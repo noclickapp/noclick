@@ -492,19 +492,34 @@ def _human_error(value: Any, depth: int = 0) -> str:
 _CODEX_NO_API_KEY = "Missing bearer or basic authentication in header"
 
 
-def explain_codex_failure(failure: str, chatgpt_auth: bool) -> str:
-    """Codex on a ChatGPT sign-in the service will not serve (Free plan) is told
-    to use an API key instead; with none connected it dies with a bare 401 from
-    api.openai.com. Say what actually happened."""
-    from nodes.agent.harness_oauth import CODEX_FREE_PLAN_MESSAGE
+def explain_codex_failure(
+    failure: str, chatgpt_auth: bool, id_token: Optional[str] = None
+) -> str:
+    """Codex that abandons a ChatGPT sign-in for API-key auth dies with a bare
+    401 from api.openai.com. WHY it abandoned the sign-in is read from the id
+    token's claims — a missing token must never be reported as a Free plan."""
+    from nodes.agent.harness_oauth import CODEX_FREE_PLAN_MESSAGE, chatgpt_plan_type
 
-    if chatgpt_auth and _CODEX_NO_API_KEY in failure:
-        return f"Codex fell back to an OpenAI API key, and none is connected. {CODEX_FREE_PLAN_MESSAGE}"
-    return failure
+    if not (chatgpt_auth and _CODEX_NO_API_KEY in failure):
+        return failure
+    prefix = "Codex fell back to an OpenAI API key, and none is connected."
+    plan = chatgpt_plan_type(id_token)
+    if plan == "free":
+        return f"{prefix} {CODEX_FREE_PLAN_MESSAGE}"
+    if plan is None:
+        return (
+            f"{prefix} The ChatGPT sign-in is missing its identity token, so "
+            "Codex could not use the subscription. Reconnect the ChatGPT account."
+        )
+    return (
+        f"{prefix} The ChatGPT sign-in (plan: {plan}) was not accepted by Codex. "
+        "Reconnect the ChatGPT account, or connect an OpenAI API key instead."
+    )
 
 
 def _parse_output(
-    parser_kind: str, stdout: str, stderr: str, returncode: int, *, chatgpt_auth: bool = False
+    parser_kind: str, stdout: str, stderr: str, returncode: int, *,
+    chatgpt_auth: bool = False, chatgpt_id_token: Optional[str] = None
 ) -> Tuple[str, bool]:
     """Extract (response_text, is_error) from a finished CLI run."""
     if parser_kind == "claude_stream_json":
@@ -556,7 +571,7 @@ def _parse_output(
                 failure = _human_error(item.get("message")) or failure
         if failure:
             # A failed turn is a failure even when the CLI exits 0.
-            return explain_codex_failure(failure, chatgpt_auth), True
+            return explain_codex_failure(failure, chatgpt_auth, chatgpt_id_token), True
         if not response:
             response = stdout.strip() or stderr.strip()
         return response, returncode != 0
@@ -719,7 +734,7 @@ async def run_local_harness_turn(
 
         stdout = stdout_b.decode(errors="replace")
         stderr = stderr_b.decode(errors="replace")
-        response, is_error = _parse_output(parser_kind, stdout, stderr, proc.returncode, chatgpt_auth=bool(env.get("CODEX_ACCESS_TOKEN")))
+        response, is_error = _parse_output(parser_kind, stdout, stderr, proc.returncode, chatgpt_auth=bool(env.get("CODEX_ACCESS_TOKEN")), chatgpt_id_token=env.get("CODEX_ID_TOKEN"))
 
         # Upstream hermes' `-z` oneshot does not join MCP discovery before its
         # first tool snapshot, so a cold connect can leave the turn toolless
@@ -754,7 +769,7 @@ async def run_local_harness_turn(
             stdout = stdout_b.decode(errors="replace")
             stderr = stderr_b.decode(errors="replace")
             response, is_error = _parse_output(
-                parser_kind, stdout, stderr, proc.returncode, chatgpt_auth=bool(env.get("CODEX_ACCESS_TOKEN"))
+                parser_kind, stdout, stderr, proc.returncode, chatgpt_auth=bool(env.get("CODEX_ACCESS_TOKEN")), chatgpt_id_token=env.get("CODEX_ID_TOKEN")
             )
         if is_error and not response:
             response = f"{model_type} exited with code {proc.returncode}"

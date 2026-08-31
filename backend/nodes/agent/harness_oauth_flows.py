@@ -177,6 +177,29 @@ async def codex_complete(poll: Dict[str, Any]) -> Dict[str, Any]:
             raise OAuthFlowError("Failed to exchange device code for tokens")
         tokens = token_resp.json()
 
+        if not tokens.get("id_token") and tokens.get("refresh_token"):
+            # The device-auth exchange doesn't always mint an id token, and codex
+            # needs one to reach the ChatGPT backend — without it the CLI silently
+            # falls back to API-key auth. The refresh grant requests ``openid``.
+            minted_resp = await client.post(
+                f"{CODEX_ISSUER}/oauth/token",
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                data={
+                    "grant_type": "refresh_token",
+                    "refresh_token": tokens["refresh_token"],
+                    "client_id": CODEX_CLIENT_ID,
+                    "scope": "openid profile email",
+                },
+            )
+            if minted_resp.is_success:
+                minted = minted_resp.json()
+                tokens = {**tokens, **{k: v for k, v in minted.items() if v}}
+            if not tokens.get("id_token"):
+                raise OAuthFlowError(
+                    "The ChatGPT sign-in did not include an identity token, "
+                    "which Codex needs. Try signing in again."
+                )
+
     access_token = tokens.get("access_token", "")
     if not access_token:
         raise OAuthFlowError("No access token received from token exchange")

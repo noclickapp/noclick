@@ -662,11 +662,25 @@ def test_the_tool_endpoint_targets_the_backends_own_port(monkeypatch):
 
 
 def test_codex_401_on_a_chatgpt_sign_in_explains_the_plan():
+    import base64
     from nodes.agent.local_harness import explain_codex_failure
 
+    def id_token(plan):
+        b64 = lambda d: base64.urlsafe_b64encode(json.dumps(d).encode()).decode().rstrip("=")
+        claims = {"https://api.openai.com/auth": {"chatgpt_plan_type": plan}}
+        return b64({"alg": "RS256"}) + "." + b64(claims) + ".sig"
+
     bare = "unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses"
-    explained = explain_codex_failure(bare, chatgpt_auth=True)
-    assert "Free plan" in explained and "OpenAI API key" in explained
+    # A definitively Free id token names the plan.
+    free = explain_codex_failure(bare, chatgpt_auth=True, id_token=id_token("free"))
+    assert "Free plan" in free and "OpenAI API key" in free
+    # No id token: the plan is unknowable — an incomplete sign-in must never be
+    # accused of being Free (a Pro user got exactly that, 2026-08-31).
+    unknown = explain_codex_failure(bare, chatgpt_auth=True)
+    assert "identity token" in unknown and "Free plan" not in unknown
+    # A paid plan that still fell back gets reconnect guidance, not an accusation.
+    paid = explain_codex_failure(bare, chatgpt_auth=True, id_token=id_token("pro"))
+    assert "pro" in paid and "Free plan" not in paid
     # An API-key run that 401s is a different problem and keeps codex's words.
     assert explain_codex_failure(bare, chatgpt_auth=False) == bare
     assert explain_codex_failure("model not found", chatgpt_auth=True) == "model not found"

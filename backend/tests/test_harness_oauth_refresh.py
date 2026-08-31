@@ -295,3 +295,77 @@ def test_compute_expires_at_iso_from_expires_in_and_jwt():
     assert datetime.fromisoformat(iso) == datetime.fromtimestamp(exp, tz=timezone.utc)
 
     assert compute_expires_at_iso(None, "not-a-jwt") is None
+
+
+async def test_a_codex_blob_missing_its_id_token_forces_refresh():
+    """A sign-in stored without an id token strands codex in API-key mode (the
+    CLI picks the ChatGPT backend from the id token's claims) — heal it at
+    env-build time via the refresh grant, which requests ``openid``."""
+    env = {
+        "CODEX_ACCESS_TOKEN": "stale-access",
+        "CODEX_REFRESH_TOKEN": "refresh-1",
+        # Not expiring: the missing id token alone must trigger the refresh.
+        "CODEX_EXPIRES_AT": _iso(+4),
+    }
+    db_blob = {"credentials": dict(env), "token_version": 2}
+    with ExitStack() as stack:
+        persist_calls = _patches(
+            stack, db_blob=db_blob,
+            responses=[_FakeResponse({
+                "access_token": "fresh-access", "refresh_token": "refresh-2",
+                "id_token": "minted-id-token", "expires_in": 864000,
+            })],
+        )
+        out = await ensure_fresh_harness_tokens(
+            env, user_id="uid", credential_id="cid-codex-noid"
+        )
+    assert out["CODEX_ID_TOKEN"] == "minted-id-token"
+    assert persist_calls[0]["new_data"]["credentials"]["CODEX_ID_TOKEN"] == "minted-id-token"
+
+
+def test_codex_id_token_staleness_verdicts():
+    """Stale = cannot serve the ChatGPT backend: absent, unparseable, or past
+    exp. A token without an exp claim is trusted (no forced refresh loop)."""
+    import base64, json, time
+    from nodes.agent.harness_oauth import codex_id_token_stale
+
+    def token(claims):
+        b64 = lambda d: base64.urlsafe_b64encode(json.dumps(d).encode()).decode().rstrip("=")
+        return b64({"alg": "RS256"}) + "." + b64(claims) + ".sig"
+
+    assert codex_id_token_stale(None)
+    assert codex_id_token_stale("")
+    assert codex_id_token_stale("not-a-jwt")
+    assert codex_id_token_stale(token({"exp": int(time.time()) - 10}))
+    assert not codex_id_token_stale(token({"exp": int(time.time()) + 3600}))
+    assert not codex_id_token_stale(token({"sub": "user"}))
+
+
+async def test_a_codex_blob_with_an_expired_id_token_forces_refresh():
+    """An id token past its exp strands codex in API-key mode just like a
+    missing one — the access-token expiry that normally gates refresh is much
+    longer-lived, so without this check the stale id token would sit for days."""
+    import base64 as _b64, json as _json, time as _time
+    b64 = lambda d: _b64.urlsafe_b64encode(_json.dumps(d).encode()).decode().rstrip("=")
+    expired = b64({"alg": "RS256"}) + "." + b64({"exp": int(_time.time()) - 60}) + ".sig"
+    env = {
+        "CODEX_ACCESS_TOKEN": "stale-access",
+        "CODEX_REFRESH_TOKEN": "refresh-1",
+        "CODEX_ID_TOKEN": expired,
+        # Not expiring: the stale id token alone must trigger the refresh.
+        "CODEX_EXPIRES_AT": _iso(+4),
+    }
+    db_blob = {"credentials": dict(env), "token_version": 2}
+    with ExitStack() as stack:
+        persist_calls = _patches(
+            stack, db_blob=db_blob,
+            responses=[_FakeResponse({
+                "access_token": "fresh-access", "refresh_token": "refresh-2",
+                "id_token": "minted-id-token", "expires_in": 864000,
+            })],
+        )
+        out = await ensure_fresh_harness_tokens(
+            env, user_id="uid", credential_id="cid-codex-expired-id"
+        )
+    assert out["CODEX_ID_TOKEN"] == "minted-id-token"
+    assert persist_calls[0]["new_data"]["credentials"]["CODEX_ID_TOKEN"] == "minted-id-token"

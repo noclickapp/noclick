@@ -156,3 +156,51 @@ class TestCodexPlanEligibility:
         result = await codex_complete({"device_auth_id": "d", "user_code": "c"})
         assert result["status"] == "completed"
         assert result["credential_data"]["credentials"]["CODEX_ID_TOKEN"] == _id_token("plus")
+
+
+
+def _minted_id_token(plan):
+    import base64, json
+    b64 = lambda d: base64.urlsafe_b64encode(json.dumps(d).encode()).decode().rstrip("=")
+    claims = {"https://api.openai.com/auth": {"chatgpt_account_id": "acct", "chatgpt_plan_type": plan}}
+    return b64({"alg": "RS256"}) + "." + b64(claims) + ".sig"
+
+
+@pytest.mark.asyncio
+class TestCodexIdTokenRepair:
+    """Codex picks the ChatGPT backend from the id token's claims; a sign-in
+    stored without one strands the CLI in API-key mode (a Pro user was told
+    their account was Free, 2026-08-31). The device-auth exchange doesn't
+    always mint one — the refresh grant requests ``openid`` and does."""
+
+    @respx.mock
+    async def test_an_exchange_without_an_id_token_mints_one_via_the_refresh_grant(self):
+        respx.post(f"{CODEX_ISSUER}/api/accounts/deviceauth/token").mock(
+            return_value=httpx.Response(200, json={"authorization_code": "ac", "code_verifier": "cv"}))
+        token_route = respx.post(f"{CODEX_ISSUER}/oauth/token").mock(side_effect=[
+            httpx.Response(200, json={"access_token": "acc", "refresh_token": "ref", "expires_in": 3600}),
+            httpx.Response(200, json={
+                "access_token": "acc2", "refresh_token": "ref2",
+                "id_token": _minted_id_token("pro"), "expires_in": 3600,
+            }),
+        ])
+        result = await codex_complete({"device_auth_id": "d", "user_code": "c"})
+        assert result["status"] == "completed"
+        creds = result["credential_data"]["credentials"]
+        assert creds["CODEX_ID_TOKEN"] == _minted_id_token("pro")
+        # The repair's rotated tokens win — the originals are consumed.
+        assert creds["CODEX_ACCESS_TOKEN"] == "acc2"
+        assert creds["CODEX_REFRESH_TOKEN"] == "ref2"
+        repair_call = token_route.calls[1]
+        assert b"scope=openid+profile+email" in repair_call.request.content
+
+    @respx.mock
+    async def test_a_sign_in_that_cannot_mint_an_id_token_is_refused(self):
+        respx.post(f"{CODEX_ISSUER}/api/accounts/deviceauth/token").mock(
+            return_value=httpx.Response(200, json={"authorization_code": "ac", "code_verifier": "cv"}))
+        respx.post(f"{CODEX_ISSUER}/oauth/token").mock(side_effect=[
+            httpx.Response(200, json={"access_token": "acc", "refresh_token": "ref"}),
+            httpx.Response(200, json={"access_token": "acc2"}),
+        ])
+        with pytest.raises(OAuthFlowError, match="identity token"):
+            await codex_complete({"device_auth_id": "d", "user_code": "c"})

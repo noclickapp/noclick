@@ -314,7 +314,16 @@ async def ensure_fresh_harness_tokens(
             is_expired=lambda expires_at: is_token_expired(
                 expires_at, buffer_minutes=_EXPIRY_BUFFER_MINUTES
             ),
-            force_refresh=not env.get(spec.expires_at_key),
+            # A codex sign-in whose id token is missing or expired strands the
+            # CLI in API-key mode (codex picks the ChatGPT backend from the id
+            # token's claims); the refresh grant requests ``openid`` and re-mints.
+            force_refresh=(
+                not env.get(spec.expires_at_key)
+                or (
+                    spec.provider == "codex_chatgpt"
+                    and codex_id_token_stale(env.get("CODEX_ID_TOKEN"))
+                )
+            ),
             provider=spec.provider,
             caller_path=caller_path,
             store=store,
@@ -335,9 +344,9 @@ CODEX_FREE_PLAN_MESSAGE = (
 )
 
 
-def chatgpt_plan_type(id_token: Optional[str]) -> Optional[str]:
-    """``chatgpt_plan_type`` from a ChatGPT id token's claims (unverified —
-    the claim only steers a message, never authorization); None when unknown."""
+def _chatgpt_id_token_claims(id_token: Optional[str]) -> Optional[Dict[str, Any]]:
+    """Decoded claims of a ChatGPT id token (unverified — claims only steer
+    messages and refresh timing, never authorization); None when unparseable."""
     import base64
     import json
 
@@ -348,9 +357,31 @@ def chatgpt_plan_type(id_token: Optional[str]) -> Optional[str]:
         claims = json.loads(base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
     except (ValueError, UnicodeDecodeError):
         return None
-    auth = claims.get("https://api.openai.com/auth") if isinstance(claims, dict) else None
+    return claims if isinstance(claims, dict) else None
+
+
+def chatgpt_plan_type(id_token: Optional[str]) -> Optional[str]:
+    """``chatgpt_plan_type`` from a ChatGPT id token's claims; None when unknown."""
+    claims = _chatgpt_id_token_claims(id_token)
+    auth = claims.get("https://api.openai.com/auth") if claims else None
     plan = auth.get("chatgpt_plan_type") if isinstance(auth, dict) else None
     return plan.lower() if isinstance(plan, str) and plan else None
+
+
+def codex_id_token_stale(id_token: Optional[str], *, buffer_s: int = 60) -> bool:
+    """True when a codex sign-in's id token cannot serve the ChatGPT backend:
+    absent, unparseable, or past its ``exp`` claim. Codex picks its auth mode
+    from this token, so a stale one strands the CLI in API-key auth exactly
+    like a missing one. An id token without an ``exp`` claim is trusted."""
+    import time
+
+    claims = _chatgpt_id_token_claims(id_token)
+    if claims is None:
+        return True
+    exp = claims.get("exp")
+    if isinstance(exp, (int, float)):
+        return exp <= time.time() + buffer_s
+    return False
 
 
 def codex_chatgpt_ineligible(id_token: Optional[str]) -> Optional[str]:
