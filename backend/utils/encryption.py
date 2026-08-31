@@ -12,12 +12,22 @@ import logging
 import re
 from typing import Dict, Any
 import json
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, MultiFernet
 
 logger = logging.getLogger(__name__)
 
 
 _HEX_KEY = re.compile(rb'\A[0-9a-fA-F]{64}\Z')
+
+
+def _retired_keys() -> list:
+    """Previous keys, kept readable only while old rows are re-encrypted.
+
+    Set CREDENTIALS_ENCRYPTION_KEY_OLD (comma-separated for more than one)
+    during a key change and remove it once nothing is sealed with them.
+    """
+    raw = os.environ.get('CREDENTIALS_ENCRYPTION_KEY_OLD', '')
+    return [part.strip().encode() for part in raw.split(',') if part.strip()]
 
 
 def _as_fernet_key(key: bytes) -> bytes:
@@ -59,7 +69,14 @@ class CredentialEncryption:
         except Exception as e:
             raise ValueError(f"Invalid CREDENTIALS_ENCRYPTION_KEY format: {e}")
 
-        self.fernet = Fernet(_as_fernet_key(key))
+        # Retired keys stay readable so changing the key need not be a flag
+        # day: MultiFernet seals with the first key and opens with any of them,
+        # which is what allows existing rows to be re-encrypted in the
+        # background rather than all at once.
+        self.fernet = MultiFernet(
+            [Fernet(_as_fernet_key(key))]
+            + [Fernet(_as_fernet_key(retired)) for retired in _retired_keys()]
+        )
 
     def encrypt_credential(self, credential_data: Dict[str, Any]) -> str:
         """
@@ -110,6 +127,20 @@ class CredentialEncryption:
         except Exception as e:
             logger.error(f"Error decrypting credential: {e}")
             raise ValueError(f"Failed to decrypt credential: {e}")
+
+
+    def rotate_credential(self, encrypted_data: str) -> str:
+        """Re-seal an existing value under the current primary key.
+
+        Verifies and re-encrypts in one step, so a value sealed with a retired
+        key comes back sealed with the primary one without its contents passing
+        through the caller.
+        """
+        try:
+            return self.fernet.rotate(encrypted_data.encode('utf-8')).decode('utf-8')
+        except Exception as e:
+            logger.error(f"Error rotating credential: {e}")
+            raise ValueError(f"Failed to rotate credential: {e}")
 
 
 # Singleton instance
