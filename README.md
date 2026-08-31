@@ -64,7 +64,7 @@ including the credential-encryption key, which is kept across re-runs — and
 starts the stack with Docker Compose. Re-running updates in place. Releases are
 tags; pin the exact source the installer builds with `NOCLICK_REF=v0.2.2`. The
 installer deliberately builds that checkout locally. If you operate the Compose
-stack directly, `NOCLICK_VERSION=0.2.9 docker compose up -d` instead pins the
+stack directly, `NOCLICK_VERSION=0.2.10 docker compose up -d` instead pins the
 released backend image; the frontend is still built for your public URLs. Every
 installer option is documented at the top of [`install.sh`](./install.sh).
 
