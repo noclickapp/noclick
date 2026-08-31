@@ -303,6 +303,11 @@ def _apply_subscription_login(model_type: str, workdir: Path, env: Dict[str, str
         }))
         creds.chmod(0o600)
         env["CLAUDE_CONFIG_DIR"] = str(home)
+        # The credential vars are transport between the backend and this
+        # function — never the CLI's to see (same doctrine as codex below).
+        for key in ("CLAUDE_CODE_ACCESS_TOKEN", "CLAUDE_CODE_REFRESH_TOKEN",
+                    "CLAUDE_CODE_EXPIRES_AT", "CLAUDE_CODE_EXPIRES_IN"):
+            env.pop(key, None)
 
     elif model_type == "codex" and env.get("CODEX_ACCESS_TOKEN"):
         home = workdir / ".codex"
@@ -319,6 +324,15 @@ def _apply_subscription_login(model_type: str, workdir: Path, env: Dict[str, str
         }))
         auth.chmod(0o600)
         env["CODEX_HOME"] = str(home)
+        # codex (0.147) treats CODEX_ACCESS_TOKEN in its environment as an auth
+        # override and abandons auth.json for a keyless API mode — every turn
+        # died with a bearer-less 401 from api.openai.com while a perfectly
+        # good ChatGPT sign-in sat in auth.json (2026-08-31, bisected var by
+        # var against the live binary). The credential vars are transport
+        # between the backend and this function — never the CLI's to see.
+        for key in ("CODEX_ACCESS_TOKEN", "CODEX_ID_TOKEN", "CODEX_REFRESH_TOKEN",
+                    "CODEX_EXPIRES_AT", "CODEX_EXPIRES_IN", "CODEX_ACCOUNT_ID"):
+            env.pop(key, None)
 
 
 # Agent model ids are `<provider>/<model>`; hermes takes the provider as its own
@@ -701,6 +715,9 @@ async def run_local_harness_turn(
         )
 
         env = {**os.environ, **(env_overrides or {})}
+        # Read before _apply_subscription_login pops the transport vars.
+        chatgpt_auth = bool(env.get("CODEX_ACCESS_TOKEN"))
+        chatgpt_id_token = env.get("CODEX_ID_TOKEN")
         # Per-conversation config/state roots keep harnesses isolated from the
         # operator's own CLI setup (and from each other).
         _apply_subscription_login(model_type, workdir, env)
@@ -734,7 +751,7 @@ async def run_local_harness_turn(
 
         stdout = stdout_b.decode(errors="replace")
         stderr = stderr_b.decode(errors="replace")
-        response, is_error = _parse_output(parser_kind, stdout, stderr, proc.returncode, chatgpt_auth=bool(env.get("CODEX_ACCESS_TOKEN")), chatgpt_id_token=env.get("CODEX_ID_TOKEN"))
+        response, is_error = _parse_output(parser_kind, stdout, stderr, proc.returncode, chatgpt_auth=chatgpt_auth, chatgpt_id_token=chatgpt_id_token)
 
         # Upstream hermes' `-z` oneshot does not join MCP discovery before its
         # first tool snapshot, so a cold connect can leave the turn toolless
@@ -769,7 +786,7 @@ async def run_local_harness_turn(
             stdout = stdout_b.decode(errors="replace")
             stderr = stderr_b.decode(errors="replace")
             response, is_error = _parse_output(
-                parser_kind, stdout, stderr, proc.returncode, chatgpt_auth=bool(env.get("CODEX_ACCESS_TOKEN")), chatgpt_id_token=env.get("CODEX_ID_TOKEN")
+                parser_kind, stdout, stderr, proc.returncode, chatgpt_auth=chatgpt_auth, chatgpt_id_token=chatgpt_id_token
             )
         if is_error and not response:
             response = f"{model_type} exited with code {proc.returncode}"

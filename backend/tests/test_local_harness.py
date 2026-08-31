@@ -707,3 +707,30 @@ def test_openclaw_mcp_server_uses_a_transport_openclaw_accepts(tmp_path, monkeyp
     config = json.loads((tmp_path / ".openclaw" / "config.json").read_text())
     # "http" failed openclaw's config validation before any turn ran.
     assert config["mcp"]["servers"]["noclick"] == {"transport": "streamable-http", "url": "http://127.0.0.1:8000/local-agent-mcp/tok"}
+
+
+def test_the_cli_never_sees_the_credential_transport_vars(tmp_path):
+    """codex (0.147) treats CODEX_ACCESS_TOKEN in its environment as an auth
+    override and abandons auth.json for a keyless API mode — a valid pro
+    sign-in died with bearer-less 401s (2026-08-31, bisected var by var
+    against the live binary). The tokens reach the CLI through its config
+    file only; the env vars are backend-internal transport."""
+    from nodes.agent.local_harness import _apply_subscription_login
+    import json as _json
+
+    env = {"PATH": "/usr/bin", "CODEX_ACCESS_TOKEN": "acc", "CODEX_ID_TOKEN": "idt",
+           "CODEX_REFRESH_TOKEN": "ref", "CODEX_EXPIRES_AT": "2027-01-01T00:00:00Z"}
+    _apply_subscription_login("codex", tmp_path, env)
+    written = _json.loads((tmp_path / ".codex" / "auth.json").read_text())
+    assert written["tokens"]["access_token"] == "acc"
+    assert written["tokens"]["id_token"] == "idt"
+    assert env["CODEX_HOME"] == str(tmp_path / ".codex")
+    assert not any(k.startswith("CODEX_") and k != "CODEX_HOME" for k in env)
+
+    env = {"PATH": "/usr/bin", "CLAUDE_CODE_ACCESS_TOKEN": "cacc",
+           "CLAUDE_CODE_REFRESH_TOKEN": "cref", "CLAUDE_CODE_EXPIRES_AT": "2027-01-01T00:00:00Z"}
+    _apply_subscription_login("claude_code", tmp_path, env)
+    creds = _json.loads((tmp_path / ".claude" / ".credentials.json").read_text())
+    assert creds["claudeAiOauth"]["accessToken"] == "cacc"
+    assert env["CLAUDE_CONFIG_DIR"] == str(tmp_path / ".claude")
+    assert not any(k.startswith("CLAUDE_CODE_") for k in env)
