@@ -36,7 +36,7 @@ spec:
         registry_type: GHCR
         registry: noclickapp
         repository: noclick
-        tag: "0.2.7"
+        tag: "0.2.8"
       http_port: 8080
       # The scheduler and the realtime relay run inside this process, so one
       # instance is by design — see docs/self-hosting.md.
