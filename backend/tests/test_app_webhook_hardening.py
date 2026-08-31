@@ -36,6 +36,8 @@ class FakeRedis:
         return 1 if key in self.store else 0
 
     async def incr(self, key):
+        if key not in self.store:
+            self.ttls.pop(key, None)  # INCR-created keys have no TTL
         self.store[key] = int(self.store.get(key, 0)) + 1
         return self.store[key]
 
@@ -44,6 +46,19 @@ class FakeRedis:
             return False
         self.ttls[key] = seconds
         return True
+
+    async def ttl(self, key):
+        if key not in self.store:
+            return -2
+        return self.ttls.get(key, -1)
+
+
+class SetNoopRedis(FakeRedis):
+    """SET NX believes the key is alive (no-op) while INCR finds it gone —
+    the expiry-in-the-gap race that mints a TTL-less counter."""
+
+    async def set(self, key, value, ex=None, nx=False):
+        return None
 
 
 class BrokenRedis:
@@ -135,6 +150,39 @@ class TestFireBudget:
 
     async def test_redis_failure_fails_open(self, broken_redis):
         assert await fire_budget.over_fire_budget("wf1", "n1", "C1") is False
+
+    # A TTL-less counter would suppress its channel FOREVER once past the cap
+    # (2026-08-31: a WhatsApp trigger's counter stuck at 39 with TTL -1, every
+    # inbound message acked 200 and silently dropped). Both mint paths — the
+    # SET-NX/INCR expiry race and legacy orphans — must self-heal.
+
+    async def test_orphaned_ttlless_counter_heals_instead_of_suppressing_forever(self, fake_redis):
+        key = "appwebhook:firebudget:wf1:n1:C1"
+        fake_redis.store[key] = 35  # legacy orphan: over cap, no TTL
+
+        assert await fire_budget.over_fire_budget("wf1", "n1", "C1") is False
+        # Reset into a fresh window: count restarted, TTL restored.
+        assert fake_redis.store[key] == 1
+        assert fake_redis.ttls[key] == fire_budget.FIRE_BUDGET_WINDOW_SECONDS
+        assert await fire_budget.over_fire_budget("wf1", "n1", "C1") is False
+
+    async def test_incr_created_key_gets_its_ttl_stamped(self, monkeypatch):
+        from utils import redis_client
+        redis = SetNoopRedis()
+        monkeypatch.setattr(redis_client, "_client", redis)
+        key = "appwebhook:firebudget:wf1:n1:C1"
+
+        assert await fire_budget.over_fire_budget("wf1", "n1", "C1") is False
+        assert redis.store[key] == 1
+        assert redis.ttls[key] == fire_budget.FIRE_BUDGET_WINDOW_SECONDS
+
+    async def test_ttld_counter_over_cap_still_suppresses(self, fake_redis):
+        key = "appwebhook:firebudget:wf1:n1:C1"
+        fake_redis.store[key] = fire_budget.FIRE_BUDGET_MAX + 5
+        fake_redis.ttls[key] = 120  # healthy window, genuinely over budget
+
+        assert await fire_budget.over_fire_budget("wf1", "n1", "C1") is True
+        assert fake_redis.store[key] == fire_budget.FIRE_BUDGET_MAX + 6  # not reset
 
 
 # ============================================================================

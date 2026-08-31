@@ -44,7 +44,23 @@ async def over_fire_budget(
         # the fail-open path and silently disable the budget).
         await client.set(key, 0, ex=FIRE_BUDGET_WINDOW_SECONDS, nx=True)
         count = await client.incr(key)
-        return count > FIRE_BUDGET_MAX
+        if count == 1:
+            # The window can expire in the gap between SET NX (which saw the
+            # key alive and no-op'd) and INCR, which then recreates it with
+            # NO TTL — a counter that never rolls and, once past the cap,
+            # suppresses the channel forever (2026-08-31 incident).
+            # count == 1 marks every key INCR could have created; re-stamping
+            # a legitimately fresh window's TTL is a harmless no-op.
+            await client.expire(key, FIRE_BUDGET_WINDOW_SECONDS)
+        if count <= FIRE_BUDGET_MAX:
+            return False
+        if await client.ttl(key) == -1:
+            # Orphaned TTL-less counter (minted by the race above before the
+            # heal existed): reset it into a fresh window instead of
+            # suppressing the channel permanently.
+            await client.set(key, 1, ex=FIRE_BUDGET_WINDOW_SECONDS)
+            return False
+        return True
     except Exception as e:
         logger.warning(f"[FireBudget] Check failed for {key}: {e}")
         return False
