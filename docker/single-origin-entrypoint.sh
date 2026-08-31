@@ -190,7 +190,10 @@ fi
 # The local harness serves CLI agents their tools on the backend's OWN port;
 # PORT is nginx here and must not shadow it.
 export NOCLICK_BACKEND_PORT=8000
+# NOCLICK_DEV_RELOAD=1 (with /app/backend bind-mounted) turns the shipped
+# image into a live-reload dev instance — the pre-release test loop.
 python -m uvicorn server:web_app --host 127.0.0.1 --port 8000 --workers 1 \
+    ${NOCLICK_DEV_RELOAD:+--reload} \
     --app-dir /app/backend &
 pids="$pids $!"
 

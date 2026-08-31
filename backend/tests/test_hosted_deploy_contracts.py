@@ -186,3 +186,5 @@ def test_single_origin_image_ships_the_cli_harnesses_the_runtime_was_verified_ag
     assert 'if [ -z "${REDIS_URL:-}" ]; then' in entrypoint
     assert 'export REDIS_URL="redis://127.0.0.1:6379/0"' in entrypoint
     assert entrypoint.index("redis-server --bind 127.0.0.1") < entrypoint.index("python -m uvicorn")
+    # The dev-reload knob must stay a no-op unless explicitly set.
+    assert "${NOCLICK_DEV_RELOAD:+--reload}" in entrypoint

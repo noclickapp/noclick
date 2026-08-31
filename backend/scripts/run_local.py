@@ -244,7 +244,7 @@ def main() -> None:
     print(f"→ Starting backend on {BACKEND_URL} …")
     backend = subprocess.Popen(
         [sys.executable, "-m", "uvicorn", "server:web_app",
-         "--host", "127.0.0.1", "--port", str(BACKEND_PORT)],
+         "--host", "127.0.0.1", "--port", str(BACKEND_PORT), "--reload"],
         cwd=BACKEND_DIR, env=backend_env,
     )
 
