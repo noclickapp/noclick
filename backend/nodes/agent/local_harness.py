@@ -26,7 +26,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Response
 
 logger = logging.getLogger(__name__)
 
@@ -131,8 +131,12 @@ async def local_agent_mcp(token: str, request: Request):
             "capabilities": {"tools": {"listChanged": False}},
             "serverInfo": {"name": "noclick-local-agent", "version": "1.0.0"},
         })
-    if method in ("notifications/initialized", "notifications/cancelled"):
-        return {}
+    if (method or "").startswith("notifications/") or req_id is None:
+        # JSON-RPC notifications get NO body: Streamable HTTP says 202 with
+        # nothing in it. Answering 200 {} broke codex's rmcp client mid-handshake
+        # — it re-initialized in a loop and never issued tools/list, so every
+        # codex turn ran toolless while the server logged nothing but 200s.
+        return Response(status_code=202)
     if method == "ping":
         return result({})
     if method == "tools/list":
@@ -257,6 +261,23 @@ def _mcp_url(token: str) -> str:
     """
     port = os.environ.get("NOCLICK_BACKEND_PORT") or os.environ.get("PORT", "8000")
     return f"http://127.0.0.1:{port}/local-agent-mcp/{token}"
+
+
+def _tools_note(tool_configs: Dict[str, Dict]) -> str:
+    """One grounding line naming the wired tools. The MCP advertisement alone
+    is not always believed: a ChatGPT-backend model asked about "apollo tools"
+    matched the name against its own connector catalogue and answered "not
+    installed" while the tools sat in its own tool list (2026-08-31)."""
+    if not tool_configs:
+        return ""
+    return (
+        "These NoClick tools are connected and callable right now via the "
+        "'noclick' MCP server: " + ", ".join(sorted(tool_configs)) + "."
+    )
+
+
+def _join_notes(*notes: Optional[str]) -> str:
+    return " ".join(n for n in notes if n)
 
 
 def _compose_prompt(config: Any, *, inline_system: bool, extra_note: str = "") -> str:
@@ -389,8 +410,15 @@ def _build_command(
         if model:
             cmd += ["-m", model]
         if mcp_url:
+            # codex gates each MCP server's tool calls behind an approval
+            # prompt, and a headless exec has no answerer — every call died as
+            # "user cancelled MCP tool call" (the same headless-asks audit
+            # every harness needs). approval_policy alone does NOT cover it;
+            # the per-server approval mode is the knob (bisected against the
+            # live binary, 2026-08-31).
             cmd += ["-c", f'mcp_servers.noclick.url="{mcp_url}"',
-                    "-c", "experimental_use_rmcp_client=true"]
+                    "-c", "experimental_use_rmcp_client=true",
+                    "-c", 'mcp_servers.noclick.default_tools_approval_mode="approve"']
         cmd += [_compose_prompt(config, inline_system=True, extra_note=extra_note)]
         return cmd, "codex_jsonl"
 
@@ -711,7 +739,7 @@ async def run_local_harness_turn(
     try:
         cmd, parser_kind = _build_command(
             model_type, config, workdir, _mcp_url(token) if token else None,
-            extra_note=volume_note,
+            extra_note=_join_notes(volume_note, _tools_note(tool_configs)),
         )
 
         env = {**os.environ, **(env_overrides or {})}

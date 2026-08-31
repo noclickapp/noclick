@@ -188,6 +188,9 @@ def test_codex_command_assembly(fake_binaries, tmp_path):
     assert "--json" in cmd and "--skip-git-repo-check" in cmd
     assert cmd[cmd.index("-m") + 1] == "gpt-5-codex"
     assert any(a.startswith('mcp_servers.noclick.url="http') for a in cmd)
+    # Headless exec has no approval answerer: without this, codex auto-cancels
+    # every MCP tool call ("user cancelled MCP tool call").
+    assert 'mcp_servers.noclick.default_tools_approval_mode="approve"' in cmd
     # System prompt inlined into the prompt (codex has no system flag here)
     assert cmd[-1].startswith("System instructions:\nbe terse")
 
@@ -734,3 +737,41 @@ def test_the_cli_never_sees_the_credential_transport_vars(tmp_path):
     assert creds["claudeAiOauth"]["accessToken"] == "cacc"
     assert env["CLAUDE_CONFIG_DIR"] == str(tmp_path / ".claude")
     assert not any(k.startswith("CLAUDE_CODE_") for k in env)
+
+
+def test_mcp_notifications_get_an_empty_202(mcp_client, monkeypatch):
+    """JSON-RPC notifications must get 202 with NO body (Streamable HTTP).
+    Answering 200 {} broke codex's rmcp client mid-handshake — it looped on
+    initialize and never issued tools/list, so every codex turn ran toolless
+    while the server logged nothing but 200s (2026-08-31)."""
+    from nodes.agent.local_harness import _ToolSession, _register_session, _sessions
+
+    token = _register_session(_ToolSession(
+        node=object(), tool_configs={}, user_id="u", conversation_id="c",
+    ))
+    try:
+        r = mcp_client.post(f"/local-agent-mcp/{token}", json={
+            "jsonrpc": "2.0", "method": "notifications/initialized",
+        })
+        assert r.status_code == 202
+        assert r.content == b""
+        # Requests (with an id) still answer JSON-RPC results.
+        r = mcp_client.post(f"/local-agent-mcp/{token}", json={
+            "jsonrpc": "2.0", "id": 1, "method": "tools/list",
+        })
+        assert r.status_code == 200
+        assert r.json()["result"] == {"tools": []}
+    finally:
+        _sessions.pop(token, None)
+
+
+def test_the_prompt_grounds_the_wired_tools():
+    """The MCP advertisement alone is not always believed — a ChatGPT-backend
+    model matched "apollo" against its own connector catalogue and answered
+    "not installed" while the tools sat in its own tool list."""
+    from nodes.agent.local_harness import _tools_note
+
+    note = _tools_note({"apollo__search_people_in_apollo": {}, "upload_file": {}})
+    assert "apollo__search_people_in_apollo" in note and "upload_file" in note
+    assert "noclick" in note
+    assert _tools_note({}) == ""
