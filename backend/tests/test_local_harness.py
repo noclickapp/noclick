@@ -646,6 +646,21 @@ async def test_hermes_toolless_turn_is_retried_once(monkeypatch, tmp_path):
     assert output["response"] == "hermes reply 2"
 
 
+def test_the_tool_endpoint_targets_the_backends_own_port(monkeypatch):
+    """PORT is the public port on every PaaS (nginx in the single-origin image,
+    which has no /local-agent-mcp route): pointed there, the CLI handshakes
+    with an HTML page and runs toolless. The backend's own bind wins."""
+    from nodes.agent.local_harness import _mcp_url
+
+    monkeypatch.setenv("PORT", "8080")
+    monkeypatch.setenv("NOCLICK_BACKEND_PORT", "8000")
+    assert _mcp_url("tok") == "http://127.0.0.1:8000/local-agent-mcp/tok"
+    monkeypatch.delenv("NOCLICK_BACKEND_PORT")
+    assert _mcp_url("tok") == "http://127.0.0.1:8080/local-agent-mcp/tok"
+    monkeypatch.delenv("PORT")
+    assert _mcp_url("tok") == "http://127.0.0.1:8000/local-agent-mcp/tok"
+
+
 def test_codex_401_on_a_chatgpt_sign_in_explains_the_plan():
     from nodes.agent.local_harness import explain_codex_failure
 

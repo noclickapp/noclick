@@ -175,6 +175,9 @@ if [ "$embedded_auth" = 1 ]; then
     pids="$pids $!"
 fi
 
+# The local harness serves CLI agents their tools on the backend's OWN port;
+# PORT is nginx here and must not shadow it.
+export NOCLICK_BACKEND_PORT=8000
 python -m uvicorn server:web_app --host 127.0.0.1 --port 8000 --workers 1 \
     --app-dir /app/backend &
 pids="$pids $!"

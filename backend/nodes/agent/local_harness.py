@@ -247,7 +247,15 @@ def _require_binary(name: str, install_hint: str) -> str:
 
 
 def _mcp_url(token: str) -> str:
-    port = os.environ.get("PORT", "8000")
+    """The turn-scoped tool endpoint, on the BACKEND's own port.
+
+    PORT is the container's public port on every PaaS — in the single-origin
+    image that is nginx, which has no route for this path, so a CLI pointed
+    there shook hands with an HTML page and ran every turn toolless (Railway,
+    2026-08-31; `make local` masked it, PORT unset there). The entrypoint
+    exports the backend's real bind as NOCLICK_BACKEND_PORT.
+    """
+    port = os.environ.get("NOCLICK_BACKEND_PORT") or os.environ.get("PORT", "8000")
     return f"http://127.0.0.1:{port}/local-agent-mcp/{token}"
 
 

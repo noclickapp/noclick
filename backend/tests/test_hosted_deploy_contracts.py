@@ -177,3 +177,5 @@ def test_single_origin_image_ships_the_cli_harnesses_the_runtime_was_verified_ag
     assert "USER noclick" not in dockerfile
     assert "chown noclick:noclick /var/lib/noclick" in entrypoint
     assert 'setpriv --reuid=noclick --regid=noclick --init-groups "$0" "$@"' in entrypoint
+    # CLI agents get their tools on the backend's own port, not nginx's.
+    assert "export NOCLICK_BACKEND_PORT=8000" in entrypoint
