@@ -33,7 +33,7 @@ frontend values documented below:
 ```bash
 # The whole application on one port, against a database you already have
 docker run -e POSTGRES_URL='postgres://…' -e VITE_PUBLIC_URL='https://noclick.example.com' \
-  -p 8080:8080 ghcr.io/noclickapp/noclick:0.2.8
+  -p 8080:8080 ghcr.io/noclickapp/noclick:0.2.9
 ```
 
 A database URL is all that image needs. It runs the auth layer itself — GoTrue
@@ -52,7 +52,7 @@ which is the arrangement described under [Required configuration](#required-conf
 The compose stack pulls the released backend rather than building it. Pin it:
 
 ```bash
-NOCLICK_VERSION=0.2.8 docker compose up -d
+NOCLICK_VERSION=0.2.9 docker compose up -d
 ```
 
 Unset, `NOCLICK_VERSION` resolves to `latest`, which is the newest _release_ —
