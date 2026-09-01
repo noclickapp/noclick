@@ -6,8 +6,8 @@
 
 <p align="center">
   <strong>Describe an agent. Watch it get built. Let it run.</strong><br />
-  Workflow automation with AI agents at the core — a visual canvas, ~160
-  integrations, and coding agents that can actually use your tools.
+  Open-source workflow automation with AI agents at the core — a visual
+  canvas, ~160 integrations, and coding agents that can actually use your tools.
 </p>
 
 <p align="center">
@@ -21,6 +21,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/noclick"><img alt="npm" src="https://img.shields.io/npm/v/noclick?logo=npm&label=npm&color=CB3837" /></a>
   <a href="https://pypi.org/project/noclick/"><img alt="PyPI" src="https://img.shields.io/pypi/v/noclick?logo=pypi&logoColor=white&label=PyPI&color=3775A9" /></a>
+  <a href="./LICENSE"><img alt="License: AGPL-3.0" src="https://img.shields.io/badge/license-AGPL--3.0-2ea44f" /></a>
   <a href="https://discord.com/invite/sHC2mrnss8"><img alt="Discord" src="https://img.shields.io/badge/Discord-join%20us-5865F2?logo=discord&logoColor=white" /></a>
 </p>
 
@@ -81,9 +82,11 @@ real coding harnesses (Claude Code, Codex, opencode, hermes, OpenClaw) and call
 your connected integrations as tools, so an agent can read a Linear issue, work
 in a git repo, and post the result back to Slack.
 
-This repository is the platform: the workflow engine, every integration node,
-the React editor, the realtime collaboration layer, the AI workflow builder,
-and an MCP server. It's the same code that runs [noclick.com](https://noclick.com).
+This repository is the whole platform, open source under the AGPL: the
+workflow engine, every integration node, the React editor, the realtime
+collaboration layer, the AI workflow builder, and an MCP server. It's the same
+code that runs [noclick.com](https://noclick.com), and it runs end to end on
+your own machine with nothing held back.
 
 <p align="center">
   <img src="docs/assets/interface.webp" alt="The NoClick editor: an AI build conversation on the left and the resulting support agent on the canvas — Gmail and Slack triggers feeding a claude-code agent that's wired to Gmail, Notion, Google Sheets and Slack as tools, all connected and green after a run" width="900" />
@@ -191,7 +194,8 @@ integration is mostly writing one Python module — the editor picks it up.
 plus managed infrastructure: retained agent runtimes so turns resume instantly,
 scaled webhook and cron delivery, additional hosted builder capabilities, and
 managed storage and email. Self-hosted and cloud share the same workflow
-format, so workflows move between them unchanged.
+format, so workflows move between them unchanged, and the cloud's operational
+layer is what funds the open-source engine.
 
 ## Contributing
 
@@ -209,10 +213,23 @@ fastest way to get a question answered.
 
 ## License
 
-[Sustainable Use License 1.0](./LICENSE.md) — use and modify it for your own
-internal business purposes, or for non-commercial and personal use. You may pass
-it on only free of charge and non-commercially. It is source-available rather
-than open source: there is no time-based conversion to a permissive licence, and
-commercial redistribution — including offering it as a hosted service — needs a
-separate agreement. [LICENSE.md](./LICENSE.md) is the authority; this paragraph
-is a summary and not a term of it.
+NoClick Community is open source under the [GNU Affero General Public License,
+version 3](./LICENSE) (`AGPL-3.0-only`). Run it, change it, and self-host it,
+at work or anywhere else. The one condition worth knowing before you fork: if
+you modify NoClick and let other people use your modified version over a
+network, you must offer them its source under the same license. That is what
+keeps NoClick and its forks open.
+
+The SDKs in [`sdk/typescript`](./sdk/typescript/LICENSE) and
+[`sdk/python`](./sdk/python/LICENSE) are **Apache-2.0**, so the components,
+external apps, and scripts you build against them carry no AGPL obligation,
+and neither does anything that talks to NoClick over its HTTP or MCP API.
+Workflows, functions, and components you author with NoClick are yours: the
+license covers NoClick itself, not what you make with it.
+
+Need NoClick under other terms, such as embedding it in a product you don't
+want to open-source? Commercial licenses are available from
+[legal@noclick.com](mailto:legal@noclick.com). Names and logos are covered by
+the [trademark policy](./TRADEMARKS.md), not the license. Releases up to
+v0.2.12 remain available under the Sustainable Use License 1.0 they shipped
+with. This section is a summary; [LICENSE](./LICENSE) is the authority.

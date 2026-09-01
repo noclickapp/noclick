@@ -11,7 +11,7 @@
     "generate:types:watch": "nodemon --watch wss/sender --ext py --exec 'npm run generate:types'"
   },
   "author": "",
-  "license": "SEE LICENSE IN LICENSE.md",
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "@babel/core": "^7.29.7",
     "@babel/preset-react": "^7.23.3",

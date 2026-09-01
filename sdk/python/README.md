@@ -69,6 +69,7 @@ Full documentation at [docs.noclick.com/sdk](https://docs.noclick.com/sdk/overvi
 
 ## License
 
-[Sustainable Use License 1.0](./LICENSE.md) — use it for your own internal
-business purposes, or non-commercially. Source-available rather than open
-source, and it does not convert to a permissive licence over time.
+[Apache License 2.0](./LICENSE). The SDK is deliberately permissive so that the
+code you write against it stays under whatever license you choose. NoClick
+itself is AGPL-3.0-only. Versions up to 0.1.1 on PyPI were published under the
+Sustainable Use License 1.0 and remain available under it.

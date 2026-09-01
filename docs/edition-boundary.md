@@ -1,9 +1,11 @@
-# Community edition boundary
+# Edition boundary
 
-This repository is designed to run without access to NoClick-managed systems.
-The boundary is structural, not a runtime feature flag.
+Everything in this repository is open source under the AGPL-3.0-only, and it
+runs end to end without access to NoClick-managed systems. This page describes
+what the hosted service at noclick.com runs on top of it, and why those pieces
+live elsewhere. The boundary is structural, not a runtime feature flag.
 
-## Included
+## In this repository
 
 - workflow editing and execution;
 - integration and trigger nodes;
@@ -16,10 +18,10 @@ The boundary is structural, not a runtime feature flag.
   Resend, and S3-compatible storage;
 - PostgreSQL/Supabase persistence and collaboration.
 
-## Not included
+## What the hosted service adds
 
-- managed hosting, deployment, or multi-region infrastructure;
-- proprietary workflow-generation and model-routing systems;
+- managed hosting, deployment, and multi-region infrastructure;
+- NoClick's hosted workflow-generation and model-routing pipeline;
 - internal administration, incident-response, and diagnostic endpoints;
 - internal analytics pipelines or customer-support tooling;
 - managed billing, usage metering, or subscription enforcement;

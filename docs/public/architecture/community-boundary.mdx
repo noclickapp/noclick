@@ -2,10 +2,14 @@
 title: "Community boundary"
 ---
 
-The community distribution contains local scheduling, relay, workspace, mail,
-and storage seams. It does not include managed infrastructure, proprietary
-workflow generation, internal diagnostics, analytics pipelines, subscription
-billing, or managed publishing.
+Everything in this repository is open source under the AGPL-3.0-only, and it
+runs end to end without any NoClick-operated service: scheduling, relay,
+workspaces, mail, and storage all have local, operator-configured
+implementations here.
 
-No community module should require a NoClick-operated service or fixed private
+The hosted service at noclick.com runs this same code and adds managed
+infrastructure on top: multi-region delivery, retained agent runtimes, its
+larger workflow-generation pipeline, internal diagnostics and analytics,
+subscription billing, and managed publishing. Those live outside this
+repository, and no community module may require them or a fixed private
 endpoint.

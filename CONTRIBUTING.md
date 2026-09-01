@@ -19,13 +19,21 @@ Signed-off-by: Your Name <you@example.com>
 
 It is not a copyright assignment and it does not transfer anything — it is a
 statement that you are entitled to contribute what you are contributing.
-You retain copyright in your work. By submitting it for inclusion, you agree
-that NoClick may distribute your contribution under the same Sustainable Use
-License that applies to the project, and you license recipients accordingly as
-a licensor of that contribution. Do not submit code you cannot license on those
-terms.
 `git config alias.ci "commit -s"` makes it the default. CI checks each commit in
 a pull request, and `git rebase --signoff main` fixes a branch that predates it.
+
+## Sign the CLA, once
+
+Your first pull request gets a comment from the CLA bot asking you to sign the
+[Contributor License Agreement](./CLA.md) by replying with one sentence. It is
+a license, not an assignment: you keep the copyright in your work, and you
+grant NoClick the right to distribute it under the project's licenses and
+under commercial terms. NoClick runs this same code as a hosted service and
+sells commercial licenses to companies that cannot accept the AGPL, and
+without that grant an outside contribution would bind those uses to the AGPL.
+The signature is recorded on the `cla-signatures` branch and covers every
+later contribution. Contributing on behalf of an employer? Make sure you are
+authorized to sign for them; the agreement says what that means.
 
 ## Setup
 
@@ -149,10 +157,10 @@ gets something consistently wrong, improving those files is a genuinely useful P
 
 ## License
 
-Contributions are accepted under the repository's
-[Sustainable Use License 1.0](./LICENSE.md), and signing off a commit is how you
-say you may submit them under it — see [Sign your commits](#sign-your-commits).
-
-The licence is source-available rather than open source, which is worth knowing
-before you spend an evening on a change: it permits internal and non-commercial
-use, and it does not convert to a permissive licence over time.
+NoClick Community is licensed under the [GNU AGPL, version 3](./LICENSE)
+(`AGPL-3.0-only`), and the SDKs under `sdk/` under the
+[Apache License 2.0](./sdk/typescript/LICENSE). A contribution lands under the
+license of the directory it touches, and the [CLA](./CLA.md) is what lets
+NoClick also ship it under commercial terms. Signing off a commit says you may
+submit it; signing the CLA says on what terms. Both are needed for a pull
+request to merge.

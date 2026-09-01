@@ -97,11 +97,11 @@ jobs:
           npm version patch --no-git-tag-version
           echo "VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
 
-      - name: Materialise the license
+      - name: Check the packed license is the SDK's own
         working-directory: sdk/typescript
-        # Keep the package copy byte-identical to the root license immediately
-        # before packing, so published metadata and contents cannot drift.
-        run: rm -f LICENSE.md && cp ../../LICENSE.md LICENSE.md
+        # The SDK is Apache-2.0 so that code built against it carries no AGPL
+        # obligation. The root LICENSE is the AGPL and must never be packed here.
+        run: head -n 2 LICENSE | grep -q 'Apache License'
 
       - name: Build
         working-directory: sdk/typescript

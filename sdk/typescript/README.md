@@ -56,4 +56,7 @@ their own backend URL as shown above.
 
 ## License
 
-Source-available under the [Sustainable Use License](./LICENSE.md).
+[Apache License 2.0](./LICENSE). The SDK is deliberately permissive so that the
+code you write against it stays under whatever license you choose. NoClick
+itself is AGPL-3.0-only. Versions up to 0.1.3 on npm were published under the
+Sustainable Use License 1.0 and remain available under it.

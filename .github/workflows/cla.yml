@@ -1,0 +1,54 @@
+# One-time Contributor License Agreement, checked by the CLA Assistant bot.
+#
+# The DCO (dco.yml) certifies that a contributor may submit a change; it
+# licenses nothing to NoClick beyond the AGPL. NoClick also runs this code as a
+# hosted service and sells commercial licenses, so contributions need the wider
+# grant in CLA.md. The bot asks once per contributor and records the signature
+# on the `cla-signatures` branch, which carries nothing else.
+name: CLA
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened, closed, synchronize]
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  cla:
+    # Nothing from the pull request is checked out or executed: the action only
+    # reads the PR's author and comments through the API, which is what makes
+    # `pull_request_target`'s write token safe here.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: contributor-assistant/github-action@ca4a40a7d1004f18d9960b404b97e5f30a505a08 # v2.6.1
+        if: github.event_name == 'pull_request_target' || github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path-to-document: https://github.com/noclickapp/noclick/blob/main/CLA.md
+          path-to-signatures: signatures/version1/cla.json
+          branch: cla-signatures
+          # The bot checks every commit author in a PR, not the PR author. Commits
+          # this repository publishes from Claude Code carry the author
+          # `Claude <noreply@anthropic.com>`, which GitHub attributes to the login
+          # `claude`; they are NoClick's own work, so that login is exempt too.
+          allowlist: dhruvyad,neo-noclick,claude,dependabot[bot],github-actions[bot]
+          # Signatures are persisted to the branch, so the comment need not be
+          # frozen; locking would also lock every closed release-review PR.
+          lock-pullrequest-aftermerge: false
+          custom-pr-sign-comment: I have read the CLA Document and I hereby sign the CLA
+          custom-notsigned-prcomment: >-
+            Thanks for the pull request! Before it can merge, NoClick needs you to
+            sign the [Contributor License Agreement](https://github.com/noclickapp/noclick/blob/main/CLA.md)
+            once. It is a license, not a copyright assignment: you keep your
+            rights, and it lets NoClick keep the project open while also running
+            it as a service. Sign by posting the sentence below as a comment.
+          create-file-commit-message: 'chore: create the CLA signature file'
+          signed-commit-message: 'chore: $contributorName signed the CLA on #$pullRequestNo'

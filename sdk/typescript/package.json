@@ -22,7 +22,7 @@
     "bin/",
     "dist/",
     "src/",
-    "LICENSE.md",
+    "LICENSE",
     "README.md"
   ],
   "scripts": {
@@ -37,7 +37,7 @@
     "automation",
     "sdk"
   ],
-  "license": "SEE LICENSE IN LICENSE.md",
+  "license": "Apache-2.0",
   "homepage": "https://docs.noclick.com/sdk/overview",
   "repository": {
     "type": "git",

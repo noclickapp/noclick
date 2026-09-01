@@ -11,7 +11,7 @@
     "vendored:check": "npm run assets:check && npm run sucrase:check",
     "prepare": "husky"
   },
-  "license": "SEE LICENSE IN LICENSE.md",
+  "license": "AGPL-3.0-only",
   "devDependencies": {
     "esbuild": "0.25.12",
     "husky": "^9.1.1",

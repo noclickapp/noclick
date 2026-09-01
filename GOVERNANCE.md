@@ -26,8 +26,8 @@ would increase risk.
 
 ## Scope
 
-The community repository intentionally contains local and self-hosted
-implementations. Managed infrastructure, internal operations tooling, private
-diagnostics, and proprietary workflow-generation systems are maintained
-separately. Contributions that cross this boundary require an explicit
-maintainer decision.
+This repository is open source under the AGPL and contains complete,
+self-hosted implementations of every seam it defines. The hosted service's
+managed infrastructure, internal operations tooling, private diagnostics, and
+its workflow-generation pipeline are maintained separately. Contributions that
+cross this boundary require an explicit maintainer decision.
