@@ -44,7 +44,7 @@ jobs:
       matrix:
         node: [18, 22]   # 18 is the README's stated minimum
     steps:
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ matrix.node }}
       - name: Preflight the fresh machine
