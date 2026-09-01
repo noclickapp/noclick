@@ -78,6 +78,11 @@ class _PendingRequest:
     collect_timer: Optional[asyncio.TimerHandle] = None
 
 
+# The presence re-broadcast cadence. Short enough that a dropped clear delta
+# heals well inside the frontend's staleness window; long enough to be noise-free.
+PRESENCE_REBROADCAST_S = 20.0
+
+
 class LocalRelayHub:
     """Singleton in-memory fan-out providing both relay channels."""
 
@@ -94,6 +99,10 @@ class LocalRelayHub:
         # Live agent presence per workflow, keyed (node_id, conversation_key) —
         # the canvas badge / working-indicator signal (relay wire parity).
         self._agent_presence: Dict[str, Dict[tuple, Dict[str, Any]]] = {}
+        # Presence deltas are fire-and-forget; the re-broadcast loop is their
+        # backstop (see _ensure_presence_rebroadcast).
+        self._presence_rebroadcast_task: Optional[asyncio.Task] = None
+        self._presence_trailing: Dict[str, int] = {}
 
     # ── user-events channel (event relay parity) ────────────────────────────
 
@@ -306,6 +315,8 @@ class LocalRelayHub:
         key = (node_id, conversation_key)
         prev = agents.get(key)
         agents[key] = {"user_id": user_id, "busy": busy}
+        self._presence_trailing.pop(workflow_id, None)
+        self._ensure_presence_rebroadcast()
         if prev is None or prev["busy"] != busy:
             await self.broadcast_to_workflow(
                 workflow_id, {"type": "agent:presence", "agents": self._agents_wire(workflow_id)},
@@ -318,9 +329,45 @@ class LocalRelayHub:
         if agents and agents.pop((node_id, conversation_key), None) is not None:
             if not agents:
                 self._agent_presence.pop(workflow_id, None)
+                # A couple of trailing empty snapshots so a lost clear delta
+                # still heals; the loop stops once they are spent.
+                self._presence_trailing[workflow_id] = 2
+                self._ensure_presence_rebroadcast()
             await self.broadcast_to_workflow(
                 workflow_id, {"type": "agent:presence", "agents": self._agents_wire(workflow_id)},
             )
+
+    def _ensure_presence_rebroadcast(self) -> None:
+        """Presence deltas ride one fire-and-forget websocket send; a lost
+        CLEAR used to leave every viewer's working indicator lit forever —
+        there is no heartbeat backstop here (2026-09-01 stuck orb). While any
+        agent is busy, and for a couple of trailing ticks after the last one
+        clears, the full snapshot re-broadcasts: a dropped delta heals in
+        seconds, and the frontend's presence-freshness clock keeps ticking
+        through genuinely long turns instead of going stale mid-run."""
+        task = self._presence_rebroadcast_task
+        if task is None or task.done():
+            self._presence_rebroadcast_task = asyncio.create_task(
+                self._presence_rebroadcast_loop()
+            )
+
+    async def _presence_rebroadcast_loop(self) -> None:
+        while True:
+            await asyncio.sleep(PRESENCE_REBROADCAST_S)
+            live = set(self._agent_presence)
+            trailing = set(self._presence_trailing) - live
+            if not live and not trailing:
+                return
+            for wf in live | trailing:
+                await self.broadcast_to_workflow(
+                    wf, {"type": "agent:presence", "agents": self._agents_wire(wf)},
+                )
+            for wf in trailing:
+                left = self._presence_trailing.get(wf, 0) - 1
+                if left <= 0:
+                    self._presence_trailing.pop(wf, None)
+                else:
+                    self._presence_trailing[wf] = left
 
     def has_live_execution(self, workflow_id: str, execution_id: str) -> bool:
         return execution_id in self._executions.get(workflow_id, {})

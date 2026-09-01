@@ -1,7 +1,7 @@
 // Unit tests for aggregating the relay's complete local-agent presence set.
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { agentPresenceStore, agentPresenceConversationKey, setAgentPresence } from './agentPresenceStore';
+import { agentPresenceStore, agentPresenceConversationKey, setAgentPresence, agentPresenceFresh, PRESENCE_STALE_MS } from './agentPresenceStore';
 
 describe('setAgentPresence', () => {
     beforeEach(() => {
@@ -47,5 +47,20 @@ describe('setAgentPresence', () => {
         expect(agentPresenceStore.byConversation[agentPresenceConversationKey('a', 'c1')]).toBe(true);
         setAgentPresence([{ nodeId: 'a', conversationKey: 'c1', userId: 'u', busy: false }]);
         expect(agentPresenceStore.byConversation[agentPresenceConversationKey('a', 'c1')]).toBeUndefined();
+    });
+});
+
+
+describe('agentPresenceFresh', () => {
+    it('goes stale when the relay falls silent', () => {
+        setAgentPresence([
+            { nodeId: 'n1', conversationKey: 'ck', userId: 'u', busy: true },
+        ]);
+        expect(agentPresenceFresh()).toBe(true);
+        // A set older than the window is no longer authoritative — a lost
+        // clear delta must age out instead of pinning the indicator forever.
+        expect(
+            agentPresenceFresh(Date.now() + PRESENCE_STALE_MS + 1)
+        ).toBe(false);
     });
 });

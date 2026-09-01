@@ -23,10 +23,27 @@ export const agentPresenceStore = proxy<{
     byNode: Record<string, NodeAgentPresence>;
     /** `${nodeId}::${conversationKey}` → whether that turn is busy. */
     byConversation: Record<string, boolean>;
+    /** Epoch ms of the last relay set. Presence is authoritative only while
+     *  FRESH: deltas are fire-and-forget, and a lost CLEAR would otherwise
+     *  leave the last busy snapshot standing forever (2026-09-01 stuck orb).
+     *  The relay re-broadcasts while a turn runs, so a genuinely busy agent
+     *  keeps this ticking; consumers past the window treat busy as unknown. */
+    lastSetAt: number;
 }>({
     byNode: {},
     byConversation: {},
+    lastSetAt: 0,
 });
+
+/** How long a relay set stays authoritative. Comfortably above the relay's
+ *  re-broadcast cadence, so only a silence that means "no longer busy" —
+ *  or a dead relay connection — ages presence out. */
+export const PRESENCE_STALE_MS = 180_000;
+
+export function agentPresenceFresh(now: number = Date.now()): boolean {
+    const at = agentPresenceStore.lastSetAt;
+    return at > 0 && now - at < PRESENCE_STALE_MS;
+}
 
 /** Key into byConversation for one agent node's conversation. */
 export function agentPresenceConversationKey(
@@ -53,4 +70,5 @@ export function setAgentPresence(agents: AgentPresenceWire[]): void {
     }
     agentPresenceStore.byNode = byNode;
     agentPresenceStore.byConversation = byConversation;
+    agentPresenceStore.lastSetAt = Date.now();
 }

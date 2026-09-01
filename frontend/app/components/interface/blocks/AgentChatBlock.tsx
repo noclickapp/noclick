@@ -5,7 +5,7 @@
 // keyed on `ck:{wf}:{node}:{conversation_key}` (default key matches what
 // FlowCanvas#handleAgentChatSend applies on send).
 
-import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
+import { useCallback, useMemo, useReducer, useRef, useState, useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 import { FlaskConical, KeyRound, PanelRightClose, PanelRightOpen, Share } from 'lucide-react';
 import { cn } from '~/lib/utils';
@@ -24,6 +24,7 @@ import { getAgentChatSession } from '~/lib/agentChatSessionStore';
 import { sendEventAsync } from '~/lib/socket-sender';
 import {
     agentPresenceStore,
+    PRESENCE_STALE_MS,
     agentPresenceConversationKey,
 } from '~/lib/agentPresenceStore';
 import { useStickToBottom } from '~/hooks/useStickToBottom';
@@ -126,10 +127,25 @@ export function AgentChatBlock({
     // working indicator and keeps the hook's
     // reconciler polling for turns this tab never saw the send for — a reload
     // mid-turn, or a run started from a trigger / share page / another tab.
-    const presenceBusy =
-        !!useSnapshot(agentPresenceStore).byConversation[
+    const presenceSnap = useSnapshot(agentPresenceStore);
+    const rawPresenceBusy =
+        !!presenceSnap.byConversation[
             agentPresenceConversationKey(id, activeKey)
         ];
+    // Presence is authoritative only while FRESH (the store's own contract) —
+    // the relay re-broadcasts while a turn runs, so a genuinely busy agent
+    // keeps lastSetAt ticking, while a lost clear delta goes stale and the
+    // indicator self-heals instead of pulsing forever (2026-09-01 stuck orb).
+    // Staleness is time-based and a quiet stuck indicator triggers no renders,
+    // so tick while presence claims busy.
+    const [, bumpPresenceClock] = useReducer((n: number) => n + 1, 0);
+    useEffect(() => {
+        if (!rawPresenceBusy) return;
+        const t = setInterval(bumpPresenceClock, 15_000);
+        return () => clearInterval(t);
+    }, [rawPresenceBusy]);
+    const presenceBusy =
+        rawPresenceBusy && Date.now() - presenceSnap.lastSetAt < PRESENCE_STALE_MS;
 
     const {
         messages,

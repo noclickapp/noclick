@@ -462,3 +462,40 @@ async def test_agent_presence_deltas_and_snapshot(fresh_hub):
     assert snapshot["agents"] == [
         {"nodeId": "agent2", "conversationKey": "ck", "userId": "u1", "busy": True}
     ]
+
+
+async def test_presence_rebroadcast_heals_a_lost_clear_delta(monkeypatch):
+    """Presence deltas are fire-and-forget over one websocket send; without a
+    re-broadcast backstop a lost CLEAR left every viewer's working indicator
+    lit forever (2026-09-01 stuck orb). While busy the snapshot re-broadcasts
+    on a cadence (also what keeps the frontend's freshness clock ticking
+    through long turns), a cleared workflow gets trailing empty snapshots,
+    and the loop then stops."""
+    import asyncio
+
+    from utils import local_relay
+
+    monkeypatch.setattr(local_relay, "PRESENCE_REBROADCAST_S", 0.02)
+    hub = local_relay.LocalRelayHub()
+    sent = []
+
+    async def record(workflow_id, event, exclude=None):
+        sent.append((workflow_id, event))
+        return 1
+
+    hub.broadcast_to_workflow = record
+
+    await hub.set_agent_presence("wf1", "n1", "ck", "u1", busy=True)
+    await asyncio.sleep(0.09)
+    busy_beats = [e for _, e in sent if e["type"] == "agent:presence" and e["agents"]]
+    assert len(busy_beats) >= 3, "steady re-broadcast while a turn runs"
+
+    sent.clear()
+    await hub.clear_agent_presence("wf1", "n1", "ck")
+    await asyncio.sleep(0.09)
+    empties = [e for _, e in sent if e["type"] == "agent:presence" and not e["agents"]]
+    assert len(empties) >= 2, "the clear delta plus trailing empty snapshots"
+
+    sent.clear()
+    await asyncio.sleep(0.08)
+    assert not sent, "the loop stops once the trailing ticks are spent"
