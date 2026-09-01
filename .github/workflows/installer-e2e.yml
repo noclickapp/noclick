@@ -1,10 +1,22 @@
 name: Installer E2E
 
-# The install commands the README promises, run on a genuinely fresh machine
-# (each runner is a clean VM). The curl path boots the full stack and trusts
-# install.sh's own readiness gate; the npx path checks the published package
-# actually runs and reaches the same installer. Scheduled because installers
-# rot silently: nothing else exercises them between releases.
+# The install commands the README promises, run on genuinely fresh machines
+# (every runner is a clean VM). Scheduled because installers rot silently:
+# nothing else exercises them between releases.
+#
+# What CI can and cannot cover, honestly:
+#   - Linux x64:   both paths, FULL boot — the readiness gates in install.sh
+#                  and the launcher are the assertion.
+#   - Linux arm64: full boot, informational until the backend image ships
+#                  multi-arch (it is amd64-only today, so this documents the
+#                  gap rather than hiding it).
+#   - macOS:       mechanics only. GitHub's macOS runners cannot run Docker
+#                  (no nested virtualization), so the assertion is that BOTH
+#                  installers parse under BSD /bin/sh + darwin node and fail
+#                  HELPFULLY — the docker guidance, not a stack trace.
+#   - Windows:     launcher mechanics — npx must execute on win32 (PATH
+#                  resolution, no sh-isms). Full boots on macOS/Windows need
+#                  real machines; see oss/README.md for the local recipes.
 on:
   workflow_dispatch:
   schedule:
@@ -13,7 +25,7 @@ on:
     types: [published]
 
 jobs:
-  curl-installer:
+  curl-linux-x64:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -25,10 +37,16 @@ jobs:
         if: failure()
         run: cd "$HOME/noclick" && docker compose ps && docker compose logs --tail 80
 
-  npx-installer:
+  npx-linux-x64:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      matrix:
+        node: [18, 22]   # 18 is the README's stated minimum
     steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
       - name: Preflight the fresh machine
         run: npx -y noclick doctor
       - name: Install exactly as the README says
@@ -38,3 +56,63 @@ jobs:
       - name: What the stack says, if it broke
         if: failure()
         run: cd "$(npx -y noclick where)" && docker compose ps && docker compose logs --tail 80
+
+  curl-linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    # Informational until ghcr images ship linux/arm64 — today this documents
+    # that ARM machines emulate or fail, rather than pretending they work.
+    continue-on-error: true
+    steps:
+      - name: Install exactly as the README says
+        run: curl -fsSL https://noclick.com/install.sh | sh
+      - name: The app serves its login page
+        run: curl -fsS http://localhost:3000/login >/dev/null
+
+  missing-prereqs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: No docker at all — the script must say so, not stack-trace
+        run: |
+          docker run --rm debian:12-slim sh -c '
+            apt-get update -qq >/dev/null && apt-get install -qq -y curl ca-certificates >/dev/null
+            if curl -fsSL https://noclick.com/install.sh | sh > out.log 2>&1; then
+              echo "should have failed"; exit 1
+            fi
+            grep -q "Docker is required" out.log && grep -q "get.docker.com" out.log'
+      - name: Docker CLI without a daemon — the script must say that too
+        run: |
+          docker run --rm docker:27-cli sh -c '
+            apk add -q curl
+            if curl -fsSL https://noclick.com/install.sh | sh > out.log 2>&1; then
+              echo "should have failed"; exit 1
+            fi
+            grep -q "not running" out.log'
+
+  macos-mechanics:
+    runs-on: macos-15
+    timeout-minutes: 10
+    steps:
+      - name: The shell installer parses under BSD sh and fails helpfully
+        run: |
+          if curl -fsSL https://noclick.com/install.sh | sh > out.log 2>&1; then
+            echo "should have failed (no docker on this runner)"; exit 1
+          fi
+          grep -q "Docker is required" out.log
+          grep -q "docs.docker.com/desktop/install/mac-install" out.log
+      - name: The launcher runs on darwin and fails helpfully
+        run: |
+          if npx -y noclick doctor > out.log 2>&1; then
+            echo "should have failed (no docker on this runner)"; exit 1
+          fi
+          grep -q "Docker is required" out.log
+
+  windows-mechanics:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: The launcher executes on win32
+        run: npx -y noclick where
+      - name: doctor reads this machine
+        run: npx -y noclick doctor
