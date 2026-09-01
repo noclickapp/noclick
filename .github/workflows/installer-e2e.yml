@@ -31,8 +31,8 @@ jobs:
     steps:
       - name: Install exactly as the README says
         run: curl -fsSL https://noclick.com/install.sh | sh
-      - name: The app serves its login page
-        run: curl -fsS http://localhost:3000/login >/dev/null
+      - name: The app actually renders
+        run: curl -fsSL http://localhost:3000/ | grep -qi noclick
       - name: What the stack says, if it broke
         if: failure()
         run: cd "$HOME/noclick" && docker compose ps && docker compose logs --tail 80
@@ -51,8 +51,8 @@ jobs:
         run: npx -y noclick doctor
       - name: Install exactly as the README says
         run: npx -y noclick
-      - name: The app serves its login page
-        run: curl -fsS http://localhost:3000/login >/dev/null
+      - name: The app actually renders
+        run: curl -fsSL http://localhost:3000/ | grep -qi noclick
       - name: What the stack says, if it broke
         if: failure()
         run: cd "$(npx -y noclick where)" && docker compose ps && docker compose logs --tail 80
@@ -66,8 +66,8 @@ jobs:
     steps:
       - name: Install exactly as the README says
         run: curl -fsSL https://noclick.com/install.sh | sh
-      - name: The app serves its login page
-        run: curl -fsS http://localhost:3000/login >/dev/null
+      - name: The app actually renders
+        run: curl -fsSL http://localhost:3000/ | grep -qi noclick
 
   missing-prereqs:
     runs-on: ubuntu-latest
