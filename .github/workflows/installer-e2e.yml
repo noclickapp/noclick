@@ -1,0 +1,35 @@
+name: Installer E2E
+
+# The install commands the README promises, run on a genuinely fresh machine
+# (each runner is a clean VM). The curl path boots the full stack and trusts
+# install.sh's own readiness gate; the npx path checks the published package
+# actually runs and reaches the same installer. Scheduled because installers
+# rot silently: nothing else exercises them between releases.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"   # Mondays 06:17 UTC
+  release:
+    types: [published]
+
+jobs:
+  curl-installer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Install exactly as the README says
+        run: curl -fsSL https://noclick.com/install.sh | sh
+      - name: The app serves its login page
+        run: curl -fsS http://localhost:3000/login >/dev/null
+      - name: What the stack says, if it broke
+        if: failure()
+        run: cd "$HOME/noclick" && docker compose ps && docker compose logs --tail 80
+
+  npx-installer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: npx noclick reaches the installer
+        run: |
+          NOCLICK_NO_START=1 npx -y noclick | tee out.log
+          grep -q "Set up in" out.log
