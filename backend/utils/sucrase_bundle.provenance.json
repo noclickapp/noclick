@@ -3,7 +3,7 @@
   "artifact": "backend/utils/sucrase_bundle.js",
   "sha256": "8faa434af09a6c9cc98e58c41c3b890c5fc243c22ebd3443ede7aed2914c06f1",
   "entrySourceSha256": "f9a7e153b62015cea3296b35f531a793d9a23713e7155c423843647c17ecbb12",
-  "packageLockSha256": "5b570975052309a0dc58a1eea4e4b77e6a95b0b778bbc2ed245d26f9b5dacc01",
+  "packageLockSha256": "b4399fda07d2b4f83095a152440712b4e8d3b45ce57849ed373c4b2e45d50ef2",
   "buildTool": {
     "name": "esbuild",
     "version": "0.25.12"
