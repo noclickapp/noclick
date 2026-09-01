@@ -27,9 +27,14 @@ jobs:
 
   npx-installer:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
-      - name: npx noclick reaches the installer
-        run: |
-          NOCLICK_NO_START=1 npx -y noclick | tee out.log
-          grep -q "Set up in" out.log
+      - name: Preflight the fresh machine
+        run: npx -y noclick doctor
+      - name: Install exactly as the README says
+        run: npx -y noclick
+      - name: The app serves its login page
+        run: curl -fsS http://localhost:3000/login >/dev/null
+      - name: What the stack says, if it broke
+        if: failure()
+        run: cd "$(npx -y noclick where)" && docker compose ps && docker compose logs --tail 80
