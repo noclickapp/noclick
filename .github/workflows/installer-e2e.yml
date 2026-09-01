@@ -32,7 +32,14 @@ jobs:
       - name: Install exactly as the README says
         run: curl -fsSL https://noclick.com/install.sh | sh
       - name: The app actually renders
-        run: curl -fsSL http://localhost:3000/ | grep -qi noclick
+        # The install gate passes when the URL answers; the first SSR can lag
+        # it by seconds, so give the render a minute before calling it broken.
+        run: |
+          for i in $(seq 1 30); do
+            curl -fsSL http://localhost:3000/ | grep -qi noclick && exit 0
+            sleep 2
+          done
+          exit 1
       - name: What the stack says, if it broke
         if: failure()
         run: cd "$HOME/noclick" && docker compose ps && docker compose logs --tail 80
@@ -52,7 +59,14 @@ jobs:
       - name: Install exactly as the README says
         run: npx -y noclick
       - name: The app actually renders
-        run: curl -fsSL http://localhost:3000/ | grep -qi noclick
+        # The install gate passes when the URL answers; the first SSR can lag
+        # it by seconds, so give the render a minute before calling it broken.
+        run: |
+          for i in $(seq 1 30); do
+            curl -fsSL http://localhost:3000/ | grep -qi noclick && exit 0
+            sleep 2
+          done
+          exit 1
       - name: What the stack says, if it broke
         if: failure()
         run: cd "$(npx -y noclick where)" && docker compose ps && docker compose logs --tail 80
@@ -67,7 +81,14 @@ jobs:
       - name: Install exactly as the README says
         run: curl -fsSL https://noclick.com/install.sh | sh
       - name: The app actually renders
-        run: curl -fsSL http://localhost:3000/ | grep -qi noclick
+        # The install gate passes when the URL answers; the first SSR can lag
+        # it by seconds, so give the render a minute before calling it broken.
+        run: |
+          for i in $(seq 1 30); do
+            curl -fsSL http://localhost:3000/ | grep -qi noclick && exit 0
+            sleep 2
+          done
+          exit 1
 
   missing-prereqs:
     runs-on: ubuntu-latest
