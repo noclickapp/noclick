@@ -21,12 +21,26 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "17 6 * * 1"   # Mondays 06:17 UTC
-  release:
-    types: [published]
+  # A `release: published` trigger never fires here: the release is created
+  # with the workflow's own token, and GitHub suppresses events from it. The
+  # Release workflow's completion is observable regardless of token.
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
 
 jobs:
+  gate:
+    # Skip everything when a Release run failed; the installers would only be
+    # testing an image that was never promoted.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: echo "installers run against the current release"
+
   curl-linux-x64:
     runs-on: ubuntu-latest
+    needs: gate
     timeout-minutes: 30
     steps:
       - name: Install exactly as the README says
@@ -46,6 +60,7 @@ jobs:
 
   npx-linux-x64:
     runs-on: ubuntu-latest
+    needs: gate
     timeout-minutes: 30
     strategy:
       matrix:
@@ -73,6 +88,7 @@ jobs:
 
   curl-linux-arm64:
     runs-on: ubuntu-24.04-arm
+    needs: gate
     timeout-minutes: 30
     # Informational until ghcr images ship linux/arm64 — today this documents
     # that ARM machines emulate or fail, rather than pretending they work.
@@ -92,6 +108,7 @@ jobs:
 
   missing-prereqs:
     runs-on: ubuntu-latest
+    needs: gate
     timeout-minutes: 10
     steps:
       - name: No docker at all — the script must say so, not stack-trace
@@ -113,6 +130,7 @@ jobs:
 
   macos-mechanics:
     runs-on: macos-15
+    needs: gate
     timeout-minutes: 10
     steps:
       - name: The shell installer parses under BSD sh and fails helpfully
@@ -131,6 +149,7 @@ jobs:
 
   windows-mechanics:
     runs-on: windows-latest
+    needs: gate
     timeout-minutes: 15
     steps:
       - name: The launcher executes on win32

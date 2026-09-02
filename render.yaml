@@ -24,10 +24,11 @@ services:
     name: noclick
     # The reviewed release image rather than a build of the current default
     # branch: identical to what the other one-click deploys run, and it skips a
-    # frontend build that wants more memory than a small instance has.
+    # frontend build that wants more memory than a small instance has. `latest`
+    # is promoted only by the release workflow after its smoke test.
     runtime: image
     image:
-      url: ghcr.io/noclickapp/noclick:0.2.12
+      url: ghcr.io/noclickapp/noclick:latest
     # The scheduler and the realtime relay run inside this process, so the
     # instance count is one by design — see docs/self-hosting.md.
     numInstances: 1

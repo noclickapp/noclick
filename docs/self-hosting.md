@@ -33,7 +33,7 @@ frontend values documented below:
 ```bash
 # The whole application on one port, against a database you already have
 docker run -e POSTGRES_URL='postgres://…' -e VITE_PUBLIC_URL='https://noclick.example.com' \
-  -p 8080:8080 ghcr.io/noclickapp/noclick:0.2.12
+  -p 8080:8080 ghcr.io/noclickapp/noclick:latest   # or a version tag from the releases page
 ```
 
 A database URL is all that image needs. It runs the auth layer itself — GoTrue
@@ -49,10 +49,11 @@ credentials unreadable to anyone who only has a copy of it. Set `SUPABASE_URL`
 and the embedded stack does not run at all — the instance uses that project,
 which is the arrangement described under [Required configuration](#required-configuration).
 
-The compose stack pulls the released backend rather than building it. Pin it:
+The compose stack pulls the released backend rather than building it. Pin it to
+a version from the [releases page](https://github.com/noclickapp/noclick/releases):
 
 ```bash
-NOCLICK_VERSION=0.2.12 docker compose up -d
+NOCLICK_VERSION=<version> docker compose up -d
 ```
 
 Unset, `NOCLICK_VERSION` resolves to `latest`, which is the newest _release_ —

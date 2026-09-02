@@ -188,3 +188,18 @@ def test_single_origin_image_ships_the_cli_harnesses_the_runtime_was_verified_ag
     assert entrypoint.index("redis-server --bind 127.0.0.1") < entrypoint.index("python -m uvicorn")
     # The dev-reload knob must stay a no-op unless explicitly set.
     assert "${NOCLICK_DEV_RELOAD:+--reload}" in entrypoint
+
+
+def test_every_one_click_deploy_runs_the_promoted_release_image() -> None:
+    # `latest` is promoted only by the release workflow after its smoke test,
+    # so it IS the reviewed release image. A version pin here went stale the
+    # first time a release was cut without anyone bumping three files and
+    # republishing the Railway template (v0.3.0, 2026-09-02).
+    render = yaml.safe_load((REPO / "render.yaml").read_text())
+    do_spec = yaml.safe_load((REPO / ".do" / "deploy.template.yaml").read_text())["spec"]
+    railway = json.loads((REPO / "railway.template.json").read_text())
+
+    assert render["services"][0]["image"]["url"] == "ghcr.io/noclickapp/noclick:latest"
+    assert do_spec["services"][0]["image"]["tag"] == "latest"
+    application = next(s for s in railway["services"].values() if s["name"] == "noclick")
+    assert application["source"]["image"] == "ghcr.io/noclickapp/noclick:latest"

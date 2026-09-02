@@ -31,12 +31,14 @@ spec:
   services:
     - name: noclick
       # The reviewed release image, not a build of the current default branch —
-      # the same artifact the other one-click deploys run.
+      # the same artifact the other one-click deploys run. `latest` is promoted
+      # only by the release workflow after its smoke test, so this always
+      # deploys the newest release without a pin to bump.
       image:
         registry_type: GHCR
         registry: noclickapp
         repository: noclick
-        tag: "0.2.12"
+        tag: "latest"
       http_port: 8080
       # The scheduler and the realtime relay run inside this process, so one
       # instance is by design — see docs/self-hosting.md.
