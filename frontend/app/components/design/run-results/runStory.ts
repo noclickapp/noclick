@@ -29,8 +29,34 @@ export interface StoryNodeResult {
     toolCalls: ReplayToolCall[];
 }
 
+/** One delivery run's result for a node the agent consumed. */
+export interface AgentInputRun {
+    executionId: string;
+    status: string | null;
+    output: unknown;
+}
+
+/** One node across the deliveries an agent response consumed (`runs` > 1
+    when it fired in several). */
+export interface AgentInputGroup {
+    nodeId: string;
+    label: string;
+    iconHtml?: string;
+    iconColor?: string;
+    nodeType: string;
+    /** The node's CURRENT operation (off the graph), so a provider-type node
+        is recognised as the fired trigger the way the canvas does. */
+    operation?: string;
+    runs: AgentInputRun[];
+}
+
 export interface StoryInput {
     results: StoryNodeResult[];
+    /** For a RESPONSE run (a warm agent's finished turn, fired as its own
+        run): the deliveries the turn consumed, resolved from the agent
+        output's `input_execution_ids`. The inbound event comes from here —
+        the run's own trigger node never fired in it. */
+    agentInputs?: AgentInputGroup[];
     workflowName: string;
     /** Overrides the agent node's label in the outbound frames' byline. */
     agentName?: string;
@@ -67,6 +93,18 @@ export function clockSecOf(iso: string | null | undefined): string | undefined {
 type Lead = Scenario['lead'];
 type Dict = Record<string, unknown>;
 
+/** What the inbound frame needs to know about the node that fired. */
+type StoryNodeIdentity = Pick<StoryNodeResult, 'nodeId' | 'nodeType' | 'label' | 'operation'>;
+
+/** `no_event_output` (backend): a push trigger executed with no delivery. */
+export const isNoEventOutput = (output: unknown): boolean =>
+    asDict(output).status === 'no_event';
+
+/** A response run's agent output — the callback-built package carrying the
+    delivery runs the turn consumed. */
+export const isResponsePackage = (output: unknown): boolean =>
+    Array.isArray(asDict(output).input_execution_ids);
+
 const asDict = (v: unknown): Dict => (v && typeof v === 'object' ? (v as Dict) : {});
 
 function str(d: Dict, ...keys: string[]): string | undefined {
@@ -94,6 +132,11 @@ function splitAddress(from?: string): { author?: string; handle?: string } {
     instead of dressing noise up as a message. */
 export function deriveLead(slug: string, output: unknown): Lead | null {
     const d = asDict(output);
+    // A push trigger run WITHOUT a live delivery (manual/test run) reports an
+    // explanation, not an event — its `message` is prose about the run, and
+    // reading it as the inbound text showed "No live event: …" as a guest's
+    // words (2026-09-02).
+    if (isNoEventOutput(d)) return null;
 
     if (slug === 'whatsapp' || slug === 'telegram') {
         const body = str(d, 'body', 'text', 'message');
@@ -191,7 +234,7 @@ export function deriveLead(slug: string, output: unknown): Lead | null {
 /** Minimal Scenario for InboundMessage: provider 'generic' + iconSlug routes
     the themed frame by the node's real slug; the rehearsal-only fields are
     inert here. */
-export function toScenario(node: StoryNodeResult, lead: Lead): Scenario {
+export function toScenario(node: StoryNodeIdentity, lead: Lead): Scenario {
     const slug = slugOfType(node.nodeType);
     return {
         slug,
@@ -557,6 +600,13 @@ export interface RunStory {
         /** Neither lead nor bare: the SANITIZED event (delivery envelope
             stripped) for the raw fallback. */
         event?: Dict;
+        /** The trigger ran with NO delivery (a manual/test run) — its own
+            explanation of why nothing came in. Rendered instead of `bare`. */
+        notice?: string;
+        /** Response runs: how many deliveries fed the turn (the package's
+            true total). The framed event is the latest; the resolved rest
+            sit in the inputs rail. */
+        deliveries?: number;
     };
     agent?: {
         nodeId: string;
@@ -573,6 +623,9 @@ export interface RunStory {
     providers: StoryToolProvider[];
     /** Every other node that ran, in given order. */
     supporting: StoryNodeResult[];
+    /** The consumed-deliveries rail: every input group except a lone
+        trigger delivery, which IS "What came in". */
+    inputs: AgentInputGroup[];
     stats: {
         ran: number;
         toolCalls: number;
@@ -582,42 +635,91 @@ export interface RunStory {
     };
 }
 
-export function buildRunStory(input: StoryInput): RunStory {
-    const { results } = input;
-    // The same predicate the canvas uses — a node is the fired event's source
-    // only if its CURRENT operation is a trigger op.
-    const triggerNode = results.find(
-        (r) => !r.isAgent && isTriggerSourceLite(r.nodeType, r.operation)
-    );
-    const agentNode = results.find((r) => r.isAgent);
-
-    let trigger: RunStory['trigger'];
-    if (triggerNode) {
-        const slug = slugOfType(triggerNode.nodeType);
-        // The message often rides inside a payload wrapper — probe the raw
-        // output first (top-level shapes), then the unwrapped event.
-        const lead =
-            deriveLead(slug, triggerNode.output) ??
-            deriveLead(slug, sanitizeEventPayload(triggerNode.output));
-        const scenario = lead ? toScenario(triggerNode, lead) : undefined;
-        let bare: { time?: string } | undefined;
-        let event: Dict | undefined;
-        if (!scenario) {
-            const sanitized = sanitizeEventPayload(triggerNode.output);
-            const time = clockOf(str(asDict(triggerNode.output), 'triggered_at', 'timestamp', 'date'));
-            if (Object.keys(sanitized).length === 0) bare = { time };
-            else event = sanitized;
-        }
-        trigger = {
-            nodeId: triggerNode.nodeId,
-            label: triggerNode.label,
+/** The inbound frame for one fired event. */
+function triggerFrom(
+    node: StoryNodeIdentity,
+    output: unknown,
+    deliveries?: number
+): NonNullable<RunStory['trigger']> {
+    const slug = slugOfType(node.nodeType);
+    const d = asDict(output);
+    if (isNoEventOutput(d)) {
+        return {
+            nodeId: node.nodeId,
+            label: node.label,
             slug,
-            operation: triggerNode.operation,
-            scenario,
-            bare,
-            event,
+            operation: node.operation,
+            bare: {},
+            notice: typeof d.message === 'string' ? d.message : 'No event was delivered.',
         };
     }
+    // The message often rides inside a payload wrapper — probe the raw
+    // output first (top-level shapes), then the unwrapped event.
+    const lead = deriveLead(slug, output) ?? deriveLead(slug, sanitizeEventPayload(output));
+    const scenario = lead ? toScenario(node, lead) : undefined;
+    let bare: { time?: string } | undefined;
+    let event: Dict | undefined;
+    if (!scenario) {
+        const sanitized = sanitizeEventPayload(output);
+        const time = clockOf(str(d, 'triggered_at', 'timestamp', 'date'));
+        if (Object.keys(sanitized).length === 0) bare = { time };
+        else event = sanitized;
+    }
+    return { nodeId: node.nodeId, label: node.label, slug, operation: node.operation, scenario, bare, event, deliveries };
+}
+
+export function buildRunStory(input: StoryInput): RunStory {
+    const { results } = input;
+    // The packaged agent (a warm turn's response) is THE agent of the run even
+    // when a downstream SDK agent's row lands first in the detail.
+    const agentNode =
+        results.find((r) => r.isAgent && isResponsePackage(r.output)) ??
+        results.find((r) => r.isAgent);
+    const agentInputs = input.agentInputs ?? [];
+    const pkg = asDict(agentNode?.output);
+
+    // A response run's trigger node did not fire in it (whatever it holds
+    // is the node's last output, restored as context — stale by
+    // construction). The event that fed the turn is the LATEST consumed
+    // delivery; none retained means no inbound section, never a guess.
+    const isResponseRun = !!agentNode && isResponsePackage(pkg);
+    // Delivery order rides the package (oldest → newest): the framed event is
+    // the trigger group holding the newest delivery, not the first group seen.
+    const orderOf = new Map<string, number>(
+        (isResponseRun ? (pkg.input_execution_ids as unknown[]) : []).map((id, i) => [String(id), i])
+    );
+    const newest = (g: AgentInputGroup) =>
+        Math.max(-1, ...g.runs.map((r) => orderOf.get(r.executionId) ?? -1));
+    // The same predicate the canvas uses — a node is the fired event's source
+    // only if its CURRENT operation is a trigger op.
+    const triggerGroup = isResponseRun
+        ? agentInputs
+              .filter((g) => g.runs.length > 0 && isTriggerSourceLite(g.nodeType, g.operation))
+              .sort((a, b) => newest(b) - newest(a))[0]
+        : undefined;
+    const triggerNode = isResponseRun
+        ? undefined
+        : results.find((r) => !r.isAgent && isTriggerSourceLite(r.nodeType, r.operation));
+
+    let trigger: RunStory['trigger'];
+    let triggerOutput: unknown;
+    if (triggerGroup) {
+        triggerOutput = triggerGroup.runs[triggerGroup.runs.length - 1].output;
+        // The turn's true delivery count: the resolved runs are capped and
+        // per node, the package's total is neither.
+        const inputsTotal = typeof pkg.inputs_total === 'number' ? pkg.inputs_total : 0;
+        trigger = triggerFrom(
+            triggerGroup,
+            triggerOutput,
+            Math.max(inputsTotal, orderOf.size, triggerGroup.runs.length)
+        );
+    } else if (triggerNode) {
+        triggerOutput = triggerNode.output;
+        trigger = triggerFrom(triggerNode, triggerOutput);
+    }
+    // A lone trigger delivery IS "What came in"; several keep the rail so
+    // the earlier ones stay reachable.
+    const inputs = agentInputs.filter((g) => g !== triggerGroup || g.runs.length > 1);
 
     let agent: RunStory['agent'];
     if (agentNode) {
@@ -629,11 +731,7 @@ export function buildRunStory(input: StoryInput): RunStory {
         // frames and the trace rows' detail suffix.
         const author = trigger?.scenario?.lead.author;
         const rawValues = new Set(
-            triggerNode
-                ? Object.values(asDict(triggerNode.output)).filter(
-                      (v): v is string => typeof v === 'string'
-                  )
-                : []
+            Object.values(asDict(triggerOutput)).filter((v): v is string => typeof v === 'string')
         );
         const pretty = (v: string) => (author && rawValues.has(v) ? author : v);
         const sends = deriveSends(agentNode.toolCalls);
@@ -656,6 +754,10 @@ export function buildRunStory(input: StoryInput): RunStory {
     const supporting: StoryNodeResult[] = [];
     for (const r of results) {
         if (r.nodeId === triggerNode?.nodeId || r.nodeId === agentNode?.nodeId) continue;
+        // A response run fires no trigger: a trigger node among its results is
+        // restored context (rows written before context stopped persisting),
+        // never a step that ran.
+        if (isResponseRun && !r.isAgent && isTriggerSourceLite(r.nodeType, r.operation)) continue;
         const provider = toToolProvider(r);
         if (provider) providers.push(provider);
         else supporting.push(r);
@@ -670,6 +772,7 @@ export function buildRunStory(input: StoryInput): RunStory {
         agent,
         providers,
         supporting,
+        inputs,
         stats: {
             ran: results.length,
             toolCalls: agentNode?.toolCalls.length ?? 0,

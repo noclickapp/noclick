@@ -7,10 +7,12 @@ import { describe, expect, it } from 'vitest';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
 import {
     buildRunStory,
+    deriveLead,
     deriveSends,
     humanizeOp,
     outcomeModeFor,
     sanitizeEventPayload,
+    type AgentInputGroup,
     type StoryNodeResult,
 } from '~/components/design/run-results/runStory';
 import type { ReplayToolCall } from '~/components/workflow/ReplayToolCallsPanel';
@@ -298,5 +300,150 @@ describe('outcomeModeFor', () => {
             ],
         });
         expect(outcomeModeFor(story)).toBe('sends');
+    });
+});
+
+/* A warm agent's finished turn arrives as its own RESPONSE run: the agent
+   output is the callback-built package (input_execution_ids, inputs_total),
+   and the run's trigger node never fired in it. The 2026-09-02 popup showed
+   the trigger's restored last output as "What came in": a "No live event: …"
+   envelope from a manual run, later another guest's message. */
+describe('response runs (a warm agent turn fired as its own run)', () => {
+    const NO_EVENT = {
+        status: 'no_event',
+        action: 'receive_message',
+        data: {},
+        message: "No live event: 'receive_message' only carries data when a real delivery fires the workflow.",
+    };
+    const delivery = (executionId: string, body: string, from = '12025550102@lid') => ({
+        executionId,
+        status: 'completed',
+        output: { event: 'message', payload: { from, body, hasMedia: false } },
+    });
+    const waGroup = (runs: AgentInputGroup['runs']): AgentInputGroup => ({
+        nodeId: 'wa-in',
+        nodeType: 'automation-whatsapp',
+        operation: 'receive_message',
+        label: 'WhatsApp',
+        runs,
+    });
+    const packagedAgent = (ids: string[], inputsTotal = ids.length): StoryNodeResult =>
+        node({
+            nodeId: 'agent-1',
+            nodeType: 'agent',
+            label: 'Agent Chat',
+            isAgent: true,
+            output: {
+                type: 'agent',
+                status: 'completed',
+                response: 'Replied warmly.',
+                input_execution_ids: ids,
+                inputs_total: inputsTotal,
+            },
+        });
+    // Legacy row: the trigger restored as context before context stopped persisting.
+    const restoredTrigger = () =>
+        node({ nodeId: 'wa-in', nodeType: 'automation-whatsapp', operation: 'receive_message', output: NO_EVENT });
+    const whatsappRegistry = () =>
+        setNodeIconData({
+            'automation-whatsapp': { label: 'WhatsApp', triggerOps: ['receive_message'] },
+            'automation-stripe': { label: 'Stripe', triggerOps: ['payment_received'] },
+        } as never);
+
+    it('frames the consumed delivery as "What came in", never the restored trigger', () => {
+        whatsappRegistry();
+        const story = buildRunStory({
+            workflowName: 'Wf',
+            results: [packagedAgent(['d1']), restoredTrigger()],
+            agentInputs: [waGroup([delivery('d1', 'Hello, how are you?')])],
+        });
+        expect(story.trigger?.nodeId).toBe('wa-in');
+        expect(story.trigger?.scenario?.lead.body).toBe('Hello, how are you?');
+        expect(story.trigger?.deliveries).toBe(1);
+        expect(story.inputs).toEqual([]); // a lone delivery IS the inbound section
+        expect(story.supporting).toHaveLength(0); // the restored trigger is not "Also ran"
+    });
+
+    it('shows no inbound event when the deliveries were not retained', () => {
+        whatsappRegistry();
+        const story = buildRunStory({
+            workflowName: 'Wf',
+            results: [packagedAgent(['d1']), restoredTrigger()],
+            agentInputs: [],
+        });
+        expect(story.trigger).toBeUndefined();
+        expect(story.supporting).toHaveLength(0);
+    });
+
+    it('frames the latest of several deliveries and keeps them all in the rail', () => {
+        whatsappRegistry();
+        const group = waGroup([delivery('d1', 'first'), delivery('d2', 'second, please')]);
+        const story = buildRunStory({
+            workflowName: 'Wf',
+            results: [packagedAgent(['d1', 'd2'])],
+            agentInputs: [group],
+        });
+        expect(story.trigger?.scenario?.lead.body).toBe('second, please');
+        expect(story.trigger?.deliveries).toBe(2);
+        expect(story.inputs).toEqual([group]);
+    });
+
+    it('with several triggers feeding one turn, frames the newest delivery, not the first group', () => {
+        whatsappRegistry();
+        const stripe: AgentInputGroup = {
+            nodeId: 'stripe-in',
+            nodeType: 'automation-stripe',
+            operation: 'payment_received',
+            label: 'Stripe',
+            runs: [{ executionId: 'd1', status: 'completed', output: { text: 'paid $40' } }],
+        };
+        const wa = waGroup([delivery('d2', 'hi'), delivery('d3', 'anyone there?')]);
+        const story = buildRunStory({
+            workflowName: 'Wf',
+            results: [packagedAgent(['d1', 'd2', 'd3'])],
+            agentInputs: [stripe, wa], // grouped by first appearance: stripe first
+        });
+        expect(story.trigger?.nodeId).toBe('wa-in');
+        expect(story.trigger?.scenario?.lead.body).toBe('anyone there?');
+        expect(story.trigger?.deliveries).toBe(3);
+        expect(story.inputs).toEqual([stripe, wa]);
+    });
+
+    it('reports the package total when the resolved deliveries are capped', () => {
+        whatsappRegistry();
+        const story = buildRunStory({
+            workflowName: 'Wf',
+            results: [packagedAgent(['d40'], 40)],
+            agentInputs: [waGroup([delivery('d40', 'last one')])],
+        });
+        expect(story.trigger?.deliveries).toBe(40);
+    });
+
+    it('keys on the packaged agent even when a downstream agent row comes first', () => {
+        whatsappRegistry();
+        const sdkAgent = node({
+            nodeId: 'agent-2',
+            nodeType: 'agent',
+            label: 'Summariser',
+            isAgent: true,
+            output: { type: 'agent', status: 'completed', response: 'summary' },
+        });
+        const story = buildRunStory({
+            workflowName: 'Wf',
+            results: [sdkAgent, packagedAgent(['d1'])],
+            agentInputs: [waGroup([delivery('d1', 'Hello')])],
+        });
+        expect(story.agent?.nodeId).toBe('agent-1');
+        expect(story.trigger?.scenario?.lead.body).toBe('Hello');
+    });
+
+    it('a no-event envelope is the trigger explaining itself, never a message', () => {
+        whatsappRegistry();
+        expect(deriveLead('whatsapp', NO_EVENT)).toBeNull();
+        // A manual run of the trigger itself (not a response run).
+        const story = buildRunStory({ workflowName: 'Wf', results: [restoredTrigger()] });
+        expect(story.trigger?.scenario).toBeUndefined();
+        expect(story.trigger?.event).toBeUndefined();
+        expect(story.trigger?.notice).toContain('No live event');
     });
 });
