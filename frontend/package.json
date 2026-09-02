@@ -224,6 +224,7 @@
       "body-parser@<1.20.6": "1.20.6",
       "body-parser@>=2.0.0 <2.3.0": "2.3.0",
       "brace-expansion@<1.1.16": "^1.1.16",
+    "browserslist@<4.28.7": "^4.28.7",
       "dompurify@<3.4.0": "^3.4.0",
       "esbuild": "0.25.12",
       "estree-util-value-to-estree@<3.3.3": "3.4.0",
