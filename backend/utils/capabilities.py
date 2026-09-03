@@ -13,6 +13,9 @@ from typing import Any, Callable, Dict, Optional
 logger = logging.getLogger(__name__)
 
 # Durable workspace backing for agent runs: (default mount, volume namer).
+# Count the warm agent sandboxes a user currently has running.
+WARM_SANDBOX_LIST = "warm_sandbox.list_active"
+
 WORKSPACE_VOLUME = "workspace.volume"
 
 # Curated per-node authoring guidance for the builder, over and above what the

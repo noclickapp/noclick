@@ -189,6 +189,9 @@ export function DashboardTab() {
         if (failed.length) toast.error(`Some dashboard sections did not load: ${failed.join(', ')}`);
     }, [sectionErrors]);
 
+    // Top-ups, tiers and the reset date are hosted billing; the open edition's
+    // credit hook (an override) has none of them, so they are read as optional.
+    const hostedCredit: Pick<typeof credit, 'used'> & Partial<{ nextRefreshAt: string | null; topup_credits: number; effectiveTier: string | null }> = credit;
     const data: DashboardData | null = useMemo(() => {
         if (!overview) return null;
         const cap = credit.limit ?? credit.monthlyCap ?? 0;
@@ -206,15 +209,15 @@ export function DashboardTab() {
                 used: credit.used,
                 cap,
                 period: credit.period ?? 'month',
-                nextRefreshAt: credit.nextRefreshAt ?? '',
-                topup: credit.topup_credits,
-                tier: credit.effectiveTier ?? '',
+                nextRefreshAt: hostedCredit.nextRefreshAt ?? '',
+                topup: hostedCredit.topup_credits ?? 0,
+                tier: hostedCredit.effectiveTier ?? '',
                 spendByDay: [],
                 topSpenders: [],
             },
             notifications: overview.notifications,
         };
-    }, [overview, workspaceSources, now, credit.used, credit.limit, credit.monthlyCap, credit.period, credit.nextRefreshAt, credit.topup_credits, credit.effectiveTier]);
+    }, [overview, workspaceSources, now, credit.used, credit.limit, credit.monthlyCap, credit.period, hostedCredit.nextRefreshAt, hostedCredit.topup_credits, hostedCredit.effectiveTier]);
 
     const refresh = useCallback(() => fetchDashboardOverview(), []);
     const failing = useCallback(

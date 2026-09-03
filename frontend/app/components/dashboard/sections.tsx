@@ -32,6 +32,7 @@ import type { ReplayToolCall } from '~/components/workflow/ReplayToolCallsPanel'
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
 import { ApprovalField } from '~/components/dashboard/ApprovalFields';
 import { isPersistedExecutionId } from '~/lib/runResults';
+import { workspaceFileUrl } from '~/hooks/useAgentWorkspaceFiles';
 import { AskAnswer } from '~/components/dashboard/AskAnswer';
 import {
     ATTENTION_KIND_LABEL,
@@ -69,7 +70,7 @@ import {
     useDashboardActions,
     type VerdictStatus,
 } from './primitives';
-import type {
+import type { ToolCallSummary,
     AgentTurn,
     AttentionItem,
     AttentionKind,
@@ -1168,6 +1169,19 @@ function TurnSends({ turn }: { turn: AgentTurn }) {
     );
 }
 
+/** The Story popup keys on a RunRow; a turn that ran as an execution is one. */
+function turnAsRun(turn: AgentTurn): RunRow {
+    return {
+        id: turn.executionId ?? '',
+        workflow: turn.workflow,
+        status: turn.status === 'error' ? 'error' : turn.status === 'awaiting' ? 'awaiting_approval' : 'completed',
+        startedAt: turn.startedAt,
+        durationMs: turn.durationMs,
+        trigger: turn.trigger,
+        nodesExecuted: 0,
+    };
+}
+
 function ToolCallRow({ call }: { call: ToolCallSummary }) {
     const [open, setOpen] = useState(false);
     const inspectable = call.arguments != null || !!call.result || !!call.error;
@@ -1297,7 +1311,7 @@ function TurnCard({ turn, now, compact = false }: { turn: AgentTurn; now: string
                     <div className="flex gap-3 pt-1">
                         <TextLink onClick={() => actions.openConversation(turn)}>Open conversation</TextLink>
                         {turn.executionId && actions.openExecution && (
-                            <TextLink onClick={() => actions.openExecution?.(turn.workflow, turn.executionId!)}>Open run</TextLink>
+                            <TextLink onClick={() => actions.openExecution?.(turnAsRun(turn))}>Open run</TextLink>
                         )}
                     </div>
                 </div>

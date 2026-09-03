@@ -63,7 +63,7 @@ export type AttentionKind =
 
 export interface AttentionField {
     name: string;
-    type: 'string' | 'number' | 'boolean' | 'select' | 'list' | 'text';
+    type: 'string' | 'number' | 'boolean' | 'select' | 'list' | 'text' | 'media';
     label: string;
     description?: string;
     options?: string[];

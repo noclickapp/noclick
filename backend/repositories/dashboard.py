@@ -18,7 +18,7 @@ import uuid as uuid_module
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
-from repositories.workflow import USER_VISIBLE_RUN_SQL
+from repositories.run_visibility import USER_VISIBLE_RUN_SQL
 
 
 class DashboardRepo:

@@ -11,12 +11,14 @@ import type { NodeRunResult } from '~/components/workflow/RunResultsDialog';
 
 type Wire = Record<string, unknown>;
 
-/** The stored snapshot rows `workflow:get_execution_detail` returns. */
-export interface SnapshotNode extends Wire {
+/** The stored snapshot rows `workflow:get_execution_detail` returns. Both
+ *  stored shapes are readable: canvas nodes carry `data.label`, headless
+ *  saves carry `config.label`. Typed so a node is also a `GraphNodeLite`. */
+export interface SnapshotNode {
     id: string;
     type?: string;
-    data?: Wire & { config?: Wire };
-    config?: Wire;
+    data?: { label?: string; operation?: string; config?: Wire; [key: string]: unknown };
+    config?: { label?: string; operation?: string; [key: string]: unknown };
 }
 interface NodeResultRow {
     node_id: string;
