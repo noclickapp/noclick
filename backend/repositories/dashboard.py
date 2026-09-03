@@ -18,6 +18,8 @@ import uuid as uuid_module
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
+from repositories.workflow import USER_VISIBLE_RUN_SQL
+
 
 class DashboardRepo:
     def __init__(self, pool):
@@ -108,23 +110,24 @@ class DashboardRepo:
     async def runs_window(self, workflow_ids: List[Any], *, days: int = 14) -> Dict[str, Any]:
         """The window's runs, bucketed per workflow per UTC day (zero-filled,
         oldest first), plus each workflow's latest run — and the same buckets
-        summed per day for the chart. One aggregate scan serves both."""
+        summed per day for the chart. One aggregate scan serves both. Agent
+        delivery runs are hidden plumbing (``DELIVERED_STATUS``) and never count."""
         if not workflow_ids:
             return {"by_day": self._zero_days(days), "by_workflow": []}
         start = self._window_start(days)
         ids = self._ids(workflow_ids)
-        per_day_sql = """
+        per_day_sql = f"""
             SELECT e.workflow_id, (e.started_at AT TIME ZONE 'UTC')::date AS day,
                    COUNT(*) FILTER (WHERE e.status <> 'error') AS ok,
                    COUNT(*) FILTER (WHERE e.status = 'error') AS failed
             FROM workflow_executions e
-            WHERE e.workflow_id = ANY($1::uuid[]) AND e.started_at >= $2
+            WHERE e.workflow_id = ANY($1::uuid[]) AND e.started_at >= $2 AND e.{USER_VISIBLE_RUN_SQL}
             GROUP BY 1, 2
         """
-        latest_sql = """
+        latest_sql = f"""
             SELECT DISTINCT ON (e.workflow_id) e.workflow_id, e.status, e.started_at
             FROM workflow_executions e
-            WHERE e.workflow_id = ANY($1::uuid[]) AND e.started_at >= $2
+            WHERE e.workflow_id = ANY($1::uuid[]) AND e.started_at >= $2 AND e.{USER_VISIBLE_RUN_SQL}
             ORDER BY e.workflow_id, e.started_at DESC
         """
         async with self._pool.acquire() as conn:
@@ -171,11 +174,11 @@ class DashboardRepo:
         unbounded newest-N over many workflows has to fetch every run first."""
         if not workflow_ids:
             return []
-        sql = """
+        sql = f"""
             SELECT e.id, e.workflow_id, e.status, e.started_at, e.finished_at,
                    e.nodes_executed, e.error, e.trigger_source
             FROM workflow_executions e
-            WHERE e.workflow_id = ANY($1::uuid[]) AND e.started_at >= $2
+            WHERE e.workflow_id = ANY($1::uuid[]) AND e.started_at >= $2 AND e.{USER_VISIBLE_RUN_SQL}
             ORDER BY e.started_at DESC, e.id DESC
             LIMIT $3
         """

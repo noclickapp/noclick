@@ -93,6 +93,11 @@ async def _seed(db, user):
         "INSERT INTO workflow_executions (workflow_id, user_id, status, started_at, wake_at, resume_node_id) VALUES ($1, $2, 'awaiting_delay', $3, $4, 'hub')",
         wf_id, USER, now - timedelta(hours=1), now + timedelta(hours=6),
     )
+    # An agent delivery run: hidden plumbing that must never be counted or listed.
+    await db.execute(
+        "INSERT INTO workflow_executions (workflow_id, user_id, status, started_at, finished_at, trigger_source) VALUES ($1, $2, 'delivered', $3, $4, 'agent_turn')",
+        wf_id, USER, now - timedelta(minutes=2), now - timedelta(minutes=1),
+    )
     await db.execute(
         "INSERT INTO webhooks (user_id, workflow_id, node_id, is_active, registered_operation, trigger_count, last_triggered_at) VALUES ($1, $2, 'hub', true, 'list_contacts', 7, $3)",
         USER, wf_id, now - timedelta(hours=2),
@@ -127,6 +132,7 @@ async def test_repo_runs_are_zero_filled_and_scoped(real_database):
     recent = await repo.recent_runs([wf_id], days=14, limit=10)
     assert {r["status"] for r in recent[:3]} == {"completed", "error", "awaiting_delay"}, "newest first"
     assert all(str(r["workflow_id"]) == wf_id for r in recent) and len(recent) == 5
+    assert all(r["status"] != "delivered" for r in recent), "delivery runs are hidden plumbing"
 
     delayed = await repo.awaiting_delay([wf_id])
     assert len(delayed) == 1 and delayed[0]["resume_node_id"] == "hub"
