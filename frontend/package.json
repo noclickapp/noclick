@@ -230,7 +230,7 @@
       "esbuild": "0.25.12",
       "estree-util-value-to-estree@<3.3.3": "3.4.0",
       "express-rate-limit@<8.2.2": "^8.2.2",
-      "fast-uri@<3.1.5": "3.1.5",
+      "fast-uri@<3.1.6": "3.1.6",
       "flatted@<3.4.0": "^3.4.0",
       "hono@<4.12.2": "^4.12.2",
       "ip-address@<10.3.1": "^10.3.1",
