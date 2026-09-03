@@ -12,6 +12,9 @@ from utils.shopify_install import (
 )
 
 
+_TEST_WEBHOOK_URI = "https://hooks.example.test/webhook/shopify/lifecycle"
+
+
 class _Acquire:
     def __init__(self, conn):
         self.conn = conn
@@ -146,7 +149,8 @@ class _HttpClient:
 
 
 @pytest.mark.asyncio
-async def test_uninstall_webhook_reuses_matching_subscription():
+async def test_uninstall_webhook_reuses_matching_subscription(monkeypatch):
+    monkeypatch.setenv("SHOPIFY_UNINSTALL_WEBHOOK_URI", _TEST_WEBHOOK_URI)
     client = _HttpClient(
         {
             "data": {
@@ -154,7 +158,7 @@ async def test_uninstall_webhook_reuses_matching_subscription():
                     "nodes": [
                         {
                             "id": "gid://shopify/WebhookSubscription/7",
-                            "uri": "https://dhruvyad--noclick-worker.modal.run/webhook/shopify/lifecycle",
+                            "uri": _TEST_WEBHOOK_URI,
                         }
                     ]
                 }
@@ -172,7 +176,8 @@ async def test_uninstall_webhook_reuses_matching_subscription():
 
 
 @pytest.mark.asyncio
-async def test_uninstall_webhook_creates_missing_subscription():
+async def test_uninstall_webhook_creates_missing_subscription(monkeypatch):
+    monkeypatch.setenv("SHOPIFY_UNINSTALL_WEBHOOK_URI", _TEST_WEBHOOK_URI)
     client = _HttpClient(
         {"data": {"webhookSubscriptions": {"nodes": []}}},
         {
@@ -193,4 +198,4 @@ async def test_uninstall_webhook_creates_missing_subscription():
     assert len(client.calls) == 2
     variables = client.calls[1][1]["json"]["variables"]
     assert variables["subscription"]["format"] == "JSON"
-    assert variables["subscription"]["uri"].endswith("/webhook/shopify/lifecycle")
+    assert variables["subscription"]["uri"] == _TEST_WEBHOOK_URI
