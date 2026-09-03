@@ -32,7 +32,7 @@ import logging
 import os
 import time
 from dataclasses import dataclass, field
-from typing import Any, Awaitable, Callable, Dict, Optional, Protocol, Set
+from typing import Any, Awaitable, Callable, Dict, Optional, Protocol, Set, Tuple
 
 from utils.discord_gateway import (
     INTENT_DIRECT_MESSAGES,
@@ -102,14 +102,61 @@ def build_gateway_envelope(
     }
 
 
+DISCORD_API = "https://discord.com/api/v10"
+
+NameLookup = Callable[[str], Awaitable[Tuple[Optional[str], Dict[str, str]]]]
+
+
+def rest_name_lookup(token: str) -> NameLookup:
+    """One-time REST fill for a guild the stream never described — a RESUMED
+    session sees no GUILD_CREATE replay. Guild name, channels and active
+    threads: three calls per guild per process, only for subscribed guilds."""
+    headers = {"Authorization": f"Bot {token.strip().removeprefix('Bot ').strip()}"}
+
+    async def lookup(guild_id: str) -> Tuple[Optional[str], Dict[str, str]]:
+        import httpx
+
+        async with httpx.AsyncClient(timeout=15) as client:
+            guild = await client.get(f"{DISCORD_API}/guilds/{guild_id}", headers=headers)
+            guild.raise_for_status()
+            channels = await client.get(f"{DISCORD_API}/guilds/{guild_id}/channels", headers=headers)
+            channels.raise_for_status()
+            threads = await client.get(f"{DISCORD_API}/guilds/{guild_id}/threads/active", headers=headers)
+            threads.raise_for_status()
+        names = {
+            str(c["id"]): c["name"]
+            for c in list(channels.json() or []) + list((threads.json() or {}).get("threads") or [])
+            if isinstance(c, dict) and c.get("id") and isinstance(c.get("name"), str)
+        }
+        return (guild.json() or {}).get("name"), names
+
+    return lookup
+
+
 class GuildDirectory:
     """Guild and channel names from the Gateway's own stream: GUILD_CREATE
     (sent for every guild at READY, channels and threads included) and the
-    create/update/delete events after it. No REST lookup per message."""
+    create/update/delete events after it — plus one REST fill per guild the
+    stream never described. No lookup per message."""
 
     def __init__(self) -> None:
         self.guild_names: Dict[str, str] = {}
         self.channel_names: Dict[str, str] = {}
+        self.fetched: Set[str] = set()
+
+    async def ensure(self, guild_id: str, lookup: NameLookup) -> None:
+        """Fill a guild's names once per process when the stream has not."""
+        if not guild_id or guild_id in self.guild_names or guild_id in self.fetched:
+            return
+        self.fetched.add(guild_id)  # once, even on failure — never a call per message
+        try:
+            name, channels = await lookup(guild_id)
+        except Exception as e:
+            logger.warning(f"[DiscordGateway] name lookup for guild {guild_id} failed: {e}")
+            return
+        if name:
+            self.guild_names[guild_id] = name
+        self.channel_names.update(channels)
 
     def apply(self, event_type: str, data: Dict[str, Any]) -> None:
         object_id = str(data.get("id") or "")
@@ -261,10 +308,12 @@ class DiscordGatewayBridge:
         connect: Optional[Callable[..., Any]] = None,
         refresh_interval_s: float = SUBSCRIPTION_REFRESH_S,
         queue_size: int = QUEUE_SIZE,
+        name_lookup: Optional[NameLookup] = None,
     ) -> None:
         self._forwarder = forwarder
         self._filter = GuildSubscriptionFilter(pool_getter)
         self.directory = GuildDirectory()
+        self._name_lookup = name_lookup or rest_name_lookup(token)
         self._refresh_interval = refresh_interval_s
         self._queue: asyncio.Queue = asyncio.Queue(maxsize=queue_size)
         self.counters = BridgeCounters()
@@ -329,9 +378,22 @@ class DiscordGatewayBridge:
 
     async def _sender_loop(self) -> None:
         while True:
-            body = await self._queue.get()
+            event_type, data = await self._queue.get()
             try:
-                await self._forwarder.forward(body)
+                # Names resolve here, off the read loop: the directory answers
+                # from the stream, or one REST fill per guild the stream never
+                # described (a resumed session gets no GUILD_CREATE replay).
+                guild_id = str(data.get("guild_id") or "")
+                await self.directory.ensure(guild_id, self._name_lookup)
+                status = self.client.status
+                envelope = build_gateway_envelope(
+                    event_type, data,
+                    bot_user_id=status.bot_user_id,
+                    application_id=status.application_id,
+                    guild_name=self.directory.guild_names.get(guild_id),
+                    channel_name=self.directory.channel_names.get(str(data.get("channel_id") or "")),
+                )
+                await self._forwarder.forward(json.dumps(envelope, separators=(",", ":")).encode())
                 self.counters.forwarded += 1
                 self.counters.last_forwarded_at = time.time()
             except asyncio.CancelledError:
@@ -365,16 +427,8 @@ class DiscordGatewayBridge:
             if not self._filter.allows(guild_id):
                 self.counters.dropped_unsubscribed += 1
                 return
-        envelope = build_gateway_envelope(
-            event_type, data,
-            bot_user_id=status.bot_user_id,
-            application_id=status.application_id,
-            guild_name=self.directory.guild_names.get(str(guild_id)),
-            channel_name=self.directory.channel_names.get(str(data.get("channel_id") or "")),
-        )
-        body = json.dumps(envelope, separators=(",", ":")).encode()
         try:
-            self._queue.put_nowait(body)
+            self._queue.put_nowait((event_type, data))
         except asyncio.QueueFull:
             self.counters.dropped_overflow += 1
             if self.counters.dropped_overflow % LOG_EVERY_N_DROPS == 1:

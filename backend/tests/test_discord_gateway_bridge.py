@@ -87,6 +87,10 @@ class FakePool:
         return _Ctx()
 
 
+async def _no_names(guild_id: str):
+    return None, {}
+
+
 class CollectingForwarder:
     def __init__(self) -> None:
         self.bodies: List[bytes] = []
@@ -121,7 +125,8 @@ class TestGuildSubscriptionFilter:
 class TestBridgeDispatch:
     def _bridge(self, forwarder, guilds=("g1",)):
         bridge = DiscordGatewayBridge(
-            "tok", forwarder=forwarder, pool_getter=lambda: FakePool(), connect=lambda url: None
+            "tok", forwarder=forwarder, pool_getter=lambda: FakePool(), connect=lambda url: None,
+            name_lookup=_no_names,
         )
         bridge.client.status.bot_user_id = "bot-1"
         bridge.client.status.application_id = "app-1"
@@ -166,7 +171,7 @@ class TestBridgeDispatch:
     async def test_queue_overflow_is_counted_not_fatal(self):
         bridge = DiscordGatewayBridge(
             "tok", forwarder=CollectingForwarder(), pool_getter=lambda: FakePool(),
-            connect=lambda url: None, queue_size=1,
+            connect=lambda url: None, queue_size=1, name_lookup=_no_names,
         )
         bridge._filter.guild_ids = {"g1"}
         await bridge._on_dispatch("MESSAGE_CREATE", _message(id="a"))
@@ -620,9 +625,10 @@ class TestGuildDirectory:
 
 
 class TestBridgeNamesAndMissRefresh:
-    def _bridge(self, forwarder, rows):
+    def _bridge(self, forwarder, rows, lookup=None):
         bridge = DiscordGatewayBridge(
-            "tok", forwarder=forwarder, pool_getter=lambda: FakePool(rows=rows), connect=lambda url: None
+            "tok", forwarder=forwarder, pool_getter=lambda: FakePool(rows=rows), connect=lambda url: None,
+            name_lookup=lookup or _no_names,
         )
         bridge.client.status.bot_user_id = "bot-1"
         return bridge
@@ -633,9 +639,41 @@ class TestBridgeNamesAndMissRefresh:
         bridge._filter.guild_ids = {"g1"}
         await bridge._on_dispatch("GUILD_CREATE", {"id": "g1", "name": "NoClick Sandbox", "channels": [{"id": "c1", "name": "general"}]})
         await bridge._on_dispatch("MESSAGE_CREATE", _message())
-        envelope = json.loads(bridge._queue.get_nowait())
+        await TestBridgeDispatch._drain(self, bridge)
+        envelope = json.loads(fwd.bodies[0])
         assert (envelope["guild_name"], envelope["channel_name"]) == ("NoClick Sandbox", "general")
         assert bridge.status()["directory_channels"] == 1
+
+    async def test_a_guild_the_stream_never_described_is_looked_up_once(self):
+        """A resumed session sees no GUILD_CREATE replay: the first forwarded
+        message fills the guild's names over REST, later ones reuse them, and a
+        failed lookup is not retried per message."""
+        calls: List[str] = []
+
+        async def lookup(guild_id):
+            calls.append(guild_id)
+            return "NoClick Sandbox", {"c1": "general"}
+
+        fwd = CollectingForwarder()
+        bridge = self._bridge(fwd, rows=[{"tenant_id": "g1"}], lookup=lookup)
+        bridge._filter.guild_ids = {"g1"}
+        await bridge._on_dispatch("MESSAGE_CREATE", _message(id="a"))
+        await bridge._on_dispatch("MESSAGE_CREATE", _message(id="b"))
+        await TestBridgeDispatch._drain(self, bridge)
+        assert calls == ["g1"]
+        assert all(json.loads(b)["channel_name"] == "general" for b in fwd.bodies)
+
+        async def failing(guild_id):
+            calls.append(guild_id)
+            raise RuntimeError("429")
+
+        bridge2 = self._bridge(CollectingForwarder(), rows=[{"tenant_id": "g2"}], lookup=failing)
+        bridge2._filter.guild_ids = {"g2"}
+        await bridge2._on_dispatch("MESSAGE_CREATE", _message(id="c", guild_id="g2"))
+        await bridge2._on_dispatch("MESSAGE_CREATE", _message(id="d", guild_id="g2"))
+        await TestBridgeDispatch._drain(self, bridge2)
+        assert calls == ["g1", "g2"]
+        assert bridge2.counters.forwarded == 2  # names missing, delivery unaffected
 
     async def test_unknown_guild_re_reads_subscriptions_once_and_forwards(self):
         """A trigger saved seconds ago: its guild is absent from the filter, so
