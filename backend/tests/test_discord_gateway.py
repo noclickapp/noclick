@@ -185,10 +185,12 @@ async def test_identify_ready_and_dispatch():
 
         await _finish(client, task)
         await asyncio.wait_for(conn.closed.wait(), 5)
-        # A shutdown close keeps the session resumable for the next process.
+        # A shutdown close keeps the session resumable for the next process,
+        # and the stored session carries the identity only READY announces.
         assert conn.close_code == gw.RESUMABLE_CLOSE_CODE
         assert client.status.state == "stopped"
-        assert (await client._store.load()).session_id == "sess-1"
+        stored = await client._store.load()
+        assert (stored.session_id, stored.bot_user_id, stored.application_id) == ("sess-1", "bot-1", "app-1")
 
 
 async def test_heartbeats_carry_last_sequence_and_track_acks():
@@ -242,13 +244,18 @@ async def test_invalid_session_reidentifies_from_scratch():
 async def test_persisted_session_resumes_on_first_connect():
     recorder = Recorder()
     store = MemorySessionStore()
-    await store.save(GatewaySession(session_id="sess-old", resume_gateway_url="", seq=3))
+    await store.save(GatewaySession(
+        session_id="sess-old", resume_gateway_url="", seq=3, bot_user_id="bot-1", application_id="app-1",
+    ))
     async with FakeGateway() as server:
         client = _client(server, recorder, store)
         task = await _run(client)
         conn = await server.connection(0)
         assert conn.identify is None
         assert conn.resume["session_id"] == "sess-old" and conn.resume["seq"] == 3
+        # A resumed session never sees READY: the identity comes from the store.
+        await _until(lambda: client.status.state == "connected")
+        assert (client.status.bot_user_id, client.status.application_id) == ("bot-1", "app-1")
         await _finish(client, task)
 
 

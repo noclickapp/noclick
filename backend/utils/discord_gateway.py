@@ -82,11 +82,17 @@ DISPATCH_SLOW_WARN_S = 1.0
 @dataclass
 class GatewaySession:
     """What RESUME needs; persisted so a restarted process resumes instead of
-    spending one of the bot's 1,000 daily IDENTIFYs and missing the gap."""
+    spending one of the bot's 1,000 daily IDENTIFYs and missing the gap.
+
+    Carries the bot's identity too: only READY announces it, and a resumed
+    session never sees READY — without these a fresh process could not tell
+    its own messages or its mentions apart until the next full identify."""
 
     session_id: str
     resume_gateway_url: str
     seq: Optional[int] = None
+    bot_user_id: Optional[str] = None
+    application_id: Optional[str] = None
 
 
 class SessionStore(Protocol):
@@ -212,6 +218,9 @@ class DiscordGatewayClient:
         """Connect and serve until ``stop()``; returns on stop or a fatal close.
         Never raises for transport trouble — that is what reconnecting is for."""
         self._session = await self._store.load()
+        if self._session is not None:
+            self.status.bot_user_id = self._session.bot_user_id
+            self.status.application_id = self._session.application_id
         while not self._stop.is_set():
             resumable = True
             try:
@@ -324,16 +333,18 @@ class DiscordGatewayClient:
         self.status.dispatches += 1
         self.status.last_event_at = time.time()
         if event_type == "READY":
-            self._session = GatewaySession(
-                session_id=str(data.get("session_id")),
-                resume_gateway_url=str(data.get("resume_gateway_url") or self._gateway_url),
-                seq=seq,
-            )
-            await self._store.save(self._session)
             self.status.bot_user_id = str((data.get("user") or {}).get("id") or "") or None
             self.status.application_id = (
                 str((data.get("application") or {}).get("id") or "") or None
             )
+            self._session = GatewaySession(
+                session_id=str(data.get("session_id")),
+                resume_gateway_url=str(data.get("resume_gateway_url") or self._gateway_url),
+                seq=seq,
+                bot_user_id=self.status.bot_user_id,
+                application_id=self.status.application_id,
+            )
+            await self._store.save(self._session)
             self.status.guild_count = len(data.get("guilds") or [])
             self._on_session_up()
             logger.info(
