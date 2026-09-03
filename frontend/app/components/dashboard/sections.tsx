@@ -126,15 +126,21 @@ export function summaryLine(data: DashboardData, attention: AttentionItem[]): st
     return parts;
 }
 
+/** "Dhruv" from "Dhruv Yadav"; an email-shaped name keeps its local part. */
+function firstName(name: string): string {
+    const first = name.trim().split(/\s+/)[0] ?? '';
+    return first.includes('@') ? first.split('@')[0] : first || name;
+}
+
 export function Greeting({ data, size = 'md', className, summary = true }: { data: DashboardData; size?: 'md' | 'lg'; className?: string; summary?: boolean }) {
     const attention = useVisibleAttention(data);
     const parts = summaryLine(data, attention);
     return (
         <div className={className}>
-            <h1 className={cn('m-0 font-semibold tracking-tight', size === 'lg' ? 'text-[30px]' : 'text-[22px]')}>
-                {greetingFor(data.now, data.workspace.userName)}
+            <h1 className={cn('m-0 font-semibold tracking-tight', size === 'lg' ? 'text-[32px]' : 'text-[26px]')}>
+                {greetingFor(data.now, firstName(data.workspace.userName))}
             </h1>
-            {summary && <p className="m-0 mt-1 text-[14px] text-foreground/70 dark:text-foreground/50">{parts.join(' · ')}</p>}
+            {summary && <p className="m-0 mt-1.5 text-[15px] text-foreground/70 dark:text-foreground/50">{parts.join(' · ')}</p>}
         </div>
     );
 }
@@ -1731,8 +1737,7 @@ export function CredentialsCompact({ data, onFocus, style = 'tiles', footer = tr
                                 onClick={() => (isDead ? actions.reconnectCredential({ credentialId: c.id, credentialType: c.credentialType, name: c.name }) : actions.manageCredential(c))}
                                 title={`${c.name} · ${credentialLabel(c.credentialType, c.nodeType)}${isDead ? ` · ${c.healthDetail}` : ''}`}
                                 className={cn(
-                                    'inline-flex h-8 items-center gap-2 rounded-md border px-2 text-[12px] transition-[padding,color,border-color]',
-                                    actions.deleteCredential && 'group-hover/cred:pr-8 group-focus-within/cred:pr-8',
+                                    'inline-flex h-8 items-center gap-2 rounded-md border bg-card px-2 text-[12px] transition-colors dark:bg-background',
                                     isDead ? 'border-red-500/30 text-foreground hover:bg-red-500/[0.06]' : 'border-border dark:border-foreground/[0.08] text-foreground/70 hover:border-foreground/20 hover:text-foreground'
                                 )}
                             >
@@ -1746,7 +1751,7 @@ export function CredentialsCompact({ data, onFocus, style = 'tiles', footer = tr
                                     aria-label={`Delete ${c.name}`}
                                     title="Delete credential"
                                     onClick={() => actions.deleteCredential?.(c)}
-                                    className="absolute right-1 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded text-foreground/55 opacity-0 transition-opacity hover:bg-foreground/[0.06] hover:text-foreground focus-visible:opacity-100 group-hover/cred:opacity-100 dark:text-foreground/40"
+                                    className="absolute right-[3px] top-1/2 grid h-[24px] w-[26px] -translate-y-1/2 place-items-center rounded bg-card text-foreground/55 opacity-0 shadow-[-10px_0_8px_-4px_hsl(var(--card))] transition-opacity hover:text-red-600 focus-visible:opacity-100 group-hover/cred:opacity-100 dark:bg-background dark:text-foreground/45 dark:shadow-[-10px_0_8px_-4px_hsl(var(--background))] dark:hover:text-red-400"
                                 >
                                     <Trash2 className="h-3.5 w-3.5" />
                                 </button>
