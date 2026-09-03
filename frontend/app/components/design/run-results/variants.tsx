@@ -587,7 +587,7 @@ function ErrorPanel({
 /** One real send: a quiet destination line (where + when), then the app's own
     frame standing alone — the same treatment the inbound event gets, so cause
     and effect read as siblings. */
-function SentFrame({
+export function SentFrame({
     send,
     icons,
     agentName,
@@ -749,7 +749,7 @@ function SupportingRow({
 }
 
 /** The trigger identity row: mark + node name + when the event landed. */
-function TriggerIdentity({ story, icons }: { story: RunStory; icons: RunVariantProps['icons'] }) {
+export function TriggerIdentity({ story, icons }: { story: RunStory; icons: RunVariantProps['icons'] }) {
     const t = story.trigger;
     if (!t) return null;
     return (
@@ -769,7 +769,7 @@ function TriggerIdentity({ story, icons }: { story: RunStory; icons: RunVariantP
     AppSurface is already a card, and boxing it again double-framed the thing
     we most want to feel real. Unthemed leads and raw events keep the quiet
     card. */
-function InboundCard({ story }: { story: RunStory }) {
+export function InboundCard({ story }: { story: RunStory }) {
     const t = story.trigger;
     if (!t) return null;
     if (t.scenario) {

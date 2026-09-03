@@ -2,7 +2,7 @@
 // overview and a FULL view for the drill-down. Variants only arrange these;
 // the content and its affordances are the same in every skeleton so a design
 // decision is about layout, never about what the tab can do.
-import { useMemo, useState, type CSSProperties, type ReactElement, type ReactNode, type SyntheticEvent, type ButtonHTMLAttributes } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties, type ReactElement, type ReactNode, type SyntheticEvent, type ButtonHTMLAttributes } from 'react';
 import {
     Archive,
     ArrowUpRight,
@@ -30,11 +30,12 @@ import {
 import { cn } from '~/lib/utils';
 import { IODataDisplay } from '~/components/workflow/IODataDisplay';
 import { OutboundMessage, type Mark } from '~/components/design/rehearsal/native';
-import { deriveSends } from '~/components/design/run-results/runStory';
+import { buildRunStory, deriveSends, type RunStory as Story, type StoryInput } from '~/components/design/run-results/runStory';
+import { InboundCard, SentFrame, TriggerIdentity, buildStoryIcons } from '~/components/design/run-results/variants';
 import type { ReplayToolCall } from '~/components/workflow/ReplayToolCallsPanel';
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
 import { ApprovalField } from '~/components/dashboard/ApprovalFields';
-import { isPersistedExecutionId } from '~/lib/runResults';
+import { isPersistedExecutionId, loadRunStory } from '~/lib/runResults';
 import { workspaceFileUrl } from '~/hooks/useAgentWorkspaceFiles';
 import { useValtioState } from '~/hooks/useValtioState';
 import { AskAnswer } from '~/components/dashboard/AskAnswer';
@@ -1186,6 +1187,43 @@ function TurnSends({ turn }: { turn: AgentTurn }) {
     );
 }
 
+/** The popup's story for a turn that ran as an execution, loaded once per run
+ *  and only when the card is open. The same loader and builder the Story popup
+ *  uses, so "what came in" wears the app's own frame and sends carry resolved
+ *  names. `null` while loading or when the turn has no persisted run. */
+const turnStories = new Map<string, Promise<Story | null>>();
+function useTurnStory(turn: AgentTurn, open: boolean): Story | null {
+    const [story, setStory] = useState<Story | null>(null);
+    const id = turn.executionId && isPersistedExecutionId(turn.executionId) ? turn.executionId : null;
+    useEffect(() => {
+        if (!open || !id) return;
+        let cancelled = false;
+        let pending = turnStories.get(id);
+        if (!pending) {
+            pending = loadRunStory(turn.workflow.id, id)
+                .then((loaded) =>
+                    buildRunStory({
+                        results: loaded.results,
+                        agentInputs: loaded.extras.agentInputs as StoryInput['agentInputs'],
+                        workflowName: turn.workflow.name,
+                        agentName: turn.agent.label,
+                        startedAt: turn.startedAt,
+                        durationMs: turn.durationMs,
+                    })
+                )
+                .catch(() => null);
+            turnStories.set(id, pending);
+        }
+        pending.then((s) => {
+            if (!cancelled) setStory(s);
+        });
+        return () => {
+            cancelled = true;
+        };
+    }, [open, id, turn]);
+    return story;
+}
+
 /** The Story popup keys on a RunRow; a turn that ran as an execution is one. */
 function turnAsRun(turn: AgentTurn): RunRow {
     return {
@@ -1283,6 +1321,9 @@ function TurnCard({ turn, now, compact = false }: { turn: AgentTurn; now: string
     const actions = useDashboardActions();
     const [open, setOpen] = useState(!compact);
     const failed = turn.status === 'error';
+    const story = useTurnStory(turn, open);
+    const storyIcons = useMemo(() => (story ? buildStoryIcons(story) : {}), [story]);
+    const storySends = story?.agent?.sends ?? [];
     return (
         <div className={cn('-mx-2 rounded-lg px-2', ROW_HOVER)}>
             <button type="button" onClick={() => setOpen((v) => !v)} className="flex w-full items-start gap-3 py-2.5 text-left">
@@ -1307,17 +1348,37 @@ function TurnCard({ turn, now, compact = false }: { turn: AgentTurn; now: string
                 </div>
             </button>
             {open && (
-                <div className="ml-8 mb-3 space-y-2">
-                    {turn.inbound && (
-                        <div className="flex items-start gap-2 rounded-lg border border-border dark:border-foreground/[0.06] bg-foreground/[0.02] px-3 py-2 text-[12px]">
-                            <NodeMark type={turn.inbound.provider} size="xs" className="mt-[3px]" />
-                            <span className="min-w-0">
-                                {turn.inbound.from && <span className="mr-1.5 text-foreground/70 dark:text-foreground/50">{turn.inbound.from}</span>}
-                                <span className="text-foreground/80">{turn.inbound.text}</span>
-                            </span>
+                <div className="ml-8 mb-3 space-y-3">
+                    {story?.trigger ? (
+                        <div>
+                            <Eyebrow className="mb-1.5" right={<TriggerIdentity story={story} icons={storyIcons} />}>
+                                What came in
+                            </Eyebrow>
+                            <InboundCard story={story} />
                         </div>
+                    ) : (
+                        turn.inbound && (
+                            <div className="flex items-start gap-2 rounded-lg border border-border dark:border-foreground/[0.06] bg-foreground/[0.02] px-3 py-2 text-[12px]">
+                                <NodeMark type={turn.inbound.provider} size="xs" className="mt-[3px]" />
+                                <span className="min-w-0">
+                                    {turn.inbound.from && <span className="mr-1.5 text-foreground/70 dark:text-foreground/50">{turn.inbound.from}</span>}
+                                    <span className="text-foreground/80">{turn.inbound.text}</span>
+                                </span>
+                            </div>
+                        )
                     )}
-                    <TurnSends turn={turn} />
+                    {storySends.length ? (
+                        <div>
+                            <Eyebrow className="mb-1.5">What went out ({storySends.length})</Eyebrow>
+                            <div className="space-y-3">
+                                {storySends.map((send, i) => (
+                                    <SentFrame key={i} send={send} icons={storyIcons} agentName={story?.agentName} />
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        <TurnSends turn={turn} />
+                    )}
                     {turn.toolCalls.length > 0 && (
                         <div className={cn(ROWS, "rounded-lg border border-border dark:border-foreground/[0.06]")}>
                             {turn.toolCalls.map((c, i) => (
