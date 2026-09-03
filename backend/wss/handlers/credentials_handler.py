@@ -182,8 +182,13 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                         error=error
                     ))
                     if error.startswith('Plan limit reached:'):
-                        user_data = session.get('user_data', {})
-                        pass
+                        from utils.capabilities import PLAN_GATE_ALERT, capability
+                        alert_plan_gate = capability(PLAN_GATE_ALERT)
+                        if alert_plan_gate is not None:
+                            alert_plan_gate(
+                                session.get('user_data', {}), "Credential Limit Hit",
+                                {"Type": request.credential_type},
+                            )
                     return
 
                 # Build credential info

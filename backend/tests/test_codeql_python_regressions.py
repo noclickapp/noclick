@@ -60,8 +60,6 @@ def test_usage_cache_key_uses_sha256_and_is_stable():
     assert len(first) == hashlib.sha256().digest_size * 2
 
 
-
-
 def test_database_health_does_not_reflect_exception_details(monkeypatch):
     import utils.database_pool as database_pool
     from utils.health_routes import router

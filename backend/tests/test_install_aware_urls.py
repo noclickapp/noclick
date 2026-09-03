@@ -9,14 +9,10 @@ import pytest
 WEBHOOK_ID = "1b1f56d7-9463-42ce-83e6-f599eb57c623"
 
 
+def test_self_host_webhook_url_never_falls_back_to_a_platform_domain(monkeypatch):
+    from utils import webhook_delivery
 
-
-
-
-def test_self_host_webhook_url_never_falls_back_to_hosted_relay(monkeypatch):
-    from utils import webhook_tunnel
-
-    monkeypatch.setenv("NOCLICK_LOCAL", "1")
+    monkeypatch.setattr(webhook_delivery, "_wildcard_domain", None)
     for name in (
         "PUBLIC_WEBHOOK_URL",
         "WEBHOOK_URL_BASE",
@@ -26,7 +22,7 @@ def test_self_host_webhook_url_never_falls_back_to_hosted_relay(monkeypatch):
     ):
         monkeypatch.delenv(name, raising=False)
     with pytest.raises(RuntimeError, match="PUBLIC_WEBHOOK_URL"):
-        webhook_tunnel.get_webhook_url(WEBHOOK_ID)
+        webhook_delivery.get_webhook_url(WEBHOOK_ID)
 
 
 def test_email_urls_use_install_frontend():
@@ -53,5 +49,3 @@ def test_email_urls_use_install_frontend():
         "https://automation.example.test",
         "https://automation.example.test",
     ]
-
-

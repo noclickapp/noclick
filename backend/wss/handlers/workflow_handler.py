@@ -60,6 +60,7 @@ from wss.receiver.client_events import (
     WorkflowClearNodeStateRequest,
     WorkflowSaveNodeStateRequest,
     WorkflowLoadNodeStateRequest,
+    WebhookRelayReconnectRequest,
     NodeOutputSchemaRequest,
 )
 from utils.node_schema_tracker import get_schema_with_suggestions
@@ -76,6 +77,33 @@ from repositories.credentials import credential_access_predicate
 from nodes.agent.provider_errors import action_for_error_text
 
 logger = logging.getLogger(__name__)
+
+
+def _filter_input_nodes(outputs: dict, statuses: dict) -> list:
+    """Build the input-node list for one delivery execution the run-results rail shows.
+
+    Two guards:
+    - IDOR: read_execution_outputs reads cas_manifests by execution_id ONLY, so gate
+      every node on ``statuses`` — the set scoped to (execution_id, workflow_id). A
+      foreign execution id (with the caller's own workflow_id passing the access check)
+      yields an empty ``statuses``, so nothing leaks.
+    - Plumbing: drop the agent's own 'awaiting_agent_turn' delivery marker and
+      tool-provider metadata (node_op_tool_provider[_bundle]) — they rode the delivery
+      execution but didn't feed the response.
+    Restored context never reaches here: a delivery persists only what it ran
+    (``workflow_execution_handler.outputs_to_persist``).
+    """
+    def _is_plumbing(out) -> bool:
+        return isinstance(out, dict) and (
+            out.get("status") == "awaiting_agent_turn"
+            or out.get("type") in ("node_op_tool_provider", "node_op_tool_provider_bundle")
+        )
+
+    return [
+        {"node_id": nid, "status": statuses[nid], "output": out}
+        for nid, out in outputs.items()
+        if nid in statuses and not _is_plumbing(out)
+    ]
 
 
 async def get_user_org_context(conn, user_id: str) -> Optional[str]:
@@ -113,6 +141,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
             "workflow:get_execution_counts": self.get_execution_counts,
             "workflow:get_execution_detail": self.get_execution_detail,
             "workflow:get_node_output": self.get_node_output,
+            "workflow:get_agent_inputs": self.get_agent_inputs,
             "workflow:collab_token": self.get_collab_token,
             "workflow:node:get_config_schema": self.get_node_config_schema,
             "workflow:node:validate_config": self.validate_node_config,
@@ -129,6 +158,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
             "workflow:state:get": self.state_get,
             "workflow:state:set": self.state_set,
             "workflow:state:keys": self.state_keys,
+            "webhook:relay:reconnect": self.reconnect_webhook_relay,
             "email:check_local_part": self.check_email_local_part,
             "email:reserve_address": self.reserve_email_address,
         }
@@ -270,7 +300,10 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                         data={},
                         error=limit_error
                     ))
-                    pass
+                    from utils.capabilities import PLAN_GATE_ALERT, capability
+                    alert_plan_gate = capability(PLAN_GATE_ALERT)
+                    if alert_plan_gate is not None:
+                        alert_plan_gate(user_data, "Workflow Limit Hit")
                     return
 
                 repo = WorkflowRepo(pool)
@@ -930,7 +963,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
             # provider config on the previous connection — every event
             # that arrives on that connection still fans out to the
             # orphan and produces a duplicate workflow run. (Verified
-            # 2026-06-25 against a WhatsApp integration whose group
+            # 2026-06-25 against a WhatsApp/WAHooks user whose group
             # chats hit both old and new connections.)
             # Spawned: the handlers make provider API calls (teardown +
             # self-heal re-registration) that must not block the save ack
@@ -1602,6 +1635,64 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                       "node_results": node_results, "tool_calls": tool_calls}))
         except Exception as e:
             logger.error(f"Error getting execution detail: {e}", exc_info=True)
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data={}, error=str(e)))
+
+    async def get_agent_inputs(self, sid: str, request: "WorkflowAgentInputsRequest") -> None:
+        """Resolve the delivery executions an agent response consumed (its
+        `input_execution_ids`) into the nodes that ran per delivery, for the run-results
+        inputs rail. Those runs are hidden plumbing (status 'delivered', never listed),
+        so this reads their CAS outputs directly by execution id. Capped: a flood agent
+        can consume many events; the popup shows the true total separately and only
+        needs the recent ones to drill into."""
+        import uuid as uuid_module
+
+        from utils.cas import store as cas_store
+
+        _MAX_INPUTS = 15
+        try:
+            session = await self.sio.get_session(sid)
+            user_id = session.get('user_id')
+            pool = await self.get_pool()
+            if not user_id or not pool:
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id, data={},
+                    error="User not authenticated" if not user_id else "Database connection not available"))
+                return
+            try:
+                wf = uuid_module.UUID(request.workflow_id)
+            except (ValueError, TypeError):
+                await send_event(self.sio, sid, ResponseEvent(request_id=request.request_id, data={"inputs": []}))
+                return
+            async with pool.acquire() as conn:
+                access = await check_resource_access(conn, user_id, "workflow", request.workflow_id)
+                if not access.has_access:
+                    await send_event(self.sio, sid, ResponseEvent(
+                        request_id=request.request_id, data={}, error="Workflow not found or access denied"))
+                    return
+
+            inputs = []
+            # The most RECENT deliveries (the list is chronological, oldest→newest) —
+            # those are what a user drills into; inputs_total shows the true count.
+            for raw in request.execution_ids[-_MAX_INPUTS:]:
+                try:
+                    ex = uuid_module.UUID(str(raw))
+                except (ValueError, TypeError):
+                    continue
+                async with pool.acquire() as conn:
+                    status_rows = await conn.fetch(
+                        "SELECT node_id, last_run_status FROM cas_manifests "
+                        "WHERE execution_id = $1 AND workflow_id = $2", ex, wf)
+                statuses = {r["node_id"]: r["last_run_status"] for r in status_rows}
+                outputs = await cas_store.read_execution_outputs(pool, ex)
+                # Workflow-scope (IDOR) guard + plumbing filter — see _filter_input_nodes.
+                nodes = _filter_input_nodes(outputs, statuses)
+                if nodes:
+                    inputs.append({"execution_id": str(raw), "nodes": nodes})
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data={"inputs": inputs}))
+        except Exception as e:
+            logger.error(f"Error resolving agent inputs: {e}", exc_info=True)
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id, data={}, error=str(e)))
 
@@ -2434,6 +2525,58 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
             logger.debug(f"Error checking webhook field: {e}")
             return False
 
+    async def reconnect_webhook_relay(self, sid: str, request: WebhookRelayReconnectRequest) -> None:
+        """
+        Reconnect the webhook relay client.
+
+        Only meaningful where a relay client is registered (a developer's
+        backend); a directly reachable backend has nothing to reconnect.
+        """
+        try:
+            from utils.webhook_delivery import reconnect_relay_client, relay_in_use
+
+            if not relay_in_use():
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data={
+                        "success": True,
+                        "message": "Deliveries reach this backend directly - no relay to reconnect"
+                    }
+                ))
+                return
+
+            # Attempt reconnection
+            logger.info("[WorkflowHandler] Attempting webhook relay reconnection...")
+            success = await reconnect_relay_client()
+
+            if success:
+                logger.info("[WorkflowHandler] Webhook relay reconnected successfully")
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data={
+                        "success": True,
+                        "message": "Webhook relay reconnected successfully"
+                    }
+                ))
+            else:
+                logger.warning("[WorkflowHandler] Failed to reconnect webhook relay")
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data={
+                        "success": False,
+                        "message": "Failed to reconnect webhook relay"
+                    }
+                ))
+
+        except Exception as e:
+            logger.error(f"Error reconnecting webhook relay: {e}", exc_info=True)
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id,
+                data={
+                    "success": False,
+                    "message": f"Error: {str(e)}"
+                }
+            ))
 
     async def get_node_output_schema(self, sid: str, request: NodeOutputSchemaRequest) -> None:
         """

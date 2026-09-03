@@ -590,7 +590,7 @@ async def test_get_or_create_auto_activates_simple_inactive_row():
     pool, conn = _pool(fetchrow=row)
 
     with patch(
-        "utils.webhook_tunnel.get_webhook_url",
+        "utils.webhook_delivery.get_webhook_url",
         MagicMock(return_value=WEBHOOK_URL),
     ):
         result = await WebhookManager.get_or_create_webhook(
@@ -614,7 +614,7 @@ async def test_get_or_create_does_not_auto_activate_marker_row():
     pool, conn = _pool(fetchrow=row)
 
     with patch(
-        "utils.webhook_tunnel.get_webhook_url",
+        "utils.webhook_delivery.get_webhook_url",
         MagicMock(return_value=WEBHOOK_URL),
     ):
         result = await WebhookManager.get_or_create_webhook(

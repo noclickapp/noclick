@@ -54,7 +54,7 @@ def _secret() -> bytes:
 def _origin() -> str:
     origin = (os.environ.get("PUBLIC_API_URL") or "").strip().rstrip("/")
     if not origin:
-        from utils.webhook_tunnel import get_webhook_base_url
+        from utils.webhook_delivery import get_webhook_base_url
 
         origin = get_webhook_base_url()
     if not origin:

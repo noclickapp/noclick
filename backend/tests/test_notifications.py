@@ -173,6 +173,10 @@ class _FakePool:
     def __init__(self, backend):
         self.b = backend
 
+    async def fetchrow(self, query, *args):
+        # The credit CTA reads the tier through the pool it is handed.
+        return await self.b.fetch_row(self, query, *args)
+
     def acquire(self):
         backend = self.b
 
@@ -477,8 +481,6 @@ async def test_credential_revoked_alert_missing_row_skips(monkeypatch):
     assert not ok and not be.sends and not be.rows
 
 
-
-
 @pytest.mark.asyncio
 async def test_run_failure_alert_escapes_error_html(monkeypatch):
     be = _FakeBackend().install(monkeypatch)
@@ -520,10 +522,6 @@ async def test_maybe_alert_run_failure_headless_only(monkeypatch, trigger_source
     assert queued.is_set() == expects_alert
 
 
-# ── Workflow attribution on usage events (powers digest credit consumers) ───
-
-
-
 def test_bar_fill_corners_rounded():
     """Partial fills must carry the track's corner radius — square fills
     inside rounded tracks was a reported visual bug."""
@@ -563,3 +561,15 @@ async def test_get_prefs_no_row(monkeypatch):
     monkeypatch.setattr(notifications, "_fetch_row", fake_fetch_row)
     prefs = await notifications.get_prefs("user-1")
     assert all(prefs.values())
+
+
+@pytest.mark.asyncio
+async def test_credit_cta_defaults_to_the_dashboard(monkeypatch):
+    """Without a platform-provided CTA the alert still has somewhere honest
+    to send the user, and never invents a purchase flow."""
+    from utils import capabilities
+
+    monkeypatch.setattr(capabilities, "_providers", {})
+    label, url = await notifications._credit_cta("user-1")
+    assert label == "Open Dashboard"
+    assert url.endswith("/dashboard")

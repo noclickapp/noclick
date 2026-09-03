@@ -27,7 +27,7 @@ import jwt
 from pydantic import BaseModel
 
 from utils.async_helpers import spawn
-from utils.webhook_tunnel import get_webhook_base_url
+from utils.webhook_delivery import get_webhook_base_url
 from utils.database_pool import get_native_pool
 from utils.shopify_routes import compliance_router as shopify_compliance_router
 from wss.receiver.client_events import WorkflowExecuteRequest

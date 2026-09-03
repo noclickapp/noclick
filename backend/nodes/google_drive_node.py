@@ -3313,7 +3313,7 @@ class GoogleDriveNode(WatchChannelTriggerMixin, WorkflowNode):
     async def renew_watch_channel(cls, pool, channel_row: Dict[str, Any]) -> None:
         """Re-subscribe an expiring Drive watch channel (called by the cron)."""
         from utils.credential_loader import load_credential
-        from utils.webhook_tunnel import get_webhook_url
+        from utils.webhook_delivery import get_webhook_url
 
         user_id = str(channel_row["user_id"])
         cred_id = channel_row.get("credential_id")

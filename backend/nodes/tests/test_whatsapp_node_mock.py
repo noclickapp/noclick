@@ -1141,7 +1141,7 @@ async def test_cleanup_external_webhook_deletes_matching_wahooks_config():
 
     # Asked rather than spelled: cleanup matches on this instance's own webhook
     # URL, and a self-hosted install mints those under its own host.
-    from utils.webhook_tunnel import get_webhook_url
+    from utils.webhook_delivery import get_webhook_url
 
     our_url = get_webhook_url(noclick_webhook_id)
 

@@ -310,7 +310,7 @@ class WebhookManager:
         registration's job (``persist_registration_state``), so a torn-down
         trigger can't present as live just because its config panel was opened.
         """
-        from utils.webhook_tunnel import get_webhook_url
+        from utils.webhook_delivery import get_webhook_url, is_relay_connected, register_webhook, relay_in_use
 
         async with pool.acquire() as conn:
             row = await conn.fetchrow(
@@ -363,10 +363,18 @@ class WebhookManager:
                 logger.info(f"[WEBHOOK] Created new webhook {webhook_id}")
 
             webhook_url = get_webhook_url(webhook_id)
-            # Self-hosted deliveries reach this process directly. Preserve the
-            # legacy status fields for node-schema compatibility.
-            is_production = True
-            relay_connected = True
+            # Without a relay, deliveries reach this backend directly; the
+            # legacy status fields report that as a live route.
+            is_production = not relay_in_use()
+            if is_production:
+                relay_connected = True
+            elif background_relay:
+                from utils.async_helpers import spawn
+                spawn(register_webhook(webhook_id), name=f"webhook-register:{webhook_id}")
+                relay_connected = is_relay_connected()  # Optimistic - assume it will succeed
+            else:
+                registration_success = await register_webhook(webhook_id)
+                relay_connected = is_relay_connected() and registration_success
 
             return {
                 "webhook_id": webhook_id,
@@ -575,7 +583,7 @@ class WebhookManager:
         Returns:
             True if webhook was deleted, False if not found
         """
-        from utils.webhook_tunnel import unregister_webhook
+        from utils.webhook_delivery import unregister_webhook
 
         try:
             async with pool.acquire() as conn:
@@ -2178,7 +2186,7 @@ class WebhookManager:
         Returns:
             Number of webhooks deleted
         """
-        from utils.webhook_tunnel import unregister_webhook
+        from utils.webhook_delivery import unregister_webhook
 
         deleted_count = 0
 

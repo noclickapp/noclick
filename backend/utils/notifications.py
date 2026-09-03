@@ -576,10 +576,16 @@ async def send_run_failure_alert(
 
 # ── Credits ──────────────────────────────────────────────────────────────────
 
-async def _credit_cta(_billing_user_id: str, pool=None) -> tuple:
-    """Community builds have no managed purchase flow."""
-    del pool
-    return "Open Dashboard", f"{FRONTEND_URL}/dashboard"
+async def _credit_cta(billing_user_id: str, pool=None) -> tuple:
+    """(button label, url) for the credit alerts. What an empty balance calls
+    for is the platform's to say (`CREDIT_CTA`); without one, the dashboard
+    is the honest destination."""
+    from utils.capabilities import CREDIT_CTA, capability
+
+    cta = capability(CREDIT_CTA)
+    if cta is None:
+        return "Open Dashboard", f"{FRONTEND_URL}/dashboard"
+    return await cta(billing_user_id, pool=_resolve_pool(pool))
 
 
 async def send_credits_exhausted_alert(
@@ -599,12 +605,12 @@ async def send_credits_exhausted_alert(
     if wf_html:
         intro = para(
             f"A run of {strong(wf_html)} was just blocked because your credit "
-            "balance ran out. Runs and agents will keep failing until the instance limits are adjusted."
+            "balance ran out. Runs and agents will keep failing until the balance is restored."
         )
     else:
         intro = para(
             "A workflow run was just blocked because your credit balance ran out. "
-            "Runs and agents will keep failing until the instance limits are adjusted."
+            "Runs and agents will keep failing until the balance is restored."
         )
 
     blocks = intro + progress_bar(
@@ -629,7 +635,7 @@ async def send_credits_exhausted_alert(
         + " because your credit balance ran out.\n"
         + (f"Stopped at: {blocked_node}\n" if blocked_node else "")
         + f"Balance: {remaining:.2f} credits\n"
-        + "Runs and agents will keep failing until the instance limits are adjusted."
+        + "Runs and agents will keep failing until the balance is restored."
     )
 
     return await send_system_alert(
@@ -640,8 +646,8 @@ async def send_credits_exhausted_alert(
         blocks_html=blocks,
         text_body=text_body,
         preheader=(
-            f"{blocked_workflow} was blocked — check the instance limits to keep your workflows running"
-            if blocked_workflow else "Check the instance limits to keep your workflows running"
+            f"{blocked_workflow} was blocked — restore your balance to keep your workflows running"
+            if blocked_workflow else "Restore your balance to keep your workflows running"
         ),
         cta_text=cta_text,
         cta_url=cta_url,
@@ -679,7 +685,7 @@ async def send_recurring_grace_alert(
     blocks = para(
         f"Your credit balance can't cover the recurring charge for your "
         f"{label_html} {strong(name_html)}. It keeps working for now, but it "
-        f"will be {strong('disconnected on ' + ends_str)} unless the instance limits are adjusted."
+        f"will be {strong('disconnected on ' + ends_str)} unless the balance is restored."
     ) + kv_rows([
         (charge_label, name_html),
         ("Balance", f"{max(remaining, 0):.2f} credits"),
@@ -689,7 +695,7 @@ async def send_recurring_grace_alert(
         f"Your credit balance can't cover the recurring charge for your "
         f"{charge_label} \"{credential_name}\".\n"
         f"Balance: {max(remaining, 0):.2f} credits\n"
-        f"It will be disconnected on {ends_str} unless the instance limits are adjusted."
+        f"It will be disconnected on {ends_str} unless the balance is restored."
     )
     return await send_system_alert(
         billing_user_id, "credits",
@@ -698,7 +704,7 @@ async def send_recurring_grace_alert(
         eyebrow="Billing alert",
         blocks_html=blocks,
         text_body=text_body,
-        preheader=f"Adjust the instance limits before {ends_str} to keep {credential_name} connected",
+        preheader=f"Restore your balance before {ends_str} to keep {credential_name} connected",
         cta_text=cta_text,
         cta_url=cta_url,
         dedupe_key=f"recurring_grace:{credential_id}",
@@ -725,12 +731,12 @@ async def send_recurring_disconnected_alert(
     blocks = para(
         f"Your {label_html} {strong(name_html)} was disconnected because your "
         "credit balance stayed exhausted through the grace period. Workflows "
-        "using it will fail until the instance limits are adjusted and reconnect it."
+        "using it will fail until the balance is restored and it is reconnected."
     )
     text_body = (
         f"Your {charge_label} \"{credential_name}\" was disconnected because your "
         "credit balance stayed exhausted through the grace period.\n"
-        "Workflows using it will fail until the instance limits are adjusted and reconnect it."
+        "Workflows using it will fail until the balance is restored and it is reconnected."
     )
     return await send_system_alert(
         billing_user_id, "credits",
@@ -739,7 +745,7 @@ async def send_recurring_disconnected_alert(
         eyebrow="Billing alert",
         blocks_html=blocks,
         text_body=text_body,
-        preheader=f"{credential_name} was disconnected — reconfigure the instance to reconnect",
+        preheader=f"{credential_name} was disconnected — restore your balance to reconnect",
         cta_text=cta_text,
         cta_url=cta_url,
         dedupe_key=f"recurring_disconnected:{credential_id}",
@@ -905,13 +911,13 @@ async def send_channel_disconnected_alert(
 
 
 def low_balance_state(
-    base: float, plan_used: float, supplemental_quota: float, supplemental_used: float
+    base: float, plan_used: float, topup_quota: float, topup_used: float
 ) -> tuple:
     """Pure: (crossed_threshold, used_fraction) over the combined monthly pool."""
-    pool_total = float(base) + float(supplemental_quota)
+    pool_total = float(base) + float(topup_quota)
     if pool_total <= 0:
         return False, 0.0
-    used = min(pool_total, float(plan_used) + float(supplemental_used))
+    used = min(pool_total, float(plan_used) + float(topup_used))
     fraction = used / pool_total
     return fraction >= LOW_BALANCE_FRACTION, fraction
 
@@ -982,11 +988,16 @@ async def send_low_balance_alert(
 async def send_weekly_digests(pool) -> int:
     """One digest per user with any workflow runs in the last 7 days. Called
     from the scheduled worker (scheduled_jobs) with its own pool. Returns sends."""
+    from billing.markup import CREDITS_PER_DOLLAR
+    from repositories.run_visibility import USER_VISIBLE_RUN_SQL
+
+    # Delivery runs (an agent handing its turn to a sandbox) are hidden plumbing:
+    # the response run is the one the user counts as "a run".
     users = await pool.fetch(
-        """SELECT user_id, COUNT(*) AS runs,
+        f"""SELECT user_id, COUNT(*) AS runs,
                   COUNT(*) FILTER (WHERE status = 'error') AS failures
              FROM workflow_executions
-            WHERE started_at >= now() - interval '7 days'
+            WHERE started_at >= now() - interval '7 days' AND {USER_VISIBLE_RUN_SQL}
             GROUP BY user_id"""
     )
     sent = 0
@@ -994,12 +1005,13 @@ async def send_weekly_digests(pool) -> int:
         user_id = str(u["user_id"])
         try:
             per_wf = await pool.fetch(
-                """SELECT e.workflow_id, COALESCE(w.name, 'Untitled workflow') AS name,
+                f"""SELECT e.workflow_id, COALESCE(w.name, 'Untitled workflow') AS name,
                           COUNT(*) AS runs,
                           COUNT(*) FILTER (WHERE e.status = 'error') AS failures
                      FROM workflow_executions e
                      LEFT JOIN workflows w ON w.id = e.workflow_id
                     WHERE e.user_id = $1 AND e.started_at >= now() - interval '7 days'
+                      AND e.{USER_VISIBLE_RUN_SQL}
                     GROUP BY e.workflow_id, w.name
                     ORDER BY COUNT(*) DESC
                     LIMIT 5""",
@@ -1011,14 +1023,14 @@ async def send_weekly_digests(pool) -> int:
                       AND created_at >= now() - interval '7 days'""",
                 u["user_id"],
             )
-            credits_used = float(spent or 0)
+            credits_used = float(spent or 0) * float(CREDITS_PER_DOLLAR)
 
             # Credit spend per workflow — attribution comes from the
             # metadata.workflow_id stamp (usage_tracker.CURRENT_WORKFLOW_ID);
             # chat/builder and pre-stamp events fold into one unattributed row.
             spend_rows = await pool.fetch(
                 """SELECT COALESCE(w.name, 'Chat, builder & other') AS name,
-                          SUM(e.total_cost) AS recorded_usage
+                          SUM(e.total_cost) AS dollars
                      FROM user_usage_events e
                      LEFT JOIN workflows w ON w.id::text = e.metadata->>'workflow_id'
                     WHERE e.user_id = $1 AND e.user_resource = false
@@ -1030,9 +1042,10 @@ async def send_weekly_digests(pool) -> int:
             )
 
             day_rows = await pool.fetch(
-                """SELECT date_trunc('day', started_at) AS d, COUNT(*) AS runs
+                f"""SELECT date_trunc('day', started_at) AS d, COUNT(*) AS runs
                      FROM workflow_executions
                     WHERE user_id = $1 AND started_at >= now() - interval '7 days'
+                      AND {USER_VISIBLE_RUN_SQL}
                     GROUP BY 1""",
                 u["user_id"],
             )
@@ -1061,7 +1074,7 @@ async def send_weekly_digests(pool) -> int:
                 ])
             )
             credit_rows = [
-                (html_lib.escape(r["name"]), float(r["recorded_usage"] or 0))
+                (html_lib.escape(r["name"]), float(r["dollars"] or 0) * float(CREDITS_PER_DOLLAR))
                 for r in spend_rows
             ]
             credit_rows = [r for r in credit_rows if r[1] >= 0.05]

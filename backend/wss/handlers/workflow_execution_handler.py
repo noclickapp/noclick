@@ -20,7 +20,7 @@ from typing import Callable, Dict, List, Any, Union, Tuple, Optional, Set
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from utils.async_helpers import spawn
-from utils.debug_routes import _get_rss_mb
+from utils.process_stats import get_rss_mb
 from utils.database_pool import DatabasePoolMixin
 from utils.credentials import (
     extract_credential_ids,
@@ -2526,7 +2526,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 )
 
                 try:
-                    rss_before = _get_rss_mb()
+                    rss_before = get_rss_mb()
                     threads_before = threading.active_count()
                     node_label = node.get('label', node_type)
 
@@ -2585,7 +2585,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     if _always_output_data and not output:
                         output = {}
 
-                    rss_after = _get_rss_mb()
+                    rss_after = get_rss_mb()
 
                     # Reclaim fragmented glibc arena pages when RSS is high
                     if rss_after > 3000:
@@ -2595,7 +2595,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                             ctypes.CDLL("libc.so.6").malloc_trim(0)
                         except (OSError, AttributeError):
                             pass
-                        rss_after = _get_rss_mb()
+                        rss_after = get_rss_mb()
 
                     threads_after = threading.active_count()
                     rss_delta = rss_after - rss_before

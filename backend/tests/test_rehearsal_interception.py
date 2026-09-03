@@ -3,8 +3,12 @@
 The promise of scripted rehearsal is not "we try not to send things" — it is
 that `run_node_operation` is never reached, so no credential is resolved and no
 provider request is made. Safety is structural rather than a policy someone can
-forget to apply, and these tests make that claim checkable. SDK and local CLI
-turns both reach tools through `execute_tool`.
+forget to apply, and these tests are what makes that claim checkable.
+
+Two mirrors, because the runtimes reach tools by different routes: the
+in-process SDK agent through `execute_tool`, and MCP-served harness tools
+through `run_node_op_tool`. Gating one and not the other would leave the
+harnesses executing for real.
 """
 
 from __future__ import annotations
@@ -66,14 +70,14 @@ def _rehearsing(monkeypatch, yes=True, result=None):
         return yes
 
     async def _mock(**kw):
-        return result if result is not None else {"ok": True, "ts": "1700000000.000001"}
+        return result if result is not None else {"ok": True, "ts": "1786.0001"}
 
     monkeypatch.setattr("nodes.agent.rehearsal.is_rehearsing", _is)
     monkeypatch.setattr("nodes.agent.tool_execution.is_rehearsing", _is)
     monkeypatch.setattr("nodes.agent.rehearsal.mock_tool_call", _mock)
 
 
-# ------------------------------------------------- shared tool choke point
+# ------------------------------------------------- mirror 1: in-process
 
 
 @pytest.mark.asyncio
@@ -86,7 +90,7 @@ async def test_in_process_rehearsal_never_reaches_the_provider(
     result = await execute_tool(
         FakeNode(), "slack__send_message_to_channel", {"channel": "#sales"}, NODE_OP_TOOL
     )
-    assert result == {"ok": True, "ts": "1700000000.000001"}
+    assert result == {"ok": True, "ts": "1786.0001"}
     assert not tripwire, "the real provider path must not be entered at all"
 
 
@@ -169,16 +173,21 @@ async def test_a_failed_simulation_surfaces_as_a_tool_error(monkeypatch, no_audi
     assert not tripwire
 
 
+# --------------------------------------------- mirror 2: cross-container
+
+
+
+
 def test_graph_nodes_cannot_act_on_real_accounts_in_a_rehearsal():
     """The tool gates cover the AGENT'S calls; graph nodes are a separate
     execution path. A send node wired after the agent — or, before start_node
     semantics, any disconnected credentialed node on the canvas — executed for
-    real during a test. Two guards cover this: the concurrent runner skips visibly,
+    real during a test. Two mirrors again: the concurrent runner skips visibly,
     and _execute_node raises for callers that bypass the runner (iteration
     bodies)."""
     text = (BACKEND / "wss/handlers/workflow_execution_handler.py").read_text()
     assert text.count("rehearsal_excluded_node_types") >= 2, (
-        "the runner skip and _execute_node must BOTH gate on "
+        "the runner skip and the _execute_node mirror must BOTH gate on "
         "rehearsal_excluded_node_types — one alone leaves a path (iteration "
         "bodies, or a runner refactor) that executes for real"
     )

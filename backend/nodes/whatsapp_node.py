@@ -2004,7 +2004,7 @@ class WhatsAppNode(WorkflowNode):
                 return
             # Find the WAHooks webhook that points to our webhook URL and delete it
             from wahooks import WAHooks
-            from utils.webhook_tunnel import get_webhook_url
+            from utils.webhook_delivery import get_webhook_url
 
             our_url = get_webhook_url(webhook_id)
 

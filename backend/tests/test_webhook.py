@@ -24,6 +24,7 @@ from pydantic import BaseModel
 
 from tests.utils.base_handler_test import BaseHandlerTest
 from tests.mocks.mock_asyncpg import configure_mock_query_responses, clear_executed_queries, get_executed_queries
+from utils import webhook_delivery
 
 
 # ============================================================================
@@ -65,28 +66,58 @@ def mock_broadcast():
         yield broadcast_calls
 
 
+class _FakeRelay:
+    """A registered relay client — a developer's backend, in delivery terms."""
+
+    def __init__(self, register_ok=True):
+        self.register_ok = register_ok
+        self.registered = []
+        self.unregistered = []
+
+    def is_connected(self):
+        return True
+
+    def session_id(self):
+        return "session-1"
+
+    async def register(self, webhook_id, user_id=None):
+        self.registered.append(webhook_id)
+        return self.register_ok
+
+    async def unregister(self, webhook_id):
+        self.unregistered.append(webhook_id)
+        return True
+
+    async def register_user(self, user_id):
+        return 0
+
+    async def unregister_user(self, user_id):
+        return 0
+
+    async def reconnect(self):
+        return True
+
+
 @pytest.fixture
-def mock_webhook_tunnel():
-    """Mock webhook_tunnel functions for local development testing."""
-    # Create AsyncMock for register_webhook since it's called with await
-    mock_register = AsyncMock(return_value=True)
-    mock_unregister = AsyncMock(return_value=True)
-
-    with patch('utils.webhook_tunnel.is_relay_connected', return_value=True) as mock_connected:
-        with patch('utils.webhook_tunnel.register_webhook', mock_register):
-            with patch('utils.webhook_tunnel.unregister_webhook', mock_unregister):
-                with patch('utils.webhook_tunnel.get_webhook_url') as mock_url:
-                    mock_url.side_effect = lambda wh_id: f"https://{wh_id}.hooks.example.test"
-                    yield {
-                        'is_connected': mock_connected,
-                        'register': mock_register,
-                        'unregister': mock_unregister,
-                        'get_url': mock_url,
-                    }
+def webhook_domain(monkeypatch):
+    """Mint wildcard-subdomain URLs on a test domain."""
+    for name in ("PUBLIC_WEBHOOK_URL", "WEBHOOK_URL_BASE", "PUBLIC_API_URL", "WEBHOOK_DOMAIN"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setattr(webhook_delivery, "_wildcard_domain", "hooks.example.test")
 
 
+@pytest.fixture
+def relay(monkeypatch, webhook_domain):
+    """Local development: deliveries come through a registered relay client."""
+    fake = _FakeRelay()
+    monkeypatch.setattr(webhook_delivery, "_relay", fake)
+    return fake
 
 
+@pytest.fixture
+def direct_delivery(monkeypatch, webhook_domain):
+    """Production or self-hosted: deliveries reach this backend directly."""
+    monkeypatch.setattr(webhook_delivery, "_relay", None)
 
 
 # ============================================================================
@@ -135,7 +166,7 @@ def _deregister_pool(owner_id, webhook_rows):
 class TestWebhookManager:
     """Test WebhookManager utility class."""
 
-    async def test_get_or_create_webhook_creates_new(self, mock_webhook_tunnel):
+    async def test_get_or_create_webhook_creates_new(self, relay):
         """A missing row is INSERTed; the fresh row reports empty registration
         state (nothing registered provider-side, no secret)."""
         from utils.webhook_manager import WebhookManager
@@ -161,7 +192,7 @@ class TestWebhookManager:
         assert result['webhook_id'] == webhook_id
         assert result['webhook_url'] == f"https://{webhook_id}.hooks.example.test"
         assert result['relay_connected'] is True
-        assert result['is_production'] is True
+        assert result['is_production'] is False
         # A fresh row carries empty registration state
         assert result['is_active'] is True
         assert result['secret_set'] is False
@@ -171,7 +202,9 @@ class TestWebhookManager:
         # The old `reactivated` key is gone
         assert 'reactivated' not in result
 
-    async def test_get_or_create_webhook_returns_existing(self, mock_webhook_tunnel):
+        assert relay.registered == [webhook_id]
+
+    async def test_get_or_create_webhook_returns_existing(self, relay):
         """An existing ACTIVE row is returned with its registration state
         passed through, and no auto-activation UPDATE is issued."""
         from utils.webhook_manager import WebhookManager
@@ -208,9 +241,7 @@ class TestWebhookManager:
         # Active row → nothing to auto-activate
         conn.execute.assert_not_called()
 
-    async def test_get_or_create_webhook_reactivates_simple_inactive_row(
-        self, mock_webhook_tunnel
-    ):
+    async def test_get_or_create_webhook_reactivates_simple_inactive_row(self, relay):
         """An inactive row WITHOUT the registered_operation marker (plain
         webhook/cron/alarm — nothing registered provider-side) re-activates on
         touch: deactivation only meant "node was deleted"."""
@@ -234,9 +265,7 @@ class TestWebhookManager:
         activate_sql = conn.execute.await_args.args[0]
         assert "is_active = true" in activate_sql
 
-    async def test_get_or_create_webhook_marked_row_stays_inactive(
-        self, mock_webhook_tunnel
-    ):
+    async def test_get_or_create_webhook_marked_row_stays_inactive(self, relay):
         """An inactive row CARRYING the registered_operation marker stays
         inactive: only a successful re-registration
         (persist_registration_state) may activate it, so a torn-down trigger
@@ -260,9 +289,53 @@ class TestWebhookManager:
         assert result['registered_operation'] == "on_new_row"
         conn.execute.assert_not_called()
 
+    async def test_get_or_create_webhook_production_mode(self, direct_delivery):
+        """Test webhook creation in production (relay_connected always True)."""
+        from utils.webhook_manager import WebhookManager
 
+        user_id = str(uuid.uuid4())
+        workflow_id = uuid.uuid4()
+        node_id = "webhook-node-1"
+        webhook_id = str(uuid.uuid4())
 
-    async def test_delete_webhook_success(self, mock_webhook_tunnel):
+        pool, conn = _mock_pool()
+        conn.fetchrow = AsyncMock(return_value=_webhook_row(webhook_id))
+
+        result = await WebhookManager.get_or_create_webhook(
+            pool=pool,
+            user_id=user_id,
+            workflow_id=workflow_id,
+            node_id=node_id,
+        )
+
+        assert result['is_production'] is True
+        assert result['relay_connected'] is True
+
+    async def test_get_or_create_webhook_registration_fails(self, relay):
+        """Test relay_connected is False when registration fails."""
+        from utils.webhook_manager import WebhookManager
+
+        user_id = str(uuid.uuid4())
+        workflow_id = uuid.uuid4()
+        node_id = "webhook-node-1"
+        webhook_id = str(uuid.uuid4())
+
+        pool, conn = _mock_pool()
+        conn.fetchrow = AsyncMock(return_value=_webhook_row(webhook_id))
+        relay.register_ok = False
+
+        result = await WebhookManager.get_or_create_webhook(
+            pool=pool,
+            user_id=user_id,
+            workflow_id=workflow_id,
+            node_id=node_id,
+        )
+
+        # relay_connected should be False because registration failed
+        assert result['relay_connected'] is False
+        assert result['is_production'] is False
+
+    async def test_delete_webhook_success(self, relay):
         """Test successful webhook deletion."""
         from utils.webhook_manager import WebhookManager
 
@@ -285,9 +358,9 @@ class TestWebhookManager:
         )
 
         assert result is True
-        mock_webhook_tunnel['unregister'].assert_called_once_with(webhook_id)
+        assert relay.unregistered == [webhook_id]
 
-    async def test_delete_webhook_not_found(self, mock_webhook_tunnel):
+    async def test_delete_webhook_not_found(self, relay):
         """Test deleting a webhook that doesn't exist."""
         from utils.webhook_manager import WebhookManager
 
@@ -308,7 +381,7 @@ class TestWebhookManager:
         )
 
         assert result is False
-        mock_webhook_tunnel['unregister'].assert_not_called()
+        assert relay.unregistered == []
 
     def test_schema_requires_webhook_with_marker(self):
         """Test schema_requires_webhook with x-requires-webhook marker."""
@@ -506,7 +579,7 @@ class TestHandleOperationChange:
 
 # ============================================================================
 # handle_credential_change Tests — credential-swap leak (verified 2026-06-25
-# against a WhatsApp integration): swapping a credential on a trigger node
+# against a WhatsApp/WAHooks user): swapping a credential on a trigger node
 # left an active provider-side webhook on the OLD connection. When both
 # connections naturally saw the same event (a WhatsApp group message both
 # of the user's phones were in), every event produced a duplicate run.
