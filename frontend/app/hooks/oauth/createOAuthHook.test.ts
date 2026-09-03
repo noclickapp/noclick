@@ -62,6 +62,16 @@ describe('createOAuthHook contract', () => {
         }
     });
 
+    it('org consent rides the same authorize URL as admin_consent=1, off by default (Microsoft)', () => {
+        const c = cfg(useMicrosoftOAuth);
+        const plain = new URL(buildAuthorizeUrl(c, 'x'), 'http://x');
+        expect(plain.searchParams.has('admin_consent')).toBe(false);
+        const org = new URL(buildAuthorizeUrl(c, 'x', undefined, { orgConsent: true }), 'http://x');
+        expect(org.pathname).toBe('/api/auth/microsoft/authorize');
+        expect(org.searchParams.get('admin_consent')).toBe('1');
+        expect(org.searchParams.get('scopes')).toBe(plain.searchParams.get('scopes'));
+    });
+
     it('caller scopes override defaults, joined verbatim (no mutation)', () => {
         const url = buildAuthorizeUrl({ provider: 'linear', defaultScopes: ['read'] }, 'x', ['read', 'write']);
         expect(scopesOf(url)).toBe('read,write');

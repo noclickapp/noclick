@@ -13,7 +13,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { SecretInput } from '~/components/workflow/SecretInput';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { OAuthErrorPanel } from '~/components/workflow/OAuthErrorPanel';
-import { getOAuthConnectInput } from '~/utils/oauthProviders';
+import { getOAuthConnectInput, providerSupportsOrgConsent } from '~/utils/oauthProviders';
 import { getSchemaTitleFromCredentialType } from '~/utils/credentialTypes';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import type { OAuthSelectionOption } from '~/hooks/useOAuthConnect';
@@ -31,6 +31,9 @@ export type OAuthConnectFn = (
     userScopes?: string[],
     customClientCredentials?: { client_id: string; client_secret: string }
 ) => void;
+
+/** Tenant-wide admin consent (providers with `supportsOrgConsent`) — see useOAuthConnect. */
+export type OAuthOrgConsentFn = (provider: string, name: string, scopes?: string[]) => void;
 
 export interface OAuthConnectFormProps {
     provider: string;
@@ -51,6 +54,8 @@ export interface OAuthConnectFormProps {
     hasExistingCredential?: boolean;
     // --- injected engine (shared between surfaces) ---
     connect: OAuthConnectFn;
+    /** Offered only when the provider supports org-wide consent; omitted = no offer. */
+    connectOrgConsent?: OAuthOrgConsentFn;
     connectingProvider: string | null;
     isConnecting: boolean;
     error?: string | null;
@@ -118,6 +123,7 @@ export function OAuthConnectForm({
     redirectUri,
     hasExistingCredential,
     connect,
+    connectOrgConsent,
     connectingProvider,
     isConnecting,
     error,
@@ -160,20 +166,24 @@ export function OAuthConnectForm({
     const byooMissing =
         !!requiresCustomClient && (!clientId.trim() || !clientSecret.trim());
 
-    // Shared trigger so the Connect button and the error panel's Reconnect fire the exact
-    // same flow. No-op when a gate (plan limit) or a required input isn't satisfied.
-    const triggerConnect = () => {
-        if (canConnect && !canConnect()) return;
-        // Name the credential after its SPECIFIC type, not the provider label.
-        // One provider can back many credential types (Microsoft → Word/Excel/
-        // OneDrive/…), and the backend derives the DB credential_type from this
-        // name. Naming everything "Microsoft - date" made every Microsoft node
-        // collapse onto one type and trip the per-type credential limit.
+    // Name the credential after its SPECIFIC type, not the provider label.
+    // One provider can back many credential types (Microsoft → Word/Excel/
+    // OneDrive/…), and the backend derives the DB credential_type from this
+    // name. Naming everything "Microsoft - date" made every Microsoft node
+    // collapse onto one type and trip the per-type credential limit.
+    const newCredentialName = () => {
         const schemaTitle = getSchemaTitleFromCredentialType(credentialType);
         const credentialLabel = schemaTitle
             ? humanizeCredentialLabel(schemaTitle.replace('Credential', ''))
             : displayName;
-        const name = `${credentialLabel} - ${new Date().toLocaleDateString()}`;
+        return `${credentialLabel} - ${new Date().toLocaleDateString()}`;
+    };
+
+    // Shared trigger so the Connect button and the error panel's Reconnect fire the exact
+    // same flow. No-op when a gate (plan limit) or a required input isn't satisfied.
+    const triggerConnect = () => {
+        if (canConnect && !canConnect()) return;
+        const name = newCredentialName();
         let shopArg: string | undefined;
         let siteArg: string | undefined;
         if (connectInput) {
@@ -203,6 +213,15 @@ export function OAuthConnectForm({
             userScopes && userScopes.length ? userScopes : undefined,
             customClient
         );
+    };
+
+    // Org-wide consent chains into a normal sign-in that mints a credential, so it
+    // rides the same gate as Connect.
+    const offersOrgConsent = !!connectOrgConsent && providerSupportsOrgConsent(provider);
+    const triggerOrgConsent = () => {
+        if (!connectOrgConsent) return;
+        if (canConnect && !canConnect()) return;
+        connectOrgConsent(provider, newCredentialName(), scopes);
     };
 
     // Self-hosted with no OAuth app for this provider: Connect would open a
@@ -440,6 +459,24 @@ export function OAuthConnectForm({
                     </>
                 )}
             </button>
+
+            {/* Tenant-wide admin consent: the way past Microsoft's "Need admin approval"
+                wall. One admin approves NoClick for the whole directory, then the same
+                popup continues into their own sign-in. */}
+            {offersOrgConsent && !isThisProviderConnecting && (
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Work or school account stuck on &ldquo;Need admin approval&rdquo;? An admin can{' '}
+                    <button
+                        type="button"
+                        onClick={triggerOrgConsent}
+                        disabled={isConnecting}
+                        className="underline underline-offset-2 hover:text-foreground/80 disabled:cursor-not-allowed transition-colors"
+                    >
+                        approve NoClick for your organization
+                    </button>{' '}
+                    once; after that everyone there can connect.
+                </p>
+            )}
 
             {/* Manual cancel — covers popup-close auto-detection misses (COOP blocks popup.closed). */}
             {isThisProviderConnecting && onCancel && (

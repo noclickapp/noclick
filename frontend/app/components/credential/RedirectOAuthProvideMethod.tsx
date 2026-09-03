@@ -37,7 +37,7 @@ function ConnectForm({
     redirectUri, serviceName, ServiceIcon, onProvided,
 }: Omit<RedirectOAuthProvideMethodProps, 'apiBase' | 'token'>) {
     const {
-        connect, isConnecting, connectingProvider, error, planLimitError,
+        connect, connectOrgConsent, isConnecting, connectingProvider, error, planLimitError,
         clearError, pendingSelection, resolvePendingSelection, cancelConnect,
     } = useOAuthConnect({ onCredentialCreated: () => onProvided() });
 
@@ -53,6 +53,7 @@ function ConnectForm({
             requiresCustomClient={requiresCustomClient}
             redirectUri={redirectUri}
             connect={connect}
+            connectOrgConsent={connectOrgConsent}
             connectingProvider={connectingProvider}
             isConnecting={isConnecting}
             error={error || planLimitError}

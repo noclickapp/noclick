@@ -3,13 +3,17 @@
 // Works with Microsoft Graph API (Outlook, OneDrive, etc.) - just pass different scopes.
 
 import { oauthRedirect } from '~/lib/oauthFlow.server';
-import { redirect, type LoaderFunctionArgs } from 'react-router';
+import { type LoaderFunctionArgs } from 'react-router';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
 
 // Microsoft OAuth endpoints (using common tenant for multi-tenant apps)
 const MICROSOFT_AUTH_URL =
     'https://login.microsoftonline.com/common/oauth2/v2.0/authorize';
+// Tenant-wide grant. `organizations`, never `common`: personal accounts have no
+// directory to consent for, and Microsoft rejects admin consent through common.
+const MICROSOFT_ADMIN_CONSENT_URL =
+    'https://login.microsoftonline.com/organizations/v2.0/adminconsent';
 
 export async function loader({ request }: LoaderFunctionArgs) {
     // Self-hosted: an OAuth app saved in Settings shows up as env vars here.
@@ -19,6 +23,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const scopes =
         url.searchParams.get('scopes') ||
         'https://graph.microsoft.com/Mail.Read,https://graph.microsoft.com/Mail.Send';
+    const orgConsent = url.searchParams.get('admin_consent') === '1';
 
     const clientId = process.env.MICROSOFT_CLIENT_ID;
     const redirectUri = process.env.MICROSOFT_REDIRECT_URI;
@@ -40,6 +45,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         JSON.stringify({
             credentialName,
             scopes: scopes.split(','),
+            adminConsent: orgConsent,
             nonce: crypto.randomUUID(), // CSRF protection
             timestamp: Date.now(),
         })
@@ -57,6 +63,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
         ]),
     ];
     const spaceSeparatedScopes = allScopes.join(' ');
+
+    if (orgConsent) {
+        // An admin approves these permissions for every user in the directory.
+        // Microsoft returns no code from this endpoint — the callback chains a
+        // granted consent into the normal sign-in so the admin ends up connected too.
+        const params = new URLSearchParams({
+            client_id: clientId,
+            redirect_uri: redirectUri,
+            scope: spaceSeparatedScopes,
+            state,
+        });
+        return oauthRedirect(
+            request,
+            `${MICROSOFT_ADMIN_CONSENT_URL}?${params.toString()}`
+        );
+    }
 
     const params = new URLSearchParams({
         client_id: clientId,

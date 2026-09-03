@@ -105,6 +105,13 @@ export interface OAuthProviderConfig {
      * connect hooks and the credential-request link, so the two can't drift.
      */
     extraScopes?: string[];
+    /**
+     * The provider has a tenant-wide admin-consent grant (Microsoft Entra). The connect
+     * form then offers "approve for your organization": one admin consents once and every
+     * user in that directory connects without the "Need admin approval" wall. Served by the
+     * provider's authorize route via `?admin_consent=1`.
+     */
+    supportsOrgConsent?: boolean;
 }
 
 // eslint-disable-next-line react/prop-types
@@ -487,6 +494,7 @@ export const OAUTH_PROVIDER_CONFIG: Record<string, OAuthProviderConfig> = {
             'https://graph.microsoft.com/User.Read',
             'offline_access',
         ],
+        supportsOrgConsent: true,
     },
     discord: {
         name: 'Discord',
@@ -1178,6 +1186,13 @@ export function oauthNeedsInAppSelection(
     provider: string | undefined
 ): boolean {
     return getProviderConfig(provider)?.oauthNeedsInAppSelection === true;
+}
+
+/** Whether a provider offers a tenant-wide admin-consent grant (`supportsOrgConsent`). */
+export function providerSupportsOrgConsent(
+    provider: string | undefined
+): boolean {
+    return getProviderConfig(provider)?.supportsOrgConsent === true;
 }
 
 /**

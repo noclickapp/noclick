@@ -10,6 +10,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 import { isPlanLimitError } from '~/lib/planLimitErrors';
+import { providerSupportsOrgConsent } from '~/utils/oauthProviders';
 import {
     useGoogleOAuth, useAirtableOAuth, useStripeOAuth, useGithubOAuth, useGitLabOAuth,
     useSalesforceOAuth, useLinearOAuth, useCalComOAuth, useBoxOAuth, useAsanaOAuth,
@@ -327,6 +328,24 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         }
     }, [oauthHookMap, onError]);
 
+    // Tenant-wide admin consent (Microsoft's "Need admin approval" wall): the same popup
+    // engine, provider-gated. Only factory hooks take the options arg, and only they carry
+    // `supportsOrgConsent`, so the gate is what keeps a bespoke hook from silently ignoring it.
+    const connectOrgConsent = useCallback((provider: string, name: string, scopes?: string[]) => {
+        const hook = oauthHookMap[provider];
+        if (!hook || !providerSupportsOrgConsent(provider)) {
+            const errorMsg = `${provider} does not offer organization-wide consent`;
+            setError(errorMsg);
+            onError?.(errorMsg);
+            return;
+        }
+        setError(null);
+        setPlanLimitError(null);
+        setConnectingProvider(provider);
+        setPendingSelection(null);
+        hook.connect(name, scopes || [], { orgConsent: true });
+    }, [oauthHookMap, onError]);
+
     const isConnecting = connectingProvider !== null;
 
     // Auto-clear a stale connectingProvider when the active hook stops connecting
@@ -361,6 +380,7 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
 
     return {
         connect,
+        connectOrgConsent,
         isConnecting,
         connectingProvider,
         error,

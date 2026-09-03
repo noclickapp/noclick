@@ -4,7 +4,7 @@
 // Passes the authorization code back to the opener window via postMessage.
 
 import { oauthCallbackUrl } from '~/lib/oauthFlow.server';
-import { type LoaderFunctionArgs } from 'react-router';
+import { redirect, type LoaderFunctionArgs } from 'react-router';
 import { useLoaderData } from 'react-router';
 import { useEffect, useState } from 'react';
 
@@ -17,6 +17,13 @@ interface LoaderData {
     error?: string;
 }
 
+// The user-flow errors Entra sends when the tenant's consent policy needs an admin
+// (90094 "The grant requires admin permission", 65001 "has not consented"). A user
+// declining (65004) is not one of them.
+const ADMIN_CONSENT_REQUIRED_RE = /AADSTS(90094|65001)\b/;
+const ADMIN_CONSENT_REQUIRED_MESSAGE =
+    'Your organization requires an admin to approve NoClick before you can connect. Ask an admin to use "approve NoClick for your organization" under the Connect button.';
+
 export async function loader({
     request,
 }: LoaderFunctionArgs): Promise<LoaderData> {
@@ -25,20 +32,32 @@ export async function loader({
     const stateB64 = url.searchParams.get('state');
     const error = url.searchParams.get('error');
     const errorDescription = url.searchParams.get('error_description');
+    // Microsoft stamps admin_consent=True on both outcomes of the admin-consent flow.
+    const isAdminConsent = /^true$/i.test(
+        url.searchParams.get('admin_consent') || ''
+    );
 
     if (error) {
         console.error(
             '[microsoft.callback] OAuth error:',
             error,
-            errorDescription
+            errorDescription,
+            isAdminConsent ? '(admin consent)' : ''
         );
-        return {
-            success: false,
-            error: errorDescription || `Microsoft OAuth error: ${error}`,
-        };
+        const detail = errorDescription || `Microsoft OAuth error: ${error}`;
+        if (isAdminConsent) {
+            return {
+                success: false,
+                error: `Admin approval was not granted: ${detail}`,
+            };
+        }
+        if (ADMIN_CONSENT_REQUIRED_RE.test(errorDescription || '')) {
+            return { success: false, error: ADMIN_CONSENT_REQUIRED_MESSAGE };
+        }
+        return { success: false, error: detail };
     }
 
-    if (!code || !stateB64) {
+    if (!stateB64 || (!code && !isAdminConsent)) {
         console.error('[microsoft.callback] Missing code or state');
         return {
             success: false,
@@ -47,17 +66,11 @@ export async function loader({
     }
 
     // Decode state
+    let state: { credentialName?: string; scopes?: string[] };
     try {
-        const stateJson = Buffer.from(stateB64, 'base64url').toString('utf-8');
-        const state = JSON.parse(stateJson);
-
-        return {
-            success: true,
-            code,
-            redirectUri: process.env.MICROSOFT_REDIRECT_URI,
-            credentialName: state.credentialName,
-            scopes: state.scopes,
-        };
+        state = JSON.parse(
+            Buffer.from(stateB64, 'base64url').toString('utf-8')
+        );
     } catch (e) {
         console.error('[microsoft.callback] Failed to decode state:', e);
         return {
@@ -65,6 +78,26 @@ export async function loader({
             error: 'Invalid state parameter',
         };
     }
+
+    if (isAdminConsent) {
+        // Admin consent returns no code: continue into the normal sign-in with the
+        // same credential name + scopes so the admin's own credential is minted.
+        const next = new URLSearchParams({
+            name: state.credentialName || '',
+            scopes: (state.scopes || []).join(','),
+        });
+        throw redirect(`/api/auth/microsoft/authorize?${next.toString()}`, {
+            headers: { 'Cache-Control': 'no-store' },
+        });
+    }
+
+    return {
+        success: true,
+        code: code as string,
+        redirectUri: process.env.MICROSOFT_REDIRECT_URI,
+        credentialName: state.credentialName,
+        scopes: state.scopes,
+    };
 }
 
 export default function MicrosoftOAuthCallback() {
