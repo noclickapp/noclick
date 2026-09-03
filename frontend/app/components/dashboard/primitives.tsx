@@ -11,7 +11,8 @@ import { getCredentialIcon } from '~/utils/credentialIcons';
 import { formatCredentialTypeLabel } from '~/utils/credentialTypes';
 import type { AgentTurn, AttentionItem, AttentionKind, CredentialEntry, DayBucket, FileEntry, FileSource, NotificationEntry, RunRow, WorkflowRef } from './types';
 
-export const SURFACE = 'rounded-xl border border-border bg-card dark:border-foreground/[0.08] dark:bg-foreground/[0.02]';
+export const SURFACE =
+    'rounded-xl border border-border bg-card [--surface:hsl(var(--card))] dark:border-foreground/[0.08] dark:bg-foreground/[0.02] dark:[--surface:color-mix(in_srgb,hsl(var(--foreground))_2%,hsl(var(--background)))]';
 
 /** Props that make a clickable row a real control: role, tab stop, Enter/Space. */
 export function clickableRow(onActivate?: () => void) {

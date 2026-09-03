@@ -109,7 +109,7 @@ const RAISED_SHADOW = 'inset 0 1px 0 0 hsl(var(--foreground) / 0.05), 0 10px 30p
 
 function surfaceProps(surface: BentoConfig['surface']): { className: string; style?: CSSProperties } {
     return surface === 'raised'
-        ? { className: 'rounded-xl border border-border bg-card', style: { boxShadow: RAISED_SHADOW } }
+        ? { className: 'rounded-xl border border-border bg-card [--surface:hsl(var(--card))]', style: { boxShadow: RAISED_SHADOW } }
         : { className: SURFACE };
 }
 

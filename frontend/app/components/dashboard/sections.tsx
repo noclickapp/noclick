@@ -1737,7 +1737,7 @@ export function CredentialsCompact({ data, onFocus, style = 'tiles', footer = tr
                                 onClick={() => (isDead ? actions.reconnectCredential({ credentialId: c.id, credentialType: c.credentialType, name: c.name }) : actions.manageCredential(c))}
                                 title={`${c.name} · ${credentialLabel(c.credentialType, c.nodeType)}${isDead ? ` · ${c.healthDetail}` : ''}`}
                                 className={cn(
-                                    'inline-flex h-8 items-center gap-2 rounded-md border bg-card px-2 text-[12px] transition-colors dark:bg-background',
+                                    'inline-flex h-8 items-center gap-2 rounded-md border px-2 text-[12px] transition-colors',
                                     isDead ? 'border-red-500/30 text-foreground hover:bg-red-500/[0.06]' : 'border-border dark:border-foreground/[0.08] text-foreground/70 hover:border-foreground/20 hover:text-foreground'
                                 )}
                             >
@@ -1751,7 +1751,7 @@ export function CredentialsCompact({ data, onFocus, style = 'tiles', footer = tr
                                     aria-label={`Delete ${c.name}`}
                                     title="Delete credential"
                                     onClick={() => actions.deleteCredential?.(c)}
-                                    className="absolute right-[3px] top-1/2 grid h-[24px] w-[26px] -translate-y-1/2 place-items-center rounded bg-card text-foreground/55 opacity-0 shadow-[-10px_0_8px_-4px_hsl(var(--card))] transition-opacity hover:text-red-600 focus-visible:opacity-100 group-hover/cred:opacity-100 dark:bg-background dark:text-foreground/45 dark:shadow-[-10px_0_8px_-4px_hsl(var(--background))] dark:hover:text-red-400"
+                                    className="absolute right-[3px] top-1/2 grid h-[24px] w-[26px] -translate-y-1/2 place-items-center rounded bg-[var(--surface)] text-foreground/55 opacity-0 shadow-[-10px_0_8px_-4px_var(--surface)] transition-opacity hover:text-red-600 focus-visible:opacity-100 group-hover/cred:opacity-100 dark:text-foreground/45 dark:hover:text-red-400"
                                 >
                                     <Trash2 className="h-3.5 w-3.5" />
                                 </button>
