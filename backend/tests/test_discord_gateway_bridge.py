@@ -695,13 +695,17 @@ class TestDiscordRehearsalSituation:
         out = DiscordNode.resolve_trigger_payload(
             situation["scenario"].trigger_payload, {"operation": "on_mention"}
         )
-        assert (out["channel_name"], out["guild_name"]) == ("support", "Northwind Community")
+        payload, lead = situation["scenario"].trigger_payload, situation["lead"]
+        assert out["channel_name"] == payload["channel_name"] and out["guild_name"] == payload["guild_name"]
         event = DiscordNode.resolve_agent_event(out)
         assert event["conversation_key"] == out["channel_id"]
-        assert event["text"].startswith("Discord message from Dana Okafor in #support (Northwind Community):")
+        # The card and the payload tell the same story: names, not ids, and
+        # the bot's own mention gone from the turn.
+        assert event["text"].startswith(
+            f"Discord message from {lead['author']} in {lead['title']} ({payload['guild_name']}):"
+        )
         assert "<@" not in event["text"].split("\n\n")[0]
-        # The card and the payload tell the same story.
-        assert situation["lead"]["body"].split("—", 1)[1].strip() in event["text"]
+        assert lead["body"].split("—", 1)[1].strip() in event["text"]
 
     def test_lead_edits_reach_the_staged_payload(self):
         from nodes.agent.rehearsal_scenarios import STAGED_SITUATIONS, apply_lead_patch

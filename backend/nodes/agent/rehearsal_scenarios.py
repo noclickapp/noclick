@@ -244,6 +244,44 @@ TELEGRAM_DIRECT_LEAD = RehearsalScenario(
 )
 
 
+# Shaped like the Gateway envelope the Discord listener forwards
+# (utils/discord_gateway_bridge.build_gateway_envelope): the node's
+# resolve_trigger_payload reads `d` as the message and the names off the
+# envelope; the bot's own mention is stripped from the agent's turn.
+DISCORD_CHANNEL_QUESTION = RehearsalScenario(
+    scenario=(
+        "Casey Example, a member of the company's Discord server, has posted in "
+        "the #support channel asking whether purchase-order approvals can be "
+        "routed from email into Slack for a team of about twelve, and what it "
+        "costs. She mentioned the bot and has not been answered. The server has "
+        "the usual community channels."
+    ),
+    trigger_node_id="",
+    trigger_payload={
+        "source": "gateway",
+        "t": "MESSAGE_CREATE",
+        "d": {
+            "id": "100000000000000401",
+            "type": 0,
+            "content": "Hey <@100000000000000001> — can you route purchase-order approvals from email into Slack? Team of about 12. What does it cost?",
+            "channel_id": "100000000000000093",
+            "guild_id": "100000000000000090",
+            "timestamp": "2024-01-01T09:14:00+00:00",
+            "author": {"id": "100000000000000210", "username": "caseyexample", "global_name": "Casey Example", "bot": False},
+            "member": {"nick": None},
+            "mentions": [{"id": "100000000000000001", "username": "assistant", "global_name": "Assistant", "bot": True}],
+            "attachments": [],
+            "embeds": [],
+        },
+        "bot_user_id": "100000000000000001",
+        "application_id": "100000000000000001",
+        "guild_name": "Example Community",
+        "channel_name": "support",
+        "received_at": 1700000000.0,
+    },
+)
+
+
 STAGED_SITUATIONS: Dict[str, list] = {
     "automation-gmail": [
         {
@@ -353,6 +391,21 @@ STAGED_SITUATIONS: Dict[str, list] = {
             },
         },
     ],
+    "automation-discord": [
+        {
+            "key": "discord-channel-question",
+            "name": "Channel question",
+            "scenario": DISCORD_CHANNEL_QUESTION,
+            "lead": {
+                "title": "#support",
+                "meta": "Casey Example · 09:14",
+                "author": "Casey Example",
+                "handle": "@caseyexample",
+                "time": "09:14",
+                "body": "@Assistant — can you route purchase-order approvals from email into Slack? Team of about 12. What does it cost?",
+            },
+        },
+    ],
 }
 
 
@@ -451,6 +504,14 @@ def apply_lead_patch(node_type: str, scenario, patch: Dict[str, str]):
         # edits change only the card's rendering, and that is all they can mean.
         if body:
             payload["data"]["event"]["text"] = body
+    elif node_type == "automation-discord":
+        message = payload["d"]
+        if body:
+            message["content"] = body
+        if author:
+            message["author"]["global_name"] = author
+        if handle:
+            message["author"]["username"] = handle.lstrip("@")
     elif node_type == "automation-whatsapp":
         if body:
             payload["payload"]["body"] = body
