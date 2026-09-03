@@ -6,8 +6,13 @@ any handshake, and parse the body into
 ``(tenant_id, event_type, payload, event_channel)`` tuples that the receiver
 fans out to subscribed workflows.
 
-App secrets come from env (the ``backend-secrets`` managed secret): ``SLACK_SIGNING_SECRET``
-and ``HUBSPOT_CLIENT_SECRET``.
+App secrets come from the environment: ``SLACK_SIGNING_SECRET``,
+``HUBSPOT_CLIENT_SECRET`` and ``DISCORD_GATEWAY_RELAY_SECRET``.
+
+Discord has two transports behind one adapter: its HTTP event webhooks and
+interactions (Ed25519-signed by Discord, tenant = application id) and the
+Gateway envelopes NoClick's own listener forwards (HMAC-signed by us, tenant =
+guild id) — see ``utils/discord_gateway_bridge.py``.
 """
 
 import json
@@ -18,8 +23,13 @@ from typing import Any, Dict, List, Optional, Tuple
 from fastapi import Response
 
 from nodes.core.webhook_subscriptions import get_verification_key
+from utils.discord_gateway_bridge import (
+    GATEWAY_SECRET_ENV,
+    GATEWAY_SIGNATURE_HEADER,
+)
 from utils.webhook_signatures import (
     verify_ed25519,
+    verify_hmac_sha256_hex,
     verify_hubspot_v3,
     verify_slack_v0,
 )
@@ -181,10 +191,44 @@ def _hubspot_parse(body: bytes) -> List[ParsedEvent]:
 # ============================================================================
 
 
+def _is_gateway_envelope(data: Any) -> bool:
+    return isinstance(data, dict) and data.get("source") == "gateway"
+
+
+def _gateway_message(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """The MESSAGE_CREATE object inside a Gateway envelope ({} otherwise)."""
+    if not _is_gateway_envelope(payload) or payload.get("t") != "MESSAGE_CREATE":
+        return {}
+    data = payload.get("d")
+    return data if isinstance(data, dict) else {}
+
+
+def _gateway_message_author(payload: Dict[str, Any]) -> Dict[str, Any]:
+    author = _gateway_message(payload).get("author")
+    return author if isinstance(author, dict) else {}
+
+
+def _gateway_message_mentions_bot(message: Dict[str, Any], bot_user_id: Optional[str]) -> bool:
+    if not bot_user_id:
+        return False
+    mentions = message.get("mentions") if isinstance(message.get("mentions"), list) else []
+    return any(isinstance(m, dict) and str(m.get("id")) == str(bot_user_id) for m in mentions)
+
+
 async def _discord_verify(
     pool, body: bytes, headers: Dict[str, str], request_url: str
 ) -> bool:
     del request_url
+    gateway_signature = headers.get(GATEWAY_SIGNATURE_HEADER, "")
+    if gateway_signature:
+        # Our own Gateway listener, not Discord: HMAC over the body with the
+        # shared relay secret. A missing secret is a deployment error, never
+        # an open door.
+        secret = os.environ.get(GATEWAY_SECRET_ENV, "").strip()
+        if not secret:
+            logger.error(f"[app_webhooks] {GATEWAY_SECRET_ENV} is not configured")
+            return False
+        return verify_hmac_sha256_hex(body, secret, gateway_signature, prefix="sha256=")
     signature = headers.get("x-signature-ed25519", "")
     timestamp = headers.get("x-signature-timestamp", "")
     if not signature or not timestamp:
@@ -223,11 +267,30 @@ def _discord_handshake(body: bytes) -> Response | None:
     return None
 
 
+def _discord_parse_gateway(data: Dict[str, Any]) -> List[ParsedEvent]:
+    """A Gateway envelope → fan-out events keyed by GUILD. Every message is a
+    MESSAGE_CREATE; one that mentions the bot is additionally a
+    MESSAGE_MENTION, so mention-only triggers subscribe to their own type
+    instead of filtering the firehose. DMs carry no guild and are not routed."""
+    message = _gateway_message(data)
+    guild_id = message.get("guild_id")
+    if not guild_id:
+        return []
+    channel = message.get("channel_id")
+    channel = channel if isinstance(channel, str) else None
+    events: List[ParsedEvent] = [(str(guild_id), "MESSAGE_CREATE", data, channel)]
+    if _gateway_message_mentions_bot(message, data.get("bot_user_id")):
+        events.append((str(guild_id), "MESSAGE_MENTION", data, channel))
+    return events
+
+
 def _discord_parse(body: bytes) -> List[ParsedEvent]:
     try:
         data = json.loads(body) if body else {}
     except json.JSONDecodeError:
         return []
+    if _is_gateway_envelope(data):
+        return _discord_parse_gateway(data)
     dtype = data.get("type")
     application_id = data.get("application_id")
     if not application_id:
@@ -268,6 +331,48 @@ def _discord_ack(body: bytes) -> Response:
     return Response(status_code=204, media_type="application/json")
 
 
+def _discord_event_id(payload: Dict[str, Any]) -> Optional[str]:
+    """Gateway messages dedup by message id — a RESUME replays the events the
+    dropped connection missed, and the listener retries ambiguous forwards.
+    Interactions dedup by interaction id."""
+    message = _gateway_message(payload)
+    if message:
+        return str(message.get("id")) if message.get("id") else None
+    if payload.get("type") == 2:
+        return str(payload.get("id")) if payload.get("id") else None
+    return None
+
+
+async def _discord_drop_event(payload: Dict[str, Any]) -> Optional[str]:
+    """Never let the bot re-trigger itself: its own messages (checked at the
+    listener too, belt and braces) and interaction follow-ups posted by this
+    application. Foreign bots pass — agents legitimately react to them, and a
+    trigger can opt out of all bots via ``ignore_bots``."""
+    message = _gateway_message(payload)
+    if not message:
+        return None
+    author = _gateway_message_author(payload)
+    bot_user_id = payload.get("bot_user_id")
+    if bot_user_id and str(author.get("id")) == str(bot_user_id):
+        return f"own message {message.get('id')}"
+    application_id = payload.get("application_id")
+    if application_id and str(message.get("application_id")) == str(application_id):
+        return f"own application message {message.get('id')}"
+    return None
+
+
+def _discord_node_filter(config: Dict[str, Any], payload: Dict[str, Any]) -> Optional[str]:
+    """Per-trigger predicate over the LIVE node config. ``ignore_bots`` is on
+    by default: automated channels are exactly where a message trigger floods,
+    and a bot mentioning the bot is rarer than a human doing so."""
+    message = _gateway_message(payload)
+    if not message:
+        return None
+    if str(config.get("ignore_bots", "true")).lower() != "false" and _gateway_message_author(payload).get("bot"):
+        return f"bot-authored message {message.get('id')} ignored (ignore_bots)"
+    return None
+
+
 async def _slack_drop_event(payload: Dict[str, Any]) -> Optional[str]:
     """Fan-out-level drop for messages NoClick itself posted (fingerprint
     match — the only way to identify send_as="user" posts, which carry no
@@ -299,6 +404,10 @@ APP_PROVIDERS = {
         # - fire_budget: per-(node, channel) fire cap (utils/fire_budget.py)
         #   for channel-conversation providers where echo loops close. NOT
         #   for burst-legitimate providers (HubSpot bulk imports).
+        # - channel_config_key: the trigger-config field holding the channel
+        #   scope (default "channel").
+        # - node_filter: pure (config, payload) -> reason-or-None predicate,
+        #   evaluated at fire time against the node's live config.
         "drop_event": _slack_drop_event,
         "event_id": _slack_event_id,
         "fire_budget": True,
@@ -313,5 +422,10 @@ APP_PROVIDERS = {
         "handshake": _discord_handshake,
         "parse": _discord_parse,
         "ack": _discord_ack,
+        "drop_event": _discord_drop_event,
+        "event_id": _discord_event_id,
+        "fire_budget": True,
+        "channel_config_key": "channel_id",
+        "node_filter": _discord_node_filter,
     },
 }

@@ -4,7 +4,7 @@ Webhook HTTP routes for receiving external webhook calls.
 When a webhook is received:
 1. Look up webhook config from database
 2. Trigger workflow execution using WorkflowExecutionHandler with caller_user_id
-3. Execution events are broadcast via workflow relay to connected viewers
+3. Execution events are broadcast via the workflow relay to connected viewers
 
 For form nodes (interface-form; legacy trigger-form-input):
 - GET requests render an HTML form based on the node's field configuration
@@ -101,9 +101,8 @@ def _get_form_node_config(workflow_config: dict, node_id: str) -> Optional[Dict[
 
 def _node_cfg(node: Any) -> Dict[str, Any]:
     """A node's config dict, tolerating malformed shapes. Transient saves have
-    carried a list-shaped config; a delivery
-    path must skip a malformed node loudly, never take down every webhook in
-    the workflow."""
+    carried a list-shaped config; a delivery path must skip a malformed node
+    loudly, never take down every webhook in the workflow."""
     config = node.get("config") if isinstance(node, dict) else None
     if isinstance(config, dict):
         return config
@@ -1840,10 +1839,15 @@ async def _fire_subscription(
     """Load a subscribed workflow, inject the event payload on its trigger node,
     and queue execution. Returns True if a run was queued.
 
-    A trigger node with a ``channel`` configured fires only for events in that
-    channel; the filter is read from the node's live config so changing it takes
-    effect on the next event with no re-registration.
+    A trigger node with a channel configured (the adapter's
+    ``channel_config_key``, ``channel`` by default) fires only for events in
+    that channel, and an adapter ``node_filter`` can veto on any other config
+    predicate; both read the node's LIVE config so an edit takes effect on the
+    next event with no re-registration.
     """
+    from utils.app_webhooks import APP_PROVIDERS
+
+    adapter = APP_PROVIDERS.get(str(sub.get("provider")), {})
     workflow_id = str(sub["workflow_id"])
     node_id = sub["node_id"]
     user_id = str(sub["user_id"])
@@ -1879,8 +1883,9 @@ async def _fire_subscription(
         logger.info(f"[APP-WEBHOOK] Trigger node {node_id} disabled, skipping")
         return False
 
+    trigger_config = _node_cfg(trigger_node)
     configured_channel = _resolve_app_webhook_config_value(
-        (trigger_node.get("config") or {}).get("channel"),
+        trigger_config.get(adapter.get("channel_config_key", "channel")),
         workflow_config,
     )
     if configured_channel and configured_channel != event_channel:
@@ -1890,20 +1895,24 @@ async def _fire_subscription(
         )
         return False
 
+    node_filter = adapter.get("node_filter")
+    skip_reason = node_filter(trigger_config, payload) if node_filter else None
+    if skip_reason:
+        logger.info(f"[APP-WEBHOOK] Trigger node {node_id} skipped: {skip_reason}")
+        return False
+
     # Blast-radius bound: no authorship check can see a two-party echo
     # (NoClick posts → an external bot auto-replies → the foreign reply
     # re-triggers this node). Suppress a trigger firing over budget, loudly.
     # Opt-in per provider (APP_PROVIDERS fire_budget capability): applies to
     # channel-conversation providers where echo loops close, never to
     # burst-legitimate ones (HubSpot bulk imports fire thousands of events).
-    from utils.app_webhooks import APP_PROVIDERS
     from utils.fire_budget import (
         FIRE_BUDGET_MAX,
         FIRE_BUDGET_WINDOW_SECONDS,
         over_fire_budget,
     )
-    budgeted = APP_PROVIDERS.get(str(sub.get("provider")), {}).get("fire_budget")
-    if budgeted and await over_fire_budget(workflow_id, node_id, event_channel):
+    if adapter.get("fire_budget") and await over_fire_budget(workflow_id, node_id, event_channel):
         logger.error(
             f"[APP-WEBHOOK] FIRE BUDGET EXCEEDED: trigger {node_id} in workflow "
             f"{workflow_id} fired >{FIRE_BUDGET_MAX} times in "
@@ -1980,7 +1989,6 @@ async def handle_app_webhook_payload(
     Slack/HubSpot events without running the separate webhook ASGI app.
     """
     from utils.app_webhooks import APP_PROVIDERS
-    from nodes.core.webhook_subscriptions import find_subscriptions
 
     adapter = APP_PROVIDERS.get(provider)
     if not adapter:
@@ -2003,8 +2011,33 @@ async def handle_app_webhook_payload(
             return handshake
         return JSONResponse(content=handshake)
 
-    from utils.app_event_dedup import mark_delivered, was_delivered
+    await dispatch_app_events(provider, body, background_tasks)
 
+    ack = adapter.get("ack")
+    if ack:
+        response = ack(body)
+        if isinstance(response, Response):
+            return response
+        return JSONResponse(content=response)
+    return WebhookResponse(
+        success=True, message="Event received", execution_id=None
+    )
+
+
+async def dispatch_app_events(provider: str, body: bytes, background_tasks=None) -> int:
+    """Parse an already-trusted app-level body and fan its events out to every
+    subscribed workflow; returns the number of runs queued.
+
+    The post-verification half of ``handle_app_webhook_payload``, callable on
+    its own by in-process producers — the open edition's Discord Gateway
+    listener hands its envelopes here without an HTTP hop or a signature.
+    """
+    from nodes.core.webhook_subscriptions import find_subscriptions
+    from utils.app_event_dedup import mark_delivered, was_delivered
+    from utils.app_webhooks import APP_PROVIDERS
+
+    adapter = APP_PROVIDERS[provider]
+    pool = get_native_pool()
     tasks = background_tasks or _SpawnBackgroundTasks()
     events = adapter["parse"](body)
     drop_event = adapter.get("drop_event")
@@ -2014,8 +2047,12 @@ async def handle_app_webhook_payload(
         # Redelivery dedup (providers redeliver on slow ACK, double-firing
         # every subscription). Best-effort at-least-once: marked delivered
         # only after this event's fan-out was ENQUEUED, so a crash before
-        # that lets the provider's retry recover the event.
-        event_id = extract_event_id(payload) if extract_event_id else None
+        # that lets the provider's retry recover the event. Keyed with the
+        # event type: one payload can legitimately parse into several events
+        # (a Discord message is MESSAGE_CREATE and, if it mentions the bot,
+        # MESSAGE_MENTION too).
+        raw_event_id = extract_event_id(payload) if extract_event_id else None
+        event_id = f"{event_type}:{raw_event_id}" if raw_event_id else None
         if event_id and await was_delivered(provider, event_id):
             logger.info(
                 f"[APP-WEBHOOK] {provider}: dropped duplicate delivery of {event_id}"
@@ -2045,15 +2082,7 @@ async def handle_app_webhook_payload(
     logger.info(
         f"[APP-WEBHOOK] {provider}: {len(events)} event(s) -> {fired} workflow run(s)"
     )
-    ack = adapter.get("ack")
-    if ack:
-        response = ack(body)
-        if isinstance(response, Response):
-            return response
-        return JSONResponse(content=response)
-    return WebhookResponse(
-        success=True, message="Event received", execution_id=None
-    )
+    return fired
 
 
 @router.post("/app/{provider}")

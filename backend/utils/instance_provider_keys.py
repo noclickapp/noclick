@@ -36,11 +36,13 @@ _TAG_PREFIX = "_NC_INSTANCE_KEY_"
 # Service keys the instance holds besides model providers: WAHooks issues the
 # WhatsApp QR sessions (one key per instance, shared by everyone on it).
 # Keys the instance holds for services that are not model providers: WhatsApp
-# QR sign-in, the platform-keyed operations a self-hosted instance runs on its
-# own key (nodes/core/platform_billing.py), and outbound email — an SMTP server
-# or a Resend key, plus the sender address.
+# QR sign-in, the Discord bot whose Gateway session delivers channel-message
+# triggers (utils/discord_gateway_bridge.py), the platform-keyed operations a
+# self-hosted instance runs on its own key (nodes/core/platform_billing.py),
+# and outbound email — an SMTP server or a Resend key, plus the sender address.
 INSTANCE_SERVICE_ENV_VARS: tuple = (
     "WAHOOKS_API_KEY",
+    "DISCORD_BOT_TOKEN",
     "APIFY_API_TOKEN",
     "EXA_API_KEY",
     "PERPLEXITY_API_KEY",

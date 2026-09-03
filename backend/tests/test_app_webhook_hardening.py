@@ -293,4 +293,6 @@ class TestRedeliveryEndToEnd:
                 "slack", body, _signed_headers(body, self.SECRET), "https://x/app/slack",
             )
         find_subs.assert_not_awaited()
-        assert await app_event_dedup.was_delivered("slack", "Ev7") is True
+        # Dedup keys carry the event type: one payload can parse into several
+        # events (Discord MESSAGE_CREATE + MESSAGE_MENTION), each delivered once.
+        assert await app_event_dedup.was_delivered("slack", "message:Ev7") is True

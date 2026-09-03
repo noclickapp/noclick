@@ -393,6 +393,15 @@ public backend origin (normally the same origin as `WEBHOOK_URL_BASE`). The
 Compose and single-origin deployments derive it automatically; set it
 explicitly for a manual deployment.
 
+**Discord message triggers.** "On Channel Message" and "On Bot Mention" need
+a live Gateway connection, which Discord only grants to a bot. Set
+`DISCORD_BOT_TOKEN` (environment or Settings → Self-hosted) and the backend
+holds that connection itself; users install the bot into their servers through
+the Discord OAuth app you configure, and the triggers listen for that server.
+Enable **Message Content Intent** on the bot in the Discord Developer Portal to
+receive message text; mentions of the bot carry their text regardless. Slash
+commands and application events keep using the app-event webhook above.
+
 **WhatsApp.** Meta Cloud API credentials work without an instance-wide
 provider key. Linking a personal WhatsApp account by QR code uses the external
 WAHooks service and requires a WAHooks account plus `WAHOOKS_API_KEY` on the

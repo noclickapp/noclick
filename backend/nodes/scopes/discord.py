@@ -99,6 +99,12 @@ _REQUIREMENTS: dict[str, ScopeRequirement] = {
     "on_entitlement_delete": _s("bot"),
     "on_entitlement_update": _s("bot"),
     "on_slash_command": _s("bot", "applications.commands"),
+    # Channel messages arrive on the bot's Gateway session; the install's
+    # ``bot`` scope is what puts the bot in the server. Reading message
+    # content is a privileged INTENT toggled in the Developer Portal, not a
+    # scope (see the module docstring).
+    "on_message": _s("bot"),
+    "on_mention": _s("bot"),
 
     # -- Reaction ----------------------------------------------------
     "add_reaction_to_message": _s("bot"),

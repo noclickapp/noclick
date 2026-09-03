@@ -456,6 +456,61 @@ class DiscordOnSlashCommandConfig(_DiscordEventTriggerBase):
     )
 
 
+class _DiscordMessageTriggerFields(BaseModel):
+    """Channel-message triggers listen on NoClick's bot Gateway session (Discord
+    delivers messages nowhere else), scoped to the server the bot was installed
+    into. Declared before the status fields so the picker leads the form."""
+
+    channel_id: Optional[str] = Field(
+        default=None,
+        title="Channel",
+        description="Only messages in this channel. Leave empty for every channel in the server.",
+    )
+    ignore_bots: str = Field(
+        default="true",
+        title="Ignore bot messages",
+        description="Skip messages posted by bots and webhooks — automated channels flood a trigger otherwise.",
+        json_schema_extra={
+            "enum": ["true", "false"],
+            "enumNames": ["Yes", "No"],
+            "x-enum-searchable": True,
+        },
+    )
+
+
+class _DiscordMessageTriggerBase(_DiscordEventTriggerBase, _DiscordMessageTriggerFields):
+    pass
+
+
+class DiscordOnMessageConfig(_DiscordMessageTriggerBase):
+    operation: Literal["on_message"] = _discord_trigger_field(
+        "on_message",
+        "On Channel Message",
+        keywords=[
+            "when message posted",
+            "new message in channel",
+            "message received",
+            "on message",
+            "when someone posts",
+            "chat message",
+        ],
+    )
+
+
+class DiscordOnMentionConfig(_DiscordMessageTriggerBase):
+    operation: Literal["on_mention"] = _discord_trigger_field(
+        "on_mention",
+        "On Bot Mention",
+        keywords=[
+            "when mentioned",
+            "when bot is mentioned",
+            "on @mention",
+            "someone tags the bot",
+            "mention received",
+        ],
+    )
+
+
 class DiscordGetMessagesConfig(BaseModel):
     """Get messages from a channel"""
 
@@ -4371,6 +4426,8 @@ DiscordConfig = Annotated[
         DiscordOnEntitlementUpdateConfig,
         DiscordOnEntitlementDeleteConfig,
         DiscordOnSlashCommandConfig,
+        DiscordOnMessageConfig,
+        DiscordOnMentionConfig,
         DiscordGetChannelWebhooksConfig,
         DiscordGetGuildWebhooksConfig,
         DiscordGetWebhookConfig,
@@ -4522,10 +4579,20 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
         "on_entitlement_delete": ["ENTITLEMENT_DELETE"],
         # Interactions (via Discord Interactions endpoint)
         "on_slash_command": ["INTERACTION_APPLICATION_COMMAND"],
+        # Channel messages (via the Gateway session NoClick's bot holds —
+        # utils/discord_gateway_bridge.py; MESSAGE_MENTION is minted by the
+        # receiver from a MESSAGE_CREATE that mentions the bot)
+        "on_message": ["MESSAGE_CREATE"],
+        "on_mention": ["MESSAGE_MENTION"],
     }
 
     # Event types delivered via the Interactions endpoint rather than app webhooks
     _interaction_event_types = {"INTERACTION_APPLICATION_COMMAND"}
+    # Event types the Gateway listener forwards: rows are keyed by GUILD (the
+    # bot-install credential's server), and Discord's application webhook
+    # config never learns about them.
+    _gateway_event_types = frozenset({"MESSAGE_CREATE", "MESSAGE_MENTION"})
+    _gateway_trigger_operations = frozenset({"on_message", "on_mention"})
 
     scope_registry = DISCORD_SCOPES
     connection_evidence = ConnectionEvidence(
@@ -4669,6 +4736,20 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
         auth_header = cls._dynamic_options_auth_header(credential_data)
         context = context or {}
         operation = context.get("operation")
+        # A bot-install credential authenticates as the PLATFORM bot, which is
+        # in every customer's server — its options are the one server this
+        # credential was installed into, never the bot's whole guild list.
+        install_guild_id = cls._install_guild_id(credential_data)
+
+        if field_name == "guild_id" and install_guild_id:
+            options = [{
+                "value": install_guild_id,
+                "label": (credential_data or {}).get("guild_name") or install_guild_id,
+            }]
+            return {
+                "options": filter_options_by_search(options, search, fields=("label", "value")),
+                "next_page_token": None,
+            }
 
         if field_name == "guild_id":
 
@@ -4699,7 +4780,7 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             )
 
         if field_name == "channel_id":
-            guild_id = context.get("guild_id")
+            guild_id = context.get("guild_id") or install_guild_id
             if guild_id:
                 channels = await cls._dynamic_options_request(
                     f"/guilds/{guild_id}/channels", auth_header
@@ -4935,13 +5016,26 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             )
         return app
 
+    @staticmethod
+    def _install_guild_id(credential: Optional[Dict[str, Any]]) -> Optional[str]:
+        """The server a bot-install credential was installed into (None for a
+        bot-token credential, which is not bound to one server)."""
+        if not isinstance(credential, dict):
+            return None
+        if credential.get("credential_type") != "discord_bot_install":
+            return None
+        guild_id = str(credential.get("guild_id") or "").strip()
+        return guild_id or None
+
     @classmethod
     async def _update_event_webhooks(
         cls, credential: Dict[str, Any], event_types: List[str]
     ) -> Dict[str, Any]:
-        # Separate app-level webhook events from interaction events
+        # Separate app-level webhook events from interaction events; Gateway
+        # types are not application-webhook events and Discord rejects them.
         app_event_types = [
-            t for t in event_types if t not in cls._interaction_event_types
+            t for t in event_types
+            if t not in cls._interaction_event_types and t not in cls._gateway_event_types
         ]
         has_interactions = any(t in cls._interaction_event_types for t in event_types)
 
@@ -5002,6 +5096,18 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
         if not event_types:
             raise ValueError(f"Unknown trigger operation: {operation}")
 
+        if operation in cls._gateway_trigger_operations:
+            return await cls._register_gateway_subscriptions(
+                pool,
+                user_id=user_id,
+                workflow_id=workflow_id,
+                node_id=node_id,
+                operation=operation,
+                credential_id=credential_id,
+                credential=credential,
+                config=config,
+            )
+
         app = await cls._fetch_current_application(credential)
         application_id = str(app["id"])
         verify_key = str(app["verify_key"])
@@ -5052,6 +5158,68 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
         return cls._discord_subscription_status(event_types)
 
     @classmethod
+    async def _register_gateway_subscriptions(
+        cls,
+        pool,
+        *,
+        user_id: str,
+        workflow_id,
+        node_id: str,
+        operation: str,
+        credential_id: Optional[str],
+        credential: Dict[str, Any],
+        config: Optional[Dict[str, Any]],
+    ) -> str:
+        """Message triggers: rows keyed by the install credential's GUILD and
+        nothing provider-side — the listener already receives every message
+        in every server the bot is in, and the rows are what make it forward
+        this server's. No verify key: Gateway envelopes are HMAC-signed by
+        NoClick's own listener, not Ed25519-signed by Discord."""
+        from nodes.core.webhook_subscriptions import (
+            get_node_subscriptions,
+            save_subscriptions,
+            subscription_rows_match,
+        )
+
+        guild_id = cls._install_guild_id(credential)
+        if not guild_id:
+            raise ValueError(
+                "Channel message triggers listen through NoClick's bot, which "
+                "must be installed into your server: connect Discord with "
+                "'Install bot' instead of a bot token."
+            )
+        event_types = cls._trigger_event_map[operation]
+        existing = await get_node_subscriptions(pool, str(workflow_id), node_id)
+        if not subscription_rows_match(
+            existing,
+            event_types=event_types,
+            credential_id=credential_id,
+            user_id=user_id,
+            tenant_id=guild_id,
+        ):
+            await save_subscriptions(
+                pool,
+                provider=cls._app_provider,
+                tenant_id=guild_id,
+                user_id=user_id,
+                workflow_id=str(workflow_id),
+                node_id=node_id,
+                credential_id=credential_id,
+                event_types=event_types,
+            )
+        return cls._gateway_status_line(operation, credential, config)
+
+    @classmethod
+    def _gateway_status_line(
+        cls, operation: str, credential: Dict[str, Any], config: Optional[Dict[str, Any]]
+    ) -> str:
+        what = "mentions of the bot" if operation == "on_mention" else "messages"
+        channel = (config or {}).get("channel_id")
+        where = f"in channel {channel}" if channel else "in every channel"
+        server = (credential or {}).get("guild_name") or cls._install_guild_id(credential)
+        return f"Active — listening for {what} {where} of {server}"
+
+    @classmethod
     async def cleanup_external_webhook(
         cls,
         pool,
@@ -5069,6 +5237,10 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
 
         node_rows = await get_node_subscriptions(pool, str(workflow_id), node_id)
         if not node_rows:
+            return
+        if all(row.get("event_type") in cls._gateway_event_types for row in node_rows):
+            # Gateway rows have no provider-side counterpart to reconcile.
+            await delete_subscriptions(pool, str(workflow_id), node_id)
             return
 
         application_id = str(node_rows[0]["tenant_id"])
@@ -5113,17 +5285,76 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
     def resolve_trigger_payload(
         cls, payload: Dict[str, Any], config: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
-        # Poll triggers: the cron POST is just a wake-up signal — run execute()
-        # so the node polls the REST API for new items.
-        if (config or {}).get("operation") in cls._poll_trigger_operations:
-            return None
         return cls._resolve_app_event_payload(payload, config)
+
+    @classmethod
+    def _resolve_gateway_payload(
+        cls, payload: Dict[str, Any], operation: Optional[str]
+    ) -> Dict[str, Any]:
+        """A Gateway MESSAGE_CREATE envelope → the trigger's output: the fields
+        a downstream node or an agent needs by name, the raw message under
+        ``data``."""
+        message = payload.get("d") if isinstance(payload.get("d"), dict) else {}
+        author = message.get("author") if isinstance(message.get("author"), dict) else {}
+        member = message.get("member") if isinstance(message.get("member"), dict) else {}
+        reference = (
+            message.get("message_reference")
+            if isinstance(message.get("message_reference"), dict)
+            else {}
+        )
+        bot_user_id = payload.get("bot_user_id")
+        mentions = [m for m in (message.get("mentions") or []) if isinstance(m, dict)]
+        attachments = [
+            {
+                "url": a.get("url"),
+                "filename": a.get("filename"),
+                "content_type": a.get("content_type"),
+                "size": a.get("size"),
+            }
+            for a in (message.get("attachments") or [])
+            if isinstance(a, dict) and a.get("url")
+        ]
+        guild_id = message.get("guild_id")
+        channel_id = message.get("channel_id")
+        message_id = message.get("id")
+        return {
+            "type": "discord",
+            "action": operation,
+            "status": "success",
+            "event_type": operation,
+            "message_id": message_id,
+            "content": message.get("content") or "",
+            "channel_id": channel_id,
+            "guild_id": guild_id,
+            "author_id": author.get("id"),
+            "author_username": author.get("username"),
+            "author_display_name": (
+                member.get("nick") or author.get("global_name") or author.get("username")
+            ),
+            "author_is_bot": bool(author.get("bot")),
+            "mentions_bot": bool(bot_user_id) and any(
+                str(m.get("id")) == str(bot_user_id) for m in mentions
+            ),
+            "mentioned_user_ids": [str(m.get("id")) for m in mentions if m.get("id")],
+            "attachments": attachments,
+            "reply_to_message_id": reference.get("message_id"),
+            "message_url": (
+                f"https://discord.com/channels/{guild_id}/{channel_id}/{message_id}"
+                if guild_id and channel_id and message_id
+                else None
+            ),
+            "sent_at": message.get("timestamp"),
+            "data": payload,
+            "timestamp": time.time(),
+        }
 
     @classmethod
     def _resolve_app_event_payload(
         cls, payload: Dict[str, Any], config: Dict[str, Any]
     ) -> Dict[str, Any]:
         operation = (config or {}).get("operation")
+        if isinstance(payload, dict) and payload.get("source") == "gateway":
+            return cls._resolve_gateway_payload(payload, operation)
         body_type = payload.get("type") if isinstance(payload, dict) else None
 
         # Interaction payload (slash command: body type=2)
@@ -5182,16 +5413,20 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
 
     @classmethod
     def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Discord slash-command interaction → the agent's user turn. The channel
-        id is both the conversation key (one conversation per channel; Discord
+        """Discord slash command or channel message → the agent's user turn.
+        The channel id is both the conversation key (one conversation per
+        channel — a thread IS a channel, so threads get their own; Discord
         channel snowflakes are globally unique, so guild scoping is redundant)
         and the reply target the send tools accept verbatim. Non-conversational
         events (entitlement, application authorized/deauthorized) fall through to
         the base JSON delivery."""
-        if not isinstance(output, dict) or output.get("event_type") != "on_slash_command":
+        if not isinstance(output, dict):
             return super().resolve_agent_event(output)
         channel_id = str(output.get("channel_id") or "").strip()
-        if not channel_id:
+        event_type = output.get("event_type")
+        if event_type in cls._gateway_trigger_operations and channel_id:
+            return cls._message_agent_event(output, channel_id)
+        if event_type != "on_slash_command" or not channel_id:
             return super().resolve_agent_event(output)
         who = output.get("username") or output.get("user_id") or "a user"
         command = output.get("command_name") or "unknown"
@@ -5210,6 +5445,33 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
         )
         return {"text": text, "conversation_key": channel_id}
 
+    @classmethod
+    def _message_agent_event(cls, output: Dict[str, Any], channel_id: str) -> Dict[str, Any]:
+        who = (
+            output.get("author_display_name")
+            or output.get("author_username")
+            or output.get("author_id")
+            or "someone"
+        )
+        content = str(output.get("content") or "")
+        bot_user_id = (output.get("data") or {}).get("bot_user_id") if isinstance(output.get("data"), dict) else None
+        if bot_user_id:
+            # The mention that woke the agent is noise in its own turn.
+            content = content.replace(f"<@!{bot_user_id}>", "").replace(f"<@{bot_user_id}>", "").strip()
+        guild = f" (server {output['guild_id']})" if output.get("guild_id") else ""
+        lines = [f"Discord message from {who} in channel {channel_id}{guild}:", content or "(no text)"]
+        attachments = [a.get("url") for a in output.get("attachments") or [] if a.get("url")]
+        if attachments:
+            lines.append("Attachments: " + ", ".join(attachments))
+        if output.get("reply_to_message_id"):
+            lines.append(f"(a reply to message {output['reply_to_message_id']})")
+        lines.append("")
+        lines.append(
+            f"To respond, use send_message_to_channel with channel_id={channel_id} "
+            f"(pass this exactly); message_id={output.get('message_id')} if you want to reply to it."
+        )
+        return {"text": "\n".join(lines), "conversation_key": channel_id}
+
     async def _trigger_on_discord_event(
         self, config: _DiscordEventTriggerBase, credentials
     ) -> Dict[str, Any]:
@@ -5219,11 +5481,16 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             return self.resolve_trigger_payload(
                 trigger_payload, {"operation": config.operation}
             )
+        waiting_for = (
+            "a channel message"
+            if config.operation in self._gateway_trigger_operations
+            else "an event webhook"
+        )
         return {
             "type": "discord",
             "action": config.operation,
             "status": "waiting",
-            "message": "Discord trigger is registered and waiting for an event webhook",
+            "message": f"Discord trigger is registered and waiting for {waiting_for}",
             "event_types": self._trigger_event_map.get(config.operation, []),
             "timestamp": time.time(),
         }

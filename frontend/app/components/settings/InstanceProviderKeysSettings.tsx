@@ -18,6 +18,7 @@ import { InstanceKeysDeleteRequest, InstanceKeysSetRequest } from '~/types/socke
 const INSTANCE_KEYS: { envVar: string; title: string; purpose: string }[] = [
     { envVar: 'OPENROUTER_API_KEY', title: 'Workflow builder', purpose: 'The builder runs on OpenRouter with this key, shared by everyone on the instance.' },
     { envVar: 'WAHOOKS_API_KEY', title: 'WhatsApp QR sign-in', purpose: 'WhatsApp connections are issued by WAHooks; every QR scan on this instance uses this key.' },
+    { envVar: 'DISCORD_BOT_TOKEN', title: 'Discord message triggers', purpose: 'The instance keeps this bot connected to Discord so "On Channel Message" and "On Bot Mention" fire instantly. Pair it with the Discord OAuth app above; enable Message Content Intent on the bot to read message text.' },
     // Operations the cloud runs on NoClick's own keys. Here they run on the instance's — or, for Exa and Perplexity, on each user's own credential.
     { envVar: 'APIFY_API_TOKEN', title: 'LinkedIn and Instagram scraping', purpose: 'Scraping operations run on Apify. Without this token they are unavailable on this instance.' },
     { envVar: 'EXA_API_KEY', title: 'Exa search', purpose: 'Lets Exa nodes search without a credential of their own; users can still connect one.' },

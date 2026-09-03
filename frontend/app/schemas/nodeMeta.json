@@ -205,7 +205,9 @@
         "on_entitlement_create",
         "on_entitlement_update",
         "on_entitlement_delete",
-        "on_slash_command"
+        "on_slash_command",
+        "on_message",
+        "on_mention"
       ]
     },
     "automation-dropbox": {

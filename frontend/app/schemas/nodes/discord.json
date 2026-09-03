@@ -7309,6 +7309,205 @@
       "title": "DiscordOnEntitlementUpdateConfig",
       "type": "object"
     },
+    "DiscordOnMentionConfig": {
+      "properties": {
+        "channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only messages in this channel. Leave empty for every channel in the server.",
+          "title": "Channel",
+          "x-dynamic-options": {
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a channel ID / reference"
+          },
+          "x-resource-type": "discord_channel"
+        },
+        "ignore_bots": {
+          "default": "true",
+          "description": "Skip messages posted by bots and webhooks \u2014 automated channels flood a trigger otherwise.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Ignore bot messages",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:widget": "readonly"
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_mention",
+          "default": "on_mention",
+          "title": "On Bot Mention",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Bot Mention",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when mentioned",
+            "when bot is mentioned",
+            "on @mention",
+            "someone tags the bot",
+            "mention received"
+          ]
+        }
+      },
+      "title": "DiscordOnMentionConfig",
+      "type": "object"
+    },
+    "DiscordOnMessageConfig": {
+      "properties": {
+        "channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only messages in this channel. Leave empty for every channel in the server.",
+          "title": "Channel",
+          "x-dynamic-options": {
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a channel ID / reference"
+          },
+          "x-resource-type": "discord_channel"
+        },
+        "ignore_bots": {
+          "default": "true",
+          "description": "Skip messages posted by bots and webhooks \u2014 automated channels flood a trigger otherwise.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Ignore bot messages",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:widget": "readonly"
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_message",
+          "default": "on_message",
+          "title": "On Channel Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Channel Message",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when message posted",
+            "new message in channel",
+            "message received",
+            "on message",
+            "when someone posts",
+            "chat message"
+          ]
+        }
+      },
+      "title": "DiscordOnMessageConfig",
+      "type": "object"
+    },
     "DiscordOnSlashCommandConfig": {
       "properties": {
         "subscription_status": {
@@ -8200,6 +8399,8 @@
           "on_entitlement_create": "#/$defs/DiscordOnEntitlementCreateConfig",
           "on_entitlement_delete": "#/$defs/DiscordOnEntitlementDeleteConfig",
           "on_entitlement_update": "#/$defs/DiscordOnEntitlementUpdateConfig",
+          "on_mention": "#/$defs/DiscordOnMentionConfig",
+          "on_message": "#/$defs/DiscordOnMessageConfig",
           "on_slash_command": "#/$defs/DiscordOnSlashCommandConfig",
           "pin_message_in_channel": "#/$defs/DiscordPinMessageConfig",
           "play_soundboard_sound_in_voice_channel": "#/$defs/DiscordSendSoundboardSoundConfig",
@@ -8429,6 +8630,12 @@
         },
         {
           "$ref": "#/$defs/DiscordOnSlashCommandConfig"
+        },
+        {
+          "$ref": "#/$defs/DiscordOnMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/DiscordOnMentionConfig"
         },
         {
           "$ref": "#/$defs/DiscordGetChannelWebhooksConfig"

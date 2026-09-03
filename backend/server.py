@@ -205,6 +205,10 @@ async def app_lifespan(app: FastAPI):
     if _is_local():
         from utils.local_cron import start_local_cron
         start_local_cron()
+        # Discord channel-message triggers need a live Gateway session; the
+        # local edition holds it in-process while DISCORD_BOT_TOKEN is set.
+        from utils.discord_gateway_bridge import start_local_discord_listener
+        start_local_discord_listener()
 
     # Start container-health emitter for OTel/Honeycomb (3s cadence)
     start_health_emitter(interval_seconds=3.0)
@@ -238,7 +242,9 @@ async def app_lifespan(app: FastAPI):
         logger.warning(f"Background task drain failed: {e}")
 
     if _is_local():
+        from utils.discord_gateway_bridge import stop_local_discord_listener
         from utils.local_cron import stop_local_cron
+        await stop_local_discord_listener()
         await stop_local_cron()
 
     # Shutdown with timeouts so hot-reload doesn't hang

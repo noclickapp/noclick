@@ -138,6 +138,7 @@ rather than branches:
 | `nodes/core/code_runtime.py` | Serverless-function nodes run in a cached local venv |
 | `utils/volume_backend.py` | Named volumes are directories under `~/.noclick/volumes/` |
 | `nodes/agent/harness_registry.py` | Agent turns run your installed CLI as a subprocess |
+| `utils/discord_gateway_bridge.py` | Discord message triggers: the Gateway listener runs in-process while `DISCORD_BOT_TOKEN` is set |
 
 ### Agent workspace files
 
