@@ -9,6 +9,7 @@ import {
     buildRunStory,
     deriveLead,
     deriveSends,
+    humanizeDiscordMentions,
     humanizeOp,
     outcomeModeFor,
     sanitizeEventPayload,
@@ -445,5 +446,60 @@ describe('response runs (a warm agent turn fired as its own run)', () => {
         expect(story.trigger?.scenario).toBeUndefined();
         expect(story.trigger?.event).toBeUndefined();
         expect(story.trigger?.notice).toContain('No live event');
+    });
+});
+
+describe('discord gateway messages', () => {
+    const message = {
+        event_type: 'on_mention',
+        message_id: 'm1',
+        content: '<@bot> can you ping <@u2> about the deploy?',
+        channel_id: '1545037700548137093',
+        channel_name: 'general',
+        guild_id: '1545037700548137090',
+        guild_name: 'NoClick Sandbox',
+        author_id: 'u1',
+        author_username: 'dana',
+        author_display_name: 'Dana K',
+        mentions: [
+            { id: 'bot', username: 'noclick', display_name: 'NoClick' },
+            { id: 'u2', username: 'sam', display_name: 'Sam' },
+        ],
+        attachments: [{ url: 'https://cdn/x.png', filename: 'x.png' }],
+        sent_at: '2026-09-03T12:34:09.208000+00:00',
+        data: { source: 'gateway' },
+    };
+
+    it('frames a channel message with names, humanized mentions and attachments', () => {
+        const lead = deriveLead('discord', message);
+        expect(lead).toMatchObject({
+            title: '#general',
+            meta: 'NoClick Sandbox',
+            author: 'Dana K',
+            handle: '@dana',
+            body: '@NoClick can you ping @Sam about the deploy?\n📎 x.png',
+        });
+        expect(lead?.time).toBeTruthy();
+    });
+
+    it('falls back to ids when the listener had no names, and to the raw event without text', () => {
+        const unnamed = { ...message, channel_name: undefined, guild_name: undefined };
+        expect(deriveLead('discord', unnamed)?.title).toBe('#1545037700548137093');
+        expect(deriveLead('discord', { ...message, content: '', attachments: [] })).toBeNull();
+    });
+
+    it('frames a slash command as its invocation', () => {
+        const lead = deriveLead('discord', {
+            event_type: 'on_slash_command',
+            command_name: 'ask',
+            options: { question: 'status?' },
+            username: 'dana',
+            channel_id: 'c1',
+        });
+        expect(lead).toMatchObject({ title: '#c1', body: '/ask question: status?', author: 'dana' });
+    });
+
+    it('humanizes mention markup on its own', () => {
+        expect(humanizeDiscordMentions('<@!1> <@&2> <#3>', [{ id: '1', username: 'sam' }])).toBe('@sam @role #channel');
     });
 });

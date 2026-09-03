@@ -49,6 +49,17 @@ logger = logging.getLogger(__name__)
 PROVIDER = "discord"
 # Gateway dispatch types the bridge forwards.
 GATEWAY_EVENT_TYPES = frozenset({"MESSAGE_CREATE"})
+# Dispatches that keep the guild/channel name directory current: a message
+# carries ids only, and names are what a person reads in a run.
+DIRECTORY_EVENT_TYPES = frozenset({
+    "GUILD_CREATE", "GUILD_UPDATE", "GUILD_DELETE",
+    "CHANNEL_CREATE", "CHANNEL_UPDATE", "CHANNEL_DELETE",
+    "THREAD_CREATE", "THREAD_UPDATE", "THREAD_DELETE",
+})
+# A message from a guild the filter does not know triggers one re-read of the
+# subscriptions, at most this often: a trigger saved seconds ago gets its
+# first message instead of losing it to the periodic refresh window.
+MISS_REFRESH_MIN_S = 5.0
 # NoClick-side event types subscriptions key on. MESSAGE_MENTION is minted by
 # the receiver's parse from a MESSAGE_CREATE that mentions the bot — both the
 # bridge's guild filter and the node's trigger map speak these names.
@@ -74,6 +85,8 @@ def build_gateway_envelope(
     *,
     bot_user_id: Optional[str],
     application_id: Optional[str],
+    guild_name: Optional[str] = None,
+    channel_name: Optional[str] = None,
 ) -> Dict[str, Any]:
     """The wire shape the receiver's Discord adapter parses (``source`` tells
     it apart from Discord's own HTTP payloads, which carry ``type``)."""
@@ -83,8 +96,40 @@ def build_gateway_envelope(
         "d": data,
         "bot_user_id": bot_user_id,
         "application_id": application_id,
+        "guild_name": guild_name,
+        "channel_name": channel_name,
         "received_at": time.time(),
     }
+
+
+class GuildDirectory:
+    """Guild and channel names from the Gateway's own stream: GUILD_CREATE
+    (sent for every guild at READY, channels and threads included) and the
+    create/update/delete events after it. No REST lookup per message."""
+
+    def __init__(self) -> None:
+        self.guild_names: Dict[str, str] = {}
+        self.channel_names: Dict[str, str] = {}
+
+    def apply(self, event_type: str, data: Dict[str, Any]) -> None:
+        object_id = str(data.get("id") or "")
+        name = data.get("name") if isinstance(data.get("name"), str) else None
+        if event_type == "GUILD_CREATE":
+            if object_id and name:
+                self.guild_names[object_id] = name
+            for channel in list(data.get("channels") or []) + list(data.get("threads") or []):
+                if isinstance(channel, dict) and channel.get("id") and isinstance(channel.get("name"), str):
+                    self.channel_names[str(channel["id"])] = channel["name"]
+        elif event_type == "GUILD_UPDATE":
+            if object_id and name:
+                self.guild_names[object_id] = name
+        elif event_type == "GUILD_DELETE":
+            self.guild_names.pop(object_id, None)
+        elif event_type in ("CHANNEL_CREATE", "CHANNEL_UPDATE", "THREAD_CREATE", "THREAD_UPDATE"):
+            if object_id and name:
+                self.channel_names[object_id] = name
+        elif event_type in ("CHANNEL_DELETE", "THREAD_DELETE"):
+            self.channel_names.pop(object_id, None)
 
 
 def sign_gateway_body(body: bytes, secret: str) -> str:
@@ -188,6 +233,9 @@ class GuildSubscriptionFilter:
     def allows(self, guild_id: Optional[str]) -> bool:
         return bool(guild_id) and str(guild_id) in self.guild_ids
 
+    def stale_for(self, seconds: float) -> bool:
+        return self.refreshed_at is None or time.time() - self.refreshed_at >= seconds
+
 
 @dataclass
 class BridgeCounters:
@@ -216,6 +264,7 @@ class DiscordGatewayBridge:
     ) -> None:
         self._forwarder = forwarder
         self._filter = GuildSubscriptionFilter(pool_getter)
+        self.directory = GuildDirectory()
         self._refresh_interval = refresh_interval_s
         self._queue: asyncio.Queue = asyncio.Queue(maxsize=queue_size)
         self.counters = BridgeCounters()
@@ -265,6 +314,8 @@ class DiscordGatewayBridge:
             "subscribed_guilds": len(self._filter.guild_ids),
             "subscriptions_refreshed_at": self._filter.refreshed_at,
             "subscriptions_error": self._filter.last_error,
+            "directory_guilds": len(self.directory.guild_names),
+            "directory_channels": len(self.directory.channel_names),
             "queue_depth": self._queue.qsize(),
             **self.counters.__dict__,
         })
@@ -294,6 +345,9 @@ class DiscordGatewayBridge:
 
     # ------------------------------------------------------------ dispatch
     async def _on_dispatch(self, event_type: str, data: Dict[str, Any]) -> None:
+        if event_type in DIRECTORY_EVENT_TYPES:
+            self.directory.apply(event_type, data)
+            return
         if event_type not in GATEWAY_EVENT_TYPES:
             return
         status = self.client.status
@@ -306,12 +360,17 @@ class DiscordGatewayBridge:
             self.counters.dropped_dm += 1  # DMs have no guild tenant to route by
             return
         if not self._filter.allows(guild_id):
-            self.counters.dropped_unsubscribed += 1
-            return
+            if self._filter.stale_for(MISS_REFRESH_MIN_S):
+                await self._filter.refresh()
+            if not self._filter.allows(guild_id):
+                self.counters.dropped_unsubscribed += 1
+                return
         envelope = build_gateway_envelope(
             event_type, data,
             bot_user_id=status.bot_user_id,
             application_id=status.application_id,
+            guild_name=self.directory.guild_names.get(str(guild_id)),
+            channel_name=self.directory.channel_names.get(str(data.get("channel_id") or "")),
         )
         body = json.dumps(envelope, separators=(",", ":")).encode()
         try:

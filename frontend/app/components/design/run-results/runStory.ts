@@ -119,6 +119,57 @@ function str(d: Dict, ...keys: string[]): string | undefined {
     return undefined;
 }
 
+/** Discord's `<@id>` / `<@!id>` markup → `@name` from the message's own
+    mentions list; role and channel mentions get a generic label. */
+export function humanizeDiscordMentions(text: string, mentions: unknown): string {
+    const names = new Map<string, string>();
+    if (Array.isArray(mentions)) {
+        for (const m of mentions) {
+            const entry = asDict(m);
+            if (entry.id !== undefined) names.set(String(entry.id), str(entry, 'display_name', 'username') ?? 'user');
+        }
+    }
+    return text
+        .replace(/<@!?([\w-]+)>/g, (_, id: string) => `@${names.get(id) ?? 'user'}`)
+        .replace(/<@&[\w-]+>/g, '@role')
+        .replace(/<#[\w-]+>/g, '#channel');
+}
+
+/** The Discord trigger's resolved output (a Gateway message, or a slash
+    command): ids for the channel and server, plus their names when the
+    listener knew them — a lead reads "#general · NoClick Sandbox", never a
+    snowflake when a name exists. */
+function deriveDiscordLead(d: Dict): Lead | null {
+    const channelName = str(d, 'channel_name');
+    const channelId = str(d, 'channel_id');
+    const title = channelName ? `#${channelName}` : channelId ? `#${channelId}` : 'Message';
+    const meta = str(d, 'guild_name') ?? '';
+    if (d.event_type === 'on_slash_command') {
+        const command = str(d, 'command_name');
+        if (!command) return null;
+        const options = asDict(d.options);
+        const args = Object.entries(options)
+            .map(([k, v]) => `${k}: ${String(v)}`)
+            .join(' · ');
+        return { title, meta, body: `/${command}${args ? ` ${args}` : ''}`, author: str(d, 'username', 'user_id') };
+    }
+    const attachments = Array.isArray(d.attachments) ? (d.attachments as unknown[]) : [];
+    const files = attachments.map((a) => str(asDict(a), 'filename', 'url')).filter((f): f is string => !!f);
+    const body = [humanizeDiscordMentions(str(d, 'content') ?? '', d.mentions), ...files.map((f) => `📎 ${f}`)]
+        .filter(Boolean)
+        .join('\n');
+    if (!body) return null;
+    const username = str(d, 'author_username');
+    return {
+        title,
+        meta,
+        body,
+        author: str(d, 'author_display_name') ?? username,
+        handle: username ? `@${username}` : undefined,
+        time: clockOf(str(d, 'sent_at')),
+    };
+}
+
 /** "Priya Raman <priya@northwind.io>" → the two halves. */
 function splitAddress(from?: string): { author?: string; handle?: string } {
     if (!from) return {};
@@ -167,6 +218,10 @@ export function deriveLead(slug: string, output: unknown): Lead | null {
             ...from,
             time: clockOf(str(d, 'date', 'timestamp')),
         };
+    }
+
+    if (slug === 'discord' && (typeof d.content === 'string' || d.event_type === 'on_slash_command')) {
+        return deriveDiscordLead(d);
     }
 
     if (slug === 'slack' || slug === 'discord' || slug === 'teams') {

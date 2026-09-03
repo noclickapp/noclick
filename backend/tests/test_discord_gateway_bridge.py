@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import time
 import uuid
 from typing import Any, Dict, List
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -587,3 +588,130 @@ class TestLocalDiscordListener:
         await bridge_mod.stop_local_discord_listener()
         assert listener._supervisor is None
         assert bridge_mod.local_discord_listener_status()["state"] == "disabled"
+
+
+# ============================================================================
+# Names and the first-message window
+# ============================================================================
+
+
+class TestGuildDirectory:
+    def test_guild_create_seeds_guild_channels_and_threads(self):
+        d = bridge_mod.GuildDirectory()
+        d.apply("GUILD_CREATE", {
+            "id": "g1", "name": "NoClick Sandbox",
+            "channels": [{"id": "c1", "name": "general", "type": 0}, {"id": "c2", "name": "ops"}],
+            "threads": [{"id": "t1", "name": "incident-42"}],
+        })
+        assert d.guild_names == {"g1": "NoClick Sandbox"}
+        assert d.channel_names == {"c1": "general", "c2": "ops", "t1": "incident-42"}
+
+    def test_updates_and_deletes_follow_the_stream(self):
+        d = bridge_mod.GuildDirectory()
+        d.apply("GUILD_CREATE", {"id": "g1", "name": "Old", "channels": [{"id": "c1", "name": "general"}]})
+        d.apply("GUILD_UPDATE", {"id": "g1", "name": "New"})
+        d.apply("CHANNEL_UPDATE", {"id": "c1", "name": "announcements", "guild_id": "g1"})
+        d.apply("THREAD_CREATE", {"id": "t9", "name": "thread"})
+        d.apply("CHANNEL_DELETE", {"id": "c1"})
+        d.apply("THREAD_DELETE", {"id": "t9"})
+        assert d.guild_names == {"g1": "New"} and d.channel_names == {}
+        d.apply("GUILD_DELETE", {"id": "g1", "unavailable": True})
+        assert d.guild_names == {}
+
+
+class TestBridgeNamesAndMissRefresh:
+    def _bridge(self, forwarder, rows):
+        bridge = DiscordGatewayBridge(
+            "tok", forwarder=forwarder, pool_getter=lambda: FakePool(rows=rows), connect=lambda url: None
+        )
+        bridge.client.status.bot_user_id = "bot-1"
+        return bridge
+
+    async def test_envelope_carries_the_names_the_stream_taught(self):
+        fwd = CollectingForwarder()
+        bridge = self._bridge(fwd, rows=[{"tenant_id": "g1"}])
+        bridge._filter.guild_ids = {"g1"}
+        await bridge._on_dispatch("GUILD_CREATE", {"id": "g1", "name": "NoClick Sandbox", "channels": [{"id": "c1", "name": "general"}]})
+        await bridge._on_dispatch("MESSAGE_CREATE", _message())
+        envelope = json.loads(bridge._queue.get_nowait())
+        assert (envelope["guild_name"], envelope["channel_name"]) == ("NoClick Sandbox", "general")
+        assert bridge.status()["directory_channels"] == 1
+
+    async def test_unknown_guild_re_reads_subscriptions_once_and_forwards(self):
+        """A trigger saved seconds ago: its guild is absent from the filter, so
+        the first message re-reads the rows (once per MISS_REFRESH_MIN_S) and
+        goes through instead of waiting out the periodic refresh."""
+        fwd = CollectingForwarder()
+        bridge = self._bridge(fwd, rows=[{"tenant_id": "g1"}])
+        assert bridge._filter.guild_ids == set()
+        await bridge._on_dispatch("MESSAGE_CREATE", _message())
+        assert bridge._queue.qsize() == 1 and bridge.counters.dropped_unsubscribed == 0
+        assert bridge._filter.guild_ids == {"g1"}
+
+    async def test_a_fresh_filter_is_not_re_read_per_stray_message(self):
+        fwd = CollectingForwarder()
+        bridge = self._bridge(fwd, rows=[{"tenant_id": "g1"}])
+        bridge._filter.refreshed_at = time.time()  # just refreshed: g1 not subscribed then
+        await bridge._on_dispatch("MESSAGE_CREATE", _message())
+        assert bridge._queue.qsize() == 0 and bridge.counters.dropped_unsubscribed == 1
+        assert bridge._filter.guild_ids == set()
+
+
+class TestDiscordNodeNamesAndMentions:
+    def test_payload_carries_names_and_mentions(self):
+        envelope = _envelope(mentions=[{"id": "bot-1"}, {"id": "u2", "username": "dana", "global_name": "Dana K"}])
+        envelope["guild_name"], envelope["channel_name"] = "NoClick Sandbox", "general"
+        out = DiscordNode.resolve_trigger_payload(envelope, {"operation": "on_mention"})
+        assert (out["guild_name"], out["channel_name"]) == ("NoClick Sandbox", "general")
+        assert out["mentions"] == [
+            {"id": "bot-1", "username": None, "display_name": None},
+            {"id": "u2", "username": "dana", "display_name": "Dana K"},
+        ]
+
+    def test_agent_turn_reads_names_not_ids(self):
+        envelope = _envelope(
+            content="<@bot-1> ask <@u2> about the deploy",
+            mentions=[{"id": "bot-1"}, {"id": "u2", "username": "dana", "global_name": "Dana K"}],
+        )
+        envelope["guild_name"], envelope["channel_name"] = "NoClick Sandbox", "general"
+        out = DiscordNode.resolve_trigger_payload(envelope, {"operation": "on_mention"})
+        text = DiscordNode.resolve_agent_event(out)["text"]
+        assert text.startswith("Discord message from Dana K in #general (NoClick Sandbox):\nask @Dana K about the deploy")
+        assert "<@" not in text.split("\n\n")[0]
+        assert "channel_id=c1" in text  # the id the send tool needs stays in the instructions
+
+    def test_humanize_mentions(self):
+        from nodes.discord_node import humanize_discord_mentions
+
+        assert humanize_discord_mentions("hi <@!1> <@2>", [{"id": "2", "username": "sam"}], drop_user_id="1") == "hi @sam"
+        assert humanize_discord_mentions("<@9>", None) == "@user"
+
+
+class TestDiscordRehearsalSituation:
+    def test_staged_situation_resolves_to_a_message_turn(self):
+        from nodes.agent.rehearsal_scenarios import STAGED_SITUATIONS
+
+        situation = STAGED_SITUATIONS["automation-discord"][0]
+        out = DiscordNode.resolve_trigger_payload(
+            situation["scenario"].trigger_payload, {"operation": "on_mention"}
+        )
+        assert (out["channel_name"], out["guild_name"]) == ("support", "Northwind Community")
+        event = DiscordNode.resolve_agent_event(out)
+        assert event["conversation_key"] == out["channel_id"]
+        assert event["text"].startswith("Discord message from Dana Okafor in #support (Northwind Community):")
+        assert "<@" not in event["text"].split("\n\n")[0]
+        # The card and the payload tell the same story.
+        assert situation["lead"]["body"].split("—", 1)[1].strip() in event["text"]
+
+    def test_lead_edits_reach_the_staged_payload(self):
+        from nodes.agent.rehearsal_scenarios import STAGED_SITUATIONS, apply_lead_patch
+
+        scenario = STAGED_SITUATIONS["automation-discord"][0]["scenario"]
+        edited = apply_lead_patch(
+            "automation-discord", scenario,
+            {"body": "Is there an API?", "author": "Sam Lee", "handle": "@samlee"},
+        )
+        message = edited.trigger_payload["d"]
+        assert message["content"] == "Is there an API?"
+        assert (message["author"]["global_name"], message["author"]["username"]) == ("Sam Lee", "samlee")
+        assert scenario.trigger_payload["d"]["content"] != "Is there an API?"  # the registry entry is untouched

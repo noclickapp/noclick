@@ -7,6 +7,7 @@ Supports both Bot Token authentication and OAuth2 for user-based operations.
 API Reference: https://discord.com/developers/docs/reference
 """
 
+import re
 import logging
 import asyncio
 import os
@@ -345,6 +346,29 @@ class DiscordExecuteWebhookConfig(BaseModel):
     embed_color: Optional[int] = Field(
         default=None, title="Embed Color", description="Color code for embed (decimal)"
     )
+
+
+_MENTION_RE = re.compile(r"<@!?([\w-]+)>")
+
+
+def humanize_discord_mentions(
+    content: str, mentions: Any, *, drop_user_id: Optional[str] = None
+) -> str:
+    """``<@id>`` markup → ``@name`` using the message's own mentions list;
+    the ``drop_user_id`` mention (the bot's) is removed outright."""
+    names = {
+        str(m.get("id")): (m.get("display_name") or m.get("username") or "user")
+        for m in (mentions or [])
+        if isinstance(m, dict) and m.get("id")
+    }
+
+    def _sub(match: "re.Match[str]") -> str:
+        user_id = match.group(1)
+        if drop_user_id and user_id == str(drop_user_id):
+            return ""
+        return f"@{names.get(user_id, 'user')}"
+
+    return re.sub(r"\s{2,}", " ", _MENTION_RE.sub(_sub, content)).strip()
 
 
 def _discord_trigger_field(value: str, display: str, keywords: Optional[list] = None):
@@ -5332,10 +5356,21 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
                 member.get("nick") or author.get("global_name") or author.get("username")
             ),
             "author_is_bot": bool(author.get("bot")),
+            "guild_name": payload.get("guild_name"),
+            "channel_name": payload.get("channel_name"),
             "mentions_bot": bool(bot_user_id) and any(
                 str(m.get("id")) == str(bot_user_id) for m in mentions
             ),
             "mentioned_user_ids": [str(m.get("id")) for m in mentions if m.get("id")],
+            "mentions": [
+                {
+                    "id": str(m.get("id")),
+                    "username": m.get("username"),
+                    "display_name": m.get("global_name") or m.get("username"),
+                }
+                for m in mentions
+                if m.get("id")
+            ],
             "attachments": attachments,
             "reply_to_message_id": reference.get("message_id"),
             "message_url": (
@@ -5422,6 +5457,9 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
         the base JSON delivery."""
         if not isinstance(output, dict):
             return super().resolve_agent_event(output)
+        if output.get("source") == "gateway":
+            # A raw listener envelope reads as the message it carries.
+            output = cls._resolve_gateway_payload(output, "on_message")
         channel_id = str(output.get("channel_id") or "").strip()
         event_type = output.get("event_type")
         if event_type in cls._gateway_trigger_operations and channel_id:
@@ -5453,13 +5491,20 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             or output.get("author_id")
             or "someone"
         )
-        content = str(output.get("content") or "")
         bot_user_id = (output.get("data") or {}).get("bot_user_id") if isinstance(output.get("data"), dict) else None
-        if bot_user_id:
-            # The mention that woke the agent is noise in its own turn.
-            content = content.replace(f"<@!{bot_user_id}>", "").replace(f"<@{bot_user_id}>", "").strip()
-        guild = f" (server {output['guild_id']})" if output.get("guild_id") else ""
-        lines = [f"Discord message from {who} in channel {channel_id}{guild}:", content or "(no text)"]
+        # Names for people, ids for tools: the mention that woke the agent is
+        # noise in its own turn, other mentions read as @name.
+        content = humanize_discord_mentions(
+            str(output.get("content") or ""), output.get("mentions"), drop_user_id=bot_user_id
+        )
+        where = f"#{output['channel_name']}" if output.get("channel_name") else f"channel {channel_id}"
+        if output.get("guild_name"):
+            server = f" ({output['guild_name']})"
+        elif output.get("guild_id"):
+            server = f" (server {output['guild_id']})"
+        else:
+            server = ""
+        lines = [f"Discord message from {who} in {where}{server}:", content or "(no text)"]
         attachments = [a.get("url") for a in output.get("attachments") or [] if a.get("url")]
         if attachments:
             lines.append("Attachments: " + ", ".join(attachments))
