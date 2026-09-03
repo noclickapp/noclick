@@ -274,7 +274,7 @@ function LedgerCell({ label, value, suffix, sub, tone, trend, onClick }: { label
     return (
         <button type="button" onClick={onClick} className={cn('flex min-w-0 flex-col items-start gap-2 text-left transition-colors hover:bg-foreground/[0.025]', LAYOUT.ledgerCell)}>
             <span className={EYEBROW}>{label}</span>
-            <span className="flex w-full items-end justify-between gap-3">
+            <span className="flex w-full items-end gap-4">
                 <span className="inline-flex items-baseline gap-1.5">
                     <span className={cn('text-[28px] font-semibold leading-none tracking-tight', tone === 'failure' && 'text-red-600 dark:text-red-400')}>{value}</span>
                     {suffix && <span className="text-[13px] text-foreground/60 dark:text-foreground/40">{suffix}</span>}

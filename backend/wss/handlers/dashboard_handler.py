@@ -204,9 +204,12 @@ async def build_overview(pool, user_id: str, *, days: int = 14) -> Dict[str, Any
             errors[name] = str(e)
             return None
 
+    # Scope is resolved once, in list_workflows; the per-workflow queries take
+    # the ids so each stays on its own table's (workflow_id, …) index.
+    wf_ids = [str(r["id"]) for r in wf_rows]
     (
         approvals, asks, prompts, bridge_links, cred_requests, credentials,
-        run_days, by_workflow, recent, delayed, webhook_rows, subscription_rows,
+        runs_window, recent, delayed, webhook_rows, subscription_rows,
         tool_calls, sandboxes, resources, conversations, notifications,
     ) = await asyncio.gather(
         section("approvals", feed.list_approvals(user_id=user_id, org_uuid=org_uuid)),
@@ -215,18 +218,19 @@ async def build_overview(pool, user_id: str, *, days: int = 14) -> Dict[str, Any
         section("bridge_links", repo.pending_bridge_links(user_id)),
         section("credential_requests", CredentialsRepo(pool).list_credential_requests(user_id)),
         section("credentials", CredentialsRepo(pool).list_accessible(user_id, org_id)),
-        section("runs_by_day", repo.runs_by_day(user_id, org_uuid, days=days)),
-        section("runs_by_workflow", repo.runs_by_workflow(user_id, org_uuid, days=days)),
-        section("recent_runs", repo.recent_runs(user_id, org_uuid)),
-        section("awaiting_delay", repo.awaiting_delay(user_id, org_uuid)),
-        section("webhooks", repo.webhook_rows(user_id, org_uuid)),
-        section("subscriptions", repo.subscription_rows(user_id, org_uuid)),
+        section("runs", repo.runs_window(wf_ids, days=days)),
+        section("recent_runs", repo.recent_runs(wf_ids, days=days)),
+        section("awaiting_delay", repo.awaiting_delay(wf_ids)),
+        section("webhooks", repo.webhook_rows(wf_ids)),
+        section("subscriptions", repo.subscription_rows(wf_ids)),
         section("tool_calls", feed.list_tool_calls(user_id=user_id, org_uuid=org_uuid, limit=120)),
         section("sandboxes", _list_sandboxes(user_id)),
-        section("resources", repo.resources(user_id, org_uuid)),
-        section("conversations", repo.agent_conversations(user_id, org_uuid)),
+        section("resources", repo.resources(wf_ids)),
+        section("conversations", repo.agent_conversations(user_id, wf_ids)),
         section("notifications", repo.notifications(user_id)),
     )
+    run_days = runs_window["by_day"] if runs_window else None
+    by_workflow = runs_window["by_workflow"] if runs_window else None
 
     # Graphs for workflows referenced by rows but outside the scoped list
     # (shared workflows, since-moved ones) so their marks and labels resolve.

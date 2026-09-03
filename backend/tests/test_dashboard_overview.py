@@ -111,27 +111,29 @@ async def test_repo_runs_are_zero_filled_and_scoped(real_database):
     wf_id, org = await _seed(real_database, user)
     repo = DashboardRepo(real_database.pool)
 
-    days = await repo.runs_by_day(user, org, days=14)
+    window = await repo.runs_window([wf_id], days=14)
+    days = window["by_day"]
     assert len(days) == 14
     # 3 completed + the parked (awaiting_delay) run count as non-failures; the 20-day-old run is outside the window.
     assert sum(d["ok"] for d in days) == 4 and sum(d["failed"] for d in days) == 1
     assert days[-1]["failed"] == 1 and days[-1]["ok"] == 2
 
-    by_wf = await repo.runs_by_workflow(user, org, days=14)
+    by_wf = window["by_workflow"]
     assert [s["workflow_id"] for s in by_wf] == [wf_id]
     assert by_wf[0]["runs"] == 5 and by_wf[0]["failed"] == 1 and len(by_wf[0]["days"]) == 14
 
-    recent = await repo.recent_runs(user, org, limit=10)
+    # Recent runs are the window's runs (the chart and the list agree), so the
+    # 20-day-old run is not listed.
+    recent = await repo.recent_runs([wf_id], days=14, limit=10)
     assert {r["status"] for r in recent[:3]} == {"completed", "error", "awaiting_delay"}, "newest first"
-    assert all(str(r["workflow_id"]) == wf_id for r in recent) and len(recent) == 6
+    assert all(str(r["workflow_id"]) == wf_id for r in recent) and len(recent) == 5
 
-    delayed = await repo.awaiting_delay(user, org)
+    delayed = await repo.awaiting_delay([wf_id])
     assert len(delayed) == 1 and delayed[0]["resume_node_id"] == "hub"
 
-    # A different user sees nothing.
-    assert await repo.runs_by_day(str(uuid.uuid4()), None, days=14) == [
-        {"date": d["date"], "ok": 0, "failed": 0} for d in days
-    ]
+    # No workflows in scope → an empty, zero-filled window and no rows.
+    assert (await repo.runs_window([], days=14))["by_day"] == [{"date": d["date"], "ok": 0, "failed": 0} for d in days]
+    assert await repo.recent_runs([]) == [] and await repo.webhook_rows([]) == []
 
 
 @pytest.mark.asyncio
@@ -140,7 +142,7 @@ async def test_repo_webhooks_notifications_and_mark_read(real_database):
     wf_id, org = await _seed(real_database, user)
     repo = DashboardRepo(real_database.pool)
 
-    hooks = await repo.webhook_rows(user, org)
+    hooks = await repo.webhook_rows([wf_id])
     assert [(str(h["workflow_id"]), h["node_id"], h["trigger_count"]) for h in hooks] == [(wf_id, "hub", 7)]
 
     rows, unread = await repo.notifications(user)
@@ -302,8 +304,7 @@ async def test_build_overview_isolates_a_failing_section():
         patch.object(dh.DashboardRepo, "list_workflows", AsyncMock(return_value=[{"id": "wf-1", "name": "WF", "workflow": SAVE_SHAPE, "updated_at": None}])),
         patch.object(dh.DashboardRepo, "unanswered_builder_prompts", ok),
         patch.object(dh.DashboardRepo, "pending_bridge_links", ok),
-        patch.object(dh.DashboardRepo, "runs_by_day", boom),
-        patch.object(dh.DashboardRepo, "runs_by_workflow", ok),
+        patch.object(dh.DashboardRepo, "runs_window", boom),
         patch.object(dh.DashboardRepo, "recent_runs", ok),
         patch.object(dh.DashboardRepo, "awaiting_delay", ok),
         patch.object(dh.DashboardRepo, "webhook_rows", ok),
@@ -320,6 +321,6 @@ async def test_build_overview_isolates_a_failing_section():
             stack.enter_context(p)
         payload = await dh.build_overview(pool, USER)
 
-    assert payload["errors"] == {"runs_by_day": "relation does not exist"}
+    assert payload["errors"] == {"runs": "relation does not exist"}
     assert payload["runs"]["days"] == [] and payload["workspace"] == {"name": "Acme", "kind": "org", "userName": "Dhruv"}
     assert payload["upcoming"][0]["kind"] == "schedule" and payload["triggers"][0]["armed"] is True
