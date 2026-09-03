@@ -67,6 +67,20 @@ function WorkspacePreview({ file }: { file: FileEntry }) {
     const url = workspaceFileUrl(file.urlPath);
     const ext = file.path.includes('.') ? file.path.slice(file.path.lastIndexOf('.') + 1).toLowerCase() : '';
     if (file.kind === 'image') return <img src={url} alt={file.path} className="max-h-[65vh] max-w-full rounded-lg object-contain" />;
+    if (file.kind === 'video') {
+        return (
+            <video src={url} controls playsInline className="max-h-[65vh] w-full rounded-lg bg-black">
+                <track kind="captions" />
+            </video>
+        );
+    }
+    if (file.kind === 'audio') {
+        return (
+            <audio src={url} controls className="w-full py-6">
+                <track kind="captions" />
+            </audio>
+        );
+    }
     const textLike = file.kind === 'doc' || file.kind === 'code' || file.kind === 'data' || ext === 'log';
     if (textLike && file.size <= MAX_TEXT_PREVIEW_BYTES && ext !== 'pdf') return <WorkspaceTextPreview url={url} markdown={ext === 'md'} />;
     return (
@@ -88,7 +102,7 @@ export function FilePreviewDialog({ request, onClose, onOpenWorkflow }: { reques
               ? workspaceFileUrl(file.urlPath, { download: true })
               : undefined
         : undefined;
-    const wide = resource ? isWidePreview(resource) : file?.kind === 'image';
+    const wide = resource ? isWidePreview(resource) : file?.kind === 'image' || file?.kind === 'video';
     return (
         <Dialog open={!!request} onOpenChange={(open) => { if (!open) onClose(); }}>
             <DialogContent data-testid="dashboard-file-preview" className={cn('flex max-h-[85vh] flex-col', wide ? 'max-w-4xl' : 'max-w-2xl')}>

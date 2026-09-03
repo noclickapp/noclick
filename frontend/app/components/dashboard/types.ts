@@ -205,7 +205,7 @@ export type FileSourceKind =
     /** The AI builder's org/personal sandbox workspace. */
     | 'builder';
 
-export type FileKind = 'image' | 'doc' | 'data' | 'code' | 'archive' | 'other';
+export type FileKind = 'image' | 'video' | 'audio' | 'doc' | 'data' | 'code' | 'archive' | 'other';
 
 export interface FileEntry {
     path: string;

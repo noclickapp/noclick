@@ -71,6 +71,8 @@ async function call(event: string, payload: Wire, timeoutMs = 30000): Promise<Wi
 function fileKindFromPath(path: string): FileEntry['kind'] {
     const ext = path.includes('.') ? path.slice(path.lastIndexOf('.') + 1).toLowerCase() : '';
     if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext)) return 'image';
+    if (['mp4', 'webm', 'mov', 'm4v', 'mkv'].includes(ext)) return 'video';
+    if (['mp3', 'wav', 'ogg', 'oga', 'm4a', 'aac'].includes(ext)) return 'audio';
     if (['csv', 'tsv', 'xlsx', 'json', 'parquet'].includes(ext)) return 'data';
     if (['py', 'js', 'ts', 'tsx', 'sh', 'sql', 'yaml', 'yml', 'toml'].includes(ext)) return 'code';
     if (['zip', 'tar', 'gz', '7z'].includes(ext)) return 'archive';
@@ -153,8 +155,14 @@ export function DashboardTab() {
 
     const focusParam = params.get('focus');
     const focus = (DASHBOARD_FOCUS_IDS as readonly string[]).includes(focusParam ?? '') ? (focusParam as FocusId) : null;
+    // The drill-down survives a trip to another tab: the tab switch strips
+    // `?focus=` from the URL, so the last drill-down is kept for the session and
+    // re-applied when the tab mounts again. Leaving it on purpose — the back
+    // button, Esc, or the browser's Back — forgets it.
+    const [lastFocus, setLastFocus] = useValtioState<FocusId | null>('dashboard', 'last_focus', null);
     const onFocus = useCallback(
         (id: FocusId | null) => {
+            setLastFocus(id);
             setParams(
                 (prev) => {
                     const next = new URLSearchParams(prev);
@@ -165,8 +173,22 @@ export function DashboardTab() {
                 { replace: !id }
             );
         },
-        [setParams]
+        [setParams, setLastFocus]
     );
+    const restored = useRef(false);
+    useEffect(() => {
+        if (restored.current) return;
+        restored.current = true;
+        if (!focus && lastFocus) onFocus(lastFocus);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only
+    }, []);
+    useEffect(() => {
+        const onPop = () => {
+            if (!new URLSearchParams(window.location.search).get('focus')) setLastFocus(null);
+        };
+        window.addEventListener('popstate', onPop);
+        return () => window.removeEventListener('popstate', onPop);
+    }, [setLastFocus]);
 
     // Relative times tick without a refetch.
     const [now, setNow] = useState(() => new Date().toISOString());

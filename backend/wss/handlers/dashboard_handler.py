@@ -949,6 +949,10 @@ def _file_kind(mime: Optional[str], resource_type: Optional[str], name: str) -> 
     ext = name.rsplit(".", 1)[-1].lower() if "." in name else ""
     if mime.startswith("image/") or resource_type == "image" or ext in ("png", "jpg", "jpeg", "gif", "webp", "svg"):
         return "image"
+    if mime.startswith("video/") or resource_type == "video" or ext in ("mp4", "webm", "mov", "m4v", "mkv"):
+        return "video"
+    if mime.startswith("audio/") or resource_type == "audio" or ext in ("mp3", "wav", "ogg", "oga", "m4a", "aac"):
+        return "audio"
     if resource_type == "dataset" or ext in ("csv", "tsv", "xlsx", "json", "parquet"):
         return "data"
     if ext in ("py", "js", "ts", "tsx", "sh", "sql", "yaml", "yml", "toml"):

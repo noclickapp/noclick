@@ -23,6 +23,9 @@ import {
     Terminal,
     X,
     Trash2,
+    Film,
+    Music,
+
 } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { IODataDisplay } from '~/components/workflow/IODataDisplay';
@@ -33,6 +36,7 @@ import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
 import { ApprovalField } from '~/components/dashboard/ApprovalFields';
 import { isPersistedExecutionId } from '~/lib/runResults';
 import { workspaceFileUrl } from '~/hooks/useAgentWorkspaceFiles';
+import { useValtioState } from '~/hooks/useValtioState';
 import { AskAnswer } from '~/components/dashboard/AskAnswer';
 import {
     ATTENTION_KIND_LABEL,
@@ -962,17 +966,21 @@ export function RunRowView({ run, now, expanded, onToggle }: { run: RunRow; now:
     );
 }
 
+/** One workflow's window: the row opens the workflow, where its run log and
+ *  the failing node live. */
 function WorkflowStatsRow({ stat, now, narrow = false, showLast = true }: { stat: DashboardData['runs']['byWorkflow'][number]; now: string; narrow?: boolean; showLast?: boolean }) {
+    const { openWorkflow } = useDashboardActions();
     return (
-        <div className={cn('-mx-2 flex items-center gap-3 rounded-lg px-2 py-2', ROW_HOVER)}>
+        <div {...clickableRow(() => openWorkflow(stat.workflow))} className={cn('group/wf -mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2', ROW_HOVER)}>
             <MarkRow types={stat.workflow.marks} size="xs" max={narrow ? 2 : 3} hideRest className={cn('shrink-0', narrow ? 'w-[38px]' : 'w-[58px]')} />
-            <span className="min-w-0 flex-1 truncate text-[14px]">{stat.workflow.name}</span>
+            <span className="min-w-0 flex-1 truncate text-[14px] transition-colors group-hover/wf:text-foreground">{stat.workflow.name}</span>
             {!narrow && <Sparkline values={stat.days.map((d) => d.ok + d.failed)} width={64} height={18} />}
             <span className="w-10 shrink-0 text-right text-[12px] tabular-nums text-foreground/75 dark:text-foreground/60">{stat.runs}</span>
-            <span className={cn('w-14 shrink-0 text-right text-[12px] tabular-nums', stat.failed ? 'text-red-600 dark:text-red-400' : 'text-foreground/45 dark:text-foreground/30')}>
+            <span className={cn('w-[76px] shrink-0 whitespace-nowrap text-right text-[12px] tabular-nums', stat.failed ? 'text-red-600 dark:text-red-400' : 'text-foreground/45 dark:text-foreground/30')}>
                 {stat.failed ? `${stat.failed} failed` : '—'}
             </span>
             {!narrow && showLast && <span className="w-16 shrink-0 text-right text-[11px] tabular-nums text-foreground/60 dark:text-foreground/40">{relTime(stat.lastRunAt, now)}</span>}
+            <ArrowUpRight className="h-3 w-3 shrink-0 text-foreground/0 transition-colors group-hover/wf:text-foreground/50" />
         </div>
     );
 }
@@ -1058,9 +1066,10 @@ export function RunsFull({ data }: SectionProps) {
                             <span className="w-[58px] shrink-0" />
                             <span className="flex-1">Workflow</span>
                             <span className="w-16">Trend</span>
-                            <span className="w-12 text-right">Runs</span>
-                            <span className="w-14 text-right">Failed</span>
+                            <span className="w-10 text-right">Runs</span>
+                            <span className="w-[76px] text-right">Failed</span>
                             <span className="w-16 text-right">Last</span>
+                            <span className="w-3" />
                         </div>
                         {data.runs.byWorkflow.map((s) => (
                             <WorkflowStatsRow key={s.workflow.id} stat={s} now={data.now} />
@@ -1417,6 +1426,10 @@ function FileGlyph({ kind, className }: { kind: FileKind; className?: string }) 
     switch (kind) {
         case 'image':
             return <ImageIcon className={c} />;
+        case 'video':
+            return <Film className={c} />;
+        case 'audio':
+            return <Music className={c} />;
         case 'doc':
             return <FileText className={c} />;
         case 'data':
@@ -1447,11 +1460,16 @@ function basename(path: string): string {
 
 /** A real thumbnail for images that already have a URL; the type glyph otherwise. */
 function FileThumb({ file }: { file: FileEntry }) {
-    const src = file.kind === 'image' ? (file.url ?? (file.urlPath ? workspaceFileUrl(file.urlPath) : null)) : null;
+    const src = file.kind === 'image' || file.kind === 'video' ? (file.url ?? (file.urlPath ? workspaceFileUrl(file.urlPath) : null)) : null;
     if (src) {
         return (
             <span className="h-8 w-8 shrink-0 overflow-hidden rounded-md border border-border dark:border-foreground/[0.08] bg-foreground/[0.04]">
-                <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" />
+                {file.kind === 'video' ? (
+                    // The first frame is the thumbnail; metadata-only, so no download.
+                    <video src={src} muted playsInline preload="metadata" className="h-full w-full object-cover" />
+                ) : (
+                    <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" />
+                )}
             </span>
         );
     }
@@ -1493,7 +1511,7 @@ function FileRowView({ file, now, showSource = true, showDir = false, onDelete }
                                 type="button"
                                 aria-label={`Delete ${basename(file.path)}`}
                                 onClick={() => setConfirm('asking')}
-                                className="grid h-6 w-6 place-items-center rounded-md text-foreground/0 transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:text-foreground/75 dark:focus-visible:text-foreground/60 group-hover/file:text-foreground/60 dark:group-hover/file:text-foreground/40"
+                                className="grid h-6 w-6 place-items-center rounded-md text-foreground/45 transition-colors hover:bg-foreground/[0.06] hover:text-red-600 dark:text-foreground/35 dark:hover:text-red-400"
                             >
                                 <Trash2 className="h-3.5 w-3.5" />
                             </button>
@@ -1559,6 +1577,9 @@ export function FilesFull({ data }: SectionProps) {
     const actions = useDashboardActions();
     const [facet, setFacet] = useState<'all' | FileSourceKind>('all');
     const [query, setQuery] = useState('');
+    // Folded places stay folded for the session, so a long list is scanned once.
+    const [collapsed, setCollapsed] = useValtioState<string[]>('dashboard', 'files_collapsed', []);
+    const toggle = (id: string) => setCollapsed(collapsed.includes(id) ? collapsed.filter((x) => x !== id) : [...collapsed, id]);
     const kinds: FileSourceKind[] = ['resources', 'workspace', 'volume', 'builder'];
     const sources = data.files.filter((s) => (facet === 'all' ? true : s.kind === facet));
     const q = query.trim().toLowerCase();
@@ -1598,9 +1619,19 @@ export function FilesFull({ data }: SectionProps) {
                     const files = s.files.filter((f) => !q || f.path.toLowerCase().includes(q));
                     if (q && !files.length) return null;
                     if (s.kind === 'workspace' && !s.files.length) return null;
+                    const folded = collapsed.includes(s.id) && !q;
                     return (
                         <section key={s.id}>
                             <div className="mb-1 flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => toggle(s.id)}
+                                    aria-expanded={!folded}
+                                    aria-label={folded ? `Expand ${s.label}` : `Collapse ${s.label}`}
+                                    className="-ml-1 grid h-5 w-5 shrink-0 place-items-center rounded text-foreground/45 transition-colors hover:bg-foreground/[0.06] hover:text-foreground dark:text-foreground/35"
+                                >
+                                    <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', folded && '-rotate-90')} />
+                                </button>
                                 {s.workflow ? <MarkRow types={s.workflow.marks} size="xs" max={3} /> : s.agent ? <NodeMark type={agentMarkType(s.agent.model)} size="xs" /> : null}
                                 {s.workflow ? (
                                     <button
@@ -1625,7 +1656,7 @@ export function FilesFull({ data }: SectionProps) {
                                     )}
                                 </span>
                             </div>
-                            {files.length ? (
+                            {folded ? null : files.length ? (
                                 <div className={cn(ROWS, "border-t border-border dark:border-foreground/[0.06]")}>
                                     {files.map((f) => (
                                         <FileRowView
