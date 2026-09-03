@@ -24,7 +24,8 @@ import { WorkflowBrowser } from '~/components/workflow/WorkflowBrowser';
 // Lazy: the operator debug tab is rendered only on demand so its static graph
 // does not enter the dashboard's initial bundle.
 const DebugViewer = lazy(() => import('~/components/debug/DebugViewer').then(m => ({ default: m.DebugViewer })));
-import { Feed } from '~/components/feed/Feed';
+// Lazy: the Dashboard tab's chart + credential-icon closure stays out of the initial bundle.
+const DashboardTab = lazy(() => import('~/components/dashboard/DashboardTab').then(m => ({ default: m.DashboardTab })));
 import { useApprovalCount } from '~/hooks/useApprovalCount';
 import { Settings } from '~/components/settings/Settings';
 import { getDefaultPanelWidth } from '~/lib/constants';
@@ -115,8 +116,9 @@ interface DashboardProps {
             setSelectedTab('flow');
         } else if (urlTab === 'debug') {
             setSelectedTab('debug');
-        } else if (urlTab === 'feed') {
-            setSelectedTab('feed');
+        } else if (urlTab === 'dashboard' || urlTab === 'feed') {
+            // 'feed' is the pre-Dashboard name; old links and bookmarks still land here.
+            setSelectedTab('dashboard');
         } else if (urlTab === 'settings' || urlTab === 'usage' || urlTab === 'org-settings') {
             // All settings-related tabs route to unified Settings
             setSelectedTab('settings');
@@ -306,19 +308,15 @@ interface DashboardProps {
         };
         window.addEventListener('noclick:navigate-to-node', handleNavigateToNode);
 
-        // Navigate to feed tab, optionally pre-filtering by workflow.
-        // Dispatched by interface components (e.g. dashboard JSX) via window.parent.dispatchEvent.
-        const handleSwitchToFeed = (e: Event) => {
-            const workflowFilter = (e as CustomEvent).detail?.workflowFilter as string | undefined;
-            setSelectedTab('feed');
+        // Open the Dashboard tab at the needs-you queue. Kept under its historical
+        // name: interface components (user-authored dashboard JSX) dispatch it via
+        // window.parent.dispatchEvent, so it is a public contract.
+        const handleSwitchToFeed = () => {
+            setSelectedTab('dashboard');
             setSearchParams(prev => {
                 const next = new URLSearchParams(prev);
-                next.set('tab', 'feed');
-                if (workflowFilter) {
-                    next.set('workflow', workflowFilter);
-                } else {
-                    next.delete('workflow');
-                }
+                applyTabToSearchParams(next, 'dashboard');
+                next.set('focus', 'attention');
                 return next;
             }, { replace: true });
         };
@@ -393,8 +391,8 @@ interface DashboardProps {
                     initialWorkflowId={urlWorkflowId}
                 />
             );
-        } else if (selectedTab === 'feed') {
-            return <Feed initialWorkflowFilter={urlWorkflowId ?? undefined} />;
+        } else if (selectedTab === 'dashboard') {
+            return <Suspense fallback={<div className="h-full w-full" />}><DashboardTab /></Suspense>;
         } else if (selectedTab === 'settings') {
             return (
                 <div className="h-full" data-onboarding="settings-view">
@@ -444,7 +442,7 @@ interface DashboardProps {
                             />
                         </div>
                         <main className="pt-[calc(3.5rem+env(safe-area-inset-top))] w-full h-full overflow-hidden flex flex-col">
-                            <div className={`${selectedTab === 'flow' || selectedTab === 'settings' || selectedTab === 'debug' || selectedTab === 'feed' ? 'flex-1 min-h-0 min-w-0' : 'p-4 w-fit min-w-full'}`}>
+                            <div className={`${selectedTab === 'flow' || selectedTab === 'settings' || selectedTab === 'debug' || selectedTab === 'dashboard' ? 'flex-1 min-h-0 min-w-0' : 'p-4 w-fit min-w-full'}`}>
                                 {renderTabContent()}
                             </div>
                         </main>
@@ -524,7 +522,7 @@ interface DashboardProps {
                             />
                         </div>
                         <main className="flex-1 min-h-0 w-full overflow-hidden">
-                            <div className={`${selectedTab === 'flow' || selectedTab === 'settings' || selectedTab === 'debug' || selectedTab === 'feed' ? 'h-full' : 'p-4 w-fit min-w-full'}`}>
+                            <div className={`${selectedTab === 'flow' || selectedTab === 'settings' || selectedTab === 'debug' || selectedTab === 'dashboard' ? 'h-full' : 'p-4 w-fit min-w-full'}`}>
                                 {renderTabContent()}
                             </div>
                         </main>

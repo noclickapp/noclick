@@ -54,6 +54,9 @@ import { toast } from 'sonner';
 interface CredentialsSettingsProps {
     onNavigateBack?: () => void;
     embedded?: boolean;
+    /** The host draws the section's title itself (the Dashboard drill-down);
+     *  keeps the actions, drops the heading and count. */
+    hideTitle?: boolean;
 }
 
 type CredentialTab = 'organization' | 'personal' | 'shared';
@@ -77,6 +80,7 @@ function getInitials(name: string): string {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function CredentialsSettings({
     embedded,
+    hideTitle = false,
     onNavigateBack,
 }: CredentialsSettingsProps) {
     const [orgContext] = useOrgContext();
@@ -348,32 +352,42 @@ export function CredentialsSettings({
         setExpandedIds(new Set());
     }, [activeTab]);
 
+    const newCredentialButton = (
+        <button
+            onClick={() => openCreateCredential()}
+            className="flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-sm text-foreground bg-card dark:bg-foreground/[0.08] hover:bg-muted dark:hover:bg-foreground/[0.12] border border-border dark:border-white/[0.08] rounded-lg transition-colors"
+        >
+            <Plus className="w-4 h-4" />
+            New credential
+        </button>
+    );
+    const showTabs = !loading && credentials.length > 0;
+
     return (
         <div>
-            {/* Header */}
-            <div className="flex items-center justify-between gap-3 mb-6">
-                <div className="flex items-center gap-3">
-                    <h2 className="text-lg font-semibold text-foreground tracking-tight">
-                        Credentials
-                    </h2>
-                    {!loading && credentials.length > 0 && (
-                        <span className="text-xs text-muted-foreground dark:text-white/40 bg-foreground/[0.06] px-2 py-0.5 rounded-full">
-                            {credentials.length}
-                        </span>
-                    )}
+            {/* Header — the host may draw the title itself, in which case the
+                action moves down to the tabs row so nothing floats alone. */}
+            {!hideTitle && (
+                <div className="flex items-center justify-between gap-3 mb-6">
+                    <div className="flex items-center gap-3">
+                        <h2 className="text-lg font-semibold text-foreground tracking-tight">
+                            Credentials
+                        </h2>
+                        {showTabs && (
+                            <span className="text-xs text-muted-foreground dark:text-white/40 bg-foreground/[0.06] px-2 py-0.5 rounded-full">
+                                {credentials.length}
+                            </span>
+                        )}
+                    </div>
+                    {newCredentialButton}
                 </div>
-                <button
-                    onClick={() => openCreateCredential()}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-foreground bg-card dark:bg-foreground/[0.08] hover:bg-muted dark:hover:bg-foreground/[0.12] border border-border dark:border-white/[0.08] rounded-lg transition-colors"
-                >
-                    <Plus className="w-4 h-4" />
-                    New credential
-                </button>
-            </div>
+            )}
+            {hideTitle && !showTabs && <div className="flex justify-end mb-4">{newCredentialButton}</div>}
 
             {/* Tabs */}
-            {!loading && credentials.length > 0 && (
-                <div className="flex gap-1 mb-4">
+            {showTabs && (
+                <div className="flex items-center justify-between gap-3 mb-4">
+                <div className="flex gap-1">
                     {hasOrg && (
                         <button
                             onClick={() => setActiveTab('organization')}
@@ -427,6 +441,8 @@ export function CredentialsSettings({
                             </span>
                         )}
                     </button>
+                </div>
+                    {hideTitle && newCredentialButton}
                 </div>
             )}
 

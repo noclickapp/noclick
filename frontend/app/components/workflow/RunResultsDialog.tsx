@@ -64,8 +64,9 @@ interface RunResultsDialogProps {
     onClose: () => void;
     /** Open a node's config panel (expanded), like the trigger-info popup. */
     onOpenConfig: (nodeId: string) => void;
-    /** Stop auto-showing this popup after future runs (re-enable in Settings). */
-    onDontShowAgain: () => void;
+    /** Stop auto-showing this popup after future runs (re-enable in Settings).
+     *  Omitted by hosts that never auto-show (the Dashboard). */
+    onDontShowAgain?: () => void;
     /** Loaded runs (newest first) for the in-popup run-switcher. */
     runs: WorkflowExecutionLog[];
     /** Execution whose results are currently shown. */
@@ -150,10 +151,10 @@ export function RunResultsDialog({
                         icons={icons}
                         onOpenConfig={onOpenConfig}
                         switcher={switcher}
-                        onDontShowAgain={() => {
+                        onDontShowAgain={onDontShowAgain ? () => {
                             onDontShowAgain();
                             onClose();
-                        }}
+                        } : undefined}
                         builtinClose
                     />
                 )}

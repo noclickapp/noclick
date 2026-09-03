@@ -40,19 +40,6 @@ class ApprovalRow:
 
 
 @dataclass(frozen=True)
-class ActivityLogRow:
-    """One row from the activity_logs feed."""
-    id: Any
-    workflow_id: Any
-    execution_id: Any
-    node_id: Optional[str]
-    message: Optional[str]
-    level: Optional[str]
-    created_at: datetime
-    workflow_name: Optional[str]
-
-
-@dataclass(frozen=True)
 class ToolCallRow:
     """One row from the tool_call_events feed."""
     id: Any
@@ -89,7 +76,7 @@ class ApprovalDecision:
 
 
 class FeedRepo:
-    """Read/write SQL for the feed handler (approvals, activity, tool calls).
+    """Read/write SQL for the feed handler and the Dashboard tab (approvals, tool calls).
 
     Constructor takes a pool proxy from ``DatabasePoolMixin.get_pool()``.
     """
@@ -98,7 +85,6 @@ class FeedRepo:
     # by SELECTs owned by this repo — never accepts caller input.
     _ALLOWED_SCOPE_ALIASES = frozenset({
         "ar",   # approval_requests
-        "al",   # activity_logs
         "tce",  # tool_call_events (user_id side of the tool-call join)
         "w",    # workflows (organization_id side of the tool-call join)
     })
@@ -221,44 +207,6 @@ class FeedRepo:
     # ------------------------------------------------------------------
     # activity logs
     # ------------------------------------------------------------------
-
-    async def list_activity(
-        self,
-        *,
-        user_id: str,
-        org_uuid: Optional[uuid_module.UUID],
-        limit: int,
-    ) -> List[ActivityLogRow]:
-        """Recent activity_logs entries for the workspace."""
-        scope_clause, scope_params = self._workspace_scope(
-            table_alias="al", user_id=user_id, org_uuid=org_uuid,
-        )
-        sql = f"""
-            SELECT
-                al.id, al.workflow_id, al.execution_id, al.node_id,
-                al.message, al.level, al.created_at,
-                w.name AS workflow_name
-            FROM activity_logs al
-            LEFT JOIN workflows w ON w.id = al.workflow_id
-            WHERE {scope_clause}
-            ORDER BY al.created_at DESC
-            LIMIT ${len(scope_params) + 1}
-        """
-        async with self._pool.acquire() as conn:
-            rows = await conn.fetch(sql, *scope_params, limit)
-        return [
-            ActivityLogRow(
-                id=r["id"],
-                workflow_id=r["workflow_id"],
-                execution_id=r["execution_id"],
-                node_id=r["node_id"],
-                message=r["message"],
-                level=r["level"],
-                created_at=r["created_at"],
-                workflow_name=r["workflow_name"],
-            )
-            for r in rows
-        ]
 
     # ------------------------------------------------------------------
     # tool-call events (with per-workflow graph fetch)

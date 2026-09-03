@@ -85,6 +85,7 @@ class Handler(Enum):
     CLAUDE_CODE_AUTH = "claude_code_auth_handler"
     WHATSAPP_QR = "whatsapp_qr_handler"
     FEED = "feed_handler"
+    DASHBOARD = "dashboard_handler"
     SKILL = "skill_handler"
     FEEDBACK = "feedback_handler"
     AGENT_SHARE = "agent_share_handler"
@@ -575,11 +576,9 @@ EVENT_ROUTING: Dict[str, Dict[str, Handler]] = {
         "approval:list": Handler.FEED,
         "approval:respond": Handler.FEED,
 
-        # Activity log events
-        "activity:list": Handler.FEED,
-
-        # Agent tool-call feed
-        "tool_calls:list": Handler.FEED,
+        # Dashboard tab
+        "dashboard:overview": Handler.DASHBOARD,
+        "dashboard:notifications:read": Handler.DASHBOARD,
 
         # Publishing events
     },

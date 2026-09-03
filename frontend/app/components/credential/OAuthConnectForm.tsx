@@ -239,8 +239,8 @@ export function OAuthConnectForm({
 
             {/* Multi-account selection (Facebook pages, Supabase projects, Atlassian sites). */}
             {showPendingSelection && (
-                <div className="p-3 rounded-lg bg-muted/60 dark:bg-zinc-900/60 border border-border space-y-2.5">
-                    <div className="text-xs text-muted-foreground dark:text-zinc-300 font-medium">
+                <div className="p-3 rounded-lg bg-foreground/[0.04] border border-border space-y-2.5">
+                    <div className="text-xs text-foreground/80 font-medium">
                         {provider === 'atlassian'
                             ? 'Use an available Jira site instead?'
                             : 'Select an account to connect'}
@@ -253,13 +253,13 @@ export function OAuthConnectForm({
                                     onResolvePendingSelection?.(option.id)
                                 }
                                 disabled={isConnecting}
-                                className="w-full text-left px-3 py-2 rounded-lg border border-border hover:border-foreground/20 bg-card hover:bg-accent dark:hover:bg-zinc-800/80 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                                className="w-full text-left px-3 py-2 rounded-lg border border-border hover:border-foreground/20 bg-card hover:bg-accent disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                             >
                                 <div className="text-sm text-foreground/90">
                                     {option.label || option.id}
                                 </div>
                                 {option.description && (
-                                    <div className="text-[11px] text-muted-foreground/70 dark:text-zinc-500 mt-0.5">
+                                    <div className="text-[11px] text-muted-foreground mt-0.5">
                                         {option.description}
                                     </div>
                                 )}
@@ -280,7 +280,7 @@ export function OAuthConnectForm({
                     <button
                         type="button"
                         onClick={() => setShowCustomFields((v) => !v)}
-                        className="w-full flex items-center justify-between px-3 py-2 text-xs text-muted-foreground hover:text-foreground/80 hover:bg-accent dark:hover:bg-zinc-900/50 transition-all rounded-lg"
+                        className="w-full flex items-center justify-between px-3 py-2 text-xs text-muted-foreground hover:text-foreground/80 hover:bg-accent transition-all rounded-lg"
                     >
                         <span className="flex items-center gap-2">
                             {showCustomFields ? (
@@ -290,13 +290,13 @@ export function OAuthConnectForm({
                             )}
                             Use custom OAuth app credentials
                         </span>
-                        <span className="text-[10px] text-muted-foreground/60 dark:text-zinc-600">
+                        <span className="text-[10px] text-muted-foreground/70">
                             Optional
                         </span>
                     </button>
                     {showCustomFields && (
                         <div className="px-3 pb-3 space-y-3 border-t border-border pt-3 mt-0">
-                            <div className="text-[10px] text-muted-foreground/70 dark:text-zinc-500 leading-relaxed space-y-2">
+                            <div className="text-[10px] text-muted-foreground leading-relaxed space-y-2">
                                 <p>
                                     By default, NoClick&apos;s OAuth app is
                                     used. If you have your own {displayName}{' '}
@@ -305,13 +305,13 @@ export function OAuthConnectForm({
                                 </p>
                                 {displayedRedirectUri && (
                                     <div className="space-y-1">
-                                        <span className="text-[10px] text-muted-foreground/60 dark:text-zinc-600">Redirect URI to add in your OAuth app:</span>
-                                        <code className="block w-full text-[10px] font-mono bg-muted/80 dark:bg-zinc-900 border border-border rounded px-2 py-1.5 text-foreground/70 break-all select-all">{displayedRedirectUri}</code>
+                                        <span className="text-[10px] text-muted-foreground/70">Redirect URI to add in your OAuth app:</span>
+                                        <code className="block w-full text-[10px] font-mono bg-foreground/[0.05] border border-border rounded px-2 py-1.5 text-foreground/70 break-all select-all">{displayedRedirectUri}</code>
                                     </div>
                                 )}
                             </div>
                             <div className="space-y-1.5">
-                                <span className="block text-xs text-muted-foreground/70 dark:text-zinc-500">
+                                <span className="block text-xs text-muted-foreground">
                                     Client ID
                                 </span>
                                 <input
@@ -325,7 +325,7 @@ export function OAuthConnectForm({
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <span className="block text-xs text-muted-foreground/70 dark:text-zinc-500">
+                                <span className="block text-xs text-muted-foreground">
                                     Client Secret
                                 </span>
                                 <SecretInput
@@ -345,7 +345,7 @@ export function OAuthConnectForm({
             {/* Provider-intrinsic tenant input (Shopify store / Zendesk subdomain / Atlassian site). */}
             {connectInput && (
                 <div className="space-y-1.5">
-                    <span className="block text-xs text-muted-foreground/70 dark:text-zinc-500">
+                    <span className="block text-xs text-muted-foreground">
                         {connectInput.label}
                     </span>
                     <div className="flex items-center">
@@ -356,12 +356,12 @@ export function OAuthConnectForm({
                             placeholder={connectInput.placeholder}
                             className={INPUT_CLASS}
                         />
-                        <span className="ml-2 text-xs text-muted-foreground/60 dark:text-zinc-600 whitespace-nowrap">
+                        <span className="ml-2 text-xs text-muted-foreground/70 whitespace-nowrap">
                             {connectInput.suffix}
                         </span>
                     </div>
                     {connectInput.help && (
-                        <div className="text-[11px] text-muted-foreground/60 dark:text-zinc-600">
+                        <div className="text-[11px] text-muted-foreground/70">
                             {connectInput.help}
                         </div>
                     )}
@@ -370,20 +370,20 @@ export function OAuthConnectForm({
 
             {/* Mandatory BYOO OAuth app (e.g. Google Business Profile). */}
             {requiresCustomClient && (
-                <div className="space-y-3 p-3 bg-muted/30 dark:bg-zinc-900/30 rounded-lg border border-border">
-                    <p className="text-[11px] text-muted-foreground/70 dark:text-zinc-500 leading-relaxed">
+                <div className="space-y-3 p-3 bg-foreground/[0.03] rounded-lg border border-border">
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
                         This integration requires your own OAuth app. Create a
                         Web Application OAuth 2.0 client and add this app&apos;s
                         callback URL as an Authorised Redirect URI.
                     </p>
                     {displayedRedirectUri && (
                         <div className="space-y-1">
-                            <span className="text-[10px] text-muted-foreground/60 dark:text-zinc-600">Redirect URI to add in your OAuth app:</span>
-                            <code className="block w-full text-[10px] font-mono bg-muted/80 dark:bg-zinc-900 border border-border rounded px-2 py-1.5 text-foreground/70 break-all select-all">{displayedRedirectUri}</code>
+                            <span className="text-[10px] text-muted-foreground/70">Redirect URI to add in your OAuth app:</span>
+                            <code className="block w-full text-[10px] font-mono bg-foreground/[0.05] border border-border rounded px-2 py-1.5 text-foreground/70 break-all select-all">{displayedRedirectUri}</code>
                         </div>
                     )}
                     <div className="space-y-1.5">
-                        <span className="block text-xs text-muted-foreground/70 dark:text-zinc-500">
+                        <span className="block text-xs text-muted-foreground">
                             Client ID
                         </span>
                         <input
@@ -395,7 +395,7 @@ export function OAuthConnectForm({
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <span className="block text-xs text-muted-foreground/70 dark:text-zinc-500">
+                        <span className="block text-xs text-muted-foreground">
                             Client Secret
                         </span>
                         <input
@@ -417,7 +417,7 @@ export function OAuthConnectForm({
                     inputMissing ||
                     byooMissing
                 }
-                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm text-foreground bg-card dark:bg-secondary hover:bg-accent dark:hover:bg-zinc-700 disabled:bg-muted disabled:text-muted-foreground/70 dark:disabled:text-zinc-500 disabled:cursor-not-allowed border border-border dark:border-zinc-700 hover:border-foreground/20 disabled:border-border rounded-lg transition-all"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors bg-foreground/[0.07] text-foreground hover:bg-foreground/[0.12] disabled:bg-foreground/[0.04] disabled:text-muted-foreground disabled:cursor-not-allowed"
             >
                 {isThisProviderConnecting ? (
                     <>
@@ -446,7 +446,7 @@ export function OAuthConnectForm({
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="w-full text-xs text-muted-foreground/70 dark:text-zinc-500 hover:text-foreground/80 transition-colors"
+                    className="w-full text-xs text-muted-foreground hover:text-foreground/80 transition-colors"
                 >
                     Cancel
                 </button>

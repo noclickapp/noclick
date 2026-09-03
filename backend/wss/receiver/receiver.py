@@ -599,6 +599,7 @@ class SocketIOProxy:
         from wss.handlers.resource_handler import ResourceHandler
         from wss.handlers.skill_handler import SkillHandler
         from wss.handlers.feed_handler import FeedHandler
+        from wss.handlers.dashboard_handler import DashboardHandler
         from wss.handlers.oauth.codex_auth_handler import CodexAuthHandler
         from wss.handlers.oauth.claude_code_auth_handler import ClaudeCodeAuthHandler
         from .event_routing import Handler
@@ -753,6 +754,8 @@ class SocketIOProxy:
         whatsapp_qr_handler = WhatsAppQRHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize feed handler (API only - approvals, activity logs, monitoring)
         feed_handler = FeedHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
+        # Dashboard tab aggregate (API only)
+        dashboard_handler = DashboardHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
 
         # Link usage_tracker with usage_dashboard_handler for cache invalidation
         if usage_dashboard_handler:
@@ -842,6 +845,7 @@ class SocketIOProxy:
             Handler.CLAUDE_CODE_AUTH: claude_code_auth_handler,
             Handler.WHATSAPP_QR: whatsapp_qr_handler,
             Handler.FEED: feed_handler,
+            Handler.DASHBOARD: dashboard_handler,
             # Handlers the platform running this engine contributed. It
             # registered them before the receiver was built; nothing here knows
             # their names.

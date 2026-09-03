@@ -38,6 +38,7 @@ import {
     CornerDownLeft,
     ChevronLeft,
     ArrowRight,
+    LayoutDashboard,
 } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { scoreFields } from '~/lib/fuzzyRank';
@@ -53,14 +54,7 @@ import {
     type OpenCommandPaletteDetail,
     type PaletteScope,
 } from '~/lib/shortcuts';
-import {
-    navigateToTab,
-    navigateToSettings,
-    navigateToWorkflow,
-    goToWorkflows,
-    triggerBrowserAction,
-    type SettingsSection,
-} from '~/lib/navigation';
+import { navigateToSettings, navigateToWorkflow, goToWorkflows, triggerBrowserAction, type SettingsSection, navigateToDashboard } from '~/lib/navigation';
 import { sendEventAsync } from '~/lib/socket-sender';
 import type { CredentialInfo } from '~/types/socket-events.generated';
 import { NoClickMCPSetupModal } from '~/components/workflow/MCPConnectModal';
@@ -496,12 +490,20 @@ export function CommandPalette() {
                 perform: goToWorkflows,
             },
             {
-                id: 'nav:feed',
-                label: 'Go to approvals',
+                id: 'nav:dashboard',
+                label: 'Go to dashboard',
+                section: 'Navigation',
+                icon: LayoutDashboard,
+                keywords: 'home overview feed runs agents files credentials',
+                perform: () => navigateToDashboard(),
+            },
+            {
+                id: 'nav:attention',
+                label: 'Go to needs you',
                 section: 'Navigation',
                 icon: UserCheck,
-                keywords: 'feed notifications inbox',
-                perform: () => navigateToTab('feed'),
+                keywords: 'approvals feed notifications inbox questions',
+                perform: () => navigateToDashboard('attention'),
             },
             ...SETTINGS_SECTIONS.map(
                 (s): Cmd => ({

@@ -33,7 +33,8 @@ export function useResourceUpload() {
     async (
       file: File,
       workflowId: string,
-      nodeId: string,
+      /** Producing node, or null for an upload not tied to a node (Dashboard Files). */
+      nodeId: string | null,
       onProgress?: (fraction: number) => void,
     ): Promise<UploadedResource> => {
       if (file.size > MAX_UPLOAD_SIZE_BYTES) {

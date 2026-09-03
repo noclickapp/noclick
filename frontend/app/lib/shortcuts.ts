@@ -5,12 +5,7 @@
 // hints, and the searchable shortcuts panel all stay in sync from one source.
 // Each entry carries the matching palette `commandId` so the palette can show the
 // keycaps next to the command it triggers.
-import {
-    navigateToTab,
-    navigateToSettings,
-    goToWorkflows,
-    triggerBrowserAction,
-} from '~/lib/navigation';
+import { navigateToSettings, goToWorkflows, triggerBrowserAction, navigateToDashboard } from '~/lib/navigation';
 import { openCreateCredential } from '~/components/shared/popups/CreateCredentialDialog';
 
 export interface LeaderShortcut {
@@ -25,14 +20,15 @@ export interface LeaderShortcut {
 // "G <key>" — go to a destination.
 export const GOTO_DESTINATIONS: LeaderShortcut[] = [
     { key: 'w', label: 'Workflows', commandId: 'nav:workflows', run: goToWorkflows },
-    { key: 'a', label: 'Approvals', commandId: 'nav:feed', run: () => navigateToTab('feed') },
+    { key: 'd', label: 'Dashboard', commandId: 'nav:dashboard', run: () => navigateToDashboard() },
+    { key: 'i', label: 'Needs you (inbox)', commandId: 'nav:attention', run: () => navigateToDashboard('attention') },
     { key: 't', label: 'Trash', commandId: 'nav:trash', run: () => triggerBrowserAction('trash') },
     { key: 'u', label: 'Usage', commandId: 'nav:settings:usage', run: () => navigateToSettings({ section: 'usage' }) },
     { key: 'c', label: 'Credentials', commandId: 'nav:settings:credentials', run: () => navigateToSettings({ section: 'credentials' }) },
     { key: 'o', label: 'Organization', commandId: 'nav:settings:organization', run: () => navigateToSettings({ section: 'organization' }) },
     { key: 's', label: 'Skills', commandId: 'nav:settings:skills', run: () => navigateToSettings({ section: 'skills' }) },
     { key: 'n', label: 'Notifications', commandId: 'nav:settings:notifications', run: () => navigateToSettings({ section: 'notifications' }) },
-    { key: 'd', label: 'Developer', commandId: 'nav:settings:developer', run: () => navigateToSettings({ section: 'developer' }) },
+    { key: 'e', label: 'Developer', commandId: 'nav:settings:developer', run: () => navigateToSettings({ section: 'developer' }) },
 ];
 
 // "N <key>" — create something new.

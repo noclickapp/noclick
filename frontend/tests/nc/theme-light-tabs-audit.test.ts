@@ -62,7 +62,7 @@ export default async function () {
     setTheme('light');
 
     const results: Record<string, { scanned: number; offenders: unknown[] }> = {};
-    for (const tab of ['feed', 'settings']) {
+    for (const tab of ['dashboard', 'settings']) {
         window.dispatchEvent(
             new CustomEvent('noclick:switch-tab', { detail: { tab } })
         );
@@ -77,7 +77,7 @@ export default async function () {
     await new Promise((r) => setTimeout(r, 100));
     freeze.remove();
 
-    nc.assert.gt(results.feed.scanned, 5, 'feed tab should render content');
+    nc.assert.gt(results.dashboard.scanned, 5, 'dashboard tab should render content');
     nc.assert.gt(results.settings.scanned, 5, 'settings tab should render content');
     return results;
 }

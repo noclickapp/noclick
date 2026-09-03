@@ -8,7 +8,8 @@ import {
   Table2, Braces, Code, Terminal, FileCode2, FileType,
 } from 'lucide-react';
 import { MarkdownRenderer } from '~/components/chat/MarkdownRenderer';
-import type { ResourceInfo } from '~/types/socket-events.generated';
+import { ResourceDatasetRowsRequest, type ResourceInfo } from '~/types/socket-events.generated';
+import { sendEventAsync } from '~/lib/socket-sender';
 
 // -- Type resolution ----------------------------------------------------------
 
@@ -211,7 +212,11 @@ function CsvRenderer({ url }: { url: string }) {
   if (headers.length === 0) {
     return <pre className="w-full p-5 text-sm text-muted-foreground dark:text-zinc-300 font-mono">{text}</pre>;
   }
+  return <RowsTable headers={headers} rows={rows} />;
+}
 
+/** The one tabular preview: CSV text and dataset rows both land here. */
+function RowsTable({ headers, rows }: { headers: string[]; rows: string[][] }) {
   return (
     <div className="w-full max-h-[75vh] overflow-auto"
       style={{ scrollbarWidth: 'thin', scrollbarColor: 'hsl(var(--foreground) / 0.08) transparent' }}
@@ -242,16 +247,48 @@ function CsvRenderer({ url }: { url: string }) {
   );
 }
 
+const DATASET_PREVIEW_ROWS = 500;
+
+/** A dataset has no blob to fetch — its rows live in dataset_rows — so the
+ *  preview pages the first rows through the same event the Dataframe block
+ *  uses and lays them out as a table. */
 function DatasetRenderer({ resource }: { resource: ResourceInfo }) {
+  const [state, setState] = useState<{ rows: Record<string, unknown>[]; total: number } | null | 'failed'>(null);
+  useEffect(() => {
+    let cancelled = false;
+    setState(null);
+    sendEventAsync(ResourceDatasetRowsRequest.create({ resource_id: resource.id, limit: DATASET_PREVIEW_ROWS }))
+      .then(res => {
+        if (!cancelled) setState({ rows: res.rows.map(r => r.data as Record<string, unknown>), total: res.total_count });
+      })
+      .catch(() => {
+        if (!cancelled) setState('failed');
+      });
+    return () => { cancelled = true; };
+  }, [resource.id]);
+
+  if (state === null) return <FetchLoading />;
+  if (state === 'failed' || state.rows.length === 0) {
+    return (
+      <div className="flex flex-col items-center gap-3 py-10 text-muted-foreground dark:text-zinc-300">
+        <Database className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
+        <p className="text-sm">{state === 'failed' ? 'Could not load the rows' : 'No rows yet'}</p>
+        <p className="text-xs text-muted-foreground/70 dark:text-zinc-500">{formatDate(resource.created_at)}</p>
+      </div>
+    );
+  }
+
+  // Columns in first-seen order across the page, so a sparse first row can't hide any.
+  const headers = Array.from(new Set(state.rows.flatMap(r => Object.keys(r))));
+  const cell = (v: unknown) => (v == null ? '' : typeof v === 'object' ? JSON.stringify(v) : String(v));
   return (
-    <div className="flex flex-col items-center gap-3 py-10 text-muted-foreground dark:text-zinc-300">
-      <Database className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
-      <p className="text-sm">
-        {(resource.metadata as Record<string, unknown>)?.row_count != null
-          ? `${(resource.metadata as Record<string, unknown>).row_count} rows`
-          : 'Dataset'}
-      </p>
-      <p className="text-xs text-muted-foreground/70 dark:text-zinc-500">{formatDate(resource.created_at)}</p>
+    <div className="w-full">
+      <RowsTable headers={headers} rows={state.rows.map(r => headers.map(h => cell(r[h])))} />
+      {state.total > state.rows.length && (
+        <p className="px-3 py-2 text-xs text-muted-foreground/70 dark:text-zinc-500">
+          Showing the first {state.rows.length} of {state.total} rows
+        </p>
+      )}
     </div>
   );
 }

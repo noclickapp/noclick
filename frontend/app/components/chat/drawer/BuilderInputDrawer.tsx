@@ -42,6 +42,10 @@ export interface BuilderInputDrawerProps {
      *  provided, a small link button renders next to the title so the user can
      *  hand these questions to whoever actually has the answers. */
     onShare?: () => Promise<string | null>;
+    /** Render inside a host that already shows the ask's title and provider
+     *  (the Dashboard's queue row): no header or step dots, no padding, and a
+     *  hairline footer carrying Back · step counter · Copy link · Skip · Continue. */
+    embedded?: boolean;
 }
 
 // ============================================================================
@@ -61,7 +65,7 @@ function isRequired(input: InputRequest): boolean {
 /** Small link icon next to the drawer title: mints the public input-bridge
  *  link for this ask and copies it — so the user can hand the questions to
  *  whoever actually has the answers (they need no NoClick account). */
-function ShareAskButton({ onShare }: { onShare: () => Promise<string | null> }) {
+function ShareAskButton({ onShare, label }: { onShare: () => Promise<string | null>; label?: string }) {
     const [state, setState] = useState<'idle' | 'busy' | 'copied'>('idle');
     const click = async () => {
         if (state === 'busy') return;
@@ -77,17 +81,21 @@ function ShareAskButton({ onShare }: { onShare: () => Promise<string | null> }) 
         } catch { /* fall through to idle */ }
         setState('idle');
     };
+    const icon = state === 'copied'
+        ? <Check className="h-3.5 w-3.5 text-emerald-500" />
+        : <Link2 className={cn('h-3.5 w-3.5', state === 'busy' && 'animate-pulse')} />;
     return (
         <button
             type="button"
             onClick={() => void click()}
             data-testid="builder-ask-share"
             title="Copy a public link so anyone can answer these questions (no login)"
-            className="shrink-0 rounded-md p-1 text-muted-foreground dark:text-zinc-500 transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+            className={label
+                ? 'inline-flex shrink-0 items-center gap-1.5 text-[12.5px] text-foreground/70 dark:text-foreground/50 transition-colors hover:text-foreground'
+                : 'shrink-0 rounded-md p-1 text-muted-foreground dark:text-zinc-500 transition-colors hover:bg-foreground/[0.06] hover:text-foreground'}
         >
-            {state === 'copied'
-                ? <Check className="h-3.5 w-3.5 text-emerald-500" />
-                : <Link2 className={cn('h-3.5 w-3.5', state === 'busy' && 'animate-pulse')} />}
+            {icon}
+            {label && (state === 'copied' ? 'Copied' : label)}
         </button>
     );
 }
@@ -185,7 +193,7 @@ function SelectionInput({
                         "w-full flex items-center gap-2 px-3 py-2 rounded-lg border text-left text-sm outline-none",
                         isSelected(option.id)
                             ? "border-foreground/30 bg-foreground/10 text-foreground"
-                            : "border-border dark:border-white/[0.06] bg-foreground/[0.02] text-muted-foreground dark:text-white/60 hover:bg-foreground/[0.05] hover:border-foreground/10"
+                            : "border-border dark:border-white/[0.06] bg-foreground/[0.02] text-muted-foreground dark:text-white/60 hover:bg-foreground/[0.05] hover:border-border dark:hover:border-foreground/10"
                     )}
                 >
                     {indicator(isSelected(option.id))}
@@ -199,7 +207,7 @@ function SelectionInput({
                     "w-full flex items-center gap-2 px-3 py-2 rounded-lg border text-left text-sm outline-none",
                     isOther
                         ? "border-foreground/30 bg-foreground/10 text-foreground"
-                        : "border-border dark:border-white/[0.06] bg-foreground/[0.02] text-muted-foreground dark:text-white/60 hover:bg-foreground/[0.05] hover:border-foreground/10"
+                        : "border-border dark:border-white/[0.06] bg-foreground/[0.02] text-muted-foreground dark:text-white/60 hover:bg-foreground/[0.05] hover:border-border dark:hover:border-foreground/10"
                 )}
             >
                 {indicator(isOther)}
@@ -331,7 +339,7 @@ function InputBody({
     overrides: { credentialIds: Record<string, string>; nodeConfig: Record<string, any> };
 }) {
     return (
-        <div onClick={e => e.stopPropagation()}>
+        <div role="presentation" onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()}>
             {input.type === 'credential' && input.nodeType && (
                 <NodeCredentials
                     nodeType={input.nodeType}
@@ -409,7 +417,7 @@ function EnvInput({
 // Main Drawer — step-by-step wizard
 // ============================================================================
 
-export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmitMessage, onValuesChange, onShare }: BuilderInputDrawerProps) {
+export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmitMessage, onValuesChange, onShare, embedded = false }: BuilderInputDrawerProps) {
     // Seed initial values from each input's defaultValue (e.g., when drafter
     // extracted a real value from the user's prompt — the user just confirms
     // instead of picking from scratch).
@@ -489,10 +497,14 @@ export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmi
 
     if (!current) return null;
 
+    // An embedded host already shows the title, so a question whose label
+    // repeats it is not labelled a second time.
+    const showLabel = !embedded || (!!current.label && current.label !== title);
+
     return (
-        <div className="flex flex-col h-full">
-            {/* Header — always visible */}
-            <div className="px-4 pt-4 pb-2 shrink-0">
+        <div className={cn('flex flex-col', !embedded && 'h-full')}>
+            {/* Header — the drawer's own; an embedded host renders its own. */}
+            {!embedded && <div className="px-4 pt-4 pb-2 shrink-0">
                 {/* Title row */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5 min-w-0">
@@ -540,25 +552,29 @@ export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmi
                         Step {step + 1} of {inputs.length}
                     </span>
                 </div>
-            </div>
+            </div>}
 
             {/* Current input — scrollable, takes remaining space */}
-            <div className="flex-1 min-h-0 overflow-y-auto scrollbar-subtle px-4 py-3">
+            <div className={cn('flex-1 min-h-0 overflow-y-auto scrollbar-subtle', !embedded && 'px-4 py-3')}>
                 {/* Label + description */}
-                <div className="mb-3">
-                    <div className="flex items-center gap-2">
-                        <span className="text-[13px] font-medium text-foreground">
-                            {current.label}
-                            {currentRequired && <span className="text-red-600 dark:text-red-400 ml-1">*</span>}
-                        </span>
-                        {isFilled(currentValue) && (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                {(showLabel || current.description) && (
+                    <div className="mb-3">
+                        {showLabel && (
+                            <div className="flex items-center gap-2">
+                                <span className="text-[13px] font-medium text-foreground">
+                                    {current.label}
+                                    {currentRequired && <span className="text-red-600 dark:text-red-400 ml-1">*</span>}
+                                </span>
+                                {isFilled(currentValue) && (
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                                )}
+                            </div>
+                        )}
+                        {current.description && (
+                            <p className={cn('text-xs text-muted-foreground', showLabel && 'mt-1')}>{current.description}</p>
                         )}
                     </div>
-                    {current.description && (
-                        <p className="text-xs text-muted-foreground mt-1">{current.description}</p>
-                    )}
-                </div>
+                )}
 
                 {/* Input body — keyed by input id so step changes remount the
                  *  widget tree. Without this, components like
@@ -606,21 +622,61 @@ export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmi
             </div>
 
             {/* Footer — always visible at bottom */}
-            <div className="px-4 py-3 border-t border-foreground/[0.06] flex items-center gap-2 shrink-0">
-                <button
-                    onClick={handleNext}
-                    disabled={!canAdvance}
-                    className={cn(
-                        "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
-                        canAdvance
-                            ? "bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
-                            : "bg-foreground/10 text-foreground/40 cursor-not-allowed"
+            {embedded ? (
+                <div className="mt-5 flex items-center gap-4">
+                    {step > 0 && (
+                        <button
+                            type="button"
+                            onClick={handleBack}
+                            className="inline-flex items-center gap-0.5 text-[12.5px] text-foreground/70 dark:text-foreground/50 transition-colors hover:text-foreground"
+                        >
+                            <ChevronLeft className="h-3.5 w-3.5" />
+                            Back
+                        </button>
                     )}
-                >
-                    {isLast ? 'Continue' : 'Next'}
-                    <ArrowRight className="w-4 h-4" />
-                </button>
-            </div>
+                    {inputs.length > 1 && (
+                        <span className="text-[11.5px] tabular-nums text-foreground/60 dark:text-foreground/40">
+                            {step + 1} of {inputs.length}
+                        </span>
+                    )}
+                    <span className="ml-auto flex items-center gap-4">
+                        {onShare && <ShareAskButton onShare={onShare} label="Copy link" />}
+                        {onDismiss && (
+                            <button type="button" onClick={handleSkip} className="text-[12.5px] text-foreground/70 dark:text-foreground/50 transition-colors hover:text-foreground">
+                                Skip
+                            </button>
+                        )}
+                        <button
+                            type="button"
+                            onClick={handleNext}
+                            disabled={!canAdvance}
+                            className={cn(
+                                'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors',
+                                canAdvance ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'cursor-not-allowed bg-foreground/10 text-foreground/60 dark:text-foreground/40'
+                            )}
+                        >
+                            {isLast ? 'Continue' : 'Next'}
+                            <ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                    </span>
+                </div>
+            ) : (
+                <div className="px-4 py-3 border-t border-border dark:border-foreground/[0.06] flex items-center gap-2 shrink-0">
+                    <button
+                        onClick={handleNext}
+                        disabled={!canAdvance}
+                        className={cn(
+                            "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
+                            canAdvance
+                                ? "bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
+                                : "bg-foreground/10 text-foreground/60 dark:text-foreground/40 cursor-not-allowed"
+                        )}
+                    >
+                        {isLast ? 'Continue' : 'Next'}
+                        <ArrowRight className="w-4 h-4" />
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

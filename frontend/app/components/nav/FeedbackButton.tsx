@@ -128,7 +128,7 @@ export function FeedbackButton() {
         >
             <ShortcutTooltip keys={['H', 'H']}>
                 <PopoverTrigger asChild>
-                    <button className="hidden md:flex items-center gap-2 rounded-lg bg-foreground/[0.06] px-2.5 py-1.5 text-sm text-foreground/80 transition-colors hover:bg-foreground/[0.1]">
+                    <button className="hidden md:flex items-center gap-2 rounded-lg bg-secondary dark:bg-foreground/[0.06] px-2.5 py-1.5 text-sm text-foreground/80 transition-colors hover:bg-accent dark:hover:bg-foreground/[0.1]">
                         <MessageSquarePlus className="h-4 w-4 text-muted-foreground dark:text-zinc-500" />
                         Feedback
                     </button>
@@ -161,7 +161,7 @@ export function FeedbackButton() {
                     </h3>
                     <SequenceKeyHint keys={['H', 'H']} />
                 </div>
-                <p className="mt-0.5 text-xs text-foreground/40">
+                <p className="mt-0.5 text-xs text-foreground/60 dark:text-foreground/40">
                     Tell us what&apos;s working or what&apos;s broken.
                 </p>
 
@@ -175,7 +175,7 @@ export function FeedbackButton() {
                                 'flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs transition-colors',
                                 type === key
                                     ? 'bg-primary text-primary-foreground'
-                                    : 'bg-foreground/[0.04] text-foreground/60 hover:bg-foreground/[0.08] hover:text-foreground'
+                                    : 'bg-secondary text-foreground/75 hover:bg-accent hover:text-foreground dark:bg-foreground/[0.04] dark:text-foreground/60 dark:hover:bg-foreground/[0.08]'
                             )}
                         >
                             <Icon className="h-3.5 w-3.5" />
@@ -197,7 +197,7 @@ export function FeedbackButton() {
                             ? 'What went wrong? Steps to reproduce help a lot.'
                             : "What's on your mind?"
                     }
-                    className="scrollbar-subtle mt-2 max-h-[15rem] min-h-[7rem] w-full resize-none overflow-y-auto rounded-lg border border-foreground/[0.08] bg-foreground/[0.03] px-3 py-2.5 text-sm text-foreground placeholder:text-foreground/30 focus:border-foreground/25 focus:outline-none"
+                    className="scrollbar-subtle mt-2 max-h-[15rem] min-h-[7rem] w-full resize-none overflow-y-auto rounded-lg border border-border bg-card dark:border-foreground/[0.08] dark:bg-foreground/[0.03] px-3 py-2.5 text-sm text-foreground placeholder:text-foreground/30 focus:border-foreground/25 focus:outline-none"
                 />
 
                 <div className="mt-2 flex justify-end">

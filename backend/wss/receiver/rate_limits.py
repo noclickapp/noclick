@@ -123,11 +123,9 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "approval:list": SocketIORateLimit(second=5, minute=30),
             "approval:respond": SocketIORateLimit(second=2, minute=20),
 
-            # Activity log events
-            "activity:list": SocketIORateLimit(second=5, minute=30),
-
-            # Agent tool-call feed
-            "tool_calls:list": SocketIORateLimit(second=5, minute=30),
+            # Dashboard tab
+            "dashboard:overview": SocketIORateLimit(second=3, minute=30),
+            "dashboard:notifications:read": SocketIORateLimit(second=3, minute=30),
 
             # Internal system events
         }

@@ -40,16 +40,19 @@ const ACCOUNT_MENU_ITEM =
 const ACCOUNT_MENU_ITEM_DANGER =
     'rounded-md cursor-pointer duration-75 text-red-600 hover:bg-red-500/10 hover:text-red-700 focus:bg-red-500/10 focus:text-red-700 dark:text-red-400 dark:hover:text-red-300 dark:focus:text-red-300';
 
-function ApprovalBadge() {
-    const [count] = useValtioState<number>(
-        'noclick-ui',
-        'approvalPendingCount',
-        0
-    );
+/** Count of things waiting on the user (approvals, questions, disconnected
+ *  accounts, broken triggers). Fed by the dashboard overview; falls back to the
+ *  live approval count so the badge is right before the overview has loaded. */
+function DashboardBadge() {
+    const [attention] = useValtioState<number | null>('noclick-ui', 'dashboardAttentionCount', null);
+    const [approvals] = useValtioState<number>('noclick-ui', 'approvalPendingCount', 0);
+    const count = attention ?? approvals;
     if (!count) return null;
     return (
-        <span className="min-w-[18px] h-[18px] rounded-full bg-foreground/15 text-[10px] font-semibold text-foreground/80 flex items-center justify-center px-1">
-            {count}
+        // Circle at minimum (min-width = height), a pill when the count is wider.
+        <span className="inline-flex h-[20px] min-w-[20px] items-center justify-center rounded-full bg-primary px-1.5 text-primary-foreground">
+            {/* Digits have no descender, so the centered line box leaves the ink high; nudge it down. */}
+            <span className="translate-y-[0.5px] text-[12px] font-semibold tabular-nums leading-none">{count}</span>
         </span>
     );
 }
@@ -176,24 +179,24 @@ export function NavBar({
                                     onClick={() => onTabChange('flow')}
                                     className={`px-3 py-1 rounded-md transition-colors ${
                                         selectedTab === 'flow'
-                                            ? 'bg-foreground/10 text-accent-foreground'
+                                            ? 'bg-accent text-accent-foreground dark:bg-foreground/10'
                                             : 'text-muted-foreground dark:text-white/60 hover:text-foreground'
                                     }`}
                                 >
                                     Workflows
                                 </button>
                             </ShortcutTooltip>
-                            <ShortcutTooltip keys={['G', 'A']}>
+                            <ShortcutTooltip keys={['G', 'D']}>
                                 <button
-                                    onClick={() => onTabChange('feed')}
+                                    onClick={() => onTabChange('dashboard')}
                                     className={`px-3 py-1 rounded-md transition-colors flex items-center gap-1.5 ${
-                                        selectedTab === 'feed'
-                                            ? 'bg-foreground/10 text-accent-foreground'
+                                        selectedTab === 'dashboard'
+                                            ? 'bg-accent text-accent-foreground dark:bg-foreground/10'
                                             : 'text-muted-foreground dark:text-white/60 hover:text-foreground'
                                     }`}
                                 >
-                                    Feed
-                                    <ApprovalBadge />
+                                    Dashboard
+                                    <DashboardBadge />
                                 </button>
                             </ShortcutTooltip>
                             {debugToolsEnabled && debugPanelVisible && (
@@ -201,7 +204,7 @@ export function NavBar({
                                     onClick={() => onTabChange('debug')}
                                     className={`px-3 py-1 rounded-md transition-colors ${
                                         selectedTab === 'debug'
-                                            ? 'bg-foreground/10 text-accent-foreground'
+                                            ? 'bg-accent text-accent-foreground dark:bg-foreground/10'
                                             : 'text-muted-foreground dark:text-white/60 hover:text-foreground'
                                     }`}
                                 >
@@ -216,7 +219,7 @@ export function NavBar({
                             const apiUrl = import.meta.env.VITE_API_URL || '';
                             const match = apiUrl.match(/localhost:(\d+)/);
                             return match ? (
-                                <span className="hidden xl:inline text-xs font-mono text-muted-foreground dark:text-white/50 bg-foreground/10 px-1.5 py-0.5 rounded">
+                                <span className="hidden xl:inline text-xs font-mono text-muted-foreground dark:text-white/50 bg-secondary dark:bg-foreground/10 px-1.5 py-0.5 rounded">
                                     :{match[1]}
                                     {backendBranch ? ` (${backendBranch})` : ''}
                                 </span>
@@ -225,7 +228,7 @@ export function NavBar({
                         {/* Search — opens the command palette (same as pressing mod+K) */}
                         <button
                             onClick={() => openCommandPalette()}
-                            className="hidden lg:flex w-44 items-center justify-between rounded-lg bg-foreground/[0.06] px-2.5 py-1.5 text-sm transition-colors hover:bg-foreground/[0.1]"
+                            className="hidden lg:flex w-44 items-center justify-between rounded-lg bg-secondary dark:bg-foreground/[0.06] px-2.5 py-1.5 text-sm transition-colors hover:bg-accent dark:hover:bg-foreground/[0.1]"
                             title="Search and run commands"
                         >
                             <span className="flex items-center gap-2 text-muted-foreground">
@@ -244,7 +247,7 @@ export function NavBar({
                                     '_blank'
                                 );
                             }}
-                            className="hidden lg:flex items-center gap-2 rounded-lg bg-foreground/[0.06] px-2.5 py-1.5 text-sm text-foreground/80 transition-colors hover:bg-foreground/[0.1]"
+                            className="hidden lg:flex items-center gap-2 rounded-lg bg-secondary dark:bg-foreground/[0.06] px-2.5 py-1.5 text-sm text-foreground/80 transition-colors hover:bg-accent dark:hover:bg-foreground/[0.1]"
                             title="Join our Discord community"
                         >
                             <FaDiscord className="h-4 w-4 text-muted-foreground dark:text-zinc-500" />

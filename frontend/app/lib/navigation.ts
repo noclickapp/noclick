@@ -14,7 +14,11 @@
 // Types
 // ============================================================================
 
-export type DashboardTab = 'vite' | 'databases' | 'flow' | 'debug' | 'analytics' | 'feed' | 'settings';
+export type DashboardTab = 'vite' | 'databases' | 'flow' | 'debug' | 'analytics' | 'dashboard' | 'settings';
+// Drill-down sections of the Dashboard tab (?focus=). Kept here, next to the tab
+// vocabulary, so URL encoding and the tab component agree on the names.
+export const DASHBOARD_FOCUS_IDS = ['attention', 'runs', 'agents', 'files', 'credentials', 'triggers', 'upcoming', 'credits', 'notifications'] as const;
+export type DashboardFocus = (typeof DASHBOARD_FOCUS_IDS)[number];
 // Single source of truth for valid settings sections — Dashboard's URL parser
 // and Settings' useUrlSyncedTab both validate against this list, so a section
 // added here is automatically routable everywhere (a section missing from a
@@ -27,6 +31,8 @@ export interface TabSwitchEventDetail {
   tab: DashboardTab;
   section?: SettingsSection;
   orgTab?: OrgSettingsTab;
+  /** Dashboard tab only: open this section full-screen. */
+  focus?: DashboardFocus;
 }
 
 /** A command-palette browser action handled by WorkflowBrowser. */
@@ -52,6 +58,24 @@ export function navigateToTab(tab: DashboardTab): void {
     detail: { tab },
     bubbles: true,
   }));
+}
+
+/** Open the Dashboard tab, optionally straight into one section's drill-down. */
+export function navigateToDashboard(focus?: DashboardFocus): void {
+  window.dispatchEvent(new CustomEvent<TabSwitchEventDetail>('noclick:switch-tab', {
+    detail: { tab: 'dashboard', focus },
+    bubbles: true,
+  }));
+}
+
+/** Open a workflow on the canvas with one node selected — the same two-step
+ * hand-off the approval feed used: Dashboard switches tabs and queues the
+ * selection, then a late `select-node` catches an already-mounted canvas. */
+export function goToWorkflowNode(workflowId: string, nodeId: string): void {
+  window.dispatchEvent(new CustomEvent('noclick:navigate-to-node', { detail: { workflowId, nodeId } }));
+  setTimeout(() => {
+    document.dispatchEvent(new CustomEvent('noclick:workflow:select-node', { detail: { workflowId, nodeId } }));
+  }, 200);
 }
 
 /**
@@ -152,9 +176,9 @@ export function applyTabToSearchParams(params: URLSearchParams, tab: string): vo
     params.set('tab', 'debug');
   } else if (tab === 'analytics') {
     params.set('tab', 'analytics');
-  } else if (tab === 'feed') {
-    params.set('tab', 'feed');
-    // Leaving the flow editor for the feed — drop the open-workflow deep-link params.
+  } else if (tab === 'dashboard') {
+    params.set('tab', 'dashboard');
+    // Leaving the flow editor for the dashboard — drop the open-workflow deep-link params.
     params.delete('workflow');
     params.delete('node');
     params.delete('field');
@@ -165,6 +189,10 @@ export function applyTabToSearchParams(params: URLSearchParams, tab: string): vo
   if (tab !== 'settings') {
     params.delete('section');
     params.delete('orgTab');
+  }
+  // The dashboard's drill-down param doesn't belong on any other tab.
+  if (tab !== 'dashboard') {
+    params.delete('focus');
   }
 }
 
@@ -186,7 +214,7 @@ export function createTabSwitchHandler(callbacks: {
     const customEvent = e as CustomEvent<TabSwitchEventDetail>;
     if (!customEvent.detail?.tab) return;
 
-    const { tab, section, orgTab } = customEvent.detail;
+    const { tab, section, orgTab, focus } = customEvent.detail;
 
     // Optimistic, SYNCHRONOUS state update — this is what makes event-based
     // navigation as fast as a direct NavBar click (the tab switches in the same
@@ -204,6 +232,11 @@ export function createTabSwitchHandler(callbacks: {
     setSearchParams(prev => {
       const newParams = new URLSearchParams(prev);
       applyTabToSearchParams(newParams, tab);
+
+      if (tab === 'dashboard') {
+        if (focus) newParams.set('focus', focus);
+        else newParams.delete('focus');
+      }
 
       // The event path owns the settings section in the URL (there's no Settings
       // component round-trip to set it, unlike a NavBar click).

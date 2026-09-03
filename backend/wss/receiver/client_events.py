@@ -3051,18 +3051,24 @@ class ApprovalRespondRequest(ClientEventBase):
 
 
 # Activity Log Events
-class ActivityListRequest(ClientEventBase):
-    """List recent activity log entries for the current user / org"""
-    event_name: ClassVar[str] = "activity:list"
+# ============================================================================
+# Dashboard Events — the Dashboard tab's one aggregate read + notification reads
+# ============================================================================
 
-    limit: int = Field(50, description="Maximum number of entries to return")
+class DashboardOverviewRequest(ClientEventBase):
+    """Everything the Dashboard tab shows, in one round trip, scoped to the
+    caller's workspace. The response is the frontend's DashboardData contract
+    (camelCase) plus per-section `errors`."""
+    event_name: ClassVar[str] = "dashboard:overview"
+
+    days: int = Field(14, ge=1, le=90, description="Run-history window in days")
 
 
-class ToolCallListRequest(ClientEventBase):
-    """List recent agent tool-call events for the current user / org"""
-    event_name: ClassVar[str] = "tool_calls:list"
+class DashboardNotificationsReadRequest(ClientEventBase):
+    """Mark the caller's notifications read — the given ids, or all when omitted"""
+    event_name: ClassVar[str] = "dashboard:notifications:read"
 
-    limit: int = Field(100, description="Maximum number of tool calls to return")
+    ids: Optional[List[str]] = Field(None, description="Notification ids to mark read; None = all unread")
 
 
 # ============================================================================
