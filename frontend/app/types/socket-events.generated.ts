@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Sun Aug 30 14:21:23  2026
+// Generated at: Thu Sep 03 15:26:10  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -971,20 +971,6 @@ export interface YjsSyncEvent {
 /* Do not modify it by hand - just update the pydantic models and then re-run the script
 */
 
-/**
- * List recent activity log entries for the current user / org
- */
-export interface ActivityListRequest {
-  /**
-   * UUID for request/response correlation
-   */
-  request_id?: string | null;
-  /**
-   * Maximum number of entries to return
-   */
-  limit?: number;
-  [k: string]: unknown;
-}
 /**
  * The user's approve/dismiss verdict on an agent's prompt_builder proposal
  * card. Persisted as a conversation event so (a) the card's decided state
@@ -2333,6 +2319,36 @@ export interface CredentialValidateAccessRequest {
    * Node type to look up the validate_credential_access classmethod
    */
   node_type: string;
+  [k: string]: unknown;
+}
+/**
+ * Mark the caller's notifications read — the given ids, or all when omitted
+ */
+export interface DashboardNotificationsReadRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Notification ids to mark read; None = all unread
+   */
+  ids?: string[] | null;
+  [k: string]: unknown;
+}
+/**
+ * Everything the Dashboard tab shows, in one round trip, scoped to the
+ * caller's workspace. The response is the frontend's DashboardData contract
+ * (camelCase) plus per-section `errors`.
+ */
+export interface DashboardOverviewRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Run-history window in days
+   */
+  days?: number;
   [k: string]: unknown;
 }
 /**
@@ -5467,20 +5483,6 @@ export interface TikTokOAuthValidateRequest {
    * UUID of the credential to validate
    */
   credential_id: string;
-  [k: string]: unknown;
-}
-/**
- * List recent agent tool-call events for the current user / org
- */
-export interface ToolCallListRequest {
-  /**
-   * UUID for request/response correlation
-   */
-  request_id?: string | null;
-  /**
-   * Maximum number of tool calls to return
-   */
-  limit?: number;
   [k: string]: unknown;
 }
 /**
@@ -13336,7 +13338,6 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-  'activity:list': (data: ActivityListRequest) => void;
   'agent:builder_decision': (data: AgentBuilderDecisionRequest) => void;
   'agent:copy:from': (data: AgentCopyFromRequest) => void;
   'agent:copy:to': (data: AgentCopyToRequest) => void;
@@ -13412,6 +13413,8 @@ export interface ClientToServerEvents {
   'credential:test_connection': (data: CredentialTestConnectionRequest) => void;
   'credential:update': (data: CredentialUpdateRequest) => void;
   'credential:validate_access': (data: CredentialValidateAccessRequest) => void;
+  'dashboard:notifications:read': (data: DashboardNotificationsReadRequest) => void;
+  'dashboard:overview': (data: DashboardOverviewRequest) => void;
   'discord:oauth:exchange': (data: DiscordOAuthExchangeRequest) => void;
   'discord:oauth:refresh': (data: DiscordOAuthRefreshRequest) => void;
   'discord:oauth:validate': (data: DiscordOAuthValidateRequest) => void;
@@ -13563,7 +13566,6 @@ export interface ClientToServerEvents {
   'tiktok:oauth:exchange': (data: TikTokOAuthExchangeRequest) => void;
   'tiktok:oauth:refresh': (data: TikTokOAuthRefreshRequest) => void;
   'tiktok:oauth:validate': (data: TikTokOAuthValidateRequest) => void;
-  'tool_calls:list': (data: ToolCallListRequest) => void;
   'twitter:oauth:exchange': (data: TwitterOAuthExchangeRequest) => void;
   'twitter:oauth:refresh': (data: TwitterOAuthRefreshRequest) => void;
   'twitter:oauth:validate': (data: TwitterOAuthValidateRequest) => void;
@@ -13659,7 +13661,6 @@ export interface ClientToServerEvents {
 // Mapping of request type names to their event names
 export const ClientEventNames = {
 
-  ActivityListRequest: 'activity:list',
   AgentBuilderDecisionRequest: 'agent:builder_decision',
   AgentCopyFromRequest: 'agent:copy:from',
   AgentCopyToRequest: 'agent:copy:to',
@@ -13730,6 +13731,8 @@ export const ClientEventNames = {
   CredentialTestConnectionRequest: 'credential:test_connection',
   CredentialUpdateRequest: 'credential:update',
   CredentialValidateAccessRequest: 'credential:validate_access',
+  DashboardNotificationsReadRequest: 'dashboard:notifications:read',
+  DashboardOverviewRequest: 'dashboard:overview',
   DeleteConversationRequest: 'conversation:delete',
   DiscordOAuthExchangeRequest: 'discord:oauth:exchange',
   DiscordOAuthRefreshRequest: 'discord:oauth:refresh',
@@ -13897,7 +13900,6 @@ export const ClientEventNames = {
   TikTokOAuthExchangeRequest: 'tiktok:oauth:exchange',
   TikTokOAuthRefreshRequest: 'tiktok:oauth:refresh',
   TikTokOAuthValidateRequest: 'tiktok:oauth:validate',
-  ToolCallListRequest: 'tool_calls:list',
   TwitterOAuthExchangeRequest: 'twitter:oauth:exchange',
   TwitterOAuthRefreshRequest: 'twitter:oauth:refresh',
   TwitterOAuthValidateRequest: 'twitter:oauth:validate',
@@ -13986,7 +13988,6 @@ export type ClientEventWithName<T extends keyof typeof ClientEventNames> = {
 
 // Helper type to map event names to their data types (auto-generated)
 interface ClientEventMap {
-  ActivityListRequest: ActivityListRequest
   AgentBuilderDecisionRequest: AgentBuilderDecisionRequest
   AgentCopyFromRequest: AgentCopyFromRequest
   AgentCopyToRequest: AgentCopyToRequest
@@ -14057,6 +14058,8 @@ interface ClientEventMap {
   CredentialTestConnectionRequest: CredentialTestConnectionRequest
   CredentialUpdateRequest: CredentialUpdateRequest
   CredentialValidateAccessRequest: CredentialValidateAccessRequest
+  DashboardNotificationsReadRequest: DashboardNotificationsReadRequest
+  DashboardOverviewRequest: DashboardOverviewRequest
   DeleteConversationRequest: DeleteConversationRequest
   DiscordOAuthExchangeRequest: DiscordOAuthExchangeRequest
   DiscordOAuthRefreshRequest: DiscordOAuthRefreshRequest
@@ -14224,7 +14227,6 @@ interface ClientEventMap {
   TikTokOAuthExchangeRequest: TikTokOAuthExchangeRequest
   TikTokOAuthRefreshRequest: TikTokOAuthRefreshRequest
   TikTokOAuthValidateRequest: TikTokOAuthValidateRequest
-  ToolCallListRequest: ToolCallListRequest
   TwitterOAuthExchangeRequest: TwitterOAuthExchangeRequest
   TwitterOAuthRefreshRequest: TwitterOAuthRefreshRequest
   TwitterOAuthValidateRequest: TwitterOAuthValidateRequest
@@ -14545,10 +14547,6 @@ export type InferResponseType<T> = T extends keyof RequestResponseMap ? RequestR
 // Companion objects for each event type (mirrors Python's event_name ClassVar)
 // These allow you to access event_name at runtime and create properly typed events
 
-export const ActivityListRequest = {
-  event_name: 'activity:list' as const,
-  create: (data: ActivityListRequest) => ({ event_name: 'activity:list' as const, ...data })
-};
 export const AgentBuilderDecisionRequest = {
   event_name: 'agent:builder_decision' as const,
   create: (data: AgentBuilderDecisionRequest) => ({ event_name: 'agent:builder_decision' as const, ...data })
@@ -14828,6 +14826,14 @@ export const CredentialUpdateRequest = {
 export const CredentialValidateAccessRequest = {
   event_name: 'credential:validate_access' as const,
   create: (data: CredentialValidateAccessRequest) => ({ event_name: 'credential:validate_access' as const, ...data })
+};
+export const DashboardNotificationsReadRequest = {
+  event_name: 'dashboard:notifications:read' as const,
+  create: (data: DashboardNotificationsReadRequest) => ({ event_name: 'dashboard:notifications:read' as const, ...data })
+};
+export const DashboardOverviewRequest = {
+  event_name: 'dashboard:overview' as const,
+  create: (data: DashboardOverviewRequest) => ({ event_name: 'dashboard:overview' as const, ...data })
 };
 export const DeleteConversationRequest = {
   event_name: 'conversation:delete' as const,
@@ -15497,10 +15503,6 @@ export const TikTokOAuthValidateRequest = {
   event_name: 'tiktok:oauth:validate' as const,
   create: (data: TikTokOAuthValidateRequest) => ({ event_name: 'tiktok:oauth:validate' as const, ...data })
 };
-export const ToolCallListRequest = {
-  event_name: 'tool_calls:list' as const,
-  create: (data: ToolCallListRequest) => ({ event_name: 'tool_calls:list' as const, ...data })
-};
 export const TwitterOAuthExchangeRequest = {
   event_name: 'twitter:oauth:exchange' as const,
   create: (data: TwitterOAuthExchangeRequest) => ({ event_name: 'twitter:oauth:exchange' as const, ...data })
@@ -15817,7 +15819,6 @@ export const ZoomOAuthValidateRequest = {
 
 // Event routing configuration (imported from backend's event_routing.py)
 export const EventRouting = {
-  'activity:list': 'API',
   'agent:builder_decision': 'API',
   'agent:pause': 'API',
   'agent:set:cwd': 'API',
@@ -15887,6 +15888,8 @@ export const EventRouting = {
   'credential:test_connection': 'API',
   'credential:update': 'API',
   'credential:validate_access': 'API',
+  'dashboard:notifications:read': 'API',
+  'dashboard:overview': 'API',
   'discord:oauth:exchange': 'API',
   'discord:oauth:refresh': 'API',
   'discord:oauth:validate': 'API',
@@ -16057,7 +16060,6 @@ export const EventRouting = {
   'tiktok:oauth:exchange': 'API',
   'tiktok:oauth:refresh': 'API',
   'tiktok:oauth:validate': 'API',
-  'tool_calls:list': 'API',
   'twitter:oauth:exchange': 'API',
   'twitter:oauth:refresh': 'API',
   'twitter:oauth:validate': 'API',
