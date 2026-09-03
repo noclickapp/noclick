@@ -1002,7 +1002,7 @@ export function RunsCompact({ data, onFocus, chart = true, top = 4, narrow = fal
                 <span className="ml-auto tabular-nums">{rate}% succeeded</span>
             </div>
             {chart && <RunsColumns days={data.runs.days} height={88} now={data.now} />}
-            <div className={cn('mt-3', ROWS, chart && 'border-t border-border dark:border-foreground/[0.06] pt-1')}>
+            <div className={cn('mt-3', ROWS, chart && 'border-t border-border dark:border-foreground/[0.06]')}>
                 {data.runs.byWorkflow.slice(0, top).map((s) => (
                     <WorkflowStatsRow key={s.workflow.id} stat={s} now={data.now} narrow={narrow} showLast={false} />
                 ))}
@@ -1059,18 +1059,26 @@ export function RunsFull({ data }: SectionProps) {
             </div>
 
             <div>
-                <Eyebrow className="mb-2">By workflow</Eyebrow>
+                {/* Column headings ride the eyebrow row, right-anchored with the rows'
+                    own column widths, so the table has one heading line. */}
+                <Eyebrow
+                    className="mb-1"
+                    right={
+                        data.runs.byWorkflow.length ? (
+                            <span className="flex items-center gap-3 text-[10.5px] uppercase tracking-[0.08em] text-foreground/45 dark:text-foreground/30">
+                                <span className="w-16">Trend</span>
+                                <span className="w-10 text-right">Runs</span>
+                                <span className="w-[76px] text-right">Failed</span>
+                                <span className="w-16 text-right">Last</span>
+                                <span className="w-3" />
+                            </span>
+                        ) : null
+                    }
+                >
+                    By workflow
+                </Eyebrow>
                 {data.runs.byWorkflow.length ? (
-                    <div className={ROWS}>
-                        <div className="-mx-2 flex items-center gap-3 px-2 pb-1 text-[10.5px] uppercase tracking-[0.08em] text-foreground/45 dark:text-foreground/30">
-                            <span className="w-[58px] shrink-0" />
-                            <span className="flex-1">Workflow</span>
-                            <span className="w-16">Trend</span>
-                            <span className="w-10 text-right">Runs</span>
-                            <span className="w-[76px] text-right">Failed</span>
-                            <span className="w-16 text-right">Last</span>
-                            <span className="w-3" />
-                        </div>
+                    <div className={cn(ROWS, 'border-t border-border dark:border-foreground/[0.06]')}>
                         {data.runs.byWorkflow.map((s) => (
                             <WorkflowStatsRow key={s.workflow.id} stat={s} now={data.now} />
                         ))}
