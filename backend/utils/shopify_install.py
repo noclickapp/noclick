@@ -16,14 +16,18 @@ from utils.auth import verify_token
 from utils.credentials import update_credential_data_detailed
 from utils.database_pool import get_native_pool
 from utils.encryption import get_encryption
+from utils.hosted_defaults import webhook_worker_base_url
 from utils.ssrf import normalize_provider_subdomain
 
 
 logger = logging.getLogger(__name__)
-SHOPIFY_UNINSTALL_WEBHOOK_URI = os.environ.get(
-    "SHOPIFY_UNINSTALL_WEBHOOK_URI",
-    "https://dhruvyad--noclick-worker.modal.run/webhook/shopify/lifecycle",
-)
+
+
+def _shopify_uninstall_webhook_uri() -> str:
+    configured = os.environ.get("SHOPIFY_UNINSTALL_WEBHOOK_URI", "").strip()
+    if configured:
+        return configured
+    return f"{webhook_worker_base_url()}/webhook/shopify/lifecycle"
 
 
 async def ensure_app_uninstalled_webhook(
@@ -43,6 +47,7 @@ async def ensure_app_uninstalled_webhook(
         "X-Shopify-Access-Token": access_token,
         "Content-Type": "application/json",
     }
+    webhook_uri = _shopify_uninstall_webhook_uri()
     owns_client = client is None
     client = client or httpx.AsyncClient(timeout=30.0)
     try:
@@ -67,7 +72,7 @@ async def ensure_app_uninstalled_webhook(
             (existing_payload.get("data") or {}).get("webhookSubscriptions") or {}
         ).get("nodes") or []
         for node in nodes:
-            if node.get("uri") == SHOPIFY_UNINSTALL_WEBHOOK_URI and node.get("id"):
+            if node.get("uri") == webhook_uri and node.get("id"):
                 return str(node["id"])
 
         create_response = await client.post(
@@ -89,7 +94,7 @@ async def ensure_app_uninstalled_webhook(
                 """,
                 "variables": {
                     "subscription": {
-                        "uri": SHOPIFY_UNINSTALL_WEBHOOK_URI,
+                        "uri": webhook_uri,
                         "format": "JSON",
                     }
                 },

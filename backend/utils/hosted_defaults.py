@@ -57,3 +57,15 @@ def frontend_url() -> str:
 
 def api_base_url() -> str:
     return _configured("PUBLIC_API_URL", "API URL")
+
+
+def webhook_worker_base_url() -> str:
+    for name in (
+        "PUBLIC_WEBHOOK_WORKER_URL",
+        "APP_WEBHOOK_BASE_URL",
+        "PUBLIC_WEBHOOK_URL",
+    ):
+        value = os.environ.get(name, "").strip().rstrip("/")
+        if value:
+            return value
+    _missing("PUBLIC_WEBHOOK_WORKER_URL", "webhook worker URL")
