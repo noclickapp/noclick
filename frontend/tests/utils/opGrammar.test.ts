@@ -58,6 +58,7 @@ const SCHEMA_FOR_SLUG: Record<string, string> = {
     grammar entry, and no lexicon hit required. */
 const PLAIN_MESSAGE_OPS = new Set([
     'slack:on_channel_message',
+    'discord:on_message',
     'microsoft_teams:on_channel_message',
     'microsoft_teams:on_chat_message',
     'whatsapp:receive_message',

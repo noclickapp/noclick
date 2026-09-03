@@ -525,6 +525,8 @@ const DISCORD_OPS: Record<string, OpRender> = {
     on_entitlement_delete: { pill: { label: 'Revoked', tone: 'bad' }, byline: "{author}'s subscription was revoked", icon: 'trash' },
     on_entitlement_update: { pill: { label: 'Renewed', tone: 'info' }, byline: "{author}'s subscription was updated", icon: 'refresh' },
     on_slash_command: { byline: '{author} used a slash command', icon: 'comment' },
+    // on_message is a plain incoming message and deliberately has no entry.
+    on_mention: { byline: '{author} mentioned the bot', icon: 'bell' },
 };
 
 const MICROSOFT_TEAMS_OPS: Record<string, OpRender> = {
