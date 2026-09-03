@@ -2,7 +2,10 @@
 
 from fastapi import APIRouter, Request
 
-from utils.shopify_compliance import receive_compliance_webhook
+from utils.shopify_compliance import (
+    receive_compliance_webhook,
+    receive_lifecycle_webhook,
+)
 from utils.shopify_install import ShopifyInstallExchangeRequest, exchange_public_install
 
 install_router = APIRouter(tags=["shopify"])
@@ -14,6 +17,11 @@ async def shopify_compliance(request: Request):
     # Shopify only needs a fast 2xx acknowledgement.  The returned identifiers
     # contain no customer payload and make delivery tests diagnosable.
     return await receive_compliance_webhook(request)
+
+
+@compliance_router.post("/shopify/lifecycle")
+async def shopify_lifecycle(request: Request):
+    return await receive_lifecycle_webhook(request)
 
 
 @install_router.post("/shopify/install/exchange")

@@ -8,6 +8,7 @@ import pytest
 
 from utils.shopify_compliance import (
     _delete_execution_history,
+    process_app_uninstalled,
     process_compliance_webhook,
     verify_shopify_hmac,
 )
@@ -131,9 +132,7 @@ async def test_data_request_ledger_hashes_email_and_does_not_store_raw_payload()
     assert result["status"] == "pending"
     assert conn.insert_args is not None
     assert raw_email not in json.dumps(conn.insert_args)
-    assert conn.insert_args[5] == hashlib.sha256(
-        raw_email.lower().encode()
-    ).hexdigest()
+    assert conn.insert_args[5] == hashlib.sha256(raw_email.lower().encode()).hexdigest()
 
 
 @pytest.mark.asyncio
@@ -161,3 +160,32 @@ async def test_duplicate_compliance_delivery_is_idempotent():
         "request_id": str(request_id),
         "status": "completed",
     }
+
+
+@pytest.mark.asyncio
+async def test_app_uninstalled_revokes_only_live_public_install_credentials():
+    class Conn:
+        def __init__(self):
+            self.sql = None
+            self.args = None
+
+        async def execute(self, sql, *args):
+            self.sql = sql
+            self.args = args
+            return "UPDATE 2"
+
+    conn = Conn()
+    result = await process_app_uninstalled(
+        shop_domain="Review-Store.myshopify.com",
+        pool=_Pool(conn),
+    )
+
+    assert result == {
+        "accepted": True,
+        "topic": "app/uninstalled",
+        "credentials_revoked": 2,
+    }
+    assert conn.args == ("review-store.myshopify.com",)
+    assert "installation_source' = 'shopify_app_store'" in conn.sql
+    assert "revoked_at IS NULL" in conn.sql
+    assert "shopify_app_uninstalled" in conn.sql

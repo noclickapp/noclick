@@ -30,22 +30,38 @@ from nodes.shopify_node import (
     [
         (
             "_handle_graphql_products",
-            ShopifyGraphQLProductsQueryConfig(first=5, query_filter="vendor:NoClick"),
+            ShopifyGraphQLProductsQueryConfig(
+                first=5,
+                query_filter="vendor:NoClick",
+                after="products-cursor",
+            ),
             "query_products_with_graphql",
         ),
         (
             "_handle_graphql_orders",
-            ShopifyGraphQLOrdersQueryConfig(first=6, query_filter="status:OPEN"),
+            ShopifyGraphQLOrdersQueryConfig(
+                first=6,
+                query_filter="status:OPEN",
+                after="orders-cursor",
+            ),
             "query_orders_with_graphql",
         ),
         (
             "_handle_graphql_customers",
-            ShopifyGraphQLCustomersQueryConfig(first=7, query_filter="tag:VIP"),
+            ShopifyGraphQLCustomersQueryConfig(
+                first=7,
+                query_filter="tag:VIP",
+                after="customers-cursor",
+            ),
             "query_customers_with_graphql",
         ),
         (
             "_handle_graphql_collections",
-            ShopifyGraphQLCollectionsQueryConfig(first=8, query_filter="title:Sale"),
+            ShopifyGraphQLCollectionsQueryConfig(
+                first=8,
+                query_filter="title:Sale",
+                after="collections-cursor",
+            ),
             "query_collections_with_graphql",
         ),
         (
@@ -75,10 +91,17 @@ async def test_prebuilt_graphql_queries_forward_query_filter(
     assert result == {"status": "success"}
     node._make_graphql_request.assert_awaited_once()
     call = node._make_graphql_request.await_args
-    assert call.kwargs["variables"] == {
+    expected_variables = {
         "first": config.first,
         "query": getattr(config, "query_filter", None),
     }
+    if hasattr(config, "after"):
+        expected_variables["after"] = config.after
+        assert "$after: String" in call.kwargs["query"]
+        assert "after: $after" in call.kwargs["query"]
+        assert "pageInfo" in call.kwargs["query"]
+        assert "endCursor" in call.kwargs["query"]
+    assert call.kwargs["variables"] == expected_variables
     assert call.kwargs["action_name"] == action_name
 
 

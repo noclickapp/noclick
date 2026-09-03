@@ -2,19 +2,116 @@
 
 from __future__ import annotations
 
+import logging
 import os
 from typing import Any, Dict
 
+import httpx
 from fastapi import HTTPException, Request
 from pydantic import BaseModel
 
-from nodes.oauth.shopify_oauth import exchange_code_for_tokens
+from nodes.oauth.shopify_oauth import SHOPIFY_API_VERSION, exchange_code_for_tokens
 from repositories.credentials import create_credential_with_limit_check
 from utils.auth import verify_token
 from utils.credentials import update_credential_data_detailed
 from utils.database_pool import get_native_pool
 from utils.encryption import get_encryption
 from utils.ssrf import normalize_provider_subdomain
+
+
+logger = logging.getLogger(__name__)
+SHOPIFY_UNINSTALL_WEBHOOK_URI = os.environ.get(
+    "SHOPIFY_UNINSTALL_WEBHOOK_URI",
+    "https://dhruvyad--noclick-worker.modal.run/webhook/shopify/lifecycle",
+)
+
+
+async def ensure_app_uninstalled_webhook(
+    shop: str,
+    access_token: str,
+    *,
+    client: httpx.AsyncClient | None = None,
+) -> str:
+    """Ensure the legacy install flow has a shop-specific uninstall hook."""
+    shop = normalize_provider_subdomain(
+        shop, "myshopify.com", field_name="Shopify store name"
+    )
+    graphql_url = (
+        f"https://{shop}.myshopify.com/admin/api/" f"{SHOPIFY_API_VERSION}/graphql.json"
+    )
+    headers = {
+        "X-Shopify-Access-Token": access_token,
+        "Content-Type": "application/json",
+    }
+    owns_client = client is None
+    client = client or httpx.AsyncClient(timeout=30.0)
+    try:
+        existing_response = await client.post(
+            graphql_url,
+            headers=headers,
+            json={
+                "query": """
+                query NoClickAppUninstalledWebhooks {
+                  webhookSubscriptions(first: 50, topics: [APP_UNINSTALLED]) {
+                    nodes { id uri }
+                  }
+                }
+                """,
+            },
+        )
+        existing_response.raise_for_status()
+        existing_payload = existing_response.json()
+        if existing_payload.get("errors"):
+            raise ValueError("Shopify could not list uninstall webhooks")
+        nodes = (
+            (existing_payload.get("data") or {}).get("webhookSubscriptions") or {}
+        ).get("nodes") or []
+        for node in nodes:
+            if node.get("uri") == SHOPIFY_UNINSTALL_WEBHOOK_URI and node.get("id"):
+                return str(node["id"])
+
+        create_response = await client.post(
+            graphql_url,
+            headers=headers,
+            json={
+                "query": """
+                mutation NoClickAppUninstalledWebhookCreate(
+                  $subscription: WebhookSubscriptionInput!
+                ) {
+                  webhookSubscriptionCreate(
+                    topic: APP_UNINSTALLED,
+                    webhookSubscription: $subscription
+                  ) {
+                    webhookSubscription { id }
+                    userErrors { field message }
+                  }
+                }
+                """,
+                "variables": {
+                    "subscription": {
+                        "uri": SHOPIFY_UNINSTALL_WEBHOOK_URI,
+                        "format": "JSON",
+                    }
+                },
+            },
+        )
+        create_response.raise_for_status()
+        create_payload = create_response.json()
+        if create_payload.get("errors"):
+            raise ValueError("Shopify could not create the uninstall webhook")
+        result = (create_payload.get("data") or {}).get(
+            "webhookSubscriptionCreate"
+        ) or {}
+        user_errors = result.get("userErrors") or []
+        if user_errors:
+            raise ValueError("Shopify rejected the uninstall webhook")
+        webhook_id = (result.get("webhookSubscription") or {}).get("id")
+        if not webhook_id:
+            raise ValueError("Shopify did not return an uninstall webhook ID")
+        return str(webhook_id)
+    finally:
+        if owns_client:
+            await client.aclose()
 
 
 class ShopifyInstallExchangeRequest(BaseModel):
@@ -63,6 +160,18 @@ async def exchange_public_install(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from None
 
+    try:
+        await ensure_app_uninstalled_webhook(shop, tokens.access_token)
+    except (httpx.HTTPError, ValueError):
+        logger.exception(
+            "[ShopifyInstall] Failed to register app/uninstalled webhook for %s",
+            shop,
+        )
+        raise HTTPException(
+            status_code=502,
+            detail="Could not register Shopify uninstall lifecycle handling",
+        ) from None
+
     credential_data = {
         "credential_type": "shopify_oauth",
         "access_token": tokens.access_token,
@@ -83,7 +192,11 @@ async def exchange_public_install(
         "shop_owner": shop_info.shop_owner,
         "email": shop_info.email,
         "shop_id": shop_info.id,
-        "scopes": [scope for scope in body.scopes.split(",") if scope],
+        # Persist Shopify's authoritative grant, not the scopes requested by
+        # the browser.  The two can diverge for an older install or after a
+        # merchant changes access, and reviewer credentials must never look
+        # healthier than the token Shopify actually issued.
+        "scopes": [scope.strip() for scope in tokens.scope.split(",") if scope.strip()],
         "installation_source": "shopify_app_store",
     }
     credential_name = shop_info.name or shop_info.domain or f"Shopify ({shop_info.id})"

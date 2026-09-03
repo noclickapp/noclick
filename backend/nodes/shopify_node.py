@@ -6221,8 +6221,8 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     ) -> Dict[str, Any]:
         """Query products using GraphQL."""
         query = """
-        query getProducts($first: Int, $query: String) {
-            products(first: $first, query: $query) {
+        query getProducts($first: Int, $query: String, $after: String) {
+            products(first: $first, query: $query, after: $after) {
                 edges {
                     node {
                         id
@@ -6256,6 +6256,10 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
                         }
                     }
                 }
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
             }
         }
         """
@@ -6263,6 +6267,7 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         variables = {
             "first": config.first,
             "query": config.query_filter,
+            "after": config.after,
         }
 
         return await self._make_graphql_request(
@@ -6339,8 +6344,8 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     ) -> Dict[str, Any]:
         """Query orders using GraphQL."""
         query = """
-        query getOrders($first: Int, $query: String) {
-            orders(first: $first, query: $query) {
+        query getOrders($first: Int, $query: String, $after: String) {
+            orders(first: $first, query: $query, after: $after) {
                 edges {
                     node {
                         id
@@ -6376,6 +6381,10 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
                         }
                     }
                 }
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
             }
         }
         """
@@ -6383,6 +6392,7 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         variables = {
             "first": config.first,
             "query": config.query_filter,
+            "after": config.after,
         }
 
         return await self._make_graphql_request(
@@ -6397,8 +6407,8 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     ) -> Dict[str, Any]:
         """Query customers using GraphQL."""
         query = """
-        query getCustomers($first: Int, $query: String) {
-            customers(first: $first, query: $query) {
+        query getCustomers($first: Int, $query: String, $after: String) {
+            customers(first: $first, query: $query, after: $after) {
                 edges {
                     node {
                         id
@@ -6431,6 +6441,10 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
                         }
                     }
                 }
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
             }
         }
         """
@@ -6438,6 +6452,7 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         variables = {
             "first": config.first,
             "query": config.query_filter,
+            "after": config.after,
         }
 
         return await self._make_graphql_request(
@@ -6524,8 +6539,8 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     ) -> Dict[str, Any]:
         """Query collections using GraphQL."""
         query = """
-        query getCollections($first: Int, $query: String) {
-            collections(first: $first, query: $query) {
+        query getCollections($first: Int, $query: String, $after: String) {
+            collections(first: $first, query: $query, after: $after) {
                 edges {
                     node {
                         id
@@ -6543,6 +6558,10 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
                         }
                     }
                 }
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
             }
         }
         """
@@ -6550,6 +6569,7 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         variables = {
             "first": config.first,
             "query": config.query_filter,
+            "after": config.after,
         }
 
         return await self._make_graphql_request(

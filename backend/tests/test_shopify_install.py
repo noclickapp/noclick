@@ -7,6 +7,7 @@ from starlette.requests import Request
 
 from utils.shopify_install import (
     ShopifyInstallExchangeRequest,
+    ensure_app_uninstalled_webhook,
     exchange_public_install,
 )
 
@@ -89,6 +90,10 @@ async def test_public_install_upserts_canonical_shop_credential(monkeypatch):
         ),
     )
     monkeypatch.setattr("utils.shopify_install.exchange_code_for_tokens", exchange)
+    lifecycle_webhook = AsyncMock(return_value="gid://shopify/WebhookSubscription/123")
+    monkeypatch.setattr(
+        "utils.shopify_install.ensure_app_uninstalled_webhook", lifecycle_webhook
+    )
     monkeypatch.setattr(
         "utils.shopify_install.update_credential_data_detailed", update_credential
     )
@@ -115,4 +120,77 @@ async def test_public_install_upserts_canonical_shop_credential(monkeypatch):
     metadata = captured["update"]["metadata_updates"]
     assert metadata["myshopify_domain"] == "acme.myshopify.com"
     assert metadata["installation_source"] == "shopify_app_store"
-    assert metadata["scopes"] == ["read_orders", "write_orders"]
+    assert metadata["scopes"] == ["read_orders"]
+    lifecycle_webhook.assert_awaited_once_with("acme", "shpat_secret")
+
+
+class _Response:
+    def __init__(self, payload):
+        self.payload = payload
+
+    def raise_for_status(self):
+        return None
+
+    def json(self):
+        return self.payload
+
+
+class _HttpClient:
+    def __init__(self, *payloads):
+        self.payloads = list(payloads)
+        self.calls = []
+
+    async def post(self, url, **kwargs):
+        self.calls.append((url, kwargs))
+        return _Response(self.payloads.pop(0))
+
+
+@pytest.mark.asyncio
+async def test_uninstall_webhook_reuses_matching_subscription():
+    client = _HttpClient(
+        {
+            "data": {
+                "webhookSubscriptions": {
+                    "nodes": [
+                        {
+                            "id": "gid://shopify/WebhookSubscription/7",
+                            "uri": "https://dhruvyad--noclick-worker.modal.run/webhook/shopify/lifecycle",
+                        }
+                    ]
+                }
+            }
+        }
+    )
+
+    webhook_id = await ensure_app_uninstalled_webhook(
+        "acme.myshopify.com", "token", client=client
+    )
+
+    assert webhook_id == "gid://shopify/WebhookSubscription/7"
+    assert len(client.calls) == 1
+    assert "APP_UNINSTALLED" in client.calls[0][1]["json"]["query"]
+
+
+@pytest.mark.asyncio
+async def test_uninstall_webhook_creates_missing_subscription():
+    client = _HttpClient(
+        {"data": {"webhookSubscriptions": {"nodes": []}}},
+        {
+            "data": {
+                "webhookSubscriptionCreate": {
+                    "webhookSubscription": {
+                        "id": "gid://shopify/WebhookSubscription/8"
+                    },
+                    "userErrors": [],
+                }
+            }
+        },
+    )
+
+    webhook_id = await ensure_app_uninstalled_webhook("acme", "token", client=client)
+
+    assert webhook_id == "gid://shopify/WebhookSubscription/8"
+    assert len(client.calls) == 2
+    variables = client.calls[1][1]["json"]["variables"]
+    assert variables["subscription"]["format"] == "JSON"
+    assert variables["subscription"]["uri"].endswith("/webhook/shopify/lifecycle")

@@ -34,6 +34,7 @@ logger = logging.getLogger(__name__)
 COMPLIANCE_TOPICS = frozenset(
     {"customers/data_request", "customers/redact", "shop/redact"}
 )
+LIFECYCLE_TOPICS = frozenset({"app/uninstalled"})
 _SHOP_RE = re.compile(r"^[a-z0-9][a-z0-9-]*\.myshopify\.com$")
 _MAX_BODY_BYTES = 1_000_000
 
@@ -176,7 +177,9 @@ async def process_compliance_webhook(
     if body_shop != header_shop:
         raise HTTPException(status_code=400, detail="Shopify shop domain mismatch")
 
-    customer = payload.get("customer") if isinstance(payload.get("customer"), dict) else {}
+    customer = (
+        payload.get("customer") if isinstance(payload.get("customer"), dict) else {}
+    )
     customer_id = _text_id(customer.get("id"))
     customer_email_hash = _email_fingerprint(customer.get("email"))
     shop_id = _text_id(payload.get("shop_id"))
@@ -283,6 +286,48 @@ async def process_compliance_webhook(
     }
 
 
+async def process_app_uninstalled(
+    *,
+    shop_domain: str,
+    pool=None,
+) -> Dict[str, Any]:
+    """Revoke public-install credentials after Shopify removes the app.
+
+    The credential row is retained so a later reinstall can update it in place;
+    the public install exchange clears ``revoked_at`` after fresh consent.
+    """
+    shop = _canonical_shop(shop_domain)
+    pool = pool or get_native_pool()
+    async with pool.acquire() as conn:
+        status = await conn.execute(
+            """
+            UPDATE credentials
+            SET revoked_at = NOW(),
+                revoked_reason = 'shopify_app_uninstalled'
+            WHERE credential_type = 'shopify_oauth'
+              AND lower(COALESCE(metadata->>'myshopify_domain', '')) = $1
+              AND metadata->>'installation_source' = 'shopify_app_store'
+              AND revoked_at IS NULL
+            """,
+            shop,
+        )
+    try:
+        credentials_revoked = int(status.rsplit(" ", 1)[-1])
+    except (AttributeError, ValueError):
+        credentials_revoked = 0
+
+    logger.info(
+        "[ShopifyLifecycle] processed topic=app/uninstalled shop=%s credentials_revoked=%s",
+        shop,
+        credentials_revoked,
+    )
+    return {
+        "accepted": True,
+        "topic": "app/uninstalled",
+        "credentials_revoked": credentials_revoked,
+    }
+
+
 async def receive_compliance_webhook(request: Request) -> Dict[str, Any]:
     """Validate the HTTP request before handing it to the processor."""
     body = await request.body()
@@ -310,3 +355,33 @@ async def receive_compliance_webhook(request: Request) -> Dict[str, Any]:
         shop_domain=shop_domain,
         payload=payload,
     )
+
+
+async def receive_lifecycle_webhook(request: Request) -> Dict[str, Any]:
+    """Validate and process Shopify installation-lifecycle webhooks."""
+    body = await request.body()
+    if len(body) > _MAX_BODY_BYTES:
+        raise HTTPException(status_code=413, detail="Webhook body too large")
+
+    secret = os.environ.get("SHOPIFY_CLIENT_SECRET", "")
+    supplied_hmac = request.headers.get("x-shopify-hmac-sha256", "")
+    if not verify_shopify_hmac(body, supplied_hmac, secret):
+        raise HTTPException(status_code=401, detail="Invalid Shopify signature")
+
+    topic = request.headers.get("x-shopify-topic", "").strip().lower()
+    if topic not in LIFECYCLE_TOPICS:
+        raise HTTPException(status_code=400, detail="Unsupported Shopify topic")
+
+    shop_domain = _canonical_shop(request.headers.get("x-shopify-shop-domain", ""))
+    try:
+        payload = json.loads(body)
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        raise HTTPException(status_code=400, detail="Invalid JSON") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Invalid webhook payload")
+
+    payload_shop = payload.get("myshopify_domain")
+    if payload_shop and _canonical_shop(payload_shop) != shop_domain:
+        raise HTTPException(status_code=400, detail="Shopify shop domain mismatch")
+
+    return await process_app_uninstalled(shop_domain=shop_domain)
