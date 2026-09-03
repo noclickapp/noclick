@@ -79,6 +79,8 @@ export interface DashboardActions {
     manageCredential: (credential: CredentialEntry) => void;
     /** Settings → Credentials, for the "all of them" hand-off. */
     openCredentialsSettings: () => void;
+    /** Confirm-and-delete a credential (the same dialog Settings uses). */
+    deleteCredential?: (credential: CredentialEntry) => void;
     connectAccount: () => void;
     topUp?: () => void;
     openUsage: () => void;

@@ -42,7 +42,7 @@ import { getCredentialIcon } from '~/utils/credentialIcons';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
 import { ShareDialog } from '~/components/shared/popups/ShareDialog';
-import { DeleteConfirmPopup } from '~/components/shared/popups/DeleteConfirmPopup';
+import { CredentialDeleteDialog } from '~/components/credential/CredentialDeleteDialog';
 import {
     openCreateCredential,
     CREDENTIALS_CHANGED_EVENT,
@@ -105,11 +105,6 @@ export function CredentialsSettings({
         id: string;
         name: string;
     } | null>(null);
-    // Workflows referencing the credential pending deletion (dry-run result),
-    // surfaced in the confirm dialog so the user knows what breaks.
-    const [affectedWorkflows, setAffectedWorkflows] = useState<
-        { workflow_id: string; workflow_name: string }[]
-    >([]);
 
     const loadCredentials = useCallback(async () => {
         setLoading(true);
@@ -171,60 +166,6 @@ export function CredentialsSettings({
             window.removeEventListener(CREDENTIALS_CHANGED_EVENT, onChanged);
     }, [loadCredentials]);
 
-    // Dry-run the delete when the confirm dialog opens: the backend returns
-    // the workflows still referencing this credential without deleting.
-    useEffect(() => {
-        if (!credentialToDelete) {
-            setAffectedWorkflows([]);
-            return;
-        }
-        let cancelled = false;
-        sendEventAsync({
-            event_name: 'credential:delete',
-            request_id: `delete-cred-dryrun-${Date.now()}`,
-            credential_id: credentialToDelete.id,
-            confirm: false,
-        })
-            .then((response) => {
-                if (!cancelled && response?.success) {
-                    setAffectedWorkflows(response.affected_workflows ?? []);
-                }
-            })
-            .catch(() => {
-                // Non-fatal: the dialog just shows the generic warning.
-            });
-        return () => {
-            cancelled = true;
-        };
-    }, [credentialToDelete]);
-
-    const handleDelete = useCallback(async () => {
-        if (!credentialToDelete) return;
-        try {
-            const response = await sendEventAsync({
-                event_name: 'credential:delete',
-                request_id: `delete-cred-${Date.now()}`,
-                credential_id: credentialToDelete.id,
-                confirm: true,
-            });
-            if (response?.success) {
-                invalidateCredentialsCache();
-                toast.success('Credential deleted');
-                loadCredentials();
-            } else {
-                // The reason rides `error`; `message` is only set on success.
-                toast.error(response?.error || 'Failed to delete credential');
-            }
-        } catch (err) {
-            console.error(
-                '[CredentialsSettings] Error deleting credential:',
-                err
-            );
-            toast.error('Failed to delete credential');
-        } finally {
-            setCredentialToDelete(null);
-        }
-    }, [credentialToDelete, loadCredentials]);
 
     const handleRemoveShare = useCallback(
         (credentialId: string, shareId: string) => {
@@ -585,25 +526,11 @@ export function CredentialsSettings({
                     </div>
                 )}
 
-            {/* Delete confirmation */}
-            <DeleteConfirmPopup
-                itemType="Credential"
-                itemName={credentialToDelete?.name}
-                isOpen={!!credentialToDelete}
-                onOpenChange={(open) => {
-                    if (!open) setCredentialToDelete(null);
-                }}
-                onConfirmDelete={handleDelete}
-                customMessage={
-                    affectedWorkflows.length > 0
-                        ? `"${credentialToDelete?.name}" is used by ${affectedWorkflows.length} workflow${affectedWorkflows.length === 1 ? '' : 's'}: ${affectedWorkflows
-                              .slice(0, 5)
-                              .map((w) => w.workflow_name)
-                              .join(
-                                  ', '
-                              )}${affectedWorkflows.length > 5 ? ', …' : ''}. Deleting it will deactivate their triggers and break those nodes until you connect a new credential.`
-                        : undefined
-                }
+            {/* Delete confirmation — the shared dialog dry-runs, confirms and deletes. */}
+            <CredentialDeleteDialog
+                credential={credentialToDelete}
+                onClose={() => setCredentialToDelete(null)}
+                onDeleted={loadCredentials}
             />
 
             {/* Share dialog */}

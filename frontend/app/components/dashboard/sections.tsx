@@ -1680,9 +1680,16 @@ function CredentialRowView({ c, now }: { c: CredentialEntry; now: string }) {
                 {dead ? (
                     <PrimaryButton onClick={() => actions.reconnectCredential({ credentialId: c.id, credentialType: c.credentialType, name: c.name })}>Reconnect</PrimaryButton>
                 ) : (
-                    <TextLink onClick={() => actions.manageCredential(c)} icon={false}>
-                        Manage
-                    </TextLink>
+                    <>
+                        <TextLink onClick={() => actions.manageCredential(c)} icon={false}>
+                            Manage
+                        </TextLink>
+                        {actions.deleteCredential && (
+                            <TextLink onClick={() => actions.deleteCredential?.(c)} icon={false} className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                                Delete
+                            </TextLink>
+                        )}
+                    </>
                 )}
                 <Verdict status={credentialVerdict(c)} className="w-4" label={c.health} />
             </div>
@@ -1718,20 +1725,33 @@ export function CredentialsCompact({ data, onFocus, style = 'tiles', footer = tr
                 {sorted.map((c) => {
                     const isDead = dead.includes(c);
                     return (
-                        <button
-                            key={c.id}
-                            type="button"
-                            onClick={() => (isDead ? actions.reconnectCredential({ credentialId: c.id, credentialType: c.credentialType, name: c.name }) : actions.manageCredential(c))}
-                            title={`${c.name} · ${credentialLabel(c.credentialType, c.nodeType)}${isDead ? ` · ${c.healthDetail}` : ''}`}
-                            className={cn(
-                                'inline-flex h-8 items-center gap-2 rounded-md border px-2 text-[12px] transition-colors',
-                                isDead ? 'border-red-500/30 text-foreground hover:bg-red-500/[0.06]' : 'border-border dark:border-foreground/[0.08] text-foreground/70 hover:border-foreground/20 hover:text-foreground'
+                        <span key={c.id} className="group/cred relative inline-flex">
+                            <button
+                                type="button"
+                                onClick={() => (isDead ? actions.reconnectCredential({ credentialId: c.id, credentialType: c.credentialType, name: c.name }) : actions.manageCredential(c))}
+                                title={`${c.name} · ${credentialLabel(c.credentialType, c.nodeType)}${isDead ? ` · ${c.healthDetail}` : ''}`}
+                                className={cn(
+                                    'inline-flex h-8 items-center gap-2 rounded-md border px-2 text-[12px] transition-[padding,color,border-color]',
+                                    actions.deleteCredential && 'group-hover/cred:pr-8 group-focus-within/cred:pr-8',
+                                    isDead ? 'border-red-500/30 text-foreground hover:bg-red-500/[0.06]' : 'border-border dark:border-foreground/[0.08] text-foreground/70 hover:border-foreground/20 hover:text-foreground'
+                                )}
+                            >
+                                <CredentialMark credentialType={c.credentialType} nodeType={c.nodeType} size="sm" />
+                                <span className="max-w-[140px] truncate">{c.name}</span>
+                                {isDead && <X className="h-3 w-3 text-red-600 dark:text-red-400" strokeWidth={2.5} />}
+                            </button>
+                            {actions.deleteCredential && (
+                                <button
+                                    type="button"
+                                    aria-label={`Delete ${c.name}`}
+                                    title="Delete credential"
+                                    onClick={() => actions.deleteCredential?.(c)}
+                                    className="absolute right-1 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded text-foreground/55 opacity-0 transition-opacity hover:bg-foreground/[0.06] hover:text-foreground focus-visible:opacity-100 group-hover/cred:opacity-100 dark:text-foreground/40"
+                                >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                </button>
                             )}
-                        >
-                            <CredentialMark credentialType={c.credentialType} nodeType={c.nodeType} size="sm" />
-                            <span className="max-w-[140px] truncate">{c.name}</span>
-                            {isDead && <X className="h-3 w-3 text-red-600 dark:text-red-400" strokeWidth={2.5} />}
-                        </button>
+                        </span>
                     );
                 })}
             </div>

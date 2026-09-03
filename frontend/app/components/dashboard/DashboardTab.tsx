@@ -20,6 +20,7 @@ import { isLocalEdition } from '~/lib/edition';
 import { openCreateCredential } from '~/components/shared/popups/CreateCredentialDialog';
 import { DashboardSkeleton } from '~/components/dashboard/DashboardSkeleton';
 import { FilePreviewDialog, type FilePreviewRequest } from '~/components/dashboard/FilePreviewDialog';
+import { CredentialDeleteDialog, type DeletableCredential } from '~/components/credential/CredentialDeleteDialog';
 import { Skeleton } from '~/components/ui/skeleton';
 
 // Drill-downs that ARE a Settings page (credentials, usage) mount the Settings
@@ -177,6 +178,7 @@ export function DashboardTab() {
     const { sources: workspaceSources, reload: reloadWorkspace } = useWorkspaceSources(overview?.workspaces, focus === 'files', overview?.generatedAt);
     const [preview, setPreview] = useState<FilePreviewRequest | null>(null);
     const [openRun, setOpenRun] = useState<RunRow | null>(null);
+    const [credentialToDelete, setCredentialToDelete] = useState<DeletableCredential | null>(null);
     const { uploadFile } = useResourceUpload();
     const fileInput = useRef<HTMLInputElement>(null);
     const uploadTarget = useRef<FileSource | null>(null);
@@ -343,6 +345,7 @@ export function DashboardTab() {
             },
             manageCredential: (c) => openCreateCredential({ credentialType: c.credentialType, credentialId: c.id }),
             openCredentialsSettings: () => navigateToSettings({ section: 'credentials' }),
+            deleteCredential: (c) => setCredentialToDelete({ id: c.id, name: c.name }),
             connectAccount: () => openCreateCredential(),
             topUp: isLocalEdition() ? undefined : () => setPendingCreditAction('user-initiated'),
             openUsage: () => navigateToUsage(),
@@ -389,6 +392,7 @@ export function DashboardTab() {
             </div>
             <input ref={fileInput} type="file" multiple className="hidden" onChange={onFilesPicked} data-testid="dashboard-upload-input" />
             <FilePreviewDialog request={preview} onClose={() => setPreview(null)} onOpenWorkflow={(source) => source.workflow && actions.openWorkflow(source.workflow, source.agent?.nodeId)} />
+            <CredentialDeleteDialog credential={credentialToDelete} onClose={() => setCredentialToDelete(null)} onDeleted={() => void refresh()} />
             {openRun && (
                 <Suspense fallback={null}>
                     <DashboardRunDialog run={openRun} onClose={() => setOpenRun(null)} />
