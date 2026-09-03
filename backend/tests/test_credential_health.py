@@ -24,15 +24,18 @@ def _qr_row(cred_id, conn_id):
 @pytest.mark.asyncio
 async def test_statuses_map_to_health_verdicts():
     rows = [_qr_row("cred-live", "c1"), _qr_row("cred-dead", "c2"), _qr_row("cred-gone", "c3")]
-    with patch("utils.whatsapp_qr.get_connection_statuses", return_value={"c1": "connected", "c2": "failed"}):
+    with patch("utils.whatsapp_qr.get_connection_statuses", return_value={"c1": "connected", "c2": "failed"}) as statuses:
         health = await get_credential_health(rows)
+    # Every judged id is REQUIRED from the seam — a cached list that predates
+    # a just-minted connection must refetch rather than report it gone.
+    statuses.assert_called_once_with(require=["c1", "c2", "c3"])
 
     assert health["cred-live"] == CredentialHealth(status="connected", healthy=True, hint=None)
     assert health["cred-dead"].healthy is False
     assert health["cred-dead"].status == "failed"
     # The hint must steer recovery toward re-scan of the SAME credential.
     assert "do not create a new credential" in health["cred-dead"].hint
-    # Absent from WAHooks = definitively gone.
+    # Absent from a FRESH WAHooks list = definitively gone.
     assert health["cred-gone"].status == "missing"
     assert health["cred-gone"].healthy is False
 
@@ -74,7 +77,8 @@ async def test_accepts_attribute_rows():
 # ---------------------------------------------------------------------------
 # AI-surface consumption: the brain/agent-facing status line and the workflow
 # snapshot must flag attached-but-dead credentials instead of rendering ✓.
-# An attached-but-dead session must not render as healthy to either AI surface.
+# (A 2026-07 credential-health incident: describe_workflow said "whatsapp ✓" on a
+# session dead for three days, sending the agent down a false root cause.)
 # ---------------------------------------------------------------------------
 
 _WA_CONFIG = {"operation": "receive_message", "credentialIds": {"whatsapp_qr": "cred-1"}}

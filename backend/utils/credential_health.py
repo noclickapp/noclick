@@ -70,19 +70,24 @@ _RECONNECT_HINT = (
 async def _whatsapp_qr_health(rows: Sequence[Any]) -> Dict[str, CredentialHealth]:
     from utils.whatsapp_qr import get_connection_statuses
 
-    statuses = await get_connection_statuses()
+    bound = {
+        str(_row_field(row, "id")): (_row_field(row, "metadata") or {}).get("connection_id")
+        for row in rows
+    }
+    # `require` makes an id the cache has never seen a refetch, not a verdict:
+    # a just-scanned connection is younger than the cache.
+    statuses = await get_connection_statuses(require=[c for c in bound.values() if c])
     if statuses is None:
         return {}
 
     out: Dict[str, CredentialHealth] = {}
-    for row in rows:
-        conn_id = (_row_field(row, "metadata") or {}).get("connection_id")
+    for cred_id, conn_id in bound.items():
         if not conn_id:
             continue  # legacy row without a connection binding — unknown, not dead
-        # Absent from WAHooks = the connection is definitively gone.
+        # Absent from a FRESH WAHooks list = the connection is definitively gone.
         status = statuses.get(conn_id, "missing")
         healthy = status == "connected"
-        out[str(_row_field(row, "id"))] = CredentialHealth(
+        out[cred_id] = CredentialHealth(
             status=status,
             healthy=healthy,
             hint=None if healthy else _RECONNECT_HINT.format(status=status),
@@ -150,6 +155,83 @@ CREDENTIAL_HEALTH_CHECKS: Dict[str, Callable[[Sequence[Any]], Awaitable[Dict[str
     "whatsapp_qr": _whatsapp_qr_health,
     "discord_bot_install": _discord_bot_install_health,
 }
+
+#: The service name the owner reads in a disconnection email.
+CREDENTIAL_HEALTH_LABELS: Dict[str, str] = {
+    "whatsapp_qr": "WhatsApp",
+    "discord_bot_install": "Discord",
+}
+
+
+async def _whatsapp_rescan_in_flight(row: Any, health: CredentialHealth) -> bool:
+    """A bound WhatsApp connection sitting in scan_qr/pending while a QR flow
+    holds its reservation is being re-scanned right now — not dead."""
+    from utils.wahooks_connections import _has_active_reservation
+
+    connection_id = (_row_field(row, "metadata") or {}).get("connection_id")
+    return bool(
+        health.status in ("scan_qr", "pending")
+        and connection_id
+        and await _has_active_reservation(str(connection_id))
+    )
+
+
+#: credential_type → "hold the email for this verdict" predicate.
+DEAD_ALERT_EXEMPTIONS: Dict[str, Callable[[Any, CredentialHealth], Awaitable[bool]]] = {
+    "whatsapp_qr": _whatsapp_rescan_in_flight,
+}
+
+
+async def alert_dead_credentials(pool) -> Dict[str, Any]:
+    """Daily backstop for connection deaths no push path reported: owners of
+    every in-use credential whose provider session is definitively dead get
+    ONE email per credential per dedupe window (shared with any push path).
+    Verdicts come from the same registry every picker and validator reads —
+    a divergent rule here would email about a credential everyone else
+    renders connected, or stay silent on one everyone renders dead."""
+    from repositories.credentials import CredentialsRepo
+    from utils.notifications import send_channel_disconnected_alert
+
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            "SELECT id, owner_id, organization_id, credential_type, metadata FROM credentials "
+            "WHERE credential_type = ANY($1::text[]) AND revoked_at IS NULL",
+            list(CREDENTIAL_HEALTH_CHECKS),
+        )
+    health = await get_credential_health(rows)
+
+    repo = CredentialsRepo(pool)
+    alerted, dead_unreferenced = [], []
+    for row in rows:
+        cred_id = str(_row_field(row, "id"))
+        verdict = health.get(cred_id)
+        if verdict is None or verdict.healthy:
+            continue
+        ctype = _row_field(row, "credential_type")
+        exemption = DEAD_ALERT_EXEMPTIONS.get(ctype)
+        if exemption and await exemption(row, verdict):
+            continue
+        org_id = _row_field(row, "organization_id")
+        referencing = await repo.list_workflows_referencing_credential(
+            cred_id, str(_row_field(row, "owner_id")), str(org_id) if org_id else None
+        )
+        if not referencing:
+            dead_unreferenced.append(cred_id)
+            continue
+        await send_channel_disconnected_alert(
+            cred_id,
+            provider_label=CREDENTIAL_HEALTH_LABELS.get(ctype, ctype),
+            session_status=verdict.status,
+            hint=verdict.hint,
+            workflow_id=referencing[0]["workflow_id"],
+            workflow_name=referencing[0]["workflow_name"],
+            pool=pool,
+        )
+        alerted.append(cred_id)
+
+    summary = {"credentials": len(rows), "alerted": alerted, "dead_unreferenced": dead_unreferenced}
+    logger.info(f"[CredentialHealth] Dead-credential alert sweep: {summary}")
+    return summary
 
 
 async def fetch_credential_health_for_ids(pool, credential_ids: Sequence[str]) -> Dict[str, CredentialHealth]:

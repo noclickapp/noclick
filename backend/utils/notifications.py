@@ -831,14 +831,21 @@ async def send_channel_disconnected_alert(
     workflow_id: Optional[str] = None,
     workflow_name: Optional[str] = None,
     pool=None,
+    hint: Optional[str] = None,
 ) -> bool:
     """Tell a connection-backed credential's OWNER its provider session died
-    (phone unlinked, WhatsApp security logout, worker loss). Distinct from
-    credential_revoked: the credential ROW is fine — the live session behind
-    it is gone, messages stop arriving silently, and ONE re-scan of the SAME
-    credential fixes it. Fired from the session.status control event and the
-    daily sweep backstop (shared dedupe key, so at most one email per
-    credential per window either way)."""
+    (phone unlinked, bot removed from a server, worker loss). Distinct from
+    credential_revoked: the credential ROW is fine — the live connection
+    behind it is gone and messages stop arriving silently. ``hint`` is the
+    health registry's fix-it guidance for that credential type; without one
+    the WhatsApp re-scan advice applies (the push path's caller). Fired from
+    provider control events and the daily sweep backstop (shared dedupe key,
+    so at most one email per credential per window either way)."""
+    fix_text = hint or (
+        f"Open the credential and re-scan the QR code to reconnect this same "
+        f"{provider_label} connection. Don't create a second credential — "
+        "repeated fresh scans can get all of the phone's links logged out."
+    )
     row = await _fetch_row(
         pool,
         "SELECT owner_id, name, credential_type FROM credentials WHERE id = $1",
@@ -861,24 +868,18 @@ async def send_channel_disconnected_alert(
         rows.append(("Workflow", html_lib.escape(workflow_name)))
     blocks = (
         para(
-            f"Your {label_html} connection {strong(name_html)} has disconnected — "
-            "usually the phone unlinked the device, or the provider logged the "
-            "session out. Incoming messages are NOT reaching your workflows and "
-            "sends will fail until you reconnect."
+            f"Your {label_html} connection {strong(name_html)} has disconnected. "
+            "Incoming messages are NOT reaching your workflows and sends will "
+            "fail until you reconnect."
         )
         + kv_rows(rows)
-        + para(
-            "To fix it, open the credential and re-scan the QR code to reconnect "
-            f"this same {label_html} connection. Don't create a second credential — "
-            "repeated fresh scans can get all of the phone's links logged out."
-        )
+        + para(f"To fix it: {html_lib.escape(fix_text)}")
     )
     text_body = (
         f'Your {provider_label} connection "{name}" has disconnected '
-        f"(session {session_status}). Incoming messages are not reaching your "
+        f"(status {session_status}). Incoming messages are not reaching your "
         "workflows and sends will fail until you reconnect it.\n"
-        "Open the credential and re-scan the QR code to reconnect this same "
-        "connection — don't create a second credential."
+        f"To fix it: {fix_text}"
     )
 
     return await send_system_alert(
@@ -888,7 +889,7 @@ async def send_channel_disconnected_alert(
         eyebrow="Connection alert",
         blocks_html=blocks,
         text_body=text_body,
-        preheader=f"{name} disconnected — re-scan to keep your workflows running",
+        preheader=f"{name} disconnected — reconnect to keep your workflows running",
         cta_text="Reconnect Now",
         cta_url=cta_url,
         dedupe_key=f"channel_disconnected:{credential_id}",

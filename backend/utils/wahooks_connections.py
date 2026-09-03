@@ -44,6 +44,38 @@ async def delete_wahooks_connection(connection_id: str) -> None:
     logger.info(f"[WAHooks] Deleted connection {connection_id}")
 
 
+async def migrate_wahooks_webhooks(old_connection_id: str, new_connection_id: str) -> int:
+    """Re-create every webhook registered on ``old_connection_id`` on
+    ``new_connection_id`` (same url + events; urls the new connection already
+    serves are skipped). WAHooks webhooks are per-connection, so a credential
+    rebind that deletes the replaced connection unregisters every trigger on
+    it unless they are carried over first. Returns the count carried over;
+    raises on failure — the caller decides whether teardown may proceed."""
+    api_key = get_wahooks_api_key()
+    if not api_key:
+        raise RuntimeError("WAHooks API key not configured")
+    from wahooks import WAHooks
+
+    def _migrate() -> int:
+        with WAHooks(api_key=api_key) as client:
+            served = {w.get("url") for w in client.list_webhooks(new_connection_id)}
+            moved = 0
+            for hook in client.list_webhooks(old_connection_id):
+                if not hook.get("url") or hook["url"] in served:
+                    continue
+                client.create_webhook(
+                    new_connection_id, url=hook["url"], events=list(hook.get("events") or [])
+                )
+                moved += 1
+            return moved
+
+    moved = await asyncio.to_thread(_migrate)
+    logger.info(
+        f"[WAHooks] Migrated {moved} webhook(s) from {old_connection_id} to {new_connection_id}"
+    )
+    return moved
+
+
 async def live_credential_connection_ids(pool) -> Set[str]:
     """connection_ids referenced by any whatsapp_qr credential. Metadata is
     the fast path; the encrypted blob is decrypted as the source of truth for
@@ -157,71 +189,6 @@ async def backfill_credential_phone_numbers(pool) -> Dict[str, Any]:
     summary = {"credentials": len(rows), "stamped": stamped}
     logger.info(f"[WAHooks] Phone-number backfill: {summary}")
     return summary
-
-
-async def alert_dead_connection_credentials(pool) -> Dict[str, Any]:
-    """Backstop for session deaths the push path missed: a session that dies
-    while no webhook is registered on it delivers no session.status event, so
-    once a day we alert owners of whatsapp_qr credentials whose connection is
-    definitively dead AND that some live workflow still references. Dedupe
-    rides the shared channel_disconnected:{credential_id} window — push +
-    sweep send at most one email per credential per window."""
-    # Same cached seam + same dead/alive rule as every other health consumer
-    # (picker, validators, brain renderings) — a divergent verdict here means a
-    # credential everyone renders DISCONNECTED never gets the backstop email.
-    # None = WAHooks unreachable = unknown, never dead.
-    from utils.whatsapp_qr import get_connection_statuses
-
-    statuses = await get_connection_statuses()
-    if statuses is None:
-        return {"skipped": "wahooks_unreachable"}
-
-    async with pool.acquire() as conn:
-        rows = await conn.fetch(
-            "SELECT id, owner_id, organization_id, metadata FROM credentials "
-            "WHERE credential_type = 'whatsapp_qr'"
-        )
-
-    from repositories.credentials import CredentialsRepo
-    from utils.credentials import credential_metadata
-    from utils.notifications import send_channel_disconnected_alert
-
-    repo = CredentialsRepo(pool)
-    alerted, dead_unreferenced = [], []
-    for row in rows:
-        connection_id = credential_metadata(row).get("connection_id")
-        if not connection_id:
-            continue
-        # Absent from WAHooks = definitively gone. scan_qr/pending on a BOUND
-        # credential = the phone unlinked — unless a reservation says a
-        # re-scan is mid-flight right now.
-        status = statuses.get(str(connection_id), "missing")
-        if status == "connected":
-            continue
-        if status in ("scan_qr", "pending") and await _has_active_reservation(str(connection_id)):
-            continue
-        referencing = await repo.list_workflows_referencing_credential(
-            str(row["id"]), str(row["owner_id"]),
-            str(row["organization_id"]) if row["organization_id"] else None,
-        )
-        if not referencing:
-            dead_unreferenced.append(str(row["id"]))
-            continue
-        await send_channel_disconnected_alert(
-            str(row["id"]),
-            provider_label="WhatsApp",
-            session_status=status,
-            workflow_id=referencing[0]["workflow_id"],
-            workflow_name=referencing[0]["workflow_name"],
-            pool=pool,
-        )
-        alerted.append(str(row["id"]))
-
-    summary = {"credentials": len(rows), "alerted": alerted, "dead_unreferenced": dead_unreferenced}
-    logger.info(f"[WAHooks] Dead-connection alert sweep: {summary}")
-    return summary
-
-
 async def sweep_orphan_connections(pool) -> Dict[str, Any]:
     """Reconcile WAHooks connections against credentials; delete orphans.
 

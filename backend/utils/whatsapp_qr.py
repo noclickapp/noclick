@@ -24,14 +24,13 @@ import asyncio
 import logging
 import os
 import time
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 
 import asyncpg
 
 from utils.redis_client import get_shared_redis
 
 logger = logging.getLogger(__name__)
-
 
 # Generously covers display → scan → status poll; a stale reservation must
 # expire so an abandoned idle connection can be handed out again.
@@ -44,15 +43,25 @@ _STATUS_CACHE_TTL_S = 60
 _status_cache: Optional[tuple[float, dict[str, str]]] = None
 
 
-async def get_connection_statuses() -> Optional[dict[str, str]]:
+async def get_connection_statuses(
+    require: Optional[Iterable[str]] = None,
+) -> Optional[dict[str, str]]:
     """connection_id → WAHooks session status ('connected', 'scan_qr',
     'pending', 'failed', 'stopped') for the installation. None = unknown
     (WAHooks unreachable/misconfigured) — callers must treat unknown as
-    healthy, never dead (non-definitive-signal doctrine)."""
+    healthy, never dead (non-definitive-signal doctrine).
+
+    ``require``: the connection ids the caller is about to judge. A cached
+    map lacking any of them is a cache MISS, not "gone": every scan mints a
+    connection the cache predates, and serving that map would flag a just-
+    connected credential "(disconnected)" for up to a minute. Absence from a
+    FRESH list is the only definitive "gone"."""
     global _status_cache
     now = time.monotonic()
     if _status_cache and now - _status_cache[0] < _STATUS_CACHE_TTL_S:
-        return _status_cache[1]
+        cached = _status_cache[1]
+        if all(cid in cached for cid in (require or ())):
+            return cached
     try:
         api_key = get_wahooks_api_key()
     except ValueError:
@@ -74,6 +83,13 @@ async def get_connection_statuses() -> Optional[dict[str, str]]:
     return statuses
 
 
+def remember_connection_status(connection_id: str, status: str) -> None:
+    """Stamp a status observed first-hand (finalize just saw ``connected``)
+    into the live cache so the next picker list agrees without a refetch."""
+    if _status_cache:
+        _status_cache[1][connection_id] = status
+
+
 def get_wahooks_api_key() -> str:
     """Get the server-side WAHooks API key from environment."""
     key = os.environ.get("WAHOOKS_API_KEY")
@@ -86,7 +102,7 @@ async def dead_session_status(connection_id: str) -> Optional[str]:
     """The definitively-dead session status for one connection, or None when
     connected/unknown. Unknown (WAHooks unreachable) is NEVER dead — the
     non-definitive-signal doctrine every consumer of this rule must share."""
-    statuses = await get_connection_statuses()
+    statuses = await get_connection_statuses(require=(connection_id,))
     if statuses is None:
         return None
     status = statuses.get(connection_id, "missing")
@@ -239,9 +255,9 @@ async def start_qr_connection(
     connection instead of minting a new one — WAHooks resets a failed/stopped
     session to scan_qr on QR fetch, the scan relinks the same session, and
     finalize resolves it as the idempotent own-binding success, so the
-    credential id (and its webhooks, workflows, recurring charge) survives
-    untouched. Minting a fresh connection during reconnect can create duplicate
-    credentials and device links, so reconnect must reuse the existing binding.
+    credential id (and its webhooks, workflows) survives untouched. Minting a
+    fresh connection during reconnect can create duplicate credentials and
+    device links, so reconnect must reuse the existing binding.
     If the old connection is gone at WAHooks, falls through to a fresh scan —
     finalize's same-phone rebind then repairs the credential in place.
 
@@ -372,6 +388,7 @@ async def finalize_qr_connection(
 
         phone_number = connection.get("phoneNumber") or ""
         logger.info("[WhatsAppQR] Connected")
+        remember_connection_status(connection_id, "connected")
 
         # Bind guard: only the owner who was shown this QR may mint a credential
         # for the connection. An expired reservation is rejected too — a stale
@@ -471,14 +488,34 @@ async def finalize_qr_connection(
                             "message": "Failed to update your existing WhatsApp credential. Please retry.",
                         }
                     if old_connection_id and old_connection_id != connection_id:
-                        from utils.wahooks_connections import delete_wahooks_connection
+                        from utils.wahooks_connections import (
+                            delete_wahooks_connection,
+                            migrate_wahooks_webhooks,
+                        )
+                        # WAHooks webhooks are per-connection: every trigger
+                        # registered on the replaced connection dies with it
+                        # unless carried over FIRST (a re-scan left a trigger
+                        # deaf while its config still said registered,
+                        # 2026-08-29). A failed carry-over keeps the old link
+                        # alive — it still delivers until the orphan sweep
+                        # reaps it, and the node loader re-registers on the
+                        # next panel open.
                         try:
-                            await delete_wahooks_connection(old_connection_id)
+                            await migrate_wahooks_webhooks(old_connection_id, connection_id)
                         except Exception as e:
-                            logger.warning(
-                                f"[WhatsAppQR] Old connection {old_connection_id} not deleted "
-                                f"after rebind ({e}) — orphan sweep will reap it"
+                            logger.error(
+                                f"[WhatsAppQR] Webhooks NOT migrated from {old_connection_id} "
+                                f"to {connection_id} ({e}) — old connection kept",
+                                exc_info=True,
                             )
+                        else:
+                            try:
+                                await delete_wahooks_connection(old_connection_id)
+                            except Exception as e:
+                                logger.warning(
+                                    f"[WhatsAppQR] Old connection {old_connection_id} not deleted "
+                                    f"after rebind ({e}) — orphan sweep will reap it"
+                                )
                     logger.info(
                         f"[WhatsAppQR] Rebound credential {prior['id']} "
                         f"to connection {connection_id}"
@@ -539,6 +576,14 @@ async def finalize_qr_connection(
 
             credential_id = str(row["id"])
 
+            # A platform that bills the persistent connection starts its clock
+            # here; the engine's default is nothing to bill.
+            from billing.recurring import start_connection_charge
+
+            await start_connection_charge(
+                conn, user_id=owner_id, credential_id=row["id"], charge_type="whatsapp_connection"
+            )
+            logger.info(f"[WhatsAppQR] Created WhatsApp QR credential {credential_id} for owner {owner_id}")
             return {
                 "success": True,
                 "status": "connected",

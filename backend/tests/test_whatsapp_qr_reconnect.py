@@ -57,7 +57,10 @@ async def _seed_credential(conn, owner, connection_id, phone=None):
 @pytest.fixture
 def stub_wahooks_reconnect(monkeypatch):
     """wahooks SDK stub covering the reconnect + finalize surfaces."""
-    calls = {"get_qr": [], "created": 0, "get_or_create": 0, "connections": {}}
+    calls = {
+        "get_qr": [], "created": 0, "get_or_create": 0, "connections": {},
+        "webhooks": {}, "seq": [],
+    }
 
     class StubClient:
         def __init__(self, api_key):
@@ -86,6 +89,17 @@ def stub_wahooks_reconnect(monkeypatch):
         def get_connection(self, connection_id):
             return calls["connections"].get(
                 connection_id, {"status": "connected", "phoneNumber": ""}
+            )
+
+        def list_webhooks(self, connection_id):
+            if connection_id == "conn-broken":
+                raise mod.WAHooksError("500 webhooks unavailable")
+            return list(calls["webhooks"].get(connection_id, []))
+
+        def create_webhook(self, connection_id, url, events):
+            calls["seq"].append(("create_webhook", connection_id))
+            calls["webhooks"].setdefault(connection_id, []).append(
+                {"id": f"wh-{len(calls['seq'])}", "url": url, "events": events}
             )
 
     mod = types.ModuleType("wahooks")
@@ -154,10 +168,70 @@ class TestStartReconnect:
 @pytest.mark.asyncio
 class TestFinalizeSamePhoneRebind:
     async def test_fresh_scan_rebinds_existing_credential(
-        self, postgres_db, fake_redis, stub_wahooks_reconnect  # noqa: F811
+        self, monkeypatch, postgres_db, fake_redis, stub_wahooks_reconnect  # noqa: F811
     ):
+        start_charge = AsyncMock()
+        monkeypatch.setattr("billing.recurring.start_connection_charge", start_charge)
         owner = await _seed_user(postgres_db)
         cred_id = await _seed_credential(postgres_db, owner, "conn-old", phone="12025550105")
+        stub_wahooks_reconnect["connections"]["conn-new"] = {
+            "status": "connected", "phoneNumber": "12025550105",
+        }
+        await fake_redis.set("whatsapp:qr:reserved:conn-new", str(owner))
+        # A trigger registered on the replaced connection (WAHooks webhooks
+        # are per-connection — it dies with the delete unless carried over).
+        stub_wahooks_reconnect["webhooks"]["conn-old"] = [
+            {"id": "wh-old", "url": "https://wh-1.hooks.example.test",
+             "events": ["message", "session.status"]},
+        ]
+
+        async def _delete(connection_id):
+            stub_wahooks_reconnect["seq"].append(("delete", connection_id))
+
+        deleted = AsyncMock(side_effect=_delete)
+        with patch("utils.wahooks_connections.delete_wahooks_connection", deleted), \
+             patch("utils.credentials.get_encryption", return_value=_StubEncryption()):
+            result = await finalize_qr_connection(
+                _PoolShim(postgres_db), owner_id=str(owner), connection_id="conn-new",
+                user_tier="plus", encryption=_StubEncryption(),
+            )
+
+        assert result["success"] is True
+        assert result["credential_id"] == str(cred_id)  # SAME credential, repaired
+        assert result["created"] is False
+        # The trigger's webhook rides along to the new connection, BEFORE the
+        # old one is torn down (2026-08-29: a re-scan left a trigger deaf).
+        assert stub_wahooks_reconnect["webhooks"]["conn-new"] == [
+            {"id": "wh-1", "url": "https://wh-1.hooks.example.test",
+             "events": ["message", "session.status"]},
+        ]
+        assert stub_wahooks_reconnect["seq"] == [
+            ("create_webhook", "conn-new"), ("delete", "conn-old"),
+        ]
+        row = await postgres_db.fetchrow(
+            "SELECT credential, metadata FROM credentials WHERE id = $1", cred_id
+        )
+        assert row["credential"] == "enc:conn-new"
+        assert row["metadata"]["connection_id"] == "conn-new"
+        deleted.assert_awaited_once_with("conn-old")
+        # No duplicate row, no duplicate recurring charge.
+        count = await postgres_db.fetchval(
+            "SELECT count(*) FROM credentials WHERE credential_type = 'whatsapp_qr'"
+        )
+        assert count == 1
+        # A rebind never starts a second billing clock: the platform's charge
+        # seam is not touched (the engine's default is nothing to bill).
+        start_charge.assert_not_awaited()
+        await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
+
+    async def test_rebind_keeps_old_connection_when_webhooks_cannot_move(
+        self, postgres_db, fake_redis, stub_wahooks_reconnect  # noqa: F811
+    ):
+        """Deleting the replaced connection without its webhooks would silently
+        unregister every trigger on it, so a failed carry-over leaves the old
+        link alive (still delivering) for the orphan sweep."""
+        owner = await _seed_user(postgres_db)
+        cred_id = await _seed_credential(postgres_db, owner, "conn-broken", phone="12025550105")
         stub_wahooks_reconnect["connections"]["conn-new"] = {
             "status": "connected", "phoneNumber": "12025550105",
         }
@@ -171,20 +245,10 @@ class TestFinalizeSamePhoneRebind:
                 user_tier="plus", encryption=_StubEncryption(),
             )
 
-        assert result["success"] is True
-        assert result["credential_id"] == str(cred_id)  # SAME credential, repaired
-        assert result["created"] is False
-        row = await postgres_db.fetchrow(
-            "SELECT credential, metadata FROM credentials WHERE id = $1", cred_id
-        )
-        assert row["credential"] == "enc:conn-new"
-        assert row["metadata"]["connection_id"] == "conn-new"
-        deleted.assert_awaited_once_with("conn-old")
-        # No duplicate credential row.
-        count = await postgres_db.fetchval(
-            "SELECT count(*) FROM credentials WHERE credential_type = 'whatsapp_qr'"
-        )
-        assert count == 1
+        assert result["success"] is True and result["credential_id"] == str(cred_id)
+        deleted.assert_not_awaited()
+        row = await postgres_db.fetchrow("SELECT metadata FROM credentials WHERE id = $1", cred_id)
+        assert row["metadata"]["connection_id"] == "conn-new"  # rebind itself still lands
         await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
 
     async def test_rebind_never_crosses_owners(
