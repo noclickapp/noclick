@@ -148,3 +148,34 @@ def test_id_extractor_drops_refs_and_unchecked_types():
     assert health_relevant_credential_ids(config) == ["0b129266-59d2-4ab8-9e19-6e6342d67270"]
     assert health_relevant_credential_ids({}) == []
     assert health_relevant_credential_ids(None) == []
+
+
+async def test_discord_install_health_marks_a_removed_bot_and_never_guesses(monkeypatch):
+    """403/404 from Discord for the installed guild is definitive (the bot was
+    removed); a probe that cannot be judged leaves the row unknown — and with
+    no platform token nothing is asked at all."""
+    from utils import credential_health as ch
+
+    monkeypatch.setenv("DISCORD_BOT_TOKEN", "platform-token")
+    answers = {"g-ok": 200, "g-gone": 404, "g-forbidden": 403, "g-limited": 429, "g-down": None}
+
+    async def probe(client, guild_id):
+        return answers[guild_id]
+
+    monkeypatch.setattr(ch, "_probe_discord_guild", probe)
+    rows = [
+        {"id": "c-ok", "credential_type": "discord_bot_install", "metadata": {"guild_id": "g-ok", "guild_name": "Acme"}},
+        {"id": "c-gone", "credential_type": "discord_bot_install", "metadata": {"guild_id": "g-gone", "guild_name": "Old Server"}},
+        {"id": "c-forbidden", "credential_type": "discord_bot_install", "metadata": {"guild_id": "g-forbidden"}},
+        {"id": "c-limited", "credential_type": "discord_bot_install", "metadata": {"guild_id": "g-limited"}},
+        {"id": "c-down", "credential_type": "discord_bot_install", "metadata": {"guild_id": "g-down"}},
+        {"id": "c-legacy", "credential_type": "discord_bot_install", "metadata": {}},
+    ]
+    health = await ch.get_credential_health(rows)
+    assert health["c-ok"].healthy is True and health["c-ok"].status == "installed"
+    assert health["c-gone"].healthy is False and "Old Server" in health["c-gone"].hint
+    assert health["c-forbidden"].healthy is False and "Install bot" in health["c-forbidden"].hint
+    assert "c-limited" not in health and "c-down" not in health and "c-legacy" not in health
+
+    monkeypatch.delenv("DISCORD_BOT_TOKEN")
+    assert await ch.get_credential_health(rows) == {}

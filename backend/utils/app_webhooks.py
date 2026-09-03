@@ -18,6 +18,8 @@ guild id) — see ``utils/discord_gateway_bridge.py``.
 import json
 import logging
 import os
+import time
+import uuid
 from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import Response
@@ -361,6 +363,51 @@ async def _discord_drop_event(payload: Dict[str, Any]) -> Optional[str]:
     return None
 
 
+_CREDENTIAL_SCOPE_TTL_S = 60.0
+_credential_scope_cache: Dict[str, Tuple[float, Optional[str], Optional[str]]] = {}
+
+
+async def _discord_credential_scope(pool, credential_id: str) -> Tuple[Optional[str], Optional[str]]:
+    """(credential_type, install guild id) for a subscription's credential —
+    the install flow stamps the guild into metadata, so no decrypt is needed.
+    Cached briefly: one row read per credential per minute, not per event."""
+    now = time.time()
+    hit = _credential_scope_cache.get(credential_id)
+    if hit and hit[0] > now:
+        return hit[1], hit[2]
+    row = await pool.fetchrow(
+        "SELECT credential_type, metadata FROM credentials WHERE id = $1",
+        uuid.UUID(str(credential_id)),
+    )
+    ctype = row["credential_type"] if row else None
+    metadata = (row["metadata"] or {}) if row else {}
+    if isinstance(metadata, str):
+        metadata = json.loads(metadata)
+    guild_id = str(metadata.get("guild_id") or "") or None
+    _credential_scope_cache[credential_id] = (now + _CREDENTIAL_SCOPE_TTL_S, ctype, guild_id)
+    return ctype, guild_id
+
+
+async def _discord_scope_filter(pool, sub: Dict[str, Any], payload: Dict[str, Any]) -> Optional[str]:
+    """Interactions (slash commands) are delivered per APPLICATION, and every
+    bot-install credential shares NoClick's one application — so without this
+    a customer's slash-command trigger fires for every other customer's
+    commands. The install credential names the server it was installed into;
+    an interaction from any other server is not this trigger's. A bot-token
+    credential is the customer's own application and keeps every server.
+    Gateway messages are guild-keyed at the row and need no scope."""
+    if _is_gateway_envelope(payload) or payload.get("type") != 2:
+        return None
+    interaction_guild = str(payload.get("guild_id") or "")
+    credential_id = sub.get("credential_id")
+    if not interaction_guild or not credential_id:
+        return None
+    ctype, install_guild = await _discord_credential_scope(pool, str(credential_id))
+    if ctype == "discord_bot_install" and install_guild and install_guild != interaction_guild:
+        return f"interaction from server {interaction_guild}, credential is installed in {install_guild}"
+    return None
+
+
 def _discord_node_filter(config: Dict[str, Any], payload: Dict[str, Any]) -> Optional[str]:
     """Per-trigger predicate over the LIVE node config. ``ignore_bots`` is on
     by default: automated channels are exactly where a message trigger floods,
@@ -408,6 +455,9 @@ APP_PROVIDERS = {
         #   scope (default "channel").
         # - node_filter: pure (config, payload) -> reason-or-None predicate,
         #   evaluated at fire time against the node's live config.
+        # - scope_filter: async (pool, subscription row, payload) ->
+        #   reason-or-None, for tenants coarser than the customer (Discord's
+        #   shared application): the row's credential decides whose event it is.
         "drop_event": _slack_drop_event,
         "event_id": _slack_event_id,
         "fire_budget": True,
@@ -427,5 +477,6 @@ APP_PROVIDERS = {
         "fire_budget": True,
         "channel_config_key": "channel_id",
         "node_filter": _discord_node_filter,
+        "scope_filter": _discord_scope_filter,
     },
 }

@@ -90,8 +90,65 @@ async def _whatsapp_qr_health(rows: Sequence[Any]) -> Dict[str, CredentialHealth
     return out
 
 
+DISCORD_API_BASE = "https://discord.com/api/v10"
+_DISCORD_REINSTALL_HINT = (
+    "NoClick's Discord bot is no longer in {server} (Discord answered {status}). "
+    "Reconnect Discord with 'Install bot' to add it back — until then this "
+    "credential's message triggers and tools are dead."
+)
+
+
+async def _probe_discord_guild(client, guild_id: str) -> Optional[int]:
+    """HTTP status of GET /guilds/{id} asked as the bot; None when Discord could
+    not be asked at all."""
+    try:
+        return (await client.get(f"{DISCORD_API_BASE}/guilds/{guild_id}")).status_code
+    except Exception as e:
+        logger.warning(f"[CredentialHealth] Discord guild probe failed for {guild_id}: {e}")
+        return None
+
+
+async def _discord_bot_install_health(rows: Sequence[Any]) -> Dict[str, CredentialHealth]:
+    """A bot-install credential is a server the bot was added to; the server's
+    admin can remove the bot at any time and nothing in NoClick learns of it.
+    Discord answering 403/404 for the guild is definitive; anything else is
+    "cannot judge" (rate limit, outage, no platform token)."""
+    import os
+
+    token = os.environ.get("DISCORD_BOT_TOKEN", "").strip().removeprefix("Bot ").strip()
+    if not token:
+        return {}
+    guild_by_cred = {
+        str(_row_field(row, "id")): str((_row_field(row, "metadata") or {}).get("guild_id") or "")
+        for row in rows
+    }
+    guild_by_cred = {k: v for k, v in guild_by_cred.items() if v}
+    if not guild_by_cred:
+        return {}
+    import httpx
+
+    async with httpx.AsyncClient(timeout=10, headers={"Authorization": f"Bot {token}"}) as client:
+        statuses = {gid: await _probe_discord_guild(client, gid) for gid in set(guild_by_cred.values())}
+    out: Dict[str, CredentialHealth] = {}
+    for row in rows:
+        cred_id = str(_row_field(row, "id"))
+        guild_id = guild_by_cred.get(cred_id)
+        status = statuses.get(guild_id) if guild_id else None
+        if status is None or status not in (200, 403, 404):
+            continue  # unknown is never dead
+        healthy = status == 200
+        server = (_row_field(row, "metadata") or {}).get("guild_name") or guild_id
+        out[cred_id] = CredentialHealth(
+            status="installed" if healthy else "removed",
+            healthy=healthy,
+            hint=None if healthy else _DISCORD_REINSTALL_HINT.format(server=server, status=status),
+        )
+    return out
+
+
 CREDENTIAL_HEALTH_CHECKS: Dict[str, Callable[[Sequence[Any]], Awaitable[Dict[str, CredentialHealth]]]] = {
     "whatsapp_qr": _whatsapp_qr_health,
+    "discord_bot_install": _discord_bot_install_health,
 }
 
 

@@ -757,3 +757,72 @@ class TestDiscordRehearsalSituation:
         assert message["content"] == "Is there an API?"
         assert (message["author"]["global_name"], message["author"]["username"]) == ("Sam Lee", "samlee")
         assert scenario.trigger_payload["d"]["content"] != "Is there an API?"  # the registry entry is untouched
+
+
+class TestSlashCommandScope:
+    """Interactions arrive per APPLICATION and every bot-install credential
+    shares NoClick's one application: the attached credential's server decides
+    whose slash command it is."""
+
+    def _interaction(self, guild):
+        return {"type": 2, "id": "int-1", "application_id": "app-1", "guild_id": guild, "channel_id": "c1", "data": {"name": "ask"}}
+
+    def _pool(self, ctype, guild):
+        pool = MagicMock()
+        pool.fetchrow = AsyncMock(return_value={"credential_type": ctype, "metadata": {"guild_id": guild}})
+        return pool
+
+    async def test_install_credential_only_hears_its_own_server(self):
+        app_webhooks._credential_scope_cache.clear()
+        pool = self._pool("discord_bot_install", "g1")
+        sub = {"credential_id": str(uuid.uuid4()), "user_id": "u1"}
+        assert await app_webhooks._discord_scope_filter(pool, sub, self._interaction("g1")) is None
+        assert await app_webhooks._discord_scope_filter(pool, sub, self._interaction("g2")) is not None
+        assert pool.fetchrow.await_count == 1  # the credential's server is cached, not re-read per event
+
+    async def test_bot_token_credential_keeps_every_server(self):
+        app_webhooks._credential_scope_cache.clear()
+        pool = self._pool("discord_bot_token", None)
+        sub = {"credential_id": str(uuid.uuid4()), "user_id": "u1"}
+        assert await app_webhooks._discord_scope_filter(pool, sub, self._interaction("g2")) is None
+
+    async def test_gateway_messages_and_dm_interactions_need_no_scope(self):
+        pool = MagicMock(); pool.fetchrow = AsyncMock()
+        sub = {"credential_id": str(uuid.uuid4()), "user_id": "u1"}
+        assert await app_webhooks._discord_scope_filter(pool, sub, _envelope()) is None
+        assert await app_webhooks._discord_scope_filter(pool, sub, self._interaction(None)) is None
+        pool.fetchrow.assert_not_awaited()
+
+    async def test_fire_subscription_drops_another_servers_command(self):
+        from utils.webhook_routes import _fire_subscription
+
+        app_webhooks._credential_scope_cache.clear()
+        workflow = {"nodes": [{"id": "n1", "config": {"operation": "on_slash_command"}}], "edges": []}
+        pool = MagicMock()
+
+        async def fetchrow(sql, *args):
+            if "FROM workflows" in sql:
+                return {"workflow": workflow}
+            return {"credential_type": "discord_bot_install", "metadata": {"guild_id": "g1"}}
+        pool.fetchrow = fetchrow
+        cred = str(uuid.uuid4())
+        sub = {"provider": "discord", "workflow_id": WF, "node_id": "n1", "user_id": "u1", "credential_id": cred}
+        with patch("utils.webhook_routes.get_native_pool", return_value=pool):
+            assert await _fire_subscription(MagicMock(), sub, self._interaction("g2"), "c1") is False
+            assert await _fire_subscription(MagicMock(), sub, self._interaction("g1"), "c1") is True
+
+    async def test_a_scope_check_that_cannot_run_fails_closed(self):
+        from utils.webhook_routes import _fire_subscription
+
+        app_webhooks._credential_scope_cache.clear()
+        workflow = {"nodes": [{"id": "n1", "config": {"operation": "on_slash_command"}}], "edges": []}
+        pool = MagicMock()
+
+        async def fetchrow(sql, *args):
+            if "FROM workflows" in sql:
+                return {"workflow": workflow}
+            raise RuntimeError("db down")
+        pool.fetchrow = fetchrow
+        sub = {"provider": "discord", "workflow_id": WF, "node_id": "n1", "user_id": "u1", "credential_id": str(uuid.uuid4())}
+        with patch("utils.webhook_routes.get_native_pool", return_value=pool):
+            assert await _fire_subscription(MagicMock(), sub, self._interaction("g1"), "c1") is False

@@ -1901,6 +1901,19 @@ async def _fire_subscription(
         logger.info(f"[APP-WEBHOOK] Trigger node {node_id} skipped: {skip_reason}")
         return False
 
+    scope_filter = adapter.get("scope_filter")
+    if scope_filter:
+        try:
+            skip_reason = await scope_filter(get_native_pool(), sub, payload)
+        except Exception as e:
+            # Fail closed: an event whose owner cannot be established must not
+            # run as someone else's.
+            logger.error(f"[APP-WEBHOOK] Scope check failed for trigger {node_id}: {e}")
+            return False
+        if skip_reason:
+            logger.info(f"[APP-WEBHOOK] Trigger node {node_id} out of scope: {skip_reason}")
+            return False
+
     # Blast-radius bound: no authorship check can see a two-party echo
     # (NoClick posts → an external bot auto-replies → the foreign reply
     # re-triggers this node). Suppress a trigger firing over budget, loudly.
