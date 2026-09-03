@@ -42,6 +42,13 @@ export interface OAuthHookConfig {
     sendScopes?: boolean;
 }
 
+export interface OAuthConnectOptions {
+    /** Tenant-wide admin consent instead of a user sign-in (providers with
+     *  `supportsOrgConsent`). The authorize route sends the admin to the provider's
+     *  admin-consent page and, once granted, chains into the normal sign-in. */
+    orgConsent?: boolean;
+}
+
 interface OAuthCallbackData {
     type: string;
     success: boolean;
@@ -60,7 +67,12 @@ interface OAuthCallbackData {
  *  back to defaults), then run through augmentScopes so a provider's always-on identity/
  *  refresh scopes (Google email/profile, Microsoft offline_access) are appended from the
  *  ONE source; providers without extraScopes (e.g. Slack) pass through unchanged. */
-export function buildAuthorizeUrl(config: OAuthHookConfig, credentialName: string, scopes?: string[]): string {
+export function buildAuthorizeUrl(
+    config: OAuthHookConfig,
+    credentialName: string,
+    scopes?: string[],
+    options: OAuthConnectOptions = {},
+): string {
     const {
         provider,
         authorizePath = `/api/auth/${provider}/authorize`,
@@ -71,6 +83,7 @@ export function buildAuthorizeUrl(config: OAuthHookConfig, credentialName: strin
     const effectiveScopes = augmentScopes(provider, scopes && scopes.length ? scopes : defaultScopes);
     const params = new URLSearchParams({ name: credentialName });
     if (sendScopes) params.set('scopes', effectiveScopes.join(scopeDelimiter));
+    if (options.orgConsent) params.set('admin_consent', '1');
     const qs = params.toString();
     return qs ? `${authorizePath}?${qs}` : authorizePath;
 }
@@ -149,7 +162,7 @@ export function createOAuthHook(config: OAuthHookConfig) {
             return () => window.removeEventListener('message', handleMessage);
         }, []);
 
-        const connect = useCallback((credentialName: string, scopes?: string[]) => {
+        const connect = useCallback((credentialName: string, scopes?: string[], options?: OAuthConnectOptions) => {
             setIsConnecting(true);
             isConnectingRef.current = true;
             credentialNameRef.current = credentialName;
@@ -161,7 +174,7 @@ export function createOAuthHook(config: OAuthHookConfig) {
             const top = window.screenY + (window.outerHeight - height) / 2;
 
             const popup = window.open(
-                buildAuthorizeUrl(config, credentialName, scopes),
+                buildAuthorizeUrl(config, credentialName, scopes, options),
                 `${provider}-oauth`,
                 `width=${width},height=${height},left=${left},top=${top},popup=yes`,
             );

@@ -102,3 +102,31 @@ describe('OAuthConnectForm — self-hosted instance OAuth app', () => {
         expect(screen.queryByText('Client ID')).toBeNull();
     });
 });
+
+describe('OAuthConnectForm — organization-wide admin consent', () => {
+    const ORG = /approve NoClick for your organization/i;
+
+    it('offers it for a provider with supportsOrgConsent and routes through connectOrgConsent', () => {
+        const connectOrgConsent = vi.fn();
+        const scopes = ['https://graph.microsoft.com/Files.ReadWrite.All'];
+        const connect = renderForm({ provider: 'microsoft', credentialType: 'microsoft_excel_oauth', displayName: 'Microsoft', scopes, connectOrgConsent });
+        fireEvent.click(screen.getByRole('button', { name: ORG }));
+        expect(connectOrgConsent).toHaveBeenCalledWith('microsoft', expect.any(String), scopes);
+        expect(connect).not.toHaveBeenCalled();
+    });
+
+    it('is absent for providers without it, and when the engine does not supply it', () => {
+        renderForm({ provider: 'linear', credentialType: 'linear_oauth', displayName: 'Linear', scopes: ['read'], connectOrgConsent: vi.fn() });
+        expect(screen.queryByRole('button', { name: ORG })).toBeNull();
+        cleanup();
+        renderForm({ provider: 'microsoft', credentialType: 'microsoft_excel_oauth', displayName: 'Microsoft', scopes: ['x'] });
+        expect(screen.queryByRole('button', { name: ORG })).toBeNull();
+    });
+
+    it('rides the same gate as Connect (plan limit blocks it)', () => {
+        const connectOrgConsent = vi.fn();
+        renderForm({ provider: 'microsoft', credentialType: 'microsoft_excel_oauth', displayName: 'Microsoft', scopes: ['x'], connectOrgConsent, canConnect: () => false });
+        fireEvent.click(screen.getByRole('button', { name: ORG }));
+        expect(connectOrgConsent).not.toHaveBeenCalled();
+    });
+});

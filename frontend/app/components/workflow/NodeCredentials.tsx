@@ -512,6 +512,7 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
         loading,
         loadCredentials,
         connect: oauthConnect,
+        connectOrgConsent,
         isConnecting: oauthIsConnecting,
         connectingProvider,
         error: oauthError,
@@ -1428,6 +1429,7 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
                                                 redirectUri={req.schema?.['x-oauth-redirect-uri'] as string | undefined}
                                                 hasExistingCredential={matchingCredentials.length > 0}
                                                 connect={oauthConnect}
+                                                connectOrgConsent={connectOrgConsent}
                                                 connectingProvider={connectingProvider}
                                                 isConnecting={oauthIsConnecting}
                                                 error={oauthError || createError || validationError?.message}
