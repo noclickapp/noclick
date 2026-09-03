@@ -395,6 +395,8 @@ EVENT_ROUTING: Dict[str, Dict[str, Handler]] = {
         "workflow:list_executions": Handler.WORKFLOW,
         "workflow:get_execution_counts": Handler.WORKFLOW,
         "workflow:get_execution_detail": Handler.WORKFLOW,
+        "workflow:get_agent_inputs": Handler.WORKFLOW,
+        "webhook:relay:reconnect": Handler.WORKFLOW,
         "workflow:get_node_output": Handler.WORKFLOW,
         "workflow:stop": Handler.WORKFLOW_EXECUTION,
         "workflow:execute": Handler.WORKFLOW_EXECUTION,

@@ -712,6 +712,22 @@ class WorkflowNodeOutputRequest(ClientEventBase):
     node_id: str = Field(..., description="Node whose output to reassemble")
 
 
+class WorkflowAgentInputsRequest(ClientEventBase):
+    """Resolve an agent response's consumed delivery executions (its
+    `input_execution_ids`) into the nodes that ran per delivery, for the run-results
+    inputs rail. The delivery runs are plumbing — their `workflow_executions` rows are
+    deleted — but their CAS outputs survive, so this reads CAS directly."""
+    event_name: ClassVar[str] = "workflow:get_agent_inputs"
+
+    workflow_id: str = Field(..., description="UUID of the workflow")
+    execution_ids: List[str] = Field(..., description="Delivery execution ids the agent consumed")
+
+
+class WebhookRelayReconnectRequest(ClientEventBase):
+    """Request to reconnect the webhook relay client (for local development only)"""
+    event_name: ClassVar[str] = "webhook:relay:reconnect"
+
+
 class WorkflowCollabTokenRequest(ClientEventBase):
     """Request to get a JWT token for workflow relay collaborative presence.
 
