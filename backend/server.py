@@ -1,7 +1,8 @@
-"""NoClick self-hosted backend application assembly.
+"""NoClick backend application assembly.
 
-Builds one ASGI app for Socket.IO, REST, MCP, and webhook traffic. Run
-directly with `python server.py` or `uvicorn server:web_app`.
+Builds the ASGI apps every edition serves: `web_app` (socket.io + REST + MCP)
+and `webhook_fastapi_app` (webhook routes only). Run directly for a local
+server: `python server.py` (or `uvicorn server:web_app`).
 """
 import os
 import tracemalloc
@@ -60,9 +61,29 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 import socketio
 import jwt
-# Import clients with expensive module initialization before the event loop
-# exists, so the first request cannot synchronously pay that cost.
+# Pre-import the R2 / Cloudflare stack at module import time. The first-time
+# imports of `boto3` and `cloudflare` compile multi-second worth of regex at
+# module load, and we caught those firing inside the asyncio loop on hot paths
+# (file_upload_node, the CAS store, workflow_execution_handler) — see the
+# 2026-05-21 zombie-run incident. Doing the work here moves it to cold start
+# where it costs nothing. The CAS store (utils.cas.store) uses this same module.
 import utils.r2_cloudflare  # noqa: F401
+# Same reasoning for the agent SDK stack (`agents` + `litellm`), which costs ~5s
+# to import and is reached only lazily — `nodes/agent_node.py` imports the LLM
+# handler inside execute(), and nothing on the startup path (`wss.receiver`)
+# pulls it in.
+#
+# `startup_warmup` already imports it, but that runs late in app_lifespan, on a
+# worker thread, and fails open. That is not enough: on 2026-07-28 we recorded an
+# 8.07s `event_loop.block` 43s into a container's life whose stack was this
+# import chain bottoming out in `agents/retry.py` building a Pydantic dataclass
+# schema — and the loop monitor only ever samples the main thread, so that import
+# was running on the loop itself. Doing it here happens before the loop exists,
+# so it can neither race the warmup nor be measured as a block. Net boot time is
+# unchanged (the warmup was already paying this serially before yielding).
+#
+# Safe to do at module scope: none of this reaches back into `api`, `mcp_server`
+# or `wss.receiver`, so it cannot cycle.
 import nodes.agent.handlers.llm  # noqa: F401
 from socketio.exceptions import ConnectionRefusedError as SocketIOConnectionError
 from utils.auth import verify_socket_token
@@ -77,7 +98,15 @@ from dotenv import load_dotenv
 from utils.otel import init_otel, shutdown_otel
 from utils.otel_health import start_health_emitter, stop_health_emitter
 from utils.otel_loop_monitor import init_loop_monitor
-# Telemetry workers start inside the lifespan so importing the app stays
+from utils.lifecycle import (
+    run_shutdown_hooks,
+    run_socket_auth_update_hooks,
+    run_socket_connect_hooks,
+    run_startup_hooks,
+)
+from utils.route_registry import apply_registered_routes, inline_webhook_routes
+# init_otel spawns a background thread, and so may a platform's boot hooks.
+# They run inside app_lifespan, not at module import time — keeps imports
 # side-effect-free for tests and tooling.
 from wss.receiver import SocketIOProxy
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
@@ -101,8 +130,6 @@ ORIGINS = [
     # MCP client origins (needed for OAuth flow + widget communication)
     "https://chatgpt.com",
     "https://claude.ai",
-    # ngrok tunnels for local dev testing
-    "https://example.ngrok-free.dev",
 ]
 
 
@@ -121,7 +148,9 @@ def _origin_aliases(url: str) -> list:
     return sorted(aliases)
 
 
-# A self-hosted install may add another port, LAN address, or domain.
+# A self-hosted install serves the app from whatever origin its operator chose —
+# another port, a LAN address, their own domain. Unset on the hosted service,
+# whose origins are listed above.
 ORIGINS.extend(a for a in _origin_aliases(os.environ.get("FRONTEND_URL", ""))
                if a not in ORIGINS)
 for configured_origin in os.environ.get("SOCKET_CORS_ORIGINS", "").split(","):
@@ -130,12 +159,14 @@ for configured_origin in os.environ.get("SOCKET_CORS_ORIGINS", "").split(","):
         if alias not in ORIGINS
     )
 
-# Create Socket.IO with the explicit application/operator origin allowlist.
-# Authentication is still enforced in the connect handler.
+# Create Socket.IO instance. Hosted accepts SDK connections from published apps
+# and arbitrary customer domains; community uses its explicit app/additional
+# origin list so SOCKET_CORS_ORIGINS is a real security control, not an inert
+# compose variable. Authentication is still enforced in the connect handler.
 sio = socketio.AsyncServer(
     async_mode='asgi',
     transports=['websocket', 'polling'],
-    cors_allowed_origins=ORIGINS,
+    cors_allowed_origins=ORIGINS if is_local_edition() else '*',
     # python-engineio expresses heartbeat settings in seconds, not milliseconds.
     ping_timeout=20,
     ping_interval=25,
@@ -146,8 +177,8 @@ sio = socketio.AsyncServer(
     cookie="io"
 )
 
-# Expose the shared server to stateless HTTP routes that have no request
-# socket of their own.
+# Expose the shared server to stateless HTTP routes (agent turn-completion
+# callback, etc.) that have no request socket of their own.
 from utils.socket_singleton import set_sio
 set_sio(sio)
 
@@ -162,12 +193,13 @@ set_mcp_server(mcp_server)
 # Create custom lifespan for startup/shutdown hooks
 @asynccontextmanager
 async def app_lifespan(app: FastAPI):
-    """Initialize and cleanly stop self-hosted application resources."""
-
+    """Start and cleanly stop everything the engine serves; whatever is running
+    the engine adds its own pieces through utils.lifecycle hooks."""
     # Thread-spawning inits run here in lifespan rather than at import time
     # so module imports stay side-effect-free for tests/tooling.
     init_otel()  # spawns BatchSpanProcessor thread
-    init_loop_monitor(asyncio.get_running_loop())  # captures main thread id (the loop-monitor regression pattern pattern)
+    init_loop_monitor(asyncio.get_running_loop())  # captures the main thread id for the loop-block monitor
+    await run_startup_hooks("boot")
 
     # Native asyncpg pool on the main event loop. Must precede handler
     # instantiation below: setup_user() on some handlers hits the DB on the
@@ -192,8 +224,12 @@ async def app_lifespan(app: FastAPI):
             # providers simply stay unconfigured and the setup page says so.
             logger.warning(f"[InstanceOAuth] could not apply stored apps: {e}")
 
-    # Instantiate and register the WebSocket handler singletons before the
-    # server begins accepting connections.
+    # SocketIOProxy.setup() instantiates WS handler singletons and registers
+    # them on `sio`. Webhook routes on the `worker` function construct their
+    # OWN per-request WorkflowExecutionHandler instances and don't use these
+    # singletons, so setup() is effectively unused on `worker` — but it's
+    # cheap and idempotent, so we run it on both functions to keep the
+    # lifespan identical and reduce surface area for divergence bugs.
     await socketio_proxy.setup()
 
     # Start MCP server lifespan (initializes StreamableHTTPSessionManager)
@@ -213,11 +249,19 @@ async def app_lifespan(app: FastAPI):
     # Start container-health emitter for OTel/Honeycomb (3s cadence)
     start_health_emitter(interval_seconds=3.0)
 
+    await run_startup_hooks("ready")
 
     yield
 
-    # Ask in-flight builder work to stop cooperatively before shared
-    # transports and the database pool are closed.
+    # Drain in-flight AI-builder runs cooperatively FIRST: a scale-down/redeploy
+    # that doesn't exit within Modal's grace gets hard-killed and left a zombie
+    # (the 2026-06-17 incident). Flipping every run's cancel scope (reason=
+    # "shutdown") routes it into the cooperative teardown (stream aclose →
+    # CancelledByUser → finalize); the awaits below give it time to finalize as a
+    # RECOVERABLE interrupt — keeps the checkpoint + emits outcome="interrupted"
+    # (distinct from a user Stop's terminal cancel), so the run auto-resumes.
+    # Backstop if it misses the grace window: the retained checkpoint + the FE
+    # staleness watchdog re-resume it (there is no reaper cron).
     try:
         from utils.cancellation import cancel_all_builder_scopes
         drained = cancel_all_builder_scopes()
@@ -226,9 +270,9 @@ async def app_lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"[shutdown] builder drain-cancel failed: {e}")
 
-    # Stop the lifespan-owned tracked loop, then give one-shot background work
-    # (CAS persistence, notifications, analytics) a bounded chance to finish
-    # while the DB pool and HTTP clients are still usable.
+    # Give one-shot background work (CAS persistence, notifications, analytics)
+    # a bounded chance to finish while the DB pool and HTTP clients are still
+    # usable.
     try:
         from utils.async_helpers import drain_spawned_tasks
         completed, cancelled = await drain_spawned_tasks(timeout=2)
@@ -240,6 +284,8 @@ async def app_lifespan(app: FastAPI):
             )
     except Exception as e:
         logger.warning(f"Background task drain failed: {e}")
+
+    await run_shutdown_hooks("drain")
 
     if _is_local():
         from utils.discord_gateway_bridge import stop_local_discord_listener
@@ -267,6 +313,7 @@ async def app_lifespan(app: FastAPI):
         logger.warning(f"Native DB pool shutdown timed out or failed: {e}")
 
     shutdown_otel()
+    await run_shutdown_hooks("final")
 
 fastapi_app = FastAPI(lifespan=app_lifespan)
 FastAPIInstrumentor.instrument_app(fastapi_app)
@@ -289,20 +336,20 @@ fastapi_app.add_middleware(
     allow_headers=["*"],
 )
 
-# Webhook and inbound-email traffic share the self-hosted API process.
+# Webhook and inbound-email routes ride the interactive app unless the
+# deployment serves them from a separate process (the hosted worker function
+# below) — that deployment says so through the route registry.
 from utils.webhook_routes import router as webhook_router
 from utils.supabase_webhook_routes import router as supabase_webhook_router
 from utils.email_routes import router as email_router
-fastapi_app.include_router(webhook_router)
-fastapi_app.include_router(supabase_webhook_router)
-fastapi_app.include_router(email_router)
+if inline_webhook_routes():
+    fastapi_app.include_router(webhook_router)
+    fastapi_app.include_router(supabase_webhook_router)
+    fastapi_app.include_router(email_router)
 
 # Register public routes for unauthenticated access to shared resources
 from utils.public_routes import router as public_router
 fastapi_app.include_router(public_router)
-
-# Frontend telemetry ingest — accepts wide events from the browser and emits
-# one OTel span per event for Honeycomb (latency, disconnect lifecycle, etc.).
 
 # Register model catalog endpoint (unified OpenRouter + LiteLLM + static list)
 from utils.models_routes import router as models_router
@@ -312,9 +359,8 @@ fastapi_app.include_router(models_router)
 from utils.credential_request_routes import router as credential_request_router
 fastapi_app.include_router(credential_request_router)
 
-# Builder input bridge: public bearer-capability links let a recipient answer
-# a parked builder run without creating an account. The link is scoped, expires,
-# and is consumed once; the community builder includes this route explicitly.
+# Builder input bridge (/api/builder-bridge/{id}) — public capability links for
+# answering a parked builder run's questions without an account.
 from utils.builder_bridge_routes import router as builder_bridge_router
 fastapi_app.include_router(builder_bridge_router)
 
@@ -328,6 +374,7 @@ from utils.health_routes import router as health_router, well_known_router
 fastapi_app.include_router(health_router)
 fastapi_app.include_router(well_known_router)
 
+
 # Register API key management routes
 from utils.api_key_routes import router as api_key_router
 fastapi_app.include_router(api_key_router)
@@ -335,8 +382,6 @@ fastapi_app.include_router(api_key_router)
 
 # Routes contributed by the platform running this engine, if any. It registered
 # them before the engine was imported; the engine does not know their names.
-from utils.route_registry import apply_registered_routes  # noqa: E402
-
 apply_registered_routes(fastapi_app, sio)
 
 # Local edition: serve the event-relay WebSocket protocols in-process so the
@@ -368,6 +413,30 @@ web_app = socketio.ASGIApp(
     other_asgi_app=mcp_server.create_asgi_middleware(fastapi_app),
     socketio_path='/socket.io/'
 )
+
+# ---------------------------------------------------------------------------
+# Webhook ASGI app: the same lifespan and routes a deployment that serves
+# webhook and inbound-email traffic from a separate process needs, and nothing
+# else — no socket.io, so no client ever connects to it. Bursty, HTTP-only
+# ingress (scheduler fan-out, provider events) then never competes with
+# interactive traffic; execution events reach the user through the relay,
+# which any process can publish to.
+webhook_fastapi_app = FastAPI(lifespan=app_lifespan)
+FastAPIInstrumentor.instrument_app(webhook_fastapi_app)
+webhook_fastapi_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+webhook_fastapi_app.include_router(webhook_router)
+webhook_fastapi_app.include_router(supabase_webhook_router)
+webhook_fastapi_app.include_router(email_router)
+# Health route on the worker too so the load balancer / monitoring can probe
+# the function independently of the api function.
+webhook_fastapi_app.include_router(health_router)
+
 
 def _sanitize_auth_reason(raw_message: str, default: str = 'Authentication failed', code: str = 'auth_failed') -> dict:
     """Build a limited payload summarizing why authentication was refused."""
@@ -496,6 +565,9 @@ async def connect(sid, environ, auth):
             'slack_thread_ts': slack_thread_ts,  # Thread for activity notifications
             'slack_channel': slack_channel,  # Channel where login was posted
         }
+        # Platform-side session state (analytics identity, admin
+        # impersonation) is added by whatever registered a connect hook.
+        await run_socket_connect_hooks(session_data, auth)
 
         await sio.save_session(sid, session_data)
 
@@ -584,6 +656,7 @@ async def update_auth(sid, data):
             return {'success': False, 'error': 'Token user mismatch'}
 
         session['user_data'] = user_data  # Update user data in case it changed
+        await run_socket_auth_update_hooks(sid, session, data, socketio_proxy)
         await sio.save_session(sid, session)
 
         logger.info(f"Auth updated successfully for {sid} (user_id: {user_id})")
