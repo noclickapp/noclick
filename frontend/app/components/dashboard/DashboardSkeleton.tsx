@@ -5,7 +5,7 @@
 // page. Only the first load shows it — refetches keep the previous data on screen.
 import { Skeleton } from '~/components/ui/skeleton';
 import { cn } from '~/lib/utils';
-import { HAIRLINE, LAYOUT, SURFACE } from '~/components/dashboard/primitives';
+import { HAIRLINE, LAYOUT, ROWS, SURFACE } from '~/components/dashboard/primitives';
 import { ORDER, SPANS } from '~/components/dashboard/variants';
 import type { FocusId } from '~/components/dashboard/types';
 
@@ -57,7 +57,7 @@ function Card({ id }: { id: FocusId }) {
                     ))}
                 </div>
             ) : (
-                <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                <div className={ROWS}>
                     {Array.from({ length: rows }, (_, i) => (
                         <Row key={i} wide={i % 2 === 0} />
                     ))}

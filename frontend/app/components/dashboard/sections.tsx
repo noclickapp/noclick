@@ -39,7 +39,6 @@ import {
     DECISION_KINDS,
     EmptyState,
     Eyebrow,
-    HAIRLINE,
     LAYOUT,
     KindPill,
     LiveDot,
@@ -47,6 +46,7 @@ import {
     Meter,
     NodeMark,
     ROW_HOVER,
+    ROWS,
     RunsColumns,
     SectionHeader,
     SURFACE,
@@ -442,7 +442,7 @@ export function UpcomingCompact({ data, onFocus, limit = 4 }: SectionProps & { l
     if (!list.length) return <EmptyState title="Nothing scheduled" hint="Schedules, agent alarms and delayed runs show up here in time order." />;
     return (
         <div>
-            <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+            <div className={ROWS}>
                 {list.slice(0, limit).map((u) => (
                     <UpcomingRowView key={u.id} u={u} now={data.now} compact />
                 ))}
@@ -475,7 +475,7 @@ export function UpcomingFull({ data, onFocus }: SectionProps) {
                     <Eyebrow className="mb-1" right={g.title === 'Not scheduled' ? undefined : <span className="text-[11px] text-foreground/55 dark:text-foreground/35">{g.items.length}</span>}>
                         {g.title}
                     </Eyebrow>
-                    <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                    <div className={ROWS}>
                         {g.items.map((u) => (
                             <UpcomingRowView key={u.id} u={u} now={data.now} />
                         ))}
@@ -799,7 +799,7 @@ export function AttentionCompact({ data, onFocus, limit = 4, dense = false }: Se
     const shown = items.slice(0, limit);
     return (
         <div>
-            <div className={cn('divide-y', HAIRLINE, 'divide-border dark:divide-foreground/[0.06]')}>
+            <div className={ROWS}>
                 {shown.map((it) => (
                     <AttentionRow
                         key={it.id}
@@ -856,7 +856,7 @@ export function AttentionFull({ data }: SectionProps) {
                 {kinds.map((k) => chip(k, ATTENTION_KIND_LABEL[k], items.filter((i) => i.kind === k).length))}
             </div>
             {visible.length ? (
-                <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                <div className={ROWS}>
                     {visible.map((it) => (
                         <AttentionRow key={it.id} item={it} now={data.now} expanded={open === it.id} onToggle={() => setOpen((v) => (v === it.id ? null : it.id))} />
                     ))}
@@ -993,7 +993,7 @@ export function RunsCompact({ data, onFocus, chart = true, top = 4, narrow = fal
                 <span className="ml-auto tabular-nums">{rate}% succeeded</span>
             </div>
             {chart && <RunsColumns days={data.runs.days} height={88} now={data.now} />}
-            <div className={cn('mt-3 divide-y divide-border dark:divide-foreground/[0.06]', chart && 'border-t border-border dark:border-foreground/[0.06] pt-1')}>
+            <div className={cn('mt-3', ROWS, chart && 'border-t border-border dark:border-foreground/[0.06] pt-1')}>
                 {data.runs.byWorkflow.slice(0, top).map((s) => (
                     <WorkflowStatsRow key={s.workflow.id} stat={s} now={data.now} narrow={narrow} showLast={false} />
                 ))}
@@ -1052,7 +1052,7 @@ export function RunsFull({ data }: SectionProps) {
             <div>
                 <Eyebrow className="mb-2">By workflow</Eyebrow>
                 {data.runs.byWorkflow.length ? (
-                    <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                    <div className={ROWS}>
                         <div className="-mx-2 flex items-center gap-3 px-2 pb-1 text-[10.5px] uppercase tracking-[0.08em] text-foreground/45 dark:text-foreground/30">
                             <span className="w-[58px] shrink-0" />
                             <span className="flex-1">Workflow</span>
@@ -1081,7 +1081,7 @@ export function RunsFull({ data }: SectionProps) {
                     </span>
                 </div>
                 {rows.length ? (
-                    <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                    <div className={ROWS}>
                         {rows.map((r) => (
                             <RunRowView key={r.id} run={r} now={data.now} expanded={open === r.id} onToggle={() => setOpen((v) => (v === r.id ? null : r.id))} />
                         ))}
@@ -1288,7 +1288,7 @@ function TurnCard({ turn, now, compact = false }: { turn: AgentTurn; now: string
                     )}
                     <TurnSends turn={turn} />
                     {turn.toolCalls.length > 0 && (
-                        <div className="divide-y divide-border dark:divide-foreground/[0.05] rounded-lg border border-border dark:border-foreground/[0.06]">
+                        <div className={cn(ROWS, "rounded-lg border border-border dark:border-foreground/[0.06]")}>
                             {turn.toolCalls.map((c, i) => (
                                 <ToolCallRow key={i} call={c} />
                             ))}
@@ -1315,7 +1315,7 @@ export function AgentsCompact({ data, onFocus, turns = 1 }: SectionProps & { tur
             {running.length > 0 && (
                 <div>
                     <Eyebrow className="mb-1">Up now</Eyebrow>
-                    <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                    <div className={ROWS}>
                         {running.map((r) => (
                             <RunningRow key={`${r.workflow.id}-${r.agent.nodeId}-${r.conversationTitle}`} r={r} now={data.now} />
                         ))}
@@ -1327,7 +1327,7 @@ export function AgentsCompact({ data, onFocus, turns = 1 }: SectionProps & { tur
                     <Eyebrow className="mb-1" right={<TextLink onClick={() => onFocus?.('agents')}>All turns</TextLink>}>
                         Last turn{turns > 1 ? 's' : ''}
                     </Eyebrow>
-                    <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                    <div className={ROWS}>
                         {recent.map((t) => (
                             <TurnCard key={t.id} turn={t} now={data.now} compact />
                         ))}
@@ -1347,7 +1347,7 @@ export function AgentsFull({ data }: SectionProps) {
             <div>
                 <Eyebrow className="mb-1">Up now</Eyebrow>
                 {running.length ? (
-                    <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                    <div className={ROWS}>
                         {running.map((r) => (
                             <RunningRow key={`${r.workflow.id}-${r.agent.nodeId}-${r.conversationTitle}`} r={r} now={data.now} />
                         ))}
@@ -1368,7 +1368,7 @@ export function AgentsFull({ data }: SectionProps) {
                     </span>
                 </div>
                 {rows.length ? (
-                    <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                    <div className={ROWS}>
                         {rows.map((t) => (
                             <TurnCard key={t.id} turn={t} now={data.now} compact />
                         ))}
@@ -1522,7 +1522,7 @@ export function FilesCompact({ data, onFocus, limit = 6, footer = true, narrow =
     const totalBytes = all.reduce((a, f) => a + f.size, 0);
     return (
         <div>
-            <div className="divide-y divide-border dark:divide-foreground/[0.05]">
+            <div className={ROWS}>
                 {all.slice(0, limit).map((f) => (
                     <FileRowView key={`${f.source.id}:${f.path}`} file={f} now={data.now} showSource={!narrow} />
                 ))}
@@ -1612,7 +1612,7 @@ export function FilesFull({ data }: SectionProps) {
                                 </span>
                             </div>
                             {files.length ? (
-                                <div className="divide-y divide-border dark:divide-foreground/[0.05] border-t border-border dark:border-foreground/[0.06]">
+                                <div className={cn(ROWS, "border-t border-border dark:border-foreground/[0.06]")}>
                                     {files.map((f) => (
                                         <FileRowView
                                             key={f.path}
@@ -1712,7 +1712,7 @@ export function CredentialsCompact({ data, onFocus, style = 'tiles', footer = tr
     if (style === 'rows') {
         return (
             <div>
-                <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                <div className={ROWS}>
                     {sorted.slice(0, 5).map((c) => (
                         <CredentialRowView key={c.id} c={c} now={data.now} />
                     ))}
@@ -1847,7 +1847,7 @@ export function TriggersCompact({ data, onFocus, stats = true }: SectionProps & 
                     </span>
                 )}
             </div>
-            <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+            <div className={ROWS}>
                 {[...broken, ...triggers.filter((t) => t.armed)].slice(0, 4).map((t) => (
                     <TriggerRowView key={t.id} t={t} now={data.now} />
                 ))}
@@ -1869,7 +1869,7 @@ export function TriggersFull({ data }: SectionProps) {
             {broken.length > 0 && (
                 <div>
                     <Eyebrow className="mb-1">Broken</Eyebrow>
-                    <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                    <div className={ROWS}>
                         {broken.map((t) => (
                             <TriggerRowView key={t.id} t={t} now={data.now} />
                         ))}
@@ -1879,7 +1879,7 @@ export function TriggersFull({ data }: SectionProps) {
             <div>
                 <Eyebrow className="mb-1">Armed</Eyebrow>
                 {armed.length ? (
-                    <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                    <div className={ROWS}>
                         {armed.map((t) => (
                             <TriggerRowView key={t.id} t={t} now={data.now} />
                         ))}
@@ -1953,7 +1953,7 @@ export function NotificationsCompact({ data, onFocus, limit = 3 }: SectionProps 
     if (!data.notifications.length) return <EmptyState title="No notifications" hint="Failures, credit alerts and your weekly digest." />;
     return (
         <div>
-            <div className="divide-y divide-border dark:divide-foreground/[0.05]">
+            <div className={ROWS}>
                 {data.notifications.slice(0, limit).map((n) => (
                     <NotificationRow key={n.id} n={n} now={data.now} />
                 ))}
@@ -1983,7 +1983,7 @@ export function NotificationsFull({ data }: SectionProps) {
                 </span>
             </div>
             {data.notifications.length ? (
-                <div className="divide-y divide-border dark:divide-foreground/[0.06]">
+                <div className={ROWS}>
                     {data.notifications.map((n) => (
                         <NotificationRow key={n.id} n={n} now={data.now} />
                     ))}

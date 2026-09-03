@@ -32,6 +32,12 @@ export function clickableRow(onActivate?: () => void) {
 export const HAIRLINE = 'border-border dark:border-foreground/[0.08]';
 export const ROW_HOVER = 'transition-colors hover:bg-foreground/[0.03]';
 
+/** Hairlines between stacked rows. Drawn as a pseudo-element line rather than
+ *  `divide-y`, whose line is the row's own top border and so bends around the
+ *  row's rounded hover corners. */
+export const ROWS =
+    "[&>*+*]:relative [&>*+*]:before:pointer-events-none [&>*+*]:before:absolute [&>*+*]:before:inset-x-0 [&>*+*]:before:top-0 [&>*+*]:before:h-px [&>*+*]:before:bg-border [&>*+*]:before:content-[''] dark:[&>*+*]:before:bg-foreground/[0.06]";
+
 /** Page and grid rhythm, shared by the Bento layout and its loading skeleton so
  *  the placeholder can never drift from the real page. */
 export const LAYOUT = {
