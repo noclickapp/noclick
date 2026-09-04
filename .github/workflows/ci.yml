@@ -89,10 +89,30 @@ jobs:
       - run: pip install pip-audit
       - run: pip-audit -r requirements.txt -r requirements-dev.txt
       - run: npm audit --omit=dev
-      - run: pnpm --dir backend audit --prod
+      - name: Audit backend production dependencies
+        run: |
+          audit_output="$(pnpm --dir backend audit --prod --ignore-registry-errors 2>&1)" || {
+            audit_status=$?
+            printf '%s\n' "$audit_output"
+            exit "$audit_status"
+          }
+          printf '%s\n' "$audit_output"
+          if [[ "$audit_output" != *"No known vulnerabilities found"* ]]; then
+            echo "::warning title=npm security audit unavailable::The registry could not complete the backend dependency audit; see the step log."
+          fi
       - run: npm audit --omit=dev
         working-directory: sdk/typescript
-      - run: pnpm --dir frontend audit --prod --audit-level=high
+      - name: Audit frontend production dependencies
+        run: |
+          audit_output="$(pnpm --dir frontend audit --prod --audit-level=high --ignore-registry-errors 2>&1)" || {
+            audit_status=$?
+            printf '%s\n' "$audit_output"
+            exit "$audit_status"
+          }
+          printf '%s\n' "$audit_output"
+          if [[ "$audit_output" != *"No known vulnerabilities found"* ]]; then
+            echo "::warning title=npm security audit unavailable::The registry could not complete the frontend dependency audit; see the step log."
+          fi
 
   typescript-sdk:
     runs-on: ubuntu-latest
