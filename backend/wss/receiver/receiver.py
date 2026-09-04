@@ -29,10 +29,8 @@ def _snapshot_resources() -> dict:
     Deliberately excludes the open-fd count: psutil's ``num_fds()`` scandirs
     /proc/self/fd, adding avoidable filesystem work twice per event. FD leaks
     remain visible through the periodic process-health sampler; the hot path
-    does not pay for that scandir. memory_info() remains a single procfs read.
-    The
-    per-event hot path. memory_info() (one /proc/self/statm read) and the
-    in-process task/thread counts are cheap and stay.
+    does not pay for that scandir. memory_info() (one /proc/self/statm read) and
+    the in-process task/thread counts are cheap and stay.
     """
     return {
         "rss_bytes": _proc.memory_info().rss,
@@ -155,28 +153,25 @@ class SocketIOProxy:
             self.SOCKET_PROXY_ENV,
         )
 
-    async def _set_debug_context_for_sid(self, sid: str):
-        """
-        Set debug user context from session for SQL query logging.
+    async def _enter_request_context(self, sid: str):
+        """Whatever the platform stamps for the duration of one dispatch.
         Returns a callable that undoes it, or None when there's nothing to undo.
 
-        Nothing here knows what the context is for. A platform registers a hook
-        (see handler_registry.register_request_context) and gets back the undo;
-        an installation without one does no work.
+        Nothing here knows what the context is for. A platform registers hooks
+        (see handler_registry.register_request_context) that see the session
+        and get back their undo; an installation without any does no work.
         """
         from .handler_registry import enter_request_context
 
-        user_email = None
+        session = None
         try:
             session = await self.sio.get_session(sid)
-            if session:
-                user_email = session.get('user_data', {}).get('email')
         except Exception:
             pass
-        return enter_request_context(user_email, sid)
+        return enter_request_context(session or {}, sid)
 
     @staticmethod
-    def _reset_debug_context(undo) -> None:
+    def _exit_request_context(undo) -> None:
         if undo is not None:
             undo()
 
@@ -187,7 +182,6 @@ class SocketIOProxy:
             self._user_sessions[user_id] = []
         if sid not in self._user_sessions[user_id]:
             self._user_sessions[user_id].append(sid)
-
 
     def _unregister_session(self, sid: str) -> None:
         """Unregister a session ID."""
@@ -215,11 +209,11 @@ class SocketIOProxy:
         except Exception:
             pass
 
-        debug_undo = await self._set_debug_context_for_sid(sid)
+        context_undo = await self._enter_request_context(sid)
         try:
             await self._run_handler_method_for_all(sid, 'setup_user', with_timing=True, timing_threshold_ms=20)
         finally:
-            self._reset_debug_context(debug_undo)
+            self._exit_request_context(context_undo)
 
     async def cleanup_user(self, sid):
         """Clean up resources for a disconnected user."""
@@ -236,11 +230,11 @@ class SocketIOProxy:
         # Clean up chunk reassembly buffers
         self.chunk_manager.cleanup_user(sid)
 
-        debug_undo = await self._set_debug_context_for_sid(sid)
+        context_undo = await self._enter_request_context(sid)
         try:
             await self._run_handler_method_for_all(sid, 'cleanup_user', with_timing=False, timing_threshold_ms=100)
         finally:
-            self._reset_debug_context(debug_undo)
+            self._exit_request_context(context_undo)
 
     def setup_events(self):
         """
@@ -294,6 +288,7 @@ class SocketIOProxy:
                 "[PROXY] route_event called before setup() — event=%s sid=%s", event, sid,
             )
             return {"error": "proxy_not_ready", "message": "SocketIOProxy.setup() has not been called yet"}
+        from .handler_registry import finish_dispatch_span
         with _tracer.start_as_current_span(f"socket {event}") as span:
             span.set_attribute("socket.event", event)
             span.set_attribute("socket.sid", sid)
@@ -329,18 +324,17 @@ class SocketIOProxy:
                     span.set_attribute("exception.slug", "err-socket-handler-unhandled")
                     span.record_exception(exc)
                     span.set_status(Status(StatusCode.ERROR, str(exc)))
-                    pass
+                    finish_dispatch_span(span, span_start_ms)
                     raise
                 if isinstance(result, dict) and "error" in result:
                     span.set_attribute("error", True)
                     span.set_attribute("error.type", str(result.get("error")))
                     span.set_attribute("error.message", str(result.get("message", "")))
                     span.set_status(Status(StatusCode.ERROR, str(result.get("error"))))
-                pass
+                finish_dispatch_span(span, span_start_ms)
                 return result
             finally:
                 _stamp_resource_delta(span, res_before)
-
 
     # Correlation IDs that show up on builder / workflow events. We pull these
     # off the raw payload at span open time (before any handler validation /
@@ -521,8 +515,7 @@ class SocketIOProxy:
                 logger.error(f"Validation error for event '{event}': {e}")
                 return {"error": "validation_error", "message": str(e)}
 
-        # Set debug context for SQL query logging (allows database_pool to log queries per-user)
-        debug_undo = await self._set_debug_context_for_sid(sid)
+        context_undo = await self._enter_request_context(sid)
 
         try:
             # Route to handlers and collect results
@@ -548,8 +541,7 @@ class SocketIOProxy:
                 else:
                     logger.warning(f"Handler {handler.__class__.__name__} doesn't have {event} in get_events()")
         finally:
-            # Always reset debug context
-            self._reset_debug_context(debug_undo)
+            self._exit_request_context(context_undo)
         
         # Return single result if only one handler, otherwise return list
         final_result = results[0] if len(results) == 1 else results
@@ -750,6 +742,8 @@ class SocketIOProxy:
         codex_auth_handler = CodexAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize Claude Code OAuth PKCE auth handler (API only)
         claude_code_auth_handler = ClaudeCodeAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
+        # Initialize GitHub Copilot device-code auth handler (API only)
+        # Initialize xAI SuperGrok device-code auth handler (API only)
         # Initialize WhatsApp QR code auth handler (API only)
         whatsapp_qr_handler = WhatsAppQRHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize feed handler (API only - approvals, activity logs, monitoring)
@@ -880,7 +874,7 @@ class SocketIOProxy:
                 else:
                     # Handler might be None if not initialized for this environment
                     if handler_enum not in handler_instances or handler_instances[handler_enum] is not None:
-                        logger.warning(f"Handler {handler_enum.value} not found or not initialized for event {event} in env {env}")
+                        logger.warning(f"Handler {getattr(handler_enum, 'value', handler_enum)} not found or not initialized for event {event} in env {env}")
         
         return event_handlers
     
@@ -896,13 +890,14 @@ class SocketIOProxy:
             Dict of {env: [handler_instance]}
         """
         from .event_routing import LIFECYCLE_HANDLERS
+        from .handler_registry import lifecycle_handler_keys
 
-        # Build lifecycle handlers from configuration
+        # Build lifecycle handlers from configuration plus the platform's own.
         # Only include handlers that are actually instantiated (not None)
         lifecycle_handlers = {}
         for env, handler_enums in LIFECYCLE_HANDLERS.items():
             env_handlers = []
-            for handler_enum in handler_enums:
+            for handler_enum in list(handler_enums) + lifecycle_handler_keys(env):
                 handler = handler_instances.get(handler_enum)
                 if handler:  # Only add if handler was actually instantiated
                     env_handlers.append(handler)

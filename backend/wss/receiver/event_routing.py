@@ -5,11 +5,11 @@ Single source of truth for both the receiver and type generation.
 """
 
 from enum import Enum
-from typing import Dict, List
+from typing import Dict, List, Optional, Union
 
 
 class Handler(Enum):
-    """Enumeration of all available handlers."""
+    """The handlers the engine builds itself."""
     AGENT = "agent_handler"
     YPY = "ypy_handler"
     CACHE_VALTIO = "cache_valtio_handler"
@@ -92,14 +92,21 @@ class Handler(Enum):
     AGENT_WORKSPACE = "agent_workspace_handler"
 
 
+# A route names either one of the engine's handlers or, as a plain string, a
+# handler the platform running it registers (wss/receiver/handler_registry).
+# The engine builds none of the latter; an install without them routes those
+# events to nothing, and the open edition's copy of this table omits them.
+HandlerKey = Union[Handler, str]
+
 # Event routing configuration - maps environments to events and their handlers
-EVENT_ROUTING: Dict[str, Dict[str, Handler]] = {
+EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
     "API": {
         # Chat and agent events
         "chat:message": Handler.AGENT,
         "agent:update_model": Handler.AGENT, # TODO: this event is likely deprecated
         "agent:set:cwd": Handler.AGENT,
         "agent:pause": Handler.AGENT,
+        "agent:warm_sandboxes": Handler.AGENT,  # per-node warm/active sandbox count (canvas badge)
         "agent:builder_decision": Handler.AGENT,  # approve/dismiss verdict on a prompt_builder card
 
         # Conversation management events
@@ -395,9 +402,8 @@ EVENT_ROUTING: Dict[str, Dict[str, Handler]] = {
         "workflow:list_executions": Handler.WORKFLOW,
         "workflow:get_execution_counts": Handler.WORKFLOW,
         "workflow:get_execution_detail": Handler.WORKFLOW,
-        "workflow:get_agent_inputs": Handler.WORKFLOW,
-        "webhook:relay:reconnect": Handler.WORKFLOW,
         "workflow:get_node_output": Handler.WORKFLOW,
+        "workflow:get_agent_inputs": Handler.WORKFLOW,
         "workflow:stop": Handler.WORKFLOW_EXECUTION,
         "workflow:execute": Handler.WORKFLOW_EXECUTION,
         "workflow:node:validate_config": Handler.WORKFLOW,
@@ -432,7 +438,8 @@ EVENT_ROUTING: Dict[str, Dict[str, Handler]] = {
         "workflow:mcp:get_folder_tree": Handler.FOLDER,
 
         # Webhook relay operations (local dev only)
-    
+        "webhook:relay:reconnect": Handler.WORKFLOW,
+
         # Workflow builder (AI-powered workflow editing)
         "workflow:builder:edit": Handler.WORKFLOW_BUILDER,
         "workflow:builder:autofill": Handler.WORKFLOW_BUILDER,
@@ -441,6 +448,7 @@ EVENT_ROUTING: Dict[str, Dict[str, Handler]] = {
         "workflow:builder:share_ask": Handler.WORKFLOW_BUILDER,
         "workflow:builder:get_state": Handler.WORKFLOW_BUILDER,
         "workflow:builder:usage": Handler.WORKFLOW_BUILDER,
+        "workflow:builder:client_timing": Handler.WORKFLOW_BUILDER,
 
         # Saved output operations (mock data management)
         "saved_output:create": Handler.SAVED_OUTPUT,
@@ -590,7 +598,7 @@ EVENT_ROUTING: Dict[str, Dict[str, Handler]] = {
 # Lifecycle handlers configuration - handlers that need lifecycle management but don't handle events directly
 # These handlers will have setup_user() and cleanup_user() called but won't receive events
 # Note: Handlers that are already in EVENT_ROUTING shouldn't be here to avoid duplicate lifecycle calls
-LIFECYCLE_HANDLERS: Dict[str, List[Handler]] = {
+LIFECYCLE_HANDLERS: Dict[str, List[HandlerKey]] = {
     "API": [
         Handler.CACHE_VALTIO,  # Manages Redis persistence for YJS state
     ],
@@ -608,7 +616,7 @@ def get_all_events() -> Dict[str, str]:
     return event_map
 
 
-def get_handler_for_event(env: str, event: str) -> Handler:
+def get_handler_for_event(env: str, event: str) -> Optional[HandlerKey]:
     """
     Get the handler enum for a specific event in a given environment.
 

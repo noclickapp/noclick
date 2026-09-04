@@ -12,6 +12,7 @@ from wss.receiver.client_events import (
     ChatMessageRequest,
     AgentSetCwdRequest,
     AgentPauseRequest,
+    AgentWarmSandboxesRequest,
     AgentBuilderDecisionRequest,
 )
 from utils.database_pool import DatabasePoolMixin
@@ -36,6 +37,7 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
             "chat:message": self.respond,
             "agent:set:cwd": self.handle_set_cwd,
             "agent:pause": self.handle_pause,
+            "agent:warm_sandboxes": self.handle_warm_sandboxes,
             "agent:builder_decision": self.handle_builder_decision,
         }
 
@@ -97,6 +99,27 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
             logger.warning(f"handle_builder_decision failed for sid {sid}: {e}", exc_info=True)
             await respond(success=False, error="Failed to record decision")
 
+    async def handle_warm_sandboxes(self, sid: str, data: AgentWarmSandboxesRequest) -> None:
+        """Return the live warm-sandbox count per agent node for a workflow's
+        canvas (polled ~30s by the FE). Reads the TTL-fresh Redis registry the
+        in-sandbox uptime reporter maintains; counts distinct conversations
+        (session_keys) per node — a node can hold several warm sandboxes at once."""
+        counts: Dict[str, int] = {}
+        try:
+            session = await self.sio.get_session(sid)
+            user_id = session.get("user_id") if session else None
+            if user_id:
+                from utils.capabilities import WARM_SANDBOX_LIST, capability
+
+                list_active_sandboxes = capability(WARM_SANDBOX_LIST)
+                if list_active_sandboxes is not None:
+                    for entry in await list_active_sandboxes(user_id=user_id):
+                        node_id = entry.get("node_id")
+                        if node_id and entry.get("workflow_id") == data.workflow_id:
+                            counts[node_id] = counts.get(node_id, 0) + 1
+        except Exception as e:
+            logger.warning(f"handle_warm_sandboxes failed for sid {sid}: {e}", exc_info=True)
+        await send_event(self.sio, sid, ResponseEvent(request_id=data.request_id, data={"counts": counts}))
 
     async def handle_set_cwd(self, sid: str, data: AgentSetCwdRequest) -> None:
         """Handle working directory updates initiated from the frontend."""
@@ -213,11 +236,41 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
                                 message=limit_error,
                                 finished=True,
                             ))
-                            user_data = session.get('user_data', {})
-                            pass
+                            from utils.capabilities import PLAN_GATE_ALERT, capability
+                            alert_plan_gate = capability(PLAN_GATE_ALERT)
+                            if alert_plan_gate is not None:
+                                alert_plan_gate(session.get('user_data', {}), "AI Edit Limit Hit (chat)")
                             return
             except Exception as e:
                 logger.warning(f"[AGENT_HANDLER] AI builder limit check failed, proceeding: {e}")
+
+            # Record chat usage for daily limit tracking (fire-and-forget)
+            first_content_text = ''
+            if data.content:
+                for item in data.content:
+                    if hasattr(item, 'text') and item.text:
+                        first_content_text = item.text[:500]
+                        break
+
+            from utils.capabilities import ACTIVITY_SIGNAL, capability
+            signal_activity = capability(ACTIVITY_SIGNAL)
+            if signal_activity is not None:
+                signal_activity(
+                    session.get('user_data', {}), "💬 Chat Message",
+                    {"Prompt": first_content_text[:100], "Model": model or 'unknown'},
+                )
+
+            try:
+                # Fire-and-forget analytics write — never blocks chat.
+                from utils.async_helpers import spawn
+                from utils.database_pool import get_native_pool
+                spawn(get_native_pool().execute(
+                    """INSERT INTO workflow_build_requests (user_id, request_type, prompt, model, generation_id, success)
+                       VALUES ($1, 'chat', $2, $3, $4, true)""",
+                    user_id, first_content_text, model or 'unknown', conversation_id,
+                ))
+            except Exception:
+                pass
 
         agent = await self._ensure_agent(
             conversation_id=conversation_id,

@@ -115,6 +115,14 @@ class AgentPauseRequest(ClientEventBase):
     expects_response: ClassVar[bool] = False
 
 
+class AgentWarmSandboxesRequest(ClientEventBase):
+    """Poll the live warm/active CLI-sandbox count per agent node so the canvas can
+    show a node as active (with a count) between turns, not just during a run."""
+    event_name: ClassVar[str] = "agent:warm_sandboxes"
+    workflow_id: str = Field(..., description="UUID of the workflow whose agent nodes' warm-sandbox counts to fetch")
+    expects_response: ClassVar[bool] = True
+
+
 # Conversation Management Events
 class ListConversationsRequest(ClientEventBase):
     """Request to list all available conversation sessions"""
@@ -723,11 +731,6 @@ class WorkflowAgentInputsRequest(ClientEventBase):
     execution_ids: List[str] = Field(..., description="Delivery execution ids the agent consumed")
 
 
-class WebhookRelayReconnectRequest(ClientEventBase):
-    """Request to reconnect the webhook relay client (for local development only)"""
-    event_name: ClassVar[str] = "webhook:relay:reconnect"
-
-
 class WorkflowCollabTokenRequest(ClientEventBase):
     """Request to get a JWT token for workflow relay collaborative presence.
 
@@ -841,6 +844,11 @@ class WorkflowNodeLoadValueRequest(ClientEventBase):
     node_id: str = Field(..., description="ID of the node in the workflow")
     context: Optional[Dict[str, Any]] = Field(default=None, description="Additional context for value computation")
     credential_ids: Optional[Dict[str, str]] = Field(default=None, description="Map of credential_type -> credential_id for API calls (e.g., telegram_bot_token -> uuid)")
+
+
+class WebhookRelayReconnectRequest(ClientEventBase):
+    """Request to reconnect the webhook relay client (for local development only)"""
+    event_name: ClassVar[str] = "webhook:relay:reconnect"
 
 
 class WorkflowClearNodeStateRequest(ClientEventBase):
@@ -3008,14 +3016,8 @@ class CodexDeviceCodePollRequest(ClientEventBase):
     credential_name: Optional[str] = Field(None, description="Name for the credential if approved")
 
 
-
-
-
-
-
-
-
-
+# xAI SuperGrok Device Code Auth Events
+# GitHub Copilot Device Code Auth Events
 # Claude Code OAuth PKCE Auth Events
 class ClaudeCodeAuthStartRequest(ClientEventBase):
     """Initiate the Claude Code OAuth PKCE flow"""

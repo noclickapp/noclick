@@ -59,6 +59,10 @@ CREDIT_CTA = "billing.credit_cta"
 # (user_data, gate, details=None) -> None, fire-and-forget.
 PLAN_GATE_ALERT = "billing.plan_gate_alert"
 
+# Tell whoever runs this instance what its users are doing, as an activity feed:
+# (user_data, action, details=None) -> None, fire-and-forget.
+ACTIVITY_SIGNAL = "activity.signal"
+
 _providers: Dict[str, Any] = {}
 
 
