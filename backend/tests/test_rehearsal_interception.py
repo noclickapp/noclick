@@ -176,6 +176,25 @@ async def test_a_failed_simulation_surfaces_as_a_tool_error(monkeypatch, no_audi
 # --------------------------------------------- mirror 2: cross-container
 
 
+@pytest.mark.asyncio
+async def test_cli_harness_path_never_reaches_the_provider(monkeypatch, tripwire):
+    """The MCP-served path the CLI harnesses use."""
+    from nodes.core.run_op import run_node_op_tool
+
+    _rehearsing(monkeypatch)
+    out = await run_node_op_tool(
+        {
+            "tool_type": "node_op",
+            "node_type": "automation-slack",
+            "operation": "send_message_to_channel",
+            "credential_id": "cred-1",
+        },
+        {"channel": "#sales"},
+        user_id="user-1",
+        conversation_id="conv-rehearsing",
+    )
+    assert out == {"ok": True, "ts": "1786.0001"}
+    assert not tripwire
 
 
 def test_graph_nodes_cannot_act_on_real_accounts_in_a_rehearsal():

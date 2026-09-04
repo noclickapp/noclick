@@ -183,6 +183,7 @@ async def launch_rehearsal(
     from wss.receiver.client_events import WorkflowExecuteRequest
 
     async def _run() -> None:
+        finish = True
         try:
             result = await execution_handler.handle_execute(
                 sid or "",
@@ -214,6 +215,19 @@ async def launch_rehearsal(
             node_error = None
             if ok:
                 outputs = getattr(result, 'node_outputs', None) or {}
+                # A CLI-harness agent may run its turn ASYNCHRONOUSLY: this run
+                # only DELIVERED it to the runtime and the response lands later
+                # via the turn-completion callback. Declaring the rehearsal done
+                # here — and worse, tearing down the fence in `finally` — put
+                # every remaining tool call of the still-live turn on the REAL
+                # dispatch path. Leave the session open; the callback finishes
+                # it when the turn lands, and the Redis TTL bounds a wedged run.
+                if any(
+                    isinstance(o, dict) and o.get('status') == 'awaiting_agent_turn'
+                    for o in outputs.values()
+                ):
+                    finish = False
+                    return
                 last = getattr(result, 'last_output_node_id', None)
                 out = outputs.get(last) if last else None
                 reply = _reply_text(out)
@@ -243,7 +257,8 @@ async def launch_rehearsal(
             logger.error(f"[rehearsal] run failed for {workflow_id}: {e}")
             await emit_rehearsal_finished(conversation_id, None, str(e))
         finally:
-            await end_rehearsal(conversation_id)
+            if finish:
+                await end_rehearsal(conversation_id)
 
     from utils.async_helpers import spawn
 

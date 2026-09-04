@@ -25,20 +25,27 @@ async def resolve_interrupted_chat_turn(
     min_idle_s: float = _INTERRUPTED_TURN_MIN_IDLE_S,
 ) -> bool:
     """Self-heal (on resume-read) for chat turns that died BEFORE any terminal
-    evidence existed. A worker killed mid-dispatch can persist the user's
-    message without a response, leaving a chat surface that polls
-    ``conversations.events`` waiting forever.
+    evidence existed — a worker killed mid-dispatch (deploy, preemption, dev
+    reload) persists the user's message but neither an awaiting marker nor a
+    response, so the marker-keyed reconciler/sweep can never see the loss and a
+    chat surface polling ``conversations.events`` waits forever.
 
     Guards — each protects a live turn from a false kill:
     - Tail + idle: the newest event must be the user's message AND the row idle
       past ``min_idle_s`` (a healthy dispatch appends/persists well inside it).
+    - Awaiting marker: the node's latest output being THIS conversation's
+      ``awaiting_agent_turn`` marker means the asynchronous runtime owns the turn — the
+      gone-beat reconciler / stale sweep resolve that class, never this.
     - Running execution: any in-flight run of the workflow may be this turn
-      — wait for the next poll.
+      (SDK turns run inside it; CLI delivery runs persist the marker at run
+      end) — wait for the next poll.
 
     The append itself is tail-guarded SQL, so a concurrently-landing response
     (or a second resolver racing this one) wins cleanly. Returns True iff the
     interrupted event was appended."""
     from repositories.conversation import ConversationRepo
+    from utils.node_outputs import latest_output_meta
+
     if not (conversation_id and workflow_id and node_id and conversation_key):
         return False
     try:
@@ -57,7 +64,16 @@ async def resolve_interrupted_chat_turn(
         if not row or row["tail_role"] != "user" or not row["idle"]:
             return False
 
-        # awaiting_* = suspended (approval/delay) — a live run, however
+        meta = await latest_output_meta(pool, workflow_id, node_id)
+        output = (meta or {}).get("output")
+        if (
+            isinstance(output, dict)
+            and output.get("status") == "awaiting_agent_turn"
+            and _marker_matches_conversation(output, workflow_id, node_id, conversation_key)
+        ):
+            return False  # delivered turn — the runtime's reconciler and sweep own it
+
+        # awaiting_* = suspended (approval/delay) — a live turn's run, however
         # old. A 'running' row is only credible while young: a worker killed
         # mid-run leaves its row 'running' FOREVER (no abandoned-row sweep
         # exists), and trusting it unboundedly would re-wedge the exact class
@@ -80,7 +96,7 @@ async def resolve_interrupted_chat_turn(
         if healed:
             logger.warning(
                 f"[AgentTurn] resolved INTERRUPTED turn for {workflow_id}/{node_id} "
-                f"ck={conversation_key!r} (no running execution)"
+                f"ck={conversation_key!r} (no marker, no running execution)"
             )
         return healed
     except Exception:

@@ -14,12 +14,14 @@ from nodes.agent.provider_errors import (
     RESPONSE_CHANNEL_MAX_LEN,
     classify_provider_error,
     format_provider_message,
+    normalize_turn_result,
 )
 
 # ── Positive corpus: real strings observed from providers/harnesses ─────────
 # (provider, kind, text). Keep entries VERBATIM as observed — don't tidy them.
 POSITIVE_CORPUS = [
-    # Representative Anthropic CLI response-channel failure.
+    # Representative Anthropic CLI response-channel failure, verbatim from a
+    # run's stored output (the CLI laundered it into the response).
     ("anthropic", "no_credits", "Credit balance is too low"),
     # Anthropic API JSON body, as litellm/SDKs surface it.
     ("anthropic", "no_credits",
@@ -326,7 +328,7 @@ def test_every_kind_has_a_message_template():
 
 
 def test_messages_disambiguate_noclick_credits_and_preserve_detail():
-    """Billing messages must distinguish provider and instance balances while
+    """Billing messages must distinguish provider and platform balances while
     preserving the provider's original detail."""
     for provider, kind, text in POSITIVE_CORPUS:
         match = classify_provider_error(text, channel="error")
@@ -336,10 +338,60 @@ def test_messages_disambiguate_noclick_credits_and_preserve_detail():
         assert text.strip()[:80] in match.message, "original detail must ride along"
 
 
+def test_normalize_moves_laundered_response_to_error_channel():
+    response, error = normalize_turn_result("Credit balance is too low", None)
+    assert response == ""
+    assert error is not None and "not your NoClick credits" in error
+    assert "Credit balance is too low" in error
+
+
+def test_normalize_rewrites_error_channel():
+    response, error = normalize_turn_result(
+        "partial answer", "API Error: 401 authentication_error: invalid x-api-key"
+    )
+    assert response == "partial answer", "response must survive an error rewrite"
+    assert "Anthropic rejected the API key" in error
+
+
+def test_normalize_leaves_unclassified_error_verbatim(caplog):
+    raw = "sandbox exploded: SIGKILL during turn"
+    response, error = normalize_turn_result("", raw)
+    assert error == raw, "unknown errors must pass through untouched"
+    assert any("unclassified" in r.message for r in caplog.records)
+
+
+def test_normalize_passes_clean_turns_through():
+    assert normalize_turn_result("a real answer", None) == ("a real answer", None)
+    long_reply = "credit balance is too low " * 30
+    response, error = normalize_turn_result(long_reply, None)
+    assert response == long_reply and error is None
+
+
 def test_format_provider_message_unknown_provider_has_no_dead_links():
     msg = format_provider_message("unknown", "invalid_key", "Invalid API key")
     assert "http" not in msg.split("Provider message:")[0]
 
 
-def test_classifier_tolerates_non_string():
-    assert classify_provider_error({"not": "a string"}) is None
+class TestBoundaryCoercion:
+    """The turn-completion payload is sandbox-authored JSON — error/response
+    slots occasionally arrive as structured objects (codex app-server error
+    items). A dict here 500'd the whole callback (2026-07-17), which the daemon
+    retried into repeated 500s; the boundary must coerce, never crash."""
+
+    def test_dict_error_is_coerced_not_crashed(self):
+        from nodes.agent.provider_errors import normalize_turn_result
+
+        response, error = normalize_turn_result(
+            "", {"code": "usage_limit", "message": "quota exceeded"})
+        assert isinstance(error, str) and "usage_limit" in error
+
+    def test_dict_response_is_coerced(self):
+        from nodes.agent.provider_errors import normalize_turn_result
+
+        response, error = normalize_turn_result({"text": "hi"}, None)
+        assert isinstance(response, str) and "hi" in response
+
+    def test_classifier_tolerates_non_string(self):
+        from nodes.agent.provider_errors import classify_provider_error
+
+        assert classify_provider_error({"not": "a string"}) is None

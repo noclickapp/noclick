@@ -63,6 +63,11 @@ PLAN_GATE_ALERT = "billing.plan_gate_alert"
 # (user_data, action, details=None) -> None, fire-and-forget.
 ACTIVITY_SIGNAL = "activity.signal"
 
+# The live public URLs a workflow is reachable at (published apps, hosted MCP
+# links) for the builder's and the agent's view of it: async (pool, workflow_id)
+# -> list. Without one a workflow has no public endpoints to describe.
+PUBLIC_ENDPOINTS = "workflow.public_endpoints"
+
 _providers: Dict[str, Any] = {}
 
 

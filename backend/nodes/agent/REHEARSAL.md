@@ -68,20 +68,34 @@ available — generation is inline in the agent's turn, and Cerebras serves that
 model fast enough not to be felt. Temperature low; the goal is plausible, not
 creative.
 
-Session state is keyed by the rehearsal conversation id and lives in Redis so
-the fabricated world stays consistent across tool calls and backend restarts.
+Session state is keyed by `(workflow_id, execution_id)` and lives in Redis, not
+process memory: CLI-harness tool calls arrive from a sandbox over the tool MCP endpoint
+and may land in a different process than the one that started the run.
 
 ### Where it hooks
 
-There is one interception point: `nodes/agent/tool_execution.py`, beside
-`_enforce_field_scopes`. SDK agents call `execute_tool` directly. Local CLI
-harnesses expose tools through their turn-scoped MCP endpoint, whose
-`tools/call` handler also calls `execute_tool` with the same node and tool
-configuration.
+Two mirrors, exactly as per-tool **field scoping** already does — the codebase
+maintains that pair for precisely this reason, because the two runtimes reach
+tools by different routes:
 
-**Rehearsal is looked up, not threaded.** `execute_tool` already has the agent
-node and its conversation id, so it asks Redis whether that conversation is
-rehearsing. No rehearsal flag is copied into tool definitions or MCP payloads.
+- `nodes/agent/tool_execution.py` — beside `_enforce_field_scopes`. In-process
+  SDK agent.
+- `nodes/core/run_op.py` — beside `_check_field_scopes`. The path CLI-harness
+  calls take over the tool MCP endpoint.
+
+Hooking only one leaves the other route executing for real.
+
+**Rehearsal is looked up, not threaded.** Field scopes ride in the per-tool
+`info` dict because they are a property of the tool; a rehearsal is a property of
+the *run*, and both mirrors already hold an identifier for it —
+`run_node_op_tool` takes `conversation_id`, the in-process path has the execution
+context. So the gate is a Redis lookup ("is this conversation rehearsing?"),
+which needs no new parameter through the tool capability, the bundle, or the tool
+config, and works cross-container for free.
+
+It also fails safe in the right direction: `run_node_op_tool` is shared with the
+hosted-MCP endpoint, whose calls carry their own `mcp-host:{id}` conversation and
+therefore can never match a rehearsal key.
 
 In scripted mode the interception is **total**: `run_node_operation` is never
 reached, so no credential is resolved and no HTTP request is made. Safety is
@@ -182,7 +196,7 @@ observed schema. This is the largest residual risk in the design.
   a start node. Within that subgraph, GRAPH nodes are a separate execution path
   from tool calls, so `rehearsal_excluded_node_types()` (every credentialed
   type + the credential-less external actors: send-email, http-request, nested
-  workflows) is guarded in two places: the concurrent runner skips them visibly,
+  workflows) is gated in TWO mirrors: the concurrent runner skips them visibly,
   `_execute_node` raises for bypassing callers (iteration bodies). Agents,
   providers, interface/state nodes and pure compute keep executing —
   trigger→transform→agent is a real shape.
@@ -241,7 +255,7 @@ implementation, not mocked separately.
 
 1. Mock session: Redis-backed, one conversation per rehearsal, schema-constrained
    generation.
-2. Interception at the shared `execute_tool` choke point used by SDK agents and
-   the local CLI turn-scoped MCP endpoint.
+2. Interception at both mirrors, with the session id carried on the existing
+   `tool_ctx` channel.
 3. Template rehearsal block, authored for one template end to end.
 4. Interface, iterated live.

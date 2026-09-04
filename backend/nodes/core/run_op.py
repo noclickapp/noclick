@@ -231,3 +231,102 @@ async def run_node_lookup(
         ]
 
     return {"options": options, "next_page_token": next_token}
+
+async def run_node_op_tool(
+    info: Dict[str, Any],
+    arguments: Optional[Dict[str, Any]],
+    *,
+    user_id: str,
+    workflow_id: Optional[str] = None,
+    organization_id: Optional[str] = None,
+    conversation_id: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Dispatch one node_op / node_op_lookup tool call (build_node_op_tools
+    config shape) to the graph-free seam. Container-agnostic — shared by the
+    hosted MCP endpoint and the shadow-tool cross-container fallback, so a
+    tool call can execute on ANY backend container, not just the one holding
+    the live agent."""
+    # Mirror of the rehearsal gate in nodes/agent/tool_execution.py. This is the
+    # path MCP-served tool calls take (CLI harnesses, hosted MCP links), so a
+    # gate on only the in-process side would leave them executing for real
+    # during a rehearsal.
+    #
+    # Keyed on the conversation, which the hosted-MCP endpoint also reaches this
+    # function with — its `mcp-host:{id}` conversations can never match a
+    # rehearsal key, so sharing this function is safe.
+    from nodes.agent.rehearsal import is_rehearsing
+
+    if await is_rehearsing(conversation_id):
+        from nodes.agent.rehearsal import RehearsalUnavailable, mock_tool_call
+
+        try:
+            simulated = await mock_tool_call(
+                conversation_id=conversation_id,
+                tool_name=info.get("name") or info.get("operation") or "tool",
+                arguments=arguments or {},
+                description=info.get("_description") or info.get("description"),
+                node_type=info.get("node_type"),
+                operation=info.get("operation"),
+            )
+        except RehearsalUnavailable as e:
+            return {"success": False, "error": f"rehearsal could not simulate this call: {e}"}
+        return simulated if isinstance(simulated, dict) else {"success": True, "data": simulated}
+
+    if info.get("tool_type") == "node_op_lookup":
+        fields = info.get("fields") or {}
+        field = (arguments or {}).get("field")
+        if field not in fields:
+            return {"success": False, "error": f"Unknown field '{field}'. Valid fields: {sorted(fields)}"}
+        context = (arguments or {}).get("context")
+        scopes = info.get("field_scopes") or {}
+        scope_for_field = scopes.get(field) if isinstance(scopes, dict) else None
+        return await run_node_lookup(
+            node_type=info["node_type"],
+            field_name=fields[field],
+            user_id=user_id,
+            credential_id=info.get("credential_id"),
+            context=context if isinstance(context, dict) else None,
+            page_token=(arguments or {}).get("page_token"),
+            search=(arguments or {}).get("search"),
+            organization_id=organization_id,
+            workflow_id=workflow_id,
+            allowed_values=scope_for_field if isinstance(scope_for_field, list) else None,
+        )
+
+    # Resource-scope enforcement on the cross-container path (mirror of
+    # _execute_node_op_tool in nodes/agent/tool_execution.py).
+    scope_error = _check_field_scopes(arguments or {}, info.get("field_scopes"))
+    if scope_error:
+        return {"success": False, "error": scope_error}
+
+    return await run_node_operation(
+        node_type=info["node_type"],
+        operation=info["operation"],
+        arguments=arguments or {},
+        user_id=user_id,
+        credential_id=info.get("credential_id"),
+        organization_id=organization_id,
+        workflow_id=workflow_id,
+        conversation_id=conversation_id,
+    )
+
+
+def _check_field_scopes(
+    arguments: Dict[str, Any], field_scopes: Optional[Any],
+) -> Optional[str]:
+    """Standalone scope check for the cross-container path. The
+    in-process path uses the same logic in nodes/agent/tool_execution.py."""
+    if not isinstance(field_scopes, dict):
+        return None
+    for field, allowed in field_scopes.items():
+        if not isinstance(allowed, list) or not allowed:
+            continue
+        value = arguments.get(field)
+        if value is None or value == "":
+            continue
+        if value not in allowed:
+            return (
+                f"'{field}' is restricted to a specific set of resources for this "
+                f"tool. Allowed values: {sorted(allowed)}. Got: {value!r}."
+            )
+    return None

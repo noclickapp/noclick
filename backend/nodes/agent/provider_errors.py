@@ -1,15 +1,57 @@
-"""Classify provider billing and authentication failures surfaced by agent harnesses.
+"""Classify LLM-provider billing/auth errors surfaced through agent harnesses.
 
-Some CLI tools relay provider failures through the normal response channel. This
-module recognizes provider-owned error contracts, preserves the original detail,
-and moves genuine failures onto the error channel with actionable guidance.
+Why this exists: a user's provider API key had no prepaid credits, and a CLI
+harness relayed the provider's billing rejection as the assistant's REPLY — the
+run completed "successfully" with the response "Credit balance is too low". On a
+platform with its own visible credit balance, the only reasonable misreading is
+that the platform's credits ran out.
+
+Design principles (deliberate, keep them when extending):
+
+- **Match provider-origin signals only** — error slugs and phrases minted by
+  the providers themselves (``insufficient_quota``, ``authentication_error``,
+  "credit balance is too low"). Providers treat these as API contract and
+  rarely change them. NEVER match harness wrapper text ("API Error:",
+  "turn failed:") — harnesses reformat every release; that's the overfit trap.
+- **Response-channel matches are length-gated.** Harnesses launder provider
+  errors into the response channel, so we classify responses too — but only
+  short ones (a provider error surfaced as a response IS the whole response).
+  A long legitimate reply that happens to discuss quotas must never be
+  reclassified.
+- **Never destroy the original.** The rewritten message always carries the
+  provider's verbatim text, so a misclassification degrades to extra guidance,
+  not lost information.
+- **Instrument the misses.** An error-channel text that classifies to nothing
+  logs a distinctive warning and stamps the current span
+  (``agent.provider_error.unclassified``) — new error shapes surface in
+  tracing instead of silently rotting the rule table. When one shows up:
+  add a fixture to ``tests/test_provider_errors.py``'s corpus, then the rule.
+
+The rule table is intentionally small. Coverage grows corpus-first: every rule
+exists because a real string in the test corpus demands it.
 """
 
+import json
+import logging
 import re
 from dataclasses import dataclass
 from typing import Dict, Optional, Tuple
 
 from billing.exceptions import INSUFFICIENT_CREDITS_RE, InsufficientBalanceError
+
+
+def _coerce_text(value) -> Optional[str]:
+    """Best-effort string form of a sandbox-authored payload slot (str pass-
+    through, structured objects → JSON) — the harness side is not a typed
+    boundary, so never assume."""
+    if value is None or isinstance(value, str):
+        return value
+    try:
+        return json.dumps(value, default=str)
+    except Exception:
+        return str(value)
+
+logger = logging.getLogger(__name__)
 
 # A provider error surfaced through the response channel is the entire
 # response; real replies that merely mention credits/quotas are longer.
@@ -148,6 +190,8 @@ _PROVIDER_META: Dict[str, Dict[str, str]] = {
         "keys_url": "https://opencode.ai/auth",
     },
     "unknown": {"label": "the model provider", "billing_url": "", "keys_url": ""},
+    # Platform, not a model provider: its billing_url is filled in by _meta()
+    # from the platform's own top-up link, when it sells credits at all.
     "noclick": {
         "label": "NoClick",
         "billing_url": "",
@@ -156,7 +200,8 @@ _PROVIDER_META: Dict[str, Dict[str, str]] = {
 }
 
 # Per-(kind) message templates. Every billing-flavored kind explicitly
-# disambiguates a provider balance from the instance credit pool.
+# disambiguates the provider's balance from NoClick credits — the confusion
+# that motivated this module.
 _TEMPLATES: Dict[str, str] = {
     # The instance's own key (the builder's), rejected in the settings form.
     "invalid_key_instance": "{label} rejected this key. Check it{keys_hint}.",
@@ -222,10 +267,35 @@ _EXTRA_GUIDANCE: Dict[Tuple[str, str], str] = {
 # Kinds the user cannot act on get NO action. A "Retry" button on a provider
 # outage would just be the Run button wearing a disguise, and a button that
 # does nothing useful teaches people to ignore the ones that do.
-def _action_for(kind: str, provider: str) -> Optional[Dict[str, str]]:
+def _platform_topup_url() -> str:
+    """The platform's own top-up deep link, or "" where nothing sells credits
+    (no `CREDIT_CTA` registered). The dashboard consumes ?action=topup into the
+    tier-correct popup — the same CTA the credits email uses."""
+    from utils.capabilities import CREDIT_CTA, capability
+
+    if capability(CREDIT_CTA) is None:
+        return ""
+    from utils.email import FRONTEND_URL
+
+    return f"{FRONTEND_URL}/dashboard?action=topup"
+
+
+def _meta(provider: str) -> Dict[str, str]:
     meta = _PROVIDER_META.get(provider, _PROVIDER_META["unknown"])
+    if provider == "noclick":
+        meta = {**meta, "billing_url": _platform_topup_url()}
+    return meta
+
+
+def _action_for(kind: str, provider: str) -> Optional[Dict[str, str]]:
+    meta = _meta(provider)
     if provider == "noclick" and kind == "no_credits":
-        return None
+        if not meta["billing_url"]:
+            return None  # nothing to buy in this edition
+        # In-place popup, not a navigation: the user is already in the app,
+        # and BalanceDisplay owns the tier-correct top-up/upgrade flow. The
+        # url rides along for surfaces without that listener.
+        return {"type": "open_topup", "label": "Add credits", "url": meta["billing_url"]}
     if kind == "invalid_key":
         return {"type": "open_credentials", "label": "Open credentials"}
     if kind in ("no_credits", "account_blocked"):
@@ -245,7 +315,7 @@ def format_provider_message(provider: str, kind: str, detail: str) -> str:
 
     Shared with connect-time key validation so the connect-form rejection and
     the runtime failure read identically."""
-    meta = _PROVIDER_META.get(provider, _PROVIDER_META["unknown"])
+    meta = _meta(provider)
     billing_hint = f" Add credits at {meta['billing_url']}." if meta["billing_url"] else ""
     keys_hint = f" or create a new one at {meta['keys_url']}" if meta["keys_url"] else ""
     body = (_TEMPLATE_OVERRIDES.get((kind, provider)) or _TEMPLATES[kind]).format(
@@ -451,3 +521,48 @@ def _stamp_span(key: str, value) -> None:
             span.set_attribute(key, value)
     except Exception:
         pass
+
+
+def normalize_turn_result(
+    response: str, error: Optional[str]
+) -> Tuple[str, Optional[str]]:
+    """The one turn-consumption policy, applied where harness results enter the
+    backend (all CLI harnesses funnel through the turn-completion callback).
+
+    - An error that classifies is rewritten with actionable guidance.
+    - A *response* that classifies (a provider error the harness laundered into
+      the reply channel) is MOVED to the error channel — the run must fail, not
+      complete with a five-word billing error as the agent's answer.
+    - An error that doesn't classify is left verbatim and logged/stamped as
+      unclassified, so new provider error shapes surface in monitoring and can
+      be added to the corpus + rule table.
+
+    Both slots are coerced to strings first: the payload is sandbox-authored
+    JSON and harnesses occasionally emit structured objects (e.g. codex
+    app-server error items) — a dict here 500'd the whole turn-completion
+    callback (2026-07-17), which the daemon then retried into repeated 500s.
+    """
+    response = _coerce_text(response) or ""
+    error = _coerce_text(error)
+    if error:
+        match = classify_provider_error(error, channel="error")
+        if match:
+            _stamp_span("agent.provider_error.kind", f"{match.provider}:{match.kind}")
+            return response, match.message
+        _stamp_span("agent.provider_error.unclassified", True)
+        logger.warning(
+            "[provider_errors] unclassified agent error (add to corpus if provider-origin): %.300s",
+            error,
+        )
+        return response, error
+
+    match = classify_provider_error(response, channel="response")
+    if match:
+        _stamp_span("agent.provider_error.kind", f"{match.provider}:{match.kind}")
+        _stamp_span("agent.provider_error.laundered_response", True)
+        logger.warning(
+            "[provider_errors] provider error laundered into response channel (%s:%s): %.200s",
+            match.provider, match.kind, response,
+        )
+        return "", match.message
+    return response, error

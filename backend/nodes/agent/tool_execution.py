@@ -637,7 +637,11 @@ async def _execute_schedule_alarm(node, arguments, tool_info) -> Dict[str, Any]:
             node.node_id, wf_nodes, wf_edges, getattr(node, "_execution_inputs", {})
         )
     else:
-        upstream_outputs = {}
+        # A tool call served over MCP (CLI harnesses) runs with no live execution
+        # inputs in this process, so the snapshot was captured at tool injection
+        # time and stashed under the per-turn executor_key. Use it here so
+        # schedule_alarm still bakes a non-empty upstream_node_outputs.
+        upstream_outputs = getattr(node, "_prefetched_upstream_outputs", None) or {}
 
     alarm_payload = {
         "source": "alarm",

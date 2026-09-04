@@ -45,9 +45,21 @@ class _FakeCtx:
         self.done.append(nid)
 
 
-async def test_normal_output_flows_downstream():
+async def test_delivery_skips_downstream_and_completes():
+    # On a daemon delivery (awaiting marker) the run skips downstream (the response +
+    # downstream come as a fresh run via the callback) and COMPLETES — not suspends.
     assert AgentExecutionStrategy().handles("agent") is True
     assert AgentExecutionStrategy().handles("automation-slack") is False
+    node = {"id": "agent-1", "type": "agent", "config": {}}
+    ctx = _FakeCtx(node, {"type": "agent", "status": "awaiting_agent_turn"}, {"agent-1": {"slack-1", "email-1"}})
+    result = await AgentExecutionStrategy().execute(ctx)
+    assert result.success
+    assert result.body_nodes_handled == {"slack-1", "email-1"}  # downstream claimed
+    assert set(ctx.skipped) == {"slack-1", "email-1"}           # and skipped
+    assert ctx.completed == ["agent-1"]
+
+
+async def test_normal_output_flows_downstream():
     node = {"id": "agent-1", "type": "agent", "config": {}}
     ctx = _FakeCtx(node, {"type": "agent", "status": "completed", "response": "hi"}, {"agent-1": {"slack-1"}})
     result = await AgentExecutionStrategy().execute(ctx)
@@ -57,10 +69,32 @@ async def test_normal_output_flows_downstream():
     assert ctx.completed == ["agent-1"]
 
 
+async def test_mocked_output_does_not_take_deliver_path():
+    # A mockedOutput carrying the marker must NOT take the deliver path — there's no
+    # real turn/daemon behind it, so its downstream must run normally here.
+    node = {"id": "agent-1", "type": "agent",
+            "config": {"mockedOutput": {"status": "awaiting_agent_turn"}}}
+    ctx = _FakeCtx(node, {"unused": True}, {"agent-1": {"slack-1"}})
+    result = await AgentExecutionStrategy().execute(ctx)
+    assert result.body_nodes_handled == set()  # downstream flows
+    assert ctx.skipped == []
+
+
+async def test_turn_completion_reentry_output_flows_downstream():
+    # The short-circuit re-entry returns a completed output → must NOT suspend
+    # (this IS the downstream run).
+    node = {"id": "agent-1", "type": "agent", "config": {}}
+    ctx = _FakeCtx(node, {"type": "agent", "status": "completed", "response": "the answer"}, {"agent-1": {"slack-1"}})
+    result = await AgentExecutionStrategy().execute(ctx)
+    assert result.body_nodes_handled == set()
+    assert ctx.skipped == []
+
+
 async def test_failed_output_halts_downstream():
     # Failures reported IN the output (credit gate, provider errors) must halt
-    # exactly like a raised exception; otherwise error strings flow downstream
-    # as ordinary data and mask the root cause.
+    # exactly like a raised exception — the strategy skipping the shared
+    # check let error strings flow downstream as data, where a consumer's parse
+    # failure masked the root cause.
     node = {"id": "agent-1", "type": "agent", "config": {}}
     ctx = _FakeCtx(
         node,

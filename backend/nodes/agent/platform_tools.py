@@ -622,6 +622,16 @@ async def describe_workflow_impl(
     gs._credential_health = await fetch_credential_health_for_ids(
         pool, gs.attached_credential_ids()
     )
+    # Live public URLs (published apps, hosted MCP links) — read-only here:
+    # describing a workflow must never mint a capability. Fails open.
+    from utils.capabilities import PUBLIC_ENDPOINTS, capability
+
+    fetch_public_endpoints = capability(PUBLIC_ENDPOINTS)
+    if fetch_public_endpoints is not None:
+        try:
+            gs._public_endpoints = await fetch_public_endpoints(pool, workflow_id)
+        except Exception:
+            logger.warning("[describe_workflow] public endpoint fetch failed", exc_info=True)
     snapshot = gs.to_xml()
 
     anchor = focus or node_id
@@ -874,3 +884,66 @@ async def execute_prompt_builder(node: Any, arguments: Dict[str, Any]) -> Dict[s
         conversation_key=getattr(node, "_conversation_key", None),
         prompt=str(arguments.get("prompt") or ""),
     )
+
+
+async def execute_platform_tool_from_ctx(
+    st_config: Dict[str, Any], arguments: Dict[str, Any], pool,
+) -> Dict[str, Any]:
+    """Pool-local execution for MCP-served tool calls (CLI harnesses):
+    everything needed rides the token's tool_ctx (merged into st_config by the
+    pool), so this runs identically in any backend process — no executor
+    callback required."""
+    tool_type = st_config.get("tool_type")
+    if tool_type == "submit_feedback":
+        return await submit_feedback_impl(
+            pool=pool,
+            user_id=st_config.get("user_id"),
+            workflow_id=st_config.get("workflow_id"),
+            node_id=st_config.get("agent_node_id"),
+            execution_id=st_config.get("execution_id"),
+            conversation_id=st_config.get("conversation_id"),
+            model=st_config.get("model"),
+            feedback=str(arguments.get("feedback") or ""),
+            issue_key=str(arguments.get("issue_key") or "") or None,
+        )
+    if tool_type == "prompt_builder":
+        return await prompt_builder_impl(
+            pool=pool,
+            user_id=st_config.get("user_id"),
+            workflow_id=st_config.get("workflow_id"),
+            node_id=st_config.get("agent_node_id"),
+            conversation_id=st_config.get("conversation_id"),
+            conversation_key=st_config.get("conversation_key"),
+            prompt=str(arguments.get("prompt") or ""),
+        )
+    if tool_type == "describe_workflow":
+        return await describe_workflow_impl(
+            pool,
+            user_id=st_config.get("user_id"),
+            workflow_id=st_config.get("workflow_id"),
+            node_id=st_config.get("agent_node_id"),
+            focus=str(arguments.get("focus") or "") or None,
+            in_iteration=bool(st_config.get("in_iteration_fanout")),
+        )
+    if tool_type == "builder_respond":
+        return await builder_respond_impl(
+            pool,
+            user_id=st_config.get("user_id"),
+            workflow_id=st_config.get("workflow_id"),
+            conversation_id=st_config.get("conversation_id"),
+            answers=arguments.get("answers") if isinstance(arguments.get("answers"), dict) else None,
+            message=arguments.get("message"),
+        )
+    if tool_type == "email_user":
+        return await email_user_impl(
+            pool,
+            user_id=st_config.get("user_id"),
+            organization_id=st_config.get("organization_id"),
+            workflow_id=st_config.get("workflow_id"),
+            node_id=st_config.get("agent_node_id"),
+            conversation_id=st_config.get("conversation_id"),
+            execution_id=st_config.get("execution_id"),
+            subject=str(arguments.get("subject") or ""),
+            body=str(arguments.get("body") or ""),
+        )
+    return {"success": False, "error": f"unknown platform tool type {tool_type!r}"}
