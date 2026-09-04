@@ -97,7 +97,7 @@ jobs:
             exit "$audit_status"
           }
           printf '%s\n' "$audit_output"
-          if [[ "$audit_output" != *"No known vulnerabilities found"* ]]; then
+          if [[ "$audit_output" != *"vulnerabilities found"* ]]; then
             echo "::warning title=npm security audit unavailable::The registry could not complete the backend dependency audit; see the step log."
           fi
       - run: npm audit --omit=dev
@@ -110,7 +110,7 @@ jobs:
             exit "$audit_status"
           }
           printf '%s\n' "$audit_output"
-          if [[ "$audit_output" != *"No known vulnerabilities found"* ]]; then
+          if [[ "$audit_output" != *"vulnerabilities found"* ]]; then
             echo "::warning title=npm security audit unavailable::The registry could not complete the frontend dependency audit; see the step log."
           fi
 
