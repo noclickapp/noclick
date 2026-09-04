@@ -128,7 +128,7 @@ async def codex_start() -> Dict[str, Any]:
         if resp.status_code == 404:
             raise OAuthFlowError("Device-code login is not available. Use an API key instead.")
         if not resp.is_success:
-            logger.error(f"[codex_start] device code request failed: {resp.status_code} HTTP {resp.status_code}")
+            logger.error(f"[codex_start] device code request failed: HTTP {resp.status_code}")
             raise OAuthFlowError(f"Failed to request device code (status {resp.status_code})")
         data = resp.json()
 
@@ -157,7 +157,7 @@ async def codex_complete(poll: Dict[str, Any]) -> Dict[str, Any]:
         if resp.status_code in (403, 404):
             return {"status": "pending"}
         if not resp.is_success:
-            logger.error(f"[codex_complete] poll failed: {resp.status_code} HTTP {resp.status_code}")
+            logger.error(f"[codex_complete] poll failed: HTTP {resp.status_code}")
             raise OAuthFlowError(f"Device code poll failed (status {resp.status_code})")
         code_data = resp.json()
 
@@ -173,7 +173,7 @@ async def codex_complete(poll: Dict[str, Any]) -> Dict[str, Any]:
             },
         )
         if not token_resp.is_success:
-            logger.error(f"[codex_complete] token exchange failed: {token_resp.status_code} HTTP {token_resp.status_code}")
+            logger.error(f"[codex_complete] token exchange failed: HTTP {token_resp.status_code}")
             raise OAuthFlowError("Failed to exchange device code for tokens")
         tokens = token_resp.json()
 
@@ -279,7 +279,7 @@ async def claude_code_complete(poll: Dict[str, Any]) -> Dict[str, Any]:
             json=token_body,
         )
         if not token_resp.is_success:
-            logger.error(f"[claude_code_complete] token exchange failed: {token_resp.status_code} HTTP {token_resp.status_code}")
+            logger.error(f"[claude_code_complete] token exchange failed: HTTP {token_resp.status_code}")
             raise OAuthFlowError(
                 f"Claude rejected the authorization code ({token_resp.status_code}). "
                 f"Codes are single-use and short-lived — restart and paste the new code promptly."
@@ -332,14 +332,26 @@ AGENT_OAUTH_FLOWS: Dict[str, AgentOAuthFlow] = {
 }
 
 # Base agent provider (agent_<provider>) → the OAuth credential type a person can
-# also provide for it. Plain provider credentials remain API-key-only.
+# also provide for it. Only providers whose primary/only sensible external auth is
+# OAuth are listed; plain agent_openai/agent_anthropic keep API-key-only requests.
 AGENT_PROVIDER_OAUTH_TYPE: Dict[str, str] = {
     "codex": "agent_codex_oauth",
     "claude_code": "agent_claude_code_oauth",
 }
 
-# Every provider exposed by this edition has an operator-key path.
-AGENT_OAUTH_ONLY_PROVIDERS = frozenset()
+# Providers with NO API-key path — OAuth sign-in is the only way to provide them.
+AGENT_OAUTH_ONLY_PROVIDERS: set = set()
+
+
+def register_agent_oauth_flow(flow: AgentOAuthFlow, *, provider: str, oauth_only: bool = False) -> None:
+    """A sign-in this deployment offers beyond the two above — a provider it
+    has an agreement with. Registered before serving traffic; the credential
+    provide endpoints, the socket handlers and the instance-status report all
+    read these tables at call time."""
+    AGENT_OAUTH_FLOWS[flow.credential_type] = flow
+    AGENT_PROVIDER_OAUTH_TYPE[provider] = flow.credential_type
+    if oauth_only:
+        AGENT_OAUTH_ONLY_PROVIDERS.add(provider)
 
 
 def get_agent_oauth_flow(credential_type: str) -> Optional[AgentOAuthFlow]:

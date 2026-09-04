@@ -130,13 +130,41 @@ export function getAgentCredentialType(provider: ModelProvider): string {
     return `agent_${provider}`;
 }
 
-// Subscription credentials accepted in place of an API key for the
-// authentication flows that ship in this edition.
+// Subscription-OAuth credential type that stands in for a provider's
+// `agent_<provider>` key. When the user signs in with ChatGPT Plus / Claude
+// Pro-Max / GitHub Copilot / SuperGrok instead of pasting an API key, the
+// credential is stored under the OAuth-specific type — so every surface that
+// asks "is this provider credentialed?" has to accept it too.
+//
+// The OpenCode wrapper entries (OPENAI / XAI / ANTHROPIC) exist because
+// opencode-ai can reach those providers over the same OAuth clients:
+//
+// OPENAI ← agent_codex_oauth: opencode-ai's CodexAuthPlugin uses the same
+// OAuth CLIENT_ID as OpenAI's codex CLI. Eligible models are limited to the
+// daily-refreshed Codex CLI list — AgentCredentialsForm hides Codex OAuth from
+// the OPENAI dropdown when the selected sub-model isn't in that list (see
+// isChatGptPlusSupported). The lookup below stays model-agnostic so a
+// previously-saved OAuth selection still resolves; the runtime guard in
+// opencode.py catches any stale combination with an actionable error.
+//
+// XAI ← agent_xai_oauth: opencode-ai's xAI plugin uses the same Grok-CLI
+// client. Tokens are interchangeable for all xai/* models.
+//
+// ANTHROPIC ← agent_claude_code_oauth: opencode-ai dropped its bundled
+// Anthropic OAuth provider in v1.3.0, but NoClick re-enables it via a vendored
+// community plugin bundled with the hosted OpenCode runtime (see backend/nodes/agent/
+// handlers/opencode_plugins/anthropic_oauth.mjs). The plugin's fetch
+// interceptor reads the OAuth credential out of auth.json and rewrites
+// api.anthropic.com requests to use Bearer auth + the anthropic-beta flags.
+//
+// Mirrors backend AGENT_OAUTH_CREDENTIAL_TYPES (nodes/agent/config/providers.py).
 const AGENT_OAUTH_ALIAS: Partial<Record<ModelProvider, string>> = {
     [ModelProvider.CODEX]: 'agent_codex_oauth',
     [ModelProvider.OPENAI]: 'agent_codex_oauth',
     [ModelProvider.CLAUDE_CODE]: 'agent_claude_code_oauth',
     [ModelProvider.ANTHROPIC]: 'agent_claude_code_oauth',
+    [ModelProvider.XAI]: 'agent_xai_oauth',
+    [ModelProvider.GITHUB_COPILOT]: 'agent_github_copilot_oauth',
 };
 
 /** Every credential_type that satisfies `provider` for an agent: the direct
@@ -204,11 +232,11 @@ export function agentAllowsUsageBased(
     selectedModel: string | undefined,
     provider: string | null
 ): boolean {
+    if (!provider) return false;
+    if (harnessOf(selectedModel) !== LLM_HARNESS) return false;
     // Usage-based billing is the hosted service's platform key; a self-hosted
     // instance has no such thing to fall back to.
     if (isLocalEdition()) return false;
-    if (!provider) return false;
-    if (harnessOf(selectedModel) !== LLM_HARNESS) return false;
     return (
         getProviderMetadata(provider as ModelProvider)?.allowUsageBased ?? false
     );
@@ -359,8 +387,11 @@ export function getAgentEffectiveModel(
 // derive the provider from the id prefix. Order matters only for
 // readability; prefixes don't overlap.
 //
-// Supported provider-prefixed models resolve to provider metadata so the
-// credential UI can offer an operator-supplied API key.
+// All twelve prefixes the OpenCode picker can produce (the nine priority +
+// three of the four free providers; github-copilot is omitted because its
+// auth is device-code OAuth, not env-var — see note below) are covered
+// here so wrapping a sub-model in OpenCode always resolves to a provider
+// with a credential schema and dashboard URL.
 //
 // Returns null for ids that don't carry a recognisable provider prefix so
 // callers can fall through to their own default (typically the wrapper
@@ -411,5 +442,12 @@ export function inferProviderFromPrefix(model: string): ModelProvider | null {
     // ── OpenCode free providers ────────────────────────────────────────
     if (model.startsWith('github-models/')) return ModelProvider.GITHUB_MODELS;
     if (model.startsWith('nvidia/')) return ModelProvider.NVIDIA;
+    // github-copilot uses device-code OAuth (github.com/login/device)
+    // rather than an env-var API key. The form's OAuth-path special-case
+    // renders <GithubCopilotOAuth /> instead of a paste-key field. The
+    // resulting agent_github_copilot_oauth credential is translated by
+    // opencode.py into OPENCODE_AUTH_CONTENT at sandbox-injection time.
+    if (model.startsWith('github-copilot/'))
+        return ModelProvider.GITHUB_COPILOT;
     return null;
 }

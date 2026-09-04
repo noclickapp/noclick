@@ -7,6 +7,12 @@ from nodes.agent.config.providers import (
     get_provider_credentials,
     validate_provider_credentials,
 )
+from nodes.agent.harness_oauth_flows import AGENT_PROVIDER_OAUTH_TYPE
+
+requires_hosted_signins = pytest.mark.skipif(
+    "github_copilot" not in AGENT_PROVIDER_OAUTH_TYPE,
+    reason="this edition registers no Copilot/xAI sign-in",
+)
 
 
 def test_opencode_zen_requires_zen_key_not_openai_fallback():
@@ -33,3 +39,8 @@ def test_other_providers_unaffected():
     validate_provider_credentials("openai/gpt-4o-mini", {"OPENAI_API_KEY": "sk-x"})
 
 
+@requires_hosted_signins
+def test_github_copilot_uses_its_oauth_token_not_openai_fallback():
+    required, provider = get_provider_credentials("github-copilot/gpt-4o")
+    assert required == ["GITHUB_COPILOT_ACCESS_TOKEN"]
+    assert provider == "github-copilot"

@@ -120,6 +120,7 @@ export enum ModelProvider {
     // OPENCODE_API_KEY env var, same opencode.ai/auth dashboard — the Go
     // subscription just unlocks a different catalog).
     GITHUB_MODELS = 'github_models',
+    GITHUB_COPILOT = 'github_copilot',
     NVIDIA = 'nvidia',
 
     // Gateways
@@ -662,8 +663,8 @@ export const PROVIDER_METADATA: Record<ModelProvider, ProviderMetadata> = {
         // the user picks a specific openclaw_model (anthropic/*, openai/*,
         // groq/*, …) inferProviderFromPrefix switches the form to that
         // provider's dashboard. Same dynamic-per-sub-model treatment as
-        // OpenCode — credentials are always mandatory for the CLI process
-        // (no NoClick-key fallback path).
+        // OpenCode — credentials are always mandatory inside the CLI
+        // sandbox (no NoClick-key fallback path).
         providerURL: 'https://openrouter.ai/settings/keys',
         requiredApiKeys: [['OPENROUTER_API_KEY']],
         allowUsageBased: false,
@@ -699,13 +700,38 @@ export const PROVIDER_METADATA: Record<ModelProvider, ProviderMetadata> = {
     // env var and the same opencode.ai/auth dashboard. Reusing the
     // OPENCODE entry means a user who already added their Zen key
     // doesn't have to re-add it for Go models.
+    [ModelProvider.GITHUB_COPILOT]: {
+        title: 'GitHub Copilot',
+        // Paid Copilot subscription. OAuth-only — there's no env-var
+        // fallback per models.dev's empty auth.env. The credential
+        // form renders <GithubCopilotOAuth /> instead of an API-key
+        // field; OAuth tokens are minted via opencode-ai's GitHub OAuth
+        // app (client_id Ov23li8tweQw6odWQebz, scope read:user) and
+        // stored as agent_github_copilot_oauth credentials. At runtime
+        // the opencode handler formats them into the OPENCODE_AUTH_CONTENT
+        // JSON shape so the sandbox auths without an interactive
+        // /connect.
+        description: 'Paid Copilot subscription via GitHub OAuth — coding-tuned models with shared GitHub auth',
+        icon: harnessMark(HARNESS_BRANDS.opencode.markSrc, 'GitHub Copilot'),
+        primaryColor: '#24292e',
+        textColor: '#ffffff',
+        providerURL: 'https://github.com/features/copilot',
+        // requiredApiKeys is left non-empty so the "missing creds"
+        // gate still treats this provider as needing a credential, but
+        // the form's OAuth-path special-case renders the OAuth UI
+        // instead of paste-key fields. The actual env-var name is
+        // never used — we inject via OPENCODE_AUTH_CONTENT, not env.
+        requiredApiKeys: [['GITHUB_COPILOT_ACCESS_TOKEN']],
+        allowUsageBased: false,
+    },
     [ModelProvider.GITHUB_MODELS]: {
         title: 'GitHub Models',
         // Free tier of github.com/marketplace/models. Uses a standard
         // GitHub PAT with the `models:read` scope — no Copilot
         // subscription required. NB the env var is GITHUB_TOKEN (this
-        // is also injected by GitHub Actions, which matters if this
-        // metadata is reused in a CI environment).
+        // is the same var GH Actions injects; benign in the agent's
+        // environment but worth noting if anyone reuses this metadata in
+        // a CI context).
         description: 'Free GitHub-hosted model marketplace (PAT with models:read scope)',
         icon: harnessMark(HARNESS_BRANDS.opencode.markSrc, 'GitHub Models'),
         primaryColor: '#24292e',

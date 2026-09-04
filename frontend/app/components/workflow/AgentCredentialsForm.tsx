@@ -44,6 +44,7 @@ import {
 import { isCliAgentModel, cliHarnessBinary } from '~/lib/agentChat';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { isLocalEdition } from '~/lib/edition';
+import { useInstanceCapabilities } from '~/hooks/useInstanceCapabilities';
 
 interface Credential {
     id: string;
@@ -54,13 +55,16 @@ interface Credential {
     updated_at: string;
 }
 
-// CLI agent providers that support an OAuth/subscription sign-in on the public
-// credential-provide page (mirrors harness_oauth_flows.AGENT_PROVIDER_OAUTH_TYPE).
-// Lets the request button surface even for OAuth-only providers (no API key).
-const AGENT_OAUTH_PROVIDERS = new Set<ModelProvider>([
-    ModelProvider.CODEX,
-    ModelProvider.CLAUDE_CODE,
-]);
+// CLI agent providers with a subscription sign-in, keyed the way the backend's
+// instance-status reports them (harness_oauth_flows.AGENT_PROVIDER_OAUTH_TYPE).
+// Which of these THIS instance can complete comes from that report; the request
+// button surfaces for them even when the provider has no API-key path.
+const AGENT_OAUTH_PROVIDER_KEY: Partial<Record<ModelProvider, string>> = {
+    [ModelProvider.CODEX]: 'codex',
+    [ModelProvider.CLAUDE_CODE]: 'claude_code',
+    [ModelProvider.GITHUB_COPILOT]: 'github_copilot',
+    [ModelProvider.XAI]: 'xai',
+};
 
 /**
  * Get human-readable label for an environment variable name.
@@ -246,7 +250,13 @@ export function AgentCredentialsForm({
     //  - Codex: standalone CODEX, or OPENAI inside a CLI wrapper whose sub-model is
     //    ChatGPT-Plus-eligible (agent_codex_oauth is interchangeable with codex CLI).
     //  - Claude Code: standalone CLAUDE_CODE, or ANTHROPIC inside any CLI wrapper.
+    //  - GitHub Copilot / xAI: their respective providers, where this instance
+    //    offers the sign-in (the backend reports which flows can complete).
+    const { agentSignIns } = useInstanceCapabilities();
+    const providerHasSignIn =
+        !!provider && !!AGENT_OAUTH_PROVIDER_KEY[provider] && AGENT_OAUTH_PROVIDER_KEY[provider]! in agentSignIns;
     const oauthCredentialType = useMemo<string | null>(() => {
+        const offered = (key: string) => key in agentSignIns;
         if (
             provider === ModelProvider.CODEX ||
             (provider === ModelProvider.OPENAI &&
@@ -254,16 +264,20 @@ export function AgentCredentialsForm({
                 (!effectiveModel.startsWith('openai/') ||
                     isChatGptPlusSupported(effectiveModel.slice('openai/'.length))))
         ) {
-            return 'agent_codex_oauth';
+            return offered('codex') ? 'agent_codex_oauth' : null;
         }
         if (
             provider === ModelProvider.CLAUDE_CODE ||
             (provider === ModelProvider.ANTHROPIC && isCliAgentModel(selectedModel))
         ) {
-            return 'agent_claude_code_oauth';
+            return offered('claude_code') ? 'agent_claude_code_oauth' : null;
         }
+        if (provider === ModelProvider.GITHUB_COPILOT && offered('github_copilot')) {
+            return 'agent_github_copilot_oauth';
+        }
+        if (provider === ModelProvider.XAI && offered('xai')) return 'agent_xai_oauth';
         return null;
-    }, [provider, selectedModel, effectiveModel]);
+    }, [provider, selectedModel, effectiveModel, agentSignIns]);
 
     // Load saved credentials
     const loadCredentials = useCallback(async () => {
@@ -312,9 +326,12 @@ export function AgentCredentialsForm({
         const oauthAliases: Partial<Record<ModelProvider, string[]>> = {
             [ModelProvider.CODEX]: ['agent_codex_oauth'],
             [ModelProvider.CLAUDE_CODE]: ['agent_claude_code_oauth'],
-            // OpenCode accepts the shared ChatGPT and Claude subscription
-            // credentials for eligible OpenAI/Anthropic sub-models.
+            [ModelProvider.GITHUB_COPILOT]: ['agent_github_copilot_oauth'],
+            // OpenCode wrapper subscription-OAuth aliases: an existing
+            // ChatGPT / Claude / xAI sign-in is valid for the matching
+            // openai/* / anthropic/* / xai/* sub-model inside OpenCode too.
             [ModelProvider.OPENAI]: [],
+            [ModelProvider.XAI]: ['agent_xai_oauth'],
             [ModelProvider.ANTHROPIC]: ['agent_claude_code_oauth'],
         };
 
@@ -888,6 +905,11 @@ export function AgentCredentialsForm({
                     </div>
                 </div>
             ) : (
+                /* Create New Button — hidden for OAuth-only providers like
+                   GITHUB_COPILOT where there's no paste-API-key path. The
+                   OAuth component handles the entire credential creation
+                   for those providers. */
+                provider !== ModelProvider.GITHUB_COPILOT && (
                     <button
                         onClick={() => setIsCreating(true)}
                         className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground dark:text-zinc-500 hover:text-foreground/80 bg-card dark:bg-card/50 hover:bg-accent dark:hover:bg-card border border-border hover:border-foreground/20 rounded-lg transition-all"
@@ -902,10 +924,12 @@ export function AgentCredentialsForm({
                             ? 'Connect with API key'
                             : 'Create new credential'}
                     </button>
+                )
             )}
 
-            {/* Agent CLI subscription sign-in (ChatGPT / Claude). Rendered through
-                the shared AgentOAuthConnect — the same entry
+            {/* Agent CLI subscription sign-in (ChatGPT / Claude, plus whichever
+                others this instance offers). Rendered through the shared
+                AgentOAuthConnect — the same entry
                 point the public credential-provide page uses — so the flow can't
                 diverge between the two surfaces. Which provider applies is decided by
                 `oauthCredentialType` above; the provider→component mapping lives in
@@ -950,10 +974,11 @@ export function AgentCredentialsForm({
                 )}
 
             {/* Ask someone else to provide this credential (via email or a copy-able
-                link). Shown for API-key providers and the OAuth CLI agents shipped
-                in this edition (Codex and Claude Code). */}
+                link). Shown for providers with an API-key path AND for the OAuth CLI
+                agents this instance offers — the provide page offers whichever
+                methods apply (API key and/or sign-in). */}
             {!compact && credentialType && !isCreating &&
-                (requiredKeys.length > 0 || (!!provider && AGENT_OAUTH_PROVIDERS.has(provider))) && (
+                (requiredKeys.length > 0 || providerHasSignIn) && (
                 <CredentialRequestActions credentialType={credentialType} />
             )}
 

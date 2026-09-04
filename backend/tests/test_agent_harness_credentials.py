@@ -6,13 +6,19 @@ capture, so platform keys can't fund them. The only credential-free agent
 configs are the SDK LLM path on an openrouter/* model (platform key + cost
 capture) and the media model types (flat per-unit pricing). Pins the fix for
 the "builder declares done, user hits disconnected-credential on the agent
-node" failure (extension run 068428db, wf 4b71f9bf).
+node" failure.
 """
 
 import re
 from pathlib import Path
-
 import pytest
+from nodes.agent.harness_oauth_flows import AGENT_PROVIDER_OAUTH_TYPE
+
+requires_hosted_signins = pytest.mark.skipif(
+    "github_copilot" not in AGENT_PROVIDER_OAUTH_TYPE,
+    reason="this edition registers no Copilot/xAI sign-in",
+)
+
 
 from nodes.agent.config.providers import (
     AGENT_OAUTH_CREDENTIAL_TYPES,
@@ -58,8 +64,10 @@ def test_no_user_credential_needed(config):
      "agent_anthropic", "agent_claude_code_oauth"),
     ({"model": "openclaw"}, "agent_openrouter", None),  # default sub is openrouter/*
     ({"model": "hermes"}, "agent_openrouter", None),    # default sub is openrouter/*
-    ({"model": "hermes", "hermes_agent_model": "xai/grok-4"},
-     "agent_xai", None),
+    pytest.param(
+        {"model": "hermes", "hermes_agent_model": "xai/grok-4"},
+        "agent_xai", "agent_xai_oauth", marks=requires_hosted_signins,
+    ),
     ({"model": "openclaw", "openclaw_model": "openai/gpt-5"},
      "agent_openai", "agent_codex_oauth"),
     # SDK LLM path on a non-openrouter model needs the user's provider key

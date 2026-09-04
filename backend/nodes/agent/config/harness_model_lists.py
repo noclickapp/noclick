@@ -39,6 +39,18 @@ async def _fetch_models_dev() -> dict:
     from utils.opencode_zen import fetch_models_dev
 
     return await fetch_models_dev()
+
+# Subscription sign-ins a platform registers (cloud registers its own): the
+# picker badge for a provider's models, and whether its models list as free.
+SUBSCRIPTION_BADGES: Dict[str, str] = {}
+SUBSCRIPTION_FREE_PROVIDERS: List[str] = []
+
+
+def register_provider_badge(provider_id: str, badge: str, *, free: bool = False) -> None:
+    SUBSCRIPTION_BADGES[provider_id] = badge
+    if free and provider_id not in SUBSCRIPTION_FREE_PROVIDERS:
+        SUBSCRIPTION_FREE_PROVIDERS.append(provider_id)
+
 def _is_chatgpt_plus_supported(model_id: str) -> bool:
     """Check whether an openai/* sub-model is reachable via ChatGPT Plus OAuth.
 
@@ -91,10 +103,10 @@ async def fetch_opencode_models() -> List[Dict[str, str]]:
         "opencode", "anthropic", "openai", "google", "xai", "groq",
         "deepseek", "mistral", "openrouter",
     ]
-    free_providers = ["opencode-go", "github-models", "nvidia"]
+    free_providers = ["opencode-go", "github-models", "nvidia", *SUBSCRIPTION_FREE_PROVIDERS]
 
     def _make_label(provider_name, name, is_free, ctx, oauth_badges=None):
-        # Append the subscription sign-in badges shipped by this edition
+        # Append "[ChatGPT Plus]" / "[SuperGrok]" / "[Copilot]" badges
         # so the picker tells users at a glance which models are
         # subscription-OAuth eligible — matters because opencode-ai's
         # CodexAuthPlugin only accepts a restricted gpt-5.X subset for
@@ -124,12 +136,18 @@ async def fetch_opencode_models() -> List[Dict[str, str]]:
 
         Mirrors opencode-ai's plugin filters:
           • CodexAuthPlugin (codex.ts): ChatGPT Plus accepts the
-            gpt-5.X subset defined in _is_chatgpt_plus_supported.          • Anthropic Claude Pro/Max: badge added when the optional
-            opencode-claude-auth plugin is installed.
+            gpt-5.X subset defined in _is_chatgpt_plus_supported.
+          • Registered sign-ins (register_provider_badge) add their own badge.
+          • Anthropic Claude Pro/Max: badge added when our vendored
+            opencode-claude-auth plugin is bundled (see the Modal
+            image setup — re-enables OAuth that opencode-ai itself
+            dropped in v1.3.0).
         """
         badges: List[str] = []
         if provider_id == 'openai' and _is_chatgpt_plus_supported(model_id):
             badges.append('ChatGPT Plus')
+        if provider_id in SUBSCRIPTION_BADGES:
+            badges.append(SUBSCRIPTION_BADGES[provider_id])
         if provider_id == 'anthropic':
             # Re-enabled via the vendored opencode-claude-auth plugin;
             # the badge tells users a Claude Pro/Max subscription works

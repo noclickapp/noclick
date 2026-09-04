@@ -508,13 +508,40 @@ WRAPPER_ID_BY_MODEL_TYPE: Dict[str, str] = {
 
 # Subscription-OAuth credential_type per provider stem. Mirrors the FE alias
 # map in agentCredentialModel.ts:getAgentCredentialIdForProvider; the OAuth
-# sign-in registry mints exactly these type strings.
+# socket handlers (wss/handlers/oauth/*) mint exactly these type strings.
 AGENT_OAUTH_CREDENTIAL_TYPES: Dict[str, str] = {
     "codex": "agent_codex_oauth",
     "openai": "agent_codex_oauth",
     "claude-code": "agent_claude_code_oauth",
     "anthropic": "agent_claude_code_oauth",
 }
+
+
+def register_subscription_provider(
+    *,
+    model_prefix: str,
+    credential_type: str,
+    access_token_env: str,
+    env_keys: Tuple[str, ...],
+    subscription: Optional[str] = None,
+    metadata_keys: Tuple[str, ...] = (),
+    oauth_only: bool = False,
+) -> None:
+    """A subscription sign-in this deployment offers for the ``<model_prefix>/``
+    model family: the credential type it mints, the env vars the runtimes
+    receive for it (``env_keys``; ``metadata_keys`` are the non-auth ones —
+    refresh tokens, expiries), and, when the family has no API-key path at
+    all, the token as its required credential. ``subscription`` names it in
+    "missing credential" messages for families that also accept a key."""
+    global _PROVIDER_OAUTH_ACCESS_KEYS, _PROVIDER_NON_AUTH_METADATA_KEYS
+    if oauth_only:
+        PROVIDER_REQUIRED_CREDENTIALS[f"{model_prefix}/"] = [access_token_env]
+    if subscription:
+        _PROVIDER_OAUTH_TOKEN[model_prefix] = (access_token_env, subscription)
+    _PROVIDER_OAUTH_ENV_KEYS[model_prefix] = tuple(env_keys)
+    _PROVIDER_OAUTH_ACCESS_KEYS = frozenset(_PROVIDER_OAUTH_ACCESS_KEYS | {access_token_env})
+    _PROVIDER_NON_AUTH_METADATA_KEYS = frozenset(_PROVIDER_NON_AUTH_METADATA_KEYS | set(metadata_keys))
+    AGENT_OAUTH_CREDENTIAL_TYPES[model_prefix] = credential_type
 
 
 @dataclass(frozen=True)

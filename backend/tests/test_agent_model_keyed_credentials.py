@@ -12,8 +12,14 @@ wrote the graph.
 import json
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
-
 import pytest
+from nodes.agent.harness_oauth_flows import AGENT_PROVIDER_OAUTH_TYPE
+
+requires_hosted_signins = pytest.mark.skipif(
+    "github_copilot" not in AGENT_PROVIDER_OAUTH_TYPE,
+    reason="this edition registers no Copilot/xAI sign-in",
+)
+
 from nodes.agent.config.providers import (
     filter_provider_credential_env,
     match_model_credential,
@@ -84,6 +90,16 @@ class TestMatchModelCredential:
         assert "agent_claude_code_oauth" in accepted
         assert "agent_api_key" in accepted
 
+    @requires_hosted_signins
+    def test_opencode_github_copilot_accepts_its_oauth_credential(self):
+        cfg = SimpleNamespace(
+            model="opencode",
+            model_type="opencode",
+            opencode_model="github-copilot/gpt-4o",
+        )
+        accepted = model_credential_accepted_types(cfg)
+        assert accepted[0] == "agent_github_copilot"
+        assert "agent_github_copilot_oauth" in accepted
 
 
 def _make_node(credential_ids, decrypted_id=None):
@@ -269,6 +285,32 @@ class TestResolveModelEnvOverrides:
             "CLAUDE_CODE_EXPIRES_IN": "3600",
         }
 
+    @requires_hosted_signins
+    async def test_opencode_github_copilot_oauth_reaches_selected_provider(
+        self, identity_freshen
+    ):
+        node = _make_node(
+            {"agent_github_copilot_oauth": GROQ_ID}, decrypted_id=GROQ_ID
+        )
+        config = SimpleNamespace(
+            model="opencode",
+            model_type="opencode",
+            opencode_model="github-copilot/gpt-4o",
+        )
+        env = await node._resolve_model_env_overrides(
+            config,
+            _bundle(
+                {
+                    "GITHUB_COPILOT_ACCESS_TOKEN": "github-oauth",
+                    "OPENAI_BASE_URL": "http://127.0.0.1:8000",
+                }
+            ),
+            "user-1",
+            provider_name="github-copilot",
+            required_vars=["GITHUB_COPILOT_ACCESS_TOKEN"],
+            cred_model="github-copilot/gpt-4o",
+        )
+        assert env == {"GITHUB_COPILOT_ACCESS_TOKEN": "github-oauth"}
 
     async def test_unknown_only_bundle_is_unattached(self, identity_freshen):
         node = _make_node({"agent_groq": GROQ_ID}, decrypted_id=GROQ_ID)

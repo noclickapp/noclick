@@ -162,6 +162,18 @@ describe('agent credential model helpers', () => {
             );
         });
 
+        it('routes github-copilot/* to the GITHUB_COPILOT provider (OAuth-only)', () => {
+            // github-copilot uses device-code OAuth (github.com/login/device);
+            // models.dev ships `auth.env: []` for it. The credential form's
+            // OAuth-path special-case mounts <GithubCopilotOAuth /> when
+            // provider === GITHUB_COPILOT, so the field is OAuth-only — no
+            // paste-API-key fallback. The provider entry still defines a
+            // requiredApiKeys placeholder so non-OAuth gates downstream
+            // (allNewRequiredFilled, etc.) don't trip.
+            expect(inferProviderFromPrefix('github-copilot/gpt-4o')).toBe(
+                ModelProvider.GITHUB_COPILOT
+            );
+        });
     });
 });
 

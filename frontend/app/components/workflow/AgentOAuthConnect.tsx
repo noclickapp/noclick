@@ -8,6 +8,8 @@
 import { type ComponentType } from 'react';
 import { CodexDeviceCodeAuth } from './CodexDeviceCodeAuth';
 import { ClaudeCodeOAuth } from './ClaudeCodeOAuth';
+import { GithubCopilotOAuth } from './GithubCopilotOAuth';
+import { XaiOAuth } from './XaiOAuth';
 
 // The common contract every agent OAuth sign-in component honours. `sendEvent` is
 // the transport override — omitted → socket (agent form); provided → HTTP shim
@@ -23,6 +25,8 @@ export interface AgentOAuthComponentProps {
 const AGENT_OAUTH_COMPONENTS: Record<string, ComponentType<AgentOAuthComponentProps>> = {
     agent_codex_oauth: CodexDeviceCodeAuth,
     agent_claude_code_oauth: ClaudeCodeOAuth,
+    agent_github_copilot_oauth: GithubCopilotOAuth,
+    agent_xai_oauth: XaiOAuth,
 };
 
 /** Whether a credential type has an agent OAuth sign-in component. */
