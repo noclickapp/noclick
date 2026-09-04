@@ -18,11 +18,25 @@ export interface InstanceCapabilities {
     email: boolean;
     /** Publishing interfaces as standalone apps is available. */
     publishing: boolean;
+    /** Plans, top-ups and invoices exist on this instance. */
+    billing: boolean;
+    /** Agent subscription sign-ins this instance can complete: provider → credential type. */
+    agentSignIns: Record<string, string>;
 }
 
 // Assume available until told otherwise: the hosted service has everything, and
 // a failed probe should not strip the UI down.
-const ASSUME_AVAILABLE: InstanceCapabilities = { email: true, publishing: true };
+const ASSUME_AVAILABLE: InstanceCapabilities = {
+    email: true,
+    publishing: true,
+    billing: true,
+    agentSignIns: {
+        codex: 'agent_codex_oauth',
+        claude_code: 'agent_claude_code_oauth',
+        github_copilot: 'agent_github_copilot_oauth',
+        xai: 'agent_xai_oauth',
+    },
+};
 
 let cached: InstanceCapabilities | null = null;
 
