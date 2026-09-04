@@ -166,11 +166,10 @@ async def test_ingest_empty_document_returns_no_records():
     assert records == []
 
 
-def test_embedding_cost_defaults_to_zero_without_operator_policy():
+def test_embedding_cost_is_real_cost():
     from billing.pricing import get_embedding_cost
     from decimal import Decimal
 
-    # Community defaults record no commercial price; an operator policy may
-    # register its own accounting implementation.
-    assert get_embedding_cost(1_000_000) == Decimal("0")
+    # 1M tokens of text-embedding-3-small = $0.02
+    assert get_embedding_cost(1_000_000) == Decimal("0.02")
     assert get_embedding_cost(0) == Decimal("0")

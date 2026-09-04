@@ -122,6 +122,6 @@ def test_every_billing_import_resolves_and_the_defaults_are_free():
     out = _run_probe(surface)
     assert out.startswith("OK:")
 
-    # Conversion math identical to the hosted edition.
-    from billing.markup import CREDITS_PER_DOLLAR as hosted_cpd
-    assert out == f"OK:{hosted_cpd}"
+    # Unconfigured, the engine counts dollars; the hosted registration
+    # publishes its own conversion (CREDITS_PER_DOLLAR) before importing it.
+    assert out == "OK:1"

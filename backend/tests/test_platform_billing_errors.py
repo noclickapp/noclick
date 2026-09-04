@@ -32,6 +32,7 @@ from nodes.agent.provider_errors import (
     action_for_error_text,
     classify_provider_error,
     describe_failure,
+    normalize_turn_result,
 )
 
 GATE_MSG = insufficient_credits_message(0.0, 0.20)  # the incident string
@@ -86,19 +87,51 @@ def test_platform_rewrite_names_noclick_and_keeps_detail():
     assert "Provider message:" not in match.message  # no provider spoke here
 
 
-# ── Platform errors do not expose a hosted purchase action ─────────────────
+# ── The action: NoClick top-up, never a provider billing page ───────────────
 
-def test_platform_errors_have_no_hosted_purchase_action():
+@pytest.fixture
+def credit_cta(monkeypatch):
+    """A platform that sells credits registers CREDIT_CTA; the top-up action
+    exists only then."""
+    from utils import capabilities
+
+    async def _cta(billing_user_id, pool=None):
+        return "Top Up Credits", "https://example.test/dashboard?action=topup"
+
+    monkeypatch.setattr(capabilities, "_providers", {capabilities.CREDIT_CTA: _cta})
+
+
+def test_gate_error_action_opens_the_topup_popup_in_place(credit_cta):
+    """`open_topup` = the client dispatches BalanceDisplay's popup event right
+    where the error is shown — never a new-tab navigation (the deep-link hop
+    can lose the intent, and the user is already in the app). The url rides
+    along only as data for surfaces without that listener."""
+    match = classify_provider_error(GATE_MSG, channel="error")
+    action = match.action()
+    assert action["type"] == "open_topup"
+    assert action["label"] == "Add credits"
+    assert "/dashboard?action=topup" in action["url"]
+    assert "openrouter" not in action["url"]
+
+
+def test_platform_action_applies_to_every_node_type(credit_cta):
+    """The credit gate fires in dozens of node handlers — the top-up button
+    must not depend on the failing node being an agent."""
+    for node_type in ("agent", "automation-image", "automation-whatsapp", None):
+        action = action_for_error_text(
+            f"Node x failed: {GATE_MSG}", node_type=node_type)
+        assert action is not None and "action=topup" in action["url"], node_type
+
+
+def test_platform_errors_have_no_purchase_action_without_a_credit_cta(monkeypatch):
+    """An installation that sells nothing must not show a button to buy it."""
+    from utils import capabilities
+
+    monkeypatch.setattr(capabilities, "_providers", {})
     match = classify_provider_error(GATE_MSG, channel="error")
     assert match.action() is None
     for node_type in ("agent", "automation-image", None):
-        assert action_for_error_text(
-            f"Node x failed: {GATE_MSG}", node_type=node_type
-        ) is None
-
-
-
-
+        assert action_for_error_text(f"Node x failed: {GATE_MSG}", node_type=node_type) is None
 
 
 def test_provider_actions_require_model_provider_provenance():
@@ -117,20 +150,28 @@ def test_provider_actions_require_model_provider_provenance():
 
 # ── Typed exception: provenance without regex ───────────────────────────────
 
-def test_insufficient_balance_error_classifies_by_type_any_message():
+def test_insufficient_balance_error_classifies_by_type_any_message(credit_cta):
     """The exception type IS platform provenance — a future message rewording
     must not silently demote gate failures back to unclassified."""
     message, action = describe_failure(
         InsufficientBalanceError("totally novel wording"), node_type="agent")
     assert "NoClick credits" in message
-    assert action is None
+    assert action is not None and "action=topup" in action["url"]
 
 
-def test_gate_failures_classify_for_non_agent_nodes_too():
+def test_gate_failures_classify_for_non_agent_nodes_too(credit_cta):
     message, action = describe_failure(
         InsufficientBalanceError(GATE_MSG), node_type="automation-image")
     assert "NoClick credits" in message
-    assert action is None
+    assert action is not None and "action=topup" in action["url"]
+
+
+def test_laundered_gate_text_moves_to_error_channel():
+    """A gate message surfacing as a CLI harness 'response' (e.g. relayed from
+    a tool result) must fail the turn with platform guidance, not complete."""
+    response, error = normalize_turn_result(GATE_MSG, None)
+    assert response == ""
+    assert "NoClick credits" in error
 
 
 # ── Email routing: platform shape in, provider shapes out ───────────────────
