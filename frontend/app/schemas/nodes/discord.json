@@ -7321,7 +7321,7 @@
             }
           ],
           "default": null,
-          "description": "Only messages in this channel. Leave empty for every channel in the server.",
+          "description": "Only messages in this channel and the threads opened in it. Leave empty for every channel in the server.",
           "title": "Channel",
           "x-dynamic-options": {
             "field_name": "channel_id",
@@ -7420,7 +7420,7 @@
             }
           ],
           "default": null,
-          "description": "Only messages in this channel. Leave empty for every channel in the server.",
+          "description": "Only messages in this channel and the threads opened in it. Leave empty for every channel in the server.",
           "title": "Channel",
           "x-dynamic-options": {
             "field_name": "channel_id",

@@ -88,7 +88,11 @@ class FakePool:
 
 
 async def _no_names(guild_id: str):
-    return None, {}
+    return None, []
+
+
+async def _no_channel(channel_id: str):
+    return None
 
 
 class CollectingForwarder:
@@ -126,7 +130,7 @@ class TestBridgeDispatch:
     def _bridge(self, forwarder, guilds=("g1",)):
         bridge = DiscordGatewayBridge(
             "tok", forwarder=forwarder, pool_getter=lambda: FakePool(), connect=lambda url: None,
-            name_lookup=_no_names,
+            name_lookup=_no_names, channel_lookup=_no_channel,
         )
         bridge.client.status.bot_user_id = "bot-1"
         bridge.client.status.application_id = "app-1"
@@ -171,7 +175,7 @@ class TestBridgeDispatch:
     async def test_queue_overflow_is_counted_not_fatal(self):
         bridge = DiscordGatewayBridge(
             "tok", forwarder=CollectingForwarder(), pool_getter=lambda: FakePool(),
-            connect=lambda url: None, queue_size=1, name_lookup=_no_names,
+            connect=lambda url: None, queue_size=1, name_lookup=_no_names, channel_lookup=_no_channel,
         )
         bridge._filter.guild_ids = {"g1"}
         await bridge._on_dispatch("MESSAGE_CREATE", _message(id="a"))
@@ -313,7 +317,15 @@ class TestDiscordGatewayAdapter:
         assert discord["fire_budget"] is True
         assert discord["channel_config_key"] == "channel_id"
         assert discord["node_filter"] is app_webhooks._discord_node_filter
+        assert discord["parent_channel"] is app_webhooks._discord_parent_channel
         assert discord["event_id"] is app_webhooks._discord_event_id
+
+    def test_parent_channel_reads_the_bridge_stamp_only(self):
+        in_thread = _envelope(channel_id="t1")
+        in_thread["parent_channel_id"] = "c1"
+        assert app_webhooks._discord_parent_channel(in_thread) == "c1"
+        assert app_webhooks._discord_parent_channel(_envelope()) is None
+        assert app_webhooks._discord_parent_channel({"type": 2, "parent_channel_id": "c1"}) is None
 
 
 class TestDispatchAndFire:
@@ -369,6 +381,16 @@ class TestDispatchAndFire:
         assert (await self._fire({"channel_id": "c1"}, _envelope(), "c2"))[0] is False
         assert (await self._fire({}, _envelope(), "c2"))[0] is True
 
+    async def test_channel_scope_covers_the_threads_opened_in_the_channel(self):
+        """A message in a thread arrives under the thread's own id, and the
+        trigger was scoped to the channel the thread was opened in — a reply
+        inside the bot's own support thread never fired (2026-09-04)."""
+        in_thread = _envelope(channel_id="t1")
+        in_thread["parent_channel_id"] = "c1"
+        assert (await self._fire({"channel_id": "c1"}, in_thread, "t1"))[0] is True
+        assert (await self._fire({"channel_id": "t1"}, in_thread, "t1"))[0] is True  # scoped to the thread itself
+        assert (await self._fire({"channel_id": "c2"}, in_thread, "t1"))[0] is False
+
     async def test_ignore_bots_is_read_from_the_live_config(self):
         bot_message = _envelope(author={"id": "b2", "bot": True})
         assert (await self._fire({}, bot_message, "c1"))[0] is False
@@ -413,7 +435,7 @@ class TestDiscordNodeMessageTriggers:
                 object(), user_id="owner", workflow_id=WF, node_id="n1", operation="on_mention",
                 credential_id="cred-1", credential=INSTALL_CRED, config={"channel_id": "c1"},
             )
-        assert status == "Active — listening for mentions of the bot in channel c1 of Acme HQ"
+        assert status == "Active — listening for mentions of the bot in channel c1 (and its threads) of Acme HQ"
         kwargs = save.await_args.kwargs
         assert kwargs["tenant_id"] == "g1"
         assert kwargs["event_types"] == ["MESSAGE_MENTION"]
@@ -623,12 +645,28 @@ class TestGuildDirectory:
         d.apply("GUILD_DELETE", {"id": "g1", "unavailable": True})
         assert d.guild_names == {}
 
+    def test_threads_are_remembered_with_their_parent_channel(self):
+        d = bridge_mod.GuildDirectory()
+        d.apply("GUILD_CREATE", {
+            "id": "g1", "name": "NoClick Sandbox",
+            # A category-parented channel is not a thread.
+            "channels": [{"id": "cat", "name": "Text", "type": 4}, {"id": "c1", "name": "general", "type": 0, "parent_id": "cat"}],
+            "threads": [{"id": "t1", "name": "incident-42", "type": 11, "parent_id": "c1"}],
+        })
+        assert d.thread_parents == {"t1": "c1"}
+        d.apply("THREAD_CREATE", {"id": "t2", "name": "support", "type": 11, "parent_id": "c1", "guild_id": "g1"})
+        d.apply("THREAD_LIST_SYNC", {"guild_id": "g1", "threads": [{"id": "t3", "name": "old", "parent_id": "c1"}]})
+        d.apply("CHANNEL_CREATE", {"id": "t4", "name": "private", "type": 12, "parent_id": "c1"})
+        assert d.thread_parents == {"t1": "c1", "t2": "c1", "t3": "c1", "t4": "c1"}
+        d.apply("THREAD_DELETE", {"id": "t2", "guild_id": "g1", "parent_id": "c1", "type": 11})
+        assert "t2" not in d.thread_parents and "t2" not in d.channel_names
+
 
 class TestBridgeNamesAndMissRefresh:
-    def _bridge(self, forwarder, rows, lookup=None):
+    def _bridge(self, forwarder, rows, lookup=None, channel_lookup=None):
         bridge = DiscordGatewayBridge(
             "tok", forwarder=forwarder, pool_getter=lambda: FakePool(rows=rows), connect=lambda url: None,
-            name_lookup=lookup or _no_names,
+            name_lookup=lookup or _no_names, channel_lookup=channel_lookup or _no_channel,
         )
         bridge.client.status.bot_user_id = "bot-1"
         return bridge
@@ -652,7 +690,7 @@ class TestBridgeNamesAndMissRefresh:
 
         async def lookup(guild_id):
             calls.append(guild_id)
-            return "NoClick Sandbox", {"c1": "general"}
+            return "NoClick Sandbox", [{"id": "c1", "name": "general", "type": 0}]
 
         fwd = CollectingForwarder()
         bridge = self._bridge(fwd, rows=[{"tenant_id": "g1"}], lookup=lookup)
@@ -674,6 +712,43 @@ class TestBridgeNamesAndMissRefresh:
         await TestBridgeDispatch._drain(self, bridge2)
         assert calls == ["g1", "g2"]
         assert bridge2.counters.forwarded == 2  # names missing, delivery unaffected
+
+    async def test_a_thread_message_carries_its_parent_channel(self):
+        fwd = CollectingForwarder()
+        bridge = self._bridge(fwd, rows=[{"tenant_id": "g1"}])
+        bridge._filter.guild_ids = {"g1"}
+        await bridge._on_dispatch("GUILD_CREATE", {"id": "g1", "name": "NoClick Sandbox", "channels": [{"id": "c1", "name": "general", "type": 0}]})
+        await bridge._on_dispatch("THREAD_CREATE", {"id": "t1", "name": "Support response", "type": 11, "parent_id": "c1", "guild_id": "g1"})
+        await bridge._on_dispatch("MESSAGE_CREATE", _message(channel_id="t1"))
+        await bridge._on_dispatch("MESSAGE_CREATE", _message(id="m2"))
+        await TestBridgeDispatch._drain(self, bridge)
+        thread, plain = (json.loads(b) for b in fwd.bodies)
+        assert (thread["channel_name"], thread["parent_channel_id"], thread["parent_channel_name"]) == ("Support response", "c1", "general")
+        assert (plain["channel_name"], plain["parent_channel_id"], plain["parent_channel_name"]) == ("general", None, None)
+        assert bridge.status()["directory_threads"] == 1
+
+    async def test_a_channel_the_stream_never_described_is_looked_up_once(self):
+        """A thread opened during a session gap: the first message in it fills
+        the channel over REST (parent included), later ones reuse it, a known
+        channel costs nothing, and a failed lookup is not retried per message."""
+        calls: List[str] = []
+
+        async def channel_lookup(channel_id):
+            calls.append(channel_id)
+            if channel_id == "t1":
+                return {"id": "t1", "name": "Support response", "type": 11, "parent_id": "c1"}
+            raise RuntimeError("404")
+
+        fwd = CollectingForwarder()
+        bridge = self._bridge(fwd, rows=[{"tenant_id": "g1"}], channel_lookup=channel_lookup)
+        bridge._filter.guild_ids = {"g1"}
+        await bridge._on_dispatch("GUILD_CREATE", {"id": "g1", "name": "NoClick Sandbox", "channels": [{"id": "c1", "name": "general", "type": 0}]})
+        for message_id, channel_id in (("a", "t1"), ("b", "t1"), ("c", "c1"), ("d", "gone"), ("e", "gone")):
+            await bridge._on_dispatch("MESSAGE_CREATE", _message(id=message_id, channel_id=channel_id))
+        await TestBridgeDispatch._drain(self, bridge)
+        assert calls == ["t1", "gone"]
+        assert [json.loads(b)["parent_channel_id"] for b in fwd.bodies] == ["c1", "c1", None, None, None]
+        assert bridge.counters.forwarded == 5
 
     async def test_unknown_guild_re_reads_subscriptions_once_and_forwards(self):
         """A trigger saved seconds ago: its guild is absent from the filter, so
@@ -717,6 +792,22 @@ class TestDiscordNodeNamesAndMentions:
         assert text.startswith("Discord message from Dana K in #general (NoClick Sandbox):\nask @Dana K about the deploy")
         assert "<@" not in text.split("\n\n")[0]
         assert "channel_id=c1" in text  # the id the send tool needs stays in the instructions
+
+    def test_a_thread_message_is_its_own_conversation_named_after_its_parent(self):
+        envelope = _envelope(channel_id="t1", content="ding ding ding", mentions=[])
+        envelope.update(
+            guild_name="NoClick Sandbox", channel_name="Support response",
+            parent_channel_id="c1", parent_channel_name="general",
+        )
+        out = DiscordNode.resolve_trigger_payload(envelope, {"operation": "on_message"})
+        assert (out["parent_channel_id"], out["parent_channel_name"]) == ("c1", "general")
+        event = DiscordNode.resolve_agent_event(out)
+        assert event["conversation_key"] == "t1"
+        assert event["text"].startswith(
+            "Discord message from Dana K in thread “Support response” under #general (NoClick Sandbox):\nding ding ding"
+        )
+        assert "list_channel_messages with channel_id=t1" in event["text"]
+        assert "send_message_to_channel with channel_id=t1" in event["text"]
 
     def test_humanize_mentions(self):
         from nodes.discord_node import humanize_discord_mentions

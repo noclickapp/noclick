@@ -1841,9 +1841,11 @@ async def _fire_subscription(
 
     A trigger node with a channel configured (the adapter's
     ``channel_config_key``, ``channel`` by default) fires only for events in
-    that channel, and an adapter ``node_filter`` can veto on any other config
-    predicate; both read the node's LIVE config so an edit takes effect on the
-    next event with no re-registration.
+    that channel — or nested under it, where the adapter's ``parent_channel``
+    names the nesting (a Discord thread's parent) — and an adapter
+    ``node_filter`` can veto on any other config predicate; both read the
+    node's LIVE config so an edit takes effect on the next event with no
+    re-registration.
     """
     from utils.app_webhooks import APP_PROVIDERS
 
@@ -1888,7 +1890,9 @@ async def _fire_subscription(
         trigger_config.get(adapter.get("channel_config_key", "channel")),
         workflow_config,
     )
-    if configured_channel and configured_channel != event_channel:
+    parent_channel = adapter.get("parent_channel")
+    event_channels = {event_channel, parent_channel(payload) if parent_channel else None} - {None}
+    if configured_channel and configured_channel not in event_channels:
         logger.info(
             f"[APP-WEBHOOK] Trigger node {node_id} scoped to channel "
             f"{configured_channel}; event in {event_channel} — skipping"

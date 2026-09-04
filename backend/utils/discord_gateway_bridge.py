@@ -32,7 +32,7 @@ import logging
 import os
 import time
 from dataclasses import dataclass, field
-from typing import Any, Awaitable, Callable, Dict, Optional, Protocol, Set, Tuple
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Protocol, Set, Tuple
 
 from utils.discord_gateway import (
     INTENT_DIRECT_MESSAGES,
@@ -54,8 +54,12 @@ GATEWAY_EVENT_TYPES = frozenset({"MESSAGE_CREATE"})
 DIRECTORY_EVENT_TYPES = frozenset({
     "GUILD_CREATE", "GUILD_UPDATE", "GUILD_DELETE",
     "CHANNEL_CREATE", "CHANNEL_UPDATE", "CHANNEL_DELETE",
-    "THREAD_CREATE", "THREAD_UPDATE", "THREAD_DELETE",
+    "THREAD_CREATE", "THREAD_UPDATE", "THREAD_DELETE", "THREAD_LIST_SYNC",
 })
+# Discord channel types that are threads. A message in one carries the
+# thread's id as its channel_id; the channel a person scoped the trigger to is
+# the thread's parent.
+THREAD_CHANNEL_TYPES = frozenset({10, 11, 12})
 # A message from a guild the filter does not know triggers one re-read of the
 # subscriptions, at most this often: a trigger saved seconds ago gets its
 # first message instead of losing it to the periodic refresh window.
@@ -87,9 +91,13 @@ def build_gateway_envelope(
     application_id: Optional[str],
     guild_name: Optional[str] = None,
     channel_name: Optional[str] = None,
+    parent_channel_id: Optional[str] = None,
+    parent_channel_name: Optional[str] = None,
 ) -> Dict[str, Any]:
     """The wire shape the receiver's Discord adapter parses (``source`` tells
-    it apart from Discord's own HTTP payloads, which carry ``type``)."""
+    it apart from Discord's own HTTP payloads, which carry ``type``). The
+    parent fields are set only for a message in a thread: the channel the
+    thread was opened in."""
     return {
         "source": "gateway",
         "t": event_type,
@@ -98,22 +106,31 @@ def build_gateway_envelope(
         "application_id": application_id,
         "guild_name": guild_name,
         "channel_name": channel_name,
+        "parent_channel_id": parent_channel_id,
+        "parent_channel_name": parent_channel_name,
         "received_at": time.time(),
     }
 
 
 DISCORD_API = "https://discord.com/api/v10"
 
-NameLookup = Callable[[str], Awaitable[Tuple[Optional[str], Dict[str, str]]]]
+# A guild fill: its name plus the channel objects (channels and active
+# threads) the directory ingests. A channel fill: one channel object.
+NameLookup = Callable[[str], Awaitable[Tuple[Optional[str], List[Dict[str, Any]]]]]
+ChannelLookup = Callable[[str], Awaitable[Optional[Dict[str, Any]]]]
+
+
+def _bot_headers(token: str) -> Dict[str, str]:
+    return {"Authorization": f"Bot {token.strip().removeprefix('Bot ').strip()}"}
 
 
 def rest_name_lookup(token: str) -> NameLookup:
     """One-time REST fill for a guild the stream never described — a RESUMED
     session sees no GUILD_CREATE replay. Guild name, channels and active
     threads: three calls per guild per process, only for subscribed guilds."""
-    headers = {"Authorization": f"Bot {token.strip().removeprefix('Bot ').strip()}"}
+    headers = _bot_headers(token)
 
-    async def lookup(guild_id: str) -> Tuple[Optional[str], Dict[str, str]]:
+    async def lookup(guild_id: str) -> Tuple[Optional[str], List[Dict[str, Any]]]:
         import httpx
 
         async with httpx.AsyncClient(timeout=15) as client:
@@ -123,12 +140,28 @@ def rest_name_lookup(token: str) -> NameLookup:
             channels.raise_for_status()
             threads = await client.get(f"{DISCORD_API}/guilds/{guild_id}/threads/active", headers=headers)
             threads.raise_for_status()
-        names = {
-            str(c["id"]): c["name"]
-            for c in list(channels.json() or []) + list((threads.json() or {}).get("threads") or [])
-            if isinstance(c, dict) and c.get("id") and isinstance(c.get("name"), str)
-        }
-        return (guild.json() or {}).get("name"), names
+        return (
+            (guild.json() or {}).get("name"),
+            list(channels.json() or []) + list((threads.json() or {}).get("threads") or []),
+        )
+
+    return lookup
+
+
+def rest_channel_lookup(token: str) -> ChannelLookup:
+    """One-time REST fill for a channel neither the stream nor the guild fill
+    described — a thread opened during a gap in the session. One call per
+    unknown channel per process."""
+    headers = _bot_headers(token)
+
+    async def lookup(channel_id: str) -> Optional[Dict[str, Any]]:
+        import httpx
+
+        async with httpx.AsyncClient(timeout=15) as client:
+            response = await client.get(f"{DISCORD_API}/channels/{channel_id}", headers=headers)
+            response.raise_for_status()
+        channel = response.json()
+        return channel if isinstance(channel, dict) else None
 
     return lookup
 
@@ -136,13 +169,19 @@ def rest_name_lookup(token: str) -> NameLookup:
 class GuildDirectory:
     """Guild and channel names from the Gateway's own stream: GUILD_CREATE
     (sent for every guild at READY, channels and threads included) and the
-    create/update/delete events after it — plus one REST fill per guild the
-    stream never described. No lookup per message."""
+    create/update/delete events after it — plus one REST fill per guild, and
+    per channel, the stream never described. No lookup per message.
+
+    A thread is remembered with its parent channel: a trigger scoped to a
+    channel hears the threads opened in it, and the parent on the envelope is
+    how the receiver knows a thread message belongs."""
 
     def __init__(self) -> None:
         self.guild_names: Dict[str, str] = {}
         self.channel_names: Dict[str, str] = {}
+        self.thread_parents: Dict[str, str] = {}
         self.fetched: Set[str] = set()
+        self.fetched_channels: Set[str] = set()
 
     async def ensure(self, guild_id: str, lookup: NameLookup) -> None:
         """Fill a guild's names once per process when the stream has not."""
@@ -156,7 +195,37 @@ class GuildDirectory:
             return
         if name:
             self.guild_names[guild_id] = name
-        self.channel_names.update(channels)
+        for channel in channels:
+            self._ingest(channel)
+
+    async def ensure_channel(self, channel_id: str, lookup: ChannelLookup) -> None:
+        """Fill one channel once per process when the stream and the guild fill
+        both missed it."""
+        if not channel_id or channel_id in self.channel_names or channel_id in self.fetched_channels:
+            return
+        self.fetched_channels.add(channel_id)
+        try:
+            channel = await lookup(channel_id)
+        except Exception as e:
+            logger.warning(f"[DiscordGateway] lookup for channel {channel_id} failed: {e}")
+            return
+        if channel:
+            self._ingest(channel)
+
+    def _ingest(self, channel: Any, *, thread: bool = False) -> None:
+        """A channel object from the stream or REST: its name, and its parent
+        when it is a thread (by type, or by arriving in a threads list)."""
+        if not isinstance(channel, dict) or not channel.get("id"):
+            return
+        channel_id = str(channel["id"])
+        if isinstance(channel.get("name"), str):
+            self.channel_names[channel_id] = channel["name"]
+        if (thread or channel.get("type") in THREAD_CHANNEL_TYPES) and channel.get("parent_id"):
+            self.thread_parents[channel_id] = str(channel["parent_id"])
+
+    def _forget(self, channel_id: str) -> None:
+        self.channel_names.pop(channel_id, None)
+        self.thread_parents.pop(channel_id, None)
 
     def apply(self, event_type: str, data: Dict[str, Any]) -> None:
         object_id = str(data.get("id") or "")
@@ -164,19 +233,24 @@ class GuildDirectory:
         if event_type == "GUILD_CREATE":
             if object_id and name:
                 self.guild_names[object_id] = name
-            for channel in list(data.get("channels") or []) + list(data.get("threads") or []):
-                if isinstance(channel, dict) and channel.get("id") and isinstance(channel.get("name"), str):
-                    self.channel_names[str(channel["id"])] = channel["name"]
+            for channel in data.get("channels") or []:
+                self._ingest(channel)
+            for channel in data.get("threads") or []:
+                self._ingest(channel, thread=True)
+        elif event_type == "THREAD_LIST_SYNC":
+            for channel in data.get("threads") or []:
+                self._ingest(channel, thread=True)
         elif event_type == "GUILD_UPDATE":
             if object_id and name:
                 self.guild_names[object_id] = name
         elif event_type == "GUILD_DELETE":
             self.guild_names.pop(object_id, None)
-        elif event_type in ("CHANNEL_CREATE", "CHANNEL_UPDATE", "THREAD_CREATE", "THREAD_UPDATE"):
-            if object_id and name:
-                self.channel_names[object_id] = name
+        elif event_type in ("CHANNEL_CREATE", "CHANNEL_UPDATE"):
+            self._ingest(data)
+        elif event_type in ("THREAD_CREATE", "THREAD_UPDATE"):
+            self._ingest(data, thread=True)
         elif event_type in ("CHANNEL_DELETE", "THREAD_DELETE"):
-            self.channel_names.pop(object_id, None)
+            self._forget(object_id)
 
 
 def sign_gateway_body(body: bytes, secret: str) -> str:
@@ -309,11 +383,13 @@ class DiscordGatewayBridge:
         refresh_interval_s: float = SUBSCRIPTION_REFRESH_S,
         queue_size: int = QUEUE_SIZE,
         name_lookup: Optional[NameLookup] = None,
+        channel_lookup: Optional[ChannelLookup] = None,
     ) -> None:
         self._forwarder = forwarder
         self._filter = GuildSubscriptionFilter(pool_getter)
         self.directory = GuildDirectory()
         self._name_lookup = name_lookup or rest_name_lookup(token)
+        self._channel_lookup = channel_lookup or rest_channel_lookup(token)
         self._refresh_interval = refresh_interval_s
         self._queue: asyncio.Queue = asyncio.Queue(maxsize=queue_size)
         self.counters = BridgeCounters()
@@ -365,6 +441,7 @@ class DiscordGatewayBridge:
             "subscriptions_error": self._filter.last_error,
             "directory_guilds": len(self.directory.guild_names),
             "directory_channels": len(self.directory.channel_names),
+            "directory_threads": len(self.directory.thread_parents),
             "queue_depth": self._queue.qsize(),
             **self.counters.__dict__,
         })
@@ -384,14 +461,19 @@ class DiscordGatewayBridge:
                 # from the stream, or one REST fill per guild the stream never
                 # described (a resumed session gets no GUILD_CREATE replay).
                 guild_id = str(data.get("guild_id") or "")
+                channel_id = str(data.get("channel_id") or "")
                 await self.directory.ensure(guild_id, self._name_lookup)
+                await self.directory.ensure_channel(channel_id, self._channel_lookup)
+                parent_id = self.directory.thread_parents.get(channel_id)
                 status = self.client.status
                 envelope = build_gateway_envelope(
                     event_type, data,
                     bot_user_id=status.bot_user_id,
                     application_id=status.application_id,
                     guild_name=self.directory.guild_names.get(guild_id),
-                    channel_name=self.directory.channel_names.get(str(data.get("channel_id") or "")),
+                    channel_name=self.directory.channel_names.get(channel_id),
+                    parent_channel_id=parent_id,
+                    parent_channel_name=self.directory.channel_names.get(parent_id) if parent_id else None,
                 )
                 await self._forwarder.forward(json.dumps(envelope, separators=(",", ":")).encode())
                 self.counters.forwarded += 1

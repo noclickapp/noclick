@@ -488,7 +488,7 @@ class _DiscordMessageTriggerFields(BaseModel):
     channel_id: Optional[str] = Field(
         default=None,
         title="Channel",
-        description="Only messages in this channel. Leave empty for every channel in the server.",
+        description="Only messages in this channel and the threads opened in it. Leave empty for every channel in the server.",
     )
     ignore_bots: str = Field(
         default="true",
@@ -5239,7 +5239,7 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
     ) -> str:
         what = "mentions of the bot" if operation == "on_mention" else "messages"
         channel = (config or {}).get("channel_id")
-        where = f"in channel {channel}" if channel else "in every channel"
+        where = f"in channel {channel} (and its threads)" if channel else "in every channel"
         server = (credential or {}).get("guild_name") or cls._install_guild_id(credential)
         return f"Active — listening for {what} {where} of {server}"
 
@@ -5358,6 +5358,9 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             "author_is_bot": bool(author.get("bot")),
             "guild_name": payload.get("guild_name"),
             "channel_name": payload.get("channel_name"),
+            # Set for a message in a thread: the channel the thread lives in.
+            "parent_channel_id": payload.get("parent_channel_id"),
+            "parent_channel_name": payload.get("parent_channel_name"),
             "mentions_bot": bool(bot_user_id) and any(
                 str(m.get("id")) == str(bot_user_id) for m in mentions
             ),
@@ -5498,6 +5501,12 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             str(output.get("content") or ""), output.get("mentions"), drop_user_id=bot_user_id
         )
         where = f"#{output['channel_name']}" if output.get("channel_name") else f"channel {channel_id}"
+        parent_id = str(output.get("parent_channel_id") or "").strip()
+        if parent_id:
+            # A thread: its own conversation, named after where it was opened.
+            parent = f"#{output['parent_channel_name']}" if output.get("parent_channel_name") else f"channel {parent_id}"
+            thread = f"thread “{output['channel_name']}”" if output.get("channel_name") else f"thread {channel_id}"
+            where = f"{thread} under {parent}"
         if output.get("guild_name"):
             server = f" ({output['guild_name']})"
         elif output.get("guild_id"):
@@ -5510,6 +5519,10 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             lines.append("Attachments: " + ", ".join(attachments))
         if output.get("reply_to_message_id"):
             lines.append(f"(a reply to message {output['reply_to_message_id']})")
+        if parent_id:
+            lines.append(
+                f"(a thread in {parent}; earlier messages in it: list_channel_messages with channel_id={channel_id})"
+            )
         lines.append("")
         lines.append(
             f"To respond, use send_message_to_channel with channel_id={channel_id} "
