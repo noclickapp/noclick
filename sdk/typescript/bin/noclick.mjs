@@ -98,7 +98,14 @@ function ensureSource() {
     if (existsSync(DIR) && readdirSync(DIR).length > 0) {
         die(`${DIR} already exists and is not a NoClick checkout.\n  Set NOCLICK_DIR to somewhere else.`);
     }
-    if (!have('git')) die('git is required to fetch the source.');
+    if (!have('git')) {
+        die(
+            'git is required to fetch the source.\n' +
+            "  Linux:   sudo apt-get install git  (or your distribution's package manager)\n" +
+            '  macOS:   xcode-select --install\n' +
+            '  Windows: winget install Git.Git, or https://git-scm.com/download/win',
+        );
+    }
     say(`Fetching NoClick into ${DIR}`);
     mkdirSync(DIR, { recursive: true });
     if (run('git', ['clone', '--quiet', '--depth', '1', '--branch', REF, REPO, DIR]).status !== 0) {
@@ -229,6 +236,11 @@ async function waitFor(url, seconds = 300) {
 async function start({ build = true } = {}) {
     ensureSource();
     const env = ensureEnv();
+    // The same switch install.sh honours: everything in place, nothing running.
+    if (process.env.NOCLICK_NO_START) {
+        console.log(`\n${green('✓')} Set up in ${DIR}. Start it with: ${bold('npx noclick')}\n`);
+        return;
+    }
     say('Building and starting (the first build takes a few minutes)');
     if (compose(build ? ['up', '-d', '--build'] : ['up', '-d']).status !== 0) {
         die('Compose failed to start the stack.');
@@ -271,7 +283,7 @@ const HELP = `${bold('npx noclick')} — run a NoClick instance on this machine
   ${bold('noclick doctor')}       check this machine
   ${bold('noclick uninstall')}    remove the containers and all data
 
-${dim('Environment: NOCLICK_DIR, NOCLICK_REF, NOCLICK_REPO, NOCLICK_APP_URL')}`;
+${dim('Environment: NOCLICK_DIR, NOCLICK_REF, NOCLICK_REPO, NOCLICK_APP_URL, NOCLICK_NO_START')}`;
 
 async function main() {
     const [command = 'start', ...rest] = process.argv.slice(2);

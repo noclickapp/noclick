@@ -15,8 +15,13 @@ name: Installer E2E
 #                  installers parse under BSD /bin/sh + darwin node and fail
 #                  HELPFULLY — the docker guidance, not a stack trace.
 #   - Windows:     launcher mechanics — npx must execute on win32 (PATH
-#                  resolution, no sh-isms). Full boots on macOS/Windows need
-#                  real machines; see oss/README.md for the local recipes.
+#                  resolution, no sh-isms) — and the PowerShell installer up
+#                  to the boot: the runner has Node, Git and a docker CLI, so
+#                  it passes the installer's checks and hands off, and
+#                  NOCLICK_NO_START stops the launcher after the checkout and
+#                  .env, since the Linux images cannot run there. Full boots
+#                  on macOS/Windows need real machines; see oss/README.md for
+#                  the local recipes.
 on:
   workflow_dispatch:
   schedule:
@@ -156,3 +161,19 @@ jobs:
         run: npx -y noclick where
       - name: doctor reads this machine
         run: npx -y noclick doctor
+      - name: The PowerShell installer runs as the README says, up to the boot
+        env:
+          NOCLICK_NO_START: "1"
+        run: |
+          irm https://noclick.com/install.ps1 | iex
+          $dir = (npx -y noclick where | Out-String).Trim()
+          foreach ($file in 'docker-compose.yml', '.env') {
+            if (-not (Test-Path (Join-Path $dir $file))) { throw "the installer left no $file in $dir" }
+          }
+      - name: Without Docker Desktop the installer says so, not a stack trace
+        run: |
+          $env:Path = ($env:Path -split ';' | Where-Object { $_ -notmatch 'docker' }) -join ';'
+          irm https://noclick.com/install.ps1 -OutFile install.ps1
+          $out = & powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 2>&1 | Out-String
+          if ($LASTEXITCODE -eq 0) { throw "should have failed (no docker on PATH)" }
+          if ($out -notmatch 'Docker Desktop is required' -or $out -notmatch 'windows-install') { throw "unhelpful failure:`n$out" }

@@ -39,17 +39,23 @@
 
 ## Quick start
 
-Try NoClick with [npx](https://docs.npmjs.com/cli/v10/commands/npx) — requires
-[Node.js](https://nodejs.org) 18+ and [Docker](https://docs.docker.com/get-docker/):
+One line on a machine with [Docker](https://docs.docker.com/get-docker/):
+
+```bash
+# macOS / Linux / WSL2
+curl -fsSL https://noclick.com/install.sh | sh
+```
+
+```powershell
+# Windows PowerShell
+irm https://noclick.com/install.ps1 | iex
+```
+
+Already have [Node.js](https://nodejs.org) 18+ and Git? The launcher the Windows
+installer hands off to runs everywhere:
 
 ```bash
 npx noclick
-```
-
-Or with one line of shell, no Node required:
-
-```bash
-curl -fsSL https://noclick.com/install.sh | sh
 ```
 
 Or by hand — the same thing, visibly:
@@ -68,7 +74,8 @@ the [releases page](https://github.com/noclickapp/noclick/releases). The
 installer deliberately builds that checkout locally. If you operate the Compose
 stack directly, `NOCLICK_VERSION=<version> docker compose up -d` instead pins
 the released backend image; the frontend is still built for your public URLs. Every
-installer option is documented at the top of [`install.sh`](./install.sh).
+installer option is documented at the top of [`install.sh`](./install.sh) and
+[`install.ps1`](./install.ps1).
 
 Then open the editor at [http://localhost:3000](http://localhost:3000).
 
