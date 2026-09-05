@@ -55,10 +55,10 @@ RUN pnpm prune --prod --ignore-scripts
 # (backend/nodes/agent/config/_cli_models.json); a test keeps them in step.
 FROM node:22-bookworm-slim AS cli
 RUN npm install -g --prefix /opt/noclick-cli \
-        @openai/codex@0.147.0 \
-        @anthropic-ai/claude-code@2.1.231 \
-        opencode-ai@1.18.18 \
-        openclaw@2026.7.1-2 \
+        @openai/codex@0.153.4 \
+        @anthropic-ai/claude-code@2.1.261 \
+        opencode-ai@1.18.29 \
+        openclaw@2026.9.1 \
     && npm cache clean --force
 
 # hermes is a Python CLI that pins its own openai SDK, which the backend's venv
@@ -71,7 +71,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git build-essen
 # hermes refuses wheel builds; it is installed editable from a checkout, the
 # way its own installer and the hosted runtime do.
 RUN git clone --filter=blob:none https://github.com/NousResearch/hermes-agent.git /opt/hermes-agent \
-    && git -C /opt/hermes-agent checkout v2026.8.3 \
+    && git -C /opt/hermes-agent checkout v2026.8.31 \
     && python -m venv /opt/hermes \
     && /opt/hermes/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
     && /opt/hermes/bin/pip install --no-cache-dir -e "/opt/hermes-agent[mcp]" \
