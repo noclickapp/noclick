@@ -280,10 +280,27 @@ export function autoSelectCredentialFromCache(nodeType: string): Record<string, 
     return { [mappedType]: own.id };
 }
 
-/** Revoked, or a connection-backed credential (whatsapp_qr) whose provider
- *  session dropped — either way it cannot work as attached right now. */
-export function isDeadCredential(cred: { revoked_at?: string | null; connection_status?: string | null }): boolean {
-    return !!cred.revoked_at || (!!cred.connection_status && cred.connection_status !== 'connected');
+/** The connection-health fields as they ride credential:list. `connection_status`
+ *  is the provider's own word ('connected' for WhatsApp, 'installed' for Discord)
+ *  and is display-only; `connection_healthy` is the verdict, `connection_hint`
+ *  the repair guidance that accompanies a `false`. */
+export interface ConnectionHealthFields {
+    connection_status?: string | null;
+    connection_healthy?: boolean | null;
+    connection_hint?: string | null;
+}
+
+/** Connection health as judged by the backend's provider check. Only an explicit
+ *  `false` verdict counts: comparing the status word against one literal flagged
+ *  every healthy Discord install as dropped. */
+export function isConnectionDropped(cred: ConnectionHealthFields): boolean {
+    return cred.connection_healthy === false;
+}
+
+/** Revoked, or a connection-backed credential whose provider session dropped —
+ *  either way it cannot work as attached right now. */
+export function isDeadCredential(cred: ConnectionHealthFields & { revoked_at?: string | null }): boolean {
+    return !!cred.revoked_at || isConnectionDropped(cred);
 }
 
 /**

@@ -42,7 +42,13 @@ export interface Credential {
     over_cap?: boolean;
     revoked_at?: string | null;
     revoked_reason?: string | null;
+    // Provider session health for connection-backed credentials. `connection_status`
+    // is the provider's own word (WhatsApp 'connected', Discord 'installed') and is
+    // display-only; `connection_healthy` is the verdict to judge, `connection_hint`
+    // the repair guidance that rides along whenever it is false.
     connection_status?: string | null;
+    connection_healthy?: boolean | null;
+    connection_hint?: string | null;
 }
 
 export interface UseCredentialOAuthOptions {

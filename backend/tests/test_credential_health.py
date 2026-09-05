@@ -183,3 +183,11 @@ async def test_discord_install_health_marks_a_removed_bot_and_never_guesses(monk
 
     monkeypatch.delenv("DISCORD_BOT_TOKEN")
     assert await ch.get_credential_health(rows) == {}
+
+
+def test_an_unhealthy_verdict_must_carry_repair_guidance():
+    """The picker renders the hint where a hardcoded WhatsApp sentence used to
+    sit, so a dead verdict without one would show a blank banner."""
+    with pytest.raises(ValueError, match="carries no hint"):
+        CredentialHealth("removed", False, None)
+    assert CredentialHealth("installed", True, None).healthy is True

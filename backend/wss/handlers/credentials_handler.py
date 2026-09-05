@@ -334,7 +334,6 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
             for row in accessible:
                 is_shared = row.access_type in ('shared', 'shared_org')
                 row_health = health.get(str(row.id))
-                connection_status = row_health.status if row_health else None
                 credentials.append(CredentialInfo(
                     id=row.id,
                     name=row.name,
@@ -351,7 +350,9 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                     share_id=row.share_id if is_shared else None,
                     revoked_at=row.revoked_at.isoformat() if row.revoked_at else None,
                     revoked_reason=row.revoked_reason,
-                    connection_status=connection_status,
+                    connection_status=row_health.status if row_health else None,
+                    connection_healthy=row_health.healthy if row_health else None,
+                    connection_hint=row_health.hint if row_health else None,
                 ))
 
             response = CredentialListResponse(

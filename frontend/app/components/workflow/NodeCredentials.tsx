@@ -30,7 +30,7 @@ const AgentCredentialsForm = lazy(() =>
 import { OAuthCredentialForm } from './OAuthCredentialForm';
 import { WhatsAppQRCredentialForm } from './WhatsAppQRCredentialForm';
 import { MCPCredentialForm } from './MCPCredentialForm';
-import { invalidateCredentialsCache, removeCredentialsFromCache, isInjectedDisplayCredential, type CredentialDisplayMeta } from '~/utils/credentialAutoSelect';
+import { invalidateCredentialsCache, removeCredentialsFromCache, isInjectedDisplayCredential, isConnectionDropped, type CredentialDisplayMeta } from '~/utils/credentialAutoSelect';
 import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
 import { getCredentialTypeFromSchema } from '~/utils/credentialTypes';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
@@ -419,9 +419,9 @@ interface CredentialRequirement {
     schema?: any;  // JSON Schema defining credential structure
 }
 
-/** Dead-but-recoverable: the provider session dropped (re-scan fixes it), as
- *  opposed to revoked_at which is a terminal disconnect. */
-const isDisconnected = (cred: Credential) => !!cred.connection_status && cred.connection_status !== 'connected';
+/** Dead-but-recoverable: the provider session dropped (reconnecting the same
+ *  credential fixes it), as opposed to revoked_at which is a terminal disconnect. */
+const isDisconnected = (cred: Credential) => isConnectionDropped(cred);
 
 /** Sort helper: healthy first, then disconnected, then revoked. */
 const deadRank = (cred: Credential) => (cred.revoked_at ? 2 : isDisconnected(cred) ? 1 : 0);
@@ -1379,7 +1379,10 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
                                         <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
                                         <span>
                                             {health === 'disconnected'
-                                                ? 'This WhatsApp connection has dropped — messages are not arriving. Re-scan the QR code below to reconnect this same credential (no new credential is created).'
+                                                // The provider check ships its own repair guidance (re-scan this
+                                                // WhatsApp credential, reinstall the Discord bot); the wire model
+                                                // guarantees one for every dropped verdict.
+                                                ? fullRow?.connection_hint ?? 'This connection has dropped and nothing is arriving through it. Reconnect the same credential below.'
                                                 : health === 'revoked'
                                                     ? 'This credential was disconnected or revoked and can no longer be used — reconnect the account below or pick another credential.'
                                                     : 'The attached credential no longer exists or is not accessible — reconnect the account below or pick another credential.'}

@@ -381,7 +381,9 @@ class CredentialInfo(BaseModel):
     share_id: Optional[str] = Field(None, description="The resource_shares row ID linking this credential to the current user (only for shared credentials)")
     revoked_at: Optional[str] = Field(None, description="When this credential was revoked/disconnected (null = live). Revoked credentials cannot be loaded at run time — the UI must surface them as dead, not selectable-as-healthy")
     revoked_reason: Optional[str] = Field(None, description="Why the credential was revoked (e.g. user_revoked, provider_4xx auto-revoke)")
-    connection_status: Optional[str] = Field(None, description="Live provider session state for connection-backed credentials (whatsapp_qr): 'connected' = phone linked; any other value ('scan_qr', 'failed', 'stopped', 'missing') = the session is dead and needs a fresh QR scan. None = not applicable or state unknown")
+    connection_status: Optional[str] = Field(None, description="Provider-native session state for connection-backed credentials, in the provider's own words (WhatsApp: 'connected'/'scan_qr'/'failed'/'missing'; Discord: 'installed'/'removed'). Display only — judge connection_healthy, never this string. None = not applicable or state unknown")
+    connection_healthy: Optional[bool] = Field(None, description="The verdict on connection_status: False = the provider session is dead and the credential cannot work as attached; True = live; None = not applicable or state unknown (never treated as dead)")
+    connection_hint: Optional[str] = Field(None, description="How to repair a dead connection (present whenever connection_healthy is False), phrased for the owner: re-scan this same WhatsApp credential, reinstall the Discord bot, …")
 
 
 class CredentialListResponse(BaseModel):

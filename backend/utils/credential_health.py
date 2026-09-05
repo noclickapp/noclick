@@ -26,9 +26,21 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class CredentialHealth:
-    status: str          # provider-native session state (e.g. 'connected', 'failed', 'missing')
+    """One provider's verdict on one credential.
+
+    ``status`` is the provider's own word — WhatsApp says ``connected``, Discord
+    says ``installed`` — so consumers must judge ``healthy``, never the word
+    (comparing against ``'connected'`` rendered every healthy Discord install as
+    dropped, 2026-09-05). ``hint`` is what the picker and the agent render for a
+    dead credential, so an unhealthy verdict without one is a programming error."""
+
+    status: str          # provider-native session state (e.g. 'connected', 'installed', 'failed', 'removed')
     healthy: bool
     hint: Optional[str]  # actionable guidance when unhealthy, phrased for humans AND agents
+
+    def __post_init__(self) -> None:
+        if not self.healthy and not self.hint:
+            raise ValueError(f"unhealthy credential verdict {self.status!r} carries no hint")
 
 
 def _row_field(row: Any, name: str) -> Any:

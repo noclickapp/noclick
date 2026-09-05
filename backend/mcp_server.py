@@ -4628,8 +4628,12 @@ class NoClickMCPServer(DatabasePoolMixin):
                     "credential_type": r["credential_type"],
                     "metadata": r["metadata"] or {},
                     **(
-                        {"connection_status": health[str(r["id"])].status}
-                        if str(r["id"]) in health else {}
+                        {
+                            "connection_status": h.status,
+                            "connection_healthy": h.healthy,
+                            "connection_hint": h.hint,
+                        }
+                        if (h := health.get(str(r["id"]))) else {}
                     ),
                 }
                 for r in rows
@@ -4694,6 +4698,8 @@ class NoClickMCPServer(DatabasePoolMixin):
                             "credential_id": str(r["id"]),
                             "name": r["name"],
                             "connection_status": h.status if (h := health.get(str(r["id"]))) else "unknown",
+                            "connection_healthy": h.healthy if h else None,
+                            "connection_hint": h.hint if h else None,
                         }
                         for r in existing
                     ]

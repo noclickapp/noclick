@@ -178,6 +178,61 @@ class TestCredentialsHandler(BaseHandlerTest):
             assert 'metadata' in cred
             assert 'credential_data' not in cred, "Decrypted data should not be in list"
 
+    async def test_list_carries_the_health_verdict_beside_the_provider_word(
+        self, real_database, frontend_sio, sid, monkeypatch
+    ):
+        """The picker judges `connection_healthy`, never `connection_status`:
+        Discord reports a live install as 'installed', and a string comparison
+        against 'connected' rendered every one of them as "(disconnected)" with
+        WhatsApp re-scan copy under it (2026-09-05). The hint that now rides
+        along is what the banner renders."""
+        from unittest.mock import AsyncMock
+
+        import utils.credential_health as health_mod
+
+        user_id = '00000000-0000-4000-8000-000000000001'
+        await self.create_test_user(real_database, user_id)
+        await asyncio.sleep(0.1)
+
+        await send_event(frontend_sio, sid, CredentialCreateRequest(
+            event_name="credential:create",
+            request_id="create-discord",
+            name="NoClick Sandbox",
+            credential_type="discord_bot_install",
+            credential_data={"bot_token": "platform"},
+            metadata={"guild_id": "123456", "guild_name": "NoClick Sandbox"},
+        ))
+        await asyncio.sleep(0.1)
+        monkeypatch.setenv("DISCORD_BOT_TOKEN", "platform-token")
+
+        async def discord_rows(request_id: str):
+            await send_event(frontend_sio, sid, CredentialListRequest(
+                event_name="credential:list", request_id=request_id,
+            ))
+            await asyncio.sleep(0.1)
+            for event in self.get_main_api_emitted_events("response"):
+                if event[1]['request_id'] == request_id:
+                    return [
+                        c for c in event[1]['data']['credentials']
+                        if c['credential_type'] == 'discord_bot_install'
+                    ]
+            raise AssertionError(f"no response for {request_id}")
+
+        # Discord answers 200 for the guild: the bot is still installed.
+        monkeypatch.setattr(health_mod, "_probe_discord_guild", AsyncMock(return_value=200))
+        [live] = await discord_rows("list-live")
+        assert live["connection_status"] == "installed"
+        assert live["connection_healthy"] is True
+        assert live["connection_hint"] is None
+
+        # Discord answers 404: the server's admin removed the bot.
+        monkeypatch.setattr(health_mod, "_probe_discord_guild", AsyncMock(return_value=404))
+        [gone] = await discord_rows("list-gone")
+        assert gone["connection_status"] == "removed"
+        assert gone["connection_healthy"] is False
+        assert "NoClick Sandbox" in gone["connection_hint"]
+        assert "Install bot" in gone["connection_hint"]
+
     async def test_get_credential_with_decryption(self, real_database, frontend_sio, sid):
         """
         Test that a specific credential can be retrieved with decrypted data.
