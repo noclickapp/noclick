@@ -39,20 +39,21 @@
 
 ## Quick start
 
-One line on a machine with [Docker](https://docs.docker.com/get-docker/):
+One line:
 
 ```bash
-# macOS / Linux / WSL2
+# macOS / Linux / WSL2 -- needs Docker: https://docs.docker.com/get-docker/
 curl -fsSL https://noclick.com/install.sh | sh
 ```
 
 ```powershell
-# Windows PowerShell
+# Windows PowerShell -- installs Docker Desktop itself; Windows restarts once
+# the first time, and the installer continues after you sign back in
 irm https://noclick.com/install.ps1 | iex
 ```
 
-Already have [Node.js](https://nodejs.org) 18+ and Git? The launcher the Windows
-installer hands off to runs everywhere:
+Already have Docker, [Node.js](https://nodejs.org) 18+ and Git? The launcher
+the Windows installer hands off to runs everywhere:
 
 ```bash
 npx noclick

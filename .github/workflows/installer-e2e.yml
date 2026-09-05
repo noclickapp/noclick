@@ -19,9 +19,10 @@ name: Installer E2E
 #                  to the boot: the runner has Node, Git and a docker CLI, so
 #                  it passes the installer's checks and hands off, and
 #                  NOCLICK_NO_START stops the launcher after the checkout and
-#                  .env, since the Linux images cannot run there. Full boots
-#                  on macOS/Windows need real machines; see oss/README.md for
-#                  the local recipes.
+#                  .env, since the Linux images cannot run there. The branch
+#                  that installs Docker Desktop (WSL2 + a restart) runs as a
+#                  dry run only. Full boots on macOS/Windows need real
+#                  machines; see oss/README.md for the local recipes.
 on:
   workflow_dispatch:
   schedule:
@@ -170,10 +171,14 @@ jobs:
           foreach ($file in 'docker-compose.yml', '.env') {
             if (-not (Test-Path (Join-Path $dir $file))) { throw "the installer left no $file in $dir" }
           }
-      - name: Without Docker Desktop the installer says so, not a stack trace
+      - name: Without Docker Desktop the installer would install it (dry run)
+        # The real branch enables WSL2 and restarts the machine, which would
+        # kill the runner; the dry run walks the same decision and stops.
+        env:
+          NOCLICK_INSTALLER_DRY_RUN: "1"
         run: |
           $env:Path = ($env:Path -split ';' | Where-Object { $_ -notmatch 'docker' }) -join ';'
           irm https://noclick.com/install.ps1 -OutFile install.ps1
           $out = & powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 2>&1 | Out-String
-          if ($LASTEXITCODE -eq 0) { throw "should have failed (no docker on PATH)" }
-          if ($out -notmatch 'Docker Desktop is required' -or $out -notmatch 'windows-install') { throw "unhelpful failure:`n$out" }
+          if ($LASTEXITCODE -ne 0) { throw "dry run should exit 0:`n$out" }
+          if ($out -notmatch 'install Docker Desktop' -or $out -notmatch 'restarts once') { throw "dry run did not describe the plan:`n$out" }

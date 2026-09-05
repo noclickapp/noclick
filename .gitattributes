@@ -1,0 +1,17 @@
+# Docker runs the shell scripts, Dockerfiles and compose files straight from
+# this checkout, and Git for Windows converts text to CRLF by default: a
+# "#!/bin/sh\r" shebang cannot be exec'd, Postgres' init script fails, and
+# the stack never comes up. Every text file stays LF on every platform.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.pdf binary
+*.zip binary
+*.gz binary

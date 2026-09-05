@@ -108,9 +108,12 @@ function ensureSource() {
     }
     say(`Fetching NoClick into ${DIR}`);
     mkdirSync(DIR, { recursive: true });
-    if (run('git', ['clone', '--quiet', '--depth', '1', '--branch', REF, REPO, DIR]).status !== 0) {
+    // Git for Windows converts text to CRLF by default; Docker execs these files
+    // as-is, so the checkout stays LF whatever the machine's git says.
+    if (run('git', ['-c', 'core.autocrlf=false', 'clone', '--quiet', '--depth', '1', '--branch', REF, REPO, DIR]).status !== 0) {
         die(`Could not clone ${REPO} (${REF}).`);
     }
+    run('git', ['-C', DIR, 'config', 'core.autocrlf', 'false']);
 }
 
 function updateSource() {
