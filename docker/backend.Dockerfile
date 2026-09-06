@@ -1,4 +1,7 @@
-# NoClick Community — backend (FastAPI + Socket.IO + in-process scheduler/relay).
+# NoClick Community — backend (FastAPI + Socket.IO + in-process scheduler/relay),
+# with the agent CLI harnesses the single-origin image also ships: an agent node
+# on Codex or Claude Code must work from the compose stack too, not only the
+# one-click image.
 #
 # The wheels are built in a throwaway stage so the runtime image carries no
 # compiler: a few dependencies (quickjs, soundfile) have no universal wheel and
@@ -18,21 +21,61 @@ COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
 
+# ── Agent CLI harnesses ──────────────────────────────────────────────────────
+# codex, claude, opencode, openclaw and hermes run as subprocesses of the backend, signed in with
+# the ChatGPT / Claude subscription or API key attached to the agent node. The
+# pins are the versions the agent runtime was verified against
+# (backend/nodes/agent/config/_cli_models.json); a test keeps them in step.
+FROM node:22-bookworm-slim AS cli
+RUN npm install -g --prefix /opt/noclick-cli \
+        @openai/codex@0.153.4 \
+        @anthropic-ai/claude-code@2.1.261 \
+        opencode-ai@1.18.29 \
+        openclaw@2026.9.1 \
+    && npm cache clean --force
+
+# hermes is a Python CLI that pins its own openai SDK, which the backend's venv
+# cannot share; it gets a venv of its own, built on the same interpreter path
+# as the runtime stage so the copy stays valid. Pinned to the ref the agent
+# runtime is tested against (_cli_models.json "hermes.ref").
+FROM python:3.12-slim AS hermes
+RUN apt-get update && apt-get install -y --no-install-recommends git build-essential libffi-dev \
+    && rm -rf /var/lib/apt/lists/*
+# hermes refuses wheel builds; it is installed editable from a checkout, the
+# way its own installer and the hosted runtime do.
+RUN git clone --filter=blob:none https://github.com/NousResearch/hermes-agent.git /opt/hermes-agent \
+    && git -C /opt/hermes-agent checkout v2026.8.31 \
+    && python -m venv /opt/hermes \
+    && /opt/hermes/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && /opt/hermes/bin/pip install --no-cache-dir -e "/opt/hermes-agent[mcp]" \
+    && rm -rf /opt/hermes-agent/.git \
+    && /opt/hermes/bin/hermes --version
+
+
+
 FROM python:3.12-slim AS runtime
 
-# libsndfile is soundfile's runtime library; the rest is what outbound TLS and
-# a readable `docker logs` timestamp need.
+# libsndfile is soundfile's runtime library; git is what the harness CLIs and
+# agent workspaces expect; the rest is what outbound TLS and a readable
+# `docker logs` timestamp need.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libsndfile1 \
         ca-certificates \
+        git \
         tini \
     && rm -rf /var/lib/apt/lists/*
 
-ENV PATH="/opt/venv/bin:$PATH" \
+ENV PATH="/opt/noclick-cli/bin:/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     NOCLICK_LOCAL=1
 COPY --from=deps /opt/venv /opt/venv
+# The harness CLIs are node programs; node itself rides along from the cli stage.
+COPY --from=cli /usr/local/bin/node /usr/local/bin/node
+COPY --from=cli /opt/noclick-cli /opt/noclick-cli
+COPY --from=hermes /opt/hermes /opt/hermes
+COPY --from=hermes /opt/hermes-agent /opt/hermes-agent
+RUN ln -s /opt/hermes/bin/hermes /opt/noclick-cli/bin/hermes
 
 # Runs unprivileged: this process executes user-authored workflow code.
 RUN useradd --create-home --uid 10001 noclick

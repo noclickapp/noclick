@@ -235,10 +235,11 @@ that. Environment variables take precedence over saved keys.
 real CLI as a subprocess on the machine running the backend, signed in as
 whatever the agent node carries: a ChatGPT or Claude subscription sign-in
 (Connect in the node's credential panel), an API key, or — with nothing
-attached — the account that CLI is already signed in to on the server. The
-single-origin image ships all five (`codex`, `claude`, `opencode`, `openclaw`
-and `hermes`, at the versions the agent runtime is tested against); a
-from-source install needs them on the backend's PATH:
+attached — the account that CLI is already signed in to on the server. Both
+Docker images — the compose stack's backend and the single-origin image — ship
+all five (`codex`, `claude`, `opencode`, `openclaw` and `hermes`, at the
+versions the agent runtime is tested against); a from-source install needs
+them on the backend's PATH:
 
 ```bash
 # whichever you want available

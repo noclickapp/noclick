@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import html
 import json
+
+import pytest
 import re
 import tomllib
 from pathlib import Path
@@ -150,10 +152,11 @@ def test_railway_button_uses_the_published_template() -> None:
     assert parse_qs(parsed.query)["utm_campaign"] == ["noclick"]
 
 
-def test_single_origin_image_ships_the_cli_harnesses_the_runtime_was_verified_against() -> None:
+@pytest.mark.parametrize("image", ["single-origin.Dockerfile", "backend.Dockerfile"])
+def test_every_self_host_image_ships_the_cli_harnesses_the_runtime_was_verified_against(image: str) -> None:
     """A hosted self-host has no operator terminal to `npm install -g` into, so
     the image carries the CLIs — at the versions the agent runtime pins."""
-    dockerfile = (REPO / "docker" / "single-origin.Dockerfile").read_text()
+    dockerfile = (REPO / "docker" / image).read_text()
     pins = dict(re.findall(r"(@openai/codex|@anthropic-ai/claude-code|opencode-ai|openclaw)@([0-9][\w.-]*)", dockerfile))
     known = json.loads((REPO / "backend" / "nodes" / "agent" / "config" / "_cli_models.json").read_text())
 
@@ -169,6 +172,11 @@ def test_single_origin_image_ships_the_cli_harnesses_the_runtime_was_verified_ag
     assert "ln -s /opt/hermes/bin/hermes /opt/noclick-cli/bin/hermes" in dockerfile
     assert "/opt/noclick-cli/bin" in dockerfile, "the CLIs must be on the backend's PATH"
 
+
+
+
+def test_single_origin_image_drops_privileges_in_its_entrypoint() -> None:
+    dockerfile = (REPO / "docker" / "single-origin.Dockerfile").read_text()
     # The volume handshake: platforms mount /var/lib/noclick root-owned, so the
     # image must NOT pin USER (the entrypoint owns the volume as root, then
     # re-execs as noclick). A reintroduced USER line silently breaks every
