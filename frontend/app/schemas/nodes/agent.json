@@ -148,7 +148,7 @@
           "ui:hidden": true
         },
         "claude_code_model": {
-          "default": "haiku",
+          "default": "sonnet",
           "title": "Claude Code Model",
           "type": "string",
           "ui:show-if": {
@@ -288,7 +288,7 @@
           "ui:hidden": true
         },
         "codex_model": {
-          "default": "gpt-5.4-mini",
+          "default": "gpt-5.6-luna",
           "title": "Codex Model",
           "type": "string",
           "ui:show-if": {

@@ -418,7 +418,12 @@ import cliModels from '~/schemas/cli-models.json';
  * "openai/..." form. Callers should strip the provider prefix first.
  */
 export function isChatGptPlusSupported(modelId: string): boolean {
-    return cliModels.codex.models.includes(modelId);
+    // `retired`: hidden from the picker but still served (codex names a
+    // replacement), so a saved selection keeps resolving instead of being gated.
+    return (
+        cliModels.codex.models.includes(modelId) ||
+        Object.prototype.hasOwnProperty.call(cliModels.codex.retired ?? {}, modelId)
+    );
 }
 
 export function inferProviderFromPrefix(model: string): ModelProvider | null {

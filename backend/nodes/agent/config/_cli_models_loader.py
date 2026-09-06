@@ -5,8 +5,11 @@ by `.github/workflows/refresh-cli-models.yml`. See `scripts/refresh_cli_models.p
 for the extraction.
 
 Three kinds of data per harness:
-  • Model lists/aliases (codex, claude-code) — extracted from the binary, which
-    bakes them as static literals; the dropdowns render from these.
+  • Model lists/aliases (codex, claude-code) — extracted from the catalog each
+    binary bakes in, filtered the way the CLI's own picker filters it (codex:
+    `visibility`/`priority`/client-version gates, with `retired` ids the CLI
+    hides but still serves; claude-code: every public alias plus `best`, the
+    alias it recommends). The dropdowns render from these.
   • Version pins (codex, claude-code, opencode, openclaw, hermes) — the tested
     CLI version for each harness. A daily refresh PR keeps packaging and model
     metadata aligned instead of silently drifting with `latest`.
@@ -61,13 +64,20 @@ def harness_default_model(harness: str) -> str:
 
 
 def codex_models() -> List[str]:
-    """Servable codex model ids: the human-owned ``extra_models`` (codex-family
-    ids the binary's embedded slug list omits — the ONLY models codex-rs
-    exposes MCP servers to; see the JSON's ``_extra_models_note``) first, then
-    the binary-extracted list."""
+    """Servable codex model ids: the binary's picker list in codex's own order
+    (its default first), then the human-owned ``extra_models`` (codex-family
+    ids the catalog omits — the ONLY models codex-rs exposes MCP servers to on
+    the API-key path; see the JSON's ``_extra_models_note``)."""
     block = _load()["codex"]
-    extras = list(block.get("extra_models") or [])
-    return extras + [m for m in block["models"] if m not in extras]
+    models = list(block["models"])
+    return models + [m for m in block.get("extra_models") or [] if m not in models]
+
+
+def codex_retired_models() -> Dict[str, str]:
+    """Ids codex hides from its picker but still serves, mapped to the
+    replacement it names. Gates accept them so a saved config keeps running;
+    the dropdown never offers them."""
+    return dict(_load()["codex"].get("retired") or {})
 
 
 def codex_version() -> str:
@@ -100,16 +110,26 @@ def claude_code_aliases() -> Dict[str, str]:
 
 
 def codex_options() -> List[Dict[str, str]]:
-    """`{value, label}` entries for the Codex model dropdown."""
-    return [{"value": m, "label": m} for m in codex_models()]
+    """`{value, label}` entries for the Codex model dropdown: codex's own
+    one-line description per model; extras flagged for the auth path that
+    can use them (ChatGPT-auth accounts 400 on them)."""
+    block = _load()["codex"]
+    info = block.get("model_info") or {}
+    extras = set(block.get("extra_models") or [])
+
+    def _label(m: str) -> str:
+        if m in extras:
+            return f"{m} · OpenAI API key auth only"
+        description = (info.get(m) or {}).get("description")
+        return f"{m} · {description}" if description else m
+
+    return [{"value": m, "label": _label(m)} for m in codex_models()]
 
 
 def claude_code_options() -> List[Dict[str, str]]:
-    """`{value, label}` entries for the Claude Code alias dropdown."""
+    """`{value, label}` entries for the Claude Code alias dropdown: the alias
+    the CLI recommends (`best`) first, then the rest in catalog order."""
     aliases = claude_code_aliases()
-    order = ["opus", "sonnet", "haiku"]
-    return [
-        {"value": alias, "label": f"{alias} ({aliases[alias]})"}
-        for alias in order
-        if alias in aliases
-    ]
+    best = _load()["claude_code"].get("best")
+    order = ([best] if best in aliases else []) + [a for a in aliases if a != best]
+    return [{"value": alias, "label": f"{alias} ({aliases[alias]})"} for alias in order]

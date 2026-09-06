@@ -65,8 +65,10 @@ def _is_chatgpt_plus_supported(model_id: str) -> bool:
     wrapper's OAuth gate is guaranteed to stay aligned with what the
     standalone Codex wrapper accepts.
     """
-    from nodes.agent.config._cli_models_loader import codex_models
-    return model_id in set(codex_models())
+    from nodes.agent.config._cli_models_loader import codex_models, codex_retired_models
+    # Retired ids are hidden from the picker but still served (codex names a
+    # replacement), so a saved selection keeps working instead of being gated.
+    return model_id in set(codex_models()) or model_id in codex_retired_models()
 async def fetch_opencode_models() -> List[Dict[str, str]]:
     """Fetch and cache the OpenCode model picker list.
 
