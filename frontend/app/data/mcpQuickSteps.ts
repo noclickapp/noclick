@@ -107,3 +107,83 @@ export const MCP_QUICK_STEPS: Record<
         },
     ],
 };
+
+/** What makes a client actually handshake once the config is saved, and how
+    to check from the client's side. Every connect surface renders this under
+    its status: a hosted link only sees a client when the client STARTS a
+    session, and "waiting for it to connect" alone never said so — a visitor
+    ran `opencode mcp add` (which only writes the config), watched the finale
+    for four minutes, left, and OpenCode connected 84s later (2026-09-05).
+    Keyed by MCP_CLIENT_GUIDES key; verified against client docs 2026-09. */
+export interface ConnectHint {
+    /** One sentence naming the action that triggers the handshake. */
+    trigger: string;
+    /** A client-side check. Terminal checks that list servers also perform
+        the handshake, so running one lights the status up. */
+    check?: QuickStep;
+}
+
+const LISTS_AND_CONNECTS = 'Check from your side — this also connects it';
+
+export const MCP_CONNECT_HINTS: Record<string, ConnectHint> = {
+    'claude-code': {
+        trigger:
+            'Claude Code connects when a session starts — run claude, or restart a running one.',
+        check: { text: LISTS_AND_CONNECTS, code: 'claude mcp list', terminal: true },
+    },
+    codex: {
+        trigger:
+            'Codex connects when a session starts — run codex, or restart a running one.',
+        check: { text: 'Inside Codex, type /mcp to see the server and its tools' },
+    },
+    opencode: {
+        trigger:
+            'opencode mcp add only saves the config. OpenCode connects when it starts — run opencode, or restart a running one.',
+        check: { text: LISTS_AND_CONNECTS, code: 'opencode mcp list', terminal: true },
+    },
+    openclaw: {
+        trigger:
+            'OpenClaw probes the server while adding it, so this lights up during openclaw mcp add.',
+    },
+    hermes: {
+        trigger: 'Hermes connects when it next starts a session.',
+    },
+    claude: {
+        trigger: 'claude.ai connects as soon as you click Add.',
+        check: { text: 'Turn it on in a chat: + → Connectors → toggle it on' },
+    },
+    chatgpt: {
+        trigger: 'ChatGPT connects when you create the connector.',
+        check: { text: 'Enable it from the + / tools menu in a new chat' },
+    },
+    cursor: {
+        trigger: 'Cursor connects as soon as you approve the install.',
+        check: {
+            text: 'Cursor Settings → MCP shows a green dot and the tool list once it is live',
+        },
+    },
+    vscode: {
+        trigger: 'VS Code starts the server the first time agent chat needs it.',
+        check: {
+            text: 'To start it now: Command Palette → MCP: List Servers → pick it → Start',
+        },
+    },
+    windsurf: {
+        trigger:
+            'Windsurf connects when you save the config and refresh the MCP servers list.',
+    },
+    zed: {
+        trigger: 'Zed connects when you save settings.json.',
+        check: {
+            text: 'Settings → AI → MCP Servers shows a green dot ("Server is active") once it is live',
+        },
+    },
+    other: {
+        trigger:
+            'Most clients connect when they start — restart yours after saving the config.',
+    },
+};
+
+export function connectHintFor(clientKey: string): ConnectHint {
+    return MCP_CONNECT_HINTS[clientKey] ?? MCP_CONNECT_HINTS.other;
+}

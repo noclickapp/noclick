@@ -10,6 +10,7 @@ import { EVENTS } from '~/lib/analytics-events';
 import { useState, useMemo, useCallback, useEffect, useRef, memo } from 'react';
 import { getAgentToolProviders, getAgentTriggerSources, getToolProviderConsumerTypes } from '~/utils/nodeSchemas';
 import { AgentWiringChips } from './AgentWiringChips';
+import { getNodeConfigHeader } from '~/lib/nodeConfigHeaders';
 import { ImportCurlButton } from './ImportCurlButton';
 import { hasUnconnectedCredentials, providerCredentialsMissing } from './NodeCredentials';
 import { useDroppable } from '@dnd-kit/core';
@@ -429,7 +430,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
     // Check if selected node has unconnected credentials that need attention
     // (drives the red Credentials header tab). Provider-wired nodes are judged
     // by their allowlist — the plain check saw operation=None (providers skip
-    // node drafter) and flagged usage-based providers that need no credential.
+    // the node drafter) and flagged usage-based providers that need no credential.
     const needsCredentialConnection = useMemo(() => {
         if (!selectedNode?.type) return false;
         // For agent nodes, use the hook result; for others, use hasUnconnectedCredentials
@@ -482,16 +483,29 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
         );
         // MCP nodes anchor the tools chips under server_url (the mode fork:
         // wired tools XOR external URL); agents under their Message field.
+        // The connect-externally affordance is a GLOBAL header (configHeaderSlot).
         return isMcp ? { server_url: chips } : { message: chips };
     }, [selectedNode, agentTriggerSources, agentToolSources, onAgentWiringAdd, onWiredNodeConfigPatch, onWiredNodeCredentialsChange, getWiredNodeData, workflowId]);
 
-    // Global header above the node's config form.
+    // Global header above the node's config form. Per-type headers come from
+    // the registry (hosted: the MCP node's connect-externally panel). HTTP
+    // Request: an Import-from-cURL action.
     const configHeaderSlot = useMemo(() => {
+        const Header = getNodeConfigHeader(selectedNode?.type);
+        if (Header && selectedNode && workflowId) {
+            return (
+                <Header
+                    workflowId={workflowId}
+                    nodeId={selectedNode.id}
+                    nodeLabel={(selectedNode.data as { label?: string } | undefined)?.label}
+                />
+            );
+        }
         if (selectedNode?.type === 'automation-http-request') {
             return <ImportCurlButton nodeId={selectedNode.id} />;
         }
         return undefined;
-    }, [selectedNode]);
+    }, [selectedNode, workflowId]);
 
     // Handle config changes from NodeConfig component
     // sourceNodeId is passed by NodeConfig to prevent race conditions when switching nodes

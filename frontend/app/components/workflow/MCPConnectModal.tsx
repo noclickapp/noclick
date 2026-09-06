@@ -1,13 +1,18 @@
-// Per-client setup guides for the NoClick MCP server: numbered steps, CLI
-// commands, JSON snippets, and one-click deeplinks. Client icons use
-// @lobehub/icons (Mono variants where the brand mark
-// is too dark for our theme), official simple-icons paths inline for VS
-// Code/Zed. Tab rail is a keyboard-navigable ARIA tablist; arrows work from
-// anywhere in the modal. Snippets verified against each client's current
-// official docs (2026-06) — key names diverge (url vs serverUrl vs TOML);
-// keep in sync when client docs move.
+// Per-client MCP setup guides, modeled on linear.app/docs/mcp (numbered
+// steps, CLI commands, JSON snippets, one-click deeplinks). One generic modal
+// (MCPSetupModal) serves the platform's own NoClick MCP server (static URL +
+// OAuth, opened from the command palette); a hosted deployment also mounts it
+// for a hosting-mode MCP node's public link, adding minting, rotation and the
+// live connect status through the modal's slots. Client icons: @lobehub/icons (Mono
+// variants where the brand mark is too dark for our theme), official
+// simple-icons paths inline for VS Code/Zed. Tab rail is a keyboard-navigable
+// ARIA tablist; arrows work from anywhere in the modal. Snippets verified
+// against each client's current official docs (2026-09) — key names diverge
+// (url vs serverUrl vs TOML); keep in sync when client docs move. What makes
+// each client actually connect lives beside the snippets in
+// data/mcpQuickSteps.ts (MCP_CONNECT_HINTS).
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Check, Copy, Globe, Loader2 } from 'lucide-react';
 import { Claude, MCP, OpenAI, Windsurf as WindsurfIcon } from '@lobehub/icons';
@@ -97,13 +102,14 @@ export const MCP_CLIENT_GUIDES: ClientGuide[] = [
         label: 'Claude',
         Icon: Claude,
         blocks: url => [
-            { kind: 'note', text: 'Works on claude.ai and the Claude desktop app, all plans, through custom connectors.' },
+            { kind: 'note', text: 'Works on claude.ai, the Claude desktop app and mobile through custom connectors — Free (one connector), Pro, Max, Team and Enterprise.' },
             {
                 kind: 'steps',
                 steps: [
-                    'Open Settings → Connectors.',
-                    'Choose Add custom connector (bottom of the list).',
+                    'Open Customize → Connectors (on Team and Enterprise an Owner adds it under Organization settings → Connectors first).',
+                    'Click + and choose Add custom connector.',
                     'Paste the server URL and click Add.',
+                    'In a chat, click + → Connectors and turn it on.',
                 ],
             },
             { kind: 'code', title: 'Server URL', code: url },
@@ -115,7 +121,7 @@ export const MCP_CLIENT_GUIDES: ClientGuide[] = [
         Icon: harnessMarkIcon('claude-code'),
         blocks: (url, name) => [
             { kind: 'code', title: 'Terminal', code: `claude mcp add --transport http ${name} ${url}` },
-            { kind: 'note', text: 'Run /mcp in a Claude Code session to confirm the server is connected. To share it with your team instead, add it to .mcp.json in the project root:' },
+            { kind: 'note', text: 'Verify with claude mcp list (it connects and shows ✔ Connected) or /mcp inside a session. To share it with your team instead, add it to .mcp.json in the project root:' },
             {
                 kind: 'code',
                 title: '.mcp.json',
@@ -149,7 +155,7 @@ export const MCP_CLIENT_GUIDES: ClientGuide[] = [
         Icon: OpenAI,
         blocks: (url, name) => [
             { kind: 'code', title: 'Terminal', code: `codex mcp add ${name} --url ${url}` },
-            { kind: 'note', text: 'Or configure it directly — verify with `codex mcp list`:' },
+            { kind: 'note', text: 'Verify with codex mcp list, or /mcp inside a Codex session. Or configure it directly:' },
             { kind: 'code', title: '~/.codex/config.toml', code: `[mcp_servers.${name}]\nurl = "${url}"` },
         ],
     },
@@ -159,7 +165,7 @@ export const MCP_CLIENT_GUIDES: ClientGuide[] = [
         Icon: harnessMarkIcon('opencode'),
         blocks: (url, name) => [
             { kind: 'code', title: 'Terminal', code: 'opencode mcp add' },
-            { kind: 'note', text: 'Choose Remote and paste the server URL when asked. Or add it to opencode.json directly:' },
+            { kind: 'note', text: 'Choose Remote, paste the server URL, and answer No to OAuth — the link itself is the key. This only saves the config: OpenCode connects when it starts, and opencode mcp list checks (and connects) from your side. Or add it to opencode.json directly:' },
             {
                 kind: 'code',
                 title: '~/.config/opencode/opencode.json',
@@ -207,6 +213,7 @@ export const MCP_CLIENT_GUIDES: ClientGuide[] = [
                 title: '.cursor/mcp.json',
                 code: JSON.stringify({ mcpServers: { [name]: { url } } }, null, 2),
             },
+            { kind: 'note', text: 'Cursor Settings → MCP shows a green dot and the tool list once it is live.' },
         ],
     },
     {
@@ -214,6 +221,8 @@ export const MCP_CLIENT_GUIDES: ClientGuide[] = [
         label: 'VS Code',
         Icon: VSCodeIcon,
         blocks: (url, name) => [
+            { kind: 'code', title: 'Terminal', code: `code --add-mcp '${JSON.stringify({ name, type: 'http', url })}'` },
+            { kind: 'note', text: 'Or from the Command Palette:' },
             {
                 kind: 'steps',
                 steps: [
@@ -223,7 +232,7 @@ export const MCP_CLIENT_GUIDES: ClientGuide[] = [
                     `Enter the name ${name} and hit enter.`,
                 ],
             },
-            { kind: 'note', text: 'Or add it to .vscode/mcp.json directly:' },
+            { kind: 'note', text: 'Or add it to .vscode/mcp.json directly. MCP: List Servers shows it and can start it right away:' },
             {
                 kind: 'code',
                 title: '.vscode/mcp.json',
@@ -239,15 +248,14 @@ export const MCP_CLIENT_GUIDES: ClientGuide[] = [
             {
                 kind: 'steps',
                 steps: [
-                    'CTRL/CMD + , to open Windsurf settings.',
-                    'Scroll to Cascade → MCP servers.',
-                    'Select Add Server → Add custom server.',
-                    'Enter the following configuration:',
+                    'Open Windsurf Settings → Cascade → MCP Servers (or the MCPs icon in the Cascade panel).',
+                    'Select Add custom server and enter the configuration below.',
+                    'Save, then refresh the servers list.',
                 ],
             },
             {
                 kind: 'code',
-                title: 'mcp_config.json',
+                title: '~/.codeium/windsurf/mcp_config.json',
                 code: JSON.stringify({ mcpServers: { [name]: { serverUrl: url } } }, null, 2),
             },
         ],
@@ -261,6 +269,12 @@ export const MCP_CLIENT_GUIDES: ClientGuide[] = [
             {
                 kind: 'code',
                 title: 'settings.json',
+                code: JSON.stringify({ context_servers: { [name]: { url } } }, null, 2),
+            },
+            { kind: 'note', text: 'Settings → AI → MCP Servers shows a green dot ("Server is active") once it connects. Older Zed builds without remote support can bridge through mcp-remote:' },
+            {
+                kind: 'code',
+                title: 'settings.json (legacy bridge)',
                 code: JSON.stringify(
                     { context_servers: { [name]: { source: 'custom', command: 'npx', args: ['-y', 'mcp-remote', url], env: {} } } },
                     null,
@@ -291,8 +305,10 @@ export const MCP_CLIENT_GUIDES: ClientGuide[] = [
 // file's icon/socket deps; re-exported here so existing importers keep working.
 export { MCP_QUICK_STEPS, type QuickStep } from '~/data/mcpQuickSteps';
 
-/** Click-anywhere-to-copy code block. */
-export function CopyBlock({ title, code }: { title: string; code: string }) {
+/** Click-anywhere-to-copy code block: the copy affordance lives top-right as
+ *  an indicator (swaps to Copied), the whole block is the button. `action`
+ *  renders extra controls in the label row (e.g. the URL rotate button). */
+export function CopyBlock({ title, code, action }: { title: string; code: string; action?: ReactNode }) {
     const [copied, setCopied] = useState(false);
     const copy = () => {
         navigator.clipboard.writeText(code);
@@ -304,6 +320,7 @@ export function CopyBlock({ title, code }: { title: string; code: string }) {
             <div className="mb-1 flex items-center justify-between gap-2">
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground dark:text-zinc-500">{title}</span>
                 <span className="flex items-center gap-1.5">
+                    {action}
                     <span className={`inline-flex items-center gap-1 text-[11px] ${copied ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground dark:text-zinc-500'}`}>
                         {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                         {copied ? 'Copied' : 'Click to copy'}
@@ -321,6 +338,33 @@ export function CopyBlock({ title, code }: { title: string; code: string }) {
                 </pre>
             </button>
         </div>
+    );
+}
+
+/** Click-anywhere-to-copy terminal command ($-prefixed prompt styling). */
+export function TerminalBlock({ code }: { code: string }) {
+    const [copied, setCopied] = useState(false);
+    const copy = () => {
+        navigator.clipboard.writeText(code);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+    };
+    return (
+        <button
+            type="button"
+            onClick={copy}
+            title="Copy to clipboard"
+            className="relative block w-full cursor-pointer rounded-lg border border-white/[0.08] bg-black text-left transition-colors hover:border-white/20"
+        >
+            <pre className="scrollbar-subtle m-0 flex items-start gap-2 overflow-x-auto px-3.5 py-3 pr-20 text-[12.5px] leading-relaxed">
+                <span className="select-none text-emerald-400/80">$</span>
+                <code className="whitespace-pre text-zinc-100">{code}</code>
+            </pre>
+            {/* Pinned outside the scroll flow — long commands scroll under the fade. */}
+            <span className="pointer-events-none absolute inset-y-px right-px flex items-start rounded-r-lg bg-gradient-to-l from-black via-black/90 to-transparent py-3 pl-8 pr-3.5 text-[11px] select-none text-zinc-500">
+                {copied ? 'Copied' : 'Copy'}
+            </span>
+        </button>
     );
 }
 
@@ -363,20 +407,30 @@ export interface MCPSetupModalProps {
     serverName: string;
     title: string;
     intro: string;
+    /** Extra control in the URL block's label row (e.g. rotate). */
+    urlAction?: ReactNode;
+    /** Banner under the URL block (e.g. the post-rotation warning). */
+    urlNotice?: ReactNode;
+    /** Rendered under the active client's guide — the hosted surface puts
+     *  the live connect status here so it sits next to the snippet it judges. */
+    statusFor?: (clientKey: string, clientLabel: string) => ReactNode;
 }
 
-/** Generic per-client setup guide for the platform NoClick MCP server. */
-export function MCPSetupModal({ open, onClose, url, urlError, serverName, title, intro }: MCPSetupModalProps) {
+/** Generic per-client MCP setup guide modal — shared by the hosted-link
+ *  surface (MCP node) and the platform NoClick MCP (command palette). */
+export function MCPSetupModal({ open, onClose, url, urlError, serverName, title, intro, urlAction, urlNotice, statusFor }: MCPSetupModalProps) {
     const [activeIndex, setActiveIndex] = useState(0);
     const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
     const activeIndexRef = useRef(0);
     activeIndexRef.current = activeIndex;
 
     // Escape closes and ArrowUp/Down switch clients from ANYWHERE in the
-    // modal (document capture — focus is often on a copy button or nowhere).
+    // modal (document capture — focus is often on a copy button, the rotate
+    // confirm, or nowhere at all). Suspended while a nested dialog owns keys.
     useEffect(() => {
         if (!open) return;
         const onKey = (e: KeyboardEvent) => {
+            if (document.querySelector('[data-mcp-rotate-confirm]')) return;
             let next: number | null = null;
             if (e.key === 'Escape') {
                 e.preventDefault();
@@ -441,14 +495,15 @@ export function MCPSetupModal({ open, onClose, url, urlError, serverName, title,
                 <div className="border-b border-border dark:border-white/[0.06] px-4 py-2.5">
                     {url ? (
                         <div className="space-y-2">
-                            <CopyBlock title="Server URL" code={url} />
+                            <CopyBlock title="Server URL" code={url} action={urlAction} />
+                            {urlNotice}
                         </div>
                     ) : urlError ? (
                         <div className="text-xs text-red-600 dark:text-red-400">{urlError}</div>
                     ) : (
                         <div className="flex items-center gap-2 text-xs text-muted-foreground dark:text-zinc-500">
                             <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            Loading server URL…
+                            Creating server link…
                         </div>
                     )}
                 </div>
@@ -492,6 +547,7 @@ export function MCPSetupModal({ open, onClose, url, urlError, serverName, title,
                         {client.blocks(displayUrl, serverName).map((b, i) => (
                             <GuideBlockView key={i} block={b} />
                         ))}
+                        {statusFor?.(client.key, client.label)}
                     </div>
                 </div>
 
@@ -523,7 +579,7 @@ export function MCPSetupModal({ open, onClose, url, urlError, serverName, title,
  *  sign-in on first connect. Opened from the command palette. */
 export function NoClickMCPSetupModal({ open, onClose }: { open: boolean; onClose: () => void }) {
     // The public MCP endpoint is the Cloudflare-proxied custom domain — NOT
-    // VITE_API_URL, which some deployments use a separate backend socket URL for socket traffic.
+    // VITE_API_URL, which prod sets to the raw Modal URL for socket traffic.
     const url = mcpServerUrl();
     return (
         <MCPSetupModal
