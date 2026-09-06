@@ -125,6 +125,7 @@ services:
   # Applies the schema and creates both private storage buckets, then exits.
   bootstrap:
     image: ${NOCLICK_BACKEND_IMAGE:-ghcr.io/noclickapp/noclick-backend:${NOCLICK_VERSION:-latest}}
+    pull_policy: missing
     build:
       context: .
       dockerfile: docker/backend.Dockerfile
@@ -153,6 +154,7 @@ services:
   backend:
     <<: *restart
     image: ${NOCLICK_BACKEND_IMAGE:-ghcr.io/noclickapp/noclick-backend:${NOCLICK_VERSION:-latest}}
+    pull_policy: missing
     build:
       context: .
       dockerfile: docker/backend.Dockerfile
@@ -212,7 +214,12 @@ services:
 
   frontend:
     <<: *restart
-    image: ${NOCLICK_FRONTEND_IMAGE:-noclick/frontend:local}
+    # The release publishes this image built for the default local URLs. `up`
+    # pulls it (pull_policy) instead of compiling the bundle here; an install
+    # with other public URLs runs `docker compose build frontend` first, and
+    # NOCLICK_BUILD=1 in the installers builds everything from the checkout.
+    image: ${NOCLICK_FRONTEND_IMAGE:-ghcr.io/noclickapp/noclick-frontend:${NOCLICK_VERSION:-latest}}
+    pull_policy: missing
     build:
       context: .
       dockerfile: docker/frontend.Dockerfile

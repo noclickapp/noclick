@@ -62,19 +62,20 @@ npx noclick
 Or by hand — the same thing, visibly:
 
 ```bash
-git clone https://github.com/noclickapp/noclick.git && cd noclick
+git clone --branch <tag> https://github.com/noclickapp/noclick.git && cd noclick
 ./scripts/noclick-setup.sh
-docker compose up -d
+NOCLICK_VERSION=<version> docker compose up -d
 ```
 
-Each installer path fetches the source, generates this instance's secrets —
-including the credential-encryption key, which is kept across re-runs — and
-starts the stack with Docker Compose. Re-running updates in place. Releases are
-tags; pin the exact source the installer builds with `NOCLICK_REF=<tag>` from
-the [releases page](https://github.com/noclickapp/noclick/releases). The
-installer deliberately builds that checkout locally. If you operate the Compose
-stack directly, `NOCLICK_VERSION=<version> docker compose up -d` instead pins
-the released backend image; the frontend is still built for your public URLs. Every
+Each installer path fetches the latest release's source, generates this
+instance's secrets — including the credential-encryption key, which is kept
+across re-runs — and pulls that release's images: about 3 GB the first time,
+and nothing is compiled on your machine. Re-running updates in place. Pin a
+release with `NOCLICK_REF=<tag>` from the
+[releases page](https://github.com/noclickapp/noclick/releases);
+`NOCLICK_REF=main` runs the development line. The frontend image is built for
+the default local URLs, so an install with other public URLs builds that one
+image itself, and `NOCLICK_BUILD=1` builds everything from the checkout. Every
 installer option is documented at the top of [`install.sh`](./install.sh) and
 [`install.ps1`](./install.ps1).
 

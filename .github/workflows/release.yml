@@ -169,10 +169,35 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Build the frontend image locally, for the default local URLs
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/frontend.Dockerfile
+          load: true
+          push: false
+          tags: noclick-release-frontend:${{ steps.v.outputs.revision }}
+          # The browser bundle compiles its public URLs in, so this image is
+          # exactly the compose stack's defaults: an install that keeps them
+          # pulls it and compiles nothing; one with other URLs builds its own.
+          build-args: |
+            VITE_API_URL=http://api.localhost:8000
+            VITE_RELAY_URL=ws://api.localhost:8000/relay
+            VITE_PUBLIC_URL=http://localhost:3000
+            VITE_DISABLE_CAPTCHA=true
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ steps.v.outputs.revision }}
+            org.opencontainers.image.version=${{ steps.v.outputs.version }}
+            org.opencontainers.image.licenses=AGPL-3.0-only
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       - name: Apply the public schema and smoke-test the local images
         env:
           IMAGE: noclick-release-single:${{ steps.v.outputs.revision }}
           BACKEND_IMAGE: noclick-release-backend:${{ steps.v.outputs.revision }}
+          FRONTEND_IMAGE: noclick-release-frontend:${{ steps.v.outputs.revision }}
           EXPECTED_REVISION: ${{ steps.v.outputs.revision }}
           EXPECTED_SOURCE: ${{ github.server_url }}/${{ github.repository }}
           EXPECTED_VERSION: ${{ steps.v.outputs.version }}
@@ -191,7 +216,7 @@ jobs:
           }
           trap cleanup EXIT
 
-          for artifact_image in "$IMAGE" "$BACKEND_IMAGE"; do
+          for artifact_image in "$IMAGE" "$BACKEND_IMAGE" "$FRONTEND_IMAGE"; do
             revision="$(docker inspect --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' "$artifact_image")"
             source="$(docker inspect --format '{{ index .Config.Labels "org.opencontainers.image.source" }}' "$artifact_image")"
             version="$(docker inspect --format '{{ index .Config.Labels "org.opencontainers.image.version" }}' "$artifact_image")"
@@ -205,6 +230,10 @@ jobs:
               echo "::error::$artifact_image version label is '$version', expected '$EXPECTED_VERSION'"; exit 1;
             }
           done
+          # The frontend image must be the default-URL build the compose stack
+          # pulls, or every laptop install would talk to the wrong API.
+          docker run --rm --entrypoint sh "$FRONTEND_IMAGE" -c 'grep -rlq "api.localhost:8000" build/client' \
+            || { echo "::error::$FRONTEND_IMAGE was not built for the default local URLs"; exit 1; }
 
           docker network create nc-verify
           docker run -d --name nc-db --network nc-verify \
@@ -392,12 +421,15 @@ jobs:
           REVISION: ${{ steps.v.outputs.revision }}
           SINGLE_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}
           BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-backend
+          FRONTEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-frontend
         run: |
           set -euo pipefail
           docker tag "noclick-release-single:$REVISION" "$SINGLE_IMAGE:sha-$REVISION"
           docker tag "noclick-release-backend:$REVISION" "$BACKEND_IMAGE:sha-$REVISION"
+          docker tag "noclick-release-frontend:$REVISION" "$FRONTEND_IMAGE:sha-$REVISION"
           docker push "$SINGLE_IMAGE:sha-$REVISION"
           docker push "$BACKEND_IMAGE:sha-$REVISION"
+          docker push "$FRONTEND_IMAGE:sha-$REVISION"
 
       - name: Promote the verified revision images idempotently
         env:
@@ -405,6 +437,7 @@ jobs:
           VERSION: ${{ steps.v.outputs.version }}
           SINGLE_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}
           BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-backend
+          FRONTEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-frontend
         run: |
           set -euo pipefail
 
@@ -461,8 +494,9 @@ jobs:
           # exact digest it just rebuilt, tested and pushed under sha-$REVISION.
           promote_version "$SINGLE_IMAGE"
           promote_version "$BACKEND_IMAGE"
+          promote_version "$FRONTEND_IMAGE"
 
-          # Both immutable version tags exist before either mutable convenience
+          # Every immutable version tag exists before any mutable convenience
           # tag moves. Re-running safely finishes a partial latest promotion.
           docker buildx imagetools create \
             --prefer-index=false \
@@ -470,6 +504,9 @@ jobs:
           docker buildx imagetools create \
             --prefer-index=false \
             --tag "$BACKEND_IMAGE:latest" "$BACKEND_IMAGE:$VERSION"
+          docker buildx imagetools create \
+            --prefer-index=false \
+            --tag "$FRONTEND_IMAGE:latest" "$FRONTEND_IMAGE:$VERSION"
 
       - name: Create the verified tag
         if: steps.tag_state.outputs.exists != 'true'

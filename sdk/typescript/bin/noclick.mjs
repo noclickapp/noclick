@@ -17,7 +17,10 @@ import { join } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 
 const REPO = process.env.NOCLICK_REPO || 'https://github.com/noclickapp/noclick.git';
-const REF = process.env.NOCLICK_REF || 'main';
+// Source and images come from one release, so the compose file always
+// matches the containers it starts; resolved in resolveRef() unless pinned.
+let REF = process.env.NOCLICK_REF || '';
+let VERSION = 'latest';
 const DIR = process.env.NOCLICK_DIR || join(homedir(), 'noclick');
 
 const E = '';
@@ -88,7 +91,30 @@ function warnIfDockerMemoryIsTight() {
 
 function compose(args, opts = {}) {
     const [cmd, base] = requireDocker();
-    return run(cmd, [...base, ...args], { cwd: DIR, ...opts });
+    return run(cmd, [...base, ...args], { cwd: DIR, env: { ...process.env, NOCLICK_VERSION: VERSION }, ...opts });
+}
+
+// An existing checkout starts from the release it already is (no network);
+// a fresh install or `update` asks GitHub for the latest one.
+async function resolveRef({ latest = false } = {}) {
+    if (!REF && !latest && existsSync(join(DIR, '.git'))) {
+        REF = capture('git', ['-C', DIR, 'describe', '--tags', '--exact-match']) || 'main';
+    }
+    if (!REF) {
+        let tag = null;
+        try {
+            const r = await fetch('https://api.github.com/repos/noclickapp/noclick/releases/latest');
+            if (r.ok) tag = (await r.json()).tag_name;
+        } catch {}
+        if (!tag) {
+            die(
+                'Could not look up the latest NoClick release from GitHub.\n' +
+                '  Set NOCLICK_REF to a release tag from https://github.com/noclickapp/noclick/releases and try again.',
+            );
+        }
+        REF = tag;
+    }
+    VERSION = /^v\d/.test(REF) ? REF.slice(1) : 'latest';
 }
 
 // ── Source ───────────────────────────────────────────────────────────────────
@@ -236,7 +262,19 @@ async function waitFor(url, seconds = 300) {
     return false;
 }
 
-async function start({ build = true } = {}) {
+// The frontend bundle has its public URLs compiled in: the release's image is
+// built for the defaults, so other URLs mean building that one image here.
+const DEFAULT_URLS = {
+    NOCLICK_APP_URL: 'http://localhost:3000',
+    NOCLICK_API_URL: 'http://api.localhost:8000',
+    NOCLICK_RELAY_URL: 'ws://api.localhost:8000/relay',
+};
+const customUrls = (env) => Object.entries(DEFAULT_URLS).some(([k, v]) => env[k] !== v);
+
+// fetch: pull the release's images (the default; nothing compiles here) or
+// build everything from the checkout (NOCLICK_BUILD=1); false = just start.
+async function start({ fetch = true } = {}) {
+    await resolveRef();
     ensureSource();
     const env = ensureEnv();
     // The same switch install.sh honours: everything in place, nothing running.
@@ -244,8 +282,20 @@ async function start({ build = true } = {}) {
         console.log(`\n${green('✓')} Set up in ${DIR}. Start it with: ${bold('npx noclick')}\n`);
         return;
     }
-    say('Building and starting (the first build takes a few minutes)');
-    if (compose(build ? ['up', '-d', '--build'] : ['up', '-d']).status !== 0) {
+    let args = ['up', '-d'];
+    if (fetch && process.env.NOCLICK_BUILD) {
+        say('Building and starting from the checkout (this takes a while)');
+        args = ['up', '-d', '--build'];
+    } else if (fetch) {
+        if (customUrls(env)) {
+            say('Custom public URLs: building the frontend for them (a few minutes)');
+            if (compose(['build', 'frontend']).status !== 0) die('Compose failed to build the frontend.');
+        }
+        say(`Downloading and starting NoClick ${VERSION} (about 3 GB the first time)`);
+    } else {
+        say('Starting');
+    }
+    if (compose(args).status !== 0) {
         die('Compose failed to start the stack.');
     }
 
@@ -279,14 +329,15 @@ const HELP = `${bold('npx noclick')} — run a NoClick instance on this machine
   ${bold('noclick')}              install if needed, then start
   ${bold('noclick stop')}         stop the containers, keep the data
   ${bold('noclick restart')}      start again without rebuilding
-  ${bold('noclick update')}       fetch the latest version and restart
+  ${bold('noclick update')}       move to the latest release and restart
   ${bold('noclick logs')} [svc]   follow the logs
   ${bold('noclick status')}       what is running
   ${bold('noclick where')}        print the install directory
   ${bold('noclick doctor')}       check this machine
   ${bold('noclick uninstall')}    remove the containers and all data
 
-${dim('Environment: NOCLICK_DIR, NOCLICK_REF, NOCLICK_REPO, NOCLICK_APP_URL, NOCLICK_NO_START')}`;
+${dim('Environment: NOCLICK_DIR, NOCLICK_REF (default: latest release), NOCLICK_REPO,')}
+${dim('             NOCLICK_APP_URL, NOCLICK_BUILD=1 (build from source), NOCLICK_NO_START')}`;
 
 async function main() {
     const [command = 'start', ...rest] = process.argv.slice(2);
@@ -304,10 +355,11 @@ async function main() {
 
         case 'restart':
             requireInstalled();
-            return start({ build: false });
+            return start({ fetch: false });
 
         case 'update':
             requireInstalled();
+            await resolveRef({ latest: true });
             updateSource();
             return start();
 

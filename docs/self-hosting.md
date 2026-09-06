@@ -68,11 +68,15 @@ thing either of us needs.
 > would have to guess which existing data is safe to discard. Migration versions
 > are append-only starting with the first public release.
 
-The frontend is still built locally, and deliberately: `docker/frontend.Dockerfile`
-compiles `VITE_*` into the browser bundle, so an image built without your URLs
-would be wrong for everyone who pulled it. The single-origin image avoids the
-question entirely — it bakes no URL and asks the origin it was served from,
-which is why that one can be published and why the one-click deploys use it.
+`docker/frontend.Dockerfile` compiles `VITE_*` into the browser bundle, so a
+frontend image is only right for the URLs it was built with. Each release
+publishes `ghcr.io/noclickapp/noclick-frontend` built for the default local
+URLs (`http://localhost:3000` and friends), which is what a laptop install
+pulls; an install with other public URLs runs `docker compose build frontend`
+first (the installers do this on their own when the URLs in `.env` differ
+from the defaults). The single-origin image avoids the question entirely — it
+bakes no URL and asks the origin it was served from, which is why the
+one-click deploys use it.
 
 ## Hosted deployments
 

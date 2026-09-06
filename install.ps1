@@ -216,15 +216,19 @@ if (-not (Have docker)) {
         Stop-Installer 0
     }
     Assert-Elevated 'to install Docker Desktop'
+    # The download comes first so it is already on disk when the machine comes
+    # back from the WSL2 restart; TEMP survives that restart.
+    $dockerArch = if ($arch -eq 'arm64') { 'arm64' } else { 'amd64' }
+    $installer = Join-Path $env:TEMP 'DockerDesktopInstaller.exe'
+    if (-not (Test-Path $installer)) {
+        Say 'Downloading Docker Desktop (about 600 MB)'
+        Get-Download "https://desktop.docker.com/win/main/$dockerArch/Docker%20Desktop%20Installer.exe" $installer
+    }
     $platformBefore = (Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform).State
     if (-not (Test-WslInstalled)) { Enable-Wsl }
     if ($platformBefore -ne 'Enabled' -or (Test-RebootPending)) {
         Restart-AndResume 'to finish enabling virtualization'
     }
-    $dockerArch = if ($arch -eq 'arm64') { 'arm64' } else { 'amd64' }
-    $installer = Join-Path $env:TEMP 'DockerDesktopInstaller.exe'
-    Say 'Downloading Docker Desktop (about 600 MB)'
-    Get-Download "https://desktop.docker.com/win/main/$dockerArch/Docker%20Desktop%20Installer.exe" $installer
     Say 'Installing Docker Desktop (a few minutes, no questions asked)'
     $install = Start-Process -FilePath $installer -ArgumentList 'install', '--quiet', '--accept-license', '--backend=wsl-2' -Wait -PassThru
     Remove-Item $installer -ErrorAction SilentlyContinue

@@ -12,15 +12,18 @@
 # only do one thing is not much of an install:
 #
 #   NOCLICK_DIR=/srv/noclick     where the source and .env live
-#   NOCLICK_REF=v1.2.3           branch or tag to install (default: main)
+#   NOCLICK_REF=v1.2.3           release tag or branch to install
+#                                (default: the latest release; main = development line)
 #   NOCLICK_REPO=<git url>       source to clone from
 #   NOCLICK_APP_URL=https://…    public URLs, if this is not a laptop
+#   NOCLICK_BUILD=1              build the images from the checkout instead of
+#                                pulling the release's (slow; for hacking on the source)
 #   NOCLICK_NO_START=1           set everything up, start nothing
 
 set -eu
 
 REPO="${NOCLICK_REPO:-https://github.com/noclickapp/noclick.git}"
-REF="${NOCLICK_REF:-main}"
+REF="${NOCLICK_REF:-}"
 DIR="${NOCLICK_DIR:-$HOME/noclick}"
 
 red() { printf '\033[31m%s\033[0m\n' "$*" >&2; }
@@ -52,6 +55,23 @@ fi
 have git || die "git is required to fetch and update the source."
 have openssl || die "openssl is required to generate this instance's secrets."
 
+# ── Release ──────────────────────────────────────────────────────────────────
+# Source and images come from one release, so the compose file always matches
+# the containers it starts. A branch (NOCLICK_REF=main) runs against the images
+# tagged latest.
+if [ -z "$REF" ]; then
+    REF="$(curl -fsSL https://api.github.com/repos/noclickapp/noclick/releases/latest 2>/dev/null \
+        | sed -n 's/^ *"tag_name": *"\([^"]*\)".*/\1/p' | head -1)"
+    [ -n "$REF" ] || die "Could not look up the latest NoClick release from GitHub.
+  Set NOCLICK_REF to a release tag from https://github.com/noclickapp/noclick/releases
+  and run this installer again."
+fi
+case "$REF" in
+    v[0-9]*) NOCLICK_VERSION="${REF#v}" ;;
+    *)       NOCLICK_VERSION=latest ;;
+esac
+export NOCLICK_VERSION
+
 # ── Source ───────────────────────────────────────────────────────────────────
 if [ -d "$DIR/.git" ]; then
     say "Updating $DIR"
@@ -76,13 +96,31 @@ sh ./scripts/noclick-setup.sh >/dev/null
 chmod 600 .env
 
 if [ "${NOCLICK_NO_START:-}" = "1" ]; then
-    say "Set up in $DIR. Start it with: cd $DIR && $COMPOSE up -d --build"
+    say "Set up in $DIR. Start it with: cd $DIR && NOCLICK_VERSION=$NOCLICK_VERSION $COMPOSE up -d"
     exit 0
 fi
 
 # ── Start ────────────────────────────────────────────────────────────────────
-say "Building and starting (the first build takes a few minutes)"
-$COMPOSE up -d --build
+# The release's images are pulled, not built: nothing compiles on this machine.
+# The frontend bundle has its public URLs compiled in, so an install with URLs
+# other than the defaults builds that one image itself.
+env_value() { sed -n "s/^$1=//p" .env | head -1; }
+custom_urls() {
+    [ "$(env_value NOCLICK_APP_URL)" != "http://localhost:3000" ] \
+        || [ "$(env_value NOCLICK_API_URL)" != "http://api.localhost:8000" ] \
+        || [ "$(env_value NOCLICK_RELAY_URL)" != "ws://api.localhost:8000/relay" ]
+}
+if [ "${NOCLICK_BUILD:-}" = "1" ]; then
+    say "Building and starting from the checkout (this takes a while)"
+    $COMPOSE up -d --build
+else
+    if custom_urls; then
+        say "Custom public URLs: building the frontend for them (a few minutes)"
+        $COMPOSE build frontend
+    fi
+    say "Downloading and starting NoClick $NOCLICK_VERSION (about 3 GB the first time)"
+    $COMPOSE up -d
+fi
 
 APP_URL="$(sed -n 's/^NOCLICK_APP_URL=//p' .env | head -1)"
 : "${APP_URL:=http://localhost:3000}"
