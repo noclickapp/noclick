@@ -171,6 +171,12 @@ def test_every_self_host_image_ships_the_cli_harnesses_the_runtime_was_verified_
     assert f"git -C /opt/hermes-agent checkout {known['hermes']['ref']}" in dockerfile
     assert "ln -s /opt/hermes/bin/hermes /opt/noclick-cli/bin/hermes" in dockerfile
     assert "/opt/noclick-cli/bin" in dockerfile, "the CLIs must be on the backend's PATH"
+    # Free trims, verified against the shipped image: opencode's platform packages
+    # once its postinstall has hard-linked the binary into bin/, and the hermes
+    # checkout folders no package imports.
+    assert "rm -rf /opt/noclick-cli/lib/node_modules/opencode-ai/node_modules/opencode-linux-*" in dockerfile
+    assert "/opt/hermes-agent/tests /opt/hermes-agent/tests-js" in dockerfile
+    assert "/opt/hermes-agent/apps /opt/hermes-agent/website" in dockerfile
 
 
 

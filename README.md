@@ -69,7 +69,7 @@ NOCLICK_VERSION=<version> docker compose up -d
 
 Each installer path fetches the latest release's source, generates this
 instance's secrets — including the credential-encryption key, which is kept
-across re-runs — and pulls that release's images: about 3 GB the first time,
+across re-runs — and pulls that release's images: about 1.5 GB to download the first time,
 and nothing is compiled on your machine. Re-running updates in place. Pin a
 release with `NOCLICK_REF=<tag>` from the
 [releases page](https://github.com/noclickapp/noclick/releases);

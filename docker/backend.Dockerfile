@@ -18,7 +18,7 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY requirements.txt ./
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt && pip uninstall -y pip
 
 
 # ── Agent CLI harnesses ──────────────────────────────────────────────────────
@@ -32,7 +32,11 @@ RUN npm install -g --prefix /opt/noclick-cli \
         @anthropic-ai/claude-code@2.1.261 \
         opencode-ai@1.18.29 \
         openclaw@2026.9.1 \
-    && npm cache clean --force
+    && npm cache clean --force \
+    # opencode's postinstall hard-links the platform binary into bin/, leaving
+    # the platform packages (one a byte-identical "baseline" copy) dead weight.
+    && rm -rf /opt/noclick-cli/lib/node_modules/opencode-ai/node_modules/opencode-linux-* \
+    && /opt/noclick-cli/bin/opencode --version
 
 # hermes is a Python CLI that pins its own openai SDK, which the backend's venv
 # cannot share; it gets a venv of its own, built on the same interpreter path
@@ -48,7 +52,11 @@ RUN git clone --filter=blob:none https://github.com/NousResearch/hermes-agent.gi
     && python -m venv /opt/hermes \
     && /opt/hermes/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
     && /opt/hermes/bin/pip install --no-cache-dir -e "/opt/hermes-agent[mcp]" \
-    && rm -rf /opt/hermes-agent/.git \
+    # Only the packages pyproject names ship; tests, the website and the
+    # companion apps are never imported.
+    && rm -rf /opt/hermes-agent/.git /opt/hermes-agent/tests /opt/hermes-agent/tests-js \
+        /opt/hermes-agent/apps /opt/hermes-agent/website /opt/hermes-agent/contributors \
+    && /opt/hermes/bin/pip uninstall -y pip wheel \
     && /opt/hermes/bin/hermes --version
 
 

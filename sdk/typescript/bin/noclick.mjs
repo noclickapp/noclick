@@ -291,7 +291,7 @@ async function start({ fetch = true } = {}) {
             say('Custom public URLs: building the frontend for them (a few minutes)');
             if (compose(['build', 'frontend']).status !== 0) die('Compose failed to build the frontend.');
         }
-        say(`Downloading and starting NoClick ${VERSION} (about 3 GB the first time)`);
+        say(`Downloading and starting NoClick ${VERSION} (about 1.5 GB to download the first time)`);
     } else {
         say('Starting');
     }

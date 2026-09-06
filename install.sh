@@ -118,7 +118,7 @@ else
         say "Custom public URLs: building the frontend for them (a few minutes)"
         $COMPOSE build frontend
     fi
-    say "Downloading and starting NoClick $NOCLICK_VERSION (about 3 GB the first time)"
+    say "Downloading and starting NoClick $NOCLICK_VERSION (about 1.5 GB to download the first time)"
     $COMPOSE up -d
 fi
 
