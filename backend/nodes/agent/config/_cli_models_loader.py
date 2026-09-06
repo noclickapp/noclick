@@ -110,20 +110,8 @@ def claude_code_aliases() -> Dict[str, str]:
 
 
 def codex_options() -> List[Dict[str, str]]:
-    """`{value, label}` entries for the Codex model dropdown: codex's own
-    one-line description per model; extras flagged for the auth path that
-    can use them (ChatGPT-auth accounts 400 on them)."""
-    block = _load()["codex"]
-    info = block.get("model_info") or {}
-    extras = set(block.get("extra_models") or [])
-
-    def _label(m: str) -> str:
-        if m in extras:
-            return f"{m} · OpenAI API key auth only"
-        description = (info.get(m) or {}).get("description")
-        return f"{m} · {description}" if description else m
-
-    return [{"value": m, "label": _label(m)} for m in codex_models()]
+    """`{value, label}` entries for the Codex model dropdown."""
+    return [{"value": m, "label": m} for m in codex_models()]
 
 
 def claude_code_options() -> List[Dict[str, str]]:
