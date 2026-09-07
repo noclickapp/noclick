@@ -736,7 +736,9 @@ class TestCredentialsHandler(BaseHandlerTest):
         retrieved_data = await get_credential(credential_id, user_id, pool=pool)
 
         assert retrieved_data is not None, "Utility should retrieve credential"
-        assert retrieved_data == test_data, "Retrieved data should match original"
+        assert retrieved_data == {**test_data, 'credential_type': 'oauth'}, (
+            "Retrieved data should preserve the original fields and authoritative row type"
+        )
 
     async def test_utility_function_access_control(self, real_database, frontend_sio, sid):
         """

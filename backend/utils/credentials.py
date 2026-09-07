@@ -80,7 +80,7 @@ async def get_credential(credential_id: str, user_id: str, pool=None, org_id: Op
 
     This utility provides programmatic access to credentials for internal use.
     It fetches the encrypted credential from the database, verifies ownership,
-    and returns the decrypted data.
+    and returns the decrypted data with the authoritative row credential_type.
 
     Args:
         credential_id: UUID of the credential to retrieve
@@ -107,7 +107,7 @@ async def get_credential(credential_id: str, user_id: str, pool=None, org_id: Op
             # Fetch credential if the user has access (canonical predicate:
             # owner / direct user-share / matching org-share).
             row = await conn.fetchrow(f"""
-                SELECT c.credential, c.revoked_at
+                SELECT c.credential, c.revoked_at, c.credential_type
                 FROM credentials c
                 WHERE c.id = $1
                   AND {credential_access_predicate()}
@@ -134,6 +134,14 @@ async def get_credential(credential_id: str, user_id: str, pool=None, org_id: Op
             encryption = get_encryption()
             try:
                 credential_data = encryption.decrypt_credential(row['credential'])
+                # OAuth blobs need not contain a type tag. Preserve the row's
+                # authoritative discriminator, as load_credential does, so a
+                # credential union cannot choose a different provider's model
+                # (Instagram Login tokens must not be sent to Facebook Graph).
+                # A stale blob tag must never override the current row type.
+                credential_type = row.get('credential_type')
+                if credential_type is not None:
+                    credential_data['credential_type'] = credential_type
                 logger.info(f"[CredentialsUtil] Retrieved credential {credential_id} for user {user_id}")
                 return credential_data
             except Exception as e:
