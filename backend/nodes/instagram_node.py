@@ -507,6 +507,26 @@ class InstagramListCommentsConfig(BaseModel):
     )
 
 
+class InstagramGetCommentConfig(BaseModel):
+    """Read one comment selected by ID, including its author and parent media."""
+
+    operation: Literal["get_comment"] = Field(
+        "get_comment",
+        json_schema_extra={
+            "const": "get_comment", "ui:hidden": True, "x-category": "Comment",
+            "x-is-trigger": False, "x-display-name": "Get Comment",
+        },
+        title="Get Comment",
+    )
+    comment_id: str = Field(
+        ..., title="Comment ID", description="The ID of the Instagram comment to retrieve",
+    )
+    fields: Optional[str] = Field(
+        "id,text,timestamp,from,media",
+        title="Fields", description="Comma-separated list of comment fields to retrieve",
+    )
+
+
 class InstagramCreateCommentConfig(BaseModel):
     """Create a comment on a media item"""
 
@@ -1084,6 +1104,11 @@ class InstagramListConversationsConfig(BaseModel):
         },
         title="List Conversations",
     )
+    user_id: Optional[str] = Field(
+        None,
+        title="Participant ID",
+        description="Optional Instagram-scoped user ID (IGSID) to find the conversation with one person. Leave blank to list conversations.",
+    )
     fields: Optional[str] = Field(
         "id,participants,updated_time",
         title="Fields",
@@ -1427,8 +1452,9 @@ InstagramConfig = Annotated[
         InstagramPublishPhotoConfig,
         InstagramPublishVideoConfig,
         InstagramPublishCarouselConfig,
-        # Comment operations (5)
+        # Comment operations (6)
         InstagramListCommentsConfig,
+        InstagramGetCommentConfig,
         InstagramCreateCommentConfig,
         InstagramReplyToCommentConfig,
         InstagramHideCommentConfig,
@@ -1705,7 +1731,15 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
                     )
                     if result.get("success") is not True:
                         raise ValueError("Instagram did not confirm the account subscription; no workflow subscription was saved.")
-                    verified = await cls._read_subscribed_fields(client, account_id, app_id)
+                    try:
+                        verified = await cls._read_subscribed_fields(client, account_id, app_id)
+                    except ValueError:
+                        # POST already succeeded. Do not falsely claim the
+                        # provider was unchanged, or activate a local row.
+                        raise ValueError(
+                            "Instagram accepted the subscription update but its readback could not be verified; "
+                            "remote fields may have changed and no workflow subscription was saved."
+                        ) from None
                     if not wanted.issubset(verified):
                         raise ValueError("Instagram subscription readback did not confirm every field; no workflow subscription was saved.")
         # A provider failure above never creates a local active registration.
@@ -1826,6 +1860,7 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
             "publish_carousel_post": self._handle_publish_carousel,
             # Comment operations
             "list_media_comments": self._handle_list_comments,
+            "get_comment": self._handle_get_comment,
             "create_media_comment": self._handle_create_comment,
             "reply_to_comment": self._handle_reply_to_comment,
             "hide_or_unhide_comment": self._handle_hide_comment,
@@ -2511,6 +2546,18 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
             action_name="create_media_comment",
         )
 
+    async def _handle_get_comment(
+        self, config: InstagramGetCommentConfig, credentials: InstagramCredential
+    ) -> Dict[str, Any]:
+        """Read the provider's comment object; do not synthesize list results."""
+        return await self._make_request(
+            method="GET",
+            endpoint=f"/{config.comment_id}",
+            credentials=credentials,
+            params={"fields": config.fields} if config.fields else {},
+            action_name="get_comment",
+        )
+
     async def _handle_reply_to_comment(
         self, config: InstagramReplyToCommentConfig, credentials: InstagramCredential
     ) -> Dict[str, Any]:
@@ -2946,6 +2993,8 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
     ) -> Dict[str, Any]:
         """List Instagram DM conversations."""
         params: Dict[str, Any] = {"platform": "instagram"}
+        if config.user_id and config.user_id.strip():
+            params["user_id"] = config.user_id.strip()
         if config.fields:
             params["fields"] = config.fields
         if config.limit:

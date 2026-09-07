@@ -5,6 +5,7 @@ import asyncio
 import hashlib
 import hmac
 import json
+import logging
 import math
 import os
 import re
@@ -28,6 +29,7 @@ MAX_EVENT_AGE_SECONDS = 7 * 24 * 60 * 60
 MAX_EVENT_FUTURE_SKEW_SECONDS = 300
 EVENT_DEDUP_SECONDS = MAX_EVENT_AGE_SECONDS + MAX_EVENT_FUTURE_SKEW_SECONDS + 1
 MAX_BODY_BYTES = 2 * 1024 * 1024
+logger = logging.getLogger(__name__)
 
 
 def instagram_account_id(value):
@@ -71,11 +73,21 @@ def verify_instagram_webhook(pool, body: bytes, headers: dict, request_url: str)
     del pool, request_url
     secret = os.environ.get("INSTAGRAM_WEBHOOK_APP_SECRET") or ""
     signature = headers.get("x-hub-signature-256", "")
-    if not isinstance(signature, str) or not re.fullmatch(r"sha256=[0-9a-f]{64}", signature):
-        return False
-    return bool(secret.strip()) and verify_hmac_sha256_hex(
-        body, secret, signature, prefix="sha256="
-    )
+    if not signature:
+        reason = "missing_header"
+    elif not isinstance(signature, str) or not re.fullmatch(r"sha256=[0-9a-f]{64}", signature):
+        reason = "invalid_format"
+    elif not secret.strip():
+        reason = "missing_secret"
+    elif not verify_hmac_sha256_hex(body, secret, signature, prefix="sha256="):
+        reason = "mismatch"
+    else:
+        return True
+    # Fixed categories only: never log the request body, header, secret or
+    # derived digests. These distinguish configuration from transport faults
+    # without changing verification or trying another signing key.
+    logger.warning("Instagram webhook signature rejected: %s", reason)
+    return False
 
 
 def instagram_handshake(query) -> PlainTextResponse:

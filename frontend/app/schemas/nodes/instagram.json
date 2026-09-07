@@ -197,6 +197,44 @@
       "title": "InstagramGetAccountInsightsConfig",
       "type": "object"
     },
+    "InstagramGetCommentConfig": {
+      "description": "Read one comment selected by ID, including its author and parent media.",
+      "properties": {
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "title": "Get Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Get Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The ID of the Instagram comment to retrieve",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,text,timestamp,from,media",
+          "description": "Comma-separated list of comment fields to retrieve",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "InstagramGetCommentConfig",
+      "type": "object"
+    },
     "InstagramGetConversationConfig": {
       "description": "Get a conversation and its messages",
       "properties": {
@@ -654,6 +692,19 @@
           "x-category": "Messaging",
           "x-display-name": "List Conversations",
           "x-is-trigger": false
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Instagram-scoped user ID (IGSID) to find the conversation with one person. Leave blank to list conversations.",
+          "title": "Participant ID"
         },
         "fields": {
           "anyOf": [
@@ -1885,6 +1936,7 @@
           "delete_product_tags_from_media": "#/$defs/InstagramDeleteProductTagsConfig",
           "discover_business_account": "#/$defs/InstagramBusinessDiscoveryConfig",
           "get_account_insights": "#/$defs/InstagramGetAccountInsightsConfig",
+          "get_comment": "#/$defs/InstagramGetCommentConfig",
           "get_conversation": "#/$defs/InstagramGetConversationConfig",
           "get_dm_message": "#/$defs/InstagramGetDMMessageConfig",
           "get_hashtag_media": "#/$defs/InstagramGetHashtagMediaConfig",
@@ -1948,6 +2000,9 @@
         },
         {
           "$ref": "#/$defs/InstagramListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramGetCommentConfig"
         },
         {
           "$ref": "#/$defs/InstagramCreateCommentConfig"
@@ -2067,6 +2122,8 @@
   ],
   "title": "Instagram Node Configuration",
   "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true,
   "x-edit-examples": [
     "Publish photo with caption and tag products for Instagram Shop",
     "Get last 20 media items and retrieve insights like reach/engagement",
@@ -2075,7 +2132,5 @@
     "List mentions where account was tagged and hide spam comments",
     "Publish carousel with 3 product images and publish story photo",
     "Get account followers/engagement stats and discover @competitor profile"
-  ],
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "x-agent-tool-provider": true
+  ]
 }

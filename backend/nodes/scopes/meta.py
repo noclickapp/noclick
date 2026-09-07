@@ -495,6 +495,7 @@ _INSTAGRAM_REQUIREMENTS: dict[str, ScopeRequirement] = {
     ),
     **_each(
         "list_media_comments",
+        "get_comment",
         "create_media_comment",
         "reply_to_comment",
         "get_mentioned_media",

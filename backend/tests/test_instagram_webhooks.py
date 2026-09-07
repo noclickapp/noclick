@@ -126,6 +126,31 @@ def test_signature_covers_exact_raw_bytes(configured):
     assert not ig.verify_instagram_webhook(None, raw + b" ", headers, "")
 
 
+@pytest.mark.parametrize("case,reason", [
+    ("missing", "missing_header"), ("invalid", "invalid_format"),
+    ("no_secret", "missing_secret"), ("mismatch", "mismatch"),
+])
+def test_signature_diagnostics_never_expose_material(configured, monkeypatch, caplog, case, reason):
+    raw = b'{"message":"private synthetic message"}'
+    signature = signed_headers(raw)["X-Hub-Signature-256"]
+    if case == "missing": signature = ""
+    elif case == "invalid": signature = "invalid-sensitive-header\nlog-injection"
+    elif case == "no_secret": monkeypatch.delenv("INSTAGRAM_WEBHOOK_APP_SECRET")
+    else: raw += b" "
+    assert not ig.verify_instagram_webhook(None, raw, {"x-hub-signature-256": signature}, "https://example.test/?private=value")
+    records = [r for r in caplog.records if r.name == ig.__name__]
+    assert [r.getMessage() for r in records] == [f"Instagram webhook signature rejected: {reason}"]
+    assert SIGNING_SECRET not in caplog.text and "private" not in caplog.text
+    if signature: assert signature not in caplog.text
+
+
+def test_valid_signature_does_not_emit_rejection_diagnostic(configured, caplog):
+    raw = encode(body_for())
+    headers = {k.lower(): v for k, v in signed_headers(raw).items()}
+    assert ig.verify_instagram_webhook(None, raw, headers, "")
+    assert not [r for r in caplog.records if r.name == ig.__name__]
+
+
 @pytest.mark.parametrize("signature", ["", "sha256=bad", "sha256=" + "0" * 64,
                                       "sha256=" + "é" * 64, "sha1=" + "0" * 64])
 def test_missing_forged_malformed_signature_rejected(configured, signature):

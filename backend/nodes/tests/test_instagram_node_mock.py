@@ -41,6 +41,8 @@ from nodes.instagram_node import (
     InstagramPublishCarouselConfig,
     # Comment operations (5)
     InstagramListCommentsConfig,
+    InstagramGetCommentConfig,
+    InstagramListConversationsConfig,
     InstagramCreateCommentConfig,
     InstagramReplyToCommentConfig,
     InstagramHideCommentConfig,
@@ -416,6 +418,65 @@ class TestCommentOperationsMock:
         assert result["action"] == "list_media_comments"
         assert result["status"] == "success"
         assert len(result["data"]["data"]) == 2
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("credential_kind", ["login", "oauth", "system", "page"])
+    @pytest.mark.parametrize("fields", [None, "id,text,timestamp,from,media"])
+    async def test_get_comment_real_transport(self, monkeypatch, credential_kind, fields):
+        """Prove routing, authenticated GET and lossless author/media readback."""
+        credentials = {
+            "login": lambda: InstagramLoginCredential(
+                access_token=MOCK_ACCESS_TOKEN, instagram_user_id=MOCK_USER_ID,
+                expires_at="2099-01-01T00:00:00Z",
+            ),
+            "oauth": get_oauth_credential,
+            "system": get_system_user_credential,
+            "page": get_page_access_credential,
+        }[credential_kind]()
+        expected = {"id": "17800123456789012", "text": "A controlled comment",
+                    "from": {"id": "1300000000000001", "username": "review_tester"},
+                    "media": {"id": "18300000000000001"}}
+        requests = []
+        def transport(request):
+            requests.append(request)
+            assert request.method == "GET"
+            assert request.url.host == ("graph.instagram.com" if credential_kind == "login" else "graph.facebook.com")
+            assert request.url.path.endswith("/17800123456789012")
+            assert request.url.params["access_token"] == MOCK_ACCESS_TOKEN
+            assert request.url.params.get("fields") == fields
+            assert request.content == b""
+            return httpx.Response(200, json=expected)
+        original = httpx.AsyncClient
+        monkeypatch.setattr(httpx, "AsyncClient", lambda *a, **kw: original(*a, transport=httpx.MockTransport(transport), **kw))
+        node = InstagramNode(node_id="read-comment", node_type="automation-instagram", node_data={},
+            config=InstagramNodeConfig(config=InstagramGetCommentConfig(comment_id=expected["id"], fields=fields), credentials=credentials))
+        result = await node.execute({})
+        assert result["status"] == "success" and result["status_code"] == 200
+        assert result["action"] == "get_comment" and result["data"] == expected
+        assert len(requests) == 1
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("participant", [None, "", "  ", "1300000000000001", " 1300000000000001 "])
+    async def test_conversation_participant_filter_real_transport(self, monkeypatch, participant):
+        requests = []
+        expected = {"data": [{"id": "controlled-conversation"}]}
+        def transport(request):
+            requests.append(request)
+            assert request.method == "GET" and request.url.host == "graph.instagram.com"
+            assert request.url.path.endswith(f"/{MOCK_USER_ID}/conversations")
+            assert request.url.params["platform"] == "instagram"
+            assert request.url.params.get("user_id") == ((participant or "").strip() or None)
+            assert request.url.params["fields"] == "id,participants,updated_time"
+            assert request.url.params["limit"] == "10" and request.url.params["after"] == "cursor-test"
+            return httpx.Response(200, json=expected)
+        original = httpx.AsyncClient
+        monkeypatch.setattr(httpx, "AsyncClient", lambda *a, **kw: original(*a, transport=httpx.MockTransport(transport), **kw))
+        credential = InstagramLoginCredential(access_token=MOCK_ACCESS_TOKEN, instagram_user_id=MOCK_USER_ID, expires_at="2099-01-01T00:00:00Z")
+        node = InstagramNode(node_id="read-conversation", node_type="automation-instagram", node_data={},
+            config=InstagramNodeConfig(config=InstagramListConversationsConfig(user_id=participant, limit=10, after="cursor-test"), credentials=credential))
+        result = await node.execute({})
+        assert result["status"] == "success" and result["action"] == "list_conversations"
+        assert result["data"] == expected and len(requests) == 1
 
     @pytest.mark.asyncio
     async def test_create_comment(self):
@@ -1557,6 +1618,18 @@ class TestInstagramEventRegistration:
         with pytest.raises(ValueError, match="identity"):
             await s.register()
         assert not s.posts and not s.rows and not s.redis.values
+
+    @pytest.mark.asyncio
+    async def test_unknown_readback_app_reports_partial_remote_update(self, instagram_registration):
+        s = instagram_registration
+        s.response_app = "99999999999999999"
+        with pytest.raises(ValueError, match="accepted the subscription update") as error:
+            await s.register()
+        assert "remote fields may have changed" in str(error.value)
+        assert "existing fields were not changed" not in str(error.value)
+        assert s.posts == [{"comments"}] and s.fields == {"comments"}
+        assert not s.rows and not s.redis.values
+        s.save.assert_not_awaited()
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("case", [
