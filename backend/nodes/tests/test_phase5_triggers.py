@@ -337,7 +337,7 @@ class TestProviderAdapters:
     def test_provider_registry(self):
         from utils.app_webhooks import APP_PROVIDERS
 
-        assert set(APP_PROVIDERS) == {"slack", "hubspot", "discord"}
+        assert set(APP_PROVIDERS) == {"slack", "hubspot", "discord", "instagram"}
         for adapter in APP_PROVIDERS.values():
             assert {"verify", "handshake", "parse"} <= set(adapter)
 
