@@ -3,6 +3,9 @@
 #   ./scripts/noclick-setup.sh   # writes .env with freshly generated secrets
 #   docker compose up -d --build
 #
+# Every service listens on its host port inside the container too: the
+# `*.localhost` aliases resolve to the containers, so a URL with the host
+# port only reaches them when the two match.
 # The default URLs use `*.localhost` names on purpose. The frontend server, the
 # backend and the browser all resolve the same string: browsers and libc map
 # `*.localhost` to the loopback address, and the Docker network resolves the
@@ -47,12 +50,12 @@ services:
       GOTRUE_API_HOST: 0.0.0.0
       GOTRUE_API_PORT: "9999"
       # GoTrue reads this one without the GOTRUE_ prefix.
-      API_EXTERNAL_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:8001}
-      GOTRUE_API_EXTERNAL_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:8001}
+      API_EXTERNAL_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:${NOCLICK_SUPABASE_PORT:-8001}}
+      GOTRUE_API_EXTERNAL_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:${NOCLICK_SUPABASE_PORT:-8001}}
       GOTRUE_DB_DRIVER: postgres
       GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@db:5432/postgres
-      GOTRUE_SITE_URL: ${NOCLICK_APP_URL:-http://localhost:3000}
-      GOTRUE_URI_ALLOW_LIST: ${NOCLICK_APP_URL:-http://localhost:3000}/**
+      GOTRUE_SITE_URL: ${NOCLICK_APP_URL:-http://localhost:${NOCLICK_APP_PORT:-3000}}
+      GOTRUE_URI_ALLOW_LIST: ${NOCLICK_APP_URL:-http://localhost:${NOCLICK_APP_PORT:-3000}}/**
       GOTRUE_JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET — run ./scripts/noclick-setup.sh}
       GOTRUE_JWT_EXP: "3600"
       GOTRUE_JWT_AUD: authenticated
@@ -95,10 +98,15 @@ services:
     depends_on:
       auth:
         condition: service_started
+    environment:
+      NOCLICK_SUPABASE_PORT: ${NOCLICK_SUPABASE_PORT:-8001}
+      # The template's nginx variables ($http_upgrade, ...) must survive envsubst.
+      NGINX_ENVSUBST_FILTER: ^NOCLICK_
     volumes:
       - ./docker/gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/gateway/supabase.conf.template:/etc/nginx/templates/default.conf.template:ro
     ports:
-      - "${NOCLICK_SUPABASE_PORT:-8001}:8001"
+      - "${NOCLICK_SUPABASE_PORT:-8001}:${NOCLICK_SUPABASE_PORT:-8001}"
     networks:
       default:
         aliases:
@@ -107,7 +115,7 @@ services:
   storage:
     <<: *restart
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
-    command: server /data --address ":9000"
+    command: server /data --address ":${NOCLICK_STORAGE_PORT:-9000}"
     environment:
       MINIO_ROOT_USER: ${OBJECT_STORAGE_ACCESS_KEY_ID:?set OBJECT_STORAGE_ACCESS_KEY_ID — run ./scripts/noclick-setup.sh}
       MINIO_ROOT_PASSWORD: ${OBJECT_STORAGE_SECRET_ACCESS_KEY:?set OBJECT_STORAGE_SECRET_ACCESS_KEY — run ./scripts/noclick-setup.sh}
@@ -116,7 +124,7 @@ services:
     ports:
       # Published because the browser uploads and downloads directly against
       # presigned URLs; nothing here is readable without one.
-      - "${NOCLICK_STORAGE_PORT:-9000}:9000"
+      - "${NOCLICK_STORAGE_PORT:-9000}:${NOCLICK_STORAGE_PORT:-9000}"
     networks:
       default:
         aliases:
@@ -146,7 +154,7 @@ services:
       - ./infra/supabase/migrations:/app/infra/supabase/migrations:ro
     environment:
       POSTGRES_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
-      OBJECT_STORAGE_ENDPOINT: http://storage:9000
+      OBJECT_STORAGE_ENDPOINT: http://storage:${NOCLICK_STORAGE_PORT:-9000}
       OBJECT_STORAGE_ACCESS_KEY_ID: ${OBJECT_STORAGE_ACCESS_KEY_ID}
       OBJECT_STORAGE_SECRET_ACCESS_KEY: ${OBJECT_STORAGE_SECRET_ACCESS_KEY}
       OBJECT_STORAGE_REGION: ${OBJECT_STORAGE_REGION:-us-east-1}
@@ -164,21 +172,22 @@ services:
     environment:
       POSTGRES_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
       POSTGRES_POOLER_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
-      SUPABASE_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:8001}
+      SUPABASE_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:${NOCLICK_SUPABASE_PORT:-8001}}
       SUPABASE_JWT_SECRET: ${JWT_SECRET}
       SUPABASE_SECRET_KEY: ${SERVICE_ROLE_KEY:?set SERVICE_ROLE_KEY — run ./scripts/noclick-setup.sh}
       CREDENTIALS_ENCRYPTION_KEY: ${CREDENTIALS_ENCRYPTION_KEY:?set CREDENTIALS_ENCRYPTION_KEY — run ./scripts/noclick-setup.sh}
       WORKFLOW_JWT_SECRET: ${WORKFLOW_JWT_SECRET:?set WORKFLOW_JWT_SECRET — run ./scripts/noclick-setup.sh}
-      FRONTEND_URL: ${NOCLICK_APP_URL:-http://localhost:3000}
+      FRONTEND_URL: ${NOCLICK_APP_URL:-http://localhost:${NOCLICK_APP_PORT:-3000}}
       SOCKET_CORS_ORIGINS: ${NOCLICK_EXTRA_CORS_ORIGINS:-}
       # The scheduler runs inside this process; it calls its own API.
-      CRON_SCHEDULER_URL: http://127.0.0.1:8000/local-cron
+      PORT: ${NOCLICK_API_PORT:-8000}
+      CRON_SCHEDULER_URL: http://127.0.0.1:${NOCLICK_API_PORT:-8000}/local-cron
       CRON_SCHEDULER_SECRET: ${CRON_SCHEDULER_SECRET:?set CRON_SCHEDULER_SECRET — run ./scripts/noclick-setup.sh}
-      PUBLIC_API_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
-      PUBLIC_WEBHOOK_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
-      APP_WEBHOOK_BASE_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
-      MCP_BASE_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
-      OBJECT_STORAGE_ENDPOINT: ${NOCLICK_STORAGE_URL:-http://storage.localhost:9000}
+      PUBLIC_API_URL: ${NOCLICK_API_URL:-http://api.localhost:${NOCLICK_API_PORT:-8000}}
+      PUBLIC_WEBHOOK_URL: ${NOCLICK_API_URL:-http://api.localhost:${NOCLICK_API_PORT:-8000}}
+      APP_WEBHOOK_BASE_URL: ${NOCLICK_API_URL:-http://api.localhost:${NOCLICK_API_PORT:-8000}}
+      MCP_BASE_URL: ${NOCLICK_API_URL:-http://api.localhost:${NOCLICK_API_PORT:-8000}}
+      OBJECT_STORAGE_ENDPOINT: ${NOCLICK_STORAGE_URL:-http://storage.localhost:${NOCLICK_STORAGE_PORT:-9000}}
       OBJECT_STORAGE_ACCESS_KEY_ID: ${OBJECT_STORAGE_ACCESS_KEY_ID}
       OBJECT_STORAGE_SECRET_ACCESS_KEY: ${OBJECT_STORAGE_SECRET_ACCESS_KEY}
       OBJECT_STORAGE_REGION: ${OBJECT_STORAGE_REGION:-us-east-1}
@@ -200,13 +209,13 @@ services:
     volumes:
       - backend-state:/var/lib/noclick
     ports:
-      - "${NOCLICK_API_PORT:-8000}:8000"
+      - "${NOCLICK_API_PORT:-8000}:${NOCLICK_API_PORT:-8000}"
     networks:
       default:
         aliases:
           - api.localhost
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=5)"]
+      test: ["CMD", "python", "-c", "import os,urllib.request;urllib.request.urlopen('http://127.0.0.1:%s/health' % os.environ.get('PORT','8000'),timeout=5)"]
       interval: 10s
       timeout: 5s
       retries: 20
@@ -226,32 +235,32 @@ services:
       args:
         # Compiled into the browser bundle — `docker compose up --build` after
         # changing any of these.
-        VITE_API_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
-        VITE_RELAY_URL: ${NOCLICK_RELAY_URL:-ws://api.localhost:8000/relay}
-        VITE_PUBLIC_URL: ${NOCLICK_APP_URL:-http://localhost:3000}
+        VITE_API_URL: ${NOCLICK_API_URL:-http://api.localhost:${NOCLICK_API_PORT:-8000}}
+        VITE_RELAY_URL: ${NOCLICK_RELAY_URL:-ws://api.localhost:${NOCLICK_API_PORT:-8000}/relay}
+        VITE_PUBLIC_URL: ${NOCLICK_APP_URL:-http://localhost:${NOCLICK_APP_PORT:-3000}}
         VITE_DISABLE_CAPTCHA: ${NOCLICK_DISABLE_CAPTCHA:-true}
         VITE_INBOUND_EMAIL_DOMAIN: ${INBOUND_EMAIL_DOMAIN:-}
     depends_on:
       backend:
         condition: service_started
     environment:
-      PORT: "3000"
+      PORT: ${NOCLICK_APP_PORT:-3000}
       NODE_ENV: production
-      VITE_PUBLIC_URL: ${NOCLICK_APP_URL:-http://localhost:3000}
-      VITE_API_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
+      VITE_PUBLIC_URL: ${NOCLICK_APP_URL:-http://localhost:${NOCLICK_APP_PORT:-3000}}
+      VITE_API_URL: ${NOCLICK_API_URL:-http://api.localhost:${NOCLICK_API_PORT:-8000}}
       # Read at request time by the sign-in action, not only compiled into the
       # bundle: without it the server asks a Turnstile function this stack does
       # not run, and every sign-in fails the captcha check.
       VITE_DISABLE_CAPTCHA: ${NOCLICK_DISABLE_CAPTCHA:-true}
       VITE_INBOUND_EMAIL_DOMAIN: ${INBOUND_EMAIL_DOMAIN:-}
-      FRONTEND_URL: ${NOCLICK_APP_URL:-http://localhost:3000}
-      SUPABASE_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:8001}
+      FRONTEND_URL: ${NOCLICK_APP_URL:-http://localhost:${NOCLICK_APP_PORT:-3000}}
+      SUPABASE_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:${NOCLICK_SUPABASE_PORT:-8001}}
       SUPABASE_ANON_KEY: ${ANON_KEY:?set ANON_KEY — run ./scripts/noclick-setup.sh}
       # Server-only. Never prefix a secret with VITE_; that publishes it.
       SUPABASE_SECRET_KEY: ${SERVICE_ROLE_KEY}
       SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET — run ./scripts/noclick-setup.sh}
     ports:
-      - "${NOCLICK_APP_PORT:-3000}:3000"
+      - "${NOCLICK_APP_PORT:-3000}:${NOCLICK_APP_PORT:-3000}"
 
   # Redis-compatible cache — Test Run rehearsals hard-require it (the
   # side-effect fence lives here), presence and caching also use it. The

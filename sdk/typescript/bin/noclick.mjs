@@ -209,15 +209,17 @@ function ensureEnv() {
     keep('ANON_KEY', () => signJwt('anon', env.JWT_SECRET));
     keep('SERVICE_ROLE_KEY', () => signJwt('service_role', env.JWT_SECRET));
 
-    keep('NOCLICK_APP_URL', () => process.env.NOCLICK_APP_URL || 'http://localhost:3000');
-    keep('NOCLICK_API_URL', () => process.env.NOCLICK_API_URL || 'http://api.localhost:8000');
-    keep('NOCLICK_RELAY_URL', () => process.env.NOCLICK_RELAY_URL || 'ws://api.localhost:8000/relay');
-    keep('NOCLICK_SUPABASE_URL', () => process.env.NOCLICK_SUPABASE_URL || 'http://supabase.localhost:8001');
-    keep('NOCLICK_STORAGE_URL', () => process.env.NOCLICK_STORAGE_URL || 'http://storage.localhost:9000');
-    keep('NOCLICK_APP_PORT', () => '3000');
-    keep('NOCLICK_API_PORT', () => '8000');
-    keep('NOCLICK_SUPABASE_PORT', () => '8001');
-    keep('NOCLICK_STORAGE_PORT', () => '9000');
+    // Ports first: the default URLs carry them, and the compose file makes
+    // every service listen on its host port so the *.localhost aliases work.
+    keep('NOCLICK_APP_PORT', () => process.env.NOCLICK_APP_PORT || '3000');
+    keep('NOCLICK_API_PORT', () => process.env.NOCLICK_API_PORT || '8000');
+    keep('NOCLICK_SUPABASE_PORT', () => process.env.NOCLICK_SUPABASE_PORT || '8001');
+    keep('NOCLICK_STORAGE_PORT', () => process.env.NOCLICK_STORAGE_PORT || '9000');
+    keep('NOCLICK_APP_URL', () => process.env.NOCLICK_APP_URL || `http://localhost:${env.NOCLICK_APP_PORT}`);
+    keep('NOCLICK_API_URL', () => process.env.NOCLICK_API_URL || `http://api.localhost:${env.NOCLICK_API_PORT}`);
+    keep('NOCLICK_RELAY_URL', () => process.env.NOCLICK_RELAY_URL || `ws://api.localhost:${env.NOCLICK_API_PORT}/relay`);
+    keep('NOCLICK_SUPABASE_URL', () => process.env.NOCLICK_SUPABASE_URL || `http://supabase.localhost:${env.NOCLICK_SUPABASE_PORT}`);
+    keep('NOCLICK_STORAGE_URL', () => process.env.NOCLICK_STORAGE_URL || `http://storage.localhost:${env.NOCLICK_STORAGE_PORT}`);
     keep('NOCLICK_AUTOCONFIRM_EMAIL', () => 'true');
     keep('NOCLICK_DISABLE_SIGNUP', () => 'false');
     for (const optional of [
@@ -337,7 +339,8 @@ const HELP = `${bold('npx noclick')} — run a NoClick instance on this machine
   ${bold('noclick uninstall')}    remove the containers and all data
 
 ${dim('Environment: NOCLICK_DIR, NOCLICK_REF (default: latest release), NOCLICK_REPO,')}
-${dim('             NOCLICK_APP_URL, NOCLICK_BUILD=1 (build from source), NOCLICK_NO_START')}`;
+${dim('             NOCLICK_APP_URL, NOCLICK_BUILD=1 (build from source), NOCLICK_NO_START')}
+${dim('             NOCLICK_APP_PORT, NOCLICK_API_PORT, NOCLICK_SUPABASE_PORT, NOCLICK_STORAGE_PORT')}`;
 
 async function main() {
     const [command = 'start', ...rest] = process.argv.slice(2);

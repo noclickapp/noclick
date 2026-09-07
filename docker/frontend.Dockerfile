@@ -75,6 +75,9 @@ COPY docker/frontend-entrypoint.sh /usr/local/bin/noclick-entrypoint
 
 # The server only reads what is here, and root-owned files are world-readable,
 # so it does not need to own them.
+# Node refuses request headers over 16 KB with HTTP 431; a localhost cookie
+# jar shared with other local apps exceeds that quickly.
+ENV NODE_OPTIONS=--max-http-header-size=65536
 USER noclick
 EXPOSE 3000
 

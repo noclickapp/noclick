@@ -197,7 +197,7 @@ python -m uvicorn server:web_app --host 127.0.0.1 --port 8000 --workers 1 \
     --app-dir /app/backend &
 pids="$pids $!"
 
-( cd /app/frontend && PORT=3000 exec node_modules/.bin/react-router-serve ./build/server/index.js ) &
+( cd /app/frontend && PORT=3000 NODE_OPTIONS=--max-http-header-size=65536 exec node_modules/.bin/react-router-serve ./build/server/index.js ) &
 pids="$pids $!"
 
 nginx -g 'daemon off;' &
