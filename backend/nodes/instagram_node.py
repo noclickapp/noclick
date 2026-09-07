@@ -1854,7 +1854,26 @@ class InstagramNode(ApifyRunnerMixin, WorkflowNode):
                 "timing_ms": container_result.get("timing_ms", {}),
             }
 
-        # Step 2: Publish
+        # Step 2: Wait until Meta finishes fetching/processing the image. A
+        # container ID alone does not mean it is ready for media_publish.
+        wait_result = await self._wait_for_media_container_ready(
+            container_id=container_id,
+            credentials=credentials,
+            action_name="publish_photo_post",
+            timeout_seconds=120,
+        )
+        if wait_result is not None:
+            wait_result["container_id"] = container_id
+            wait_result["timing_ms"] = {
+                "container_creation": container_result.get("timing_ms", {}).get(
+                    "api_request", 0
+                ),
+                **wait_result.get("timing_ms", {}),
+            }
+            return wait_result
+
+        # Step 3: Publish once; do not recreate the container or retry an
+        # ambiguous publish failure here.
         publish_result = await self._make_request(
             method="POST",
             endpoint=f"/{credentials.instagram_user_id}/media_publish",
@@ -1915,7 +1934,7 @@ class InstagramNode(ApifyRunnerMixin, WorkflowNode):
 
         # Step 2: Wait for video processing to finish before publish.
         # Without this, Meta can return "Media ID is not available".
-        wait_result = await self._wait_for_video_container_ready(
+        wait_result = await self._wait_for_media_container_ready(
             container_id=container_id,
             credentials=credentials,
             action_name="publish_video_reel",
@@ -1955,7 +1974,7 @@ class InstagramNode(ApifyRunnerMixin, WorkflowNode):
 
         return publish_result
 
-    async def _wait_for_video_container_ready(
+    async def _wait_for_media_container_ready(
         self,
         container_id: str,
         credentials: InstagramCredential,
@@ -1963,7 +1982,7 @@ class InstagramNode(ApifyRunnerMixin, WorkflowNode):
         timeout_seconds: int = 120,
     ) -> Optional[Dict[str, Any]]:
         """
-        Poll a media container until video processing is finished.
+        Poll a media container until processing is finished.
 
         Returns:
             None when container is ready to publish.
@@ -1971,11 +1990,11 @@ class InstagramNode(ApifyRunnerMixin, WorkflowNode):
         """
         import asyncio
 
-        poll_start = time.time()
+        poll_start = time.monotonic()
         poll_interval = 3
         last_status = None
 
-        while (time.time() - poll_start) < timeout_seconds:
+        while (time.monotonic() - poll_start) < timeout_seconds:
             status_result = await self._make_request(
                 method="GET",
                 endpoint=f"/{container_id}",
@@ -1989,12 +2008,12 @@ class InstagramNode(ApifyRunnerMixin, WorkflowNode):
                     "status": "error",
                     "action": action_name,
                     "error": status_result.get(
-                        "error", "Failed to check video processing status"
+                        "error", "Failed to check media processing status"
                     ),
                     "status_code": status_result.get("status_code", 400),
                     "timing_ms": {
                         "status_poll_total": round(
-                            (time.time() - poll_start) * 1000, 2
+                            (time.monotonic() - poll_start) * 1000, 2
                         ),
                     },
                 }
@@ -2006,15 +2025,15 @@ class InstagramNode(ApifyRunnerMixin, WorkflowNode):
             if status_code == "FINISHED":
                 return None
 
-            if status_code in ("ERROR", "EXPIRED"):
+            if status_code in ("ERROR", "EXPIRED", "PUBLISHED"):
                 return {
                     "status": "error",
                     "action": action_name,
-                    "error": f"Video processing failed with status: {status_code}",
+                    "error": f"Media container is not publishable (status: {status_code})",
                     "status_code": 400,
                     "timing_ms": {
                         "status_poll_total": round(
-                            (time.time() - poll_start) * 1000, 2
+                            (time.monotonic() - poll_start) * 1000, 2
                         ),
                     },
                 }
@@ -2025,12 +2044,12 @@ class InstagramNode(ApifyRunnerMixin, WorkflowNode):
             "status": "error",
             "action": action_name,
             "error": (
-                f"Video processing timed out after {timeout_seconds} seconds"
+                f"Media processing timed out after {timeout_seconds} seconds"
                 + (f" (last status: {last_status})" if last_status else "")
             ),
             "status_code": 408,
             "timing_ms": {
-                "status_poll_total": round((time.time() - poll_start) * 1000, 2),
+                "status_poll_total": round((time.monotonic() - poll_start) * 1000, 2),
             },
         }
 

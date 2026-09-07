@@ -14,6 +14,7 @@ This ensures:
 
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+from types import SimpleNamespace
 import httpx
 from datetime import datetime, timedelta, timezone
 
@@ -139,7 +140,7 @@ def mock_async_client(responses):
 
     mock_client = AsyncMock()
     # Set up mock to handle request() method (which is what Instagram node uses)
-    mock_client.request = mock_any_method
+    mock_client.request = AsyncMock(side_effect=mock_any_method)
     # Also handle get, post, delete for any tests that might use them directly
     mock_client.get = mock_any_method
     mock_client.post = mock_any_method
@@ -286,6 +287,7 @@ class TestMediaOperationsMock:
         with mock_async_client(
             [
                 create_mock_response(container_response),
+                create_mock_response({"status_code": "FINISHED"}),
                 create_mock_response(publish_response),
             ]
         ):
@@ -1219,3 +1221,188 @@ class TestInstagramLoginDualSupport:
         # reaches the API (success from the mock), not the gate
         assert result["status"] == "success"
         assert "graph.facebook.com" in captured["url"]
+
+
+class TestPhotoContainerReadiness:
+    """Exercise the real photo handler and HTTP boundary without provider calls."""
+
+    @pytest.fixture
+    def photo_node(self):
+        return InstagramNode(
+            node_id="photo",
+            node_type="automation-instagram",
+            node_data={},
+            config=InstagramNodeConfig(
+                config=InstagramPublishPhotoConfig(
+                    image_url="https://example.com/photo.jpg", caption="Test photo"
+                ),
+                credentials=get_instagram_login_credential(),
+            ),
+        )
+
+    @staticmethod
+    def requests(client_factory):
+        return client_factory.return_value.__aenter__.return_value.request.await_args_list
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "credentials_factory",
+        [get_instagram_login_credential, get_oauth_credential,
+         get_system_user_credential, get_page_access_credential],
+    )
+    @pytest.mark.parametrize("statuses", [["FINISHED"], ["IN_PROGRESS", "FINISHED"]])
+    async def test_publishes_once_only_after_finished(
+        self, photo_node, credentials_factory, statuses
+    ):
+        credentials = credentials_factory()
+        photo_node.config.credentials = credentials
+        responses = [create_mock_response({"id": "container_123"})]
+        responses += [create_mock_response({"status_code": status}) for status in statuses]
+        responses += [create_mock_response({"id": "media_123"})]
+        with (
+            mock_async_client(responses) as factory,
+            patch("asyncio.sleep", new_callable=AsyncMock),
+        ):
+            result = await photo_node.execute({})
+
+        requests = self.requests(factory)
+        host = (
+            "graph.instagram.com"
+            if isinstance(credentials, InstagramLoginCredential)
+            else "graph.facebook.com"
+        )
+        assert all(f"https://{host}/" in request.kwargs["url"] for request in requests)
+        assert [request.kwargs["method"] for request in requests] == [
+            "POST", *(["GET"] * len(statuses)), "POST"
+        ]
+        assert requests[0].kwargs["url"].endswith(f"/{credentials.instagram_user_id}/media")
+        assert requests[0].kwargs["params"]["image_url"] == "https://example.com/photo.jpg"
+        assert requests[0].kwargs["params"]["caption"] == "Test photo"
+        for request in requests[1:-1]:
+            assert request.kwargs["url"].endswith("/container_123")
+            assert request.kwargs["params"]["fields"] == "status_code,status"
+        assert requests[-1].kwargs["url"].endswith(
+            f"/{credentials.instagram_user_id}/media_publish"
+        )
+        assert requests[-1].kwargs["params"]["creation_id"] == "container_123"
+        assert result["status"] == "success"
+        assert result["action"] == "publish_photo_post"
+        assert result["data"] == {"id": "media_123"}
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("status", ["ERROR", "EXPIRED", "PUBLISHED"])
+    @pytest.mark.parametrize("media_kind", ["photo", "video"])
+    async def test_terminal_container_never_publishes(self, photo_node, status, media_kind):
+        if media_kind == "video":
+            photo_node.config.config = InstagramPublishVideoConfig(
+                video_url="https://example.com/video.mp4"
+            )
+        responses = [
+            create_mock_response({"id": "container_123"}),
+            create_mock_response({"status_code": status}),
+        ]
+        with mock_async_client(responses) as factory:
+            result = await photo_node.execute({})
+        assert result["status"] == "error"
+        expected_action = "publish_photo_post" if media_kind == "photo" else "publish_video_reel"
+        assert result["action"] == expected_action
+        assert result["container_id"] == "container_123"
+        assert status in result["error"]
+        assert "status_poll_total" in result["timing_ms"]
+        assert [request.kwargs["method"] for request in self.requests(factory)] == [
+            "POST", "GET"
+        ]
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("status_code", [400, 500])
+    async def test_status_request_failure_never_publishes(self, photo_node, status_code):
+        responses = [
+            create_mock_response({"id": "container_123"}),
+            create_mock_response({"error": {"message": "Status lookup failed"}}, status_code),
+        ]
+        with mock_async_client(responses) as factory:
+            result = await photo_node.execute({})
+        assert result["status"] == "error"
+        assert result["action"] == "publish_photo_post"
+        assert result["status_code"] == status_code
+        assert result["container_id"] == "container_123"
+        assert result["error"] == "Status lookup failed"
+        assert [request.kwargs["method"] for request in self.requests(factory)] == [
+            "POST", "GET"
+        ]
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("status", ["IN_PROGRESS", "UNKNOWN", None])
+    async def test_processing_timeout_never_publishes_or_recreates(self, photo_node, status):
+        elapsed = [0.0]
+
+        async def advance_time(seconds):
+            elapsed[0] += seconds
+
+        clock = SimpleNamespace(time=lambda: elapsed[0], monotonic=lambda: elapsed[0])
+        responses = [
+            create_mock_response({"id": "container_123"}),
+            create_mock_response({"status_code": status}),
+        ]
+        with (
+            mock_async_client(responses) as factory,
+            patch("nodes.instagram_node.time", clock),
+            patch("asyncio.sleep", side_effect=advance_time),
+        ):
+            result = await photo_node.execute({})
+        assert result["status"] == "error"
+        assert result["action"] == "publish_photo_post"
+        assert result["status_code"] == 408
+        assert result["container_id"] == "container_123"
+        assert "timed out" in result["error"]
+        assert 120 <= elapsed[0] <= 123
+        requests = self.requests(factory)
+        assert len(requests) == 41  # One creation plus the bounded status polls.
+        assert all(request.kwargs["method"] == "GET" for request in requests[1:])
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("failure_stage", ["status", "publish"])
+    async def test_http_timeout_does_not_retry_write(self, photo_node, failure_stage):
+        responses = [create_mock_response({"id": "container_123"})]
+        if failure_stage == "publish":
+            responses += [create_mock_response({"status_code": "FINISHED"})]
+        with mock_async_client(responses) as factory:
+            client = factory.return_value.__aenter__.return_value
+            client.request.side_effect = [*responses, httpx.ReadTimeout("Synthetic timeout")]
+            result = await photo_node.execute({})
+        assert result["status"] == "error"
+        assert result["status_code"] == 408
+        assert result["container_id"] == "container_123"
+        assert len(self.requests(factory)) == len(responses) + 1
+        expected_methods = ["POST", "GET"]
+        if failure_stage == "publish":
+            expected_methods.append("POST")
+        assert [request.kwargs["method"] for request in self.requests(factory)] == expected_methods
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("status_code", [400, 500])
+    async def test_publish_failure_does_not_retry_or_recreate(self, photo_node, status_code):
+        responses = [
+            create_mock_response({"id": "container_123"}),
+            create_mock_response({"status_code": "FINISHED"}),
+            create_mock_response({"error": {"message": "Publish failed"}}, status_code),
+        ]
+        with mock_async_client(responses) as factory:
+            result = await photo_node.execute({})
+        assert result["status"] == "error"
+        assert result["error"] == "Publish failed"
+        assert result["container_id"] == "container_123"
+        assert result["status_code"] == status_code
+        assert [request.kwargs["method"] for request in self.requests(factory)] == [
+            "POST", "GET", "POST"
+        ]
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("status_code", [200, 400])
+    async def test_failed_container_creation_stops_before_status_or_publish(self, photo_node, status_code):
+        payload = {} if status_code == 200 else {"error": {"message": "Creation failed"}}
+        with mock_async_client(create_mock_response(payload, status_code)) as factory:
+            result = await photo_node.execute({})
+        assert result["status"] == "error"
+        assert len(self.requests(factory)) == 1
+        assert self.requests(factory)[0].kwargs["url"].endswith("/media")
