@@ -67,16 +67,26 @@ OBJECT_STORAGE_SECRET_ACCESS_KEY="$(get_existing OBJECT_STORAGE_SECRET_ACCESS_KE
 [ -n "$ANON_KEY" ] || ANON_KEY="$(sign_jwt anon "$JWT_SECRET")"
 [ -n "$SERVICE_ROLE_KEY" ] || SERVICE_ROLE_KEY="$(sign_jwt service_role "$JWT_SECRET")"
 
+# Ports first: the default URLs carry them, and the compose file makes every
+# service listen on its host port so the *.localhost aliases work.
+APP_PORT="${NOCLICK_APP_PORT:-$(get_existing NOCLICK_APP_PORT)}"
+API_PORT="${NOCLICK_API_PORT:-$(get_existing NOCLICK_API_PORT)}"
+SUPABASE_PORT="${NOCLICK_SUPABASE_PORT:-$(get_existing NOCLICK_SUPABASE_PORT)}"
+STORAGE_PORT="${NOCLICK_STORAGE_PORT:-$(get_existing NOCLICK_STORAGE_PORT)}"
+: "${APP_PORT:=3000}"
+: "${API_PORT:=8000}"
+: "${SUPABASE_PORT:=8001}"
+: "${STORAGE_PORT:=9000}"
 APP_URL="${NOCLICK_APP_URL:-$(get_existing NOCLICK_APP_URL)}"
 API_URL="${NOCLICK_API_URL:-$(get_existing NOCLICK_API_URL)}"
 SUPABASE_URL="${NOCLICK_SUPABASE_URL:-$(get_existing NOCLICK_SUPABASE_URL)}"
 STORAGE_URL="${NOCLICK_STORAGE_URL:-$(get_existing NOCLICK_STORAGE_URL)}"
 RELAY_URL="${NOCLICK_RELAY_URL:-$(get_existing NOCLICK_RELAY_URL)}"
-: "${APP_URL:=http://localhost:3000}"
-: "${API_URL:=http://api.localhost:8000}"
-: "${SUPABASE_URL:=http://supabase.localhost:8001}"
-: "${STORAGE_URL:=http://storage.localhost:9000}"
-: "${RELAY_URL:=ws://api.localhost:8000/relay}"
+: "${APP_URL:=http://localhost:$APP_PORT}"
+: "${API_URL:=http://api.localhost:$API_PORT}"
+: "${SUPABASE_URL:=http://supabase.localhost:$SUPABASE_PORT}"
+: "${STORAGE_URL:=http://storage.localhost:$STORAGE_PORT}"
+: "${RELAY_URL:=ws://api.localhost:$API_PORT/relay}"
 
 umask 077
 cat > "$ENV_FILE" <<ENV
@@ -96,11 +106,11 @@ NOCLICK_RELAY_URL=$RELAY_URL
 NOCLICK_SUPABASE_URL=$SUPABASE_URL
 NOCLICK_STORAGE_URL=$STORAGE_URL
 
-# Published ports on the host.
-NOCLICK_APP_PORT=3000
-NOCLICK_API_PORT=8000
-NOCLICK_SUPABASE_PORT=8001
-NOCLICK_STORAGE_PORT=9000
+# Published ports on the host; the services listen on the same ports inside.
+NOCLICK_APP_PORT=$APP_PORT
+NOCLICK_API_PORT=$API_PORT
+NOCLICK_SUPABASE_PORT=$SUPABASE_PORT
+NOCLICK_STORAGE_PORT=$STORAGE_PORT
 
 # ── Secrets ──────────────────────────────────────────────────────────────────
 POSTGRES_PASSWORD=$POSTGRES_PASSWORD
