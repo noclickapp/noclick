@@ -181,6 +181,24 @@ def test_every_self_host_image_ships_the_cli_harnesses_the_runtime_was_verified_
 
 
 
+@pytest.mark.parametrize("image", ["single-origin.Dockerfile", "frontend.Dockerfile"])
+def test_every_self_host_image_bundles_the_server_instead_of_shipping_node_modules(image: str) -> None:
+    """The SSR server keeps every UI dependency external by default, which put
+    900 MB of node_modules under a 60 MB build in both images. The container
+    builds bundle them (NOCLICK_BUNDLE_SERVER) and install only the serve
+    process plus the packages kept external, so the app and the server share
+    one React and one router."""
+    dockerfile = (REPO / "docker" / image).read_text()
+    vite_config = (REPO / "frontend" / "vite.config.ts").read_text()
+    assert "NOCLICK_BUNDLE_SERVER === '1'" in vite_config
+    assert "noExternal: true" in vite_config
+    assert "ENV NOCLICK_BUNDLE_SERVER=1" in dockerfile
+    assert "pnpm install --frozen-lockfile --prod" not in dockerfile
+    assert "pnpm prune --prod" not in dockerfile
+    assert "/runtime/node_modules" in dockerfile
+    for pkg in ("react", "react-dom", "react-router", "@react-router/node", "@react-router/serve"):
+        assert pkg in dockerfile, f"{pkg} must be installed for the runtime"
+
 def test_single_origin_image_drops_privileges_in_its_entrypoint() -> None:
     dockerfile = (REPO / "docker" / "single-origin.Dockerfile").read_text()
     # The volume handshake: platforms mount /var/lib/noclick root-owned, so the

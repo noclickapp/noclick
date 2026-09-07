@@ -17,6 +17,12 @@ const ADBLOCK_BAIT = /analytic|telemetr|track|pixel|beacon|banner|advert|sponsor
 const neutralizeBaitName = (info: { name: string }) =>
     ADBLOCK_BAIT.test(info.name) ? 'assets/chunk-[hash].js' : 'assets/[name]-[hash].js';
 
+// The container images bundle every dependency into the server build so the
+// runtime ships no node_modules (NOCLICK_BUNDLE_SERVER=1, set by the
+// Dockerfiles). React and the router stay external so the app and the serve
+// process share one instance of each.
+const bundleServer = process.env.NOCLICK_BUNDLE_SERVER === '1';
+
 export default defineConfig({
     plugins: [
         ncPlugin(),
@@ -61,9 +67,9 @@ export default defineConfig({
         // pre-bundling it avoids the "outdated optimize dep" fetch failure.
         include: ['react', 'react-dom', 'react-grid-layout', 'react-grid-layout/extras', 'react-draggable', 'react-resizable', 'html-to-image'],
     },
-    ssr: {
-        noExternal: ['@visx/vendor', '@lobehub/icons', '@lobehub/ui', '@lobehub/fluent-emoji'],
-    },
+    ssr: bundleServer
+        ? { noExternal: true, external: ['react', 'react-dom', 'react-router', '@react-router/node'] }
+        : { noExternal: ['@visx/vendor', '@lobehub/icons', '@lobehub/ui', '@lobehub/fluent-emoji'] },
     server: {
         allowedHosts: [
             '.ngrok-free.app',

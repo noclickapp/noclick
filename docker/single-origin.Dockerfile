@@ -30,6 +30,7 @@ ENV NODE_OPTIONS=--max-old-space-size=6144
 # the bundle. Without it the app ships hosted-only UI: a Google sign-in button
 # with no provider behind it, the onboarding questionnaire, a credit balance.
 ENV VITE_NOCLICK_LOCAL=1
+ENV NOCLICK_BUNDLE_SERVER=1
 
 COPY sdk/typescript ./sdk/typescript
 COPY frontend/package.json frontend/pnpm-lock.yaml frontend/.npmrc ./frontend/
@@ -44,8 +45,14 @@ ARG VITE_INBOUND_EMAIL_DOMAIN
 ENV VITE_INBOUND_EMAIL_DOMAIN=$VITE_INBOUND_EMAIL_DOMAIN
 RUN pnpm run build
 
-# Production dependencies only, for the runtime image.
-RUN pnpm prune --prod --ignore-scripts
+# The server build bundles every dependency (NOCLICK_BUNDLE_SERVER, read by
+# vite.config.ts), so the runtime needs only the serve process and the packages
+# kept external there, at the versions the lockfile resolved.
+RUN mkdir /runtime && cd /runtime && npm init -y >/dev/null \
+    && specs=$(for p in react react-dom react-router @react-router/node @react-router/serve; do \
+           printf '%s@%s ' "$p" "$(node -p "require('/src/frontend/node_modules/$p/package.json').version")"; done) \
+    && npm install --omit=dev --ignore-scripts --no-audit --no-fund $specs \
+    && npm cache clean --force
 
 
 # ── Agent CLI harnesses ──────────────────────────────────────────────────────
@@ -132,7 +139,7 @@ COPY infra/supabase/migrations ./infra/supabase/migrations
 COPY docker/bootstrap.py ./docker/bootstrap.py
 COPY --from=frontend /src/frontend/build ./frontend/build
 COPY --from=frontend /src/frontend/public ./frontend/public
-COPY --from=frontend /src/frontend/node_modules ./frontend/node_modules
+COPY --from=frontend /runtime/node_modules ./frontend/node_modules
 COPY --from=frontend /src/frontend/package.json ./frontend/package.json
 
 COPY docker/gateway/single-origin.conf.template /etc/nginx/single-origin.conf.template

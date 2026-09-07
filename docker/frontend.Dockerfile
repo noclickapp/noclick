@@ -41,6 +41,7 @@ ARG VITE_APP_HOST
 # BUILD time. Unset, the bundle ships hosted-only UI: a Google sign-in button
 # with no provider behind it, the onboarding questionnaire, a credit balance.
 ENV VITE_NOCLICK_LOCAL=1
+ENV NOCLICK_BUNDLE_SERVER=1
 ENV VITE_RELAY_URL=$VITE_RELAY_URL \
     VITE_DISABLE_CAPTCHA=$VITE_DISABLE_CAPTCHA \
     VITE_CLOUDFLARE_TURNSTILE_SITE_KEY=$VITE_CLOUDFLARE_TURNSTILE_SITE_KEY \
@@ -50,34 +51,32 @@ RUN VITE_API_URL="${VITE_API_URL:-${VITE_API_HOST:+https://$VITE_API_HOST}}" \
     VITE_RELAY_URL="${VITE_RELAY_URL:-${VITE_API_HOST:+wss://$VITE_API_HOST/relay}}" \
     pnpm run build
 
+# The server build bundles every dependency (NOCLICK_BUNDLE_SERVER, read by
+# vite.config.ts), so the runtime needs only the serve process and the packages
+# kept external there, at the versions the lockfile resolved.
+RUN mkdir /runtime && cd /runtime && npm init -y >/dev/null \
+    && specs=$(for p in react react-dom react-router @react-router/node @react-router/serve; do \
+           printf '%s@%s ' "$p" "$(node -p "require('/src/frontend/node_modules/$p/package.json').version")"; done) \
+    && npm install --omit=dev --ignore-scripts --no-audit --no-fund $specs \
+    && npm cache clean --force
 
-FROM node:22-bookworm-slim AS runtime
 
-RUN corepack enable && apt-get update && apt-get install -y --no-install-recommends \
-        tini \
-    && rm -rf /var/lib/apt/lists/*
+FROM node:22-alpine AS runtime
+
+RUN apk add --no-cache tini && adduser -D -u 10002 noclick
 
 WORKDIR /app
-COPY frontend/package.json frontend/pnpm-lock.yaml frontend/.npmrc ./
-# --ignore-scripts: the only lifecycle script here installs husky's git hooks,
-# which needs a repository and dev dependencies. No production dependency
-# compiles anything.
-RUN pnpm install --frozen-lockfile --prod --ignore-scripts && pnpm store prune
-
+# package.json carries "type": "module", which is how node reads the server build.
+COPY frontend/package.json ./
+COPY --from=build /runtime/node_modules ./node_modules
 COPY --from=build /src/frontend/build ./build
 COPY --from=build /src/frontend/public ./public
 COPY docker/frontend-entrypoint.sh /usr/local/bin/noclick-entrypoint
 
-# No recursive chown. It was the most expensive step in this image by a wide
-# margin — 56s, more than the Vite build and the dependency install together —
-# because it walks every file under node_modules, and it duplicates the entire
-# /app layer in order to rewrite ownership. The server only reads what is here,
-# and root-owned files are world-readable, so it does not need to own them.
-RUN useradd --create-home --uid 10002 noclick
+# The server only reads what is here, and root-owned files are world-readable,
+# so it does not need to own them.
 USER noclick
 EXPOSE 3000
 
-# `pnpm start` would go through env-cmd, which insists on a .env file; the
-# container gets its configuration from the environment instead.
-ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/noclick-entrypoint"]
+ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/noclick-entrypoint"]
 CMD ["node_modules/.bin/react-router-serve", "./build/server/index.js"]
