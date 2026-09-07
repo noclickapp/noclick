@@ -1,7 +1,7 @@
 """Install the repository's CLI pins into an isolated directory for native tests.
 
 Usage: python backend/tests/fixtures/install_clis.py /tmp/noclick-test-clis
-Add the resulting bin directory to PATH. Requires Git, npm, and Node >=24.15.
+Add the resulting bin directory to PATH. Requires Git, npm, and Node 22 or 24.
 """
 import json
 from pathlib import Path

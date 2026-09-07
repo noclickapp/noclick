@@ -11,7 +11,6 @@ let migrationRestarted = false;
 let socket;
 let ready = false;
 let stopping = false;
-let retry = false;
 const deadline = Date.now() + 60_000;
 const requestIds = new Map();
 const emit = value => process.stdout.write(JSON.stringify(value) + '\n');
@@ -48,12 +47,22 @@ process.on('SIGINT', () => stop());
 
 function connect() {
   if (stopping) return;
-  retry = false;
-  socket = new WebSocket(address);
-  socket.addEventListener('message', ({data}) => {
+  const ws = socket = new WebSocket(address);
+  let retryScheduled = false;
+  function retryStartup() {
+    if (stopping || socket !== ws || retryScheduled) return;
+    if (ready || Date.now() >= deadline) return stop(1);
+    // Node 22 can emit error without close after a refused connection. Retry
+    // from either event, once per socket, and only before accepting any input.
+    retryScheduled = true;
+    ws.close();
+    setTimeout(() => { if (!ready && socket === ws) connect(); }, 200);
+  }
+  ws.addEventListener('message', ({data}) => {
+    if (stopping || socket !== ws || retryScheduled) return;
     const frame = JSON.parse(data);
     if (frame.event === 'connect.challenge') {
-      socket.send(JSON.stringify({type:'req', id:'connect', method:'connect', params:{
+      ws.send(JSON.stringify({type:'req', id:'connect', method:'connect', params:{
         minProtocol:4, maxProtocol:4,
         client:{id:'gateway-client', version:'1.0.0', platform:process.platform, mode:'backend'},
         role:'operator', scopes:['operator.read','operator.write','operator.admin'], caps:[], auth:{token},
@@ -63,7 +72,7 @@ function connect() {
         ready = true;
         emit({method:'bridge/ready', params:{}});
       } else if (frame.error?.details?.reason === 'startup-sidecars' && Date.now() < deadline) {
-        retry = true;
+        retryStartup();
       } else {
         process.stderr.write((frame.error?.message || 'OpenClaw connection rejected') + '\n');
         stop(1);
@@ -76,14 +85,8 @@ function connect() {
       emit({method:frame.event, params:frame.payload || {}});
     }
   });
-  socket.addEventListener('error', () => {
-    if (!ready && Date.now() < deadline) retry = true;
-    else stop(1);
-  });
-  socket.addEventListener('close', () => {
-    if (retry && !ready && !stopping) setTimeout(connect, 200);
-    else if (!stopping) stop(1); // Never replay inputs after a connection loss.
-  });
+  ws.addEventListener('error', retryStartup);
+  ws.addEventListener('close', retryStartup); // Never reconnect after hello-ok.
 }
 createInterface({input:process.stdin}).on('line', line => {
   if (!ready) return stop(1);
