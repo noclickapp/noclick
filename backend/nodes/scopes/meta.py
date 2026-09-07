@@ -465,6 +465,14 @@ _IG_BASE = ("instagram_basic", "pages_read_engagement")
 _IG_COMMENTS = ("instagram_basic", "instagram_manage_comments", "pages_read_engagement")
 
 _INSTAGRAM_REQUIREMENTS: dict[str, ScopeRequirement] = {
+    "on_comment": _s(
+        "instagram_business_basic", "instagram_business_manage_comments",
+        note="Instagram Login only: signed comments events for the connected professional account.",
+    ),
+    "on_message": _s(
+        "instagram_business_basic", "instagram_business_manage_messages",
+        note="Instagram Login only: signed inbound messages for the connected professional account.",
+    ),
     **_each(
         "get_user_profile",
         "list_user_media",

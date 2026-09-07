@@ -48,7 +48,7 @@ cachetools==5.5.2
 tenacity==8.5.0
 posthog==7.19.2
 testcontainers==4.13.2
-fakeredis==2.33.0
+fakeredis[lua]==2.33.0
 fastmcp==3.4.7
 resend==2.19.0
 quickjs==1.19.4

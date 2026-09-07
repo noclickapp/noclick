@@ -910,6 +910,150 @@
         "pages_read_engagement"
       ]
     },
+    "InstagramOnCommentConfig": {
+      "description": "A new customer comment delivered by Instagram's signed webhook.",
+      "properties": {
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Signed Instagram events for the connected professional account.",
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:widget": "readonly"
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_comment",
+          "default": "on_comment",
+          "title": "On Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "On Comment",
+          "x-is-trigger": true,
+          "x-requires-login": "instagram"
+        },
+        "media_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: receive comments only on this post. Leave blank for all posts owned by the connected account.",
+          "title": "Media ID"
+        }
+      },
+      "title": "InstagramOnCommentConfig",
+      "type": "object"
+    },
+    "InstagramOnMessageConfig": {
+      "description": "An inbound customer message delivered by Instagram's signed webhook.",
+      "properties": {
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Signed Instagram events for the connected professional account.",
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:widget": "readonly"
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_message",
+          "default": "on_message",
+          "title": "On Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "On Message",
+          "x-is-trigger": true,
+          "x-requires-login": "instagram"
+        },
+        "sender_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: receive messages only from this Instagram-scoped sender ID. Leave blank for all inbound senders.",
+          "title": "Sender ID"
+        }
+      },
+      "title": "InstagramOnMessageConfig",
+      "type": "object"
+    },
     "InstagramPageAccessTokenCredential": {
       "description": "Page Access Token credential (can be made permanent).\nSuitable for Facebook Page-based Instagram integrations.\n\nGenerate at: Graph API Explorer or via Facebook Login",
       "properties": {
@@ -1755,6 +1899,8 @@
           "list_media_comments": "#/$defs/InstagramListCommentsConfig",
           "list_user_media": "#/$defs/InstagramListMediaConfig",
           "mark_dm_seen": "#/$defs/InstagramMarkDMSeenConfig",
+          "on_comment": "#/$defs/InstagramOnCommentConfig",
+          "on_message": "#/$defs/InstagramOnMessageConfig",
           "publish_carousel_post": "#/$defs/InstagramPublishCarouselConfig",
           "publish_photo_post": "#/$defs/InstagramPublishPhotoConfig",
           "publish_photo_story": "#/$defs/InstagramPublishStoryPhotoConfig",
@@ -1776,6 +1922,12 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/InstagramOnCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramOnMessageConfig"
+        },
         {
           "$ref": "#/$defs/InstagramGetProfileConfig"
         },

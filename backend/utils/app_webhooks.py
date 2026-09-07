@@ -29,6 +29,7 @@ from utils.discord_gateway_bridge import (
     GATEWAY_SECRET_ENV,
     GATEWAY_SIGNATURE_HEADER,
 )
+from utils.instagram_webhooks import INSTAGRAM_WEBHOOK_ADAPTER
 from utils.webhook_signatures import (
     verify_ed25519,
     verify_hmac_sha256_hex,
@@ -444,6 +445,7 @@ def _slack_event_id(payload: Dict[str, Any]) -> Optional[str]:
 
 
 APP_PROVIDERS = {
+    "instagram": INSTAGRAM_WEBHOOK_ADAPTER,
     "slack": {
         "verify": _slack_verify,
         "handshake": _slack_handshake,

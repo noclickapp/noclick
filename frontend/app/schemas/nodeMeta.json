@@ -567,7 +567,11 @@
       ]
     },
     "automation-instagram": {
-      "agentToolProvider": true
+      "agentToolProvider": true,
+      "triggerOperations": [
+        "on_comment",
+        "on_message"
+      ]
     },
     "automation-instantly": {
       "agentToolProvider": true,

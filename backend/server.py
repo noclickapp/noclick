@@ -315,8 +315,10 @@ async def app_lifespan(app: FastAPI):
     shutdown_otel()
     await run_shutdown_hooks("final")
 
+from utils.instagram_webhook_privacy import instagram_webhook_request_hook
+
 fastapi_app = FastAPI(lifespan=app_lifespan)
-FastAPIInstrumentor.instrument_app(fastapi_app)
+FastAPIInstrumentor.instrument_app(fastapi_app, server_request_hook=instagram_webhook_request_hook)
 HTTPXClientInstrumentor().instrument()
 # LiteLLM's streaming completion path uses aiohttp, not httpx; both client
 # instrumentors are needed to capture all outbound LLM/API traffic.
@@ -422,7 +424,7 @@ web_app = socketio.ASGIApp(
 # interactive traffic; execution events reach the user through the relay,
 # which any process can publish to.
 webhook_fastapi_app = FastAPI(lifespan=app_lifespan)
-FastAPIInstrumentor.instrument_app(webhook_fastapi_app)
+FastAPIInstrumentor.instrument_app(webhook_fastapi_app, server_request_hook=instagram_webhook_request_hook)
 webhook_fastapi_app.add_middleware(
     CORSMiddleware,
     allow_origins=ORIGINS,

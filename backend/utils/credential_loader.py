@@ -23,7 +23,7 @@ _LOAD_CREDENTIAL_SQL = f"""
 
 
 async def load_credential(
-    pool, user_id: str, credential_id: Optional[str]
+    pool, user_id: str, credential_id: Optional[str], *, raise_on_error: bool = False
 ) -> Optional[Dict[str, Any]]:
     """Fetch and decrypt a credential the user is allowed to use.
 
@@ -47,6 +47,8 @@ async def load_credential(
                 _LOAD_CREDENTIAL_SQL, credential_id, user_id, org_id,
             )
     except Exception as e:
+        if raise_on_error:
+            raise
         logger.error(f"[credential_loader] Error fetching credential {credential_id}: {e}")
         return None
 

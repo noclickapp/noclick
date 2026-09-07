@@ -24,8 +24,11 @@ Total Operations: 23
 import asyncio
 import json
 import logging
+import os
 import time
+from contextlib import asynccontextmanager
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
+from uuid import uuid4
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 import httpx
 
@@ -36,6 +39,7 @@ from nodes.core.platform_billing import platform_keyed_operation
 PLATFORM_KEYED = platform_keyed_operation("APIFY_API_TOKEN", byok=False)
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_subscriptions import AppEventTriggerMixin
 from nodes.oauth.facebook_oauth import is_token_expired, refresh_access_token
 from nodes.oauth.instagram_login_oauth import (
     is_token_expired as _ig_login_is_expired,
@@ -1354,11 +1358,67 @@ class InstagramScrapeCommentsConfig(BaseModel):
 
 
 # ============================================================================
+# Signed, account-scoped Instagram Login event triggers
+# ============================================================================
+
+
+class _InstagramEventTriggerConfig(BaseModel):
+    """Shared app-level subscription status; never a per-workflow callback."""
+
+    subscription_status: Optional[str] = Field(
+        None,
+        title="Status",
+        description="Signed Instagram events for the connected professional account.",
+        json_schema_extra={"ui:widget": "readonly", "ui:loadValue": True},
+    )
+    trigger_registered: Optional[bool] = Field(None, json_schema_extra={"ui:hidden": True})
+    trigger_error: Optional[str] = Field(None, json_schema_extra={"ui:hidden": True})
+
+
+class InstagramOnCommentConfig(_InstagramEventTriggerConfig):
+    """A new customer comment delivered by Instagram's signed webhook."""
+
+    operation: Literal["on_comment"] = Field(
+        "on_comment",
+        title="On Comment",
+        json_schema_extra={
+            "const": "on_comment", "ui:hidden": True, "x-is-trigger": True,
+            "x-display-name": "On Comment", "x-category": "Comment",
+            "x-requires-login": "instagram",
+        },
+    )
+    media_id: Optional[str] = Field(
+        None, title="Media ID",
+        description="Optional: receive comments only on this post. Leave blank for all posts owned by the connected account.",
+    )
+
+
+class InstagramOnMessageConfig(_InstagramEventTriggerConfig):
+    """An inbound customer message delivered by Instagram's signed webhook."""
+
+    operation: Literal["on_message"] = Field(
+        "on_message",
+        title="On Message",
+        json_schema_extra={
+            "const": "on_message", "ui:hidden": True, "x-is-trigger": True,
+            "x-display-name": "On Message", "x-category": "Messaging",
+            "x-requires-login": "instagram",
+        },
+    )
+    sender_id: Optional[str] = Field(
+        None, title="Sender ID",
+        description="Optional: receive messages only from this Instagram-scoped sender ID. Leave blank for all inbound senders.",
+    )
+
+
+# ============================================================================
 # Discriminated Union
 # ============================================================================
 
 InstagramConfig = Annotated[
     Union[
+        InstagramOnCommentConfig,
+        InstagramOnMessageConfig,
         # Profile operations (1)
         InstagramGetProfileConfig,
         # Media operations (5)
@@ -1427,7 +1487,7 @@ class InstagramNodeConfig(NodeConfig[InstagramConfig, InstagramCredential]):
 # ============================================================================
 
 
-class InstagramNode(ApifyRunnerMixin, WorkflowNode):
+class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
     """
     Instagram Graph API automation node.
 
@@ -1446,6 +1506,9 @@ class InstagramNode(ApifyRunnerMixin, WorkflowNode):
     ]
 
     scope_registry = INSTAGRAM_SCOPES
+    _app_provider = "instagram"
+    _trigger_event_map = {"on_comment": ["comments"], "on_message": ["messages"]}
+    _credential_prompt = "Connect exactly one Instagram Login credential to activate this trigger; Facebook Login is not supported."
     connection_evidence = ConnectionEvidence(
         operation="list_user_media",
         noun="posts",
@@ -1456,6 +1519,252 @@ class InstagramNode(ApifyRunnerMixin, WorkflowNode):
     def get_config_model(cls):
         """Return the Pydantic model for node configuration."""
         return InstagramNodeConfig
+
+    @staticmethod
+    def _require_instagram_login_credential(credential) -> Dict[str, Any]:
+        from utils.instagram_webhooks import instagram_account_id
+
+        data = credential.model_dump() if isinstance(credential, BaseModel) else credential
+        if not isinstance(data, dict) or data.get("credential_type") != "instagram_login":
+            raise ValueError("Instagram event triggers require Instagram Login, not Facebook Login or a manual token.")
+        account_id = data.get("instagram_user_id")
+        if not isinstance(account_id, str) or not instagram_account_id(account_id):
+            raise ValueError("Instagram Login credential has no valid professional account ID; reconnect it.")
+        if not isinstance(data.get("access_token"), str) or not data["access_token"].strip():
+            raise ValueError("Instagram Login credential has no access token; reconnect it.")
+        return data
+
+    @classmethod
+    def _pick_trigger_credential_id(cls, credential_ids):
+        """Never let insertion order pick a legacy/ambiguous credential."""
+        from utils.instagram_webhooks import instagram_login_credential_id
+
+        return instagram_login_credential_id(credential_ids)
+
+    @classmethod
+    async def _resolve_tenant_id(cls, credential):
+        return cls._require_instagram_login_credential(credential)["instagram_user_id"]
+
+    @classmethod
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        if not credential_data or credential_data.get("credential_type") != "instagram_login":
+            return credential_data
+        from nodes.core.oauth_refresh import freshen_oauth_credential
+        from nodes.core.oauth_audit import current_caller_path
+
+        return await freshen_oauth_credential(
+            credential_data, pool=pool, user_id=user_id, credential_id=credential_id,
+            refresh=_ig_login_refresh, is_expired=_ig_login_is_expired,
+            refresh_token_key="access_token", provider="instagram_login",
+            caller_path=current_caller_path(),
+        )
+
+    @staticmethod
+    async def _registration_request(client, method, path, *, params=None, data=None):
+        """Registration errors must never expose response bodies or token URLs."""
+        try:
+            response = await client.request(
+                method, f"{INSTAGRAM_API_BASE}/{path}", params=params, data=data,
+            )
+        except httpx.HTTPError:
+            raise ValueError("Instagram subscription request failed; retry registration later.") from None
+        if response.status_code >= 400:
+            raise ValueError(f"Instagram subscription request returned HTTP {response.status_code}; check account access and callback setup.")
+        try:
+            body = response.json()
+        except ValueError:
+            raise ValueError("Instagram subscription returned an invalid response.") from None
+        if not isinstance(body, dict) or body.get("error"):
+            raise ValueError("Instagram rejected the subscription request; check account access and callback setup.")
+        return body
+
+    @classmethod
+    async def _read_subscribed_fields(cls, client, account_id: str, app_id: str) -> set[str]:
+        """Preserve the exact configured app's complete remote field set.
+
+        An unrecognized app identity or incomplete pagination is NOT an empty
+        subscription. Stop before POST rather than risk replacing its fields.
+        """
+        from utils.instagram_webhooks import instagram_account_id
+
+        # Meta's parent app and Instagram product have different public IDs.
+        # Accept only those explicitly configured identities, never whichever
+        # unrelated app happens to be the sole row returned by the provider.
+        expected_ids = {app_id}
+        product_id = os.environ.get("INSTAGRAM_CLIENT_ID") or os.environ.get("INSTAGRAM_APP_ID")
+        if product_id:
+            if not instagram_account_id(product_id):
+                raise ValueError("The configured Instagram product app ID is invalid.")
+            expected_ids.add(product_id)
+        rows = []
+        after = None
+        seen_cursors = set()
+        for _ in range(5):
+            params = {"fields": "id,subscribed_fields"}
+            if after:
+                params["after"] = after
+            body = await cls._registration_request(client, "GET", f"{account_id}/subscribed_apps", params=params)
+            page = body.get("data")
+            if not isinstance(page, list) or any(not isinstance(row, dict) for row in page):
+                raise ValueError("Instagram returned invalid subscription data; existing fields were not changed.")
+            rows.extend(page)
+            paging = body.get("paging") or {}
+            if not isinstance(paging, dict):
+                raise ValueError("Instagram returned invalid subscription pagination.")
+            if not paging.get("next"):
+                break
+            cursors = paging.get("cursors") or {}
+            after = cursors.get("after") if isinstance(cursors, dict) else None
+            if not isinstance(after, str) or not after or after in seen_cursors:
+                raise ValueError("Instagram subscription pagination is incomplete; existing fields were not changed.")
+            seen_cursors.add(after)
+        else:
+            raise ValueError("Instagram subscription pagination exceeded its safety bound; existing fields were not changed.")
+        matching = [row for row in rows if str(row.get("id")) in expected_ids]
+        if rows and len(matching) != 1:
+            raise ValueError("Instagram subscribed-app identity does not match the configured webhook app; existing fields were not changed.")
+        if not matching:
+            return set()
+        fields = matching[0].get("subscribed_fields")
+        if not isinstance(fields, list) or any(
+            not isinstance(field, str) or not field or not field.replace("_", "").isalnum()
+            for field in fields
+        ):
+            raise ValueError("Instagram did not return a valid subscribed-fields list; existing fields were not changed.")
+        return set(fields)
+
+    @staticmethod
+    @asynccontextmanager
+    async def _registration_lease(account_id: str, app_id: str):
+        """Cross-container union updates; contention fails visibly, never loops."""
+        from utils.redis_client import get_shared_redis
+
+        redis = get_shared_redis()
+        if redis is None:
+            raise ValueError("Instagram registration lock is unavailable; retry later.")
+        key = f"instagram:subscription-register:{app_id}:{account_id}"
+        owner = str(uuid4())
+        try:
+            async with asyncio.timeout(5):
+                acquired = await redis.set(key, owner, nx=True, ex=90)
+        except Exception:
+            raise ValueError("Instagram registration lock is unavailable; retry later.") from None
+        if not acquired:
+            raise ValueError("Instagram account registration is already in progress; retry later.")
+        try:
+            # The provider read/merge/write/readback must finish well before the
+            # 90-second lease expires; no blind write retries inside this block.
+            async with asyncio.timeout(45):
+                yield
+        except TimeoutError:
+            raise ValueError("Instagram subscription verification timed out; retry registration later.") from None
+        finally:
+            try:
+                async with asyncio.timeout(5):
+                    await redis.eval(
+                        "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end",
+                        1, key, owner,
+                    )
+            except Exception:
+                logger.warning("[InstagramNode] Registration lease release failed; it will expire automatically.")
+
+    @classmethod
+    async def register_node_subscriptions(
+        cls, pool, *, user_id, workflow_id, node_id, operation,
+        credential_id, credential, config=None,
+    ):
+        from utils.instagram_webhooks import require_instagram_webhook_configuration
+
+        app_id = require_instagram_webhook_configuration()
+        event_types = cls._trigger_event_map.get(operation or "")
+        if not event_types:
+            raise ValueError("Unknown Instagram trigger operation.")
+        if not credential_id:
+            raise ValueError(cls._credential_prompt)
+        if config and "credentialIds" in config and cls._pick_trigger_credential_id(config["credentialIds"]) != credential_id:
+            raise ValueError(cls._credential_prompt)
+        cls._require_instagram_login_credential(credential)
+        credential = await cls.freshen_credential(
+            credential, pool=pool, user_id=user_id, credential_id=credential_id,
+        )
+        credential = cls._require_instagram_login_credential(credential)
+        account_id = credential["instagram_user_id"]
+        async with httpx.AsyncClient(
+            timeout=15.0, headers={"Authorization": f"Bearer {credential['access_token']}"},
+        ) as client:
+            identity = await cls._registration_request(client, "GET", "me", params={"fields": "user_id"})
+            if str(identity.get("user_id")) != account_id:
+                raise ValueError("Instagram Login account identity changed; reconnect the intended account before activating this trigger.")
+            async with cls._registration_lease(account_id, app_id):
+                current = await cls._read_subscribed_fields(client, account_id, app_id)
+                wanted = current | set(event_types)
+                if wanted != current:
+                    result = await cls._registration_request(
+                        client, "POST", f"{account_id}/subscribed_apps",
+                        data={"subscribed_fields": ",".join(sorted(wanted))},
+                    )
+                    if result.get("success") is not True:
+                        raise ValueError("Instagram did not confirm the account subscription; no workflow subscription was saved.")
+                    verified = await cls._read_subscribed_fields(client, account_id, app_id)
+                    if not wanted.issubset(verified):
+                        raise ValueError("Instagram subscription readback did not confirm every field; no workflow subscription was saved.")
+        # A provider failure above never creates a local active registration.
+        # Shared cleanup intentionally only removes this node's local rows; it
+        # must not unsubscribe an account used by another workflow/application.
+        return await super().register_node_subscriptions(
+            pool, user_id=user_id, workflow_id=workflow_id, node_id=node_id,
+            operation=operation, credential_id=credential_id, credential=credential, config=config,
+        )
+
+    @classmethod
+    def _subscription_status_line(cls, event_types, config):
+        filtered = (config or {}).get("media_id") if event_types == ["comments"] else (config or {}).get("sender_id")
+        return f"Registered — listening for Instagram {event_types[0]} on the connected account" + (" (filtered)" if filtered else "")
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        operation = (config or {}).get("operation")
+        expected = cls._trigger_event_map.get(operation or "", [])
+        if not isinstance(payload, dict) or payload.get("object") != "instagram" or payload.get("event_type") not in expected:
+            raise ValueError("Instagram delivery does not match this trigger.")
+        data = payload.get("data")
+        account_id = payload.get("account_id")
+        if not isinstance(data, dict) or not account_id or not payload.get("event_id"):
+            raise ValueError("Instagram delivery is incomplete.")
+        result = {
+            "type": "instagram", "status": "success", "action": operation,
+            "account_id": str(account_id), "event_type": payload["event_type"],
+            "event_id": payload["event_id"], "timestamp": payload.get("timestamp"),
+            "data": data,
+        }
+        if operation == "on_comment":
+            author, media = data.get("from"), data.get("media")
+            if not isinstance(author, dict) or not isinstance(media, dict) or not data.get("id") or not media.get("id"):
+                raise ValueError("Instagram comment delivery is incomplete.")
+            author_id = author.get("id")
+            author_username = author.get("username")
+            # Meta also delivers comments with from.username only. The signed
+            # adapter's live-credential guard excludes our own username before
+            # dispatch; never manufacture an author ID for these events.
+            if not author_id and not (isinstance(author_username, str) and author_username.strip()):
+                raise ValueError("Instagram comment delivery has no author identity.")
+            if (author_id and str(author_id) == str(account_id)) or ((config or {}).get("media_id") and str(media["id"]) != str(config["media_id"])):
+                raise ValueError("Instagram comment does not match the inbound trigger scope.")
+            result.update(comment_id=str(data["id"]), media_id=str(media["id"]),
+                          author_id=str(author_id) if author_id else None, author_username=author_username,
+                          text=data.get("text") or "")
+        else:
+            sender, recipient, message = data.get("sender"), data.get("recipient"), data.get("message")
+            if not isinstance(sender, dict) or not isinstance(recipient, dict) or not isinstance(message, dict) or not sender.get("id") or not message.get("mid"):
+                raise ValueError("Instagram message delivery is incomplete.")
+            if str(recipient.get("id")) != str(account_id) or str(sender["id"]) == str(account_id) or message.get("is_echo") or ((config or {}).get("sender_id") and str(sender["id"]) != str(config["sender_id"])):
+                raise ValueError("Instagram message does not match the inbound trigger scope.")
+            result.update(sender_id=str(sender["id"]), recipient_id=str(recipient["id"]),
+                          message_id=str(message["mid"]), text=message.get("text") or "")
+        return result
+
+    def trigger_produced_no_event(self, output):
+        return output.get("action") in self._trigger_event_map and output.get("status") == "no_event"
 
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -1475,6 +1784,15 @@ class InstagramNode(ApifyRunnerMixin, WorkflowNode):
             raise ValueError("Valid configuration is required")
 
         op_config = config.config
+
+        if op_config.operation in self._trigger_event_map:
+            # Real signed deliveries enter through resolve_trigger_payload, not
+            # execute(). A manual run must not replay or fabricate an event.
+            self._require_instagram_login_credential(config.credentials)
+            return self.no_event_output(
+                op_config.operation,
+                "Waiting for a signed Instagram delivery; manual runs do not register subscriptions or contact Instagram.",
+            )
 
         # Scraping operations run through NoClick's Apify integration (server-side token).
         # No Instagram OAuth credential is required; billed against the user's NoClick balance.

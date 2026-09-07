@@ -1860,6 +1860,8 @@ async def _fire_subscription(
         )
     except Exception as e:
         logger.error(f"[APP-WEBHOOK] Failed to load workflow {workflow_id}: {e}")
+        if adapter.get("event_guard"):
+            raise HTTPException(status_code=503, detail="Webhook delivery temporarily unavailable") from None
         return False
     if not row or not row.get("workflow"):
         return False
@@ -1913,9 +1915,30 @@ async def _fire_subscription(
             # Fail closed: an event whose owner cannot be established must not
             # run as someone else's.
             logger.error(f"[APP-WEBHOOK] Scope check failed for trigger {node_id}: {e}")
+            if adapter.get("event_guard"):
+                raise HTTPException(status_code=503, detail="Webhook delivery temporarily unavailable") from None
             return False
         if skip_reason:
             logger.info(f"[APP-WEBHOOK] Trigger node {node_id} out of scope: {skip_reason}")
+            return False
+
+    # Some providers bind subscriptions to credentials that can change before
+    # reconciliation runs. Check the LIVE node, not just the old subscription
+    # row, before injecting an account's private event into a workflow run.
+    live_scope_filter = adapter.get("live_scope_filter")
+    if live_scope_filter:
+        try:
+            skip_reason = await live_scope_filter(
+                get_native_pool(), sub, payload, trigger_node
+            )
+        except Exception:
+            # Never ACK a transient verification failure as a delivered event.
+            # Also never include credential-loader/provider exception text in
+            # this endpoint's response or log.
+            logger.error(f"[APP-WEBHOOK] Live scope check unavailable for trigger {node_id}")
+            raise HTTPException(status_code=503, detail="Webhook scope check temporarily unavailable") from None
+        if skip_reason:
+            logger.info(f"[APP-WEBHOOK] Trigger node {node_id} out of live scope: {skip_reason}")
             return False
 
     # Blast-radius bound: no authorship check can see a two-party echo
@@ -2049,16 +2072,13 @@ async def dispatch_app_events(provider: str, body: bytes, background_tasks=None)
     its own by in-process producers — the open edition's Discord Gateway
     listener hands its envelopes here without an HTTP hop or a signature.
     """
-    from nodes.core.webhook_subscriptions import find_subscriptions
-    from utils.app_event_dedup import mark_delivered, was_delivered
     from utils.app_webhooks import APP_PROVIDERS
 
     adapter = APP_PROVIDERS[provider]
-    pool = get_native_pool()
     tasks = background_tasks or _SpawnBackgroundTasks()
     events = adapter["parse"](body)
-    drop_event = adapter.get("drop_event")
     extract_event_id = adapter.get("event_id")
+    event_guard = adapter.get("event_guard")
     fired = 0
     for tenant_id, event_type, payload, event_channel in events:
         # Redelivery dedup (providers redeliver on slow ACK, double-firing
@@ -2070,36 +2090,82 @@ async def dispatch_app_events(provider: str, body: bytes, background_tasks=None)
         # MESSAGE_MENTION too).
         raw_event_id = extract_event_id(payload) if extract_event_id else None
         event_id = f"{event_type}:{raw_event_id}" if raw_event_id else None
-        if event_id and await was_delivered(provider, event_id):
-            logger.info(
-                f"[APP-WEBHOOK] {provider}: dropped duplicate delivery of {event_id}"
+        if event_guard:
+            # Opt-in atomic lease/delivered-marker contract. Contention and
+            # unavailable dedup storage are retryable failures, not permission
+            # to duplicate a reply. Existing providers keep their old behavior.
+            if not event_id:
+                raise HTTPException(status_code=503, detail="Webhook event identity unavailable")
+            async with event_guard(event_id) as should_deliver:
+                if should_deliver:
+                    fired += await _dispatch_one_app_event(
+                        provider, adapter, tasks, tenant_id, event_type,
+                        payload, event_channel, event_id, legacy_dedup=False,
+                    )
+        else:
+            fired += await _dispatch_one_app_event(
+                provider, adapter, tasks, tenant_id, event_type,
+                payload, event_channel, event_id, legacy_dedup=True,
             )
-            continue
-        if drop_event:
-            drop_reason = await drop_event(payload)
-            if drop_reason:
-                logger.info(
-                    f"[APP-WEBHOOK] {provider}: dropped {event_type} event ({drop_reason})"
-                )
-                # A drop is a final decision — mark it delivered so a
-                # redelivery doesn't depend on the drop signal (e.g. the
-                # self-post fingerprint) still being present later.
-                if event_id:
-                    await mark_delivered(provider, event_id)
-                continue
-        subscriptions = await find_subscriptions(
-            pool, provider, tenant_id, event_type
-        )
-        for sub in subscriptions:
-            if await _fire_subscription(tasks, sub, payload, event_channel):
-                fired += 1
-        if event_id:
-            await mark_delivered(provider, event_id)
 
     logger.info(
         f"[APP-WEBHOOK] {provider}: {len(events)} event(s) -> {fired} workflow run(s)"
     )
     return fired
+
+
+async def _dispatch_one_app_event(
+    provider, adapter, tasks, tenant_id, event_type, payload,
+    event_channel, event_id, *, legacy_dedup: bool,
+) -> int:
+    """Fan out one parsed event; the caller owns any atomic delivery lease.
+
+    Queuing is not durable execution. A process failure after queuing can still
+    lose a run, and partial fan-out retries can repeat already-queued work.
+    Downstream non-idempotent actions still need event-specific write guards.
+    """
+    from nodes.core.webhook_subscriptions import find_subscriptions
+    from utils.app_event_dedup import mark_delivered, was_delivered
+
+    if legacy_dedup and event_id and await was_delivered(provider, event_id):
+        logger.info(f"[APP-WEBHOOK] {provider}: dropped duplicate delivery of {event_id}")
+        return 0
+    drop_event = adapter.get("drop_event")
+    if drop_event:
+        drop_reason = await drop_event(payload)
+        if drop_reason:
+            logger.info(f"[APP-WEBHOOK] {provider}: dropped {event_type} event ({drop_reason})")
+            if legacy_dedup and event_id:
+                await mark_delivered(provider, event_id)
+            return 0
+    subscriptions = await find_subscriptions(
+        get_native_pool(), provider, tenant_id, event_type
+    )
+    fired = 0
+    for sub in subscriptions:
+        subscription_guard = adapter.get("subscription_guard")
+        if subscription_guard:
+            # A failed later subscriber must not cause an already-queued
+            # subscriber to fire again when the provider retries this event.
+            delivery_id = json.dumps([
+                "subscription", event_id, str(sub["workflow_id"]), sub["node_id"]
+            ], separators=(",", ":"))
+            async with subscription_guard(delivery_id) as should_deliver:
+                if should_deliver and await _fire_subscription(tasks, sub, payload, event_channel):
+                    fired += 1
+        elif await _fire_subscription(tasks, sub, payload, event_channel):
+            fired += 1
+    if legacy_dedup and event_id:
+        await mark_delivered(provider, event_id)
+    return fired
+
+
+@router.get("/app/instagram")
+async def verify_instagram_app_webhook(request: Request):
+    from utils.instagram_webhooks import instagram_handshake
+    from utils.instagram_webhook_privacy import consume_instagram_verification_query
+
+    return instagram_handshake(consume_instagram_verification_query(request))
 
 
 @router.post("/app/{provider}")
@@ -2113,14 +2179,47 @@ async def receive_app_webhook(
     NoClick app to this one URL; the request is verified against the app secret
     and routed via the ``webhook_subscriptions`` table.
     """
-    body = await request.body()
-    return await handle_app_webhook_payload(
-        provider,
-        body,
-        dict(request.headers.items()),
-        str(request.url),
-        background_tasks,
-    )
+    if provider == "instagram":
+        from utils.instagram_webhooks import MAX_BODY_BYTES
+
+        chunks = []
+        size = 0
+        async for chunk in request.stream():
+            size += len(chunk)
+            if size > MAX_BODY_BYTES:
+                raise HTTPException(status_code=413, detail="Instagram webhook payload too large")
+            chunks.append(chunk)
+        body = b"".join(chunks)
+    else:
+        body = await request.body()
+    from utils.app_webhooks import APP_PROVIDERS
+
+    guarded = bool(APP_PROVIDERS.get(provider, {}).get("event_guard"))
+    try:
+        return await handle_app_webhook_payload(
+            provider,
+            body,
+            dict(request.headers.items()),
+            str(request.url),
+            background_tasks,
+        )
+    except Exception as error:
+        if not guarded:
+            raise
+        # FastAPI's ordinary exception response discards BackgroundTasks. A
+        # previously queued event in this batch may already have its delivered
+        # marker, so it MUST still run even when a later event fails. Preserve
+        # that work while asking the provider to retry the unfinished portion.
+        if isinstance(error, HTTPException):
+            return JSONResponse(
+                status_code=error.status_code, content={"detail": error.detail},
+                headers=error.headers, background=background_tasks,
+            )
+        logger.error(f"[APP-WEBHOOK] Guarded delivery temporarily unavailable for {provider}")
+        return JSONResponse(
+            status_code=503, content={"detail": "Webhook delivery temporarily unavailable"},
+            background=background_tasks,
+        )
 
 
 def _build_delay_resume_data(payload: dict, workflow_id: str) -> Optional[dict]:
