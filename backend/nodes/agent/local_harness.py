@@ -1,27 +1,20 @@
-"""Local-process CLI harness runner.
+"""Run installed CLI agents in conversation-scoped local processes.
 
-Runs a CLI coding agent (Claude Code, Codex, OpenCode, Hermes, or OpenClaw)
-as a one-shot subprocess on the machine serving the backend, using the
-operator's installed and authenticated CLI. The harness registry uses this
-runner by default for CLI model types.
-
-Each conversation has a stable workspace and fresh CLI configuration. Wired
-tools are exposed over a turn-scoped MCP endpoint on this backend and share
-the normal tool execution and audit path. Model usage is charged through the
-operator's CLI subscription or API credentials. Harnesses with a known
-upstream MCP-discovery race are retried once when no tools were discovered.
+Native streaming and gateway protocols accept input in their live session.
+Independent conversation keys execute concurrently.
+Wired tools use the local MCP endpoint and the normal execution/audit path.
 """
 
 import asyncio
+import socket
 import hashlib
 import json
 import logging
 import os
-import re
 import secrets
 import shutil
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -37,7 +30,7 @@ TURN_TIMEOUT_S = float(os.environ.get("NOCLICK_LOCAL_HARNESS_TIMEOUT", "900"))
 router = APIRouter()
 
 
-# ── Turn-scoped tool sessions ────────────────────────────────────────────
+# ── Process-scoped tool sessions ────────────────────────────────────────────
 
 
 @dataclass
@@ -46,21 +39,12 @@ class _ToolSession:
     tool_configs: Dict[str, Dict]
     user_id: str
     conversation_id: str
-    # Set when the harness actually fetched the tool list — the signal the
-    # discovery-race retry keys on.
+    # Records whether this MCP client fetched the advertised tool list.
     saw_tools: bool = False
 
 
 _sessions: Dict[str, _ToolSession] = {}
-
-
-# Harnesses whose upstream release races MCP discovery on a cold connect.
-_DISCOVERY_RACE_HARNESSES = ("hermes_agent",)
-
-
-def _session_saw_tools(token: str) -> bool:
-    session = _sessions.get(token)
-    return bool(session and session.saw_tools)
+_presence_counts: Dict[tuple, int] = {}
 
 
 def _register_session(session: _ToolSession) -> str:
@@ -109,10 +93,13 @@ def _tool_list(tool_configs: Dict[str, Dict]) -> List[Dict[str, Any]]:
 
 @router.post("/local-agent-mcp/{token}")
 async def local_agent_mcp(token: str, request: Request):
-    """Stateless MCP Streamable-HTTP endpoint scoped to one agent turn."""
+    """Stateless MCP Streamable-HTTP endpoint scoped to a local process."""
     session = _sessions.get(token)
     if session is None:
         raise HTTPException(status_code=404, detail="Unknown or expired tool session")
+    # A concurrent completion may advance the active input while this tool is
+    # awaiting I/O. Keep its execution and audit context together.
+    session = replace(session)
     try:
         body = await request.json()
     except Exception:
@@ -141,6 +128,8 @@ async def local_agent_mcp(token: str, request: Request):
         return result({})
     if method == "tools/list":
         session.saw_tools = True
+        if token in _sessions:
+            _sessions[token].saw_tools = True
         return result({"tools": _tool_list(session.tool_configs)})
     if method == "tools/call":
         from nodes.agent.tool_execution import execute_tool
@@ -381,6 +370,7 @@ def hermes_provider_and_model(model_id: str) -> Tuple[Optional[str], str]:
 def _build_command(
     model_type: str, config: Any, workdir: Path, mcp_url: Optional[str],
     extra_note: str = "",
+    *, persistent: bool = False,
 ) -> Tuple[List[str], str]:
     """Returns (argv, parser_kind). Raises if the CLI is missing."""
     if model_type == "claude_code":
@@ -401,6 +391,11 @@ def _build_command(
             cmd += ["--mcp-config", str(mcp_config), "--allowedTools", "mcp__noclick__*"]
         if (workdir / ".noclick-turns").exists():
             cmd += ["--continue"]
+        if persistent:
+            del cmd[2]  # messages arrive on stdin, never as a positional prompt
+            cmd += ["--input-format", "stream-json", "--replay-user-messages", "--strict-mcp-config"]
+            if not mcp_url:
+                cmd += ["--mcp-config", '{"mcpServers":{}}']
         return cmd, "claude_stream_json"
 
     if model_type == "codex":
@@ -420,46 +415,52 @@ def _build_command(
                     "-c", "experimental_use_rmcp_client=true",
                     "-c", 'mcp_servers.noclick.default_tools_approval_mode="approve"']
         cmd += [_compose_prompt(config, inline_system=True, extra_note=extra_note)]
+        if persistent:
+            options = []
+            if mcp_url:
+                options = ["-c", f"mcp_servers.noclick.url={json.dumps(mcp_url)}",
+                           "-c", 'mcp_servers.noclick.default_tools_approval_mode="approve"']
+            cmd = [binary, "app-server", *options]
         return cmd, "codex_jsonl"
 
     if model_type == "opencode":
         binary = _require_binary("opencode", "https://opencode.ai")
-        if mcp_url:
-            (workdir / "opencode.json").write_text(json.dumps({
-                "$schema": "https://opencode.ai/config.json",
-                "mcp": {"noclick": {"type": "remote", "url": mcp_url, "enabled": True}},
-            }))
+        (workdir / "opencode.json").write_text(json.dumps({
+            "$schema": "https://opencode.ai/config.json",
+            "mcp": {"noclick": {"type": "remote", "url": mcp_url, "enabled": True}} if mcp_url else {},
+        }))
         cmd = [binary, "run", _compose_prompt(config, inline_system=True, extra_note=extra_note)]
         model = getattr(config, "opencode_model", "") or ""
         if model:
             cmd += ["-m", model]
+        if persistent:
+            cmd = [binary, "serve", "--hostname", "127.0.0.1"]
         return cmd, "plain_text"
 
     if model_type == "hermes_agent":
-        binary = _require_binary("hermes", "pip install 'hermes-agent[mcp]'")
+        binary = _require_binary("hermes", "Use the pinned Hermes installer in backend/tests/fixtures/install_clis.py")
         home = workdir / ".hermes"
         home.mkdir(parents=True, exist_ok=True)
-        if mcp_url:
-            # Config format per hermes docs: HTTP MCP servers + the discovery
-            # bound. Upstream's `-z` oneshot does NOT join discovery before the
-            # first tool snapshot (checked against 0.14.0), so tools can be
-            # missing on a cold connect — the runner's retry covers that here
-            # while keeping the upstream binary unmodified.
-            (home / "config.yaml").write_text(
-                "agent:\n  disabled_toolsets: [messaging, gateway]\n\n"
-                "mcp_discovery_timeout: 20\n"
-                "mcp_servers:\n"
-                "  noclick:\n"
+        # Replace the owned configuration even when tools were removed; a
+        # retired endpoint must not remain in the next process's tool list.
+        (home / "config.yaml").write_text(
+            "agent:\n  disabled_toolsets: [messaging, gateway]\n\ntools:\n  tool_search: false\n\n"
+            "mcp_discovery_timeout: 20\n" + (
+                "mcp_servers:\n  noclick:\n"
                 f"    url: {json.dumps(mcp_url)}\n"
-                "    timeout: 120\n"
-                "    connect_timeout: 60\n"
-            )
+                "    timeout: 120\n    connect_timeout: 60\n"
+                if mcp_url else "mcp_servers: {}\n")
+        )
         cmd = [binary, "-z", _compose_prompt(config, inline_system=True, extra_note=extra_note)]
         provider, model = hermes_provider_and_model(getattr(config, "hermes_agent_model", "") or "")
         if model:
             cmd += ["-m", model]
         if provider:
             cmd += ["--provider", provider]
+        if persistent:
+            # NoClick owns this process and its isolated HERMES_HOME. Let the
+            # CLI return lifecycle control here instead of its system service.
+            cmd = [binary, "gateway", "run", "--external-supervisor"]
         return cmd, "plain_text"
 
     if model_type == "openclaw":
@@ -495,6 +496,13 @@ def _build_command(
         model = getattr(config, "openclaw_model", "") or ""
         if model:
             cmd += ["--model", model]
+        if persistent:
+            oc_config["plugins"] = {"allow": []}
+            oc_config["gateway"] = {"mode": "local", "bind": "loopback", "auth": {"mode": "token"}}
+            if model:
+                oc_config["agents"]["defaults"]["model"] = {"primary": model}
+            (home / "config.json").write_text(json.dumps(oc_config, indent=2))
+            cmd = [binary, "gateway", "--allow-unconfigured"]
         return cmd, "openclaw_json"
 
     raise RuntimeError(f"Local harness has no adapter for model type '{model_type}'")
@@ -696,160 +704,191 @@ async def _emit_status(node: Any, status: str) -> None:
         logger.debug(f"[LocalHarness] status emit failed: {status}", exc_info=True)
 
 
+async def close_local_harness_sessions():
+    from nodes.agent.local_process.session import sessions
+    await sessions.close()
+
+
+# The registry is deliberately local to this backend process.
+from utils.lifecycle import register_shutdown_hook
+register_shutdown_hook(close_local_harness_sessions, phase="drain", timeout=10,
+                       name="local-cli-processes")
+
+
 async def run_local_harness_turn(
-    node: Any,
-    config: Any,
-    env_overrides: Dict[str, str],
-    user_id: str,
-    tool_configs: Dict[str, Dict],
-    filesystem_configs: List[Dict],
-    *,
-    model_type: str,
+    node: Any, config: Any, env_overrides: Dict[str, str], user_id: str,
+    tool_configs: Dict[str, Dict], filesystem_configs: List[Dict], *, model_type: str,
 ) -> Dict[str, Any]:
+    from nodes.agent.local_process.session import sessions
+    from nodes.agent.local_process.native import ClaudeSession, CodexSession, OpenCodeSession
+    from nodes.agent.local_process.hermes import HermesSession
+    from nodes.agent.local_process.openclaw import OpenClawSession
+
     conversation_key = getattr(config, "conversation_key", None)
     conversation_id = getattr(node, "conversation_id", None) or node.chat_routing_id()
     workflow_id = str(getattr(node, "workflow_id", "") or "no-workflow")
     node_id = str(getattr(node, "node_id", "") or "agent")
-    workdir = _workspace_dir(workflow_id, node_id, conversation_key)
-    volume_note = _mount_filesystem_volumes(
-        workdir, workflow_id, filesystem_configs, conversation_key,
-    )
+    # No key means a new conversation, not a shared global 'default' session.
+    scope = str(conversation_key) if conversation_key is not None and str(conversation_key) else secrets.token_hex(16)
+    workdir = _workspace_dir(workflow_id, node_id, scope)
+    key = (str(workdir), workflow_id, node_id, scope)
+    model_field = {"claude_code": "claude_code_model", "codex": "codex_model",
+                   "opencode": "opencode_model", "hermes_agent": "hermes_agent_model",
+                   "openclaw": "openclaw_model"}[model_type]
+    model = getattr(config, model_field, "") or ""
+    fingerprint = hashlib.sha256(json.dumps({
+        "harness": model_type, "model": model, "user": str(user_id),
+        "system": getattr(config, "system_prompt", ""), "env": env_overrides,
+        "user_env": getattr(node, "_user_env", None),
+        "tools": tool_configs, "filesystems": filesystem_configs,
+    }, sort_keys=True, default=str).encode()).hexdigest()
 
-    token: Optional[str] = None
-    if tool_configs:
-        token = _register_session(_ToolSession(
-            node=node, tool_configs=tool_configs, user_id=str(user_id),
-            conversation_id=str(conversation_id),
-        ))
+    async def factory():
+        note = _mount_filesystem_volumes(workdir, workflow_id, filesystem_configs, conversation_key)
+        note = _join_notes(note, _tools_note(tool_configs))
+        context = _ToolSession(node=node, tool_configs=tool_configs, user_id=str(user_id),
+                               conversation_id=str(conversation_id))
+        token = _register_session(context) if tool_configs else None
+        def cleanup():
+            if token:
+                _sessions.pop(token, None)
+        try:
+            kwargs = {"persistent": True} if model_type in LOCAL_HARNESS_MODEL_TYPES else {}
+            cmd, parser = _build_command(model_type, config, workdir,
+                                         _mcp_url(token) if token else None, extra_note=note, **kwargs)
+            env = {**os.environ, **(env_overrides or {})}
+            # Some CLIs resolve configuration through PWD rather than getcwd().
+            env["PWD"] = str(workdir)
+            _apply_subscription_login(model_type, workdir, env)
+            if model_type == "hermes_agent":
+                env["HERMES_HOME"] = str(workdir / ".hermes")
+            elif model_type == "openclaw":
+                env["OPENCLAW_HOME"] = str(workdir / ".openclaw")
+                env["OPENCLAW_CONFIG_PATH"] = str(workdir / ".openclaw" / "config.json")
+            user_env = getattr(node, "_user_env", None)
+            if user_env:
+                from nodes.agent.user_env import sanitize_user_env
+                env = {**sanitize_user_env(user_env), **env}
+            common = dict(workdir=workdir, env=env, command=cmd, cleanup=cleanup)
+            if model_type == "claude_code":
+                session = ClaudeSession(**common)
+            elif model_type == "codex":
+                session = CodexSession(model=model, **common)
+            elif model_type == "opencode":
+                with socket.socket() as sock:
+                    sock.bind(("127.0.0.1", 0))
+                    port = sock.getsockname()[1]
+                password = secrets.token_urlsafe(24)
+                env["OPENCODE_SERVER_PASSWORD"] = password
+                env["XDG_DATA_HOME"] = str(workdir / ".local" / "share")
+                env["XDG_STATE_HOME"] = str(workdir / ".local" / "state")
+                cmd += ["--port", str(port)]
+                session = OpenCodeSession(model=model, base_url=f"http://127.0.0.1:{port}",
+                                          password=password, **common)
+            elif model_type == "hermes_agent":
+                with socket.socket() as sock:
+                    sock.bind(("127.0.0.1", 0))
+                    port = sock.getsockname()[1]
+                api_key = secrets.token_urlsafe(24)
+                env.update(API_SERVER_ENABLED="true", API_SERVER_KEY=api_key,
+                           API_SERVER_HOST="127.0.0.1", API_SERVER_PORT=str(port),
+                           HERMES_YOLO_MODE="1")
+                provider, hermes_model = hermes_provider_and_model(model)
+                session = HermesSession(base_url=f"http://127.0.0.1:{port}", api_key=api_key,
+                                        provider=provider, model=hermes_model, **common)
+            elif model_type == "openclaw":
+                with socket.socket() as sock:
+                    sock.bind(("127.0.0.1", 0))
+                    port = sock.getsockname()[1]
+                home = workdir / ".openclaw"
+                config_path = home / "config.json"
+                oc = json.loads(config_path.read_text())
+                # Custom provider endpoints use the same credential env as the
+                # other local CLIs; configuration remains inside this workspace.
+                provider, _, submodel = model.partition("/")
+                base = env.get("ANTHROPIC_BASE_URL") if provider == "anthropic" else env.get("OPENAI_BASE_URL")
+                if base:
+                    key_name = "ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY"
+                    base = base.rstrip("/")
+                    if not base.endswith("/v1"):
+                        base += "/v1"
+                    oc["models"] = {"providers": {provider: {"baseUrl": base,
+                        "api": "anthropic-messages" if provider == "anthropic" else "openai-completions",
+                        "apiKey": env.get(key_name, ""), "models": [{"id": submodel, "name": submodel}]}}}
+                config_path.write_text(json.dumps(oc))
+                config_path.chmod(0o600)
+                env.update(OPENCLAW_STATE_DIR=str(home), OPENCLAW_GATEWAY_TOKEN=secrets.token_urlsafe(24),
+                    OPENCLAW_DISABLE_BONJOUR="1", OPENCLAW_NO_RESPAWN="1", OPENCLAW_SKIP_CHANNELS="1",
+                    OPENCLAW_EXEC_SHELL_SNAPSHOT="0", NOCLICK_OPENCLAW_URL=f"ws://127.0.0.1:{port}",
+                    NOCLICK_OPENCLAW_COMMAND=json.dumps([*cmd, "--port", str(port)]))
+                bridge = Path(__file__).with_name("openclaw_bridge.mjs")
+                common["command"] = [_require_binary("node", "Install Node.js 22.22.3 or later"), str(bridge)]
+                session = OpenClawSession(**common)
+            else:
+                raise RuntimeError(f"No persistent adapter for {model_type}")
+            session.tool_context, session.note = context, note
+            return session
+        except BaseException:
+            cleanup()
+            raise
 
-    model_field = {
-        "claude_code": "claude_code_model", "codex": "codex_model",
-        "opencode": "opencode_model", "hermes_agent": "hermes_agent_model",
-        "openclaw": "openclaw_model",
-    }[model_type]
-    model_str = getattr(config, model_field, "") or model_type
+    def activate(session):
+        session.tool_context.node = node
+        session.tool_context.conversation_id = str(conversation_id)
 
     await _emit_status(node, "Agent is working…")
     hub = _presence_hub()
+    presence_key = (workflow_id, node_id, str(conversation_key or ""))
     if hub is not None:
-        await hub.set_agent_presence(
-            workflow_id, node_id, str(conversation_key or ""), str(user_id), busy=True,
-        )
-
+        _presence_counts[presence_key] = _presence_counts.get(presence_key, 0) + 1
+    session = future = None
     try:
-        cmd, parser_kind = _build_command(
-            model_type, config, workdir, _mcp_url(token) if token else None,
-            extra_note=_join_notes(volume_note, _tools_note(tool_configs)),
-        )
-
-        env = {**os.environ, **(env_overrides or {})}
-        # cwd= moves the child but leaves the inherited PWD at the backend's
-        # own directory, and `opencode run` creates its session in $PWD: the
-        # turn ran from /app/backend, where no opencode.json exists, toolless.
-        env["PWD"] = str(workdir)
-        # Read before _apply_subscription_login pops the transport vars.
-        chatgpt_auth = bool(env.get("CODEX_ACCESS_TOKEN"))
-        chatgpt_id_token = env.get("CODEX_ID_TOKEN")
-        # Per-conversation config/state roots keep harnesses isolated from the
-        # operator's own CLI setup (and from each other).
-        _apply_subscription_login(model_type, workdir, env)
-        if model_type == "hermes_agent":
-            env["HERMES_HOME"] = str(workdir / ".hermes")
-        elif model_type == "openclaw":
-            env["OPENCLAW_HOME"] = str(workdir / ".openclaw")
-            env["OPENCLAW_CONFIG_PATH"] = str(workdir / ".openclaw" / "config.json")
-        user_env = getattr(node, "_user_env", None)
-        if user_env:
-            from nodes.agent.user_env import sanitize_user_env
-            env = {**sanitize_user_env(user_env), **env}
-
-        logger.info(
-            f"[LocalHarness] {model_type} turn: {len(tool_configs)} tool(s), cwd={workdir}"
-        )
-        proc = await asyncio.create_subprocess_exec(
-            *cmd, cwd=workdir, env=env,
-            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-        )
-        try:
-            stdout_b, stderr_b = await asyncio.wait_for(
-                proc.communicate(), timeout=TURN_TIMEOUT_S,
-            )
-        except asyncio.TimeoutError:
-            proc.kill()
-            await proc.wait()
-            raise RuntimeError(
-                f"Local {model_type} turn timed out after {TURN_TIMEOUT_S:.0f}s"
-            )
-
-        stdout = stdout_b.decode(errors="replace")
-        stderr = stderr_b.decode(errors="replace")
-        response, is_error = _parse_output(parser_kind, stdout, stderr, proc.returncode, chatgpt_auth=chatgpt_auth, chatgpt_id_token=chatgpt_id_token)
-
-        # Upstream hermes' `-z` oneshot does not join MCP discovery before its
-        # first tool snapshot, so a cold connect can leave the turn toolless
-        # before its first tool snapshot. The session tracks whether any tool was
-        # fetched and reruns a toolless first turn once. Established CLI
-        # connections make the retry uncommon after the first turn.
-        if (
-            model_type in _DISCOVERY_RACE_HARNESSES
-            and token is not None
-            and not _session_saw_tools(token)
-            and not is_error
-        ):
-            logger.info(
-                f"[LocalHarness] {model_type}: first turn saw no tools "
-                "(upstream MCP discovery race) — retrying once"
-            )
-            await _emit_status(node, "Connecting tools…")
-            proc = await asyncio.create_subprocess_exec(
-                *cmd, cwd=workdir, env=env,
-                stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-            )
+        if hub is not None:
             try:
-                stdout_b, stderr_b = await asyncio.wait_for(
-                    proc.communicate(), timeout=TURN_TIMEOUT_S,
-                )
-            except asyncio.TimeoutError:
-                proc.kill()
-                await proc.wait()
-                raise RuntimeError(
-                    f"Local {model_type} turn timed out after {TURN_TIMEOUT_S:.0f}s"
-                )
-            stdout = stdout_b.decode(errors="replace")
-            stderr = stderr_b.decode(errors="replace")
-            response, is_error = _parse_output(
-                parser_kind, stdout, stderr, proc.returncode, chatgpt_auth=chatgpt_auth, chatgpt_id_token=chatgpt_id_token
-            )
-        if is_error and not response:
-            response = f"{model_type} exited with code {proc.returncode}"
-
-        # Marks the workspace as having history so the next claude turn
-        # continues the cwd-keyed session.
-        (workdir / ".noclick-turns").touch()
-
-        output: Dict[str, Any] = {
-            "type": "agent",
-            "status": "failed" if is_error else "completed",
-            "response": response,
-            "model": model_str,
-            "conversation_key": conversation_key,
-        }
-        if is_error:
-            output["error"] = response
-            logger.warning(f"[LocalHarness] {model_type} turn failed: {response[:300]}")
-
-        await node._persist_llm_assistant_turn(
-            output,
-            conversation_id=conversation_id,
-            model=model_str,
-            raw_text=response,
-            agent_errored=is_error,
-        )
+                await hub.set_agent_presence(*presence_key, str(user_id), busy=True)
+            except Exception:
+                logger.debug("Local agent presence update failed", exc_info=True)
+        async with asyncio.timeout(TURN_TIMEOUT_S):
+            session, future = await sessions.submit(key, fingerprint, factory,
+                lambda session: _compose_prompt(config, inline_system=model_type != "claude_code", extra_note=session.note), activate)
+            result = await asyncio.shield(future)
+        error = result.pop("error", None)
+        if error:
+            error = _human_error(error) or str(error)
+            if model_type == "codex":
+                error = explain_codex_failure(error, bool(env_overrides.get("CODEX_ACCESS_TOKEN")), env_overrides.get("CODEX_ID_TOKEN"))
+        output = {"type": "agent", "status": "failed" if error else "completed",
+                  "model": model or model_type, "conversation_key": conversation_key, **result}
+        if error:
+            output["error"] = error
+        if not output.get("skipped"):
+            await node._persist_llm_assistant_turn(output, conversation_id=conversation_id,
+                model=model or model_type, raw_text=output["response"], agent_errored=bool(error))
+        return output
+    except asyncio.CancelledError:
+        if future:
+            future.cancel()
+        if session and all(f.done() for f in session.pending.values()):
+            await session.close("Local agent request cancelled")
+        raise
+    except Exception as exc:
+        error = (f"Local {model_type} turn timed out after {TURN_TIMEOUT_S:.0f}s"
+                 if isinstance(exc, TimeoutError) else str(exc))
+        if session:
+            await session.close(error)
+        output = {"type": "agent", "status": "failed", "response": "", "error": error,
+                  "model": model or model_type, "conversation_key": conversation_key}
+        await node._persist_llm_assistant_turn(output, conversation_id=conversation_id,
+            model=model or model_type, raw_text="", agent_errored=True)
         return output
     finally:
-        if token:
-            _sessions.pop(token, None)
         if hub is not None:
-            await hub.clear_agent_presence(
-                workflow_id, node_id, str(conversation_key or ""),
-            )
+            remaining = _presence_counts[presence_key] - 1
+            if remaining:
+                _presence_counts[presence_key] = remaining
+            else:
+                _presence_counts.pop(presence_key)
+                try:
+                    await hub.clear_agent_presence(*presence_key)
+                except Exception:
+                    logger.debug("Local agent presence cleanup failed", exc_info=True)

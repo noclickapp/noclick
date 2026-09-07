@@ -51,7 +51,7 @@ RUN git clone --filter=blob:none https://github.com/NousResearch/hermes-agent.gi
     && git -C /opt/hermes-agent checkout v2026.8.31 \
     && python -m venv /opt/hermes \
     && /opt/hermes/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
-    && /opt/hermes/bin/pip install --no-cache-dir -e "/opt/hermes-agent[mcp]" \
+    && /opt/hermes/bin/pip install --no-cache-dir -e "/opt/hermes-agent[mcp,anthropic]" "aiohttp==3.14.3" \
     # Only the packages pyproject names ship; tests, the website and the
     # companion apps are never imported.
     && rm -rf /opt/hermes-agent/.git /opt/hermes-agent/tests /opt/hermes-agent/tests-js \

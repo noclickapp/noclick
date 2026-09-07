@@ -11,11 +11,10 @@ import asyncio
 import json
 import os
 import stat
-import sys
-from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import pytest_asyncio
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -28,6 +27,12 @@ from nodes.agent.local_harness import (
     run_local_harness_turn,
     router,
 )
+
+
+@pytest_asyncio.fixture(autouse=True)
+async def close_processes_after_test():
+    yield
+    await lh.close_local_harness_sessions()
 
 
 class FakeConfig(SimpleNamespace):
@@ -300,9 +305,7 @@ def test_parse_plain_text():
 
 @pytest.mark.asyncio
 async def test_run_local_harness_turn_end_to_end(monkeypatch, tmp_path):
-    # Fake `claude` that emits a stream-json result and records its argv, cwd
-    # and the PWD it inherited. Python, not sh: a shell rewrites a wrong PWD
-    # to the real cwd on startup and would hide the inherited value.
+    # Python preserves inherited PWD; a shell would silently repair it.
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     fake = bin_dir / "claude"
@@ -311,6 +314,7 @@ async def test_run_local_harness_turn_end_to_end(monkeypatch, tmp_path):
         "import json, os, sys\n"
         "open(os.path.join(os.getcwd(), '.argv'), 'w').write(' '.join(sys.argv[1:]))\n"
         "open(os.path.join(os.getcwd(), '.pwd'), 'w').write(os.environ.get('PWD', ''))\n"
+        "open(os.path.join(os.getcwd(), '.input'), 'w').write(sys.stdin.readline())\n"
         "print(json.dumps({'type': 'result', 'subtype': 'success', 'result': 'local turn done', 'is_error': False}))\n"
     )
     fake.chmod(fake.stat().st_mode | stat.S_IEXEC)
@@ -350,9 +354,8 @@ async def test_run_local_harness_turn_end_to_end(monkeypatch, tmp_path):
     assert workspace.is_dir()
     assert (workspace / ".noclick-turns").exists()
     argv = (workspace / ".argv").read_text()
-    assert "-p hello" in argv and "--output-format stream-json" in argv
-    # The CLI's PWD must be the workspace: `opencode run` creates its session
-    # in $PWD, and the inherited one pointed at the backend's directory.
+    assert "--input-format stream-json" in argv and "--output-format stream-json" in argv
+    assert json.loads((workspace / ".input").read_text())["message"]["content"] == "hello"
     assert (workspace / ".pwd").read_text() == str(workspace)
 
 
@@ -392,6 +395,7 @@ async def test_filesystem_volume_mounts_into_workspace(monkeypatch, tmp_path):
     fake.write_text(
         "#!/bin/sh\n"
         'echo "$@" > "$PWD/.argv"\n'
+        'read -r message; echo "$message" > "$PWD/.input"\n'
         'echo persisted > "$PWD/workspace/from-agent.txt"\n'
         """printf '{"type":"result","subtype":"success","result":"ok","is_error":false}\\n'\n"""
     )
@@ -426,7 +430,7 @@ async def test_filesystem_volume_mounts_into_workspace(monkeypatch, tmp_path):
     # The model was told about the mount.
     workspace_dirs = list((tmp_path / ".noclick" / "volumes").iterdir())
     ws = [d for d in workspace_dirs if d.name != volume_name][0]
-    assert "persistent shared storage" in (ws / ".argv").read_text()
+    assert "persistent shared storage" in (ws / ".input").read_text()
 
 
 def test_tools_call_streams_step_frames(mcp_client, monkeypatch):
@@ -482,7 +486,7 @@ async def test_turn_sets_and_clears_agent_presence(monkeypatch, tmp_path):
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     fake = bin_dir / "claude"
-    fake.write_text("#!/bin/sh\nprintf '{\"type\":\"result\",\"result\":\"ok\",\"is_error\":false}\\n'\n")
+    fake.write_text("#!/bin/sh\nprintf '{\"type\":\"result\",\"subtype\":\"success\",\"result\":\"ok\",\"is_error\":false}\\n'\n")
     fake.chmod(fake.stat().st_mode | stat.S_IEXEC)
     monkeypatch.setenv("PATH", f"{bin_dir}:{os.environ['PATH']}")
     monkeypatch.setenv("HOME", str(tmp_path))
@@ -583,77 +587,9 @@ def test_openclaw_json_parsing():
     assert _parse_output("openclaw_json", "not json", "", 1) == ("not json", True)
 
 
-@pytest.mark.asyncio
-async def test_hermes_toolless_turn_is_retried_once(monkeypatch, tmp_path):
-    """Upstream hermes' oneshot races MCP discovery; the local runner re-runs
-    a toolless turn instead of shipping the hosted build's patched binary."""
-    bin_dir = tmp_path / "bin"
-    bin_dir.mkdir()
-    fake = bin_dir / "hermes"
-    # Counts runs; only the SECOND run fetches the tool list (simulating the
-    # race resolving once the MCP connection is warm).
-    fake.write_text(
-        "#!/bin/sh\n"
-        'n=$(cat "$PWD/.runs" 2>/dev/null || echo 0); n=$((n+1)); echo $n > "$PWD/.runs"\n'
-        'if [ "$n" -ge 2 ]; then\n'
-        '  curl -s -X POST "$NC_MCP_URL" -H "content-type: application/json" '
-        '-d \'{"jsonrpc":"2.0","id":1,"method":"tools/list"}\' > /dev/null 2>&1\n'
-        "fi\n"
-        'echo "hermes reply $n"\n'
-    )
-    fake.chmod(fake.stat().st_mode | stat.S_IEXEC)
-    monkeypatch.setenv("PATH", f"{bin_dir}:{os.environ['PATH']}")
-    monkeypatch.setenv("HOME", str(tmp_path))
-
-    async def fake_persist(output, **kw):
-        pass
-
-    node = SimpleNamespace(
-        workflow_id="wf-h", node_id="a1", conversation_id=None,
-        chat_routing_id=lambda: "conv", sio=None, sid=None, user_id="u1",
-        _persist_llm_assistant_turn=fake_persist, _user_env=None,
-    )
-
-    # Serve the tool endpoint so the fake binary's tools/list lands for real.
-    import uvicorn
-    from fastapi import FastAPI
-
-    app = FastAPI()
-    app.include_router(router)
-    server = uvicorn.Server(uvicorn.Config(app, host="127.0.0.1", port=8123, log_level="error"))
-    serve_task = asyncio.create_task(server.serve())
-    while not server.started:
-        await asyncio.sleep(0.05)
-    monkeypatch.setenv("PORT", "8123")
-
-    try:
-        # The fake binary needs the URL; the runner writes it into hermes config,
-        # so hand it over through the environment too.
-        monkeypatch.setattr(
-            lh, "_mcp_url",
-            lambda token: f"http://127.0.0.1:8123/local-agent-mcp/{token}",
-        )
-        real_build = lh._build_command
-
-        def build_with_env(model_type, config, workdir, mcp_url, extra_note=""):
-            cmd, kind = real_build(model_type, config, workdir, mcp_url, extra_note)
-            os.environ["NC_MCP_URL"] = mcp_url or ""
-            return cmd, kind
-
-        monkeypatch.setattr(lh, "_build_command", build_with_env)
-
-        output = await run_local_harness_turn(
-            node, _config(message="hi", conversation_key="ck-h"),
-            {}, "u1",
-            {"t__op": {"tool_type": "node_op", "_description": "d", "_parameters": {}}},
-            [], model_type="hermes_agent",
-        )
-    finally:
-        server.should_exit = True
-        await serve_task
-
-    # Second run's output wins — the toolless first turn was discarded.
-    assert output["response"] == "hermes reply 2"
+def test_hermes_persistent_command_uses_gateway(fake_binaries_all, tmp_path):
+    cmd, _ = _build_command("hermes_agent", _config(), tmp_path, None, persistent=True)
+    assert cmd == ["/fake/bin/hermes", "gateway", "run", "--external-supervisor"]
 
 
 def test_the_tool_endpoint_targets_the_backends_own_port(monkeypatch):
@@ -782,3 +718,16 @@ def test_the_prompt_grounds_the_wired_tools():
     assert "apollo__search_people_in_apollo" in note and "upload_file" in note
     assert "noclick" in note
     assert _tools_note({}) == ""
+
+
+@pytest.mark.parametrize('kind,config_path', [('opencode', 'opencode.json'), ('hermes_agent', '.hermes/config.yaml')])
+def test_removing_tools_replaces_retired_mcp_configuration(fake_binaries_all, tmp_path, kind, config_path):
+    import yaml
+    _build_command(kind, _config(), tmp_path, 'http://127.0.0.1/retired-token', persistent=True)
+    path = tmp_path / config_path
+    assert 'retired-token' in path.read_text()
+    _build_command(kind, _config(), tmp_path, None, persistent=True)
+    content = path.read_text()
+    assert 'retired-token' not in content
+    parsed = json.loads(content) if kind == 'opencode' else yaml.safe_load(content)
+    assert (parsed['mcp'] if kind == 'opencode' else parsed['mcp_servers']) == {}
