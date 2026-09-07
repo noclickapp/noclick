@@ -13,7 +13,6 @@ import logging
 import os
 import secrets
 import shutil
-import time
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
@@ -133,7 +132,6 @@ async def local_agent_mcp(token: str, request: Request):
         return result({"tools": _tool_list(session.tool_configs)})
     if method == "tools/call":
         from nodes.agent.tool_execution import execute_tool
-        from utils.tool_call_log import record_tool_call
 
         tool_name = params.get("name") or ""
         arguments = params.get("arguments") or {}
@@ -142,34 +140,36 @@ async def local_agent_mcp(token: str, request: Request):
         # builders in wss.sender.events) used by the agent chat UI.
         step_id = f"local-{secrets.token_hex(6)}"
         _spawn_step(session, step_id, _step_text(tool_name, arguments), "in_progress")
-        started = time.monotonic()
         try:
             call_result = await execute_tool(session.node, tool_name, arguments, session.tool_configs)
             is_error = isinstance(call_result, dict) and call_result.get("success") is False
-            error_text = call_result.get("error") if is_error else None
         except Exception as e:
             logger.error(f"[LocalHarness] tools/call {tool_name} failed: {e}", exc_info=True)
             # Tool exceptions can contain request details, credentials, or a
             # local stack-derived path. Keep that detail in operator logs and
             # return a stable public error to the CLI client/agent.
             call_result = {"success": False, "error": "Tool execution failed"}
-            is_error, error_text = True, "Tool execution failed"
+            is_error = True
+            # execute_tool audits every call it returns from, with the node's
+            # execution context; it never got to this one, so record the masked
+            # failure here. A row on the success path too doubled every call.
+            from utils.tool_call_log import record_tool_call
 
-        info = session.tool_configs.get(tool_name) or {}
-        record_tool_call(
-            user_id=session.user_id,
-            tool_name=tool_name,
-            tool_type=info.get("tool_type", "unknown"),
-            result_status="error" if is_error else "success",
-            workflow_id=str(getattr(session.node, "workflow_id", "") or ""),
-            conversation_id=session.conversation_id,
-            provider_node_id=info.get("node_id"),
-            operation=info.get("operation"),
-            credential_id=info.get("credential_id"),
-            arguments=arguments,
-            error=error_text,
-            duration_ms=(time.monotonic() - started) * 1000,
-        )
+            info = session.tool_configs.get(tool_name) or {}
+            record_tool_call(
+                user_id=session.user_id,
+                tool_name=tool_name,
+                tool_type=info.get("tool_type", "unknown"),
+                result_status="error",
+                workflow_id=str(getattr(session.node, "workflow_id", "") or ""),
+                conversation_id=session.conversation_id,
+                provider_node_id=info.get("node_id"),
+                operation=info.get("operation"),
+                credential_id=info.get("credential_id"),
+                arguments=arguments,
+                error="Tool execution failed",
+            )
+
         _spawn_step(session, step_id, json.dumps(call_result, default=str), "completed")
         return result({
             "content": [{"type": "text", "text": json.dumps(call_result, default=str)}],
@@ -425,12 +425,17 @@ def _build_command(
 
     if model_type == "opencode":
         binary = _require_binary("opencode", "https://opencode.ai")
-        (workdir / "opencode.json").write_text(json.dumps({
+        model = getattr(config, "opencode_model", "") or ""
+        opencode_config = {
             "$schema": "https://opencode.ai/config.json",
             "mcp": {"noclick": {"type": "remote", "url": mcp_url, "enabled": True}} if mcp_url else {},
-        }))
+        }
+        if model:
+            # Session titles otherwise go to opencode's own hosted provider,
+            # which fails on accounts without a payment method.
+            opencode_config["small_model"] = model
+        (workdir / "opencode.json").write_text(json.dumps(opencode_config))
         cmd = [binary, "run", _compose_prompt(config, inline_system=True, extra_note=extra_note)]
-        model = getattr(config, "opencode_model", "") or ""
         if model:
             cmd += ["-m", model]
         if persistent:

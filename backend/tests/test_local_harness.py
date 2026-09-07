@@ -128,8 +128,9 @@ def test_mcp_endpoint_serves_turn_tools(mcp_client, monkeypatch):
         assert payload["isError"] is False
         assert json.loads(payload["content"][0]["text"])["data"] == {"echo": {"title": "T"}}
         assert calls == [("linear__create_issue", {"title": "T"})]
-        assert audits[0]["tool_name"] == "linear__create_issue"
-        assert audits[0]["result_status"] == "success"
+        # execute_tool (mocked here) owns the audit row; the endpoint recording
+        # its own left every self-hosted call in tool_call_events twice.
+        assert audits == []
     finally:
         lh._sessions.pop(token, None)
 
