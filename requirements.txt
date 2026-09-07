@@ -5,7 +5,6 @@ annotated-types==0.7.0
 fastapi==0.141.1
 starlette==1.6.0
 fastapi-cli==0.0.4
-numpy
 openai==2.38.0
 openai-agents==0.17.3
 pillow==12.3.0
@@ -30,7 +29,6 @@ markdown-it-py==4.0.0
 # (https://github.com/python-websockets/websockets/issues/1239)
 websockets==15.0.1
 asyncpg==0.30.0
-pandas==2.2.3
 numpy==1.26.4
 psycopg2-binary==2.9.9
 PyJWT==2.13.0
