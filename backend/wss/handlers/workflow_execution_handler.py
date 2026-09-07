@@ -990,6 +990,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     initial_outputs=preloaded_outputs or None,
                     include_last_output_node_id=True,
                     noop_silent_node_id=noop_silent_node_id,
+                    workflow_graph=(snapshot_nodes, snapshot_edges),
                 )
 
             execution_task = asyncio.create_task(_run_execution())
@@ -1095,7 +1096,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                         execution_id=execution_id,
                         conversation_id=request.conversation_id,
                         workflow_org_id=workflow_org_id,
-                        workflow_variables=workflow_variables
+                        workflow_variables=workflow_variables,
+                        workflow_graph=(snapshot_nodes, snapshot_edges),
                     )
                     logger.info("[WorkflowExecution] On-error subgraph execution completed")
                 except Exception as on_error_exc:
@@ -1749,6 +1751,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     workflow_variables=workflow_variables,
                     cancellation_event=cancellation_event,
                     include_last_output_node_id=True,
+                    workflow_graph=(all_nodes, all_edges),
                 )
 
             execution_task = asyncio.create_task(_run_resume())
@@ -2224,6 +2227,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         workflow_variables: Optional[Dict[str, Any]] = None,
         include_last_output_node_id: bool = False,
         noop_silent_node_id: Optional[str] = None,
+        workflow_graph: Optional[Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]] = None,
     ) -> Union[
         Tuple[int, Optional[str], Dict[str, Any]],
         Tuple[int, Optional[str], Dict[str, Any], Optional[str]],
@@ -2249,6 +2253,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             conversation_id: Optional conversation ID for agent memory persistence (workflow chat)
             initial_outputs: Optional pre-populated node outputs (e.g., tool arguments)
             workflow_org_id: Optional organization ID of the workflow (for credential access control)
+            workflow_graph: The full (nodes, edges) the slice was cut from; None when the
+                slice is the whole graph. Tool-provider verdicts are judged on it.
 
         Returns:
             Tuple of `(nodes_executed_count, error_message or None, node_outputs dict)`.
@@ -2264,6 +2270,14 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         # the workflow id without per-call-site plumbing.
         from billing.usage_tracker import CURRENT_WORKFLOW_ID
         CURRENT_WORKFLOW_ID.set(workflow_id)
+
+        # Wiring context for tool-provider verdicts: the slice plus the
+        # bottom-handle consumers its nodes feed in the full graph. Context
+        # only — scheduling below stays on the executable slice.
+        from nodes.agent.node_op_tools import is_node_op_provider, with_provider_wiring
+        context_nodes, context_edges = with_provider_wiring(
+            executable_nodes, executable_edges, *(workflow_graph or (None, None))
+        )
 
         predecessors, node_by_id, successors, predecessor_edges = self._build_dependency_maps(executable_nodes, executable_edges)
 
@@ -2417,8 +2431,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 # edit time (trigger_provider_conflict), but legacy workflows may
                 # still carry the combo. Provider mode wins — the agent keeps its
                 # tools; the event is dropped with a loud log.
-                from nodes.agent.node_op_tools import is_node_op_provider
-                if is_node_op_provider(node_id, node_type, executable_nodes, executable_edges):
+                if is_node_op_provider(node_id, node_type, context_nodes, context_edges):
                     logger.warning(
                         f"[WorkflowExecution] Node {node_id} ({node_type}) is provider-wired "
                         f"but received a trigger payload — ignoring the payload (a node "
@@ -2478,8 +2491,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 # binding), so replaying a stale mock would hand the agent an
                 # outdated credential_id/allowlist. Fall through to the live
                 # provider short-circuit in _execute_node instead.
-                from nodes.agent.node_op_tools import is_node_op_provider
-                if is_node_op_provider(node_id, node_type, list(node_by_id.values()), executable_edges):
+                if is_node_op_provider(node_id, node_type, context_nodes, context_edges):
                     logger.info(
                         f"[WorkflowExecution] Ignoring mocked output for tool-provider node {node_id}"
                     )
@@ -2518,8 +2530,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 is_rehearsal_conversation(conversation_id)
                 and node_type in rehearsal_excluded_node_types()
             ):
-                from nodes.agent.node_op_tools import is_node_op_provider
-                if not is_node_op_provider(node_id, node_type, executable_nodes, executable_edges):
+                if not is_node_op_provider(node_id, node_type, context_nodes, context_edges):
                     logger.info(
                         f"[WorkflowExecution] Rehearsal: skipping {node_id} ({node_type}) — "
                         f"acts on a real account, not executed in a test"
@@ -2558,7 +2569,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                         semaphore=semaphore,
                         execute_node=lambda n, outputs: self._execute_node(
                             n, outputs, sid, user_id, workflow_id, conversation_id,
-                            executable_nodes, executable_edges, workflow_org_id, execution_id
+                            context_nodes, context_edges, workflow_org_id, execution_id
                         ),
                         emit_state=lambda nid, ntype, st, err: self._emit_node_state(
                             sid, workflow_id, nid, ntype, st, err, execution_id
@@ -2626,7 +2637,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                         try:
                             output = await self._execute_node(
                                 node, _effective_node_outputs, sid, user_id, workflow_id, conversation_id,
-                                executable_nodes, executable_edges, workflow_org_id, execution_id
+                                context_nodes, context_edges, workflow_org_id, execution_id
                             )
                             _last_error = None
                             break
@@ -3546,6 +3557,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     initial_outputs=initial_outputs,
                     workflow_org_id=workflow_org_id,
                     include_last_output_node_id=True,
+                    workflow_graph=(workflow_nodes, workflow_edges),
                 )
 
                 if error_msg:

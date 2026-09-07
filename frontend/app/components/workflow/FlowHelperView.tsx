@@ -20,7 +20,7 @@ import { ReferenceAutocompleteProvider } from './ReferenceAutocompleteContext';
 import { useInputNodeSchemas } from '~/hooks/useNodeOutputSchema';
 import { parseWholeReference, splitAtFirstIndex, getValueAtPath } from '~/lib/listReferences';
 import { getNodeArrayOutputPath } from '~/lib/arrayOutput';
-import { isPreviousNodeOutputRequired } from '~/utils/workflowNodeExecution';
+import { isPreviousNodeOutputRequired, providerRunBlocker } from '~/utils/workflowNodeExecution';
 import type { CredentialVariable } from '~/hooks/useCredentialVariables';
 import type { CredentialDisplayMeta } from '~/utils/credentialAutoSelect';
 import { ConfigTabContent } from './flowHelper/ConfigTabContent';
@@ -270,10 +270,20 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
         selectedNodeRef.current = selectedNode;
     }, [selectedNode]);
 
+    // Selected node is wired to an AI agent's bottom handle as a tool provider —
+    // the config tab swaps the schema form for the operation allowlist.
+    const toolProviderConsumerTypes = useMemo(
+        () => (selectedNode ? getToolProviderConsumerTypes(selectedNode.id, nodes, edges) : []),
+        [selectedNode, nodes, edges]
+    );
+    const agentToolProviderMode = toolProviderConsumerTypes.length > 0;
+    // A provider has nothing to run on its own; prepareNodeExecution refuses it too.
+    const runBlocker = providerRunBlocker(toolProviderConsumerTypes);
+
     // Check if node can be run: only block if a previous node is missing output AND
     // the selected node's config actually references that node's data via {{nodeId...}}
     const canRunNode = useMemo(() => {
-        if (!selectedNode || !onRunNode) return false;
+        if (!selectedNode || !onRunNode || runBlocker) return false;
         if (inputNodes.length === 0) return true;
         return inputNodes.every(n => {
             const output = n.data?.mockedOutput ?? n.data?.output;
@@ -281,7 +291,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
             // No output — only block if config actually references this node
             return !isPreviousNodeOutputRequired(n, selectedNode, edges);
         });
-    }, [selectedNode, inputNodes, edges, onRunNode]);
+    }, [selectedNode, inputNodes, edges, onRunNode, runBlocker]);
 
     // Tracks the optimistic pending- id for a single-node run started from THIS
     // helper, scoped to the node it was launched on. Lets the Run button flip to
@@ -418,14 +428,6 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
         selectedNode?.type === 'agent' ? credentialIds as Record<string, string> : {},
         selectedNode?.type === 'agent' ? (selectedNode?.data?.config as Record<string, any> | undefined) : undefined
     );
-
-    // Selected node is wired to an AI agent's bottom handle as a tool provider —
-    // the config tab swaps the schema form for the operation allowlist.
-    const toolProviderConsumerTypes = useMemo(
-        () => (selectedNode ? getToolProviderConsumerTypes(selectedNode.id, nodes, edges) : []),
-        [selectedNode, nodes, edges]
-    );
-    const agentToolProviderMode = toolProviderConsumerTypes.length > 0;
 
     // Check if selected node has unconnected credentials that need attention
     // (drives the red Credentials header tab). Provider-wired nodes are judged
@@ -955,7 +957,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
                                 {isThisNodeRunning ? 'Stop this node' :
                                  !selectedNode ? 'Select a node first' :
                                  isWorkflowRunning ? 'Workflow is running' :
-                                 !canRunNode ? 'Missing input data from previous nodes' :
+                                 !canRunNode ? (runBlocker ?? 'Missing input data from previous nodes') :
                                  <KeyHint keys={['mod', 'enter']} />}
                             </TooltipContent>
                         </Tooltip>

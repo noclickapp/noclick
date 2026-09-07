@@ -5,7 +5,7 @@
  */
 
 import type { Node, Edge } from '@xyflow/react';
-import { filterConfigForExecution } from '~/utils/nodeSchemas';
+import { filterConfigForExecution, getToolProviderConsumerTypes } from '~/utils/nodeSchemas';
 import { buildSaveConfig } from '~/lib/applyNodeUpdate';
 
 // Re-export for convenience
@@ -153,6 +153,22 @@ export function isPreviousNodeOutputRequired(
 }
 
 /**
+ * Why a node cannot run on its own, or null when it can. A tool provider has
+ * no operation of its own: its allowlisted actions run when the agent / MCP
+ * client it is wired into calls them, and a single-node run would cut it out
+ * of that wiring and execute it as a plain node.
+ */
+export function providerRunBlocker(consumers: ReadonlyArray<'agent' | 'mcp-server'>): string | null {
+    if (consumers.length === 0) return null;
+    const caller = !consumers.includes('agent')
+        ? 'your MCP client'
+        : consumers.includes('mcp-server')
+          ? 'the agent or your MCP client'
+          : 'the agent';
+    return `This node provides tools. Its actions run when ${caller} calls them.`;
+}
+
+/**
  * Prepares the subset graph needed to execute a single node.
  *
  * This function:
@@ -176,6 +192,10 @@ export function prepareNodeExecution(
     const targetNode = nodes.find(n => n.id === nodeId);
     if (!targetNode) {
         return { success: false, error: 'Node not found' };
+    }
+    const blocker = providerRunBlocker(getToolProviderConsumerTypes(nodeId, nodes, edges));
+    if (blocker) {
+        return { success: false, error: blocker };
     }
 
     // Find previous nodes (nodes that have edges pointing to this node)

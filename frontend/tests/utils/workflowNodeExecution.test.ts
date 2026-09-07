@@ -40,3 +40,45 @@ describe('workflowNodeExecution replay graph serialization', () => {
         });
     });
 });
+
+describe('single-node run of a tool provider', () => {
+    // 2026-09-07: "Run" on a Facebook node wired into an MCP Server's
+    // bottom handle sent just the node — cut out of its wiring it was parsed
+    // as a plain node and failed with "'operation' field is required".
+    const provider = () =>
+        createWorkflowNode('slack-1', 'automation-slack', { x: 0, y: 0 }, {
+            label: 'Slack',
+            agent_tool_operations: ['send_message'],
+        });
+    const bottomEdge = (target: string): Edge => ({
+        id: `slack-1-${target}`,
+        source: 'slack-1',
+        target,
+        sourceHandle: 'top',
+        targetHandle: 'bottom',
+    });
+
+    it('refuses a provider wired into an agent and names the caller', () => {
+        const agent = createWorkflowNode('agent-1', 'agent', { x: 0, y: 200 }, { message: 'hi' });
+        const result = prepareNodeExecution('slack-1', [provider(), agent], [bottomEdge('agent-1')]);
+        expect(result).toEqual({
+            success: false,
+            error: 'This node provides tools. Its actions run when the agent calls them.',
+        });
+    });
+
+    it('refuses a provider hosted by an MCP Server node', () => {
+        const mcp = createWorkflowNode('mcp-1', 'mcp-server', { x: 0, y: 200 }, {});
+        const result = prepareNodeExecution('slack-1', [provider(), mcp], [bottomEdge('mcp-1')]);
+        expect(result.success).toBe(false);
+        if (result.success) throw new Error('expected refusal');
+        expect(result.error).toContain('your MCP client');
+    });
+
+    it('still runs the same node when it is wired as plain dataflow', () => {
+        const agent = createWorkflowNode('agent-1', 'agent', { x: 0, y: 200 }, { message: 'hi' });
+        const dataflow: Edge = { id: 'e', source: 'slack-1', target: 'agent-1' };
+        const result = prepareNodeExecution('slack-1', [provider(), agent], [dataflow]);
+        expect(result.success).toBe(true);
+    });
+});

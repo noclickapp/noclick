@@ -38,6 +38,10 @@ _EXCLUDED_NODE_TYPES = {
     "merge",
 }
 
+# Bottom-handle consumers a provider can be wired into: an agent, or an MCP
+# node in hosting mode.
+_PROVIDER_CONSUMER_TYPES = frozenset({"agent", "mcp-server"})
+
 
 def _provider_slug(node_type: str) -> str:
     """automation-linear → linear (matches the schema filename convention)."""
@@ -295,7 +299,7 @@ def is_node_op_provider(
     # node of every workflow run — only pay the schema cost for nodes that
     # are actually wired to a consumer.
     consumer_ids = {
-        n.get("id") for n in workflow_nodes if n.get("type") in ("agent", "mcp-server")
+        n.get("id") for n in workflow_nodes if n.get("type") in _PROVIDER_CONSUMER_TYPES
     }
     wired = any(
         e.get("source") == node_id
@@ -304,6 +308,44 @@ def is_node_op_provider(
         for e in workflow_edges
     )
     return wired and node_supports_op_tools(node_type)
+
+
+def with_provider_wiring(
+    slice_nodes: List[Dict[str, Any]],
+    slice_edges: List[Dict[str, Any]],
+    graph_nodes: Optional[List[Dict[str, Any]]],
+    graph_edges: Optional[List[Dict[str, Any]]],
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """The execution slice plus the tool-provider wiring its nodes carry in
+    the FULL workflow graph: every bottom-handle edge from a slice node into an
+    agent / hosting-mode MCP consumer, and those consumer nodes. Consumers
+    outside the slice are context only and never execute. Without them,
+    is_node_op_provider judges a provider cut out of its graph (a single-node
+    "Run" sends just the node and its inputs) as a plain node and runs it as
+    one — with no operation it fails, with a leftover one it acts on a real
+    account. Without a graph the slice IS the graph."""
+    if not graph_nodes or not graph_edges:
+        return slice_nodes, slice_edges
+    node_ids = {n.get("id") for n in slice_nodes}
+    edge_keys = {(e.get("source"), e.get("target"), e.get("targetHandle")) for e in slice_edges}
+    consumers = {
+        n.get("id"): n for n in graph_nodes if n.get("type") in _PROVIDER_CONSUMER_TYPES
+    }
+    nodes, edges = list(slice_nodes), list(slice_edges)
+    for edge in graph_edges:
+        if edge.get("targetHandle") != "bottom" or edge.get("source") not in node_ids:
+            continue
+        consumer = consumers.get(edge.get("target"))
+        if consumer is None:
+            continue
+        key = (edge.get("source"), edge.get("target"), "bottom")
+        if key not in edge_keys:
+            edges.append(edge)
+            edge_keys.add(key)
+        if consumer.get("id") not in node_ids:
+            nodes.append(consumer)
+            node_ids.add(consumer.get("id"))
+    return nodes, edges
 
 
 _SANDBOX_REPO_RE = r"[A-Za-z0-9_.\-]+/[A-Za-z0-9_.\-]+"
