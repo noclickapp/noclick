@@ -300,14 +300,18 @@ def test_parse_plain_text():
 
 @pytest.mark.asyncio
 async def test_run_local_harness_turn_end_to_end(monkeypatch, tmp_path):
-    # Fake `claude` that emits a stream-json result and records its argv/cwd.
+    # Fake `claude` that emits a stream-json result and records its argv, cwd
+    # and the PWD it inherited. Python, not sh: a shell rewrites a wrong PWD
+    # to the real cwd on startup and would hide the inherited value.
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     fake = bin_dir / "claude"
     fake.write_text(
-        "#!/bin/sh\n"
-        'echo "$@" > "$PWD/.argv"\n'
-        """printf '{"type":"result","subtype":"success","result":"local turn done","is_error":false}\\n'\n"""
+        "#!/usr/bin/env python3\n"
+        "import json, os, sys\n"
+        "open(os.path.join(os.getcwd(), '.argv'), 'w').write(' '.join(sys.argv[1:]))\n"
+        "open(os.path.join(os.getcwd(), '.pwd'), 'w').write(os.environ.get('PWD', ''))\n"
+        "print(json.dumps({'type': 'result', 'subtype': 'success', 'result': 'local turn done', 'is_error': False}))\n"
     )
     fake.chmod(fake.stat().st_mode | stat.S_IEXEC)
     monkeypatch.setenv("PATH", f"{bin_dir}:{os.environ['PATH']}")
@@ -347,6 +351,9 @@ async def test_run_local_harness_turn_end_to_end(monkeypatch, tmp_path):
     assert (workspace / ".noclick-turns").exists()
     argv = (workspace / ".argv").read_text()
     assert "-p hello" in argv and "--output-format stream-json" in argv
+    # The CLI's PWD must be the workspace: `opencode run` creates its session
+    # in $PWD, and the inherited one pointed at the backend's directory.
+    assert (workspace / ".pwd").read_text() == str(workspace)
 
 
 @pytest.mark.asyncio

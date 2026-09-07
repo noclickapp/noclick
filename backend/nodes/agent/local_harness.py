@@ -743,6 +743,10 @@ async def run_local_harness_turn(
         )
 
         env = {**os.environ, **(env_overrides or {})}
+        # cwd= moves the child but leaves the inherited PWD at the backend's
+        # own directory, and `opencode run` creates its session in $PWD: the
+        # turn ran from /app/backend, where no opencode.json exists, toolless.
+        env["PWD"] = str(workdir)
         # Read before _apply_subscription_login pops the transport vars.
         chatgpt_auth = bool(env.get("CODEX_ACCESS_TOKEN"))
         chatgpt_id_token = env.get("CODEX_ID_TOKEN")
