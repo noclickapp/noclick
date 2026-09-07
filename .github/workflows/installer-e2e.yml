@@ -96,9 +96,8 @@ jobs:
     runs-on: ubuntu-24.04-arm
     needs: gate
     timeout-minutes: 30
-    # Informational until ghcr images ship linux/arm64 — today this documents
-    # that ARM machines emulate or fail, rather than pretending they work.
-    continue-on-error: true
+    # A real boot on arm64: since v0.3.4 the images are multi-arch, so this
+    # gates like the x64 jobs.
     steps:
       - name: Install exactly as the README says
         run: curl -fsSL https://noclick.com/install.sh | sh

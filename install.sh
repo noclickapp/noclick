@@ -79,12 +79,14 @@ if [ -d "$DIR/.git" ]; then
     # Reset rather than merge: local edits to tracked files are not a supported
     # upgrade path, and a half-merged tree is a worse place to be than a clean
     # one. .env is untracked and survives.
-    git -C "$DIR" checkout --quiet --force FETCH_HEAD
+    git -C "$DIR" -c advice.detachedHead=false checkout --quiet --force FETCH_HEAD
 elif [ -e "$DIR" ] && [ -n "$(ls -A "$DIR" 2>/dev/null)" ]; then
     die "$DIR already exists and is not a NoClick checkout. Set NOCLICK_DIR to somewhere else."
 else
     say "Fetching NoClick into $DIR"
-    git clone --quiet --depth 1 --branch "$REF" "$REPO" "$DIR" \
+    # A release tag is a detached checkout by design; git's paragraph of
+    # branch advice is noise in an install log.
+    git -c advice.detachedHead=false clone --quiet --depth 1 --branch "$REF" "$REPO" "$DIR" \
         || die "Could not clone $REPO ($REF)."
 fi
 
