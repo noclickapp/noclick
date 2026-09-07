@@ -436,7 +436,7 @@ export function OAuthConnectForm({
                     inputMissing ||
                     byooMissing
                 }
-                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors bg-foreground/[0.07] text-foreground hover:bg-foreground/[0.12] disabled:bg-foreground/[0.04] disabled:text-muted-foreground disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg border border-border bg-card text-foreground transition-colors hover:border-foreground/20 hover:bg-accent disabled:cursor-not-allowed disabled:border-border disabled:bg-muted disabled:text-muted-foreground"
             >
                 {isThisProviderConnecting ? (
                     <>
