@@ -41,8 +41,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 65
     permissions:
-      contents: write # create a dispatch tag and the GitHub release
-      packages: write # granted only to this protected release job
+      contents: read
+      packages: write # granted only to the protected release jobs
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      tag: ${{ steps.v.outputs.tag }}
+      revision: ${{ steps.v.outputs.revision }}
+      tag_exists: ${{ steps.tag_state.outputs.exists }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -424,17 +429,188 @@ jobs:
           FRONTEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-frontend
         run: |
           set -euo pipefail
-          docker tag "noclick-release-single:$REVISION" "$SINGLE_IMAGE:sha-$REVISION"
-          docker tag "noclick-release-backend:$REVISION" "$BACKEND_IMAGE:sha-$REVISION"
-          docker tag "noclick-release-frontend:$REVISION" "$FRONTEND_IMAGE:sha-$REVISION"
-          docker push "$SINGLE_IMAGE:sha-$REVISION"
-          docker push "$BACKEND_IMAGE:sha-$REVISION"
-          docker push "$FRONTEND_IMAGE:sha-$REVISION"
+          # Per-architecture tags; the publish job assembles sha-$REVISION from
+          # this and the arm64 job's build.
+          docker tag "noclick-release-single:$REVISION" "$SINGLE_IMAGE:sha-$REVISION-amd64"
+          docker tag "noclick-release-backend:$REVISION" "$BACKEND_IMAGE:sha-$REVISION-amd64"
+          docker tag "noclick-release-frontend:$REVISION" "$FRONTEND_IMAGE:sha-$REVISION-amd64"
+          docker push "$SINGLE_IMAGE:sha-$REVISION-amd64"
+          docker push "$BACKEND_IMAGE:sha-$REVISION-amd64"
+          docker push "$FRONTEND_IMAGE:sha-$REVISION-amd64"
 
-      - name: Promote the verified revision images idempotently
+  # Native arm64 builds of the same revision, so Apple-silicon Docker Desktop
+  # runs without emulation and arm64 Linux hosts can run the stack at all.
+  # The amd64 job carries the full smoke; this one proves the images boot on
+  # the architecture and ship the CLI harnesses for it.
+  arm64:
+    if: github.event.repository.visibility == 'public' && github.ref == 'refs/heads/main'
+    environment:
+      name: release
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      revision: ${{ steps.v.outputs.revision }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          # Build and test code must not inherit the release job's write token
+          # through git's persisted extraheader.
+          persist-credentials: false
+      - name: Resolve the revision and version this run builds
+        id: v
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          {
+            echo "version=$INPUT_VERSION"
+            echo "revision=$(git rev-parse HEAD)"
+          } >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push the arm64 single-origin image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/single-origin.Dockerfile
+          platforms: linux/arm64
+          push: true
+          provenance: false
+          sbom: false
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:sha-${{ steps.v.outputs.revision }}-arm64
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ steps.v.outputs.revision }}
+            org.opencontainers.image.version=${{ steps.v.outputs.version }}
+            org.opencontainers.image.licenses=AGPL-3.0-only
+          cache-from: type=gha,scope=arm64
+          cache-to: type=gha,mode=max,scope=arm64
+      - name: Build and push the arm64 backend image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/backend.Dockerfile
+          platforms: linux/arm64
+          push: true
+          provenance: false
+          sbom: false
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}-backend:sha-${{ steps.v.outputs.revision }}-arm64
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ steps.v.outputs.revision }}
+            org.opencontainers.image.version=${{ steps.v.outputs.version }}
+            org.opencontainers.image.licenses=AGPL-3.0-only
+          cache-from: type=gha,scope=arm64
+          cache-to: type=gha,mode=max,scope=arm64
+      - name: Build and push the arm64 frontend image, for the default local URLs
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/frontend.Dockerfile
+          platforms: linux/arm64
+          push: true
+          provenance: false
+          sbom: false
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}-frontend:sha-${{ steps.v.outputs.revision }}-arm64
+          build-args: |
+            VITE_API_URL=http://api.localhost:8000
+            VITE_RELAY_URL=ws://api.localhost:8000/relay
+            VITE_PUBLIC_URL=http://localhost:3000
+            VITE_DISABLE_CAPTCHA=true
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ steps.v.outputs.revision }}
+            org.opencontainers.image.version=${{ steps.v.outputs.version }}
+            org.opencontainers.image.licenses=AGPL-3.0-only
+          cache-from: type=gha,scope=arm64
+          cache-to: type=gha,mode=max,scope=arm64
+      - name: Boot the arm64 images natively
         env:
           REVISION: ${{ steps.v.outputs.revision }}
-          VERSION: ${{ steps.v.outputs.version }}
+          BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-backend
+          FRONTEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-frontend
+        run: |
+          set -euo pipefail
+          for image in "$BACKEND_IMAGE" "$FRONTEND_IMAGE"; do
+            docker pull --quiet "$image:sha-$REVISION-arm64" >/dev/null
+            arch="$(docker inspect --format '{{.Architecture}}' "$image:sha-$REVISION-arm64")"
+            [ "$arch" = "arm64" ] || { echo "::error::$image:sha-$REVISION-arm64 is $arch, not arm64"; exit 1; }
+          done
+          docker run --rm --entrypoint sh "$BACKEND_IMAGE:sha-$REVISION-arm64" -c '
+            set -e
+            python -c "import nodes.core.registry"
+            for c in codex claude opencode openclaw hermes; do command -v "$c" >/dev/null || { echo "missing harness: $c"; exit 1; }; done
+            opencode --version && codex --version && hermes --version'
+          docker run -d --name fe-arm64 -p 3000:3000 \
+            -e SESSION_SECRET=arm64-smoke -e SUPABASE_URL=http://127.0.0.1:9 -e SUPABASE_ANON_KEY=arm64-smoke \
+            -e VITE_PUBLIC_URL=http://localhost:3000 "$FRONTEND_IMAGE:sha-$REVISION-arm64"
+          code=""
+          for _ in $(seq 1 30); do
+            code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://localhost:3000/ || true)"
+            case "$code" in 2*|3*) break ;; esac
+            sleep 2
+          done
+          case "$code" in
+            2*|3*) echo "arm64 frontend answered / with $code" ;;
+            *) docker logs fe-arm64 2>&1 | tail -40; echo "::error::the arm64 frontend did not answer / (got $code)"; exit 1 ;;
+          esac
+          docker rm -f fe-arm64 >/dev/null
+
+  publish:
+    needs: [release, arm64]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write # create a dispatch tag and the GitHub release
+      packages: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          # Build and test code must not inherit the release job's write token
+          # through git's persisted extraheader.
+          persist-credentials: false
+      - name: Require one revision across both architectures
+        env:
+          AMD64: ${{ needs.release.outputs.revision }}
+          ARM64: ${{ needs.arm64.outputs.revision }}
+        run: |
+          set -euo pipefail
+          [ -n "$AMD64" ] && [ "$AMD64" = "$ARM64" ] || { echo "::error::amd64 built $AMD64 but arm64 built $ARM64"; exit 1; }
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Assemble one manifest per image from both architectures
+        env:
+          REVISION: ${{ needs.release.outputs.revision }}
+          SINGLE_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}
+          BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-backend
+          FRONTEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-frontend
+        run: |
+          set -euo pipefail
+          for image in "$SINGLE_IMAGE" "$BACKEND_IMAGE" "$FRONTEND_IMAGE"; do
+            docker buildx imagetools create --tag "$image:sha-$REVISION" \
+              "$image:sha-$REVISION-amd64" "$image:sha-$REVISION-arm64"
+            platforms="$(docker buildx imagetools inspect "$image:sha-$REVISION" --raw \
+              | python3 -c 'import json,sys; m=json.load(sys.stdin); print(" ".join(sorted(x["platform"]["architecture"] for x in m.get("manifests", []) if x.get("platform", {}).get("os") == "linux")))')"
+            [ "$platforms" = "amd64 arm64" ] || { echo "::error::$image:sha-$REVISION carries [$platforms], expected amd64 arm64"; exit 1; }
+            echo "$image:sha-$REVISION -> $platforms"
+          done
+      - name: Promote the verified revision images idempotently
+        env:
+          REVISION: ${{ needs.release.outputs.revision }}
+          VERSION: ${{ needs.release.outputs.version }}
           SINGLE_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}
           BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-backend
           FRONTEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-frontend
@@ -509,11 +685,11 @@ jobs:
             --tag "$FRONTEND_IMAGE:latest" "$FRONTEND_IMAGE:$VERSION"
 
       - name: Create the verified tag
-        if: steps.tag_state.outputs.exists != 'true'
+        if: needs.release.outputs.tag_exists != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.v.outputs.tag }}
-          REVISION: ${{ steps.v.outputs.revision }}
+          TAG: ${{ needs.release.outputs.tag }}
+          REVISION: ${{ needs.release.outputs.revision }}
         run: |
           set -euo pipefail
           if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
@@ -530,8 +706,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          VERSION: ${{ steps.v.outputs.version }}
-          TAG: ${{ steps.v.outputs.tag }}
+          VERSION: ${{ needs.release.outputs.version }}
+          TAG: ${{ needs.release.outputs.tag }}
           IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}
         run: |
           set -euo pipefail
