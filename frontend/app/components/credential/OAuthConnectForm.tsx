@@ -483,7 +483,7 @@ export function OAuthConnectForm({
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="w-full text-xs text-muted-foreground hover:text-foreground/80 transition-colors"
+                    className="mx-auto flex items-center justify-center rounded-md px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground/80"
                 >
                     Cancel
                 </button>
