@@ -205,6 +205,14 @@ function Enable-Wsl {
     }
 }
 
+function Set-DockerDesktopAutoStart {
+    $store = Join-Path $env:APPDATA 'Docker\settings-store.json'
+    $settings = if (Test-Path $store) { Get-Content $store -Raw | ConvertFrom-Json } else { New-Object PSObject }
+    $settings | Add-Member -NotePropertyName AutoStart -NotePropertyValue $true -Force
+    New-Item -ItemType Directory -Force (Split-Path $store) | Out-Null
+    Set-Content -Path $store -Value ($settings | ConvertTo-Json -Depth 8) -Encoding ascii
+}
+
 function Invoke-Installer {
 $dryRun = [bool]$env:NOCLICK_INSTALLER_DRY_RUN
 # -- Docker Desktop -----------------------------------------------------------
@@ -247,10 +255,12 @@ if (-not (Test-CommandLine 'docker info')) {
         Say 'Docker Desktop is installed but not running. Dry run: the installer would start it. Stopping here.'
         Stop-Installer 0
     }
-    # Start Docker Desktop at sign-in (recent versions default this to off):
-    # the same Run entry the app writes when the setting is switched on, so
-    # the stack, whose services restart unless stopped, is back after a reboot.
-    Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'Docker Desktop' -Value "`"$dockerDesktop`" -Autostart"
+    # Start Docker Desktop at sign-in, so the stack, whose services restart
+    # unless stopped, is back after a reboot. Docker Desktop owns the Run
+    # entry and rewrites it from its own settings store on every start, so a
+    # Run entry written here was reset to a bare path with AutoStart off;
+    # the setting itself is the knob, read before the first start.
+    Set-DockerDesktopAutoStart
     Say 'Starting Docker Desktop (the first start takes a minute or two)'
     Start-Process $dockerDesktop
     $deadline = (Get-Date).AddMinutes(6)
