@@ -316,13 +316,15 @@ async def app_lifespan(app: FastAPI):
     await run_shutdown_hooks("final")
 
 from utils.instagram_webhook_privacy import instagram_webhook_request_hook
+from utils.outbound_trace_privacy import OutboundTraceProvider
 
 fastapi_app = FastAPI(lifespan=app_lifespan)
 FastAPIInstrumentor.instrument_app(fastapi_app, server_request_hook=instagram_webhook_request_hook)
-HTTPXClientInstrumentor().instrument()
+_outbound_trace_provider = OutboundTraceProvider()
+HTTPXClientInstrumentor().instrument(tracer_provider=_outbound_trace_provider)
 # LiteLLM's streaming completion path uses aiohttp, not httpx; both client
 # instrumentors are needed to capture all outbound LLM/API traffic.
-AioHttpClientInstrumentor().instrument()
+AioHttpClientInstrumentor().instrument(tracer_provider=_outbound_trace_provider)
 # asyncpg: per-query spans for DB-latency attribution. Must run before the
 # first pool is created so the monkey-patch is in place on every connection.
 # DatabasePoolMixin._db lazy-property defers pool creation until first request,
