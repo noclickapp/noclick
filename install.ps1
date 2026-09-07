@@ -206,6 +206,7 @@ function Enable-Wsl {
 }
 
 function Invoke-Installer {
+$dryRun = [bool]$env:NOCLICK_INSTALLER_DRY_RUN
 # -- Docker Desktop -----------------------------------------------------------
 if (-not (Have docker) -and (Test-Path $dockerDesktop)) { Update-SessionPath }
 if (-not (Have docker)) {
@@ -242,6 +243,10 @@ if (-not (Test-CommandLine 'docker info')) {
     if (-not (Test-Path $dockerDesktop)) {
         Fail "Docker is installed but not running.`n  Start it, then run this installer again."
     }
+    if ($dryRun) {
+        Say 'Docker Desktop is installed but not running. Dry run: the installer would start it. Stopping here.'
+        Stop-Installer 0
+    }
     # Start Docker Desktop at sign-in (recent versions default this to off):
     # the same Run entry the app writes when the setting is switched on, so
     # the stack, whose services restart unless stopped, is back after a reboot.
@@ -274,7 +279,8 @@ if (-not $nodeOk) {
         if ($releases[$i].lts) { $lts = $releases[$i].version; break }
     }
     if (-not $lts) { Fail 'Could not determine the current Node.js LTS release from nodejs.org.' }
-    Install-Portable 'node' "https://nodejs.org/dist/$lts/node-$lts-win-$arch.zip" (Join-Path $tools 'node') ''
+    if ($dryRun) { Say "Dry run: would install a private Node.js $lts under $tools." }
+    else { Install-Portable 'node' "https://nodejs.org/dist/$lts/node-$lts-win-$arch.zip" (Join-Path $tools 'node') '' }
 }
 if (-not (Have git)) {
     $gitArch = if ($arch -eq 'arm64') { 'arm64' } else { '64-bit' }
@@ -285,12 +291,17 @@ if (-not (Have git)) {
         if ($candidate.name -like "MinGit-*-$gitArch.zip" -and $candidate.name -notlike '*busybox*') { $asset = $candidate; break }
     }
     if (-not $asset) { Fail "Could not find a MinGit build for $gitArch in Git for Windows' latest release." }
-    Install-Portable 'git' $asset.browser_download_url (Join-Path $tools 'git') 'cmd'
+    if ($dryRun) { Say "Dry run: would install a private Git ($($asset.name)) under $tools." }
+    else { Install-Portable 'git' $asset.browser_download_url (Join-Path $tools 'git') 'cmd' }
 }
 
 # -- Hand off -----------------------------------------------------------------
 # npx.cmd rather than npx: Windows PowerShell resolves a bare `npx` to npx.ps1,
 # which the default Restricted execution policy refuses to run.
+if ($dryRun) {
+    Say 'Dry run: would hand off to npx noclick now, which fetches NoClick and starts it. Stopping here.'
+    Stop-Installer 0
+}
 Say 'Handing off to npx noclick'
 $npx = (Get-Command npx.cmd).Source
 $code = Invoke-Native { & $npx -y noclick@latest }

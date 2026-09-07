@@ -177,8 +177,28 @@ jobs:
         env:
           NOCLICK_INSTALLER_DRY_RUN: "1"
         run: |
-          $env:Path = ($env:Path -split ';' | Where-Object { $_ -notmatch 'docker' }) -join ';'
+          # Stripping "docker" directories from PATH left the runner's Docker
+          # reachable, so the installer rightly saw it and handed off to a
+          # compose pull on a Windows-containers daemon. Hide the binary itself.
+          $hidden = @()
+          foreach ($cmd in 'docker', 'docker-compose') {
+            $bin = (Get-Command $cmd -ErrorAction SilentlyContinue).Source
+            if ($bin) { Rename-Item $bin "$bin.hidden"; $hidden += "$bin.hidden" }
+          }
+          $hidden | Set-Content hidden-binaries.txt
+          if (Get-Command docker -ErrorAction SilentlyContinue) { throw "docker is still reachable" }
           irm https://noclick.com/install.ps1 -OutFile install.ps1
           $out = & powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 2>&1 | Out-String
           if ($LASTEXITCODE -ne 0) { throw "dry run should exit 0:`n$out" }
           if ($out -notmatch 'install Docker Desktop' -or $out -notmatch 'restarts once') { throw "dry run did not describe the plan:`n$out" }
+          if ($out -match 'Handing off') { throw "a dry run must never hand off:`n$out" }
+      - name: With Docker present a dry run reports the plan and never hands off
+        env:
+          NOCLICK_INSTALLER_DRY_RUN: "1"
+        run: |
+          foreach ($bin in (Get-Content hidden-binaries.txt)) { Rename-Item $bin ($bin -replace '\.hidden$', '') }
+          if (-not (Get-Command docker -ErrorAction SilentlyContinue)) { throw "docker should be back" }
+          $out = & powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 2>&1 | Out-String
+          if ($LASTEXITCODE -ne 0) { throw "dry run should exit 0:`n$out" }
+          if ($out -notmatch 'Dry run') { throw "dry run did not describe the plan:`n$out" }
+          if ($out -match 'Handing off') { throw "a dry run must never hand off:`n$out" }
