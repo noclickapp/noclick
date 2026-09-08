@@ -3,11 +3,37 @@
 Usage: python backend/tests/fixtures/install_clis.py /tmp/noclick-test-clis
 Add the resulting bin directory to PATH. Requires Git, npm, and Node 22 or 24.
 """
+import base64
 import json
+import os
 from pathlib import Path
 import shlex
 import subprocess
 import sys
+
+HERMES_REPO = 'https://github.com/NousResearch/hermes-agent.git'
+
+
+def github_git_env(token: str | None) -> dict[str, str]:
+    """Git environment that authenticates github.com clones with an Actions token.
+
+    Anonymous git-over-HTTPS from shared CI runners gets HTTP 429 from GitHub.
+    The header rides GIT_CONFIG_* rather than the URL or argv, so a failed
+    clone's CalledProcessError (which prints the command) cannot leak it.
+    """
+    if not token:
+        return {}
+    basic = base64.b64encode(f'x-access-token:{token}'.encode()).decode()
+    return {
+        'GIT_CONFIG_COUNT': '1',
+        'GIT_CONFIG_KEY_0': 'http.https://github.com/.extraheader',
+        'GIT_CONFIG_VALUE_0': f'AUTHORIZATION: basic {basic}',
+    }
+
+
+def clone_hermes(ref: str, dest: Path, token: str | None) -> None:
+    subprocess.run(['git', 'clone', '--depth', '1', '--branch', ref, HERMES_REPO, str(dest)],
+                   check=True, env={**os.environ, **github_git_env(token)})
 
 
 def install(target: Path):
@@ -23,8 +49,7 @@ def install(target: Path):
             path.unlink()
         path.symlink_to(target / 'npm/node_modules/.bin' / binary)
     hermes = target / 'hermes'
-    subprocess.run(['git', 'clone', '--depth', '1', '--branch', pins['hermes']['ref'],
-                    'https://github.com/NousResearch/hermes-agent.git', str(hermes)], check=True)
+    clone_hermes(pins['hermes']['ref'], hermes, os.environ.get('GITHUB_TOKEN'))
     venv = target / 'venv'
     subprocess.run([sys.executable, '-m', 'venv', str(venv)], check=True)
     python = venv / 'bin/python'

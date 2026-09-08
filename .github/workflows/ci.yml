@@ -148,6 +148,9 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: pip install -r requirements-dev.txt
       - run: python backend/tests/fixtures/install_clis.py "$RUNNER_TEMP/native-clis"
+        env:
+          # Authenticates the hermes-agent clone; anonymous clones get 429s.
+          GITHUB_TOKEN: ${{ github.token }}
       - run: echo "$RUNNER_TEMP/native-clis/bin" >> "$GITHUB_PATH"
       - run: python -m pytest -q backend/tests/test_local_harness_sessions.py backend/tests/test_local_harness_native.py backend/tests/test_hermes_protocol.py backend/tests/test_openclaw_protocol.py
         env:
