@@ -98,6 +98,12 @@ class ExecutionContext:
     organization_id: Optional[str] = None
     execution_id: Optional[str] = None
 
+    claim_nodes: Optional[Callable[[Set[str]], None]] = None
+    """Claim node IDs before executing them so the main runner cannot execute
+    them independently when a nested strategy signals completion. Synchronous
+    to establish ownership before the strategy yields to other node tasks.
+    """
+
 
 @dataclass
 class ExecutionResult:

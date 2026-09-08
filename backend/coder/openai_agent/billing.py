@@ -111,6 +111,20 @@ class BillingHooks(RunHooks):
     # Pre-call: balance gate + input-token snapshot
     # ------------------------------------------------------------------ #
     async def on_llm_start(self, context, agent, system_prompt, input_items) -> None:  # noqa: ARG002
+        # Reject unfunded calls before tokenizing their accumulated history.
+        # BYOK still counts tokens for usage reporting but skips this gate.
+        if not self._env:
+            from billing.usage_tracker import usage_tracker
+            await usage_tracker.enforce_credit_gate(
+                self._user_id,
+                organization_id=self._organization_id,
+                sio=self._sio,
+                sid=self._sid,
+                caller_user_id=self._caller_user_id,
+                surface="agent",
+                message="You're out of credits. The agent has been paused.",
+            )
+
         # Count input tokens locally so we can use them as a fallback in
         # ``on_llm_end`` when the provider drops the usage chunk. Cheap
         # (text-only, no network) and saves us from emitting a $0/zero-
@@ -122,26 +136,6 @@ class BillingHooks(RunHooks):
             model=self._model,
             system_prompt=system_prompt,
             input_items=input_items,
-        )
-
-        # If the caller supplied their own keys, they're paying their own
-        # provider — we don't check or charge.
-        if self._env:
-            return
-
-        # Standardized pre-flight gate: strict owner resolution (org work with no
-        # resolvable owner fails the run), balance check, exhausted-event emit,
-        # and abort — all in one shared implementation. Raises
-        # OwnerResolutionError or InsufficientBalanceError; both abort the run.
-        from billing.usage_tracker import usage_tracker
-        await usage_tracker.enforce_credit_gate(
-            self._user_id,
-            organization_id=self._organization_id,
-            sio=self._sio,
-            sid=self._sid,
-            caller_user_id=self._caller_user_id,
-            surface="agent",
-            message="You're out of credits. The agent has been paused.",
         )
 
     # ------------------------------------------------------------------ #

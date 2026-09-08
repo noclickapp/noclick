@@ -895,17 +895,8 @@ class Agent:
                         # AgentUpdatedStreamEvent and other lifecycle events are not
                         # surfaced to the frontend.
             except InsufficientBalanceError as e:
-                # BillingHooks already emitted CreditsExhaustedEvent. Surface a
-                # finished message so the caller's await unblocks cleanly and
-                # the frontend transitions from streaming → terminal state.
-                # Pair with AgentStateEvent(state='error') so workflow callers
-                # know to mark the run as failed (vs completed with the error
-                # string as the response, which would silently succeed).
-                # Both carry the gate's message verbatim: its shape is the
-                # contract (billing.exceptions) that downstream consumers —
-                # the top-up error button, the credits email routing — key on;
-                # an ad-hoc slug here made SDK-path exhaustion invisible to
-                # both.
+                # Finish the chat once, then preserve the typed failure so
+                # workflow runners can stop unfunded work without retrying it.
                 logger.warning("[openai_agent] run aborted: %s", e)
                 await self._emit_message(ChatMessageEvent(
                     message=str(e),
@@ -915,7 +906,7 @@ class Agent:
                     state="error",
                     reason=str(e),
                 ))
-                return
+                raise
             except Exception as e:
                 if (
                     attempt + 1 < _LLM_RUN_ATTEMPTS
