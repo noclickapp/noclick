@@ -43,6 +43,7 @@ from utils.slack import send_activity_notification_background, extract_user_name
 from utils.analytics import log_activity_background, set_person_properties_background
 from utils.analytics_events import Events
 from repositories.workflow import WorkflowRepo
+from billing.exceptions import InsufficientBalanceError
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
@@ -2348,7 +2349,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             async with state.lock:
                 if node_id in nodes_in_iteration:
                     return
-                if node_id in state.completed or node_id in state.skipped:
+                if node_id in state.completed or node_id in state.failed or node_id in state.skipped:
                     # Already handled by a strategy (e.g., switch/conditional executed or skipped this node)
                     return
 
@@ -2581,6 +2582,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                         mark_failed=self._create_mark_failed_callback(state),
                         mark_skipped=self._create_mark_skipped_callback(state),
                         signal_done=lambda nid: node_done[nid].set() if nid in node_done else None,
+                        claim_nodes=nodes_in_iteration.update,
                     )
 
                     result = await strategy.execute(ctx)
@@ -2589,17 +2591,18 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     async with state.lock:
                         nodes_in_iteration.update(result.body_nodes_handled)
 
-                    # Mark loop body nodes as completed and emit state
-                    # (the iteration strategy updates outputs but doesn't call mark_completed to avoid re-execution)
-                    for body_node_id in result.body_nodes_handled:
-                        if body_node_id in state.node_outputs:
-                            body_node = node_by_id.get(body_node_id)
-                            if body_node:
-                                await self._emit_node_state(
-                                    sid, workflow_id, body_node_id,
-                                    body_node.get('type', 'unknown'),
-                                    'completed', None, execution_id
-                                )
+                    # Strategies own their terminal states. An existing output
+                    # may be a failure or preloaded context for a skipped node.
+                    # Restore recorded failures after all items finish: a later
+                    # outer item can otherwise hide an earlier nested failure.
+                    for body_node_id in result.body_nodes_handled & state.failed:
+                        body_node = node_by_id.get(body_node_id)
+                        if body_node:
+                            await self._emit_node_state(
+                                sid, workflow_id, body_node_id,
+                                body_node.get('type', 'unknown'), 'error',
+                                state.node_errors.get(body_node_id), execution_id,
+                            )
                 finally:
                     node_done[node_id].set()
 
@@ -2643,6 +2646,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                             break
                         except Exception as _exc:
                             _last_error = _exc
+                            if isinstance(_exc, InsufficientBalanceError):
+                                break
                             if _attempt < _max_tries - 1 and _wait_ms > 0:
                                 await asyncio.sleep(_wait_ms / 1000)
 

@@ -3,6 +3,7 @@
 import logging
 from typing import Dict, Callable, Optional, List, Any
 
+from billing.exceptions import InsufficientBalanceError
 from coder.openai_agent import Agent
 from coder.openai_agent.config import AgentConfiguration
 from wss.schema import SocketIOHandler
@@ -535,6 +536,9 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
             # Call the agent - events are emitted via callback
             await agent(message_dict)
 
+        except InsufficientBalanceError:
+            # The SDK already sent the terminal chat and credit events.
+            return
         except Exception as e:
             logger.error(f"Error processing message for {sid}: {e}")
 

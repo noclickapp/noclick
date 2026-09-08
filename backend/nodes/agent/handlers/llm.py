@@ -11,6 +11,7 @@ import logging
 import os
 from typing import Any, Callable, Dict, List, Optional
 
+from billing.exceptions import InsufficientBalanceError
 from coder.openai_agent import Agent
 from coder.openai_agent.config import AgentConfiguration
 from nodes.agent.provider_errors import classify_and_rewrite_provider_error
@@ -194,6 +195,9 @@ async def execute_llm_model(
 
         return output
 
+    except InsufficientBalanceError:
+        # The SDK already emitted the terminal chat events; retain the gate type.
+        raise
     except Exception as e:
         logger.error(f"[LLM] Error executing agent: {e}", exc_info=True)
         # Provider billing/auth rejections reach here as raw litellm exception

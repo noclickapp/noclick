@@ -54,13 +54,21 @@ Usage Examples:
 import asyncio
 import logging
 from collections import deque
+from dataclasses import dataclass
 from typing import Dict, Any, Optional, Type, List, Set, Literal
 from pydantic import BaseModel, Field, field_validator
 
 from nodes.core.base import WorkflowNode, NodeConfig, OutputHandle
-from nodes.core.execution_strategy import ExecutionStrategy, ExecutionContext, ExecutionResult
+from billing.exceptions import InsufficientBalanceError
+from nodes.core.execution_strategy import ExecutionStrategy, ExecutionContext, ExecutionResult, check_output_error
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class _IterationAbort:
+    """Credit denial shared by a loop and its nested loops, for this run only."""
+    error: Optional[InsufficientBalanceError] = None
 
 
 # ============================================================================
@@ -600,7 +608,10 @@ class IterationExecutionStrategy:
 
         return sorted_body
 
-    async def execute(self, ctx: ExecutionContext) -> ExecutionResult:
+    async def execute(
+        self, ctx: ExecutionContext, *, _abort: Optional[_IterationAbort] = None,
+        _run_done_nodes: bool = True,
+    ) -> ExecutionResult:
         """
         Execute an iteration node and its body nodes for each item.
 
@@ -632,9 +643,14 @@ class IterationExecutionStrategy:
         # Initialize variables for error/finally handling
         all_loop_body_node_ids: Set[str] = set()
         done_node_ids: Set[str] = set()
+        nested_handled_nodes: Set[str] = set()
+        abort = _abort if _abort is not None else _IterationAbort()
+        body_errors: Dict[str, str] = {}
 
         try:
             async with ctx.semaphore:
+                if abort.error is not None:
+                    raise abort.error
                 await ctx.emit_state(node_id, node_type, 'running', None)
 
                 # Check if iteration node has mocked output - use mocked items if so
@@ -672,6 +688,8 @@ class IterationExecutionStrategy:
                     node_id, initial_loop_node_ids, done_node_ids, ctx.successors,
                     node_by_id=ctx.node_by_id, edges=ctx.edges,
                 )
+                if ctx.claim_nodes is not None:
+                    ctx.claim_nodes(all_loop_body_node_ids | done_node_ids)
                 logger.info(
                     f"[IterationStrategy] All loop body nodes (including transitive): "
                     f"{all_loop_body_node_ids}"
@@ -723,6 +741,13 @@ class IterationExecutionStrategy:
                     """Execute body nodes for a single iteration."""
                     nonlocal completed_count
                     async with iteration_semaphore:
+                        # Check AFTER acquiring: queued items must not read or append
+                        # more conversation history after another item is denied.
+                        if abort.error is not None:
+                            return {
+                                'index': index, 'item': item, 'outputs': {},
+                                'success': False, 'skipped': True, 'error': str(abort.error),
+                            }
                         row_number = index + row_offset
 
                         # Create iteration context for this item
@@ -747,14 +772,28 @@ class IterationExecutionStrategy:
 
                         # Execute each body node for this iteration (in topological order)
                         iteration_outputs: Dict[str, Any] = {}
+                        nested_outputs: Dict[str, Any] = {}
                         iteration_failed = False
+                        iteration_error = None
+                        unavailable: Set[str] = set()
 
                         for body_node_id in sorted_body_node_ids:
+                            if abort.error is not None:
+                                iteration_failed = True
+                                iteration_error = iteration_error or str(abort.error)
+                                break
                             body_node = ctx.node_by_id.get(body_node_id)
                             if not body_node:
                                 continue
 
                             body_node_type = body_node.get('type', 'unknown')
+
+                            # An item failure invalidates its dependent nodes, but
+                            # independent branches and later items may still run.
+                            if ctx.predecessors.get(body_node_id, set()) & unavailable:
+                                unavailable.add(body_node_id)
+                                await ctx.emit_state(body_node_id, body_node_type, 'skipped', None)
+                                continue
 
                             # Check if body node is disabled
                             if body_node.get('config', {}).get('disabled', False):
@@ -765,6 +804,8 @@ class IterationExecutionStrategy:
                             body_mocked = body_node.get('config', {}).get('mockedOutput')
                             if body_mocked is not None:
                                 iteration_outputs[body_node_id] = body_mocked
+                                await ctx.emit_output(body_node_id, body_node_type, body_mocked)
+                                await ctx.emit_state(body_node_id, body_node_type, 'completed', None)
                                 continue
 
                             try:
@@ -802,6 +843,7 @@ class IterationExecutionStrategy:
 
                                 # Include outputs from previously executed body nodes in this iteration
                                 # This allows body nodes to reference each other (e.g., agent -> sheets write)
+                                iteration_node_outputs.update(nested_outputs)
                                 iteration_node_outputs.update(iteration_outputs)
 
                                 # Nested iteration: run the inner iteration's full strategy
@@ -830,24 +872,49 @@ class IterationExecutionStrategy:
                                         signal_done=ctx.signal_done,
                                         organization_id=ctx.organization_id,
                                         execution_id=ctx.execution_id,
+                                        claim_nodes=ctx.claim_nodes,
                                     )
-                                    nested_result = await IterationExecutionStrategy().execute(nested_ctx)
+                                    # The enclosing body traversal already includes
+                                    # the inner loop's done branch. Run it there once,
+                                    # with normal item failure/dependency handling.
+                                    nested_result = await IterationExecutionStrategy().execute(
+                                        nested_ctx, _abort=abort, _run_done_nodes=False,
+                                    )
                                     body_output = nested_result.output
                                     # Track inner body nodes so they're skipped by the main loop
                                     all_loop_body_node_ids.update(nested_result.body_nodes_handled)
+                                    nested_handled_nodes.update(nested_result.body_nodes_handled)
+                                    nested_outputs.update({
+                                        nid: nested_ctx.node_outputs[nid]
+                                        for nid in nested_result.body_nodes_handled
+                                        if nid in nested_ctx.node_outputs
+                                    })
+                                    if abort.error is not None:
+                                        raise abort.error
+                                    if not nested_result.success:
+                                        raise RuntimeError(nested_result.error or 'Nested iteration failed')
                                 else:
                                     body_output = await ctx.execute_node(body_node, iteration_node_outputs)
 
                                 iteration_outputs[body_node_id] = body_output
 
                                 await ctx.emit_output(body_node_id, body_node_type, body_output)
+                                output_error = check_output_error(body_output)
+                                if output_error:
+                                    raise RuntimeError(output_error)
                                 await ctx.emit_state(body_node_id, body_node_type, 'completed', None)
 
                             except Exception as e:
                                 logger.error(f"[IterationStrategy] Body node {body_node_id} failed at iteration {index}: {e}")
-                                iteration_outputs[body_node_id] = {'error': str(e)}
+                                iteration_outputs.setdefault(body_node_id, {'error': str(e), 'error_type': type(e).__name__})
                                 iteration_failed = True
+                                iteration_error = iteration_error or str(e)
+                                unavailable.add(body_node_id)
+                                body_errors[body_node_id] = str(e)
+                                if isinstance(e, InsufficientBalanceError):
+                                    abort.error = e
 
+                                await ctx.mark_failed(body_node_id, str(e))
                                 await ctx.emit_state(body_node_id, body_node_type, 'error', str(e))
 
                         # Persist body node outputs for this iteration (fire-and-forget).
@@ -899,6 +966,7 @@ class IterationExecutionStrategy:
                             'item': item,
                             'outputs': iteration_outputs,
                             'success': not iteration_failed,
+                            'error': iteration_error,
                         }
 
                 # Execute all iterations concurrently (limited by semaphore)
@@ -916,6 +984,7 @@ class IterationExecutionStrategy:
                             'index': i,
                             'item': items[i],
                             'outputs': {'error': str(result)},
+                            'error': str(result),
                             'success': False,
                         }
                     else:
@@ -940,7 +1009,7 @@ class IterationExecutionStrategy:
                     for result in iteration_results:
                         if not result.get('success', False):
                             # Include error info for failed iterations
-                            collected_results.append({'_iteration_error': result.get('outputs', {}).get('error', 'Unknown error')})
+                            collected_results.append({'_iteration_error': result.get('error') or 'Unknown error'})
                             continue
 
                         outputs = result.get('outputs', {})
@@ -983,25 +1052,37 @@ class IterationExecutionStrategy:
                 final_output = {
                     'items': items,
                     'total': total,
-                    'results_count': len(iteration_results),
+                    'results_count': completed_count,
                     'results_success': success_count,
+                    'results_skipped': sum(1 for r in iteration_results if r.get('skipped')),
                     'collected_results': collected_results,
                     'isIterationNode': True,
-                    'completed': True,
+                    'completed': abort.error is None,
                     'headers': headers,
                     'item': items[0] if items else None,
                     'index': 0,
                     'row_number': row_offset,
                 }
 
-                # Mark iteration node as completed
-                await ctx.mark_completed(node_id, final_output)
+                if abort.error is not None:
+                    final_output.update(status='error', error=str(abort.error), error_type=type(abort.error).__name__)
+                    ctx.node_outputs[node_id] = final_output
+                    await ctx.mark_failed(node_id, str(abort.error))
+                else:
+                    await ctx.mark_completed(node_id, final_output)
                 await ctx.emit_output(node_id, node_type, final_output)
-                await ctx.emit_state(node_id, node_type, 'completed', None)
+                await ctx.emit_state(node_id, node_type, 'error' if abort.error else 'completed', str(abort.error) if abort.error else None)
 
                 # Update loop body node outputs internally (don't mark as completed)
                 # This prevents the workflow executor from re-executing these nodes with aggregated output
                 # before the iteration strategy returns and marks them as handled
+                # Queued items skipped by a credit abort have no outputs. Keep
+                # each node's last attempted output instead of losing it (or
+                # retaining a preloaded output from an older execution).
+                last_body_outputs: Dict[str, Any] = {}
+                for result in iteration_results:
+                    last_body_outputs.update(result.get('outputs', {}))
+
                 for body_node_id in all_loop_body_node_ids:
                     body_node = ctx.node_by_id.get(body_node_id)
                     if body_node:
@@ -1012,41 +1093,53 @@ class IterationExecutionStrategy:
                         # Downstream consumers should use collected_results (on the
                         # aggregation source node or the iteration node) instead.
                         body_output = None
-                        if iteration_results:
-                            last_result = iteration_results[-1]
-                            if body_node_id in last_result.get('outputs', {}):
-                                body_output = {
-                                    'lastOutput': last_result['outputs'].get(body_node_id),
-                                    'iterationCount': total,
-                                }
-                                # Add collected_results to the aggregation source node's output
-                                # This allows downstream nodes (like Google Sheets) to access
-                                # the flat array directly via {{body_node.collected_results}}
-                                if body_node_id == aggregation_source_id:
-                                    body_output['collected_results'] = collected_results
-                                    logger.info(f"[IterationStrategy] Added collected_results to aggregation source node {body_node_id}")
+                        if body_node_id in last_body_outputs:
+                            body_output = {
+                                'lastOutput': last_body_outputs[body_node_id],
+                                'iterationCount': completed_count,
+                            }
+                            # Add collected_results to the aggregation source node's output
+                            # This allows downstream nodes (like Google Sheets) to access
+                            # the flat array directly via {{body_node.collected_results}}
+                            if body_node_id == aggregation_source_id:
+                                body_output['collected_results'] = collected_results
+                                logger.info(f"[IterationStrategy] Added collected_results to aggregation source node {body_node_id}")
 
                         # Update output internally without calling mark_completed
                         # This avoids triggering re-execution of these nodes before they're marked as handled
                         if body_output is not None:
                             ctx.node_outputs[body_node_id] = body_output
 
-                        # Signal done so dependencies can proceed, but don't emit state or mark completed
-                        # The workflow executor will handle that after this strategy returns
+                        # Keep failures terminal even when a later item succeeded.
+                        if body_node_id in body_errors:
+                            await ctx.emit_state(body_node_id, body_node.get('type', 'unknown'), 'error', body_errors[body_node_id])
+                        elif abort.error is not None and body_node_id not in last_body_outputs and body_node_id not in nested_handled_nodes:
+                            await ctx.mark_skipped(body_node_id)
+                            await ctx.emit_state(body_node_id, body_node.get('type', 'unknown'), 'skipped', None)
+
+                        # The strategy owns terminal states; the main runner only
+                        # claims these nodes and must not overwrite their errors.
                         ctx.signal_done(body_node_id)
 
                 # Release iteration_results to allow GC of per-iteration output dicts.
                 # All needed data has been extracted into body_output and collected_results.
                 iteration_results.clear()
+                last_body_outputs.clear()
 
                 # Execute "done" handle nodes with aggregated output
                 # These nodes receive the final aggregated results after all iterations complete
-                for done_node_id in done_node_ids:
+                for done_node_id in (done_node_ids if _run_done_nodes else ()):
                     done_node = ctx.node_by_id.get(done_node_id)
                     if not done_node:
                         continue
 
                     done_node_type = done_node.get('type', 'unknown')
+
+                    if abort.error is not None:
+                        await ctx.mark_skipped(done_node_id)
+                        await ctx.emit_state(done_node_id, done_node_type, 'skipped', None)
+                        ctx.signal_done(done_node_id)
+                        continue
 
                     # Check if done node is disabled
                     if done_node.get('config', {}).get('disabled', False):
@@ -1076,13 +1169,20 @@ class IterationExecutionStrategy:
 
                         done_output = await ctx.execute_node(done_node, done_node_outputs)
 
-                        await ctx.mark_completed(done_node_id, done_output)
                         await ctx.emit_output(done_node_id, done_node_type, done_output)
+                        output_error = check_output_error(done_output)
+                        if output_error:
+                            ctx.node_outputs[done_node_id] = done_output
+                            raise RuntimeError(output_error)
+                        await ctx.mark_completed(done_node_id, done_output)
                         await ctx.emit_state(done_node_id, done_node_type, 'completed', None)
                         logger.info(f"[IterationStrategy] Done node {done_node_id} completed successfully")
 
                     except Exception as e:
                         logger.error(f"[IterationStrategy] Done node {done_node_id} failed: {e}")
+                        if isinstance(e, InsufficientBalanceError):
+                            abort.error = e
+                        await ctx.mark_failed(done_node_id, str(e))
                         await ctx.emit_state(done_node_id, done_node_type, 'error', str(e))
 
                     finally:
@@ -1091,16 +1191,19 @@ class IterationExecutionStrategy:
                 logger.info(f"[IterationStrategy] Node {node_id} completed {total} iterations")
 
                 # Mark ALL handled nodes (loop body + done nodes) so workflow executor doesn't re-execute them
-                all_handled_nodes = all_loop_body_node_ids | done_node_ids
+                all_handled_nodes = all_loop_body_node_ids | (done_node_ids if _run_done_nodes else set())
                 logger.info(f"[IterationStrategy] Marking as handled: {all_handled_nodes}")
 
                 return ExecutionResult(
                     output=final_output,
                     body_nodes_handled=all_handled_nodes,  # Include ALL transitive loop body nodes + done nodes
-                    success=True
+                    success=abort.error is None,
+                    error=str(abort.error) if abort.error else None,
                 )
 
         except Exception as e:
+            if isinstance(e, InsufficientBalanceError):
+                abort.error = e
             error_msg = f"Iteration node {node_id} failed: {str(e)}"
             logger.error(f"[IterationStrategy] {error_msg}")
 
@@ -1110,7 +1213,7 @@ class IterationExecutionStrategy:
             # Mark all transitive loop body nodes + done nodes as handled
             # If error happened early, fallback to all direct successors
             if all_loop_body_node_ids or done_node_ids:
-                all_handled_nodes = all_loop_body_node_ids | done_node_ids
+                all_handled_nodes = all_loop_body_node_ids | (done_node_ids if _run_done_nodes else set())
             else:
                 all_handled_nodes = ctx.successors.get(node_id, set())
 
@@ -1128,6 +1231,10 @@ class IterationExecutionStrategy:
             ctx.signal_done(node_id)
 
             # Signal that ALL handled nodes are done (transitive loop body + done nodes)
-            handled_nodes = (all_loop_body_node_ids | done_node_ids) if (all_loop_body_node_ids or done_node_ids) else ctx.successors.get(node_id, set())
+            handled_nodes = (
+                all_loop_body_node_ids | (done_node_ids if _run_done_nodes else set())
+                if (all_loop_body_node_ids or done_node_ids)
+                else ctx.successors.get(node_id, set())
+            )
             for successor_id in handled_nodes:
                 ctx.signal_done(successor_id)

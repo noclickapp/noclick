@@ -252,7 +252,8 @@ class TestIterationSubOutputCasWrite:
         # And there's no bare 'body' manifest either (only the composite keys).
         assert "body" not in iter_node_ids
 
-    async def test_iteration_failed_item_skips_persist(self, cas_pool):
+    @pytest.mark.parametrize('failure_as_output', [False, True])
+    async def test_iteration_failed_item_skips_persist(self, cas_pool, failure_as_output):
         """The 'not iteration_failed' gate: an iteration whose body raises is NOT
         persisted, while a sibling iteration that succeeds IS. Body raises on
         item 0 (v==1) and succeeds on item 1 (v==2) → no 'body#iter:0' row, a
@@ -273,6 +274,8 @@ class TestIterationSubOutputCasWrite:
                 }
             item = node_outputs.get("item", {})
             if item.get("v") == 1:
+                if failure_as_output:
+                    return {"type": "agent", "status": "failed", "response": "body blew up on item 0"}
                 raise RuntimeError("body blew up on item 0")
             return {"got": item.get("v")}
 
