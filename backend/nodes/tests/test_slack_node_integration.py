@@ -153,7 +153,7 @@ def check_result_or_skip(
 @pytest.fixture
 def bot_credentials() -> SlackCredential:
     """Bot token credentials for testing."""
-    return SlackBotTokenCredential(credential_type="bot_token", bot_token=BOT_TOKEN)
+    return SlackBotTokenCredential(credential_type="slack_bot_token", bot_token=BOT_TOKEN)
 
 
 # Mark all tests in this module as integration tests
@@ -929,7 +929,7 @@ if __name__ == "__main__":
         print(f"Using token: {BOT_TOKEN[:20]}...")
 
         credentials = SlackBotTokenCredential(
-            credential_type="bot_token", bot_token=BOT_TOKEN
+            credential_type="slack_bot_token", bot_token=BOT_TOKEN
         )
 
         # Test auth
