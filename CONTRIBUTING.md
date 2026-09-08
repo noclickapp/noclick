@@ -65,7 +65,9 @@ from your Pydantic model, so you write Python and the interface appears.
 4. Regenerate schemas: `cd backend && python scripts/generate_socket_types.py`
    (the pre-commit hook does this too).
 5. Add tests under `backend/nodes/tests/`. Mock the provider's HTTP calls —
-   tests must not need real credentials.
+   tests must not need real credentials. A test that has to hit a live API
+   carries `pytestmark = pytest.mark.integration`; the default run excludes
+   it, and `pytest -m ""` opts back in.
 
 For OAuth nodes, declare the scopes each operation needs in
 `backend/nodes/scopes/<provider>.py` and point the node at that registry.

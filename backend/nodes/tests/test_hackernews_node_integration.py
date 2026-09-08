@@ -5,8 +5,10 @@ Tests all 12 operations against the real Hacker News APIs:
 - Firebase API (10 operations)
 - Algolia Search API (2 operations)
 
-No authentication required - both APIs are public.
-These tests verify actual API behavior and response formats.
+No authentication required - both APIs are public, which is exactly why this
+file is opt-in: with no credential to be missing it never skips itself, and a
+public API timing out on a CI runner turned every push red. Excluded by the
+default ``-m "not integration"``; run with ``-m ""``.
 """
 
 import pytest
@@ -27,6 +29,8 @@ from nodes.hackernews_node import (
     HNSearchConfig,
     HNSearchByDateConfig,
 )
+
+pytestmark = pytest.mark.integration
 
 
 # ============================================================================

@@ -176,6 +176,8 @@ and `frontend/app/lib/hostedDefaults.ts`. A hardcoded hostname elsewhere fails
   verify the same behaviour a different way.
 - Tests must exercise real behaviour, not mock behaviour. A test that only
   proves a mock was called is worth deleting.
+- A test that must hit a live API carries `pytestmark = pytest.mark.integration`.
+  `pytest.ini` excludes the marker by default; `pytest -m ""` opts back in.
 
 ## Code style
 

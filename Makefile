@@ -19,7 +19,9 @@ test-backend-community:
 	# is why nobody noticed that twenty tables the code queries had been dropped
 	# from the shipped schema: none of the tests that touch them were on it.
 	# Tests needing a live third-party credential skip themselves when it is
-	# absent, so this is green without any secrets.
+	# absent, and the ones that hit a public API with no credential carry the
+	# `integration` marker that pytest.ini excludes by default, so this is
+	# green without any secrets or any third party's uptime.
 	# DB-backed items are placed in one xdist group by tests/conftest.py. This
 	# keeps one shared PostgreSQL testcontainer instead of starting one per CPU,
 	# while the much larger unit-test lane still uses all available workers.
