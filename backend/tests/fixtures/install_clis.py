@@ -8,8 +8,10 @@ import json
 import os
 from pathlib import Path
 import shlex
+import shutil
 import subprocess
 import sys
+import time
 
 HERMES_REPO = 'https://github.com/NousResearch/hermes-agent.git'
 
@@ -31,9 +33,28 @@ def github_git_env(token: str | None) -> dict[str, str]:
     }
 
 
-def clone_hermes(ref: str, dest: Path, token: str | None) -> None:
-    subprocess.run(['git', 'clone', '--depth', '1', '--branch', ref, HERMES_REPO, str(dest)],
-                   check=True, env={**os.environ, **github_git_env(token)})
+def clone_hermes(ref: str, dest: Path, token: str | None, attempts: int = 3,
+                 sleep=time.sleep) -> None:
+    """Clone the pinned hermes-agent tag, or reuse a checkout CI restored from cache.
+
+    GitHub load-sheds this repository's git backend under heavy traffic (HTTP 429
+    for every client, authenticated or not), so a warm cache never clones and a
+    cold one retries briefly before giving up.
+    """
+    if (dest / '.git').exists():
+        print(f'Reusing hermes-agent checkout at {dest}')
+        return
+    env = {**os.environ, **github_git_env(token)}
+    for attempt in range(1, attempts + 1):
+        try:
+            subprocess.run(['git', 'clone', '--depth', '1', '--branch', ref, HERMES_REPO, str(dest)],
+                           check=True, env=env)
+            return
+        except subprocess.CalledProcessError:
+            shutil.rmtree(dest, ignore_errors=True)
+            if attempt == attempts:
+                raise
+            sleep(20 * attempt)
 
 
 def install(target: Path):

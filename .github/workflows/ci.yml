@@ -147,6 +147,12 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: pip install -r requirements-dev.txt
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          # GitHub load-sheds hermes-agent's git backend under heavy traffic
+          # (HTTP 429 for every client); a warm cache never clones it.
+          path: ${{ runner.temp }}/native-clis/hermes
+          key: hermes-${{ runner.os }}-${{ hashFiles('backend/nodes/agent/config/_cli_models.json') }}
       - run: python backend/tests/fixtures/install_clis.py "$RUNNER_TEMP/native-clis"
         env:
           # Authenticates the hermes-agent clone; anonymous clones get 429s.
