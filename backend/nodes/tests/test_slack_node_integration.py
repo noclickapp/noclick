@@ -227,7 +227,7 @@ class TestConversationOperations:
         node = create_node(config, bot_credentials)
         result = await node.execute({})
 
-        data = check_result_or_skip(result, "list_conversations", "channels:read")
+        data = check_result_or_skip(result, "list_channels_in_workspace", "channels:read")
 
         if data.get("ok"):
             channels = data.get("channels", [])
@@ -278,7 +278,7 @@ class TestUserOperations:
         node = create_node(config, bot_credentials)
         result = await node.execute({})
 
-        data = check_result_or_skip(result, "list_users", "users:read")
+        data = check_result_or_skip(result, "list_workspace_users", "users:read")
 
         if data.get("ok"):
             members = data.get("members", [])
@@ -439,7 +439,7 @@ class TestFileOperations:
         node = create_node(config, bot_credentials)
         result = await node.execute({})
 
-        data = check_result_or_skip(result, "list_files", "files:read")
+        data = check_result_or_skip(result, "list_workspace_files", "files:read")
 
         if data.get("ok"):
             files = data.get("files", [])
@@ -474,7 +474,7 @@ class TestBookmarkOperations:
         node = create_node(config, bot_credentials)
         result = await node.execute({})
 
-        data = check_result_or_skip(result, "list_bookmarks", "bookmarks:read")
+        data = check_result_or_skip(result, "list_channel_bookmarks", "bookmarks:read")
 
         if data.get("ok"):
             bookmarks = data.get("bookmarks", [])
@@ -544,7 +544,7 @@ class TestReminderOperations:
         node = create_node(config, bot_credentials)
         result = await node.execute({})
 
-        data = check_result_or_skip(result, "list_reminders", "reminders:read")
+        data = check_result_or_skip(result, "list_user_reminders", "reminders:read")
 
         if data.get("ok"):
             reminders = data.get("reminders", [])
@@ -625,7 +625,7 @@ class TestSearchOperations:
         node = create_node(config, bot_credentials)
         result = await node.execute({})
 
-        data = check_result_or_skip(result, "search_files", "search:read")
+        data = check_result_or_skip(result, "search_workspace_files", "search:read")
 
         if data.get("ok"):
             files = data.get("files", {})
@@ -655,7 +655,7 @@ class TestUserProfileOperations:
         node = create_node(config, bot_credentials)
         result = await node.execute({})
 
-        data = check_result_or_skip(result, "get_user_profile", "users.profile:read")
+        data = check_result_or_skip(result, "get_user_profile_information", "users.profile:read")
 
         if data.get("ok"):
             profile = data.get("profile", {})
