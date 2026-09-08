@@ -44,7 +44,14 @@ class AgentCredentials(BaseModel):
     Credentials are stored as environment variable name -> value pairs.
     The frontend determines which fields to show based on the selected model/provider.
     """
-    credential_type: Literal["agent_api_key"] = Field("agent_api_key", json_schema_extra={"ui:hidden": True})
+    # The credentials ROW type is authoritative and rides the decrypted blob
+    # (utils.credentials.get_credential), and agent rows are typed per provider:
+    # `agent_openrouter`, `agent_codex_oauth`, legacy `agents`. A Literal here
+    # rejected every real row once that stamping landed (2026-09-07). The
+    # schema keeps the generic identifier as its const for the credential pickers.
+    credential_type: str = Field(
+        "agent_api_key", json_schema_extra={"const": "agent_api_key", "ui:hidden": True}
+    )
     credentials: Optional[Dict[str, str]] = Field(
         default=None,
         title="API Credentials",
