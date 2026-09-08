@@ -4,7 +4,7 @@
 // and the one-click unsubscribe links in alert emails.
 
 import { useEffect, useState } from 'react';
-import { AlertTriangle, CalendarRange, Coins, KeyRound, Unplug } from 'lucide-react';
+import { AlertTriangle, CalendarRange, CirclePause, Coins, KeyRound, Unplug } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '~/lib/utils';
 import { Switch } from '~/components/ui/switch';
@@ -41,6 +41,12 @@ const CATEGORIES = [
         label: 'Channel disconnections',
         description: 'When a live channel connection (like WhatsApp) drops and messages stop arriving.',
         icon: Unplug,
+    },
+    {
+        key: 'schedule_paused',
+        label: 'Paused schedules',
+        description: 'When a schedule is paused because its runs kept failing the same way.',
+        icon: CirclePause,
     },
     {
         key: 'digest',

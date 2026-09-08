@@ -165,12 +165,14 @@ class CronScheduleTriggerMixin:
         Deliberately sync + cheap — the async spec runs only inside reconcile.
         The credential is included because ARMING (the baseline poll) needs it
         even though registration doesn't — a credential attached after
-        registration must reconcile so the arm finally runs."""
+        registration must reconcile so the arm finally runs. ``disabled`` is
+        included because a disabled trigger converges to NO schedules."""
         from utils.credentials import pick_credential_id
 
         cfg = config or {}
         return {
             "operation": cfg.get("operation"),
+            "disabled": bool(cfg.get("disabled")),
             "schedule": cfg.get("schedule"),
             "schedules": cfg.get("schedules"),
             "timezone": cfg.get("timezone"),

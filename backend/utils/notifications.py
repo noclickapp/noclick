@@ -60,6 +60,7 @@ logger = logging.getLogger(__name__)
 
 CATEGORIES = frozenset({
     "run_failure", "credits", "digest", "credential_revoked", "channel_disconnected",
+    "schedule_paused",
 })
 CATEGORY_LABELS = {
     "run_failure": "workflow failure alerts",
@@ -67,6 +68,7 @@ CATEGORY_LABELS = {
     "digest": "the weekly activity digest",
     "credential_revoked": "credential disconnection alerts",
     "channel_disconnected": "channel connection alerts",
+    "schedule_paused": "paused schedule alerts",
 }
 
 # Suppression window after a run-failure email per workflow — a cron flow
@@ -74,6 +76,9 @@ CATEGORY_LABELS = {
 # window are counted and folded into the next email.
 RUN_FAILURE_SUPPRESS_S = 6 * 3600
 CREDITS_EXHAUSTED_SUPPRESS_S = 24 * 3600
+# One pause email per trigger per day: the breaker re-trips on the first
+# identical failure after a re-enable, and that is the same news.
+SCHEDULE_PAUSED_SUPPRESS_S = 24 * 3600
 # Low-balance fires once per plan window (key includes the window), TTL is
 # just a safety bound past the longest month.
 LOW_BALANCE_TTL_S = 40 * 24 * 3600
@@ -177,7 +182,7 @@ _LOCAL_WINDOWS_MAX = 4096
 # per-workflow windows can't exceed the run_failure cap.
 ALERT_DAILY_CAPS = {
     "run_failure": 3, "credits": 2, "digest": None, "credential_revoked": 3,
-    "channel_disconnected": 3,
+    "channel_disconnected": 3, "schedule_paused": 3,
 }
 assert set(ALERT_DAILY_CAPS) == CATEGORIES  # every category decides its cap explicitly
 
@@ -824,6 +829,82 @@ async def send_credential_revoked_alert(
             "credential_id": credential_id,
             "provider": provider,
             "revoked_reason": revoked_reason,
+        },
+        pool=pool,
+    )
+
+
+def _span_label(seconds: float) -> str:
+    """"40 minutes", "3 hours", "5 days" — the coarsest unit that fits."""
+    for unit, size in (("day", 86400), ("hour", 3600), ("minute", 60)):
+        n = int(seconds // size)
+        if n >= 1:
+            return f"{n} {unit}{'s' if n != 1 else ''}"
+    return "under a minute"
+
+
+async def send_schedule_paused_alert(
+    *,
+    user_id: str,
+    workflow_id: str,
+    node_id: str,
+    node_label: str,
+    trigger_source: str,
+    error: str,
+    failures: int,
+    span_s: float,
+    pool=None,
+) -> bool:
+    """Tell the owner their schedule was paused: its last ``failures`` runs
+    all died with the same error over ``span_s`` seconds, so the trigger node
+    was disabled instead of minting another error run per tick. Re-enabling
+    the node resumes the schedule (utils/webhook_routes.py's breaker)."""
+    row = await _fetch_row(pool, "SELECT name FROM workflows WHERE id = $1", workflow_id)
+    workflow_name = (row["name"] if row else None) or "Untitled workflow"
+    wf_html = html_lib.escape(workflow_name)
+    label_html = html_lib.escape(node_label)
+    error_text = (error or "Unknown error").strip()
+    if len(error_text) > 500:
+        error_text = error_text[:500] + "…"
+    span = _span_label(span_s)
+    paused_at = datetime.now(timezone.utc).strftime("%b %-d, %Y · %H:%M UTC")
+    source = TRIGGER_SOURCE_LABELS.get(trigger_source, trigger_source)
+    open_url = f"{FRONTEND_URL}/dashboard?tab=workflows&workflow={workflow_id}"
+
+    blocks = (
+        para(
+            f"Your workflow {strong(wf_html)} failed the same way "
+            f"{strong(f'{failures} times in a row')} over {span}, so we paused its schedule."
+        )
+        + kv_rows([("Workflow", wf_html), ("Paused trigger", label_html),
+                   ("Trigger", source), ("Paused at", paused_at)])
+        + error_panel(html_lib.escape(error_text))
+        + para(f"Fix the cause, then re-enable {strong(label_html)} to resume the schedule.")
+    )
+    text_body = (
+        f'Your workflow "{workflow_name}" failed the same way {failures} times in a row '
+        f"over {span}, so we paused its schedule.\n"
+        f"Paused trigger: {node_label}\nTrigger: {source}\nPaused at: {paused_at}\n"
+        f"Error: {error_text}\n"
+        f"Fix the cause, then re-enable {node_label} to resume the schedule.\n"
+    )
+    return await send_system_alert(
+        user_id, "schedule_paused",
+        subject=f'We paused the schedule on "{workflow_name}"',
+        heading=f"{wf_html} paused" if len(workflow_name) <= 34 else "Schedule paused",
+        eyebrow="Schedule alert",
+        blocks_html=blocks,
+        text_body=text_body,
+        preheader=f"{failures} identical failures — {error_text[:90]}",
+        cta_text="Open Workflow",
+        cta_url=open_url,
+        dedupe_key=f"schedule_paused:{workflow_id}:{node_id}",
+        dedupe_ttl_s=SCHEDULE_PAUSED_SUPPRESS_S,
+        metadata={
+            "workflow_id": workflow_id,
+            "node_id": node_id,
+            "trigger_source": trigger_source,
+            "failures": failures,
         },
         pool=pool,
     )

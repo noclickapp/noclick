@@ -330,3 +330,17 @@ async def test_build_overview_isolates_a_failing_section():
     assert payload["errors"] == {"runs": "relation does not exist"}
     assert payload["runs"]["days"] == [] and payload["workspace"] == {"name": "Acme", "kind": "org", "userName": "Dhruv"}
     assert payload["upcoming"][0]["kind"] == "schedule" and payload["triggers"][0]["armed"] is True
+
+
+def test_paused_trigger_needs_attention_but_a_switched_off_one_is_silent():
+    """The failure breaker pauses by disabling the node WITH a paused_reason;
+    a node the user switched off carries none and stays out of the way."""
+    graph = {"nodes": [
+        {"id": "paused", "type": "trigger-cron", "config": {"label": "Hourly sync", "disabled": True, "paused_reason": "Paused after 5 identical failures: Node x failed"}},
+        {"id": "off", "type": "trigger-cron", "config": {"label": "Old job", "disabled": True}},
+    ]}
+    workflows = _wf(graph=graph)
+    triggers, broken = dh._compose_triggers(workflows, [], [])
+    assert [t["nodeId"] for t in triggers] == ["paused"]
+    assert triggers[0]["armed"] is False and triggers[0]["error"].startswith("Paused after")
+    assert [b["title"] for b in broken] == ["Hourly sync is paused"]

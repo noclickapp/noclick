@@ -64,6 +64,12 @@ def node_config(node: Dict[str, Any]) -> Dict[str, Any]:
     return cfg
 
 
+def node_disabled(node: Dict[str, Any]) -> bool:
+    """The switched-off flag, wherever a writer put it: top-level ``disabled``
+    (canvas data), or inside the config (save shape / builder patches)."""
+    return bool(node.get("disabled")) or bool(node_config(node).get("disabled"))
+
+
 def node_type(node: Dict[str, Any]) -> str:
     return str(node.get("type") or "")
 

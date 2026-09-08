@@ -94,7 +94,8 @@ async def test_register_still_registers_when_no_stale_hooks(monkeypatch):
 
 
 def test_delivery_scan_tolerates_malformed_node_config():
-    from utils.webhook_routes import _get_node_type_for_webhook, _is_node_disabled, _node_cfg
+    from utils.graph_nodes import node_disabled
+    from utils.webhook_routes import _get_node_type_for_webhook, _node_cfg
 
     workflow = {"nodes": [
         {"id": "bad", "type": "x", "config": ["not", "a", "dict"]},   # the 2026-07-19 shape
@@ -106,4 +107,4 @@ def test_delivery_scan_tolerates_malformed_node_config():
     assert _node_cfg(workflow["nodes"][0]) == {}
     assert _node_cfg(workflow["nodes"][1]) == {}
     assert _node_cfg("not-a-node") == {}
-    assert _is_node_disabled({"id": "bad", "config": []}) is False
+    assert node_disabled({"id": "bad", "config": []}) is False

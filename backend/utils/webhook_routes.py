@@ -18,6 +18,7 @@ import inspect
 import json
 import logging
 import uuid as uuid_module
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 from fastapi import APIRouter, Request, HTTPException, BackgroundTasks, Response
@@ -29,6 +30,8 @@ from pydantic import BaseModel
 from utils.async_helpers import spawn
 from utils.webhook_delivery import get_webhook_base_url
 from utils.database_pool import get_native_pool
+from utils.graph_nodes import node_disabled, node_label
+from billing.exceptions import match_insufficient_credits
 from utils.shopify_routes import compliance_router as shopify_compliance_router
 from wss.receiver.client_events import WorkflowExecuteRequest
 from wss.handlers.workflow_execution_handler import WorkflowExecutionResult
@@ -57,24 +60,6 @@ class WebhookURLResponse(BaseModel):
 # ============================================================================
 # Form Input HTML Rendering
 # ============================================================================
-
-def _is_node_disabled(node: dict) -> bool:
-    """
-    Check if a node is disabled.
-
-    Checks both node-level and config-level disabled flags since the disabled
-    state can be stored at either location depending on how it was set.
-
-    Args:
-        node: The workflow node dict
-
-    Returns:
-        True if the node is disabled, False otherwise
-    """
-    node_disabled = node.get("disabled", False)
-    config_disabled = _node_cfg(node).get("disabled", False)
-    return node_disabled or config_disabled
-
 
 def _get_form_node_config(workflow_config: dict, node_id: str) -> Optional[Dict[str, Any]]:
     """Get the form input node's inner config (fields, description) from workflow config.
@@ -1058,6 +1043,11 @@ def update_webhook_stats(webhook_id: str):
         logger.error(f"[WEBHOOK] Failed to update stats: {e}")
 
 
+def _schedule_tick_id(headers: dict) -> Optional[str]:
+    """The cron-scheduler's schedule id when this delivery is one of its ticks."""
+    return headers.get("x-cron-schedule-id") or headers.get("X-Cron-Schedule-Id")
+
+
 def _is_stale_schedule_tick(headers: dict, trigger_node: dict, is_alarm: bool) -> bool:
     """A cron-scheduler tick landing on a node whose CURRENT operation is not a
     trigger — a schedule that survived an operation change (or was provisioned
@@ -1065,9 +1055,7 @@ def _is_stale_schedule_tick(headers: dict, trigger_node: dict, is_alarm: bool) -
     tick. The workflow config loaded successfully and shows a non-trigger op,
     so this is a definitive signal: the caller may prune the schedule + webhook.
     """
-    if is_alarm:
-        return False
-    if not (headers.get("x-cron-schedule-id") or headers.get("X-Cron-Schedule-Id")):
+    if is_alarm or not _schedule_tick_id(headers):
         return False
     node_type = trigger_node.get("type") or ""
     if node_type.startswith("trigger-"):
@@ -1095,9 +1083,7 @@ def _schedule_tick_config_error(
     that HAS run cleanly and now fails validation is a real regression (e.g.
     an AI edit broke it) → dispatch, so the failure stays visible.
     """
-    if is_alarm:
-        return None
-    if not (headers.get("x-cron-schedule-id") or headers.get("X-Cron-Schedule-Id")):
+    if is_alarm or not _schedule_tick_id(headers):
         return None
 
     from nodes.core.registry import NODE_REGISTRY
@@ -1111,6 +1097,172 @@ def _schedule_tick_config_error(
     if result["valid"]:
         return None
     return "; ".join(result["errors"]) or "config failed validation"
+
+
+# A schedule whose runs keep dying the same way is PAUSED rather than left to
+# mint an error run (and a failure alert) per tick: at least this many
+# consecutive runs failed with an identical error…
+SCHEDULE_BREAKER_MIN_FAILURES = 5
+# …sustained for at least this long, so a short provider outage never pauses a
+# healthy schedule: a minute-cron needs ~30 identical failures, an hourly one 5.
+SCHEDULE_BREAKER_MIN_SPAN_S = 30 * 60
+# How far back the streak is read; bounds the query, not the streak semantics.
+_SCHEDULE_BREAKER_LOOKBACK = 60
+
+
+@dataclass(frozen=True)
+class FailureStreak:
+    """The workflow's latest runs from one trigger source all failed alike."""
+    count: int
+    error: str
+    span_s: float
+
+    @property
+    def trips_breaker(self) -> bool:
+        # Credit exhaustion is a billing state, not a broken workflow: a top-up
+        # must resume the schedule by itself, so it never pauses one.
+        return (
+            self.count >= SCHEDULE_BREAKER_MIN_FAILURES
+            and self.span_s >= SCHEDULE_BREAKER_MIN_SPAN_S
+            and match_insufficient_credits(self.error) is None
+        )
+
+
+async def _schedule_failure_streak(
+    workflow_id: str, trigger_source: str
+) -> Optional[FailureStreak]:
+    """Walk the workflow's recent runs from ``trigger_source`` newest-first and
+    count how many, from the latest, failed with the SAME error. None when the
+    latest run did not fail — and on a DB error (fail OPEN: a blip dispatches
+    the tick, it never pauses a schedule)."""
+    try:
+        rows = await get_native_pool().fetch(
+            """
+            SELECT status, error, started_at FROM workflow_executions
+            WHERE workflow_id = $1 AND trigger_source = $2
+            ORDER BY started_at DESC
+            LIMIT $3
+            """,
+            uuid_module.UUID(workflow_id), trigger_source, _SCHEDULE_BREAKER_LOOKBACK,
+        )
+    except Exception as e:
+        logger.warning(f"[WEBHOOK] failure-streak lookup failed for {workflow_id}: {e}")
+        return None
+    if not rows or rows[0]["status"] != "error" or not (rows[0]["error"] or "").strip():
+        return None
+    error = rows[0]["error"]
+    streak = next(
+        (rows[:i] for i, r in enumerate(rows) if r["status"] != "error" or r["error"] != error),
+        rows,
+    )
+    span = (streak[0]["started_at"] - streak[-1]["started_at"]).total_seconds()
+    return FailureStreak(count=len(streak), error=error, span_s=span)
+
+
+async def _pause_stuck_schedule(
+    workflow_id: str,
+    node_id: str,
+    trigger_node: dict,
+    *,
+    user_id: str,
+    trigger_source: str,
+    streak: FailureStreak,
+) -> bool:
+    """Disable the trigger node — the pause primitive the panel toggle and the
+    builder's <disable_node> already use — so the reconciler converges its
+    schedule to none, mirror the reason (``paused_reason``, read by the
+    Dashboard; a re-registration clears it), and tell the owner once. False
+    (dispatch as usual) when the graph write fails: a pause that did not
+    land must not be announced."""
+    from utils.webhook_manager import WebhookManager
+    from utils.notifications import send_schedule_paused_alert
+
+    reason = f"Paused after {streak.count} identical failures: {streak.error}"
+    pool = get_native_pool()
+    try:
+        await WebhookManager.merge_node_config_patch(
+            pool, uuid_module.UUID(workflow_id), node_id,
+            {"disabled": True, "paused_reason": reason[:300]},
+        )
+    except Exception as e:
+        logger.warning(f"[WEBHOOK] could not pause schedule for {node_id}: {e}")
+        return False
+    logger.warning(
+        f"[WEBHOOK] Paused schedule on {workflow_id}:{node_id} — {streak.count} identical "
+        f"failures over {streak.span_s / 60:.0f} min: {streak.error[:160]}"
+    )
+    spawn(
+        WebhookManager.reconcile_node(pool, workflow_id, node_id, user_id=user_id),
+        name=f"schedule-pause-reconcile:{node_id}",
+    )
+    spawn(
+        send_schedule_paused_alert(
+            user_id=user_id, workflow_id=workflow_id, node_id=node_id,
+            node_label=node_label(trigger_node) or node_id,
+            trigger_source=trigger_source, error=streak.error,
+            failures=streak.count, span_s=streak.span_s, pool=pool,
+        ),
+        name=f"schedule-paused-alert:{node_id}",
+    )
+    return True
+
+
+@dataclass(frozen=True)
+class ScheduleTickVerdict:
+    """Why a cron-scheduler tick must not dispatch. ``prune`` marks a definitive
+    orphan (schedule + webhook already deleted; answer 410); otherwise the tick
+    is acknowledged and skipped (200)."""
+    detail: str
+    prune: bool = False
+
+
+async def _schedule_tick_verdict(
+    headers: dict,
+    workflow_id: str,
+    webhook_id: str,
+    trigger_node: dict,
+    node_id: str,
+    is_alarm: bool,
+    *,
+    user_id: str,
+    nodes: list,
+) -> Optional[ScheduleTickVerdict]:
+    """The pre-dispatch gate every scheduler tick passes, shared by both
+    delivery paths. Order matters: an orphan is pruned before anything else,
+    a disabled trigger is skipped before the breaker can re-judge a schedule
+    it already paused, and a config still being set up is skipped quietly.
+    Non-schedule deliveries never reach a verdict."""
+    if _is_stale_schedule_tick(headers, trigger_node, is_alarm):
+        logger.warning(
+            f"[WEBHOOK] Schedule tick for node {node_id} whose current operation is not a "
+            f"trigger — pruning stale schedule + webhook {webhook_id}"
+        )
+        _cleanup_orphaned_webhook(webhook_id, workflow_id, node_id)
+        return ScheduleTickVerdict("Node operation is not a trigger", prune=True)
+    if is_alarm or not _schedule_tick_id(headers):
+        return None
+    if node_disabled(trigger_node):
+        logger.info(f"[WEBHOOK] Schedule tick for disabled trigger {node_id} skipped")
+        return ScheduleTickVerdict("Schedule tick skipped: trigger is disabled")
+    if cfg_err := _schedule_tick_config_error(headers, trigger_node, is_alarm):
+        if not await _trigger_ever_ran(workflow_id, node_id):
+            logger.info(
+                f"[WEBHOOK] Schedule tick for node {node_id} still being set up — saved "
+                f"config not yet valid ({cfg_err}); skipping run until the config save lands"
+            )
+            return ScheduleTickVerdict("Schedule tick skipped: trigger configuration not yet saved")
+        # Previously-working trigger now failing validation: dispatch so the
+        # config error surfaces as a visible run failure.
+    trigger_source = _webhook_trigger_source(nodes, node_id)
+    streak = await _schedule_failure_streak(workflow_id, trigger_source)
+    if streak and streak.trips_breaker and await _pause_stuck_schedule(
+        workflow_id, node_id, trigger_node,
+        user_id=user_id, trigger_source=trigger_source, streak=streak,
+    ):
+        return ScheduleTickVerdict(
+            f"Schedule paused after {streak.count} identical failures"
+        )
+    return None
 
 
 async def _trigger_ever_ran(workflow_id: str, node_id: str) -> bool:
@@ -1316,30 +1468,17 @@ async def handle_webhook_payload(
         _cleanup_orphaned_webhook(webhook_id, workflow_id, str(config.get("node_id", "")))
         return _json_relay_response({"detail": "Webhook trigger node not found in workflow"}, status_code=404) if return_response else False
 
-    if _is_stale_schedule_tick(headers, trigger_node, is_alarm):
-        logger.warning(
-            f"[WEBHOOK] Schedule tick for node {actual_node_id} whose current operation is not a "
-            f"trigger — pruning stale schedule + webhook {webhook_id}"
-        )
-        _cleanup_orphaned_webhook(webhook_id, workflow_id, actual_node_id)
-        return _json_relay_response({"detail": "Node operation is not a trigger"}, status_code=410) if return_response else False
-
-    if cfg_err := _schedule_tick_config_error(headers, trigger_node, is_alarm):
-        if not await _trigger_ever_ran(workflow_id, actual_node_id):
-            logger.info(
-                f"[WEBHOOK] Schedule tick for node {actual_node_id} still being set up — saved "
-                f"config not yet valid ({cfg_err}); skipping run until the config save lands"
-            )
-            update_webhook_stats(webhook_id)
-            return _json_relay_response(
-                WebhookResponse(
-                    success=True,
-                    message="Schedule tick skipped: trigger configuration not yet saved",
-                    execution_id=None,
-                ).model_dump()
-            ) if return_response else True
-        # Previously-working trigger now failing validation: dispatch so the
-        # config error surfaces as a visible run failure.
+    verdict = await _schedule_tick_verdict(
+        headers, workflow_id, webhook_id, trigger_node, actual_node_id, is_alarm,
+        user_id=user_id, nodes=nodes,
+    )
+    if verdict is not None:
+        if verdict.prune:
+            return _json_relay_response({"detail": verdict.detail}, status_code=410) if return_response else False
+        update_webhook_stats(webhook_id)
+        return _json_relay_response(
+            WebhookResponse(success=True, message=verdict.detail, execution_id=None).model_dump()
+        ) if return_response else True
 
     try:
         _validate_webhook_request_settings(
@@ -1413,7 +1552,7 @@ async def handle_webhook_payload(
     payload = await _transform_trigger_payload(node_cls, trigger_node, payload, workflow_id)
 
     # Check if trigger node is disabled - skip execution if so
-    if trigger_node and _is_node_disabled(trigger_node):
+    if trigger_node and node_disabled(trigger_node):
         logger.info(f"[WEBHOOK] Trigger node {actual_node_id} is disabled, skipping workflow execution")
         update_webhook_stats(webhook_id)
         if return_response:
@@ -1883,7 +2022,7 @@ async def _fire_subscription(
             break
     if trigger_node is None:
         return False
-    if _is_node_disabled(trigger_node):
+    if node_disabled(trigger_node):
         logger.info(f"[APP-WEBHOOK] Trigger node {node_id} disabled, skipping")
         return False
 
@@ -2556,7 +2695,7 @@ async def receive_webhook(
                 return HTMLResponse(_render_error_html("Form trigger node not found"))
 
             # Check if trigger node is disabled - show message if so
-            if trigger_node and _is_node_disabled(trigger_node):
+            if trigger_node and node_disabled(trigger_node):
                 logger.info(f"[WEBHOOK] Form trigger node {actual_node_id} is disabled, skipping workflow execution")
                 return HTMLResponse(_render_error_html("This form is currently disabled"))
 
@@ -2667,28 +2806,15 @@ async def receive_webhook(
         _cleanup_orphaned_webhook(webhook_id, workflow_id, str(config.get("node_id", "")))
         raise HTTPException(status_code=404, detail="Webhook trigger node not found in workflow")
 
-    if _is_stale_schedule_tick(dict(request.headers), trigger_node, is_alarm):
-        logger.warning(
-            f"[WEBHOOK] Schedule tick for node {actual_node_id} whose current operation is not a "
-            f"trigger — pruning stale schedule + webhook {webhook_id}"
-        )
-        _cleanup_orphaned_webhook(webhook_id, workflow_id, actual_node_id)
-        raise HTTPException(status_code=410, detail="Node operation is not a trigger")
-
-    if cfg_err := _schedule_tick_config_error(dict(request.headers), trigger_node, is_alarm):
-        if not await _trigger_ever_ran(workflow_id, actual_node_id):
-            logger.info(
-                f"[WEBHOOK] Schedule tick for node {actual_node_id} still being set up — saved "
-                f"config not yet valid ({cfg_err}); skipping run until the config save lands"
-            )
-            update_webhook_stats(webhook_id)
-            return WebhookResponse(
-                success=True,
-                message="Schedule tick skipped: trigger configuration not yet saved",
-                execution_id=None,
-            )
-        # Previously-working trigger now failing validation: dispatch so the
-        # config error surfaces as a visible run failure.
+    verdict = await _schedule_tick_verdict(
+        dict(request.headers), workflow_id, webhook_id, trigger_node, actual_node_id, is_alarm,
+        user_id=user_id, nodes=nodes,
+    )
+    if verdict is not None:
+        if verdict.prune:
+            raise HTTPException(status_code=410, detail=verdict.detail)
+        update_webhook_stats(webhook_id)
+        return WebhookResponse(success=True, message=verdict.detail, execution_id=None)
 
     # Run the trigger node's handshake + signature hooks. A handshake response
     # is returned synchronously without firing the workflow; a bad signature
@@ -2707,7 +2833,7 @@ async def receive_webhook(
         return JSONResponse(content=hook_response)
 
     # Check if trigger node is disabled - skip execution if so
-    if trigger_node and _is_node_disabled(trigger_node):
+    if trigger_node and node_disabled(trigger_node):
         logger.info(f"[WEBHOOK] Trigger node {actual_node_id} is disabled, skipping workflow execution")
         update_webhook_stats(webhook_id)
         return WebhookResponse(

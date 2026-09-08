@@ -876,3 +876,167 @@ class TestTriggerEverRan:
             await _trigger_ever_ran(self.WF, "n1")
             sql = gp.return_value.fetchrow.call_args.args[0]
             assert "'completed'" in sql and "'skipped'" in sql and "'error'" not in sql
+
+
+@pytest.mark.asyncio
+class TestScheduleBreaker:
+    """A schedule whose runs keep dying the same way is PAUSED, not left to
+    mint an error run (and a failure email) per tick — 68% of a week's
+    headless runs were 100%-failing loops before this (2026-09-08). The
+    breaker reads the runtime's own verdict, identical consecutive failures
+    sustained long enough, so no config validator can misjudge a working
+    schedule; pausing is the node's disabled flag, which the reconciler
+    already turns into a pruned schedule."""
+
+    WF = "11111111-2222-3333-4444-555555555555"
+    HEADERS = {"x-cron-schedule-id": "sched-1"}
+    ERR = "Node fetch_rows failed: Failed to resolve credential abc"
+    CRON_CONFIG = {"schedules": [{"frequency": "hours", "interval": 1}], "timezone": "UTC"}
+
+    @staticmethod
+    def _rows(n, error, *, minutes_apart=60, status="error"):
+        from datetime import datetime, timedelta, timezone
+        newest = datetime(2026, 9, 8, 12, 0, tzinfo=timezone.utc)
+        return [
+            {"status": status, "error": error, "started_at": newest - timedelta(minutes=minutes_apart * i)}
+            for i in range(n)
+        ]
+
+    async def _streak(self, rows):
+        from utils.webhook_routes import _schedule_failure_streak
+        with patch("utils.webhook_routes.get_native_pool") as gp:
+            gp.return_value.fetch = AsyncMock(return_value=rows)
+            return await _schedule_failure_streak(self.WF, "cron")
+
+    async def test_identical_failures_sustained_for_hours_trip(self):
+        streak = await self._streak(self._rows(5, self.ERR))
+        assert (streak.count, streak.error, streak.span_s) == (5, self.ERR, 4 * 3600)
+        assert streak.trips_breaker
+
+    async def test_a_short_burst_is_a_blip_not_a_broken_schedule(self):
+        streak = await self._streak(self._rows(5, self.ERR, minutes_apart=1))
+        assert streak.count == 5 and not streak.trips_breaker
+
+    async def test_streak_ends_at_a_success_or_a_different_error(self):
+        rows = self._rows(3, self.ERR) + self._rows(1, None, status="completed") + self._rows(9, self.ERR)
+        streak = await self._streak(rows)
+        assert streak.count == 3 and not streak.trips_breaker
+        rows = self._rows(4, self.ERR) + self._rows(9, "Node other failed: HTTP 503")
+        assert (await self._streak(rows)).count == 4
+
+    async def test_a_latest_success_means_no_streak(self):
+        rows = self._rows(1, None, status="completed") + self._rows(10, self.ERR)
+        assert await self._streak(rows) is None
+        assert await self._streak([]) is None
+
+    async def test_credit_exhaustion_never_pauses(self):
+        from billing.exceptions import insufficient_credits_message
+        streak = await self._streak(self._rows(6, insufficient_credits_message(0.0, 0.2)))
+        assert streak.count == 6 and not streak.trips_breaker
+
+    async def test_db_error_fails_open(self):
+        from utils.webhook_routes import _schedule_failure_streak
+        with patch("utils.webhook_routes.get_native_pool") as gp:
+            gp.return_value.fetch = AsyncMock(side_effect=RuntimeError("timeout"))
+            assert await _schedule_failure_streak(self.WF, "cron") is None
+
+    # ── the shared tick gate ──
+
+    def _node(self, config=None, node_type="trigger-cron"):
+        return {"id": "n1", "type": node_type, "config": dict(self.CRON_CONFIG if config is None else config)}
+
+    def _tripped(self):
+        from utils.webhook_routes import FailureStreak
+        return FailureStreak(count=5, error=self.ERR, span_s=4 * 3600)
+
+    async def _verdict(self, node, *, streak=None, ever_ran=True, headers=None):
+        from utils import webhook_routes as wr
+        pause = AsyncMock(return_value=True)
+        with (
+            patch.object(wr, "_schedule_failure_streak", AsyncMock(return_value=streak)),
+            patch.object(wr, "_trigger_ever_ran", AsyncMock(return_value=ever_ran)),
+            patch.object(wr, "_pause_stuck_schedule", pause),
+            patch.object(wr, "_cleanup_orphaned_webhook") as cleanup,
+        ):
+            verdict = await wr._schedule_tick_verdict(
+                self.HEADERS if headers is None else headers, self.WF, "wh-1",
+                node, "n1", False, user_id="u1", nodes=[node],
+            )
+        return verdict, pause, cleanup
+
+    async def test_tripped_streak_pauses_and_acknowledges_the_tick(self):
+        streak = self._tripped()
+        verdict, pause, _ = await self._verdict(self._node(), streak=streak)
+        assert verdict and not verdict.prune and "paused" in verdict.detail.lower()
+        pause.assert_awaited_once()
+        assert pause.await_args.kwargs["trigger_source"] == "cron"
+        assert pause.await_args.kwargs["streak"] is streak
+
+    async def test_untripped_streak_dispatches(self):
+        from utils.webhook_routes import FailureStreak
+        verdict, pause, _ = await self._verdict(
+            self._node(), streak=FailureStreak(count=4, error=self.ERR, span_s=4 * 3600),
+        )
+        assert verdict is None and pause.await_count == 0
+
+    async def test_disabled_trigger_is_skipped_before_the_breaker(self):
+        # An already-paused schedule must not be re-judged (and re-announced)
+        # on the ticks that land before the reconciler prunes it.
+        verdict, pause, _ = await self._verdict(
+            self._node({**self.CRON_CONFIG, "disabled": True}), streak=self._tripped(),
+        )
+        assert verdict and "disabled" in verdict.detail and pause.await_count == 0
+
+    async def test_orphan_is_pruned_before_anything_else(self):
+        node = self._node({"operation": "append_rows_to_sheet"}, node_type="automation-google-sheets")
+        verdict, pause, cleanup = await self._verdict(node, streak=self._tripped())
+        assert verdict.prune and cleanup.called and pause.await_count == 0
+
+    async def test_setup_skip_precedes_the_breaker(self):
+        node = self._node(
+            {"operation": "on_form_response", "schedule": {"interval": "1", "frequency": "minutes"}},
+            node_type="automation-google-forms",
+        )
+        verdict, pause, _ = await self._verdict(node, streak=self._tripped(), ever_ran=False)
+        assert verdict and "not yet saved" in verdict.detail and pause.await_count == 0
+
+    async def test_non_scheduler_deliveries_get_no_verdict(self):
+        verdict, pause, _ = await self._verdict(
+            self._node({**self.CRON_CONFIG, "disabled": True}), streak=self._tripped(), headers={},
+        )
+        assert verdict is None and pause.await_count == 0
+
+    # ── the pause itself ──
+
+    async def _pause(self, *, merge_result=None):
+        from utils import webhook_routes as wr
+        from utils.webhook_manager import WebhookManager
+        spawned = []
+
+        def fake_spawn(coro, name=None):
+            spawned.append(name)
+            coro.close()
+
+        merge = AsyncMock(side_effect=merge_result) if merge_result else AsyncMock()
+        with (
+            patch("utils.webhook_routes.get_native_pool", return_value=MagicMock()),
+            patch.object(WebhookManager, "merge_node_config_patch", merge),
+            patch.object(wr, "spawn", fake_spawn),
+        ):
+            paused = await wr._pause_stuck_schedule(
+                self.WF, "n1", {"id": "n1", "type": "trigger-cron", "config": {"label": "Hourly"}},
+                user_id="u1", trigger_source="cron", streak=self._tripped(),
+            )
+        return paused, merge, spawned
+
+    async def test_pause_disables_the_node_stamps_the_reason_then_reconciles_and_alerts(self):
+        paused, merge, spawned = await self._pause()
+        assert paused is True
+        patch_payload = merge.await_args.args[3]
+        assert patch_payload["disabled"] is True
+        assert patch_payload["paused_reason"].startswith("Paused after 5 identical failures: Node fetch_rows")
+        assert spawned == ["schedule-pause-reconcile:n1", "schedule-paused-alert:n1"]
+
+    async def test_a_pause_that_did_not_land_is_not_announced(self):
+        paused, _, spawned = await self._pause(merge_result=RuntimeError("db down"))
+        assert paused is False and spawned == []

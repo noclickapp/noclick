@@ -36,6 +36,8 @@ from functools import lru_cache
 from typing import Dict, Any, List, Optional
 from uuid import UUID
 
+from utils.graph_nodes import node_disabled
+
 logger = logging.getLogger(__name__)
 
 
@@ -1607,10 +1609,16 @@ class WebhookManager:
                 wf_uuid, node_id,
             )
 
-        if not (spec and spec.expressions):
-            # NOT desired: node gone, operation changed away, or config not
-            # runnable yet. Scheduler-disabled is different — we can't judge,
-            # so never tear down (local dev without the CF scheduler).
+        # A disabled trigger is not desired either: the disabled flag IS the
+        # pause primitive (the panel toggle, the builder's <disable_node>, the
+        # failure breaker in webhook_routes), and this is the one place that
+        # turns it into a pruned schedule.
+        paused = node is not None and node_disabled(node)
+
+        if paused or not (spec and spec.expressions):
+            # NOT desired: node gone, operation changed away, disabled, or
+            # config not runnable yet. Scheduler-disabled is different — we
+            # can't judge, so never tear down (local dev without the CF scheduler).
             if spec is not None and not is_cron_scheduler_enabled():
                 return {"state": "noop"}
             # Prune only when something suggests schedules may exist —
@@ -1647,7 +1655,7 @@ class WebhookManager:
                 await WebhookManager.merge_node_config_patch(
                     pool, wf_uuid, node_id, teardown_values
                 )
-            return {"state": "deregistered", "values": teardown_values}
+            return {"state": "deregistered", "paused": paused, "values": teardown_values}
 
         scope = node_class.schedule_poll_scope(node_config)
         credential_id = _extract_node_credential_id(node, node_config)
@@ -1692,6 +1700,9 @@ class WebhookManager:
             "schedule_id": reg["schedule_id"],
             "schedule_ids": reg["schedule_ids"],
             "next_run": reg["next_run"],
+            # Re-registering is how a breaker pause ends (the node was
+            # re-enabled), so the pause reason goes with it.
+            "paused_reason": None,
             **spec.extra_values,
         }
         if not reg["is_active"]:

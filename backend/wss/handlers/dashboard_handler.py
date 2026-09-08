@@ -682,14 +682,19 @@ def _compose_triggers(workflows: _Workflows, webhook_rows: List[Dict[str, Any]],
             if not kind:
                 continue
             cfg = node_config(node)
-            if cfg.get("disabled") is True:
+            # Switched off on purpose: nothing to show. Paused by the failure
+            # breaker (disabled + its reason): the owner has to act on it.
+            paused_reason = cfg.get("paused_reason") or None
+            if cfg.get("disabled") is True and not paused_reason:
                 continue
             node_id = str(node.get("id") or "")
             hook = hooks.get((wf_id, node_id))
             node_subs = subs.get((wf_id, node_id), [])
             mirror_registered = cfg.get("trigger_registered")
             mirror_error = cfg.get("trigger_error") or None
-            if kind in ("schedule", "poll"):
+            if paused_reason:
+                armed, error = False, paused_reason
+            elif kind in ("schedule", "poll"):
                 armed = bool(mirror_registered) or bool(cfg.get("next_run"))
                 error = mirror_error if not armed else None
             elif kind == "app_event":
@@ -721,7 +726,7 @@ def _compose_triggers(workflows: _Workflows, webhook_rows: List[Dict[str, Any]],
                 broken.append({
                     "id": f"trigger:{wf_id}:{node_id}",
                     "kind": "trigger_broken",
-                    "title": f"{label} is not registered",
+                    "title": f"{label} is paused" if paused_reason else f"{label} is not registered",
                     "detail": error,
                     "workflow": workflows.ref(wf_id),
                     "provider": ntype,

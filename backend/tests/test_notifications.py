@@ -549,6 +549,7 @@ async def test_get_prefs_defaults_and_overrides(monkeypatch):
         "credits": True,
         "digest": False,
         "run_failure": True,
+        "schedule_paused": True,
     }
     assert set(prefs) == set(CATEGORIES)
 
@@ -573,3 +574,23 @@ async def test_credit_cta_defaults_to_the_dashboard(monkeypatch):
     label, url = await notifications._credit_cta("user-1")
     assert label == "Open Dashboard"
     assert url.endswith("/dashboard")
+
+
+@pytest.mark.asyncio
+async def test_schedule_paused_alert_sends_once_per_trigger_per_day(monkeypatch):
+    from utils.notifications import send_schedule_paused_alert
+
+    be = _FakeBackend().install(monkeypatch)
+    kwargs = dict(
+        user_id="user-1", workflow_id="wf-1", node_id="cron", node_label="Daily digest",
+        trigger_source="cron", error="Node gmail failed: Gmail credentials are required",
+        failures=5, span_s=4 * 3600,
+    )
+    assert await send_schedule_paused_alert(**kwargs) is True
+    text = be.sends[0]["text"]
+    assert "5 times in a row" in text and "4 hours" in text and "Daily digest" in text
+    assert "Gmail credentials are required" in text
+    assert be.rows[0]["category"] == "schedule_paused"
+    # A re-enable that fails the same way re-pauses at once — same news, one email.
+    assert await send_schedule_paused_alert(**kwargs) is False
+    assert len(be.sends) == 1

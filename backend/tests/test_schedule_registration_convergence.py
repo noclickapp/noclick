@@ -583,3 +583,48 @@ def test_every_poll_trigger_op_is_a_family_member():
         "Schedule-trigger operations outside the registration family — they "
         f"ship dead from headless surfaces: {problems}"
     )
+
+
+# ─── pausing is the disabled flag ────────────────────────────────────────────
+
+
+async def test_disabled_trigger_converges_to_no_schedules_and_keeps_its_reason():
+    """The failure breaker (webhook_routes) pauses a schedule by disabling the
+    node and mirroring paused_reason; the reconciler prunes the schedule and
+    touches only its own registration mirrors, so the reason survives."""
+    config = {
+        **COMPLETE_FORMS_CONFIG,
+        "disabled": True,
+        "paused_reason": "Paused after 5 identical failures: Node x failed",
+    }
+    result, world = await _reconcile("automation-google-forms", config, row=_row())
+    assert result["state"] == "deregistered" and result["paused"] is True
+    assert world.pruned == [(WF, (NODE,))]
+    assert world.deactivated == [(WF, NODE)]
+    assert world.patches[0]["trigger_registered"] is False
+    assert "paused_reason" not in world.patches[0]
+
+
+async def test_re_enabling_registers_and_clears_the_pause_reason():
+    config = {**COMPLETE_FORMS_CONFIG, "paused_reason": "Paused after 5 identical failures: x"}
+    result, world = await _reconcile("automation-google-forms", config)
+    assert result["state"] == "registered"
+    assert world.patches[0]["paused_reason"] is None
+
+
+async def test_disabled_never_registered_trigger_is_a_noop():
+    result, world = await _reconcile(
+        "automation-google-forms", {**COMPLETE_FORMS_CONFIG, "disabled": True},
+    )
+    assert result["state"] == "noop" and not world.registered
+
+
+async def test_disable_toggle_is_a_registration_field():
+    """The panel's disable toggle must reconcile (prune / re-register) like
+    any other registration-relevant edit."""
+    from nodes.core.registry import NODE_REGISTRY
+
+    cls = NODE_REGISTRY["automation-google-forms"]
+    on = cls.registration_fingerprint_fields(COMPLETE_FORMS_CONFIG)
+    off = cls.registration_fingerprint_fields({**COMPLETE_FORMS_CONFIG, "disabled": True})
+    assert on != off and off["disabled"] is True

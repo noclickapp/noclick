@@ -334,7 +334,8 @@ export type NotificationCategory =
     | 'credits'
     | 'digest'
     | 'credential_revoked'
-    | 'channel_disconnected';
+    | 'channel_disconnected'
+    | 'schedule_paused';
 
 export interface NotificationEntry {
     id: string;
