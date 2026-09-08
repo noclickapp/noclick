@@ -10,6 +10,7 @@ from abc import ABC, abstractmethod
 from functools import lru_cache
 from typing import (
     TYPE_CHECKING,
+    FrozenSet,
     Callable,
     ClassVar,
     Dict,
@@ -67,6 +68,81 @@ def _config_target_and_members(config_data: Dict[str, Any], config_model: Any):
         if typing.get_origin(annotation) is typing.Union:
             models = [a for a in typing.get_args(annotation) if hasattr(a, 'model_fields')]
     return target, models
+
+
+def credential_type_literals(config_model: Any) -> Optional[FrozenSet[str]]:
+    """The ``credential_type`` values a node's credentials union accepts, or
+    None when some member takes any string (or carries no discriminator)."""
+    import typing
+    field = getattr(config_model, 'model_fields', {}).get('credentials')
+    if field is None:
+        return None
+    members: list = []
+    stack = [field.annotation]
+    while stack:
+        ann = stack.pop()
+        origin = typing.get_origin(ann)
+        if origin is typing.Annotated:
+            stack.append(typing.get_args(ann)[0])
+        elif origin is typing.Union or type(ann).__name__ == 'UnionType':
+            stack.extend(typing.get_args(ann))
+        elif hasattr(ann, 'model_fields'):
+            members.append(ann)
+    if not members:
+        return None
+    accepted: set = set()
+    for member in members:
+        ct = member.model_fields.get('credential_type')
+        if ct is None:
+            return None
+        ann = ct.annotation
+        if typing.get_origin(ann) is typing.Annotated:
+            ann = typing.get_args(ann)[0]
+        parts = typing.get_args(ann) if typing.get_origin(ann) is typing.Union else (ann,)
+        for part in parts:
+            if part is str:
+                return None
+            if typing.get_origin(part) is typing.Literal:
+                accepted.update(typing.get_args(part))
+    return frozenset(accepted)
+
+
+def reconcile_credential_type(config_data: Dict[str, Any], config_model: Any) -> Dict[str, Any]:
+    """Make the credentials' ``credential_type`` one the node's model accepts.
+
+    The credentials ROW type is authoritative and rides the decrypted blob
+    (utils.credentials.get_credential), but rows are typed by where they were
+    minted, not by every node they serve: one Google row (``google_sheets_oauth``)
+    powers Gmail/Drive/YouTube nodes, Microsoft rows serve Excel/Outlook/Word,
+    and pre-2026 rows carry lowercased class titles (``bottokencredential``).
+    Row type accepted → it wins (a stale blob tag must never pick another
+    provider's model). Otherwise the key the credential was attached under
+    (the node's own type, set by the credential picker) wins, and failing that
+    the tag is dropped so the union selects by shape, as it did before the
+    row stamp landed (2026-09-07: 94 live workflows would have failed).
+    Pure — returns a copy when it changes anything."""
+    creds = config_data.get('credentials')
+    if not isinstance(creds, dict):
+        return config_data
+    accepted = credential_type_literals(config_model)
+    tag = creds.get('credential_type')
+    if accepted is None or tag is None or tag in accepted:
+        return config_data
+    ids = config_data.get('credentialIds')
+    ids = ids if isinstance(ids, dict) else {}
+    chosen = config_data.get('credential_id')
+    ordered = [k for k, v in ids.items() if v == chosen] + [k for k, v in ids.items() if v != chosen]
+    key = next((k for k in ordered if k in accepted), None)
+    out = dict(config_data)
+    out['credentials'] = creds = dict(creds)
+    name = getattr(config_model, '__name__', str(config_model))
+    if key is not None:
+        logger.info(f"[{name}] credential row type {tag!r} is not one this node declares; using attachment key {key!r}")
+        creds['credential_type'] = key
+    else:
+        logger.warning(f"[{name}] credential row type {tag!r} is not one this node declares ({sorted(accepted)}); letting the credential union choose by shape")
+        creds.pop('credential_type')
+    return out
 
 
 @lru_cache(maxsize=None)
@@ -928,7 +1004,7 @@ class WorkflowNode(ABC):
             # judging raw values here reported verdicts the runtime parse
             # contradicted (Gmail validation regression).
             adapter = _cached_type_adapter(config_model)
-            adapter.validate_python(runtime_config_view(config_data, config_model))
+            adapter.validate_python(reconcile_credential_type(runtime_config_view(config_data, config_model), config_model))
 
             return {
                 "valid": True,
@@ -1030,6 +1106,7 @@ class WorkflowNode(ABC):
         # rejected unset markers dropped to their defaults. Validators judge
         # the same view, so their verdicts match what happens here.
         config_data = runtime_config_view(config_data, config_model)
+        config_data = reconcile_credential_type(config_data, config_model)
 
         try:
             # Use TypeAdapter to handle Union types
