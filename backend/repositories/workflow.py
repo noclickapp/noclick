@@ -33,6 +33,15 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 
+# A delivery run is one whose agent handed its turn to a warm sandbox (node
+# output ``awaiting_agent_turn``); the response arrives as a SEPARATE run. It
+# is plumbing to the user but a real execution to the system: its CAS outputs
+# (the fired event), tool_call_events and the response run's
+# ``input_execution_ids`` all key on its id, and the CAS writer only persists
+# for a live execution row. So the row is KEPT under this terminal status and
+# every user-facing history/latest/count read hides it with the predicate.
+from repositories.run_visibility import DELIVERED_STATUS, USER_VISIBLE_RUN_SQL  # noqa: F401 — re-exported
+
 
 # ── Column allowlists ──────────────────────────────────────────────────────
 # The dynamic UPDATE builders emit `col = $N` from a user-supplied dict; the
@@ -932,11 +941,12 @@ class WorkflowRepo:
         """Cursor-paginated execution log — served by the covering index
         ``idx_workflow_executions_workflow_started``. Optional from_ts/to_ts
         bound the started_at range (NULL = unbounded)."""
-        rows = await conn.fetch("""
+        rows = await conn.fetch(f"""
             SELECT id, workflow_id, user_id, status, started_at, finished_at,
                    nodes_executed, error, trigger_source, graph_hash
             FROM workflow_executions
             WHERE workflow_id = $1
+              AND {USER_VISIBLE_RUN_SQL}
               AND ($2::text[] IS NULL OR status = ANY($2::text[]))
               AND ($3::text[] IS NULL OR trigger_source = ANY($3::text[]))
               AND ($4::text IS NULL OR error ILIKE '%' || $4::text || '%')
@@ -959,13 +969,13 @@ class WorkflowRepo:
     ) -> List[Dict[str, Any]]:
         """GROUPING SETS aggregate for the workflow's execution counts (total
         + per-status + per-trigger). Index-Only Scan at prod scale."""
-        rows = await conn.fetch("""
+        rows = await conn.fetch(f"""
             SELECT GROUPING(status, trigger_source) AS gid,
                    status,
                    trigger_source,
                    count(*) AS n
             FROM workflow_executions
-            WHERE workflow_id = $1
+            WHERE workflow_id = $1 AND {USER_VISIBLE_RUN_SQL}
             GROUP BY GROUPING SETS ((status), (trigger_source), ())
         """, workflow_id)
         return [dict(r) for r in rows]
@@ -1006,10 +1016,10 @@ class WorkflowRepo:
         self, conn, workflow_id, user_id
     ) -> Optional[Dict[str, Any]]:
         """MCP ``get_execution_status`` by ``workflow_id`` (latest run)."""
-        row = await conn.fetchrow("""
+        row = await conn.fetchrow(f"""
             SELECT id, workflow_id, status, started_at, finished_at, nodes_executed, error
             FROM workflow_executions
-            WHERE workflow_id = $1 AND user_id = $2
+            WHERE workflow_id = $1 AND user_id = $2 AND {USER_VISIBLE_RUN_SQL}
             ORDER BY started_at DESC
             LIMIT 1
         """, workflow_id, user_id)
@@ -1021,8 +1031,8 @@ class WorkflowRepo:
         """Latest non-running execution — builder ``run_node`` reads this to
         classify a failed run."""
         row = await conn.fetchrow(
-            """SELECT status, error FROM workflow_executions
-               WHERE workflow_id = $1 AND status != 'running'
+            f"""SELECT status, error FROM workflow_executions
+               WHERE workflow_id = $1 AND status != 'running' AND {USER_VISIBLE_RUN_SQL}
                ORDER BY finished_at DESC NULLS LAST LIMIT 1""",
             workflow_id,
         )
@@ -1031,21 +1041,39 @@ class WorkflowRepo:
     async def delete_execution(
         self, conn, execution_id
     ) -> None:
-        """Delete an execution row — used for no-op Drive/Calendar
-        wake-ups so they don't appear in run history."""
+        """Delete an execution row — only for no-op Drive/Calendar wake-ups
+        (nothing ran, nothing to keep). Delivery runs are never deleted: see
+        ``mark_execution_delivered``."""
         await conn.execute(
             "DELETE FROM workflow_executions WHERE id = $1", execution_id,
         )
+
+    async def _finish_execution(
+        self, conn, execution_id, *, status: str, nodes_executed: int
+    ) -> None:
+        await conn.execute("""
+            UPDATE workflow_executions
+            SET status = $1, finished_at = NOW(), nodes_executed = $2
+            WHERE id = $3
+        """, status, nodes_executed, execution_id)
 
     async def mark_execution_completed(
         self, conn, execution_id, nodes_executed: int
     ) -> None:
         """Terminal state = completed."""
-        await conn.execute("""
-            UPDATE workflow_executions
-            SET status = 'completed', finished_at = NOW(), nodes_executed = $1
-            WHERE id = $2
-        """, nodes_executed, execution_id)
+        await self._finish_execution(
+            conn, execution_id, status="completed", nodes_executed=nodes_executed,
+        )
+
+    async def mark_execution_delivered(
+        self, conn, execution_id, nodes_executed: int
+    ) -> None:
+        """Terminal state = delivered: the agent handed its turn to a sandbox
+        (see ``DELIVERED_STATUS``). The row stays so the delivery's outputs and
+        tool calls remain addressable; readers hide it via ``USER_VISIBLE_RUN_SQL``."""
+        await self._finish_execution(
+            conn, execution_id, status=DELIVERED_STATUS, nodes_executed=nodes_executed,
+        )
 
     async def mark_execution_completed_empty(
         self, conn, execution_id
@@ -1260,6 +1288,80 @@ class WorkflowRepo:
             DELETE FROM workflow_checkpoints
             WHERE id = $1 AND user_id = $2
         """, checkpoint_id, user_id)
+
+    # ══════════════════════════════════════════════════════════════════════
+    # workflow_build_requests (analytics)
+    # ══════════════════════════════════════════════════════════════════════
+
+    async def insert_build_request_pool(
+        self,
+        *,
+        user_id: str,
+        request_type: str,
+        prompt: str,
+        model: Optional[str],
+        generation_id: str,
+        success: bool,
+        error_message: Optional[str] = None,
+        result_graph: Optional[Dict[str, Any]] = None,
+        result_summary: Optional[Dict[str, Any]] = None,
+        duration_ms: Optional[int] = None,
+        current_graph: Optional[Dict[str, Any]] = None,
+        current_graph_summary: Optional[Dict[str, Any]] = None,
+        target_node_ids: Optional[List[str]] = None,
+        selected_node_id: Optional[str] = None,
+    ) -> None:
+        """Pool-owning fire-and-forget variant for the AI builder path —
+        the caller wraps this in ``spawn(...)`` so the analytics write
+        never blocks the response. Handler previously used a sync
+        ``execute_query(wait=False)`` path; the async spawn variant keeps
+        the semantics identical."""
+        async with self._pool.acquire() as conn:
+            await self.insert_build_request(
+                conn,
+                user_id=user_id, request_type=request_type, prompt=prompt,
+                model=model, generation_id=generation_id, success=success,
+                error_message=error_message, result_graph=result_graph,
+                result_summary=result_summary, duration_ms=duration_ms,
+                current_graph=current_graph,
+                current_graph_summary=current_graph_summary,
+                target_node_ids=target_node_ids, selected_node_id=selected_node_id,
+            )
+
+    async def insert_build_request(
+        self,
+        conn,
+        *,
+        user_id: str,
+        request_type: str,
+        prompt: str,
+        model: Optional[str],
+        generation_id: str,
+        success: bool,
+        error_message: Optional[str],
+        result_graph: Optional[Dict[str, Any]],
+        result_summary: Optional[Dict[str, Any]],
+        duration_ms: Optional[int],
+        current_graph: Optional[Dict[str, Any]],
+        current_graph_summary: Optional[Dict[str, Any]],
+        target_node_ids: Optional[List[str]],
+        selected_node_id: Optional[str],
+    ) -> None:
+        """Fire-and-forget analytics INSERT for the AI builder path.
+
+        Kept async here so callers can either ``await`` (for tests) or
+        ``spawn(...)`` (production fire-and-forget)."""
+        await conn.execute("""
+            INSERT INTO workflow_build_requests (
+                user_id, request_type, prompt, model, generation_id,
+                success, error_message, result_graph, result_summary, duration_ms,
+                current_graph, current_graph_summary, target_node_ids, selected_node_id
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+        """,
+            user_id, request_type, prompt, model, generation_id,
+            success, error_message, result_graph, result_summary, duration_ms,
+            current_graph, current_graph_summary, target_node_ids, selected_node_id,
+        )
 
     # ══════════════════════════════════════════════════════════════════════
     # workflow_folders (owner-scoped, builder platform_ops)

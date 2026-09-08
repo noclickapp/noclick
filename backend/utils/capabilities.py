@@ -68,6 +68,11 @@ ACTIVITY_SIGNAL = "activity.signal"
 # -> list. Without one a workflow has no public endpoints to describe.
 PUBLIC_ENDPOINTS = "workflow.public_endpoints"
 
+# Tell whoever runs this instance that one node's execution grew the process
+# by a lot: async (workflow_id, node_id, node_label, node_type, rss_mb,
+# rss_delta_mb, threads) -> None. The engine logs the allocators either way.
+MEMORY_SPIKE_ALERT = "diagnostics.memory_spike_alert"
+
 _providers: Dict[str, Any] = {}
 
 

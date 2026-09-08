@@ -126,6 +126,42 @@ def build_node_run_statuses(
     return statuses
 
 
+def _is_awaiting_marker(output: Any) -> bool:
+    """An agent's delivery marker: the turn was handed to a sandbox and the
+    response arrives as a separate run."""
+    return isinstance(output, dict) and output.get("status") == "awaiting_agent_turn"
+
+
+def outputs_to_persist(
+    node_outputs: Dict[str, Any],
+    node_statuses: Dict[str, Dict[str, Any]],
+    preloaded: Dict[str, Any],
+    *,
+    keep_context: bool,
+) -> Dict[str, Any]:
+    """A run persists what it RAN. An output seeded unchanged from stored
+    context (``preloaded``, compared by identity) never re-persists under this
+    execution: the copy would become the node's LATEST manifest and hijack
+    every reader keyed on recency (lost-turn reconciler, canvas hydrate, the
+    next run's preload), and it is dead weight no run view returns. A seeded
+    node that nonetheless ran (has a status — a replayed trigger) is kept.
+
+    ``keep_context`` (suspended runs): resume re-seeds from THIS execution's
+    rows, so seeded context must land — except a seeded awaiting marker,
+    which is never legitimate context.
+    """
+    kept: Dict[str, Any] = {}
+    for node_id, output in node_outputs.items():
+        seeded = (
+            node_id in preloaded
+            and preloaded[node_id] is output
+            and node_id not in node_statuses
+        )
+        if not seeded or (keep_context and not _is_awaiting_marker(output)):
+            kept[node_id] = output
+    return kept
+
+
 @dataclass
 class WorkflowExecutionResult:
     execution_id: str
@@ -609,7 +645,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     gate_error = insufficient_credits_message(remaining, required)
                     logger.warning(f"[WorkflowExecution] {gate_error}")
                     # Route the policy event to the user-scoped bus. Sending it with
-                    # workflow_id would make it exclusive to the workflow relay relay,
+                    # workflow_id would make it exclusive to the workflow relay,
                     # while account-level usage consumers subscribe by user_id.
                     await send_event(self.sio, sid, CreditsExhaustedEvent(
                         credits_remaining=remaining,
@@ -920,6 +956,11 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                                 sid, request.workflow_id, rn['id'],
                                 rn.get('type', ''), replayed[rn['id']],
                             )
+                            # The replayed event IS this run's inbound event:
+                            # record it as completed so it persists with the run.
+                            self._execution_node_statuses.setdefault(execution_id, {})[rn['id']] = {
+                                "status": "completed", "error": None,
+                            }
 
             # A headless Drive/Calendar trigger wakes on every drive change (the
             # watch is drive-global); non-matching wake-ups return change_count=0.
@@ -977,6 +1018,23 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             # execution record. The trigger advanced its cursor during execute().
             is_noop_trigger_run = bool(noop_silent_node_id) and success and nodes_executed == 0
 
+            # A delivery run: the agent handed its turn to the sandbox (output
+            # 'awaiting_agent_turn') and the real response arrives as a SEPARATE run.
+            # Plumbing to the user (hidden from run history via the terminal
+            # 'delivered' status), but its row must SURVIVE: the CAS persist below
+            # is fire-and-forget and refuses a deleted execution, so deleting the
+            # row here raced it and lost the delivery's outputs — the fired event
+            # the response run's package (input_execution_ids) resolves, and the
+            # awaiting marker the lost-turn reconciler keys on (2026-09-02).
+            # Judged on the nodes that RAN: preloaded context can carry another
+            # agent's in-flight marker (a cron branch beside a mid-turn agent),
+            # which must not turn an unrelated run into hidden plumbing.
+            ran_ids = {n['id'] for n in executable_nodes}
+            is_delivery_run = success and any(
+                _is_awaiting_marker(o)
+                for nid, o in (node_outputs or {}).items() if nid in ran_ids
+            )
+
             # Check if a suspending node (approval, delay) halted execution — its
             # strategy already set the execution status and the node handled its
             # own side effects. We just need to persist outputs for resume, emit
@@ -988,6 +1046,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                             request.workflow_id, user_id, node_outputs,
                             execution_id=execution_id,
                             executable_nodes=executable_nodes,
+                            preloaded=preloaded_outputs, keep_context=True,
                         ),
                         name=f"persist-node-outputs-suspended:{execution_id}",
                     )
@@ -1089,6 +1148,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                         request.workflow_id, user_id, node_outputs,
                         execution_id=execution_id,
                         executable_nodes=executable_nodes,
+                        preloaded=preloaded_outputs,
                     ),
                     name=f"persist-node-outputs:{execution_id}",
                 )
@@ -1135,6 +1195,10 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     nodes_executed=nodes_executed,
                     duration=duration,
                     error=error_msg,
+                    # A delivery run is hidden from history — tell the client to drop
+                    # its tracking entry (which the optimistic chat log line was
+                    # reconciled onto) instead of recording a phantom completed run.
+                    dropped=is_delivery_run,
                 ), workflow_id=request.workflow_id, execution_relay=relay)
             completion_event_sent = True
 
@@ -1145,7 +1209,9 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 "duration_s": round(duration, 3),
                 "trigger": getattr(request, 'trigger', None) or 'manual',
             }
-            if success and not is_noop_trigger_run:
+            if is_delivery_run:
+                pass  # agent-chat delivery is plumbing — not a user-facing run, no analytics
+            elif success and not is_noop_trigger_run:
                 log_activity_background(Events.WORKFLOW_RUN_COMPLETED, user_id, analytics_props)
                 # Activation milestone: first successful run is the "got value" moment.
                 # set_once pins activated/activated_at to that first run, so with
@@ -1166,9 +1232,13 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 async with pool.acquire() as conn:
                     repo = WorkflowRepo(pool)
                     if is_noop_trigger_run:
-                        # Drop the record entirely so a global-watch no-op never
-                        # appears in run history.
+                        # Nothing ran and nothing was persisted — drop the record so
+                        # a global-watch no-op never appears in run history.
                         await repo.delete_execution(conn, execution_id)
+                    elif is_delivery_run:
+                        await repo.mark_execution_delivered(
+                            conn, execution_id, nodes_executed,
+                        )
                     elif success:
                         await repo.mark_execution_completed(
                             conn, execution_id, nodes_executed,
@@ -1539,6 +1609,10 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         if not initial_outputs:
             logger.error(f"[resume] no outputs for execution {execution_id}")
             return
+        # Everything but the resuming node is re-seeded unchanged from this
+        # execution's own rows; re-persisting it would only clobber the earlier
+        # run's recorded statuses with NULL.
+        seeded = {k: v for k, v in initial_outputs.items() if k != resume_node_id}
 
         # 2. Restore the suspending node's output. For a conditional resume
         #    (approval) set the chosen output_handle for branch routing.
@@ -1636,7 +1710,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 conn, uuid_module.UUID(execution_id),
             )
 
-        # 7. Connect to workflow relay relay. Declared up-front so the finally
+        # 7. Connect to the workflow relay. Declared up-front so the finally
         # block below can release it on any exit path. Pre-2026-05-25 the
         # cleanup at the end of this method lived outside a finally, so any
         # raise between relay creation and the end leaked the relay + its
@@ -1645,7 +1719,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         # +0.2 threads / +1.6 MB per call.
         relay = create_execution_relay(workflow_id, execution_id, user_id)
         if not await relay.connect():
-            logger.error("[resume] failed to connect to workflow relay relay")
+            logger.error("[resume] failed to connect to WorkflowRoom relay")
             return
 
         relay_stop_task: Optional[asyncio.Task] = None
@@ -1700,6 +1774,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                         workflow_id, user_id, node_outputs,
                         execution_id=execution_id,
                         executable_nodes=downstream_nodes,
+                        preloaded=seeded,
                     ),
                     name=f"persist-node-outputs-resume:{execution_id}",
                 )
@@ -2612,7 +2687,19 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                         logger.warning(
                             f"[MEMORY] tracemalloc top allocators after {node_id} \"{node_label}\":\n" + "\n".join(lines)
                         )
+                        from utils.capabilities import MEMORY_SPIKE_ALERT, capability
 
+                        alert_memory_spike = capability(MEMORY_SPIKE_ALERT)
+                        if alert_memory_spike is not None:
+                            spawn(
+                                alert_memory_spike(
+                                    workflow_id=workflow_id, node_id=node_id,
+                                    node_label=node_label, node_type=node_type,
+                                    rss_mb=rss_after, rss_delta_mb=rss_delta,
+                                    threads=threads_after,
+                                ),
+                                name="memory-spike-alert",
+                            )
 
                     # Check for error indicators in output (e.g., serverless function exit_code != 0)
                     output_error = self._check_output_for_error(output)
@@ -3479,7 +3566,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
 
         # Execute the node with outputs from upstream nodes. Wrap in caller_path_scope
         # so any OAuth refresh triggered by this node's _ensure_fresh_token is tagged
-        # 'execute' in the oauth.refresh span / operator refresh audit audit row.
+        # 'execute' in the oauth.refresh span / credential_refresh_events audit row.
         logger.info(f"[WorkflowExecution] Executing {node_type} node {node_id}")
         from nodes.core.oauth_audit import caller_path_scope
         with caller_path_scope("execute"):
@@ -3529,6 +3616,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         node_outputs: Dict[str, Any],
         execution_id: Optional[str] = None,
         executable_nodes: Optional[List[Dict[str, Any]]] = None,
+        preloaded: Optional[Dict[str, Any]] = None,
+        keep_context: bool = False,
     ) -> None:
         """Persist a run's node outputs + per-node terminal status to the CAS
         (the sole node-output store; large outputs are chunked there, no local
@@ -3542,11 +3631,16 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             node_outputs: Dict mapping node_id to output data
             execution_id: UUID of the execution (CAS key)
             executable_nodes: List of node dicts with id/type (set-variable detect)
+            preloaded: Outputs seeded from stored context — see ``outputs_to_persist``
+            keep_context: Suspended run: seeded context must land for resume
         """
         # Per-node last-run status built by the executor — pop so it's recorded
         # exactly once and the map doesn't leak. Stored as the CAS manifest's
         # last_run_status/error; the frontend hydrates it from node_statuses on load.
         node_statuses = self._execution_node_statuses.pop(execution_id, None) if execution_id else None
+        node_outputs = outputs_to_persist(
+            node_outputs or {}, node_statuses or {}, preloaded or {}, keep_context=keep_context,
+        )
         if not node_outputs and not node_statuses:
             return
 
