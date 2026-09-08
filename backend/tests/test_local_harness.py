@@ -361,6 +361,51 @@ async def test_run_local_harness_turn_end_to_end(monkeypatch, tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_delivery_failure_after_exit_reports_the_process_own_error(tmp_path, monkeypatch):
+    """The CLI died before reading its prompt (not signed in, a bad flag): the
+    broken pipe is the symptom and its stderr the diagnosis. Under load the
+    transport error used to win the future (2026-09-07 flake)."""
+    from nodes.agent.local_process.session import Session
+
+    class Dead(Session):
+        async def send(self, receipt, text):
+            raise ConnectionResetError("Connection lost")
+
+    session = Dead(workdir=tmp_path, env={}, command=["claude"], cleanup=lambda: None)
+    session.proc = SimpleNamespace(returncode=3)
+    session.stderr = b"catastrophe\n"
+    monkeypatch.setattr(session, "_signal", lambda sig: None)
+    future = await session.submit("hello")
+    assert (await future)["error"] == "catastrophe"
+
+
+@pytest.mark.asyncio
+async def test_delivery_failure_with_a_live_child_blames_the_pipe(tmp_path, monkeypatch):
+    from nodes.agent.local_process import session as session_module
+    from nodes.agent.local_process.session import Session
+
+    monkeypatch.setattr(session_module, "DELIVERY_EXIT_GRACE_S", 0.05)
+
+    class Alive(Session):
+        async def send(self, receipt, text):
+            raise ConnectionResetError("Connection lost")
+
+    proc = SimpleNamespace(returncode=None)
+
+    async def wait():
+        await asyncio.sleep(0.1)
+        proc.returncode = 0
+        return 0
+
+    proc.wait = wait
+    session = Alive(workdir=tmp_path, env={}, command=["claude"], cleanup=lambda: None)
+    session.proc = proc
+    monkeypatch.setattr(session, "_signal", lambda sig: None)
+    future = await session.submit("hello")
+    assert (await future)["error"] == "Local agent delivery failed: Connection lost"
+
+
+@pytest.mark.asyncio
 async def test_run_local_harness_turn_failure_shape(monkeypatch, tmp_path):
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()

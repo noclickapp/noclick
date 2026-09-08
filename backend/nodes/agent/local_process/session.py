@@ -14,6 +14,9 @@ from uuid import uuid4
 from nodes.agent.cli_protocol import RpcError
 
 IDLE_TIMEOUT_S = float(os.environ.get("NOCLICK_LOCAL_AGENT_IDLE_TIMEOUT", "60"))
+# A pipe breaks before the child's exit is observed; this is how long a failed
+# delivery waits to learn whether the child is gone before blaming the pipe.
+DELIVERY_EXIT_GRACE_S = 1.0
 
 
 class Session:
@@ -31,6 +34,7 @@ class Session:
         self.proc = None
         self.tasks: set[asyncio.Task] = set()
         self.stderr = b""
+        self._stderr_task = None
         self._idle_task = None
         self._close_task = None
 
@@ -47,7 +51,7 @@ class Session:
             stderr=asyncio.subprocess.PIPE, limit=4 * 1024 * 1024,
             start_new_session=os.name == "posix",
         )
-        self.task(self._read_stderr())
+        self._stderr_task = self.task(self._read_stderr())
 
     async def _read_stderr(self):
         while data := await self.proc.stderr.read(4096):
@@ -68,9 +72,37 @@ class Session:
         try:
             await self.send(receipt, text)
         except Exception as exc:
-            # Uncertain delivery is terminal; never replay a possibly accepted input.
-            await self.close(f"Local agent delivery failed: {exc}")
+            # Uncertain delivery is terminal; never replay a possibly accepted
+            # input. A child that died before reading owns the story: its
+            # stderr says why (not signed in, a bad flag) and the broken pipe
+            # is only the symptom, so it must not beat the exit reader to
+            # the future.
+            await self.close(
+                await self.exit_error() if await self.exited()
+                else f"Local agent delivery failed: {exc}"
+            )
         return future
+
+    async def exited(self) -> bool:
+        """Whether the child is gone: reaped already, or within the grace."""
+        if self.proc is None:
+            return False
+        if self.proc.returncode is not None:
+            return True
+        try:
+            await asyncio.wait_for(self.proc.wait(), DELIVERY_EXIT_GRACE_S)
+        except asyncio.TimeoutError:
+            return False
+        return True
+
+    async def exit_error(self) -> str:
+        """The exited child's own account: its diagnostic output, else its
+        exit code. The drain is bounded because a tool child that inherited
+        the pipe can hold it open past its parent's exit."""
+        if self._stderr_task is not None and not self._stderr_task.done():
+            await asyncio.wait({self._stderr_task}, timeout=0.5)
+        detail = self.stderr.decode(errors="replace").strip()
+        return detail or f"Local agent exited with code {self.proc.returncode}"
 
     async def send(self, receipt, text):
         raise NotImplementedError
@@ -203,10 +235,7 @@ class LineSession(Session):
                 else:
                     self.on_event(event)
             await self.proc.wait()
-            # Drain remaining diagnostic output before reporting an early exit.
-            await asyncio.sleep(0)
-            detail = self.stderr.decode(errors="replace").strip()
-            await self.close(detail or f"Local agent exited with code {self.proc.returncode}")
+            await self.close(await self.exit_error())
         except asyncio.CancelledError:
             raise
         except Exception as exc:
