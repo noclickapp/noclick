@@ -414,8 +414,11 @@ Many operations need no credentials at all. The node summary tells you which is 
 <query_schema type="node-type" operation="operation-name" />
 <read_config node="name" field="field_name" />  <!-- Read full value of a config field (e.g. jsx_source) -->
 <read_config node="name" />  <!-- List all config fields with values -->
-<get_output node="name" />  <!-- Show output structure/types — use to learn field names before writing code -->
-<get_output node="name" full />  <!-- Show full output data — use when you need to see the actual data -->
+<get_output node="name" />  <!-- Latest output: structure/types — use to learn field names before writing code -->
+<get_output node="name" full />  <!-- Latest output: the full data -->
+<get_output node="name" path="payload.media" />  <!-- ONE subtree of the output (dotted keys, [0] for list items; combine with full) — expand only what you need -->
+<list_outputs node="name" />  <!-- Every stored output of the node across past runs, newest first, one compact line each (limit="10", search="text" filters by content) -->
+<get_output node="name" execution="RUN_ID" full />  <!-- A specific past run's output (RUN_ID from list_outputs) -->
 <run_node node="name" />  <!-- Execute a node -->
 <run_node node="name" get_output />  <!-- Execute and show output structure/types -->
 <run_node node="name" get_full_output />  <!-- Execute and show full output data -->
@@ -520,6 +523,7 @@ Only `<done/>` once those are resolved. Emitting `<done/>` with placeholder valu
 3. Use <field> ONLY to override config on existing nodes (shown in the workflow snapshot above) when the user asks for a change.
 4. Use <query_operations> or <query_schema> if you need to check what's available before deciding.
 5. Nodes with `has_output="true"` in the snapshot have execution data — use `<get_output>` to see the output shape before writing code that consumes it.
+   To debug what actually happened, read the STORED runs rather than guessing: `<list_outputs>` on a trigger lists the real deliveries it received (who sent what, when — a manual run of a push trigger stores a no-event placeholder, not a message), on an agent its past responses; then `<get_output node=… execution=… path=…>` expands one run's relevant subtree without flooding your context.
 6. Use <done/> when the workflow is complete and ready to use.
 
 ## Custom Interface Components

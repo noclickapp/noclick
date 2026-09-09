@@ -152,6 +152,22 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 from utils.node_outputs import latest_output_meta
                 return await latest_output_meta(pool, wf_id, node_id)
 
+            async def get_node_output_history(self, node_id: str, limit: int) -> List[Dict[str, Any]]:
+                pool = await handler.get_pool()
+                if not pool or not wf_id:
+                    return []
+                from utils.node_outputs import output_history
+                return await output_history(pool, wf_id, node_id, limit=limit)
+
+            async def get_node_output_at(self, node_id: str, execution_id: str) -> Optional[Any]:
+                pool = await handler.get_pool()
+                if not pool or not wf_id:
+                    return None
+                from utils.node_outputs import read_node_output
+                return await read_node_output(
+                    pool, execution_id=execution_id, node_id=node_id, workflow_id=wf_id,
+                )
+
             async def get_nodes_with_output(self, node_ids: List[str]) -> set:
                 pool = await handler.get_pool()
                 if not pool or not wf_id:

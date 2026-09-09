@@ -5,7 +5,11 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import re
 import time
+import uuid
+from collections import deque
+from datetime import datetime, timezone
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Protocol, Set, Tuple, TYPE_CHECKING
 
 from opentelemetry import trace
@@ -84,7 +88,7 @@ AGENTIC_TAGS: Set[str] = {
     # Config inspection
     'read_config',
     # Node output inspection and execution
-    'get_output', 'run_node',
+    'get_output', 'list_outputs', 'run_node',
     # Workflow variables + test runs
     'define_variable', 'add_test_run', 'run_test',
     # Output
@@ -1548,7 +1552,19 @@ class PlatformOps(Protocol):
     """Async callbacks for operations that need DB or socket access."""
 
     async def get_node_output(self, node_id: str) -> Optional[Dict[str, Any]]:
-        """Get latest output with metadata. Returns {output, created_at} or None."""
+        """Get latest output with metadata. Returns {output, created_at,
+        execution_id, stored_count} or None."""
+        ...
+
+    async def get_node_output_history(self, node_id: str, limit: int) -> List[Dict[str, Any]]:
+        """The node's stored outputs across runs, newest first:
+        [{execution_id, created_at, output, trigger_source, run_status,
+        node_status, error}] (utils.node_outputs.output_history)."""
+        ...
+
+    async def get_node_output_at(self, node_id: str, execution_id: str) -> Optional[Any]:
+        """One past run's output for the node, or None when nothing is stored
+        for that (run, node) — the workflow-scoped utils.node_outputs.read_node_output."""
         ...
 
     async def get_nodes_with_output(self, node_ids: List[str]) -> Set[str]:
@@ -1623,7 +1639,7 @@ class PlatformOps(Protocol):
 WORKFLOW_CONTENT_TAGS: Set[str] = {'define_variable', 'add_test_run'}
 
 # Tags that require platform ops (async, DB access)
-NODE_OPS_TAGS: Set[str] = {'get_output', 'run_node'}
+NODE_OPS_TAGS: Set[str] = {'get_output', 'list_outputs', 'run_node'}
 PLATFORM_TAGS: Set[str] = {
     *NODE_OPS_TAGS,
     'search_credentials',
@@ -1644,6 +1660,159 @@ import json as _json
 _FULL_OUTPUT_FIELD_CHAR_CAP = 5000
 # Final safety net on the serialized JSON length, applied after per-field truncation.
 _FULL_OUTPUT_TOTAL_CHAR_CAP = 30000
+
+# <list_outputs>: one compact line per stored run, so browsing a trigger's
+# deliveries costs a few hundred tokens, not a page per event.
+LIST_OUTPUTS_DEFAULT_LIMIT = 10
+LIST_OUTPUTS_MAX_LIMIT = 30
+LIST_OUTPUTS_SEARCH_SCAN = 50  # newest rows a `search` filters over
+_PREVIEW_CHARS = 280
+
+
+def _preview_scalar(v: Any) -> str:
+    if isinstance(v, str):
+        # A URL's host is the informative part (rehosted asset vs provider
+        # link); its path is an opaque id that would eat the whole clip.
+        host = re.match(r'^https?://[^/?#]+', v)
+        if host and len(v) > len(host.group(0)) + 1:
+            return json.dumps(host.group(0) + "/…", ensure_ascii=False)
+        return json.dumps(v if len(v) <= 24 else v[:23] + "…", ensure_ascii=False)
+    return json.dumps(v, default=str)
+
+
+def compact_preview(value: Any, budget: int = _PREVIEW_CHARS) -> str:
+    """One line of `path=value` pairs — shallow-first (every top-level scalar
+    before any nested one), non-null before null, underscore keys (raw provider
+    blobs, envelope plumbing) skipped, strings clipped to 24 chars — cut at
+    `budget` with a trailing `…`. Reads at a glance (sender, kind, status) and
+    the paths double as `path=` arguments for the drill-down."""
+    if not isinstance(value, (dict, list)):
+        return _preview_scalar(value)
+    pairs: List[str] = []
+    nulls: List[str] = []
+    queue = deque([("", value)])
+    while queue:
+        prefix, node = queue.popleft()
+        if isinstance(node, list):
+            if not node:
+                pairs.append(f"{prefix}=[]")
+            elif all(not isinstance(x, (dict, list)) for x in node):
+                shown = ", ".join(_preview_scalar(x) for x in node[:3])
+                pairs.append(f"{prefix}=[{shown}{f', +{len(node) - 3}' if len(node) > 3 else ''}]")
+            else:
+                pairs.append(f"{prefix}=[{len(node)} items]")
+                queue.append((f"{prefix}[0]", node[0]))
+            continue
+        for k, v in node.items():
+            if str(k).startswith("_"):
+                continue
+            path = f"{prefix}.{k}" if prefix else str(k)
+            if isinstance(v, (dict, list)):
+                queue.append((path, v))
+            elif v is None:
+                nulls.append(f"{path}=null")
+            else:
+                pairs.append(f"{path}={_preview_scalar(v)}")
+    text = ""
+    for pair in pairs + nulls:
+        candidate = f"{text}, {pair}" if text else pair
+        if len(candidate) > budget:
+            return text + "…"
+        text = candidate
+    return text
+
+
+_PATH_SEGMENT_RE = re.compile(r'^([^\[\]]*)((?:\[\d+\])*)$')
+
+
+def _describe_level(value: Any) -> str:
+    if isinstance(value, dict):
+        keys = list(value.keys())
+        shown = ", ".join(str(k) for k in keys[:25])
+        return f"keys: {shown}" + (f" (+{len(keys) - 25} more)" if len(keys) > 25 else "")
+    if isinstance(value, list):
+        return f"a list of {len(value)} items (index with [0])"
+    return f"a {type(value).__name__} scalar"
+
+
+def walk_output_path(value: Any, path: str) -> Tuple[Any, Optional[str]]:
+    """Follow a dotted path (`payload.media`, `items[0].id`) into a JSON value.
+    Returns (subtree, None), or (None, error) naming what DOES exist at the
+    last reachable level so the next attempt can be exact."""
+    cur = value
+    where = ""
+    for raw in path.split('.'):
+        m = _PATH_SEGMENT_RE.match(raw)
+        if not m or not raw:
+            return None, f"malformed path segment {raw!r} — use dotted keys and [n] indexes, e.g. payload.items[0].id"
+        key, indexes = m.group(1), [int(i) for i in re.findall(r'\[(\d+)\]', m.group(2))]
+        if key:
+            if not isinstance(cur, dict) or key not in cur:
+                return None, f"no key {key!r} at {where or '(root)'} — it is {_describe_level(cur)}"
+            cur = cur[key]
+            where = f"{where}.{key}" if where else key
+        for i in indexes:
+            if not isinstance(cur, list) or i >= len(cur):
+                return None, f"no index [{i}] at {where or '(root)'} — it is {_describe_level(cur)}"
+            cur = cur[i]
+            where = f"{where}[{i}]"
+    return cur, None
+
+
+def _is_trigger_node(node: NodeState) -> bool:
+    if node.type.startswith('trigger-'):
+        return True
+    from nodes.agent.node_op_tools import is_trigger_operation
+    return is_trigger_operation(node.type, node.operation)
+
+
+def _no_output_message(node: NodeState, node_ref: str) -> str:
+    """Why nothing is stored. A push trigger's silence means no delivery has
+    landed — telling the brain to <run_node> it would only store a no-event
+    placeholder, and 'run the node first' read as 'it never received a message'."""
+    if _is_trigger_node(node):
+        return (
+            "No stored output: no delivery has been recorded for this trigger yet. "
+            "A manual <run_node> on a push trigger stores a no-event placeholder, not a real event — "
+            "a real message/webhook has to arrive."
+        )
+    return f"No output available. Run the node first with <run_node node=\"{node_ref}\" />"
+
+
+def _clamp_int(raw: Optional[str], default: int, lo: int, hi: int) -> int:
+    try:
+        return max(lo, min(hi, int(raw))) if raw else default
+    except (TypeError, ValueError):
+        return default
+
+
+def _is_uuid(value: str) -> bool:
+    try:
+        uuid.UUID(value)
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
+def _run_stamp(row: Dict[str, Any]) -> str:
+    """`2026-09-09 14:34 UTC · webhook · completed` (+ the error when it failed)."""
+    created = row.get("created_at") or ""
+    try:
+        when = datetime.fromisoformat(created).astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    except (TypeError, ValueError):
+        when = created or "?"
+    status = row.get("node_status") or row.get("run_status") or "?"
+    stamp = f"{when} · {row.get('trigger_source') or '?'} · {status}"
+    if row.get("error"):
+        stamp += f" · error: {str(row['error'])[:80]}"
+    return stamp
+
+
+def _render_output(output: Any, *, is_full: bool, path: str) -> Tuple[str, Optional[str]]:
+    view, err = walk_output_path(output, path) if path else (output, None)
+    if err:
+        return "", err
+    return (_serialize_full_output(view) if is_full else summarize_output(view)), None
 
 
 def _truncate_large_strings(value: Any, max_len: int = _FULL_OUTPUT_FIELD_CHAR_CAP) -> Any:
@@ -1699,6 +1868,8 @@ async def execute_node_ops(
             if op.tag == 'get_output':
                 node_ref = op.attrs.get('node', '')
                 is_full = 'full' in op.attrs
+                execution = (op.attrs.get('execution') or '').strip()
+                path = (op.attrs.get('path') or '').strip()
                 _op_span.set_attribute("agent.op.node", node_ref)
                 _op_span.set_attribute("agent.op.full_output", is_full)
                 if not node_ref:
@@ -1710,23 +1881,97 @@ async def execute_node_ops(
                     results.append(f"[get_output node={node_ref}] Node '{node_ref}' does not exist in the workflow. Add it first with <add_node>.")
                     _op_span.set_attribute("agent.op.error", "node_not_found")
                     continue
-                node_id = node.id
-                result = await platform.get_node_output(node_id)
-                if result is None:
-                    results.append(f"[get_output node={node_ref}] No output available. Run the node first with <run_node node=\"{node_ref}\" />")
+                head = (
+                    f"[get_output node={node_ref}"
+                    + (f" execution={execution}" if execution else "")
+                    + (f" path={path}" if path else "")
+                    + (" full" if is_full else "")
+                    + "]"
+                )
+                hints: List[str] = []
+                if execution:
+                    if not _is_uuid(execution):
+                        results.append(f"{head} 'execution' must be the full run id shown by <list_outputs node=\"{node_ref}\" />.")
+                        _op_span.set_attribute("agent.op.error", "bad_execution_id")
+                        continue
+                    output = await platform.get_node_output_at(node.id, execution)
+                    if output is None:
+                        results.append(f"{head} No stored output for that run — the node did not run in it, or the output was pruned.")
+                        _op_span.set_attribute("agent.op.empty_output", True)
+                        continue
+                    stamp = ""
+                else:
+                    result = await platform.get_node_output(node.id)
+                    output = result.get("output") if result else None
+                    if output is None:
+                        results.append(f"{head} {_no_output_message(node, node_ref)}")
+                        _op_span.set_attribute("agent.op.empty_output", True)
+                        continue
+                    created_at = result.get("created_at", "")
+                    stamp = f" (latest, stored {created_at})" if created_at else " (latest)"
+                    if isinstance(output, dict) and output.get("status") == "no_event":
+                        hints.append("This is a manual run's no-event placeholder, not a real delivery.")
+                    stored = result.get("stored_count") or 0
+                    if stored > 1:
+                        hints.append(f"{stored} outputs are stored across runs — <list_outputs node=\"{node_ref}\" /> lists them.")
+                body, err = _render_output(output, is_full=is_full, path=path)
+                if err:
+                    results.append(f"{head} {err}")
+                    _op_span.set_attribute("agent.op.error", "bad_path")
+                    continue
+                label = "" if is_full else " Output schema:"
+                tail = ("\n" + " ".join(hints)) if hints else ""
+                results.append(f"{head}{stamp}{label}\n{body}{tail}")
+
+            elif op.tag == 'list_outputs':
+                node_ref = op.attrs.get('node', '')
+                search = (op.attrs.get('search') or '').strip()
+                limit = _clamp_int(op.attrs.get('limit'), LIST_OUTPUTS_DEFAULT_LIMIT, 1, LIST_OUTPUTS_MAX_LIMIT)
+                _op_span.set_attribute("agent.op.node", node_ref)
+                if not node_ref:
+                    results.append("[list_outputs] Error: 'node' attribute is required.")
+                    _op_span.set_attribute("agent.op.error", "missing_node_attr")
+                    continue
+                node = graph_state.get_node(node_ref)
+                if not node:
+                    results.append(f"[list_outputs node={node_ref}] Node '{node_ref}' does not exist in the workflow.")
+                    _op_span.set_attribute("agent.op.error", "node_not_found")
+                    continue
+                head = f"[list_outputs node={node_ref}" + (f' search="{search}"' if search else "") + "]"
+                # One extra row tells us older outputs exist without a count query;
+                # a search filters over a bounded newest-N window server-side.
+                scan = LIST_OUTPUTS_SEARCH_SCAN if search else limit + 1
+                rows = await platform.get_node_output_history(node.id, scan)
+                scanned = len(rows)
+                if search:
+                    needle = search.lower()
+                    rows = [
+                        r for r in rows
+                        if needle in json.dumps(r.get("output"), default=str, ensure_ascii=False).lower()
+                    ]
+                if not rows:
+                    if search:
+                        results.append(f"{head} None of the newest {scanned} stored outputs contains {search!r}.")
+                    else:
+                        results.append(f"{head} {_no_output_message(node, node_ref)}")
                     _op_span.set_attribute("agent.op.empty_output", True)
                     continue
-                output = result.get("output")
-                created_at = result.get("created_at", "")
-                status_line = f" (last output: {created_at})" if created_at else ""
-                if output is None:
-                    results.append(f"[get_output node={node_ref}] No output available. Run the node first with <run_node node=\"{node_ref}\" />")
-                    _op_span.set_attribute("agent.op.empty_output", True)
-                elif is_full:
-                    output_str = _serialize_full_output(output)
-                    results.append(f"[get_output node={node_ref} full]{status_line}\n{output_str}")
+                shown = rows[:limit]
+                if search:
+                    scope = f"{len(shown)} match{'es' if len(shown) != 1 else ''} among the newest {scanned} stored outputs"
                 else:
-                    results.append(f"[get_output node={node_ref}]{status_line} Output schema:\n{summarize_output(output)}")
+                    scope = f"newest {len(shown)} stored outputs" + (
+                        f" (older ones exist — raise limit, max {LIST_OUTPUTS_MAX_LIMIT})" if len(rows) > limit else ""
+                    )
+                lines = [
+                    f"{head} {scope}, newest first. Expand one with "
+                    f"<get_output node=\"{node_ref}\" execution=\"ID\" /> — add `full` for the data, "
+                    f"or path=\"a.b[0]\" to expand only a subtree:"
+                ]
+                for i, r in enumerate(shown, 1):
+                    lines.append(f"#{i} {_run_stamp(r)} execution={r.get('execution_id')}")
+                    lines.append(f"   {compact_preview(r.get('output'))}")
+                results.append("\n".join(lines))
 
             elif op.tag == 'run_node':
                 node_ref = op.attrs.get('node', '')

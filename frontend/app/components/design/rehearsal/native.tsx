@@ -12,7 +12,7 @@ import { useEffect, useRef, type CSSProperties } from 'react';
 import { CheckCheck, FileText, Film, Image as ImageIcon, Mic, Music, Paperclip } from 'lucide-react';
 import { SerializedIcon } from '~/components/shared/SerializedIcon';
 import { cn } from '~/lib/utils';
-import { AGENT_NAME, type Scenario } from './fixture';
+import { AGENT_NAME, type MediaRef, type Scenario } from './fixture';
 import { resolveAppTheme, type AppTheme } from './appThemes';
 import { BespokeInbound } from './bespokeFrames';
 import { conjugate, resolveOpRender } from './opGrammar';
@@ -239,13 +239,19 @@ function ThemedBubbleIn({
     operation?: string;
 }) {
     const inks = { color: theme.ink, borderColor: `${theme.sub}66` };
+    // Same media anatomy as the outbound bubble: image/video fill the bubble
+    // edge-to-edge under the sender line, a voice note plays in the caption
+    // block, a document is a chip. Edits stage text only.
+    const media = edit ? undefined : lead.media;
+    const edge = hasPreview(media) && media.kind !== 'audio';
     return (
         <AppSurface theme={theme} className="p-3">
             {!edit && <SystemLine theme={theme} lead={lead} operation={operation} />}
             <div
-                className={cn('max-w-[88%] rounded-2xl px-3.5 py-2.5', tailClass(theme, 'in'), edit && 'w-full')}
-                style={{ background: theme.bubbleIn }}
+                className={cn('max-w-[88%] overflow-hidden rounded-2xl', tailClass(theme, 'in'), edit && 'w-full')}
+                style={{ background: theme.bubbleIn, ...(edge ? { width: 'min(320px, 88%)' } : {}) }}
             >
+                <div className="px-3.5 pt-2.5">
                 {edit ? (
                     <div className="flex items-baseline gap-2">
                         <Editable
@@ -273,6 +279,20 @@ function ThemedBubbleIn({
                         </span>
                     </p>
                 )}
+                </div>
+                {edge && <EdgeMedia media={media as MediaRef & { url: string }} />}
+                <div className="px-3.5 pb-2.5">
+                {media && !edge && (
+                    <p className="m-0 mt-1.5">
+                        {hasPreview(media) ? (
+                            <audio src={media.url} controls className="w-full">
+                                <track kind="captions" />
+                            </audio>
+                        ) : (
+                            <MediaChip media={media} ink={theme.sub} />
+                        )}
+                    </p>
+                )}
                 {edit ? (
                     <Editable
                         multiline
@@ -283,13 +303,14 @@ function ThemedBubbleIn({
                         style={inks}
                     />
                 ) : (
-                    <p className="mb-0 mt-1 text-[13px] leading-relaxed">{lead.body}</p>
+                    lead.body && <p className="mb-0 mt-1 text-[13px] leading-relaxed">{lead.body}</p>
                 )}
                 {lead.time && (
                     <p className="m-0 mt-1 text-right text-[10px]" style={{ color: theme.sub }}>
                         {lead.time}
                     </p>
                 )}
+                </div>
             </div>
             {theme.composer && !edit && <ComposerRow theme={theme} />}
         </AppSurface>
@@ -363,9 +384,18 @@ function ThemedRowIn({
                             style={inks}
                         />
                     ) : (
-                        <p className="mb-0 mt-0.5 text-[13px] leading-relaxed">
-                            {withMention(lead.body, theme.accent)}
-                        </p>
+                        <>
+                            {lead.body && (
+                                <p className="mb-0 mt-0.5 text-[13px] leading-relaxed">
+                                    {withMention(lead.body, theme.accent)}
+                                </p>
+                            )}
+                            {lead.media && (
+                                <div className="mt-2">
+                                    <AttachedMedia media={lead.media} border={theme.border} />
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
@@ -463,6 +493,11 @@ function ThemedEmailIn({
                         </p>
                     )}
                     <p className="mb-0 mt-2.5 text-[13px] leading-relaxed">{lead.body}</p>
+                    {lead.media && (
+                        <div className="mt-2.5">
+                            <AttachedMedia media={lead.media} border={theme.border} />
+                        </div>
+                    )}
                 </>
             )}
         </AppSurface>
@@ -570,6 +605,11 @@ function InboundEmail({ lead, edit }: { lead: Scenario['lead']; edit?: LeadEdit 
             <p className="mb-0 mt-2.5 text-[13px] leading-relaxed text-foreground/60">
                 {lead.body}
             </p>
+            {lead.media && (
+                <div className="mt-2.5">
+                    <AttachedMedia media={lead.media} />
+                </div>
+            )}
         </div>
     );
 }
@@ -628,22 +668,24 @@ export function InboundMessage({ scenario, edit }: { scenario: Scenario; edit?: 
 type Artifact = NonNullable<Scenario['artifacts']>[number];
 
 /** The no-preview media chip — an opaque media_id upload, or a file we can
-    only link. The one piece every shape shares. */
-function MediaChip({ media, ink }: { media: NonNullable<Artifact['media']>; ink?: string }) {
+    only link. The one piece every shape shares; an inbound attachment wears
+    its filename. */
+function MediaChip({ media, ink }: { media: MediaRef; ink?: string }) {
     const Icon =
         media.kind === 'image' ? ImageIcon : media.kind === 'video' ? Film : media.kind === 'audio' ? Music : FileText;
     const label =
-        media.kind === 'file' ? 'Attachment' : media.kind.charAt(0).toUpperCase() + media.kind.slice(1);
+        media.name ??
+        (media.kind === 'file' ? 'Attachment' : media.kind.charAt(0).toUpperCase() + media.kind.slice(1));
     const chip = (
         <span
             className={cn(
-                'inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11.5px]',
+                'inline-flex max-w-full items-center gap-1.5 rounded-md px-2 py-1 text-[11.5px]',
                 !ink && 'border border-foreground/15 text-foreground/60'
             )}
             style={ink ? { color: ink, boxShadow: `inset 0 0 0 1px ${ink}55` } : undefined}
         >
             <Icon className="h-3.5 w-3.5 shrink-0" />
-            {label}
+            <span className="truncate">{label}</span>
         </span>
     );
     if (media.url)
@@ -656,17 +698,17 @@ function MediaChip({ media, ink }: { media: NonNullable<Artifact['media']>; ink?
 }
 
 /** True when the media can render as a real visual preview (vs a chip). */
-function hasPreview(media: Artifact['media']): media is NonNullable<Artifact['media']> & { url: string } {
+function hasPreview(media: MediaRef | undefined): media is MediaRef & { url: string } {
     return Boolean(media?.url && media.kind !== 'file');
 }
 
 /** Edge-to-edge media for BUBBLE shapes: the image fills the bubble and is
     clipped by ITS corners — WhatsApp/Telegram's media-bubble anatomy, not a
-    rounded thumbnail floating inside the padding. (Agent-sent media has no
-    caption track to offer.) */
-function EdgeMedia({ media }: { media: NonNullable<Artifact['media']> & { url: string } }) {
+    rounded thumbnail floating inside the padding. (Media has no caption
+    track to offer.) */
+function EdgeMedia({ media }: { media: MediaRef & { url: string } }) {
     if (media.kind === 'image')
-        return <img src={media.url} alt="Sent by the agent" className="block max-h-64 w-full object-cover" />;
+        return <img src={media.url} alt={media.name ?? 'Image'} className="block max-h-64 w-full object-cover" />;
     if (media.kind === 'video')
         return (
             <video src={media.url} controls className="block max-h-64 w-full bg-black">
@@ -678,13 +720,13 @@ function EdgeMedia({ media }: { media: NonNullable<Artifact['media']> & { url: s
 
 /** Attachment-block media for ROW/EMAIL shapes: Slack and mail clients show
     uploads as a bordered preview under the text, capped at client width. */
-function AttachedMedia({ media, border }: { media: NonNullable<Artifact['media']>; border?: string }) {
+function AttachedMedia({ media, border }: { media: MediaRef; border?: string }) {
     if (hasPreview(media)) {
         if (media.kind === 'image')
             return (
                 <img
                     src={media.url}
-                    alt="Sent by the agent"
+                    alt={media.name ?? 'Image'}
                     className="block max-h-64 max-w-full rounded-lg"
                     style={{ maxWidth: 360, border: border ? `1px solid ${border}` : undefined }}
                 />
@@ -849,7 +891,7 @@ function ThemedBubbleOut({
                                     ...(edge ? { width: 'min(320px, 88%)' } : {}),
                                 }}
                             >
-                                {edge && <EdgeMedia media={media as NonNullable<Artifact['media']> & { url: string }} />}
+                                {edge && <EdgeMedia media={media as MediaRef & { url: string }} />}
                                 <div className="px-3.5 py-2.5">
                                     {media && !edge && (
                                         <p className="m-0 mb-1">

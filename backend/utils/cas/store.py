@@ -590,14 +590,22 @@ async def read_node_output_history(pool, workflow_id, node_id, limit=20) -> List
                 if k == node_id or k.startswith(prefix)]
         if not keys:
             return []
+        # The run's provenance rides along (LEFT JOIN — a delivery whose
+        # execution row is gone still lists): trigger_source is what tells a
+        # reader that one row is a real webhook delivery and the next a manual
+        # run's no-event placeholder.
         rows = await conn.fetch(
-            "SELECT l.execution_id, l.node_id, l.created_at, l.manifest "
+            "SELECT l.execution_id, l.node_id, l.created_at, l.manifest, "
+            "       l.last_run_status, l.last_run_error, "
+            "       e.trigger_source, e.status AS run_status "
             "FROM unnest($2::text[]) AS n(node_id) "
             "JOIN LATERAL ("
-            "  SELECT execution_id, node_id, created_at, manifest FROM cas_manifests"
+            "  SELECT execution_id, node_id, created_at, manifest, last_run_status, last_run_error"
+            "  FROM cas_manifests"
             "  WHERE workflow_id = $1 AND node_id = n.node_id"
             "  ORDER BY created_at DESC LIMIT $3"
             ") l ON true "
+            "LEFT JOIN workflow_executions e ON e.id = l.execution_id "
             "ORDER BY l.created_at DESC LIMIT $3",
             wf, keys, limit)
     # Fan out R2 reassembly across history rows (sequential awaits would serialize
@@ -610,6 +618,10 @@ async def read_node_output_history(pool, workflow_id, node_id, limit=20) -> List
             "execution_id": str(row["execution_id"]),
             "created_at": row["created_at"].isoformat() if row["created_at"] else None,
             "output": value,
+            "trigger_source": row["trigger_source"],
+            "run_status": row["run_status"],
+            "node_status": row["last_run_status"],
+            "error": row["last_run_error"],
         }
         for row, value in zip(rows, values)
     ]
@@ -617,12 +629,14 @@ async def read_node_output_history(pool, workflow_id, node_id, limit=20) -> List
 
 async def read_latest_node_output_meta(pool, workflow_id, node_id) -> Optional[Dict[str, Any]]:
     """Latest output for a node plus its store row identity, as
-    {output, created_at(isoformat), execution_id}. None if nothing was persisted.
-    Used by callers that need both the output and its persistence identity."""
+    {output, created_at(isoformat), execution_id, stored_count}. None if
+    nothing was persisted. Used by callers that need the output, its
+    persistence identity, or how many runs the node has stored."""
     wf = _as_uuid(workflow_id)
     async with pool.acquire() as conn:
         row = await conn.fetchrow(
-            "SELECT execution_id, manifest, created_at FROM cas_manifests "
+            "SELECT execution_id, manifest, created_at, count(*) OVER () AS stored_count "
+            "FROM cas_manifests "
             "WHERE workflow_id = $1 AND node_id = $2 ORDER BY created_at DESC LIMIT 1",
             wf, node_id)
     if row is None:
@@ -634,6 +648,7 @@ async def read_latest_node_output_meta(pool, workflow_id, node_id) -> Optional[D
         "output": output,
         "created_at": row["created_at"].isoformat() if row["created_at"] else None,
         "execution_id": str(row["execution_id"]) if row["execution_id"] else None,
+        "stored_count": int(row["stored_count"]),
     }
 
 

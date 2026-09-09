@@ -48,7 +48,7 @@ ALL_TAGS: Set[str] = {
     # Config inspection (agentic)
     'read_config',
     # Node output and execution (agentic)
-    'get_output', 'run_node',
+    'get_output', 'list_outputs', 'run_node',
     # Workflow variables + test runs (settings-level content)
     'define_variable', 'add_test_run', 'run_test',
     # Deprecated aliases (backward compat)

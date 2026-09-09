@@ -216,6 +216,91 @@ describe('buildRunStory trigger presentation', () => {
         );
     });
 
+    it('frames a WhatsApp voice note (null body, rehosted media) as a message with playable audio', () => {
+        const lead = deriveLead('whatsapp', {
+            event: 'message',
+            payload: {
+                id: 'false_12025550102@lid_3A95',
+                timestamp: 1788964423,
+                from: '12025550102@lid',
+                fromMe: false,
+                body: null,
+                hasMedia: true,
+                media: {
+                    url: 'https://assets.example/ff059e24/voice.oga',
+                    filename: '3A95025CC465397BA241.oga',
+                    mimetype: 'audio/ogg; codecs=opus',
+                    size: 15570,
+                    rehosted: true,
+                    resource_id: 'a225b541',
+                },
+                location: null,
+                vCards: null,
+                senderPhone: '12025550102',
+            },
+        });
+        expect(lead).toBeNull(); // the top-level envelope is not the message
+        const inner = deriveLead('whatsapp', sanitizeEventPayload({ event: 'message', payload: {
+            from: '12025550102@lid', body: null, hasMedia: true, senderPhone: '12025550102',
+            media: { url: 'https://assets.example/ff059e24/voice.oga', filename: 'v.oga', mimetype: 'audio/ogg; codecs=opus', rehosted: true },
+        } }));
+        expect(inner?.media).toEqual({ kind: 'audio', url: 'https://assets.example/ff059e24/voice.oga', name: 'v.oga' });
+        expect(inner?.body).toBe('');
+        // The phone beats the opaque @lid identity in the bubble header.
+        expect(inner?.handle).toBe('12025550102');
+    });
+
+    it('keeps a captioned photo as body + image, and never exposes a non-rehosted provider URL', () => {
+        const photo = deriveLead('whatsapp', {
+            from: '1@c.us', body: 'look at this', hasMedia: true,
+            media: { url: 'https://assets.example/x/photo.jpg', mimetype: 'image/jpeg', filename: 'photo.jpg', rehosted: true },
+        });
+        expect(photo?.body).toBe('look at this');
+        expect(photo?.media?.kind).toBe('image');
+        expect(photo?.media?.url).toBe('https://assets.example/x/photo.jpg');
+        const stale = deriveLead('whatsapp', {
+            from: '1@c.us', body: null, hasMedia: true,
+            media: { url: 'https://api.wahooks.example/files/abc', mimetype: 'application/pdf', filename: 'invoice.pdf' },
+        });
+        expect(stale?.media).toEqual({ kind: 'file', url: undefined, name: 'invoice.pdf' });
+    });
+
+    it('describes WhatsApp locations and contact cards instead of dropping them', () => {
+        const loc = deriveLead('whatsapp', {
+            from: '1@c.us', body: null, hasMedia: false,
+            location: { latitude: 28.6139, longitude: 77.209, description: 'Connaught Place' },
+        });
+        expect(loc?.body).toBe('📍 Connaught Place (28.6139, 77.209)');
+        const card = deriveLead('whatsapp', {
+            from: '1@c.us', body: null, hasMedia: false,
+            vCards: ['BEGIN:VCARD\nVERSION:3.0\nFN:Priya Raman\nTEL:+14155550184\nEND:VCARD'],
+        });
+        expect(card?.body).toBe('👤 Shared contact: Priya Raman');
+        // Nothing recognisable still falls through to the raw event.
+        expect(deriveLead('whatsapp', { from: '1@c.us', body: null, hasMedia: false, ack: 2 })).toBeNull();
+    });
+
+    it('frames a Telegram voice message as an audio chip (file ids have no browser URL)', () => {
+        const lead = deriveLead('telegram', sanitizeEventPayload({
+            update_id: 1,
+            message: {
+                message_id: 7,
+                from: { first_name: 'Sam', username: 'sam' },
+                chat: { id: 42 },
+                date: 1788964423,
+                voice: { file_id: 'AwACAgIAAxkB', duration: 4, mime_type: 'audio/ogg' },
+            },
+        }));
+        expect(lead?.media).toEqual({ kind: 'audio', name: undefined });
+        expect(lead?.body).toBe('');
+        const doc = deriveLead('telegram', {
+            caption: 'the deck', chat: { id: 42 },
+            document: { file_id: 'BQAC', file_name: 'deck.pdf', mime_type: 'application/pdf' },
+        });
+        expect(doc?.body).toBe('the deck');
+        expect(doc?.media).toEqual({ kind: 'file', name: 'deck.pdf' });
+    });
+
     it('classifies a provider-type trigger via registry triggerOps (operation from the graph)', () => {
         setNodeIconData({
             'automation-whatsapp': { label: 'WhatsApp', triggerOps: ['receive_message'] },

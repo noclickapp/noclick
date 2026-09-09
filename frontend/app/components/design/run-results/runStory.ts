@@ -5,7 +5,7 @@
    Consumed by the production RunResultsDialog; the Story view in variants.tsx
    is a rendering of this. */
 
-import type { Scenario } from '~/components/design/rehearsal/fixture';
+import type { MediaRef, Scenario } from '~/components/design/rehearsal/fixture';
 import type { ReplayRow } from '~/components/design/rehearsal/useReplay';
 import { toReplayRows, type LiveRow } from '~/components/design/rehearsal/useLiveRun';
 import type { ReplayToolCall } from '~/components/workflow/ReplayToolCallsPanel';
@@ -178,6 +178,76 @@ function splitAddress(from?: string): { author?: string; handle?: string } {
     return from.includes('@') ? { handle: from } : { author: from };
 }
 
+function mediaKindFromMime(mime: string | undefined): MediaRef['kind'] {
+    const m = (mime ?? '').toLowerCase();
+    if (m.startsWith('image/')) return 'image';
+    if (m.startsWith('video/')) return 'video';
+    if (m.startsWith('audio/')) return 'audio';
+    return 'file';
+}
+
+/** Telegram's message keys for each attachment kind (BARE file ids — no URL
+    a browser could load, so the frame shows a chip, never a broken player). */
+const TELEGRAM_MEDIA_KEYS: Array<[string, MediaRef['kind']]> = [
+    ['photo', 'image'],
+    ['sticker', 'image'],
+    ['video', 'video'],
+    ['video_note', 'video'],
+    ['animation', 'video'],
+    ['voice', 'audio'],
+    ['audio', 'audio'],
+    ['document', 'file'],
+];
+
+/** What a chat message carried besides text. WhatsApp deliveries carry a
+    `media` object whose URL is browser-loadable ONLY once rehosted (the
+    provider's own URL is platform-authed and useless here — 2026-09-09: a
+    voice note rendered as a raw JSON tree because the lead had no media
+    slot); Telegram updates carry the attachment under its kind's key. */
+function deriveInboundMedia(d: Dict): MediaRef | undefined {
+    const media = asDict(d.media);
+    if (Object.keys(media).length > 0 || d.hasMedia === true) {
+        const url = media.rehosted === true ? str(media, 'url') : undefined;
+        return {
+            kind: mediaKindFromMime(str(media, 'mimetype', 'mime_type')),
+            url: url && /^https?:\/\//.test(url) ? url : undefined,
+            name: str(media, 'filename'),
+        };
+    }
+    for (const [key, kind] of TELEGRAM_MEDIA_KEYS) {
+        const v = d[key];
+        if (v && typeof v === 'object') return { kind, name: str(asDict(v), 'file_name') };
+    }
+    return undefined;
+}
+
+/** A shared location or contact card as a line of text — the bubble has no
+    map or vCard frame, but "📍 …" beats a null body. */
+function describeNonTextMessage(d: Dict): string | undefined {
+    const loc = asDict(d.location);
+    const lat = str(loc, 'latitude');
+    const lng = str(loc, 'longitude');
+    if (lat && lng) {
+        const label = str(loc, 'description', 'name', 'address') ?? 'Shared a location';
+        return `📍 ${label} (${lat}, ${lng})`;
+    }
+    const contact = asDict(d.contact);
+    const contactName = [str(contact, 'first_name'), str(contact, 'last_name')].filter(Boolean).join(' ');
+    if (contactName) {
+        const phone = str(contact, 'phone_number');
+        return `👤 Shared contact: ${contactName}${phone ? ` (${phone})` : ''}`;
+    }
+    if (Array.isArray(d.vCards) && d.vCards.length > 0) {
+        const names = d.vCards
+            .map((v) => (typeof v === 'string' ? v.match(/^FN:(.+)$/m)?.[1]?.trim() : undefined))
+            .filter((n): n is string => Boolean(n));
+        return names.length
+            ? `👤 Shared contact${names.length > 1 ? 's' : ''}: ${names.join(', ')}`
+            : `👤 Shared ${d.vCards.length} contact${d.vCards.length > 1 ? 's' : ''}`;
+    }
+    return undefined;
+}
+
 /** The fired event as a lead the native frames can wear. Null when the payload
     has no recognisable message shape — the views then show the raw event
     instead of dressing noise up as a message. */
@@ -190,19 +260,24 @@ export function deriveLead(slug: string, output: unknown): Lead | null {
     if (isNoEventOutput(d)) return null;
 
     if (slug === 'whatsapp' || slug === 'telegram') {
-        const body = str(d, 'body', 'text', 'message');
-        if (!body) return null;
+        // A media message's body is its caption (often empty); a location or
+        // contact card has no body at all — describe it instead.
+        const media = deriveInboundMedia(d);
+        const body = str(d, 'body', 'text', 'message', 'caption') ?? describeNonTextMessage(d);
+        if (!body && !media) return null;
         // No author fallback to the address — author AND handle both reading
-        // "1415…@c.us" printed the id twice in the bubble header.
+        // "1415…@c.us" printed the id twice in the bubble header. WhatsApp's
+        // senderPhone beats `from`, which may be an opaque @lid identity.
         const author = str(d, 'sender_name', 'from_name', 'pushName', 'author');
-        const handle = str(d, 'from', 'phone', 'chat_id');
+        const handle = str(d, 'senderPhone', 'from', 'phone', 'chat_id');
         return {
             title: author ?? handle ?? 'Message',
             meta: handle ?? '',
-            body,
+            body: body ?? '',
             author,
             handle,
             time: clockOf(str(d, 'timestamp', 'date')),
+            media,
         };
     }
 
@@ -309,12 +384,9 @@ export function toScenario(node: StoryNodeIdentity, lead: Lead): Scenario {
 
 /* ---------------------------------------------------------------- sends */
 
-export interface StoryMedia {
-    kind: 'image' | 'video' | 'audio' | 'file';
-    /** Public URL when the call carried one — renders a real preview. An
-        opaque media_id keeps the kind but shows an attachment chip. */
-    url?: string;
-}
+/** Public URL when the call carried one — renders a real preview. An
+    opaque media_id keeps the kind but shows an attachment chip. */
+export type StoryMedia = MediaRef;
 
 export interface StorySend {
     provider: string;

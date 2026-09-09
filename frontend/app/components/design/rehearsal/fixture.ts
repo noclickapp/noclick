@@ -40,6 +40,15 @@ export interface ToolEvent {
 
 export type RunEvent = ThoughtEvent | ToolEvent;
 
+/** A media payload riding a message, in or out. `url` renders a real preview
+    (image/video/audio player); kind alone renders a chip. `name` is the
+    filename an inbound attachment arrived with. */
+export interface MediaRef {
+    kind: 'image' | 'video' | 'audio' | 'file';
+    url?: string;
+    name?: string;
+}
+
 /** One staged situation arriving through a trigger, and the run it produces. */
 export interface MockRun {
     slug: string;
@@ -56,6 +65,9 @@ export interface MockRun {
         /** Their address — an email or a phone number. */
         handle?: string;
         time?: string;
+        /** What they attached — a voice note, photo, document. Real runs
+            only; a message can be media alone, with an empty body. */
+        media?: MediaRef;
     };
     events: RunEvent[];
     doneAt: number;
@@ -76,7 +88,7 @@ export interface MockRun {
         subject?: string;
         /** A media payload riding the send (real runs: image/video/document
             sends). url renders a preview; kind alone renders a chip. */
-        media?: { kind: 'image' | 'video' | 'audio' | 'file'; url?: string };
+        media?: MediaRef;
     }[] | null;
     /** Shown at done when there is no artifact: what it chose and why. */
     outcome?: string;

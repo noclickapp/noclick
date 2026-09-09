@@ -112,6 +112,51 @@ class TestCasReads:
         assert [h["output"] for h in hist] == [{"i": 2}, {"i": 1}]  # newest first, limited to 2
         assert hist[0]["execution_id"] == str(execs[2])
 
+    async def test_history_rows_carry_run_provenance(self, postgres_db):
+        """Each history row says which kind of run stored it (trigger_source +
+        statuses) — that is what separates a real webhook delivery from a
+        manual run's no-event placeholder when the builder browses a trigger.
+        An execution row that is gone still lists (LEFT JOIN), just unlabelled."""
+        pool = _SingleConnPool(postgres_db)
+        wid = await _wf(postgres_db)
+        e_webhook = uuid.uuid4()
+        await postgres_db.execute(
+            "INSERT INTO workflow_executions (id, workflow_id, user_id, status, trigger_source) "
+            "VALUES ($1,$2,$3,'delivered','webhook')", e_webhook, wid, TEST_USER_ID)
+        e_manual = await _exec(postgres_db, wid)
+        with patch_r2(FakeR2()):
+            await store.persist_node_result(
+                pool, workflow_id=wid, execution_id=e_webhook, node_id="wa", output={"body": "hi"}, status="completed")
+            await _set_created(postgres_db, e_webhook, "wa", T0)
+            await store.persist_node_result(
+                pool, workflow_id=wid, execution_id=e_manual, node_id="wa",
+                output={"status": "no_event"}, status="error", error="boom")
+            await _set_created(postgres_db, e_manual, "wa", T0 + timedelta(minutes=1))
+            # A row whose execution vanished (retention, manual delete): FK-free
+            # cas_manifests keeps it; the join must not drop it.
+            await postgres_db.execute("DELETE FROM workflow_executions WHERE id = $1", e_manual)
+            hist = await store.read_node_output_history(pool, wid, "wa")
+        assert [h["output"] for h in hist] == [{"status": "no_event"}, {"body": "hi"}]
+        orphan, real = hist
+        assert (orphan["trigger_source"], orphan["run_status"]) == (None, None)
+        assert (orphan["node_status"], orphan["error"]) == ("error", "boom")
+        assert (real["trigger_source"], real["run_status"], real["node_status"], real["error"]) == (
+            "webhook", "delivered", "completed", None)
+
+    async def test_latest_meta_counts_stored_runs(self, postgres_db):
+        pool = _SingleConnPool(postgres_db)
+        wid = await _wf(postgres_db)
+        execs = [await _exec(postgres_db, wid) for _ in range(3)]
+        with patch_r2(FakeR2()):
+            for i, eid in enumerate(execs):
+                await store.persist_node_result(pool, workflow_id=wid, execution_id=eid, node_id="n1", output={"i": i})
+                await _set_created(postgres_db, eid, "n1", T0 + timedelta(minutes=i))
+            meta = await store.read_latest_node_output_meta(pool, wid, "n1")
+            assert await store.read_latest_node_output_meta(pool, wid, "never") is None
+        assert meta["output"] == {"i": 2}
+        assert meta["execution_id"] == str(execs[2])
+        assert meta["stored_count"] == 3
+
     async def test_iteration_composite_outputs_carousel_and_latest(self, postgres_db):
         """Iteration sub-outputs are stored under composite '<node>#iter:N' keys
         on the REAL execution_id. The carousel (history) surfaces them under the
