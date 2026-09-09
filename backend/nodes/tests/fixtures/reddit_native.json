@@ -1,0 +1,205 @@
+{
+  "feed": {
+    "kind": "Listing",
+    "data": {
+      "children": [
+        {
+          "kind": "t3",
+          "data": {
+            "id": "abc123",
+            "title": "Example post",
+            "author": "example_author",
+            "subreddit": "Example",
+            "selftext": "A **formatted** body with literal &amp; and \ud83d\ude00.",
+            "selftext_html": "<div class=\"md\"><p>A <strong>formatted</strong> body with literal &amp;amp; and \ud83d\ude00.</p></div>",
+            "permalink": "/r/Example/comments/abc123/example/",
+            "created_utc": 1700000000,
+            "edited": false,
+            "score": 4,
+            "num_comments": 9,
+            "link_flair_text": "Discussion",
+            "url": "https://www.reddit.com/r/Example/comments/abc123/example/",
+            "sr_detail": {
+              "display_name": "Example",
+              "subscribers": 1234,
+              "description": "A full community description.",
+              "public_description": "A short description."
+            }
+          }
+        },
+        {
+          "kind": "t3",
+          "data": {
+            "id": "abc456",
+            "title": "Example post",
+            "author": "example_author",
+            "subreddit": "Example",
+            "selftext": "",
+            "selftext_html": null,
+            "permalink": "/r/Example/comments/abc456/example/",
+            "created_utc": 1700000000,
+            "edited": false,
+            "score": 4,
+            "num_comments": 9,
+            "link_flair_text": "Discussion",
+            "url": "https://www.reddit.com/r/Example/comments/abc456/example/",
+            "sr_detail": {
+              "display_name": "Example",
+              "subscribers": 1234,
+              "description": "A full community description.",
+              "public_description": "A short description."
+            },
+            "media_metadata": {
+              "img1": {
+                "s": {
+                  "u": "https://example.org/1.jpg?x=1&amp;y=2"
+                }
+              },
+              "img2": {
+                "s": {
+                  "u": "https://example.org/2.jpg"
+                }
+              }
+            },
+            "gallery_data": {
+              "items": [
+                {
+                  "media_id": "img2"
+                },
+                {
+                  "media_id": "img1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "kind": "t3",
+          "data": {
+            "id": "abc789",
+            "title": "Example post",
+            "author": "example_author",
+            "subreddit": "Example",
+            "selftext": "",
+            "selftext_html": null,
+            "permalink": "/r/Example/comments/abc789/example/",
+            "created_utc": 1700000000,
+            "edited": false,
+            "score": 4,
+            "num_comments": 9,
+            "link_flair_text": "Discussion",
+            "url": "https://www.reddit.com/r/Example/comments/abc789/example/",
+            "sr_detail": {
+              "display_name": "Example",
+              "subscribers": 1234,
+              "description": "A full community description.",
+              "public_description": "A short description."
+            },
+            "media": {
+              "reddit_video": {
+                "fallback_url": "https://example.org/video.mp4",
+                "hls_url": "https://example.org/video.m3u8",
+                "dash_url": "https://example.org/video.mpd",
+                "has_audio": true,
+                "duration": 156
+              }
+            }
+          }
+        }
+      ],
+      "after": "t3_abc789",
+      "before": null
+    }
+  },
+  "thread": [
+    {
+      "kind": "Listing",
+      "data": {
+        "children": [
+          {
+            "kind": "t3",
+            "data": {
+              "id": "abc123",
+              "title": "Example post",
+              "author": "example_author",
+              "subreddit": "Example",
+              "selftext": "A **formatted** body with literal &amp; and \ud83d\ude00.",
+              "selftext_html": "<div class=\"md\"><p>A <strong>formatted</strong> body with literal &amp;amp; and \ud83d\ude00.</p></div>",
+              "permalink": "/r/Example/comments/abc123/example/",
+              "created_utc": 1700000000,
+              "edited": false,
+              "score": 4,
+              "num_comments": 9,
+              "link_flair_text": "Discussion",
+              "url": "https://www.reddit.com/r/Example/comments/abc123/example/",
+              "sr_detail": {
+                "display_name": "Example",
+                "subscribers": 1234,
+                "description": "A full community description.",
+                "public_description": "A short description."
+              }
+            }
+          }
+        ],
+        "after": null,
+        "before": null
+      }
+    },
+    {
+      "kind": "Listing",
+      "data": {
+        "children": [
+          {
+            "kind": "t1",
+            "data": {
+              "id": "def123",
+              "parent_id": "t3_abc123",
+              "link_id": "t3_abc123",
+              "author": "example_commenter",
+              "body": "A comment",
+              "body_html": "<p>A comment</p>",
+              "created_utc": 1700000001,
+              "score": 2,
+              "permalink": "/r/Example/comments/abc123/example/def123/",
+              "replies": {
+                "kind": "Listing",
+                "data": {
+                  "children": [
+                    {
+                      "kind": "t1",
+                      "data": {
+                        "id": "def456",
+                        "parent_id": "t1_def123",
+                        "link_id": "t3_abc123",
+                        "author": "example_commenter",
+                        "body": "Nested reply",
+                        "body_html": "<p>Nested reply</p>",
+                        "created_utc": 1700000001,
+                        "score": 2,
+                        "permalink": "/r/Example/comments/abc123/example/def456/",
+                        "replies": ""
+                      }
+                    }
+                  ],
+                  "after": null,
+                  "before": null
+                }
+              }
+            }
+          },
+          {
+            "kind": "more",
+            "data": {
+              "children": [
+                "more1",
+                "more2"
+              ]
+            }
+          }
+        ],
+        "after": null,
+        "before": null
+      }
+    }
+  ]
+}

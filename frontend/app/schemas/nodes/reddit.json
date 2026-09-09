@@ -1569,7 +1569,7 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "DECODO_AUTH_TOKEN"
       }
     },
     "RedditGetSubredditRulesConfig": {

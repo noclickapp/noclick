@@ -139,6 +139,7 @@ async def test_apply_is_inert_on_hosted(monkeypatch):
 
 def test_the_instance_also_holds_service_keys():
     assert "WAHOOKS_API_KEY" in keys.SUPPORTED_ENV_VARS
+    assert "DECODO_AUTH_TOKEN" in keys.SUPPORTED_ENV_VARS
 
 
 @pytest.mark.asyncio

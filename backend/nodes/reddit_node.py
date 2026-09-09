@@ -16,10 +16,10 @@ import httpx
 from pydantic import BaseModel, Field, Discriminator, ConfigDict, model_validator
 
 from nodes.core.base import WorkflowNode, NodeConfig
-from nodes.core.apify_runner import ApifyRunnerMixin
+from nodes.core.decodo_runner import DecodoRunnerMixin
 from nodes.core.platform_billing import platform_keyed_operation
 from nodes.core.reddit_scraper import (
-    REDDIT_ACTOR, REDDIT_ACTOR_BUILD, build_reddit_input, normalize_reddit_result,
+    build_reddit_input, fetch_subreddit,
 )
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.scopes.reddit import REDDIT_SCOPES
@@ -192,7 +192,7 @@ class RedditGetSubredditPostsConfig(BaseModel):
                 "Includes full post text, timestamps, scores, comment counts, media, "
                 "and optional threaded comments. Uses NoClick credits; no Reddit login is needed."
             ),
-            **platform_keyed_operation("APIFY_API_TOKEN", byok=False),
+            **platform_keyed_operation("DECODO_AUTH_TOKEN", byok=False),
         }
     )
 
@@ -2480,7 +2480,7 @@ class RedditNodeConfig(NodeConfig[RedditConfig, RedditCredential]):
 # ============================================================================
 
 
-class RedditNode(ApifyRunnerMixin, WorkflowNode):
+class RedditNode(DecodoRunnerMixin, WorkflowNode):
     """
     Reddit API automation node.
 
@@ -2873,29 +2873,13 @@ class RedditNode(ApifyRunnerMixin, WorkflowNode):
     # ========== Subreddit Operations ==========
 
     async def _get_subreddit_posts(self, config: RedditGetSubredditPostsConfig, credentials: RedditCredential) -> Dict[str, Any]:
-        """Fetch complete public post records and community metadata through Apify."""
-        actor_input, subreddit, sort, period, limit, comments = build_reddit_input(config)
-        result = await self._run_apify_actor(
-            REDDIT_ACTOR, actor_input, "get_subreddit_posts", "reddit_scraping", "reddit",
-            build=REDDIT_ACTOR_BUILD,
-            max_total_charge_usd=round(0.05 + 0.003 * limit * (1 + comments), 3),
-            summary_key="RUN-SUMMARY", result_charge_event="result", emit_output=False,
+        """Fetch native public records with embedded community details."""
+        request = build_reddit_input(config)
+        return await self._run_decodo(
+            lambda client: fetch_subreddit(client, request),
+            action_name="get_subreddit_posts", platform="reddit",
+            timeout=120 if request[-1] else 60,
         )
-        # A listing does not include the community sidebar; fetch it explicitly.
-        community = await self._run_apify_actor(
-            REDDIT_ACTOR,
-            {**actor_input, "startUrls": [{"url": f"https://www.reddit.com/r/{subreddit}/"}],
-             "maxPostsCount": 0, "crawlCommentsPerPost": False, "maxCommentsPerPost": 0},
-            "get_subreddit_posts", "reddit_scraping", "reddit",
-            build=REDDIT_ACTOR_BUILD, max_total_charge_usd=0.05,
-            summary_key="RUN-SUMMARY", result_charge_event="result", emit_output=False,
-        )
-        output = normalize_reddit_result(
-            result["data"]["items"], community["data"]["items"],
-            subreddit=subreddit, sort=sort, period=period, limit=limit, comments_limit=comments,
-        )
-        await self.emit(output)
-        return output
 
     async def _get_subreddit_info(
         self, config: RedditGetSubredditInfoConfig, credentials: RedditCredential

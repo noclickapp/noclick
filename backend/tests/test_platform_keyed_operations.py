@@ -18,7 +18,7 @@ from nodes.core.platform_billing import PLATFORM_KEY_MARKER, require_platform_ke
 from nodes.core.registry import NODE_REGISTRY
 
 PLATFORM_KEYED = [
-    ("automation-reddit", "get_subreddit_posts", "APIFY_API_TOKEN"),
+    ("automation-reddit", "get_subreddit_posts", "DECODO_AUTH_TOKEN"),
     ("automation-exa", "search", "EXA_API_KEY"),
     ("automation-perplexity", "chat_completion", "PERPLEXITY_API_KEY"),
     ("automation-linkedin", "scrape_user_profiles", "APIFY_API_TOKEN"),

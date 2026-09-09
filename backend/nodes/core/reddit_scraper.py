@@ -1,12 +1,240 @@
-"""Input and output contract for the public Reddit scraper (verified live)."""
-
+"""Validate and normalize native Reddit JSON without changing authored text."""
+import asyncio
+from datetime import datetime, timezone
+from html import unescape
 import re
-from datetime import datetime
-from typing import Any
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlsplit
 
-REDDIT_ACTOR = "harshmaur/reddit-scraper"
-REDDIT_ACTOR_BUILD = "0.0.392"
+ORIGIN = "https://www.reddit.com"
+
+
+def _integer(value):
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def timestamp(value):
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError("Missing or invalid Reddit timestamp")
+    return datetime.fromtimestamp(value, timezone.utc).isoformat()
+
+
+def require(data, *fields):
+    missing = [key for key in fields if data.get(key) is None]
+    if missing:
+        raise ValueError("Incomplete Reddit data: " + ", ".join(missing))
+
+
+def permalink(path):
+    if not isinstance(path, str) or not path.startswith("/r/"):
+        raise ValueError("Invalid Reddit permalink")
+    return ORIGIN + path
+
+
+def media(data):
+    photos, videos, assets = [], [], []
+    metadata = data.get("media_metadata") or {}
+    for item in (data.get("gallery_data") or {}).get("items", []):
+        entry = metadata.get(item.get("media_id"), {})
+        source = entry.get("s") or {}
+        if source.get("u"):
+            photos.append(unescape(source["u"]))
+        for key in ("mp4", "gif"):
+            if source.get(key):
+                videos.append(unescape(source[key]))
+        assets.append(
+            {"type": "gallery", "media_id": item.get("media_id"), "metadata": entry}
+        )
+    destination = data.get("url") or ""
+    if not photos and re.search(
+        r"\.(?:png|jpe?g|webp|gif)$", urlsplit(destination).path, re.I
+    ):
+        photos.append(unescape(destination))
+    for field in ("media", "secure_media"):
+        entry = data.get(field)
+        if not isinstance(entry, dict):
+            continue
+        video = entry.get("reddit_video") or {}
+        if video.get("fallback_url"):
+            videos.append(unescape(video["fallback_url"]))
+        assets.append({"type": field, "metadata": entry})
+    # Crossposts can carry their playable assets on the original post.
+    for parent in data.get("crosspost_parent_list") or []:
+        parent_photos, parent_videos, parent_assets = media(
+            {k: v for k, v in parent.items() if k != "crosspost_parent_list"}
+        )
+        photos.extend(parent_photos)
+        videos.extend(parent_videos)
+        assets.extend(parent_assets)
+    return list(dict.fromkeys(photos)), list(dict.fromkeys(videos)), assets
+
+
+def normalize_post(data, community, scraped_at):
+    require(
+        data,
+        "id",
+        "title",
+        "author",
+        "subreddit",
+        "selftext",
+        "permalink",
+        "created_utc",
+        "score",
+        "num_comments",
+    )
+    require(
+        community, "display_name", "subscribers", "description", "public_description"
+    )
+    if not isinstance(data["id"], str) or not re.fullmatch(r"[a-z0-9]+", data["id"]):
+        raise ValueError("Invalid Reddit post identity")
+    if (
+        any(
+            not isinstance(data[key], str)
+            for key in ("title", "author", "subreddit", "selftext")
+        )
+        or not data["title"]
+    ):
+        raise ValueError("Invalid Reddit post text")
+    if not all(isinstance(community[k], str) for k in ("display_name", "description", "public_description")):
+        raise ValueError("Invalid Reddit community metadata")
+    if not _integer(community["subscribers"]) or community["subscribers"] < 0:
+        raise ValueError("Invalid Reddit community member count")
+    if data["subreddit"].casefold() != community["display_name"].casefold():
+        raise ValueError("Post belongs to a different community")
+    if not re.match(
+        rf"^/r/{re.escape(data['subreddit'])}/comments/{re.escape(data['id'])}/",
+        data["permalink"], re.I,
+    ):
+        raise ValueError("Reddit post permalink does not match its identity")
+    if data["selftext"] and not isinstance(data.get("selftext_html"), str):
+        raise ValueError("Post body HTML is missing")
+    if data["selftext"] and not data["selftext_html"]:
+        raise ValueError("Post body HTML is missing")
+    if (
+        not _integer(data["num_comments"])
+        or data["num_comments"] < 0
+        or isinstance(data["score"], bool)
+        or not isinstance(data["score"], (int, float))
+    ):
+        raise ValueError("Invalid Reddit engagement counts")
+    created = timestamp(data["created_utc"])
+    edited = data.get("edited")
+    photos, videos, assets = media(data)
+    return {
+        "post_id": data["id"],
+        "title": data["title"],
+        "url": permalink(data["permalink"]),
+        "author": data["author"],
+        "subreddit": data["subreddit"],
+        "body": data["selftext"],
+        "content_html": data.get("selftext_html") or "",
+        "published_at": created,
+        "updated_at": timestamp(edited)
+        if isinstance(edited, (int, float)) and not isinstance(edited, bool)
+        else created,
+        "scraped_at": scraped_at,
+        "score": data["score"],
+        "num_comments": data["num_comments"],
+        "tag": data.get("link_flair_text"),
+        "content_url": data.get("url"),
+        "photos": photos,
+        "videos": videos,
+        "media_assets": assets,
+        "community_url": ORIGIN + "/r/" + community["display_name"] + "/",
+        "community_description": community["description"]
+        or community["public_description"],
+        "community_members_num": community["subscribers"],
+        "related_posts": None,
+    }
+
+
+def normalize_comments(children, limit, post_id):
+    seen = set()
+
+    def visit(things, parent_id):
+        result = []
+        for thing in things:
+            if len(seen) >= limit:
+                break
+            if thing.get("kind") != "t1":
+                continue
+            data = thing["data"]
+            require(
+                data,
+                "id",
+                "parent_id",
+                "author",
+                "body",
+                "body_html",
+                "created_utc",
+                "score",
+                "permalink",
+            )
+            if data["parent_id"] != parent_id or data.get("link_id") != "t3_" + post_id:
+                raise ValueError("Reddit returned a comment attached to the wrong post or parent")
+            if not all(isinstance(data[k], str) for k in ("id", "author", "body", "body_html")):
+                raise ValueError("Invalid Reddit comment text")
+            if not _integer(data["score"]):
+                raise ValueError("Invalid comment score")
+            if data["id"] in seen:
+                continue
+            seen.add(data["id"])
+            replies = data.get("replies")
+            nested = (
+                replies.get("data", {}).get("children", [])
+                if isinstance(replies, dict)
+                else []
+            )
+            result.append(
+                {
+                    "comment_id": data["id"],
+                    "parent_id": data["parent_id"],
+                    "author": data["author"],
+                    "body": data["body"],
+                    "content_html": data.get("body_html"),
+                    "created_at": timestamp(data["created_utc"]),
+                    "score": data["score"],
+                    "url": permalink(data["permalink"]),
+                    "replies": visit(nested, "t1_" + data["id"]),
+                    "reply_count": None,
+                }
+            )
+        return result
+
+    roots = visit(children, "t3_" + post_id)
+    return roots, len(seen)
+
+
+def listing_children(value, kind):
+    if (
+        not isinstance(value, dict)
+        or value.get("kind") != "Listing"
+        or not isinstance(value.get("data"), dict)
+    ):
+        raise ValueError("Missing Reddit listing envelope")
+    children = value["data"].get("children")
+    if not isinstance(children, list) or any(
+        not isinstance(c, dict) or not isinstance(c.get("data"), dict) for c in children
+    ):
+        raise ValueError("Malformed Reddit listing children")
+    allowed = {kind, "more"} if kind == "t1" else {kind}
+    if any(c.get("kind") not in allowed for c in children):
+        raise ValueError("Unexpected record type in Reddit listing")
+    return children
+
+
+def comment_coverage(children):
+    returned, deferred = 0, 0
+    for thing in children:
+        if thing.get("kind") == "more":
+            deferred += len(thing["data"].get("children") or [])
+        elif thing.get("kind") == "t1":
+            returned += 1
+            replies = thing["data"].get("replies")
+            if replies:
+                nested, more = comment_coverage(listing_children(replies, "t1"))
+                returned += nested
+                deferred += more
+    return returned, deferred
 
 
 def build_reddit_input(config):
@@ -17,214 +245,75 @@ def build_reddit_input(config):
     period = config.time if sort in {"top", "controversial"} else None
     limit = max(1, min(config.limit or 25, 100))
     comments = (config.max_comments or 10) if config.fetch_comments == "true" else 0
-    url = f"https://www.reddit.com/r/{subreddit}/{sort}/"
+    params = {"raw_json": 1, "limit": limit, "sr_detail": 1}
     if period:
-        url += "?" + urlencode({"t": period})
-    return (
-        {
-            "startUrls": [{"url": url}],
-            "maxPostsCount": limit,
-            "crawlCommentsPerPost": bool(comments),
-            "maxCommentsPerPost": comments,
-            "maxCommentsCount": 0,
-            "maxCommunitiesCount": 1,
-            "includeNSFW": True,
-            "aiAnalysis": False,
-            "customLabels": {},
-            "proxy": {"useApifyProxy": True, "apifyProxyGroups": ["RESIDENTIAL"]},
-        },
-        subreddit,
-        sort,
-        period,
-        limit,
-        comments,
+        params["t"] = period
+    url = f"{ORIGIN}/r/{subreddit}/{sort}.json?" + urlencode(params)
+    return url, subreddit, sort, period, limit, comments
+
+
+def normalize_reddit_result(value, *, subreddit, sort, period, limit, comments_limit):
+    posts = []
+    seen = set()
+    now = datetime.now(timezone.utc).isoformat()
+    children = listing_children(value, "t3")
+    if len(children) > limit:
+        raise ValueError("Reddit scraper exceeded the requested post limit")
+    for item in children:
+        data = item["data"]
+        post = normalize_post(data, data.get("sr_detail") or {}, now)
+        if post["subreddit"].casefold() != subreddit.casefold():
+            raise ValueError("Reddit scraper returned a different subreddit")
+        if post["post_id"] not in seen:
+            posts.append(post)
+            seen.add(post["post_id"])
+    if sort == "new":
+        posts.sort(key=lambda p: p["published_at"], reverse=True)
+    elif sort == "top":
+        posts.sort(key=lambda p: p["score"], reverse=True)
+    return {
+        "posts": posts, "count": len(posts), "subreddit": subreddit, "sort": sort,
+        "time_period": period, "source": "decodo", "comments_fetched": bool(comments_limit),
+        "coverage": {"requested_posts": limit, "requested_count_met": len(posts) >= limit,
+                     "next_cursor": value["data"].get("after")},
+    }
+
+
+def attach_comments(post, thread, limit):
+    if not isinstance(thread, list) or len(thread) != 2:
+        raise ValueError("Reddit returned an invalid comment thread")
+    parents = listing_children(thread[0], "t3")
+    if len(parents) != 1 or parents[0]["data"].get("id") != post["post_id"]:
+        raise ValueError("Reddit returned a comment thread for the wrong post")
+    children = listing_children(thread[1], "t1")
+    available, deferred = comment_coverage(children)
+    comments, count = normalize_comments(children, limit, post["post_id"])
+    post.update(
+        comments=comments, comment_count=count, comments_limit=limit, comments_are_sampled=True,
+        comment_coverage={"returned_by_reddit": available, "returned_to_caller": count,
+                          "deferred_comment_ids": deferred},
     )
 
 
-def _require(item: dict, fields: tuple[str, ...]) -> None:
-    missing = [key for key in fields if item.get(key) is None]
-    if missing:
-        raise ValueError(
-            f"Reddit scraper returned an incomplete record: missing {', '.join(missing)}"
-        )
-
-
-def _date(value: str) -> str:
-    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
-    if parsed.tzinfo is None:
-        raise ValueError("Reddit scraper returned a timestamp without a timezone")
-    return value
-
-
-def normalize_reddit_result(
-    items: list[dict],
-    community_items: list[dict],
-    *,
-    subreddit: str,
-    sort: str,
-    period: str | None,
-    limit: int,
-    comments_limit: int,
-) -> dict[str, Any]:
-    communities = [
-        x
-        for x in community_items
-        if x.get("dataType") == "community" and x.get("name", "").casefold() == subreddit.casefold()
-    ]
-    if len(communities) != 1:
-        raise ValueError(f"Reddit scraper did not return community metadata for r/{subreddit}")
-    community = communities[0]
-    _require(community, ("membersCount", "description", "publicDescription"))
-    posts = {}
-    for item in items:
-        if item.get("dataType") != "post":
-            continue
-        _require(
-            item,
-            (
-                "id",
-                "title",
-                "body",
-                "postUrl",
-                "authorName",
-                "createdAt",
-                "score",
-                "commentsCount",
-                "parsedCommunityName",
-            ),
-        )
-        if item["body"]:
-            _require(item, ("bodyHtml",))
-        post_id = item["id"].removeprefix("t3_")
-        if (
-            not post_id
-            or not item["title"]
-            or not item["postUrl"].startswith("https://www.reddit.com/")
-            or item["parsedCommunityName"].casefold() != subreddit.casefold()
-        ):
-            raise ValueError("Reddit scraper returned a post with an invalid identity or subreddit")
-        if (
-            not isinstance(item["commentsCount"], int)
-            or item["commentsCount"] < 0
-            or not isinstance(item["score"], (int, float))
-        ):
-            raise ValueError("Reddit scraper returned invalid engagement counts")
-        if (
-            item.get("bodyLength") is not None
-            and len(item["body"].encode("utf-16-le")) // 2 != item["bodyLength"]
-        ):
-            raise ValueError("Reddit scraper returned truncated post text")
-        posts[post_id] = {
-            "post_id": post_id,
-            "title": item["title"],
-            "url": item["postUrl"],
-            "author": item["authorName"],
-            "subreddit": item["parsedCommunityName"],
-            "body": item["body"],
-            "content_html": item.get("bodyHtml") or "",
-            "published_at": _date(item["createdAt"]),
-            "updated_at": item.get("editedAt") or item["createdAt"],
-            "scraped_at": item.get("crawledAt"),
-            "score": item["score"],
-            "num_comments": item["commentsCount"],
-            "tag": item.get("flair"),
-            "content_url": item.get("contentUrl"),
-            "photos": (item.get("galleryImages") or [])
-            if item.get("mediaType") == "gallery"
-            else (
-                [item["contentUrl"]]
-                if item.get("mediaType") == "image" and item.get("contentUrl")
-                else item.get("images") or []
-            ),
-            "videos": [item["videoUrl"]] if item.get("videoUrl") else [],
-            "media_assets": item.get("mediaAssets") or [],
-            "community_url": f"https://www.reddit.com/r/{subreddit}/",
-            "community_description": community["description"] or community["publicDescription"],
-            "community_members_num": community["membersCount"],
-            # Reddit does not expose related-post recommendations in this dataset.
-            "related_posts": None,
-        }
-    if len(posts) > limit:
-        raise ValueError("Reddit scraper exceeded the requested post limit")
-
+async def fetch_subreddit(client, request):
+    url, subreddit, sort, period, limit, comments_limit = request
+    value = await client.fetch_json(url)
+    output = normalize_reddit_result(
+        value, subreddit=subreddit, sort=sort, period=period, limit=limit, comments_limit=comments_limit,
+    )
     if comments_limit:
-        comments_by_post: dict[str, dict] = {pid: {} for pid in posts}
-        for item in items:
-            if item.get("dataType") != "comment":
-                continue
-            _require(
-                item,
-                (
-                    "id",
-                    "postId",
-                    "parentId",
-                    "body",
-                    "authorName",
-                    "url",
-                    "commentCreatedAt",
-                    "score",
-                ),
-            )
-            pid = item["postId"].removeprefix("t3_")
-            if pid not in posts:
-                raise ValueError("Reddit scraper returned a comment without its post")
-            cid = item["id"].removeprefix("t1_")
-            comments_by_post[pid][cid] = {
-                "comment_id": cid,
-                "parent_id": item["parentId"],
-                "author": item["authorName"],
-                "body": item["body"],
-                "content_html": item.get("bodyHtml"),
-                "created_at": _date(item["commentCreatedAt"]),
-                "score": item["score"],
-                "url": item["url"],
-                "replies": [],
-                "reply_count": None,
-            }
-        for pid, comments in comments_by_post.items():
-            if len(comments) > comments_limit:
-                raise ValueError("Reddit scraper exceeded the requested comment limit")
-            roots = []
-            for cid, comment in comments.items():
-                parent_id = comment["parent_id"]
-                parent = (
-                    comments.get(parent_id.removeprefix("t1_"))
-                    if parent_id.startswith("t1_")
-                    else None
-                )
-                # Keep orphaned replies visible; sampling may omit their parent.
-                if parent is not None:
-                    ancestors = {cid}
-                    cursor = parent
-                    while cursor is not None:
-                        if cursor["comment_id"] in ancestors:
-                            raise ValueError("Reddit scraper returned cyclic comment replies")
-                        ancestors.add(cursor["comment_id"])
-                        cursor = comments.get(cursor["parent_id"].removeprefix("t1_"))
-                    parent["replies"].append(comment)
-                else:
-                    roots.append(comment)
-            posts[pid].update(
-                comments=roots,
-                comment_count=len(comments),
-                comments_limit=comments_limit,
-                comments_are_sampled=True,
-            )
+        async def enrich(post):
+            params = urlencode({"raw_json": 1, "limit": comments_limit, "depth": 10})
+            url = f"{ORIGIN}/r/{subreddit}/comments/{post['post_id']}.json?{params}"
+            attach_comments(post, await client.fetch_json(url), comments_limit)
 
-    result = list(posts.values())
-    if sort == "new":
-        result.sort(
-            key=lambda p: datetime.fromisoformat(p["published_at"].replace("Z", "+00:00")),
-            reverse=True,
-        )
-    elif sort == "top":
-        result.sort(key=lambda p: p["score"], reverse=True)
-    return {
-        "posts": result,
-        "count": len(result),
-        "subreddit": subreddit,
-        "sort": sort,
-        "time_period": period,
-        "source": "apify",
-        "comments_fetched": bool(comments_limit),
-    }
+        tasks = [asyncio.create_task(enrich(post)) for post in output["posts"]]
+        try:
+            await asyncio.gather(*tasks)
+        except BaseException:
+            # Close every pending paid read before the runner settles usage or exits.
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            raise
+    return output
