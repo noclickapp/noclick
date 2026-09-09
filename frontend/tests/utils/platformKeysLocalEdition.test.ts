@@ -61,16 +61,16 @@ describe('self-hosted credential-optional operations', () => {
     });
 
     it.each([
-        ['automation-linkedin', 'scrape_user_profiles'],
-        ['automation-reddit', 'get_subreddit_posts'],
-    ])('%s scraping requires the instance Apify key', (nodeType, operation) => {
+        ['automation-linkedin', 'scrape_user_profiles', 'APIFY_API_TOKEN'],
+        ['automation-reddit', 'get_subreddit_posts', 'DECODO_AUTH_TOKEN'],
+    ])('%s scraping requires its instance provider key', (nodeType, operation, envVar) => {
         configure();
         expect(
             operationPlatformKey(
                 nodeType,
                 singleOp(operation)
             )
-        ).toEqual({ env: 'APIFY_API_TOKEN', byok: false });
+        ).toEqual({ env: envVar, byok: false });
         expect(
             hasUnconnectedCredentials(
                 nodeType,
@@ -78,7 +78,7 @@ describe('self-hosted credential-optional operations', () => {
                 singleOp(operation)
             )
         ).toBe(true);
-        configure('APIFY_API_TOKEN');
+        configure(envVar);
         expect(
             hasUnconnectedCredentials(
                 nodeType,
