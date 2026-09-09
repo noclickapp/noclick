@@ -9,6 +9,12 @@ from coder.workflow.graph_state import GraphState, NodeState
 from coder.workflow.workflow_ops import find_predecessors
 
 
+@pytest.fixture
+def apify_instance_key(monkeypatch):
+    """Public Reddit reads are credential-optional when the instance funds them."""
+    monkeypatch.setenv("APIFY_API_TOKEN", "instance-key")
+
+
 # ============================================================================
 # summarize_output
 # ============================================================================
@@ -362,7 +368,7 @@ class TestNodeConfigShape:
 # ============================================================================
 
 class TestNodeRequiresCredentials:
-    def test_credentials_optional_operation(self):
+    def test_credentials_optional_operation(self, apify_instance_key):
         from coder.workflow.operation_catalog import node_requires_credentials
         assert node_requires_credentials('automation-reddit', 'get_subreddit_posts', {}) is False
 
@@ -380,7 +386,7 @@ class TestNodeRequiresCredentials:
 
 
 class TestCredentialStatusLine:
-    def test_not_required_for_optional_operation(self):
+    def test_not_required_for_optional_operation(self, apify_instance_key):
         from coder.workflow.operation_catalog import credential_status_line
         line = credential_status_line('automation-reddit', 'get_subreddit_posts', {}, 'reddit')
         assert line == '[credentials: not required for this operation]'
@@ -420,7 +426,7 @@ class TestCredentialStatusLine:
         harness = credential_status_line('agent', 'default', {'model': 'codex'}, 'summarizer')
         assert harness.startswith('[credentials needed:')
 
-    def test_summary_and_snapshot_carry_the_line(self):
+    def test_summary_and_snapshot_carry_the_line(self, apify_instance_key):
         from coder.workflow.agentic.commands import build_node_summary
 
         state = GraphState()
@@ -443,7 +449,7 @@ class TestKnownCredentialTypes:
 
 
 class TestNoCredentialsGuidance:
-    def test_unknown_type_and_no_needy_nodes(self):
+    def test_unknown_type_and_no_needy_nodes(self, apify_instance_key):
         from coder.workflow.agentic.commands import _no_credentials_guidance
 
         state = GraphState()
@@ -495,7 +501,7 @@ class TestExtractAskRequestsValidation:
         from coder.workflow.workflow_xml import XmlOp
         return XmlOp(tag='ask', attrs={'node': node, 'field': field, 'label': label}, body=None)
 
-    def test_credential_ask_rejected_for_credential_free_operation(self):
+    def test_credential_ask_rejected_for_credential_free_operation(self, apify_instance_key):
         from coder.workflow.agentic.commands import extract_ask_requests
 
         state = GraphState()
@@ -586,7 +592,7 @@ class TestExtractAskRequestsValidation:
 
 class TestSearchCredentialsGuidanceWiring:
     @pytest.mark.asyncio
-    async def test_empty_search_reports_no_requirement(self):
+    async def test_empty_search_reports_no_requirement(self, apify_instance_key):
         from coder.workflow.agentic.commands import execute_platform_ops
         from coder.workflow.workflow_xml import XmlOp
 

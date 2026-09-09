@@ -269,12 +269,14 @@ def test_agentic_add_edge_into_mcp_auto_normalizes():
     assert any('agent_tool_operations' in r for r in results), results
 
 
-def test_allowlist_requires_credentials():
+def test_allowlist_requires_credentials(monkeypatch):
     """Providers whose every allowlisted op is x-credentials-optional need no
     credential (reddit get_subreddit_posts); any op without the flag — or an
     empty allowlist — keeps the requirement."""
     from nodes.agent.node_op_tools import allowlist_requires_credentials
 
+    # The instance supplies Apify; users need no Reddit account for this read.
+    monkeypatch.setenv("APIFY_API_TOKEN", "instance-key")
     assert not allowlist_requires_credentials('automation-reddit', ['get_subreddit_posts'])
     assert allowlist_requires_credentials('automation-gmail', ['fetch_emails_from_inbox'])
     assert allowlist_requires_credentials('automation-reddit', [])

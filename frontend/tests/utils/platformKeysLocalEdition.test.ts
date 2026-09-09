@@ -60,27 +60,30 @@ describe('self-hosted credential-optional operations', () => {
         ).toBe(false);
     });
 
-    it('LinkedIn scraping runs on Apify: the node credential never substitutes', () => {
+    it.each([
+        ['automation-linkedin', 'scrape_user_profiles'],
+        ['automation-reddit', 'get_subreddit_posts'],
+    ])('%s scraping requires the instance Apify key', (nodeType, operation) => {
         configure();
         expect(
             operationPlatformKey(
-                'automation-linkedin',
-                singleOp('scrape_user_profiles')
+                nodeType,
+                singleOp(operation)
             )
         ).toEqual({ env: 'APIFY_API_TOKEN', byok: false });
         expect(
             hasUnconnectedCredentials(
-                'automation-linkedin',
+                nodeType,
                 none,
-                singleOp('scrape_user_profiles')
+                singleOp(operation)
             )
         ).toBe(true);
         configure('APIFY_API_TOKEN');
         expect(
             hasUnconnectedCredentials(
-                'automation-linkedin',
+                nodeType,
                 none,
-                singleOp('scrape_user_profiles')
+                singleOp(operation)
             )
         ).toBe(false);
     });
@@ -92,17 +95,6 @@ describe('self-hosted credential-optional operations', () => {
         expect(
             operationPlatformKey('automation-exa', singleOp('create_webset'))
         ).toBeNull();
-    });
-
-    it('a genuinely free operation stays optional without any key', () => {
-        configure();
-        expect(
-            hasUnconnectedCredentials(
-                'automation-reddit',
-                none,
-                singleOp('get_subreddit_posts')
-            )
-        ).toBe(false);
     });
 
     it('never advertises the cloud\u2019s usage-based billing', () => {
