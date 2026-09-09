@@ -8,22 +8,19 @@ API Reference: https://www.reddit.com/dev/api/
 OAuth Reference: https://github.com/reddit-archive/reddit/wiki/OAuth2
 """
 
-import asyncio
-import html as html_lib
 import logging
-import os
-import re
 import time
-import xml.etree.ElementTree as ET
-from datetime import datetime
-from decimal import Decimal
 from typing import Dict, Any, Optional, Union, Literal, List, Annotated
-from urllib.parse import urlencode
 
 import httpx
 from pydantic import BaseModel, Field, Discriminator, ConfigDict, model_validator
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.apify_runner import ApifyRunnerMixin
+from nodes.core.platform_billing import platform_keyed_operation
+from nodes.core.reddit_scraper import (
+    REDDIT_ACTOR, REDDIT_ACTOR_BUILD, build_reddit_input, normalize_reddit_result,
+)
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.scopes.reddit import REDDIT_SCOPES
 from utils.oauth_token_cache import (
@@ -36,13 +33,6 @@ logger = logging.getLogger(__name__)
 
 REDDIT_API_BASE = "https://oauth.reddit.com"
 USER_AGENT = "NoClick/1.0 (workflow automation)"
-BRIGHTDATA_DATASETS_API_BASE = "https://api.brightdata.com/datasets/v3"
-BRIGHTDATA_REDDIT_POSTS_DATASET_ID = "gd_lvz8ah06191smkebj4"
-BRIGHTDATA_REDDIT_SNAPSHOT_TIMEOUT_SECONDS = 120.0
-BRIGHTDATA_REDDIT_COST_PER_RECORD_USD = Decimal("0.0015")
-PUBLIC_REDDIT_COMMENT_LIMIT = 10
-PUBLIC_REDDIT_COMMENT_FETCH_CONCURRENCY = 8
-
 # Optional[Literal] nests its enum inside anyOf, which the config renderer can't
 # turn into a dropdown — time fields need the enum hoisted explicitly.
 TIME_PERIOD_SCHEMA_EXTRA = {
@@ -51,23 +41,6 @@ TIME_PERIOD_SCHEMA_EXTRA = {
     "x-enum-searchable": True,
 }
 
-
-def _get_brightdata_api_token() -> str:
-    return (
-        os.environ.get("BRIGHTDATA_API_TOKEN")
-        or os.environ.get("BRIGHTDATA_DATASET_API_TOKEN")
-        or os.environ.get("BRIGHTDATA_TOKEN")
-        or ""
-    )
-
-
-def _get_brightdata_proxy_url() -> str:
-    """Read Bright Data proxy config lazily so dotenv load order can't stale it."""
-    user = os.environ.get("BRIGHTDATA_PROXY_USER", "")
-    password = os.environ.get("BRIGHTDATA_PROXY_PASS", "")
-    host = os.environ.get("BRIGHTDATA_PROXY_HOST", "brd.superproxy.io")
-    port = os.environ.get("BRIGHTDATA_PROXY_PORT", "33335")
-    return f"http://{user}:{password}@{host}:{port}" if user else ""
 
 # ============================================================================
 # Reddit Credential Schemas
@@ -216,11 +189,10 @@ class RedditGetSubredditPostsConfig(BaseModel):
         json_schema_extra={
             "ui:help": (
                 "Fetches public subreddit posts without Reddit credentials. "
-                "Fast mode uses Reddit's public RSS feed directly and retries through "
-                "the configured proxy only when needed. Rich mode uses Bright Data's "
-                "Reddit scraper and may take longer, but can return richer metadata."
+                "Includes full post text, timestamps, scores, comment counts, media, "
+                "and optional threaded comments. Uses NoClick credits; no Reddit login is needed."
             ),
-            "x-credentials-optional": True,
+            **platform_keyed_operation("APIFY_API_TOKEN", byok=False),
         }
     )
 
@@ -250,7 +222,7 @@ class RedditGetSubredditPostsConfig(BaseModel):
     time: Optional[Literal["hour", "day", "week", "month", "year", "all"]] = Field(
         default="day",
         title="Time Period",
-        description="Time period for top/controversial sorting (fast mode only)",
+        description="Time period for top/controversial sorting",
         json_schema_extra={
             **TIME_PERIOD_SCHEMA_EXTRA,
             "ui:show-if": {"field": "sort", "containsAny": ["top", "controversial"]},
@@ -267,37 +239,18 @@ class RedditGetSubredditPostsConfig(BaseModel):
     fetch_comments: Optional[str] = Field(
         default="false",
         title="Fetch Comments",
-        description="Fetch top comments for each post (adds latency - 1-2 seconds per post)",
+        description="Fetch a bounded sample of comments and nested replies for each post. Adds latency and usage; num_comments always reports the total on Reddit.",
         json_schema_extra={
             "enum": ["true", "false"],
             "enumNames": ["Yes", "No"],
             "x-enum-searchable": True,
         }
     )
-    content_mode: Optional[str] = Field(
-        default="fast",
-        title="Content Detail",
-        description=(
-            "Fast uses Reddit RSS and is usually quicker. Rich uses Bright Data's "
-            "Reddit scraper for richer post metadata and may take significantly longer. "
-            "Rich mode does not support the Time Period filter."
-        ),
-        json_schema_extra={
-            "enum": ["fast", "rich"],
-            "enumNames": ["Fast (RSS, less detail)", "Rich (Bright Data, slower)"],
-            "x-enum-searchable": True,
-        }
-    )
-    use_proxy: Optional[str] = Field(
-        default="auto",
-        title="Proxy Mode",
-        description="How the fast RSS path should handle Reddit blocks. Auto tries direct first and retries through Bright Data proxy only if needed. Always forces proxy. Never keeps requests direct-only.",
-        json_schema_extra={
-            "enum": ["auto", "always", "never"],
-            "enumNames": ["Auto (direct + proxy retry)", "Always use proxy", "Never use proxy"],
-            "x-enum-searchable": True,
-            "ui:category": "Advanced",
-        }
+    max_comments: Optional[int] = Field(
+        default=10, ge=1, le=100,
+        title="Comments per Post",
+        description="Maximum sampled comments per post, including replies. Deleted or hidden comments may be unavailable.",
+        json_schema_extra={"ui:show-if": {"field": "fetch_comments", "equals": "true"}},
     )
 
 
@@ -2527,7 +2480,7 @@ class RedditNodeConfig(NodeConfig[RedditConfig, RedditCredential]):
 # ============================================================================
 
 
-class RedditNode(WorkflowNode):
+class RedditNode(ApifyRunnerMixin, WorkflowNode):
     """
     Reddit API automation node.
 
@@ -2920,16 +2873,29 @@ class RedditNode(WorkflowNode):
     # ========== Subreddit Operations ==========
 
     async def _get_subreddit_posts(self, config: RedditGetSubredditPostsConfig, credentials: RedditCredential) -> Dict[str, Any]:
-        """Fetch subreddit posts from Reddit's public endpoints only."""
-        return await self._fetch_public_subreddit_posts(
-            subreddit=config.subreddit,
-            sort=config.sort or "",
-            time_period=config.time if config.sort in ["top", "controversial"] else None,
-            limit=config.limit,
-            fetch_comments=config.fetch_comments,
-            use_proxy=config.use_proxy,
-            content_mode=config.content_mode,
+        """Fetch complete public post records and community metadata through Apify."""
+        actor_input, subreddit, sort, period, limit, comments = build_reddit_input(config)
+        result = await self._run_apify_actor(
+            REDDIT_ACTOR, actor_input, "get_subreddit_posts", "reddit_scraping", "reddit",
+            build=REDDIT_ACTOR_BUILD,
+            max_total_charge_usd=round(0.05 + 0.003 * limit * (1 + comments), 3),
+            summary_key="RUN-SUMMARY", result_charge_event="result", emit_output=False,
         )
+        # A listing does not include the community sidebar; fetch it explicitly.
+        community = await self._run_apify_actor(
+            REDDIT_ACTOR,
+            {**actor_input, "startUrls": [{"url": f"https://www.reddit.com/r/{subreddit}/"}],
+             "maxPostsCount": 0, "crawlCommentsPerPost": False, "maxCommentsPerPost": 0},
+            "get_subreddit_posts", "reddit_scraping", "reddit",
+            build=REDDIT_ACTOR_BUILD, max_total_charge_usd=0.05,
+            summary_key="RUN-SUMMARY", result_charge_event="result", emit_output=False,
+        )
+        output = normalize_reddit_result(
+            result["data"]["items"], community["data"]["items"],
+            subreddit=subreddit, sort=sort, period=period, limit=limit, comments_limit=comments,
+        )
+        await self.emit(output)
+        return output
 
     async def _get_subreddit_info(
         self, config: RedditGetSubredditInfoConfig, credentials: RedditCredential
@@ -4413,839 +4379,3 @@ class RedditNode(WorkflowNode):
             "thing_id": thing_id,
             "action": "unignored_reports" if config.unignore else "ignored_reports",
         }
-
-    # ========== RSS Feed Operations (No authentication required) ==========
-
-    async def _reddit_get(
-        self,
-        url: str,
-        proxy_mode: str = "auto",
-        timeout: float = 60.0,
-    ) -> tuple[httpx.Response, bool]:
-        """Make a GET request to Reddit with smart proxy fallback.
-
-        Args:
-            url: The Reddit URL to fetch
-            proxy_mode: "auto" (direct first, proxy on 429), "always", or "never"
-            timeout: Request timeout in seconds
-
-        Returns:
-            Tuple of (response, used_proxy) where used_proxy indicates if proxy was used
-        """
-        headers = {"User-Agent": USER_AGENT}
-        proxy_url = _get_brightdata_proxy_url()
-
-        if proxy_mode == "always" and proxy_url:
-            # Always use proxy
-            async with httpx.AsyncClient(
-                proxy=proxy_url, verify=False
-            ) as client:
-                response = await client.get(url, headers=headers, timeout=timeout)
-            return response, True
-
-        # Try direct first (for "auto" and "never" modes)
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url, headers=headers, timeout=timeout)
-
-        # Reddit now often returns a 403 HTML "blocked by network security"
-        # page instead of a 429. Treat that the same as a proxy-worthy block.
-        body = response.text.lower() if response.status_code == 403 else ""
-        should_retry_via_proxy = response.status_code == 429 or (
-            response.status_code == 403
-            and "blocked by network security" in body
-        )
-
-        # If blocked and auto mode, retry through proxy
-        if (
-            should_retry_via_proxy
-            and proxy_mode == "auto"
-            and proxy_url
-        ):
-            logger.info(
-                f"[RedditNode] Reddit blocked direct access ({response.status_code}), retrying via proxy: {url[:80]}"
-            )
-            async with httpx.AsyncClient(
-                proxy=proxy_url, verify=False
-            ) as client:
-                response = await client.get(url, headers=headers, timeout=timeout)
-            return response, True
-
-        return response, False
-
-    async def _fetch_post_comments(
-        self, post_id: str, subreddit: str, limit: int = 10, proxy_mode: str = "auto"
-    ) -> List[Dict[str, Any]]:
-        """Fetch top comments for a post via Reddit's public Atom comment feed.
-
-        Args:
-            post_id: Post ID (without t3_ prefix)
-            subreddit: Subreddit name
-            limit: Maximum number of comments to return
-            proxy_mode: "auto", "always", or "never"
-
-        Returns:
-            List of comment data
-        """
-        try:
-            url = f"https://www.reddit.com/r/{subreddit}/comments/{post_id}/.rss"
-
-            response, _ = await self._reddit_get(url, proxy_mode=proxy_mode)
-
-            if response.status_code != 200:
-                logger.warning(
-                    f"[RedditNode] Failed to fetch comments for post {post_id}: {response.status_code}"
-                )
-                return []
-
-            return self._parse_comment_feed_entries(response.content, post_id, limit)
-
-        except Exception as e:
-            logger.warning(
-                f"[RedditNode] Error fetching comments for post {post_id}: {str(e)}"
-            )
-            return []
-
-    @staticmethod
-    def _normalize_subreddit_name(subreddit: str) -> str:
-        normalized = subreddit.strip()
-        if normalized.startswith("r/"):
-            normalized = normalized[2:]
-        return normalized
-
-    @classmethod
-    def _build_public_subreddit_url(
-        cls,
-        subreddit: str,
-        sort: str = "",
-        time_period: Optional[str] = None,
-    ) -> str:
-        normalized_subreddit = cls._normalize_subreddit_name(subreddit)
-        path = f"/r/{normalized_subreddit}/"
-        if sort:
-            path += f"{sort}/"
-
-        params: Dict[str, str] = {}
-        if time_period and sort in ["top", "controversial"]:
-            params["t"] = time_period
-
-        base_url = f"https://www.reddit.com{path}"
-        return f"{base_url}?{urlencode(params)}" if params else base_url
-
-    @staticmethod
-    def _extract_post_id_from_reddit_url(url: str) -> str:
-        match = re.search(r"/comments/([^/]+)/", url or "")
-        return match.group(1) if match else ""
-
-    @staticmethod
-    def _brightdata_sort(sort: str) -> str:
-        return {
-            "new": "New",
-            "top": "Top",
-            "hot": "Hot",
-            "rising": "Hot",
-            "controversial": "Top",
-        }.get((sort or "").lower(), "Hot")
-
-    @staticmethod
-    def _extract_brightdata_comment_id(url: str) -> str:
-        parts = [part for part in (url or "").split("/") if part]
-        if "comment" in parts:
-            idx = parts.index("comment") + 1
-            return parts[idx] if idx < len(parts) else ""
-        return parts[-1] if parts else ""
-
-    def _normalize_brightdata_comment(self, item: Dict[str, Any]) -> Dict[str, Any]:
-        return {
-            "comment_id": self._extract_brightdata_comment_id(item.get("url", "")),
-            "author": item.get("user_commenting") or "[deleted]",
-            "body": item.get("comment") or "",
-            "created_at": item.get("date_of_comment"),
-            "score": item.get("num_upvotes", 0),
-            "reply_count": item.get("num_replies", 0),
-            "url": item.get("url", ""),
-            "replies": item.get("replies") or [],
-        }
-
-    def _normalize_brightdata_post(
-        self,
-        item: Dict[str, Any],
-        should_fetch_comments: bool,
-    ) -> Optional[Dict[str, Any]]:
-        if item.get("error_code") or item.get("error"):
-            return None
-        title = item.get("title") or ""
-        url = item.get("url") or ""
-        post_id = (item.get("post_id") or self._extract_post_id_from_reddit_url(url)).removeprefix("t3_")
-        if not title or not post_id:
-            return None
-
-        post: Dict[str, Any] = {
-            "title": title,
-            "url": url,
-            "author": item.get("user_posted") or "",
-            "post_id": post_id,
-            "subreddit": item.get("community_name") or "",
-            "body": item.get("description") or item.get("description_markdown") or "",
-            "content_html": item.get("description") or "",
-            "published_at": item.get("date_posted"),
-            "updated_at": item.get("timestamp"),
-            "score": item.get("num_upvotes", 0),
-            "num_comments": item.get("num_comments", 0),
-            "tag": item.get("tag"),
-            "photos": item.get("photos") or [],
-            "videos": item.get("videos") or [],
-            "community_url": item.get("community_url"),
-            "community_description": item.get("community_description"),
-            "community_members_num": item.get("community_members_num"),
-            "related_posts": item.get("related_posts") or [],
-        }
-
-        if should_fetch_comments:
-            comments = [
-                self._normalize_brightdata_comment(comment)
-                for comment in (item.get("comments") or [])[:PUBLIC_REDDIT_COMMENT_LIMIT]
-            ]
-            post["comments"] = comments
-            post["comment_count"] = len(comments)
-        return post
-
-    async def _check_brightdata_credits_or_raise(self) -> None:
-        if not self.user_id:
-            raise ValueError("[RedditNode] No user context; cannot meter Bright Data usage")
-        from billing.usage_tracker import usage_tracker
-        await usage_tracker.enforce_credit_gate(
-            self.user_id,
-            organization_id=self.organization_id,
-            sio=self.sio,
-            sid=self.sid,
-            user_resource=False,
-            surface="brightdata",
-        )
-
-    @staticmethod
-    def _brightdata_reddit_raw_cost(record_count: int) -> Decimal:
-        configured_cost = os.environ.get("BRIGHTDATA_REDDIT_COST_PER_RECORD_USD")
-        per_record = Decimal(configured_cost) if configured_cost else BRIGHTDATA_REDDIT_COST_PER_RECORD_USD
-        return per_record * Decimal(str(max(record_count, 0)))
-
-    async def _track_brightdata_reddit_usage(
-        self,
-        raw_cost: Decimal,
-        item_count: int,
-        snapshot_id: str,
-        operation: str,
-    ) -> None:
-        if raw_cost <= 0:
-            return
-        if not self.user_id:
-            logger.error("[RedditNode] No user_id; skipping Bright Data usage tracking")
-            return
-
-        from billing.markup import apply_brightdata_markup
-        from billing.schema import UsageEventData
-        from billing.usage_tracker import usage_tracker
-
-        charged = apply_brightdata_markup(raw_cost)
-        usage_event = UsageEventData(
-            user_id=self.user_id,
-            total_cost=charged,
-            usage_type="api_usage",
-            usage_subtype=f"reddit/{operation}",
-            quantity=Decimal(str(item_count)),
-            unit_type="requests",
-            user_resource=False,
-            organization_id=self.organization_id,
-            metadata={
-                "platform": "reddit",
-                "provider": "brightdata",
-                "dataset_id": BRIGHTDATA_REDDIT_POSTS_DATASET_ID,
-                "operation": operation,
-                "snapshot_id": snapshot_id,
-                "items_returned": item_count,
-                "raw_cost_usd": float(raw_cost),
-                "charged_cost_usd": float(charged),
-            },
-        )
-        try:
-            await usage_tracker.track_usage_event(
-                usage_event,
-                sio=self.sio,
-                sid=self.sid,
-            )
-        except Exception as exc:
-            logger.error("[RedditNode] Failed to track Bright Data usage: %s", exc)
-
-    async def _fetch_brightdata_snapshot(
-        self,
-        client: httpx.AsyncClient,
-        snapshot_id: str,
-        timeout_seconds: float,
-    ) -> tuple[List[Dict[str, Any]], Dict[str, Any]]:
-        deadline = time.time() + timeout_seconds
-        while time.time() < deadline:
-            progress = await client.get(f"{BRIGHTDATA_DATASETS_API_BASE}/progress/{snapshot_id}")
-            if progress.status_code >= 400:
-                raise ValueError(f"Bright Data progress failed: {progress.text[:300]}")
-            state = progress.json() or {}
-            status = state.get("status")
-            if status == "ready":
-                snapshot = await client.get(
-                    f"{BRIGHTDATA_DATASETS_API_BASE}/snapshot/{snapshot_id}",
-                    params={"format": "json"},
-                )
-                if snapshot.status_code >= 400:
-                    raise ValueError(f"Bright Data snapshot download failed: {snapshot.text[:300]}")
-                data = snapshot.json()
-                if not isinstance(data, list):
-                    raise ValueError("Bright Data snapshot returned invalid data")
-                return data, state
-            if status in {"failed", "error", "canceled", "cancelled"}:
-                raise ValueError(f"Bright Data snapshot failed: {state}")
-            await asyncio.sleep(3)
-        await client.post(f"{BRIGHTDATA_DATASETS_API_BASE}/snapshot/{snapshot_id}/cancel")
-        raise TimeoutError(f"Bright Data snapshot {snapshot_id} did not finish in {timeout_seconds:.0f}s")
-
-    async def _fetch_public_subreddit_posts_via_brightdata(
-        self,
-        subreddit: str,
-        sort: str = "",
-        limit: Optional[int] = 25,
-        fetch_comments: Optional[str] = "false",
-    ) -> Dict[str, Any]:
-        token = _get_brightdata_api_token()
-        if not token:
-            raise RuntimeError("BRIGHTDATA_API_TOKEN is not configured")
-        await self._check_brightdata_credits_or_raise()
-
-        normalized_subreddit = self._normalize_subreddit_name(subreddit)
-        requested_limit = min(limit or 25, 100)
-        should_fetch_comments = fetch_comments and fetch_comments.lower() == "true"
-        payload = {
-            "input": [
-                {
-                    "url": f"https://www.reddit.com/r/{normalized_subreddit}/",
-                    "sort_by": self._brightdata_sort(sort),
-                }
-            ]
-        }
-        params = {
-            "dataset_id": BRIGHTDATA_REDDIT_POSTS_DATASET_ID,
-            "type": "discover_new",
-            "discover_by": "subreddit_url",
-            "include_errors": "true",
-            "format": "json",
-            "limit_per_input": str(requested_limit),
-        }
-        timeout_seconds = float(
-            os.environ.get(
-                "BRIGHTDATA_REDDIT_SNAPSHOT_TIMEOUT_SECONDS",
-                str(BRIGHTDATA_REDDIT_SNAPSHOT_TIMEOUT_SECONDS),
-            )
-        )
-
-        total_start = time.time()
-        async with httpx.AsyncClient(
-            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-            timeout=httpx.Timeout(connect=10.0, read=30.0, write=10.0, pool=10.0),
-        ) as client:
-            response = await client.post(
-                f"{BRIGHTDATA_DATASETS_API_BASE}/trigger",
-                params=params,
-                json=payload,
-            )
-            if response.status_code >= 400:
-                raise ValueError(f"Bright Data trigger failed: {response.text[:500]}")
-            snapshot_id = (response.json() or {}).get("snapshot_id")
-            if not snapshot_id:
-                raise ValueError(f"Bright Data did not return a snapshot id: {response.text[:300]}")
-            items, progress_state = await self._fetch_brightdata_snapshot(client, snapshot_id, timeout_seconds)
-
-        posts = [
-            post
-            for item in items
-            if (post := self._normalize_brightdata_post(item, bool(should_fetch_comments)))
-        ][:requested_limit]
-        if not posts:
-            raise ValueError("Bright Data returned no valid Reddit posts")
-
-        logger.info(
-            "[RedditNode] Bright Data Reddit scrape returned %s posts in %.2fs",
-            len(posts),
-            time.time() - total_start,
-        )
-        record_count = int(progress_state.get("records") or len(posts))
-        await self._track_brightdata_reddit_usage(
-            raw_cost=self._brightdata_reddit_raw_cost(record_count),
-            item_count=len(posts),
-            snapshot_id=snapshot_id,
-            operation="get_subreddit_posts",
-        )
-        return {
-            "posts": posts,
-            "count": len(posts),
-            "subreddit": subreddit,
-            "source": "brightdata_reddit_scraper",
-            "provider": "brightdata",
-            "content_mode": "rich",
-        }
-
-    async def _attach_public_feed_comments(
-        self,
-        posts: List[Dict[str, Any]],
-        subreddit: str,
-        proxy_mode: str,
-    ) -> None:
-        """Attach public Atom-feed comments to posts concurrently."""
-        normalized_subreddit = subreddit.strip()
-        if normalized_subreddit.startswith("r/"):
-            normalized_subreddit = normalized_subreddit[2:]
-
-        semaphore = asyncio.Semaphore(PUBLIC_REDDIT_COMMENT_FETCH_CONCURRENCY)
-
-        async def fetch_for_post(post: Dict[str, Any]) -> None:
-            post_id = post.get("post_id")
-            if not post_id:
-                post["comments"] = []
-                post["comment_count"] = 0
-                return
-            async with semaphore:
-                comments = await self._fetch_post_comments(
-                    post_id,
-                    normalized_subreddit,
-                    limit=PUBLIC_REDDIT_COMMENT_LIMIT,
-                    proxy_mode=proxy_mode,
-                )
-            post["comments"] = comments
-            post["comment_count"] = len(comments)
-
-        await asyncio.gather(*(fetch_for_post(post) for post in posts))
-
-    # XML namespaces used by Reddit RSS/Atom feeds
-    _RSS_NS = {
-        "content": "http://purl.org/rss/1.0/modules/content/",
-        "atom": "http://www.w3.org/2005/Atom",
-        "media": "http://search.yahoo.com/mrss/",
-    }
-
-    @staticmethod
-    def _find_elem(
-        item: ET.Element,
-        atom_tag: str,
-        ns: Dict[str, str],
-        rss_tag: Optional[str] = None,
-    ) -> Optional[ET.Element]:
-        """Find an element trying Atom namespace first, then plain RSS tag.
-
-        NOTE: Do NOT use `elem_a or elem_b` with ElementTree — an Element with
-        no children evaluates as falsy, silently skipping valid matches.
-        """
-        elem = item.find(f"atom:{atom_tag}", ns)
-        if elem is not None:
-            return elem
-        if rss_tag:
-            return item.find(rss_tag)
-        return item.find(atom_tag)
-
-    def _parse_feed_entries(self, content: bytes) -> List[Dict[str, Any]]:
-        """Parse RSS/Atom feed XML into a list of post dicts."""
-        root = ET.fromstring(content)
-        ns = self._RSS_NS
-
-        # Try Atom format first (most common for Reddit), fall back to RSS
-        items = root.findall(".//atom:entry", ns)
-        if not items:
-            items = root.findall(".//item")
-
-        posts = []
-        for item in items:
-            post: Dict[str, Any] = {}
-
-            # Title
-            title_elem = self._find_elem(item, "title", ns)
-            if title_elem is not None:
-                post["title"] = title_elem.text or ""
-
-            # URL — Atom uses href attr, RSS uses text
-            link_elem = item.find("atom:link", ns)
-            if link_elem is not None:
-                post["url"] = link_elem.get("href") or ""
-            else:
-                link_elem = item.find("link")
-                if link_elem is not None:
-                    post["url"] = link_elem.text or ""
-
-            # Author
-            author_elem = self._find_elem(item, "author", ns)
-            if author_elem is not None:
-                name_elem = self._find_elem(author_elem, "name", ns)
-                post["author"] = (
-                    name_elem.text if name_elem is not None else author_elem.text
-                ) or ""
-
-            # Post ID from URL
-            if post.get("url"):
-                parts = post["url"].split("/")
-                if "comments" in parts:
-                    try:
-                        post["post_id"] = parts[parts.index("comments") + 1]
-                    except (ValueError, IndexError):
-                        pass
-
-            # Content HTML
-            content_elem = self._find_elem(item, "content", ns, "content:encoded")
-            if content_elem is not None:
-                post["content_html"] = content_elem.text or ""
-            else:
-                summary_elem = self._find_elem(item, "summary", ns, "description")
-                if summary_elem is not None:
-                    post["content_html"] = summary_elem.text or ""
-
-            # Category (subreddit)
-            cat_elem = self._find_elem(item, "category", ns)
-            if cat_elem is not None:
-                post["subreddit"] = cat_elem.get("term") or cat_elem.text or ""
-
-            # Timestamps
-            for tag, key in [("updated", "updated_at"), ("published", "published_at")]:
-                elem = self._find_elem(item, tag, ns)
-                if elem is not None and elem.text:
-                    post[key] = elem.text
-            if "published_at" not in post:
-                pubdate = item.find("pubDate")
-                if pubdate is not None and pubdate.text:
-                    post["published_at"] = pubdate.text
-
-            if post.get("title"):
-                posts.append(post)
-
-        return posts
-
-    @staticmethod
-    def _strip_feed_html(content: str) -> str:
-        """Convert feed HTML snippets into readable text."""
-        text = html_lib.unescape(content or "")
-        text = re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL)
-        text = re.sub(r"<br\\s*/?>", "\n", text, flags=re.IGNORECASE)
-        text = re.sub(r"</p\\s*>", "\n\n", text, flags=re.IGNORECASE)
-        text = re.sub(r"<[^>]+>", "", text)
-        return text.strip()
-
-    def _parse_comment_feed_entries(
-        self,
-        content: bytes,
-        post_id: str,
-        limit: int,
-    ) -> List[Dict[str, Any]]:
-        """Parse a Reddit post comment Atom feed into comment dicts."""
-        root = ET.fromstring(content)
-        ns = self._RSS_NS
-        entries = root.findall(".//atom:entry", ns)
-        comments: List[Dict[str, Any]] = []
-
-        for entry in entries:
-            link_elem = entry.find("atom:link", ns)
-            href = link_elem.get("href") if link_elem is not None else ""
-            if not href:
-                continue
-
-            parts = [part for part in href.split("/") if part]
-            try:
-                comment_idx = parts.index(post_id) + 2
-            except ValueError:
-                continue
-            if comment_idx >= len(parts):
-                # The first entry in the feed is the post itself, not a comment.
-                continue
-
-            author_elem = self._find_elem(entry, "author", ns)
-            author_name = ""
-            if author_elem is not None:
-                name_elem = self._find_elem(author_elem, "name", ns)
-                author_name = (
-                    name_elem.text if name_elem is not None else author_elem.text
-                ) or ""
-
-            content_elem = self._find_elem(entry, "content", ns, "content:encoded")
-            html_body = content_elem.text if content_elem is not None else ""
-            if not html_body:
-                summary_elem = self._find_elem(entry, "summary", ns, "description")
-                html_body = summary_elem.text if summary_elem is not None else ""
-
-            created_at = None
-            for tag in ("updated", "published"):
-                ts_elem = self._find_elem(entry, tag, ns)
-                if ts_elem is not None and ts_elem.text:
-                    created_at = ts_elem.text
-                    break
-
-            comments.append(
-                {
-                    "comment_id": parts[comment_idx],
-                    "author": author_name or "[deleted]",
-                    "body": self._strip_feed_html(html_body),
-                    "body_html": html_body or "",
-                    "created_at": created_at,
-                    "url": href,
-                }
-            )
-            if len(comments) >= limit:
-                break
-
-        return comments
-
-    async def _fetch_page_with_retry(
-        self,
-        url: str,
-        page_num: int,
-        proxy_mode: str = "auto",
-    ) -> tuple[httpx.Response, bool]:
-        """Fetch a single page with retry on 5xx errors and smart proxy fallback.
-
-        Returns:
-            Tuple of (response, used_proxy)
-        """
-        used_proxy = False
-        response = None
-        for attempt in range(3):
-            response, used_proxy = await self._reddit_get(url, proxy_mode=proxy_mode)
-            if response.status_code < 500:
-                return response, used_proxy
-            logger.warning(
-                f"[RedditNode] Page {page_num} returned {response.status_code}, "
-                f"retry {attempt + 1}/2"
-            )
-            await asyncio.sleep(2)
-        return response, used_proxy
-
-    async def _fetch_rss_feed(
-        self,
-        subreddit: str,
-        sort: str = "",
-        time_param: Optional[str] = None,
-        limit: Optional[int] = None,
-        proxy_mode: str = "auto",
-    ) -> Dict[str, Any]:
-        """Fetch Reddit posts from Reddit's public Atom feed.
-
-        The JSON listing endpoints are now aggressively blocked for anonymous
-        access, while the public feed URLs remain accessible. This operation is
-        intentionally a feed reader, so use the feed endpoint directly here.
-
-        Args:
-            subreddit: Subreddit name(s), supports multiple with +
-            sort: Sort parameter (hot, new, top, rising, controversial)
-            time_param: Time filter for top/controversial
-            limit: Total number of posts to return (Reddit feed supports up to 100)
-            proxy_mode: "auto" (direct first, proxy on block), "always", or "never"
-
-        Returns:
-            Dict with "posts" list and "proxy_stats" tracking proxy usage
-        """
-        # Normalize subreddit name
-        subreddit = subreddit.strip()
-        if subreddit.startswith("r/"):
-            subreddit = subreddit[2:]
-
-        # Build feed URL
-        base_url = f"https://www.reddit.com/r/{subreddit}/"
-        feed_path = f"{sort}.rss" if sort else ".rss"
-        feed_url = base_url + feed_path
-
-        params: Dict[str, Any] = {}
-        if time_param and sort in ["top", "controversial"]:
-            params["t"] = time_param
-
-        requested_limit = limit or 25
-        effective_limit = min(requested_limit, 100)
-        params["limit"] = effective_limit
-
-        total_start = time.time()
-        request_count = 0
-
-        # Proxy usage tracking
-        proxy_requests = 0
-        direct_requests = 0
-
-        try:
-            url = f"{feed_url}?{urlencode(params)}" if params else feed_url
-            api_start = time.time()
-            logger.info(
-                f"[RedditNode] 🔌 Feed request ({proxy_mode} proxy) {url}"
-            )
-
-            response, used_proxy = await self._fetch_page_with_retry(
-                url, 1, proxy_mode
-            )
-            request_count = 1
-
-            if used_proxy:
-                proxy_requests += 1
-            else:
-                direct_requests += 1
-
-            logger.info(
-                f"[RedditNode] ✅ Feed request: "
-                f"status={response.status_code}, "
-                f"proxy={'yes' if used_proxy else 'no'}, "
-                f"time={time.time() - api_start:.3f}s"
-            )
-
-            if response.status_code >= 400:
-                error_text = response.text
-                logger.error(
-                    f"[RedditNode] Feed fetch error: {response.status_code} - {error_text}"
-                )
-                raise ValueError(
-                    f"Reddit feed error ({response.status_code}): {error_text}"
-                )
-
-            all_posts = self._parse_feed_entries(response.content)[:effective_limit]
-
-            total_time = time.time() - total_start
-            logger.info(
-                f"[RedditNode] Fetched {len(all_posts)} posts across "
-                f"{request_count} request(s) in {total_time:.3f}s "
-                f"(direct={direct_requests}, proxy={proxy_requests})"
-            )
-            return {
-                "posts": all_posts,
-                "proxy_stats": {
-                    "mode": proxy_mode,
-                    "direct_requests": direct_requests,
-                    "proxy_requests": proxy_requests,
-                    "total_requests": direct_requests + proxy_requests,
-                },
-            }
-
-        except Exception as e:
-            logger.error(f"[RedditNode] Feed fetch failed: {str(e)}")
-            raise ValueError(f"Failed to fetch Reddit feed: {str(e)}")
-
-    async def _fetch_public_subreddit_posts(
-        self,
-        subreddit: str,
-        sort: str = "",
-        time_period: Optional[str] = None,
-        limit: Optional[int] = 25,
-        fetch_comments: Optional[str] = "false",
-        use_proxy: Optional[str] = "auto",
-        content_mode: Optional[str] = "fast",
-    ) -> Dict[str, Any]:
-        """Fetch public subreddit posts.
-
-        Fast mode is RSS direct-first with proxy retry handled by _reddit_get.
-        Rich mode explicitly uses Bright Data's Reddit scraper.
-        """
-        proxy_mode = use_proxy or "auto"
-        should_fetch_comments = fetch_comments and fetch_comments.lower() == "true"
-        normalized_content_mode = (content_mode or "fast").lower()
-
-        def annotate_brightdata_result(result: Dict[str, Any]) -> Dict[str, Any]:
-            if sort:
-                result["sort"] = sort
-            # Bright Data's discover-by-subreddit API only accepts a sort, so the
-            # time period cannot be applied — say so instead of echoing it back.
-            if sort in ["top", "controversial"] and time_period:
-                result["note"] = (
-                    f"Time period '{time_period}' is not supported in rich mode; "
-                    f"results reflect Reddit's default '{sort}' view."
-                )
-            if should_fetch_comments:
-                result["comments_fetched"] = True
-            return result
-
-        if normalized_content_mode == "rich":
-            try:
-                result = await self._fetch_public_subreddit_posts_via_brightdata(
-                    subreddit=subreddit,
-                    sort=sort,
-                    limit=limit,
-                    fetch_comments=fetch_comments,
-                )
-                return annotate_brightdata_result(result)
-            except Exception as exc:
-                logger.warning(
-                    "[RedditNode] Rich Bright Data scrape failed, falling back to public feed: %s",
-                    exc,
-                )
-                result = await self._fetch_public_feed_subreddit_posts(
-                    subreddit=subreddit,
-                    sort=sort,
-                    time_period=time_period,
-                    limit=limit,
-                    should_fetch_comments=bool(should_fetch_comments),
-                    proxy_mode=proxy_mode,
-                )
-                result["fallback_reason"] = "brightdata_failed"
-                return result
-
-        try:
-            result = await self._fetch_public_feed_subreddit_posts(
-                subreddit=subreddit,
-                sort=sort,
-                time_period=time_period,
-                limit=limit,
-                should_fetch_comments=bool(should_fetch_comments),
-                proxy_mode=proxy_mode,
-            )
-            result["content_mode"] = "fast"
-            return result
-        except Exception as exc:
-            logger.warning(
-                "[RedditNode] Public feed scrape failed, falling back to Bright Data: %s",
-                exc,
-            )
-            result = await self._fetch_public_subreddit_posts_via_brightdata(
-                subreddit=subreddit,
-                sort=sort,
-                limit=limit,
-                fetch_comments=fetch_comments,
-            )
-            annotate_brightdata_result(result)
-            result["fallback_reason"] = "public_feed_failed"
-            return result
-
-    async def _fetch_public_feed_subreddit_posts(
-        self,
-        subreddit: str,
-        sort: str,
-        time_period: Optional[str],
-        limit: Optional[int],
-        should_fetch_comments: bool,
-        proxy_mode: str,
-    ) -> Dict[str, Any]:
-        sort_param = sort if sort else ""
-        feed_result = await self._fetch_rss_feed(
-            subreddit,
-            sort=sort_param,
-            time_param=time_period if sort in ["top", "controversial"] else None,
-            limit=limit,
-            proxy_mode=proxy_mode,
-        )
-
-        posts = feed_result["posts"]
-        proxy_stats = feed_result["proxy_stats"]
-
-        # Optionally fetch comments for each post
-        if should_fetch_comments:
-            logger.info(f"[RedditNode] Fetching comments for {len(posts)} posts...")
-            await self._attach_public_feed_comments(posts, subreddit, proxy_mode)
-
-        result: Dict[str, Any] = {
-            "posts": posts,
-            "count": len(posts),
-            "subreddit": subreddit,
-            "source": "public_feed",
-            "proxy": proxy_stats,
-        }
-
-        if sort:
-            result["sort"] = sort
-
-        if sort in ["top", "controversial"]:
-            result["time_period"] = time_period
-
-        if should_fetch_comments:
-            result["comments_fetched"] = True
-
-        return result

@@ -85,10 +85,6 @@ def apply_perplexity_markup(cost: Decimal) -> Decimal:
     return _apply_min_markup(cost, False)
 
 
-def apply_brightdata_markup(cost: Decimal) -> Decimal:
-    return _apply_min_markup(cost, False)
-
-
 def apply_modal_compute_markup(cost: Decimal) -> Decimal:
     return _apply_min_markup(cost, False)
 

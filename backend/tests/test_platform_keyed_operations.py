@@ -18,6 +18,7 @@ from nodes.core.platform_billing import PLATFORM_KEY_MARKER, require_platform_ke
 from nodes.core.registry import NODE_REGISTRY
 
 PLATFORM_KEYED = [
+    ("automation-reddit", "get_subreddit_posts", "APIFY_API_TOKEN"),
     ("automation-exa", "search", "EXA_API_KEY"),
     ("automation-perplexity", "chat_completion", "PERPLEXITY_API_KEY"),
     ("automation-linkedin", "scrape_user_profiles", "APIFY_API_TOKEN"),
@@ -25,7 +26,7 @@ PLATFORM_KEYED = [
 ]
 
 # Optional without any key at all: nothing to fund.
-GENUINELY_FREE = {"automation-reddit": {"get_subreddit_posts"}}
+GENUINELY_FREE = {}
 
 
 @pytest.fixture
@@ -57,11 +58,6 @@ def test_self_hosted_requires_a_credential_until_the_instance_holds_the_key(self
     monkeypatch.setenv(env, "instance-key")
     assert is_operation_credentials_optional(node_type, operation) is True
     assert allowlist_requires_credentials(node_type, [operation]) is False
-
-
-def test_a_genuinely_free_operation_stays_optional_everywhere(self_hosted):
-    assert is_operation_credentials_optional("automation-reddit", "get_subreddit_posts") is True
-    assert allowlist_requires_credentials("automation-reddit", ["get_subreddit_posts"]) is False
 
 
 def test_every_credential_optional_operation_declares_who_pays():

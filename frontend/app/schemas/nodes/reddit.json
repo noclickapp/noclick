@@ -1478,7 +1478,7 @@
             }
           ],
           "default": "day",
-          "description": "Time period for top/controversial sorting (fast mode only)",
+          "description": "Time period for top/controversial sorting",
           "enum": [
             "hour",
             "day",
@@ -1528,7 +1528,7 @@
             }
           ],
           "default": "false",
-          "description": "Fetch top comments for each post (adds latency - 1-2 seconds per post)",
+          "description": "Fetch a bounded sample of comments and nested replies for each post. Adds latency and usage; num_comments always reports the total on Reddit.",
           "enum": [
             "true",
             "false"
@@ -1540,52 +1540,24 @@
           "title": "Fetch Comments",
           "x-enum-searchable": true
         },
-        "content_mode": {
+        "max_comments": {
           "anyOf": [
             {
-              "type": "string"
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
             },
             {
               "type": "null"
             }
           ],
-          "default": "fast",
-          "description": "Fast uses Reddit RSS and is usually quicker. Rich uses Bright Data's Reddit scraper for richer post metadata and may take significantly longer. Rich mode does not support the Time Period filter.",
-          "enum": [
-            "fast",
-            "rich"
-          ],
-          "enumNames": [
-            "Fast (RSS, less detail)",
-            "Rich (Bright Data, slower)"
-          ],
-          "title": "Content Detail",
-          "x-enum-searchable": true
-        },
-        "use_proxy": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": "auto",
-          "description": "How the fast RSS path should handle Reddit blocks. Auto tries direct first and retries through Bright Data proxy only if needed. Always forces proxy. Never keeps requests direct-only.",
-          "enum": [
-            "auto",
-            "always",
-            "never"
-          ],
-          "enumNames": [
-            "Auto (direct + proxy retry)",
-            "Always use proxy",
-            "Never use proxy"
-          ],
-          "title": "Proxy Mode",
-          "ui:category": "Advanced",
-          "x-enum-searchable": true
+          "default": 10,
+          "description": "Maximum sampled comments per post, including replies. Deleted or hidden comments may be unavailable.",
+          "title": "Comments per Post",
+          "ui:show-if": {
+            "equals": "true",
+            "field": "fetch_comments"
+          }
         }
       },
       "required": [
@@ -1593,8 +1565,12 @@
       ],
       "title": "Get Subreddit Posts",
       "type": "object",
-      "ui:help": "Fetches public subreddit posts without Reddit credentials. Fast mode uses Reddit's public RSS feed directly and retries through the configured proxy only when needed. Rich mode uses Bright Data's Reddit scraper and may take longer, but can return richer metadata.",
-      "x-credentials-optional": true
+      "ui:help": "Fetches public subreddit posts without Reddit credentials. Includes full post text, timestamps, scores, comment counts, media, and optional threaded comments. Uses NoClick credits; no Reddit login is needed.",
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "RedditGetSubredditRulesConfig": {
       "description": "Get rules for a subreddit",

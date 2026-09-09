@@ -461,6 +461,9 @@ def _with_missing_credential_hint(error: Exception, tool_info: Dict) -> Exceptio
     fails its own way on missing auth) — tell the agent the actionable cause."""
     if tool_info.get("credential_id"):
         return error
+    from nodes.core.run_op import needs_credential_hint
+    if not needs_credential_hint(tool_info.get("node_type", ""), tool_info.get("operation")):
+        return error
     return RuntimeError(
         f"{error} — note: no credentials are connected to this tool's provider "
         f"node; if this action requires auth, connect credentials on the node "

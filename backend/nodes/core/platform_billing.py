@@ -2,7 +2,7 @@
 
 ``x-credentials-optional`` on an operation's config class says the operation
 can run with nothing attached. A few are optional because they are genuinely
-free (Reddit's public feed); most are optional because NoClick's own provider
+free; most are optional because NoClick's own provider
 key pays for the call and meters it to credits. Those declare the key:
 
     model_config = ConfigDict(json_schema_extra=platform_keyed_operation("EXA_API_KEY", byok=True))

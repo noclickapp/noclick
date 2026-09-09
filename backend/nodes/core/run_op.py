@@ -24,6 +24,18 @@ from utils.credentials import resolve_credential_with_owner_fallback
 logger = logging.getLogger(__name__)
 
 
+def needs_credential_hint(node_type: str, operation: Optional[str], config=None) -> bool:
+    """A platform scraper failure cannot be fixed by attaching a user credential."""
+    from coder.workflow.operation_catalog import get_operation_config_class, is_operation_credentials_optional
+    from nodes.core.platform_billing import platform_key_of
+
+    config_class = get_operation_config_class(node_type, operation) if operation else None
+    marker = platform_key_of(config_class.model_json_schema()) if config_class else None
+    if marker and marker.get("byok") is False:
+        return False
+    return not is_operation_credentials_optional(node_type, operation, config)
+
+
 async def resolve_operation_credential(
     credential_id: str,
     user_id: str,
@@ -129,7 +141,7 @@ async def run_node_operation(
         # platform-keyed (credential-less) operation.
         raise
     except Exception as e:
-        if credentials is None:
+        if credentials is None and needs_credential_hint(node_type, operation, config):
             # Same seam as run_node_lookup: every node fails its own cryptic
             # way on missing auth, so give the model the actionable cause.
             raise ValueError(

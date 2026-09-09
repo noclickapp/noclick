@@ -11,7 +11,6 @@ user-facing output — only platform-relevant fields are returned.
 import asyncio
 import json
 import logging
-import os
 import time
 from decimal import Decimal
 from typing import Any, Dict, List, Optional
@@ -55,6 +54,7 @@ class ApifyRunnerMixin:
         if not self.user_id:
             raise ValueError(f"[{type(self).__name__}] No user context — cannot meter Apify usage.")
         from billing.usage_tracker import usage_tracker
+
         await usage_tracker.enforce_credit_gate(
             self.user_id,
             organization_id=self.organization_id,
@@ -75,19 +75,20 @@ class ApifyRunnerMixin:
         platform: str = "unknown",
     ) -> None:
         """Apply the platform markup to the actor's actual cost and record a UsageEventData."""
-        from billing.markup import apply_apify_markup
+        from billing.markup import apply_apify_markup, PLATFORM_MIN_MARKUP
         from billing.schema import UsageEventData
         from billing.usage_tracker import usage_tracker
 
         raw = Decimal(str(raw_cost_usd or 0))
         charged = apply_apify_markup(raw)
+        markup_pct = int((PLATFORM_MIN_MARKUP - 1) * 100)
 
         if not self.user_id:
             logger.error(f"[{type(self).__name__}] No user_id; skipping usage tracking")
             return
 
         # Pass the raw runner; track_usage_event resolves to the org owner
-        # centrally (organization attribution policy choke point).
+        # centrally (Owner Pays choke point).
         usage_event = UsageEventData(
             user_id=self.user_id,
             total_cost=charged,
@@ -106,6 +107,7 @@ class ApifyRunnerMixin:
                 "items_returned": item_count,
                 "raw_cost_usd": float(raw),
                 "charged_cost_usd": float(charged),
+                "markup_pct": markup_pct,
             },
         )
         try:
@@ -124,143 +126,169 @@ class ApifyRunnerMixin:
         action_name: str,
         usage_subtype: str,
         platform: str,
+        *,
+        build: Optional[str] = None,
+        max_total_charge_usd: Optional[float] = None,
+        summary_key: Optional[str] = None,
+        result_charge_event: Optional[str] = None,
+        emit_output: bool = True,
     ) -> Dict[str, Any]:
-        """Run an Apify actor, fetch dataset items, and charge the user.
-
-        Pattern:
-          1. POST /v2/acts/{id}/runs?waitForFinish=60
-          2. Poll GET /v2/actor-runs/{runId}?waitForFinish=60 until terminal
-          3. GET /v2/datasets/{defaultDatasetId}/items
-          4. Track cost from usageTotalUsd with markup via _track_apify_usage()
-
-        Returns only platform-facing fields; internal Apify details (actor_id,
-        run_id, billing) are omitted from the output to keep the user-facing
-        response clean.
-        """
-        total_start = time.time()
+        """Run, validate and meter an actor. Provider failures must fail the tool."""
+        total_start = time.monotonic()
         await self._check_credits_or_raise()
         token = self._get_apify_token()
-        normalized_actor_id = actor_id.replace("/", "~")
-
-        logger.info(f"[{type(self).__name__}] Apify actor={normalized_actor_id} action={action_name}")
-
-        items: List[Any] = []
-        run_id: Optional[str] = None
-        api_time: float = 0.0
-        usage_total_usd: float = 0.0
-        terminal_statuses = {"SUCCEEDED", "FAILED", "ABORTED", "TIMED-OUT"}
-
+        actor_id = actor_id.replace("/", "~")
+        terminal = {"SUCCEEDED", "FAILED", "ABORTED", "TIMED-OUT"}
+        params = {"waitForFinish": 30, "timeout": int(APIFY_ACTOR_TIMEOUT_SECONDS)}
+        if build:
+            params["build"] = build
+        if max_total_charge_usd is not None:
+            params["maxTotalChargeUsd"] = max_total_charge_usd
+        run = {}
+        items = []
+        summary = None
+        api_time = 0.0
+        validated = False
         async with httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=15.0, read=120.0, write=30.0, pool=15.0)
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=httpx.Timeout(connect=15.0, read=75.0, write=30.0, pool=15.0),
         ) as client:
-            api_start = time.time()
-            start_resp = await client.post(
-                f"{APIFY_API_BASE}/acts/{normalized_actor_id}/runs",
-                params={"token": token, "waitForFinish": "60"},
-                json=actor_input,
-            )
-            api_time = (time.time() - api_start) * 1000
-
-            if start_resp.status_code >= 400:
-                return await self._emit_apify_error(
-                    platform, action_name, start_resp, total_start, api_time
-                )
-
             try:
-                run_data = (start_resp.json() or {}).get("data") or {}
-            except json.JSONDecodeError:
-                run_data = {}
-            run_id = run_data.get("id")
-            dataset_id = run_data.get("defaultDatasetId")
-            run_status = run_data.get("status")
-
-            if not run_id:
-                err = f"Apify did not return a run id (response: {start_resp.text[:200]})"
-                return await self._emit_apify_error_text(
-                    platform, action_name, err, total_start, api_time
+                response = await client.post(
+                    f"{APIFY_API_BASE}/acts/{actor_id}/runs",
+                    params=params,
+                    json=actor_input,
                 )
-
-            while run_status not in terminal_statuses:
-                if (time.time() - total_start) > APIFY_ACTOR_TIMEOUT_SECONDS:
-                    logger.warning(f"[{type(self).__name__}] Apify run {run_id} exceeded timeout")
-                    break
-                poll_resp = await client.get(
-                    f"{APIFY_API_BASE}/actor-runs/{run_id}",
-                    params={"token": token, "waitForFinish": "60"},
-                )
-                if poll_resp.status_code >= 400:
-                    break
-                try:
-                    run_data = (poll_resp.json() or {}).get("data") or run_data
-                    run_status = run_data.get("status")
-                except json.JSONDecodeError:
-                    break
-
-            # usageTotalUsd is computed asynchronously after run termination —
-            # retry up to ~10s with backoff if it's still 0.
-            usage_total_usd = float(run_data.get("usageTotalUsd") or 0)
-            if run_status in terminal_statuses and usage_total_usd == 0:
-                for delay in (1, 2, 3, 4):
-                    await asyncio.sleep(delay)
-                    refetch = await client.get(
-                        f"{APIFY_API_BASE}/actor-runs/{run_id}",
-                        params={"token": token},
+                api_time = (time.monotonic() - total_start) * 1000
+                run = self._apify_json(response).get("data") or {}
+                if not run.get("id"):
+                    raise RuntimeError("Apify did not return a run id")
+                while run.get("status") not in terminal:
+                    if time.monotonic() - total_start > APIFY_ACTOR_TIMEOUT_SECONDS:
+                        raise TimeoutError("Apify scraper exceeded its execution time limit")
+                    response = await client.get(
+                        f"{APIFY_API_BASE}/actor-runs/{run['id']}",
+                        params={"waitForFinish": 30},
                     )
-                    if refetch.status_code >= 400:
-                        break
-                    try:
-                        run_data = (refetch.json() or {}).get("data") or run_data
-                    except json.JSONDecodeError:
-                        break
-                    usage_total_usd = float(run_data.get("usageTotalUsd") or 0)
-                    if usage_total_usd > 0:
-                        break
-
-            items = []
-            if dataset_id:
-                items_resp = await client.get(
-                    f"{APIFY_API_BASE}/datasets/{dataset_id}/items",
-                    params={"token": token, "format": "json", "clean": "true"},
-                )
-                if items_resp.status_code < 400:
-                    try:
-                        parsed = items_resp.json()
-                        items = parsed if isinstance(parsed, list) else [parsed]
-                    except json.JSONDecodeError:
-                        items = []
-                else:
-                    logger.warning(
-                        f"[{type(self).__name__}] dataset fetch failed: "
-                        f"{items_resp.status_code} {items_resp.text[:200]}"
+                    polled = self._apify_json(response).get("data") or {}
+                    if not polled.get("status"):
+                        raise RuntimeError("Apify returned an invalid run status")
+                    run = polled
+                if run["status"] != "SUCCEEDED":
+                    raise RuntimeError(
+                        f"Apify run {run['id']} finished with status={run['status']}: "
+                        f"{run.get('statusMessage') or 'Scraping did not complete'}"
                     )
-
-            if run_status and run_status != "SUCCEEDED":
-                err = (
-                    f"Apify run finished with status={run_status}. "
-                    f"See https://console.apify.com/actors/runs/{run_id}"
-                )
-                logger.error(f"[{type(self).__name__}] {err}")
-                await self._track_apify_usage(
-                    normalized_actor_id, action_name, usage_subtype,
-                    usage_total_usd, len(items), run_id, platform=platform,
-                )
-                total_time = (time.time() - total_start) * 1000
-                output = {
-                    "type": platform,
-                    "action": action_name,
-                    "status": "error",
-                    "error": err,
-                    "data": {"items": items, "count": len(items)},
-                    "timing_ms": {"total": round(total_time, 1)},
-                }
-                await self.emit(output)
-                return output
-
-        await self._track_apify_usage(
-            normalized_actor_id, action_name, usage_subtype,
-            usage_total_usd, len(items), run_id, platform=platform,
-        )
-        total_time = (time.time() - total_start) * 1000
+                if not run.get("defaultDatasetId"):
+                    raise RuntimeError("Apify completed without a dataset")
+                while True:
+                    response = await client.get(
+                        f"{APIFY_API_BASE}/datasets/{run['defaultDatasetId']}/items",
+                        params={
+                            "format": "json",
+                            "clean": "true",
+                            "offset": len(items),
+                            "limit": 1000,
+                        },
+                    )
+                    page = self._apify_json(response)
+                    if not isinstance(page, list) or any(not isinstance(x, dict) for x in page):
+                        raise RuntimeError("Apify returned an invalid dataset")
+                    items.extend(page)
+                    if len(page) < 1000:
+                        break
+                for item in items:
+                    if item.get("error"):
+                        raise RuntimeError(
+                            f"Apify scraper returned an error: {str(item['error'])[:500]}"
+                        )
+                if summary_key:
+                    store_id = run.get("defaultKeyValueStoreId")
+                    if not store_id:
+                        raise RuntimeError("Apify completed without a run summary store")
+                    summary = self._apify_json(
+                        await client.get(
+                            f"{APIFY_API_BASE}/key-value-stores/{store_id}/records/{summary_key}",
+                        )
+                    )
+                    self._validate_apify_summary(summary, len(items))
+                validated = True
+            finally:
+                if run.get("id"):
+                    if run.get("status") not in terminal:
+                        # Poll failures and task cancellation must not leave paid work running.
+                        try:
+                            aborted = self._apify_json(
+                                await client.post(
+                                    f"{APIFY_API_BASE}/actor-runs/{run['id']}/abort",
+                                )
+                            ).get("data")
+                            if aborted:
+                                run = aborted
+                        except Exception:
+                            logger.exception(
+                                "Could not abort Apify run %s; server timeout remains active",
+                                run["id"],
+                            )
+                    # Even a nonzero total can still contain only the startup charge.
+                    previous_cost = run.get("usageTotalUsd")
+                    settled = False
+                    delays = (1, 2, 4, 8, 15, 30) if result_charge_event else (1, 2, 3, 4)
+                    for delay in delays:
+                        try:
+                            await asyncio.sleep(delay)
+                            fresh = (
+                                self._apify_json(
+                                    await client.get(
+                                        f"{APIFY_API_BASE}/actor-runs/{run['id']}",
+                                        params={"waitForFinish": 0},
+                                    )
+                                ).get("data")
+                                or {}
+                            )
+                            if not fresh.get("id"):
+                                raise RuntimeError("Missing run metadata when settling Apify usage")
+                            run = fresh
+                            cost = run.get("usageTotalUsd")
+                            counts = run.get("chargedEventCounts") or {}
+                            event_cost = self._apify_event_cost(run)
+                            if (
+                                cost is not None
+                                and (
+                                    event_cost is None
+                                    or Decimal(str(cost)) + Decimal("1e-12") >= event_cost
+                                )
+                                and (
+                                    (result_charge_event and event_cost is not None)
+                                    or (delay >= 2 and cost == previous_cost)
+                                )
+                                and (
+                                    not result_charge_event
+                                    or counts.get(result_charge_event, 0) >= len(items)
+                                )
+                            ):
+                                settled = True
+                                break
+                            previous_cost = cost
+                        except Exception:
+                            logger.exception(
+                                "Could not refresh final cost for Apify run %s", run["id"]
+                            )
+                            break
+                    await self._track_apify_usage(
+                        actor_id,
+                        action_name,
+                        usage_subtype,
+                        float(run.get("usageTotalUsd") or 0),
+                        len(items),
+                        run["id"],
+                        platform=platform,
+                    )
+                    if result_charge_event and validated and not settled:
+                        raise RuntimeError(
+                            f"Apify usage for run {run['id']} has not settled; "
+                            "the provider has not confirmed all result charges."
+                        )
         output = {
             "type": platform,
             "action": action_name,
@@ -268,51 +296,60 @@ class ApifyRunnerMixin:
             "data": {"items": items, "count": len(items)},
             "timing_ms": {
                 "api_request": round(api_time, 1),
-                "total": round(total_time, 1),
+                "total": round((time.monotonic() - total_start) * 1000, 1),
             },
         }
-        await self.emit(output)
+        if emit_output:
+            await self.emit(output)
         return output
 
-    async def _emit_apify_error(
-        self,
-        platform: str,
-        action_name: str,
-        response: "httpx.Response",
-        total_start: float,
-        api_time_ms: float,
-    ) -> Dict[str, Any]:
-        try:
-            error_data = response.json()
-            error_msg = error_data.get("error", {}).get("message", response.text)
-        except Exception:
-            error_msg = response.text
-        return await self._emit_apify_error_text(
-            platform, action_name, error_msg, total_start, api_time_ms,
-            status_code=response.status_code,
+    @staticmethod
+    def _apify_event_cost(run: Dict[str, Any]) -> Optional[Decimal]:
+        """The aggregate total can lag even after individual charges are visible."""
+        pricing = run.get("pricingInfo") or {}
+        if pricing.get("pricingModel") != "PAY_PER_EVENT":
+            return None
+        events = (pricing.get("pricingPerEvent") or {}).get("actorChargeEvents") or {}
+        counts = run.get("chargedEventCounts") or {}
+        if any(name not in events or "eventPriceUsd" not in events[name] for name in counts):
+            return None
+        return sum(
+            (
+                Decimal(str(count)) * Decimal(str(events[name]["eventPriceUsd"]))
+                for name, count in counts.items()
+            ),
+            Decimal(0),
         )
 
-    async def _emit_apify_error_text(
-        self,
-        platform: str,
-        action_name: str,
-        error_msg: str,
-        total_start: float,
-        api_time_ms: float,
-        status_code: Optional[int] = None,
-    ) -> Dict[str, Any]:
-        logger.error(f"[{type(self).__name__}] Apify error: {error_msg}")
-        total_time = (time.time() - total_start) * 1000
-        output = {
-            "type": platform,
-            "action": action_name,
-            "status": "error",
-            "error": error_msg,
-            "data": None,
-            "timing_ms": {
-                "api_request": round(api_time_ms, 1),
-                "total": round(total_time, 1),
-            },
-        }
-        await self.emit(output)
-        return output
+    @staticmethod
+    def _apify_json(response: httpx.Response):
+        try:
+            payload = response.json()
+        except (json.JSONDecodeError, ValueError):
+            raise RuntimeError(
+                f"Apify returned a non-JSON response (HTTP {response.status_code})"
+            ) from None
+        if response.status_code >= 400:
+            error = payload.get("error", {}) if isinstance(payload, dict) else {}
+            message = error.get("message") if isinstance(error, dict) else str(error)
+            raise RuntimeError(
+                f"Apify request failed (HTTP {response.status_code}): {message or 'Provider request failed'}"
+            )
+        return payload
+
+    @staticmethod
+    def _validate_apify_summary(summary, item_count: int) -> None:
+        if not isinstance(summary, dict) or summary.get("itemsTotal") != item_count:
+            raise RuntimeError("Apify run summary does not match the returned dataset")
+        requests = summary.get("requests") or {}
+        if (
+            not requests.get("finished")
+            or requests.get("failed")
+            or summary.get("skippedTotal")
+            or summary.get("inputWarnings")
+            or summary.get("chargeLimitReached")
+        ):
+            raise RuntimeError(
+                "Apify scraper returned incomplete results (failed/skipped requests, "
+                "input warnings, or a spending limit). Retry with a smaller request."
+            )
