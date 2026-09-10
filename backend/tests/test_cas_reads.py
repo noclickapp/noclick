@@ -156,6 +156,31 @@ class TestCasReads:
         assert meta["output"] == {"i": 2}
         assert meta["execution_id"] == str(execs[2])
         assert meta["stored_count"] == 3
+        assert meta["last_run"]["execution_id"] == str(execs[2]) and meta["last_run"]["error"] is None
+
+    async def test_latest_meta_says_why_the_newest_run_stored_nothing(self, postgres_db):
+        pool = _SingleConnPool(postgres_db)
+        wid = await _wf(postgres_db)
+        ok, failed = await _exec(postgres_db, wid), await _exec(postgres_db, wid)
+        with patch_r2(FakeR2()):
+            await store.persist_node_result(pool, workflow_id=wid, execution_id=ok, node_id="n1", output={"i": 0})
+            await _set_created(postgres_db, ok, "n1", T0)
+            await store.persist_node_result(
+                pool, workflow_id=wid, execution_id=failed, node_id="n1", status="error", error="boom",
+            )
+            await _set_created(postgres_db, failed, "n1", T0 + timedelta(minutes=1))
+            meta = await store.read_latest_node_output_meta(pool, wid, "n1")
+        # The newest run stored no output — and the reader says why, instead of
+        # collapsing to "nothing here" (the builder told a user its red node's
+        # failure "cannot be determined", 2026-09-10).
+        assert meta["output"] is None and meta["execution_id"] == str(failed)
+        assert meta["stored_count"] == 2
+        assert meta["last_run"] == {
+            "execution_id": str(failed),
+            "created_at": (T0 + timedelta(minutes=1)).isoformat(),
+            "status": "error",
+            "error": "boom",
+        }
 
     async def test_iteration_composite_outputs_carousel_and_latest(self, postgres_db):
         """Iteration sub-outputs are stored under composite '<node>#iter:N' keys

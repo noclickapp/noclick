@@ -1553,7 +1553,10 @@ class PlatformOps(Protocol):
 
     async def get_node_output(self, node_id: str) -> Optional[Dict[str, Any]]:
         """Get latest output with metadata. Returns {output, created_at,
-        execution_id, stored_count} or None."""
+        execution_id, stored_count, last_run} or None when the node was never
+        persisted; ``output`` is None when the newest run stored none (it
+        failed or skipped the node) and ``last_run`` {status, error,
+        created_at, execution_id} says why."""
         ...
 
     async def get_node_output_history(self, node_id: str, limit: int) -> List[Dict[str, Any]]:
@@ -1766,6 +1769,22 @@ def _is_trigger_node(node: NodeState) -> bool:
     return is_trigger_operation(node.type, node.operation)
 
 
+def _last_run_failure(result: Optional[Dict[str, Any]], node_ref: str) -> Optional[str]:
+    """Why the newest run left no output, when it FAILED at this node: the
+    error the run engine recorded, so the brain reads the cause instead of
+    "run the node first" (asked to explain a red node, it answered "cannot be
+    determined" while the error sat in the store, 2026-09-10)."""
+    last_run = (result or {}).get("last_run") or {}
+    if last_run.get("status") != "error":
+        return None
+    error = (last_run.get("error") or "").strip() or "no error message was recorded"
+    when = f" ({last_run['created_at']})" if last_run.get("created_at") else ""
+    return (
+        f"The latest run{when} FAILED at this node, so it stored no output:\n{error}\n"
+        f"Fix the cause before re-running. Earlier runs: <list_outputs node=\"{node_ref}\" />"
+    )
+
+
 def _no_output_message(node: NodeState, node_ref: str) -> str:
     """Why nothing is stored. A push trigger's silence means no delivery has
     landed — telling the brain to <run_node> it would only store a no-event
@@ -1904,8 +1923,10 @@ async def execute_node_ops(
                     result = await platform.get_node_output(node.id)
                     output = result.get("output") if result else None
                     if output is None:
-                        results.append(f"{head} {_no_output_message(node, node_ref)}")
+                        failure = _last_run_failure(result, node_ref)
+                        results.append(f"{head} {failure or _no_output_message(node, node_ref)}")
                         _op_span.set_attribute("agent.op.empty_output", True)
+                        _op_span.set_attribute("agent.op.last_run_failed", failure is not None)
                         continue
                     created_at = result.get("created_at", "")
                     stamp = f" (latest, stored {created_at})" if created_at else " (latest)"

@@ -239,6 +239,30 @@ async def test_latest_get_output_flags_placeholders_and_points_at_history():
 
 
 @pytest.mark.asyncio
+async def test_latest_get_output_reports_the_failed_run_instead_of_run_it_first():
+    failed = {
+        "output": None, "created_at": "2026-09-10T10:03:32+00:00", "execution_id": RUN_B, "stored_count": 2,
+        "last_run": {
+            "execution_id": RUN_B, "created_at": "2026-09-10T10:03:32+00:00", "status": "error",
+            "error": "Required field 'to' is empty — {{ $('wa').payload.senderPhone }} resolved to nothing",
+        },
+    }
+    platform = _Platform(latest=failed)
+    out = await execute_node_ops([XmlOp(tag="get_output", attrs={"node": "wa"}, body="")], platform, _graph())
+    assert out[0].startswith(
+        "[get_output node=wa] The latest run (2026-09-10T10:03:32+00:00) FAILED at this node, so it stored no output:\n"
+        "Required field 'to' is empty"
+    )
+    assert '<list_outputs node="wa" />' in out[0]
+    assert "Run the node first" not in out[0] and "no delivery has been recorded" not in out[0]
+    # A newest run that merely skipped the node is not a failure — the
+    # trigger guidance stands (the graph's node is a push trigger).
+    platform = _Platform(latest={**failed, "last_run": {**failed["last_run"], "status": "skipped", "error": None}})
+    out = await execute_node_ops([XmlOp(tag="get_output", attrs={"node": "wa"}, body="")], platform, _graph())
+    assert "no delivery has been recorded" in out[0] and "FAILED" not in out[0]
+
+
+@pytest.mark.asyncio
 async def test_get_output_by_execution_and_path_expands_only_the_subtree():
     platform = _Platform(latest={"output": NO_EVENT, "stored_count": 2}, by_run={RUN_A: VOICE_NOTE})
     op = XmlOp(tag="get_output", attrs={"node": "wa", "execution": RUN_A, "path": "payload.media", "full": ""}, body="")

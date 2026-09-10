@@ -628,27 +628,37 @@ async def read_node_output_history(pool, workflow_id, node_id, limit=20) -> List
 
 
 async def read_latest_node_output_meta(pool, workflow_id, node_id) -> Optional[Dict[str, Any]]:
-    """Latest output for a node plus its store row identity, as
-    {output, created_at(isoformat), execution_id, stored_count}. None if
-    nothing was persisted. Used by callers that need the output, its
-    persistence identity, or how many runs the node has stored."""
+    """The node's newest store row, as {output, created_at(isoformat),
+    execution_id, stored_count, last_run}. None if nothing was ever persisted.
+
+    A run that failed (or skipped) the node stores no manifest, so ``output``
+    is None for it — and ``last_run`` {status, error, created_at,
+    execution_id} says why, so a reader asking "what is here?" gets the
+    recorded error instead of silence. Readers that only want an output keep
+    their contract: None means the newest run stored none."""
     wf = _as_uuid(workflow_id)
     async with pool.acquire() as conn:
         row = await conn.fetchrow(
-            "SELECT execution_id, manifest, created_at, count(*) OVER () AS stored_count "
+            "SELECT execution_id, manifest, created_at, last_run_status, last_run_error, "
+            "       count(*) OVER () AS stored_count "
             "FROM cas_manifests "
             "WHERE workflow_id = $1 AND node_id = $2 ORDER BY created_at DESC LIMIT 1",
             wf, node_id)
     if row is None:
         return None
-    output = await _reassemble(row["manifest"])
-    if output is None:
-        return None
+    created_at = row["created_at"].isoformat() if row["created_at"] else None
+    execution_id = str(row["execution_id"]) if row["execution_id"] else None
     return {
-        "output": output,
-        "created_at": row["created_at"].isoformat() if row["created_at"] else None,
-        "execution_id": str(row["execution_id"]) if row["execution_id"] else None,
+        "output": await _reassemble(row["manifest"]),
+        "created_at": created_at,
+        "execution_id": execution_id,
         "stored_count": int(row["stored_count"]),
+        "last_run": {
+            "execution_id": execution_id,
+            "created_at": created_at,
+            "status": row["last_run_status"],
+            "error": row["last_run_error"],
+        },
     }
 
 
