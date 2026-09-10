@@ -174,20 +174,27 @@ class TestRegisterAndDescribe:
 class TestJoinChannelAction:
     def _load(self, context):
         return SlackNode.load_field_value(
-            "join_channel", user_id="u1", workflow_id="wf", node_id="n1", pool=object(),
+            "join_channel", user_id="u1", workflow_id="6c0f4e2a-9b1d-4c3e-8f5a-2d7b1e9c4a10", node_id="n1", pool=object(),
             context=context, credential_ids={"slack_oauth": "cred"},
         )
 
     async def test_join_then_re_register_through_the_status_path(self):
+        """Join, re-run the status registration, and persist its mirrors —
+        the Dashboard runs this away from the panel, so nothing else would."""
+        from utils.webhook_manager import WebhookManager
+
+        mirrors = {"subscription_status": "Active", "trigger_error": None, "trigger_action": None}
         with respx.mock as route:
             join = _slack(route, "conversations.join", {"ok": True}, http="POST")
             with patch.object(SlackNode, "_resolve_trigger_credential", AsyncMock(return_value=("cred", CRED))), \
                  patch("nodes.core.webhook_subscriptions.AppEventTriggerMixin.load_field_value",
-                       AsyncMock(return_value={"values": {"subscription_status": "Active"}})) as status_load:
+                       AsyncMock(return_value={"values": mirrors})) as status_load, \
+                 patch.object(WebhookManager, "merge_node_config_patch", AsyncMock()) as merge:
                 result = await self._load({"channel": "C1", "operation": "on_channel_message"})
         assert join.calls[0].request.content == b"channel=C1"
-        assert result == {"values": {"subscription_status": "Active"}}
+        assert result == {"values": mirrors}
         assert status_load.await_args.args[0] == "subscription_status"
+        assert merge.await_args.args[2:] == ("n1", mirrors)
 
     async def test_join_failure_stays_on_the_status_field_with_the_retry(self):
         with respx.mock as route:

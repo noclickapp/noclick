@@ -59,6 +59,9 @@ export interface DashboardActions {
     /** Attention items answered locally, hidden until the next fetch confirms. */
     dismissed: ReadonlySet<string>;
     openWorkflow: (workflow: WorkflowRef, nodeId?: string) => void;
+    /** Run a broken trigger's backend-minted fix (meta.action — the Slack
+        "Join #channel"); the queue re-fetches and the row clears itself. */
+    fixTrigger?: (item: AttentionItem) => void;
     respondApproval: (item: AttentionItem, decision: 'approved' | 'rejected', values: Record<string, unknown>) => void;
     answerAsk: (item: AttentionItem, answers: Record<string, unknown>) => void;
     /** Resume the builder without an answer (the wizard's Skip). */

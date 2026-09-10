@@ -350,6 +350,7 @@ import {
     recordDeletedNodes,
     recordRemoteDeletedNodes,
     setGraphLoaded,
+    isGraphLoaded,
     setGraphVersion,
     setGraphDragging,
     setCanvasMounted,
@@ -1711,6 +1712,13 @@ const FlowCanvasInner = ({
             if (!node) {
                 console.warn('[FlowCanvas] Node not found:', nodeId);
                 return;
+            }
+            // A navigation that also parked this selection as pending is
+            // satisfied here; left behind, it would keep the cached-selection
+            // restore (which yields to a pending one) off until the next mount.
+            const pending = getPendingNodeSelection();
+            if (pending && pending.workflowId === workflowId && pending.nodeId === nodeId) {
+                clearPendingNodeSelection();
             }
 
             // Switch to canvas view if currently in interface/other tab
@@ -6334,6 +6342,11 @@ const FlowCanvasInner = ({
 
             const currentNodes = nodesRef.current;
             if (currentNodes.length === 0) return false; // nodes not loaded yet, retry
+            // The cache restores nodes before the backend answers, and the
+            // backend snapshot then replaces every node object — a selection
+            // made on cached nodes is dropped with them (Dashboard "Open
+            // trigger" landed on an open, empty config panel, 2026-09-10).
+            if (!isGraphLoaded(workflowId)) return false;
 
             const node = currentNodes.find((n) => n.id === pending.nodeId);
             if (!node) return false; // target node not found yet, retry
@@ -6394,8 +6407,8 @@ const FlowCanvasInner = ({
         const interval = setInterval(() => {
             if (processPending()) clearInterval(interval);
         }, 150);
-        // Give up after 5 seconds to avoid leaking intervals
-        const timeout = setTimeout(() => clearInterval(interval), 5000);
+        // Give up after 10 seconds to avoid leaking intervals
+        const timeout = setTimeout(() => clearInterval(interval), 10000);
         return () => {
             clearInterval(interval);
             clearTimeout(timeout);

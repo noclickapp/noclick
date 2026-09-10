@@ -15,6 +15,7 @@ Authentication: https://api.slack.com/authentication/token-types
 """
 
 import json
+import uuid
 import logging
 import inspect
 import time
@@ -7405,10 +7406,21 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
                 "trigger_error": message,
                 "trigger_action": {"field": "join_channel", "label": f"Join {label}"},
             }}
-        return await super().load_field_value(
+        result = await super().load_field_value(
             "subscription_status", user_id, workflow_id, node_id, pool,
             context=context, credential_ids=credential_ids,
         )
+        # The Dashboard runs this action away from the panel, so the verdict
+        # must land in the stored graph here (the panel's autosave writes the
+        # same values; the reconciler persists mirrors exactly this way).
+        values = result.get("values") if isinstance(result, dict) else None
+        if values:
+            from utils.webhook_manager import WebhookManager
+
+            await WebhookManager.merge_node_config_patch(
+                pool, uuid.UUID(str(workflow_id)), node_id, values
+            )
+        return result
 
     @classmethod
     async def load_field_options(

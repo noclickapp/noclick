@@ -350,12 +350,27 @@ def test_registered_but_deaf_app_event_trigger_needs_the_owner():
     """Subscription rows can be live while Slack stays silent (the app is not
     in the channel) — the registration mirror carries that verdict and the
     Dashboard must surface it, not hide it behind armed=True."""
+    action = {"field": "join_channel", "label": "Join #support"}
     graph = {"nodes": [{"id": "slack", "type": "automation-slack", "config": {
-        "label": "Crisp chats", "operation": "on_channel_message", "channel": "C1",
+        "label": "Crisp chats", "operation": "on_channel_message", "channel": "C1", "channel__label": "#support",
+        "credentialIds": {"slack_oauth": "cred-1"}, "_triggerPayload": {"huge": True},
         "trigger_registered": True, "trigger_error": "@noclick isn't in #support",
+        "subscription_status": "⚠ @noclick isn't in #support", "trigger_action": action,
     }}]}
     workflows = _wf(graph=graph)
     triggers, broken = dh._compose_triggers(workflows, [], [{"workflow_id": "wf-1", "node_id": "slack", "event_type": "message"}])
     assert triggers[0]["armed"] is True and triggers[0]["error"] == "@noclick isn't in #support"
     assert [b["title"] for b in broken] == ["Crisp chats isn't receiving events"]
     assert broken[0]["detail"] == "@noclick isn't in #support"
+    # The queue's button runs the fix in place: the load_value field plus the
+    # context and credentials the trigger panel would send, mirrors and the
+    # payload stash left out.
+    meta = broken[0]["meta"]
+    assert meta["nodeId"] == "slack" and meta["nodeType"] == "automation-slack" and meta["action"] == action
+    assert meta["context"] == {"label": "Crisp chats", "operation": "on_channel_message", "channel": "C1", "channel__label": "#support"}
+    assert meta["credentialIds"] == {"slack_oauth": "cred-1"}
+
+    # No backend fix → the row only opens the trigger.
+    graph["nodes"][0]["config"].pop("trigger_action")
+    _, broken = dh._compose_triggers(_wf(graph=graph), [], [{"workflow_id": "wf-1", "node_id": "slack", "event_type": "message"}])
+    assert broken[0]["meta"] == {"nodeId": "slack"}

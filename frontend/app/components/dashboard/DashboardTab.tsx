@@ -283,6 +283,30 @@ export function DashboardTab() {
         () => ({
             dismissed: new Set(dismissed),
             openWorkflow: (wf, nodeId) => (nodeId ? goToWorkflowNode(wf.id, nodeId) : navigateToWorkflow({ id: wf.id, name: wf.name })),
+            fixTrigger: (item) => {
+                // The same load_value field the trigger panel's Status button
+                // runs (Slack join_channel): it performs the fix, re-registers
+                // and stamps the verdict, so the refetch decides the row.
+                const meta = item.meta ?? {};
+                const action = meta.action as { field: string; label: string };
+                call('workflow:node:load_value', {
+                    node_type: meta.nodeType,
+                    field_name: action.field,
+                    workflow_id: item.workflow.id,
+                    node_id: meta.nodeId,
+                    context: meta.context,
+                    credential_ids: meta.credentialIds,
+                })
+                    .then((res) => {
+                        const r = res as { success?: boolean; message?: string; values?: Record<string, unknown> };
+                        if (r.success === false) throw new Error(r.message || 'failed');
+                        const status = String(r.values?.subscription_status ?? '');
+                        if (status.startsWith('⚠')) throw new Error(status.replace(/^⚠\s*/, ''));
+                        toast.success(status || 'Done');
+                    })
+                    .then(refresh)
+                    .catch(failing(action.label));
+            },
             respondApproval: (item, decision, values) => {
                 dismissAttention(item.id);
                 call('approval:respond', { approval_id: item.meta?.approvalId, decision, values }).then(refresh).catch(failing('Approval'));

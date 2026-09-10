@@ -13,6 +13,7 @@ import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
 import { getFieldsForOption } from '~/utils/schemaFieldExtractor';
 import {
     getIncompleteNodes,
+    issueBlocksRun,
     validateNode,
     type NodeValidationContext,
     type NodeValidationIssue,
@@ -214,6 +215,9 @@ export function getIncompleteRunPrompt(
 ): IncompleteStep[] | null {
     const steps = getIncompleteNodes(nodes, context)
         .filter((node) => !node.data?.disabled)
+        // A registered-but-deaf trigger is incomplete on the canvas, but a
+        // manual run never waits for the provider to deliver.
+        .filter((node) => validateNode(node, context).issues.some(issueBlocksRun))
         .map((node) => describeStep(node, context));
     return steps.length > 0 ? steps : null;
 }

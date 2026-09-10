@@ -678,8 +678,21 @@ function AttentionActions({ item, values, expanded, onToggle }: { item: Attentio
                     Reconnect
                 </PrimaryButton>
             );
-        case 'trigger_broken':
-            return <PrimaryButton onClick={() => actions.openWorkflow(item.workflow, item.meta?.nodeId as string | undefined)}>Open trigger</PrimaryButton>;
+        case 'trigger_broken': {
+            const open = () => actions.openWorkflow(item.workflow, item.meta?.nodeId as string | undefined);
+            const action = item.meta?.action as { field: string; label: string } | undefined;
+            // The fix the backend can perform itself is the action; opening
+            // the trigger stays one step away for everything else.
+            if (action && actions.fixTrigger) {
+                return (
+                    <>
+                        <QuietButton onClick={open}>Open trigger</QuietButton>
+                        <PrimaryButton onClick={() => actions.fixTrigger?.(item)}>{action.label}</PrimaryButton>
+                    </>
+                );
+            }
+            return <PrimaryButton onClick={open}>Open trigger</PrimaryButton>;
+        }
         default:
             return null;
     }

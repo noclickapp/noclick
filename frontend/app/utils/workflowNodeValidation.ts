@@ -6,7 +6,7 @@
 import type { Edge, Node } from '@xyflow/react';
 import { getSchemaInfo, getFieldsForOption, getRequireOneOfGroups, nodeTypeOffersOperationChoice, type RequireOneOfGroups } from '~/utils/schemaFieldExtractor';
 import { hasUnconnectedCredentials, providerCredentialsMissing } from '~/components/workflow/NodeCredentials';
-import { isAgentToolProviderType } from '~/utils/nodeSchemas';
+import { isAgentToolProviderType, isTriggerSource } from '~/utils/nodeSchemas';
 
 /** Graph context for edge-dependent validation (agent tool-provider mode).
  *  Optional — callers without edges get plain per-node validation.
@@ -57,9 +57,16 @@ const SKIP_VALIDATION_TYPES = new Set([
 ]);
 
 export interface NodeValidationIssue {
-    type: 'missing_required_field' | 'missing_credentials' | 'missing_operation';
+    type: 'missing_required_field' | 'missing_credentials' | 'missing_operation' | 'trigger_not_receiving';
     message: string;
     fieldKey?: string;
+}
+
+/** Whether an issue should hold a MANUAL run. A registered-but-deaf trigger
+    (Slack: the app is not in the channel) paints the node incomplete on the
+    canvas, but a manual run never needs the provider to deliver. */
+export function issueBlocksRun(issue: NodeValidationIssue): boolean {
+    return issue.type !== 'trigger_not_receiving';
 }
 
 export interface NodeValidationResult {
@@ -245,6 +252,22 @@ export function validateNode(node: Node, context?: NodeValidationContext): NodeV
         });
     }
 
+    // Registration mirrors a delivery verdict as trigger_error (Slack: the app
+    // is not in the channel — rows live, events never arrive). That is as
+    // incomplete as a missing field: the badge, the navigator and Setup must
+    // name it, or the node reads green while the workflow is deaf. Only for a
+    // trigger operation (a stale mirror on a node switched to an action must
+    // not paint it) and not over a missing credential, which is the first ask.
+    const triggerError =
+        typeof config.trigger_error === 'string' ? config.trigger_error.trim() : '';
+    if (
+        triggerError &&
+        issues.length === 0 &&
+        isTriggerSource(node.type, getNodeOperation(nodeData))
+    ) {
+        issues.push({ type: 'trigger_not_receiving', message: triggerError });
+    }
+
     // Get schema info for this node type
     const schemaInfo = getSchemaInfo(node.type);
     if (!schemaInfo) {
@@ -363,6 +386,11 @@ export function getNodeIssueSummary(node: Node, context?: NodeValidationContext)
         } else {
             parts.push(`${missingFields.length} fields required`);
         }
+    }
+
+    const deaf = result.issues.find(i => i.type === 'trigger_not_receiving');
+    if (deaf) {
+        parts.push(deaf.message);
     }
 
     return parts.join(', ');

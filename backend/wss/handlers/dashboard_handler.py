@@ -664,6 +664,24 @@ def _trigger_kind(ntype: str, operation: Optional[str]) -> Optional[str]:
     return "webhook"
 
 
+# Registration mirrors and payload stashes never travel as the trigger's
+# config context (the load_value field re-registers and re-mints them).
+_TRIGGER_MIRROR_KEYS = frozenset({"subscription_status", "trigger_registered", "trigger_error", "trigger_action", "credentialIds"})
+
+
+def _broken_trigger_meta(node_id: str, ntype: str, op: Optional[str], cfg: Dict[str, Any]) -> Dict[str, Any]:
+    """What the queue's buttons need. A backend-minted fix (``trigger_action``,
+    the Slack join) ships with the config context and credential ids the
+    trigger panel would send, so the Dashboard can run it in place."""
+    meta: Dict[str, Any] = {"nodeId": node_id}
+    action = cfg.get("trigger_action")
+    if isinstance(action, dict) and action.get("field"):
+        context = {k: v for k, v in cfg.items() if k not in _TRIGGER_MIRROR_KEYS and not str(k).startswith("_")}
+        context["operation"] = op
+        meta.update({"nodeType": ntype, "action": action, "context": context, "credentialIds": cfg.get("credentialIds") or {}})
+    return meta
+
+
 def _compose_triggers(workflows: _Workflows, webhook_rows: List[Dict[str, Any]], subscription_rows: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
     hooks = {(str(r["workflow_id"]), str(r["node_id"])): r for r in webhook_rows}
     subs: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
@@ -737,7 +755,7 @@ def _compose_triggers(workflows: _Workflows, webhook_rows: List[Dict[str, Any]],
                     "workflow": workflows.ref(wf_id),
                     "provider": ntype,
                     "createdAt": _iso(row.get("updated_at")),
-                    "meta": {"nodeId": node_id},
+                    "meta": _broken_trigger_meta(node_id, ntype, op, cfg),
                 })
     triggers.sort(key=lambda t: (t["armed"], t["workflow"]["name"].lower()))
     return triggers, broken
