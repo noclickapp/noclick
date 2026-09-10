@@ -359,12 +359,17 @@ export function mergeServerNodes(loaded: Node[], existing: Node[]): Node[] {
         const animState = (
             prev?.data as { mcpAnimationState?: string } | undefined
         )?.mcpAnimationState;
-        if (animState && animState !== 'complete') {
-            return applyNodeUpdate(loadedNode, {
-                extras: { mcpAnimationState: animState },
-            });
-        }
-        return loadedNode;
+        const merged =
+            animState && animState !== 'complete'
+                ? applyNodeUpdate(loadedNode, {
+                      extras: { mcpAnimationState: animState },
+                  })
+                : loadedNode;
+        // Selection is canvas state, not graph content: a re-sync that
+        // rebuilt every node object dropped it, so a node selected while the
+        // cache-restored graph was still loading (the Dashboard's "Open
+        // trigger") was deselected the moment the server answered.
+        return prev?.selected ? { ...merged, selected: true } : merged;
     });
     for (const prev of existing) {
         if (!loaded.some((l) => l.id === prev.id)) next.push(prev);

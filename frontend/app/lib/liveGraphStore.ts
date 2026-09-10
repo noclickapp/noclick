@@ -503,11 +503,6 @@ export function setGraphLoaded(workflowId: string, loaded: boolean): void {
     rec.loaded = loaded;
 }
 
-/** The backend snapshot has been applied — a cache-restored graph has not. */
-export function isGraphLoaded(workflowId: string): boolean {
-    return graphRecords[workflowId]?.loaded === true;
-}
-
 /** Adopt the server's optimistic-concurrency token from a full workflow:get.
  *  A full load is also the re-baseline point for remote-delete tombstones:
  *  whatever the server holds now is truth, so stale remote tombstones from

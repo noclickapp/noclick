@@ -350,7 +350,6 @@ import {
     recordDeletedNodes,
     recordRemoteDeletedNodes,
     setGraphLoaded,
-    isGraphLoaded,
     setGraphVersion,
     setGraphDragging,
     setCanvasMounted,
@@ -1719,6 +1718,17 @@ const FlowCanvasInner = ({
             const pending = getPendingNodeSelection();
             if (pending && pending.workflowId === workflowId && pending.nodeId === nodeId) {
                 clearPendingNodeSelection();
+                // Same deep-link cleanup the pending consumer does, so the
+                // params don't re-select on the next reload.
+                setSearchParamsRef.current(
+                    (prev) => {
+                        const newParams = new URLSearchParams(prev);
+                        newParams.delete('node');
+                        newParams.delete('field');
+                        return newParams;
+                    },
+                    { replace: true }
+                );
             }
 
             // Switch to canvas view if currently in interface/other tab
@@ -6342,11 +6352,10 @@ const FlowCanvasInner = ({
 
             const currentNodes = nodesRef.current;
             if (currentNodes.length === 0) return false; // nodes not loaded yet, retry
-            // The cache restores nodes before the backend answers, and the
-            // backend snapshot then replaces every node object — a selection
-            // made on cached nodes is dropped with them (Dashboard "Open
-            // trigger" landed on an open, empty config panel, 2026-09-10).
-            if (!isGraphLoaded(workflowId)) return false;
+            // Select from the server's graph, not the cache restore that
+            // precedes it: this mount's load flag, since the store's `loaded`
+            // never resets between opens of the same workflow.
+            if (!hasLoadedWorkflowRef.current) return false;
 
             const node = currentNodes.find((n) => n.id === pending.nodeId);
             if (!node) return false; // target node not found yet, retry
