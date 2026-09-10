@@ -170,6 +170,95 @@ function deriveDiscordLead(d: Dict): Lead | null {
     };
 }
 
+/** Slack's message markup → what a person reads: `<@U1|dana>` → @dana,
+    `<@U1>` → @U1, `<#C1|general>` → #general, `<!here>` → @here,
+    `<https://x|label>` → label, entities unescaped. */
+export function humanizeSlackMarkup(text: string): string {
+    return text
+        .replace(/<@([\w-]+)\|([^>]+)>/g, '@$2')
+        .replace(/<@([\w-]+)>/g, '@$1')
+        .replace(/<#([\w-]+)\|([^>]+)>/g, '#$2')
+        .replace(/<#([\w-]+)>/g, '#$1')
+        .replace(/<!subteam\^[\w-]+\|@?([^>]+)>/g, '@$1')
+        .replace(/<!(here|channel|everyone)(?:\|[^>]*)?>/g, '@$1')
+        .replace(/<([^|>]+)\|([^>]+)>/g, '$2')
+        .replace(/<((?:https?|mailto):[^>]+)>/g, '$1')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&');
+}
+
+/** Slack message subtypes that are notices about the channel, not a
+    person talking — the frame names the event instead of quoting it as
+    someone's words. */
+const SLACK_SUBTYPE_NOTES: Record<string, string> = {
+    channel_join: 'joined the channel',
+    channel_leave: 'left the channel',
+    channel_topic: 'set the channel topic',
+    channel_purpose: 'set the channel purpose',
+    channel_name: 'renamed the channel',
+    channel_archive: 'archived the channel',
+    channel_unarchive: 'unarchived the channel',
+    pinned_item: 'pinned a message',
+    unpinned_item: 'unpinned a message',
+    file_share: 'shared a file',
+    thread_broadcast: 'replied in a thread',
+    message_changed: 'edited a message',
+    message_deleted: 'deleted a message',
+};
+
+/** Slack's epoch-seconds `ts` ("1789060263.695389") → an ISO string
+    clockOf can read. */
+function slackTsToIso(ts?: string): string | undefined {
+    const seconds = ts ? Number(ts) : NaN;
+    return Number.isFinite(seconds) ? new Date(seconds * 1000).toISOString() : undefined;
+}
+
+/** A Slack trigger's output: the Events API envelope (nested under `data`,
+    unwrapped by the caller) whose message sits under `event`. The text
+    keeps Slack's markup readable, a bot post's attachments are part of
+    what came in (a support hand-off is mostly attachment text), a system
+    subtype reads as the notice it is, and the channel shows by the label
+    the trigger was configured with when the backend carried it. */
+function deriveSlackLead(d: Dict): Lead | null {
+    // The trigger's own output ({type: 'slack', data: envelope, channel_label})
+    // and the unwrapped envelope both land here.
+    const envelope = typeof asDict(d.data).event === 'object' ? asDict(d.data) : d;
+    const event = asDict(envelope.event);
+    const m = typeof event.type === 'string' ? event : envelope;
+    const attachments = Array.isArray(m.attachments) ? (m.attachments as unknown[]).map(asDict) : [];
+    const files = Array.isArray(m.files) ? (m.files as unknown[]).map(asDict) : [];
+    const lines = [
+        str(m, 'text', 'message', 'body') ?? '',
+        ...attachments.map((a) => str(a, 'text', 'fallback', 'title') ?? ''),
+        ...files.map((f) => (str(f, 'title', 'name') ? `📎 ${str(f, 'title', 'name')}` : '')),
+    ]
+        .map((line) => humanizeSlackMarkup(line).trim())
+        .filter(Boolean);
+    const body = lines.join('\n');
+    if (!body) return null;
+    const channelLabel = str(d, 'channel_label') ?? str(m, 'channel_name');
+    const channelId = str(m, 'channel');
+    const channel = channelLabel ?? channelId;
+    const title = channel ? (channel.startsWith('#') ? channel : `#${channel}`) : 'Message';
+    const subtype = str(m, 'subtype');
+    const note = subtype ? SLACK_SUBTYPE_NOTES[subtype] : undefined;
+    const thread = str(m, 'thread_ts');
+    const meta = [title, note, thread && thread !== str(m, 'ts') ? 'in a thread' : undefined]
+        .filter(Boolean)
+        .join(' · ');
+    const botName = str(asDict(m.bot_profile), 'name') ?? str(m, 'username');
+    const user = str(m, 'user');
+    return {
+        title,
+        meta,
+        body,
+        author: botName ?? undefined,
+        handle: user ? `@${user}` : botName ? undefined : str(m, 'bot_id'),
+        time: clockOf(slackTsToIso(str(m, 'ts', 'event_ts'))),
+    };
+}
+
 /** "Priya Raman <priya@northwind.io>" → the two halves. */
 function splitAddress(from?: string): { author?: string; handle?: string } {
     if (!from) return {};
@@ -299,7 +388,11 @@ export function deriveLead(slug: string, output: unknown): Lead | null {
         return deriveDiscordLead(d);
     }
 
-    if (slug === 'slack' || slug === 'discord' || slug === 'teams') {
+    if (slug === 'slack') {
+        return deriveSlackLead(d);
+    }
+
+    if (slug === 'discord' || slug === 'teams') {
         const body = str(d, 'text', 'message', 'body');
         if (!body) return null;
         const channel = str(d, 'channel', 'channel_name');

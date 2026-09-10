@@ -11,6 +11,7 @@ import {
     deriveSends,
     humanizeDiscordMentions,
     humanizeOp,
+    humanizeSlackMarkup,
     outcomeModeFor,
     sanitizeEventPayload,
     type AgentInputGroup,
@@ -586,5 +587,71 @@ describe('discord gateway messages', () => {
 
     it('humanizes mention markup on its own', () => {
         expect(humanizeDiscordMentions('<@!1> <@&2> <#3>', [{ id: '1', username: 'sam' }])).toBe('@sam @role #channel');
+    });
+});
+
+// The Slack trigger's output nests the Events API envelope under `data` and
+// the message under `event`; reading `text` off the top level framed NO Slack
+// run natively (every one fell back to the JSON view, 2026-09-10).
+describe('deriveLead · slack', () => {
+    const output = (event: Record<string, unknown>, extra: Record<string, unknown> = {}) => ({
+        type: 'slack',
+        action: 'on_channel_message',
+        status: 'success',
+        event_type: 'message',
+        team_id: 'T1',
+        data: { token: 'x', team_id: 'T1', api_app_id: 'A1', type: 'event_callback', event: { type: 'message', ...event } },
+        timestamp: 1789060264.1,
+        ...extra,
+    });
+    const lead = (event: Record<string, unknown>, extra?: Record<string, unknown>) => {
+        const out = output(event, extra);
+        return deriveLead('slack', out) ?? deriveLead('slack', sanitizeEventPayload(out));
+    };
+
+    it('frames a channel message from the nested event, by the picked label', () => {
+        const l = lead(
+            { text: 'hey <@U2|dana> see <https://x.io|the doc>', user: 'U1', channel: 'C1', ts: '1789060263.695389' },
+            { channel_label: '#support' }
+        )!;
+        expect(l.title).toBe('#support');
+        expect(l.body).toBe('hey @dana see the doc');
+        expect(l.handle).toBe('@U1');
+        expect(l.author).toBeUndefined();
+        expect(l.time).toMatch(/^\d\d:\d\d$/);
+    });
+
+    it('falls back to the channel id and names a system subtype', () => {
+        const l = lead({ subtype: 'channel_join', text: '<@U1> has joined the channel', user: 'U1', channel: 'C1', ts: '1' })!;
+        expect(l.title).toBe('#C1');
+        expect(l.meta).toBe('#C1 · joined the channel');
+        expect(l.body).toBe('@U1 has joined the channel');
+    });
+
+    it('a bot post is authored by the bot and its attachments are what came in', () => {
+        const l = lead({
+            subtype: 'bot_message',
+            text: ':speech_balloon: Conversation from Ahnaf.',
+            bot_id: 'B1',
+            username: 'Support desk',
+            channel: 'C1',
+            ts: '2',
+            attachments: [{ fallback: 'Conversation is unresolved. Please reply.' }],
+        })!;
+        expect(l.author).toBe('Support desk');
+        expect(l.handle).toBeUndefined();
+        expect(l.body).toBe(':speech_balloon: Conversation from Ahnaf.\nConversation is unresolved. Please reply.');
+    });
+
+    it('a thread reply says so, and an empty event is not a lead', () => {
+        const l = lead({ text: 'ok', user: 'U1', channel: 'C1', ts: '3.1', thread_ts: '2.0' })!;
+        expect(l.meta).toBe('#C1 · in a thread');
+        expect(lead({ subtype: 'message_deleted', channel: 'C1', ts: '4' })).toBeNull();
+    });
+
+    it('humanizes Slack markup', () => {
+        expect(humanizeSlackMarkup('<@U1> <#C1|general> <!here> <https://a.io> &amp; <!subteam^S1|@ops>')).toBe(
+            '@U1 #general @here https://a.io & @ops'
+        );
     });
 });

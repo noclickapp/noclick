@@ -7185,7 +7185,11 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
     def resolve_trigger_payload(
         cls, payload: Dict[str, Any], config: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Return a structured Slack event payload for app-level trigger runs."""
+        """Return a structured Slack event payload for app-level trigger runs.
+
+        Slack events carry channel IDS only; the picker stored the label the
+        user chose (``channel__label``), so a run of a channel-scoped trigger
+        also says ``#support`` where the event says ``C0BN…``."""
         if isinstance(payload, str):
             try:
                 payload = json.loads(payload)
@@ -7193,16 +7197,21 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
                 return {"type": "slack", "status": "success", "data": payload}
 
         event = payload.get("event") if isinstance(payload, dict) else None
-        operation = (config or {}).get("operation")
-        return {
+        config = config or {}
+        out: Dict[str, Any] = {
             "type": "slack",
-            "action": operation,
+            "action": config.get("operation"),
             "status": "success",
             "event_type": event.get("type") if isinstance(event, dict) else None,
             "team_id": payload.get("team_id") if isinstance(payload, dict) else None,
             "data": payload,
             "timestamp": time.time(),
         }
+        label = config.get("channel__label")
+        scoped = config.get("channel")
+        if label and scoped and isinstance(event, dict) and event.get("channel") == scoped:
+            out["channel_label"] = label
+        return out
 
     @classmethod
     def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -7240,22 +7249,9 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         node_config = (self.node_data or {}).get("config", {})
         trigger_payload = node_config.get("_triggerPayload")
         if trigger_payload:
-            event = (
-                trigger_payload.get("event")
-                if isinstance(trigger_payload, dict)
-                else None
+            return self.resolve_trigger_payload(
+                trigger_payload, {**node_config, "operation": config.operation}
             )
-            return {
-                "type": "slack",
-                "action": config.operation,
-                "status": "success",
-                "event_type": event.get("type") if isinstance(event, dict) else None,
-                "team_id": trigger_payload.get("team_id")
-                if isinstance(trigger_payload, dict)
-                else None,
-                "data": trigger_payload,
-                "timestamp": time.time(),
-            }
         return {
             "message": (
                 "This trigger fires when the subscribed Slack event occurs in "
