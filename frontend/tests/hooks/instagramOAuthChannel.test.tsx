@@ -219,6 +219,101 @@ describe('Instagram callback delivery', () => {
         expect(vi.getTimerCount()).toBe(0);
     });
 
+    it('replaces a cancelled pending attempt when the shared form retries', async () => {
+        vi.useFakeTimers();
+        state.exchange.mockResolvedValue({
+            success: true,
+            credential_id: 'saved-retry',
+        });
+        const success = vi.fn();
+        const hook = renderHook(() =>
+            useInstagramLoginOAuth({ onSuccess: success })
+        );
+        act(() => hook.result.current.connect('cancelled'));
+        const previousChannel = [...TestChannel.peers][0];
+        const previousCallback = previousChannel.onmessage!;
+        await act(async () => {
+            vi.advanceTimersByTime(4 * 60_000);
+        });
+        // Cancel clears the shared form's state, without unmounting the hook
+        // or receiving a provider callback. The next click starts a new attempt.
+        act(() => hook.result.current.connect('retry'));
+        expect(window.open).toHaveBeenCalledTimes(2);
+        expect(openedAttempt(0)).not.toBe(openedAttempt(1));
+        expect(vi.mocked(window.open).mock.calls[0][1]).not.toBe(
+            vi.mocked(window.open).mock.calls[1][1]
+        );
+        expect(previousChannel.closed).toBe(true);
+        expect(TestChannel.peers.size).toBe(1);
+        expect(vi.getTimerCount()).toBe(1);
+        await act(async () => {
+            // Even an already-queued message from the cancelled channel is stale.
+            previousCallback(
+                new MessageEvent('message', {
+                    data: {
+                        type: 'instagram_login-oauth-callback',
+                        success: true,
+                        code: 'cancelled-code',
+                    },
+                })
+            );
+            vi.advanceTimersByTime(61_000);
+        });
+        expect(state.exchange).not.toHaveBeenCalled();
+        expect(hook.result.current.isConnecting).toBe(true);
+        const sender = new TestChannel(
+            oauthChannelName('instagram_login', openedAttempt(1))
+        );
+        await act(async () => {
+            sender.postMessage({
+                type: 'instagram_login-oauth-callback',
+                success: true,
+                code: 'retry-code',
+            });
+        });
+        expect(state.exchange).toHaveBeenCalledTimes(1);
+        expect(state.exchange).toHaveBeenCalledWith(
+            expect.objectContaining({
+                code: 'retry-code',
+                credential_name: 'retry',
+            })
+        );
+        expect(success).toHaveBeenCalledTimes(1);
+        expect(vi.getTimerCount()).toBe(0);
+        sender.close();
+        expect(TestChannel.peers.size).toBe(0);
+    });
+
+    it('does not replace an attempt while its credential exchange is in flight', async () => {
+        let finish!: (value: unknown) => void;
+        state.exchange.mockReturnValue(
+            new Promise((resolve) => {
+                finish = resolve;
+            })
+        );
+        const hook = renderHook(() => useInstagramLoginOAuth());
+        act(() => hook.result.current.connect('persisting'));
+        const sender = new TestChannel(
+            oauthChannelName('instagram_login', openedAttempt())
+        );
+        await act(async () => {
+            sender.postMessage({
+                type: 'instagram_login-oauth-callback',
+                success: true,
+                code: 'synthetic-code',
+            });
+        });
+        act(() => hook.result.current.connect('retry'));
+        expect(window.open).toHaveBeenCalledTimes(1);
+        expect(state.exchange).toHaveBeenCalledTimes(1);
+        await act(async () => {
+            finish({ success: true, credential_id: 'saved' });
+        });
+        act(() => hook.result.current.connect('next'));
+        expect(window.open).toHaveBeenCalledTimes(2);
+        sender.close();
+    });
+
     it('does not let the previous attempt watchdog cancel a retry', async () => {
         vi.useFakeTimers();
         const hook = renderHook(() => useInstagramLoginOAuth());

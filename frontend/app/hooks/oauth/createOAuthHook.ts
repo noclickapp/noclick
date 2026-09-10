@@ -233,8 +233,13 @@ export function createOAuthHook(config: OAuthHookConfig) {
                 scopes?: string[],
                 options?: OAuthConnectOptions
             ) => {
-                if (isConnectingRef.current || isExchangingRef.current) return;
+                // The shared credential form can cancel without unmounting this
+                // hook. A new connect replaces that pending attempt, but must not
+                // interrupt a callback already persisting its credential.
+                if (isExchangingRef.current) return;
                 clearTimersRef.current();
+                channelRef.current?.close();
+                channelRef.current = null;
                 setIsConnecting(true);
                 isConnectingRef.current = true;
                 credentialNameRef.current = credentialName;
@@ -257,6 +262,7 @@ export function createOAuthHook(config: OAuthHookConfig) {
                         );
                         channelRef.current = channel;
                         channel.onmessage = (event) => {
+                            if (channelRef.current !== channel) return;
                             void callbackRef.current?.(
                                 event.data as OAuthCallbackData
                             );
