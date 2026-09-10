@@ -124,8 +124,8 @@ WhatsAppCredential = Union[WhatsAppQRCredential, WhatsAppAccessTokenCredential]
 
 # Recipient guidance shared by every QR-capable send op. Leads with the
 # reply-to-a-trigger case and tells the agent to echo the chat id VERBATIM:
-# to_chat_id() passes @-suffixed ids straight through, so reconstructing an
-# E.164 number is both unnecessary and how replies got mis-addressed to
+# wahooks_chat_id() passes @-suffixed ids straight through, so reconstructing
+# an E.164 number is both unnecessary and how replies got mis-addressed to
 # non-existent accounts (WAHA accepts them, returns PENDING, never delivers).
 _RECIPIENT_DESC = (
     "Recipient chat. When replying to an incoming message (e.g. from a WhatsApp "
@@ -134,6 +134,35 @@ _RECIPIENT_DESC = (
     "phone number. To start a new conversation, use a phone number in E.164 "
     "format (e.g., +12025550100)."
 )
+
+
+# WAHooks ops addressed by a chat id rather than a send recipient.
+_WAHOOKS_CHAT_ID_OPS = frozenset({"get_chat_messages", "edit_message", "mark_chat_read"})
+
+
+def wahooks_chat_id(recipient: Any) -> str:
+    """A phone number ("+12025550100") or chat id as WAHooks expects it.
+
+    Ids that already carry a server suffix (@c.us / @g.us / @lid /
+    @s.whatsapp.net — the chat dropdown, a trigger's ``payload.from``) pass
+    through verbatim. An EMPTY recipient raises: templates resolve after the
+    config parse, so a reference to a key the trigger never emits
+    (``{{ $('t').chat_id }}``) arrives here as "", and WAHooks accepts a bare
+    "@s.whatsapp.net", answers PENDING and never delivers — four "successful"
+    replies went nowhere that way (2026-09-10).
+    """
+    raw = str(recipient or "").strip()
+    local, _, server = raw.partition("@")
+    if not server:
+        local = local.lstrip("+").replace(" ", "").replace("-", "")
+    if not local:
+        raise ValueError(
+            "WhatsApp recipient is empty after resolving the config "
+            f"(got {recipient!r}). To reply to the message that triggered this "
+            "run, reference its chat id verbatim: "
+            "{{ $('<trigger node>').payload.from }}."
+        )
+    return raw if server else f"{local}@s.whatsapp.net"
 
 
 def _chat_picker_field(
@@ -2378,16 +2407,14 @@ class WhatsAppNode(WorkflowNode):
                 f"QR scan credentials support: {', '.join(sorted(supported_actions))}"
             )
 
-        # Convert a phone number ("+12025550100") to a WAHooks chat id. Ids that
-        # already carry a server suffix (@c.us / @g.us / @lid / @s.whatsapp.net —
-        # e.g. picked from the chat dropdown or a trigger payload) pass through;
-        # the server accepts all of them.
-        def to_chat_id(phone: str) -> str:
-            if "@" in phone:
-                return phone
-            return (
-                phone.lstrip("+").replace(" ", "").replace("-", "") + "@s.whatsapp.net"
-            )
+        # Resolved OUTSIDE the try below: an empty recipient must fail the node
+        # (red run), not be folded into the error envelope a caller may read
+        # as a returned call.
+        chat_id: Optional[str] = None
+        if action in _WAHOOKS_CHAT_ID_OPS:
+            chat_id = wahooks_chat_id(op_config.chat_id)
+        elif action.startswith("send_"):
+            chat_id = wahooks_chat_id(op_config.to)
 
         start_time = time.time()
         try:
@@ -2416,7 +2443,7 @@ class WhatsAppNode(WorkflowNode):
                     if action == "get_chat_messages":
                         page = client.get_messages(
                             conn_id,
-                            to_chat_id(op_config.chat_id),
+                            chat_id,
                             limit=op_config.limit,
                             before=op_config.before or None,
                         )
@@ -2434,15 +2461,13 @@ class WhatsAppNode(WorkflowNode):
                         return client.edit_message(
                             conn_id,
                             op_config.message_id,
-                            to_chat_id(op_config.chat_id),
+                            chat_id,
                             op_config.body,
                         )
                     if action == "mark_chat_read":
-                        return client.mark_read(conn_id, to_chat_id(op_config.chat_id))
+                        return client.mark_read(conn_id, chat_id)
                     if action == "get_account_profile":
                         return client.get_profile(conn_id)
-                    # Send operations require a recipient
-                    chat_id = to_chat_id(op_config.to)
                     if action == "send_reaction_emoji":
                         return client.react(
                             conn_id,
