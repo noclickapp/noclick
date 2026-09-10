@@ -6,8 +6,8 @@ ClickUp OAuth uses:
 - Authorization URL: https://app.clickup.com/api
 - Token URL:         https://api.clickup.com/api/v2/oauth/token
 - Refresh:           ClickUp issues NO refresh token and the access token does
-                     not currently expire, so refresh is effectively a no-op
-                     that re-validates and keeps the existing token.
+                     not currently expire. Refresh keeps the existing value;
+                     only an API request can establish whether it is still valid.
 - User / account:    GET https://api.clickup.com/api/v2/user (returns the
                      authorized user) — used to label the credential.
 
@@ -94,8 +94,8 @@ async def exchange_code_for_tokens(
 ) -> Tuple[ClickUpTokens, ClickUpUserInfo]:
     """Exchange authorization code for an access token, then fetch user info.
 
-    ClickUp's token endpoint takes ``client_id``, ``client_secret`` and ``code``
-    (and accepts ``redirect_uri``), and returns only ``access_token`` — no
+    ClickUp's token endpoint takes a JSON body with ``client_id``,
+    ``client_secret``, ``code`` and ``redirect_uri``, and returns ``access_token`` — no
     refresh token and no expiry.
 
     Args:
@@ -119,37 +119,49 @@ async def exchange_code_for_tokens(
     }
 
     async with httpx.AsyncClient() as client:
-        token_response = await client.post(CLICKUP_TOKEN_URL, params=data)
+        # Never put the client secret or one-time code in a request URL.
+        token_response = await client.post(CLICKUP_TOKEN_URL, json=data)
 
         if token_response.status_code != 200:
-            logger.error(f"[ClickUpOAuth] Token exchange failed: HTTP {token_response.status_code}")
+            logger.error(
+                "[ClickUpOAuth] Token exchange failed: HTTP %s", token_response.status_code
+            )
             raise ValueError(f"Token exchange failed: HTTP {token_response.status_code}")
 
-        token_data = token_response.json()
+        try:
+            token_data = token_response.json()
+        except ValueError:
+            raise ValueError("Token exchange failed: invalid token response") from None
+
+        if not isinstance(token_data, dict):
+            raise ValueError("Token exchange failed: invalid token response")
 
         if "err" in token_data or "error" in token_data:
-            error_msg = token_data.get(
-                "err", token_data.get("error", "Unknown error")
-            )
-            logger.error(f"[ClickUpOAuth] Token exchange failed: {error_msg}")
-            raise ValueError(f"Token exchange failed: {error_msg}")
+            # Provider error text can echo submitted credentials.
+            logger.error("[ClickUpOAuth] Token exchange rejected by provider")
+            raise ValueError("Token exchange failed: provider rejected authorization")
 
         access_token = token_data.get("access_token")
-        if not access_token:
-            raise ValueError("Token exchange failed: no access_token in response")
+        refresh_token = token_data.get("refresh_token")
+        token_type = token_data.get("token_type", "Bearer")
+        if (
+            not isinstance(access_token, str)
+            or not access_token.strip()
+            or (refresh_token is not None and not isinstance(refresh_token, str))
+            or not isinstance(token_type, str)
+        ):
+            raise ValueError("Token exchange failed: invalid token response")
 
         tokens = ClickUpTokens(
             access_token=access_token,
-            refresh_token=token_data.get("refresh_token"),
+            refresh_token=refresh_token,
             expires_at=None,  # ClickUp access tokens do not expire.
-            token_type=token_data.get("token_type", "Bearer"),
+            token_type=token_type,
         )
 
         user_info = await _get_user_info(client, tokens.access_token)
 
-        logger.info(
-            f"[ClickUpOAuth] Successfully exchanged code for tokens for user {user_info.name}"
-        )
+        logger.info("[ClickUpOAuth] Successfully exchanged authorization code")
         return tokens, user_info
 
 
@@ -166,7 +178,7 @@ async def _get_user_info(
     )
 
     if response.status_code != 200:
-        logger.warning(f"[ClickUpOAuth] Failed to get user info: HTTP {response.status_code}")
+        logger.warning("[ClickUpOAuth] Failed to get user info: HTTP %s", response.status_code)
         return ClickUpUserInfo(id="unknown", name="Unknown")
 
     payload = response.json()
