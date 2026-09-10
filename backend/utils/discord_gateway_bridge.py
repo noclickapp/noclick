@@ -93,11 +93,15 @@ def build_gateway_envelope(
     channel_name: Optional[str] = None,
     parent_channel_id: Optional[str] = None,
     parent_channel_name: Optional[str] = None,
+    category_id: Optional[str] = None,
+    category_name: Optional[str] = None,
 ) -> Dict[str, Any]:
     """The wire shape the receiver's Discord adapter parses (``source`` tells
     it apart from Discord's own HTTP payloads, which carry ``type``). The
     parent fields are set only for a message in a thread: the channel the
-    thread was opened in."""
+    thread was opened in. The category fields name the category that channel
+    (or, outside a thread, the message's own channel) sits under — a trigger
+    scoped to the category hears everything beneath it."""
     return {
         "source": "gateway",
         "t": event_type,
@@ -108,6 +112,8 @@ def build_gateway_envelope(
         "channel_name": channel_name,
         "parent_channel_id": parent_channel_id,
         "parent_channel_name": parent_channel_name,
+        "category_id": category_id,
+        "category_name": category_name,
         "received_at": time.time(),
     }
 
@@ -172,14 +178,16 @@ class GuildDirectory:
     create/update/delete events after it — plus one REST fill per guild, and
     per channel, the stream never described. No lookup per message.
 
-    A thread is remembered with its parent channel: a trigger scoped to a
-    channel hears the threads opened in it, and the parent on the envelope is
-    how the receiver knows a thread message belongs."""
+    A thread is remembered with its parent channel, and a channel with its
+    category: a trigger scoped to a channel hears the threads opened in it,
+    one scoped to a category hears every channel under it, and the ancestors
+    stamped on the envelope are how the receiver knows a message belongs."""
 
     def __init__(self) -> None:
         self.guild_names: Dict[str, str] = {}
         self.channel_names: Dict[str, str] = {}
         self.thread_parents: Dict[str, str] = {}
+        self.channel_categories: Dict[str, str] = {}
         self.fetched: Set[str] = set()
         self.fetched_channels: Set[str] = set()
 
@@ -220,12 +228,21 @@ class GuildDirectory:
         channel_id = str(channel["id"])
         if isinstance(channel.get("name"), str):
             self.channel_names[channel_id] = channel["name"]
-        if (thread or channel.get("type") in THREAD_CHANNEL_TYPES) and channel.get("parent_id"):
+        if not channel.get("parent_id"):
+            return
+        if thread or channel.get("type") in THREAD_CHANNEL_TYPES:
             self.thread_parents[channel_id] = str(channel["parent_id"])
+        else:
+            self.channel_categories[channel_id] = str(channel["parent_id"])
+
+    def category_of(self, channel_id: str) -> Optional[str]:
+        """The category a channel — or a thread's parent channel — sits under."""
+        return self.channel_categories.get(self.thread_parents.get(channel_id, channel_id))
 
     def _forget(self, channel_id: str) -> None:
         self.channel_names.pop(channel_id, None)
         self.thread_parents.pop(channel_id, None)
+        self.channel_categories.pop(channel_id, None)
 
     def apply(self, event_type: str, data: Dict[str, Any]) -> None:
         object_id = str(data.get("id") or "")
@@ -465,15 +482,19 @@ class DiscordGatewayBridge:
                 await self.directory.ensure(guild_id, self._name_lookup)
                 await self.directory.ensure_channel(channel_id, self._channel_lookup)
                 parent_id = self.directory.thread_parents.get(channel_id)
+                category_id = self.directory.category_of(channel_id)
+                names = self.directory.channel_names
                 status = self.client.status
                 envelope = build_gateway_envelope(
                     event_type, data,
                     bot_user_id=status.bot_user_id,
                     application_id=status.application_id,
                     guild_name=self.directory.guild_names.get(guild_id),
-                    channel_name=self.directory.channel_names.get(channel_id),
+                    channel_name=names.get(channel_id),
                     parent_channel_id=parent_id,
-                    parent_channel_name=self.directory.channel_names.get(parent_id) if parent_id else None,
+                    parent_channel_name=names.get(parent_id) if parent_id else None,
+                    category_id=category_id,
+                    category_name=names.get(category_id) if category_id else None,
                 )
                 await self._forwarder.forward(json.dumps(envelope, separators=(",", ":")).encode())
                 self.counters.forwarded += 1

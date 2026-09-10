@@ -344,3 +344,18 @@ def test_paused_trigger_needs_attention_but_a_switched_off_one_is_silent():
     assert [t["nodeId"] for t in triggers] == ["paused"]
     assert triggers[0]["armed"] is False and triggers[0]["error"].startswith("Paused after")
     assert [b["title"] for b in broken] == ["Hourly sync is paused"]
+
+
+def test_registered_but_deaf_app_event_trigger_needs_the_owner():
+    """Subscription rows can be live while Slack stays silent (the app is not
+    in the channel) — the registration mirror carries that verdict and the
+    Dashboard must surface it, not hide it behind armed=True."""
+    graph = {"nodes": [{"id": "slack", "type": "automation-slack", "config": {
+        "label": "Crisp chats", "operation": "on_channel_message", "channel": "C1",
+        "trigger_registered": True, "trigger_error": "@noclick isn't in #support",
+    }}]}
+    workflows = _wf(graph=graph)
+    triggers, broken = dh._compose_triggers(workflows, [], [{"workflow_id": "wf-1", "node_id": "slack", "event_type": "message"}])
+    assert triggers[0]["armed"] is True and triggers[0]["error"] == "@noclick isn't in #support"
+    assert [b["title"] for b in broken] == ["Crisp chats isn't receiving events"]
+    assert broken[0]["detail"] == "@noclick isn't in #support"

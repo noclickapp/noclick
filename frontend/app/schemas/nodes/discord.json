@@ -7011,7 +7011,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7074,7 +7074,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7137,7 +7137,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7199,7 +7199,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7261,7 +7261,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7321,7 +7321,7 @@
             }
           ],
           "default": null,
-          "description": "Only messages in this channel and the threads opened in it. Leave empty for every channel in the server.",
+          "description": "Only messages in this channel and the threads opened in it \u2014 or, for a category, every channel under it. Leave empty for every channel in the server.",
           "title": "Channel",
           "x-dynamic-options": {
             "field_name": "channel_id",
@@ -7359,7 +7359,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7420,7 +7420,7 @@
             }
           ],
           "default": null,
-          "description": "Only messages in this channel and the threads opened in it. Leave empty for every channel in the server.",
+          "description": "Only messages in this channel and the threads opened in it \u2014 or, for a category, every channel under it. Leave empty for every channel in the server.",
           "title": "Channel",
           "x-dynamic-options": {
             "field_name": "channel_id",
@@ -7458,7 +7458,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7522,7 +7522,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [

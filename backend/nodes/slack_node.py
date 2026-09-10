@@ -27,7 +27,7 @@ from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import load_paginated_options
 from nodes.core.oauth_refresh import ensure_fresh_oauth_token
-from nodes.core.webhook_subscriptions import AppEventTriggerMixin
+from nodes.core.webhook_subscriptions import AppEventTriggerMixin, RegistrationAdvisory
 from nodes.scopes.slack import BOT as _SLACK_BOT
 from nodes.scopes.slack import USER as _SLACK_USER
 from nodes.scopes.slack import (
@@ -6671,12 +6671,18 @@ class _SlackEventTriggerBase(BaseModel):
     subscription_status: Optional[str] = Field(
         default=None,
         title="Status",
-        json_schema_extra={"ui:widget": "readonly", "ui:loadValue": True},
+        json_schema_extra={"ui:widget": "subscription_status", "ui:loadValue": True},
     )
     trigger_registered: Optional[bool] = Field(
         default=None, json_schema_extra={"ui:hidden": True}
     )
     trigger_error: Optional[str] = Field(
+        default=None, json_schema_extra={"ui:hidden": True}
+    )
+    # A fix the Status field can offer for a registered-but-deaf trigger
+    # ({"field": <load_field_value name>, "label": <button text>}); mirrored
+    # by registration, never user-edited.
+    trigger_action: Optional[Dict[str, Any]] = Field(
         default=None, json_schema_extra={"ui:hidden": True}
     )
 
@@ -7112,6 +7118,11 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
 
     scope_registry = SLACK_SCOPES
 
+    # Slack delivers channel events (messages, mentions, reactions, joins,
+    # files) only to apps that are MEMBERS of the channel — the subscription
+    # row alone leaves the trigger deaf. channel_created is workspace-wide.
+    _CHANNEL_MEMBERSHIP_TRIGGER_OPS = frozenset(_trigger_event_map) - {"on_channel_created"}
+
     # The channel picker already returns exactly what a user recognises, so the
     # dropdown query and the proof are one call. test_authentication names the
     # workspace when a bot is in no channels yet.
@@ -7251,6 +7262,153 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
             ),
             "event_types": self._trigger_event_map.get(config.operation, []),
         }
+
+    # ------------------------------------------------------------------
+    # Registration health: attached ≠ receiving
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _bot_token(credential: Dict[str, Any]) -> Optional[str]:
+        return credential.get("access_token") or credential.get("bot_token")
+
+    @classmethod
+    async def _slack_get(cls, token: str, method: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """One bot-token GET; raises on a Slack error so callers judge the
+        verdict, not the transport."""
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            response = await client.get(
+                f"{SLACK_API_BASE}/{method}",
+                headers={"Authorization": f"Bearer {token}"},
+                params=params,
+            )
+        data = response.json() if response.content else {}
+        if not data.get("ok"):
+            raise ValueError(data.get("error") or "unknown_error")
+        return data
+
+    @classmethod
+    async def _probe_conversation(cls, token: str, channel: str) -> Optional[Dict[str, Any]]:
+        """The channel as the bot sees it — ``None`` when it cannot see it at
+        all, which for a private channel means it was never invited."""
+        try:
+            return (await cls._slack_get(token, "conversations.info", {"channel": channel})).get("channel") or None
+        except ValueError as e:
+            if str(e) == "channel_not_found":
+                return None
+            raise
+
+    @classmethod
+    async def _bot_handle(cls, token: str) -> str:
+        """``@name`` of the installed app's bot user, for the /invite hint."""
+        try:
+            user = (await cls._slack_get(token, "auth.test", {})).get("user")
+        except Exception:
+            user = None
+        return f"@{user}" if user else "the app"
+
+    @classmethod
+    async def _bot_channel_count(cls, token: str) -> int:
+        data = await cls._slack_get(
+            token,
+            "users.conversations",
+            {"types": "public_channel,private_channel", "exclude_archived": "true", "limit": "1"},
+        )
+        return len(data.get("channels") or [])
+
+    @classmethod
+    async def _join_channel(cls, token: str, channel: str) -> None:
+        """``conversations.join`` — public channels only; Slack has no API to
+        self-invite into a private one."""
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            response = await client.post(
+                f"{SLACK_API_BASE}/conversations.join",
+                headers={"Authorization": f"Bearer {token}"},
+                data={"channel": channel},
+            )
+        data = response.json() if response.content else {}
+        if not data.get("ok"):
+            raise ValueError(data.get("error") or "unknown_error")
+
+    @classmethod
+    async def check_registration_health(
+        cls,
+        credential: Dict[str, Any],
+        operation: Optional[str],
+        config: Optional[Dict[str, Any]],
+    ) -> Optional[RegistrationAdvisory]:
+        """Is the app somewhere Slack will actually send this trigger's
+        events from? A picked channel must have the app as a member (public:
+        offer to join; private: only a human can invite); no channel filter
+        needs the app in at least one channel."""
+        if operation not in cls._CHANNEL_MEMBERSHIP_TRIGGER_OPS:
+            return None
+        token = cls._bot_token(credential)
+        if not token:
+            return None
+        channel = (config or {}).get("channel") or None
+        if not channel:
+            if await cls._bot_channel_count(token) > 0:
+                return None
+            bot = await cls._bot_handle(token)
+            return RegistrationAdvisory(
+                f"{bot} isn't in any channel yet, so Slack has nothing to send. "
+                f"Invite it to a channel (/invite {bot})."
+            )
+        info = await cls._probe_conversation(token, channel)
+        if info is not None and info.get("is_member"):
+            return None
+        label = f"#{info['name']}" if info and info.get("name") else (config or {}).get("channel__label") or channel
+        if info is not None and info.get("is_archived"):
+            return RegistrationAdvisory(f"{label} is archived, so nothing will ever be posted there.")
+        bot = await cls._bot_handle(token)
+        deaf = f"{bot} isn't in {label}, so Slack won't send its events here."
+        if info is None or info.get("is_private"):
+            return RegistrationAdvisory(f"{deaf} Invite it from the channel (/invite {bot}).")
+        return RegistrationAdvisory(
+            f"{deaf} Join the channel to start receiving them.",
+            action={"field": "join_channel", "label": f"Join {label}"},
+        )
+
+    @classmethod
+    async def load_field_value(
+        cls,
+        field_name: str,
+        user_id: str,
+        workflow_id,
+        node_id: str,
+        pool,
+        context: Optional[Dict[str, Any]] = None,
+        credential_ids: Optional[Dict[str, str]] = None,
+    ) -> Dict[str, Any]:
+        """``join_channel``: the Status field's fix-it action — join the picked
+        public channel as the app, then re-run the status registration so the
+        verdict flips through the one path that mints it."""
+        if field_name != "join_channel":
+            return await super().load_field_value(
+                field_name, user_id, workflow_id, node_id, pool,
+                context=context, credential_ids=credential_ids,
+            )
+        channel = (context or {}).get("channel") or None
+        if not channel:
+            raise ValueError("Pick a channel first")
+        _, credential = await cls._resolve_trigger_credential(pool, user_id, credential_ids)
+        token = cls._bot_token(credential or {})
+        if not token:
+            raise ValueError(cls._credential_prompt)
+        try:
+            await cls._join_channel(token, channel)
+        except ValueError as e:
+            label = (context or {}).get("channel__label") or channel
+            message = f"Couldn't join {label}: {e}"
+            return {"values": {
+                "subscription_status": f"⚠ {message}",
+                "trigger_error": message,
+                "trigger_action": {"field": "join_channel", "label": f"Join {label}"},
+            }}
+        return await super().load_field_value(
+            "subscription_status", user_id, workflow_id, node_id, pool,
+            context=context, credential_ids=credential_ids,
+        )
 
     @classmethod
     async def load_field_options(

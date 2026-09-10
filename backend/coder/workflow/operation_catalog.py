@@ -860,6 +860,10 @@ def trigger_status_line(
     is_app_event = _app_event_trigger_class(node_type) is not None
     kind = "trigger (app-event — no webhook URL)" if is_app_event else "trigger"
     if cfg.get("trigger_registered") is True:
+        if cfg.get("trigger_error"):
+            # Rows exist but the provider will not feed them (Slack: the app
+            # is not in the channel) — only the user can fix this one.
+            return f"[{kind}: registered but NOT receiving events — {cfg['trigger_error']}]"
         status = cfg.get("subscription_status") or "registered"
         return f"[{kind}: {status}]"
     if cfg.get("trigger_error"):

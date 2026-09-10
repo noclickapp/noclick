@@ -800,7 +800,7 @@ class GraphState:
                         continue
                     # Registration mirrors render as one purposeful
                     # [trigger: ...] line below, not raw fields.
-                    if k in ('subscription_status', 'trigger_registered', 'trigger_error'):
+                    if k in ('subscription_status', 'trigger_registered', 'trigger_error', 'trigger_action'):
                         continue
                     val_str = str(v)
                     if len(val_str) > 80:

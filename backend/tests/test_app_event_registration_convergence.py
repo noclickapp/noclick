@@ -427,3 +427,33 @@ def test_every_trigger_operation_has_a_registration_strategy():
         "webhook_url/subscription_status ui:loadValue) or, only if events "
         "truly need no registration, add to REGISTRATION_FREE_TRIGGER_OPS."
     )
+
+
+async def test_reconcile_stamps_the_delivery_verdict(world):
+    """The reconciler mints the same mirrors the panel does: a registration
+    whose provider will not deliver (the Slack app is not in the channel)
+    lands in the config as a ⚠ status with the fix-it action, and a healthy
+    one clears every trace of it."""
+    from nodes.core.webhook_subscriptions import RegistrationAdvisory
+
+    world.set_node("on_channel_message")
+    advisory = RegistrationAdvisory("@noclick isn't in #x", {"field": "join_channel", "label": "Join #x"})
+    with patch.object(SlackNode, "check_registration_health", AsyncMock(return_value=advisory)), \
+         patch.object(WebhookManager, "merge_node_config_patch", AsyncMock()) as merge:
+        result = await _reconcile(world)
+    assert result["state"] == "registered"
+    assert merge.await_args.args[3] == {
+        "trigger_registered": True, "trigger_error": "@noclick isn't in #x",
+        "subscription_status": "⚠ @noclick isn't in #x",
+        "trigger_action": {"field": "join_channel", "label": "Join #x"},
+    }
+
+    world.set_node("on_channel_message", credential="cred-2")  # rows differ → re-register
+    with patch.object(SlackNode, "check_registration_health", AsyncMock(return_value=None)), \
+         patch.object(WebhookManager, "merge_node_config_patch", AsyncMock()) as merge:
+        result = await _reconcile(world, resolve=("cred-2", {"team_id": "T123"}))
+    assert result["state"] == "registered"
+    assert merge.await_args.args[3] == {
+        "trigger_registered": True, "trigger_error": None,
+        "subscription_status": "Active — listening across all channels", "trigger_action": None,
+    }

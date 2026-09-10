@@ -20,7 +20,7 @@ import logging
 import os
 import time
 import uuid
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from fastapi import Response
 
@@ -409,11 +409,18 @@ async def _discord_scope_filter(pool, sub: Dict[str, Any], payload: Dict[str, An
     return None
 
 
-def _discord_parent_channel(payload: Dict[str, Any]) -> Optional[str]:
-    """For a message in a thread, the channel the thread was opened in (the
-    bridge stamps it from its directory); None otherwise."""
-    parent = payload.get("parent_channel_id") if _is_gateway_envelope(payload) else None
-    return parent if isinstance(parent, str) and parent else None
+def _discord_ancestor_channels(payload: Dict[str, Any]) -> Set[str]:
+    """The channels a message's own channel nests under, as the bridge
+    stamped them from its directory: a thread's parent channel and the
+    category that channel sits in. A trigger scoped to any of them hears the
+    message."""
+    if not _is_gateway_envelope(payload):
+        return set()
+    return {
+        value
+        for value in (payload.get("parent_channel_id"), payload.get("category_id"))
+        if isinstance(value, str) and value
+    }
 
 
 def _discord_node_filter(config: Dict[str, Any], payload: Dict[str, Any]) -> Optional[str]:
@@ -462,9 +469,9 @@ APP_PROVIDERS = {
         #   for burst-legitimate providers (HubSpot bulk imports).
         # - channel_config_key: the trigger-config field holding the channel
         #   scope (default "channel").
-        # - parent_channel: pure payload -> channel-id-or-None, the channel an
-        #   event's own channel nests under (a Discord thread's parent); the
-        #   channel scope accepts either.
+        # - ancestor_channels: pure payload -> set of channel ids the event's
+        #   own channel nests under (a Discord thread's parent, its category);
+        #   the channel scope accepts any of them.
         # - node_filter: pure (config, payload) -> reason-or-None predicate,
         #   evaluated at fire time against the node's live config.
         # - scope_filter: async (pool, subscription row, payload) ->
@@ -488,7 +495,7 @@ APP_PROVIDERS = {
         "event_id": _discord_event_id,
         "fire_budget": True,
         "channel_config_key": "channel_id",
-        "parent_channel": _discord_parent_channel,
+        "ancestor_channels": _discord_ancestor_channels,
         "node_filter": _discord_node_filter,
         "scope_filter": _discord_scope_filter,
     },

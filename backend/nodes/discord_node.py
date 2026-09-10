@@ -27,6 +27,45 @@ from nodes.scopes.discord import DISCORD_SCOPES
 logger = logging.getLogger(__name__)
 
 DISCORD_API_BASE = "https://discord.com/api/v10"
+# Channel object types (https://discord.com/developers/docs/resources/channel).
+GUILD_CATEGORY_TYPE = 4
+# A category in the picker: no "#", and a suffix so nobody mistakes it for a
+# channel (the guild's top category listed first as "#NoClick" was picked as
+# the trigger channel, 2026-09-10). The status line keys on the same suffix.
+CATEGORY_LABEL_SUFFIX = " (category)"
+
+
+def _picker_channel_label(channel: Dict[str, Any]) -> str:
+    name = channel.get("name")
+    if not name:
+        return str(channel.get("id"))
+    if channel.get("type") == GUILD_CATEGORY_TYPE:
+        return f"{name}{CATEGORY_LABEL_SUFFIX}"
+    return f"#{name}"
+
+
+def _order_channels_for_picker(
+    channels: List[Dict[str, Any]], *, with_categories: bool
+) -> List[Dict[str, Any]]:
+    """Discord's sidebar order: uncategorised channels, then each category
+    followed by its channels. Categories are offered only where one is a
+    valid pick (a message trigger, which then covers every channel in it)."""
+    position = lambda c: c.get("position") or 0  # noqa: E731
+    categories = sorted(
+        (c for c in channels if c.get("type") == GUILD_CATEGORY_TYPE), key=position
+    )
+    by_parent: Dict[Optional[str], List[Dict[str, Any]]] = {}
+    for channel in channels:
+        if channel.get("type") != GUILD_CATEGORY_TYPE:
+            by_parent.setdefault(channel.get("parent_id"), []).append(channel)
+    ordered = sorted(by_parent.pop(None, []), key=position)
+    for category in categories:
+        if with_categories:
+            ordered.append(category)
+        ordered.extend(sorted(by_parent.pop(category.get("id"), []), key=position))
+    for orphans in by_parent.values():  # parent not in the listing
+        ordered.extend(sorted(orphans, key=position))
+    return ordered
 
 # ============================================================================
 # Discord Credential Schemas
@@ -390,7 +429,7 @@ class _DiscordEventTriggerBase(BaseModel):
     subscription_status: Optional[str] = Field(
         default=None,
         title="Status",
-        json_schema_extra={"ui:widget": "readonly", "ui:loadValue": True},
+        json_schema_extra={"ui:widget": "subscription_status", "ui:loadValue": True},
     )
     trigger_registered: Optional[bool] = Field(
         default=None, json_schema_extra={"ui:hidden": True}
@@ -488,7 +527,7 @@ class _DiscordMessageTriggerFields(BaseModel):
     channel_id: Optional[str] = Field(
         default=None,
         title="Channel",
-        description="Only messages in this channel and the threads opened in it. Leave empty for every channel in the server.",
+        description="Only messages in this channel and the threads opened in it — or, for a category, every channel under it. Leave empty for every channel in the server.",
     )
     ignore_bots: str = Field(
         default="true",
@@ -4609,6 +4648,9 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
         "on_message": ["MESSAGE_CREATE"],
         "on_mention": ["MESSAGE_MENTION"],
     }
+    # The ops whose channel scope may be a category (covers its channels and
+    # their threads, judged at fire time from the bridge's ancestor stamps).
+    _CATEGORY_SCOPED_OPS = frozenset({"on_message", "on_mention"})
 
     # Event types delivered via the Interactions endpoint rather than app webhooks
     _interaction_event_types = {"INTERACTION_APPLICATION_COMMAND"}
@@ -4805,6 +4847,7 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
 
         if field_name == "channel_id":
             guild_id = context.get("guild_id") or install_guild_id
+            with_categories = operation in cls._CATEGORY_SCOPED_OPS
             if guild_id:
                 channels = await cls._dynamic_options_request(
                     f"/guilds/{guild_id}/channels", auth_header
@@ -4812,13 +4855,12 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
                 options = [
                     {
                         "value": channel.get("id"),
-                        "label": f"#{channel.get('name')}"
-                        if channel.get("name")
-                        else channel.get("id"),
+                        "label": _picker_channel_label(channel),
                         "metadata": {"type": channel.get("type")},
                     }
-                    for channel in channels
-                    if channel.get("id")
+                    for channel in _order_channels_for_picker(
+                        [c for c in channels if c.get("id")], with_categories=with_categories
+                    )
                 ]
             else:
                 guilds = await cls._dynamic_options_request(
@@ -4844,15 +4886,10 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
                         )
                         continue
                     guild_name = guild.get("name") or guild.get("id")
-                    for channel in channels or []:
-                        if not channel.get("id"):
-                            continue
-                        channel_name = channel.get("name") or channel.get("id")
-                        label = (
-                            f"{guild_name} / #{channel_name}"
-                            if channel.get("name")
-                            else f"{guild_name} / {channel_name}"
-                        )
+                    for channel in _order_channels_for_picker(
+                        [c for c in channels or [] if c.get("id")], with_categories=with_categories
+                    ):
+                        label = f"{guild_name} / {_picker_channel_label(channel)}"
                         options.append(
                             {
                                 "value": channel.get("id"),
@@ -5239,7 +5276,13 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
     ) -> str:
         what = "mentions of the bot" if operation == "on_mention" else "messages"
         channel = (config or {}).get("channel_id")
-        where = f"in channel {channel} (and its threads)" if channel else "in every channel"
+        label = (config or {}).get("channel_id__label") or (channel and f"channel {channel}")
+        if not channel:
+            where = "in every channel"
+        elif str(label).endswith(CATEGORY_LABEL_SUFFIX):
+            where = f"in every channel under {label} (and their threads)"
+        else:
+            where = f"in {label} (and its threads)"
         server = (credential or {}).get("guild_name") or cls._install_guild_id(credential)
         return f"Active — listening for {what} {where} of {server}"
 

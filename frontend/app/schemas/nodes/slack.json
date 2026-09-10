@@ -9412,7 +9412,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -9438,6 +9438,20 @@
           ],
           "default": null,
           "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "trigger_action": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Action",
           "ui:hidden": true
         },
         "channel": {
@@ -9490,7 +9504,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -9516,6 +9530,20 @@
           ],
           "default": null,
           "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "trigger_action": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Action",
           "ui:hidden": true
         },
         "operation": {
@@ -9553,7 +9581,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -9579,6 +9607,20 @@
           ],
           "default": null,
           "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "trigger_action": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Action",
           "ui:hidden": true
         },
         "channel": {
@@ -9631,7 +9673,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -9657,6 +9699,20 @@
           ],
           "default": null,
           "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "trigger_action": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Action",
           "ui:hidden": true
         },
         "channel": {
@@ -9708,7 +9764,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -9734,6 +9790,20 @@
           ],
           "default": null,
           "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "trigger_action": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Action",
           "ui:hidden": true
         },
         "channel": {
@@ -9786,7 +9856,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -9812,6 +9882,20 @@
           ],
           "default": null,
           "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "trigger_action": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Action",
           "ui:hidden": true
         },
         "channel": {

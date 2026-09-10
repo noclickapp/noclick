@@ -699,7 +699,9 @@ def _compose_triggers(workflows: _Workflows, webhook_rows: List[Dict[str, Any]],
                 error = mirror_error if not armed else None
             elif kind == "app_event":
                 armed = bool(node_subs)
-                error = mirror_error if not armed else None
+                # Rows can be live while the provider stays silent (the Slack
+                # app is not in the channel) — the mirror carries that verdict.
+                error = mirror_error
             elif kind in ("form", "email"):
                 armed = True
                 error = None
@@ -722,11 +724,15 @@ def _compose_triggers(workflows: _Workflows, webhook_rows: List[Dict[str, Any]],
                 "fireCount": int(hook.get("trigger_count") or 0) if hook else 0,
             }
             triggers.append(entry)
-            if not armed and error:
+            if error:
                 broken.append({
                     "id": f"trigger:{wf_id}:{node_id}",
                     "kind": "trigger_broken",
-                    "title": f"{label} is paused" if paused_reason else f"{label} is not registered",
+                    "title": (
+                        f"{label} is paused" if paused_reason
+                        else f"{label} is not registered" if not armed
+                        else f"{label} isn't receiving events"
+                    ),
                     "detail": error,
                     "workflow": workflows.ref(wf_id),
                     "provider": ntype,

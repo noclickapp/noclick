@@ -7304,7 +7304,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7368,7 +7368,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7432,7 +7432,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7495,7 +7495,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7559,7 +7559,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7623,7 +7623,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [
@@ -7687,7 +7687,7 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
-          "ui:widget": "readonly"
+          "ui:widget": "subscription_status"
         },
         "trigger_registered": {
           "anyOf": [

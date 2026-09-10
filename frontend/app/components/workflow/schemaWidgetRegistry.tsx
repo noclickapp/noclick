@@ -17,6 +17,7 @@ import { useResourceUpload } from '~/hooks/useResourceUpload';
 import { useRenewableResourceUrl } from '~/hooks/useRenewableResourceUrl';
 import { UploadProgressBar } from '~/components/ui/upload-progress';
 import { CopyableReadonlyField } from '~/components/ui/CopyableReadonlyField';
+import { SubscriptionStatusField } from './SubscriptionStatusField';
 import { EmailTriggerField } from './EmailTriggerField';
 import { ScheduleWidget } from './ScheduleWidget';
 import { SchedulesWidget } from './SchedulesWidget';
@@ -61,7 +62,7 @@ export interface WidgetRenderProps {
     /** Full config object for accessing sibling fields */
     config?: Record<string, any>;
     /** Callback when a field needs to be refetched (e.g., after countdown expires) */
-    onFieldRefetch?: (fieldName: string) => void;
+    onFieldRefetch?: (fieldName: string) => void | Promise<void>;
     /** Node context for widgets that need backend communication */
     nodeId?: string;
     nodeType?: string;
@@ -266,6 +267,21 @@ function renderReadonlyWidget({ fieldSchema, value, isLoading }: WidgetRenderPro
             isLoading={isLoading}
             copyable={fieldSchema['ui:copyable'] === true}
             inputClassName={inputClasses}
+        />
+    );
+}
+
+/**
+ * Subscription status widget - an app-event trigger's registration verdict,
+ * with the backend-minted fix-it action (`config.trigger_action`) as a button.
+ */
+function renderSubscriptionStatusWidget({ value, isLoading, config, onFieldRefetch }: WidgetRenderProps): ReactElement {
+    return (
+        <SubscriptionStatusField
+            value={value || ''}
+            isLoading={isLoading}
+            action={config?.trigger_action ?? null}
+            onAction={onFieldRefetch}
         />
     );
 }
@@ -935,6 +951,7 @@ const WIDGET_REGISTRY: Record<string, WidgetRenderer> = {
     'webhook': renderWebhookWidget,
     'email_trigger': (props) => <EmailTriggerField {...props} />,
     'readonly': renderReadonlyWidget,
+    'subscription_status': renderSubscriptionStatusWidget,
     'password': renderPasswordWidget,
     'datetime': ({ fieldKey, fieldSchema, value, onChange }) => (
         <DateTimeField

@@ -1490,7 +1490,7 @@ class WebhookManager:
             return {"state": "unregistered", "error": "credential unavailable"}
 
         try:
-            status = await node_class.register_node_subscriptions(
+            mirrors = await node_class.register_and_describe(
                 pool,
                 user_id=owner_id,
                 workflow_id=str(wf_uuid),
@@ -1508,16 +1508,13 @@ class WebhookManager:
             await WebhookManager.merge_node_config_patch(
                 pool, wf_uuid, node_id,
                 {"trigger_registered": False, "trigger_error": str(e),
-                 "subscription_status": f"⚠ Not registered: {e}"},
+                 "subscription_status": f"⚠ Not registered: {e}",
+                 "trigger_action": None},
             )
             return {"state": "failed", "error": str(e)}
         # Mirror the outcome into the config blob so panels/builder snapshots
         # that read the stored graph don't show a stale failure after a heal.
-        await WebhookManager.merge_node_config_patch(
-            pool, wf_uuid, node_id,
-            {"trigger_registered": True, "trigger_error": None,
-             "subscription_status": status},
-        )
+        await WebhookManager.merge_node_config_patch(pool, wf_uuid, node_id, mirrors)
         return {"state": "registered"}
 
     @staticmethod

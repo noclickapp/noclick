@@ -508,6 +508,9 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
                 // merge it in so operation-aware loaders (e.g. per-event
                 // triggers) can resolve it from context.
                 context: { ...localConfig, operation: operationProp },
+                // Trigger loaders resolve their credential from these (a
+                // refetch of subscription_status re-registers).
+                credential_ids: credentialIds,
             }) as { success: boolean; values?: Record<string, any>; message?: string };
 
             if (response?.success && response.values) {
@@ -526,7 +529,7 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
             isLoadingValuesRef.current[fieldName] = false;
             setIsLoadingValues(prev => ({ ...prev, [fieldName]: false }));
         }
-    }, [workflowId, nodeId, nodeType, localConfig, onChange]);
+    }, [workflowId, nodeId, nodeType, localConfig, credentialIds, onChange]);
 
     // Resolve $refs from root schema's $defs (safe even when schema is null)
     const resolveRef = useCallback((ref: string) => {
@@ -732,11 +735,16 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
                 .sort()
                 .join('|');
             // webhook_url additionally re-fetches on required-completeness
-            // flips (see requiredOk above); other loadValue fields keep the
+            // flips (see requiredOk above); subscription_status on the channel
+            // scope, so the registration verdict (is the Slack app in THIS
+            // channel?) follows the pick; other loadValue fields keep the
             // operation+credential key so config typing never re-fires them.
+            const cfg = localConfig as Record<string, any>;
             const fetchKey = fieldName === 'webhook_url'
                 ? `${operationProp ?? ''}::${credKey}::req=${requiredOk}`
-                : `${operationProp ?? ''}::${credKey}`;
+                : fieldName === 'subscription_status'
+                    ? `${operationProp ?? ''}::${credKey}::scope=${cfg.channel ?? cfg.channel_id ?? ''}`
+                    : `${operationProp ?? ''}::${credKey}`;
             if (lastFetchKeyRef.current[fieldName] === fetchKey) return;
             lastFetchKeyRef.current[fieldName] = fetchKey;
 

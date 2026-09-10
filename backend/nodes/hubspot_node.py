@@ -7803,7 +7803,7 @@ class _HubSpotEventTriggerBase(BaseModel):
     subscription_status: Optional[str] = Field(
         default=None,
         title="Status",
-        json_schema_extra={"ui:widget": "readonly", "ui:loadValue": True},
+        json_schema_extra={"ui:widget": "subscription_status", "ui:loadValue": True},
     )
     trigger_registered: Optional[bool] = Field(
         default=None, json_schema_extra={"ui:hidden": True}

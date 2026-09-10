@@ -317,15 +317,17 @@ class TestDiscordGatewayAdapter:
         assert discord["fire_budget"] is True
         assert discord["channel_config_key"] == "channel_id"
         assert discord["node_filter"] is app_webhooks._discord_node_filter
-        assert discord["parent_channel"] is app_webhooks._discord_parent_channel
+        assert discord["ancestor_channels"] is app_webhooks._discord_ancestor_channels
         assert discord["event_id"] is app_webhooks._discord_event_id
 
-    def test_parent_channel_reads_the_bridge_stamp_only(self):
+    def test_ancestor_channels_read_the_bridge_stamps_only(self):
         in_thread = _envelope(channel_id="t1")
         in_thread["parent_channel_id"] = "c1"
-        assert app_webhooks._discord_parent_channel(in_thread) == "c1"
-        assert app_webhooks._discord_parent_channel(_envelope()) is None
-        assert app_webhooks._discord_parent_channel({"type": 2, "parent_channel_id": "c1"}) is None
+        assert app_webhooks._discord_ancestor_channels(in_thread) == {"c1"}
+        in_thread["category_id"] = "cat"
+        assert app_webhooks._discord_ancestor_channels(in_thread) == {"c1", "cat"}
+        assert app_webhooks._discord_ancestor_channels(_envelope()) == set()
+        assert app_webhooks._discord_ancestor_channels({"type": 2, "parent_channel_id": "c1", "category_id": "cat"}) == set()
 
 
 class TestDispatchAndFire:
@@ -390,6 +392,20 @@ class TestDispatchAndFire:
         assert (await self._fire({"channel_id": "c1"}, in_thread, "t1"))[0] is True
         assert (await self._fire({"channel_id": "t1"}, in_thread, "t1"))[0] is True  # scoped to the thread itself
         assert (await self._fire({"channel_id": "c2"}, in_thread, "t1"))[0] is False
+
+    async def test_channel_scope_covers_the_channels_under_a_category(self):
+        """The picker offered the guild's top category as "#NoClick" and it was
+        chosen as the trigger channel; every #support message was skipped
+        (2026-09-10). A category scope means every channel under it — and
+        the threads under those."""
+        in_channel = _envelope(channel_id="c1")
+        in_channel["category_id"] = "cat"
+        assert (await self._fire({"channel_id": "cat"}, in_channel, "c1"))[0] is True
+        assert (await self._fire({"channel_id": "other-cat"}, in_channel, "c1"))[0] is False
+        in_thread = _envelope(channel_id="t1")
+        in_thread["parent_channel_id"] = "c1"
+        in_thread["category_id"] = "cat"
+        assert (await self._fire({"channel_id": "cat"}, in_thread, "t1"))[0] is True
 
     async def test_ignore_bots_is_read_from_the_live_config(self):
         bot_message = _envelope(author={"id": "b2", "bot": True})
@@ -536,6 +552,33 @@ class TestDiscordNodeMessageTriggers:
         assert result["options"] == [{"value": "c1", "label": "#general", "metadata": {"type": 0}}]
         assert req.await_args.args[0] == "/guilds/g1/channels"
 
+    async def test_channel_picker_orders_like_the_sidebar_and_names_categories(self):
+        """Discord lists the category first, and labelling it "#NoClick" got it
+        picked as the trigger channel (2026-09-10). Categories are offered only
+        to the message triggers that can scope to one, named as categories,
+        after the uncategorised channels; every other op never sees them."""
+        listing = [
+            {"id": "c1", "name": "support", "type": 0, "parent_id": "cat", "position": 1},
+            {"id": "cat", "name": "NoClick", "type": 4, "position": 0},
+            {"id": "c0", "name": "general", "type": 0, "parent_id": "cat", "position": 0},
+            {"id": "v1", "name": "Voice Channels", "type": 4, "position": 1},
+            {"id": "lobby", "name": "lobby", "type": 0, "position": 5},
+        ]
+        with patch.object(DiscordNode, "_dynamic_options_request", new=AsyncMock(return_value=listing)), \
+             patch.dict(os.environ, {"DISCORD_BOT_TOKEN": "platform"}):
+            trigger = await DiscordNode.load_field_options("channel_id", INSTALL_CRED, context={"operation": "on_message"})
+            action = await DiscordNode.load_field_options("channel_id", INSTALL_CRED, context={"operation": "send_message"})
+        assert [(o["value"], o["label"]) for o in trigger["options"]] == [
+            ("lobby", "#lobby"), ("cat", "NoClick (category)"), ("c0", "#general"), ("c1", "#support"), ("v1", "Voice Channels (category)"),
+        ]
+        assert [o["value"] for o in action["options"]] == ["lobby", "c0", "c1"]
+
+    def test_status_line_reads_the_picked_label(self):
+        status = DiscordNode._gateway_status_line("on_message", INSTALL_CRED, {"channel_id": "c1", "channel_id__label": "#support"})
+        assert status == "Active — listening for messages in #support (and its threads) of Acme HQ"
+        status = DiscordNode._gateway_status_line("on_message", INSTALL_CRED, {"channel_id": "cat", "channel_id__label": "NoClick (category)"})
+        assert status == "Active — listening for messages in every channel under NoClick (category) (and their threads) of Acme HQ"
+
     def test_scope_registry_covers_the_new_operations(self):
         from nodes.scopes.discord import DISCORD_SCOPES
         for op in ("on_message", "on_mention"):
@@ -654,6 +697,8 @@ class TestGuildDirectory:
             "threads": [{"id": "t1", "name": "incident-42", "type": 11, "parent_id": "c1"}],
         })
         assert d.thread_parents == {"t1": "c1"}
+        assert d.channel_categories == {"c1": "cat"}
+        assert d.category_of("c1") == "cat" and d.category_of("t1") == "cat" and d.category_of("cat") is None
         d.apply("THREAD_CREATE", {"id": "t2", "name": "support", "type": 11, "parent_id": "c1", "guild_id": "g1"})
         d.apply("THREAD_LIST_SYNC", {"guild_id": "g1", "threads": [{"id": "t3", "name": "old", "parent_id": "c1"}]})
         d.apply("CHANNEL_CREATE", {"id": "t4", "name": "private", "type": 12, "parent_id": "c1"})
@@ -726,6 +771,27 @@ class TestBridgeNamesAndMissRefresh:
         assert (thread["channel_name"], thread["parent_channel_id"], thread["parent_channel_name"]) == ("Support response", "c1", "general")
         assert (plain["channel_name"], plain["parent_channel_id"], plain["parent_channel_name"]) == ("general", None, None)
         assert bridge.status()["directory_threads"] == 1
+
+    async def test_a_message_carries_the_category_its_channel_sits_in(self):
+        """Category stamps let a category-scoped trigger hear #support and
+        the threads opened in it (the receiver judges the scope)."""
+        fwd = CollectingForwarder()
+        bridge = self._bridge(fwd, rows=[{"tenant_id": "g1"}])
+        bridge._filter.guild_ids = {"g1"}
+        await bridge._on_dispatch("GUILD_CREATE", {"id": "g1", "name": "NoClick", "channels": [
+            {"id": "cat", "name": "NoClick", "type": 4},
+            {"id": "c1", "name": "support", "type": 0, "parent_id": "cat"},
+            {"id": "c9", "name": "lobby", "type": 0},
+        ]})
+        await bridge._on_dispatch("THREAD_CREATE", {"id": "t1", "name": "Ticket", "type": 11, "parent_id": "c1", "guild_id": "g1"})
+        await bridge._on_dispatch("MESSAGE_CREATE", _message(id="a", channel_id="c1"))
+        await bridge._on_dispatch("MESSAGE_CREATE", _message(id="b", channel_id="t1"))
+        await bridge._on_dispatch("MESSAGE_CREATE", _message(id="c", channel_id="c9"))
+        await TestBridgeDispatch._drain(self, bridge)
+        in_channel, in_thread, uncategorised = (json.loads(b) for b in fwd.bodies)
+        assert (in_channel["category_id"], in_channel["category_name"]) == ("cat", "NoClick")
+        assert (in_thread["parent_channel_id"], in_thread["category_id"], in_thread["category_name"]) == ("c1", "cat", "NoClick")
+        assert (uncategorised["category_id"], uncategorised["category_name"]) == (None, None)
 
     async def test_a_channel_the_stream_never_described_is_looked_up_once(self):
         """A thread opened during a session gap: the first message in it fills

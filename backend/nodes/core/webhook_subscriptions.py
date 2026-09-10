@@ -12,6 +12,7 @@ calls :func:`find_subscriptions` to do the fan-out lookup.
 """
 
 import logging
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
@@ -20,6 +21,36 @@ logger = logging.getLogger(__name__)
 
 def _as_uuid(value):
     return UUID(value) if isinstance(value, str) else value
+
+
+@dataclass(frozen=True)
+class RegistrationAdvisory:
+    """Rows saved, but the provider will not deliver — a condition the rows
+    cannot express (Slack sends channel events only to apps that are MEMBERS
+    of the channel; #support sat green and deaf, 2026-09-10). ``action``
+    is a ``load_field_value`` field the panel can invoke to fix it, with the
+    button label to show: ``{"field": "join_channel", "label": "Join #x"}``."""
+
+    message: str
+    action: Optional[Dict[str, str]] = None
+
+
+def registration_mirrors(status: str, advisory: Optional[RegistrationAdvisory]) -> Dict[str, Any]:
+    """The config keys every registration surface stamps: the panel's
+    Status field, the builder's trigger line and the Dashboard read these."""
+    if advisory is None:
+        return {
+            "trigger_registered": True,
+            "trigger_error": None,
+            "subscription_status": status,
+            "trigger_action": None,
+        }
+    return {
+        "trigger_registered": True,
+        "trigger_error": advisory.message,
+        "subscription_status": f"⚠ {advisory.message}",
+        "trigger_action": advisory.action,
+    }
 
 
 async def save_subscriptions(
@@ -296,6 +327,63 @@ class AppEventTriggerMixin:
         return cls._subscription_status_line(event_types, config)
 
     @classmethod
+    async def check_registration_health(
+        cls,
+        credential: Dict[str, Any],
+        operation: Optional[str],
+        config: Optional[Dict[str, Any]],
+    ) -> Optional[RegistrationAdvisory]:
+        """Registered ≠ receiving. Providers override to judge, against the
+        live provider state, whether events will actually arrive for this
+        config (Slack: is the app in the channel?). ``None`` means healthy or
+        cannot judge — never accuse on a non-definitive signal."""
+        return None
+
+    @classmethod
+    async def register_and_describe(
+        cls,
+        pool,
+        *,
+        user_id: str,
+        workflow_id,
+        node_id: str,
+        operation: Optional[str],
+        credential_id: Optional[str],
+        credential: Dict[str, Any],
+        config: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """Register, then judge delivery health; returns the config mirrors.
+        The panel loader and the reconciler both stamp exactly this, so the
+        Status field can never say Active for a trigger the provider will
+        not feed. A health probe that fails is "cannot judge" — the
+        registration itself is never failed by it."""
+        status = await cls.register_node_subscriptions(
+            pool,
+            user_id=user_id,
+            workflow_id=workflow_id,
+            node_id=node_id,
+            operation=operation,
+            credential_id=credential_id,
+            credential=credential,
+            config=config,
+        )
+        try:
+            advisory = await cls.check_registration_health(credential, operation, config)
+        except (ImportError, AttributeError, TypeError, NameError):
+            # A wrong seam, not an unhappy provider: loud, then degrade.
+            logger.error(
+                f"[{cls.__name__}] registration health probe is broken for node {node_id}",
+                exc_info=True,
+            )
+            advisory = None
+        except Exception as e:
+            logger.warning(
+                f"[{cls.__name__}] registration health probe failed for node {node_id}: {e}"
+            )
+            advisory = None
+        return registration_mirrors(status, advisory)
+
+    @classmethod
     async def load_field_value(
         cls,
         field_name: str,
@@ -320,6 +408,7 @@ class AppEventTriggerMixin:
             values["trigger_registered"] = False
             values["trigger_error"] = message
             values["subscription_status"] = f"⚠ {message}"
+            values["trigger_action"] = None
             return {"values": values}
 
         credential_id, credential = await cls._resolve_trigger_credential(
@@ -339,7 +428,7 @@ class AppEventTriggerMixin:
             )
             if owner_id is None:
                 raise ValueError("Workflow not found")
-            status = await cls.register_node_subscriptions(
+            mirrors = await cls.register_and_describe(
                 pool,
                 user_id=owner_id,
                 workflow_id=workflow_id,
@@ -356,9 +445,7 @@ class AppEventTriggerMixin:
             )
             return _fail(f"Not registered: {e}")
 
-        values["trigger_registered"] = True
-        values["trigger_error"] = None
-        values["subscription_status"] = status
+        values.update(mirrors)
         return {"values": values}
 
     @classmethod
