@@ -22,7 +22,7 @@ by the executor) — node values are NEVER spliced into the JS source.
 import asyncio
 import json
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Mapping, NamedTuple, Optional, Tuple
 
 from utils.js_executor import execute_js_async
 
@@ -36,6 +36,48 @@ _ACCESSOR_RE = re.compile(r"\$\(|\$(?:ifEmpty|vars|json|now|if)\b")
 _LEGACY_PATH_RE = re.compile(r"^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_]+|\[\d+\]|\[\])*$")
 # Literal `$('id')` / `$("id")` accessor arguments inside an expression.
 _REF_ARG_RE = re.compile(r"""\$\(\s*['"]([^'"]+)['"]\s*\)""")
+# The first property read off a `$('id')` accessor — `$('t').payload` or
+# `$('t')['payload']` — names the missing key in an unresolved-reference error.
+# Deliberately one hop deep: "output has no key 'chat_id'; its keys are …" is
+# what makes the message fixable without opening the run.
+_REF_FIRST_KEY_RE = re.compile(
+    r"""\$\(\s*['"][^'"]+['"]\s*\)\s*(?:\.(?P<dot>[A-Za-z_$][\w$]*)|\[\s*['"](?P<bracket>[^'"]+)['"]\s*\])"""
+)
+# JS `undefined` cannot cross the sandbox boundary (it serialises to null), so an
+# evaluated block returns this marker object instead and _eval_block maps it back
+# to UNDEFINED. Null stays null; the two are reported with different reasons.
+_UNDEFINED_MARKER_KEY = "__nc_undefined__"
+
+
+class _Undefined:
+    """The result of an expression that evaluated to JS ``undefined`` — a key
+    the referenced output does not have. Never leaves this module: the
+    evaluated config carries None, and callers learn about it through the
+    ``unresolved`` channel of :func:`evaluate_expressions`."""
+
+    __slots__ = ()
+
+    def __repr__(self) -> str:
+        return "UNDEFINED"
+
+
+UNDEFINED = _Undefined()
+
+
+class UnresolvedReference(NamedTuple):
+    """A whole-field expression that produced no value.
+
+    ``path`` is the config path (``to``, ``headers[0].value``); ``reason`` is
+    ``"undefined"`` (the referenced output has no such key) or ``"null"`` (the
+    key exists and holds null). Partial interpolations (``"Hi {{ … }}"``) are
+    not recorded — their empty splice is the long-standing lenient behaviour.
+    """
+
+    path: str
+    expression: str
+    reason: str
+
+
 # A `nodeId.<rest>` that starts with a node id then a `.field` / `[idx]` (the rest may
 # be arbitrary JS). Used to upgrade the bare `{{node.field.method()}}` mistake — JS
 # appended to the `{{node.field}}` form instead of using `$('node')` — to the accessor
@@ -169,7 +211,7 @@ def _stringify(v: Any) -> str:
     """Stringify a computed value for substitution into surrounding text. Matches
     the existing reference convention (``''`` for null) but JSON-encodes
     objects/arrays so they don't leak Python repr."""
-    if v is None:
+    if v is None or v is UNDEFINED:
         return ""
     if isinstance(v, str):
         return v
@@ -229,11 +271,20 @@ async def _eval_block(
 ) -> Any:
     expr = inner.strip()
     inputs = _build_inputs(inner, node_outputs, workflow_nodes, primary_input)
-    code = _PREAMBLE + f"return ({expr});"
+    # The newline before `)` keeps a trailing `// comment` in the expression
+    # from swallowing the close paren.
+    code = (
+        _PREAMBLE
+        + f"const __nc_value = ({expr}\n);\n"
+        + f"return __nc_value === undefined ? {{{json.dumps(_UNDEFINED_MARKER_KEY)}: true}} : __nc_value;"
+    )
     result = await execute_js_async(code=code, inputs=inputs, timeout_sec=EXPRESSION_TIMEOUT_SEC)
     if not result.get("success"):
         raise ExpressionEvaluationError(expr, result.get("error") or "unknown error")
-    return result.get("result")
+    value = result.get("result")
+    if isinstance(value, dict) and len(value) == 1 and value.get(_UNDEFINED_MARKER_KEY) is True:
+        return UNDEFINED
+    return value
 
 
 async def _evaluate_string(
@@ -241,6 +292,8 @@ async def _evaluate_string(
     node_outputs: Dict[str, Any],
     workflow_nodes: Optional[List[Dict[str, Any]]],
     primary_input: Any,
+    path: str = "",
+    unresolved: Optional[List[UnresolvedReference]] = None,
 ) -> Any:
     if "{{" not in value:
         return value
@@ -254,10 +307,18 @@ async def _evaluate_string(
         return value  # only legacy/literal blocks — leave for the sync resolver
 
     # Full-match: the entire field is exactly one JS block → preserve the raw type.
+    # A block that produced nothing leaves the whole field EMPTY, which is only
+    # ever right for an optional field — so it is reported and the caller decides.
     if len(js_blocks) == 1:
         s, e, inner = js_blocks[0]
         if value[:s].strip() == "" and value[e:].strip() == "":
-            return await _eval_block(inner, node_outputs, workflow_nodes, primary_input)
+            result = await _eval_block(inner, node_outputs, workflow_nodes, primary_input)
+            if result is UNDEFINED or result is None:
+                if unresolved is not None:
+                    reason = "undefined" if result is UNDEFINED else "null"
+                    unresolved.append(UnresolvedReference(path, inner.strip(), reason))
+                return None
+            return result
 
     # Partial: evaluate each JS block, stringify, and splice into the surrounding
     # text. Non-JS spans (legacy refs, literals, plain text) are kept verbatim.
@@ -345,7 +406,8 @@ async def evaluate_single_expression(
     # Upgrade a bare `node.field.method()` to `$('node')...`; otherwise eval as-is (the
     # preview always treats its input as JS, accessor or not).
     expr = _as_js_expression(expression, node_outputs) or expression
-    return await _eval_block(expr, node_outputs, workflow_nodes, primary_input)
+    result = await _eval_block(expr, node_outputs, workflow_nodes, primary_input)
+    return None if result is UNDEFINED else result
 
 
 async def evaluate_expressions(
@@ -354,28 +416,102 @@ async def evaluate_expressions(
     *,
     workflow_nodes: Optional[List[Dict[str, Any]]] = None,
     primary_input: Any = None,
+    unresolved: Optional[List[UnresolvedReference]] = None,
+    _path: str = "",
 ) -> Any:
     """Recursively evaluate ``$``-expression ``{{ ... }}`` blocks in a config value,
     replacing each with its computed value. Legacy path references and literal
     ``{{ }}`` passthroughs are returned untouched for the downstream sync resolver.
 
+    Pass a list as ``unresolved`` to learn which whole-field expressions produced
+    no value (:class:`UnresolvedReference`); those fields come back as None.
+
     Raises ``ExpressionEvaluationError`` if any JS expression fails — the caller
     surfaces it as the node's error.
     """
     if isinstance(value, str):
-        return await _evaluate_string(value, node_outputs, workflow_nodes, primary_input)
+        return await _evaluate_string(
+            value, node_outputs, workflow_nodes, primary_input, _path, unresolved
+        )
     if isinstance(value, dict):
         return {
             k: await evaluate_expressions(
-                v, node_outputs, workflow_nodes=workflow_nodes, primary_input=primary_input
+                v, node_outputs, workflow_nodes=workflow_nodes, primary_input=primary_input,
+                unresolved=unresolved, _path=f"{_path}.{k}" if _path else str(k),
             )
             for k, v in value.items()
         }
     if isinstance(value, list):
         return [
             await evaluate_expressions(
-                item, node_outputs, workflow_nodes=workflow_nodes, primary_input=primary_input
+                item, node_outputs, workflow_nodes=workflow_nodes, primary_input=primary_input,
+                unresolved=unresolved, _path=f"{_path}[{i}]",
             )
-            for item in value
+            for i, item in enumerate(value)
         ]
     return value
+
+
+def _output_keys_summary(output: Any, limit: int = 12) -> str:
+    if isinstance(output, dict):
+        keys = [str(k) for k in output]
+        if not keys:
+            return "it is an empty object"
+        shown = ", ".join(keys[:limit])
+        if len(keys) > limit:
+            shown += f", … (+{len(keys) - limit} more)"
+        return f"its top-level keys are: {shown}"
+    if isinstance(output, list):
+        return f"it is a list of {len(output)} items (index with [0])"
+    return f"it is a {type(output).__name__} value"
+
+
+def describe_unresolved_reference(
+    ref: UnresolvedReference, node_outputs: Mapping[str, Any]
+) -> str:
+    """One sentence naming what the expression asked for and what the referenced
+    node actually holds — the difference between "resolved to nothing" and a
+    fix the reader can make without opening the run."""
+    detail = f"{{{{ {ref.expression} }}}} resolved to nothing"
+    node_ids = _REF_ARG_RE.findall(ref.expression)
+    if not node_ids:
+        return detail
+    node_id = node_ids[0]
+    output = node_outputs.get(node_id)
+    if isinstance(output, dict) and output.get("status") == "no_event":
+        return (
+            f"{detail}: node '{node_id}' has no live event in this run — a manual run "
+            f"stores a no-event placeholder, so fire the workflow with a real "
+            f"message/webhook to test this path"
+        )
+    key_match = _REF_FIRST_KEY_RE.search(ref.expression)
+    key = key_match and (key_match.group("dot") or key_match.group("bracket"))
+    if ref.reason == "null":
+        what = f"'{key}' is null" if key else "the value is null"
+        return f"{detail}: in node '{node_id}' output {what}"
+    what = f"has no key '{key}'" if key else "has no such value"
+    return f"{detail}: node '{node_id}' output {what} ({_output_keys_summary(output)})"
+
+
+def unresolved_required_field_error(
+    unresolved: Iterable[UnresolvedReference],
+    required_fields: Iterable[str],
+    node_outputs: Mapping[str, Any],
+) -> Optional[str]:
+    """The node error for whole-field references that resolved to nothing in
+    REQUIRED fields, or None when every unresolved field is optional.
+
+    An optional field left empty takes its default; a required field left
+    empty either fails its parse or — for a str field — is handed to the
+    provider as "" (a reply addressed to nobody reported success for 50
+    minutes, 2026-09-10). Only top-level fields are judged: the model says
+    nothing about the shape inside a list or object field.
+    """
+    required = set(required_fields)
+    hits = [ref for ref in unresolved if ref.path in required]
+    if not hits:
+        return None
+    return "; ".join(
+        f"Required field '{ref.path}' is empty — {describe_unresolved_reference(ref, node_outputs)}"
+        for ref in hits
+    )

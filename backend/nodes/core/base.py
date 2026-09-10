@@ -212,6 +212,37 @@ def _coerce_str_fields(config_data: Dict[str, Any], config_model: type) -> None:
             target[key] = default
 
 
+def _operation_members(target: Dict[str, Any], models: list) -> list:
+    """The union members that describe ``target``'s selected operation — all
+    of them when the config names no operation or none matches."""
+    op = target.get('operation')
+    if op is None or len(models) <= 1:
+        return models
+    matched = [
+        m for m in models
+        if m.model_fields.get('operation') is not None
+        and m.model_fields['operation'].default == op
+    ]
+    return matched or models
+
+
+def required_config_fields(config_data: Dict[str, Any], config_model: Any) -> frozenset[str]:
+    """The operation-level field names the runtime parse REQUIRES for this
+    config — no default, so an empty value is a parse failure or, for a str
+    field, an "" the provider is handed. With several candidate members
+    (undiscriminated union) a field counts only if every member requires it.
+    Same config lens as :func:`runtime_config_view`."""
+    target, models = _config_target_and_members(config_data, config_model)
+    models = _operation_members(target, models)
+    if not models:
+        return frozenset()
+    per_member = [
+        {name for name, finfo in m.model_fields.items() if finfo.is_required()}
+        for m in models
+    ]
+    return frozenset(set.intersection(*per_member))
+
+
 def _drop_rejected_unset_markers(target: Dict[str, Any], models: list) -> None:
     """Drop None/"" values that the resolved field annotation rejects but has
     a default for. Only values that would otherwise FAIL parsing are touched,
@@ -223,14 +254,7 @@ def _drop_rejected_unset_markers(target: Dict[str, Any], models: list) -> None:
     member accepts must survive for that member to receive."""
     if not target or not models:
         return
-    op = target.get('operation')
-    if op is not None and len(models) > 1:
-        matched = [
-            m for m in models
-            if m.model_fields.get('operation') is not None
-            and m.model_fields['operation'].default == op
-        ]
-        models = matched or models
+    models = _operation_members(target, models)
     for key in list(target.keys()):
         v = target.get(key)
         if v is not None and v != '':
@@ -1071,14 +1095,29 @@ class WorkflowNode(ABC):
         the wrapper, so they never fail this check).
         """
         config_model = cls.get_config_model()
-        data = flat_config
-        if config_model is not None:
-            try:
-                if issubclass(config_model, NodeConfig):
-                    data = {"config": flat_config}
-            except TypeError:
-                pass  # config_model may be a Union / non-class type
+        data = flat_config if config_model is None else cls._wrap_flat_config(flat_config, config_model)
         return cls.validate_config(data)
+
+    @staticmethod
+    def _wrap_flat_config(flat_config: Dict[str, Any], config_model: Any) -> Dict[str, Any]:
+        """The stored flat config in the shape ``parse_config`` receives:
+        nested under ``config`` for NodeConfig wrappers, as-is otherwise."""
+        try:
+            if issubclass(config_model, NodeConfig):
+                return {"config": flat_config}
+        except TypeError:
+            pass  # config_model may be a Union / non-class type
+        return flat_config
+
+    @classmethod
+    def required_config_fields(cls, flat_config: Dict[str, Any]) -> frozenset[str]:
+        """Field names the runtime parse requires for this node's selected
+        operation (flat graph shape, wrapped like ``validate_saved_config``).
+        Empty when the node has no config model."""
+        config_model = cls.get_config_model()
+        if config_model is None:
+            return frozenset()
+        return required_config_fields(cls._wrap_flat_config(flat_config, config_model), config_model)
 
     @classmethod
     def parse_config(cls, config_data: Dict[str, Any]) -> Optional[BaseModel]:

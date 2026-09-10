@@ -2950,6 +2950,39 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             logger.warning(f"[WorkflowExecution] Failed to preload upstream outputs: {e}")
         return outputs
 
+    @staticmethod
+    def _raise_on_unresolved_required_refs(
+        node_id: str,
+        node_type: str,
+        node_config: Dict[str, Any],
+        unresolved: List['UnresolvedReference'],
+        node_outputs: Dict[str, Any],
+        workflow_nodes: Optional[List[Dict[str, Any]]],
+        workflow_edges: Optional[List[Dict[str, Any]]],
+    ) -> None:
+        """A whole-field expression that produced nothing leaves the field
+        empty. For an OPTIONAL field that is its default; for a REQUIRED one it
+        is a config defect that must fail the node here, loudly — the str
+        coercion in the runtime config view would otherwise turn None into ""
+        and the provider would be handed an empty value (a WhatsApp reply
+        addressed to nobody reported success, 2026-09-10). Provider-mode nodes
+        never parse an operation config, so they are exempt."""
+        from nodes.agent.node_op_tools import is_node_op_provider
+        from nodes.core.base import ConfigValidationError
+        from nodes.core.registry import NODE_REGISTRY
+        from utils.expression_evaluator import unresolved_required_field_error
+
+        if is_node_op_provider(node_id, node_type, workflow_nodes, workflow_edges):
+            return
+        node_cls = NODE_REGISTRY.get(node_type)
+        if node_cls is None:
+            return
+        error = unresolved_required_field_error(
+            unresolved, node_cls.required_config_fields(node_config), node_outputs
+        )
+        if error:
+            raise ConfigValidationError(error)
+
     def _resolve_references(self, value: Any, node_outputs: Dict[str, Any]) -> Any:
         """
         Recursively resolve references in config values.
@@ -3374,7 +3407,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         # are left untouched for _resolve_references below. $json maps to the single
         # direct upstream output. A failed expression raises and surfaces as the
         # node's error via the try/except wrapping _execute_node.
-        from utils.expression_evaluator import evaluate_expressions
+        from utils.expression_evaluator import UnresolvedReference, evaluate_expressions
         _incoming = [
             e.get('source') for e in (workflow_edges or [])
             if e.get('target') == node_id and e.get('source')
@@ -3382,9 +3415,15 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         _primary_input = node_outputs.get(_incoming[0]) if len(_incoming) == 1 else None
         # Feed the evaluated config into the resolver; keep `node_config` raw so the
         # state-injection path below still substring-matches its un-evaluated refs.
+        unresolved: List[UnresolvedReference] = []
         evaluated_config = await evaluate_expressions(
-            node_config, node_outputs, workflow_nodes=workflow_nodes, primary_input=_primary_input
+            node_config, node_outputs, workflow_nodes=workflow_nodes,
+            primary_input=_primary_input, unresolved=unresolved,
         )
+        if unresolved:
+            self._raise_on_unresolved_required_refs(
+                node_id, node_type, node_config, unresolved, node_outputs, workflow_nodes, workflow_edges,
+            )
 
         # Resolve references in config values (e.g., {{nodeId.output.field}})
         # This allows config fields to reference outputs from upstream nodes
