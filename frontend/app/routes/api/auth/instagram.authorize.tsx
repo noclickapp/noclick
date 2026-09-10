@@ -8,6 +8,7 @@ import { type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthChannelName } from '~/lib/oauthChannel';
 
 const INSTAGRAM_AUTH_URL = 'https://www.instagram.com/oauth/authorize';
 
@@ -43,12 +44,24 @@ export async function loader({ request }: LoaderFunctionArgs) {
         .split(',')
         .map((s) => s.trim())
         .filter(Boolean);
+    const callbackChannel = url.searchParams.get('callback_channel');
+    if (callbackChannel) {
+        try {
+            oauthChannelName('instagram_login', callbackChannel);
+        } catch {
+            throw new Response('Invalid OAuth callback channel', {
+                status: 400,
+            });
+        }
+    }
 
     const state = Buffer.from(
         JSON.stringify({
             scopes,
             nonce: crypto.randomUUID(),
             timestamp: Date.now(),
+            appOrigin: url.origin,
+            callbackChannel,
         })
     ).toString('base64url');
 

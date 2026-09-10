@@ -949,7 +949,6 @@
       "title": "InstagramOAuthCredential",
       "type": "object",
       "x-credential-hidden": true,
-      "x-credential-preview-flag": "meta-oauth-preview",
       "x-credential-type": "oauth",
       "x-oauth-provider": "facebook",
       "x-oauth-scopes": [
@@ -2097,10 +2096,10 @@
     "credentials": {
       "anyOf": [
         {
-          "$ref": "#/$defs/InstagramOAuthCredential"
+          "$ref": "#/$defs/InstagramLoginCredential"
         },
         {
-          "$ref": "#/$defs/InstagramLoginCredential"
+          "$ref": "#/$defs/InstagramOAuthCredential"
         },
         {
           "$ref": "#/$defs/InstagramSystemUserTokenCredential"
@@ -2122,8 +2121,6 @@
   ],
   "title": "Instagram Node Configuration",
   "type": "object",
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "x-agent-tool-provider": true,
   "x-edit-examples": [
     "Publish photo with caption and tag products for Instagram Shop",
     "Get last 20 media items and retrieve insights like reach/engagement",
@@ -2132,5 +2129,7 @@
     "List mentions where account was tagged and hide spam comments",
     "Publish carousel with 3 product images and publish story photo",
     "Get account followers/engagement stats and discover @competitor profile"
-  ]
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
 }

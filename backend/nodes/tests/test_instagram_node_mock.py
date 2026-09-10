@@ -1190,6 +1190,8 @@ class TestCredentialSchemaVisibility:
         schema = InstagramNode.get_config_schema()
         defs = schema["$defs"]
         assert defs["InstagramOAuthCredential"].get("x-credential-hidden") is True
+        assert "x-credential-preview-flag" not in defs["InstagramOAuthCredential"]
+        assert "x-credential-hidden" not in defs["InstagramLoginCredential"]
         # still a valid runtime credential — existing OAuth creds keep executing
         cred = InstagramNodeConfig(
             config=InstagramGetProfileConfig(),

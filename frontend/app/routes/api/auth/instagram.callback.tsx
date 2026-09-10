@@ -1,12 +1,13 @@
 // Instagram Login OAuth callback route (Instagram API with Instagram Login).
 // Handles the redirect from instagram.com after the user grants permission and
-// relays the authorization code back to the opener window via postMessage
-// (type `instagram_login-oauth-callback`, consumed by the createOAuthHook factory).
+// relays the authorization code over the attempt's same-origin channel. Instagram
+// can sever window.opener; only an acknowledged credential exchange means success.
 
 import { oauthCallbackUrl } from '~/lib/oauthFlow.server';
 import { type LoaderFunctionArgs } from 'react-router';
 import { useLoaderData } from 'react-router';
 import { useEffect, useState } from 'react';
+import { oauthChannelName } from '~/lib/oauthChannel';
 
 interface LoaderData {
     success: boolean;
@@ -14,55 +15,126 @@ interface LoaderData {
     redirectUri?: string;
     scopes?: string[];
     error?: string;
+    callbackChannel?: string;
 }
 
 export async function loader({
     request,
 }: LoaderFunctionArgs): Promise<LoaderData> {
-    const url = await oauthCallbackUrl(request);
+    let url: URL;
+    try {
+        url = await oauthCallbackUrl(request);
+    } catch (error) {
+        // Keep state validation fail-closed, but don't strand users on a generic 400.
+        if (error instanceof Response && error.status === 400) {
+            return {
+                success: false,
+                error: 'This sign-in session expired or could not be verified. Close this tab and start Connect Instagram again in NoClick.',
+            };
+        }
+        throw error;
+    }
     // Instagram may append a `#_` fragment to the code; the backend also strips it.
     const code = url.searchParams.get('code');
     const stateB64 = url.searchParams.get('state');
     const error = url.searchParams.get('error');
     const errorDescription = url.searchParams.get('error_description');
 
-    if (error) {
-        console.error('[instagram_login.callback] OAuth error:', error, errorDescription);
+    if (!stateB64) {
         return {
             success: false,
-            error: errorDescription || `Instagram OAuth error: ${error}`,
-        };
-    }
-
-    if (!code || !stateB64) {
-        console.error('[instagram_login.callback] Missing code or state');
-        return {
-            success: false,
-            error: 'Missing authorization code or state parameter',
+            error:
+                errorDescription ||
+                (error
+                    ? `Instagram OAuth error: ${error}`
+                    : 'Missing authorization state parameter'),
         };
     }
 
     try {
         const stateJson = Buffer.from(stateB64, 'base64url').toString('utf-8');
         const state = JSON.parse(stateJson);
+        const callbackChannel = state.callbackChannel;
+        if (callbackChannel)
+            oauthChannelName('instagram_login', callbackChannel);
+        if (error || !code) {
+            return {
+                success: false,
+                callbackChannel,
+                error:
+                    errorDescription ||
+                    (error
+                        ? `Instagram OAuth error: ${error}`
+                        : 'Missing authorization code'),
+            };
+        }
         return {
             success: true,
             code,
             redirectUri: process.env.INSTAGRAM_REDIRECT_URI,
             scopes: state.scopes,
+            callbackChannel,
         };
-    } catch (e) {
-        console.error('[instagram_login.callback] Failed to decode state:', e);
+    } catch {
         return { success: false, error: 'Invalid state parameter' };
     }
 }
 
 export default function InstagramLoginOAuthCallback() {
     const data = useLoaderData<typeof loader>() as LoaderData;
-    const [status, setStatus] = useState<'sending' | 'success' | 'error'>('sending');
+    const [status, setStatus] = useState<'sending' | 'success' | 'error'>(
+        'sending'
+    );
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
+        if (data.callbackChannel) {
+            let channel: BroadcastChannel;
+            try {
+                channel = new BroadcastChannel(
+                    oauthChannelName('instagram_login', data.callbackChannel)
+                );
+            } catch {
+                setStatus('error');
+                setErrorMessage(
+                    'This browser cannot return the connection to NoClick. Start Connect Instagram again in an up-to-date browser.'
+                );
+                return;
+            }
+            const timeout = setTimeout(() => {
+                channel.close();
+                setStatus('error');
+                setErrorMessage(
+                    'NoClick did not confirm the connection. Return to your original NoClick tab and try again.'
+                );
+            }, 60_000);
+            let closeTimer: ReturnType<typeof setTimeout> | undefined;
+            channel.onmessage = (event: MessageEvent) => {
+                if (event.data?.type !== 'instagram_login-oauth-result') return;
+                clearTimeout(timeout);
+                channel.close();
+                if (event.data.success) {
+                    setStatus('success');
+                    closeTimer = setTimeout(() => window.close(), 1500);
+                } else {
+                    setStatus('error');
+                    setErrorMessage(
+                        event.data.error ||
+                            'NoClick could not save the Instagram connection.'
+                    );
+                }
+            };
+            channel.postMessage({
+                type: 'instagram_login-oauth-callback',
+                ...data,
+            });
+            return () => {
+                clearTimeout(timeout);
+                clearTimeout(closeTimer);
+                channel.close();
+            };
+        }
+        // Preserve in-flight sign-ins started before the channel-enabled release.
         if (window.opener) {
             window.opener.postMessage(
                 { type: 'instagram_login-oauth-callback', ...data },
@@ -81,7 +153,8 @@ export default function InstagramLoginOAuthCallback() {
         } else {
             setStatus('error');
             setErrorMessage(
-                'This page should be opened from the workflow editor. Please try connecting again.'
+                data.error ||
+                    'Return to your original NoClick tab and start Connect Instagram again.'
             );
         }
     }, [data]);
@@ -92,7 +165,9 @@ export default function InstagramLoginOAuthCallback() {
                 {status === 'sending' && (
                     <>
                         <div className="animate-spin w-8 h-8 border-2 border-border dark:border-zinc-700 border-t-foreground rounded-full mx-auto mb-4" />
-                        <div className="text-foreground mb-2">Connecting to Instagram...</div>
+                        <div className="text-foreground mb-2">
+                            Connecting to Instagram...
+                        </div>
                         <div className="text-muted-foreground/70 dark:text-zinc-500 text-sm">
                             Please wait while we complete the connection.
                         </div>
@@ -102,11 +177,23 @@ export default function InstagramLoginOAuthCallback() {
                 {status === 'success' && (
                     <>
                         <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            <svg
+                                className="w-6 h-6 text-green-500"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M5 13l4 4L19 7"
+                                />
                             </svg>
                         </div>
-                        <div className="text-foreground mb-2">Connected Successfully!</div>
+                        <div className="text-foreground mb-2">
+                            Connected Successfully!
+                        </div>
                         <div className="text-muted-foreground/70 dark:text-zinc-500 text-sm">
                             This window will close automatically.
                         </div>
@@ -116,12 +203,26 @@ export default function InstagramLoginOAuthCallback() {
                 {status === 'error' && (
                     <>
                         <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            <svg
+                                className="w-6 h-6 text-red-500"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
                             </svg>
                         </div>
-                        <div className="text-foreground mb-2">Connection Failed</div>
-                        <div className="text-red-600 dark:text-red-400 text-sm mb-4">{errorMessage}</div>
+                        <div className="text-foreground mb-2">
+                            Connection Failed
+                        </div>
+                        <div className="text-red-600 dark:text-red-400 text-sm mb-4">
+                            {errorMessage}
+                        </div>
                         <button
                             onClick={() => window.close()}
                             className="px-4 py-2 text-sm text-foreground bg-secondary hover:bg-accent dark:hover:bg-zinc-700 rounded-lg transition-colors"

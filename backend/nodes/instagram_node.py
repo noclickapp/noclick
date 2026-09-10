@@ -111,11 +111,9 @@ class InstagramOAuthCredential(BaseModel):
     model_config = ConfigDict(json_schema_extra={
         "x-credential-type": "oauth",
         "x-oauth-provider": "facebook",
-        # Hidden until Meta approves our OAuth app — existing OAuth credentials
-        # still parse/execute; new connections use the token credentials below.
-        # PostHog flag reveals it for allow-listed accounts (e.g. Meta reviewers).
+        # Retain legacy credentials for execution, but use direct Instagram Login
+        # for new connections; the Facebook app is configured for Pages, not IG.
         "x-credential-hidden": True,
-        "x-credential-preview-flag": "meta-oauth-preview",
         "x-oauth-scopes": [
             "instagram_basic",
             "instagram_content_publish",
@@ -255,10 +253,10 @@ class InstagramPageAccessTokenCredential(BaseModel):
     })
 
 
-# Support all three credential types
+# Prefer direct login while preserving stored Facebook/token credentials.
 InstagramCredential = Union[
-    InstagramOAuthCredential,
     InstagramLoginCredential,
+    InstagramOAuthCredential,
     InstagramSystemUserTokenCredential,
     InstagramPageAccessTokenCredential,
 ]
