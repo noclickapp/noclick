@@ -149,3 +149,57 @@ def test_frontend_connect_requests_every_scope_the_node_needs(key):
         f"A credential connected through the AI builder's credential selector "
         f"would be unable to run the operations needing them."
     )
+
+
+def _posthog_cimd():
+    return json.loads(
+        (REPO / "frontend/public/.well-known/posthog-oauth-client.json").read_text()
+    )
+
+
+def test_posthog_cimd_scope_ceiling_uses_the_provider_namespace():
+    # PostHog ignores a flat dotted key, leaving the intended ceiling unenforced.
+    metadata = _posthog_cimd()
+    assert "com.posthog.scopes" not in metadata
+    assert isinstance(metadata["com.posthog"], dict)
+    scopes = metadata["com.posthog"]["scopes"]
+    assert isinstance(scopes, list) and scopes
+    assert all(
+        isinstance(scope, str) and scope.strip() == scope and scope for scope in scopes
+    )
+    assert len(scopes) == len(set(scopes))
+
+
+@pytest.mark.parametrize("connect_path", ["authorize_route", "node_schema"])
+def test_posthog_cimd_ceiling_covers_each_connect_path(connect_path):
+    declared = set(_posthog_cimd()["com.posthog"]["scopes"])
+    if connect_path == "authorize_route":
+        source = (REPO / "frontend/app/routes/api/auth/posthog.authorize.tsx").read_text()
+        match = re.search(r"const DEFAULT_SCOPES\s*=\s*\[(.*?)\];", source, re.S)
+        assert match, "PostHog authorize-route default scope list was not found"
+        requested = set(re.findall(r"['\"]([^'\"]+)['\"]", match.group(1)))
+    else:
+        # Both the node picker and the AI builder use the node schema's scopes.
+        # PostHog has no separate oauthProviders.ts defaultScopes override.
+        requested = _node_scopes("posthog")
+    assert requested, f"No scopes found for PostHog {connect_path}"
+    assert requested <= declared, (
+        f"PostHog silently drops scopes outside the CIMD ceiling: "
+        f"{connect_path} requests undeclared scopes {sorted(requested - declared)}"
+    )
+    # Keep the public declaration limited to the product's existing requests.
+    if connect_path == "authorize_route":
+        assert declared == requested
+
+
+def test_posthog_cimd_preserves_the_public_pkce_client_contract():
+    metadata = _posthog_cimd()
+    assert metadata["client_id"] == (
+        "https://www.noclick.com/.well-known/posthog-oauth-client.json"
+    )
+    assert metadata["redirect_uris"] == ["https://noclick.com/api/auth/posthog/callback"]
+    assert metadata["token_endpoint_auth_method"] == "none"
+    assert metadata["grant_types"] == ["authorization_code", "refresh_token"]
+    assert metadata["response_types"] == ["code"]
+    assert "client_secret" not in metadata
+    assert "provisioning" not in metadata.get("com.posthog", {})
