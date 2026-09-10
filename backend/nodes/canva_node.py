@@ -2144,7 +2144,7 @@ class CanvaNode(WorkflowNode):
         self, config: CanvaCreateCommentThreadConfig, credentials: CanvaOAuthCredential
     ) -> Dict[str, Any]:
         """Create comment thread on design."""
-        body = {"message": config.message}
+        body = {"message_plaintext": config.message}
 
         return await self._make_request(
             method="POST",
@@ -2169,7 +2169,7 @@ class CanvaNode(WorkflowNode):
         self, config: CanvaCreateReplyConfig, credentials: CanvaOAuthCredential
     ) -> Dict[str, Any]:
         """Create reply to comment thread."""
-        body = {"message": config.message}
+        body = {"message_plaintext": config.message}
 
         return await self._make_request(
             method="POST",
