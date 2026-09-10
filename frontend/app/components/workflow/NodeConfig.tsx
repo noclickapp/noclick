@@ -27,7 +27,7 @@ import { hasUnconnectedCredentials } from './NodeCredentials';
 import { useAgentCredentialsRequired } from '~/hooks/useAgentCredentialsRequired';
 import { CopyLinkButton } from '~/components/ui/CopyLinkButton';
 import { buildNodeDeepLink } from '~/utils/workflowNavigation';
-import { getRequireOneOfGroups } from '~/utils/schemaFieldExtractor';
+import { booleanSelectValue, getRequireOneOfGroups, isBooleanSchema } from '~/utils/schemaFieldExtractor';
 import { evaluateRequireOneOf, describeRequireOneOfGroup } from '~/utils/workflowNodeValidation';
 import { NodeSettings } from './NodeSettings';
 import { FieldRequirementBadge, isFieldFilled } from './FieldRequirementBadge';
@@ -2000,6 +2000,26 @@ function renderField(
                 onChange={onChange}
                 placeholder={prop['ui:placeholder'] || prop.placeholder || prop.description || 'Select one or more...'}
             />
+        );
+    }
+
+    // Boolean → a Yes/No select that writes real booleans. As a bare text input
+    // this invited free text the runtime rejected as "Input should be a valid
+    // boolean" (2026-09-10). A stored expression keeps the text input below.
+    if (isBooleanSchema(prop) && !(typeof value === 'string' && value.includes('{{'))) {
+        const hasDefault = typeof prop.default === 'boolean';
+        return (
+            <select
+                value={booleanSelectValue(value)}
+                onChange={(e) => onChange(key, e.target.value === '' ? undefined : e.target.value === 'true')}
+                className={commonClasses}
+            >
+                <option value="" className="bg-card">
+                    {hasDefault ? `Default (${prop.default ? 'Yes' : 'No'})` : 'Not set'}
+                </option>
+                <option value="true" className="bg-card">Yes</option>
+                <option value="false" className="bg-card">No</option>
+            </select>
         );
     }
 

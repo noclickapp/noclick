@@ -389,3 +389,26 @@ export function getOptionLabel(nodeType: string, optionIndex: number): string {
 
     return `Option ${optionIndex + 1}`;
 }
+
+/**
+ * Whether a JSON-schema property holds a boolean: `type: boolean`, a nullable
+ * `["boolean", "null"]`, or Pydantic's Optional[bool] `anyOf` shape. A
+ * property that also admits a string is NOT a boolean field — it takes free
+ * text or an expression.
+ */
+export function isBooleanSchema(prop: any): boolean {
+    if (!prop || typeof prop !== 'object') return false;
+    const declared = Array.isArray(prop.type) ? prop.type : prop.type ? [prop.type] : [];
+    const alternatives = Array.isArray(prop.anyOf)
+        ? prop.anyOf.map((option: any) => option?.type).filter(Boolean)
+        : [];
+    const types = [...declared, ...alternatives];
+    return types.includes('boolean') && types.every((t: string) => t === 'boolean' || t === 'null');
+}
+
+/** The <select> value for a stored boolean field: '' when unset, else 'true' / 'false'. */
+export function booleanSelectValue(value: unknown): '' | 'true' | 'false' {
+    if (value === true || value === 'true') return 'true';
+    if (value === false || value === 'false') return 'false';
+    return '';
+}
