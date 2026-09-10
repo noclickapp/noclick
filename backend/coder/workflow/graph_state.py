@@ -212,6 +212,12 @@ class GraphState:
         # AI surfaces. Absent id =
         # unknown = healthy.
         self._credential_health: Dict[str, Any] = {}
+        # Top-level keys each node's output is KNOWN to have — this
+        # workflow's latest stored output, else the shape learned across runs
+        # of the same type+operation — populated out-of-band like
+        # _credential_health, so a `$('node').key` write can be judged
+        # without a DB round-trip. Absent node = shape unknown, never "no keys".
+        self._output_keys: Dict[str, List[str]] = {}
 
         # Workflow variables (settings.variable_definitions) — settings-level,
         # not part of the graph blob, so populated out-of-band like

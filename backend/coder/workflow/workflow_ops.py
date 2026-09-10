@@ -8,7 +8,7 @@ import re
 import time
 import uuid
 from collections import deque
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, Iterator, List, Mapping, Optional, Sequence, Set, Tuple
 
 from .workflow_xml import XmlOp
 
@@ -556,6 +556,28 @@ _FOREIGN_ACCESSOR_RE = re.compile(
 )
 
 
+def _config_strings(
+    config: Dict[str, Any], skip_fields: frozenset = frozenset()
+) -> Iterator[Tuple[str, str]]:
+    """Every string value in ``config`` (recursively) with its dotted/indexed
+    path — the one walker behind the write-time lints. ``skip_fields`` names
+    top-level fields to leave alone (code fields, sanitizer-owned fields)."""
+
+    def walk(value: Any, path: str) -> Iterator[Tuple[str, str]]:
+        if isinstance(value, str):
+            yield path, value
+        elif isinstance(value, dict):
+            for k, v in value.items():
+                yield from walk(v, f"{path}.{k}")
+        elif isinstance(value, list):
+            for i, v in enumerate(value):
+                yield from walk(v, f"{path}[{i}]")
+
+    for key, value in (config or {}).items():
+        if key not in skip_fields:
+            yield from walk(value, key)
+
+
 def find_foreign_expression_tokens(
     config: Dict[str, Any], skip_fields: frozenset = frozenset()
 ) -> List[tuple]:
@@ -566,23 +588,11 @@ def find_foreign_expression_tokens(
     as :func:`find_placeholder_tokens` (``skip_fields`` exempts code fields).
     """
     hits: List[tuple] = []
-
-    def walk(value: Any, path: str) -> None:
-        if isinstance(value, str):
-            for block in _FOREIGN_EXPR_BLOCK_RE.finditer(value):
-                m = _FOREIGN_ACCESSOR_RE.search(block.group(1))
-                if m:
-                    hits.append((path, m.group(0).strip()))
-        elif isinstance(value, dict):
-            for k, v in value.items():
-                walk(v, f"{path}.{k}")
-        elif isinstance(value, list):
-            for i, v in enumerate(value):
-                walk(v, f"{path}[{i}]")
-
-    for key, value in (config or {}).items():
-        if key not in skip_fields:
-            walk(value, key)
+    for path, text in _config_strings(config, skip_fields):
+        for block in _FOREIGN_EXPR_BLOCK_RE.finditer(text):
+            m = _FOREIGN_ACCESSOR_RE.search(block.group(1))
+            if m:
+                hits.append((path, m.group(0).strip()))
     return hits
 
 
@@ -599,6 +609,65 @@ def foreign_expression_error(path: str, snippet: str) -> str:
     )
 
 
+# A `$('node')` read followed by its first key — `.key` or `['key']` — and
+# whether that key is being CALLED (a method, not an output field).
+_OUTPUT_REF_RE = re.compile(
+    r"""\$\(\s*(['"])(?P<node>[^'"]+)\1\s*\)\s*"""
+    r"""(?:\.(?P<key>[A-Za-z_$][\w$]*)|\[\s*(['"])(?P<bkey>[^'"]+)\4\s*\])(?P<call>\s*\()?"""
+)
+
+
+def output_top_level_keys(output: Any) -> Optional[List[str]]:
+    """The keys a stored node output exposes to ``$('node').key`` references,
+    or None when nothing can be asserted: a non-object output, or a manual
+    run's ``no_event`` placeholder (its keys describe the placeholder, not a
+    delivery — read as the trigger's shape they would flag every real
+    reference)."""
+    if not isinstance(output, dict) or output.get("status") == "no_event":
+        return None
+    return [str(k) for k in output]
+
+
+def find_unknown_output_references(
+    config: Dict[str, Any],
+    output_keys: Mapping[str, Sequence[str]],
+    skip_fields: frozenset = frozenset(),
+) -> List[tuple]:
+    """``$('node').key`` reads inside ``{{ … }}`` blocks whose first key is
+    not among the keys ``node``'s output is known to have.
+
+    ``output_keys`` maps node id → known top-level keys. Nodes absent from it
+    are never judged (an unknown shape is not a wrong reference), nor are
+    method calls (``$('n').toString()``). Returns
+    ``[(field_path, node_id, key, known_keys), …]`` — same walker contract as
+    :func:`find_foreign_expression_tokens`.
+    """
+    hits: List[tuple] = []
+    for path, text in _config_strings(config, skip_fields):
+        for block in _FOREIGN_EXPR_BLOCK_RE.finditer(text):
+            for m in _OUTPUT_REF_RE.finditer(block.group(1)):
+                if m.group("call"):
+                    continue
+                known = output_keys.get(m.group("node"))
+                key = m.group("key") or m.group("bkey")
+                if known and key not in known:
+                    hits.append((path, m.group("node"), key, list(known)))
+    return hits
+
+
+def unknown_output_reference_error(
+    path: str, node_id: str, key: str, known_keys: Sequence[str]
+) -> str:
+    """The actionable lint message for one unknown-key hit — shared by the
+    write-time check and the done-gate so wording can't drift."""
+    shown = ", ".join(list(known_keys)[:12]) + (", …" if len(known_keys) > 12 else "")
+    return (
+        f"Field '{path}' reads $('{node_id}').{key}, but that node's output has no key "
+        f"'{key}' — it resolves to nothing at run time. Its keys are: {shown}. Reference "
+        f"one of those, or <get_output node=\"{node_id}\" /> to see the stored output."
+    )
+
+
 def find_placeholder_tokens(
     config: Dict[str, Any], skip_fields: frozenset = frozenset()
 ) -> List[tuple]:
@@ -608,23 +677,11 @@ def find_placeholder_tokens(
     fields to ignore — code fields (JSX object literals can look like
     placeholders) and fields owned by a downstream sanitizer.
     """
-    hits: List[tuple] = []
-
-    def walk(value: Any, path: str) -> None:
-        if isinstance(value, str):
-            for m in PLACEHOLDER_TOKEN_RE.finditer(value):
-                hits.append((path, m.group(0)))
-        elif isinstance(value, dict):
-            for k, v in value.items():
-                walk(v, f"{path}.{k}")
-        elif isinstance(value, list):
-            for i, v in enumerate(value):
-                walk(v, f"{path}[{i}]")
-
-    for key, value in (config or {}).items():
-        if key not in skip_fields:
-            walk(value, key)
-    return hits
+    return [
+        (path, m.group(0))
+        for path, text in _config_strings(config, skip_fields)
+        for m in PLACEHOLDER_TOKEN_RE.finditer(text)
+    ]
 
 
 def strip_placeholder_auth_headers(config: Dict[str, Any]) -> List[Dict[str, Any]]:

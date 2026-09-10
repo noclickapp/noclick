@@ -19,6 +19,7 @@ from ..workflow_xml import XmlOp, coerce_value, coerce_value_for_field
 from ..workflow_ops import (
     STRUCTURAL_TOOL_TYPES,
     drop_stale_agent_discriminator,
+    find_unknown_output_references,
     is_trigger_source,
     resolve_sticky_note_position,
     create_sticky_note_dict,
@@ -33,6 +34,7 @@ from ..workflow_ops import (
     provider_dataflow_conflict,
     resolve_tools_edge,
     trigger_provider_conflict,
+    unknown_output_reference_error,
     validate_agent_tool_operations,
 )
 from ..operation_catalog import (
@@ -1271,6 +1273,18 @@ def execute_field_ops(
                     if fname in schema.get('properties', {}):
                         desc = _describe_field(schema['properties'][fname], defs)
                         results.append(f"  Expected schema for {fname}: {desc}")
+        # A reference to a key the referenced output does not have resolves
+        # to nothing at run time (a required field then fails the node). The
+        # keys come from real outputs (GraphState._output_keys); an unknown
+        # shape is never judged.
+        for path, ref_node, key, known in find_unknown_output_references(
+            {k: node.config[k] for k in changed_fields if k in node.config},
+            graph_state._output_keys,
+        ):
+            results.append(
+                f"REFERENCE ERROR for {node_name}.{path}: "
+                f"{unknown_output_reference_error(path, ref_node, key, known)}"
+            )
 
     return results
 
