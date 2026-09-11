@@ -25,6 +25,7 @@ from typing import Dict, Any, Optional, Literal, Union, Annotated
 from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
+from nodes.core.agent_events import bullet_lines
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.media_resolver import resolve_media_input
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
@@ -1272,6 +1273,30 @@ class LoopsNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "Find a Loops contact by email to check their subscription status",
         "Create a draft Loops campaign for a product launch",
     ]
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Loops webhook (``{eventName, contactIdentity{email, userId}, email,
+        campaignName, linkUrl, time}``) → one line the agent reads as what a
+        contact did, plus the ``find_contact`` lookup for their record. No
+        conversation key — a marketing event is not a thread."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        payload = data if isinstance(data, dict) and "status" in output else output
+        kind = payload.get("eventName")
+        identity = payload.get("contactIdentity") if isinstance(payload.get("contactIdentity"), dict) else {}
+        mail = payload.get("email") if isinstance(payload.get("email"), dict) else {}
+        campaign = payload.get("campaign") if isinstance(payload.get("campaign"), dict) else {}
+        email = identity.get("email") or (payload.get("email") if isinstance(payload.get("email"), str) else None)
+        who = email or identity.get("userId")
+        if not isinstance(kind, str) or not who:
+            return super().resolve_agent_event(output)
+        campaign_name = payload.get("campaignName") or campaign.get("name")
+        lines = [f"Loops {kind}: {who}" + (f" (campaign “{campaign_name}”)" if campaign_name else "")]
+        lines += bullet_lines([("subject", mail.get("subject")), ("link", payload.get("linkUrl")), ("user id", identity.get("userId")), ("at", payload.get("time"))])
+        lines.append(f"Contact record: find_contact email={email}." if email else f"Contact record: find_contact user_id={identity.get('userId')}.")
+        return {"text": "\n".join(lines), "conversation_key": None, "title": f"{kind} · {who}"}
 
     @classmethod
     def get_config_model(cls):

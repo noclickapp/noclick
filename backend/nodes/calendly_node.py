@@ -36,6 +36,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 
 import httpx
 
+from nodes.core.agent_events import bullet_lines
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
@@ -977,13 +978,46 @@ class CalendlyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         expected = hmac.new(secret.encode(), signed_payload, hashlib.sha256).hexdigest()
         return hmac.compare_digest(expected, provided)
 
+    _invitee_verbs = {"invitee.created": "booked", "invitee.canceled": "canceled"}
+
     @classmethod
-    def resolve_agent_event(cls, output):
-        """Translate a fired Calendly webhook into an agent turn."""
-        payload = output if isinstance(output, dict) else {}
-        event = payload.get("event")
-        text = json.dumps(payload, default=str)[:6000]
-        return {"text": f"Calendly event {event}:\n{text}" if event else text, "conversation_key": None}
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Calendly invitee webhook → the agent's user turn: who booked (or
+        canceled) which event, when and where, their answers to the booking
+        questions, the cancellation reason, and the scheduled-event / invitee
+        URIs the cancel and lookup operations take. Other topics (routing
+        forms, contacts) ride as bounded JSON. No conversation key — a booking
+        is not a thread."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        wrapper = data if isinstance(data, dict) and "status" in output else output
+        event = wrapper.get("event")
+        payload = wrapper.get("payload") if isinstance(wrapper.get("payload"), dict) else {}
+        booking = payload.get("scheduled_event") if isinstance(payload.get("scheduled_event"), dict) else {}
+        if event not in cls._invitee_verbs or not (payload.get("email") or booking):
+            return super().resolve_agent_event(output)
+        name, email = payload.get("name"), payload.get("email")
+        who = f"{name} <{email}>" if name and email else name or email or "an invitee"
+        when = f"{booking.get('start_time')}–{booking.get('end_time')}" if booking.get("end_time") else booking.get("start_time")
+        tz = f" ({payload['timezone']})" if payload.get("timezone") else ""
+        lines = [f"Calendly {event}: {who} {cls._invitee_verbs[event]} {booking.get('name') or 'an event'} at {when}{tz}"]
+        location = booking.get("location") if isinstance(booking.get("location"), dict) else {}
+        lines += bullet_lines([
+            ("location", " ".join(str(p) for p in (location.get("type"), location.get("join_url") or location.get("location")) if p) or None),
+            ("status", payload.get("status")), ("rescheduled", "yes" if payload.get("rescheduled") else None),
+        ])
+        answers = [q for q in payload.get("questions_and_answers") or [] if isinstance(q, dict) and q.get("answer")]
+        if answers:
+            lines += ["Answers:"] + [f"- {q.get('question')}: {q['answer']}" for q in answers]
+        cancellation = payload.get("cancellation") if isinstance(payload.get("cancellation"), dict) else {}
+        if cancellation:
+            lines.append(f"Canceled by {cancellation.get('canceled_by')}: {cancellation.get('reason') or 'no reason given'}")
+        if booking.get("uri"):
+            invitee = f" invitee={payload['uri']}" if payload.get("uri") else ""
+            lines.append(f"To act: cancel_scheduled_event or get_event_invitee with scheduled_event={booking['uri']}{invitee}.")
+        title = f"{name or email or event} · {booking['name']}" if booking.get("name") else f"{event}: {name or email}"
+        return {"text": "\n".join(lines), "conversation_key": None, "title": title}
 
     # ------------------------------------------------------------------
     # Execute

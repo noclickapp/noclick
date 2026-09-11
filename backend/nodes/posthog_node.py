@@ -37,6 +37,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 
 import httpx
 
+from nodes.core.agent_events import bullet_lines, compact_json
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
@@ -1533,10 +1534,37 @@ class PostHogNode(ExternalWebhookTriggerMixin, WorkflowNode):
         capability. Accept the delivery."""
         return True
 
+    # Properties named on their own line; the rest ride as bounded JSON.
+    _agent_event_props = (
+        "$current_url", "$exception_type", "$exception_message", "$feature_flag",
+        "$feature_flag_response", "$survey_name", "$survey_response",
+    )
+
     @classmethod
-    def resolve_agent_event(cls, output):
-        payload = output if isinstance(output, dict) else {}
-        return {"text": f"PostHog event:\n{json.dumps(payload, default=str)[:6000]}", "conversation_key": None}
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """PostHog Hog-function delivery (``{event, distinct_id, properties,
+        timestamp}`` — the body the trigger registration templates) → the
+        agent's user turn: who did what when, the properties that explain the
+        event (URL, exception, flag, survey, web vitals) named, the rest as
+        bounded JSON, and the ``list_events`` filter for the person's stream.
+        No conversation key — analytics events are not a thread."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        payload = data if isinstance(data, dict) and "status" in output else output
+        event, who = payload.get("event"), payload.get("distinct_id")
+        if not isinstance(event, str) or not who:
+            return super().resolve_agent_event(output)
+        props = payload.get("properties") if isinstance(payload.get("properties"), dict) else {}
+        named = [k for k in props if k in cls._agent_event_props or k.startswith("$web_vitals_")]
+        when = f" at {payload['timestamp']}" if payload.get("timestamp") else ""
+        lines = [f"PostHog {event} by {who}{when}"]
+        lines += bullet_lines([(k.lstrip("$").replace("_", " "), props[k]) for k in named])
+        rest = {k: v for k, v in props.items() if k not in named and not k.startswith("$set")}
+        if rest:
+            lines.append(compact_json(rest, limit=800))
+        lines.append(f"More from this person: list_events distinct_id={who}.")
+        return {"text": "\n".join(lines), "conversation_key": None, "title": f"{event} · {who}"}
 
     # ---- Execute ----
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:

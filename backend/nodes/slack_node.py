@@ -7213,32 +7213,130 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
             out["channel_label"] = label
         return out
 
+    # Message subtypes that are notices about the channel, not a person
+    # talking — the turn names the event instead of quoting it as words.
+    _SUBTYPE_NOTES = {
+        "channel_join": "joined the channel",
+        "channel_leave": "left the channel",
+        "channel_topic": "set the channel topic",
+        "channel_purpose": "set the channel purpose",
+        "channel_name": "renamed the channel",
+        "channel_archive": "archived the channel",
+        "channel_unarchive": "unarchived the channel",
+        "pinned_item": "pinned a message",
+        "unpinned_item": "unpinned a message",
+        "file_share": "shared a file",
+        "thread_broadcast": "replied in a thread",
+        "message_changed": "edited a message",
+        "message_deleted": "deleted a message",
+    }
+
     @classmethod
     def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Slack event → message text for the agent's user turn + a
-        channel/thread conversation key: DMs key on the channel, channel
-        messages on the thread root (a top-level message starts a
-        thread-scoped conversation). Channel + thread ts in the text double
-        as the reply ids for send-message tools."""
+        """Slack event → the agent's user turn + a channel/thread conversation
+        key: DMs key on the channel, channel messages on the thread root (a
+        top-level message starts a thread-scoped conversation).
+
+        Only what a person reading the channel would see rides the turn — the
+        text with Slack's markup made readable, a bot post's attachment cards
+        (a support hand-off is mostly card fields), shared file names — never
+        the Events API envelope (verification token, authorizations, block-kit
+        duplicates). An edit (``message_changed``) reads its nested message;
+        the receiving bot's own @mention is the wake-up, not content. Channel
+        and thread ids stay visible as the reply target for send tools."""
+        from nodes.core.agent_events import bullet_lines, compact_json, humanize_slack_markup
+
         data = output.get("data") if isinstance(output.get("data"), dict) else {}
         event = data.get("event") if isinstance(data.get("event"), dict) else None
-        if not event or not event.get("text"):
-            # Non-message events (reactions, channel created, ...): raw JSON.
+        if not event:
             return super().resolve_agent_event(output)
-        channel = event.get("channel")
-        thread = event.get("thread_ts") or event.get("ts")
-        if event.get("channel_type") == "im":
-            ck = channel
-            where = f"DM {channel}"
-        else:
-            ck = f"{channel}:{thread}" if channel and thread else channel
-            where = f"channel {channel}" + (f", thread {thread}" if thread else "")
-        return {
-            "text": (
-                f"Slack message from {event.get('user') or 'unknown'} in {where}:\n"
-                f"{event['text']}"
+        event_type = event.get("type")
+        subtype = event.get("subtype")
+        # An edit carries the current message nested; previous_message is history.
+        msg = event.get("message") if subtype == "message_changed" and isinstance(event.get("message"), dict) else event
+        channel = event.get("channel") or event.get("channel_id") or (event.get("item") or {}).get("channel")
+        label = output.get("channel_label") or (
+            f"#{event['channel_name']}" if event.get("channel_name") else None
+        )
+        is_dm = event.get("channel_type") == "im"
+        where = "DM" if is_dm else (label or f"channel {channel}")
+        title = label or ("DM" if is_dm else (f"#{channel}" if channel else "Slack"))
+        bot_user_id = next(
+            (
+                a.get("user_id")
+                for a in data.get("authorizations") or []
+                if isinstance(a, dict) and a.get("is_bot") and a.get("user_id")
             ),
+            None,
+        )
+
+        if event_type not in ("message", "app_mention"):
+            # Reactions, joins, channel/file events: one line + the event's own
+            # fields, not the delivery envelope around them.
+            body = {k: v for k, v in event.items() if k not in ("type", "event_ts", "channel_type")}
+            return {
+                "text": f"Slack {event_type} in {where}:\n{compact_json(body, limit=1500)}",
+                "conversation_key": f"{channel}" if channel else None,
+                "title": title,
+            }
+
+        thread = msg.get("thread_ts") or event.get("thread_ts")
+        ts = msg.get("ts") or event.get("ts")
+        root = thread or ts
+        ck = channel if is_dm else (f"{channel}:{root}" if channel and root else channel)
+        if subtype == "message_deleted":
+            deleted = event.get("previous_message") if isinstance(event.get("previous_message"), dict) else {}
+            who = deleted.get("user") or deleted.get("username") or "someone"
+            return {
+                "text": f"Slack: {who} deleted a message in {where} (ts {event.get('deleted_ts') or ts}).",
+                "conversation_key": ck,
+                "title": title,
+            }
+
+        bot_name = (msg.get("bot_profile") or {}).get("name") or msg.get("username")
+        who = (
+            f"{bot_name} (bot)" if bot_name and not msg.get("user")
+            else (msg.get("user") or bot_name or "unknown")
+        )
+        lines: List[str] = []
+        text = humanize_slack_markup(str(msg.get("text") or ""), drop_user_id=bot_user_id)
+        if text:
+            lines.append(text)
+        for a in msg.get("attachments") or []:
+            if not isinstance(a, dict):
+                continue
+            head = a.get("title") or a.get("pretext")
+            body = a.get("text") or (a.get("fallback") if not a.get("fields") else None)
+            for piece in (head, body):
+                if piece:
+                    lines.append(humanize_slack_markup(str(piece)))
+            lines += [
+                humanize_slack_markup(line)
+                for line in bullet_lines(
+                    (f.get("title") or "field", f.get("value")) for f in a.get("fields") or [] if isinstance(f, dict)
+                )
+            ]
+        for f in msg.get("files") or []:
+            if isinstance(f, dict) and (f.get("title") or f.get("name")):
+                kind = f.get("filetype") or f.get("mimetype")
+                lines.append(f"📎 {f.get('title') or f.get('name')}" + (f" ({kind})" if kind else ""))
+        note = cls._SUBTYPE_NOTES.get(subtype or "")
+        if not lines:
+            if not note:
+                return super().resolve_agent_event(output)
+            lines.append(f"({note})")
+        ids = f"channel {channel}" + (f", thread {root}" if root and not is_dm else "")
+        header = f"Slack message from {who} in {where}"
+        if note:
+            header += f" ({note})"
+        elif thread and thread != ts:
+            header += " (thread reply)"
+        header += f" [{ids}]:"
+        reply = f"To reply, send to channel={channel}" + (f" with thread_ts={root}" if root and not is_dm else "") + "."
+        return {
+            "text": "\n".join([header, *lines, "", reply]),
             "conversation_key": ck,
+            "title": title,
         }
 
     async def _trigger_on_slack_event(self, config, credentials) -> Dict[str, Any]:

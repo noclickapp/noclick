@@ -25,6 +25,7 @@ from pydantic import BaseModel, ConfigDict, Field, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.agent_events import bullet_lines, prune_empty
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import (
     load_paginated_options,
@@ -1426,6 +1427,19 @@ class TypeformNodeFullConfig(NodeConfig[TypeformNodeConfig, TypeformCredential])
 # ============================================================================
 
 
+def _typeform_answer_text(answer: Dict[str, Any]) -> str:
+    """One webhook answer as text, whatever the field type: the value sits
+    under the key named by ``type``; choices carry labels."""
+    kind = answer.get("type")
+    value = answer.get(kind) if isinstance(kind, str) else None
+    if isinstance(value, dict):
+        labels = value.get("labels")
+        value = ", ".join(str(x) for x in labels) if isinstance(labels, list) else (
+            value.get("label") or value.get("other") or value
+        )
+    return "" if value is None else str(value)
+
+
 class TypeformNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """Typeform workflow node implementation"""
 
@@ -1444,6 +1458,38 @@ class TypeformNode(ExternalWebhookTriggerMixin, WorkflowNode):
         field="form_id",
         noun="forms",
     )
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """A form_response webhook → the submission as "Question: answer"
+        lines, titles zipped from the payload's own definition by field id
+        (answers carry only ids), plus any hidden fields. The field catalogue
+        and event envelope stay on the trigger node; the manual-run notice
+        (no form_response) is left to the base."""
+        fr = output.get("form_response") if isinstance(output, dict) else None
+        if not isinstance(fr, dict):
+            return super().resolve_agent_event(output)
+        definition = fr.get("definition") if isinstance(fr.get("definition"), dict) else {}
+        titles = {f.get("id"): f.get("title") for f in definition.get("fields") or [] if isinstance(f, dict)}
+        form_title = definition.get("title") or "Typeform"
+        when = f" submitted at {fr['submitted_at']}" if fr.get("submitted_at") else ""
+        lines = [f'Typeform: new response to "{form_title}"{when}']
+        pairs = []
+        for a in fr.get("answers") or []:
+            if not isinstance(a, dict):
+                continue
+            field = a.get("field") if isinstance(a.get("field"), dict) else {}
+            label = titles.get(field.get("id")) or field.get("ref") or field.get("id") or "?"
+            pairs.append((label, prune_empty(_typeform_answer_text(a), max_str=1500)))
+        lines += bullet_lines(pairs) or ["(no answers)"]
+        hidden = fr.get("hidden") if isinstance(fr.get("hidden"), dict) else {}
+        if prune_empty(hidden):
+            lines += ["", "Hidden fields:", *bullet_lines(hidden.items())]
+        text = prune_empty("\n".join(lines), max_str=3400)
+        if fr.get("form_id"):
+            text += f"\n\nEarlier submissions to this form: get_form_responses (form_id={fr['form_id']})."
+        return {"text": text, "conversation_key": None, "title": form_title}
+
     @classmethod
     def get_config_model(cls):
         return TypeformNodeFullConfig

@@ -490,11 +490,19 @@ def test_decomposed_trigger_ops_are_marked_triggers_in_schema():
 
 
 def test_resolve_agent_event_surfaces_object():
-    out = {"type": "invoice.paid", "data": {"object": {"id": "in_1", "amount_paid": 500}}}
+    """The event name and object id head the turn; the object's fields ride
+    as labelled lines (amounts converted from minor units), never as a dump."""
+    out = {"type": "invoice.paid", "data": {"object": {
+        "id": "in_1", "object": "invoice", "amount_paid": 500, "currency": "usd", "status": "paid",
+        "customer_email": "casey@example.com", "lines": {"data": [{"id": "il_1"}]},
+    }}}
     resolved = StripeNode.resolve_agent_event(out)
-    assert "invoice.paid" in resolved["text"]
-    assert "in_1" in resolved["text"]
+    assert resolved["text"].startswith("Stripe invoice.paid: invoice in_1")
+    assert "- amount: 5.00 USD" in resolved["text"]
+    assert "- customer: casey@example.com" in resolved["text"]
+    assert "il_1" not in resolved["text"]
     assert resolved["conversation_key"] is None
+    assert resolved["title"] == "invoice.paid · $5.00"
 
 
 async def test_register_stripe_webhook_uses_content_encoding(monkeypatch):

@@ -27,6 +27,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.agent_events import prune_empty
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.oauth.google_oauth import is_token_expired, refresh_access_token
@@ -3984,6 +3985,38 @@ class GoogleSheetsNode(ScheduledPollTriggerMixin, WorkflowNode):
         field="spreadsheet_id",
         noun="spreadsheets",
     )
+
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """New rows → one line per row, cells labelled by the header row (ten
+        at most, the rest counted); the parallel ``values`` arrays and the
+        header list stay on the trigger node."""
+        rows = output.get("rows") if isinstance(output, dict) else None
+        if not isinstance(rows, list):
+            return super().resolve_agent_event(output)
+        rows = [r for r in rows if isinstance(r, dict)]
+        if not rows:
+            return None
+        one = rows[0] if len(rows) == 1 else None
+        lines = ["Google Sheets: new row" if one else f"Google Sheets: {len(rows)} new rows"]
+        for r in rows[:10]:
+            cells = prune_empty(r.get("row") if isinstance(r.get("row"), dict) else {}, max_str=120)
+            values = prune_empty(r.get("values") if isinstance(r.get("values"), list) else [], max_str=120)
+            rendered = (
+                ", ".join(f"{k}={v}" for k, v in cells.items())
+                or ", ".join(str(v) for v in values)
+                or "(empty row)"
+            )
+            lines.append(f"Row {r.get('row_number')}: {rendered}")
+        if len(rows) > 10:
+            lines.append(f"…and {len(rows) - 10} more rows")
+        hint = "To read around these rows or write back, call read_sheet_data / write_sheet_data on the trigger's spreadsheet and sheet, addressing rows by the numbers above."
+        return {
+            "text": prune_empty("\n".join(lines), max_str=3400) + f"\n\n{hint}",
+            "conversation_key": None,
+            "title": f"New row {one.get('row_number')}" if one else f"{len(rows)} new rows",
+        }
 
     @classmethod
     def get_config_model(cls) -> Optional[Union[Type, type]]:

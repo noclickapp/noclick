@@ -35,6 +35,7 @@ from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, ConfigDict, Discriminator, create_model
 import httpx
 
+from nodes.core.agent_events import bullet_lines, prune_empty
 from nodes.core.base import WorkflowNode, NodeConfig
 from utils.ssrf import guarded_async_client, normalize_provider_subdomain
 from nodes.core.connection_evidence import ConnectionEvidence
@@ -7756,6 +7757,41 @@ class ZendeskNode(ExternalWebhookTriggerMixin, WorkflowNode):
         operation="list_agents",
         noun="agents",
     )
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Zendesk ticket event → the agent's user turn: the ticket's id,
+        subject, status/priority, the new comment or the changed value, and the
+        ticket operations that take the id. The ticket is the thread, so its id
+        is the conversation key. User/organization events fall through to the
+        bounded-JSON default."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        payload = data if isinstance(data, dict) and "status" in output else output
+        kind, subject = str(payload.get("type") or ""), str(payload.get("subject") or "")
+        if not kind.startswith("zen:event-type:ticket.") or not subject.startswith("zen:ticket:"):
+            return super().resolve_agent_event(output)
+        ticket_id, event = subject.rsplit(":", 1)[1], kind.rsplit(":", 1)[1]
+        detail = payload.get("detail") if isinstance(payload.get("detail"), dict) else {}
+        change = payload.get("event") if isinstance(payload.get("event"), dict) else {}
+        comment = change.get("comment") if isinstance(change.get("comment"), dict) else {}
+        author = comment.get("author") if isinstance(comment.get("author"), dict) else {}
+        header = f"Zendesk {event}: ticket #{ticket_id}" + (f" “{detail['subject']}”" if detail.get("subject") else "")
+        lines = [header] + bullet_lines([
+            ("status", detail.get("status")), ("priority", detail.get("priority")),
+            ("requester", detail.get("requester_id")), ("assignee", detail.get("assignee_id")), ("at", payload.get("time")),
+        ])
+        if detail.get("description"):
+            lines += ["", prune_empty(str(detail["description"]), max_str=1500)]
+        if comment.get("body"):
+            who = author.get("name") or author.get("id") or comment.get("author_id") or "someone"
+            lines += ["", f"Comment from {who}:", prune_empty(str(comment["body"]), max_str=1500)]
+        if "previous" in change or "current" in change:
+            lines.append(f"Changed: {change.get('previous')} → {change.get('current')}")
+        lines += ["", f"To reply, use add_comment ticket_id={ticket_id}; to change status/priority/assignee, update_ticket ticket_id={ticket_id}; show_ticket ticket_id={ticket_id} loads the full ticket."]
+        title = f"Ticket #{ticket_id}: {detail['subject']}" if detail.get("subject") else f"Ticket #{ticket_id}"
+        return {"text": "\n".join(lines), "conversation_key": ticket_id, "title": title}
 
     @classmethod
     def get_config_model(cls):

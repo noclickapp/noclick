@@ -101,7 +101,9 @@ def test_non_message_event_falls_back_to_base():
     }
     ev = GoHighLevelNode.resolve_agent_event(contact_event)
     assert ev["conversation_key"] is None
-    assert json.loads(ev["text"])["type"] == "ContactCreate"
+    # The base default names the event and keeps the provider's own fields.
+    assert ev["text"].startswith("Event: ContactCreate\n")
+    assert json.loads(ev["text"].split("\n", 1)[1])["type"] == "ContactCreate"
 
 
 def test_message_without_routable_id_falls_back_to_base():

@@ -7,6 +7,7 @@ import { memo, useState } from 'react';
 import { Check, Copy, FileText } from 'lucide-react';
 import { MarkdownRenderer } from '~/components/chat/MarkdownRenderer';
 import { AgentChatSteps } from '~/components/chat/AgentChatSteps';
+import { TriggerEventMessage } from '~/components/chat/TriggerEventMessage';
 import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
 import { ThinkingOrb } from '~/components/shared/ThinkingOrb';
 import {
@@ -284,6 +285,17 @@ export const AgentChatTranscript = memo(function AgentChatTranscript({
                             key={i}
                             proposal={msg.builderPrompt}
                             onDecision={onBuilderDecision}
+                        />
+                    );
+                }
+                if (msg.isUser && msg.trigger) {
+                    // A trigger-started turn: the event in its own frame, never
+                    // the agent's standing instructions or a payload dump.
+                    return (
+                        <TriggerEventMessage
+                            key={i}
+                            trigger={msg.trigger}
+                            text={msg.text}
                         />
                     );
                 }

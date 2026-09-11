@@ -593,6 +593,32 @@ describe('discord gateway messages', () => {
 // The Slack trigger's output nests the Events API envelope under `data` and
 // the message under `event`; reading `text` off the top level framed NO Slack
 // run natively (every one fell back to the JSON view, 2026-09-10).
+describe('deriveLead · gmail', () => {
+    it('frames the first email of a poll batch, preferring the unquoted reply text', () => {
+        const l = deriveLead('gmail', {
+            type: 'gmail',
+            operation: 'poll_for_new_emails',
+            email_count: 2,
+            emails: [
+                {
+                    id: 'm1',
+                    thread_id: 't1',
+                    from: 'Casey Example <casey@example.com>',
+                    subject: 'Pricing for 20 seats',
+                    body: 'Can we get pricing?\n\nOn Fri, Alex wrote:\n> old',
+                    reply_text: 'Can we get pricing?',
+                    date: '2026-09-12T10:00:00Z',
+                },
+                { id: 'm2', subject: 'Second' },
+            ],
+        })!;
+        expect(l.title).toBe('Pricing for 20 seats');
+        expect(l.body).toBe('Can we get pricing?');
+        expect(l.author).toBe('Casey Example');
+        expect(l.handle).toBe('casey@example.com');
+    });
+});
+
 describe('deriveLead · slack', () => {
     const output = (event: Record<string, unknown>, extra: Record<string, unknown> = {}) => ({
         type: 'slack',
@@ -647,6 +673,35 @@ describe('deriveLead · slack', () => {
         const l = lead({ text: 'ok', user: 'U1', channel: 'C1', ts: '3.1', thread_ts: '2.0' })!;
         expect(l.meta).toBe('#C1 · in a thread');
         expect(lead({ subtype: 'message_deleted', channel: 'C1', ts: '4' })).toBeNull();
+    });
+
+    it('an edit reads its nested message, and a card\'s fields are what came in', () => {
+        const card = {
+            subtype: 'bot_message',
+            username: 'Support desk',
+            text: '*Chat with a visitor.*',
+            attachments: [
+                {
+                    fallback: '[no preview available]',
+                    fields: [
+                        { title: 'Location', value: ':flag-ro: Bucharest, Romania' },
+                        { title: 'Email Address', value: '<mailto:casey@example.com|casey@example.com>' },
+                    ],
+                },
+            ],
+            ts: '1789143280.000000',
+            thread_ts: '1788884081.346399',
+        };
+        const l = lead(
+            { subtype: 'message_changed', message: card, previous_message: { ...card, text: 'OLD' }, channel: 'C1', hidden: true, ts: '1789143280.012600' },
+            { channel_label: '#crisp-chats' }
+        )!;
+        expect(l.title).toBe('#crisp-chats');
+        expect(l.author).toBe('Support desk');
+        expect(l.body).toBe('*Chat with a visitor.*\nLocation: :flag-ro: Bucharest, Romania\nEmail Address: casey@example.com');
+        expect(l.body).not.toContain('OLD');
+        expect(l.body).not.toContain('no preview');
+        expect(l.meta).toBe('#crisp-chats · edited a message · in a thread');
     });
 
     it('humanizes Slack markup', () => {

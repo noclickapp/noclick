@@ -33,6 +33,7 @@ from typing import Dict, Any, Optional, List, Literal, Union, Annotated, Type
 from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
+from nodes.core.agent_events import bullet_lines, prune_empty
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.schedule_registration import CronScheduleTriggerMixin
 from nodes.cron_trigger_node import (
@@ -1933,6 +1934,40 @@ class DatadogNode(CronScheduleTriggerMixin, WorkflowNode):
         "Open an incident and mark customers as impacted",
         "Mute a noisy monitor during a maintenance window",
     ]
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Datadog poll result → the agent's user turn: one block per new event
+        (alert type, title, message clipped, host/service/tags), capped, with
+        the id ``get_event`` takes. An empty poll delivers nothing. No
+        conversation key — a monitor stream is not a thread."""
+        if not isinstance(output, dict) or output.get("operation") != "on_new_event":
+            return super().resolve_agent_event(output)
+        events = [e for e in output.get("events") or [] if isinstance(e, dict)]
+        if not events:
+            return None
+        n = len(events)
+        noun = f"{n} new Datadog event{'s' if n != 1 else ''}"
+        lines = [f"Datadog: {noun}" + (f" matching “{output['query']}”" if output.get("query") else "")]
+        shown, size = 0, len(lines[0])
+        for e in events[:10]:
+            a = e.get("attributes") if isinstance(e.get("attributes"), dict) else {}
+            tag = f"[{a['alert_type']}] " if a.get("alert_type") else ""
+            message = f" — {prune_empty(str(a['message']), max_str=240)}" if a.get("message") else ""
+            tags = a.get("tags") if isinstance(a.get("tags"), list) else []
+            block = ["", f"{tag}{a.get('title') or e.get('id')}{message}"] + bullet_lines([
+                ("host", a.get("host")), ("service", a.get("service")), ("priority", a.get("priority")), ("status", a.get("status")),
+                ("monitor", a.get("monitor_id")), ("tags", ", ".join(str(t) for t in tags[:10]) or None), ("at", a.get("timestamp")), ("id", e.get("id")),
+            ])
+            size += sum(len(line) + 1 for line in block)
+            if shown and size > 3500:  # the turn stays bounded; the rest is on the node
+                break
+            lines += block
+            shown += 1
+        if n > shown:
+            lines.append(f"[… {n - shown} more event{'s' if n - shown != 1 else ''} on the trigger node]")
+        lines.append("Full event: get_event event_id=<id>.")
+        return {"text": "\n".join(lines), "conversation_key": None, "title": noun}
 
     @classmethod
     def get_config_model(cls):

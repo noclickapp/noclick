@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.agent_events import bullet_lines, prune_empty
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import require_credential_token
 from nodes.core.watch_channels import (
@@ -1372,6 +1373,17 @@ class GoogleCalendarNodeConfig(
 # ============================================================================
 
 
+def _gcal_when(event: Dict[str, Any]) -> str:
+    """An event's span as a person reads it: all-day dates, else the start and
+    end timestamps as Google sends them."""
+    start = event.get("start") if isinstance(event.get("start"), dict) else {}
+    end = event.get("end") if isinstance(event.get("end"), dict) else {}
+    if start.get("date"):
+        span = f"{start['date']} (all day)"
+        return f"{span} → {end['date']}" if end.get("date") and end["date"] != start["date"] else span
+    return " → ".join(str(v) for v in (start.get("dateTime"), end.get("dateTime")) if v)
+
+
 class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
     """
     Google Calendar workflow node for managing calendar events.
@@ -1471,6 +1483,52 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
         field="calendar_id",
         noun="calendars",
     )
+
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Changed events → what a person reads off an invite: title, when,
+        where, who, status and link per event (five at most); the raw Event's
+        reminder/conference/etag noise stays on the trigger node. The dedup,
+        resync and not-yet-active envelopes carry no events and deliver
+        nothing. The last line names fetch_calendar_event / update_calendar_event
+        by event id."""
+        events = output.get("events") if isinstance(output, dict) else None
+        if not isinstance(events, list):
+            return super().resolve_agent_event(output)
+        events = [e for e in events if isinstance(e, dict)]
+        if not events:
+            return None
+        one = events[0] if len(events) == 1 else None
+        clip = 1500 if one else 300
+        lines = ["Google Calendar: event changed" if one else f"Google Calendar: {len(events)} events changed"]
+        for e in events[:5]:
+            organizer = e.get("organizer") if isinstance(e.get("organizer"), dict) else {}
+            attendees = [a.get("email") for a in e.get("attendees") or [] if isinstance(a, dict) and a.get("email")]
+            lines += ["", f"Event: {e.get('summary') or '(no title)'}"]
+            lines += bullet_lines([
+                ("When", _gcal_when(e)),
+                ("Where", e.get("location")),
+                ("Status", e.get("status")),
+                ("Organizer", organizer.get("email")),
+                ("Attendees", prune_empty(", ".join(attendees), max_str=300)),
+                ("Link", e.get("htmlLink")),
+                ("Meet", e.get("hangoutLink")),
+                ("Event id", e.get("id")),
+                ("Updated", e.get("updated")),
+            ])
+            if e.get("description"):
+                lines += ["Description:", prune_empty(str(e["description"]), max_str=clip)]
+        if len(events) > 5:
+            rest = "; ".join(str(e.get("summary") or "(no title)") for e in events[5:])
+            lines += ["", f"…and {len(events) - 5} more: {prune_empty(rest, max_str=300)}"]
+        target = f"event_id={one.get('id')}" if one else "the Event id shown above"
+        hint = f"To read or change an event, call fetch_calendar_event / update_calendar_event with {target} on the trigger's calendar."
+        return {
+            "text": prune_empty("\n".join(lines), max_str=3400) + f"\n\n{hint}",
+            "conversation_key": None,
+            "title": (one.get("summary") or "Calendar event") if one else f"{len(events)} calendar events changed",
+        }
 
     @classmethod
     def get_config_model(cls) -> Optional[Union[Type, type]]:

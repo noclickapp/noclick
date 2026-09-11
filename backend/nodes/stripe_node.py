@@ -21,6 +21,8 @@ API reference: https://docs.stripe.com/api
 
 import hashlib
 import hmac
+import json
+from datetime import datetime, timezone
 import logging
 import re
 import time
@@ -41,6 +43,7 @@ from urllib.parse import quote, urlencode
 import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
+from nodes.core.agent_events import bullet_lines, compact_json, prune_empty
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
@@ -61,6 +64,59 @@ def _stripe_token_from_credential(credential: Dict[str, Any]) -> Optional[str]:
     """Extract a bearer token from a decrypted Stripe credential (key or OAuth)."""
     cred = credential or {}
     return cred.get("api_key") or cred.get("access_token")
+
+
+# Stripe amounts are integer minor units except in zero-decimal currencies.
+_ZERO_DECIMAL_CURRENCIES = frozenset(
+    {"bif", "clp", "djf", "gnf", "jpy", "kmf", "krw", "mga", "pyg", "rwf", "ugx", "vnd", "vuv", "xaf", "xof", "xpf"}
+)
+_CURRENCY_SYMBOLS = {"usd": "$", "eur": "€", "gbp": "£"}
+
+# Per object type: the amount keys (first non-zero wins) and the (label, path)
+# pairs an agent event renders. Unlisted types ride as bounded JSON.
+_EVENT_OBJECT_FIELDS: Dict[str, Tuple[Tuple[str, ...], List[Tuple[str, str]]]] = {
+    "invoice": (("amount_paid", "amount_due"), [("number", "number"), ("customer", "customer_email"), ("name", "customer_name"), ("status", "status"), ("url", "hosted_invoice_url")]),
+    "payment_intent": (("amount",), [("status", "status"), ("description", "description"), ("receipt_email", "receipt_email"), ("error", "last_payment_error.message")]),
+    "charge": (("amount",), [("status", "status"), ("name", "billing_details.name"), ("email", "billing_details.email"), ("failure", "failure_message"), ("receipt", "receipt_url")]),
+    "customer": ((), [("email", "email"), ("name", "name")]),
+    "subscription": ((), [("customer", "customer"), ("status", "status"), ("period ends", "current_period_end"), ("cancels at period end", "cancel_at_period_end")]),
+    "checkout.session": (("amount_total",), [("payment", "payment_status"), ("email", "customer_details.email"), ("name", "customer_details.name"), ("mode", "mode"), ("url", "url")]),
+    "dispute": (("amount",), [("reason", "reason"), ("status", "status"), ("evidence due", "evidence_details.due_by")]),
+}
+
+
+def _dig(obj: Any, path: str) -> Any:
+    for part in path.split("."):
+        if not isinstance(obj, dict):
+            return None
+        obj = obj.get(part)
+    return obj
+
+
+def _stripe_money(minor: Any, currency: Any, *, symbol: bool = False) -> Optional[str]:
+    """``4200, "usd"`` → ``42.00 USD`` (``$42.00`` with ``symbol``)."""
+    if isinstance(minor, bool) or not isinstance(minor, (int, float)):
+        return None
+    cur = str(currency or "").lower()
+    amount = f"{int(minor):,}" if cur in _ZERO_DECIMAL_CURRENCIES else f"{minor / 100:,.2f}"
+    if symbol and cur in _CURRENCY_SYMBOLS:
+        return f"{_CURRENCY_SYMBOLS[cur]}{amount}"
+    return f"{amount} {cur.upper()}".strip()
+
+
+def _stripe_short(value: Any) -> str:
+    text = value if isinstance(value, str) else json.dumps(prune_empty(value), default=str)
+    return text if len(text) <= 120 else text[:120] + "…"
+
+
+_EPOCH_PATHS = frozenset({"current_period_end", "evidence_details.due_by"})
+
+
+def _stripe_field(obj: Dict[str, Any], path: str) -> Any:
+    value = _dig(obj, path)
+    if path in _EPOCH_PATHS and isinstance(value, (int, float)) and not isinstance(value, bool):
+        return datetime.fromtimestamp(value, tz=timezone.utc).isoformat().replace("+00:00", "Z")
+    return value
 
 
 def _stringify(value: Any) -> str:
@@ -2681,14 +2737,47 @@ class StripeNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return not wanted or payload.get("type") in wanted
 
     @classmethod
-    def resolve_agent_event(cls, output: Dict[str, Any]) -> Dict[str, Any]:
-        """Surface the Stripe event type + object to a downstream agent."""
-        import json
-
-        event_type = output.get("type", "stripe.event")
-        obj = ((output.get("data") or {}).get("object")) if isinstance(output, dict) else None
-        text = f"Stripe event: {event_type}\n{json.dumps(obj or output, default=str)[:4000]}"
-        return {"text": text, "conversation_key": None}
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Stripe event → the agent's user turn: the event name and object id,
+        the fields a person reads off that object (amounts in major units with
+        their currency), and the ``previous_attributes`` diff an ``*.updated``
+        event carries. Unknown object types ride as bounded JSON. No
+        conversation key — a billing event is not a thread."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        payload = data if isinstance(data, dict) and "status" in output else output
+        kind = payload.get("type")
+        data = payload.get("data") if isinstance(payload.get("data"), dict) else {}
+        obj = data.get("object")
+        if not isinstance(kind, str) or not isinstance(obj, dict):
+            return super().resolve_agent_event(output)
+        obj_type = obj.get("object") or kind.rsplit(".", 1)[0]
+        amount_keys, fields = _EVENT_OBJECT_FIELDS.get(obj_type, ((), None))
+        minor = next((obj[k] for k in amount_keys if obj.get(k)), None)
+        currency = obj.get("currency")
+        lines = [f"Stripe {kind}: {obj_type} {obj.get('id')}"]
+        if fields is None:
+            lines.append(compact_json(obj, limit=1500))
+        else:
+            card = _dig(obj, "payment_method_details.card") or {}
+            lines += bullet_lines(
+                [("amount", _stripe_money(minor, currency))]
+                + [(label, _stripe_field(obj, path)) for label, path in fields]
+                + [("card", f"{card.get('brand')} …{card.get('last4')}" if card.get("last4") else None)]
+            )
+        for item in _dig(obj, "items.data") or []:
+            price = item.get("price") if isinstance(item, dict) and isinstance(item.get("price"), dict) else {}
+            cost = _stripe_money(price.get("unit_amount"), price.get("currency"))
+            interval = _dig(price, "recurring.interval")
+            lines.append(f"- plan: {price.get('nickname') or price.get('id')} ({cost}/{interval})" if cost else f"- plan: {price.get('nickname') or price.get('id')}")
+        prev = data.get("previous_attributes")
+        if isinstance(prev, dict) and prev:
+            lines.append("Changed:")
+            lines += [f"- {k}: {_stripe_short(v)} → {_stripe_short(obj.get(k))}" for k, v in prev.items()]
+        shown = _stripe_money(minor, currency, symbol=True)
+        title = f"{kind} · {shown}" if shown else f"{kind} · {obj.get('id')}"
+        return {"text": "\n".join(lines), "conversation_key": None, "title": title}
 
     @classmethod
     def verify_webhook_signature(

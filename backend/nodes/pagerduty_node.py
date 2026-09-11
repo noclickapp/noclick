@@ -31,6 +31,7 @@ from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
+from nodes.core.agent_events import bullet_lines, prune_empty
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
@@ -6405,6 +6406,47 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         field="escalation_policy_id",
         noun="escalation policies",
     )
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """PagerDuty v3 webhook → the agent's user turn. The delivery nests the
+        event under ``event`` and the incident under ``event.data`` (a note
+        event carries the note, with the incident as a reference beside it);
+        the turn is the incident's number, title, status, urgency and service,
+        who acted, the console URL, and the id the update/note operations
+        take. The incident is the thread, so its id is the conversation key."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        wrapper = data if isinstance(data, dict) and "status" in output else output
+        event = wrapper.get("event") if isinstance(wrapper.get("event"), dict) else {}
+        kind = event.get("event_type")
+        record = event.get("data") if isinstance(event.get("data"), dict) else {}
+        note = record.get("content") if record.get("type") == "incident_note" else None
+        incident = record.get("incident") if note is not None and isinstance(record.get("incident"), dict) else record
+        if not isinstance(kind, str) or not kind.startswith("incident.") or not incident.get("id"):
+            return super().resolve_agent_event(output)
+        iid = incident["id"]
+        number = f"#{incident['number']} " if incident.get("number") else ""
+        service = incident.get("service") if isinstance(incident.get("service"), dict) else {}
+        priority = incident.get("priority") if isinstance(incident.get("priority"), dict) else {}
+        agent = event.get("agent") if isinstance(event.get("agent"), dict) else {}
+        heading = incident.get("title") or incident.get("summary") or iid
+        facts = ", ".join(p for p in (
+            incident.get("status"),
+            f"{incident['urgency']} urgency" if incident.get("urgency") else None,
+            f"service {service['summary']}" if service.get("summary") else None,
+        ) if p)
+        lines = [f"PagerDuty {kind}: {number}{heading}" + (f" — {facts}" if facts else "")]
+        assignees = [a.get("summary") for a in incident.get("assignees") or [] if isinstance(a, dict) and a.get("summary")]
+        lines += bullet_lines([
+            ("by", agent.get("summary")), ("assigned to", ", ".join(assignees) or None), ("priority", priority.get("summary")),
+            ("at", event.get("occurred_at")), ("url", incident.get("html_url")),
+        ])
+        if note:
+            lines += ["", "Note:", prune_empty(str(note), max_str=1500)]
+        lines.append(f"To act: update_incident incident_id={iid} status=acknowledged|resolved, or create_note incident_id={iid}.")
+        return {"text": "\n".join(lines), "conversation_key": str(iid), "title": f"{number}{heading}".strip()}
 
     @classmethod
     def get_config_model(cls):

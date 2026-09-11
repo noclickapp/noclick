@@ -2688,6 +2688,67 @@ class GitLabNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return GitLabNodeConfig
 
     @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """GitLab hook → the issue/MR/comment/push the event is about and who
+        did what, never the ``project``/``repository``/``user`` objects around
+        it. Issue, MR and note events key on ``path#iid`` / ``path!iid`` so a
+        follow-up comment resumes the same conversation; every other
+        ``object_kind`` (pipeline, build, release, …) rides as a bounded dump
+        of its ``object_attributes`` under a named header."""
+        from nodes.core.agent_events import bullet_lines, compact_json, first_line, prune_empty
+
+        kind = (output.get("object_kind") or output.get("event_name")) if isinstance(output, dict) else None
+        if not isinstance(kind, str):
+            return super().resolve_agent_event(output)
+        project = output.get("project") if isinstance(output.get("project"), dict) else {}
+        path = project.get("path_with_namespace") or output.get("full_path") or output.get("name") or "GitLab"
+        pid = project.get("id")
+        user = output.get("user") if isinstance(output.get("user"), dict) else {}
+        who = user.get("name") or user.get("username") or output.get("user_name") or output.get("user_username") or "someone"
+        oa = output.get("object_attributes") if isinstance(output.get("object_attributes"), dict) else {}
+        target = None  # (label, iid, noteable_type, title)
+        if kind in ("issue", "merge_request") and oa.get("iid"):
+            target = ("MR" if kind == "merge_request" else "Issue", oa["iid"], f"{kind}s", oa.get("title"))
+        elif kind == "note":
+            for key, label in (("issue", "Issue"), ("merge_request", "MR")):
+                ref = output.get(key)
+                if isinstance(ref, dict) and ref.get("iid"):
+                    target = (label, ref["iid"], f"{key}s", ref.get("title"))
+        if target:
+            label, iid, ntype, title = target
+            sigil = "!" if label == "MR" else "#"
+            head = f"{label} {sigil}{iid}: {title}"
+            if kind == "note":
+                header = f"GitLab comment by {who} on {head} in {path}:"
+                body = [prune_empty(str(oa.get("note") or ""), max_str=1500), oa.get("url")]
+            else:
+                header = f"GitLab {'merge request' if label == 'MR' else 'issue'} {oa.get('action') or 'event'} by {who} in {path}:"
+                body = [head, prune_empty(str(oa.get("description") or ""), max_str=1500)]
+                body += bullet_lines([
+                    ("state", oa.get("state")),
+                    ("branches", f"{oa.get('source_branch')} → {oa.get('target_branch')}" if oa.get("source_branch") else None),
+                    ("labels", ", ".join(l.get("title") for l in output.get("labels") or [] if isinstance(l, dict) and l.get("title"))),
+                    ("assignees", ", ".join(a.get("name") for a in output.get("assignees") or [] if isinstance(a, dict) and a.get("name"))),
+                    ("url", oa.get("url")),
+                ])
+            act = f"To reply, use create_note with project_id={pid}, noteable_type={ntype}, noteable_iid={iid}."
+            return {"text": "\n".join([header, *[l for l in body if l], "", act]), "conversation_key": f"{path}{sigil}{iid}", "title": head}
+        if kind in ("push", "tag_push") and isinstance(output.get("commits"), list):
+            commits = output["commits"]
+            branch = str(output.get("ref") or "").removeprefix("refs/heads/").removeprefix("refs/tags/")
+            lines = [f"- {str(c.get('id') or '')[:8]} {first_line(str(c.get('message') or ''))} ({(c.get('author') or {}).get('name')})" for c in commits[:10] if isinstance(c, dict)]
+            if len(commits) > 10:
+                lines.append(f"- … and {len(commits) - 10} more")
+            header = f"GitLab push by {who} to {branch} in {path} ({len(commits)} commit(s)):"
+            return {"text": "\n".join([header, *lines, "", f"To read the project, use get_project with project_id={pid}."]), "conversation_key": None, "title": f"Push to {branch} in {path}"}
+        label = kind.replace("_", " ")
+        act = f"To dig in, use get_project with project_id={pid}" if pid else ""
+        if kind == "pipeline" and oa.get("id"):
+            act += f" or get_pipeline with project_id={pid}, pipeline_id={oa['id']}"
+        text = "\n".join([f"GitLab {label} by {who} in {path}:", compact_json(oa or output, limit=1500), *(["", act + "."] if act else [])])
+        return {"text": text, "conversation_key": None, "title": f"{label.capitalize()} {oa.get('status') or oa.get('action') or ''} in {path}".replace("  ", " ")}
+
+    @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         """Refresh an expiring GitLab OAuth token at credential load (dropdowns,
         trigger registration). No-op for non-rotating Personal Access Tokens

@@ -1468,6 +1468,16 @@ async def _clickup_request(
 # ============================================================================
 
 
+def _clickup_value(value: Any) -> str:
+    """A history item's before/after as a person reads it — a status or
+    assignee object by its name, anything else as bounded text."""
+    if value is None:
+        return "—"
+    if isinstance(value, dict):
+        return str(value.get("status") or value.get("name") or value.get("username") or value.get("id") or value)[:120]
+    return str(value)[:120]
+
+
 class ClickUpNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """ClickUp project-management automation node."""
 
@@ -1488,6 +1498,32 @@ class ClickUpNode(ExternalWebhookTriggerMixin, WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return ClickUpNodeConfig
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """ClickUp webhook → the event, the task id and each history item as
+        a ``field: before → after`` line (a comment by its text), with a
+        pointer at ``get_task`` for the title ClickUp does not send. A task
+        webhook carries no thread, so there is no conversation key."""
+        from nodes.core.agent_events import prune_empty
+
+        event = output.get("event") if isinstance(output, dict) else None
+        task_id = output.get("task_id") if isinstance(event, str) else None
+        if not task_id:
+            return super().resolve_agent_event(output)
+        kind = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", event).lower()
+        lines = []
+        for h in output.get("history_items") or []:
+            if not isinstance(h, dict):
+                continue
+            who = (h.get("user") or {}).get("username") or "someone"
+            comment = h.get("comment") if isinstance(h.get("comment"), dict) else {}
+            if comment.get("text_content"):
+                lines.append(f"- comment by {who}: {prune_empty(str(comment['text_content']), max_str=1500)}")
+            elif h.get("field"):
+                lines.append(f"- {h['field']}: {_clickup_value(h.get('before'))} → {_clickup_value(h.get('after'))} (by {who})")
+        act = f"The task's title is not included: use get_task with task_id={task_id} to read it and create_task_comment with task_id={task_id} to reply."
+        return {"text": "\n".join([f"ClickUp {kind} on task {task_id}:", *lines, "", act]), "conversation_key": None, "title": f"{kind.capitalize()}: task {task_id}"}
 
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):

@@ -16,6 +16,7 @@ from typing import Dict, Any, Optional, Union, Type
 from pydantic import BaseModel, Field
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.agent_events import compact_json, first_line, prune_empty
 
 logger = logging.getLogger(__name__)
 
@@ -178,6 +179,35 @@ class WebhookTriggerNode(WorkflowNode):
 
     # A manual run can't produce an HTTP request — replay the last received one.
     manual_run_replays_last_event = True
+
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """A live request → the caller's body as the turn, headed by the method
+        and any query params. Headers never ride: authentication secrets
+        travel in them. The execute() envelope (a never-fired manual run) is
+        left to the base."""
+        meta = output.get("_webhook") if isinstance(output, dict) else None
+        if not isinstance(meta, dict) or not meta.get("method"):
+            return super().resolve_agent_event(output)
+        body = {k: v for k, v in output.items() if k != "_webhook"}
+        lines = [f"Webhook {str(meta['method']).upper()} received"]
+        query = prune_empty(meta.get("query_params"), max_str=200) if isinstance(meta.get("query_params"), dict) else {}
+        if query:
+            lines.append("Query: " + prune_empty(", ".join(f"{k}={v}" for k, v in query.items()), max_str=300))
+        raw = body.get("raw")
+        if set(body) == {"raw"} and isinstance(raw, str):
+            lines += ["", prune_empty(raw, max_str=1500) or "(empty body)"]
+        elif prune_empty(body):
+            lines += ["", compact_json(body, limit=3500)]
+        else:
+            lines.append("(empty body)")
+        title = next(
+            (first_line(body[k]) for k in ("title", "subject", "event", "type")
+             if isinstance(body.get(k), str) and body[k].strip()),
+            "Webhook request",
+        )
+        return {"text": "\n".join(lines), "conversation_key": None, "title": title}
 
     @classmethod
     def get_config_model(cls) -> Optional[Union[Type, type]]:

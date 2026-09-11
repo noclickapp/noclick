@@ -22,10 +22,12 @@ import logging
 import time
 import json
 import json as json_module
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 import httpx
 
+from nodes.core.agent_events import bullet_lines
 from nodes.core.base import WorkflowNode, NodeConfig
 from utils.ssrf import guarded_async_client
 from nodes.core.connection_evidence import ConnectionEvidence
@@ -8353,6 +8355,47 @@ class HubSpotNode(AppEventTriggerMixin, WorkflowNode):
         noun="deal pipelines",
         identity_operation="get_account_info",
     )
+
+    # Object type → the operation that loads the record and its id field.
+    _fetch_ops = {
+        "contact": ("get_contact", "contact_id"),
+        "deal": ("get_deal", "deal_id"),
+        "company": ("get_company", "company_id"),
+    }
+    _change_verbs = {"creation": "created", "propertyChange": "updated", "deletion": "deleted"}
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """HubSpot app-event → the agent's user turn. The delivery is one event
+        dict of ids plus the changed property — HubSpot never sends the record —
+        so the turn says so and names the fetch operation with the exact id. No
+        conversation key: a CRM object event is not a thread."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        payload = data if isinstance(data, dict) and "status" in output else output
+        kind = payload.get("subscriptionType") or payload.get("eventType")
+        object_id = payload.get("objectId")
+        if not isinstance(kind, str) or "." not in kind or object_id is None:
+            return super().resolve_agent_event(output)
+        obj_type, change = kind.split(".", 1)
+        obj_type = str(payload.get("objectType") or obj_type).lower()
+        occurred = payload.get("occurredAt")
+        if isinstance(occurred, (int, float)) and not isinstance(occurred, bool):
+            occurred = datetime.fromtimestamp(occurred / 1000, tz=timezone.utc).isoformat().replace("+00:00", "Z")
+        lines = [f"HubSpot {kind}: {obj_type} {object_id}"]
+        if payload.get("propertyName"):
+            lines.append(f"{payload['propertyName']} → {payload.get('propertyValue')}")
+        lines += bullet_lines([("source", payload.get("changeSource")), ("at", occurred), ("portal", payload.get("portalId"))])
+        fetch = cls._fetch_ops.get(obj_type)
+        if change == "deletion":
+            lines.append("The record was deleted; only its id remains.")
+        elif fetch:
+            lines.append(f"The record is not included; fetch it with {fetch[0]} {fetch[1]}={object_id}.")
+        else:
+            lines.append("The record is not included; only its id is delivered.")
+        title = f"{obj_type.capitalize()} {object_id} {cls._change_verbs.get(change, change)}"
+        return {"text": "\n".join(lines), "conversation_key": None, "title": title}
 
     @classmethod
     def get_config_model(cls):

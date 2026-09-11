@@ -22,6 +22,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, field_validato
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.agent_events import prune_empty
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.scopes.microsoft import OUTLOOK_SCOPES
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
@@ -3279,6 +3280,52 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     #: OAuth scope requirements per operation (nodes/scopes/microsoft.py).
     scope_registry = OUTLOOK_SCOPES
+
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """A Graph change notification → the ids an agent can act on. The mail
+        and calendar subscriptions here carry no resource data, so a
+        notification names only what changed: the turn hands over each
+        message/event id and points at get_email_message / get_calendar_event
+        for the content — never a fabricated body. clientState (the signing
+        secret) stays out."""
+        notifications = output.get("value") if isinstance(output, dict) else None
+        if not isinstance(notifications, list):
+            return super().resolve_agent_event(output)
+        items, titles, mail = [], [], False
+        for n in notifications:
+            if not isinstance(n, dict):
+                continue
+            resource = str(n.get("resource") or "")
+            rd = n.get("resourceData")
+            rid = (rd.get("id") if isinstance(rd, dict) else None) or resource.rsplit("/", 1)[-1]
+            change = str(n.get("changeType") or "changed")
+            if "/messages" in resource.lower():
+                kind, fetch = "Email", f"get_email_message (message_id={rid})"
+                change = "received" if change == "created" else change
+            elif "/events" in resource.lower():
+                kind, fetch = "Calendar event", f"get_calendar_event (event_id={rid})"
+            else:
+                continue
+            titles.append(f"{kind} {change}")
+            if change == "deleted":
+                items.append(f"- {kind} deleted: id {rid} (no longer fetchable)")
+                continue
+            mail = mail or kind == "Email"
+            items.append(f"- {kind} {change}: id {rid} — fetch it with {fetch}")
+        if not items:
+            return super().resolve_agent_event(output)
+        plural = "s" if len(items) > 1 else ""
+        lines = [f"Outlook: {len(items)} change notification{plural} (ids only — Microsoft Graph sends no content)", *items]
+        text = prune_empty("\n".join(lines), max_str=3400)
+        if mail:
+            text += "\n\nTo reply to an email, call reply_to_email_message with its message_id."
+        return {
+            "text": text,
+            "conversation_key": None,
+            "title": titles[0] if len(items) == 1 else f"{len(items)} Outlook changes",
+        }
 
     @classmethod
     def get_config_model(cls) -> Optional[Union[Type, type]]:

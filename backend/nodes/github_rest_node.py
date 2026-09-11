@@ -7264,6 +7264,70 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
     def get_config_model(cls):
         return GithubRestNodeConfig
 
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """GitHub webhook → the record the event is about (title, body, state,
+        labels, link) and who did what, never the ``repository``/``sender``
+        objects GitHub sends around it. Issue, PR and comment events key on
+        ``owner/repo#number`` so a follow-up comment resumes the same
+        conversation; pushes, releases and stars have no thread."""
+        from nodes.core.agent_events import bullet_lines, first_line, prune_empty
+
+        repo = (output.get("repository") or {}).get("full_name") if isinstance(output, dict) else None
+        if not repo:
+            return super().resolve_agent_event(output)
+        owner, _, name = repo.partition("/")
+        ids = f"owner={owner}, repo={name}"
+        who = (output.get("sender") or {}).get("login") or "someone"
+        action = output.get("action") or "event"
+        record = output.get("pull_request") or output.get("issue")
+        if isinstance(record, dict) and record.get("number"):
+            n = record["number"]
+            is_pr = "pull_request" in output or "pull_request" in record
+            head = f"{'Pull request' if is_pr else 'Issue'} #{n}: {record.get('title')}"
+            comment = output.get("comment") if isinstance(output.get("comment"), dict) else None
+            if comment:
+                header = f"GitHub comment {action} by {who} on {head} in {repo}:"
+                body = [prune_empty(str(comment.get("body") or ""), max_str=1500), comment.get("html_url")]
+            else:
+                header = f"GitHub {'pull request' if is_pr else 'issue'} {action} by {who} in {repo}:"
+                body = [head, prune_empty(str(record.get("body") or ""), max_str=1500)]
+                body += bullet_lines([
+                    ("state", "merged" if record.get("merged") else record.get("state")),
+                    ("draft", "yes" if record.get("draft") else None),
+                    ("branches", f"{(record.get('head') or {}).get('ref')} → {(record.get('base') or {}).get('ref')}" if record.get("head") else None),
+                    ("author", (record.get("user") or {}).get("login")),
+                    ("labels", ", ".join(l.get("name") for l in record.get("labels") or [] if isinstance(l, dict) and l.get("name"))),
+                    ("assignees", ", ".join(a.get("login") for a in record.get("assignees") or [] if isinstance(a, dict) and a.get("login"))),
+                    ("url", record.get("html_url")),
+                ])
+            act = f"To reply, use create_issue_comment with {ids}, issue_number={n}"
+            if is_pr:
+                act += f"; to review, create_pull_request_review with {ids}, pull_number={n}"
+            return {"text": "\n".join([header, *[l for l in body if l], "", act + "."]), "conversation_key": f"{repo}#{n}", "title": head}
+        if isinstance(output.get("commits"), list):
+            commits, branch = output["commits"], str(output.get("ref") or "").removeprefix("refs/heads/")
+            lines = [f"- {str(c.get('id') or '')[:7]} {first_line(str(c.get('message') or ''))} ({(c.get('author') or {}).get('name')})" for c in commits[:10] if isinstance(c, dict)]
+            if len(commits) > 10:
+                lines.append(f"- … and {len(commits) - 10} more")
+            header = f"GitHub push by {(output.get('pusher') or {}).get('name') or who} to {branch} in {repo} ({len(commits)} commit(s)):"
+            lines += bullet_lines([("compare", output.get("compare"))])
+            act = f"To inspect a commit, use get_commit with {ids}, ref=<sha>."
+            return {"text": "\n".join([header, *lines, "", act]), "conversation_key": None, "title": f"Push to {branch} in {repo}"}
+        release = output.get("release")
+        if isinstance(release, dict):
+            tag = release.get("tag_name")
+            head = f"Release {tag}" + (f": {release['name']}" if release.get("name") else "")
+            body = [head, prune_empty(str(release.get("body") or ""), max_str=1500)]
+            body += bullet_lines([("prerelease", "yes" if release.get("prerelease") else None), ("url", release.get("html_url"))])
+            act = f"To read it, use get_release_by_tag with {ids}, tag={tag}."
+            return {"text": "\n".join([f"GitHub release {action} by {who} in {repo}:", *[l for l in body if l], "", act]), "conversation_key": None, "title": head}
+        if "starred_at" in output:
+            when = f" at {output['starred_at']}" if output.get("starred_at") else ""
+            act = f"To read the repository, use get_repository with {ids}."
+            return {"text": f"GitHub star {action} by {who} on {repo}{when}.\n\n{act}", "conversation_key": None, "title": f"Star {action} by {who} on {repo}"}
+        return super().resolve_agent_event(output)
+
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Execute GitHub action via REST API."""
         logger.info(f"[GithubRestNode] Executing node {self.node_id}")

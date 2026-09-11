@@ -225,12 +225,28 @@ function deriveSlackLead(d: Dict): Lead | null {
     // and the unwrapped envelope both land here.
     const envelope = typeof asDict(d.data).event === 'object' ? asDict(d.data) : d;
     const event = asDict(envelope.event);
-    const m = typeof event.type === 'string' ? event : envelope;
+    const container = typeof event.type === 'string' ? event : envelope;
+    // An edit carries the current message nested (previous_message is
+    // history); the channel and ts stay on the outer event.
+    const m =
+        container.subtype === 'message_changed' && typeof container.message === 'object'
+            ? { ...asDict(container.message), channel: container.channel, subtype: container.subtype }
+            : container;
     const attachments = Array.isArray(m.attachments) ? (m.attachments as unknown[]).map(asDict) : [];
     const files = Array.isArray(m.files) ? (m.files as unknown[]).map(asDict) : [];
+    // A card's fields ARE its content (a support hand-off is location, email,
+    // links); its fallback is only worth showing when there are no fields.
+    const attachmentLines = attachments.flatMap((a) => {
+        const fields = Array.isArray(a.fields) ? (a.fields as unknown[]).map(asDict) : [];
+        return [
+            str(a, 'title', 'pretext') ?? '',
+            str(a, 'text') ?? (fields.length ? '' : (str(a, 'fallback') ?? '')),
+            ...fields.map((f) => (str(f, 'value') ? `${str(f, 'title') ?? 'field'}: ${str(f, 'value')}` : '')),
+        ];
+    });
     const lines = [
         str(m, 'text', 'message', 'body') ?? '',
-        ...attachments.map((a) => str(a, 'text', 'fallback', 'title') ?? ''),
+        ...attachmentLines,
         ...files.map((f) => (str(f, 'title', 'name') ? `📎 ${str(f, 'title', 'name')}` : '')),
     ]
         .map((line) => humanizeSlackMarkup(line).trim())
@@ -371,16 +387,20 @@ export function deriveLead(slug: string, output: unknown): Lead | null {
     }
 
     if (slug === 'gmail' || slug === 'microsoft_outlook' || slug === 'email') {
-        const body = str(d, 'body', 'snippet', 'text');
-        const title = str(d, 'subject');
+        // The Gmail poll delivers a batch ({emails: [...]}); the newest-first
+        // frame is the first one. A flat email (rehearsal, inbound trigger)
+        // is itself the lead.
+        const e = Array.isArray(d.emails) && d.emails.length ? asDict(d.emails[0]) : d;
+        const body = str(e, 'reply_text', 'body', 'snippet', 'text');
+        const title = str(e, 'subject');
         if (!body && !title) return null;
-        const from = splitAddress(str(d, 'from', 'sender'));
+        const from = splitAddress(str(e, 'from', 'sender'));
         return {
             title: title ?? '(no subject)',
-            meta: str(d, 'from') ?? '',
+            meta: str(e, 'from') ?? '',
             body: body ?? '',
             ...from,
-            time: clockOf(str(d, 'date', 'timestamp')),
+            time: clockOf(str(e, 'date', 'timestamp')),
         };
     }
 

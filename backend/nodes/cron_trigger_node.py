@@ -687,6 +687,26 @@ class CronTriggerNode(CronScheduleTriggerMixin, WorkflowNode):
         "Monitor when the next scheduled run will execute",
     ]
 
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """A tick carries no content, only routing ids the agent has no use
+        for — so the turn is the one fact it has: when the schedule fired.
+        Both the raw scheduler POST and the execute() envelope resolve."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        payload = output.get("payload")
+        scheduled = (
+            output.get("type") == "cron-trigger"
+            or "schedule_id" in output
+            or (isinstance(payload, dict) and payload.get("source") == "cron_trigger")
+        )
+        if not scheduled:
+            return super().resolve_agent_event(output)
+        fired = output.get("triggered_at")
+        text = f"Scheduled run fired at {fired}" if fired else "Scheduled run fired"
+        return {"text": text, "conversation_key": None, "title": "Scheduled run"}
+
     @classmethod
     def get_config_model(cls) -> Optional[Union[Type, type]]:
         """Get Pydantic config model for cron trigger node"""

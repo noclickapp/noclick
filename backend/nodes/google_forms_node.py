@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.agent_events import bullet_lines, prune_empty
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import require_credential_token
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
@@ -373,6 +374,21 @@ class GoogleFormsNodeConfig(NodeConfig[GoogleFormsConfig, GoogleFormsOAuthCreden
 # ============================================================================
 
 
+def _forms_answer_text(answer: Dict[str, Any]) -> str:
+    """One FormResponse answer as text: text values joined, uploads by name."""
+    texts = [
+        str(v.get("value"))
+        for v in (answer.get("textAnswers") or {}).get("answers") or []
+        if isinstance(v, dict) and v.get("value") not in (None, "")
+    ]
+    files = [
+        f"file: {f.get('fileName') or f.get('fileId')}"
+        for f in (answer.get("fileUploadAnswers") or {}).get("answers") or []
+        if isinstance(f, dict)
+    ]
+    return "; ".join(texts + files)
+
+
 class GoogleFormsNode(ScheduledPollTriggerMixin, WorkflowNode):
     """
     Google Forms workflow node for managing forms and responses.
@@ -410,6 +426,40 @@ class GoogleFormsNode(ScheduledPollTriggerMixin, WorkflowNode):
         field="form_id",
         noun="forms",
     )
+
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """New submissions → one block each (five at most): who, when and every
+        answer as "questionId: answer". A FormResponse carries no question
+        titles, so the turn says how to map ids to titles (get_form_metadata)
+        instead of guessing them."""
+        responses = output.get("responses") if isinstance(output, dict) else None
+        if not isinstance(responses, list):
+            return super().resolve_agent_event(output)
+        responses = [r for r in responses if isinstance(r, dict)]
+        if not responses:
+            return None
+        one = len(responses) == 1
+        clip = 500 if one else 200
+        lines = ["Google Forms: new response" if one else f"Google Forms: {len(responses)} new responses"]
+        for r in responses[:5]:
+            who = r.get("respondentEmail") or "an anonymous respondent"
+            when = f" at {r['createTime']}" if r.get("createTime") else ""
+            lines += ["", f"Response {r.get('responseId')} from {who}{when}"]
+            answers = r.get("answers") if isinstance(r.get("answers"), dict) else {}
+            lines += bullet_lines(
+                (qid, prune_empty(_forms_answer_text(a), max_str=clip))
+                for qid, a in answers.items() if isinstance(a, dict)
+            ) or ["- (no answers)"]
+        if len(responses) > 5:
+            lines += ["", f"…and {len(responses) - 5} more responses"]
+        hint = "Answers are keyed by question id: call get_form_metadata on the trigger's form to map ids to question titles, or get_form_response with a response id above for one submission."
+        return {
+            "text": prune_empty("\n".join(lines), max_str=3400) + f"\n\n{hint}",
+            "conversation_key": None,
+            "title": "New form response" if one else f"{len(responses)} new form responses",
+        }
 
     @classmethod
     def get_config_model(cls) -> Optional[Union[Type, type]]:

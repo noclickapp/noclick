@@ -3,11 +3,11 @@
 A conversation.* webhook wired directly into an AI agent must deliver the
 latest message text, surface the conversation id VERBATIM in the reply form
 the reply_conversation tool accepts, and key the turn on a per-conversation
-conversation_key (so each Intercom thread keeps its own agent memory). Non
-conversational topics (contact/company/ticket) fall through to the base
-raw-JSON default with no conversation key.
+conversation_key (so each Intercom thread keeps its own agent memory).
+Contact/company topics read as the record's identity with no conversation
+key (ticket topics are covered in test_agent_events_crm_ops.py); a
+conversation without an id falls through to the base default.
 """
-import json
 import sys
 
 sys.path.insert(0, "backend")
@@ -117,7 +117,7 @@ def test_conversation_key_is_string():
     assert isinstance(ev["conversation_key"], str)
 
 
-# ── Non-conversation events fall through to the base default ────────────────────
+# ── Non-conversation events read as records, with no conversation key ───────────
 
 def _contact_event(topic="contact.user.created"):
     return {
@@ -127,18 +127,20 @@ def _contact_event(topic="contact.user.created"):
     }
 
 
-def test_contact_event_falls_through_to_base():
+def test_contact_event_reads_as_the_contact_record():
     ev = IntercomNode.resolve_agent_event(_contact_event())
     assert ev["conversation_key"] is None
-    # Base default delivers the raw payload as JSON.
-    assert "contact_99" in ev["text"]
-    assert json.loads(ev["text"])  # valid JSON dump
+    assert ev["text"].startswith("Intercom contact.user.created: new@example.com")
+    assert "get_contact contact_id=contact_99" in ev["text"]
+    assert ev["title"] == "Contact: new@example.com"
 
 
-def test_company_event_falls_through_to_base():
-    payload = {"type": "notification_event", "topic": "company.created", "data": {"item": {"type": "company", "id": "co_1"}}}
+def test_company_event_reads_as_the_company_record():
+    payload = {"type": "notification_event", "topic": "company.created", "data": {"item": {"type": "company", "id": "co_1", "name": "Acme Example"}}}
     ev = IntercomNode.resolve_agent_event(payload)
     assert ev["conversation_key"] is None
+    assert ev["text"].startswith("Intercom company.created: Acme Example")
+    assert "get_company company_id=co_1" in ev["text"]
 
 
 def test_conversation_without_id_falls_through():

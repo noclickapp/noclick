@@ -25,6 +25,7 @@ from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, ConfigDict, Field, Discriminator
 import httpx
 
+from nodes.core.agent_events import bullet_lines
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
@@ -75,6 +76,22 @@ PUBLIC_APP_GRAPHQL_OPERATIONS = {
 # ============================================================================
 # Webhook trigger helpers
 # ============================================================================
+
+
+_CURRENCY_SYMBOLS = {"USD": "$", "EUR": "€", "GBP": "£"}
+
+
+def _shopify_money(amount: Any, currency: Any) -> Optional[str]:
+    """Shopify's decimal-string amounts → ``$42.00`` / ``42.00 CAD``."""
+    if amount in (None, ""):
+        return None
+    code = str(currency or "").upper()
+    return f"{_CURRENCY_SYMBOLS[code]}{amount}" if code in _CURRENCY_SYMBOLS else f"{amount} {code}".strip()
+
+
+def _shopify_person(first: Any, last: Any, email: Any) -> Optional[str]:
+    name = " ".join(str(p) for p in (first, last) if p)
+    return f"{name} <{email}>" if name and email else name or email or None
 
 
 def _shopify_api_base(store_name: str) -> str:
@@ -3951,6 +3968,56 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "on_product_updated": "products/update",
         "on_customer_created": "customers/create",
     }
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Shopify webhook → the agent's user turn. The delivery is the raw
+        order/product/customer and its topic lives only in the ``X-Shopify-Topic``
+        header, so the header block is read before it is dropped. The turn is
+        what a shop owner reads off the object, then the ``get_*_by_id``
+        operation that takes its id. No conversation key — a store event is not
+        a thread."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        obj = data if isinstance(data, dict) and "status" in output else output
+        meta = obj.get("_webhook") if isinstance(obj.get("_webhook"), dict) else {}
+        headers = {str(k).lower(): v for k, v in (meta.get("headers") or {}).items()}
+        topic = str(headers.get("x-shopify-topic") or "")
+        resource = topic.split("/", 1)[0] or next((r for r, key in (("orders", "line_items"), ("products", "variants"), ("customers", "email")) if key in obj), "")
+        if obj.get("id") is None or resource not in ("orders", "products", "customers"):
+            return super().resolve_agent_event(output)
+        where = f" at {headers['x-shopify-shop-domain']}" if headers.get("x-shopify-shop-domain") else ""
+        oid = obj["id"]
+        if resource == "orders":
+            customer = obj.get("customer") if isinstance(obj.get("customer"), dict) else {}
+            ship = obj.get("shipping_address") if isinstance(obj.get("shipping_address"), dict) else {}
+            label = obj.get("name") or f"#{obj.get('order_number') or oid}"
+            money = _shopify_money(obj.get("total_price"), obj.get("currency"))
+            lines = [f"Shopify {topic or 'order'}: Order {label}{where}"]
+            lines += bullet_lines([
+                ("customer", _shopify_person(customer.get("first_name"), customer.get("last_name"), customer.get("email") or obj.get("email"))),
+                ("total", money), ("payment", obj.get("financial_status")), ("fulfillment", obj.get("fulfillment_status")),
+                ("ships to", ", ".join(str(p) for p in (ship.get("city"), ship.get("country")) if p) or None),
+            ])
+            items = [i for i in obj.get("line_items") or [] if isinstance(i, dict)]
+            lines += [f"- {i.get('quantity')} × {i.get('title')} @ {i.get('price')}" for i in items[:20]]
+            if len(items) > 20:
+                lines.append(f"[… {len(items) - 20} more line items]")
+            lines.append(f"Full order: get_order_by_id order_id={oid}.")
+            title = f"Order {label} · {money}" if money else f"Order {label}"
+        elif resource == "products":
+            lines = [f"Shopify {topic or 'product'}: {obj.get('title')} (product {oid}){where}"]
+            lines += bullet_lines([("handle", obj.get("handle")), ("status", obj.get("status"))])
+            variants = [v for v in obj.get("variants") or [] if isinstance(v, dict)]
+            lines += [f"- {v.get('title')}: {v.get('price')}" for v in variants[:20]]
+            lines.append(f"Full product: get_product_by_id product_id={oid}.")
+            title = f"Product: {obj.get('title')}"
+        else:
+            who = _shopify_person(obj.get("first_name"), obj.get("last_name"), obj.get("email")) or "customer"
+            lines = [f"Shopify {topic or 'customer'}: {who} (customer {oid}){where}", f"Full customer: get_customer_by_id customer_id={oid}."]
+            title = f"Customer: {who}"
+        return {"text": "\n".join(lines), "conversation_key": None, "title": title}
 
     @classmethod
     def get_config_model(cls):

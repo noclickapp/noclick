@@ -817,19 +817,21 @@ class WorkflowNode(ABC):
         ``AgentNode._resolve_trigger_event``); ``output`` is what landed in
         node_outputs — the ``resolve_trigger_payload`` short-circuit for push
         triggers, the poll result for poll triggers. The default delivers the
-        whole output as JSON, which is always safe since trigger shapes differ
+        payload as bounded JSON, which is always safe since trigger shapes differ
         per provider. Channel-like triggers (Telegram, Slack, Alarm) override
         to extract the message text and the medium's native thread/chat key so
         the agent resumes the right conversation. Return ``None`` to deliver
         nothing.
-        """
-        import json
 
-        try:
-            text = json.dumps(output, indent=2, ensure_ascii=False, default=str)
-        except (TypeError, ValueError):
-            text = str(output)
-        return {"text": text, "conversation_key": None}
+        The default unwraps the delivery envelope, prunes empty values and
+        ``_``-prefixed plumbing (``_webhook`` carries the inbound HTTP headers),
+        and bounds the JSON — see ``nodes.core.agent_events``. An override may
+        also return ``"title"``, a short line the chat surface uses as the
+        conversation's name (else the text's first line).
+        """
+        from nodes.core.agent_events import default_agent_event
+
+        return default_agent_event(output)
 
     # Grid layout constraints for interface nodes (defaultW, defaultH, minW, minH).
     # Only relevant for interface-* nodes; ignored for automation/agent nodes.

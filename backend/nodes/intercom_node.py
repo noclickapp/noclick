@@ -29,6 +29,7 @@ from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
+from nodes.core.agent_events import bullet_lines, prune_empty
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.scopes.intercom import INTERCOM_SCOPES
@@ -1829,37 +1830,72 @@ class IntercomNode(WorkflowNode):
 
     @classmethod
     def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Intercom conversation webhook → the agent's user turn + a per-conversation
-        key. Only conversation.* events (``data.item`` is a conversation) are handled
-        here; contact/company/ticket topics fall through to the raw-JSON default. The
-        conversation id in the text doubles as the ``conversation_id`` the
-        ``reply_conversation`` tool needs to answer the right thread."""
-        data = output.get("data") if isinstance(output.get("data"), dict) else {}
+        """Intercom webhook → the agent's user turn, by ``data.item.type``: a
+        conversation or ticket is a thread (its id is the conversation key and
+        rides verbatim in the form the reply tool accepts), a contact or company
+        reads as the record's identity plus the operation that loads it. Bodies
+        are raw Intercom HTML — surfaced as-is. Anything else falls through to
+        the bounded-JSON default."""
+        data = output.get("data") if isinstance(output, dict) and isinstance(output.get("data"), dict) else {}
         item = data.get("item") if isinstance(data.get("item"), dict) else {}
-        if item.get("type") != "conversation" or not item.get("id"):
+        item_type, item_id = item.get("type"), item.get("id")
+        if not item_id or item_type not in ("conversation", "ticket", "contact", "company"):
             return super().resolve_agent_event(output)
-        conv_id = item["id"]
+        topic = output.get("topic") or f"{item_type} event"
+        if item_type == "conversation":
+            # Latest message: newest part carrying a body, else the opening source message.
+            msg = cls._latest_part(item, "conversation_parts") or (item.get("source") if isinstance(item.get("source"), dict) else {})
+            who = cls._author_name(msg)
+            body = msg.get("body") or "[no message body]"
+            text = (
+                f"Intercom {topic} from {who} (conversation {item_id}):\n{body}\n\n"
+                f"To reply, use conversation_id={item_id} with the reply_conversation tool."
+            )
+            return {"text": text, "conversation_key": str(item_id), "title": f"{who} · conversation {item_id}"}
+        if item_type == "ticket":
+            attrs = item.get("ticket_attributes") if isinstance(item.get("ticket_attributes"), dict) else {}
+            state = item.get("ticket_state")
+            state = (state.get("category") or state.get("internal_label")) if isinstance(state, dict) else state
+            ticket_type = item.get("ticket_type") if isinstance(item.get("ticket_type"), dict) else {}
+            contacts = (item.get("contacts") or {}).get("contacts") if isinstance(item.get("contacts"), dict) else None
+            contacts = [c.get("external_id") or c.get("id") for c in contacts or [] if isinstance(c, dict)]
+            heading = attrs.get("_default_title_")
+            lines = [f"Intercom {topic}: ticket {item_id}" + (f" “{heading}”" if heading else "")]
+            lines += bullet_lines([("state", state), ("type", ticket_type.get("name")), ("contacts", ", ".join(str(c) for c in contacts if c) or None)])
+            if attrs.get("_default_description_"):
+                lines += ["", prune_empty(str(attrs["_default_description_"]), max_str=1500)]
+            lines += bullet_lines((k, v) for k, v in attrs.items() if not k.startswith("_default_"))
+            part = cls._latest_part(item, "ticket_parts")
+            if part:
+                lines += ["", f"Latest update from {cls._author_name(part)}:", prune_empty(str(part["body"]), max_str=1500)]
+            lines += ["", f"To reply, use reply_ticket ticket_id={item_id} (with an admin_id); update_ticket ticket_id={item_id} changes its state."]
+            title = f"Ticket {item_id}: {heading}" if heading else f"Ticket {item_id}"
+            return {"text": "\n".join(lines), "conversation_key": str(item_id), "title": title}
+        if item_type == "contact":
+            who = item.get("name") or item.get("email") or item_id
+            lines = [f"Intercom {topic}: {who}"]
+            lines += bullet_lines([("email", item.get("email")), ("role", item.get("role")), ("phone", item.get("phone")), ("external id", item.get("external_id")), ("id", item_id)])
+            lines.append(f"Full record: get_contact contact_id={item_id}.")
+            return {"text": "\n".join(lines), "conversation_key": None, "title": f"Contact: {who}"}
+        who = item.get("name") or item.get("company_id") or item_id
+        plan = item.get("plan") if isinstance(item.get("plan"), dict) else {}
+        lines = [f"Intercom {topic}: {who}"]
+        lines += bullet_lines([("company id", item.get("company_id")), ("website", item.get("website")), ("plan", plan.get("name")), ("id", item_id)])
+        lines.append(f"Full record: get_company company_id={item_id}.")
+        return {"text": "\n".join(lines), "conversation_key": None, "title": f"Company: {who}"}
 
-        # Latest message: newest conversation part carrying a body, else the
-        # opening source message. Bodies are raw Intercom HTML — surfaced as-is.
-        parts_wrap = item.get("conversation_parts")
-        parts = parts_wrap.get("conversation_parts") if isinstance(parts_wrap, dict) else None
-        part = None
-        if isinstance(parts, list):
-            part = next((p for p in reversed(parts) if isinstance(p, dict) and p.get("body")), None)
-        source = item.get("source") if isinstance(item.get("source"), dict) else {}
-        msg = part or source
+    @staticmethod
+    def _latest_part(item: Dict[str, Any], key: str) -> Optional[Dict[str, Any]]:
+        wrap = item.get(key)
+        parts = wrap.get(key) if isinstance(wrap, dict) else None
+        if not isinstance(parts, list):
+            return None
+        return next((p for p in reversed(parts) if isinstance(p, dict) and p.get("body")), None)
+
+    @staticmethod
+    def _author_name(msg: Dict[str, Any]) -> str:
         author = msg.get("author") if isinstance(msg.get("author"), dict) else {}
-        who = author.get("name") or author.get("email") or author.get("type") or "someone"
-        body = msg.get("body") or "[no message body]"
-        topic = output.get("topic") or "conversation event"
-        return {
-            "text": (
-                f"Intercom {topic} from {who} (conversation {conv_id}):\n{body}\n\n"
-                f"To reply, use conversation_id={conv_id} with the reply_conversation tool."
-            ),
-            "conversation_key": str(conv_id),
-        }
+        return author.get("name") or author.get("email") or author.get("type") or "someone"
 
     # ------------------------------------------------------------------
     # Execute

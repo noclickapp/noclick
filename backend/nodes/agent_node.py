@@ -407,6 +407,7 @@ class AgentNode(WorkflowNode):
         image_urls: Optional[List[str]] = None,
         video_urls: Optional[List[str]] = None,
         attachments: Optional[List[Dict[str, Any]]] = None,
+        trigger: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Append one event to ``conversations.events`` so the chat-history
         sidebar + restore on the interface AgentChatBlock see this turn.
@@ -416,7 +417,10 @@ class AgentNode(WorkflowNode):
         turns (image / video / kling fast-path handlers, image-generating LLM
         tools) and user-attached images on user turns. ``attachments`` carries
         the user's non-image files (``{name, url, mime_type}``) restored as
-        chips on the user bubble. The restore mapper
+        chips on the user bubble. ``trigger`` marks a trigger-started user
+        turn: ``{node_id, node_type, label, operation, output}`` — the fired
+        node and its (bounded) output, from which the chat surface derives
+        the event's native frame. The restore mapper
         (useAgentChat.persistedEventsToChatMessages) reads these top-level
         fields.
 
@@ -460,6 +464,8 @@ class AgentNode(WorkflowNode):
             event["video_urls"] = video_urls
         if attachments:
             event["attachments"] = attachments
+        if trigger:
+            event["trigger"] = trigger
         try:
             from utils.database_pool import get_native_pool
             await get_native_pool().execute(
@@ -1028,6 +1034,26 @@ class AgentNode(WorkflowNode):
             logger.warning("[AgentNode] builder-update relay failed", exc_info=True)
             return None
 
+    @staticmethod
+    def _trigger_turn_record(
+        trigger_event: Dict[str, Any],
+    ) -> Tuple[str, str, Dict[str, Any]]:
+        """``(message, label, trigger)`` persisted for a trigger-started user
+        turn: the hook's text as the bubble, its title (else the text's first
+        line) as the conversation's name, and the fired node + its bounded
+        output as the record the chat surface frames natively."""
+        from nodes.core.agent_events import compact_for_display, first_line
+
+        text = trigger_event["text"]
+        record = {
+            "node_id": trigger_event["node_id"],
+            "node_type": trigger_event["node_type"],
+            "label": trigger_event["source"],
+            "operation": trigger_event.get("operation"),
+            "output": compact_for_display(trigger_event["output"]),
+        }
+        return text, trigger_event.get("title") or first_line(text), record
+
     def _resolve_trigger_event(self, inputs: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """The event that started this run, when its trigger is wired directly
         into this agent (any handle — dataflow left or alarm/tools bottom).
@@ -1051,9 +1077,13 @@ class AgentNode(WorkflowNode):
             return None
         return {
             "node_id": fired["id"],
+            "node_type": fired.get("type", ""),
+            "operation": fired["config"].get("operation"),
             "source": fired["config"].get("label") or fired.get("type", "trigger"),
             "text": event.get("text") or "",
             "conversation_key": event.get("conversation_key"),
+            "title": event.get("title"),
+            "output": output,
         }
 
     async def _resolve_sandbox_mounts(
@@ -1643,6 +1673,18 @@ class AgentNode(WorkflowNode):
         # turn, and relay notes deliberately never persist.
         is_wake_turn = (config.message or "").strip() == WAKE_TURN_MESSAGE
         user_message_text = "" if is_wake_turn else (config.message or "").strip()
+        # A trigger-started turn persists as the EVENT: the standing
+        # instructions are node config, not something the user said, and a
+        # bubble quoting them buried what actually came in. The structured
+        # record lets the chat surface frame the event natively (the same
+        # derivation the run popup uses) — see nodes.core.agent_events.
+        persisted_trigger: Optional[Dict[str, Any]] = None
+        if trigger_event and trigger_event.get("text"):
+            user_message_text, turn_label, persisted_trigger = self._trigger_turn_record(
+                trigger_event
+            )
+        else:
+            turn_label = user_message_text
         persist_user_turn: Optional[asyncio.Task] = None
         if (user_message_text or message_attachments) and effective_conversation_id:
             # Concurrent with the credential freshen below (independent I/O);
@@ -1657,11 +1699,12 @@ class AgentNode(WorkflowNode):
                     message=user_message_text,
                     model=config.model,
                     label=(
-                        user_message_text
+                        turn_label
                         or ", ".join(a["name"] for a in message_attachments)
                     )[:100],
                     image_urls=attach_image_urls or None,
                     attachments=attach_files or None,
+                    trigger=persisted_trigger,
                 )
             )
 

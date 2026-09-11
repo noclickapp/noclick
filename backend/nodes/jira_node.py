@@ -5403,6 +5403,19 @@ class JiraNodeFullConfig(NodeConfig[JiraConfig, JiraCredential]):
 # ============================================================================
 
 
+def _jira_text(value: Any) -> str:
+    """Plain text of a Jira field: a string as-is, an ADF document flattened
+    (paragraphs on their own lines)."""
+    if isinstance(value, str):
+        return value
+    if not isinstance(value, dict):
+        return ""
+    parts = [value["text"]] if isinstance(value.get("text"), str) else []
+    parts += [_jira_text(c) for c in value.get("content") or []]
+    text = "".join(parts)
+    return text + "\n" if value.get("type") == "paragraph" else text
+
+
 class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
     """
     Jira workflow node for issue and project management.
@@ -5444,6 +5457,44 @@ class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return JiraNodeFullConfig
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Jira webhook → the issue as a person reads it (key, summary,
+        status, assignee, what the changelog changed, a new comment), never
+        the field catalogue, avatar URLs and ``self`` links around it. Keyed
+        on the issue key so comments and updates on one issue share a
+        conversation."""
+        from nodes.core.agent_events import bullet_lines, prune_empty
+
+        issue = output.get("issue") if isinstance(output, dict) else None
+        if not isinstance(issue, dict) or not issue.get("key"):
+            return super().resolve_agent_event(output)
+        key, fields = issue["key"], issue.get("fields") if isinstance(issue.get("fields"), dict) else {}
+        who = (output.get("user") or {}).get("displayName") or "someone"
+        event = str(output.get("issue_event_type_name") or output.get("webhookEvent") or "event").removeprefix("jira:").replace("_", " ")
+        project = (fields.get("project") or {}).get("key")
+        head = f"{key}: {fields.get('summary')}"
+        header = f"Jira {event} by {who}" + (f" in project {project}" if project else "") + ":"
+        api = issue.get("self") if isinstance(issue.get("self"), str) else ""
+        body = [head, prune_empty(_jira_text(fields.get("description")).strip(), max_str=1500)]
+        body += bullet_lines([
+            ("type", (fields.get("issuetype") or {}).get("name")),
+            ("status", (fields.get("status") or {}).get("name")),
+            ("priority", (fields.get("priority") or {}).get("name")),
+            ("assignee", (fields.get("assignee") or {}).get("displayName")),
+            ("reporter", (fields.get("reporter") or {}).get("displayName")),
+            ("labels", ", ".join(l for l in fields.get("labels") or [] if isinstance(l, str))),
+            ("url", f"{api.split('/rest/')[0]}/browse/{key}" if "/rest/" in api else None),
+        ])
+        items = (output.get("changelog") or {}).get("items") or []
+        body += [f"- changed {i.get('field')}: {i.get('fromString')} → {i.get('toString')}" for i in items[:8] if isinstance(i, dict)]
+        comment = output.get("comment") if isinstance(output.get("comment"), dict) else None
+        if comment:
+            author = (comment.get("author") or {}).get("displayName") or "someone"
+            body += [f"Comment by {author}:", prune_empty(_jira_text(comment.get("body")).strip(), max_str=1500)]
+        act = f"To reply, use add_comment_to_issue with issue_key={key}; transition_issue_status with issue_key={key} to move it; get_issue with issue_key={key} for the full record."
+        return {"text": "\n".join([header, *[l for l in body if l], "", act]), "conversation_key": key, "title": head}
 
     # ========================================================================
     # Webhook trigger (on_jira_event) — dynamic webhook with 30-day expiry

@@ -444,6 +444,46 @@ describe('persistedEventsToChatMessages — restore transcript from legacy event
         expect(agent.steps).toBeUndefined();
     });
 
+    it('restores a trigger-started user turn with its trigger record (never the instructions)', () => {
+        const output = { type: 'slack', data: { event: { type: 'message', text: 'hi' } } };
+        const [user, agent] = persistedEventsToChatMessages([
+            {
+                role: 'user',
+                message: 'Slack message from U1 in #support:\nhi',
+                trigger: {
+                    node_id: 'slack_1',
+                    node_type: 'automation-slack',
+                    label: 'Support channel',
+                    operation: 'on_channel_message',
+                    output,
+                },
+            },
+            { role: 'assistant', message: 'On it.' },
+        ]);
+        expect(user.isUser).toBe(true);
+        expect(user.text).toBe('Slack message from U1 in #support:\nhi');
+        expect(user.trigger).toEqual({
+            nodeId: 'slack_1',
+            nodeType: 'automation-slack',
+            label: 'Support channel',
+            operation: 'on_channel_message',
+            output,
+        });
+        expect(agent.trigger).toBeUndefined();
+    });
+
+    it('keeps a trigger turn whose text is empty, and ignores a record without a node type', () => {
+        const [kept] = persistedEventsToChatMessages([
+            { role: 'user', message: '', trigger: { node_id: 'c1', node_type: 'trigger-cron', output: {} } },
+        ]);
+        expect(kept.trigger?.nodeType).toBe('trigger-cron');
+        const [plain] = persistedEventsToChatMessages([
+            { role: 'user', message: 'typed', trigger: { node_id: 'x' } },
+        ]);
+        expect(plain.trigger).toBeUndefined();
+        expect(plain.text).toBe('typed');
+    });
+
     it('restores an assistant turn with generated images (image gen fast-path)', () => {
         // image / kling handlers persist {role:'assistant', message, image_urls}
         // via agent_node._persist_interface_chat_event. The mapper must surface

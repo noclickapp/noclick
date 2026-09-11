@@ -43,11 +43,25 @@ def _wire(agent: AgentNode, nodes, edges) -> None:
 class TestResolveAgentEventHook:
     """Per-class translation of a fired trigger's output into an agent event."""
 
-    def test_default_delivers_whole_output_as_json(self):
-        output = {'type': 'webhook-trigger', 'payload': {'issue': {'id': 7}}}
+    def test_default_delivers_unwrapped_payload_as_json(self):
+        # The delivery envelope (type/status/_webhook plumbing) is not the
+        # event: the payload wrapper is unwrapped and empties are pruned.
+        output = {
+            'type': 'webhook-trigger',
+            'payload': {'issue': {'id': 7, 'labels': [], 'assignee': None}},
+            '_webhook': {'headers': {'x-secret': 'y'}},
+        }
         event = WebhookTriggerNode.resolve_agent_event(output)
         assert event['conversation_key'] is None
-        assert json.loads(event['text']) == output
+        assert json.loads(event['text']) == {'issue': {'id': 7}}
+        assert 'x-secret' not in event['text']
+
+    def test_default_names_the_event_and_bounds_the_body(self):
+        output = {'type': 'x', 'event_type': 'issues', 'data': {'body': 'y' * 10_000}}
+        event = WorkflowNode.resolve_agent_event(output)
+        assert event['text'].startswith('Event: issues\n')
+        assert len(event['text']) < 4300
+        assert 'truncated' in event['text']
 
     def test_default_is_base_implementation(self):
         # Any node class without an override inherits the safe JSON default.
@@ -141,11 +155,18 @@ class TestResolveAgentEventHook:
         event = SlackNode.resolve_agent_event(output)
         assert event['conversation_key'] == 'D789'
 
-    def test_slack_non_message_event_falls_back_to_json(self):
-        output = {'type': 'slack', 'data': {'event': {'type': 'reaction_added'}}}
+    def test_slack_non_message_event_reads_as_one_line_plus_its_fields(self):
+        output = {'type': 'slack', 'data': {
+            'token': 'verification-secret', 'authorizations': [{'user_id': 'U0'}],
+            'event': {'type': 'reaction_added', 'user': 'U1', 'reaction': 'eyes',
+                      'item': {'type': 'message', 'channel': 'C1', 'ts': '1.0'}},
+        }}
         event = SlackNode.resolve_agent_event(output)
-        assert event['conversation_key'] is None
-        assert json.loads(event['text']) == output
+        assert event['conversation_key'] == 'C1'
+        assert event['text'].startswith('Slack reaction_added in channel C1:')
+        assert '"reaction": "eyes"' in event['text']
+        assert 'verification-secret' not in event['text']
+        assert 'authorizations' not in event['text']
 
     def test_alarm_delivers_wake_message_and_scheduled_key(self):
         output = {
@@ -181,8 +202,10 @@ class TestAgentResolveTriggerEvent:
         event = agent._resolve_trigger_event(inputs)
         assert event is not None
         assert event['node_id'] == 'wh1'
+        assert event['node_type'] == 'trigger-webhook'
         assert event['source'] == 'GitHub Issues'  # user label frames the event
-        assert json.loads(event['text']) == inputs['wh1']
+        assert json.loads(event['text']) == {'a': 1}
+        assert event['output'] is inputs['wh1']  # the chat record derives from it
 
     def test_source_falls_back_to_node_type(self):
         agent = _make_agent()
@@ -320,6 +343,32 @@ class TestAgentResolveTriggerEvent:
         event = agent._resolve_trigger_event(inputs)
         assert event['text'] == 'wake'
         assert event['conversation_key'] == 'k1'
+
+    def test_trigger_turn_persists_the_event_never_the_instructions(self):
+        """The bubble and the conversation title are the EVENT: the standing
+        instructions are node config. The record carries the fired node and
+        its output with the delivery plumbing stripped and the size bounded."""
+        agent = _make_agent()
+        _wire(
+            agent,
+            nodes=[{'id': 'wh1', 'type': 'trigger-webhook',
+                    'config': {**self.FIRED, 'label': 'Orders hook', 'operation': None}},
+                   {'id': 'agent_1', 'type': 'agent', 'config': {}}],
+            edges=[{'source': 'wh1', 'target': 'agent_1'}],
+        )
+        inputs = {'wh1': {'order': {'id': 7, 'note': ''}, 'title': 'Order 7',
+                          '_webhook': {'headers': {'authorization': 'Bearer secret'}}}}
+        event = agent._resolve_trigger_event(inputs)
+        message, label, record = AgentNode._trigger_turn_record(event)
+        assert message == event['text']
+        assert 'Bearer secret' not in message
+        assert label == json.dumps({'order': {'id': 7}, 'title': 'Order 7'}, indent=2).splitlines()[0]
+        assert record['node_type'] == 'trigger-webhook'
+        assert record['label'] == 'Orders hook'
+        assert record['output'] == {'order': {'id': 7}, 'title': 'Order 7'}
+        # A hook title names the conversation outright.
+        message, label, _ = AgentNode._trigger_turn_record({**event, 'title': '#support'})
+        assert label == '#support'
 
     def test_integration_trigger_with_an_override_delivers(self):
         """2026-08-03: a PostHog on_rageclick trigger wired into an agent killed

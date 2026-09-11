@@ -3577,6 +3577,46 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return AsanaNodeConfig
 
     @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Asana's event batch carries ids only (action, resource gid/type,
+        parent, the changed field) — one line per event saying so, and a
+        pointer at ``get_task`` for the content, instead of the raw batch.
+        An empty batch delivers nothing; a batch is not one thread, so there
+        is no conversation key."""
+        events = output.get("events") if isinstance(output, dict) else None
+        if not isinstance(events, list):
+            return super().resolve_agent_event(output)
+        events = [e for e in events if isinstance(e, dict)]
+        if not events:
+            return None
+        lines = []
+        for e in events[:10]:
+            res, parent, change = e.get("resource") or {}, e.get("parent") or {}, e.get("change") or {}
+            line = f"- {e.get('action') or 'changed'} {res.get('resource_subtype') or res.get('resource_type') or 'resource'} {res.get('gid')}"
+            if res.get("name"):
+                line += f" “{res['name']}”"
+            if parent.get("gid"):
+                line += f" in {parent.get('resource_type') or 'parent'} {parent['gid']}"
+            if change.get("field"):
+                line += f" ({change.get('action') or 'changed'} {change['field']})"
+            if (e.get("user") or {}).get("gid"):
+                line += f" by user {e['user']['gid']}"
+            lines.append(line)
+        if len(events) > 10:
+            lines.append(f"- … and {len(events) - 10} more")
+        tasks = list(dict.fromkeys(
+            e["resource"]["gid"] for e in events
+            if (e.get("resource") or {}).get("resource_type") == "task" and e["resource"].get("gid")
+        ))
+        act = "Asana sends ids, not content: " + (
+            f"use get_task with task_gid={tasks[0]} to read the task and add_comment with task_gid={tasks[0]} to comment on it."
+            if tasks else "use get_task with task_gid=<gid> to read a task."
+        )
+        first = lines[0][2:]
+        title = f"Asana: {first[:80]}" if len(events) == 1 else f"{len(events)} Asana events"
+        return {"text": "\n".join([f"Asana: {len(events)} event(s):", *lines, "", act]), "conversation_key": None, "title": title}
+
+    @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         """Refresh an expiring Asana OAuth token at credential load (dropdowns,
         trigger registration). No-op for non-rotating Personal Access Tokens

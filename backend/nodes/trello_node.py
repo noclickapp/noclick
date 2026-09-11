@@ -1517,6 +1517,40 @@ class TrelloNode(ExternalWebhookTriggerMixin, WorkflowNode):
     def get_config_model(cls):
         return TrelloNodeConfig
 
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Trello action → what happened to which card on which board, by
+        whom (a comment's text, a move's from → to list, the fields an update
+        changed), never the ``model``/``memberCreator`` objects around it. A
+        board webhook fires every action, so there is no one thread to key."""
+        from nodes.core.agent_events import bullet_lines, prune_empty
+
+        action = output.get("action") if isinstance(output, dict) else None
+        if not isinstance(action, dict) or not isinstance(action.get("type"), str):
+            return super().resolve_agent_event(output)
+        data = action.get("data") if isinstance(action.get("data"), dict) else {}
+        card, board = data.get("card") or {}, data.get("board") or {}
+        kind = "".join(f" {c.lower()}" if c.isupper() else c for c in action["type"]).strip()
+        member = action.get("memberCreator") or {}
+        who = member.get("fullName") or member.get("username") or "someone"
+        header = f"Trello {kind} by {who}" + (f" on board “{board['name']}”" if board.get("name") else "") + ":"
+        old = data.get("old") if isinstance(data.get("old"), dict) else {}
+        body = bullet_lines([
+            ("card", card.get("name")),
+            ("description", prune_empty(str(card.get("desc") or ""), max_str=1500) if "desc" in old else None),
+            ("list", (data.get("list") or {}).get("name")),
+            ("moved", f"{data['listBefore'].get('name')} → {data['listAfter'].get('name')}" if data.get("listBefore") and data.get("listAfter") else None),
+            ("comment", prune_empty(str(data.get("text") or ""), max_str=1500)),
+            ("changed", ", ".join(old.keys())),
+            ("when", action.get("date")),
+        ])
+        card_id = card.get("id") or card.get("shortLink")
+        if card_id:
+            act = f"To act on the card, use get_card or add_comment with card_id={card_id}."
+        else:
+            act = f"No card is attached to this action; use get_board_cards with board_id={board.get('id') or board.get('shortLink')} to browse the board."
+        return {"text": "\n".join([header, *body, "", act]), "conversation_key": None, "title": f"{kind.capitalize()}: {card.get('name') or board.get('name') or 'Trello'}"}
+
     # ------------------------------------------------------------------
     # Dynamic options (boards)
     # ------------------------------------------------------------------

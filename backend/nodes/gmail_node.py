@@ -26,6 +26,7 @@ import httpx
 import uuid as uuid_module
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.agent_events import prune_empty
 from utils.ssrf import guarded_async_client
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.schedule_registration import CronScheduleTriggerMixin
@@ -1557,6 +1558,56 @@ class GmailNode(CronScheduleTriggerMixin, WorkflowNode):
         label_keys=("from", "sender", "from_email"),
         identity_operation="fetch_user_profile",
     )
+
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """New mail → the turn a person would read: sender, subject and the
+        unquoted reply text per email (five at most, the rest by subject); the
+        poll envelope and the Test Run's flat single email both resolve. One
+        email keys the conversation on its thread so replies stay threaded, a
+        batch keys nothing. The last line names reply_to_email_message with
+        the exact message id."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        if isinstance(output.get("emails"), list):
+            emails = [e for e in output["emails"] if isinstance(e, dict)]
+            if not emails:
+                return None
+        elif "from" in output and ("body" in output or "snippet" in output):
+            emails = [output]
+        else:
+            return super().resolve_agent_event(output)
+        one = emails[0] if len(emails) == 1 else None
+        clip = 1500 if one else 400
+        lines = ["New email in Gmail" if one else f"{len(emails)} new emails in Gmail"]
+        for e in emails[:5]:
+            body = e.get("reply_text") or e.get("body") or e.get("snippet") or "(empty body)"
+            lines += ["", f"From: {e.get('from') or '(unknown sender)'}"]
+            if e.get("date"):
+                lines.append(f"Date: {e['date']}")
+            lines.append(f"Subject: {e.get('subject') or '(no subject)'}")
+            if not one:
+                lines.append(f"Message id: {e.get('id')}")
+            lines += ["", prune_empty(str(body), max_str=clip)]
+            for a in e.get("attachments") or []:
+                if isinstance(a, dict):
+                    lines.append(
+                        f"Attachment: {a.get('filename')} ({a.get('mime_type')}, "
+                        f"attachment_id={a.get('attachment_id')})"
+                    )
+        if len(emails) > 5:
+            rest = "; ".join(str(e.get("subject") or "(no subject)") for e in emails[5:])
+            lines += ["", f"…and {len(emails) - 5} more: {prune_empty(rest, max_str=300)}"]
+        target = f"message_id={one.get('id')}" if one else "the Message id shown above"
+        hint = f"To reply, call reply_to_email_message with {target}."
+        if any(e.get("attachments") for e in emails[:5]):
+            hint += " Attachment contents come from fetch_email_attachment (message_id + attachment_id)."
+        return {
+            "text": prune_empty("\n".join(lines), max_str=3400) + f"\n\n{hint}",
+            "conversation_key": one.get("thread_id") if one and isinstance(one.get("thread_id"), str) else None,
+            "title": (one.get("subject") or "New email") if one else f"{len(emails)} new emails",
+        }
 
     @classmethod
     def get_config_model(cls) -> Optional[Union[Type, type]]:

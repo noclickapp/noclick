@@ -17,6 +17,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field, ConfigDict, Discriminator, field_validator
 import httpx
 
+from nodes.core.agent_events import bullet_lines
 from nodes.core.base import WorkflowNode, NodeConfig
 
 logger = logging.getLogger(__name__)
@@ -277,6 +278,34 @@ class ResendNode(WorkflowNode):
         "Cancel a scheduled email if the user already converted",
         "Trigger a workflow when an email bounces or a recipient complains",
     ]
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Resend webhook (``{type, created_at, data{email_id, from, to,
+        subject, …}}``) → the agent's user turn: what happened to which email,
+        the bounce message or clicked link when the event carries one, and the
+        id ``get_email`` takes. No conversation key — a delivery event is not
+        a thread."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        payload = data if isinstance(data, dict) and "status" in output else output
+        kind = payload.get("type")
+        email = payload.get("data") if isinstance(payload.get("data"), dict) else {}
+        if not isinstance(kind, str) or not email:
+            return super().resolve_agent_event(output)
+        to = email.get("to")
+        to = ", ".join(str(t) for t in to) if isinstance(to, list) else to
+        bounce = email.get("bounce") if isinstance(email.get("bounce"), dict) else {}
+        click = email.get("click") if isinstance(email.get("click"), dict) else {}
+        lines = [f"Resend {kind}: to {to} from {email.get('from')}" + (f" — {email['subject']}" if email.get("subject") else "")]
+        lines += bullet_lines([
+            ("bounce", bounce.get("message")), ("bounce type", bounce.get("subType") or bounce.get("type")),
+            ("clicked", click.get("link")), ("at", payload.get("created_at")), ("email id", email.get("email_id")),
+        ])
+        if email.get("email_id"):
+            lines.append(f"Details: get_email email_id={email['email_id']}.")
+        return {"text": "\n".join(lines), "conversation_key": None, "title": f"{kind} · {email.get('subject') or to}"}
 
     @classmethod
     def get_config_model(cls):

@@ -14,6 +14,7 @@ import json
 import logging
 import secrets
 import time
+from nodes.core.agent_events import bullet_lines
 from nodes.core.base import NodeConfig
 from nodes.core.base import WorkflowNode
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
@@ -2375,12 +2376,47 @@ class HoneycombNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return verify_webhook_token(headers or {}, (config or {}).get("signing_secret"))
 
     @classmethod
-    def resolve_agent_event(cls, output):
-        payload = output if isinstance(output, dict) else {}
-        data = payload.get("data", payload)
-        name = data.get("name") or data.get("trigger_description") if isinstance(data, dict) else None
-        text = json.dumps(data, default=str)[:6000]
-        return {"text": f"Honeycomb alert {name}:\n{text}" if name else text, "conversation_key": None}
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Honeycomb trigger or SLO burn-alert webhook → the agent's user turn:
+        what fired (the trigger's name and state, or the SLO and its exhaustion
+        window), the threshold and the groups that crossed it, and the trigger
+        / query links. A manual run wraps the payload in ``data``. No
+        conversation key — an alert is not a thread."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        payload = data if isinstance(data, dict) and "status" in output else output
+        slo = payload.get("slo") if isinstance(payload.get("slo"), dict) else {}
+        name = payload.get("name") or payload.get("trigger_description")
+        if payload.get("alert_type") and slo:
+            slo_name = slo.get("name") or slo.get("id")
+            minutes = payload.get("exhaustion_minutes")
+            lines = [f"Honeycomb burn alert ({payload['alert_type']}) for SLO {slo_name}"] + bullet_lines([
+                ("budget exhausted in", f"{minutes} min" if minutes is not None else None),
+                ("budget rate window", f"{payload['budget_rate_window_minutes']} min" if payload.get("budget_rate_window_minutes") else None),
+                ("dataset", payload.get("dataset_name")), ("environment", payload.get("environment")),
+                ("summary", payload.get("summary")), ("url", payload.get("slo_url") or payload.get("result_url")),
+            ])
+            title = f"Burn alert: {slo_name}"
+        elif name:
+            status = payload.get("status")
+            threshold = f"{payload.get('operator') or ''} {payload['threshold']}".strip() if payload.get("threshold") is not None else None
+            lines = [f"Honeycomb trigger {status}: {name}" if status else f"Honeycomb trigger: {name}"] + bullet_lines([
+                ("description", payload.get("trigger_description") if payload.get("name") else None), ("threshold", threshold),
+                ("summary", payload.get("summary")), ("dataset", payload.get("dataset_name")), ("environment", payload.get("environment")),
+            ])
+            groups = [g for g in payload.get("result_groups_triggered") or [] if isinstance(g, dict)]
+            for g in groups[:10]:
+                group = g.get("Group")
+                group = json.dumps(group, default=str) if isinstance(group, (dict, list)) else group
+                lines.append(f"- {group}: {g.get('Result')}")
+            if len(groups) > 10:
+                lines.append(f"[… {len(groups) - 10} more groups]")
+            lines += bullet_lines([("trigger", payload.get("trigger_url")), ("results", payload.get("result_url"))])
+            title = f"{status}: {name}" if status else str(name)
+        else:
+            return super().resolve_agent_event(output)
+        return {"text": "\n".join(lines), "conversation_key": None, "title": title}
 
     # ------------------------------------------------------------------
     # Execute

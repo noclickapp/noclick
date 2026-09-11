@@ -2613,6 +2613,51 @@ class LinearNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return LinearNodeConfig
 
     @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Linear webhook → the issue, comment or project it is about as a
+        person reads it (identifier, title, state, assignee, what changed),
+        keyed on the issue identifier so comments and updates on one issue
+        share a conversation. ``type``/``action`` sit beside ``data`` at the
+        top level, so they are read here before the shared unwrap could take
+        ``data`` for the whole payload."""
+        from nodes.core.agent_events import bullet_lines, prune_empty
+
+        data = output.get("data") if isinstance(output, dict) else None
+        kind = output.get("type") if isinstance(data, dict) else None
+        if kind not in ("Issue", "Comment", "Project"):
+            return super().resolve_agent_event(output)
+        action = output.get("action")
+        verb = {"create": "created", "update": "updated", "remove": "removed"}.get(action, action or "changed")
+        who = (output.get("actor") or {}).get("name") or (data.get("user") or {}).get("name") or "someone"
+        url = data.get("url") or output.get("url")
+        if kind == "Comment":
+            issue = data.get("issue") if isinstance(data.get("issue"), dict) else {}
+            head = f"{issue.get('identifier')}: {issue.get('title')}"
+            body = [prune_empty(str(data.get("body") or ""), max_str=1500), url]
+            act = f"To reply, use create_issue_comment with issueId={issue.get('id')}."
+            return {"text": "\n".join([f"Linear comment {verb} by {who} on {head}:", *[l for l in body if l], "", act]), "conversation_key": issue.get("identifier"), "title": f"Comment on {head}"}
+        if kind == "Project":
+            body = [str(data.get("name") or ""), prune_empty(str(data.get("description") or ""), max_str=1500)]
+            body += bullet_lines([("state", data.get("state")), ("lead", (data.get("lead") or {}).get("name")), ("url", url)])
+            act = f"To read it, use get_project with id={data.get('id')}."
+            return {"text": "\n".join([f"Linear project {verb} by {who}:", *[l for l in body if l], "", act]), "conversation_key": None, "title": f"Project: {data.get('name')}"}
+        head = f"{data.get('identifier')}: {data.get('title')}"
+        team = (data.get("team") or {}).get("key")
+        header = f"Linear issue {verb} by {who}" + (f" in team {team}" if team else "") + ":"
+        body = [head, prune_empty(str(data.get("description") or ""), max_str=1500)]
+        body += bullet_lines([
+            ("state", (data.get("state") or {}).get("name")),
+            ("priority", data.get("priorityLabel") or data.get("priority")),
+            ("assignee", (data.get("assignee") or {}).get("name")),
+            ("labels", ", ".join(l.get("name") for l in data.get("labels") or [] if isinstance(l, dict) and l.get("name"))),
+            ("url", url),
+        ])
+        changed = output.get("updatedFrom") if isinstance(output.get("updatedFrom"), dict) else {}
+        body += [f"- changed {k} (was {str(v)[:120]})" for k, v in changed.items() if k != "updatedAt"]
+        act = f"To reply, use create_issue_comment with issueId={data.get('id')}; get_issue with id={data.get('id')} for the full record."
+        return {"text": "\n".join([header, *[l for l in body if l], "", act]), "conversation_key": data.get("identifier"), "title": head}
+
+    @classmethod
     async def _resolve_dynamic_team_id(
         cls, auth_header: str, context: Optional[Dict[str, Any]]
     ) -> Optional[str]:

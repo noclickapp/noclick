@@ -1530,6 +1530,21 @@ class NotionNodeConfig(NodeConfig[NotionConfig, NotionCredential]):
 # ============================================================================
 
 
+def _notion_rich_text(rich: Any) -> str:
+    """The plain text of a Notion rich-text array."""
+    return "".join(t.get("plain_text", "") for t in rich or [] if isinstance(t, dict))
+
+
+def _notion_title(obj: Dict[str, Any]) -> str:
+    """A database's ``title`` array or a page's title property as text."""
+    if isinstance(obj.get("title"), list):
+        return _notion_rich_text(obj["title"])
+    for prop in (obj.get("properties") or {}).values():
+        if isinstance(prop, dict) and prop.get("type") == "title":
+            return _notion_rich_text(prop.get("title"))
+    return ""
+
+
 class NotionNode(ScheduledPollTriggerMixin, WorkflowNode):
     """
     Notion automation node.
@@ -1559,6 +1574,40 @@ class NotionNode(ScheduledPollTriggerMixin, WorkflowNode):
     def get_config_model(cls):
         """Return the Pydantic model for node configuration."""
         return NotionNodeConfig
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """A poll's batch of new/updated pages, databases or comments → one
+        line each (title, id, link; a comment's text and its page) instead
+        of the raw Notion objects, whose property maps are mostly ids. An
+        empty batch delivers nothing, and a batch is not one thread, so
+        there is no conversation key."""
+        from nodes.core.agent_events import prune_empty
+
+        items = output.get("items") if isinstance(output, dict) else None
+        if not isinstance(items, list):
+            return super().resolve_agent_event(output)
+        items = [i for i in items if isinstance(i, dict)]
+        if not items:
+            return None
+        kind = items[0].get("object") if items[0].get("object") in ("page", "database", "comment") else "item"
+        lines = []
+        for item in items[:10]:
+            if item.get("object") == "comment":
+                page = (item.get("parent") or {}).get("page_id")
+                lines.append(f"- “{prune_empty(_notion_rich_text(item.get('rich_text')), max_str=300)}”" + (f" on page {page}" if page else ""))
+            else:
+                lines.append(f"- {_notion_title(item) or 'Untitled'} (id {item.get('id')})" + (f" {item['url']}" if item.get("url") else ""))
+        if len(items) > 10:
+            lines.append(f"- … and {len(items) - 10} more")
+        what = f"{len(items)} {kind}{'s' if len(items) != 1 else ''}"
+        header = f"Notion: {what} {'created' if kind == 'comment' else 'new or updated'}:"
+        if kind == "comment":
+            act = "To reply, use create_page_comment with parent_type=page_id, parent_id=<page id>; fetch_page_properties with page_id=<page id> for the page."
+        else:
+            act = "To read a page, use fetch_page_properties with page_id=<id> and fetch_block_children with block_id=<id> for its content; a database with fetch_database_metadata or query_notion_database with database_id=<id>."
+        title = f"{kind.capitalize()}: {_notion_title(items[0]) or lines[0][2:80]}" if len(items) == 1 else f"{what} in Notion"
+        return {"text": "\n".join([header, *lines, "", act]), "conversation_key": None, "title": title}
 
     async def _trigger_on_database_item(self, config, credentials) -> Dict[str, Any]:
         """Poll a database and emit items new or updated since the last poll.
@@ -1671,12 +1720,7 @@ class NotionNode(ScheduledPollTriggerMixin, WorkflowNode):
                 options = []
                 for db in results:
                     db_id = db.get("id", "")
-                    # Extract title from title property
-                    title_prop = db.get("title", [])
-                    title = ""
-                    if title_prop and len(title_prop) > 0:
-                        title = title_prop[0].get("plain_text", "")
-
+                    title = _notion_title(db)
                     if not title:
                         title = f"Untitled Database ({db_id[:8]}...)"
 
@@ -1744,16 +1788,7 @@ class NotionNode(ScheduledPollTriggerMixin, WorkflowNode):
                 options = []
                 for page in results:
                     page_id = page.get("id", "")
-                    props = page.get("properties", {})
-                    title = ""
-                    for prop in props.values():
-                        if prop.get("type") == "title":
-                            rich = prop.get("title", [])
-                            if rich:
-                                title = "".join(
-                                    t.get("plain_text", "") for t in rich
-                                )
-                            break
+                    title = _notion_title(page)
                     if not title:
                         title = f"Untitled Page ({page_id[:8]}...)"
 

@@ -162,9 +162,10 @@ def test_phone_sms_missing_sender_falls_back_to_base():
     event = _phone_sms_event()
     event["payload"]["object"]["sender"] = {}  # no phone_number
     result = ZoomNode.resolve_agent_event(event)
-    # Base fallback: whole payload as JSON, no conversation key.
+    # Base fallback: the event named, its payload as JSON, no conversation key.
     assert result["conversation_key"] is None
-    assert json.loads(result["text"])["event"] == "phone.sms_received"
+    assert result["text"].startswith("Event: phone.sms_received\n")
+    assert json.loads(result["text"].split("\n", 1)[1])["object"]["message"]
 
 
 # ── In-meeting chat (conversation anchor, no send-into-meeting op) ──────────────
@@ -196,9 +197,10 @@ def test_meeting_started_uses_base_fallback():
         "payload": {"account_id": "AbCdEfGhIj", "object": {"id": "8912345678", "topic": "Standup"}},
     }
     result = ZoomNode.resolve_agent_event(event)
-    # Base default: whole output as JSON, conversation_key None.
+    # Base default: the event named, the payload as JSON, conversation_key None.
     assert result["conversation_key"] is None
-    assert json.loads(result["text"])["event"] == "meeting.started"
+    assert result["text"].startswith("Event: meeting.started\n")
+    assert json.loads(result["text"].split("\n", 1)[1])["object"]["topic"] == "Standup"
 
 
 def test_recording_completed_uses_base_fallback():
@@ -208,7 +210,8 @@ def test_recording_completed_uses_base_fallback():
     }
     result = ZoomNode.resolve_agent_event(event)
     assert result["conversation_key"] is None
-    assert json.loads(result["text"])["event"] == "recording.completed"
+    assert result["text"].startswith("Event: recording.completed\n")
+    assert json.loads(result["text"].split("\n", 1)[1])["object"]["uuid"] == "rec-1"
 
 
 def test_malformed_payload_uses_base_fallback():

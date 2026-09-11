@@ -41,6 +41,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 
 import httpx
 
+from nodes.core.agent_events import bullet_lines
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
@@ -977,9 +978,42 @@ class SentryNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return hmac.compare_digest(expected, sig)
 
     @classmethod
-    def resolve_agent_event(cls, output):
-        payload = output if isinstance(output, dict) else {}
-        return {"text": f"Sentry event:\n{json.dumps(payload, default=str)[:6000]}", "conversation_key": None}
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Sentry service hook (``event.created``: the event beside the project
+        fields) or issue-alert webhook (``event.alert``, wrapped as ``{action,
+        data{event, triggered_rule}}``) → the agent's user turn: level, project,
+        the event title, where it happened (culprit / environment / release),
+        the exception, the affected user, the console link, and the issue id
+        ``update_issue`` takes. An issue is the thread, so its id keys the
+        conversation when the payload names one."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        payload = data if isinstance(data, dict) and "status" in output else output
+        inner = payload.get("data") if isinstance(payload.get("data"), dict) else {}
+        top = inner if isinstance(inner.get("event"), dict) else payload
+        event = top.get("event") if isinstance(top.get("event"), dict) else {}
+        heading = event.get("title") or top.get("message") or event.get("message")
+        if not event or not heading:
+            return super().resolve_agent_event(output)
+        level = top.get("level") or event.get("level") or "event"
+        project = top.get("project_name") or top.get("project_slug") or event.get("project")
+        values = (event.get("exception") or {}).get("values") if isinstance(event.get("exception"), dict) else None
+        last = values[-1] if isinstance(values, list) and values and isinstance(values[-1], dict) else {}
+        meta = event.get("metadata") if isinstance(event.get("metadata"), dict) else {}
+        exc_type, exc_value = last.get("type") or meta.get("type"), last.get("value") or meta.get("value")
+        user = event.get("user") if isinstance(event.get("user"), dict) else {}
+        issue_id = event.get("issue_id") or top.get("issue_id")
+        lines = [f"Sentry {level} in {project}: {heading}" if project else f"Sentry {level}: {heading}"]
+        lines += bullet_lines([
+            ("culprit", top.get("culprit") or event.get("culprit")), ("environment", event.get("environment")), ("release", event.get("release")),
+            ("exception", f"{exc_type}: {exc_value}" if exc_type and exc_value else exc_type or exc_value),
+            ("user", user.get("email") or user.get("id")), ("rule", inner.get("triggered_rule")), ("issue", issue_id),
+            ("url", top.get("web_url") or event.get("web_url") or event.get("issue_url") or top.get("url")),
+        ])
+        if issue_id:
+            lines.append(f"To resolve/ignore/assign: update_issue issue_id={issue_id}.")
+        return {"text": "\n".join(lines), "conversation_key": str(issue_id) if issue_id else None, "title": str(heading)}
 
     # ---- Execute ----
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:

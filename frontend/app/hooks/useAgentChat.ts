@@ -125,6 +125,22 @@ export interface AgentChatMessage {
      *  only). When set, the message renders as an approve/dismiss card instead
      *  of a text bubble; `text` is empty. Not persisted — live-session only. */
     builderPrompt?: BuilderPromptProposal;
+    /** The trigger that started this turn (a user turn the fired event took,
+     *  not something typed): the transcript frames its output natively and
+     *  keeps `text` — the agent's concise view of the event — as the fallback. */
+    trigger?: ChatTriggerEvent;
+}
+
+/** A trigger-started user turn's provenance, persisted by
+ *  agent_node._persist_interface_chat_event as `trigger`. `output` is the
+ *  fired node's output, bounded server-side, in the provider's own keys —
+ *  what runStory's deriveLead reads. */
+export interface ChatTriggerEvent {
+    nodeId: string;
+    nodeType: string;
+    label?: string;
+    operation?: string;
+    output?: unknown;
 }
 
 /** Payload of ChatMessageEvent.builder_prompt — the agent's proposed builder
@@ -216,6 +232,27 @@ interface PersistedEvent {
     /** prompt_builder approval card persisted mid-turn (platform_tools) —
      *  restored as a card message so reconcile adoption / reload keep it. */
     builder_prompt?: BuilderPromptProposal | null;
+    /** Trigger-started user turn: the fired node + its bounded output
+     *  (see ChatTriggerEvent). */
+    trigger?: {
+        node_id?: string;
+        node_type?: string;
+        label?: string;
+        operation?: string;
+        output?: unknown;
+    } | null;
+}
+
+function triggerFromEvent(ev: PersistedEvent): ChatTriggerEvent | undefined {
+    const t = ev.trigger;
+    if (!t?.node_type) return undefined;
+    return {
+        nodeId: t.node_id ?? '',
+        nodeType: t.node_type,
+        label: t.label,
+        operation: t.operation,
+        output: t.output,
+    };
 }
 
 /** Rebuild a restored bubble's step rows from its persisted tool timeline.
@@ -555,6 +592,7 @@ export function persistedEventsToChatMessages(
             const fileAttachments = isUser
                 ? fileAttachmentsFromEvent(ev)
                 : undefined;
+            const trigger = isUser ? triggerFromEvent(ev) : undefined;
             // A model change starts a fresh conversation and folds the old
             // thread into the first message so the new model has context. Put
             // it back where it belongs: real bubbles above, and the user's own
@@ -571,7 +609,7 @@ export function persistedEventsToChatMessages(
                     carriedOver: true,
                 });
             }
-            if (!text && !content && !fileAttachments) continue;
+            if (!text && !content && !fileAttachments && !trigger) continue;
             if (isUser) flushCards(); // cards belong to the PREVIOUS turn
             out.push({
                 isUser,
@@ -579,6 +617,7 @@ export function persistedEventsToChatMessages(
                 isComplete: true,
                 content,
                 attachments: fileAttachments,
+                trigger,
                 steps: isUser
                     ? undefined
                     : stepsFromPersistedToolCalls(ev.tool_calls),

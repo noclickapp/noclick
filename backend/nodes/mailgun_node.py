@@ -30,10 +30,13 @@ import hmac
 import json
 import logging
 import time
+from email.utils import parseaddr
 from typing import Dict, Any, Optional, List, Literal, Tuple, Union, Annotated
+from urllib.parse import parse_qsl
 from pydantic import BaseModel, Field, ConfigDict, Discriminator, field_validator
 import httpx
 
+from nodes.core.agent_events import bullet_lines, prune_empty
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
@@ -1135,6 +1138,45 @@ class MailgunNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "Get delivery metrics for the last 7 days",
         "Trigger a workflow whenever an email is delivered or bounces",
     ]
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Mailgun delivery → the agent's user turn. An event webhook carries
+        ``event-data`` (what happened to which message, with the delivery
+        status); an inbound route forward is the urlencoded form Mailgun
+        POSTs, kept under ``raw`` because it is not JSON, and reads as the
+        email it is — sender, subject, body — threaded per sender so a reply
+        continues the conversation. The ``signature`` block never rides."""
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        payload = data if isinstance(data, dict) and "status" in output else output
+        raw = payload.get("raw")
+        if isinstance(raw, (str, bytes)):
+            form = dict(parse_qsl(raw.decode("utf-8", "replace") if isinstance(raw, bytes) else raw, keep_blank_values=True))
+            sender = parseaddr(form.get("sender") or form.get("from") or "")[1]
+            if not sender:
+                return super().resolve_agent_event(output)
+            subject = form.get("subject") or "(no subject)"
+            lines = [
+                f"Email received at {form.get('recipient')}", f"From: {form.get('from') or sender}", f"Subject: {subject}", "",
+                prune_empty(form.get("stripped-text") or form.get("body-plain") or "(empty body)", max_str=1500), "",
+                f"To reply, use send_message with to={sender} and subject=Re: {subject}.",
+            ]
+            return {"text": "\n".join(lines), "conversation_key": sender.lower(), "title": f"{form.get('from') or sender}: {subject}"}
+        ev = payload.get("event-data") if isinstance(payload.get("event-data"), dict) else {}
+        if not ev.get("event"):
+            return super().resolve_agent_event(output)
+        message = ev.get("message") if isinstance(ev.get("message"), dict) else {}
+        headers = message.get("headers") if isinstance(message.get("headers"), dict) else {}
+        status = ev.get("delivery-status") if isinstance(ev.get("delivery-status"), dict) else {}
+        verdict = " ".join(str(p) for p in (status.get("code"), status.get("message") or status.get("description")) if p)
+        lines = [f"Mailgun {ev['event']}: to {ev.get('recipient')}" + (f" — {headers['subject']}" if headers.get("subject") else "") + (f" ({verdict})" if verdict else "")]
+        lines += bullet_lines([
+            ("from", headers.get("from")), ("reason", ev.get("reason")), ("severity", ev.get("severity")),
+            ("description", status.get("description") if status.get("message") else None), ("link", ev.get("url")), ("message id", headers.get("message-id")),
+        ])
+        return {"text": "\n".join(lines), "conversation_key": None, "title": f"{ev['event']} → {ev.get('recipient')}"}
 
     @classmethod
     def get_config_model(cls):

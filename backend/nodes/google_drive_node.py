@@ -27,6 +27,7 @@ from pydantic import BaseModel, ConfigDict, Field, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.agent_events import prune_empty
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.watch_channels import (
     WatchChannelTriggerMixin,
@@ -2496,6 +2497,47 @@ class GoogleDriveNode(WatchChannelTriggerMixin, WorkflowNode):
         field="file_id",
         noun="files",
     )
+
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Drive changes → one line each (ten at most): the kind of item, what
+        happened to it, its name, id, type and modified time. A removed item
+        arrives without metadata and is named by id only. The dedup and
+        not-yet-active envelopes carry no changes and deliver nothing."""
+        changes = output.get("changes") if isinstance(output, dict) else None
+        if not isinstance(changes, list):
+            return super().resolve_agent_event(output)
+        changes = [c for c in changes if isinstance(c, dict)]
+        if not changes:
+            return None
+        lines = ["Google Drive: item changed" if len(changes) == 1 else f"Google Drive: {len(changes)} changes"]
+        titles = []
+        for c in changes[:10]:
+            f = c.get("file") if isinstance(c.get("file"), dict) else {}
+            kind = "Folder" if f.get("mimeType") == _FOLDER_MIME else "File"
+            what = "removed" if c.get("removed") else "trashed" if f.get("trashed") else "changed"
+            if not f:
+                titles.append("Drive item removed")
+                lines.append(f"- Item {what}: id {c.get('fileId')} (no metadata — it no longer exists)")
+                continue
+            titles.append(f"{kind} {what}: {f.get('name') or '(unnamed)'}")
+            details = ", ".join(
+                x for x in (
+                    f"id {f.get('id') or c.get('fileId')}",
+                    f.get("mimeType"),
+                    f"modified {f['modifiedTime']}" if f.get("modifiedTime") else None,
+                ) if x
+            )
+            lines.append(f"- {kind} {what}: {f.get('name') or '(unnamed)'} ({details})")
+        if len(changes) > 10:
+            lines.append(f"…and {len(changes) - 10} more changes")
+        hint = "To inspect or fetch an item, call get_file_metadata / download_file with its file_id from above."
+        return {
+            "text": prune_empty("\n".join(lines), max_str=3400) + f"\n\n{hint}",
+            "conversation_key": None,
+            "title": titles[0] if len(changes) == 1 else f"{len(changes)} Drive changes",
+        }
 
     @classmethod
     def get_config_model(cls) -> Optional[Union[Type, type]]:

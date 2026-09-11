@@ -2357,6 +2357,17 @@ async def _monday_graphql(
 # ============================================================================
 
 
+def _monday_value(value: Any) -> str:
+    """A column value as a person reads it — a status by its label text, a
+    person/name/text object by that, anything else as bounded text."""
+    if value is None:
+        return "—"
+    if isinstance(value, dict):
+        label = value.get("label") if isinstance(value.get("label"), dict) else {}
+        return str(label.get("text") or value.get("text") or value.get("name") or value.get("value") or value)[:120]
+    return str(value)[:120]
+
+
 class MondayNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """monday.com work-management automation node."""
 
@@ -2377,6 +2388,35 @@ class MondayNode(ExternalWebhookTriggerMixin, WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return MondayNodeConfig
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """monday.com webhook → the item and column the event touched, as a
+        person reads it (item name, ``column: before → after``, an update's
+        text), never the raw label/index objects. Everything sits under the
+        ``event`` wrapper; a board fires every event, so no conversation
+        key."""
+        from nodes.core.agent_events import bullet_lines, prune_empty
+
+        event = output.get("event") if isinstance(output, dict) else None
+        if not isinstance(event, dict) or not isinstance(event.get("type"), str):
+            return super().resolve_agent_event(output)
+        kind = event["type"].replace("_", " ")
+        item_id, item, column = event.get("pulseId"), event.get("pulseName"), event.get("columnTitle")
+        body = bullet_lines([
+            ("item", f"{item} (id {item_id})" if item and item_id else (item or (f"id {item_id}" if item_id else None))),
+            ("group", event.get("groupName")),
+            (column or "value", f"{_monday_value(event.get('previousValue'))} → {_monday_value(event.get('value'))}" if column else None),
+            ("update", prune_empty(str(event.get("textBody") or ""), max_str=1500)),
+            ("by user", event.get("userId")),
+            ("when", event.get("triggerTime")),
+        ])
+        if item_id:
+            act = f"To act on the item, use get_items with item_ids={item_id} to read it or create_update with item_id={item_id} to comment."
+        else:
+            act = f"To read the board, use get_board with board_id={event.get('boardId')}."
+        title = f"{item}: {column} changed" if item and column else (f"{kind.capitalize()}: {item}" if item else kind.capitalize())
+        return {"text": "\n".join([f"monday.com {kind} on board {event.get('boardId')}:", *body, "", act]), "conversation_key": None, "title": title}
 
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
