@@ -12,6 +12,7 @@ from typing import Union, get_args, get_origin
 
 from nodes.core.registry import NODE_REGISTRY
 from ..operation_catalog import get_native_agent_tools_for_node_type
+from ..structural_tools import STRUCTURAL_AGENT_TOOL_PROVIDERS, STRUCTURAL_AGENT_TOOL_TYPES
 
 
 def _has_trigger_operation(node_type: str) -> bool:
@@ -70,9 +71,8 @@ def _get_available_node_types() -> str:
     # the brain conclude that the native Alarm node did not exist even though
     # it is registered and supported by the graph-command layer.
     processing_types = {
-        'agent', 'tool', 'alarm', 'filesystem', 'iteration',
-        'automation-serverless-function', 'mcp-server',
-    }
+        'agent', 'iteration', 'automation-serverless-function',
+    } | STRUCTURAL_AGENT_TOOL_TYPES
 
     for node_type in NODE_REGISTRY.keys():
         if node_type.startswith('test-'):
@@ -88,14 +88,17 @@ def _get_available_node_types() -> str:
             if _has_trigger_operation(node_type):
                 trigger_capable.append(node_type)
 
-    native_tool_providers = []
-    for node_type in ("alarm", "filesystem"):
-        tools = get_native_agent_tools_for_node_type(node_type)
+    structural_tool_providers = []
+    for provider in STRUCTURAL_AGENT_TOOL_PROVIDERS:
+        tools = get_native_agent_tools_for_node_type(provider.node_type)
         if tools:
-            native_tool_providers.append(
-                f"{node_type}: {', '.join(tool.name for tool in tools)} "
-                "(automatically exposed when wired to an agent; not config operations)"
-            )
+            surface = ', '.join(tool.name for tool in tools)
+        else:
+            surface = 'runtime-discovered/custom tools'
+        structural_tool_providers.append(
+            f"{provider.node_type}: {surface} "
+            "(automatically exposed when wired to an agent; not config operations)"
+        )
 
     lines = [
         f"TRIGGERS: {', '.join(sorted(triggers))}",
@@ -104,8 +107,8 @@ def _get_available_node_types() -> str:
         f"PROCESSING: {', '.join(sorted(processing))}",
         f"INTERFACE: {', '.join(sorted(interface))}",
     ]
-    if native_tool_providers:
-        lines.append("NATIVE AGENT TOOL PROVIDERS: " + "; ".join(native_tool_providers))
+    if structural_tool_providers:
+        lines.append("STRUCTURAL AGENT TOOL PROVIDERS: " + "; ".join(structural_tool_providers))
     return "\n".join(lines)
 
 

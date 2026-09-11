@@ -439,7 +439,7 @@ export function AgentWiringPalette({
                                 </section>
                             )}
                             {/* Operation allowlist is for the ~58 integration-op providers only —
-                                the structural types (tool / mcp-server / alarm / filesystem) emit
+                                the structural types (tool / mcp-server / noclick / alarm / filesystem) emit
                                 their tool surfaces from their own NodeConfig above. */}
                             {configNode.role === 'tool' && !STRUCTURAL_AGENT_TOOL_TYPES.has(configNode.nodeType) && (
                                 <AgentToolOperationsPicker

@@ -52,7 +52,10 @@ PROVIDER_TARGET_HANDLE = "bottom"
 # Structural tool nodes whose ONLY meaningful agent connection is provider
 # wiring — an edge from one of these into an agent is normalized to
 # top→bottom even without an explicit type="tools".
-STRUCTURAL_TOOL_TYPES = frozenset({"tool", "mcp-server", "alarm", "filesystem"})
+# Kept with the builder's structural-tool catalog so newly added native or
+# runtime-discovered providers cannot be visible to one layer but rejected by
+# another.
+from .structural_tools import STRUCTURAL_AGENT_TOOL_TYPES as STRUCTURAL_TOOL_TYPES
 
 
 def resolve_tools_edge(
