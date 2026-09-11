@@ -63,8 +63,15 @@ def _get_available_node_types() -> str:
     interface = []
     trigger_capable = []  # automation-* nodes with at least one `x-is-trigger` operation
 
-    # Node types that are processing/control flow, not integrations
-    processing_types = {'agent', 'tool', 'iteration', 'automation-serverless-function', 'mcp-server'}
+    # Structural agent-tool providers are not integrations, but the builder
+    # must still see them.  In particular, ``alarm`` is wired into an agent's
+    # bottom handle to let it schedule future wake-ups; omitting it here made
+    # the brain conclude that the native Alarm node did not exist even though
+    # it is registered and supported by the graph-command layer.
+    processing_types = {
+        'agent', 'tool', 'alarm', 'filesystem', 'iteration',
+        'automation-serverless-function', 'mcp-server',
+    }
 
     for node_type in NODE_REGISTRY.keys():
         if node_type.startswith('test-'):
