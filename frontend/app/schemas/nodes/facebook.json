@@ -1738,6 +1738,11 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
+          "ui:loadValueDependencies": [
+            "callback_mode",
+            "page_id",
+            "disabled"
+          ],
           "ui:readonly": true,
           "ui:show-if": {
             "contains": "managed",
@@ -1862,6 +1867,11 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
+          "ui:loadValueDependencies": [
+            "callback_mode",
+            "page_id",
+            "disabled"
+          ],
           "ui:readonly": true,
           "ui:show-if": {
             "contains": "managed",
@@ -1986,6 +1996,11 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
+          "ui:loadValueDependencies": [
+            "callback_mode",
+            "page_id",
+            "disabled"
+          ],
           "ui:readonly": true,
           "ui:show-if": {
             "contains": "managed",
@@ -2110,6 +2125,11 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
+          "ui:loadValueDependencies": [
+            "callback_mode",
+            "page_id",
+            "disabled"
+          ],
           "ui:readonly": true,
           "ui:show-if": {
             "contains": "managed",
@@ -2234,6 +2254,11 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
+          "ui:loadValueDependencies": [
+            "callback_mode",
+            "page_id",
+            "disabled"
+          ],
           "ui:readonly": true,
           "ui:show-if": {
             "contains": "managed",
@@ -2358,6 +2383,11 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
+          "ui:loadValueDependencies": [
+            "callback_mode",
+            "page_id",
+            "disabled"
+          ],
           "ui:readonly": true,
           "ui:show-if": {
             "contains": "managed",
@@ -2482,6 +2512,11 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
+          "ui:loadValueDependencies": [
+            "callback_mode",
+            "page_id",
+            "disabled"
+          ],
           "ui:readonly": true,
           "ui:show-if": {
             "contains": "managed",
@@ -2606,6 +2641,11 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
+          "ui:loadValueDependencies": [
+            "callback_mode",
+            "page_id",
+            "disabled"
+          ],
           "ui:readonly": true,
           "ui:show-if": {
             "contains": "managed",
@@ -2730,6 +2770,11 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
+          "ui:loadValueDependencies": [
+            "callback_mode",
+            "page_id",
+            "disabled"
+          ],
           "ui:readonly": true,
           "ui:show-if": {
             "contains": "managed",
@@ -2854,6 +2899,11 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
+          "ui:loadValueDependencies": [
+            "callback_mode",
+            "page_id",
+            "disabled"
+          ],
           "ui:readonly": true,
           "ui:show-if": {
             "contains": "managed",
@@ -2978,6 +3028,11 @@
           "default": null,
           "title": "Status",
           "ui:loadValue": true,
+          "ui:loadValueDependencies": [
+            "callback_mode",
+            "page_id",
+            "disabled"
+          ],
           "ui:readonly": true,
           "ui:show-if": {
             "contains": "managed",

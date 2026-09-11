@@ -337,9 +337,11 @@ class TestProviderAdapters:
     def test_provider_registry(self):
         from utils.app_webhooks import APP_PROVIDERS
 
-        assert set(APP_PROVIDERS) == {"slack", "hubspot", "discord", "instagram"}
+        assert set(APP_PROVIDERS) == {"slack", "hubspot", "discord", "instagram", "facebook"}
         for adapter in APP_PROVIDERS.values():
             assert {"verify", "handshake", "parse"} <= set(adapter)
+        assert {"event_guard", "subscription_guard", "live_scope_filter"} <= set(APP_PROVIDERS["facebook"])
+        assert APP_PROVIDERS["facebook"]["max_body_bytes"] == 2 * 1024 * 1024
 
 
 class TestAppWebhookPayloadHandler:

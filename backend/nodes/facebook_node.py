@@ -1192,6 +1192,7 @@ class _FbWebhookTrigger(BaseModel):
         "x-dynamic-options": {"field_name": "page_id", "searchable": True, "allow_custom": True}})
     subscription_status: Optional[str] = Field(None, title="Status", json_schema_extra={
         "ui:loadValue": True, "ui:readonly": True,
+        "ui:loadValueDependencies": ["callback_mode", "page_id", "disabled"],
         "ui:show-if": {"field": "callback_mode", "contains": "managed"}})
     webhook_url: Optional[str] = Field(None, title="Callback URL",
                                        description="Paste this into your Meta app's webhook config.",

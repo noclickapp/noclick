@@ -486,7 +486,7 @@ async def test_conflicting_panel_credential_selectors_fail_before_provider_calls
 
 
 @pytest.mark.parametrize("change", ["manual", "disabled", "operation", "deleted"])
-async def test_reconciliation_removes_obsolete_managed_rows_without_unsubscribing_shared_page(facebook_world, change):
+async def test_reconciliation_removes_obsolete_managed_rows_without_unsubscribing_shared_page(facebook_world, change, monkeypatch):
     s = facebook_world
     await s.provision()
     before = len(s.requests)
@@ -495,6 +495,10 @@ async def test_reconciliation_removes_obsolete_managed_rows_without_unsubscribin
     if change == "operation": s.config["operation"] = "get_me"
     if change == "deleted":
         # The full deletion reconciler also checks legacy webhooks/cron rows.
+        # Model that independent transport explicitly, including OSS where
+        # the scheduler is configured; it must never hit the Graph fixture.
+        prune_schedules = AsyncMock(return_value={"deleted": 0})
+        monkeypatch.setattr("utils.cron_scheduler_client.delete_schedules_for_nodes", prune_schedules)
         s.nodes = []
         conn = AsyncMock()
         conn.fetchrow.return_value = None
@@ -502,6 +506,8 @@ async def test_reconciliation_removes_obsolete_managed_rows_without_unsubscribin
     assert (await s.reconcile())["state"] == "deregistered"
     assert not s.rows and len(s.requests) == before
     assert s.fields == {"leadgen", "feed"}
+    if change == "deleted":
+        prune_schedules.assert_awaited_once_with(s.workflow, [s.node_id])
 
 
 async def test_unverified_owner_credential_never_saves_registration(facebook_world):
