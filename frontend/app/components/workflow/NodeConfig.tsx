@@ -295,6 +295,8 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
     // re-fire at React render cadence, which thrashes server-side
     // subscription writes for app-fanout triggers like Slack/HubSpot.
     const lastFetchKeyRef = useRef<Record<string, string>>({});
+    const desiredFetchKeyRef = useRef<Record<string, string>>({});
+    useEffect(() => () => { desiredFetchKeyRef.current = {}; }, []);
     const [frontendValidation, setFrontendValidation] = useState<ValidationResult>({ valid: true, errors: [] });
     // Track collapsed state for collapsible sections (function_inputs, python_editor, nested objects)
     const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
@@ -656,7 +658,10 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
     // This is operation-aware: only loads values for fields in the currently selected operation schema
     // This allows nodes like Telegram to have webhook URLs only for specific operations (e.g., "receive_message")
     useEffect(() => {
-        if (!resolvedSchema || !workflowId || !nodeId) return;
+        if (!resolvedSchema || !workflowId || !nodeId) {
+            desiredFetchKeyRef.current = {};
+            return;
+        }
 
         // Find all fields with ui:loadValue in the CURRENT active schema
         // This respects anyOf/oneOf discriminators - different operations can have different fields
@@ -671,9 +676,15 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
         // against a default schema.
         let effectiveOptionIndex = selectedOptionIndex;
         if (hasDiscriminator) {
-            if (!operationProp) return;
+            if (!operationProp) {
+                desiredFetchKeyRef.current = {};
+                return;
+            }
             const committedIdx = discriminator.valueToOptionIndex.get(operationProp);
-            if (committedIdx === undefined) return;
+            if (committedIdx === undefined) {
+                desiredFetchKeyRef.current = {};
+                return;
+            }
             effectiveOptionIndex = committedIdx;
         }
 
@@ -691,11 +702,19 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
         const properties = activeSchema?.properties || {};
 
         for (const [fieldName, fieldProp] of Object.entries(properties) as [string, any][]) {
-            if (fieldProp['ui:loadValue'] === true) {
+            if (fieldProp['ui:loadValue'] === true &&
+                (!fieldProp['ui:show-if'] || evaluateShowIf(fieldProp['ui:show-if'], localConfig))) {
                 loadValueFields.push(fieldName);
             }
         }
 
+        // Hidden/removed fields cannot apply an old registration response.
+        for (const fieldName of Object.keys(desiredFetchKeyRef.current)) {
+            if (!loadValueFields.includes(fieldName)) {
+                delete desiredFetchKeyRef.current[fieldName];
+                delete lastFetchKeyRef.current[fieldName];
+            }
+        }
         if (loadValueFields.length === 0) return;
 
         // Required-field completeness of the active operation ('operation' is
@@ -718,8 +737,6 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
 
         // Load values for each field in the current operation
         loadValueFields.forEach(async (fieldName) => {
-            // Skip if already loading (use ref to avoid stale closure issues)
-            if (isLoadingValuesRef.current[fieldName]) return;
             // Re-load only when the content that the value depends on actually
             // changed — operation pick + credentialId selection. Object
             // identity of credentialIds changes per render (parent re-creates
@@ -740,13 +757,25 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
             // channel?) follows the pick; other loadValue fields keep the
             // operation+credential key so config typing never re-fires them.
             const cfg = localConfig as Record<string, any>;
-            const fetchKey = fieldName === 'webhook_url'
+            const baseFetchKey = fieldName === 'webhook_url'
                 ? `${operationProp ?? ''}::${credKey}::req=${requiredOk}`
                 : fieldName === 'subscription_status'
                     ? `${operationProp ?? ''}::${credKey}::scope=${cfg.channel ?? cfg.channel_id ?? ''}`
                     : `${operationProp ?? ''}::${credKey}`;
+            const dependencies: string[] = properties[fieldName]['ui:loadValueDependencies'] ?? [];
+            const fetchKey = JSON.stringify([workflowId, nodeId, nodeType, baseFetchKey,
+                dependencies.map(key => cfg[key] ?? null)]);
+            desiredFetchKeyRef.current[fieldName] = fetchKey;
+            const isCurrent = () => desiredFetchKeyRef.current[fieldName] === fetchKey;
+            // Finish an in-flight call before requesting the latest selection;
+            // its response is discarded if Page/mode/credential/node changed.
+            if (isLoadingValuesRef.current[fieldName]) return;
             if (lastFetchKeyRef.current[fieldName] === fetchKey) return;
             lastFetchKeyRef.current[fieldName] = fetchKey;
+
+            if (dependencies.length && localConfig[fieldName] != null) {
+                setLocalConfig(prev => ({ ...prev, [fieldName]: null }));
+            }
 
             // Update both ref and state
             isLoadingValuesRef.current[fieldName] = true;
@@ -767,25 +796,27 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
                     credential_ids: credentialIds,
                 }) as { success: boolean; value?: any; values?: Record<string, any>; message?: string };
 
-                if (response?.success) {
+                if (response?.success && isCurrent()) {
                     if (response.values) {
                         // Multiple values returned - update all of them in config
                         // Use functional update to avoid race conditions
                         setLocalConfig(prev => {
+                            if (!isCurrent()) return prev;
                             const newConfig = { ...prev, ...response.values };
-                            setTimeout(() => onChange(newConfig, capturedNodeId), 0);
+                            setTimeout(() => { if (isCurrent()) onChange(newConfig, capturedNodeId); }, 0);
                             return newConfig;
                         });
                     } else if (response.value !== undefined) {
                         // Single value returned
                         // Use functional update to avoid race conditions
                         setLocalConfig(prev => {
+                            if (!isCurrent()) return prev;
                             const newConfig = { ...prev, [fieldName]: response.value };
-                            setTimeout(() => onChange(newConfig, capturedNodeId), 0);
+                            setTimeout(() => { if (isCurrent()) onChange(newConfig, capturedNodeId); }, 0);
                             return newConfig;
                         });
                     }
-                } else {
+                } else if (isCurrent()) {
                     console.warn(`Failed to load value for ${fieldName}:`, response?.message);
                 }
             } catch (error) {
@@ -796,7 +827,7 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
             }
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [resolvedSchema, workflowId, nodeId, nodeType, selectedOptionIndex, hasOneOf, hasDiscriminator, operationProp, discriminator.valueToOptionIndex, credentialIds, localConfig]); // Re-run when operation, credentials, or config (required-completeness) change
+    }, [resolvedSchema, workflowId, nodeId, nodeType, selectedOptionIndex, hasOneOf, hasDiscriminator, operationProp, discriminator.valueToOptionIndex, credentialIds, localConfig, isLoadingValues]); // Completion rechecks a selection changed during an in-flight load.
 
     // Track previous schedule for comparison (nodes with schedule + webhook)
     const prevScheduleRef = useRef<string | null>(null);

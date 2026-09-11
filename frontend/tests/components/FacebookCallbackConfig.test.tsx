@@ -1,4 +1,6 @@
 // @vitest-environment jsdom
+// Exercise the generated Facebook schema through the real configuration editor.
+// These cases guard Page/mode changes and stale registration responses in both editions.
 import React from 'react';
 import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
