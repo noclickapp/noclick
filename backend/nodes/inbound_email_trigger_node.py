@@ -128,7 +128,11 @@ class InboundEmailTriggerNode(WorkflowNode):
                     lines += [f"  Content of {a.get('name')}:", "  ---", a["text"], "  ---"]
                 elif a.get("note"):
                     lines.append(f"  ({a['note']})")
-        return {"text": "\n".join(lines), "conversation_key": str(sender).lower()}
+        return {
+            "text": "\n".join(lines),
+            "conversation_key": str(sender).lower(),
+            "title": output.get("subject") or "(no subject)",
+        }
 
     @classmethod
     async def cleanup_external_webhook(

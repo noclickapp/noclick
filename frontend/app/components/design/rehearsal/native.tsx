@@ -39,7 +39,9 @@ function Glyph({ mark, className }: { mark?: Mark; className?: string }) {
     the agent" beat that explains why the run started. Themed frames pass the
     app's own mention accent; the neutral frame keeps the sky default. */
 function withMention(text: string, accent?: string) {
-    const m = text.match(/@[\w-]+/);
+    // A mention starts a word — the `@example` inside casey@example.com is
+    // an address, not a mention.
+    const m = text.match(/(?<![\w.])@[\w-]+/);
     if (!m || m.index === undefined) return text;
     return (
         <>
@@ -351,7 +353,7 @@ function ThemedRowIn({
                     className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-[12.5px] font-semibold"
                     style={{ background: `${theme.accent}26`, color: theme.accent }}
                 >
-                    {(lead.author ?? '?').charAt(0).toUpperCase()}
+                    {(lead.author ?? lead.handle?.replace(/^@/, '') ?? '?').charAt(0).toUpperCase()}
                 </span>
                 <div className="min-w-0 flex-1">
                     {edit ? (
@@ -364,8 +366,9 @@ function ThemedRowIn({
                         />
                     ) : (
                         <p className="m-0 flex items-baseline gap-2">
+                            {/* A Slack event names people by id — the row still needs a name. */}
                             <span className="text-[13px] font-semibold" style={{ color: theme.author }}>
-                                {lead.author}
+                                {lead.author ?? lead.handle}
                             </span>
                             {lead.time && (
                                 <span className="font-mono text-[11px]" style={{ color: theme.sub }}>
@@ -386,7 +389,7 @@ function ThemedRowIn({
                     ) : (
                         <>
                             {lead.body && (
-                                <p className="mb-0 mt-0.5 text-[13px] leading-relaxed">
+                                <p className="mb-0 mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed">
                                     {withMention(lead.body, theme.accent)}
                                 </p>
                             )}

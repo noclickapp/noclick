@@ -551,6 +551,9 @@ const WHATSAPP_OPS: Record<string, OpRender> = {
 };
 
 export const APP_OP_RENDERS: Record<string, Record<string, OpRender>> = {
+    // A poll for new mail is the inbox, not an action on it — no byline, or the
+    // generic lexicon reads "new_" as "created by".
+    gmail: { poll_for_new_emails: { icon: 'mail' } },
     github: GITHUB_OPS,
     gitlab: GITLAB_OPS,
     linear: LINEAR_OPS,

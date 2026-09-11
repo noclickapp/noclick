@@ -619,6 +619,69 @@ describe('deriveLead · gmail', () => {
     });
 });
 
+describe('deriveLead · record-shaped triggers', () => {
+    it('frames a GitHub issue from the webhook, never the repository/sender objects', () => {
+        const l = deriveLead('github_rest', {
+            action: 'opened',
+            issue: { number: 42, title: 'Login fails with SSO', body: 'Since 2.3.0, SSO users see a blank page.', html_url: 'https://github.com/acme-example/api/issues/42', user: { login: 'octo-example' }, created_at: '2026-09-12T10:00:00Z' },
+            repository: { full_name: 'acme-example/api', private: true },
+            sender: { login: 'octo-example' },
+            _webhook: { headers: { 'x-hub-signature-256': 'x' } },
+        })!;
+        expect(l.title).toBe('#42 Login fails with SSO');
+        expect(l.meta).toBe('acme-example/api');
+        expect(l.author).toBe('octo-example');
+        expect(l.body).toBe('Since 2.3.0, SSO users see a blank page.');
+    });
+
+    it('frames a GitHub push as its commit list', () => {
+        const l = deriveLead('github_rest', {
+            ref: 'refs/heads/main',
+            commits: [{ id: 'abcdef1234567', message: 'fix: auth callback\n\nlonger body', author: { name: 'Casey' } }],
+            pusher: { name: 'casey-example' },
+            repository: { full_name: 'acme-example/api' },
+            sender: { login: 'casey-example' },
+        })!;
+        expect(l.title).toBe('Push to main (1 commit)');
+        expect(l.body).toBe('abcdef1 fix: auth callback');
+    });
+
+    it('frames a Linear issue and a Linear comment', () => {
+        const issue = deriveLead('linear', { type: 'Issue', action: 'create', createdAt: '2026-09-12T10:20:00.000Z', actor: { name: 'Casey Example' }, data: { identifier: 'ACME-118', title: 'Export runs as CSV', description: 'Customers keep asking.', state: { name: 'Todo' }, team: { key: 'ACME' } } })!;
+        expect(issue.title).toBe('ACME-118 Export runs as CSV');
+        expect(issue.meta).toBe('ACME · Todo');
+        expect(issue.author).toBe('Casey Example');
+        const comment = deriveLead('linear', { type: 'Comment', action: 'create', data: { body: 'On it.', issue: { identifier: 'ACME-118', title: 'Export runs as CSV' }, user: { name: 'Alex' } } })!;
+        expect(comment.title).toBe('ACME-118 Export runs as CSV');
+        expect(comment.body).toBe('On it.');
+    });
+
+    it('frames a Jira issue, a Notion page batch, a PagerDuty incident and a Typeform response', () => {
+        const jira = deriveLead('jira', { webhookEvent: 'jira:issue_created', user: { displayName: 'Casey Example' }, issue: { key: 'ACME-7', fields: { summary: 'Broken login', description: 'Blank page', project: { key: 'ACME' }, status: { name: 'To Do' } } } })!;
+        expect(jira.title).toBe('ACME-7 Broken login');
+        expect(jira.meta).toBe('ACME · To Do');
+        const notion = deriveLead('notion', { items: [{ object: 'page', id: 'p1', url: 'https://www.notion.so/p1', properties: { Name: { type: 'title', title: [{ plain_text: 'Q4 launch plan' }] } } }, { id: 'p2' }], new_item_count: 2 })!;
+        expect(notion.title).toBe('Q4 launch plan');
+        expect(notion.meta).toBe('1 of 2');
+        const pd = deriveLead('pagerduty', { event: { event_type: 'incident.triggered', occurred_at: '2026-09-12T10:30:00Z', agent: { summary: 'Datadog' }, data: { number: 77, title: 'API p95 latency > 2s', status: 'triggered', urgency: 'high', service: { summary: 'api' } } } })!;
+        expect(pd.title).toBe('#77 API p95 latency > 2s');
+        expect(pd.body).toContain('triggered, high urgency');
+        const tf = deriveLead('typeform', { event_type: 'form_response', form_response: { submitted_at: '2026-09-12T10:02:00Z', definition: { title: 'Demo request', fields: [{ id: 'f1', title: 'Your name' }, { id: 'f2', title: 'Work email' }, { id: 'f3', title: 'Plan' }] }, answers: [{ field: { id: 'f1' }, type: 'text', text: 'Casey Example' }, { field: { id: 'f2' }, type: 'email', email: 'casey@example.com' }, { field: { id: 'f3' }, type: 'choice', choice: { label: 'Team' } }] } })!;
+        expect(tf.title).toBe('Demo request');
+        expect(tf.body).toBe('Your name: Casey Example\nWork email: casey@example.com\nPlan: Team');
+        expect(tf.author).toBe('Casey Example');
+        expect(tf.handle).toBe('casey@example.com');
+    });
+
+    it('frames a Stripe event from its nested data.object, including a plain paid invoice', () => {
+        const l = deriveLead('stripe', { id: 'evt_1', type: 'invoice.paid', created: 1789143280, data: { object: { object: 'invoice', number: 'ACME-0042', customer_email: 'casey@example.com', customer_name: 'Casey Example', amount_paid: 4200, currency: 'usd', status: 'paid', lines: { data: [{ description: 'Team plan × 20 seats' }] } } } })!;
+        expect(l.title).toBe('$42.00');
+        expect(l.meta).toBe('ACME-0042');
+        expect(l.body).toBe('Team plan × 20 seats');
+        expect(l.handle).toBe('casey@example.com');
+    });
+});
+
 describe('deriveLead · slack', () => {
     const output = (event: Record<string, unknown>, extra: Record<string, unknown> = {}) => ({
         type: 'slack',
@@ -698,7 +761,7 @@ describe('deriveLead · slack', () => {
         )!;
         expect(l.title).toBe('#crisp-chats');
         expect(l.author).toBe('Support desk');
-        expect(l.body).toBe('*Chat with a visitor.*\nLocation: :flag-ro: Bucharest, Romania\nEmail Address: casey@example.com');
+        expect(l.body).toBe('Chat with a visitor.\nLocation: :flag-ro: Bucharest, Romania\nEmail Address: casey@example.com');
         expect(l.body).not.toContain('OLD');
         expect(l.body).not.toContain('no preview');
         expect(l.meta).toBe('#crisp-chats · edited a message · in a thread');
@@ -708,5 +771,13 @@ describe('deriveLead · slack', () => {
         expect(humanizeSlackMarkup('<@U1> <#C1|general> <!here> <https://a.io> &amp; <!subteam^S1|@ops>')).toBe(
             '@U1 #general @here https://a.io & @ops'
         );
+        expect(humanizeSlackMarkup('<@U0BOT> *urgent:* the _build_ is red', 'U0BOT')).toBe('urgent: the build is red');
+    });
+
+    it("drops the receiving bot's own mention from an app_mention", () => {
+        const out = output({ type: 'app_mention', text: '<@U0BOT> can you check <https://s.example|the status page>?', user: 'U1', channel: 'C1', ts: '1.1' });
+        (out.data as Record<string, unknown>).authorizations = [{ user_id: 'U0BOT', is_bot: true }];
+        const l = deriveLead('slack', out) ?? deriveLead('slack', sanitizeEventPayload(out));
+        expect(l!.body).toBe('can you check the status page?');
     });
 });

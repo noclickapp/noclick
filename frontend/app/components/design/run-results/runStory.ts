@@ -173,7 +173,8 @@ function deriveDiscordLead(d: Dict): Lead | null {
 /** Slack's message markup → what a person reads: `<@U1|dana>` → @dana,
     `<@U1>` → @U1, `<#C1|general>` → #general, `<!here>` → @here,
     `<https://x|label>` → label, entities unescaped. */
-export function humanizeSlackMarkup(text: string): string {
+export function humanizeSlackMarkup(text: string, dropUserId?: string): string {
+    if (dropUserId) text = text.replace(new RegExp(`<@${dropUserId}(?:\\|[^>]*)?>\\s*`, 'g'), '');
     return text
         .replace(/<@([\w-]+)\|([^>]+)>/g, '@$2')
         .replace(/<@([\w-]+)>/g, '@$1')
@@ -185,7 +186,10 @@ export function humanizeSlackMarkup(text: string): string {
         .replace(/<((?:https?|mailto):[^>]+)>/g, '$1')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
-        .replace(/&amp;/g, '&');
+        .replace(/&amp;/g, '&')
+        // mrkdwn emphasis markers: *bold* / _italic_ around a phrase.
+        .replace(/(^|[\s(])\*([^*\n]+)\*(?=$|[\s.,;:!?)])/g, '$1$2')
+        .replace(/(^|[\s(])_([^_\n]+)_(?=$|[\s.,;:!?)])/g, '$1$2');
 }
 
 /** Slack message subtypes that are notices about the channel, not a
@@ -234,6 +238,9 @@ function deriveSlackLead(d: Dict): Lead | null {
             : container;
     const attachments = Array.isArray(m.attachments) ? (m.attachments as unknown[]).map(asDict) : [];
     const files = Array.isArray(m.files) ? (m.files as unknown[]).map(asDict) : [];
+    // The receiving bot's own @mention is what woke the agent, not content.
+    const botUserId = (Array.isArray(envelope.authorizations) ? (envelope.authorizations as unknown[]).map(asDict) : [])
+        .find((a) => a.is_bot === true && typeof a.user_id === 'string')?.user_id as string | undefined;
     // A card's fields ARE its content (a support hand-off is location, email,
     // links); its fallback is only worth showing when there are no fields.
     const attachmentLines = attachments.flatMap((a) => {
@@ -249,7 +256,7 @@ function deriveSlackLead(d: Dict): Lead | null {
         ...attachmentLines,
         ...files.map((f) => (str(f, 'title', 'name') ? `📎 ${str(f, 'title', 'name')}` : '')),
     ]
-        .map((line) => humanizeSlackMarkup(line).trim())
+        .map((line) => humanizeSlackMarkup(line, botUserId).trim())
         .filter(Boolean);
     const body = lines.join('\n');
     if (!body) return null;
@@ -353,6 +360,134 @@ function describeNonTextMessage(d: Dict): string | undefined {
     return undefined;
 }
 
+function epochToIso(v: unknown): string | undefined {
+    const n = typeof v === 'number' ? v : typeof v === 'string' ? Number(v) : NaN;
+    if (!Number.isFinite(n)) return undefined;
+    return new Date(n < 1e12 ? n * 1000 : n).toISOString();
+}
+
+const clip = (text: string | undefined, max = 600): string =>
+    text && text.length > max ? `${text.slice(0, max).trimEnd()}…` : (text ?? '');
+
+/** GitHub's webhook: the record the event is about (issue, PR, comment,
+    push, release), never the repository/sender objects around it. */
+function deriveGitHubLead(d: Dict): Lead | null {
+    const repo = str(asDict(d.repository), 'full_name');
+    if (!repo) return null;
+    const who = str(asDict(d.sender), 'login');
+    const base = { meta: repo, author: who, handle: who ? `@${who}` : undefined };
+    const record = asDict(d.pull_request ?? d.issue);
+    const number = record.number;
+    if (typeof number === 'number') {
+        const comment = asDict(d.comment);
+        const title = `#${number} ${str(record, 'title') ?? ''}`.trim();
+        const body = str(comment, 'body') ?? str(record, 'body') ?? '';
+        return { ...base, title, body: clip(body), time: clockOf(str(comment, 'created_at') ?? str(record, 'updated_at', 'created_at')) };
+    }
+    if (Array.isArray(d.commits)) {
+        const branch = (str(d, 'ref') ?? '').replace(/^refs\/heads\//, '');
+        const commits = (d.commits as unknown[]).map(asDict);
+        const body = commits
+            .slice(0, 6)
+            .map((c) => `${String(c.id ?? '').slice(0, 7)} ${(str(c, 'message') ?? '').split('\n')[0]}`)
+            .join('\n');
+        return { ...base, title: `Push to ${branch || 'branch'} (${commits.length} commit${commits.length === 1 ? '' : 's'})`, body, author: str(asDict(d.pusher), 'name') ?? who };
+    }
+    const release = asDict(d.release);
+    if (str(release, 'tag_name')) {
+        return { ...base, title: `${str(release, 'tag_name')}${str(release, 'name') ? ` ${str(release, 'name')}` : ''}`, body: clip(str(release, 'body')), time: clockOf(str(release, 'published_at', 'created_at')) };
+    }
+    if ('starred_at' in d) return { ...base, title: repo, body: `${who ?? 'Someone'} starred the repository.`, time: clockOf(str(d, 'starred_at')) };
+    return null;
+}
+
+/** Linear's webhook: {type, action, data} — the entity is `data`. */
+function deriveLinearLead(d: Dict): Lead | null {
+    const data = asDict(d.data);
+    const kind = str(d, 'type');
+    if (!kind || !Object.keys(data).length) return null;
+    const who = str(asDict(d.actor), 'name') ?? str(asDict(data.user), 'name');
+    if (kind === 'Comment') {
+        const issue = asDict(data.issue);
+        return { title: `${str(issue, 'identifier') ?? 'Comment'} ${str(issue, 'title') ?? ''}`.trim(), meta: str(issue, 'identifier') ?? '', body: clip(str(data, 'body')), author: who, time: clockOf(str(d, 'createdAt')) };
+    }
+    const id = str(data, 'identifier');
+    const title = `${id ? `${id} ` : ''}${str(data, 'title', 'name') ?? ''}`.trim();
+    if (!title) return null;
+    const state = str(asDict(data.state), 'name');
+    return { title, meta: [str(asDict(data.team), 'key'), state].filter(Boolean).join(' · '), body: clip(str(data, 'description')), author: who, time: clockOf(str(d, 'createdAt')) };
+}
+
+/** Jira cloud's webhook: the issue under `issue.fields`. */
+function deriveJiraLead(d: Dict): Lead | null {
+    const issue = asDict(d.issue);
+    const key = str(issue, 'key');
+    if (!key) return null;
+    const fields = asDict(issue.fields);
+    const comment = asDict(d.comment);
+    const who = str(asDict(d.user), 'displayName') ?? str(asDict(comment.author), 'displayName');
+    const description = typeof fields.description === 'string' ? fields.description : undefined;
+    return {
+        title: `${key} ${str(fields, 'summary') ?? ''}`.trim(),
+        meta: [str(asDict(fields.project), 'key'), str(asDict(fields.status), 'name')].filter(Boolean).join(' · '),
+        body: clip(str(comment, 'body') ?? description),
+        author: who,
+        time: clockOf(str(comment, 'created') ?? str(fields, 'updated', 'created')),
+    };
+}
+
+/** Notion's poll batch: the first item (page, database or comment). */
+function deriveNotionLead(d: Dict): Lead | null {
+    const item = Array.isArray(d.items) && d.items.length ? asDict(d.items[0]) : d;
+    if (!str(item, 'id')) return null;
+    const props = asDict(item.properties);
+    const titleProp = Object.values(props).map(asDict).find((p) => Array.isArray(p.title));
+    const plain = (parts: unknown) => (Array.isArray(parts) ? parts.map((t) => str(asDict(t), 'plain_text') ?? '').join('') : '');
+    const title = plain(titleProp?.title) || plain(item.title) || (item.object === 'comment' ? 'Comment' : 'Untitled');
+    const body = item.object === 'comment' ? plain(item.rich_text) : (str(item, 'url') ?? '');
+    const count = typeof d.new_item_count === 'number' ? d.new_item_count : undefined;
+    return { title, meta: count && count > 1 ? `1 of ${count}` : (str(item, 'object') ?? ''), body, time: clockOf(str(item, 'last_edited_time', 'created_time')) };
+}
+
+/** PagerDuty V3: the incident under event.data. */
+function derivePagerDutyLead(d: Dict): Lead | null {
+    const event = asDict(d.event);
+    const data = asDict(event.data);
+    const title = str(data, 'title');
+    if (!title) return null;
+    const number = data.number;
+    const body = [
+        str(data, 'status') && `${str(data, 'status')}${str(data, 'urgency') ? `, ${str(data, 'urgency')} urgency` : ''}`,
+        str(asDict(data.service), 'summary') && `service ${str(asDict(data.service), 'summary')}`,
+        str(data, 'html_url'),
+    ]
+        .filter(Boolean)
+        .join(' · ');
+    return { title: `${typeof number === 'number' ? `#${number} ` : ''}${title}`, meta: str(event, 'event_type') ?? '', body, author: str(asDict(event.agent), 'summary'), time: clockOf(str(event, 'occurred_at')) };
+}
+
+/** Typeform's webhook: answers zipped with the form definition's titles. */
+function deriveTypeformLead(d: Dict): Lead | null {
+    const fr = asDict(d.form_response);
+    const fields = new Map(
+        (Array.isArray(asDict(fr.definition).fields) ? (asDict(fr.definition).fields as unknown[]).map(asDict) : []).map((f) => [str(f, 'id'), str(f, 'title')])
+    );
+    const answers = Array.isArray(fr.answers) ? (fr.answers as unknown[]).map(asDict) : [];
+    let email: string | undefined;
+    let name: string | undefined;
+    const lines = answers.map((a) => {
+        const kind = str(a, 'type') ?? 'text';
+        const raw = a[kind];
+        const value = typeof raw === 'object' && raw ? (str(asDict(raw), 'label') ?? ((asDict(raw).labels as string[] | undefined) ?? []).join(', ')) : String(raw ?? '');
+        if (kind === 'email' && !email) email = value;
+        const q = fields.get(str(asDict(a.field), 'id')) ?? str(asDict(a.field), 'ref') ?? 'Answer';
+        if (/name/i.test(q) && !name) name = value;
+        return `${q}: ${value}`;
+    });
+    if (!lines.length) return null;
+    return { title: str(asDict(fr.definition), 'title') ?? 'Form response', meta: email ?? '', body: lines.join('\n'), author: name, handle: email, time: clockOf(str(fr, 'submitted_at')) };
+}
+
 /** The fired event as a lead the native frames can wear. Null when the payload
     has no recognisable message shape — the views then show the raw event
     instead of dressing noise up as a message. */
@@ -425,7 +560,20 @@ export function deriveLead(slug: string, output: unknown): Lead | null {
         };
     }
 
+    if (slug === 'github' || slug === 'github_rest' || slug === 'github_graphql') {
+        return deriveGitHubLead(d);
+    }
+    if (slug === 'linear') return deriveLinearLead(d);
+    if (slug === 'jira') return deriveJiraLead(d);
+    if (slug === 'notion') return deriveNotionLead(d);
+    if (slug === 'pagerduty') return derivePagerDutyLead(d);
+    if (slug === 'typeform' && typeof d.form_response === 'object') return deriveTypeformLead(d);
+
     if (slug === 'stripe') {
+        // A Stripe Event nests the object under data.object; a flat object
+        // (rehearsal fixtures) is itself the lead.
+        const nested = asDict(asDict(d.data).object);
+        if (Object.keys(nested).length) return deriveLead(slug, { ...nested, event_type: d.type });
         const cents = d.amount_due ?? d.amount ?? d.amount_paid;
         const currency = (str(d, 'currency') ?? 'usd').toUpperCase();
         const title =
@@ -436,20 +584,26 @@ export function deriveLead(slug: string, output: unknown): Lead | null {
         const attempt = typeof d.attempt_count === 'number' ? d.attempt_count : undefined;
         const retry = str(d, 'next_payment_attempt');
         const failure = str(d, 'failure_message', 'description');
+        const lineItem = str(asDict((asDict(d.lines).data as unknown[] | undefined)?.[0]), 'description');
+        const status = str(d, 'status', 'payment_status');
         const body = [
             failure,
+            lineItem,
             number && attempt ? `Attempt ${attempt} for ${number}.` : undefined,
             retry ? `Next retry ${retry}.` : undefined,
+            !failure && !lineItem && status ? `${str(d, 'object') ?? 'Payment'} ${status}.` : undefined,
         ]
             .filter(Boolean)
             .join(' ');
         if (!body) return null;
+        const details = asDict(d.customer_details);
         return {
             title,
             meta: number ?? '',
             body,
-            author: str(d, 'customer_name', 'customer'),
-            handle: str(d, 'customer_email'),
+            author: str(d, 'customer_name') ?? str(details, 'name') ?? str(asDict(d.billing_details), 'name'),
+            handle: str(d, 'customer_email', 'receipt_email') ?? str(details, 'email') ?? str(asDict(d.billing_details), 'email'),
+            time: clockOf(epochToIso(d.created)),
         };
     }
 

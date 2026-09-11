@@ -1798,7 +1798,8 @@ class WhatsAppNode(WorkflowNode):
                 f"To reply, call a send tool with to={chat_id} "
                 f"(pass this chat id exactly — do not convert it to a phone number)."
             )
-            return {"text": text, "conversation_key": chat_id}
+            title = (p.get("_data") or {}).get("pushName") or p.get("notifyName") or chat_id.split("@", 1)[0]
+            return {"text": text, "conversation_key": chat_id, "title": title}
 
         # Meta Cloud API envelope — bare E.164 sender numbers.
         if output.get("object") == "whatsapp_business_account":
@@ -1815,7 +1816,8 @@ class WhatsAppNode(WorkflowNode):
                 f"WhatsApp message from {sender}:\n{body}\n\n"
                 f"To reply, call a send tool with to={sender}."
             )
-            return {"text": text, "conversation_key": sender}
+            profile = (value.get("contacts") or [{}])[0].get("profile") or {}
+            return {"text": text, "conversation_key": sender, "title": profile.get("name") or sender}
 
         return super().resolve_agent_event(output)
 

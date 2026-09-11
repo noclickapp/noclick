@@ -5527,7 +5527,7 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             f"To respond, use send_message_to_channel with channel_id={channel_id} "
             f"(pass this exactly)."
         )
-        return {"text": text, "conversation_key": channel_id}
+        return {"text": text, "conversation_key": channel_id, "title": f"/{command}"}
 
     @classmethod
     def _message_agent_event(cls, output: Dict[str, Any], channel_id: str) -> Dict[str, Any]:
@@ -5571,7 +5571,7 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             f"To respond, use send_message_to_channel with channel_id={channel_id} "
             f"(pass this exactly); message_id={output.get('message_id')} if you want to reply to it."
         )
-        return {"text": "\n".join(lines), "conversation_key": channel_id}
+        return {"text": "\n".join(lines), "conversation_key": channel_id, "title": where}
 
     async def _trigger_on_discord_event(
         self, config: _DiscordEventTriggerBase, credentials

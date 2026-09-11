@@ -197,7 +197,7 @@ function GithubEvent({ lead, theme, operation }: FrameProps) {
                         {withTime(opByline(r, lead, `opened by ${lead.author ?? 'someone'}`), lead)}
                     </p>
                     <p
-                        className={`mb-0 mt-2 rounded-md px-2.5 py-2 text-[12.5px] leading-relaxed ${mono ? 'font-mono text-[11.5px]' : ''}`}
+                        className={`mb-0 mt-2 whitespace-pre-wrap rounded-md px-2.5 py-2 text-[12.5px] leading-relaxed ${mono ? 'font-mono text-[11.5px]' : ''}`}
                         style={{ background: 'rgba(125,133,144,0.08)', boxShadow: `inset 0 0 0 1px ${theme.border}`, color: theme.ink }}
                     >
                         {lead.body}
@@ -223,7 +223,7 @@ function GitlabEvent({ lead, theme, operation }: FrameProps) {
                     <p className="m-0 mt-1 text-[11.5px]" style={sub(theme)}>
                         {withTime(opByline(r, lead, lead.author ?? ''), lead)}
                     </p>
-                    <p className="mb-0 mt-2 text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+                    <p className="mb-0 mt-2 text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
                 </div>
             </div>
         </Surface>
@@ -256,7 +256,7 @@ function LinearIssue({ lead, theme, operation }: FrameProps) {
             <p className="m-0 mt-1.5 pl-[21px] text-[11.5px]" style={sub(theme)}>
                 {withTime(opByline(r, lead, `created by ${lead.author ?? 'someone'}`), lead)}
             </p>
-            <p className="mb-0 mt-1.5 pl-[21px] text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+            <p className="mb-0 mt-1.5 pl-[21px] text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
         </Surface>
     );
 }
@@ -283,7 +283,7 @@ function JiraIssue({ lead, theme, operation }: FrameProps) {
             <p className="m-0 mt-1.5 text-[11.5px]" style={sub(theme)}>
                 {withTime(opByline(r, lead, `Reporter: ${lead.author ?? '—'}`), lead)}
             </p>
-            <p className="mb-0 mt-1.5 text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+            <p className="mb-0 mt-1.5 text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
         </Surface>
     );
 }
@@ -300,7 +300,7 @@ function NotionPage({ lead, theme, operation }: FrameProps) {
                 {withTime(opByline(r, lead, `Created by ${lead.author ?? 'someone'}`), lead)}
             </p>
             <div className="my-2 h-px" style={{ background: theme.border }} />
-            <p className="mb-0 text-[13px] leading-relaxed">{lead.body}</p>
+            <p className="mb-0 text-[13px] leading-relaxed whitespace-pre-wrap">{lead.body}</p>
         </Surface>
     );
 }
@@ -321,7 +321,7 @@ function MondayItem({ lead, theme, operation }: FrameProps) {
             <p className="m-0 mt-1 text-[11.5px]" style={sub(theme)}>
                 {opByline(r, lead, `added by ${lead.author ?? 'someone'}`)}
             </p>
-            <p className="mb-0 mt-1.5 text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+            <p className="mb-0 mt-1.5 text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
         </Surface>
     );
 }
@@ -339,7 +339,7 @@ function ClickupTask({ lead, theme, operation }: FrameProps) {
             <p className="m-0 mt-1 pl-[26px] text-[11.5px]" style={sub(theme)}>
                 {opByline(r, lead, `created by ${lead.author ?? 'someone'}`)}
             </p>
-            <p className="mb-0 mt-1.5 pl-[26px] text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+            <p className="mb-0 mt-1.5 pl-[26px] text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
         </Surface>
     );
 }
@@ -378,7 +378,7 @@ function AsanaTask({ lead, theme, operation }: FrameProps) {
             <p className="m-0 mt-1 pl-[30px] text-[11.5px]" style={sub(theme)}>
                 {opByline(r, lead, `assigned to ${lead.author ?? 'someone'}`)}
             </p>
-            <p className="mb-0 mt-1.5 pl-[30px] text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+            <p className="mb-0 mt-1.5 pl-[30px] text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
         </Surface>
     );
 }
@@ -394,7 +394,7 @@ function TodoistTask({ lead, theme, operation }: FrameProps) {
                     <p className="m-0 mt-1 text-[11.5px]" style={sub(theme)}>
                         {withTime(opByline(r, lead, `Inbox${lead.author ? ` · ${lead.author}` : ''}`), lead)}
                     </p>
-                    <p className="mb-0 mt-1.5 text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+                    <p className="mb-0 mt-1.5 text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
                 </div>
             </div>
         </Surface>
@@ -418,7 +418,7 @@ function StripeEvent({ lead, theme, operation }: FrameProps) {
                     lead
                 )}
             </p>
-            <p className="mb-0 mt-2 text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+            <p className="mb-0 mt-2 text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
         </Surface>
     );
 }
@@ -437,7 +437,7 @@ function ShopifyOrder({ lead, theme, operation }: FrameProps) {
                     lead
                 )}
             </p>
-            <p className="mb-0 mt-2 text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+            <p className="mb-0 mt-2 text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
         </Surface>
     );
 }
@@ -465,7 +465,7 @@ function BookingCard({ lead, theme, operation }: FrameProps) {
                             lead
                         )}
                     </p>
-                    <p className="mb-0 mt-1.5 text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+                    <p className="mb-0 mt-1.5 text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
                 </div>
             </div>
         </Surface>
@@ -484,7 +484,7 @@ function FormResponse({ lead, theme, operation }: FrameProps) {
             </div>
             <p className="m-0 mt-1 text-[13.5px] font-semibold">{lead.title}</p>
             <div className="mt-2 pl-3" style={{ borderLeft: `3px solid ${theme.accent}` }}>
-                <p className="m-0 text-[12.5px] leading-relaxed">{lead.body}</p>
+                <p className="m-0 text-[12.5px] leading-relaxed whitespace-pre-wrap">{lead.body}</p>
             </div>
             <p className="m-0 mt-2 text-[11.5px]" style={sub(theme)}>
                 {opByline(r, lead, [lead.author, lead.handle].filter(Boolean).join(' · '))}
@@ -574,7 +574,7 @@ function Ticket({ lead, theme, operation }: FrameProps) {
                     lead
                 )}
             </p>
-            <p className="mb-0 mt-2 text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+            <p className="mb-0 mt-2 text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
         </Surface>
     );
 }
@@ -600,7 +600,7 @@ function AlertCard({ lead, theme, operation }: FrameProps) {
                     {conjugate(r.byline, lead.author)}
                 </p>
             )}
-            <p className="mb-0 mt-2 font-mono text-[12px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+            <p className="mb-0 mt-2 font-mono text-[12px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
             {lead.time && (
                 <p className="m-0 mt-1.5 font-mono text-[10.5px]" style={sub(theme)}>{lead.time}</p>
             )}
@@ -626,7 +626,7 @@ function SocialPost({ lead, theme, operation }: FrameProps) {
                     {conjugate(r.byline, lead.author)}
                 </p>
             )}
-            <p className="mb-0 mt-2 text-[13.5px] leading-relaxed">{lead.body}</p>
+            <p className="mb-0 mt-2 text-[13.5px] leading-relaxed whitespace-pre-wrap">{lead.body}</p>
         </Surface>
     );
 }
@@ -653,7 +653,7 @@ function FileEvent({ lead, theme, operation }: FrameProps) {
                     <p className="m-0 mt-0.5 text-[11.5px]" style={sub(theme)}>
                         {withTime(opByline(r, lead, `Added by ${lead.author ?? 'someone'}`), lead)}
                     </p>
-                    <p className="mb-0 mt-1.5 text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+                    <p className="mb-0 mt-1.5 text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
                 </div>
             </div>
         </Surface>
@@ -682,7 +682,7 @@ function EventCard({ lead, theme, operation }: FrameProps) {
                     lead
                 )}
             </p>
-            <p className="mb-0 mt-2 text-[12.5px] leading-relaxed" style={sub(theme)}>{lead.body}</p>
+            <p className="mb-0 mt-2 text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
         </Surface>
     );
 }

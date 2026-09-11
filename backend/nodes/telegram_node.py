@@ -2294,6 +2294,7 @@ class TelegramNode(WorkflowNode):
         return {
             "text": f"Telegram message from {who} in {where}:\n{text}",
             "conversation_key": str(chat_id) if chat_id is not None else None,
+            "title": chat.get("title") or (f"@{sender['username']}" if sender.get("username") else who),
         }
 
     @classmethod
