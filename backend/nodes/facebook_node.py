@@ -42,6 +42,7 @@ from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.oauth.facebook_oauth import is_token_expired, refresh_access_token
 from nodes.scopes.meta import FACEBOOK_SCOPES
+from utils.facebook_events import FB_WEBHOOK_FIELDS
 from utils.ssrf import assert_exact_url_origin
 from utils.webhook_signatures import verify_hmac_sha256_hex
 
@@ -1181,20 +1182,6 @@ _reg(FbGraphRequestConfig, "graph_request", _graph_request)
 # ============================================================================
 # Webhook triggers (per field)
 # ============================================================================
-
-FB_WEBHOOK_FIELDS = [
-    ("feed", "On Feed Activity"),
-    ("mention", "On Page Mention"),
-    ("ratings", "On New Rating"),
-    ("messages", "On Message"),
-    ("messaging_postbacks", "On Postback"),
-    ("messaging_referrals", "On Referral"),
-    ("message_reactions", "On Message Reaction"),
-    ("message_deliveries", "On Message Delivered"),
-    ("message_reads", "On Message Read"),
-    ("standby", "On Standby (Handover)"),
-]
-
 
 class _FbWebhookTrigger(BaseModel):
     webhook_url: Optional[str] = Field(None, title="Callback URL",

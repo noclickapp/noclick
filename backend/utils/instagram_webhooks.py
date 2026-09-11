@@ -1,8 +1,6 @@
 """Signed Instagram Login webhooks, isolated to the currently connected account."""
 
 from contextlib import asynccontextmanager
-import asyncio
-import hashlib
 import hmac
 import json
 import logging
@@ -17,6 +15,7 @@ from fastapi import HTTPException
 from fastapi.responses import PlainTextResponse
 
 from utils.credential_loader import load_credential
+from utils.app_delivery_guard import guard_app_delivery
 from utils.graph_nodes import node_config
 from utils.redis_client import get_shared_redis
 from utils.webhook_signatures import verify_hmac_sha256_hex
@@ -218,23 +217,6 @@ async def instagram_live_scope_filter(pool, sub: dict, payload: dict, trigger_no
     return None
 
 
-_CLAIM = """
-if redis.call('EXISTS', KEYS[2]) == 1 then return 0 end
-if redis.call('SET', KEYS[1], ARGV[1], 'NX', 'EX', ARGV[2]) then return 1 end
-return -1
-"""
-_COMPLETE = """
-if redis.call('GET', KEYS[1]) ~= ARGV[1] then return 0 end
-redis.call('SET', KEYS[2], '1', 'EX', ARGV[2])
-redis.call('DEL', KEYS[1])
-return 1
-"""
-_RELEASE = """
-if redis.call('GET', KEYS[1]) == ARGV[1] then return redis.call('DEL', KEYS[1]) end
-return 0
-"""
-
-
 @asynccontextmanager
 async def instagram_event_guard(event_id: str):
     """Serialize fan-out; a failed attempt remains retryable, never fail open.
@@ -242,40 +224,12 @@ async def instagram_event_guard(event_id: str):
     This protects enqueueing, not durable execution: process loss after marking
     but before running background tasks still requires a durable queue to close.
     """
-    client = get_shared_redis()
-    if client is None or not event_id:
-        raise HTTPException(status_code=503, detail="Instagram delivery guard unavailable")
-    digest = hashlib.sha256(event_id.encode()).hexdigest()
-    key = f"appwebhook:instagram:{{{digest}}}"
-    lease, delivered = f"{key}:lease", f"{key}:delivered"
-    nonce = uuid.uuid4().hex
-    try:
-        claimed = await client.eval(_CLAIM, 2, lease, delivered, nonce, EVENT_LEASE_SECONDS)
-    except Exception:
-        raise HTTPException(status_code=503, detail="Instagram delivery guard unavailable") from None
-    if claimed == 0:
-        yield False
-        return
-    if claimed != 1:
-        raise HTTPException(status_code=503, detail="Instagram event delivery already in progress")
-    try:
-        async with asyncio.timeout(EVENT_PROCESSING_SECONDS):
-            yield True
-    except BaseException as error:
-        try:
-            await client.eval(_RELEASE, 1, lease, nonce)
-        except Exception:
-            pass  # The short lease expires; never delete another attempt's lease.
-        if isinstance(error, TimeoutError):
-            raise HTTPException(status_code=503, detail="Instagram event processing timed out") from None
-        raise
-    else:
-        try:
-            completed = await client.eval(_COMPLETE, 2, lease, delivered, nonce, EVENT_DEDUP_SECONDS)
-        except Exception:
-            raise HTTPException(status_code=503, detail="Instagram delivery acknowledgement unavailable") from None
-        if completed != 1:
-            raise HTTPException(status_code=503, detail="Instagram delivery lease expired")
+    async with guard_app_delivery(
+        event_id, client=get_shared_redis(), provider="instagram", label="Instagram",
+        lease_seconds=EVENT_LEASE_SECONDS, processing_seconds=EVENT_PROCESSING_SECONDS,
+        dedup_seconds=EVENT_DEDUP_SECONDS,
+    ) as deliver:
+        yield deliver
 
 
 INSTAGRAM_WEBHOOK_ADAPTER = {

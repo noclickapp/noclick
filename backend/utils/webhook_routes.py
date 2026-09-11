@@ -2287,8 +2287,16 @@ async def _dispatch_one_app_event(
         if subscription_guard:
             # A failed later subscriber must not cause an already-queued
             # subscriber to fire again when the provider retries this event.
+            # Some providers project one wire event into multiple field types
+            # (a Messenger postback carrying a referral). A wildcard node must
+            # receive that event once, while distinct field-specific nodes each
+            # receive it. The outer event guard remains field-scoped.
+            subscription_identity = adapter.get("subscription_event_id")
+            delivery_event_id = subscription_identity(payload) if subscription_identity else event_id
+            if not isinstance(delivery_event_id, str) or not delivery_event_id:
+                raise HTTPException(status_code=503, detail="Webhook event identity unavailable")
             delivery_id = json.dumps([
-                "subscription", event_id, str(sub["workflow_id"]), sub["node_id"]
+                "subscription", delivery_event_id, str(sub["workflow_id"]), sub["node_id"]
             ], separators=(",", ":"))
             async with subscription_guard(delivery_id) as should_deliver:
                 if should_deliver and await _fire_subscription(tasks, sub, payload, event_channel):
