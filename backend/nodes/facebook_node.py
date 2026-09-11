@@ -30,6 +30,7 @@ import hashlib
 import hmac
 import json
 import logging
+import re
 import time
 from typing import Annotated, Any, Dict, List, Literal, Optional, Union
 
@@ -42,6 +43,7 @@ from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.oauth.facebook_oauth import is_token_expired, refresh_access_token
 from nodes.scopes.meta import FACEBOOK_SCOPES
 from utils.ssrf import assert_exact_url_origin
+from utils.webhook_signatures import verify_hmac_sha256_hex
 
 logger = logging.getLogger(__name__)
 
@@ -1267,12 +1269,11 @@ class FacebookNode(WorkflowNode):
     def verify_webhook_signature(cls, body: bytes, headers: Dict[str, str], config: Dict[str, Any]) -> bool:
         sig = headers.get("x-hub-signature-256") or headers.get("X-Hub-Signature-256")
         app_secret = (config or {}).get("app_secret")
-        if not app_secret:
-            return sig is None or (sig.startswith("sha256=") and len(sig) > len("sha256="))
-        if not sig or not sig.startswith("sha256="):
+        if not isinstance(app_secret, str) or not app_secret.strip():
             return False
-        expected = hmac.new(str(app_secret).encode("utf-8"), body, hashlib.sha256).hexdigest()
-        return hmac.compare_digest(sig[len("sha256="):], expected)
+        if not isinstance(sig, str) or not re.fullmatch(r"sha256=[0-9a-f]{64}", sig):
+            return False
+        return verify_hmac_sha256_hex(body, app_secret, sig, prefix="sha256=")
 
     @classmethod
     def handle_webhook_handshake(cls, body: bytes, headers: Dict[str, str], config: Optional[Dict[str, Any]] = None):
@@ -1282,12 +1283,17 @@ class FacebookNode(WorkflowNode):
         if query.get("hub.mode") != "subscribe":
             return None
         expected_token = (config or {}).get("verify_token")
-        if expected_token and query.get("hub.verify_token") != expected_token:
+        supplied_token = query.get("hub.verify_token")
+        if not isinstance(expected_token, str) or not expected_token.strip():
+            return None
+        if not isinstance(supplied_token, str) or not hmac.compare_digest(
+            supplied_token.encode("utf-8"), expected_token.encode("utf-8")
+        ):
             return None
         challenge = query.get("hub.challenge")
-        if challenge is None:
+        if not isinstance(challenge, str) or not 1 <= len(challenge) <= 1024:
             return None
-        return PlainTextResponse(content=str(challenge), status_code=200)
+        return PlainTextResponse(content=challenge, status_code=200, headers={"Cache-Control": "no-store"})
 
     @staticmethod
     def _payload_fields(payload: Dict[str, Any]) -> List[str]:
