@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Union, get_args, get_origin
 
 from nodes.core.registry import NODE_REGISTRY
+from ..operation_catalog import get_native_agent_tools_for_node_type
 
 
 def _has_trigger_operation(node_type: str) -> bool:
@@ -87,6 +88,15 @@ def _get_available_node_types() -> str:
             if _has_trigger_operation(node_type):
                 trigger_capable.append(node_type)
 
+    native_tool_providers = []
+    for node_type in ("alarm", "filesystem"):
+        tools = get_native_agent_tools_for_node_type(node_type)
+        if tools:
+            native_tool_providers.append(
+                f"{node_type}: {', '.join(tool.name for tool in tools)} "
+                "(automatically exposed when wired to an agent; not config operations)"
+            )
+
     lines = [
         f"TRIGGERS: {', '.join(sorted(triggers))}",
         f"TRIGGER-CAPABLE INTEGRATIONS (can be used as a workflow entry node): {', '.join(sorted(trigger_capable))}",
@@ -94,6 +104,8 @@ def _get_available_node_types() -> str:
         f"PROCESSING: {', '.join(sorted(processing))}",
         f"INTERFACE: {', '.join(sorted(interface))}",
     ]
+    if native_tool_providers:
+        lines.append("NATIVE AGENT TOOL PROVIDERS: " + "; ".join(native_tool_providers))
     return "\n".join(lines)
 
 
