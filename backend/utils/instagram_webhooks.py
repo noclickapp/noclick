@@ -233,6 +233,7 @@ async def instagram_event_guard(event_id: str):
 
 
 INSTAGRAM_WEBHOOK_ADAPTER = {
+    "max_body_bytes": MAX_BODY_BYTES,
     "verify": verify_instagram_webhook,
     "handshake": lambda body: None,
     "parse": parse_instagram_webhook,

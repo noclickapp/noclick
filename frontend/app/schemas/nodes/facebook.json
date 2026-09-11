@@ -1694,6 +1694,56 @@
     },
     "FbTrigger_on_any_facebook_event": {
       "properties": {
+        "callback_mode": {
+          "default": "manual",
+          "description": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+          "enum": [
+            "manual",
+            "managed"
+          ],
+          "title": "Callback Mode",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page authorized by the connected Facebook account.",
+          "title": "Page",
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "page_id",
+            "searchable": true
+          }
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:readonly": true,
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          }
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -1707,6 +1757,11 @@
           "description": "Paste this into your Meta app's webhook config.",
           "title": "Callback URL",
           "ui:copyable": true,
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "webhook"
         },
         "verify_token": {
@@ -1720,7 +1775,13 @@
           ],
           "default": null,
           "description": "Token Meta echoes during the subscription handshake.",
-          "title": "Verify Token"
+          "title": "Verify Token",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
+          "ui:widget": "password"
         },
         "app_secret": {
           "anyOf": [
@@ -1734,6 +1795,11 @@
           "default": null,
           "description": "App secret for X-Hub-Signature-256 verification.",
           "title": "App Secret",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "password"
         },
         "operation": {
@@ -1752,6 +1818,56 @@
     },
     "FbTrigger_on_feed": {
       "properties": {
+        "callback_mode": {
+          "default": "manual",
+          "description": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+          "enum": [
+            "manual",
+            "managed"
+          ],
+          "title": "Callback Mode",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page authorized by the connected Facebook account.",
+          "title": "Page",
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "page_id",
+            "searchable": true
+          }
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:readonly": true,
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          }
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -1765,6 +1881,11 @@
           "description": "Paste this into your Meta app's webhook config.",
           "title": "Callback URL",
           "ui:copyable": true,
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "webhook"
         },
         "verify_token": {
@@ -1778,7 +1899,13 @@
           ],
           "default": null,
           "description": "Token Meta echoes during the subscription handshake.",
-          "title": "Verify Token"
+          "title": "Verify Token",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
+          "ui:widget": "password"
         },
         "app_secret": {
           "anyOf": [
@@ -1792,6 +1919,11 @@
           "default": null,
           "description": "App secret for X-Hub-Signature-256 verification.",
           "title": "App Secret",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "password"
         },
         "operation": {
@@ -1810,6 +1942,56 @@
     },
     "FbTrigger_on_mention": {
       "properties": {
+        "callback_mode": {
+          "default": "manual",
+          "description": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+          "enum": [
+            "manual",
+            "managed"
+          ],
+          "title": "Callback Mode",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page authorized by the connected Facebook account.",
+          "title": "Page",
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "page_id",
+            "searchable": true
+          }
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:readonly": true,
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          }
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -1823,6 +2005,11 @@
           "description": "Paste this into your Meta app's webhook config.",
           "title": "Callback URL",
           "ui:copyable": true,
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "webhook"
         },
         "verify_token": {
@@ -1836,7 +2023,13 @@
           ],
           "default": null,
           "description": "Token Meta echoes during the subscription handshake.",
-          "title": "Verify Token"
+          "title": "Verify Token",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
+          "ui:widget": "password"
         },
         "app_secret": {
           "anyOf": [
@@ -1850,6 +2043,11 @@
           "default": null,
           "description": "App secret for X-Hub-Signature-256 verification.",
           "title": "App Secret",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "password"
         },
         "operation": {
@@ -1868,6 +2066,56 @@
     },
     "FbTrigger_on_message_deliveries": {
       "properties": {
+        "callback_mode": {
+          "default": "manual",
+          "description": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+          "enum": [
+            "manual",
+            "managed"
+          ],
+          "title": "Callback Mode",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page authorized by the connected Facebook account.",
+          "title": "Page",
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "page_id",
+            "searchable": true
+          }
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:readonly": true,
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          }
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -1881,6 +2129,11 @@
           "description": "Paste this into your Meta app's webhook config.",
           "title": "Callback URL",
           "ui:copyable": true,
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "webhook"
         },
         "verify_token": {
@@ -1894,7 +2147,13 @@
           ],
           "default": null,
           "description": "Token Meta echoes during the subscription handshake.",
-          "title": "Verify Token"
+          "title": "Verify Token",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
+          "ui:widget": "password"
         },
         "app_secret": {
           "anyOf": [
@@ -1908,6 +2167,11 @@
           "default": null,
           "description": "App secret for X-Hub-Signature-256 verification.",
           "title": "App Secret",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "password"
         },
         "operation": {
@@ -1926,6 +2190,56 @@
     },
     "FbTrigger_on_message_reactions": {
       "properties": {
+        "callback_mode": {
+          "default": "manual",
+          "description": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+          "enum": [
+            "manual",
+            "managed"
+          ],
+          "title": "Callback Mode",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page authorized by the connected Facebook account.",
+          "title": "Page",
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "page_id",
+            "searchable": true
+          }
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:readonly": true,
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          }
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -1939,6 +2253,11 @@
           "description": "Paste this into your Meta app's webhook config.",
           "title": "Callback URL",
           "ui:copyable": true,
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "webhook"
         },
         "verify_token": {
@@ -1952,7 +2271,13 @@
           ],
           "default": null,
           "description": "Token Meta echoes during the subscription handshake.",
-          "title": "Verify Token"
+          "title": "Verify Token",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
+          "ui:widget": "password"
         },
         "app_secret": {
           "anyOf": [
@@ -1966,6 +2291,11 @@
           "default": null,
           "description": "App secret for X-Hub-Signature-256 verification.",
           "title": "App Secret",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "password"
         },
         "operation": {
@@ -1984,6 +2314,56 @@
     },
     "FbTrigger_on_message_reads": {
       "properties": {
+        "callback_mode": {
+          "default": "manual",
+          "description": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+          "enum": [
+            "manual",
+            "managed"
+          ],
+          "title": "Callback Mode",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page authorized by the connected Facebook account.",
+          "title": "Page",
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "page_id",
+            "searchable": true
+          }
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:readonly": true,
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          }
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -1997,6 +2377,11 @@
           "description": "Paste this into your Meta app's webhook config.",
           "title": "Callback URL",
           "ui:copyable": true,
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "webhook"
         },
         "verify_token": {
@@ -2010,7 +2395,13 @@
           ],
           "default": null,
           "description": "Token Meta echoes during the subscription handshake.",
-          "title": "Verify Token"
+          "title": "Verify Token",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
+          "ui:widget": "password"
         },
         "app_secret": {
           "anyOf": [
@@ -2024,6 +2415,11 @@
           "default": null,
           "description": "App secret for X-Hub-Signature-256 verification.",
           "title": "App Secret",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "password"
         },
         "operation": {
@@ -2042,6 +2438,56 @@
     },
     "FbTrigger_on_messages": {
       "properties": {
+        "callback_mode": {
+          "default": "manual",
+          "description": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+          "enum": [
+            "manual",
+            "managed"
+          ],
+          "title": "Callback Mode",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page authorized by the connected Facebook account.",
+          "title": "Page",
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "page_id",
+            "searchable": true
+          }
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:readonly": true,
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          }
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -2055,6 +2501,11 @@
           "description": "Paste this into your Meta app's webhook config.",
           "title": "Callback URL",
           "ui:copyable": true,
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "webhook"
         },
         "verify_token": {
@@ -2068,7 +2519,13 @@
           ],
           "default": null,
           "description": "Token Meta echoes during the subscription handshake.",
-          "title": "Verify Token"
+          "title": "Verify Token",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
+          "ui:widget": "password"
         },
         "app_secret": {
           "anyOf": [
@@ -2082,6 +2539,11 @@
           "default": null,
           "description": "App secret for X-Hub-Signature-256 verification.",
           "title": "App Secret",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "password"
         },
         "operation": {
@@ -2100,6 +2562,56 @@
     },
     "FbTrigger_on_messaging_postbacks": {
       "properties": {
+        "callback_mode": {
+          "default": "manual",
+          "description": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+          "enum": [
+            "manual",
+            "managed"
+          ],
+          "title": "Callback Mode",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page authorized by the connected Facebook account.",
+          "title": "Page",
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "page_id",
+            "searchable": true
+          }
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:readonly": true,
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          }
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -2113,6 +2625,11 @@
           "description": "Paste this into your Meta app's webhook config.",
           "title": "Callback URL",
           "ui:copyable": true,
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "webhook"
         },
         "verify_token": {
@@ -2126,7 +2643,13 @@
           ],
           "default": null,
           "description": "Token Meta echoes during the subscription handshake.",
-          "title": "Verify Token"
+          "title": "Verify Token",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
+          "ui:widget": "password"
         },
         "app_secret": {
           "anyOf": [
@@ -2140,6 +2663,11 @@
           "default": null,
           "description": "App secret for X-Hub-Signature-256 verification.",
           "title": "App Secret",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "password"
         },
         "operation": {
@@ -2158,6 +2686,56 @@
     },
     "FbTrigger_on_messaging_referrals": {
       "properties": {
+        "callback_mode": {
+          "default": "manual",
+          "description": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+          "enum": [
+            "manual",
+            "managed"
+          ],
+          "title": "Callback Mode",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page authorized by the connected Facebook account.",
+          "title": "Page",
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "page_id",
+            "searchable": true
+          }
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:readonly": true,
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          }
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -2171,6 +2749,11 @@
           "description": "Paste this into your Meta app's webhook config.",
           "title": "Callback URL",
           "ui:copyable": true,
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "webhook"
         },
         "verify_token": {
@@ -2184,7 +2767,13 @@
           ],
           "default": null,
           "description": "Token Meta echoes during the subscription handshake.",
-          "title": "Verify Token"
+          "title": "Verify Token",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
+          "ui:widget": "password"
         },
         "app_secret": {
           "anyOf": [
@@ -2198,6 +2787,11 @@
           "default": null,
           "description": "App secret for X-Hub-Signature-256 verification.",
           "title": "App Secret",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "password"
         },
         "operation": {
@@ -2216,6 +2810,56 @@
     },
     "FbTrigger_on_ratings": {
       "properties": {
+        "callback_mode": {
+          "default": "manual",
+          "description": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+          "enum": [
+            "manual",
+            "managed"
+          ],
+          "title": "Callback Mode",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page authorized by the connected Facebook account.",
+          "title": "Page",
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "page_id",
+            "searchable": true
+          }
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:readonly": true,
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          }
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -2229,6 +2873,11 @@
           "description": "Paste this into your Meta app's webhook config.",
           "title": "Callback URL",
           "ui:copyable": true,
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "webhook"
         },
         "verify_token": {
@@ -2242,7 +2891,13 @@
           ],
           "default": null,
           "description": "Token Meta echoes during the subscription handshake.",
-          "title": "Verify Token"
+          "title": "Verify Token",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
+          "ui:widget": "password"
         },
         "app_secret": {
           "anyOf": [
@@ -2256,6 +2911,11 @@
           "default": null,
           "description": "App secret for X-Hub-Signature-256 verification.",
           "title": "App Secret",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "password"
         },
         "operation": {
@@ -2274,6 +2934,56 @@
     },
     "FbTrigger_on_standby": {
       "properties": {
+        "callback_mode": {
+          "default": "manual",
+          "description": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+          "enum": [
+            "manual",
+            "managed"
+          ],
+          "title": "Callback Mode",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page authorized by the connected Facebook account.",
+          "title": "Page",
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "page_id",
+            "searchable": true
+          }
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:readonly": true,
+          "ui:show-if": {
+            "contains": "managed",
+            "field": "callback_mode"
+          }
+        },
         "webhook_url": {
           "anyOf": [
             {
@@ -2287,6 +2997,11 @@
           "description": "Paste this into your Meta app's webhook config.",
           "title": "Callback URL",
           "ui:copyable": true,
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "webhook"
         },
         "verify_token": {
@@ -2300,7 +3015,13 @@
           ],
           "default": null,
           "description": "Token Meta echoes during the subscription handshake.",
-          "title": "Verify Token"
+          "title": "Verify Token",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
+          "ui:widget": "password"
         },
         "app_secret": {
           "anyOf": [
@@ -2314,6 +3035,11 @@
           "default": null,
           "description": "App secret for X-Hub-Signature-256 verification.",
           "title": "App Secret",
+          "ui:show-if": {
+            "containsAll": [],
+            "field": "callback_mode",
+            "notContains": "managed"
+          },
           "ui:widget": "password"
         },
         "operation": {

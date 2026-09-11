@@ -40,16 +40,16 @@ from starlette.responses import PlainTextResponse
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_subscriptions import AppEventTriggerMixin
 from nodes.oauth.facebook_oauth import is_token_expired, refresh_access_token
 from nodes.scopes.meta import FACEBOOK_SCOPES
 from utils.facebook_events import FB_WEBHOOK_FIELDS
+from utils.facebook_subscriptions import FB_API_BASE, GRAPH_API_VERSION
 from utils.ssrf import assert_exact_url_origin
 from utils.webhook_signatures import verify_hmac_sha256_hex
 
 logger = logging.getLogger(__name__)
 
-GRAPH_API_VERSION = "v25.0"
-FB_API_BASE = f"https://graph.facebook.com/{GRAPH_API_VERSION}"
 FB_RUPLOAD_ORIGIN = "https://rupload.facebook.com"
 
 FACEBOOK_OAUTH_SCOPES = [
@@ -1184,12 +1184,23 @@ _reg(FbGraphRequestConfig, "graph_request", _graph_request)
 # ============================================================================
 
 class _FbWebhookTrigger(BaseModel):
+    callback_mode: Literal["manual", "managed"] = Field(
+        "manual", title="Callback Mode",
+        description="Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.")
+    page_id: Optional[str] = Field(None, title="Page", description="Page authorized by the connected Facebook account.", json_schema_extra={
+        "ui:show-if": {"field": "callback_mode", "contains": "managed"},
+        "x-dynamic-options": {"field_name": "page_id", "searchable": True, "allow_custom": True}})
+    subscription_status: Optional[str] = Field(None, title="Status", json_schema_extra={
+        "ui:loadValue": True, "ui:readonly": True,
+        "ui:show-if": {"field": "callback_mode", "contains": "managed"}})
     webhook_url: Optional[str] = Field(None, title="Callback URL",
                                        description="Paste this into your Meta app's webhook config.",
-                                       json_schema_extra={"ui:widget": "webhook", "ui:copyable": True})
-    verify_token: Optional[str] = Field(None, title="Verify Token", description="Token Meta echoes during the subscription handshake.")
+                                       json_schema_extra={"ui:widget": "webhook", "ui:copyable": True,
+                                           "ui:show-if": {"field": "callback_mode", "containsAll": [], "notContains": "managed"}})
+    verify_token: Optional[str] = Field(None, title="Verify Token", description="Token Meta echoes during the subscription handshake.",
+                                      json_schema_extra={"ui:widget": "password", "ui:show-if": {"field": "callback_mode", "containsAll": [], "notContains": "managed"}})
     app_secret: Optional[str] = Field(None, title="App Secret", description="App secret for X-Hub-Signature-256 verification.",
-                                      json_schema_extra={"ui:widget": "password"})
+                                      json_schema_extra={"ui:widget": "password", "ui:show-if": {"field": "callback_mode", "containsAll": [], "notContains": "managed"}})
 
 
 def _fb_field_op(field: str) -> str:
@@ -1231,7 +1242,7 @@ class FacebookNodeConfig(NodeConfig[FacebookConfig, FacebookCredential]):
     pass
 
 
-class FacebookNode(WorkflowNode):
+class FacebookNode(AppEventTriggerMixin, WorkflowNode):
     """Facebook (Pages + Messenger) automation node."""
 
     edit_examples = [
@@ -1243,6 +1254,10 @@ class FacebookNode(WorkflowNode):
     ]
 
     scope_registry = FACEBOOK_SCOPES
+    _app_provider = "facebook"
+    _trigger_event_map = {op: [f for f, _ in FB_WEBHOOK_FIELDS] if field == "*" else [field]
+                          for op, field, _ in FB_TRIGGER_SPECS}
+    _credential_prompt = "Connect exactly one Facebook OAuth credential and select its Page for managed callbacks."
     connection_evidence = ConnectionEvidence(
         field="page_id",
         noun="Pages",
@@ -1253,7 +1268,87 @@ class FacebookNode(WorkflowNode):
         return FacebookNodeConfig
 
     @classmethod
+    def registration_field_for_config(cls, operation, config):
+        if operation not in FB_TRIGGER_EVENT:
+            return None
+        return "subscription_status" if (config or {}).get("callback_mode") == "managed" else "webhook_url"
+
+    @classmethod
+    def subscription_events_for_config(cls, operation, config):
+        if (config or {}).get("callback_mode") != "managed" or (config or {}).get("disabled") in (True, "true"):
+            return []
+        return super().subscription_events_for_config(operation, config)
+
+    @classmethod
+    def subscription_matches_config(cls, rows, config):
+        from utils.facebook_events import facebook_page_id
+
+        page = facebook_page_id((config or {}).get("page_id"))
+        return bool(page and all(row.get("provider") == "facebook" and str(row.get("tenant_id")) == page for row in rows))
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {key: (config or {}).get(key) for key in ("callback_mode", "page_id", "disabled")}
+
+    @classmethod
+    def _pick_trigger_credential_id(cls, credential_ids):
+        from utils.facebook_events import facebook_trigger_credential_id
+
+        return facebook_trigger_credential_id(credential_ids)
+
+    @classmethod
+    async def _resolve_subscription_tenant(cls, credential, config):
+        from utils.facebook_events import facebook_page_id
+
+        return facebook_page_id((config or {}).get("page_id"))
+
+    @classmethod
+    async def register_node_subscriptions(cls, pool, *, user_id, workflow_id, node_id,
+                                          operation, credential_id, credential, config=None):
+        from utils.credential_loader import load_credential
+        from utils.facebook_subscriptions import ensure_page_subscription
+
+        config = {**(config or {}), "operation": operation}
+        if not credential_id or cls._pick_trigger_credential_id(config.get("credentialIds")) != credential_id:
+            raise ValueError(cls._credential_prompt)
+        # Register as the workflow owner, not a collaborator's credential grant.
+        try:
+            current = await load_credential(pool, user_id, credential_id, raise_on_error=True)
+            if current:
+                current = await cls.freshen_credential(current, pool=pool, user_id=user_id, credential_id=credential_id)
+        except Exception:
+            raise ValueError("Facebook credential verification is unavailable; retry registration.") from None
+        if not current:
+            raise ValueError("The workflow owner cannot use this Facebook credential; reconnect or share it explicitly.")
+        await ensure_page_subscription(current, config)
+        return await super().register_node_subscriptions(
+            pool, user_id=user_id, workflow_id=workflow_id, node_id=node_id,
+            operation=operation, credential_id=credential_id, credential=current, config=config)
+
+    @classmethod
+    def _subscription_status_line(cls, event_types, config):
+        return "Registered — listening on the selected Facebook Page"
+
+    @classmethod
+    async def load_field_value(cls, field_name, user_id, workflow_id, node_id, pool, context=None, credential_ids=None):
+        from utils.webhook_manager import WebhookManager
+
+        config = dict(context or {})
+        if credential_ids is not None:
+            if "credentialIds" in config and config["credentialIds"] != credential_ids:
+                raise ValueError("Facebook credential selection changed; reload the trigger configuration.")
+            config["credentialIds"] = credential_ids
+        field = cls.registration_field_for_config(config.get("operation"), config)
+        if field_name != field:
+            return {"value": None}
+        if field == "subscription_status":
+            return await super().load_field_value(field_name, user_id, workflow_id, node_id, pool, config, credential_ids)
+        return {"values": await WebhookManager.get_or_create_webhook(pool, user_id, workflow_id, node_id)}
+
+    @classmethod
     def verify_webhook_signature(cls, body: bytes, headers: Dict[str, str], config: Dict[str, Any]) -> bool:
+        if (config or {}).get("callback_mode") == "managed":
+            return False  # Managed events must pass the app-level live Page guard.
         sig = headers.get("x-hub-signature-256") or headers.get("X-Hub-Signature-256")
         app_secret = (config or {}).get("app_secret")
         if not isinstance(app_secret, str) or not app_secret.strip():
@@ -1264,6 +1359,8 @@ class FacebookNode(WorkflowNode):
 
     @classmethod
     def handle_webhook_handshake(cls, body: bytes, headers: Dict[str, str], config: Optional[Dict[str, Any]] = None):
+        if (config or {}).get("callback_mode") == "managed":
+            return None
         query = headers.get("__query_params__") or {}
         if headers.get("__method__") != "GET" or not isinstance(query, dict):
             return None
@@ -1378,6 +1475,10 @@ class FacebookNode(WorkflowNode):
         # "unexpected keyword argument 'credential_data'" and broke the Page dropdown).
         if field_name != "page_id":
             return {"options": []}
+        if (context or {}).get("callback_mode") == "managed":
+            from utils.facebook_subscriptions import managed_page_options
+
+            return await managed_page_options(credential_data)
         access_token = (credential_data or {}).get("access_token")
         if not access_token:
             return {"options": []}

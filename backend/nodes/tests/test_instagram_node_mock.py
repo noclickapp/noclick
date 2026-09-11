@@ -1506,6 +1506,9 @@ class _InstagramRegistrationRedis:
             return 1
         return 0
 
+    async def get(self, key):
+        return self.values.get(key)
+
 
 @pytest.fixture
 def instagram_registration(monkeypatch):
@@ -1793,9 +1796,10 @@ class TestInstagramEventRegistration:
     @pytest.mark.asyncio
     async def test_lease_does_not_release_a_replacement_owner(self, instagram_registration):
         s = instagram_registration
-        async with InstagramNode._registration_lease(TRIGGER_ACCOUNT, TRIGGER_APP):
-            key = next(iter(s.redis.values))
-            s.redis.values[key] = "replacement-owner"
+        with pytest.raises(ValueError, match="lock was lost"):
+            async with InstagramNode._registration_lease(TRIGGER_ACCOUNT, TRIGGER_APP):
+                key = next(iter(s.redis.values))
+                s.redis.values[key] = "replacement-owner"
         assert s.redis.values[key] == "replacement-owner"
 
     @pytest.mark.asyncio

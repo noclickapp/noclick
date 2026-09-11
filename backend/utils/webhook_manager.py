@@ -433,6 +433,8 @@ class WebhookManager:
             return None
 
         webhook_field = WebhookManager.node_webhook_field_for(node_type, operation)
+        if hasattr(node_class, "registration_field_for_config"):
+            webhook_field = node_class.registration_field_for_config(operation, config)
         if not webhook_field:
             return None
 
@@ -1452,7 +1454,7 @@ class WebhookManager:
         from utils.credentials import extract_credential_ids
 
         desired_events = (
-            node_class._trigger_event_map.get(current_op or "", []) if node else []
+            node_class.subscription_events_for_config(current_op, node_config) if node else []
         )
         rows = await get_node_subscriptions(pool, str(wf_uuid), node_id)
 
@@ -1472,7 +1474,7 @@ class WebhookManager:
             cred_ids = extract_credential_ids(node["data"])
         credential_id = node_class._pick_trigger_credential_id(cred_ids)
 
-        if subscription_rows_match(
+        if node_class.subscription_matches_config(rows, node_config) and subscription_rows_match(
             rows,
             event_types=desired_events,
             credential_id=credential_id,

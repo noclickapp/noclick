@@ -26,9 +26,7 @@ import json
 import logging
 import os
 import time
-from contextlib import asynccontextmanager
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
-from uuid import uuid4
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 import httpx
 
@@ -1585,112 +1583,33 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
 
     @staticmethod
     async def _registration_request(client, method, path, *, params=None, data=None):
-        """Registration errors must never expose response bodies or token URLs."""
-        try:
-            response = await client.request(
-                method, f"{INSTAGRAM_API_BASE}/{path}", params=params, data=data,
-            )
-        except httpx.HTTPError:
-            raise ValueError("Instagram subscription request failed; retry registration later.") from None
-        if response.status_code >= 400:
-            raise ValueError(f"Instagram subscription request returned HTTP {response.status_code}; check account access and callback setup.")
-        try:
-            body = response.json()
-        except ValueError:
-            raise ValueError("Instagram subscription returned an invalid response.") from None
-        if not isinstance(body, dict) or body.get("error"):
-            raise ValueError("Instagram rejected the subscription request; check account access and callback setup.")
-        return body
+        from utils.meta_subscriptions import graph_request
+
+        return await graph_request(client, method, path, base=INSTAGRAM_API_BASE,
+                                   label="Instagram", params=params, data=data)
 
     @classmethod
     async def _read_subscribed_fields(cls, client, account_id: str, app_id: str) -> set[str]:
-        """Preserve the exact configured app's complete remote field set.
-
-        An unrecognized app identity or incomplete pagination is NOT an empty
-        subscription. Stop before POST rather than risk replacing its fields.
-        """
         from utils.instagram_webhooks import instagram_account_id
+        from utils.meta_subscriptions import read_subscribed_fields
 
-        # Meta's parent app and Instagram product have different public IDs.
-        # Accept only those explicitly configured identities, never whichever
-        # unrelated app happens to be the sole row returned by the provider.
         expected_ids = {app_id}
         product_id = os.environ.get("INSTAGRAM_CLIENT_ID") or os.environ.get("INSTAGRAM_APP_ID")
         if product_id:
             if not instagram_account_id(product_id):
                 raise ValueError("The configured Instagram product app ID is invalid.")
             expected_ids.add(product_id)
-        rows = []
-        after = None
-        seen_cursors = set()
-        for _ in range(5):
-            params = {"fields": "id,subscribed_fields"}
-            if after:
-                params["after"] = after
-            body = await cls._registration_request(client, "GET", f"{account_id}/subscribed_apps", params=params)
-            page = body.get("data")
-            if not isinstance(page, list) or any(not isinstance(row, dict) for row in page):
-                raise ValueError("Instagram returned invalid subscription data; existing fields were not changed.")
-            rows.extend(page)
-            paging = body.get("paging") or {}
-            if not isinstance(paging, dict):
-                raise ValueError("Instagram returned invalid subscription pagination.")
-            if not paging.get("next"):
-                break
-            cursors = paging.get("cursors") or {}
-            after = cursors.get("after") if isinstance(cursors, dict) else None
-            if not isinstance(after, str) or not after or after in seen_cursors:
-                raise ValueError("Instagram subscription pagination is incomplete; existing fields were not changed.")
-            seen_cursors.add(after)
-        else:
-            raise ValueError("Instagram subscription pagination exceeded its safety bound; existing fields were not changed.")
-        matching = [row for row in rows if str(row.get("id")) in expected_ids]
-        if rows and len(matching) != 1:
-            raise ValueError("Instagram subscribed-app identity does not match the configured webhook app; existing fields were not changed.")
-        if not matching:
-            return set()
-        fields = matching[0].get("subscribed_fields")
-        if not isinstance(fields, list) or any(
-            not isinstance(field, str) or not field or not field.replace("_", "").isalnum()
-            for field in fields
-        ):
-            raise ValueError("Instagram did not return a valid subscribed-fields list; existing fields were not changed.")
-        return set(fields)
+
+        async def request(method, path, **kwargs):
+            return await cls._registration_request(client, method, path, **kwargs)
+
+        return await read_subscribed_fields(request, account_id, expected_ids, label="Instagram")
 
     @staticmethod
-    @asynccontextmanager
-    async def _registration_lease(account_id: str, app_id: str):
-        """Cross-container union updates; contention fails visibly, never loops."""
-        from utils.redis_client import get_shared_redis
+    def _registration_lease(account_id: str, app_id: str):
+        from utils.meta_subscriptions import registration_lease
 
-        redis = get_shared_redis()
-        if redis is None:
-            raise ValueError("Instagram registration lock is unavailable; retry later.")
-        key = f"instagram:subscription-register:{app_id}:{account_id}"
-        owner = str(uuid4())
-        try:
-            async with asyncio.timeout(5):
-                acquired = await redis.set(key, owner, nx=True, ex=90)
-        except Exception:
-            raise ValueError("Instagram registration lock is unavailable; retry later.") from None
-        if not acquired:
-            raise ValueError("Instagram account registration is already in progress; retry later.")
-        try:
-            # The provider read/merge/write/readback must finish well before the
-            # 90-second lease expires; no blind write retries inside this block.
-            async with asyncio.timeout(45):
-                yield
-        except TimeoutError:
-            raise ValueError("Instagram subscription verification timed out; retry registration later.") from None
-        finally:
-            try:
-                async with asyncio.timeout(5):
-                    await redis.eval(
-                        "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end",
-                        1, key, owner,
-                    )
-            except Exception:
-                logger.warning("[InstagramNode] Registration lease release failed; it will expire automatically.")
+        return registration_lease(account_id, app_id, provider="instagram", label="Instagram")
 
     @classmethod
     async def register_node_subscriptions(
@@ -1719,10 +1638,11 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
             identity = await cls._registration_request(client, "GET", "me", params={"fields": "user_id"})
             if str(identity.get("user_id")) != account_id:
                 raise ValueError("Instagram Login account identity changed; reconnect the intended account before activating this trigger.")
-            async with cls._registration_lease(account_id, app_id):
+            async with cls._registration_lease(account_id, app_id) as check_owner:
                 current = await cls._read_subscribed_fields(client, account_id, app_id)
                 wanted = current | set(event_types)
                 if wanted != current:
+                    await check_owner()
                     result = await cls._registration_request(
                         client, "POST", f"{account_id}/subscribed_apps",
                         data={"subscribed_fields": ",".join(sorted(wanted))},

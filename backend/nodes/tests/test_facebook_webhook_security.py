@@ -13,6 +13,11 @@ from fastapi import HTTPException
 
 from nodes.facebook_node import FacebookNode
 from utils import facebook_events as fb_events
+from utils import facebook_subscriptions as fb_subs
+from utils.meta_subscriptions import MetaAuthorizationDenied
+import httpx
+from types import SimpleNamespace
+from urllib.parse import parse_qs
 
 
 BODY = b'{"object":"page","entry":[]}'
@@ -140,6 +145,459 @@ PAGE = "123456789"
 OTHER_PAGE = "223456789"
 SENDER = "323456789"
 CREDENTIAL = "00000000-0000-4000-8000-000000000001"
+APP = "123123123"
+USER = "456456456"
+
+
+@pytest.fixture
+async def facebook_registration(monkeypatch):
+    from utils import redis_client
+
+    redis = fakeredis.aioredis.FakeRedis()
+    monkeypatch.setattr(redis_client, "get_shared_redis", lambda: redis)
+    monkeypatch.setattr(fb_events, "get_shared_redis", lambda: redis)
+    for name, value in {"FACEBOOK_WEBHOOK_APP_ID": APP,
+                        "FACEBOOK_WEBHOOK_APP_SECRET": "synthetic-signing-secret",
+                        "FACEBOOK_WEBHOOK_VERIFY_TOKEN": "synthetic-verify",
+                        "APP_WEBHOOK_BASE_URL": "https://callback.example"}.items():
+        monkeypatch.setenv(name, value)
+    s = SimpleNamespace(
+        redis=redis, requests=[], posts=[], fields={"leadgen"}, failure=None,
+        page_identity=PAGE, page_rows=[{"id": PAGE, "access_token": "synthetic-page-token", "tasks": ["MANAGE"]}],
+        readback_missing=False, gate=None, entered=None, post_success=True,
+        token_data={"app_id": APP, "user_id": USER, "type": "USER", "is_valid": True,
+                    "expires_at": 4102444800, "data_access_expires_at": 4102444800,
+                    "scopes": ["pages_show_list", "pages_manage_metadata", "pages_read_engagement", "pages_read_user_content", "pages_messaging"]},
+        credential={"credential_type": "facebook_oauth", "facebook_user_id": USER, "access_token": "synthetic-user-token"},
+        config={"operation": "on_feed", "callback_mode": "managed", "page_id": PAGE,
+                "credentialIds": {"facebook_oauth": CREDENTIAL}},
+        app_subscription={"object": "page", "active": True, "callback_url": "https://callback.example/webhook/app/facebook",
+                          "fields": [{"name": name} for name, _ in fb_events.FB_WEBHOOK_FIELDS]},
+    )
+    original_client = httpx.AsyncClient
+    s.client = original_client
+
+    async def transport(request):
+        s.requests.append(request)
+        assert request.url.host == "graph.facebook.com"
+        if s.failure:
+            override = s.failure(request)
+            if override is not None:
+                return override
+        if request.url.path.endswith("/debug_token"):
+            assert request.headers["Authorization"] == f"Bearer {APP}|synthetic-signing-secret"
+            assert request.url.params["input_token"] == "synthetic-user-token"
+            return httpx.Response(200, json={"data": s.token_data})
+        if request.url.path.endswith(f"/{APP}/subscriptions"):
+            assert request.method == "GET"
+            assert request.headers["Authorization"] == f"Bearer {APP}|synthetic-signing-secret"
+            return httpx.Response(200, json={"data": [s.app_subscription]})
+        assert "access_token" not in request.url.params
+        assert "appsecret_proof" in request.url.params
+        if request.url.path.endswith("/me/accounts"):
+            assert request.headers["Authorization"] == "Bearer synthetic-user-token"
+            return httpx.Response(200, json={"data": s.page_rows})
+        assert request.headers["Authorization"] == "Bearer synthetic-page-token"
+        if request.url.path.endswith("/me"):
+            return httpx.Response(200, json={"id": s.page_identity})
+        assert request.url.path.endswith(f"/{PAGE}/subscribed_apps")
+        if request.method == "POST":
+            fields = set(parse_qs(request.content.decode())["subscribed_fields"][0].split(","))
+            s.posts.append(fields)
+            if s.post_success:
+                s.fields = fields
+            return httpx.Response(200, json={"success": s.post_success})
+        if s.gate:
+            s.entered.set()
+            await s.gate.wait()
+        fields = [] if s.posts and s.readback_missing else sorted(s.fields)
+        return httpx.Response(200, json={"data": [{"id": APP, "subscribed_fields": fields}]})
+
+    monkeypatch.setattr(httpx, "AsyncClient", lambda *a, **kw: original_client(*a, transport=httpx.MockTransport(transport), **kw))
+    yield s
+    await redis.aclose()
+
+
+async def test_page_registration_preserves_union_is_idempotent_and_uses_only_page_token(facebook_registration):
+    s = facebook_registration
+    assert await fb_subs.ensure_page_subscription(s.credential, s.config) == PAGE
+    assert s.posts == [{"leadgen", "feed"}]
+    await fb_subs.ensure_page_subscription(s.credential, dict(s.config, operation="on_messages"))
+    assert s.posts[-1] == {"leadgen", "feed", "messages"}
+    await fb_subs.ensure_page_subscription(s.credential, s.config)
+    assert len(s.posts) == 2
+    assert await s.redis.keys("*") == []
+
+
+async def test_managed_page_picker_paginates_without_exposing_page_tokens(facebook_registration):
+    s = facebook_registration
+    def first_page(request):
+        if "after" not in request.url.params:
+            return httpx.Response(200, json={"data": [{"id": OTHER_PAGE, "name": "Another Page"}],
+                "paging": {"next": "https://untrusted.example", "cursors": {"after": "next"}}})
+        return None
+    s.failure = first_page
+    result = await FacebookNode.load_field_options("page_id", s.credential, context=s.config)
+    assert result == {"options": [{"label": "Another Page", "value": OTHER_PAGE}, {"label": PAGE, "value": PAGE}]}
+    assert len(s.requests) == 2 and "synthetic-page-token" not in json.dumps(result)
+
+
+async def test_managed_picker_surfaces_provider_failure_instead_of_empty_success(facebook_registration):
+    s = facebook_registration
+    s.failure = lambda r: httpx.Response(503, json={})
+    with pytest.raises(ValueError, match="HTTP 503"):
+        await FacebookNode.load_field_options("page_id", s.credential, context=s.config)
+
+
+@pytest.mark.parametrize("key,value", [("object", "instagram"), ("active", False), ("callback_url", "https://other.example"), ("fields", []), ("fields", ["feed"])])
+async def test_app_callback_configuration_is_verified_before_page_subscription(facebook_registration, key, value):
+    s = facebook_registration
+    s.app_subscription[key] = value
+    with pytest.raises(ValueError, match="app-level"):
+        await fb_subs.ensure_page_subscription(s.credential, s.config)
+    assert not s.posts and not any("subscribed_apps" in r.url.path for r in s.requests)
+
+
+@pytest.mark.parametrize("operation", ["on_" + f for f, _ in fb_events.FB_WEBHOOK_FIELDS] + ["on_any_facebook_event"])
+async def test_all_facebook_event_fields_register(facebook_registration, operation):
+    s = facebook_registration
+    await fb_subs.ensure_page_subscription(s.credential, dict(s.config, operation=operation))
+    expected = {f for f, _ in fb_events.FB_WEBHOOK_FIELDS} if operation == "on_any_facebook_event" else {operation[3:]}
+    assert s.posts == [{"leadgen"} | expected]
+
+
+@pytest.mark.parametrize("key,value", [
+    ("app_id", "999"), ("user_id", "999"), ("type", "PAGE"), ("is_valid", False),
+    ("is_valid", 1), ("expires_at", 1), ("expires_at", None), ("expires_at", True),
+    ("data_access_expires_at", 1), ("scopes", []), ("scopes", "pages_manage_metadata"),
+])
+async def test_app_user_expiry_scopes_gate_precedes_page_lookup(facebook_registration, key, value):
+    s = facebook_registration
+    s.token_data[key] = value
+    with pytest.raises(MetaAuthorizationDenied):
+        await fb_subs.ensure_page_subscription(s.credential, s.config)
+    assert len(s.requests) == 1 and not s.posts
+
+
+@pytest.mark.parametrize("change", ["not_selected", "duplicate", "no_management", "no_token", "wrong_page_token"])
+async def test_registration_never_falls_back_to_another_page_or_user_token(facebook_registration, change):
+    s = facebook_registration
+    if change == "not_selected": s.page_rows[0]["id"] = OTHER_PAGE
+    if change == "duplicate": s.page_rows.append(deepcopy(s.page_rows[0]))
+    if change == "no_management": s.page_rows[0]["tasks"] = ["ANALYZE"]
+    if change == "no_token": s.page_rows[0].pop("access_token")
+    if change == "wrong_page_token": s.page_identity = OTHER_PAGE
+    with pytest.raises(MetaAuthorizationDenied):
+        await fb_subs.ensure_page_subscription(s.credential, s.config)
+    assert not s.posts and not any("subscribed_apps" in r.url.path for r in s.requests)
+
+
+@pytest.mark.parametrize("mode", ["manual", "", None])
+async def test_legacy_or_missing_callback_mode_never_registers_managed(facebook_registration, mode):
+    s = facebook_registration
+    with pytest.raises(ValueError):
+        await fb_subs.ensure_page_subscription(s.credential, dict(s.config, callback_mode=mode))
+    assert not s.requests
+
+
+async def test_paginated_page_and_app_edges_use_cursors_not_next_urls(facebook_registration):
+    s = facebook_registration
+
+    def pagination(request):
+        if request.method != "GET": return None
+        if request.url.path.endswith("/me/accounts") and "after" not in request.url.params:
+            return httpx.Response(200, json={"data": [{"id": OTHER_PAGE}], "paging": {
+                "next": "https://evil.example/steal", "cursors": {"after": "next-pages"}}})
+        if request.url.path.endswith("/subscribed_apps") and "after" not in request.url.params:
+            return httpx.Response(200, json={"data": [{"id": "789789", "subscribed_fields": ["messages"]}], "paging": {
+                "next": "https://evil.example/steal", "cursors": {"after": "next-apps"}}})
+        return None
+    s.failure = pagination
+    await fb_subs.ensure_page_subscription(s.credential, s.config)
+    assert s.posts == [{"leadgen", "feed"}]
+    assert {r.url.params.get("after") for r in s.requests} == {None, "next-pages", "next-apps"}
+
+
+@pytest.mark.parametrize("path", ["/me/accounts", "/subscribed_apps"])
+@pytest.mark.parametrize("broken", ["missing_cursor", "repeated_cursor", "malformed_page", "malformed_paging", "too_many"])
+async def test_incomplete_edges_stop_before_registration(facebook_registration, path, broken):
+    s = facebook_registration
+    calls = []
+
+    def fail(request):
+        if not request.url.path.endswith(path): return None
+        calls.append(request)
+        body = {"data": [], "paging": {"next": "https://untrusted.example", "cursors": {"after": "repeat"}}}
+        if broken == "missing_cursor": body["paging"].pop("cursors")
+        if broken == "malformed_page": body["data"] = {}
+        if broken == "malformed_paging": body["paging"] = []
+        if broken == "too_many": body["paging"]["cursors"]["after"] = str(len(calls))
+        return httpx.Response(200, json=body)
+    s.failure = fail
+    with pytest.raises(ValueError):
+        await fb_subs.ensure_page_subscription(s.credential, s.config)
+    assert not s.posts
+    assert len(calls) == ((50 if path == "/me/accounts" else 5) if broken == "too_many" else 2 if broken == "repeated_cursor" else 1)
+
+
+@pytest.mark.parametrize("failure", ["false_success", "missing_fields", "readback_error"])
+async def test_remote_update_is_not_success_until_readback_verified(facebook_registration, failure):
+    s = facebook_registration
+    if failure == "false_success": s.post_success = False
+    if failure == "missing_fields": s.readback_missing = True
+    if failure == "readback_error":
+        s.failure = lambda r: httpx.Response(503, json={}) if s.posts and r.method == "GET" else None
+    with pytest.raises(ValueError, match="no workflow subscription was saved"):
+        await fb_subs.ensure_page_subscription(s.credential, s.config)
+    assert s.posts == [{"leadgen", "feed"}]
+    assert not any(r.method == "DELETE" for r in s.requests)
+    assert await s.redis.keys("*") == []
+
+
+async def test_real_redis_serializes_page_union_updates(facebook_registration):
+    s = facebook_registration
+    s.gate, s.entered = asyncio.Event(), asyncio.Event()
+    first = asyncio.create_task(fb_subs.ensure_page_subscription(s.credential, s.config))
+    await asyncio.wait_for(s.entered.wait(), 1)
+    try:
+        with pytest.raises(ValueError, match="already in progress"):
+            await fb_subs.ensure_page_subscription(s.credential, dict(s.config, operation="on_messages"))
+    finally:
+        s.gate.set()
+        await first
+    await fb_subs.ensure_page_subscription(s.credential, dict(s.config, operation="on_messages"))
+    assert s.posts == [{"leadgen", "feed"}, {"leadgen", "feed", "messages"}]
+
+
+async def test_lost_lease_stops_before_post_and_preserves_new_owner(facebook_registration):
+    s = facebook_registration
+    s.gate, s.entered = asyncio.Event(), asyncio.Event()
+    attempt = asyncio.create_task(fb_subs.ensure_page_subscription(s.credential, s.config))
+    await asyncio.wait_for(s.entered.wait(), 1)
+    key = (await s.redis.keys("*"))[0]
+    await s.redis.set(key, "replacement-owner", ex=90)
+    s.gate.set()
+    with pytest.raises(ValueError, match="lock was lost"):
+        await attempt
+    assert not s.posts and await s.redis.get(key) == b"replacement-owner"
+
+
+async def test_transport_logs_and_errors_do_not_contain_token_or_provider_body(facebook_registration, caplog):
+    import logging
+    s = facebook_registration
+    caplog.set_level(logging.INFO, logger="httpx")
+    await fb_subs.ensure_page_subscription(s.credential, s.config)
+    assert "synthetic-user-token" not in caplog.text
+    assert "synthetic-signing-secret" not in caplog.text
+    assert "appsecret_proof" not in caplog.text
+    assert "Meta Graph transport activity" in caplog.text
+    s.failure = lambda r: httpx.Response(503, json={"error": {"message": "SECRET-SENTINEL"}})
+    with pytest.raises(ValueError) as exc:
+        await fb_subs.ensure_page_subscription(s.credential, s.config)
+    assert "SECRET-SENTINEL" not in str(exc.value) + caplog.text
+
+
+@pytest.fixture
+def facebook_world(facebook_registration, monkeypatch):
+    from nodes.core import webhook_subscriptions as subscriptions
+    from utils import credential_loader, facebook_webhooks, webhook_manager, webhook_routes
+
+    s = facebook_registration
+    s.owner = "00000000-0000-4000-8000-000000000010"
+    s.workflow = "00000000-0000-4000-8000-000000000020"
+    s.node_id, s.rows = "facebook-trigger", []
+    s.nodes = [{"id": s.node_id, "type": "automation-facebook", "config": s.config}]
+    s.pool = MagicMock()
+    s.pool.fetchrow = AsyncMock(side_effect=lambda *a: {"workflow": {"nodes": deepcopy(s.nodes), "edges": []}})
+    s.loaded = s.credential
+
+    async def load_credential(pool, user_id, credential_id, **kwargs):
+        assert user_id == s.owner and credential_id == CREDENTIAL
+        return deepcopy(s.loaded)
+
+    async def owner_nodes(pool, wf, include_nodes=True):
+        assert str(wf) == s.workflow
+        return s.owner, deepcopy(s.nodes) if include_nodes else []
+
+    async def save(pool, **data):
+        s.rows = [dict(data, event_type=event) for event in data["event_types"]]
+
+    async def delete(*args):
+        s.rows = []
+
+    monkeypatch.setattr(credential_loader, "load_credential", load_credential)
+    monkeypatch.setattr(facebook_webhooks, "load_credential", load_credential)
+    monkeypatch.setattr(webhook_manager, "_load_workflow_owner_and_nodes", owner_nodes)
+    monkeypatch.setattr(FacebookNode, "freshen_credential", AsyncMock(side_effect=lambda data, **kw: data))
+    monkeypatch.setattr(subscriptions, "get_node_subscriptions", AsyncMock(side_effect=lambda *a: deepcopy(s.rows)))
+    s.save = AsyncMock(side_effect=save)
+    monkeypatch.setattr(subscriptions, "save_subscriptions", s.save)
+    monkeypatch.setattr(subscriptions, "delete_subscriptions", AsyncMock(side_effect=delete))
+    monkeypatch.setattr(subscriptions, "find_subscriptions", AsyncMock(side_effect=lambda pool, provider, page, kind:
+        [deepcopy(row) for row in s.rows if row["provider"] == provider and row["tenant_id"] == page and row["event_type"] == kind]))
+    monkeypatch.setattr(webhook_routes, "get_native_pool", lambda: s.pool)
+    monkeypatch.setattr("utils.fire_budget.over_fire_budget", AsyncMock(return_value=False))
+    s.execute = AsyncMock()
+    monkeypatch.setattr(webhook_routes, "_execute_workflow_with_relay", s.execute)
+    monkeypatch.setattr(webhook_manager.WebhookManager, "merge_node_config_patch", AsyncMock())
+
+    async def provision():
+        return await webhook_manager.WebhookManager.provision_node_webhook(
+            s.pool, user_id=s.owner, workflow_id=s.workflow, node_id=s.node_id,
+            node_type="automation-facebook", operation=s.config["operation"], config=s.config)
+
+    async def reconcile():
+        return await webhook_manager.WebhookManager.reconcile_node(s.pool, s.workflow, s.node_id)
+
+    s.provision, s.reconcile = provision, reconcile
+    return s
+
+
+async def test_managed_headless_registration_and_reconcile_use_live_page_binding(facebook_world):
+    s = facebook_world
+    result = await s.provision()
+    assert result["trigger_registered"] is True
+    assert result["subscription_status"].startswith("Registered")
+    assert s.rows[0]["tenant_id"] == PAGE and s.rows[0]["user_id"] == s.owner
+    before = len(s.requests)
+    assert (await s.reconcile())["state"] == "live"
+    assert len(s.requests) == before
+    # Same credential, new Page: must not take the credential-only fast path.
+    s.config["page_id"] = OTHER_PAGE
+    assert (await s.reconcile())["state"] == "failed"
+    assert len(s.requests) > before and s.rows[0]["tenant_id"] == PAGE
+
+
+async def test_panel_separate_credential_argument_matches_headless_registration(facebook_world):
+    s = facebook_world
+    context = {key: value for key, value in s.config.items() if key != "credentialIds"}
+    result = await FacebookNode.load_field_value("subscription_status", s.owner, s.workflow, s.node_id, s.pool,
+                                                context=context, credential_ids={"facebook_oauth": CREDENTIAL})
+    assert result["values"]["trigger_registered"] is True
+    assert s.rows[0]["credential_id"] == CREDENTIAL and "credentialIds" not in context
+
+
+async def test_conflicting_panel_credential_selectors_fail_before_provider_calls(facebook_world):
+    s = facebook_world
+    with pytest.raises(ValueError, match="selection changed"):
+        await FacebookNode.load_field_value("subscription_status", s.owner, s.workflow, s.node_id, s.pool,
+                                            context=s.config, credential_ids={"facebook_oauth": "different"})
+    assert not s.requests and not s.rows
+
+
+@pytest.mark.parametrize("change", ["manual", "disabled", "operation", "deleted"])
+async def test_reconciliation_removes_obsolete_managed_rows_without_unsubscribing_shared_page(facebook_world, change):
+    s = facebook_world
+    await s.provision()
+    before = len(s.requests)
+    if change == "manual": s.config["callback_mode"] = "manual"
+    if change == "disabled": s.config["disabled"] = True
+    if change == "operation": s.config["operation"] = "get_me"
+    if change == "deleted":
+        # The full deletion reconciler also checks legacy webhooks/cron rows.
+        s.nodes = []
+        conn = AsyncMock()
+        conn.fetchrow.return_value = None
+        s.pool.acquire.return_value = AsyncMock(__aenter__=AsyncMock(return_value=conn), __aexit__=AsyncMock(return_value=False))
+    assert (await s.reconcile())["state"] == "deregistered"
+    assert not s.rows and len(s.requests) == before
+    assert s.fields == {"leadgen", "feed"}
+
+
+async def test_unverified_owner_credential_never_saves_registration(facebook_world):
+    s = facebook_world
+    s.loaded = None
+    result = await s.provision()
+    assert result["trigger_registered"] is False
+    assert not s.rows and not s.requests
+
+
+async def test_provider_readback_failure_never_saves_local_active_rows(facebook_world):
+    s = facebook_world
+    s.readback_missing = True
+    result = await s.provision()
+    assert result["trigger_registered"] is False and "readback" in result["trigger_error"]
+    s.save.assert_not_awaited()
+    assert not s.rows
+
+
+@pytest.mark.parametrize("mode", [None, "manual"])
+async def test_manual_mode_provisions_original_callback_and_rejects_managed_loader(facebook_world, monkeypatch, mode):
+    from utils.webhook_manager import WebhookManager
+    s = facebook_world
+    s.config["callback_mode"] = mode
+    mint = AsyncMock(return_value={"webhook_id": "synthetic-webhook", "webhook_url": "https://example.test"})
+    monkeypatch.setattr(WebhookManager, "get_or_create_webhook", mint)
+    assert (await s.provision())["webhook_url"] == "https://example.test"
+    assert mint.await_count == 1 and not s.rows and not s.requests
+    assert await FacebookNode.load_field_value("subscription_status", s.owner, s.workflow, s.node_id, s.pool, context=s.config) == {"value": None}
+
+
+def test_managed_mode_never_accepts_the_legacy_per_workflow_callback():
+    config = {"callback_mode": "managed", "app_secret": SECRET, "verify_token": "verify-test"}
+    assert not FacebookNode.verify_webhook_signature(BODY, {"x-hub-signature-256": signed()}, config)
+    assert handshake(config) is None
+
+
+@pytest.mark.parametrize("change", ["none", "page", "operation", "manual", "credential", "revoked", "owner", "provider_revoked", "granular_scope", "app", "remote_unsubscribed"])
+async def test_live_delivery_rechecks_current_authorization_without_provider_writes(facebook_world, facebook_clock, change):
+    from utils.facebook_webhooks import facebook_live_scope_filter
+    s = facebook_world
+    await s.provision()
+    row = deepcopy(s.rows[0])
+    if change == "page": s.config["page_id"] = OTHER_PAGE
+    if change == "operation": s.config["operation"] = "on_messages"
+    if change == "manual": s.config["callback_mode"] = "manual"
+    if change == "credential": s.config["credentialIds"] = {}
+    if change == "revoked": s.loaded = None
+    if change == "owner": s.owner = "00000000-0000-4000-8000-000000000011"
+    if change == "provider_revoked": s.token_data["is_valid"] = False
+    if change == "app": s.token_data["app_id"] = "999"
+    if change == "granular_scope": s.token_data["granular_scopes"] = [{"scope": "pages_manage_metadata", "target_ids": [OTHER_PAGE]}]
+    if change == "remote_unsubscribed": s.fields = {"leadgen"}
+    payload = fb_events.parse_facebook_webhook(json.dumps({"object": "page", "entry": [{
+        "id": PAGE, "time": NOW, "changes": [{"field": "feed", "value": {"post_id": "123_456", "verb": "add"}}]}]}).encode())[0][2]
+    before = len(s.posts)
+    result = await facebook_live_scope_filter(s.pool, row, payload, s.nodes[0])
+    assert (result is None) == (change == "none")
+    assert len(s.posts) == before
+
+
+@pytest.mark.parametrize("status,code", [(429, 4), (503, 2), (403, 4)])
+async def test_transient_provider_failure_remains_retryable(facebook_world, facebook_clock, status, code):
+    from utils.facebook_webhooks import facebook_live_scope_filter
+    s = facebook_world
+    await s.provision()
+    s.failure = lambda r: httpx.Response(status, json={"error": {"code": code, "is_transient": True}})
+    payload = {"object": "page", "page_id": PAGE, "event_type": "feed"}
+    with pytest.raises(ValueError):
+        await facebook_live_scope_filter(s.pool, s.rows[0], payload, s.nodes[0])
+
+
+async def test_real_signed_asgi_delivery_isolated_to_authorized_page_and_retry_deduped(facebook_world, facebook_clock):
+    from fastapi import FastAPI
+    from utils import webhook_routes
+    s = facebook_world
+    await s.provision()
+    app = FastAPI()
+    app.include_router(webhook_routes.router)
+    entries = [{"id": page, "time": NOW, "changes": [{"field": "feed", "value": {"post_id": page + "_111", "verb": "add"}}]} for page in (PAGE, OTHER_PAGE)]
+    body = json.dumps({"object": "page", "entry": entries}).encode()
+    async with s.client(transport=httpx.ASGITransport(app=app), base_url="https://example.test") as client:
+        url = "/webhook/app/facebook"
+        bad = await client.post(url, content=body, headers={"x-hub-signature-256": signed(body)})
+        assert bad.status_code in (401, 403) and s.execute.await_count == 0
+        headers = {"x-hub-signature-256": signed(body, "synthetic-signing-secret")}
+        good = await client.post(url, content=body, headers=headers)
+        assert good.status_code == 200
+        assert s.execute.await_count == 1
+        delivered = s.execute.call_args.kwargs["nodes"][0]["config"]["_triggerPayload"]
+        assert delivered["page_id"] == PAGE and len(delivered["entry"]) == 1
+        assert OTHER_PAGE not in json.dumps(delivered)
+        again = await client.post(url, content=body, headers=headers)
+        assert again.status_code == 200 and s.execute.await_count == 1
+        too_big = await client.post(url, content=b"x" * (fb_events.MAX_BODY_BYTES + 1))
+        assert too_big.status_code == 413
 
 
 @pytest.fixture

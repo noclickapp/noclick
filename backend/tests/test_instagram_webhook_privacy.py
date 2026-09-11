@@ -14,21 +14,28 @@ from utils.instagram_webhook_privacy import (
     instagram_webhook_request_hook,
 )
 from utils.instagram_webhooks import instagram_handshake
+from utils.facebook_webhooks import facebook_handshake
 
 
 @pytest.mark.parametrize("valid", [True, False])
-async def test_verification_and_access_log_path_survive_real_span_redaction(monkeypatch, valid):
+@pytest.mark.parametrize("service", ["instagram", "facebook"])
+async def test_verification_and_access_log_path_survive_real_span_redaction(monkeypatch, valid, service):
     monkeypatch.setenv("INSTAGRAM_WEBHOOK_VERIFY_TOKEN", "synthetic-verification-token")
+    monkeypatch.setenv("FACEBOOK_WEBHOOK_VERIFY_TOKEN", "synthetic-verification-token")
+    monkeypatch.setenv("FACEBOOK_WEBHOOK_APP_ID", "123456789")
+    monkeypatch.setenv("FACEBOOK_WEBHOOK_APP_SECRET", "synthetic-signing-secret")
+    monkeypatch.setenv("APP_WEBHOOK_BASE_URL", "https://example.test")
     exporter = InMemorySpanExporter()
     provider = TracerProvider()
     provider.add_span_processor(SimpleSpanProcessor(exporter))
     app = FastAPI()
     scopes = []
 
-    @app.get("/webhook/app/instagram")
+    @app.get(f"/webhook/app/{service}")
     async def verify(request: Request):
         scopes.append(request.scope)
-        return instagram_handshake(consume_instagram_verification_query(request))
+        handshake = instagram_handshake if service == "instagram" else facebook_handshake
+        return handshake(consume_instagram_verification_query(request))
 
     FastAPIInstrumentor.instrument_app(
         app, tracer_provider=provider,
@@ -38,7 +45,7 @@ async def test_verification_and_access_log_path_survive_real_span_redaction(monk
     try:
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="https://example.test") as client:
             response = await client.get(
-                "/webhook/app/instagram",
+                f"/webhook/app/{service}",
                 params={"hub.mode": "subscribe", "hub.challenge": "1234",
                         "hub.verify_token": "synthetic-verification-token" if valid else "synthetic-wrong-token"},
                 headers={"X-Hub-Signature-256": "synthetic-signature"},
@@ -55,7 +62,7 @@ async def test_verification_and_access_log_path_survive_real_span_redaction(monk
             assert "synthetic-signature" not in rendered
         assert scopes[0]["query_string"] == b""
         assert "_instagram_callback_query" not in scopes[0]
-        assert get_path_with_query_string(scopes[0]) == "/webhook/app/instagram"
+        assert get_path_with_query_string(scopes[0]) == f"/webhook/app/{service}"
     finally:
         FastAPIInstrumentor.uninstrument_app(app)
         provider.shutdown()

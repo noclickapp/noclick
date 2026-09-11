@@ -1,4 +1,4 @@
-"""Keep Instagram callback verification material out of server telemetry.
+"""Keep Instagram/Facebook callback verification material out of server telemetry.
 
 Meta sends the verification token in a GET query, unlike signed POST bodies.
 The request hook runs before routing; it preserves that query only for the
@@ -8,12 +8,12 @@ Proxy/platform access logs remain an operator configuration responsibility.
 
 from starlette.datastructures import QueryParams
 
-_PATH = "/webhook/app/instagram"
+_PATHS = {"/webhook/app/instagram", "/webhook/app/facebook"}
 _QUERY_KEY = "_instagram_callback_query"
 
 
 def instagram_webhook_request_hook(span, scope):
-    if scope.get("path", "").rstrip("/") != _PATH:
+    if scope.get("path", "").rstrip("/") not in _PATHS:
         return
     raw_query = scope.get("query_string", b"")
     if raw_query:

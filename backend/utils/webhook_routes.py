@@ -2308,6 +2308,14 @@ async def _dispatch_one_app_event(
     return fired
 
 
+@router.get("/app/facebook")
+async def verify_facebook_app_webhook(request: Request):
+    from utils.facebook_webhooks import facebook_handshake
+    from utils.instagram_webhook_privacy import consume_instagram_verification_query
+
+    return facebook_handshake(consume_instagram_verification_query(request))
+
+
 @router.get("/app/instagram")
 async def verify_instagram_app_webhook(request: Request):
     from utils.instagram_webhooks import instagram_handshake
@@ -2327,21 +2335,20 @@ async def receive_app_webhook(
     NoClick app to this one URL; the request is verified against the app secret
     and routed via the ``webhook_subscriptions`` table.
     """
-    if provider == "instagram":
-        from utils.instagram_webhooks import MAX_BODY_BYTES
+    from utils.app_webhooks import APP_PROVIDERS
 
+    max_body_bytes = APP_PROVIDERS.get(provider, {}).get("max_body_bytes")
+    if max_body_bytes:
         chunks = []
         size = 0
         async for chunk in request.stream():
             size += len(chunk)
-            if size > MAX_BODY_BYTES:
-                raise HTTPException(status_code=413, detail="Instagram webhook payload too large")
+            if size > max_body_bytes:
+                raise HTTPException(status_code=413, detail="Webhook payload too large")
             chunks.append(chunk)
         body = b"".join(chunks)
     else:
         body = await request.body()
-    from utils.app_webhooks import APP_PROVIDERS
-
     guarded = bool(APP_PROVIDERS.get(provider, {}).get("event_guard"))
     try:
         return await handle_app_webhook_payload(

@@ -202,7 +202,7 @@ async def test_reconcile_is_idempotent(world):
 def test_gate_recognizes_every_app_event_trigger_op():
     """node_webhook_field_for is the candidate pre-filter for BOTH headless
     write paths (builder step 3d, MCP auto-provision) — an op it misses ships
-    dead. Every app-event trigger op must resolve to subscription_status."""
+    dead. Hybrid manual/managed nodes also carry a legacy webhook field."""
     from nodes.core.registry import NODE_REGISTRY
     from nodes.core.webhook_subscriptions import AppEventTriggerMixin
 
@@ -213,8 +213,10 @@ def test_gate_recognizes_every_app_event_trigger_op():
             continue
         for op in node_class._trigger_event_map:
             checked += 1
+            expected = (node_class.registration_field_for_config(op, {})
+                        if hasattr(node_class, "registration_field_for_config") else "subscription_status")
             assert WebhookManager.node_webhook_field_for(node_type, op) == \
-                "subscription_status", f"{node_type}:{op} invisible to provisioning"
+                expected, f"{node_type}:{op} invisible to provisioning"
     assert checked > 0
 
 

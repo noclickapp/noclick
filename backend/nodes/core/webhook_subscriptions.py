@@ -229,6 +229,19 @@ class AppEventTriggerMixin:
     _credential_prompt: str = "Connect a credential to activate this trigger"
 
     @classmethod
+    def subscription_events_for_config(cls, operation, config):
+        return cls._trigger_event_map.get(operation or "", [])
+
+    @classmethod
+    def subscription_matches_config(cls, rows, config):
+        """Optional extra row binding for user-selected tenants or modes."""
+        return True
+
+    @classmethod
+    async def _resolve_subscription_tenant(cls, credential, config):
+        return await cls._resolve_tenant_id(credential)
+
+    @classmethod
     async def _resolve_tenant_id(cls, credential: Dict[str, Any]) -> Optional[str]:
         """Return the connected account's tenant id (Slack team_id / HubSpot
         portalId), looking it up via the provider API if not on the credential."""
@@ -299,10 +312,10 @@ class AppEventTriggerMixin:
         Idempotent: rows already matching the desired registration are left
         untouched, so panel re-opens and sweep passes never churn the table.
         """
-        event_types = cls._trigger_event_map.get(operation or "", [])
+        event_types = cls.subscription_events_for_config(operation, config)
         if not event_types:
             raise ValueError(f"Unknown trigger operation: {operation}")
-        tenant_id = await cls._resolve_tenant_id(credential)
+        tenant_id = await cls._resolve_subscription_tenant(credential, config)
         if not tenant_id:
             raise ValueError("Could not determine the connected account")
 
