@@ -78,7 +78,7 @@ describe('TriggerEventMessage', () => {
                 description: '',
                 iconColor: '#5865F2',
                 iconHtml: '<svg data-brand="discord"></svg>',
-                dimensions: { width: 1, height: 1 },
+                dimensions: { width: 1, height: 1, iconSize: 1 },
             },
         });
         const { container } = render(

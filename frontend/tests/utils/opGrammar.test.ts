@@ -17,6 +17,7 @@ const SCHEMA_DIR = join(__dirname, '../../app/schemas/nodes');
 
 /** grammar slug → schema file basename */
 const SCHEMA_FOR_SLUG: Record<string, string> = {
+    gmail: 'gmail',
     github: 'github-rest',
     gitlab: 'gitlab',
     linear: 'linear',
