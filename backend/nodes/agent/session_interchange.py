@@ -383,8 +383,8 @@ def translate(
             )
         else:
             native_path, manifest_path = conversion.target_import_paths(artifact, target_home)
-            conversion.write_artifact(artifact, output_path=native_path, manifest_path=manifest_path)
-    except SessionMigrateError as e:
+            _install_file_artifact(artifact, native_path, manifest_path)
+    except (SessionMigrateError, OSError) as e:
         raise InterchangeError("install_failed", str(e)) from e
 
     # The verdict reads the store BACK through the library's own reader for
@@ -637,6 +637,30 @@ def _harness_for_format(fmt: str) -> str:
         if name == fmt:
             return harness
     return fmt
+
+
+def _install_file_artifact(artifact: Any, native_path: Path, manifest_path: Path) -> None:
+    """Land a file-backed artifact (Claude Code, Codex) where the harness
+    reads it. The translator's own installer hard-links a temp file into
+    place and ``fchmod``s it — the FUSE-backed session volumes the hosted
+    sandboxes mount reject both (``Operation not permitted``), so the write
+    here is a plain create-if-absent (``O_EXCL``, mode 0600 where the
+    filesystem honours it) with no rename, link or chmod after."""
+    for path, data in ((native_path, artifact.native_bytes),
+                       (manifest_path, (json.dumps(artifact.manifest(output_path=native_path), indent=2, sort_keys=True) + "\n").encode())):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        try:
+            with os.fdopen(fd, "wb") as stream:
+                stream.write(data)
+                stream.flush()
+                try:
+                    os.fsync(stream.fileno())
+                except OSError:
+                    pass  # a volume that does not fsync still persists on commit
+        except BaseException:
+            _discard(path)
+            raise
 
 
 def _read_pointer(pointer: Optional[Path]) -> Optional[str]:

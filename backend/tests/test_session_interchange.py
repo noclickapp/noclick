@@ -173,6 +173,31 @@ class TestTranslate:
         assert e.value.reason == "readback_mismatch"
         assert not list((tmp_path / ".codex").rglob("rollout-*.jsonl"))
 
+    def test_install_needs_neither_hard_links_nor_fchmod(self, tmp_path, monkeypatch):
+        """The hosted session volumes reject link(2) and fchmod(2) with
+        EPERM (the first real-sandbox move died exactly there); the install
+        must land on such a filesystem."""
+        import errno
+        import os
+
+        def eperm(*a, **k):
+            raise PermissionError(errno.EPERM, "Operation not permitted")
+
+        monkeypatch.setattr(os, "link", eperm)
+        monkeypatch.setattr(os, "fchmod", eperm)
+        monkeypatch.setattr(os, "fsync", eperm)
+        src = si.load_native_session("claude_code", home=tmp_path, session_ref=str(_claude_fixture(tmp_path / "s.jsonl")))
+        out = si.translate(src, target_harness="codex", target_home=tmp_path / ".codex", cwd=Path(CWD))
+        assert out.fidelity.ok and out.manifest_path.exists()
+        back = si.translate(si.load_native_session("codex", home=tmp_path / ".codex", session_ref=str(out.native_path)),
+                            target_harness="claude_code", target_home=tmp_path / ".claude", cwd=Path(CWD))
+        assert back.fidelity.ok
+        # Never silently replaces a thread the harness already holds.
+        with pytest.raises(FileExistsError):
+            si._install_file_artifact(SimpleNamespace(native_bytes=b"x", manifest=lambda output_path: {}),
+                                      out.native_path, out.manifest_path)
+        assert out.native_path.read_bytes() != b"x"
+
     def test_empty_source_is_refused(self, tmp_path):
         empty = SimpleNamespace(events=(), source_format=SimpleNamespace(value="claude"))
         with pytest.raises(si.InterchangeError) as e:
