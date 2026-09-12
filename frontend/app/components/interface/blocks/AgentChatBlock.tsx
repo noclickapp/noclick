@@ -482,9 +482,10 @@ export function AgentChatBlock({
     // chat stayed empty, and the empty state rendered INSTEAD of the transcript
     // that owns the error banner — zero feedback.
     //
-    // The conversation owns its harness — agent_model is locked when the
-    // conversation is first persisted, and that's what the run must
-    // honor, not the picker (which can drift mid-render or via races).
+    // The conversation owns its harness — agent_model names the harness that
+    // ran its LAST turn (the store the thread lives in; a switch moves the
+    // thread from it), and that's what the run must honor, not the picker
+    // (which can drift mid-render or via races).
     // Wrapper harnesses (openclaw/opencode/hermes) carry the real provider on
     // their sub-model field (openclaw_model → openrouter/…), not the harness id.
     // Resolve the effective model first — same path as the effectiveProvider memo
