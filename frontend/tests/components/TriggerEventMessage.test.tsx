@@ -7,6 +7,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { TriggerEventMessage } from '~/components/chat/TriggerEventMessage';
+import { setNodeIconData } from '~/lib/nodeIconRegistry';
 
 afterEach(cleanup);
 
@@ -57,6 +58,38 @@ describe('TriggerEventMessage', () => {
         const raw = container.querySelector('pre')?.textContent ?? '';
         expect(raw).toContain('"total": "42.00"');
         expect(raw).not.toContain('Bearer secret');
+    });
+
+    it("leads the caption with the app's own mark and name once the icon registry is loaded", () => {
+        const { container: bare } = render(
+            <TriggerEventMessage
+                trigger={{ nodeId: 'd1', nodeType: 'automation-discord', label: 'Community server', operation: 'on_message', output: {} }}
+                text="Discord message"
+            />
+        );
+        // Unloaded registry: the trigger bolt, node label + operation.
+        expect(screen.getByTestId('agent-chat-trigger-caption').textContent).toBe('Community server · On message');
+        expect(bare.querySelector('svg.lucide-zap')).toBeTruthy();
+        cleanup();
+        setNodeIconData({
+            'automation-discord': {
+                type: 'automation-discord',
+                label: 'Discord',
+                description: '',
+                iconColor: '#5865F2',
+                iconHtml: '<svg data-brand="discord"></svg>',
+                dimensions: { width: 1, height: 1 },
+            },
+        });
+        const { container } = render(
+            <TriggerEventMessage
+                trigger={{ nodeId: 'd1', nodeType: 'automation-discord', label: 'Community server', operation: 'on_message', output: {} }}
+                text="Discord message"
+            />
+        );
+        expect(screen.getByTestId('agent-chat-trigger-caption').textContent).toBe('Discord · Community server · On message');
+        expect(container.querySelector('svg[data-brand="discord"]')).toBeTruthy();
+        expect(container.querySelector('svg.lucide-zap')).toBeNull();
     });
 
     it('offers no payload toggle for an event with nothing but routing ids (a schedule tick)', () => {

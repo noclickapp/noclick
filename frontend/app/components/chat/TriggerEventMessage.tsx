@@ -9,6 +9,8 @@
 import { useMemo, useState } from 'react';
 import { ChevronDown, Zap } from 'lucide-react';
 import { cn } from '~/lib/utils';
+import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
+import { SerializedIcon } from '~/components/shared/SerializedIcon';
 import { InboundMessage } from '~/components/design/rehearsal/native';
 import {
     deriveLead,
@@ -45,7 +47,17 @@ export function TriggerEventMessage({
               )
             : undefined;
     }, [slug, trigger]);
-    const caption = [trigger.label, trigger.operation && humanizeOp(trigger.operation)]
+    // The app's own mark and name lead the caption: a Slack row and a Discord
+    // row share an anatomy, and the node's label ("Support channel") may not
+    // say which app it is. The light icon registry serves it (populated by the
+    // app routes' loaders); an unloaded registry shows the trigger bolt.
+    const meta = getNodeIconMeta(trigger.nodeType);
+    const appName = meta?.label;
+    const caption = [
+        appName,
+        trigger.label && trigger.label !== appName ? trigger.label : undefined,
+        trigger.operation && humanizeOp(trigger.operation),
+    ]
         .filter(Boolean)
         .join(' · ');
     return (
@@ -54,8 +66,16 @@ export function TriggerEventMessage({
             className="flex flex-col items-end gap-1.5"
         >
             <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                <Zap className="h-3 w-3" />
-                {caption || 'Trigger'}
+                {meta?.iconHtml ? (
+                    <SerializedIcon
+                        html={meta.iconHtml}
+                        iconColor={meta.iconColor}
+                        className="h-3.5 w-3.5 shrink-0"
+                    />
+                ) : (
+                    <Zap className="h-3 w-3" />
+                )}
+                <span data-testid="agent-chat-trigger-caption">{caption || 'Trigger'}</span>
             </span>
             <div className="w-full max-w-[85%]">
                 {scenario ? (
