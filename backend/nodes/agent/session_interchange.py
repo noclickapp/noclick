@@ -344,12 +344,20 @@ def translate(
     cwd: Path,
     target_cli: Optional[Path] = None,
     target_cli_version: Optional[str] = None,
+    model_provider: Optional[str] = None,
+    model: Optional[str] = None,
     environ: Optional[Dict[str, str]] = None,
 ) -> InterchangeResult:
     """Write ``session`` into ``target_harness``'s store under ``target_home``
     and return the verdict. Raises ``InterchangeError`` when the target would
     not hold the conversation faithfully — the written files are left in
-    place only when the verdict passed."""
+    place only when the verdict passed.
+
+    ``model_provider``/``model`` name the identity the TARGET runs under, and
+    they matter: a Codex rollout's header records its provider, and a resumed
+    thread calls THAT provider over the configured one — a header naming the
+    stock ``openai`` sent a thread configured for a custom endpoint to
+    api.openai.com with the wrong key (first real move, 2026-09-13)."""
     from session_migrate import __version__ as translator_version
     from session_migrate import conversion
     from session_migrate.errors import SessionMigrateError
@@ -359,7 +367,10 @@ def translate(
     source_skeleton = skeleton_of(session)
     if source_skeleton.messages == 0:
         raise InterchangeError("empty_source", "the source thread holds no messages")
-    options = conversion.ConversionOptions(target_format=TargetFormat(fmt), cwd=cwd, target_cli_version=target_cli_version)
+    options = conversion.ConversionOptions(
+        target_format=TargetFormat(fmt), cwd=cwd, target_cli_version=target_cli_version,
+        model_provider=model_provider, model=model,
+    )
     try:
         artifact = conversion.convert_session(session, options)
     except SessionMigrateError as e:
@@ -413,7 +424,10 @@ def translate(
     )
 
 
-def move_thread(source: StoreRef, target: StoreRef, *, target_cli_version: Optional[str] = None) -> InterchangeResult:
+def move_thread(
+    source: StoreRef, target: StoreRef, *,
+    target_cli_version: Optional[str] = None, model_provider: Optional[str] = None, model: Optional[str] = None,
+) -> InterchangeResult:
     """Move this conversation's thread from ``source`` into ``target``'s store
     and point ``target``'s runner at it. Raises ``InterchangeError`` with the
     reason the caller reports; ``source_empty`` means there was nothing to
@@ -426,7 +440,8 @@ def move_thread(source: StoreRef, target: StoreRef, *, target_cli_version: Optio
     )
     result = translate(
         session, target_harness=target.harness, target_home=target.home, cwd=target.cwd,
-        target_cli=target.cli, target_cli_version=target_cli_version, environ=target.environ,
+        target_cli=target.cli, target_cli_version=target_cli_version,
+        model_provider=model_provider, model=model, environ=target.environ,
     )
     if target.pointer is not None:
         target.pointer.parent.mkdir(parents=True, exist_ok=True)
@@ -588,6 +603,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap.add_argument("--cwd", required=True)
     ap.add_argument("--target-pointer")
     ap.add_argument("--target-cli-version")
+    ap.add_argument("--target-model-provider")
+    ap.add_argument("--target-model")
     a = ap.parse_args(argv)
     cwd = Path(a.cwd)
     try:
@@ -596,7 +613,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                      pointer=Path(a.source_pointer) if a.source_pointer else None, session_id=a.source_session_id),
             StoreRef(a.target_harness, Path(a.target_home), cwd,
                      pointer=Path(a.target_pointer) if a.target_pointer else None),
-            target_cli_version=a.target_cli_version,
+            target_cli_version=a.target_cli_version, model_provider=a.target_model_provider, model=a.target_model,
         )
         verdict: Dict[str, Any] = result.as_dict()
     except InterchangeError as e:
@@ -661,6 +678,25 @@ def _install_file_artifact(artifact: Any, native_path: Path, manifest_path: Path
         except BaseException:
             _discard(path)
             raise
+
+
+def codex_model_provider(home: Path, *, custom_base_url: bool = False) -> str:
+    """The provider id a Codex thread under ``home`` runs against: the
+    ``model_provider`` its config names, else the stock ``openai`` (API key
+    and ChatGPT sign-in alike). ``custom_base_url`` is the hosted config's
+    rule — an OpenAI-compatible endpoint is written as provider ``custom``."""
+    if custom_base_url:
+        return "custom"
+    try:
+        import tomllib
+
+        with open(home / "config.toml", "rb") as fh:
+            provider = tomllib.load(fh).get("model_provider")
+        if isinstance(provider, str) and provider.strip():
+            return provider.strip()
+    except (OSError, ValueError):
+        pass
+    return "openai"
 
 
 def _read_pointer(pointer: Optional[Path]) -> Optional[str]:

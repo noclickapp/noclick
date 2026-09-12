@@ -127,6 +127,19 @@ class TestTranslate:
         assert si.skeleton_of(again).roles == EXPECTED_ROLES
         assert result.fidelity.dropped.get("thinking") == 1  # the one loss we accept, and it is counted
 
+    def test_codex_target_header_names_the_configured_provider(self, tmp_path):
+        """A resumed Codex thread calls the provider its rollout header names,
+        not the configured one — the header must carry the target's."""
+        src = si.load_native_session("claude_code", home=tmp_path, session_ref=str(_claude_fixture(tmp_path / "s.jsonl")))
+        out = si.translate(src, target_harness="codex", target_home=tmp_path / ".codex", cwd=Path(CWD),
+                           model_provider="custom", model="gpt-5-codex")
+        head = json.loads(out.native_path.read_text().splitlines()[0])["payload"]
+        assert head["model_provider"] == "custom"  # the model itself rides every turn/start, not the header
+        assert si.codex_model_provider(tmp_path / ".codex") == "openai"  # no config: the stock provider
+        (tmp_path / ".codex" / "config.toml").write_text('model_provider = "noclick"\nmodel = "x"\n')
+        assert si.codex_model_provider(tmp_path / ".codex") == "noclick"
+        assert si.codex_model_provider(tmp_path / ".codex", custom_base_url=True) == "custom"
+
     def test_codex_to_claude_lands_under_the_cwd_project(self, tmp_path):
         src = si.load_native_session("codex", home=tmp_path, session_ref=str(_codex_fixture(tmp_path / "r.jsonl")))
         home = tmp_path / ".claude"
@@ -374,8 +387,10 @@ class TestSandboxScript:
             "--source-harness", "claude_code", "--source-home", str(home), "--source-cwd", str(workdir),
             "--target-harness", "codex", "--target-home", str(tmp_path / "codex-home"), "--cwd", str(workdir),
             "--target-pointer", str(pointer), "--target-cli-version", "0.153.4",
+            "--target-model-provider", "custom", "--target-model", "gpt-5-codex",
         )
         assert verdict["ok"] and verdict["fidelity"]["ok"] and pointer.read_text() == verdict["session_id"]
+        assert '"model_provider":"custom"' in Path(verdict["native_path"]).read_text()
         assert verdict["translator_version"] == si.TRANSLATOR_VERSION
 
     def test_failure_verdicts(self, tmp_path):

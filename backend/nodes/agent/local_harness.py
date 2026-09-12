@@ -782,7 +782,7 @@ async def run_local_harness_turn(
             from nodes.agent.local_interchange import interchange_local
 
             carried = await interchange_local(
-                node, model_type, workdir, env, conversation_id=str(conversation_id), user_id=str(user_id),
+                node, model_type, workdir, env, conversation_id=str(conversation_id), user_id=str(user_id), model=model,
             )
             common = dict(workdir=workdir, env=env, command=cmd, cleanup=cleanup)
             if model_type == "claude_code":

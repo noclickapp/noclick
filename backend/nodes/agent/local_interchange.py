@@ -25,6 +25,7 @@ from nodes.agent.session_interchange import (
     InterchangeError,
     StoreRef,
     carried_context,
+    codex_model_provider,
     harness_of,
     harness_pins,
     move_thread,
@@ -70,7 +71,8 @@ def local_store(harness: str, workdir: Path, env: Dict[str, str], *, as_target: 
 
 
 async def interchange_local(
-    node: Any, model_type: str, workdir: Path, env: Dict[str, str], *, conversation_id: str, user_id: str,
+    node: Any, model_type: str, workdir: Path, env: Dict[str, str], *,
+    conversation_id: str, user_id: str, model: Optional[str] = None,
 ) -> str:
     """Move the thread into ``model_type``'s store when the conversation last
     ran elsewhere. Returns the carried-context block for the first message
@@ -98,8 +100,11 @@ async def interchange_local(
             reason, detail = "no_adapter", f"{previous if source is None else model_type} has no local store adapter"
         else:
             version = pins.get(model_type) if model_type in ("claude_code", "codex") else None
+            provider = codex_model_provider(target.home) if model_type == "codex" else None
             try:
-                result = await asyncio.to_thread(move_thread, source, target, target_cli_version=version)
+                result = await asyncio.to_thread(
+                    move_thread, source, target, target_cli_version=version, model_provider=provider, model=model or None,
+                )
             except InterchangeError as e:
                 reason, detail = e.reason, e.detail
             except Exception as e:

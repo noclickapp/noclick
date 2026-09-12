@@ -375,8 +375,8 @@ async def test_a_thread_arriving_from_another_harness_carries_context_on_the_fir
 
     calls = []
 
-    async def carried(node, model_type, workdir, env, *, conversation_id, user_id):
-        calls.append((node._previous_agent_model, model_type, conversation_id, user_id))
+    async def carried(node, model_type, workdir, env, *, conversation_id, user_id, model=None):
+        calls.append((node._previous_agent_model, model_type, conversation_id, user_id, model))
         return '<<<NOCLICK_CARRIED_CONTEXT\n[]\nNOCLICK_CARRIED_CONTEXT>>>'
 
     monkeypatch.setattr(local_interchange, 'interchange_local', carried)
@@ -392,6 +392,6 @@ async def test_a_thread_arriving_from_another_harness_carries_context_on_the_fir
     await until(lambda: sum('model' in e for e in wire(d)) == 2)
     (d / 'release-2').touch()
     await second
-    assert calls == [('claude-code', 'codex', 'conversation', 'user')]
+    assert calls == [('claude-code', 'codex', 'conversation', 'user', 'test')]
     prompts = [e['inputs'] for e in wire(d) if 'model' in e]
     assert prompts[0][0].startswith('A\n\n<<<NOCLICK_CARRIED_CONTEXT') and prompts[1] == ['B']
