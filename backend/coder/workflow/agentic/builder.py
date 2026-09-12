@@ -602,7 +602,15 @@ class AgenticBuilder:
                         node.operation,
                         dict(node.config or {}),
                     )
-            field_results.extend(execute_field_ops(field_ops, self.graph_state))
+            # Resolving a queryable-enum field rebuilds MODELS_REGISTRY on TTL
+            # expiry, which fetches the model catalogs over sync httpx/requests
+            # and translates them — seconds of loop stall. Same offload as the
+            # layout call above and as agent_node's list_all_models().
+            field_results.extend(
+                await asyncio.to_thread(
+                    execute_field_ops, field_ops, self.graph_state
+                )
+            )
             await self._self_heal_operation_changes(
                 operation_changes, field_results
             )
