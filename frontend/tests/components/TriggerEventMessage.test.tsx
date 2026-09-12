@@ -92,6 +92,16 @@ describe('TriggerEventMessage', () => {
         expect(container.querySelector('svg.lucide-zap')).toBeNull();
     });
 
+    it('drops a label that merely repeats the node type (an unlabelled trigger)', () => {
+        render(
+            <TriggerEventMessage
+                trigger={{ nodeId: 'w1', nodeType: 'automation-whatsapp', label: 'automation-whatsapp', operation: 'receive_message', output: {} }}
+                text="WhatsApp message"
+            />
+        );
+        expect(screen.getByTestId('agent-chat-trigger-caption').textContent).toBe('Receive message');
+    });
+
     it('offers no payload toggle for an event with nothing but routing ids (a schedule tick)', () => {
         const { container } = render(
             <TriggerEventMessage

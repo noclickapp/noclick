@@ -53,11 +53,13 @@ export function TriggerEventMessage({
     // app routes' loaders); an unloaded registry shows the trigger bolt.
     const meta = getNodeIconMeta(trigger.nodeType);
     const appName = meta?.label;
-    const caption = [
-        appName,
-        trigger.label && trigger.label !== appName ? trigger.label : undefined,
-        trigger.operation && humanizeOp(trigger.operation),
-    ]
+    // An unlabelled trigger is recorded by its type ("automation-whatsapp")
+    // — the app name already says that.
+    const label =
+        trigger.label && trigger.label !== appName && trigger.label !== trigger.nodeType
+            ? trigger.label
+            : undefined;
+    const caption = [appName, label, trigger.operation && humanizeOp(trigger.operation)]
         .filter(Boolean)
         .join(' · ');
     return (
