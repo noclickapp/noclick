@@ -269,8 +269,10 @@ def _join_notes(*notes: Optional[str]) -> str:
     return " ".join(n for n in notes if n)
 
 
-def _compose_prompt(config: Any, *, inline_system: bool, extra_note: str = "") -> str:
-    message = getattr(config, "message", "") or ""
+def _compose_prompt(config: Any, *, inline_system: bool, extra_note: str = "", carried: str = "") -> str:
+    from nodes.agent.session_interchange import with_carried_context
+
+    message = with_carried_context(getattr(config, "message", "") or "", carried)
     if extra_note:
         message = f"{message}\n\n[Environment note: {extra_note}]"
     system_prompt = (getattr(config, "system_prompt", "") or "").strip()
@@ -774,6 +776,14 @@ async def run_local_harness_turn(
             if user_env:
                 from nodes.agent.user_env import sanitize_user_env
                 env = {**sanitize_user_env(user_env), **env}
+            # A thread that last ran on another harness moves into this one's
+            # store now, before the process that resumes it starts; when it
+            # cannot, the first message carries the recent turns instead.
+            from nodes.agent.local_interchange import interchange_local
+
+            carried = await interchange_local(
+                node, model_type, workdir, env, conversation_id=str(conversation_id), user_id=str(user_id),
+            )
             common = dict(workdir=workdir, env=env, command=cmd, cleanup=cleanup)
             if model_type == "claude_code":
                 session = ClaudeSession(**common)
@@ -831,7 +841,7 @@ async def run_local_harness_turn(
                 session = OpenClawSession(**common)
             else:
                 raise RuntimeError(f"No persistent adapter for {model_type}")
-            session.tool_context, session.note = context, note
+            session.tool_context, session.note, session.carried = context, note, carried
             return session
         except BaseException:
             cleanup()
@@ -840,6 +850,11 @@ async def run_local_harness_turn(
     def activate(session):
         session.tool_context.node = node
         session.tool_context.conversation_id = str(conversation_id)
+
+    def prompt(session):
+        # Carried context rides the FIRST turn of a freshly started session only.
+        carried, session.carried = getattr(session, "carried", ""), ""
+        return _compose_prompt(config, inline_system=model_type != "claude_code", extra_note=session.note, carried=carried)
 
     await _emit_status(node, "Agent is working…")
     hub = _presence_hub()
@@ -854,8 +869,7 @@ async def run_local_harness_turn(
             except Exception:
                 logger.debug("Local agent presence update failed", exc_info=True)
         async with asyncio.timeout(TURN_TIMEOUT_S):
-            session, future = await sessions.submit(key, fingerprint, factory,
-                lambda session: _compose_prompt(config, inline_system=model_type != "claude_code", extra_note=session.note), activate)
+            session, future = await sessions.submit(key, fingerprint, factory, prompt, activate)
             result = await asyncio.shield(future)
         error = result.pop("error", None)
         if error:

@@ -364,3 +364,34 @@ async def test_group_signal_denial_falls_back_to_owned_child(monkeypatch):
     assert session.proc.returncode is not None and session.stopped.is_set()
     assert (await task)['status'] == 'failed'
     assert not sessions.entries
+
+
+@pytest.mark.asyncio
+async def test_a_thread_arriving_from_another_harness_carries_context_on_the_first_prompt_only(monkeypatch):
+    """The move runs before the process starts; when it cannot resume natively
+    the carried block rides the first prompt of the fresh session and never the
+    next one."""
+    from nodes.agent import local_interchange
+
+    calls = []
+
+    async def carried(node, model_type, workdir, env, *, conversation_id, user_id):
+        calls.append((node._previous_agent_model, model_type, conversation_id, user_id))
+        return '<<<NOCLICK_CARRIED_CONTEXT\n[]\nNOCLICK_CARRIED_CONTEXT>>>'
+
+    monkeypatch.setattr(local_interchange, 'interchange_local', carried)
+    saved = []
+    n = node(saved)
+    n._previous_agent_model = 'claude-code'
+    first = run(n, config('A'))
+    d = directory()
+    await until(lambda: any('model' in e for e in wire(d)))
+    (d / 'release-1').touch()
+    await first
+    second = run(n, config('B'))
+    await until(lambda: sum('model' in e for e in wire(d)) == 2)
+    (d / 'release-2').touch()
+    await second
+    assert calls == [('claude-code', 'codex', 'conversation', 'user')]
+    prompts = [e['inputs'] for e in wire(d) if 'model' in e]
+    assert prompts[0][0].startswith('A\n\n<<<NOCLICK_CARRIED_CONTEXT') and prompts[1] == ['B']

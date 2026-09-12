@@ -392,7 +392,7 @@ class AgentNode(WorkflowNode):
             node_id = COALESCE(conversations.node_id, EXCLUDED.node_id),
             title = COALESCE(NULLIF(conversations.title, ''), EXCLUDED.title),
             preview = COALESCE(NULLIF(conversations.preview, ''), EXCLUDED.preview),
-            agent_model = COALESCE(conversations.agent_model, EXCLUDED.agent_model)
+            agent_model = COALESCE(EXCLUDED.agent_model, conversations.agent_model)
     """
 
     async def _persist_interface_chat_event(
@@ -549,6 +549,19 @@ class AgentNode(WorkflowNode):
             image_urls=image_urls or None,
             video_urls=video_urls or None,
         )
+
+    async def _locked_agent_model(self, conversation_id: str) -> Optional[str]:
+        """``conversations.agent_model`` for this thread — the harness that ran
+        its last turn. None when unborn or unreadable (a turn never waits on
+        its history's provenance)."""
+        try:
+            from repositories.conversation import ConversationRepo
+            from utils.database_pool import get_native_pool
+
+            return await ConversationRepo(get_native_pool()).get_agent_model(conversation_id)
+        except Exception:
+            logger.warning("[AgentNode] agent_model unreadable for %s", conversation_id, exc_info=True)
+            return None
 
     async def _persist_llm_assistant_turn(
         self,
@@ -1685,6 +1698,14 @@ class AgentNode(WorkflowNode):
             )
         else:
             turn_label = user_message_text
+        # The harness that ran this thread's LAST turn, read BEFORE the
+        # user-turn persist below re-stamps the row with the current one: a
+        # harness switch moves the thread from that store (session_interchange).
+        self._previous_agent_model = (
+            await self._locked_agent_model(effective_conversation_id)
+            if effective_conversation_id and getattr(config, "model_type", "llm") in WRAPPER_ID_BY_MODEL_TYPE
+            else None
+        )
         persist_user_turn: Optional[asyncio.Task] = None
         if (user_message_text or message_attachments) and effective_conversation_id:
             # Concurrent with the credential freshen below (independent I/O);
