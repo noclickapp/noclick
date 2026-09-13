@@ -14,6 +14,8 @@ user. The E2E on real binaries is the other half.
 import ast
 import json
 import os
+import re
+import shutil
 import subprocess
 import sys
 import uuid
@@ -230,8 +232,10 @@ class TestPackage:
 
     def test_formats_are_discoverable(self):
         described = {d["harness"]: d for d in ic.describe_formats()}
-        assert set(described) == {"claude_code", "codex"}
+        assert set(described) == {"claude_code", "codex", "opencode", "hermes_agent", "openclaw"}
         assert "projects" in described["claude_code"]["store"] and "rollout" in described["codex"]["store"]
+        assert "opencode.db" in described["opencode"]["store"] and "state.db" in described["hermes_agent"]["store"]
+        assert "openclaw-agent.sqlite" in described["openclaw"]["store"]
 
 
 # ── reading each harness's store ────────────────────────────────────────────
@@ -453,7 +457,7 @@ class TestMoveThread:
 
     def test_a_harness_without_a_format_never_touches_the_source(self, tmp_path):
         with pytest.raises(ic.InterchangeError) as e:
-            ic.move_thread(_store("codex", tmp_path), _store("hermes_agent", tmp_path / "h"))
+            ic.move_thread(_store("codex", tmp_path), _store("some_future_harness", tmp_path / "h"))
         assert e.value.reason == "no_adapter" and not (tmp_path / "h").exists()
 
     def test_inspect_explains_a_store(self, tmp_path):
@@ -490,7 +494,7 @@ class TestCommand:
         report = self._run("inspect", "--harness", "claude_code", "--home", str(home), "--cwd", CWD)
         assert report["ok"] and report["skeleton"]["messages"] == 3
         listing = self._run("formats")
-        assert {f["harness"] for f in listing["formats"]} == {"claude_code", "codex"}
+        assert {f["harness"] for f in listing["formats"]} == set(ic.FORMATS)
 
     def test_failure_verdicts(self, tmp_path):
         verdict = self._run("move", "--source-harness", "claude_code", "--source-home", str(tmp_path / "none"),
@@ -511,8 +515,10 @@ class TestGlue:
         assert si.pair_support("claude_code", "codex") is None and si.pair_support("codex", "claude_code") is None
         assert si.pair_support("codex", "codex") == ("same_harness", "")
         assert si.pair_support(si.SDK_HARNESS, "codex")[0] == "sdk_source"
-        for other in ("openclaw", "opencode", "hermes_agent"):
-            assert si.pair_support(other, "codex")[0] == "no_adapter" and si.pair_support("codex", other)[0] == "no_adapter"
+        for source in ic.FORMATS:
+            for target in ic.FORMATS:
+                assert si.pair_support(source, target) == (("same_harness", "") if source == target else None), (source, target)
+        assert si.pair_support("some_future_harness", "codex")[0] == "no_adapter"
         assert si.EXPECTED_FALLBACK_REASONS <= set(ic.REASONS)
         for reason in ("readback_mismatch", "fidelity_drop", "install_failed", "translator_crashed"):
             assert reason not in si.EXPECTED_FALLBACK_REASONS  # drift pages
@@ -580,3 +586,455 @@ async def test_report_fallback_is_loud_for_drift_quiet_for_limits_and_never_rais
 
     monkeypatch.setattr("utils.feedback.record_feedback", boom)
     await si.report_fallback(object(), user_id="u1", conversation_id="c", source_harness="a", target_harness="b", reason="install_failed")  # swallowed
+
+
+# ── the database-backed stores ──────────────────────────────────────────────
+#
+# Fixtures below reproduce the rows the pinned binaries write: opencode's
+# message/part JSON (1.18), hermes's sessions/messages rows on its schema 26,
+# openclaw's transcript_events + projection tables (2026.9.1, captured from a
+# real store). Writers are validated by round trip here and against the real
+# binaries in the Harness E2E.
+
+import sqlite3
+
+from nodes.agent.interchange.formats import hermes as hermes_fmt
+from nodes.agent.interchange.formats import openclaw as openclaw_fmt
+from nodes.agent.interchange.formats import opencode as opencode_fmt
+
+OPENCLAW_TABLES = """CREATE TABLE conversations (conversation_id TEXT PRIMARY KEY) STRICT;
+CREATE TABLE session_nodes (
+  session_key TEXT NOT NULL PRIMARY KEY,
+  current_session_id TEXT NOT NULL,
+  entry_json TEXT NOT NULL,
+  entry_valid INTEGER NOT NULL DEFAULT 0 CHECK (entry_valid IN (-1, 0, 1)),
+  updated_at INTEGER NOT NULL,
+  status TEXT CHECK (status IS NULL OR status IN ('running', 'done', 'failed', 'killed', 'timeout')),
+  created_at INTEGER,
+  created_via TEXT CHECK (created_via IS NULL OR created_via IN ('operator', 'spawn', 'channel', 'cron', 'talk', 'run', 'plugin', 'internal')),
+  created_actor_type TEXT CHECK (created_actor_type IS NULL OR created_actor_type IN ('human', 'agent', 'system')),
+  created_actor_id TEXT,
+  owner_actor_type TEXT,
+  owner_actor_id TEXT,
+  owner_assigned_by_type TEXT,
+  owner_assigned_by_id TEXT,
+  owner_assigned_at INTEGER,
+  project_id TEXT,
+  parent_session_key TEXT,
+  spawned_by TEXT,
+  fork_source_session_key TEXT,
+  fork_source_session_id TEXT,
+  fork_source_entry_id TEXT,
+  label TEXT,
+  display_name TEXT,
+  category TEXT,
+  icon TEXT,
+  pinned_at INTEGER,
+  archived_at INTEGER,
+  last_read_at INTEGER,
+  last_interaction_at INTEGER,
+  last_activity_at INTEGER
+) STRICT;
+CREATE TABLE session_windows (
+  session_id TEXT NOT NULL PRIMARY KEY,
+  session_key TEXT NOT NULL,
+  previous_session_id TEXT,
+  reason TEXT CHECK (reason IS NULL OR reason IN ('initial', 'reset', 'rollover', 'fork', 'rewind', 'switch', 'recovery', 'compaction')),
+  session_scope TEXT NOT NULL DEFAULT 'conversation' CHECK (session_scope IN ('conversation', 'shared-main', 'group', 'channel')),
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  transcript_updated_at INTEGER DEFAULT NULL,
+  transcript_observed_at INTEGER DEFAULT NULL,
+  session_entry_provenance INTEGER NOT NULL DEFAULT 0 CHECK (session_entry_provenance IN (0, 1)),
+  acp_owned INTEGER NOT NULL DEFAULT 0 CHECK (acp_owned IN (0, 1)),
+  plugin_owner_id TEXT,
+  hook_external_content_source TEXT CHECK (hook_external_content_source IS NULL OR hook_external_content_source IN ('gmail', 'webhook')),
+  started_at INTEGER,
+  ended_at INTEGER,
+  status TEXT CHECK (status IS NULL OR status IN ('running', 'done', 'failed', 'killed', 'timeout')),
+  chat_type TEXT CHECK (chat_type IS NULL OR chat_type IN ('direct', 'group', 'channel')),
+  channel TEXT,
+  account_id TEXT,
+  primary_conversation_id TEXT,
+  model_provider TEXT,
+  model TEXT,
+  agent_harness_id TEXT,
+  parent_session_key TEXT,
+  spawned_by TEXT,
+  display_name TEXT,
+  FOREIGN KEY (session_key) REFERENCES session_nodes(session_key) ON DELETE CASCADE,
+  FOREIGN KEY (primary_conversation_id) REFERENCES conversations(conversation_id) ON DELETE SET NULL
+) STRICT;
+CREATE TABLE transcript_events (
+  session_id TEXT NOT NULL,
+  seq INTEGER NOT NULL,
+  event_json TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  PRIMARY KEY (session_id, seq),
+  FOREIGN KEY (session_id) REFERENCES "session_windows"(session_id) ON DELETE CASCADE
+) STRICT;
+CREATE TABLE transcript_event_identities (
+  session_id TEXT NOT NULL,
+  event_id TEXT NOT NULL,
+  seq INTEGER NOT NULL,
+  event_type TEXT,
+  parent_id TEXT,
+  message_idempotency_key TEXT,
+  created_at INTEGER NOT NULL,
+  PRIMARY KEY (session_id, event_id),
+  FOREIGN KEY (session_id, seq) REFERENCES transcript_events(session_id, seq) ON DELETE CASCADE
+) STRICT;
+CREATE TABLE session_transcript_index_state (
+  session_id TEXT NOT NULL PRIMARY KEY,
+  indexed_seq INTEGER NOT NULL,
+  leaf_event_id TEXT,
+  needs_rebuild INTEGER NOT NULL DEFAULT 0,
+  active_event_count INTEGER NOT NULL DEFAULT 0,
+  active_message_count INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER NOT NULL,
+  FOREIGN KEY (session_id) REFERENCES session_windows(session_id) ON DELETE CASCADE
+) STRICT;
+CREATE TABLE session_transcript_active_events (
+  session_id TEXT NOT NULL,
+  active_position INTEGER NOT NULL CHECK (active_position >= 0),
+  event_seq INTEGER NOT NULL,
+  message_position INTEGER CHECK (message_position IS NULL OR message_position >= 0),
+  context_eligible INTEGER,
+  PRIMARY KEY (session_id, active_position),
+  FOREIGN KEY (session_id, event_seq) REFERENCES transcript_events(session_id, seq) ON DELETE CASCADE
+) STRICT;
+CREATE TABLE transcript_rewrite_watermarks (
+  session_id TEXT NOT NULL PRIMARY KEY,
+  generation TEXT NOT NULL,
+  updated_at INTEGER NOT NULL,
+  FOREIGN KEY (session_id) REFERENCES "session_windows"(session_id) ON DELETE CASCADE
+) STRICT;
+CREATE VIRTUAL TABLE session_transcript_fts USING fts5(
+  text,
+  session_id UNINDEXED,
+  message_id UNINDEXED,
+  role UNINDEXED,
+  timestamp UNINDEXED,
+  tokenize = 'unicode61 remove_diacritics 2'
+);"""
+
+
+def _opencode_home(root: Path, cwd: str = CWD) -> Path:
+    """A 1.18-shaped opencode database: user text; assistant with step-start,
+    reasoning, text, a completed tool part carrying its result, step-finish;
+    a final assistant text. Ids and times as the CLI mints them."""
+    home = root / "xdg"
+    db = home / "opencode" / "opencode.db"
+    db.parent.mkdir(parents=True)
+    sid = "ses_01a09500000feTeSt0000000001"
+    t = 1789200000000
+    with sqlite3.connect(db) as conn:
+        conn.executescript("""
+            CREATE TABLE project (id text PRIMARY KEY, worktree text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, sandboxes text NOT NULL);
+            CREATE TABLE session (id text PRIMARY KEY, project_id text NOT NULL, parent_id text, slug text NOT NULL, directory text NOT NULL, title text NOT NULL,
+                version text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, time_archived integer);
+            CREATE TABLE message (id text PRIMARY KEY, session_id text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, data text NOT NULL);
+            CREATE TABLE part (id text PRIMARY KEY, message_id text NOT NULL, session_id text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, data text NOT NULL);
+        """)
+        conn.execute("INSERT INTO project VALUES ('global', '/', ?, ?, '[]')", (t, t))
+        conn.execute("INSERT INTO session VALUES (?, 'global', NULL, 'curious-panda', ?, 'Auth callback tests', '1.18.29', ?, ?, NULL)", (sid, cwd, t, t + 9000))
+        u, a1, a2 = "msg_01a0950000010000000000u1", "msg_01a0950000020000000000a1", "msg_01a0950000030000000000a2"
+        conn.execute("INSERT INTO message VALUES (?, ?, ?, ?, ?)", (u, sid, t + 1000, t + 1000, json.dumps(
+            {"id": u, "sessionID": sid, "role": "user", "time": {"created": t + 1000}, "agent": "build", "model": {"providerID": "anthropic", "modelID": "claude-sonnet-4-5"}})))
+        conn.execute("INSERT INTO message VALUES (?, ?, ?, ?, ?)", (a1, sid, t + 2000, t + 5000, json.dumps(
+            {"id": a1, "sessionID": sid, "role": "assistant", "time": {"created": t + 2000, "completed": t + 5000}, "parentID": u, "modelID": "claude-sonnet-4-5",
+             "providerID": "anthropic", "mode": "build", "agent": "build", "path": {"cwd": cwd, "root": "/"}, "cost": 0,
+             "tokens": {"total": 10, "input": 8, "output": 2, "reasoning": 0, "cache": {"read": 0, "write": 0}}, "finish": "tool-calls"})))
+        conn.execute("INSERT INTO message VALUES (?, ?, ?, ?, ?)", (a2, sid, t + 6000, t + 9000, json.dumps(
+            {"id": a2, "sessionID": sid, "role": "assistant", "time": {"created": t + 6000, "completed": t + 9000}, "parentID": u, "modelID": "claude-sonnet-4-5",
+             "providerID": "anthropic", "mode": "build", "agent": "build", "path": {"cwd": cwd, "root": "/"}, "cost": 0,
+             "tokens": {"total": 12, "input": 8, "output": 4, "reasoning": 0, "cache": {"read": 0, "write": 0}}, "finish": "stop"})))
+        parts = [
+            (u, t + 1000, {"type": "text", "text": "Which tests cover the auth callback?"}),
+            (a1, t + 2001, {"type": "step-start"}),
+            (a1, t + 2002, {"type": "reasoning", "text": "look for callback tests", "time": {"start": t + 2002, "end": t + 2500}}),
+            (a1, t + 2600, {"type": "text", "text": "Let me search the test suite.", "time": {"start": t + 2600, "end": t + 2600}}),
+            (a1, t + 3000, {"type": "tool", "callID": "call_function_abc_1", "tool": "grep", "state": {"status": "completed", "input": {"pattern": "auth_callback", "path": "tests"},
+                             "output": "tests/test_auth.py:12:def test_auth_callback", "title": "grep", "metadata": {}, "time": {"start": t + 3000, "end": t + 3100}}}),
+            (a1, t + 5000, {"type": "step-finish", "reason": "tool-calls", "cost": 0, "tokens": {"total": 10, "input": 8, "output": 2, "reasoning": 0, "cache": {"read": 0, "write": 0}}}),
+            (a2, t + 6001, {"type": "step-start"}),
+            (a2, t + 6002, {"type": "text", "text": "One test covers it: tests/test_auth.py::test_auth_callback.", "time": {"start": t + 6002, "end": t + 6002}}),
+            (a2, t + 9000, {"type": "step-finish", "reason": "stop", "cost": 0, "tokens": {"total": 12, "input": 8, "output": 4, "reasoning": 0, "cache": {"read": 0, "write": 0}}}),
+        ]
+        for i, (mid, at, data) in enumerate(parts):
+            pid = f"prt_01a0950000{i:02d}00000000000p{i}"
+            conn.execute("INSERT INTO part VALUES (?, ?, ?, ?, ?, ?)", (pid, mid, sid, at, at, json.dumps({"id": pid, "sessionID": sid, "messageID": mid, **data})))
+    return home
+
+
+def _hermes_home(root: Path, cwd: str = CWD) -> Path:
+    """A schema-26 hermes state database with the fixed NoClick session:
+    user text, an assistant tool-call row, the tool row, the reply."""
+    home = root / "hermes-home"
+    home.mkdir()
+    now = 1789200000.0
+    with sqlite3.connect(home / "state.db") as conn:
+        conn.executescript(hermes_fmt.SCHEMA_SQL)
+        conn.execute("INSERT INTO schema_version (version) VALUES (26)")
+        conn.execute("INSERT INTO sessions (id, source, model, started_at, cwd, title, message_count, tool_call_count) VALUES (?,?,?,?,?,?,?,?)",
+                     ("noclick", "api", "anthropic/claude-sonnet-4-5", now, cwd, "Auth callback tests", 3, 1))
+        rows = [("user", "Which tests cover the auth callback?", None, None, None, None, None, None),
+                ("assistant", "Let me search the test suite.", None, json.dumps([{"id": "call_1", "type": "function", "function": {"name": "terminal", "arguments": json.dumps({"command": "rg -n auth_callback tests"})}}]),
+                 None, "tool_calls", "**Searching**\n\nI should grep for the callback.", None),
+                ("tool", "tests/test_auth.py:12:def test_auth_callback", "call_1", None, "terminal", None, None, None),
+                ("assistant", "One test covers it: tests/test_auth.py::test_auth_callback.", None, None, None, "stop", None, None),
+                # a rewound row the gateway soft-deleted: never part of the thread
+                ("assistant", "DRAFT that was rewound", None, None, None, "stop", None, 0)]
+        for i, (role, content, tcid, tcalls, tname, finish, reasoning, active) in enumerate(rows):
+            conn.execute("INSERT INTO messages (session_id, role, content, tool_call_id, tool_calls, tool_name, timestamp, finish_reason, reasoning, active) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                         ("noclick", role, content, tcid, tcalls, tname, now + i, finish, reasoning, 1 if active is None else active))
+    return home
+
+
+def _openclaw_state(root: Path, cwd: str = CWD, *, session_id: str = "noclick-abc123def456") -> Path:
+    """A 2026.9.1 openclaw agent database holding one thread under NoClick's
+    session key, with the projection rows the Gateway keeps beside the
+    events, plus an abandoned event the active projection excludes."""
+    state = root / "openclaw-state"
+    db = state / "agents" / "main" / "agent" / "openclaw-agent.sqlite"
+    db.parent.mkdir(parents=True)
+    now = 1789200000000
+    ids = [str(uuid.uuid4()) for _ in range(6)]
+    events = [
+        {"type": "session", "version": 3, "id": session_id, "timestamp": "2026-09-12T10:00:00.000Z", "cwd": cwd},
+        {"type": "model_change", "id": ids[0], "parentId": None, "timestamp": "2026-09-12T10:00:00.100Z", "provider": "anthropic", "modelId": "claude-sonnet-4-5"},
+        {"type": "custom", "customType": "model-snapshot", "data": {"timestamp": now, "provider": "anthropic", "modelApi": "anthropic-messages", "modelId": "claude-sonnet-4-5"},
+         "id": ids[1], "parentId": ids[0], "timestamp": "2026-09-12T10:00:00.200Z"},
+        {"type": "message", "id": ids[2], "parentId": ids[1], "timestamp": "2026-09-12T10:00:01.000Z",
+         "message": {"role": "user", "content": "Which tests cover the auth callback?", "timestamp": now + 1000, "__openclaw": {"senderIsOwner": True}}},
+        {"type": "message", "id": ids[3], "parentId": ids[2], "timestamp": "2026-09-12T10:00:02.000Z",
+         "message": {"role": "assistant", "content": [{"type": "thinking", "thinking": "look"}, {"type": "text", "text": "Let me search the test suite."},
+                                                       {"type": "toolCall", "id": "toolu_01", "name": "exec", "arguments": {"command": "rg -n auth_callback tests"}}],
+                     "api": "anthropic-messages", "provider": "anthropic", "model": "claude-sonnet-4-5", "stopReason": "toolUse", "timestamp": now + 2000,
+                     "usage": {"input": 1, "output": 1, "cacheRead": 0, "cacheWrite": 0, "totalTokens": 2, "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0, "total": 0}}}},
+        {"type": "message", "id": ids[4], "parentId": ids[3], "timestamp": "2026-09-12T10:00:03.000Z",
+         "message": {"role": "toolResult", "toolCallId": "toolu_01", "toolName": "exec", "content": [{"type": "text", "text": "tests/test_auth.py:12:def test_auth_callback"}], "isError": False, "timestamp": now + 3000}},
+        {"type": "message", "id": ids[5], "parentId": ids[4], "timestamp": "2026-09-12T10:00:04.000Z",
+         "message": {"role": "assistant", "content": [{"type": "text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}],
+                     "api": "anthropic-messages", "provider": "anthropic", "model": "claude-sonnet-4-5", "stopReason": "stop", "timestamp": now + 4000,
+                     "usage": {"input": 1, "output": 1, "cacheRead": 0, "cacheWrite": 0, "totalTokens": 2, "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0, "total": 0}}}},
+        {"type": "message", "id": str(uuid.uuid4()), "parentId": ids[4], "timestamp": "2026-09-12T10:00:05.000Z",
+         "message": {"role": "assistant", "content": [{"type": "text", "text": "ABANDONED branch"}], "api": "anthropic-messages", "provider": "anthropic", "model": "claude-sonnet-4-5", "stopReason": "stop", "timestamp": now + 5000}},
+    ]
+    with sqlite3.connect(db) as conn:
+        conn.executescript(OPENCLAW_TABLES)
+        key = openclaw_fmt.SESSION_KEY
+        conn.execute("INSERT INTO session_nodes (session_key, current_session_id, entry_json, entry_valid, updated_at) VALUES (?,?,?,1,?)",
+                     (key, session_id, json.dumps({"sessionId": session_id, "updatedAt": now + 4000, "sessionStartedAt": now}), now + 4000))
+        conn.execute("INSERT INTO session_windows (session_id, session_key, created_at, updated_at, session_entry_provenance, model_provider, model, agent_harness_id) VALUES (?,?,?,?,1,?,?,'openclaw')",
+                     (session_id, key, now, now + 4000, "anthropic", "claude-sonnet-4-5"))
+        active_seqs = [1, 2, 3, 4, 5, 6]  # everything but the header and the abandoned branch (seq 7)
+        for seq, e in enumerate(events):
+            conn.execute("INSERT INTO transcript_events VALUES (?,?,?,?)", (session_id, seq, json.dumps(e), now))
+            conn.execute("INSERT INTO transcript_event_identities (session_id, event_id, seq, event_type, parent_id, created_at) VALUES (?,?,?,?,?,?)",
+                         (session_id, e.get("id") or session_id, seq, e["type"], e.get("parentId"), now))
+        mp = 0
+        for pos, seq in enumerate(active_seqs):
+            is_msg = events[seq]["type"] == "message"
+            conn.execute("INSERT INTO session_transcript_active_events VALUES (?,?,?,?,1)", (session_id, pos, seq, mp if is_msg else None))
+            mp += is_msg
+        conn.execute("INSERT INTO session_transcript_index_state VALUES (?,?,?,0,?,?,?)", (session_id, 6, ids[5], len(active_seqs), mp, now + 4000))
+        conn.execute("INSERT INTO transcript_rewrite_watermarks VALUES (?,?,?)", (session_id, "abcd", now))
+    return state
+
+
+class TestOpenCodeStore:
+    def test_reads_messages_and_pairs_the_tool_part(self, tmp_path):
+        home = _opencode_home(tmp_path)
+        thread = ic.read_thread(ic.StoreRef("opencode", home, Path(CWD)))
+        sk = ic.skeleton_of(thread)
+        assert sk.roles == EXPECTED_ROLES and sk.tool_calls == 1 and sk.tool_results == 1 and sk.unpaired_tool_calls == 0
+        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == ("ses_01a09500000feTeSt0000000001", CWD, "1.18.29", "claude-sonnet-4-5")
+        call = next(e for e in thread.events if e.kind == ic.ir.TOOL_CALL)
+        assert (call.tool_name, call.tool_call_id, call.tool_input) == ("grep", "call_function_abc_1", {"pattern": "auth_callback", "path": "tests"})
+        assert thread.dropped["thinking"] == 1 and thread.dropped["opaque:part_step-start"] == 2 and ic.classify_drops(dict(thread.dropped)) == {}
+        # the pointer names the session; a missing one is nothing to move
+        pointer = tmp_path / ".noclick-opencode-session"
+        pointer.write_text("ses_01a09500000feTeSt0000000001")
+        assert ic.format_for("opencode").locate(ic.StoreRef("opencode", home, Path(CWD), pointer=pointer)).endswith("#ses_01a09500000feTeSt0000000001")
+        pointer.write_text("ses_nope")
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.format_for("opencode").locate(ic.StoreRef("opencode", home, Path(CWD), pointer=pointer))
+        assert e.value.reason == "source_empty"
+
+    def test_bundle_is_the_importers_shape(self, tmp_path):
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        fmt = ic.format_for("opencode")
+        written = fmt.write(thread, ic.StoreRef("opencode", tmp_path / "xdg", Path(CWD)), ic.TargetIdentity(cli_version="1.18.29", model="anthropic/claude-sonnet-4-5"))
+        bundle = written.records[0]
+        assert set(bundle) == {"info", "messages"} and bundle["info"]["id"] == written.session_id and bundle["info"]["directory"] == CWD
+        assert bundle["info"]["version"] == "1.18.29" and bundle["info"]["title"] == "Which tests cover the auth callback?"
+        roles = [m["info"]["role"] for m in bundle["messages"]]
+        assert roles == ["user", "assistant"]  # one assistant message carries text, the tool part, and the reply
+        assistant = bundle["messages"][1]
+        assert assistant["info"]["parentID"] == bundle["messages"][0]["info"]["id"] and assistant["info"]["finish"] == "tool-calls"
+        assert assistant["info"]["providerID"] == "anthropic" and assistant["info"]["modelID"] == "claude-sonnet-4-5"
+        assert [p["type"] for p in assistant["parts"]] == ["step-start", "text", "tool", "text", "step-finish"]
+        tool = assistant["parts"][2]
+        assert (tool["callID"], tool["tool"], tool["state"]["status"], tool["state"]["input"], tool["state"]["output"]) == \
+            ("toolu_01", "Grep", "completed", {"pattern": "auth_callback", "path": "tests"}, "tests/test_auth.py:12:def test_auth_callback")
+        assert all(re.fullmatch(r"(ses|msg|prt)_[0-9a-f]{12}[0-9A-Za-z]{14}", x) for x in
+                   [bundle["info"]["id"]] + [m["info"]["id"] for m in bundle["messages"]] + [p["id"] for m in bundle["messages"] for p in m["parts"]])
+        assert written.dropped["thinking"] == 1 and ic.classify_drops(dict(written.dropped)) == {}
+
+    def test_install_needs_the_cli(self, tmp_path, monkeypatch):
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        monkeypatch.setattr("shutil.which", lambda *a, **k: None)
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.translate(thread, ic.StoreRef("opencode", tmp_path / "xdg", Path(CWD)))
+        assert e.value.reason == "install_failed" and "opencode is not on PATH" in e.value.detail
+
+    @pytest.mark.skipif(not shutil.which("opencode"), reason="requires the opencode CLI")
+    def test_round_trip_through_the_real_importer(self, tmp_path):
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        home = tmp_path / "xdg"
+        pointer = tmp_path / ".noclick-opencode-session"
+        out = ic.move_thread(_store("claude_code", _claude_home(tmp_path / "again")), ic.StoreRef("opencode", home, Path(CWD), pointer=pointer, environ=dict(os.environ)),
+                             ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
+        assert out.fidelity.ok and pointer.read_text() == out.session_id
+        assert ic.skeleton_of(ic.read_thread(ic.StoreRef("opencode", home, Path(CWD), pointer=pointer))).digest == ic.skeleton_of(thread).digest
+
+
+class TestHermesStore:
+    def test_reads_the_active_rows_of_the_fixed_session(self, tmp_path):
+        home = _hermes_home(tmp_path)
+        thread = ic.read_thread(ic.StoreRef("hermes_agent", home, Path(CWD), session_id="noclick"))
+        sk = ic.skeleton_of(thread)
+        assert sk.roles == EXPECTED_ROLES and sk.tool_calls == 1 and sk.tool_results == 1 and sk.unpaired_tool_calls == 0
+        assert "DRAFT" not in json.dumps([e.text for e in thread.events])  # active = 0 is a rewind
+        call = next(e for e in thread.events if e.kind == ic.ir.TOOL_CALL)
+        assert (call.tool_name, call.tool_call_id, call.tool_input) == ("terminal", "call_1", {"command": "rg -n auth_callback tests"})
+        result = next(e for e in thread.events if e.kind == ic.ir.TOOL_RESULT)
+        assert (result.tool_call_id, result.tool_name, result.text) == ("call_1", "terminal", "tests/test_auth.py:12:def test_auth_callback")
+        assert thread.dropped["thinking"] == 1 and ic.classify_drops(dict(thread.dropped)) == {}
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.format_for("hermes_agent").locate(ic.StoreRef("hermes_agent", home, Path(CWD), session_id="other"))
+        assert e.value.reason == "source_empty"
+
+    def test_writes_a_store_the_gateway_boots_on(self, tmp_path):
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        home = tmp_path / "hermes-home"
+        out = ic.translate(thread, ic.StoreRef("hermes_agent", home, Path(CWD), session_id="noclick"), ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
+        assert out.fidelity.ok and out.native_path == home / "state.db"
+        with sqlite3.connect(out.native_path) as conn:
+            assert conn.execute("SELECT version FROM schema_version").fetchone() == (hermes_fmt.SCHEMA_VERSION,)
+            # message_count counts user/assistant rows the way hermes does — the tool-call row is one
+            assert conn.execute("SELECT source, model, title, message_count, tool_call_count FROM sessions WHERE id = 'noclick'").fetchone() == \
+                ("api", "anthropic/claude-sonnet-4-5", "Which tests cover the auth callback?", 4, 1)
+            rows = conn.execute("SELECT role, content, tool_call_id, tool_calls, tool_name, finish_reason FROM messages WHERE session_id = 'noclick' AND active = 1 ORDER BY id").fetchall()
+        assert [r[0] for r in rows] == ["user", "assistant", "assistant", "tool", "assistant"]
+        assert rows[2][1] is None and json.loads(rows[2][3]) == [{"id": "toolu_01", "type": "function", "function": {"name": "Grep", "arguments": json.dumps({"pattern": "auth_callback", "path": "tests"})}}]
+        assert rows[2][5] == "tool_calls" and rows[3][2:5] == ("toolu_01", None, "Grep") and rows[4][5] == "stop"
+        # moving again retires the older thread under the fixed id; the verdict reads only the new one
+        again = ic.translate(thread, ic.StoreRef("hermes_agent", home, Path(CWD), session_id="noclick"))
+        assert again.fidelity.ok
+        with sqlite3.connect(out.native_path) as conn:
+            assert conn.execute("SELECT COUNT(*) FROM messages WHERE session_id = 'noclick' AND active = 1").fetchone() == (5,)
+            assert conn.execute("SELECT COUNT(*) FROM messages WHERE session_id = 'noclick' AND active = 0").fetchone() == (5,)
+
+    def test_a_failed_verdict_restores_the_previous_thread(self, tmp_path, monkeypatch):
+        home = _hermes_home(tmp_path)
+        before = ic.read_thread(ic.StoreRef("hermes_agent", home, Path(CWD), session_id="noclick"))
+        fmt = ic.format_for("hermes_agent")
+        real = fmt.read
+        monkeypatch.setattr(fmt, "read", lambda ref: (lambda t: (setattr(t, "events", t.events[:-1]), t)[1])(real(ref)))
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.translate(ic.read_thread(_store("claude_code", _claude_home(tmp_path))), ic.StoreRef("hermes_agent", home, Path(CWD), session_id="noclick"))
+        assert e.value.reason == "readback_mismatch"
+        monkeypatch.setattr(fmt, "read", real)
+        assert ic.skeleton_of(ic.read_thread(ic.StoreRef("hermes_agent", home, Path(CWD), session_id="noclick"))).digest == ic.skeleton_of(before).digest
+
+
+class TestOpenClawStore:
+    def test_reads_the_active_projection_under_noclicks_key(self, tmp_path):
+        state = _openclaw_state(tmp_path)
+        thread = ic.read_thread(ic.StoreRef("openclaw", state, Path(CWD), session_id="noclick-not-this-one"))  # falls through to the key
+        sk = ic.skeleton_of(thread)
+        assert sk.roles == EXPECTED_ROLES and sk.tool_calls == 1 and sk.tool_results == 1 and sk.unpaired_tool_calls == 0
+        assert (thread.session_id, thread.cwd, thread.model) == ("noclick-abc123def456", CWD, "anthropic/claude-sonnet-4-5")
+        assert "ABANDONED" not in json.dumps([e.text for e in thread.events]) and thread.dropped["opaque:inactive_branch"] == 1
+        assert thread.dropped["thinking"] == 1 and thread.dropped["opaque:entry_model_change"] == 1 and ic.classify_drops(dict(thread.dropped)) == {}
+        call = next(e for e in thread.events if e.kind == ic.ir.TOOL_CALL)
+        assert (call.tool_name, call.tool_call_id, call.tool_input) == ("exec", "toolu_01", {"command": "rg -n auth_callback tests"})
+
+    def test_an_unknown_assistant_block_is_a_drift_signal_not_bookkeeping(self, tmp_path):
+        events = openclaw_fmt.OpenClawFormat._message_events(ic.Provenance(4, "message"), {"role": "assistant", "content": [{"type": "hologram", "data": 1}]}, None)
+        assert events[0].kind == ic.ir.MESSAGE and events[0].role is None and events[0].reason == "unknown_block_hologram"
+        assert ic.classify_drops(ic.ir.count_drops(events) | {"message:unknown_block_hologram": 1}) == {"message:unknown_block_hologram": 1}
+
+    def test_writes_the_events_and_the_projection_the_gateway_requires(self, tmp_path):
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        state = tmp_path / "openclaw-state"
+        db = state / "agents" / "main" / "agent" / "openclaw-agent.sqlite"
+        db.parent.mkdir(parents=True)
+        with sqlite3.connect(db) as conn:
+            conn.executescript(OPENCLAW_TABLES)  # the primed store; priming itself needs the binary
+        sid = "noclick-0123456789abcdef"
+        out = ic.translate(thread, ic.StoreRef("openclaw", state, Path(CWD), session_id=sid.upper()), ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
+        assert out.fidelity.ok and out.session_id == sid  # canonical: lowercase
+        with sqlite3.connect(db) as conn:
+            assert conn.execute("SELECT current_session_id FROM session_nodes WHERE session_key = ?", (openclaw_fmt.SESSION_KEY,)).fetchone() == (sid,)
+            assert conn.execute("SELECT session_key, model_provider, model, agent_harness_id, session_entry_provenance FROM session_windows WHERE session_id = ?", (sid,)).fetchone() \
+                == (openclaw_fmt.SESSION_KEY, "anthropic", "claude-sonnet-4-5", "openclaw", 1)
+            events = [json.loads(r[0]) for r in conn.execute("SELECT event_json FROM transcript_events WHERE session_id = ? ORDER BY seq", (sid,))]
+            state_row = conn.execute("SELECT indexed_seq, leaf_event_id, needs_rebuild, active_event_count, active_message_count FROM session_transcript_index_state WHERE session_id = ?", (sid,)).fetchone()
+            active = conn.execute("SELECT active_position, event_seq, message_position FROM session_transcript_active_events WHERE session_id = ? ORDER BY active_position", (sid,)).fetchall()
+            fts = conn.execute("SELECT role, text FROM session_transcript_fts WHERE session_id = ?", (sid,)).fetchall()
+            identities = conn.execute("SELECT COUNT(*) FROM transcript_event_identities WHERE session_id = ?", (sid,)).fetchone()
+        assert events[0] == {"type": "session", "version": 3, "id": sid, "timestamp": thread.started_at, "cwd": CWD}
+        roles = [e["message"]["role"] for e in events[1:]]
+        assert roles == ["user", "assistant", "toolResult", "assistant"]
+        assert all(events[i]["parentId"] == events[i - 1]["id"] for i in range(2, len(events))) and events[1]["parentId"] is None
+        assert events[2]["message"]["content"] == [{"type": "text", "text": "Let me search the test suite."},
+                                                    {"type": "toolCall", "id": "toolu_01", "name": "Grep", "arguments": {"pattern": "auth_callback", "path": "tests"}}]
+        assert events[2]["message"]["stopReason"] == "toolUse" and events[2]["message"]["api"] == "anthropic-messages"
+        assert events[3]["message"] == {"role": "toolResult", "toolCallId": "toolu_01", "toolName": "Grep", "content": [{"type": "text", "text": "tests/test_auth.py:12:def test_auth_callback"}],
+                                        "isError": False, "timestamp": events[3]["message"]["timestamp"]}
+        assert state_row == (len(events) - 1, events[-1]["id"], 0, len(events) - 1, 4) and identities == (len(events),)
+        assert active == [(0, 1, 0), (1, 2, 1), (2, 3, 2), (3, 4, 3)] and sorted(r[0] for r in fts) == ["assistant", "assistant", "user"]
+
+    def test_priming_needs_the_binary_and_is_isolated_from_the_real_config(self, tmp_path, monkeypatch):
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        monkeypatch.setattr("shutil.which", lambda *a, **k: None)
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.translate(thread, ic.StoreRef("openclaw", tmp_path / "state", Path(CWD), session_id="noclick-x"))
+        assert e.value.reason == "install_failed" and "openclaw is not on PATH" in e.value.detail
+        calls = []
+
+        def fake_run(argv, cwd=None, env=None, **k):
+            calls.append((argv, env))
+            db = tmp_path / "state2" / "agents" / "main" / "agent" / "openclaw-agent.sqlite"
+            db.parent.mkdir(parents=True, exist_ok=True)
+            with sqlite3.connect(db) as conn:
+                conn.executescript(OPENCLAW_TABLES)
+            return SimpleNamespace(returncode=1, stdout="", stderr="")
+
+        monkeypatch.setattr("shutil.which", lambda *a, **k: "/usr/bin/openclaw")
+        monkeypatch.setattr("subprocess.run", fake_run)
+        out = ic.translate(thread, ic.StoreRef("openclaw", tmp_path / "state2", Path(CWD), session_id="noclick-y",
+                                               environ={"PATH": "/usr/bin", "OPENAI_API_KEY": "real", "OPENAI_BASE_URL": "http://real"}))
+        assert out.fidelity.ok
+        argv, env = calls[0]
+        assert argv[:2] == ["/usr/bin/openclaw", "agent"] and "--model" in argv and argv[argv.index("--model") + 1] == "nc-prime/nc-prime"
+        assert "OPENAI_API_KEY" not in env and "OPENAI_BASE_URL" not in env
+        assert json.loads(Path(env["OPENCLAW_CONFIG_PATH"]).read_text()).get("models") is None  # no provider the prime could reach
+
+
+def test_every_format_has_a_validated_version_and_a_local_store():
+    import importlib.util
+
+    from nodes.agent.local_interchange import local_store
+
+    spec = importlib.util.spec_from_file_location("drift", Path(__file__).with_name("test_session_interchange_drift.py"))
+    drift = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(drift)
+    VALIDATED_HARNESS_VERSIONS = drift.VALIDATED_HARNESS_VERSIONS
+
+    assert set(VALIDATED_HARNESS_VERSIONS) == set(ic.FORMATS)
+    for harness in ic.FORMATS:
+        assert local_store(harness, Path("/tmp/x"), {}, as_target=True) is not None, harness

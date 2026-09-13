@@ -59,13 +59,15 @@ REASONS: Dict[str, str] = {
 @dataclass
 class Written:
     """A writer's output: the native records in order, where they belong,
-    and what the writer could not represent."""
+    and what the writer could not represent. ``install`` may leave what it
+    needs to take the write back again in ``undo``."""
 
     session_id: str
     native_path: Path
     records: List[Dict[str, Any]]
     dropped: Counter = field(default_factory=Counter)
     warnings: List[str] = field(default_factory=list)
+    undo: Dict[str, Any] = field(default_factory=dict)
 
 
 class ThreadFormat:
@@ -92,22 +94,33 @@ class ThreadFormat:
 
     def write(self, thread: Thread, store: StoreRef, identity: TargetIdentity) -> Written:
         """``thread`` as this harness's native records, addressed under
-        ``store``. Does not touch the filesystem — ``install`` does."""
+        ``store``. Does not touch the store — ``install`` does."""
         raise NotImplementedError
 
-    def describe(self) -> Dict[str, Any]:
-        return {"harness": self.harness, "store": (self.__doc__ or "").strip().splitlines()[0]}
-
-    # ── shared mechanics ────────────────────────────────────────────────────
-
-    def install(self, written: Written) -> Path:
-        """Land the records where the harness reads them: a plain
-        create-if-absent write (``O_EXCL``, mode 0600 where the filesystem
-        honours it), with no rename, link or chmod after it — the FUSE-backed
-        session volumes the hosted sandboxes mount reject those with EPERM."""
+    def install(self, written: Written, store: Optional[StoreRef] = None) -> Path:
+        """Land the records where the harness reads them. File-backed stores
+        get a plain create-if-absent write (``O_EXCL``, mode 0600 where the
+        filesystem honours it) with no rename, link or chmod after it — the
+        FUSE-backed session volumes the hosted sandboxes mount reject those
+        with EPERM. Database-backed formats override this."""
         data = "".join(json.dumps(r, ensure_ascii=False, separators=(",", ":")) + "\n" for r in written.records).encode()
         write_new_file(written.native_path, data)
         return written.native_path
+
+    def ref_for(self, written: Written, store: StoreRef) -> str:
+        """The ``read`` reference for what ``install`` landed — the verdict
+        reads the store back through it."""
+        return str(written.native_path)
+
+    def unwrite(self, written: Written, store: StoreRef) -> None:
+        """Take a failed install back so the harness never resumes it."""
+        discard(written.native_path)
+
+    def describe(self) -> Dict[str, Any]:
+        first_paragraph = (self.__doc__ or "").strip().split("\n\n", 1)[0]
+        return {"harness": self.harness, "store": " ".join(first_paragraph.split())}
+
+    # ── shared mechanics ────────────────────────────────────────────────────
 
     @staticmethod
     def read_jsonl(path: Path) -> Tuple[List[Tuple[int, Any]], int, str]:
@@ -146,6 +159,28 @@ class ThreadFormat:
     @staticmethod
     def sha(thread: Thread) -> str:
         return thread.sha256 or ""
+
+
+def db_ref(db: Path, session_id: str) -> str:
+    """A ``read`` reference into a database-backed store."""
+    return f"{db}#{session_id}"
+
+
+def split_db_ref(ref: str) -> Tuple[Path, str]:
+    db, sep, session_id = ref.rpartition("#")
+    if not sep or not db:
+        raise InterchangeError("source_unreadable", f"not a database reference: {ref!r}")
+    return Path(db), session_id
+
+
+def pointer_text(pointer: Optional[Path]) -> Optional[str]:
+    """What a runner's pointer file names, or None."""
+    if pointer is None:
+        return None
+    try:
+        return pointer.read_text().strip() or None
+    except OSError:
+        return None
 
 
 def write_new_file(path: Path, data: bytes) -> None:

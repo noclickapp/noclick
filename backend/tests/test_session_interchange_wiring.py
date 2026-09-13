@@ -69,8 +69,14 @@ class TestLocalStores:
         assert local.local_store("claude_code", workdir, {}, as_target=False).home == tmp_path / "home" / ".claude"
         claude = local.local_store("claude_code", workdir, env, as_target=True)
         assert claude.home == workdir / ".claude" and claude.pointer == workdir / ".noclick-turns"
-        for other in ("opencode", "hermes_agent", "openclaw"):
-            assert local.local_store(other, workdir, {}, as_target=True) is None
+        oc = local.local_store("opencode", workdir, {"PATH": "/x"}, as_target=True)
+        assert oc.home == workdir / ".local" / "share" and oc.pointer == workdir / ".noclick-opencode-session" and oc.environ["XDG_DATA_HOME"] == str(oc.home)
+        hermes = local.local_store("hermes_agent", workdir, {}, as_target=False)
+        assert hermes.home == workdir / ".hermes" and hermes.session_id == "noclick"
+        oclaw = local.local_store("openclaw", workdir, {}, as_target=True)
+        assert oclaw.home == workdir / ".openclaw" and oclaw.session_id.startswith("noclick-") and len(oclaw.session_id) == 24
+        assert oclaw.environ["OPENCLAW_STATE_DIR"] == str(workdir / ".openclaw")
+        assert local.local_store("some_future_harness", workdir, {}, as_target=True) is None
 
 
 class TestInterchangeLocal:
@@ -106,9 +112,18 @@ class TestInterchangeLocal:
         monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: object())
         monkeypatch.setattr("repositories.conversation.ConversationRepo", lambda pool: SimpleNamespace(
             read_events=AsyncMock(return_value=[{"role": "user", "message": "we agreed on blue"}])))
+        def failing(source, target, identity=None):
+            raise local.InterchangeError("readback_mismatch", "the target lost a message")
+
+        monkeypatch.setattr(local, "move_thread", failing)
         block = await local.interchange_local(_node("opencode"), "codex", tmp_path, {}, conversation_id="c", user_id="u-1")
-        assert "we agreed on blue" in block and "(no_adapter)" in block
-        assert reported.await_args.kwargs["reason"] == "no_adapter"
+        assert "we agreed on blue" in block and "(readback_mismatch)" in block
+        assert reported.await_args.kwargs["reason"] == "readback_mismatch"
+        monkeypatch.undo()
+        monkeypatch.setattr(local, "report_fallback", reported)
+        monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: object())
+        monkeypatch.setattr("repositories.conversation.ConversationRepo", lambda pool: SimpleNamespace(
+            read_events=AsyncMock(return_value=[{"role": "user", "message": "we agreed on blue"}])))
         # Nothing to move: the target's own store is the latest, nothing carried.
         monkeypatch.setenv("HOME", str(tmp_path))
         block = await local.interchange_local(_node("claude-code"), "codex", tmp_path / "w", {}, conversation_id="c", user_id="u-1")

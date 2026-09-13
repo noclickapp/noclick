@@ -186,6 +186,9 @@ class StoreRef:
     cwd: Path
     pointer: Optional[Path] = None
     session_id: Optional[str] = None
+    #: The process environment a CLI-backed format runs the harness binary
+    #: with (opencode's importer, openclaw's priming run); None = os.environ.
+    environ: Optional[Dict[str, str]] = None
 
     def as_dict(self) -> Dict[str, Any]:
         return {"harness": self.harness, "home": str(self.home), "cwd": str(self.cwd),

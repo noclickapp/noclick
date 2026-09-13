@@ -33,7 +33,7 @@ from ..ir import (
     ASSISTANT, CONTEXT, MESSAGE, OPAQUE, SYSTEM, THINKING, TOOL_CALL, TOOL_RESULT, USER,
     Event, Provenance, StoreRef, TargetIdentity, Thread, count_drops, string, text_of,
 )
-from .base import InterchangeError, ThreadFormat, Written
+from .base import InterchangeError, ThreadFormat, Written, pointer_text
 
 CONVERSATION_TYPES = ("user", "assistant")
 #: Records the CLI writes beside the conversation; recognised so they land
@@ -56,7 +56,7 @@ class ClaudeCodeFormat(ThreadFormat):
 
     def locate(self, store: StoreRef) -> str:
         projects = store.home / "projects"
-        wanted = store.session_id or _pointer_text(store.pointer)
+        wanted = store.session_id or pointer_text(store.pointer)
         if wanted and _is_uuid(wanted):
             hits = list(projects.glob(f"*/{wanted}.jsonl"))
             if not hits:
@@ -263,13 +263,6 @@ class ClaudeCodeFormat(ThreadFormat):
             else:
                 dropped[event.drop_key] += 1
         return Written(session_id=session_id, native_path=path, records=records, dropped=dropped)
-
-
-def _pointer_text(pointer: Optional[Path]) -> Optional[str]:
-    try:
-        return pointer.read_text().strip() or None if pointer else None
-    except OSError:
-        return None
 
 
 def _is_uuid(value: str) -> bool:

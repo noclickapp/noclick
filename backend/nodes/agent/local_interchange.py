@@ -42,7 +42,7 @@ def local_store(harness: str, workdir: Path, env: Dict[str, str], *, as_target: 
     ``_apply_subscription_login`` prepared, else the operator's real home). A
     source's env is gone, so its home is inferred: a subscription sign-in
     left its home inside the workdir, otherwise the thread is in the real
-    home. Returns None for harnesses without a local store adapter."""
+    home. Returns None for a harness the engine has no format for."""
     home_dir = Path(os.environ.get("HOME") or Path.home())
     if harness == "claude_code":
         if as_target:
@@ -57,6 +57,21 @@ def local_store(harness: str, workdir: Path, env: Dict[str, str], *, as_target: 
         else:
             home = workdir / ".codex" if (workdir / ".codex" / "sessions").is_dir() else home_dir / ".codex"
         return StoreRef(harness, home, workdir, pointer=workdir / ".noclick-codex-thread")
+    # The rest keep their whole state under the conversation workdir, the way
+    # run_local_harness_turn points each process (XDG_DATA_HOME, HERMES_HOME,
+    # OPENCLAW_STATE_DIR); their binaries run from the operator's PATH.
+    if harness == "opencode":
+        data_home = workdir / ".local" / "share"
+        return StoreRef(harness, data_home, workdir, pointer=workdir / ".noclick-opencode-session",
+                        environ={**env, "XDG_DATA_HOME": str(data_home)})
+    if harness == "hermes_agent":
+        return StoreRef(harness, workdir / ".hermes", workdir, session_id="noclick")
+    if harness == "openclaw":
+        import hashlib
+
+        state = workdir / ".openclaw"
+        return StoreRef(harness, state, workdir, session_id=f"noclick-{hashlib.sha256(str(workdir).encode()).hexdigest()[:16]}",
+                        environ={**env, "OPENCLAW_STATE_DIR": str(state), "OPENCLAW_HOME": str(state)})
     return None
 
 

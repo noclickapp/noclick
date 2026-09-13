@@ -20,7 +20,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from .formats import InterchangeError, Written, discard, format_for, write_new_file
+from .formats import InterchangeError, Written, format_for, write_new_file
 from .ir import INTERCHANGE_VERSION, Skeleton, StoreRef, TargetIdentity, Thread, classify_drops, skeleton_of
 
 MANIFEST_DIR = ".nc_interchange"
@@ -95,17 +95,17 @@ def translate(thread: Thread, target: StoreRef, identity: Optional[TargetIdentit
     if rejected:
         raise InterchangeError("fidelity_drop", json.dumps(rejected, sort_keys=True))
     try:
-        fmt.install(written)
+        fmt.install(written, target)
     except OSError as e:
         raise InterchangeError("install_failed", f"{written.native_path}: {e.strerror or e}") from e
     try:
-        back = fmt.read(str(written.native_path))
+        back = fmt.read(fmt.ref_for(written, target))
     except (InterchangeError, OSError, ValueError, KeyError, TypeError) as e:
-        discard(written.native_path)
+        fmt.unwrite(written, target)
         raise InterchangeError("readback_failed", str(e)) from e
     fidelity = Fidelity(source=source_skeleton, target=skeleton_of(back), dropped=dropped, rejected_drops=rejected)
     if not fidelity.ok:
-        discard(written.native_path)
+        fmt.unwrite(written, target)
         raise InterchangeError("readback_mismatch", json.dumps(fidelity.as_dict(), sort_keys=True))
     manifest_path = _write_manifest(thread, target, identity, written, fidelity)
     return InterchangeResult(

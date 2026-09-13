@@ -45,6 +45,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     mv.add_argument("--target-harness", required=True)
     mv.add_argument("--target-home", required=True)
     mv.add_argument("--target-pointer")
+    mv.add_argument("--target-session-id", help="the id the target runner resumes by, where the harness needs one")
     mv.add_argument("--cwd", required=True, help="the working directory the target thread runs under")
     mv.add_argument("--target-cli-version")
     mv.add_argument("--target-model-provider")
@@ -70,7 +71,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             source = StoreRef(a.source_harness, Path(a.source_home), Path(a.source_cwd or a.cwd),
                               pointer=Path(a.source_pointer) if a.source_pointer else None, session_id=a.source_session_id)
             target = StoreRef(a.target_harness, Path(a.target_home), Path(a.cwd),
-                              pointer=Path(a.target_pointer) if a.target_pointer else None)
+                              pointer=Path(a.target_pointer) if a.target_pointer else None, session_id=a.target_session_id)
             identity = TargetIdentity(cli_version=a.target_cli_version, model_provider=a.target_model_provider, model=a.target_model)
             out = move_thread(source, target, identity).as_dict()
     except InterchangeError as e:
