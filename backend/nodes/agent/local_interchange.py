@@ -1,14 +1,13 @@
 """Local-edition wiring for the thread interchange
-(``nodes/agent/session_interchange``): the same move the hosted runtime runs
-inside a sandbox, run in-process on the operator's own session stores before
-the new harness's process starts.
+(``nodes/agent/interchange``): the same move the hosted runtime runs inside
+a sandbox, run in-process on the operator's own session stores before the
+new harness's process starts.
 
 Every local harness keeps its state under the conversation workdir (a
-subscription sign-in's ``.claude``/``.codex`` home, opencode's XDG data home)
-or the operator's real home; ``local_store`` resolves both the way
-``run_local_harness_turn`` sets the process up, so the translator reads the
-thread the previous harness actually wrote and writes where the next one
-actually looks.
+subscription sign-in's ``.claude``/``.codex`` home) or the operator's real
+home; ``local_store`` resolves both the way ``run_local_harness_turn`` sets
+the process up, so the engine reads the thread the previous harness
+actually wrote and writes where the next one actually looks.
 """
 
 from __future__ import annotations
@@ -16,23 +15,21 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
-import shutil
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 from nodes.agent.session_interchange import (
-    TRANSLATOR_VERSION,
     InterchangeError,
     StoreRef,
     carried_context,
-    codex_model_provider,
     harness_of,
-    harness_pins,
     move_thread,
     pair_support,
     record_native_move,
     report_fallback,
+    target_identity,
     turns_from_projection,
+    versions_for_report,
 )
 
 logger = logging.getLogger(__name__)
@@ -45,7 +42,7 @@ def local_store(harness: str, workdir: Path, env: Dict[str, str], *, as_target: 
     ``_apply_subscription_login`` prepared, else the operator's real home). A
     source's env is gone, so its home is inferred: a subscription sign-in
     left its home inside the workdir, otherwise the thread is in the real
-    home. Returns None for harnesses the translator cannot address."""
+    home. Returns None for harnesses without a local store adapter."""
     home_dir = Path(os.environ.get("HOME") or Path.home())
     if harness == "claude_code":
         if as_target:
@@ -60,13 +57,6 @@ def local_store(harness: str, workdir: Path, env: Dict[str, str], *, as_target: 
         else:
             home = workdir / ".codex" if (workdir / ".codex" / "sessions").is_dir() else home_dir / ".codex"
         return StoreRef(harness, home, workdir, pointer=workdir / ".noclick-codex-thread")
-    if harness == "opencode":
-        data_home = workdir / ".local" / "share"
-        cli = shutil.which("opencode", path=env.get("PATH"))
-        return StoreRef(
-            harness, data_home, workdir, pointer=workdir / ".noclick-opencode-session",
-            cli=Path(cli) if cli else None, environ={**env, "XDG_DATA_HOME": str(data_home)},
-        )
     return None
 
 
@@ -88,9 +78,8 @@ async def interchange_local(
     except Exception:
         logger.warning("[LocalInterchange] no database pool; verdict will not be recorded")
         pool = None
-    pins = harness_pins()
     reason = detail = ""
-    blocked = pair_support(previous, model_type, pins=pins)
+    blocked = pair_support(previous, model_type)
     if blocked:
         reason, detail = blocked
     else:
@@ -99,12 +88,9 @@ async def interchange_local(
         if source is None or target is None:
             reason, detail = "no_adapter", f"{previous if source is None else model_type} has no local store adapter"
         else:
-            version = pins.get(model_type) if model_type in ("claude_code", "codex") else None
-            provider = codex_model_provider(target.home) if model_type == "codex" else None
+            identity = target_identity(model_type, home=target.home, model=model)
             try:
-                result = await asyncio.to_thread(
-                    move_thread, source, target, target_cli_version=version, model_provider=provider, model=model or None,
-                )
+                result = await asyncio.to_thread(move_thread, source, target, identity)
             except InterchangeError as e:
                 reason, detail = e.reason, e.detail
             except Exception as e:
@@ -124,6 +110,6 @@ async def interchange_local(
         block = carried_context(turns_from_projection(events), reason=reason)
     await report_fallback(
         pool, user_id=user_id, conversation_id=conversation_id, source_harness=previous, target_harness=model_type,
-        reason=reason, detail=detail, versions={**pins, "session-migrate": TRANSLATOR_VERSION},
+        reason=reason, detail=detail, versions=versions_for_report(),
     )
     return block

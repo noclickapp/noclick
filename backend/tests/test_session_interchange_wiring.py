@@ -69,18 +69,17 @@ class TestLocalStores:
         assert local.local_store("claude_code", workdir, {}, as_target=False).home == tmp_path / "home" / ".claude"
         claude = local.local_store("claude_code", workdir, env, as_target=True)
         assert claude.home == workdir / ".claude" and claude.pointer == workdir / ".noclick-turns"
-        oc = local.local_store("opencode", workdir, {"PATH": ""}, as_target=True)
-        assert oc.environ["XDG_DATA_HOME"] == str(workdir / ".local" / "share") and oc.pointer == workdir / ".noclick-opencode-session"
-        assert local.local_store("hermes_agent", workdir, {}, as_target=True) is None
+        for other in ("opencode", "hermes_agent", "openclaw"):
+            assert local.local_store(other, workdir, {}, as_target=True) is None
 
 
 class TestInterchangeLocal:
     async def test_moves_the_thread_before_the_process_starts(self, tmp_path, monkeypatch):
         import sys
 
-        sys.path.insert(0, str(BACKEND / "tests"))
+        sys.path.insert(1, str(BACKEND / "tests"))
         from test_session_interchange import SESSION, _claude_fixture
-        from session_migrate.formats.claude import project_directory_name
+        from nodes.agent.interchange.formats.claude_code import project_directory_name
 
         workdir = tmp_path / "work"
         workdir.mkdir()
@@ -108,8 +107,8 @@ class TestInterchangeLocal:
         monkeypatch.setattr("repositories.conversation.ConversationRepo", lambda pool: SimpleNamespace(
             read_events=AsyncMock(return_value=[{"role": "user", "message": "we agreed on blue"}])))
         block = await local.interchange_local(_node("opencode"), "codex", tmp_path, {}, conversation_id="c", user_id="u-1")
-        assert "we agreed on blue" in block and "(translator_pin_mismatch)" in block
-        assert reported.await_args.kwargs["reason"] == "translator_pin_mismatch"
+        assert "we agreed on blue" in block and "(no_adapter)" in block
+        assert reported.await_args.kwargs["reason"] == "no_adapter"
         # Nothing to move: the target's own store is the latest, nothing carried.
         monkeypatch.setenv("HOME", str(tmp_path))
         block = await local.interchange_local(_node("claude-code"), "codex", tmp_path / "w", {}, conversation_id="c", user_id="u-1")

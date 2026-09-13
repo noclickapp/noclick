@@ -1,68 +1,45 @@
-"""Translation drift is caught at the pins, before a user's thread finds it.
+"""Harness drift is caught at the pins, before a user's thread finds it.
 
-The translator (``session-migrate``) validates each harness at ONE version
-and NoClick pins each harness at its own; the two move independently (the
-daily refresh bumps ours, upstream releases weekly). This suite makes every
-move visible: the translator pin is one number across ``requirements.txt``,
-the engine and the installed package (the hosted sandbox images are pinned in
-``cloud/tests``); and the lag between what the translator validated and what
-NoClick runs is DECLARED here, so a bump on
-either side fails until someone has re-run the fixtures (and, for a real
-binary, the harness E2E) and re-declared the lag.
+The engine's readers and writers were validated against ONE version of each
+harness — fixtures in its record shapes here, and the real binary in the
+Harness E2E. NoClick's pins move on their own (the daily refresh). This
+test makes every move visible: a bumped pin fails until someone has re-run
+both and re-declared the validated version, and the engine stays a
+dependency-free package that ships into the sandboxes as files.
 """
 
 from pathlib import Path
 
-import session_migrate
-from session_migrate.formats import claude, codex, hermes, opencode
-
+from nodes.agent import interchange as ic
 from nodes.agent import session_interchange as si
 
 BACKEND = Path(__file__).resolve().parents[1]
 
-#: harness → (NoClick's pin, the version the translator validated, consequence).
-#: ``warning``: the translator reads by record shape; ``tests/test_session_interchange.py``
-#: carries fixtures in the pinned shape. ``blocked``: the translator drives the
-#: harness CLI and refuses other versions; the pair falls back (loudly) until
-#: session-migrate catches up. ``unaddressable``: see ``si.UNADDRESSABLE``.
-KNOWN_TRANSLATOR_LAG = {
-    "claude_code": ("2.1.261", "2.1.209", "warning"),
-    "codex": ("0.153.4", "0.144.4", "warning"),
-    "opencode": ("1.18.29", "1.17.20", "blocked"),
-    "hermes_agent": ("v2026.8.31", "v2026.8.27", "unaddressable"),
+#: harness → the version the engine's format was validated against.
+VALIDATED_HARNESS_VERSIONS = {
+    "claude_code": "2.1.261",
+    "codex": "0.153.4",
 }
 
 
-def test_translator_pin_is_one_number_everywhere():
-    assert session_migrate.__version__ == si.TRANSLATOR_VERSION
-    requirements = (BACKEND.parent / "requirements.txt").read_text()
-    assert si.translator_requirement() in requirements.splitlines()
-
-
-def test_translator_lag_is_declared_for_every_harness_pin():
-    ours = si.harness_pins()
-    validated = {
-        "claude_code": claude.PINNED_CLAUDE_VERSION,
-        "codex": codex.PINNED_CODEX_VERSION,
-        "opencode": opencode.PINNED_OPENCODE_VERSION,
-        "hermes_agent": hermes.PINNED_HERMES_RELEASE_TAG,
-    }
-    for harness, (declared_ours, declared_theirs, consequence) in KNOWN_TRANSLATOR_LAG.items():
-        assert (ours[harness], validated[harness]) == (declared_ours, declared_theirs), (
-            f"{harness}: NoClick pins {ours[harness]} and session-migrate {si.TRANSLATOR_VERSION} validated "
-            f"{validated[harness]}, but KNOWN_TRANSLATOR_LAG declares {(declared_ours, declared_theirs)}. "
-            "A pin moved: re-run tests/test_session_interchange.py (fixtures in the pinned record shape) and the "
-            "harness E2E, then re-declare the lag here — or bump session-migrate so it validates the new pin."
+def test_every_format_is_validated_against_the_pinned_harness():
+    pins = si.harness_pins()
+    assert set(VALIDATED_HARNESS_VERSIONS) == set(ic.FORMATS), "declare a validated version for every format, and only for formats"
+    for harness, validated in VALIDATED_HARNESS_VERSIONS.items():
+        assert pins[harness] == validated, (
+            f"{harness}: NoClick now pins {pins[harness]} but the interchange format was validated against {validated}. "
+            "Re-run tests/test_session_interchange.py against the new version's record shapes, re-run the Harness E2E "
+            "(test_prod_thread_moves_between_harnesses), then re-declare VALIDATED_HARNESS_VERSIONS."
         )
-    # The engine's verdict on each pair must agree with the declaration.
-    blocked = si.pair_support("opencode", "claude_code", pins=ours)
-    if KNOWN_TRANSLATOR_LAG["opencode"][2] == "blocked":
-        assert blocked and blocked[0] == "translator_pin_mismatch"
-    else:
-        assert blocked is None
-    assert si.pair_support("claude_code", "codex", pins=ours) is None
 
 
-def test_openclaw_has_no_translator_adapter_yet():
-    assert "openclaw" not in si.HARNESS_FORMATS
-    assert si.pair_support("openclaw", "codex")[0] == "no_adapter"
+def test_the_engine_has_no_third_party_dependency():
+    requirements = (BACKEND.parent / "requirements.txt").read_text()
+    assert "session-migrate" not in requirements
+    for image in ("claude_code", "codex", "opencode", "hermes_agent"):
+        source = (BACKEND / "cloud" / "agent" / "harnesses" / f"{image}.py").read_text()
+        assert "translator_requirement" not in source and "session-migrate" not in source
+
+
+def test_interchange_version_is_recorded_in_every_verdict():
+    assert ic.INTERCHANGE_VERSION and ic.INTERCHANGE_VERSION.strip().isdigit()

@@ -1,197 +1,416 @@
-"""Native thread interchange between harnesses (nodes/agent/session_interchange).
+"""The thread interchange engine (nodes/agent/interchange).
 
-A thread moves as the harness's own session files, and the verdict is what
-the TARGET's reader sees after the write — the same skeleton of messages
-and paired tool calls the source held. Fixtures are fictional threads in the
-record shapes the pinned harnesses write today (Claude Code 2.1.26x with its
-queue/attachment/last-prompt bookkeeping records; a paginated Codex rollout
-with ordinals, custom tool calls and encrypted reasoning), so a translator
-or harness bump that stops reading them fails here before it fails a user.
+A thread moves as the target harness's own session store, and the verdict
+is what the TARGET's reader sees after the write — the same skeleton of
+messages and paired tool calls the source held. Fixtures are fictional
+threads in the record shapes the pinned harnesses write today (Claude Code
+2.1.26x with its bookkeeping records, abandoned branches, subagent
+sidechains and compaction; a paginated Codex rollout with ordinals, injected
+context, custom tool calls, encrypted reasoning and a compaction window),
+so a harness bump that changes those shapes fails here before it fails a
+user. The E2E on real binaries is the other half.
 """
 
-import dataclasses
+import ast
 import json
+import os
+import subprocess
+import sys
 import uuid
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
+from nodes.agent import interchange as ic
 from nodes.agent import session_interchange as si
+from nodes.agent.interchange import formats
+from nodes.agent.interchange.formats import claude_code as claude_fmt
+from nodes.agent.interchange.formats import codex as codex_fmt
 
 SESSION = "6f1e2d3c-4b5a-4c6d-8e7f-0a1b2c3d4e5f"
 CWD = "/home/casey/work/acme-api"
+PACKAGE = Path(ic.__file__).parent
+
+# The conversation every fixture holds: prompt → assistant text → a tool
+# call → its result → the reply. Two harnesses, one skeleton.
+EXPECTED_ROLES = ["user", "assistant", "assistant"]
 
 
-def _claude_fixture(path: Path, cwd: str = CWD) -> Path:
-    """A four-turn Claude Code thread: prompt → thinking + text → a tool
-    call → its result → the reply, wrapped in the bookkeeping records the
-    2.1.26x CLI writes around a conversation."""
-    ids = [str(uuid.uuid4()) for _ in range(6)]
-    ts = "2026-09-12T10:00:0{}.000Z"
-    base = {"isSidechain": False, "sessionId": SESSION, "cwd": cwd, "version": "2.1.261", "userType": "external"}
-    records = [
+# ── fixtures ────────────────────────────────────────────────────────────────
+
+def _claude_records(cwd: str) -> list:
+    ids = [str(uuid.uuid4()) for _ in range(12)]
+    ts = "2026-09-12T10:00:{:02d}.000Z"
+    base = {"isSidechain": False, "userType": "external", "cwd": cwd, "sessionId": SESSION, "version": "2.1.261",
+            "gitBranch": "main", "entrypoint": "cli", "slug": "auth-callback"}
+    msg_id = "msg_01"
+    return [
+        {"type": "mode", "mode": "default", "sessionId": SESSION},
+        {"type": "bridge-session", "bridgeSessionId": "b1", "sessionId": SESSION, "lastSequenceNum": 0},
         {"type": "queue-operation", "operation": "enqueue", "timestamp": ts.format(0), "sessionId": SESSION, "content": "Which tests cover the auth callback?"},
         {**base, "parentUuid": None, "type": "user", "uuid": ids[0], "timestamp": ts.format(1), "promptId": str(uuid.uuid4()),
          "message": {"role": "user", "content": "Which tests cover the auth callback?"}},
-        {**base, "parentUuid": ids[0], "type": "attachment", "uuid": ids[1], "timestamp": ts.format(1),
+        # the CLI's own context injection: never a turn
+        {**base, "parentUuid": ids[0], "type": "user", "uuid": ids[1], "timestamp": ts.format(1), "isMeta": True,
+         "message": {"role": "user", "content": "# AGENTS.md\nBe terse."}},
+        # a hook fired between turns: a system record inside the chain
+        {**base, "parentUuid": ids[1], "type": "system", "uuid": ids[2], "timestamp": ts.format(1), "level": "info",
+         "content": "SessionStart hook ran", "hookCount": 1, "isMeta": True},
+        {**base, "parentUuid": ids[2], "type": "attachment", "uuid": ids[3], "timestamp": ts.format(1),
          "attachment": {"type": "total_tokens_reminder", "text": "<total_tokens>1000 tokens left</total_tokens>"}},
-        {**base, "parentUuid": ids[1], "type": "assistant", "uuid": ids[2], "timestamp": ts.format(2), "requestId": "req_1",
-         "message": {"model": "claude-haiku-4-5-20251001", "id": "msg_1", "type": "message", "role": "assistant",
+        {**base, "parentUuid": ids[3], "type": "assistant", "uuid": ids[4], "timestamp": ts.format(2), "requestId": "req_1", "apiBlockIndex": 0,
+         "message": {"model": "claude-haiku-4-5-20251001", "id": msg_id, "type": "message", "role": "assistant",
                      "content": [{"type": "thinking", "thinking": "look for callback tests", "signature": "sig"},
                                  {"type": "text", "text": "Let me search the test suite."}],
                      "stop_reason": None, "usage": {"input_tokens": 12, "output_tokens": 8}}},
-        {**base, "parentUuid": ids[2], "type": "assistant", "uuid": ids[3], "timestamp": ts.format(3), "requestId": "req_1",
-         "message": {"model": "claude-haiku-4-5-20251001", "id": "msg_1", "type": "message", "role": "assistant",
-                     "content": [{"type": "tool_use", "id": "toolu_01", "name": "Grep", "input": {"pattern": "auth_callback", "path": "tests"}}],
+        {**base, "parentUuid": ids[4], "type": "assistant", "uuid": ids[5], "timestamp": ts.format(3), "requestId": "req_1", "apiBlockIndex": 1,
+         "message": {"model": "claude-haiku-4-5-20251001", "id": msg_id, "type": "message", "role": "assistant",
+                     "content": [{"type": "tool_use", "id": "toolu_01", "name": "Grep", "input": {"pattern": "auth_callback", "path": "tests"}, "caller": {"type": "direct"}}],
                      "stop_reason": "tool_use", "usage": {"input_tokens": 12, "output_tokens": 20}}},
-        {**base, "parentUuid": ids[3], "type": "user", "uuid": ids[4], "timestamp": ts.format(4),
-         "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_01", "content": "tests/test_auth.py:12:def test_auth_callback"}]},
+        {**base, "parentUuid": ids[5], "type": "user", "uuid": ids[6], "timestamp": ts.format(4), "sourceToolUseID": "toolu_01",
+         "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_01", "content": "tests/test_auth.py:12:def test_auth_callback", "is_error": False}]},
          "toolUseResult": {"mode": "content", "numFiles": 1}},
-        {**base, "parentUuid": ids[4], "type": "assistant", "uuid": ids[5], "timestamp": ts.format(5), "requestId": "req_2",
+        # an abandoned branch: a draft reply the user backed out of
+        {**base, "parentUuid": ids[6], "type": "assistant", "uuid": ids[7], "timestamp": ts.format(5), "requestId": "req_x",
+         "message": {"model": "claude-haiku-4-5-20251001", "id": "msg_x", "type": "message", "role": "assistant",
+                     "content": [{"type": "text", "text": "DRAFT — never sent"}], "stop_reason": "end_turn", "usage": {}}},
+        {**base, "parentUuid": ids[6], "type": "assistant", "uuid": ids[8], "timestamp": ts.format(6), "requestId": "req_2",
          "message": {"model": "claude-haiku-4-5-20251001", "id": "msg_2", "type": "message", "role": "assistant",
                      "content": [{"type": "text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}],
                      "stop_reason": "end_turn", "usage": {"input_tokens": 40, "output_tokens": 16}}},
-        {"type": "last-prompt", "lastPrompt": "Which tests cover the auth callback?", "leafUuid": ids[5], "sessionId": SESSION},
+        # a subagent's own tree
+        {**base, "isSidechain": True, "parentUuid": None, "type": "user", "uuid": ids[9], "timestamp": ts.format(7),
+         "message": {"role": "user", "content": "SIDECHAIN: explore the repo"}},
+        {**base, "isSidechain": True, "parentUuid": ids[9], "type": "assistant", "uuid": ids[10], "timestamp": ts.format(8), "requestId": "req_s",
+         "message": {"model": "claude-haiku-4-5-20251001", "id": "msg_s", "type": "message", "role": "assistant",
+                     "content": [{"type": "text", "text": "SIDECHAIN reply"}], "stop_reason": "end_turn", "usage": {}}},
+        {"type": "last-prompt", "lastPrompt": "Which tests cover the auth callback?", "leafUuid": ids[8], "sessionId": SESSION},
+        {"type": "ai-title", "aiTitle": "Auth callback tests", "sessionId": SESSION},
+        {"type": "pr-link", "prNumber": 7, "prRepository": "acme/api", "prUrl": "https://example.invalid/pr/7", "sessionId": SESSION, "timestamp": ts.format(9)},
     ]
+
+
+def _claude_fixture(path: Path, cwd: str = CWD) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("".join(json.dumps(r) + "\n" for r in _claude_records(cwd)))
+    return path
+
+
+def _claude_compacted_fixture(path: Path, cwd: str = CWD) -> Path:
+    """After compaction: a boundary with no parent, the summary the CLI
+    carries, then new turns. The pre-compaction chain is still in the file."""
+    old = _claude_records(cwd)
+    ids = [str(uuid.uuid4()) for _ in range(4)]
+    ts = "2026-09-12T11:00:{:02d}.000Z"
+    base = {"isSidechain": False, "userType": "external", "cwd": cwd, "sessionId": SESSION, "version": "2.1.261", "gitBranch": "main"}
+    old_leaf = next(r["leafUuid"] for r in old if r.get("type") == "last-prompt")
+    new = [
+        {**base, "parentUuid": None, "logicalParentUuid": old_leaf, "type": "system", "subtype": "compact_boundary", "uuid": ids[0],
+         "timestamp": ts.format(0), "content": "Conversation compacted", "isMeta": True, "compactMetadata": {"trigger": "auto", "preTokens": 120000}},
+        {**base, "parentUuid": ids[0], "type": "user", "uuid": ids[1], "timestamp": ts.format(1), "isCompactSummary": True,
+         "message": {"role": "user", "content": "Summary: the auth callback is covered by one test."}},
+        {**base, "parentUuid": ids[1], "type": "user", "uuid": ids[2], "timestamp": ts.format(2),
+         "message": {"role": "user", "content": "Add a second test for the failure path."}},
+        {**base, "parentUuid": ids[2], "type": "assistant", "uuid": ids[3], "timestamp": ts.format(3), "requestId": "req_3",
+         "message": {"model": "claude-haiku-4-5-20251001", "id": "msg_3", "type": "message", "role": "assistant",
+                     "content": [{"type": "text", "text": "Added tests/test_auth.py::test_auth_callback_failure."}], "stop_reason": "end_turn", "usage": {}}},
+        {"type": "last-prompt", "lastPrompt": "Add a second test for the failure path.", "leafUuid": ids[3], "sessionId": SESSION},
+    ]
+    records = [r for r in old if r.get("type") != "last-prompt"] + new
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("".join(json.dumps(r) + "\n" for r in records))
     return path
 
 
-def _codex_fixture(path: Path, cwd: str = CWD) -> Path:
-    """The same thread as a paginated Codex rollout (0.15x): ordinals, a
-    developer context message, world_state, a custom tool call with a string
-    input and its output, encrypted reasoning, token accounting."""
-    sid = "01a0a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a5b"
+CODEX_SID = "01a0a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a5b"
+
+
+def _codex_rows(cwd: str) -> list:
     turn = "01a0a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a5c"
-    t = "2026-09-12T10:00:{:02d}.000Z"
-    rows = [
-        ("session_meta", {"session_id": sid, "id": sid, "timestamp": t.format(0), "cwd": cwd, "originator": "codex_cli_rs", "cli_version": "0.153.4", "source": "cli", "model_provider": "openai"}),
+    sid = CODEX_SID
+    return [
+        ("session_meta", {"session_id": sid, "id": sid, "timestamp": "2026-09-12T10:00:00.000Z", "cwd": cwd, "originator": "codex_cli_rs",
+                          "cli_version": "0.153.4", "source": "cli", "model_provider": "openai", "history_mode": "paginated",
+                          "base_instructions": {"text": "You are Codex."}, "git": {"branch": "main"}}),
         ("event_msg", {"type": "task_started", "turn_id": turn, "started_at": 1789200000, "model_context_window": 258400}),
         ("response_item", {"type": "message", "id": "msg_dev", "role": "developer", "content": [{"type": "input_text", "text": "# AGENTS.md instructions\nBe terse."}]}),
+        ("response_item", {"type": "message", "id": "msg_env", "role": "user", "content": [{"type": "input_text", "text": f"<environment_context>\n  <cwd>{cwd}</cwd>\n</environment_context>"}]}),
         ("world_state", {"full": True, "state": {"agents_md": {"directory": cwd, "text": "Be terse."}}}),
         ("turn_context", {"turn_id": turn, "root_turn_id": turn, "cwd": cwd, "workspace_roots": [cwd], "model": "gpt-5-codex"}),
+        ("event_msg", {"type": "user_message", "message": "Which tests cover the auth callback?", "client_id": "c1"}),
         ("response_item", {"type": "message", "id": "msg_u1", "role": "user", "content": [{"type": "input_text", "text": "Which tests cover the auth callback?"}]}),
+        ("event_msg", {"type": "item_completed", "turn_id": turn, "thread_id": sid, "item": {"type": "UserMessage", "id": "it1", "content": [{"type": "text", "text": "Which tests cover the auth callback?"}]}}),
         ("response_item", {"type": "reasoning", "id": "rs_1", "summary": [], "encrypted_content": "gAAAAABopaque"}),
+        ("event_msg", {"type": "agent_message", "message": "Let me search the test suite.", "phase": "commentary"}),
         ("response_item", {"type": "message", "id": "msg_a1", "role": "assistant", "content": [{"type": "output_text", "text": "Let me search the test suite."}], "phase": "commentary"}),
         ("response_item", {"type": "custom_tool_call", "id": "ctc_1", "status": "completed", "call_id": "call_1", "name": "exec", "input": "rg -n auth_callback tests"}),
         ("token_usage_record", {"thread_id": sid, "turn_id": turn, "usage": {"input_tokens": 300, "output_tokens": 20}}),
         ("response_item", {"type": "custom_tool_call_output", "id": "ctco_1", "call_id": "call_1", "output": [{"type": "input_text", "text": "tests/test_auth.py:12:def test_auth_callback"}]}),
         ("event_msg", {"type": "token_count", "info": {"total_token_usage": {"input_tokens": 300, "output_tokens": 20, "total_tokens": 320}}}),
+        ("event_msg", {"type": "agent_message", "message": "One test covers it: tests/test_auth.py::test_auth_callback.", "phase": "final_answer"}),
         ("response_item", {"type": "message", "id": "msg_a2", "role": "assistant", "content": [{"type": "output_text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}], "phase": "final_answer"}),
+        ("event_msg", {"type": "item_completed", "turn_id": turn, "thread_id": sid, "item": {"type": "AgentMessage", "id": "it2", "content": [{"type": "Text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}]}}),
         ("event_msg", {"type": "task_complete", "turn_id": turn, "last_agent_message": "One test covers it.", "started_at": 1789200000, "completed_at": 1789200009}),
     ]
+
+
+def _write_rollout(path: Path, rows: list) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("".join(json.dumps({"timestamp": t.format(i), "ordinal": i, "type": kind, "payload": payload}) + "\n" for i, (kind, payload) in enumerate(rows)))
+    t = "2026-09-12T10:00:{:02d}.000Z"
+    path.write_text("".join(json.dumps({"timestamp": t.format(i % 60), "ordinal": i, "type": kind, "payload": payload}) + "\n"
+                            for i, (kind, payload) in enumerate(rows)))
     return path
 
 
-EXPECTED_ROLES = ["user", "assistant", "assistant"]  # the two assistant turns; the tool call is its own event
+def _codex_fixture(path: Path, cwd: str = CWD) -> Path:
+    return _write_rollout(path, _codex_rows(cwd))
 
 
-class TestSkeletonAndDrops:
-    def test_claude_fixture_reads_to_the_expected_skeleton(self, tmp_path):
-        session = si.load_native_session("claude_code", home=tmp_path, session_ref=str(_claude_fixture(tmp_path / "s.jsonl")))
-        sk = si.skeleton_of(session)
+def _codex_compacted_fixture(path: Path, cwd: str = CWD) -> Path:
+    """A window compaction: the model continues from replacement_history."""
+    rows = _codex_rows(cwd)
+    rows += [
+        ("compacted", {"message": "Summary so far.", "window_number": 1, "replacement_history": [
+            {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Summary so far: one test covers the callback."}]},
+            {"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": "Understood."}]},
+        ]}),
+        ("event_msg", {"type": "context_compacted"}),
+        ("response_item", {"type": "message", "id": "msg_u2", "role": "user", "content": [{"type": "input_text", "text": "Add a second test for the failure path."}]}),
+        ("response_item", {"type": "message", "id": "msg_a3", "role": "assistant", "content": [{"type": "output_text", "text": "Added tests/test_auth.py::test_auth_callback_failure."}]}),
+    ]
+    return _write_rollout(path, rows)
+
+
+def _store(harness: str, home: Path, cwd: str = CWD, **kw) -> ic.StoreRef:
+    return ic.StoreRef(harness, home, Path(cwd), **kw)
+
+
+def _claude_home(root: Path, cwd: str = CWD, *, compacted: bool = False) -> Path:
+    home = root / "claude-home"
+    fixture = _claude_compacted_fixture if compacted else _claude_fixture
+    fixture(home / "projects" / claude_fmt.project_directory_name(Path(cwd)) / f"{SESSION}.jsonl", cwd=cwd)
+    return home
+
+
+def _codex_home(root: Path, cwd: str = CWD, *, compacted: bool = False) -> Path:
+    home = root / "codex-home"
+    fixture = _codex_compacted_fixture if compacted else _codex_fixture
+    fixture(home / "sessions" / "2026" / "09" / "12" / f"rollout-2026-09-12T10-00-00-{CODEX_SID}.jsonl", cwd=cwd)
+    return home
+
+
+# ── the engine is what ships into a sandbox ─────────────────────────────────
+
+class TestPackage:
+    def test_imports_nothing_but_the_stdlib_and_itself(self):
+        stdlib = set(sys.stdlib_module_names)
+        for path in PACKAGE.rglob("*.py"):
+            tree = ast.parse(path.read_text())
+            for node in ast.walk(tree):
+                if isinstance(node, ast.ImportFrom):
+                    if node.level:
+                        continue  # relative: the package itself
+                    root = (node.module or "").split(".")[0]
+                elif isinstance(node, ast.Import):
+                    root = node.names[0].name.split(".")[0]
+                else:
+                    continue
+                assert root in stdlib, f"{path.relative_to(PACKAGE)} imports {root!r}: the engine must ship into a sandbox unchanged"
+
+    def test_every_raised_reason_is_in_the_vocabulary(self):
+        import re
+
+        raised = set()
+        for path in PACKAGE.rglob("*.py"):
+            raised |= set(re.findall(r'InterchangeError\("([a-z_]+)"', path.read_text()))
+        assert raised and raised <= set(ic.REASONS), raised - set(ic.REASONS)
+        with pytest.raises(ValueError):
+            ic.InterchangeError("not_a_reason")
+
+    def test_formats_are_discoverable(self):
+        described = {d["harness"]: d for d in ic.describe_formats()}
+        assert set(described) == {"claude_code", "codex"}
+        assert "projects" in described["claude_code"]["store"] and "rollout" in described["codex"]["store"]
+
+
+# ── reading each harness's store ────────────────────────────────────────────
+
+class TestClaudeCodeRead:
+    def test_the_active_chain_is_the_thread(self, tmp_path):
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        sk = ic.skeleton_of(thread)
         assert sk.roles == EXPECTED_ROLES and sk.tool_calls == 1 and sk.tool_results == 1 and sk.unpaired_tool_calls == 0
+        texts = [e.text for e in thread.events if e.is_turn]
+        assert texts == ["Which tests cover the auth callback?", "Let me search the test suite.",
+                         "One test covers it: tests/test_auth.py::test_auth_callback."]
+        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == (SESSION, CWD, "2.1.261", "claude-haiku-4-5-20251001")
+        # the draft branch and the subagent sidechain are not the thread
+        assert "DRAFT" not in json.dumps([e.text for e in thread.events]) and "SIDECHAIN" not in json.dumps([e.text for e in thread.events])
+        assert thread.dropped["opaque:inactive_branch_records"] == 3
+        # bookkeeping inside the chain lands under accepted keys, with provenance
+        assert thread.dropped["context:meta"] == 1 and thread.dropped["context:system_record"] == 1
+        assert thread.dropped["opaque:record_attachment"] == 1 and thread.dropped["thinking"] == 1
+        assert ic.classify_drops(dict(thread.dropped)) == {}
+        call = next(e for e in thread.events if e.kind == ic.ir.TOOL_CALL)
+        assert (call.tool_name, call.tool_call_id, call.tool_input) == ("Grep", "toolu_01", {"pattern": "auth_callback", "path": "tests"})
+        assert str(call.provenance).startswith("record ") and "(assistant) block 0" in str(call.provenance)
 
-    def test_codex_fixture_reads_to_the_same_skeleton(self, tmp_path):
-        session = si.load_native_session("codex", home=tmp_path, session_ref=str(_codex_fixture(tmp_path / "r.jsonl")))
-        sk = si.skeleton_of(session)
+    def test_a_compacted_session_starts_from_the_summary(self, tmp_path):
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path, compacted=True)))
+        turns = [(e.role, e.text) for e in thread.events if e.is_turn]
+        assert turns == [("user", "Summary: the auth callback is covered by one test."),
+                         ("user", "Add a second test for the failure path."),
+                         ("assistant", "Added tests/test_auth.py::test_auth_callback_failure.")]
+        assert thread.dropped["context:compact_boundary"] == 1
+        assert ic.skeleton_of(thread).tool_calls == 0  # the pre-compaction chain is history the CLI already folded
+
+    def test_locate_prefers_the_cwd_project_then_the_newest_anywhere(self, tmp_path):
+        import time
+
+        home = _claude_home(tmp_path)
+        project = home / "projects" / claude_fmt.project_directory_name(Path(CWD))
+        older = _claude_fixture(project / f"{uuid.uuid4()}.jsonl")
+        os.utime(older, (time.time() - 3600, time.time() - 3600))
+        _claude_fixture(home / "projects" / "-some-other-cwd" / "x.jsonl", cwd="/some/other/cwd")
+        fmt = ic.format_for("claude_code")
+        assert fmt.locate(_store("claude_code", home)) == str(project / f"{SESSION}.jsonl")
+        assert fmt.locate(_store("claude_code", home, cwd="/elsewhere")).endswith("x.jsonl")
+        assert fmt.locate(_store("claude_code", home, session_id=SESSION)) == str(project / f"{SESSION}.jsonl")
+        with pytest.raises(ic.InterchangeError) as e:
+            fmt.locate(_store("claude_code", tmp_path / "nohome"))
+        assert e.value.reason == "source_empty"
+
+    def test_project_directory_is_the_cwd_as_given(self):
+        assert claude_fmt.project_directory_name(Path("/Users/casey/work/acme-api")) == "-Users-casey-work-acme-api"
+
+
+class TestCodexRead:
+    def test_the_response_items_are_the_thread(self, tmp_path):
+        thread = ic.read_thread(_store("codex", _codex_home(tmp_path)))
+        sk = ic.skeleton_of(thread)
         assert sk.roles == EXPECTED_ROLES and sk.tool_calls == 1 and sk.tool_results == 1 and sk.unpaired_tool_calls == 0
+        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == (CODEX_SID, CWD, "0.153.4", "gpt-5-codex")
+        assert thread.dropped["context:injected"] == 1 and thread.dropped["context:system_message"] == 1
+        assert thread.dropped["thinking"] == 1 and thread.dropped["context:turn_context"] == 1
+        assert thread.dropped["opaque:record_world_state"] == 1 and thread.dropped["opaque:event_token_count"] == 1
+        assert ic.classify_drops(dict(thread.dropped)) == {}
+        call = next(e for e in thread.events if e.kind == ic.ir.TOOL_CALL)
+        assert (call.tool_name, call.tool_call_id, call.tool_input) == ("exec", "call_1", "rg -n auth_callback tests")
+        result = next(e for e in thread.events if e.kind == ic.ir.TOOL_RESULT)
+        assert result.text == "tests/test_auth.py:12:def test_auth_callback"
 
-    def test_accepted_drops_are_bookkeeping_and_reasoning_only(self):
-        assert si.classify_drops({"opaque:token_count": 3, "thinking": 2, "context:turn_context": 1, "session:title": 1,
-                                  "tool_call:non_object_input": 1, "tool_result:is_error": 1, "timestamp:invalid": 1,
-                                  "message:privileged_role": 1}) == {}
-        assert si.classify_drops({"tool_result:orphan_id": 1, "opaque:x": 2, "tool_call:missing_name": 0}) == {"tool_result:orphan_id": 1}
+    def test_a_compaction_window_replaces_what_came_before(self, tmp_path):
+        thread = ic.read_thread(_store("codex", _codex_home(tmp_path, compacted=True)))
+        turns = [(e.role, e.text) for e in thread.events if e.is_turn]
+        assert turns == [("user", "Summary so far: one test covers the callback."), ("assistant", "Understood."),
+                         ("user", "Add a second test for the failure path."), ("assistant", "Added tests/test_auth.py::test_auth_callback_failure.")]
+        assert thread.dropped["compaction:windows"] == 1 and ic.skeleton_of(thread).tool_calls == 0
 
-    def test_unsupported_harness_is_named(self, tmp_path):
-        with pytest.raises(si.InterchangeError) as e:
-            si.load_native_session("openclaw", home=tmp_path, session_ref="x")
-        assert e.value.reason == "unsupported_harness"
+    def test_both_harnesses_read_to_the_same_skeleton(self, tmp_path):
+        a = ic.skeleton_of(ic.read_thread(_store("claude_code", _claude_home(tmp_path))))
+        b = ic.skeleton_of(ic.read_thread(_store("codex", _codex_home(tmp_path))))
+        assert a.roles == b.roles and a.tool_calls == b.tool_calls  # texts differ only in the tool call's name/input
 
 
-class TestTranslate:
-    def test_claude_to_codex_lands_a_rollout_the_codex_reader_resumes(self, tmp_path):
-        src = si.load_native_session("claude_code", home=tmp_path, session_ref=str(_claude_fixture(tmp_path / "s.jsonl")))
+# ── writing each harness's store ────────────────────────────────────────────
+
+class TestClaudeToCodex:
+    def test_the_rollout_codex_resumes(self, tmp_path):
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
         home = tmp_path / ".codex"
-        result = si.translate(src, target_harness="codex", target_home=home, cwd=Path(CWD))
-        assert result.fidelity.ok
-        assert result.native_path.is_relative_to(home / "sessions") and result.native_path.name.startswith("rollout-")
-        assert result.manifest_path.exists()
-        head = json.loads(result.native_path.read_text().splitlines()[0])
-        assert head["type"] == "session_meta"
-        again = si.load_native_session("codex", home=home, session_ref=str(result.native_path))
-        assert si.skeleton_of(again).roles == EXPECTED_ROLES
-        assert result.fidelity.dropped.get("thinking") == 1  # the one loss we accept, and it is counted
+        out = ic.translate(thread, _store("codex", home), ic.TargetIdentity(cli_version="0.153.4", model_provider="custom", model="gpt-5-codex"))
+        assert out.fidelity.ok and out.native_path.is_relative_to(home / "sessions") and out.native_path.name.endswith(f"{out.session_id}.jsonl")
+        rows = [json.loads(l) for l in out.native_path.read_text().splitlines()]
+        head = rows[0]
+        assert head["type"] == "session_meta" and set(head["payload"]) >= {"session_id", "id", "timestamp", "cwd", "originator", "cli_version", "source", "model_provider", "history_mode"}
+        assert head["payload"]["model_provider"] == "custom" and head["payload"]["cli_version"] == "0.153.4" and head["payload"]["cwd"] == CWD
+        items = [r["payload"] for r in rows if r["type"] == "response_item"]
+        assert [i["type"] for i in items] == ["message", "message", "function_call", "function_call_output", "message"]
+        assert items[0]["role"] == "user" and items[0]["content"] == [{"type": "input_text", "text": "Which tests cover the auth callback?"}]
+        assert items[2]["name"] == "Grep" and items[2]["call_id"] == "toolu_01" and json.loads(items[2]["arguments"]) == {"pattern": "auth_callback", "path": "tests"}
+        assert items[3] == {"type": "function_call_output", "call_id": "toolu_01", "output": "tests/test_auth.py:12:def test_auth_callback"}
+        mirrors = [r["payload"] for r in rows if r["type"] == "event_msg"]
+        assert [m["type"] for m in mirrors] == ["user_message", "agent_message", "agent_message"]
+        assert "gAAAAAB" not in out.native_path.read_text() and "look for callback tests" not in out.native_path.read_text()
+        assert out.fidelity.dropped["thinking"] == 1 and out.manifest_path.exists()
+        manifest = json.loads(out.manifest_path.read_text())
+        assert manifest["source"]["sha256"] == thread.sha256 and manifest["target"]["identity"]["model_provider"] == "custom"
+        again = ic.skeleton_of(ic.format_for("codex").read(str(out.native_path)))
+        assert again.digest == ic.skeleton_of(thread).digest
 
-    def test_codex_target_header_names_the_configured_provider(self, tmp_path):
-        """A resumed Codex thread calls the provider its rollout header names,
-        not the configured one — the header must carry the target's."""
-        src = si.load_native_session("claude_code", home=tmp_path, session_ref=str(_claude_fixture(tmp_path / "s.jsonl")))
-        out = si.translate(src, target_harness="codex", target_home=tmp_path / ".codex", cwd=Path(CWD),
-                           model_provider="custom", model="gpt-5-codex")
-        head = json.loads(out.native_path.read_text().splitlines()[0])["payload"]
-        assert head["model_provider"] == "custom"  # the model itself rides every turn/start, not the header
-        assert si.codex_model_provider(tmp_path / ".codex") == "openai"  # no config: the stock provider
-        (tmp_path / ".codex" / "config.toml").write_text('model_provider = "noclick"\nmodel = "x"\n')
-        assert si.codex_model_provider(tmp_path / ".codex") == "noclick"
-        assert si.codex_model_provider(tmp_path / ".codex", custom_base_url=True) == "custom"
 
-    def test_codex_to_claude_lands_under_the_cwd_project(self, tmp_path):
-        src = si.load_native_session("codex", home=tmp_path, session_ref=str(_codex_fixture(tmp_path / "r.jsonl")))
+class TestCodexToClaude:
+    def test_the_session_claude_continues(self, tmp_path):
+        thread = ic.read_thread(_store("codex", _codex_home(tmp_path)))
         home = tmp_path / ".claude"
-        result = si.translate(src, target_harness="claude_code", target_home=home, cwd=Path(CWD))
-        assert result.fidelity.ok
-        assert result.native_path.parent.parent == home / "projects"
-        again = si.load_native_session("claude_code", home=home, session_ref=str(result.native_path))
-        assert si.skeleton_of(again).tool_calls == 1 and si.skeleton_of(again).tool_results == 1
-        text = result.native_path.read_text()
-        assert "Which tests cover the auth callback?" in text and "test_auth_callback" in text
-        assert "gAAAAABopaque" not in text  # provider-bound reasoning never crosses
+        out = ic.translate(thread, _store("claude_code", home), ic.TargetIdentity(cli_version="2.1.261", model="sonnet"))
+        assert out.fidelity.ok
+        assert out.native_path.parent == home / "projects" / claude_fmt.project_directory_name(Path(CWD)) and out.native_path.stem == out.session_id
+        rows = [json.loads(l) for l in out.native_path.read_text().splitlines()]
+        assert [r["type"] for r in rows] == ["user", "assistant", "assistant", "user", "assistant"]
+        assert rows[0]["parentUuid"] is None and all(rows[i]["parentUuid"] == rows[i - 1]["uuid"] for i in range(1, len(rows)))
+        assert {r["sessionId"] for r in rows} == {out.session_id} and {r["cwd"] for r in rows} == {CWD} and {r["version"] for r in rows} == {"2.1.261"}
+        assert rows[0]["message"] == {"role": "user", "content": "Which tests cover the auth callback?"}
+        assert rows[1]["message"]["model"] == "sonnet" and rows[1]["message"]["content"] == [{"type": "text", "text": "Let me search the test suite."}]
+        assert rows[1]["message"]["stop_reason"] == "end_turn" and "usage" in rows[1]["message"] and rows[1]["requestId"]
+        tool_use = rows[2]["message"]["content"][0]
+        assert tool_use == {"type": "tool_use", "id": "call_1", "name": "exec", "input": {"input": "rg -n auth_callback tests"}}
+        assert rows[3]["message"]["content"] == [{"type": "tool_result", "tool_use_id": "call_1", "content": "tests/test_auth.py:12:def test_auth_callback", "is_error": False}]
+        assert out.fidelity.dropped["tool_call:non_object_input"] == 1  # the shell string is wrapped, not lost
+        assert "gAAAAAB" not in out.native_path.read_text()
+        again = ic.read_thread(_store("claude_code", home))
+        assert ic.skeleton_of(again).digest == ic.skeleton_of(thread).digest
 
-    def test_a_rejected_drop_fails_before_anything_is_written(self, tmp_path, monkeypatch):
-        from session_migrate import conversion
 
-        src = si.load_native_session("claude_code", home=tmp_path, session_ref=str(_claude_fixture(tmp_path / "s.jsonl")))
-        real = conversion.convert_session
-
-        def lossy(session, options):
-            art = real(session, options)
-            return dataclasses.replace(art, dropped={**art.dropped, "tool_result:orphan_id": 1})
-
-        monkeypatch.setattr(conversion, "convert_session", lossy)
-        with pytest.raises(si.InterchangeError) as e:
-            si.translate(src, target_harness="codex", target_home=tmp_path / ".codex", cwd=Path(CWD))
-        assert e.value.reason == "fidelity_drop" and "orphan_id" in e.value.detail
+class TestVerdict:
+    def test_a_structural_drop_fails_before_anything_is_written(self, tmp_path, monkeypatch):
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        # a result whose call is missing: the reader would never pair it
+        orphan = ic.Event(ic.ir.TOOL_RESULT, ic.Provenance(99, "user"), tool_call_id="toolu_ghost", text="?")
+        thread.events.append(orphan)
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.translate(thread, _store("codex", tmp_path / ".codex"))
+        assert e.value.reason == "fidelity_drop" and "tool_result:orphan_id" in e.value.detail
         assert not (tmp_path / ".codex").exists()
 
     def test_a_readback_mismatch_discards_the_written_store(self, tmp_path, monkeypatch):
-        src = si.load_native_session("claude_code", home=tmp_path, session_ref=str(_claude_fixture(tmp_path / "s.jsonl")))
-        real_load = si.load_native_session
-        calls = {"n": 0}
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        fmt = ic.format_for("codex")
+        real = fmt.read
 
-        def flaky(harness, **kw):
-            calls["n"] += 1
-            session = real_load(harness, **kw)
-            if harness == "codex":  # the read-back: pretend the target lost a message
-                return SimpleNamespace(events=session.events[:-1], source_format=session.source_format)
-            return session
+        def lossy(ref):
+            back = real(ref)
+            back.events = [e for e in back.events if not (e.is_turn and e.role == "assistant")][:-0 or None]
+            back.events = back.events[:-1]
+            return back
 
-        monkeypatch.setattr(si, "load_native_session", flaky)
-        with pytest.raises(si.InterchangeError) as e:
-            si.translate(src, target_harness="codex", target_home=tmp_path / ".codex", cwd=Path(CWD))
+        monkeypatch.setattr(fmt, "read", lossy)
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.translate(thread, _store("codex", tmp_path / ".codex"))
         assert e.value.reason == "readback_mismatch"
         assert not list((tmp_path / ".codex").rglob("rollout-*.jsonl"))
 
+    def test_empty_source_and_same_harness_are_refused(self, tmp_path):
+        empty = ic.Thread("claude_code", "x", None, None, None, None, None, [], 0)
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.translate(empty, _store("codex", tmp_path))
+        assert e.value.reason == "empty_source"
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.move_thread(_store("codex", tmp_path), _store("codex", tmp_path))
+        assert e.value.reason == "same_harness"
+
+    def test_accepted_versus_rejected_drops(self):
+        assert ic.classify_drops({"opaque:event_token_count": 3, "thinking": 2, "context:injected": 1, "compaction:windows": 1,
+                                  "tool_call:non_object_input": 1, "tool_call:missing_id": 1}) == {}
+        assert ic.classify_drops({"tool_result:orphan_id": 1, "opaque:x": 2, "tool_call:missing_name": 0, "message:unsupported": 1}) \
+            == {"tool_result:orphan_id": 1, "message:unsupported": 1}
+
     def test_install_needs_neither_hard_links_nor_fchmod(self, tmp_path, monkeypatch):
-        """The hosted session volumes reject link(2) and fchmod(2) with
-        EPERM (the first real-sandbox move died exactly there); the install
-        must land on such a filesystem."""
+        """The hosted session volumes reject link(2) and fchmod(2) with EPERM
+        (a real-sandbox move died exactly there); the install must land on
+        such a filesystem, and never replace a thread the harness holds."""
         import errno
-        import os
 
         def eperm(*a, **k):
             raise PermissionError(errno.EPERM, "Operation not permitted")
@@ -199,41 +418,131 @@ class TestTranslate:
         monkeypatch.setattr(os, "link", eperm)
         monkeypatch.setattr(os, "fchmod", eperm)
         monkeypatch.setattr(os, "fsync", eperm)
-        src = si.load_native_session("claude_code", home=tmp_path, session_ref=str(_claude_fixture(tmp_path / "s.jsonl")))
-        out = si.translate(src, target_harness="codex", target_home=tmp_path / ".codex", cwd=Path(CWD))
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        out = ic.translate(thread, _store("codex", tmp_path / ".codex"))
         assert out.fidelity.ok and out.manifest_path.exists()
-        back = si.translate(si.load_native_session("codex", home=tmp_path / ".codex", session_ref=str(out.native_path)),
-                            target_harness="claude_code", target_home=tmp_path / ".claude", cwd=Path(CWD))
-        assert back.fidelity.ok
-        # Never silently replaces a thread the harness already holds.
         with pytest.raises(FileExistsError):
-            si._install_file_artifact(SimpleNamespace(native_bytes=b"x", manifest=lambda output_path: {}),
-                                      out.native_path, out.manifest_path)
+            formats.write_new_file(out.native_path, b"x")
         assert out.native_path.read_bytes() != b"x"
 
-    def test_empty_source_is_refused(self, tmp_path):
-        empty = SimpleNamespace(events=(), source_format=SimpleNamespace(value="claude"))
-        with pytest.raises(si.InterchangeError) as e:
-            si.translate(empty, target_harness="codex", target_home=tmp_path, cwd=Path(CWD))
-        assert e.value.reason == "empty_source"
+
+class TestMoveThread:
+    def test_round_trip_through_the_runners_pointers(self, tmp_path):
+        workdir = tmp_path / "work"
+        workdir.mkdir()
+        claude_home = _claude_home(tmp_path, cwd=str(workdir))
+        codex_home = tmp_path / "codex-home"
+        codex_pointer = workdir / ".noclick-codex-thread"
+        out = ic.move_thread(_store("claude_code", claude_home, str(workdir)), _store("codex", codex_home, str(workdir), pointer=codex_pointer),
+                             ic.TargetIdentity(cli_version="0.153.4", model_provider="openai"))
+        assert out.fidelity.ok and codex_pointer.read_text() == out.session_id
+        marker = workdir / ".noclick-turns"
+        back = ic.move_thread(_store("codex", codex_home, str(workdir), pointer=codex_pointer),
+                              _store("claude_code", tmp_path / "claude-home-2", str(workdir), pointer=marker))
+        assert back.fidelity.ok and marker.read_text() == back.session_id
+        assert back.native_path.parent == tmp_path / "claude-home-2" / "projects" / claude_fmt.project_directory_name(workdir)
+        assert ic.skeleton_of(ic.read_thread(_store("claude_code", tmp_path / "claude-home-2", str(workdir)))).roles == EXPECTED_ROLES
+
+    def test_nothing_to_move_is_source_empty(self, tmp_path):
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.move_thread(_store("claude_code", tmp_path / "nohome"), _store("codex", tmp_path / "c"))
+        assert e.value.reason == "source_empty" and "source_empty" in si.EXPECTED_FALLBACK_REASONS
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.format_for("codex").locate(_store("codex", tmp_path / "codex", pointer=tmp_path / "missing"))
+        assert e.value.reason == "source_empty"
+
+    def test_a_harness_without_a_format_never_touches_the_source(self, tmp_path):
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.move_thread(_store("codex", tmp_path), _store("hermes_agent", tmp_path / "h"))
+        assert e.value.reason == "no_adapter" and not (tmp_path / "h").exists()
+
+    def test_inspect_explains_a_store(self, tmp_path):
+        report = ic.inspect_store(_store("claude_code", _claude_home(tmp_path)))
+        assert report["skeleton"]["messages"] == 3 and report["turns_total"] == 3 and report["rejected_drops"] == {}
+        assert report["turns"][0]["text"].startswith("Which tests") and "record" in report["turns"][0]["provenance"]
+
+
+class TestCommand:
+    """The engine runs as ``python -m …`` inside the target sandbox: one JSON
+    verdict on stdout, whatever happened."""
+
+    def _run(self, *args):
+        proc = subprocess.run([sys.executable, "-m", "nodes.agent.interchange", *args], cwd=PACKAGE.parents[2],
+                              capture_output=True, text=True, timeout=120)
+        assert proc.returncode == 0, proc.stderr
+        return ic.parse_verdict(proc.stdout)
+
+    def test_move(self, tmp_path):
+        workdir = tmp_path / "work"
+        workdir.mkdir()
+        home = _claude_home(tmp_path, cwd=str(workdir))
+        pointer = tmp_path / "codex-home" / "sessions" / ".nc_thread"
+        verdict = self._run("move", "--source-harness", "claude_code", "--source-home", str(home), "--source-cwd", str(workdir),
+                            "--target-harness", "codex", "--target-home", str(tmp_path / "codex-home"), "--cwd", str(workdir),
+                            "--target-pointer", str(pointer), "--target-cli-version", "0.153.4",
+                            "--target-model-provider", "custom", "--target-model", "gpt-5-codex")
+        assert verdict["ok"] and verdict["fidelity"]["ok"] and pointer.read_text() == verdict["session_id"]
+        assert verdict["interchange_version"] == ic.INTERCHANGE_VERSION
+        assert '"model_provider":"custom"' in Path(verdict["native_path"]).read_text()
+
+    def test_inspect_and_formats(self, tmp_path):
+        home = _claude_home(tmp_path)
+        report = self._run("inspect", "--harness", "claude_code", "--home", str(home), "--cwd", CWD)
+        assert report["ok"] and report["skeleton"]["messages"] == 3
+        listing = self._run("formats")
+        assert {f["harness"] for f in listing["formats"]} == {"claude_code", "codex"}
+
+    def test_failure_verdicts(self, tmp_path):
+        verdict = self._run("move", "--source-harness", "claude_code", "--source-home", str(tmp_path / "none"),
+                            "--target-harness", "codex", "--target-home", str(tmp_path / "codex-home"), "--cwd", str(tmp_path))
+        assert verdict["ok"] is False and verdict["reason"] == "source_empty"
+        assert ic.parse_verdict("chatter\n{not json\n" + json.dumps({"ok": False, "reason": "x", "detail": ""}) + "\n") == {"ok": False, "reason": "x", "detail": ""}
+        assert ic.parse_verdict("Traceback …")["reason"] == "translator_crashed"
+
+
+# ── the NoClick side ────────────────────────────────────────────────────────
+
+class TestGlue:
+    def test_harness_of(self):
+        assert si.harness_of("claude-code") == "claude_code" and si.harness_of("codex") == "codex" and si.harness_of("hermes") == "hermes_agent"
+        assert si.harness_of("gpt-5.6-luna") == si.SDK_HARNESS and si.harness_of(None) is None and si.harness_of("") is None
+
+    def test_pair_support_follows_the_format_registry(self):
+        assert si.pair_support("claude_code", "codex") is None and si.pair_support("codex", "claude_code") is None
+        assert si.pair_support("codex", "codex") == ("same_harness", "")
+        assert si.pair_support(si.SDK_HARNESS, "codex")[0] == "sdk_source"
+        for other in ("openclaw", "opencode", "hermes_agent"):
+            assert si.pair_support(other, "codex")[0] == "no_adapter" and si.pair_support("codex", other)[0] == "no_adapter"
+        assert si.EXPECTED_FALLBACK_REASONS <= set(ic.REASONS)
+        for reason in ("readback_mismatch", "fidelity_drop", "install_failed", "translator_crashed"):
+            assert reason not in si.EXPECTED_FALLBACK_REASONS  # drift pages
+
+    def test_target_identity_from_pins_and_config(self, tmp_path):
+        ident = si.target_identity("codex", home=tmp_path, model="gpt-5-codex", custom_base_url=True)
+        assert ident.model_provider == "custom" and ident.model == "gpt-5-codex" and ident.cli_version == si.harness_pins()["codex"]
+        assert si.codex_model_provider(tmp_path) == "openai"
+        (tmp_path / "config.toml").write_text('model_provider = "noclick"\nmodel = "x"\n')
+        assert si.codex_model_provider(tmp_path) == "noclick"
+        assert si.target_identity("claude_code", home=tmp_path, model="sonnet").model_provider is None
 
 
 class TestFallback:
     def test_carried_context_is_the_fenced_block_the_display_strips(self):
-        block = si.carried_context([(True, "first"), (False, "reply"), (True, "second")], reason="readback_mismatch")
+        block = ic.carried_context([(True, "first"), (False, "reply"), (True, "second")], reason="readback_mismatch")
         lines = block.split("\n")
         assert lines[0] == "<<<NOCLICK_CARRIED_CONTEXT" and lines[-1] == "NOCLICK_CARRIED_CONTEXT>>>"
         assert "different harness (readback_mismatch)" in lines[1]
         assert json.loads(lines[3]) == [{"isUser": True, "text": "first"}, {"isUser": False, "text": "reply"}, {"isUser": True, "text": "second"}]
+        assert ic.with_carried_context("hi", "") == "hi" and ic.with_carried_context("hi", "<<<block>>>") == "hi\n\n<<<block>>>"
 
     def test_budget_trims_the_oldest_and_keeps_the_newest_tail(self):
-        block = si.carried_context([(True, "a" * 3000), (False, "b" * 3000), (True, "c" * 5000)], budget=4000)
+        block = ic.carried_context([(True, "a" * 3000), (False, "b" * 3000), (True, "c" * 5000)], budget=4000)
         turns = json.loads(block.split("\n")[3])
         assert len(turns) == 1 and turns[0]["text"].startswith("… ") and turns[0]["text"].endswith("c" * 10) and len(turns[0]["text"]) == 4002
-        assert si.carried_context([(True, "   "), (False, "")]) == ""
+        assert ic.carried_context([(True, "   "), (False, "")]) == ""
 
     def test_projection_turns_skip_cancelled_and_non_messages(self):
-        turns = si.turns_from_projection([
+        turns = ic.turns_from_projection([
             {"role": "user", "message": "hi", "trigger": {"node_type": "automation-slack"}},
             {"builder_prompt": {"prompt": "x"}},
             {"role": "assistant", "message": "err", "cancelled": True},
@@ -243,12 +552,11 @@ class TestFallback:
 
 
 @pytest.mark.asyncio
-async def test_report_fallback_is_loud_deduped_and_never_raises(monkeypatch):
+async def test_report_fallback_is_loud_for_drift_quiet_for_limits_and_never_raises(monkeypatch):
     seen = {}
 
     async def fake_feedback(pool, **kw):
         seen["feedback"] = kw
-        return True
 
     class FakeRepo:
         def __init__(self, pool):
@@ -261,178 +569,14 @@ async def test_report_fallback_is_loud_deduped_and_never_raises(monkeypatch):
     monkeypatch.setattr("repositories.conversation.ConversationRepo", FakeRepo)
     await si.report_fallback(object(), user_id="u1", conversation_id="ck:wf:agent:thread", source_harness="claude_code",
                              target_harness="codex", reason="readback_mismatch", detail="lost a message", versions={"codex": "0.153.4"})
-    assert seen["feedback"]["feedback_type"] == "interchange_fallback"
-    assert seen["feedback"]["dedupe_key"] == "claude_code:codex:readback_mismatch"
+    assert seen["feedback"]["feedback_type"] == "interchange_fallback" and seen["feedback"]["dedupe_key"] == "claude_code:codex:readback_mismatch"
     assert seen["meta"][1] == "last_interchange" and seen["meta"][2]["ok"] is False
+    seen.clear()
+    await si.report_fallback(object(), user_id="u", conversation_id="c", source_harness="llm", target_harness="codex", reason="sdk_source")
+    assert "feedback" not in seen and seen["meta"][2]["reason"] == "sdk_source"
 
     async def boom(pool, **kw):
         raise RuntimeError("slack down")
 
     monkeypatch.setattr("utils.feedback.record_feedback", boom)
-    await si.report_fallback(object(), user_id="u1", conversation_id="c", source_harness="a", target_harness="b", reason="x")  # swallowed
-
-
-class TestHarnessOf:
-    def test_wrapper_ids_name_their_harness_and_model_ids_name_the_sdk(self):
-        assert si.harness_of("claude-code") == "claude_code"
-        assert si.harness_of("codex") == "codex"
-        assert si.harness_of("hermes") == "hermes_agent"
-        assert si.harness_of("gpt-5.6-luna") == si.SDK_HARNESS
-        assert si.harness_of(None) is None and si.harness_of("") is None
-
-
-class TestPairSupport:
-    def test_claude_and_codex_move_both_ways(self):
-        pins = si.harness_pins()
-        assert si.pair_support("claude_code", "codex", pins=pins) is None
-        assert si.pair_support("codex", "claude_code", pins=pins) is None
-
-    def test_known_limits_are_named(self):
-        assert si.pair_support("codex", "codex") == ("same_harness", "")
-        assert si.pair_support(si.SDK_HARNESS, "codex")[0] == "sdk_source"
-        assert si.pair_support("openclaw", "codex")[0] == "no_adapter"
-        assert si.pair_support("codex", "hermes_agent")[0] == "unaddressable"
-        assert si.pair_support("opencode", "codex", pins={"opencode": "0.0.1"})[0] == "translator_pin_mismatch"
-        assert si.pair_support("opencode", "codex") is None  # the in-sandbox script trusts the backend's judgement
-        for reason in ("no_adapter", "unaddressable", "sdk_source", "source_empty"):
-            assert reason in si.EXPECTED_FALLBACK_REASONS
-        assert "translator_pin_mismatch" not in si.EXPECTED_FALLBACK_REASONS  # a lag we must fix, so it pages
-
-
-def _claude_home(tmp_path, workdir):
-    from session_migrate.formats.claude import project_directory_name
-
-    home = tmp_path / "claude-home"
-    _claude_fixture(home / "projects" / project_directory_name(workdir) / f"{SESSION}.jsonl", cwd=str(workdir))
-    return home
-
-
-class TestMoveThread:
-    def test_claude_to_codex_and_back_through_the_runners_pointers(self, tmp_path):
-        workdir = tmp_path / "work"
-        workdir.mkdir()
-        claude_home = _claude_home(tmp_path, workdir)
-        codex_home = tmp_path / "codex-home"
-        codex_pointer = workdir / ".noclick-codex-thread"
-        out = si.move_thread(
-            si.StoreRef("claude_code", claude_home, workdir),
-            si.StoreRef("codex", codex_home, workdir, pointer=codex_pointer),
-            target_cli_version="0.153.4",
-        )
-        assert out.fidelity.ok and codex_pointer.read_text() == out.session_id
-        assert out.native_path.name.endswith(f"{out.session_id}.jsonl")
-        # Back: the codex source is found through the pointer the runner resumes by;
-        # the claude target lands under the workdir's project and arms --continue.
-        claude_home2 = tmp_path / "claude-home-2"
-        marker = workdir / ".noclick-turns"
-        back = si.move_thread(
-            si.StoreRef("codex", codex_home, workdir, pointer=codex_pointer),
-            si.StoreRef("claude_code", claude_home2, workdir, pointer=marker),
-        )
-        assert back.fidelity.ok and marker.read_text() == back.session_id
-        from session_migrate.formats.claude import project_directory_name
-
-        assert back.native_path.parent == claude_home2 / "projects" / project_directory_name(workdir)
-        assert si.skeleton_of(si.load_native_session("claude_code", home=claude_home2, session_ref=str(back.native_path))).roles == EXPECTED_ROLES
-
-    def test_claude_source_prefers_the_cwd_project_and_the_newest_thread(self, tmp_path):
-        import os
-        import time
-
-        workdir = tmp_path / "work"
-        workdir.mkdir()
-        home = _claude_home(tmp_path, workdir)
-        from session_migrate.formats.claude import project_directory_name
-
-        project = home / "projects" / project_directory_name(workdir)
-        older = _claude_fixture(project / "older.jsonl", cwd=str(workdir))
-        os.utime(older, (time.time() - 3600, time.time() - 3600))
-        _claude_fixture(home / "projects" / "-some-other-cwd" / "x.jsonl", cwd="/some/other/cwd")
-        assert si.locate_source(si.StoreRef("claude_code", home, workdir)) == str(project / f"{SESSION}.jsonl")
-        assert si.locate_source(si.StoreRef("claude_code", home, tmp_path / "elsewhere")).endswith("x.jsonl")  # no project for that cwd: newest anywhere
-
-    def test_nothing_to_move_is_source_empty_not_a_failure(self, tmp_path):
-        with pytest.raises(si.InterchangeError) as e:
-            si.move_thread(si.StoreRef("claude_code", tmp_path / "nohome", tmp_path), si.StoreRef("codex", tmp_path / "c", tmp_path))
-        assert e.value.reason == "source_empty" and "source_empty" in si.EXPECTED_FALLBACK_REASONS
-        with pytest.raises(si.InterchangeError) as e:
-            si.locate_source(si.StoreRef("codex", tmp_path / "codex", tmp_path, pointer=tmp_path / "missing"))
-        assert e.value.reason == "source_empty"
-
-    def test_a_blocked_pair_never_touches_the_target(self, tmp_path):
-        with pytest.raises(si.InterchangeError) as e:
-            si.move_thread(si.StoreRef("codex", tmp_path, tmp_path), si.StoreRef("hermes_agent", tmp_path / "h", tmp_path))
-        assert e.value.reason == "unaddressable" and not (tmp_path / "h").exists()
-
-
-class TestSandboxScript:
-    """The engine runs as a plain script inside the target sandbox: one JSON
-    verdict on stdout, whatever happened."""
-
-    def _run(self, *args):
-        import subprocess
-        import sys
-
-        script = Path(si.__file__)
-        proc = subprocess.run([sys.executable, str(script), *args], capture_output=True, text=True, timeout=120)
-        assert proc.returncode == 0, proc.stderr
-        return si.parse_verdict(proc.stdout)
-
-    def test_move_verdict(self, tmp_path):
-        workdir = tmp_path / "work"
-        workdir.mkdir()
-        home = _claude_home(tmp_path, workdir)
-        pointer = tmp_path / "codex-home" / "sessions" / ".nc_thread"
-        verdict = self._run(
-            "--source-harness", "claude_code", "--source-home", str(home), "--source-cwd", str(workdir),
-            "--target-harness", "codex", "--target-home", str(tmp_path / "codex-home"), "--cwd", str(workdir),
-            "--target-pointer", str(pointer), "--target-cli-version", "0.153.4",
-            "--target-model-provider", "custom", "--target-model", "gpt-5-codex",
-        )
-        assert verdict["ok"] and verdict["fidelity"]["ok"] and pointer.read_text() == verdict["session_id"]
-        assert '"model_provider":"custom"' in Path(verdict["native_path"]).read_text()
-        assert verdict["translator_version"] == si.TRANSLATOR_VERSION
-
-    def test_failure_verdicts(self, tmp_path):
-        verdict = self._run(
-            "--source-harness", "claude_code", "--source-home", str(tmp_path / "none"),
-            "--target-harness", "codex", "--target-home", str(tmp_path / "codex-home"), "--cwd", str(tmp_path),
-        )
-        assert verdict == {"ok": False, "reason": "source_empty", "detail": verdict["detail"]}
-        assert si.parse_verdict("chatter\n{not json\n" + json.dumps({"ok": False, "reason": "x", "detail": ""}) + "\n") == {"ok": False, "reason": "x", "detail": ""}
-        assert si.parse_verdict("Traceback …")["reason"] == "translator_crashed"
-
-    def test_script_imports_nothing_from_the_backend_at_module_level(self):
-        import ast
-
-        tree = ast.parse(Path(si.__file__).read_text())
-        top_level = [n for n in tree.body if isinstance(n, (ast.Import, ast.ImportFrom))]
-        names = {(n.module if isinstance(n, ast.ImportFrom) else n.names[0].name) for n in top_level}
-        assert not {n for n in names if n and n.split(".")[0] in ("nodes", "utils", "repositories", "cloud", "session_migrate")}, names
-
-
-def test_with_carried_context_keeps_the_users_words_first():
-    assert si.with_carried_context("hi", "") == "hi"
-    assert si.with_carried_context("hi", "<<<block>>>") == "hi\n\n<<<block>>>"
-
-
-@pytest.mark.asyncio
-async def test_expected_fallbacks_are_recorded_quietly(monkeypatch):
-    seen = {}
-
-    async def fake_feedback(pool, **kw):
-        seen["feedback"] = kw
-
-    class FakeRepo:
-        def __init__(self, pool):
-            pass
-
-        async def set_metadata_key(self, conversation_id, key, value):
-            seen["meta"] = value
-
-    monkeypatch.setattr("utils.feedback.record_feedback", fake_feedback)
-    monkeypatch.setattr("repositories.conversation.ConversationRepo", FakeRepo)
-    await si.report_fallback(object(), user_id="u", conversation_id="c", source_harness="llm", target_harness="codex", reason="sdk_source")
-    assert "feedback" not in seen and seen["meta"]["reason"] == "sdk_source"
-    await si.report_fallback(object(), user_id="u", conversation_id="c", source_harness="codex", target_harness="claude_code", reason="convert_failed")
-    assert seen["feedback"]["dedupe_key"] == "codex:claude_code:convert_failed"
+    await si.report_fallback(object(), user_id="u1", conversation_id="c", source_harness="a", target_harness="b", reason="install_failed")  # swallowed
