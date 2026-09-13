@@ -36,9 +36,8 @@ def test_every_format_is_validated_against_the_pinned_harness():
 def test_the_engine_has_no_third_party_dependency():
     requirements = (BACKEND.parent / "requirements.txt").read_text()
     assert "session-migrate" not in requirements
-    for image in ("claude_code", "codex", "opencode", "hermes_agent"):
-        source = (BACKEND / "cloud" / "agent" / "harnesses" / f"{image}.py").read_text()
-        assert "translator_requirement" not in source and "session-migrate" not in source
+    for path in (BACKEND / "nodes" / "agent" / "interchange").rglob("*.py"):
+        assert "session_migrate" not in path.read_text()
 
 
 def test_interchange_version_is_recorded_in_every_verdict():
