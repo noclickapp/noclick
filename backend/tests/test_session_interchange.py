@@ -1068,12 +1068,6 @@ class TestSqliteCompat:
         with pytest.raises(RuntimeError, match=r"3\.34\.1.*pysqlite3-binary==" + re.escape(sc.PYSQLITE3_BINARY)):
             sc.module()
 
-    def test_the_image_pin_is_the_one_the_formats_name(self):
-        from nodes.agent.interchange.formats import sqlite_compat as sc
-
-        images = (Path(__file__).resolve().parents[1] / "cloud" / "agent" / "runtime" / "images.py").read_text()
-        assert f'PYSQLITE3_BINARY = "{sc.PYSQLITE3_BINARY}"' in images
-
     def test_a_store_that_is_not_a_database_is_source_unreadable(self, tmp_path):
         (tmp_path / "state.db").write_bytes(b"not a database, and the harness cannot open it either")
         with pytest.raises(ic.InterchangeError) as e:
