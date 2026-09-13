@@ -119,8 +119,9 @@ export default async function () {
             '[data-testid="agent-chat-history-row"]'
         );
         if (!row) throw new Error('no history row rendered for the thread');
-        const tag = row.querySelector<HTMLElement>(
-            '[data-testid="agent-chat-history-row-harness"]'
+        nc.assert.truthy(
+            !row.querySelector('[data-testid="agent-chat-history-row-harness"]'),
+            'rows carry no harness tag — which harness a thread last ran on is not something the user manages'
         );
         row.click();
         await nc.wait.ms(800);
@@ -135,8 +136,6 @@ export default async function () {
             threadKey: threadKey.slice(-10),
             switchedTo: second,
             preflightNamesPickedHarness: warning.includes(second),
-            rowTag: tag?.innerText.trim() ?? null,
-            rowCrossHarness: tag?.dataset.crossHarness ?? null,
             modelAfterPick: after.model,
             keyAfterPick: String(after.conversation_key ?? '').slice(-10),
         };

@@ -18,22 +18,12 @@ import {
 } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import type { AgentConversationSummary } from '~/hooks/useAgentChatConversations';
-import {
-    harnessOf,
-    harnessLabel,
-    splitCarryOverContext,
-    LEGACY_CLI_HARNESS,
-} from '~/lib/agentChat';
+import { splitCarryOverContext } from '~/lib/agentChat';
 import { useAnchoredPopover } from './useAnchoredPopover';
 
 interface AgentChatHistoryProps {
     conversations: AgentConversationSummary[];
     activeKey: string;
-    /** Current model on the agent node — rows are tagged with the harness
-     *  that ran their last turn, and one on another harness says so: picking
-     *  it never changes the model; the backend moves the thread into this
-     *  harness at the next send (session interchange). */
-    currentModel: string;
     isLoading: boolean;
     onSwitchTo: (conv: AgentConversationSummary) => void;
     onDelete: (conv: AgentConversationSummary) => void;
@@ -68,7 +58,6 @@ function relativeTime(iso: string): string {
 export function AgentChatHistory({
     conversations,
     activeKey,
-    currentModel,
     isLoading,
     onSwitchTo,
     onDelete,
@@ -163,8 +152,6 @@ export function AgentChatHistory({
                             </div>
                         ) : (
                             (() => {
-                                // Hoisted out of the row map so we don't recompute per row.
-                                const currentHarness = harnessOf(currentModel);
                                 return (
                                     <ul className="max-h-[420px] overflow-y-auto scrollbar-subtle px-2 pb-2 space-y-0.5">
                                         {conversations.map((c) => {
@@ -189,27 +176,12 @@ export function AgentChatHistory({
                                                 ).text ||
                                                 c.conversation_key ||
                                                 'Conversation';
-                                            // Compare by harness bucket so same-harness model swaps
-                                            // (gpt-4o ↔ claude-3.5 within the LLM harness) don't trigger
-                                            // the cross-harness warning — only CLI runtime crossings do.
-                                            const rowModel =
-                                                c.agent_model ?? null;
-                                            const rowHarness =
-                                                harnessOf(rowModel);
-                                            const isCrossHarness =
-                                                !!rowModel &&
-                                                rowHarness !== currentHarness;
                                             return (
                                                 <li key={c.conversation_id}>
                                                     <div
                                                         data-testid="agent-chat-history-row"
                                                         data-active={
                                                             isActive
-                                                                ? 'true'
-                                                                : 'false'
-                                                        }
-                                                        data-cross-harness={
-                                                            isCrossHarness
                                                                 ? 'true'
                                                                 : 'false'
                                                         }
@@ -259,37 +231,6 @@ export function AgentChatHistory({
                                                                     className="shrink-0 text-[10px] rounded-md px-1.5 py-0.5 border text-sky-700 border-sky-200 bg-sky-50 dark:text-sky-300 dark:border-sky-900/50 dark:bg-sky-950/30"
                                                                 >
                                                                     Shared
-                                                                </span>
-                                                            ) : null}
-                                                            {/* Only show the harness badge for CLI runtimes
-                            (Codex / Claude Code / OpenCode / OpenClaw /
-                            Hermes Agent) and the legacy-CLI backfill.
-                            Regular LLM chats route through the in-process
-                            wrapper and don't get a brand tag —
-                            harnessLabel returns '' for them, and an empty
-                            badge with the styled border just looks broken. */}
-                                                            {rowModel &&
-                                                            harnessLabel(
-                                                                rowHarness
-                                                            ) ? (
-                                                                <span
-                                                                    data-testid="agent-chat-history-row-harness"
-                                                                    title={
-                                                                        rowHarness ===
-                                                                        LEGACY_CLI_HARNESS
-                                                                            ? "Original CLI not recorded — this row predates harness tagging, so we can't tell which CLI it used. Continuing it here starts from the visible transcript."
-                                                                            : isCrossHarness
-                                                                              ? `Last ran on ${harnessLabel(rowHarness)}. Continuing on ${harnessLabel(currentHarness) || 'the standard LLM'} moves the thread over at your next send — the model stays as picked.`
-                                                                              : `Harness: ${harnessLabel(rowHarness)}${rowModel.includes('/') ? ` (${rowModel})` : ''}`
-                                                                    }
-                                                                    className={cn(
-                                                                        'shrink-0 text-[10px] tabular-nums rounded-md px-1.5 py-0.5 border',
-                                                                        'text-muted-foreground dark:text-zinc-500 border-border bg-card/40'
-                                                                    )}
-                                                                >
-                                                                    {harnessLabel(
-                                                                        rowHarness
-                                                                    )}
                                                                 </span>
                                                             ) : null}
                                                             <span className="text-[10px] text-muted-foreground/70 dark:text-zinc-600 shrink-0 tabular-nums">

@@ -20,17 +20,13 @@
 import { describe, it, expect } from 'vitest';
 import {
     splitCarryOverContext,
-    DEFAULT_AGENT_MODEL,
     DEFAULT_INTERFACE_CONV_KEY,
     deriveAgentChatConversationId,
     buildAgentChatRunOverride,
     buildAgentChatConfigPatch,
     isCliAgentModel,
     harnessOf,
-    harnessLabel,
     credentialProviderFor,
-    LEGACY_LLM_MODEL,
-    LEGACY_CLI_MODEL,
 } from '~/lib/agentChat';
 
 /** The full spectrum of agent model IDs the frontend chat surface targets.
@@ -379,34 +375,6 @@ describe('harnessOf', () => {
         expect(harnessOf(null)).toBe('llm');
         expect(harnessOf(undefined)).toBe('llm');
         expect(harnessOf('')).toBe('llm');
-    });
-});
-
-describe('harnessLabel', () => {
-    // CLI harness labels are sourced from PROVIDER_METADATA so the popover
-    // shows the same brand name the credentials form does — no hardcoded
-    // restating of 'Claude Code' / 'OpenAI Codex' / etc. that could drift.
-    it('reads CLI harness labels from PROVIDER_METADATA', () => {
-        expect(harnessLabel('codex')).toBe('OpenAI Codex');
-        expect(harnessLabel('claude-code')).toBe('Claude Code');
-        expect(harnessLabel('opencode')).toBe('OpenCode');
-        expect(harnessLabel('openclaw')).toBe('OpenClaw');
-        expect(harnessLabel('hermes')).toBe('Hermes Agent');
-    });
-
-    it('returns empty string for the LLM bucket (no badge in chat history)', () => {
-        // Every LLM chat shares the same in-process wrapper; the bucket
-        // identity matters for cross-harness comparisons (state isn't
-        // portable between CLI and LLM) but there's no useful brand label.
-        // AgentChatHistory.tsx gates the badge render on a non-empty label
-        // so LLM rows don't get a styled badge with empty text.
-        expect(harnessLabel('llm')).toBe('');
-    });
-
-    it('returns "?" for the unresolvable legacy-CLI bucket', () => {
-        // Legacy CLI rows: the original handler can't be recovered, so the
-        // label is non-committal rather than fabricating a name.
-        expect(harnessLabel('legacy-cli')).toBe('?');
     });
 });
 

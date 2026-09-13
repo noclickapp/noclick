@@ -746,7 +746,6 @@ export function AgentChatBlock({
                         <AgentChatHistory
                             conversations={conversationsState.conversations}
                             activeKey={activeKey}
-                            currentModel={selectedModel}
                             isLoading={conversationsState.isLoading}
                             onSwitchTo={handleSwitchToConversation}
                             onDelete={conversationsState.deleteOne}

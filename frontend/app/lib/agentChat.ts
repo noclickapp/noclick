@@ -4,7 +4,6 @@
 // agent model variants (gpt-4o-mini, claude-code, openclaw, hermes, …)
 // without spinning up the backend or socket.
 
-import { getProviderMetadata, ModelProvider } from '~/types/provider';
 import agentSchema from '~/schemas/nodes/agent.json';
 
 /** Default conversation_key applied to agent nodes that opt into the
@@ -132,29 +131,6 @@ export function credentialProviderFor(
     if (isCliAgentModel(model))
         return CLI_MODEL_PROVIDER[model] ?? model.replace(/-/g, '_');
     return resolveProvider(model);
-}
-
-/** Human-readable label for a harness, used in the chat-history popover.
- *  CLI harness ids map to ModelProvider enum values via CLI_MODEL_PROVIDER
- *  (e.g. 'claude-code' → CLAUDE_CODE, 'hermes' → HERMES_AGENT), so we reuse
- *  PROVIDER_METADATA's `title` field as the canonical display name rather
- *  than re-stating it here.
- *
- *  Returns `''` for the LLM bucket — there's no useful brand label to
- *  attach to a normal LLM chat (every LLM routes through the same in-
- *  process wrapper, so the bucket isn't a "harness" in the way a CLI
- *  binary is). Callers should treat an empty label as "don't render
- *  the badge". The bucket identity still matters for cross-harness
- *  detection elsewhere, just not for display. */
-export function harnessLabel(harness: string): string {
-    if (harness === LLM_HARNESS) return '';
-    // We don't know which CLI for legacy rows — the 5 CLI handlers all write
-    // the same event shape, so the backfill couldn't recover the original
-    // harness. Show a non-committal marker rather than fabricate one.
-    if (harness === LEGACY_CLI_HARNESS) return '?';
-    const provider = (CLI_MODEL_PROVIDER[harness] ??
-        harness.replace(/-/g, '_')) as ModelProvider;
-    return getProviderMetadata(provider)?.title ?? harness;
 }
 
 // validateAgentCredentialsForModel moved to ~/lib/agentCredentialModel so the
