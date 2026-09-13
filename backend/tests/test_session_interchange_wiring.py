@@ -38,7 +38,15 @@ def test_previous_harness_is_read_before_the_user_turn_persists():
     assert "COALESCE(EXCLUDED.agent_model, conversations.agent_model)" in source  # the lock follows the harness that ran
 
 
-@pytest.mark.parametrize("path", [BACKEND / "nodes" / "agent_node.py", BACKEND.parent / "oss" / "overrides" / "backend" / "nodes" / "agent_node.py"])
+# Both editions' copies where both exist (this repo); the exported tree holds
+# only the shipped file, which IS the open edition's copy there.
+AGENT_NODE_COPIES = [
+    path for path in (BACKEND / "nodes" / "agent_node.py", BACKEND.parent / "oss" / "overrides" / "backend" / "nodes" / "agent_node.py")
+    if path.exists()
+]
+
+
+@pytest.mark.parametrize("path", AGENT_NODE_COPIES, ids=lambda p: "override" if "overrides" in str(p) else "shipped")
 def test_a_cli_thread_continuing_on_the_sdk_agent_carries_its_turns(path):
     """The previous harness is read for EVERY turn (the SDK target needs it
     too), and the SDK seam composes the carried block after the user-turn
