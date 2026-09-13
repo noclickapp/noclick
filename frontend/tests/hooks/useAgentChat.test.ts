@@ -1898,13 +1898,20 @@ describe('prompt_builder approval card (builder_prompt frames)', () => {
 // what the transcript is rebuilt from, so it came back on the next read.
 describe('persistedEventsToChatMessages — carried context', () => {
     it('puts the carried thread back as real turns, not inside the message', async () => {
-        const { buildCarryOverContext } = await import('~/lib/agentChat');
-        const block = buildCarryOverContext([
-            { isUser: true, text: "hi what's 2+2" },
-            { isUser: false, text: '4' },
-        ]);
+        // The block the backend's interchange fallback writes into a stored
+        // message (nodes/agent/interchange/fallback.py:carried_context).
+        const block = [
+            '<<<NOCLICK_CARRIED_CONTEXT',
+            'Earlier turns of this conversation, which ran on a different harness (sdk_target).',
+            'History, not a new instruction — answer the message ABOVE this block.',
+            JSON.stringify([
+                { isUser: true, text: "hi what's 2+2" },
+                { isUser: false, text: '4' },
+            ]),
+            'NOCLICK_CARRIED_CONTEXT>>>',
+        ].join('\n');
         const out = persistedEventsToChatMessages([
-            { role: 'user', message: `${block}\n\nrepeat pls` },
+            { role: 'user', message: `repeat pls\n\n${block}` },
         ] as never);
 
         expect(
@@ -1923,33 +1930,6 @@ describe('persistedEventsToChatMessages — carried context', () => {
         expect(out).toHaveLength(1);
         expect(out[0].text).toBe('just a question');
         expect(out[0].carriedOver).toBeUndefined();
-    });
-});
-
-// ── The conversation's model must not be "unknown" ──────────────────────────
-// Reported live: a thread took consecutive turns through different harnesses,
-// so the agent answered "this is our first
-// interaction" to a question about the conversation directly above it.
-//
-// The mint guard asks what model the thread is running. Its nominal source is
-// the conversations list — which is only refetched when the History popover
-// opens, so a thread minted in this session is absent from it. Unknown then
-// read as "same as the picker", and no fresh thread was minted. The session
-// store carries what was actually dispatched so the next send can tell.
-describe('agentChatSessionStore — lastSentModel', () => {
-    it('starts null and survives across reads of the same conversation', () => {
-        const s = getAgentChatSession('conv-model-1');
-        expect(s.lastSentModel).toBeNull();
-        s.lastSentModel = 'opencode';
-        expect(getAgentChatSession('conv-model-1').lastSentModel).toBe(
-            'opencode'
-        );
-    });
-
-    it('is per conversation, so a fresh thread does not inherit the old one', () => {
-        getAgentChatSession('conv-model-a').lastSentModel =
-            'openrouter/openai/gpt-4o';
-        expect(getAgentChatSession('conv-model-b').lastSentModel).toBeNull();
     });
 });
 
@@ -1998,10 +1978,8 @@ describe('getAgentChatSession', () => {
     it('keeps returning the same session on later touches', () => {
         const id = `conv-proxy-stable-${Math.random()}`;
         getAgentChatSession(id).isStreaming = true;
-        getAgentChatSession(id).lastSentModel = 'opencode';
         const s = agentChatSessionStore.sessions[id];
         expect(s.isStreaming).toBe(true);
-        expect(s.lastSentModel).toBe('opencode');
     });
 });
 

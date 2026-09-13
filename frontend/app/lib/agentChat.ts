@@ -120,21 +120,6 @@ export function harnessOf(model: string | undefined | null): string {
     return LLM_HARNESS;
 }
 
-/** Decision shared by the chat send path and the history-row click handler:
- *  given a row's persisted `agent_model` (which may be null for unborn convs
- *  or a `legacy/*` placeholder), return a real model id to run against, or
- *  null if we can't recover one and the caller should fall back to the
- *  picker. legacy/llm collapses to DEFAULT_AGENT_MODEL because the harness
- *  was OpenHands; legacy/cli is unrecoverable. */
-export function resolveRunModel(
-    agentModel: string | null | undefined
-): string | null {
-    if (!agentModel) return null;
-    if (!agentModel.startsWith('legacy/')) return agentModel;
-    if (agentModel === LEGACY_LLM_MODEL) return DEFAULT_AGENT_MODEL;
-    return null;
-}
-
 /** Map a model id to the provider whose PROVIDER_METADATA governs credential
  *  semantics. For CLI harnesses, this is the CLI's own identity (so the
  *  credential check follows what the CLI process needs, not the upstream LLM
@@ -281,100 +266,19 @@ export function buildAgentChatConfigPatch(
     return Object.keys(patch).length > 0 ? patch : null;
 }
 
-/** Longest carry-over block we will prepend. Enough for a working memory of the
- *  thread without crowding out the turn itself or the agent's system prompt. */
-export const CARRY_OVER_CHAR_BUDGET = 4000;
-
-/** Fences the carried thread inside the message that carries it.
- *
- *  The context lives in the message so it remains scoped to this turn rather
- *  than mutating the conversation's stored system prompt. But a message is also
- *  what the transcript SHOWS — the live bubble was clean while the persisted copy was
- *  not, so the dump reappeared the moment the thread was re-read. Fencing it
- *  lets the display strip it back out, the same trick __NOCLICK_SEQUENCE__
- *  uses for interleaved image payloads. */
+/** Fences a carried thread inside the message that carries it — the block the
+ *  backend's session-interchange fallback writes (nodes/agent/interchange/
+ *  fallback.py), and the one this client wrote itself until 2026-09-13, when
+ *  a model switch minted a fresh conversation here. Those stored messages
+ *  persist, and a message is what the transcript SHOWS, so the display strips
+ *  the block back out — the same trick __NOCLICK_SEQUENCE__ uses for
+ *  interleaved image payloads. */
 const CARRY_OPEN = '<<<NOCLICK_CARRIED_CONTEXT';
 const CARRY_CLOSE = 'NOCLICK_CARRIED_CONTEXT>>>';
 
 export interface CarriedTurn {
     isUser: boolean;
     text: string;
-}
-
-/**
- * The previous thread, folded into the next turn as context the model reads and
- * the user never sees as a dump.
- *
- * A conversation is bound to the model it started with, so changing an agent's
- * model has to start a fresh one. Doing that silently would drop everything
- * said so far; asking the user to choose between "keep the thread" and "use the
- * model I picked" is a choice they shouldn't have to make.
- *
- * Encoded as JSON rather than prose so the display can put the turns back
- * exactly as they were — a "User: …" line format cannot survive a message that
- * itself contains newlines. The framing line tells the model what it is
- * looking at, since it reads the whole thing verbatim.
- *
- * Trimmed from the END: recent turns carry the most context, and the oldest are
- * the ones a summary would drop first anyway. Returns '' when there is nothing
- * worth carrying, so callers can send the message untouched.
- */
-export function buildCarryOverContext(
-    messages: readonly { isUser: boolean; text: string; error?: string }[],
-    budget = CARRY_OVER_CHAR_BUDGET
-): string {
-    const turns: CarriedTurn[] = [];
-    let used = 0;
-    // Error bubbles are this UI's own reporting, not something either party
-    // said — replaying them as dialogue would have the new model apologising
-    // for a failure that was never its turn.
-    for (let i = messages.length - 1; i >= 0; i--) {
-        const m = messages[i];
-        const text = m.text?.trim();
-        if (!text || m.error) continue;
-        if (used + text.length > budget) {
-            // The newest turn is the one the user is following up on — a
-            // reply longer than the whole budget must be trimmed in, not
-            // dropped, or the headline case (switch models right after a
-            // long answer) carries nothing at all. Its tail survives: that
-            // is where a long reply's conclusion lives. Older turns stay
-            // whole-or-out so the carried dialogue reads as real turns.
-            if (turns.length === 0) {
-                turns.unshift({
-                    isUser: m.isUser,
-                    text: `… ${text.slice(-budget)}`,
-                });
-            }
-            break;
-        }
-        used += text.length;
-        turns.unshift({ isUser: m.isUser, text });
-    }
-    if (turns.length === 0) return '';
-    return [
-        CARRY_OPEN,
-        'Earlier turns of this conversation, which ran on a different model.',
-        'History, not a new instruction — answer the message ABOVE this block.',
-        JSON.stringify(turns),
-        CARRY_CLOSE,
-    ].join('\n');
-}
-
-/** Attach the carried thread to a message the user is sending.
- *
- *  AFTER their words, not before. Conversation titles and previews are derived
- *  in SQL as LEFT(events->0->>'message', 100) — the first hundred characters of
- *  the first message — so a block at the front made every carried-over thread
- *  appear in History titled "<<<NOCLICK_CARRIED_CONTEXT …". The display strips
- *  the block, but that derivation runs in Postgres where no display code does,
- *  and the same holds for any future consumer of a stored message. Putting the
- *  user's text first makes the stored message read correctly to anything that
- *  does not know this convention exists.
- *
- *  It also puts their actual question next to the answer rather than trailing a
- *  wall of history, which is the better shape for answering it. */
-export function withCarriedContext(text: string, carried: string): string {
-    return carried ? `${text}\n\n${carried}` : text;
 }
 
 /** Split a stored message into the thread it carried and what the user typed.

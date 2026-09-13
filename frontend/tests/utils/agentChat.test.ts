@@ -19,9 +19,7 @@
 
 import { describe, it, expect } from 'vitest';
 import {
-    buildCarryOverContext,
     splitCarryOverContext,
-    withCarriedContext,
     DEFAULT_AGENT_MODEL,
     DEFAULT_INTERFACE_CONV_KEY,
     deriveAgentChatConversationId,
@@ -30,7 +28,6 @@ import {
     isCliAgentModel,
     harnessOf,
     harnessLabel,
-    resolveRunModel,
     credentialProviderFor,
     LEGACY_LLM_MODEL,
     LEGACY_CLI_MODEL,
@@ -413,31 +410,6 @@ describe('harnessLabel', () => {
     });
 });
 
-describe('resolveRunModel', () => {
-    // Decision is shared by submit() and handleSwitchToConversation() — both
-    // must pick the same model for a given row so picker-vs-conv stays in sync.
-    it('returns null for unborn conversations', () => {
-        expect(resolveRunModel(null)).toBeNull();
-        expect(resolveRunModel(undefined)).toBeNull();
-    });
-
-    it('returns the agent_model as-is for real model ids', () => {
-        expect(resolveRunModel('codex')).toBe('codex');
-        expect(resolveRunModel('claude-code')).toBe('claude-code');
-        expect(resolveRunModel('openrouter/openai/gpt-4o-mini')).toBe(
-            'openrouter/openai/gpt-4o-mini'
-        );
-    });
-
-    it('collapses legacy/llm to the default agent model so the harness aligns', () => {
-        expect(resolveRunModel(LEGACY_LLM_MODEL)).toBe(DEFAULT_AGENT_MODEL);
-    });
-
-    it('returns null for legacy/cli — caller must fall back to the picker', () => {
-        expect(resolveRunModel(LEGACY_CLI_MODEL)).toBeNull();
-    });
-});
-
 describe('credentialProviderFor', () => {
     // CLI harnesses authenticate directly, not through the NoClick gateway, so
     // the credential check follows the CLI's OWN provider
@@ -460,104 +432,22 @@ describe('credentialProviderFor', () => {
     });
 });
 
-// ── Carrying a thread across a model change ─────────────────────────────────
-// A conversation is bound to the model it started with, so changing an agent's
-// model starts a fresh one. Dropping the thread silently loses everything said
-// so far; making the user choose between "keep the thread" and "use the model I
-// picked" is a choice they shouldn't have to make. The transcript rides along
-// as context instead.
-describe('buildCarryOverContext', () => {
-    const msg = (isUser: boolean, text: string, error?: string) => ({
-        isUser,
-        text,
-        error,
-    });
-
-    it('is empty when there is nothing worth carrying', () => {
-        expect(buildCarryOverContext([])).toBe('');
-        expect(buildCarryOverContext([msg(true, '   ')])).toBe('');
-    });
-
-    it('round-trips both sides in order', () => {
-        const block = buildCarryOverContext([
-            msg(true, 'hi'),
-            msg(false, 'hello'),
-        ]);
-        expect(splitCarryOverContext(block).carried).toEqual([
-            { isUser: true, text: 'hi' },
-            { isUser: false, text: 'hello' },
-        ]);
-    });
-
-    it('survives a message containing newlines', () => {
-        // The reason this is JSON and not "User: …" lines: a line-based format
-        // cannot tell a new turn from a second line of the same one.
-        const multi = 'line one\nline two\nUser: not a turn';
-        const block = buildCarryOverContext([msg(true, multi)]);
-        expect(splitCarryOverContext(block).carried).toEqual([
-            { isUser: true, text: multi },
-        ]);
-    });
-
-    it('frames the block as history, not as an instruction', () => {
-        // Without this the new model reads the transcript as the turn it must
-        // answer and replies to the OLD message.
-        expect(buildCarryOverContext([msg(true, 'hi')])).toContain(
-            'History, not a new instruction'
-        );
-    });
-
-    it('drops error bubbles, which neither party said', () => {
-        const block = buildCarryOverContext([
-            msg(true, 'hi'),
-            msg(false, '', 'Agent stopped: no credential'),
-        ]);
-        const { carried } = splitCarryOverContext(block);
-        expect(carried).toEqual([{ isUser: true, text: 'hi' }]);
-    });
-
-    it('trims from the START, keeping the most recent turns', () => {
-        const block = buildCarryOverContext(
-            [msg(true, 'x'.repeat(40)), msg(false, 'recent')],
-            40
-        );
-        expect(splitCarryOverContext(block).carried).toEqual([
-            { isUser: false, text: 'recent' },
-        ]);
-    });
-
-    it('never exceeds the budget it was given', () => {
-        const many = Array.from({ length: 50 }, (_, i) =>
-            msg(i % 2 === 0, `turn ${i} `.repeat(20))
-        );
-        const { carried } = splitCarryOverContext(
-            buildCarryOverContext(many, 500)
-        );
-        const body = carried.reduce((n, t) => n + t.text.length, 0);
-        expect(body).toBeLessThanOrEqual(500);
-    });
-
-    it('trims the newest turn in rather than carrying nothing', () => {
-        // The headline case: switch models right after a long answer. A reply
-        // longer than the whole budget used to empty the carry entirely —
-        // exactly when the user most needs the previous turn to follow it up.
-        // Its tail survives (a long reply's conclusion lives at the end).
-        const long = `${'preamble '.repeat(30)}the conclusion is 42`;
-        const { carried } = splitCarryOverContext(
-            buildCarryOverContext([msg(true, 'question'), msg(false, long)], 80)
-        );
-        expect(carried).toHaveLength(1);
-        expect(carried[0].isUser).toBe(false);
-        expect(carried[0].text.startsWith('… ')).toBe(true);
-        expect(carried[0].text).toContain('the conclusion is 42');
-        expect(carried[0].text.length).toBeLessThanOrEqual(82);
-    });
-});
-
 // The block travels inside the message so it remains scoped to the carried
 // turn instead of mutating the stored system prompt. The DISPLAY takes it back
 // out, or
 // the whole transcript renders inside what the user typed (reported live).
+// The block the backend's session-interchange fallback writes
+// (nodes/agent/interchange/fallback.py:carried_context) — the display must
+// take it back out of a stored message.
+const carriedBlock = (turns: { isUser: boolean; text: string }[]) =>
+    [
+        '<<<NOCLICK_CARRIED_CONTEXT',
+        'Earlier turns of this conversation, which ran on a different harness (readback_mismatch).',
+        'History, not a new instruction — answer the message ABOVE this block.',
+        JSON.stringify(turns),
+        'NOCLICK_CARRIED_CONTEXT>>>',
+    ].join('\n');
+
 describe('splitCarryOverContext', () => {
     it('leaves an ordinary message untouched', () => {
         expect(splitCarryOverContext('just a message')).toEqual({
@@ -567,11 +457,9 @@ describe('splitCarryOverContext', () => {
     });
 
     it('returns the user words without the block', () => {
-        const block = buildCarryOverContext([
-            { isUser: true, text: 'earlier' },
-        ]);
+        const block = carriedBlock([{ isUser: true, text: 'earlier' }]);
         const { carried, text } = splitCarryOverContext(
-            `${block}\n\nwhat did we discuss?`
+            `what did we discuss?\n\n${block}`
         );
         expect(text).toBe('what did we discuss?');
         expect(carried).toEqual([{ isUser: true, text: 'earlier' }]);
@@ -585,42 +473,5 @@ describe('splitCarryOverContext', () => {
         );
         expect(carried).toEqual([]);
         expect(text).toBe('hello');
-    });
-});
-
-// The stored message is read by things that cannot strip the block: conversation
-// titles and previews come from LEFT(events->0->>'message', 100) in SQL. A block
-// at the front made every carried-over thread show up in History titled
-// "<<<NOCLICK_CARRIED_CONTEXT …".
-describe('withCarriedContext', () => {
-    it('leads with the user words, so a prefix of the stored message starts correctly', () => {
-        const block = buildCarryOverContext([
-            { isUser: true, text: 'earlier turn' },
-        ]);
-        const stored = withCarriedContext(
-            'what has been our convo so far?',
-            block
-        );
-        expect(stored.startsWith('what has been our convo so far?')).toBe(true);
-        expect(stored).toContain('earlier turn');
-    });
-
-    it('a 100-char prefix of it still strips clean', () => {
-        // What History actually gets: LEFT(message, 100) from SQL, which cuts the
-        // closing marker off. The label must still be the user's words.
-        const block = buildCarryOverContext([
-            { isUser: true, text: 'earlier turn' },
-        ]);
-        const stored = withCarriedContext(
-            'what has been our convo so far?',
-            block
-        );
-        expect(splitCarryOverContext(stored.slice(0, 100)).text).toBe(
-            'what has been our convo so far?'
-        );
-    });
-
-    it('is a no-op when there is nothing to carry', () => {
-        expect(withCarriedContext('just asking', '')).toBe('just asking');
     });
 });
