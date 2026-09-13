@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from .formats import InterchangeError, Written, format_for, write_new_file
+from .formats.sqlite_compat import Error as SqliteError
 from .ir import INTERCHANGE_VERSION, Skeleton, StoreRef, TargetIdentity, Thread, classify_drops, skeleton_of
 
 MANIFEST_DIR = ".nc_interchange"
@@ -71,13 +72,12 @@ def read_thread(store: StoreRef) -> Thread:
     """This conversation's thread from ``store``, located the way the
     harness itself would resume it."""
     fmt = format_for(store.harness)
-    ref = fmt.locate(store)
     try:
-        return fmt.read(ref)
+        return fmt.read(fmt.locate(store))
     except InterchangeError:
         raise
-    except (OSError, ValueError, KeyError, TypeError) as e:
-        raise InterchangeError("source_unreadable", f"{ref}: {type(e).__name__}: {e}") from e
+    except (OSError, ValueError, KeyError, TypeError, *SqliteError) as e:
+        raise InterchangeError("source_unreadable", f"{store.harness} store at {store.home}: {type(e).__name__}: {e}") from e
 
 
 def translate(thread: Thread, target: StoreRef, identity: Optional[TargetIdentity] = None) -> InterchangeResult:

@@ -25,7 +25,6 @@ import json
 import os
 import secrets
 import shutil
-import sqlite3
 import string as _string
 import subprocess
 import time
@@ -37,6 +36,7 @@ from ..ir import (
     ASSISTANT, CONTEXT, MESSAGE, OPAQUE, THINKING, TOOL_CALL, TOOL_RESULT, USER,
     Event, Provenance, StoreRef, TargetIdentity, Thread, count_drops, string, text_of,
 )
+from . import sqlite_compat as sqlite
 from .base import InterchangeError, ThreadFormat, Written, db_ref, pointer_text, split_db_ref, write_new_file
 
 _ALNUM = _string.ascii_letters + _string.digits
@@ -63,7 +63,7 @@ class OpenCodeFormat(ThreadFormat):
         if not db.is_file():
             raise InterchangeError("source_empty", f"no opencode database at {db}")
         wanted = store.session_id or pointer_text(store.pointer)
-        with sqlite3.connect(f"file:{db}?mode=ro", uri=True) as conn:
+        with sqlite.connect(db, readonly=True) as conn:
             if wanted:
                 if conn.execute("SELECT 1 FROM session WHERE id = ?", (wanted,)).fetchone() is None:
                     raise InterchangeError("source_empty", f"opencode session {wanted} not in {db}")
@@ -77,7 +77,7 @@ class OpenCodeFormat(ThreadFormat):
 
     def read(self, ref: str) -> Thread:
         db, sid = split_db_ref(ref)
-        with sqlite3.connect(f"file:{db}?mode=ro", uri=True) as conn:
+        with sqlite.connect(db, readonly=True) as conn:
             session = conn.execute("SELECT directory, version, title, time_created FROM session WHERE id = ?", (sid,)).fetchone()
             if session is None:
                 raise InterchangeError("source_unreadable", f"opencode session {sid} vanished from {db}")

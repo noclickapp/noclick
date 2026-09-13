@@ -207,6 +207,9 @@ def _codex_home(root: Path, cwd: str = CWD, *, compacted: bool = False) -> Path:
 class TestPackage:
     def test_imports_nothing_but_the_stdlib_and_itself(self):
         stdlib = set(sys.stdlib_module_names)
+        # The one runtime dependency, and only as a guarded optional: the
+        # modern SQLite the harness images install (sqlite_compat).
+        optional = {"pysqlite3"}
         for path in PACKAGE.rglob("*.py"):
             tree = ast.parse(path.read_text())
             for node in ast.walk(tree):
@@ -218,7 +221,8 @@ class TestPackage:
                     root = node.names[0].name.split(".")[0]
                 else:
                     continue
-                assert root in stdlib, f"{path.relative_to(PACKAGE)} imports {root!r}: the engine must ship into a sandbox unchanged"
+                assert root in stdlib or root in optional, (
+                    f"{path.relative_to(PACKAGE)} imports {root!r}: the engine must ship into a sandbox unchanged")
 
     def test_every_raised_reason_is_in_the_vocabulary(self):
         import re
@@ -1038,3 +1042,40 @@ def test_every_format_has_a_validated_version_and_a_local_store():
     assert set(VALIDATED_HARNESS_VERSIONS) == set(ic.FORMATS)
     for harness in ic.FORMATS:
         assert local_store(harness, Path("/tmp/x"), {}, as_target=True) is not None, harness
+
+
+class TestSqliteCompat:
+    """The database stores need SQLite 3.37+ (OpenClaw's tables are STRICT);
+    the harness sandboxes' Python links bullseye's 3.34, so the formats go
+    through ``sqlite_compat``, which answers the stdlib module or the
+    ``pysqlite3-binary`` wheel every harness image installs."""
+
+    def test_the_module_in_use_handles_strict_tables(self):
+        from nodes.agent.interchange.formats import sqlite_compat as sc
+
+        mod = sc.module()
+        assert mod.sqlite_version_info >= sc.MIN_SQLITE and mod.Error in sc.Error
+        conn = sc.connect(":memory:")
+        conn.execute("CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT NOT NULL) STRICT")
+        conn.execute("CREATE VIRTUAL TABLE f USING fts5(body)")  # OpenClaw's transcript index
+
+    def test_a_runtime_without_a_modern_sqlite_names_the_fix(self, monkeypatch):
+        from nodes.agent.interchange.formats import sqlite_compat as sc
+
+        old = SimpleNamespace(__name__="sqlite3", sqlite_version_info=(3, 34, 1), sqlite_version="3.34.1", Error=Exception)
+        monkeypatch.setattr(sc, "_candidates", lambda: [old])
+        monkeypatch.setattr(sc, "_module", None)
+        with pytest.raises(RuntimeError, match=r"3\.34\.1.*pysqlite3-binary==" + re.escape(sc.PYSQLITE3_BINARY)):
+            sc.module()
+
+    def test_the_image_pin_is_the_one_the_formats_name(self):
+        from nodes.agent.interchange.formats import sqlite_compat as sc
+
+        images = (Path(__file__).resolve().parents[1] / "cloud" / "agent" / "runtime" / "images.py").read_text()
+        assert f'PYSQLITE3_BINARY = "{sc.PYSQLITE3_BINARY}"' in images
+
+    def test_a_store_that_is_not_a_database_is_source_unreadable(self, tmp_path):
+        (tmp_path / "state.db").write_bytes(b"not a database, and the harness cannot open it either")
+        with pytest.raises(ic.InterchangeError) as e:
+            ic.read_thread(ic.StoreRef("hermes_agent", tmp_path, Path(CWD), session_id="noclick"))
+        assert e.value.reason == "source_unreadable" and "hermes_agent store at" in e.value.detail

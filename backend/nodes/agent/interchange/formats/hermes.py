@@ -21,7 +21,6 @@ store built here, and replay) — see ``tests/test_session_interchange_drift.py`
 from __future__ import annotations
 
 import json
-import sqlite3
 import time
 from collections import Counter
 from pathlib import Path
@@ -31,6 +30,7 @@ from ..ir import (
     ASSISTANT, CONTEXT, MESSAGE, OPAQUE, SYSTEM, THINKING, TOOL_CALL, TOOL_RESULT, USER,
     Event, Provenance, StoreRef, TargetIdentity, Thread, count_drops, string, text_of,
 )
+from . import sqlite_compat as sqlite
 from .base import InterchangeError, ThreadFormat, Written, db_ref, split_db_ref
 
 SESSION_ID = "noclick"
@@ -153,7 +153,7 @@ class HermesFormat(ThreadFormat):
         if not db.is_file():
             raise InterchangeError("source_empty", f"no hermes state database at {db}")
         sid = store.session_id or SESSION_ID
-        with sqlite3.connect(f"file:{db}?mode=ro", uri=True) as conn:
+        with sqlite.connect(db, readonly=True) as conn:
             if conn.execute("SELECT 1 FROM sessions WHERE id = ?", (sid,)).fetchone() is None:
                 raise InterchangeError("source_empty", f"hermes session {sid} not in {db}")
             if conn.execute("SELECT 1 FROM messages WHERE session_id = ? AND active = 1 AND role IN ('user','assistant') LIMIT 1", (sid,)).fetchone() is None:
@@ -164,7 +164,7 @@ class HermesFormat(ThreadFormat):
 
     def read(self, ref: str) -> Thread:
         db, sid = split_db_ref(ref)
-        with sqlite3.connect(f"file:{db}?mode=ro", uri=True) as conn:
+        with sqlite.connect(db, readonly=True) as conn:
             session = conn.execute("SELECT model, started_at, cwd FROM sessions WHERE id = ?", (sid,)).fetchone()
             if session is None:
                 raise InterchangeError("source_unreadable", f"hermes session {sid} vanished from {db}")
@@ -272,11 +272,11 @@ class HermesFormat(ThreadFormat):
         if not undo:
             return
         try:
-            with sqlite3.connect(self.db_path(store), timeout=30) as conn:
+            with sqlite.connect(self.db_path(store)) as conn:
                 conn.execute("DELETE FROM messages WHERE session_id = ? AND id > ?", (written.session_id, undo["max_id_before"]))
                 for rid in undo["retired_ids"]:
                     conn.execute("UPDATE messages SET active = 1 WHERE id = ?", (rid,))
-        except sqlite3.Error:
+        except sqlite.Error:
             pass
 
     def install(self, written: Written, store: Optional[StoreRef] = None) -> Path:
@@ -285,7 +285,7 @@ class HermesFormat(ThreadFormat):
         session, rows = written.records[0], written.records[1:]
         try:
             db.parent.mkdir(parents=True, exist_ok=True)
-            with sqlite3.connect(db, timeout=30) as conn:
+            with sqlite.connect(db) as conn:
                 if conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'messages'").fetchone() is None:
                     conn.executescript(SCHEMA_SQL)
                     if conn.execute("SELECT 1 FROM schema_version").fetchone() is None:
@@ -308,7 +308,7 @@ class HermesFormat(ThreadFormat):
                          json.dumps(r["tool_calls"], ensure_ascii=False) if r.get("tool_calls") else None,
                          r.get("tool_name"), r["timestamp"], r.get("finish_reason")),
                     )
-        except sqlite3.Error as e:
+        except sqlite.Error as e:
             raise InterchangeError("install_failed", f"hermes store {db}: {e}") from e
         return db
 

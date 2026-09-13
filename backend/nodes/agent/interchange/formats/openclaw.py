@@ -31,7 +31,6 @@ import json
 import os
 import secrets
 import shutil
-import sqlite3
 import subprocess
 import time
 import uuid
@@ -43,6 +42,7 @@ from ..ir import (
     ASSISTANT, CONTEXT, MESSAGE, OPAQUE, SYSTEM, THINKING, TOOL_CALL, TOOL_RESULT, USER,
     Event, Provenance, StoreRef, TargetIdentity, Thread, count_drops, string, text_of,
 )
+from . import sqlite_compat as sqlite
 from .base import InterchangeError, ThreadFormat, Written, db_ref, split_db_ref
 
 SESSION_KEY = "agent:main:noclick"
@@ -63,7 +63,7 @@ class OpenClawFormat(ThreadFormat):
         db = self.db_path(store)
         if not db.is_file():
             raise InterchangeError("source_empty", f"no openclaw agent database at {db}")
-        with sqlite3.connect(f"file:{db}?mode=ro", uri=True) as conn:
+        with sqlite.connect(db, readonly=True) as conn:
             wanted = (store.session_id or "").lower()
             if wanted and conn.execute("SELECT 1 FROM session_windows WHERE session_id = ?", (wanted,)).fetchone():
                 return db_ref(db, wanted)
@@ -78,7 +78,7 @@ class OpenClawFormat(ThreadFormat):
 
     def read(self, ref: str) -> Thread:
         db, sid = split_db_ref(ref)
-        with sqlite3.connect(f"file:{db}?mode=ro", uri=True) as conn:
+        with sqlite.connect(db, readonly=True) as conn:
             window = conn.execute("SELECT model_provider, model, created_at FROM session_windows WHERE session_id = ?", (sid,)).fetchone()
             if window is None:
                 raise InterchangeError("source_unreadable", f"openclaw session {sid} vanished from {db}")
@@ -231,7 +231,7 @@ class OpenClawFormat(ThreadFormat):
         sid = written.session_id
         undo = written.undo
         try:
-            with sqlite3.connect(self.db_path(store), timeout=30) as conn:
+            with sqlite.connect(self.db_path(store)) as conn:
                 for table in ("session_transcript_active_events", "session_transcript_index_state", "transcript_rewrite_watermarks",
                               "transcript_event_identities", "transcript_events", "session_windows"):
                     conn.execute(f"DELETE FROM {table} WHERE session_id = ?", (sid,))
@@ -242,7 +242,7 @@ class OpenClawFormat(ThreadFormat):
                 else:
                     conn.execute("UPDATE session_nodes SET current_session_id = ?, entry_json = ?, updated_at = ? WHERE session_key = ?",
                                  (previous[0], previous[1], previous[2], SESSION_KEY))
-        except sqlite3.Error:
+        except sqlite.Error:
             pass
 
     def install(self, written: Written, store: Optional[StoreRef] = None) -> Path:
@@ -255,7 +255,7 @@ class OpenClawFormat(ThreadFormat):
         entries = written.records
         provider, model = _split_model(_provider_model(entries))
         try:
-            with sqlite3.connect(db, timeout=30) as conn:
+            with sqlite.connect(db) as conn:
                 if conn.execute("SELECT 1 FROM session_windows WHERE session_id = ?", (sid,)).fetchone():
                     raise InterchangeError("install_failed", f"openclaw session {sid} already exists")
                 written.undo = {"previous_node": conn.execute(
@@ -294,7 +294,7 @@ class OpenClawFormat(ThreadFormat):
                 conn.execute("INSERT INTO session_transcript_index_state (session_id, indexed_seq, leaf_event_id, needs_rebuild, active_event_count, active_message_count, updated_at) VALUES (?,?,?,?,?,?,?)",
                              (sid, len(entries) - 1, leaf, 0, active, message_pos, now))
                 conn.execute("INSERT INTO transcript_rewrite_watermarks (session_id, generation, updated_at) VALUES (?,?,?)", (sid, secrets.token_hex(16), now))
-        except sqlite3.Error as e:
+        except sqlite.Error as e:
             raise InterchangeError("install_failed", f"openclaw store {db}: {e}") from e
         return db
 

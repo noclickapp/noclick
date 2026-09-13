@@ -164,7 +164,7 @@ async def report_fallback(
     stamp_span(source_harness, target_harness, reason=reason, native=False)
     log = logger.error if loud else logger.info
     log("[SessionInterchange] FALLBACK %s→%s for %s: %s %s versions=%s",
-        source_harness, target_harness, conversation_id, reason, detail[:300], versions or {})
+        source_harness, target_harness, conversation_id, reason, _tail(detail, 300), versions or {})
     if loud:
         try:
             from utils.feedback import record_feedback
@@ -181,6 +181,11 @@ async def report_fallback(
         "ok": False, "source_harness": source_harness, "target_harness": target_harness,
         "reason": reason, "detail": detail[:500], "versions": versions or {},
     })
+
+
+def _tail(detail: str, limit: int) -> str:
+    """The END of a long detail — a traceback names its exception last."""
+    return detail if len(detail) <= limit else "…" + detail[-limit:]
 
 
 def versions_for_report() -> Dict[str, str]:
