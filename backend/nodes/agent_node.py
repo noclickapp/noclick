@@ -1702,9 +1702,7 @@ class AgentNode(WorkflowNode):
         # user-turn persist below re-stamps the row with the current one: a
         # harness switch moves the thread from that store (session_interchange).
         self._previous_agent_model = (
-            await self._locked_agent_model(effective_conversation_id)
-            if effective_conversation_id and getattr(config, "model_type", "llm") in WRAPPER_ID_BY_MODEL_TYPE
-            else None
+            await self._locked_agent_model(effective_conversation_id) if effective_conversation_id else None
         )
         persist_user_turn: Optional[asyncio.Task] = None
         if (user_message_text or message_attachments) and effective_conversation_id:
@@ -1774,6 +1772,22 @@ class AgentNode(WorkflowNode):
                     "message": "Builder wake turn: updates already relayed by a concurrent turn",
                     "skipped": True,
                 }
+
+        # A thread whose last turn ran on a CLI harness continues on the
+        # in-process agent with its recent turns carried in — the SDK keeps
+        # its history in the conversation row, so there is no store to move
+        # into (session_interchange.carry_into_sdk; the CLI harnesses move
+        # the thread natively at cold start instead). Composed AFTER the
+        # user-turn persist capture, like the relay note, so the block reaches
+        # the model but never the persisted bubble.
+        if effective_conversation_id and getattr(config, "model_type", "llm") not in WRAPPER_ID_BY_MODEL_TYPE:
+            from nodes.agent.session_interchange import carry_into_sdk, with_carried_context
+
+            carried = await carry_into_sdk(
+                self, conversation_id=effective_conversation_id, user_id=str(self.user_id)
+            )
+            if carried:
+                config.message = with_carried_context((config.message or "").strip(), carried)
 
         # Owner-presence steering for email_user — same pre-dispatch message
         # seam as the builder relay, so BOTH runtimes see it. Only composed

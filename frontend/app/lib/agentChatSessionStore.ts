@@ -20,16 +20,6 @@ export interface AgentChatSession {
      *  (that was the erasure), it restores instantly and lets the reconcile
      *  poll heal any frames missed while unmounted. */
     resumedOnce: boolean;
-    /** The model the last send in THIS conversation actually dispatched.
-     *
-     *  The conversations list is the nominal answer, but it is only refetched
-     *  when the History popover opens — so a conversation minted in this session
-     *  has no entry there, and "what model is this thread running?" came back
-     *  undefined exactly when it mattered. That let one thread take a turn on the
-     *  in-process LLM agent and the next on an opencode sandbox, which has none
-     *  of the first turn's history: the agent answered "this is our first
-     *  interaction" to a question about the conversation above it. */
-    lastSentModel: string | null;
 }
 
 const emptySession = (): AgentChatSession => ({
@@ -38,7 +28,6 @@ const emptySession = (): AgentChatSession => ({
     errorReason: null,
     lastFinishedAt: 0,
     resumedOnce: false,
-    lastSentModel: null,
 });
 
 export const agentChatSessionStore = proxy<{

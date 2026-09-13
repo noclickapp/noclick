@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ModelProvider } from '~/types/provider';
 import {
-    conversationNeedsFreshThread,
     getAgentConfigRecord,
     validateAgentSendCredentials,
     getAgentCredentialIdForProvider,
@@ -227,70 +226,5 @@ describe('validateAgentSendCredentials', () => {
                 resolveProvider,
             })
         ).toContain('needs a opencode credential');
-    });
-});
-
-describe('conversationNeedsFreshThread', () => {
-    const config = {
-        model: 'opencode',
-        opencode_model: 'opencode/deepseek-v4-flash-free',
-        openclaw_model: 'openrouter/~openai/gpt-mini-latest',
-    };
-    const resolveProvider = (m: string) =>
-        m.startsWith('openrouter/')
-            ? 'openrouter'
-            : m.startsWith('opencode/')
-              ? 'opencode'
-              : null;
-
-    it('is true when the chat runs a different provider than the picker', () => {
-        expect(
-            conversationNeedsFreshThread({
-                sendModel: 'openclaw',
-                selectedModel: 'opencode',
-                config,
-                resolveProvider,
-            })
-        ).toBe(true);
-    });
-
-    it('is false when they agree', () => {
-        expect(
-            conversationNeedsFreshThread({
-                sendModel: 'opencode',
-                selectedModel: 'opencode',
-                config,
-                resolveProvider,
-            })
-        ).toBe(false);
-    });
-
-    it('is false for a different MODEL on the same provider and harness', () => {
-        // Both route through the in-process LLM agent and the same credential,
-        // so the thread continues — minting here would throw away history for
-        // nothing.
-        expect(
-            conversationNeedsFreshThread({
-                sendModel: 'openrouter/anthropic/claude-3.5',
-                selectedModel: 'openrouter/openai/gpt-4o',
-                config,
-                resolveProvider,
-            })
-        ).toBe(false);
-    });
-
-    it('is true across harnesses even on the same provider', () => {
-        // openclaw runs its sub-model through openrouter, so the PROVIDER
-        // matches — but its sandbox state is disjoint from the in-process LLM
-        // agent's, so the thread cannot continue. Provider alone was the old
-        // test for this and it missed exactly this case.
-        expect(
-            conversationNeedsFreshThread({
-                sendModel: 'openrouter/~openai/gpt-mini-latest',
-                selectedModel: 'openclaw',
-                config,
-                resolveProvider,
-            })
-        ).toBe(true);
     });
 });

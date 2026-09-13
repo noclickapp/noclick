@@ -1,21 +1,21 @@
 // The transcript must look continuous from the instant Send is pressed.
 //
 // Reported live: after changing the model, the chat showed a bare step timeline
-// — no carried history and not even the message just typed — until the reply
-// landed seconds later. addUserMessage writes to conversationIdRef, which still
-// pointed at the thread being LEFT: createNew() propagates its key through the
-// node config, and the id had not caught up. The echo went to the old thread
-// while the screen showed the new, empty one.
+// — no history and not even the message just typed — until the reply landed
+// seconds later. The echo had gone to a thread the send was leaving. A switch
+// no longer leaves the thread at all (the backend moves it into the picked
+// harness — session interchange), so the transcript must stay continuous: the
+// earlier turns still on screen, the new message beneath them, at once.
 //
 // The socket is stubbed, so this asserts what is on screen without billing a
 // turn — and deliberately checks BEFORE any reply could arrive, which is the
 // window the user was complaining about.
 //
-// Cleanup matters as much as the assertion here: the send is REAL, so it mints
-// a conversation_key into the node config and seeds a session whose streaming
-// flag nothing will ever clear (the dispatch was swallowed). nc.agentChat
-// restore drops every touched session and puts the thread identity back —
-// without it this test wedges the user's chat on a ghost thread (2026-07-27).
+// Cleanup matters as much as the assertion here: the send is REAL and seeds a
+// session whose streaming flag nothing will ever clear (the dispatch was
+// swallowed). nc.agentChat.restore drops every touched session and puts the
+// thread identity back — without it this test wedges the user's chat on a
+// ghost thread (2026-07-27).
 import { nc } from '~/lib/nc';
 import { socketReceiver } from '~/lib/socket-receiver';
 
@@ -62,18 +62,13 @@ export default async function () {
         await nc.wait.ms(1600);
         const before = transcriptText();
 
-        // Force the precondition a real model change creates. On a canvas that
-        // has been probed repeatedly the live session already records the model
-        // it last ran and may be wedged mid-turn, so a switch would be a no-op
-        // and the mint — the whole point of this test — would never fire.
+        // A canvas probed repeatedly may hold a session wedged mid-turn, which
+        // would refuse the send before anything is observable.
         const { agentChatSessionStore } = await import(
             '~/lib/agentChatSessionStore'
         );
         const live = agentChatSessionStore.sessions[touched[0]];
-        if (live) {
-            live.lastSentModel = saved.model ?? null;
-            live.isStreaming = false;
-        }
+        if (live) live.isStreaming = false;
 
         if (sock && originalEmit) {
             sock.emit = (...args: unknown[]) => {
@@ -105,12 +100,17 @@ export default async function () {
             touched.push(nc.agentChat.conversationId(agent.id, dispatchedKey));
 
         nc.assert.truthy(
-            dispatchedKey && !touched[0].endsWith(dispatchedKey),
-            'the switch must have minted a new thread, or this proves nothing'
+            !dispatchedKey || touched[0].endsWith(dispatchedKey),
+            'the switch must continue the thread on screen, not mint one'
         );
         nc.assert.truthy(
             during.includes('continuity probe'),
             `the message just sent must be on screen — saw: ${during.slice(0, 160)}`
+        );
+        const earlier = before.trim().slice(0, 60);
+        nc.assert.truthy(
+            !earlier || during.includes(earlier),
+            'the earlier turns must still be on screen beneath the switch'
         );
 
         return {
@@ -118,13 +118,9 @@ export default async function () {
             dispatchedKey: dispatchedKey?.slice(-10),
             hadHistoryBefore: before.trim().length > 0,
             ownMessageVisible: during.includes('continuity probe'),
-            // Only meaningful when the previous thread had turns to carry.
-            carriedTurnsVisible:
-                document.querySelectorAll(
-                    '[data-testid="agent-chat-transcript"] *'
-                ).length > 0 && before.trim().length > 0
-                    ? during.length > 'continuity probe'.length + 10
-                    : null,
+            earlierTurnsStillVisible: before.trim()
+                ? during.includes(before.trim().slice(0, 60))
+                : null,
         };
     } finally {
         if (sock && originalEmit) sock.emit = originalEmit;

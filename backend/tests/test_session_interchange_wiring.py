@@ -38,6 +38,21 @@ def test_previous_harness_is_read_before_the_user_turn_persists():
     assert "COALESCE(EXCLUDED.agent_model, conversations.agent_model)" in source  # the lock follows the harness that ran
 
 
+@pytest.mark.parametrize("path", [BACKEND / "nodes" / "agent_node.py", BACKEND.parent / "oss" / "overrides" / "backend" / "nodes" / "agent_node.py"])
+def test_a_cli_thread_continuing_on_the_sdk_agent_carries_its_turns(path):
+    """The previous harness is read for EVERY turn (the SDK target needs it
+    too), and the SDK seam composes the carried block after the user-turn
+    persist capture — like the relay note — and before dispatch."""
+    source = path.read_text()
+    read_at = source.index("self._previous_agent_model = (")
+    assert "WRAPPER_ID_BY_MODEL_TYPE" not in source[read_at:read_at + 200], "the read must not be gated on CLI targets"
+    persist_at = source.index("persist_user_turn = asyncio.create_task(")
+    carry_at = source.index("carried = await carry_into_sdk(")
+    dispatch_at = source.index("final_response_ref = [")
+    assert persist_at < carry_at < dispatch_at
+    assert 'getattr(config, "model_type", "llm") not in WRAPPER_ID_BY_MODEL_TYPE' in source[carry_at - 400:carry_at]
+
+
 async def test_locked_model_read_never_blocks_a_turn(monkeypatch):
     from nodes.agent_node import AgentNode
 

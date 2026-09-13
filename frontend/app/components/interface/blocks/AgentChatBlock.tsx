@@ -20,7 +20,6 @@ import {
 import { useCachedValtioState } from '~/hooks/useCachedValtioState';
 import { useValtioState } from '~/hooks/useValtioState';
 import { useAgentChat, type BuilderPromptProposal } from '~/hooks/useAgentChat';
-import { getAgentChatSession } from '~/lib/agentChatSessionStore';
 import { sendEventAsync } from '~/lib/socket-sender';
 import {
     agentPresenceStore,
@@ -53,19 +52,13 @@ import type { BlockComponentProps } from '../types';
 import { AgentModelPicker } from './AgentModelPicker';
 import { AgentWiringSections } from './AgentWiringSections';
 import {
-    buildCarryOverContext,
     DEFAULT_AGENT_MODEL,
     DEFAULT_INTERFACE_CONV_KEY,
     deriveAgentChatConversationId,
-    harnessOf,
     isImageAttachment,
-    resolveRunModel,
-    splitCarryOverContext,
-    withCarriedContext,
 } from '~/lib/agentChat';
 import { useChatAttachments } from '~/hooks/useChatAttachments';
 import {
-    conversationNeedsFreshThread,
     getAgentEffectiveModel,
     staleCredentialKeysForProvider,
     inferProviderFromPrefix,
@@ -262,40 +255,17 @@ export function AgentChatBlock({
         activeKey,
         setConversationKey
     );
-    // Memoize so submit's identity doesn't churn on every list refresh — the
-    // raw conversations array gets a new reference on every poll/refetch even
-    // when its contents are unchanged.
-    const activeConv = useMemo(
-        () =>
-            conversationsState.conversations.find(
-                (c) => c.conversation_key === activeKey
-            ),
-        [conversationsState.conversations, activeKey]
-    );
-
+    // Picking a thread never changes the model: the thread follows the
+    // picker, not the other way round. A thread that last ran on another
+    // harness is moved into the picked one by the backend at the next send
+    // (session interchange). Rewriting `config.model` here was how a click
+    // in History silently switched the agent's model (2026-09-13).
     const handleSwitchToConversation = useCallback(
         (conv: AgentConversationSummary) => {
             if (isReadOnly) return;
-            const currentModelValue =
-                (config.model as string) || DEFAULT_AGENT_MODEL;
-            if (harnessOf(conv.agent_model) === harnessOf(currentModelValue)) {
-                setConversationKey(conv.conversation_key);
-                return;
-            }
-            const targetModel = resolveRunModel(conv.agent_model);
-            if (!targetModel) {
-                // legacy/cli — can't recover the original CLI. Load the thread; the
-                // amber cross-harness tag warns the user about event-shape mixing.
-                setConversationKey(conv.conversation_key);
-                return;
-            }
-            onConfigChange({
-                ...config,
-                conversation_key: conv.conversation_key,
-                model: targetModel,
-            });
+            setConversationKey(conv.conversation_key);
         },
-        [config, isReadOnly, onConfigChange, setConversationKey]
+        [isReadOnly, setConversationKey]
     );
 
     // Generic config writer used by the sidebar fields (system prompt, temperature, …).
@@ -400,57 +370,17 @@ export function AgentChatBlock({
         onCredentialIdsChange(next);
     }, [effectiveProvider, credentialIds, isReadOnly, onCredentialIdsChange]);
 
-    const { createNew } = conversationsState;
-
-    // A conversation is bound to the model it started with — each harness keeps
-    // independent conversation state, and a different provider means a different
-    // credential and route. So a picker that has
-    // moved on means the NEXT SEND starts a fresh conversation under it, with
-    // the previous thread carried over as context (see submitText).
-    //
-    // Decided here, ACTED ON at send. This used to be two mechanisms on
-    // different triggers — an effect that minted the instant the harness
-    // changed, and a later provider check — and both emptied the transcript
-    // before the user had sent anything. Whichever fired first decided the
-    // outcome, and a message dispatched near that moment landed in the thread
-    // being left. As one step inside submitText there is no interleaving to
-    // get wrong, and nothing changes until the user actually sends.
-    // What this thread is actually running. The conversations list is the
-    // nominal source, but it is only refetched when the History popover opens,
-    // so a thread minted in this session is missing from it — and an unknown
-    // model silently read as "same as picked", which is how one conversation
-    // took consecutive turns through different harnesses.
-    const conversationModel =
-        resolveRunModel(activeConv?.agent_model) ??
-        getAgentChatSession(conversationId).lastSentModel ??
-        selectedModel;
-
-    const willMintNewConversation = useMemo(
-        () =>
-            !isReadOnly &&
-            conversationNeedsFreshThread({
-                sendModel: conversationModel,
-                selectedModel,
-                config: config as Record<string, unknown>,
-                resolveProvider: (m) =>
-                    getModelById(m)?.provider ??
-                    inferProviderFromPrefix(m) ??
-                    null,
-            }),
-        [isReadOnly, conversationModel, selectedModel, config, getModelById]
-    );
-
-    /** The model this send will actually run under — the single answer both the
-     *  credential pre-flight and the dispatch use, so they cannot disagree
-     *  about what is about to happen.
+    /** The model this send runs under — the single answer both the credential
+     *  pre-flight and the dispatch use, so they cannot disagree.
      *
-     *  Always the pick. A send that mints runs it by definition, and a send
-     *  that continues can only differ from the thread within the same harness
-     *  and provider (anything else mints) — same credential, same route, and
-     *  LLM-path history is model-agnostic, so Sonnet→Opus mid-thread is safe.
-     *  Honouring the thread's own model here instead silently discarded such
-     *  picks AND snapped the picker back: the send-time config patch wrote the
-     *  thread's model over the pick the user had just persisted. */
+     *  Always the pick, on the SAME conversation. A thread whose last turn
+     *  ran on another harness is moved into the picked one by the backend
+     *  (session interchange: natively into the harness's own store, or its
+     *  recent turns carried into the first message when it cannot). This
+     *  client used to mint a fresh conversation and carry the transcript
+     *  itself, which is what made every switch look like a new chat.
+     *  Honouring the thread's own model here instead silently discarded the
+     *  pick AND snapped the picker back. */
     const effectiveSendModel = selectedModel;
 
     // CLI-harness sub-model (codex_model / claude_code_model / …). Hoisted so
@@ -549,25 +479,6 @@ export function AgentChatBlock({
                 submittingRef.current = false;
             }, 0);
 
-            // Everything the switch involves happens HERE, in order, before
-            // anything is dispatched: read the thread, mint the key, send into
-            // it. The key is handed to the sender rather than read back off the
-            // node config, which createNew() writes asynchronously.
-            const carried = willMintNewConversation
-                ? buildCarryOverContext(messages)
-                : '';
-            const conversationKey = willMintNewConversation
-                ? createNew()
-                : undefined;
-            const targetConversationId = conversationKey
-                ? deriveAgentChatConversationId(workflowId, id, conversationKey)
-                : conversationId;
-            // Remember what this thread runs, against the conversation the turn
-            // is actually going into. The list will not tell us until the
-            // History popover is opened, and the next send has to know.
-            const target = getAgentChatSession(targetConversationId);
-            target.lastSentModel = effectiveSendModel;
-
             // Echo content for the user bubble: attached images render as
             // thumbnails, other files as chips — same shapes the persisted
             // transcript restores, so the reconciler's replacement matches.
@@ -590,50 +501,16 @@ export function AgentChatBlock({
             // Echo the user message locally — the backend doesn't replay
             // chat:message for the sender, so without this the bubble doesn't
             // appear until the agent's first response chunk arrives.
-            if (conversationKey) {
-                // Minting: addUserMessage would write to the conversation being
-                // LEFT, because createNew() propagates its key through the node
-                // config and conversationId has not caught up yet. The echo has
-                // to be placed on the thread the turn is going into, along with
-                // the turns it carried — otherwise the user watches a blank
-                // transcript with a step timeline and no sign of their own
-                // message until the reply lands.
-                //
-                // The same content arrives persisted a moment later (the block
-                // rides the message and is split back out); the reconciler
-                // REPLACES the transcript with that, so this seed is a stand-in,
-                // not a second copy.
-                target.messages = [
-                    ...splitCarryOverContext(carried).carried.map((turn) => ({
-                        isUser: turn.isUser,
-                        text: turn.text,
-                        isComplete: true,
-                        carriedOver: true,
-                    })),
-                    {
-                        isUser: true,
-                        text,
-                        isComplete: true,
-                        content: echoContent.length ? echoContent : undefined,
-                        attachments: echoFiles.length ? echoFiles : undefined,
-                    },
-                ];
-                target.isStreaming = true;
-            } else {
-                addUserMessage(
-                    text,
-                    echoContent.length ? echoContent : undefined,
-                    echoFiles.length ? echoFiles : undefined
-                );
-            }
-            // The model reads the carried thread; the bubble above shows only
-            // what the user typed. The transcript puts those turns back as real
-            // messages once the send is persisted (splitCarryOverContext).
+            addUserMessage(
+                text,
+                echoContent.length ? echoContent : undefined,
+                echoFiles.length ? echoFiles : undefined
+            );
             onAgentChatSend?.(
                 id,
-                withCarriedContext(text, carried),
+                text,
                 effectiveSendModel,
-                conversationKey,
+                undefined,
                 readyAttachments.length ? readyAttachments : undefined
             );
             setDraft('');
@@ -649,12 +526,7 @@ export function AgentChatBlock({
             addUserMessage,
             sendCredentialError,
             pinScroll,
-            willMintNewConversation,
             effectiveSendModel,
-            messages,
-            createNew,
-            conversationId,
-            workflowId,
             readyAttachments,
             attachmentsUploading,
             clearAttachments,

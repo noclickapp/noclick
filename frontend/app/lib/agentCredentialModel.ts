@@ -287,33 +287,6 @@ export function validateAgentCredentialsForModel(args: {
  *  CLI harnesses are ALWAYS BYOK (see agentAllowsUsageBased): a credential-less
  *  openrouter sub-model under opencode used to sail past this gate and die on
  *  the backend's OPENROUTER_API_KEY error. */
-/** Whether this chat will run under a DIFFERENT provider than the picker shows.
- *
- *  A conversation keeps the model it started with, so switching the node's model
- *  between sessions leaves the chat on the old one. Exported because two places
- *  need the same answer and must not drift: the message (which has to name the
- *  pin rather than blame the current selection) and the recovery action (a new
- *  conversation is the only thing that moves a pin — no credential edit does). */
-export function conversationNeedsFreshThread(args: {
-    /** The model the conversation was created with. */
-    sendModel: string;
-    /** The model the picker shows now. */
-    selectedModel: string;
-    config: AgentConfigRecord;
-    resolveProvider: (model: string) => string | null;
-}): boolean {
-    const { sendModel, selectedModel, config, resolveProvider } = args;
-    // Different harness: codex's --resume volume, claude-code's --continue
-    // volume and openclaw's local state are disjoint, so the thread cannot
-    // continue even when both route through the same provider.
-    if (harnessOf(sendModel) !== harnessOf(selectedModel)) return true;
-    // Same harness, different provider: different credential and routing.
-    return (
-        resolveProvider(getAgentEffectiveModel(sendModel, config)) !==
-        resolveProvider(getAgentEffectiveModel(selectedModel, config))
-    );
-}
-
 export function validateAgentSendCredentials(args: {
     /** The model this send will ACTUALLY run under. A chat whose picked model
      *  has moved to another provider mints a fresh conversation on send, so

@@ -44,6 +44,7 @@ REASONS: Dict[str, str] = {
     "no_adapter": "no format module for one of the harnesses",
     "same_harness": "source and target are the same harness — nothing to move",
     "sdk_source": "the in-process agent keeps its history in the conversation row, not a harness store",
+    "sdk_target": "the in-process agent has no harness store to move into — the thread rides in as carried context",
     "source_empty": "the source store holds no thread for this conversation (the target's own store is current)",
     "source_unreadable": "the source thread could not be parsed — a harness format drifted",
     "source_too_large": "the source store exceeds MAX_STORE_BYTES",

@@ -39,7 +39,7 @@ SDK_HARNESS = "llm"
 #: failure: recorded and stamped, never paged. Every other reason in
 #: ``REASONS`` (and ``translator_crashed``) means a harness or the engine
 #: drifted, and pages.
-EXPECTED_FALLBACK_REASONS = frozenset({"no_adapter", "sdk_source", "source_empty"})
+EXPECTED_FALLBACK_REASONS = frozenset({"no_adapter", "sdk_source", "sdk_target", "source_empty"})
 
 
 def harness_of(agent_model: Optional[str]) -> Optional[str]:
@@ -75,12 +75,42 @@ def pair_support(source: str, target: str) -> Optional[Tuple[str, str]]:
     moves when the engine has a format for it."""
     if source == target:
         return ("same_harness", "")
+    if source == SDK_HARNESS:
+        return ("sdk_source", REASONS["sdk_source"])
+    if target == SDK_HARNESS:
+        return ("sdk_target", REASONS["sdk_target"])
     for harness in (source, target):
-        if harness == SDK_HARNESS:
-            return ("sdk_source", REASONS["sdk_source"])
         if harness not in FORMATS:
             return ("no_adapter", f"{harness} has no thread format")
     return None
+
+
+async def carry_into_sdk(node: Any, *, conversation_id: str, user_id: str) -> str:
+    """The carried-context block for a turn the in-process agent runs on a
+    thread whose last turn ran on a CLI harness. The SDK keeps its history
+    in the conversation row, so there is no store to move into; the
+    projection's recent turns ride in the first message instead, and the
+    fallback is recorded like any other (quietly — it is a known limit).
+    Empty when the thread is already the SDK's. Never raises."""
+    previous = harness_of(getattr(node, "_previous_agent_model", None))
+    if previous is None or previous == SDK_HARNESS:
+        return ""
+    reason, detail = pair_support(previous, SDK_HARNESS) or ("sdk_target", REASONS["sdk_target"])
+    try:
+        from repositories.conversation import ConversationRepo
+        from utils.database_pool import get_native_pool
+
+        pool = get_native_pool()
+        events = await ConversationRepo(pool).read_events(conversation_id, user_id)
+    except Exception:
+        logger.warning("[SessionInterchange] projection unreadable; carrying nothing into the SDK agent", exc_info=True)
+        pool, events = None, []
+    block = carried_context(turns_from_projection(events), reason=reason)
+    await report_fallback(
+        pool, user_id=user_id, conversation_id=conversation_id, source_harness=previous, target_harness=SDK_HARNESS,
+        reason=reason, detail=detail, versions=versions_for_report(),
+    )
+    return block
 
 
 def codex_model_provider(home: Path, *, custom_base_url: bool = False) -> str:
@@ -203,7 +233,7 @@ async def _set_last_interchange(pool: Any, conversation_id: str, value: Dict[str
 
 __all__ = [
     "EXPECTED_FALLBACK_REASONS", "FORMATS", "INTERCHANGE_VERSION", "REASONS", "SDK_HARNESS", "InterchangeError",
-    "InterchangeResult", "StoreRef", "TargetIdentity", "carried_context", "codex_model_provider", "harness_of",
+    "InterchangeResult", "StoreRef", "TargetIdentity", "carried_context", "carry_into_sdk", "codex_model_provider", "harness_of",
     "harness_pins", "move_thread", "pair_support", "parse_verdict", "read_thread", "record_native_move",
     "report_fallback", "stamp_span", "target_identity", "turns_from_projection", "versions_for_report",
     "with_carried_context",

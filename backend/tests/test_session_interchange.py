@@ -536,6 +536,76 @@ class TestGlue:
         assert si.target_identity("claude_code", home=tmp_path, model="sonnet").model_provider is None
 
 
+class TestSdkTarget:
+    """The in-process agent has no harness store: a CLI thread continuing
+    on it rides in as carried context, recorded as the known limit it is."""
+
+    def test_pair_support_names_the_direction(self):
+        assert si.pair_support("codex", "llm") == ("sdk_target", ic.REASONS["sdk_target"])
+        assert si.pair_support("llm", "codex") == ("sdk_source", ic.REASONS["sdk_source"])
+        assert "sdk_target" in si.EXPECTED_FALLBACK_REASONS
+
+    async def test_carries_the_projection_and_reports_quietly(self, monkeypatch):
+        import repositories.conversation as conv_mod
+        import utils.database_pool as pool_mod
+
+        events = [
+            {"role": "user", "message": "remember the passphrase"},
+            {"role": "assistant", "message": "noted"},
+            {"role": "assistant", "message": "cancelled draft", "cancelled": True},
+        ]
+
+        class Repo:
+            def __init__(self, pool):
+                assert pool == "pool"
+
+            async def read_events(self, conversation_id, user_id):
+                assert (conversation_id, user_id) == ("ck:wf-1:agent_1:t", "u-1")
+                return events
+
+        reports = []
+
+        async def report(pool, **kw):
+            reports.append((pool, kw))
+
+        monkeypatch.setattr(conv_mod, "ConversationRepo", Repo)
+        monkeypatch.setattr(pool_mod, "get_native_pool", lambda: "pool")
+        monkeypatch.setattr(si, "report_fallback", report)
+        node = SimpleNamespace(_previous_agent_model="codex")
+        block = await si.carry_into_sdk(node, conversation_id="ck:wf-1:agent_1:t", user_id="u-1")
+        turns = ic.turns_from_projection(events)
+        assert block == ic.carried_context(turns, reason="sdk_target") and "cancelled draft" not in block
+        assert reports == [("pool", {
+            "user_id": "u-1", "conversation_id": "ck:wf-1:agent_1:t", "source_harness": "codex", "target_harness": "llm",
+            "reason": "sdk_target", "detail": ic.REASONS["sdk_target"], "versions": si.versions_for_report(),
+        })]
+
+    async def test_a_thread_already_on_the_sdk_carries_nothing(self, monkeypatch):
+        called = []
+        monkeypatch.setattr(si, "report_fallback", lambda *a, **k: called.append(1))
+        for previous in (None, "openrouter/anthropic/claude-sonnet-5", "legacy/llm"):
+            node = SimpleNamespace(_previous_agent_model=previous)
+            assert await si.carry_into_sdk(node, conversation_id="c", user_id="u") == "", previous
+        assert not called
+
+    async def test_an_unreadable_projection_still_reports(self, monkeypatch):
+        import utils.database_pool as pool_mod
+
+        def boom():
+            raise RuntimeError("no pool here")
+
+        reports = []
+
+        async def report(pool, **kw):
+            reports.append((pool, kw["reason"]))
+
+        monkeypatch.setattr(pool_mod, "get_native_pool", boom)
+        monkeypatch.setattr(si, "report_fallback", report)
+        node = SimpleNamespace(_previous_agent_model="claude-code")
+        assert await si.carry_into_sdk(node, conversation_id="c", user_id="u") == ""
+        assert reports == [(None, "sdk_target")]
+
+
 class TestFallback:
     def test_carried_context_is_the_fenced_block_the_display_strips(self):
         block = ic.carried_context([(True, "first"), (False, "reply"), (True, "second")], reason="readback_mismatch")

@@ -29,11 +29,10 @@ import { useAnchoredPopover } from './useAnchoredPopover';
 interface AgentChatHistoryProps {
     conversations: AgentConversationSummary[];
     activeKey: string;
-    /** Current model on the agent node — used to flag rows whose original
-     *  harness differs from this one (CLI runtime context is per-harness, so
-     *  the user should know clicking a claude-code thread while codex is the
-     *  active model only restores the visible transcript, not the CLI's
-     *  internal state). */
+    /** Current model on the agent node — rows are tagged with the harness
+     *  that ran their last turn, and one on another harness says so: picking
+     *  it never changes the model; the backend moves the thread into this
+     *  harness at the next send (session interchange). */
     currentModel: string;
     isLoading: boolean;
     onSwitchTo: (conv: AgentConversationSummary) => void;
@@ -278,16 +277,14 @@ export function AgentChatHistory({
                                                                     title={
                                                                         rowHarness ===
                                                                         LEGACY_CLI_HARNESS
-                                                                            ? "Original CLI not recorded — this row predates harness tagging, so we can't tell which CLI it used. Continuing it on the current model may mix event shapes."
+                                                                            ? "Original CLI not recorded — this row predates harness tagging, so we can't tell which CLI it used. Continuing it here starts from the visible transcript."
                                                                             : isCrossHarness
-                                                                              ? `This thread was used on ${harnessLabel(rowHarness)}. Continuing on ${harnessLabel(currentHarness) || 'the standard LLM'} restores the visible transcript only — the next send starts fresh because each harness keeps its own runtime state. Switching will realign the model picker.`
+                                                                              ? `Last ran on ${harnessLabel(rowHarness)}. Continuing on ${harnessLabel(currentHarness) || 'the standard LLM'} moves the thread over at your next send — the model stays as picked.`
                                                                               : `Harness: ${harnessLabel(rowHarness)}${rowModel.includes('/') ? ` (${rowModel})` : ''}`
                                                                     }
                                                                     className={cn(
                                                                         'shrink-0 text-[10px] tabular-nums rounded-md px-1.5 py-0.5 border',
-                                                                        isCrossHarness
-                                                                            ? 'text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-900/50 dark:bg-amber-950/30'
-                                                                            : 'text-muted-foreground dark:text-zinc-500 border-border bg-card/40'
+                                                                        'text-muted-foreground dark:text-zinc-500 border-border bg-card/40'
                                                                     )}
                                                                 >
                                                                     {harnessLabel(

@@ -1,16 +1,18 @@
-// Changing an agent's model must not empty the chat, and the switch must
-// happen at SEND — atomically — rather than as an effect reacting to the pin.
+// Changing an agent's model must not touch the chat, and the switch happens
+// at SEND, into the SAME thread.
 //
-// The bug this pins: the retire fired on detection, so the transcript emptied
-// on its own and left the user staring at a blank thread with a banner saying
-// the context would carry over "to your next message". A message dispatched
-// near that moment landed in the conversation being left. Both were ordering
-// bugs between two independent effects; there is now one step.
+// Two bugs this pins. The retire used to fire on detection, so the transcript
+// emptied on its own and a message dispatched near that moment landed in the
+// conversation being left. Then (until 2026-09-13) the send minted a fresh
+// conversation and carried the transcript as text, so every switch looked
+// like a new chat and the thread never moved natively. The backend now moves
+// the thread into the picked harness (session interchange); this client just
+// sends the picked model on the thread it is looking at.
 //
 // The socket is stubbed, so this asserts the dispatch without billing a turn.
 // The send is still REAL, so `finally` must undo its persistent side effects
-// (minted conversation_key, wedged streaming flag) via nc.agentChat.restore —
-// see agent-switch-shows-thread-immediately.test.ts for the incident.
+// (wedged streaming flag) via nc.agentChat.restore — see
+// agent-switch-shows-thread-immediately.test.ts for the incident.
 import { nc } from '~/lib/nc';
 import { socketReceiver } from '~/lib/socket-receiver';
 
@@ -113,14 +115,26 @@ export default async function () {
         if (keyAfterSend)
             touched.push(nc.agentChat.conversationId(agent.id, keyAfterSend));
 
-        nc.assert.truthy(
-            keyAfterSend && keyAfterSend !== keyBeforeSwitch,
-            'the send must mint a new conversation'
+        nc.assert.equal(
+            keyAfterSend,
+            keyBeforeSwitch,
+            'the send must continue the thread, not mint a new one'
         );
         nc.assert.equal(
             sentConfig.conversation_key,
-            keyAfterSend,
-            'and must dispatch INTO it, not into the one it left'
+            keyBeforeSwitch,
+            'and must dispatch INTO that thread'
+        );
+        nc.assert.equal(
+            sentConfig.model,
+            swapped,
+            'under the picked model'
+        );
+        nc.assert.truthy(
+            !String(sentConfig.message ?? '').includes(
+                'NOCLICK_CARRIED_CONTEXT'
+            ),
+            'the client carries nothing — the backend moves the thread'
         );
 
         return {
@@ -131,9 +145,6 @@ export default async function () {
             keyAfterSend,
             dispatchedKey: sentConfig.conversation_key,
             dispatchedModel: sentConfig.model,
-            carriedContext: String(sentConfig.message ?? '').includes(
-                'NOCLICK_CARRIED_CONTEXT'
-            ),
         };
     } finally {
         if (sock && originalEmit) sock.emit = originalEmit;
