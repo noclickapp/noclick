@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Thu Sep 03 15:26:10  2026
+// Generated at: Mon Sep 14 17:16:25  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -1231,6 +1231,21 @@ export interface AgentShareSetActiveRequest {
   [k: string]: unknown;
 }
 /**
+ * Poll the live warm/active CLI-sandbox count per agent node so the canvas can
+ * show a node as active (with a count) between turns, not just during a run.
+ */
+export interface AgentWarmSandboxesRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * UUID of the workflow whose agent nodes' warm-sandbox counts to fetch
+   */
+  workflow_id: string;
+  [k: string]: unknown;
+}
+/**
  * Delete one file from an agent conversation's workspace volume.
  * Requires edit or owner access to the workflow.
  */
@@ -1926,6 +1941,10 @@ export interface ClaudeCodeAuthExchangeRequest {
    * Optional name for the credential
    */
   credential_name?: string | null;
+  /**
+   * Reconnect target from the start request
+   */
+  credential_id?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -1936,6 +1955,10 @@ export interface ClaudeCodeAuthStartRequest {
    * UUID for request/response correlation
    */
   request_id?: string | null;
+  /**
+   * Owned Claude credential to reconnect; omitted to add an account
+   */
+  credential_id?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -5702,6 +5725,16 @@ export interface WebflowOAuthValidateRequest {
   [k: string]: unknown;
 }
 /**
+ * Request to reconnect the webhook relay client (for local development only)
+ */
+export interface WebhookRelayReconnectRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
  * Initiate the WhatsApp QR code flow — creates a connection and returns QR code
  */
 export interface WhatsAppQRStartRequest {
@@ -5789,6 +5822,27 @@ export interface WordPressOAuthValidateRequest {
    * UUID of the credential to validate
    */
   credential_id: string;
+  [k: string]: unknown;
+}
+/**
+ * Resolve an agent response's consumed delivery executions (its
+ * `input_execution_ids`) into the nodes that ran per delivery, for the run-results
+ * inputs rail. The delivery runs are plumbing — their `workflow_executions` rows are
+ * deleted — but their CAS outputs survive, so this reads CAS directly.
+ */
+export interface WorkflowAgentInputsRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * UUID of the workflow
+   */
+  workflow_id: string;
+  /**
+   * Delivery execution ids the agent consumed
+   */
+  execution_ids: string[];
   [k: string]: unknown;
 }
 /**
@@ -6279,6 +6333,10 @@ export interface WorkflowGetRequest {
    * UUID of the workflow to retrieve
    */
   workflow_id: string;
+  /**
+   * Load activation issues and real-input evidence for setup
+   */
+  include_readiness?: boolean;
   [k: string]: unknown;
 }
 /**
@@ -8021,6 +8079,8 @@ export interface ClaudeCodeAuthExchangeResponse {
    * Status or error message
    */
   message?: string | null;
+  error_code?: string | null;
+  restart_required?: boolean;
 }
 /**
  * Response for claude-code:auth:start
@@ -8042,6 +8102,7 @@ export interface ClaudeCodeAuthStartResponse {
    * Status or error message
    */
   message?: string | null;
+  error_code?: string | null;
 }
 /**
  * Response for clickup:oauth:exchange request
@@ -8328,9 +8389,17 @@ export interface CredentialInfo {
    */
   revoked_reason?: string | null;
   /**
-   * Live provider session state for connection-backed credentials (whatsapp_qr): 'connected' = phone linked; any other value ('scan_qr', 'failed', 'stopped', 'missing') = the session is dead and needs a fresh QR scan. None = not applicable or state unknown
+   * Provider-native session state for connection-backed credentials, in the provider's own words (WhatsApp: 'connected'/'scan_qr'/'failed'/'missing'; Discord: 'installed'/'removed'). Display only — judge connection_healthy, never this string. None = not applicable or state unknown
    */
   connection_status?: string | null;
+  /**
+   * The verdict on connection_status: False = the provider session is dead and the credential cannot work as attached; True = live; None = not applicable or state unknown (never treated as dead)
+   */
+  connection_healthy?: boolean | null;
+  /**
+   * How to repair a dead connection (present whenever connection_healthy is False), phrased for the owner: re-scan this same WhatsApp credential, reinstall the Discord bot, …
+   */
+  connection_hint?: string | null;
 }
 /**
  * Response for credential:delete request
@@ -12746,6 +12815,7 @@ export interface WorkflowExecutionListResponse {
  */
 export interface WorkflowGetResponse {
   workflow: WorkflowInfo1;
+  readiness?: WorkflowReadinessReport | null;
   /**
    * Per-node last-run status keyed by node_id
    */
@@ -12821,6 +12891,45 @@ export interface WorkflowInfo1 {
    * Optimistic-concurrency version of the workflow blob. Bumped by a DB trigger on every blob change; clients echo it as expected_graph_version on workflow:update so stale snapshots lose cleanly instead of clobbering.
    */
   graph_version?: number | null;
+}
+export interface WorkflowReadinessReport {
+  status: "needs_setup" | "configured" | "waiting_for_input" | "deadline_armed" | "input_observed" | "manual_only";
+  issues: ReadinessIssue[];
+  registered_trigger_ids: string[];
+  observations: TriggerObservation[];
+  destinations: AlertDestination[];
+  deadline_watches?: DeadlineWatchEvidence[];
+  alarm_node_ids?: string[];
+  explanation: string;
+}
+export interface ReadinessIssue {
+  node_id: string;
+  code: string;
+  message: string;
+  [k: string]: unknown;
+}
+export interface TriggerObservation {
+  node_id: string;
+  execution_id: string;
+  created_at: string;
+  trigger_source: string;
+  run_status: string;
+  [k: string]: unknown;
+}
+export interface AlertDestination {
+  node_id: string;
+  operation: string;
+  recipients: string[];
+  [k: string]: unknown;
+}
+export interface DeadlineWatchEvidence {
+  node_id: string;
+  watch_key: string;
+  status: string;
+  deadline: string;
+  last_seen_at?: string | null;
+  fired_at?: string | null;
+  [k: string]: unknown;
 }
 /**
  * Response for workflow:list request
@@ -13347,6 +13456,7 @@ export interface ClientToServerEvents {
   'agent:read:file': (data: AgentReadFileRequest) => void;
   'agent:run:command': (data: AgentRunCommandRequest) => void;
   'agent:set:cwd': (data: AgentSetCwdRequest) => void;
+  'agent:warm_sandboxes': (data: AgentWarmSandboxesRequest) => void;
   'agent:write:file': (data: AgentWriteFileRequest) => void;
   'agent_share:get_or_create': (data: AgentShareGetOrCreateRequest) => void;
   'agent_share:rotate': (data: AgentShareRotateRequest) => void;
@@ -13576,6 +13686,7 @@ export interface ClientToServerEvents {
   'webflow:oauth:exchange': (data: WebflowOAuthExchangeRequest) => void;
   'webflow:oauth:refresh': (data: WebflowOAuthRefreshRequest) => void;
   'webflow:oauth:validate': (data: WebflowOAuthValidateRequest) => void;
+  'webhook:relay:reconnect': (data: WebhookRelayReconnectRequest) => void;
   'whatsapp:qr:start': (data: WhatsAppQRStartRequest) => void;
   'whatsapp:qr:status': (data: WhatsAppQRStatusRequest) => void;
   'wordpress:oauth:exchange': (data: WordPressOAuthExchangeRequest) => void;
@@ -13595,6 +13706,7 @@ export interface ClientToServerEvents {
   'workflow:delete': (data: WorkflowDeleteRequest) => void;
   'workflow:execute': (data: WorkflowExecuteRequest) => void;
   'workflow:get': (data: WorkflowGetRequest) => void;
+  'workflow:get_agent_inputs': (data: WorkflowAgentInputsRequest) => void;
   'workflow:get_execution_counts': (data: WorkflowExecutionCountsRequest) => void;
   'workflow:get_execution_detail': (data: WorkflowExecutionDetailRequest) => void;
   'workflow:get_node_output': (data: WorkflowNodeOutputRequest) => void;
@@ -13673,6 +13785,7 @@ export const ClientEventNames = {
   AgentShareGetOrCreateRequest: 'agent_share:get_or_create',
   AgentShareRotateRequest: 'agent_share:rotate',
   AgentShareSetActiveRequest: 'agent_share:set_active',
+  AgentWarmSandboxesRequest: 'agent:warm_sandboxes',
   AgentWorkspaceDeleteRequest: 'agent_workspace:delete',
   AgentWorkspaceListRequest: 'agent_workspace:list',
   AgentWriteFileRequest: 'agent:write:file',
@@ -13910,11 +14023,13 @@ export const ClientEventNames = {
   WebflowOAuthExchangeRequest: 'webflow:oauth:exchange',
   WebflowOAuthRefreshRequest: 'webflow:oauth:refresh',
   WebflowOAuthValidateRequest: 'webflow:oauth:validate',
+  WebhookRelayReconnectRequest: 'webhook:relay:reconnect',
   WhatsAppQRStartRequest: 'whatsapp:qr:start',
   WhatsAppQRStatusRequest: 'whatsapp:qr:status',
   WordPressOAuthExchangeRequest: 'wordpress:oauth:exchange',
   WordPressOAuthRefreshRequest: 'wordpress:oauth:refresh',
   WordPressOAuthValidateRequest: 'wordpress:oauth:validate',
+  WorkflowAgentInputsRequest: 'workflow:get_agent_inputs',
   WorkflowAutofillRequest: 'workflow:builder:autofill',
   WorkflowBuilderEditRequest: 'workflow:builder:edit',
   WorkflowCheckpointCreateRequest: 'workflow:checkpoint:create',
@@ -14000,6 +14115,7 @@ interface ClientEventMap {
   AgentShareGetOrCreateRequest: AgentShareGetOrCreateRequest
   AgentShareRotateRequest: AgentShareRotateRequest
   AgentShareSetActiveRequest: AgentShareSetActiveRequest
+  AgentWarmSandboxesRequest: AgentWarmSandboxesRequest
   AgentWorkspaceDeleteRequest: AgentWorkspaceDeleteRequest
   AgentWorkspaceListRequest: AgentWorkspaceListRequest
   AgentWriteFileRequest: AgentWriteFileRequest
@@ -14237,11 +14353,13 @@ interface ClientEventMap {
   WebflowOAuthExchangeRequest: WebflowOAuthExchangeRequest
   WebflowOAuthRefreshRequest: WebflowOAuthRefreshRequest
   WebflowOAuthValidateRequest: WebflowOAuthValidateRequest
+  WebhookRelayReconnectRequest: WebhookRelayReconnectRequest
   WhatsAppQRStartRequest: WhatsAppQRStartRequest
   WhatsAppQRStatusRequest: WhatsAppQRStatusRequest
   WordPressOAuthExchangeRequest: WordPressOAuthExchangeRequest
   WordPressOAuthRefreshRequest: WordPressOAuthRefreshRequest
   WordPressOAuthValidateRequest: WordPressOAuthValidateRequest
+  WorkflowAgentInputsRequest: WorkflowAgentInputsRequest
   WorkflowAutofillRequest: WorkflowAutofillRequest
   WorkflowBuilderEditRequest: WorkflowBuilderEditRequest
   WorkflowCheckpointCreateRequest: WorkflowCheckpointCreateRequest
@@ -14594,6 +14712,10 @@ export const AgentShareRotateRequest = {
 export const AgentShareSetActiveRequest = {
   event_name: 'agent_share:set_active' as const,
   create: (data: AgentShareSetActiveRequest) => ({ event_name: 'agent_share:set_active' as const, ...data })
+};
+export const AgentWarmSandboxesRequest = {
+  event_name: 'agent:warm_sandboxes' as const,
+  create: (data: AgentWarmSandboxesRequest) => ({ event_name: 'agent:warm_sandboxes' as const, ...data })
 };
 export const AgentWorkspaceDeleteRequest = {
   event_name: 'agent_workspace:delete' as const,
@@ -15543,6 +15665,10 @@ export const WebflowOAuthValidateRequest = {
   event_name: 'webflow:oauth:validate' as const,
   create: (data: WebflowOAuthValidateRequest) => ({ event_name: 'webflow:oauth:validate' as const, ...data })
 };
+export const WebhookRelayReconnectRequest = {
+  event_name: 'webhook:relay:reconnect' as const,
+  create: (data: WebhookRelayReconnectRequest) => ({ event_name: 'webhook:relay:reconnect' as const, ...data })
+};
 export const WhatsAppQRStartRequest = {
   event_name: 'whatsapp:qr:start' as const,
   create: (data: WhatsAppQRStartRequest) => ({ event_name: 'whatsapp:qr:start' as const, ...data })
@@ -15562,6 +15688,10 @@ export const WordPressOAuthRefreshRequest = {
 export const WordPressOAuthValidateRequest = {
   event_name: 'wordpress:oauth:validate' as const,
   create: (data: WordPressOAuthValidateRequest) => ({ event_name: 'wordpress:oauth:validate' as const, ...data })
+};
+export const WorkflowAgentInputsRequest = {
+  event_name: 'workflow:get_agent_inputs' as const,
+  create: (data: WorkflowAgentInputsRequest) => ({ event_name: 'workflow:get_agent_inputs' as const, ...data })
 };
 export const WorkflowAutofillRequest = {
   event_name: 'workflow:builder:autofill' as const,
@@ -15823,6 +15953,7 @@ export const EventRouting = {
   'agent:pause': 'API',
   'agent:set:cwd': 'API',
   'agent:update_model': 'API',
+  'agent:warm_sandboxes': 'API',
   'agent_share:get_or_create': 'API',
   'agent_share:rotate': 'API',
   'agent_share:set_active': 'API',
@@ -16074,12 +16205,14 @@ export const EventRouting = {
   'webflow:oauth:exchange': 'API',
   'webflow:oauth:refresh': 'API',
   'webflow:oauth:validate': 'API',
+  'webhook:relay:reconnect': 'API',
   'whatsapp:qr:start': 'API',
   'whatsapp:qr:status': 'API',
   'wordpress:oauth:exchange': 'API',
   'wordpress:oauth:refresh': 'API',
   'wordpress:oauth:validate': 'API',
   'workflow:builder:autofill': 'API',
+  'workflow:builder:client_timing': 'API',
   'workflow:builder:edit': 'API',
   'workflow:builder:get_state': 'API',
   'workflow:builder:input_response': 'API',
@@ -16096,6 +16229,7 @@ export const EventRouting = {
   'workflow:delete': 'API',
   'workflow:execute': 'API',
   'workflow:get': 'API',
+  'workflow:get_agent_inputs': 'API',
   'workflow:get_execution_counts': 'API',
   'workflow:get_execution_detail': 'API',
   'workflow:get_node_output': 'API',

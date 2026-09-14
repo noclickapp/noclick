@@ -409,6 +409,11 @@ def facebook_world(facebook_registration, monkeypatch):
     s.nodes = [{"id": s.node_id, "type": "automation-facebook", "config": s.config}]
     s.pool = MagicMock()
     s.pool.fetchrow = AsyncMock(side_effect=lambda *a: {"workflow": {"nodes": deepcopy(s.nodes), "edges": []}})
+    # Both direct reads and a pinned connection see the same authoritative graph.
+    s.pool.acquire = MagicMock(return_value=AsyncMock(
+        __aenter__=AsyncMock(return_value=s.pool),
+        __aexit__=AsyncMock(return_value=False),
+    ))
     s.loaded = s.credential
 
     async def load_credential(pool, user_id, credential_id, **kwargs):

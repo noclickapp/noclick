@@ -588,6 +588,10 @@ async def test_get_or_create_auto_activates_simple_inactive_row():
            "external_webhook_id": None, "registered_operation": None,
            "registered_credential_id": None}
     pool, conn = _pool(fetchrow=row)
+    # Activation reads the saved runnable graph separately from the webhook row.
+    conn.fetchrow.side_effect = lambda sql, *args: (
+        _wf_row([_node()]) if sql.startswith("SELECT workflow FROM workflows") else row
+    )
 
     with patch(
         "utils.webhook_delivery.get_webhook_url",
@@ -612,6 +616,10 @@ async def test_get_or_create_does_not_auto_activate_marker_row():
            "external_webhook_id": ENDPOINT_ID, "registered_operation": OPERATION,
            "registered_credential_id": CREDENTIAL_ID}
     pool, conn = _pool(fetchrow=row)
+    # Activation reads the saved runnable graph separately from the webhook row.
+    conn.fetchrow.side_effect = lambda sql, *args: (
+        _wf_row([_node()]) if sql.startswith("SELECT workflow FROM workflows") else row
+    )
 
     with patch(
         "utils.webhook_delivery.get_webhook_url",

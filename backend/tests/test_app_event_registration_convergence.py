@@ -35,6 +35,7 @@ class SubWorld:
         self.rows = []
         self.owner = OWNER
         self.nodes = []
+        self.edges = []
 
     def set_node(self, operation, credential=CRED, node_type="automation-slack"):
         self.nodes = [{
@@ -78,11 +79,13 @@ def world():
     return SubWorld()
 
 
-def _fake_pool():
-    """Pool for the external-family fallthrough (webhooks-row fetch on the
-    removed-node path) — no rows, no webhooks table state."""
+def _fake_pool(world):
+    """Read the same saved graph as the reconciler; no external webhook rows."""
     conn = AsyncMock()
-    conn.fetchrow = AsyncMock(return_value=None)
+    conn.fetchrow = AsyncMock(side_effect=lambda sql, *args: (
+        {"workflow": {"nodes": world.nodes, "edges": world.edges}}
+        if sql.startswith("SELECT workflow FROM workflows") else None
+    ))
     conn.fetch = AsyncMock(return_value=[])
     pool = MagicMock()
     pool.acquire = MagicMock(return_value=AsyncMock(
@@ -108,7 +111,7 @@ async def _reconcile(world, resolve=("cred-1", {"team_id": "T123"})):
                      AsyncMock(return_value=resolve)) as resolver,
         patch("utils.redis_client.get_shared_redis", lambda: None),
     ):
-        result = await WebhookManager.reconcile_node(_fake_pool(), WF, NODE)
+        result = await WebhookManager.reconcile_node(_fake_pool(world), WF, NODE)
         result["_credential_loads"] = resolver.await_count
     return result
 
@@ -196,6 +199,24 @@ async def test_reconcile_is_idempotent(world):
     assert world.rows == rows_after_first
 
 
+async def test_reconcile_waits_for_downstream_setup_and_registers_after_repair(world):
+    world.set_node("on_app_mention")
+    agent = {"id": "agent", "type": "agent", "config": {
+        "model": "claude-code",
+        "credentialIds": {"agent_claude_code_oauth": "saved-account"},
+    }}
+    world.nodes.append(agent)
+    world.edges = [{"source": NODE, "target": "agent"}]
+    result = await _reconcile(world)
+    assert result["state"] == "failed"
+    assert "message" in result["error"].lower()
+    assert world.rows == []
+
+    agent["config"]["message"] = "Read the incoming Slack mention."
+    assert (await _reconcile(world))["state"] == "registered"
+    assert {r["event_type"] for r in world.rows} == {"app_mention"}
+
+
 # ─── headless provisioning (builder / MCP) ───────────────────────────────────
 
 
@@ -223,6 +244,7 @@ def test_gate_recognizes_every_app_event_trigger_op():
 async def test_provision_node_webhook_registers_headlessly(world):
     """The panel-equivalent load must register a Slack trigger with no UI
     visit — exactly what the builder-built workflow was missing."""
+    world.set_node("on_app_mention")
     with (
         patch("utils.credential_loader.load_credential",
               AsyncMock(return_value={"team_id": "T123", "access_token": "t"})),
@@ -237,6 +259,7 @@ async def test_provision_node_webhook_registers_headlessly(world):
             object(),
             user_id="collab-session-user",
             workflow_id=WF,
+            workflow_graph={"nodes": world.nodes, "edges": world.edges},
             node_id=NODE,
             node_type="automation-slack",
             operation="on_app_mention",
@@ -253,6 +276,7 @@ async def test_provision_folds_operation_into_loader_context(world):
     """Builder GraphState holds operation OUTSIDE node.config — the seam must
     fold the parameter in, or the mixin registers against operation=None
     ('Unknown trigger operation: None', 2026-07-30 builder follow-up)."""
+    world.set_node("on_app_mention")
     with (
         patch("utils.credential_loader.load_credential",
               AsyncMock(return_value={"team_id": "T123", "access_token": "t"})),
@@ -267,6 +291,7 @@ async def test_provision_folds_operation_into_loader_context(world):
             object(),
             user_id=OWNER,
             workflow_id=WF,
+            workflow_graph={"nodes": world.nodes, "edges": world.edges},
             node_id=NODE,
             node_type="automation-slack",
             operation="on_app_mention",

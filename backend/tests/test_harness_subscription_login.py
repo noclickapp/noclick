@@ -35,16 +35,18 @@ def _no_redis(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_pkce_verifier_survives_without_redis():
-    await flows._pkce_put("session-1", "verifier-1")
-    assert await flows._pkce_take("session-1") == "verifier-1"
+@pytest.mark.parametrize("context", [None, {"user_id": "owner", "credential_id": "saved"}])
+async def test_pkce_verifier_survives_without_redis(context):
+    await flows._pkce_put("session-1", "verifier-1", context)
+    assert await flows._pkce_take("session-1") == {"code_verifier": "verifier-1", "context": context}
 
 
 @pytest.mark.asyncio
-async def test_pkce_verifier_is_single_use():
+@pytest.mark.parametrize("context", [None, {"user_id": "owner", "credential_id": "saved"}])
+async def test_pkce_verifier_is_single_use(context):
     """A verifier that has been exchanged must not be exchangeable again."""
-    await flows._pkce_put("session-2", "verifier-2")
-    assert await flows._pkce_take("session-2") == "verifier-2"
+    await flows._pkce_put("session-2", "verifier-2", context)
+    assert await flows._pkce_take("session-2") == {"code_verifier": "verifier-2", "context": context}
     assert await flows._pkce_take("session-2") is None
 
 
