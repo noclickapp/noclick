@@ -534,6 +534,16 @@ async def _execute_node_op_lookup(node, tool_name, arguments, tool_info) -> Dict
 
 async def _execute_alarm_tool(node, tool_name, arguments, tool_info) -> Dict[str, Any]:
     """Dispatch alarm tool calls."""
+    if tool_info.get('node_id') and arguments.get('schedule_id'):
+        from utils.alarm_watch import set_watch_schedule_status
+        status = None
+        if tool_name == 'cancel_alarm':
+            status = 'cancelled'
+        elif tool_name == 'update_alarm' and arguments.get('enabled') is not None:
+            status = None if str(arguments['enabled']).lower() == 'true' else 'paused'
+        if status:
+            await set_watch_schedule_status(node, tool_info['node_id'], arguments['schedule_id'], status)
+
     if tool_name == "schedule_alarm":
         return await _execute_schedule_alarm(node, arguments, tool_info)
     elif tool_name == "list_alarms":
@@ -541,7 +551,10 @@ async def _execute_alarm_tool(node, tool_name, arguments, tool_info) -> Dict[str
     elif tool_name == "cancel_alarm":
         return await _execute_cancel_alarm(node, arguments)
     elif tool_name == "update_alarm":
-        return await _execute_update_alarm(node, arguments)
+        result = await _execute_update_alarm(node, arguments)
+        if result.get('success') and tool_info.get('node_id') and str(arguments.get('enabled')).lower() == 'true':
+            await set_watch_schedule_status(node, tool_info['node_id'], arguments['schedule_id'], 'armed')
+        return result
     else:
         return {"success": False, "error": f"Unknown alarm tool: {tool_name}"}
 
@@ -654,6 +667,20 @@ async def _execute_schedule_alarm(node, arguments, tool_info) -> Dict[str, Any]:
         "conversation_key": getattr(node, "_conversation_key", None),
         "upstream_node_outputs": upstream_outputs,
     }
+
+    if arguments.get("watch_key") is not None:
+        from utils.alarm_watch import schedule_watch
+        if alarm_type not in ("countdown", "datetime"):
+            return {"success": False, "error": "A missing-update watch needs a countdown or timezone-aware datetime deadline, not cron."}
+        try:
+            run_at = parse_countdown_to_timestamp(delay_or_time) if alarm_type == "countdown" else delay_or_time
+            return await schedule_watch(
+                node=node, alarm_node_id=alarm_node_id, watch_key=arguments["watch_key"],
+                observed_at=arguments.get("observed_at"), run_at=run_at,
+                webhook_url=webhook_url, payload=alarm_payload,
+            )
+        except ValueError as error:
+            return {"success": False, "error": str(error)}
 
     try:
         if alarm_type == "countdown":

@@ -400,6 +400,24 @@ def normalize_sandbox_repos(value: Any) -> Tuple[Optional[List[Dict[str, str]]],
     return normalized, None
 
 
+def effective_provider_operations(node_type: str, config: Dict[str, Any]) -> List[Any]:
+    """A configured resource is a restriction, not an ignored operation default.
+
+    Explicit scopes win; unconfigured fields remain agent-selected. This also
+    protects existing graphs that saved a fixed recipient on a provider node.
+    """
+    names, scopes = normalize_allowed_operations(config.get('agent_tool_operations') or [])
+    result = []
+    for operation in names:
+        fields = dict(scopes.get(operation) or {})
+        for field in scopable_fields_for_operation(node_type, operation):
+            value = config.get(field)
+            if field not in fields and isinstance(value, (str, int)) and not isinstance(value, bool) and str(value).strip():
+                fields[field] = [str(value)]
+        result.append({'operation': operation, 'field_scopes': fields} if fields else operation)
+    return result
+
+
 def build_provider_output(node_type: str, raw_config: Dict[str, Any]) -> Dict[str, Any]:
     """Build the provider-mode output an integration node publishes to the
     agent instead of running an operation. Consumed by
@@ -411,12 +429,9 @@ def build_provider_output(node_type: str, raw_config: Dict[str, Any]) -> Dict[st
     nested = raw_config.get("config") if isinstance(raw_config.get("config"), dict) else {}
     merged = {**nested, **{k: v for k, v in raw_config.items() if k not in ("config", "credentials")}}
 
-    # Pass through agent_tool_operations VERBATIM (mixed strings + scoped
-    # objects). build_node_op_tools normalizes via normalize_allowed_operations
-    # at collection time; the runtime reads scopes off tool_configs.
-    allowed = merged.get("agent_tool_operations") or []
-    if not isinstance(allowed, list):
-        allowed = []
+    # Carry explicit scopes and fixed resource restrictions into both the
+    # tool schema and the execution boundary.
+    allowed = effective_provider_operations(node_type, merged)
 
     # Shared extraction/pick (utils.credentials) — same variants the workflow
     # execution handler accepts, so a config that resolves a credential in a

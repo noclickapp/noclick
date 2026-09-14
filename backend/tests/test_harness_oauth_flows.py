@@ -34,6 +34,9 @@ class _FakeRedis:
     async def delete(self, key):
         self.store.pop(key, None)
 
+    async def getdel(self, key):
+        return self.store.pop(key, None)
+
 
 @pytest.mark.asyncio
 class TestCodexFlow:
@@ -117,6 +120,13 @@ class TestClaudeCodePkceFlow:
         monkeypatch.setattr(flows, "_redis_client", _FakeRedis())
         with pytest.raises(OAuthFlowError):
             await claude_code_complete({"auth_session_id": "missing", "code": "x#y"})
+
+    @pytest.mark.parametrize('wrong_context', [None, {'user_id': 'other'}, {'user_id': 'owner', 'credential_id': 'other'}])
+    async def test_cannot_exchange_another_connection_session(self, monkeypatch, wrong_context):
+        monkeypatch.setattr(flows, '_redis_client', _FakeRedis())
+        start = await claude_code_start(context={'user_id': 'owner', 'credential_id': 'saved'})
+        with pytest.raises(OAuthFlowError, match='different connection'):
+            await claude_code_complete({**start['poll'], 'code': 'code'}, context=wrong_context)
 
 
 def _minted_id_token(plan):

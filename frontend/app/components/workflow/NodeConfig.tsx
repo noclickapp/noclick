@@ -27,7 +27,7 @@ import { hasUnconnectedCredentials } from './NodeCredentials';
 import { useAgentCredentialsRequired } from '~/hooks/useAgentCredentialsRequired';
 import { CopyLinkButton } from '~/components/ui/CopyLinkButton';
 import { buildNodeDeepLink } from '~/utils/workflowNavigation';
-import { booleanSelectValue, getRequireOneOfGroups, isBooleanSchema } from '~/utils/schemaFieldExtractor';
+import { booleanSelectValue, getRequireOneOfGroups, isBooleanSchema, isFieldApplicable } from '~/utils/schemaFieldExtractor';
 import { evaluateRequireOneOf, describeRequireOneOfGroup } from '~/utils/workflowNodeValidation';
 import { NodeSettings } from './NodeSettings';
 import { FieldRequirementBadge, isFieldFilled } from './FieldRequirementBadge';
@@ -1643,7 +1643,7 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
                 }
 
                 // Skip fields marked as hidden
-                if (prop['ui:hidden']) {
+                if (prop['ui:hidden'] || !isFieldApplicable(prop, credentialIds)) {
                     return null;
                 }
 

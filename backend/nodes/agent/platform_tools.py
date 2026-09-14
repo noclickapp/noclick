@@ -653,12 +653,14 @@ async def describe_workflow_impl(
                 f"{e.get('source')} ({nodes_by_id.get(e.get('source'), {}).get('type', '?')})"
                 for e in inputs))
         if providers:
+            import json
+            from nodes.agent.node_op_tools import effective_provider_operations
             parts = []
             for e in providers:
                 src = nodes_by_id.get(e.get("source"), {})
-                ops = _cfg(src).get("agent_tool_operations")
+                ops = effective_provider_operations(src.get('type', ''), _cfg(src))
                 parts.append(f"{e.get('source')} ({src.get('type', '?')}"
-                             + (f"; allowlisted ops: {', '.join(ops)}" if ops else "") + ")")
+                             + (f"; allowlisted ops: {', '.join(op if isinstance(op, str) else json.dumps(op) for op in ops)}" if ops else "") + ")")
             notes.append("Your TOOL PROVIDERS (bottom handle): " + ", ".join(parts))
         if out:
             notes.append(
@@ -685,9 +687,12 @@ async def describe_workflow_impl(
             "appear above: " + ", ".join(ambient) + "."
         )
 
+    from utils.workflow_readiness import readiness_report
+    readiness = await readiness_report(pool, workflow_id, workflow, credential_health=gs._credential_health)
     return {
         "success": True,
         "workflow_name": row["name"],
+        "readiness": readiness,
         "your_node_id": node_id,
         "position_notes": notes,
         "snapshot": snapshot,

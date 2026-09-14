@@ -506,6 +506,11 @@ def extract_ask_requests(
                     if error:
                         rejections.append(error)
                         continue
+                    from coder.workflow.operation_catalog import user_input_block_reason
+                    blocked = user_input_block_reason(node.type, _operation, node.config, field, field_schema)
+                    if blocked:
+                        rejections.append(f"<ask> rejected: {blocked}")
+                        continue
                     # Snapshot the node's current credentials + sibling config so
                     # the picker (DynamicOptionsField) has what it needs to load
                     # options, without coupling the drawer to any particular
@@ -2396,6 +2401,8 @@ def build_node_summary(node: NodeState, graph_state: Optional[GraphState] = None
             parts.extend(format_resolution_block(resolution))
         node.pending_resolutions.clear()
 
+    from coder.workflow.operation_catalog import pending_user_fields
+    node.user_fields = pending_user_fields(node.type, node.operation, node.config, node.user_fields)
     if node.user_fields:
         parts.append(f"  [needs user input: {', '.join(node.user_fields)}]")
 

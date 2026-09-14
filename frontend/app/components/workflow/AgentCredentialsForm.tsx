@@ -934,6 +934,12 @@ export function AgentCredentialsForm({
                 diverge between the two surfaces. Which provider applies is decided by
                 `oauthCredentialType` above; the provider→component mapping lives in
                 AgentOAuthConnect. */}
+            {!isCreating && oauthCredentialType === 'agent_claude_code_oauth' && !selectedCredentialId && matchingCredentials.length === 1 && (
+                <button type="button" onClick={() => handleSelectCredential(matchingCredentials[0].id)}
+                    className="w-full rounded-lg border border-border bg-accent px-3 py-2 text-sm text-foreground">
+                    Use saved connection: {matchingCredentials[0].name}
+                </button>
+            )}
             {!isCreating && oauthCredentialType && (
                 <AgentOAuthConnect
                     credentialType={oauthCredentialType}

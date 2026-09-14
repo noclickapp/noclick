@@ -2709,6 +2709,7 @@ class NoClickMCPServer(DatabasePoolMixin):
                         node_type=info["node_type"],
                         operation=info.get("operation"),
                         config=config,
+                        workflow_graph={"nodes": nodes, "edges": edges},
                     )
                     if not updates:
                         continue

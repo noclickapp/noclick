@@ -166,6 +166,16 @@ def _deregister_pool(owner_id, webhook_rows):
 class TestWebhookManager:
     """Test WebhookManager utility class."""
 
+    @pytest.fixture(autouse=True)
+    def saved_runnable_graph(self, monkeypatch):
+        # These URL/relay tests now have a saved, runnable trigger. Keep their
+        # webhook-row fake separate from the readiness reader's graph query.
+        monkeypatch.setattr('repositories.workflow.WorkflowRepo.get_workflow_data',
+            AsyncMock(return_value={'workflow': {'nodes': [
+                {'id': 'webhook-node-1', 'type': 'trigger-webhook', 'config': {}}
+            ], 'edges': []}}))
+
+
     async def test_get_or_create_webhook_creates_new(self, relay):
         """A missing row is INSERTed; the fresh row reports empty registration
         state (nothing registered provider-side, no secret)."""

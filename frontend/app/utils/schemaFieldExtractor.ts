@@ -412,3 +412,10 @@ export function booleanSelectValue(value: unknown): '' | 'true' | 'false' {
     if (value === false || value === 'false') return 'false';
     return '';
 }
+
+/** Credential-specific fields stay available until an account is selected. */
+export function isFieldApplicable(prop: Record<string, unknown>, credentialIds: Record<string, string>): boolean {
+    const supported = prop['x-supported-credential-types'];
+    const selected = Object.keys(credentialIds).filter(key => credentialIds[key]);
+    return !Array.isArray(supported) || selected.length === 0 || selected.some(key => supported.includes(key));
+}

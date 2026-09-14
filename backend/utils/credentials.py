@@ -172,6 +172,8 @@ async def update_credential_data_detailed(
     pool=None,
     expected_token_version: Optional[int] = None,
     credential_name: Optional[str] = None,
+    expected_owner_id: Optional[str] = None,
+    expected_credential_type: Optional[str] = None,
 ) -> tuple[int, Optional[str]]:
     """Persist a credential update and return ``(rows_affected, error_class)``.
 
@@ -185,6 +187,9 @@ async def update_credential_data_detailed(
       verified when the credential is loaded; a refreshed rotating token MUST
       be saved regardless of which user ran the workflow, since failing to
       persist a consumed single-use token bricks the owner's copy.
+    - ``expected_owner_id`` and ``expected_credential_type`` opt an explicit
+      reconnect into atomic identity checks. A transferred/deleted credential
+      cannot be overwritten between authorization and persistence.
     - ``user_id`` is logged only.
     - Merges ``new_data`` into the existing encrypted blob; metadata is
       merged as JSONB ``||``.
@@ -229,6 +234,12 @@ async def update_credential_data_detailed(
                 ]
                 if expected_token_version is not None:
                     args.append(expected_token_version)
+                if expected_owner_id is not None:
+                    args.append(expected_owner_id)
+                    version_guard += f" AND owner_id = ${len(args)}::uuid"
+                if expected_credential_type is not None:
+                    args.append(expected_credential_type)
+                    version_guard += f" AND credential_type = ${len(args)}"
                 result = await conn.execute(f"""
                     UPDATE credentials
                     SET credential = $1,
@@ -246,6 +257,12 @@ async def update_credential_data_detailed(
                 args = [encrypted_data, credential_name, credential_id]
                 if expected_token_version is not None:
                     args.append(expected_token_version)
+                if expected_owner_id is not None:
+                    args.append(expected_owner_id)
+                    version_guard += f" AND owner_id = ${len(args)}::uuid"
+                if expected_credential_type is not None:
+                    args.append(expected_credential_type)
+                    version_guard += f" AND credential_type = ${len(args)}"
                 result = await conn.execute(f"""
                     UPDATE credentials
                     SET credential = $1,

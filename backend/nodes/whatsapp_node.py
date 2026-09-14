@@ -1528,51 +1528,7 @@ class WhatsAppGetProfileConfig(BaseModel):
 # ============================================================================
 
 
-class WhatsAppReceiveMessageConfig(BaseModel):
-    """Receive incoming messages via webhook. Works with both QR scan and Cloud API credentials."""
-
-    model_config = ConfigDict(json_schema_extra={"x-requires-webhook": True})
-
-    operation: Literal["receive_message"] = Field(
-        "receive_message",
-        json_schema_extra={
-            "const": "receive_message",
-            "ui:hidden": True,
-            "x-category": None,
-            "x-is-trigger": True,
-            "x-display-name": "Receive Message",
-        },
-        title="Receive Message",
-    )
-    webhook_id: Optional[str] = Field(
-        default=None, json_schema_extra={"ui:hidden": True}
-    )
-    webhook_url: Optional[str] = Field(
-        default=None,
-        title="Webhook URL",
-        description="Webhook URL for receiving messages. Auto-registered for QR credentials; for Cloud API, configure in Meta Developer Console.",
-        json_schema_extra={
-            "ui:widget": "webhook",
-            "ui:copyable": True,
-            "ui:loadValue": True,
-        },
-    )
-    verify_token: Optional[str] = Field(
-        default=None,
-        title="Verify Token (Optional)",
-        description="Token to verify webhook subscription (you choose this)",
-        json_schema_extra={"ui:widget": "password"},
-    )
-    include_group_messages: str = Field(
-        "false",
-        title="Trigger on Group Messages",
-        description="Also trigger when a message arrives in a group chat. Off by default: an auto-reply bot answering into groups can message many people at once.",
-        json_schema_extra={
-            "enum": ["false", "true"],
-            "enumNames": ["No (direct messages only)", "Yes (also group chats)"],
-            "x-enum-searchable": True,
-        },
-    )
+from nodes.whatsapp_trigger_config import WhatsAppReceiveMessageConfig
 
 
 class WhatsAppReceiveStatusConfig(BaseModel):
@@ -2213,6 +2169,7 @@ class WhatsAppNode(WorkflowNode):
 
         webhook_url = webhook_data.get("webhook_url")
         wahooks_registered = False
+        registration_error = None
 
         # If QR credentials are selected, auto-register the webhook with WAHooks
         credential_id = (credential_ids or {}).get("whatsapp_qr")
@@ -2244,6 +2201,7 @@ class WhatsAppNode(WorkflowNode):
                                 from utils.whatsapp_qr import dead_session_status
 
                                 if dead := await dead_session_status(connection_id):
+                                    registration_error = f"WhatsApp session is {dead}; reconnect this saved account."
                                     logger.warning(
                                         f"[WhatsAppNode] NOT registering webhook: connection "
                                         f"{connection_id} session is {dead} — "
@@ -2253,11 +2211,17 @@ class WhatsAppNode(WorkflowNode):
                                     await asyncio.to_thread(
                                         _wahooks_ensure_webhook, api_key, connection_id, webhook_url
                                     )
+                                    await WebhookManager.persist_registration_state(
+                                        pool, webhook_data['webhook_id'],
+                                        registered_operation='receive_message',
+                                        registered_credential_id=credential_id,
+                                    )
                                     wahooks_registered = True
                                     logger.info(
                                         f"[WhatsAppNode] WAHooks webhook registered for connection {connection_id}"
                                     )
             except Exception as e:
+                registration_error = str(e)
                 logger.warning(
                     f"[WhatsAppNode] Failed to auto-register WAHooks webhook: {e}"
                 )
@@ -2266,6 +2230,13 @@ class WhatsAppNode(WorkflowNode):
             "values": {
                 **webhook_data,
                 "wahooks_registered": wahooks_registered,
+                "trigger_registered": wahooks_registered if credential_id else None,
+                # Provisioning drops None values to preserve unknown fields.
+                # An explicit empty error clears a previous failed registration.
+                "trigger_error": registration_error or (
+                    "WhatsApp webhook registration is incomplete."
+                    if credential_id and not wahooks_registered else ""
+                ),
             }
         }
 

@@ -130,6 +130,52 @@ class WorkflowRepo:
         )
         return dict(row) if row else None
 
+    async def get_trigger_observations(self, conn, workflow_id, node_ids) -> List[Dict[str, Any]]:
+        """Latest retained real input per trigger, without reassembling output blobs."""
+        if not node_ids:
+            return []
+        rows = await conn.fetch("""
+            SELECT DISTINCT ON (m.node_id) m.node_id, m.execution_id,
+                   m.created_at, e.trigger_source, e.status AS run_status
+            FROM cas_manifests m
+            JOIN workflow_executions e ON e.id = m.execution_id AND e.workflow_id = m.workflow_id
+            WHERE m.workflow_id = $1 AND m.node_id = ANY($2::text[])
+              AND e.trigger_source = 'webhook'
+              AND m.last_run_status = 'completed'
+            ORDER BY m.node_id, m.created_at DESC
+        """, workflow_id, node_ids)
+        return [{**dict(r), 'execution_id': str(r['execution_id']), 'created_at': r['created_at'].isoformat()} for r in rows]
+
+    async def get_deadline_watches(self, conn, workflow_id, node_ids) -> List[Dict[str, Any]]:
+        if not node_ids:
+            return []
+        rows = await conn.fetch("""
+            SELECT node_id, state FROM workflow_node_state
+            WHERE workflow_id=$1 AND node_id=ANY($2::text[])
+        """, workflow_id, node_ids)
+        watches = []
+        for row in rows:
+            state = row['state']
+            if isinstance(state, str):
+                state = json.loads(state)
+            for watch in (state.get('deadline_watches') or {}).values():
+                watches.append({'node_id': row['node_id'], **{k: watch.get(k) for k in (
+                    'watch_key', 'status', 'deadline', 'last_seen_at', 'fired_at')}})
+        return watches
+
+    async def get_registered_trigger_ids(self, conn, workflow_id, node_ids) -> List[str]:
+        """Registration evidence only; an active row does not prove delivery."""
+        if not node_ids:
+            return []
+        rows = await conn.fetch("""
+            SELECT node_id FROM webhooks
+            WHERE workflow_id=$1 AND node_id=ANY($2::text[]) AND is_active AND registered_operation IS NOT NULL
+            UNION
+            SELECT node_id FROM webhook_subscriptions
+            WHERE workflow_id=$1 AND node_id=ANY($2::text[])
+        """, workflow_id, node_ids)
+        return [r['node_id'] for r in rows]
+
     async def get_workflow_for_mcp_load(
         self, conn, workflow_id
     ) -> Optional[Dict[str, Any]]:

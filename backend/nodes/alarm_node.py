@@ -50,7 +50,10 @@ SCHEDULE_ALARM_TOOL_DESCRIPTION = (
     "- datetime: fires at a specific ISO 8601 timestamp (e.g., '2026-03-07T10:00:00Z')\n"
     "- cron: fires on a recurring schedule (standard cron expression, e.g., '0 9 * * 1')\n\n"
     "Include a descriptive message — you'll receive it when the alarm fires as context "
-    "for what you should do."
+    "for what you should do. For missing-update monitoring, set watch_key to a stable site ID "
+    "and observed_at to the real inbound update timestamp. Reusing the key replaces its deadline "
+    "durably; older updates and stale or duplicate timers cannot wake you twice. Arm the first "
+    "deadline during setup (omit observed_at); use a timezone-aware datetime reporting deadline."
 )
 SCHEDULE_ALARM_PARAMETERS: List[Dict[str, Any]] = [
     {
@@ -79,6 +82,13 @@ SCHEDULE_ALARM_PARAMETERS: List[Dict[str, Any]] = [
         "required": True,
     },
 ]
+
+SCHEDULE_ALARM_PARAMETERS.extend([
+    {"name": "watch_key", "type": "string", "required": False,
+     "description": "Stable site/report identity for missing-update monitoring. Replaces that site's deadline; countdown or datetime only."},
+    {"name": "observed_at", "type": "string", "required": False,
+     "description": "For watch_key: actual incoming update timestamp with timezone. Omit only when arming the initial expected reporting window. Older/duplicate observations are ignored."},
+])
 
 # --- list_alarms ---
 LIST_ALARMS_TOOL_NAME = "list_alarms"

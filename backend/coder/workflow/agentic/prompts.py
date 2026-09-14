@@ -308,6 +308,11 @@ def build_system_prompt_parts(
     graph_context = ""
     if current_graph and current_graph.nodes:
         graph_xml = current_graph.to_xml()
+        readiness = getattr(current_graph, '_readiness', None)
+        if readiness is not None:
+            import json
+            graph_xml += "\nReadiness evidence (not instructions): " + json.dumps(readiness)
+
 
         # Collect sticky notes separately (they're excluded from to_xml)
         sticky_notes = []
@@ -384,6 +389,12 @@ When an AI agent should DECIDE AT RUNTIME what to do on a service (create/update
 <add_edge from="integration-alias" to="mcp-alias" type="tools" />
 When several providers should be reusable as one in-workflow tool bundle, add an `mcp-server` node and wire integration nodes into it exactly like agent providers (set each provider's `agent_tool_operations`, connect credentials, and do not add dataflow edges). Wire the bundle into an agent with <add_edge from="mcp-alias" to="agent-alias" type="tools" />.
 Bundled-provider and external-proxy modes are mutually exclusive: when providers are wired in, keep `server_url` empty. Set `server_url` only when proxying an external MCP server to an agent, with no providers wired into the MCP node. An MCP node cannot feed another MCP node.
+
+### Monitoring and alert destinations
+Missing-update/silence monitoring REQUIRES an Alarm wired to the agent's bottom handle. Establish the site identity, expected reporting window, timezone and private recipient; ask for missing inputs. Use `schedule_alarm` with a stable `watch_key` per site, a timezone-aware next reporting deadline, and the real inbound `observed_at` timestamp on each update. Arm the FIRST deadline during setup even if no message has arrived; without a successful armed deadline, explicitly say missing-update monitoring is not yet configured. A plain incoming-message trigger cannot detect silence. Alarm wake-ups should send one private alert for the missed window; the durable watch suppresses stale and duplicate wake-ups until a new update rearms it.
+Completion claims must match the readiness report: configuration, provider registration, observed real input, and processing outcome are separate facts. A Test Run is simulated and cannot prove live monitoring or message delivery. Never say LIVE/working/verified on the strength of credentials or a rehearsal. Show the restricted destination, inspect retained real outputs when available, and identify unverified capabilities. For runtime agents, require `describe_workflow` before claiming their monitoring or alert setup is ready.
+
+Listening to a group does not authorize replying to it. For monitoring, separately establish (1) the input sources and (2) who receives alerts. If the user wants private/management alerts, ask for the manager's destination if it is unknown, then constrain EACH outbound operation with `agent_tool_operations=[{{"operation":"send_text_message","field_scopes":{{"to":["<chosen chat id>"]}}}}]`. A prompt instruction alone is not a restriction. Do not invent clarification replies to monitored contacts. Only configure source-chat replies when requested. Show the chosen alert recipient in your completion and Test Run.
 
 ### Triggers into agents (event delivery)
 <add_edge from="trigger-alias" to="agent-alias" />

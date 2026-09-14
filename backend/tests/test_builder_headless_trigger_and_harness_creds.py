@@ -312,6 +312,22 @@ class TestDoneGateNudge:
 # ============================================================================
 
 class TestProvisionNodeWebhook:
+    @pytest.fixture(autouse=True)
+    def runnable_graph(self):
+        # Headless callers supply their authoritative graph before it is saved.
+        # Exercise the real activation validator; only provider I/O is stubbed.
+        self._graph = {"nodes": [
+            {"id": "telegram-trigger", "type": "automation-telegram", "config": {
+                "operation": "receive_webhook_messages",
+                "credentialIds": {"telegram_bot_token": "cred-1"},
+            }},
+            {"id": "hook", "type": "trigger-webhook", "config": {}},
+            {"id": "gm", "type": "automation-gmail", "config": {
+                "operation": "poll_for_new_emails",
+                "credentialIds": {"gmail_oauth": "cred-2"},
+            }},
+        ], "edges": []}
+
     @pytest.mark.asyncio
     async def test_custom_loader_invoked_for_trigger_op(self, monkeypatch):
         from nodes.telegram_node import TelegramNode
@@ -329,6 +345,7 @@ class TestProvisionNodeWebhook:
         updates = await WebhookManager.provision_node_webhook(
             object(),
             user_id='u1', workflow_id='f9c4dee2-971c-40af-af70-77cfb1cf75e2',
+            workflow_graph=self._graph,
             node_id='telegram-trigger', node_type='automation-telegram',
             operation='receive_webhook_messages', config={},
         )
@@ -354,6 +371,7 @@ class TestProvisionNodeWebhook:
         updates = await WebhookManager.provision_node_webhook(
             object(),
             user_id='u1', workflow_id='f9c4dee2-971c-40af-af70-77cfb1cf75e2',
+            workflow_graph=self._graph,
             node_id='telegram-trigger', node_type='automation-telegram',
             operation='receive_webhook_messages',
             config={'webhook_url': 'https://wh.hooks.example.test',
@@ -374,6 +392,7 @@ class TestProvisionNodeWebhook:
         updates = await WebhookManager.provision_node_webhook(
             object(),
             user_id='u1', workflow_id='f9c4dee2-971c-40af-af70-77cfb1cf75e2',
+            workflow_graph=self._graph,
             node_id='tg-tools', node_type='automation-telegram',
             operation='send_message_to_chat', config={},
         )
@@ -385,6 +404,7 @@ class TestProvisionNodeWebhook:
         updates = await WebhookManager.provision_node_webhook(
             object(),
             user_id='u1', workflow_id='f9c4dee2-971c-40af-af70-77cfb1cf75e2',
+            workflow_graph=self._graph,
             node_id='tg-tools', node_type='automation-telegram',
             operation=None, config={},
         )
@@ -402,6 +422,7 @@ class TestProvisionNodeWebhook:
         updates = await WebhookManager.provision_node_webhook(
             object(),
             user_id='u1', workflow_id='f9c4dee2-971c-40af-af70-77cfb1cf75e2',
+            workflow_graph=self._graph,
             node_id='hook', node_type='trigger-webhook', operation=None, config={},
         )
         assert updates['webhook_url'] == 'https://wh-1.hooks.example.test'
@@ -410,6 +431,7 @@ class TestProvisionNodeWebhook:
         updates2 = await WebhookManager.provision_node_webhook(
             object(),
             user_id='u1', workflow_id='f9c4dee2-971c-40af-af70-77cfb1cf75e2',
+            workflow_graph=self._graph,
             node_id='hook', node_type='trigger-webhook', operation=None,
             config={'webhook_url': 'https://wh-1.hooks.example.test'},
         )
@@ -429,6 +451,7 @@ class TestProvisionNodeWebhook:
         updates = await WebhookManager.provision_node_webhook(
             object(),
             user_id='u1', workflow_id='f9c4dee2-971c-40af-af70-77cfb1cf75e2',
+            workflow_graph=self._graph,
             node_id='telegram-trigger', node_type='automation-telegram',
             operation='receive_webhook_messages', config={},
         )
@@ -442,6 +465,7 @@ class TestProvisionNodeWebhook:
         updates2 = await WebhookManager.provision_node_webhook(
             object(),
             user_id='u1', workflow_id='f9c4dee2-971c-40af-af70-77cfb1cf75e2',
+            workflow_graph=self._graph,
             node_id='telegram-trigger', node_type='automation-telegram',
             operation='receive_webhook_messages', config={},
         )
@@ -466,6 +490,7 @@ class TestProvisionNodeWebhook:
         updates = await WebhookManager.provision_node_webhook(
             object(),
             user_id='u1', workflow_id='f9c4dee2-971c-40af-af70-77cfb1cf75e2',
+            workflow_graph=self._graph,
             node_id='gm', node_type='automation-gmail',
             operation='poll_for_new_emails', config={},
         )
@@ -486,7 +511,7 @@ class TestBuilderProvisionsWebhooks:
 
     @pytest.mark.asyncio
     async def test_set_credentials_triggers_provisioning(self, monkeypatch):
-        """The the-reproduced-run shape: telegram-trigger existed from a prior turn;
+        """The reproduced setup: telegram-trigger existed from a prior turn;
         gen 2 only attaches its credential — provisioning must still run so
         setWebhook happens without a UI click."""
         import utils.database_pool as dbp

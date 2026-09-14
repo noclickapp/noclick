@@ -814,6 +814,8 @@ class GraphState:
                     else:
                         config_parts.append(f'    {k}="{val_str}"')
 
+            from coder.workflow.operation_catalog import pending_user_fields
+            node.user_fields = pending_user_fields(node.type, node.operation, node.config, node.user_fields)
             if node.user_fields:
                 config_parts.append(f'    [needs user input: {", ".join(node.user_fields)}]')
 

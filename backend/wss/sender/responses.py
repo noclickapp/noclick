@@ -4,6 +4,7 @@ These models provide type-safe responses that correspond to specific request typ
 enabling full type checking from backend to frontend.
 """
 from typing import List, Dict, Any, Optional, ClassVar
+from wss.sender.workflow_readiness_responses import WorkflowReadinessReport
 from pydantic import BaseModel, Field
 from datetime import datetime
 
@@ -70,6 +71,7 @@ class WorkflowListResponse(BaseModel):
 class WorkflowGetResponse(BaseModel):
     """Response for workflow:get request"""
     workflow: WorkflowInfo = Field(..., description="Workflow details")
+    readiness: Optional[WorkflowReadinessReport] = None
     # Per-node last-run status {node_id: {status, finishedAt (epoch ms), error}},
     # read from the CAS (cas_manifests, via node_outputs.latest_statuses). Returned
     # alongside the graph so the status chips render in the same paint instead of
@@ -2179,20 +2181,7 @@ class CodexDeviceCodePollResponse(BaseModel):
 
 
 # Claude Code OAuth PKCE Auth Responses
-class ClaudeCodeAuthStartResponse(BaseModel):
-    """Response for claude-code:auth:start"""
-    success: bool = Field(..., description="Whether the OAuth start was successful")
-    auth_url: Optional[str] = Field(None, description="URL to open in browser for authentication")
-    auth_session_id: Optional[str] = Field(None, description="Session ID for exchanging the code")
-    message: Optional[str] = Field(None, description="Status or error message")
-
-
-class ClaudeCodeAuthExchangeResponse(BaseModel):
-    """Response for claude-code:auth:exchange"""
-    success: bool = Field(..., description="Whether the code exchange was successful")
-    credential_id: Optional[str] = Field(None, description="UUID of the created credential")
-    credential_name: Optional[str] = Field(None, description="Name of the created credential")
-    message: Optional[str] = Field(None, description="Status or error message")
+from wss.sender.claude_oauth_responses import ClaudeCodeAuthStartResponse, ClaudeCodeAuthExchangeResponse
 
 
 # WhatsApp QR Code Auth Responses

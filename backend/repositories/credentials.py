@@ -409,6 +409,16 @@ class CredentialsRepo:
             )
         return row is not None
 
+    async def get_owned_header(self, credential_id: str, owner_id: str) -> Optional[Dict[str, Any]]:
+        """Non-secret identity used when reconnecting an existing account."""
+        async with self._pool.acquire() as conn:
+            row = await conn.fetchrow(
+                "SELECT id, name, credential_type FROM credentials "
+                "WHERE id = $1::uuid AND owner_id = $2::uuid",
+                credential_id, owner_id,
+            )
+        return dict(row) if row else None
+
     # ------------------------------------------------------------------
     # get_credential
     # ------------------------------------------------------------------
@@ -737,6 +747,14 @@ class CredentialsRepo:
         # asyncpg returns the string 'UPDATE N' — the same non-zero check
         # the handler used inline.
         return result != 'UPDATE 0'
+
+
+async def resolve_provided_credential_owner(conn, target_email: str, requester_id: str) -> str:
+    """A registered provider owns their grant; otherwise the requester does."""
+    provider = await conn.fetchrow(
+        'SELECT id FROM auth.users WHERE LOWER(email) = LOWER($1)', target_email,
+    )
+    return str(provider['id']) if provider else requester_id
 
 
 async def create_credential_with_limit_check(

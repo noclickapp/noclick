@@ -29,7 +29,7 @@ import { setNodeEditInfo, updateNodeEditInfo, clearAllNodeEditInfo, getCurrentWo
 import type { RecordedEvent } from '~/lib/recordedEvent';
 import { trackChatSendStarted } from '~/lib/telemetry-chat';
 import type { AiEditInfo } from '~/lib/collaboration';
-import { applyNodeUpdate, createWorkflowNode, rawConfigToPayload } from '~/lib/applyNodeUpdate';
+import { applyNodeUpdate, buildSaveConfig, createWorkflowNode, rawConfigToPayload } from '~/lib/applyNodeUpdate';
 import { getBuilderContext } from '~/lib/builder-context';
 import { getAppliedTheme } from '~/lib/theme';
 
@@ -902,7 +902,7 @@ export function useCanvasWorkflowEdit({
                     index: i,
                     status: 'complete' as const,
                     operation: n.data?.operation,
-                    config: n.data?.config,
+                    config: buildSaveConfig(n),
                 })),
                 edges: edgesRef.current.map(e => ({
                     id: e.id,
@@ -946,7 +946,7 @@ export function useCanvasWorkflowEdit({
                 label: String(n.data?.label ?? ''),
                 goal: n.data?.goal || '',
                 operation: n.data?.operation,
-                config: n.data?.config,
+                config: buildSaveConfig(n),
                 error: n.data?.error || (n.data?.output as any)?.error || null,
                 position: n.position,
                 ...(n.width != null ? { width: n.width } : {}),
@@ -1228,7 +1228,7 @@ export function useCanvasWorkflowEdit({
                     index: i,
                     status: 'complete' as const,
                     operation: n.data?.operation,
-                    config: n.data?.config,
+                    config: buildSaveConfig(n),
                 })),
                 edges: edgesRef.current.map(e => ({
                     id: e.id,
@@ -1268,7 +1268,7 @@ export function useCanvasWorkflowEdit({
                 label: String(n.data?.label ?? ''),
                 goal: n.data?.goal || '',
                 operation: n.data?.operation,
-                config: n.data?.config,
+                config: buildSaveConfig(n),
                 error: n.data?.error || (n.data?.output as any)?.error || null,
                 position: n.position,
                 ...(n.width != null ? { width: n.width } : {}),

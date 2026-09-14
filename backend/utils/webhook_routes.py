@@ -1568,6 +1568,9 @@ async def handle_webhook_payload(
     # For alarm nodes, execute only the agent's subgraph to avoid side effects
     if is_alarm:
         agent_node_id = _find_connected_agent(nodes, edges, actual_node_id)
+        from utils.alarm_watch import claim_watch_delivery
+        if not await claim_watch_delivery(workflow_id, actual_node_id, agent_node_id, payload):
+            return _json_relay_response(WebhookResponse(success=True, message="Superseded or duplicate deadline ignored", execution_id=None).model_dump()) if return_response else True
         if agent_node_id:
             subgraph_ids = _get_agent_subgraph(nodes, edges, agent_node_id)
             # Restore upstream context: mock upstream nodes with stored outputs
@@ -2895,6 +2898,9 @@ async def receive_webhook(
     # For alarm nodes, execute only the agent's subgraph to avoid side effects
     if is_alarm:
         agent_node_id = _find_connected_agent(nodes, edges, actual_node_id)
+        from utils.alarm_watch import claim_watch_delivery
+        if not await claim_watch_delivery(workflow_id, actual_node_id, agent_node_id, payload):
+            return WebhookResponse(success=True, message="Superseded or duplicate deadline ignored", execution_id=None)
         if agent_node_id:
             subgraph_ids = _get_agent_subgraph(nodes, edges, agent_node_id)
             # Restore upstream context: mock upstream nodes with stored outputs

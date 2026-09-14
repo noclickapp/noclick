@@ -9,6 +9,9 @@ from typing import Dict, Callable
 
 from utils.database_pool import DatabasePoolMixin
 from utils.encryption import get_encryption
+from repositories.credentials import CredentialsRepo, create_credential_with_limit_check
+from billing.plan_limits import check_credential_limit
+from utils.credentials import update_credential_data_detailed
 from wss.schema import SocketIOHandler
 from wss.sender import send_event, ResponseEvent
 from wss.sender.responses import (
@@ -47,6 +50,18 @@ class ClaudeCodeAuthHandler(DatabasePoolMixin, SocketIOHandler):
     async def setup_user(self, sid: str) -> None:
         _ = sid
 
+    async def _preflight(self, pool, user_id, user_tier, credential_id):
+        if credential_id:
+            target = await CredentialsRepo(pool).get_owned_header(credential_id, user_id)
+            if not target or target['credential_type'] != 'agent_claude_code_oauth':
+                return 'invalid_reconnect_target', 'Only the owner can reconnect this Claude credential.'
+        else:
+            async with pool.acquire() as conn:
+                allowed, error = await check_credential_limit(conn, user_id, user_tier, 'agent_claude_code_oauth')
+            if not allowed:
+                return 'credential_limit', f'{error} You can select an existing Claude connection instead.'
+        return None, None
+
     async def start_oauth(self, sid: str, request: ClaudeCodeAuthStartRequest) -> None:
         """
         Initiate the OAuth 2.0 PKCE flow by generating a code verifier/challenge pair,
@@ -66,8 +81,20 @@ class ClaudeCodeAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
+            pool = await self.get_pool()
+            if not pool:
+                raise OAuthFlowError('Database connection not available')
+            code, message = await self._preflight(
+                pool, user_id, session.get('user_data', {}).get('subscription_tier', 'free'), request.credential_id,
+            )
+            if code:
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data=ClaudeCodeAuthStartResponse(success=False, message=message, error_code=code).model_dump(),
+                ))
+                return
             try:
-                result = await claude_code_start()
+                result = await claude_code_start(context={'user_id': user_id, 'credential_id': request.credential_id})
             except OAuthFlowError as e:
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id,
@@ -112,19 +139,48 @@ class ClaudeCodeAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
+            pool = await self.get_pool()
+            if not pool:
+                raise OAuthFlowError('Database connection not available')
+            user_tier = session.get('user_data', {}).get('subscription_tier', 'free')
+            code, message = await self._preflight(pool, user_id, user_tier, request.credential_id)
+            if code:
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data=ClaudeCodeAuthExchangeResponse(
+                        success=False, message=message, error_code=code, restart_required=True,
+                    ).model_dump(),
+                ))
+                return
             try:
                 result = await claude_code_complete({
                     "auth_session_id": request.auth_session_id,
                     "code": request.authorization_code,
-                })
+                }, context={'user_id': user_id, 'credential_id': request.credential_id})
             except OAuthFlowError as e:
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id,
-                    data=ClaudeCodeAuthExchangeResponse(success=False, message=str(e)).model_dump()
+                    data=ClaudeCodeAuthExchangeResponse(success=False, message=str(e), error_code='authorization_failed', restart_required=True).model_dump()
                 ))
                 return
 
             credential_data = result["credential_data"]
+
+            if request.credential_id:
+                affected, error = await update_credential_data_detailed(
+                    request.credential_id, user_id, credential_data, pool=pool,
+                    metadata_updates={'provider': 'claude_code', 'auth_mode': 'oauth'},
+                    expected_owner_id=user_id, expected_credential_type='agent_claude_code_oauth',
+                )
+                if affected != 1:
+                    raise OAuthFlowError('The selected connection could not be updated. Please refresh connections and restart sign-in.')
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data=ClaudeCodeAuthExchangeResponse(
+                        success=True, credential_id=request.credential_id, message='Claude connection refreshed',
+                    ).model_dump(),
+                ))
+                return
 
             try:
                 encrypted_data = self.encryption.encrypt_credential(credential_data)
@@ -133,17 +189,7 @@ class ClaudeCodeAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id,
                     data=ClaudeCodeAuthExchangeResponse(
-                        success=False, message="Failed to encrypt credentials"
-                    ).model_dump()
-                ))
-                return
-
-            pool = await self.get_pool()
-            if not pool:
-                await send_event(self.sio, sid, ResponseEvent(
-                    request_id=request.request_id,
-                    data=ClaudeCodeAuthExchangeResponse(
-                        success=False, message="Database connection not available"
+                        success=False, message="Failed to encrypt credentials", error_code="credential_store_failed", restart_required=True
                     ).model_dump()
                 ))
                 return
@@ -151,7 +197,6 @@ class ClaudeCodeAuthHandler(DatabasePoolMixin, SocketIOHandler):
             credential_name = request.credential_name or "Anthropic (Claude Code)"
 
             async with pool.acquire() as conn:
-                from repositories.credentials import create_credential_with_limit_check
                 user_tier = session.get('user_data', {}).get('subscription_tier', 'free')
                 row, error = await create_credential_with_limit_check(
                     conn, user_id, user_tier, 'agent_claude_code_oauth',
@@ -162,7 +207,10 @@ class ClaudeCodeAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 )
                 if error:
                     await send_event(self.sio, sid, ResponseEvent(
-                        request_id=request.request_id, data={}, error=error
+                        request_id=request.request_id,
+                        data=ClaudeCodeAuthExchangeResponse(
+                            success=False, message=error, error_code='credential_store_failed', restart_required=True,
+                        ).model_dump(),
                     ))
                     return
 
@@ -183,6 +231,6 @@ class ClaudeCodeAuthHandler(DatabasePoolMixin, SocketIOHandler):
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id,
                 data=ClaudeCodeAuthExchangeResponse(
-                    success=False, message=str(e)
+                    success=False, message=str(e), error_code='exchange_failed', restart_required=True
                 ).model_dump()
             ))

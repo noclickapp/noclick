@@ -597,13 +597,17 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                     graph_version=row.get('graph_version'),
                 )
 
-                # Send response — node_statuses rides along so the chips render in
-                # the same paint as the graph (no second round-trip / pop-in).
-                response = WorkflowGetResponse(workflow=workflow, node_statuses=node_statuses)
-                await send_event(self.sio, sid, ResponseEvent(
-                    request_id=request.request_id,
-                    data=response.model_dump()
-                ))
+            # Send response — node_statuses rides along so the chips render in
+            # the same paint as the graph (no second round-trip / pop-in).
+            readiness = None
+            if request.include_readiness:
+                from utils.workflow_readiness import readiness_report
+                readiness = await readiness_report(pool, request.workflow_id, workflow.workflow_data)
+            response = WorkflowGetResponse(workflow=workflow, node_statuses=node_statuses, readiness=readiness)
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id,
+                data=response.model_dump()
+            ))
 
         except Exception as e:
             logger.error(f"Error getting workflow: {e}", exc_info=True)
@@ -1015,6 +1019,29 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                                 _pool, n_type, _wid, nid,
                                 old_cfg, new_cfg, user_id=_uid,
                             )
+                        from utils.graph_nodes import graph_nodes, node_config
+                        from utils.workflow_readiness import activation_issues
+                        for trigger in graph_nodes(_new_wf):
+                            cfg = node_config(trigger)
+                            kind, nid = trigger.get('type'), trigger.get('id')
+                            if not nid or cfg.get('disabled') in (True, 'true'):
+                                continue
+                            if not WebhookManager.node_webhook_field_for(kind, cfg.get('operation')):
+                                continue
+                            if cfg.get('webhook_url') and not cfg.get('trigger_error'):
+                                continue
+                            if activation_issues(_new_wf, nid):
+                                continue
+                            try:
+                                patch = await WebhookManager.provision_node_webhook(
+                                    _pool, user_id=_uid, workflow_id=_wid, node_id=nid,
+                                    node_type=kind, operation=cfg.get('operation'), config=cfg,
+                                    workflow_graph=_new_wf,
+                                )
+                                if patch:
+                                    await WebhookManager.merge_node_config_patch(_pool, _wid, nid, patch)
+                            except Exception:
+                                logger.warning('Trigger activation after setup edit failed: %s', nid, exc_info=True)
                         # Re-added nodes (canvas undo of a delete): their
                         # rows were deactivated at delete time; re-register
                         # the previously-registered triggers among them.

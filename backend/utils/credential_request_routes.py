@@ -351,7 +351,7 @@ def _get_agent_provider(credential_type: str) -> Optional[str]:
 def _agent_credential_fields(credential_type: str) -> Optional[list[dict]]:
     """Renderable field(s) for an ``agent_<provider>`` credential, derived from the
     provider's required env vars. None if not an agent API-key type OR the provider
-    has no operator-key form. Field names ARE the env vars so the provided
+    is OAuth-only (e.g. GitHub Copilot). Field names ARE the env vars so the provided
     values slot straight into the ``{credentials: {...}}`` blob the agent runtime reads."""
     provider = _get_agent_provider(credential_type)
     if not provider or provider in AGENT_OAUTH_ONLY_PROVIDERS:
@@ -493,8 +493,9 @@ class ProvideCredentialBody(BaseModel):
 # Endpoints
 # ---------------------------------------------------------------------------
 
-# Optional harness sign-in support is resolved once here because
-# _agent_methods() runs on EVERY
+# Harness subscription OAuth (Claude Pro/Max, ChatGPT, GitHub Copilot, xAI) is
+# hosted-only: the device-code flows and their handlers aren't part of every
+# build. Resolved once here because _agent_methods() runs on EVERY
 # credential-provide page — a function-level import made the whole public page
 # 500 with ModuleNotFoundError, not just the agent-OAuth part of it.
 #
@@ -617,6 +618,17 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
     )
 
 
+async def _provided_credential_owner(pool, row, credential_type: str) -> str:
+    from repositories.credentials import resolve_provided_credential_owner
+    from billing.plan_limits import check_credential_limit
+
+    owner_id = await resolve_provided_credential_owner(pool, row['target_email'], str(row['requester_id']))
+    allowed, error = await check_credential_limit(pool, owner_id, 'free', credential_type)
+    if not allowed:
+        raise HTTPException(status_code=403, detail=error)
+    return owner_id
+
+
 async def _store_and_fulfill(
     pool, row, credential_type: str,
     credential_data: dict, credential_name: str, metadata: dict,
@@ -626,13 +638,7 @@ async def _store_and_fulfill(
     the API-key / redirect-OAuth provide path and the agent-OAuth completion."""
     encrypted = get_encryption().encrypt_credential(credential_data)
 
-    # If the provider already has a NoClick account they own the credential
-    # (can revoke) and the requester gets edit access via a share.
-    provider_user = await pool.fetchrow(
-        "SELECT id FROM auth.users WHERE LOWER(email) = LOWER($1)",
-        row['target_email'],
-    )
-    credential_owner_id = str(provider_user['id']) if provider_user else str(row['requester_id'])
+    credential_owner_id = await _provided_credential_owner(pool, row, credential_type)
 
     org_context_row = await pool.fetchrow(PRIMARY_ORG_SQL, credential_owner_id)
     cred_org_id = str(org_context_row['organization_id']) if org_context_row else None
@@ -665,7 +671,7 @@ async def _store_and_fulfill(
         await pool.execute("DELETE FROM credentials WHERE id = $1", credential_id)
         raise HTTPException(status_code=410, detail="This credential request has already been fulfilled")
 
-    if provider_user:
+    if credential_owner_id != str(row['requester_id']):
         await pool.execute(
             """
             INSERT INTO resource_shares (resource_type, resource_id, target_type, target_user_id, permission, shared_by)
@@ -860,6 +866,7 @@ async def agent_oauth_start(token: str, body: AgentOAuthStartBody) -> dict[str, 
     pool = get_native_pool()
     row = await _load_active_request(token, pool)
     flow = _resolve_agent_oauth_flow(row['credential_type'], body.credential_type)
+    await _provided_credential_owner(pool, row, flow.credential_type)
     try:
         result = await flow.start()
     except OAuthFlowError as e:
@@ -883,6 +890,7 @@ async def agent_oauth_complete(token: str, body: AgentOAuthCompleteBody) -> dict
     pool = get_native_pool()
     row = await _load_active_request(token, pool)
     flow = _resolve_agent_oauth_flow(row['credential_type'], body.credential_type)
+    await _provided_credential_owner(pool, row, flow.credential_type)
     try:
         result = await flow.complete(body.poll or {})
     except OAuthFlowError as e:
@@ -909,9 +917,9 @@ async def agent_oauth_complete(token: str, body: AgentOAuthCompleteBody) -> dict
 # WhatsApp QR scan sign-in over the public request link
 #
 # Unlike API-key / OAuth methods, a QR credential is minted server-side by the
-# shared utils.whatsapp_qr core (which owns reservation and unique-index binding
-# safety). The connection binds to the REQUESTER; the external scanner never
-# needs an account. These endpoints
+# shared utils.whatsapp_qr core (which owns the reservation + unique-index + charge
+# binding safety). The connection binds to the REQUESTER (they own it and pay the
+# recurring charge); the external scanner never needs an account. These endpoints
 # resolve the requester from the token and delegate to that one audited core.
 # ---------------------------------------------------------------------------
 
@@ -953,13 +961,13 @@ def _assert_qr_request(credential_type: str) -> None:
 
 
 async def _requester_effective_tier(pool, requester_id) -> str:
-    """Community credential requests are uncapped by billing tier."""
-    del pool, requester_id
-    return "free"
+    from billing.plan_limits import get_context_tier
+    return await get_context_tier(pool, str(requester_id))
 
 
 async def _rollback_qr_credential(pool, credential_id: str) -> None:
     """Undo a QR credential minted for a request that turned out already fulfilled."""
+    # Connection charges are removed by the credential FK cascade.
     await pool.execute("DELETE FROM credentials WHERE id = $1", credential_id)
 
 

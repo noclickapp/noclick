@@ -510,6 +510,7 @@ class WorkflowGetRequest(ClientEventBase):
     event_name: ClassVar[str] = "workflow:get"
 
     workflow_id: str = Field(..., description="UUID of the workflow to retrieve")
+    include_readiness: bool = Field(False, description="Load activation issues and real-input evidence for setup")
 
 
 class WorkflowNodeSetConfigRequest(ClientEventBase):
@@ -3022,6 +3023,7 @@ class CodexDeviceCodePollRequest(ClientEventBase):
 class ClaudeCodeAuthStartRequest(ClientEventBase):
     """Initiate the Claude Code OAuth PKCE flow"""
     event_name: ClassVar[str] = "claude-code:auth:start"
+    credential_id: Optional[str] = Field(None, description="Owned Claude credential to reconnect; omitted to add an account")
 
 class ClaudeCodeAuthExchangeRequest(ClientEventBase):
     """Exchange OAuth authorization code for tokens"""
@@ -3029,6 +3031,7 @@ class ClaudeCodeAuthExchangeRequest(ClientEventBase):
     auth_session_id: str = Field(..., description="Session ID from start response")
     authorization_code: str = Field(..., description="Authorization code pasted by user")
     credential_name: Optional[str] = Field(None, description="Optional name for the credential")
+    credential_id: Optional[str] = Field(None, description="Reconnect target from the start request")
 
 
 # WhatsApp QR Code Auth Events

@@ -276,6 +276,23 @@ async def test_manual_run_on_healthy_session_returns_no_event(monkeypatch):
         result = await node.execute({})
     assert result["status"] == "no_event"
     assert "No live event" in result["message"]
+    assert node.trigger_produced_no_event(result) is True
+
+
+def test_action_status_cannot_halt_the_workflow():
+    from nodes.whatsapp_node import WhatsAppSendTextConfig
+
+    node = _qr_node()
+    node._config = WhatsAppNodeConfig(
+        config=WhatsAppSendTextConfig(to="+12025550123", body="hello"),
+        credentials=WhatsAppQRCredential(connection_id="conn-1"),
+    )
+    assert node.trigger_produced_no_event({"status": "no_event"}) is False
+
+
+def test_real_delivery_is_not_a_no_event_result():
+    node = _qr_node()
+    assert node.trigger_produced_no_event({"payload": {"text": "Tank 30%"}}) is False
 
 
 @pytest.mark.asyncio

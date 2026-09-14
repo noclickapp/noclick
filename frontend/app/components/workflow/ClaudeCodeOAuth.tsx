@@ -1,7 +1,7 @@
 // Claude Code OAuth PKCE authentication component.
 // Handles the full OAuth flow: generate auth URL → user authenticates → paste code → exchange for tokens.
 
-import { useState, useCallback , useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { ExternalLink, Loader2, Check, AlertCircle, ClipboardPaste } from 'lucide-react';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { useAgentOAuthAnalytics } from '~/hooks/useAgentOAuthAnalytics';
@@ -20,6 +20,7 @@ interface OAuthState {
     authUrl?: string;
     authSessionId?: string;
     message?: string;
+    credentialId?: string;
 }
 
 export function ClaudeCodeOAuth({
@@ -30,29 +31,35 @@ export function ClaudeCodeOAuth({
 }: ClaudeCodeOAuthProps) {
     const [state, setState] = useState<OAuthState>({ status: 'idle' });
     const [pastedCode, setPastedCode] = useState('');
+    const [addingAccount, setAddingAccount] = useState(false);
     const analytics = useAgentOAuthAnalytics('claude_code');
     const send = useMemo(() => sendEvent ?? sendEventAsync, [sendEvent]);
+    const exchanging = useRef(false);
+    const credentialId = addingAccount ? undefined : credentialIds.agent_claude_code_oauth;
 
     const startFlow = useCallback(async () => {
         setState({ status: 'loading' });
+        setPastedCode('');
         analytics.started();
         try {
             const response = await send({
                 event_name: 'claude-code:auth:start',
                 request_id: `claude-code-auth-start-${Date.now()}`,
+                credential_id: credentialId,
             });
             if (response?.success) {
                 setState({
                     status: 'awaiting_code',
                     authUrl: response.auth_url,
                     authSessionId: response.auth_session_id,
+                    credentialId,
                 });
                 window.open(response.auth_url, '_blank');
             } else {
                 analytics.failed('start', response?.message);
                 setState({
                     status: 'error',
-                    message: response?.message || 'Failed to start OAuth flow',
+                    message: response?.message || response?.error || 'Failed to start OAuth flow',
                 });
             }
         } catch (err) {
@@ -62,10 +69,11 @@ export function ClaudeCodeOAuth({
                 message: err instanceof Error ? err.message : 'Failed to start OAuth flow',
             });
         }
-    }, [analytics, send]);
+    }, [analytics, send, credentialId]);
 
     const exchangeCode = useCallback(async () => {
-        if (!pastedCode.trim() || !state.authSessionId) return;
+        if (!pastedCode.trim() || !state.authSessionId || exchanging.current) return;
+        exchanging.current = true;
         setState(prev => ({ ...prev, status: 'exchanging' }));
         try {
             const response = await send({
@@ -73,11 +81,14 @@ export function ClaudeCodeOAuth({
                 request_id: `claude-code-auth-exchange-${Date.now()}`,
                 auth_session_id: state.authSessionId,
                 authorization_code: pastedCode.trim(),
+                credential_id: state.credentialId,
             });
             if (response?.success) {
                 analytics.completed();
                 setState({ status: 'completed', message: response.message });
-                await onCredentialCreated();
+                await onCredentialCreated().catch(() => {
+                    setState({ status: 'completed', message: 'Connected. Refresh the saved connections list to see the updated account.' });
+                });
                 if (response.credential_id) {
                     const newCredentialIds = { ...credentialIds };
                     Object.keys(newCredentialIds).forEach(key => {
@@ -88,26 +99,30 @@ export function ClaudeCodeOAuth({
                 }
                 setPastedCode('');
             } else {
-                analytics.failed('exchange', response?.message);
-                setState(prev => ({
-                    ...prev,
-                    status: 'awaiting_code',
-                    message: response?.message || 'Failed to exchange code',
-                }));
+                const message = response?.message || response?.error || 'Failed to exchange code';
+                analytics.failed('exchange', message);
+                setState({ status: 'error', message });
+                setPastedCode('');
             }
         } catch (err) {
             analytics.failed('exchange', err instanceof Error ? err.message : String(err));
-            setState(prev => ({
-                ...prev,
-                status: 'awaiting_code',
-                message: err instanceof Error ? err.message : 'Exchange failed',
-            }));
+            setState({ status: 'error', message: `${err instanceof Error ? err.message : 'Exchange failed'}. Check saved connections before starting a new sign-in.` });
+            setPastedCode('');
+            try {
+                await onCredentialCreated();
+            } catch {
+                setState({ status: 'error', message: 'The sign-in result could not be verified. Refresh the saved connections list before starting another sign-in.' });
+            }
+        } finally {
+            exchanging.current = false;
         }
-    }, [pastedCode, state.authSessionId, onCredentialCreated, credentialIds, onCredentialIdsChange, analytics, send]);
+    }, [pastedCode, state.authSessionId, state.credentialId, onCredentialCreated, credentialIds, onCredentialIdsChange, analytics, send]);
 
     const cancel = useCallback(() => {
+        if (exchanging.current) return;
         setState({ status: 'idle' });
         setPastedCode('');
+        setAddingAccount(false);
     }, []);
 
     if (state.status === 'idle') {
@@ -118,10 +133,10 @@ export function ClaudeCodeOAuth({
                     className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-foreground/80 hover:text-foreground bg-muted dark:bg-zinc-800/50 hover:bg-accent border border-border dark:border-zinc-700 hover:border-muted-foreground/40 dark:hover:border-zinc-600 rounded-lg transition-all"
                 >
                     <ExternalLink className="h-3.5 w-3.5" />
-                    Connect with Claude account
+                    {credentialId ? 'Reconnect selected Claude account' : 'Connect with Claude account'}
                 </button>
                 <p className="text-[11px] text-muted-foreground/70 dark:text-zinc-600 text-center">
-                    For Claude Pro, Max, Teams, or Enterprise subscribers
+                    {credentialId ? 'Your saved connection is selected. Reconnect only if it stopped working.' : 'For Claude Pro, Max, Teams, or Enterprise subscribers'}
                 </p>
             </div>
         );
@@ -192,6 +207,7 @@ export function ClaudeCodeOAuth({
                 )}
                 <button
                     onClick={cancel}
+                    disabled={state.status === 'exchanging'}
                     className="w-full px-3 py-2 text-xs text-muted-foreground hover:text-foreground/80 bg-card hover:bg-accent border border-border rounded-lg transition-all"
                 >
                     Cancel
@@ -208,7 +224,7 @@ export function ClaudeCodeOAuth({
                     <span>{state.message || 'Claude account connected'}</span>
                 </div>
                 <button
-                    onClick={() => setState({ status: 'idle' })}
+                    onClick={() => { setAddingAccount(true); setState({ status: 'idle' }); }}
                     className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground dark:text-zinc-500 hover:text-foreground/80 bg-muted/50 dark:bg-zinc-900/50 hover:bg-accent dark:hover:bg-zinc-900 border border-border hover:border-muted-foreground/40 dark:hover:border-zinc-700 rounded-lg transition-all"
                 >
                     <ExternalLink className="h-3.5 w-3.5" />

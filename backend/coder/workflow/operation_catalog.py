@@ -915,6 +915,25 @@ def trigger_status_line(
     return None
 
 
+def user_input_block_reason(node_type, operation, config, field, schema=None) -> Optional[str]:
+    """Reject questions for derived fields or fields unavailable to this account."""
+    if schema is None:
+        schema = (get_operation_schema(node_type, operation or 'default') or {}).get('properties', {}).get(field, {})
+    if schema.get('readOnly'):
+        return f'{field} is provided automatically; load its value instead of asking the user.'
+    supported = schema.get('x-supported-credential-types')
+    if supported:
+        from utils.credentials import extract_credential_ids
+        attached = set(extract_credential_ids(config or {}))
+        if attached and not attached.intersection(supported):
+            return f'{field} does not apply to the attached credential type ({", ".join(sorted(attached))}).'
+    return None
+
+
+def pending_user_fields(node_type, operation, config, fields) -> List[str]:
+    return [f for f in fields or [] if not user_input_block_reason(node_type, operation, config, f)]
+
+
 def missing_required_fields(
     node_type: str,
     operation: Optional[str],

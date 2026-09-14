@@ -313,6 +313,9 @@ class WebhookManager:
         trigger can't present as live just because its config panel was opened.
         """
         from utils.webhook_delivery import get_webhook_url, is_relay_connected, register_webhook, relay_in_use
+        from utils.workflow_readiness import require_activation_ready
+
+        await require_activation_ready(pool, workflow_id, node_id)
 
         async with pool.acquire() as conn:
             row = await conn.fetchrow(
@@ -403,7 +406,20 @@ class WebhookManager:
         return _webhook_field_for_cached(node_type, operation)
 
     @staticmethod
-    async def provision_node_webhook(
+    async def provision_node_webhook(pool, *, user_id, workflow_id, node_id, node_type, operation, config, workflow_graph=None):
+        from utils.workflow_readiness import activation_graph_scope, require_activation_ready
+
+        if not WebhookManager.node_webhook_field_for(node_type, operation):
+            return None
+        with activation_graph_scope(workflow_id, workflow_graph):
+            await require_activation_ready(pool, workflow_id, node_id)
+            return await WebhookManager._provision_node_webhook(
+                pool, user_id=user_id, workflow_id=workflow_id, node_id=node_id,
+                node_type=node_type, operation=operation, config=config,
+            )
+
+    @staticmethod
+    async def _provision_node_webhook(
         pool,
         *,
         user_id: str,
@@ -1492,6 +1508,8 @@ class WebhookManager:
             return {"state": "unregistered", "error": "credential unavailable"}
 
         try:
+            from utils.workflow_readiness import require_activation_ready
+            await require_activation_ready(pool, wf_uuid, node_id)
             mirrors = await node_class.register_and_describe(
                 pool,
                 user_id=owner_id,

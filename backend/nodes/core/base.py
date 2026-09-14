@@ -674,18 +674,20 @@ class WorkflowNode(ABC):
         return payload
 
     def trigger_produced_no_event(self, output: Dict[str, Any]) -> bool:
-        """Whether this trigger, having just polled, found no new data — in
-        which case the executor skips all downstream nodes instead of running
-        them on empty input. Applies to EVERY run source (scheduled ticks,
-        manual, MCP): an empty poll envelope is not an event, and testing
-        downstream without new data is what mockedOutput is for.
+        """Halt a trigger's branch when it ran without an event.
 
-        Default ``False``: every other node always flows downstream. Scheduled
-        poll triggers override this — the ``ScheduledPollTriggerMixin`` reports it
-        from its dedup set, and nodes that dedup differently (e.g. Gmail, via its
-        arrival-time watermark) inspect their own output shape.
+        Push triggers use ``no_event_output``; poll triggers override this
+        with their dedup result. An action's similarly named status is data,
+        never an instruction to stop downstream execution.
         """
-        return False
+        if output.get("status") != "no_event":
+            return False
+        from nodes.agent.node_op_tools import is_trigger_operation
+
+        operation = getattr(getattr(self.config, "config", None), "operation", None)
+        return self.node_type.startswith("trigger-") or is_trigger_operation(
+            self.node_type, operation,
+        )
 
     def trigger_emitted_event(self, output: Dict[str, Any]) -> bool:
         """The positive counterpart: this trigger just polled AND emitted fresh

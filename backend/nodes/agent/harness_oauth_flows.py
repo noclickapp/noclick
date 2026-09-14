@@ -85,27 +85,27 @@ def _get_redis() -> Optional[redis.Redis]:
     return _redis_client
 
 
-async def _pkce_put(session_id: str, verifier: str) -> None:
+async def _pkce_put(session_id: str, verifier: str, context: Optional[dict] = None) -> None:
+    payload = {"code_verifier": verifier, "context": context}
     r = _get_redis()
     if r is not None:
         await r.set(
             f"claude_code_pkce:{session_id}",
-            json.dumps({"code_verifier": verifier}),
+            json.dumps(payload),
             ex=_PKCE_TTL_S,
         )
         return
-    _local_pkce[session_id] = (verifier, time.time() + _PKCE_TTL_S)
+    _local_pkce[session_id] = (payload, time.time() + _PKCE_TTL_S)
 
 
-async def _pkce_take(session_id: str) -> Optional[str]:
+async def _pkce_take(session_id: str) -> Optional[dict]:
     """Single-use: a verifier that has been read is gone, whichever store held it."""
     r = _get_redis()
     if r is not None:
-        stored = await r.get(f"claude_code_pkce:{session_id}")
+        stored = await r.getdel(f"claude_code_pkce:{session_id}")
         if not stored:
             return None
-        await r.delete(f"claude_code_pkce:{session_id}")
-        return json.loads(stored)["code_verifier"]
+        return json.loads(stored)
     now = time.time()
     for key, (_, expiry) in list(_local_pkce.items()):
         if expiry < now:
@@ -225,13 +225,13 @@ async def codex_complete(poll: Dict[str, Any]) -> Dict[str, Any]:
 # Claude Code (Anthropic) — PKCE paste
 # ==============================================================================
 
-async def claude_code_start() -> Dict[str, Any]:
+async def claude_code_start(*, context: Optional[dict] = None) -> Dict[str, Any]:
     code_verifier = urlsafe_b64encode(secrets.token_bytes(32)).rstrip(b"=").decode("ascii")[:43]
     digest = hashlib.sha256(code_verifier.encode("ascii")).digest()
     code_challenge = urlsafe_b64encode(digest).rstrip(b"=").decode("ascii")
     auth_session_id = str(uuid.uuid4())
 
-    await _pkce_put(auth_session_id, code_verifier)
+    await _pkce_put(auth_session_id, code_verifier, context)
 
     auth_url = (
         f"{CLAUDE_CODE_AUTH_URL}"
@@ -250,7 +250,7 @@ async def claude_code_start() -> Dict[str, Any]:
     }
 
 
-async def claude_code_complete(poll: Dict[str, Any]) -> Dict[str, Any]:
+async def claude_code_complete(poll: Dict[str, Any], *, context: Optional[dict] = None) -> Dict[str, Any]:
     auth_session_id = poll.get("auth_session_id", "")
     raw_code = poll.get("code", "")
     # The pasted code is "{code}#{state}".
@@ -258,9 +258,12 @@ async def claude_code_complete(poll: Dict[str, Any]) -> Dict[str, Any]:
     authorization_code = parts[0]
     code_state = parts[1] if len(parts) > 1 else None
 
-    code_verifier = await _pkce_take(auth_session_id)
-    if not code_verifier:
+    attempt = await _pkce_take(auth_session_id)
+    if not attempt:
         raise OAuthFlowError("Auth session expired or invalid. Please restart the sign-in.")
+    if attempt.get("context") != context:
+        raise OAuthFlowError("This sign-in belongs to a different connection. Please restart the sign-in.")
+    code_verifier = attempt["code_verifier"]
 
     token_body: Dict[str, Any] = {
         "grant_type": "authorization_code",
