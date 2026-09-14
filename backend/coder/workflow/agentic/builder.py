@@ -402,6 +402,7 @@ class AgenticBuilder:
         if attempts >= self._CONFIG_NUDGE_LIMIT:
             return None
         from ..operation_catalog import validate_node_config
+        from ..workflow_ops import agent_message_error, agent_trigger_fed
 
         problems: List[str] = []
         for node in self.graph_state.nodes.values():
@@ -412,6 +413,10 @@ class AgenticBuilder:
             if isinstance(allowlist, list) and allowlist:
                 continue
             error = validate_node_config(node.type, node.operation, config)
+            if error is None and node.type == "agent":
+                error = agent_message_error(config, trigger_fed=agent_trigger_fed(
+                    node.id, self.graph_state.nodes.values(), self.graph_state.edges.values(),
+                ))
             if error:
                 problems.append(
                     f"- {node.id} ({node.type}:{node.operation}): {error}"

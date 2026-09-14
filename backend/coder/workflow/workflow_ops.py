@@ -445,6 +445,47 @@ def node_has_credential(config: dict) -> bool:
     )
 
 
+AGENT_MESSAGE_REQUIRED_ERROR = (
+    "Message is empty. Write the agent's standing instructions in Message, or wire "
+    "a trigger into the agent so each delivered event becomes the turn."
+)
+
+
+def agent_trigger_fed(node_id: str, nodes: Sequence[Any], edges: Sequence[Any]) -> bool:
+    """Whether a trigger source feeds ``node_id`` through an input handle (not
+    the bottom tools handle) — the wiring under which a delivered event is the
+    agent's turn. Takes either stored shape (dict nodes/edges) or the builder's
+    GraphState objects; mirrors the FE's ``getAgentTriggerSources``."""
+    def _get(obj: Any, *keys: str) -> Any:
+        for key in keys:
+            value = obj.get(key) if isinstance(obj, dict) else getattr(obj, key, None)
+            if value is not None:
+                return value
+        return None
+
+    by_id = {_get(n, "id"): n for n in nodes}
+    for e in edges:
+        if _get(e, "target", "target_id") != node_id or _get(e, "targetHandle", "target_handle") == "bottom":
+            continue
+        src = by_id.get(_get(e, "source", "source_id"))
+        if src is None:
+            continue
+        op = _get(src, "operation")
+        if op is None and isinstance(src, dict):
+            op = (src.get("config") or {}).get("operation") or (src.get("data") or {}).get("operation")
+        if is_trigger_source(str(_get(src, "type") or ""), op):
+            return True
+    return False
+
+
+def agent_message_error(config: Optional[Mapping[str, Any]], *, trigger_fed: bool) -> Optional[str]:
+    """An agent's Message is required unless a trigger feeds it — the same rule
+    the canvas (``validateNode``) and the run engine apply."""
+    if trigger_fed or str((config or {}).get("message") or "").strip():
+        return None
+    return AGENT_MESSAGE_REQUIRED_ERROR
+
+
 def is_trigger_source(node_type: str, operation: Optional[str]) -> bool:
     """Whether a node acts as a trigger source: a dedicated ``trigger-*`` node,
     the unified form node (public form URL whose submissions start runs), or an

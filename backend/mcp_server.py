@@ -45,6 +45,7 @@ from coder.workflow.workflow_ops import (
     parse_add_test_run,
     parse_define_variable,
     upsert_variable_definitions,
+    agent_message_error,
     deep_merge_config,
     drop_stale_agent_discriminator,
     is_trigger_source,
@@ -3321,6 +3322,9 @@ class NoClickMCPServer(DatabasePoolMixin):
 
         # C1: Pydantic + JSX + placeholder lint, and missing required fields.
         error = validate_node_config(node_type, op, config)
+        if error is None and node_type == "agent":
+            # Message is required unless a wired trigger's event is the turn.
+            error = agent_message_error(config, trigger_fed=bool(upstream_trigger_ids))
         missing = missing_required_fields(node_type, operation, config)
 
         verdict: Dict[str, Any] = {"config_valid": error is None}
@@ -4277,7 +4281,12 @@ class NoClickMCPServer(DatabasePoolMixin):
                 )
                 entry: Dict[str, Any] = {"node_id": nid, "type": node_type, "operation": op}
                 # Reuse the write-path validation pass (on a shallow copy — read-only).
-                verdict = self._postprocess_config(node_type, op, dict(config), is_provider=is_provider)
+                verdict = self._postprocess_config(
+                    node_type, op, dict(config), is_provider=is_provider,
+                    upstream_trigger_ids=(
+                        self._upstream_trigger_ids(nid, nodes, edges) if node_type == "agent" else None
+                    ),
+                )
                 entry.update(verdict or {"config_valid": True})
                 ref_warnings = self._validate_references(config, nodes, edges, nid)
                 if ref_warnings:

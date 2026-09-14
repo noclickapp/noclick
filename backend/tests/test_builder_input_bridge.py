@@ -684,8 +684,9 @@ async def test_wake_turn_fires_empty_message_run_as_owner(monkeypatch):
     assert req.trigger_source == "builder_event"
     assert req.start_node_id == "agent_1"
     override = req.config_overrides["agent_1"]
-    # Sentinel, not "" — every agent config model requires min_length=1, so an
-    # empty message crashed validation before the relay could compose events in.
+    # The sentinel is what AgentNode keys a wake turn on (the relay note IS the
+    # turn, never persisted as a user bubble); it also predates message
+    # defaulting to empty, when "" crashed validation at construction.
     from utils.builder_bridge import WAKE_TURN_MESSAGE
     assert override["message"] == WAKE_TURN_MESSAGE
     # ck parsing keeps colons inside the key intact (tg:99).
@@ -730,14 +731,14 @@ async def test_wake_turn_skips_when_nothing_undelivered_or_unkeyable(monkeypatch
 # ── Wake-turn message survives agent config validation ──────────────────────
 
 def test_wake_turn_sentinel_passes_config_validation():
-    """The 2026-07-31 crash class: every agent config model requires
-    message min_length=1, and validation runs at node construction — BEFORE
-    the pre-dispatch relay could replace an empty wake message. The sentinel
-    must parse for the harness that crashed (claude-code) and the SDK default;
-    the empty string must still be rejected (that contract is why the sentinel
-    exists)."""
+    """The 2026-07-31 crash class: the wake message used to fail the config
+    model's length rule at node construction — BEFORE the pre-dispatch relay
+    could replace it. The sentinel must parse for the harness that crashed
+    (claude-code) and the SDK default. (Message now defaults to empty and the
+    "nothing to send" rule runs on the composed turn — see
+    test_agent_message_contract — so the sentinel's remaining job is marking
+    the turn as a wake, not surviving validation.)"""
     from nodes.agent_node import AgentNode
-    from nodes.core.base import ConfigValidationError
     from utils.builder_bridge import WAKE_TURN_MESSAGE
 
     for model in ("claude-code", "gpt-5.2"):
@@ -745,9 +746,6 @@ def test_wake_turn_sentinel_passes_config_validation():
             {"config": {"model": model, "message": WAKE_TURN_MESSAGE}}
         )
         assert parsed.config.message == WAKE_TURN_MESSAGE
-
-        with pytest.raises(ConfigValidationError):
-            AgentNode.parse_config({"config": {"model": model, "message": ""}})
 
 
 def test_skipped_wake_output_does_not_propagate_downstream():

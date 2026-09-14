@@ -22,8 +22,14 @@ class BaseAgentFields(BaseModel):
         description="Instructions defining how the AI agent should behave",
         json_schema_extra={"ui:widget": "textarea"}
     )
+    # Empty by default, NOT min_length=1: a trigger-wired agent's turn is the
+    # delivered event, composed in AgentNode.execute AFTER this model parses,
+    # so a length rule here made every such agent with a blank Message die on
+    # its first delivery (two real inboxes dropped mail that way, 2026-08-03).
+    # "Message or a delivered event" is enforced where both are known —
+    # workflow_ops.agent_message_error (build time) and execute (run time).
     message: str = Field(
-        min_length=1,
+        default="",
         title="Message",
         description="The task or question to send to the agent",
         json_schema_extra={

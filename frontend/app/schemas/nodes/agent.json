@@ -42,8 +42,8 @@
           "ui:widget": "textarea"
         },
         "message": {
+          "default": "",
           "description": "The task or question to send to the agent",
-          "minLength": 1,
           "title": "Message",
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
@@ -164,9 +164,6 @@
           }
         }
       },
-      "required": [
-        "message"
-      ],
       "title": "ClaudeCodeConfig",
       "type": "object",
       "x-flatten-union": true
@@ -182,8 +179,8 @@
           "ui:widget": "textarea"
         },
         "message": {
+          "default": "",
           "description": "The task or question to send to the agent",
-          "minLength": 1,
           "title": "Message",
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
@@ -304,9 +301,6 @@
           }
         }
       },
-      "required": [
-        "message"
-      ],
       "title": "CodexConfig",
       "type": "object",
       "x-flatten-union": true
@@ -322,8 +316,8 @@
           "ui:widget": "textarea"
         },
         "message": {
+          "default": "",
           "description": "The task or question to send to the agent",
-          "minLength": 1,
           "title": "Message",
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
@@ -478,9 +472,6 @@
           "x-enum-searchable": true
         }
       },
-      "required": [
-        "message"
-      ],
       "title": "HermesAgentConfig",
       "type": "object",
       "x-flatten-union": true
@@ -496,8 +487,8 @@
           "ui:widget": "textarea"
         },
         "message": {
+          "default": "",
           "description": "The task or question to send to the agent",
-          "minLength": 1,
           "title": "Message",
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
@@ -961,9 +952,6 @@
           "x-enum-searchable": true
         }
       },
-      "required": [
-        "message"
-      ],
       "title": "ImageConfig",
       "type": "object",
       "x-flatten-union": true
@@ -979,8 +967,8 @@
           "ui:widget": "textarea"
         },
         "message": {
+          "default": "",
           "description": "The task or question to send to the agent",
-          "minLength": 1,
           "title": "Message",
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
@@ -1397,9 +1385,6 @@
           "x-enum-searchable": true
         }
       },
-      "required": [
-        "message"
-      ],
       "title": "KlingConfig",
       "type": "object",
       "x-flatten-union": true
@@ -1415,8 +1400,8 @@
           "ui:widget": "textarea"
         },
         "message": {
+          "default": "",
           "description": "The task or question to send to the agent",
-          "minLength": 1,
           "title": "Message",
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
@@ -1530,9 +1515,6 @@
           "x-queryable-enum": "models"
         }
       },
-      "required": [
-        "message"
-      ],
       "title": "LLMAgentConfig",
       "type": "object",
       "x-flatten-union": true
@@ -1548,8 +1530,8 @@
           "ui:widget": "textarea"
         },
         "message": {
+          "default": "",
           "description": "The task or question to send to the agent",
-          "minLength": 1,
           "title": "Message",
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
@@ -1684,9 +1666,6 @@
           }
         }
       },
-      "required": [
-        "message"
-      ],
       "title": "OpenClawConfig",
       "type": "object",
       "x-flatten-union": true
@@ -1702,8 +1681,8 @@
           "ui:widget": "textarea"
         },
         "message": {
+          "default": "",
           "description": "The task or question to send to the agent",
-          "minLength": 1,
           "title": "Message",
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
@@ -1824,9 +1803,6 @@
           }
         }
       },
-      "required": [
-        "message"
-      ],
       "title": "OpenCodeConfig",
       "type": "object",
       "x-flatten-union": true
@@ -1842,8 +1818,8 @@
           "ui:widget": "textarea"
         },
         "message": {
+          "default": "",
           "description": "The task or question to send to the agent",
-          "minLength": 1,
           "title": "Message",
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
@@ -2034,9 +2010,6 @@
           "ui:widget": "veo_image_upload"
         }
       },
-      "required": [
-        "message"
-      ],
       "title": "VideoConfig",
       "type": "object",
       "x-flatten-union": true

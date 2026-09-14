@@ -16,14 +16,18 @@ export interface NodeValidationContext {
     /** Ids of nodes currently wired into an agent's bottom handle as tool
      *  providers (qualifying types only). */
     wiredProviderIds: ReadonlySet<string>;
+    /** Ids of agents a trigger source feeds through an input handle — their
+     *  turn is the delivered event, so an empty Message is not a gap. */
+    triggerFedAgentIds: ReadonlySet<string>;
 }
 
 /**
- * Stable string key of the current provider wiring — sorted wired-provider
- * ids joined with '|'. Cheap to recompute on every edges-identity change
- * (xyflow rewrites the edges array on selection), and identical content
- * yields an identical string, letting callers memo the context object
- * content-stably so selection churn doesn't retrigger validation passes.
+ * Stable string key of the current edge-dependent wiring: sorted wired-provider
+ * ids joined with '|', then '#', then the sorted trigger-fed agent ids. Cheap
+ * to recompute on every edges-identity change (xyflow rewrites the edges array
+ * on selection), and identical content yields an identical string, letting
+ * callers memo the context object content-stably so selection churn doesn't
+ * retrigger validation passes.
  */
 export function computeWiredProviderIdsKey(nodes: Node[], edges: Edge[]): string {
     // Consumers: agents AND hosting-mode MCP nodes — providers wired into
@@ -33,17 +37,31 @@ export function computeWiredProviderIdsKey(nodes: Node[], edges: Edge[]): string
     );
     const byId = new Map(nodes.map(n => [n.id, n]));
     const wired = new Set<string>();
+    const triggerFed = new Set<string>();
     for (const e of edges) {
-        if (e.targetHandle !== 'bottom' || !consumerIds.has(e.target)) continue;
         const source = byId.get(e.source);
-        if (source && isAgentToolProviderType(source.type)) wired.add(source.id);
+        if (!source) continue;
+        if (e.targetHandle === 'bottom') {
+            if (consumerIds.has(e.target) && isAgentToolProviderType(source.type)) wired.add(source.id);
+            continue;
+        }
+        // Same predicate as the agent's trigger chips (getAgentTriggerSources).
+        const target = byId.get(e.target);
+        if (target?.type !== 'agent') continue;
+        const data = (source.data || {}) as Record<string, any>;
+        const operation = (data.operation ?? data.config?.operation) as string | undefined;
+        if (isTriggerSource(source.type, operation)) triggerFed.add(target.id);
     }
-    return [...wired].sort().join('|');
+    return `${[...wired].sort().join('|')}#${[...triggerFed].sort().join('|')}`;
 }
 
 /** Build a validation context from a wiring key (see computeWiredProviderIdsKey). */
 export function contextFromWiringKey(key: string): NodeValidationContext {
-    return { wiredProviderIds: new Set(key ? key.split('|') : []) };
+    const [wired = '', fed = ''] = key.split('#');
+    return {
+        wiredProviderIds: new Set(wired ? wired.split('|') : []),
+        triggerFedAgentIds: new Set(fed ? fed.split('|') : []),
+    };
 }
 
 /** Convenience for non-React callers: key + context in one step. */
@@ -318,6 +336,22 @@ export function validateNode(node: Node, context?: NodeValidationContext): NodeV
             type: 'missing_required_field',
             message: `${label} is required`,
             fieldKey: field.key,
+        });
+    }
+
+    // An agent's Message is required unless a trigger feeds the agent — the
+    // delivered event is then the turn. The schema can't say this (the field
+    // defaults to empty so a trigger-wired agent parses), so the graph-aware
+    // rule lives here, mirroring the backend's workflow_ops.agent_message_error.
+    if (
+        node.type === 'agent' &&
+        isFieldEmpty(config.message) &&
+        !context?.triggerFedAgentIds.has(node.id)
+    ) {
+        issues.push({
+            type: 'missing_required_field',
+            message: 'Message is required',
+            fieldKey: 'message',
         });
     }
 

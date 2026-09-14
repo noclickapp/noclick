@@ -1271,6 +1271,9 @@ class AgentNode(WorkflowNode):
             return None
 
         _match_type, match_id = match
+        # Which sign-in funds this run — the warm-sandbox fingerprint keys on it
+        # for harnesses whose rotating tokens a running sandbox never needs.
+        self._model_credential_id = match_id
         if handler_bundle is not None and self.node_data.get("credential_id") == match_id:
             bundle: Dict[str, str] = handler_bundle
         else:
@@ -1814,6 +1817,24 @@ class AgentNode(WorkflowNode):
                 )
                 base = (config.message or "").strip()
                 config.message = f"{base}\n\n{presence_note}" if base else presence_note
+
+        # The turn is composed: standing Message plus whatever this run
+        # delivered (trigger event, relay note, carried context). Nothing at
+        # all is a config error, judged HERE rather than by a length rule on
+        # the field, which fired before the event could be composed.
+        if not (config.message or "").strip():
+            from coder.workflow.workflow_ops import AGENT_MESSAGE_REQUIRED_ERROR, agent_trigger_fed
+            from nodes.core.base import ConfigValidationError
+
+            wired = agent_trigger_fed(
+                self.node_id, getattr(self, "_workflow_nodes", None) or [],
+                getattr(self, "_workflow_edges", None) or [],
+            )
+            raise ConfigValidationError(
+                "No trigger event reached this run and the agent has no standing Message "
+                "(a manual run delivers no event). Send a real event, or write a Message to "
+                "run it by hand." if wired else AGENT_MESSAGE_REQUIRED_ERROR
+            )
 
         # Track final response for return value (mutable refs so handlers can access)
         final_response_ref = [""]
