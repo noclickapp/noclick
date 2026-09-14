@@ -251,11 +251,23 @@ class _HarnessOAuthSpec:
     access_key: str
     refresh_key: str
     expires_at_key: str
+    # Token fields a refresh rotates alongside access/refresh/expires.
+    companion_keys: Tuple[str, ...] = ()
 
     def build_refresh(self, env: Dict[str, str]):
         if self.provider == "claude_code":
             return lambda token: _refresh_claude_code(token)
         return _make_codex_refresh(env)
+
+    def stale(self, row: Dict[str, Any]) -> bool:
+        """Refresh even though the access token is fine: a legacy blob with no
+        expiry (the persist upgrades it in place, once), or a codex sign-in
+        whose id token is missing/expired — codex picks the ChatGPT backend
+        from that token's claims, so a stale one strands the CLI in API-key
+        mode; the refresh grant requests ``openid`` and re-mints it."""
+        if not row.get(self.expires_at_key):
+            return True
+        return self.provider == "codex_chatgpt" and codex_id_token_stale(row.get("CODEX_ID_TOKEN"))
 
 
 HARNESS_OAUTH_SPECS = (
@@ -270,6 +282,7 @@ HARNESS_OAUTH_SPECS = (
         access_key="CODEX_ACCESS_TOKEN",
         refresh_key="CODEX_REFRESH_TOKEN",
         expires_at_key="CODEX_EXPIRES_AT",
+        companion_keys=("CODEX_ID_TOKEN",),
     ),
 )
 
@@ -285,12 +298,12 @@ async def ensure_fresh_harness_tokens(
     """Refresh any harness subscription-OAuth tokens in *env* that are expiring.
 
     Mutates and returns *env*. No-op for API-key credentials (no refresh token
-    present). A blob minted before ``*_EXPIRES_AT`` existed is refreshed
-    immediately (``force_refresh``) — the persist upgrades it in place, so the
-    force fires once per legacy credential, not per run. Raises
-    ``OAuthRefreshError`` (a ``ValueError``) when the provider rejects the
-    refresh — fail loud with "reconnect" guidance rather than dispatching a
-    sandbox that 401s mid-turn.
+    present). A blob minted before ``*_EXPIRES_AT`` existed, or a codex sign-in
+    whose 1h id token has lapsed, is refreshed via the row-level ``stale``
+    predicate — re-judged against the in-lock re-read, so concurrent runs share
+    one refresh instead of each minting a token. Raises ``OAuthRefreshError``
+    (a ``ValueError``) when the provider rejects the refresh — fail loud with
+    "reconnect" guidance rather than dispatching a sandbox that 401s mid-turn.
     """
     if not env:
         return env
@@ -314,16 +327,10 @@ async def ensure_fresh_harness_tokens(
             is_expired=lambda expires_at: is_token_expired(
                 expires_at, buffer_minutes=_EXPIRY_BUFFER_MINUTES
             ),
-            # A codex sign-in whose id token is missing or expired strands the
-            # CLI in API-key mode (codex picks the ChatGPT backend from the id
-            # token's claims); the refresh grant requests ``openid`` and re-mints.
-            force_refresh=(
-                not env.get(spec.expires_at_key)
-                or (
-                    spec.provider == "codex_chatgpt"
-                    and codex_id_token_stale(env.get("CODEX_ID_TOKEN"))
-                )
-            ),
+            stale=spec.stale,
+            # A refresh rotates the id token too; adopting a sibling's row must
+            # carry it, or the sandbox boots in API-key mode on a stale one.
+            additional_token_fields=spec.companion_keys,
             provider=spec.provider,
             caller_path=caller_path,
             store=store,

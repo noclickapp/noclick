@@ -166,7 +166,9 @@ def resolve_zen_gateway_route(model: str) -> Optional[ZenGatewayRoute]:
 # if its provider's OAuth token is present.
 _PROVIDER_OAUTH_TOKEN: Dict[str, Tuple[str, str]] = {
     "anthropic": ("CLAUDE_CODE_ACCESS_TOKEN", "a Claude subscription"),
+    "claude-code": ("CLAUDE_CODE_ACCESS_TOKEN", "a Claude subscription"),
     "openai": ("CODEX_ACCESS_TOKEN", "a ChatGPT subscription"),
+    "codex": ("CODEX_ACCESS_TOKEN", "a ChatGPT subscription"),
 }
 
 
@@ -458,20 +460,29 @@ def filter_provider_credential_env(
     return filtered
 
 
+def provider_has_credentials(model: str, env_overrides: Optional[Dict[str, str]]) -> bool:
+    """Whether ``env_overrides`` authenticates ``model``'s provider — its required
+    API key OR the provider's subscription-OAuth access token."""
+    required_vars, provider_name = get_provider_credentials(model)
+    env = env_overrides or {}
+    if any(env.get(v) for v in required_vars):
+        return True
+    oauth = _PROVIDER_OAUTH_TOKEN.get(provider_name)
+    return bool(oauth and env.get(oauth[0]))
+
+
 def validate_provider_credentials(model: str, env_overrides: Optional[Dict[str, str]]) -> None:
     """Raise ``ValueError`` when ``model``'s provider has neither its required API
     key nor a matching subscription-OAuth token in ``env_overrides``.
 
     The CLI path's pre-flight gate: a missing credential fails fast here with a
-    clear message instead of starting a process that errors at turn time. Only
-    reliable for provider-prefixed models (openrouter/anthropic/openai/xai/…)."""
+    clear message instead of starting a process that errors at turn time. Takes
+    a provider-prefixed model (openrouter/…, anthropic/…) or a fixed-provider
+    harness id (``codex``, ``claude-code``)."""
+    if provider_has_credentials(model, env_overrides):
+        return
     required_vars, provider_name = get_provider_credentials(model)
-    env = env_overrides or {}
-    if any(env.get(v) for v in required_vars):
-        return
     oauth = _PROVIDER_OAUTH_TOKEN.get(provider_name)
-    if oauth and env.get(oauth[0]):
-        return
     # Name the one sign-in that would work here, not the whole list: the reader
     # has already chosen a provider.
     suffix = f", or sign in with {oauth[1]}" if oauth else ""

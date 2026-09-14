@@ -28,6 +28,7 @@ from .providers import (
     filter_provider_credential_env,
     get_provider_credentials,
     match_model_credential,
+    provider_has_credentials,
     model_credential_accepted_types,
     resolve_agent_cred_model,
 )
@@ -162,6 +163,7 @@ __all__ = [
     'filter_provider_credential_env',
     'get_provider_credentials',
     'match_model_credential',
+    'provider_has_credentials',
     'model_credential_accepted_types',
     'resolve_agent_cred_model',
     'infer_model_type',

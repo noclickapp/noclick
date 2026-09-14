@@ -362,6 +362,7 @@ async def ensure_fresh_oauth_token(
     expires_at_key: str = "expires_at",
     additional_token_fields: Tuple[str, ...] = (),
     force_refresh: bool = False,
+    stale: Optional[Callable[[Dict[str, Any]], bool]] = None,
     provider: str = "unknown",
     caller_path: str = "unknown",
     store=None,
@@ -386,6 +387,13 @@ async def ensure_fresh_oauth_token(
             in-lock concurrent-refresh no-op. Inside a
             ``force_refresh_once_scope`` only the first force per token chain
             is honored.
+        stale: row-level staleness predicate — refresh when it holds for the
+            credential even though ``expires_at`` is fine (a companion token
+            the access token's expiry says nothing about, e.g. codex's 1h id
+            token). Unlike ``force_refresh`` it is RE-EVALUATED against the
+            in-lock re-read: a concurrent execution that already fixed the row
+            is adopted instead of refreshed again, so concurrent runs share one
+            refresh instead of each minting a token.
         provider: tag emitted on the audit row / span (slack, google, ...).
         caller_path: where the refresh was initiated from (execute, freshen,
             dropdown, trigger_register, trigger_test, mcp, hydrate, propagate).
@@ -423,7 +431,7 @@ async def ensure_fresh_oauth_token(
         caller_path=caller_path,
         credential_id=credential_id,
         user_id=user_id,
-        force_refresh=force_refresh,
+        force_refresh=force_refresh or bool(stale is not None and stale(credential)),
         started_at=started_at,
     )
     builder.set_before_token(credential.get(refresh_token_key))
@@ -448,6 +456,7 @@ async def ensure_fresh_oauth_token(
                 expires_at_key=expires_at_key,
                 additional_token_fields=additional_token_fields,
                 force_refresh=force_refresh,
+                stale=stale,
                 store=store,
             )
         except Exception as exc:
@@ -598,6 +607,7 @@ async def _run_refresh(
     additional_token_fields: Tuple[str, ...],
     force_refresh: bool,
     store,
+    stale: Optional[Callable[[Dict[str, Any]], bool]] = None,
 ) -> str:
     """Core refresh logic with the builder threaded through every branch.
 
@@ -607,7 +617,8 @@ async def _run_refresh(
     """
     expires_at = credential.get(expires_at_key)
     access_token = credential.get(access_token_key)
-    if not force_refresh and (not expires_at or not is_expired(expires_at)):
+    stale_now = stale is not None and stale(credential)
+    if not force_refresh and not stale_now and (not expires_at or not is_expired(expires_at)):
         # Token still valid — no refresh happens, no audit row emitted.
         builder.set_outcome(PhaseOutcome.IN_LOCK_NOOP_FRESH)
         return access_token
@@ -652,8 +663,11 @@ async def _run_refresh(
             builder.in_lock_reread_updated_at = _parse_iso8601(fresh.get("updated_at"))
             if not builder.loaded_updated_at:
                 builder.loaded_updated_at = builder.in_lock_reread_updated_at
+            # The row of record may already carry what we were about to mint.
+            stale_now = stale is not None and stale(fresh)
         if (
             not force_refresh
+            and not stale_now
             and fresh
             and fresh.get(expires_at_key)
             and not is_expired(fresh[expires_at_key])

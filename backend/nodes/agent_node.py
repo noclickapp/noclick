@@ -157,6 +157,7 @@ from nodes.agent.config import (
     filter_provider_credential_env,
     get_provider_credentials,
     match_model_credential,
+    provider_has_credentials,
     resolve_agent_cred_model,
 )
 from nodes.agent.harness_registry import get_cli_turn_runner
@@ -1311,10 +1312,11 @@ class AgentNode(WorkflowNode):
             model_type=model_type,
         )
 
-        missing = [v for v in required_vars if not bundle or v not in bundle]
-        if missing:
+        # A subscription sign-in satisfies the provider without its API key —
+        # judged by the same predicate as the CLI pre-flight gate.
+        if not provider_has_credentials(cred_model, bundle):
             logger.warning(
-                f"[AgentNode] Missing credentials for {provider_name}: {missing}"
+                f"[AgentNode] Missing credentials for {provider_name}: {list(required_vars)}"
             )
         return bundle
 

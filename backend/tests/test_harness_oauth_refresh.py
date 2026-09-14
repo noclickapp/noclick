@@ -369,3 +369,37 @@ async def test_a_codex_blob_with_an_expired_id_token_forces_refresh():
         )
     assert out["CODEX_ID_TOKEN"] == "minted-id-token"
     assert persist_calls[0]["new_data"]["credentials"]["CODEX_ID_TOKEN"] == "minted-id-token"
+
+
+async def test_a_sibling_run_that_already_re_minted_the_id_token_is_adopted_not_repeated():
+    """Concurrent deliveries each loaded the same lapsed id token (the ChatGPT
+    id token lives 1h, the access token 10d). The staleness verdict must be
+    re-judged against the in-lock row of record: the first run's refresh has
+    landed there, so the others adopt its tokens — id token included — instead
+    of minting their own. Three tokens for one credential churned the warm
+    sandbox's env fingerprint and got a booting sandbox terminated (2026-09-13)."""
+    import base64 as _b64, json as _json, time as _time
+    b64 = lambda d: _b64.urlsafe_b64encode(_json.dumps(d).encode()).decode().rstrip("=")
+    jwt = lambda exp: b64({"alg": "RS256"}) + "." + b64({"exp": int(_time.time()) + exp}) + ".sig"
+    env = {
+        "CODEX_ACCESS_TOKEN": "stale-access",
+        "CODEX_REFRESH_TOKEN": "refresh-1",
+        "CODEX_ID_TOKEN": jwt(-60),
+        "CODEX_EXPIRES_AT": _iso(+4),
+    }
+    # The row of record already carries the sibling's refresh.
+    db_blob = {"credentials": {
+        "CODEX_ACCESS_TOKEN": "sibling-access",
+        "CODEX_REFRESH_TOKEN": "refresh-2",
+        "CODEX_ID_TOKEN": jwt(+3600),
+        "CODEX_EXPIRES_AT": _iso(+9 * 24),
+    }, "token_version": 3}
+    with ExitStack() as stack:
+        persist_calls = _patches(stack, db_blob=db_blob, responses=[])
+        out = await ensure_fresh_harness_tokens(
+            env, user_id="uid", credential_id="cid-codex-sibling"
+        )
+    assert _FakeAsyncClient.calls == []  # no second refresh
+    assert persist_calls == []
+    assert out["CODEX_ACCESS_TOKEN"] == "sibling-access"
+    assert out["CODEX_ID_TOKEN"] == db_blob["credentials"]["CODEX_ID_TOKEN"]
