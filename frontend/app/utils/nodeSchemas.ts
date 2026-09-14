@@ -415,8 +415,8 @@ export function getToolProviderConsumerTypes(
  */
 /** A field on an operation that can be resource-scoped — has both
  *  `x-dynamic-options` (loader-backed picker) AND `x-resource-type`
- *  (identity tag). Backend enforcement in
- *  tool_execution._enforce_field_scopes reads the matching
+ *  (identity tag). Backend enforcement at runtime (run_op._check_field_scopes
+ *  and tool_execution._enforce_field_scopes) reads the matching
  *  `agent_tool_operations[i].field_scopes[field]` allowlist. */
 export interface AgentToolScopableField {
     field: string;
@@ -709,6 +709,7 @@ export function getAgentToolProviders(
  *   - `mcp-server`  — external MCP server or hosted bundle
  *   - `alarm`       — AlarmNode (4 alarm tools: schedule/list/cancel/update)
  *   - `filesystem`  — FilesystemNode (sandbox volume + upload_file tool)
+ *   - `noclick`     — NoClickNode (runtime-discovered NoClick MCP tools)
  * Mirrors FlowCanvas.isValidConnection's BOTTOM_HANDLE_TYPES.
  */
 export const STRUCTURAL_AGENT_TOOL_TYPES: ReadonlySet<string> = new Set([
@@ -716,6 +717,7 @@ export const STRUCTURAL_AGENT_TOOL_TYPES: ReadonlySet<string> = new Set([
     'mcp-server',
     'alarm',
     'filesystem',
+    'noclick',
 ]);
 
 /** Can this node type wire its 'top' into an agent's 'bottom' as a tool

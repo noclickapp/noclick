@@ -646,7 +646,7 @@ def autolayout(nodes_raw, edges_raw, pinned_node_ids=None):
     dims = {n['id']: get_dims(n) for n in nodes}
 
     # ── Separate tool→agent vertical attachments ──
-    # Tool providers (tool/mcp-server/alarm/filesystem nodes AND integration
+    # Tool providers (tool/mcp-server/noclick/alarm/filesystem nodes AND integration
     # nodes in provider mode) connect into an agent's bottom handle and are
     # positioned below their agent rather than in the horizontal layout.
     # targetHandle == 'bottom' is the defining attribute of these edges

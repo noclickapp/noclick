@@ -18,6 +18,7 @@ from nodes.agent.config.providers import (
     agent_credential_types,
 )
 from .workflow_ops import find_placeholder_tokens
+from .structural_tools import get_structural_agent_tool_definitions
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,39 @@ class OperationInfo:
     display_name: Optional[str] = None
     category: Optional[str] = None
     is_trigger: bool = False
+
+
+@dataclass(frozen=True)
+class NativeAgentToolInfo:
+    """A tool emitted by a structural node when it is wired into an agent.
+
+    Native tools deliberately are not :class:`OperationInfo` instances:
+    they are runtime capabilities, not selectable config-union variants.  In
+    particular, treating Alarm's tools as config operations makes the node drafter try
+    to select ``schedule_alarm`` as an Alarm node's operation, even though
+    the node has no such config field.
+    """
+    name: str
+    description: str
+
+
+def get_native_agent_tools_for_node_type(node_type: str) -> List[NativeAgentToolInfo]:
+    """Return tools structurally provided to an agent, if any.
+
+    Keep this separate from ``get_operations_for_node_type``.  The latter is
+    the config-operation catalog used by node drafting; native tool nodes emit
+    their tools from ``execute()`` and therefore have no matching Pydantic
+    operation discriminators.  Mixing the two catalogs caused the builder to
+    discover Alarm's UI-only ``default`` operation instead of its four agent
+    tools.
+    """
+    return [
+        NativeAgentToolInfo(
+            name=str(tool["tool_name"]),
+            description=str(tool.get("tool_description", "")),
+        )
+        for tool in get_structural_agent_tool_definitions(node_type)
+    ]
 
 
 def get_operations_for_node_type(node_type: str) -> List[OperationInfo]:
