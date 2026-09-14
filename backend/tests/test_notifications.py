@@ -594,3 +594,42 @@ async def test_schedule_paused_alert_sends_once_per_trigger_per_day(monkeypatch)
     # A re-enable that fails the same way re-pauses at once — same news, one email.
     assert await send_schedule_paused_alert(**kwargs) is False
     assert len(be.sends) == 1
+
+# ── channel reconnected follow-up ────────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_reconnected_notice_only_after_a_recent_emailed_alert(monkeypatch):
+    """A WORKING push retracts the disconnect email only when one actually
+    went out recently — a re-scan hours later needs no confirmation, and a
+    grace window that never emailed has nothing to retract."""
+    from unittest.mock import AsyncMock
+
+    from utils.notifications import send_channel_reconnected_notice
+
+    sent = AsyncMock(return_value=True)
+    monkeypatch.setattr("utils.notifications.send_system_alert", sent)
+    rows = {
+        "user_notifications": None,
+        "credentials": {"owner_id": "u1", "name": "WhatsApp (91)"},
+        "workflows": {"name": "TARS"},
+    }
+
+    async def fetch_row(pool, query, *args):
+        for table, row in rows.items():
+            if table in query:
+                return row
+        return None
+
+    monkeypatch.setattr("utils.notifications._fetch_row", fetch_row)
+
+    assert not await send_channel_reconnected_notice("cred-1", provider_label="WhatsApp", workflow_id="wf-1")
+    sent.assert_not_awaited()
+
+    rows["user_notifications"] = {"?column?": 1}
+    assert await send_channel_reconnected_notice("cred-1", provider_label="WhatsApp", workflow_id="wf-1")
+    assert sent.await_args.args[:2] == ("u1", "channel_disconnected")
+    kwargs = sent.await_args.kwargs
+    assert kwargs["dedupe_key"] == "channel_reconnected:cred-1"
+    assert "do not re-scan" in kwargs["text_body"].lower()
+    assert "TARS" in kwargs["blocks_html"]

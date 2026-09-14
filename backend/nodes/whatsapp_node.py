@@ -1960,23 +1960,37 @@ class WhatsAppNode(WorkflowNode):
     async def handle_control_event(
         cls, payload, config, *, pool, workflow_id, node_id
     ):
-        """Consume WAHooks ``session.status`` pushes: never a workflow run;
-        a definitive death (FAILED/STOPPED) marks the moment the phone link
-        died, so the owner is alerted instead of leaving the trigger falsely
-        marked as healthy. The event names a WAHA session we can't map to a
-        connection id, so before alerting we live-verify the node's OWN
-        credential's connection — a stale registration delivering another
-        session's death must not mis-flag a healthy credential."""
+        """Consume WAHooks ``session.status`` pushes: never a workflow run.
+        A down signal (FAILED/STOPPED) first arms a grace window — a worker
+        restart flaps every session for ~30 s and the link comes back on its
+        own — and only once the connection has stayed down past it do we
+        live-verify the node's OWN credential's connection (the event names a
+        WAHA session we can't map to a connection id, so a stale registration
+        delivering another session's death must not mis-flag a healthy
+        credential) and alert the owner. WORKING closes the window and, if an
+        alert had gone out, tells the owner it reconnected so they don't
+        re-scan a healthy link."""
         if payload.get("event") != "session.status" or "session" not in payload:
             return None
         status = str((payload.get("payload") or {}).get("status") or "").upper()
         consumed = f"session.status {status or 'unknown'} consumed"
+        credential_id = ((config or {}).get("credentialIds") or {}).get("whatsapp_qr")
+        if status == "WORKING":
+            if credential_id and await cls._connection_back(str(credential_id), workflow_id, pool):
+                return f"{consumed} — owner told it reconnected"
+            return consumed
         if status not in ("FAILED", "STOPPED"):
             return consumed
-
-        credential_id = ((config or {}).get("credentialIds") or {}).get("whatsapp_qr")
         if not credential_id:
             return f"{consumed} (no QR credential attached)"
+
+        from utils.connection_grace import down_signal, up_signal
+
+        verdict = await down_signal(str(credential_id))
+        if verdict == "armed":
+            return f"{consumed} (grace window armed)"
+        if verdict == "waiting":
+            return f"{consumed} (within grace window)"
 
         try:
             from utils.credentials import credential_metadata
@@ -1999,6 +2013,7 @@ class WhatsAppNode(WorkflowNode):
 
             live = await asyncio.wait_for(asyncio.to_thread(_live_status), timeout=5)
             if live == "connected":
+                await up_signal(str(credential_id))
                 return f"{consumed} (credential connection healthy)"
 
             from utils.notifications import send_channel_disconnected_alert
@@ -2015,6 +2030,24 @@ class WhatsAppNode(WorkflowNode):
         except Exception as e:
             logger.warning(f"[WhatsAppNode] session.status handling failed: {e}")
             return consumed
+
+    @staticmethod
+    async def _connection_back(credential_id: str, workflow_id, pool) -> bool:
+        """A WORKING push: close the grace window; if it was open AND the
+        disconnect alert had been emailed, tell the owner it healed itself."""
+        from utils.connection_grace import up_signal
+
+        try:
+            if not await up_signal(credential_id):
+                return False
+            from utils.notifications import send_channel_reconnected_notice
+
+            return await send_channel_reconnected_notice(
+                credential_id, provider_label="WhatsApp", workflow_id=workflow_id, pool=pool,
+            )
+        except Exception as e:
+            logger.warning(f"[WhatsAppNode] reconnected notice failed: {e}")
+            return False
 
     @classmethod
     async def cleanup_external_webhook(

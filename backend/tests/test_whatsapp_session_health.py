@@ -6,6 +6,7 @@ envelope), the webhook subscription upgrade, and the daily sweep backstop.
 """
 
 import os
+import time
 from unittest.mock import ANY, AsyncMock, MagicMock, patch
 
 import pytest
@@ -54,6 +55,36 @@ class _StatusClient:
 
     def get_connection(self, connection_id):
         return {"id": connection_id, "status": self._status}
+
+
+class _FakeRedis:
+    def __init__(self):
+        self.store = {}
+
+    async def set(self, key, value, ex=None, nx=False):
+        if nx and key in self.store:
+            return None
+        self.store[key] = value
+        return True
+
+    async def get(self, key):
+        v = self.store.get(key)
+        return None if v is None else str(v).encode()
+
+    async def delete(self, key):
+        return 1 if self.store.pop(key, None) is not None else 0
+
+
+@pytest.fixture(autouse=True)
+def _no_redis(monkeypatch):
+    """The grace window is Redis-backed; without Redis the push path judges
+    the first down signal immediately (fail open) — the older tests below
+    pin that path, the grace tests install a fake."""
+    monkeypatch.setattr("utils.redis_client.get_shared_redis", lambda: None)
+
+
+def _event(status):
+    return {"event": "session.status", "session": "s", "payload": {"status": status}}
 
 
 # ── handle_control_event ────────────────────────────────────────────────────
@@ -126,6 +157,96 @@ async def test_control_event_never_raises():
         RECEIVE_CFG, pool=pool, workflow_id="wf-1", node_id="wa-1",
     )
     assert "consumed" in msg  # still consumed — a broken handler must not fire the workflow
+
+
+@pytest.mark.asyncio
+async def test_first_down_signal_arms_the_grace_window_without_alerting(monkeypatch):
+    """A worker restart flaps every session for ~30 s; the first FAILED is not
+    a death, and inside the window we don't even ask WAHooks."""
+    redis = _FakeRedis()
+    monkeypatch.setattr("utils.redis_client.get_shared_redis", lambda: redis)
+    alert = AsyncMock()
+
+    def _no_verify(api_key):
+        raise AssertionError("must not live-verify inside the grace window")
+
+    with patch.dict(os.environ, {"WAHOOKS_API_KEY": "k"}), \
+         patch("wahooks.WAHooks", _no_verify), \
+         patch("utils.notifications.send_channel_disconnected_alert", alert):
+        msg = await WhatsAppNode.handle_control_event(
+            _event("FAILED"), RECEIVE_CFG, pool=_pool(), workflow_id="wf-1", node_id="wa-1",
+        )
+        assert "grace window armed" in msg
+        msg = await WhatsAppNode.handle_control_event(
+            _event("STOPPED"), RECEIVE_CFG, pool=_pool(), workflow_id="wf-1", node_id="wa-1",
+        )
+        assert "within grace window" in msg
+    alert.assert_not_awaited()
+    assert "conn:down:cred-1" in redis.store
+
+
+@pytest.mark.asyncio
+async def test_down_past_the_grace_window_verifies_once_and_alerts(monkeypatch):
+    redis = _FakeRedis()
+    redis.store["conn:down:cred-1"] = int(time.time()) - 200
+    monkeypatch.setattr("utils.redis_client.get_shared_redis", lambda: redis)
+    alert = AsyncMock()
+    calls = []
+
+    class _Counting(_StatusClient):
+        def get_connection(self, connection_id):
+            calls.append(connection_id)
+            return super().get_connection(connection_id)
+
+    with patch.dict(os.environ, {"WAHOOKS_API_KEY": "k"}), \
+         patch("wahooks.WAHooks", lambda api_key: _Counting("failed")), \
+         patch("utils.notifications.send_channel_disconnected_alert", alert):
+        msg = await WhatsAppNode.handle_control_event(
+            _event("FAILED"), RECEIVE_CFG, pool=_pool(), workflow_id="wf-1", node_id="wa-1",
+        )
+        assert "owner alerted" in msg
+        # The FAILED loop keeps coming; the live check is throttled per credential.
+        msg = await WhatsAppNode.handle_control_event(
+            _event("FAILED"), RECEIVE_CFG, pool=_pool(), workflow_id="wf-1", node_id="wa-1",
+        )
+        assert "within grace window" in msg
+    alert.assert_awaited_once()
+    assert calls == ["conn-1"]
+
+
+@pytest.mark.asyncio
+async def test_healthy_live_check_closes_the_window(monkeypatch):
+    redis = _FakeRedis()
+    redis.store["conn:down:cred-1"] = int(time.time()) - 200
+    monkeypatch.setattr("utils.redis_client.get_shared_redis", lambda: redis)
+    with patch.dict(os.environ, {"WAHOOKS_API_KEY": "k"}), \
+         patch("wahooks.WAHooks", lambda api_key: _StatusClient("connected")), \
+         patch("utils.notifications.send_channel_disconnected_alert", AsyncMock()):
+        msg = await WhatsAppNode.handle_control_event(
+            _event("FAILED"), RECEIVE_CFG, pool=_pool(), workflow_id="wf-1", node_id="wa-1",
+        )
+    assert "healthy" in msg
+    assert "conn:down:cred-1" not in redis.store
+
+
+@pytest.mark.asyncio
+async def test_working_after_a_down_signal_tells_the_owner_it_reconnected(monkeypatch):
+    redis = _FakeRedis()
+    redis.store["conn:down:cred-1"] = int(time.time()) - 400
+    monkeypatch.setattr("utils.redis_client.get_shared_redis", lambda: redis)
+    notice = AsyncMock(return_value=True)
+    with patch("utils.notifications.send_channel_reconnected_notice", notice):
+        msg = await WhatsAppNode.handle_control_event(
+            _event("WORKING"), RECEIVE_CFG, pool=_pool(), workflow_id="wf-1", node_id="wa-1",
+        )
+        assert "reconnected" in msg
+        # No window open → a routine WORKING says nothing.
+        msg = await WhatsAppNode.handle_control_event(
+            _event("WORKING"), RECEIVE_CFG, pool=_pool(), workflow_id="wf-1", node_id="wa-1",
+        )
+        assert "reconnected" not in msg
+    notice.assert_awaited_once_with("cred-1", provider_label="WhatsApp", workflow_id="wf-1", pool=ANY)
+    assert "conn:down:cred-1" not in redis.store
 
 
 # ── manual-run truth check ──────────────────────────────────────────────────

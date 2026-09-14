@@ -910,6 +910,90 @@ async def send_schedule_paused_alert(
     )
 
 
+async def send_channel_reconnected_notice(
+    credential_id: str,
+    *,
+    provider_label: str,
+    workflow_id: Optional[str] = None,
+    pool=None,
+) -> bool:
+    """The follow-up to send_channel_disconnected_alert: the provider reports
+    the same connection WORKING again. Sent only when a disconnect EMAIL went
+    out for this credential in the last 2 h (a re-scan hours after an alert
+    needs no confirmation; a window that never emailed has nothing to
+    retract), so the owner learns the link healed itself and does NOT re-scan
+    — a fresh scan on a healthy session adds a duplicate device link, the
+    exact hazard the disconnect email warns about."""
+    recent = await _fetch_row(
+        pool,
+        "SELECT 1 FROM user_notifications WHERE dedupe_key = $1 AND email_sent "
+        "AND created_at > now() - interval '2 hours'",
+        f"channel_disconnected:{credential_id}",
+    )
+    if not recent:
+        return False
+    row = await _fetch_row(
+        pool, "SELECT owner_id, name FROM credentials WHERE id = $1", credential_id,
+    )
+    if not row:
+        return False
+    workflow_name = None
+    if workflow_id:
+        wf = await _fetch_row(pool, "SELECT name FROM workflows WHERE id = $1", workflow_id)
+        workflow_name = wf["name"] if wf else None
+
+    owner_id = str(row["owner_id"])
+    name = row["name"] or f"{provider_label} connection"
+    name_html = html_lib.escape(name)
+    label_html = html_lib.escape(provider_label)
+    cta_url = (
+        f"{FRONTEND_URL}/workflow/{workflow_id}" if workflow_id
+        else f"{FRONTEND_URL}/dashboard?tab=settings&section=credentials"
+    )
+    rows = [("Connection", name_html), ("Service", label_html), ("Status", "connected")]
+    if workflow_name:
+        rows.append(("Workflow", html_lib.escape(workflow_name)))
+    blocks = (
+        para(
+            f"Your {label_html} connection {strong(name_html)} is connected again. "
+            "It recovered on its own after the disconnection we emailed you "
+            "about, and messages are flowing."
+        )
+        + kv_rows(rows)
+        + para(
+            "Nothing to do. Please do not re-scan the QR code: a fresh scan on "
+            "a working connection adds a second device link, which can get all "
+            "of the phone's links logged out."
+        )
+    )
+    text_body = (
+        f'Your {provider_label} connection "{name}" is connected again — it '
+        "recovered on its own after the disconnection we emailed you about.\n"
+        "Nothing to do. Do not re-scan the QR code: a fresh scan on a working "
+        "connection adds a second device link."
+    )
+    return await send_system_alert(
+        owner_id, "channel_disconnected",
+        subject=f"Your {provider_label} connection is back",
+        heading=f"{provider_label} reconnected",
+        eyebrow="Connection alert",
+        blocks_html=blocks,
+        text_body=text_body,
+        preheader=f"{name} is connected again — no action needed",
+        cta_text="Open Workflow" if workflow_id else "Open Credentials",
+        cta_url=cta_url,
+        dedupe_key=f"channel_reconnected:{credential_id}",
+        dedupe_ttl_s=24 * 3600,
+        metadata={
+            "credential_id": credential_id,
+            "provider": provider_label,
+            "session_status": "connected",
+            "workflow_id": workflow_id,
+        },
+        pool=pool,
+    )
+
+
 async def send_channel_disconnected_alert(
     credential_id: str,
     *,
