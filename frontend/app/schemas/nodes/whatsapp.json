@@ -791,6 +791,7 @@
           ],
           "default": null,
           "description": "Webhook URL for receiving messages. Auto-registered for QR credentials; for Cloud API, configure in Meta Developer Console.",
+          "readOnly": true,
           "title": "Webhook URL",
           "ui:copyable": true,
           "ui:loadValue": true,
@@ -806,9 +807,12 @@
             }
           ],
           "default": null,
-          "description": "Token to verify webhook subscription (you choose this)",
+          "description": "Cloud API subscription verification token. QR connections do not use this field.",
           "title": "Verify Token (Optional)",
-          "ui:widget": "password"
+          "ui:widget": "password",
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
         },
         "include_group_messages": {
           "default": "false",
