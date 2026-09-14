@@ -203,16 +203,17 @@ async def test_reconcile_waits_for_downstream_setup_and_registers_after_repair(w
     world.set_node("on_app_mention")
     agent = {"id": "agent", "type": "agent", "config": {
         "model": "claude-code",
+        "temperature": 3,
         "credentialIds": {"agent_claude_code_oauth": "saved-account"},
     }}
     world.nodes.append(agent)
     world.edges = [{"source": NODE, "target": "agent"}]
     result = await _reconcile(world)
     assert result["state"] == "failed"
-    assert "message" in result["error"].lower()
+    assert "less than or equal to 2" in result["error"].lower()
     assert world.rows == []
 
-    agent["config"]["message"] = "Read the incoming Slack mention."
+    agent["config"]["temperature"] = 0.7
     assert (await _reconcile(world))["state"] == "registered"
     assert {r["event_type"] for r in world.rows} == {"app_mention"}
 

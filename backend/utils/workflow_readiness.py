@@ -39,6 +39,7 @@ def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dic
         allowlist_requires_credentials,
     )
     from coder.workflow.operation_catalog import node_requires_credentials
+    from coder.workflow.workflow_ops import agent_message_error, agent_trigger_fed
     from utils.credentials import extract_credential_ids
 
     nodes = [{**n, "config": node_config(n)} for n in graph_nodes(graph)]
@@ -119,7 +120,17 @@ def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dic
             )
         if not provider:
             result = node_cls.validate_config({"config": cfg})
-            for error in result.get("errors") or []:
+            errors = list(result.get("errors") or [])
+            if kind == "agent":
+                message_error = agent_message_error(
+                    cfg,
+                    trigger_fed=agent_trigger_fed(
+                        nid, [by_id[source] for source in enabled], edges,
+                    ),
+                )
+                if message_error:
+                    errors.append(message_error)
+            for error in errors:
                 issues.append(
                     {
                         "node_id": nid,

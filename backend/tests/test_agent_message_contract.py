@@ -26,7 +26,7 @@ FIRED = {'_triggerPayload': {'a': 1}}
 
 
 class TestParse:
-    @pytest.mark.parametrize("model", ["openrouter/openai/gpt-4o-mini", "claude-code", "codex"])
+    @pytest.mark.parametrize("model", ["openrouter/openai/gpt-4o-mini", "claude-code", "codex", "hermes", "openclaw"])
     def test_an_empty_message_parses_on_every_harness(self, model):
         parsed = AgentNode.parse_config({"config": {"model": model, "message": ""}})
         assert parsed.config.message == ""

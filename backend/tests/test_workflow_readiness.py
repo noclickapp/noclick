@@ -52,28 +52,46 @@ def monitor_graph(message=None):
     }
 
 
-def test_missing_message_blocks_only_its_enabled_reachable_path():
+def test_invalid_config_blocks_only_its_enabled_reachable_path():
     graph = monitor_graph()
+    graph["nodes"][1]["config"]["temperature"] = 3
     assert any(
-        "message" in i["message"].lower() for i in activation_issues(graph, "in")
+        "less than or equal to 2" in i["message"].lower() for i in activation_issues(graph, "in")
     )
-    graph["nodes"][1]["config"][
-        "message"
-    ] = "Review update and privately alert the manager."
+    graph["nodes"][1]["config"]["temperature"] = 0.7
     assert activation_issues(graph, "in") == []
     graph["nodes"].append(
         {"id": "unrelated", "type": "agent", "config": {"model": "claude-code"}}
     )
     assert activation_issues(graph, "in") == []
     graph["nodes"][1]["config"]["disabled"] = True
-    graph["nodes"][1]["config"].pop("message")
+    graph["nodes"][1]["config"]["temperature"] = 3
     assert activation_issues(graph, "in") == []
     graph["nodes"][0]["config"]["disabled"] = True
     assert activation_issues(graph, "in")[0]["code"] == "disabled"
 
 
+@pytest.mark.parametrize("source_state", ["enabled", "disabled", "tools", "disconnected"])
+def test_empty_agent_message_requires_an_enabled_trigger_feed(source_state):
+    graph = monitor_graph()
+    if source_state == "disabled":
+        graph["nodes"][0]["config"]["disabled"] = True
+    elif source_state == "tools":
+        graph["edges"][0]["targetHandle"] = "bottom"
+    elif source_state == "disconnected":
+        graph["edges"].pop(0)
+    errors = [i for i in activation_issues(graph) if i["node_id"] == "brain"]
+    if source_state == "enabled":
+        assert errors == []
+    else:
+        assert any("Message is empty" in i["message"] for i in errors)
+        graph["nodes"][1]["config"]["message"] = "Review the available context."
+        assert not [i for i in activation_issues(graph) if i["node_id"] == "brain"]
+
+
 async def test_broken_path_cannot_register_and_repair_can(real_database, monkeypatch):
     graph = monitor_graph()
+    graph["nodes"][1]["config"]["temperature"] = 3
     loader = AsyncMock(
         return_value={"values": {"webhook_url": "https://example.test/hook"}}
     )
@@ -87,10 +105,10 @@ async def test_broken_path_cannot_register_and_repair_can(real_database, monkeyp
         config=graph["nodes"][0]["config"],
         workflow_graph=graph,
     )
-    with pytest.raises(WorkflowNotReadyError, match="message"):
+    with pytest.raises(WorkflowNotReadyError, match="less than or equal to 2"):
         await WebhookManager.provision_node_webhook(real_database.pool, **kwargs)
     loader.assert_not_awaited()
-    graph["nodes"][1]["config"]["message"] = "Review this update."
+    graph["nodes"][1]["config"]["temperature"] = 0.7
     assert (await WebhookManager.provision_node_webhook(real_database.pool, **kwargs))[
         "webhook_url"
     ]
