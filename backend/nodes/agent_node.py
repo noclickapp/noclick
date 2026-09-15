@@ -1097,8 +1097,64 @@ class AgentNode(WorkflowNode):
             "text": event.get("text") or "",
             "conversation_key": event.get("conversation_key"),
             "title": event.get("title"),
+            "media": event.get("media") or [],
             "output": output,
         }
+
+    async def _digest_event_media(self, trigger_event: Dict[str, Any], config: Any) -> None:
+        """Understand what the event carried besides text — a voice note is
+        transcribed, a document extracted — and compose it under the event
+        text. Runs BEFORE the turn record is built, so the digest also
+        annotates the fired output the chat surface frames (the transcript
+        renders under the audio player)."""
+        block = await self._digest_media_entries(
+            trigger_event.get("media"), config, source=trigger_event["node_type"]
+        )
+        if block:
+            trigger_event["text"] = f"{trigger_event['text']}\n\n{block}"
+
+    async def _digest_media_entries(self, entries: Any, config: Any, *, source: str) -> str:
+        """The media digest (``nodes.core.media_digest``) over a hook's
+        ``media`` entries, as the block composed into this turn. A Test
+        Run's media is fabricated: nothing is fetched or billed. Empty when
+        nothing digestible arrived."""
+        from nodes.core.media_digest import (
+            DigestContext,
+            digest_media,
+            format_media_digests,
+            refs_from_entries,
+            rehearsal_media_note,
+        )
+
+        refs = refs_from_entries(entries, source=source)
+        if not refs:
+            return ""
+        from nodes.agent.rehearsal import is_rehearsal_conversation
+
+        if is_rehearsal_conversation(self.conversation_id):
+            return rehearsal_media_note(refs)
+        from utils.content_extraction import BillingContext
+
+        digests = await digest_media(
+            refs,
+            DigestContext(
+                billing=BillingContext(
+                    user_id=self.user_id,
+                    organization_id=self.organization_id,
+                    workflow_id=self.workflow_id,
+                    node_id=self.node_id,
+                    sio=self.sio,
+                    sid=self.sid,
+                ) if self.user_id else None,
+                allow_ai=getattr(config, "enable_media_transcription", "true") != "false",
+                workflow_id=self.workflow_id,
+            ),
+        )
+        logger.info(
+            f"[AgentNode] Digested {len(digests)} media item(s) from {source}: "
+            + ", ".join(d.method or f"error={d.error!r}" for d in digests)
+        )
+        return format_media_digests(digests)
 
     async def _resolve_sandbox_mounts(
         self, mounts: List[Dict[str, Any]], user_id: Optional[str]
@@ -1606,6 +1662,8 @@ class AgentNode(WorkflowNode):
         # Composed here, pre-dispatch, so all six harnesses (SDK llm + 5 CLI
         # sandboxes) see the same effective message.
         trigger_event = self._resolve_trigger_event(inputs)
+        if trigger_event:
+            await self._digest_event_media(trigger_event, config)
         event_ck = (trigger_event or {}).get("conversation_key")
         if trigger_event and trigger_event.get("text"):
             event_block = (
@@ -1752,6 +1810,23 @@ class AgentNode(WorkflowNode):
                     f"[AgentNode] Delivering {len(message_attachments)} chat "
                     f"attachment(s) ({len(attach_image_urls)} image)"
                 )
+                # An uploaded voice memo or document is digested the way a
+                # channel's is — the transcript joins the turn under the list.
+                from nodes.core.agent_events import media_entry
+
+                digest_block = await self._digest_media_entries(
+                    [
+                        media_entry(
+                            url=a["url"], mime_type=a["mime_type"], filename=a["name"],
+                            size_bytes=a["size_bytes"], resource_id=a["resource_id"],
+                        )
+                        for a in message_attachments
+                    ],
+                    config,
+                    source="chat_attachment",
+                )
+                if digest_block:
+                    config.message = f"{config.message}\n\n{digest_block}"
 
         # Relay pending prompt_builder verdicts (approve/dismiss on the card)
         # into this turn. AFTER the user-turn persist capture, so the note

@@ -324,6 +324,8 @@ function deriveInboundMedia(d: Dict): MediaRef | undefined {
             kind: mediaKindFromMime(str(media, 'mimetype', 'mime_type')),
             url: url && /^https?:\/\//.test(url) ? url : undefined,
             name: str(media, 'filename'),
+            // The agent's digest annotates the record it transcribed.
+            transcript: str(media, 'transcript'),
         };
     }
     for (const [key, kind] of TELEGRAM_MEDIA_KEYS) {

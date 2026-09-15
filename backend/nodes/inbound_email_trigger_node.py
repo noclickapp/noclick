@@ -117,7 +117,10 @@ class InboundEmailTriggerNode(WorkflowNode):
             "",
             output.get("text") or output.get("html") or "(empty body)",
         ]
+        from nodes.core.agent_events import media_entry
+
         attachments = output.get("attachments") or []
+        media = []
         if attachments:
             lines += ["", "Attachments:"]
             for a in attachments:
@@ -128,10 +131,22 @@ class InboundEmailTriggerNode(WorkflowNode):
                     lines += [f"  Content of {a.get('name')}:", "  ---", a["text"], "  ---"]
                 elif a.get("note"):
                     lines.append(f"  ({a['note']})")
+                # Documents are inlined above; audio/image/video attachments
+                # go to the agent's media digest (a voice memo is transcribed).
+                if str(a.get("mime_type") or "").split("/", 1)[0] in ("audio", "image", "video"):
+                    media.append(media_entry(
+                        url=a.get("download_url"),
+                        mime_type=a.get("mime_type"),
+                        filename=a.get("name"),
+                        size_bytes=a.get("size_bytes"),
+                        resource_id=a.get("resource_id"),
+                        record=a,
+                    ))
         return {
             "text": "\n".join(lines),
             "conversation_key": str(sender).lower(),
             "title": output.get("subject") or "(no subject)",
+            "media": media,
         }
 
     @classmethod

@@ -14,7 +14,7 @@ import json
 import os
 import time
 import logging
-from typing import Dict, Any, Optional, Union, Type, Literal, Annotated, List
+from typing import Dict, Any, Optional, Tuple, Union, Type, Literal, Annotated, List
 from uuid import UUID, uuid4
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
 import httpx
@@ -25,6 +25,57 @@ from utils.ssrf import guarded_async_client
 logger = logging.getLogger(__name__)
 
 TELEGRAM_API_BASE = "https://api.telegram.org/bot"
+TELEGRAM_FILE_BASE = "https://api.telegram.org/file/bot"
+
+# Message keys that carry an attachment, in the order one message is judged
+# (a voice note is never also a document), with the MIME Telegram omits for
+# the kinds it always encodes the same way.
+TELEGRAM_MEDIA_KEYS: Tuple[Tuple[str, Optional[str]], ...] = (
+    ("voice", "audio/ogg"),
+    ("audio", None),
+    ("video_note", "video/mp4"),
+    ("video", None),
+    ("animation", None),
+    ("photo", "image/jpeg"),
+    ("document", None),
+    ("sticker", None),
+)
+_UPDATE_MESSAGE_KEYS = ("message", "edited_message", "channel_post", "edited_channel_post")
+
+
+def update_message(update: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """The message object of a Bot API update, whichever key carries it."""
+    return next(
+        (update[k] for k in _UPDATE_MESSAGE_KEYS if isinstance(update.get(k), dict)),
+        None,
+    )
+
+
+def message_attachment(msg: Dict[str, Any]) -> Optional[Tuple[str, Dict[str, Any], Optional[str]]]:
+    """``(key, attachment, default_mime)`` for the media a message carries —
+    a photo's largest size — or ``None`` for a text-only message."""
+    for key, default_mime in TELEGRAM_MEDIA_KEYS:
+        value = msg.get(key)
+        if key == "photo" and isinstance(value, list) and value:
+            value = value[-1]
+        if isinstance(value, dict) and value.get("file_id"):
+            return key, value, default_mime
+    return None
+
+
+async def get_telegram_file_info(bot_token: str, file_id: str) -> Dict[str, Any]:
+    """Bot API ``getFile``: the server-side path a file downloads from
+    (valid for about an hour). Raises on a Telegram error."""
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{TELEGRAM_API_BASE}{bot_token}/getFile",
+            json={"file_id": file_id},
+            timeout=30.0,
+        )
+    data = response.json()
+    if response.status_code != 200 or not data.get("ok"):
+        raise ValueError(f"Telegram getFile failed: {data.get('description') or response.status_code}")
+    return data.get("result") or {}
 
 
 # ============================================================================
@@ -2267,35 +2318,138 @@ class TelegramNode(WorkflowNode):
     def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Telegram update → message text for the agent's user turn + the chat
         id as conversation key (one conversation per chat). The chat id in the
-        text doubles as the reply id for send-message tools."""
-        msg = next(
-            (
-                output[k]
-                for k in (
-                    "message",
-                    "edited_message",
-                    "channel_post",
-                    "edited_channel_post",
-                )
-                if isinstance(output.get(k), dict)
-            ),
-            None,
-        )
+        text doubles as the reply id for send-message tools. A media message
+        reads as its caption (else what it carried — "[voice message]") plus
+        the rehosted attachment, which the agent digests (a voice note is
+        transcribed into the turn)."""
+        msg = update_message(output)
         text = (msg or {}).get("text") or (msg or {}).get("caption")
-        if not msg or not text:
-            # Non-message updates (callbacks, member changes, media without
-            # caption): deliver the raw update as JSON.
+        found = message_attachment(msg) if msg else None
+        if not msg or (not text and not found):
+            # Non-message updates (callbacks, member changes, polls): deliver
+            # the raw update as JSON.
             return super().resolve_agent_event(output)
+        from nodes.core.agent_events import media_entry
+        from nodes.core.media_digest import media_kind, media_placeholder
+
         chat = msg.get("chat") or {}
         chat_id = chat.get("id")
         sender = msg.get("from") or {}
         who = sender.get("username") or sender.get("first_name") or "unknown"
         where = f"chat {chat_id}" + (f" ({chat['title']})" if chat.get("title") else "")
+        media_note = ""
+        entries = []
+        if found:
+            key, attachment, default_mime = found
+            media = msg.get("media") if isinstance(msg.get("media"), dict) else {}
+            mime = media.get("mimetype") or attachment.get("mime_type") or default_mime
+            filename = media.get("filename") or attachment.get("file_name")
+            voice = key == "voice"
+            if not text:
+                text = media_placeholder(media_kind(mime, filename), voice=voice, filename=filename)
+            if media.get("rehosted") and media.get("url"):
+                desc = ", ".join(str(x) for x in (mime, filename) if x)
+                media_note = (
+                    f"\nAttached {key.replace('_', ' ')} ({desc or 'unknown type'}): {media['url']}\n"
+                    f"Download that URL (e.g. curl -o) to view or process the file — "
+                    f"it is a public, unguessable link."
+                )
+                entries.append(media_entry(
+                    url=media["url"],
+                    mime_type=mime,
+                    filename=filename,
+                    size_bytes=media.get("size"),
+                    duration_s=attachment.get("duration"),
+                    voice=voice,
+                    resource_id=media.get("resource_id"),
+                    record=media,
+                ))
+            else:
+                # Not rehosted (no bot credential at delivery, or the fetch
+                # failed): a bare file_id is useless to the run — say so.
+                media_note = (
+                    f"\n[The attached {key.replace('_', ' ')} could not be retrieved — "
+                    "ask the sender to describe it or resend if its content matters.]"
+                )
         return {
-            "text": f"Telegram message from {who} in {where}:\n{text}",
+            "text": f"Telegram message from {who} in {where}:\n{text}{media_note}",
             "conversation_key": str(chat_id) if chat_id is not None else None,
             "title": chat.get("title") or (f"@{sender['username']}" if sender.get("username") else who),
+            "media": entries,
         }
+
+    MEDIA_REHOST_MAX_BYTES = 20 * 1024 * 1024  # the Bot API's getFile ceiling
+    MEDIA_REHOST_TIMEOUT_S = 20
+
+    @classmethod
+    async def transform_trigger_payload(
+        cls, payload, config, *, pool, workflow_id, node_id
+    ):
+        """Rehost a message's attachment (voice note, photo, video, document)
+        to workflow resources and hang the public capability URL on the
+        message as ``media`` — the same slot WhatsApp fills, so the agent
+        digest, the run popup and the chat frame read one shape. The Bot
+        API's download URL embeds the bot token, so the fetch happens here
+        with the node's credential and the token never rides the payload.
+        Failures raise into the delivery seam, which keeps the original
+        payload — the message still runs."""
+        msg = update_message(payload) if isinstance(payload, dict) else None
+        found = message_attachment(msg) if msg else None
+        if not found or not workflow_id:
+            return None
+        key, attachment, default_mime = found
+        token = await cls._delivery_bot_token(config, pool, str(workflow_id))
+        if not token:
+            return None
+        info = await get_telegram_file_info(token, attachment["file_id"])
+        file_path = info.get("file_path")
+        if not file_path:
+            return None
+
+        from utils.inbound_media import rehost_inbound_media
+
+        ext = os.path.splitext(file_path)[1]
+        rehosted = await rehost_inbound_media(
+            pool,
+            workflow_id=str(workflow_id),
+            node_id=node_id,
+            url=f"{TELEGRAM_FILE_BASE}{token}/{file_path}",
+            source="telegram_inbound_media",
+            mimetype=attachment.get("mime_type") or default_mime,
+            filename=attachment.get("file_name")
+            or f"{key}-{attachment.get('file_unique_id') or attachment['file_id'][:12]}{ext}",
+            max_bytes=cls.MEDIA_REHOST_MAX_BYTES,
+            timeout_s=cls.MEDIA_REHOST_TIMEOUT_S,
+        )
+        if not rehosted:
+            return None
+        msg["media"] = {**rehosted, "kind": key, "duration": attachment.get("duration")}
+        return payload
+
+    @staticmethod
+    async def _delivery_bot_token(config, pool, workflow_id: str) -> Optional[str]:
+        """The trigger node's bot token at delivery time: its attached
+        credential, resolved as the workflow owner (the identity the fire
+        runs as) with the owner-fallback policy every run uses."""
+        credential_id = ((config or {}).get("credentialIds") or {}).get("telegram_bot_token")
+        if not credential_id:
+            return None
+        owner = await pool.fetchrow(
+            "SELECT owner_id, organization_id FROM workflows WHERE id = $1::uuid",
+            workflow_id,
+        )
+        if not owner:
+            return None
+        from utils.credentials import resolve_credential_with_owner_fallback
+
+        credential = await resolve_credential_with_owner_fallback(
+            str(credential_id),
+            str(owner["owner_id"]),
+            pool,
+            org_id=str(owner["organization_id"]) if owner["organization_id"] else None,
+            workflow_id=workflow_id,
+        )
+        return (credential or {}).get("token") or None
 
     @classmethod
     async def cleanup_external_webhook(

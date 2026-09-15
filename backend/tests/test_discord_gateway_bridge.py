@@ -525,7 +525,7 @@ class TestDiscordNodeMessageTriggers:
         assert text.startswith("Discord message from Dana K in channel c1 (server g1):")
         assert "hello  can you help?".replace("  ", " ") in text.replace("  ", " ")
         assert "<@bot-1>" not in text
-        assert "Attachments: https://cdn/x.png" in text
+        assert "Attachments: x.png (image/png): https://cdn/x.png" in text
         assert "a reply to message m0" in text
         assert "send_message_to_channel with channel_id=c1" in text
         assert "message_id=m1" in text

@@ -13,6 +13,7 @@ and stale trigger outputs preloaded from previous runs can't inject events.
 import json
 
 import pytest
+from unittest.mock import AsyncMock, patch
 
 from nodes.agent_node import AgentNode
 from nodes.alarm_node import AlarmNode
@@ -387,3 +388,106 @@ class TestAgentResolveTriggerEvent:
         event = agent._resolve_trigger_event(inputs)
         assert event['node_id'] == 'ph1'
         assert '$rageclick' in event['text']
+
+
+class TestEventMedia:
+    """What a message carried besides text rides the hook result as
+    ``media`` entries (agent_events.media_entry) and the agent digests them
+    into the turn — a voice note becomes a transcript, never a placeholder."""
+
+    def test_discord_voice_message_is_a_voice_entry(self):
+        from nodes.discord_node import DiscordNode
+
+        output = {
+            'type': 'discord', 'event_type': 'on_message', 'channel_id': 'c1',
+            'author_username': 'dana', 'content': '', 'message_id': 'm1',
+            'attachments': [{'url': 'https://cdn.discordapp.com/a/voice-message.ogg',
+                             'filename': 'voice-message.ogg', 'content_type': 'audio/ogg',
+                             'size': 9000, 'duration_secs': 6.5}],
+        }
+        event = DiscordNode.resolve_agent_event(output)
+        assert '[voice message]' in event['text']
+        (entry,) = event['media']
+        assert entry['voice'] is True and entry['duration_s'] == 6.5
+        assert entry['record'] is output['attachments'][0]
+
+    def test_email_audio_attachment_is_an_entry_documents_are_inlined_instead(self):
+        from nodes.inbound_email_trigger_node import InboundEmailTriggerNode
+
+        output = {
+            'from': 'a@example.com', 'to': 'agent@example.test', 'subject': 'memo', 'text': 'see attached',
+            'attachments': [
+                {'name': 'memo.m4a', 'mime_type': 'audio/mp4', 'size_bytes': 5000,
+                 'download_url': 'https://assets.example/memo.m4a', 'resource_id': 'r-audio'},
+                {'name': 'q.pdf', 'mime_type': 'application/pdf', 'size_bytes': 100,
+                 'download_url': 'https://assets.example/q.pdf', 'resource_id': 'r-doc', 'text': 'inlined'},
+            ],
+        }
+        event = InboundEmailTriggerNode.resolve_agent_event(output)
+        assert 'Content of q.pdf' in event['text']
+        (entry,) = event['media']
+        assert entry['resource_id'] == 'r-audio' and entry['mime_type'] == 'audio/mp4'
+
+    def test_resolve_trigger_event_carries_the_media_entries(self):
+        agent = _make_agent()
+        _wire(
+            agent,
+            nodes=[{'id': 'tg', 'type': 'automation-telegram', 'config': {'_triggerPayload': {}}},
+                   {'id': 'agent_1', 'type': 'agent', 'config': {}}],
+            edges=[{'source': 'tg', 'target': 'agent_1'}],
+        )
+        media = {'url': 'https://assets.example/v.oga', 'mimetype': 'audio/ogg', 'rehosted': True, 'resource_id': 'r1'}
+        inputs = {'tg': {'message': {'chat': {'id': 5}, 'voice': {'file_id': 'f', 'duration': 3}, 'media': media}}}
+        event = agent._resolve_trigger_event(inputs)
+        assert event['media'][0]['record'] is media
+        assert event['media'][0]['voice'] is True
+
+    @pytest.mark.asyncio
+    async def test_digest_composes_the_transcript_under_the_event_text(self):
+        from nodes.core.media_digest import MediaDigest, MediaRef
+
+        agent = _make_agent(user_id='u1')
+        agent.conversation_id = 'conv-1'
+        trigger_event = {
+            'node_id': 'tg', 'node_type': 'automation-telegram', 'text': 'Telegram message:\n[voice message]',
+            'media': [{'url': 'https://assets.example/v.oga', 'mime_type': 'audio/ogg', 'voice': True,
+                       'duration_s': 3, 'record': {}}],
+        }
+        seen = {}
+
+        async def fake_digest(refs, ctx):
+            seen['ctx'] = ctx
+            return [MediaDigest(ref=refs[0], text='call me back', method='transcription')]
+
+        config = type('Cfg', (), {'enable_media_transcription': 'true'})()
+        with patch('nodes.core.media_digest.digest_media', fake_digest):
+            await agent._digest_event_media(trigger_event, config)
+        assert trigger_event['text'].endswith('Voice message (0:03) — transcript:\n"""\ncall me back\n"""')
+        assert seen['ctx'].billing.user_id == 'u1'
+        assert seen['ctx'].workflow_id == 'test_wf'
+        assert seen['ctx'].allow_ai is True
+
+        # The agent's switch reaches the digest as allow_ai.
+        config.enable_media_transcription = 'false'
+        with patch('nodes.core.media_digest.digest_media', fake_digest):
+            await agent._digest_event_media(dict(trigger_event, text='x'), config)
+        assert seen['ctx'].allow_ai is False
+
+    @pytest.mark.asyncio
+    async def test_rehearsal_fetches_and_bills_nothing(self):
+        agent = _make_agent(user_id='u1')
+        agent.conversation_id = 'rehearsal:test_wf:abc'
+        trigger_event = {
+            'node_id': 'wa', 'node_type': 'automation-whatsapp', 'text': 'WhatsApp message:\n[voice message]',
+            'media': [{'url': 'https://assets.example/v.oga', 'mime_type': 'audio/ogg', 'voice': True}],
+        }
+        with patch('nodes.core.media_digest.digest_media', AsyncMock(side_effect=AssertionError('must not digest'))):
+            await agent._digest_event_media(trigger_event, type('Cfg', (), {})())
+        assert 'not transcribed in a Test Run' in trigger_event['text']
+
+    @pytest.mark.asyncio
+    async def test_nothing_digestible_leaves_the_text_alone(self):
+        agent = _make_agent(user_id='u1')
+        trigger_event = {'node_id': 'x', 'node_type': 'trigger-webhook', 'text': 'hello', 'media': []}
+        await agent._digest_event_media(trigger_event, type('Cfg', (), {})())
+        assert trigger_event['text'] == 'hello'

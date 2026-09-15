@@ -295,6 +295,17 @@ function ThemedBubbleIn({
                         )}
                     </p>
                 )}
+                {media && !edge && media.transcript && (
+                    // What the agent's digest heard — the transcript is the
+                    // message, the player is the evidence.
+                    <p
+                        data-testid="inbound-media-transcript"
+                        className="m-0 mt-1.5 text-[12.5px] italic leading-relaxed"
+                        style={{ color: theme.sub }}
+                    >
+                        “{media.transcript}”
+                    </p>
+                )}
                 {edit ? (
                     <Editable
                         multiline

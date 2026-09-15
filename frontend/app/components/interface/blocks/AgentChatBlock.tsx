@@ -1155,6 +1155,38 @@ export function AgentChatBlock({
                                         aria-label="Allow email updates"
                                     />
                                 </div>
+                                <div className="flex items-start justify-between gap-3 px-3 py-2.5">
+                                    <div className="min-w-0">
+                                        <div className="text-xs font-medium text-foreground">
+                                            Voice transcription
+                                        </div>
+                                        <p className="text-[10px] text-muted-foreground/70 dark:text-zinc-600 mt-0.5 leading-relaxed">
+                                            Voice notes and audio files that
+                                            arrive with a message (WhatsApp,
+                                            Telegram, Discord, email, uploads)
+                                            are transcribed so the agent can
+                                            read them. Charged like other AI
+                                            usage.
+                                        </p>
+                                    </div>
+                                    <Switch
+                                        checked={
+                                            (config.enable_media_transcription as
+                                                | string
+                                                | undefined) !== 'false'
+                                        }
+                                        onCheckedChange={(v) =>
+                                            patchConfig({
+                                                enable_media_transcription: v
+                                                    ? 'true'
+                                                    : 'false',
+                                            })
+                                        }
+                                        disabled={isReadOnly}
+                                        data-testid="agent-chat-toggle-media-transcription"
+                                        aria-label="Transcribe voice messages"
+                                    />
+                                </div>
                             </div>
                         </section>
 

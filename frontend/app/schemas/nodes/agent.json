@@ -118,6 +118,23 @@
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
         },
+        "enable_media_transcription": {
+          "default": "true",
+          "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Transcribe Voice Messages",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Charged per transcription like other AI usage. When off, the agent is told a voice message arrived and can ask the sender to type it out.",
+          "x-enum-searchable": true
+        },
         "show_in_interface": {
           "default": "true",
           "description": "Show this agent as a fullscreen chat in the Interface tab.",
@@ -255,6 +272,23 @@
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
         },
+        "enable_media_transcription": {
+          "default": "true",
+          "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Transcribe Voice Messages",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Charged per transcription like other AI usage. When off, the agent is told a voice message arrived and can ask the sender to type it out.",
+          "x-enum-searchable": true
+        },
         "show_in_interface": {
           "default": "true",
           "description": "Show this agent as a fullscreen chat in the Interface tab.",
@@ -390,6 +424,23 @@
           "type": "string",
           "ui:category": "Advanced",
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "enable_media_transcription": {
+          "default": "true",
+          "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Transcribe Voice Messages",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Charged per transcription like other AI usage. When off, the agent is told a voice message arrived and can ask the sender to type it out.",
           "x-enum-searchable": true
         },
         "show_in_interface": {
@@ -561,6 +612,23 @@
           "type": "string",
           "ui:category": "Advanced",
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "enable_media_transcription": {
+          "default": "true",
+          "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Transcribe Voice Messages",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Charged per transcription like other AI usage. When off, the agent is told a voice message arrived and can ask the sender to type it out.",
           "x-enum-searchable": true
         },
         "show_in_interface": {
@@ -1043,6 +1111,23 @@
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
         },
+        "enable_media_transcription": {
+          "default": "true",
+          "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Transcribe Voice Messages",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Charged per transcription like other AI usage. When off, the agent is told a voice message arrived and can ask the sender to type it out.",
+          "x-enum-searchable": true
+        },
         "show_in_interface": {
           "default": "true",
           "description": "Show this agent as a fullscreen chat in the Interface tab.",
@@ -1476,6 +1561,23 @@
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
         },
+        "enable_media_transcription": {
+          "default": "true",
+          "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Transcribe Voice Messages",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Charged per transcription like other AI usage. When off, the agent is told a voice message arrived and can ask the sender to type it out.",
+          "x-enum-searchable": true
+        },
         "show_in_interface": {
           "default": "true",
           "description": "Show this agent as a fullscreen chat in the Interface tab.",
@@ -1604,6 +1706,23 @@
           "type": "string",
           "ui:category": "Advanced",
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "enable_media_transcription": {
+          "default": "true",
+          "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Transcribe Voice Messages",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Charged per transcription like other AI usage. When off, the agent is told a voice message arrived and can ask the sender to type it out.",
           "x-enum-searchable": true
         },
         "show_in_interface": {
@@ -1757,6 +1876,23 @@
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
         },
+        "enable_media_transcription": {
+          "default": "true",
+          "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Transcribe Voice Messages",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Charged per transcription like other AI usage. When off, the agent is told a voice message arrived and can ask the sender to type it out.",
+          "x-enum-searchable": true
+        },
         "show_in_interface": {
           "default": "true",
           "description": "Show this agent as a fullscreen chat in the Interface tab.",
@@ -1892,6 +2028,23 @@
           "type": "string",
           "ui:category": "Advanced",
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "enable_media_transcription": {
+          "default": "true",
+          "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Transcribe Voice Messages",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Charged per transcription like other AI usage. When off, the agent is told a voice message arrived and can ask the sender to type it out.",
           "x-enum-searchable": true
         },
         "show_in_interface": {

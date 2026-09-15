@@ -829,7 +829,12 @@ class WorkflowNode(ABC):
         ``_``-prefixed plumbing (``_webhook`` carries the inbound HTTP headers),
         and bounds the JSON — see ``nodes.core.agent_events``. An override may
         also return ``"title"``, a short line the chat surface uses as the
-        conversation's name (else the text's first line).
+        conversation's name (else the text's first line), and ``"media"``, a
+        list of ``agent_events.media_entry`` dicts for what the message
+        carried besides text (a voice note, a photo, an attachment) — the
+        agent digests those into the turn (``nodes.core.media_digest``:
+        audio is transcribed, documents extracted) so a media-only message
+        is never an opaque placeholder.
         """
         from nodes.core.agent_events import default_agent_event
 

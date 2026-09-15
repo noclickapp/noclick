@@ -47,6 +47,10 @@ export interface MediaRef {
     kind: 'image' | 'video' | 'audio' | 'file';
     url?: string;
     name?: string;
+    /** What the agent's media digest read from it — a voice note's
+        transcript, carried on the persisted record so the frame shows what
+        was said under the player. */
+    transcript?: string;
 }
 
 /** One staged situation arriving through a trigger, and the run it produces. */

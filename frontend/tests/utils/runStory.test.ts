@@ -251,6 +251,22 @@ describe('buildRunStory trigger presentation', () => {
         expect(inner?.handle).toBe('12025550102');
     });
 
+    it('carries the transcript the agent digest wrote onto the media record (WhatsApp and Telegram)', () => {
+        const wa = deriveLead('whatsapp', sanitizeEventPayload({ event: 'message', payload: {
+            from: '12025550102@lid', body: null, hasMedia: true,
+            media: { url: 'https://assets.example/v.oga', filename: 'v.oga', mimetype: 'audio/ogg', rehosted: true, transcript: 'call me back' },
+        } }));
+        expect(wa?.media).toEqual({ kind: 'audio', url: 'https://assets.example/v.oga', name: 'v.oga', transcript: 'call me back' });
+        // Telegram's rehosted attachment lands in the same `media` slot, so a
+        // voice note plays (and reads) instead of showing a bare file-id chip.
+        const tg = deriveLead('telegram', sanitizeEventPayload({ update_id: 1, message: {
+            chat: { id: 100000001 }, from: { first_name: 'Alex' },
+            voice: { file_id: 'f', duration: 3 },
+            media: { url: 'https://assets.example/voice.oga', filename: 'voice.oga', mimetype: 'audio/ogg', rehosted: true, transcript: 'see you at three' },
+        } }));
+        expect(tg?.media).toEqual({ kind: 'audio', url: 'https://assets.example/voice.oga', name: 'voice.oga', transcript: 'see you at three' });
+    });
+
     it('keeps a captioned photo as body + image, and never exposes a non-rehosted provider URL', () => {
         const photo = deriveLead('whatsapp', {
             from: '1@c.us', body: 'look at this', hasMedia: true,

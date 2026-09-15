@@ -42,6 +42,22 @@ describe('InboundMessage media', () => {
         expect(container.querySelector('img')).toBeNull();
     });
 
+    it('shows the transcript under the player when the digest heard it', () => {
+        const { container, getByTestId } = render(
+            <InboundMessage
+                scenario={scenario('whatsapp', {
+                    title: '12025550102',
+                    meta: '12025550102',
+                    body: '',
+                    handle: '12025550102',
+                    media: { kind: 'audio', url: 'https://assets.example/v.oga', name: 'v.oga', transcript: 'call me back' },
+                })}
+            />
+        );
+        expect(container.querySelector('audio')).not.toBeNull();
+        expect(getByTestId('inbound-media-transcript').textContent).toContain('call me back');
+    });
+
     it('fills the bubble with a photo and keeps the caption beneath it', () => {
         const { container, getByText } = render(
             <InboundMessage

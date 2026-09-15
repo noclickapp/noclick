@@ -195,6 +195,35 @@ def humanize_slack_markup(text: str, *, drop_user_id: Optional[str] = None) -> s
     )
 
 
+def media_entry(
+    *,
+    url: Optional[str] = None,
+    mime_type: Optional[str] = None,
+    filename: Optional[str] = None,
+    size_bytes: Optional[int] = None,
+    duration_s: Optional[float] = None,
+    voice: bool = False,
+    resource_id: Optional[str] = None,
+    record: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """One piece of media an event carried, in the shape a hook returns under
+    ``"media"`` and ``nodes.core.media_digest`` understands: a fetchable URL
+    and/or a workflow resource id, the MIME type, and — for a voice note —
+    its duration. ``record`` is the provider's own dict for that media inside
+    the output; the digest annotates it (``transcript``) so the persisted
+    trigger record the chat surface frames carries what was said."""
+    return {
+        "url": url,
+        "mime_type": mime_type or "",
+        "filename": filename,
+        "size_bytes": size_bytes,
+        "duration_s": duration_s,
+        "voice": voice,
+        "resource_id": resource_id,
+        "record": record,
+    }
+
+
 def bullet_lines(pairs: Iterable[Tuple[str, Any]]) -> List[str]:
     """``[(label, value)]`` → ``"- label: value"`` lines, skipping empties."""
     lines = []

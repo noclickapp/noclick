@@ -57,7 +57,7 @@ class _FakeClient:
         self._chunks = chunks
         self.requests = []
 
-    def __call__(self, timeout=None):
+    def __call__(self, timeout=None, **kwargs):
         return self
 
     async def __aenter__(self):
@@ -87,7 +87,7 @@ async def test_media_rehosted_and_url_swapped(monkeypatch):
         "size_bytes": 10, "storage_ref": "o/w/res-1/f1.jpg",
         "download_url": "https://assets.example.test/o/w/res-1/f1.jpg",
     })
-    with patch("nodes.whatsapp_node.guarded_async_client", client), \
+    with patch("utils.inbound_media.guarded_async_client", client), \
          patch("utils.resource_store.create_resource_from_bytes", store):
         out = await WhatsAppNode.transform_trigger_payload(
             payload, WA_CFG, pool=_pool(), workflow_id="wf-1", node_id="wa-1",
@@ -127,7 +127,7 @@ async def test_non_media_and_non_message_untouched(monkeypatch):
 async def test_oversized_media_not_rehosted(monkeypatch):
     monkeypatch.setenv("WAHOOKS_API_KEY", "k")
     huge = _FakeClient(chunks=[b"x" * (WhatsAppNode.MEDIA_REHOST_MAX_BYTES + 1)])
-    with patch("nodes.whatsapp_node.guarded_async_client", huge):
+    with patch("utils.inbound_media.guarded_async_client", huge):
         out = await WhatsAppNode.transform_trigger_payload(
             _media_payload(), WA_CFG, pool=_pool(), workflow_id="wf-1", node_id="n",
         )
@@ -182,11 +182,36 @@ def test_agent_event_honest_when_media_not_retrieved():
     assert "wahooks.com" not in event["text"]  # never dangle the authed URL
 
 
-def test_agent_event_media_without_caption():
+def test_agent_event_media_without_caption_names_its_kind():
     payload = _media_payload(rehosted=True)
     payload["payload"]["body"] = None
     event = WhatsAppNode.resolve_agent_event(payload)
-    assert "[media message]" in event["text"]
+    assert "[image]" in event["text"]
+    # Rehosted media is handed to the agent's digest with its record, so a
+    # transcript/extraction lands on the persisted media dict.
+    (entry,) = event["media"]
+    assert entry["url"] == payload["payload"]["media"]["url"]
+    assert entry["mime_type"] == "image/jpeg"
+    assert entry["record"] is payload["payload"]["media"]
+
+
+def test_agent_event_voice_note_is_a_digestible_audio_entry():
+    payload = _media_payload(rehosted=True, resource_id="res-9")
+    p = payload["payload"]
+    p["body"] = None
+    p["media"].update({"url": "https://assets.example.test/o/w/r/v.oga", "mimetype": "audio/ogg; codecs=opus", "filename": "v.oga"})
+    p["_data"] = {"message": {"audioMessage": {"ptt": True, "seconds": 14}}}
+    event = WhatsAppNode.resolve_agent_event(payload)
+    assert "[voice message]" in event["text"]
+    (entry,) = event["media"]
+    assert entry["voice"] is True
+    assert entry["duration_s"] == 14
+    assert entry["resource_id"] == "res-9"
+
+
+def test_agent_event_unretrieved_media_has_no_entry():
+    event = WhatsAppNode.resolve_agent_event(_media_payload())
+    assert event["media"] == []
 
 
 # ── delivery-seam contract ──────────────────────────────────────────────────

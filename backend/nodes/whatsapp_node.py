@@ -1721,17 +1721,24 @@ class WhatsAppNode(WorkflowNode):
             chat_id = str(p.get("from") or key.get("remoteJid") or "").strip()
             if not chat_id:
                 return super().resolve_agent_event(output)
+            from nodes.core.agent_events import media_entry
+            from nodes.core.media_digest import media_kind, media_placeholder
+
             media = p.get("media") if isinstance(p.get("media"), dict) else {}
             has_media = bool(p.get("hasMedia") or media)
+            kind = media_kind(media.get("mimetype"), media.get("filename")) if media else None
+            voice = kind == "audio" and cls._is_voice_note(p, media)
             # For media messages, body is the caption (may be empty).
             body = p.get("body") or p.get("caption") or (
-                "[media message]" if has_media else "[non-text message]"
+                media_placeholder(kind, voice=voice, filename=media.get("filename"))
+                if has_media else "[non-text message]"
             )
             participant = str(key.get("participant") or "").strip()  # sender in a group
             header = f"WhatsApp message from {chat_id}"
             if participant and participant != chat_id:
                 header += f" (sent by {participant})"
             media_note = ""
+            entries = []
             if has_media:
                 if media.get("rehosted") and media.get("url"):
                     desc = ", ".join(
@@ -1742,6 +1749,16 @@ class WhatsAppNode(WorkflowNode):
                         f"Download that URL (e.g. curl -o) to view or process the file — "
                         f"it is a public, unguessable link."
                     )
+                    entries.append(media_entry(
+                        url=media["url"],
+                        mime_type=media.get("mimetype"),
+                        filename=media.get("filename"),
+                        size_bytes=media.get("size"),
+                        duration_s=cls._audio_seconds(p),
+                        voice=voice,
+                        resource_id=media.get("resource_id"),
+                        record=media,
+                    ))
                 else:
                     # Not rehosted: the provider URL is platform-authed and
                     # useless to the run — say so instead of dangling it.
@@ -1755,7 +1772,7 @@ class WhatsAppNode(WorkflowNode):
                 f"(pass this chat id exactly — do not convert it to a phone number)."
             )
             title = (p.get("_data") or {}).get("pushName") or p.get("notifyName") or chat_id.split("@", 1)[0]
-            return {"text": text, "conversation_key": chat_id, "title": title}
+            return {"text": text, "conversation_key": chat_id, "title": title, "media": entries}
 
         # Meta Cloud API envelope — bare E.164 sender numbers.
         if output.get("object") == "whatsapp_business_account":
@@ -1833,6 +1850,32 @@ class WhatsAppNode(WorkflowNode):
     MEDIA_REHOST_MAX_BYTES = 25 * 1024 * 1024
     MEDIA_REHOST_TIMEOUT_S = 20
 
+    @staticmethod
+    def _audio_message(p: Dict[str, Any]) -> Dict[str, Any]:
+        """WAHA's raw record for a voice/audio message, when the engine ships it."""
+        data = p.get("_data") if isinstance(p.get("_data"), dict) else {}
+        msg = data.get("message") if isinstance(data.get("message"), dict) else {}
+        audio = msg.get("audioMessage")
+        return audio if isinstance(audio, dict) else {}
+
+    @classmethod
+    def _is_voice_note(cls, p: Dict[str, Any], media: Dict[str, Any]) -> bool:
+        """A push-to-talk note rather than an audio file: WAHA marks it ``ptt``
+        (NOWEB engine) or ``type: "ptt"`` (WEBJS); Opus-in-Ogg is the voice
+        note codec either way."""
+        data = p.get("_data") if isinstance(p.get("_data"), dict) else {}
+        if cls._audio_message(p).get("ptt") is True or data.get("type") == "ptt":
+            return True
+        return "opus" in str(media.get("mimetype") or "").lower()
+
+    @classmethod
+    def _audio_seconds(cls, p: Dict[str, Any]) -> Optional[float]:
+        secs = cls._audio_message(p).get("seconds")
+        if secs is None:
+            data = p.get("_data") if isinstance(p.get("_data"), dict) else {}
+            secs = data.get("duration")
+        return float(secs) if isinstance(secs, (int, float)) and secs > 0 else None
+
     @classmethod
     async def transform_trigger_payload(
         cls, payload, config, *, pool, workflow_id, node_id
@@ -1858,58 +1901,23 @@ class WhatsAppNode(WorkflowNode):
         # before attaching the bearer (also blocks private-network SSRF).
         assert_exact_url_origin(url, WAHOOKS_API_ORIGIN)
 
-        owner = await pool.fetchrow(
-            "SELECT owner_id, organization_id FROM workflows WHERE id = $1::uuid",
-            workflow_id,
-        )
-        if not owner:
-            return None
+        from utils.inbound_media import rehost_inbound_media
 
-        chunks, total = [], 0
-        async with guarded_async_client(timeout=cls.MEDIA_REHOST_TIMEOUT_S) as client:
-            async with client.stream(
-                "GET", url, headers={"Authorization": f"Bearer {api_key}"}
-            ) as resp:
-                resp.raise_for_status()
-                content_type_header = resp.headers.get("content-type")
-                async for chunk in resp.aiter_bytes():
-                    total += len(chunk)
-                    if total > cls.MEDIA_REHOST_MAX_BYTES:
-                        logger.warning(
-                            f"[WhatsAppNode] Media exceeds rehost cap "
-                            f"({cls.MEDIA_REHOST_MAX_BYTES} bytes) — delivering without content"
-                        )
-                        return None
-                    chunks.append(chunk)
-        body = b"".join(chunks)
-
-        from utils.resource_store import create_resource_from_bytes
-
-        mimetype = media.get("mimetype") or content_type_header or "application/octet-stream"
-        filename = media.get("filename") or url.rsplit("/", 1)[-1] or "whatsapp-media"
-        resource = await create_resource_from_bytes(
-            user_id=str(owner["owner_id"]),
+        rehosted = await rehost_inbound_media(
+            pool,
             workflow_id=str(workflow_id),
             node_id=node_id,
-            organization_id=str(owner["organization_id"]) if owner["organization_id"] else None,
-            body=body,
-            content_type=mimetype,
-            filename=filename,
-            metadata={"source": "whatsapp_inbound_media"},
+            url=url,
+            source="whatsapp_inbound_media",
+            mimetype=media.get("mimetype"),
+            filename=media.get("filename") or url.rsplit("/", 1)[-1] or "whatsapp-media",
+            headers={"Authorization": f"Bearer {api_key}"},
+            max_bytes=cls.MEDIA_REHOST_MAX_BYTES,
+            timeout_s=cls.MEDIA_REHOST_TIMEOUT_S,
         )
-        p["media"] = {
-            **media,
-            "url": resource["download_url"],
-            "mimetype": mimetype,
-            "filename": filename,
-            "size": resource["size_bytes"],
-            "rehosted": True,
-            "resource_id": resource["resource_id"],
-        }
-        logger.info(
-            f"[WhatsAppNode] Rehosted inbound media ({resource['size_bytes']} bytes, "
-            f"{mimetype}) as resource {resource['resource_id']}"
-        )
+        if not rehosted:
+            return None
+        p["media"] = {**media, **rehosted}
         return payload
 
     @classmethod

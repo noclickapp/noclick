@@ -5377,6 +5377,8 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
                 "filename": a.get("filename"),
                 "content_type": a.get("content_type"),
                 "size": a.get("size"),
+                # Set only on a voice message — what marks the clip as speech.
+                "duration_secs": a.get("duration_secs"),
             }
             for a in (message.get("attachments") or [])
             if isinstance(a, dict) and a.get("url")
@@ -5556,10 +5558,38 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             server = f" (server {output['guild_id']})"
         else:
             server = ""
+        from nodes.core.agent_events import media_entry
+        from nodes.core.media_digest import media_kind, media_placeholder
+
+        attachments = [a for a in output.get("attachments") or [] if isinstance(a, dict) and a.get("url")]
+        # A voice message is an audio attachment stamped with its duration;
+        # the digest transcribes it into the turn.
+        media = [
+            media_entry(
+                url=a["url"],
+                mime_type=a.get("content_type"),
+                filename=a.get("filename"),
+                size_bytes=a.get("size"),
+                duration_s=a.get("duration_secs"),
+                voice=bool(a.get("duration_secs")),
+                record=a,
+            )
+            for a in attachments
+        ]
+        if not content and len(attachments) == 1:
+            a = attachments[0]
+            content = media_placeholder(
+                media_kind(a.get("content_type"), a.get("filename")),
+                voice=bool(a.get("duration_secs")),
+                filename=a.get("filename"),
+            )
         lines = [f"Discord message from {who} in {where}{server}:", content or "(no text)"]
-        attachments = [a.get("url") for a in output.get("attachments") or [] if a.get("url")]
         if attachments:
-            lines.append("Attachments: " + ", ".join(attachments))
+            lines.append("Attachments: " + ", ".join(
+                f"{a['filename']} ({a['content_type']}): {a['url']}"
+                if a.get("filename") and a.get("content_type") else a["url"]
+                for a in attachments
+            ))
         if output.get("reply_to_message_id"):
             lines.append(f"(a reply to message {output['reply_to_message_id']})")
         if parent_id:
@@ -5571,7 +5601,7 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             f"To respond, use send_message_to_channel with channel_id={channel_id} "
             f"(pass this exactly); message_id={output.get('message_id')} if you want to reply to it."
         )
-        return {"text": "\n".join(lines), "conversation_key": channel_id, "title": where}
+        return {"text": "\n".join(lines), "conversation_key": channel_id, "title": where, "media": media}
 
     async def _trigger_on_discord_event(
         self, config: _DiscordEventTriggerBase, credentials

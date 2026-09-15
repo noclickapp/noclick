@@ -97,6 +97,21 @@ class BaseAgentFields(BaseModel):
             "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
         }
     )
+    # Gates the AI half of the media digest (nodes/core/media_digest.py): voice
+    # notes and audio files that arrive with a message are transcribed into
+    # the agent's turn. Free digests (document text) are never gated.
+    enable_media_transcription: str = Field(
+        default="true",
+        title="Transcribe Voice Messages",
+        description="Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
+        json_schema_extra={
+            "enum": ["true", "false"],
+            "enumNames": ["Yes", "No"],
+            "x-enum-searchable": True,
+            "ui:category": "Advanced",
+            "ui:help": "Charged per transcription like other AI usage. When off, the agent is told a voice message arrived and can ask the sender to type it out.",
+        }
+    )
     # Surfaces this agent as a fullscreen chat tab in the workflow's Interface tab,
     # making it easy to configure the model + chat with the agent without leaving
     # the editor. Rendered as a separate AgentChatBlock — see frontend.
