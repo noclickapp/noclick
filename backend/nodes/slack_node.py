@@ -17,6 +17,7 @@ Authentication: https://api.slack.com/authentication/token-types
 import json
 import uuid
 import logging
+import copy
 import inspect
 import time
 from typing import Dict, Any, Optional, Tuple, Union, Literal, List, Annotated
@@ -7244,7 +7245,7 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         duplicates). An edit (``message_changed``) reads its nested message;
         the receiving bot's own @mention is the wake-up, not content. Channel
         and thread ids stay visible as the reply target for send tools."""
-        from nodes.core.agent_events import bullet_lines, compact_json, humanize_slack_markup
+        from nodes.core.agent_events import bullet_lines, compact_json, humanize_slack_markup, media_entry
 
         data = output.get("data") if isinstance(output.get("data"), dict) else {}
         event = data.get("event") if isinstance(data.get("event"), dict) else None
@@ -7316,10 +7317,26 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
                     (f.get("title") or "field", f.get("value")) for f in a.get("fields") or [] if isinstance(f, dict)
                 )
             ]
+        media = []
         for f in msg.get("files") or []:
             if isinstance(f, dict) and (f.get("title") or f.get("name")):
                 kind = f.get("filetype") or f.get("mimetype")
-                lines.append(f"📎 {f.get('title') or f.get('name')}" + (f" ({kind})" if kind else ""))
+                line = f"📎 {f.get('title') or f.get('name')}" + (f" ({kind})" if kind else "")
+                # A file rehosted at delivery (transform_trigger_payload) is
+                # fetchable and digestible; Slack's own URL is private and
+                # never rides the turn.
+                rehosted = f.get("media") if isinstance(f.get("media"), dict) else None
+                if rehosted and rehosted.get("rehosted") and rehosted.get("url"):
+                    line += f": {rehosted['url']}"
+                    media.append(media_entry(
+                        url=rehosted["url"],
+                        mime_type=rehosted.get("mimetype") or f.get("mimetype"),
+                        filename=rehosted.get("filename") or f.get("name"),
+                        size_bytes=rehosted.get("size"),
+                        resource_id=rehosted.get("resource_id"),
+                        record=rehosted,
+                    ))
+                lines.append(line)
         note = cls._SUBTYPE_NOTES.get(subtype or "")
         if not lines:
             if not note:
@@ -7337,7 +7354,100 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
             "text": "\n".join([header, *lines, "", reply]),
             "conversation_key": ck,
             "title": title,
+            "media": media,
         }
+
+    MEDIA_REHOST_MAX_BYTES = 25 * 1024 * 1024
+    MEDIA_REHOST_TIMEOUT_S = 20
+    MEDIA_REHOST_MAX_FILES = 3
+    FILES_ORIGIN = "https://files.slack.com"
+
+    @classmethod
+    async def transform_trigger_payload(
+        cls, payload, config, *, pool, workflow_id, node_id
+    ):
+        """Rehost the files a message shared (a voice clip, a PDF, a
+        screenshot) to workflow resources and hang the capability URL on
+        each file as ``media`` — the slot the agent digest and the chat
+        frame read. Slack's file URLs are private: they need the workspace's
+        bot token, which the run must never carry, so the fetch happens here
+        with the node's credential. The app-event fan-out hands every
+        subscribed workflow the SAME payload object, so the envelope is
+        copied before it is annotated: a capability URL minted for one
+        workflow's owner must not land in another workflow's run. Failures
+        raise into the delivery seam, which keeps the original payload."""
+        event = payload.get("event") if isinstance(payload, dict) and isinstance(payload.get("event"), dict) else None
+        if not event or event.get("type") not in ("message", "app_mention") or not workflow_id:
+            return None
+        msg = cls._event_message(event)
+        files = [
+            f for f in msg.get("files") or []
+            if isinstance(f, dict) and isinstance(f.get("url_private_download") or f.get("url_private"), str)
+        ]
+        if not files:
+            return None
+        token = await cls._delivery_bot_token(config, pool, str(workflow_id))
+        if not token:
+            return None
+
+        from utils.inbound_media import rehost_inbound_media
+        from utils.ssrf import assert_exact_url_origin
+
+        payload = copy.deepcopy(payload)
+        rehosted_any = False
+        for f in cls._event_message(payload["event"]).get("files")[: cls.MEDIA_REHOST_MAX_FILES]:
+            url = f.get("url_private_download") or f.get("url_private")
+            if not isinstance(url, str):
+                continue
+            # The bot token must only be sent to Slack's file host.
+            assert_exact_url_origin(url, cls.FILES_ORIGIN)
+            rehosted = await rehost_inbound_media(
+                pool,
+                workflow_id=str(workflow_id),
+                node_id=node_id,
+                url=url,
+                source="slack_inbound_media",
+                mimetype=f.get("mimetype"),
+                filename=f.get("name") or f.get("title"),
+                headers={"Authorization": f"Bearer {token}"},
+                max_bytes=cls.MEDIA_REHOST_MAX_BYTES,
+                timeout_s=cls.MEDIA_REHOST_TIMEOUT_S,
+            )
+            if rehosted:
+                f["media"] = rehosted
+                rehosted_any = True
+        return payload if rehosted_any else None
+
+    @staticmethod
+    def _event_message(event: Dict[str, Any]) -> Dict[str, Any]:
+        """The message an event is about — an edit carries it nested."""
+        nested = event.get("message")
+        if event.get("subtype") == "message_changed" and isinstance(nested, dict):
+            return nested
+        return event
+
+    @classmethod
+    async def _delivery_bot_token(cls, config, pool, workflow_id: str) -> Optional[str]:
+        """The trigger node's workspace bot token at delivery time: its
+        attached credential resolved as the owner (utils.inbound_media), then
+        the installation chain of record for a rotating OAuth credential."""
+        from utils.inbound_media import resolve_delivery_credential
+
+        credential, owner_id = await resolve_delivery_credential(
+            pool, config, workflow_id, "slack_oauth", "slack_bot_token"
+        )
+        if not credential:
+            return None
+        if credential.get("bot_token"):
+            return credential["bot_token"]
+        credential_id = ((config or {}).get("credentialIds") or {}).get("slack_oauth")
+        return await ensure_fresh_slack_bot_token(
+            pool,
+            credential,
+            user_id=owner_id,
+            credential_id=str(credential_id) if credential_id else None,
+            caller_path="media_rehost",
+        )
 
     async def _trigger_on_slack_event(self, config, credentials) -> Dict[str, Any]:
         """Output when the trigger node is run manually from the editor.

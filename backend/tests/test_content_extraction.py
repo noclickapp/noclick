@@ -195,3 +195,30 @@ def test_scanned_note_survives_inline_enrich():
         out = asyncio.run(ce.inline_enrich_attachments(records, fetch))
         model.assert_not_called()
     assert "no extractable text layer" in out[0]["note"]
+
+
+# ── Placement: a registered extractor isolates EVERY parse ──────────────────
+
+def test_registered_extractor_parses_every_document_isolated():
+    """Attachment bytes come from strangers and pypdf/docx are parsers, so once
+    a platform registers the isolated extractor nothing parses in-process —
+    not even a tiny file, and whichever app asked."""
+    calls = []
+
+    class Handle:
+        class remote:
+            @staticmethod
+            async def aio(data, mime_type, filename):
+                calls.append((len(data), mime_type, filename))
+                return "isolated text"
+
+    assert not ce.parses_isolated()
+    ce.register_remote_extractor(Handle)
+    try:
+        assert ce.parses_isolated()
+        result = asyncio.run(ce.extract_content(b"tiny", mime_type="text/plain", filename="t.txt"))
+    finally:
+        ce.register_remote_extractor(None)
+    assert result.text == "isolated text" and result.method == "document"
+    assert calls == [(4, "text/plain", "t.txt")]
+    assert not ce.parses_isolated()

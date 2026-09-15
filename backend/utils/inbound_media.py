@@ -15,7 +15,7 @@ The returned dict is the ``media`` slot every consumer reads (the frontend's
 """
 
 import logging
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, Tuple
 
 from utils.ssrf import guarded_async_client
 
@@ -23,6 +23,38 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_MAX_BYTES = 25 * 1024 * 1024
 DEFAULT_TIMEOUT_S = 20
+
+
+async def resolve_delivery_credential(
+    pool, config: Optional[Dict[str, Any]], workflow_id: str, *credential_keys: str
+) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    """``(credential, owner_id)`` for the trigger node's attached credential
+    at delivery time — the one whose token fetches provider-private media —
+    resolved as the workflow OWNER (the identity a fire runs as) with the
+    owner-fallback policy every run uses. ``credential_keys`` name the
+    ``credentialIds`` slots to try in order (a node may accept an OAuth or a
+    manual-token credential). ``(None, None)`` when nothing is attached."""
+    ids = (config or {}).get("credentialIds") or {}
+    credential_id = next((ids[k] for k in credential_keys if ids.get(k)), None)
+    if not credential_id:
+        return None, None
+    owner = await pool.fetchrow(
+        "SELECT owner_id, organization_id FROM workflows WHERE id = $1::uuid",
+        workflow_id,
+    )
+    if not owner:
+        return None, None
+    from utils.credentials import resolve_credential_with_owner_fallback
+
+    owner_id = str(owner["owner_id"])
+    credential = await resolve_credential_with_owner_fallback(
+        str(credential_id),
+        owner_id,
+        pool,
+        org_id=str(owner["organization_id"]) if owner["organization_id"] else None,
+        workflow_id=workflow_id,
+    )
+    return credential, owner_id
 
 
 async def rehost_inbound_media(

@@ -14,8 +14,13 @@ Two hard rules every caller inherits:
     fetch-attachment operations (where the user/agent asked for this document)
     may pass ``allow_ai=True`` with a billing context. Inline auto-enrichment
     on message fetches uses the free CPU path only.
-  - **Document parsing never blocks the event loop.** CPU extraction runs in
-    a worker thread and the byte limit bounds resource use.
+  - **Untrusted bytes never parse in the process that holds credentials.**
+    Attachments come from strangers (an inbound email, a channel message) and
+    pypdf/docx/bs4 are parsers. A platform registers a remote extractor — an
+    isolated function with no secrets — and EVERY document parse runs there,
+    whatever its size or which app asked. With nothing registered (the open
+    edition, tests) parsing runs inline in a worker thread, which keeps the
+    event loop free but not the process.
 """
 
 import asyncio
@@ -31,12 +36,13 @@ logger = logging.getLogger(__name__)
 
 # ── Limits ───────────────────────────────────────────────────────────────────
 MAX_EXTRACT_BYTES = 15 * 1024 * 1024      # refuse to parse anything bigger
-INLINE_BYTES_THRESHOLD = 512 * 1024       # base for the inline-enrichment cap
+INLINE_BYTES_THRESHOLD = 512 * 1024       # api app parses ≤ this in-process
 AI_OCR_MAX_PAGES = 20                     # bounds worst-case per-document charge
 DEFAULT_INLINE_CHAR_BUDGET = 8_000        # per-attachment auto-inlined text
 INLINE_ENRICH_MAX_ATTACHMENTS = 3         # per-message auto-enrich cap
 
-# Operators may replace this with any model supported by their LiteLLM setup.
+# Via OpenRouter by default (one provider key); an operator may point this at
+# any model their LiteLLM setup serves.
 AI_EXTRACTION_MODEL = os.environ.get("AI_EXTRACTION_MODEL", "openrouter/google/gemini-3.5-flash")
 
 # Mimes/extensions the free CPU path can extract (delegates to document_ingest).
@@ -70,7 +76,7 @@ class ExtractedContent:
 @dataclass
 class BillingContext:
     """Who pays for AI-assisted extraction. Raw runner + org — the usage
-    tracker's organization attribution policy choke point resolves the billed pool."""
+    tracker's Owner Pays choke point resolves the billed pool."""
     user_id: str
     organization_id: Optional[str] = None
     workflow_id: Optional[str] = None
@@ -84,10 +90,29 @@ class ExtractionError(ValueError):
     user/agent-facing — callers surface it verbatim."""
 
 
-# ── CPU placement ────────────────────────────────────────────────────────────
+# ── Placement ────────────────────────────────────────────────────────────────
+# A platform registers a handle with ``.remote.aio(data, mime, filename)`` at
+# boot (the hosted edition: a secret-free isolated function, registered by
+# every serving app). Nothing registered: parse inline in a thread.
+
+_remote_extractor = None
+
+
+def register_remote_extractor(fn) -> None:
+    global _remote_extractor
+    _remote_extractor = fn
+
+
+def parses_isolated() -> bool:
+    """True when document parsing leaves this process."""
+    return _remote_extractor is not None
+
 
 async def _extract_document_text(data: bytes, mime_type: str, filename: str) -> str:
-    """Run CPU-bound document parsing outside the event loop."""
+    """Free CPU extraction, isolated whenever an extractor is registered."""
+    if _remote_extractor is not None:
+        # .aio per the async bridge guardrail (test_no_modal_bridge_in_async)
+        return await _remote_extractor.remote.aio(data, mime_type, filename)
     from nodes.core.document_ingest import extract_text
 
     return await asyncio.to_thread(extract_text, data, mime_type, filename)

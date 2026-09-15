@@ -2428,27 +2428,10 @@ class TelegramNode(WorkflowNode):
 
     @staticmethod
     async def _delivery_bot_token(config, pool, workflow_id: str) -> Optional[str]:
-        """The trigger node's bot token at delivery time: its attached
-        credential, resolved as the workflow owner (the identity the fire
-        runs as) with the owner-fallback policy every run uses."""
-        credential_id = ((config or {}).get("credentialIds") or {}).get("telegram_bot_token")
-        if not credential_id:
-            return None
-        owner = await pool.fetchrow(
-            "SELECT owner_id, organization_id FROM workflows WHERE id = $1::uuid",
-            workflow_id,
-        )
-        if not owner:
-            return None
-        from utils.credentials import resolve_credential_with_owner_fallback
+        """The trigger node's bot token at delivery time (utils.inbound_media)."""
+        from utils.inbound_media import resolve_delivery_credential
 
-        credential = await resolve_credential_with_owner_fallback(
-            str(credential_id),
-            str(owner["owner_id"]),
-            pool,
-            org_id=str(owner["organization_id"]) if owner["organization_id"] else None,
-            workflow_id=workflow_id,
-        )
+        credential, _owner = await resolve_delivery_credential(pool, config, workflow_id, "telegram_bot_token")
         return (credential or {}).get("token") or None
 
     @classmethod

@@ -797,3 +797,33 @@ describe('deriveLead · slack', () => {
         expect(l!.body).toBe('can you check the status page?');
     });
 });
+
+describe('Slack shared files', () => {
+    it('frames a file rehosted at delivery as playable media with its transcript', () => {
+        const lead = deriveLead('slack', {
+            type: 'slack',
+            data: {
+                event: {
+                    type: 'message', subtype: 'file_share', user: 'U1', channel: 'C1', ts: '4.4', text: 'here',
+                    files: [{
+                        id: 'F1', name: 'memo.m4a', title: 'memo', mimetype: 'audio/mp4',
+                        url_private: 'https://files.example/private',
+                        media: { url: 'https://assets.example/o/w/r/memo.m4a', mimetype: 'audio/mp4', filename: 'memo.m4a', rehosted: true, transcript: 'call me back' },
+                    }],
+                },
+            },
+        });
+        expect(lead?.media).toEqual({ kind: 'audio', url: 'https://assets.example/o/w/r/memo.m4a', name: 'memo.m4a', transcript: 'call me back' });
+        expect(lead?.body).toContain('📎 memo');
+    });
+
+    it('shows a chip, never the private URL, when nothing was rehosted', () => {
+        const lead = deriveLead('slack', {
+            type: 'slack',
+            data: { event: { type: 'message', user: 'U1', channel: 'C1', ts: '4.4', text: 'here',
+                             files: [{ id: 'F1', name: 'q.pdf', title: 'Q3', url_private: 'https://files.example/private' }] } },
+        });
+        expect(lead?.media).toBeUndefined();
+        expect(JSON.stringify(lead)).not.toContain('files.example');
+    });
+});

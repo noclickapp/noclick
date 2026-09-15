@@ -2104,6 +2104,15 @@ async def _fire_subscription(
         )
         return False
 
+    # Provider media only the node's credential can fetch (a Slack file) is
+    # rehosted here, after every filter — a dropped event costs nothing — and
+    # per subscription, so each workflow's run carries its own resource.
+    from nodes.core.registry import NODE_REGISTRY
+
+    await _transform_trigger_payload(
+        NODE_REGISTRY.get(trigger_node.get("type") or ""), trigger_node, payload, workflow_id
+    )
+
     background_tasks.add_task(
         _execute_workflow_with_relay,
         user_id=user_id,

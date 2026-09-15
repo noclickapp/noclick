@@ -272,6 +272,10 @@ function deriveSlackLead(d: Dict): Lead | null {
         .join(' · ');
     const botName = str(asDict(m.bot_profile), 'name') ?? str(m, 'username');
     const user = str(m, 'user');
+    // A shared file rehosted at delivery carries the same `media` slot a
+    // WhatsApp message does — playable, and annotated by the agent's digest.
+    const rehosted = files.map((f) => asDict(f.media)).find((r) => r.rehosted === true);
+    const media = rehosted ? deriveInboundMedia({ media: rehosted }) : undefined;
     return {
         title,
         meta,
@@ -279,6 +283,7 @@ function deriveSlackLead(d: Dict): Lead | null {
         author: botName ?? undefined,
         handle: user ? `@${user}` : botName ? undefined : str(m, 'bot_id'),
         time: clockOf(slackTsToIso(str(m, 'ts', 'event_ts'))),
+        media,
     };
 }
 
