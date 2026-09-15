@@ -482,3 +482,35 @@ async def extract_token_from_cookies(cookie_str: str) -> tuple[str, str]:
         # Log unexpected errors but don't expose details
         logger.error(f"Unexpected error in cookie extraction")
         raise ValueError("Authentication failed")
+
+
+async def authenticate_http_request(request: Any) -> tuple[str, Dict[str, Any]]:
+    """Resolve the caller of a REST request: ``(user_id, verified claims)``.
+
+    Prefers ``Authorization: Bearer <supabase access token>`` — the SPA's live
+    ``getSession()`` token, which works cross-origin (the auth cookie is
+    SameSite=Lax + scoped to the app domain, so it is never sent to the API
+    domain in prod) and never goes stale. Falls back to the session cookie for
+    same-origin callers. Identity is the VERIFIED JWT's ``sub``, never the
+    cookie blob's user field. Raises ``HTTPException(401)``.
+    """
+    from fastapi import HTTPException
+
+    token: Optional[str] = None
+    auth_header = request.headers.get("authorization", "")
+    if auth_header.lower().startswith("bearer "):
+        token = auth_header[7:].strip() or None
+    if token is None:
+        cookie = request.headers.get("cookie", "")
+        if cookie:
+            try:
+                token, _cookie_user_id = await extract_token_from_cookies(cookie)
+            except Exception:
+                token = None
+    if not token:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    try:
+        user_id, claims = await verify_socket_token(token)
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid session")
+    return user_id, claims

@@ -8,6 +8,7 @@ import { sendEventAsync } from '~/lib/socket-sender';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { isLocalEdition } from '~/lib/edition';
+import { backendAuthHeaders } from '~/lib/apiAuth';
 
 // Backend API base URL
 const API_BASE = import.meta.env.VITE_API_URL || '';
@@ -37,6 +38,11 @@ interface NewKeyResponse extends APIKey {
 interface WorkflowOption {
   id: string;
   name: string;
+}
+
+async function responseError(resp: Response): Promise<string> {
+  const detail = await resp.json().then(b => b?.detail).catch(() => null);
+  return typeof detail === 'string' ? detail : `request failed (${resp.status})`;
 }
 
 // --- Workflow scope dropdown (same pattern as Feed's WorkflowFilterDropdown) ---
@@ -129,13 +135,17 @@ export function DeveloperSettings() {
   const [showRevoked, setShowRevoked] = useState(false);
   const [showQuickstart, setShowQuickstart] = useState(false);
   const [workflows, setWorkflows] = useState<WorkflowOption[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchKeys = useCallback(async () => {
     try {
-      const resp = await fetch(`${API_BASE}/api/keys`, { credentials: 'include' });
-      if (resp.ok) setKeys(await resp.json());
+      const resp = await fetch(`${API_BASE}/api/keys`, { credentials: 'include', headers: await backendAuthHeaders() });
+      if (!resp.ok) throw new Error(await responseError(resp));
+      setKeys(await resp.json());
+      setError(null);
     } catch (e) {
       console.error('Failed to fetch API keys:', e);
+      setError(`Couldn't load API keys: ${(e as Error).message}`);
     } finally {
       setLoading(false);
     }
@@ -161,7 +171,7 @@ export function DeveloperSettings() {
     try {
       const resp = await fetch(`${API_BASE}/api/keys`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(await backendAuthHeaders()) },
         credentials: 'include',
         body: JSON.stringify({
           name: newKeyName.trim(),
@@ -169,15 +179,16 @@ export function DeveloperSettings() {
           workflow_id: newKeyWorkflow || null,
         }),
       });
-      if (resp.ok) {
-        const data: NewKeyResponse = await resp.json();
-        setNewKeyRaw(data.raw_key);
-        setNewKeyName('');
-        setNewKeyWorkflow('');
-        await fetchKeys();
-      }
+      if (!resp.ok) throw new Error(await responseError(resp));
+      const data: NewKeyResponse = await resp.json();
+      setNewKeyRaw(data.raw_key);
+      setNewKeyName('');
+      setNewKeyWorkflow('');
+      setError(null);
+      await fetchKeys();
     } catch (e) {
       console.error('Failed to create API key:', e);
+      setError(`Couldn't create API key: ${(e as Error).message}`);
     } finally {
       setCreating(false);
     }
@@ -185,10 +196,15 @@ export function DeveloperSettings() {
 
   const handleRevoke = async (keyId: string) => {
     try {
-      const resp = await fetch(`${API_BASE}/api/keys/${keyId}`, { method: 'DELETE', credentials: 'include' });
-      if (resp.ok) await fetchKeys();
+      const resp = await fetch(`${API_BASE}/api/keys/${keyId}`, {
+        method: 'DELETE', credentials: 'include', headers: await backendAuthHeaders(),
+      });
+      if (!resp.ok) throw new Error(await responseError(resp));
+      setError(null);
+      await fetchKeys();
     } catch (e) {
       console.error('Failed to revoke API key:', e);
+      setError(`Couldn't revoke API key: ${(e as Error).message}`);
     }
   };
 
@@ -229,6 +245,12 @@ export function DeveloperSettings() {
           </a>
         </div>
       </div>
+
+      {error && (
+        <div className="mb-6 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-sm text-red-700 dark:text-red-300">
+          {error}
+        </div>
+      )}
 
       {/* New key reveal banner */}
       {newKeyRaw && (

@@ -10,7 +10,7 @@ from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 
 from utils.api_keys import create_api_key, list_api_keys, revoke_api_key
-from utils.auth import extract_token_from_cookies, verify_token
+from utils.auth import authenticate_http_request
 from utils.database_pool import get_native_pool
 
 logger = logging.getLogger(__name__)
@@ -19,16 +19,8 @@ router = APIRouter(prefix="/api/keys", tags=["api-keys"])
 
 
 async def _get_user_id(request: Request) -> str:
-    """Extract and verify user_id from request cookies."""
-    cookie = request.headers.get("cookie", "")
-    if not cookie:
-        raise HTTPException(status_code=401, detail="Authentication required")
-    try:
-        token, user_id = await extract_token_from_cookies(cookie)
-        await verify_token(token)
-        return user_id
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid authentication")
+    user_id, _claims = await authenticate_http_request(request)
+    return user_id
 
 
 class CreateKeyRequest(BaseModel):
