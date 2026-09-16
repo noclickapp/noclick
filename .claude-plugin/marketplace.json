@@ -1,0 +1,25 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "noclick",
+  "owner": {
+    "name": "NoClick",
+    "url": "https://noclick.com"
+  },
+  "description": "Official NoClick integrations for Claude Code.",
+  "plugins": [
+    {
+      "name": "noclick",
+      "source": "./plugins/noclick",
+      "description": "Build, edit, run, and inspect NoClick workflows from Claude Code through NoClick's hosted OAuth MCP server.",
+      "category": "integrations",
+      "keywords": [
+        "noclick",
+        "mcp",
+        "automation",
+        "workflows",
+        "ai-agents",
+        "integrations"
+      ]
+    }
+  ]
+}

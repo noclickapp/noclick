@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "noclick",
+  "displayName": "NoClick",
+  "description": "Build, edit, run, and inspect NoClick workflows from Claude Code through NoClick's hosted OAuth MCP server.",
+  "version": "1.0.0",
+  "author": {
+    "name": "NoClick",
+    "url": "https://noclick.com"
+  },
+  "homepage": "https://docs.noclick.com/mcp/setup",
+  "repository": "https://github.com/noclickapp/noclick",
+  "license": "AGPL-3.0-only",
+  "keywords": [
+    "noclick",
+    "mcp",
+    "automation",
+    "workflows",
+    "ai-agents",
+    "integrations"
+  ]
+}
