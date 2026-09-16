@@ -466,8 +466,8 @@ _IG_COMMENTS = ("instagram_basic", "instagram_manage_comments", "pages_read_enga
 
 _INSTAGRAM_REQUIREMENTS: dict[str, ScopeRequirement] = {
     "on_mention": _s(
-        "instagram_business_basic", "instagram_business_manage_comments",
-        note="Instagram Login only: mentions in comments and public post/Reel captions.",
+        "instagram_basic", "instagram_manage_comments", "pages_read_engagement", "pages_show_list", "pages_manage_metadata",
+        note="Facebook Login with a linked Page: mentions in comments and public post/Reel captions.",
     ),
     "on_comment": _s(
         "instagram_business_basic", "instagram_business_manage_comments",

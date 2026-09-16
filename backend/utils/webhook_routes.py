@@ -2320,6 +2320,7 @@ async def _dispatch_one_app_event(
     return fired
 
 
+@router.get("/app/instagram_facebook")
 @router.get("/app/facebook")
 async def verify_facebook_app_webhook(request: Request):
     from utils.facebook_webhooks import facebook_handshake

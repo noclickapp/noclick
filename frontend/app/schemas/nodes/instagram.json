@@ -914,6 +914,19 @@
           "title": "Token Expiry",
           "type": "string"
         },
+        "facebook_page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Page linked to this Instagram professional account",
+          "title": "Facebook Page ID"
+        },
         "email": {
           "anyOf": [
             {
@@ -946,18 +959,17 @@
         "instagram_user_id",
         "expires_at"
       ],
-      "title": "InstagramOAuthCredential",
+      "title": "Instagram with Facebook Login",
       "type": "object",
-      "x-credential-hidden": true,
       "x-credential-type": "oauth",
       "x-oauth-provider": "facebook",
       "x-oauth-scopes": [
         "instagram_basic",
         "instagram_content_publish",
         "instagram_manage_comments",
-        "instagram_manage_messages",
         "pages_show_list",
-        "pages_read_engagement"
+        "pages_read_engagement",
+        "pages_manage_metadata"
       ]
     },
     "InstagramOnCommentConfig": {
@@ -1033,7 +1045,7 @@
       "type": "object"
     },
     "InstagramOnMentionConfig": {
-      "description": "Receive @mentions in comments and captions on public posts and Reels.\n\nIncludes other accounts' posts. Private posts and Story mentions are not\nsupported. Meta can omit author details or media URLs for restricted media.",
+      "description": "Receive @mentions in comments and captions on public posts and Reels.\n\nConnect with Facebook Login through a linked Facebook Page.\nIncludes other accounts' posts. Private posts and Story mentions are not\nsupported. Meta can omit author details or media URLs for restricted media.",
       "properties": {
         "subscription_status": {
           "anyOf": [
@@ -1091,7 +1103,7 @@
             "caption mention",
             "reel mention"
           ],
-          "x-requires-login": "instagram"
+          "x-requires-login": "facebook"
         }
       },
       "title": "InstagramOnMentionConfig",

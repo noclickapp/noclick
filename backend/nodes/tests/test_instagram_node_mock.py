@@ -1184,14 +1184,13 @@ class TestErrorHandlingMock:
 
 
 class TestCredentialSchemaVisibility:
-    """OAuth is hidden from the credentials UI until Meta approves our OAuth app;
-    token methods stay visible and carry acquisition links. Existing OAuth
-    credentials must still parse (union membership pins runtime compatibility)."""
+    """Both login methods are discoverable; existing credentials remain valid."""
 
-    def test_oauth_credential_is_hidden_but_still_parses(self):
+    def test_both_login_choices_are_visible_and_parse(self):
         schema = InstagramNode.get_config_schema()
         defs = schema["$defs"]
-        assert defs["InstagramOAuthCredential"].get("x-credential-hidden") is True
+        assert "x-credential-hidden" not in defs["InstagramOAuthCredential"]
+        assert defs["InstagramOAuthCredential"]["title"] == "Instagram with Facebook Login"
         assert "x-credential-preview-flag" not in defs["InstagramOAuthCredential"]
         assert "x-credential-hidden" not in defs["InstagramLoginCredential"]
         # still a valid runtime credential — existing OAuth creds keep executing
@@ -1990,7 +1989,7 @@ class TestInstagramEventOutputs:
             InstagramNode.resolve_trigger_payload(payload, config)
 
     @pytest.mark.parametrize("mapping", [
-        {}, {"instagram_oauth": TRIGGER_CREDENTIAL_ID},
+        {},
         {"instagram_login": TRIGGER_CREDENTIAL_ID, "instagram_oauth": "other"},
         {"instagram_login": TRIGGER_CREDENTIAL_ID, "credential_type": "instagram_oauth"},
         {"instagram_login": "{{unresolved}}"}, {"instagram_login": "not-a-uuid"},
@@ -2000,6 +1999,7 @@ class TestInstagramEventOutputs:
 
     def test_valid_trigger_map_and_schema(self):
         assert InstagramNode._pick_trigger_credential_id({"instagram_login": TRIGGER_CREDENTIAL_ID}) == TRIGGER_CREDENTIAL_ID
+        assert InstagramNode._pick_trigger_credential_id({"instagram_oauth": TRIGGER_CREDENTIAL_ID}) == TRIGGER_CREDENTIAL_ID
         schema = InstagramNode.get_config_schema()
         for name, operation in [("InstagramOnCommentConfig", "on_comment"), ("InstagramOnMessageConfig", "on_message"), ("InstagramOnMentionConfig", "on_mention")]:
             fields = schema["$defs"][name]["properties"]
@@ -2010,7 +2010,6 @@ class TestInstagramEventOutputs:
 
     @pytest.mark.parametrize("operation,capability", [
         ("on_comment", "instagram_business_manage_comments"),
-        ("on_mention", "instagram_business_manage_comments"),
         ("on_message", "instagram_business_manage_messages"),
     ])
     def test_trigger_scope_map_uses_only_the_selected_instagram_login_capability(self, operation, capability):
@@ -2096,8 +2095,8 @@ class TestInstagramMentionTrigger:
             await node.execute({})
 
 
-    @pytest.mark.parametrize("credentials", [get_oauth_credential, get_system_user_credential, get_page_access_credential])
-    async def test_trigger_requires_instagram_login(self, credentials):
+    @pytest.mark.parametrize("credentials", [get_system_user_credential, get_page_access_credential])
+    async def test_trigger_requires_oauth_login(self, credentials):
         node = _instagram_trigger(_parsed_instagram_event(), credentials())
         with pytest.raises(ValueError, match="Instagram Login"):
             await node.execute({})
@@ -2352,3 +2351,112 @@ class TestInstagramMentionTrigger:
             assert sent["media_urls"] == ["https://cdn.example/media"]
         finally:
             await redis.aclose()
+
+
+class TestFacebookLoginInstagramMentions:
+    @pytest.mark.parametrize("kind", ["comment", "caption"])
+    async def test_cross_account_mentions_use_recipient_expansion(self, http_mock, monkeypatch, kind):
+        from utils.instagram_webhooks import parse_instagram_webhook
+        monkeypatch.setattr("utils.instagram_webhooks.current_time", lambda: 1789560000)
+        value = {"media_id": "777", **({"comment_id": "12345"} if kind == "comment" else {})}
+        body = {"object": "instagram", "entry": [{"id": MOCK_USER_ID, "time": 1789560000,
+                "changes": [{"field": "mentions", "value": value}]}]}
+        payload = parse_instagram_webhook(json.dumps(body).encode())[0][2]
+        media = {"id": "777", "media_type": "VIDEO", "caption": "Mentioning mock_user"}
+        expansion = "mentioned_comment" if kind == "comment" else "mentioned_media"
+        data = {"id": "12345", "text": "@mock_user hello", "media": media} if kind == "comment" else media
+        route = http_mock.get(f"https://graph.facebook.com/v21.0/{MOCK_USER_ID}").mock(
+            return_value=httpx.Response(200, json={"id": MOCK_USER_ID, expansion: data}))
+        result = await _instagram_trigger(payload, get_oauth_credential()).execute({})
+        assert result["status"] == "success"
+        assert result["data"]["mention_type"] == kind
+        assert result["data"]["media_id"] == "777"
+        assert result["data"]["author_available"] is False
+        assert result["data"]["media_url_available"] is False
+        argument = "comment_id(12345)" if kind == "comment" else "media_id(777)"
+        assert route.calls[0].request.url.params["fields"].startswith(f"{expansion}.{argument}{{")
+        assert ",from" not in route.calls[0].request.url.params["fields"]
+
+    async def test_legacy_mentions_connection_explains_required_reconnection(self):
+        advisory = await InstagramNode.check_registration_health(
+            get_instagram_login_credential().model_dump(), "on_mention", {})
+        assert advisory is not None
+        assert await InstagramNode.check_registration_health(get_oauth_credential().model_dump(), "on_mention", {}) is None
+
+    def test_changing_login_provider_invalidates_existing_registration(self):
+        config = {"credentialIds": {"instagram_oauth": TRIGGER_CREDENTIAL_ID}}
+        assert not InstagramNode.subscription_matches_config([{"provider": "instagram"}], config)
+        assert InstagramNode.subscription_matches_config([{"provider": "instagram_facebook"}], config)
+
+
+@pytest.fixture
+async def facebook_instagram_registration(monkeypatch):
+    import fakeredis.aioredis
+    from utils import redis_client
+
+    redis = fakeredis.aioredis.FakeRedis()
+    monkeypatch.setattr(redis_client, "get_shared_redis", lambda: redis)
+    for name, value in {"FACEBOOK_WEBHOOK_APP_ID": "888", "FACEBOOK_WEBHOOK_APP_SECRET": "synthetic-secret",
+                        "FACEBOOK_WEBHOOK_VERIFY_TOKEN": "synthetic-verify", "APP_WEBHOOK_BASE_URL": "https://callback.example"}.items():
+        monkeypatch.setenv(name, value)
+    s = SimpleNamespace(
+        credential={**get_oauth_credential().model_dump(), "facebook_page_id": MOCK_PAGE_ID},
+        linked=MOCK_USER_ID, fields={"messages", "feed"}, posts=[], wrong_app=False,
+        callback="https://callback.example/webhook/app/instagram_facebook", app_fields=[{"name": "mentions"}],
+        scopes=["instagram_basic", "instagram_manage_comments", "pages_show_list", "pages_read_engagement", "pages_manage_metadata"],
+        targets=[{"scope": "instagram_manage_comments", "target_ids": [MOCK_USER_ID]}],
+    )
+    original_client = httpx.AsyncClient
+
+    async def transport(request):
+        path = request.url.path.split("/", 2)[2]
+        assert request.url.host == "graph.facebook.com"
+        if path == "debug_token":
+            return httpx.Response(200, json={"data": {"app_id": "999" if s.wrong_app else "888", "user_id": "456",
+                "is_valid": True, "type": "USER", "expires_at": 4102444800, "data_access_expires_at": 4102444800,
+                "scopes": s.scopes, "granular_scopes": s.targets}})
+        if path == "me":
+            identity = "456" if request.headers["Authorization"] == f"Bearer {MOCK_ACCESS_TOKEN}" else MOCK_PAGE_ID
+            return httpx.Response(200, json={"id": identity})
+        if path == "me/accounts":
+            return httpx.Response(200, json={"data": [{"id": MOCK_PAGE_ID, "access_token": "synthetic-page", "tasks": ["MANAGE"]}]})
+        if path == MOCK_PAGE_ID:
+            return httpx.Response(200, json={"instagram_business_account": {"id": s.linked}})
+        if path == "888/subscriptions":
+            return httpx.Response(200, json={"data": [{"object": "instagram", "active": True, "callback_url": s.callback, "fields": s.app_fields}]})
+        assert path == f"{MOCK_PAGE_ID}/subscribed_apps"
+        if request.method == "POST":
+            s.fields = set(parse_qs(request.content.decode())["subscribed_fields"][0].split(","))
+            s.posts.append(s.fields)
+            return httpx.Response(200, json={"success": True})
+        return httpx.Response(200, json={"data": [{"id": "888", "subscribed_fields": sorted(s.fields)}]})
+
+    monkeypatch.setattr(httpx, "AsyncClient", lambda *a, **kw: original_client(*a, transport=httpx.MockTransport(transport), **kw))
+    yield s
+    await redis.aclose()
+
+
+@pytest.mark.parametrize("existing", [True, False])
+async def test_instagram_facebook_registration_uses_linked_page_without_replacing_fields(facebook_instagram_registration, existing):
+    from utils.instagram_facebook import ensure_instagram_facebook_subscription
+    s = facebook_instagram_registration
+    if not existing:
+        s.fields = set()
+    assert await ensure_instagram_facebook_subscription(s.credential) == MOCK_USER_ID
+    assert s.posts == ([] if existing else [{"feed"}])
+    assert s.fields == ({"messages", "feed"} if existing else {"feed"})
+
+
+@pytest.mark.parametrize("case", ["wrong_app", "missing_scope", "wrong_target", "wrong_link", "wrong_callback", "missing_mentions"])
+async def test_instagram_facebook_registration_rejects_invalid_authorization_before_writing(facebook_instagram_registration, case):
+    from utils.instagram_facebook import ensure_instagram_facebook_subscription
+    s = facebook_instagram_registration
+    if case == "wrong_app": s.wrong_app = True
+    elif case == "missing_scope": s.scopes.remove("instagram_manage_comments")
+    elif case == "wrong_target": s.targets[0]["target_ids"] = ["999999"]
+    elif case == "wrong_link": s.linked = "999999"
+    elif case == "wrong_callback": s.callback = "https://wrong.example"
+    else: s.app_fields = [{"name": "comments"}]
+    with pytest.raises(ValueError):
+        await ensure_instagram_facebook_subscription(s.credential)
+    assert s.posts == []

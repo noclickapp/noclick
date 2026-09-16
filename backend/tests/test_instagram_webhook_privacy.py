@@ -18,7 +18,7 @@ from utils.facebook_webhooks import facebook_handshake
 
 
 @pytest.mark.parametrize("valid", [True, False])
-@pytest.mark.parametrize("service", ["instagram", "facebook"])
+@pytest.mark.parametrize("service", ["instagram", "facebook", "instagram_facebook"])
 async def test_verification_and_access_log_path_survive_real_span_redaction(monkeypatch, valid, service):
     monkeypatch.setenv("INSTAGRAM_WEBHOOK_VERIFY_TOKEN", "synthetic-verification-token")
     monkeypatch.setenv("FACEBOOK_WEBHOOK_VERIFY_TOKEN", "synthetic-verification-token")

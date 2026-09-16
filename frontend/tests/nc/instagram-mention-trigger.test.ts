@@ -12,6 +12,7 @@ export default async function () {
     const schema = option.$ref ? info!.resolveRef(option.$ref) : option;
     nc.assert.equal(schema.properties.operation.title, 'On Mention', 'Readable label');
     nc.assert.truthy(schema.properties.operation['x-is-trigger'], 'Classified as a trigger');
+    nc.assert.equal(schema.properties.operation['x-requires-login'], 'facebook', 'Mentions use Facebook Login');
     nc.assert.equal(schema.properties.subscription_status['ui:widget'], 'readonly', 'Visible status field');
     nc.assert.truthy(schema.properties.subscription_status['ui:loadValue'], 'Status activates subscription');
     nc.assert.truthy(isTriggerSource('automation-instagram', 'on_mention'), 'Available to Add Trigger');

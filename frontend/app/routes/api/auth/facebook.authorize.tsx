@@ -12,11 +12,10 @@ const FACEBOOK_AUTH_URL = 'https://www.facebook.com/v21.0/dialog/oauth';
 // Default Instagram scopes
 const DEFAULT_INSTAGRAM_SCOPES = [
     'instagram_basic',
-    'instagram_content_publish',
     'instagram_manage_comments',
     'pages_show_list',
     'pages_read_engagement',
-    'business_management',
+    'pages_manage_metadata',
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {

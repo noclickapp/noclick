@@ -39,16 +39,22 @@ async def enrich_mention(node, credentials, payload):
             raise ValueError("Instagram did not return the connected account's username")
         if not mentions_username(value["text"], username):
             return node.no_event_output("on_mention", "This event does not mention the connected account.")
-    # Instagram Login reads the object IDs in the signed notification directly.
-    # The mentioned_comment/mentioned_media user expansions belong to Facebook
-    # Login and fail with "nonexisting field" on graph.instagram.com.
-    fields = MENTIONED_COMMENT_FIELDS + ",from" if kind == "comment" else MENTIONED_MEDIA_FIELDS
+    facebook = credentials.credential_type == "instagram_oauth"
+    fields = MENTIONED_COMMENT_FIELDS if kind == "comment" else MENTIONED_MEDIA_FIELDS
+    expansion = "mentioned_comment" if kind == "comment" else "mentioned_media"
+    if facebook:
+        argument = "comment_id" if kind == "comment" else "media_id"
+        fields = f"{expansion}.{argument}({object_id}){{{fields}}}"
+    elif kind == "comment":
+        fields += ",from"
     result = await node._make_request(
-        "GET", f"/{object_id}", credentials,
+        "GET", f"/{account_id if facebook else object_id}", credentials,
         params={"fields": fields}, action_name="on_mention",
     )
     if result["status"] == "error":
         return result
+    if facebook:
+        result = {**result, "data": result["data"].get(expansion)}
     comment = None
     if kind == "comment":
         comment = result["data"]

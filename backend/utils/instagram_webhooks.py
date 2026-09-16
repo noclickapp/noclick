@@ -38,17 +38,17 @@ def instagram_account_id(value):
     return value if _NUMERIC_ID.fullmatch(value) else None
 
 
-def instagram_login_credential_id(credential_ids):
+def instagram_login_credential_id(credential_ids, credential_type="instagram_login"):
     if not isinstance(credential_ids, dict):
         return None
-    if credential_ids.get("credential_type") not in (None, "", "instagram_login"):
+    if credential_ids.get("credential_type") not in (None, "", credential_type):
         return None
     populated = {key: str(value) for key, value in credential_ids.items()
                  if value and key != "credential_type"}
-    if set(populated) != {"instagram_login"}:
+    if set(populated) != {credential_type}:
         return None
     try:
-        return str(uuid.UUID(populated["instagram_login"]))
+        return str(uuid.UUID(populated[credential_type]))
     except (ValueError, TypeError, AttributeError):
         return None
 
@@ -238,22 +238,23 @@ def _event(account, event_type, provider_id, timestamp, data, channel):
     return account, event_type, envelope, channel
 
 
-async def instagram_live_scope_filter(pool, sub: dict, payload: dict, trigger_node: dict):
+async def instagram_live_scope_filter(pool, sub: dict, payload: dict, trigger_node: dict,
+                                      *, provider="instagram", credential_type="instagram_login"):
     config = node_config(trigger_node)
     if config.get("disabled") in (True, "true"):
         return "Instagram trigger is disabled"
     event_type = payload.get("event_type")
     account = instagram_account_id(payload.get("account_id"))
     if (trigger_node.get("type") != "automation-instagram" or not account
-            or sub.get("provider") != "instagram" or sub.get("event_type") != event_type
+            or sub.get("provider") != provider or sub.get("event_type") != event_type
             or str(sub.get("tenant_id")) != account
             or config.get("operation") != _EVENT_OPERATIONS.get(event_type)):
         return "Instagram trigger or account binding changed"
-    credential_id = instagram_login_credential_id(config.get("credentialIds"))
+    credential_id = instagram_login_credential_id(config.get("credentialIds"), credential_type)
     if not credential_id or credential_id != str(sub.get("credential_id")):
         return "Instagram Login credential binding changed"
     credential = await load_credential(pool, str(sub["user_id"]), credential_id, raise_on_error=True)
-    if (not credential or credential.get("credential_type") != "instagram_login"
+    if (not credential or credential.get("credential_type") != credential_type
             or instagram_account_id(credential.get("instagram_user_id")) != account):
         return "Instagram credential is unavailable or belongs to another account"
     if event_type in ("comments", "mentions"):
@@ -280,14 +281,14 @@ async def instagram_live_scope_filter(pool, sub: dict, payload: dict, trigger_no
 
 
 @asynccontextmanager
-async def instagram_event_guard(event_id: str):
+async def instagram_event_guard(event_id: str, *, provider="instagram"):
     """Serialize fan-out; a failed attempt remains retryable, never fail open.
 
     This protects enqueueing, not durable execution: process loss after marking
     but before running background tasks still requires a durable queue to close.
     """
     async with guard_app_delivery(
-        event_id, client=get_shared_redis(), provider="instagram", label="Instagram",
+        event_id, client=get_shared_redis(), provider=provider, label="Instagram",
         lease_seconds=EVENT_LEASE_SECONDS, processing_seconds=EVENT_PROCESSING_SECONDS,
         dedup_seconds=EVENT_DEDUP_SECONDS,
     ) as deliver:

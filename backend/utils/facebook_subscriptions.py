@@ -60,11 +60,11 @@ def _request(client, token, app):
     return request
 
 
-async def authorize_page(credential, page_id, app, event_fields):
+async def authorize_page(credential, page_id, app, event_fields, *, permission_targets=None):
     """Return an ephemeral derived Page token; never cache a Page access grant."""
     try:
         async with asyncio.timeout(45):
-            return await _authorize_page(credential, page_id, app, event_fields)
+            return await _authorize_page(credential, page_id, app, event_fields, permission_targets=permission_targets)
     except TimeoutError:
         raise ValueError("Facebook Page authorization timed out; retry verification.") from None
 
@@ -85,7 +85,7 @@ async def managed_page_options(credential):
     return {"options": [{"value": str(page["id"]), "label": str(page.get("name") or page["id"])} for page in pages]}
 
 
-async def _authorize_page(credential, page_id, app, event_fields):
+async def _authorize_page(credential, page_id, app, event_fields, *, permission_targets=None):
     user = facebook_page_id((credential or {}).get("facebook_user_id"))
     token = (credential or {}).get("access_token")
     if ((credential or {}).get("credential_type") != "facebook_oauth" or not user
@@ -110,6 +110,7 @@ async def _authorize_page(credential, page_id, app, event_fields):
         required |= {"pages_read_engagement", "pages_read_user_content"}
     if event_fields - {"feed", "mention", "ratings"}:
         required.add("pages_messaging")
+    required |= set(permission_targets or {})
     scopes = details.get("scopes")
     if not isinstance(scopes, list) or any(not isinstance(scope, str) for scope in scopes) or not required.issubset(scopes):
         raise MetaAuthorizationDenied("Facebook authorization is missing required Page permissions; reconnect it.")
@@ -119,7 +120,7 @@ async def _authorize_page(credential, page_id, app, event_fields):
     for grant in granular:
         if grant.get("scope") in required and "target_ids" in grant:
             targets = grant["target_ids"]
-            if not isinstance(targets, list) or page_id not in [facebook_page_id(target) for target in targets]:
+            if not isinstance(targets, list) or (permission_targets or {}).get(grant["scope"], page_id) not in [facebook_page_id(target) for target in targets]:
                 raise MetaAuthorizationDenied("Facebook permission no longer includes the selected Page; reconnect it.")
     async with httpx.AsyncClient(timeout=15, follow_redirects=False, headers={"Authorization": f"Bearer {token}"}) as client:
         rows = await read_edge(_request(client, token, app), "me/accounts", fields="id,access_token,tasks", label="Facebook", max_pages=50)

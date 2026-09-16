@@ -96,6 +96,9 @@ class InstagramOAuthCredential(BaseModel):
         title="Token Expiry",
         description="ISO 8601 timestamp when access token expires",
     )
+    facebook_page_id: Optional[str] = Field(
+        None, title="Facebook Page ID", description="The Page linked to this Instagram professional account",
+    )
     email: Optional[str] = Field(
         None,
         title="Account Email",
@@ -110,16 +113,14 @@ class InstagramOAuthCredential(BaseModel):
     model_config = ConfigDict(json_schema_extra={
         "x-credential-type": "oauth",
         "x-oauth-provider": "facebook",
-        # Retain legacy credentials for execution, but use direct Instagram Login
-        # for new connections; the Facebook app is configured for Pages, not IG.
-        "x-credential-hidden": True,
+        "title": "Instagram with Facebook Login",
         "x-oauth-scopes": [
             "instagram_basic",
             "instagram_content_publish",
             "instagram_manage_comments",
-            "instagram_manage_messages",
             "pages_show_list",
             "pages_read_engagement",
+            "pages_manage_metadata",
             # business_management deliberately NOT requested: no IG operation
             # requires it (scope-registry verified) and it is excluded from App
             # Review — requesting an unapproved permission fails the login dialog.
@@ -1418,6 +1419,7 @@ class InstagramOnCommentConfig(_InstagramEventTriggerConfig):
 class InstagramOnMentionConfig(_InstagramEventTriggerConfig):
     """Receive @mentions in comments and captions on public posts and Reels.
 
+    Connect with Facebook Login through a linked Facebook Page.
     Includes other accounts' posts. Private posts and Story mentions are not
     supported. Meta can omit author details or media URLs for restricted media.
     """
@@ -1427,7 +1429,7 @@ class InstagramOnMentionConfig(_InstagramEventTriggerConfig):
         json_schema_extra={
             "const": "on_mention", "ui:hidden": True, "x-is-trigger": True,
             "x-display-name": "On Mention", "x-category": "Comment",
-            "x-requires-login": "instagram",
+            "x-requires-login": "facebook",
             "x-keywords": ["mention listener", "tagged in comment", "caption mention", "reel mention"],
         },
     )
@@ -1550,7 +1552,7 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
     scope_registry = INSTAGRAM_SCOPES
     _app_provider = "instagram"
     _trigger_event_map = {"on_comment": ["comments"], "on_message": ["messages"], "on_mention": ["mentions"]}
-    _credential_prompt = "Connect exactly one Instagram Login credential to activate this trigger; Facebook Login is not supported."
+    _credential_prompt = "Connect exactly one Instagram credential. Mentions on other accounts’ posts require Facebook Login and a linked Page."
     connection_evidence = ConnectionEvidence(
         operation="list_user_media",
         noun="posts",
@@ -1581,7 +1583,16 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
         """Never let insertion order pick a legacy/ambiguous credential."""
         from utils.instagram_webhooks import instagram_login_credential_id
 
-        return instagram_login_credential_id(credential_ids)
+        return (instagram_login_credential_id(credential_ids)
+                or instagram_login_credential_id(credential_ids, "instagram_oauth"))
+
+    @classmethod
+    def subscription_matches_config(cls, rows, config):
+        from utils.instagram_webhooks import instagram_login_credential_id
+
+        facebook = instagram_login_credential_id((config or {}).get("credentialIds"), "instagram_oauth")
+        provider = "instagram_facebook" if facebook else "instagram"
+        return all(row.get("provider") == provider for row in rows)
 
     @classmethod
     async def _resolve_tenant_id(cls, credential):
@@ -1589,15 +1600,16 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
 
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
-        if not credential_data or credential_data.get("credential_type") != "instagram_login":
+        if not credential_data or credential_data.get("credential_type") not in ("instagram_login", "instagram_oauth"):
             return credential_data
         from nodes.core.oauth_refresh import freshen_oauth_credential
         from nodes.core.oauth_audit import current_caller_path
 
         return await freshen_oauth_credential(
             credential_data, pool=pool, user_id=user_id, credential_id=credential_id,
-            refresh=_ig_login_refresh, is_expired=_ig_login_is_expired,
-            refresh_token_key="access_token", provider="instagram_login",
+            refresh=refresh_access_token if credential_data["credential_type"] == "instagram_oauth" else _ig_login_refresh,
+            is_expired=is_token_expired if credential_data["credential_type"] == "instagram_oauth" else _ig_login_is_expired,
+            refresh_token_key="access_token", provider="facebook" if credential_data["credential_type"] == "instagram_oauth" else "instagram_login",
             caller_path=current_caller_path(),
         )
 
@@ -1663,6 +1675,28 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
     ):
         from utils.instagram_webhooks import require_instagram_webhook_configuration
 
+        if isinstance(credential, dict) and credential.get("credential_type") == "instagram_oauth":
+            if operation != "on_mention":
+                raise ValueError("This Instagram trigger requires Instagram Login.")
+            if not credential_id or (config and "credentialIds" in config
+                    and cls._pick_trigger_credential_id(config["credentialIds"]) != credential_id):
+                raise ValueError(cls._credential_prompt)
+            from utils.instagram_facebook import PROVIDER, ensure_instagram_facebook_subscription
+            from nodes.core.webhook_subscriptions import get_node_subscriptions, save_subscriptions, subscription_rows_match
+
+            credential = await cls.freshen_credential(
+                credential, pool=pool, user_id=user_id, credential_id=credential_id,
+            )
+            account = await ensure_instagram_facebook_subscription(credential)
+            rows = await get_node_subscriptions(pool, str(workflow_id), node_id)
+            if (not all(row.get("provider") == PROVIDER for row in rows) or not subscription_rows_match(
+                    rows, event_types=["mentions"], credential_id=credential_id, user_id=user_id, tenant_id=account)):
+                await save_subscriptions(
+                    pool, provider=PROVIDER, tenant_id=account, user_id=user_id,
+                    workflow_id=str(workflow_id), node_id=node_id, credential_id=credential_id, event_types=["mentions"],
+                )
+            return cls._subscription_status_line(["mentions"], config)
+
         app_id = require_instagram_webhook_configuration()
         event_types = cls._trigger_event_map.get(operation or "")
         if not event_types:
@@ -1714,6 +1748,15 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
             pool, user_id=user_id, workflow_id=workflow_id, node_id=node_id,
             operation=operation, credential_id=credential_id, credential=credential, config=config,
         )
+
+    @classmethod
+    async def check_registration_health(cls, credential, operation, config):
+        if operation == "on_mention" and (credential or {}).get("credential_type") == "instagram_login":
+            from nodes.core.webhook_subscriptions import RegistrationAdvisory
+            return RegistrationAdvisory(
+                "Mentions on other accounts' posts require Instagram with Facebook Login and a linked Facebook Page. Reconnect this trigger."
+            )
+        return None
 
     @classmethod
     def _subscription_status_line(cls, event_types, config):
@@ -1791,7 +1834,8 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
         op_config = config.config
 
         if op_config.operation in self._trigger_event_map:
-            self._require_instagram_login_credential(config.credentials)
+            if not (op_config.operation == "on_mention" and isinstance(config.credentials, InstagramOAuthCredential)):
+                self._require_instagram_login_credential(config.credentials)
             payload = self.node_data.get("config", {}).get("_triggerPayload")
             if op_config.operation == "on_mention" and payload is not None:
                 from utils.instagram_mentions import enrich_mention

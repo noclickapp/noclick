@@ -44,11 +44,10 @@ interface FacebookOAuthCallbackData {
 
 const REQUIRED_INSTAGRAM_SCOPES = [
     'instagram_basic',
-    'instagram_content_publish',
     'instagram_manage_comments',
     'pages_show_list',
     'pages_read_engagement',
-    'business_management',
+    'pages_manage_metadata',
 ];
 
 export function useFacebookOAuth(options: UseFacebookOAuthOptions = {}) {

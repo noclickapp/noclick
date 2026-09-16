@@ -8,7 +8,7 @@ Proxy/platform access logs remain an operator configuration responsibility.
 
 from starlette.datastructures import QueryParams
 
-_PATHS = {"/webhook/app/instagram", "/webhook/app/facebook"}
+_PATHS = {"/webhook/app/instagram", "/webhook/app/facebook", "/webhook/app/instagram_facebook"}
 _QUERY_KEY = "_instagram_callback_query"
 
 
