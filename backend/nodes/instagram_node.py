@@ -1619,6 +1619,14 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
             if not instagram_account_id(product_id):
                 raise ValueError("The configured Instagram product app ID is invalid.")
             expected_ids.add(product_id)
+        # Instagram Login can return an internal subscription identity distinct
+        # from both dashboard app IDs. Trust only an operator-verified alias,
+        # never whichever app happens to be the sole row on this edge.
+        subscribed_app_id = os.environ.get("INSTAGRAM_SUBSCRIBED_APP_ID")
+        if subscribed_app_id:
+            if not instagram_account_id(subscribed_app_id):
+                raise ValueError("The configured Instagram subscribed app ID is invalid.")
+            expected_ids.add(subscribed_app_id)
 
         async def request(method, path, **kwargs):
             return await cls._registration_request(client, method, path, **kwargs)

@@ -1525,6 +1525,7 @@ def instagram_registration(monkeypatch):
     }
     state.credential = credential
     monkeypatch.setenv("INSTAGRAM_CLIENT_ID", TRIGGER_PRODUCT_APP)
+    monkeypatch.delenv("INSTAGRAM_SUBSCRIBED_APP_ID", raising=False)
     monkeypatch.setattr("utils.instagram_webhooks.require_instagram_webhook_configuration", lambda: TRIGGER_APP)
     monkeypatch.setattr("utils.redis_client.get_shared_redis", lambda: state.redis)
     state.freshen = AsyncMock(side_effect=lambda data, **kwargs: data)
@@ -1589,6 +1590,28 @@ def instagram_registration(monkeypatch):
 
 
 class TestInstagramEventRegistration:
+    @pytest.mark.asyncio
+    async def test_verified_subscription_identity_preserves_remote_fields(self, instagram_registration, monkeypatch):
+        s = instagram_registration
+        s.response_app = "18054700000000001"
+        s.fields = {"messages"}
+        monkeypatch.setenv("INSTAGRAM_SUBSCRIBED_APP_ID", s.response_app)
+        await s.register("on_mention")
+        assert s.posts == [{"comments", "messages"}]
+        assert s.save.await_count == 1
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("configured", ["not-an-id", "18054700000000002"])
+    async def test_subscription_identity_must_match_explicit_configuration(self, instagram_registration, monkeypatch, configured):
+        s = instagram_registration
+        s.response_app = "18054700000000001"
+        s.fields = {"messages"}
+        monkeypatch.setenv("INSTAGRAM_SUBSCRIBED_APP_ID", configured)
+        with pytest.raises(ValueError, match="app ID is invalid|identity does not match"):
+            await s.register("on_mention")
+        assert not s.posts
+        s.save.assert_not_awaited()
+
     @pytest.mark.asyncio
     async def test_incremental_union_idempotence_and_local_cleanup(self, instagram_registration):
         s = instagram_registration
