@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "noclick": {
+      "type": "http",
+      "url": "https://api.noclick.io/mcp"
+    }
+  }
+}

@@ -171,7 +171,8 @@ while IFS=: read -r managed_path managed_host; do
   esac
   case "$managed_path" in
     sdk/typescript/src/index.ts|sdk/typescript/src/transports/websocket.ts|sdk/python/noclick/client.py|\
-    docs/edition-boundary.md|sdk/typescript/README.md|sdk/python/README.md|docs/public/sdk/external-apps.mdx)
+    docs/edition-boundary.md|sdk/typescript/README.md|sdk/python/README.md|docs/public/sdk/external-apps.mdx|\
+    plugins/noclick/.mcp.json|plugins/noclick/README.md)
       if [[ "$managed_host" == "$approved_api_host" ]]; then
         continue
       fi
