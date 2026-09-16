@@ -10,6 +10,7 @@ import asyncio
 import hashlib
 import hmac
 import json
+import logging
 from unittest.mock import AsyncMock, MagicMock
 
 import fakeredis.aioredis
@@ -149,6 +150,22 @@ def test_valid_signature_does_not_emit_rejection_diagnostic(configured, caplog):
     headers = {k.lower(): v for k, v in signed_headers(raw).items()}
     assert ig.verify_instagram_webhook(None, raw, headers, "")
     assert not [r for r in caplog.records if r.name == ig.__name__]
+
+
+def test_comment_diagnostic_correlates_unparsed_delivery_without_content(caplog):
+    payload = body_for(messages=False)
+    value = payload["entry"][0]["changes"][0]["value"]
+    value["text"] = "private content @someone"
+    value["from"]["username"] = "private_username"
+    value["access_token"] = "private_token"
+    value["private_key"] = "private_value"
+    del value["media"]  # Malformed delivery must remain visible in diagnostics.
+    with caplog.at_level(logging.INFO, logger=ig.__name__):
+        assert ig.parse_instagram_webhook(encode(payload)) == []
+    assert f"account={ACCOUNT} field=comments comment={COMMENT} media=None" in caplog.text
+    assert f"author={SENDER} fresh=True" in caplog.text
+    assert "private" not in caplog.text
+    assert "@someone" not in caplog.text
 
 
 @pytest.mark.parametrize("signature", ["", "sha256=bad", "sha256=" + "0" * 64,

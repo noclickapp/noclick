@@ -176,9 +176,24 @@ def parse_instagram_webhook(body: bytes) -> list:
         for change in changes:
             change = _object(change)
             field = change.get("field")
-            if field not in ("comments", "mentions") or not _fresh_timestamp(entry.get("time")):
+            if field not in ("comments", "mentions"):
                 continue
             value = _object(change.get("value"))
+            # Correlate real provider deliveries even when their shape cannot
+            # be normalized. Only numeric identifiers and fixed key names are
+            # logged; never content, usernames, URLs, tokens or full payloads.
+            logger.info(
+                "Instagram webhook change account=%s field=%s comment=%s media=%s "
+                "author=%s fresh=%s keys=%s",
+                account, field,
+                instagram_account_id(value.get("comment_id")) or instagram_account_id(value.get("id")),
+                instagram_account_id(value.get("media_id")) or instagram_account_id(_object(value.get("media")).get("id")),
+                instagram_account_id(_object(value.get("from")).get("id")),
+                _fresh_timestamp(entry.get("time")),
+                ",".join(key for key in ("id", "comment_id", "media_id", "media", "from", "text") if key in value),
+            )
+            if not _fresh_timestamp(entry.get("time")):
+                continue
             mention = _mention_data(value, field)
             author_id = instagram_account_id(_object(value.get("from")).get("id"))
             if mention and author_id != account:
