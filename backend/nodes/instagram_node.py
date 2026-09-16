@@ -1627,6 +1627,23 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
             if not instagram_account_id(subscribed_app_id):
                 raise ValueError("The configured Instagram subscribed app ID is invalid.")
             expected_ids.add(subscribed_app_id)
+        # Some Instagram Login subscription identities differ by account.
+        # Scope verified aliases to that account so one customer's identity
+        # cannot satisfy another customer's readback.
+        account_aliases = os.environ.get("INSTAGRAM_SUBSCRIBED_APP_IDS_BY_ACCOUNT")
+        if account_aliases:
+            try:
+                aliases = json.loads(account_aliases)
+                if not isinstance(aliases, dict) or any(
+                    not instagram_account_id(account) or not instagram_account_id(alias)
+                    for account, alias in aliases.items()
+                ):
+                    raise ValueError
+            except (ValueError, TypeError):
+                raise ValueError("The configured Instagram account subscription IDs are invalid.") from None
+            alias = aliases.get(account_id)
+            if alias:
+                expected_ids.add(str(alias))
 
         async def request(method, path, **kwargs):
             return await cls._registration_request(client, method, path, **kwargs)

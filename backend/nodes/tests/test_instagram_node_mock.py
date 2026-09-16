@@ -1526,6 +1526,7 @@ def instagram_registration(monkeypatch):
     state.credential = credential
     monkeypatch.setenv("INSTAGRAM_CLIENT_ID", TRIGGER_PRODUCT_APP)
     monkeypatch.delenv("INSTAGRAM_SUBSCRIBED_APP_ID", raising=False)
+    monkeypatch.delenv("INSTAGRAM_SUBSCRIBED_APP_IDS_BY_ACCOUNT", raising=False)
     monkeypatch.setattr("utils.instagram_webhooks.require_instagram_webhook_configuration", lambda: TRIGGER_APP)
     monkeypatch.setattr("utils.redis_client.get_shared_redis", lambda: state.redis)
     state.freshen = AsyncMock(side_effect=lambda data, **kwargs: data)
@@ -1590,6 +1591,41 @@ def instagram_registration(monkeypatch):
 
 
 class TestInstagramEventRegistration:
+    @pytest.mark.asyncio
+    async def test_subscription_alias_is_scoped_to_its_account(self, instagram_registration, monkeypatch):
+        s = instagram_registration
+        s.response_app = "18054700000000001"
+        s.fields = {"messages"}
+        monkeypatch.setenv("INSTAGRAM_SUBSCRIBED_APP_IDS_BY_ACCOUNT", json.dumps({
+            TRIGGER_ACCOUNT: s.response_app, "17841400000000002": "18054700000000002",
+        }))
+        await s.register("on_mention")
+        assert s.posts == [{"comments", "messages"}]
+        assert s.save.await_count == 1
+
+    @pytest.mark.asyncio
+    async def test_another_accounts_subscription_alias_is_rejected(self, instagram_registration, monkeypatch):
+        s = instagram_registration
+        s.response_app = "18054700000000001"
+        s.fields = {"messages"}
+        monkeypatch.setenv("INSTAGRAM_SUBSCRIBED_APP_IDS_BY_ACCOUNT", json.dumps({
+            "17841400000000002": s.response_app,
+        }))
+        with pytest.raises(ValueError, match="identity does not match"):
+            await s.register("on_mention")
+        assert not s.posts
+        s.save.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("configured", ["{", "[]", '"123"', '{"bad-account":"123"}', '{"123":"bad-id"}'])
+    async def test_invalid_account_subscription_map_is_rejected(self, instagram_registration, monkeypatch, configured):
+        s = instagram_registration
+        monkeypatch.setenv("INSTAGRAM_SUBSCRIBED_APP_IDS_BY_ACCOUNT", configured)
+        with pytest.raises(ValueError, match="account subscription IDs are invalid"):
+            await s.register("on_mention")
+        assert not s.posts
+        s.save.assert_not_awaited()
+
     @pytest.mark.asyncio
     async def test_verified_subscription_identity_preserves_remote_fields(self, instagram_registration, monkeypatch):
         s = instagram_registration
