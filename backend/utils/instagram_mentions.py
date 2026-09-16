@@ -39,28 +39,27 @@ async def enrich_mention(node, credentials, payload):
             raise ValueError("Instagram did not return the connected account's username")
         if not mentions_username(value["text"], username):
             return node.no_event_output("on_mention", "This event does not mention the connected account.")
-    expansion = (
-        f"mentioned_comment.comment_id({object_id}){{{MENTIONED_COMMENT_FIELDS}}}"
-        if kind == "comment"
-        else f"mentioned_media.media_id({object_id}){{{MENTIONED_MEDIA_FIELDS}}}"
-    )
+    # Instagram Login reads the object IDs in the signed notification directly.
+    # The mentioned_comment/mentioned_media user expansions belong to Facebook
+    # Login and fail with "nonexisting field" on graph.instagram.com.
+    fields = MENTIONED_COMMENT_FIELDS + ",from" if kind == "comment" else MENTIONED_MEDIA_FIELDS
     result = await node._make_request(
-        "GET", f"/{account_id}", credentials,
-        params={"fields": expansion}, action_name="on_mention",
+        "GET", f"/{object_id}", credentials,
+        params={"fields": fields}, action_name="on_mention",
     )
     if result["status"] == "error":
         return result
     comment = None
     if kind == "comment":
-        comment = result["data"].get("mentioned_comment")
+        comment = result["data"]
         if not isinstance(comment, dict) or instagram_account_id(comment.get("id")) != object_id:
             raise ValueError("Instagram did not return the mentioned comment")
         media = comment.get("media")
-        author = value.get("from")
+        author = value.get("from") or comment.get("from")
         author = author if isinstance(author, dict) else None
         text = comment.get("text")
     else:
-        media = result["data"].get("mentioned_media")
+        media = result["data"]
         author = {"username": media["username"]} if isinstance(media, dict) and media.get("username") else None
         text = media.get("caption") if isinstance(media, dict) else None
     if not isinstance(media, dict) or instagram_account_id(media.get("id")) != media_id:

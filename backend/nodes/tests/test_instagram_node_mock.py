@@ -2033,8 +2033,8 @@ class TestInstagramMentionTrigger:
         node = _instagram_trigger(payload)
         media = {"id": "777", "caption": "look demo", "username": "post_author", "media_type": media_type,
                  "media_url": "https://cdn.example/media", "timestamp": "2026-09-16T12:00:00Z"}
-        route = http_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
-            return_value=httpx.Response(200, json={"mentioned_media": media}))
+        route = http_mock.get("https://graph.instagram.com/v21.0/777").mock(
+            return_value=httpx.Response(200, json=media))
         result = await node.execute({})
         assert result["status"] == "success"
         data = result["data"]
@@ -2044,7 +2044,7 @@ class TestInstagramMentionTrigger:
         assert data["media_urls"] == ["https://cdn.example/media"]
         assert data["text"] == "look demo"  # Meta strips @; don't fabricate source text.
         assert data["mentioned_username"] == "demo"
-        assert route.calls[0].request.url.params["fields"].startswith("mentioned_media.media_id(777)")
+        assert route.calls[0].request.url.params["fields"] == "id,caption,media_type,media_url,timestamp,username"
 
 
     async def test_manual_run_is_no_event_and_stops_branch(self):
@@ -2074,10 +2074,10 @@ class TestInstagramMentionTrigger:
                  "children": {"data": [{"id": "778", **({"media_url": "https://cdn.example/child.jpg"} if media_url else {})}]}}
         if media_url:
             media["media_url"] = media_url
-        route = http_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
-            return_value=httpx.Response(200, json={"mentioned_comment": {
+        route = http_mock.get("https://graph.instagram.com/v21.0/12345").mock(
+            return_value=httpx.Response(200, json={
                 "id": "12345", "text": "hello @DeMo!", "timestamp": "2026-09-16T12:00:00Z", "media": media,
-            }}))
+            }))
         result = await node.execute({})
         assert result["status"] == "success"
         assert result["data"]["comment"]["text"] == "hello @DeMo!"
@@ -2089,14 +2089,15 @@ class TestInstagramMentionTrigger:
         assert result["data"]["media_urls"] == ([media_url, "https://cdn.example/child.jpg"] if media_url else [])
         assert result["data"]["media_url_available"] is bool(media_url)
         fields = route.calls[0].request.url.params["fields"]
-        assert fields.startswith("mentioned_comment.comment_id(12345)")
+        assert fields.startswith("id,text,timestamp,media{")
+        assert fields.endswith(",from")
         assert "media_url" in fields and "children{" in fields
         assert "username" not in fields
 
 
     async def test_enrichment_failure_stays_visible(self, http_mock):
         node = _instagram_trigger(_parsed_instagram_event())
-        http_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
+        http_mock.get("https://graph.instagram.com/v21.0/12345").mock(
             return_value=httpx.Response(403, json={"error": {"message": "Missing permission"}}))
         result = await node.execute({})
         assert result["status"] == "error"
@@ -2121,10 +2122,10 @@ class TestInstagramMentionTrigger:
         monkeypatch.setattr(http_request_node, "guarded_async_client", httpx.AsyncClient)
         monkeypatch.setattr("wss.handlers.workflow_execution_handler.track_node_schema", AsyncMock())
         monkeypatch.setattr("wss.handlers.workflow_execution_handler.log_activity_background", lambda *a, **kw: None)
-        graph = http_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
-            return_value=httpx.Response(200, json={"mentioned_comment": {
+        graph = http_mock.get("https://graph.instagram.com/v21.0/12345").mock(
+            return_value=httpx.Response(200, json={
                 "id": "12345", "text": "hi @demo", "media": {"id": "777", "media_url": "https://cdn.example/image.jpg"},
-            }}))
+            }))
         receiver = http_mock.post("https://customer.example/mentions").mock(
             return_value=httpx.Response(200, json={"received": True}))
         nodes = [
@@ -2221,10 +2222,10 @@ class TestInstagramMentionTrigger:
         body = _instagram_delivery()
         body["entry"][0]["changes"] = [{"field": field, "value": {"comment_id": "12345", "media_id": "777"}}]
         event = parse_instagram_webhook(json.dumps(body).encode())[0][2]
-        http_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
-            return_value=httpx.Response(200, json={"mentioned_comment": {
+        http_mock.get("https://graph.instagram.com/v21.0/12345").mock(
+            return_value=httpx.Response(200, json={
                 "id": "12345", "text": "hi @demo", "media": {"id": "777"},
-            }}))
+            }))
         result = await _instagram_trigger(event).execute({})
         assert result["data"]["text"] == "hi @demo"
         assert result["data"]["author"] is None
@@ -2284,11 +2285,12 @@ class TestInstagramMentionTrigger:
         monkeypatch.setattr(webhook_routes, "_execute_workflow_with_relay", execute)
         body = _instagram_delivery()
         media = {"id": "777", "media_url": "https://cdn.example/media", "media_type": "VIDEO"}
-        response = {"mentioned_comment": {"id": "12345", "text": "hi @demo", "media": media}}
+        response = {"id": "12345", "text": "hi @demo", "media": media}
         if kind == "caption":
             body["entry"][0]["changes"] = [{"field": "comments", "value": {"media_id": "777"}}]
-            response = {"mentioned_media": {**media, "caption": "hi demo", "username": "creator"}}
-        graph = http_mock.get(f"https://graph.instagram.com/v21.0/{account}").mock(
+            response = {**media, "caption": "hi demo", "username": "creator"}
+        object_id = "12345" if kind == "comment" else "777"
+        graph = http_mock.get(f"https://graph.instagram.com/v21.0/{object_id}").mock(
             return_value=httpx.Response(200, json=response))
         receiver = http_mock.post("https://customer.example/mentions").mock(return_value=httpx.Response(200, json={"ok": True}))
         monkeypatch.setenv("INSTAGRAM_WEBHOOK_APP_SECRET", "synthetic-secret")
