@@ -188,7 +188,7 @@ class FacebookOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
             except ValueError as e:
-                logger.error(f"[FacebookOAuthHandler] Token exchange failed: {e}")
+                logger.error("[FacebookOAuthHandler] Instagram connection failed for user %s: %s", user_id, e)
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id,
                     data=FacebookOAuthExchangeResponse(

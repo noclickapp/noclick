@@ -9,9 +9,11 @@ This handles the Facebook OAuth flow and extracts Instagram Business account inf
 import os
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Tuple, Optional, Dict, Any, List
+from typing import Tuple, Optional, List
 import httpx
 from pydantic import BaseModel
+
+from utils.instagram_account_discovery import discover_instagram_accounts
 
 logger = logging.getLogger(__name__)
 
@@ -149,87 +151,6 @@ async def exchange_code_for_tokens(
     """
     client_id, client_secret = get_facebook_client_config()
 
-    def _collect_accounts_from_pages(
-        pages_payload: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
-        """Extract linked Instagram business accounts from /me/accounts page objects."""
-        discovered: List[Dict[str, Any]] = []
-        seen_ids = set()
-        for page in pages_payload:
-            ig_account = page.get("instagram_business_account") or page.get(
-                "connected_instagram_account"
-            )
-            if not ig_account:
-                continue
-
-            ig_id = ig_account.get("id")
-            if not ig_id or ig_id in seen_ids:
-                continue
-
-            seen_ids.add(ig_id)
-            discovered.append(
-                {
-                    "instagram_user_id": ig_id,
-                    "instagram_username": ig_account.get("username"),
-                    "facebook_page_id": page.get("id"),
-                    "facebook_page_name": page.get("name"),
-                }
-            )
-        return discovered
-
-    async def _discover_accounts_via_page_tokens(
-        client: httpx.AsyncClient,
-        pages_payload: List[Dict[str, Any]],
-    ) -> List[Dict[str, Any]]:
-        """
-        Fallback discovery path.
-        Some apps/users return pages from /me/accounts without the nested
-        instagram_business_account. In that case, query each page directly
-        with its page access token.
-        """
-        discovered: List[Dict[str, Any]] = []
-        seen_ids = set()
-
-        for page in pages_payload:
-            page_id = page.get("id")
-            page_name = page.get("name")
-            page_access_token = page.get("access_token")
-            if not page_id or not page_access_token:
-                continue
-
-            page_resp = await client.get(
-                f"{FACEBOOK_GRAPH_API}/{page_id}",
-                params={
-                    "access_token": page_access_token,
-                    "fields": "instagram_business_account{id,username},connected_instagram_account{id,username},name",
-                },
-            )
-            if page_resp.status_code != 200:
-                continue
-
-            page_data = page_resp.json()
-            ig_account = page_data.get("instagram_business_account") or page_data.get(
-                "connected_instagram_account"
-            )
-            if not ig_account:
-                continue
-
-            ig_id = ig_account.get("id")
-            if not ig_id or ig_id in seen_ids:
-                continue
-
-            seen_ids.add(ig_id)
-            discovered.append(
-                {
-                    "instagram_user_id": ig_id,
-                    "instagram_username": ig_account.get("username"),
-                    "facebook_page_id": page_id,
-                    "facebook_page_name": page_data.get("name") or page_name,
-                }
-            )
-
-        return discovered
-
     async def _get_granted_scopes(
         client: httpx.AsyncClient, user_access_token: str
     ) -> List[str]:
@@ -300,47 +221,16 @@ async def exchange_code_for_tokens(
             token_type=long_lived_data.get("token_type", "Bearer"),
         )
 
-        # Step 3: Get user's Facebook Pages with Instagram Business accounts
-        pages_response = await client.get(
-            f"{FACEBOOK_GRAPH_API}/me/accounts",
-            params={
-                "access_token": tokens.access_token,
-                "fields": (
-                    "id,name,access_token,tasks,"
-                    "instagram_business_account{id,username},"
-                    "connected_instagram_account{id,username}"
-                ),
-            },
+        # Step 3: Exhaust the Page list before deciding which account to connect.
+        all_accounts, discovery_detail = await discover_instagram_accounts(
+            client, tokens.access_token, base=FACEBOOK_GRAPH_API
         )
-
-        if pages_response.status_code != 200:
-            error_data = pages_response.json()
-            error_msg = error_data.get("error", {}).get("message", "Unknown error")
-            logger.error(f"[FacebookOAuth] Failed to get pages: {error_msg}")
-            raise ValueError(f"Failed to get Facebook Pages: {error_msg}")
-
-        pages_data = pages_response.json()
-        pages = pages_data.get("data", [])
-
-        # Collect all pages with Instagram Business accounts
-        all_accounts = _collect_accounts_from_pages(pages)
-
-        # Fallback: inspect each page via its page access token.
-        if not all_accounts and pages:
-            all_accounts = await _discover_accounts_via_page_tokens(client, pages)
-
         if not all_accounts:
             granted_scopes = await _get_granted_scopes(client, tokens.access_token)
-            granted_scopes_text = (
-                ", ".join(granted_scopes) if granted_scopes else "(unknown)"
-            )
+            granted_scopes_text = ", ".join(granted_scopes) if granted_scopes else "(unknown)"
             raise ValueError(
-                "No Instagram Business account found. "
-                "Please make sure:\n"
-                "1) The Instagram account is linked to the same Facebook Page used in OAuth\n"
-                "2) OAuth granted instagram_basic, pages_show_list, pages_read_engagement\n"
-                "3) OAuth granted business_management if page access is via Meta Business Manager\n"
-                "4) Your user has sufficient Page tasks/permissions in Meta Business settings\n"
+                f"{discovery_detail} "
+                "Required permissions: instagram_basic, pages_show_list, pages_read_engagement. "
                 f"Granted scopes on this token: {granted_scopes_text}"
             )
 

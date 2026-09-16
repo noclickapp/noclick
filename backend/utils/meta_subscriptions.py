@@ -30,29 +30,30 @@ class MetaAuthorizationDenied(ValueError):
     """A definitive provider rejection, unlike an unavailable verification."""
 
 
-async def graph_request(client, method, path, *, base, label, params=None, data=None):
+async def graph_request(client, method, path, *, base, label, params=None, data=None, headers=None, purpose="subscription"):
     # Callers provide fixed relative paths and tokens in Authorization headers.
     for name in tuple(logging.Logger.manager.loggerDict):
         if name == "httpx" or name.startswith(("httpx.", "httpcore.")):
             logging.getLogger(name).addFilter(_TRANSPORT_PRIVACY)
     private = _PRIVATE_REQUEST.set(True)
     try:
-        response = await client.request(method, f"{base}/{path}", params=params, data=data)
+        options = {"headers": headers} if headers is not None else {}
+        response = await client.request(method, f"{base}/{path}", params=params, data=data, **options)
     except httpx.HTTPError:
-        raise ValueError(f"{label} subscription request failed; retry registration later.") from None
+        raise ValueError(f"{label} {purpose} request failed; retry later.") from None
     finally:
         _PRIVATE_REQUEST.reset(private)
     try:
         body = response.json()
     except ValueError:
-        raise ValueError(f"{label} subscription returned an invalid response.") from None
+        raise ValueError(f"{label} {purpose} returned an invalid response.") from None
     error = body.get("error") if isinstance(body, dict) else None
     if isinstance(error, dict) and error.get("is_transient") is not True and error.get("code") in (10, 102, 190, 200):
         raise MetaAuthorizationDenied(f"{label} account authorization is unavailable; reconnect with the required Page permissions.")
     if response.status_code != 200:
-        raise ValueError(f"{label} subscription request returned HTTP {response.status_code}; check account access and callback setup.")
+        raise ValueError(f"{label} {purpose} request returned HTTP {response.status_code}; check account access.")
     if not isinstance(body, dict) or error:
-        raise ValueError(f"{label} rejected the subscription request; check account access and callback setup.")
+        raise ValueError(f"{label} rejected the {purpose} request; check account access.")
     return body
 
 
@@ -67,21 +68,21 @@ async def read_edge(request, path, *, fields, label, max_pages=5):
         body = await request("GET", path, params=params)
         page = body.get("data")
         if not isinstance(page, list) or any(not isinstance(row, dict) for row in page):
-            raise ValueError(f"{label} returned invalid subscription data; existing fields were not changed.")
+            raise ValueError(f"{label} returned invalid data.")
         rows.extend(page)
         paging = body.get("paging")
         if paging is None:
             return rows
         if not isinstance(paging, dict):
-            raise ValueError(f"{label} returned invalid subscription pagination.")
+            raise ValueError(f"{label} returned invalid pagination.")
         if not paging.get("next"):
             return rows
         cursors = paging.get("cursors")
         after = cursors.get("after") if isinstance(cursors, dict) else None
         if not isinstance(after, str) or not after or len(after) > 8192 or after in seen_cursors:
-            raise ValueError(f"{label} subscription pagination is incomplete; existing fields were not changed.")
+            raise ValueError(f"{label} pagination is incomplete.")
         seen_cursors.add(after)
-    raise ValueError(f"{label} subscription pagination exceeded its safety bound; existing fields were not changed.")
+    raise ValueError(f"{label} pagination exceeded its safety bound.")
 
 
 async def read_subscribed_fields(request, account_id, app_ids, *, label, require_matching_if_nonempty=True):

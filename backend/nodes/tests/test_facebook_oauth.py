@@ -28,13 +28,14 @@ async def test_exchange_discovers_instagram_via_page_token_fallback(monkeypatch)
     responses = [
         _mock_response(200, {"access_token": "short"}),
         _mock_response(200, {"access_token": "long", "expires_in": 5184000, "token_type": "Bearer"}),
-        _mock_response(200, {"data": [{"id": "page_1", "name": "My Page", "access_token": "page_token_1"}]}),
-        _mock_response(200, {"id": "page_1", "name": "My Page", "instagram_business_account": {"id": "ig_1", "username": "ig_user"}}),
+        _mock_response(200, {"data": [{"id": "123", "name": "My Page", "access_token": "page_token_1"}]}),
+        _mock_response(200, {"id": "123", "name": "My Page", "instagram_business_account": {"id": "ig_1", "username": "ig_user"}}),
         _mock_response(200, {"email": "user@example.com"}),
     ]
 
     mock_client = AsyncMock()
-    mock_client.get = AsyncMock(side_effect=responses)
+    mock_client.get = AsyncMock(side_effect=responses[:2] + responses[-1:])
+    mock_client.request = AsyncMock(side_effect=responses[2:-1])
     async_client_mock = MagicMock()
     async_client_mock.return_value.__aenter__.return_value = mock_client
 
@@ -44,7 +45,7 @@ async def test_exchange_discovers_instagram_via_page_token_fallback(monkeypatch)
     assert tokens.access_token == "long"
     assert info.instagram_user_id == "ig_1"
     assert info.instagram_username == "ig_user"
-    assert info.facebook_page_id == "page_1"
+    assert info.facebook_page_id == "123"
     assert info.email == "user@example.com"
 
 
@@ -57,13 +58,14 @@ async def test_exchange_error_includes_granted_scopes_when_no_account(monkeypatc
     responses = [
         _mock_response(200, {"access_token": "short"}),
         _mock_response(200, {"access_token": "long", "expires_in": 5184000, "token_type": "Bearer"}),
-        _mock_response(200, {"data": [{"id": "page_1", "name": "My Page", "access_token": "page_token_1"}]}),
-        _mock_response(200, {"id": "page_1", "name": "My Page"}),  # page fallback still no IG account
+        _mock_response(200, {"data": [{"id": "123", "name": "My Page", "access_token": "page_token_1"}]}),
+        _mock_response(200, {"id": "123", "name": "My Page"}),  # page fallback still no IG account
         _mock_response(200, {"data": {"scopes": ["pages_show_list"]}}),  # debug_token
     ]
 
     mock_client = AsyncMock()
-    mock_client.get = AsyncMock(side_effect=responses)
+    mock_client.get = AsyncMock(side_effect=responses[:2] + responses[-1:])
+    mock_client.request = AsyncMock(side_effect=responses[2:-1])
     async_client_mock = MagicMock()
     async_client_mock.return_value.__aenter__.return_value = mock_client
 
@@ -72,7 +74,9 @@ async def test_exchange_error_includes_granted_scopes_when_no_account(monkeypatc
             await exchange_code_for_tokens("code123", "https://example.com/callback")
 
     message = str(exc.value)
-    assert "No Instagram Business account found" in message
+    assert "No linked Instagram Business or Creator account" in message
+    assert "Facebook returned 1 Page(s) (IDs: 123)" in message
+    assert "business_management" not in message
     assert "instagram_basic" in message
     assert "Granted scopes on this token" in message
 
@@ -87,7 +91,7 @@ async def test_exchange_supports_connected_instagram_account_field(monkeypatch):
         _mock_response(200, {"access_token": "short"}),
         _mock_response(200, {"access_token": "long", "expires_in": 5184000, "token_type": "Bearer"}),
         _mock_response(200, {"data": [{
-            "id": "page_1",
+            "id": "123",
             "name": "My Page",
             "access_token": "page_token_1",
             "connected_instagram_account": {"id": "ig_2", "username": "connected_ig"},
@@ -96,7 +100,8 @@ async def test_exchange_supports_connected_instagram_account_field(monkeypatch):
     ]
 
     mock_client = AsyncMock()
-    mock_client.get = AsyncMock(side_effect=responses)
+    mock_client.get = AsyncMock(side_effect=responses[:2] + responses[-1:])
+    mock_client.request = AsyncMock(side_effect=responses[2:-1])
     async_client_mock = MagicMock()
     async_client_mock.return_value.__aenter__.return_value = mock_client
 
