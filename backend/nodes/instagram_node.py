@@ -38,6 +38,7 @@ PLATFORM_KEYED = platform_keyed_operation("APIFY_API_TOKEN", byok=False)
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_subscriptions import AppEventTriggerMixin
+from nodes.instagram_mentions import MENTIONED_COMMENT_FIELDS, MENTIONED_MEDIA_FIELDS
 from nodes.oauth.facebook_oauth import is_token_expired, refresh_access_token
 from nodes.oauth.instagram_login_oauth import (
     is_token_expired as _ig_login_is_expired,
@@ -857,7 +858,7 @@ class InstagramGetMentionedMediaConfig(BaseModel):
                     "one mention at a time by its id.",
     )
     fields: Optional[str] = Field(
-        "id,caption,media_type,media_url,permalink,timestamp,username",
+        MENTIONED_MEDIA_FIELDS,
         title="Fields",
         description="Comma-separated list of fields to retrieve for the mentioned media",
     )
@@ -885,7 +886,7 @@ class InstagramGetMentionedCommentsConfig(BaseModel):
                     "one mention at a time by its id.",
     )
     fields: Optional[str] = Field(
-        "id,text,username,timestamp,media{id,caption,media_type}",
+        MENTIONED_COMMENT_FIELDS,
         title="Fields",
         description="Comma-separated list of fields to retrieve for the mentioned comment",
     )
@@ -1414,6 +1415,24 @@ class InstagramOnCommentConfig(_InstagramEventTriggerConfig):
     )
 
 
+class InstagramOnMentionConfig(_InstagramEventTriggerConfig):
+    """Receive @mentions in comments and captions on public posts and Reels.
+
+    Includes other accounts' posts. Private posts and Story mentions are not
+    supported. Meta can omit author details or media URLs for restricted media.
+    """
+
+    operation: Literal["on_mention"] = Field(
+        "on_mention", title="On Mention",
+        json_schema_extra={
+            "const": "on_mention", "ui:hidden": True, "x-is-trigger": True,
+            "x-display-name": "On Mention", "x-category": "Comment",
+            "x-requires-login": "instagram",
+            "x-keywords": ["mention listener", "tagged in comment", "caption mention", "reel mention"],
+        },
+    )
+
+
 class InstagramOnMessageConfig(_InstagramEventTriggerConfig):
     """An inbound customer message delivered by Instagram's signed webhook."""
 
@@ -1439,6 +1458,7 @@ class InstagramOnMessageConfig(_InstagramEventTriggerConfig):
 InstagramConfig = Annotated[
     Union[
         InstagramOnCommentConfig,
+        InstagramOnMentionConfig,
         InstagramOnMessageConfig,
         # Profile operations (1)
         InstagramGetProfileConfig,
@@ -1529,7 +1549,7 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
 
     scope_registry = INSTAGRAM_SCOPES
     _app_provider = "instagram"
-    _trigger_event_map = {"on_comment": ["comments"], "on_message": ["messages"]}
+    _trigger_event_map = {"on_comment": ["comments"], "on_message": ["messages"], "on_mention": ["mentions"]}
     _credential_prompt = "Connect exactly one Instagram Login credential to activate this trigger; Facebook Login is not supported."
     connection_evidence = ConnectionEvidence(
         operation="list_user_media",
@@ -1640,7 +1660,9 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
                 raise ValueError("Instagram Login account identity changed; reconnect the intended account before activating this trigger.")
             async with cls._registration_lease(account_id, app_id) as check_owner:
                 current = await cls._read_subscribed_fields(client, account_id, app_id)
-                wanted = current | set(event_types)
+                # Instagram Login delivers mentions through the comments field.
+                remote_fields = {"comments" if event == "mentions" else event for event in event_types}
+                wanted = current | remote_fields
                 if wanted != current:
                     await check_owner()
                     result = await cls._registration_request(
@@ -1670,6 +1692,8 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
 
     @classmethod
     def _subscription_status_line(cls, event_types, config):
+        if event_types == ["mentions"]:
+            return "Registered — listening for Instagram mentions in comments and post/Reel captions"
         filtered = (config or {}).get("media_id") if event_types == ["comments"] else (config or {}).get("sender_id")
         return f"Registered — listening for Instagram {event_types[0]} on the connected account" + (" (filtered)" if filtered else "")
 
@@ -1683,6 +1707,10 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
         account_id = payload.get("account_id")
         if not isinstance(data, dict) or not account_id or not payload.get("event_id"):
             raise ValueError("Instagram delivery is incomplete.")
+        if operation == "on_mention":
+            # Fetching mentioned media needs the bound credential. Keep the
+            # signed envelope on _triggerPayload and use normal node execution.
+            return None
         result = {
             "type": "instagram", "status": "success", "action": operation,
             "account_id": str(account_id), "event_type": payload["event_type"],
@@ -1738,9 +1766,13 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
         op_config = config.config
 
         if op_config.operation in self._trigger_event_map:
-            # Real signed deliveries enter through resolve_trigger_payload, not
-            # execute(). A manual run must not replay or fabricate an event.
             self._require_instagram_login_credential(config.credentials)
+            payload = self.node_data.get("config", {}).get("_triggerPayload")
+            if op_config.operation == "on_mention" and payload is not None:
+                from nodes.instagram_mentions import enrich_mention
+                self.resolve_trigger_payload(payload, {"operation": "on_mention"})
+                return await enrich_mention(self, config.credentials, payload)
+            # A manual run must not replay or fabricate an event.
             return self.no_event_output(
                 op_config.operation,
                 "Waiting for a signed Instagram delivery; manual runs do not register subscriptions or contact Instagram.",
@@ -2742,7 +2774,7 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
         by a specific media id (there is no list edge — that returns
         "Unknown path components"). The id is delivered by the mentions webhook.
         """
-        sub_fields = config.fields or "id,caption,media_type,media_url,permalink,timestamp,username"
+        sub_fields = config.fields or MENTIONED_MEDIA_FIELDS
         return await self._make_request(
             method="GET",
             endpoint=f"/{credentials.instagram_user_id}",
@@ -2762,7 +2794,7 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
         by a specific comment id (no list edge exists). The id is delivered by the
         mentions webhook.
         """
-        sub_fields = config.fields or "id,text,username,timestamp,media{id,caption,media_type}"
+        sub_fields = config.fields or MENTIONED_COMMENT_FIELDS
         return await self._make_request(
             method="GET",
             endpoint=f"/{credentials.instagram_user_id}",

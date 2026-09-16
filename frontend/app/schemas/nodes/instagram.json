@@ -478,7 +478,7 @@
               "type": "null"
             }
           ],
-          "default": "id,text,username,timestamp,media{id,caption,media_type}",
+          "default": "id,text,timestamp,media{id,caption,media_type,media_url,permalink,timestamp,thumbnail_url,children{id,media_type,media_url,thumbnail_url}}",
           "description": "Comma-separated list of fields to retrieve for the mentioned comment",
           "title": "Fields"
         }
@@ -516,7 +516,7 @@
               "type": "null"
             }
           ],
-          "default": "id,caption,media_type,media_url,permalink,timestamp,username",
+          "default": "id,caption,media_type,media_url,timestamp,username",
           "description": "Comma-separated list of fields to retrieve for the mentioned media",
           "title": "Fields"
         }
@@ -1030,6 +1030,71 @@
         }
       },
       "title": "InstagramOnCommentConfig",
+      "type": "object"
+    },
+    "InstagramOnMentionConfig": {
+      "description": "Receive @mentions in comments and captions on public posts and Reels.\n\nIncludes other accounts' posts. Private posts and Story mentions are not\nsupported. Meta can omit author details or media URLs for restricted media.",
+      "properties": {
+        "subscription_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Signed Instagram events for the connected professional account.",
+          "title": "Status",
+          "ui:loadValue": true,
+          "ui:widget": "readonly"
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_mention",
+          "default": "on_mention",
+          "title": "On Mention",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "On Mention",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "mention listener",
+            "tagged in comment",
+            "caption mention",
+            "reel mention"
+          ],
+          "x-requires-login": "instagram"
+        }
+      },
+      "title": "InstagramOnMentionConfig",
       "type": "object"
     },
     "InstagramOnMessageConfig": {
@@ -1951,6 +2016,7 @@
           "list_user_media": "#/$defs/InstagramListMediaConfig",
           "mark_dm_seen": "#/$defs/InstagramMarkDMSeenConfig",
           "on_comment": "#/$defs/InstagramOnCommentConfig",
+          "on_mention": "#/$defs/InstagramOnMentionConfig",
           "on_message": "#/$defs/InstagramOnMessageConfig",
           "publish_carousel_post": "#/$defs/InstagramPublishCarouselConfig",
           "publish_photo_post": "#/$defs/InstagramPublishPhotoConfig",
@@ -1975,6 +2041,9 @@
       "oneOf": [
         {
           "$ref": "#/$defs/InstagramOnCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramOnMentionConfig"
         },
         {
           "$ref": "#/$defs/InstagramOnMessageConfig"

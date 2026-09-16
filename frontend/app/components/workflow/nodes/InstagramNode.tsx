@@ -1,5 +1,5 @@
 // Instagram Graph API automation node definition.
-// Uses Facebook OAuth for Instagram Business/Creator accounts.
+// Supports Instagram Login and Facebook connections for professional accounts.
 
 import { memo } from 'react';
 import { NodeProps } from '@xyflow/react';
@@ -16,7 +16,7 @@ const InstagramNodeComponent = (props: NodeProps) => {
 export const InstagramNode: NodeDefinition = {
     type: 'automation-instagram',
     label: 'Instagram',
-    description: 'Instagram Automation',
+    description: 'Instagram posts, Reels, comments, messages, and mention triggers',
     Icon: InstagramIcon,
     iconColor: 'text-pink-500',
     dimensions: DIMENSIONS,

@@ -21,7 +21,7 @@ from utils.redis_client import get_shared_redis
 from utils.webhook_signatures import verify_hmac_sha256_hex
 
 _NUMERIC_ID = re.compile(r"[1-9][0-9]{0,31}\Z")
-_EVENT_OPERATIONS = {"comments": "on_comment", "messages": "on_message"}
+_EVENT_OPERATIONS = {"comments": "on_comment", "messages": "on_message", "mentions": "on_mention"}
 EVENT_LEASE_SECONDS = 300
 EVENT_PROCESSING_SECONDS = 240
 MAX_EVENT_AGE_SECONDS = 7 * 24 * 60 * 60
@@ -124,6 +124,39 @@ def _fresh_timestamp(value, *, milliseconds=False):
     return now - MAX_EVENT_AGE_SECONDS <= seconds <= now + MAX_EVENT_FUTURE_SKEW_SECONDS
 
 
+def mentions_username(text, username):
+    """Match an entire Instagram handle, never @name_extra or email addresses."""
+    return bool(isinstance(text, str) and username and re.search(
+        rf"(?<![\w.])@{re.escape(username.lstrip('@'))}(?![\w.])", text, re.IGNORECASE,
+    ))
+
+
+def _mention_data(value, field):
+    """Normalize full comment notifications and ID-only mention notifications.
+
+    Instagram Login carries mentions under the comments subscription; Facebook
+    Login's documented mentions shape uses comment_id/media_id. Keep accepting
+    that shape without requiring Facebook Login credentials for this trigger.
+    """
+    media_id = instagram_account_id(value.get("media_id")) or instagram_account_id(_object(value.get("media")).get("id"))
+    comment_id = instagram_account_id(value.get("comment_id"))
+    if not comment_id and field == "comments" and value.get("id"):
+        # Ordinary comments share this subscription. The live credential guard
+        # checks WHICH username was mentioned before enqueueing a workflow.
+        if not re.search(r"(?<![\w.])@[\w.]+", str(value.get("text") or "")):
+            return None
+        comment_id = instagram_account_id(value.get("id"))
+    if not media_id:
+        return None
+    if comment_id:
+        kind = "comment"
+    elif value.get("media_id") and not value.get("comment_id") and not value.get("id"):
+        kind = "caption"
+    else:
+        return None
+    return {**value, "mention_type": kind, "comment_id": comment_id, "media_id": media_id}
+
+
 def parse_instagram_webhook(body: bytes) -> list:
     try:
         payload = json.loads(body)
@@ -138,13 +171,22 @@ def parse_instagram_webhook(body: bytes) -> list:
         if not account:
             continue
         changes = _items(entry.get("changes"))
-        if entry.get("field") == "comments":
+        if entry.get("field") in ("comments", "mentions"):
             changes = [*changes, entry]
         for change in changes:
             change = _object(change)
-            if change.get("field") != "comments":
+            field = change.get("field")
+            if field not in ("comments", "mentions") or not _fresh_timestamp(entry.get("time")):
                 continue
             value = _object(change.get("value"))
+            mention = _mention_data(value, field)
+            author_id = instagram_account_id(_object(value.get("from")).get("id"))
+            if mention and author_id != account:
+                object_id = mention["comment_id"] or mention["media_id"]
+                events.append(_event(account, "mentions", f"{mention['mention_type']}:{object_id}",
+                                     entry.get("time"), mention, mention["media_id"]))
+            if field != "comments":
+                continue
             comment_id = instagram_account_id(value.get("id"))
             author = instagram_account_id(_object(value.get("from")).get("id"))
             username = _object(value.get("from")).get("username")
@@ -199,14 +241,19 @@ async def instagram_live_scope_filter(pool, sub: dict, payload: dict, trigger_no
     if (not credential or credential.get("credential_type") != "instagram_login"
             or instagram_account_id(credential.get("instagram_user_id")) != account):
         return "Instagram credential is unavailable or belongs to another account"
-    if event_type == "comments":
+    if event_type in ("comments", "mentions"):
         author = _object(_object(payload.get("data")).get("from"))
         username = str(author.get("username") or "").casefold()
         own_username = str(credential.get("instagram_username") or "").casefold()
         if username and own_username and username == own_username:
             return "Instagram account's own comment"
-        if not instagram_account_id(author.get("id")) and not own_username:
+        if event_type == "comments" and not instagram_account_id(author.get("id")) and not own_username:
             return "Instagram comment author cannot be safely identified"
+        if event_type == "mentions":
+            data = _object(payload.get("data"))
+            if own_username and isinstance(data.get("text"), str) and not mentions_username(data["text"], own_username):
+                return "Instagram event does not mention the connected account"
+            return None
     field = "media_id" if event_type == "comments" else "sender_id"
     expected = config.get(field)
     if expected:

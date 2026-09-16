@@ -570,6 +570,7 @@
       "agentToolProvider": true,
       "triggerOperations": [
         "on_comment",
+        "on_mention",
         "on_message"
       ]
     },

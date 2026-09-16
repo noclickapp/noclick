@@ -13,6 +13,7 @@ This ensures:
 """
 
 import pytest
+import json
 from unittest.mock import AsyncMock, MagicMock, patch
 from types import SimpleNamespace
 import asyncio
@@ -30,6 +31,7 @@ from nodes.instagram_node import (
     InstagramSystemUserTokenCredential,
     InstagramPageAccessTokenCredential,
     InstagramOnCommentConfig,
+    InstagramOnMentionConfig,
     InstagramOnMessageConfig,
     # Profile operations (1)
     InstagramGetProfileConfig,
@@ -1861,7 +1863,7 @@ def _instagram_event(kind="comments"):
 
 class TestInstagramEventOutputs:
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("config", [InstagramOnCommentConfig(), InstagramOnMessageConfig()])
+    @pytest.mark.parametrize("config", [InstagramOnCommentConfig(), InstagramOnMessageConfig(), InstagramOnMentionConfig()])
     async def test_manual_run_has_no_event_or_http_and_halts_downstream(self, config):
         credential = InstagramLoginCredential(
             access_token="synthetic-only", instagram_user_id=TRIGGER_ACCOUNT,
@@ -1940,7 +1942,7 @@ class TestInstagramEventOutputs:
     def test_valid_trigger_map_and_schema(self):
         assert InstagramNode._pick_trigger_credential_id({"instagram_login": TRIGGER_CREDENTIAL_ID}) == TRIGGER_CREDENTIAL_ID
         schema = InstagramNode.get_config_schema()
-        for name, operation in [("InstagramOnCommentConfig", "on_comment"), ("InstagramOnMessageConfig", "on_message")]:
+        for name, operation in [("InstagramOnCommentConfig", "on_comment"), ("InstagramOnMessageConfig", "on_message"), ("InstagramOnMentionConfig", "on_mention")]:
             fields = schema["$defs"][name]["properties"]
             assert fields["operation"]["const"] == operation
             assert fields["operation"]["x-is-trigger"] is True
@@ -1949,8 +1951,334 @@ class TestInstagramEventOutputs:
 
     @pytest.mark.parametrize("operation,capability", [
         ("on_comment", "instagram_business_manage_comments"),
+        ("on_mention", "instagram_business_manage_comments"),
         ("on_message", "instagram_business_manage_messages"),
     ])
     def test_trigger_scope_map_uses_only_the_selected_instagram_login_capability(self, operation, capability):
         from nodes.scopes.meta import _INSTAGRAM_REQUIREMENTS
         assert _INSTAGRAM_REQUIREMENTS[operation].scopes == ("instagram_business_basic", capability)
+
+
+def _instagram_delivery(account="17841400000000000", comment="12345", text="hi @demo", *, flat=False):
+    change = {"field": "comments", "value": {
+        "id": comment, "text": text,
+        "from": {"id": "9988", "username": "sender"},
+        "media": {"id": "777", "media_product_type": "FEED"},
+    }}
+    return {"object": "instagram", "entry": [{
+        "id": account, "time": 1789560000,
+        **(change if flat else {"changes": [change]}),
+    }]}
+
+
+def _instagram_trigger(payload=None, credentials=None):
+    from nodes.core.registry import NodeFactory
+    return NodeFactory.create_node(
+        "ig", "automation-instagram", {
+            "config": {"operation": "on_mention", **({"_triggerPayload": payload} if payload else {})},
+            "credentials": (credentials or get_instagram_login_credential()).model_dump(),
+        },
+    )
+
+
+def _parsed_instagram_event(**kwargs):
+    from utils.instagram_webhooks import parse_instagram_webhook
+    return next(event[2] for event in parse_instagram_webhook(json.dumps(_instagram_delivery(**kwargs)).encode()) if event[1] == "mentions")
+
+
+class TestInstagramMentionTrigger:
+    @pytest.fixture(autouse=True)
+    def stable_webhook_clock(self, monkeypatch):
+        monkeypatch.setattr("utils.instagram_webhooks.current_time", lambda: 1789560000)
+
+    @pytest.mark.parametrize("field", ["comments", "mentions"])
+    @pytest.mark.parametrize("media_type", ["IMAGE", "VIDEO"])
+    async def test_post_and_reel_caption_mentions(self, respx_mock, field, media_type):
+        from utils.instagram_webhooks import parse_instagram_webhook
+        delivery = _instagram_delivery()
+        delivery["entry"][0]["changes"] = [{"field": field, "value": {"media_id": "777"}}]
+        payload = parse_instagram_webhook(json.dumps(delivery).encode())[0][2]
+        node = _instagram_trigger(payload)
+        media = {"id": "777", "caption": "look demo", "username": "post_author", "media_type": media_type,
+                 "media_url": "https://cdn.example/media", "timestamp": "2026-09-16T12:00:00Z"}
+        route = respx_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
+            return_value=httpx.Response(200, json={"mentioned_media": media}))
+        result = await node.execute({})
+        assert result["status"] == "success"
+        data = result["data"]
+        assert data["mention_type"] == "caption"
+        assert data["comment"] is None and data["comment_id"] is None
+        assert data["author"] == {"username": "post_author"}
+        assert data["media_urls"] == ["https://cdn.example/media"]
+        assert data["text"] == "look demo"  # Meta strips @; don't fabricate source text.
+        assert data["mentioned_username"] == "demo"
+        assert route.calls[0].request.url.params["fields"].startswith("mentioned_media.media_id(777)")
+
+
+    async def test_manual_run_is_no_event_and_stops_branch(self):
+        node = _instagram_trigger()
+        result = await node.execute({})
+        assert result["status"] == "no_event"
+        assert node.trigger_produced_no_event(result)
+
+
+    async def test_account_mismatch_is_refused(self):
+        node = _instagram_trigger(_parsed_instagram_event(account="222"))
+        with pytest.raises(ValueError, match="different connected account"):
+            await node.execute({})
+
+
+    @pytest.mark.parametrize("credentials", [get_oauth_credential, get_system_user_credential, get_page_access_credential])
+    async def test_trigger_requires_instagram_login(self, credentials):
+        node = _instagram_trigger(_parsed_instagram_event(), credentials())
+        with pytest.raises(ValueError, match="Instagram Login"):
+            await node.execute({})
+
+
+    @pytest.mark.parametrize("media_url", ["https://cdn.example/post.jpg", None])
+    async def test_mention_enriches_comment_and_media(self, respx_mock, media_url):
+        node = _instagram_trigger(_parsed_instagram_event(text="hello @DeMo!"))
+        media = {"id": "777", "media_type": "CAROUSEL_ALBUM", "permalink": "https://www.instagram.com/p/example/",
+                 "children": {"data": [{"id": "778", **({"media_url": "https://cdn.example/child.jpg"} if media_url else {})}]}}
+        if media_url:
+            media["media_url"] = media_url
+        route = respx_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
+            return_value=httpx.Response(200, json={"mentioned_comment": {
+                "id": "12345", "text": "hello @DeMo!", "timestamp": "2026-09-16T12:00:00Z", "media": media,
+            }}))
+        result = await node.execute({})
+        assert result["status"] == "success"
+        assert result["data"]["comment"]["text"] == "hello @DeMo!"
+        assert result["data"]["comment"]["from"]["username"] == "sender"
+        assert result["data"]["author"] == {"id": "9988", "username": "sender"}
+        assert result["data"]["author_available"] is True
+        assert result["data"]["text"] == "hello @DeMo!"
+        assert result["data"]["media"] == media
+        assert result["data"]["media_urls"] == ([media_url, "https://cdn.example/child.jpg"] if media_url else [])
+        assert result["data"]["media_url_available"] is bool(media_url)
+        fields = route.calls[0].request.url.params["fields"]
+        assert fields.startswith("mentioned_comment.comment_id(12345)")
+        assert "media_url" in fields and "children{" in fields
+        assert "username" not in fields
+
+
+    async def test_enrichment_failure_stays_visible(self, respx_mock):
+        node = _instagram_trigger(_parsed_instagram_event())
+        respx_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
+            return_value=httpx.Response(403, json={"error": {"message": "Missing permission"}}))
+        result = await node.execute({})
+        assert result["status"] == "error"
+        assert result["error"] == "Missing permission"
+
+
+    def test_trigger_is_discoverable_and_registers_headlessly(self):
+        from utils.webhook_manager import WebhookManager
+        from nodes.agent.node_op_tools import is_trigger_operation
+        assert is_trigger_operation("automation-instagram", "on_mention")
+        assert WebhookManager.operation_requires_registration("automation-instagram", "on_mention")
+        assert WebhookManager.node_webhook_field_for("automation-instagram", "on_mention") == "subscription_status"
+
+
+    @pytest.mark.parametrize("mention", [True, False])
+    async def test_workflow_forwards_only_mentions_to_http_node(self, monkeypatch, respx_mock, mention):
+        from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
+        from nodes import http_request_node
+
+        # Replace network transport only; keep both nodes, config/reference
+        # resolution, credential shaping and the concurrent executor real.
+        monkeypatch.setattr(http_request_node, "guarded_async_client", httpx.AsyncClient)
+        monkeypatch.setattr("wss.handlers.workflow_execution_handler.track_node_schema", AsyncMock())
+        monkeypatch.setattr("wss.handlers.workflow_execution_handler.log_activity_background", lambda *a, **kw: None)
+        graph = respx_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
+            return_value=httpx.Response(200, json={"mentioned_comment": {
+                "id": "12345", "text": "hi @demo", "media": {"id": "777", "media_url": "https://cdn.example/image.jpg"},
+            }}))
+        receiver = respx_mock.post("https://customer.example/mentions").mock(
+            return_value=httpx.Response(200, json={"received": True}))
+        nodes = [
+            {"id": "ig", "type": "automation-instagram", "config": {
+                "operation": "on_mention",
+                "_triggerPayload": _parsed_instagram_event(),
+                "credentials": get_instagram_login_credential().model_dump(),
+            }},
+            {"id": "send", "type": "automation-http-request", "config": {
+                "operation": "send_http_post_request", "url": "https://customer.example/mentions",
+                "body_type": "json", "body": "{{ JSON.stringify($('ig').data) }}",
+            }},
+        ]
+        if not mention:
+            # A queued delivery can outlive an account username change. The
+            # execution check must suppress enrichment and the downstream POST.
+            nodes[0]["config"]["_triggerPayload"]["data"]["text"] = "ordinary comment"
+        handler = WorkflowExecutionHandler(AsyncMock())
+        _, error, outputs = await handler._execute_nodes_concurrent(
+            nodes, [{"source": "ig", "target": "send"}], "sid", "user", "workflow",
+        )
+        assert error is None
+        assert graph.call_count == int(mention)
+        assert receiver.call_count == int(mention)
+        if mention:
+            body = json.loads(receiver.calls[0].request.content)
+            assert body["comment"]["text"] == "hi @demo"
+            assert body["author"] == {"id": "9988", "username": "sender"}
+            assert body["text"] == "hi @demo"
+            assert body["media"]["media_url"] == "https://cdn.example/image.jpg"
+            assert body["account_id"] == "17841400000000000"
+        else:
+            assert outputs["ig"]["status"] == "no_event"
+
+
+    @pytest.mark.parametrize("flat", [False, True])
+    @pytest.mark.parametrize("field", ["comments", "mentions"])
+    def test_comment_and_caption_events_route_separately(self, flat, field):
+        from utils.instagram_webhooks import parse_instagram_webhook
+        body = _instagram_delivery()
+        body["entry"] = [
+            {"id": account, "time": 1789560000,
+             **(change if flat else {"changes": [change]})}
+            for account in ["17841400000000000", "222"]
+            for change in [
+                {"field": field, "value": {"comment_id": "777", "media_id": "777"}},
+                {"field": field, "value": {"media_id": "777"}},
+            ]
+        ]
+        events = parse_instagram_webhook(json.dumps(body).encode())
+        assert len(events) == 4
+        assert {event[1] for event in events} == {"mentions"}
+        assert len({event[2]["event_id"] for event in events}) == 4
+        assert [event[2]["data"]["mention_type"] for event in events] == ["comment", "caption"] * 2
+        assert [event[0] for event in events] == ["17841400000000000"] * 2 + ["222"] * 2
+
+    @pytest.mark.parametrize("text,expected", [
+        ("hi @DeMo!", True), ("@demo check this", True), ("ordinary comment", False),
+        ("hi @demo_extra", False), ("hi @demo.name", False), ("a@demo.com", False),
+    ])
+    async def test_live_scope_only_dispatches_mentions_of_bound_account(self, monkeypatch, text, expected):
+        from utils.instagram_webhooks import instagram_live_scope_filter
+        credential = get_instagram_login_credential().model_dump()
+        monkeypatch.setattr("utils.instagram_webhooks.load_credential", AsyncMock(return_value=credential))
+        payload = _parsed_instagram_event()
+        payload["data"]["text"] = text
+        sub = {"provider": "instagram", "event_type": "mentions", "tenant_id": credential["instagram_user_id"],
+               "credential_id": TRIGGER_CREDENTIAL_ID, "user_id": TRIGGER_USER}
+        trigger = {"type": "automation-instagram", "config": {
+            "operation": "on_mention", "credentialIds": {"instagram_login": TRIGGER_CREDENTIAL_ID},
+        }}
+        reason = await instagram_live_scope_filter(object(), sub, payload, trigger)
+        assert (reason is None) == expected
+        monkeypatch.setattr("utils.instagram_webhooks.load_credential", AsyncMock(return_value=None))
+        assert await instagram_live_scope_filter(object(), sub, payload, trigger)
+        monkeypatch.setattr("utils.instagram_webhooks.load_credential", AsyncMock(return_value={**credential, "instagram_user_id": "999"}))
+        assert await instagram_live_scope_filter(object(), sub, payload, trigger)
+
+    async def test_mentions_register_comments_remotely_without_clobbering_messages(self, instagram_registration):
+        s = instagram_registration
+        s.fields = {"messages"}
+        status = await s.register("on_mention", "ig-mentions")
+        assert "comments and post/Reel captions" in status
+        assert s.posts == [{"comments", "messages"}]
+        assert s.rows[(TRIGGER_WORKFLOW, "ig-mentions")][0]["event_type"] == "mentions"
+        await s.register("on_comment", "ig-comments")
+        await s.register("on_mention", "ig-mentions")
+        assert len(s.posts) == 1
+        assert len(s.rows) == 2
+
+    @pytest.mark.parametrize("field", ["comments", "mentions"])
+    async def test_id_only_comment_does_not_invent_author(self, respx_mock, field):
+        from utils.instagram_webhooks import parse_instagram_webhook
+        body = _instagram_delivery()
+        body["entry"][0]["changes"] = [{"field": field, "value": {"comment_id": "12345", "media_id": "777"}}]
+        event = parse_instagram_webhook(json.dumps(body).encode())[0][2]
+        respx_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
+            return_value=httpx.Response(200, json={"mentioned_comment": {
+                "id": "12345", "text": "hi @demo", "media": {"id": "777"},
+            }}))
+        result = await _instagram_trigger(event).execute({})
+        assert result["data"]["text"] == "hi @demo"
+        assert result["data"]["author"] is None
+        assert result["data"]["author_available"] is False
+        assert result["data"]["media_urls"] == []
+        assert result["data"]["media_url_available"] is False
+
+    @pytest.mark.parametrize("value", [{}, {"media_id": "invalid"}, {"comment_id": "invalid", "media_id": "777"}, {"id": "12345", "media_id": "777"}])
+    def test_incomplete_mentions_do_not_dispatch(self, value):
+        from utils.instagram_webhooks import parse_instagram_webhook
+        body = _instagram_delivery()
+        body["entry"][0]["changes"] = [{"field": "mentions", "value": value}]
+        assert parse_instagram_webhook(json.dumps(body).encode()) == []
+    @pytest.mark.parametrize("kind", ["comment", "caption"])
+    async def test_signed_mention_reaches_http_receiver_once(self, monkeypatch, respx_mock, kind):
+        import hashlib
+        import hmac
+        import fakeredis.aioredis
+        from fastapi import BackgroundTasks, HTTPException
+        from utils import webhook_routes, instagram_webhooks
+        from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
+        from nodes import http_request_node
+
+        credential = get_instagram_login_credential().model_dump()
+        account = credential["instagram_user_id"]
+        workflow = {"nodes": [
+            {"id": "ig", "type": "automation-instagram", "config": {
+                "operation": "on_mention", "credentialIds": {"instagram_login": TRIGGER_CREDENTIAL_ID},
+            }},
+            {"id": "send", "type": "automation-http-request", "config": {
+                "operation": "send_http_post_request", "url": "https://customer.example/mentions",
+                "body_type": "json", "body": "{{ JSON.stringify($('ig').data) }}",
+            }},
+        ], "edges": [{"source": "ig", "target": "send"}]}
+        pool = MagicMock(fetchrow=AsyncMock(side_effect=lambda *a: {"workflow": copy.deepcopy(workflow)}))
+        monkeypatch.setattr(webhook_routes, "get_native_pool", lambda: pool)
+        monkeypatch.setattr(instagram_webhooks, "load_credential", AsyncMock(return_value=credential))
+        sub = {"provider": "instagram", "tenant_id": account, "event_type": "mentions",
+               "credential_id": TRIGGER_CREDENTIAL_ID, "user_id": TRIGGER_USER,
+               "workflow_id": TRIGGER_WORKFLOW, "node_id": "ig"}
+        async def subscriptions(_pool, provider, tenant, event):
+            return [sub] if tenant == account and event == "mentions" else []
+        monkeypatch.setattr("nodes.core.webhook_subscriptions.find_subscriptions", subscriptions)
+        monkeypatch.setattr(http_request_node, "guarded_async_client", httpx.AsyncClient)
+        monkeypatch.setattr("wss.handlers.workflow_execution_handler.track_node_schema", AsyncMock())
+        monkeypatch.setattr("wss.handlers.workflow_execution_handler.log_activity_background", lambda *a, **kw: None)
+        async def execute(**kwargs):
+            # Credential loading and socket transport are infrastructure seams;
+            # the real factory, references, executor, and both nodes run below.
+            kwargs["nodes"][0]["config"].pop("credentialIds")
+            kwargs["nodes"][0]["config"]["credentials"] = credential
+            handler = WorkflowExecutionHandler(AsyncMock())
+            _, error, _ = await handler._execute_nodes_concurrent(
+                kwargs["nodes"], kwargs["edges"], "sid", TRIGGER_USER, TRIGGER_WORKFLOW,
+            )
+            assert error is None
+        monkeypatch.setattr(webhook_routes, "_execute_workflow_with_relay", execute)
+        body = _instagram_delivery()
+        media = {"id": "777", "media_url": "https://cdn.example/media", "media_type": "VIDEO"}
+        response = {"mentioned_comment": {"id": "12345", "text": "hi @demo", "media": media}}
+        if kind == "caption":
+            body["entry"][0]["changes"] = [{"field": "comments", "value": {"media_id": "777"}}]
+            response = {"mentioned_media": {**media, "caption": "hi demo", "username": "creator"}}
+        graph = respx_mock.get(f"https://graph.instagram.com/v21.0/{account}").mock(
+            return_value=httpx.Response(200, json=response))
+        receiver = respx_mock.post("https://customer.example/mentions").mock(return_value=httpx.Response(200, json={"ok": True}))
+        monkeypatch.setenv("INSTAGRAM_WEBHOOK_APP_SECRET", "synthetic-secret")
+        redis = fakeredis.aioredis.FakeRedis()
+        monkeypatch.setattr("utils.redis_client._client", redis)
+        monkeypatch.setattr(instagram_webhooks, "get_shared_redis", lambda: redis)
+        raw = json.dumps(body).encode()
+        headers = {"x-hub-signature-256": "sha256=" + hmac.new(b"synthetic-secret", raw, hashlib.sha256).hexdigest()}
+        try:
+            with pytest.raises(HTTPException) as error:
+                await webhook_routes.handle_app_webhook_payload("instagram", raw, {}, "https://callback.example", BackgroundTasks())
+            assert error.value.status_code == 401
+            for _ in range(2):
+                tasks = BackgroundTasks()
+                await webhook_routes.handle_app_webhook_payload("instagram", raw, headers, "https://callback.example", tasks)
+                await tasks()
+            assert graph.call_count == receiver.call_count == 1
+            sent = json.loads(receiver.calls[0].request.content)
+            assert sent["mention_type"] == kind
+            assert sent["event_id"] == f"{account}:mentions:{kind}:{'12345' if kind == 'comment' else '777'}"
+            assert sent["text"] == ("hi @demo" if kind == "comment" else "hi demo")
+            assert sent["author"]["username"] == ("sender" if kind == "comment" else "creator")
+            assert sent["media_urls"] == ["https://cdn.example/media"]
+        finally:
+            await redis.aclose()
