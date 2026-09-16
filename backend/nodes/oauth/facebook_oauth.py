@@ -231,6 +231,8 @@ async def exchange_code_for_tokens(
             raise ValueError(
                 f"{discovery_detail} "
                 "Required permissions: instagram_basic, pages_show_list, pages_read_engagement. "
+                "Business portfolio Pages also need business_management and ads_read "
+                "(or ads_management); reconnect and allow business access. "
                 f"Granted scopes on this token: {granted_scopes_text}"
             )
 

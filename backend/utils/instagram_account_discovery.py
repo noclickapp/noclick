@@ -24,8 +24,8 @@ async def discover_instagram_accounts(client, user_token, *, base):
             "Facebook returned no Pages for this login. Reconnect using the personal "
             "Facebook profile that has access to the Page linked to your Instagram "
             "professional account, and include that Page in Facebook's consent screen. "
-            "If the Page is managed in a business portfolio, check that the profile "
-            "has been assigned access to the Page."
+            "For a Page in a business portfolio, also select that portfolio and "
+            "allow business access when reconnecting."
         )
 
     accounts, seen_ids, failed_pages, missing_tokens = [], set(), [], []

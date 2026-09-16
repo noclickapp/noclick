@@ -76,7 +76,7 @@ async def test_exchange_error_includes_granted_scopes_when_no_account(monkeypatc
     message = str(exc.value)
     assert "No linked Instagram Business or Creator account" in message
     assert "Facebook returned 1 Page(s) (IDs: 123)" in message
-    assert "business_management" not in message
+    assert "Business portfolio Pages also need business_management and ads_read" in message
     assert "instagram_basic" in message
     assert "Granted scopes on this token" in message
 
@@ -110,3 +110,15 @@ async def test_exchange_supports_connected_instagram_account_field(monkeypatch):
 
     assert info.instagram_user_id == "ig_2"
     assert info.instagram_username == "connected_ig"
+
+
+def test_browser_instagram_facebook_scopes_match_backend_schema():
+    import json
+    from pathlib import Path
+    from nodes.instagram_node import InstagramOAuthCredential
+
+    backend_scopes = InstagramOAuthCredential.model_json_schema()["x-oauth-scopes"]
+    browser_schema = Path(__file__).resolve().parents[3] / "frontend/app/schemas/nodes/instagram.json"
+    browser_scopes = json.loads(browser_schema.read_text())["$defs"]["InstagramOAuthCredential"]["x-oauth-scopes"]
+    assert {"ads_read", "business_management"}.issubset(backend_scopes)
+    assert set(browser_scopes) == set(backend_scopes)

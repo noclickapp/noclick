@@ -3,7 +3,7 @@
 // Instagram Graph API requires Facebook Login (connects via Facebook Pages).
 
 import { oauthRedirect } from '~/lib/oauthFlow.server';
-import { redirect, type LoaderFunctionArgs } from 'react-router';
+import { type LoaderFunctionArgs } from 'react-router';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
 
@@ -12,10 +12,14 @@ const FACEBOOK_AUTH_URL = 'https://www.facebook.com/v21.0/dialog/oauth';
 // Default Instagram scopes
 const DEFAULT_INSTAGRAM_SCOPES = [
     'instagram_basic',
+    'instagram_content_publish',
     'instagram_manage_comments',
     'pages_show_list',
     'pages_read_engagement',
     'pages_manage_metadata',
+    // Required for Page roles and discovery through a business portfolio.
+    'ads_read',
+    'business_management',
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -63,7 +67,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         response_type: 'code',
         scope: commaSeparatedScopes,
         state: state,
-        // auth_type: 'rerequest',  // Uncomment to request declined permissions again
+        auth_type: 'rerequest', // Re-offer permissions declined in an earlier connection.
     });
 
     const authUrl = `${FACEBOOK_AUTH_URL}?${params.toString()}`;

@@ -121,9 +121,11 @@ class InstagramOAuthCredential(BaseModel):
             "pages_show_list",
             "pages_read_engagement",
             "pages_manage_metadata",
-            # business_management deliberately NOT requested: no IG operation
-            # requires it (scope-registry verified) and it is excluded from App
-            # Review — requesting an unapproved permission fails the login dialog.
+            # Business Manager Page roles require ads_read for IG User reads.
+            # /me/accounts omits business-owned Pages without business_management
+            # (Graph v17+ changelog, User Accounts). Keep the browser schema in sync.
+            "ads_read",
+            "business_management",
         ],
     })
 
