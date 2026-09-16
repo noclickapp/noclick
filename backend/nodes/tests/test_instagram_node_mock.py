@@ -1986,6 +1986,15 @@ def _parsed_instagram_event(**kwargs):
     return next(event[2] for event in parse_instagram_webhook(json.dumps(_instagram_delivery(**kwargs)).encode()) if event[1] == "mentions")
 
 
+@pytest.fixture
+def http_mock():
+    # Node CI intentionally has no respx plugin; reuse the HTTP node's transport.
+    from nodes.tests import _httpx_mock
+
+    with _httpx_mock.mock:
+        yield _httpx_mock
+
+
 class TestInstagramMentionTrigger:
     @pytest.fixture(autouse=True)
     def stable_webhook_clock(self, monkeypatch):
@@ -1993,7 +2002,7 @@ class TestInstagramMentionTrigger:
 
     @pytest.mark.parametrize("field", ["comments", "mentions"])
     @pytest.mark.parametrize("media_type", ["IMAGE", "VIDEO"])
-    async def test_post_and_reel_caption_mentions(self, respx_mock, field, media_type):
+    async def test_post_and_reel_caption_mentions(self, http_mock, field, media_type):
         from utils.instagram_webhooks import parse_instagram_webhook
         delivery = _instagram_delivery()
         delivery["entry"][0]["changes"] = [{"field": field, "value": {"media_id": "777"}}]
@@ -2001,7 +2010,7 @@ class TestInstagramMentionTrigger:
         node = _instagram_trigger(payload)
         media = {"id": "777", "caption": "look demo", "username": "post_author", "media_type": media_type,
                  "media_url": "https://cdn.example/media", "timestamp": "2026-09-16T12:00:00Z"}
-        route = respx_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
+        route = http_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
             return_value=httpx.Response(200, json={"mentioned_media": media}))
         result = await node.execute({})
         assert result["status"] == "success"
@@ -2036,13 +2045,13 @@ class TestInstagramMentionTrigger:
 
 
     @pytest.mark.parametrize("media_url", ["https://cdn.example/post.jpg", None])
-    async def test_mention_enriches_comment_and_media(self, respx_mock, media_url):
+    async def test_mention_enriches_comment_and_media(self, http_mock, media_url):
         node = _instagram_trigger(_parsed_instagram_event(text="hello @DeMo!"))
         media = {"id": "777", "media_type": "CAROUSEL_ALBUM", "permalink": "https://www.instagram.com/p/example/",
                  "children": {"data": [{"id": "778", **({"media_url": "https://cdn.example/child.jpg"} if media_url else {})}]}}
         if media_url:
             media["media_url"] = media_url
-        route = respx_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
+        route = http_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
             return_value=httpx.Response(200, json={"mentioned_comment": {
                 "id": "12345", "text": "hello @DeMo!", "timestamp": "2026-09-16T12:00:00Z", "media": media,
             }}))
@@ -2062,9 +2071,9 @@ class TestInstagramMentionTrigger:
         assert "username" not in fields
 
 
-    async def test_enrichment_failure_stays_visible(self, respx_mock):
+    async def test_enrichment_failure_stays_visible(self, http_mock):
         node = _instagram_trigger(_parsed_instagram_event())
-        respx_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
+        http_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
             return_value=httpx.Response(403, json={"error": {"message": "Missing permission"}}))
         result = await node.execute({})
         assert result["status"] == "error"
@@ -2080,7 +2089,7 @@ class TestInstagramMentionTrigger:
 
 
     @pytest.mark.parametrize("mention", [True, False])
-    async def test_workflow_forwards_only_mentions_to_http_node(self, monkeypatch, respx_mock, mention):
+    async def test_workflow_forwards_only_mentions_to_http_node(self, monkeypatch, http_mock, mention):
         from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
         from nodes import http_request_node
 
@@ -2089,11 +2098,11 @@ class TestInstagramMentionTrigger:
         monkeypatch.setattr(http_request_node, "guarded_async_client", httpx.AsyncClient)
         monkeypatch.setattr("wss.handlers.workflow_execution_handler.track_node_schema", AsyncMock())
         monkeypatch.setattr("wss.handlers.workflow_execution_handler.log_activity_background", lambda *a, **kw: None)
-        graph = respx_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
+        graph = http_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
             return_value=httpx.Response(200, json={"mentioned_comment": {
                 "id": "12345", "text": "hi @demo", "media": {"id": "777", "media_url": "https://cdn.example/image.jpg"},
             }}))
-        receiver = respx_mock.post("https://customer.example/mentions").mock(
+        receiver = http_mock.post("https://customer.example/mentions").mock(
             return_value=httpx.Response(200, json={"received": True}))
         nodes = [
             {"id": "ig", "type": "automation-instagram", "config": {
@@ -2184,12 +2193,12 @@ class TestInstagramMentionTrigger:
         assert len(s.rows) == 2
 
     @pytest.mark.parametrize("field", ["comments", "mentions"])
-    async def test_id_only_comment_does_not_invent_author(self, respx_mock, field):
+    async def test_id_only_comment_does_not_invent_author(self, http_mock, field):
         from utils.instagram_webhooks import parse_instagram_webhook
         body = _instagram_delivery()
         body["entry"][0]["changes"] = [{"field": field, "value": {"comment_id": "12345", "media_id": "777"}}]
         event = parse_instagram_webhook(json.dumps(body).encode())[0][2]
-        respx_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
+        http_mock.get("https://graph.instagram.com/v21.0/17841400000000000").mock(
             return_value=httpx.Response(200, json={"mentioned_comment": {
                 "id": "12345", "text": "hi @demo", "media": {"id": "777"},
             }}))
@@ -2207,7 +2216,7 @@ class TestInstagramMentionTrigger:
         body["entry"][0]["changes"] = [{"field": "mentions", "value": value}]
         assert parse_instagram_webhook(json.dumps(body).encode()) == []
     @pytest.mark.parametrize("kind", ["comment", "caption"])
-    async def test_signed_mention_reaches_http_receiver_once(self, monkeypatch, respx_mock, kind):
+    async def test_signed_mention_reaches_http_receiver_once(self, monkeypatch, http_mock, kind):
         import hashlib
         import hmac
         import fakeredis.aioredis
@@ -2256,9 +2265,9 @@ class TestInstagramMentionTrigger:
         if kind == "caption":
             body["entry"][0]["changes"] = [{"field": "comments", "value": {"media_id": "777"}}]
             response = {"mentioned_media": {**media, "caption": "hi demo", "username": "creator"}}
-        graph = respx_mock.get(f"https://graph.instagram.com/v21.0/{account}").mock(
+        graph = http_mock.get(f"https://graph.instagram.com/v21.0/{account}").mock(
             return_value=httpx.Response(200, json=response))
-        receiver = respx_mock.post("https://customer.example/mentions").mock(return_value=httpx.Response(200, json={"ok": True}))
+        receiver = http_mock.post("https://customer.example/mentions").mock(return_value=httpx.Response(200, json={"ok": True}))
         monkeypatch.setenv("INSTAGRAM_WEBHOOK_APP_SECRET", "synthetic-secret")
         redis = fakeredis.aioredis.FakeRedis()
         monkeypatch.setattr("utils.redis_client._client", redis)
