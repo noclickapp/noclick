@@ -38,7 +38,7 @@ PLATFORM_KEYED = platform_keyed_operation("APIFY_API_TOKEN", byok=False)
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_subscriptions import AppEventTriggerMixin
-from nodes.instagram_mentions import MENTIONED_COMMENT_FIELDS, MENTIONED_MEDIA_FIELDS
+from utils.instagram_mentions import MENTIONED_COMMENT_FIELDS, MENTIONED_MEDIA_FIELDS
 from nodes.oauth.facebook_oauth import is_token_expired, refresh_access_token
 from nodes.oauth.instagram_login_oauth import (
     is_token_expired as _ig_login_is_expired,
@@ -1769,7 +1769,7 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
             self._require_instagram_login_credential(config.credentials)
             payload = self.node_data.get("config", {}).get("_triggerPayload")
             if op_config.operation == "on_mention" and payload is not None:
-                from nodes.instagram_mentions import enrich_mention
+                from utils.instagram_mentions import enrich_mention
                 self.resolve_trigger_payload(payload, {"operation": "on_mention"})
                 return await enrich_mention(self, config.credentials, payload)
             # A manual run must not replay or fabricate an event.
