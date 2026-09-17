@@ -24,6 +24,10 @@ const INSTANCE_KEYS: { envVar: string; title: string; purpose: string }[] = [
     { envVar: 'APIFY_API_TOKEN', title: 'LinkedIn and Instagram scraping', purpose: 'Scraping operations run on Apify. Without this token they are unavailable on this instance.' },
     { envVar: 'EXA_API_KEY', title: 'Exa search', purpose: 'Lets Exa nodes search without a credential of their own; users can still connect one.' },
     { envVar: 'PERPLEXITY_API_KEY', title: 'Perplexity', purpose: 'Lets Perplexity nodes run without a credential of their own; users can still connect one.' },
+    // Phone linking: users prove they own a number with a code sent through the instance's Twilio Verify service.
+    { envVar: 'TWILIO_ACCOUNT_SID', title: 'Phone linking (Twilio)', purpose: 'Settings → Phone sends verification codes through your Twilio account. Set the account SID here, then its auth token and the Verify service below.' },
+    { envVar: 'TWILIO_AUTH_TOKEN', title: 'Twilio auth token', purpose: 'The auth token of the Twilio account above.' },
+    { envVar: 'TWILIO_VERIFY_SERVICE_SID', title: 'Twilio Verify service', purpose: 'The Verify service (VA…) the codes are sent from. Phone linking stays hidden until all three are set.' },
 ];
 
 const SMTP_VARS = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'FROM_EMAIL'];

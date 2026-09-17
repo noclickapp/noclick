@@ -76,6 +76,7 @@ class Handler(Enum):
     SHARE = "share_handler"
     ONBOARDING = "onboarding_handler"
     NOTIFICATION_PREFS = "notification_prefs_handler"
+    PHONE = "phone_handler"
     INSTANCE_OAUTH = "instance_oauth_handler"
     INSTANCE_KEYS = "instance_keys_handler"
     WORKFLOW_BUILDER = "workflow_builder_handler"
@@ -125,6 +126,12 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         # Notification email preferences
         "notifications:prefs:get": Handler.NOTIFICATION_PREFS,
         "notifications:prefs:update": Handler.NOTIFICATION_PREFS,
+
+        # Verified phone identity
+        "phone:status": Handler.PHONE,
+        "phone:link:start": Handler.PHONE,
+        "phone:link:check": Handler.PHONE,
+        "phone:unlink": Handler.PHONE,
         "instance_oauth:list": Handler.INSTANCE_OAUTH,
         "instance_oauth:set": Handler.INSTANCE_OAUTH,
         "instance_oauth:delete": Handler.INSTANCE_OAUTH,

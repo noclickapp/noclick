@@ -25,6 +25,12 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "notifications:prefs:get": SocketIORateLimit(second=5, minute=30),
             "notifications:prefs:update": SocketIORateLimit(second=3, minute=20),
 
+            # Verified phone identity (the service also caps sends per user and per number)
+            "phone:status": SocketIORateLimit(second=5, minute=30),
+            "phone:link:start": SocketIORateLimit(second=1, minute=5),
+            "phone:link:check": SocketIORateLimit(second=2, minute=10),
+            "phone:unlink": SocketIORateLimit(second=1, minute=5),
+
             # Proving a credential works: each call is a real provider round
             # trip, so it is bounded well below a click-happy user.
             "credential:test_connection": SocketIORateLimit(second=2, minute=20),
@@ -90,6 +96,7 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             # the restricted-session gate + the owner's credit gates.
             "agent_workspace:list": SocketIORateLimit(second=3, minute=40),
             "agent_workspace:delete": SocketIORateLimit(second=2, minute=30),
+            "mcp_host:status": SocketIORateLimit(second=2, minute=40),
             "agent:builder_decision": SocketIORateLimit(second=3, minute=30),
             "workflow:builder:share_ask": SocketIORateLimit(second=2, minute=15),
             "agent_share:get_or_create": SocketIORateLimit(second=2, minute=15),

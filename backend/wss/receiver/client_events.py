@@ -263,6 +263,32 @@ class NotificationPrefsUpdateRequest(ClientEventBase):
     prefs: Dict[str, bool] = Field(..., description="Category → enabled, e.g. {'run_failure': false}")
 
 
+# Verified phone identity (Settings → Phone): the number channels resolve to an account through
+class PhoneStatusRequest(ClientEventBase):
+    """Request the user's linked phone, if any"""
+    event_name: ClassVar[str] = "phone:status"
+
+
+class PhoneLinkStartRequest(ClientEventBase):
+    """Send a verification code to a number the user wants to link"""
+    event_name: ClassVar[str] = "phone:link:start"
+
+    phone: str = Field(..., description="Phone number with country code, e.g. +1 424 242 1064")
+
+
+class PhoneLinkCheckRequest(ClientEventBase):
+    """Submit the code for a pending challenge; only an approved check links the number"""
+    event_name: ClassVar[str] = "phone:link:check"
+
+    challenge_id: str = Field(..., description="Challenge id returned by phone:link:start")
+    code: str = Field(..., description="The code the user received")
+
+
+class PhoneUnlinkRequest(ClientEventBase):
+    """Unlink the user's phone"""
+    event_name: ClassVar[str] = "phone:unlink"
+
+
 # Instance OAuth app configuration (self-hosted: one OAuth client per provider)
 class InstanceOAuthListRequest(ClientEventBase):
     """List the providers this instance has an OAuth app configured for"""

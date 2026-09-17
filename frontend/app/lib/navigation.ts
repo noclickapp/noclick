@@ -23,7 +23,7 @@ export type DashboardFocus = (typeof DASHBOARD_FOCUS_IDS)[number];
 // and Settings' useUrlSyncedTab both validate against this list, so a section
 // added here is automatically routable everywhere (a section missing from a
 // hand-copied list silently falls back to 'usage').
-export const SETTINGS_SECTIONS = ['usage', 'credentials', 'organization', 'developer', 'skills', 'notifications', 'popups', 'oauth-apps'] as const;
+export const SETTINGS_SECTIONS = ['usage', 'credentials', 'organization', 'developer', 'skills', 'notifications', 'phone', 'popups', 'oauth-apps'] as const;
 export type SettingsSection = (typeof SETTINGS_SECTIONS)[number];
 export type OrgSettingsTab = 'overview' | 'sso' | 'danger';
 

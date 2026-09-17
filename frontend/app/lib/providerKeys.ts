@@ -16,6 +16,9 @@ export const PROVIDER_KEY_SOURCES: Record<string, { label: string; url: string; 
     APIFY_API_TOKEN: { label: 'Apify', url: 'https://console.apify.com/settings/integrations', placeholder: 'apify_api_…' },
     EXA_API_KEY: { label: 'Exa', url: 'https://dashboard.exa.ai/api-keys' },
     PERPLEXITY_API_KEY: { label: 'Perplexity', url: 'https://www.perplexity.ai/settings/api', placeholder: 'pplx-…' },
+    TWILIO_ACCOUNT_SID: { label: 'Twilio account SID', url: 'https://console.twilio.com/', placeholder: 'AC…' },
+    TWILIO_AUTH_TOKEN: { label: 'Twilio auth token', url: 'https://console.twilio.com/' },
+    TWILIO_VERIFY_SERVICE_SID: { label: 'Twilio Verify service SID', url: 'https://console.twilio.com/us1/develop/verify/services', placeholder: 'VA…' },
 };
 
 /** "OPENROUTER_API_KEY" → "OpenRouter"; an unlisted "FOO_BAR_API_KEY" → "Foo bar". */

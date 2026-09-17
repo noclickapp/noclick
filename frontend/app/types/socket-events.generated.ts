@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Mon Sep 14 17:16:25  2026
+// Generated at: Thu Sep 17 17:05:48  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -3965,6 +3965,58 @@ export interface ParallelOAuthExchangeRequest {
  * Validate if a stored Parallel API key is still active.
  */
 export interface ParallelOAuthValidateRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Submit the code for a pending challenge; only an approved check links the number
+ */
+export interface PhoneLinkCheckRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Challenge id returned by phone:link:start
+   */
+  challenge_id: string;
+  /**
+   * The code the user received
+   */
+  code: string;
+  [k: string]: unknown;
+}
+/**
+ * Send a verification code to a number the user wants to link
+ */
+export interface PhoneLinkStartRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Phone number with country code, e.g. +1 424 242 1064
+   */
+  phone: string;
+  [k: string]: unknown;
+}
+/**
+ * Request the user's linked phone, if any
+ */
+export interface PhoneStatusRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Unlink the user's phone
+ */
+export interface PhoneUnlinkRequest {
   /**
    * UUID for request/response correlation
    */
@@ -13602,6 +13654,10 @@ export interface ClientToServerEvents {
   'pagerduty:oauth:validate': (data: PagerDutyOAuthValidateRequest) => void;
   'parallel:oauth:exchange': (data: ParallelOAuthExchangeRequest) => void;
   'parallel:oauth:validate': (data: ParallelOAuthValidateRequest) => void;
+  'phone:link:check': (data: PhoneLinkCheckRequest) => void;
+  'phone:link:start': (data: PhoneLinkStartRequest) => void;
+  'phone:status': (data: PhoneStatusRequest) => void;
+  'phone:unlink': (data: PhoneUnlinkRequest) => void;
   'pipedrive:oauth:exchange': (data: PipedriveOAuthExchangeRequest) => void;
   'pipedrive:oauth:refresh': (data: PipedriveOAuthRefreshRequest) => void;
   'pipedrive:oauth:validate': (data: PipedriveOAuthValidateRequest) => void;
@@ -13936,6 +13992,10 @@ export const ClientEventNames = {
   PagerDutyOAuthValidateRequest: 'pagerduty:oauth:validate',
   ParallelOAuthExchangeRequest: 'parallel:oauth:exchange',
   ParallelOAuthValidateRequest: 'parallel:oauth:validate',
+  PhoneLinkCheckRequest: 'phone:link:check',
+  PhoneLinkStartRequest: 'phone:link:start',
+  PhoneStatusRequest: 'phone:status',
+  PhoneUnlinkRequest: 'phone:unlink',
   PipedriveOAuthExchangeRequest: 'pipedrive:oauth:exchange',
   PipedriveOAuthRefreshRequest: 'pipedrive:oauth:refresh',
   PipedriveOAuthValidateRequest: 'pipedrive:oauth:validate',
@@ -14266,6 +14326,10 @@ interface ClientEventMap {
   PagerDutyOAuthValidateRequest: PagerDutyOAuthValidateRequest
   ParallelOAuthExchangeRequest: ParallelOAuthExchangeRequest
   ParallelOAuthValidateRequest: ParallelOAuthValidateRequest
+  PhoneLinkCheckRequest: PhoneLinkCheckRequest
+  PhoneLinkStartRequest: PhoneLinkStartRequest
+  PhoneStatusRequest: PhoneStatusRequest
+  PhoneUnlinkRequest: PhoneUnlinkRequest
   PipedriveOAuthExchangeRequest: PipedriveOAuthExchangeRequest
   PipedriveOAuthRefreshRequest: PipedriveOAuthRefreshRequest
   PipedriveOAuthValidateRequest: PipedriveOAuthValidateRequest
@@ -15317,6 +15381,22 @@ export const ParallelOAuthValidateRequest = {
   event_name: 'parallel:oauth:validate' as const,
   create: (data: ParallelOAuthValidateRequest) => ({ event_name: 'parallel:oauth:validate' as const, ...data })
 };
+export const PhoneLinkCheckRequest = {
+  event_name: 'phone:link:check' as const,
+  create: (data: PhoneLinkCheckRequest) => ({ event_name: 'phone:link:check' as const, ...data })
+};
+export const PhoneLinkStartRequest = {
+  event_name: 'phone:link:start' as const,
+  create: (data: PhoneLinkStartRequest) => ({ event_name: 'phone:link:start' as const, ...data })
+};
+export const PhoneStatusRequest = {
+  event_name: 'phone:status' as const,
+  create: (data: PhoneStatusRequest) => ({ event_name: 'phone:status' as const, ...data })
+};
+export const PhoneUnlinkRequest = {
+  event_name: 'phone:unlink' as const,
+  create: (data: PhoneUnlinkRequest) => ({ event_name: 'phone:unlink' as const, ...data })
+};
 export const PipedriveOAuthExchangeRequest = {
   event_name: 'pipedrive:oauth:exchange' as const,
   create: (data: PipedriveOAuthExchangeRequest) => ({ event_name: 'pipedrive:oauth:exchange' as const, ...data })
@@ -16120,6 +16200,10 @@ export const EventRouting = {
   'pagerduty:oauth:validate': 'API',
   'parallel:oauth:exchange': 'API',
   'parallel:oauth:validate': 'API',
+  'phone:link:check': 'API',
+  'phone:link:start': 'API',
+  'phone:status': 'API',
+  'phone:unlink': 'API',
   'pipedrive:oauth:exchange': 'API',
   'pipedrive:oauth:refresh': 'API',
   'pipedrive:oauth:validate': 'API',

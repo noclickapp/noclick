@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState, lazy, Suspense } from 'react';
-import { ArrowLeft, BarChart3, Bell, Brain, Building2, ChevronRight, Code2, KeyRound, Eye, Plug } from 'lucide-react';
+import { ArrowLeft, BarChart3, Bell, Brain, Building2, ChevronRight, Code2, KeyRound, Eye, Plug, Smartphone } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
 import { COMMAND_SHORTCUT_KEYS } from '~/lib/shortcuts';
@@ -23,8 +23,10 @@ import { DeveloperSettings } from '~/components/settings/DeveloperSettings';
 import { InstanceOAuthSettings } from '~/components/settings/InstanceOAuthSettings';
 import { InstanceProviderKeysSettings } from '~/components/settings/InstanceProviderKeysSettings';
 import { NotificationsSettings } from '~/components/settings/NotificationsSettings';
+import { PhoneSettings } from '~/components/settings/PhoneSettings';
 import { PopupPreferencesSettings } from '~/components/settings/PopupPreferencesSettings';
 import { isLocalEdition } from '~/lib/edition';
+import { usePhoneLinkingAvailable } from '~/hooks/usePhoneLinking';
 // Lazy: the Skills section embeds workflow canvases (SkillEditor → FlowCanvas and
 // SkillRowExpansion → ReadOnlyFlowCanvas), which pull the node-component registry
 // (~4.7MB). Settings is always mounted on the dashboard, so loading Skills eagerly
@@ -84,6 +86,7 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
     }
   };
 
+  const phoneLinking = usePhoneLinkingAvailable();
   const navItems = [
     {
       id: 'usage' as const,
@@ -119,6 +122,13 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
       description: 'Email alerts for failures, credits, and digests',
       icon: Bell,
       visible: true,
+    },
+    {
+      id: 'phone' as const,
+      label: 'Phone',
+      description: 'Link your number for WhatsApp and calls',
+      icon: Smartphone,
+      visible: phoneLinking,
     },
     {
       id: 'popups' as const,
@@ -225,6 +235,7 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
               </>
             )}
             {mobileSection === 'notifications' && <NotificationsSettings />}
+            {mobileSection === 'phone' && <PhoneSettings />}
             {mobileSection === 'popups' && <PopupPreferencesSettings />}
             {mobileSection === 'organization' && settingsOrgId && (
               <OrganizationSettings organizationId={settingsOrgId} embedded isPersonalWorkspace={isPersonalWorkspace} />
@@ -298,6 +309,7 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
             </>
           )}
           {currentSection === 'notifications' && <NotificationsSettings />}
+          {currentSection === 'phone' && <PhoneSettings />}
           {currentSection === 'popups' && <PopupPreferencesSettings />}
           {currentSection === 'organization' && settingsOrgId && (
             <OrganizationSettings organizationId={settingsOrgId} embedded isPersonalWorkspace={isPersonalWorkspace} />

@@ -478,7 +478,7 @@
               "type": "null"
             }
           ],
-          "default": "id,text,timestamp,media{id,caption,media_type,media_url,permalink,timestamp,thumbnail_url,children{id,media_type,media_url,thumbnail_url}}",
+          "default": "id,text,timestamp,media{id,caption,media_type,media_url,permalink,timestamp,thumbnail_url,children{id,media_type,media_url,thumbnail_url}},from",
           "description": "Comma-separated list of fields to retrieve for the mentioned comment",
           "title": "Fields"
         }

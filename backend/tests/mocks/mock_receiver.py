@@ -71,18 +71,30 @@ class MockSocketIOProxy(SocketIOProxy):
         from wss.handlers.folder_handler import FolderHandler
         from wss.handlers.workflow_builder_handler import WorkflowBuilderHandler
         from wss.handlers.agent_share_handler import AgentShareHandler
+        from wss.handlers.phone_handler import PhoneHandler
 
         agent_handler = MockAgentHandler(self.sio)
         workflow_execution_handler = WorkflowExecutionHandler(self.sio)
         workflow_handler = WorkflowHandler(self.sio)
         workflow_mcp_handler = WorkflowMCPHandler(self.sio)  # MCP handler for AI agent workflow manipulation
         credentials_handler = CredentialsHandler(self.sio)  # Real handler for credentials management
+        # The debug console is hosted-only tooling; mirror the real receiver and
+        # treat it as optional, so this mock (and the 18 tests that build on it)
+        # still work in a build without it.
+        try:
+            from cloud.handlers.debug_handler import DebugHandler, set_debug_handler
+
+            debug_handler = DebugHandler(self.sio)
+            set_debug_handler(debug_handler)
+        except ImportError:
+            debug_handler = None
         share_handler = ShareHandler(self.sio)  # Real handler for resource sharing
         saved_output_handler = SavedOutputHandler(self.sio)  # Real handler for saved output management
         resource_handler = ResourceHandler(self.sio)  # Real handler for workflow resources
         folder_handler = FolderHandler(self.sio)  # Real handler for folder operations
         workflow_builder_handler = WorkflowBuilderHandler(self.sio)  # Real handler for AI builder + conversations
         agent_share_handler = AgentShareHandler(self.sio)  # Real handler for public agent share links
+        phone_handler = PhoneHandler(self.sio)  # Real handler for verified phone identity
 
         return {
             Handler.AGENT: agent_handler,
@@ -90,10 +102,12 @@ class MockSocketIOProxy(SocketIOProxy):
             Handler.WORKFLOW: workflow_handler,
             Handler.WORKFLOW_MCP: workflow_mcp_handler,
             Handler.CREDENTIALS: credentials_handler,
+            "debug_handler": debug_handler,
             Handler.SHARE: share_handler,
             Handler.SAVED_OUTPUT: saved_output_handler,
             Handler.RESOURCE: resource_handler,
             Handler.FOLDER: folder_handler,
             Handler.WORKFLOW_BUILDER: workflow_builder_handler,
             Handler.AGENT_SHARE: agent_share_handler,
+            Handler.PHONE: phone_handler,
         }

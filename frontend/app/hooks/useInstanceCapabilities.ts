@@ -22,6 +22,8 @@ export interface InstanceCapabilities {
     billing: boolean;
     /** Agent subscription sign-ins this instance can complete: provider → credential type. */
     agentSignIns: Record<string, string>;
+    /** A Twilio Verify service is configured, so users can link a phone number. */
+    phoneVerification: boolean;
 }
 
 // Assume available until told otherwise: the hosted service has everything, and
@@ -36,6 +38,7 @@ const ASSUME_AVAILABLE: InstanceCapabilities = {
         github_copilot: 'agent_github_copilot_oauth',
         xai: 'agent_xai_oauth',
     },
+    phoneVerification: true,
 };
 
 let cached: InstanceCapabilities | null = null;
