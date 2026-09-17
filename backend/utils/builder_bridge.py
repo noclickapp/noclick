@@ -79,18 +79,27 @@ async def create_bridge_link_for_ask(
         from utils.email import credential_provide_url
 
         sanitized: List[Dict[str, Any]] = []
+        # One request per credential type: the upsert is keyed on (requester,
+        # type) and ROTATES the token, so a second ask for the same type
+        # silently killed the first ask's provide link (2026-09-18). One
+        # connection answers every ask of that type anyway.
+        minted: Dict[str, Any] = {}
         for inp in inputs or []:
             entry = _sanitize_input(inp)
             if entry["type"] == "credential" and entry.get("credential_type"):
-                row = await CredentialsRepo(pool).upsert_credential_request(
-                    requester_id=user_id,
-                    target_email="",
-                    credential_type=entry["credential_type"],
-                    message=(
-                        f"Requested by the workflow builder for "
-                        f"'{workflow_name or 'a workflow'}'"
-                    ),
-                )
+                row = minted.get(entry["credential_type"])
+                if row is None:
+                    row = await CredentialsRepo(pool).upsert_credential_request(
+                        requester_id=user_id,
+                        target_email="",
+                        credential_type=entry["credential_type"],
+                        message=(
+                            f"Requested by the workflow builder for "
+                            f"'{workflow_name or 'a workflow'}'"
+                        ),
+                    )
+                    if row:
+                        minted[entry["credential_type"]] = row
                 if row:
                     entry["credential_request_id"] = str(row.id)
                     entry["credential_provide_url"] = credential_provide_url(row.token)
@@ -145,16 +154,46 @@ async def heal_link_inputs(pool, link: Dict[str, Any]) -> List[Dict[str, Any]]:
         inputs = json.loads(inputs)
     inputs = list(inputs or [])
 
-    needs_heal = [
-        i for i, e in enumerate(inputs)
-        if e.get("type") == "credential" and not e.get("credential_provide_token")
-    ]
-    if not needs_heal:
-        return inputs
-
     from repositories.builder_bridge import BuilderBridgeRepo
     from repositories.credentials import CredentialsRepo
     from utils.email import credential_provide_url
+
+    changed = False
+    # An entry that names a request must carry that row's CURRENT token: a
+    # later upsert for the same type rotates it (a sibling ask, a reconnect),
+    # and the stale token renders "Credential request not found".
+    rows_by_request: Dict[str, Optional[Any]] = {}
+    for entry in inputs:
+        req_id = entry.get("credential_request_id") if entry.get("type") == "credential" else None
+        if not req_id:
+            continue
+        if req_id not in rows_by_request:
+            try:
+                rows_by_request[req_id] = await pool.fetchrow(
+                    "SELECT token, credential_type FROM credential_requests WHERE id = $1::uuid",
+                    req_id,
+                )
+            except Exception:
+                logger.warning("[BuilderBridge] request lookup failed for %s", req_id, exc_info=True)
+                rows_by_request[req_id] = None
+        row = rows_by_request[req_id]
+        if row and entry.get("credential_provide_token") != row["token"]:
+            entry["credential_provide_token"] = row["token"]
+            entry["credential_provide_url"] = credential_provide_url(row["token"])
+            entry.setdefault("credential_type", row["credential_type"])
+            changed = True
+
+    # Entries that name a request were judged above; a request the lookup
+    # could not confirm is left alone rather than re-minted under a live tab.
+    needs_heal = [
+        i for i, e in enumerate(inputs)
+        if e.get("type") == "credential" and not e.get("credential_provide_token")
+        and not e.get("credential_request_id")
+    ]
+    if not needs_heal:
+        if changed:
+            await _persist_healed(pool, link, inputs)
+        return inputs
 
     # Full ask inputs from the conversation, for entries whose snapshot never
     # captured a credential type. Fetched lazily, once.
@@ -179,25 +218,10 @@ async def heal_link_inputs(pool, link: Dict[str, Any]) -> List[Dict[str, Any]]:
                 logger.warning("[BuilderBridge] pending_ask read failed during heal", exc_info=True)
         return full_by_id
 
-    changed = False
+    minted: Dict[str, Any] = {}  # one request per credential type, as at mint time
     for i in needs_heal:
         entry = inputs[i]
         try:
-            req_id = entry.get("credential_request_id")
-            if req_id:
-                # Pre-inline-token era: the request exists — backfill its token
-                # without re-minting (an upsert would rotate it needlessly).
-                row = await pool.fetchrow(
-                    "SELECT token, credential_type FROM credential_requests WHERE id = $1::uuid",
-                    req_id,
-                )
-                if row:
-                    entry["credential_provide_token"] = row["token"]
-                    entry["credential_provide_url"] = credential_provide_url(row["token"])
-                    entry.setdefault("credential_type", row["credential_type"])
-                    changed = True
-                continue
-
             cred_type = entry.get("credential_type")
             if not cred_type:
                 # Empty-type era: re-derive from the conversation's full input.
@@ -215,15 +239,19 @@ async def heal_link_inputs(pool, link: Dict[str, Any]) -> List[Dict[str, Any]]:
                     continue
                 entry["credential_type"] = cred_type
 
-            row = await CredentialsRepo(pool).upsert_credential_request(
-                requester_id=str(link["user_id"]),
-                target_email="",
-                credential_type=cred_type,
-                message=(
-                    f"Requested by the workflow builder for "
-                    f"'{link.get('workflow_name') or 'a workflow'}'"
-                ),
-            )
+            row = minted.get(cred_type)
+            if row is None:
+                row = await CredentialsRepo(pool).upsert_credential_request(
+                    requester_id=str(link["user_id"]),
+                    target_email="",
+                    credential_type=cred_type,
+                    message=(
+                        f"Requested by the workflow builder for "
+                        f"'{link.get('workflow_name') or 'a workflow'}'"
+                    ),
+                )
+                if row:
+                    minted[cred_type] = row
             if row:
                 entry["credential_request_id"] = str(row.id)
                 entry["credential_provide_url"] = credential_provide_url(row.token)
@@ -235,11 +263,17 @@ async def heal_link_inputs(pool, link: Dict[str, Any]) -> List[Dict[str, Any]]:
             )
 
     if changed:
-        try:
-            await BuilderBridgeRepo(pool).update_inputs(str(link["id"]), inputs)
-        except Exception:
-            logger.warning("[BuilderBridge] healed-inputs persist failed", exc_info=True)
+        await _persist_healed(pool, link, inputs)
     return inputs
+
+
+async def _persist_healed(pool, link: Dict[str, Any], inputs: List[Dict[str, Any]]) -> None:
+    from repositories.builder_bridge import BuilderBridgeRepo
+
+    try:
+        await BuilderBridgeRepo(pool).update_inputs(str(link["id"]), inputs)
+    except Exception:
+        logger.warning("[BuilderBridge] healed-inputs persist failed", exc_info=True)
 
 
 async def fire_agent_wake_turn(
