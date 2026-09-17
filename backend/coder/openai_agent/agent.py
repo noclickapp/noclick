@@ -176,6 +176,7 @@ class Agent:
         sandbox_setups: Optional[List[Dict[str, Any]]] = None,
         user_env: Optional[Dict[str, str]] = None,
         execution_id: Optional[str] = None,
+        history_limit: Optional[int] = None,
     ):
         if not emit_message:
             raise ValueError("emit_message callback is required")
@@ -292,6 +293,7 @@ class Agent:
         sandbox_setups: Optional[List[Dict[str, Any]]] = None,
         user_env: Optional[Dict[str, str]] = None,
         execution_id: Optional[str] = None,
+        history_limit: Optional[int] = None,
         **kwargs,
     ) -> "Agent":
         """Async factory for ``Agent``.
@@ -335,6 +337,7 @@ class Agent:
                 user_id=user_id,
                 workflow_id=workflow_id,
                 node_id=node_id,
+                history_limit=history_limit,
             )
         agent._initialized = True
         return agent
