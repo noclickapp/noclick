@@ -3,8 +3,10 @@
 Owns every read/write against ``conversations`` across the interactive chat
 agent (``agent_handler``) and the AI workflow builder (``workflow_builder_handler``).
 
-Tables in scope: ``conversations`` only. ``sdk_history`` writes in
-``PostgresSession`` are also out of scope.
+Tables in scope: ``conversations`` only. The ``workflow_build_requests`` insert
+that agent_handler.respond fires for chat-usage tracking stays in
+WorkflowRepo territory; ``sdk_history`` writes in ``PostgresSession`` are
+also out of scope.
 
 Rows are converted to ``dict`` at the repo boundary so ``asyncpg.Record``
 never leaks. Reads that fetch the ``events`` JSONB column normalize
@@ -421,6 +423,27 @@ class ConversationRepo:
                 cost_delta, token_delta, turn_delta,
             )
 
+    async def get_agent_model(self, conversation_id: str) -> Optional[str]:
+        """The harness/model that ran the conversation's last turn (None when
+        the row does not exist yet)."""
+        async with self._pool.acquire() as conn:
+            return await conn.fetchval(
+                "SELECT agent_model FROM conversations WHERE conversation_id::text = $1::text AND deleted_at IS NULL",
+                conversation_id,
+            )
+
+    async def set_metadata_key(self, conversation_id: str, key: str, value: Any) -> None:
+        """Set one top-level key of ``conversations.metadata`` (UPDATE-only)."""
+        async with self._pool.acquire() as conn:
+            await conn.execute(
+                """
+                UPDATE conversations
+                SET metadata = jsonb_set(COALESCE(metadata, '{}'::jsonb), ARRAY[$2::text], ($3::text)::jsonb, true)
+                WHERE conversation_id = $1
+                """,
+                conversation_id, key, json.dumps(value, default=str),
+            )
+
     async def record_mcp_delivery(
         self,
         conversation_id: str,
@@ -486,6 +509,54 @@ class ConversationRepo:
                 conversation_id, user_id,
             )
         return row["conversation_id"] if row else None
+
+    async def list_by_prefix(
+        self, user_id: str, *, prefix: str, limit: int = 10,
+    ) -> List[Dict[str, Any]]:
+        """The user's conversations whose id starts with ``prefix``, newest
+        first — how the account coordinator finds the builder runs it started."""
+        async with self._pool.acquire() as conn:
+            rows = await conn.fetch(
+                """
+                SELECT conversation_id, workflow_id::text AS workflow_id, agent_state,
+                       pending_ask, preview, events, last_activity
+                FROM conversations
+                WHERE user_id::text = $1::text
+                  AND starts_with(conversation_id, $2)
+                  AND deleted_at IS NULL
+                ORDER BY last_activity DESC
+                LIMIT $3
+                """,
+                user_id, prefix, limit,
+            )
+        out = []
+        for r in rows:
+            row = dict(r)
+            row["events"] = _normalize_events(row.get("events"))
+            ask = row.get("pending_ask")
+            row["pending_ask"] = json.loads(ask) if isinstance(ask, str) else ask
+            out.append(row)
+        return out
+
+    async def reset_conversation(self, conversation_id: str, user_id: str) -> bool:
+        """Wipe a conversation in place — transcript, SDK history, parked ask —
+        keeping its id, for a durable per-account thread that starts over."""
+        async with self._pool.acquire() as conn:
+            row = await conn.fetchrow(
+                """
+                UPDATE conversations
+                SET events = '[]'::jsonb,
+                    metadata = COALESCE(metadata, '{}'::jsonb) - 'sdk_history',
+                    pending_ask = NULL,
+                    title = NULL,
+                    preview = NULL,
+                    last_activity = NOW()
+                WHERE conversation_id = $1 AND user_id::text = $2::text
+                RETURNING conversation_id
+                """,
+                conversation_id, user_id,
+            )
+        return row is not None
 
     # ──────────────────────────────────────────────────────────────────────
     # Chat-agent path (agent_handler)

@@ -12,6 +12,8 @@ type Rollout = 'internal' | 'everyone';
 export const FEATURE_ROLLOUT = {
     // Verified phone linking (Settings → Phone) and the channels keyed on it.
     phone_channel: 'internal',
+    // The account coordinator (Dashboard dock; later WhatsApp and calls).
+    coordinator: 'internal',
 } satisfies Record<string, Rollout>;
 
 export type Feature = keyof typeof FEATURE_ROLLOUT;

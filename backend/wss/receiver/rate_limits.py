@@ -31,6 +31,11 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "phone:link:check": SocketIORateLimit(second=2, minute=10),
             "phone:unlink": SocketIORateLimit(second=1, minute=5),
 
+            # Account coordinator (a send is one billed agent turn)
+            "coordinator:open": SocketIORateLimit(second=5, minute=30),
+            "coordinator:send": SocketIORateLimit(second=1, minute=12),
+            "coordinator:reset": SocketIORateLimit(second=1, minute=5),
+
             # Proving a credential works: each call is a real provider round
             # trip, so it is bounded well below a click-happy user.
             "credential:test_connection": SocketIORateLimit(second=2, minute=20),

@@ -19,6 +19,8 @@ import { DASHBOARD_FOCUS_IDS, goToWorkflowNode, navigateToSettings, navigateToUs
 import { isLocalEdition } from '~/lib/edition';
 import { openCreateCredential } from '~/components/shared/popups/CreateCredentialDialog';
 import { DashboardSkeleton } from '~/components/dashboard/DashboardSkeleton';
+import { CoordinatorPanel } from '~/components/dashboard/CoordinatorPanel';
+import { useFeatureGate } from '~/lib/featureGates';
 import { FilePreviewDialog, type FilePreviewRequest } from '~/components/dashboard/FilePreviewDialog';
 import { CredentialDeleteDialog, type DeletableCredential } from '~/components/credential/CredentialDeleteDialog';
 import { Skeleton } from '~/components/ui/skeleton';
@@ -151,6 +153,7 @@ export function DashboardTab() {
     const { overview, loading, error, dismissed } = useDashboardOverview();
     const credit = useCreditUsage();
     const [params, setParams] = useSearchParams();
+    const coordinator = useFeatureGate('coordinator');
     const [, setPendingCreditAction] = useValtioState<'credit-exhausted' | 'user-initiated' | null>('global', 'pending_credit_action', null);
 
     const focusParam = params.get('focus');
@@ -439,6 +442,7 @@ export function DashboardTab() {
             <div className="h-full" data-testid="dashboard-tab">
                 <BentoDashboard data={data} config={PRODUCT_CONFIG} focus={focus} onFocus={onFocus} fullViewOverrides={FULL_VIEW_OVERRIDES} />
             </div>
+            {coordinator && <CoordinatorPanel />}
             <input ref={fileInput} type="file" multiple className="hidden" onChange={onFilesPicked} data-testid="dashboard-upload-input" />
             <FilePreviewDialog request={preview} onClose={() => setPreview(null)} onOpenWorkflow={(source) => source.workflow && actions.openWorkflow(source.workflow, source.agent?.nodeId)} />
             <CredentialDeleteDialog credential={credentialToDelete} onClose={() => setCredentialToDelete(null)} onDeleted={() => void refresh()} />

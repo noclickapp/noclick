@@ -469,6 +469,7 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
         conversation_id: str,
         user_id: Optional[str],
         workflow_id: Optional[str],
+        node_id: Optional[str] = None,
     ):
         """Create an emit callback for a specific session.
 
@@ -506,7 +507,7 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
                             conversation_id=conversation_id,
                             user_id=user_id,
                             workflow_id=workflow_id,
-                            node_id=None,
+                            node_id=node_id,
                             source="agent",
                             content=final_text,
                             model=model,
@@ -520,7 +521,7 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
                         conversation_id=conversation_id,
                         user_id=user_id,
                         workflow_id=workflow_id,
-                        node_id=None,
+                        node_id=node_id,
                         reason=reason,
                         model=model,
                     )

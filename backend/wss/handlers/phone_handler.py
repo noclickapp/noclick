@@ -8,7 +8,7 @@ per account, rate limits) live in utils/phone_identity.py.
 """
 
 import logging
-from typing import Any, Awaitable, Callable, Dict, Optional, Tuple
+from typing import Any, Awaitable, Callable, Dict, Optional
 
 from utils.feature_gates import FeatureNotAvailable, require_feature
 from utils.phone_identity import PhoneIdentity, PhoneLinkError, default_service
@@ -21,6 +21,7 @@ from wss.receiver.client_events import (
 from wss.schema import SocketIOHandler
 from wss.sender import send_event
 from wss.sender.events import ResponseEvent
+from wss.session_actor import session_actor
 
 logger = logging.getLogger(__name__)
 
@@ -42,20 +43,12 @@ class PhoneHandler(SocketIOHandler):
             "phone:unlink": self.handle_unlink,
         }
 
-    async def _actor(self, sid: str) -> Optional[Tuple[str, Optional[str]]]:
-        session = await self.sio.get_session(sid)
-        user_id = session.get("user_id") if session else None
-        if not user_id:
-            return None
-        user_data = session.get("user_data") or {}
-        return user_id, user_data.get("email")
-
     async def _respond(
         self, sid: str, request_id: str,
         op: Callable[[PhoneIdentity, str], Awaitable[Any]],
     ) -> None:
         try:
-            actor = await self._actor(sid)
+            actor = await session_actor(self.sio, sid)
             if actor is None:
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request_id, data=None, error="Not authenticated"))

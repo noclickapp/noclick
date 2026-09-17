@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Thu Sep 17 17:05:48  2026
+// Generated at: Thu Sep 17 18:22:01  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -2101,6 +2101,40 @@ export interface CodexDeviceCodeStartRequest {
    * UUID for request/response correlation
    */
   request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Get the account's coordinator conversation id
+ */
+export interface CoordinatorOpenRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Start the coordinator conversation over
+ */
+export interface CoordinatorResetRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Send the coordinator a message; the reply streams as chat:message frames
+ */
+export interface CoordinatorSendRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * The user's message
+   */
+  text: string;
   [k: string]: unknown;
 }
 /**
@@ -13563,6 +13597,9 @@ export interface ClientToServerEvents {
   'conversation:list_for_agent': (data: ListConversationsForAgentRequest) => void;
   'conversation:resume': (data: ResumeConversationRequest) => void;
   'conversations:list': (data: ListConversationsRequest) => void;
+  'coordinator:open': (data: CoordinatorOpenRequest) => void;
+  'coordinator:reset': (data: CoordinatorResetRequest) => void;
+  'coordinator:send': (data: CoordinatorSendRequest) => void;
   'credential:authorize_for_workflow': (data: CredentialAuthorizeForWorkflowRequest) => void;
   'credential:create': (data: CredentialCreateRequest) => void;
   'credential:delete': (data: CredentialDeleteRequest) => void;
@@ -13888,6 +13925,9 @@ export const ClientEventNames = {
   CloudflareOAuthValidateRequest: 'cloudflare:oauth:validate',
   CodexDeviceCodePollRequest: 'codex:auth:poll',
   CodexDeviceCodeStartRequest: 'codex:auth:start',
+  CoordinatorOpenRequest: 'coordinator:open',
+  CoordinatorResetRequest: 'coordinator:reset',
+  CoordinatorSendRequest: 'coordinator:send',
   CredentialAuthorizeForWorkflowRequest: 'credential:authorize_for_workflow',
   CredentialCreateRequest: 'credential:create',
   CredentialDeleteRequest: 'credential:delete',
@@ -14222,6 +14262,9 @@ interface ClientEventMap {
   CloudflareOAuthValidateRequest: CloudflareOAuthValidateRequest
   CodexDeviceCodePollRequest: CodexDeviceCodePollRequest
   CodexDeviceCodeStartRequest: CodexDeviceCodeStartRequest
+  CoordinatorOpenRequest: CoordinatorOpenRequest
+  CoordinatorResetRequest: CoordinatorResetRequest
+  CoordinatorSendRequest: CoordinatorSendRequest
   CredentialAuthorizeForWorkflowRequest: CredentialAuthorizeForWorkflowRequest
   CredentialCreateRequest: CredentialCreateRequest
   CredentialDeleteRequest: CredentialDeleteRequest
@@ -14964,6 +15007,18 @@ export const CodexDeviceCodePollRequest = {
 export const CodexDeviceCodeStartRequest = {
   event_name: 'codex:auth:start' as const,
   create: (data: CodexDeviceCodeStartRequest) => ({ event_name: 'codex:auth:start' as const, ...data })
+};
+export const CoordinatorOpenRequest = {
+  event_name: 'coordinator:open' as const,
+  create: (data: CoordinatorOpenRequest) => ({ event_name: 'coordinator:open' as const, ...data })
+};
+export const CoordinatorResetRequest = {
+  event_name: 'coordinator:reset' as const,
+  create: (data: CoordinatorResetRequest) => ({ event_name: 'coordinator:reset' as const, ...data })
+};
+export const CoordinatorSendRequest = {
+  event_name: 'coordinator:send' as const,
+  create: (data: CoordinatorSendRequest) => ({ event_name: 'coordinator:send' as const, ...data })
 };
 export const CredentialAuthorizeForWorkflowRequest = {
   event_name: 'credential:authorize_for_workflow' as const,
@@ -16087,6 +16142,9 @@ export const EventRouting = {
   'conversation:list_for_agent': 'API',
   'conversation:resume': 'API',
   'conversations:list': 'API',
+  'coordinator:open': 'API',
+  'coordinator:reset': 'API',
+  'coordinator:send': 'API',
   'credential:authorize_for_workflow': 'API',
   'credential:create': 'API',
   'credential:delete': 'API',

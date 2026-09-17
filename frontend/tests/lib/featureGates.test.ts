@@ -22,6 +22,6 @@ describe('feature gates', () => {
     it('mirrors the backend rollout table one feature at a time', () => {
         // The backend enforces; this table only hides surfaces. A feature must
         // exist on both sides under the same name (backend/utils/feature_gates.py).
-        expect(Object.keys(FEATURE_ROLLOUT)).toEqual(['phone_channel']);
+        expect(Object.keys(FEATURE_ROLLOUT)).toEqual(['phone_channel', 'coordinator']);
     });
 });

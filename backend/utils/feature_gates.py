@@ -17,6 +17,8 @@ EVERYONE = "everyone"
 FEATURE_ROLLOUT: dict[str, str] = {
     # Verified phone linking (Settings → Phone) and the channels keyed on it.
     "phone_channel": INTERNAL,
+    # The account coordinator (Dashboard dock; later WhatsApp and calls).
+    "coordinator": INTERNAL,
 }
 
 

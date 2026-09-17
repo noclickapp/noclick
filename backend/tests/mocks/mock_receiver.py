@@ -72,6 +72,7 @@ class MockSocketIOProxy(SocketIOProxy):
         from wss.handlers.workflow_builder_handler import WorkflowBuilderHandler
         from wss.handlers.agent_share_handler import AgentShareHandler
         from wss.handlers.phone_handler import PhoneHandler
+        from wss.handlers.coordinator_handler import CoordinatorHandler
 
         agent_handler = MockAgentHandler(self.sio)
         workflow_execution_handler = WorkflowExecutionHandler(self.sio)
@@ -95,6 +96,7 @@ class MockSocketIOProxy(SocketIOProxy):
         workflow_builder_handler = WorkflowBuilderHandler(self.sio)  # Real handler for AI builder + conversations
         agent_share_handler = AgentShareHandler(self.sio)  # Real handler for public agent share links
         phone_handler = PhoneHandler(self.sio)  # Real handler for verified phone identity
+        coordinator_handler = CoordinatorHandler(self.sio)  # Real handler for the account coordinator
 
         return {
             Handler.AGENT: agent_handler,
@@ -110,4 +112,5 @@ class MockSocketIOProxy(SocketIOProxy):
             Handler.WORKFLOW_BUILDER: workflow_builder_handler,
             Handler.AGENT_SHARE: agent_share_handler,
             Handler.PHONE: phone_handler,
+            Handler.COORDINATOR: coordinator_handler,
         }

@@ -581,6 +581,7 @@ class SocketIOProxy:
         from wss.handlers.onboarding_handler import OnboardingHandler
         from wss.handlers.notification_prefs_handler import NotificationPrefsHandler
         from wss.handlers.phone_handler import PhoneHandler
+        from wss.handlers.coordinator_handler import CoordinatorHandler
         from wss.handlers.instance_oauth_handler import InstanceOAuthHandler
         from wss.handlers.instance_keys_handler import InstanceKeysHandler
         from wss.handlers.feedback_handler import FeedbackHandler
@@ -727,6 +728,8 @@ class SocketIOProxy:
         notification_prefs_handler = NotificationPrefsHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize phone handler (API only - verified phone identity for channels)
         phone_handler = PhoneHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
+        # Initialize coordinator handler (API only - the account's own agent)
+        coordinator_handler = CoordinatorHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         instance_oauth_handler = InstanceOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         instance_keys_handler = InstanceKeysHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize feedback handler (API only - in-app feedback / bug reports)
@@ -832,6 +835,7 @@ class SocketIOProxy:
             Handler.ONBOARDING: onboarding_handler,
             Handler.NOTIFICATION_PREFS: notification_prefs_handler,
             Handler.PHONE: phone_handler,
+            Handler.COORDINATOR: coordinator_handler,
             Handler.INSTANCE_OAUTH: instance_oauth_handler,
             Handler.INSTANCE_KEYS: instance_keys_handler,
             Handler.FEEDBACK: feedback_handler,

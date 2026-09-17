@@ -51,7 +51,7 @@ fi
 # under backend/coder requires an explicit edition-boundary review.
 while IFS= read -r coder_entry; do
   case "$coder_entry" in
-    backend/coder/__init__.py|backend/coder/openai_agent|backend/coder/workflow) ;;
+    backend/coder/__init__.py|backend/coder/openai_agent|backend/coder/workflow|backend/coder/coordinator) ;;
     *)
       echo "Community boundary violation: unreviewed backend/coder entry: $coder_entry" >&2
       exit 1

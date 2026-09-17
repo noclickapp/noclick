@@ -289,6 +289,24 @@ class PhoneUnlinkRequest(ClientEventBase):
     event_name: ClassVar[str] = "phone:unlink"
 
 
+# Account coordinator: the one agent that sees the whole account (Dashboard dock)
+class CoordinatorOpenRequest(ClientEventBase):
+    """Get the account's coordinator conversation id"""
+    event_name: ClassVar[str] = "coordinator:open"
+
+
+class CoordinatorSendRequest(ClientEventBase):
+    """Send the coordinator a message; the reply streams as chat:message frames"""
+    event_name: ClassVar[str] = "coordinator:send"
+
+    text: str = Field(..., min_length=1, max_length=8000, description="The user's message")
+
+
+class CoordinatorResetRequest(ClientEventBase):
+    """Start the coordinator conversation over"""
+    event_name: ClassVar[str] = "coordinator:reset"
+
+
 # Instance OAuth app configuration (self-hosted: one OAuth client per provider)
 class InstanceOAuthListRequest(ClientEventBase):
     """List the providers this instance has an OAuth app configured for"""
