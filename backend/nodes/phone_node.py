@@ -30,7 +30,7 @@ class PhoneNumberCredential(BaseModel):
     phone_number: str = Field(..., min_length=1, json_schema_extra={"ui:hidden": True})  # E.164
     number_sid: str = Field(..., min_length=1, json_schema_extra={"ui:hidden": True})  # provider id
 
-    model_config = ConfigDict(json_schema_extra={
+    model_config = ConfigDict(title="Phone Number", json_schema_extra={
         "x-credential-type": "purchase",
         "x-credential-instructions": (
             f"Buy a phone number for this agent. It is billed {PHONE_NUMBER_MONTHLY_CREDITS} credits a month "
