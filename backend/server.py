@@ -104,7 +104,7 @@ from utils.lifecycle import (
     run_socket_connect_hooks,
     run_startup_hooks,
 )
-from utils.route_registry import apply_registered_routes, inline_webhook_routes
+from utils.route_registry import apply_registered_routes, inline_webhook_routes, apply_registered_worker_routes
 # init_otel spawns a background thread, and so may a platform's boot hooks.
 # They run inside app_lifespan, not at module import time — keeps imports
 # side-effect-free for tests and tooling.
@@ -440,6 +440,8 @@ webhook_fastapi_app.include_router(email_router)
 # Health route on the worker too so the load balancer / monitoring can probe
 # the function independently of the api function.
 webhook_fastapi_app.include_router(health_router)
+# Routes a platform serves from its worker process (none in a plain install).
+apply_registered_worker_routes(webhook_fastapi_app, sio)
 
 
 def _sanitize_auth_reason(raw_message: str, default: str = 'Authentication failed', code: str = 'auth_failed') -> dict:

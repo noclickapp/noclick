@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Dict, Optional
+from typing import Any, Awaitable, Callable, Dict, Optional
 
 from billing.exceptions import InsufficientBalanceError
 from coder.coordinator.tools import COORDINATOR_NODE_ID, CoordinatorTools, coordinator_tool_params
@@ -47,9 +47,16 @@ def conversation_id_for(user_id: str) -> str:
     return f"coordinator:{user_id}"
 
 
-async def run_coordinator_turn(*, sio, sid: str, user_id: str, user_email: Optional[str], text: str) -> None:
-    """Persist the user's message, run one agent turn streaming chat frames to
-    the socket, persist the reply. Turns of one account never interleave."""
+async def run_coordinator_turn(
+    *, sio, sid: str, user_id: str, user_email: Optional[str], text: str,
+    sink: Optional[Callable[[ChatMessageEvent], Awaitable[None]]] = None,
+    extra: Optional[Dict[str, Any]] = None,
+) -> None:
+    """Persist the user's message, run one agent turn, persist the reply.
+    Frames stream to the socket ``sid`` and, when given, to ``sink`` — how a
+    channel with no socket (a voice call) hears the same turn. ``extra`` is
+    stamped on the persisted events (e.g. the channel). Turns of one account
+    never interleave."""
     pool = get_native_pool()
     conversation_id = conversation_id_for(user_id)
     lock = _turn_locks.setdefault(user_id, asyncio.Lock())
@@ -67,14 +74,20 @@ async def run_coordinator_turn(*, sio, sid: str, user_id: str, user_email: Optio
         # The interactive chat's persistence and emit plumbing, unchanged: the
         # coordinator's transcript is a normal conversation row.
         chat = AgentHandler(sio)
-        emit = await chat._create_emit_callback(
+        chat_emit = await chat._create_emit_callback(
             sid, COORDINATOR_MODEL, conversation_id=conversation_id, user_id=user_id,
-            workflow_id=None, node_id=COORDINATOR_NODE_ID,
+            workflow_id=None, node_id=COORDINATOR_NODE_ID, extra=extra,
         )
+
+        async def emit(event) -> None:
+            await chat_emit(event)
+            if sink is not None and isinstance(event, ChatMessageEvent):
+                await sink(event)
+
         await chat._persist_chat_event(
             conversation_id=conversation_id, user_id=user_id, workflow_id=None,
             node_id=COORDINATOR_NODE_ID, source="user", content=text,
-            model=COORDINATOR_MODEL, label="Coordinator",
+            model=COORDINATOR_MODEL, label="Coordinator", extra=extra,
         )
         agent = await Agent.create(
             emit_message=emit, config=config, conversation_id=conversation_id, sid=sid,
@@ -84,10 +97,15 @@ async def run_coordinator_turn(*, sio, sid: str, user_id: str, user_email: Optio
         try:
             await agent({"content_items": [ContentItem(type="text", text=text)]})
         except InsufficientBalanceError:
-            return  # the billing hook already told the client
+            # The billing hook already told the socket; a sink hears it too.
+            if sink is not None:
+                await sink(ChatMessageEvent(
+                    conversation_id=conversation_id, finished=True, model=COORDINATOR_MODEL,
+                    message="Your NoClick account is out of credits, so I have to stop here.",
+                ))
         except Exception as exc:
             logger.error("coordinator turn failed for %s", user_id, exc_info=True)
-            await send_event(sio, sid, ChatMessageEvent(
+            await emit(ChatMessageEvent(
                 conversation_id=conversation_id, message=f"Sorry, something went wrong: {exc}",
                 finished=True, model=COORDINATOR_MODEL,
             ))

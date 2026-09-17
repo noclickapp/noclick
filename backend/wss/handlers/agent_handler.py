@@ -357,6 +357,7 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
         content: str,
         model: Optional[str],
         label: Optional[str] = None,
+        extra: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Append one chat event to ``conversations.events``.
 
@@ -400,6 +401,9 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
             compact = compact_tool_calls_for_transcript(calls) or None
             if compact:
                 event["tool_calls"] = compact
+        if extra:
+            # Where the turn came from (e.g. a voice call), for surfaces that badge it.
+            event.update(extra)
         try:
             # Awaiting (vs fire-and-forget) is critical here: each chat
             # message produces TWO writes in quick succession (user message
@@ -470,6 +474,7 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
         user_id: Optional[str],
         workflow_id: Optional[str],
         node_id: Optional[str] = None,
+        extra: Optional[Dict[str, Any]] = None,
     ):
         """Create an emit callback for a specific session.
 
@@ -511,6 +516,7 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
                             source="agent",
                             content=final_text,
                             model=model,
+                            extra=extra,
                         )
                     accumulated.clear()
             elif isinstance(event, AgentStateEvent):

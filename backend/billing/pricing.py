@@ -39,6 +39,9 @@ def _price(name: str) -> Decimal:
 EMAIL_SEND_PRICE = _price("PRICE_EMAIL_SEND")
 AI_EXTRACTION_PRICE_PER_PAGE = _price("PRICE_AI_EXTRACTION_PER_PAGE")
 SANDBOX_MINUTE_PRICE = _price("PRICE_SANDBOX_MINUTE")
+# A minute of a coordinator voice call (telephony + speech), billed to the
+# account the caller's number is bound to.
+VOICE_MINUTE_PRICE = _price("PRICE_VOICE_MINUTE")
 
 # Credits a warm sandbox must have before a turn may start, so a legitimately
 # started turn has runway before the uptime reaper can reach it.

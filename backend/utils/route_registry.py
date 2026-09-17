@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 RouteProvider = Callable[[Any, Any], None]
 
 _providers: List[RouteProvider] = []
+_worker_providers: List[RouteProvider] = []
 _inline_webhook_routes = True
 
 
@@ -60,8 +61,22 @@ def apply_registered_routes(app: Any, sio: Any) -> None:
         logger.info(f"[Routes] Mounted {len(_providers)} registered route provider(s)")
 
 
+def register_worker_routes(provider: RouteProvider) -> None:
+    """Register routes for the process that serves webhooks and other inbound
+    traffic, when a deployment runs it separately from the interactive app."""
+    _worker_providers.append(provider)
+
+
+def apply_registered_worker_routes(app: Any, sio: Any) -> None:
+    for provider in _worker_providers:
+        provider(app, sio)
+    if _worker_providers:
+        logger.info(f"[Routes] Mounted {len(_worker_providers)} registered worker route provider(s)")
+
+
 def clear() -> None:
     """Reset registration state (tests)."""
     global _inline_webhook_routes
     _providers.clear()
+    _worker_providers.clear()
     _inline_webhook_routes = True

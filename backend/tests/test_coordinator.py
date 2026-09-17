@@ -25,6 +25,7 @@ from wss.receiver.client_events import (
     CoordinatorOpenRequest, CoordinatorResetRequest, CoordinatorSendRequest,
 )
 from wss.sender import send_event
+from wss.sender.events import ChatMessageEvent
 
 USER = "11111111-1111-1111-1111-111111111111"
 ORG = "22222222-2222-2222-2222-222222222222"
@@ -157,7 +158,10 @@ class FakeAgent:
     async def __call__(self, message):
         FakeAgent.calls.append(("start", self.kwargs["user_id"], message["content_items"][0].text))
         await asyncio.sleep(0.01)
-        await self.kwargs["emit_message"](f"reply:{message['content_items'][0].text}")
+        await self.kwargs["emit_message"](ChatMessageEvent(
+            conversation_id=self.kwargs["conversation_id"],
+            message=f"reply:{message['content_items'][0].text}", finished=True,
+        ))
         FakeAgent.calls.append(("end", self.kwargs["user_id"]))
 
     async def cleanup(self):
@@ -170,13 +174,13 @@ class FakeChat:
     def __init__(self, sio):
         pass
 
-    async def _create_emit_callback(self, sid, model, *, conversation_id, user_id, workflow_id, node_id=None):
+    async def _create_emit_callback(self, sid, model, *, conversation_id, user_id, workflow_id, node_id=None, extra=None):
         async def emit(event):
-            FakeChat.persisted.append(("emit", conversation_id, node_id, event))
+            FakeChat.persisted.append(("emit", conversation_id, node_id, event, extra))
         return emit
 
     async def _persist_chat_event(self, **kw):
-        FakeChat.persisted.append(("user", kw["conversation_id"], kw["node_id"], kw["content"]))
+        FakeChat.persisted.append(("user", kw["conversation_id"], kw["node_id"], kw["content"], kw.get("extra")))
 
 
 @pytest.fixture
@@ -192,9 +196,9 @@ def turn_seams(monkeypatch):
 async def test_turn_builds_the_agent_on_the_account_and_persists_both_sides(turn_seams):
     await coordinator.run_coordinator_turn(sio=object(), sid="sid-1", user_id=USER, user_email="a@b.c", text="hi")
     assert FakeAgent.calls == [("start", USER, "hi"), ("end", USER), ("cleanup", USER)]
-    agent_kwargs = FakeChat.persisted  # persisted in order: user turn first, then the emitted reply
-    assert agent_kwargs[0] == ("user", CID, COORDINATOR_NODE_ID, "hi")
-    assert agent_kwargs[1][:3] == ("emit", CID, COORDINATOR_NODE_ID)
+    persisted = FakeChat.persisted  # persisted in order: user turn first, then the emitted reply
+    assert persisted[0] == ("user", CID, COORDINATOR_NODE_ID, "hi", None)
+    assert persisted[1][:3] == ("emit", CID, COORDINATOR_NODE_ID) and persisted[1][3].message == "reply:hi"
 
 
 async def test_turn_wires_persistence_tools_and_billing_identity(turn_seams, monkeypatch):
@@ -229,14 +233,30 @@ async def test_turn_failure_is_reported_as_a_finished_frame(turn_seams, monkeypa
         async def __call__(self, message):
             raise RuntimeError("model down")
     monkeypatch.setattr(coordinator, "Agent", Exploding)
-    sent = []
+    heard = []
 
-    async def fake_send(sio, sid, event):
-        sent.append(event)
-    monkeypatch.setattr(coordinator, "send_event", fake_send)
-    await coordinator.run_coordinator_turn(sio=object(), sid="s", user_id=USER, user_email=None, text="hi")
-    assert sent[-1].finished is True and "model down" in sent[-1].message and sent[-1].conversation_id == CID
+    async def sink(event):
+        heard.append(event)
+    await coordinator.run_coordinator_turn(sio=object(), sid="s", user_id=USER, user_email=None, text="hi", sink=sink)
+    # The failure rides the same emit path as a reply: persisted for the thread and handed to the sink.
+    last = FakeChat.persisted[-1]
+    assert last[0] == "emit" and last[3].finished is True and "model down" in last[3].message
+    assert heard[-1] is last[3] and heard[-1].conversation_id == CID
     assert FakeAgent.calls[-1] == ("cleanup", USER)
+
+
+async def test_turn_sink_hears_every_frame_and_extra_stamps_both_persisted_events(turn_seams):
+    heard = []
+
+    async def sink(event):
+        heard.append(event)
+    await coordinator.run_coordinator_turn(
+        sio=object(), sid="", user_id=USER, user_email=None, text="hi", sink=sink,
+        extra={"channel": "voice", "call_sid": "CA1"},
+    )
+    assert [e.message for e in heard] == ["reply:hi"] and heard[0].finished is True
+    assert FakeChat.persisted[0][4] == {"channel": "voice", "call_sid": "CA1"}  # the user turn
+    assert FakeChat.persisted[1][4] == {"channel": "voice", "call_sid": "CA1"}  # the reply's emit callback
 
 
 # ── the socket handler ───────────────────────────────────────────────────────
