@@ -68,6 +68,7 @@ class PostgresSession:
         user_id: Optional[str] = None,
         workflow_id: Optional[str] = None,
         node_id: Optional[str] = None,
+        history_limit: Optional[int] = None,
     ) -> None:
         if not conversation_id:
             raise ValueError("PostgresSession requires conversation_id")
@@ -75,12 +76,17 @@ class PostgresSession:
         self._user_id = user_id
         self._workflow_id = workflow_id
         self._node_id = node_id
+        # Replay at most this many recent items to the model (None = all); the
+        # stored history is never trimmed, only what a turn re-sends.
+        self._history_limit = history_limit
 
     # ------------------------------------------------------------------ #
     # SDK Session protocol
     # ------------------------------------------------------------------ #
     async def get_items(self, limit: int | None = None) -> List[dict]:
         """Return the latest N items (or all) in chronological order."""
+        if limit is None:
+            limit = self._history_limit
         from utils.database_pool import get_native_pool
         row = await get_native_pool().fetchrow(
             "SELECT metadata FROM conversations WHERE conversation_id = $1",

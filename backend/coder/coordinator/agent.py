@@ -44,8 +44,14 @@ VOICE_STYLE = (
     "\n\nYou are speaking on a phone call. Answer in plain spoken sentences: no markdown, no bullet "
     "points, no headings, no emoji, and never read a URL or an id aloud — say what it is and that it is "
     "on the dashboard. Two or three sentences unless the caller asks for detail. If the caller's words "
-    "are an incomplete fragment, say 'Go on.' and nothing else."
+    "are an incomplete fragment, say 'Go on.' and nothing else. On a call, answer from what you already "
+    "know when you can; reach for list_workflows or describe_workflow rather than account_overview unless "
+    "the caller asks what needs attention."
 )
+
+# The model replays this many recent items; the full thread stays in
+# conversations.events, so nothing is lost, only re-sent.
+HISTORY_LIMIT = 40
 
 _turn_locks: Dict[str, asyncio.Lock] = {}
 
@@ -100,9 +106,10 @@ async def run_coordinator_turn(
         )
 
         async def emit(event) -> None:
-            await chat_emit(event)
+            # The sink first: the transport speaks while the transcript write lands.
             if sink is not None and isinstance(event, ChatMessageEvent):
                 await sink(event)
+            await chat_emit(event)
 
         await chat._persist_chat_event(
             conversation_id=conversation_id, user_id=user_id, workflow_id=None,
@@ -113,6 +120,7 @@ async def run_coordinator_turn(
             emit_message=emit, config=config, conversation_id=conversation_id, sid=sid,
             user_id=user_id, user_email=user_email, sio=sio, enable_persistence=True,
             custom_tool_executor=tools.execute, organization_id=organization_id,
+            history_limit=HISTORY_LIMIT,
         )
         try:
             await agent({"content_items": [ContentItem(type="text", text=text)]})
