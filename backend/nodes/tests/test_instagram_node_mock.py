@@ -2375,7 +2375,39 @@ class TestFacebookLoginInstagramMentions:
         assert result["data"]["media_url_available"] is False
         argument = "comment_id(12345)" if kind == "comment" else "media_id(777)"
         assert route.calls[0].request.url.params["fields"].startswith(f"{expansion}.{argument}{{")
-        assert ",from" not in route.calls[0].request.url.params["fields"]
+        assert (",from" in route.calls[0].request.url.params["fields"]) is (kind == "comment")
+
+    @pytest.mark.parametrize("author", [
+        {"username": "commenter"},
+        {"id": "9988", "username": "commenter"},
+        {"username": MOCK_USERNAME},
+    ])
+    async def test_id_only_mention_requests_and_uses_comment_author(self, http_mock, monkeypatch, author):
+        from utils.instagram_webhooks import parse_instagram_webhook
+
+        monkeypatch.setattr("utils.instagram_webhooks.current_time", lambda: 1789560000)
+        body = {"object": "instagram", "entry": [{"id": MOCK_USER_ID, "time": 1789560000,
+            "changes": [{"field": "mentions", "value": {"comment_id": "12345", "media_id": "777"}}]}]}
+        payload = parse_instagram_webhook(json.dumps(body).encode())[0][2]
+        assert "from" not in payload["data"]
+        route = http_mock.get(f"https://graph.facebook.com/v21.0/{MOCK_USER_ID}").mock(
+            return_value=httpx.Response(200, json={"id": MOCK_USER_ID, "mentioned_comment": {
+                "id": "12345", "text": f"@{MOCK_USERNAME} hello", "from": author,
+                "media": {"id": "777", "media_type": "VIDEO"},
+            }}))
+        result = await _instagram_trigger(payload, get_oauth_credential()).execute({})
+        # Meta only returns the author when it is selected inside the expansion.
+        fields = route.calls[0].request.url.params["fields"]
+        assert fields.startswith("mentioned_comment.comment_id(12345){")
+        assert fields.endswith(",from}")
+        if author["username"] == MOCK_USERNAME:
+            assert result["status"] == "no_event"
+        else:
+            assert result["status"] == "success"
+            assert result["data"]["author"] == author
+            assert result["data"]["comment"]["from"] == author
+            assert result["data"]["author_available"] is True
+            assert result["data"]["mentioned_username"] == MOCK_USERNAME
 
     async def test_legacy_mentions_connection_explains_required_reconnection(self):
         advisory = await InstagramNode.check_registration_health(

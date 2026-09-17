@@ -2,7 +2,7 @@
 
 MENTIONED_COMMENT_FIELDS = (
     "id,text,timestamp,media{id,caption,media_type,media_url,permalink,timestamp,"
-    "thumbnail_url,children{id,media_type,media_url,thumbnail_url}}"
+    "thumbnail_url,children{id,media_type,media_url,thumbnail_url}},from"
 )
 # Mentioned Media exposes fewer fields than the regular Media endpoint.
 MENTIONED_MEDIA_FIELDS = "id,caption,media_type,media_url,timestamp,username"
@@ -45,8 +45,6 @@ async def enrich_mention(node, credentials, payload):
     if facebook:
         argument = "comment_id" if kind == "comment" else "media_id"
         fields = f"{expansion}.{argument}({object_id}){{{fields}}}"
-    elif kind == "comment":
-        fields += ",from"
     result = await node._make_request(
         "GET", f"/{account_id if facebook else object_id}", credentials,
         params={"fields": fields}, action_name="on_mention",
