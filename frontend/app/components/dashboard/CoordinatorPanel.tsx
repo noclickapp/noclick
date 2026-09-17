@@ -83,7 +83,7 @@ export function CoordinatorPanel() {
             <button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="fixed bottom-4 right-4 z-40 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-lg hover:bg-accent"
+                className="fixed bottom-24 right-4 z-40 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-lg hover:bg-accent"
                 data-testid="coordinator-dock"
             >
                 <Sparkles className="h-4 w-4" />
@@ -95,8 +95,8 @@ export function CoordinatorPanel() {
     return (
         <div
             className={cn(
-                'fixed bottom-4 right-4 z-40 flex w-[min(28rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl',
-                'h-[min(34rem,calc(100vh-6rem))]',
+                'fixed bottom-24 right-4 z-40 flex w-[min(28rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl',
+                'h-[min(34rem,calc(100vh-11rem))]',
             )}
             data-testid="coordinator-panel"
         >
