@@ -13,6 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import Annotated
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.capabilities import PHONE_CALLS, PHONE_NUMBERS, capability
 
@@ -58,6 +59,14 @@ class PhoneOnCallConfig(WebhookTriggerConfigBase):
         title="Greeting",
         description="What the agent says when it picks up. Leave empty for a plain hello.",
     )
+    # The registration marker: loading it provisions the call receiver and
+    # routes the attached number at it (the mixin's load_field_value).
+    webhook_url: Optional[str] = Field(
+        default=None,
+        title="Call routing",
+        description="Set up automatically once a number is attached: calls to it reach this workflow.",
+        json_schema_extra={"ui:widget": "webhook", "ui:loadValue": True, "readOnly": True},
+    )
 
 
 class PhonePlaceCallConfig(BaseModel):
@@ -78,7 +87,25 @@ class PhonePlaceCallConfig(BaseModel):
     goal: str = Field(..., title="Goal", description="What this call should achieve, in plain words.")
 
 
-PhoneConfig = Annotated[Union[PhoneOnCallConfig, PhonePlaceCallConfig], Field(discriminator="operation")]
+class PhoneGetNumberConfig(BaseModel):
+    """Read-only: the number this credential holds and whether the provider still has it."""
+
+    operation: Literal["get_number"] = Field(
+        "get_number",
+        json_schema_extra={
+            "ui:hidden": True,
+            "x-category": "Number",
+            "x-is-trigger": False,
+            "x-display-name": "Get Number",
+            "x-keywords": ["my number", "phone number", "caller id"],
+        },
+        title="Get Number",
+    )
+
+
+PhoneConfig = Annotated[
+    Union[PhoneOnCallConfig, PhonePlaceCallConfig, PhoneGetNumberConfig], Field(discriminator="operation"),
+]
 
 
 class PhoneNodeConfig(NodeConfig[PhoneConfig, PhoneNumberCredential]):
@@ -93,6 +120,10 @@ class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "Let the agent call the customer back with the quote",
         "Give the support agent a phone number",
     ]
+    # The proof a bought number works IS the number: the provider still lists it.
+    connection_evidence = ConnectionEvidence(
+        noun="numbers", identity_operation="get_number", identity_keys=("phone_number",),
+    )
 
     @classmethod
     def get_config_model(cls) -> Optional[Union[Type[BaseModel], type]]:
@@ -124,7 +155,7 @@ class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
         await numbers.unroute(str(number_sid))
 
     @classmethod
-    def verify_webhook_signature(cls, *args: Any, **kwargs: Any) -> bool:
+    def verify_webhook_signature(cls, body: bytes, headers: Dict[str, str], config: Dict[str, Any]) -> bool:
         # Calls never arrive on the worker's webhook URL: the platform's call
         # receiver answers them and verifies the carrier's signature itself.
         return False
@@ -155,11 +186,16 @@ class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
             # A real call short-circuits through resolve_trigger_payload; this
             # runs only on manual/test runs, where there is no call.
             return self.no_event_output("On Incoming Call", "Call the number to fire it.")
+        if credential is None:
+            return {"status": "error", "error": "Attach a phone number first."}
+        if isinstance(config, PhoneGetNumberConfig):
+            numbers = capability(PHONE_NUMBERS)
+            active = await numbers.exists(credential.number_sid) if numbers is not None else None
+            return {"status": "success", "phone_number": credential.phone_number, "number_sid": credential.number_sid,
+                    "active": active, "name": credential.phone_number}
         calls = capability(PHONE_CALLS)
         if calls is None:
             return {"status": "error", "error": "Outbound calls are not enabled on this instance."}
-        if credential is None:
-            return {"status": "error", "error": "Attach a phone number to place calls."}
         return await calls.place(
             user_id=self.user_id, workflow_id=self.workflow_id, node_id=self.node_id,
             from_number=credential.phone_number, number_sid=credential.number_sid,

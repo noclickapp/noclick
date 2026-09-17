@@ -50,7 +50,7 @@ async def test_routing_points_the_number_at_the_platform_and_needs_a_provider():
         await PhoneNode._register_external_webhook(webhook_url="https://x", credential=CRED, config={}, node_id="n1")
     await PhoneNode._unregister_external_webhook(credential=None, config={"external_webhook_id": "PN123"}, node_id="n1")
     numbers.unroute.assert_awaited_once_with("PN123")
-    assert PhoneNode.verify_webhook_signature() is False  # calls never arrive on the worker webhook URL
+    assert PhoneNode.verify_webhook_signature(b"", {}, {}) is False  # calls never arrive on the worker webhook URL
 
 
 def test_a_finished_call_reads_as_one_conversation_per_caller_and_number():
@@ -81,3 +81,14 @@ async def test_execute_reports_no_event_and_no_outbound_provider_honestly():
     provide(PHONE_CALLS, calls)
     assert (await node.execute({}))["summary"] == "Booked."
     assert calls.place.await_args.kwargs["from_number"] == "+15674833618" and calls.place.await_args.kwargs["goal"] == "Confirm the booking"
+
+
+async def test_get_number_is_the_credentials_proof():
+    from nodes.phone_node import PhoneGetNumberConfig
+    node = _node(PhoneGetNumberConfig())
+    out = await node.execute({})
+    assert out["phone_number"] == "+15674833618" and out["active"] is None  # no provider: cannot judge
+    numbers = MagicMock(); numbers.exists = AsyncMock(return_value=True)
+    provide(PHONE_NUMBERS, numbers)
+    assert (await node.execute({}))["active"] is True
+    assert PhoneNode.connection_evidence.identity_operation == "get_number"

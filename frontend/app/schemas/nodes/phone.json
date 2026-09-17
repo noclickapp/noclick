@@ -1,5 +1,27 @@
 {
   "$defs": {
+    "PhoneGetNumberConfig": {
+      "description": "Read-only: the number this credential holds and whether the provider still has it.",
+      "properties": {
+        "operation": {
+          "const": "get_number",
+          "default": "get_number",
+          "title": "Get Number",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Number",
+          "x-display-name": "Get Number",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my number",
+            "phone number",
+            "caller id"
+          ]
+        }
+      },
+      "title": "PhoneGetNumberConfig",
+      "type": "object"
+    },
     "PhoneNumberCredential": {
       "description": "A number bought on NoClick. The blob names the provider's number id; the\nnumber itself is public and mirrored into metadata for listings.",
       "properties": {
@@ -158,6 +180,22 @@
           "default": null,
           "description": "What the agent says when it picks up. Leave empty for a plain hello.",
           "title": "Greeting"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set up automatically once a number is attached: calls to it reach this workflow.",
+          "readOnly": true,
+          "title": "Call routing",
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
         }
       },
       "title": "PhoneOnCallConfig",
@@ -208,6 +246,7 @@
       "description": "Node-specific configuration",
       "discriminator": {
         "mapping": {
+          "get_number": "#/$defs/PhoneGetNumberConfig",
           "on_call": "#/$defs/PhoneOnCallConfig",
           "place_call": "#/$defs/PhonePlaceCallConfig"
         },
@@ -219,6 +258,9 @@
         },
         {
           "$ref": "#/$defs/PhonePlaceCallConfig"
+        },
+        {
+          "$ref": "#/$defs/PhoneGetNumberConfig"
         }
       ],
       "title": "Config"
