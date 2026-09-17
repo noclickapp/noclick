@@ -39,7 +39,26 @@ SYSTEM_PROMPT = (
     "links. Be concise and concrete: names, counts, next steps."
 )
 
+VOICE_CHANNELS = ("phone", "whatsapp", "callback", "voice")
+VOICE_STYLE = (
+    "\n\nYou are speaking on a phone call. Answer in plain spoken sentences: no markdown, no bullet "
+    "points, no headings, no emoji, and never read a URL or an id aloud — say what it is and that it is "
+    "on the dashboard. Two or three sentences unless the caller asks for detail. If the caller's words "
+    "are an incomplete fragment, say 'Go on.' and nothing else."
+)
+
 _turn_locks: Dict[str, asyncio.Lock] = {}
+
+
+def system_prompt_for(extra: Optional[Dict[str, Any]], note: Optional[str]) -> str:
+    """The base prompt, the spoken style on a voice channel, and the caller's
+    own context for this turn (name, account facts) when the channel has it."""
+    prompt = SYSTEM_PROMPT
+    if extra and extra.get("channel") in VOICE_CHANNELS:
+        prompt += VOICE_STYLE
+    if note:
+        prompt += "\n\n" + note.strip()
+    return prompt
 
 
 def conversation_id_for(user_id: str) -> str:
@@ -51,6 +70,7 @@ async def run_coordinator_turn(
     *, sio, sid: str, user_id: str, user_email: Optional[str], text: str,
     sink: Optional[Callable[[ChatMessageEvent], Awaitable[None]]] = None,
     extra: Optional[Dict[str, Any]] = None,
+    note: Optional[str] = None,
 ) -> None:
     """Persist the user's message, run one agent turn, persist the reply.
     Frames stream to the socket ``sid`` and, when given, to ``sink`` — how a
@@ -69,7 +89,7 @@ async def run_coordinator_turn(
         )
         config = AgentConfiguration.from_kwargs(
             model=COORDINATOR_MODEL, enable_cmd=False, enable_editor=False, enable_mcp=False,
-            custom_tools=coordinator_tool_params(), system_prompt=SYSTEM_PROMPT,
+            custom_tools=coordinator_tool_params(), system_prompt=system_prompt_for(extra, note),
         )
         # The interactive chat's persistence and emit plumbing, unchanged: the
         # coordinator's transcript is a normal conversation row.

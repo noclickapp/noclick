@@ -314,3 +314,27 @@ class TestCoordinatorHandler(BaseHandlerTest):
             response = await self._send(frontend_sio, sid, request)
             assert response["data"] == {"kind": "gated"} and "available on your account" in response["error"], request
         self.turn.assert_not_awaited()
+
+
+def test_voice_turns_get_the_spoken_style_and_the_callers_note():
+    web = coordinator.system_prompt_for({"channel": "web"}, None)
+    assert web == coordinator.SYSTEM_PROMPT
+    voice = coordinator.system_prompt_for({"channel": "whatsapp", "call_sid": "CA1"}, "The caller is Dhruv.")
+    assert voice.startswith(coordinator.SYSTEM_PROMPT) and "phone call" in voice and voice.endswith("The caller is Dhruv.")
+    assert coordinator.system_prompt_for(None, "note only").endswith("note only")
+
+
+async def test_turn_composes_the_prompt_for_its_channel(turn_seams, monkeypatch):
+    captured = {}
+    orig_create = FakeAgent.create
+
+    async def create(cls, **kwargs):
+        captured.update(kwargs)
+        return await orig_create(**kwargs)
+    monkeypatch.setattr(FakeAgent, "create", classmethod(create))
+    await coordinator.run_coordinator_turn(
+        sio=object(), sid="", user_id=USER, user_email=None, text="hi",
+        extra={"channel": "phone", "call_sid": "CA1"}, note="The caller is Dhruv. Their account has 2 workflows: A, B.",
+    )
+    prompt = captured["config"].settings.system_prompt
+    assert "no markdown" in prompt and prompt.endswith("Their account has 2 workflows: A, B.")
