@@ -16,6 +16,7 @@ from repositories.conversation import ConversationRepo
 from repositories.workflow import WorkflowRepo
 from utils.async_helpers import spawn
 from utils.builder_bridge import bridge_url, create_bridge_link_for_ask
+from utils.capabilities import OWNER_MESSAGE, capability
 from utils.tool_call_log import record_tool_call
 
 logger = logging.getLogger(__name__)
@@ -31,14 +32,15 @@ MAX_CHARS = 280
 _OVERVIEW_SECTIONS = ("attention", "runs", "agents", "credentials", "triggers", "upcoming", "notifications", "files")
 
 
-def coordinator_tool_params() -> List[Dict[str, Any]]:
-    """ChatCompletionToolParam dicts — the shape Agent.create's custom_tools takes."""
+def coordinator_tool_params(*, include_owner_message: bool = False) -> List[Dict[str, Any]]:
+    """ChatCompletionToolParam dicts — the shape Agent.create's custom_tools takes.
+    ``message_owner`` is advertised only where the instance can deliver one."""
     def tool(name: str, description: str, properties: Dict[str, Any], required: Optional[List[str]] = None):
         return {"type": "function", "function": {
             "name": name, "description": description,
             "parameters": {"type": "object", "properties": properties, "required": required or [], "additionalProperties": False},
         }}
-    return [
+    params = [
         tool("account_overview",
              "What is going on in this account right now: items needing the owner, recent and upcoming runs, "
              "running agents, credential health, unread notifications. Same data as the Dashboard.",
@@ -65,7 +67,23 @@ def coordinator_tool_params() -> List[Dict[str, Any]]:
              "Where the builds you requested stand: finished, running, or waiting on the owner (with the questions "
              "and the link that answers them).",
              {"builder_conversation_id": {"type": "string", "description": "One build, else the latest few."}}),
+        tool("trash_workflow",
+             "Move a workflow the owner owns to the trash: it stops running, its schedules and webhooks are removed, "
+             "and it can be restored for 30 days before it is deleted for good. Confirm with the owner first.",
+             {"workflow_id": {"type": "string"}}, ["workflow_id"]),
+        tool("restore_workflow", "Bring a trashed workflow back, with its schedules and webhooks.",
+             {"workflow_id": {"type": "string"}}, ["workflow_id"]),
     ]
+    if include_owner_message:
+        params.append(tool(
+            "message_owner",
+            "Send the owner a WhatsApp message on their linked phone: a link, a summary, anything they asked to have "
+            "sent there. Not needed when you are already replying over WhatsApp text.",
+            {"text": {"type": "string", "description": "The message, short and plain."},
+             "link": {"type": "string", "description": "Optional URL, sent on its own line."}},
+            ["text"],
+        ))
+    return params
 
 
 def bounded(value: Any, *, max_items: int = MAX_ITEMS, max_chars: int = MAX_CHARS, depth: int = 8) -> Any:
@@ -98,7 +116,18 @@ class CoordinatorTools:
             "describe_workflow": self.describe_workflow,
             "request_build": self.request_build,
             "build_status": self.build_status,
+            "trash_workflow": self.trash_workflow,
+            "restore_workflow": self.restore_workflow,
         }
+        if capability(OWNER_MESSAGE) is not None:
+            self._tools["message_owner"] = self.message_owner
+
+    @property
+    def can_message_owner(self) -> bool:
+        return "message_owner" in self._tools
+
+    def tool_params(self) -> List[Dict[str, Any]]:
+        return coordinator_tool_params(include_owner_message=self.can_message_owner)
 
     async def execute(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """The custom_tool_executor seam: dispatch, never raise, always audit."""
@@ -259,3 +288,22 @@ class CoordinatorTools:
         if not minted:
             return {"questions": [i.get("label") for i in inputs if i.get("label")], "answer_url": None}
         return {"questions": minted["questions"], "answer_url": minted["url"]}
+
+    async def trash_workflow(self, workflow_id: str) -> Dict[str, Any]:
+        from wss.handlers.workflow_handler import trash_workflow_as_owner
+
+        return await trash_workflow_as_owner(self.pool, workflow_id, self.user_id)
+
+    async def restore_workflow(self, workflow_id: str) -> Dict[str, Any]:
+        from wss.handlers.workflow_handler import restore_workflow_as_owner
+
+        return await restore_workflow_as_owner(self.pool, workflow_id, self.user_id)
+
+    async def message_owner(self, text: str, link: Optional[str] = None) -> Dict[str, Any]:
+        send = capability(OWNER_MESSAGE)
+        if send is None:
+            return {"success": False, "error": "this instance has no channel to message the owner on"}
+        text = (text or "").strip()
+        if not text:
+            return {"success": False, "error": "text is required"}
+        return await send(self.pool, self.user_id, text, link=(link or "").strip() or None)

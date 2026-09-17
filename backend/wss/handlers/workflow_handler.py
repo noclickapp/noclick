@@ -65,7 +65,11 @@ from wss.receiver.client_events import (
 )
 from utils.node_schema_tracker import get_schema_with_suggestions
 from utils.encryption import get_encryption
-from utils.workflow_resource_manager import cleanup_nodes_resources, cleanup_workflow_resources, cleanup_workflow_operational_resources
+import uuid
+from utils.async_helpers import spawn
+from utils.workflow_resource_manager import (
+    cleanup_nodes_resources, cleanup_workflow_operational_resources, cleanup_workflow_resources, restore_nodes_resources,
+)
 from utils.webhook_manager import WebhookManager
 from utils.access_control import check_resource_access, Permission
 from utils.slack import send_activity_notification_background, send_workflow_update_notification_background, extract_user_name
@@ -116,6 +120,48 @@ async def get_user_org_context(conn, user_id: str) -> Optional[str]:
     """
     row = await conn.fetchrow(PRIMARY_ORG_SQL, user_id)
     return str(row["organization_id"]) if row else None
+
+
+
+async def trash_workflow_as_owner(pool, workflow_id, user_id: str) -> Dict[str, Any]:
+    """Move a workflow the user owns to the trash, restorable for 30 days:
+    schedules and provider webhooks are torn down now, storage and node state
+    are kept for restore. The socket handler, MCP and the coordinator share it."""
+    try:
+        wid = uuid.UUID(str(workflow_id))
+    except (TypeError, ValueError):
+        return {"success": False, "error": "Workflow not found"}
+    repo = WorkflowRepo(pool)
+    async with pool.acquire() as conn:
+        if not await repo.workflow_exists_for_owner(conn, wid, user_id):
+            return {"success": False, "error": "Workflow not found"}
+    await cleanup_workflow_operational_resources(pool=pool, workflow_id=str(wid))
+    async with pool.acquire() as conn:
+        await repo.soft_delete_workflow(conn, wid, user_id)
+    return {"success": True, "workflow_id": str(wid), "message": "Workflow moved to trash"}
+
+
+async def restore_workflow_as_owner(pool, workflow_id, user_id: str) -> Dict[str, Any]:
+    """Bring a trashed workflow back; its schedules and provider webhooks
+    re-register in the background."""
+    try:
+        wid = uuid.UUID(str(workflow_id))
+    except (TypeError, ValueError):
+        return {"success": False, "error": "Workflow not found in trash"}
+    async with pool.acquire() as conn:
+        result = await WorkflowRepo(pool).restore_workflow(conn, wid, user_id)
+        if result == 'UPDATE 0':
+            return {"success": False, "error": "Workflow not found in trash"}
+        wf_row = await conn.fetchrow("SELECT workflow FROM workflows WHERE id = $1", wid)
+    if wf_row:
+        nodes = (wf_row["workflow"] or {}).get("nodes", [])
+        # restore_nodes_resources re-activates simple trigger rows, restores
+        # cron schedules AND re-registers provider-side webhooks.
+        spawn(
+            restore_nodes_resources(pool=pool, user_id=user_id, workflow_id=str(wid), nodes=nodes),
+            name=f"workflow-restore:{wid}",
+        )
+    return {"success": True, "workflow_id": str(wid), "message": "Workflow restored successfully"}
 
 
 class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
@@ -1131,33 +1177,14 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
-            # Verify workflow exists and belongs to user before cleanup
-            repo = WorkflowRepo(pool)
-            async with pool.acquire() as conn:
-                exists = await repo.workflow_exists_for_owner(
-                    conn, request.workflow_id, user_id,
-                )
-
-            if not exists:
+            result = await trash_workflow_as_owner(pool, request.workflow_id, user_id)
+            if not result["success"]:
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id,
                     data={},
-                    error="Workflow not found"
+                    error=result["error"]
                 ))
                 return
-
-            # Cleanup operational resources (cron + webhooks) before trashing,
-            # but preserve R2 storage, node state, and workflow_resources for
-            # restore. Runs connection-free: it calls the external scheduler /
-            # relay and must not hold a pinned pool connection.
-            await cleanup_workflow_operational_resources(
-                pool=pool,
-                workflow_id=request.workflow_id
-            )
-
-            # Soft-delete: move to trash instead of permanent deletion
-            async with pool.acquire() as conn:
-                await repo.soft_delete_workflow(conn, request.workflow_id, user_id)
 
             response = WorkflowDeleteResponse(
                 success=True,
@@ -1255,43 +1282,14 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
-            async with pool.acquire() as conn:
-                result = await WorkflowRepo(pool).restore_workflow(
-                    conn, request.workflow_id, user_id,
-                )
-
-                if result == 'UPDATE 0':
-                    await send_event(self.sio, sid, ResponseEvent(
-                        request_id=request.request_id,
-                        data={},
-                        error="Workflow not found in trash"
-                    ))
-                    return
-
-            # Restore cron schedules and re-register external webhooks (Stripe, Linear, etc.)
-            # in the background so restore response isn't blocked by provider API calls.
-            try:
-                async with pool.acquire() as conn:
-                    wf_row = await conn.fetchrow(
-                        "SELECT workflow FROM workflows WHERE id = $1", request.workflow_id
-                    )
-                if wf_row:
-                    nodes = (wf_row["workflow"] or {}).get("nodes", [])
-                    from utils.async_helpers import spawn
-                    from utils.workflow_resource_manager import restore_nodes_resources
-
-                    # restore_nodes_resources re-activates simple trigger rows,
-                    # restores cron schedules, AND re-registers provider-side
-                    # webhooks for previously-registered trigger nodes.
-                    spawn(
-                        restore_nodes_resources(
-                            pool=pool, user_id=user_id,
-                            workflow_id=str(request.workflow_id), nodes=nodes,
-                        ),
-                        name=f"workflow-restore:{request.workflow_id}",
-                    )
-            except Exception as e:
-                logger.warning(f"[Workflow] Failed to spawn restore resource job: {e}")
+            result = await restore_workflow_as_owner(pool, request.workflow_id, user_id)
+            if not result["success"]:
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data={},
+                    error=result["error"]
+                ))
+                return
 
             response = WorkflowRestoreResponse(
                 success=True,

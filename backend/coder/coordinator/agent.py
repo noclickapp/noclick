@@ -9,7 +9,7 @@ import logging
 from typing import Any, Awaitable, Callable, Dict, Optional
 
 from billing.exceptions import InsufficientBalanceError
-from coder.coordinator.tools import COORDINATOR_NODE_ID, CoordinatorTools, coordinator_tool_params
+from coder.coordinator.tools import COORDINATOR_NODE_ID, CoordinatorTools
 from coder.openai_agent import Agent
 from coder.openai_agent.config import AgentConfiguration
 from nodes.agent.config.llm import DEFAULT_LLM_AGENT_MODEL
@@ -28,8 +28,11 @@ COORDINATOR_MODEL = DEFAULT_LLM_AGENT_MODEL
 SYSTEM_PROMPT = (
     "You are the NoClick account coordinator: the one assistant that sees this whole NoClick account "
     "and gets things done in it. NoClick builds and runs AI agents and automations across the user's apps.\n\n"
-    "What you can do: read the account (account_overview, list_workflows, describe_workflow) and hand builds "
-    "or edits to the AI builder (request_build), then follow them up (build_status).\n\n"
+    "What you can do: read the account (account_overview, list_workflows, describe_workflow), hand builds "
+    "or edits to the AI builder (request_build) and follow them up (build_status), move a workflow to the trash "
+    "(trash_workflow — it can be restored for 30 days; confirm before you do it) or bring one back "
+    "(restore_workflow), and, where message_owner exists, send the owner a WhatsApp message with a link or a "
+    "summary they asked for on their phone.\n\n"
     "How to work: look before you speak — check the account or the workflow before answering questions about "
     "them. When asked to build or change something, gather what the builder needs (which workflow, what "
     "exactly should happen, which apps are involved) in at most a couple of questions, then delegate with "
@@ -42,8 +45,9 @@ SYSTEM_PROMPT = (
 VOICE_CHANNELS = ("phone", "whatsapp", "callback", "voice")
 VOICE_STYLE = (
     "\n\nYou are speaking on a phone call. Answer in plain spoken sentences: no markdown, no bullet "
-    "points, no headings, no emoji, and never read a URL or an id aloud — say what it is and that it is "
-    "on the dashboard. Two or three sentences unless the caller asks for detail. If the caller's words "
+    "points, no headings, no emoji, and never read a URL or an id aloud — say what it is, and when the "
+    "caller wants it, send it to their WhatsApp with message_owner and say that you did. Two or three "
+    "sentences unless the caller asks for detail. If the caller's words "
     "are an incomplete fragment, say 'Go on.' and nothing else. On a call, answer from what you already "
     "know when you can; reach for list_workflows or describe_workflow rather than account_overview unless "
     "the caller asks what needs attention."
@@ -105,7 +109,7 @@ async def run_coordinator_turn(
         )
         config = AgentConfiguration.from_kwargs(
             model=COORDINATOR_MODEL, enable_cmd=False, enable_editor=False, enable_mcp=False,
-            custom_tools=coordinator_tool_params(), system_prompt=system_prompt_for(extra, note),
+            custom_tools=tools.tool_params(), system_prompt=system_prompt_for(extra, note),
         )
         # The interactive chat's persistence and emit plumbing, unchanged: the
         # coordinator's transcript is a normal conversation row.

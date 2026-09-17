@@ -83,6 +83,12 @@ BUILDER_ASK_NOTIFY = "builder.ask_notify"
 # builder_conversation_id, summary, success, error, user_context) -> None.
 BUILDER_RESULT_NOTIFY = "builder.result_notify"
 
+# Message the account owner on a channel of their own the engine does not
+# have (a WhatsApp number): async (pool, user_id, text, *, link=None) ->
+# {"success", "channel"} or {"success": False, "error"}. Without one the
+# coordinator has no message_owner tool.
+OWNER_MESSAGE = "owner.message"
+
 _providers: Dict[str, Any] = {}
 
 

@@ -19,6 +19,8 @@ from coder.coordinator.tools import (
     BUILDER_CONVERSATION_PREFIX, COORDINATOR_NODE_ID, CoordinatorTools, bounded, coordinator_tool_params,
 )
 from tests.mocks.mock_asyncpg import MockNativePool
+from utils import capabilities
+from utils.capabilities import OWNER_MESSAGE
 from tests.utils.base_handler_test import BaseHandlerTest
 from utils import feature_gates
 from wss.receiver.client_events import (
@@ -40,9 +42,11 @@ def tools(pool=None, org=ORG):
 # ── tool surface ─────────────────────────────────────────────────────────────
 
 def test_tool_params_are_the_sdk_shape_and_match_the_dispatcher():
-    params = coordinator_tool_params()
+    t = tools()
+    params = t.tool_params()
     names = {p["function"]["name"] for p in params}
-    assert names == set(tools()._tools)
+    assert names == set(t._tools)
+    assert {"trash_workflow", "restore_workflow"} <= names
     for p in params:
         assert p["type"] == "function" and p["function"]["description"]
         schema = p["function"]["parameters"]
@@ -215,7 +219,7 @@ async def test_turn_wires_persistence_tools_and_billing_identity(turn_seams, mon
     assert captured["custom_tool_executor"].__self__.__class__ is CoordinatorTools
     config = captured["config"]
     assert config.llm.model == coordinator.COORDINATOR_MODEL and config.settings.system_prompt == coordinator.SYSTEM_PROMPT
-    assert config.capabilities.custom_tool_names == [t["function"]["name"] for t in coordinator_tool_params()]
+    assert config.capabilities.custom_tool_names == [t["function"]["name"] for t in tools().tool_params()]
     assert not config.capabilities.enable_cmd and not config.capabilities.enable_mcp
 
 
@@ -338,3 +342,43 @@ async def test_turn_composes_the_prompt_for_its_channel(turn_seams, monkeypatch)
     )
     prompt = captured["config"].settings.system_prompt
     assert "no markdown" in prompt and prompt.endswith("Their account has 2 workflows: A, B.")
+
+
+# ── trash, restore, message_owner ────────────────────────────────────────────
+
+@pytest.fixture
+def own_capabilities():
+    saved = dict(capabilities._providers)
+    capabilities.clear()
+    yield
+    capabilities.clear()
+    capabilities._providers.update(saved)
+
+
+async def test_trash_and_restore_run_the_shared_owner_seams(monkeypatch):
+    trash = AsyncMock(return_value={"success": True, "workflow_id": WORKFLOW, "message": "Workflow moved to trash"})
+    restore = AsyncMock(return_value={"success": False, "error": "Workflow not found in trash"})
+    monkeypatch.setattr("wss.handlers.workflow_handler.trash_workflow_as_owner", trash)
+    monkeypatch.setattr("wss.handlers.workflow_handler.restore_workflow_as_owner", restore)
+    t = tools()
+    assert (await t.execute("trash_workflow", {"workflow_id": WORKFLOW}))["success"] is True
+    assert trash.await_args.args[1:] == (WORKFLOW, USER)  # the owner, never a collaborator
+    out = await t.execute("restore_workflow", {"workflow_id": WORKFLOW})
+    assert out == {"success": False, "error": "Workflow not found in trash"}
+    assert restore.await_args.args[1:] == (WORKFLOW, USER)
+
+
+async def test_message_owner_exists_only_where_the_instance_can_deliver_one(own_capabilities):
+    bare = tools()
+    assert not bare.can_message_owner
+    assert "message_owner" not in {p["function"]["name"] for p in bare.tool_params()}
+    assert (await bare.execute("message_owner", {"text": "hi"}))["success"] is False
+
+    send = AsyncMock(return_value={"success": True, "channel": "whatsapp", "message_id": "wamid.9"})
+    capabilities.provide(OWNER_MESSAGE, send)
+    t = tools()
+    assert "message_owner" in {p["function"]["name"] for p in t.tool_params()}
+    out = await t.execute("message_owner", {"text": "  Your link  ", "link": "https://noclick.com/b/abc"})
+    assert out["success"] is True and out["channel"] == "whatsapp"
+    send.assert_awaited_once_with(t.pool, USER, "Your link", link="https://noclick.com/b/abc")
+    assert (await t.execute("message_owner", {"text": "   "}))["success"] is False
