@@ -49,6 +49,13 @@ VOICE_STYLE = (
     "the caller asks what needs attention."
 )
 
+TEXT_CHANNELS = ("whatsapp_text",)
+TEXT_STYLE = (
+    "\n\nYou are replying over WhatsApp text. Keep it to a few short lines: no headings, no tables, no "
+    "markdown links — WhatsApp formatting only (*bold*, _italic_), a URL on its own line. Answer from "
+    "what you already know when you can."
+)
+
 # The model replays this many recent items; the full thread stays in
 # conversations.events, so nothing is lost, only re-sent.
 HISTORY_LIMIT = 40
@@ -57,11 +64,14 @@ _turn_locks: Dict[str, asyncio.Lock] = {}
 
 
 def system_prompt_for(extra: Optional[Dict[str, Any]], note: Optional[str]) -> str:
-    """The base prompt, the spoken style on a voice channel, and the caller's
-    own context for this turn (name, account facts) when the channel has it."""
+    """The base prompt, the channel's style (spoken on a call, terse on a text),
+    and the caller's own context for this turn when the channel has it."""
     prompt = SYSTEM_PROMPT
-    if extra and extra.get("channel") in VOICE_CHANNELS:
+    channel = (extra or {}).get("channel")
+    if channel in VOICE_CHANNELS:
         prompt += VOICE_STYLE
+    elif channel in TEXT_CHANNELS:
+        prompt += TEXT_STYLE
     if note:
         prompt += "\n\n" + note.strip()
     return prompt

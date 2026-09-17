@@ -73,6 +73,16 @@ PUBLIC_ENDPOINTS = "workflow.public_endpoints"
 # rss_delta_mb, threads) -> None. The engine logs the allocators either way.
 MEMORY_SPIKE_ALERT = "diagnostics.memory_spike_alert"
 
+# Tell the account, on channels the engine does not have (a WhatsApp number,
+# a per-account thread), that a builder run parked on a question:
+# async (pool, *, user_id, workflow_id, workflow_name, builder_conversation_id,
+#        ask_id, inputs, user_context) -> None, fire-and-forget.
+BUILDER_ASK_NOTIFY = "builder.ask_notify"
+
+# ...or finished: async (pool, *, user_id, workflow_id, workflow_name,
+# builder_conversation_id, summary, success, error, user_context) -> None.
+BUILDER_RESULT_NOTIFY = "builder.result_notify"
+
 _providers: Dict[str, Any] = {}
 
 

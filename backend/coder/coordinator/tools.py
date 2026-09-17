@@ -55,7 +55,8 @@ def coordinator_tool_params() -> List[Dict[str, Any]]:
         tool("request_build",
              "Hand a build or edit to the AI builder, which runs in the background as the account owner. "
              "Give it a new workflow's name or an existing workflow_id, plus complete instructions. "
-             "Returns immediately; check on it with build_status.",
+             "Returns immediately; check on it with build_status. If the builder needs something from the "
+             "owner, they get a WhatsApp message with the link and it appears in this thread.",
              {"instructions": {"type": "string", "description": "What to build or change, in full."},
               "workflow_id": {"type": "string", "description": "Edit this existing workflow. Omit to create a new one."},
               "name": {"type": "string", "description": "Name for a new workflow."}},
@@ -208,7 +209,8 @@ class CoordinatorTools:
             "success": True, "status": "builder_started",
             "workflow_id": workflow_id, "workflow_name": workflow_name,
             "builder_conversation_id": builder_conversation_id,
-            "note": "The builder runs in the background; build_status reports progress and any question it parks on.",
+            "note": "The builder runs in the background; build_status reports progress. If it needs something "
+                    "from the owner, they receive a WhatsApp message with the link and it lands in this thread.",
         }
 
     async def _run_builder(self, request) -> None:
