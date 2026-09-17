@@ -151,9 +151,13 @@ async def reconnect_bridge_credential(link_id: str, body: BridgeReconnectBody) -
     )
     if not row:
         raise HTTPException(status_code=500, detail="Failed to re-open the credential request")
-    entry["credential_request_id"] = str(row.id)
-    entry["credential_provide_token"] = row.token
-    entry["credential_provide_url"] = credential_provide_url(row.token)
+    # Every ask of this type shares the request (the upsert rotated its token
+    # for all of them), so every sibling takes the new token too.
+    for sibling in inputs:
+        if sibling.get("type") == "credential" and sibling.get("credential_type") == entry["credential_type"]:
+            sibling["credential_request_id"] = str(row.id)
+            sibling["credential_provide_token"] = row.token
+            sibling["credential_provide_url"] = credential_provide_url(row.token)
     await repo.update_inputs(link_id, inputs)
     return {"success": True}
 

@@ -754,3 +754,96 @@ def test_skipped_wake_output_does_not_propagate_downstream():
     skipped = {"status": "success", "skipped": True, "message": "nothing to relay"}
     assert AgentNode.should_propagate_output(skipped, {}) is False
     assert AgentNode.should_propagate_output({"status": "success", "response": "hi"}, {}) is True
+
+
+@pytest.mark.asyncio
+async def test_same_type_credential_asks_share_one_request(monkeypatch):
+    """The request upsert is keyed on (requester, type) and rotates the token,
+    so a second Gmail ask used to invalidate the first ask's link ("Credential
+    request not found" on step 1 of 2, 2026-09-18). One request, both asks."""
+    from utils import builder_bridge
+
+    created = {}
+
+    async def fake_create_link(self, **kw):
+        created.update(kw)
+        return "link-123"
+
+    minted = AsyncMock(return_value=SimpleNamespace(id=uuid.uuid4(), token="tok-gmail"))
+    monkeypatch.setattr("repositories.builder_bridge.BuilderBridgeRepo.create_link", fake_create_link)
+    monkeypatch.setattr("repositories.credentials.CredentialsRepo.upsert_credential_request", minted)
+    monkeypatch.setattr("mcp_adapter.auth.endpoints.get_frontend_url", lambda: "https://www.noclick.com")
+
+    await builder_bridge.create_bridge_link_for_ask(
+        MagicMock(), user_id=str(uuid.uuid4()), workflow_id=str(uuid.uuid4()), builder_conversation_id="conv-1",
+        ask_id="ask-1", agent_conversation_id=None, agent_node_id=None, workflow_name="Inbox agent",
+        inputs=[
+            {"id": "ask_0", "label": "Which Gmail account should receive the trigger?", "type": "credential", "credentialType": "google_gmail_oauth"},
+            {"id": "ask_1", "label": "Which Gmail account sends the replies?", "type": "credential", "credentialType": "google_gmail_oauth"},
+            {"id": "ask_2", "label": "Connect Slack", "type": "credential", "credentialType": "slack_oauth"},
+        ],
+    )
+    assert minted.await_count == 2  # one per type, not one per ask
+    gmail = [e for e in created["inputs"] if e["credential_type"] == "google_gmail_oauth"]
+    assert len(gmail) == 2 and gmail[0]["credential_request_id"] == gmail[1]["credential_request_id"]
+    assert gmail[0]["credential_provide_token"] == gmail[1]["credential_provide_token"] == "tok-gmail"
+
+
+@pytest.mark.asyncio
+async def test_heal_refreshes_a_token_the_row_has_since_rotated(monkeypatch):
+    """A link minted before the fix carries a dead token on one of two
+    same-type asks; on load it takes the row's current token, no re-mint."""
+    from utils import builder_bridge
+
+    req = str(uuid.uuid4())
+
+    class FakePool:
+        async def fetchrow(self, query, *args):
+            assert "credential_requests" in query and args[0] == req
+            return {"token": "tok-live", "credential_type": "google_gmail_oauth"}
+
+    minted = AsyncMock()
+    monkeypatch.setattr("repositories.credentials.CredentialsRepo.upsert_credential_request", minted)
+    persisted = AsyncMock()
+    monkeypatch.setattr("repositories.builder_bridge.BuilderBridgeRepo.update_inputs", persisted)
+
+    link = _link_row([
+        {"id": "ask_0", "type": "credential", "credential_type": "google_gmail_oauth",
+         "credential_request_id": req, "credential_provide_token": "tok-dead",
+         "credential_provide_url": "https://x/credential/provide/tok-dead"},
+        {"id": "ask_1", "type": "credential", "credential_type": "google_gmail_oauth",
+         "credential_request_id": req, "credential_provide_token": "tok-live",
+         "credential_provide_url": "https://x/credential/provide/tok-live"},
+    ])
+    healed = await builder_bridge.heal_link_inputs(FakePool(), link)
+    assert [e["credential_provide_token"] for e in healed] == ["tok-live", "tok-live"]
+    assert healed[0]["credential_provide_url"].endswith("/credential/provide/tok-live")
+    minted.assert_not_awaited()
+    assert persisted.await_count == 1
+
+
+@pytest.mark.asyncio
+async def test_reconnect_refreshes_every_ask_of_that_type(monkeypatch):
+    from utils import builder_bridge_routes as routes
+    from utils.builder_bridge_routes import BridgeReconnectBody
+
+    link = _link_row([
+        {"id": "ask_0", "type": "credential", "credential_type": "google_gmail_oauth",
+         "credential_request_id": "req-old", "credential_provide_token": "tok-old", "required": True},
+        {"id": "ask_1", "type": "credential", "credential_type": "google_gmail_oauth",
+         "credential_request_id": "req-old", "credential_provide_token": "tok-old", "required": True},
+        {"id": "ask_2", "type": "credential", "credential_type": "slack_oauth",
+         "credential_request_id": "req-slack", "credential_provide_token": "tok-slack", "required": True},
+    ])
+    monkeypatch.setattr("repositories.builder_bridge.BuilderBridgeRepo.load_pending", AsyncMock(return_value=link))
+    new_id = uuid.uuid4()
+    monkeypatch.setattr("repositories.credentials.CredentialsRepo.upsert_credential_request",
+                        AsyncMock(return_value=SimpleNamespace(id=new_id, token="tok-new")))
+    persisted = AsyncMock()
+    monkeypatch.setattr("repositories.builder_bridge.BuilderBridgeRepo.update_inputs", persisted)
+    monkeypatch.setattr("utils.builder_bridge_routes.get_native_pool", lambda: MagicMock())
+
+    await routes.reconnect_bridge_credential("link-1", BridgeReconnectBody(input_id="ask_1"))
+    saved = persisted.await_args.args[1]
+    assert [e["credential_provide_token"] for e in saved] == ["tok-new", "tok-new", "tok-slack"]
+    assert saved[0]["credential_request_id"] == saved[1]["credential_request_id"] == str(new_id)
