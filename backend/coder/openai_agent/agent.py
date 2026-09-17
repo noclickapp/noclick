@@ -904,6 +904,7 @@ class Agent:
                 await self._emit_message(ChatMessageEvent(
                     message=str(e),
                     finished=True,
+                    status="error",  # a failure frame, for consumers that speak or relay rather than render
                 ))
                 await self._emit_message(AgentStateEvent(
                     state="error",
@@ -941,6 +942,7 @@ class Agent:
                 await self._emit_message(ChatMessageEvent(
                     message=f"Error: {reason}",
                     finished=True,
+                    status="error",
                 ))
                 await self._emit_message(AgentStateEvent(
                     state="error",

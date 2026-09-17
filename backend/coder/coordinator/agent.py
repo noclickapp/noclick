@@ -60,6 +60,9 @@ TEXT_STYLE = (
     "what you already know when you can."
 )
 
+# What a channel hears when a turn fails: the raw provider text stays in the log.
+TURN_FAILED_LINE = "Sorry, I hit a problem on my side. Please try that again in a moment."
+
 # The model replays this many recent items; the full thread stays in
 # conversations.events, so nothing is lost, only re-sent.
 HISTORY_LIMIT = 40
@@ -119,7 +122,15 @@ async def run_coordinator_turn(
             workflow_id=None, node_id=COORDINATOR_NODE_ID, extra=extra,
         )
 
+        failed: Dict[str, bool] = {}
+
         async def emit(event) -> None:
+            if isinstance(event, ChatMessageEvent) and event.status == "error":
+                # The wrapper's failure frame carries the provider's raw text. A
+                # phone or a WhatsApp thread gets one plain line; the log keeps the detail.
+                logger.error("coordinator turn failed for %s: %s", user_id, event.message)
+                failed["turn"] = True
+                event = event.model_copy(update={"message": TURN_FAILED_LINE, "status": None})
             # The sink first: the transport speaks while the transcript write lands.
             if sink is not None and isinstance(event, ChatMessageEvent):
                 await sink(event)
@@ -139,17 +150,17 @@ async def run_coordinator_turn(
         try:
             await agent({"content_items": [ContentItem(type="text", text=text)]})
         except InsufficientBalanceError:
-            # The billing hook already told the socket; a sink hears it too.
-            if sink is not None:
+            # The billing hook already told the socket; a sink hears it too,
+            # unless the wrapper's own failure frame already reached it.
+            if sink is not None and not failed:
                 await sink(ChatMessageEvent(
                     conversation_id=conversation_id, finished=True, model=COORDINATOR_MODEL,
                     message="Your NoClick account is out of credits, so I have to stop here.",
                 ))
-        except Exception as exc:
-            logger.error("coordinator turn failed for %s", user_id, exc_info=True)
+        except Exception:
+            logger.error("coordinator turn crashed for %s", user_id, exc_info=True)
             await emit(ChatMessageEvent(
-                conversation_id=conversation_id, message=f"Sorry, something went wrong: {exc}",
-                finished=True, model=COORDINATOR_MODEL,
+                conversation_id=conversation_id, message=TURN_FAILED_LINE, finished=True, model=COORDINATOR_MODEL,
             ))
         finally:
             await agent.cleanup()

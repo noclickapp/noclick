@@ -242,11 +242,30 @@ async def test_turn_failure_is_reported_as_a_finished_frame(turn_seams, monkeypa
     async def sink(event):
         heard.append(event)
     await coordinator.run_coordinator_turn(sio=object(), sid="s", user_id=USER, user_email=None, text="hi", sink=sink)
-    # The failure rides the same emit path as a reply: persisted for the thread and handed to the sink.
+    # The failure rides the same emit path as a reply: persisted for the thread and handed to the sink,
+    # as one plain line — the exception text belongs in the log, not in a caller's ear.
     last = FakeChat.persisted[-1]
-    assert last[0] == "emit" and last[3].finished is True and "model down" in last[3].message
+    assert last[0] == "emit" and last[3].finished is True and last[3].message == coordinator.TURN_FAILED_LINE
     assert heard[-1] is last[3] and heard[-1].conversation_id == CID
     assert FakeAgent.calls[-1] == ("cleanup", USER)
+
+
+async def test_the_wrappers_failure_frame_is_spoken_as_one_plain_line(turn_seams, monkeypatch, caplog):
+    class ProviderDown(FakeAgent):
+        async def __call__(self, message):
+            await self.kwargs["emit_message"](ChatMessageEvent(
+                conversation_id=self.kwargs["conversation_id"], finished=True, status="error",
+                message="Error: litellm.BadRequestError: OpenrouterException - {'error': {'code': 400}}",
+            ))
+    monkeypatch.setattr(coordinator, "Agent", ProviderDown)
+    heard = []
+
+    async def sink(event):
+        heard.append(event)
+    await coordinator.run_coordinator_turn(sio=object(), sid="s", user_id=USER, user_email=None, text="hi", sink=sink)
+    assert [e.message for e in heard] == [coordinator.TURN_FAILED_LINE] and heard[0].status is None
+    assert FakeChat.persisted[-1][3].message == coordinator.TURN_FAILED_LINE
+    assert "OpenrouterException" in caplog.text  # the detail is kept where an operator reads it
 
 
 async def test_turn_sink_hears_every_frame_and_extra_stamps_both_persisted_events(turn_seams):
