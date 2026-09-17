@@ -22,7 +22,7 @@ from wss.receiver.client_events import PhoneNumberBuyRequest, PhoneNumberSearchR
 from wss.schema import SocketIOHandler
 from wss.sender import send_event
 from wss.sender.events import ResponseEvent
-from wss.sender.responses import PhoneNumberBuyResponse, PhoneNumberSearchResponse
+from wss.sender.phone_responses import PhoneNumberBuyResponse, PhoneNumberSearchResponse
 
 logger = logging.getLogger(__name__)
 
