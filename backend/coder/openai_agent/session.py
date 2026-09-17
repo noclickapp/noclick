@@ -49,6 +49,30 @@ logger = logging.getLogger(__name__)
 _HISTORY_KEY = "sdk_history"
 
 
+# Items a replay window may not open on: their meaning lives in the item before them.
+_TRAILING_ITEM_TYPES = ("function_call_output", "reasoning")
+
+
+def coherent_tail(items: List[dict], limit: int) -> List[dict]:
+    """The last ``limit`` items, advanced to a boundary the provider accepts.
+    A window that opens on a tool output whose call was cut off (or reasoning
+    whose message was) fails the whole turn — "No tool call found for
+    function call output" — until the next message moves the window
+    (2026-09-17). It opens on the first user message inside the window, or,
+    when one turn is longer than the window, on the first item that stands
+    on its own."""
+    if limit >= len(items):
+        return items
+    tail = items[-limit:]
+    for i, item in enumerate(tail):
+        if item.get("role") == "user":
+            return tail[i:]
+    for i, item in enumerate(tail):
+        if item.get("type") not in _TRAILING_ITEM_TYPES:
+            return tail[i:]
+    return tail
+
+
 class PostgresSession:
     """Session protocol impl backed by ``conversations.metadata.sdk_history``.
 
@@ -102,7 +126,7 @@ class PostgresSession:
         # staying bricked. Read-side only; the stored row is untouched.
         items = [clip_history_item(it) for it in _extract_history(row["metadata"])]
         if limit is not None and limit < len(items):
-            return items[-limit:]
+            return coherent_tail(items, limit)
         return items
 
     async def add_items(self, items: List[dict]) -> None:
