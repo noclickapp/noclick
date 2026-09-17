@@ -11,11 +11,11 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { kindFromCredentialType, type CredentialMethodKind } from './credentialMethodKind';
 
-const KNOWN_KINDS: CredentialMethodKind[] = ['api_key', 'oauth', 'agent_oauth', 'qr_scan'];
+const KNOWN_KINDS: CredentialMethodKind[] = ['api_key', 'oauth', 'agent_oauth', 'qr_scan', 'purchase'];
 
 // x-credential-type values we've consciously accounted for. Field-based ones
 // (e.g. Reddit's "script": client_id/secret/username/password) resolve to api_key.
-const KNOWN_DISCRIMINATORS = ['oauth', 'qr_scan', 'script'];
+const KNOWN_DISCRIMINATORS = ['oauth', 'qr_scan', 'purchase', 'script'];
 
 const schemasDir = join(dirname(fileURLToPath(import.meta.url)), '../schemas/nodes');
 
@@ -36,6 +36,7 @@ describe('credentialMethodKind discriminator', () => {
     it('maps each discriminator to a kind; absent → api_key', () => {
         expect(kindFromCredentialType('oauth')).toBe('oauth');
         expect(kindFromCredentialType('qr_scan')).toBe('qr_scan');
+        expect(kindFromCredentialType('purchase')).toBe('purchase');
         expect(kindFromCredentialType('script')).toBe('api_key'); // field-based
         expect(kindFromCredentialType(undefined)).toBe('api_key');
         expect(kindFromCredentialType(null)).toBe('api_key');

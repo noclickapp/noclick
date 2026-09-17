@@ -1,0 +1,251 @@
+{
+  "$defs": {
+    "PhoneNumberCredential": {
+      "description": "A number bought on NoClick. The blob names the provider's number id; the\nnumber itself is public and mirrored into metadata for listings.",
+      "properties": {
+        "credential_type": {
+          "const": "phone_number",
+          "default": "phone_number",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number": {
+          "minLength": 1,
+          "title": "Phone Number",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "number_sid": {
+          "minLength": 1,
+          "title": "Number Sid",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "phone_number",
+        "number_sid"
+      ],
+      "title": "PhoneNumberCredential",
+      "type": "object",
+      "x-credential-instructions": "Buy a phone number for this agent. It is billed 15 credits a month for as long as you keep it; delete the credential to release it.",
+      "x-credential-type": "purchase"
+    },
+    "PhoneOnCallConfig": {
+      "description": "Trigger: the number is called. The wired agent answers, live.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_call",
+          "default": "on_call",
+          "title": "On Incoming Call",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Incoming Call",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "answer calls",
+            "phone call",
+            "voice",
+            "receive call",
+            "inbound call"
+          ]
+        },
+        "greeting": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the agent says when it picks up. Leave empty for a plain hello.",
+          "title": "Greeting"
+        }
+      },
+      "title": "PhoneOnCallConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PhonePlaceCallConfig": {
+      "description": "Tool: dial a number from this one, with a goal the agent pursues on the call.",
+      "properties": {
+        "operation": {
+          "const": "place_call",
+          "default": "place_call",
+          "title": "Place a Call",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calls",
+          "x-display-name": "Place a Call",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "call",
+            "dial",
+            "phone",
+            "ring",
+            "outbound call"
+          ]
+        },
+        "to_number": {
+          "description": "The number to call, in international format (+1\u2026).",
+          "title": "To",
+          "type": "string"
+        },
+        "goal": {
+          "description": "What this call should achieve, in plain words.",
+          "title": "Goal",
+          "type": "string"
+        }
+      },
+      "required": [
+        "to_number",
+        "goal"
+      ],
+      "title": "PhonePlaceCallConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "on_call": "#/$defs/PhoneOnCallConfig",
+          "place_call": "#/$defs/PhonePlaceCallConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PhoneOnCallConfig"
+        },
+        {
+          "$ref": "#/$defs/PhonePlaceCallConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PhoneNumberCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Phone Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Answer calls to my number with this agent",
+    "Let the agent call the customer back with the quote",
+    "Give the support agent a phone number"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

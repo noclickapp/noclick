@@ -581,6 +581,7 @@ class SocketIOProxy:
         from wss.handlers.onboarding_handler import OnboardingHandler
         from wss.handlers.notification_prefs_handler import NotificationPrefsHandler
         from wss.handlers.phone_handler import PhoneHandler
+        from wss.handlers.phone_number_handler import PhoneNumberHandler
         from wss.handlers.coordinator_handler import CoordinatorHandler
         from wss.handlers.instance_oauth_handler import InstanceOAuthHandler
         from wss.handlers.instance_keys_handler import InstanceKeysHandler
@@ -752,6 +753,7 @@ class SocketIOProxy:
         # Initialize xAI SuperGrok device-code auth handler (API only)
         # Initialize WhatsApp QR code auth handler (API only)
         whatsapp_qr_handler = WhatsAppQRHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
+        phone_number_handler = PhoneNumberHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize feed handler (API only - approvals, activity logs, monitoring)
         feed_handler = FeedHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Dashboard tab aggregate (API only)
@@ -846,6 +848,7 @@ class SocketIOProxy:
             Handler.CODEX_AUTH: codex_auth_handler,
             Handler.CLAUDE_CODE_AUTH: claude_code_auth_handler,
             Handler.WHATSAPP_QR: whatsapp_qr_handler,
+            Handler.PHONE_NUMBER: phone_number_handler,
             Handler.FEED: feed_handler,
             Handler.DASHBOARD: dashboard_handler,
             # Handlers the platform running this engine contributed. It

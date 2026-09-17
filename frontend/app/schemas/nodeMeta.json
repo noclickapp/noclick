@@ -774,6 +774,12 @@
         "receive_webhook"
       ]
     },
+    "automation-phone": {
+      "agentToolProvider": true,
+      "triggerOperations": [
+        "on_call"
+      ]
+    },
     "automation-pinecone": {
       "agentToolProvider": true
     },

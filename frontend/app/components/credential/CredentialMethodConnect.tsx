@@ -146,6 +146,17 @@ function QrScanMethod({ method, apiBase, token, onProvided }: CredentialMethodCo
     );
 }
 
+/** purchase — a bought resource (a phone number) is billed to the owner's account,
+ *  so a public link never buys one on their behalf; the workflow is where it happens. */
+function PurchaseMethod({ serviceName }: CredentialMethodConnectProps) {
+    return (
+        <p className="rounded-md border border-border bg-muted p-3 text-sm text-muted-foreground">
+            {serviceName ? `${serviceName} numbers` : 'Phone numbers'} are bought inside the NoClick app — open the
+            workflow to add one.
+        </p>
+    );
+}
+
 // kind → component. Exhaustive by the Record type: a new CredentialMethodKind won't
 // compile until it has an entry here. THE one place the correspondence is declared.
 const CREDENTIAL_METHOD_COMPONENTS: Record<CredentialMethodKind, ComponentType<CredentialMethodConnectProps>> = {
@@ -153,6 +164,7 @@ const CREDENTIAL_METHOD_COMPONENTS: Record<CredentialMethodKind, ComponentType<C
     oauth: OAuthMethod,
     agent_oauth: AgentOAuthMethod,
     qr_scan: QrScanMethod,
+    purchase: PurchaseMethod,
 };
 
 /** Resolve a backend method's kind (single source: kindFromBackendMethod) and render

@@ -14,6 +14,8 @@ export const FEATURE_ROLLOUT = {
     phone_channel: 'internal',
     // The account coordinator (Dashboard dock; later WhatsApp and calls).
     coordinator: 'internal',
+    // Buying phone numbers for the Phone node.
+    phone_numbers: 'internal',
 } satisfies Record<string, Rollout>;
 
 export type Feature = keyof typeof FEATURE_ROLLOUT;

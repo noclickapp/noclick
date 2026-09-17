@@ -9,6 +9,7 @@ import logging
 from typing import Dict, Optional, Type, Any
 from nodes.core.base import WorkflowNode
 from nodes.telegram_node import TelegramNode
+from nodes.phone_node import PhoneNode
 from nodes.agent_node import AgentNode
 from nodes.google_sheets_node import GoogleSheetsNode
 from nodes.google_analytics_node import GoogleAnalyticsNode
@@ -187,6 +188,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
 
     # Automation nodes
     'automation-telegram': TelegramNode,
+    'automation-phone': PhoneNode,
     'automation-http-request': HttpRequestNode,
     'automation-linear': LinearNode,
     'automation-github-rest': GithubRestNode,

@@ -835,6 +835,19 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 except Exception as e:
                     logger.error(f"[CredentialsHandler] Failed to delete WAHooks connection: {e}")
 
+            # A bought phone number goes back to the provider with its credential;
+            # the recurring charge row dies with the credential.
+            if credential_type == 'phone_number':
+                from utils.capabilities import PHONE_NUMBERS, capability
+                numbers = capability(PHONE_NUMBERS)
+                if numbers is not None:
+                    try:
+                        number_sid = get_encryption().decrypt_credential(row.credential).get('number_sid')
+                        if number_sid:
+                            await numbers.release(number_sid)
+                    except Exception as e:
+                        logger.error(f"[CredentialsHandler] Failed to release phone number: {e}")
+
             # Delete the credential and its shares (edit permission verified above).
             await repo.delete_credential_and_shares(request.credential_id)
 

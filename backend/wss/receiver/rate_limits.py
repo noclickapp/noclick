@@ -29,6 +29,8 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "phone:status": SocketIORateLimit(second=5, minute=30),
             "phone:link:start": SocketIORateLimit(second=1, minute=5),
             "phone:link:check": SocketIORateLimit(second=2, minute=10),
+            "phone_number:search": SocketIORateLimit(second=2, minute=20),
+            "phone_number:buy": SocketIORateLimit(second=1, minute=5),
             "phone:unlink": SocketIORateLimit(second=1, minute=5),
 
             # Account coordinator (a send is one billed agent turn)

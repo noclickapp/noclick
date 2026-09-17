@@ -19,6 +19,7 @@ FEATURE_ROLLOUT: dict[str, str] = {
     "phone_channel": INTERNAL,
     # The account coordinator (Dashboard dock; later WhatsApp and calls).
     "coordinator": INTERNAL,
+    "phone_numbers": INTERNAL,
 }
 
 

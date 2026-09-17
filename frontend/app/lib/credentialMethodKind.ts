@@ -1,11 +1,11 @@
 // The single source of truth for "what UI does a credential method need". Every
 // credential model declares its kind via the `x-credential-type` schema extension
-// (oauth / qr_scan / absent→api_key); agent CLI sign-ins are their own kind. Both the
+// (oauth / qr_scan / purchase / absent→api_key); agent CLI sign-ins are their own kind. Both the
 // in-app credential UI (from the JSON schema) and the public provide page (from the
 // backend method) derive the kind HERE and render through the CredentialMethodConnect
 // registry — so dispatch can't drift, and adding a kind is one registry entry.
 
-export type CredentialMethodKind = 'api_key' | 'oauth' | 'agent_oauth' | 'qr_scan';
+export type CredentialMethodKind = 'api_key' | 'oauth' | 'agent_oauth' | 'qr_scan' | 'purchase';
 
 /** Map an `x-credential-type` value to a schema-backed UI kind. Unknown/absent → api_key
  *  (plain fields), which is the correct default for any field-based credential. */
@@ -13,6 +13,7 @@ export function kindFromCredentialType(xCredentialType: string | null | undefine
     switch (xCredentialType) {
         case 'oauth': return 'oauth';
         case 'qr_scan': return 'qr_scan';
+        case 'purchase': return 'purchase';
         default: return 'api_key';
     }
 }

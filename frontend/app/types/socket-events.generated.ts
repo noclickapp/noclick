@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Thu Sep 17 18:22:01  2026
+// Generated at: Fri Sep 18 03:35:00  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -4035,6 +4035,42 @@ export interface PhoneLinkStartRequest {
    * Phone number with country code, e.g. +1 424 242 1064
    */
   phone: string;
+  [k: string]: unknown;
+}
+/**
+ * Buy a number and mint the phone_number credential that IS the number.
+ */
+export interface PhoneNumberBuyRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * The E.164 number picked from a search
+   */
+  phone_number: string;
+  /**
+   * Display name for the credential
+   */
+  credential_name?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Numbers available to buy for a workflow (voice-capable, local).
+ */
+export interface PhoneNumberSearchRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * ISO country code; US only at launch
+   */
+  country?: string;
+  /**
+   * Optional area code to search within
+   */
+  area_code?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -13695,6 +13731,8 @@ export interface ClientToServerEvents {
   'phone:link:start': (data: PhoneLinkStartRequest) => void;
   'phone:status': (data: PhoneStatusRequest) => void;
   'phone:unlink': (data: PhoneUnlinkRequest) => void;
+  'phone_number:buy': (data: PhoneNumberBuyRequest) => void;
+  'phone_number:search': (data: PhoneNumberSearchRequest) => void;
   'pipedrive:oauth:exchange': (data: PipedriveOAuthExchangeRequest) => void;
   'pipedrive:oauth:refresh': (data: PipedriveOAuthRefreshRequest) => void;
   'pipedrive:oauth:validate': (data: PipedriveOAuthValidateRequest) => void;
@@ -14034,6 +14072,8 @@ export const ClientEventNames = {
   ParallelOAuthValidateRequest: 'parallel:oauth:validate',
   PhoneLinkCheckRequest: 'phone:link:check',
   PhoneLinkStartRequest: 'phone:link:start',
+  PhoneNumberBuyRequest: 'phone_number:buy',
+  PhoneNumberSearchRequest: 'phone_number:search',
   PhoneStatusRequest: 'phone:status',
   PhoneUnlinkRequest: 'phone:unlink',
   PipedriveOAuthExchangeRequest: 'pipedrive:oauth:exchange',
@@ -14371,6 +14411,8 @@ interface ClientEventMap {
   ParallelOAuthValidateRequest: ParallelOAuthValidateRequest
   PhoneLinkCheckRequest: PhoneLinkCheckRequest
   PhoneLinkStartRequest: PhoneLinkStartRequest
+  PhoneNumberBuyRequest: PhoneNumberBuyRequest
+  PhoneNumberSearchRequest: PhoneNumberSearchRequest
   PhoneStatusRequest: PhoneStatusRequest
   PhoneUnlinkRequest: PhoneUnlinkRequest
   PipedriveOAuthExchangeRequest: PipedriveOAuthExchangeRequest
@@ -15444,6 +15486,14 @@ export const PhoneLinkStartRequest = {
   event_name: 'phone:link:start' as const,
   create: (data: PhoneLinkStartRequest) => ({ event_name: 'phone:link:start' as const, ...data })
 };
+export const PhoneNumberBuyRequest = {
+  event_name: 'phone_number:buy' as const,
+  create: (data: PhoneNumberBuyRequest) => ({ event_name: 'phone_number:buy' as const, ...data })
+};
+export const PhoneNumberSearchRequest = {
+  event_name: 'phone_number:search' as const,
+  create: (data: PhoneNumberSearchRequest) => ({ event_name: 'phone_number:search' as const, ...data })
+};
 export const PhoneStatusRequest = {
   event_name: 'phone:status' as const,
   create: (data: PhoneStatusRequest) => ({ event_name: 'phone:status' as const, ...data })
@@ -16262,6 +16312,8 @@ export const EventRouting = {
   'phone:link:start': 'API',
   'phone:status': 'API',
   'phone:unlink': 'API',
+  'phone_number:buy': 'API',
+  'phone_number:search': 'API',
   'pipedrive:oauth:exchange': 'API',
   'pipedrive:oauth:refresh': 'API',
   'pipedrive:oauth:validate': 'API',

@@ -86,6 +86,7 @@ class Handler(Enum):
     CODEX_AUTH = "codex_auth_handler"
     CLAUDE_CODE_AUTH = "claude_code_auth_handler"
     WHATSAPP_QR = "whatsapp_qr_handler"
+    PHONE_NUMBER = "phone_number_handler"
     FEED = "feed_handler"
     DASHBOARD = "dashboard_handler"
     SKILL = "skill_handler"
@@ -597,6 +598,8 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         # WhatsApp QR code auth events
         "whatsapp:qr:start": Handler.WHATSAPP_QR,
         "whatsapp:qr:status": Handler.WHATSAPP_QR,
+        "phone_number:search": Handler.PHONE_NUMBER,
+        "phone_number:buy": Handler.PHONE_NUMBER,
 
         # Approval feed events
         "approval:list": Handler.FEED,

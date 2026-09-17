@@ -149,6 +149,7 @@ import { NoClickNode } from './NoClickNode';
 import { AlarmNode } from './AlarmNode';
 import { FilesystemNode } from './FilesystemNode';
 import { TwilioNode } from './TwilioNode';
+import { PhoneNode } from './PhoneNode';
 import { TikTokNode } from './TikTokNode';
 import { TwitterNode } from './TwitterNode';
 import { CloudflareNode } from './CloudflareNode';
@@ -208,7 +209,7 @@ function _buildAvailable(): NodeDefinition[] {
         GoogleBusinessProfileNode, GoogleSearchConsoleNode, HackerNewsNode, InstagramNode, FacebookNode, InstantlyNode,
         JiraNode, IntercomNode, LinkedInNode, NotionNode, PostgresNode, RedditNode, RSSNode, ExtendNode,
         RedisNode, SalesforceNode, AffinityNode, BasedashNode, SemrushNode, ShopifyNode, SlackNode,
-        SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
+        SupabaseNode, TikTokNode, TwilioNode, PhoneNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
         MailchimpNode, PipedriveNode, ResendNode, DV360Node, QuickBooksNode, ThreadsNode, MetaNode, BigQueryNode, GoHighLevelNode, ExpensifyNode, LaunchDarklyNode, WebflowNode, PhantomBusterNode, CalComNode, CalendlyNode, HoneycombNode, SentryNode, GoogleMapsNode, PerplexityNode, PostHogNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MilvusNode, MongoDBNode, ElasticsearchNode, MailgunNode,
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,

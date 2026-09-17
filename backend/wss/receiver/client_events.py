@@ -3267,3 +3267,19 @@ class CloudflareOAuthValidateRequest(ClientEventBase):
     event_name: ClassVar[str] = "cloudflare:oauth:validate"
 
     credential_id: str = Field(..., description="UUID of the credential to validate")
+
+
+class PhoneNumberSearchRequest(ClientEventBase):
+    """Numbers available to buy for a workflow (voice-capable, local)."""
+    event_name: ClassVar[str] = "phone_number:search"
+
+    country: str = Field("US", description="ISO country code; US only at launch")
+    area_code: Optional[str] = Field(None, description="Optional area code to search within")
+
+
+class PhoneNumberBuyRequest(ClientEventBase):
+    """Buy a number and mint the phone_number credential that IS the number."""
+    event_name: ClassVar[str] = "phone_number:buy"
+
+    phone_number: str = Field(..., description="The E.164 number picked from a search")
+    credential_name: Optional[str] = Field(None, description="Display name for the credential")
