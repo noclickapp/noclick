@@ -16,19 +16,16 @@ describe('phone formatting', () => {
     });
 });
 
-describe('the number mask', () => {
-    const cells = (s: string) => s.padEnd(10, ' ').split('').map((c) => (c === ' ' ? '' : c));
-    it('turns filled cells into the provider query', async () => {
-        const { searchQueryFromCells } = await import('~/lib/phoneFormat');
-        expect(searchQueryFromCells(cells(''))).toEqual({ area_code: null, contains: null });
-        expect(searchQueryFromCells(cells('424'))).toEqual({ area_code: '424', contains: null });
-        expect(searchQueryFromCells(cells('424242'))).toEqual({ area_code: null, contains: '424242****' });
-        expect(searchQueryFromCells(cells('   555'))).toEqual({ area_code: null, contains: '***555****' });
-        expect(searchQueryFromCells(cells('   noclick'))).toEqual({ area_code: null, contains: '***NOCLICK' });
-        // "Anywhere": the filled run, unanchored.
-        expect(searchQueryFromCells(cells('   555'), 'anywhere')).toEqual({ area_code: null, contains: '555' });
-        expect(searchQueryFromCells(cells('424'), 'anywhere')).toEqual({ area_code: null, contains: '424' });
-        expect(searchQueryFromCells(cells(' 4 2'), 'anywhere')).toEqual({ area_code: null, contains: '4*2' });
-        expect(searchQueryFromCells(cells(''), 'anywhere')).toEqual({ area_code: null, contains: null });
+describe('the number search', () => {
+    it('reads one string as an area code or an anywhere pattern', async () => {
+        const { searchQueryFromText } = await import('~/lib/phoneFormat');
+        expect(searchQueryFromText('')).toEqual({ area_code: null, contains: null });
+        expect(searchQueryFromText('415')).toEqual({ area_code: '415', contains: null });
+        expect(searchQueryFromText('(415) ')).toEqual({ area_code: '415', contains: null });
+        expect(searchQueryFromText('555')).toEqual({ area_code: '555', contains: null });
+        expect(searchQueryFromText('4242')).toEqual({ area_code: null, contains: '4242' });
+        expect(searchQueryFromText('no click')).toEqual({ area_code: null, contains: 'NOCLICK' });
+        expect(searchQueryFromText('4*2')).toEqual({ area_code: null, contains: '4*2' });
+        expect(searchQueryFromText('12345678901234')).toEqual({ area_code: null, contains: '1234567890' });
     });
 });

@@ -33,27 +33,12 @@ export function patternSpan(e164: string, pattern: string): [number, number] | n
     return [offset + hit.index, offset + hit.index + hit[0].length];
 }
 
-export const NUMBER_CELLS = 10;
-
-export type PatternMode = 'positions' | 'anywhere';
-
-/** What the number picker asks the provider for.
- *  - `positions`: the ten cells are the number's positions; blank cells match
- *    anything. Only the area code filled is an area-code search; any other
- *    shape is a positional pattern (ten characters anchor it).
- *  - `anywhere`: the filled cells, read left to right, must appear somewhere
- *    in the number — the provider's unanchored contains search. */
-export function searchQueryFromCells(cells: string[], mode: PatternMode = 'positions'): { area_code: string | null; contains: string | null } {
-    const pattern = Array.from({ length: NUMBER_CELLS }, (_, i) => (cells[i] || '*').toUpperCase());
-    if (pattern.every((c) => c === '*')) return { area_code: null, contains: null };
-    if (mode === 'anywhere') {
-        const run = pattern.join('').replace(/^\*+|\*+$/g, '');
-        return { area_code: null, contains: run };
-    }
-    const area = pattern.slice(0, 3);
-    const rest = pattern.slice(3);
-    if (area.every((c) => c !== '*' && /\d/.test(c)) && rest.every((c) => c === '*')) {
-        return { area_code: area.join(''), contains: null };
-    }
-    return { area_code: null, contains: pattern.join('') };
+/** What the number picker asks the provider for, from one search string:
+ *  digits, keypad letters and * wildcards, matched anywhere in the number.
+ *  Exactly three digits is read as an area code (the far more common ask). */
+export function searchQueryFromText(text: string): { area_code: string | null; contains: string | null } {
+    const cleaned = text.toUpperCase().replace(/[^0-9A-Z*]/g, '').slice(0, 10);
+    if (!cleaned) return { area_code: null, contains: null };
+    if (/^\d{3}$/.test(cleaned) && cleaned[0] !== '0' && cleaned[0] !== '1') return { area_code: cleaned, contains: null };
+    return { area_code: null, contains: cleaned };
 }

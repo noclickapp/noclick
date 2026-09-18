@@ -6,11 +6,11 @@ import { Link } from 'react-router';
 import { AlertCircle, Loader2, Search } from 'lucide-react';
 import { sendEventAsync } from '~/lib/socket-sender';
 import type { OAuthExchange } from '~/hooks/oauth/OAuthExchangeContext';
-import { NUMBER_CELLS, formatPhoneForDisplay, patternSpan, searchQueryFromCells, type PatternMode } from '~/lib/phoneFormat';
-import { NumberPatternInput } from '~/components/credential/NumberPatternInput';
+import { formatPhoneForDisplay, patternSpan, searchQueryFromText } from '~/lib/phoneFormat';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
 import { Skeleton } from '~/components/ui/skeleton';
 
 interface AvailableNumber {
@@ -71,8 +71,7 @@ interface PhoneNumberPurchaseFormProps {
 }
 
 export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: PhoneNumberPurchaseFormProps) => {
-    const [cells, setCells] = useState<string[]>(() => Array.from({ length: NUMBER_CELLS }, () => ''));
-    const [mode, setMode] = useState<PatternMode>('positions');
+    const [text, setText] = useState('');
     const [searched, setSearched] = useState<{ areaCode: string | null; pattern: string | null; limit: number } | null>(null);
     const [numbers, setNumbers] = useState<AvailableNumber[] | null>(null);
     const [monthlyCredits, setMonthlyCredits] = useState(DEFAULT_MONTHLY_CREDITS);
@@ -85,7 +84,7 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
     const search = async (limit = FIRST_PAGE) => {
         setSearching(true);
         setError(null);
-        const wanted = searchQueryFromCells(cells, mode);
+        const wanted = searchQueryFromText(text);
         const query = { areaCode: wanted.area_code, pattern: wanted.contains, limit };
         try {
             const reply: Reply<{ numbers: AvailableNumber[]; monthly_credits: number }> = await sendRef.current({
@@ -139,17 +138,20 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
                 Buy a US number for this agent — {monthlyCredits} credits a month, charged hourly while you keep it
                 (Plus and Pro plans). Deleting the credential releases it.
             </p>
-            <NumberPatternInput cells={cells} onChange={setCells} mode={mode} onModeChange={setMode} onSubmit={() => void search()} disabled={busy} />
             <div className="flex items-center gap-2">
-                <Button type="button" size="sm" onClick={() => void search()} disabled={busy}>
+                <Input
+                    value={text}
+                    onChange={(e) => setText(e.target.value.toUpperCase().replace(/[^0-9A-Z*]/g, '').slice(0, 10))}
+                    onKeyDown={(e) => { if (e.key === 'Enter') void search(); }}
+                    placeholder="Area code or digits, e.g. 415 or NOCLICK"
+                    aria-label="Digits or letters the number should contain"
+                    className="h-8 w-64 text-xs"
+                    disabled={busy}
+                />
+                <Button type="button" size="sm" variant="outline" onClick={() => void search()} disabled={busy}>
                     {searching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
                     Find numbers
                 </Button>
-                {cells.some(Boolean) && (
-                    <Button type="button" size="sm" variant="ghost" className="h-8 px-2 text-xs text-muted-foreground" onClick={() => setCells(Array.from({ length: NUMBER_CELLS }, () => ''))} disabled={busy}>
-                        Clear
-                    </Button>
-                )}
             </div>
             {error && (
                 <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/10 p-2 text-xs text-destructive">
@@ -178,8 +180,8 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
             )}
             {numbers && numbers.length === 0 && !error && (
                 <div className="rounded-md border border-dashed border-border p-3 text-xs text-muted-foreground">
-                    No numbers match{searched?.pattern ? <> the pattern <span className="font-mono">{searched.pattern.replace(/\*/g, '·')}</span></> : ''}
-                    {searched?.areaCode ? <> in area code {searched.areaCode}</> : ''}. Leave more spots blank or try
+                    No numbers match{searched?.pattern ? <> the pattern <span className="font-mono">{searched.pattern}</span></> : ''}
+                    {searched?.areaCode ? <> in area code {searched.areaCode}</> : ''}. Try fewer digits or
                     another area code.
                 </div>
             )}
