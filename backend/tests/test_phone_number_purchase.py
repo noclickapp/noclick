@@ -81,6 +81,7 @@ class FakeSio:
 async def test_handler_gates_on_the_rollout_then_the_provider(seams, monkeypatch):
     from utils import feature_gates
     from wss.receiver.client_events import PhoneNumberSearchRequest
+    numbers = seams[0]
     sent = []
     monkeypatch.setattr(h, "send_event", AsyncMock(side_effect=lambda sio, sid, ev: sent.append(ev)))
     monkeypatch.setattr(feature_gates, "is_internal_user", lambda email: email.endswith("@noclick.com"))
@@ -88,8 +89,13 @@ async def test_handler_gates_on_the_rollout_then_the_provider(seams, monkeypatch
     await handler.handle_search("sid", PhoneNumberSearchRequest(request_id="r1", country="US"))
     assert sent[-1].data == {"kind": "gated"}
     handler = h.PhoneNumberHandler(FakeSio({"user_id": USER, "user_data": {"email": "dhruv@noclick.com"}}))
-    await handler.handle_search("sid", PhoneNumberSearchRequest(request_id="r2", country="US", area_code="567"))
+    await handler.handle_search("sid", PhoneNumberSearchRequest(request_id="r2", country="US", area_code="567", contains="no click", limit=12))
     assert sent[-1].error is None and sent[-1].data["numbers"][0]["phone_number"] == "+15674833618" and sent[-1].data["monthly_credits"] == 15
+    numbers.search.assert_awaited_with("US", "567", 12, contains="NOCLICK")  # spaces dropped, letters kept for the keypad
+    await handler.handle_search("sid", PhoneNumberSearchRequest(request_id="r2b", country="US", contains="555-****"))
+    assert numbers.search.await_args.kwargs == {"contains": "555****"}
+    await handler.handle_search("sid", PhoneNumberSearchRequest(request_id="r2c", country="US", contains="hello world!!"))
+    assert sent[-1].data == {"kind": "pattern"}
     await handler.handle_search("sid", PhoneNumberSearchRequest(request_id="r3", country="IN"))
     assert sent[-1].data == {"kind": "country"}
     capabilities.clear()

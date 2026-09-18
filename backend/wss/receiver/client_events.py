@@ -3275,6 +3275,10 @@ class PhoneNumberSearchRequest(ClientEventBase):
 
     country: str = Field("US", description="ISO country code; US only at launch")
     area_code: Optional[str] = Field(None, description="Optional area code to search within")
+    contains: Optional[str] = Field(
+        None, description="Optional pattern the number must contain: digits, letters (keypad-mapped) and * for any digit",
+    )
+    limit: int = Field(10, ge=1, le=20, description="How many numbers to return")
 
 
 class PhoneNumberBuyRequest(ClientEventBase):

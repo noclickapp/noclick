@@ -23,7 +23,7 @@
       "type": "object"
     },
     "PhoneNumberCredential": {
-      "description": "A number bought on NoClick. The blob names the provider's number id; the\nnumber itself is public and mirrored into metadata for listings.",
+      "description": "A phone number your agent answers and calls from.",
       "properties": {
         "credential_type": {
           "const": "phone_number",

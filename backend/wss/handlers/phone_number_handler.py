@@ -6,6 +6,7 @@ phone_numbers rollout; the provider is a platform capability."""
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any, Awaitable, Callable, Dict, Optional
 
 from billing.markup import CREDITS_PER_DOLLAR
@@ -29,6 +30,8 @@ logger = logging.getLogger(__name__)
 FEATURE = "phone_numbers"
 CHARGE_TYPE = "phone_number"
 COUNTRIES = ("US",)
+# The provider matches a pattern of digits, letters (keypad-mapped) and * for any digit.
+CONTAINS_PATTERN = re.compile(r"^[0-9A-Z*]{1,10}$")
 
 
 class PhoneNumberError(ValueError):
@@ -80,7 +83,10 @@ class PhoneNumberHandler(DatabasePoolMixin, SocketIOHandler):
             area_code = (request.area_code or "").strip() or None
             if area_code and not (area_code.isdigit() and len(area_code) == 3):
                 raise PhoneNumberError("An area code is three digits.", "area_code")
-            numbers = await capability(PHONE_NUMBERS).search(country, area_code, 5)
+            contains = (request.contains or "").strip().upper().replace(" ", "").replace("-", "") or None
+            if contains and not CONTAINS_PATTERN.fullmatch(contains):
+                raise PhoneNumberError("A pattern is up to 10 digits, letters or * wildcards.", "pattern")
+            numbers = await capability(PHONE_NUMBERS).search(country, area_code, request.limit, contains=contains)
             return PhoneNumberSearchResponse(numbers=numbers, monthly_credits=PHONE_NUMBER_MONTHLY_CREDITS).model_dump()
         await self._respond(sid, request.request_id, op)
 

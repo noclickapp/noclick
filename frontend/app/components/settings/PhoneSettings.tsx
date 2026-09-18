@@ -4,6 +4,7 @@
 // the section exists only where usePhoneLinkingAvailable says so.
 
 import { useEffect, useState } from 'react';
+import { formatPhoneForDisplay } from '~/lib/phoneFormat';
 import { ShieldCheck, Smartphone } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '~/lib/utils';
@@ -32,15 +33,7 @@ interface Challenge {
 
 type Reply<T> = Partial<T> & { error?: string; kind?: string };
 
-/** '+14242421064' → '+1 424 242 1064' for display; the wire keeps E.164. */
-export function formatPhoneForDisplay(e164: string): string {
-    const digits = e164.replace(/^\+/, '');
-    if (digits.length <= 4) return e164;
-    const country = digits.length > 10 ? digits.slice(0, digits.length - 10) : digits.slice(0, 1);
-    const rest = digits.slice(country.length);
-    const groups = rest.match(/.{1,3}(?=(.{3})*$)/g) ?? [rest];
-    return `+${country} ${groups.join(' ')}`;
-}
+export { formatPhoneForDisplay };
 
 export function PhoneSettings() {
     const [status, setStatus] = useState<PhoneStatus | null>(null);

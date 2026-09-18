@@ -89,7 +89,7 @@ BUILDER_RESULT_NOTIFY = "builder.result_notify"
 # coordinator has no message_owner tool.
 OWNER_MESSAGE = "owner.message"
 
-# Phone numbers a workflow can own: search(country, area_code, limit) -> list,
+# Phone numbers a workflow can own: search(country, area_code, limit, *, contains=None) -> list,
 # buy(e164, *, label) -> {number_sid, phone_number}, release(number_sid),
 # route(number_sid, *, webhook_id) / unroute(number_sid) (where its calls go),
 # exists(number_sid) -> bool. Without one, numbers cannot be bought here.

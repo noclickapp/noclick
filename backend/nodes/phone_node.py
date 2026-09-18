@@ -24,9 +24,10 @@ PHONE_NUMBER_MONTHLY_CREDITS = 15
 
 
 class PhoneNumberCredential(BaseModel):
-    """A number bought on NoClick. The blob names the provider's number id; the
-    number itself is public and mirrored into metadata for listings."""
+    """A phone number your agent answers and calls from."""
 
+    # The blob names the provider's number id; the number itself is public and
+    # mirrored into metadata for listings.
     credential_type: Literal["phone_number"] = Field("phone_number", json_schema_extra={"ui:hidden": True})
     phone_number: str = Field(..., min_length=1, json_schema_extra={"ui:hidden": True})  # E.164
     number_sid: str = Field(..., min_length=1, json_schema_extra={"ui:hidden": True})  # provider id

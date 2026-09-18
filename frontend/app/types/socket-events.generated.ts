@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Fri Sep 18 03:35:00  2026
+// Generated at: Fri Sep 18 13:43:05  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -4071,6 +4071,14 @@ export interface PhoneNumberSearchRequest {
    * Optional area code to search within
    */
   area_code?: string | null;
+  /**
+   * Optional pattern the number must contain: digits, letters (keypad-mapped) and * for any digit
+   */
+  contains?: string | null;
+  /**
+   * How many numbers to return
+   */
+  limit?: number;
   [k: string]: unknown;
 }
 /**
