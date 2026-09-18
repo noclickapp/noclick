@@ -827,3 +827,25 @@ describe('Slack shared files', () => {
         expect(JSON.stringify(lead)).not.toContain('files.example');
     });
 });
+
+describe('phone call lead', () => {
+    it('frames a finished call as an exchange with the other party and duration', () => {
+        const lead = deriveLead('phone', {
+            caller: '+15551234567', to: '+15674833618', call_sid: 'CA1', seconds: 79, channel: 'phone', direction: 'inbound',
+            transcript: [
+                { role: 'assistant', text: 'This is Luke. What do you want?!', at: 5.8 },
+                { role: 'user', text: 'Do you have time to talk', at: 8.5 },
+                { role: 'assistant', text: '', at: 9 },
+            ],
+        });
+        expect(lead).toMatchObject({
+            title: 'Incoming call', meta: '1:19', author: '+15551234567',
+            handle: 'from +15551234567 · on +15674833618',
+            body: 'You: This is Luke. What do you want?!\nCaller: Do you have time to talk',
+        });
+        const out = deriveLead('phone', { caller: '+15674833618', to: '+919717440092', seconds: 52, direction: 'outbound', transcript: [{ role: 'user', text: 'Hello?' }] });
+        expect(out).toMatchObject({ title: 'Outbound call', meta: '0:52', author: '+919717440092', handle: 'to +919717440092 · from +15674833618', body: 'Caller: Hello?' });
+        expect(deriveLead('phone', { status: 'no_event', message: 'No live event' })).toBeNull();
+        expect(deriveLead('phone', { type: 'node_op_tool_provider' })).toBeNull();
+    });
+});

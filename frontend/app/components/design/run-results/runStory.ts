@@ -498,6 +498,33 @@ function deriveTypeformLead(d: Dict): Lead | null {
 /** The fired event as a lead the native frames can wear. Null when the payload
     has no recognisable message shape — the views then show the raw event
     instead of dressing noise up as a message. */
+/** A finished phone call (the phone node's event): the other party as the
+    contact, the duration as the pill, and the transcript as "Caller:"/"You:"
+    lines the call frame lays out as an exchange. On an inbound call the
+    other party is the caller; on one the agent placed, the number it called. */
+function derivePhoneCallLead(d: Dict): Lead | null {
+    const outbound = d.direction === 'outbound';
+    const other = str(d, outbound ? 'to' : 'caller');
+    const ours = str(d, outbound ? 'caller' : 'to');
+    const turns = (d.transcript as unknown[])
+        .map(asDict)
+        .filter((t) => typeof t.text === 'string' && (t.text as string).trim())
+        .map((t) => `${t.role === 'user' ? 'Caller' : 'You'}: ${(t.text as string).trim()}`);
+    if (!other && !turns.length) return null;
+    const seconds = typeof d.seconds === 'number' ? d.seconds : Number(d.seconds);
+    const duration = Number.isFinite(seconds) && seconds > 0
+        ? `${Math.floor(seconds / 60)}:${String(Math.round(seconds % 60)).padStart(2, '0')}`
+        : '';
+    return {
+        title: outbound ? 'Outbound call' : 'Incoming call',
+        meta: duration,
+        body: turns.join('\n'),
+        author: other,
+        handle: other && ours ? `${outbound ? 'to' : 'from'} ${other} · ${outbound ? 'from' : 'on'} ${ours}` : other,
+        time: clockOf(str(d, 'timestamp', 'ended_at')),
+    };
+}
+
 export function deriveLead(slug: string, output: unknown): Lead | null {
     const d = asDict(output);
     // A push trigger run WITHOUT a live delivery (manual/test run) reports an
@@ -544,6 +571,10 @@ export function deriveLead(slug: string, output: unknown): Lead | null {
             ...from,
             time: clockOf(str(e, 'date', 'timestamp')),
         };
+    }
+
+    if (slug === 'phone' && Array.isArray(d.transcript)) {
+        return derivePhoneCallLead(d);
     }
 
     if (slug === 'discord' && (typeof d.content === 'string' || d.event_type === 'on_slash_command')) {

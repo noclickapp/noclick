@@ -38,6 +38,7 @@ export type AppShape =
     | 'alert'       // Datadog / Sentry / PagerDuty monitor
     | 'post'        // Reddit / X / Facebook / Instagram / YouTube
     | 'file'        // Dropbox / Drive file event
+    | 'call'        // a phone call: who, how long, the transcript
     | 'event';      // themed fallback card
 
 export interface AppTheme {
@@ -243,6 +244,12 @@ const APP_THEME_DEFS: Record<string, Omit<AppTheme, 'slug'>> = {
     },
 
     /* ------------------------------------------------ commerce / billing */
+    phone: {
+        name: 'Phone', shape: 'call',
+        surface: '#101614', bubbleIn: '#1b2320', bubbleOut: '#1f5f43',
+        author: '#9fb3a8', accent: '#34c759', ink: '#f2f5f3', sub: '#8a9a91',
+        border: 'rgba(255,255,255,0.08)',
+    },
     stripe: {
         name: 'Stripe', shape: 'stripe',
         surface: '#0a2540', author: '#f6f9fc', accent: '#635bff',

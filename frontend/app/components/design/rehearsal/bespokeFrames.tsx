@@ -423,6 +423,49 @@ function StripeEvent({ lead, theme, operation }: FrameProps) {
     );
 }
 
+/** A phone call as its transcript: who was on the line, how long, and the
+    exchange as alternating lines. The lead's body is the transcript, one
+    "Caller: …" / "You: …" line per turn (the phone node's own event text);
+    a body without that shape is shown as prose. */
+function CallCard({ lead, theme }: FrameProps) {
+    const lines = lead.body.split('\n').filter((l) => l.trim());
+    const turns = lines
+        .map((l) => /^(Caller|You|Agent|Callee):\s*(.*)$/i.exec(l))
+        .filter((m): m is RegExpExecArray => !!m)
+        .map((m) => ({ them: /^(caller|callee)$/i.test(m[1]), text: m[2] }));
+    const scripted = turns.length > 0 && turns.length === lines.length;
+    return (
+        <Surface theme={theme}>
+            <div className="flex items-center justify-between gap-2">
+                <p className="m-0 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider" style={sub(theme)}>
+                    <Phone className="h-3 w-3" style={{ color: theme.accent }} />
+                    {lead.title}
+                </p>
+                {lead.meta ? tintPill(lead.meta, theme.accent) : null}
+            </div>
+            {lead.handle ? (
+                <p className="m-0 mt-1 text-[11.5px]" style={sub(theme)}>{withTime(lead.handle, lead)}</p>
+            ) : null}
+            {scripted ? (
+                <div className="mt-2.5 flex flex-col gap-1.5">
+                    {turns.map((t, i) => (
+                        <div key={i} className={`flex ${t.them ? 'justify-start' : 'justify-end'}`}>
+                            <span
+                                className="max-w-[88%] rounded-2xl px-3 py-1.5 text-[12.5px] leading-snug"
+                                style={{ background: t.them ? theme.bubbleIn : theme.bubbleOut, color: theme.ink }}
+                            >
+                                {t.text}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <p className="mb-0 mt-2 text-[12.5px] leading-relaxed whitespace-pre-wrap" style={sub(theme)}>{lead.body}</p>
+            )}
+        </Surface>
+    );
+}
+
 function ShopifyOrder({ lead, theme, operation }: FrameProps) {
     const r = resolveOpRender('shopify', operation);
     return (
@@ -710,6 +753,7 @@ export function BespokeInbound(props: FrameProps) {
         case 'alert': return <AlertCard {...props} />;
         case 'post': return <SocialPost {...props} />;
         case 'file': return <FileEvent {...props} />;
+        case 'call': return <CallCard {...props} />;
         default: return <EventCard {...props} />;
     }
 }
