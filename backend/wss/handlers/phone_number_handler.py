@@ -30,6 +30,9 @@ logger = logging.getLogger(__name__)
 FEATURE = "phone_numbers"
 CHARGE_TYPE = "phone_number"
 COUNTRIES = ("US",)
+# A number is a paid-plan feature: the monthly charge would eat a free plan's
+# whole allowance, and the free tier's daily cap could not cover its calls.
+NUMBER_TIERS = ("plus", "pro", "enterprise")
 # The provider matches a pattern of digits, letters (keypad-mapped) and * for any digit.
 CONTAINS_PATTERN = re.compile(r"^[0-9A-Z*]{1,10}$")
 # US toll-free prefixes; everything else a local search returns is a local number.
@@ -99,6 +102,8 @@ class PhoneNumberHandler(DatabasePoolMixin, SocketIOHandler):
             contains = (request.contains or "").strip().upper().replace(" ", "").replace("-", "") or None
             if contains and not CONTAINS_PATTERN.fullmatch(contains):
                 raise PhoneNumberError("A pattern is up to 10 digits, letters or * wildcards.", "pattern")
+            if not await number_tier_ok(await self.get_pool(), actor["user_id"], actor["user_tier"]):
+                raise PhoneNumberError("Phone numbers are available on the Plus and Pro plans.", "plan")
             numbers = await capability(PHONE_NUMBERS).search(country, area_code, request.limit, contains=contains)
             return PhoneNumberSearchResponse(numbers=numbers, monthly_credits=PHONE_NUMBER_MONTHLY_CREDITS).model_dump()
         await self._respond(sid, request.request_id, op)
@@ -116,17 +121,29 @@ class PhoneNumberHandler(DatabasePoolMixin, SocketIOHandler):
         await self._respond(sid, request.request_id, op)
 
 
+async def number_tier_ok(pool, user_id: str, user_tier: str) -> bool:
+    """Whether this account may hold a number: a paid plan of its own, or a
+    paid org it owns (the same effective tier that funds its credits)."""
+    from billing.plan_limits import get_effective_tier
+
+    async with pool.acquire() as conn:
+        effective = await get_effective_tier(conn, user_id, user_tier)
+    return effective in NUMBER_TIERS
+
+
 async def buy_number_for_user(pool, *, user_id: str, user_tier: str, e164: str,
                               credential_name: Optional[str], encryption) -> Dict[str, str]:
     """Buy at the provider, then mint the credential and charge its first
     month in ONE transaction (the provider bills a month in advance, and so
     do we: the charge renews on each anniversary while the number is kept);
     a credential that cannot be written releases the number again, so nothing
-    is ever billed to nobody. The first month must be affordable before
-    anything is bought."""
+    is ever billed to nobody. The account needs a paid plan and the first
+    month must be affordable before anything is bought."""
     numbers = capability(PHONE_NUMBERS)
     if numbers is None:
         raise PhoneNumberError("Phone numbers cannot be bought on this instance.", "unavailable")
+    if not await number_tier_ok(pool, user_id, user_tier):
+        raise PhoneNumberError("Phone numbers are available on the Plus and Pro plans.", "plan")
     billing_user = await usage_tracker.resolve_billing_user_id(user_id)
     remaining = await usage_tracker.fetch_credit_remaining(billing_user)
     if remaining is not None and remaining < PHONE_NUMBER_MONTHLY_CREDITS:

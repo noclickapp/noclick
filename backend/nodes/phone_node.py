@@ -35,8 +35,8 @@ class PhoneNumberCredential(BaseModel):
     model_config = ConfigDict(title="Phone Number", json_schema_extra={
         "x-credential-type": "purchase",
         "x-credential-instructions": (
-            f"Buy a phone number for this agent. It is billed {PHONE_NUMBER_MONTHLY_CREDITS} credits a month "
-            "for as long as you keep it; delete the credential to release it."
+            f"Buy a phone number for this agent. It is billed {PHONE_NUMBER_MONTHLY_CREDITS} credits a month, "
+            "charged hourly for as long as you keep it (Plus and Pro plans); delete the credential to release it."
         ),
     })
 

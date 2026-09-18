@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 import { AlertCircle, Loader2, Search } from 'lucide-react';
 import { sendEventAsync } from '~/lib/socket-sender';
 import type { OAuthExchange } from '~/hooks/oauth/OAuthExchangeContext';
-import { NUMBER_CELLS, formatPhoneForDisplay, patternSpan, searchQueryFromCells } from '~/lib/phoneFormat';
+import { NUMBER_CELLS, formatPhoneForDisplay, patternSpan, searchQueryFromCells, type PatternMode } from '~/lib/phoneFormat';
 import { NumberPatternInput } from '~/components/credential/NumberPatternInput';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
 import { Badge } from '~/components/ui/badge';
@@ -33,6 +33,8 @@ const failureText = (reply: Reply<unknown>, fallback: string): string => {
             return 'Phone numbers are not enabled on this account yet.';
         case 'unavailable':
             return 'Numbers cannot be bought on this instance.';
+        case 'plan':
+            return 'Phone numbers are available on the Plus and Pro plans.';
         default:
             return reply.error || fallback;
     }
@@ -70,6 +72,7 @@ interface PhoneNumberPurchaseFormProps {
 
 export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: PhoneNumberPurchaseFormProps) => {
     const [cells, setCells] = useState<string[]>(() => Array.from({ length: NUMBER_CELLS }, () => ''));
+    const [mode, setMode] = useState<PatternMode>('positions');
     const [searched, setSearched] = useState<{ areaCode: string | null; pattern: string | null; limit: number } | null>(null);
     const [numbers, setNumbers] = useState<AvailableNumber[] | null>(null);
     const [monthlyCredits, setMonthlyCredits] = useState(DEFAULT_MONTHLY_CREDITS);
@@ -82,7 +85,7 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
     const search = async (limit = FIRST_PAGE) => {
         setSearching(true);
         setError(null);
-        const wanted = searchQueryFromCells(cells);
+        const wanted = searchQueryFromCells(cells, mode);
         const query = { areaCode: wanted.area_code, pattern: wanted.contains, limit };
         try {
             const reply: Reply<{ numbers: AvailableNumber[]; monthly_credits: number }> = await sendRef.current({
@@ -133,26 +136,21 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
     return (
         <div className="space-y-3">
             <p className="text-xs text-muted-foreground">
-                Buy a US number for this agent — {monthlyCredits} credits a month while you keep it. Deleting the
-                credential releases it.
+                Buy a US number for this agent — {monthlyCredits} credits a month, charged hourly while you keep it
+                (Plus and Pro plans). Deleting the credential releases it.
             </p>
-            <div className="flex flex-wrap items-center gap-2">
-                <NumberPatternInput cells={cells} onChange={setCells} onSubmit={() => void search()} disabled={busy} />
-                <Button type="button" size="sm" variant="outline" onClick={() => void search()} disabled={busy}>
+            <NumberPatternInput cells={cells} onChange={setCells} mode={mode} onModeChange={setMode} onSubmit={() => void search()} disabled={busy} />
+            <div className="flex items-center gap-2">
+                <Button type="button" size="sm" onClick={() => void search()} disabled={busy}>
                     {searching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
                     Find numbers
                 </Button>
                 {cells.some(Boolean) && (
-                    <Button type="button" size="sm" variant="ghost" className="h-8 px-2 text-xs" onClick={() => setCells(Array.from({ length: NUMBER_CELLS }, () => ''))} disabled={busy}>
+                    <Button type="button" size="sm" variant="ghost" className="h-8 px-2 text-xs text-muted-foreground" onClick={() => setCells(Array.from({ length: NUMBER_CELLS }, () => ''))} disabled={busy}>
                         Clear
                     </Button>
                 )}
             </div>
-            <p className="text-[11px] text-muted-foreground">
-                Type the digits or letters you want where you want them; blank spots match anything. Just an area
-                code finds numbers in that area; letters spell on the keypad, so <span className="font-mono">NOCLICK</span> works
-                too.
-            </p>
             {error && (
                 <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/10 p-2 text-xs text-destructive">
                     <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
@@ -162,6 +160,12 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
                             <>
                                 {' '}
                                 <Link to="/dashboard?action=topup" className="underline">Top up credits</Link>
+                            </>
+                        )}
+                        {error.kind === 'plan' && (
+                            <>
+                                {' '}
+                                <Link to="/pricing" className="underline">See plans</Link>
                             </>
                         )}
                     </span>

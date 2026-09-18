@@ -25,5 +25,10 @@ describe('the number mask', () => {
         expect(searchQueryFromCells(cells('424242'))).toEqual({ area_code: null, contains: '424242****' });
         expect(searchQueryFromCells(cells('   555'))).toEqual({ area_code: null, contains: '***555****' });
         expect(searchQueryFromCells(cells('   noclick'))).toEqual({ area_code: null, contains: '***NOCLICK' });
+        // "Anywhere": the filled run, unanchored.
+        expect(searchQueryFromCells(cells('   555'), 'anywhere')).toEqual({ area_code: null, contains: '555' });
+        expect(searchQueryFromCells(cells('424'), 'anywhere')).toEqual({ area_code: null, contains: '424' });
+        expect(searchQueryFromCells(cells(' 4 2'), 'anywhere')).toEqual({ area_code: null, contains: '4*2' });
+        expect(searchQueryFromCells(cells(''), 'anywhere')).toEqual({ area_code: null, contains: null });
     });
 });

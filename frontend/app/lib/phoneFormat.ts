@@ -35,12 +35,21 @@ export function patternSpan(e164: string, pattern: string): [number, number] | n
 
 export const NUMBER_CELLS = 10;
 
-/** What a ten-cell number mask asks the provider for: blank cells match
- *  anything, so only the area code filled is an area-code search, and any
- *  other shape is a positional pattern (ten characters anchor it). */
-export function searchQueryFromCells(cells: string[]): { area_code: string | null; contains: string | null } {
+export type PatternMode = 'positions' | 'anywhere';
+
+/** What the number picker asks the provider for.
+ *  - `positions`: the ten cells are the number's positions; blank cells match
+ *    anything. Only the area code filled is an area-code search; any other
+ *    shape is a positional pattern (ten characters anchor it).
+ *  - `anywhere`: the filled cells, read left to right, must appear somewhere
+ *    in the number — the provider's unanchored contains search. */
+export function searchQueryFromCells(cells: string[], mode: PatternMode = 'positions'): { area_code: string | null; contains: string | null } {
     const pattern = Array.from({ length: NUMBER_CELLS }, (_, i) => (cells[i] || '*').toUpperCase());
     if (pattern.every((c) => c === '*')) return { area_code: null, contains: null };
+    if (mode === 'anywhere') {
+        const run = pattern.join('').replace(/^\*+|\*+$/g, '');
+        return { area_code: null, contains: run };
+    }
     const area = pattern.slice(0, 3);
     const rest = pattern.slice(3);
     if (area.every((c) => c !== '*' && /\d/.test(c)) && rest.every((c) => c === '*')) {
