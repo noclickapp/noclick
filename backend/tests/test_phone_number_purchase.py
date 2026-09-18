@@ -62,6 +62,16 @@ async def test_the_first_month_must_be_affordable_before_anything_is_bought(seam
     numbers.buy.assert_not_awaited(); created.assert_not_awaited()
 
 
+async def test_only_local_numbers_are_bought(seams):
+    numbers, created, _, enc = seams
+    for number in ("+18005550100", "+18335550100", "+442071234567"):
+        with pytest.raises(h.PhoneNumberError) as exc:
+            await h.buy_number_for_user(MockNativePool(), user_id=USER, user_tier="pro", e164=number, credential_name=None, encryption=enc)
+        assert exc.value.kind == "number"
+    numbers.buy.assert_not_awaited()
+    assert h.is_local_number("+15674833618") and not h.is_local_number("+18775550100")
+
+
 async def test_a_credential_that_cannot_be_saved_releases_the_number(seams):
     numbers, created, charge, enc = seams
     created.return_value = (None, "Credential limit reached for the free plan")

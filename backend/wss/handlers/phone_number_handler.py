@@ -32,6 +32,19 @@ CHARGE_TYPE = "phone_number"
 COUNTRIES = ("US",)
 # The provider matches a pattern of digits, letters (keypad-mapped) and * for any digit.
 CONTAINS_PATTERN = re.compile(r"^[0-9A-Z*]{1,10}$")
+# US toll-free prefixes; everything else a local search returns is a local number.
+TOLL_FREE_PREFIXES = ("800", "833", "844", "855", "866", "877", "888")
+
+
+def is_local_number(e164: str) -> bool:
+    """A ten-digit North American number outside the toll-free prefixes —
+    the only kind the local search returns and the only kind sold here."""
+    digits = e164.lstrip("+")
+    if len(digits) != 11 or not digits.startswith("1") or not digits.isdigit():
+        return False
+    area = digits[1:4]
+    # NANP area codes never start with 0 or 1; toll-free codes are 8xx pairs.
+    return area[0] not in "01" and area not in TOLL_FREE_PREFIXES
 
 
 class PhoneNumberError(ValueError):
@@ -105,10 +118,12 @@ class PhoneNumberHandler(DatabasePoolMixin, SocketIOHandler):
 
 async def buy_number_for_user(pool, *, user_id: str, user_tier: str, e164: str,
                               credential_name: Optional[str], encryption) -> Dict[str, str]:
-    """Buy at the provider, then mint the credential and its recurring charge
-    in ONE transaction; a credential that cannot be written releases the
-    number again, so nothing is ever billed to nobody. The first month must
-    be affordable before anything is bought."""
+    """Buy at the provider, then mint the credential and charge its first
+    month in ONE transaction (the provider bills a month in advance, and so
+    do we: the charge renews on each anniversary while the number is kept);
+    a credential that cannot be written releases the number again, so nothing
+    is ever billed to nobody. The first month must be affordable before
+    anything is bought."""
     numbers = capability(PHONE_NUMBERS)
     if numbers is None:
         raise PhoneNumberError("Phone numbers cannot be bought on this instance.", "unavailable")
@@ -116,9 +131,13 @@ async def buy_number_for_user(pool, *, user_id: str, user_tier: str, e164: str,
     remaining = await usage_tracker.fetch_credit_remaining(billing_user)
     if remaining is not None and remaining < PHONE_NUMBER_MONTHLY_CREDITS:
         raise PhoneNumberError(
-            f"Buying a number needs {PHONE_NUMBER_MONTHLY_CREDITS} credits available for its first month; "
+            f"Buying a number charges {PHONE_NUMBER_MONTHLY_CREDITS} credits for its first month; "
             f"you have {remaining:.1f}.", "credits",
         )
+    if not is_local_number(e164):
+        # Only the provider's local numbers are offered (the search only asks
+        # for them); toll-free and short codes cost several times more.
+        raise PhoneNumberError("Only local US numbers can be bought.", "number")
     bought = await numbers.buy(e164, label=f"NoClick {user_id[:8]}")
     blob = {"credential_type": PHONE_NUMBER_CREDENTIAL_TYPE, "phone_number": bought["phone_number"],
             "number_sid": bought["number_sid"]}
