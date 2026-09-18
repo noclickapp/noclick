@@ -81,7 +81,8 @@ class PhoneNumberHandler(DatabasePoolMixin, SocketIOHandler):
             require_feature(FEATURE, email=user_data.get("email"))
             if capability(PHONE_NUMBERS) is None:
                 raise PhoneNumberError("Phone numbers cannot be bought on this instance.", "unavailable")
-            data = await op({"user_id": user_id, "user_tier": user_data.get("subscription_tier", "free")})
+            data = await op({"user_id": user_id, "user_tier": user_data.get("subscription_tier", "free"),
+                             "pool": await self.get_pool()})
             await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data=data))
         except FeatureNotAvailable as e:
             await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data={"kind": "gated"}, error=str(e)))
@@ -102,7 +103,7 @@ class PhoneNumberHandler(DatabasePoolMixin, SocketIOHandler):
             contains = (request.contains or "").strip().upper().replace(" ", "").replace("-", "") or None
             if contains and not CONTAINS_PATTERN.fullmatch(contains):
                 raise PhoneNumberError("A pattern is up to 10 digits, letters or * wildcards.", "pattern")
-            if not await number_tier_ok(await self.get_pool(), actor["user_id"], actor["user_tier"]):
+            if not await number_tier_ok(actor["pool"], actor["user_id"], actor["user_tier"]):
                 raise PhoneNumberError("Phone numbers are available on the Plus and Pro plans.", "plan")
             numbers = await capability(PHONE_NUMBERS).search(country, area_code, request.limit, contains=contains)
             return PhoneNumberSearchResponse(numbers=numbers, monthly_credits=PHONE_NUMBER_MONTHLY_CREDITS).model_dump()
@@ -114,7 +115,7 @@ class PhoneNumberHandler(DatabasePoolMixin, SocketIOHandler):
             if e164 is None:
                 raise PhoneNumberError("That is not a valid phone number.", "number")
             result = await buy_number_for_user(
-                await self.get_pool(), user_id=actor["user_id"], user_tier=actor["user_tier"],
+                actor["pool"], user_id=actor["user_id"], user_tier=actor["user_tier"],
                 e164=e164, credential_name=request.credential_name, encryption=self.encryption,
             )
             return PhoneNumberBuyResponse(**result).model_dump()

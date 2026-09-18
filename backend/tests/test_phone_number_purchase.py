@@ -105,6 +105,7 @@ async def test_handler_gates_on_the_rollout_then_the_provider(seams, monkeypatch
     numbers = seams[0]
     sent = []
     monkeypatch.setattr(h, "send_event", AsyncMock(side_effect=lambda sio, sid, ev: sent.append(ev)))
+    monkeypatch.setattr(h.PhoneNumberHandler, "get_pool", AsyncMock(return_value=MockNativePool()))  # CI has no live pool
     monkeypatch.setattr(feature_gates, "is_internal_user", lambda email: email.endswith("@noclick.com"))
     handler = h.PhoneNumberHandler(FakeSio({"user_id": USER, "user_data": {"email": "someone@example.com"}}))
     await handler.handle_search("sid", PhoneNumberSearchRequest(request_id="r1", country="US"))
