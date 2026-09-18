@@ -36,10 +36,11 @@ def test_registered_as_a_trigger_and_a_tool_provider_with_a_purchase_credential(
     assert cred["properties"]["number_sid"]["ui:hidden"] is True
 
 
-async def test_routing_points_the_number_at_the_platform_and_needs_a_provider():
+async def test_routing_points_the_number_at_the_platform_and_needs_a_provider(monkeypatch):
     numbers = MagicMock()
     numbers.route = AsyncMock()
     numbers.unroute = AsyncMock()
+    monkeypatch.setattr("nodes.phone_node._number_holder", AsyncMock(return_value=None))
     with pytest.raises(RuntimeError, match="cannot route"):
         await PhoneNode._register_external_webhook(webhook_url="https://x", credential=CRED, config={"webhook_id": "wh1"}, node_id="n1")
     provide(PHONE_NUMBERS, numbers)
@@ -92,3 +93,23 @@ async def test_get_number_is_the_credentials_proof():
     provide(PHONE_NUMBERS, numbers)
     assert (await node.execute({}))["active"] is True
     assert PhoneNode.connection_evidence.identity_operation == "get_number"
+
+
+async def test_a_number_rings_one_agent(monkeypatch):
+    """A second on_call node on the same number is refused with the holder's
+    name — routing would otherwise silently steal every call."""
+    from tests.mocks.mock_asyncpg import MockNativePool
+    from nodes.phone_node import _number_holder
+
+    numbers = MagicMock(); numbers.route = AsyncMock()
+    provide(PHONE_NUMBERS, numbers)
+    monkeypatch.setattr("nodes.phone_node._number_holder", AsyncMock(return_value='"Support line"'))
+    with pytest.raises(RuntimeError, match='already answers calls for "Support line"'):
+        await PhoneNode._register_external_webhook(webhook_url="https://x", credential=CRED, config={"webhook_id": "wh2"}, node_id="n2")
+    numbers.route.assert_not_awaited()
+
+    # The lookup excludes the node's own row, so a re-registration is not its own conflict.
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: MockNativePool({"FROM webhooks w": {"workflow_id": "wf1", "name": "Support line"}}))
+    assert await _number_holder("PN123", except_webhook_id="wh2") == '"Support line"'
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: MockNativePool({}))
+    assert await _number_holder("PN123", except_webhook_id="wh2") is None

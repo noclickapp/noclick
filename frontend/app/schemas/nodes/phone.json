@@ -51,7 +51,7 @@
       ],
       "title": "Phone Number",
       "type": "object",
-      "x-credential-instructions": "Buy a phone number for this agent. It is billed 15 credits a month, charged hourly for as long as you keep it (Plus and Pro plans); delete the credential to release it.",
+      "x-credential-instructions": "Buy a phone number for this agent, 15 credits a month (Plus and Pro plans).",
       "x-credential-type": "purchase"
     },
     "PhoneOnCallConfig": {

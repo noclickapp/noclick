@@ -35,8 +35,7 @@ class PhoneNumberCredential(BaseModel):
     model_config = ConfigDict(title="Phone Number", json_schema_extra={
         "x-credential-type": "purchase",
         "x-credential-instructions": (
-            f"Buy a phone number for this agent. It is billed {PHONE_NUMBER_MONTHLY_CREDITS} credits a month, "
-            "charged hourly for as long as you keep it (Plus and Pro plans); delete the credential to release it."
+            f"Buy a phone number for this agent, {PHONE_NUMBER_MONTHLY_CREDITS} credits a month (Plus and Pro plans)."
         ),
     })
 
@@ -113,6 +112,27 @@ class PhoneNodeConfig(NodeConfig[PhoneConfig, PhoneNumberCredential]):
     pass
 
 
+async def _number_holder(number_sid: str, *, except_webhook_id: str) -> Optional[str]:
+    """The workflow whose active on_call trigger already routes this number
+    (its name, for the message), or None. The webhook row's
+    external_webhook_id IS the number's provider id."""
+    from utils.database_pool import get_native_pool
+
+    row = await get_native_pool().fetchrow(
+        """
+        SELECT w.workflow_id, wf.name
+        FROM webhooks w LEFT JOIN workflows wf ON wf.id = w.workflow_id
+        WHERE w.external_webhook_id = $1 AND w.registered_operation = 'on_call'
+          AND w.is_active AND w.id::text <> $2
+        LIMIT 1
+        """,
+        number_sid, except_webhook_id,
+    )
+    if row is None:
+        return None
+    return f'"{row["name"]}"' if row["name"] else f"workflow {row['workflow_id']}"
+
+
 class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """A phone number the workflow owns: calls in to the wired agent, calls out for it."""
 
@@ -143,6 +163,15 @@ class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
         webhook_id = str(config.get("webhook_id") or "")
         if not webhook_id:
             raise RuntimeError("The call receiver is not provisioned yet")
+        # One number rings one agent. Routing rewrites the provider's voice
+        # webhook, so a second on_call node on the same number used to take
+        # every call silently while the first still read "registered".
+        holder = await _number_holder(credential["number_sid"], except_webhook_id=webhook_id)
+        if holder is not None:
+            raise RuntimeError(
+                f"{credential.get('phone_number') or 'This number'} already answers calls for "
+                f"{holder}. A number can ring one agent; buy another number for this one."
+            )
         await numbers.route(credential["number_sid"], webhook_id=webhook_id)
         return {"external_webhook_id": credential["number_sid"]}
 

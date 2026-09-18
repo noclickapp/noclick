@@ -12,6 +12,7 @@ import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Skeleton } from '~/components/ui/skeleton';
+import { UpgradePopup } from '~/components/utils/UpgradePopup';
 
 interface AvailableNumber {
     phone_number: string;
@@ -78,6 +79,7 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
     const [searching, setSearching] = useState(false);
     const [buying, setBuying] = useState<string | null>(null);
     const [error, setError] = useState<{ text: string; kind?: string } | null>(null);
+    const [upgradeOpen, setUpgradeOpen] = useState(false);
     const sendRef = useRef(sendEvent ?? sendEventAsync);
     useEffect(() => { sendRef.current = sendEvent ?? sendEventAsync; }, [sendEvent]);
 
@@ -95,6 +97,7 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
                 limit,
             });
             if (reply.error) {
+                if (reply.kind === 'plan') { setUpgradeOpen(true); return; }
                 setError({ text: failureText(reply, 'Could not search for numbers.'), kind: reply.kind });
                 return;
             }
@@ -117,6 +120,7 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
                 phone_number: phoneNumber,
             });
             if (reply.error || !reply.credential_id) {
+                if (reply.kind === 'plan') { setUpgradeOpen(true); return; }
                 setError({ text: failureText(reply, 'Could not buy that number.'), kind: reply.kind });
                 return;
             }
@@ -134,22 +138,32 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
 
     return (
         <div className="space-y-3">
+            <UpgradePopup
+                isOpen={upgradeOpen}
+                onOpenChange={setUpgradeOpen}
+                title="Phone numbers are on Plus and Pro"
+                description={`A number your agent answers and calls from, ${monthlyCredits} credits a month. Upgrade to buy one.`}
+            />
             <p className="text-xs text-muted-foreground">
-                Buy a US number for this agent — {monthlyCredits} credits a month, charged hourly while you keep it
-                (Plus and Pro plans). Deleting the credential releases it.
+                Buy a US number for this agent, {monthlyCredits} credits a month. Delete the credential to release it.
             </p>
-            <div className="flex items-center gap-2">
-                <Input
-                    value={text}
-                    onChange={(e) => setText(e.target.value.toUpperCase().replace(/[^0-9A-Z*]/g, '').slice(0, 10))}
-                    onKeyDown={(e) => { if (e.key === 'Enter') void search(); }}
-                    placeholder="Area code or digits, e.g. 415 or NOCLICK"
-                    aria-label="Digits or letters the number should contain"
-                    className="h-8 w-64 text-xs"
-                    disabled={busy}
-                />
-                <Button type="button" size="sm" variant="outline" onClick={() => void search()} disabled={busy}>
-                    {searching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
+            <div className="flex max-w-xl items-center gap-2">
+                <div className="relative min-w-0 flex-1">
+                    <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                        value={text}
+                        onChange={(e) => setText(e.target.value.toUpperCase().replace(/[^0-9A-Z*]/g, '').slice(0, 10))}
+                        onKeyDown={(e) => { if (e.key === 'Enter') void search(); }}
+                        placeholder="Area code or digits, e.g. 415 or NOCLICK"
+                        aria-label="Digits or letters the number should contain"
+                        // The panel's wash, not the page ground: bg-background is pure
+                        // black in dark mode and read as a slab on the card.
+                        className="h-8 border-border bg-foreground/[0.04] pl-8 text-xs shadow-none placeholder:text-xs focus-visible:border-foreground/30 focus-visible:ring-0 focus-visible:ring-offset-0 md:text-xs"
+                        disabled={busy}
+                    />
+                </div>
+                <Button type="button" size="sm" variant="secondary" className="h-8 shrink-0 text-xs font-medium" onClick={() => void search()} disabled={busy}>
+                    {searching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
                     Find numbers
                 </Button>
             </div>
