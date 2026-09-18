@@ -140,6 +140,7 @@ import mailchimpSchema from '~/schemas/nodes/mailchimp.json';
 import typeformSchema from '~/schemas/nodes/typeform.json';
 import supabaseSchema from '~/schemas/nodes/supabase.json';
 import twilioSchema from '~/schemas/nodes/twilio.json';
+import phoneSchema from '~/schemas/nodes/phone.json';
 import whatsappSchema from '~/schemas/nodes/whatsapp.json';
 import elevenlabsSchema from '~/schemas/nodes/elevenlabs.json';
 import dropboxSchema from '~/schemas/nodes/dropbox.json';
@@ -300,6 +301,7 @@ const _NODE_SCHEMAS_RAW: Record<string, any> = {
     'automation-typeform': typeformSchema,
     'automation-supabase': supabaseSchema,
     'automation-twilio': twilioSchema,
+    'automation-phone': phoneSchema,
     'automation-whatsapp': whatsappSchema,
     'automation-elevenlabs': elevenlabsSchema,
     'automation-dropbox': dropboxSchema,
@@ -831,6 +833,7 @@ function getProviderLabel(providerKey: string): string {
         'linkedin': 'LinkedIn Account',
         'reddit': 'Reddit Account',
         'telegram': 'Telegram Bot',
+        'phone': 'Phone Number',
         'instagram': 'Instagram Account',
         'instantly': 'Instantly Account',
         'tiktok': 'TikTok Account',
