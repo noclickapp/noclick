@@ -6,11 +6,11 @@ import { Link } from 'react-router';
 import { AlertCircle, Loader2, Search } from 'lucide-react';
 import { sendEventAsync } from '~/lib/socket-sender';
 import type { OAuthExchange } from '~/hooks/oauth/OAuthExchangeContext';
-import { formatPhoneForDisplay, patternSpan } from '~/lib/phoneFormat';
+import { NUMBER_CELLS, formatPhoneForDisplay, patternSpan, searchQueryFromCells } from '~/lib/phoneFormat';
+import { NumberPatternInput } from '~/components/credential/NumberPatternInput';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
 import { Skeleton } from '~/components/ui/skeleton';
 
 interface AvailableNumber {
@@ -63,15 +63,14 @@ function NumberLabel({ e164, pattern }: { e164: string; pattern: string }) {
 }
 
 interface PhoneNumberPurchaseFormProps {
-    onCredentialCreated: (credentialId: string) => void;
+    onCredentialCreated: (credentialId: string, phoneNumber: string) => void;
     // Transport override (default: socket), the same seam the QR form exposes.
     sendEvent?: OAuthExchange;
 }
 
 export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: PhoneNumberPurchaseFormProps) => {
-    const [areaCode, setAreaCode] = useState('');
-    const [pattern, setPattern] = useState('');
-    const [searched, setSearched] = useState<{ areaCode: string; pattern: string; limit: number } | null>(null);
+    const [cells, setCells] = useState<string[]>(() => Array.from({ length: NUMBER_CELLS }, () => ''));
+    const [searched, setSearched] = useState<{ areaCode: string | null; pattern: string | null; limit: number } | null>(null);
     const [numbers, setNumbers] = useState<AvailableNumber[] | null>(null);
     const [monthlyCredits, setMonthlyCredits] = useState(DEFAULT_MONTHLY_CREDITS);
     const [searching, setSearching] = useState(false);
@@ -83,13 +82,14 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
     const search = async (limit = FIRST_PAGE) => {
         setSearching(true);
         setError(null);
-        const query = { areaCode: areaCode.trim(), pattern: pattern.trim(), limit };
+        const wanted = searchQueryFromCells(cells);
+        const query = { areaCode: wanted.area_code, pattern: wanted.contains, limit };
         try {
             const reply: Reply<{ numbers: AvailableNumber[]; monthly_credits: number }> = await sendRef.current({
                 event_name: 'phone_number:search',
                 country: 'US',
-                area_code: query.areaCode || null,
-                contains: query.pattern || null,
+                area_code: query.areaCode,
+                contains: query.pattern,
                 limit,
             });
             if (reply.error) {
@@ -119,7 +119,7 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
                 return;
             }
             invalidateCredentialsCache();
-            onCredentialCreated(reply.credential_id);
+            onCredentialCreated(reply.credential_id, reply.phone_number ?? phoneNumber);
         } catch (e) {
             setError({ text: e instanceof Error ? e.message : 'Could not buy that number.' });
         } finally {
@@ -127,7 +127,6 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
         }
     };
 
-    const onEnter = (e: React.KeyboardEvent) => { if (e.key === 'Enter') void search(); };
     const canShowMore = numbers !== null && searched !== null && searched.limit < MORE_PAGE && numbers.length >= searched.limit;
     const busy = searching || !!buying;
 
@@ -138,31 +137,21 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
                 credential releases it.
             </p>
             <div className="flex flex-wrap items-center gap-2">
-                <Input
-                    value={areaCode}
-                    onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, '').slice(0, 3))}
-                    placeholder="Area code"
-                    aria-label="Area code"
-                    inputMode="numeric"
-                    className="h-8 w-28 text-xs"
-                    onKeyDown={onEnter}
-                />
-                <Input
-                    value={pattern}
-                    onChange={(e) => setPattern(e.target.value.toUpperCase().replace(/[^0-9A-Z*]/g, '').slice(0, 10))}
-                    placeholder="Contains, e.g. 555**** or NOCLICK"
-                    aria-label="Digits or letters the number should contain"
-                    className="h-8 w-60 text-xs uppercase tracking-wide"
-                    onKeyDown={onEnter}
-                />
+                <NumberPatternInput cells={cells} onChange={setCells} onSubmit={() => void search()} disabled={busy} />
                 <Button type="button" size="sm" variant="outline" onClick={() => void search()} disabled={busy}>
                     {searching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
                     Find numbers
                 </Button>
+                {cells.some(Boolean) && (
+                    <Button type="button" size="sm" variant="ghost" className="h-8 px-2 text-xs" onClick={() => setCells(Array.from({ length: NUMBER_CELLS }, () => ''))} disabled={busy}>
+                        Clear
+                    </Button>
+                )}
             </div>
             <p className="text-[11px] text-muted-foreground">
-                Letters stand for their keypad digits and * for any digit, so <span className="font-mono">NOCLICK</span> finds
-                a number spelling it and <span className="font-mono">*00</span> one ending in two zeros.
+                Type the digits or letters you want where you want them; blank spots match anything. Just an area
+                code finds numbers in that area; letters spell on the keypad, so <span className="font-mono">NOCLICK</span> works
+                too.
             </p>
             {error && (
                 <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/10 p-2 text-xs text-destructive">
@@ -185,9 +174,9 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
             )}
             {numbers && numbers.length === 0 && !error && (
                 <div className="rounded-md border border-dashed border-border p-3 text-xs text-muted-foreground">
-                    No numbers match{searched?.pattern ? <> the pattern <span className="font-mono">{searched.pattern}</span></> : ''}
-                    {searched?.areaCode ? <> in area code {searched.areaCode}</> : ''}. Try a shorter pattern, more
-                    wildcards, or another area code.
+                    No numbers match{searched?.pattern ? <> the pattern <span className="font-mono">{searched.pattern.replace(/\*/g, '·')}</span></> : ''}
+                    {searched?.areaCode ? <> in area code {searched.areaCode}</> : ''}. Leave more spots blank or try
+                    another area code.
                 </div>
             )}
             {numbers && numbers.length > 0 && (

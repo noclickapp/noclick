@@ -32,3 +32,19 @@ export function patternSpan(e164: string, pattern: string): [number, number] | n
     const offset = digits.length - national.length;
     return [offset + hit.index, offset + hit.index + hit[0].length];
 }
+
+export const NUMBER_CELLS = 10;
+
+/** What a ten-cell number mask asks the provider for: blank cells match
+ *  anything, so only the area code filled is an area-code search, and any
+ *  other shape is a positional pattern (ten characters anchor it). */
+export function searchQueryFromCells(cells: string[]): { area_code: string | null; contains: string | null } {
+    const pattern = Array.from({ length: NUMBER_CELLS }, (_, i) => (cells[i] || '*').toUpperCase());
+    if (pattern.every((c) => c === '*')) return { area_code: null, contains: null };
+    const area = pattern.slice(0, 3);
+    const rest = pattern.slice(3);
+    if (area.every((c) => c !== '*' && /\d/.test(c)) && rest.every((c) => c === '*')) {
+        return { area_code: area.join(''), contains: null };
+    }
+    return { area_code: null, contains: pattern.join('') };
+}
