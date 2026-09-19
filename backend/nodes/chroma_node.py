@@ -1146,14 +1146,14 @@ class ChromaNode(WorkflowNode):
         context: Optional[Dict[str, Any]] = None,
         page_token: Optional[str] = None,
         search: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> List[Dict[str, Any]]:
         """Populate the collection dropdown."""
         if field_name != "collection":
-            return {"options": []}
+            return []
         try:
             credential = ChromaCredential(**credential_data)
         except Exception:
-            return {"options": []}
+            return []
         try:
             async with guarded_async_client(timeout=20.0) as client:
                 resp = await client.get(
@@ -1161,10 +1161,10 @@ class ChromaNode(WorkflowNode):
                 )
         except httpx.HTTPError as e:
             logger.warning(f"[ChromaNode] Failed to list collections: {e}")
-            return {"options": []}
+            return []
         if resp.status_code >= 400:
             logger.warning(f"[ChromaNode] List collections returned {resp.status_code}: {resp.text}")
-            return {"options": []}
+            return []
         collections = resp.json() or []
         options = []
         for col in collections:
@@ -1174,7 +1174,7 @@ class ChromaNode(WorkflowNode):
             if search and search.lower() not in name.lower():
                 continue
             options.append({"value": name, "label": name})
-        return {"options": options}
+        return options
 
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         start_time = time.time()
