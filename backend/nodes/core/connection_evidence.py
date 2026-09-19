@@ -54,6 +54,7 @@ unverified nodes.
 from __future__ import annotations
 
 import logging
+import re
 from dataclasses import dataclass, field as dc_field
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
@@ -181,6 +182,10 @@ class EvidenceResult:
     #: Verbatim provider error when reachable is False. Never paraphrased: the
     #: provider's own words are what makes a failure diagnosable.
     error: Optional[str] = None
+    #: What the refusal usually means and what to check, when the shape of the
+    #: error says so (a web page instead of JSON = wrong host). Beside the
+    #: provider's words, never instead of them.
+    hint: Optional[str] = None
 
     @property
     def is_empty_but_working(self) -> bool:
@@ -221,9 +226,39 @@ def _label_from(row: Any, keys: Sequence[str]) -> Optional[str]:
     return None
 
 
-def _rows_from_options(payload: Dict[str, Any]) -> List[Any]:
-    """Rows out of a ``load_field_options`` payload."""
-    opts = payload.get("options")
+def _identity_label(payload: Any, keys: Sequence[str], depth: int = 3) -> Optional[str]:
+    """The account's name out of an identity result, wherever the provider nests it.
+
+    Slack answers ``{"team": "Acme"}``; Tableau answers
+    ``{"session": {"site": {"name": "Acme"}, "user": {"name": "Priya"}}}``. Walk
+    breadth-first so a top-level match wins over a nested one, and stop at a
+    few levels so a deep envelope cannot turn into a scan.
+    """
+    level: List[Any] = [payload]
+    for _ in range(depth):
+        nxt: List[Any] = []
+        for node in level:
+            if not isinstance(node, dict):
+                continue
+            label = _label_from(node, keys)
+            if label:
+                return label
+            nxt.extend(v for v in node.values() if isinstance(v, dict))
+        if not nxt:
+            return None
+        level = nxt
+    return None
+
+
+def _rows_from_options(payload: Any) -> List[Any]:
+    """Rows out of a ``load_field_options`` payload.
+
+    Loaders answer either ``{"options": [...]}`` or, in the older signature, a
+    bare list; the dropdown handler accepts both, and so does the proof.
+    """
+    if isinstance(payload, list):
+        return payload
+    opts = payload.get("options") if isinstance(payload, dict) else None
     return opts if isinstance(opts, list) else []
 
 
@@ -247,7 +282,66 @@ def _raise_if_error_envelope(payload: Any) -> None:
     if not (failed and err):
         return
     code = payload.get("status_code")
-    raise _ProviderRefused(f"{err}{f' (HTTP {code})' if code else ''}")
+    raise _ProviderRefused(f"{redact_secrets(summarize_provider_text(str(err), code))}{f' (HTTP {code})' if code else ''}")
+
+
+_HTML_MARKERS = ("<html", "<!doctype", "<body", "http status ")
+_SECRET_PARAM = re.compile(r"([?&](?:api_?key|key|token|access_token|secret|password|auth)=)[^&\s'\"]+", re.I)
+
+
+def redact_secrets(text: str) -> str:
+    """Provider errors sometimes quote the failing URL — key included (httpx:
+    ``Client error '403 Forbidden' for url 'https://…?key=abc'``). The verdict
+    is shown on a screen someone may be sharing, so the value goes."""
+    return _SECRET_PARAM.sub(r"\1***", text or "")
+
+
+def looks_like_web_page(text: str) -> bool:
+    low = (text or "").lstrip().lower()[:400]
+    return any(m in low for m in _HTML_MARKERS)
+
+
+def summarize_provider_text(text: str, status_code: Any = None) -> str:
+    """The provider's words, unless those words are a whole web page.
+
+    A sign-in page or an admin console answers an API call with HTML; showing
+    300 characters of markup tells the user nothing and hides the real message —
+    the URL is not an API host. Everything else stays verbatim.
+    """
+    if not looks_like_web_page(text):
+        return text
+    code = f"HTTP {status_code} " if status_code else ""
+    return (
+        f"The server answered {code}with a web page instead of an API response"
+    )
+
+
+def hint_for_rejection(error_text: Optional[str]) -> Optional[str]:
+    """What a refusal usually means, from the shape of the error alone.
+
+    Provider-agnostic on purpose: a node that knows more (a console host that
+    is never the API host) says so in its own error text, and this line sits
+    under it. None when the text carries no recognisable shape — a hint that
+    guesses is worse than no hint.
+    """
+    low = (error_text or "").lower()
+    if not low:
+        return None
+    if looks_like_web_page(low) or "web page instead of an api response" in low:
+        return (
+            "That address serves a web page, not an API. It is probably a sign-in "
+            "page or admin console — check the server URL."
+        )
+    if "404" in low or "not found" in low or "no such host" in low or "name or service not known" in low:
+        return "Nothing answered at that address. Check the host or server URL for typos."
+    if any(m in low for m in ("401", "invalid", "unauthorized", "unauthenticated", "not_authed", "authentication failed", "expired", "revoked")):
+        return (
+            "The key or token was rejected. Copy it again from the provider — it may "
+            "be truncated, expired or revoked."
+        )
+    if any(m in low for m in ("403", "forbidden", "permission", "missing_scope", "insufficient")):
+        return "The credential was recognised but refused. Check its permissions or scopes."
+    return None
 
 
 def _rows_from_operation(payload: Any) -> List[Any]:
@@ -276,14 +370,24 @@ def _rows_from_operation(payload: Any) -> List[Any]:
     # Nodes name their collection after the thing (`emails`, `zones`, `boards`),
     # so a fixed key list is endless whack-a-mole — Gmail returned its rows under
     # `emails` and the probe reported "connected, nothing to show". Fall back to
-    # the largest list of rows anywhere in the envelope, which is what any of
-    # those names points at anyway.
+    # the largest list of rows anywhere in the envelope (a few levels deep:
+    # Tableau wraps as `data.workbooks.workbook`), which is what any of those
+    # names points at anyway.
     best: List[Any] = []
-    for v in payload.values():
-        if not isinstance(v, list) or len(v) <= len(best):
-            continue
-        if all(isinstance(x, (dict, str)) for x in v):
-            best = v
+    level: List[Dict[str, Any]] = [payload]
+    for _ in range(3):
+        nxt: List[Dict[str, Any]] = []
+        for node in level:
+            for v in node.values():
+                if isinstance(v, dict):
+                    nxt.append(v)
+                elif isinstance(v, list) and len(v) > len(best) and all(
+                    isinstance(x, (dict, str)) for x in v
+                ):
+                    best = v
+        if not nxt:
+            break
+        level = nxt
     return best
 
 
@@ -339,11 +443,12 @@ def verify_operation_scopes(
 async def collect_evidence(
     *,
     node_type: str,
-    credential_id: str,
+    credential_id: Optional[str] = None,
     user_id: str,
     pool=None,
     organization_id: Optional[str] = None,
     workflow_id: Optional[str] = None,
+    credential_data: Optional[Dict[str, Any]] = None,
 ) -> EvidenceResult:
     """Ask a provider to prove itself, and shape the answer for a human.
 
@@ -351,7 +456,13 @@ async def collect_evidence(
     returned a shape we did not expect. Anything unexpected degrades to
     ``reachable=None`` ("cannot judge"), which the UI renders as unverified
     rather than broken.
+
+    Takes either a stored ``credential_id`` or the raw ``credential_data`` of a
+    credential that is not saved yet — the connect flow proves a typed-in key
+    BEFORE storing it, so a dead key never becomes a row.
     """
+    if credential_id is None and credential_data is None:
+        raise ValueError("collect_evidence needs a credential_id or credential_data")
     import asyncio
 
     from nodes.core.registry import NODE_REGISTRY
@@ -371,34 +482,38 @@ async def collect_evidence(
         #    nouns the user recognises — so the dropdown and the proof are one
         #    request rather than two.
         if spec.field and hasattr(node_cls, "load_field_options"):
-            from utils.credentials import resolve_credential_with_owner_fallback
+            loaded = credential_data
+            if loaded is None:
+                from utils.credentials import resolve_credential_with_owner_fallback
 
-            credential_data = await resolve_credential_with_owner_fallback(
-                credential_id,
-                user_id,
-                pool,
-                org_id=organization_id,
-                workflow_id=workflow_id,
-            )
-            if credential_data is None:
-                raise ValueError(f"credential {credential_id} is unresolvable")
-            # Freshen at load, exactly as the dropdown path does. Without this the
-            # probe can hit the provider with an expired access token and report
-            # a perfectly healthy credential as REJECTED — telling someone to
-            # reconnect a working account, the one outcome worse than saying
-            # nothing. (Caught trashing a test file: the same credential 401'd
-            # here and answered fine after a refresh.)
-            from nodes.core.oauth_audit import caller_path_scope
-
-            with caller_path_scope("connection_evidence"):
-                credential_data = await node_cls.freshen_credential(
-                    credential_data,
-                    pool=pool,
-                    user_id=user_id,
-                    credential_id=credential_id,
+                loaded = await resolve_credential_with_owner_fallback(
+                    credential_id,
+                    user_id,
+                    pool,
+                    org_id=organization_id,
+                    workflow_id=workflow_id,
                 )
+                if loaded is None:
+                    raise ValueError(f"credential {credential_id} is unresolvable")
+                # Freshen at load, exactly as the dropdown path does. Without this
+                # the probe can hit the provider with an expired access token and
+                # report a perfectly healthy credential as REJECTED — telling
+                # someone to reconnect a working account, the one outcome worse
+                # than saying nothing. (Caught trashing a test file: the same
+                # credential 401'd here and answered fine after a refresh.) An
+                # unsaved blob has no row to persist a rotation into, so it is
+                # probed as typed.
+                from nodes.core.oauth_audit import caller_path_scope
+
+                with caller_path_scope("connection_evidence"):
+                    loaded = await node_cls.freshen_credential(
+                        loaded,
+                        pool=pool,
+                        user_id=user_id,
+                        credential_id=credential_id,
+                    )
             payload = await node_cls.load_field_options(
-                field_name=spec.field, credential_data=credential_data
+                field_name=spec.field, credential_data=loaded
             )
             _raise_if_error_envelope(payload)
             rows = _rows_from_options(payload or {})
@@ -420,6 +535,7 @@ async def collect_evidence(
                 user_id=user_id,
                 pool=pool,
                 credential_id=credential_id,
+                credential_data=credential_data,
                 organization_id=organization_id,
                 workflow_id=workflow_id,
             )
@@ -461,6 +577,7 @@ async def collect_evidence(
                 user_id=user_id,
                 pool=pool,
                 credential_id=credential_id,
+                credential_data=credential_data,
                 organization_id=organization_id,
                 workflow_id=workflow_id,
             )
@@ -468,7 +585,7 @@ async def collect_evidence(
             result.reachable = True
             if isinstance(ident, dict):
                 inner = ident.get("data") if isinstance(ident.get("data"), dict) else ident
-                result.account_label = _label_from(inner, spec.identity_keys)
+                result.account_label = _identity_label(inner, spec.identity_keys)
 
     try:
         await asyncio.wait_for(_run(), timeout=EVIDENCE_TIMEOUT_S)
@@ -489,9 +606,11 @@ async def collect_evidence(
         # A provider REJECTING us is a real, reportable verdict; anything else
         # (shape surprises, transport blips) is not something to accuse a user's
         # credential over.
-        text = str(e)
+        text = redact_secrets(str(e))
         if _looks_like_auth_rejection(text):
-            return EvidenceResult(reachable=False, noun=spec.noun, error=text[:300])
+            return EvidenceResult(
+                reachable=False, noun=spec.noun, error=text[:300], hint=hint_for_rejection(text)
+            )
         logger.info("[evidence] %s could not be judged: %s", node_type, text[:200])
         return EvidenceResult(reachable=None, noun=spec.noun)
 

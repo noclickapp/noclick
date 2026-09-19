@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Fri Sep 18 13:43:05  2026
+// Generated at: Sat Sep 19 16:30:28  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -8436,7 +8436,11 @@ export interface CredentialAffectedWorkflow {
   workflow_name: string;
 }
 /**
- * Response for credential:create request
+ * Response for credential:create request.
+ *
+ * A refused save carries WHY per field (``field_errors``) or the provider's
+ * refusal (``message`` + ``hint``); a saved credential carries what the
+ * connect-time probe proved (``verification``, null when no probe ran).
  */
 export interface CredentialCreateResponse {
   /**
@@ -8451,6 +8455,20 @@ export interface CredentialCreateResponse {
    * Success or error message
    */
   message?: string | null;
+  /**
+   * Definitive shape problems keyed by credential field; nothing was saved
+   */
+  field_errors?: {
+    [k: string]: string;
+  };
+  /**
+   * What a provider refusal usually means, when its shape says so
+   */
+  hint?: string | null;
+  /**
+   * What the connect-time probe proved about the saved credential; null when no probe ran
+   */
+  verification?: CredentialTestConnectionResponse | null;
 }
 /**
  * Credential information structure (without decrypted data)
@@ -8530,6 +8548,60 @@ export interface CredentialInfo {
    * How to repair a dead connection (present whenever connection_healthy is False), phrased for the owner: re-scan this same WhatsApp credential, reinstall the Discord bot, …
    */
   connection_hint?: string | null;
+}
+/**
+ * Response for credential:test_connection.
+ */
+export interface CredentialTestConnectionResponse {
+  /**
+   * true = provider answered, false = provider rejected the credential, null = cannot judge
+   */
+  reachable?: boolean | null;
+  /**
+   * Recognisable items from the account
+   */
+  samples?: EvidenceSampleModel[];
+  /**
+   * The user's word for those items ('channels', 'repositories')
+   */
+  noun?: string;
+  /**
+   * How many were found, when more than shown
+   */
+  total?: number | null;
+  /**
+   * The account itself, shown when there is nothing to list
+   */
+  account_label?: string | null;
+  /**
+   * Config field these samples can fill; null when they answer nothing
+   */
+  answers_field?: string | null;
+  /**
+   * 'account' = data unique to this account; 'reachability' = only proves the key is accepted
+   */
+  proves?: string;
+  /**
+   * The provider's verbatim refusal when reachable is false
+   */
+  error?: string | null;
+  /**
+   * What the refusal usually means and what to check, when its shape says so
+   */
+  hint?: string | null;
+}
+/**
+ * One recognisable item from the user's own account.
+ */
+export interface EvidenceSampleModel {
+  /**
+   * What the user sees, in their own vocabulary (e.g. '#sales')
+   */
+  label: string;
+  /**
+   * Settable into `answers_field`; null when the sample cannot answer a config field
+   */
+  value?: string | null;
 }
 /**
  * Response for credential:delete request
@@ -8669,57 +8741,8 @@ export interface CredentialRequestListResponse {
   requests?: CredentialRequestInfo[];
 }
 /**
- * Response for credential:test_connection.
- */
-export interface CredentialTestConnectionResponse {
-  /**
-   * true = provider answered, false = provider rejected the credential, null = cannot judge
-   */
-  reachable?: boolean | null;
-  /**
-   * Recognisable items from the account
-   */
-  samples?: EvidenceSampleModel[];
-  /**
-   * The user's word for those items ('channels', 'repositories')
-   */
-  noun?: string;
-  /**
-   * How many were found, when more than shown
-   */
-  total?: number | null;
-  /**
-   * The account itself, shown when there is nothing to list
-   */
-  account_label?: string | null;
-  /**
-   * Config field these samples can fill; null when they answer nothing
-   */
-  answers_field?: string | null;
-  /**
-   * 'account' = data unique to this account; 'reachability' = only proves the key is accepted
-   */
-  proves?: string;
-  /**
-   * The provider's verbatim refusal when reachable is false
-   */
-  error?: string | null;
-}
-/**
- * One recognisable item from the user's own account.
- */
-export interface EvidenceSampleModel {
-  /**
-   * What the user sees, in their own vocabulary (e.g. '#sales')
-   */
-  label: string;
-  /**
-   * Settable into `answers_field`; null when the sample cannot answer a config field
-   */
-  value?: string | null;
-}
-/**
- * Response for credential:update request
+ * Response for credential:update request. A replaced secret is judged
+ * exactly like a new one (see CredentialCreateResponse).
  */
 export interface CredentialUpdateResponse {
   /**
@@ -8734,6 +8757,20 @@ export interface CredentialUpdateResponse {
    * Success or error message
    */
   message?: string | null;
+  /**
+   * Definitive shape problems keyed by credential field; nothing was saved
+   */
+  field_errors?: {
+    [k: string]: string;
+  };
+  /**
+   * What a provider refusal usually means, when its shape says so
+   */
+  hint?: string | null;
+  /**
+   * What the connect-time probe proved about the replaced secret; null when no probe ran
+   */
+  verification?: CredentialTestConnectionResponse | null;
 }
 /**
  * Information about a single dataset row

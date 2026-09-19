@@ -20,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
 logger = logging.getLogger(__name__)
@@ -2296,6 +2297,13 @@ class TelegramNode(WorkflowNode):
         "Forward a message from #general to #archive with context",
         "Set up a webhook to receive incoming messages from Telegram",
     ]
+
+    # A bot owns nothing listable; getMe names the bot itself.
+    connection_evidence = ConnectionEvidence(
+        identity_operation="get_bot_information",
+        noun="bot",
+        identity_keys=("username", "first_name"),
+    )
 
     @classmethod
     def get_config_model(cls) -> Optional[Union[Type, type]]:

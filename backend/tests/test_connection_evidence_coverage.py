@@ -47,38 +47,27 @@ BACKEND = Path(__file__).resolve().parents[1]
 # which (identity-only) works even for stateless API keys.
 _NO_EVIDENCE_YET: frozenset[str] = frozenset(
     {
-        # --- has a listing operation; needs a zero-argument one picked ---
-        "automation-affinity",
-        "automation-apify",
-        "automation-instantly",
-        "automation-postgres",
-        "automation-reducto",
-        "automation-rss",
-        "automation-voyage",
-        # --- no listing at all; needs an identity/verification probe ---
-        "automation-appsheet",
-        "automation-bluesky",
-        "automation-brandfetch",
-        "automation-fellow",
-        "automation-gohighlevel",
-        "automation-google-maps",
-        "automation-pagespeed",
-        "automation-resend",
-        "automation-semrush",
-        "automation-telegram",
-        # --- unbounded keyspace: wants a summary, not a listing ---
-        "automation-redis",
-        "automation-upstash-vector",
-        # --- every listing is scoped to a project picked after connect, and
-        #     there is no zero-argument read. Unblocked by teaching evidence to
-        #     read project_id off the service-account credential itself. ---
-        "automation-firestore",
+        # --- every read needs an argument the user supplies later ---
+        "automation-appsheet",      # credential is app-scoped; every read wants a table_name, no table listing
+        "automation-google-maps",   # every operation needs a query/address and bills per call
+        "automation-pagespeed",     # every operation needs a page_url
+        # --- reads exist on the provider but not on the node ---
+        "automation-resend",        # only get_email(email_id); GET /domains is not implemented
+        # --- the natural probe is not provably read-only by name ---
+        "automation-upstash-vector",  # `info` is the right probe; renaming it breaks saved configs
+        # --- one node, disjoint credential classes ---
+        "automation-rss",           # five provider credentials with disjoint ops; Direct has no per-account read
+        # --- the probe needs config the credential does not carry ---
+        "automation-firestore",     # every listing is scoped to a project picked after connect
+        "mcp-server",               # the key authenticates a server named in node CONFIG (server_url)
     }
 )
 
 # Nodes with a credential field that is not a provider account: no external
-# service exists to prove anything against.
-_NO_PROVIDER: frozenset[str] = frozenset({"automation-http-request"})
+# service exists to prove anything against (http-request), or the credential is
+# a bundle of harness LLM keys with its own dedicated connect-time probe
+# (`nodes/agent/key_validation.py`, which the connect seam routes agent types to).
+_NO_PROVIDER: frozenset[str] = frozenset({"automation-http-request", "agent"})
 
 # An operation is treated as mutating unless it is provably a read. Fail closed:
 # wrongly skipping a read costs a thinner evidence panel, wrongly running a write
@@ -107,24 +96,20 @@ _READ_ONLY_PREFIXES = (
 def _credentialed_nodes() -> dict[str, type]:
     """Registered nodes whose config model carries a credential.
 
-    Detected from the generated schema rather than a hand-list so a new node is
-    picked up the moment it is registered.
+    Derived from the config model's ``credentials`` annotation — the same
+    resolution the connect seam uses — so a new node is picked up the moment it
+    is registered. The earlier ``x-credential-type`` scan only saw OAuth/QR
+    classes and left every API-key credential (Tableau, Datadog, Twilio, …)
+    outside the ratchet, which is exactly where the 2026-09-18 Tableau
+    Cloud-Manager credential went green without a probe.
     """
-    found: dict[str, type] = {}
-    for node_type, node_cls in NODE_REGISTRY.items():
-        if node_type in _NO_PROVIDER:
-            continue
-        try:
-            schema = node_cls.get_config_schema()
-        except Exception:  # a broken schema fails its own test, not this one
-            continue
-        defs = schema.get("$defs", {}) or {}
-        has_cred = any(
-            isinstance(v, dict) and v.get("x-credential-type") for v in defs.values()
-        )
-        if has_cred:
-            found[node_type] = node_cls
-    return found
+    from nodes.core.credential_connect import credential_classes_for_node
+
+    return {
+        node_type: node_cls
+        for node_type, node_cls in NODE_REGISTRY.items()
+        if node_type not in _NO_PROVIDER and credential_classes_for_node(node_cls)
+    }
 
 
 def _operations(node_cls: type) -> dict[str, list[str]]:

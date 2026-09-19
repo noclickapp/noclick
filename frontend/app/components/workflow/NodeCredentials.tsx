@@ -14,7 +14,9 @@ import { ShareDialog } from '~/components/shared/popups/ShareDialog';
 import { CredentialRequestActions } from './CredentialRequestActions';
 import { CredentialFieldInput, type CredentialField } from '~/components/credential/CredentialFieldInput';
 import { OAuthConnectForm } from '~/components/credential/OAuthConnectForm';
-import { CredentialCreatePanel } from '~/components/credential/CredentialCreatePanel';
+import { CredentialCreatePanel, type CredentialSaveResult } from '~/components/credential/CredentialCreatePanel';
+import { ConnectionVerdict } from '~/components/credential/ConnectionVerdict';
+import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import { CredentialCreateEntryButton } from '~/components/credential/CredentialCreateEntryButton';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { kindFromCredentialType } from '~/lib/credentialMethodKind';
@@ -403,7 +405,13 @@ const getFieldsFromSchema = (credentialSchema: any): CredentialField[] => {
                 type: prop['ui:widget'] === 'password' ? 'password' : 'text',
                 placeholder: prop['ui:placeholder'] || prop.placeholder,
                 required: required.includes(name),
-                description: prop.description,
+                // ui:help is the field's own guidance; the Pydantic description
+                // is the fallback. A field-level x-credential-url says where
+                // this one value comes from.
+                description: prop['ui:help'] || prop.description,
+                helpUrl: typeof prop['x-credential-url'] === 'string' && prop['x-credential-url'].startsWith('http')
+                    ? prop['x-credential-url']
+                    : undefined,
                 default: prop.default,
                 options: Array.isArray(enumValues)
                     ? enumValues.map((v, i) => ({ value: v, label: enumNames?.[i] ?? v }))
@@ -438,9 +446,13 @@ interface NodeCredentialsProps {
     credentialVariables?: { name: string; label: string; credentialTypes: string[] }[];  // Credential variables with type metadata from set-variable nodes
     /** Compact mode: hides credential type title/description and share request option. Used in builder input drawer. */
     compact?: boolean;
+    /** What the connect-time probe proved about a credential just created or
+        re-keyed here (null = nothing could be judged), so hosts like the Setup
+        step can show the verdict without a second provider round-trip. */
+    onVerification?: (credentialId: string, verification: CredentialTestConnectionResponse | null) => void;
 }
 
-export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, onChange, credentialVariables, compact }: NodeCredentialsProps) => {
+export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, onChange, credentialVariables, compact, onVerification }: NodeCredentialsProps) => {
     const [schema, setSchema] = useState<any>(null);
     const [requiredCredentials, setRequiredCredentials] = useState<CredentialRequirement[]>([]);
 
@@ -579,6 +591,15 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
 
     // Edit state
     const [editingCredentialId, setEditingCredentialId] = useState<string | null>(null);
+    // Connect-time verdicts for credentials created or re-keyed in this
+    // session, by id. Older credentials carry theirs in metadata.verified_as.
+    const [verifications, setVerifications] = useState<Record<string, CredentialTestConnectionResponse | null>>({});
+    const [editFieldErrors, setEditFieldErrors] = useState<Record<string, string>>({});
+    const [editHint, setEditHint] = useState<string | null>(null);
+    const recordVerification = useCallback((credentialId: string, verification: CredentialTestConnectionResponse | null | undefined) => {
+        setVerifications(prev => ({ ...prev, [credentialId]: verification ?? null }));
+        onVerification?.(credentialId, verification ?? null);
+    }, [onVerification]);
     const [editCredentialName, setEditCredentialName] = useState('');
     const [editCredentialFormData, setEditCredentialFormData] = useState<Record<string, string>>({});
     const [editLoading, setEditLoading] = useState(false);
@@ -792,7 +813,7 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
     // returned error; plan-limit errors route to the shared banner instead.
     const handleCreateCredential = useCallback(async (
         req: CredentialRequirement, name: string, data: Record<string, string>,
-    ): Promise<string | null> => {
+    ): Promise<CredentialSaveResult> => {
         if (!canCreateCredential(req.credential_type)) return null;
         try {
             const response = await sendEventAsync({
@@ -813,6 +834,7 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
                 // credential so its descriptor travels even though the list refresh
                 // above may not have re-rendered into availableCredentials yet.
                 handleCredentialSelect(req.credential_type, response.credential.id, response.credential);
+                recordVerification(response.credential.id, response.verification);
                 setCreatingCredentialType(null);
                 return null;
             }
@@ -821,7 +843,9 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
                 setPlanLimitError(errMsg);
                 return null;
             }
-            return errMsg;
+            // The connect seam refused: per-field verdicts land under their
+            // inputs, a provider refusal in the banner with its hint.
+            return { error: errMsg, fieldErrors: response?.field_errors ?? null, hint: response?.hint ?? null };
         } catch (err) {
             console.error('[NodeCredentials] Error creating credential:', err);
             const errMsg = err instanceof Error ? err.message : 'Failed to create credential';
@@ -831,7 +855,7 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
             }
             return errMsg;
         }
-    }, [canCreateCredential, loadCredentials, handleCredentialSelect]);
+    }, [canCreateCredential, loadCredentials, handleCredentialSelect, recordVerification]);
 
     const cancelCreate = useCallback(() => {
         setCreatingCredentialType(null);
@@ -848,13 +872,16 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
 
     const handleUpdateCredential = useCallback(async (req: CredentialRequirement) => {
         setEditError(null);
+        setEditFieldErrors({});
+        setEditHint(null);
         setEditLoading(true);
 
         try {
+            const credentialId = editingCredentialId!;
             const response = await sendEventAsync({
                 event_name: 'credential:update',
                 request_id: `update-cred-${Date.now()}`,
-                credential_id: editingCredentialId!,
+                credential_id: credentialId,
                 name: editCredentialName || undefined,
                 credential_data: editCredentialFormData
             });
@@ -863,11 +890,18 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
                 // Invalidate cache and reload credentials
                 invalidateCredentialsCache();
                 await loadCredentials();
+                recordVerification(credentialId, response.verification);
                 setEditingCredentialId(null);
                 setEditCredentialName('');
                 setEditCredentialFormData({});
             } else {
-                setEditError(response?.message || 'Failed to update credential');
+                // A re-keyed secret is judged like a new one: field verdicts
+                // under their inputs, the provider's refusal in the banner.
+                const fieldErrors = response?.field_errors ?? {};
+                setEditFieldErrors(fieldErrors);
+                setEditHint(response?.hint ?? null);
+                const message = response?.error || response?.message || 'Failed to update credential';
+                setEditError(Object.values(fieldErrors).includes(message) ? null : message);
             }
         } catch (err) {
             console.error('[NodeCredentials] Error updating credential:', err);
@@ -875,17 +909,25 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
         } finally {
             setEditLoading(false);
         }
-    }, [editingCredentialId, editCredentialName, editCredentialFormData, loadCredentials]);
+    }, [editingCredentialId, editCredentialName, editCredentialFormData, loadCredentials, recordVerification]);
 
     const cancelEdit = useCallback(() => {
         setEditingCredentialId(null);
         setEditCredentialName('');
         setEditCredentialFormData({});
         setEditError(null);
+        setEditFieldErrors({});
+        setEditHint(null);
     }, []);
 
     const updateEditField = useCallback((fieldName: string, value: string) => {
         setEditCredentialFormData(prev => ({ ...prev, [fieldName]: value }));
+        setEditFieldErrors(prev => {
+            if (!prev[fieldName]) return prev;
+            const rest = { ...prev };
+            delete rest[fieldName];
+            return rest;
+        });
     }, []);
 
     // Open delete confirmation dialog
@@ -1466,6 +1508,27 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
                             ) : (
                                 /* Standard Form-Based Credential Creation */
                                 <>
+                                    {/* What connecting proved. A credential created or re-keyed
+                                        here shows the probe's verdict in full; one connected
+                                        earlier shows the account it was verified as, which the
+                                        row remembers. Attached-and-silent is the state this
+                                        whole layer exists to remove. */}
+                                    {selectedCredential && editingCredentialId !== selectedCredential.id && (
+                                        selectedCredentialId in verifications ? (
+                                            <ConnectionVerdict
+                                                verification={verifications[selectedCredentialId]}
+                                                providerLabel={req.label}
+                                                className="max-w-md"
+                                            />
+                                        ) : selectedCredential.metadata?.verified_as ? (
+                                            <div className="flex items-center gap-1.5" data-testid="credential-verified-as">
+                                                <CheckCircle2 className="h-3 w-3 text-muted-foreground dark:text-zinc-500 flex-shrink-0" />
+                                                <span className="text-[11px] text-muted-foreground dark:text-zinc-500">
+                                                    Verified · {String(selectedCredential.metadata.verified_as)}
+                                                </span>
+                                            </div>
+                                        ) : null
+                                    )}
                                     {creatingCredentialType === req.credential_type ? (
                                         <CredentialCreatePanel
                                             label={req.label}
@@ -1473,6 +1536,7 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
                                             fields={getFieldsFromSchema(req.schema)}
                                             onCancel={cancelCreate}
                                             onSave={(name, data) => handleCreateCredential(req, name, data)}
+                                            instructions={typeof req.schema?.['x-credential-instructions'] === 'string' ? req.schema['x-credential-instructions'] : undefined}
                                         />
                                     ) : (
                                         /* Standalone "Create new" entry point. Always visible (not just when
@@ -1556,15 +1620,17 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
                                                 field={field}
                                                 value={editCredentialFormData[field.name] || ''}
                                                 onChange={(v) => updateEditField(field.name, v)}
+                                                error={editFieldErrors[field.name]}
                                             />
                                         ))}
                                     </>
                                 )}
 
                                 {/* Error Message */}
-                                {editError && (
-                                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                                        <div className="text-xs text-red-500">{editError}</div>
+                                {(editError || editHint) && (
+                                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 space-y-1" role="alert">
+                                        {editError && <div className="text-xs text-red-600 dark:text-red-400 break-words">{editError}</div>}
+                                        {editHint && <div className="text-[11.5px] leading-relaxed text-foreground/70">{editHint}</div>}
                                     </div>
                                 )}
 

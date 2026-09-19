@@ -216,6 +216,23 @@ class CredentialTestConnectionResponse(BaseModel):
     answers_field: Optional[str] = Field(None, description="Config field these samples can fill; null when they answer nothing")
     proves: str = Field("account", description="'account' = data unique to this account; 'reachability' = only proves the key is accepted")
     error: Optional[str] = Field(None, description="The provider's verbatim refusal when reachable is false")
+    hint: Optional[str] = Field(None, description="What the refusal usually means and what to check, when its shape says so")
+
+    @classmethod
+    def from_evidence(cls, result: Any, proves: str = "account") -> "CredentialTestConnectionResponse":
+        """Wire shape of an ``EvidenceResult`` — the one translation, shared by the
+        on-demand test and the connect flow's verification."""
+        return cls(
+            reachable=result.reachable,
+            samples=[EvidenceSampleModel(label=s.label, value=s.value) for s in result.samples],
+            noun=result.noun,
+            total=result.total,
+            account_label=result.account_label,
+            answers_field=result.answers_field,
+            proves=proves,
+            error=result.error,
+            hint=getattr(result, "hint", None),
+        )
 
 
 class RehearsalRunResponse(BaseModel):
@@ -405,17 +422,29 @@ class CredentialGetResponse(BaseModel):
 
 
 class CredentialCreateResponse(BaseModel):
-    """Response for credential:create request"""
+    """Response for credential:create request.
+
+    A refused save carries WHY per field (``field_errors``) or the provider's
+    refusal (``message`` + ``hint``); a saved credential carries what the
+    connect-time probe proved (``verification``, null when no probe ran).
+    """
     success: bool = Field(..., description="Whether creation was successful")
     credential: Optional[CredentialInfo] = Field(None, description="Created credential info")
     message: Optional[str] = Field(None, description="Success or error message")
+    field_errors: Dict[str, str] = Field(default_factory=dict, description="Definitive shape problems keyed by credential field; nothing was saved")
+    hint: Optional[str] = Field(None, description="What a provider refusal usually means, when its shape says so")
+    verification: Optional[CredentialTestConnectionResponse] = Field(None, description="What the connect-time probe proved about the saved credential; null when no probe ran")
 
 
 class CredentialUpdateResponse(BaseModel):
-    """Response for credential:update request"""
+    """Response for credential:update request. A replaced secret is judged
+    exactly like a new one (see CredentialCreateResponse)."""
     success: bool = Field(..., description="Whether update was successful")
     credential: Optional[CredentialInfo] = Field(None, description="Updated credential info")
     message: Optional[str] = Field(None, description="Success or error message")
+    field_errors: Dict[str, str] = Field(default_factory=dict, description="Definitive shape problems keyed by credential field; nothing was saved")
+    hint: Optional[str] = Field(None, description="What a provider refusal usually means, when its shape says so")
+    verification: Optional[CredentialTestConnectionResponse] = Field(None, description="What the connect-time probe proved about the replaced secret; null when no probe ran")
 
 
 class CredentialAffectedWorkflow(BaseModel):

@@ -27,6 +27,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
 logger = logging.getLogger(__name__)
@@ -921,6 +922,12 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "Find pages similar to a competitor's homepage",
         "Trigger a workflow whenever a scheduled Exa monitor finds new results",
     ]
+
+    connection_evidence = ConnectionEvidence(
+        operation="list_websets",
+        noun="websets",
+        label_keys=("title", "externalId", "id"),
+    )
 
     @classmethod
     def get_config_model(cls):

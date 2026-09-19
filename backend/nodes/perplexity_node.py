@@ -26,6 +26,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
 
@@ -734,6 +735,13 @@ async def _perplexity_request(
 
 class PerplexityNode(WorkflowNode):
     """Perplexity AI automation node (search-grounded chat, search, agent, embeddings)."""
+
+    # Same model list for every key, and the loader hides failures: reachability only.
+    connection_evidence = ConnectionEvidence(
+        operation="list_models",
+        noun="models",
+        proves="reachability",
+    )
 
     edit_examples = [
         "Answer a question with up-to-date web citations using Sonar",

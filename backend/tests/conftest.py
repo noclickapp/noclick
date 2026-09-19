@@ -254,6 +254,29 @@ async def setup_users_table_for_folder_tests(postgres_db, request):
 
 
 @pytest.fixture(autouse=True)
+def _no_live_connect_probe(monkeypatch):
+    """Creating a credential proves it against the REAL provider
+    (credential_connect.validate_for_connect → collect_evidence). A test that
+    creates a `slack_bot_token` with a made-up token would otherwise get a live
+    `invalid_auth` and a refused save. Stub the seam to "cannot judge" so
+    creates behave as before; a test about the probe itself monkeypatches
+    `credential_connect._collect_evidence` with its own fake (or the real
+    `connection_evidence.collect_evidence`)."""
+    from nodes.core import credential_connect as cc
+    from nodes.core.connection_evidence import EvidenceResult
+
+    async def _cannot_judge(**kwargs):
+        return EvidenceResult(reachable=None)
+
+    async def _allow(credential_type, credential_data):
+        return None
+
+    monkeypatch.setattr(cc, "_collect_evidence", _cannot_judge)
+    # Same for the harness LLM-key probe (Anthropic/OpenAI/… over the network).
+    monkeypatch.setattr(cc, "_validate_agent_api_key", _allow)
+
+
+@pytest.fixture(autouse=True)
 def _reset_runtime_backend_registries():
     """Reset process-cached runtime registries before each test.
 

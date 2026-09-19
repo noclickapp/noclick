@@ -44,6 +44,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import load_paginated_options
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from utils.webhook_signatures import verify_twilio_signature
@@ -1618,6 +1619,14 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "Create a conversation and add multiple participants",
     ]
 
+    # Operation, not the phone_number_sid picker: the picker needs auth_token,
+    # which API-key credentials lack. SendGrid keys cannot list numbers at all.
+    connection_evidence = ConnectionEvidence(
+        operation="list_owned_phone_numbers",
+        noun="phone numbers",
+        label_keys=("friendly_name", "phone_number", "sid"),
+    )
+
     @classmethod
     def get_config_model(cls):
         return TwilioNodeFullConfig
@@ -1804,6 +1813,13 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     def _get_basic_auth_header(self, credentials) -> str:
         """Generate Basic Authentication header for Twilio APIs"""
+        if isinstance(credentials, SendGridAPIKeyCredential):
+            # A plain error, not an AttributeError: the connect-time probe runs
+            # this path and must read it as "cannot judge", not a broken seam.
+            raise ValueError(
+                "SendGrid API keys only authenticate SendGrid email operations; "
+                "connect a Twilio account or API key for this operation"
+            )
         if isinstance(credentials, TwilioAPIKeyCredential):
             creds_str = f"{credentials.api_key_sid}:{credentials.api_key_secret}"
         else:  # TwilioAccountCredential
