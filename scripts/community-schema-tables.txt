@@ -10,6 +10,7 @@ cas_manifests
 cas_refs
 cas_storage_stats
 conversations
+coordinator_agent_tasks
 credential_refresh_events
 credential_requests
 credentials
