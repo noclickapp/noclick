@@ -35,6 +35,7 @@ import httpx
 
 from nodes.core.agent_events import bullet_lines, prune_empty
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.schedule_registration import CronScheduleTriggerMixin
 from nodes.cron_trigger_node import (
     ScheduleConfig,
@@ -1934,6 +1935,8 @@ class DatadogNode(CronScheduleTriggerMixin, WorkflowNode):
         "Open an incident and mark customers as impacted",
         "Mute a noisy monitor during a maintenance window",
     ]
+
+    connection_evidence = ConnectionEvidence(field="monitor_id", noun="monitors")
 
     @classmethod
     def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:

@@ -27,6 +27,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import bounded_seen_ids
 from nodes.cron_trigger_node import (
     ScheduleConfig,
@@ -1207,6 +1208,14 @@ class SigmaNode(WorkflowNode):
         "Create a team and add members to it",
         "Materialize a workbook element on a schedule",
     ]
+
+    # Operation rather than the workbook_id picker: that loader swallows auth
+    # failures into an empty list, which would read as "connected, no workbooks".
+    connection_evidence = ConnectionEvidence(
+        operation="list_workbooks",
+        noun="workbooks",
+        label_keys=("name", "workbookId"),
+    )
 
     @classmethod
     def get_config_model(cls):

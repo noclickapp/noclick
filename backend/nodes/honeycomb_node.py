@@ -17,6 +17,7 @@ import time
 from nodes.core.agent_events import bullet_lines
 from nodes.core.base import NodeConfig
 from nodes.core.base import WorkflowNode
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from nodes.core.webhook_trigger import WebhookTriggerConfigBase
 from pydantic import BaseModel, ConfigDict, Field
@@ -2277,6 +2278,12 @@ class HoneycombNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "Create an SLO burn alert",
         "When a Honeycomb trigger fires, notify my team",
     ]
+
+    connection_evidence = ConnectionEvidence(
+        field="dataset",
+        noun="datasets",
+        identity_operation="get_auth",
+    )
 
     @classmethod
     def get_config_model(cls):

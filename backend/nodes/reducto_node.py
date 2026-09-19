@@ -33,6 +33,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
 
@@ -818,6 +819,14 @@ class ReductoNode(WorkflowNode):
         "Classify an uploaded document into a set of document types",
         "Trigger a workflow when an async parse job completes",
     ]
+
+    # /version answers 200 to ANY bearer token, so it proves nothing; /jobs is
+    # the cheapest read that actually checks the key.
+    connection_evidence = ConnectionEvidence(
+        operation="list_jobs",
+        noun="recent jobs",
+        label_keys=("job_id", "id"),
+    )
 
     @classmethod
     def get_config_model(cls):

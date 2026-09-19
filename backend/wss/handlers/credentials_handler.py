@@ -27,6 +27,7 @@ from wss.sender.responses import (
     CredentialListResponse,
     CredentialGetResponse,
     CredentialCreateResponse,
+    CredentialTestConnectionResponse,
     CredentialUpdateResponse,
     CredentialDeleteResponse,
     CredentialRequestInfo,
@@ -139,26 +140,35 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
-            # Harness LLM API keys get a definitive live probe before they're
-            # saved — a creditless/revoked key rejected HERE (in the form, with
-            # the same message the runtime classifier uses) never becomes a
-            # confusing mid-turn failure. Fails open on non-definitive signals.
-            from nodes.agent.key_validation import validate_agent_api_key
+            # Shape + prove BEFORE anything is stored: the blob is parsed through
+            # its credential class and the node's own read-only probe runs, so a
+            # dead key is refused in the form (per field, or in the provider's
+            # words) instead of becoming a run failure. Non-definitive signals
+            # save the credential as unverified.
+            from nodes.core.credential_connect import validate_for_connect
 
-            rejection = await validate_agent_api_key(
-                request.credential_type, request.credential_data
+            verdict = await validate_for_connect(
+                credential_type=request.credential_type,
+                credential_data=request.credential_data,
+                user_id=user_id,
+                pool=pool,
             )
-            if rejection:
+            if not verdict.ok:
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id,
-                    data={},
-                    error=rejection
+                    data=CredentialCreateResponse(
+                        success=False,
+                        message=verdict.message,
+                        field_errors=verdict.field_errors,
+                        hint=verdict.hint,
+                    ).model_dump(),
+                    error=verdict.message,
                 ))
                 return
 
             # Encrypt the credential data
             try:
-                encrypted_data = self.encryption.encrypt_credential(request.credential_data)
+                encrypted_data = self.encryption.encrypt_credential(verdict.credential_data)
             except Exception as e:
                 logger.error(f"[CredentialsHandler] Encryption failed: {e}")
                 await send_event(self.sio, sid, ResponseEvent(
@@ -173,7 +183,8 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 user_tier = session.get('user_data', {}).get('subscription_tier', 'free')
                 row, error = await create_credential_with_limit_check(
                     conn, user_id, user_tier, request.credential_type,
-                    request.name, encrypted_data, request.metadata or {},
+                    request.name, encrypted_data,
+                    {**(request.metadata or {}), **verdict.verified_metadata()},
                 )
                 if error:
                     await send_event(self.sio, sid, ResponseEvent(
@@ -205,7 +216,11 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 response = CredentialCreateResponse(
                     success=True,
                     credential=credential,
-                    message="Credential created successfully"
+                    message="Credential created successfully",
+                    verification=(
+                        CredentialTestConnectionResponse.from_evidence(verdict.evidence)
+                        if verdict.evidence is not None else None
+                    ),
                 )
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id,
@@ -619,14 +634,40 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
             # revoked_at — user-entered new secrets are the recovery path for
             # an auto-revoked credential. Name/metadata-only edits keep the
             # direct UPDATE (they never touch the blob).
+            verdict = None
             if request.credential_data is not None:
+                from nodes.core.credential_connect import validate_for_connect
                 from utils.credentials import update_credential_data
+
+                # A replaced secret is judged exactly like a new one: shaped
+                # through its class and proven before it overwrites a row —
+                # resurrecting a revoked credential with a dead key would only
+                # move the failure into the next run.
+                existing = await repo.fetch_with_access(request.credential_id, user_id, org_id)
+                verdict = await validate_for_connect(
+                    credential_type=existing.credential_type if existing else None,
+                    credential_data=request.credential_data,
+                    user_id=user_id,
+                    pool=pool,
+                )
+                if not verdict.ok:
+                    await send_event(self.sio, sid, ResponseEvent(
+                        request_id=request.request_id,
+                        data=CredentialUpdateResponse(
+                            success=False,
+                            message=verdict.message,
+                            field_errors=verdict.field_errors,
+                            hint=verdict.hint,
+                        ).model_dump(),
+                        error=verdict.message,
+                    ))
+                    return
 
                 updated = await update_credential_data(
                     credential_id=request.credential_id,
                     user_id=user_id,
-                    new_data=request.credential_data,
-                    metadata_updates=request.metadata,
+                    new_data=verdict.credential_data,
+                    metadata_updates={**(request.metadata or {}), **verdict.verified_metadata()} or None,
                     pool=pool,
                 )
                 if not updated:
@@ -667,7 +708,11 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
             response = CredentialUpdateResponse(
                 success=True,
                 credential=credential,
-                message="Credential updated successfully"
+                message="Credential updated successfully",
+                verification=(
+                    CredentialTestConnectionResponse.from_evidence(verdict.evidence)
+                    if verdict is not None and verdict.evidence is not None else None
+                ),
             )
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id,

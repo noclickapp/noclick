@@ -83,9 +83,14 @@ async def run_node_operation(
     organization_id: Optional[str] = None,
     workflow_id: Optional[str] = None,
     conversation_id: Optional[str] = None,
+    credential_data: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Run a single integration-node operation and return its output dict.
+
+    ``credential_data`` runs the operation with a credential that is not stored
+    (the connect flow proving a typed-in key before saving it); otherwise
+    ``credential_id`` is resolved through the owner-fallback seam.
 
     Builds the same node_data shape the workflow handler produces
     ({config, credentials, credential_id}), instantiates the node via
@@ -99,8 +104,8 @@ async def run_node_operation(
     execute() (e.g. reddit_node enforce_credit_gate) using the
     user_id/organization_id passed here.
     """
-    credentials = None
-    if credential_id:
+    credentials = credential_data
+    if credentials is None and credential_id:
         credentials = await resolve_operation_credential(
             credential_id, user_id, pool, organization_id, workflow_id
         )
@@ -117,7 +122,8 @@ async def run_node_operation(
     node_data: Dict[str, Any] = {"config": config}
     if credentials:
         node_data["credentials"] = credentials
-        node_data["credential_id"] = credential_id
+        if credential_id:
+            node_data["credential_id"] = credential_id
 
     instance = NodeFactory.create_node(
         node_id=f"node-op:{node_type}:{operation}",

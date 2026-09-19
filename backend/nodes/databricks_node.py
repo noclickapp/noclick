@@ -43,6 +43,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator, create_model
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import SSRFError, guarded_async_client
 
 logger = logging.getLogger(__name__)
@@ -10374,6 +10375,13 @@ class DatabricksNode(WorkflowNode):
         "Start a SQL warehouse before running queries",
         "Trigger a workflow when a Databricks job sends a webhook notification",
     ]
+
+    connection_evidence = ConnectionEvidence(
+        field="job_id",
+        noun="jobs",
+        identity_operation="get_current_user",
+        identity_keys=("userName", "displayName"),
+    )
 
     @classmethod
     def get_config_model(cls):

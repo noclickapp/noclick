@@ -75,6 +75,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 
 logger = logging.getLogger(__name__)
@@ -4103,6 +4104,13 @@ class RedisNode(WorkflowNode):
     Executes Redis commands via REST API for workflow automation.
     Supports 49 operations across strings, hashes, lists, sets, sorted sets, and keys.
     """
+
+    # DBSIZE returns a count, not names: it proves the REST token works, no more.
+    connection_evidence = ConnectionEvidence(
+        operation="get_database_key_count",
+        noun="keys",
+        proves="reachability",
+    )
 
     edit_examples = [
         "Store user session tokens in Redis with 1 hour expiration",

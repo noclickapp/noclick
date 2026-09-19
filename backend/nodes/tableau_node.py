@@ -23,10 +23,13 @@ import json
 import logging
 import time
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
-from pydantic import BaseModel, Field, ConfigDict, Discriminator, create_model
+from urllib.parse import urlsplit
+from pydantic import BaseModel, Field, ConfigDict, Discriminator, create_model, field_validator, model_validator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence, summarize_provider_text
+from nodes.core.credential_fields import https_origin, segment_after
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from utils.ssrf import guarded_async_client
 
@@ -43,6 +46,22 @@ TABLEAU_API_VERSION = "3.29"
 def _base_url(server_url: str) -> str:
     """Build the versioned REST API base, e.g. https://10ax.online.tableau.com/api/3.29."""
     return f"{server_url.rstrip('/')}/api/{TABLEAU_API_VERSION}"
+
+
+# A 2026 Tableau Cloud signup lands on Cloud Manager — a tenant console that
+# does not serve the site REST API (its /api/… answers a bare 403 page). The
+# site lives on a pod, and the browser URL there carries both halves.
+CLOUD_MANAGER_HINT = (
+    "That is the Tableau Cloud Manager console, not your site. Use the address of "
+    "your site — the part before /#/site/ in the browser, e.g. "
+    "https://us-east-1.online.tableau.com — and create the token on the site "
+    "(account menu → My Account Settings → Personal Access Tokens)."
+)
+
+
+def _is_cloud_manager_host(server_url: str) -> bool:
+    host = (urlsplit(server_url if "://" in server_url else f"https://{server_url}").hostname or "").lower()
+    return host.endswith(".cloudmanager.tableau.com")
 
 
 async def _tableau_signin(
@@ -73,7 +92,11 @@ async def _tableau_signin(
                 err = response.json()
                 message = err.get("error", {}).get("detail", str(err))
             except Exception:
-                message = response.text
+                # Tableau Cloud Manager and sign-in pages answer with HTML: the
+                # host is not a site's REST endpoint, and markup would hide that.
+                message = summarize_provider_text(response.text, response.status_code)
+                if _is_cloud_manager_host(server_url):
+                    message = f"{message}. {CLOUD_MANAGER_HINT}"
             logger.error(f"[TableauNode] Sign in failed: {message}")
             return {
                 "status": "error",
@@ -7782,7 +7805,13 @@ TABLEAU_WEBHOOK_EVENTS = [
 
 
 class TableauPATCredential(BaseModel):
-    """Personal Access Token credential for Tableau."""
+    """Personal Access Token credential for Tableau.
+
+    Shaped for how people actually arrive: the whole browser URL of the site
+    (``https://<pod>.online.tableau.com/#/site/<slug>/home``) pasted as the
+    server fills both the pod and the site; the Cloud Manager console host is
+    refused up front because it never serves the REST API.
+    """
 
     credential_type: Literal["tableau_pat"] = Field(
         "tableau_pat", json_schema_extra={"ui:hidden": True}
@@ -7791,22 +7820,27 @@ class TableauPATCredential(BaseModel):
         ...,
         title="Server URL",
         description=(
-            "Your Tableau server, including the pod for Tableau Cloud "
-            "(e.g. https://10ax.online.tableau.com) or your Tableau Server host."
+            "Your site's address — the part before /#/site/ in the browser "
+            "(e.g. https://us-east-1.online.tableau.com), or your Tableau Server "
+            "host. Pasting the whole site URL works too."
         ),
+        json_schema_extra={"ui:placeholder": "https://us-east-1.online.tableau.com"},
     )
     site_content_url: str = Field(
         "",
         title="Site Content URL",
         description=(
-            "The site's content URL (the part after /site/ in the browser URL). "
-            "Leave blank for the Default site."
+            "The slug after /#/site/ in your browser URL. Every Tableau Cloud "
+            "site has one; only Tableau Server's Default site leaves it blank."
         ),
     )
     pat_name: str = Field(
         ...,
         title="Token Name",
-        description="The name of the Personal Access Token from My Account Settings -> Personal Access Tokens",
+        description=(
+            "The name you gave the Personal Access Token. Create it on the site: "
+            "account menu → My Account Settings → Personal Access Tokens."
+        ),
     )
     pat_secret: str = Field(
         ...,
@@ -7815,9 +7849,39 @@ class TableauPATCredential(BaseModel):
         json_schema_extra={"ui:widget": "password"},
     )
 
+    @model_validator(mode="before")
+    @classmethod
+    def _split_pasted_site_url(cls, data: Any) -> Any:
+        """A whole site URL in Server URL carries the site slug — take both."""
+        if isinstance(data, dict) and not (data.get("site_content_url") or "").strip():
+            slug = segment_after(data.get("server_url"), "site")
+            if slug:
+                data = {**data, "site_content_url": slug}
+        return data
+
+    @field_validator("server_url")
+    @classmethod
+    def _origin_only(cls, value: str) -> str:
+        origin = https_origin(value, field_name="Server URL")
+        if _is_cloud_manager_host(origin):
+            raise ValueError(CLOUD_MANAGER_HINT)
+        return origin
+
+    @field_validator("site_content_url")
+    @classmethod
+    def _slug_only(cls, value: str) -> str:
+        return (segment_after(value, "site") or value or "").strip().strip("/")
+
     model_config = ConfigDict(
         json_schema_extra={
-            "x-credential-url": "https://help.tableau.com/current/pro/desktop/en-us/useracct.htm#create-and-revoke-personal-access-tokens"
+            "x-credential-url": "https://help.tableau.com/current/pro/desktop/en-us/useracct.htm#create-and-revoke-personal-access-tokens",
+            "x-credential-instructions": (
+                "Open your Tableau site (not Cloud Manager). Copy the address up to "
+                "/#/site/ as the Server URL and the slug after it as the Site Content "
+                "URL — or paste the whole URL into Server URL. Then account menu → "
+                "My Account Settings → Personal Access Tokens → Create, and paste the "
+                "token's name and secret."
+            ),
         }
     )
 
@@ -8551,6 +8615,15 @@ class TableauNode(ExternalWebhookTriggerMixin, WorkflowNode):
     # without this flag the mixin's secret-requiring idempotency guard never
     # holds and every config-panel open re-registers + orphans the endpoint.
     webhook_signing_secret_not_issued = True
+
+    # Proof on connect: the site's own workbooks, else who the token signed in
+    # as. Both are zero-argument reads; a Cloud Manager URL or a made-up PAT
+    # fails here, in the form, instead of on the first tool call.
+    connection_evidence = ConnectionEvidence(
+        operation="query_workbooks",
+        noun="workbooks",
+        identity_operation="get_current_session",
+    )
 
     edit_examples = [
         "List all workbooks on the Tableau site",

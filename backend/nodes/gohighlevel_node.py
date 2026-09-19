@@ -24,6 +24,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator, create_model
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
 
@@ -18914,6 +18915,12 @@ class GoHighLevelNode(WorkflowNode):
         "Send an SMS to a contact",
         "Book an appointment on a calendar",
     ]
+
+    # /locations/search answers for agency AND sub-account PITs (needs locations.readonly).
+    connection_evidence = ConnectionEvidence(
+        operation="search_locations",
+        noun="sub-accounts",
+    )
 
     @classmethod
     def get_config_model(cls):

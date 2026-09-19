@@ -23,6 +23,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
 
@@ -1111,6 +1112,11 @@ class InstantlyNode(WorkflowNode):
     Supports 35 operations across accounts, campaigns, leads, emails,
     analytics, and webhook triggers.
     """
+
+    connection_evidence = ConnectionEvidence(
+        operation="list_campaigns",
+        noun="campaigns",
+    )
 
     edit_examples = [
         "Create campaign with 3-step sequence and add 500 leads from CSV",

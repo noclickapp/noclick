@@ -36,6 +36,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from utils.ssrf import normalize_provider_subdomain
 
@@ -765,6 +766,13 @@ class FellowNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "Trigger a workflow when a new AI note is generated",
         "Trigger a workflow when an action item is assigned to me",
     ]
+
+    connection_evidence = ConnectionEvidence(
+        operation="list_notes",
+        noun="meeting notes",
+        label_keys=("title", "id"),
+        identity_operation="get_me",
+    )
 
     # Maps each trigger operation to the Fellow event type(s) it subscribes to.
     _trigger_event_map: ClassVar[Dict[str, list]] = {

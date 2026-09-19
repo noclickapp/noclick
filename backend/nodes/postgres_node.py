@@ -22,6 +22,7 @@ from pydantic import BaseModel, Field, Discriminator
 import asyncpg
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import SSRFError, resolve_host_addresses
 
 logger = logging.getLogger(__name__)
@@ -1705,6 +1706,11 @@ class PostgresNode(WorkflowNode):
     Executes PostgreSQL database operations for workflow automation.
     Uses asyncpg for high-performance async database access.
     """
+
+    connection_evidence = ConnectionEvidence(
+        operation="list_schema_tables",
+        noun="tables",
+    )
 
     edit_examples = [
         "Query users table where status=active and select email,created_at",

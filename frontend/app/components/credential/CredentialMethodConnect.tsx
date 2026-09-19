@@ -13,7 +13,8 @@ import {
     type CredentialMethodKind,
 } from '~/lib/credentialMethodKind';
 import { type CredentialField } from './CredentialFieldInput';
-import { CredentialCreatePanel } from './CredentialCreatePanel';
+import { CredentialCreatePanel, type CredentialSaveResult } from './CredentialCreatePanel';
+import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import { RedirectOAuthProvideMethod } from './RedirectOAuthProvideMethod';
 import { AgentOAuthProvideMethod } from './AgentOAuthProvideMethod';
 import { provideLinkTransport } from './provideLinkTransport';
@@ -28,6 +29,8 @@ export interface ProvideCredentialMethod {
     description?: string | null;
     /** "Get your API key here" deep link for the picker. */
     credential_url?: string | null;
+    /** Where the values come from, in steps (the schema's x-credential-instructions). */
+    instructions?: string | null;
     method_kind?: string | null;
     is_oauth: boolean;
     oauth_provider?: string | null;
@@ -48,7 +51,9 @@ export interface CredentialMethodConnectProps {
     token: string;
     serviceName?: string;
     ServiceIcon: ComponentType<{ className?: string }> | null;
-    onProvided: () => void;
+    /** Fires once the credential lands. Manual credentials carry what the
+     *  connect-time probe proved, so the success state can show it. */
+    onProvided: (verification?: CredentialTestConnectionResponse | null) => void;
     /** Collapse affordance for panel-style methods (api_key): renders the
      *  panel's X / Cancel. Ignored by kinds without a collapse concept. */
     onCancel?: () => void;
@@ -59,14 +64,18 @@ export interface CredentialMethodConnectProps {
  *  /provide endpoint. Anonymous surfaces can't name the owner's credential,
  *  so the name field is hidden and the backend applies its default. */
 function ApiKeyMethod({ method, apiBase, token, onProvided, onCancel }: CredentialMethodConnectProps) {
-    const fields = method.credential_fields.length > 0
-        ? method.credential_fields
+    // The wire shape is snake_case; the shared field renderer speaks camelCase.
+    const fields: CredentialField[] = method.credential_fields.length > 0
+        ? method.credential_fields.map((f) => ({
+            ...f,
+            helpUrl: f.helpUrl ?? (f as { help_url?: string | null }).help_url ?? null,
+        }))
         : [{
             name: 'api_key', label: 'Credential Value', type: 'password' as const,
             required: true, placeholder: 'Paste your API key or credential here',
         }];
 
-    const save = useCallback(async (_name: string, data: Record<string, string>) => {
+    const save = useCallback(async (_name: string, data: Record<string, string>): Promise<CredentialSaveResult> => {
         try {
             const res = await fetch(`${apiBase}/api/credential-request/${token}/provide`, {
                 method: 'POST',
@@ -77,9 +86,20 @@ function ApiKeyMethod({ method, apiBase, token, onProvided, onCancel }: Credenti
             });
             if (!res.ok) {
                 const e = await res.json().catch(() => ({}));
-                return e.detail || 'Failed to provide credential';
+                // The connect seam refuses with {message, field_errors, hint};
+                // older/other errors are a plain detail string.
+                const detail = e.detail;
+                if (detail && typeof detail === 'object') {
+                    return {
+                        error: detail.message || 'Failed to provide credential',
+                        fieldErrors: detail.field_errors ?? null,
+                        hint: detail.hint ?? null,
+                    };
+                }
+                return detail || 'Failed to provide credential';
             }
-            onProvided();
+            const body = await res.json().catch(() => ({}));
+            onProvided(body?.verification ?? null);
             return null;
         } catch {
             return 'Failed to submit credential. Please try again.';
@@ -94,6 +114,7 @@ function ApiKeyMethod({ method, apiBase, token, onProvided, onCancel }: Credenti
             onCancel={onCancel}
             saveLabel="Connect"
             hideName
+            instructions={method.instructions}
         />
     );
 }

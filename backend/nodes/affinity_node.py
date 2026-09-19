@@ -36,6 +36,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
 
@@ -1593,6 +1594,12 @@ class AffinityNode(WorkflowNode):
         "Search opportunities where stage is 'Closed Won' this quarter",
         "Subscribe a webhook for new list entries on the Targets list",
     ]
+
+    connection_evidence = ConnectionEvidence(
+        operation="list_lists",
+        noun="lists",
+        identity_operation="get_authenticated_user_info",
+    )
 
     @classmethod
     def get_config_model(cls):

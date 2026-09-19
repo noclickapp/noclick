@@ -7,6 +7,7 @@
 // per-node credential UIs (2026-07-19: the bridge's hand-rolled connect
 // button silently did nothing for WhatsApp).
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
+import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import { Loader2, Shield, ExternalLink, Clock, X } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
@@ -33,6 +34,8 @@ export interface ProvideRequestDetails {
   requires_custom_client?: boolean;
   requires_pkce: boolean;
   credential_fields: CredentialField[];
+  /** Where the values come from, in steps (the schema's x-credential-instructions). */
+  instructions?: string | null;
   available_methods: ProvideCredentialMethod[];
   status: string;
   expires_at: string;
@@ -65,8 +68,9 @@ export function CredentialProvideFlow({
 }: {
   token: string;
   apiBase: string;
-  /** Fires once the credential lands — the parent owns the success state. */
-  onProvided: () => void;
+  /** Fires once the credential lands — the parent owns the success state.
+      Manual credentials carry what the connect-time probe proved. */
+  onProvided: (verification?: CredentialTestConnectionResponse | null) => void;
   /** Fires when request details load, for parents that render their own header. */
   onDetails?: (details: ProvideRequestDetails) => void;
   /** Tighter paddings for embedded surfaces (the builder input bridge card). */
@@ -133,6 +137,7 @@ export function CredentialProvideFlow({
       supports_custom_client: details.supports_custom_client,
       requires_custom_client: details.requires_custom_client,
       credential_fields: details.credential_fields,
+      instructions: details.instructions,
     }];
   }, [details]);
 
@@ -219,7 +224,7 @@ function MethodSection({
   token: string;
   serviceName?: string;
   ServiceIcon: ComponentType<{ className?: string }> | null;
-  onProvided: () => void;
+  onProvided: (verification?: CredentialTestConnectionResponse | null) => void;
   showHeading: boolean;
 }) {
   const kind = kindFromBackendMethod(method);

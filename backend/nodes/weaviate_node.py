@@ -31,6 +31,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.document_ingest import DOCUMENT_ACCEPT, ingest_document
 from utils.ssrf import guarded_async_client
 
@@ -820,6 +821,14 @@ class WeaviateNode(WorkflowNode):
         "Use generative search to summarize retrieved documents with GPT-4",
         "Aggregate object counts grouped by category",
     ]
+
+    # Operation rather than the collection picker: that loader returns a bare
+    # list and swallows errors, neither of which the evidence seam can read.
+    connection_evidence = ConnectionEvidence(
+        operation="list_collections",
+        noun="collections",
+        label_keys=("class", "name"),
+    )
 
     @classmethod
     def get_config_model(cls):

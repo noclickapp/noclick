@@ -24,6 +24,7 @@ import httpx
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
 
@@ -2428,6 +2429,14 @@ class ApifyNode(WorkflowNode):
         "Create a webhook to notify on actor run completion",
         "Build an actor to crawl competitor prices daily",
     ]
+
+    connection_evidence = ConnectionEvidence(
+        operation="list_actors",
+        noun="actors",
+        label_keys=("title", "name", "id"),
+        identity_operation="get_current_user",
+        identity_keys=("username",),
+    )
 
     @classmethod
     def get_config_model(cls):

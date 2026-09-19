@@ -21,6 +21,7 @@ from urllib.parse import unquote_plus, urlsplit
 from pydantic import BaseModel, Field, ConfigDict, Discriminator
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.document_ingest import DOCUMENT_ACCEPT, ingest_document
 from utils.ssrf import (
     SSRFError,
@@ -1507,6 +1508,12 @@ def _serialize(docs: Any) -> Any:
 
 class MongoDBNode(WorkflowNode):
     """MongoDB database automation node."""
+
+    # The database loader returns a bare list the evidence field path can't read.
+    connection_evidence = ConnectionEvidence(
+        operation="list_databases",
+        noun="databases",
+    )
 
     edit_examples = [
         "Find all active users in a MongoDB collection",

@@ -11269,7 +11269,7 @@
       "type": "object"
     },
     "TableauPATCredential": {
-      "description": "Personal Access Token credential for Tableau.",
+      "description": "Personal Access Token credential for Tableau.\n\nShaped for how people actually arrive: the whole browser URL of the site\n(``https://<pod>.online.tableau.com/#/site/<slug>/home``) pasted as the\nserver fills both the pod and the site; the Cloud Manager console host is\nrefused up front because it never serves the REST API.",
       "properties": {
         "credential_type": {
           "const": "tableau_pat",
@@ -11279,18 +11279,19 @@
           "ui:hidden": true
         },
         "server_url": {
-          "description": "Your Tableau server, including the pod for Tableau Cloud (e.g. https://10ax.online.tableau.com) or your Tableau Server host.",
+          "description": "Your site's address \u2014 the part before /#/site/ in the browser (e.g. https://us-east-1.online.tableau.com), or your Tableau Server host. Pasting the whole site URL works too.",
           "title": "Server URL",
-          "type": "string"
+          "type": "string",
+          "ui:placeholder": "https://us-east-1.online.tableau.com"
         },
         "site_content_url": {
           "default": "",
-          "description": "The site's content URL (the part after /site/ in the browser URL). Leave blank for the Default site.",
+          "description": "The slug after /#/site/ in your browser URL. Every Tableau Cloud site has one; only Tableau Server's Default site leaves it blank.",
           "title": "Site Content URL",
           "type": "string"
         },
         "pat_name": {
-          "description": "The name of the Personal Access Token from My Account Settings -> Personal Access Tokens",
+          "description": "The name you gave the Personal Access Token. Create it on the site: account menu \u2192 My Account Settings \u2192 Personal Access Tokens.",
           "title": "Token Name",
           "type": "string"
         },
@@ -11308,6 +11309,7 @@
       ],
       "title": "TableauPATCredential",
       "type": "object",
+      "x-credential-instructions": "Open your Tableau site (not Cloud Manager). Copy the address up to /#/site/ as the Server URL and the slug after it as the Site Content URL \u2014 or paste the whole URL into Server URL. Then account menu \u2192 My Account Settings \u2192 Personal Access Tokens \u2192 Create, and paste the token's name and secret.",
       "x-credential-url": "https://help.tableau.com/current/pro/desktop/en-us/useracct.htm#create-and-revoke-personal-access-tokens"
     },
     "TableauPublishVirtualConnectionConfig": {

@@ -19,6 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from pydantic import Discriminator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.connection_evidence import ConnectionEvidence
 
 VOYAGE_BASE_URL = "https://api.voyageai.com/v1"
 
@@ -480,6 +481,12 @@ def _parse_json_field(value: str, field_name: str) -> Any:
 # ── Node ───────────────────────────────────────────────────────────────────────
 
 class VoyageNode(WorkflowNode):
+    connection_evidence = ConnectionEvidence(
+        operation="list_files",
+        noun="uploaded files",
+        label_keys=("filename", "id"),
+    )
+
     @classmethod
     def get_config_model(cls):
         return VoyageNodeConfig

@@ -34,6 +34,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 
 logger = logging.getLogger(__name__)
@@ -860,6 +861,8 @@ class ExpensifyNode(ScheduledPollTriggerMixin, WorkflowNode):
         "List all the workspaces I can access",
         "Create a new corporate workspace policy",
     ]
+
+    connection_evidence = ConnectionEvidence(field="policy_id", noun="workspaces")
 
     @classmethod
     def get_config_model(cls):

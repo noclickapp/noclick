@@ -367,6 +367,79 @@ class TestCredentialRequestHTTPAPI:
         # Verify notification email was sent
         mock_send_email.assert_called_once()
 
+    @pytest.fixture
+    def node_request(self, db):
+        """A pending request for a NODE credential type (the setup_db fixture's
+        openai_api_key belongs to no node, so the connect seam passes it through
+        unshaped by design)."""
+        db.execute("DELETE FROM credential_requests WHERE credential_type = 'firecrawl_api_key'")
+        db.execute("DELETE FROM credentials WHERE credential_type = 'firecrawl_api_key'")
+        db.execute(
+            "INSERT INTO auth.users (id, email, raw_user_meta_data) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING",
+            TEST_USER_ID, TEST_USER_EMAIL, {'name': 'Test Requester'},
+        )
+        row = db.fetchrow("""
+            INSERT INTO credential_requests (requester_id, target_email, credential_type)
+            VALUES ($1, $2, $3)
+            RETURNING id, token
+        """, TEST_USER_ID, TARGET_EMAIL, 'firecrawl_api_key')
+        yield {'request_id': str(row['id']), 'token': row['token']}
+        db.execute("DELETE FROM resource_shares WHERE resource_type = 'credential'")
+        db.execute("DELETE FROM credential_requests WHERE credential_type = 'firecrawl_api_key'")
+        db.execute("DELETE FROM credentials WHERE credential_type = 'firecrawl_api_key'")
+
+    async def test_provide_refuses_a_url_pasted_into_a_secret_field(self, real_database, db, node_request):
+        """The public page gets the same judgement as the in-app form: the blob
+        is shaped through its credential class before it is stored, and a URL in
+        the key field comes back per field as a 400 — nothing is written and the
+        request stays pending for a corrected submission."""
+        from fastapi import HTTPException
+        from utils.credential_request_routes import provide_credential, ProvideCredentialBody
+
+        with pytest.raises(HTTPException) as exc_info:
+            await provide_credential(
+                node_request['token'],
+                ProvideCredentialBody(credential_data={'api_key': 'https://www.firecrawl.dev/app/api-keys'}),
+            )
+        assert exc_info.value.status_code == 400
+        detail = exc_info.value.detail
+        assert 'web address' in detail['field_errors']['api_key']
+        assert detail['message'] == detail['field_errors']['api_key']
+
+        assert db.fetchrow("SELECT 1 FROM credentials WHERE credential_type = 'firecrawl_api_key'") is None
+        req_row = db.fetchrow("SELECT status FROM credential_requests WHERE id = $1", node_request['request_id'])
+        assert req_row['status'] == 'pending'
+
+    @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
+    async def test_provide_returns_what_the_probe_proved(self, mock_send_email, real_database, db, node_request, monkeypatch):
+        """A manual credential the probe could vouch for carries `verification`
+        back to the page and stamps verified_as on the row's metadata."""
+        import json
+        from nodes.core import credential_connect as cc
+        from nodes.core.connection_evidence import EvidenceResult, EvidenceSample
+        from utils.credential_request_routes import provide_credential, ProvideCredentialBody
+
+        seen = {}
+
+        async def fake_collect(**kwargs):
+            seen.update(kwargs)
+            return EvidenceResult(reachable=True, noun='monitors', samples=[EvidenceSample(label='Pricing page')], account_label='Acme')
+
+        monkeypatch.setattr(cc, '_collect_evidence', fake_collect)
+
+        result = await provide_credential(
+            node_request['token'], ProvideCredentialBody(credential_data={'api_key': ' fc-test-key-12345 '}),
+        )
+        assert result['status'] == 'success'
+        assert result['verification']['reachable'] is True
+        assert result['verification']['account_label'] == 'Acme'
+        assert seen['credential_data']['api_key'] == 'fc-test-key-12345', 'the probe sees the shaped blob'
+        assert seen['user_id'] == TEST_USER_ID, 'the probe runs as the requester'
+        row = db.fetchrow("SELECT metadata FROM credentials WHERE credential_type = 'firecrawl_api_key' ORDER BY created_at DESC LIMIT 1")
+        metadata = row['metadata'] if isinstance(row['metadata'], dict) else json.loads(row['metadata'])
+        assert metadata['verified_as'] == 'Acme'
+        assert metadata['provided_by'] == TARGET_EMAIL
+
     @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
     async def test_agent_llm_credential_request(self, mock_send_email, real_database, db):
         """agent_<provider> requests resolve the provider's API-key field and store

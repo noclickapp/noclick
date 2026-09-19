@@ -5,6 +5,7 @@
 // between them. Styling is a prop (inputClassName) so each surface keeps its look
 // while sharing the logic.
 
+import { ExternalLink } from 'lucide-react';
 import { SecretInput } from '~/components/workflow/SecretInput';
 import { FieldRequirementBadge, isFieldFilled } from '~/components/workflow/FieldRequirementBadge';
 
@@ -15,6 +16,8 @@ export interface CredentialField {
     placeholder?: string;
     required: boolean;
     description?: string;
+    /** Where this one value comes from, when the schema names it. */
+    helpUrl?: string | null;
     default?: string;
     options?: Array<{ value: string; label: string }>;
 }
@@ -28,19 +31,26 @@ interface CredentialFieldInputProps {
     onChange: (value: string) => void;
     /** Input styling; defaults to the compact in-app style. */
     inputClassName?: string;
+    /** The server's per-field verdict on the last save ("looks like a web
+        address"), shown under the input it names. */
+    error?: string | null;
 }
 
 export function CredentialFieldInput({
     field,
     value,
     onChange,
-    inputClassName = CRED_INPUT_CLASS,
+    inputClassName: baseInputClassName = CRED_INPUT_CLASS,
+    error,
 }: CredentialFieldInputProps) {
     // Selects fall back to field.default when untouched, so judge filledness on
     // what the control actually shows.
     const effectiveValue = field.options ? value || field.default || '' : value;
+    const inputClassName = error
+        ? `${baseInputClassName} !border-red-500/60 focus:!border-red-500`
+        : baseInputClassName;
     return (
-        <div className="space-y-1.5">
+        <div className="space-y-1.5" data-field={field.name}>
             <label className="flex items-center gap-2 text-xs text-muted-foreground/70 dark:text-zinc-500">
                 {field.label}
                 <FieldRequirementBadge isRequired={field.required} isFilled={isFieldFilled(effectiveValue)} />
@@ -75,9 +85,24 @@ export function CredentialFieldInput({
                     className={`${inputClassName} font-mono`}
                 />
             )}
-            {field.description && (
+            {error && (
+                <p className="text-[11px] leading-relaxed text-red-600 dark:text-red-400" role="alert">
+                    {error}
+                </p>
+            )}
+            {(field.description || field.helpUrl) && (
                 <p className="text-[11px] leading-relaxed text-muted-foreground/70 dark:text-zinc-500">
                     {field.description}
+                    {field.helpUrl && (
+                        <a
+                            href={field.helpUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ml-1 inline-flex items-center gap-0.5 underline decoration-foreground/20 underline-offset-2 hover:text-foreground/80"
+                        >
+                            Where to find this <ExternalLink className="h-2.5 w-2.5" />
+                        </a>
+                    )}
                 </p>
             )}
         </div>

@@ -42,6 +42,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
@@ -1249,6 +1250,8 @@ class ExtendNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "Run a multi-step Extend workflow on a file",
         "Trigger a workflow whenever an Extend run completes",
     ]
+
+    connection_evidence = ConnectionEvidence(field="extractor_id", noun="extractors")
 
     @classmethod
     def get_config_model(cls):

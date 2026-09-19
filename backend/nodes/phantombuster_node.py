@@ -36,6 +36,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
 
@@ -1470,6 +1471,12 @@ def _parse_params(value: Optional[str]) -> Optional[Dict[str, Any]]:
 
 class PhantomBusterNode(WorkflowNode):
     """PhantomBuster web scraping & automation node."""
+
+    connection_evidence = ConnectionEvidence(
+        field="agent_id",
+        noun="phantoms",
+        identity_operation="get_org",
+    )
 
     edit_examples = [
         "List all my Phantoms",

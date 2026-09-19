@@ -26,6 +26,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
 logger = logging.getLogger(__name__)
@@ -1512,6 +1513,13 @@ class TrelloNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "List every card on a board for a weekly status report",
         "Trigger a workflow whenever a card on a board changes",
     ]
+
+    connection_evidence = ConnectionEvidence(
+        field="board_id",
+        noun="boards",
+        identity_operation="get_me",
+        identity_keys=("fullName", "username", "email"),
+    )
 
     @classmethod
     def get_config_model(cls):

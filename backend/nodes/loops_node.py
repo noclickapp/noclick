@@ -27,6 +27,7 @@ import httpx
 
 from nodes.core.agent_events import bullet_lines
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.media_resolver import resolve_media_input
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from utils.webhook_signatures import verify_svix
@@ -1265,6 +1266,13 @@ async def _loops_request(
 
 class LoopsNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """Loops email marketing & lifecycle automation node."""
+
+    connection_evidence = ConnectionEvidence(
+        field="mailing_list_id",
+        noun="mailing lists",
+        identity_operation="test_api_key",
+        identity_keys=("teamName",),
+    )
 
     edit_examples = [
         "Add a new contact to Loops when a user signs up",

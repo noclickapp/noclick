@@ -30,6 +30,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import bounded_seen_ids
 from nodes.cron_trigger_node import (
     ScheduleConfig,
@@ -1468,6 +1469,8 @@ class ClickHouseNode(WorkflowNode):
         "Create a developer API key for a new teammate",
         "List the audit activities for my organization",
     ]
+
+    connection_evidence = ConnectionEvidence(field="organization_id", noun="organizations")
 
     @classmethod
     def get_config_model(cls):

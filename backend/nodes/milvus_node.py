@@ -19,6 +19,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.document_ingest import DOCUMENT_ACCEPT, ingest_document
 from utils.ssrf import guarded_async_client
 
@@ -924,6 +925,12 @@ def _with_db(body: Dict[str, Any], db_name: Optional[str]) -> Dict[str, Any]:
 
 class MilvusNode(WorkflowNode):
     """Milvus / Zilliz Cloud vector database automation node."""
+
+    # The collection loader returns a bare list the evidence field path can't read.
+    connection_evidence = ConnectionEvidence(
+        operation="list_collections",
+        noun="collections",
+    )
 
     edit_examples = [
         "Search a Milvus collection for the entities most similar to a query embedding",

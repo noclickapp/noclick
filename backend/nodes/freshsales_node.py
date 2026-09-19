@@ -29,6 +29,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client, normalize_provider_subdomain
 
 logger = logging.getLogger(__name__)
@@ -1514,6 +1515,8 @@ class FreshsalesNode(WorkflowNode):
         "Log a phone call against a contact after a sales call",
         "Trigger a workflow when a Freshsales Workflow fires a webhook",
     ]
+
+    connection_evidence = ConnectionEvidence(field="owner_id", noun="users")
 
     @classmethod
     def get_config_model(cls):

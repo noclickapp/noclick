@@ -32,6 +32,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
 logger = logging.getLogger(__name__)
@@ -6102,6 +6103,13 @@ class LaunchDarklyNodeConfig(NodeConfig[LaunchDarklyConfig, LaunchDarklyCredenti
 
 class LaunchDarklyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """LaunchDarkly feature management automation node."""
+
+    connection_evidence = ConnectionEvidence(
+        field="project_key",
+        noun="projects",
+        identity_operation="get_caller_identity",
+        identity_keys=("tokenName", "projectName"),
+    )
 
     edit_examples = [
         "Turn on the new-checkout feature flag in production",

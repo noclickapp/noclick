@@ -20,6 +20,7 @@ import httpx
 from typing import Dict, Any, Optional, Union, Literal, List, Annotated
 from pydantic import BaseModel, Field, ConfigDict, Discriminator
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
 
@@ -2359,6 +2360,15 @@ class SemrushNode(WorkflowNode):
         "Get traffic trends for example.com over last 6 months",
         "Analyze market share vs top 5 competitors in tech vertical",
     ]
+
+    # No zero-argument per-account read exists on this node; the global rank
+    # table only proves the key is accepted. One line keeps the API-unit spend minimal.
+    connection_evidence = ConnectionEvidence(
+        operation="get_semrush_rank_report",
+        noun="rank report",
+        operation_arguments={"display_limit": 1},
+        proves="reachability",
+    )
 
     # API v3 base URLs
     V3_ANALYTICS_BASE = "https://api.semrush.com"

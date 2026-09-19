@@ -15,6 +15,8 @@ import { setNodeIconData } from '~/lib/nodeIconRegistry';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { PoweredByBadge } from '~/components/agent-share/PoweredByBadge';
 import { PublicThemeToggle } from '~/components/shared/PublicThemeToggle';
+import { ConnectionVerdict } from '~/components/credential/ConnectionVerdict';
+import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import {
   CredentialProvideFlow,
   formatCredentialType,
@@ -52,6 +54,7 @@ export default function ProvideCredentialPage() {
 
   const [details, setDetails] = useState<ProvideRequestDetails | null>(null);
   const [provided, setProvided] = useState(false);
+  const [verification, setVerification] = useState<CredentialTestConnectionResponse | null>(null);
 
   const credentialIcon = useMemo(
     () => (details ? getCredentialIcon(details.credential_type) : null),
@@ -101,6 +104,15 @@ export default function ProvideCredentialPage() {
                 {details?.requester_name} has been notified and can now use this
                 credential. You can safely close this page.
               </p>
+              {/* What the connect-time probe proved — the provider's own data,
+                  so the person who typed the key sees it worked, not just landed. */}
+              {verification && (
+                <ConnectionVerdict
+                  verification={verification}
+                  providerLabel={serviceName || (details ? formatCredentialType(details.credential_type) : 'The provider')}
+                  className="mt-5 text-left"
+                />
+              )}
             </div>
           ) : (
             <div className="px-5 py-5">
@@ -114,7 +126,10 @@ export default function ProvideCredentialPage() {
                 apiBase={API_BASE}
                 compact
                 onDetails={setDetails}
-                onProvided={() => setProvided(true)}
+                onProvided={(v) => {
+                  setVerification(v ?? null);
+                  setProvided(true);
+                }}
               />
             </div>
           )}

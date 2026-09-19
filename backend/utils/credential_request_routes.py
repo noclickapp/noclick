@@ -190,12 +190,18 @@ def _extract_fields_from_schema(defn: dict) -> list[dict]:
         )
         if is_optional and name not in required:
             continue
+        # Field-level guidance rides along so the public page explains a field
+        # exactly as the in-app form does: the schema's help text and, when a
+        # field names where its value comes from, that link.
+        help_url = prop.get('x-credential-url')
         fields.append({
             'name': name,
             'label': prop.get('title', name),
             'type': 'password' if prop.get('ui:widget') == 'password' else 'text',
-            'placeholder': prop.get('placeholder', ''),
+            'placeholder': prop.get('ui:placeholder') or prop.get('placeholder', ''),
             'required': name in required,
+            'description': prop.get('ui:help') or prop.get('description') or '',
+            'help_url': help_url if isinstance(help_url, str) and help_url.startswith('http') else None,
         })
     return fields
 
@@ -226,6 +232,7 @@ def _method_dict_from_defn(title: str, defn: dict) -> Optional[dict]:
         'label': raw_label,
         'description': short_desc,
         'credential_url': cred_url,
+        'instructions': defn.get('x-credential-instructions') or None,
         'is_oauth': is_oauth,
         'oauth_provider': provider,
         'oauth_scopes': defn.get('x-oauth-scopes', []) if is_oauth else [],
@@ -429,6 +436,8 @@ class CredentialField(BaseModel):
     type: str  # "text" or "password"
     placeholder: str = ''
     required: bool = True
+    description: str = ''
+    help_url: Optional[str] = None
 
 
 class CredentialMethod(BaseModel):
@@ -437,6 +446,8 @@ class CredentialMethod(BaseModel):
     label: str
     description: str = ''
     credential_url: Optional[str] = None
+    # Where the values come from, in steps (the schema's x-credential-instructions).
+    instructions: Optional[str] = None
     is_oauth: bool
     oauth_provider: Optional[str] = None
     oauth_scopes: list[str] = []
@@ -471,6 +482,7 @@ class CredentialRequestDetails(BaseModel):
     supports_custom_client: bool = False
     requires_custom_client: bool = False
     credential_fields: list[CredentialField] = []
+    instructions: Optional[str] = None
     # All available auth methods for this service (populated when > 1 method exists)
     available_methods: list[CredentialMethod] = []
     status: str
@@ -588,6 +600,7 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
             credential_fields=[CredentialField(**f) for f in m.get('credential_fields', [])],
             agent_oauth_kind=m.get('agent_oauth_kind'),
             method_kind=m.get('method_kind', 'api_key'),
+            instructions=m.get('instructions'),
             supports_custom_client=m.get('supports_custom_client', False),
             requires_custom_client=m.get('requires_custom_client', False),
             oauth_redirect_uri=m.get('oauth_redirect_uri'),
@@ -612,6 +625,7 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
         requires_custom_client=own.get('requires_custom_client', False) if own else False,
         oauth_user_scopes=own.get('oauth_user_scopes', []) if own else [],
         credential_fields=[CredentialField(**f) for f in fields],
+        instructions=own.get('instructions') if own else None,
         available_methods=available,
         status=row['status'],
         expires_at=row['expires_at'].isoformat() if row['expires_at'] else '',
@@ -698,7 +712,7 @@ async def _store_and_fulfill(
 
 
 @router.post("/{token}/provide")
-async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[str, str]:
+async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[str, Any]:
     """Submit a credential for a request. Public — no auth required."""
     pool = get_native_pool()
 
@@ -790,7 +804,38 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
                 credential_name = f"{credential_type}{by_suffix}"
                 metadata = {'provided_by': provided_by}
 
-        return await _store_and_fulfill(pool, row, credential_type, credential_data, credential_name, metadata)
+            # The same judgement the in-app form gets: shape through the
+            # credential class and prove against the provider before storing.
+            # The probe runs as the requester (the workflow owner the
+            # credential is for) — a public page has no session of its own.
+            from nodes.core.credential_connect import validate_for_connect
+
+            verdict = await validate_for_connect(
+                credential_type=credential_type,
+                credential_data=credential_data,
+                user_id=str(row['requester_id']),
+                pool=pool,
+            )
+            if not verdict.ok:
+                raise HTTPException(
+                    status_code=400,
+                    detail={
+                        "message": verdict.message,
+                        "field_errors": verdict.field_errors,
+                        "hint": verdict.hint,
+                    },
+                )
+            credential_data = verdict.credential_data
+            metadata = {**metadata, **verdict.verified_metadata()}
+
+        stored = await _store_and_fulfill(pool, row, credential_type, credential_data, credential_name, metadata)
+        if not provider and verdict.evidence is not None:
+            from wss.sender.responses import CredentialTestConnectionResponse
+
+            stored["verification"] = CredentialTestConnectionResponse.from_evidence(
+                verdict.evidence
+            ).model_dump()
+        return stored
 
     except HTTPException:
         raise

@@ -28,6 +28,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import ScheduledPollTriggerMixin, PollTriggerConfigBase
 from utils.ssrf import normalize_provider_subdomain
 
@@ -14027,6 +14028,13 @@ class SnowflakeNode(ScheduledPollTriggerMixin, WorkflowNode):
         "Resume a warehouse before running heavy queries",
         "Execute a scheduled Snowflake task on demand",
     ]
+
+    # Operation rather than the database picker: that loader swallows auth
+    # failures into an empty list, which would read as "connected, no databases".
+    connection_evidence = ConnectionEvidence(
+        operation="list_databases",
+        noun="databases",
+    )
 
     # Bearer-token interpretation header value — always a Programmatic Access
     # Token (PAT is the only supported Snowflake credential).

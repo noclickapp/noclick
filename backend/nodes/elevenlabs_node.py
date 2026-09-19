@@ -82,6 +82,7 @@ import httpx
 import base64
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import (
     filter_options_by_search,
     require_credential_token,
@@ -1411,6 +1412,15 @@ class ElevenLabsNode(WorkflowNode):
         "Dub video to Spanish preserving original voice tone",
         "Get subscription limit and character usage statistics",
     ]
+
+    # The voice catalogue is the same for every account; what they GENERATED is not.
+    connection_evidence = ConnectionEvidence(
+        operation="list_generated_audio_history",
+        noun="recently used voices",
+        label_keys=("voice_name",),
+        identity_operation="get_user_account_information",
+        identity_keys=("first_name",),
+    )
 
     @classmethod
     def get_config_model(cls):

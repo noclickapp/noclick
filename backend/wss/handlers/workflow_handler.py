@@ -32,7 +32,6 @@ from wss.sender.responses import (
     CredentialTestConnectionResponse,
     RehearsalRunResponse,
     RehearsalScenariosResponse,
-    EvidenceSampleModel,
     WorkflowNodeLoadValueResponse,
     WorkflowCollabTokenResponse,
     FieldOption,
@@ -2116,18 +2115,8 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
 
         await send_event(self.sio, sid, ResponseEvent(
             request_id=request.request_id,
-            data=CredentialTestConnectionResponse(
-                reachable=result.reachable,
-                samples=[
-                    EvidenceSampleModel(label=s.label, value=s.value)
-                    for s in result.samples
-                ],
-                noun=result.noun,
-                total=result.total,
-                account_label=result.account_label,
-                answers_field=result.answers_field,
-                proves=getattr(spec, 'proves', 'account'),
-                error=result.error,
+            data=CredentialTestConnectionResponse.from_evidence(
+                result, proves=getattr(spec, 'proves', 'account')
             ).model_dump()
         ))
 

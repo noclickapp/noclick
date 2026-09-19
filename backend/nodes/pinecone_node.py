@@ -26,6 +26,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.document_ingest import DOCUMENT_ACCEPT, ingest_document
 from utils.ssrf import (
     SSRFError,
@@ -784,6 +785,12 @@ def _split_csv(value: Optional[str]) -> List[str]:
 
 class PineconeNode(WorkflowNode):
     """Pinecone vector database automation node."""
+
+    # The index loader returns a bare list the evidence field path can't read.
+    connection_evidence = ConnectionEvidence(
+        operation="list_indexes",
+        noun="indexes",
+    )
 
     edit_examples = [
         "Search a Pinecone index for the vectors most similar to a query embedding",

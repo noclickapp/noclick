@@ -26,6 +26,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.binary_output import BinaryOutput
 
 logger = logging.getLogger(__name__)
@@ -706,6 +707,9 @@ def _page_params(c) -> Dict[str, Any]:
 
 class BasedashNode(WorkflowNode):
     """Basedash BI/admin automation node (API key auth)."""
+
+    # Dashboards/data sources only list once an organization is picked.
+    connection_evidence = ConnectionEvidence(field="organization_id", noun="organizations")
 
     @classmethod
     def get_config_model(cls):

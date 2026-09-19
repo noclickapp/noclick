@@ -28,6 +28,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.cron_trigger_node import (
     ScheduleConfig,
@@ -1080,6 +1081,13 @@ class HexNode(ScheduledPollTriggerMixin, WorkflowNode):
         "Create a signed embed URL for a Hex app",
         "List workspace users via the Hex Admin API",
     ]
+
+    connection_evidence = ConnectionEvidence(
+        operation="list_projects",
+        noun="projects",
+        label_keys=("title", "name", "id"),
+        identity_operation="get_me",
+    )
 
     @classmethod
     def get_config_model(cls):

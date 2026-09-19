@@ -28,6 +28,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
 logger = logging.getLogger(__name__)
@@ -1415,6 +1416,8 @@ class BeehiivNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "List all active subscriptions for a publication",
         "Trigger a workflow whenever a new subscriber confirms",
     ]
+
+    connection_evidence = ConnectionEvidence(field="publication_id", noun="publications")
 
     @classmethod
     def get_config_model(cls):

@@ -26,6 +26,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
 logger = logging.getLogger(__name__)
@@ -1647,6 +1648,8 @@ class FindymailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "Find direct phone numbers for a list of LinkedIn URLs",
         "Trigger a workflow when a signal monitor matches a new buying signal",
     ]
+
+    connection_evidence = ConnectionEvidence(operation="list_contact_lists", noun="contact lists")
 
     @classmethod
     def get_config_model(cls):

@@ -38,6 +38,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from nodes.core.poll_trigger import ScheduledPollTriggerMixin, PollTriggerConfigBase
 from utils.oauth_token_cache import (
@@ -4468,6 +4469,8 @@ class AtlasAdminNode(ExternalWebhookTriggerMixin, ScheduledPollTriggerMixin, Wor
         "Take an on-demand backup snapshot of a cluster",
         "Trigger a workflow when an Atlas alert opens",
     ]
+
+    connection_evidence = ConnectionEvidence(field="project_id", noun="projects")
 
     @classmethod
     def get_config_model(cls):

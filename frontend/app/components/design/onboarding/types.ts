@@ -19,7 +19,7 @@ export interface ResolvedTool {
     `partial` is the one that matters: the token is valid but is missing a scope
     one of the allowlisted operations needs, so the agent authenticates fine and
     then fails mid-run. */
-export type TestOutcome = 'untested' | 'working' | 'partial' | 'failed';
+export type TestOutcome = 'untested' | 'working' | 'partial' | 'failed' | 'unverified';
 
 export interface CredentialStep {
     kind: 'credential';

@@ -22,6 +22,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.document_ingest import DOCUMENT_ACCEPT, ingest_document
 from utils.ssrf import guarded_async_client
 
@@ -886,6 +887,11 @@ class ElasticsearchNode(WorkflowNode):
         "Reindex documents from one Elasticsearch index into another",
         "Inspect mappings, settings, aliases, and stats for an Elasticsearch index",
     ]
+
+    connection_evidence = ConnectionEvidence(
+        operation="list_indices",
+        noun="indices",
+    )
 
     @classmethod
     def get_config_model(cls):

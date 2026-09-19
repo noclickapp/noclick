@@ -34,6 +34,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
 
@@ -591,6 +592,13 @@ class FalNode(WorkflowNode):
         "Fetch the result of a completed fal job",
         "Trigger a workflow when a queued fal job finishes",
     ]
+
+    # The model catalogue is identical for every key, but /v1/models still rejects a bad one.
+    connection_evidence = ConnectionEvidence(
+        operation="search_models",
+        noun="models",
+        proves="reachability",
+    )
 
     @classmethod
     def get_config_model(cls):

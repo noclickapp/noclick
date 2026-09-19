@@ -30,6 +30,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.schedule_registration import CronScheduleTriggerMixin
 from nodes.core.poll_trigger import bounded_seen_ids
 from nodes.cron_trigger_node import (
@@ -827,6 +828,12 @@ class DevinNode(CronScheduleTriggerMixin, WorkflowNode):
         "Create a knowledge note Devin should use for the project",
         "List all Devin sessions for the organization",
     ]
+
+    connection_evidence = ConnectionEvidence(
+        field="session_id",
+        noun="sessions",
+        identity_operation="get_self",
+    )
 
     @classmethod
     def get_config_model(cls):

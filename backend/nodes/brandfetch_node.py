@@ -25,6 +25,7 @@ from utils.webhook_signatures import verify_svix
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
 
@@ -717,6 +718,16 @@ class BrandfetchNode(WorkflowNode):
         "Identify the merchant brand behind a bank statement descriptor",
         "Build a themed logo CDN URL for a domain",
     ]
+
+    # Every read is a per-domain lookup, so probe Brandfetch's own brand. The
+    # nested logo/link rows carry no `domain`, so none masquerade as account data.
+    connection_evidence = ConnectionEvidence(
+        operation="get_brand_by_domain",
+        operation_arguments={"domain": "brandfetch.com"},
+        noun="brand lookups",
+        label_keys=("domain",),
+        proves="reachability",
+    )
 
     @classmethod
     def get_config_model(cls):

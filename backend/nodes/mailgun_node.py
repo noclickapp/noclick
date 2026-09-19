@@ -38,6 +38,7 @@ import httpx
 
 from nodes.core.agent_events import bullet_lines, prune_empty
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 logger = logging.getLogger(__name__)
@@ -1130,6 +1131,12 @@ async def _mailgun_request(
 
 class MailgunNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """Mailgun email automation node."""
+
+    # The domain loader swallows provider errors into [], so probe via the op.
+    connection_evidence = ConnectionEvidence(
+        operation="list_domains",
+        noun="domains",
+    )
 
     edit_examples = [
         "Send a transactional email through my Mailgun domain",

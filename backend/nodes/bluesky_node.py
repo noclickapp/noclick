@@ -23,6 +23,7 @@ from pydantic import BaseModel, Field, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 
 logger = logging.getLogger(__name__)
 
@@ -3210,6 +3211,12 @@ class BlueSkyNode(WorkflowNode):
         "Mute a thread and send a direct message about the topic",
         "Block a user and report for harassment with description",
     ]
+
+    connection_evidence = ConnectionEvidence(
+        noun="account",
+        identity_operation="get_active_session",
+        identity_keys=("handle",),
+    )
 
     @classmethod
     def get_config_model(cls) -> Optional[Union[Type, type]]:

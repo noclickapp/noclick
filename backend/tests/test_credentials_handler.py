@@ -122,6 +122,182 @@ class TestCredentialsHandler(BaseHandlerTest):
         encrypted_credential = row['credential']
         assert "super_secret_key_123" not in encrypted_credential, "Plaintext should not be stored"
 
+    async def test_create_refuses_a_url_pasted_into_a_secret_field(self, real_database, frontend_sio, sid):
+        """The connect seam judges the blob through its credential class BEFORE
+        anything is stored: a URL in a key field comes back per field, and no
+        row is written (the 2026-09-18 Tableau case — site URLs saved as a PAT)."""
+        user_id = '00000000-0000-4000-8000-000000000001'
+        await self.create_test_user(real_database, user_id)
+
+        await send_event(frontend_sio, sid, CredentialCreateRequest(
+            event_name="credential:create",
+            request_id="test-create-refused",
+            name="Firecrawl (url pasted)",
+            credential_type="firecrawl_api_key",
+            credential_data={"api_key": "https://www.firecrawl.dev/app/api-keys"},
+        ))
+        await asyncio.sleep(0.2)
+
+        response = self.get_main_api_emitted_events("response")[-1][1]
+        assert response['request_id'] == 'test-create-refused'
+        assert response['error'], "a refused save carries the one-line error"
+        assert response['data']['success'] is False
+        assert 'web address' in response['data']['field_errors']['api_key']
+        assert response['data']['field_errors']['api_key'] == response['error']
+
+        count = await real_database.fetchval(
+            "SELECT count(*) FROM credentials WHERE owner_id = $1 AND name = 'Firecrawl (url pasted)'",
+            user_id,
+        )
+        assert count == 0, "a refused credential must never become a row"
+
+    async def test_create_stores_the_shaped_blob_and_the_probe_verdict(self, real_database, frontend_sio, sid, monkeypatch):
+        """A whole site URL pasted as the server is split into pod + site before
+        encryption, the probe's answer rides the response as `verification`, and
+        the row remembers who it was verified as."""
+        from nodes.core import credential_connect as cc
+        from nodes.core.connection_evidence import EvidenceResult, EvidenceSample
+
+        user_id = '00000000-0000-4000-8000-000000000001'
+        await self.create_test_user(real_database, user_id)
+
+        seen = {}
+
+        async def fake_collect(**kwargs):
+            seen.update(kwargs)
+            return EvidenceResult(
+                reachable=True, noun="workbooks",
+                samples=[EvidenceSample(label="Sales"), EvidenceSample(label="Ops")],
+                account_label="Acme site",
+            )
+
+        monkeypatch.setattr(cc, "_collect_evidence", fake_collect)
+
+        await send_event(frontend_sio, sid, CredentialCreateRequest(
+            event_name="credential:create",
+            request_id="test-create-verified",
+            name="Tableau",
+            credential_type="tableau_pat",
+            credential_data={
+                "server_url": "https://us-east-1.online.tableau.com/#/site/acme/home",
+                "site_content_url": "",
+                "pat_name": "noclick",
+                "pat_secret": "s3cret\n",
+            },
+        ))
+        await asyncio.sleep(0.2)
+
+        response = self.get_main_api_emitted_events("response")[-1][1]
+        data = response['data']
+        assert data['success'] is True
+        assert data['verification']['reachable'] is True
+        assert [s['label'] for s in data['verification']['samples']] == ["Sales", "Ops"]
+        assert data['credential']['metadata']['verified_as'] == "Acme site"
+        assert data['credential']['metadata']['verified_at']
+
+        # The probe saw the SHAPED blob, and that is what was encrypted.
+        assert seen['credential_data']['server_url'] == "https://us-east-1.online.tableau.com"
+        assert seen['credential_data']['site_content_url'] == "acme"
+        assert seen['credential_data']['pat_secret'] == "s3cret"
+        stored = await get_credential(data['credential']['id'], user_id, pool=real_database.pool)
+        assert stored['server_url'] == "https://us-east-1.online.tableau.com"
+        assert stored['site_content_url'] == "acme"
+
+    async def test_create_blocks_on_a_definitive_provider_rejection(self, real_database, frontend_sio, sid, monkeypatch):
+        from nodes.core import credential_connect as cc
+        from nodes.core.connection_evidence import EvidenceResult
+
+        user_id = '00000000-0000-4000-8000-000000000001'
+        await self.create_test_user(real_database, user_id)
+
+        async def fake_collect(**kwargs):
+            return EvidenceResult(
+                reachable=False, noun="workbooks",
+                error="The server answered HTTP 403 with a web page instead of an API response",
+                hint="That address serves a web page, not an API.",
+            )
+
+        monkeypatch.setattr(cc, "_collect_evidence", fake_collect)
+
+        await send_event(frontend_sio, sid, CredentialCreateRequest(
+            event_name="credential:create",
+            request_id="test-create-rejected",
+            name="Tableau (rejected by provider)",
+            credential_type="tableau_pat",
+            credential_data={
+                "server_url": "https://tableau.example.com",
+                "pat_name": "noclick",
+                "pat_secret": "s3cret",
+            },
+        ))
+        await asyncio.sleep(0.2)
+
+        response = self.get_main_api_emitted_events("response")[-1][1]
+        assert response['data']['success'] is False
+        assert 'web page' in response['error']
+        assert response['data']['hint'].startswith('That address')
+        count = await real_database.fetchval(
+            "SELECT count(*) FROM credentials WHERE owner_id = $1 AND name = 'Tableau (rejected by provider)'", user_id,
+        )
+        assert count == 0
+
+    async def test_create_saves_unverified_when_the_probe_cannot_judge(self, real_database, frontend_sio, sid, monkeypatch):
+        """A provider outage is not a verdict: the credential is saved and the
+        response says nothing was proven (verification.reachable is null)."""
+        from nodes.core import credential_connect as cc
+        from nodes.core.connection_evidence import EvidenceResult
+
+        user_id = '00000000-0000-4000-8000-000000000001'
+        await self.create_test_user(real_database, user_id)
+
+        async def fake_collect(**kwargs):
+            return EvidenceResult(reachable=None, noun="workbooks")
+
+        monkeypatch.setattr(cc, "_collect_evidence", fake_collect)
+
+        await send_event(frontend_sio, sid, CredentialCreateRequest(
+            event_name="credential:create",
+            request_id="test-create-unverified",
+            name="Tableau",
+            credential_type="tableau_pat",
+            credential_data={"server_url": "https://tableau.example.com", "pat_name": "n", "pat_secret": "s"},
+        ))
+        await asyncio.sleep(0.2)
+
+        data = self.get_main_api_emitted_events("response")[-1][1]['data']
+        assert data['success'] is True
+        assert data['verification']['reachable'] is None
+        assert 'verified_as' not in (data['credential']['metadata'] or {})
+
+    async def test_update_judges_a_replaced_secret_like_a_new_one(self, real_database, frontend_sio, sid):
+        user_id = '00000000-0000-4000-8000-000000000001'
+        await self.create_test_user(real_database, user_id)
+
+        await send_event(frontend_sio, sid, CredentialCreateRequest(
+            event_name="credential:create",
+            request_id="test-update-seed",
+            name="Firecrawl",
+            credential_type="firecrawl_api_key",
+            credential_data={"api_key": "fc-real-key"},
+        ))
+        await asyncio.sleep(0.2)
+        credential_id = self.get_main_api_emitted_events("response")[-1][1]['data']['credential']['id']
+
+        await send_event(frontend_sio, sid, CredentialUpdateRequest(
+            event_name="credential:update",
+            request_id="test-update-refused",
+            credential_id=credential_id,
+            credential_data={"api_key": "<your api key>"},
+        ))
+        await asyncio.sleep(0.2)
+
+        response = self.get_main_api_emitted_events("response")[-1][1]
+        assert response['request_id'] == 'test-update-refused'
+        assert response['data']['success'] is False
+        assert 'placeholder' in response['data']['field_errors']['api_key']
+        stored = await get_credential(credential_id, user_id, pool=real_database.pool)
+        assert stored['api_key'] == "fc-real-key", "a refused re-key leaves the row untouched"
+
     async def test_list_credentials(self, real_database, frontend_sio, sid):
         """
         Test that credentials can be listed without exposing decrypted data.
@@ -199,7 +375,12 @@ class TestCredentialsHandler(BaseHandlerTest):
             request_id="create-discord",
             name="NoClick Sandbox",
             credential_type="discord_bot_install",
-            credential_data={"bot_token": "platform"},
+            # The install flow's shape — credential:create now parses the blob
+            # through the credential class before storing it.
+            credential_data={
+                "guild_id": "123456789012345678", "guild_name": "Acme",
+                "access_token": "at", "refresh_token": "rt", "expires_at": "2099-01-01T00:00:00Z",
+            },
             metadata={"guild_id": "123456", "guild_name": "NoClick Sandbox"},
         ))
         await asyncio.sleep(0.1)
