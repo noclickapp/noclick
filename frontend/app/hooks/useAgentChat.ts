@@ -100,6 +100,8 @@ export interface AgentChatFileAttachment {
 }
 
 export interface AgentChatMessage {
+    turnId?: string;
+    notification?: boolean;
     isUser: boolean;
     text: string;
     isComplete: boolean;
@@ -187,6 +189,8 @@ export interface UseAgentChatResult {
  *  actions. Everything else (system prompt, recall, think, env observations)
  *  is internal machinery and not rendered in the transcript. */
 interface PersistedEvent {
+    turn_id?: string;
+    notification?: boolean;
     id?: number;
     /** Legacy action/source shape — pre-Phase-9 events written by the previous
      *  OpenHands-era PostgresStore. Still present in older conversations.events rows. */
@@ -618,6 +622,8 @@ export function persistedEventsToChatMessages(
                 content,
                 attachments: fileAttachments,
                 trigger,
+                turnId: ev.turn_id,
+                notification: ev.notification || undefined,
                 steps: isUser
                     ? undefined
                     : stepsFromPersistedToolCalls(ev.tool_calls),
@@ -683,6 +689,8 @@ export function persistedEventsToChatMessages(
 }
 
 type ChatEventData = {
+    turn_id?: string | null;
+    notification?: boolean;
     message?: string | null;
     finished?: boolean;
     content?: ContentItem[] | null;
@@ -811,13 +819,27 @@ function advanceSteps(
     return next.length ? next : undefined;
 }
 
+/** Preserve newer background results when an older resume snapshot wins a race. */
+function appendMissingNotifications(
+    base: AgentChatMessage[],
+    candidates: readonly AgentChatMessage[]
+): AgentChatMessage[] {
+    const ids = new Set(base.map((m) => m.turnId).filter(Boolean));
+    return base.concat(
+        candidates.filter(
+            (m) => m.notification && m.turnId && !ids.has(m.turnId)
+        )
+    );
+}
+
 /** Index of the LIVE tail — the last message that is not a builder approval
- *  card. Cards sink to the bottom of their turn (arriving mid-stream, they
+ *  card or background notification. Cards sink to the bottom of their turn (arriving mid-stream, they
  *  must render below the response, not above it), so every "is the tail an
  *  in-flight bubble?" check skips them. -1 when only cards (or nothing). */
 export function liveTailIndex(messages: readonly AgentChatMessage[]): number {
     let i = messages.length - 1;
-    while (i >= 0 && messages[i].builderPrompt) i--;
+    while (i >= 0 && (messages[i].builderPrompt || messages[i].notification))
+        i--;
     return i;
 }
 
@@ -842,6 +864,18 @@ export function applyChatMessageEvent(
     prev: AgentChatMessage[],
     data: ChatEventData
 ): AgentChatMessage[] {
+    if (data.notification) {
+        if (data.turn_id && prev.some((m) => m.turnId === data.turn_id))
+            return prev;
+        return prev.concat({
+            isUser: false,
+            text: data.message ?? '',
+            isComplete: true,
+            content: data.content ?? undefined,
+            turnId: data.turn_id ?? undefined,
+            notification: true,
+        });
+    }
     // prompt_builder approval card: a standalone frame arriving MID-turn (the
     // tool returned but the agent turn keeps running). Appended at the END so
     // the approval sits at the BOTTOM of the turn where the eye lands after a
@@ -1041,7 +1075,10 @@ export function useAgentChat(
                 if (!session.isStreaming && session.messages.length > 0) {
                     // Idle revisit: the persisted transcript is the fresh truth (cards
                     // and tool timelines are persisted) — adopt it wholesale.
-                    session.messages = dedupeConsecutiveErrors(persisted);
+                    session.messages = appendMissingNotifications(
+                        dedupeConsecutiveErrors(persisted),
+                        session.messages
+                    );
                     return;
                 }
                 setMessages((prev) => {
@@ -1052,10 +1089,14 @@ export function useAgentChat(
                             .map((m) => m.builderPrompt?.proposal_id)
                             .filter(Boolean)
                     );
+                    const turnIds = new Set(
+                        persisted.map((m) => m.turnId).filter(Boolean)
+                    );
                     const live = prev.filter(
                         (m) =>
-                            !m.builderPrompt?.proposal_id ||
-                            !pids.has(m.builderPrompt.proposal_id)
+                            (!m.turnId || !turnIds.has(m.turnId)) &&
+                            (!m.builderPrompt?.proposal_id ||
+                                !pids.has(m.builderPrompt.proposal_id))
                     );
                     return dedupeConsecutiveErrors([...persisted, ...live]);
                 });
@@ -1080,7 +1121,7 @@ export function useAgentChat(
             (data: ChatMessageEvent) => {
                 if (data.conversation_id !== conversationId) return;
                 setMessages((prev) => applyChatMessageEvent(prev, data));
-                if (data.finished) {
+                if (data.finished && !data.notification) {
                     setIsStreaming(false);
                     markFinished(Date.now());
                     // A turn that ended cleanly retires the previous turn's banner. The
@@ -1235,7 +1276,12 @@ export function useAgentChat(
                 const persisted = dedupeConsecutiveErrors(
                     persistedEventsToChatMessages(resp.messages)
                 );
-                const lastPersisted = persisted[persisted.length - 1];
+                // A missed background frame is useful even while the user's turn
+                // is still running; it must not resolve that turn.
+                setMessages((prev) =>
+                    appendMissingNotifications(prev, persisted)
+                );
+                const lastPersisted = persisted[liveTailIndex(persisted)];
                 // Terminal iff the newest persisted entry is a completed assistant
                 // message carrying real content (text or an error). An in-flight or
                 // user entry means the turn genuinely hasn't finished — keep waiting.
@@ -1267,7 +1313,9 @@ export function useAgentChat(
                 // Replace the whole transcript with the persisted truth — this drops
                 // the stale in-flight "running agent…" bubble the live path would have
                 // closed, and is idempotent if some frames did arrive.
-                setMessages(persisted);
+                setMessages((prev) =>
+                    appendMissingNotifications(persisted, prev)
+                );
             } catch (err) {
                 if (!cancelled)
                     console.warn('[useAgentChat] reconcile poll failed', err);

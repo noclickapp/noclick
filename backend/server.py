@@ -251,7 +251,14 @@ async def app_lifespan(app: FastAPI):
 
     await run_startup_hooks("ready")
 
-    yield
+    from coder.coordinator.tasks import task_worker
+    coordinator_worker = asyncio.create_task(task_worker(), name="coordinator-agent-tasks")
+
+    try:
+        yield
+    finally:
+        coordinator_worker.cancel()
+        await asyncio.gather(coordinator_worker, return_exceptions=True)
 
     # Drain in-flight AI-builder runs cooperatively FIRST: a scale-down/redeploy
     # that doesn't exit within Modal's grace gets hard-killed and left a zombie

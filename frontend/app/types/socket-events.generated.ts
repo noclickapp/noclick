@@ -312,6 +312,8 @@ export interface CacheValtioStateEvent {
  * This event is used for all AI agent responses and component generation in the chat interface.
  */
 export interface ChatMessageEvent {
+  turn_id?: string | null;
+  notification?: boolean;
   /**
    * Conversation session ID for associating messages with specific conversation context
    */

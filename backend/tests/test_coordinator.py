@@ -78,6 +78,30 @@ async def test_execute_dispatches_never_raises_and_audits():
                      ("account_overview", "error", COORDINATOR_NODE_ID, CID)]
 
 
+async def test_find_agents_reads_both_graph_shapes_and_filters_by_purpose():
+    rows = [{"id": WORKFLOW, "name": "Operations", "workflow": {"nodes": [
+        {"id": "a", "type": "agent", "config": {"label": "Researcher", "goal": "Market research", "model": "codex"}},
+        {"id": "b", "type": "agent", "data": {"label": "Writer", "goal": "Market briefs", "config": {"model": "claude-code"}}},
+        {"id": "c", "type": "trigger-run", "config": {"label": "Market event"}},
+    ]}}]
+    with patch("repositories.dashboard.DashboardRepo.list_workflows", AsyncMock(return_value=rows)):
+        out = await tools().find_agents("market")
+        assert [a["node_id"] for a in out["agents"]] == ["a", "b"]
+        assert out["agents"][1]["purpose"] == "Market briefs"
+        assert (await tools().find_agents("unknown"))["agents"] == []
+
+
+async def test_agent_message_preserves_followup_and_reply_channel():
+    t = tools()
+    t.reply_channel = "whatsapp_text"
+    request = AsyncMock(return_value={"success": True, "task": {"status": "queued"}})
+    with patch("coder.coordinator.tasks.request_agent_message", request):
+        out = await t.message_agent(WORKFLOW, "agent", "Continue", reply_to_task_id="previous")
+    assert out["task"]["status"] == "queued"
+    assert request.call_args.kwargs == dict(user_id=USER, workflow_id=WORKFLOW, node_id="agent",
+                                           message="Continue", channel="whatsapp_text", reply_to_task_id="previous")
+
+
 async def test_account_overview_is_the_dashboard_aggregate_bounded():
     big = {"workspace": {"name": "W"}, "generatedAt": "t", "errors": {},
            "attention": [{"id": i, "title": "x" * 500} for i in range(40)], "runs": {"recent": [1, 2, 3]}}

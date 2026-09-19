@@ -54,6 +54,18 @@ def coordinator_tool_params(*, include_owner_message: bool = False) -> List[Dict
              {"workflow_id": {"type": "string"},
               "focus": {"type": "string", "description": "Optional node id to anchor the notes on."}},
              ["workflow_id"]),
+        tool("find_agents", "Find existing agents by their name, workflow or purpose. Returns workflow_id and node_id for message_agent.",
+             {"query": {"type": "string", "description": "Optional name or purpose to search for."}}),
+        tool("message_agent", "Send work to an existing agent. Returns a durable task immediately; its reply arrives "
+             "in this conversation when ready. The agent uses its configured tools and may run downstream workflow actions. "
+             "For a follow-up, pass reply_to_task_id to preserve that agent's conversation; otherwise start a new conversation.",
+             {"workflow_id": {"type": "string"}, "node_id": {"type": "string"},
+              "message": {"type": "string", "description": "Complete instructions and relevant context for the agent."},
+              "reply_to_task_id": {"type": "string", "description": "A prior task to this agent whose conversation to continue."}},
+             ["workflow_id", "node_id", "message"]),
+        tool("agent_tasks", "Read your agent requests, their status and their actual replies. Pass task_id for one "
+             "specific request; otherwise lists active tasks first, then recent results.",
+             {"task_id": {"type": "string"}}),
         tool("request_build",
              "Hand a build or edit to the AI builder, which runs in the background as the account owner. "
              "Give it a new workflow's name or an existing workflow_id, plus complete instructions. "
@@ -104,16 +116,21 @@ def bounded(value: Any, *, max_items: int = MAX_ITEMS, max_chars: int = MAX_CHAR
 
 
 class CoordinatorTools:
-    def __init__(self, *, pool, sio, user_id: str, organization_id: Optional[str], conversation_id: str):
+    def __init__(self, *, pool, sio, user_id: str, organization_id: Optional[str], conversation_id: str,
+                 reply_channel: str = "web"):
         self.pool = pool
         self.sio = sio
         self.user_id = user_id
         self.organization_id = organization_id
         self.conversation_id = conversation_id
+        self.reply_channel = reply_channel
         self._tools: Dict[str, Callable[..., Awaitable[Dict[str, Any]]]] = {
             "account_overview": self.account_overview,
             "list_workflows": self.list_workflows,
             "describe_workflow": self.describe_workflow,
+            "find_agents": self.find_agents,
+            "message_agent": self.message_agent,
+            "agent_tasks": self.agent_tasks,
             "request_build": self.request_build,
             "build_status": self.build_status,
             "trash_workflow": self.trash_workflow,
@@ -186,6 +203,46 @@ class CoordinatorTools:
         except (TypeError, ValueError):
             return None
         return await WorkflowExecutionHandler(self.sio)._fetch_workflow(workflow_id, self.user_id)
+
+    async def find_agents(self, query: Optional[str] = None) -> Dict[str, Any]:
+        from repositories.dashboard import DashboardRepo
+        from utils.graph_nodes import graph_nodes, node_config, node_disabled, node_label, node_model
+
+        rows = await DashboardRepo(self.pool).list_workflows(
+            self.user_id, uuid.UUID(self.organization_id) if self.organization_id else None,
+        )
+        found = []
+        wanted = (query or "").casefold().strip()
+        for row in rows:
+            for node in graph_nodes(row["workflow"]):
+                if node.get("type") != "agent":
+                    continue
+                goal = str(node_config(node).get("goal") or (node.get("data") or {}).get("goal") or "")
+                name = node_label(node) or "Agent"
+                if wanted and wanted not in f"{row['name']} {name} {goal}".casefold():
+                    continue
+                found.append({"workflow_id": str(row["id"]), "workflow_name": row["name"],
+                              "node_id": node["id"], "name": name, "purpose": goal[:500],
+                              "model": node_model(node), "disabled": node_disabled(node)})
+        return {"success": True, "agents": found[:40], "has_more": len(found) > 40}
+
+    async def message_agent(self, workflow_id: str, node_id: str, message: str,
+                            reply_to_task_id: Optional[str] = None) -> Dict[str, Any]:
+        from coder.coordinator.tasks import request_agent_message
+
+        return await request_agent_message(
+            self.pool, self.sio, user_id=self.user_id, workflow_id=workflow_id, node_id=node_id,
+            message=message, channel=self.reply_channel, reply_to_task_id=reply_to_task_id,
+        )
+
+    async def agent_tasks(self, task_id: Optional[str] = None) -> Dict[str, Any]:
+        from coder.coordinator.tasks import task_view
+        from repositories.coordinator_tasks import CoordinatorTaskRepo
+
+        if task_id:
+            uuid.UUID(task_id)
+        rows = await CoordinatorTaskRepo(self.pool).list_for_user(self.user_id, task_id)
+        return {"success": True, "tasks": [task_view(row) for row in rows]}
 
     async def describe_workflow(self, workflow_id: str, focus: Optional[str] = None) -> Dict[str, Any]:
         from nodes.agent.platform_tools import describe_workflow_impl

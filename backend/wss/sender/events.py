@@ -75,6 +75,8 @@ class BuilderPromptProposal(BaseModel):
 
 
 class ChatMessageEvent(BaseModel):
+    turn_id: Optional[str] = None
+    notification: bool = Field(False, description="Standalone background update; never finish the in-progress reply.")
     """
     Event emitted for chat messages including AI responses and component generation.
     
