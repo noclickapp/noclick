@@ -744,6 +744,48 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
             assert status == 'completed' and committed["execution_id"] == execution_id and committed["digest"]
 
     @pytest.mark.asyncio
+    async def test_an_agent_turn_runs_inside_an_existing_run_with_no_bookkeeping(self, real_database, frontend_sio, sid):
+        """A conversational turn (a phone call's) executes the agent and what
+        feeds it under the call's own run: no new execution row, no graph
+        snapshot, no output persist, and nothing downstream of the agent."""
+        from repositories.workflow import WorkflowRepo
+        from utils.database_pool import get_native_pool
+
+        workflow_id = str(uuid.uuid4())
+        user_id = '00000000-0000-4000-8000-000000000003'
+        await self.create_test_user(real_database, user_id)
+        await self.create_workflow_in_db(real_database, workflow_id, user_id)
+        nodes = [
+            {"id": "agent-1", "type": "agent", "position": {"x": 0, "y": 0},
+             "config": self.wrap_node_data("agent", {"system_prompt": "Answer the phone", "message": "standing instructions", "temperature": 0.5})},
+            {"id": "telegram-1", "type": "automation-telegram", "position": {"x": 100, "y": 0},
+             "config": self.wrap_node_data("automation-telegram", {"message": "{{agent-1.response}}", "chatId": "123456"})},
+        ]
+        edges = [{"id": "e1", "source": "agent-1", "target": "telegram-1"}]
+        await real_database.execute("UPDATE workflows SET workflow = $2 WHERE id = $1", workflow_id, {"nodes": nodes, "edges": edges})
+        pool = get_native_pool()
+        async with pool.acquire() as conn:
+            execution_id = await WorkflowRepo(pool).create_execution(
+                conn, workflow_id=workflow_id, user_id=user_id, trigger_source="phone_call")
+
+        handler = WorkflowExecutionHandler(sio=None)
+        with patch("utils.node_outputs.commit_graph_snapshot", AsyncMock()) as snapshot, \
+             patch("utils.node_outputs.persist_outputs", AsyncMock()) as persist:
+            result = await handler.execute_agent_turn(
+                workflow_id=workflow_id, agent_node_id="agent-1", user_id=user_id, message="Are you open?",
+                conversation_key="+1555:+1567", execution_id=execution_id,
+            )
+        assert result.success, result.error
+        assert result.execution_id == execution_id
+        assert set(result.node_outputs) == {"agent-1"}, "the agent's downstream is not a turn's to run"
+        assert result.node_outputs["agent-1"].get("response")
+        snapshot.assert_not_awaited()
+        persist.assert_not_awaited()
+        rows = await real_database.fetch("SELECT id, status FROM workflow_executions WHERE workflow_id = $1", uuid.UUID(workflow_id))
+        assert [(str(r["id"]), r["status"]) for r in rows] == [(execution_id, "running")], "the call's run is the only row, still open"
+        assert execution_id not in handler._execution_node_statuses and execution_id not in handler._execution_relays
+
+    @pytest.mark.asyncio
     async def test_parallel_workflow(self, real_database, frontend_sio, sid):
         """Test parallel branching and convergence: A → [B,C,D] → E."""
         # Setup database

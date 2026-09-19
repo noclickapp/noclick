@@ -1327,6 +1327,78 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             except asyncio.CancelledError:
                 pass  # Swallow — cleanup must not be interrupted
 
+    async def execute_agent_turn(
+        self, *, workflow_id: str, agent_node_id: str, user_id: str, message: str,
+        conversation_key: str, execution_id: str,
+    ) -> WorkflowExecutionResult:
+        """One conversational turn of an agent node inside an EXISTING run —
+        a phone call's — with none of a run's bookkeeping: no execution row,
+        no graph snapshot, no output persist. The agent and its tool providers
+        execute exactly as they would in a run (same executor, tools, memory,
+        billing, tool audit under this execution id); its downstream nodes do
+        NOT — a spoken reply is not a dataflow output, and the whole call
+        reaches them at hang-up as the trigger's event. Node events ride the
+        run's own relay, so the canvas follows the call live."""
+        from utils.execution_relay import create_execution_relay
+        from wss.sender import _active_execution_relay
+
+        start_time = time.time()
+
+        def _result(success: bool, error: Optional[str], node_outputs=None, last=None) -> WorkflowExecutionResult:
+            return WorkflowExecutionResult(
+                execution_id=execution_id, workflow_id=workflow_id, success=success,
+                nodes_executed=len(node_outputs or {}), duration=time.time() - start_time, error=error,
+                node_outputs=node_outputs or {}, last_output_node_id=last,
+            )
+
+        fetched = await self._fetch_workflow(workflow_id, user_id)
+        if not fetched:
+            return _result(False, "Workflow not found or access denied")
+        nodes, edges, workflow_org_id, workflow_variables, _settings = fetched
+        import copy
+        nodes = copy.deepcopy(nodes)
+        agent = next((n for n in nodes if n.get('id') == agent_node_id), None)
+        if agent is None:
+            return _result(False, f"Agent node {agent_node_id} not found")
+        agent.setdefault('config', {}).update({
+            "message": message, "conversation_key": conversation_key, "mockedOutput": None,
+        })
+        executable = [n for n in nodes if n.get('type') not in NON_EXECUTABLE_NODE_TYPES]
+        # The agent's forward edges are cut so reachability yields the agent plus
+        # the providers and data nodes that feed it, never what it feeds.
+        turn_edges = [e for e in edges if e.get('source') != agent_node_id]
+        slice_nodes, slice_edges = self._get_reachable_nodes(agent_node_id, executable, turn_edges)
+        pool = await self.get_pool()
+        preloaded = await self._preload_excluded_node_outputs(
+            pool, workflow_id, nodes, {n['id'] for n in slice_nodes},
+        )
+        relay = create_execution_relay(workflow_id, execution_id, user_id)
+        relay.start()
+        self._execution_relays[execution_id] = relay
+        _active_execution_relay.set(relay)
+        try:
+            nodes_executed, error_msg, node_outputs, last = await self._execute_nodes_concurrent(
+                slice_nodes, slice_edges, "", user_id, workflow_id,
+                execution_id=execution_id,
+                conversation_id=f"ck:{workflow_id}:{agent_node_id}:{conversation_key}",
+                workflow_org_id=workflow_org_id,
+                cancellation_event=asyncio.Event(),
+                workflow_variables=workflow_variables,
+                initial_outputs=preloaded or None,
+                include_last_output_node_id=True,
+                workflow_graph=(nodes, edges),
+            )
+            return _result(error_msg is None, error_msg, node_outputs, last)
+        finally:
+            # Per-node statuses are the run's to persist; a turn leaves none behind.
+            self._execution_node_statuses.pop(execution_id, None)
+            self._execution_relays.pop(execution_id, None)
+            _active_execution_relay.set(None)
+            try:
+                await asyncio.shield(relay.close())
+            except (Exception, asyncio.CancelledError):
+                pass
+
     def _start_graph_snapshot(self, workflow_id: str, execution_id: str, nodes, edges) -> Optional[asyncio.Task]:
         """The CAS graph snapshot off the critical path: canonicalized NOW (node
         execution mutates the dicts), committed while the first nodes run — the
