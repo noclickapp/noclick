@@ -16,6 +16,9 @@ from utils.cas import store as _cas
 # ── Writes ──────────────────────────────────────────────────────────────────
 # Capture the run's graph once at start (idempotent; resume-safe short-circuit).
 snapshot_graph = _cas.persist_graph_snapshot
+# The same in two halves: canonicalize synchronously, commit off the critical path.
+prepare_graph_snapshot = _cas.prepare_graph_snapshot
+commit_graph_snapshot = _cas.commit_graph_snapshot
 # Persist a whole run's node outputs + per-node terminal statuses (at run end).
 persist_outputs = _cas.persist_run_outputs
 # Persist a single node's output + status (iteration sub-outputs).
@@ -42,7 +45,7 @@ read_graph = _cas.read_graph              # reassembled graph snapshot for a run
 read_node_output = _cas.read_node_output  # one node's reassembled output for a run
 
 __all__ = [
-    "snapshot_graph", "persist_outputs", "persist_node",
+    "snapshot_graph", "prepare_graph_snapshot", "commit_graph_snapshot", "persist_outputs", "persist_node",
     "execution_outputs", "latest_outputs", "latest_output", "latest_output_meta",
     "nodes_with_output", "latest_statuses", "output_history",
     "read_graph", "read_node_output",

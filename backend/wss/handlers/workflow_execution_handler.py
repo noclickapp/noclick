@@ -186,6 +186,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         # Maps execution_id -> asyncio.Event (set when cancellation requested)
         # Per-execution WebSocket relay connections to workflow relay
         self._execution_relays: Dict[str, Any] = {}  # execution_id -> ExecutionRelay
+        self._snapshot_tasks: set = set()  # in-flight CAS graph snapshots (see _start_graph_snapshot)
         # Per-execution last-run node status, built when the executor finishes and
         # consumed (popped) by _persist_node_outputs so headless/webhook runs persist
         # each node's completed/error/skipped status into the CAS (cas_manifests'
@@ -769,19 +770,12 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 logger.info(f"[WorkflowExecution] Using pre-created execution record {execution_id}")
 
             # CAS: snapshot the run's graph once at start (whole-blob, deduped).
-            # snapshot_graph short-circuits on resume (existing graph_hash), so the
+            # The commit short-circuits on resume (existing graph_hash), so the
             # snapshot is the run-start graph, never a post-edit one.
             # Best-effort — a snapshot failure must never block execution.
-            try:
-                from utils.database_pool import get_native_pool
-                from utils.node_outputs import snapshot_graph
-                # CAS writes need a native asyncpg pool (transaction + executemany);
-                await snapshot_graph(
-                    get_native_pool(), workflow_id=request.workflow_id, execution_id=execution_id,
-                    graph={"nodes": snapshot_nodes, "edges": snapshot_edges},
-                )
-            except Exception as e:
-                logger.error(f"[WorkflowExecution] CAS graph snapshot failed: {e}", exc_info=True)
+            snapshot_task = self._start_graph_snapshot(
+                request.workflow_id, execution_id, snapshot_nodes, snapshot_edges,
+            )
 
             cancellation_event = asyncio.Event()
 
@@ -1230,7 +1224,11 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     "error": (error_msg or '')[:500],
                 })
 
-            # Update execution record (non-blocking — UI already notified)
+            # Update execution record (non-blocking — UI already notified). The
+            # snapshot lands first: the row is read as a whole once terminal, and
+            # a no-op run's delete must not race the snapshot's own writes.
+            if snapshot_task is not None:
+                await snapshot_task
             try:
                 async with pool.acquire() as conn:
                     repo = WorkflowRepo(pool)
@@ -1328,6 +1326,34 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                         pass
             except asyncio.CancelledError:
                 pass  # Swallow — cleanup must not be interrupted
+
+    def _start_graph_snapshot(self, workflow_id: str, execution_id: str, nodes, edges) -> Optional[asyncio.Task]:
+        """The CAS graph snapshot off the critical path: canonicalized NOW (node
+        execution mutates the dicts), committed while the first nodes run — the
+        R2 PUT is ~1 s from us-east-1 and sat in front of every run whose graph
+        was new, which a config override makes every run (2026-09-19). Never
+        raises; the task is awaited before the execution row is finalized."""
+        from utils.database_pool import get_native_pool
+        from utils.node_outputs import commit_graph_snapshot, prepare_graph_snapshot
+        try:
+            digest, data = prepare_graph_snapshot({"nodes": nodes, "edges": edges})
+        except Exception as e:
+            logger.error(f"[WorkflowExecution] CAS graph snapshot failed: {e}", exc_info=True)
+            return None
+
+        async def commit() -> None:
+            try:
+                await commit_graph_snapshot(
+                    get_native_pool(), workflow_id=workflow_id, execution_id=execution_id,
+                    digest=digest, data=data,
+                )
+            except Exception as e:
+                logger.error(f"[WorkflowExecution] CAS graph snapshot failed: {e}", exc_info=True)
+
+        task = asyncio.create_task(commit())
+        self._snapshot_tasks.add(task)  # asyncio holds tasks weakly; an early return must not drop it
+        task.add_done_callback(self._snapshot_tasks.discard)
+        return task
 
     def _maybe_alert_run_failure(
         self,

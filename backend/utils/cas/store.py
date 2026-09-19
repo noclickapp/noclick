@@ -21,7 +21,7 @@ import asyncio
 import json
 import logging
 import uuid as uuid_module
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
 import zstandard as zstd
@@ -327,11 +327,23 @@ def _strip_volatile_for_snapshot(graph: Any) -> Any:
     return {**graph, 'nodes': cleaned_nodes}
 
 
+def prepare_graph_snapshot(graph: Any) -> Tuple[str, bytes]:
+    """The snapshot's canonical bytes + hash, computed synchronously so a caller
+    can commit them off the critical path while execution mutates the graph."""
+    data = canonicalize(_strip_volatile_for_snapshot(graph))
+    return hash_bytes(data), data
+
+
 async def persist_graph_snapshot(pool, *, workflow_id, execution_id, graph: Any) -> str:
     """Persist the run's graph snapshot whole-blob, written ONCE per execution.
     Returns the graph hash. Idempotent + resume-safe: if the execution already
     has a graph_hash, returns it without touching the store (resume must not
     re-snapshot a post-edit graph)."""
+    digest, data = prepare_graph_snapshot(graph)
+    return await commit_graph_snapshot(pool, workflow_id=workflow_id, execution_id=execution_id, digest=digest, data=data)
+
+
+async def commit_graph_snapshot(pool, *, workflow_id, execution_id, digest: str, data: bytes) -> str:
     wf, ex = _as_uuid(workflow_id), _as_uuid(execution_id)
     async with pool.acquire() as conn:
         existing = await conn.fetchval(
@@ -339,8 +351,6 @@ async def persist_graph_snapshot(pool, *, workflow_id, execution_id, graph: Any)
     if existing:
         return existing
 
-    data = canonicalize(_strip_volatile_for_snapshot(graph))
-    digest = hash_bytes(data)
     owed = await _owed_hashes(pool, [digest])
     owed_sizes = await _put_owed({digest: data}, owed)
 

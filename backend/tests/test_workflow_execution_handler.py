@@ -709,6 +709,41 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
         assert completion_data.get('error') is None
 
     @pytest.mark.asyncio
+    async def test_graph_snapshot_never_gates_node_execution(self, real_database, frontend_sio, sid):
+        """The CAS graph snapshot (an R2 PUT, ~1 s from us-east-1) commits while
+        the nodes run and lands before the execution row is finalized — it used
+        to sit in front of the first node on every run with a new graph."""
+        workflow_id = str(uuid.uuid4())
+        user_id = '00000000-0000-4000-8000-000000000003'
+        await self.create_test_user(real_database, user_id)
+        await self.create_workflow_in_db(real_database, workflow_id, user_id)
+        nodes = [{"id": "telegram-1", "type": "automation-telegram", "position": {"x": 0, "y": 0},
+                  "config": self.wrap_node_data("automation-telegram", {"message": "Test message", "chatId": "123456"})}]
+
+        gate = asyncio.Event()
+        committed = {}
+
+        async def slow_commit(pool, *, workflow_id, execution_id, digest, data):
+            await gate.wait()
+            committed.update(execution_id=execution_id, digest=digest)
+            return digest
+
+        with patch("utils.node_outputs.commit_graph_snapshot", slow_commit):
+            run = asyncio.create_task(send_event(frontend_sio, sid, self.create_workflow_request(nodes, [], workflow_id=workflow_id)))
+            await asyncio.sleep(0.3)
+            states = [e[1]['state'] for e in self.get_main_api_emitted_events("workflow:node:state")]
+            assert states == ['running', 'completed'], "the node ran while the snapshot was still uploading"
+            complete = self.get_main_api_emitted_events("workflow:complete")
+            assert len(complete) == 1 and complete[0][1]['success'] is True
+            execution_id = complete[0][1]['execution_id']
+            status = await real_database.fetchval("SELECT status FROM workflow_executions WHERE id = $1", uuid.UUID(execution_id))
+            assert status == 'running', "the row is finalized only once the snapshot has landed"
+            gate.set()
+            await asyncio.wait_for(run, 5)
+            status = await real_database.fetchval("SELECT status FROM workflow_executions WHERE id = $1", uuid.UUID(execution_id))
+            assert status == 'completed' and committed["execution_id"] == execution_id and committed["digest"]
+
+    @pytest.mark.asyncio
     async def test_parallel_workflow(self, real_database, frontend_sio, sid):
         """Test parallel branching and convergence: A → [B,C,D] → E."""
         # Setup database
