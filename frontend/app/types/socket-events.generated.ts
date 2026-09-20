@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Sat Sep 19 16:30:28  2026
+// Generated at: Sun Sep 20 20:34:59  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -160,6 +160,10 @@ export interface ActiveGenTextChunkEvent {
    * Echoes the originating client request's request_id for FE latency correlation
    */
   request_id?: string | null;
+  /**
+   * Server wall-clock at emit time (ms). FE uses this to compute BE→FE wire latency for the first chunk per gen.
+   */
+  emit_at_ms?: number | null;
 }
 /**
  * Heuristic running "tokens processed" count for the live builder counter.
@@ -312,8 +316,6 @@ export interface CacheValtioStateEvent {
  * This event is used for all AI agent responses and component generation in the chat interface.
  */
 export interface ChatMessageEvent {
-  turn_id?: string | null;
-  notification?: boolean;
   /**
    * Conversation session ID for associating messages with specific conversation context
    */
@@ -358,6 +360,14 @@ export interface ChatMessageEvent {
    * Structured content with text and images. Used when the message contains mixed media
    */
   content?: ContentItem[] | null;
+  /**
+   * Idempotency key for terminal frames (finished=true): a retry-stable per-response id. Clients drop a finished frame whose turn_id they already rendered — delivery is at-least-once, and the live frame can race the reconcile poll's adoption of the persisted transcript.
+   */
+  turn_id?: string | null;
+  /**
+   * Standalone background update; never append to or finish the user's in-progress reply.
+   */
+  notification?: boolean;
   /**
    * Approval card for the agent's prompt_builder tool (interactive chats only): {prompt, node_id, proposal_id}. The chat renders approve/dismiss; approving opens the builder sidebar and submits the prompt. Standalone frame — no message text, no streaming implications.
    */
@@ -419,7 +429,7 @@ export interface ConversationResumeEvent {
  *
  * Emitted by the agent BillingHooks pre-call balance check (for agent runs) and
  * by the per-node pre-flight checks in the image/imagen/kling/video node handlers
- * when check_credit_balance returns a value below the minimum.
+ * and agent runtimes when check_credit_balance returns a value below the minimum.
  * Account-level usage surfaces may listen for this event and surface its
  * message. Some runners raise the same policy failure as an error instead.
  */
@@ -792,6 +802,10 @@ export interface WorkflowCompleteEvent {
    * True when the run did not finish but paused on a delay or approval node. The client shows the run as 'Waiting' rather than completed.
    */
   suspended?: boolean;
+  /**
+   * True when this run is plumbing hidden from run history (an agent-chat delivery — the real response arrives as a separate run). The client REMOVES its tracking/log entry instead of recording a completed line, so a delivery never lingers as a phantom 'no outputs' entry in the run switcher.
+   */
+  dropped?: boolean;
 }
 /**
  * Backend request for frontend workflow data or mutation.
@@ -2104,6 +2118,60 @@ export interface CodexDeviceCodeStartRequest {
    */
   request_id?: string | null;
   [k: string]: unknown;
+}
+/**
+ * Search the account's memory headers without loading full bodies
+ */
+export interface CoordinatorMemoriesListRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  query?: string;
+  offset?: number;
+  [k: string]: unknown;
+}
+/**
+ * Forget a memory without letting stale writes restore it
+ */
+export interface CoordinatorMemoryDeleteRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  memory_id: string;
+  expected_version: number;
+  [k: string]: unknown;
+}
+/**
+ * Read one account-owned memory
+ */
+export interface CoordinatorMemoryGetRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  memory_id: string;
+  [k: string]: unknown;
+}
+/**
+ * Create or version-check an edit to a memory, including its retrieval description
+ */
+export interface CoordinatorMemorySaveRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  memory: CoordinatorMemoryWrite;
+  [k: string]: unknown;
+}
+export interface CoordinatorMemoryWrite {
+  name: string;
+  description: string;
+  memory_type: "user" | "feedback" | "project" | "reference";
+  content: string;
+  memory_id?: string | null;
+  expected_version?: number | null;
 }
 /**
  * Get the account's coordinator conversation id
@@ -12934,7 +13002,7 @@ export interface WorkflowExecutionInfo {
    */
   user_id: string;
   /**
-   * Execution status: running, completed, error
+   * Execution status: running, completed, error, awaiting_approval, awaiting_delay, or delivered (an agent delivery run — hidden from run listings)
    */
   status: string;
   /**
@@ -13680,6 +13748,10 @@ export interface ClientToServerEvents {
   'conversation:list_for_agent': (data: ListConversationsForAgentRequest) => void;
   'conversation:resume': (data: ResumeConversationRequest) => void;
   'conversations:list': (data: ListConversationsRequest) => void;
+  'coordinator:memories:delete': (data: CoordinatorMemoryDeleteRequest) => void;
+  'coordinator:memories:get': (data: CoordinatorMemoryGetRequest) => void;
+  'coordinator:memories:list': (data: CoordinatorMemoriesListRequest) => void;
+  'coordinator:memories:save': (data: CoordinatorMemorySaveRequest) => void;
   'coordinator:open': (data: CoordinatorOpenRequest) => void;
   'coordinator:reset': (data: CoordinatorResetRequest) => void;
   'coordinator:send': (data: CoordinatorSendRequest) => void;
@@ -14010,6 +14082,10 @@ export const ClientEventNames = {
   CloudflareOAuthValidateRequest: 'cloudflare:oauth:validate',
   CodexDeviceCodePollRequest: 'codex:auth:poll',
   CodexDeviceCodeStartRequest: 'codex:auth:start',
+  CoordinatorMemoriesListRequest: 'coordinator:memories:list',
+  CoordinatorMemoryDeleteRequest: 'coordinator:memories:delete',
+  CoordinatorMemoryGetRequest: 'coordinator:memories:get',
+  CoordinatorMemorySaveRequest: 'coordinator:memories:save',
   CoordinatorOpenRequest: 'coordinator:open',
   CoordinatorResetRequest: 'coordinator:reset',
   CoordinatorSendRequest: 'coordinator:send',
@@ -14349,6 +14425,10 @@ interface ClientEventMap {
   CloudflareOAuthValidateRequest: CloudflareOAuthValidateRequest
   CodexDeviceCodePollRequest: CodexDeviceCodePollRequest
   CodexDeviceCodeStartRequest: CodexDeviceCodeStartRequest
+  CoordinatorMemoriesListRequest: CoordinatorMemoriesListRequest
+  CoordinatorMemoryDeleteRequest: CoordinatorMemoryDeleteRequest
+  CoordinatorMemoryGetRequest: CoordinatorMemoryGetRequest
+  CoordinatorMemorySaveRequest: CoordinatorMemorySaveRequest
   CoordinatorOpenRequest: CoordinatorOpenRequest
   CoordinatorResetRequest: CoordinatorResetRequest
   CoordinatorSendRequest: CoordinatorSendRequest
@@ -15096,6 +15176,22 @@ export const CodexDeviceCodePollRequest = {
 export const CodexDeviceCodeStartRequest = {
   event_name: 'codex:auth:start' as const,
   create: (data: CodexDeviceCodeStartRequest) => ({ event_name: 'codex:auth:start' as const, ...data })
+};
+export const CoordinatorMemoriesListRequest = {
+  event_name: 'coordinator:memories:list' as const,
+  create: (data: CoordinatorMemoriesListRequest) => ({ event_name: 'coordinator:memories:list' as const, ...data })
+};
+export const CoordinatorMemoryDeleteRequest = {
+  event_name: 'coordinator:memories:delete' as const,
+  create: (data: CoordinatorMemoryDeleteRequest) => ({ event_name: 'coordinator:memories:delete' as const, ...data })
+};
+export const CoordinatorMemoryGetRequest = {
+  event_name: 'coordinator:memories:get' as const,
+  create: (data: CoordinatorMemoryGetRequest) => ({ event_name: 'coordinator:memories:get' as const, ...data })
+};
+export const CoordinatorMemorySaveRequest = {
+  event_name: 'coordinator:memories:save' as const,
+  create: (data: CoordinatorMemorySaveRequest) => ({ event_name: 'coordinator:memories:save' as const, ...data })
 };
 export const CoordinatorOpenRequest = {
   event_name: 'coordinator:open' as const,
@@ -16239,6 +16335,10 @@ export const EventRouting = {
   'conversation:list_for_agent': 'API',
   'conversation:resume': 'API',
   'conversations:list': 'API',
+  'coordinator:memories:delete': 'API',
+  'coordinator:memories:get': 'API',
+  'coordinator:memories:list': 'API',
+  'coordinator:memories:save': 'API',
   'coordinator:open': 'API',
   'coordinator:reset': 'API',
   'coordinator:send': 'API',
