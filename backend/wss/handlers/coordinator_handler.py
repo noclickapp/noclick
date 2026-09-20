@@ -12,9 +12,14 @@ from typing import Any, Awaitable, Callable, Dict
 
 from coder.coordinator import agent as coordinator
 from repositories.conversation import ConversationRepo
+from repositories.coordinator_memories import CoordinatorMemoryRepo, MemoryConflict
 from utils.database_pool import DatabasePoolMixin
 from utils.feature_gates import FeatureNotAvailable, require_feature
 from wss.receiver.client_events import (
+    CoordinatorMemoriesListRequest,
+    CoordinatorMemoryGetRequest,
+    CoordinatorMemorySaveRequest,
+    CoordinatorMemoryDeleteRequest,
     CoordinatorOpenRequest,
     CoordinatorResetRequest,
     CoordinatorSendRequest,
@@ -43,6 +48,10 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             "coordinator:open": self.handle_open,
             "coordinator:send": self.handle_send,
             "coordinator:reset": self.handle_reset,
+            "coordinator:memories:list": self.handle_memories_list,
+            "coordinator:memories:get": self.handle_memory_get,
+            "coordinator:memories:save": self.handle_memory_save,
+            "coordinator:memories:delete": self.handle_memory_delete,
         }
 
     async def _respond(self, sid: str, request_id: str, op: Callable[[str, Any], Awaitable[Any]]) -> None:
@@ -56,6 +65,9 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             require_feature(coordinator.COORDINATOR_FEATURE, email=email)
             data = await op(user_id, email)
             await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data=data))
+        except MemoryConflict as e:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request_id, data={"kind": "conflict"}, error=str(e)))
         except FeatureNotAvailable as e:
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request_id, data={"kind": "gated"}, error=str(e)))
@@ -87,4 +99,28 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
         async def op(user_id: str, _email):
             repo = ConversationRepo(await self.get_pool())
             return {"reset": await repo.reset_conversation(coordinator.conversation_id_for(user_id), user_id)}
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_memories_list(self, sid: str, request: CoordinatorMemoriesListRequest) -> None:
+        async def op(user_id: str, _email):
+            return await CoordinatorMemoryRepo(await self.get_pool()).list_headers(
+                user_id, query=request.query, offset=request.offset,
+            )
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_memory_get(self, sid: str, request: CoordinatorMemoryGetRequest) -> None:
+        async def op(user_id: str, _email):
+            return {"memory": await CoordinatorMemoryRepo(await self.get_pool()).get(user_id, request.memory_id)}
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_memory_save(self, sid: str, request: CoordinatorMemorySaveRequest) -> None:
+        async def op(user_id: str, _email):
+            return {"memory": await CoordinatorMemoryRepo(await self.get_pool()).save(user_id, request.memory)}
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_memory_delete(self, sid: str, request: CoordinatorMemoryDeleteRequest) -> None:
+        async def op(user_id: str, _email):
+            return await CoordinatorMemoryRepo(await self.get_pool()).delete(
+                user_id, request.memory_id, request.expected_version,
+            )
         await self._respond(sid, request.request_id, op)

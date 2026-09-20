@@ -9,6 +9,7 @@ import logging
 from typing import Any, Awaitable, Callable, Dict, Optional
 
 from billing.exceptions import InsufficientBalanceError
+from coder.coordinator.memory import MEMORY_INSTRUCTIONS, memory_context
 from coder.coordinator.tools import COORDINATOR_NODE_ID, CoordinatorTools
 from coder.openai_agent import Agent
 from coder.openai_agent.config import AgentConfiguration
@@ -46,7 +47,7 @@ SYSTEM_PROMPT = (
     "the questions and the link. Never claim something ran, was built, or was fixed unless a tool said so. "
     "Never ask for passwords, API keys or one-time codes; credentials are connected through NoClick's own "
     "links. Be concise and concrete: names, counts, next steps."
-)
+) + MEMORY_INSTRUCTIONS
 
 VOICE_CHANNELS = ("phone", "whatsapp", "callback", "voice")
 VOICE_STYLE = (
@@ -120,7 +121,8 @@ async def run_coordinator_turn(
         from coder.coordinator.tasks import task_context
 
         tasks_note = await task_context(pool, user_id)
-        context_note = "\n\n".join(part for part in (note, tasks_note) if part) or None
+        memories_note = await memory_context(pool, user_id, model=COORDINATOR_MODEL)
+        context_note = "\n\n".join(part for part in (note, tasks_note, memories_note) if part) or None
         config = AgentConfiguration.from_kwargs(
             model=COORDINATOR_MODEL, enable_cmd=False, enable_editor=False, enable_mcp=False,
             custom_tools=tools.tool_params(), system_prompt=system_prompt_for(extra, context_note),

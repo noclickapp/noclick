@@ -53,6 +53,31 @@ class ConversationRepo:
     def __init__(self, pool):
         self._pool = pool
 
+    async def search_messages(self, conversation_id: str, user_id: str, query: str, *, before: Optional[int] = None):
+        """Bounded, owner-scoped recall across the stored transcript, not SDK history."""
+        query = query.strip()
+        if not query or len(query) > 300 or (before is not None and before < 1):
+            raise ValueError("Provide a search query of 1–300 characters and a positive history cursor.")
+        async with self._pool.acquire() as conn:
+            rows = await conn.fetch(
+                """WITH owned AS (
+                    SELECT events FROM conversations WHERE conversation_id=$1 AND user_id=$2 AND deleted_at IS NULL
+                ), messages AS (
+                    SELECT e.ordinality AS position, e.value->>'role' AS role,
+                        COALESCE(e.value->>'message', e.value->'args'->>'content', '') AS message
+                    FROM owned, jsonb_array_elements(CASE
+                        WHEN jsonb_typeof(events)='string' THEN (events #>> '{}')::jsonb
+                        ELSE events END) WITH ORDINALITY e
+                ) SELECT position, role, left(ts_headline('simple', message, websearch_to_tsquery('simple', $3),
+                    'StartSel=, StopSel=, MaxWords=150, MinWords=30, MaxFragments=2'), 2000) AS excerpt
+                FROM messages WHERE role IN ('user', 'assistant') AND ($4::bigint IS NULL OR position < $4)
+                    AND (to_tsvector('simple', message) @@ websearch_to_tsquery('simple', $3)
+                         OR strpos(lower(message), lower($3)) > 0)
+                ORDER BY position DESC LIMIT 21""", conversation_id, user_id, query, before,
+            )
+        return {"matches": [dict(r) for r in rows[:20]],
+                "next_before": rows[19]["position"] if len(rows) > 20 else None}
+
     # ══════════════════════════════════════════════════════════════════════
     # Reads
     # ══════════════════════════════════════════════════════════════════════

@@ -13,7 +13,9 @@ from typing import Any, Awaitable, Callable, Dict, List, Optional
 
 from repositories.builder_bridge import BuilderBridgeRepo
 from repositories.conversation import ConversationRepo
+from repositories.coordinator_memories import CoordinatorMemoryRepo
 from repositories.workflow import WorkflowRepo
+from utils.coordinator_memory import CoordinatorMemoryWrite
 from utils.async_helpers import spawn
 from utils.builder_bridge import bridge_url, create_bridge_link_for_ask
 from utils.capabilities import OWNER_MESSAGE, capability
@@ -41,6 +43,24 @@ def coordinator_tool_params(*, include_owner_message: bool = False) -> List[Dict
             "parameters": {"type": "object", "properties": properties, "required": required or [], "additionalProperties": False},
         }}
     params = [
+        tool("search_memories", "Find durable memories by keywords, or list their retrieval headers. "
+             "Search includes full bodies but returns only descriptions; read_memory loads the content.",
+             {"query": {"type": "string"}, "offset": {"type": "integer", "minimum": 0}}),
+        tool("read_memory", "Read one memory's complete Markdown body and current version before using or updating it.",
+             {"memory_id": {"type": "string"}}, ["memory_id"]),
+        tool("save_memory", "Remember a durable fact or correction. Write a semantic description of what this "
+             "memory contains and when to retrieve it, separately from the full Markdown content. Never derive "
+             "the description by truncating the body. Search first to avoid duplicates. To update, read the "
+             "existing entry and pass memory_id and expected_version; omit both for a new memory.",
+             CoordinatorMemoryWrite.model_json_schema()["properties"],
+             CoordinatorMemoryWrite.model_json_schema()["required"]),
+        tool("forget_memory", "Forget a memory at the user's request. Requires its current version; "
+             "deleted memories must not be recreated from old conversations.",
+             {"memory_id": {"type": "string"}, "expected_version": {"type": "integer", "minimum": 1}},
+             ["memory_id", "expected_version"]),
+        tool("search_history", "Find older messages in this account's coordinator conversation, across channels. "
+             "Use concise keywords; returns excerpts with positions. Pass next_before as before for older matches.",
+             {"query": {"type": "string"}, "before": {"type": "integer", "minimum": 1}}, ["query"]),
         tool("account_overview",
              "What is going on in this account right now: items needing the owner, recent and upcoming runs, "
              "running agents, credential health, unread notifications. Same data as the Dashboard.",
@@ -125,6 +145,11 @@ class CoordinatorTools:
         self.conversation_id = conversation_id
         self.reply_channel = reply_channel
         self._tools: Dict[str, Callable[..., Awaitable[Dict[str, Any]]]] = {
+            "search_memories": self.search_memories,
+            "read_memory": self.read_memory,
+            "save_memory": self.save_memory,
+            "forget_memory": self.forget_memory,
+            "search_history": self.search_history,
             "account_overview": self.account_overview,
             "list_workflows": self.list_workflows,
             "describe_workflow": self.describe_workflow,
@@ -169,6 +194,30 @@ class CoordinatorTools:
             duration_ms=(time.monotonic() - started) * 1000,
         )
         return result
+
+    async def search_memories(self, query: str = "", offset: int = 0) -> Dict[str, Any]:
+        return {"success": True, **await CoordinatorMemoryRepo(self.pool).list_headers(
+            self.user_id, query=query, limit=20, offset=offset,
+        )}
+
+    async def read_memory(self, memory_id: str) -> Dict[str, Any]:
+        return {"success": True, "memory": await CoordinatorMemoryRepo(self.pool).get(self.user_id, memory_id)}
+
+    async def save_memory(self, **fields) -> Dict[str, Any]:
+        memory = CoordinatorMemoryWrite.model_validate(fields)
+        saved = await CoordinatorMemoryRepo(self.pool).save(
+            self.user_id, memory, origin_conversation_id=self.conversation_id,
+        )
+        # The model just authored the body; echoing it spends context unnecessarily.
+        return {"success": True, "memory": {k: v for k, v in saved.items() if k != "content"}}
+
+    async def forget_memory(self, memory_id: str, expected_version: int) -> Dict[str, Any]:
+        return {"success": True, **await CoordinatorMemoryRepo(self.pool).delete(self.user_id, memory_id, expected_version)}
+
+    async def search_history(self, query: str, before: Optional[int] = None) -> Dict[str, Any]:
+        return {"success": True, **await ConversationRepo(self.pool).search_messages(
+            self.conversation_id, self.user_id, query, before=before,
+        )}
 
     async def account_overview(self, section: str = "all") -> Dict[str, Any]:
         from wss.handlers.dashboard_handler import build_overview

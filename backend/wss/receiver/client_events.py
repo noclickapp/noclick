@@ -9,6 +9,7 @@ can now be frontend or API given the addition of sandboxes.
 from typing import ClassVar, Optional, List, Dict, Any, Union, Literal
 from pydantic import BaseModel, Field, ConfigDict
 from wss.sender.schema import ContentItem
+from utils.coordinator_memory import CoordinatorMemoryWrite
 
 
 # Base class for client events with TypeScript type generation support
@@ -305,6 +306,32 @@ class CoordinatorSendRequest(ClientEventBase):
 class CoordinatorResetRequest(ClientEventBase):
     """Start the coordinator conversation over"""
     event_name: ClassVar[str] = "coordinator:reset"
+
+
+class CoordinatorMemoriesListRequest(ClientEventBase):
+    """Search the account's memory headers without loading full bodies"""
+    event_name: ClassVar[str] = "coordinator:memories:list"
+    query: str = Field(default="", max_length=300)
+    offset: int = Field(default=0, ge=0, le=10000)
+
+
+class CoordinatorMemoryGetRequest(ClientEventBase):
+    """Read one account-owned memory"""
+    event_name: ClassVar[str] = "coordinator:memories:get"
+    memory_id: str = Field(min_length=36, max_length=36)
+
+
+class CoordinatorMemorySaveRequest(ClientEventBase):
+    """Create or version-check an edit to a memory, including its retrieval description"""
+    event_name: ClassVar[str] = "coordinator:memories:save"
+    memory: CoordinatorMemoryWrite
+
+
+class CoordinatorMemoryDeleteRequest(ClientEventBase):
+    """Forget a memory without letting stale writes restore it"""
+    event_name: ClassVar[str] = "coordinator:memories:delete"
+    memory_id: str = Field(min_length=36, max_length=36)
+    expected_version: int = Field(ge=1)
 
 
 # Instance OAuth app configuration (self-hosted: one OAuth client per provider)

@@ -25,6 +25,8 @@ from tests.utils.base_handler_test import BaseHandlerTest
 from utils import feature_gates
 from wss.receiver.client_events import (
     CoordinatorOpenRequest, CoordinatorResetRequest, CoordinatorSendRequest,
+    CoordinatorMemoriesListRequest, CoordinatorMemoryGetRequest, CoordinatorMemorySaveRequest,
+    CoordinatorMemoryDeleteRequest,
 )
 from wss.sender import send_event
 from wss.sender.events import ChatMessageEvent
@@ -247,6 +249,28 @@ async def test_turn_wires_persistence_tools_and_billing_identity(turn_seams, mon
     assert not config.capabilities.enable_cmd and not config.capabilities.enable_mcp
 
 
+@pytest.mark.parametrize("channel", ["web", "voice", "whatsapp_text"])
+async def test_each_transport_loads_retrieval_headers_into_the_turn(turn_seams, monkeypatch, channel):
+    captured = {}
+    original = FakeAgent.create
+
+    async def create(cls, **kwargs):
+        captured.update(kwargs)
+        return await original(**kwargs)
+
+    monkeypatch.setattr(FakeAgent, "create", classmethod(create))
+    monkeypatch.setattr("repositories.coordinator_memories.CoordinatorMemoryRepo.list_headers", AsyncMock(return_value={
+        "memories": [{"id": WORKFLOW, "name": "release-process", "description": "Consult before preparing a release.",
+                      "memory_type": "feedback", "origin_conversation_id": CID}], "has_more": False,
+    }))
+    await coordinator.run_coordinator_turn(sio=object(), sid="s", user_id=USER, user_email=None,
+                                           text="What next?", extra={"channel": channel})
+    prompt = captured["config"].settings.system_prompt
+    assert "Consult before preparing a release." in prompt
+    assert "read_memory" in prompt and CID in prompt
+    assert "voice" != channel or "phone call" in prompt
+
+
 async def test_turns_of_one_account_never_interleave(turn_seams):
     await asyncio.gather(
         coordinator.run_coordinator_turn(sio=object(), sid="s", user_id=USER, user_email=None, text="one"),
@@ -357,10 +381,29 @@ class TestCoordinatorHandler(BaseHandlerTest):
         monkeypatch.setitem(feature_gates.FEATURE_ROLLOUT, "coordinator", feature_gates.INTERNAL)
         monkeypatch.setattr(feature_gates, "is_internal_user", lambda email: False)
         for request in (CoordinatorOpenRequest(request_id="g0"), CoordinatorSendRequest(request_id="g1", text="hi"),
-                        CoordinatorResetRequest(request_id="g2")):
+                        CoordinatorResetRequest(request_id="g2"),
+                        CoordinatorMemoriesListRequest(request_id="g3"),
+                        CoordinatorMemoryGetRequest(request_id="g4", memory_id=WORKFLOW),
+                        CoordinatorMemorySaveRequest(request_id="g5", memory={
+                            "name": "pref", "description": "When to read", "memory_type": "user", "content": "Details"}),
+                        CoordinatorMemoryDeleteRequest(request_id="g6", memory_id=WORKFLOW, expected_version=1)):
             response = await self._send(frontend_sio, sid, request)
             assert response["data"] == {"kind": "gated"} and "available on your account" in response["error"], request
         self.turn.assert_not_awaited()
+
+    async def test_memory_api_uses_session_owner_and_returns_conflicts(self, frontend_sio, sid, monkeypatch):
+        from repositories.coordinator_memories import MemoryConflict
+        listing = AsyncMock(return_value={"memories": [], "has_more": False})
+        monkeypatch.setattr("repositories.coordinator_memories.CoordinatorMemoryRepo.list_headers", listing)
+        response = await self._send(frontend_sio, sid, CoordinatorMemoriesListRequest(
+            request_id="ml", query="preferences", user_id="someone-else"))
+        assert response["data"] == {"memories": [], "has_more": False}
+        assert listing.await_args.args == ("uuid-test-user",)
+        monkeypatch.setattr("repositories.coordinator_memories.CoordinatorMemoryRepo.delete",
+                            AsyncMock(side_effect=MemoryConflict("Memory changed")))
+        conflict = await self._send(frontend_sio, sid, CoordinatorMemoryDeleteRequest(
+            request_id="md", memory_id=WORKFLOW, expected_version=1))
+        assert conflict["data"] == {"kind": "conflict"} and conflict["error"] == "Memory changed"
 
 
 def test_voice_turns_get_the_spoken_style_and_the_callers_note():

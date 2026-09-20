@@ -4,12 +4,13 @@
 // transcript every agent chat uses. Mounted only where useFeatureGate says so.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ChevronDown, RotateCcw, Sparkles } from 'lucide-react';
+import { Brain, ChevronDown, RotateCcw, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '~/lib/utils';
 import { AgentChatComposer } from '~/components/chat/AgentChatComposer';
 import { AgentChatTranscript } from '~/components/chat/AgentChatTranscript';
 import { useAgentChat } from '~/hooks/useAgentChat';
+import { CoordinatorMemoriesDialog } from '~/components/dashboard/CoordinatorMemories';
 import { sendEvent, sendEventAsync } from '~/lib/socket-sender';
 import {
     CoordinatorOpenRequest,
@@ -21,6 +22,7 @@ type Reply<T> = Partial<T> & { error?: string; kind?: string };
 
 export function CoordinatorPanel() {
     const [open, setOpen] = useState(false);
+    const [memoriesOpen, setMemoriesOpen] = useState(false);
     const [conversationId, setConversationId] = useState<string | null>(null);
     const [gated, setGated] = useState(false);
     const [draft, setDraft] = useState('');
@@ -106,12 +108,17 @@ export function CoordinatorPanel() {
                     <p className="text-sm font-medium leading-tight text-foreground">Coordinator</p>
                     <p className="truncate text-[11px] text-muted-foreground">Knows your whole account. Ask, or request a build.</p>
                 </div>
+                <button type="button" onClick={() => setMemoriesOpen(true)}
+                    className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+                    title="Memories" aria-label="Open memories">
+                    <Brain className="h-4 w-4" />
+                </button>
                 <button
                     type="button"
                     onClick={reset}
                     disabled={!conversationId || isStreaming}
                     className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-40"
-                    title="Start over"
+                    title="Start over (keeps memories)"
                     aria-label="Start over"
                 >
                     <RotateCcw className="h-4 w-4" />
@@ -139,6 +146,7 @@ export function CoordinatorPanel() {
                     textareaRef={textareaRef}
                 />
             </div>
+            <CoordinatorMemoriesDialog open={memoriesOpen} onOpenChange={setMemoriesOpen} />
         </div>
     );
 }
