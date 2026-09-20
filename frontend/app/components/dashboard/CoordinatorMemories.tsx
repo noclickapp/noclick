@@ -1,9 +1,10 @@
 // A review surface for the coordinator's account-private memories. The compact
 // retrieval description and full Markdown body are separate, editable fields so
 // users can see what the coordinator knows and correct or forget it.
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
     ArrowLeft,
+    ChevronDown,
     ChevronRight,
     BookOpen,
     Folder,
@@ -42,6 +43,11 @@ const types: CoordinatorMemoryWrite['memory_type'][] = [
     'reference',
 ];
 
+// Use the soft fields from template publishing, with a visible keyboard focus
+// state. The editor sits directly on the page rather than inside another card.
+const MEMORY_FIELD =
+    'rounded-xl border-0 bg-foreground/[0.035] px-4 py-3 text-sm font-normal text-foreground shadow-none transition-colors placeholder:text-muted-foreground/50 focus-visible:bg-foreground/[0.055] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground/15 focus-visible:ring-offset-0';
+
 function MemoryEditor({
     entry,
     busy,
@@ -55,6 +61,7 @@ function MemoryEditor({
     onDelete: (entry: MemoryEntry) => Promise<void>;
     onReload: (id: string) => Promise<void>;
 }) {
+    const fieldId = useId();
     const existing = entry === 'new' ? null : entry;
     const [name, setName] = useState(existing?.name ?? '');
     const [description, setDescription] = useState(existing?.description ?? '');
@@ -65,7 +72,7 @@ function MemoryEditor({
     const [confirmDelete, setConfirmDelete] = useState(false);
     return (
         <form
-            className="space-y-4"
+            className="space-y-7"
             onSubmit={(event) => {
                 event.preventDefault();
                 void onSave({
@@ -83,8 +90,8 @@ function MemoryEditor({
             }}
             data-testid="memory-editor"
         >
-            <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto]">
-                <label className="space-y-1 text-sm font-medium">
+            <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_190px]">
+                <label className="block min-w-0 space-y-2.5 text-xs font-medium text-muted-foreground">
                     <span>Name</span>
                     <Input
                         name="memory-name"
@@ -96,70 +103,102 @@ function MemoryEditor({
                         maxLength={100}
                         disabled={busy}
                         title="Lowercase words separated by hyphens"
+                        className={cn(MEMORY_FIELD, 'h-11')}
                     />
                 </label>
-                <label className="space-y-1 text-sm font-medium">
+                <label className="block space-y-2.5 text-xs font-medium text-muted-foreground">
                     <span>Type</span>
-                    <select
-                        name="memory-type"
-                        value={type}
-                        onChange={(e) => setType(e.target.value as typeof type)}
-                        disabled={busy}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm capitalize"
-                    >
-                        {types.map((value) => (
-                            <option key={value} value={value}>
-                                {MEMORY_KINDS[value].label}
-                            </option>
-                        ))}
-                    </select>
+                    <span className="relative block">
+                        <select
+                            name="memory-type"
+                            value={type}
+                            onChange={(e) =>
+                                setType(e.target.value as typeof type)
+                            }
+                            disabled={busy}
+                            className={cn(
+                                MEMORY_FIELD,
+                                'h-11 w-full cursor-pointer appearance-none pr-11 disabled:cursor-not-allowed disabled:opacity-50'
+                            )}
+                        >
+                            {types.map((value) => (
+                                <option
+                                    key={value}
+                                    value={value}
+                                    className="bg-popover text-foreground"
+                                >
+                                    {MEMORY_KINDS[value].label}
+                                </option>
+                            ))}
+                        </select>
+                        <ChevronDown
+                            className="pointer-events-none absolute right-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/70"
+                            aria-hidden="true"
+                        />
+                    </span>
                 </label>
             </div>
-            <label className="block space-y-1 text-sm font-medium">
-                <span>Retrieval description</span>
+            <label className="block space-y-2.5 text-xs font-medium text-muted-foreground">
+                <span id={`${fieldId}-summary-label`}>When this is useful</span>
                 <Textarea
                     name="memory-description"
+                    aria-labelledby={`${fieldId}-summary-label`}
+                    aria-describedby={`${fieldId}-summary-help`}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="What this memory covers and when it is useful"
+                    placeholder="What should the coordinator be doing when it recalls this?"
                     required
                     maxLength={600}
-                    rows={3}
+                    rows={2}
                     disabled={busy}
+                    className={cn(
+                        MEMORY_FIELD,
+                        'min-h-[88px] resize-y leading-relaxed'
+                    )}
                 />
-                <span className="block text-xs font-normal text-muted-foreground">
-                    The coordinator uses this summary to decide when to read the
-                    full memory. Update it when the details change.
+                <span
+                    id={`${fieldId}-summary-help`}
+                    className="block text-[11px] font-normal leading-relaxed text-muted-foreground/70"
+                >
+                    A short summary that helps the coordinator find this memory.
                 </span>
             </label>
-            <label className="block space-y-1 text-sm font-medium">
-                <span>Full memory</span>
+            <label className="block space-y-2.5 text-xs font-medium text-muted-foreground">
+                <span className="flex items-center justify-between gap-3">
+                    <span id={`${fieldId}-content-label`}>Memory</span>
+                    <span className="text-[11px] font-normal text-muted-foreground/60">
+                        Markdown supported
+                    </span>
+                </span>
                 <Textarea
                     name="memory-content"
+                    aria-labelledby={`${fieldId}-content-label`}
+                    aria-describedby={`${fieldId}-content-help`}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="Details, context, and references…"
                     required
                     maxLength={16000}
-                    rows={12}
+                    rows={9}
                     disabled={busy}
-                    className="font-mono text-[13px] leading-relaxed"
+                    className={cn(
+                        MEMORY_FIELD,
+                        'min-h-[224px] resize-y leading-7'
+                    )}
                 />
-                <span className="block text-xs font-normal text-muted-foreground">
-                    Markdown supported. Read only when needed.
+                <span
+                    id={`${fieldId}-content-help`}
+                    className="block text-[11px] font-normal leading-relaxed text-muted-foreground/70"
+                >
+                    The details the coordinator reads when this memory is
+                    relevant.
                 </span>
             </label>
-            {existing && (
-                <p className="text-xs text-muted-foreground">
-                    Updated {memoryDate(existing.updated_at)}
-                    {existing.origin_conversation_id
-                        ? ' · From a coordinator conversation'
-                        : ' · Added here'}
-                </p>
-            )}
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 pt-1">
                 <Button
                     type="submit"
+                    size="sm"
+                    className="rounded-full px-5"
                     disabled={
                         busy ||
                         !name.trim() ||
@@ -174,7 +213,9 @@ function MemoryEditor({
                     <>
                         <Button
                             type="button"
-                            variant="outline"
+                            variant="ghost"
+                            size="sm"
+                            className="rounded-full text-muted-foreground"
                             disabled={busy}
                             onClick={() => void onReload(existing.id)}
                         >
@@ -183,7 +224,8 @@ function MemoryEditor({
                         <Button
                             type="button"
                             variant="ghost"
-                            className="ml-auto text-destructive"
+                            size="sm"
+                            className="ml-auto rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                             disabled={busy}
                             onClick={() => setConfirmDelete(true)}
                             aria-label="Delete memory"
@@ -195,7 +237,7 @@ function MemoryEditor({
             </div>
             {confirmDelete && existing && (
                 <div
-                    className="space-y-2 rounded-lg border border-destructive/40 p-3"
+                    className="space-y-3 rounded-2xl bg-destructive/[0.06] p-4"
                     role="alert"
                 >
                     <p className="text-sm">
@@ -206,6 +248,8 @@ function MemoryEditor({
                         <Button
                             type="button"
                             variant="destructive"
+                            size="sm"
+                            className="rounded-full"
                             disabled={busy}
                             onClick={() => void onDelete(existing)}
                         >
@@ -214,6 +258,8 @@ function MemoryEditor({
                         <Button
                             type="button"
                             variant="ghost"
+                            size="sm"
+                            className="rounded-full"
                             disabled={busy}
                             onClick={() => setConfirmDelete(false)}
                         >
@@ -373,22 +419,17 @@ function MemoryDetail({ memory }: { memory: CoordinatorMemoryState }) {
     const existing = entry === 'new' ? null : entry;
     return (
         <article
-            className="min-w-0 overflow-hidden rounded-xl border border-border/80 bg-card dark:bg-foreground/[0.015]"
+            className="min-w-0 max-w-3xl space-y-8 pb-8 pt-3"
             data-testid="memory-detail"
         >
-            <div className="border-b border-border/70 px-5 pb-5 pt-4 sm:px-7">
-                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                    {existing ? (
+            <header>
+                {existing && (
+                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                         <MemoryKind type={existing.memory_type} />
-                    ) : (
-                        <span className="text-xs text-muted-foreground">
-                            New memory
-                        </span>
-                    )}
-                    {existing && (
                         <Button
                             variant="ghost"
                             size="sm"
+                            className="rounded-full text-muted-foreground"
                             disabled={memory.busy}
                             onClick={() => setEditing(!editing)}
                         >
@@ -397,18 +438,18 @@ function MemoryDetail({ memory }: { memory: CoordinatorMemoryState }) {
                             )}
                             {editing ? 'Cancel editing' : 'Edit memory'}
                         </Button>
-                    )}
-                </div>
+                    </div>
+                )}
                 <h2 className="m-0 break-words text-[22px] font-semibold leading-snug tracking-tight">
                     {existing ? memoryTitle(existing.name) : 'Add a memory'}
                 </h2>
-                <p className="mb-0 mt-2 text-xs leading-relaxed text-muted-foreground">
+                <p className="mb-0 mt-2.5 text-xs leading-relaxed text-muted-foreground">
                     {existing
                         ? `Updated ${memoryDate(existing.updated_at)} · ${existing.origin_conversation_id ? 'From a conversation' : 'Added by you'}`
                         : 'Give your coordinator context to use in future conversations.'}
                 </p>
-            </div>
-            <div className="px-5 py-6 sm:px-7">
+            </header>
+            <div>
                 {editing ? (
                     <MemoryEditor
                         key={memory.editorRevision}
@@ -421,8 +462,8 @@ function MemoryDetail({ memory }: { memory: CoordinatorMemoryState }) {
                 ) : (
                     existing && (
                         <>
-                            <div className="mb-8 border-l-2 border-foreground/15 pl-4">
-                                <p className="m-0 text-[10.5px] font-semibold uppercase tracking-wider text-muted-foreground">
+                            <div className="mb-9 max-w-[72ch] space-y-2">
+                                <p className="m-0 text-xs font-medium text-muted-foreground/70">
                                     When this is useful
                                 </p>
                                 <p className="mb-0 mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -468,15 +509,18 @@ export function CoordinatorMemoriesView({
                         Private to you
                     </p>
                 </div>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={memory.create}
-                    disabled={memory.busy}
-                >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add memory
-                </Button>
+                {memory.selected !== 'new' && (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="rounded-full bg-foreground/[0.035] px-4 text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground"
+                        onClick={memory.create}
+                        disabled={memory.busy}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add memory
+                    </Button>
+                )}
             </div>
             {memory.error && (
                 <div
@@ -659,7 +703,7 @@ export function CoordinatorMemoriesView({
                     )}
                 </aside>
                 {(hasSelection || memory.busy) && (
-                    <div className="min-w-0">
+                    <div className="min-w-0 lg:pl-4 xl:pl-8">
                         {memory.busy && !memory.selected ? (
                             <MemoryLoading />
                         ) : memory.selected ? (
@@ -670,7 +714,7 @@ export function CoordinatorMemoriesView({
                                     size="sm"
                                     disabled={memory.busy}
                                     onClick={memory.back}
-                                    className="mb-3 -ml-2 text-muted-foreground"
+                                    className="mb-3 -ml-3 rounded-full text-muted-foreground"
                                 >
                                     <ArrowLeft className="mr-2 h-4 w-4" />
                                     All memories
