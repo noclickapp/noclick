@@ -290,6 +290,8 @@ export interface BentoDashboardProps {
     focus: FocusId | null;
     onFocus: (id: FocusId | null) => void;
     fullViewOverrides?: FullViewOverrides;
+    /** Optional account actions beside the dashboard greeting. */
+    headerActions?: ReactNode;
 }
 
 /** Column spans per layout, in a 12-column grid. `hero` makes the queue span two rows. */
@@ -336,7 +338,7 @@ export const ORDER: Record<BentoConfig['layout'], FocusId[]> = {
     uniform: ['attention', 'runs', 'agents', 'upcoming', 'files', 'credentials', 'triggers', 'credits', 'notifications'],
 };
 
-export function BentoDashboard({ data, config, focus, onFocus, fullViewOverrides }: BentoDashboardProps) {
+export function BentoDashboard({ data, config, focus, onFocus, fullViewOverrides, headerActions }: BentoDashboardProps) {
     const attention = useVisibleAttention(data);
     const folded = config.kpi === 'folded';
     const hero = config.layout === 'hero';
@@ -399,7 +401,10 @@ export function BentoDashboard({ data, config, focus, onFocus, fullViewOverrides
         <div className="relative h-full" data-testid="dashboard-variant-bento" data-config={`${config.surface}/${config.header}/${config.kpi}/${config.layout}`}>
             <div className="scrollbar-subtle h-full overflow-y-auto">
                 <div className={cn('mx-auto', LAYOUT.pagePad)} style={{ maxWidth: LAYOUT.pageMaxWidth }}>
-                    <Greeting data={data} className={config.kpi === 'strip' ? 'mb-3' : LAYOUT.greetingGap} summary={config.kpi !== 'strip'} />
+                    <div className={cn('flex flex-wrap items-start justify-between gap-3', config.kpi === 'strip' ? 'mb-3' : LAYOUT.greetingGap)}>
+                        <Greeting data={data} summary={config.kpi !== 'strip'} />
+                        {headerActions && <div className="shrink-0">{headerActions}</div>}
+                    </div>
                     {config.kpi === 'row' && <KpiRow data={data} onFocus={onFocus} items={kpiItems} className={cn('mb-6 border-b pb-6', HAIRLINE)} />}
                     {config.kpi === 'ledger' && <KpiLedger data={data} onFocus={onFocus} className={LAYOUT.ledgerGap} />}
                     {config.kpi === 'strip' && <KpiStrip data={data} onFocus={onFocus} className={cn('mb-6 border-b pb-5', HAIRLINE)} />}

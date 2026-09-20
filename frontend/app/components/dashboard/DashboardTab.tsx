@@ -6,6 +6,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import { toast } from 'sonner';
+import { Brain } from 'lucide-react';
 import { BentoDashboard, type BentoConfig, type FullViewOverrides } from '~/components/dashboard/variants';
 import { DashboardActionsContext, type DashboardActions } from '~/components/dashboard/primitives';
 import type { DashboardData, FileEntry, FileSource, FocusId, RunRow } from '~/components/dashboard/types';
@@ -19,8 +20,9 @@ import { DASHBOARD_FOCUS_IDS, goToWorkflowNode, navigateToSettings, navigateToUs
 import { isLocalEdition } from '~/lib/edition';
 import { openCreateCredential } from '~/components/shared/popups/CreateCredentialDialog';
 import { DashboardSkeleton } from '~/components/dashboard/DashboardSkeleton';
-import { CoordinatorPanel } from '~/components/dashboard/CoordinatorPanel';
+import { CoordinatorMemoriesDialog } from '~/components/dashboard/CoordinatorMemories';
 import { useFeatureGate } from '~/lib/featureGates';
+import { Button } from '~/components/ui/button';
 import { FilePreviewDialog, type FilePreviewRequest } from '~/components/dashboard/FilePreviewDialog';
 import { CredentialDeleteDialog, type DeletableCredential } from '~/components/credential/CredentialDeleteDialog';
 import { Skeleton } from '~/components/ui/skeleton';
@@ -154,6 +156,7 @@ export function DashboardTab() {
     const credit = useCreditUsage();
     const [params, setParams] = useSearchParams();
     const coordinator = useFeatureGate('coordinator');
+    const [memoriesOpen, setMemoriesOpen] = useState(false);
     const [, setPendingCreditAction] = useValtioState<'credit-exhausted' | 'user-initiated' | null>('global', 'pending_credit_action', null);
 
     const focusParam = params.get('focus');
@@ -440,9 +443,21 @@ export function DashboardTab() {
     return (
         <DashboardActionsContext.Provider value={actions}>
             <div className="h-full" data-testid="dashboard-tab">
-                <BentoDashboard data={data} config={PRODUCT_CONFIG} focus={focus} onFocus={onFocus} fullViewOverrides={FULL_VIEW_OVERRIDES} />
+                <BentoDashboard
+                    data={data}
+                    config={PRODUCT_CONFIG}
+                    focus={focus}
+                    onFocus={onFocus}
+                    fullViewOverrides={FULL_VIEW_OVERRIDES}
+                    headerActions={coordinator && (
+                        <Button variant="outline" size="sm" onClick={() => setMemoriesOpen(true)}>
+                            <Brain className="mr-2 h-4 w-4" />
+                            Memories
+                        </Button>
+                    )}
+                />
             </div>
-            {coordinator && <CoordinatorPanel />}
+            {coordinator && <CoordinatorMemoriesDialog open={memoriesOpen} onOpenChange={setMemoriesOpen} />}
             <input ref={fileInput} type="file" multiple className="hidden" onChange={onFilesPicked} data-testid="dashboard-upload-input" />
             <FilePreviewDialog request={preview} onClose={() => setPreview(null)} onOpenWorkflow={(source) => source.workflow && actions.openWorkflow(source.workflow, source.agent?.nodeId)} />
             <CredentialDeleteDialog credential={credentialToDelete} onClose={() => setCredentialToDelete(null)} onDeleted={() => void refresh()} />
