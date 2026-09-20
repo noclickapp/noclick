@@ -46,3 +46,20 @@ async def test_get_items_applies_the_coherent_window(monkeypatch):
     assert await session.get_items(limit=None) == [_user(2), _assistant(2)]  # the session's own bound applies
     session_all = PostgresSession("coordinator:u1", user_id="u1")
     assert await session_all.get_items() == history
+
+
+@pytest.mark.asyncio
+async def test_a_read_only_session_remembers_but_is_not_remembered(monkeypatch):
+    """A live phone turn reads the caller's conversation and writes nothing:
+    the call's transcript at hang-up is the one message it leaves behind."""
+    history = [_user(1), _assistant(1)]
+    pool = MagicMock()
+    pool.fetchrow = AsyncMock(return_value={"metadata": {"sdk_history": history}})
+    pool.execute = AsyncMock()
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: pool)
+    session = PostgresSession("ck:wf:agent:+1555:+1567", user_id="u1", read_only=True)
+    assert await session.get_items() == history
+    await session.add_items([_user(2), _assistant(2)])
+    assert await session.pop_item() is None
+    await session.clear_session()
+    pool.execute.assert_not_awaited()

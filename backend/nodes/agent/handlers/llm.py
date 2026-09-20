@@ -19,6 +19,8 @@ from wss.sender.schema import ContentItem, ImageUrl
 
 logger = logging.getLogger(__name__)
 
+READONLY_HISTORY_LIMIT = 40  # items replayed to a read-only (live phone) turn
+
 
 async def execute_llm_model(
     node,
@@ -81,6 +83,7 @@ async def execute_llm_model(
             return await node._execute_tool(tool_name, arguments, tool_configs or {})
 
         enable_persistence = bool(config.conversation_key or node.conversation_id)
+        memory_readonly = getattr(node, "memory_readonly", False)
         agent = await Agent.create(
             emit_message=emit_callback,
             config=agent_config,
@@ -100,6 +103,10 @@ async def execute_llm_model(
             sandbox_setups=sandbox_setups or None,
             user_env=user_env or None,
             execution_id=node.execution_id,
+            memory_readonly=memory_readonly,
+            # A turn that leaves no memory needs only recent memory, and it is
+            # answered while a caller waits — a bounded replay keeps it quick.
+            history_limit=READONLY_HISTORY_LIMIT if memory_readonly else None,
         )
         logger.info(f"[LLM] Created agent: conversation_id={effective_conversation_id}, "
                      f"persistence={enable_persistence}, conversation_key={config.conversation_key!r}")

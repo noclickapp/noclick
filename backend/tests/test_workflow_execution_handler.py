@@ -784,6 +784,12 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
         rows = await real_database.fetch("SELECT id, status FROM workflow_executions WHERE workflow_id = $1", uuid.UUID(workflow_id))
         assert [(str(r["id"]), r["status"]) for r in rows] == [(execution_id, "running")], "the call's run is the only row, still open"
         assert execution_id not in handler._execution_node_statuses and execution_id not in handler._execution_relays
+        # The turn remembers but is not remembered: the caller's conversation is
+        # read, never written — the call's transcript at hang-up is its one message.
+        history = await real_database.fetchval(
+            "SELECT metadata->'sdk_history' FROM conversations WHERE conversation_id = $1",
+            f"ck:{workflow_id}:agent-1:+1555:+1567")
+        assert history is None, f"a live turn wrote memory: {history}"
 
     @pytest.mark.asyncio
     async def test_parallel_workflow(self, real_database, frontend_sio, sid):

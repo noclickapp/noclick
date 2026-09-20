@@ -1362,6 +1362,9 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             return _result(False, f"Agent node {agent_node_id} not found")
         agent.setdefault('config', {}).update({
             "message": message, "conversation_key": conversation_key, "mockedOutput": None,
+            # The turn remembers but is not remembered: the call's transcript,
+            # delivered at hang-up, is the one message it leaves in memory.
+            "_memoryReadonly": True,
         })
         executable = [n for n in nodes if n.get('type') not in NON_EXECUTABLE_NODE_TYPES]
         # The agent's forward edges are cut so reachability yields the agent plus

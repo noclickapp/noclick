@@ -93,6 +93,7 @@ class PostgresSession:
         workflow_id: Optional[str] = None,
         node_id: Optional[str] = None,
         history_limit: Optional[int] = None,
+        read_only: bool = False,
     ) -> None:
         if not conversation_id:
             raise ValueError("PostgresSession requires conversation_id")
@@ -103,6 +104,10 @@ class PostgresSession:
         # Replay at most this many recent items to the model (None = all); the
         # stored history is never trimmed, only what a turn re-sends.
         self._history_limit = history_limit
+        # A turn that remembers but is not remembered: a live phone turn reads
+        # the caller's conversation and writes nothing — the call's transcript,
+        # delivered at hang-up, is the one message the call leaves behind.
+        self._read_only = read_only
 
     # ------------------------------------------------------------------ #
     # SDK Session protocol
@@ -131,7 +136,7 @@ class PostgresSession:
 
     async def add_items(self, items: List[dict]) -> None:
         """Append new items to the history (creating the row if needed)."""
-        if not items:
+        if not items or self._read_only:
             return
 
         # Strip non-portable fields the SDK injects (matches what
@@ -177,6 +182,8 @@ class PostgresSession:
         RETURNING clause would see the post-update metadata and we'd
         return the second-to-last element instead of the popped one.
         """
+        if self._read_only:
+            return None
         from utils.database_pool import get_native_pool
         row = await get_native_pool().fetchrow(
             f"""
@@ -213,6 +220,8 @@ class PostgresSession:
 
     async def clear_session(self) -> None:
         """Wipe all items for this session (does NOT delete the row)."""
+        if self._read_only:
+            return
         from utils.database_pool import get_native_pool
         await get_native_pool().execute(
             f"""

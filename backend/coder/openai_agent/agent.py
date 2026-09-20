@@ -294,6 +294,7 @@ class Agent:
         user_env: Optional[Dict[str, str]] = None,
         execution_id: Optional[str] = None,
         history_limit: Optional[int] = None,
+        memory_readonly: bool = False,
         **kwargs,
     ) -> "Agent":
         """Async factory for ``Agent``.
@@ -338,6 +339,7 @@ class Agent:
                 workflow_id=workflow_id,
                 node_id=node_id,
                 history_limit=history_limit,
+                read_only=memory_readonly,
             )
         agent._initialized = True
         return agent
