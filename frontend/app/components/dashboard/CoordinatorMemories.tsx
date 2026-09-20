@@ -198,7 +198,7 @@ function MemoryEditor({
                 <Button
                     type="submit"
                     size="sm"
-                    className="rounded-full px-5"
+                    className="px-5"
                     disabled={
                         busy ||
                         !name.trim() ||
@@ -215,7 +215,7 @@ function MemoryEditor({
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="rounded-full text-muted-foreground"
+                            className="text-muted-foreground"
                             disabled={busy}
                             onClick={() => void onReload(existing.id)}
                         >
@@ -225,7 +225,7 @@ function MemoryEditor({
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="ml-auto rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                            className="ml-auto text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                             disabled={busy}
                             onClick={() => setConfirmDelete(true)}
                             aria-label="Delete memory"
@@ -249,7 +249,6 @@ function MemoryEditor({
                             type="button"
                             variant="destructive"
                             size="sm"
-                            className="rounded-full"
                             disabled={busy}
                             onClick={() => void onDelete(existing)}
                         >
@@ -259,7 +258,6 @@ function MemoryEditor({
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="rounded-full"
                             disabled={busy}
                             onClick={() => setConfirmDelete(false)}
                         >
@@ -429,7 +427,7 @@ function MemoryDetail({ memory }: { memory: CoordinatorMemoryState }) {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="rounded-full text-muted-foreground"
+                            className="text-muted-foreground"
                             disabled={memory.busy}
                             onClick={() => setEditing(!editing)}
                         >
@@ -513,7 +511,7 @@ export function CoordinatorMemoriesView({
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="rounded-full bg-foreground/[0.035] px-4 text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground"
+                        className="text-muted-foreground hover:text-foreground"
                         onClick={memory.create}
                         disabled={memory.busy}
                     >
@@ -714,7 +712,7 @@ export function CoordinatorMemoriesView({
                                     size="sm"
                                     disabled={memory.busy}
                                     onClick={memory.back}
-                                    className="mb-3 -ml-3 rounded-full text-muted-foreground"
+                                    className="mb-3 -ml-3 text-muted-foreground"
                                 >
                                     <ArrowLeft className="mr-2 h-4 w-4" />
                                     All memories
