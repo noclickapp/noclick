@@ -16,6 +16,7 @@ import {
     RefreshCw,
     Search,
     Trash2,
+    X,
 } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -503,7 +504,7 @@ export function CoordinatorMemoriesView({
                     )}
                     aria-label="Memory library"
                 >
-                    <div className="flex items-center gap-2 px-1">
+                    <div className="flex items-center gap-2 pl-1">
                         <h2 className="m-0 text-xs font-medium text-muted-foreground">
                             {memory.query ? 'Search results' : 'Library'}
                         </h2>
@@ -513,28 +514,45 @@ export function CoordinatorMemoriesView({
                                 {memory.has_more ? '+' : ''}
                             </span>
                         )}
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <div className="relative min-w-0 flex-1">
-                            <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                aria-label="Search memories"
-                                placeholder="Search memories"
-                                value={memory.query}
-                                onChange={(e) => memory.search(e.target.value)}
-                                maxLength={300}
-                                className="pl-9"
-                            />
-                        </div>
                         <Button
                             variant="ghost"
                             size="icon"
                             onClick={memory.reload}
                             disabled={memory.loading}
                             aria-label="Refresh memories"
+                            className="ml-auto h-7 w-7 rounded-lg text-muted-foreground/60 hover:text-foreground"
                         >
-                            <RefreshCw className="h-3.5 w-3.5" />
+                            <RefreshCw
+                                className={cn(
+                                    'h-3 w-3',
+                                    memory.loading && 'animate-spin'
+                                )}
+                            />
                         </Button>
+                    </div>
+                    <div className="flex items-center gap-2 rounded-xl bg-foreground/[0.035] px-3 py-2.5 transition-colors focus-within:bg-foreground/[0.06]">
+                        <Search
+                            className="h-3.5 w-3.5 shrink-0 text-muted-foreground/70"
+                            aria-hidden="true"
+                        />
+                        <input
+                            aria-label="Search memories"
+                            placeholder="Search memories"
+                            value={memory.query}
+                            onChange={(e) => memory.search(e.target.value)}
+                            maxLength={300}
+                            className="min-w-0 flex-1 bg-transparent text-xs text-foreground outline-none placeholder:text-muted-foreground/55"
+                        />
+                        {memory.query && (
+                            <button
+                                type="button"
+                                onClick={() => memory.search('')}
+                                aria-label="Clear memory search"
+                                className="rounded-md p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            >
+                                <X className="h-3 w-3" />
+                            </button>
+                        )}
                     </div>
                     {memory.loading ? (
                         <MemoryLoading />
@@ -571,13 +589,9 @@ export function CoordinatorMemoriesView({
                                             memory.selected !== 'new' &&
                                             memory.selected?.id === entry.id
                                         }
-                                        className="group relative flex w-full items-start gap-3 rounded-lg border border-border/60 bg-foreground/[0.015] p-3.5 text-left transition-colors hover:border-foreground/20 hover:bg-foreground/[0.035] aria-pressed:border-foreground/20 aria-pressed:bg-foreground/[0.055] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:opacity-50"
+                                        className="group flex w-full items-start gap-3 rounded-xl border border-transparent p-3.5 text-left transition-colors hover:bg-foreground/[0.035] aria-pressed:border-foreground/[0.08] aria-pressed:bg-foreground/[0.055] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:opacity-50"
                                         data-testid="memory-entry"
                                     >
-                                        <span
-                                            className="absolute bottom-3 left-0 top-3 w-0.5 rounded-full bg-foreground/60 opacity-0 group-aria-pressed:opacity-100"
-                                            aria-hidden="true"
-                                        />
                                         <MemoryMark type={entry.memory_type} />
                                         <div className="min-w-0 flex-1">
                                             <div
