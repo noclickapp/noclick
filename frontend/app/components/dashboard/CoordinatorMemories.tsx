@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import {
     ArrowLeft,
+    ChevronRight,
     BookOpen,
     Folder,
     LockKeyhole,
@@ -23,7 +24,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Skeleton } from '~/components/ui/skeleton';
 import { cn } from '~/lib/utils';
-import { EmptyState, relTime, ROWS, TextLink } from './primitives';
+import { EmptyState, relTime, TextLink } from './primitives';
 import {
     useCoordinatorMemories,
     type MemoryEntry,
@@ -81,7 +82,7 @@ function MemoryEditor({
             }}
             data-testid="memory-editor"
         >
-            <div className="grid grid-cols-[1fr_auto] gap-3">
+            <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto]">
                 <label className="space-y-1 text-sm font-medium">
                     <span>Name</span>
                     <Input
@@ -107,7 +108,7 @@ function MemoryEditor({
                     >
                         {types.map((value) => (
                             <option key={value} value={value}>
-                                {value}
+                                {MEMORY_KINDS[value].label}
                             </option>
                         ))}
                     </select>
@@ -139,9 +140,9 @@ function MemoryEditor({
                     placeholder="Details, context, and references…"
                     required
                     maxLength={16000}
-                    rows={9}
+                    rows={12}
                     disabled={busy}
-                    className="font-mono text-sm"
+                    className="font-mono text-[13px] leading-relaxed"
                 />
                 <span className="block text-xs font-normal text-muted-foreground">
                     Markdown supported. Read only when needed.
@@ -149,7 +150,7 @@ function MemoryEditor({
             </label>
             {existing && (
                 <p className="text-xs text-muted-foreground">
-                    Updated {new Date(existing.updated_at).toLocaleString()}
+                    Updated {memoryDate(existing.updated_at)}
                     {existing.origin_conversation_id
                         ? ' · From a coordinator conversation'
                         : ' · Added here'}
@@ -246,6 +247,26 @@ function MemoryKind({ type }: { type: MemoryHeader['memory_type'] }) {
     );
 }
 
+function MemoryMark({ type }: { type: MemoryHeader['memory_type'] }) {
+    const { Icon } = MEMORY_KINDS[type];
+    return (
+        <span
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-foreground/[0.05] text-muted-foreground"
+            aria-hidden="true"
+        >
+            <Icon className="h-3.5 w-3.5" />
+        </span>
+    );
+}
+
+function memoryDate(value: string) {
+    return new Intl.DateTimeFormat(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+    }).format(new Date(value));
+}
+
 function MemoryLoading() {
     return (
         <div
@@ -291,7 +312,7 @@ export function MemoriesPreview({
             ) : entries.length ? (
                 <div
                     className={cn(
-                        'grid divide-y divide-border md:divide-y-0 md:[&>*+*]:border-l md:[&>*+*]:border-border md:[&>*+*]:pl-6',
+                        'grid gap-2',
                         entries.length === 2 && 'md:grid-cols-2',
                         entries.length >= 3 && 'md:grid-cols-3'
                     )}
@@ -302,12 +323,18 @@ export function MemoriesPreview({
                             type="button"
                             onClick={() => onOpen(entry.id)}
                             data-testid="memory-preview-entry"
-                            className="group flex min-w-0 flex-col py-2 text-left transition-colors hover:bg-foreground/[0.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:pr-6"
+                            className="group flex min-w-0 flex-col rounded-lg border border-border/30 bg-foreground/[0.01] p-3 text-left transition-colors hover:border-border/60 hover:bg-foreground/[0.025] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
-                            <span className="line-clamp-1 text-[13px] font-medium">
-                                {memoryTitle(entry.name)}
+                            <span className="flex items-center gap-2.5">
+                                <span className="min-w-0 flex-1 truncate text-[13px] font-medium">
+                                    {memoryTitle(entry.name)}
+                                </span>
+                                <ChevronRight
+                                    className="h-3.5 w-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-60 group-focus-visible:opacity-60"
+                                    aria-hidden="true"
+                                />
                             </span>
-                            <span className="mt-1.5 line-clamp-2 text-[12px] leading-relaxed text-muted-foreground">
+                            <span className="mt-2 line-clamp-2 text-[12px] leading-relaxed text-muted-foreground">
                                 {entry.description}
                             </span>
                             <span className="mt-auto flex flex-wrap items-center gap-2 pt-3 text-[10.5px] text-muted-foreground">
@@ -345,11 +372,11 @@ function MemoryDetail({ memory }: { memory: CoordinatorMemoryState }) {
     const existing = entry === 'new' ? null : entry;
     return (
         <article
-            className="min-w-0 lg:border-l lg:border-border lg:pl-8"
+            className="min-w-0 overflow-hidden rounded-xl border border-border/80 bg-card dark:bg-foreground/[0.015]"
             data-testid="memory-detail"
         >
-            <div className="border-b border-border pb-5">
-                <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <div className="border-b border-border/70 px-5 pb-5 pt-4 sm:px-7">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                     {existing ? (
                         <MemoryKind type={existing.memory_type} />
                     ) : (
@@ -371,16 +398,16 @@ function MemoryDetail({ memory }: { memory: CoordinatorMemoryState }) {
                         </Button>
                     )}
                 </div>
-                <h2 className="m-0 break-words text-xl font-semibold tracking-tight">
+                <h2 className="m-0 break-words text-[22px] font-semibold leading-snug tracking-tight">
                     {existing ? memoryTitle(existing.name) : 'Add a memory'}
                 </h2>
                 <p className="mb-0 mt-2 text-xs leading-relaxed text-muted-foreground">
                     {existing
-                        ? `Updated ${new Date(existing.updated_at).toLocaleString()} · ${existing.origin_conversation_id ? 'From a conversation' : 'Added by you'}`
+                        ? `Updated ${memoryDate(existing.updated_at)} · ${existing.origin_conversation_id ? 'From a conversation' : 'Added by you'}`
                         : 'Give your coordinator context to use in future conversations.'}
                 </p>
             </div>
-            <div className="py-6">
+            <div className="px-5 py-6 sm:px-7">
                 {editing ? (
                     <MemoryEditor
                         key={memory.editorRevision}
@@ -393,7 +420,7 @@ function MemoryDetail({ memory }: { memory: CoordinatorMemoryState }) {
                 ) : (
                     existing && (
                         <>
-                            <div className="mb-8">
+                            <div className="mb-8 border-l-2 border-foreground/15 pl-4">
                                 <p className="m-0 text-[10.5px] font-semibold uppercase tracking-wider text-muted-foreground">
                                     When this is useful
                                 </p>
@@ -402,7 +429,7 @@ function MemoryDetail({ memory }: { memory: CoordinatorMemoryState }) {
                                 </p>
                             </div>
                             <div
-                                className="prose prose-sm max-w-none break-words text-foreground prose-headings:text-foreground prose-p:leading-7 prose-a:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted dark:prose-invert"
+                                className="prose prose-sm max-w-[72ch] overflow-x-auto break-words text-foreground prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-foreground prose-p:leading-7 prose-a:text-foreground prose-strong:text-foreground prose-code:text-foreground prose-pre:bg-muted dark:prose-invert [&>:first-child]:mt-0"
                                 data-testid="memory-content-preview"
                             >
                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -424,20 +451,20 @@ export function CoordinatorMemoriesView({
 }: {
     memory: CoordinatorMemoryState;
 }) {
+    const hasSelection = memory.selected !== null;
     return (
         <div
             data-testid="coordinator-memories"
             className="space-y-5 text-foreground"
         >
-            <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="space-y-1.5">
                     <p className="m-0 text-sm text-muted-foreground">
-                        Preferences, project context, and references that carry
-                        across conversations.
+                        Context that carries across conversations.
                     </p>
-                    <p className="mb-0 mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <p className="m-0 flex items-center gap-1.5 text-[11px] text-muted-foreground/80">
                         <LockKeyhole className="h-3 w-3" />
-                        Private to you · Kept when you start a new chat
+                        Private to you
                     </p>
                 </div>
                 <Button
@@ -463,14 +490,30 @@ export function CoordinatorMemoriesView({
                     {memory.notice}
                 </p>
             )}
-            <div className="grid items-start gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
+            <div
+                className={cn(
+                    'grid items-start gap-6',
+                    hasSelection && 'lg:grid-cols-[288px_minmax(0,1fr)]'
+                )}
+            >
                 <aside
                     className={cn(
                         'min-w-0 space-y-3',
-                        memory.selected && 'hidden lg:block'
+                        hasSelection && 'hidden lg:sticky lg:top-4 lg:block'
                     )}
                     aria-label="Memory library"
                 >
+                    <div className="flex items-center gap-2 px-1">
+                        <h2 className="m-0 text-xs font-medium text-muted-foreground">
+                            {memory.query ? 'Search results' : 'Library'}
+                        </h2>
+                        {!memory.loading && !memory.error && (
+                            <span className="text-[11px] tabular-nums text-muted-foreground/70">
+                                {memory.memories.length}
+                                {memory.has_more ? '+' : ''}
+                            </span>
+                        )}
+                    </div>
                     <div className="flex items-center gap-1">
                         <div className="relative min-w-0 flex-1">
                             <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -509,9 +552,15 @@ export function CoordinatorMemoriesView({
                             }
                         />
                     ) : (
-                        <ul className={cn(ROWS, 'm-0 p-0')}>
+                        <ul
+                            className={cn(
+                                'm-0 space-y-2 p-0',
+                                hasSelection &&
+                                    'scrollbar-subtle lg:max-h-[calc(100dvh-21rem)] lg:overflow-y-auto'
+                            )}
+                        >
                             {memory.memories.map((entry) => (
-                                <li key={entry.id} className="list-none py-1">
+                                <li key={entry.id} className="list-none">
                                     <button
                                         type="button"
                                         disabled={memory.busy}
@@ -522,16 +571,47 @@ export function CoordinatorMemoriesView({
                                             memory.selected !== 'new' &&
                                             memory.selected?.id === entry.id
                                         }
-                                        className="w-full space-y-2 rounded-md p-3 text-left transition-colors hover:bg-foreground/[0.03] aria-pressed:bg-foreground/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                                        className="group relative flex w-full items-start gap-3 rounded-lg border border-border/60 bg-foreground/[0.015] p-3.5 text-left transition-colors hover:border-foreground/20 hover:bg-foreground/[0.035] aria-pressed:border-foreground/20 aria-pressed:bg-foreground/[0.055] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:opacity-50"
                                         data-testid="memory-entry"
                                     >
-                                        <div className="truncate text-sm font-medium">
-                                            {memoryTitle(entry.name)}
+                                        <span
+                                            className="absolute bottom-3 left-0 top-3 w-0.5 rounded-full bg-foreground/60 opacity-0 group-aria-pressed:opacity-100"
+                                            aria-hidden="true"
+                                        />
+                                        <MemoryMark type={entry.memory_type} />
+                                        <div className="min-w-0 flex-1">
+                                            <div
+                                                className="truncate text-[13px] font-medium"
+                                                title={memoryTitle(entry.name)}
+                                            >
+                                                {memoryTitle(entry.name)}
+                                            </div>
+                                            <p className="mb-0 mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                                                {entry.description}
+                                            </p>
+                                            <div className="mt-2 text-[11px] text-muted-foreground/80">
+                                                {
+                                                    MEMORY_KINDS[
+                                                        entry.memory_type
+                                                    ].label
+                                                }
+                                            </div>
                                         </div>
-                                        <p className="m-0 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                                            {entry.description}
-                                        </p>
-                                        <MemoryKind type={entry.memory_type} />
+                                        {!hasSelection && (
+                                            <time
+                                                dateTime={entry.updated_at}
+                                                title={new Date(
+                                                    entry.updated_at
+                                                ).toLocaleString()}
+                                                className="hidden shrink-0 pt-0.5 text-[11px] text-muted-foreground sm:block"
+                                            >
+                                                {memoryDate(entry.updated_at)}
+                                            </time>
+                                        )}
+                                        <ChevronRight
+                                            className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground/40 transition-colors group-hover:text-foreground"
+                                            aria-hidden="true"
+                                        />
                                     </button>
                                 </li>
                             ))}
@@ -564,48 +644,35 @@ export function CoordinatorMemoriesView({
                         </div>
                     )}
                 </aside>
-                <div
-                    className={cn(
-                        'min-w-0',
-                        !memory.selected && !memory.busy && 'hidden lg:block'
-                    )}
-                >
-                    {memory.busy && !memory.selected ? (
-                        <MemoryLoading />
-                    ) : memory.selected ? (
-                        <>
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                disabled={memory.busy}
-                                onClick={memory.back}
-                                className="mb-3 lg:hidden"
-                            >
-                                <ArrowLeft className="mr-2 h-4 w-4" />
-                                All memories
-                            </Button>
-                            <MemoryDetail
-                                key={
-                                    memory.selected === 'new'
-                                        ? 'new'
-                                        : memory.selected.id
-                                }
-                                memory={memory}
-                            />
-                        </>
-                    ) : (
-                        <div className="flex min-h-[280px] flex-col items-center justify-center px-8 text-center lg:border-l lg:border-border">
-                            <BookOpen className="mb-4 h-5 w-5 text-muted-foreground/60" />
-                            <h2 className="m-0 text-sm font-medium">
-                                Select a memory
-                            </h2>
-                            <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
-                                Read its details or make a correction.
-                            </p>
-                        </div>
-                    )}
-                </div>
+                {(hasSelection || memory.busy) && (
+                    <div className="min-w-0">
+                        {memory.busy && !memory.selected ? (
+                            <MemoryLoading />
+                        ) : memory.selected ? (
+                            <>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    disabled={memory.busy}
+                                    onClick={memory.back}
+                                    className="mb-3 -ml-2 text-muted-foreground"
+                                >
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
+                                    All memories
+                                </Button>
+                                <MemoryDetail
+                                    key={
+                                        memory.selected === 'new'
+                                            ? 'new'
+                                            : memory.selected.id
+                                    }
+                                    memory={memory}
+                                />
+                            </>
+                        ) : null}
+                    </div>
+                )}
             </div>
         </div>
     );
