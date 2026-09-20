@@ -22,6 +22,20 @@ logger = logging.getLogger(__name__)
 READONLY_HISTORY_LIMIT = 40  # items replayed to a read-only (live phone) turn
 
 
+def memory_is_readonly(node) -> bool:
+    """A turn that reads this conversation's memory but writes nothing to
+    it. A live phone turn is one: the call's transcript, delivered at hang-up,
+    is the one message a call leaves in the agent's memory — not one exchange
+    per delegation. Set through the runtime config key ``_memoryReadonly``
+    (the executor's agent-turn primitive), the same way ``_agent_turn_output``
+    and ``_triggerPayload`` travel. Read here, not on the node class: the open
+    edition ships its own ``agent_node.py`` (an oss override), this file is
+    shared by both."""
+    data = getattr(node, "node_data", None) or {}
+    config = data.get("config") if isinstance(data.get("config"), dict) else {}
+    return bool(config.get("_memoryReadonly") or data.get("_memoryReadonly"))
+
+
 async def execute_llm_model(
     node,
     config,
@@ -83,7 +97,7 @@ async def execute_llm_model(
             return await node._execute_tool(tool_name, arguments, tool_configs or {})
 
         enable_persistence = bool(config.conversation_key or node.conversation_id)
-        memory_readonly = getattr(node, "memory_readonly", False)
+        memory_readonly = memory_is_readonly(node)
         agent = await Agent.create(
             emit_message=emit_callback,
             config=agent_config,
