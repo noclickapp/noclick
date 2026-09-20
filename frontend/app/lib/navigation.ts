@@ -17,7 +17,7 @@
 export type DashboardTab = 'vite' | 'databases' | 'flow' | 'debug' | 'analytics' | 'dashboard' | 'settings';
 // Drill-down sections of the Dashboard tab (?focus=). Kept here, next to the tab
 // vocabulary, so URL encoding and the tab component agree on the names.
-export const DASHBOARD_FOCUS_IDS = ['attention', 'runs', 'agents', 'files', 'credentials', 'triggers', 'upcoming', 'credits', 'notifications'] as const;
+export const DASHBOARD_FOCUS_IDS = ['attention', 'runs', 'agents', 'files', 'credentials', 'triggers', 'upcoming', 'credits', 'notifications', 'memories'] as const;
 export type DashboardFocus = (typeof DASHBOARD_FOCUS_IDS)[number];
 // Single source of truth for valid settings sections — Dashboard's URL parser
 // and Settings' useUrlSyncedTab both validate against this list, so a section

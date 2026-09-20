@@ -2124,7 +2124,7 @@ export function NotificationsFull({ data }: SectionProps) {
 
 // ---------------------------------------------------------------------------
 
-export const FULL_VIEWS: Record<FocusId, (p: SectionProps) => ReactElement> = {
+export const FULL_VIEWS: Record<Exclude<FocusId, 'memories'>, (p: SectionProps) => ReactElement> = {
     attention: AttentionFull,
     runs: RunsFull,
     agents: AgentsFull,

@@ -240,9 +240,9 @@ function Card({
     );
 }
 
-function FocusView({ data, focus, onBack, overrides }: { data: DashboardData; focus: FocusId; onBack: () => void; overrides?: FullViewOverrides }) {
+function FocusView({ data, focus, onBack, overrides, children }: { data: DashboardData; focus: FocusId; onBack: () => void; overrides?: FullViewOverrides; children?: ReactNode }) {
     const attention = useVisibleAttention(data);
-    const Full = overrides?.[focus] ?? FULL_VIEWS[focus];
+    const Full = overrides?.[focus] ?? (focus === 'memories' ? null : FULL_VIEWS[focus]);
     const count = focusCount(data, focus, attention);
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
@@ -269,7 +269,7 @@ function FocusView({ data, focus, onBack, overrides }: { data: DashboardData; fo
                         {FOCUS_TITLES[focus]}
                         {count != null && <span className="text-[14px] font-normal tabular-nums text-foreground/60 dark:text-foreground/40">{count}</span>}
                     </h1>
-                    <Full data={data} onFocus={(id) => (id ? undefined : onBack())} />
+                    {children ?? (Full && <Full data={data} onFocus={(id) => (id ? undefined : onBack())} />)}
                 </div>
             </div>
         </div>
@@ -290,13 +290,14 @@ export interface BentoDashboardProps {
     focus: FocusId | null;
     onFocus: (id: FocusId | null) => void;
     fullViewOverrides?: FullViewOverrides;
-    /** Optional account actions beside the dashboard greeting. */
-    headerActions?: ReactNode;
+    /** Account-private memories use their own gated data source. */
+    memories?: { preview: ReactNode; detail: ReactNode; count?: number };
 }
 
 /** Column spans per layout, in a 12-column grid. `hero` makes the queue span two rows. */
 export const SPANS: Record<BentoConfig['layout'], Record<FocusId, string>> = {
     balanced: {
+        memories: 'col-span-12',
         attention: 'col-span-12 lg:col-span-7',
         runs: 'col-span-12 lg:col-span-5',
         agents: 'col-span-12 lg:col-span-5',
@@ -308,6 +309,7 @@ export const SPANS: Record<BentoConfig['layout'], Record<FocusId, string>> = {
         notifications: 'col-span-12 lg:col-span-4',
     },
     hero: {
+        memories: 'col-span-12',
         attention: 'col-span-12 lg:col-span-8 lg:row-span-2',
         runs: 'col-span-12 lg:col-span-4',
         agents: 'col-span-12 lg:col-span-4',
@@ -319,6 +321,7 @@ export const SPANS: Record<BentoConfig['layout'], Record<FocusId, string>> = {
         notifications: 'col-span-12 lg:col-span-8',
     },
     uniform: {
+        memories: 'col-span-12',
         attention: 'col-span-12 md:col-span-6 lg:col-span-4',
         runs: 'col-span-12 md:col-span-6 lg:col-span-4',
         agents: 'col-span-12 md:col-span-6 lg:col-span-4',
@@ -333,12 +336,12 @@ export const SPANS: Record<BentoConfig['layout'], Record<FocusId, string>> = {
 
 /** Card order per layout — auto-placement fills the grid in this sequence. */
 export const ORDER: Record<BentoConfig['layout'], FocusId[]> = {
-    balanced: ['attention', 'runs', 'agents', 'upcoming', 'files', 'credentials', 'triggers', 'credits', 'notifications'],
-    hero: ['attention', 'runs', 'agents', 'upcoming', 'files', 'credentials', 'triggers', 'credits', 'notifications'],
-    uniform: ['attention', 'runs', 'agents', 'upcoming', 'files', 'credentials', 'triggers', 'credits', 'notifications'],
+    balanced: ['attention', 'runs', 'agents', 'upcoming', 'files', 'credentials', 'triggers', 'credits', 'notifications', 'memories'],
+    hero: ['attention', 'runs', 'agents', 'upcoming', 'files', 'credentials', 'triggers', 'credits', 'notifications', 'memories'],
+    uniform: ['attention', 'runs', 'agents', 'upcoming', 'files', 'credentials', 'triggers', 'credits', 'notifications', 'memories'],
 };
 
-export function BentoDashboard({ data, config, focus, onFocus, fullViewOverrides, headerActions }: BentoDashboardProps) {
+export function BentoDashboard({ data, config, focus, onFocus, fullViewOverrides, memories }: BentoDashboardProps) {
     const attention = useVisibleAttention(data);
     const folded = config.kpi === 'folded';
     const hero = config.layout === 'hero';
@@ -350,6 +353,11 @@ export function BentoDashboard({ data, config, focus, onFocus, fullViewOverrides
     const head = (id: FocusId) => (folded || (hero && id === 'attention') ? headlineFor(id, data, attention) : null);
 
     const cards: Record<FocusId, ReactNode> = {
+        memories: memories && (
+            <Card key="memories" id="memories" config={config} title="Memories" count={memories.count} onOpen={go('memories')} className={SPANS[config.layout].memories}>
+                {memories.preview}
+            </Card>
+        ),
         attention: (
             <Card key="attention" id="attention" config={config} title="Needs you" count={attention.length} onOpen={go('attention')} headline={head('attention')} className={SPANS[config.layout].attention}>
                 <AttentionCompact data={data} onFocus={onFocus} limit={hero ? 7 : 4} dense={narrow} />
@@ -399,12 +407,9 @@ export function BentoDashboard({ data, config, focus, onFocus, fullViewOverrides
 
     return (
         <div className="relative h-full" data-testid="dashboard-variant-bento" data-config={`${config.surface}/${config.header}/${config.kpi}/${config.layout}`}>
-            <div className="scrollbar-subtle h-full overflow-y-auto">
+            <div className="scrollbar-subtle h-full overflow-y-auto" inert={!!focus} aria-hidden={!!focus}>
                 <div className={cn('mx-auto', LAYOUT.pagePad)} style={{ maxWidth: LAYOUT.pageMaxWidth }}>
-                    <div className={cn('flex flex-wrap items-start justify-between gap-3', config.kpi === 'strip' ? 'mb-3' : LAYOUT.greetingGap)}>
-                        <Greeting data={data} summary={config.kpi !== 'strip'} />
-                        {headerActions && <div className="shrink-0">{headerActions}</div>}
-                    </div>
+                    <Greeting data={data} className={config.kpi === 'strip' ? 'mb-3' : LAYOUT.greetingGap} summary={config.kpi !== 'strip'} />
                     {config.kpi === 'row' && <KpiRow data={data} onFocus={onFocus} items={kpiItems} className={cn('mb-6 border-b pb-6', HAIRLINE)} />}
                     {config.kpi === 'ledger' && <KpiLedger data={data} onFocus={onFocus} className={LAYOUT.ledgerGap} />}
                     {config.kpi === 'strip' && <KpiStrip data={data} onFocus={onFocus} className={cn('mb-6 border-b pb-5', HAIRLINE)} />}
@@ -417,7 +422,11 @@ export function BentoDashboard({ data, config, focus, onFocus, fullViewOverrides
                     </div>
                 </div>
             </div>
-            {focus && <FocusView data={data} focus={focus} onBack={() => onFocus(null)} overrides={fullViewOverrides} />}
+            {focus && (focus !== 'memories' || memories) && (
+                <FocusView data={data} focus={focus} onBack={() => onFocus(null)} overrides={fullViewOverrides}>
+                    {focus === 'memories' ? memories?.detail : undefined}
+                </FocusView>
+            )}
         </div>
     );
 }

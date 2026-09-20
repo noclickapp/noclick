@@ -20,6 +20,7 @@ const SHAPES: Record<FocusId, { rows: number; chart?: boolean; chips?: boolean }
     triggers: { rows: 3 },
     credits: { rows: 2 },
     notifications: { rows: 3 },
+    memories: { rows: 3 },
 };
 
 function Row({ wide = false }: { wide?: boolean }) {
@@ -67,7 +68,7 @@ function Card({ id }: { id: FocusId }) {
     );
 }
 
-export function DashboardSkeleton() {
+export function DashboardSkeleton({ memories = false }: { memories?: boolean }) {
     return (
         <div className="scrollbar-subtle h-full overflow-y-auto" data-testid="dashboard-tab-loading" aria-busy="true" aria-label="Loading your dashboard">
             <div className={cn('mx-auto', LAYOUT.pagePad)} style={{ maxWidth: LAYOUT.pageMaxWidth }}>
@@ -85,7 +86,7 @@ export function DashboardSkeleton() {
                     ))}
                 </div>
                 <div className={cn('grid', LAYOUT.gridGap)} style={{ gridTemplateColumns: 'repeat(12, minmax(0, 1fr))' }}>
-                    {ORDER.balanced.map((id) => (
+                    {ORDER.balanced.filter((id) => id !== 'memories' || memories).map((id) => (
                         <Card key={id} id={id} />
                     ))}
                 </div>

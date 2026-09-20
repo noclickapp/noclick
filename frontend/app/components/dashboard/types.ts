@@ -369,6 +369,7 @@ export interface DashboardData {
 /** A drill-down target: the section shown full-screen. */
 export type FocusId =
     | 'attention'
+    | 'memories'
     | 'runs'
     | 'agents'
     | 'files'
@@ -387,5 +388,6 @@ export const FOCUS_TITLES: Record<FocusId, string> = {
     triggers: 'Triggers',
     upcoming: 'Upcoming',
     credits: 'Credits',
+    memories: 'Memories',
     notifications: 'Notifications',
 };

@@ -98,6 +98,20 @@ export default async function () {
             'Full memory is not rendered in the catalog'
         );
         click(host.querySelector('[data-testid="memory-entry"]')!);
+        await nc.wait.until(
+            () =>
+                !!host.querySelector('[data-testid="memory-content-preview"]'),
+            3000
+        );
+        nc.assert.truthy(
+            host.textContent?.includes('Detailed body'),
+            'Opening a memory shows readable content'
+        );
+        nc.assert.falsy(
+            input('memory-content'),
+            'Reading a memory does not open an edit form'
+        );
+        click(button('Edit memory'));
         await nc.wait.until(() => !!input('memory-content'), 3000);
         nc.assert.equal(
             input('memory-description').value,
@@ -172,7 +186,7 @@ export default async function () {
             3000
         );
         nc.assert.equal(deletes, 1, 'Confirmed deletion persists');
-        click(button('Add'));
+        click(button('Add memory'));
         type('memory-name', 'report-format');
         type('memory-description', 'Consult when writing my weekly report.');
         type('memory-content', 'Use concise bullets and links to evidence.');

@@ -86,7 +86,8 @@ const message = (error: unknown) =>
     error instanceof Error ? error.message : 'Could not load memories';
 
 export function useCoordinatorMemories(
-    transport: MemoryTransport = coordinatorMemoryTransport
+    transport: MemoryTransport = coordinatorMemoryTransport,
+    enabled = true
 ) {
     const [query, setQuery] = useState('');
     const [offset, setOffset] = useState(0);
@@ -105,6 +106,7 @@ export function useCoordinatorMemories(
     const selection = useRef(0);
 
     useEffect(() => {
+        if (!enabled) return;
         let cancelled = false;
         setLoading(true);
         const timer = setTimeout(() => {
@@ -130,7 +132,7 @@ export function useCoordinatorMemories(
             cancelled = true;
             clearTimeout(timer);
         };
-    }, [query, offset, revision, transport]);
+    }, [query, offset, revision, transport, enabled]);
 
     useEffect(
         () => () => {
@@ -193,6 +195,25 @@ export function useCoordinatorMemories(
         }
     };
 
+    const search = useCallback((value: string) => {
+        setQuery(value);
+        setOffset(0);
+    }, []);
+    const back = useCallback(() => {
+        selection.current += 1;
+        setBusy(false);
+        setSelected(null);
+        setError(null);
+        setNotice(null);
+    }, []);
+    const create = useCallback(() => {
+        selection.current += 1;
+        setBusy(false);
+        setSelected('new');
+        setError(null);
+        setNotice(null);
+    }, []);
+
     return {
         ...page,
         query,
@@ -206,24 +227,12 @@ export function useCoordinatorMemories(
         select,
         save,
         forget,
-        search: (value: string) => {
-            setQuery(value);
-            setOffset(0);
-        },
+        search,
         setOffset,
         reload: () => refresh((value) => value + 1),
-        back: () => {
-            selection.current += 1;
-            setBusy(false);
-            setSelected(null);
-            setError(null);
-            setNotice(null);
-        },
-        create: () => {
-            selection.current += 1;
-            setSelected('new');
-            setError(null);
-            setNotice(null);
-        },
+        back,
+        create,
     };
 }
+
+export type CoordinatorMemoryState = ReturnType<typeof useCoordinatorMemories>;
