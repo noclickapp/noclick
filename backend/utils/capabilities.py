@@ -50,6 +50,10 @@ NODE_GUIDANCE = "builder.node_guidance"
 # that front door; without it there are none.
 PUBLISHED_APP_DOMAIN = "publish_app.domain"
 
+# Publish a saved, owned interface: async (pool, *, user_id, workflow_id,
+# node_id, subdomain, title) -> {url, app_id, node_id, subdomain}.
+INTERFACE_PUBLISH = "interface.publish"
+
 # What a user whose balance ran out should do next, for the credit alerts:
 # async (billing_user_id, pool=None) -> (button label, url). Without one the
 # alerts point at the dashboard.
