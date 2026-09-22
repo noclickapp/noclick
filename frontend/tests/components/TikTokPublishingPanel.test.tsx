@@ -10,10 +10,8 @@ import {
     screen,
     waitFor,
 } from '@testing-library/react';
-import {
-    TikTokPublishingPanel,
-    tikTokDisclosureError,
-} from '~/components/workflow/TikTokPublishingPanel';
+import { TikTokPublishingPanel } from '~/components/workflow/TikTokPublishingPanel';
+import { tikTokDisclosureError } from '~/utils/tikTokPublishing';
 
 const send = vi.hoisted(() => vi.fn());
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: send }));

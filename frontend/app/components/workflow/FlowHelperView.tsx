@@ -39,6 +39,7 @@ import { useFit, type FitItem } from './flowHelper/useFit';
 import { isTextEntryTarget, isModalOpen } from '~/lib/keyboard';
 import { KeyHint } from '~/components/shared/KeyHint';
 import { applyCredentialSelection } from '~/lib/applyCredentialSelection';
+import { tikTokNodePublishingError } from '~/utils/tikTokPublishing';
 
 type HelperTabType = 'home' | 'config' | 'credentials' | null;
 
@@ -278,7 +279,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
     );
     const agentToolProviderMode = toolProviderConsumerTypes.length > 0;
     // A provider has nothing to run on its own; prepareNodeExecution refuses it too.
-    const runBlocker = providerRunBlocker(toolProviderConsumerTypes);
+    const runBlocker = providerRunBlocker(toolProviderConsumerTypes) ?? tikTokNodePublishingError(selectedNode);
 
     // Check if node can be run: only block if a previous node is missing output AND
     // the selected node's config actually references that node's data via {{nodeId...}}
@@ -328,7 +329,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
     // Uses ref to ensure we're always operating on the currently selected node
     const handleRunNode = useCallback(() => {
         const currentNode = selectedNodeRef.current;
-        if (!currentNode || !onRunNode) return;
+        if (!currentNode || !onRunNode || tikTokNodePublishingError(currentNode)) return;
         logActivity(EVENTS.NODE_RUN_CLICKED, {
             node_id: currentNode.id,
             node_type: currentNode.type,

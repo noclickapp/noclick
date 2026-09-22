@@ -31,6 +31,8 @@ import { booleanSelectValue, getRequireOneOfGroups, isBooleanSchema, isFieldAppl
 import { evaluateRequireOneOf, describeRequireOneOfGroup } from '~/utils/workflowNodeValidation';
 import { NodeSettings } from './NodeSettings';
 import { FieldRequirementBadge, isFieldFilled } from './FieldRequirementBadge';
+import { TikTokPublishingPanel, TIKTOK_PANEL_FIELDS } from './TikTokPublishingPanel';
+import { tikTokDisclosureError } from '~/utils/tikTokPublishing';
 
 // Initialize AJV for frontend validation (Draft 2020-12)
 // IMPORTANT: Use Ajv2020 class for draft-2020-12 schemas
@@ -1273,11 +1275,15 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
             }
         }
 
+        if (nodeType === 'automation-tiktok' && ['direct_post_video', 'direct_post_photo'].includes(operationProp || '')) {
+            const disclosureError = tikTokDisclosureError(localConfig);
+            if (disclosureError) validationErrors.push({ message: disclosureError, type: 'general' });
+        }
         setFrontendValidation({
             valid: validationErrors.length === 0,
             errors: validationErrors,
         });
-    }, [localConfig, schema, resolvedSchema, rootSchema, nodeType, selectedOptionIndex]);
+    }, [localConfig, schema, resolvedSchema, rootSchema, nodeType, selectedOptionIndex, operationProp]);
 
     // Fire an analytics event when validation first transitions from valid → invalid with a
     // new set of field keys. Signature uses (type, fieldKey) only — never the error message,
@@ -1632,10 +1638,22 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
                 picks an operation and the picker collapses. */}
             {!(pickerOpen && hasOneOf && hasDiscriminator && !discriminatorHidden) && (<>
 
+            {nodeType === 'automation-tiktok' && !focusFields && (operationProp === 'direct_post_video' || operationProp === 'direct_post_photo') && (
+                <TikTokPublishingPanel
+                    key={nodeId}
+                    config={localConfig}
+                    operation={operationProp}
+                    credentialId={credentialIds.tiktok_oauth || credentialIds.TikTokOAuthCredential || ''}
+                    onChange={handleFieldChange}
+                />
+            )}
+
             {/* Auto-generated form fields (filtered for selected option) */}
             {Array.from(currentFields.entries()).map(([key, fieldInfo]) => {
                 const { prop, required: isRequired } = fieldInfo;
                 const value = localConfig[key] || '';
+
+                if (nodeType === 'automation-tiktok' && !focusFields && (operationProp === 'direct_post_video' || operationProp === 'direct_post_photo') && TIKTOK_PANEL_FIELDS.has(key)) return null;
 
                 // Focused hosts render only the fields they came to fix.
                 if (focusFields && !focusFields.includes(key)) {

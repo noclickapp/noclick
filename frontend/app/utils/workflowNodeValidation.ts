@@ -7,6 +7,7 @@ import type { Edge, Node } from '@xyflow/react';
 import { getSchemaInfo, getFieldsForOption, getRequireOneOfGroups, nodeTypeOffersOperationChoice, type RequireOneOfGroups } from '~/utils/schemaFieldExtractor';
 import { hasUnconnectedCredentials, providerCredentialsMissing } from '~/components/workflow/NodeCredentials';
 import { isAgentToolProviderType, isTriggerSource } from '~/utils/nodeSchemas';
+import { tikTokNodePublishingError } from '~/utils/tikTokPublishing';
 
 /** Graph context for edge-dependent validation (agent tool-provider mode).
  *  Optional — callers without edges get plain per-node validation.
@@ -370,6 +371,10 @@ export function validateNode(node: Node, context?: NodeValidationContext): NodeV
         }
     }
 
+    const publishingError = tikTokNodePublishingError(node);
+    if (publishingError) {
+        issues.push({ type: 'missing_required_field', fieldKey: 'disclose_commercial_content', message: publishingError });
+    }
     return {
         isComplete: issues.length === 0,
         issues,

@@ -2,6 +2,7 @@
 // Configuration remains reusable by unattended runs; this is not an approval dialog.
 import { useId, useState } from 'react';
 import { useTikTokCreator } from '~/hooks/useTikTokCreator';
+import { tikTokDisclosureError } from '~/utils/tikTokPublishing';
 
 export const TIKTOK_PANEL_FIELDS = new Set([
     'privacy_level',
@@ -13,20 +14,6 @@ export const TIKTOK_PANEL_FIELDS = new Set([
     'brand_organic_toggle',
     'is_aigc',
 ]);
-
-export function tikTokDisclosureError(
-    config: Record<string, unknown>
-): string | undefined {
-    const commercial = config.disclose_commercial_content === 'true';
-    const paid = config.brand_content_toggle === 'true';
-    const ownBrand = config.brand_organic_toggle === 'true';
-    if (commercial && !paid && !ownBrand)
-        return 'Select your own brand, a paid partnership, or both before running.';
-    if (!commercial && (paid || ownBrand))
-        return 'Enable commercial content disclosure for promotional content.';
-    if (paid && config.privacy_level === 'SELF_ONLY')
-        return 'Paid partnerships cannot be private. Select another visibility before running.';
-}
 
 function previewUrl(value: unknown): string | undefined {
     if (typeof value !== 'string' || value.includes('{{')) return;
