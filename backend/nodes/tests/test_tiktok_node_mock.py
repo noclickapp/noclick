@@ -80,6 +80,45 @@ def patch_http(response):
     return patch("httpx.AsyncClient", return_value=mock_client), mock_client
 
 
+CREATOR = {
+    "creator_nickname": "TestUser",
+    "privacy_level_options": ["SELF_ONLY", "PUBLIC_TO_EVERYONE"],
+    "max_video_post_duration_sec": 300,
+    "comment_disabled": False,
+    "duet_disabled": False,
+    "stitch_disabled": False,
+}
+
+
+def direct_responses(client, init, *, creator=None, state="PUBLISH_COMPLETE"):
+    async def request(**kwargs):
+        if "creator_info" in kwargs["url"]:
+            return mock_response(
+                {
+                    "data": CREATOR if creator is None else creator,
+                    "error": {"code": "ok"},
+                }
+            )
+        if "status/fetch" in kwargs["url"]:
+            return mock_response(
+                {
+                    "data": {"status": state, "fail_reason": "test_failure"},
+                    "error": {"code": "ok"},
+                }
+            )
+        return init
+
+    client.request.side_effect = request
+
+
+def init_body(client):
+    return next(
+        call.kwargs["json"]
+        for call in client.request.call_args_list
+        if "/init/" in call.kwargs["url"]
+    )
+
+
 def build_node(action_config, credential=None):
     if credential is None:
         credential = get_credential()
@@ -352,6 +391,11 @@ class TestErrorHandling:
 
 
 class TestDirectPostingOperations:
+    @pytest.fixture(autouse=True)
+    def video_probe(self):
+        with patch.object(TikTokNode, "_video_duration", new=AsyncMock(return_value=5)):
+            yield
+
     @pytest.mark.asyncio
     async def test_query_creator_info(self):
         config = TikTokQueryCreatorInfoConfig()
@@ -384,18 +428,24 @@ class TestDirectPostingOperations:
 
         init_resp = mock_response(
             {
-                "data": {"publish_id": "pub_123", "upload_url": "https://upload.tiktok/abc"},
+                "data": {
+                    "publish_id": "pub_123",
+                    "upload_url": "https://upload.tiktok/abc",
+                },
                 "error": {"code": "ok"},
             }
         )
         put_resp = mock_response({}, status_code=201)
-        resolved = ResolvedMedia(data=b"x" * 100, mime_type="video/mp4", filename="v.mp4")
+        resolved = ResolvedMedia(
+            data=b"x" * 100, mime_type="video/mp4", filename="v.mp4"
+        )
 
         mock_client = AsyncMock()
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock(return_value=None)
         mock_client.request = AsyncMock(return_value=init_resp)
         mock_client.put = AsyncMock(return_value=put_resp)
+        direct_responses(mock_client, init_resp)
 
         with patch("httpx.AsyncClient", return_value=mock_client), patch(
             "nodes.tiktok_node.assert_url_allowed", new_callable=AsyncMock
@@ -410,17 +460,16 @@ class TestDirectPostingOperations:
         assert result["publish_id"] == "pub_123"
 
         # init request shape
-        init_body = mock_client.request.call_args.kwargs["json"]
-        assert mock_client.request.call_args.kwargs["url"].endswith(
-            "/v2/post/publish/video/init/"
-        )
-        assert init_body["source_info"]["source"] == "FILE_UPLOAD"
-        assert init_body["source_info"]["video_size"] == 100
-        assert init_body["source_info"]["chunk_size"] == 100
-        assert init_body["source_info"]["total_chunk_count"] == 1
-        assert init_body["post_info"]["privacy_level"] == "SELF_ONLY"
-        assert init_body["post_info"]["disable_comment"] is True
-        assert init_body["post_info"]["title"] == "hello"
+        body = init_body(mock_client)
+        assert body["source_info"]["source"] == "FILE_UPLOAD"
+        assert body["source_info"]["video_size"] == 100
+        assert body["source_info"]["chunk_size"] == 100
+        assert body["source_info"]["total_chunk_count"] == 1
+        assert body["post_info"]["privacy_level"] == "SELF_ONLY"
+        assert body["post_info"]["disable_comment"] is True
+        assert body["post_info"]["title"] == "hello"
+        assert result["published"] is True
+        assert "upload_url" not in result["data"]["data"]
 
         # chunk upload: whole file in one PUT with the right Content-Range
         put_kwargs = mock_client.put.call_args.kwargs
@@ -452,6 +501,7 @@ class TestDirectPostingOperations:
         mock_client.__aexit__ = AsyncMock(return_value=None)
         mock_client.request = AsyncMock(return_value=init_resp)
         mock_client.put = AsyncMock()
+        direct_responses(mock_client, init_resp)
 
         with patch("httpx.AsyncClient", return_value=mock_client), patch(
             "nodes.core.media_resolver.resolve_media_input",
@@ -467,15 +517,23 @@ class TestDirectPostingOperations:
             video_url="https://example.com/v.mp4", privacy_level="SELF_ONLY"
         )
         node = build_node(config)
-        resolved = ResolvedMedia(data=b"x" * 10, mime_type="video/mp4", filename="v.mp4")
+        resolved = ResolvedMedia(
+            data=b"x" * 10, mime_type="video/mp4", filename="v.mp4"
+        )
 
         mock_client = AsyncMock()
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock(return_value=None)
         mock_client.request = AsyncMock(
-            return_value=mock_response({"error": {"message": "denied"}}, status_code=403)
+            return_value=mock_response(
+                {"error": {"message": "denied"}}, status_code=403
+            )
         )
         mock_client.put = AsyncMock()
+        direct_responses(
+            mock_client,
+            mock_response({"error": {"message": "denied"}}, status_code=403),
+        )
 
         with patch("httpx.AsyncClient", return_value=mock_client), patch(
             "nodes.core.media_resolver.resolve_media_input",
@@ -498,13 +556,13 @@ class TestDirectPostingOperations:
         node = build_node(config)
         api_resp = {"data": {"publish_id": "pub_9"}, "error": {"code": "ok"}}
         ctx, mock_client = patch_http(mock_response(api_resp))
-        with ctx:
+        direct_responses(mock_client, mock_response(api_resp))
+        with ctx, patch("nodes.tiktok_node.assert_url_allowed", new=AsyncMock()):
             result = await node.execute({})
 
         assert result["status"] == "success"
         assert result["action"] == "direct_post_photo"
-        assert_request(mock_client, "POST", "/v2/post/publish/content/init/")
-        body = mock_client.request.call_args.kwargs["json"]
+        body = init_body(mock_client)
         assert body["media_type"] == "PHOTO"
         assert body["post_mode"] == "DIRECT_POST"
         assert body["source_info"]["photo_images"] == [
@@ -515,20 +573,211 @@ class TestDirectPostingOperations:
 
 
 class TestPrivacyOptions:
-    def test_all_privacy_levels_available_and_public_default(self):
-        # Audited app: every privacy level is selectable and the default is public.
-        cfg = TikTokDirectPostVideoConfig(video_url="https://x/v.mp4")
-        assert cfg.privacy_level == "PUBLIC_TO_EVERYONE"
+    @pytest.mark.parametrize(
+        "model,media",
+        [
+            (TikTokDirectPostVideoConfig, {"video_url": "https://x/v.mp4"}),
+            (TikTokDirectPostPhotoConfig, {"photo_urls": "https://x/1.jpg"}),
+        ],
+    )
+    def test_privacy_is_explicit_and_interactions_opt_in(self, model, media):
+        from pydantic import ValidationError
 
-        schema = TikTokDirectPostVideoConfig.model_json_schema()
-        enum = schema["properties"]["privacy_level"]["enum"]
-        assert set(enum) == {
-            "PUBLIC_TO_EVERYONE",
-            "MUTUAL_FOLLOW_FRIENDS",
-            "FOLLOWER_OF_CREATOR",
-            "SELF_ONLY",
+        with pytest.raises(ValidationError, match="privacy_level"):
+            model(**media)
+        cfg = model(**media, privacy_level="SELF_ONLY")
+        assert cfg.disable_comment == "true"
+        assert cfg.brand_content_toggle == cfg.brand_organic_toggle == "false"
+        schema = model.model_json_schema()
+        assert "default" not in schema["properties"]["privacy_level"]
+        assert (
+            schema["properties"]["privacy_level"]["x-dynamic-options"]["allow_custom"]
+            is False
+        )
+        from nodes.core.base import _mark_sole_option_autofill
+
+        _mark_sole_option_autofill(schema)
+        assert (
+            schema["properties"]["privacy_level"]["x-dynamic-options"][
+                "auto_select_sole_option"
+            ]
+            is False
+        )
+
+    @pytest.mark.asyncio
+    async def test_dynamic_options_use_actual_creator(self):
+        ctx, client = patch_http(
+            mock_response({"data": {**CREATOR, "privacy_level_options": ["SELF_ONLY"]}})
+        )
+        with ctx:
+            options = await TikTokNode.load_field_options(
+                "privacy_level",
+                get_credential().model_dump(),
+                page_token=None,
+                search="",
+            )
+        assert [o["value"] for o in options] == ["SELF_ONLY"]
+        assert options[0]["metadata"]["creator_nickname"] == "TestUser"
+
+
+class TestDirectPostGuards:
+    @pytest.mark.asyncio
+    async def test_real_video_duration_probe(self, tmp_path):
+        import shutil
+        import subprocess
+
+        if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
+            pytest.skip("ffmpeg/ffprobe not installed in test runner")
+        media = tmp_path / "probe.mp4"
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-v",
+                "error",
+                "-f",
+                "lavfi",
+                "-i",
+                "color=c=black:s=64x64:d=1",
+                "-c:v",
+                "libx264",
+                "-y",
+                str(media),
+            ],
+            check=True,
+            timeout=30,
+        )
+        assert 0.9 <= await TikTokNode._video_duration(media.read_bytes()) <= 1.1
+        with pytest.raises(ValueError, match="duration"):
+            await TikTokNode._video_duration(b"not a video")
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "settings,creator,message",
+        [
+            ({"privacy_level": "FOLLOWER_OF_CREATOR"}, CREATOR, "privacy level"),
+            (
+                {"disable_comment": "false"},
+                {**CREATOR, "comment_disabled": True},
+                "disabled comment",
+            ),
+            (
+                {"disable_duet": "false"},
+                {**CREATOR, "duet_disabled": True},
+                "disabled duet",
+            ),
+            (
+                {"disable_stitch": "false"},
+                {**CREATOR, "stitch_disabled": True},
+                "disabled stitch",
+            ),
+            ({"brand_content_toggle": "true"}, CREATOR, "private visibility"),
+            ({"disable_comment": "maybe"}, CREATOR, "must be true or false"),
+        ],
+    )
+    async def test_no_publish_on_invalid_settings(self, settings, creator, message):
+        cfg = TikTokDirectPostVideoConfig(
+            **{
+                "video_url": "https://a.com/a.mp4",
+                "privacy_level": "SELF_ONLY",
+                **settings,
+            }
+        )
+        ctx, client = patch_http(mock_response({}))
+        direct_responses(client, mock_response({}), creator=creator)
+        with ctx, pytest.raises(ValueError, match=message):
+            await build_node(cfg).execute({})
+        assert not any(
+            "/init/" in c.kwargs["url"] for c in client.request.call_args_list
+        )
+
+    @pytest.mark.asyncio
+    async def test_hosted_video_uses_pull_and_disclosures(self):
+        cfg = TikTokDirectPostVideoConfig(
+            video_url="https://a.com/a.mp4",
+            privacy_level="PUBLIC_TO_EVERYONE",
+            brand_content_toggle="true",
+            brand_organic_toggle="true",
+            is_aigc="true",
+        )
+        ctx, client = patch_http(mock_response({}))
+        direct_responses(client, mock_response({"data": {"publish_id": "p"}}))
+        media = ResolvedMedia(
+            b"video", "video/mp4", "a.mp4", download_url=cfg.video_url
+        )
+        with ctx, patch("nodes.tiktok_node.assert_url_allowed", new=AsyncMock()), patch(
+            "nodes.core.media_resolver.resolve_media_input",
+            new=AsyncMock(return_value=media),
+        ), patch.object(TikTokNode, "_video_duration", new=AsyncMock(return_value=5)):
+            result = await build_node(cfg).execute({})
+        body = init_body(client)
+        assert body["source_info"] == {
+            "source": "PULL_FROM_URL",
+            "video_url": cfg.video_url,
         }
+        assert body["post_info"]["brand_content_toggle"] is True
+        assert body["post_info"]["brand_organic_toggle"] is True
+        assert body["post_info"]["is_aigc"] is True
+        client.put.assert_not_awaited()
+        assert result["published"] is True
 
-    def test_photo_privacy_default_public(self):
-        cfg = TikTokDirectPostPhotoConfig(photo_urls="https://x/1.jpg")
-        assert cfg.privacy_level == "PUBLIC_TO_EVERYONE"
+    @pytest.mark.asyncio
+    async def test_duration_limit_prevents_init(self):
+        cfg = TikTokDirectPostVideoConfig(
+            video_url="data:video/mp4;base64,eA==", privacy_level="SELF_ONLY"
+        )
+        ctx, client = patch_http(mock_response({}))
+        direct_responses(client, mock_response({}))
+        with ctx, patch.object(
+            TikTokNode, "_video_duration", new=AsyncMock(return_value=301)
+        ), pytest.raises(ValueError, match="exceeds"):
+            await build_node(cfg).execute({})
+        assert not any(
+            "/init/" in c.kwargs["url"] for c in client.request.call_args_list
+        )
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "state,published,status",
+        [
+            ("PROCESSING_UPLOAD", False, "success"),
+            ("FAILED", False, "error"),
+            ("PUBLISH_COMPLETE", True, "success"),
+        ],
+    )
+    async def test_status_poll_never_republishes(self, state, published, status):
+        cfg = TikTokDirectPostPhotoConfig(
+            photo_urls="https://a.com/1.jpg", privacy_level="SELF_ONLY", is_aigc="true"
+        )
+        ctx, client = patch_http(mock_response({}))
+        direct_responses(
+            client, mock_response({"data": {"publish_id": "p"}}), state=state
+        )
+        with ctx, patch("nodes.tiktok_node.assert_url_allowed", new=AsyncMock()), patch(
+            "nodes.tiktok_node.asyncio.sleep", new=AsyncMock()
+        ):
+            result = await build_node(cfg).execute({})
+        assert result["published"] is published
+        assert result["status"] == status
+        assert result["publish_status"] == state
+        assert (
+            sum("/init/" in c.kwargs["url"] for c in client.request.call_args_list) == 1
+        )
+        assert init_body(client)["is_aigc"] is True
+
+    @pytest.mark.asyncio
+    async def test_http_200_error_not_success(self):
+        ctx, _ = patch_http(
+            mock_response(
+                {
+                    "error": {
+                        "code": "scope_not_authorized",
+                        "message": "Missing scope",
+                        "log_id": "log1",
+                    }
+                }
+            )
+        )
+        with ctx:
+            result = await build_node(TikTokQueryCreatorInfoConfig()).execute({})
+        assert result["status"] == "error"
+        assert result["error_code"] == "scope_not_authorized"

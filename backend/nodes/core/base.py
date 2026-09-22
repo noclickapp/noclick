@@ -376,7 +376,8 @@ def _mark_sole_option_autofill(schema: Any) -> None:
             continue
         dyn = prop.get("x-dynamic-options")
         if isinstance(dyn, dict) and not dyn.get("depends_on"):
-            dyn["auto_select_sole_option"] = True
+            # Explicit user-choice fields (e.g. publishing privacy) must not autofill.
+            dyn.setdefault("auto_select_sole_option", True)
 
 
 @lru_cache(maxsize=None)

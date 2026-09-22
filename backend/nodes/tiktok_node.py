@@ -12,7 +12,8 @@ Documentation: https://developers.tiktok.com/doc/overview
 Note on Content Publishing:
   - upload_video_to_creator_inbox: /v2/post/publish/inbox/video/init/ (PULL_FROM_URL).
     The video lands as a draft in the creator's inbox for review. Requires video.upload.
-  - direct_post_video: /v2/post/publish/video/init/ via FILE_UPLOAD — the bytes are
+  - direct_post_video: /v2/post/publish/video/init/ — hosted URLs use PULL_FROM_URL;
+    inline media uses FILE_UPLOAD. The bytes are
     uploaded straight to TikTok (chunked) and published to the profile. Requires the
     video.publish scope. Privacy level is the creator's choice (an account's settings
     may restrict the allowed set; query creator info to confirm).
@@ -23,7 +24,11 @@ Note on Content Publishing:
 Total Operations: 8
 """
 
+import asyncio
+import json
 import logging
+import math
+import tempfile
 import time
 from typing import Any, Dict, Literal, Optional, Union, Annotated
 
@@ -110,23 +115,25 @@ class TikTokOAuthCredential(BaseModel):
         description="URL of the authenticated user's profile picture",
     )
 
-    model_config = ConfigDict(json_schema_extra={
-        "x-credential-type": "oauth",
-        "x-oauth-provider": "tiktok",
-        "x-credential-url": "https://developers.tiktok.com/",
-        "x-credential-instructions": (
-            "Connect your TikTok account via OAuth. You need a TikTok developer app "
-            "with TIKTOK_CLIENT_KEY and TIKTOK_CLIENT_SECRET configured."
-        ),
-        "x-oauth-scopes": [
-            "user.info.basic",
-            "user.info.profile",
-            "user.info.stats",
-            "video.list",
-            "video.upload",
-            "video.publish",
-        ],
-    })
+    model_config = ConfigDict(
+        json_schema_extra={
+            "x-credential-type": "oauth",
+            "x-oauth-provider": "tiktok",
+            "x-credential-url": "https://developers.tiktok.com/",
+            "x-credential-instructions": (
+                "Connect your TikTok account via OAuth. You need a TikTok developer app "
+                "with TIKTOK_CLIENT_KEY and TIKTOK_CLIENT_SECRET configured."
+            ),
+            "x-oauth-scopes": [
+                "user.info.basic",
+                "user.info.profile",
+                "user.info.stats",
+                "video.list",
+                "video.upload",
+                "video.publish",
+            ],
+        }
+    )
 
 
 # ============================================================================
@@ -279,15 +286,63 @@ class TikTokCheckPublishStatusConfig(BaseModel):
     publish_id: str = Field(
         ...,
         title="Publish ID",
-        description="The publish_id returned by the publish_video operation",
+        description="The publish_id returned by an inbox upload or direct post. Check this ID again while processing; do not rerun the publishing operation.",
     )
 
 
 # Privacy levels accepted by TikTok's direct-post endpoints. A creator's account
 # settings can restrict the allowed set — query creator info to confirm per account.
-_PRIVACY_LEVELS = ["PUBLIC_TO_EVERYONE", "MUTUAL_FOLLOW_FRIENDS", "FOLLOWER_OF_CREATOR", "SELF_ONLY"]
-_PRIVACY_LABELS = ["Public", "Friends (mutual follow)", "Followers only", "Only me (private)"]
-_YES_NO = {"enum": ["true", "false"], "enumNames": ["Yes", "No"], "x-enum-searchable": True}
+_PRIVACY_LEVELS = [
+    "PUBLIC_TO_EVERYONE",
+    "MUTUAL_FOLLOW_FRIENDS",
+    "FOLLOWER_OF_CREATOR",
+    "SELF_ONLY",
+]
+_PRIVACY_LABELS = [
+    "Public",
+    "Friends (mutual follow)",
+    "Followers only",
+    "Only me (private)",
+]
+_YES_NO = {
+    "enum": ["true", "false"],
+    "enumNames": ["Yes", "No"],
+    "x-enum-searchable": True,
+}
+
+
+class TikTokDirectPostSettings(BaseModel):
+    privacy_level: str = Field(
+        ...,
+        title="Privacy Level",
+        description="Choose who may see posts from this workflow. Rechecked against the connected creator's current options on every run.",
+        json_schema_extra={
+            "x-dynamic-options": {
+                "field_name": "privacy_level",
+                "allow_custom": False,
+                "auto_select_sole_option": False,
+                "placeholder": "Select visibility...",
+            }
+        },
+    )
+    disable_comment: str = Field(
+        "true", title="Disable Comments", json_schema_extra=_YES_NO
+    )
+    brand_content_toggle: str = Field(
+        "false",
+        title="Paid Partnership",
+        description="Enable when promoting a third-party brand for compensation. Private visibility is not allowed.",
+        json_schema_extra=_YES_NO,
+    )
+    brand_organic_toggle: str = Field(
+        "false",
+        title="Promote Your Own Brand",
+        description="Enable for content promoting your own business. TikTok labels this promotional content.",
+        json_schema_extra=_YES_NO,
+    )
+    is_aigc: str = Field(
+        "false", title="AI-generated Content", json_schema_extra=_YES_NO
+    )
 
 
 class TikTokQueryCreatorInfoConfig(BaseModel):
@@ -307,10 +362,10 @@ class TikTokQueryCreatorInfoConfig(BaseModel):
     )
 
 
-class TikTokDirectPostVideoConfig(BaseModel):
-    """Publish a video directly to the creator's TikTok profile via FILE_UPLOAD
-    (the bytes are uploaded straight to TikTok, no public URL needed). Requires
-    the video.publish scope."""
+class TikTokDirectPostVideoConfig(TikTokDirectPostSettings):
+    """Publish directly to TikTok without an inbox confirmation. Hosted media uses
+    PULL_FROM_URL from a TikTok-verified domain. Requires video.publish and an
+    approved Direct Post audit for public posting."""
 
     operation: Literal["direct_post_video"] = Field(
         "direct_post_video",
@@ -328,8 +383,8 @@ class TikTokDirectPostVideoConfig(BaseModel):
         title="Video",
         description=(
             "The video to post — upload a file, paste a URL, or reference an upstream "
-            "file (e.g. {{http-1.response.url}}). The bytes are uploaded directly to "
-            "TikTok (MP4 recommended, max 64 MB)."
+            "file (e.g. {{http-1.response.url}}). Hosted URLs must be HTTPS and belong "
+            "to a domain verified by this TikTok app (MP4 recommended, max 64 MB)."
         ),
         json_schema_extra={"ui:widget": "media_upload", "ui:accept": "video/*"},
     )
@@ -339,22 +394,9 @@ class TikTokDirectPostVideoConfig(BaseModel):
         description="Video caption (max 2200 characters). Hashtags and @mentions are supported.",
         json_schema_extra={"ui:widget": "textarea"},
     )
-    privacy_level: str = Field(
-        "PUBLIC_TO_EVERYONE",
-        title="Privacy Level",
-        description="Who can see the post. The creator's account settings can restrict which levels are allowed — use Query Creator Info to confirm the available options for an account.",
-        json_schema_extra={
-            "enum": _PRIVACY_LEVELS,
-            "enumNames": _PRIVACY_LABELS,
-            "x-enum-searchable": True,
-        },
-    )
-    disable_comment: str = Field(
-        "false", title="Disable Comments", json_schema_extra=_YES_NO
-    )
-    disable_duet: str = Field("false", title="Disable Duet", json_schema_extra=_YES_NO)
+    disable_duet: str = Field("true", title="Disable Duet", json_schema_extra=_YES_NO)
     disable_stitch: str = Field(
-        "false", title="Disable Stitch", json_schema_extra=_YES_NO
+        "true", title="Disable Stitch", json_schema_extra=_YES_NO
     )
     video_cover_timestamp_ms: Optional[int] = Field(
         None,
@@ -363,7 +405,7 @@ class TikTokDirectPostVideoConfig(BaseModel):
     )
 
 
-class TikTokDirectPostPhotoConfig(BaseModel):
+class TikTokDirectPostPhotoConfig(TikTokDirectPostSettings):
     """Publish a photo carousel directly to the creator's TikTok profile. Photos
     are pulled by TikTok from public URLs. Requires video.publish scope."""
 
@@ -396,21 +438,10 @@ class TikTokDirectPostPhotoConfig(BaseModel):
         description="Photo post description / caption (max 4000 characters)",
         json_schema_extra={"ui:widget": "textarea"},
     )
-    privacy_level: str = Field(
-        "PUBLIC_TO_EVERYONE",
-        title="Privacy Level",
-        description="Who can see the post. The creator's account settings can restrict which levels are allowed — use Query Creator Info to confirm the available options for an account.",
-        json_schema_extra={
-            "enum": _PRIVACY_LEVELS,
-            "enumNames": _PRIVACY_LABELS,
-            "x-enum-searchable": True,
-        },
-    )
     photo_cover_index: int = Field(
-        0, title="Cover Photo Index", description="Zero-based index of the photo to use as the cover."
-    )
-    disable_comment: str = Field(
-        "false", title="Disable Comments", json_schema_extra=_YES_NO
+        0,
+        title="Cover Photo Index",
+        description="Zero-based index of the photo to use as the cover.",
     )
     auto_add_music: str = Field(
         "true", title="Auto-add Music", json_schema_extra=_YES_NO
@@ -479,6 +510,30 @@ class TikTokNode(WorkflowNode):
         """Return the Pydantic model for node configuration."""
         return TikTokNodeConfig
 
+    @classmethod
+    async def load_field_options(
+        cls, field_name, credential_data, context=None, page_token=None, search=None
+    ):
+        if field_name != "privacy_level":
+            return []
+        node = cls(
+            node_id="tiktok-options", node_type="automation-tiktok", node_data={}
+        )
+        token = await node._get_access_token(TikTokOAuthCredential(**credential_data))
+        result = await node._handle_query_creator_info(
+            TikTokQueryCreatorInfoConfig(), token
+        )
+        if result.get("status") != "success":
+            raise ValueError(
+                result.get("error") or "Could not load TikTok creator info"
+            )
+        creator = result["data"].get("data", {})
+        labels = dict(zip(_PRIVACY_LEVELS, _PRIVACY_LABELS))
+        return [
+            {"value": level, "label": labels.get(level, level), "metadata": creator}
+            for level in creator.get("privacy_level_options", [])
+        ]
+
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
         Execute the configured TikTok operation.
@@ -535,7 +590,9 @@ class TikTokNode(WorkflowNode):
     # =========================================================================
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+    async def freshen_credential(
+        cls, credential_data, *, pool=None, user_id=None, credential_id=None
+    ):
         """Refresh an expiring OAuth token at credential load (dropdowns,
         trigger registration). No-op for non-rotating credentials (API keys /
         offline / non-expiring tokens)."""
@@ -543,7 +600,10 @@ class TikTokNode(WorkflowNode):
         from nodes.oauth.tiktok_oauth import refresh_access_token
 
         return await freshen_oauth_credential(
-            credential_data, pool=pool, user_id=user_id, credential_id=credential_id,
+            credential_data,
+            pool=pool,
+            user_id=user_id,
+            credential_id=credential_id,
             refresh=refresh_access_token,
             provider="tiktok",
         )
@@ -556,7 +616,7 @@ class TikTokNode(WorkflowNode):
         60-minute buffer and refreshes automatically if a refresh_token is available.
         """
         from nodes.core.oauth_refresh import ensure_fresh_oauth_token
-        
+
         cred_dict = credentials.model_dump()
 
         async def _refresh(refresh_token: str):
@@ -642,7 +702,11 @@ class TikTokNode(WorkflowNode):
                         # url_ownership_unverified); log_id is what TikTok support
                         # needs. The human message alone is often a generic
                         # "review our guidelines" link, so surface all three.
-                        err = error_data.get("error", {}) if isinstance(error_data, dict) else {}
+                        err = (
+                            error_data.get("error", {})
+                            if isinstance(error_data, dict)
+                            else {}
+                        )
                         error_code = err.get("code")
                         log_id = err.get("log_id")
                         error_message = (
@@ -671,6 +735,18 @@ class TikTokNode(WorkflowNode):
                     data = response.json()
                 except Exception:
                     data = {"raw": response.text}
+
+                # TikTok can report a failed request in an HTTP 200 envelope.
+                error = data.get("error", {}) if isinstance(data, dict) else {}
+                if error.get("code") not in (None, "ok"):
+                    return {
+                        "status": "error",
+                        "action": action_name,
+                        "error": error.get("message") or error["code"],
+                        "error_code": error["code"],
+                        "log_id": error.get("log_id"),
+                        "status_code": response.status_code,
+                    }
 
                 return {
                     "status": "success",
@@ -825,14 +901,24 @@ class TikTokNode(WorkflowNode):
         config: TikTokDirectPostVideoConfig,
         access_token: str,
     ) -> Dict[str, Any]:
-        """Publish a video directly to the profile via FILE_UPLOAD: resolve the
-        source to bytes, initialize the post, then upload the bytes in chunks."""
+        """Validate current creator limits, then initialize exactly one post."""
         from nodes.core.media_resolver import resolve_media_input
 
-        resolved = await resolve_media_input(config.video_url, default_mime="video/mp4")
+        creator = await self._direct_post_preflight(config, access_token)
+        resolved = await resolve_media_input(
+            config.video_url, default_mime="video/mp4", max_bytes=64 * 1024 * 1024
+        )
         video_bytes = resolved.data
         mime_type = resolved.mime_type or "video/mp4"
         video_size = len(video_bytes)
+        duration = await self._video_duration(video_bytes)
+        max_duration = creator.get("max_video_post_duration_sec")
+        if not isinstance(max_duration, (int, float)) or max_duration <= 0:
+            raise ValueError("TikTok did not return a valid maximum video duration")
+        if duration > max_duration:
+            raise ValueError(
+                f"Video duration {duration:.1f}s exceeds this creator's {max_duration}s limit"
+            )
 
         # TikTok accepts a single chunk up to 64 MB; larger videos are split into
         # 10 MB chunks with the final chunk absorbing the remainder.
@@ -849,24 +935,35 @@ class TikTokNode(WorkflowNode):
             "disable_comment": config.disable_comment == "true",
             "disable_duet": config.disable_duet == "true",
             "disable_stitch": config.disable_stitch == "true",
+            "brand_content_toggle": config.brand_content_toggle == "true",
+            "brand_organic_toggle": config.brand_organic_toggle == "true",
+            "is_aigc": config.is_aigc == "true",
         }
         if config.title:
             post_info["title"] = config.title
         if config.video_cover_timestamp_ms is not None:
             post_info["video_cover_timestamp_ms"] = config.video_cover_timestamp_ms
 
+        if resolved.download_url:
+            await self._validate_hosted_url(resolved.download_url)
+            source_info = {
+                "source": "PULL_FROM_URL",
+                "video_url": resolved.download_url,
+            }
+        else:
+            source_info = {
+                "source": "FILE_UPLOAD",
+                "video_size": video_size,
+                "chunk_size": chunk_size,
+                "total_chunk_count": total_chunk_count,
+            }
         init = await self._make_request(
             method="POST",
             endpoint="/v2/post/publish/video/init/",
             access_token=access_token,
             json_body={
                 "post_info": post_info,
-                "source_info": {
-                    "source": "FILE_UPLOAD",
-                    "video_size": video_size,
-                    "chunk_size": chunk_size,
-                    "total_chunk_count": total_chunk_count,
-                },
+                "source_info": source_info,
             },
             action_name="direct_post_video",
         )
@@ -876,26 +973,23 @@ class TikTokNode(WorkflowNode):
         init_data = init["data"].get("data", {})
         publish_id = init_data.get("publish_id")
         upload_url = init_data.get("upload_url")
-        if not upload_url:
+        if not publish_id or (
+            source_info["source"] == "FILE_UPLOAD" and not upload_url
+        ):
             return {
                 "status": "error",
                 "action": "direct_post_video",
-                "error": f"TikTok did not return an upload URL: {init['data']}",
+                "error": "TikTok did not return the required publishing identifiers",
                 "status_code": 502,
             }
 
-        upload = await self._upload_file_chunks(
-            upload_url, video_bytes, mime_type, chunk_size, total_chunk_count
-        )
-
-        return {
-            "status": "success",
-            "action": "direct_post_video",
-            "publish_id": publish_id,
-            "data": init["data"],
-            "upload": upload,
-            "status_code": init.get("status_code", 200),
-        }
+        # Never persist the capability URL in workflow execution history.
+        init_data.pop("upload_url", None)
+        if source_info["source"] == "FILE_UPLOAD":
+            await self._upload_file_chunks(
+                upload_url, video_bytes, mime_type, chunk_size, total_chunk_count
+            )
+        return await self._direct_post_result(init, publish_id, access_token)
 
     async def _handle_direct_post_photo(
         self,
@@ -905,20 +999,29 @@ class TikTokNode(WorkflowNode):
         """Publish a photo carousel directly to the profile. TikTok pulls each
         image from its public URL (PULL_FROM_URL)."""
         photo_images = [u.strip() for u in config.photo_urls.split(",") if u.strip()]
-        if not photo_images:
-            raise ValueError("At least one photo URL is required")
+        if not 1 <= len(photo_images) <= 10:
+            raise ValueError("Provide between 1 and 10 photo URLs")
+        if not 0 <= config.photo_cover_index < len(photo_images):
+            raise ValueError(
+                "Cover photo index must identify one of the supplied photos"
+            )
+        await self._direct_post_preflight(config, access_token)
+        for url in photo_images:
+            await self._validate_hosted_url(url)
 
         post_info: Dict[str, Any] = {
             "privacy_level": config.privacy_level,
             "disable_comment": config.disable_comment == "true",
             "auto_add_music": config.auto_add_music == "true",
+            "brand_content_toggle": config.brand_content_toggle == "true",
+            "brand_organic_toggle": config.brand_organic_toggle == "true",
         }
         if config.title:
             post_info["title"] = config.title
         if config.description:
             post_info["description"] = config.description
 
-        return await self._make_request(
+        init = await self._make_request(
             method="POST",
             endpoint="/v2/post/publish/content/init/",
             access_token=access_token,
@@ -931,9 +1034,141 @@ class TikTokNode(WorkflowNode):
                 },
                 "post_mode": "DIRECT_POST",
                 "media_type": "PHOTO",
+                "is_aigc": config.is_aigc == "true",
             },
             action_name="direct_post_photo",
         )
+        if init.get("status") != "success":
+            return init
+        publish_id = init["data"].get("data", {}).get("publish_id")
+        if not publish_id:
+            return {
+                "status": "error",
+                "action": config.operation,
+                "error": "TikTok did not return a publish ID",
+            }
+        return await self._direct_post_result(init, publish_id, access_token)
+
+    async def _direct_post_preflight(self, config, access_token):
+        for field in (
+            "disable_comment",
+            "disable_duet",
+            "disable_stitch",
+            "brand_content_toggle",
+            "brand_organic_toggle",
+            "is_aigc",
+            "auto_add_music",
+        ):
+            if hasattr(config, field) and getattr(config, field) not in (
+                "true",
+                "false",
+            ):
+                raise ValueError(f"{field} must be true or false")
+        if (
+            config.brand_content_toggle == "true"
+            and config.privacy_level == "SELF_ONLY"
+        ):
+            raise ValueError("Paid partnership content cannot use private visibility")
+        result = await self._handle_query_creator_info(
+            TikTokQueryCreatorInfoConfig(), access_token
+        )
+        if result.get("status") != "success":
+            raise ValueError(
+                f"TikTok creator check failed: {result.get('error_code') or result.get('error')}"
+            )
+        creator = result["data"].get("data", {})
+        if config.privacy_level not in creator.get("privacy_level_options", []):
+            raise ValueError(
+                "Selected privacy level is not available for this TikTok creator. Refresh the posting options."
+            )
+        for interaction in ("comment", "duet", "stitch"):
+            if getattr(
+                config, f"disable_{interaction}", "true"
+            ) == "false" and creator.get(f"{interaction}_disabled"):
+                raise ValueError(
+                    f"This TikTok creator has disabled {interaction}; update the workflow setting"
+                )
+        return creator
+
+    @staticmethod
+    async def _validate_hosted_url(url):
+        from urllib.parse import urlsplit
+
+        parsed = urlsplit(url)
+        if parsed.scheme != "https" or parsed.username or parsed.password:
+            raise ValueError(
+                "TikTok media needs a public HTTPS URL on an app-verified domain"
+            )
+        await assert_url_allowed(url)
+
+    @staticmethod
+    async def _video_duration(data):
+        if not data:
+            raise ValueError("Video is empty")
+        # Probe downloaded bytes, never let ffprobe fetch arbitrary network URLs.
+        with tempfile.NamedTemporaryFile(suffix=".video") as media:
+            media.write(data)
+            media.flush()
+            process = await asyncio.create_subprocess_exec(
+                "ffprobe",
+                "-v",
+                "error",
+                "-protocol_whitelist",
+                "file,pipe",
+                "-show_entries",
+                "format=duration",
+                "-of",
+                "json",
+                media.name,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.DEVNULL,
+            )
+            try:
+                stdout, _ = await asyncio.wait_for(process.communicate(), timeout=30)
+            except BaseException:
+                if process.returncode is None:
+                    process.kill()
+                await process.wait()
+                raise
+        try:
+            duration = float(json.loads(stdout)["format"]["duration"])
+        except (ValueError, KeyError, TypeError):
+            raise ValueError("Could not determine video duration") from None
+        if process.returncode or not math.isfinite(duration) or duration <= 0:
+            raise ValueError("Invalid video duration")
+        return duration
+
+    async def _direct_post_result(self, init, publish_id, access_token):
+        result = {
+            **init,
+            "publish_id": publish_id,
+            "publish_status": "PROCESSING",
+            "published": False,
+            "message": "TikTok is processing this post. It may take a few minutes to appear. Check this publish ID; do not repost.",
+        }
+        for attempt in range(6):
+            if attempt:
+                await asyncio.sleep(5)
+            state = await self._handle_check_publish_status(
+                TikTokCheckPublishStatusConfig(publish_id=publish_id), access_token
+            )
+            if state.get("status") != "success":
+                result["status_check_error"] = state.get("error")
+                break
+            details = state["data"].get("data", {})
+            result["publish_status"] = details.get("status", "PROCESSING")
+            result["publish_details"] = details
+            if result["publish_status"] == "PUBLISH_COMPLETE":
+                result.update(published=True, message="TikTok confirmed publication.")
+                break
+            if result["publish_status"] == "FAILED":
+                result.update(
+                    status="error",
+                    error=details.get("fail_reason") or "TikTok publishing failed",
+                    message="TikTok reported a publishing failure.",
+                )
+                break
+        return result
 
     async def _upload_file_chunks(
         self,
@@ -951,7 +1186,11 @@ class TikTokNode(WorkflowNode):
             for i in range(total_chunk_count):
                 start = i * chunk_size
                 # The final chunk absorbs any remainder beyond the even split.
-                end = video_size - 1 if i == total_chunk_count - 1 else start + chunk_size - 1
+                end = (
+                    video_size - 1
+                    if i == total_chunk_count - 1
+                    else start + chunk_size - 1
+                )
                 chunk = data[start : end + 1]
                 response = await client.put(
                     upload_url,

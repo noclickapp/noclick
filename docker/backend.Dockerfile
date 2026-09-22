@@ -68,6 +68,7 @@ FROM python:3.12-slim AS runtime
 # `docker logs` timestamp need.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libsndfile1 \
+        ffmpeg \
         ca-certificates \
         git \
         tini \

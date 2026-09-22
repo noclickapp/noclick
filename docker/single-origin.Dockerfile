@@ -113,6 +113,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         nginx \
         gettext-base \
         libsndfile1 \
+        ffmpeg \
         ca-certificates \
         ripgrep \
         redis-server \

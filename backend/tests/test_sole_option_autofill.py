@@ -103,6 +103,8 @@ def test_every_required_independent_picker_auto_answers(node_type, node_cls):
         f"{defn}.{field}"
         for defn, field, dyn, required in _dynamic_fields(node_cls)
         if required and not dyn.get("depends_on") and not dyn.get("auto_select_sole_option")
+        # TikTok requires an explicit privacy choice even when only SELF_ONLY is allowed.
+        and (node_type, field) != ("automation-tiktok", "privacy_level")
     ]
     assert not missing, (
         f"{node_type}: required independent pickers not marked for sole-option "

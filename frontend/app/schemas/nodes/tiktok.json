@@ -14,7 +14,7 @@
           "x-is-trigger": false
         },
         "publish_id": {
-          "description": "The publish_id returned by the publish_video operation",
+          "description": "The publish_id returned by an inbox upload or direct post. Check this ID again while processing; do not rerun the publishing operation.",
           "title": "Publish ID",
           "type": "string"
         }
@@ -28,6 +28,75 @@
     "TikTokDirectPostPhotoConfig": {
       "description": "Publish a photo carousel directly to the creator's TikTok profile. Photos\nare pulled by TikTok from public URLs. Requires video.publish scope.",
       "properties": {
+        "privacy_level": {
+          "description": "Choose who may see posts from this workflow. Rechecked against the connected creator's current options on every run.",
+          "title": "Privacy Level",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": false,
+            "auto_select_sole_option": false,
+            "field_name": "privacy_level",
+            "placeholder": "Select visibility..."
+          }
+        },
+        "disable_comment": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Disable Comments",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "brand_content_toggle": {
+          "default": "false",
+          "description": "Enable when promoting a third-party brand for compensation. Private visibility is not allowed.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Paid Partnership",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "brand_organic_toggle": {
+          "default": "false",
+          "description": "Enable for content promoting your own business. TikTok labels this promotional content.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Promote Your Own Brand",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "is_aigc": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "AI-generated Content",
+          "type": "string",
+          "x-enum-searchable": true
+        },
         "operation": {
           "const": "direct_post_photo",
           "default": "direct_post_photo",
@@ -70,44 +139,11 @@
           "title": "Description",
           "ui:widget": "textarea"
         },
-        "privacy_level": {
-          "default": "PUBLIC_TO_EVERYONE",
-          "description": "Who can see the post. The creator's account settings can restrict which levels are allowed \u2014 use Query Creator Info to confirm the available options for an account.",
-          "enum": [
-            "PUBLIC_TO_EVERYONE",
-            "MUTUAL_FOLLOW_FRIENDS",
-            "FOLLOWER_OF_CREATOR",
-            "SELF_ONLY"
-          ],
-          "enumNames": [
-            "Public",
-            "Friends (mutual follow)",
-            "Followers only",
-            "Only me (private)"
-          ],
-          "title": "Privacy Level",
-          "type": "string",
-          "x-enum-searchable": true
-        },
         "photo_cover_index": {
           "default": 0,
           "description": "Zero-based index of the photo to use as the cover.",
           "title": "Cover Photo Index",
           "type": "integer"
-        },
-        "disable_comment": {
-          "default": "false",
-          "enum": [
-            "true",
-            "false"
-          ],
-          "enumNames": [
-            "Yes",
-            "No"
-          ],
-          "title": "Disable Comments",
-          "type": "string",
-          "x-enum-searchable": true
         },
         "auto_add_music": {
           "default": "true",
@@ -125,14 +161,84 @@
         }
       },
       "required": [
+        "privacy_level",
         "photo_urls"
       ],
       "title": "TikTokDirectPostPhotoConfig",
       "type": "object"
     },
     "TikTokDirectPostVideoConfig": {
-      "description": "Publish a video directly to the creator's TikTok profile via FILE_UPLOAD\n(the bytes are uploaded straight to TikTok, no public URL needed). Requires\nthe video.publish scope.",
+      "description": "Publish directly to TikTok without an inbox confirmation. Hosted media uses\nPULL_FROM_URL from a TikTok-verified domain. Requires video.publish and an\napproved Direct Post audit for public posting.",
       "properties": {
+        "privacy_level": {
+          "description": "Choose who may see posts from this workflow. Rechecked against the connected creator's current options on every run.",
+          "title": "Privacy Level",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": false,
+            "auto_select_sole_option": false,
+            "field_name": "privacy_level",
+            "placeholder": "Select visibility..."
+          }
+        },
+        "disable_comment": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Disable Comments",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "brand_content_toggle": {
+          "default": "false",
+          "description": "Enable when promoting a third-party brand for compensation. Private visibility is not allowed.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Paid Partnership",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "brand_organic_toggle": {
+          "default": "false",
+          "description": "Enable for content promoting your own business. TikTok labels this promotional content.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Promote Your Own Brand",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "is_aigc": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "AI-generated Content",
+          "type": "string",
+          "x-enum-searchable": true
+        },
         "operation": {
           "const": "direct_post_video",
           "default": "direct_post_video",
@@ -144,7 +250,7 @@
           "x-is-trigger": false
         },
         "video_url": {
-          "description": "The video to post \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). The bytes are uploaded directly to TikTok (MP4 recommended, max 64 MB).",
+          "description": "The video to post \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). Hosted URLs must be HTTPS and belong to a domain verified by this TikTok app (MP4 recommended, max 64 MB).",
           "title": "Video",
           "type": "string",
           "ui:accept": "video/*",
@@ -164,41 +270,8 @@
           "title": "Caption",
           "ui:widget": "textarea"
         },
-        "privacy_level": {
-          "default": "PUBLIC_TO_EVERYONE",
-          "description": "Who can see the post. The creator's account settings can restrict which levels are allowed \u2014 use Query Creator Info to confirm the available options for an account.",
-          "enum": [
-            "PUBLIC_TO_EVERYONE",
-            "MUTUAL_FOLLOW_FRIENDS",
-            "FOLLOWER_OF_CREATOR",
-            "SELF_ONLY"
-          ],
-          "enumNames": [
-            "Public",
-            "Friends (mutual follow)",
-            "Followers only",
-            "Only me (private)"
-          ],
-          "title": "Privacy Level",
-          "type": "string",
-          "x-enum-searchable": true
-        },
-        "disable_comment": {
-          "default": "false",
-          "enum": [
-            "true",
-            "false"
-          ],
-          "enumNames": [
-            "Yes",
-            "No"
-          ],
-          "title": "Disable Comments",
-          "type": "string",
-          "x-enum-searchable": true
-        },
         "disable_duet": {
-          "default": "false",
+          "default": "true",
           "enum": [
             "true",
             "false"
@@ -212,7 +285,7 @@
           "x-enum-searchable": true
         },
         "disable_stitch": {
-          "default": "false",
+          "default": "true",
           "enum": [
             "true",
             "false"
@@ -240,6 +313,7 @@
         }
       },
       "required": [
+        "privacy_level",
         "video_url"
       ],
       "title": "TikTokDirectPostVideoConfig",
