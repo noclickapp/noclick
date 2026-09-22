@@ -53,6 +53,21 @@
           "type": "string",
           "x-enum-searchable": true
         },
+        "disclose_commercial_content": {
+          "default": "false",
+          "description": "Enable for promotional content, then select your own brand, a paid partnership, or both.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Disclose Commercial Content",
+          "type": "string",
+          "x-enum-searchable": true
+        },
         "brand_content_toggle": {
           "default": "false",
           "description": "Enable when promoting a third-party brand for compensation. Private visibility is not allowed.",
@@ -192,6 +207,21 @@
             "No"
           ],
           "title": "Disable Comments",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "disclose_commercial_content": {
+          "default": "false",
+          "description": "Enable for promotional content, then select your own brand, a paid partnership, or both.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Disclose Commercial Content",
           "type": "string",
           "x-enum-searchable": true
         },

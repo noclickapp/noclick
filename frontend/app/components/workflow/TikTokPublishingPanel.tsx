@@ -8,10 +8,25 @@ export const TIKTOK_PANEL_FIELDS = new Set([
     'disable_comment',
     'disable_duet',
     'disable_stitch',
+    'disclose_commercial_content',
     'brand_content_toggle',
     'brand_organic_toggle',
     'is_aigc',
 ]);
+
+export function tikTokDisclosureError(
+    config: Record<string, unknown>
+): string | undefined {
+    const commercial = config.disclose_commercial_content === 'true';
+    const paid = config.brand_content_toggle === 'true';
+    const ownBrand = config.brand_organic_toggle === 'true';
+    if (commercial && !paid && !ownBrand)
+        return 'Select your own brand, a paid partnership, or both before running.';
+    if (!commercial && (paid || ownBrand))
+        return 'Enable commercial content disclosure for promotional content.';
+    if (paid && config.privacy_level === 'SELF_ONLY')
+        return 'Paid partnerships cannot be private. Select another visibility before running.';
+}
 
 function previewUrl(value: unknown): string | undefined {
     if (typeof value !== 'string' || value.includes('{{')) return;
@@ -47,6 +62,8 @@ export function TikTokPublishingPanel({
               .map((url) => previewUrl(url.trim()));
     const paid = config.brand_content_toggle === 'true';
     const ownBrand = config.brand_organic_toggle === 'true';
+    const commercial = config.disclose_commercial_content === 'true';
+    const disclosureError = tikTokDisclosureError(config);
     const visibility =
         typeof config.privacy_level === 'string' ? config.privacy_level : '';
     const validVisibility = options.some(
@@ -209,15 +226,40 @@ export function TikTokPublishingPanel({
                     );
                 }
             )}
-            {checkbox(
-                'brand_organic_toggle',
-                'Promote your own brand',
-                ownBrand
-            )}
-            {checkbox(
-                'brand_content_toggle',
-                'Paid partnership with another brand',
-                paid
+            <label className="flex items-center gap-2 text-sm">
+                <input
+                    type="checkbox"
+                    checked={commercial}
+                    onChange={(event) => {
+                        onChange(
+                            'disclose_commercial_content',
+                            String(event.target.checked)
+                        );
+                        if (!event.target.checked) {
+                            onChange('brand_content_toggle', 'false');
+                            onChange('brand_organic_toggle', 'false');
+                        }
+                    }}
+                />
+                Disclose commercial content
+            </label>
+            {commercial &&
+                checkbox(
+                    'brand_organic_toggle',
+                    'Promote your own brand',
+                    ownBrand
+                )}
+            {commercial &&
+                checkbox(
+                    'brand_content_toggle',
+                    'Paid partnership with another brand',
+                    paid,
+                    visibility === 'SELF_ONLY' && !paid
+                )}
+            {commercial && visibility === 'SELF_ONLY' && !paid && (
+                <p className="text-xs text-muted-foreground">
+                    Paid partnership is unavailable with private visibility.
+                </p>
             )}
             {(paid || ownBrand) && (
                 <p className="text-xs">
@@ -225,12 +267,7 @@ export function TikTokPublishingPanel({
                     {paid ? 'Paid partnership' : 'Promotional content'}.
                 </p>
             )}
-            {paid && visibility === 'SELF_ONLY' && (
-                <p role="alert">
-                    Paid partnerships cannot be private. Select another
-                    visibility before running.
-                </p>
-            )}
+            {disclosureError && <p role="alert">{disclosureError}</p>}
             {checkbox(
                 'is_aigc',
                 'AI-generated content',

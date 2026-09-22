@@ -670,7 +670,13 @@ class TestDirectPostGuards:
                 {**CREATOR, "stitch_disabled": True},
                 "disabled stitch",
             ),
-            ({"brand_content_toggle": "true"}, CREATOR, "private visibility"),
+            (
+                {"disclose_commercial_content": "true", "brand_content_toggle": "true"},
+                CREATOR,
+                "private visibility",
+            ),
+            ({"disclose_commercial_content": "true"}, CREATOR, "Select your own brand"),
+            ({"brand_content_toggle": "true"}, CREATOR, "Enable commercial"),
             ({"disable_comment": "maybe"}, CREATOR, "must be true or false"),
         ],
     )
@@ -695,6 +701,7 @@ class TestDirectPostGuards:
         cfg = TikTokDirectPostVideoConfig(
             video_url="https://a.com/a.mp4",
             privacy_level="PUBLIC_TO_EVERYONE",
+            disclose_commercial_content="true",
             brand_content_toggle="true",
             brand_organic_toggle="true",
             is_aigc="true",

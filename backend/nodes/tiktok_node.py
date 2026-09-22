@@ -328,6 +328,12 @@ class TikTokDirectPostSettings(BaseModel):
     disable_comment: str = Field(
         "true", title="Disable Comments", json_schema_extra=_YES_NO
     )
+    disclose_commercial_content: str = Field(
+        "false",
+        title="Disclose Commercial Content",
+        description="Enable for promotional content, then select your own brand, a paid partnership, or both.",
+        json_schema_extra=_YES_NO,
+    )
     brand_content_toggle: str = Field(
         "false",
         title="Paid Partnership",
@@ -1052,6 +1058,7 @@ class TikTokNode(WorkflowNode):
     async def _direct_post_preflight(self, config, access_token):
         for field in (
             "disable_comment",
+            "disclose_commercial_content",
             "disable_duet",
             "disable_stitch",
             "brand_content_toggle",
@@ -1064,6 +1071,19 @@ class TikTokNode(WorkflowNode):
                 "false",
             ):
                 raise ValueError(f"{field} must be true or false")
+        commercial = config.disclose_commercial_content == "true"
+        has_brand = (
+            config.brand_content_toggle == "true"
+            or config.brand_organic_toggle == "true"
+        )
+        if commercial and not has_brand:
+            raise ValueError(
+                "Select your own brand, a paid partnership, or both for commercial content"
+            )
+        if has_brand and not commercial:
+            raise ValueError(
+                "Enable commercial content disclosure for promotional content"
+            )
         if (
             config.brand_content_toggle == "true"
             and config.privacy_level == "SELF_ONLY"

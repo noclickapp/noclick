@@ -10,7 +10,10 @@ import {
     screen,
     waitFor,
 } from '@testing-library/react';
-import { TikTokPublishingPanel } from '~/components/workflow/TikTokPublishingPanel';
+import {
+    TikTokPublishingPanel,
+    tikTokDisclosureError,
+} from '~/components/workflow/TikTokPublishingPanel';
 
 const send = vi.hoisted(() => vi.fn());
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: send }));
@@ -89,6 +92,7 @@ describe('TikTok publishing controls', () => {
             video_url: 'https://media.example/video.mp4',
             title: 'Original video',
             privacy_level: 'SELF_ONLY',
+            disclose_commercial_content: 'true',
             brand_content_toggle: 'true',
         });
         await screen.findByText('Post to TikTok · Review Creator');
@@ -111,6 +115,42 @@ describe('TikTok publishing controls', () => {
         expect(
             screen.getByText(/Upstream-generated content is resolved/)
         ).toBeTruthy();
+    });
+    it('keeps commercial disclosure off until selected', async () => {
+        const { onChange } = show();
+        await screen.findByText('Post to TikTok · Review Creator');
+        expect(screen.queryByLabelText('Promote your own brand')).toBeNull();
+        fireEvent.click(screen.getByLabelText('Disclose commercial content'));
+        expect(onChange).toHaveBeenCalledWith(
+            'disclose_commercial_content',
+            'true'
+        );
+    });
+    it('requires a commercial category and disallows a private paid partnership', async () => {
+        show({
+            disclose_commercial_content: 'true',
+            privacy_level: 'SELF_ONLY',
+        });
+        await screen.findByText('Post to TikTok · Review Creator');
+        expect(screen.getByRole('alert').textContent).toContain(
+            'Select your own brand'
+        );
+        expect(
+            (
+                screen.getByLabelText(
+                    'Paid partnership with another brand'
+                ) as HTMLInputElement
+            ).disabled
+        ).toBe(true);
+        expect(
+            tikTokDisclosureError({
+                disclose_commercial_content: 'true',
+                brand_organic_toggle: 'true',
+            })
+        ).toBeUndefined();
+        expect(
+            tikTokDisclosureError({ brand_content_toggle: 'true' })
+        ).toContain('Enable commercial');
     });
     it('photo controls omit duet and stitch', async () => {
         show(
