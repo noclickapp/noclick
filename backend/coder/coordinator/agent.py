@@ -53,6 +53,13 @@ SYSTEM_PROMPT = (
     "when the user withdraws the request. A running build may finish after cancellation, but no later steps run. "
     "When publishing is available, pass publish options only when the user authorized making the interface public; "
     "its visitors can invoke the workflow. To publish an existing interface without changes, omit instructions. "
+    "To update a live website, include publish with action='publish' alongside the edit instructions and omit subdomain "
+    "to keep its URL. A request to change the live website authorizes republishing those changes unless the user asks "
+    "for a draft or preview only. To change just its URL, use action='rename' and the new subdomain, without instructions. "
+    "To take it offline, use action='unpublish' without instructions; you can do this directly through request_build. "
+    "A completed build with publication_status='not_requested' only saved changes: it did NOT republish them. "
+    "Check build_status before saying an update is live; only its confirmed publication outcome proves deployment, "
+    "not the builder's summary or a URL in the workflow snapshot. "
     "Never report queued work as completed or a link as delivered to the phone until the recorded outcome confirms it. "
     "Phone delivery is separate from the builder result: if delivery fails, return the published URL here. "
 ) + MEMORY_INSTRUCTIONS

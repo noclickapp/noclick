@@ -141,7 +141,7 @@ class BuilderRequestRepo:
         await self.pool.execute(
             """UPDATE builder_requests SET status='failed', pending_ask=NULL, lease_until=NULL, updated_at=now(),
                error=CASE WHEN phase='publishing' THEN
-                 'Publishing was interrupted. The app may already be live; check it before requesting publication again.'
+                 'The publication operation was interrupted and may have taken effect. Check the app before retrying; an unfinished rename can be resumed with the same target or unpublished.'
                  ELSE 'The build was interrupted or waited seven days for input. Check it before starting another request.' END
                WHERE status IN ('running','waiting_for_input') AND lease_until < now()""",
         )

@@ -22,6 +22,12 @@ def request_view(row):
         "request_id": str(row["id"]), "workflow_id": str(row["workflow_id"]),
         "builder_conversation_id": row["conversation_id"], "status": row["status"], "phase": row["phase"],
         "pending_ask": row["pending_ask"], "result": row["result"], "error": row["error"],
+        "publication_requested": row["publish"],
+        "publication_status": ((row["result"] or {}).get("publication", {}).get("state", "published")
+                               if row["status"] == "completed" and (row["result"] or {}).get("publication")
+                               else (row["status"] if row["publish"] is not None else "not_requested")),
+        "deployment_note": ("This request only saves changes. It does not update the public site."
+                            if row["publish"] is None else None),
         "delivery": {"send_to_phone": row["send_to_phone"], "phone_state": row["phone_state"],
                      "error": row["delivery_error"]},
     }
@@ -29,7 +35,8 @@ def request_view(row):
 
 def request_context(row):
     return {**row["origin"], "workflow_id": str(row["workflow_id"]),
-            "builder_request_id": str(row["id"]), "builder_attempt_id": str(row["attempt_id"])}
+            "builder_request_id": str(row["id"]), "builder_attempt_id": str(row["attempt_id"]),
+            "publication_requested": row["publish"]}
 
 
 async def submit_request(pool, *, user_id, workflow_id=None, instructions=None, name=None, publish=None,
@@ -38,6 +45,8 @@ async def submit_request(pool, *, user_id, workflow_id=None, instructions=None, 
     if instructions and len(instructions) > 16000:
         raise ValueError("Instructions must contain at most 16000 characters.")
     publication = PublicationOptions.model_validate(publish).model_dump() if publish is not None else None
+    if publication and publication["action"] != "publish" and (instructions or not workflow_id):
+        raise ValueError("Rename and unpublish operate on an existing deployment; provide workflow_id and omit instructions.")
     if not instructions and not (workflow_id and publication is not None):
         raise ValueError("Provide build instructions, or an existing workflow and publish options.")
     if publication is not None and capability(INTERFACE_PUBLISH) is None:
@@ -82,8 +91,12 @@ async def _run_attempt(pool, request, build):
                 raise ValueError("Interface publishing is unavailable on this instance.")
             published = await publish(pool, user_id=str(request["user_id"]), workflow_id=str(request["workflow_id"]),
                                       **request["publish"])
-            if not published.get("url") or published.get("error"):
-                raise ValueError(published.get("error") or "The publisher returned no live URL.")
+            action = request["publish"].get("action", "publish")
+            expected_state = {"publish": "published", "rename": "renamed", "unpublish": "unpublished"}[action]
+            confirmed = (published.get("state") == expected_state if action != "publish"
+                         else bool(published.get("url")))
+            if published.get("error") or not confirmed or (action == "rename" and not published.get("url")):
+                raise ValueError(published.get("error") or "The publisher did not confirm the requested outcome.")
             await repo.finish(request_id, attempt_id, result={**(request["result"] or {}), "publication": published})
     except asyncio.CancelledError:
         raise
@@ -139,7 +152,17 @@ async def notify_result(pool, request):
     elif request["status"] == "failed":
         text = f"I couldn't finish your builder request: {request['error']}"
     else:
-        text = "Your interface is published." if url else (result.get("summary") or "Your build is complete.")
+        publication = result.get("publication") or {}
+        if publication.get("state") == "unpublished":
+            text = "Your interface is unpublished. Its public URL is no longer available."
+        elif publication.get("state") == "renamed":
+            text = ("Your interface is already published at the requested URL." if publication.get("changed") is False
+                    else "Your published URL has changed. The previous URL is no longer available.")
+        elif url:
+            text = "Your interface is published."
+        else:
+            # Builder prose can describe the edit but cannot attest to deployment.
+            text = "Your changes are saved. This request did not publish or update a public site."
     phone_state, delivery_error = request["phone_state"], request["delivery_error"]
     if phone_state == "sending":
         phone_state, delivery_error = await deliver_phone(pool, user_id, text, link=url)

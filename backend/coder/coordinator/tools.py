@@ -89,14 +89,17 @@ def coordinator_tool_params(*, include_owner_message: bool = False, include_publ
         tool("request_build",
              "Ask the builder to create or edit an interface, agent, or workflow, with optional publication. "
              "The builder owns all phases and questions; check build_status using the returned request_id. "
-             "To publish an existing saved interface without rebuilding, pass workflow_id and publish, and omit instructions. "
+             "To publish, rename or unpublish an existing interface without rebuilding, pass workflow_id and publish, and omit instructions. "
              "Publication makes the interface public and its visitors can invoke the workflow; only request it when authorized.",
              {"instructions": {"type": "string", "description": "What to build or change. Required unless publishing an existing interface."},
               "workflow_id": {"type": "string", "description": "Existing workflow, or omit to create one."},
               "name": {"type": "string", "description": "Name for a new workflow."},
               "send_to_phone": {"type": "boolean", "description": "Send the result to the owner's phone when requested."},
               **({"publish": {**PublicationOptions.model_json_schema(),
-                  "description": "Publish the interface when building finishes. Omit node_id only if there is one interface."}}
+                  "description": "action=publish deploys saved edits (after building, if requested); omit subdomain to keep the existing URL. "
+                                 "action=rename moves the LIVE version to subdomain without deploying draft edits. "
+                                 "action=unpublish removes the public site. Rename/unpublish require workflow_id and no instructions. "
+                                 "Omit node_id only when the target is unambiguous."}}
                  if include_publishing else {})}),
         tool("build_status", "Read builder requests: status, current phase, questions and answer links, results, "
              "published URLs, and separate delivery outcomes.",

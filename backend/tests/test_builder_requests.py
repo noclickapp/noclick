@@ -149,7 +149,7 @@ async def test_interrupted_side_effect_is_not_replayed(builder_request_db):
     await repo.reap_stalled()
     await repo.finish(task["id"], task["attempt_id"], result={"publication": {"url": "late"}})
     row = (await repo.list_for_user(USER))[0]
-    assert row["status"] == "failed" and "may already be live" in row["error"]
+    assert row["status"] == "failed" and "may have taken effect" in row["error"]
     assert row["result"] is None and await repo.claim() is None
 
 
@@ -338,3 +338,64 @@ async def test_editor_can_build_but_cannot_publish_and_access_is_rechecked(build
         assert (await repo.list_for_user(editor))[0]["status"] == "failed"
     finally:
         await pool.execute("DELETE FROM auth.users WHERE id=$1::uuid", editor)
+
+
+@pytest.mark.parametrize("action,state,url", [("rename", "renamed", "https://new.example"), ("unpublish", "unpublished", None)])
+async def test_publication_lifecycle_results_and_notifications(builder_request_db, monkeypatch, action, state, url):
+    pool, repo, _, enqueue = builder_request_db
+    options = PublicationOptions(action=action, subdomain="new-site" if action == "rename" else None).model_dump()
+    await enqueue(publish=options)
+    result = {"action": action, "state": state, **({"url": url} if url else {})}
+    monkeypatch.setattr(requests, "capability", lambda _: AsyncMock(return_value=result))
+    monkeypatch.setattr(requests, "get_sio", lambda: object())
+    monkeypatch.setattr(requests, "emit_notification", AsyncMock())
+    await requests.run_request(pool, await repo.claim())
+    row = (await repo.list_for_user(USER))[0]
+    assert row["status"] == "completed" and requests.request_view(row)["publication_status"] == state
+    await requests.notify_result(pool, await repo.claim_notification())
+    events = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id=$1", f"coordinator:{USER}")
+    message = events[-1]["message"]
+    assert ("unpublished" if action == "unpublish" else "URL has changed") in message
+    assert "Your interface is published." not in message
+
+
+async def test_build_only_result_cannot_claim_deployment(builder_request_db, monkeypatch):
+    from coder.workflow.agentic.prompts import _build_user_context
+
+    pool, repo, _, enqueue = builder_request_db
+    await enqueue(instructions="Make the theme black", publish=None)
+    task = await repo.claim()
+    context = requests.request_context(task)
+    assert "only saves changes" in _build_user_context(context)
+    await repo.build_finished(USER, task["id"], task["attempt_id"], success=True, summary="Your edits are now live!")
+    view = requests.request_view((await repo.list_for_user(USER))[0])
+    assert view["publication_status"] == "not_requested" and "does not update" in view["deployment_note"]
+    monkeypatch.setattr(requests, "get_sio", lambda: object())
+    monkeypatch.setattr(requests, "emit_notification", AsyncMock())
+    await requests.notify_result(pool, await repo.claim_notification())
+    events = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id=$1", f"coordinator:{USER}")
+    assert "did not publish" in events[-1]["message"] and "now live" not in events[-1]["message"]
+
+
+async def test_managed_builder_knows_publication_runs_after_done(builder_request_db):
+    from coder.workflow.agentic.prompts import _build_user_context
+
+    _, repo, _, enqueue = builder_request_db
+    await enqueue(instructions="Make the theme black")
+    context = requests.request_context(await repo.claim())
+    assert context["publication_requested"]["action"] == "publish"
+    assert "publication is pending" in _build_user_context(context)
+
+
+@pytest.mark.parametrize("options", [{"action": "rename"}, {"action": "unpublish", "subdomain": "site"}, {"action": "delete"}])
+async def test_invalid_publication_actions_are_rejected(options):
+    with pytest.raises(ValueError):
+        PublicationOptions.model_validate(options)
+
+
+async def test_rename_and_unpublish_do_not_start_an_unrelated_build(builder_request_db):
+    pool, _, workflow_id, _ = builder_request_db
+    for action in ("rename", "unpublish"):
+        with pytest.raises(ValueError, match="omit instructions"):
+            await requests.submit_request(pool, user_id=USER, workflow_id=workflow_id, instructions="Edit the draft",
+                                          publish={"action": action, **({"subdomain": "new-site"} if action == "rename" else {})})
