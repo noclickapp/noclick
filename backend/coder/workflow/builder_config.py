@@ -16,7 +16,7 @@ from nodes.agent.config.providers import get_provider_credentials
 
 # The same brain the hosted service builds with; a smaller model made the
 # builder noticeably worse at exactly the judgment calls it exists for.
-BRAIN_MODEL_NAME = "gpt-5.6-luna"
+BRAIN_MODEL_NAME = "gpt-6-luna"
 BRAIN_FALLBACK_ROUTE = "openrouter/google/gemini-3.5-flash:nitro"
 
 

@@ -473,7 +473,7 @@
           "ui:hidden": true
         },
         "hermes_agent_model": {
-          "default": "openrouter/openai/gpt-5.6-luna",
+          "default": "openrouter/~openai/gpt-luna-latest",
           "description": "LLM to run inside Hermes Agent. Must support tool/function calling. Use chat models (e.g. claude-3.5-sonnet, gpt-4o, hermes-3-70b) \u2014 reasoning models like DeepSeek R1 do not support tool use.",
           "title": "Model",
           "type": "string",
@@ -1602,13 +1602,13 @@
           "ui:hidden": true
         },
         "model": {
-          "default": "openrouter/openai/gpt-5.6-luna",
+          "default": "openrouter/~openai/gpt-luna-latest",
           "description": "LLM model to use for processing",
           "title": "Model",
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "custom_placeholder": "Or type a model id (e.g. openrouter/openai/gpt-5.6-luna)",
+            "custom_placeholder": "Or type a model id (e.g. openrouter/~openai/gpt-luna-latest)",
             "field_name": "model",
             "placeholder": "Select a model...",
             "searchable": true
@@ -1755,7 +1755,7 @@
           "ui:hidden": true
         },
         "openclaw_model": {
-          "default": "openrouter/openai/gpt-5.6-luna",
+          "default": "openrouter/~openai/gpt-luna-latest",
           "description": "LLM to run inside OpenClaw. Use a tool-capable chat model in provider/model format, for example openrouter/anthropic/claude-sonnet-4-5.",
           "title": "Model",
           "type": "string",

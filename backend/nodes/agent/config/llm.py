@@ -12,7 +12,7 @@ from .base import BaseAgentFields
 # (coder/workflow/agentic/prompts.py). Change it here, regen schemas, and also
 # update any hand-owned examples and registered CLI model defaults kept in
 # sync with the generated schema.
-DEFAULT_LLM_AGENT_MODEL = "openrouter/openai/gpt-5.6-luna"
+DEFAULT_LLM_AGENT_MODEL = "openrouter/~openai/gpt-luna-latest"
 
 
 class LLMAgentConfig(BaseAgentFields):

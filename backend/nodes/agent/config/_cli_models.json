@@ -42,11 +42,11 @@
   "openclaw": {
     "package": "openclaw",
     "version": "2026.9.1",
-    "default_model": "openrouter/openai/gpt-5.6-luna"
+    "default_model": "openrouter/~openai/gpt-luna-latest"
   },
   "hermes": {
     "package": "NousResearch/hermes-agent",
     "ref": "v2026.8.31",
-    "default_model": "openrouter/openai/gpt-5.6-luna"
+    "default_model": "openrouter/~openai/gpt-luna-latest"
   }
 }
