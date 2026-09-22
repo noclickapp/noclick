@@ -39,11 +39,14 @@ interface GraphRecord {
     variables: Record<string, unknown>;
     displayMetadata: DisplayMetadata | null;
     deletedNodeIds: Set<string>;
-    // Collaborator deletes seen via the collab channel whose originating
-    // save may not have landed yet. Used ONLY as rebase tombstones (a CAS
-    // conflict rebase must not re-add a node a collaborator just deleted);
-    // full workflow:get loads re-baseline and clear this set.
+    // Deletes another writer streamed to us (a collaborator over the collab
+    // channel, the AI builder over its event stream) whose own persist may
+    // not have landed yet. Used ONLY as rebase tombstones: a CAS conflict
+    // answers with the row as it stands, and without these a node the
+    // builder just removed reads as "server-only" and comes straight back
+    // (2026-09-22). Full workflow:get loads re-baseline and clear both.
     remoteDeletedNodeIds: Set<string>;
+    remoteDeletedEdgeIds: Set<string>;
 
     // Lifecycle flags. Saves are suppressed unless `loaded` is true and
     // `dragging` is false. Headless-active is queried directly from the
@@ -106,6 +109,7 @@ export function createGraphRecord(
         displayMetadata: null,
         deletedNodeIds: new Set(),
         remoteDeletedNodeIds: new Set(),
+        remoteDeletedEdgeIds: new Set(),
         loaded: false,
         dragging: false,
         canvasMounted: false,
@@ -269,6 +273,7 @@ function rebaseFromServer(
         const source = raw?.source as string | undefined;
         const target = raw?.target as string | undefined;
         if (!id || !source || !target || localEdgeIds.has(id)) continue;
+        if (rec.remoteDeletedEdgeIds.has(id)) continue;
         // An edge is only meaningful if both endpoints survived the merge.
         if (!localNodeIds.has(source) || !localNodeIds.has(target)) continue;
         addEdges.push({
@@ -489,6 +494,12 @@ export function recordRemoteDeletedNodes(workflowId: string, ids: string[]): voi
     for (const id of ids) rec.remoteDeletedNodeIds.add(id);
 }
 
+export function recordRemoteDeletedEdges(workflowId: string, ids: string[]): void {
+    const rec = graphRecords[workflowId];
+    if (!rec) return;
+    for (const id of ids) rec.remoteDeletedEdgeIds.add(id);
+}
+
 /** My own deletes whose save hasn't been acked yet. Load/reconnect merges
  *  must drop matching server nodes or a refetch resurrects the deletion. */
 export function getPendingDeletedNodeIds(workflowId: string): ReadonlySet<string> {
@@ -512,6 +523,7 @@ export function setGraphVersion(workflowId: string, version: number | null): voi
     if (!rec) return;
     if (typeof version === 'number') rec.graphVersion = version;
     rec.remoteDeletedNodeIds.clear();
+    rec.remoteDeletedEdgeIds.clear();
 }
 
 /** Snapshot the record's current content as the no-op-save baseline. Called
@@ -611,6 +623,7 @@ export function applyRemoteEdgeAdd(workflowId: string, edgeData: unknown): void 
 export function applyRemoteEdgeRemove(workflowId: string, edgeId: string): void {
     const rec = graphRecords[workflowId];
     if (!rec) return;
+    rec.remoteDeletedEdgeIds.add(edgeId);
     if (!rec.edges.some(e => e.id === edgeId)) return;
     rec.edges = rec.edges.filter(e => e.id !== edgeId);
 }
@@ -708,6 +721,7 @@ export function applyAgenticGraphEvent(
             const id = (nested.id as string | undefined) ?? event.nodeId;
             const type = (nested.type as string | undefined) ?? event.nodeType;
             if (!id || !type) return;
+            rec.remoteDeletedNodeIds.delete(id); // a re-add is the newer intent
             if (rec.nodes.some(n => n.id === id)) return;
             const animState = event.status === 'completed' ? 'complete' : 'adding';
             // Prefer the BE-authored position if present; otherwise a
@@ -796,6 +810,10 @@ export function applyAgenticGraphEvent(
         case 'node_removed': {
             const id = event.nodeId;
             if (!id) return;
+            // Tombstone first: the builder's persist of this removal runs
+            // after its terminal frame, so our flush save can conflict
+            // against a row that still holds the node.
+            rec.remoteDeletedNodeIds.add(id);
             rec.nodes = rec.nodes.filter(n => n.id !== id);
             rec.edges = rec.edges.filter(e => e.source !== id && e.target !== id);
             break;
@@ -813,6 +831,7 @@ export function applyAgenticGraphEvent(
                 ?? (nested.target as string | undefined)
                 ?? event.targetId;
             if (!id || !source || !target) return;
+            rec.remoteDeletedEdgeIds.delete(id);
             if (rec.edges.some(e => e.id === id)) return;
             const sourceHandle = nested.sourceHandle as string | undefined;
             const targetHandle = nested.targetHandle as string | undefined;
@@ -831,6 +850,7 @@ export function applyAgenticGraphEvent(
         case 'edge_removed': {
             const id = event.edgeId;
             if (!id) return;
+            rec.remoteDeletedEdgeIds.add(id);
             rec.edges = rec.edges.filter(e => e.id !== id);
             break;
         }

@@ -10,6 +10,9 @@ import { workflowDebugStore } from '~/lib/workflow-debug-store';
 
 vi.mock('~/lib/socket-receiver', () => ({ socketReceiver: { getSocket: () => ({}), on: () => vi.fn() } }));
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn().mockResolvedValue({ success: true }) }));
+// The hook tombstones builder removals in the live graph store; keep the
+// store's socket wiring out of this hook-only suite.
+vi.mock('~/lib/liveGraphStore', () => ({ recordRemoteDeletedNodes: vi.fn(), recordRemoteDeletedEdges: vi.fn() }));
 vi.mock('~/lib/builderHydration', () => ({
     BUILDER_EDIT_TIMEOUT_MS: 1000,
     subscribeToBuilderResponse: () => vi.fn(),

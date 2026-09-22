@@ -31,6 +31,7 @@ import { trackChatSendStarted } from '~/lib/telemetry-chat';
 import type { AiEditInfo } from '~/lib/collaboration';
 import { applyNodeUpdate, buildSaveConfig, createWorkflowNode, rawConfigToPayload } from '~/lib/applyNodeUpdate';
 import { getBuilderContext } from '~/lib/builder-context';
+import { recordRemoteDeletedNodes, recordRemoteDeletedEdges } from '~/lib/liveGraphStore';
 import { getAppliedTheme } from '~/lib/theme';
 
 /**
@@ -403,6 +404,10 @@ export function useCanvasWorkflowEdit({
                     };
                     setNodeEditInfo(nodeId, removedEditInfo);
                     broadcastAiEditingUpdate?.(nodeId, removedEditInfo);
+                    // The builder persists this removal only after its
+                    // terminal frame; tombstone so a conflict rebase on our
+                    // flush save can't adopt the node back from the old row.
+                    if (workflowId) recordRemoteDeletedNodes(workflowId, [nodeId]);
                     onNodesChange(prev => {
                         const updated = prev.filter(n => n.id !== nodeId);
                         nodesRef.current = updated;
@@ -501,6 +506,7 @@ export function useCanvasWorkflowEdit({
                     const sourceType = sourceNode?.type || sourceNode?.data?.nodeType;
                     const targetType = targetNode?.type || targetNode?.data?.nodeType;
 
+                    if (workflowId) recordRemoteDeletedEdges(workflowId, [edgeId]);
                     onEdgesChange(prev => {
                         const updated = prev.filter(e => e.id !== edgeId);
                         edgesRef.current = updated;
@@ -855,7 +861,7 @@ export function useCanvasWorkflowEdit({
                 break;
             }
         }
-    }, [onNodesChange, onEdgesChange, onEditComplete, onError, cleanupSocketListener, broadcastAiEditingUpdate, broadcastAiEditingEnd, broadcastNodeAdd, broadcastNodeRemove, broadcastEdgeAdd, broadcastEdgeRemove, broadcastNodeDrag]);
+    }, [workflowId, onNodesChange, onEdgesChange, onEditComplete, onError, cleanupSocketListener, broadcastAiEditingUpdate, broadcastAiEditingEnd, broadcastNodeAdd, broadcastNodeRemove, broadcastEdgeAdd, broadcastEdgeRemove, broadcastNodeDrag]);
 
     // Start an edit
     const startEdit = useCallback(async (prompt: string, selectedNodeId?: string | null, conversationId?: string, n8nWorkflow?: Record<string, unknown> | null, scope?: { type: 'node'; nodeId: string }) => {

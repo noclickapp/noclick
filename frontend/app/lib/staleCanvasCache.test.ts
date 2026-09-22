@@ -63,6 +63,8 @@ import {
     flushGraphNow,
     hasLiveGraphState,
     seedSaveBaseline,
+    markGraphDirty,
+    applyAgenticGraphEvent,
 } from './liveGraphStore';
 import {
     createWorkflowNode,
@@ -73,6 +75,7 @@ import {
 import type { Node, Edge } from '@xyflow/react';
 
 const WF = 'wf-stale-cache-test';
+type AgenticEvent = Parameters<typeof applyAgenticGraphEvent>[1];
 
 function makeNode(id: string): Node {
     return createWorkflowNode(id, 'automation-slack', { x: 0, y: 0 }, {});
@@ -241,6 +244,99 @@ describe('CAS conflict rebase', () => {
         // Rebase re-queues the save under the new version.
         expect(rec.dirty).toBe(true);
         expect(rec.saveTimer).not.toBeNull();
+    });
+});
+
+describe('builder removals survive a CAS conflict rebase', () => {
+    // 2026-09-22: the builder streamed node_removed, the canvas flush-saved on
+    // active_gen:terminal with a version token the builder had already bumped
+    // on earlier turns, and the conflict payload carried the row as it stood
+    // BEFORE the builder's own persist landed. The removed node was adopted
+    // as "server-only" and written straight back — three times for one user.
+    function serverStillHoldsRemoved() {
+        wire.respond = () => ({
+            conflict: true,
+            graph_version: 9,
+            workflow_data: {
+                nodes: [
+                    { id: 'keep', type: 'automation-slack', position: { x: 0, y: 0 }, config: {} },
+                    { id: 'builder_removed', type: 'automation-google-sheets', position: { x: 0, y: 0 }, config: {} },
+                ],
+                edges: [
+                    { id: 'e_keep_removed', source: 'keep', target: 'builder_removed' },
+                ],
+            },
+        });
+    }
+
+    it('does not resurrect a node the builder just removed', async () => {
+        serverStillHoldsRemoved();
+        primeMountedRecord([makeNode('keep'), makeNode('builder_removed')], 5);
+        recordGraphSnapshot(WF, false, {
+            edges: [{ id: 'e_keep_removed', source: 'keep', target: 'builder_removed' } as Edge],
+        }, false);
+
+        applyAgenticGraphEvent(WF, { type: 'node_removed', nodeId: 'builder_removed' } as AgenticEvent);
+        markGraphDirty(WF); // the canvas effect marks dirty when it sees the change
+        flushGraphNow(WF);
+        await tick();
+
+        const rec = graphRecords[WF];
+        expect(rec.graphVersion).toBe(9);
+        expect(rec.nodes.map((n) => n.id)).toEqual(['keep']);
+        expect(rec.edges).toEqual([]);
+    });
+
+    it('does not resurrect an edge the builder just removed', async () => {
+        wire.respond = () => ({
+            conflict: true,
+            graph_version: 9,
+            workflow_data: {
+                nodes: [
+                    { id: 'a', type: 'automation-slack', position: { x: 0, y: 0 }, config: {} },
+                    { id: 'b', type: 'automation-slack', position: { x: 0, y: 0 }, config: {} },
+                ],
+                edges: [{ id: 'e_ab', source: 'a', target: 'b' }],
+            },
+        });
+        primeMountedRecord([makeNode('a'), makeNode('b')], 5);
+        recordGraphSnapshot(WF, false, {
+            edges: [{ id: 'e_ab', source: 'a', target: 'b' } as Edge],
+        }, false);
+
+        applyAgenticGraphEvent(WF, { type: 'edge_removed', edgeId: 'e_ab' } as AgenticEvent);
+        markGraphDirty(WF);
+        flushGraphNow(WF);
+        await tick();
+
+        expect(graphRecords[WF].edges).toEqual([]);
+    });
+
+    it('lets the builder re-add a node it removed earlier in the run', async () => {
+        wire.respond = () => ({
+            conflict: true,
+            graph_version: 9,
+            workflow_data: {
+                nodes: [
+                    { id: 'keep', type: 'automation-slack', position: { x: 0, y: 0 }, config: {} },
+                    { id: 'again', type: 'automation-gmail', position: { x: 0, y: 0 }, config: { label: 'server' } },
+                ],
+                edges: [],
+            },
+        });
+        primeMountedRecord([makeNode('keep'), makeNode('again')], 5);
+        applyAgenticGraphEvent(WF, { type: 'node_removed', nodeId: 'again' } as AgenticEvent);
+        applyAgenticGraphEvent(WF, {
+            type: 'node_added',
+            node: { id: 'again', type: 'automation-gmail', label: 'local' },
+        } as AgenticEvent);
+        markGraphDirty(WF);
+        flushGraphNow(WF);
+        await tick();
+
+        const rec = graphRecords[WF];
+        expect(rec.nodes.map((n) => n.id).sort()).toEqual(['again', 'keep']);
+        expect(rec.remoteDeletedNodeIds.has('again')).toBe(false);
     });
 });
 
