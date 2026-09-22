@@ -394,6 +394,11 @@ fastapi_app.include_router(well_known_router)
 from utils.api_key_routes import router as api_key_router
 fastapi_app.include_router(api_key_router)
 
+# Phone sign-in (/api/auth/phone/*) — keeps Supabase's SMS sign-in on the
+# account a number is bound to.
+from utils.phone_auth_routes import router as phone_auth_router
+fastapi_app.include_router(phone_auth_router)
+
 
 # Routes contributed by the platform running this engine, if any. It registered
 # them before the engine was imported; the engine does not know their names.

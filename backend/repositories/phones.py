@@ -160,6 +160,15 @@ class PhoneRepo:
         )
         return str(value) if value else None
 
+    async def auth_phone(self, user_id: str, *, confirmed: bool = False) -> Optional[str]:
+        """The account's sign-in phone as E.164 (auth stores it without the +)."""
+        value = await self._pool.fetchval(
+            "SELECT phone FROM auth.users WHERE id = $1::uuid AND phone IS NOT NULL AND phone <> '' "
+            + ("AND phone_confirmed_at IS NOT NULL" if confirmed else ""),
+            user_id,
+        )
+        return f"+{value.lstrip('+')}" if value else None
+
     async def account_email(self, user_id: str) -> Optional[str]:
         return await get_user_email(self._pool, user_id) or None
 

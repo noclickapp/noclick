@@ -23,6 +23,7 @@ class FakeAuthAdmin:
     def __init__(self, pool):
         self.pool = pool
         self.created = []
+        self.updated = []
 
     async def create_user(self, *, phone, phone_confirm, user_metadata):
         assert phone_confirm is True
@@ -37,6 +38,18 @@ class FakeAuthAdmin:
         )
         self.created.append(str(user_id))
         return {"id": str(user_id)}
+
+    async def update_user(self, user_id, **attributes):
+        self.updated.append((user_id, attributes))
+        if "phone" in attributes:
+            digits = attributes["phone"].lstrip("+")
+            if await self.pool.fetchval("SELECT 1 FROM auth.users WHERE phone = $1 AND id <> $2::uuid", digits, user_id):
+                raise SupabaseAdminError("phone_exists", status_code=422)
+            await self.pool.execute(
+                "UPDATE auth.users SET phone = $2, phone_confirmed_at = now() WHERE id = $1::uuid", user_id, digits)
+        if "email" in attributes:
+            await self.pool.execute("UPDATE auth.users SET email = $2 WHERE id = $1::uuid", user_id, attributes["email"])
+        return {"id": user_id}
 
 
 @pytest.fixture
@@ -141,3 +154,36 @@ async def test_unlinking_a_number_hands_it_to_a_fresh_account_not_the_old_one(ph
     successor = await svc.claim_for_channel("+15550100006", name="", source="whatsapp")
     assert successor.created is True and successor.user_id != first.user_id
     assert str((await repo.get_user_by_phone("+15550100007"))["user_id"]) == first.user_id
+
+
+async def test_phone_sign_in_lands_on_the_account_the_number_is_bound_to(phones_db):
+    pool, repo, admin, svc = phones_db
+    await verify_link(repo, EMAIL_USER, "+15550100008")
+    await svc.prepare_sign_in("+1 555 010 0008")
+    # The email account's sign-in phone is now that number, so the SMS code signs into it.
+    assert await repo.auth_phone(EMAIL_USER, confirmed=True) == "+15550100008"
+    await svc.prepare_sign_in("+15550100008")
+    assert len(admin.updated) == 1  # already pointed there: nothing to change
+
+    # An unbound number is left for the sign-in to make a phone-only account.
+    await svc.prepare_sign_in("+15550100009")
+    assert len(admin.updated) == 1 and admin.created == []
+
+
+async def test_a_first_phone_sign_in_binds_its_number_to_the_new_account(phones_db):
+    pool, repo, _, svc = phones_db
+    # What Supabase's own phone sign-up leaves behind: a confirmed auth phone, no binding.
+    fresh = str(await pool.fetchval(
+        "INSERT INTO auth.users (phone, phone_confirmed_at, raw_user_meta_data) VALUES ('15550100010', now(), $1) RETURNING id",
+        {"username": "+1•••••••0010"}))
+    assert await svc.bind_signed_in(fresh) == "+15550100010"
+    assert str((await repo.get_user_by_phone("+15550100010"))["user_id"]) == fresh
+    assert await svc.bind_signed_in(fresh) == "+15550100010"  # idempotent
+
+    # A number another account holds live is never taken over.
+    squatter = str(await pool.fetchval(
+        "INSERT INTO auth.users (phone, phone_confirmed_at, raw_user_meta_data) VALUES ('15550100011', now(), $1) RETURNING id",
+        {"username": "x"}))
+    await verify_link(repo, EMAIL_USER, "+15550100011")
+    assert await svc.bind_signed_in(squatter) is None
+    assert str((await repo.get_user_by_phone("+15550100011"))["user_id"]) == EMAIL_USER

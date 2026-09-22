@@ -190,6 +190,43 @@ class PhoneIdentity:
             logger.info("phone_unlinked user=%s phone=%s", user_id, mask_e164(phone))
         return removed
 
+    async def prepare_sign_in(self, raw_phone: str) -> str:
+        """Before the web's phone sign-in sends its code: a number already
+        bound to an account becomes that account's auth phone, so the code
+        signs into it rather than minting a new account. An unbound number is
+        left alone (the sign-in then makes a phone-only account); nothing here
+        reveals which case applied. Returns the number in E.164."""
+        phone = normalize_e164(raw_phone)
+        if phone is None:
+            raise PhoneLinkError("invalid_number")
+        binding = await self.repo.get_user_by_phone(phone)
+        if binding is None:
+            return phone
+        user_id = str(binding["user_id"])
+        if await self.repo.auth_phone(user_id) != phone:
+            await self._admin().update_user(user_id, phone=phone, phone_confirm=True)
+            logger.info("phone_sign_in_prepared user=%s phone=%s", user_id, mask_e164(phone))
+        return phone
+
+    async def bind_signed_in(self, user_id: str) -> Optional[str]:
+        """After a phone sign-in: the account's confirmed auth phone is one of
+        its numbers. The number, or None when the account has no confirmed
+        phone or the number is live elsewhere (logged, never stolen)."""
+        phone = await self.repo.auth_phone(user_id, confirmed=True)
+        if phone is None:
+            return None
+        async with self.repo.claiming(phone) as conn:
+            holder = await self.repo.get_user_by_phone(phone, conn=conn)
+            if holder is not None:
+                if str(holder["user_id"]) != user_id:
+                    logger.error("phone_sign_in_number_held_elsewhere user=%s holder=%s phone=%s",
+                                 user_id, holder["user_id"], mask_e164(phone))
+                    return None
+                return phone
+            await self.repo.bind_channel(conn, user_id=user_id, phone_e164=phone, source="verify")
+        logger.info("phone_bound_by_sign_in user=%s phone=%s", user_id, mask_e164(phone))
+        return phone
+
     async def claim_for_channel(self, phone_e164: str, *, name: str, source: str) -> ChannelClaim:
         """The account a channel-authenticated number reaches, made on first
         contact: a phone-only account with the normal free tier, no signup."""
