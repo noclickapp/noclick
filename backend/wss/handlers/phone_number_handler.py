@@ -94,19 +94,10 @@ class PhoneNumberHandler(DatabasePoolMixin, SocketIOHandler):
 
     async def handle_search(self, sid: str, request: PhoneNumberSearchRequest) -> None:
         async def op(actor: Dict[str, Any]) -> Dict[str, Any]:
-            country = (request.country or "US").upper()
-            if country not in COUNTRIES:
-                raise PhoneNumberError("Only US numbers can be bought right now.", "country")
-            area_code = (request.area_code or "").strip() or None
-            if area_code and not (area_code.isdigit() and len(area_code) == 3):
-                raise PhoneNumberError("An area code is three digits.", "area_code")
-            contains = (request.contains or "").strip().upper().replace(" ", "").replace("-", "") or None
-            if contains and not CONTAINS_PATTERN.fullmatch(contains):
-                raise PhoneNumberError("A pattern is up to 10 digits, letters or * wildcards.", "pattern")
-            if not await number_tier_ok(actor["pool"], actor["user_id"], actor["user_tier"]):
-                raise PhoneNumberError("Phone numbers are available on the Plus and Pro plans.", "plan")
-            numbers = await capability(PHONE_NUMBERS).search(country, area_code, request.limit, contains=contains)
-            return PhoneNumberSearchResponse(numbers=numbers, monthly_credits=PHONE_NUMBER_MONTHLY_CREDITS).model_dump()
+            return await search_numbers_for_user(
+                actor["pool"], user_id=actor["user_id"], user_tier=actor["user_tier"],
+                country=request.country, area_code=request.area_code, contains=request.contains, limit=request.limit,
+            )
         await self._respond(sid, request.request_id, op)
 
     async def handle_buy(self, sid: str, request: PhoneNumberBuyRequest) -> None:
@@ -122,6 +113,24 @@ class PhoneNumberHandler(DatabasePoolMixin, SocketIOHandler):
         await self._respond(sid, request.request_id, op)
 
 
+async def search_numbers_for_user(pool, *, user_id, user_tier, country="US", area_code=None, contains=None, limit=10):
+    if capability(PHONE_NUMBERS) is None:
+        raise PhoneNumberError("Phone numbers cannot be bought on this instance.", "unavailable")
+    country = (country or "US").upper()
+    if country not in COUNTRIES:
+        raise PhoneNumberError("Only US numbers can be bought right now.", "country")
+    area_code = (area_code or "").strip() or None
+    if area_code and not (area_code.isdigit() and len(area_code) == 3):
+        raise PhoneNumberError("An area code is three digits.", "area_code")
+    contains = (contains or "").strip().upper().replace(" ", "").replace("-", "") or None
+    if contains and not CONTAINS_PATTERN.fullmatch(contains):
+        raise PhoneNumberError("A pattern is up to 10 digits, letters or * wildcards.", "pattern")
+    if not await number_tier_ok(pool, user_id, user_tier):
+        raise PhoneNumberError("Phone numbers are available on the Plus and Pro plans.", "plan")
+    numbers = await capability(PHONE_NUMBERS).search(country, area_code, limit, contains=contains)
+    return PhoneNumberSearchResponse(numbers=numbers, monthly_credits=PHONE_NUMBER_MONTHLY_CREDITS).model_dump()
+
+
 async def number_tier_ok(pool, user_id: str, user_tier: str) -> bool:
     """Whether this account may hold a number: a paid plan of its own, or a
     paid org it owns (the same effective tier that funds its credits)."""
@@ -133,7 +142,7 @@ async def number_tier_ok(pool, user_id: str, user_tier: str) -> bool:
 
 
 async def buy_number_for_user(pool, *, user_id: str, user_tier: str, e164: str,
-                              credential_name: Optional[str], encryption) -> Dict[str, str]:
+                              credential_name: Optional[str], encryption, on_created=None) -> Dict[str, str]:
     """Buy at the provider, then mint the credential and charge its first
     month in ONE transaction (the provider bills a month in advance, and so
     do we: the charge renews on each anniversary while the number is kept);
@@ -172,6 +181,8 @@ async def buy_number_for_user(pool, *, user_id: str, user_tier: str, e164: str,
                 if error or row is None:
                     raise PhoneNumberError(error or "Could not save the number", "credential")
                 await start_connection_charge(conn, user_id=user_id, credential_id=row["id"], charge_type=CHARGE_TYPE)
+                if on_created is not None:
+                    await on_created(conn, {"credential_id": str(row["id"]), "phone_number": bought["phone_number"]})
     except Exception:
         try:
             await numbers.release(bought["number_sid"])

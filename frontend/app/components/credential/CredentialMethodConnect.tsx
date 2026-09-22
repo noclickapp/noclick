@@ -8,6 +8,8 @@
 // so scopes / flows / binding safety can't diverge between the two surfaces.
 
 import { useCallback, type ComponentType } from 'react';
+import { Link, useLocation } from 'react-router';
+import { Button } from '~/components/ui/button';
 import {
     kindFromBackendMethod,
     type CredentialMethodKind,
@@ -167,14 +169,16 @@ function QrScanMethod({ method, apiBase, token, onProvided }: CredentialMethodCo
     );
 }
 
-/** purchase — a bought resource (a phone number) is billed to the owner's account,
- *  so a public link never buys one on their behalf; the workflow is where it happens. */
-function PurchaseMethod({ serviceName }: CredentialMethodConnectProps) {
+/** A public credential link leads to an authenticated owner confirmation page.
+ *  The owner returns here afterward so the existing builder answer can resume. */
+function PurchaseMethod({ token }: CredentialMethodConnectProps) {
+    const location = useLocation();
+    const returnTo = location.pathname + location.search;
     return (
-        <p className="rounded-md border border-border bg-muted p-3 text-sm text-muted-foreground">
-            {serviceName ? `${serviceName} numbers` : 'Phone numbers'} are bought inside the NoClick app — open the
-            workflow to add one.
-        </p>
+        <div className="space-y-3">
+            <p className="text-sm leading-relaxed text-muted-foreground">The account owner can choose a number and review its monthly cost before purchasing.</p>
+            <Button asChild variant="secondary"><Link to={`/credential/purchase/${token}?return_to=${encodeURIComponent(returnTo)}`}>Review phone number</Link></Button>
+        </div>
     );
 }
 

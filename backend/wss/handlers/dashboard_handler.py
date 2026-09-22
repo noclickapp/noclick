@@ -544,17 +544,24 @@ def _compose_attention(
 
     now = datetime.now(timezone.utc)
     for req in cred_requests:
-        if req.status != "pending" or (req.expires_at and req.expires_at.replace(tzinfo=req.expires_at.tzinfo or timezone.utc) < now):
+        is_phone = req.credential_type == "phone_number"
+        actionable = req.status == "pending" or (is_phone and req.status == "provisioning")
+        expired = req.status == "pending" and req.expires_at and req.expires_at.replace(tzinfo=req.expires_at.tzinfo or timezone.utc) < now
+        if not actionable or expired:
             continue
+        title = f"Credential requested from {req.target_email}"
+        if is_phone:
+            title = "Check phone purchase" if req.status == "provisioning" else "Choose a phone number"
         items.append({
             "id": f"credreq:{req.id}",
             "kind": "credential_request",
-            "title": f"Credential requested from {req.target_email}",
+            "title": title,
+            **({"link": f"/credential/purchase/{req.token}"} if is_phone else {}),
             "detail": req.message or None,
             "workflow": {"id": "", "name": "Credentials", "marks": []},
             "credentialType": req.credential_type,
             "createdAt": _iso(req.created_at),
-            "meta": {"requestId": str(req.id), "expiresAt": _iso(req.expires_at)},
+            "meta": {"requestId": str(req.id), "expiresAt": _iso(req.expires_at), "status": req.status},
         })
 
     used_by = _credential_usage(workflows)

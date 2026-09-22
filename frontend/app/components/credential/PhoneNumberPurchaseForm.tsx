@@ -69,9 +69,20 @@ interface PhoneNumberPurchaseFormProps {
     onCredentialCreated: (credentialId: string, phoneNumber: string) => void;
     // Transport override (default: socket), the same seam the QR form exposes.
     sendEvent?: OAuthExchange;
+    confirmation?: {
+        initialQuote?: PhonePurchaseQuote | null;
+        onState: (state: { status: string; error?: string | null; phone_number?: string | null }) => void;
+    };
 }
 
-export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: PhoneNumberPurchaseFormProps) => {
+export interface PhonePurchaseQuote {
+    id: string;
+    phone_number: string;
+    monthly_credits: number;
+    expires_at: string;
+}
+
+export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent, confirmation }: PhoneNumberPurchaseFormProps) => {
     const [text, setText] = useState('');
     const [searched, setSearched] = useState<{ areaCode: string | null; pattern: string | null; limit: number } | null>(null);
     const [numbers, setNumbers] = useState<AvailableNumber[] | null>(null);
@@ -80,6 +91,8 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
     const [buying, setBuying] = useState<string | null>(null);
     const [error, setError] = useState<{ text: string; kind?: string } | null>(null);
     const [upgradeOpen, setUpgradeOpen] = useState(false);
+    const [quote, setQuote] = useState(confirmation?.initialQuote ?? null);
+    const submitting = useRef(false);
     const sendRef = useRef(sendEvent ?? sendEventAsync);
     useEffect(() => { sendRef.current = sendEvent ?? sendEventAsync; }, [sendEvent]);
 
@@ -112,9 +125,20 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
     };
 
     const buy = async (phoneNumber: string) => {
+        if (submitting.current) return;
+        submitting.current = true;
         setBuying(phoneNumber);
         setError(null);
         try {
+            if (confirmation) {
+                const reply = await sendRef.current({ event_name: 'phone_number:quote', phone_number: phoneNumber });
+                if (reply.error || !reply.quote) {
+                    setError({ text: failureText(reply, 'Could not prepare that number.'), kind: reply.kind });
+                } else {
+                    setQuote(reply.quote);
+                }
+                return;
+            }
             const reply: Reply<{ credential_id: string; phone_number: string }> = await sendRef.current({
                 event_name: 'phone_number:buy',
                 phone_number: phoneNumber,
@@ -129,6 +153,31 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
         } catch (e) {
             setError({ text: e instanceof Error ? e.message : 'Could not buy that number.' });
         } finally {
+            submitting.current = false;
+            setBuying(null);
+        }
+    };
+
+    const confirm = async () => {
+        if (!quote || submitting.current || !confirmation) return;
+        submitting.current = true;
+        setBuying(quote.phone_number);
+        setError(null);
+        try {
+            const reply = await sendRef.current({ event_name: 'phone_number:confirm', quote_id: quote.id });
+            if (reply.status === 'fulfilled' && reply.credential_id) {
+                invalidateCredentialsCache();
+                onCredentialCreated(reply.credential_id, reply.phone_number);
+            } else if (reply.status === 'provisioning') {
+                confirmation.onState(reply);
+            } else {
+                setQuote(null);
+                setError({ text: failureText(reply, 'Select the number again to review its current price.'), kind: reply.kind });
+            }
+        } catch {
+            confirmation.onState({ status: 'provisioning', error: 'Connection interrupted. Check the request status before trying again.' });
+        } finally {
+            submitting.current = false;
             setBuying(null);
         }
     };
@@ -138,6 +187,28 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
 
     return (
         <div className="space-y-3">
+            {quote && confirmation ? (
+                <div className="space-y-6 rounded-2xl bg-foreground/[0.035] p-6" data-testid="phone-purchase-confirmation">
+                    <div>
+                        <p className="mb-2 text-xs text-muted-foreground">Your selected number</p>
+                        <p className="text-2xl font-medium tracking-tight">{formatPhoneForDisplay(quote.phone_number)}</p>
+                        <p className="mt-2 text-sm text-muted-foreground">US local number · Voice</p>
+                    </div>
+                    <dl className="space-y-3 text-sm">
+                        <div className="flex justify-between gap-4"><dt className="text-muted-foreground">Due today</dt><dd>{quote.monthly_credits} credits</dd></div>
+                        <div className="flex justify-between gap-4"><dt className="text-muted-foreground">Renews monthly</dt><dd>{quote.monthly_credits} credits</dd></div>
+                    </dl>
+                    <p className="text-xs leading-relaxed text-muted-foreground">The first month is charged when you confirm. Renews on the monthly anniversary while you keep the number. Call usage is billed separately. Delete the phone-number credential to release it and stop renewals.</p>
+                    <p className="text-xs text-muted-foreground">Available until purchased by someone else. Review price again if this confirmation expires.</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Button type="button" disabled={busy} onClick={() => void confirm()}>
+                            {buying ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                            Confirm purchase · {quote.monthly_credits} credits
+                        </Button>
+                        <Button type="button" variant="ghost" disabled={busy} onClick={() => setQuote(null)}>Choose another</Button>
+                    </div>
+                </div>
+            ) : <>
             <UpgradePopup
                 isOpen={upgradeOpen}
                 onOpenChange={setUpgradeOpen}
@@ -145,7 +216,7 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
                 description={`A number your agent answers and calls from, ${monthlyCredits} credits a month. Upgrade to buy one.`}
             />
             <p className="text-xs text-muted-foreground">
-                Buy a US number for this agent, {monthlyCredits} credits a month. Delete the credential to release it.
+                {confirmation ? 'Choose a US number. Review the price before confirming.' : `Buy a US number for this agent, ${monthlyCredits} credits a month. Delete the credential to release it.`}
             </p>
             <div className="flex max-w-xl items-center gap-2">
                 <div className="relative min-w-0 flex-1">
@@ -208,7 +279,7 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
                                     <NumberLabel e164={n.phone_number} pattern={searched?.pattern ?? ''} />
                                     <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
                                         <span className="truncate">{[n.locality, n.region].filter(Boolean).join(', ') || 'United States'}</span>
-                                        {n.capabilities.filter((c) => CAPABILITY_LABELS[c]).map((c) => (
+                                        {n.capabilities.filter((c) => CAPABILITY_LABELS[c] && (!confirmation || c === 'voice')).map((c) => (
                                             <Badge key={c} variant="secondary" className="h-4 px-1.5 text-[10px] font-normal">
                                                 {CAPABILITY_LABELS[c]}
                                             </Badge>
@@ -217,7 +288,7 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
                                 </div>
                                 <Button type="button" size="sm" onClick={() => void buy(n.phone_number)} disabled={busy}>
                                     {buying === n.phone_number ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-                                    Buy · {monthlyCredits}/mo
+                                    {confirmation ? 'Review' : 'Buy'} · {monthlyCredits}/mo
                                 </Button>
                             </li>
                         ))}
@@ -232,6 +303,7 @@ export const PhoneNumberPurchaseForm = ({ onCredentialCreated, sendEvent }: Phon
                     </div>
                 </div>
             )}
+            </>}
         </div>
     );
 };

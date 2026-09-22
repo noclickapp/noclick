@@ -17,6 +17,7 @@ from utils.database_pool import get_native_pool
 from utils.encryption import get_encryption
 from utils.email import send_credential_fulfilled_email
 from utils.shopify_routes import install_router as shopify_install_router
+from utils.phone_purchase_routes import router as phone_purchase_router
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ router = APIRouter(prefix="/api/credential-request", tags=["credential-request"]
 # authenticated API front door instead of adding another root-level backend
 # prefix that self-hosted gateways would have to discover independently.
 router.include_router(shopify_install_router)
+router.include_router(phone_purchase_router)
 
 MAX_PROVISION_ATTEMPTS = 5
 
@@ -557,10 +559,11 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
     if not row:
         raise HTTPException(status_code=404, detail="Credential request not found")
 
-    if row['status'] != 'pending':
+    phone_result = row['credential_type'] == 'phone_number' and row['status'] in ('fulfilled', 'provisioning')
+    if row['status'] != 'pending' and not phone_result:
         raise HTTPException(status_code=410, detail=f"This credential request has already been {row['status']}")
 
-    if row['expires_at'] and row['expires_at'].replace(tzinfo=timezone.utc) < datetime.now(timezone.utc):
+    if not phone_result and row['expires_at'] and row['expires_at'].replace(tzinfo=timezone.utc) < datetime.now(timezone.utc):
         raise HTTPException(status_code=410, detail="This credential request has expired")
 
     if row['provision_attempts'] >= MAX_PROVISION_ATTEMPTS:
@@ -761,6 +764,9 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
                 detail=f"Invalid credential type override: {body.credential_type}",
             )
         credential_type = body.credential_type
+
+    if credential_type == "phone_number":
+        raise HTTPException(403, "Phone numbers require an authenticated purchase confirmation.")
 
     provider = _get_oauth_provider(credential_type)
 

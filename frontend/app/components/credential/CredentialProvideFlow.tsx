@@ -105,6 +105,7 @@ export function CredentialProvideFlow({
         setDetails(data);
         setStatus('ready');
         onDetails?.(data);
+        if (data.credential_type === 'phone_number' && data.status === 'fulfilled') onProvided();
       } catch {
         if (mounted) {
           setStatus('error');

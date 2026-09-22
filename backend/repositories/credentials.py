@@ -657,6 +657,7 @@ class CredentialsRepo:
         INSERT INTO credential_requests (requester_id, target_email, credential_type, message)
         VALUES ($1, LOWER($2), $3, $4)
         ON CONFLICT (requester_id, target_email, credential_type)
+        WHERE credential_type <> 'phone_number'
         DO UPDATE SET
             message = EXCLUDED.message,
             token = encode(gen_random_bytes(32), 'hex'),
@@ -664,7 +665,8 @@ class CredentialsRepo:
             status = 'pending',
             provision_attempts = 0,
             fulfilled_at = NULL,
-            credential_id = NULL
+            credential_id = NULL,
+            purchase_quote = NULL, provisioning_started_at = NULL, provision_error = NULL
         RETURNING id, target_email, credential_type, message, status, token,
                   expires_at, created_at, fulfilled_at
     """
@@ -682,10 +684,34 @@ class CredentialsRepo:
         the handler needs (including ``token``, needed to compose the
         outbound email)."""
         async with self._pool.acquire() as conn:
-            row = await conn.fetchrow(
-                self._UPSERT_REQUEST_SQL,
-                requester_id, target_email, credential_type, message,
-            )
+            async with conn.transaction():
+                row = None
+                if credential_type == "phone_number":
+                    # Keep a paid request's token stable while it is actionable or
+                    # in flight. Re-minting a builder link must not reset a purchase.
+                    await conn.execute("SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+                                       f"phone-request:{requester_id}")
+                    row = await conn.fetchrow(
+                        "SELECT * FROM credential_requests WHERE requester_id=$1::uuid "
+                        "AND target_email=LOWER($2) AND credential_type='phone_number' "
+                        "AND (status='provisioning' OR (status='pending' AND expires_at>now())) FOR UPDATE",
+                        requester_id, target_email,
+                    )
+                    if row is None:
+                        await conn.execute(
+                            "UPDATE credential_requests SET status='expired' WHERE requester_id=$1::uuid "
+                            "AND target_email=LOWER($2) AND credential_type='phone_number' "
+                            "AND status='pending' AND expires_at<=now()", requester_id, target_email,
+                        )
+                        row = await conn.fetchrow(
+                            "INSERT INTO credential_requests (requester_id,target_email,credential_type,message) "
+                            "VALUES ($1::uuid,LOWER($2),'phone_number',$3) RETURNING *",
+                            requester_id, target_email, message,
+                        )
+                if row is None:
+                    row = await conn.fetchrow(
+                        self._UPSERT_REQUEST_SQL, requester_id, target_email, credential_type, message,
+                    )
         if not row:
             return None
         return CredentialRequestRow(
@@ -701,13 +727,63 @@ class CredentialsRepo:
             token=row['token'],
         )
 
+    async def phone_purchase_request(self, token: str, user_id: str):
+        row = await self._pool.fetchrow(
+            "SELECT * FROM credential_requests WHERE token=$1 AND requester_id=$2::uuid "
+            "AND credential_type='phone_number'", token, user_id,
+        )
+        return dict(row) if row else None
+
+    async def phone_purchase_by_id(self, request_id: str, user_id: str):
+        row = await self._pool.fetchrow(
+            "SELECT * FROM credential_requests WHERE id=$1::uuid AND requester_id=$2::uuid "
+            "AND credential_type='phone_number'", request_id, user_id,
+        )
+        return dict(row) if row else None
+
+    async def set_phone_quote(self, token: str, user_id: str, quote):
+        return await self._pool.fetchval(
+            "UPDATE credential_requests SET purchase_quote=$3::jsonb, provision_error=NULL "
+            "WHERE token=$1 AND requester_id=$2::uuid AND credential_type='phone_number' "
+            "AND status='pending' AND expires_at>now() RETURNING id", token, user_id, quote,
+        ) is not None
+
+    async def claim_phone_purchase(self, token: str, user_id: str, quote_id: str, monthly_credits: float):
+        row = await self._pool.fetchrow(
+            """UPDATE credential_requests SET status='provisioning', provisioning_started_at=now(), provision_error=NULL
+               WHERE token=$1 AND requester_id=$2::uuid AND credential_type='phone_number'
+                 AND status='pending' AND expires_at>now() AND purchase_quote->>'id'=$3
+                 AND (purchase_quote->>'expires_at')::timestamptz>now()
+                 AND (purchase_quote->>'monthly_credits')::numeric=$4 RETURNING *""",
+            token, user_id, quote_id, monthly_credits,
+        )
+        return dict(row) if row else None
+
+    async def record_phone_purchase_error(self, request_id: str, error: str, *, rejected: bool):
+        await self._pool.execute(
+            """UPDATE credential_requests SET provision_error=$2,
+               status=CASE WHEN $3 THEN 'pending' ELSE status END,
+               purchase_quote=CASE WHEN $3 THEN NULL ELSE purchase_quote END
+               WHERE id=$1::uuid AND status='provisioning'""", request_id, error, rejected,
+        )
+
+    @staticmethod
+    async def fulfill_phone_purchase(conn, request_id: str, credential_id: str):
+        row = await conn.fetchrow(
+            """UPDATE credential_requests SET status='fulfilled', credential_id=$2::uuid,
+               fulfilled_at=now(), provision_error=NULL WHERE id=$1::uuid AND status='provisioning' RETURNING id""",
+            request_id, credential_id,
+        )
+        if row is None:
+            raise ValueError("The purchase request is no longer active")
+
     async def list_credential_requests(
         self, requester_id: str
     ) -> List[CredentialRequestRow]:
         """Outgoing credential requests for the current user."""
         sql = """
             SELECT id, target_email, credential_type, message, status,
-                   credential_id, expires_at, created_at, fulfilled_at
+                   credential_id, expires_at, created_at, fulfilled_at, token
             FROM credential_requests
             WHERE requester_id = $1
             ORDER BY created_at DESC
@@ -725,7 +801,7 @@ class CredentialsRepo:
                 expires_at=r['expires_at'],
                 created_at=r['created_at'],
                 fulfilled_at=r['fulfilled_at'],
-                token=None,
+                token=r["token"] if r["credential_type"] == "phone_number" else None,
             )
             for r in rows
         ]

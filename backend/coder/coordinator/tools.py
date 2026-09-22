@@ -19,7 +19,7 @@ from repositories.workflow import WorkflowRepo
 from utils.coordinator_memory import CoordinatorMemoryWrite
 from utils.builder_request import PublicationOptions
 from utils.builder_bridge import bridge_url, create_bridge_link_for_ask
-from utils.capabilities import INTERFACE_PUBLISH, OWNER_MESSAGE, capability
+from utils.capabilities import INTERFACE_PUBLISH, OWNER_MESSAGE, PHONE_NUMBERS, capability
 from utils.tool_call_log import record_tool_call
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ MAX_CHARS = 280
 _OVERVIEW_SECTIONS = ("attention", "runs", "agents", "credentials", "triggers", "upcoming", "notifications", "files")
 
 
-def coordinator_tool_params(*, include_owner_message: bool = False, include_publishing: bool = False) -> List[Dict[str, Any]]:
+def coordinator_tool_params(*, include_owner_message: bool = False, include_publishing: bool = False, include_phone_numbers: bool = False) -> List[Dict[str, Any]]:
     """ChatCompletionToolParam dicts — the shape Agent.create's custom_tools takes.
     ``message_owner`` is advertised only where the instance can deliver one."""
     def tool(name: str, description: str, properties: Dict[str, Any], required: Optional[List[str]] = None):
@@ -113,6 +113,19 @@ def coordinator_tool_params(*, include_owner_message: bool = False, include_publ
         tool("restore_workflow", "Bring a trashed workflow back, with its schedules and webhooks.",
              {"workflow_id": {"type": "string"}}, ["workflow_id"]),
     ]
+    if include_phone_numbers:
+        params.extend([
+            tool("find_phone_numbers", "Find available US local phone numbers and their monthly price. Does not buy a number.",
+                 {"area_code": {"type": "string"}, "contains": {"type": "string"}}),
+            tool("phone_number_request_status", "Read a phone purchase request's status and purchased credential. Pending/provisioning means it is not confirmed yet.",
+                 {"request_id": {"type": "string"}}, ["request_id"]),
+            tool("request_phone_number", "Prepare a phone-number purchase and return a link for the signed-in owner to review "
+                 "the selected number, purpose and recurring charge. Never buys automatically. Reuses the active request. "
+                 "After purchase, use request_build to configure the agent/workflow with its phone_number credential.",
+                 {"purpose": {"type": "string", "description": "What the owner wants this number used for."},
+                  "phone_number": {"type": "string", "description": "An available number from find_phone_numbers, or omit to let the owner choose."}},
+                 ["purpose"]),
+        ])
     if include_owner_message:
         params.append(tool(
             "message_owner",
@@ -169,6 +182,10 @@ class CoordinatorTools:
             "trash_workflow": self.trash_workflow,
             "restore_workflow": self.restore_workflow,
         }
+        if capability(PHONE_NUMBERS) is not None:
+            self._tools["phone_number_request_status"] = self.phone_number_request_status
+            self._tools["find_phone_numbers"] = self.find_phone_numbers
+            self._tools["request_phone_number"] = self.request_phone_number
         if capability(OWNER_MESSAGE) is not None:
             self._tools["message_owner"] = self.message_owner
 
@@ -178,7 +195,8 @@ class CoordinatorTools:
 
     def tool_params(self) -> List[Dict[str, Any]]:
         return coordinator_tool_params(include_owner_message=self.can_message_owner,
-                                       include_publishing=capability(INTERFACE_PUBLISH) is not None)
+                                       include_publishing=capability(INTERFACE_PUBLISH) is not None,
+                                       include_phone_numbers=capability(PHONE_NUMBERS) is not None)
 
     async def execute(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """The custom_tool_executor seam: dispatch, never raise, always audit."""
@@ -312,6 +330,20 @@ class CoordinatorTools:
         )
         result.pop("your_node_id", None)
         return result
+
+    async def find_phone_numbers(self, area_code=None, contains=None):
+        from utils.phone_purchase import PhonePurchase
+        return await PhonePurchase(self.pool, self.user_id).search(area_code=area_code, contains=contains)
+
+    async def phone_number_request_status(self, request_id: str):
+        from utils.phone_purchase import PhonePurchase
+        service = PhonePurchase(self.pool, self.user_id)
+        row = await service.repo.phone_purchase_by_id(request_id, self.user_id)
+        return service.view(row) if row else {"success": False, "error": "Purchase request not found"}
+
+    async def request_phone_number(self, purpose: str, phone_number=None):
+        from utils.phone_purchase import PhonePurchase
+        return await PhonePurchase(self.pool, self.user_id).create(purpose, phone_number)
 
     async def request_build(
         self, instructions: Optional[str] = None, workflow_id: Optional[str] = None, name: Optional[str] = None,

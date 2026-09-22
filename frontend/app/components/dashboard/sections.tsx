@@ -662,6 +662,12 @@ function AttentionActions({ item, values, expanded, onToggle }: { item: Attentio
                 </>
             );
         case 'credential_request':
+            if (item.credentialType === 'phone_number' && item.link) return (
+                <>
+                    <PrimaryButton onClick={() => window.location.assign(item.link!)}>{item.meta?.status === 'provisioning' ? 'Check purchase' : 'Review purchase'}</PrimaryButton>
+                    {item.meta?.status !== 'provisioning' && <QuietButton onClick={() => actions.cancelCredentialRequest(item)}>Cancel</QuietButton>}
+                </>
+            );
             return (
                 <>
                     <QuietButton onClick={() => actions.cancelCredentialRequest(item)}>Cancel</QuietButton>

@@ -8,6 +8,10 @@ _E164 = re.compile(r"^\+[1-9][0-9]{6,14}$")
 _FORMATTING = re.compile(r"[\s\-().]")
 
 
+class PhonePurchaseRejected(ValueError):
+    """The provider definitively refused a purchase; no number was bought."""
+
+
 def normalize_e164(raw: str | None) -> str | None:
     """'+1 (424) 242-1064' -> '+14242421064'; None unless it is a full
     international number. A leading 00 is the dial-out prefix outside North
