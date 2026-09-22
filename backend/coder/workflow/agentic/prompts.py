@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Tuple
 
+from coder.workflow.user_context import build_user_context as _build_user_context
+
 from nodes.agent.config.llm import DEFAULT_LLM_AGENT_MODEL
 
 from ..graph_state import GraphState
@@ -170,56 +172,6 @@ def _build_n8n_import_context(n8n_context: Optional[Dict[str, Dict[str, Any]]]) 
 
     return "\n".join(lines)
 
-
-def _build_user_context(
-    user_context: Optional[Dict[str, Any]],
-    current_graph: Optional[GraphState] = None,
-) -> str:
-    """Build context section describing what the user is currently looking at."""
-    if not user_context:
-        return ""
-    parts = ["## Current User Context"]
-    has_workflow = user_context.get('has_workflow')
-    workflow_id = user_context.get('workflow_id')
-    workflow_name = user_context.get('workflow_name')
-    # A present workflow_id means a workflow IS open. Only derive when the flag
-    # is absent (the resume-after-ask path passes workflow_id without it); an
-    # explicit False still wins. Without this, a missing flag fell through to
-    # "does NOT have a workflow open", which made the brain re-add existing nodes.
-    if has_workflow is None:
-        has_workflow = bool(workflow_id)
-    if has_workflow and workflow_id:
-        wf_label = f'"{workflow_name}" ({workflow_id})' if workflow_name else workflow_id
-        parts.append(f"The user has workflow {wf_label} open. Add nodes directly to this workflow — do NOT create a new workflow unless the user explicitly asks for one.")
-    elif not has_workflow:
-        parts.append("The user does NOT have a workflow open. If they mention an existing workflow, use <list_workflows> to find it and <open_workflow> to navigate there.")
-    inner_tab = user_context.get('inner_tab')
-    if inner_tab:
-        parts.append(f"The user is viewing the '{inner_tab}' tab.")
-        if inner_tab == 'interface':
-            parts.append(
-                "They are looking at the Interface tab — they want a custom UI. "
-                "Unless they are explicitly asking to edit an existing interface node, "
-                "default to creating a NEW `interface-html-react` node. "
-                "Add it with a DETAILED `goal` describing the UI — what it shows/does, and which "
-                "nodes' data it reads (the system wires those via `nodes.getOutput(...)`). "
-                "Do NOT write `jsx_source` or set `operation`/`fullscreen` yourself on the new node — "
-                "the system authors a fullscreen React interface from your goal (node drafting). "
-                "To refine an EXISTING interface afterward, edit its `jsx_source` directly with a `<field>` patch. "
-                "Never add ReactFlow edges to interface-html-react nodes."
-            )
-    selected = user_context.get('selected_node_id')
-    if selected:
-        parts.append(f"The user has selected node/block: {selected}")
-        # Add type info for the selected node
-        if current_graph and selected in current_graph.nodes:
-            node = current_graph.nodes[selected]
-            parts.append(f"  Type: {node.type}, Operation: {node.operation or 'not set'}")
-            # Hint about reading its config
-            long_fields = [k for k, v in node.config.items() if v and len(str(v)) > 120]
-            if long_fields:
-                parts.append(f"  Has large config fields: {', '.join(long_fields)} — use <read_config node=\"{selected}\" field=\"...\"> to inspect")
-    return "\n".join(parts)
 
 
 def _build_edit_scope_directive(
