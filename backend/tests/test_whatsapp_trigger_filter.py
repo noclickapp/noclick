@@ -146,6 +146,7 @@ def test_resolve_agent_event_surfaces_chat_id_verbatim():
     assert resolved["conversation_key"] == "12025550101@c.us"
     assert "12025550101@c.us" in resolved["text"]
     assert "Hey, how are you?" in resolved["text"]
+    assert "not the reply address" not in resolved["text"]  # no senderPhone → no identity note
 
 
 def test_resolve_agent_event_lid_chat_id_preserved():
@@ -174,6 +175,38 @@ def test_resolve_agent_event_group_names_participant():
     # Reply to the group; the actual human sender is named in the text.
     assert resolved["conversation_key"] == "120000000000000001@g.us"
     assert "12025550101@c.us" in resolved["text"]
+
+
+def test_resolve_agent_event_lid_sender_carries_phone_and_name():
+    """A @lid chat id hides the number; the header must still say who wrote
+    (WAHooks senderPhone + pushName) so a "supervisor = +1 …" rule can match.
+    The reply address stays the chat id."""
+    event = _wahooks_event("12025550102@lid")
+    event["payload"]["senderPhone"] = "12025550107"
+    event["payload"]["_data"]["pushName"] = "Ada"
+    resolved = WhatsAppNode.resolve_agent_event(event)
+    header = resolved["text"].split("\n", 1)[0]
+    assert header == "WhatsApp message from 12025550102@lid (Ada, phone +12025550107):"
+    assert "to=12025550102@lid" in resolved["text"]
+    assert "not the reply address" in resolved["text"]
+    assert resolved["conversation_key"] == "12025550102@lid"
+    assert resolved["title"] == "Ada"
+
+
+def test_resolve_agent_event_phone_omitted_when_it_is_the_chat_id():
+    event = _wahooks_event("12025550101@c.us")
+    event["payload"]["senderPhone"] = "+12025550101"
+    text = WhatsAppNode.resolve_agent_event(event)["text"]
+    assert "phone" not in text.split("\n", 1)[0]
+    assert "not the reply address" not in text
+
+
+def test_resolve_agent_event_group_participant_carries_phone():
+    event = _wahooks_event("120000000000000001@g.us", participant="12025550103@lid")
+    event["payload"]["senderPhone"] = "12025550107"
+    header = WhatsAppNode.resolve_agent_event(event)["text"].split("\n", 1)[0]
+    assert header.startswith("WhatsApp message from 120000000000000001@g.us (sent by 12025550103@lid")
+    assert "phone +12025550107" in header
 
 
 def test_resolve_agent_event_cloud_api_envelope():
