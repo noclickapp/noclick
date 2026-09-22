@@ -738,6 +738,9 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
     if not row:
         raise HTTPException(status_code=404, detail="Credential request not found")
 
+    if row['credential_type'] == 'phone_number':
+        raise HTTPException(403, "Phone numbers require an authenticated purchase confirmation.")
+
     if row['status'] != 'pending':
         raise HTTPException(status_code=410, detail=f"This credential request has already been {row['status']}")
 

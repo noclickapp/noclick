@@ -52,11 +52,17 @@ class PhonePurchase:
         if status == "pending" and row["expires_at"] <= datetime.now(timezone.utc):
             status = "expired"
         quote = row["purchase_quote"]
+        error = row["provision_error"]
+        started = row["provisioning_started_at"]
+        if status == "provisioning" and not error and (
+            started is None or started < datetime.now(timezone.utc) - timedelta(minutes=2)
+        ):
+            error = "This purchase is taking longer than expected. Do not start another purchase; contact support to verify its outcome."
         return {
             "request_id": str(row["id"]), "status": status, "purpose": row["message"],
             "quote": quote, "credential_id": str(row["credential_id"]) if row["credential_id"] else None,
             "phone_number": quote["phone_number"] if quote else None,
-            "error": row["provision_error"],
+            "error": error,
         }
 
     async def status(self, token):

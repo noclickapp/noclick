@@ -145,6 +145,16 @@ async def test_request_refresh_preserves_review_and_inflight_purchase(phone_db):
     numbers.buy.assert_not_awaited()
 
 
+async def test_abandoned_purchase_surfaces_uncertainty_without_buying_again(phone_db):
+    pool, service, token, numbers = phone_db
+    quote = (await service.quote(token, NUMBER))["quote"]
+    await service.repo.claim_phone_purchase(token, USER, quote["id"], 15)
+    await pool.execute("UPDATE credential_requests SET provisioning_started_at=now()-interval '3 minutes' WHERE token=$1", token)
+    result = await service.confirm(token, quote["id"])
+    assert result["status"] == "provisioning" and "contact support" in result["error"]
+    numbers.buy.assert_not_awaited()
+
+
 async def test_owner_auth_and_request_scope_http(phone_db, monkeypatch):
     pool, service, token, numbers = phone_db
     quote = (await service.quote(token, NUMBER))["quote"]
@@ -181,6 +191,7 @@ async def test_public_manual_credential_route_cannot_forge_phone_number(phone_db
     with pytest.raises(HTTPException) as exc:
         await public.provide_credential(token, public.ProvideCredentialBody(credential_data={"phone_number": NUMBER, "number_sid": "forged"}))
     assert exc.value.status_code == 403
+    assert await pool.fetchval("SELECT provision_attempts FROM credential_requests WHERE token=$1", token) == 0
     numbers.buy.assert_not_awaited()
 
 

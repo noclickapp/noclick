@@ -92,7 +92,10 @@ export default function PhonePurchasePage() {
     }, []);
     const check = async () => {
         setChecking(true);
-        try { setState(await send({ event_name: 'phone_number:status' })); }
+        try {
+            const next = await send({ event_name: 'phone_number:status' });
+            setState(s => next.status ? next : { ...s, error: next.error || 'Could not check this request. Try again.' });
+        }
         catch { setState(s => ({ ...s, error: 'Could not check this request. Refresh the page to sign in again.' })); }
         finally { setChecking(false); }
     };
