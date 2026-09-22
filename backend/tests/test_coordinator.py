@@ -16,11 +16,13 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 from coder.coordinator import agent as coordinator
+from coder.coordinator import tools as coordinator_tools
 from coder.coordinator.tools import (
     COORDINATOR_NODE_ID, CoordinatorTools, bounded, coordinator_tool_params,
 )
 from tests.mocks.mock_asyncpg import MockNativePool
 from utils import capabilities
+from utils.account_link import Verified
 from utils.capabilities import OWNER_MESSAGE
 from tests.utils.base_handler_test import BaseHandlerTest
 from utils import feature_gates
@@ -263,8 +265,46 @@ async def test_turn_wires_persistence_tools_and_billing_identity(turn_seams, mon
     assert "Current UTC time:" in config.settings.system_prompt
     assert callable(captured["call_model_input_filter"])
     assert captured.get("history_limit") is None
-    assert config.capabilities.custom_tool_names == [t["function"]["name"] for t in tools().tool_params()]
+    # An account with no email (made by a WhatsApp first contact) can connect one.
+    names = config.capabilities.custom_tool_names
+    assert names == [t["function"]["name"] for t in tools().tool_params()] + ["connect_account", "confirm_connect_code"]
     assert not config.capabilities.enable_cmd and not config.capabilities.enable_mcp
+
+    await coordinator.run_coordinator_turn(sio="SIO", sid="sid-1", user_id=USER, user_email="a@b.c", text="hi")
+    assert captured["config"].capabilities.custom_tool_names == [t["function"]["name"] for t in tools().tool_params()]
+
+
+async def test_a_verified_connect_code_moves_the_account_after_the_turn_is_saved(turn_seams, monkeypatch):
+    order = []
+
+    class FakeLink:
+        def __init__(self, pool):
+            pass
+
+        async def verify(self, user_id, code):
+            order.append(("verify", user_id, code))
+            return Verified(email="ada@example.com", merges=True)
+
+        async def complete(self, user_id):
+            order.append(("complete", user_id, [p[0] for p in FakeChat.persisted]))
+            return "target-user"
+    monkeypatch.setattr(coordinator_tools, "AccountLink", FakeLink)
+    monkeypatch.setattr(coordinator, "AccountLink", FakeLink)
+
+    class ConnectingAgent(FakeAgent):
+        async def __call__(self, message):
+            result = await self.kwargs["custom_tool_executor"]("confirm_connect_code", {"code": "123456"})
+            assert result["joins_existing_account"] is True and "ada@example.com" in result["outcome"]
+            await super().__call__(message)
+    monkeypatch.setattr(coordinator, "Agent", ConnectingAgent)
+    await coordinator.run_coordinator_turn(sio=None, sid="", user_id=USER, user_email=None, text="it's 123456")
+    # The reply was persisted into this account's thread before the thread moved.
+    assert order == [("verify", USER, "123456"), ("complete", USER, ["user", "emit"])]
+
+    order.clear()
+    monkeypatch.setattr(coordinator, "Agent", FakeAgent)
+    await coordinator.run_coordinator_turn(sio=None, sid="", user_id=USER, user_email=None, text="hi")
+    assert order == []  # no code, no move
 
 
 @pytest.mark.parametrize("channel", ["web", "voice", "whatsapp_text"])

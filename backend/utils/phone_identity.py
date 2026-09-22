@@ -153,6 +153,12 @@ class PhoneIdentity:
             await self.repo.record_check(challenge_id, status="pending")
             raise PhoneLinkError("invalid_code")
         phone = challenge["phone_e164"]
+        holder = await self.repo.get_user_by_phone(phone)
+        if holder is not None and str(holder["user_id"]) != user_id and not await self.repo.account_email(str(holder["user_id"])):
+            # The number was all that phone-only account had; proving it is
+            # proving that account, so it folds into this one.
+            await self.repo.absorb(source=str(holder["user_id"]), target=user_id)
+            logger.info("phone_only_account_absorbed source=%s target=%s", holder["user_id"], user_id)
         try:
             binding = await self.repo.consume_and_link(
                 user_id=user_id, phone_e164=phone, challenge_id=challenge_id,

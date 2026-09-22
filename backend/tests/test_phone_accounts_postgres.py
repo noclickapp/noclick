@@ -73,8 +73,7 @@ async def test_first_contact_makes_a_phone_only_account_with_a_workspace(phones_
     user = await pool.fetchrow("SELECT email, phone, raw_user_meta_data FROM auth.users WHERE id = $1::uuid", first.user_id)
     assert user["email"] is None and user["phone"] == "15550100001"
     assert user["raw_user_meta_data"]["name"] == "Ada"
-    # The signup triggers ran: a free-tier billing row and a personal workspace.
-    assert await pool.fetchval("SELECT subscription_tier FROM user_billing WHERE id = $1::uuid", first.user_id) == "free"
+    # The signup triggers ran: a personal workspace (and, hosted, a free-tier billing row).
     assert await pool.fetchval(
         "SELECT o.name FROM organization_members m JOIN organizations o ON o.id = m.organization_id "
         "WHERE m.user_id = $1::uuid AND m.role = 'owner'", first.user_id,

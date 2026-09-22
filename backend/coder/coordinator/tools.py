@@ -19,6 +19,7 @@ from repositories.workflow import WorkflowRepo
 from utils.coordinator_memory import CoordinatorMemoryWrite
 from utils.builder_request import PublicationOptions
 from utils.builder_bridge import bridge_url, create_bridge_link_for_ask
+from utils.account_link import AccountLink, AccountLinkError
 from utils.capabilities import INTERFACE_PUBLISH, OWNER_MESSAGE, PHONE_NUMBERS, capability
 from utils.tool_call_log import record_tool_call
 
@@ -34,7 +35,8 @@ MAX_CHARS = 280
 _OVERVIEW_SECTIONS = ("attention", "runs", "agents", "credentials", "triggers", "upcoming", "notifications", "files")
 
 
-def coordinator_tool_params(*, include_owner_message: bool = False, include_publishing: bool = False, include_phone_numbers: bool = False) -> List[Dict[str, Any]]:
+def coordinator_tool_params(*, include_owner_message: bool = False, include_publishing: bool = False, include_phone_numbers: bool = False,
+                            include_account_connect: bool = False) -> List[Dict[str, Any]]:
     """ChatCompletionToolParam dicts — the shape Agent.create's custom_tools takes.
     ``message_owner`` is advertised only where the instance can deliver one."""
     def tool(name: str, description: str, properties: Dict[str, Any], required: Optional[List[str]] = None):
@@ -161,6 +163,19 @@ def coordinator_tool_params(*, include_owner_message: bool = False, include_publ
              "link": {"type": "string", "description": "Optional URL, sent on its own line."}},
             ["text"],
         ))
+    if include_account_connect:
+        params.extend([
+            tool("connect_account",
+                 "This account belongs to the chat's phone number alone: it has no email. When the owner asks to "
+                 "connect an existing NoClick account, or to add an email for signing in on the web, send a 6-digit "
+                 "code to the email they give. Never guess or reuse an email they didn't give in this conversation.",
+                 {"email": {"type": "string"}}, ["email"]),
+            tool("confirm_connect_code",
+                 "Check the code the owner received by email. On a match, once this reply is sent, the chat joins the "
+                 "account that already has that email (its workflows, credentials, memories and this conversation move "
+                 "there) or, when none does, this account takes the email for signing in. Tell them which happened.",
+                 {"code": {"type": "string"}}, ["code"]),
+        ])
     return params
 
 
@@ -183,7 +198,7 @@ def bounded(value: Any, *, max_items: int = MAX_ITEMS, max_chars: int = MAX_CHAR
 
 class CoordinatorTools:
     def __init__(self, *, pool, sio, user_id: str, organization_id: Optional[str], conversation_id: str,
-                 reply_channel: str = "web", continuation=None):
+                 reply_channel: str = "web", continuation=None, phone_only: bool = False):
         self.pool = pool
         self.sio = sio
         self.user_id = user_id
@@ -220,6 +235,10 @@ class CoordinatorTools:
             self._tools["request_phone_number"] = self.request_phone_number
         if capability(OWNER_MESSAGE) is not None:
             self._tools["message_owner"] = self.message_owner
+        if phone_only:
+            self._tools["connect_account"] = self.connect_account
+            self._tools["confirm_connect_code"] = self.confirm_connect_code
+        self.connect_verified = False
 
     @property
     def can_message_owner(self) -> bool:
@@ -228,7 +247,8 @@ class CoordinatorTools:
     def tool_params(self) -> List[Dict[str, Any]]:
         return coordinator_tool_params(include_owner_message=self.can_message_owner,
                                        include_publishing=capability(INTERFACE_PUBLISH) is not None,
-                                       include_phone_numbers=capability(PHONE_NUMBERS) is not None)
+                                       include_phone_numbers=capability(PHONE_NUMBERS) is not None,
+                                       include_account_connect="connect_account" in self._tools)
 
     async def execute(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """The custom_tool_executor seam: dispatch, never raise, always audit."""
@@ -504,6 +524,28 @@ class CoordinatorTools:
         from wss.handlers.workflow_handler import restore_workflow_as_owner
 
         return await restore_workflow_as_owner(self.pool, workflow_id, self.user_id)
+
+    async def connect_account(self, email: str) -> Dict[str, Any]:
+        try:
+            sent = await AccountLink(self.pool).start(self.user_id, email)
+        except AccountLinkError as exc:
+            return {"success": False, "error": str(exc), "kind": exc.kind}
+        return {"success": True, **sent, "next": "Ask them for the code from that email."}
+
+    async def confirm_connect_code(self, code: str) -> Dict[str, Any]:
+        try:
+            verified = await AccountLink(self.pool).verify(self.user_id, code)
+        except AccountLinkError as exc:
+            return {"success": False, "error": str(exc), "kind": exc.kind}
+        self.connect_verified = True
+        if verified.merges:
+            outcome = (f"This chat joins the existing account for {verified.email} as soon as this reply is sent: its "
+                       "workflows, credentials, memories and this conversation move there, and they can sign in on "
+                       "the web with that email.")
+        else:
+            outcome = (f"No account had {verified.email}, so this account takes it: from this reply on they can sign "
+                       "in on the web with that email. Everything here stays as it is.")
+        return {"success": True, "email": verified.email, "joins_existing_account": verified.merges, "outcome": outcome}
 
     async def message_owner(self, text: str, link: Optional[str] = None) -> Dict[str, Any]:
         send = capability(OWNER_MESSAGE)

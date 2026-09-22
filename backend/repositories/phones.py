@@ -163,6 +163,12 @@ class PhoneRepo:
     async def account_email(self, user_id: str) -> Optional[str]:
         return await get_user_email(self._pool, user_id) or None
 
+    async def absorb(self, *, source: str, target: str) -> None:
+        """Fold a phone-only account into ``target`` (its numbers included)."""
+        from utils.account_link import merge_into
+
+        await merge_into(self._pool, source=source, target=target)
+
     async def touch_seen(self, phone_e164: str) -> None:
         await self._pool.execute(
             "UPDATE public.user_phones SET last_seen_at = now() "

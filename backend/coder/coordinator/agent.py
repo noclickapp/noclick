@@ -19,6 +19,7 @@ from coder.openai_agent import Agent
 from coder.openai_agent.config import AgentConfiguration
 from nodes.agent.config.llm import DEFAULT_LLM_AGENT_MODEL
 from repositories.coordinator_wakeups import CoordinatorWakeupRepo, coordinator_lock
+from utils.account_link import AccountLink
 from utils.database_pool import get_native_pool
 from wss.handlers.agent_handler import AgentHandler
 from wss.handlers.workflow_handler import get_user_org_context
@@ -169,6 +170,7 @@ async def run_coordinator_turn(
             pool=pool, sio=sio, user_id=user_id, organization_id=organization_id,
             conversation_id=conversation_id,
             reply_channel=(extra or {}).get("channel") or "web", continuation=continuation,
+            phone_only=not user_email,
         )
         from coder.coordinator.tasks import task_context
 
@@ -275,6 +277,9 @@ async def run_coordinator_turn(
             ))
         finally:
             await agent.cleanup()
+        if tools.connect_verified:
+            # The turn is persisted; the thread it lives in can now move.
+            await AccountLink(pool).complete(user_id)
         if completion and failed:
             # A recurring alarm stops after a failed turn. Do not silently
             # repeat a provider/context failure on every scheduled occurrence.
