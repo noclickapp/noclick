@@ -262,18 +262,8 @@ export function TikTokPublishingPanel({
             )}
             <p className="text-xs text-muted-foreground">
                 By posting, you agree to TikTok’s{' '}
-                <a
-                    href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline"
-                >
-                    Music Usage Confirmation
-                </a>
                 {paid && (
                     <>
-                        {' '}
-                        and{' '}
                         <a
                             href="https://www.tiktok.com/legal/page/global/bc-policy/en"
                             target="_blank"
@@ -282,8 +272,17 @@ export function TikTokPublishingPanel({
                         >
                             Branded Content Policy
                         </a>
+                        {' and '}
                     </>
                 )}
+                <a
+                    href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline"
+                >
+                    Music Usage Confirmation
+                </a>
                 .
             </p>
             <p className="text-xs text-muted-foreground">

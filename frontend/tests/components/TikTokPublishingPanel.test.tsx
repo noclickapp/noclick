@@ -101,6 +101,13 @@ describe('TikTok publishing controls', () => {
         expect(
             screen.getByRole('link', { name: 'Branded Content Policy' })
         ).toBeTruthy();
+        expect(
+            screen
+                .getByRole('link', { name: 'Music Usage Confirmation' })
+                .closest('p')?.textContent
+        ).toMatch(
+            /By posting, you agree to TikTok’s Branded Content Policy and Music Usage Confirmation\./
+        );
         expect(screen.getByRole('alert').textContent).toContain(
             'cannot be private'
         );
@@ -117,6 +124,13 @@ describe('TikTok publishing controls', () => {
     it('keeps commercial disclosure off until selected', async () => {
         const { onChange } = show();
         await screen.findByText('Post to TikTok · Review Creator');
+        expect(
+            screen
+                .getByRole('link', { name: 'Music Usage Confirmation' })
+                .closest('p')?.textContent
+        ).toMatch(
+            /By posting, you agree to TikTok’s Music Usage Confirmation\./
+        );
         expect(screen.queryByLabelText('Promote your own brand')).toBeNull();
         fireEvent.click(screen.getByLabelText('Disclose commercial content'));
         expect(onChange).toHaveBeenCalledWith(
