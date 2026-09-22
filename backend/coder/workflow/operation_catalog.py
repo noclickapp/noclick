@@ -607,6 +607,8 @@ def node_requires_credentials(
     """
     if node_type == 'agent':
         return agent_credential_requirement(config).required
+    if credentials_truly_optional(node_type):
+        return False
     return bool(_credential_schema_refs(node_type, operation, config)[1])
 
 

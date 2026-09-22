@@ -69,8 +69,49 @@ def test_truly_optional_nodes_say_not_required(node_type):
     """Public feeds/endpoints must get the POSITIVE signal, not silence and
     not a demand — the brain treats a bare node as needing nothing."""
     assert get_credential_info(node_type, None, {}) is None
+    assert node_requires_credentials(node_type, None, {}) is False
     assert credential_status_line(node_type, None, {}, 'n1') == (
         '[credentials: not required for this operation]'
+    )
+
+
+def test_public_http_receiver_does_not_block_trigger_activation():
+    from utils.workflow_readiness import activation_issues
+
+    graph = {
+        'nodes': [
+            {'id': 'start', 'type': 'trigger-run', 'config': {}},
+            {
+                'id': 'receiver',
+                'type': 'automation-http-request',
+                'config': {
+                    'operation': 'send_http_post_request',
+                    'url': 'https://example.test/receive',
+                },
+            },
+        ],
+        'edges': [{'source': 'start', 'target': 'receiver'}],
+    }
+    assert activation_issues(graph, 'start') == []
+
+
+def test_required_oauth_node_still_blocks_trigger_activation():
+    from utils.workflow_readiness import activation_issues
+
+    graph = {
+        'nodes': [
+            {'id': 'start', 'type': 'trigger-run', 'config': {}},
+            {
+                'id': 'instagram',
+                'type': 'automation-instagram',
+                'config': {'operation': 'get_media_details', 'media_id': '123'},
+            },
+        ],
+        'edges': [{'source': 'start', 'target': 'instagram'}],
+    }
+    assert any(
+        issue['node_id'] == 'instagram' and issue['code'] == 'missing_credentials'
+        for issue in activation_issues(graph, 'start')
     )
 
 
