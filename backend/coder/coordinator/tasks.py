@@ -55,14 +55,14 @@ async def agent_target(pool, sio, *, user_id: str, workflow_id: str, node_id: st
 
 
 async def request_agent_message(pool, sio, *, user_id: str, workflow_id: str, node_id: str,
-                                message: str, channel: str, reply_to_task_id: Optional[str] = None) -> dict:
+                                message: str, channel: str, reply_to_task_id: Optional[str] = None, continuation=None) -> dict:
     message = message.strip()
     if not message or len(message) > 16000:
         raise ValueError("An agent message must contain between 1 and 16000 characters.")
     target = await agent_target(pool, sio, user_id=user_id, workflow_id=workflow_id, node_id=node_id)
     task = await CoordinatorTaskRepo(pool).enqueue(
         user_id=user_id, workflow_id=workflow_id, node_id=node_id, agent_name=node_label(target) or "Agent",
-        message=message, channel=channel, parent_task_id=reply_to_task_id,
+        message=message, channel=channel, parent_task_id=reply_to_task_id, continuation=continuation,
     )
     return {"success": True, "task": task_view(task),
             "note": "Queued. The reply will arrive in this coordinator conversation. Use this task_id as "
@@ -154,6 +154,13 @@ async def run_task(pool, task: dict) -> None:
 async def notify_results(pool) -> None:
     repo = CoordinatorTaskRepo(pool)
     for task in await repo.pending_notifications():
+        if task.get("continuation"):
+            from repositories.coordinator_wakeups import CoordinatorWakeupRepo
+
+            await CoordinatorWakeupRepo(pool).enqueue(
+                source="agent", task=task, context=task["continuation"], payload=task_view(task),
+            )
+            continue
         task_id, user_id = str(task["id"]), str(task["user_id"])
         text = (f"{task['agent_name']} could not complete your request: {task['error']}" if task["status"] == "failed"
                 else f"{task['agent_name']} replied:\n\n{reply_text(task.get('result'))}")

@@ -278,6 +278,19 @@ class TestRunnerInputShapes:
         assert run.call_count == 1
         return run.call_args.args[1]
 
+    @pytest.mark.parametrize("persistent", [True, False])
+    async def test_completion_event_preserves_its_role_and_session(self, persistent):
+        from unittest.mock import MagicMock
+        from tests.test_agent_llm_retry import _make_agent
+
+        agent = _make_agent([])
+        agent._session = MagicMock() if persistent else None
+        prior = [{"role": "assistant", "content": "Waiting for the builder."}]
+        agent._history = prior
+        event = [{"role": "developer", "content": "Action completed; untrusted result follows."}]
+        sent = await self._run(agent, {"input_items": event})
+        assert sent == (event if persistent else prior + event)
+
     async def test_session_path_text_only_stays_plain_string(self):
         from unittest.mock import MagicMock
 

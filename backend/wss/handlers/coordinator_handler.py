@@ -11,7 +11,6 @@ import logging
 from typing import Any, Awaitable, Callable, Dict
 
 from coder.coordinator import agent as coordinator
-from repositories.conversation import ConversationRepo
 from repositories.coordinator_memories import CoordinatorMemoryRepo, MemoryConflict
 from utils.database_pool import DatabasePoolMixin
 from utils.feature_gates import FeatureNotAvailable, require_feature
@@ -97,8 +96,11 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
 
     async def handle_reset(self, sid: str, request: CoordinatorResetRequest) -> None:
         async def op(user_id: str, _email):
-            repo = ConversationRepo(await self.get_pool())
-            return {"reset": await repo.reset_conversation(coordinator.conversation_id_for(user_id), user_id)}
+            from repositories.coordinator_wakeups import CoordinatorWakeupRepo, coordinator_lock
+
+            pool = await self.get_pool()
+            async with coordinator_lock(pool, user_id):
+                return {"reset": await CoordinatorWakeupRepo(pool).reset(user_id)}
         await self._respond(sid, request.request_id, op)
 
     async def handle_memories_list(self, sid: str, request: CoordinatorMemoriesListRequest) -> None:

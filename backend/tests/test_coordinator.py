@@ -9,6 +9,7 @@ routing, gated on the coordinator rollout.
 """
 
 import asyncio
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, patch
 
@@ -219,8 +220,15 @@ class FakeChat:
         FakeChat.persisted.append(("user", kw["conversation_id"], kw["node_id"], kw["content"], kw.get("extra")))
 
 
+@asynccontextmanager
+async def fake_coordinator_lock(pool, user_id):
+    yield AsyncMock()
+
+
 @pytest.fixture
 def turn_seams(monkeypatch):
+    monkeypatch.setattr(coordinator, "coordinator_lock", fake_coordinator_lock)
+    monkeypatch.setattr(coordinator.CoordinatorWakeupRepo, "epoch", AsyncMock(return_value=""))
     FakeAgent.calls.clear()
     FakeChat.persisted.clear()
     monkeypatch.setattr(coordinator, "Agent", FakeAgent)
@@ -248,7 +256,7 @@ async def test_turn_wires_persistence_tools_and_billing_identity(turn_seams, mon
     await coordinator.run_coordinator_turn(sio="SIO", sid="sid-1", user_id=USER, user_email=None, text="hi")
     assert captured["conversation_id"] == CID and captured["enable_persistence"] is True
     assert captured["user_id"] == USER and captured["organization_id"] == ORG and captured["sio"] == "SIO"
-    assert captured["custom_tool_executor"].__self__.__class__ is CoordinatorTools
+    assert callable(captured["custom_tool_executor"])
     config = captured["config"]
     assert config.llm.model == coordinator.COORDINATOR_MODEL and config.settings.system_prompt == coordinator.SYSTEM_PROMPT
     assert config.capabilities.custom_tool_names == [t["function"]["name"] for t in tools().tool_params()]
@@ -370,8 +378,8 @@ class TestCoordinatorHandler(BaseHandlerTest):
         assert self.turn.await_args.kwargs["user_email"] == "someone@example.com"
         assert self.turn.await_args.kwargs["sid"] == sid
 
-        monkeypatch.setattr("coder.coordinator.tools.ConversationRepo.reset_conversation", AsyncMock(return_value=True))
-        monkeypatch.setattr("wss.handlers.coordinator_handler.ConversationRepo.reset_conversation", AsyncMock(return_value=True))
+        monkeypatch.setattr("repositories.coordinator_wakeups.coordinator_lock", fake_coordinator_lock)
+        monkeypatch.setattr("repositories.coordinator_wakeups.CoordinatorWakeupRepo.reset", AsyncMock(return_value=True))
         reset = await self._send(frontend_sio, sid, CoordinatorResetRequest(request_id="r1"))
         assert reset["data"] == {"reset": True}
 

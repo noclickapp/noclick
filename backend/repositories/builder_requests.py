@@ -151,6 +151,8 @@ class BuilderRequestRepo:
             """WITH next AS (SELECT id FROM builder_requests
                  WHERE status IN ('completed','failed','cancelled') AND notified_at IS NULL
                  AND reply_conversation_id IS NOT NULL
+                 AND NOT EXISTS (SELECT 1 FROM coordinator_wakeups w
+                   WHERE w.source='builder' AND w.source_id=builder_requests.id)
                  AND (notification_lease_until IS NULL OR notification_lease_until < now())
                  ORDER BY updated_at FOR UPDATE SKIP LOCKED LIMIT 1)
                UPDATE builder_requests r SET notification_token=$1,
@@ -158,7 +160,7 @@ class BuilderRequestRepo:
                  delivery_error=CASE WHEN phone_state='sending' THEN
                    'Phone delivery was interrupted; receipt could not be confirmed. The result is saved here.' ELSE delivery_error END,
                  phone_state=CASE WHEN phone_state='sending' THEN 'uncertain'
-                   WHEN phone_state IS NULL AND send_to_phone THEN 'sending' ELSE phone_state END
+                   WHEN phone_state IS NULL AND send_to_phone AND NOT (origin ? 'continuation') THEN 'sending' ELSE phone_state END
                FROM next WHERE r.id=next.id RETURNING r.*""", uuid.uuid4(),
         )
         return dict(row) if row else None

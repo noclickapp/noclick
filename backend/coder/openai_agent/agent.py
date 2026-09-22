@@ -797,6 +797,11 @@ class Agent:
             if isinstance(user_content, str)
             else [{"role": "user", "content": user_content}]
         )
+        # Internal orchestrators can resume with a typed completion event rather
+        # than inventing a new user message. The SDK persists these items too.
+        if "input_items" in message:
+            new_turn = message["input_items"]
+        new_items = [{"role": "user", "content": new_turn}] if isinstance(new_turn, str) else new_turn
         # Decide the input shape based on which history backend is active:
         #   - PostgresSession path: pass just the new user turn; the SDK
         #     Runner auto-prepends prior items via session.get_items() and
@@ -806,7 +811,7 @@ class Agent:
         if self._session is not None:
             input_list = new_turn
         elif self._history:
-            input_list = self._history + [{"role": "user", "content": user_content}]
+            input_list = self._history + new_items
         else:
             input_list = new_turn
 
@@ -970,10 +975,8 @@ class Agent:
                 # turn so the next call still has the right context.
                 self._history = (
                     (self._history or [])
-                    + [
-                        {"role": "user", "content": user_content},
-                        {"role": "assistant", "content": accumulated_text},
-                    ]
+                    + new_items
+                    + [{"role": "assistant", "content": accumulated_text}]
                 )
 
         # Streamable chunks already populated the consumer's accumulator,

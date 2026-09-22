@@ -17,7 +17,7 @@ class CoordinatorTaskRepo:
         self.pool = pool
 
     async def enqueue(self, *, user_id: str, workflow_id: str, node_id: str, agent_name: str,
-                      message: str, channel: str, parent_task_id: Optional[str] = None) -> Dict[str, Any]:
+                      message: str, channel: str, parent_task_id: Optional[str] = None, continuation=None) -> Dict[str, Any]:
         task_id = uuid.uuid4()
         async with self.pool.acquire() as conn:
             async with conn.transaction():
@@ -40,9 +40,9 @@ class CoordinatorTaskRepo:
                 key = parent["conversation_key"] if parent else f"coordinator-{user_id}-{task_id}"
                 row = await conn.fetchrow(
                     """INSERT INTO coordinator_agent_tasks
-                       (id, user_id, workflow_id, node_id, agent_name, conversation_key, parent_task_id, message, channel)
-                       VALUES ($1, $2::uuid, $3::uuid, $4, $5, $6, $7::uuid, $8, $9) RETURNING *""",
-                    task_id, user_id, workflow_id, node_id, agent_name, key, parent_task_id, message, channel,
+                       (id, user_id, workflow_id, node_id, agent_name, conversation_key, parent_task_id, message, channel, continuation)
+                       VALUES ($1, $2::uuid, $3::uuid, $4, $5, $6, $7::uuid, $8, $9, $10) RETURNING *""",
+                    task_id, user_id, workflow_id, node_id, agent_name, key, parent_task_id, message, channel, continuation,
                 )
         return dict(row)
 
@@ -137,7 +137,9 @@ class CoordinatorTaskRepo:
     async def pending_notifications(self):
         return [dict(r) for r in await self.pool.fetch(
             """SELECT * FROM coordinator_agent_tasks WHERE status IN ('completed', 'failed')
-               AND notified_at IS NULL ORDER BY updated_at LIMIT 20""",
+               AND notified_at IS NULL AND NOT EXISTS (SELECT 1 FROM coordinator_wakeups w
+                 WHERE w.source='agent' AND w.source_id=coordinator_agent_tasks.id)
+               ORDER BY updated_at LIMIT 20""",
         )]
 
     async def persist_notification(self, task_id: str, event: dict) -> bool:

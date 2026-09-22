@@ -255,10 +255,14 @@ async def app_lifespan(app: FastAPI):
     coordinator_worker = asyncio.create_task(task_worker(), name="coordinator-agent-tasks")
     from coder.workflow.requests import request_worker
     builder_worker = asyncio.create_task(request_worker(), name="builder-requests")
+    from coder.coordinator.wakeups import wakeup_worker
+    completion_worker = asyncio.create_task(wakeup_worker(), name="coordinator-wakeups")
 
     try:
         yield
     finally:
+        completion_worker.cancel()
+        await asyncio.gather(completion_worker, return_exceptions=True)
         coordinator_worker.cancel()
         await asyncio.gather(coordinator_worker, return_exceptions=True)
         builder_worker.cancel()

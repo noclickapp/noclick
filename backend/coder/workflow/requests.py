@@ -143,6 +143,15 @@ async def record_result(pool, user_id, context, *, success, summary, error):
 
 
 async def notify_result(pool, request):
+    if (request.get("origin") or {}).get("continuation"):
+        from repositories.coordinator_wakeups import CoordinatorWakeupRepo
+        from coder.coordinator.tools import bounded
+
+        await CoordinatorWakeupRepo(pool).enqueue(
+            source="builder", task=request, context=request["origin"]["continuation"],
+            payload=bounded(request_view(request), max_chars=16000, max_items=30),
+        )
+        return
     repo = BuilderRequestRepo(pool)
     request_id, user_id = str(request["id"]), str(request["user_id"])
     result = request["result"] or {}
