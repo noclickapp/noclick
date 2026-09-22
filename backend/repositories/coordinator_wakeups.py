@@ -44,7 +44,7 @@ class CoordinatorWakeupRepo:
             async with conn.transaction():
                 row = await conn.fetchrow(
                     """UPDATE conversations SET events='[]'::jsonb,
-                       metadata=(COALESCE(metadata,'{}'::jsonb)-'sdk_history') ||
+                       metadata=(COALESCE(metadata,'{}'::jsonb)-'sdk_history'-'coordinator_context') ||
                          jsonb_build_object('coordinator_epoch', $3::text),
                        pending_ask=NULL, title=NULL, preview=NULL, last_activity=now()
                        WHERE conversation_id=$1 AND user_id=$2::uuid RETURNING conversation_id""",
@@ -80,18 +80,56 @@ class CoordinatorWakeupRepo:
                 )
 
     async def claim(self):
-        row = await self.pool.fetchrow(
-            """WITH next AS (SELECT id FROM coordinator_wakeups WHERE status='queued'
-                 ORDER BY created_at,id FOR UPDATE SKIP LOCKED LIMIT 1)
-               UPDATE coordinator_wakeups w SET status='running', attempt_id=$1,
-                 lease_until=now()+interval '2 minutes' FROM next WHERE w.id=next.id RETURNING w.*""",
-            uuid.uuid4(),
-        )
+        from utils.coordinator_alarm import MAX_DAILY, MIN_GAP_SECONDS
+
+        async with self.pool.acquire() as conn, conn.transaction():
+            row = await conn.fetchrow(
+                """SELECT w.* FROM coordinator_wakeups w WHERE w.status='queued' AND w.not_before<=now()
+                   AND NOT EXISTS (SELECT 1 FROM coordinator_wakeups busy WHERE busy.user_id=w.user_id
+                                   AND busy.status IN ('running','ready','delivering'))
+                   AND (w.source<>'alarm' OR (
+                     NOT EXISTS (SELECT 1 FROM coordinator_wakeups a WHERE a.user_id=w.user_id AND a.source='alarm'
+                                 AND a.id<>w.id AND (a.admitted_at>now()-$1*interval '1 second'
+                                   OR (a.alarm_id=w.alarm_id AND a.admitted_at>now()-interval '15 minutes')))
+                     AND (SELECT count(*) FROM coordinator_wakeups a WHERE a.user_id=w.user_id AND a.source='alarm'
+                          AND a.id<>w.id AND a.admitted_at>now()-interval '24 hours')<$2))
+                   ORDER BY CASE WHEN w.source='alarm' THEN 1 ELSE 0 END,w.not_before,w.created_at,w.id
+                   FOR UPDATE OF w SKIP LOCKED LIMIT 1""", MIN_GAP_SECONDS, MAX_DAILY,
+            )
+            if row is None:
+                return None
+            # Row locks alone do not serialize *different* events for one
+            # account. Reserve the account across competing worker containers.
+            if not await conn.fetchval("SELECT pg_try_advisory_xact_lock(hashtextextended($1,0))",
+                                       f"coordinator-claim:{row['user_id']}"):
+                return None
+            if await conn.fetchval("SELECT EXISTS(SELECT 1 FROM coordinator_wakeups WHERE user_id=$1 "
+                                   "AND status IN ('running','ready','delivering'))", row["user_id"]):
+                return None
+            if row["source"] == "alarm":
+                # Recheck under the account admission lock: another selected
+                # event might have finished between our initial read and lock.
+                blocked = await conn.fetchval(
+                    """SELECT count(*) >= $3 OR COALESCE(bool_or(
+                         admitted_at>now()-$4*interval '1 second' OR
+                         (alarm_id=$5 AND admitted_at>now()-interval '15 minutes')),false)
+                       FROM coordinator_wakeups WHERE user_id=$1 AND source='alarm' AND id<>$2
+                       AND admitted_at>now()-interval '24 hours'""",
+                    row["user_id"], row["id"], MAX_DAILY, MIN_GAP_SECONDS, row["alarm_id"],
+                )
+                if blocked:
+                    return None
+            row = await conn.fetchrow(
+                """UPDATE coordinator_wakeups SET status='running', attempt_id=$2,
+                   admitted_at=COALESCE(admitted_at,now()),lease_until=now()+interval '2 minutes'
+                   WHERE id=$1 RETURNING *""", row["id"], uuid.uuid4(),
+            )
         return dict(row) if row else None
 
     async def start(self, event):
         return await self.pool.fetchval(
-            """UPDATE coordinator_wakeups SET started_at=now() WHERE id=$1 AND attempt_id=$2
+            """UPDATE coordinator_wakeups SET started_at=now(),
+               admitted_at=CASE WHEN source='alarm' THEN now() ELSE admitted_at END WHERE id=$1 AND attempt_id=$2
                AND status='running' AND started_at IS NULL AND lease_until>now() RETURNING id""", event["id"], event["attempt_id"],
         ) is not None
 
@@ -102,12 +140,20 @@ class CoordinatorWakeupRepo:
             event["id"], event["attempt_id"],
         ) is not None
 
-    async def finish(self, event, text, *, skipped=False):
-        await self.pool.execute(
-            """UPDATE coordinator_wakeups SET status=$3, response=$4, lease_until=NULL
-               WHERE id=$1 AND attempt_id=$2 AND status='running'""",
-            event["id"], event["attempt_id"], "skipped" if skipped else "ready", text,
-        )
+    async def finish(self, event, text, *, skipped=False, reschedule=True):
+        from repositories.coordinator_alarms import CoordinatorAlarmRepo
+
+        async with self.pool.acquire() as conn, conn.transaction():
+            alarms = CoordinatorAlarmRepo(self.pool)
+            if event["source"] == "alarm":
+                await alarms.lock(conn, str(event["user_id"]))
+            row = await conn.fetchrow(
+                """UPDATE coordinator_wakeups SET status=$3, response=$4, lease_until=NULL
+                   WHERE id=$1 AND attempt_id=$2 AND status='running' RETURNING *""",
+                event["id"], event["attempt_id"], "skipped" if skipped else "ready", text,
+            )
+            if row and not skipped and reschedule:
+                await alarms.repeat(conn, row)
 
     async def reap_stalled(self):
         await self.pool.execute(
@@ -160,7 +206,7 @@ class CoordinatorWakeupRepo:
                 "UPDATE builder_requests SET notified_at=now(), notification_lease_until=NULL, "
                 "phone_state=$2, delivery_error=$3 WHERE id=$1", row["source_id"], phone_state, error,
             )
-        else:
+        elif row["source"] == "agent":
             await db.execute("UPDATE coordinator_agent_tasks SET notified_at=now(), delivery_error=$2 WHERE id=$1",
                              row["source_id"], error)
 

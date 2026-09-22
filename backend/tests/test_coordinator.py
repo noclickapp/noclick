@@ -258,7 +258,11 @@ async def test_turn_wires_persistence_tools_and_billing_identity(turn_seams, mon
     assert captured["user_id"] == USER and captured["organization_id"] == ORG and captured["sio"] == "SIO"
     assert callable(captured["custom_tool_executor"])
     config = captured["config"]
-    assert config.llm.model == coordinator.COORDINATOR_MODEL and config.settings.system_prompt == coordinator.SYSTEM_PROMPT
+    assert config.llm.model == coordinator.COORDINATOR_MODEL
+    assert config.settings.system_prompt.startswith(coordinator.SYSTEM_PROMPT)
+    assert "Current UTC time:" in config.settings.system_prompt
+    assert callable(captured["call_model_input_filter"])
+    assert captured.get("history_limit") is None
     assert config.capabilities.custom_tool_names == [t["function"]["name"] for t in tools().tool_params()]
     assert not config.capabilities.enable_cmd and not config.capabilities.enable_mcp
 

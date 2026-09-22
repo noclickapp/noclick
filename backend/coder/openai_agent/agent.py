@@ -295,6 +295,7 @@ class Agent:
         execution_id: Optional[str] = None,
         history_limit: Optional[int] = None,
         memory_readonly: bool = False,
+        call_model_input_filter=None,
         **kwargs,
     ) -> "Agent":
         """Async factory for ``Agent``.
@@ -329,6 +330,7 @@ class Agent:
         )
         agent._build_sdk_agent()
         agent._build_billing_hooks()
+        agent._call_model_input_filter = call_model_input_filter
         # Hook up the durable Session iff caller asked for persistence AND
         # gave us a conversation_id to key it on. Falls through to the
         # transient in-memory ``_history`` path otherwise.
@@ -837,12 +839,17 @@ class Agent:
             env_ctx = override_env(**env_overrides) if env_overrides else contextlib.nullcontext()
             try:
                 with env_ctx:
+                    run_options = {}
+                    if getattr(self, "_call_model_input_filter", None) is not None:
+                        from agents import RunConfig
+                        run_options["run_config"] = RunConfig(call_model_input_filter=self._call_model_input_filter)
                     result = Runner.run_streamed(
                         self._sdk_agent,
                         input_list,
                         hooks=self._billing_hooks,
                         session=self._session,
                         max_turns=AGENT_MAX_TURNS,
+                        **run_options,
                     )
                     # Expose to pause() so the chat UI's stop button can cancel
                     # this run. Cleared in the finally below — pause() on a

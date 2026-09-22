@@ -55,42 +55,44 @@ class CoordinatorMemoryRepo:
             raise ValueError("Memory not found.")
         return memory_view(row)
 
-    async def save(self, user_id: str, memory: CoordinatorMemoryWrite, *, origin_conversation_id: Optional[str] = None):
-        async with self.pool.acquire() as conn:
-            async with conn.transaction():
-                # Serialize creates/counts and duplicate-name checks across containers.
-                await conn.execute("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", f"coordinator-memory:{user_id}")
-                duplicate = await conn.fetchrow(
-                    "SELECT id, deleted_at FROM coordinator_memories WHERE user_id = $1::uuid AND name = $2",
-                    user_id, memory.name,
+    async def save(self, user_id: str, memory: CoordinatorMemoryWrite, *, origin_conversation_id: Optional[str] = None, conn=None):
+        if conn is None:
+            async with self.pool.acquire() as connection:
+                return await self.save(user_id, memory, origin_conversation_id=origin_conversation_id, conn=connection)
+        async with conn.transaction():
+            # Serialize creates/counts and duplicate-name checks across containers.
+            await conn.execute("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", f"coordinator-memory:{user_id}")
+            duplicate = await conn.fetchrow(
+                "SELECT id, deleted_at FROM coordinator_memories WHERE user_id = $1::uuid AND name = $2",
+                user_id, memory.name,
+            )
+            if duplicate and duplicate["id"] != memory.memory_id:
+                if duplicate["deleted_at"]:
+                    raise MemoryConflict("This memory was forgotten. Do not recreate it from old conversations.")
+                raise MemoryConflict("A memory with this name already exists. Read it before updating it.")
+            if memory.memory_id:
+                row = await conn.fetchrow(
+                    f"""UPDATE coordinator_memories SET name=$3, description=$4, memory_type=$5, content=$6,
+                        version=version+1, updated_at=clock_timestamp()
+                        WHERE user_id=$1::uuid AND id=$2::uuid AND version=$7 AND deleted_at IS NULL
+                        RETURNING {HEADER_COLUMNS}, content""",
+                    user_id, memory.memory_id, memory.name, memory.description, memory.memory_type,
+                    memory.content, memory.expected_version,
                 )
-                if duplicate and duplicate["id"] != memory.memory_id:
-                    if duplicate["deleted_at"]:
-                        raise MemoryConflict("This memory was forgotten. Do not recreate it from old conversations.")
-                    raise MemoryConflict("A memory with this name already exists. Read it before updating it.")
-                if memory.memory_id:
-                    row = await conn.fetchrow(
-                        f"""UPDATE coordinator_memories SET name=$3, description=$4, memory_type=$5, content=$6,
-                            version=version+1, updated_at=clock_timestamp()
-                            WHERE user_id=$1::uuid AND id=$2::uuid AND version=$7 AND deleted_at IS NULL
-                            RETURNING {HEADER_COLUMNS}, content""",
-                        user_id, memory.memory_id, memory.name, memory.description, memory.memory_type,
-                        memory.content, memory.expected_version,
-                    )
-                    if row is None:
-                        raise MemoryConflict("Memory changed or was deleted. Reload it before making another edit.")
-                else:
-                    count = await conn.fetchval(
-                        "SELECT count(*) FROM coordinator_memories WHERE user_id=$1::uuid AND deleted_at IS NULL", user_id,
-                    )
-                    if count >= 500:
-                        raise ValueError("Memory is full (500 entries). Merge or delete existing entries first.")
-                    row = await conn.fetchrow(
-                        f"""INSERT INTO coordinator_memories
-                            (user_id, name, description, memory_type, content, origin_conversation_id)
-                            VALUES ($1::uuid, $2, $3, $4, $5, $6) RETURNING {HEADER_COLUMNS}, content""",
-                        user_id, memory.name, memory.description, memory.memory_type, memory.content, origin_conversation_id,
-                    )
+                if row is None:
+                    raise MemoryConflict("Memory changed or was deleted. Reload it before making another edit.")
+            else:
+                count = await conn.fetchval(
+                    "SELECT count(*) FROM coordinator_memories WHERE user_id=$1::uuid AND deleted_at IS NULL", user_id,
+                )
+                if count >= 500:
+                    raise ValueError("Memory is full (500 entries). Merge or delete existing entries first.")
+                row = await conn.fetchrow(
+                    f"""INSERT INTO coordinator_memories
+                        (user_id, name, description, memory_type, content, origin_conversation_id)
+                        VALUES ($1::uuid, $2, $3, $4, $5, $6) RETURNING {HEADER_COLUMNS}, content""",
+                    user_id, memory.name, memory.description, memory.memory_type, memory.content, origin_conversation_id,
+                )
         return memory_view(row)
 
     async def delete(self, user_id: str, memory_id: str, expected_version: int):

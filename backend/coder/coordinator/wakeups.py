@@ -16,6 +16,8 @@ MAX_AUTONOMOUS_TURNS = 8
 def outcome_summary(event):
     """Keep the source result accessible even if the model cannot resume."""
     payload = event["payload"]
+    if event["source"] == "alarm":
+        return "Scheduled reminder: " + payload["message"]
     source = "Builder request" if event["source"] == "builder" else "Agent request"
     text = f"{source} {payload.get('status', 'finished')}."
     if payload.get("error"):
@@ -54,11 +56,11 @@ async def run_wakeup(pool, event):
         require_feature(COORDINATOR_FEATURE, email=email)
         allowed, error = await plan_allows_turn(pool, user_id)
         if not allowed:
-            await repo.finish(event, outcome_summary(event) + " I couldn't continue: " + str(error))
+            await repo.finish(event, outcome_summary(event) + " I couldn't continue: " + str(error), reschedule=False)
             return
         if event["context"]["depth"] >= MAX_AUTONOMOUS_TURNS:
             await repo.finish(event, outcome_summary(event) +
-                              " I've reached the automatic follow-up limit. Please message me to continue.")
+                              " I've reached the automatic follow-up limit. Please message me to continue.", reschedule=False)
             return
         channel = event["context"]["channel"]
         # A call may have ended hours ago. Its follow-up is delivered as text.
@@ -78,7 +80,7 @@ async def run_wakeup(pool, event):
     except Exception:
         logger.exception("coordinator completion turn failed: %s", event["id"])
         await repo.finish(event, outcome_summary(event) +
-                          " I couldn't finish the follow-up. Please check the result before retrying.")
+                          " I couldn't finish the follow-up. Please check the result before retrying.", reschedule=False)
     finally:
         lease.cancel()
         await asyncio.gather(lease, return_exceptions=True)
