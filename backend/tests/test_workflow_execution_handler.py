@@ -721,25 +721,34 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
                   "config": self.wrap_node_data("automation-telegram", {"message": "Test message", "chatId": "123456"})}]
 
         gate = asyncio.Event()
+        snapshot_started = asyncio.Event()
         committed = {}
 
         async def slow_commit(pool, *, workflow_id, execution_id, digest, data):
+            snapshot_started.set()
             await gate.wait()
             committed.update(execution_id=execution_id, digest=digest)
             return digest
 
         with patch("utils.node_outputs.commit_graph_snapshot", slow_commit):
             run = asyncio.create_task(send_event(frontend_sio, sid, self.create_workflow_request(nodes, [], workflow_id=workflow_id)))
-            await asyncio.sleep(0.3)
-            states = [e[1]['state'] for e in self.get_main_api_emitted_events("workflow:node:state")]
-            assert states == ['running', 'completed'], "the node ran while the snapshot was still uploading"
-            complete = self.get_main_api_emitted_events("workflow:complete")
-            assert len(complete) == 1 and complete[0][1]['success'] is True
-            execution_id = complete[0][1]['execution_id']
-            status = await real_database.fetchval("SELECT status FROM workflow_executions WHERE id = $1", uuid.UUID(execution_id))
-            assert status == 'running', "the row is finalized only once the snapshot has landed"
-            gate.set()
-            await asyncio.wait_for(run, 5)
+            try:
+                await asyncio.wait_for(snapshot_started.wait(), 5)
+                # Keep the upload blocked while waiting for actual node completion,
+                # rather than assuming database/socket work finishes within 300 ms.
+                async with asyncio.timeout(5):
+                    while not self.get_main_api_emitted_events("workflow:complete"):
+                        await asyncio.sleep(0.01)
+                states = [e[1]['state'] for e in self.get_main_api_emitted_events("workflow:node:state")]
+                assert states == ['running', 'completed'], "the node ran while the snapshot was still uploading"
+                complete = self.get_main_api_emitted_events("workflow:complete")
+                assert len(complete) == 1 and complete[0][1]['success'] is True
+                execution_id = complete[0][1]['execution_id']
+                status = await real_database.fetchval("SELECT status FROM workflow_executions WHERE id = $1", uuid.UUID(execution_id))
+                assert status == 'running', "the row is finalized only once the snapshot has landed"
+            finally:
+                gate.set()
+                await asyncio.wait_for(run, 5)
             status = await real_database.fetchval("SELECT status FROM workflow_executions WHERE id = $1", uuid.UUID(execution_id))
             assert status == 'completed' and committed["execution_id"] == execution_id and committed["digest"]
 
