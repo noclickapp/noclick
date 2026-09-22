@@ -51,6 +51,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
         response_type: 'code',
         scope: scopesParam,
         state: state,
+        // TikTok otherwise silently reuses an existing grant, including when a
+        // user chooses "Connect Another Account". Show the real account/consent
+        // screen so they can verify which creator they are connecting.
+        disable_auto_auth: '1',
     });
 
     const authUrl = `${TIKTOK_AUTH_URL}?${params.toString()}`;
