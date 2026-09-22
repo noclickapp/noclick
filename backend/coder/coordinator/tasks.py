@@ -8,17 +8,14 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from datetime import datetime, timezone
 from typing import Any, Optional
 
 from repositories.coordinator_tasks import CoordinatorTaskRepo
 from utils.access_control import Permission, check_resource_access
-from utils.capabilities import OWNER_MESSAGE, capability
 from utils.database_pool import get_native_pool
 from utils.graph_nodes import node_disabled, node_label
 from utils.socket_singleton import get_sio
-from wss.sender import send_event
-from wss.sender.events import ChatMessageEvent
+from utils.task_notifications import deliver_phone, emit_notification, notification_event
 
 logger = logging.getLogger(__name__)
 POLL_SECONDS = 5
@@ -161,30 +158,18 @@ async def notify_results(pool) -> None:
         text = (f"{task['agent_name']} could not complete your request: {task['error']}" if task["status"] == "failed"
                 else f"{task['agent_name']} replied:\n\n{reply_text(task.get('result'))}")
         turn_id = f"coordinator-task:{task_id}"
-        event = {"role": "assistant", "message": text, "turn_id": turn_id, "notification": True,
-                 "coordinator_task_id": task_id, "timestamp": datetime.now(timezone.utc).isoformat()}
+        event = notification_event(text, turn_id, coordinator_task_id=task_id)
         if not await repo.persist_notification(task_id, event):
             continue
         try:
-            await send_event(get_sio(), "", ChatMessageEvent(
-                conversation_id=f"coordinator:{user_id}", message=text, finished=True,
-                turn_id=turn_id, notification=True,
-            ), user_id=user_id)
+            await emit_notification(get_sio(), user_id, f"coordinator:{user_id}", event)
         except Exception as exc:
             logger.exception("coordinator task live delivery failed: %s", task_id)
             await repo.record_delivery_error(task_id, str(exc))
         if task["channel"] != "web":
-            send = capability(OWNER_MESSAGE)
-            if send is None:
-                await repo.record_delivery_error(task_id, "No phone delivery channel; the result is saved in the coordinator chat.")
-                continue
-            try:
-                result = await send(pool, user_id, text)
-                if not result.get("success"):
-                    await repo.record_delivery_error(task_id, result.get("error") or "Phone delivery failed.")
-            except Exception as exc:
-                logger.exception("coordinator task phone delivery failed: %s", task_id)
-                await repo.record_delivery_error(task_id, str(exc))
+            _, delivery_error = await deliver_phone(pool, user_id, text)
+            if delivery_error:
+                await repo.record_delivery_error(task_id, delivery_error)
 
 
 async def task_context(pool, user_id: str) -> str:

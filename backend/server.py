@@ -253,20 +253,16 @@ async def app_lifespan(app: FastAPI):
 
     from coder.coordinator.tasks import task_worker
     coordinator_worker = asyncio.create_task(task_worker(), name="coordinator-agent-tasks")
-    from coder.coordinator.publications import publication_worker
-    from utils.capabilities import INTERFACE_PUBLISH, capability
-
-    publication_task = (asyncio.create_task(publication_worker(), name="coordinator-publications")
-                        if capability(INTERFACE_PUBLISH) is not None else None)
+    from coder.workflow.requests import request_worker
+    builder_worker = asyncio.create_task(request_worker(), name="builder-requests")
 
     try:
         yield
     finally:
         coordinator_worker.cancel()
         await asyncio.gather(coordinator_worker, return_exceptions=True)
-        if publication_task is not None:
-            publication_task.cancel()
-            await asyncio.gather(publication_task, return_exceptions=True)
+        builder_worker.cancel()
+        await asyncio.gather(builder_worker, return_exceptions=True)
 
     # Drain in-flight AI-builder runs cooperatively FIRST: a scale-down/redeploy
     # that doesn't exit within Modal's grace gets hard-killed and left a zombie

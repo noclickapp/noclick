@@ -13,6 +13,7 @@ import pytest
 
 from coder.coordinator import tasks
 from repositories.coordinator_tasks import CoordinatorTaskRepo
+from utils import task_notifications
 from utils.access_control import Permission
 
 pytestmark = pytest.mark.asyncio
@@ -98,7 +99,7 @@ async def test_callback_races_delivery_ack_and_duplicate_notifications(task_db, 
     row = (await repo.list_for_user(USER, tid))[0]
     assert row["status"] == "completed" and row["result"]["response"] == "The answer"
     send = AsyncMock()
-    monkeypatch.setattr(tasks, "send_event", send)
+    monkeypatch.setattr(task_notifications, "send_event", send)
     monkeypatch.setattr(tasks, "get_sio", lambda: object())
     await asyncio.gather(tasks.notify_results(pool), tasks.notify_results(pool))
     send.assert_awaited_once()
@@ -128,9 +129,9 @@ async def test_phone_delivery_failure_keeps_the_durable_reply(task_db, monkeypat
     claimed = await repo.claim()
     await tasks.settle_output(repo, str(claimed["id"]), {"response": {"answer": 42}})
     monkeypatch.setattr(tasks, "get_sio", lambda: object())
-    monkeypatch.setattr(tasks, "send_event", AsyncMock())
+    monkeypatch.setattr(task_notifications, "send_event", AsyncMock())
     phone = AsyncMock(return_value={"success": False, "error": "WhatsApp window closed"})
-    monkeypatch.setattr(tasks, "capability", lambda key: phone)
+    monkeypatch.setattr(task_notifications, "capability", lambda key: phone)
     await tasks.notify_results(pool)
     row = (await repo.list_for_user(USER))[0]
     assert row["status"] == "completed" and row["notified_at"]

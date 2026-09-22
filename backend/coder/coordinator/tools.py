@@ -14,11 +14,10 @@ from typing import Any, Awaitable, Callable, Dict, List, Optional
 from repositories.builder_bridge import BuilderBridgeRepo
 from repositories.conversation import ConversationRepo
 from repositories.coordinator_memories import CoordinatorMemoryRepo
-from repositories.coordinator_publications import CoordinatorPublicationRepo
+from repositories.builder_requests import BuilderRequestRepo
 from repositories.workflow import WorkflowRepo
 from utils.coordinator_memory import CoordinatorMemoryWrite
-from utils.coordinator_publication import PublicationOptions
-from utils.async_helpers import spawn
+from utils.builder_request import PublicationOptions
 from utils.builder_bridge import bridge_url, create_bridge_link_for_ask
 from utils.capabilities import INTERFACE_PUBLISH, OWNER_MESSAGE, capability
 from utils.tool_call_log import record_tool_call
@@ -29,7 +28,6 @@ COORDINATOR_TOOL_TYPE = "coordinator"
 # The audit's per-(node, conversation) turn boundary needs a node id; the
 # coordinator is not a node, so it borrows the builder's sentinel convention.
 COORDINATOR_NODE_ID = "__coordinator__"
-BUILDER_CONVERSATION_PREFIX = "coordinator-builder:"
 
 MAX_ITEMS = 10
 MAX_CHARS = 280
@@ -89,22 +87,22 @@ def coordinator_tool_params(*, include_owner_message: bool = False, include_publ
              "specific request; otherwise lists active tasks first, then recent results.",
              {"task_id": {"type": "string"}}),
         tool("request_build",
-             "Hand a build or edit to the AI builder, which runs in the background as the account owner. "
-             "Give it a new workflow's name or an existing workflow_id, plus complete instructions. "
-             "Returns immediately; check on it with build_status. If the builder needs something from the "
-             "owner, they get a WhatsApp message with the link and it appears in this thread.",
-             {"instructions": {"type": "string", "description": "What to build or change, in full."},
-              "workflow_id": {"type": "string", "description": "Edit this existing workflow. Omit to create a new one."},
+             "Ask the builder to create or edit an interface, agent, or workflow, with optional publication. "
+             "The builder owns all phases and questions; check build_status using the returned request_id. "
+             "To publish an existing saved interface without rebuilding, pass workflow_id and publish, and omit instructions. "
+             "Publication makes the interface public and its visitors can invoke the workflow; only request it when authorized.",
+             {"instructions": {"type": "string", "description": "What to build or change. Required unless publishing an existing interface."},
+              "workflow_id": {"type": "string", "description": "Existing workflow, or omit to create one."},
               "name": {"type": "string", "description": "Name for a new workflow."},
+              "send_to_phone": {"type": "boolean", "description": "Send the result to the owner's phone when requested."},
               **({"publish": {**PublicationOptions.model_json_schema(),
-                  "description": "Only when the user asked to publish: publish the finished interface and deliver its URL. "
-                                 "Omit node_id for a new build with one interface. Set send_to_phone if explicitly requested."}}
-                 if include_publishing else {})},
-             ["instructions"]),
-        tool("build_status",
-             "Where the builds you requested stand: finished, running, or waiting on the owner (with the questions "
-             "and the link that answers them).",
-             {"builder_conversation_id": {"type": "string", "description": "One build, else the latest few."}}),
+                  "description": "Publish the interface when building finishes. Omit node_id only if there is one interface."}}
+                 if include_publishing else {})}),
+        tool("build_status", "Read builder requests: status, current phase, questions and answer links, results, "
+             "published URLs, and separate delivery outcomes.",
+             {"request_id": {"type": "string"}, "builder_conversation_id": {"type": "string"}}),
+        tool("cancel_build", "Cancel a builder request before publishing starts. A build already running may finish, "
+             "but no later steps will run.", {"request_id": {"type": "string"}}, ["request_id"]),
         tool("trash_workflow",
              "Move a workflow the owner owns to the trash: it stops running, its schedules and webhooks are removed, "
              "and it can be restored for 30 days before it is deleted for good. Confirm with the owner first.",
@@ -112,21 +110,6 @@ def coordinator_tool_params(*, include_owner_message: bool = False, include_publ
         tool("restore_workflow", "Bring a trashed workflow back, with its schedules and webhooks.",
              {"workflow_id": {"type": "string"}}, ["workflow_id"]),
     ]
-    if include_publishing:
-        params.extend([
-            tool("publish_interface", "Publish a saved interface the user asked to make public. Requires workflow ownership. "
-                 "Returns a queued publication; its actual URL or failure is delivered to this conversation when finished. "
-                 "Omit node_id only when the workflow has one enabled HTML/React interface. "
-                 "A published interface is publicly accessible and can invoke its workflow through the interface. "
-                 "Set send_to_phone when the user asks to receive the link on their phone.",
-                 {"workflow_id": {"type": "string"}, **PublicationOptions.model_json_schema()["properties"]},
-                 ["workflow_id", "subdomain"]),
-            tool("publication_status", "Check requested publications, including builds waiting on input, live URLs, "
-                 "publishing errors and separate phone-delivery outcomes.", {"publication_id": {"type": "string"}}),
-            tool("cancel_publication", "Cancel a requested publication before publishing starts. "
-                 "An already running build may finish but will not be published. Use when the user withdraws their publishing request.",
-                 {"publication_id": {"type": "string"}}, ["publication_id"]),
-        ])
     if include_owner_message:
         params.append(tool(
             "message_owner",
@@ -179,13 +162,10 @@ class CoordinatorTools:
             "agent_tasks": self.agent_tasks,
             "request_build": self.request_build,
             "build_status": self.build_status,
+            "cancel_build": self.cancel_build,
             "trash_workflow": self.trash_workflow,
             "restore_workflow": self.restore_workflow,
         }
-        if capability(INTERFACE_PUBLISH) is not None:
-            self._tools["publish_interface"] = self.publish_interface
-            self._tools["publication_status"] = self.publication_status
-            self._tools["cancel_publication"] = self.cancel_publication
         if capability(OWNER_MESSAGE) is not None:
             self._tools["message_owner"] = self.message_owner
 
@@ -331,119 +311,41 @@ class CoordinatorTools:
         return result
 
     async def request_build(
-        self, instructions: str, workflow_id: Optional[str] = None, name: Optional[str] = None,
-        publish: Optional[Dict[str, Any]] = None,
+        self, instructions: Optional[str] = None, workflow_id: Optional[str] = None, name: Optional[str] = None,
+        publish: Optional[Dict[str, Any]] = None, send_to_phone: bool = False,
     ) -> Dict[str, Any]:
-        instructions = (instructions or "").strip()
-        if not instructions or len(instructions) > 16000:
-            return {"success": False, "error": "instructions must contain between 1 and 16000 characters"}
-        publication = PublicationOptions.model_validate(publish) if publish is not None else None
-        if publication is not None and capability(INTERFACE_PUBLISH) is None:
-            return {"success": False, "error": "Interface publishing is unavailable on this instance."}
-        if workflow_id:
-            fetched = await self._accessible_graph(workflow_id)
-            if fetched is None:
-                return {"success": False, "error": "workflow not found"}
-            nodes, edges = fetched[0], fetched[1]
-            workflow_name = await self.pool.fetchval("SELECT name FROM workflows WHERE id = $1::uuid", workflow_id)
-        else:
-            from wss.handlers.workflow_builder_handler import create_workflow_as_user
+        from coder.workflow.requests import request_view, submit_request
 
-            created = await create_workflow_as_user(
-                self.pool, self.user_id, name=(name or "New workflow").strip()[:120], description=instructions[:300],
-            )
-            if created.get("error"):
-                return {"success": False, "error": created["error"]}
-            workflow_id, workflow_name = created["workflow_id"], created["name"]
-            nodes, edges = [], []
-        builder_conversation_id = f"{BUILDER_CONVERSATION_PREFIX}{self.user_id}:{uuid.uuid4().hex[:8]}"
-        if publication is not None:
-            from coder.coordinator.publications import publication_view
-
-            queued = await CoordinatorPublicationRepo(self.pool).enqueue(
-                user_id=self.user_id, workflow_id=workflow_id,
-                options=publication.model_dump(exclude={"send_to_phone"}),
-                send_to_phone=publication.send_to_phone or self.reply_channel != "web",
-                builder_conversation_id=builder_conversation_id, instructions=instructions,
-            )
-            return {"success": True, **publication_view(queued), "workflow_name": workflow_name,
-                    "note": "Build and publication are queued. The live URL or failure will arrive here when finished; "
-                            "publication_status tracks the request. Questions still use the builder's answer link."}
-        from wss.receiver.client_events import WorkflowBuilderEditRequest
-
-        request = WorkflowBuilderEditRequest(
-            request_id=f"coordinator-{uuid.uuid4().hex[:8]}",
-            current_graph={"nodes": nodes, "edges": edges},
-            edit_prompt=instructions,
-            conversation_id=builder_conversation_id,
-            user_context={
-                "workflow_id": workflow_id,
-                "source": "coordinator",
-                "coordinator_conversation_id": self.conversation_id,
-            },
+        request = await submit_request(
+            self.pool, user_id=self.user_id, workflow_id=workflow_id, instructions=instructions, name=name, publish=publish,
+            origin={"source": "coordinator", "coordinator_conversation_id": self.conversation_id},
+            reply_conversation_id=self.conversation_id, reply_node_id=COORDINATOR_NODE_ID,
+            send_to_phone=send_to_phone or self.reply_channel != "web",
         )
-        spawn(self._run_builder(request))
-        return {
-            "success": True, "status": "builder_started",
-            "workflow_id": workflow_id, "workflow_name": workflow_name,
-            "builder_conversation_id": builder_conversation_id,
-            "note": "The builder runs in the background; build_status reports progress. If it needs something "
-                    "from the owner, they receive a WhatsApp message with the link and it lands in this thread.",
-        }
+        return {"success": True, **request_view(request),
+                "note": "The builder owns this request through completion. build_status shows its phase and questions; "
+                        "the result will arrive here when finished."}
 
-    async def publish_interface(self, workflow_id: str, **fields) -> Dict[str, Any]:
-        from coder.coordinator.publications import publication_view
+    async def cancel_build(self, request_id: str) -> Dict[str, Any]:
+        from coder.workflow.requests import request_view
 
-        publication = PublicationOptions.model_validate(fields)
-        queued = await CoordinatorPublicationRepo(self.pool).enqueue(
-            user_id=self.user_id, workflow_id=workflow_id, options=publication.model_dump(exclude={"send_to_phone"}),
-            send_to_phone=publication.send_to_phone or self.reply_channel != "web",
+        uuid.UUID(request_id)
+        request = await BuilderRequestRepo(self.pool).cancel(self.user_id, request_id)
+        return {"success": True, **request_view(request)}
+
+    async def build_status(self, builder_conversation_id: Optional[str] = None, request_id: Optional[str] = None) -> Dict[str, Any]:
+        from coder.workflow.requests import request_view
+
+        if request_id:
+            uuid.UUID(request_id)
+        rows = await BuilderRequestRepo(self.pool).list_for_user(
+            self.user_id, request_id=request_id, conversation_id=builder_conversation_id,
         )
-        return {"success": True, **publication_view(queued),
-                "note": "Publication is queued. The live URL or failure will arrive here when finished."}
-
-    async def publication_status(self, publication_id: Optional[str] = None) -> Dict[str, Any]:
-        from coder.coordinator.publications import publication_view
-
-        if publication_id:
-            uuid.UUID(publication_id)
-        rows = await CoordinatorPublicationRepo(self.pool).list_for_user(self.user_id, publication_id)
-        return {"success": True, "publications": [publication_view(row) for row in rows]}
-
-    async def cancel_publication(self, publication_id: str) -> Dict[str, Any]:
-        from coder.coordinator.publications import publication_view
-
-        uuid.UUID(publication_id)
-        row = await CoordinatorPublicationRepo(self.pool).cancel(self.user_id, publication_id)
-        return {"success": True, **publication_view(row)}
-
-    async def _run_builder(self, request) -> None:
-        from wss.handlers.workflow_builder_handler import WorkflowBuilderHandler
-
-        try:
-            await WorkflowBuilderHandler(self.sio).edit_workflow("", request, caller_user_id=self.user_id)
-        except Exception:
-            logger.error("coordinator builder run failed: %s", request.conversation_id, exc_info=True)
-
-    async def build_status(self, builder_conversation_id: Optional[str] = None) -> Dict[str, Any]:
-        repo = ConversationRepo(self.pool)
-        rows = await repo.list_by_prefix(
-            self.user_id, prefix=f"{BUILDER_CONVERSATION_PREFIX}{self.user_id}:", limit=20,
-        )
-        if builder_conversation_id:
-            rows = [r for r in rows if r["conversation_id"] == builder_conversation_id]
         builds = []
-        for row in rows[:5]:
-            assistant = [e for e in (row.get("events") or []) if e.get("role") == "assistant"]
-            entry: Dict[str, Any] = {
-                "builder_conversation_id": row["conversation_id"],
-                "workflow_id": row.get("workflow_id"),
-                "state": row.get("agent_state") or "running",
-                "last_activity": row["last_activity"].isoformat() if row.get("last_activity") else None,
-                "latest": bounded((assistant[-1].get("message") if assistant else None), max_chars=800),
-            }
-            ask = row.get("pending_ask")
-            if isinstance(ask, dict) and ask.get("ask_id"):
+        for row in rows:
+            entry = request_view(row)
+            ask = row["pending_ask"]
+            if row["status"] == "waiting_for_input" and ask:
                 entry["waiting_for"] = await self._ask_link(row, ask)
             builds.append(entry)
         return {"success": True, "builds": builds}

@@ -110,6 +110,39 @@ def merge_builder_run_graph(
     return nodes, normalized_edges
 
 
+async def create_workflow_as_user(pool, user_id: str, *, name: str, description: str) -> Dict[str, Any]:
+    """Create an empty workflow owned by ``user_id`` in their current org context,
+    shared with the org when there is one, under the plan's workflow cap. The
+    builder's ``create_workflow`` op and the account coordinator both use it."""
+    from billing.plan_limits import check_workflow_limit, get_user_tier_from_db
+    from wss.handlers.workflow_handler import get_user_org_context
+
+    async with pool.acquire() as conn:
+        org_id = await get_user_org_context(conn, user_id)
+        user_tier = await get_user_tier_from_db(conn, user_id)
+        can_create, limit_error = await check_workflow_limit(conn, user_id, user_tier)
+        if not can_create:
+            return {"error": limit_error}
+        repo = WorkflowRepo(pool)
+        workflow_id = await repo.create_workflow_builder(
+            conn,
+            name=name,
+            description=description,
+            owner_id=uuid.UUID(user_id),
+            organization_id=uuid.UUID(org_id) if org_id else None,
+            workflow_data={"nodes": [], "edges": []},
+        )
+        if org_id:
+            await repo.insert_workflow_org_share(
+                conn,
+                workflow_id=workflow_id,
+                organization_id=uuid.UUID(org_id),
+                permission='edit',
+                shared_by=uuid.UUID(user_id),
+            )
+    return {"success": True, "workflow_id": str(workflow_id), "name": name}
+
+
 class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
     """Handler for AI-powered workflow editing via AgenticBuilder."""
 
@@ -423,34 +456,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 pool = await handler.get_pool()
                 if not pool:
                     return {"error": "Database not available"}
-                async with pool.acquire() as conn:
-                    from wss.handlers.workflow_handler import get_user_org_context
-                    from billing.plan_limits import check_workflow_limit, get_user_tier_from_db
-                    org_id = await get_user_org_context(conn, user_id)
-                    user_tier = await get_user_tier_from_db(conn, user_id)
-                    can_create, limit_error = await check_workflow_limit(conn, user_id, user_tier)
-                    if not can_create:
-                        return {"error": limit_error}
-                    repo = WorkflowRepo(pool)
-                    workflow_id = await repo.create_workflow_builder(
-                        conn,
-                        name=name,
-                        description=description,
-                        owner_id=uuid.UUID(user_id),
-                        organization_id=uuid.UUID(org_id) if org_id else None,
-                        workflow_data={"nodes": [], "edges": []},
-                    )
-                    wf_id_str = str(workflow_id)
-                    # Share with org if in org context
-                    if org_id:
-                        await repo.insert_workflow_org_share(
-                            conn,
-                            workflow_id=workflow_id,
-                            organization_id=uuid.UUID(org_id),
-                            permission='edit',
-                            shared_by=uuid.UUID(user_id),
-                        )
-                return {"success": True, "workflow_id": wf_id_str, "name": name}
+                return await create_workflow_as_user(pool, user_id, name=name, description=description)
 
             async def list_folders(self) -> List[Dict[str, Any]]:
                 pool = await handler.get_pool()
@@ -1003,8 +1009,19 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         workflow owner with an empty sid; empty-sid emits are dropped by
         send_event's falsy-sid guard, user_id-routed events still land.
         """
+        from utils.builder_request import is_builder_request
+
         try:
-            await self._handle_input_response_impl(sid, data, caller_user_id=caller_user_id)
+            if is_builder_request(data.get('conversation_id')):
+                from coder.workflow.requests import resume_request
+
+                session = await self.sio.get_session(sid) if not caller_user_id else None
+                user_id = caller_user_id or (session or {}).get('user_id')
+                if not user_id:
+                    raise ValueError("Not authenticated")
+                await resume_request(self, sid, data, user_id)
+            else:
+                await self._handle_input_response_impl(sid, data, caller_user_id=caller_user_id)
         except Exception as e:
             logger.exception("[BuilderHandler] inline input_response failed: %s", e)
             await send_event(self.sio, sid, ResponseEvent(
@@ -1229,6 +1246,19 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         # record (minted when the run first parked). Without this a resumed
         # run's completion/second-ask never reaches the agent's conversation.
         resumed_user_context: Dict[str, Any] = {'workflow_id': workflow_id, 'has_workflow': True}
+        from utils.builder_request import is_builder_request
+
+        if is_builder_request(conversation_id):
+            from coder.workflow.requests import request_context
+            from repositories.builder_requests import BuilderRequestRepo
+
+            tracked = await BuilderRequestRepo(await self.get_pool()).for_conversation(user_id, conversation_id)
+            if tracked is None or tracked['status'] != 'running':
+                raise ValueError("Builder request is no longer running")
+            resumed_user_context.update(request_context(tracked))
+        elif conversation_id.startswith(f"coordinator-builder:{user_id}:"):
+            # Conversations started before durable builder requests retain their return address.
+            resumed_user_context.update(source="coordinator", coordinator_conversation_id=f"coordinator:{user_id}")
         try:
             from repositories.builder_bridge import BuilderBridgeRepo
 
@@ -2511,6 +2541,11 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         runs (user_context.source == 'agent_prompt_builder'). Best-effort —
         the run is already durably parked either way."""
         ctx = request.user_context or {}
+        if user_id and ctx.get('builder_request_id'):
+            from coder.workflow.requests import record_question
+
+            if not await record_question(await self.get_pool(), user_id, ctx, pending_ask.to_dict()):
+                return  # A cancelled or superseded attempt cannot ask more questions.
         agent_cid = ctx.get('agent_conversation_id')
         if ctx.get('source') != 'agent_prompt_builder' or not (user_id and agent_cid):
             return
@@ -2575,6 +2610,13 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         """builder_result relay for HEADLESS agent-originated runs — the agent
         learns what the builder actually did on its next turn."""
         ctx = request.user_context or {}
+        if user_id and ctx.get('builder_request_id'):
+            from coder.workflow.requests import record_result
+
+            text = "\n".join(s.get("text", "") for s in segments if s.get("type") == "text").strip()
+            summary = (text or builder.graph_state.summary or "Run completed.")[:1500] if success else (error or "Build failed.")
+            await record_result(await self.get_pool(), user_id, ctx, success=success, summary=summary, error=error)
+            return  # The builder request owns follow-through and terminal delivery.
         agent_cid = ctx.get('agent_conversation_id')
         if ctx.get('source') != 'agent_prompt_builder' or not (user_id and agent_cid):
             return

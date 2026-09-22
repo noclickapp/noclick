@@ -16,7 +16,7 @@ import pytest
 
 from coder.coordinator import agent as coordinator
 from coder.coordinator.tools import (
-    BUILDER_CONVERSATION_PREFIX, COORDINATOR_NODE_ID, CoordinatorTools, bounded, coordinator_tool_params,
+    COORDINATOR_NODE_ID, CoordinatorTools, bounded, coordinator_tool_params,
 )
 from tests.mocks.mock_asyncpg import MockNativePool
 from utils import capabilities
@@ -140,35 +140,40 @@ async def test_describe_refuses_what_the_user_cannot_see_then_delegates():
     assert impl.await_args.kwargs["node_id"] is None and impl.await_args.kwargs["focus"] == "n1"
 
 
-
-
-async def test_build_status_reports_state_latest_reply_and_a_reusable_ask_link():
-    ask = {"ask_id": "ask-1", "inputs": [{"id": "q1", "label": "Which channel?", "type": "text"}]}
-    rows = [
-        {"conversation_id": f"{BUILDER_CONVERSATION_PREFIX}{USER}:aaaa", "workflow_id": WORKFLOW, "agent_state": "paused",
-         "pending_ask": ask, "preview": "p", "last_activity": datetime(2026, 9, 17, tzinfo=timezone.utc),
-         "events": [{"role": "user", "message": "build"}, {"role": "assistant", "message": "I need one thing."}]},
-        {"conversation_id": f"{BUILDER_CONVERSATION_PREFIX}{USER}:bbbb", "workflow_id": WORKFLOW, "agent_state": None,
-         "pending_ask": None, "preview": None, "last_activity": None, "events": []},
-    ]
+async def test_request_build_delegates_to_the_builder_service():
     t = tools()
-    with patch("coder.coordinator.tools.ConversationRepo.list_by_prefix", AsyncMock(return_value=rows)) as listing, \
+    row = {"id": "req", "workflow_id": WORKFLOW, "conversation_id": "builder-request:req",
+           "status": "queued", "phase": "building", "pending_ask": None, "result": None, "error": None,
+           "send_to_phone": False, "phone_state": None, "delivery_error": None}
+    with patch("coder.workflow.requests.submit_request", AsyncMock(return_value=row)) as submit:
+        result = await t.request_build("Add a Slack alert", workflow_id=WORKFLOW)
+    assert result["status"] == "queued" and result["request_id"] == "req"
+    assert submit.await_args.kwargs["instructions"] == "Add a Slack alert"
+    assert submit.await_args.kwargs["reply_conversation_id"] == CID
+    assert submit.await_args.kwargs["origin"] == {"source": "coordinator", "coordinator_conversation_id": CID}
+
+
+async def test_build_status_reports_durable_state_and_reuses_the_answer_link():
+    ask = {"ask_id": "ask-1", "inputs": [{"id": "q1", "label": "Which channel?", "type": "text"}]}
+    row = {"id": "req", "workflow_id": WORKFLOW, "conversation_id": "builder-request:req",
+           "status": "waiting_for_input", "phase": "building", "pending_ask": ask, "result": None, "error": None,
+           "send_to_phone": False, "phone_state": None, "delivery_error": None}
+    t = tools()
+    with patch("coder.coordinator.tools.BuilderRequestRepo.list_for_user", AsyncMock(return_value=[row])) as listing, \
          patch("coder.coordinator.tools.BuilderBridgeRepo.find_pending_for_ask", AsyncMock(return_value="link-1")), \
          patch("coder.coordinator.tools.create_bridge_link_for_ask", AsyncMock()) as mint:
-        result = await t.build_status()
-    assert listing.await_args.kwargs["prefix"] == f"{BUILDER_CONVERSATION_PREFIX}{USER}:"
-    first, second = result["builds"]
-    assert first["state"] == "paused" and first["latest"] == "I need one thing."
-    assert first["waiting_for"]["questions"] == ["Which channel?"] and first["waiting_for"]["answer_url"].endswith("/b/link-1")
-    assert second["state"] == "running" and "waiting_for" not in second
+        result = await t.build_status(builder_conversation_id=row["conversation_id"])
+    assert listing.await_args.kwargs["conversation_id"] == row["conversation_id"]
+    build = result["builds"][0]
+    assert build["status"] == "waiting_for_input" and build["phase"] == "building"
+    assert build["waiting_for"]["questions"] == ["Which channel?"]
+    assert build["waiting_for"]["answer_url"].endswith("/b/link-1")
     mint.assert_not_awaited()
-
-    with patch("coder.coordinator.tools.ConversationRepo.list_by_prefix", AsyncMock(return_value=rows)), \
+    with patch("coder.coordinator.tools.BuilderRequestRepo.list_for_user", AsyncMock(return_value=[row])), \
          patch("coder.coordinator.tools.BuilderBridgeRepo.find_pending_for_ask", AsyncMock(return_value=None)), \
          patch("coder.coordinator.tools.create_bridge_link_for_ask",
                AsyncMock(return_value={"link_id": "new", "url": "https://x/b/new", "questions": ["Which channel?"], "inputs": []})) as mint:
-        result = await t.build_status(builder_conversation_id=rows[0]["conversation_id"])
-    assert [b["builder_conversation_id"] for b in result["builds"]] == [rows[0]["conversation_id"]]
+        result = await t.build_status()
     assert result["builds"][0]["waiting_for"]["answer_url"] == "https://x/b/new"
     assert mint.await_args.kwargs["ask_id"] == "ask-1" and mint.await_args.kwargs["user_id"] == USER
 
