@@ -1734,9 +1734,23 @@ class WhatsAppNode(WorkflowNode):
                 if has_media else "[non-text message]"
             )
             participant = str(key.get("participant") or "").strip()  # sender in a group
+            # A @lid chat id hides the number, but WAHooks still names the
+            # writer (senderPhone + pushName). Without them in the turn a
+            # "supervisor = +1 868 …" rule can never match — 12 real approvals
+            # got the customer greeting (2026-09-22). Identity only: the reply
+            # address stays the chat id.
+            sender_phone = str(p.get("senderPhone") or "").strip().lstrip("+")
+            push_name = str((p.get("_data") or {}).get("pushName") or p.get("notifyName") or "").strip()
+            sender_id = participant or chat_id
+            phone_shown = bool(sender_phone) and sender_phone != sender_id.split("@", 1)[0]
+            identity = [push_name] if push_name else []
+            if phone_shown:
+                identity.append(f"phone +{sender_phone}")
             header = f"WhatsApp message from {chat_id}"
             if participant and participant != chat_id:
-                header += f" (sent by {participant})"
+                header += f" (sent by {', '.join([participant, *identity])})"
+            elif identity:
+                header += f" ({', '.join(identity)})"
             media_note = ""
             entries = []
             if has_media:
@@ -1766,12 +1780,16 @@ class WhatsAppNode(WorkflowNode):
                         "\n[The attached media could not be retrieved — ask the "
                         "sender to describe it or resend if its content matters.]"
                     )
+            identity_note = (
+                " The phone number in the header identifies the sender; it is not the reply address."
+                if phone_shown else ""
+            )
             text = (
                 f"{header}:\n{body}{media_note}\n\n"
                 f"To reply, call a send tool with to={chat_id} "
-                f"(pass this chat id exactly — do not convert it to a phone number)."
+                f"(pass this chat id exactly — do not convert it to a phone number).{identity_note}"
             )
-            title = (p.get("_data") or {}).get("pushName") or p.get("notifyName") or chat_id.split("@", 1)[0]
+            title = push_name or chat_id.split("@", 1)[0]
             return {"text": text, "conversation_key": chat_id, "title": title, "media": entries}
 
         # Meta Cloud API envelope — bare E.164 sender numbers.
