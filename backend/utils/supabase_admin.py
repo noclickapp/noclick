@@ -337,6 +337,30 @@ class SupabaseAdminClient:
             except httpx.RequestError as e:
                 raise SupabaseAdminError(f"Request failed: {str(e)}")
 
+    async def _user_request(self, method: str, path: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.request(
+                    method, f'{self.base_url}/auth/v1/admin/users{path}',
+                    headers=self._headers, json=payload, timeout=30.0,
+                )
+            except httpx.RequestError as e:
+                raise SupabaseAdminError(f"Request failed: {e}")
+        if response.status_code >= 300:
+            raise SupabaseAdminError(
+                f"Auth admin {method} failed: {response.status_code}",
+                status_code=response.status_code, response_body=response.text,
+            )
+        return response.json()
+
+    async def create_user(self, **attributes: Any) -> Dict[str, Any]:
+        """Create an auth user (e.g. ``phone=..., phone_confirm=True, user_metadata=...``).
+        A taken email or phone raises with status 422."""
+        return await self._user_request('POST', '', attributes)
+
+    async def update_user(self, user_id: str, **attributes: Any) -> Dict[str, Any]:
+        return await self._user_request('PUT', f'/{user_id}', attributes)
+
     def get_saml_metadata_url(self) -> str:
         """Get the SAML metadata URL for this Supabase project (SP metadata)."""
         return f"{self.base_url}/auth/v1/sso/saml/metadata"

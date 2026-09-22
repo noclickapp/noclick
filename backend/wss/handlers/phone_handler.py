@@ -1,10 +1,11 @@
 """
 Verified phone identity (Settings → Phone).
 
-The number a signed-in user proves possession of here is what WhatsApp
+The numbers a signed-in user proves possession of here are what WhatsApp
 messages and calls resolve to an account through. Every event is gated on
-the phone_channel rollout; the rules (Twilio Verify approval, one live number
-per account, rate limits) live in utils/phone_identity.py.
+the phone_channel rollout; the rules (Twilio Verify approval, several numbers
+per account and one account per number, rate limits) live in
+utils/phone_identity.py.
 """
 
 import logging
@@ -29,7 +30,7 @@ FEATURE = "phone_channel"
 
 
 class PhoneHandler(SocketIOHandler):
-    """Handler for linking, checking and unlinking a user's verified phone"""
+    """Handler for linking, checking and unlinking a user's verified numbers"""
 
     def __init__(self, sio, service_factory: Optional[Callable[[], PhoneIdentity]] = None):
         super().__init__(sio)
@@ -84,5 +85,5 @@ class PhoneHandler(SocketIOHandler):
 
     async def handle_unlink(self, sid: str, request: PhoneUnlinkRequest) -> None:
         async def op(svc: PhoneIdentity, uid: str) -> Dict[str, Any]:
-            return {"unlinked": await svc.unlink(uid)}
+            return {"unlinked": await svc.unlink(uid, request.phone)}
         await self._respond(sid, request.request_id, op)

@@ -1,7 +1,8 @@
-// Verified phone: the number WhatsApp messages and calls resolve to this
-// account through. It is linked only by a code the user proves possession of,
-// via the phone:* socket events (utils/phone_identity.py owns the rules), and
-// the section exists only where usePhoneLinkingAvailable says so.
+// Verified phones: the numbers WhatsApp messages and calls resolve to this
+// account through, each one more channel to the same account. Linked here by a
+// code the user proves possession of, or by messaging NoClick on WhatsApp, via
+// the phone:* socket events (utils/phone_identity.py owns the rules); the
+// section exists only where usePhoneLinkingAvailable says so.
 
 import { useEffect, useState } from 'react';
 import { formatPhoneForDisplay } from '~/lib/phoneFormat';
@@ -18,11 +19,16 @@ import {
     PhoneUnlinkRequest,
 } from '~/types/socket-events.generated';
 
+interface LinkedPhone {
+    phone: string;
+    verified_at: string;
+    source: 'verify' | 'whatsapp';
+}
+
 interface PhoneStatus {
     configured: boolean;
-    phone: string | null;
-    verified_at: string | null;
-    link_version: number | null;
+    max_phones: number;
+    phones: LinkedPhone[];
 }
 
 interface Challenge {
@@ -41,8 +47,10 @@ export function PhoneSettings() {
     const [phoneInput, setPhoneInput] = useState('');
     const [code, setCode] = useState('');
     const [busy, setBusy] = useState(false);
-    const [confirmUnlink, setConfirmUnlink] = useState(false);
+    const [confirmUnlink, setConfirmUnlink] = useState<string | null>(null);
     const isLoading = status === null;
+    const phones = status?.phones ?? [];
+    const canAdd = !status || phones.length < status.max_phones;
 
     const refresh = async () => {
         try {
@@ -52,9 +60,8 @@ export function PhoneSettings() {
             if (reply.error) throw new Error(reply.error);
             setStatus({
                 configured: !!reply.configured,
-                phone: reply.phone ?? null,
-                verified_at: reply.verified_at ?? null,
-                link_version: reply.link_version ?? null,
+                max_phones: reply.max_phones ?? 1,
+                phones: reply.phones ?? [],
             });
         } catch (error) {
             console.error('[PhoneSettings] failed to load status:', error);
@@ -92,7 +99,7 @@ export function PhoneSettings() {
                     challenge_id: challenge.challenge_id,
                     code,
                 }),
-            )) as Reply<{ phone: string; verified_at: string; link_version: number }>;
+            )) as Reply<{ phone: string; verified_at: string }>;
             if (reply.error) {
                 // Expired, exhausted or taken: the challenge is spent, start over.
                 if (reply.kind && reply.kind !== 'invalid_code') setChallenge(null);
@@ -109,15 +116,15 @@ export function PhoneSettings() {
         }
     };
 
-    const unlink = async () => {
+    const unlink = async (phone: string) => {
         setBusy(true);
         try {
             const reply = (await sendEventAsync(
-                PhoneUnlinkRequest.create({ request_id: crypto.randomUUID() }),
+                PhoneUnlinkRequest.create({ request_id: crypto.randomUUID(), phone }),
             )) as Reply<{ unlinked: boolean }>;
             if (reply.error) throw new Error(reply.error);
-            setConfirmUnlink(false);
-            toast.success('Phone unlinked');
+            setConfirmUnlink(null);
+            toast.success(`Unlinked ${formatPhoneForDisplay(phone)}`);
             await refresh();
         } catch (error) {
             toast.error(error instanceof Error ? error.message : 'Could not unlink the phone');
@@ -133,41 +140,43 @@ export function PhoneSettings() {
             <div className="mb-6">
                 <h2 className="text-lg font-semibold text-foreground">Phone</h2>
                 <p className="text-sm text-muted-foreground dark:text-white/40 mt-1">
-                    Link the number you will message and call NoClick from. We send a code to prove
-                    it is yours; nothing else is sent until you opt in.
+                    Link the numbers you message and call NoClick from. We send a code to prove
+                    each is yours; nothing else is sent until you opt in.
                 </p>
             </div>
 
-            <div className={cn(card, 'transition-opacity', isLoading && 'opacity-60')}>
-                {status?.phone ? (
-                    <div className="flex items-center gap-3.5 px-4 py-3.5">
+            <div className={cn(card, 'transition-opacity divide-y divide-border dark:divide-white/[0.06]', isLoading && 'opacity-60')}>
+                {phones.map((linked) => (
+                    <div key={linked.phone} className="flex items-center gap-3.5 px-4 py-3.5">
                         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500/10 flex-shrink-0">
                             <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 stroke-[1.5]" />
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-[0.9375rem] font-medium text-foreground leading-tight">
-                                {formatPhoneForDisplay(status.phone)}
+                                {formatPhoneForDisplay(linked.phone)}
                             </p>
                             <p className="text-xs text-muted-foreground dark:text-white/40 mt-0.5 truncate">
-                                Verified{status.verified_at ? ` on ${new Date(status.verified_at).toLocaleDateString()}` : ''}
+                                {linked.source === 'whatsapp' ? 'Linked on WhatsApp' : 'Verified'}
+                                {` on ${new Date(linked.verified_at).toLocaleDateString()}`}
                             </p>
                         </div>
-                        {confirmUnlink ? (
+                        {confirmUnlink === linked.phone ? (
                             <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="sm" disabled={busy} onClick={() => setConfirmUnlink(false)}>
+                                <Button variant="ghost" size="sm" disabled={busy} onClick={() => setConfirmUnlink(null)}>
                                     Keep
                                 </Button>
-                                <Button variant="destructive" size="sm" disabled={busy} onClick={unlink}>
+                                <Button variant="destructive" size="sm" disabled={busy} onClick={() => unlink(linked.phone)}>
                                     Unlink
                                 </Button>
                             </div>
                         ) : (
-                            <Button variant="outline" size="sm" disabled={busy || isLoading} onClick={() => setConfirmUnlink(true)}>
+                            <Button variant="outline" size="sm" disabled={busy || isLoading} onClick={() => setConfirmUnlink(linked.phone)}>
                                 Unlink
                             </Button>
                         )}
                     </div>
-                ) : challenge ? (
+                ))}
+                {!canAdd ? null : challenge ? (
                     <form
                         className="px-4 py-3.5 space-y-3"
                         onSubmit={(e) => {
@@ -214,7 +223,9 @@ export function PhoneSettings() {
                                 <Smartphone className="w-4 h-4 text-muted-foreground dark:text-white/60 stroke-[1.5]" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-[0.9375rem] font-medium text-foreground leading-tight">No phone linked</p>
+                                <p className="text-[0.9375rem] font-medium text-foreground leading-tight">
+                                    {phones.length ? 'Add another number' : 'No phone linked'}
+                                </p>
                                 <p className="text-xs text-muted-foreground dark:text-white/40 mt-0.5">
                                     Use the full number with its country code.
                                 </p>
@@ -245,7 +256,7 @@ export function PhoneSettings() {
             </div>
 
             <p className="text-xs text-muted-foreground/70 dark:text-white/30 mt-3 px-1">
-                One number per account. Unlinking takes effect immediately for every channel that uses it.
+                Each number reaches the same account. Unlinking one takes effect immediately for every channel that uses it.
             </p>
         </div>
     );

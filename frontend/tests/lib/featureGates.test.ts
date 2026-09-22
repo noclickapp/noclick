@@ -12,11 +12,17 @@ describe('feature gates', () => {
     });
 
     it('rolls an internal feature out to the hosted team only', () => {
-        expect(FEATURE_ROLLOUT.phone_channel).toBe('internal');
-        expect(isFeatureEnabled('phone_channel', 'staff@example.com')).toBe(true);
-        expect(isFeatureEnabled('phone_channel', 'customer@example.com')).toBe(false);
-        expect(isFeatureEnabled('phone_channel', '')).toBe(false);
-        expect(isFeatureEnabled('phone_channel', null)).toBe(false);
+        expect(FEATURE_ROLLOUT.coordinator).toBe('internal');
+        expect(isFeatureEnabled('coordinator', 'staff@example.com')).toBe(true);
+        expect(isFeatureEnabled('coordinator', 'customer@example.com')).toBe(false);
+        expect(isFeatureEnabled('coordinator', '')).toBe(false);
+        expect(isFeatureEnabled('coordinator', null)).toBe(false);
+    });
+
+    it('opens an everyone feature to every account, signed in or not', () => {
+        expect(FEATURE_ROLLOUT.phone_channel).toBe('everyone');
+        expect(isFeatureEnabled('phone_channel', 'customer@example.com')).toBe(true);
+        expect(isFeatureEnabled('phone_channel', null)).toBe(true);
     });
 
     it('mirrors the backend rollout table one feature at a time', () => {

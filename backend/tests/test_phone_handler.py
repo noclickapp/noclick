@@ -2,7 +2,7 @@
 PhoneHandler through the real receiver routing: every phone:* event is gated
 on the phone_channel rollout, resolves the actor from the socket session, and
 returns the service's verdicts as correlated responses. The repository is
-also run once against the native-pool double so its SQL shapes execute.
+challenge SQL is also run once against the native-pool double.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -33,6 +33,7 @@ class TestPhoneHandler(BaseHandlerTest):
     @pytest.fixture(autouse=True)
     def phone_service(self, monkeypatch):
         self.repo, self.verify = FakeRepo(), FakeVerify()
+        self.repo.emails[USER_ID] = "someone@example.com"
         monkeypatch.setitem(feature_gates.FEATURE_ROLLOUT, "phone_channel", feature_gates.EVERYONE)
         with patch("wss.handlers.phone_handler.default_service",
                    return_value=PhoneIdentity(self.repo, self.verify)):
@@ -48,7 +49,7 @@ class TestPhoneHandler(BaseHandlerTest):
     @pytest.mark.asyncio
     async def test_link_flow_over_the_socket(self, frontend_sio, sid):
         status = await self._send(frontend_sio, sid, PhoneStatusRequest(request_id="s1"))
-        assert status["data"] == {"configured": True, "phone": None, "verified_at": None, "link_version": None}
+        assert status["data"] == {"configured": True, "max_phones": 5, "phones": []}
 
         started = await self._send(frontend_sio, sid, PhoneLinkStartRequest(request_id="a1", phone="+1 424 242 1064"))
         assert started.get("error") is None and started["data"]["phone"] == PHONE
@@ -61,9 +62,12 @@ class TestPhoneHandler(BaseHandlerTest):
         assert linked.get("error") is None and linked["data"]["phone"] == PHONE and linked["data"]["link_version"] == 1
         assert (await self.repo.get_user_by_phone(PHONE))["user_id"] == USER_ID
 
-        unlinked = await self._send(frontend_sio, sid, PhoneUnlinkRequest(request_id="u1"))
+        listed = await self._send(frontend_sio, sid, PhoneStatusRequest(request_id="s2"))
+        assert [p["phone"] for p in listed["data"]["phones"]] == [PHONE]
+
+        unlinked = await self._send(frontend_sio, sid, PhoneUnlinkRequest(request_id="u1", phone=PHONE))
         assert unlinked["data"] == {"unlinked": True}
-        assert (await self._send(frontend_sio, sid, PhoneStatusRequest(request_id="s2")))["data"]["phone"] is None
+        assert (await self._send(frontend_sio, sid, PhoneStatusRequest(request_id="s3")))["data"]["phones"] == []
 
     @pytest.mark.asyncio
     async def test_bad_number_is_a_typed_error_and_never_reaches_the_provider(self, frontend_sio, sid):
@@ -79,7 +83,7 @@ class TestPhoneHandler(BaseHandlerTest):
             PhoneStatusRequest(request_id="g0"),
             PhoneLinkStartRequest(request_id="g1", phone=PHONE),
             PhoneLinkCheckRequest(request_id="g2", challenge_id="ch-1", code="123456"),
-            PhoneUnlinkRequest(request_id="g3"),
+            PhoneUnlinkRequest(request_id="g3", phone=PHONE),
         )):
             response = await self._send(frontend_sio, sid, request)
             assert response["data"] == {"kind": "gated"} and "available on your account" in response["error"], request
@@ -99,10 +103,6 @@ async def test_repository_sql_executes_against_the_pool_double():
             "status": "pending", "attempts": 0, "expires_at": now + timedelta(minutes=5),
         },
         "SELECT COUNT(*)": 2,
-        "FROM public.user_phones WHERE user_id": {"phone_e164": PHONE, "verified_at": now, "link_version": 1},
-        "FROM public.user_phones WHERE phone_e164": {"user_id": "u1", "verified_at": now, "link_version": 1},
-        "INSERT INTO public.user_phones": {"phone_e164": PHONE, "verified_at": now, "link_version": 2},
-        "UPDATE public.user_phones SET unlinked_at": "UPDATE 1",
     })
     repo = PhoneRepo(pool)
     assert (await repo.create_challenge(user_id="u1", phone_e164=PHONE, provider_sid="VE1", expires_at=now))["id"] == "ch-1"
@@ -111,11 +111,7 @@ async def test_repository_sql_executes_against_the_pool_double():
     assert await repo.count_starts(user_id="u1", since=now) == 2
     with pytest.raises(ValueError):
         await repo.count_starts(since=now)
-    assert (await repo.get_active_phone("u1"))["link_version"] == 1
-    assert (await repo.get_user_by_phone(PHONE))["user_id"] == "u1"
-    assert (await repo.consume_and_link(user_id="u1", phone_e164=PHONE, challenge_id="ch-1"))["link_version"] == 2
-    assert await repo.unlink("u1") is True
-    # The supersede + insert and the approve + bind pairs each ran inside one acquired connection.
+    # The supersede + insert ran inside one acquired connection. The
+    # user_phones SQL runs against real Postgres in test_phone_accounts_postgres.py.
     statements = [c.args[0] for c in pool.conn.execute.await_args_list]
     assert any("SET status = 'superseded'" in s for s in statements)
-    assert any("SET status = 'approved'" in s for s in statements)

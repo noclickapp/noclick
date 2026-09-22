@@ -266,7 +266,7 @@ class NotificationPrefsUpdateRequest(ClientEventBase):
 
 # Verified phone identity (Settings → Phone): the number channels resolve to an account through
 class PhoneStatusRequest(ClientEventBase):
-    """Request the user's linked phone, if any"""
+    """Request the user's linked numbers"""
     event_name: ClassVar[str] = "phone:status"
 
 
@@ -286,8 +286,10 @@ class PhoneLinkCheckRequest(ClientEventBase):
 
 
 class PhoneUnlinkRequest(ClientEventBase):
-    """Unlink the user's phone"""
+    """Unlink one of the user's numbers"""
     event_name: ClassVar[str] = "phone:unlink"
+
+    phone: str = Field(..., description="The linked number to unlink, E.164")
 
 
 # Account coordinator: the one agent that sees the whole account (Dashboard dock)

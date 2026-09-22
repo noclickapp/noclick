@@ -18,7 +18,7 @@ import respx
 from utils import feature_gates
 from utils.feature_gates import FeatureNotAvailable, is_feature_enabled, require_feature
 from utils.phone_identity import (
-    CHALLENGE_TTL, MAX_CHECKS, MAX_STARTS_PER_NUMBER, MAX_STARTS_PER_USER,
+    CHALLENGE_TTL, MAX_CHECKS, MAX_PHONES_PER_ACCOUNT, MAX_STARTS_PER_NUMBER, MAX_STARTS_PER_USER,
     PhoneIdentity, PhoneLinkError,
 )
 from utils.phone_numbers import mask_e164, normalize_e164
@@ -38,7 +38,8 @@ class FakeRepo:
 
     def __init__(self):
         self.challenges = {}
-        self.phones = {}  # user_id -> row
+        self.phones = {}  # (user_id, phone) -> row
+        self.emails = {USER: "user@example.com", OTHER: "other@example.com"}
         self._seq = 0
 
     async def create_challenge(self, *, user_id, phone_e164, provider_sid, expires_at):
@@ -70,14 +71,18 @@ class FakeRepo:
         key, value = ("user_id", user_id) if user_id else ("phone_e164", phone_e164)
         return sum(1 for r in self.challenges.values() if r[key] == value and r["created_at"] >= since)
 
-    async def get_active_phone(self, user_id):
-        row = self.phones.get(user_id)
-        return dict(row) if row and row["unlinked_at"] is None else None
+    def _live(self, user_id=None, phone_e164=None):
+        return [r for r in self.phones.values() if r["unlinked_at"] is None
+                and (user_id is None or r["user_id"] == user_id)
+                and (phone_e164 is None or r["phone_e164"] == phone_e164)]
 
-    async def get_user_by_phone(self, phone_e164):
-        for uid, row in self.phones.items():
-            if row["phone_e164"] == phone_e164 and row["unlinked_at"] is None:
-                return {"user_id": uid, "verified_at": row["verified_at"], "link_version": row["link_version"]}
+    async def list_active_phones(self, user_id):
+        return [dict(r) for r in sorted(self._live(user_id=user_id), key=lambda r: r["verified_at"])]
+
+    async def get_user_by_phone(self, phone_e164, conn=None):
+        for row in self._live(phone_e164=phone_e164):
+            return {"user_id": row["user_id"], "verified_at": row["verified_at"],
+                    "link_version": row["link_version"], "source": row["source"]}
         return None
 
     async def consume_and_link(self, *, user_id, phone_e164, challenge_id):
@@ -87,17 +92,20 @@ class FakeRepo:
         challenge = self.challenges[challenge_id]
         challenge.update(status="approved", attempts=challenge["attempts"] + 1,
                          consumed_at=datetime.now(timezone.utc))
-        existing = self.phones.get(user_id)
+        existing = self.phones.get((user_id, phone_e164))
         row = {
-            "phone_e164": phone_e164, "verified_at": datetime.now(timezone.utc),
-            "unlinked_at": None, "challenge_id": challenge_id,
+            "user_id": user_id, "phone_e164": phone_e164, "verified_at": datetime.now(timezone.utc),
+            "unlinked_at": None, "challenge_id": challenge_id, "source": "verify", "last_seen_at": None,
             "link_version": (existing["link_version"] + 1) if existing else 1,
         }
-        self.phones[user_id] = row
-        return {k: row[k] for k in ("phone_e164", "verified_at", "link_version")}
+        self.phones[(user_id, phone_e164)] = row
+        return {k: row[k] for k in ("phone_e164", "verified_at", "link_version", "source")}
 
-    async def unlink(self, user_id):
-        row = self.phones.get(user_id)
+    async def account_email(self, user_id):
+        return self.emails.get(user_id)
+
+    async def unlink(self, user_id, phone_e164):
+        row = self.phones.get((user_id, phone_e164))
         if not row or row["unlinked_at"] is not None:
             return False
         row["unlinked_at"] = datetime.now(timezone.utc)
@@ -177,7 +185,7 @@ def test_feature_gate_internal_then_everyone(monkeypatch):
 async def test_link_requires_twilios_approval_and_binds_once():
     repo, verify = FakeRepo(), FakeVerify()
     svc = PhoneIdentity(repo, verify)
-    assert await svc.status(USER) == {"configured": True, "phone": None, "verified_at": None, "link_version": None}
+    assert await svc.status(USER) == {"configured": True, "max_phones": MAX_PHONES_PER_ACCOUNT, "phones": []}
 
     started = await svc.start_link(USER, "+1 (424) 242-1064")
     assert started["phone"] == PHONE and verify.started == [PHONE]
@@ -187,17 +195,19 @@ async def test_link_requires_twilios_approval_and_binds_once():
     with pytest.raises(PhoneLinkError) as wrong:
         await svc.check_link(USER, started["challenge_id"], "000000")
     assert wrong.value.kind == "invalid_code"
-    assert await svc.status(USER) == {"configured": True, "phone": None, "verified_at": None, "link_version": None}
+    assert (await svc.status(USER))["phones"] == []
     assert repo.challenges[started["challenge_id"]]["attempts"] == 1
 
     linked = await svc.check_link(USER, started["challenge_id"], "123456")
     assert linked["phone"] == PHONE and linked["link_version"] == 1
     # The check is bound to the exact verification that was started.
     assert verify.checked[-1] == (f"VE{1:030d}", "123456")
-    status = await svc.status(USER)
-    assert status["phone"] == PHONE and status["link_version"] == 1
+    row = repo.phones[(USER, PHONE)]
+    assert (await svc.status(USER))["phones"] == [
+        {"phone": PHONE, "verified_at": row["verified_at"].isoformat(), "source": "verify"},
+    ]
     assert await repo.get_user_by_phone(PHONE) == {
-        "user_id": USER, "verified_at": repo.phones[USER]["verified_at"], "link_version": 1,
+        "user_id": USER, "verified_at": row["verified_at"], "link_version": 1, "source": "verify",
     }
 
     # A consumed challenge cannot approve again.
@@ -213,7 +223,7 @@ async def test_pending_result_and_bad_code_shapes_never_link():
         with pytest.raises(PhoneLinkError) as exc:
             await svc.check_link(USER, started["challenge_id"], code)
         assert exc.value.kind == "invalid_code"
-    assert (await svc.status(USER))["phone"] is None
+    assert (await svc.status(USER))["phones"] == []
     # Nothing malformed ever reached the provider.
     assert svc.verify.checked == []
 
@@ -295,7 +305,7 @@ async def test_number_held_by_another_account_is_disclosed_only_after_possession
         await svc.check_link(USER, started["challenge_id"], "123456")
     assert exc.value.kind == "linked_elsewhere"
     assert repo.challenges[started["challenge_id"]]["status"] == "conflict"
-    assert (await svc.status(USER))["phone"] is None
+    assert (await svc.status(USER))["phones"] == []
     assert (await repo.get_user_by_phone(PHONE))["user_id"] == OTHER
 
 
@@ -303,17 +313,58 @@ async def test_unlink_frees_the_number_and_relink_bumps_the_version():
     repo = FakeRepo()
     svc = PhoneIdentity(repo, FakeVerify())
     await link(svc)
-    assert await svc.unlink(USER) is True
-    assert await svc.unlink(USER) is False
-    assert (await svc.status(USER))["phone"] is None
+    assert await svc.unlink(USER, PHONE) is True
+    with pytest.raises(PhoneLinkError) as exc:
+        await svc.unlink(USER, PHONE)
+    assert exc.value.kind == "not_linked"
+    assert (await svc.status(USER))["phones"] == []
     assert await repo.get_user_by_phone(PHONE) is None
 
-    # Another account can now take it; the first can rebind to a new number.
+    # Another account can now take it; the first relinking it later bumps its row.
     other = await link(svc, user=OTHER)
     assert other["link_version"] == 1
-    relinked = await link(svc, phone="+14242421099")
+    await svc.unlink(OTHER, PHONE)
+    relinked = await link(svc)
     assert relinked["link_version"] == 2
-    assert (await repo.get_user_by_phone("+14242421099"))["user_id"] == USER
+    assert (await repo.get_user_by_phone(PHONE))["user_id"] == USER
+
+
+async def test_an_account_holds_several_numbers_each_reaching_it():
+    repo = FakeRepo()
+    svc = PhoneIdentity(repo, FakeVerify())
+    numbers = [f"+1424242{1000 + i}" for i in range(MAX_PHONES_PER_ACCOUNT)]
+    for number in numbers:
+        # One more challenge than the per-user send cap allows in a window.
+        for row in repo.challenges.values():
+            row["created_at"] -= CHALLENGE_TTL
+        await link(svc, phone=number)
+    assert [p["phone"] for p in (await svc.status(USER))["phones"]] == numbers
+    assert {(await repo.get_user_by_phone(n))["user_id"] for n in numbers} == {USER}
+
+    with pytest.raises(PhoneLinkError) as exc:
+        await svc.start_link(USER, "+14242429999")
+    assert exc.value.kind == "too_many_phones"
+    with pytest.raises(PhoneLinkError) as exc:
+        await svc.start_link(USER, numbers[0])
+    assert exc.value.kind == "already_linked"
+
+    # Unlinking one leaves the others working.
+    await svc.unlink(USER, numbers[0])
+    assert await repo.get_user_by_phone(numbers[0]) is None
+    assert (await repo.get_user_by_phone(numbers[1]))["user_id"] == USER
+
+
+async def test_a_phone_only_account_keeps_its_last_way_in():
+    repo = FakeRepo()
+    repo.emails.pop(USER)
+    svc = PhoneIdentity(repo, FakeVerify())
+    await link(svc)
+    await link(svc, phone="+14242421099")
+    assert await svc.unlink(USER, "+14242421099") is True
+    with pytest.raises(PhoneLinkError) as exc:
+        await svc.unlink(USER, PHONE)
+    assert exc.value.kind == "last_way_in"
+    assert (await repo.get_user_by_phone(PHONE))["user_id"] == USER
 
 
 async def test_unconfigured_instance_and_bad_numbers_fail_before_the_provider():

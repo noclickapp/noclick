@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Sun Sep 20 20:34:59  2026
+// Generated at: Wed Sep 23 01:31:25  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -4152,7 +4152,7 @@ export interface PhoneNumberSearchRequest {
   [k: string]: unknown;
 }
 /**
- * Request the user's linked phone, if any
+ * Request the user's linked numbers
  */
 export interface PhoneStatusRequest {
   /**
@@ -4162,13 +4162,17 @@ export interface PhoneStatusRequest {
   [k: string]: unknown;
 }
 /**
- * Unlink the user's phone
+ * Unlink one of the user's numbers
  */
 export interface PhoneUnlinkRequest {
   /**
    * UUID for request/response correlation
    */
   request_id?: string | null;
+  /**
+   * The linked number to unlink, E.164
+   */
+  phone: string;
   [k: string]: unknown;
 }
 /**

@@ -1,12 +1,18 @@
 """Repository for verified phone identity: verification challenges and the
-per-account phone binding (user_phones). Backend-only tables (RLS on, no
+per-account phone bindings (user_phones: several numbers per account, one
+account per live number). Backend-only tables (RLS on, no
 policies); the linking rules live in utils/phone_identity.py.
 """
 
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, AsyncIterator, Dict, List, Optional
+
+from repositories.users import get_user_email
+
+_PHONE_COLUMNS = "phone_e164, verified_at, link_version, source, last_seen_at"
 
 
 class PhoneRepo:
@@ -69,18 +75,28 @@ class PhoneRepo:
             key, since,
         ) or 0)
 
-    async def get_active_phone(self, user_id: str) -> Optional[Dict[str, Any]]:
+    async def list_active_phones(self, user_id: str) -> List[Dict[str, Any]]:
+        rows = await self._pool.fetch(
+            f"SELECT {_PHONE_COLUMNS} FROM public.user_phones "
+            "WHERE user_id = $1 AND unlinked_at IS NULL ORDER BY verified_at",
+            user_id,
+        )
+        return [dict(r) for r in rows]
+
+    async def get_reach_phone(self, user_id: str) -> Optional[Dict[str, Any]]:
+        """The number to reach the account on: the live one it last messaged from."""
         row = await self._pool.fetchrow(
-            "SELECT phone_e164, verified_at, link_version FROM public.user_phones "
-            "WHERE user_id = $1 AND unlinked_at IS NULL",
+            f"SELECT {_PHONE_COLUMNS} FROM public.user_phones "
+            "WHERE user_id = $1 AND unlinked_at IS NULL "
+            "ORDER BY last_seen_at DESC NULLS LAST, verified_at DESC LIMIT 1",
             user_id,
         )
         return dict(row) if row else None
 
-    async def get_user_by_phone(self, phone_e164: str) -> Optional[Dict[str, Any]]:
+    async def get_user_by_phone(self, phone_e164: str, *, conn=None) -> Optional[Dict[str, Any]]:
         """The account a live number resolves to — what inbound channels key on."""
-        row = await self._pool.fetchrow(
-            "SELECT user_id, verified_at, link_version FROM public.user_phones "
+        row = await (conn or self._pool).fetchrow(
+            "SELECT user_id, verified_at, link_version, source FROM public.user_phones "
             "WHERE phone_e164 = $1 AND unlinked_at IS NULL",
             phone_e164,
         )
@@ -101,26 +117,72 @@ class PhoneRepo:
                     "SET status = 'approved', attempts = attempts + 1, consumed_at = now() WHERE id = $1",
                     challenge_id,
                 )
-                row = await conn.fetchrow(
-                    """
-                    INSERT INTO public.user_phones (user_id, phone_e164, challenge_id)
-                    VALUES ($1, $2, $3)
-                    ON CONFLICT (user_id) DO UPDATE SET
-                        phone_e164 = EXCLUDED.phone_e164,
-                        verified_at = now(),
-                        unlinked_at = NULL,
-                        challenge_id = EXCLUDED.challenge_id,
-                        link_version = public.user_phones.link_version + 1
-                    RETURNING phone_e164, verified_at, link_version
-                    """,
-                    user_id, phone_e164, challenge_id,
-                )
+                return await self._bind(conn, user_id, phone_e164, source="verify", challenge_id=challenge_id)
+
+    @asynccontextmanager
+    async def claiming(self, phone_e164: str) -> AsyncIterator[Any]:
+        """A transaction holding the number's claim lock: two first messages
+        from one new number must not mint two accounts."""
+        async with self._pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute("SELECT pg_advisory_xact_lock(hashtext('user_phones:' || $1))", phone_e164)
+                yield conn
+
+    async def bind_channel(self, conn, *, user_id: str, phone_e164: str, source: str) -> Dict[str, Any]:
+        """Bind a number whose possession the channel itself authenticated."""
+        return await self._bind(conn, user_id, phone_e164, source=source, challenge_id=None)
+
+    @staticmethod
+    async def _bind(conn, user_id: str, phone_e164: str, *, source: str, challenge_id: Optional[str]) -> Dict[str, Any]:
+        row = await conn.fetchrow(
+            """
+            INSERT INTO public.user_phones (user_id, phone_e164, challenge_id, source)
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT (user_id, phone_e164) DO UPDATE SET
+                verified_at = now(),
+                unlinked_at = NULL,
+                challenge_id = EXCLUDED.challenge_id,
+                source = EXCLUDED.source,
+                link_version = public.user_phones.link_version + 1
+            RETURNING phone_e164, verified_at, link_version, source
+            """,
+            user_id, phone_e164, challenge_id, source,
+        )
         return dict(row)
 
-    async def unlink(self, user_id: str) -> bool:
-        status = await self._pool.execute(
-            "UPDATE public.user_phones SET unlinked_at = now() "
-            "WHERE user_id = $1 AND unlinked_at IS NULL",
-            user_id,
+    async def orphan_phone_user(self, conn, phone_e164: str) -> Optional[str]:
+        """An auth user created for this number whose binding never landed (a
+        crash between the two writes). Auth stores the number without its +."""
+        value = await conn.fetchval(
+            "SELECT u.id FROM auth.users u WHERE u.phone = $1 AND u.deleted_at IS NULL "
+            "AND NOT EXISTS (SELECT 1 FROM public.user_phones p WHERE p.user_id = u.id AND p.unlinked_at IS NULL)",
+            phone_e164.lstrip("+"),
         )
+        return str(value) if value else None
+
+    async def account_email(self, user_id: str) -> Optional[str]:
+        return await get_user_email(self._pool, user_id) or None
+
+    async def touch_seen(self, phone_e164: str) -> None:
+        await self._pool.execute(
+            "UPDATE public.user_phones SET last_seen_at = now() "
+            "WHERE phone_e164 = $1 AND unlinked_at IS NULL",
+            phone_e164,
+        )
+
+    async def unlink(self, user_id: str, phone_e164: str) -> bool:
+        """Unlink one number. The account's auth phone is cleared with it, so
+        whoever holds the number next cannot sign in to this account by it."""
+        async with self._pool.acquire() as conn:
+            async with conn.transaction():
+                status = await conn.execute(
+                    "UPDATE public.user_phones SET unlinked_at = now() "
+                    "WHERE user_id = $1 AND phone_e164 = $2 AND unlinked_at IS NULL",
+                    user_id, phone_e164,
+                )
+                await conn.execute(
+                    "UPDATE auth.users SET phone = NULL, phone_confirmed_at = NULL "
+                    "WHERE id = $1 AND phone = $2",
+                    user_id, phone_e164.lstrip("+"),
+                )
         return str(status).endswith(" 1")

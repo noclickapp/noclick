@@ -1,26 +1,32 @@
 """Linking a phone number to a NoClick account by proving possession of it.
 
-Web-first: the signed-in user asks for a code, Twilio Verify sends it, and
-only Twilio's own ``approved`` verdict on the challenge minted for that exact
-user and number binds the two. Caller id, a WhatsApp sender, a ``pending``
-result or anything the client asserts never does. One live number per
-account and one account per live number; a rebind bumps ``link_version`` so
-work queued for the old binding can be told from the new one. Whether a
-number belongs to someone else is disclosed only after possession is proven.
+Two ways to prove possession. On the web, the signed-in user asks for a code,
+Twilio Verify sends it, and only Twilio's own ``approved`` verdict on the
+challenge minted for that exact user and number binds the two. On a channel
+whose provider authenticates the sender (a Meta-signed WhatsApp message),
+first contact binds the number to the account it already has, or to a new
+phone-only account (``claim_for_channel``). Caller id, a ``pending`` result
+or anything a client asserts never binds. An account holds up to
+``MAX_PHONES_PER_ACCOUNT`` live numbers, each one more channel to it; a live
+number belongs to one account. A rebind bumps ``link_version`` so work queued
+for the old binding can be told from the new one. Whether a number belongs to
+someone else is disclosed only after possession is proven.
 """
 
 from __future__ import annotations
 
 import logging
 import re
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 import asyncpg
 
 from repositories.phones import PhoneRepo
 from utils.database_pool import get_native_pool
 from utils.phone_numbers import mask_e164, normalize_e164
+from utils.supabase_admin import SupabaseAdminClient, get_supabase_admin
 from utils.twilio_verify import PlatformVerify, TwilioVerifyError
 
 logger = logging.getLogger(__name__)
@@ -28,6 +34,7 @@ logger = logging.getLogger(__name__)
 CHALLENGE_TTL = timedelta(minutes=10)  # Twilio Verify's default validity
 MAX_STARTS_PER_USER = 3                # per CHALLENGE_TTL
 MAX_STARTS_PER_NUMBER = 5              # per hour, across accounts
+MAX_PHONES_PER_ACCOUNT = 5
 MAX_CHECKS = 5                         # Twilio's own cap, refused here first so the wording is ours
 _CODE = re.compile(r"^[0-9]{4,10}$")
 
@@ -40,7 +47,17 @@ _MESSAGES = {
     "invalid_code": "That code isn't right",
     "too_many_checks": "Too many attempts. Request a new code",
     "linked_elsewhere": "That number is already linked to another NoClick account. Unlink it there first",
+    "already_linked": "That number is already linked to this account",
+    "too_many_phones": f"An account can link up to {MAX_PHONES_PER_ACCOUNT} numbers. Unlink one first",
+    "not_linked": "That number isn't linked to this account",
+    "last_way_in": "This number is the only way into this account. Add an email before unlinking it",
 }
+
+
+@dataclass(frozen=True)
+class ChannelClaim:
+    user_id: str
+    created: bool  # a new phone-only account was made for this contact
 
 
 class PhoneLinkError(ValueError):
@@ -54,21 +71,27 @@ def _iso(value: Any) -> Optional[str]:
 
 
 class PhoneIdentity:
-    def __init__(self, repo: PhoneRepo, verify: Optional[PlatformVerify]):
+    def __init__(
+        self, repo: PhoneRepo, verify: Optional[PlatformVerify],
+        admin: Callable[[], SupabaseAdminClient] = get_supabase_admin,
+    ):
         self.repo = repo
         self.verify = verify
+        self._admin = admin
 
     @staticmethod
     def _now() -> datetime:
         return datetime.now(timezone.utc)
 
     async def status(self, user_id: str) -> Dict[str, Any]:
-        binding = await self.repo.get_active_phone(user_id)
+        phones = await self.repo.list_active_phones(user_id)
         return {
             "configured": self.verify is not None,
-            "phone": binding["phone_e164"] if binding else None,
-            "verified_at": _iso(binding["verified_at"]) if binding else None,
-            "link_version": binding["link_version"] if binding else None,
+            "max_phones": MAX_PHONES_PER_ACCOUNT,
+            "phones": [
+                {"phone": p["phone_e164"], "verified_at": _iso(p["verified_at"]), "source": p["source"]}
+                for p in phones
+            ],
         }
 
     async def start_link(self, user_id: str, raw_phone: str) -> Dict[str, Any]:
@@ -77,6 +100,11 @@ class PhoneIdentity:
         phone = normalize_e164(raw_phone)
         if phone is None:
             raise PhoneLinkError("invalid_number")
+        linked = {p["phone_e164"] for p in await self.repo.list_active_phones(user_id)}
+        if phone in linked:
+            raise PhoneLinkError("already_linked")
+        if len(linked) >= MAX_PHONES_PER_ACCOUNT:
+            raise PhoneLinkError("too_many_phones")
         now = self._now()
         if await self.repo.count_starts(user_id=user_id, since=now - CHALLENGE_TTL) >= MAX_STARTS_PER_USER:
             raise PhoneLinkError("too_many_sends")
@@ -144,11 +172,39 @@ class PhoneIdentity:
             "link_version": binding["link_version"],
         }
 
-    async def unlink(self, user_id: str) -> bool:
-        removed = await self.repo.unlink(user_id)
+    async def unlink(self, user_id: str, raw_phone: str) -> bool:
+        phone = normalize_e164(raw_phone)
+        linked = {p["phone_e164"] for p in await self.repo.list_active_phones(user_id)}
+        if phone not in linked:
+            raise PhoneLinkError("not_linked")
+        if len(linked) == 1 and not await self.repo.account_email(user_id):
+            raise PhoneLinkError("last_way_in")
+        removed = await self.repo.unlink(user_id, phone)
         if removed:
-            logger.info("phone_unlinked user=%s", user_id)
+            logger.info("phone_unlinked user=%s phone=%s", user_id, mask_e164(phone))
         return removed
+
+    async def claim_for_channel(self, phone_e164: str, *, name: str, source: str) -> ChannelClaim:
+        """The account a channel-authenticated number reaches, made on first
+        contact: a phone-only account with the normal free tier, no signup."""
+        binding = await self.repo.get_user_by_phone(phone_e164)
+        if binding is not None:
+            return ChannelClaim(user_id=str(binding["user_id"]), created=False)
+        async with self.repo.claiming(phone_e164) as conn:
+            binding = await self.repo.get_user_by_phone(phone_e164, conn=conn)
+            if binding is not None:
+                return ChannelClaim(user_id=str(binding["user_id"]), created=False)
+            user_id = await self.repo.orphan_phone_user(conn, phone_e164)
+            created = user_id is None
+            if created:
+                metadata = {"username": name or mask_e164(phone_e164), "signup_channel": source}
+                if name:
+                    metadata["name"] = name
+                user = await self._admin().create_user(phone=phone_e164, phone_confirm=True, user_metadata=metadata)
+                user_id = str(user["id"])
+            await self.repo.bind_channel(conn, user_id=user_id, phone_e164=phone_e164, source=source)
+        logger.info("phone_claimed user=%s phone=%s source=%s created=%s", user_id, mask_e164(phone_e164), source, created)
+        return ChannelClaim(user_id=user_id, created=created)
 
     @staticmethod
     def _from_provider(exc: TwilioVerifyError) -> PhoneLinkError:

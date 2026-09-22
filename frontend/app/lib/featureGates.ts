@@ -11,8 +11,8 @@ type Rollout = 'internal' | 'everyone';
 
 export const FEATURE_ROLLOUT = {
     // Verified phone linking (Settings → Phone) and the channels keyed on it.
-    phone_channel: 'internal',
-    // The account coordinator (Dashboard dock; later WhatsApp and calls).
+    phone_channel: 'everyone',
+    // The account coordinator's web dock. WhatsApp and calls are open to everyone.
     coordinator: 'internal',
     // Buying phone numbers for the Phone node.
     phone_numbers: 'internal',
