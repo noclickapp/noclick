@@ -65,7 +65,7 @@ RUN npm install -g --prefix /opt/noclick-cli \
         @openai/codex@0.156.1 \
         @anthropic-ai/claude-code@2.1.280 \
         opencode-ai@1.18.32 \
-        openclaw@2026.9.2 \
+        openclaw@2026.9.1 \
     && npm cache clean --force \
     # opencode's postinstall hard-links the platform binary into bin/, leaving
     # the platform packages (one a byte-identical "baseline" copy) dead weight.

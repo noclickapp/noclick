@@ -138,13 +138,13 @@ def _codex_rows(cwd: str) -> list:
     sid = CODEX_SID
     return [
         ("session_meta", {"session_id": sid, "id": sid, "timestamp": "2026-09-12T10:00:00.000Z", "cwd": cwd, "originator": "codex_cli_rs",
-                          "cli_version": "0.153.4", "source": "cli", "model_provider": "openai", "history_mode": "paginated",
-                          "base_instructions": {"text": "You are Codex."}, "git": {"branch": "main"}}),
-        ("event_msg", {"type": "task_started", "turn_id": turn, "started_at": 1789200000, "model_context_window": 258400}),
+                          "cli_version": "0.156.1", "source": "cli", "model_provider": "openai", "history_mode": "paginated",
+                          "base_instructions": {"text": "You are Codex."}, "git": {"branch": "main"}, "runtime_workspace_roots": [cwd]}),
+        ("event_msg", {"type": "task_started", "turn_id": turn, "root_turn_id": turn, "started_at": 1789200000, "model_context_window": 258400}),
         ("response_item", {"type": "message", "id": "msg_dev", "role": "developer", "content": [{"type": "input_text", "text": "# AGENTS.md instructions\nBe terse."}]}),
         ("response_item", {"type": "message", "id": "msg_env", "role": "user", "content": [{"type": "input_text", "text": f"<environment_context>\n  <cwd>{cwd}</cwd>\n</environment_context>"}]}),
         ("world_state", {"full": True, "state": {"agents_md": {"directory": cwd, "text": "Be terse."}}}),
-        ("turn_context", {"turn_id": turn, "root_turn_id": turn, "cwd": cwd, "workspace_roots": [cwd], "model": "gpt-5-codex"}),
+        ("turn_context", {"turn_id": turn, "root_turn_id": turn, "cwd": cwd, "workspace_roots": [cwd], "model": "gpt-5-codex", "disabled_plugin_ids": []}),
         ("event_msg", {"type": "user_message", "message": "Which tests cover the auth callback?", "client_id": "c1"}),
         ("response_item", {"type": "message", "id": "msg_u1", "role": "user", "content": [{"type": "input_text", "text": "Which tests cover the auth callback?"}]}),
         ("event_msg", {"type": "item_completed", "turn_id": turn, "thread_id": sid, "item": {"type": "UserMessage", "id": "it1", "content": [{"type": "text", "text": "Which tests cover the auth callback?"}]}}),
@@ -153,7 +153,7 @@ def _codex_rows(cwd: str) -> list:
         ("response_item", {"type": "message", "id": "msg_a1", "role": "assistant", "content": [{"type": "output_text", "text": "Let me search the test suite."}], "phase": "commentary"}),
         ("response_item", {"type": "custom_tool_call", "id": "ctc_1", "status": "completed", "call_id": "call_1", "name": "exec", "input": "rg -n auth_callback tests"}),
         ("token_usage_record", {"thread_id": sid, "turn_id": turn, "usage": {"input_tokens": 300, "output_tokens": 20}}),
-        ("response_item", {"type": "custom_tool_call_output", "id": "ctco_1", "call_id": "call_1", "output": [{"type": "input_text", "text": "tests/test_auth.py:12:def test_auth_callback"}]}),
+        ("response_item", {"type": "custom_tool_call_output", "id": "ctco_1", "call_id": "call_1", "output": [{"type": "input_text", "text": "tests/test_auth.py:12:def test_auth_callback"}], "metadata": {}}),
         ("event_msg", {"type": "token_count", "info": {"total_token_usage": {"input_tokens": 300, "output_tokens": 20, "total_tokens": 320}}}),
         ("event_msg", {"type": "agent_message", "message": "One test covers it: tests/test_auth.py::test_auth_callback.", "phase": "final_answer"}),
         ("response_item", {"type": "message", "id": "msg_a2", "role": "assistant", "content": [{"type": "output_text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}], "phase": "final_answer"}),
@@ -303,7 +303,7 @@ class TestCodexRead:
         thread = ic.read_thread(_store("codex", _codex_home(tmp_path)))
         sk = ic.skeleton_of(thread)
         assert sk.roles == EXPECTED_ROLES and sk.tool_calls == 1 and sk.tool_results == 1 and sk.unpaired_tool_calls == 0
-        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == (CODEX_SID, CWD, "0.153.4", "gpt-5-codex")
+        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == (CODEX_SID, CWD, "0.156.1", "gpt-5-codex")
         assert thread.dropped["context:injected"] == 1 and thread.dropped["context:system_message"] == 1
         assert thread.dropped["thinking"] == 1 and thread.dropped["context:turn_context"] == 1
         assert thread.dropped["opaque:record_world_state"] == 1 and thread.dropped["opaque:event_token_count"] == 1
@@ -332,12 +332,12 @@ class TestClaudeToCodex:
     def test_the_rollout_codex_resumes(self, tmp_path):
         thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
         home = tmp_path / ".codex"
-        out = ic.translate(thread, _store("codex", home), ic.TargetIdentity(cli_version="0.153.4", model_provider="custom", model="gpt-5-codex"))
+        out = ic.translate(thread, _store("codex", home), ic.TargetIdentity(cli_version="0.156.1", model_provider="custom", model="gpt-5-codex"))
         assert out.fidelity.ok and out.native_path.is_relative_to(home / "sessions") and out.native_path.name.endswith(f"{out.session_id}.jsonl")
         rows = [json.loads(l) for l in out.native_path.read_text().splitlines()]
         head = rows[0]
         assert head["type"] == "session_meta" and set(head["payload"]) >= {"session_id", "id", "timestamp", "cwd", "originator", "cli_version", "source", "model_provider", "history_mode"}
-        assert head["payload"]["model_provider"] == "custom" and head["payload"]["cli_version"] == "0.153.4" and head["payload"]["cwd"] == CWD
+        assert head["payload"]["model_provider"] == "custom" and head["payload"]["cli_version"] == "0.156.1" and head["payload"]["cwd"] == CWD
         items = [r["payload"] for r in rows if r["type"] == "response_item"]
         assert [i["type"] for i in items] == ["message", "message", "function_call", "function_call_output", "message"]
         assert items[0]["role"] == "user" and items[0]["content"] == [{"type": "input_text", "text": "Which tests cover the auth callback?"}]
@@ -447,7 +447,7 @@ class TestMoveThread:
         codex_home = tmp_path / "codex-home"
         codex_pointer = workdir / ".noclick-codex-thread"
         out = ic.move_thread(_store("claude_code", claude_home, str(workdir)), _store("codex", codex_home, str(workdir), pointer=codex_pointer),
-                             ic.TargetIdentity(cli_version="0.153.4", model_provider="openai"))
+                             ic.TargetIdentity(cli_version="0.156.1", model_provider="openai"))
         assert out.fidelity.ok and codex_pointer.read_text() == out.session_id
         marker = workdir / ".noclick-turns"
         back = ic.move_thread(_store("codex", codex_home, str(workdir), pointer=codex_pointer),
@@ -492,7 +492,7 @@ class TestCommand:
         pointer = tmp_path / "codex-home" / "sessions" / ".nc_thread"
         verdict = self._run("move", "--source-harness", "claude_code", "--source-home", str(home), "--source-cwd", str(workdir),
                             "--target-harness", "codex", "--target-home", str(tmp_path / "codex-home"), "--cwd", str(workdir),
-                            "--target-pointer", str(pointer), "--target-cli-version", "0.153.4",
+                            "--target-pointer", str(pointer), "--target-cli-version", "0.156.1",
                             "--target-model-provider", "custom", "--target-model", "gpt-5-codex")
         assert verdict["ok"] and verdict["fidelity"]["ok"] and pointer.read_text() == verdict["session_id"]
         assert verdict["interchange_version"] == ic.INTERCHANGE_VERSION
@@ -653,7 +653,7 @@ async def test_report_fallback_is_loud_for_drift_quiet_for_limits_and_never_rais
     monkeypatch.setattr("utils.feedback.record_feedback", fake_feedback)
     monkeypatch.setattr("repositories.conversation.ConversationRepo", FakeRepo)
     await si.report_fallback(object(), user_id="u1", conversation_id="ck:wf:agent:thread", source_harness="claude_code",
-                             target_harness="codex", reason="readback_mismatch", detail="lost a message", versions={"codex": "0.153.4"})
+                             target_harness="codex", reason="readback_mismatch", detail="lost a message", versions={"codex": "0.156.1"})
     assert seen["feedback"]["feedback_type"] == "interchange_fallback" and seen["feedback"]["dedupe_key"] == "claude_code:codex:readback_mismatch"
     assert seen["meta"][1] == "last_interchange" and seen["meta"][2]["ok"] is False
     seen.clear()

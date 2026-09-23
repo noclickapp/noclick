@@ -41,7 +41,8 @@
   },
   "openclaw": {
     "package": "openclaw",
-    "version": "2026.9.2",
+    "_version_frozen": "openclaw 2026.9.2 publishes its workspace bootstrap files (AGENTS.md, SOUL.md, ...) with a hard link and fails when link(2) is refused; the per-conversation workspace is a Modal volume, which refuses it, so every new conversation's first turn errors. Frozen at 2026.9.1 until that path works on our volumes (or bootstrap is skipped by config); refresh_cli_models.py skips bumping openclaw.",
+    "version": "2026.9.1",
     "default_model": "openrouter/~openai/gpt-luna-latest"
   },
   "hermes": {

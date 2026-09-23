@@ -16,7 +16,7 @@ injects context into the user role itself (``<environment_context>``,
 The app-server resumes a thread by id (``thread/resume``) from the rollout
 whose filename ends in that id, and it calls the provider the rollout
 header names over the configured one — a moved thread must name the
-target's. Validated against Codex 0.153.4 (read and resume) — see
+target's. Validated against Codex 0.156.1 (read and resume) — see
 ``tests/test_session_interchange_drift.py``.
 """
 

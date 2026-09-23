@@ -15,7 +15,7 @@ binary must be on PATH where a move runs — it is, in the target's sandbox.
 Reading is direct, since the source volume is mounted in a sandbox that has
 no ``opencode``. NoClick's runner resumes by the id in its pointer file
 (``.nc_session`` beside the database hosted, ``.noclick-opencode-session``
-in the local workdir). Validated against OpenCode 1.18.29 (import and
+in the local workdir). Validated against OpenCode 1.18.32 (import and
 resume) — see ``tests/test_session_interchange_drift.py``.
 """
 
