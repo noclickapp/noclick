@@ -225,7 +225,7 @@ export function PhoneNumberInput({
     return (
         <div
             className={cn(
-                'flex h-11 w-full items-center rounded-xl border border-input bg-background text-sm text-foreground transition-colors focus-within:border-foreground',
+                'flex h-11 w-full items-center rounded-xl border border-input bg-background text-sm text-foreground transition-colors focus-within:border-muted-foreground/40',
                 disabled && 'opacity-60',
                 className
             )}
