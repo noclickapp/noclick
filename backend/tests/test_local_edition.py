@@ -370,7 +370,7 @@ def _frozen_local_cron(frozen):
         def now(cls, tzinfo=None):
             return frozen.astimezone(tzinfo or ZoneInfo("UTC"))
 
-    return patch("utils.local_cron.datetime", _FrozenDT)
+    return patch("utils.cron_timing.datetime", _FrozenDT)
 
 
 def test_local_cron_evaluates_expressions_in_schedule_timezone():
