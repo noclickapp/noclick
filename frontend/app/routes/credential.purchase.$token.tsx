@@ -6,6 +6,7 @@ import { Link, useLoaderData, type ActionFunctionArgs, type LoaderFunctionArgs }
 import { ArrowLeft, Check, Clock3, Phone, ShieldCheck } from 'lucide-react';
 import { json, type JsonPayloadOf } from '~/lib/routerResponse';
 import { requireAuth } from '~/lib/supabase';
+import { apiBaseUrl } from '~/lib/hostedDefaults';
 import { csrfFailureResponse, generateCsrfToken } from '~/lib/csrf.server';
 import { Button } from '~/components/ui/button';
 import { PhoneNumberPurchaseForm, type PhonePurchaseQuote } from '~/components/credential/PhoneNumberPurchaseForm';
@@ -29,7 +30,7 @@ function returnPath(request: Request) {
 }
 
 async function backend(token: string, accessToken: string, operation?: string, body?: unknown) {
-    const res = await fetch(`${process.env.API_URL}/api/credential-request/${encodeURIComponent(token)}/phone${operation ? `/${operation}` : ''}`, {
+    const res = await fetch(`${apiBaseUrl()}/api/credential-request/${encodeURIComponent(token)}/phone${operation ? `/${operation}` : ''}`, {
         method: operation ? 'POST' : 'GET',
         headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
         ...(operation ? { body: JSON.stringify(body) } : {}),
