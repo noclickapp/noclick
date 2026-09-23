@@ -1195,6 +1195,8 @@ class AgentNode(WorkflowNode):
                 )
             credential_data = resolved_credentials.get(m["credential_id"])
             if credential_data is None:
+                from utils.credential_approval import forbid_secret_export
+                await forbid_secret_export(m["credential_id"], pool=pool)
                 credential_data = await resolve_operation_credential(
                     m["credential_id"], user_id or self.user_id, pool,
                     organization_id=self.organization_id, workflow_id=self.workflow_id,
@@ -1252,6 +1254,8 @@ class AgentNode(WorkflowNode):
             return {}
         from nodes.agent.user_env import sanitize_user_env
         from nodes.core.run_op import resolve_operation_credential
+        from utils.credential_approval import forbid_secret_export
+        await forbid_secret_export(env_credential_id)
 
         # pool=None: resolution resolves the native pool at first actual DB use.
         credential_data = await resolve_operation_credential(

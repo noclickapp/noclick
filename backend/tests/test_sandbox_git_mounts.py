@@ -240,7 +240,8 @@ def _bare_agent():
 
 
 @pytest.mark.asyncio
-async def test_resolve_sandbox_mounts_resolves_and_freshens():
+async def test_resolve_sandbox_mounts_resolves_and_freshens(monkeypatch):
+    monkeypatch.setattr("repositories.credential_approvals.CredentialApprovalRepo.has_restrictions", AsyncMock(return_value=False))
     agent = _bare_agent()
     mounts = [
         {
@@ -295,7 +296,8 @@ async def test_resolve_sandbox_mounts_fails_loudly_without_credential():
 
 
 @pytest.mark.asyncio
-async def test_resolve_sandbox_mounts_rejects_non_mount_provider():
+async def test_resolve_sandbox_mounts_rejects_non_mount_provider(monkeypatch):
+    monkeypatch.setattr("repositories.credential_approvals.CredentialApprovalRepo.has_restrictions", AsyncMock(return_value=False))
     agent = _bare_agent()
     mounts = [
         {

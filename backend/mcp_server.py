@@ -1386,6 +1386,15 @@ class NoClickMCPServer(DatabasePoolMixin):
         if not hasattr(node_class, 'load_field_options'):
             return {"error": f"Node type {node_type} does not support dynamic options"}
 
+        if credential_id:
+            from utils.credential_approval import admit_lookup
+            pending = await admit_lookup(
+                credential_id=credential_id, user_id=user_id, node_type=node_type, pool=await self.get_pool(),
+                arguments={"field_name": field_name, "context": context, "page_token": page_token, "search": None},
+            )
+            if pending:
+                return pending
+
         # Inject user_id into context for credential-less nodes (e.g., resource picker)
         ctx = dict(context or {})
         if user_id:
@@ -2548,7 +2557,7 @@ class NoClickMCPServer(DatabasePoolMixin):
                     dq["node_type"], field, cred_data, context=context,
                     user_id=user_id, credential_id=cred_id,
                 )
-                if "error" in result:
+                if "error" in result or result.get("executed") is False:
                     dynamic_options_response.setdefault(alias, {})[field] = result
                     continue
 
@@ -2629,7 +2638,9 @@ class NoClickMCPServer(DatabasePoolMixin):
                             nt, fname, cred_data, context={},
                             user_id=user_id, credential_id=cred_id,
                         )
-                        if "error" not in result:
+                        if result.get("executed") is False:
+                            dynamic_options_response.setdefault(alias, {})[fname] = result
+                        elif "error" not in result:
                             opts = result.get("options", [])[:dynamic_options_limit]
                             dynamic_options_response.setdefault(alias, {})[fname] = {"options": opts}
                 except Exception as e:
@@ -4649,6 +4660,31 @@ class NoClickMCPServer(DatabasePoolMixin):
                 for r in rows
             ]
 
+        async def credential_actions():
+            from utils.credential_actions import CredentialActions
+            from wss.handlers.workflow_handler import get_user_org_context
+            pool = await self.get_pool()
+            user_id = _user_id_var.get()
+            async with pool.acquire() as conn:
+                org_id = await get_user_org_context(conn, user_id)
+            return CredentialActions(pool=pool, user_id=user_id, organization_id=org_id)
+
+        @self.mcp.tool(name="credential_operations", description="Discover a connection's operations without a workflow. Pass node_type and operation for its argument schema. Approval restrictions apply to every call.")
+        async def credential_operations(credential_id: str, node_type: str | None = None, operation: str | None = None, query: str = "", offset: int = 0) -> dict:
+            return await (await credential_actions()).credential_operations(credential_id, node_type, operation, query, offset)
+
+        @self.mcp.tool(name="call_credential_operation", description="Execute one discovered operation directly using a connection. Only perform user-authorized actions. A pending_approval result means nothing ran: give the user its review link, then retry the identical call only after approval.")
+        async def call_credential_operation(credential_id: str, node_type: str, operation: str, arguments: dict) -> dict:
+            return await (await credential_actions()).call_credential_operation(credential_id, node_type, operation, arguments)
+
+        @self.mcp.tool(name="lookup_credential_options", description="Resolve IDs for an operation's fields using the lookup schema from credential_operations. Restricted connections also require approval for these reads.")
+        async def lookup_credential_options(credential_id: str, node_type: str, operation: str, field: str, context: dict | None = None, search: str | None = None, page_token: str | None = None) -> dict:
+            return await (await credential_actions()).lookup_credential_options(credential_id, node_type, operation, field, context, search, page_token)
+
+        @self.mcp.tool(name="require_credential_approval", description="Add approval restrictions to this specific credential, across all agents and MCP callers. Use operation keys from credential_operations, or '*' for every operation. This tool cannot remove restrictions; only the owner can unlock them through the returned settings link.")
+        async def require_credential_approval(credential_id: str, operations: list[str]) -> dict:
+            return await (await credential_actions()).require_credential_approval(credential_id, operations)
+
         @self.mcp.tool(
             name="connect_credential",
             description=(
@@ -4668,22 +4704,10 @@ class NoClickMCPServer(DatabasePoolMixin):
             pool = await self.get_pool()
             if not pool:
                 return {"error": "Database not available"}
-            from repositories.users import get_user_email
-            async with pool.acquire() as conn:
-                email = await get_user_email(conn, uuid.UUID(user_id))
-            if not email:
-                return {"error": "Could not resolve your account email to anchor the connect request."}
-            from repositories.credentials import CredentialsRepo
-            from utils.email import credential_provide_url
-            req = await CredentialsRepo(pool).upsert_credential_request(
-                requester_id=user_id, target_email=email,
-                credential_type=cred_type, message="Connect requested via MCP",
-            )
-            if not req or not req.token:
-                return {"error": "Failed to create credential request"}
+            actions = await credential_actions()
+            connected = await actions.connect_credential(cred_type, "Connect requested via MCP")
             result: Dict[str, Any] = {
-                "credential_type": cred_type,
-                "connect_url": credential_provide_url(req.token),
+                **connected, "credential_type": cred_type, "connect_url": connected["url"],
             }
             from utils.credential_health import CREDENTIAL_HEALTH_CHECKS, get_credential_health
             if cred_type in CREDENTIAL_HEALTH_CHECKS:
@@ -4782,24 +4806,14 @@ class NoClickMCPServer(DatabasePoolMixin):
             if not hasattr(node_class, 'load_field_options'):
                 return {"error": f"Node type {node_type} does not support dynamic options"}
 
-            # Allow credential-less dynamic options (e.g., dataset resource picker)
-            if credential_id:
-                pool = await self.get_pool()
-                cred_data = await get_credential(credential_id, user_id, pool=pool)
-                if not cred_data:
-                    return {"error": f"Credential not found or access denied: {credential_id}"}
-            else:
-                cred_data = {}
-
+            from nodes.core.run_op import run_node_lookup
             try:
-                result = await self._load_dynamic_options_for_field(
-                    node_type, field_name, cred_data,
+                return await run_node_lookup(
+                    node_type=node_type, field_name=field_name, user_id=user_id,
+                    credential_id=credential_id or None, pool=await self.get_pool(),
                     context=context, page_token=page_token or None,
-                    user_id=user_id, credential_id=credential_id or None,
                 )
-                return result
             except Exception as e:
-                logger.error(f"[MCP Server] load_options error: {e}", exc_info=True)
                 return {"error": str(e)}
 
         @self.mcp.tool(
@@ -4841,6 +4855,17 @@ class NoClickMCPServer(DatabasePoolMixin):
             pool = await self.get_pool()
             try:
                 # Priority 1: the node's own load_field_value (alarm/filesystem/mcp-server/…).
+                from utils.credentials import extract_credential_ids
+                from nodes.core.run_op import resolve_operation_credential
+                from utils.credential_approval import admit_lookup
+                for cid in set((extract_credential_ids(config) or {}).values()):
+                    await resolve_operation_credential(cid, user_id, pool, workflow_id=workflow_id)
+                    pending = await admit_lookup(
+                        credential_id=cid, user_id=user_id, node_type=node_type, pool=pool, workflow_id=workflow_id,
+                        arguments={"loader": "value", "field_name": field_name, "context": merged_context},
+                    )
+                    if pending:
+                        return pending
                 if hasattr(node_class, "load_field_value"):
                     result = await node_class.load_field_value(
                         field_name=field_name, user_id=user_id,
@@ -5168,6 +5193,10 @@ class NoClickMCPServer(DatabasePoolMixin):
 
                     node_type = target_node.get("type", "unknown")
                     if output is not None:
+                        if isinstance(output, dict) and output.get("executed") is False and output.get("status") in ("pending_approval", "rejected"):
+                            results.append({"node_id": node_id, "type": node_type, "success": False,
+                                            "status": output["status"], "output": output})
+                            continue
                         if not return_output:
                             output_str = json.dumps(output) if not isinstance(output, str) else output
                             output = output_str[:500] + "..." if len(output_str) > 500 else output_str

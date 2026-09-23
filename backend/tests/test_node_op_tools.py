@@ -275,10 +275,11 @@ async def test_execute_tool_lookup_rejects_unknown_field():
     assert "teamId" in result["error"]
 
 
-async def test_run_node_lookup_executes_real_loader():
+async def test_run_node_lookup_executes_real_loader(monkeypatch):
     """Through the real LinearNode.load_field_options: credential freshen path,
     _user_id context injection, and {options, next_page_token} normalization —
     only the GraphQL HTTP call is mocked."""
+    monkeypatch.setattr("repositories.credential_approvals.CredentialApprovalRepo.admit", AsyncMock(return_value=None))
     payload = {"teams": {"nodes": [{"id": "t1", "name": "Engineering", "key": "ENG"}]}}
     creds = {"credential_type": "linear_pat", "api_key": "lin_api_test"}
 
@@ -811,10 +812,11 @@ def _mock_httpx_client(response_payload):
     return factory, client
 
 
-async def test_run_node_operation_executes_linear_create_issue():
+async def test_run_node_operation_executes_linear_create_issue(monkeypatch):
     """End-to-end through the real LinearNode: discriminated-union config
     parse (with str coercion), operation dispatch, credential plumbing, and
     output shape — only the HTTP boundary is mocked."""
+    monkeypatch.setattr("repositories.credential_approvals.CredentialApprovalRepo.admit", AsyncMock(return_value=None))
     payload = {
         "data": {
             "issueCreate": {
