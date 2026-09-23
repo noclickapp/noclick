@@ -49,7 +49,9 @@ def coordinator_tool_params(*, include_whatsapp: bool = False, include_publishin
             "name": name, "description": description,
             "parameters": {"type": "object", "properties": properties, "required": required or [], "additionalProperties": False},
         }}
-    params = [
+    from utils.credential_actions import credential_tool_params
+
+    params = credential_tool_params(tool) + [
         tool("schedule_alarm", "Schedule a message to wake this coordinator later, only for work the user requested. "
              "Countdown and datetime alarms fire once; cron recurs in the supplied timezone. "
              "The alarm resumes this same conversation and delivers its response to the current channel. "
@@ -292,6 +294,11 @@ class CoordinatorTools:
             "trash_workflow": self.trash_workflow,
             "restore_workflow": self.restore_workflow,
         }
+        from utils.credential_actions import CredentialActions, credential_tool_params
+        credential_tools = CredentialActions(pool=pool, user_id=user_id, organization_id=organization_id,
+                                             conversation_id=conversation_id, continuation=continuation)
+        for name in credential_tool_params(lambda name, *args: name):
+            self._tools[name] = getattr(credential_tools, name)
         if capability(PHONE_NUMBERS) is not None:
             self._tools["phone_number_request_status"] = self.phone_number_request_status
             self._tools["find_phone_numbers"] = self.find_phone_numbers

@@ -1713,6 +1713,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         from_status = data['from_status']
         decision = data.get('decision')
         edited_values = data.get('edited_values')
+        retry_credential_node = data.get('retry_credential_node') is True
+        resume_node_ids = set(data.get('credential_resume_nodes') or [resume_node_id]) if retry_credential_node else {resume_node_id}
         context = data.get('_context') or {}
         user_id = caller_user_id or context.get('user_id')
 
@@ -1777,7 +1779,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
 
         start_successors: set = set()
         for edge in all_edges:
-            if edge.get("source") != resume_node_id:
+            if edge.get("source") not in resume_node_ids:
                 continue
             if decision is not None:
                 handle = edge.get("sourceHandle") or "default"
@@ -1796,7 +1798,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             downstream_ids.add(nid)
             queue.extend(successors.get(nid, set()))
 
-        if not downstream_ids:
+        if not downstream_ids and not retry_credential_node:
             logger.info(f"[resume] no downstream nodes for node '{resume_node_id}'")
             async with pool.acquire() as conn:
                 await WorkflowRepo(pool).complete_no_downstream_resume(
@@ -1807,17 +1809,21 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         # 5. Filter to subgraph; include the suspending node itself with
         #    mockedOutput so downstream nodes see a node_done event for it.
         node_by_id = {n["id"]: n for n in all_nodes}
-        execution_ids = downstream_ids | {resume_node_id}
+        execution_ids = downstream_ids | resume_node_ids
         downstream_nodes = []
         for nid in execution_ids:
             node = node_by_id.get(nid)
             if not node:
                 continue
-            if nid == resume_node_id:
+            if nid == resume_node_id and not retry_credential_node:
                 import copy as _copy
                 node = _copy.deepcopy(node)
                 node.setdefault("config", {})["mockedOutput"] = resume_output
             downstream_nodes.append(node)
+        if retry_credential_node:
+            for nid in resume_node_ids:
+                initial_outputs.pop(nid, None)
+                seeded.pop(nid, None)
         downstream_edges = [
             e for e in all_edges
             if e.get("source") in execution_ids and e.get("target") in execution_ids
@@ -1826,10 +1832,11 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         # 6. Resume the ORIGINAL execution row in place — one logical run is
         #    one execution record. Flip it back to running. Outputs from before
         #    the suspension already live under this execution_id.
-        async with pool.acquire() as conn:
-            await WorkflowRepo(pool).resume_execution_running(
-                conn, uuid_module.UUID(execution_id),
-            )
+        if not retry_credential_node:  # Credential dispatch already claimed this row atomically.
+            async with pool.acquire() as conn:
+                await WorkflowRepo(pool).resume_execution_running(
+                    conn, uuid_module.UUID(execution_id),
+                )
 
         # 7. Connect to the workflow relay. Declared up-front so the finally
         # block below can release it on any exit path. Pre-2026-05-25 the
@@ -1891,15 +1898,15 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
 
             # 9. Persist outputs and finish the (single) execution row.
             if node_outputs:
-                spawn(
-                    self._persist_node_outputs(
-                        workflow_id, user_id, node_outputs,
-                        execution_id=execution_id,
-                        executable_nodes=downstream_nodes,
-                        preloaded=seeded,
-                    ),
-                    name=f"persist-node-outputs-resume:{execution_id}",
+                persist = self._persist_node_outputs(
+                    workflow_id, user_id, node_outputs,
+                    execution_id=execution_id, executable_nodes=downstream_nodes, preloaded=seeded,
                 )
+                if retry_credential_node:
+                    # The next approval batch must see this batch's checkpoint.
+                    await persist
+                else:
+                    spawn(persist, name=f"persist-node-outputs-resume:{execution_id}")
 
             # If the resumed run hit another suspending node (e.g. a second delay),
             # it re-suspended — leave the row in its new awaiting_* status rather

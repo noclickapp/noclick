@@ -634,6 +634,9 @@ function AttentionActions({ item, values, expanded, onToggle }: { item: Attentio
                 </>
             );
         case 'approval':
+            if (item.meta?.credentialAction) {
+                return <PrimaryButton onClick={() => actions.openLink(item)}>Review action <ArrowUpRight className="h-3 w-3" /></PrimaryButton>;
+            }
             return (
                 <>
                     <QuietButton onClick={() => actions.respondApproval(item, 'rejected', values)}>Reject</QuietButton>

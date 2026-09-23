@@ -135,7 +135,10 @@ export function useDashboardOverview() {
         // demand by the actions that change it.
         const unsubCreated = onSocketEvent('approval:request:created', () => scheduleRefetch());
         const unsubResolved = onSocketEvent('approval:request:resolved', () => scheduleRefetch());
+        const onFocus = () => scheduleRefetch();
+        window.addEventListener('focus', onFocus);
         return () => {
+            window.removeEventListener('focus', onFocus);
             unsubCreated();
             unsubResolved();
         };

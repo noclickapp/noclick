@@ -90,6 +90,12 @@ class CoordinatorWakeupRepo:
                 payload.get("send_to_phone", False))
             return dict(row)
 
+    async def by_source(self, source, source_id):
+        row = await self.pool.fetchrow(
+            "SELECT * FROM coordinator_wakeups WHERE source=$1 AND source_id=$2::uuid", source, source_id,
+        )
+        return dict(row) if row else None
+
     async def get(self, event_id):
         row = await self.pool.fetchrow("SELECT * FROM coordinator_wakeups WHERE id=$1::uuid", event_id)
         return dict(row) if row else None

@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Link } from 'react-router';
 import {
     Share2,
     Trash2,
@@ -19,6 +20,7 @@ import {
     Users,
     KeyRound,
     Plus,
+    ShieldCheck,
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -724,6 +726,11 @@ function CredentialRow({
                 )}
 
                 {/* Action buttons */}
+                <Link to={`/credential/permissions/${credential.id}`} aria-label={`Tool permissions for ${credential.name}`}
+                    title="Tool permissions" onClick={event => event.stopPropagation()}
+                    className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground">
+                    <ShieldCheck className="h-4 w-4" />
+                </Link>
                 {(onShare || onDelete || onUnshare) && (
                     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                     <div

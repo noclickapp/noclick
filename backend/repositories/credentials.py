@@ -679,6 +679,7 @@ class CredentialsRepo:
         target_email: str,
         credential_type: str,
         message: Optional[str],
+        reuse_pending: bool = False,
     ) -> Optional[CredentialRequestRow]:
         """Insert-or-refresh a credential request. On conflict, rotates the
         token, resets expiry, and re-opens the request. Returns the shape
@@ -687,6 +688,15 @@ class CredentialsRepo:
         async with self._pool.acquire() as conn:
             async with conn.transaction():
                 row = None
+                if reuse_pending and credential_type != "phone_number":
+                    await conn.execute("SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+                                       f"credential-request:{requester_id}:{target_email.lower()}:{credential_type}")
+                    row = await conn.fetchrow(
+                        "SELECT * FROM credential_requests WHERE requester_id=$1::uuid "
+                        "AND target_email=LOWER($2) AND credential_type=$3 "
+                        "AND status='pending' AND expires_at>now() FOR UPDATE",
+                        requester_id, target_email, credential_type,
+                    )
                 if credential_type == "phone_number":
                     # Keep a paid request's token stable while it is actionable or
                     # in flight. Re-minting a builder link must not reset a purchase.
@@ -727,6 +737,21 @@ class CredentialsRepo:
             fulfilled_at=row['fulfilled_at'],
             token=row['token'],
         )
+
+    async def connection_request_status(self, request_id: str, user_id: str):
+        from datetime import timezone
+        row = await self._pool.fetchrow(
+            "SELECT id,status,credential_id,expires_at FROM credential_requests "
+            "WHERE id=$1::uuid AND requester_id=$2::uuid", request_id, user_id,
+        )
+        if row is None:
+            return None
+        status = row["status"]
+        if status == "pending" and row["expires_at"] <= datetime.now(timezone.utc):
+            status = "expired"
+        return {"request_id": str(row["id"]), "status": status,
+                "credential_id": str(row["credential_id"]) if row["credential_id"] else None,
+                "expires_at": row["expires_at"].isoformat()}
 
     async def phone_purchase_request(self, token: str, user_id: str):
         row = await self._pool.fetchrow(

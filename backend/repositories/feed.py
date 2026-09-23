@@ -150,6 +150,10 @@ class FeedRepo:
         scope_clause, scope_params = self._workspace_scope(
             table_alias="ar", user_id=user_id, org_uuid=org_uuid,
         )
+        scope_params.append(user_id)
+        scope_clause = (f"((ar.credential_id IS NULL AND {scope_clause}) OR "
+                        f"EXISTS(SELECT 1 FROM credentials c WHERE c.id=ar.credential_id "
+                        f"AND c.owner_id=${len(scope_params)}::uuid))")
         pending_sql = f"""
             SELECT
                 ar.id, ar.workflow_id, ar.execution_id, ar.node_id,
@@ -160,6 +164,9 @@ class FeedRepo:
             FROM approval_requests ar
             LEFT JOIN workflows w ON w.id = ar.workflow_id
             WHERE ar.status = 'pending'
+              AND (ar.expires_at IS NULL OR ar.expires_at>now())
+              AND (ar.credential_id IS NULL OR EXISTS(SELECT 1 FROM credentials c WHERE c.id=ar.credential_id
+                   AND c.approval_revision=(ar.action_payload->>'policy_revision')::bigint AND c.revoked_at IS NULL))
               AND {scope_clause}
             ORDER BY ar.created_at DESC
             LIMIT 100
@@ -309,7 +316,7 @@ class FeedRepo:
         async with self._pool.acquire() as conn:
             if values is not None:
                 current = await conn.fetchrow(
-                    "SELECT content FROM approval_requests WHERE id = $1",
+                    "SELECT content FROM approval_requests WHERE id = $1 AND credential_id IS NULL",
                     approval_id,
                 )
                 if current and current["content"]:
@@ -322,7 +329,7 @@ class FeedRepo:
                         content_data = {}
                     content_data["values"] = values
                     await conn.execute(
-                        "UPDATE approval_requests SET content = $1 WHERE id = $2",
+                        "UPDATE approval_requests SET content = $1 WHERE id = $2 AND credential_id IS NULL",
                         _json.dumps(content_data),
                         approval_id,
                     )
@@ -330,7 +337,7 @@ class FeedRepo:
                 """
                 UPDATE approval_requests
                 SET status = $1, decided_by = $2, decided_at = NOW()
-                WHERE id = $3 AND status IN ('pending', 'approved', 'rejected')
+                WHERE id = $3 AND credential_id IS NULL AND status IN ('pending', 'approved', 'rejected')
                 RETURNING id, workflow_id, execution_id, node_id, user_id, organization_id
                 """,
                 decision, decided_by_user_id, approval_id,

@@ -72,6 +72,8 @@ async def reconcile(pool):
     repo = CoordinatorWakeupRepo(pool)
     await repo.reap_stalled()
     await repo.prune()
+    from utils.credential_approval_dispatch import dispatch_workflows
+    await dispatch_workflows(pool)
     rows = await repo.reconciliation_batch(limit=50)
     semaphore = asyncio.Semaphore(10)
 

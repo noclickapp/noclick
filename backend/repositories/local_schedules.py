@@ -49,7 +49,7 @@ class LocalScheduleRepo:
 
     async def save(self, body):
         kind = body.get("target_kind", "workflow")
-        if kind not in ("workflow", "coordinator", "coordinator_wakeup"):
+        if kind not in ("workflow", "coordinator", "coordinator_wakeup", "credential_approval"):
             raise ValueError("Invalid schedule target")
         if not body.get("user_id") or not body.get("webhook_url"):
             raise ValueError("Missing user_id or webhook_url")

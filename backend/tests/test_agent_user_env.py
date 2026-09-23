@@ -174,6 +174,8 @@ def test_env_credential_id_reads_the_map(node_data, expected):
     ],
 )
 async def test_resolve_user_env_accepts_both_blob_shapes(monkeypatch, blob, expected):
+    from unittest.mock import AsyncMock
+    monkeypatch.setattr("repositories.credential_approvals.CredentialApprovalRepo.has_restrictions", AsyncMock(return_value=False))
     from nodes import agent_node as an
 
     node = an.AgentNode.__new__(an.AgentNode)

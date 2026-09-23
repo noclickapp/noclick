@@ -240,7 +240,8 @@ async def build_overview(pool, user_id: str, *, days: int = 14) -> Dict[str, Any
             if row.get(key):
                 referenced.add(str(row[key]))
     for row in (approvals[0] + approvals[1]) if approvals else []:
-        referenced.add(str(row.workflow_id))
+        if row.workflow_id:
+            referenced.add(str(row.workflow_id))
     if tool_calls:
         for wf_id, graph in tool_calls[1].items():
             workflows.add(str(wf_id), None, graph)
@@ -456,14 +457,20 @@ def _compose_attention(
     items: List[Dict[str, Any]] = []
 
     for row in pending_approvals:
+        content = _parse_json(row.content, {}) or {}
+        credential_action = content.get("credential_action", False)
         items.append({
             "id": f"approval:{row.id}",
             "kind": "approval",
             "title": row.title or "Approval required",
-            "workflow": workflows.ref(row.workflow_id, row.workflow_name),
+            "workflow": workflows.ref(row.workflow_id, row.workflow_name) if row.workflow_id else None,
             "createdAt": _iso(row.created_at),
             "fields": _approval_fields(row),
-            "meta": {"approvalId": str(row.id), "executionId": str(row.execution_id), "nodeId": row.node_id},
+            "detail": (f"{content.get('credential_name', 'Connection')} · Review this call before it runs"
+                       if credential_action else None),
+            "link": f"/credential/approval/{row.id}" if credential_action else None,
+            "meta": {"approvalId": str(row.id), "executionId": str(row.execution_id), "nodeId": row.node_id,
+                     "credentialAction": credential_action},
         })
 
     for ask in asks:

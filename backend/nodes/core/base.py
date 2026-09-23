@@ -649,6 +649,11 @@ class WorkflowNode(ABC):
         from nodes.core.binary_output import resolve_binary_outputs
         from nodes.core.media_resolver import renewable_media_urls
 
+        from utils.credential_approval import admit_node
+        pending = await admit_node(self, inputs)
+        if pending is not None:
+            return pending
+
         async with renewable_media_urls(self._config, self.workflow_id):
             output = await self.execute(inputs)
         return await resolve_binary_outputs(

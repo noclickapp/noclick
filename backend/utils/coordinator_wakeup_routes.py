@@ -82,3 +82,30 @@ async def scheduled_coordinator(request: Request):
         delay = await repo.retry_delay(event)
         raise HTTPException(503, "Coordinator is busy", headers={"Retry-After": str(delay)})
     return {"delivered": True}
+
+
+@router.post("/internal/scheduler/credential-approval")
+async def scheduled_credential_approval(request: Request):
+    """The same signed scheduler transports approved workflow continuations."""
+    raw = await request.body()
+    if len(raw) > 32768 or not verify_delivery(raw, request.headers, scheduler.CRON_SCHEDULER_SECRET, max_age=None):
+        raise HTTPException(401, "Invalid scheduler signature")
+    if not verify_delivery(raw, request.headers, scheduler.CRON_SCHEDULER_SECRET):
+        raise HTTPException(503, "Scheduler delivery expired in transit", headers={"Retry-After": "30"})
+    try:
+        body = json.loads(raw)
+        caller_id = str(uuid.UUID(body["user_id"]))
+        approval_id = str(uuid.UUID(body["payload"]["approval_id"]))
+        if body["target_kind"] != "credential_approval":
+            raise ValueError("Invalid target")
+    except (KeyError, TypeError, ValueError):
+        raise HTTPException(400, "Invalid approval delivery")
+    from repositories.credential_approvals import CredentialApprovalRepo
+    from utils.credential_approval_dispatch import resume_workflows
+    pool = get_native_pool()
+    row = await CredentialApprovalRepo(pool).scheduled_request(approval_id, caller_id)
+    if not row or row["status"] != "approved" or row["consumed_at"] or not row["execution_id"]:
+        return {"skipped": True}
+    if not await resume_workflows(pool, str(row["execution_id"])):
+        raise HTTPException(503, "Workflow checkpoint is not ready", headers={"Retry-After": "10"})
+    return {"delivered": True}

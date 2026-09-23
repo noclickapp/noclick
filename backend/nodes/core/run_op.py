@@ -84,6 +84,7 @@ async def run_node_operation(
     workflow_id: Optional[str] = None,
     conversation_id: Optional[str] = None,
     credential_data: Optional[Dict[str, Any]] = None,
+    approval_context: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Run a single integration-node operation and return its output dict.
@@ -119,7 +120,7 @@ async def run_node_operation(
     config = clean_config_empty_strings(arguments or {})
     config["operation"] = operation
 
-    node_data: Dict[str, Any] = {"config": config}
+    node_data: Dict[str, Any] = {"config": config, "_approval_context": approval_context, "_approval_pool": pool}
     if credentials:
         node_data["credentials"] = credentials
         if credential_id:
@@ -172,6 +173,8 @@ async def run_node_lookup(
     organization_id: Optional[str] = None,
     workflow_id: Optional[str] = None,
     allowed_values: Optional[list] = None,
+    conversation_id: Optional[str] = None,
+    approval_context: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Run a node's dynamic-options loader standalone — the backend for the
@@ -186,6 +189,19 @@ async def run_node_lookup(
     """
     from nodes.core.registry import NODE_REGISTRY
     from nodes.core.dynamic_options import normalize_search
+
+    if credential_id:
+        # Resolve access before creating a review request, just as execution does.
+        await resolve_operation_credential(credential_id, user_id, pool, organization_id, workflow_id)
+        from utils.credential_approval import admit_lookup
+        pending = await admit_lookup(
+            credential_id=credential_id, user_id=user_id, node_type=node_type, pool=pool,
+            arguments={"field_name": field_name, "context": context, "page_token": page_token, "search": search},
+            organization_id=organization_id, workflow_id=workflow_id,
+            conversation_id=conversation_id, continuation=approval_context,
+        )
+        if pending:
+            return pending
 
     node_class = NODE_REGISTRY.get(node_type)
     if node_class is None:

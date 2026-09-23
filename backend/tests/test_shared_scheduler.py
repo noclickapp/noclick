@@ -90,10 +90,11 @@ async def test_retention_preserves_paused_schedules(local_scheduler):
     assert await repo.get(str(paused["id"])) is not None
 
 
-async def test_restart_reuses_delivery_id_and_fences_old_completion(local_scheduler):
+@pytest.mark.parametrize("kind", ["workflow", "credential_approval"])
+async def test_restart_reuses_delivery_id_and_fences_old_completion(local_scheduler, kind):
     _, pool = local_scheduler
     repo = LocalScheduleRepo(pool)
-    await add(repo)
+    await add(repo, kind=kind)
     first = (await repo.claim(1))[0]
     await pool.execute("UPDATE local_cron_schedules SET lease_until=now()-interval '1 second'")
     second = (await LocalScheduleRepo(pool).claim(1))[0]
