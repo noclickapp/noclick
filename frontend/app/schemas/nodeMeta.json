@@ -1185,7 +1185,8 @@
     "automation-twilio": {
       "agentToolProvider": true,
       "triggerOperations": [
-        "on_incoming_sms"
+        "on_incoming_sms",
+        "on_call"
       ]
     },
     "automation-twitter": {

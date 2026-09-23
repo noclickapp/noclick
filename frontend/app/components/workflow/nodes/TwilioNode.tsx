@@ -30,7 +30,8 @@ const TwilioNodeComponent = (props: NodeProps) => {
 export const TwilioNode: NodeDefinition = {
     type: 'automation-twilio',
     label: 'Twilio',
-    description: 'Twilio automation',
+    description: 'SMS, WhatsApp and live phone calls on your own Twilio numbers',
+    keywords: ['sms', 'text message', 'phone call', 'voice agent', 'answer calls', 'bring your own number'],
     Icon: TwilioIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

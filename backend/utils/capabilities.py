@@ -99,8 +99,12 @@ OWNER_MESSAGE = "owner.message"
 # exists(number_sid) -> bool. Without one, numbers cannot be bought here.
 PHONE_NUMBERS = "phone.numbers"
 
-# Outbound calls from an owned number: async place(*, user_id, workflow_id,
-# node_id, from_number, number_sid, to_number, goal) -> dict.
+# Live calls with the wired agent as the voice, on a number the platform
+# bought OR one the user brought from their own Twilio account:
+# receiver_url(webhook_id) -> the URL a number's voice webhook points at;
+# async place(*, user_id, workflow_id, node_id, credential_id, from_number,
+# number_sid, to_number, goal, carrier=None) -> dict, where carrier is
+# {"account_sid", "auth_token"} for a brought number (None = platform account).
 PHONE_CALLS = "phone.calls"
 
 _providers: Dict[str, Any] = {}

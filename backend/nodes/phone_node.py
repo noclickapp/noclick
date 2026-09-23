@@ -12,7 +12,9 @@ from typing import Any, Dict, Literal, Optional, Type, Union
 from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import Annotated
 
+from nodes.core.agent_events import phone_call_event
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.call_routing import already_answers, number_holder as _number_holder
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.capabilities import PHONE_CALLS, PHONE_NUMBERS, capability
@@ -112,27 +114,6 @@ class PhoneNodeConfig(NodeConfig[PhoneConfig, PhoneNumberCredential]):
     pass
 
 
-async def _number_holder(number_sid: str, *, except_webhook_id: str) -> Optional[str]:
-    """The workflow whose active on_call trigger already routes this number
-    (its name, for the message), or None. The webhook row's
-    external_webhook_id IS the number's provider id."""
-    from utils.database_pool import get_native_pool
-
-    row = await get_native_pool().fetchrow(
-        """
-        SELECT w.workflow_id, wf.name
-        FROM webhooks w LEFT JOIN workflows wf ON wf.id = w.workflow_id
-        WHERE w.external_webhook_id = $1 AND w.registered_operation = 'on_call'
-          AND w.is_active AND w.id::text <> $2
-        LIMIT 1
-        """,
-        number_sid, except_webhook_id,
-    )
-    if row is None:
-        return None
-    return f'"{row["name"]}"' if row["name"] else f"workflow {row['workflow_id']}"
-
-
 class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """A phone number the workflow owns: calls in to the wired agent, calls out for it."""
 
@@ -168,10 +149,7 @@ class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
         # every call silently while the first still read "registered".
         holder = await _number_holder(credential["number_sid"], except_webhook_id=webhook_id)
         if holder is not None:
-            raise RuntimeError(
-                f"{credential.get('phone_number') or 'This number'} already answers calls for "
-                f"{holder}. A number can ring one agent; buy another number for this one."
-            )
+            raise RuntimeError(already_answers(credential.get("phone_number"), holder))
         await numbers.route(credential["number_sid"], webhook_id=webhook_id)
         return {"external_webhook_id": credential["number_sid"]}
 
@@ -192,20 +170,8 @@ class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     @classmethod
     def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """A finished call, as the wired agent reads it: who called which number,
-        and what was said. One conversation per (caller, number)."""
-        caller = str(output.get("caller") or "").strip()
-        number = str(output.get("to") or "").strip()
-        if not caller:
-            return super().resolve_agent_event(output)
-        transcript = output.get("transcript") or []
-        lines = "\n".join(
-            f"{'Caller' if t.get('role') == 'user' else 'You'}: {t.get('text', '')}" for t in transcript if t.get("text")
-        )
-        text = f"Phone call from {caller} to your number {number}."
-        if lines:
-            text += f"\n\nTranscript:\n{lines}"
-        return {"text": text, "conversation_key": f"{caller}:{number}", "title": f"Call from {caller}"}
+        """A finished call, as the wired agent reads it (nodes/core/agent_events)."""
+        return phone_call_event(output) or super().resolve_agent_event(output)
 
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         node_config = self.config
@@ -228,6 +194,7 @@ class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
             return {"status": "error", "error": "Outbound calls are not enabled on this instance."}
         return await calls.place(
             user_id=self.user_id, workflow_id=self.workflow_id, node_id=self.node_id,
+            credential_id=self.node_data.get("credential_id"),
             from_number=credential.phone_number, number_sid=credential.number_sid,
             to_number=config.to_number, goal=config.goal,
         )

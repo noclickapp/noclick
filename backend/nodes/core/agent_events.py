@@ -224,6 +224,31 @@ def media_entry(
     }
 
 
+def phone_call_event(output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """A finished phone call, as the wired agent reads it: who called which
+    number (or which number was called), and what was said. One conversation
+    per (other party, our number). None when the output is not a call record."""
+    caller = str(output.get("caller") or "").strip()
+    number = str(output.get("to") or "").strip()
+    if not caller:
+        return None
+    outbound = output.get("direction") == "outbound"
+    transcript = output.get("transcript") or []
+    lines = "\n".join(
+        f"{'You' if t.get('role') != 'user' else ('They' if outbound else 'Caller')}: {t.get('text', '')}"
+        for t in transcript if t.get("text")
+    )
+    if outbound:
+        text = f"Your call from {caller} to {number} ended."
+        conversation_key, title = f"{number}:{caller}", f"Call to {number}"
+    else:
+        text = f"Phone call from {caller} to your number {number}."
+        conversation_key, title = f"{caller}:{number}", f"Call from {caller}"
+    if lines:
+        text += f"\n\nTranscript:\n{lines}"
+    return {"text": text, "conversation_key": conversation_key, "title": title}
+
+
 def bullet_lines(pairs: Iterable[Tuple[str, Any]]) -> List[str]:
     """``[(label, value)]`` → ``"- label: value"`` lines, skipping empties."""
     lines = []
