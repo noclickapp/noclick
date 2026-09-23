@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useFetcher } from 'react-router';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
+import { PhoneNumberInput } from '~/components/ui/phone-number-input';
 import { Label } from '~/components/ui/label';
 import { TurnstileWidget } from '~/components/auth/TurnstileWidget';
 import {
@@ -101,16 +102,7 @@ export function PhoneSignInForm({ next, csrfToken }: PhoneSignInFormProps) {
                         >
                             Phone number
                         </Label>
-                        <Input
-                            id="phone"
-                            name="phone"
-                            type="tel"
-                            required
-                            inputMode="tel"
-                            autoComplete="tel"
-                            placeholder="+1 424 242 1064"
-                            className={THESIS_INPUT_CLASS}
-                        />
+                        <PhoneNumberInput id="phone" name="phone" />
                         <p className="mt-2 text-sm text-muted-foreground/70 dark:text-zinc-500">
                             The number you message NoClick from on WhatsApp
                             signs you in to the same account. New here? This

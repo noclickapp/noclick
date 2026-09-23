@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { cn } from '~/lib/utils';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
+import { PhoneNumberInput } from '~/components/ui/phone-number-input';
 import { sendEventAsync } from '~/lib/socket-sender';
 import {
     PhoneLinkCheckRequest,
@@ -55,7 +56,7 @@ export function PhoneSettings() {
     const refresh = async () => {
         try {
             const reply = (await sendEventAsync(
-                PhoneStatusRequest.create({ request_id: crypto.randomUUID() }),
+                PhoneStatusRequest.create({ request_id: crypto.randomUUID() })
             )) as Reply<PhoneStatus>;
             if (reply.error) throw new Error(reply.error);
             setStatus({
@@ -77,13 +78,23 @@ export function PhoneSettings() {
         setBusy(true);
         try {
             const reply = (await sendEventAsync(
-                PhoneLinkStartRequest.create({ request_id: crypto.randomUUID(), phone: phoneInput }),
+                PhoneLinkStartRequest.create({
+                    request_id: crypto.randomUUID(),
+                    phone: phoneInput,
+                })
             )) as Reply<Challenge>;
-            if (reply.error || !reply.challenge_id) throw new Error(reply.error || 'No challenge returned');
-            setChallenge({ challenge_id: reply.challenge_id, phone: reply.phone!, expires_at: reply.expires_at! });
+            if (reply.error || !reply.challenge_id)
+                throw new Error(reply.error || 'No challenge returned');
+            setChallenge({
+                challenge_id: reply.challenge_id,
+                phone: reply.phone!,
+                expires_at: reply.expires_at!,
+            });
             setCode('');
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : 'Could not send a code');
+            toast.error(
+                error instanceof Error ? error.message : 'Could not send a code'
+            );
         } finally {
             setBusy(false);
         }
@@ -98,11 +109,12 @@ export function PhoneSettings() {
                     request_id: crypto.randomUUID(),
                     challenge_id: challenge.challenge_id,
                     code,
-                }),
+                })
             )) as Reply<{ phone: string; verified_at: string }>;
             if (reply.error) {
                 // Expired, exhausted or taken: the challenge is spent, start over.
-                if (reply.kind && reply.kind !== 'invalid_code') setChallenge(null);
+                if (reply.kind && reply.kind !== 'invalid_code')
+                    setChallenge(null);
                 throw new Error(reply.error);
             }
             setChallenge(null);
@@ -110,7 +122,11 @@ export function PhoneSettings() {
             toast.success(`Linked ${formatPhoneForDisplay(reply.phone!)}`);
             await refresh();
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : 'Could not verify the code');
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : 'Could not verify the code'
+            );
         } finally {
             setBusy(false);
         }
@@ -120,34 +136,52 @@ export function PhoneSettings() {
         setBusy(true);
         try {
             const reply = (await sendEventAsync(
-                PhoneUnlinkRequest.create({ request_id: crypto.randomUUID(), phone }),
+                PhoneUnlinkRequest.create({
+                    request_id: crypto.randomUUID(),
+                    phone,
+                })
             )) as Reply<{ unlinked: boolean }>;
             if (reply.error) throw new Error(reply.error);
             setConfirmUnlink(null);
             toast.success(`Unlinked ${formatPhoneForDisplay(phone)}`);
             await refresh();
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : 'Could not unlink the phone');
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : 'Could not unlink the phone'
+            );
         } finally {
             setBusy(false);
         }
     };
 
-    const card = 'rounded-xl border border-border dark:border-white/[0.06] bg-card dark:bg-foreground/[0.03] overflow-hidden';
+    const card =
+        'rounded-xl border border-border dark:border-white/[0.06] bg-card dark:bg-foreground/[0.03] overflow-hidden';
 
     return (
         <div className="max-w-2xl">
             <div className="mb-6">
                 <h2 className="text-lg font-semibold text-foreground">Phone</h2>
                 <p className="text-sm text-muted-foreground dark:text-white/40 mt-1">
-                    Link the numbers you message and call NoClick from. We send a code to prove
-                    each is yours; nothing else is sent until you opt in.
+                    Link the numbers you message and call NoClick from. We send
+                    a code to prove each is yours; nothing else is sent until
+                    you opt in.
                 </p>
             </div>
 
-            <div className={cn(card, 'transition-opacity divide-y divide-border dark:divide-white/[0.06]', isLoading && 'opacity-60')}>
+            <div
+                className={cn(
+                    card,
+                    'transition-opacity divide-y divide-border dark:divide-white/[0.06]',
+                    isLoading && 'opacity-60'
+                )}
+            >
                 {phones.map((linked) => (
-                    <div key={linked.phone} className="flex items-center gap-3.5 px-4 py-3.5">
+                    <div
+                        key={linked.phone}
+                        className="flex items-center gap-3.5 px-4 py-3.5"
+                    >
                         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500/10 flex-shrink-0">
                             <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 stroke-[1.5]" />
                         </div>
@@ -156,21 +190,38 @@ export function PhoneSettings() {
                                 {formatPhoneForDisplay(linked.phone)}
                             </p>
                             <p className="text-xs text-muted-foreground dark:text-white/40 mt-0.5 truncate">
-                                {linked.source === 'whatsapp' ? 'Linked on WhatsApp' : 'Verified'}
+                                {linked.source === 'whatsapp'
+                                    ? 'Linked on WhatsApp'
+                                    : 'Verified'}
                                 {` on ${new Date(linked.verified_at).toLocaleDateString()}`}
                             </p>
                         </div>
                         {confirmUnlink === linked.phone ? (
                             <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="sm" disabled={busy} onClick={() => setConfirmUnlink(null)}>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    disabled={busy}
+                                    onClick={() => setConfirmUnlink(null)}
+                                >
                                     Keep
                                 </Button>
-                                <Button variant="destructive" size="sm" disabled={busy} onClick={() => unlink(linked.phone)}>
+                                <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    disabled={busy}
+                                    onClick={() => unlink(linked.phone)}
+                                >
                                     Unlink
                                 </Button>
                             </div>
                         ) : (
-                            <Button variant="outline" size="sm" disabled={busy || isLoading} onClick={() => setConfirmUnlink(linked.phone)}>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                disabled={busy || isLoading}
+                                onClick={() => setConfirmUnlink(linked.phone)}
+                            >
                                 Unlink
                             </Button>
                         )}
@@ -185,7 +236,11 @@ export function PhoneSettings() {
                         }}
                     >
                         <p className="text-sm text-foreground">
-                            Enter the code we sent to <span className="font-medium">{formatPhoneForDisplay(challenge.phone)}</span>.
+                            Enter the code we sent to{' '}
+                            <span className="font-medium">
+                                {formatPhoneForDisplay(challenge.phone)}
+                            </span>
+                            .
                         </p>
                         <div className="flex items-center gap-2">
                             <Input
@@ -196,16 +251,31 @@ export function PhoneSettings() {
                                 placeholder="123456"
                                 className="max-w-[10rem] font-mono tracking-widest"
                             />
-                            <Button type="submit" size="sm" disabled={busy || code.trim().length < 4}>
+                            <Button
+                                type="submit"
+                                size="sm"
+                                disabled={busy || code.trim().length < 4}
+                            >
                                 Verify
                             </Button>
-                            <Button type="button" variant="ghost" size="sm" disabled={busy} onClick={() => setChallenge(null)}>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                disabled={busy}
+                                onClick={() => setChallenge(null)}
+                            >
                                 Change number
                             </Button>
                         </div>
                         <p className="text-xs text-muted-foreground dark:text-white/40">
                             Codes expire after ten minutes. No code yet?{' '}
-                            <button type="button" className="underline underline-offset-2" disabled={busy} onClick={startLink}>
+                            <button
+                                type="button"
+                                className="underline underline-offset-2"
+                                disabled={busy}
+                                onClick={startLink}
+                            >
                                 Send again
                             </button>
                         </p>
@@ -224,31 +294,40 @@ export function PhoneSettings() {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-[0.9375rem] font-medium text-foreground leading-tight">
-                                    {phones.length ? 'Add another number' : 'No phone linked'}
+                                    {phones.length
+                                        ? 'Add another number'
+                                        : 'No phone linked'}
                                 </p>
                                 <p className="text-xs text-muted-foreground dark:text-white/40 mt-0.5">
-                                    Use the full number with its country code.
+                                    Pick the country, then type the number.
                                 </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Input
+                            <PhoneNumberInput
+                                name="phone"
                                 value={phoneInput}
-                                onChange={(e) => setPhoneInput(e.target.value)}
-                                type="tel"
-                                inputMode="tel"
-                                autoComplete="tel"
-                                placeholder="+1 424 242 1064"
-                                className="max-w-[16rem]"
+                                onChange={setPhoneInput}
+                                className="h-9 max-w-[18rem] rounded-md"
                                 disabled={isLoading || !status?.configured}
                             />
-                            <Button type="submit" size="sm" disabled={busy || isLoading || !status?.configured || phoneInput.trim().length < 7}>
+                            <Button
+                                type="submit"
+                                size="sm"
+                                disabled={
+                                    busy ||
+                                    isLoading ||
+                                    !status?.configured ||
+                                    phoneInput.trim().length < 7
+                                }
+                            >
                                 Send code
                             </Button>
                         </div>
                         {status && !status.configured && (
                             <p className="text-xs text-amber-600 dark:text-amber-400">
-                                Phone verification is not set up on this instance yet.
+                                Phone verification is not set up on this
+                                instance yet.
                             </p>
                         )}
                     </form>
@@ -256,7 +335,8 @@ export function PhoneSettings() {
             </div>
 
             <p className="text-xs text-muted-foreground/70 dark:text-white/30 mt-3 px-1">
-                Each number reaches the same account. Unlinking one takes effect immediately for every channel that uses it.
+                Each number reaches the same account. Unlinking one takes effect
+                immediately for every channel that uses it.
             </p>
         </div>
     );
