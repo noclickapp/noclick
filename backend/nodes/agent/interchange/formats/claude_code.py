@@ -8,8 +8,8 @@ abandoned branches and subagent ``isSidechain`` trees are not the thread.
 ``tool_use``, ``tool_result``, ``thinking``, ``image``. Around the
 conversation the CLI writes bookkeeping the thread does not need
 (``attachment``, ``queue-operation``, ``last-prompt``, ``mode``,
-``bridge-session``, titles, PR links, file-history snapshots, hook
-``system`` records) and, after compaction, a ``system`` compact boundary
+``bridge-session``, ``cost-state``, titles, PR links, file-history
+snapshots, hook ``system`` records) and, after compaction, a ``system`` compact boundary
 followed by a user record flagged ``isCompactSummary`` whose text IS the
 carried history.
 
@@ -17,7 +17,7 @@ carried history.
 directory of its cwd; the slug is the cwd with every non-alphanumeric
 character replaced by ``-`` — the cwd as given, not resolved (on macOS the
 CLI names ``/Users/…``, never the ``/System/Volumes/Data`` firmlink).
-Validated against Claude Code 2.1.261 (read and resume) — see
+Validated against Claude Code 2.1.280 (read and resume) — see
 ``tests/test_session_interchange_drift.py``.
 """
 
@@ -40,7 +40,7 @@ CONVERSATION_TYPES = ("user", "assistant")
 #: under one drop key instead of reading as something unknown.
 BOOKKEEPING_TYPES = frozenset({
     "attachment", "queue-operation", "last-prompt", "atis-latch", "mode", "bridge-session",
-    "ai-title", "custom-title", "pr-link", "file-history-snapshot", "file-history-delta", "summary",
+    "ai-title", "custom-title", "pr-link", "file-history-snapshot", "file-history-delta", "summary", "cost-state",
 })
 
 
