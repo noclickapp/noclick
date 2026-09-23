@@ -3,7 +3,8 @@
 // phone_verify, see lib/auth.server.ts); a verified code redirects to `next`.
 // A new number makes an account, so it serves sign-up as well as sign-in.
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useFetcher } from 'react-router';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -26,15 +27,29 @@ interface PhoneSignInFormProps {
     csrfToken?: string;
 }
 
-type PhoneReply = { error?: string; phoneSent?: string; csrfToken?: string };
+type PhoneReply = {
+    error?: string;
+    phoneSent?: string;
+    csrfToken?: string;
+    signedIn?: boolean;
+    redirectTo?: string;
+};
 
 export function PhoneSignInForm({ next, csrfToken }: PhoneSignInFormProps) {
     const fetcher = useFetcher();
     const [captchaToken, setCaptchaToken] = useState('');
     const [attempt, setAttempt] = useState(0);
+    const [changing, setChanging] = useState(false);
     const reply = fetcher.data as PhoneReply | undefined;
-    const phoneSent = reply?.phoneSent;
-    const pending = fetcher.state !== 'idle';
+    const phoneSent = changing ? undefined : reply?.phoneSent;
+    const signedIn = !!reply?.signedIn;
+    // Stays pending through the full-page load a verified code starts.
+    const pending = fetcher.state !== 'idle' || signedIn;
+
+    useEffect(() => {
+        if (reply?.signedIn)
+            window.location.assign(reply.redirectTo || '/dashboard');
+    }, [reply]);
     const action = `/auth/login${next ? `?next=${encodeURIComponent(next)}` : ''}`;
     const token = resolveCsrfToken(csrfToken, reply);
 
@@ -59,7 +74,10 @@ export function PhoneSignInForm({ next, csrfToken }: PhoneSignInFormProps) {
                             htmlFor="phone-code"
                             className="mb-2 block text-xs font-medium text-muted-foreground"
                         >
-                            Code sent to {phoneSent}
+                            Code sent to{' '}
+                            {parsePhoneNumberFromString(
+                                phoneSent
+                            )?.formatInternational() ?? phoneSent}
                         </Label>
                         <Input
                             id="phone-code"
@@ -81,6 +99,14 @@ export function PhoneSignInForm({ next, csrfToken }: PhoneSignInFormProps) {
                         )}
                         Sign in
                     </Button>
+                    <button
+                        type="button"
+                        onClick={() => setChanging(true)}
+                        disabled={pending}
+                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                        Use a different number
+                    </button>
                 </fetcher.Form>
             ) : (
                 <fetcher.Form
@@ -91,6 +117,7 @@ export function PhoneSignInForm({ next, csrfToken }: PhoneSignInFormProps) {
                     onSubmit={() => {
                         setCaptchaToken('');
                         setAttempt((n) => n + 1);
+                        setChanging(false);
                     }}
                 >
                     <input type="hidden" name="csrf_token" value={token} />
