@@ -10,6 +10,19 @@ import logging
 from repositories.credential_approvals import CredentialApprovalRepo
 
 logger = logging.getLogger(__name__)
+_callback_provider = None
+
+
+def register_callback_url(provider):
+    global _callback_provider
+    _callback_provider = provider
+
+
+async def callback_url():
+    if _callback_provider:
+        return await _callback_provider()
+    from utils.coordinator_dispatch import callback_url as local_url
+    return (await local_url()).rsplit("/", 1)[0] + "/credential-approval"
 
 
 async def dispatch_decision(pool, row):
@@ -37,7 +50,6 @@ async def dispatch_workflows(pool, execution_id=None):
     import uuid
     from datetime import datetime, timezone
     from utils import cron_scheduler_client as scheduler
-    from utils.coordinator_dispatch import callback_url
     if not scheduler.is_cron_scheduler_enabled():
         return
     repo = CredentialApprovalRepo(pool)
@@ -58,7 +70,7 @@ async def dispatch_workflows(pool, execution_id=None):
                 user_id=first["action_payload"]["caller_user_id"], workflow_id=None,
                 node_id=None, schedule_id=schedule_id, target_kind="credential_approval",
                 run_at=datetime.now(timezone.utc).isoformat(),
-                webhook_url=(await callback_url()).rsplit("/", 1)[0] + "/credential-approval",
+                webhook_url=await callback_url(),
                 payload={"approval_id": str(first["id"])},
             )
         if result.get("error") or result.get("skipped"):

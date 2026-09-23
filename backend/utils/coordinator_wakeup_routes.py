@@ -10,6 +10,7 @@ from utils.database_pool import get_native_pool
 from utils.scheduler_delivery import verify_delivery
 
 router = APIRouter()
+credential_router = APIRouter()
 
 
 @router.post("/internal/scheduler/coordinator")
@@ -84,7 +85,7 @@ async def scheduled_coordinator(request: Request):
     return {"delivered": True}
 
 
-@router.post("/internal/scheduler/credential-approval")
+@credential_router.post("/internal/scheduler/credential-approval")
 async def scheduled_credential_approval(request: Request):
     """The same signed scheduler transports approved workflow continuations."""
     raw = await request.body()
@@ -109,3 +110,8 @@ async def scheduled_credential_approval(request: Request):
     if not await resume_workflows(pool, str(row["execution_id"])):
         raise HTTPException(503, "Workflow checkpoint is not ready", headers={"Retry-After": "10"})
     return {"delivered": True}
+
+
+# The local server mounts both targets; hosted workflow continuations use the
+# existing workflow worker with its normal timeout and mounted volumes.
+router.include_router(credential_router)
