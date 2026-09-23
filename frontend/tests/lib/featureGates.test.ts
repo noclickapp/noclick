@@ -4,7 +4,7 @@ vi.mock('~/lib/internalUsers', () => ({
     isInternalEmail: (email: string) => email === 'staff@example.com',
 }));
 
-import { FEATURE_ROLLOUT, featureGateState, isFeatureEnabled } from '~/lib/featureGates';
+import { FEATURE_ROLLOUT, allowAccounts, featureGateState, isFeatureEnabled } from '~/lib/featureGates';
 
 describe('feature gates', () => {
     beforeEach(() => {
@@ -17,6 +17,13 @@ describe('feature gates', () => {
         expect(isFeatureEnabled('coordinator', 'customer@example.com')).toBe(false);
         expect(isFeatureEnabled('coordinator', '')).toBe(false);
         expect(isFeatureEnabled('coordinator', null)).toBe(false);
+    });
+
+    it('lets a named account pilot an internal feature without joining the staff list', () => {
+        expect(isFeatureEnabled('coordinator', 'pilot@example.com')).toBe(false);
+        allowAccounts('coordinator', [' Pilot@Example.com ']);
+        expect(isFeatureEnabled('coordinator', 'pilot@example.com')).toBe(true);
+        expect(isFeatureEnabled('coordinator', 'other@example.com')).toBe(false);
     });
 
     it('opens an everyone feature to every account, signed in or not', () => {

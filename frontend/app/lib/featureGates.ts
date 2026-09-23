@@ -4,6 +4,8 @@
 // side only decides whether to show a surface. INTERNAL resolves through
 // isInternalEmail — the module the self-hosted export replaces — so a feature
 // reaches self-hosters when it flips to EVERYONE here and on the backend.
+// Single accounts piloting an INTERNAL feature are let in by `allowAccounts`,
+// which the hosted bootstrap calls; the staff list is never a rollout list.
 import { proxy, useSnapshot } from 'valtio';
 import { isInternalEmail } from '~/lib/internalUsers';
 
@@ -20,9 +22,19 @@ export const FEATURE_ROLLOUT = {
 
 export type Feature = keyof typeof FEATURE_ROLLOUT;
 
+const FEATURE_ALLOWLIST = new Map<Feature, Set<string>>();
+
+/** Let these accounts use an INTERNAL feature ahead of its launch. */
+export function allowAccounts(feature: Feature, emails: readonly string[]): void {
+    const allowed = FEATURE_ALLOWLIST.get(feature) ?? new Set<string>();
+    for (const email of emails) allowed.add(email.trim().toLowerCase());
+    FEATURE_ALLOWLIST.set(feature, allowed);
+}
+
 export function isFeatureEnabled(feature: Feature, email: string | null | undefined): boolean {
     if ((FEATURE_ROLLOUT[feature] as Rollout) === 'everyone') return true;
-    return !!email && isInternalEmail(email);
+    if (!email) return false;
+    return isInternalEmail(email) || (FEATURE_ALLOWLIST.get(feature)?.has(email.toLowerCase()) ?? false);
 }
 
 /** The signed-in user's email, published by the dashboard route on auth. */

@@ -1,13 +1,18 @@
 """Per-account rollout of features that are built but not yet for everyone.
 
 A feature starts INTERNAL (the hosted team's own accounts, via
-utils.internal_users) and flips to EVERYONE in one line when it launches. The
-socket handler is the enforcement point; frontend/app/lib/featureGates.ts
+utils.internal_users) and flips to EVERYONE in one line when it launches. In
+between, single accounts can be let in by name (``allow_accounts``): a
+customer piloting a feature is not staff, and the staff list is an
+authorization boundary (debug routes, admin tools), never a rollout list.
+The socket handler is the enforcement point; frontend/app/lib/featureGates.ts
 mirrors this table only to hide the surface. A self-hosted install sees the
 feature once it is EVERYONE.
 """
 
 from __future__ import annotations
+
+from typing import Dict, Iterable, Set
 
 from utils.internal_users import is_internal_user
 
@@ -23,6 +28,10 @@ FEATURE_ROLLOUT: dict[str, str] = {
     "phone_numbers": INTERNAL,
 }
 
+# Accounts let into an INTERNAL feature by email, lower-cased. Empty in the
+# engine; the hosted edition registers its pilots at bootstrap.
+FEATURE_ALLOWLIST: Dict[str, Set[str]] = {}
+
 
 class FeatureNotAvailable(PermissionError):
     def __init__(self, feature: str):
@@ -30,11 +39,19 @@ class FeatureNotAvailable(PermissionError):
         self.feature = feature
 
 
+def allow_accounts(feature: str, emails: Iterable[str]) -> None:
+    """Let these accounts use an INTERNAL feature ahead of its launch."""
+    FEATURE_ROLLOUT[feature]  # a typo is a KeyError, never a silent no-op
+    FEATURE_ALLOWLIST.setdefault(feature, set()).update(e.strip().lower() for e in emails if e and e.strip())
+
+
 def is_feature_enabled(feature: str, *, email: str | None) -> bool:
     rollout = FEATURE_ROLLOUT[feature]  # a typo is a KeyError, never a silent False
     if rollout == EVERYONE:
         return True
-    return bool(email) and is_internal_user(email)
+    if not email:
+        return False
+    return is_internal_user(email) or email.lower() in FEATURE_ALLOWLIST.get(feature, ())
 
 
 def require_feature(feature: str, *, email: str | None) -> None:
