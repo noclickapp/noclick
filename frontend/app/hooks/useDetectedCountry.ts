@@ -1,7 +1,7 @@
 // The visitor's likely country, for preselecting a phone input's calling code:
 // the IP country /api/public-session reports (Vercel geolocation), else the
 // browser locale's region, else nothing (the input then starts international).
-import { isSupportedCountry, type Country } from 'react-phone-number-input';
+import { isSupportedCountry, type CountryCode } from 'libphonenumber-js';
 import { usePublicSession } from '~/hooks/usePublicSession';
 
 function localeCountry(): string | undefined {
@@ -13,7 +13,7 @@ function localeCountry(): string | undefined {
     return undefined;
 }
 
-export function useDetectedCountry(): Country | undefined {
+export function useDetectedCountry(): CountryCode | undefined {
     const { country } = usePublicSession();
     const guess = country?.toUpperCase() || localeCountry();
     return guess && isSupportedCountry(guess) ? guess : undefined;
