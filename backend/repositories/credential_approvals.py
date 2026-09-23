@@ -62,73 +62,96 @@ class CredentialApprovalRepo:
             "SELECT cardinality(approval_operations)>0 FROM credentials WHERE id=$1::uuid", credential_id,
         )
 
-    async def admit(self, *, credential_id, user_id, node_type, operation, arguments,
-                    organization_id=None, workflow_id=None, execution_id=None, node_id=None,
-                    conversation_id=None, continuation=None):
+    async def admit(self, **call):
         """None admits a call. Otherwise return its durable approval record."""
         async with self.pool.acquire() as conn, conn.transaction():
-            credential = await conn.fetchrow(
-                "SELECT name,owner_id,approval_operations,approval_revision,revoked_at FROM credentials "
-                "WHERE id=$1::uuid FOR UPDATE", credential_id,
+            return await self._admit(conn, **call)
+
+    async def admit_many(self, calls):
+        """A loader can use several connections; approve the entire call atomically.
+
+        Preserve approved grants while another owner is still deciding. Acquire
+        credential locks in a stable order before examining or consuming any grant.
+        """
+        async with self.pool.acquire() as conn, conn.transaction():
+            await conn.fetch(
+                "SELECT id FROM credentials WHERE id=ANY($1::uuid[]) ORDER BY id FOR UPDATE",
+                [UUID(call["credential_id"]) for call in calls],
             )
-            if credential is None or credential["revoked_at"]:
-                raise PermissionError("Credential no longer available.")
-            restrictions = credential["approval_operations"]
-            key = f"{node_type}.{operation}"
-            if "*" not in restrictions and key not in restrictions and not (operation == "__lookup__" and restrictions):
+            rows = [await self._admit(conn, consume=False, **call) for call in calls]
+            pending = [row for row in rows if row and row["status"] != "approved"]
+            if pending:
+                return pending
+            ids = [row["id"] for row in rows if row]
+            if ids:
+                await conn.execute("UPDATE approval_requests SET consumed_at=now() WHERE id=ANY($1::uuid[])", ids)
+            return []
+
+    async def _admit(self, conn, *, credential_id, user_id, node_type, operation, arguments,
+                    organization_id=None, workflow_id=None, execution_id=None, node_id=None,
+                    conversation_id=None, continuation=None, consume=True):
+        credential = await conn.fetchrow(
+            "SELECT name,owner_id,approval_operations,approval_revision,revoked_at FROM credentials "
+            "WHERE id=$1::uuid FOR UPDATE", credential_id,
+        )
+        if credential is None or credential["revoked_at"]:
+            raise PermissionError("Credential no longer available.")
+        restrictions = credential["approval_operations"]
+        key = f"{node_type}.{operation}"
+        if "*" not in restrictions and key not in restrictions and not (operation == "__lookup__" and restrictions):
+            return None
+        payload = {
+            "credential_id": str(UUID(credential_id)), "caller_user_id": str(UUID(user_id)),
+            "organization_id": str(organization_id) if organization_id else None,
+            "node_type": node_type, "operation": operation, "arguments": arguments,
+            "workflow_id": str(workflow_id) if workflow_id else None,
+            "execution_id": str(execution_id) if execution_id else None,
+            "node_id": node_id, "conversation_id": conversation_id,
+            "policy_revision": credential["approval_revision"],
+        }
+        encoded = canonical_json(payload)
+        if len(encoded.encode()) > 256_000:
+            raise ValueError("This action is too large to review. Reduce its arguments before requesting approval.")
+        fingerprint = hashlib.sha256(encoded.encode()).hexdigest()
+        # Pending calls deduplicate, decisions cannot change arguments, and
+        # each approved grant admits one retry of precisely the same call.
+        existing = await conn.fetchrow(
+            "SELECT id,status,consumed_at,expires_at FROM approval_requests "
+            "WHERE credential_id=$1::uuid AND action_fingerprint=$2 AND expires_at>now() "
+            "AND consumed_at IS NULL ORDER BY created_at DESC LIMIT 1 FOR UPDATE",
+            credential_id, fingerprint,
+        )
+        if existing:
+            if existing["status"] == "approved" and consume:
+                await conn.execute("UPDATE approval_requests SET consumed_at=now() WHERE id=$1", existing["id"])
                 return None
-            payload = {
-                "credential_id": str(UUID(credential_id)), "caller_user_id": str(UUID(user_id)),
-                "organization_id": str(organization_id) if organization_id else None,
-                "node_type": node_type, "operation": operation, "arguments": arguments,
-                "workflow_id": str(workflow_id) if workflow_id else None,
-                "execution_id": str(execution_id) if execution_id else None,
-                "node_id": node_id, "conversation_id": conversation_id,
-                "policy_revision": credential["approval_revision"],
-            }
-            encoded = canonical_json(payload)
-            if len(encoded.encode()) > 256_000:
-                raise ValueError("This action is too large to review. Reduce its arguments before requesting approval.")
-            fingerprint = hashlib.sha256(encoded.encode()).hexdigest()
-            # Pending calls deduplicate, decisions cannot change arguments, and
-            # each approved grant admits one retry of precisely the same call.
-            existing = await conn.fetchrow(
-                "SELECT id,status,consumed_at,expires_at FROM approval_requests "
-                "WHERE credential_id=$1::uuid AND action_fingerprint=$2 AND expires_at>now() "
-                "AND consumed_at IS NULL ORDER BY created_at DESC LIMIT 1 FOR UPDATE",
-                credential_id, fingerprint,
+            return dict(existing)
+        count = await conn.fetchval(
+            "SELECT count(*) FROM approval_requests WHERE credential_id=$1::uuid "
+            "AND status='pending' AND expires_at>now()", credential_id,
+        )
+        if count >= 100:
+            raise ValueError("This credential already has 100 pending approvals. Review them before requesting more.")
+        payload["continuation"] = continuation
+        content = {"credential_action": True, "credential_name": credential["name"],
+                   "node_type": node_type, "operation": operation, "arguments": arguments,
+                   "fields": [], "values": {}}
+        row = await conn.fetchrow(
+            "INSERT INTO approval_requests (workflow_id,execution_id,node_id,user_id,organization_id,"
+            "title,content,credential_id,action_fingerprint,action_payload,expires_at) "
+            "VALUES ($1::uuid,$2::uuid,$3,$4::uuid,NULL,$5,$6,$7::uuid,$8,$9,now()+interval '24 hours') "
+            "RETURNING id,status,consumed_at,expires_at",
+            workflow_id, execution_id, node_id or "__credential__", str(credential["owner_id"]),
+            f"{operation.replace('_', ' ')} · {credential['name']}", json.dumps(content),
+            credential_id, fingerprint, payload,
+        )
+        if execution_id:
+            await conn.execute(
+                "UPDATE workflow_executions SET status='awaiting_approval',finished_at=now() WHERE id=$1::uuid",
+                execution_id,
             )
-            if existing:
-                if existing["status"] == "approved":
-                    await conn.execute("UPDATE approval_requests SET consumed_at=now() WHERE id=$1", existing["id"])
-                    return None
-                return dict(existing)
-            count = await conn.fetchval(
-                "SELECT count(*) FROM approval_requests WHERE credential_id=$1::uuid "
-                "AND status='pending' AND expires_at>now()", credential_id,
-            )
-            if count >= 100:
-                raise ValueError("This credential already has 100 pending approvals. Review them before requesting more.")
-            payload["continuation"] = continuation
-            content = {"credential_action": True, "credential_name": credential["name"],
-                       "node_type": node_type, "operation": operation, "arguments": arguments,
-                       "fields": [], "values": {}}
-            row = await conn.fetchrow(
-                "INSERT INTO approval_requests (workflow_id,execution_id,node_id,user_id,organization_id,"
-                "title,content,credential_id,action_fingerprint,action_payload,expires_at) "
-                "VALUES ($1::uuid,$2::uuid,$3,$4::uuid,NULL,$5,$6,$7::uuid,$8,$9,now()+interval '24 hours') "
-                "RETURNING id,status,consumed_at,expires_at",
-                workflow_id, execution_id, node_id or "__credential__", str(credential["owner_id"]),
-                f"{operation.replace('_', ' ')} · {credential['name']}", json.dumps(content),
-                credential_id, fingerprint, payload,
-            )
-            if execution_id:
-                await conn.execute(
-                    "UPDATE workflow_executions SET status='awaiting_approval',finished_at=now() WHERE id=$1::uuid",
-                    execution_id,
-                )
-            return {**dict(row), "new_request": True, "owner_id": str(credential["owner_id"]),
-                    "title": f"{operation.replace('_', ' ')} · {credential['name']}"}
+        return {**dict(row), "new_request": True, "owner_id": str(credential["owner_id"]),
+                "title": f"{operation.replace('_', ' ')} · {credential['name']}"}
 
     async def resumable_workflows(self, execution_id=None):
         """The approval queue is also the recovery outbox; no second job store.

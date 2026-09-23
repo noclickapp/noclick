@@ -4857,11 +4857,13 @@ class NoClickMCPServer(DatabasePoolMixin):
                 # Priority 1: the node's own load_field_value (alarm/filesystem/mcp-server/…).
                 from utils.credentials import extract_credential_ids
                 from nodes.core.run_op import resolve_operation_credential
-                from utils.credential_approval import admit_lookup
-                for cid in set((extract_credential_ids(config) or {}).values()):
+                from utils.credential_approval import admit_lookups
+                credential_ids = set((extract_credential_ids(config) or {}).values())
+                for cid in credential_ids:
                     await resolve_operation_credential(cid, user_id, pool, workflow_id=workflow_id)
-                    pending = await admit_lookup(
-                        credential_id=cid, user_id=user_id, node_type=node_type, pool=pool, workflow_id=workflow_id,
+                if credential_ids:
+                    pending = await admit_lookups(
+                        credential_ids=credential_ids, user_id=user_id, node_type=node_type, pool=pool, workflow_id=workflow_id,
                         arguments={"loader": "value", "field_name": field_name, "context": merged_context},
                     )
                     if pending:

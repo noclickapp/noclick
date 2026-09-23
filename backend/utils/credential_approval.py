@@ -78,3 +78,18 @@ async def admit_lookup(*, credential_id, user_id, node_type, arguments, pool=Non
     )
     await notify_created(row)
     return pending_result(row) if row else None
+
+
+async def admit_lookups(*, credential_ids, user_id, node_type, arguments, pool, workflow_id=None):
+    """One loader invocation can touch multiple credentials; none is consumed early."""
+    rows = await CredentialApprovalRepo(pool).admit_many([
+        {"credential_id": cid, "user_id": user_id, "node_type": node_type, "operation": "__lookup__",
+         "arguments": arguments, "workflow_id": workflow_id}
+        for cid in sorted(set(credential_ids))
+    ])
+    for row in rows:
+        await notify_created(row)
+    if not rows:
+        return None
+    results = [pending_result(row) for row in rows]
+    return {**results[0], "approvals": results}

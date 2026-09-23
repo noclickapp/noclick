@@ -356,3 +356,22 @@ async def test_scheduler_approval_callback_rejects_forgery_and_retries_missing_c
     lookup.assert_awaited_once_with(body['payload']['approval_id'], USER)
     resume.return_value = True
     assert await routes.scheduled_credential_approval(request(delivery_headers(raw, secret))) == {"delivered": True}
+
+
+async def test_multi_credential_lookup_preserves_grants_until_every_owner_approves(approval_db):
+    pool, repo, (a, b) = approval_db
+    for cid in (a, b):
+        await repo.tighten(cid, USER, ['*'])
+    calls = [{**call(cid), 'operation': '__lookup__'} for cid in (a, b)]
+    pending = await repo.admit_many(calls)
+    assert len(pending) == 2
+    await repo.decide_from_human(str(pending[0]['id']), USER, 'approved')
+    remaining = await repo.admit_many(calls)
+    assert [row['id'] for row in remaining] == [pending[1]['id']]
+    assert await pool.fetchval('SELECT consumed_at FROM approval_requests WHERE id=$1', pending[0]['id']) is None
+    await repo.decide_from_human(str(pending[1]['id']), USER, 'approved')
+    # Opposite credential orders still serialize and admit only one invocation.
+    results = await asyncio.gather(repo.admit_many(calls), repo.admit_many(list(reversed(calls))))
+    assert sum(not result for result in results) == 1
+    assert await pool.fetchval('SELECT count(*) FROM approval_requests WHERE id=ANY($1::uuid[]) AND consumed_at IS NOT NULL',
+                              [row['id'] for row in pending]) == 2
