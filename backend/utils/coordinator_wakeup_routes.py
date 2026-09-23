@@ -15,8 +15,12 @@ router = APIRouter()
 @router.post("/internal/scheduler/coordinator")
 async def scheduled_coordinator(request: Request):
     raw = await request.body()
-    if len(raw) > 32768 or not verify_delivery(raw, request.headers, scheduler.CRON_SCHEDULER_SECRET):
+    if len(raw) > 32768 or not verify_delivery(raw, request.headers, scheduler.CRON_SCHEDULER_SECRET, max_age=None):
         raise HTTPException(401, "Invalid scheduler signature")
+    if not verify_delivery(raw, request.headers, scheduler.CRON_SCHEDULER_SECRET):
+        # A valid signed request may age while queued at the cloud concurrency
+        # ceiling. Retry with a fresh signature; never treat overload as a lost alarm.
+        raise HTTPException(503, "Scheduler delivery expired in transit", headers={"Retry-After": "30"})
     try:
         body = json.loads(raw)
         uuid.UUID(body["user_id"])

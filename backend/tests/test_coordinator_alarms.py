@@ -1,6 +1,7 @@
 """Shared scheduler → signed callback → durable coordinator turn, with real PostgreSQL."""
 import asyncio
 import json
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock
@@ -46,6 +47,23 @@ async def post(app, body, *, signature=True):
     headers = delivery_headers(raw, "test-scheduler-secret") if signature else {}
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://scheduler.test") as client:
         return await client.post("/internal/scheduler/coordinator", content=raw, headers=headers)
+
+
+async def test_callback_aged_in_cloud_queue_is_retryable_without_running_a_turn(alarm_db, monkeypatch):
+    app, pool, alarms, _ = alarm_db
+    alarm = await schedule(alarms)
+    _, body = await fire(pool, alarm["schedule_id"])
+    raw = json.dumps(body).encode()
+    headers = delivery_headers(raw, "test-scheduler-secret", timestamp=int(time.time())-600)
+    process = AsyncMock()
+    monkeypatch.setattr("coder.coordinator.wakeups.process_event", process)
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://scheduler.test") as client:
+        response = await client.post("/internal/scheduler/coordinator", content=raw, headers=headers)
+        assert response.status_code == 503 and response.headers["retry-after"] == "30"
+        invalid = await client.post("/internal/scheduler/coordinator", content=raw+b" ", headers=headers)
+        assert invalid.status_code == 401
+    process.assert_not_called()
+    assert await pool.fetchval("SELECT count(*) FROM coordinator_wakeups") == 0
 
 
 async def test_timing_is_owned_by_shared_scheduler_not_inbox(alarm_db):

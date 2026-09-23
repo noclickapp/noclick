@@ -10,10 +10,11 @@ def delivery_headers(body: bytes, secret: str, *, timestamp=None):
     return {"X-Scheduler-Timestamp": stamp, "X-Scheduler-Signature": signature}
 
 
-def verify_delivery(body: bytes, headers, secret: str):
+def verify_delivery(body: bytes, headers, secret: str, *, max_age=300):
     try:
         stamp = headers.get("x-scheduler-timestamp", "")
-        if not secret or abs(time.time() - int(stamp)) > 300:
+        age = abs(time.time() - int(stamp))
+        if not secret or (max_age is not None and age > max_age):
             return False
         expected = delivery_headers(body, secret, timestamp=stamp)["X-Scheduler-Signature"]
         return hmac.compare_digest(expected, headers.get("x-scheduler-signature", ""))
