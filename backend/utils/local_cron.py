@@ -1,58 +1,36 @@
 """In-process cron scheduler for the local edition (NOCLICK_LOCAL=1).
 
-Implements the scheduler REST contract consumed by cron_scheduler_client, so
-the launcher only needs to point CRON_SCHEDULER_URL at
+Serves the SAME REST API as the Cloudflare cron-scheduler Worker
+(infra/cloudflare/cron-scheduler), so utils.cron_scheduler_client needs no
+local-mode branches — the launcher just points CRON_SCHEDULER_URL at
 http://<backend>/local-cron with a generated CRON_SCHEDULER_SECRET. A single
-asyncio ticker scans due rows, advances next_run first (at most once per
-tick), then delivers each webhook with the shared schedule payload and
-X-Cron-Schedule-Id header used by the stale-schedule guard.
+asyncio ticker replaces the per-schedule Durable Object alarms. It claims
+only available delivery capacity with short PostgreSQL leases and delivers
+outside the transaction. Retries retain the occurrence ID; edits and
+cancellations fence stale completions. The payload and signed headers match
+the hosted scheduler for both workflow alarms and coordinator wakeups.
 
-Storage is a local-only table created lazily at ticker start rather than a
-deployment migration.
+Storage is a local-only table created lazily at ticker start (NOT a supabase
+migration — this table must never exist in the hosted schema).
 """
 
 import asyncio
 import json
 import logging
 import os
-import re
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
-from zoneinfo import ZoneInfo
 
 import httpx
-from urllib.parse import urlsplit, urlunsplit
 from fastapi import APIRouter, Header, HTTPException, Request
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/local-cron")
 
-_TICK_INTERVAL_S = 15.0
-_DELIVERY_TIMEOUT_S = 300.0  # workflows run inline on delivery; allow long runs
+_TICK_INTERVAL_S = 15.0  # Compatibility for callers of the idle-delay helper.
 
-_SCHEMA_SQL = """
-CREATE TABLE IF NOT EXISTS local_cron_schedules (
-    id uuid PRIMARY KEY,
-    user_id text NOT NULL,
-    workflow_id text NOT NULL,
-    node_id text NOT NULL,
-    cron_expression text NOT NULL,
-    webhook_url text NOT NULL,
-    payload jsonb,
-    timezone text NOT NULL DEFAULT 'UTC',
-    enabled boolean NOT NULL DEFAULT true,
-    run_once boolean NOT NULL DEFAULT false,
-    max_attempts integer NOT NULL DEFAULT 3,
-    next_run timestamptz NOT NULL,
-    last_run timestamptz,
-    created_at timestamptz NOT NULL DEFAULT now(),
-    updated_at timestamptz NOT NULL DEFAULT now()
-);
-ALTER TABLE local_cron_schedules ADD COLUMN IF NOT EXISTS last_run timestamptz;
-CREATE INDEX IF NOT EXISTS local_cron_schedules_due_idx
-    ON local_cron_schedules (next_run) WHERE enabled;
-"""
+from repositories.local_schedules import LocalScheduleRepo
 
 _ticker_task: Optional[asyncio.Task] = None
 _schema_ready = False
@@ -64,147 +42,21 @@ def _require_secret(authorization: Optional[str]) -> None:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
-# Scheduler expression formats — the same custom vocabulary the CF worker's
-# cron-utils speaks: "*/Ns" seconds (+ optional 5-field constraint tail),
-# "… /Nh" hour durations, "base /Nw" week-stepped weeklies, plain 5-field cron.
-_SECONDS_FORMAT_RE = re.compile(r'^\*/(\d+)s(?:\s+(.*))?$')
-_HOURS_FORMAT_RE = re.compile(r'/(\d+)h$')
-_WEEKS_FORMAT_RE = re.compile(r'^(.+)\s/(\d+)w$')
+from utils.cron_timing import _compute_next_run, _parse_run_at
 
 
-def _expand_fields(expr: str):
-    """Expression → (minutes, hours, doms, months, dows) as int sets, None =
-    unrestricted. croniter does the parsing; evaluation is ours (below)."""
-    from croniter import croniter
-
-    fields = croniter.expand(expr)[0]
-
-    def to_set(field) -> Optional[set]:
-        if field == ['*']:
-            return None
-        return {int(v) for v in field}
-
-    return tuple(to_set(f) for f in fields)
-
-
-def _fields_match(sets, local_dt: datetime) -> bool:
-    """Wall-clock membership, with restricted day-of-month AND day-of-week
-    INTERSECTING — our generator's semantics, where vixie cron ORs them
-    (unrestricted None passes, so the AND is correct for every combination)."""
-    mins, hrs, doms, mons, dows = sets
-    if mins is not None and local_dt.minute not in mins:
-        return False
-    if hrs is not None and local_dt.hour not in hrs:
-        return False
-    if mons is not None and local_dt.month not in mons:
-        return False
-    if doms is not None and local_dt.day not in doms:
-        return False
-    if dows is not None and (local_dt.weekday() + 1) % 7 not in dows:
-        return False
-    return True
-
-
-def _next_standard(expr: str, tz_name: str, after_utc: datetime) -> datetime:
-    """Next fire of a 5-field expression strictly after ``after_utc``,
-    DST-correct by construction: local wall-clock candidates are built
-    directly with zoneinfo (fold=0 = first occurrence of a fall-back
-    repeated hour; spring-forward gap times round-trip-detected and
-    skipped) instead of stepping croniter, whose iteration lands fires
-    ±1h around DST transitions."""
-    sets = _expand_fields(expr)
-    mins, hrs, doms, mons, dows = sets
-    minutes = sorted(mins) if mins is not None else range(60)
-    hours = sorted(hrs) if hrs is not None else range(24)
-    tz = ZoneInfo(tz_name or "UTC")
-    utc = timezone.utc
-    start_date = after_utc.astimezone(tz).date()
-    for offset in range(4000):  # ~11-year scan horizon
-        d = start_date + timedelta(days=offset)
-        if mons is not None and d.month not in mons:
-            continue
-        if doms is not None and d.day not in doms:
-            continue
-        if dows is not None and (d.weekday() + 1) % 7 not in dows:
-            continue
-        for h in hours:
-            for m in minutes:
-                naive = datetime(d.year, d.month, d.day, h, m)
-                candidate = naive.replace(tzinfo=tz).astimezone(utc)
-                if candidate.astimezone(tz).replace(tzinfo=None) != naive:
-                    continue  # nonexistent wall-clock time (spring-forward gap)
-                if candidate > after_utc:
-                    return candidate
-    raise ValueError(f"No upcoming run for {expr!r} within the scan horizon")
-
-
-def _compute_next_run(
-    cron_expression: str, tz_name: str, last_run: Optional[datetime] = None,
-) -> datetime:
-    """Next fire (UTC) for any scheduler expression, worker-parity semantics."""
-    expr = cron_expression.strip()
-    now_utc = datetime.now(timezone.utc)
-
-    m = _SECONDS_FORMAT_RE.match(expr)
-    if m:
-        candidate = now_utc + timedelta(seconds=max(1, int(m.group(1))))
-        tail = (m.group(2) or "").split()
-        if len(tail) == 5:  # constrained: gate the candidate's minute
-            tail_expr = " ".join(tail)
-            local = candidate.astimezone(ZoneInfo(tz_name or "UTC"))
-            if not _fields_match(_expand_fields(tail_expr), local):
-                return _next_standard(tail_expr, tz_name, candidate)
-        return candidate
-
-    wm = _WEEKS_FORMAT_RE.match(expr)
-    if wm:
-        base_next = _next_standard(wm.group(1).strip(), tz_name, now_utc)
-        interval = max(1, int(wm.group(2)))
-        if last_run is not None and interval > 1:
-            weeks_since = int((base_next - last_run).total_seconds() // (7 * 86400))
-            skip = interval - (weeks_since % interval)
-            if 0 < skip < interval:
-                return base_next + timedelta(weeks=skip)
-        return base_next
-
-    hm = _HOURS_FORMAT_RE.search(expr)
-    if hm:  # "/Nh" duration format: true every-N-hours-from-now
-        return now_utc + timedelta(hours=max(1, int(hm.group(1))))
-
-    return _next_standard(expr, tz_name, now_utc)
-
-
-def _parse_run_at(run_at: str) -> datetime:
-    dt = datetime.fromisoformat(run_at.replace("Z", "+00:00"))
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc)
-
-
-def _row_json(row) -> Dict[str, Any]:
-    return {
-        "id": str(row["id"]),
-        "user_id": row["user_id"],
-        "workflow_id": row["workflow_id"],
-        "node_id": row["node_id"],
-        "cron_expression": row["cron_expression"],
-        "webhook_url": row["webhook_url"],
-        "payload": row["payload"],
-        "timezone": row["timezone"],
-        "enabled": row["enabled"],
-        "run_once": row["run_once"],
-        "max_attempts": row["max_attempts"],
-        "next_run": row["next_run"].isoformat(),
-        "created_at": row["created_at"].isoformat(),
-    }
+def _row_json(row):
+    import uuid
+    result = {key: (value.isoformat() if isinstance(value, datetime) else str(value) if isinstance(value, uuid.UUID) else value)
+              for key, value in dict(row).items()}
+    return result
 
 
 async def _ensure_schema(pool) -> None:
     global _schema_ready
     if _schema_ready:
         return
-    async with pool.acquire() as conn:
-        await conn.execute(_SCHEMA_SQL)
+    await LocalScheduleRepo(pool).ensure_schema()
     _schema_ready = True
 
 
@@ -223,44 +75,11 @@ async def create_schedule(request: Request, authorization: Optional[str] = Heade
     pool = _get_pool()
     await _ensure_schema(pool)
 
-    import uuid as uuid_module
-    schedule_id = str(body.get("id") or uuid_module.uuid4())
-    run_once = bool(body.get("run_once"))
-    # `tz` is the wire field for evaluation timezone (same contract as the CF
-    # worker); the legacy `timezone` field rode alongside UTC-pre-converted
-    # expressions and must stay ignored.
-    tz_name = body.get("tz") or "UTC"
-    if run_once:
-        next_run = _parse_run_at(body["run_at"])
-    else:
-        try:
-            next_run = _compute_next_run(body["cron_expression"], tz_name)
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Invalid cron expression: {e}")
-
-    async with pool.acquire() as conn:
-        await conn.execute(
-            """
-            INSERT INTO local_cron_schedules
-                (id, user_id, workflow_id, node_id, cron_expression, webhook_url,
-                 payload, timezone, run_once, max_attempts, next_run)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-            ON CONFLICT (id) DO UPDATE SET
-                cron_expression = EXCLUDED.cron_expression,
-                webhook_url = EXCLUDED.webhook_url,
-                payload = EXCLUDED.payload,
-                timezone = EXCLUDED.timezone,
-                run_once = EXCLUDED.run_once,
-                max_attempts = EXCLUDED.max_attempts,
-                next_run = EXCLUDED.next_run,
-                enabled = true,
-                updated_at = now()
-            """,
-            schedule_id, body["user_id"], body["workflow_id"], body["node_id"],
-            body["cron_expression"], body["webhook_url"], body.get("payload"),
-            tz_name, run_once, int(body.get("max_attempts") or 3), next_run,
-        )
-    return {"id": schedule_id, "next_run": next_run.isoformat()}
+    try:
+        row = await LocalScheduleRepo(pool).save(body)
+    except (ValueError, KeyError) as error:
+        raise HTTPException(status_code=400, detail=str(error))
+    return {"id": str(row["id"]), "next_run": row["next_run"].isoformat()}
 
 
 @router.put("/schedules/{schedule_id}")
@@ -272,44 +91,19 @@ async def update_schedule(
     pool = _get_pool()
     await _ensure_schema(pool)
 
-    async with pool.acquire() as conn:
-        row = await conn.fetchrow(
-            "SELECT * FROM local_cron_schedules WHERE id = $1", schedule_id,
-        )
-        if row is None:
-            raise HTTPException(status_code=404, detail="Schedule not found")
-
-        cron_expression = body.get("cron_expression", row["cron_expression"])
-        next_run = row["next_run"]
-        if "cron_expression" in body:
-            next_run = _compute_next_run(cron_expression, row["timezone"], row["last_run"])
-        await conn.execute(
-            """
-            UPDATE local_cron_schedules SET
-                cron_expression = $2, webhook_url = $3, payload = $4,
-                enabled = $5, max_attempts = $6, next_run = $7, updated_at = now()
-            WHERE id = $1
-            """,
-            schedule_id, cron_expression,
-            body.get("webhook_url", row["webhook_url"]),
-            body["payload"] if "payload" in body else row["payload"],
-            bool(body.get("enabled", row["enabled"])),
-            int(body.get("max_attempts", row["max_attempts"])),
-            next_run,
-        )
-    return {"success": True, "next_run": next_run.isoformat()}
+    try:
+        return await LocalScheduleRepo(pool).update(schedule_id, body)
+    except ValueError as error:
+        raise HTTPException(404 if str(error) == "Schedule not found" else 400, str(error))
 
 
 @router.get("/schedules")
-async def list_schedules(workflow_id: str, authorization: Optional[str] = Header(None)):
+async def list_schedules(workflow_id: Optional[str] = None, user_id: Optional[str] = None,
+                         target_kind: Optional[str] = None, authorization: Optional[str] = Header(None)):
     _require_secret(authorization)
     pool = _get_pool()
     await _ensure_schema(pool)
-    async with pool.acquire() as conn:
-        rows = await conn.fetch(
-            "SELECT * FROM local_cron_schedules WHERE workflow_id = $1", workflow_id,
-        )
-    return [_row_json(r) for r in rows]
+    return [_row_json(r) for r in await LocalScheduleRepo(pool).list(workflow_id, user_id, target_kind)]
 
 
 @router.get("/schedules/{schedule_id}")
@@ -343,14 +137,10 @@ async def delete_schedule(schedule_id: str, authorization: Optional[str] = Heade
     _require_secret(authorization)
     pool = _get_pool()
     await _ensure_schema(pool)
-    async with pool.acquire() as conn:
-        result = await conn.execute(
-            "DELETE FROM local_cron_schedules WHERE id = $1", schedule_id,
-        )
-    deleted = int(result.split()[-1])
+    deleted = await LocalScheduleRepo(pool).delete(schedule_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Schedule not found")
-    return {"deleted": deleted}
+    return {"deleted": True}
 
 
 @router.post("/schedules/bulk-delete-nodes")
@@ -375,140 +165,123 @@ async def bulk_delete_nodes(request: Request, authorization: Optional[str] = Hea
     return {"deleted": len(rows), "deleted_schedules": [str(r["id"]) for r in rows]}
 
 
-# ── Ticker ───────────────────────────────────────────────────────────────
+# ── Bounded durable delivery (shared by workflow alarms and coordinator events) ──
+_active_deliveries = set()
+_recovery_tasks = set()
 
 
-def _delivery_url(webhook_url: str) -> str:
-    """The URL a tick is posted to.
-
-    Webhook URLs are minted on the instance's public origin, which from inside
-    the instance may not route back to it at all (a laptop's localhost:PORT is
-    the container's own loopback; a platform edge may refuse hairpin traffic).
-    LOCAL_CRON_DELIVERY_ORIGIN names the origin this process can actually
-    reach — the single-origin image points it at its own nginx — and only the
-    origin is swapped, so the webhook path is delivered exactly as minted.
-    """
+def _delivery_url(webhook_url):
+    from urllib.parse import urlsplit, urlunsplit
     origin = os.environ.get("LOCAL_CRON_DELIVERY_ORIGIN", "").strip()
     if not origin:
         return webhook_url
-    o = urlsplit(origin); parts = urlsplit(webhook_url)
+    o, parts = urlsplit(origin), urlsplit(webhook_url)
     return urlunsplit((o.scheme, o.netloc, parts.path, parts.query, parts.fragment))
 
 
-async def _deliver(schedule: Dict[str, Any], triggered_at: datetime) -> None:
-    """Worker-parity delivery: same body/headers, 4xx = no retry."""
-    payload = schedule["payload"]
-    if isinstance(payload, str):
-        payload = json.loads(payload)
-    body = {
-        "schedule_id": schedule["id"],
-        "workflow_id": schedule["workflow_id"],
-        "user_id": schedule["user_id"],
-        "node_id": schedule["node_id"],
-        "triggered_at": triggered_at.isoformat(),
-        "payload": payload,
-    }
-    max_attempts = max(1, int(schedule["max_attempts"]))
-    async with httpx.AsyncClient(timeout=_DELIVERY_TIMEOUT_S) as client:
-        for attempt in range(1, max_attempts + 1):
-            try:
-                response = await client.post(
-                    _delivery_url(schedule["webhook_url"]),
-                    json=body,
-                    headers={
-                        "X-Cron-Schedule-Id": schedule["id"],
-                        "X-Cron-Attempt": str(attempt),
-                    },
-                )
-                if response.is_success:
+async def _deliver(row):
+    runner = asyncio.current_task()
+
+    async def heartbeat():
+        try:
+            while True:
+                await asyncio.sleep(30)
+                if not await LocalScheduleRepo(_get_pool()).heartbeat(row):
+                    runner.cancel()
                     return
-                logger.warning(
-                    f"[local-cron] schedule {schedule['id'][:8]} attempt {attempt}: HTTP {response.status_code}"
-                )
-                if 400 <= response.status_code < 500:
-                    return
-            except Exception as e:
-                logger.warning(f"[local-cron] schedule {schedule['id'][:8]} attempt {attempt}: {e}")
-            if attempt < max_attempts:
-                await asyncio.sleep(min(2 ** attempt, 10))
+        except Exception:
+            runner.cancel()
+
+    lease = asyncio.create_task(heartbeat())
+    try:
+        await _deliver_owned(row)
+    finally:
+        lease.cancel()
+        await asyncio.gather(lease, return_exceptions=True)
 
 
-async def _tick() -> None:
+async def _deliver_owned(row):
+    from utils.scheduler_delivery import delivery_headers
+    body = json.dumps({"schedule_id": str(row["id"]), "delivery_id": str(row["occurrence_id"]),
+                       "target_kind": row["target_kind"], "revision": str(row["revision"]),
+                       "workflow_id": row["workflow_id"], "node_id": row["node_id"],
+                       "user_id": row["user_id"], "triggered_at": row["triggered_at"].isoformat(),
+                       "payload": row["payload"]}, separators=(",", ":")).encode()
+    headers = {"Content-Type": "application/json", "X-Cron-Schedule-Id": str(row["id"]),
+               "X-Cron-Attempt": str(row["attempts"]),
+               **delivery_headers(body, os.environ.get("CRON_SCHEDULER_SECRET", ""))}
+    retry_after, error, success = None, None, False
+    try:
+        async with httpx.AsyncClient(timeout=660) as client:
+            response = await client.post(_delivery_url(row["webhook_url"]), content=body, headers=headers)
+        success = response.is_success
+        if not success:
+            error = f"HTTP {response.status_code}"
+            if response.status_code in (429, 503) or (response.status_code >= 500 and row["attempts"] < row["max_attempts"]):
+                retry_after = min(86400, max(1, int(response.headers.get("Retry-After", "30"))))
+            # Transient errors are bounded in time, not discarded after three busy responses.
+    except Exception as exc:
+        error = str(exc)
+        retry_after = min(300, 2 ** min(row["attempts"], 8)) if row["attempts"] < row["max_attempts"] else None
+    if (datetime.now(timezone.utc) - row["triggered_at"]).total_seconds() > 86400:
+        retry_after = None
+    await LocalScheduleRepo(_get_pool()).finish(row, success=success, error=error, retry_after=retry_after)
+
+
+async def _tick():
     pool = _get_pool()
     await _ensure_schema(pool)
-    now = datetime.now(timezone.utc)
-    async with pool.acquire() as conn:
-        due = await conn.fetch(
-            "SELECT * FROM local_cron_schedules WHERE enabled AND next_run <= $1", now,
-        )
-        for row in due:
-            # Advance bookkeeping BEFORE delivering so a slow/hung workflow run
-            # can't re-fire the same tick, and one schedule can't block others.
-            if row["run_once"]:
-                await conn.execute(
-                    "DELETE FROM local_cron_schedules WHERE id = $1", row["id"],
-                )
-            else:
-                try:
-                    # This delivery anchors /Nw week stepping (worker parity).
-                    next_run = _compute_next_run(row["cron_expression"], row["timezone"], now)
-                except Exception as e:
-                    logger.error(
-                        f"[local-cron] disabling schedule {row['id']} — bad expression: {e}"
-                    )
-                    await conn.execute(
-                        "UPDATE local_cron_schedules SET enabled = false WHERE id = $1",
-                        row["id"],
-                    )
-                    continue
-                await conn.execute(
-                    "UPDATE local_cron_schedules SET next_run = $2, last_run = $3, updated_at = now() WHERE id = $1",
-                    row["id"], next_run, now,
-                )
-            from utils.async_helpers import spawn
-            spawn(_deliver(_row_json(row), now), name=f"local-cron-{row['id']}")
+    for task in tuple(_active_deliveries):
+        if task.done():
+            _active_deliveries.remove(task)
+            if not task.cancelled() and task.exception():
+                logger.error("Local scheduler delivery failed", exc_info=task.exception())
+    capacity = max(0, int(os.getenv("LOCAL_SCHEDULER_CONCURRENCY", "8")) - len(_active_deliveries))
+    if capacity:
+        for row in await LocalScheduleRepo(pool).claim(capacity):
+            _active_deliveries.add(asyncio.create_task(_deliver(dict(row))))
 
 
-def _sleep_seconds(earliest_next_run: Optional[datetime], now: datetime) -> float:
-    """How long the ticker sleeps: until the earliest due schedule, but never
-    longer than a tick and never less than a second. A fixed 15s tick made
-    every-5-seconds schedules fire every 15."""
+def _sleep_seconds(earliest_next_run, now):
     if earliest_next_run is None:
         return _TICK_INTERVAL_S
     return min(_TICK_INTERVAL_S, max(1.0, (earliest_next_run - now).total_seconds()))
 
 
-async def _run_ticker() -> None:
-    logger.info("[local-cron] ticker started")
+async def _run_ticker():
+    import time
+    next_recovery = 0.0
+    recovery = None
     while True:
         try:
             await _tick()
-        except asyncio.CancelledError:
-            raise
-        except Exception as e:
-            logger.error(f"[local-cron] tick failed: {e}", exc_info=True)
-        earliest = None
-        try:
-            earliest = await _get_pool().fetchval(
-                "SELECT min(next_run) FROM local_cron_schedules WHERE enabled"
-            )
-        except Exception as e:
-            logger.debug(f"[local-cron] next-due lookup failed, sleeping a full tick: {e}")
-        await asyncio.sleep(_sleep_seconds(earliest, datetime.now(timezone.utc)))
+            if time.monotonic() >= next_recovery and (recovery is None or recovery.done()):
+                if recovery and not recovery.cancelled() and recovery.exception():
+                    logger.error("Scheduler reconciliation failed", exc_info=recovery.exception())
+                next_recovery = time.monotonic() + 60
+                from utils.coordinator_dispatch import reconcile
+                recovery = asyncio.create_task(reconcile(_get_pool()))
+                _recovery_tasks.add(recovery)
+                recovery.add_done_callback(_recovery_tasks.discard)
+                await LocalScheduleRepo(_get_pool()).prune()
+        except Exception:
+            logger.exception("Local scheduler tick failed")
+        # One second keeps short alarms responsive without spawning unbounded work.
+        await asyncio.sleep(1)
 
 
-def start_local_cron() -> None:
+def start_local_cron():
     global _ticker_task
     if _ticker_task is None or _ticker_task.done():
         _ticker_task = asyncio.create_task(_run_ticker())
 
 
-async def stop_local_cron() -> None:
+async def stop_local_cron():
     global _ticker_task
-    if _ticker_task is not None:
-        _ticker_task.cancel()
-        try:
-            await _ticker_task
-        except (asyncio.CancelledError, Exception):
-            pass
-        _ticker_task = None
+    tasks = [*_active_deliveries, *_recovery_tasks, *([_ticker_task] if _ticker_task else [])]
+    for task in tasks:
+        task.cancel()
+    await asyncio.gather(*tasks, return_exceptions=True)
+    _active_deliveries.clear()
+    _recovery_tasks.clear()
+    _ticker_task = None

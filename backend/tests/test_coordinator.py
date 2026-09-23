@@ -221,7 +221,7 @@ class FakeChat:
 
 
 @asynccontextmanager
-async def fake_coordinator_lock(pool, user_id):
+async def fake_coordinator_lock(pool, user_id, **kwargs):
     yield AsyncMock()
 
 

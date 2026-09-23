@@ -15,6 +15,7 @@ from coder.coordinator import agent, tasks, wakeups
 from coder.workflow import requests
 from repositories.coordinator_tasks import CoordinatorTaskRepo
 from repositories.coordinator_wakeups import CoordinatorWakeupRepo, coordinator_lock
+from tests.fixtures.local_scheduler import local_scheduler  # noqa: F401
 from tests.test_builder_requests import USER, builder_request_db  # noqa: F401
 from utils import capabilities
 from wss.sender.events import ChatMessageEvent
@@ -25,7 +26,7 @@ CONTEXT = {"epoch": "", "depth": 0, "request": "After unpublishing, publish at t
 
 
 @pytest.fixture
-async def db(builder_request_db, monkeypatch):
+async def db(builder_request_db, monkeypatch, local_scheduler):
     pool, builds, workflow_id, enqueue = builder_request_db
     repo = CoordinatorWakeupRepo(pool)
     monkeypatch.setattr(agent, "get_native_pool", lambda: pool)
@@ -112,7 +113,7 @@ async def test_completion_wakes_same_coordinator_and_only_then_submits_b(db, mon
     assert followup["origin"]["continuation"] == {**context, "depth": 1}
     assert followup["send_to_phone"] is True
     # No fabricated user message or duplicate assistant transcript on resume.
-    assert await pool.fetchval("SELECT count(*) FROM conversations WHERE conversation_id=$1", f"coordinator:{USER}") == 0
+    assert not await pool.fetchval("SELECT events FROM conversations WHERE conversation_id=$1", f"coordinator:{USER}")
     phone = AsyncMock(return_value=("sent", None))
     socket = AsyncMock()
     monkeypatch.setattr(wakeups, "deliver_phone", phone)
@@ -191,7 +192,9 @@ async def test_shared_lock_serializes_independent_containers_and_releases_on_err
             await asyncio.sleep(0.05)
             assert not acquired.is_set()
             # An unrelated account is not blocked by this turn.
-            async with coordinator_lock(pool, str(uuid.uuid4())):
+            other = str(uuid.uuid4())
+            await pool.execute("INSERT INTO auth.users(id,email) VALUES($1::uuid, 'lease-test@example.test')", other)
+            async with coordinator_lock(pool, other):
                 pass
             raise ValueError("turn failed")
     await asyncio.wait_for(waiter, 2)

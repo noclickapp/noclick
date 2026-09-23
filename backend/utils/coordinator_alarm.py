@@ -3,8 +3,6 @@
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-from croniter import croniter
-
 from utils.cron_scheduler_client import parse_countdown_to_timestamp
 
 MAX_PENDING = 10
@@ -16,9 +14,10 @@ MIN_REPEAT_SECONDS = 900
 def next_cron(expression, zone, now=None):
     if not isinstance(expression, str) or len(expression) > 100 or len(expression.split()) != 5:
         raise ValueError("Use a standard five-field cron expression.")
-    current = (now or datetime.now(timezone.utc)).astimezone(ZoneInfo(zone))
-    iterator = croniter(expression, current, max_years_between_matches=2)
-    return iterator.get_next(datetime).astimezone(timezone.utc)
+    ZoneInfo(zone)
+    from utils.cron_timing import _compute_next_run
+    return _compute_next_run(expression, zone, after=now)
+
 
 
 def alarm_time(alarm_type, delay_or_time, timezone_name="UTC"):

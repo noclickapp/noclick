@@ -147,7 +147,10 @@ async def run_coordinator_turn(
     pool = get_native_pool()
     conversation_id = conversation_id_for(user_id)
     lock = _turn_locks.setdefault(user_id, asyncio.Lock())
-    async with lock, coordinator_lock(pool, user_id) as lock_conn:
+    if completion and lock.locked():
+        from repositories.coordinator_lease import CoordinatorBusy
+        raise CoordinatorBusy("An interactive turn is already running")
+    async with lock, coordinator_lock(pool, user_id, wait_seconds=0 if completion else 600) as turn_lease:
         wakeups = CoordinatorWakeupRepo(pool)
         epoch = await wakeups.epoch(user_id)
         if completion:
@@ -224,10 +227,10 @@ async def run_coordinator_turn(
         tool_guard = asyncio.Lock()
 
         async def execute(name, arguments):
-            # Fail closed if the connection carrying the cross-container turn
-            # lock vanished. Do not let an orphaned turn start more effects.
+            # Fail closed if renewable turn ownership was lost. An orphaned
+            # turn cannot begin further tool effects.
             async with tool_guard:
-                await lock_conn.fetchval("SELECT 1")
+                await turn_lease.check()
                 if completion and not await wakeups.heartbeat(completion):
                     raise RuntimeError("Coordinator completion lease was lost")
             return await tools.execute(name, arguments)

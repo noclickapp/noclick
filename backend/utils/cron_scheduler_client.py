@@ -241,8 +241,9 @@ async def delete_schedules_for_workflow(
 
 
 async def list_schedules(
-    workflow_id: str,
-    timeout: float = 10.0
+    workflow_id: Optional[str] = None,
+    timeout: float = 10.0,
+    *, user_id: Optional[str] = None, target_kind: Optional[str] = None
 ) -> Any:
     """
     List all schedules for a workflow.
@@ -262,7 +263,7 @@ async def list_schedules(
         async with httpx.AsyncClient() as client:
             response = await client.get(
                 f"{CRON_SCHEDULER_URL}/schedules",
-                params={"workflow_id": workflow_id},
+                params={k: v for k, v in {"workflow_id": workflow_id, "user_id": user_id, "target_kind": target_kind}.items() if v is not None},
                 headers={
                     "Authorization": f"Bearer {CRON_SCHEDULER_SECRET}"
                 },
@@ -390,6 +391,8 @@ async def create_schedule(
     timeout: float = 10.0,
     timezone: str = "UTC",
     schedule_id: Optional[str] = None,
+    target_kind: str = "workflow",
+    run_at: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Create a new cron schedule for a workflow node.
@@ -421,6 +424,7 @@ async def create_schedule(
         async with httpx.AsyncClient() as client:
             body: Dict[str, Any] = {
                 "user_id": user_id,
+                "target_kind": target_kind,
                 "workflow_id": workflow_id,
                 "node_id": node_id,
                 "cron_expression": cron_expression,
@@ -434,6 +438,8 @@ async def create_schedule(
                 # double-shifting those legacy payloads.
                 "tz": timezone,
             }
+            if run_at:
+                body.update(run_at=run_at, run_once=True)
             if schedule_id:
                 body["id"] = schedule_id
             response = await client.post(
@@ -474,7 +480,8 @@ async def update_schedule(
     payload: Optional[Dict[str, Any]] = None,
     enabled: Optional[bool] = None,
     max_attempts: Optional[int] = None,
-    timeout: float = 10.0
+    timeout: float = 10.0,
+    expected_revision: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Update an existing cron schedule.
@@ -497,6 +504,8 @@ async def update_schedule(
 
     # Build update payload with only provided fields
     update_data: Dict[str, Any] = {}
+    if expected_revision is not None:
+        update_data["expected_revision"] = expected_revision
     if cron_expression is not None:
         update_data["cron_expression"] = cron_expression
     if webhook_url is not None:
@@ -584,73 +593,15 @@ def parse_countdown_to_timestamp(delay: str) -> str:
 
 
 async def create_alarm(
-    user_id: str,
-    workflow_id: str,
-    node_id: str,
-    run_at: str,
-    webhook_url: str,
-    payload: Optional[Dict[str, Any]] = None,
-    max_attempts: int = 3,
-    timeout: float = 10.0,
+    user_id: str, workflow_id: Optional[str], node_id: Optional[str], run_at: str,
+    webhook_url: str, payload: Optional[Dict[str, Any]] = None,
+    max_attempts: int = 3, timeout: float = 10.0, *,
+    schedule_id: Optional[str] = None, target_kind: str = "workflow",
 ) -> Dict[str, Any]:
-    """
-    Create a one-time alarm that fires at a specific timestamp and auto-deletes.
-
-    Args:
-        user_id: The user ID
-        workflow_id: The workflow ID
-        node_id: The alarm node ID
-        run_at: ISO 8601 timestamp for when the alarm should fire
-        webhook_url: URL to call when alarm fires
-        payload: Payload to include in the webhook (e.g., alarm message)
-        max_attempts: Number of delivery retry attempts
-        timeout: Request timeout in seconds
-
-    Returns:
-        Dict with 'id' and 'next_run' on success, or 'error' on failure
-    """
-    if not is_cron_scheduler_enabled():
-        logger.debug("Cron scheduler not configured, skipping alarm creation")
-        return {"error": "Cron scheduler not configured", "skipped": True}
-
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f"{CRON_SCHEDULER_URL}/schedules",
-                json={
-                    "user_id": user_id,
-                    "workflow_id": workflow_id,
-                    "node_id": node_id,
-                    "cron_expression": "__run_at__",
-                    "webhook_url": webhook_url,
-                    "payload": payload,
-                    "max_attempts": max_attempts,
-                    "run_once": True,
-                    "run_at": run_at,
-                },
-                headers={
-                    "Authorization": f"Bearer {CRON_SCHEDULER_SECRET}",
-                    "Content-Type": "application/json"
-                },
-                timeout=timeout
-            )
-
-            if response.status_code == 201:
-                result = response.json()
-                logger.info(
-                    f"Created one-time alarm {result.get('id')} for "
-                    f"workflow {workflow_id}, node {node_id}, fires at {run_at}"
-                )
-                return result
-            else:
-                logger.error(
-                    f"Failed to create alarm: {response.status_code} - {response.text}"
-                )
-                return {"error": f"HTTP {response.status_code}: {response.text}"}
-
-    except httpx.TimeoutException:
-        logger.error(f"Timeout creating alarm for node {node_id}")
-        return {"error": "Timeout"}
-    except Exception as e:
-        logger.error(f"Error creating alarm: {e}", exc_info=True)
-        return {"error": str(e)}
+    """One-time and recurring alarms use the SAME registration and delivery path."""
+    return await create_schedule(
+        user_id=user_id, workflow_id=workflow_id, node_id=node_id,
+        cron_expression="__run_at__", webhook_url=webhook_url, payload=payload,
+        max_attempts=max_attempts, timeout=timeout, schedule_id=schedule_id,
+        target_kind=target_kind, run_at=run_at,
+    )

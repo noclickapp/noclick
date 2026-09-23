@@ -4,8 +4,8 @@ import asyncio
 import logging
 
 from repositories.coordinator_wakeups import CoordinatorWakeupRepo
+from repositories.coordinator_lease import CoordinatorBusy
 from repositories.users import get_user_email
-from utils.database_pool import get_native_pool
 from utils.socket_singleton import get_sio
 from utils.task_notifications import deliver_phone, emit_notification
 
@@ -73,6 +73,8 @@ async def run_wakeup(pool, event):
             )
         if text is not None:
             await repo.finish(event, text or outcome_summary(event))
+    except CoordinatorBusy:
+        await repo.defer(event)
     except asyncio.CancelledError:
         # The reaper retries only turns that never started. Started turns may
         # have taken actions, so their uncertain outcome is surfaced instead.
@@ -99,31 +101,17 @@ async def deliver_reply(pool, event):
     await CoordinatorWakeupRepo(pool).delivered(event, phone_state, error)
 
 
-async def wakeup_worker():
-    active = set()
-    try:
-        while True:
-            try:
-                pool = get_native_pool()
-                repo = CoordinatorWakeupRepo(pool)
-                await repo.reap_stalled()
-                delivery = await repo.claim_delivery()
-                if delivery:
-                    await deliver_reply(pool, delivery)
-                for done in tuple(active):
-                    if done.done():
-                        active.remove(done)
-                        if not done.cancelled() and done.exception():
-                            logger.error("coordinator wake-up failed", exc_info=done.exception())
-                while len(active) < 4:
-                    event = await repo.claim()
-                    if event is None:
-                        break
-                    active.add(asyncio.create_task(run_wakeup(pool, event)))
-            except Exception:
-                logger.exception("coordinator wake-up poll failed")
-            await asyncio.sleep(5)
-    finally:
-        for task in active:
-            task.cancel()
-        await asyncio.gather(*active, return_exceptions=True)
+async def process_event(pool, event):
+    """One scheduler request, no polling and no per-process reply bottleneck."""
+    repo = CoordinatorWakeupRepo(pool)
+    if event["status"] == "queued":
+        claimed = await repo.claim(event["id"])
+        if not claimed:
+            return False
+        await run_wakeup(pool, claimed)
+    current = await repo.get(event["id"])
+    if current["status"] == "ready":
+        delivery = await repo.claim_delivery(event["id"])
+        if delivery:
+            await deliver_reply(pool, delivery)
+    return (await repo.get(event["id"]))["status"] in ("done", "skipped")

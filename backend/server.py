@@ -255,14 +255,10 @@ async def app_lifespan(app: FastAPI):
     coordinator_worker = asyncio.create_task(task_worker(), name="coordinator-agent-tasks")
     from coder.workflow.requests import request_worker
     builder_worker = asyncio.create_task(request_worker(), name="builder-requests")
-    from coder.coordinator.wakeups import wakeup_worker
-    completion_worker = asyncio.create_task(wakeup_worker(), name="coordinator-wakeups")
 
     try:
         yield
     finally:
-        completion_worker.cancel()
-        await asyncio.gather(completion_worker, return_exceptions=True)
         coordinator_worker.cancel()
         await asyncio.gather(coordinator_worker, return_exceptions=True)
         builder_worker.cancel()
@@ -408,6 +404,8 @@ apply_registered_routes(fastapi_app, sio)
 # the external relay services.
 if is_local_edition():
     from utils.local_relay_routes import router as local_relay_router
+    from utils.coordinator_wakeup_routes import router as coordinator_scheduler_router
+    fastapi_app.include_router(coordinator_scheduler_router)
     from utils.local_cron import router as local_cron_router
     from utils.local_storage_routes import router as local_storage_router
     fastapi_app.include_router(local_relay_router)
