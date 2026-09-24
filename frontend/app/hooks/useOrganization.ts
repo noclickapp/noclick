@@ -26,7 +26,8 @@ export interface Organization {
 export interface OrganizationMember {
   id: string;
   user_id: string;
-  email: string;
+  /** Null for a phone-only account (WhatsApp signup). */
+  email: string | null;
   full_name: string | null;
   username: string | null;
   avatar_url: string | null;

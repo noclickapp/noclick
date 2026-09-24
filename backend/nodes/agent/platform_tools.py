@@ -280,6 +280,17 @@ def agent_email_available() -> bool:
     return bool(get_inbound_email_domain())
 
 
+async def email_user_offered(pool, user_id: Optional[str], enabled: bool, in_iteration: bool = False) -> bool:
+    """Whether this turn offers email_user: the node flag, the edition's mail
+    channel, no iteration fan-out, and an owner with an email address (a
+    phone-only account has none, so the tool could only fail)."""
+    if not (enabled and user_id and not in_iteration and agent_email_available()):
+        return False
+    from repositories.users import get_user_email
+
+    return bool(await get_user_email(pool, user_id))
+
+
 def build_platform_tools(
     enable_prompt_builder: bool, enable_email_updates: bool = False,
     in_iteration: bool = False,
@@ -295,6 +306,7 @@ def build_platform_tools(
         pairs.append(_platform_pair(_DESCRIBE_WORKFLOW_PARAM, "describe_workflow"))
     # email_user requires a configured inbound/reply mail channel. Community
     # installs advertise it only after the operator configures that channel.
+    # Hosted callers pass email_user_offered()'s verdict (owner has an email).
     if enable_email_updates and not in_iteration and agent_email_available():
         pairs.append(_platform_pair(_EMAIL_USER_PARAM, "email_user"))
     return pairs
@@ -699,10 +711,8 @@ async def describe_workflow_impl(
         ambient = ["submit_feedback"]
         if cfg.get("enable_prompt_builder") != "false":
             ambient += ["prompt_builder", "builder_respond", "describe_workflow"]
-        if (
-            cfg.get("enable_email_updates") != "false"
-            and not in_iteration
-            and agent_email_available()
+        if await email_user_offered(
+            pool, user_id, cfg.get("enable_email_updates") != "false", in_iteration,
         ):
             ambient.append("email_user (emails the workflow owner directly — needs NO email node)")
         notes.append(

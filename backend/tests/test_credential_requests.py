@@ -28,6 +28,7 @@ from wss.sender import send_event
 TEST_USER_ID = '00000000-0000-4000-8000-000000000001'
 TEST_USER_EMAIL = 'requester@example.com'
 TARGET_EMAIL = 'provider@example.com'
+PHONE_USER_ID = '00000000-0000-4000-8000-0000000000f1'
 
 
 @pytest.mark.asyncio
@@ -334,6 +335,43 @@ class TestCredentialRequestHTTPAPI:
         with pytest.raises(HTTPException) as exc_info:
             await get_credential_request('nonexistent_token')
         assert exc_info.value.status_code == 404
+
+    @pytest.fixture
+    def phone_only_request(self, db):
+        """A request minted by a WhatsApp-signup account: auth.users.email is NULL."""
+        db.execute("DELETE FROM credential_requests WHERE requester_id = $1", PHONE_USER_ID)
+        db.execute(
+            "INSERT INTO auth.users (id, email, raw_user_meta_data) VALUES ($1, NULL, $2) "
+            "ON CONFLICT (id) DO UPDATE SET email = NULL, raw_user_meta_data = EXCLUDED.raw_user_meta_data",
+            PHONE_USER_ID, {'username': 'Priya', 'signup_channel': 'whatsapp'},
+        )
+        row = db.fetchrow(
+            "INSERT INTO credential_requests (requester_id, target_email, credential_type) "
+            "VALUES ($1, '', 'openai_api_key') RETURNING token",
+            PHONE_USER_ID,
+        )
+        yield row['token']
+        db.execute("DELETE FROM credential_requests WHERE requester_id = $1", PHONE_USER_ID)
+        db.execute("DELETE FROM credentials WHERE owner_id = $1", PHONE_USER_ID)
+        db.execute("DELETE FROM auth.users WHERE id = $1", PHONE_USER_ID)
+
+    @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
+    async def test_phone_only_requester_link_works_end_to_end(self, mock_send_email, real_database, db, phone_only_request):
+        """The coordinator's WhatsApp link for a phone-only account 500'd
+        ("Credential request not found") on the NULL requester email."""
+        from utils.credential_request_routes import get_credential_request, provide_credential, ProvideCredentialBody
+
+        details = await get_credential_request(phone_only_request)
+        assert details.requester_name == 'Priya'
+        assert details.requester_email is None
+
+        result = await provide_credential(
+            phone_only_request, ProvideCredentialBody(credential_data={'api_key': 'sk-test-key-12345'}),
+        )
+        assert result['status'] == 'success'
+        owner = db.fetchrow("SELECT owner_id FROM credentials WHERE owner_id = $1", PHONE_USER_ID)
+        assert owner is not None
+        mock_send_email.assert_not_awaited()
 
     @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
     async def test_provide_api_key_credential(self, mock_send_email, real_database, db, setup_db):
@@ -932,7 +970,7 @@ class TestWhatsAppQRProvideLink:
         # The internal connection_id must never surface as a typed field.
         assert all(f.name != 'connection_id' for f in qr.credential_fields)
 
-    async def test_qr_start_gated_to_whatsapp_qr_type(self, real_database, db):
+    async def test_qr_start_gated_to_whatsapp_qr_type(self, real_database, db, setup_db):
         """/qr/start on a non-QR request is rejected (400)."""
         from utils.credential_request_routes import qr_start
         from fastapi import HTTPException

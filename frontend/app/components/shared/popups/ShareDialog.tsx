@@ -256,6 +256,8 @@ export function ShareDialog({
         const seenEmails = new Set<string>();
         for (const [, members] of orgMembers) {
             for (const member of members) {
+                // User shares are addressed by email; a phone-only member is reached via the org share.
+                if (!member.email) continue;
                 const email = member.email.toLowerCase();
                 // Skip duplicates and already-shared users
                 if (seenEmails.has(email) || sharedEmails.has(email)) continue;

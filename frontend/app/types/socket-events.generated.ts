@@ -651,9 +651,9 @@ export interface ShareNotificationEvent {
    */
   permission: string;
   /**
-   * Email of the user who shared
+   * Email of the user who shared (None for a phone-only account)
    */
-  shared_by_email: string;
+  shared_by_email?: string | null;
   /**
    * Display name of the user who shared
    */

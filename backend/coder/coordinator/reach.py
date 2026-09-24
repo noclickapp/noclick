@@ -71,12 +71,17 @@ async def _post_to_web(pool, user_id: str, text: str) -> Dict[str, Any]:
     return {"success": True}
 
 
-async def reach_note(pool, user_id: str) -> str:
+async def reach_note(pool, user_id: str, *, phone_only: bool = False) -> str:
     """What the coordinator should know about reaching its owner this turn."""
     from coder.coordinator.email_channel import coordinator_address
 
-    address = await coordinator_address(pool, user_id)
-    return ("Your email address: " + (f"{address} (the owner can email you there; only their own mail is read)."
-                                       if address else "none yet (set_email_address when email is first needed).")
+    if phone_only:
+        email_part = "Email: unavailable until the owner connects an email to this account (connect_account)."
+    else:
+        address = await coordinator_address(pool, user_id)
+        email_part = "Your email address: " + (
+            f"{address} (the owner can email you there; only their own mail is read)."
+            if address else "none yet (set_email_address when email is first needed).")
+    return (email_part
             + " How the owner likes to be reached is a memory: save it when they say, and pass that channel to "
               "message_owner.")

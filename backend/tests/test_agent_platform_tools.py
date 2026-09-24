@@ -543,6 +543,7 @@ class TestDescribeWorkflow:
         }
         pool = MagicMock()
         pool.fetchrow = AsyncMock(return_value={"name": "Bot", "workflow": workflow})
+        pool.fetchval = AsyncMock(return_value="owner@example.com")  # the owner's email
         result = await describe_workflow_impl(
             pool, user_id="u", workflow_id="w", node_id="agent_1",
         )

@@ -19,6 +19,7 @@ from wss.sender import send_event
 from wss.sender.events import ResponseEvent
 from billing.plan_limits import check_organization_limit
 from repositories.organization import OrgRepo
+from repositories.users import user_label
 
 logger = logging.getLogger(__name__)
 
@@ -834,11 +835,11 @@ class OrganizationHandler(DatabasePoolMixin, SocketIOHandler):
             ))
 
             # Send invitation email
-            inviter_email = session.get('user_data', {}).get('email', 'A team member')
+            user_data = session.get('user_data', {})
             await send_organization_invite_email(
                 to_email=email,
                 organization_name=org_name or 'the organization',
-                inviter_name=inviter_email.split('@')[0] if '@' in inviter_email else inviter_email,
+                inviter_name=user_label(user_data.get('user_metadata'), user_data.get('email')) or 'A team member',
                 invite_token=invite_row['token'],
                 role=role,
                 organization_icon_url=org_icon_url,
@@ -1242,14 +1243,15 @@ class OrganizationHandler(DatabasePoolMixin, SocketIOHandler):
                 logger.info("[INVITE] Found a valid organization invite")
 
                 # Get user's email from session (auth.users isn't accessible from regular connection)
-                user_email = session.get('user_data', {}).get('email', '').lower()
+                user_email = (session.get('user_data', {}).get('email') or '').lower()
 
                 if not user_email:
-                    logger.error(f"[INVITE] Could not get user email from session for user_id={user_id}")
+                    # A phone-only account (WhatsApp signup) has no email to match the invite against.
                     await send_event(self.sio, sid, ResponseEvent(
                         request_id=request_id,
                         data={},
-                        error="Could not verify your email address. Please try logging in again."
+                        error="This invite was sent to an email address, and your account doesn't have one yet. "
+                              "Connect your email first (text NoClick on WhatsApp to link it), then open the invite again."
                     ))
                     return
 

@@ -24,6 +24,8 @@ import { LogoMark } from '~/components/shared/LogoMark';
 
 interface OrgSwitcherProps {
     userEmail: string;
+    /** Shown when there is no email (a phone-only account). */
+    userLabel?: string;
     userAvatarUrl?: string;
 }
 
@@ -37,7 +39,7 @@ interface UserOrg {
     is_primary: boolean;
 }
 
-export function OrgSwitcher({ userEmail, userAvatarUrl }: OrgSwitcherProps) {
+export function OrgSwitcher({ userEmail, userLabel, userAvatarUrl }: OrgSwitcherProps) {
     const { listMyOrganizations, switchOrganization, loading } =
         useOrganization();
     const [orgContext, setOrgContext] = useOrgContext();
@@ -53,7 +55,7 @@ export function OrgSwitcher({ userEmail, userAvatarUrl }: OrgSwitcherProps) {
     const [switching, setSwitching] = useState(false);
 
     // Extract username from email (part before @)
-    const username = userEmail.split('@')[0];
+    const username = userEmail.split('@')[0] || userLabel || '';
 
     // Find current organization from list
     const currentOrg = organizations.find((org) => org.id === orgContext.id);

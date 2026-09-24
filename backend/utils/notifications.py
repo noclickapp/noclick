@@ -1163,6 +1163,8 @@ async def send_weekly_digests(pool) -> int:
                   COUNT(*) FILTER (WHERE status = 'error') AS failures
              FROM workflow_executions
             WHERE started_at >= now() - interval '7 days' AND {USER_VISIBLE_RUN_SQL}
+              -- Phone-only accounts have no address to send the digest to.
+              AND user_id IN (SELECT id FROM auth.users WHERE email IS NOT NULL)
             GROUP BY user_id"""
     )
     sent = 0

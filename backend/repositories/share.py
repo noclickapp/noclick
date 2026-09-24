@@ -32,6 +32,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import asyncpg
 
 from repositories.organization import IS_ORG_MEMBER_SQL, PRIMARY_ORG_SQL
+from repositories.users import user_name_sql
 
 
 # ─── Dataclass returns ─────────────────────────────────────────────────────
@@ -469,7 +470,7 @@ class ShareRepo:
     async def get_user_email_and_name(self, user_id: str) -> Optional[UserEmailName]:
         async with self._pool.acquire() as conn:
             row = await conn.fetchrow(
-                "SELECT email, raw_user_meta_data->>'name' as name FROM auth.users WHERE id = $1",
+                f"SELECT email, {user_name_sql()} as name FROM auth.users WHERE id = $1",
                 user_id,
             )
         if not row:
@@ -491,7 +492,7 @@ class ShareRepo:
             row = await conn.fetchrow(
                 "SELECT email, "
                 "       raw_user_meta_data->>'avatar_url' as avatar_url, "
-                "       raw_user_meta_data->>'name' as display_name "
+                f"       {user_name_sql()} as display_name "
                 "FROM auth.users WHERE id = $1",
                 user_id,
             )
@@ -786,7 +787,7 @@ class ShareRepo:
                 rs.permission,
                 rs.created_at as shared_at,
                 sharer.email as shared_by_email,
-                sharer.raw_user_meta_data->>'name' as shared_by_name,
+                {user_name_sql('sharer')} as shared_by_name,
                 CASE
                     WHEN rs.resource_type = 'workflow' THEN w.name
                     WHEN rs.resource_type = 'database' THEN t.title

@@ -25,6 +25,7 @@ from utils.analytics import log_activity_background
 from utils.analytics_events import Events
 
 from .organization import PRIMARY_ORG_SQL
+from .users import user_name_sql
 
 
 def credential_access_predicate(require_edit: bool = False) -> str:
@@ -240,7 +241,7 @@ class CredentialsRepo:
     # list_credentials
     # ------------------------------------------------------------------
 
-    _LIST_ACCESSIBLE_SQL = """
+    _LIST_ACCESSIBLE_SQL = f"""
         SELECT DISTINCT ON (c.id)
             c.id, c.name, c.credential_type, c.metadata, c.created_at, c.updated_at,
             c.owner_id, c.organization_id, c.revoked_at, c.revoked_reason,
@@ -258,7 +259,7 @@ class CredentialsRepo:
             END as my_permission,
             CASE WHEN c.owner_id = $1 THEN 0 ELSE 1 END as sort_order,
             owner.email as owner_email,
-            owner.raw_user_meta_data->>'name' as owner_name,
+            {user_name_sql('owner')} as owner_name,
             COALESCE(us.id, os.id) as share_id,
             (os.id IS NOT NULL) as shared_with_org
         FROM credentials c
@@ -342,10 +343,10 @@ class CredentialsRepo:
         UUIDs and read back a third party's credential name."""
         if not credential_ids:
             return []
-        sql = """
+        sql = f"""
             SELECT c.id, c.name, c.credential_type, c.owner_id,
                    u.email AS owner_email,
-                   u.raw_user_meta_data->>'name' AS owner_name
+                   {user_name_sql('u')} AS owner_name
             FROM credentials c
             JOIN auth.users u ON u.id = c.owner_id
             WHERE c.id = ANY($1::uuid[]) AND c.owner_id = $2
@@ -827,6 +828,9 @@ class CredentialsRepo:
 
 async def resolve_provided_credential_owner(conn, target_email: str, requester_id: str) -> str:
     """A registered provider owns their grant; otherwise the requester does."""
+    if not target_email:
+        # Self-connect requests (builder bridge, phone-only accounts) name no provider.
+        return requester_id
     provider = await conn.fetchrow(
         'SELECT id FROM auth.users WHERE LOWER(email) = LOWER($1)', target_email,
     )

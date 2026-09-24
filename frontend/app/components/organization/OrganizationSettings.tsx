@@ -32,6 +32,7 @@ import {
 } from '~/components/ui/dropdown-menu';
 import { Button } from '~/components/ui/button';
 import { useValtioState } from '~/hooks/useValtioState';
+import { userDisplayName, userInitials } from '~/lib/userDisplay';
 
 interface OrganizationSettingsProps {
   organizationId: string;
@@ -367,11 +368,11 @@ function OverviewTab({
   // Filter members based on search query
   const filteredMembers = fuzzyFilter(members, searchQuery, (member) => [
     {
-      text: (member.full_name || member.username || member.email.split('@')[0]).toLowerCase(),
+      text: userDisplayName(member).toLowerCase(),
       weight: 1,
       fuzzy: true,
     },
-    { text: member.email.toLowerCase(), weight: 0.6, fuzzy: true },
+    { text: (member.email ?? '').toLowerCase(), weight: 0.6, fuzzy: true },
   ]);
 
   // Filter invites based on search query
@@ -727,7 +728,7 @@ function OverviewTab({
                   ) : (
                     <div className="w-6 h-6 rounded-full bg-foreground/[0.06] flex items-center justify-center flex-shrink-0">
                       <span className="text-[9px] text-muted-foreground dark:text-white/50">
-                        {member.email.slice(0, 2).toUpperCase()}
+                        {userInitials(member)}
                       </span>
                     </div>
                   )}
@@ -735,7 +736,7 @@ function OverviewTab({
                   {/* Name + Email inline */}
                   <div className="flex-1 min-w-0 flex items-center gap-2">
                     <span className="text-sm text-foreground/80 truncate">
-                      {member.full_name || member.username || member.email.split('@')[0]}
+                      {userDisplayName(member)}
                     </span>
                     <span className="text-xs text-muted-foreground/70 dark:text-white/30 truncate hidden sm:block">
                       {member.email}
@@ -1179,7 +1180,7 @@ function DangerZoneTab({ organization, members, onTransferOwnership, onDelete }:
   const eligibleMembers = members.filter(m => m.role !== 'owner');
   const filteredEligible = fuzzyFilter(eligibleMembers, transferSearch, m => [
     { text: (m.full_name || '').toLowerCase(), weight: 1, fuzzy: true },
-    { text: m.email.toLowerCase(), weight: 0.6, fuzzy: true },
+    { text: (m.email ?? '').toLowerCase(), weight: 0.6, fuzzy: true },
   ]);
   const selectedMember = eligibleMembers.find(m => m.user_id === selectedMemberId);
 
@@ -1238,7 +1239,7 @@ function DangerZoneTab({ organization, members, onTransferOwnership, onDelete }:
                       }}
                       className="w-full bg-foreground/[0.03] border border-input dark:border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-foreground/90 text-left focus:outline-none focus:border-muted-foreground/40 dark:focus:border-white/15 transition-all duration-150 flex items-center justify-between"
                     >
-                      <span>{selectedMember.full_name || selectedMember.email} <span className="text-muted-foreground dark:text-white/40">({selectedMember.role})</span></span>
+                      <span>{selectedMember.full_name || selectedMember.email || userDisplayName(selectedMember)} <span className="text-muted-foreground dark:text-white/40">({selectedMember.role})</span></span>
                       <ChevronDown className="w-3.5 h-3.5 text-muted-foreground dark:text-white/40" />
                     </button>
                   ) : (
@@ -1279,7 +1280,7 @@ function DangerZoneTab({ organization, members, onTransferOwnership, onDelete }:
                               )}
                             >
                               <div className="min-w-0 flex-1">
-                                <div className="text-foreground/90 truncate">{m.full_name || m.email.split('@')[0]}</div>
+                                <div className="text-foreground/90 truncate">{userDisplayName(m)}</div>
                                 <div className="text-xs text-muted-foreground dark:text-white/40 truncate">{m.email}</div>
                               </div>
                               <span className="text-xs text-muted-foreground/70 dark:text-white/30 flex-shrink-0">{m.role}</span>
@@ -1313,7 +1314,7 @@ function DangerZoneTab({ organization, members, onTransferOwnership, onDelete }:
                     type="text"
                     value={transferConfirmEmail}
                     onChange={(e) => setTransferConfirmEmail(e.target.value)}
-                    placeholder={selectedMember?.email}
+                    placeholder={selectedMember?.email ?? undefined}
                     autoFocus
                     className={cn(
                       "w-full bg-foreground/[0.03] border rounded-xl px-4 py-2.5",

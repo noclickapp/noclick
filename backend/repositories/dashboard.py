@@ -19,6 +19,7 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 from repositories.run_visibility import USER_VISIBLE_RUN_SQL
+from repositories.users import user_label_sql
 
 
 class DashboardRepo:
@@ -47,14 +48,7 @@ class DashboardRepo:
         """The greeting's inputs: the user's display name and the workspace name."""
         async with self._pool.acquire() as conn:
             user_row = await conn.fetchrow(
-                """
-                SELECT COALESCE(
-                    NULLIF(raw_user_meta_data->>'full_name', ''),
-                    NULLIF(raw_user_meta_data->>'name', ''),
-                    split_part(email, '@', 1)
-                ) AS name
-                FROM auth.users WHERE id = $1::uuid
-                """,
+                f"SELECT {user_label_sql()} AS name FROM auth.users WHERE id = $1::uuid",
                 user_id,
             )
             org_name = None

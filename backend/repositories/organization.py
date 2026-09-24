@@ -27,6 +27,8 @@ from __future__ import annotations
 from typing import Any, Callable, Dict, List, Optional
 from uuid import UUID
 
+from repositories.users import user_label_sql
+
 
 # ── Column allowlists for dynamic UPDATE statements ─────────────────────────
 _ORG_UPDATE_COLUMNS = frozenset({"name", "settings"})
@@ -822,11 +824,7 @@ class OrgRepo:
         FROM workflow_folders f
         LEFT JOIN workflows w ON w.folder_id = f.id
         LEFT JOIN LATERAL (
-            SELECT COALESCE(
-                raw_user_meta_data->>'full_name',
-                raw_user_meta_data->>'name',
-                split_part(email, '@', 1)
-            ) as display_name
+            SELECT """ + user_label_sql() + """ as display_name
             FROM auth.users WHERE id = f.owner_id
         ) owner_info ON true
         WHERE f.organization_id = $1
@@ -845,11 +843,7 @@ class OrgRepo:
         FROM workflow_folders f
         LEFT JOIN workflows w ON w.folder_id = f.id
         LEFT JOIN LATERAL (
-            SELECT COALESCE(
-                raw_user_meta_data->>'full_name',
-                raw_user_meta_data->>'name',
-                split_part(email, '@', 1)
-            ) as display_name
+            SELECT """ + user_label_sql() + """ as display_name
             FROM auth.users WHERE id = f.owner_id
         ) owner_info ON true
         WHERE (

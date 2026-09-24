@@ -41,6 +41,7 @@ from uuid import UUID
 # for a live execution row. So the row is KEPT under this terminal status and
 # every user-facing history/latest/count read hides it with the predicate.
 from repositories.run_visibility import DELIVERED_STATUS, USER_VISIBLE_RUN_SQL  # noqa: F401 — re-exported
+from repositories.users import user_label_sql
 
 
 # ── Column allowlists ──────────────────────────────────────────────────────
@@ -620,11 +621,7 @@ class WorkflowRepo:
             SELECT DISTINCT w.id, w.name, w.description, w.workflow, w.permissions,
                    w.created_at, w.updated_at, w.display_metadata, w.owner_id, w.folder_id,
                    COALESCE(rs.permission, rs_folder_org.permission) as share_permission,
-                   COALESCE(
-                       owner_au.raw_user_meta_data->>'full_name',
-                       owner_au.raw_user_meta_data->>'name',
-                       split_part(owner_au.email, '@', 1)
-                   ) as owner_display_name
+                   {user_label_sql('owner_au')} as owner_display_name
             FROM workflows w
             LEFT JOIN resource_shares rs ON rs.resource_id = w.id
                 AND rs.resource_type = 'workflow'
@@ -668,11 +665,7 @@ class WorkflowRepo:
                    w.created_at, w.updated_at, w.display_metadata, w.owner_id, w.folder_id,
                    COALESCE(rs_user.permission, rs_folder_share.permission) as share_permission,
                    rs_user.target_folder_id as share_target_folder_id,
-                   COALESCE(
-                       owner_au.raw_user_meta_data->>'full_name',
-                       owner_au.raw_user_meta_data->>'name',
-                       split_part(owner_au.email, '@', 1)
-                   ) as owner_display_name
+                   {user_label_sql('owner_au')} as owner_display_name
             FROM workflows w
             LEFT JOIN resource_shares rs_org ON rs_org.resource_id = w.id
                 AND rs_org.resource_type = 'workflow'

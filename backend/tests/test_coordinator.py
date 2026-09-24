@@ -266,9 +266,14 @@ async def test_turn_wires_persistence_tools_and_billing_identity(turn_seams, mon
     assert "Current UTC time:" in config.settings.system_prompt
     assert callable(captured["call_model_input_filter"])
     assert captured.get("history_limit") is None
-    # An account with no email (made by a WhatsApp first contact) can connect one.
+    # An account with no email (made by a WhatsApp first contact) can connect one, and
+    # is never offered the email channel it cannot use.
     names = config.capabilities.custom_tool_names
-    assert names == [t["function"]["name"] for t in tools().tool_params()] + ["connect_account", "confirm_connect_code"]
+    with_email = [t["function"]["name"] for t in tools().tool_params()]
+    assert names == [n for n in with_email if n != "set_email_address"] + ["connect_account", "confirm_connect_code"]
+    message_owner = next(t for t in config.capabilities.custom_tools if t["function"]["name"] == "message_owner")
+    assert "email" not in message_owner["function"]["parameters"]["properties"]["channel"]["enum"]
+    assert "Email: unavailable" in config.settings.system_prompt
     assert not config.capabilities.enable_cmd and not config.capabilities.enable_mcp
 
     await coordinator.run_coordinator_turn(sio="SIO", sid="sid-1", user_id=USER, user_email="a@b.c", text="hi")
@@ -482,7 +487,7 @@ async def test_turn_composes_the_prompt_for_its_channel(turn_seams, monkeypatch)
         return await orig_create(**kwargs)
     monkeypatch.setattr(FakeAgent, "create", classmethod(create))
     await coordinator.run_coordinator_turn(
-        sio=object(), sid="", user_id=USER, user_email=None, text="hi",
+        sio=object(), sid="", user_id=USER, user_email="a@b.c", text="hi",
         extra={"channel": "phone", "call_sid": "CA1"}, note="The caller is Dhruv. Their account has 2 workflows: A, B.",
     )
     prompt = captured["config"].settings.system_prompt

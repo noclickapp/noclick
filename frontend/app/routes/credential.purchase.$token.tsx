@@ -51,7 +51,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     headers.set('Cache-Control', 'private, no-store');
     headers.set('Referrer-Policy', 'no-referrer');
     const result = await backend(params.token!, session!.access_token) as PurchaseState;
-    return json({ purchase: result, csrfToken, returnTo: returnPath(request), email: user.email }, { headers });
+    return json({ purchase: result, csrfToken, returnTo: returnPath(request), signedInAs: user.email || (user.phone ? formatPhoneForDisplay(user.phone) : 'your account') }, { headers });
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -73,7 +73,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function PhonePurchasePage() {
-    const { purchase, csrfToken, returnTo, email } = useLoaderData<JsonPayloadOf<typeof loader>>();
+    const { purchase, csrfToken, returnTo, signedInAs } = useLoaderData<JsonPayloadOf<typeof loader>>();
     const [state, setState] = useState<PurchaseState>(purchase);
     const csrf = useRef(csrfToken);
     const [checking, setChecking] = useState(false);
@@ -111,7 +111,7 @@ export default function PhonePurchasePage() {
                 </div>
                 <h1 className="text-3xl font-semibold tracking-tight">{completed ? 'Your number is ready' : waiting ? 'Checking your purchase' : 'A number for your agent'}</h1>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{purchase.purpose || 'Choose a phone number for your account. Connect it to an agent when you’re ready.'}</p>
-                <div className="mb-8 mt-4 flex items-center gap-2 text-xs text-muted-foreground"><ShieldCheck className="h-3.5 w-3.5 shrink-0" />Signed in as {email}</div>
+                <div className="mb-8 mt-4 flex items-center gap-2 text-xs text-muted-foreground"><ShieldCheck className="h-3.5 w-3.5 shrink-0" />Signed in as {signedInAs}</div>
                 {state.status === 'pending' ? (
                     <PhoneNumberPurchaseForm
                         key={state.quote?.id || 'selection'}

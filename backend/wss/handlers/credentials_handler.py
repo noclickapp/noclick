@@ -22,6 +22,7 @@ from utils.credentials import (
     authorize_credentials_for_workflow,
 )
 from repositories.credentials import CredentialsRepo
+from repositories.users import user_label
 from wss.sender.responses import (
     CredentialInfo,
     CredentialListResponse,
@@ -970,8 +971,7 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
 
             # Email the target only when an address was provided
             if target_email:
-                requester_email = user_data.get('email', '')
-                requester_name = user_data.get('user_metadata', {}).get('name', requester_email.split('@')[0] if requester_email else 'Someone')
+                requester_name = user_label(user_data.get('user_metadata'), user_data.get('email')) or 'Someone'
 
                 await send_credential_request_email(
                     to_email=target_email,

@@ -190,24 +190,32 @@ def coordinator_tool_params(*, include_whatsapp: bool = False, include_publishin
                   "phone_number": {"type": "string", "description": "An available number from find_phone_numbers, or omit to let the owner choose."}},
                  ["purpose"]),
         ])
-    reach = ["auto", "email", "web"] + (["whatsapp"] if include_whatsapp else [])
+    # A phone-only account (include_account_connect) has no email to send to or read mail from.
+    has_email = not include_account_connect
+    reach = ["auto"] + (["email"] if has_email else []) + ["web"] + (["whatsapp"] if include_whatsapp else [])
+    email_hint = ("'email' comes from your own address and needs one (set_email_address). " if has_email
+                  else "Email opens up once the owner connects one (connect_account). ")
     params.extend([
         tool("message_owner",
              "Reach the owner outside this reply: a finished result, an alert, a link they asked for. Pass the channel "
              "they prefer when your memory says (save one with save_memory when they tell you); 'auto' (the default) "
-             "uses the channel they last wrote to you on. 'email' comes from your own address and needs one "
-             "(set_email_address). Not needed to answer the message you're replying to.",
+             "uses the channel they last wrote to you on. " + email_hint +
+             "Not needed to answer the message you're replying to.",
              {"text": {"type": "string", "description": "The message, short and plain; Markdown images show inline."},
               "link": {"type": "string", "description": "Optional URL, sent on its own line."},
               "channel": {"type": "string", "enum": reach},
               "subject": {"type": "string", "description": "Email subject when the channel is email."}},
              ["text"]),
-        tool("set_email_address",
-             "Choose or rename your own email address (name@noclick domain); the owner can email you there. The first "
-             "time email is needed, pick a short readable name yourself (e.g. the owner's first name + 'assistant') or "
-             "ask them; rename it whenever they ask.",
-             {"name": {"type": "string", "description": "The part before @: lowercase letters, digits, . _ -"}},
-             ["name"]),
+    ])
+    if has_email:
+        params.append(tool(
+            "set_email_address",
+            "Choose or rename your own email address (name@noclick domain); the owner can email you there. The first "
+            "time email is needed, pick a short readable name yourself (e.g. the owner's first name + 'assistant') or "
+            "ask them; rename it whenever they ask.",
+            {"name": {"type": "string", "description": "The part before @: lowercase letters, digits, . _ -"}},
+            ["name"]))
+    params.extend([
         tool("submit_feedback", _SUBMIT_FEEDBACK_PARAM["function"]["description"],
              {**_SUBMIT_FEEDBACK_PARAM["function"]["parameters"]["properties"],
               "workflow_id": {"type": "string", "description": "The workflow it happened in, when there is one."}},
@@ -290,9 +298,10 @@ class CoordinatorTools:
             self._tools["request_phone_number"] = self.request_phone_number
         self._tools.update({
             "message_owner": self.message_owner,
-            "set_email_address": self.set_email_address,
             "submit_feedback": self.submit_feedback,
         })
+        if not phone_only:
+            self._tools["set_email_address"] = self.set_email_address
         if phone_only:
             self._tools["connect_account"] = self.connect_account
             self._tools["confirm_connect_code"] = self.confirm_connect_code

@@ -90,7 +90,7 @@ export default function ProvideCredentialPage() {
         </div>
         <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground dark:text-zinc-500">
           {details
-            ? `${details.requester_name} (${details.requester_email}) is asking you to securely connect an account for their NoClick workflow. No account needed.`
+            ? `${details.requester_name}${details.requester_email ? ` (${details.requester_email})` : ''} is asking you to securely connect an account for their NoClick workflow. No account needed.`
             : 'Someone is asking you to securely connect an account for their NoClick workflow. No account needed.'}
         </p>
 

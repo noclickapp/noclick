@@ -24,7 +24,8 @@ import type { CredentialField } from './CredentialFieldInput';
 export interface ProvideRequestDetails {
   credential_type: string;
   requester_name: string;
-  requester_email: string;
+  /** Null for a phone-only requester (WhatsApp signup). */
+  requester_email: string | null;
   message?: string;
   is_oauth: boolean;
   oauth_provider?: string;
@@ -98,7 +99,11 @@ export function CredentialProvideFlow({
         }
         if (!res.ok) {
           setStatus('error');
-          setErrorMessage('Credential request not found.');
+          setErrorMessage(
+            res.status === 404
+              ? 'Credential request not found.'
+              : 'Something went wrong loading this request. Please try again in a moment.',
+          );
           return;
         }
         const data: ProvideRequestDetails = await res.json();

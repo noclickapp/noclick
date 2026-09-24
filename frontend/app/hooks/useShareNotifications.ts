@@ -27,7 +27,7 @@ export function useShareNotifications(): void {
         };
         const resourceTypeLabel = resourceTypeLabels[data.resource_type] || data.resource_type;
         const permissionLabel = data.permission === 'edit' ? 'edit access' : 'view access';
-        const sharer = data.shared_by_name || data.shared_by_email;
+        const sharer = data.shared_by_name || data.shared_by_email || 'Someone';
 
         toast.success(`${sharer} shared a ${resourceTypeLabel} with you`, {
             description: `"${data.resource_name}" - ${permissionLabel}`,

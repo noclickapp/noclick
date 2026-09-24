@@ -12,6 +12,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from repositories.organization import PRIMARY_ORG_SQL
+from repositories.users import user_label_sql
 from utils.async_helpers import spawn
 from utils.database_pool import get_native_pool
 from utils.encryption import get_encryption
@@ -474,7 +475,8 @@ class CredentialMethod(BaseModel):
 class CredentialRequestDetails(BaseModel):
     credential_type: str
     requester_name: str
-    requester_email: str
+    # None for a phone-only requester (WhatsApp signup).
+    requester_email: Optional[str] = None
     message: Optional[str] = None
     is_oauth: bool
     oauth_provider: Optional[str] = None
@@ -544,10 +546,10 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
     """Get credential request details by token. Public — no auth required."""
     pool = get_native_pool()
     row = await pool.fetchrow(
-        """
+        f"""
         SELECT cr.id, cr.credential_type, cr.message, cr.status, cr.expires_at,
                cr.provision_attempts,
-               u.raw_user_meta_data->>'name' as requester_name,
+               {user_label_sql('u')} as requester_name,
                u.email as requester_email
         FROM credential_requests cr
         JOIN auth.users u ON u.id = cr.requester_id
@@ -617,7 +619,7 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
 
     return CredentialRequestDetails(
         credential_type=cred_type,
-        requester_name=row['requester_name'] or row['requester_email'].split('@')[0],
+        requester_name=row['requester_name'] or "A NoClick user",
         requester_email=row['requester_email'],
         message=row['message'],
         is_oauth=provider is not None,
@@ -698,14 +700,7 @@ async def _store_and_fulfill(
             credential_id, str(row['requester_id']), credential_owner_id,
         )
 
-    try:
-        await send_credential_fulfilled_email(
-            to_email=row['requester_email'],
-            provider_email=row['target_email'],
-            credential_type=credential_type,
-        )
-    except Exception as e:
-        logger.warning(f"Failed to send fulfillment notification: {e}")
+    await _notify_requester_fulfilled(row, credential_type)
 
     logger.info(
         f"Credential request {row['id']} fulfilled: type={credential_type}, "
@@ -726,8 +721,7 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
         """
         SELECT cr.id, cr.requester_id, cr.credential_type, cr.status, cr.expires_at,
                cr.provision_attempts, cr.target_email,
-               u.email as requester_email,
-               u.raw_user_meta_data->>'name' as requester_name
+               u.email as requester_email
         FROM credential_requests cr
         JOIN auth.users u ON u.id = cr.requester_id
         WHERE cr.token = $1
@@ -1019,6 +1013,21 @@ async def _requester_effective_tier(pool, requester_id) -> str:
     return await get_context_tier(pool, str(requester_id))
 
 
+async def _notify_requester_fulfilled(row, credential_type: str) -> None:
+    """Email the requester that their request landed; a phone-only requester
+    has no address and is skipped."""
+    if not row["requester_email"]:
+        return
+    try:
+        await send_credential_fulfilled_email(
+            to_email=row["requester_email"],
+            provider_email=row["target_email"],
+            credential_type=credential_type,
+        )
+    except Exception as e:
+        logger.warning(f"Failed to send fulfillment notification: {e}")
+
+
 async def _rollback_qr_credential(pool, credential_id: str) -> None:
     """Undo a QR credential minted for a request that turned out already fulfilled."""
     # Connection charges are removed by the credential FK cascade.
@@ -1041,14 +1050,7 @@ async def _claim_qr_fulfillment(pool, row, credential_id: str) -> bool:
     if not claimed:
         return False
     if row["target_email"]:
-        try:
-            await send_credential_fulfilled_email(
-                to_email=row["requester_email"],
-                provider_email=row["target_email"],
-                credential_type="whatsapp_qr",
-            )
-        except Exception as e:
-            logger.warning(f"Failed to send fulfillment notification: {e}")
+        await _notify_requester_fulfilled(row, "whatsapp_qr")
     logger.info(f"Credential request {row['id']} fulfilled via WhatsApp QR: credential={credential_id}")
     return True
 
