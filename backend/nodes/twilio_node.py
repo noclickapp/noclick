@@ -1962,6 +1962,7 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
             from_number=from_number, number_sid=config.phone_number_sid,
             to_number=config.to_number, goal=config.goal, conversation_id=self.conversation_id,
             carrier={"account_sid": account_sid, "auth_token": credentials.auth_token},
+            operation_context=self.node_data.get("_operation_context"),
         )
 
     @staticmethod

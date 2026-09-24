@@ -6,6 +6,7 @@ workflow agent's tool calls are."""
 from __future__ import annotations
 
 import json
+import inspect
 import logging
 import time
 import uuid
@@ -296,7 +297,8 @@ class CoordinatorTools:
         }
         from utils.credential_actions import CredentialActions, credential_tool_params
         credential_tools = CredentialActions(pool=pool, user_id=user_id, organization_id=organization_id,
-                                             conversation_id=conversation_id, continuation=continuation)
+                                             conversation_id=conversation_id, continuation=continuation, native_tools=True)
+        self.credential_tools = credential_tools
         for name in credential_tool_params(lambda name, *args: name):
             self._tools[name] = getattr(credential_tools, name)
         if capability(PHONE_NUMBERS) is not None:
@@ -328,21 +330,42 @@ class CoordinatorTools:
         """The custom_tool_executor seam: dispatch, never raise, always audit."""
         started = time.monotonic()
         method = self._tools.get(name)
+        audit_arguments = arguments if isinstance(arguments, dict) else {}
         try:
-            if method is None:
+            route = self.credential_tools.registry.routes.get(name)
+            if route:
+                # Route comes from the server catalog, never model-supplied
+                # node/operation fields. Credential access is checked afresh.
+                if not isinstance(arguments, dict) or set(arguments) != {"credential_id", "arguments"}:
+                    raise ValueError("Provide credential_id and arguments for this operation.")
+                if not isinstance(arguments["arguments"], dict):
+                    raise ValueError("Operation arguments must be an object.")
+                if route[2]:
+                    result = await self.credential_tools.lookup_credential_options(
+                        node_type=route[0], operation=route[1], credential_id=arguments["credential_id"],
+                        **arguments["arguments"])
+                else:
+                    result = await self.credential_tools.call_credential_operation(
+                        node_type=route[0], operation=route[1], **arguments)
+            elif method is None:
                 result: Dict[str, Any] = {"success": False, "error": f"unknown tool: {name}"}
             else:
+                try:
+                    inspect.signature(method).bind(**(arguments or {}))
+                except TypeError as exc:
+                    raise ValueError(f"bad arguments for {name}: {exc}") from exc
                 result = await method(**(arguments or {}))
-        except TypeError as exc:
-            result = {"success": False, "error": f"bad arguments for {name}: {exc}"}
         except Exception as exc:
             logger.error("coordinator tool %s failed", name, exc_info=True)
             result = {"success": False, "error": str(exc)}
+        failed = result.get("success") is False or result.get("status") in ("error", "failed") or bool(result.get("error"))
         record_tool_call(
             user_id=self.user_id, tool_name=name, tool_type=COORDINATOR_TOOL_TYPE,
-            result_status="success" if result.get("success", True) else "error",
+            result_status="error" if failed else "success",
             conversation_id=self.conversation_id, agent_node_id=COORDINATOR_NODE_ID,
-            arguments=arguments, error=None if result.get("success", True) else str(result.get("error")),
+            operation=route[1] if route else audit_arguments.get("operation"),
+            credential_id=audit_arguments.get("credential_id"),
+            arguments=arguments, error=str(result.get("error")) if failed else None,
             result_preview=json.dumps(result, default=str)[:500],
             duration_ms=(time.monotonic() - started) * 1000,
         )

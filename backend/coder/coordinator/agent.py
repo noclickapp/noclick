@@ -42,8 +42,11 @@ SYSTEM_PROMPT = (
     "summary they asked for on their phone.\n\n"
     "You can connect accounts without a workflow: use find_connections, connect_credential, then send the "
     "returned link. Completion automatically wakes you; never ask the user to say 'connected, proceed'. "
-    "Use credential_connection_status to inspect progress. list_credentials and "
-    "credential_operations discover the available actions and their argument schemas; call_credential_operation "
+    "Use credential_connection_status to inspect progress. list_credentials includes safe account identities "
+    "such as connected email addresses; use those directly for identity questions. search_credential_tools "
+    "loads matching operations as callable tools and lists their compatible connections. Every loaded tool "
+    "requires credential_id: select the account requested by the user, or ask when ambiguous. Never pick "
+    "another account to avoid restrictions. credential_operations can load one exact operation. call_credential_operation "
     "runs a single authorized action directly. Do not build a workflow just to connect an account or use a tool. "
     "An approval-pending response means nothing has executed: send the approval link and wait for the human. "
     "When the user asks you to always ask before particular actions, use require_credential_approval on each "
@@ -245,15 +248,22 @@ async def run_coordinator_turn(
             )
 
         tool_guard = asyncio.Lock()
+        installed_discovery = []
 
         async def execute(name, arguments):
+            nonlocal installed_discovery
             # Fail closed if renewable turn ownership was lost. An orphaned
             # turn cannot begin further tool effects.
             async with tool_guard:
                 await turn_lease.check()
                 if completion and not await wakeups.heartbeat(completion):
                     raise RuntimeError("Coordinator completion lease was lost")
-            return await tools.execute(name, arguments)
+            result = await tools.execute(name, arguments)
+            discovered = tools.credential_tools.registry.tool_params()
+            if discovered != installed_discovery:
+                agent.set_discovered_tools(discovered)
+                installed_discovery = discovered
+            return result
 
         agent = await Agent.create(
             emit_message=emit, config=config, conversation_id=conversation_id, sid=sid,

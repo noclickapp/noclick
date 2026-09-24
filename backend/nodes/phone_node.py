@@ -200,4 +200,5 @@ class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
             credential_id=self.node_data.get("credential_id"),
             from_number=credential.phone_number, number_sid=credential.number_sid,
             to_number=config.to_number, goal=config.goal, conversation_id=self.conversation_id,
+            operation_context=self.node_data.get("_operation_context"),
         )

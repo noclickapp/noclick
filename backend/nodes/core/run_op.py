@@ -85,6 +85,7 @@ async def run_node_operation(
     conversation_id: Optional[str] = None,
     credential_data: Optional[Dict[str, Any]] = None,
     approval_context: Optional[Dict[str, Any]] = None,
+    operation_context: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Run a single integration-node operation and return its output dict.
@@ -120,7 +121,8 @@ async def run_node_operation(
     config = clean_config_empty_strings(arguments or {})
     config["operation"] = operation
 
-    node_data: Dict[str, Any] = {"config": config, "_approval_context": approval_context, "_approval_pool": pool}
+    node_data: Dict[str, Any] = {"config": config, "_approval_context": approval_context, "_approval_pool": pool,
+                               "_operation_context": operation_context}
     if credentials:
         node_data["credentials"] = credentials
         if credential_id:

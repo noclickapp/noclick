@@ -7,7 +7,18 @@ connect a provider, discover its operations, or perform an authorized action.
 from uuid import UUID
 
 from repositories.credentials import CredentialsRepo
-from utils.credential_operations import connection_catalog, operation_catalog, operation_tool
+from utils.credential_operations import connection_catalog, operation_catalog, operation_tool, search_operations
+from utils.credential_tool_registry import CredentialToolRegistry
+
+
+def credential_summary(row):
+    # Metadata is provider-defined and can contain tokens. Export only known
+    # public identity fields, never the whole metadata or credential blob.
+    identity = {key: value[:320] for key in (
+        "email", "phone_number", "username", "account_name", "workspace_name", "team_name",
+    ) if isinstance(value := (row.metadata or {}).get(key), str) and value.strip()}
+    return {"id": row.id, "name": row.name, "credential_type": row.credential_type,
+            "identity": identity, "revoked": bool(row.revoked_at), "access": row.my_permission}
 
 
 def credential_tool_params(tool):
@@ -16,6 +27,12 @@ def credential_tool_params(tool):
     return [
         tool("list_credentials", "List accessible connections without secrets. No workflow is required.",
              {"query": {"type": "string"}, "offset": {"type": "integer", "minimum": 0}}),
+        tool("search_credential_tools", "Search operations across connected accounts and load the top matching tools "
+             "for direct calls. Returns tool names and compatible credential IDs with account identities. "
+             "Each loaded tool requires credential_id: select the requested account, never guess between ambiguous accounts. "
+             "Use list_credentials for account identity (including email) without calling a provider. "
+             "Optionally narrow to credential_id or use offset for more matches.",
+             {"query": {"type": "string"}, **identity, "offset": {"type": "integer", "minimum": 0}}, ["query"]),
         tool("find_connections", "Find supported connection types before creating a connection link. Search by service name.",
              {"query": {"type": "string"}}, ["query"]),
         tool("connect_credential", "Create a secure NoClick link to connect an account without creating a workflow. "
@@ -25,6 +42,9 @@ def credential_tool_params(tool):
              {"credential_type": {"type": "string"}, "message": {"type": "string", "maxLength": 1000}}, ["credential_type"]),
         tool("credential_connection_status", "Check whether a standalone connection was completed. Returns its credential ID when ready.",
              {"request_id": {"type": "string"}}, ["request_id"]),
+        tool("credential_operation_status", "Inspect a long-running credential operation by operation_id. "
+             "Pending or expired is not success and is not permission to repeat the action.",
+             {"operation_id": {"type": "string"}}, ["operation_id"]),
         tool("request_credential_permissions", "Send the owner a link to review this connection's approval rules. "
              "Only the human can unlock tools. Saving the review wakes you automatically; inspect the result before continuing.",
              identity, ["credential_id"]),
@@ -48,13 +68,15 @@ def credential_tool_params(tool):
 
 
 class CredentialActions:
-    def __init__(self, *, pool, user_id, organization_id=None, conversation_id=None, continuation=None):
+    def __init__(self, *, pool, user_id, organization_id=None, conversation_id=None, continuation=None, native_tools=False):
         self.pool = pool
         self.user_id = user_id
         self.organization_id = organization_id
         self.conversation_id = conversation_id
         self.continuation = continuation
         self.repo = CredentialsRepo(pool)
+        self.registry = CredentialToolRegistry()
+        self.native_tools = native_tools
 
     async def _credentials(self):
         return await self.repo.list_accessible(self.user_id, self.organization_id)
@@ -69,13 +91,37 @@ class CredentialActions:
         return row
 
     async def list_credentials(self, query="", offset=0):
-        rows = [{"id": row.id, "name": row.name, "credential_type": row.credential_type,
-                 "revoked": bool(row.revoked_at), "access": row.my_permission}
-                for row in await self._credentials()
-                if query.casefold() in f"{row.name} {row.credential_type}".casefold()]
+        rows = [credential_summary(row) for row in await self._credentials()]
+        rows = [row for row in rows if query.casefold() in
+                f"{row['name']} {row['credential_type']} {' '.join(row['identity'].values())}".casefold()]
         offset = max(0, offset)
         return {"credentials": rows[offset:offset + 30], "total": len(rows),
                 "next_offset": offset + 30 if len(rows) > offset + 30 else None}
+
+    async def search_credential_tools(self, query, credential_id=None, offset=0):
+        rows = [await self._credential(credential_id)] if credential_id else [
+            row for row in await self._credentials() if not row.revoked_at]
+        operations, candidates, catalogs = {}, {}, {}
+        for row in rows:
+            if row.credential_type not in catalogs:
+                catalogs[row.credential_type] = operation_catalog(row.credential_type)
+            for op in catalogs[row.credential_type]:
+                operations.setdefault(op["key"], op)
+                candidates.setdefault(op["key"], []).append(row)
+        matches = search_operations(operations.values(), query)
+        offset = max(0, offset)
+        results = []
+        for op in matches[offset:offset + 3]:
+            compatible = candidates[op["key"]]
+            definitions, configs = operation_tool(compatible[0].credential_type, op["node_type"], op["operation"])
+            names = self.registry.load(op["node_type"], op["operation"], definitions, configs)
+            results.append({**op, "tool_names": names,
+                            "credentials": [credential_summary(row) for row in compatible[:30]],
+                            "credential_count": len(compatible)})
+        return {"operations": results, "total": len(matches),
+                "next_offset": offset + 3 if len(matches) > offset + 3 else None,
+                "instructions": "Call the loaded tool with the chosen credential_id and typed arguments. "
+                "Search again to reload a tool no longer visible. Restrictions apply to the selected credential."}
 
     async def find_connections(self, query):
         methods, _ = connection_catalog()
@@ -107,6 +153,13 @@ class CredentialActions:
             raise ValueError("Connection request not found.")
         return row
 
+    async def credential_operation_status(self, operation_id):
+        from repositories.coordinator_operations import CoordinatorOperationRepo
+        row = await CoordinatorOperationRepo(self.pool).get(str(UUID(operation_id)), self.user_id)
+        if row is None:
+            raise ValueError("Operation not found or not accessible.")
+        return {"operation_id": str(row["id"]), "delivery_status": row["status"], "outcome": row["payload"]}
+
     async def credential_operations(self, credential_id, node_type=None, operation=None, query="", offset=0):
         from repositories.credential_approvals import CredentialApprovalRepo
         row = await self._credential(credential_id)
@@ -114,14 +167,16 @@ class CredentialActions:
         if operation:
             if not node_type:
                 raise ValueError("node_type is required for an operation schema.")
-            tools, _ = operation_tool(row.credential_type, node_type, operation)
+            tools, configs = operation_tool(row.credential_type, node_type, operation)
+            names = self.registry.load(node_type, operation, tools, configs) if self.native_tools else []
             return {"tools": tools, "call_tool": "call_credential_operation",
-                    "instructions": "Use the operation tool's parameters as arguments to call_credential_operation; use lookup_credential_options for the lookup descriptor.",
+                    **({"loaded_tools": names} if names else {}),
+                    "instructions": ("Call the loaded tool with credential_id and typed arguments." if names else
+                        "Use the operation tool's parameters as arguments to call_credential_operation; use lookup_credential_options for the lookup descriptor."),
                     "approval_required": "*" in policy["approval_operations"]
                     or f"{node_type}.{operation}" in policy["approval_operations"],
                     "lookup_tool": "lookup_credential_options"}
-        operations = [op for op in operation_catalog(row.credential_type, node_type)
-                      if query.casefold() in f"{op['operation']} {op['display_name']} {op['description']}".casefold()]
+        operations = search_operations(operation_catalog(row.credential_type, node_type), query)
         offset = max(0, offset)
         return {"operations": operations[offset:offset + 30], "total": len(operations),
                 "approval_operations": policy["approval_operations"],
@@ -137,6 +192,7 @@ class CredentialActions:
             credential_id=row.id, user_id=self.user_id, pool=self.pool,
             organization_id=self.organization_id, conversation_id=self.conversation_id,
             approval_context=self.continuation,
+            operation_context=self.continuation,
         )
 
     async def require_credential_approval(self, credential_id, operations):

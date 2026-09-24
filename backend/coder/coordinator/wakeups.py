@@ -23,6 +23,11 @@ def outcome_summary(event):
     if event["source"] == "link":
         what = "Connection request" if payload["kind"] == "credential_request" else "Credential permissions review"
         return f"{what}: {payload['status']}."
+    if event["source"] == "operation":
+        text = f"Credential operation {payload['operation']}: {payload['status']}."
+        if payload["status"] == "expired":
+            text += " Its completion report was not received; do not repeat it without checking the outcome."
+        return text
     if event["source"] == "signal":
         if payload.get("kind") == "agent_message":
             return f"An agent in “{payload.get('workflow_name')}” messaged you: {payload.get('message', '')[:500]}"

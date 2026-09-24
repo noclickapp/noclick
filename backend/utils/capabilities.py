@@ -103,10 +103,12 @@ PHONE_NUMBERS = "phone.numbers"
 # bought OR one the user brought from their own Twilio account:
 # receiver_url(webhook_id) -> the URL a number's voice webhook points at;
 # async place(*, user_id, workflow_id, node_id, credential_id, from_number,
-# number_sid, to_number, goal, carrier=None, conversation_id=None) -> dict,
+# number_sid, to_number, goal, carrier=None, conversation_id=None, operation_context=None) -> dict,
 # where carrier is {"account_sid", "auth_token"} for a brought number (None =
 # platform account) and conversation_id names the agent turn placing the call,
-# which the finished call comes back to.
+# which the finished call comes back to. With no workflow, the trusted runtime's
+# operation_context registers a coordinator completion; remote speech stays in
+# a goal-scoped call assistant, never the owner's account conversation.
 PHONE_CALLS = "phone.calls"
 
 _providers: Dict[str, Any] = {}

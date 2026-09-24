@@ -489,6 +489,25 @@ class Agent:
             sdk_tools.append(self._make_function_tool(name, description, parameters))
         return sdk_tools
 
+    def set_discovered_tools(self, definitions: List[Dict[str, Any]]) -> None:
+        """Replace just the on-demand tools, visible on the next SDK model turn.
+
+        The runner re-reads Agent.tools each round. Already selected tools keep
+        their invocation closures; static tools and execute_bash are untouched.
+        """
+        if self._sdk_agent is None:
+            raise RuntimeError("Agent is not initialized")
+        previous = getattr(self, "_discovered_tool_names", set())
+        static = [t for t in self._sdk_agent.tools if t.name not in previous]
+        static_names = {t.name for t in static}
+        names = [d["function"]["name"] for d in definitions]
+        if static_names.intersection(names) or len(set(names)) != len(names):
+            raise ValueError("Discovered tools must have unique names distinct from static tools")
+        discovered = [self._make_function_tool(d["function"]["name"], d["function"].get("description", ""),
+                                               d["function"]["parameters"]) for d in definitions]
+        self._sdk_agent.tools = static + discovered
+        self._discovered_tool_names = set(names)
+
     def _make_function_tool(
         self,
         name: str,
