@@ -22,10 +22,9 @@ MOVE_COLUMNS = (
     ("apps", "owner_id"),
     ("approval_requests", "user_id"),
     ("builder_input_links", "user_id"),
-    ("builder_requests", "user_id"),
     ("builder_sessions", "user_id"),
     ("conversations", "user_id"),
-    ("coordinator_agent_tasks", "user_id"),
+    ("coordinator_jobs", "user_id"),
     ("coordinator_memories", "user_id"),
     ("coordinator_wakeups", "user_id"),     # pending follow-ups and alarms
     ("credential_requests", "requester_id"),
@@ -105,7 +104,7 @@ ORG_KEEP_TABLES = (
 
 # Text columns that name the retired account's coordinator conversation.
 COORDINATOR_REFERENCES = (
-    ("builder_requests", "reply_conversation_id"),
+    ("coordinator_jobs", "reply_conversation_id"),
     ("builder_input_links", "agent_conversation_id"),
 )
 
@@ -190,7 +189,7 @@ async def merge_accounts(conn, *, source: str, target: str) -> MergeResult:
     for table, column in COORDINATOR_REFERENCES:
         await conn.execute(f"UPDATE {table} SET {column} = $2 WHERE {column} = $1", s_conv, t_conv)
     await conn.execute(
-        "UPDATE builder_requests SET origin = jsonb_set(origin, '{coordinator_conversation_id}', to_jsonb($2::text)) "
+        "UPDATE coordinator_jobs SET origin = jsonb_set(origin, '{coordinator_conversation_id}', to_jsonb($2::text)) "
         "WHERE origin->>'coordinator_conversation_id' = $1", s_conv, t_conv)
 
     if s_org and t_org:

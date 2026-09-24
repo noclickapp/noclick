@@ -47,12 +47,12 @@ async def complete_build(db, *, error=None, cancelled=False, context=None):
     pool, repo, builds, workflow_id, enqueue = db
     request = await enqueue(
         publish={"action": "unpublish", "title": "", "node_id": None, "subdomain": None},
-        origin={"source": "coordinator", "continuation": CONTEXT if context is None else context},
+        origin={"source": "coordinator"}, continuation=CONTEXT if context is None else context,
         send_to_phone=True,
     )
     claimed = await builds.claim()
     if cancelled:
-        await pool.execute("UPDATE builder_requests SET status='cancelled' WHERE id=$1", request["id"])
+        await pool.execute("UPDATE coordinator_jobs SET status='cancelled' WHERE id=$1", request["id"])
     else:
         await builds.finish(claimed["id"], claimed["attempt_id"],
                             result={"publication": {"state": "unpublished"}}, error=error)
@@ -96,7 +96,7 @@ async def test_completion_wakes_same_coordinator_and_only_then_submits_b(db, mon
                 "workflow_id": workflow_id, "publish": {"action": "publish", "subdomain": "ttt"},
             })
             assert result["success"]
-            calls.append(result["request_id"])
+            calls.append(result["job_id"])
             await self.kwargs["emit_message"](ChatMessageEvent(message="Unpublished; publishing at ttt now.", finished=True))
 
         async def cleanup(self):
@@ -108,9 +108,9 @@ async def test_completion_wakes_same_coordinator_and_only_then_submits_b(db, mon
     assert sum(c is not None for c in claims) == 1
     await wakeups.run_wakeup(pool, event)
     assert len(calls) == 1
-    followup = (await builds.list_for_user(USER, request_id=calls[0]))[0]
-    assert followup["publish"]["subdomain"] == "ttt"
-    assert followup["origin"]["continuation"] == {**context, "depth": 1}
+    followup = (await builds.list_for_user(USER, job_id=calls[0]))[0]
+    assert followup["spec"]["publish"]["subdomain"] == "ttt"
+    assert followup["continuation"] == {**context, "depth": 1}
     assert followup["send_to_phone"] is True
     # No fabricated user message or duplicate assistant transcript on resume.
     assert not await pool.fetchval("SELECT events FROM conversations WHERE conversation_id=$1", f"coordinator:{USER}")
@@ -126,7 +126,7 @@ async def test_completion_wakes_same_coordinator_and_only_then_submits_b(db, mon
     transcript = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id=$1", f"coordinator:{USER}")
     assert len(transcript) == 1 and transcript[0]["role"] == "assistant"
     assert transcript[0]["notification"] is True
-    assert (await builds.list_for_user(USER, request_id=str(request["id"])))[0]["phone_state"] == "sent"
+    assert (await builds.list_for_user(USER, job_id=str(request["id"])))[0]["phone_state"] == "sent"
 
 
 @pytest.mark.parametrize("status", ["completed", "failed", "cancelled"])
@@ -143,12 +143,12 @@ async def test_agent_reply_uses_same_completion_inbox(db, failed):
     pool, repo, _, workflow_id, _ = db
     tasks_repo = CoordinatorTaskRepo(pool)
     task = await tasks_repo.enqueue(user_id=USER, workflow_id=workflow_id, node_id="agent", agent_name="Researcher",
-                                    message="Research this", channel="whatsapp_text", continuation=CONTEXT)
+                                    message="Research this", send_to_phone=True, continuation=CONTEXT)
     await tasks_repo.claim()
     await tasks_repo.finish(str(task["id"]), result={"response": "Found it"}, error="Unavailable" if failed else None)
     await asyncio.gather(tasks.notify_results(pool), tasks.notify_results(pool))
     event = await repo.claim()
-    assert event["source"] == "agent" and event["source_id"] == task["id"]
+    assert event["source"] == "job" and event["source_id"] == task["id"]
     assert event["payload"]["status"] == ("failed" if failed else "completed")
     assert event["send_to_phone"] is True
     assert await repo.claim() is None

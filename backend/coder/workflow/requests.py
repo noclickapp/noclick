@@ -1,4 +1,4 @@
-"""Builder-owned requests: build/edit, ask/resume, and requested publication.
+"""Build jobs: build/edit, ask/resume, and requested publication.
 
 Callers submit an outcome and consume one request's state. The builder owns
 phase transitions; the publisher remains the authority for published apps.
@@ -17,17 +17,18 @@ from utils.task_notifications import deliver_phone, emit_notification, notificat
 logger = logging.getLogger(__name__)
 
 
-def request_view(row):
+def build_view(row):
+    publish = row["spec"].get("publish")
     return {
-        "request_id": str(row["id"]), "workflow_id": str(row["workflow_id"]),
-        "builder_conversation_id": row["conversation_id"], "status": row["status"], "phase": row["phase"],
+        "job_id": str(row["id"]), "kind": "build", "workflow_id": str(row["workflow_id"]),
+        "builder_conversation_id": row["conversation_key"], "status": row["status"], "phase": row["phase"],
         "pending_ask": row["pending_ask"], "result": row["result"], "error": row["error"],
-        "publication_requested": row["publish"],
+        "publication_requested": publish,
         "publication_status": ((row["result"] or {}).get("publication", {}).get("state", "published")
                                if row["status"] == "completed" and (row["result"] or {}).get("publication")
-                               else (row["status"] if row["publish"] is not None else "not_requested")),
+                               else (row["status"] if publish is not None else "not_requested")),
         "deployment_note": ("This request only saves changes. It does not update the public site."
-                            if row["publish"] is None else None),
+                            if publish is None else None),
         "delivery": {"send_to_phone": row["send_to_phone"], "phone_state": row["phone_state"],
                      "error": row["delivery_error"]},
     }
@@ -36,11 +37,12 @@ def request_view(row):
 def request_context(row):
     return {**row["origin"], "workflow_id": str(row["workflow_id"]),
             "builder_request_id": str(row["id"]), "builder_attempt_id": str(row["attempt_id"]),
-            "publication_requested": row["publish"]}
+            "publication_requested": row["spec"].get("publish")}
 
 
 async def submit_request(pool, *, user_id, workflow_id=None, instructions=None, name=None, publish=None,
-                         origin=None, reply_conversation_id=None, reply_node_id=None, send_to_phone=False):
+                         origin=None, continuation=None, reply_conversation_id=None, reply_node_id=None,
+                         send_to_phone=False):
     instructions = (instructions or "").strip() or None
     if instructions and len(instructions) > 16000:
         raise ValueError("Instructions must contain at most 16000 characters.")
@@ -62,7 +64,7 @@ async def submit_request(pool, *, user_id, workflow_id=None, instructions=None, 
         workflow_id = created["workflow_id"]
     return await BuilderRequestRepo(pool).enqueue(
         user_id=user_id, workflow_id=workflow_id, instructions=instructions, publish=publication,
-        origin=origin, reply_conversation_id=reply_conversation_id, reply_node_id=reply_node_id,
+        origin=origin, continuation=continuation, reply_conversation_id=reply_conversation_id, reply_node_id=reply_node_id,
         send_to_phone=send_to_phone,
     )
 
@@ -80,7 +82,7 @@ async def _run_attempt(pool, request, build):
     try:
         # Recheck access at execution time, including after an answer/reconnect.
         workflow = await repo.accessible_workflow(str(request["user_id"]), str(request["workflow_id"]),
-                                                  publishing=request["publish"] is not None)
+                                                  publishing="publish" in request["spec"])
         if request["phase"] == "building":
             await build(workflow["workflow"])
             # A finish or question changes the request in the builder callback.
@@ -90,8 +92,8 @@ async def _run_attempt(pool, request, build):
             if publish is None:
                 raise ValueError("Interface publishing is unavailable on this instance.")
             published = await publish(pool, user_id=str(request["user_id"]), workflow_id=str(request["workflow_id"]),
-                                      **request["publish"])
-            action = request["publish"].get("action", "publish")
+                                      **request["spec"]["publish"])
+            action = request["spec"]["publish"].get("action", "publish")
             expected_state = {"publish": "published", "rename": "renamed", "unpublish": "unpublished"}[action]
             confirmed = (published.get("state") == expected_state if action != "publish"
                          else bool(published.get("url")))
@@ -114,8 +116,8 @@ async def run_request(pool, request):
         from wss.receiver.client_events import WorkflowBuilderEditRequest
 
         message = WorkflowBuilderEditRequest(
-            request_id=str(request["id"]), conversation_id=request["conversation_id"],
-            current_graph=graph, edit_prompt=request["instructions"], user_context=request_context(request),
+            request_id=str(request["id"]), conversation_id=request["conversation_key"],
+            current_graph=graph, edit_prompt=request["spec"]["instructions"], user_context=request_context(request),
         )
         await WorkflowBuilderHandler(get_sio()).edit_workflow("", message, caller_user_id=str(request["user_id"]))
 
@@ -143,13 +145,13 @@ async def record_result(pool, user_id, context, *, success, summary, error):
 
 
 async def notify_result(pool, request):
-    if (request.get("origin") or {}).get("continuation"):
+    if request["continuation"]:
         from repositories.coordinator_wakeups import CoordinatorWakeupRepo
         from coder.coordinator.tools import bounded
 
         await CoordinatorWakeupRepo(pool).enqueue(
-            source="builder", task=request, context=request["origin"]["continuation"],
-            payload=bounded(request_view(request), max_chars=16000, max_items=30),
+            job=request, context=request["continuation"],
+            payload=bounded(build_view(request), max_chars=16000, max_items=30),
         )
         return
     repo = BuilderRequestRepo(pool)

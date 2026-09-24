@@ -106,17 +106,14 @@ def coordinator_tool_params(*, include_owner_message: bool = False, include_publ
              {"query": {"type": "string", "description": "Optional name or purpose to search for."}}),
         tool("message_agent", "Send work to an existing agent. Returns a durable task immediately; its reply arrives "
              "in this conversation when ready. The agent uses its configured tools and may run downstream workflow actions. "
-             "For a follow-up, pass reply_to_task_id to preserve that agent's conversation; otherwise start a new conversation.",
+             "For a follow-up, pass reply_to_job_id to preserve that agent's conversation; otherwise start a new conversation.",
              {"workflow_id": {"type": "string"}, "node_id": {"type": "string"},
               "message": {"type": "string", "description": "Complete instructions and relevant context for the agent."},
-              "reply_to_task_id": {"type": "string", "description": "A prior task to this agent whose conversation to continue."}},
+              "reply_to_job_id": {"type": "string", "description": "A prior job for this agent whose conversation to continue."}},
              ["workflow_id", "node_id", "message"]),
-        tool("agent_tasks", "Read your agent requests, their status and their actual replies. Pass task_id for one "
-             "specific request; otherwise lists active tasks first, then recent results.",
-             {"task_id": {"type": "string"}}),
         tool("request_build",
              "Ask the builder to create or edit an interface, agent, or workflow, with optional publication. "
-             "The builder owns all phases and questions; check build_status using the returned request_id. "
+             "The builder owns all phases and questions; check job_status using the returned job_id. "
              "To publish, rename or unpublish an existing interface without rebuilding, pass workflow_id and publish, and omit instructions. "
              "Publication makes the interface public and its visitors can invoke the workflow; only request it when authorized.",
              {"instructions": {"type": "string", "description": "What to build or change. Required unless publishing an existing interface."},
@@ -129,11 +126,14 @@ def coordinator_tool_params(*, include_owner_message: bool = False, include_publ
                                  "action=unpublish removes the public site. Rename/unpublish require workflow_id and no instructions. "
                                  "Omit node_id only when the target is unambiguous."}}
                  if include_publishing else {})}),
-        tool("build_status", "Read builder requests: status, current phase, questions and answer links, results, "
-             "published URLs, and separate delivery outcomes.",
-             {"request_id": {"type": "string"}, "builder_conversation_id": {"type": "string"}}),
-        tool("cancel_build", "Cancel a builder request before publishing starts. A build already running may finish, "
-             "but no later steps will run.", {"request_id": {"type": "string"}}, ["request_id"]),
+        tool("job_status", "Read the jobs you started — builds and agent requests — with their status and actual "
+             "results. Builds also show their phase, questions with answer links, published URLs and delivery "
+             "outcomes; agent jobs show the agent's reply. Pass job_id for one job or kind to narrow the list; "
+             "otherwise lists active jobs first, then recent ones.",
+             {"job_id": {"type": "string"}, "kind": {"type": "string", "enum": ["build", "agent"]}}),
+        tool("cancel_job", "Cancel a build before publishing starts. A build already running may finish, but no "
+             "later steps will run. Agent requests cannot be cancelled once sent.", {"job_id": {"type": "string"}},
+             ["job_id"]),
         tool("trash_workflow",
              "Move a workflow the owner owns to the trash: it stops running, its schedules and webhooks are removed, "
              "and it can be restored for 30 days before it is deleted for good. Confirm with the owner first.",
@@ -222,10 +222,9 @@ class CoordinatorTools:
             "describe_workflow": self.describe_workflow,
             "find_agents": self.find_agents,
             "message_agent": self.message_agent,
-            "agent_tasks": self.agent_tasks,
             "request_build": self.request_build,
-            "build_status": self.build_status,
-            "cancel_build": self.cancel_build,
+            "job_status": self.job_status,
+            "cancel_job": self.cancel_job,
             "trash_workflow": self.trash_workflow,
             "restore_workflow": self.restore_workflow,
         }
@@ -415,23 +414,14 @@ class CoordinatorTools:
         return {"success": True, "agents": found[:40], "has_more": len(found) > 40}
 
     async def message_agent(self, workflow_id: str, node_id: str, message: str,
-                            reply_to_task_id: Optional[str] = None) -> Dict[str, Any]:
+                            reply_to_job_id: Optional[str] = None) -> Dict[str, Any]:
         from coder.coordinator.tasks import request_agent_message
 
         return await request_agent_message(
             self.pool, self.sio, user_id=self.user_id, workflow_id=workflow_id, node_id=node_id,
-            message=message, channel=self.reply_channel, reply_to_task_id=reply_to_task_id,
-            **({"continuation": self.continuation} if self.continuation else {}),
+            message=message, send_to_phone=self.reply_channel != "web", reply_to_job_id=reply_to_job_id,
+            continuation=self.continuation,
         )
-
-    async def agent_tasks(self, task_id: Optional[str] = None) -> Dict[str, Any]:
-        from coder.coordinator.tasks import task_view
-        from repositories.coordinator_tasks import CoordinatorTaskRepo
-
-        if task_id:
-            uuid.UUID(task_id)
-        rows = await CoordinatorTaskRepo(self.pool).list_for_user(self.user_id, task_id)
-        return {"success": True, "tasks": [task_view(row) for row in rows]}
 
     async def describe_workflow(self, workflow_id: str, focus: Optional[str] = None) -> Dict[str, Any]:
         from nodes.agent.platform_tools import describe_workflow_impl
@@ -462,53 +452,49 @@ class CoordinatorTools:
         self, instructions: Optional[str] = None, workflow_id: Optional[str] = None, name: Optional[str] = None,
         publish: Optional[Dict[str, Any]] = None, send_to_phone: bool = False,
     ) -> Dict[str, Any]:
-        from coder.workflow.requests import request_view, submit_request
+        from coder.workflow.requests import build_view, submit_request
 
         request = await submit_request(
             self.pool, user_id=self.user_id, workflow_id=workflow_id, instructions=instructions, name=name, publish=publish,
-            origin={"source": "coordinator", "coordinator_conversation_id": self.conversation_id,
-                    **({"continuation": self.continuation} if self.continuation else {})},
+            origin={"source": "coordinator", "coordinator_conversation_id": self.conversation_id},
+            continuation=self.continuation,
             reply_conversation_id=self.conversation_id, reply_node_id=COORDINATOR_NODE_ID,
             send_to_phone=send_to_phone or self.reply_channel != "web",
         )
-        return {"success": True, **request_view(request),
-                "note": "The builder owns this request through completion. build_status shows its phase and questions; "
+        return {"success": True, **build_view(request),
+                "note": "The builder owns this build through completion. job_status shows its phase and questions; "
                         "completion or failure will wake you to continue the user’s request using the result."}
 
-    async def cancel_build(self, request_id: str) -> Dict[str, Any]:
-        from coder.workflow.requests import request_view
+    async def cancel_job(self, job_id: str) -> Dict[str, Any]:
+        from coder.workflow.requests import build_view
 
-        uuid.UUID(request_id)
-        request = await BuilderRequestRepo(self.pool).cancel(self.user_id, request_id)
-        return {"success": True, **request_view(request)}
+        uuid.UUID(job_id)
+        return {"success": True, **build_view(await BuilderRequestRepo(self.pool).cancel(self.user_id, job_id))}
 
-    async def build_status(self, builder_conversation_id: Optional[str] = None, request_id: Optional[str] = None) -> Dict[str, Any]:
-        from coder.workflow.requests import request_view
+    async def job_status(self, job_id: Optional[str] = None, kind: Optional[str] = None) -> Dict[str, Any]:
+        from coder.coordinator.jobs import job_view
+        from repositories.coordinator_jobs import CoordinatorJobRepo
 
-        if request_id:
-            uuid.UUID(request_id)
-        rows = await BuilderRequestRepo(self.pool).list_for_user(
-            self.user_id, request_id=request_id, conversation_id=builder_conversation_id,
-        )
-        builds = []
-        for row in rows:
-            entry = request_view(row)
-            ask = row["pending_ask"]
-            if row["status"] == "waiting_for_input" and ask:
-                entry["waiting_for"] = await self._ask_link(row, ask)
-            builds.append(entry)
-        return {"success": True, "builds": builds}
+        if job_id:
+            uuid.UUID(job_id)
+        jobs = []
+        for row in await CoordinatorJobRepo(self.pool).list_for_user(self.user_id, job_id=job_id, kind=kind):
+            entry = job_view(row)
+            if row["kind"] == "build" and row["status"] == "waiting" and row["pending_ask"]:
+                entry["waiting_for"] = await self._ask_link(row, row["pending_ask"])
+            jobs.append(entry)
+        return {"success": True, "jobs": jobs}
 
     async def _ask_link(self, row: Dict[str, Any], ask: Dict[str, Any]) -> Dict[str, Any]:
         """The question the builder parked on and the one link that answers
         it — reused when it already exists, minted otherwise."""
         inputs = ask.get("inputs") or []
-        link_id = await BuilderBridgeRepo(self.pool).find_pending_for_ask(row["conversation_id"], ask["ask_id"])
+        link_id = await BuilderBridgeRepo(self.pool).find_pending_for_ask(row["conversation_key"], ask["ask_id"])
         if link_id:
             return {"questions": [i.get("label") for i in inputs if i.get("label")], "answer_url": bridge_url(link_id)}
         minted = await create_bridge_link_for_ask(
             self.pool, user_id=self.user_id, workflow_id=row.get("workflow_id"),
-            builder_conversation_id=row["conversation_id"], ask_id=ask["ask_id"], inputs=inputs,
+            builder_conversation_id=row["conversation_key"], ask_id=ask["ask_id"], inputs=inputs,
             agent_conversation_id=None, agent_node_id=None, workflow_name=None,
         )
         if not minted:

@@ -8,6 +8,7 @@ import asyncio
 import uuid
 
 from repositories.conversation import ConversationRepo
+from repositories.coordinator_jobs import TERMINAL
 
 
 from repositories.coordinator_lease import coordinator_lock  # shared by all transports
@@ -41,30 +42,23 @@ class CoordinatorWakeupRepo:
                 )
         return row is not None
 
-    async def enqueue(self, *, source, task, context, payload):
-        """Transfer the source outbox to the inbox atomically and idempotently."""
+    async def enqueue(self, *, job, context, payload):
+        """Transfer a finished job's outcome to the inbox atomically and idempotently."""
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                if source == "builder":
-                    valid = await conn.fetchval(
-                        "SELECT id FROM builder_requests WHERE id=$1 AND notification_token=$2 "
-                        "AND notified_at IS NULL FOR UPDATE", task["id"], task["notification_token"],
-                    )
-                else:
-                    valid = await conn.fetchval(
-                        "SELECT id FROM coordinator_agent_tasks WHERE id=$1 AND notified_at IS NULL "
-                        "AND status IN ('completed','failed') FOR UPDATE", task["id"],
-                    )
+                valid = await conn.fetchval(
+                    f"SELECT id FROM coordinator_jobs WHERE id=$1 AND notified_at IS NULL AND status IN {TERMINAL} FOR UPDATE",
+                    job["id"],
+                )
                 if not valid:
                     return
                 await conn.execute(
                     """INSERT INTO coordinator_wakeups(user_id,source,source_id,context,payload,send_to_phone)
-                       VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (source,source_id) DO NOTHING""",
-                    task["user_id"], source, task["id"], context, payload,
-                    task["send_to_phone"] if source == "builder" else task["channel"] != "web",
+                       VALUES ($1,'job',$2,$3,$4,$5) ON CONFLICT (source,source_id) DO NOTHING""",
+                    job["user_id"], job["id"], context, payload, job["send_to_phone"],
                 )
 
-        row = await self.pool.fetchrow("SELECT * FROM coordinator_wakeups WHERE source=$1 AND source_id=$2", source, task["id"])
+        row = await self.pool.fetchrow("SELECT * FROM coordinator_wakeups WHERE source='job' AND source_id=$1", job["id"])
         if row:
             from utils.coordinator_dispatch import dispatch_event
             await dispatch_event(self.pool, dict(row))
@@ -223,7 +217,7 @@ class CoordinatorWakeupRepo:
                  status=CASE WHEN started_at IS NULL THEN 'queued' ELSE 'ready' END,
                  payload=CASE WHEN started_at IS NOT NULL THEN payload || '{"stop_schedule":true}'::jsonb ELSE payload END,
                  response=CASE WHEN started_at IS NOT NULL THEN
-                   'An action finished, but my follow-up was interrupted. Check build_status or agent_tasks before retrying any action.' END,
+                   'An action finished, but my follow-up was interrupted. Check job_status before retrying any action.' END,
                  lease_until=NULL
                FROM expired WHERE w.id=expired.id RETURNING w.*""",
         )
@@ -275,15 +269,11 @@ class CoordinatorWakeupRepo:
         return {**dict(row), "notification": event}
 
     async def _record_source_delivery(self, row, phone_state, error, *, conn=None):
-        db = conn or self.pool
-        if row["source"] == "builder":
-            await db.execute(
-                "UPDATE builder_requests SET notified_at=now(), notification_lease_until=NULL, "
+        if row["source"] == "job":
+            await (conn or self.pool).execute(
+                "UPDATE coordinator_jobs SET notified_at=now(), notification_lease_until=NULL, "
                 "phone_state=$2, delivery_error=$3 WHERE id=$1", row["source_id"], phone_state, error,
             )
-        elif row["source"] == "agent":
-            await db.execute("UPDATE coordinator_agent_tasks SET notified_at=now(), delivery_error=$2 WHERE id=$1",
-                             row["source_id"], error)
 
     async def delivered(self, row, phone_state, error):
         async with self.pool.acquire() as conn:

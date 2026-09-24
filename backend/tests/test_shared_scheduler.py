@@ -167,7 +167,7 @@ async def test_dispatch_reconciles_failed_registration_without_replacing_existin
     from utils import coordinator_dispatch, cron_scheduler_client as client
     _, pool = local_scheduler
     event_id = uuid.uuid4()
-    await pool.execute("INSERT INTO coordinator_wakeups(id,user_id,source,source_id,context,payload) VALUES($1,$2::uuid,'builder',$3,'{}','{}')", event_id, USER, uuid.uuid4())
+    await pool.execute("INSERT INTO coordinator_wakeups(id,user_id,source,source_id,context,payload) VALUES($1,$2::uuid,'job',$3,'{}','{}')", event_id, USER, uuid.uuid4())
     repo = CoordinatorWakeupRepo(pool)
     event = await repo.get(event_id)
     original = client.create_alarm

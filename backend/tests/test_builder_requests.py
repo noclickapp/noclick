@@ -70,15 +70,15 @@ async def test_one_lifecycle_through_questions_resume_and_completion(builder_req
     await repo.waiting(USER, first["id"], first["attempt_id"], {"ask_id": "q1", "inputs": []})
     assert await repo.claim() is None
     with pytest.raises(ValueError, match="not waiting"):
-        await repo.claim_resume(str(uuid.uuid4()), first["conversation_id"], "q1")
+        await repo.claim_resume(str(uuid.uuid4()), first["conversation_key"], "q1")
     with pytest.raises(ValueError, match="not waiting"):
-        await repo.claim_resume(USER, first["conversation_id"], "wrong")
+        await repo.claim_resume(USER, first["conversation_key"], "wrong")
     # A fresh process resumes the same request with a new execution attempt.
     restarted = BuilderRequestRepo(pool)
-    resumed = await restarted.claim_resume(USER, first["conversation_id"], "q1")
+    resumed = await restarted.claim_resume(USER, first["conversation_key"], "q1")
     assert resumed["id"] == first["id"] and resumed["attempt_id"] != first["attempt_id"]
     with pytest.raises(ValueError, match="already resumed"):
-        await restarted.claim_resume(USER, first["conversation_id"], "q1")
+        await restarted.claim_resume(USER, first["conversation_key"], "q1")
     await repo.build_finished(USER, first["id"], first["attempt_id"], success=True, summary="Stale completion")
     assert (await repo.list_for_user(USER))[0]["status"] == "running"
     await restarted.build_finished(USER, resumed["id"], resumed["attempt_id"], success=True, summary="Built it")
@@ -101,7 +101,7 @@ async def test_ownership_failure_and_private_storage(builder_request_db):
         await enqueue(user_id=str(uuid.uuid4()))
     await enqueue(instructions="Build")
     task = await repo.claim()
-    assert await repo.list_for_user(str(uuid.uuid4()), request_id=str(task["id"])) == []
+    assert await repo.list_for_user(str(uuid.uuid4()), job_id=str(task["id"])) == []
     await repo.build_finished(USER, task["id"], task["attempt_id"], success=False, summary="Failed", error="Build failed")
     assert await repo.claim() is None
     row = (await repo.list_for_user(USER))[0]
@@ -109,9 +109,9 @@ async def test_ownership_failure_and_private_storage(builder_request_db):
     await pool.execute("UPDATE workflows SET deleted_at=now() WHERE id=$1::uuid", workflow_id)
     with pytest.raises(ValueError, match="Workflow not found"):
         await enqueue()
-    assert await pool.fetchval("SELECT relrowsecurity FROM pg_class WHERE relname='builder_requests'")
+    assert await pool.fetchval("SELECT relrowsecurity FROM pg_class WHERE relname='coordinator_jobs'")
     for role in ("anon", "authenticated"):
-        assert not await pool.fetchval("SELECT has_table_privilege($1,'builder_requests','SELECT,INSERT,UPDATE,DELETE')", role)
+        assert not await pool.fetchval("SELECT has_table_privilege($1,'coordinator_jobs','SELECT,INSERT,UPDATE,DELETE')", role)
 
 
 @pytest.mark.parametrize("phone_success", [True, False])
@@ -126,7 +126,7 @@ async def test_result_and_phone_delivery_are_separate(builder_request_db, monkey
     emit = AsyncMock()
     monkeypatch.setattr(task_notifications, "send_event", emit)
     await requests.run_request(pool, await repo.claim())
-    publish.assert_awaited_once_with(pool, user_id=USER, workflow_id=workflow_id, **queued["publish"])
+    publish.assert_awaited_once_with(pool, user_id=USER, workflow_id=workflow_id, **queued["spec"]["publish"])
     claims = await asyncio.gather(*(repo.claim_notification() for _ in range(3)))
     assert sum(row is not None for row in claims) == 1
     await requests.notify_result(pool, next(row for row in claims if row))
@@ -145,7 +145,7 @@ async def test_interrupted_side_effect_is_not_replayed(builder_request_db):
     pool, repo, _, enqueue = builder_request_db
     await enqueue()
     task = await repo.claim()
-    await pool.execute("UPDATE builder_requests SET lease_until=now()-interval '1 second' WHERE id=$1", task["id"])
+    await pool.execute("UPDATE coordinator_jobs SET lease_until=now()-interval '1 second' WHERE id=$1", task["id"])
     await repo.reap_stalled()
     await repo.finish(task["id"], task["attempt_id"], result={"publication": {"url": "late"}})
     row = (await repo.list_for_user(USER))[0]
@@ -172,7 +172,7 @@ async def test_cancel_blocks_follow_through_and_late_callbacks(builder_request_d
     assert (await repo.cancel(USER, str(task["id"])))["status"] == "cancelled"
     await repo.build_finished(USER, task["id"], task["attempt_id"], success=True, summary="Late")
     with pytest.raises(ValueError, match="not waiting"):
-        await repo.claim_resume(USER, task["conversation_id"], "q")
+        await repo.claim_resume(USER, task["conversation_key"], "q")
     assert await repo.claim() is None
     await enqueue()
     publishing = await repo.claim()
@@ -187,7 +187,7 @@ async def test_interrupted_phone_send_is_not_duplicated(builder_request_db, monk
     await repo.finish(task["id"], task["attempt_id"], result={"publication": {"url": "https://app.example"}})
     original = await repo.claim_notification()
     assert original["phone_state"] == "sending"
-    await pool.execute("UPDATE builder_requests SET notification_lease_until=now()-interval '1 second' WHERE id=$1", original["id"])
+    await pool.execute("UPDATE coordinator_jobs SET notification_lease_until=now()-interval '1 second' WHERE id=$1", original["id"])
     recovered = await repo.claim_notification()
     assert recovered["phone_state"] == "uncertain"
     phone = AsyncMock()
@@ -214,17 +214,17 @@ async def test_coordinator_delegates_every_artifact_request_to_builder(builder_r
     assert result["status"] == "queued" and result["phase"] == ("building" if instructions else "publishing")
     row = (await repo.list_for_user(USER))[0]
     assert row["send_to_phone"] and row["origin"]["source"] == "coordinator"
-    assert row["conversation_id"] == result["builder_conversation_id"]
-    status = await tools.build_status(request_id=result["request_id"])
-    assert status["builds"][0]["request_id"] == result["request_id"]
-    assert (await tools.cancel_build(result["request_id"]))["status"] == "cancelled"
+    assert row["conversation_key"] == result["builder_conversation_id"]
+    status = await tools.job_status(job_id=result["job_id"])
+    assert status["jobs"][0]["job_id"] == result["job_id"] and status["jobs"][0]["kind"] == "build"
+    assert (await tools.cancel_job(result["job_id"]))["status"] == "cancelled"
 
 
 async def test_one_tool_contract_and_optional_publisher():
     plain = {p["function"]["name"]: p["function"] for p in coordinator_tool_params()}
     publishing = {p["function"]["name"]: p["function"] for p in coordinator_tool_params(include_publishing=True)}
     assert set(plain) == set(publishing)
-    assert {"request_build", "build_status", "cancel_build"} <= set(plain)
+    assert {"request_build", "job_status", "cancel_job"} <= set(plain)
     assert not {"publish_interface", "publication_status", "cancel_publication"} & set(plain)
     assert "publish" not in plain["request_build"]["parameters"]["properties"]
     assert "publish" in publishing["request_build"]["parameters"]["properties"]
@@ -239,7 +239,7 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
     pool, repo, workflow_id, enqueue = builder_request_db
     queued = await enqueue(instructions="Build a dashboard", origin={"source": source, "client_reference": "test"},
                            **({} if publish_after else {"publish": None}))
-    cid = queued["conversation_id"]
+    cid = queued["conversation_key"]
     monkeypatch.setattr(WorkflowBuilderHandler, "get_pool", AsyncMock(return_value=pool))
     monkeypatch.setattr(requests, "get_sio", lambda: SimpleNamespace())
     builder = SimpleNamespace(edit=AsyncMock(), generation_id="resumed",
@@ -251,7 +251,7 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
 
     async def start_build(handler, sid, request, caller_user_id=None):
         assert caller_user_id == USER and sid == ""
-        assert request.edit_prompt == queued["instructions"]
+        assert request.edit_prompt == queued["spec"]["instructions"]
         assert request.user_context["source"] == source
         await pool.execute(ConversationRepo._UPSERT_CHAT_EVENT_SQL, cid, USER, workflow_id, None, [
             {"role": "user", "message": request.edit_prompt},
@@ -262,7 +262,7 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
     # The worker uses the normal headless builder entry point; only the model is replaced.
     monkeypatch.setattr(WorkflowBuilderHandler, "_edit_workflow_impl", start_build)
     await requests.run_request(pool, await repo.claim())
-    assert (await repo.list_for_user(USER))[0]["status"] == "waiting_for_input"
+    assert (await repo.list_for_user(USER))[0]["status"] == "waiting"
 
     # Exercise the actual answer handler: it restores caller context from the
     # builder request, independent of coordinator-specific conversation naming.
@@ -293,7 +293,7 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
         ready = await repo.claim()
         assert ready["id"] == queued["id"] and ready["phase"] == "publishing"
         await requests.run_request(pool, ready)
-        publish.assert_awaited_once_with(pool, user_id=USER, workflow_id=workflow_id, **queued["publish"])
+        publish.assert_awaited_once_with(pool, user_id=USER, workflow_id=workflow_id, **queued["spec"]["publish"])
     else:
         assert await repo.claim() is None
         publish.assert_not_awaited()
@@ -312,7 +312,7 @@ async def test_new_workflow_uses_existing_creator_and_builder_request(builder_re
         workflow = await pool.fetchrow("SELECT owner_id,name,workflow FROM workflows WHERE id=$1", request["workflow_id"])
         assert str(workflow["owner_id"]) == USER and workflow["name"] == "Inbox agent"
         assert workflow["workflow"] == {"nodes": [], "edges": []}
-        assert request["instructions"] == "Build an agent" and request["phase"] == "building"
+        assert request["spec"]["instructions"] == "Build an agent" and request["phase"] == "building"
         assert (await repo.claim())["id"] == request["id"]
     finally:
         await pool.execute("DELETE FROM workflows WHERE id=$1", request["workflow_id"])
@@ -351,7 +351,7 @@ async def test_publication_lifecycle_results_and_notifications(builder_request_d
     monkeypatch.setattr(requests, "emit_notification", AsyncMock())
     await requests.run_request(pool, await repo.claim())
     row = (await repo.list_for_user(USER))[0]
-    assert row["status"] == "completed" and requests.request_view(row)["publication_status"] == state
+    assert row["status"] == "completed" and requests.build_view(row)["publication_status"] == state
     await requests.notify_result(pool, await repo.claim_notification())
     events = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id=$1", f"coordinator:{USER}")
     message = events[-1]["message"]
@@ -368,7 +368,7 @@ async def test_build_only_result_cannot_claim_deployment(builder_request_db, mon
     context = requests.request_context(task)
     assert "only saves changes" in _build_user_context(context)
     await repo.build_finished(USER, task["id"], task["attempt_id"], success=True, summary="Your edits are now live!")
-    view = requests.request_view((await repo.list_for_user(USER))[0])
+    view = requests.build_view((await repo.list_for_user(USER))[0])
     assert view["publication_status"] == "not_requested" and "does not update" in view["deployment_note"]
     monkeypatch.setattr(requests, "get_sio", lambda: object())
     monkeypatch.setattr(requests, "emit_notification", AsyncMock())

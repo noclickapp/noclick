@@ -26,6 +26,8 @@ OPEN_EDITION_ONLY = {
     ("mcp_server_links", "user_id"), ("workflow_embeddings", "owner_id"),
 }
 HOSTED_ONLY = {("voice_calls", "user_id")}
+# The local scheduler creates its table on first use, in either edition.
+CREATED_AT_RUNTIME = {("local_cron_schedules", "user_id")}
 
 USER_KEYED = """
 SELECT cl.relname AS table_name, a.attname AS column_name
@@ -46,7 +48,8 @@ async def test_every_user_keyed_column_has_a_merge_decision(phones_db):
     # Decide MOVE or KEEP in repositories/account_merge.py for any column listed here.
     assert sorted(in_schema - planned) == []
     # The plan spans both editions; what this schema lacks must be the other edition's.
-    assert planned - in_schema in (OPEN_EDITION_ONLY, HOSTED_ONLY)
+    absent = (planned - in_schema) - CREATED_AT_RUNTIME
+    assert absent in (OPEN_EDITION_ONLY - CREATED_AT_RUNTIME, HOSTED_ONLY)
 
     with_org = {r["relname"] for r in await pool.fetch(
         "SELECT cl.relname FROM pg_class cl JOIN pg_namespace n ON n.oid = cl.relnamespace AND n.nspname = 'public' "

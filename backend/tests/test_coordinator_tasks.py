@@ -41,7 +41,7 @@ async def task_db(postgres_db, postgres_container):
 
     async def enqueue(**overrides):
         args = dict(user_id=USER, workflow_id=workflow_id, node_id="agent", agent_name="Researcher",
-                    message="Research this", channel="web")
+                    message="Research this", send_to_phone=False)
         args.update(overrides)
         return await repo.enqueue(**args)
 
@@ -56,7 +56,7 @@ async def task_db(postgres_db, postgres_container):
 async def test_concurrent_claims_dispatch_once_and_followups_wait(task_db):
     pool, repo, enqueue = task_db
     first = await enqueue()
-    second = await enqueue(parent_task_id=str(first["id"]), message="And summarize it")
+    second = await enqueue(parent_job_id=str(first["id"]), message="And summarize it")
     assert first["conversation_key"] == second["conversation_key"]
     claims = await asyncio.gather(*(repo.claim() for _ in range(4)))
     claimed = [c for c in claims if c]
@@ -73,9 +73,9 @@ async def test_followup_ownership_and_pending_cap(task_db):
     _, repo, enqueue = task_db
     first = await enqueue()
     with pytest.raises(ValueError, match="account"):
-        await enqueue(parent_task_id=str(first["id"]), user_id=str(uuid.uuid4()))
+        await enqueue(parent_job_id=str(first["id"]), user_id=str(uuid.uuid4()))
     with pytest.raises(ValueError, match="agent"):
-        await enqueue(parent_task_id=str(first["id"]), node_id="other-agent")
+        await enqueue(parent_job_id=str(first["id"]), node_id="other-agent")
     assert await repo.list_for_user(str(uuid.uuid4()), str(first["id"])) == []
     outcomes = await asyncio.gather(*(enqueue() for _ in range(12)), return_exceptions=True)
     assert sum(isinstance(o, ValueError) for o in outcomes) == 3
@@ -114,7 +114,7 @@ async def test_restart_expires_lease_without_resending(task_db):
     pool, repo, enqueue = task_db
     await enqueue()
     claimed = await repo.claim()
-    await pool.execute("UPDATE coordinator_agent_tasks SET lease_until=now()-interval '1 second' WHERE id=$1", claimed["id"])
+    await pool.execute("UPDATE coordinator_jobs SET lease_until=now()-interval '1 second' WHERE id=$1", claimed["id"])
     restarted = CoordinatorTaskRepo(pool)
     await restarted.reap_stalled()
     row = (await restarted.list_for_user(USER))[0]
@@ -125,7 +125,7 @@ async def test_restart_expires_lease_without_resending(task_db):
 
 async def test_phone_delivery_failure_keeps_the_durable_reply(task_db, monkeypatch):
     pool, repo, enqueue = task_db
-    await enqueue(channel="phone")
+    await enqueue(send_to_phone=True)
     claimed = await repo.claim()
     await tasks.settle_output(repo, str(claimed["id"]), {"response": {"answer": 42}})
     monkeypatch.setattr(tasks, "get_sio", lambda: object())
@@ -154,9 +154,9 @@ async def test_dispatch_rechecks_access_and_finalizes_precreated_execution(task_
 
 async def test_task_table_is_inaccessible_to_browser_roles(task_db):
     pool, _, _ = task_db
-    assert await pool.fetchval("SELECT relrowsecurity FROM pg_class WHERE oid='coordinator_agent_tasks'::regclass")
+    assert await pool.fetchval("SELECT relrowsecurity FROM pg_class WHERE oid='coordinator_jobs'::regclass")
     for role in ("anon", "authenticated"):
-        assert not await pool.fetchval("SELECT has_table_privilege($1, 'coordinator_agent_tasks', 'SELECT,INSERT,UPDATE,DELETE')", role)
+        assert not await pool.fetchval("SELECT has_table_privilege($1, 'coordinator_jobs', 'SELECT,INSERT,UPDATE,DELETE')", role)
 
 
 @pytest.mark.parametrize("permission", [Permission.VIEW, None])
@@ -168,7 +168,7 @@ async def test_message_requires_edit_access(permission):
     ))), patch("wss.handlers.workflow_execution_handler.WorkflowExecutionHandler._fetch_workflow", AsyncMock()) as fetch:
         with pytest.raises(ValueError, match="edit access"):
             await tasks.request_agent_message(MockNativePool(), None, user_id=USER, workflow_id=str(uuid.uuid4()),
-                                              node_id="agent", message="Hello", channel="web")
+                                              node_id="agent", message="Hello", send_to_phone=False)
         fetch.assert_not_called()
 
 

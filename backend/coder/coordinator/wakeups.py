@@ -18,11 +18,11 @@ def outcome_summary(event):
     payload = event["payload"]
     if event["source"] == "alarm":
         return "Scheduled reminder: " + payload["message"]
-    source = "Builder request" if event["source"] == "builder" else "Agent request"
-    text = f"{source} {payload.get('status', 'finished')}."
+    what = {"build": "Build", "agent": "Agent request"}[payload["kind"]]
+    text = f"{what} {payload.get('status', 'finished')}."
     if payload.get("error"):
         text += " " + payload["error"][:500]
-    url = ((payload.get("result") or {}).get("publication") or {}).get("url") if event["source"] == "builder" else None
+    url = ((payload.get("result") or {}).get("publication") or {}).get("url") if payload["kind"] == "build" else None
     return text + ("\n" + url if url else "")
 
 
