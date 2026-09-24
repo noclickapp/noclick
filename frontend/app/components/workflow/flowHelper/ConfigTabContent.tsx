@@ -222,6 +222,8 @@ export function ConfigTabContent({
             {agentToolProviderMode ? (
                 <AgentToolOperationsPicker
                     key={selectedNode.id}
+                    credentialIds={credentialIds}
+                    hidePermissionSummary
                     nodeType={selectedNode.type || 'default'}
                     consumerTypes={toolProviderConsumerTypes}
                     selectedOperations={

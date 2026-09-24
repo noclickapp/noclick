@@ -443,6 +443,7 @@ export function AgentWiringPalette({
                                 their tool surfaces from their own NodeConfig above. */}
                             {configNode.role === 'tool' && !STRUCTURAL_AGENT_TOOL_TYPES.has(configNode.nodeType) && (
                                 <AgentToolOperationsPicker
+                                    credentialIds={liveCredIds}
                                     nodeType={configNode.nodeType}
                                     selectedOperations={liveOps}
                                     onChange={ops =>

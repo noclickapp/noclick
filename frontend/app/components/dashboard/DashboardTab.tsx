@@ -298,6 +298,7 @@ export function DashboardTab() {
             dismissed: new Set(dismissed),
             openWorkflow: (wf, nodeId) => (nodeId ? goToWorkflowNode(wf.id, nodeId) : navigateToWorkflow({ id: wf.id, name: wf.name })),
             fixTrigger: (item) => {
+                if (!item.workflow) return;
                 // The same load_value field the trigger panel's Status button
                 // runs (Slack join_channel): it performs the fix, re-registers
                 // and stamps the verdict, so the refetch decides the row.
@@ -325,6 +326,11 @@ export function DashboardTab() {
                 dismissAttention(item.id);
                 call('approval:respond', { approval_id: item.meta?.approvalId, decision, values }).then(refresh).catch(failing('Approval'));
             },
+            credentialApprovalDecided: (item) => {
+                dismissAttention(item.id);
+                toast.success('Decision saved');
+                void refresh();
+            },
             answerAsk: (item, answers) => {
                 dismissAttention(item.id);
                 call('workflow:builder:input_response', { conversation_id: item.meta?.conversationId, ask_id: item.meta?.askId, values: answers, dismissed: false })
@@ -349,6 +355,7 @@ export function DashboardTab() {
                 }
             },
             decideProposal: (item, decision) => {
+                if (!item.workflow) return;
                 dismissAttention(item.id);
                 call('agent:builder_decision', {
                     workflow_id: item.workflow.id,

@@ -75,7 +75,7 @@ export interface AttentionItem {
     kind: AttentionKind;
     title: string;
     detail?: string;
-    workflow: WorkflowRef;
+    workflow: WorkflowRef | null;
     /** Who is asking — the agent or builder that parked. */
     from?: AgentRef;
     createdAt: string;

@@ -889,6 +889,7 @@ export function IncompleteRunDialog({
                                     says what the list is and why it is required,
                                     in the same shape as every other requirement. */}
                                         <AgentToolOperationsPicker
+                                            credentialIds={credentialsForNode(step.nodeId)}
                                             nodeType={step.nodeType}
                                             selectedOperations={
                                                 (values[TOOL_OPERATIONS_KEY] as

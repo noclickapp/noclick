@@ -52,11 +52,14 @@ export default async function () {
         )!;
         flushSync(() => read.click());
         nc.assert.equal(
-            read.getAttribute('aria-checked'),
+            read.getAttribute('aria-pressed'),
             'true',
             'Selected action requires approval'
         );
-        nc.assert.falsy(saved, 'Toggling does not persist a security policy');
+        nc.assert.falsy(
+            saved,
+            'Changing a lock does not persist a security policy'
+        );
         const save = [...host.querySelectorAll('button')].find(
             (button) => button.textContent === 'Save rules'
         )!;
@@ -65,6 +68,46 @@ export default async function () {
             saved?.join(','),
             'gmail.send,gmail.read',
             'Save preserves existing restrictions'
+        );
+        const preset = (label: string) =>
+            [...host.querySelectorAll('button')].find(
+                (button) => button.textContent === label
+            )!;
+        saved = undefined;
+        flushSync(() => preset('Read-only').click());
+        nc.assert.equal(
+            read.getAttribute('aria-pressed'),
+            'false',
+            'Read-only leaves read actions free'
+        );
+        nc.assert.truthy(
+            host.textContent?.includes('Approval required'),
+            'Changes visibly require approval'
+        );
+        nc.assert.truthy(
+            host.textContent?.includes('Unlocked'),
+            'Unrestricted actions are explicit'
+        );
+        nc.assert.falsy(
+            host.querySelector('[role="switch"]'),
+            'Permission controls never resemble an enable switch'
+        );
+        nc.assert.falsy(saved, 'Shortcuts require an explicit save');
+        flushSync(() => preset('None').click());
+        nc.assert.equal(
+            read.getAttribute('aria-pressed'),
+            'true',
+            'None locks all calls'
+        );
+        nc.assert.truthy(
+            read.disabled,
+            'The wildcard also covers future actions'
+        );
+        flushSync(() => preset('All').click());
+        nc.assert.equal(
+            read.getAttribute('aria-pressed'),
+            'false',
+            'All removes locks'
         );
         nc.assert.truthy(
             host.textContent?.includes('Only you can remove'),

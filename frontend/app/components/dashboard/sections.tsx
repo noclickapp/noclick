@@ -39,6 +39,7 @@ import { isPersistedExecutionId, loadRunStory } from '~/lib/runResults';
 import { workspaceFileUrl } from '~/hooks/useAgentWorkspaceFiles';
 import { useValtioState } from '~/hooks/useValtioState';
 import { AskAnswer } from '~/components/dashboard/AskAnswer';
+import { InlineCredentialApproval } from '~/components/dashboard/InlineCredentialApproval';
 import {
     ATTENTION_KIND_LABEL,
     CredentialMark,
@@ -505,7 +506,7 @@ function AttentionMark({ item, size }: { item: AttentionItem; size: 'sm' | 'md' 
     if (item.provider) return <NodeMark type={item.provider} size={size} className="mt-[3px]" />;
     if (item.credentialType) return <CredentialMark credentialType={item.credentialType} size={size} className="mt-[3px]" />;
     if (item.from) return <NodeMark type={agentMarkType(item.from.model)} size={size} className="mt-[3px]" />;
-    return <NodeMark type={item.workflow.marks[0] ?? 'agent'} size={size} className="mt-[3px]" />;
+    return <NodeMark type={item.workflow?.marks[0] ?? 'agent'} size={size} className="mt-[3px]" />;
 }
 
 function PrimaryButton({ children, onClick, className }: { children: ReactNode; onClick?: () => void; className?: string }) {
@@ -635,7 +636,7 @@ function AttentionActions({ item, values, expanded, onToggle }: { item: Attentio
             );
         case 'approval':
             if (item.meta?.credentialAction) {
-                return <PrimaryButton onClick={() => actions.openLink(item)}>Review action <ArrowUpRight className="h-3 w-3" /></PrimaryButton>;
+                return <PrimaryButton onClick={onToggle}>{expanded ? 'Hide details' : 'Review action'} {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}</PrimaryButton>;
             }
             return (
                 <>
@@ -688,7 +689,7 @@ function AttentionActions({ item, values, expanded, onToggle }: { item: Attentio
                 </PrimaryButton>
             );
         case 'trigger_broken': {
-            const open = () => actions.openWorkflow(item.workflow, item.meta?.nodeId as string | undefined);
+            const open = () => item.workflow && actions.openWorkflow(item.workflow, item.meta?.nodeId as string | undefined);
             const action = item.meta?.action as { field: string; label: string } | undefined;
             // The fix the backend can perform itself is the action; opening
             // the trigger stays one step away for everything else.
@@ -750,9 +751,10 @@ export function AttentionRow({
     const isDecision = DECISION_KINDS.has(item.kind);
     // A row expands only when there is a form to show; a choice-only ask is
     // answered from its chips, so it has nothing to open.
-    const expandable = !dense && !!(item.fields?.length || item.inputs?.length);
+    const credentialAction = item.kind === 'approval' && !!item.meta?.credentialAction;
+    const expandable = !dense && !!(credentialAction || item.fields?.length || item.inputs?.length);
     const [values, setValues] = useState<Record<string, unknown>>(() => Object.fromEntries((item.fields ?? []).map((f) => [f.name, f.value ?? ''])));
-    const { answerAsk } = useDashboardActions();
+    const { answerAsk, credentialApprovalDecided } = useDashboardActions();
     return (
         <div
             className={cn('group/row -mx-2 rounded-lg px-2', (expandable || dense) && 'cursor-pointer', ROW_HOVER)}
@@ -774,13 +776,13 @@ export function AttentionRow({
                     )}
                     {!dense && !expanded && item.kind === 'builder_ask' && <AskChoices item={item} className="mt-2" />}
                     <div className="mt-1 flex min-w-0 items-center gap-2 whitespace-nowrap text-[12px] text-foreground/60 dark:text-foreground/40">
-                        <WorkflowLine workflow={item.workflow} className="min-w-0 shrink" maxMarks={3} showMarks={!quiet} />
+                        {item.workflow && <WorkflowLine workflow={item.workflow} className="min-w-0 shrink" maxMarks={3} showMarks={!quiet} />}
                         {item.from && !quiet && (
                             <span className="inline-flex shrink-0 items-center gap-1">
                                 · <NodeMark type={agentMarkType(item.from.model)} size="xs" /> {item.from.label}
                             </span>
                         )}
-                        <span className="shrink-0">· {relTime(item.createdAt, now)}</span>
+                        <span className="shrink-0">{(item.workflow || (item.from && !quiet)) && '· '}{relTime(item.createdAt, now)}</span>
                     </div>
                 </div>
                 {dense ? (
@@ -793,8 +795,10 @@ export function AttentionRow({
             </div>
             {expanded && (
                 <div className="ml-8 space-y-3 pb-3 pr-1" role="presentation" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
-                    {item.detail && !item.inputs?.length && <p className="m-0 text-[13px] leading-relaxed text-foreground/75 dark:text-foreground/60">{item.detail}</p>}
-                    {item.kind === 'builder_ask' && item.inputs?.length ? (
+                    {item.detail && !item.inputs?.length && !credentialAction && <p className="m-0 text-[13px] leading-relaxed text-foreground/75 dark:text-foreground/60">{item.detail}</p>}
+                    {credentialAction ? (
+                        <InlineCredentialApproval approvalId={String(item.meta?.approvalId ?? '')} onDecided={() => credentialApprovalDecided?.(item)} />
+                    ) : item.kind === 'builder_ask' && item.inputs?.length ? (
                         <AskAnswer item={item} />
                     ) : (
                         <>

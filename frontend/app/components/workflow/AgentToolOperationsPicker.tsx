@@ -13,10 +13,10 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertCircle, ArrowUpRight, Check, ChevronDown, GitBranch, Info, Loader2, Lock, Search, SlidersHorizontal, Wrench, X } from 'lucide-react';
-import { Checkbox } from '~/components/ui/checkbox';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { usePickerKeyboardNav } from '~/hooks/usePickerKeyboardNav';
 import { scoreFields } from '~/utils/fuzzySearch';
+import { isReadOperation } from '~/utils/readOperations';
 import {
     getAgentToolOperations,
     operationName,
@@ -28,9 +28,14 @@ import { getNodeMetadata } from './nodes/nodeRegistry';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { WorkflowNodeLoadOptionsRequest } from '~/types/socket-events.generated';
 import type { WorkflowNodeLoadOptionsResponse } from '~/types/socket-events.generated';
+import { ToolCredentialPermissions, type ToolPermissionControls } from '~/components/credential/ToolCredentialPermissions';
 
 interface AgentToolOperationsPickerProps {
     nodeType: string;
+    /** Connections whose approval policies the signed-in owner can manage. */
+    credentialIds?: Record<string, string>;
+    /** Keep the flow helper focused on its inline permission controls. */
+    hidePermissionSummary?: boolean;
     /** Currently allowlisted operations (config.agent_tool_operations). Mixed
      *  shape: bare strings for unscoped ops, {operation, field_scopes} for
      *  resource-pinned ops. Existing callers passing legacy string[] still
@@ -65,13 +70,16 @@ export const SANDBOX_MOUNT_TYPES: Record<string, { field: string }> = {
     'automation-github-rest': { field: 'repository' },
 };
 
-// Operation-name prefixes treated as non-mutating for the "Read-only" quick
-// select. Heuristic over generated op names — covers list/get/search/etc.
-const READ_PREFIXES = new Set(['list', 'get', 'search', 'fetch', 'read', 'query', 'count', 'check']);
+export function AgentToolOperationsPicker(props: AgentToolOperationsPickerProps) {
+    if (!props.credentialIds) return <OperationsPicker {...props} />;
+    return (
+        <ToolCredentialPermissions credentialIds={props.credentialIds} nodeType={props.nodeType} hideSummary={props.hidePermissionSummary}>
+            {(permissions) => <OperationsPicker {...props} permissions={permissions} />}
+        </ToolCredentialPermissions>
+    );
+}
 
-const isReadOperation = (op: string) => READ_PREFIXES.has(op.split('_')[0]);
-
-export function AgentToolOperationsPicker({
+function OperationsPicker({
     nodeType,
     selectedOperations,
     onChange,
@@ -82,7 +90,8 @@ export function AgentToolOperationsPicker({
     mountCredentialId,
     hideIntro = false,
     consumerTypes,
-}: AgentToolOperationsPickerProps) {
+    permissions,
+}: AgentToolOperationsPickerProps & { permissions?: ToolPermissionControls }) {
     const [search, setSearch] = useState('');
     const [showSelectedOnly, setShowSelectedOnly] = useState(false);
     const listRef = useRef<HTMLDivElement>(null);
@@ -411,6 +420,8 @@ export function AgentToolOperationsPicker({
                 </div>
             </div>
 
+            {permissions?.header}
+
             <div ref={listRef} className="space-y-3 max-h-[420px] overflow-y-auto scrollbar-subtle pr-1">
                 {grouped.map(([category, ops]) => (
                     <section key={category}>
@@ -436,54 +447,61 @@ export function AgentToolOperationsPicker({
                                 const showScopeRow = isChecked && scopableCount > 0;
                                 return (
                                     <div key={op.operation} className="flex flex-col">
-                                        <button
-                                            type="button"
-                                            data-flat-index={flatPos}
-                                            onClick={() => toggle(op.operation)}
-                                            onMouseEnter={() => setHighlighted(flatPos)}
-                                            onMouseDown={e => e.preventDefault()}
-                                            className={`flex items-center gap-2.5 px-2 py-1.5 rounded text-left transition-colors ${
-                                                isHighlighted
-                                                    ? 'bg-foreground/[0.10]'
-                                                    : isChecked
-                                                      ? 'bg-foreground/[0.04]'
-                                                      : 'hover:bg-foreground/[0.04]'
-                                            }`}
-                                        >
-                                            <Checkbox
-                                                checked={isChecked}
-                                                tabIndex={-1}
-                                                className="h-3.5 w-3.5 rounded border-muted-foreground/40 dark:border-white/25 data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-primary-foreground pointer-events-none flex-shrink-0 [&_svg]:h-3 [&_svg]:w-3"
-                                            />
-                                            {meta?.Icon && (
-                                                <BrandIcon
-                                                    Icon={meta.Icon}
-                                                    iconColor={meta.iconColor}
-                                                    className="h-3.5 w-3.5 flex-shrink-0"
-                                                />
-                                            )}
-                                            <span
-                                                className={`text-[12px] leading-tight flex-shrink-0 ${
-                                                    isChecked || isHighlighted ? 'text-foreground' : 'text-foreground/80'
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                role="checkbox"
+                                                aria-checked={isChecked}
+                                                aria-label={`Allow ${op.displayName}`}
+                                                data-flat-index={flatPos}
+                                                onClick={() => toggle(op.operation)}
+                                                onMouseEnter={() => setHighlighted(flatPos)}
+                                                onMouseDown={e => e.preventDefault()}
+                                                className={`flex min-w-0 flex-1 items-center gap-2.5 px-2 py-1.5 rounded text-left transition-colors ${
+                                                    isHighlighted
+                                                        ? 'bg-foreground/[0.10]'
+                                                        : isChecked
+                                                          ? 'bg-foreground/[0.04]'
+                                                          : 'hover:bg-foreground/[0.04]'
                                                 }`}
                                             >
-                                                {op.displayName}
-                                            </span>
-                                            {op.description && (
-                                                <span className="text-[11px] text-muted-foreground dark:text-zinc-500 leading-tight truncate min-w-0">
-                                                    {op.description}
-                                                </span>
-                                            )}
-                                            {showScopeRow && scopedFieldCount > 0 && (
                                                 <span
-                                                    className="ml-auto flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground"
-                                                    title="Limited to specific resources"
+                                                    aria-hidden="true"
+                                                    className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded border ${isChecked ? 'border-primary bg-primary text-primary-foreground' : 'border-muted-foreground/40 dark:border-white/25'}`}
                                                 >
-                                                    <Lock className="w-2.5 h-2.5" />
-                                                    Limited
+                                                    {isChecked && <Check className="h-3 w-3" />}
                                                 </span>
-                                            )}
-                                        </button>
+                                                {meta?.Icon && (
+                                                    <BrandIcon
+                                                        Icon={meta.Icon}
+                                                        iconColor={meta.iconColor}
+                                                        className="h-3.5 w-3.5 flex-shrink-0"
+                                                    />
+                                                )}
+                                                <span
+                                                    className={`text-[12px] leading-tight flex-shrink-0 ${
+                                                        isChecked || isHighlighted ? 'text-foreground' : 'text-foreground/80'
+                                                    }`}
+                                                >
+                                                    {op.displayName}
+                                                </span>
+                                                {op.description && (
+                                                    <span className="text-[11px] text-muted-foreground dark:text-zinc-500 leading-tight truncate min-w-0">
+                                                        {op.description}
+                                                    </span>
+                                                )}
+                                                {showScopeRow && scopedFieldCount > 0 && (
+                                                    <span
+                                                        className="ml-auto flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground"
+                                                        title="Limited to specific resources"
+                                                    >
+                                                        <Lock className="w-2.5 h-2.5" />
+                                                        Limited
+                                                    </span>
+                                                )}
+                                            </button>
+                                            {permissions?.lock(op.operation, op.displayName)}
+                                        </div>
                                         {showScopeRow && (
                                             <ScopeAccordion
                                                 op={op}

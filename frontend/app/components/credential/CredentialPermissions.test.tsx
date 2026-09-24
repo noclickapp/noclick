@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-// Exercise per-connection switches and explicit human saves, including shared
+// Exercise per-connection lock controls and explicit human saves, including shared
 // read-only credentials and the all-actions rule's behavior after revalidation.
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
@@ -43,17 +43,17 @@ describe('credential approval rules', () => {
         const save = vi.fn();
         view(state, save);
         fireEvent.click(
-            screen.getByRole('switch', {
+            screen.getByRole('button', {
                 name: 'Require approval for Send email',
             })
         );
         expect(save).not.toHaveBeenCalled();
         expect(
             screen
-                .getByRole('switch', {
+                .getByRole('button', {
                     name: 'Require approval for Read email',
                 })
-                .getAttribute('aria-checked')
+                .getAttribute('aria-pressed')
         ).toBe('false');
         fireEvent.click(screen.getByRole('button', { name: 'Save rules' }));
         expect(save).toHaveBeenCalledWith(['gmail.send']);
@@ -63,13 +63,13 @@ describe('credential approval rules', () => {
         const save = vi.fn();
         view({ ...state, approval_operations: ['gmail.send'] }, save);
         fireEvent.click(
-            screen.getByRole('switch', {
-                name: 'Require approval for all actions',
+            screen.getByRole('button', {
+                name: 'None',
             })
         );
         expect(
             (
-                screen.getByRole('switch', {
+                screen.getByRole('button', {
                     name: 'Require approval for Read email',
                 }) as HTMLButtonElement
             ).disabled
@@ -87,7 +87,7 @@ describe('credential approval rules', () => {
         expect(screen.queryByRole('button', { name: 'Save rules' })).toBeNull();
         expect(
             screen
-                .getAllByRole('switch')
+                .getAllByRole('button')
                 .every((button) => (button as HTMLButtonElement).disabled)
         ).toBe(true);
     });
@@ -100,11 +100,87 @@ describe('credential approval rules', () => {
             { target: { value: 'Read' } }
         );
         fireEvent.click(
-            screen.getByRole('switch', {
+            screen.getByRole('button', {
                 name: 'Require approval for Read email',
             })
         );
         fireEvent.click(screen.getByRole('button', { name: 'Save rules' }));
         expect(save).toHaveBeenCalledWith(['gmail.send', 'gmail.read']);
     });
+});
+
+it('Read-only leaves reads free and locks changes across the whole catalog, even during search', () => {
+    const save = vi.fn();
+    view({ ...state, approval_operations: ['*', 'retired.action'] }, save);
+    fireEvent.change(screen.getByRole('textbox', { name: 'Search tools' }), {
+        target: { value: 'Read' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Read-only' }));
+    expect(
+        screen
+            .getByRole('button', { name: 'Require approval for Read email' })
+            .getAttribute('aria-pressed')
+    ).toBe('false');
+    expect(screen.queryByText('Send email')).toBeNull();
+    expect(save).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Save rules' }));
+    expect(save).toHaveBeenCalledWith(['retired.action', 'gmail.send']);
+});
+
+it('All explicitly removes restrictions and None covers future actions', () => {
+    const save = vi.fn();
+    view({ ...state, approval_operations: ['gmail.send'] }, save);
+    fireEvent.click(screen.getByRole('button', { name: 'None' }));
+    expect(screen.getByText(/including new ones/)).toBeTruthy();
+    expect(screen.getAllByText('Approval required')).toHaveLength(2);
+    fireEvent.click(screen.getByRole('button', { name: 'All' }));
+    expect(screen.getAllByText('Unlocked')).toHaveLength(2);
+    fireEvent.click(screen.getByRole('button', { name: 'Save rules' }));
+    expect(save).toHaveBeenCalledWith([]);
+});
+
+it('disables shortcuts and locks while saving', () => {
+    render(
+        <MemoryRouter>
+            <CredentialPermissions state={state} saving onSave={vi.fn()} />
+        </MemoryRouter>
+    );
+    expect(
+        screen
+            .getAllByRole('button')
+            .every((button) => (button as HTMLButtonElement).disabled)
+    ).toBe(true);
+});
+
+it('uses the operation identifier rather than the human title for the read shortcut', () => {
+    const save = vi.fn();
+    view(
+        {
+            ...state,
+            operations: [
+                {
+                    ...state.operations[0],
+                    display_name: 'Read and forward an email',
+                    operation: 'forward_email',
+                },
+                {
+                    ...state.operations[1],
+                    display_name: 'Inbox',
+                    operation: 'fetch_inbox',
+                },
+            ],
+        },
+        save
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Read-only' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save rules' }));
+    expect(save).toHaveBeenCalledWith(['gmail.send']);
+});
+
+it('shows unavailable-connection errors without needing an operation catalog', () => {
+    view({ detail: 'Credential not found.' } as CredentialPolicyState);
+    expect(screen.getByRole('alert').textContent).toBe('Credential not found.');
+    expect(
+        screen.queryByRole('group', { name: 'Use without approval' })
+    ).toBeNull();
 });

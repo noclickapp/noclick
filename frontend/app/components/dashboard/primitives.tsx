@@ -63,6 +63,8 @@ export interface DashboardActions {
         "Join #channel"); the queue re-fetches and the row clears itself. */
     fixTrigger?: (item: AttentionItem) => void;
     respondApproval: (item: AttentionItem, decision: 'approved' | 'rejected', values: Record<string, unknown>) => void;
+    /** Refresh the queue after the owner-checked credential review route saves a decision. */
+    credentialApprovalDecided?: (item: AttentionItem) => void;
     answerAsk: (item: AttentionItem, answers: Record<string, unknown>) => void;
     /** Resume the builder without an answer (the wizard's Skip). */
     dismissAsk?: (item: AttentionItem) => void;
