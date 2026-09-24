@@ -148,6 +148,10 @@ async def execute_tool(
                 from nodes.agent.platform_tools import execute_submit_feedback
 
                 result = await execute_submit_feedback(node, dispatch_arguments)
+            elif tool_type == "message_coordinator":
+                from nodes.agent.platform_tools import execute_message_coordinator
+
+                result = await execute_message_coordinator(node, dispatch_arguments)
             elif tool_type == "prompt_builder":
                 from nodes.agent.platform_tools import execute_prompt_builder
 

@@ -251,8 +251,14 @@ async def run_coordinator_turn(
         )
         try:
             if completion:
-                event_description = ("A scheduled coordinator message is due." if completion["source"] == "alarm"
-                                     else "A delegated action has finished.")
+                if completion["source"] == "signal":
+                    from coder.coordinator.signals import describe
+
+                    event_description = describe(completion)
+                elif completion["source"] == "alarm":
+                    event_description = "A scheduled coordinator message is due."
+                else:
+                    event_description = "A delegated action has finished."
                 payload = json.dumps({"source": completion["source"], "source_id": str(completion["source_id"]),
                                       "original_request": continuation["request"], "outcome": completion["payload"]})
                 await agent({"input_items": [{"role": "developer", "content":

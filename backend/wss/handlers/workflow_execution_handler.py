@@ -1450,6 +1450,23 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         alert there with this run's context. Best-effort: never raises into
         the execution path."""
         trigger_source = getattr(request, 'trigger_source', None) or 'manual'
+        # The account coordinator triages every failure (flood rules live in
+        # coder/coordinator/signals.py), except the builder's own wake turns
+        # and runs the coordinator started, whose outcome already reaches it.
+        if user_id and trigger_source not in ('builder_event', 'coordinator'):
+            try:
+                from coder.coordinator.signals import record_run_failure
+                from utils.database_pool import get_native_pool
+
+                spawn(
+                    record_run_failure(
+                        get_native_pool(), workflow_id=request.workflow_id, execution_id=execution_id,
+                        error=error_msg, trigger_source=trigger_source, node_label=node_label,
+                    ),
+                    name=f"coordinator-failure-signal:{execution_id}",
+                )
+            except Exception as e:
+                logger.warning(f"[WorkflowExecution] failed to queue coordinator failure signal: {e}")
         # builder_event = internal wake-turn plumbing (fire_agent_wake_turn):
         # the next-user-message relay is its backstop, so a failure here is
         # recoverable noise, not a broken user workflow — never email it.

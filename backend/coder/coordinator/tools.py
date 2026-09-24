@@ -157,6 +157,19 @@ def coordinator_tool_params(*, include_whatsapp: bool = False, include_publishin
         tool("cancel_job", "Cancel a build before publishing starts. A build already running may finish, but no "
              "later steps will run. Agent requests cannot be cancelled once sent.", {"job_id": {"type": "string"}},
              ["job_id"]),
+        tool("list_runs", "A workflow's recent runs, newest first: status, what triggered it, when, and its error.",
+             {"workflow_id": {"type": "string"}, "status": {"type": "string", "enum": ["completed", "error", "running"]},
+              "limit": {"type": "integer", "minimum": 1, "maximum": 25}}, ["workflow_id"]),
+        tool("get_run", "One run in detail: each node's status and error, and with include_outputs a short preview "
+             "of what each node produced. For why a workflow keeps failing, prefer asking the builder.",
+             {"execution_id": {"type": "string"}, "include_outputs": {"type": "boolean"}}, ["execution_id"]),
+        tool("pause_workflow", "Stop a workflow from running on its own: its triggers are switched off (schedules, "
+             "webhooks, app events), nothing is deleted, and resume_workflow switches back exactly what you paused. "
+             "Use it for a workflow that is useless or doing harm; say why.",
+             {"workflow_id": {"type": "string"}, "reason": {"type": "string", "maxLength": 200}},
+             ["workflow_id", "reason"]),
+        tool("resume_workflow", "Switch back on the triggers you paused.",
+             {"workflow_id": {"type": "string"}}, ["workflow_id"]),
         tool("trash_workflow",
              "Move a workflow the owner owns to the trash: it stops running, its schedules and webhooks are removed, "
              "and it can be restored for 30 days before it is deleted for good. Confirm with the owner first.",
@@ -264,6 +277,10 @@ class CoordinatorTools:
             "request_build": self.request_build,
             "job_status": self.job_status,
             "cancel_job": self.cancel_job,
+            "list_runs": self.list_runs,
+            "get_run": self.get_run,
+            "pause_workflow": self.pause_workflow,
+            "resume_workflow": self.resume_workflow,
             "trash_workflow": self.trash_workflow,
             "restore_workflow": self.restore_workflow,
         }
@@ -443,15 +460,23 @@ class CoordinatorTools:
         ]}
 
     async def _accessible_graph(self, workflow_id: str):
-        """The saved graph, only if this user may see it — the node-side
-        describe reads by id alone because it runs inside the workflow."""
-        from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
+        """(nodes, edges) of the saved graph, only if this user may see it —
+        the node-side describe reads by id alone because it runs inside the
+        workflow."""
+        from utils.access_control import check_resource_access
 
         try:
-            uuid.UUID(workflow_id)
+            wf = uuid.UUID(workflow_id)
         except (TypeError, ValueError):
             return None
-        return await WorkflowExecutionHandler(self.sio)._fetch_workflow(workflow_id, self.user_id)
+        async with self.pool.acquire() as conn:
+            if not (await check_resource_access(conn, self.user_id, "workflow", workflow_id)).has_access:
+                return None
+            graph = await conn.fetchval("SELECT workflow FROM workflows WHERE id = $1 AND deleted_at IS NULL", wf)
+        if graph is None:
+            return None
+        graph = graph if isinstance(graph, dict) else json.loads(graph)
+        return graph.get("nodes") or [], graph.get("edges") or []
 
     async def find_agents(self, query: Optional[str] = None) -> Dict[str, Any]:
         from repositories.dashboard import DashboardRepo
@@ -562,6 +587,102 @@ class CoordinatorTools:
         if not minted:
             return {"questions": [i.get("label") for i in inputs if i.get("label")], "answer_url": None}
         return {"questions": minted["questions"], "answer_url": minted["url"]}
+
+    async def list_runs(self, workflow_id: str, status: Optional[str] = None, limit: int = 10) -> Dict[str, Any]:
+        from repositories.workflow import WorkflowRepo
+
+        if await self._accessible_graph(workflow_id) is None:
+            return {"success": False, "error": "workflow not found"}
+        async with self.pool.acquire() as conn:
+            rows = await WorkflowRepo(self.pool).list_executions(
+                conn, workflow_id=uuid.UUID(workflow_id), status_filter=[status] if status else None,
+                trigger_filter=None, search=None, cursor_ts=None, cursor_id=None, limit=max(1, min(int(limit), 25)),
+            )
+        return {"success": True, "runs": [{
+            "execution_id": str(r["id"]), "status": r["status"], "trigger": r["trigger_source"],
+            "started_at": r["started_at"].isoformat() if r["started_at"] else None,
+            "finished_at": r["finished_at"].isoformat() if r["finished_at"] else None,
+            "error": (r["error"] or "")[:300] or None,
+        } for r in rows]}
+
+    async def get_run(self, execution_id: str, include_outputs: bool = False) -> Dict[str, Any]:
+        from coder.workflow.agentic.commands import compact_preview
+        from utils.graph_nodes import node_label
+        from utils.node_outputs import execution_outputs
+
+        try:
+            run_id = uuid.UUID(execution_id)
+        except (TypeError, ValueError):
+            return {"success": False, "error": "run not found"}
+        run = await self.pool.fetchrow(
+            "SELECT id, workflow_id, status, trigger_source, started_at, finished_at, error "
+            "FROM workflow_executions WHERE id = $1", run_id)
+        graph = await self._accessible_graph(str(run["workflow_id"])) if run else None
+        if graph is None:
+            return {"success": False, "error": "run not found"}
+        labels = {n.get("id"): node_label(n) or n.get("type") for n in graph[0]}
+        nodes = await self.pool.fetch(
+            "SELECT node_id, last_run_status, last_run_error FROM cas_manifests WHERE execution_id = $1", run_id)
+        outputs = await execution_outputs(self.pool, run_id) if include_outputs else {}
+        return {"success": True, "run": {
+            "execution_id": str(run["id"]), "workflow_id": str(run["workflow_id"]), "status": run["status"],
+            "trigger": run["trigger_source"], "error": (run["error"] or "")[:500] or None,
+            "started_at": run["started_at"].isoformat() if run["started_at"] else None,
+            "nodes": [{
+                "node_id": n["node_id"], "label": labels.get(n["node_id"]), "status": n["last_run_status"],
+                "error": (n["last_run_error"] or "")[:500] or None,
+                **({"output": compact_preview(outputs[n["node_id"]], 600)} if n["node_id"] in outputs else {}),
+            } for n in nodes][:40],
+        }}
+
+    async def _owned_graph(self, workflow_id: str):
+        try:
+            wf = uuid.UUID(workflow_id)
+        except (TypeError, ValueError):
+            return None
+        row = await self.pool.fetchrow(
+            "SELECT owner_id, workflow FROM workflows WHERE id = $1 AND deleted_at IS NULL", wf)
+        if row is None or str(row["owner_id"]) != self.user_id:
+            return None
+        graph = row["workflow"] or {}
+        return graph if isinstance(graph, dict) else json.loads(graph)
+
+    async def _set_triggers(self, workflow_id: str, pick, patch: Dict[str, Any]) -> List[str]:
+        from utils.graph_nodes import node_label
+        from utils.webhook_manager import WebhookManager
+
+        graph = await self._owned_graph(workflow_id)
+        if graph is None:
+            raise ValueError("Only the owner's own workflows can be paused or resumed here.")
+        changed = []
+        for node in graph.get("nodes") or []:
+            if pick(node):
+                await WebhookManager.merge_node_config_patch(self.pool, uuid.UUID(workflow_id), node["id"], patch)
+                await WebhookManager.reconcile_node(self.pool, workflow_id, node["id"], user_id=self.user_id)
+                changed.append(node_label(node) or node["id"])
+        return changed
+
+    async def pause_workflow(self, workflow_id: str, reason: str) -> Dict[str, Any]:
+        from utils.graph_nodes import is_trigger_node, node_disabled
+
+        paused = await self._set_triggers(
+            workflow_id, lambda n: is_trigger_node(n) and not node_disabled(n),
+            {"disabled": True, "paused_by": "coordinator", "paused_reason": f"Paused by the coordinator: {reason}"[:300]},
+        )
+        if not paused:
+            return {"success": False, "error": "This workflow has no active triggers to pause."}
+        return {"success": True, "paused_triggers": paused}
+
+    async def resume_workflow(self, workflow_id: str) -> Dict[str, Any]:
+        from utils.graph_nodes import node_config
+
+        resumed = await self._set_triggers(
+            workflow_id, lambda n: node_config(n).get("paused_by") == "coordinator",
+            {"disabled": False, "paused_by": None, "paused_reason": None},
+        )
+        if not resumed:
+            return {"success": False, "error": "Nothing here was paused by you."}
+        return {"success": True, "resumed_triggers": resumed}
 
     async def trash_workflow(self, workflow_id: str) -> Dict[str, Any]:
         from wss.handlers.workflow_handler import trash_workflow_as_owner

@@ -44,21 +44,30 @@ class CoordinatorWakeupRepo:
 
     async def enqueue(self, *, job, context, payload):
         """Transfer a finished job's outcome to the inbox atomically and idempotently."""
+        await self._transfer(
+            "job", job, context, payload, job["send_to_phone"],
+            f"SELECT id FROM coordinator_jobs WHERE id=$1 AND notified_at IS NULL AND status IN {TERMINAL} FOR UPDATE",
+        )
+
+    async def enqueue_signal(self, *, signal, context, payload):
+        """A signal from elsewhere in the account (coder/coordinator/signals.py)."""
+        await self._transfer(
+            "signal", signal, context, payload, False,
+            "SELECT id FROM coordinator_signals WHERE id=$1 AND notified_at IS NULL FOR UPDATE",
+        )
+
+    async def _transfer(self, source, item, context, payload, send_to_phone, still_pending_sql):
         async with self.pool.acquire() as conn:
             async with conn.transaction():
-                valid = await conn.fetchval(
-                    f"SELECT id FROM coordinator_jobs WHERE id=$1 AND notified_at IS NULL AND status IN {TERMINAL} FOR UPDATE",
-                    job["id"],
-                )
-                if not valid:
+                if not await conn.fetchval(still_pending_sql, item["id"]):
                     return
                 await conn.execute(
                     """INSERT INTO coordinator_wakeups(user_id,source,source_id,context,payload,send_to_phone)
-                       VALUES ($1,'job',$2,$3,$4,$5) ON CONFLICT (source,source_id) DO NOTHING""",
-                    job["user_id"], job["id"], context, payload, job["send_to_phone"],
+                       VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (source,source_id) DO NOTHING""",
+                    item["user_id"], source, item["id"], context, payload, send_to_phone,
                 )
-
-        row = await self.pool.fetchrow("SELECT * FROM coordinator_wakeups WHERE source='job' AND source_id=$1", job["id"])
+        row = await self.pool.fetchrow("SELECT * FROM coordinator_wakeups WHERE source=$1 AND source_id=$2",
+                                       source, item["id"])
         if row:
             from utils.coordinator_dispatch import dispatch_event
             await dispatch_event(self.pool, dict(row))
@@ -274,6 +283,9 @@ class CoordinatorWakeupRepo:
                 "UPDATE coordinator_jobs SET notified_at=now(), notification_lease_until=NULL, "
                 "phone_state=$2, delivery_error=$3 WHERE id=$1", row["source_id"], phone_state, error,
             )
+        elif row["source"] == "signal":
+            await (conn or self.pool).execute("UPDATE coordinator_signals SET notified_at=now() WHERE id=$1",
+                                              row["source_id"])
 
     async def delivered(self, row, phone_state, error):
         async with self.pool.acquire() as conn:

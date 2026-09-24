@@ -18,6 +18,10 @@ def outcome_summary(event):
     payload = event["payload"]
     if event["source"] == "alarm":
         return "Scheduled reminder: " + payload["message"]
+    if event["source"] == "signal":
+        if payload.get("kind") == "agent_message":
+            return f"An agent in “{payload.get('workflow_name')}” messaged you: {payload.get('message', '')[:500]}"
+        return f"“{payload.get('workflow_name')}” failed: {(payload.get('error') or '')[:500]}"
     if payload["kind"] == "video":
         if payload.get("result"):
             return f"Your video is ready: {payload['result']['url']}"

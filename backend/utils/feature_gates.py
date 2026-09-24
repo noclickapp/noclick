@@ -22,9 +22,9 @@ EVERYONE = "everyone"
 FEATURE_ROLLOUT: dict[str, str] = {
     # Verified phone linking (Settings → Phone) and the channels keyed on it.
     "phone_channel": EVERYONE,
-    # The account coordinator's web dock. WhatsApp and calls are open to
-    # everyone (cloud/channel_identity.py).
-    "coordinator": INTERNAL,
+    # The account coordinator, on every channel (it triages every account's
+    # failures, so every account needs it).
+    "coordinator": EVERYONE,
     "phone_numbers": INTERNAL,
 }
 

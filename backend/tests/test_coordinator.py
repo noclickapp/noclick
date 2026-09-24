@@ -132,11 +132,11 @@ async def test_list_workflows_is_the_builders_listing_in_org_context():
 
 async def test_describe_refuses_what_the_user_cannot_see_then_delegates():
     t = tools()
-    with patch("wss.handlers.workflow_execution_handler.WorkflowExecutionHandler._fetch_workflow", AsyncMock(return_value=None)):
+    with patch.object(CoordinatorTools, "_accessible_graph", AsyncMock(return_value=None)):
         assert (await t.describe_workflow(WORKFLOW))["success"] is False
     assert (await t.describe_workflow("not-a-uuid"))["success"] is False
     described = {"success": True, "workflow_name": "Inbox", "your_node_id": None, "snapshot": "<w/>"}
-    with patch("wss.handlers.workflow_execution_handler.WorkflowExecutionHandler._fetch_workflow", AsyncMock(return_value=([], [], None, {}, {}))), \
+    with patch.object(CoordinatorTools, "_accessible_graph", AsyncMock(return_value=([], []))), \
          patch("nodes.agent.platform_tools.describe_workflow_impl", AsyncMock(return_value=dict(described))) as impl:
         result = await t.describe_workflow(WORKFLOW, focus="n1")
     assert result == {"success": True, "workflow_name": "Inbox", "snapshot": "<w/>"}

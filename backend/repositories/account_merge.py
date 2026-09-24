@@ -26,6 +26,7 @@ MOVE_COLUMNS = (
     ("conversations", "user_id"),
     ("coordinator_jobs", "user_id"),
     ("coordinator_memories", "user_id"),
+    ("coordinator_signals", "user_id"),
     ("coordinator_wakeups", "user_id"),     # pending follow-ups and alarms
     ("credential_requests", "requester_id"),
     ("credentials", "owner_id"),

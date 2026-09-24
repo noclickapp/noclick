@@ -20,11 +20,33 @@ PROMPT_BUILDER_TOOL = "prompt_builder"
 BUILDER_RESPOND_TOOL = "builder_respond"
 DESCRIBE_WORKFLOW_TOOL = "describe_workflow"
 EMAIL_USER_TOOL = "email_user"
+MESSAGE_COORDINATOR_TOOL = "message_coordinator"
 # Excluded from per-harness capability gates (e.g. codex's API-key model gate):
 # platform tools are ambient, not user-wired capability the run depends on.
 PLATFORM_TOOL_TYPES = {
     "submit_feedback", "prompt_builder", "builder_respond", "describe_workflow",
-    "email_user",
+    "email_user", "message_coordinator",
+}
+
+_MESSAGE_COORDINATOR_PARAM = {
+    "type": "function",
+    "function": {
+        "name": MESSAGE_COORDINATOR_TOOL,
+        "description": (
+            "Message the account's coordinator: the owner's assistant that oversees every workflow and can fix, "
+            "pause or rebuild them, and reach the owner on their preferred channel. Use it sparingly: only when your "
+            "instructions tell you to, or when you are stuck with no other way forward (a broken workflow around "
+            "you, something only the owner can decide). Not for progress updates, and not for platform bugs "
+            "(submit_feedback). One short, self-contained message; you won't get a reply in this turn."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "message": {"type": "string", "description": "What happened and what you need."},
+            },
+            "required": ["message"],
+        },
+    },
 }
 
 _FEEDBACK_MAX_LEN = 4000
@@ -265,7 +287,8 @@ def build_platform_tools(
     """``(tool_param, tool_config)`` pairs to append to the agent's collected
     tool set. The config carries the tool type and its model-facing schema;
     execution context comes from the active agent turn."""
-    pairs = [_platform_pair(_SUBMIT_FEEDBACK_PARAM, "submit_feedback")]
+    pairs = [_platform_pair(_SUBMIT_FEEDBACK_PARAM, "submit_feedback"),
+             _platform_pair(_MESSAGE_COORDINATOR_PARAM, "message_coordinator")]
     if enable_prompt_builder:
         pairs.append(_platform_pair(_PROMPT_BUILDER_PARAM, "prompt_builder"))
         pairs.append(_platform_pair(_BUILDER_RESPOND_PARAM, "builder_respond"))
@@ -835,6 +858,20 @@ async def execute_submit_feedback(node: Any, arguments: Dict[str, Any]) -> Dict[
     )
 
 
+async def execute_message_coordinator(node: Any, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    from coder.coordinator.signals import record_agent_message
+    from utils.database_pool import get_native_pool
+
+    return await record_agent_message(
+        get_native_pool(),
+        user_id=getattr(node, "user_id", None),
+        workflow_id=getattr(node, "workflow_id", None),
+        node_id=getattr(node, "node_id", None),
+        conversation_id=getattr(node, "conversation_id", None) or node.chat_routing_id(),
+        message=str(arguments.get("message") or ""),
+    )
+
+
 async def execute_describe_workflow(node: Any, arguments: Dict[str, Any]) -> Dict[str, Any]:
     from utils.database_pool import get_native_pool
 
@@ -910,6 +947,17 @@ async def execute_platform_tool_from_ctx(
             model=st_config.get("model"),
             feedback=str(arguments.get("feedback") or ""),
             issue_key=str(arguments.get("issue_key") or "") or None,
+        )
+    if tool_type == "message_coordinator":
+        from coder.coordinator.signals import record_agent_message
+
+        return await record_agent_message(
+            pool,
+            user_id=st_config.get("user_id"),
+            workflow_id=st_config.get("workflow_id"),
+            node_id=st_config.get("agent_node_id"),
+            conversation_id=st_config.get("conversation_id"),
+            message=str(arguments.get("message") or ""),
         )
     if tool_type == "prompt_builder":
         return await prompt_builder_impl(

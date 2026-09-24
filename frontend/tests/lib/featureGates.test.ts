@@ -12,18 +12,18 @@ describe('feature gates', () => {
     });
 
     it('rolls an internal feature out to the hosted team only', () => {
-        expect(FEATURE_ROLLOUT.coordinator).toBe('internal');
-        expect(isFeatureEnabled('coordinator', 'staff@example.com')).toBe(true);
-        expect(isFeatureEnabled('coordinator', 'customer@example.com')).toBe(false);
-        expect(isFeatureEnabled('coordinator', '')).toBe(false);
-        expect(isFeatureEnabled('coordinator', null)).toBe(false);
+        expect(FEATURE_ROLLOUT.phone_numbers).toBe('internal');
+        expect(isFeatureEnabled('phone_numbers', 'staff@example.com')).toBe(true);
+        expect(isFeatureEnabled('phone_numbers', 'customer@example.com')).toBe(false);
+        expect(isFeatureEnabled('phone_numbers', '')).toBe(false);
+        expect(isFeatureEnabled('phone_numbers', null)).toBe(false);
     });
 
     it('lets a named account pilot an internal feature without joining the staff list', () => {
-        expect(isFeatureEnabled('coordinator', 'pilot@example.com')).toBe(false);
-        allowAccounts('coordinator', [' Pilot@Example.com ']);
-        expect(isFeatureEnabled('coordinator', 'pilot@example.com')).toBe(true);
-        expect(isFeatureEnabled('coordinator', 'other@example.com')).toBe(false);
+        expect(isFeatureEnabled('phone_numbers', 'pilot@example.com')).toBe(false);
+        allowAccounts('phone_numbers', [' Pilot@Example.com ']);
+        expect(isFeatureEnabled('phone_numbers', 'pilot@example.com')).toBe(true);
+        expect(isFeatureEnabled('phone_numbers', 'other@example.com')).toBe(false);
     });
 
     it('opens an everyone feature to every account, signed in or not', () => {

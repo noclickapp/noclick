@@ -7,6 +7,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from nodes.agent.platform_tools import (
     PLATFORM_TOOL_TYPES,
     PROMPT_BUILDER_TOOL,
+    MESSAGE_COORDINATOR_TOOL,
     SUBMIT_FEEDBACK_TOOL,
     build_platform_tools,
     prompt_builder_mode,
@@ -27,12 +28,12 @@ class TestBuildPlatformTools:
         )
 
         assert _tool_names(build_platform_tools(True)) == [
-            SUBMIT_FEEDBACK_TOOL, PROMPT_BUILDER_TOOL, BUILDER_RESPOND_TOOL,
+            SUBMIT_FEEDBACK_TOOL, MESSAGE_COORDINATOR_TOOL, PROMPT_BUILDER_TOOL, BUILDER_RESPOND_TOOL,
             DESCRIBE_WORKFLOW_TOOL,
         ]
 
     def test_prompt_builder_disabled(self):
-        assert _tool_names(build_platform_tools(False)) == [SUBMIT_FEEDBACK_TOOL]
+        assert _tool_names(build_platform_tools(False)) == [SUBMIT_FEEDBACK_TOOL, MESSAGE_COORDINATOR_TOOL]
 
     def test_email_updates_opt_in(self):
         # email_user is opt-in and independent of the builder flag.
@@ -40,7 +41,7 @@ class TestBuildPlatformTools:
 
         assert EMAIL_USER_TOOL not in _tool_names(build_platform_tools(True))
         assert _tool_names(build_platform_tools(False, True)) == [
-            SUBMIT_FEEDBACK_TOOL, EMAIL_USER_TOOL,
+            SUBMIT_FEEDBACK_TOOL, MESSAGE_COORDINATOR_TOOL, EMAIL_USER_TOOL,
         ]
         assert _tool_names(build_platform_tools(True, True))[-1] == EMAIL_USER_TOOL
 
@@ -346,7 +347,7 @@ class TestAgentNodeInjection:
     def test_disabled_string_excludes_prompt_builder(self):
         # The injection site gates on config.enable_prompt_builder != "false".
         assert _tool_names(build_platform_tools("false" != "false")) == [
-            SUBMIT_FEEDBACK_TOOL,
+            SUBMIT_FEEDBACK_TOOL, MESSAGE_COORDINATOR_TOOL,
         ]
 
 
