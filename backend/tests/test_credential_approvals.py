@@ -250,7 +250,8 @@ async def test_phone_only_account_can_open_standalone_connection_link(approval_d
         token = connection["url"].rsplit("/", 1)[-1]
         monkeypatch.setattr(routes, "get_native_pool", lambda: pool)
         details = await routes.get_credential_request(token)
-        assert details.requester_name == "Your account"
+        assert details.requester_name == "A NoClick user"
+        assert details.requester_email is None
         assert details.credential_type == "whatsapp_qr"
     finally:
         await pool.execute("UPDATE auth.users SET email='approval-other@example.test' WHERE id=$1::uuid", OTHER)
