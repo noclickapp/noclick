@@ -122,14 +122,17 @@ class PhonePurchase:
             )
             logger.warning("Phone purchase %s failed; rejected=%s", claimed["id"], rejected, exc_info=True)
             await self.repo.record_phone_purchase_error(str(claimed["id"]), message, rejected=rejected)
+        from utils.coordinator_links import dispatch_link
+        dispatch_link(self.pool, "credential_request", claimed['id'])
         return await self.status(token)
 
-    async def create(self, purpose: str, phone_number: str | None = None):
+    async def create(self, purpose: str, phone_number: str | None = None, *, continuation=None):
         if not purpose.strip() or len(purpose) > 1000:
             raise ValueError("Explain the intended use in 1–1000 characters.")
         await self.actor()
         row = await self.repo.upsert_credential_request(
             requester_id=self.user_id, target_email="", credential_type="phone_number", message=purpose.strip(),
+            continuation=continuation,
         )
         current = await self.request(row.token)
         # Never overwrite the number/price the owner may already be reviewing.
@@ -137,4 +140,5 @@ class PhonePurchase:
             await self.quote(row.token, phone_number)
         from mcp_adapter.auth.endpoints import get_frontend_url
         return {**await self.status(row.token),
+                "auto_resume": continuation is not None,
                 "approval_url": f"{get_frontend_url().rstrip('/')}/credential/purchase/{row.token}"}

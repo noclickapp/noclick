@@ -246,3 +246,21 @@ async def test_coordinator_advertises_only_available_purchase_tools(phone_db):
     numbers.buy.assert_not_awaited()
     other = CoordinatorTools(pool=pool, sio=None, user_id=str(uuid4()), organization_id=None, conversation_id="other")
     assert (await other.phone_number_request_status(result["request_id"]))["success"] is False
+
+
+async def test_coordinator_purchase_registers_before_confirmation_and_wakes_after_buy(phone_db, monkeypatch):
+    monkeypatch.setattr('utils.coordinator_links.dispatch_link', lambda *args: None)
+    pool, service, token, numbers = phone_db
+    context = {'epoch': '', 'depth': 0, 'request': 'Buy a line and build my receptionist', 'channel': 'whatsapp_text'}
+    request = await service.create('Receptionist', continuation=context)
+    assert request['auto_resume'] and request['approval_url'].endswith(token)
+    before = await pool.fetchrow("SELECT * FROM coordinator_wakeups WHERE await_key=$1", f"credential_request:{request['request_id']}")
+    assert before['status'] == 'waiting'
+    quote = (await service.quote(token, NUMBER))['quote']
+    result = await service.confirm(token, quote['id'])
+    after = await pool.fetchrow('SELECT * FROM coordinator_wakeups WHERE id=$1', before['id'])
+    assert after['status'] == 'queued'
+    assert after['context'] == context and after['send_to_phone']
+    assert after['payload']['credential_id'] == result['credential_id']
+    numbers.buy.assert_awaited_once()
+    await pool.execute('DELETE FROM coordinator_wakeups WHERE id=$1', before['id'])

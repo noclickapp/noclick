@@ -22,6 +22,7 @@ export interface CredentialPolicyState {
     approval_operations: string[];
     revision: number;
     can_edit: boolean;
+    review_pending?: boolean;
     detail?: string;
 }
 
@@ -266,11 +267,13 @@ export function CredentialPermissions({
                             </p>
                             {state.can_edit && (
                                 <Button
-                                    disabled={!changed || saving}
+                                    disabled={(!changed && !state.review_pending) || saving}
                                     onClick={() => onSave([...selected])}
                                 >
                                     {saving ? (
                                         'Saving…'
+                                    ) : state.review_pending ? (
+                                        changed ? 'Save and continue' : 'Confirm rules'
                                     ) : changed ? (
                                         'Save rules'
                                     ) : (

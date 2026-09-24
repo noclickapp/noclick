@@ -664,43 +664,15 @@ async def _store_and_fulfill(
     org_context_row = await pool.fetchrow(PRIMARY_ORG_SQL, credential_owner_id)
     cred_org_id = str(org_context_row['organization_id']) if org_context_row else None
 
-    cred_row = await pool.fetchrow(
-        """
-        INSERT INTO credentials (owner_id, organization_id, name, credential_type, credential, metadata, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
-        RETURNING id
-        """,
-        credential_owner_id, cred_org_id, credential_name, credential_type, encrypted, metadata,
-    )
-    if not cred_row:
-        raise HTTPException(status_code=500, detail="Failed to store credential")
-    credential_id = str(cred_row['id'])
-
-    # Atomically claim fulfillment. The status guard (not the initial read) owns the
-    # double-submit race: a concurrent provide that lost gets 0 rows, and we remove
-    # the credential it just created.
-    claimed = await pool.fetchval(
-        """
-        UPDATE credential_requests
-        SET status = 'fulfilled', credential_id = $1, fulfilled_at = NOW()
-        WHERE id = $2 AND status = 'pending'
-        RETURNING id
-        """,
-        credential_id, str(row['id']),
-    )
-    if not claimed:
-        await pool.execute("DELETE FROM credentials WHERE id = $1", credential_id)
-        raise HTTPException(status_code=410, detail="This credential request has already been fulfilled")
-
-    if credential_owner_id != str(row['requester_id']):
-        await pool.execute(
-            """
-            INSERT INTO resource_shares (resource_type, resource_id, target_type, target_user_id, permission, shared_by)
-            VALUES ('credential', $1, 'user', $2, 'edit', $3)
-            ON CONFLICT DO NOTHING
-            """,
-            credential_id, str(row['requester_id']), credential_owner_id,
+    from repositories.credentials import CredentialsRepo
+    try:
+        credential_id = await CredentialsRepo(pool).store_provided_credential(
+            request_id=str(row['id']), request_token=row['token'], owner_id=credential_owner_id, requester_id=str(row['requester_id']),
+            organization_id=cred_org_id, name=credential_name, credential_type=credential_type,
+            encrypted=encrypted, metadata=metadata,
         )
+    except ValueError as exc:
+        raise HTTPException(status_code=410, detail=str(exc)) from None
 
     await _notify_requester_fulfilled(row, credential_type)
 
@@ -708,6 +680,8 @@ async def _store_and_fulfill(
         f"Credential request {row['id']} fulfilled: type={credential_type}, "
         f"requester={row['requester_id']}, provider={row['target_email']}"
     )
+    from utils.coordinator_links import dispatch_link
+    dispatch_link(pool, "credential_request", row['id'])
     return {"status": "success", "message": "Credential provided successfully", "credential_id": credential_id}
 
 
@@ -721,7 +695,7 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
     # read would release immediately anyway.
     row = await pool.fetchrow(
         """
-        SELECT cr.id, cr.requester_id, cr.credential_type, cr.status, cr.expires_at,
+        SELECT cr.id, cr.token, cr.requester_id, cr.credential_type, cr.status, cr.expires_at,
                cr.provision_attempts, cr.target_email,
                u.email as requester_email
         FROM credential_requests cr
@@ -870,7 +844,7 @@ async def _load_active_request(token: str, pool):
     columns ``_store_and_fulfill`` needs. Raises 404/410 like the provide endpoint."""
     row = await pool.fetchrow(
         """
-        SELECT cr.id, cr.requester_id, cr.credential_type, cr.status, cr.expires_at,
+        SELECT cr.id, cr.token, cr.requester_id, cr.credential_type, cr.status, cr.expires_at,
                cr.target_email, u.email as requester_email
         FROM credential_requests cr
         JOIN auth.users u ON u.id = cr.requester_id
@@ -1044,16 +1018,18 @@ async def _claim_qr_fulfillment(pool, row, credential_id: str) -> bool:
         """
         UPDATE credential_requests
         SET status = 'fulfilled', credential_id = $1, fulfilled_at = NOW()
-        WHERE id = $2 AND status = 'pending'
+        WHERE id = $2 AND token = $3 AND status = 'pending' AND expires_at > now()
         RETURNING id
         """,
-        credential_id, str(row["id"]),
+        credential_id, str(row["id"]), row["token"],
     )
     if not claimed:
         return False
     if row["target_email"]:
         await _notify_requester_fulfilled(row, "whatsapp_qr")
     logger.info(f"Credential request {row['id']} fulfilled via WhatsApp QR: credential={credential_id}")
+    from utils.coordinator_links import dispatch_link
+    dispatch_link(pool, "credential_request", row['id'])
     return True
 
 

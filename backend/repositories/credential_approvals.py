@@ -48,14 +48,31 @@ class CredentialApprovalRepo:
 
     async def replace_from_human(self, credential_id, user_id, operations, expected_revision):
         """Only the authenticated browser route exposes this compare-and-swap."""
-        row = await self.pool.fetchrow(
-            "UPDATE credentials SET approval_operations=$3,approval_revision=approval_revision+1 "
-            "WHERE id=$1::uuid AND owner_id=$2::uuid AND approval_revision=$4 RETURNING approval_revision",
-            credential_id, user_id, sorted(set(operations)), expected_revision,
-        )
-        if row is None:
-            raise ValueError("The policy changed or you are not its owner. Refresh before saving.")
+        from repositories.coordinator_links import CoordinatorLinkRepo
+        async with self.pool.acquire() as conn, conn.transaction():
+            row = await conn.fetchrow(
+                "UPDATE credentials SET approval_operations=$3,approval_revision=approval_revision+1 "
+                "WHERE id=$1::uuid AND owner_id=$2::uuid AND approval_revision=$4 RETURNING approval_revision",
+                credential_id, user_id, sorted(set(operations)), expected_revision,
+            )
+            if row is None:
+                raise ValueError("The policy changed or you are not its owner. Refresh before saving.")
+            await CoordinatorLinkRepo.complete(conn, kind="credential_policy", resource_id=credential_id,
+                outcome={"status": "reviewed", "credential_id": str(credential_id),
+                         "approval_revision": row["approval_revision"], "approval_operations": sorted(set(operations))})
         return row["approval_revision"]
+
+    async def await_human_review(self, credential_id, user_id, context):
+        from datetime import datetime, timedelta, timezone
+        from repositories.coordinator_links import CoordinatorLinkRepo
+        async with self.pool.acquire() as conn, conn.transaction():
+            row = await conn.fetchrow(
+                "SELECT id FROM credentials WHERE id=$1::uuid AND owner_id=$2::uuid FOR UPDATE", credential_id, user_id,
+            )
+            if row is None:
+                raise PermissionError("Only the credential owner can review its restrictions.")
+            await CoordinatorLinkRepo.wait(conn, user_id=user_id, kind="credential_policy", resource_id=credential_id,
+                                          context=context, expires_at=datetime.now(timezone.utc) + timedelta(days=7))
 
     async def has_restrictions(self, credential_id):
         return await self.pool.fetchval(
@@ -242,23 +259,10 @@ class CredentialApprovalRepo:
             )
             if row is None:
                 raise ValueError("This request was already decided, expired, or its credential policy changed.")
-            payload = row["action_payload"]
             if row["execution_id"] and decision == "rejected":
                 await conn.execute(
                     "UPDATE workflow_executions SET status='error',error='Credential action declined by owner',finished_at=now() "
                     "WHERE id=$1 AND status='awaiting_approval'", row["execution_id"],
                 )
-            context = payload.get("continuation")
-            if context and payload.get("conversation_id") == f"coordinator:{payload['caller_user_id']}":
-                # Commit decision and follow-up together. Scheduler reconciliation
-                # repairs a crash before the route dispatches this outbox event.
-                await conn.execute(
-                    "INSERT INTO coordinator_wakeups(user_id,source,source_id,context,payload,send_to_phone) "
-                    "VALUES ($1::uuid,'credential_approval',$2,$3,$4,$5) ON CONFLICT(source,source_id) DO NOTHING",
-                    payload["caller_user_id"], row["id"], context,
-                    {"approval_id": str(row["id"]), "status": decision,
-                     "credential_id": str(row["credential_id"]), "node_type": payload["node_type"],
-                     "operation": payload["operation"], "arguments": payload["arguments"]},
-                    context.get("channel", "web") != "web",
-                )
+            # The approval lifecycle trigger commits the wakeup with this decision.
             return dict(row)

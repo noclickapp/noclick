@@ -241,3 +241,72 @@ async def test_wakeup_table_is_private(db):
     assert await pool.fetchval("SELECT relrowsecurity FROM pg_class WHERE oid='coordinator_wakeups'::regclass")
     for role in ("anon", "authenticated"):
         assert not await pool.fetchval("SELECT has_table_privilege($1,'coordinator_wakeups','SELECT')", role)
+
+
+@pytest.mark.parametrize('link_kind', ['credential_request', 'credential_policy', 'credential_approval'])
+async def test_human_link_result_recovers_then_runs_same_thread_and_replies_once(db, monkeypatch, link_kind):
+    from repositories.credentials import CredentialsRepo
+    from repositories.credential_approvals import CredentialApprovalRepo
+    from repositories.local_schedules import LocalScheduleRepo
+    from utils import coordinator_dispatch
+    pool, repo, _, _, _ = db
+    cid = await pool.fetchval("INSERT INTO credentials(owner_id,name,credential_type,credential) "
+                              "VALUES($1::uuid,'Mail','google_gmail_oauth','encrypted') RETURNING id", USER)
+    policy = CredentialApprovalRepo(pool)
+    if link_kind == 'credential_request':
+        row = await CredentialsRepo(pool).upsert_credential_request(
+            requester_id=USER, target_email='', credential_type='google_gmail_oauth',
+            message='Connect mail', continuation=CONTEXT,
+        )
+        await pool.execute("UPDATE credential_requests SET status='fulfilled',credential_id=$2 WHERE id=$1::uuid", row.id, cid)
+        expected = 'fulfilled'
+    elif link_kind == 'credential_policy':
+        await policy.await_human_review(str(cid), USER, CONTEXT)
+        await policy.replace_from_human(str(cid), USER, [], 0)
+        expected = 'reviewed'
+    else:
+        await policy.tighten(str(cid), USER, ['automation-gmail.send_email_message'])
+        approval = await policy.admit(credential_id=str(cid), user_id=USER,
+            node_type='automation-gmail', operation='send_email_message', arguments={'to': 'recipient@example.test'},
+            conversation_id=f'coordinator:{USER}', continuation=CONTEXT)
+        await policy.decide_from_human(str(approval['id']), USER, 'approved')
+        expected = 'approved'
+    # Simulate a process stopping immediately after commit: no route dispatched.
+    assert await pool.fetchval('SELECT count(*) FROM local_cron_schedules') == 0
+    await coordinator_dispatch.reconcile(pool)
+    schedules = await LocalScheduleRepo(pool).list(user_id=USER, target_kind='coordinator_wakeup')
+    assert len(schedules) == 1
+    event = await repo.get(schedules[0]['payload']['event_id'])
+    seen = []
+
+    class ResumedAgent:
+        @classmethod
+        async def create(cls, **kwargs):
+            self = cls()
+            self.kwargs = kwargs
+            assert kwargs['conversation_id'] == f'coordinator:{USER}'
+            assert kwargs['enable_persistence']
+            return self
+
+        async def __call__(self, message):
+            payload = json.loads(message['input_items'][0]['content'].split('\n', 1)[1])
+            assert payload['original_request'] == CONTEXT['request']
+            assert payload['outcome']['status'] == expected
+            seen.append(payload)
+            await self.kwargs['emit_message'](ChatMessageEvent(message='I have the result and can continue.', finished=True))
+
+        async def cleanup(self):
+            pass
+
+    monkeypatch.setattr(agent, 'Agent', ResumedAgent)
+    phone = AsyncMock(return_value=('sent', None))
+    monkeypatch.setattr(wakeups, 'deliver_phone', phone)
+    monkeypatch.setattr(wakeups, 'emit_notification', AsyncMock())
+    assert await wakeups.process_event(pool, event)
+    assert await wakeups.process_event(pool, await repo.get(event['id']))  # Duplicate scheduler delivery.
+    assert len(seen) == 1
+    phone.assert_awaited_once()
+    assert phone.call_args.args[2] == 'I have the result and can continue.'
+    assert (await repo.get(event['id']))['status'] == 'done'
+    await pool.execute('DELETE FROM credential_requests WHERE requester_id=$1::uuid', USER)
+    await pool.execute('DELETE FROM credentials WHERE id=$1', cid)

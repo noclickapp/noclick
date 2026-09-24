@@ -39,6 +39,13 @@ const view = (value = state, onSave = vi.fn()) =>
     );
 
 describe('credential approval rules', () => {
+    it('lets a requested review finish without changing its rules', () => {
+        const save = vi.fn();
+        view({ ...state, review_pending: true, approval_operations: ['gmail.send'] }, save);
+        fireEvent.click(screen.getByRole('button', { name: 'Confirm rules' }));
+        expect(save).toHaveBeenCalledWith(['gmail.send']);
+    });
+
     it('saves only the chosen operations, after an explicit human save', () => {
         const save = vi.fn();
         view(state, save);

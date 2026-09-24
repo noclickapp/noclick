@@ -549,7 +549,7 @@ class CoordinatorTools:
 
     async def request_phone_number(self, purpose: str, phone_number=None):
         from utils.phone_purchase import PhonePurchase
-        return await PhonePurchase(self.pool, self.user_id).create(purpose, phone_number)
+        return await PhonePurchase(self.pool, self.user_id).create(purpose, phone_number, continuation=self.continuation)
 
     async def request_build(
         self, instructions: Optional[str] = None, workflow_id: Optional[str] = None, name: Optional[str] = None,

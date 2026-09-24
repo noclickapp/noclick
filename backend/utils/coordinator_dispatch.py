@@ -35,6 +35,8 @@ async def dispatch_event(pool, event):
 
 
 async def _register_event(pool, event):
+    if event["status"] == "waiting":
+        return False  # Link creation is not a completion or a scheduled model turn.
     if event["status"] in ("done", "skipped"):
         return True
     if not scheduler.is_cron_scheduler_enabled():
@@ -66,9 +68,11 @@ async def _register_event(pool, event):
 async def reconcile(pool):
     from repositories.coordinator_wakeups import CoordinatorWakeupRepo
     from utils.media_generation import poll_video_jobs
+    from repositories.coordinator_links import CoordinatorLinkRepo
 
     # The coordinator's minute: advance its media jobs, then its inbox.
     await poll_video_jobs(pool)
+    await CoordinatorLinkRepo(pool).expire()
     repo = CoordinatorWakeupRepo(pool)
     await repo.reap_stalled()
     await repo.prune()

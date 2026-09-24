@@ -20,6 +20,9 @@ def outcome_summary(event):
         return "Scheduled reminder: " + payload["message"]
     if event["source"] == "credential_approval":
         return f"Credential operation {payload['operation']} was {payload['status']} by its owner."
+    if event["source"] == "link":
+        what = "Connection request" if payload["kind"] == "credential_request" else "Credential permissions review"
+        return f"{what}: {payload['status']}."
     if event["source"] == "signal":
         if payload.get("kind") == "agent_message":
             return f"An agent in “{payload.get('workflow_name')}” messaged you: {payload.get('message', '')[:500]}"

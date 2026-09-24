@@ -49,10 +49,12 @@ async def policy(credential_id: UUID, user_id=Depends(human)):
         org_id = await get_user_org_context(conn, user_id)
     try:
         row = await CredentialApprovalRepo(pool).policy(str(credential_id), user_id, org_id)
+        from repositories.coordinator_links import CoordinatorLinkRepo
         return {"id": str(row["id"]), "name": row["name"], "credential_type": row["credential_type"],
                 "operations": operation_catalog(row["credential_type"]),
                 "approval_operations": row["approval_operations"], "revision": row["approval_revision"],
-                "can_edit": str(row["owner_id"]) == user_id}
+                "can_edit": str(row["owner_id"]) == user_id,
+                "review_pending": await CoordinatorLinkRepo(pool).pending("credential_policy", credential_id, user_id)}
     except PermissionError as exc:
         raise HTTPException(404, str(exc)) from None
 
@@ -69,6 +71,8 @@ async def save_policy(credential_id: UUID, body: PolicyChange, user_id=Depends(h
         if set(body.operations) - valid - set(row["approval_operations"]):
             raise ValueError("Unknown operation in approval policy.")
         revision = await repo.replace_from_human(str(credential_id), user_id, body.operations, body.expected_revision)
+        from utils.coordinator_links import dispatch_link
+        dispatch_link(get_native_pool(), "credential_policy", credential_id)
         return {"revision": revision, "approval_operations": sorted(set(body.operations))}
     except PermissionError as exc:
         raise HTTPException(403, str(exc)) from None

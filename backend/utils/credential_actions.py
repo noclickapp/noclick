@@ -20,10 +20,14 @@ def credential_tool_params(tool):
              {"query": {"type": "string"}}, ["query"]),
         tool("connect_credential", "Create a secure NoClick link to connect an account without creating a workflow. "
              "Return the link to the user; never ask for tokens or verification codes in chat. "
+             "Completion wakes you automatically; do not ask for a confirmation message in chat. "
              "Use find_connections for credential_type. Paid phone numbers use request_phone_number instead.",
              {"credential_type": {"type": "string"}, "message": {"type": "string", "maxLength": 1000}}, ["credential_type"]),
         tool("credential_connection_status", "Check whether a standalone connection was completed. Returns its credential ID when ready.",
              {"request_id": {"type": "string"}}, ["request_id"]),
+        tool("request_credential_permissions", "Send the owner a link to review this connection's approval rules. "
+             "Only the human can unlock tools. Saving the review wakes you automatically; inspect the result before continuing.",
+             identity, ["credential_id"]),
         tool("credential_operations", "Discover this connection's available operations. Pass node_type and operation to get "
              "the complete argument schema and optional lookup schema before calling it. Provider OAuth scopes may require reconnection.",
              {**operation, "query": {"type": "string"}, "offset": {"type": "integer", "minimum": 0}}, ["credential_id"]),
@@ -91,9 +95,11 @@ class CredentialActions:
         row = await self.repo.upsert_credential_request(
             requester_id=self.user_id, target_email="", credential_type=credential_type,
             message=(message or "Connect this account for your coordinator.")[:1000], reuse_pending=True,
+            continuation=self.continuation,
         )
         return {"status": row.status, "request_id": row.id,
-                "url": credential_provide_url(row.token, get_frontend_url())}
+                "url": credential_provide_url(row.token, get_frontend_url()),
+                "auto_resume": self.continuation is not None}
 
     async def credential_connection_status(self, request_id):
         row = await self.repo.connection_request_status(str(UUID(request_id)), self.user_id)
@@ -135,8 +141,6 @@ class CredentialActions:
 
     async def require_credential_approval(self, credential_id, operations):
         from repositories.credential_approvals import CredentialApprovalRepo
-        from mcp_adapter.auth.endpoints import get_frontend_url
-
         row = await self._credential(credential_id)
         allowed = {op["key"] for op in operation_catalog(row.credential_type)} | {"*"}
         if not operations or set(operations) - allowed:
@@ -144,8 +148,18 @@ class CredentialActions:
         restrictions = await CredentialApprovalRepo(self.pool).tighten(
             row.id, self.user_id, operations,
         )
-        return {"approval_operations": restrictions,
-                "settings_url": f"{get_frontend_url().rstrip('/')}/credential/permissions/{row.id}"}
+        # Tightening has already completed; it is not a pending human request.
+        # Only the explicit review tool returns a link and registers a continuation.
+        return {"approval_operations": restrictions}
+
+    async def request_credential_permissions(self, credential_id):
+        from repositories.credential_approvals import CredentialApprovalRepo
+        from mcp_adapter.auth.endpoints import get_frontend_url
+
+        row = await self._credential(credential_id)
+        await CredentialApprovalRepo(self.pool).await_human_review(row.id, self.user_id, self.continuation)
+        return {"settings_url": f"{get_frontend_url().rstrip('/')}/credential/permissions/{row.id}",
+                "auto_resume": self.continuation is not None}
 
     async def lookup_credential_options(self, credential_id, node_type, operation, field, context=None,
                                         search=None, page_token=None):

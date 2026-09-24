@@ -680,6 +680,7 @@ class CredentialsRepo:
         credential_type: str,
         message: Optional[str],
         reuse_pending: bool = False,
+        continuation: Optional[dict] = None,
     ) -> Optional[CredentialRequestRow]:
         """Insert-or-refresh a credential request. On conflict, rotates the
         token, resets expiry, and re-opens the request. Returns the shape
@@ -723,6 +724,12 @@ class CredentialsRepo:
                     row = await conn.fetchrow(
                         self._UPSERT_REQUEST_SQL, requester_id, target_email, credential_type, message,
                     )
+                if row and continuation is not None:
+                    from repositories.coordinator_links import CoordinatorLinkRepo
+                    await CoordinatorLinkRepo.wait(
+                        conn, user_id=requester_id, kind="credential_request", resource_id=row['id'],
+                        context=continuation, expires_at=row['expires_at'],
+                    )
         if not row:
             return None
         return CredentialRequestRow(
@@ -737,6 +744,30 @@ class CredentialsRepo:
             fulfilled_at=row['fulfilled_at'],
             token=row['token'],
         )
+
+    async def store_provided_credential(self, *, request_id, request_token, owner_id, requester_id,
+                                        organization_id, name, credential_type, encrypted, metadata):
+        """Publish the credential, its sharing and the link result as one commit."""
+        async with self._pool.acquire() as conn, conn.transaction():
+            credential_id = await conn.fetchval(
+                "INSERT INTO credentials(owner_id,organization_id,name,credential_type,credential,metadata) "
+                "VALUES($1::uuid,$2::uuid,$3,$4,$5,$6) RETURNING id",
+                owner_id, organization_id, name, credential_type, encrypted, metadata,
+            )
+            claimed = await conn.fetchval(
+                "UPDATE credential_requests SET status='fulfilled',credential_id=$1,fulfilled_at=now() "
+                "WHERE id=$2::uuid AND token=$3 AND status='pending' AND expires_at>now() RETURNING id",
+                credential_id, request_id, request_token,
+            )
+            if not claimed:
+                raise ValueError("This credential request has already been fulfilled")
+            if owner_id != requester_id:
+                await conn.execute(
+                    "INSERT INTO resource_shares(resource_type,resource_id,target_type,target_user_id,permission,shared_by) "
+                    "VALUES('credential',$1,'user',$2::uuid,'edit',$3::uuid) ON CONFLICT DO NOTHING",
+                    credential_id, requester_id, owner_id,
+                )
+            return str(credential_id)
 
     async def connection_request_status(self, request_id: str, user_id: str):
         from datetime import timezone
