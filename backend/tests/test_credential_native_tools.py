@@ -18,6 +18,14 @@ from tests.test_credential_approvals import USER, OTHER, OP, approval_db  # noqa
 pytestmark = pytest.mark.asyncio
 
 
+@pytest.fixture(autouse=True)
+async def use_test_database(approval_db, monkeypatch):
+    # Provider execution also reads account tier for email branding. Every
+    # database read must use this test's real pool, not a local dev database
+    # or an uninitialized app-lifespan pool on CI.
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: approval_db[0])
+
+
 def coordinator(pool):
     return CoordinatorTools(pool=pool, sio=None, user_id=USER, organization_id=None,
                             conversation_id=f"coordinator:{USER}")
