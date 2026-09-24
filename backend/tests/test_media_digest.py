@@ -181,6 +181,30 @@ def test_gate_raise_means_zero_spend():
     tracker.track_usage_event.assert_not_awaited()
 
 
+@pytest.mark.asyncio
+async def test_video_uses_bounded_probe_and_bills_provider_cost(monkeypatch):
+    tracker = _tracker()
+    model = AsyncMock(return_value=_response("At 0:02, the sign reads Main Street."))
+    duration = AsyncMock(return_value=10.0)
+    monkeypatch.setattr("utils.video_probe.video_duration", duration)
+    ref = md.MediaRef(kind="video", mime_type="video/mp4")
+    with patch("billing.usage_tracker.usage_tracker", tracker), patch("litellm.acompletion", model):
+        digest = await md.digester_for("video")(ref, b"video", md.DigestContext(billing=_billing()))
+        assert digest.method == "video_description" and "Main Street" in digest.text
+        assert model.await_args.kwargs["messages"][0]["content"][1]["video_url"]["url"] == "data:video/mp4;base64,dmlkZW8="
+        assert tracker.track_usage_event.await_args.args[0].usage_subtype == "extraction/ai_video_digest"
+        model.reset_mock()
+        duration.return_value = md.MAX_VIDEO_SECONDS + 1
+        with pytest.raises(md.DigestError, match="two-minute"):
+            await md.digester_for("video")(ref, b"video", md.DigestContext(billing=_billing()))
+        model.assert_not_awaited()
+        duration.return_value = 10
+        tracker.enforce_credit_gate.side_effect = InsufficientBalanceError("Out of credits")
+        with pytest.raises(InsufficientBalanceError):
+            await md.digester_for("video")(ref, b"video", md.DigestContext(billing=_billing()))
+        model.assert_not_awaited()
+
+
 def test_unreported_cost_still_lands_a_zero_row(caplog):
     tracker = _tracker()
     with patch("billing.usage_tracker.usage_tracker", tracker), \

@@ -27,8 +27,6 @@ Total Operations: 8
 import asyncio
 import json
 import logging
-import math
-import tempfile
 import time
 from typing import Any, Dict, Literal, Optional, Union, Annotated
 
@@ -1123,40 +1121,9 @@ class TikTokNode(WorkflowNode):
 
     @staticmethod
     async def _video_duration(data):
-        if not data:
-            raise ValueError("Video is empty")
-        # Probe downloaded bytes, never let ffprobe fetch arbitrary network URLs.
-        with tempfile.NamedTemporaryFile(suffix=".video") as media:
-            media.write(data)
-            media.flush()
-            process = await asyncio.create_subprocess_exec(
-                "ffprobe",
-                "-v",
-                "error",
-                "-protocol_whitelist",
-                "file,pipe",
-                "-show_entries",
-                "format=duration",
-                "-of",
-                "json",
-                media.name,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.DEVNULL,
-            )
-            try:
-                stdout, _ = await asyncio.wait_for(process.communicate(), timeout=30)
-            except BaseException:
-                if process.returncode is None:
-                    process.kill()
-                await process.wait()
-                raise
-        try:
-            duration = float(json.loads(stdout)["format"]["duration"])
-        except (ValueError, KeyError, TypeError):
-            raise ValueError("Could not determine video duration") from None
-        if process.returncode or not math.isfinite(duration) or duration <= 0:
-            raise ValueError("Invalid video duration")
-        return duration
+        from utils.video_probe import video_duration
+
+        return await video_duration(data)
 
     async def _direct_post_result(self, init, publish_id, access_token):
         result = {
