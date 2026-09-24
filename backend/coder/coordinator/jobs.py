@@ -10,6 +10,9 @@ def job_view(row: dict) -> dict:
     if row["kind"] == "build":
         from coder.workflow.requests import build_view
         return build_view(row)
+    if row["kind"] == "video":
+        from utils.media_generation import video_view
+        return video_view(row)
     from coder.coordinator.tasks import agent_view
     return agent_view(row)
 

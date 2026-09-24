@@ -6,6 +6,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from billing.usage_tracker import usage_tracker
+
 from tests.mocks.mock_asyncpg import MockNativePool
 from utils import capabilities
 from utils.capabilities import PHONE_NUMBERS, provide
@@ -30,9 +32,10 @@ def seams(monkeypatch):
     numbers.release = AsyncMock()
     numbers.search = AsyncMock(return_value=[{"phone_number": "+15674833618", "locality": "Lucas", "region": "OH", "capabilities": ["voice"]}])
     provide(PHONE_NUMBERS, numbers)
+    monkeypatch.setattr("billing.plan_limits.registered_plan_limits", lambda: object())  # plans exist (hosted)
     monkeypatch.setattr("billing.plan_limits.get_effective_tier", AsyncMock(side_effect=lambda conn, uid, tier: tier))
-    monkeypatch.setattr(h.usage_tracker, "resolve_billing_user_id", AsyncMock(return_value=USER))
-    monkeypatch.setattr(h.usage_tracker, "fetch_credit_remaining", AsyncMock(return_value=40.0))
+    monkeypatch.setattr(usage_tracker, "resolve_billing_user_id", AsyncMock(return_value=USER))
+    monkeypatch.setattr(usage_tracker, "fetch_credit_remaining", AsyncMock(return_value=40.0))
     created = AsyncMock(return_value=({"id": "cred-1"}, None))
     charge = AsyncMock()
     monkeypatch.setattr(h, "create_credential_with_limit_check", created)
@@ -56,7 +59,7 @@ async def test_buy_mints_credential_and_charge_together(seams):
 
 async def test_the_first_month_must_be_affordable_before_anything_is_bought(seams):
     numbers, created, _, enc = seams
-    h.usage_tracker.fetch_credit_remaining.return_value = 3.0
+    usage_tracker.fetch_credit_remaining.return_value = 3.0
     with pytest.raises(h.PhoneNumberError) as exc:
         await h.buy_number_for_user(MockNativePool(), user_id=USER, user_tier="plus", e164="+15674833618", credential_name=None, encryption=enc)
     assert exc.value.kind == "credits" and "15 credits" in str(exc.value)

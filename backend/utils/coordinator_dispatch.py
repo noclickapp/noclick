@@ -65,6 +65,10 @@ async def _register_event(pool, event):
 
 async def reconcile(pool):
     from repositories.coordinator_wakeups import CoordinatorWakeupRepo
+    from utils.media_generation import poll_video_jobs
+
+    # The coordinator's minute: advance its media jobs, then its inbox.
+    await poll_video_jobs(pool)
     repo = CoordinatorWakeupRepo(pool)
     await repo.reap_stalled()
     await repo.prune()

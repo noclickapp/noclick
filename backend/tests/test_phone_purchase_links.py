@@ -8,6 +8,7 @@ import httpx
 import pytest
 from fastapi import FastAPI, HTTPException
 
+from billing.usage_tracker import usage_tracker
 from repositories.credentials import CredentialsRepo
 from utils import capabilities, phone_purchase as purchase, phone_purchase_routes as routes
 from utils.phone_numbers import PhonePurchaseRejected
@@ -39,8 +40,8 @@ async def phone_db(postgres_db, postgres_container, monkeypatch):
     monkeypatch.setattr("billing.plan_limits.get_effective_tier", AsyncMock(return_value="pro"))
     monkeypatch.setattr("billing.plan_limits.check_credential_limit", AsyncMock(return_value=(True, None)))
     monkeypatch.setattr("repositories.credentials.log_activity_background", lambda *a, **k: None)
-    monkeypatch.setattr(handler.usage_tracker, "resolve_billing_user_id", AsyncMock(return_value=USER))
-    monkeypatch.setattr(handler.usage_tracker, "fetch_credit_remaining", AsyncMock(return_value=100))
+    monkeypatch.setattr(usage_tracker, "resolve_billing_user_id", AsyncMock(return_value=USER))
+    monkeypatch.setattr(usage_tracker, "fetch_credit_remaining", AsyncMock(return_value=100))
     monkeypatch.setattr(handler, "start_connection_charge", AsyncMock())
     monkeypatch.setattr(purchase, "get_encryption", lambda: MagicMock(encrypt_credential=lambda blob: "test-encrypted"))
     repo = CredentialsRepo(pool)

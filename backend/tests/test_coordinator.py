@@ -527,3 +527,21 @@ async def test_message_owner_exists_only_where_the_instance_can_deliver_one(own_
     assert out["success"] is True and out["channel"] == "whatsapp"
     send.assert_awaited_once_with(t.pool, USER, "Your link", link="https://noclick.com/b/abc")
     assert (await t.execute("message_owner", {"text": "   "}))["success"] is False
+
+
+async def test_media_tools_answer_the_model_with_results_or_the_gate_reason(monkeypatch):
+    from billing.gates import GateDenied
+
+    monkeypatch.setattr(coordinator_tools, "generate_image", AsyncMock(return_value={
+        "model": "openai/gpt-image-2.5-sunburst", "images": [{"url": "https://f.example/image-1.png"}]}))
+    made = await tools().execute("generate_image", {"prompt": "a fern"})
+    assert made == {"success": True, "model": "openai/gpt-image-2.5-sunburst", "images": ["https://f.example/image-1.png"]}
+
+    monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(
+        side_effect=GateDenied("plan", "Video generation is available on the Plus and Pro plans.")))
+    refused = await tools().execute("generate_video", {"prompt": "waves"})
+    assert refused == {"success": False, "error": "Video generation is available on the Plus and Pro plans."}
+    monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(return_value={"job_id": "j1", "projected_credits": 9.6}))
+    started = await tools().execute("generate_video", {"prompt": "waves", "seconds": 8})
+    assert started["success"] is True and started["job_id"] == "j1" and "woken" in started["next"]
+    assert coordinator_tools.start_video.await_args.kwargs["continuation"] is None

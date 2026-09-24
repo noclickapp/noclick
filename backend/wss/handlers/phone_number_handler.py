@@ -11,9 +11,9 @@ from typing import Any, Awaitable, Callable, Dict, Optional
 
 from billing.markup import CREDITS_PER_DOLLAR
 from billing.recurring import start_connection_charge
-from billing.usage_tracker import usage_tracker
 from nodes.phone_node import PHONE_NUMBER_CREDENTIAL_TYPE, PHONE_NUMBER_MONTHLY_CREDITS
 from repositories.credentials import create_credential_with_limit_check
+from billing.gates import GateDenied, check_product
 from utils.capabilities import PHONE_NUMBERS, capability
 from utils.database_pool import DatabasePoolMixin
 from utils.encryption import get_encryption
@@ -32,7 +32,6 @@ CHARGE_TYPE = "phone_number"
 COUNTRIES = ("US",)
 # A number is a paid-plan feature: the monthly charge would eat a free plan's
 # whole allowance, and the free tier's daily cap could not cover its calls.
-NUMBER_TIERS = ("plus", "pro", "enterprise")
 # The provider matches a pattern of digits, letters (keypad-mapped) and * for any digit.
 CONTAINS_PATTERN = re.compile(r"^[0-9A-Z*]{1,10}$")
 # US toll-free prefixes; everything else a local search returns is a local number.
@@ -125,20 +124,19 @@ async def search_numbers_for_user(pool, *, user_id, user_tier, country="US", are
     contains = (contains or "").strip().upper().replace(" ", "").replace("-", "") or None
     if contains and not CONTAINS_PATTERN.fullmatch(contains):
         raise PhoneNumberError("A pattern is up to 10 digits, letters or * wildcards.", "pattern")
-    if not await number_tier_ok(pool, user_id, user_tier):
-        raise PhoneNumberError("Phone numbers are available on the Plus and Pro plans.", "plan")
+    await _gate(pool, user_id, user_tier)
     numbers = await capability(PHONE_NUMBERS).search(country, area_code, limit, contains=contains)
     return PhoneNumberSearchResponse(numbers=numbers, monthly_credits=PHONE_NUMBER_MONTHLY_CREDITS).model_dump()
 
 
-async def number_tier_ok(pool, user_id: str, user_tier: str) -> bool:
-    """Whether this account may hold a number: a paid plan of its own, or a
-    paid org it owns (the same effective tier that funds its credits)."""
-    from billing.plan_limits import get_effective_tier
-
-    async with pool.acquire() as conn:
-        effective = await get_effective_tier(conn, user_id, user_tier)
-    return effective in NUMBER_TIERS
+async def _gate(pool, user_id: str, user_tier: str, *, projected_credits: Optional[float] = None) -> None:
+    """A paid plan of its own or a paid org it owns (the effective tier that
+    funds its credits), and for a purchase the first month's credits."""
+    try:
+        await check_product(pool, "phone_numbers", user_id=user_id, personal_tier=user_tier,
+                            projected_credits=projected_credits)
+    except GateDenied as exc:
+        raise PhoneNumberError(str(exc), exc.kind) from None
 
 
 async def buy_number_for_user(pool, *, user_id: str, user_tier: str, e164: str,
@@ -152,15 +150,7 @@ async def buy_number_for_user(pool, *, user_id: str, user_tier: str, e164: str,
     numbers = capability(PHONE_NUMBERS)
     if numbers is None:
         raise PhoneNumberError("Phone numbers cannot be bought on this instance.", "unavailable")
-    if not await number_tier_ok(pool, user_id, user_tier):
-        raise PhoneNumberError("Phone numbers are available on the Plus and Pro plans.", "plan")
-    billing_user = await usage_tracker.resolve_billing_user_id(user_id)
-    remaining = await usage_tracker.fetch_credit_remaining(billing_user)
-    if remaining is not None and remaining < PHONE_NUMBER_MONTHLY_CREDITS:
-        raise PhoneNumberError(
-            f"Buying a number charges {PHONE_NUMBER_MONTHLY_CREDITS} credits for its first month; "
-            f"you have {remaining:.1f}.", "credits",
-        )
+    await _gate(pool, user_id, user_tier, projected_credits=PHONE_NUMBER_MONTHLY_CREDITS)
     if not is_local_number(e164):
         # Only the provider's local numbers are offered (the search only asks
         # for them); toll-free and short codes cost several times more.

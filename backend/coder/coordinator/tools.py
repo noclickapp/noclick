@@ -19,7 +19,11 @@ from repositories.workflow import WorkflowRepo
 from utils.coordinator_memory import CoordinatorMemoryWrite
 from utils.builder_request import PublicationOptions
 from utils.builder_bridge import bridge_url, create_bridge_link_for_ask
+from billing.gates import GateDenied
 from utils.account_link import AccountLink, AccountLinkError
+from utils.media_generation import (
+    DEFAULT_VIDEO_MODEL, DEFAULT_VIDEO_RESOLUTION, DEFAULT_VIDEO_SECONDS, MediaError, generate_image, start_video,
+)
 from utils.capabilities import INTERFACE_PUBLISH, OWNER_MESSAGE, PHONE_NUMBERS, capability
 from utils.tool_call_log import record_tool_call
 
@@ -71,6 +75,24 @@ def coordinator_tool_params(*, include_owner_message: bool = False, include_publ
              {"query": {"type": "string", "minLength": 1, "maxLength": 2000},
               "num_results": {"type": "integer", "minimum": 1, "maximum": 8},
               "domains": {"type": "array", "items": {"type": "string"}, "maxItems": 10}}, ["query"]),
+        tool("generate_image", "Make an image from a description and keep it as an account file; billed in credits like "
+             "any model call. Use the default model unless the owner explicitly names another OpenRouter image model. "
+             "Show each result with Markdown image syntax, ![short caption](url), so every channel can display it.",
+             {"prompt": {"type": "string", "minLength": 1, "maxLength": 4000},
+              "model": {"type": "string", "description": "Only when the owner asked for a specific model."},
+              "aspect_ratio": {"type": "string", "enum": ["1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3"]}},
+             ["prompt"]),
+        tool("generate_video", "Start a video from a description (Plus and Pro plans; checked against the projected cost "
+             "before anything runs). It takes a few minutes: you are woken with the result, so tell the owner it's on "
+             "its way and don't wait for it. Show the finished video with ![short caption](url). Defaults: "
+             f"{DEFAULT_VIDEO_MODEL}, {DEFAULT_VIDEO_SECONDS}s, {DEFAULT_VIDEO_RESOLUTION}, with sound; change them only when asked.",
+             {"prompt": {"type": "string", "minLength": 1, "maxLength": 4000},
+              "model": {"type": "string", "description": "Only when the owner asked for a specific OpenRouter video model."},
+              "seconds": {"type": "integer", "minimum": 2, "maximum": 20},
+              "resolution": {"type": "string", "enum": ["480p", "720p", "1080p"]},
+              "aspect_ratio": {"type": "string", "enum": ["16:9", "9:16", "1:1"]},
+              "audio": {"type": "boolean"}},
+             ["prompt"]),
         tool("search_memories", "Find durable memories by keywords, or list their retrieval headers. "
              "Search includes full bodies but returns only descriptions; read_memory loads the content.",
              {"query": {"type": "string"}, "offset": {"type": "integer", "minimum": 0}}),
@@ -126,11 +148,11 @@ def coordinator_tool_params(*, include_owner_message: bool = False, include_publ
                                  "action=unpublish removes the public site. Rename/unpublish require workflow_id and no instructions. "
                                  "Omit node_id only when the target is unambiguous."}}
                  if include_publishing else {})}),
-        tool("job_status", "Read the jobs you started — builds and agent requests — with their status and actual "
-             "results. Builds also show their phase, questions with answer links, published URLs and delivery "
-             "outcomes; agent jobs show the agent's reply. Pass job_id for one job or kind to narrow the list; "
-             "otherwise lists active jobs first, then recent ones.",
-             {"job_id": {"type": "string"}, "kind": {"type": "string", "enum": ["build", "agent"]}}),
+        tool("job_status", "Read the jobs you started — builds, agent requests and videos — with their status and "
+             "actual results. Builds also show their phase, questions with answer links, published URLs and delivery "
+             "outcomes; agent jobs show the agent's reply; videos show the file once ready. Pass job_id for one job "
+             "or kind to narrow the list; otherwise lists active jobs first, then recent ones.",
+             {"job_id": {"type": "string"}, "kind": {"type": "string", "enum": ["build", "agent", "video"]}}),
         tool("cancel_job", "Cancel a build before publishing starts. A build already running may finish, but no "
              "later steps will run. Agent requests cannot be cancelled once sent.", {"job_id": {"type": "string"}},
              ["job_id"]),
@@ -212,6 +234,8 @@ class CoordinatorTools:
             "update_alarm": self.update_alarm,
             "cancel_alarm": self.cancel_alarm,
             "web_search": self.web_search,
+            "generate_image": self.generate_image,
+            "generate_video": self.generate_video,
             "search_memories": self.search_memories,
             "read_memory": self.read_memory,
             "save_memory": self.save_memory,
@@ -272,6 +296,26 @@ class CoordinatorTools:
             duration_ms=(time.monotonic() - started) * 1000,
         )
         return result
+
+    async def generate_image(self, prompt: str, model: Optional[str] = None,
+                             aspect_ratio: Optional[str] = None) -> Dict[str, Any]:
+        try:
+            made = await generate_image(self.pool, user_id=self.user_id, organization_id=self.organization_id,
+                                        prompt=prompt, model=model, aspect_ratio=aspect_ratio)
+        except (GateDenied, MediaError) as exc:
+            return {"success": False, "error": str(exc)}
+        return {"success": True, "model": made["model"], "images": [i["url"] for i in made["images"]]}
+
+    async def generate_video(self, prompt: str, model: Optional[str] = None, seconds: Optional[int] = None,
+                             resolution: Optional[str] = None, aspect_ratio: Optional[str] = None,
+                             audio: bool = True) -> Dict[str, Any]:
+        try:
+            job = await start_video(self.pool, user_id=self.user_id, organization_id=self.organization_id,
+                                    prompt=prompt, model=model, seconds=seconds, resolution=resolution,
+                                    aspect_ratio=aspect_ratio, audio=audio, continuation=self.continuation)
+        except (GateDenied, MediaError) as exc:
+            return {"success": False, "error": str(exc)}
+        return {"success": True, **job, "next": "It is rendering; you'll be woken with the video when it's done."}
 
     async def web_search(self, query: str, num_results: int = 5, domains: Optional[List[str]] = None):
         from nodes.core.run_op import run_node_operation
