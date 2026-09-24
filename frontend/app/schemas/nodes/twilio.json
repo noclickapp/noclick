@@ -1206,6 +1206,171 @@
       "title": "Make Call",
       "type": "object"
     },
+    "TwilioOnCallConfig": {
+      "description": "Trigger: your Twilio number is called. The wired agent answers, live,\non the same voice stack as a number bought inside NoClick.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_call",
+          "default": "on_call",
+          "title": "On Incoming Call",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Incoming Call",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "answer calls",
+            "phone call",
+            "voice agent",
+            "receive call",
+            "inbound call",
+            "ivr"
+          ]
+        },
+        "phone_number_sid": {
+          "description": "The Twilio number that rings this agent (an Account SID + Auth Token credential is needed).",
+          "title": "Phone Number",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "phone_number_sid",
+            "placeholder": "Select a phone number...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "twilio_phone_number"
+        },
+        "greeting": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the agent says when it picks up. Leave empty for a plain hello.",
+          "title": "Greeting"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set up automatically once the number is picked: calls to it reach this workflow.",
+          "readOnly": true,
+          "title": "Call routing",
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "phone_number_sid"
+      ],
+      "title": "On Incoming Call",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "TwilioOnIncomingSmsConfig": {
       "description": "Trigger: fires when an SMS is received by a Twilio phone number.",
       "properties": {
@@ -1332,6 +1497,59 @@
       "title": "TwilioOnIncomingSmsConfig",
       "type": "object",
       "x-requires-webhook": true
+    },
+    "TwilioPlaceCallConfig": {
+      "description": "Dial a number from your Twilio number and hold the whole conversation yourself: the agent behind this tool is the voice on the call and pursues the goal end to end (keypad menus included). Returns at once while the call runs; when it ends, the full transcript arrives in this conversation as a new message \u2014 report the outcome then, never redial.",
+      "properties": {
+        "operation": {
+          "const": "place_call",
+          "default": "place_call",
+          "title": "Place an Agent Call",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Call",
+          "x-display-name": "Place an Agent Call",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "ai call",
+            "agent call",
+            "voice agent",
+            "dial",
+            "outbound call",
+            "call someone"
+          ]
+        },
+        "phone_number_sid": {
+          "description": "The Twilio number to call from (an Account SID + Auth Token credential is needed).",
+          "title": "From Number",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "phone_number_sid",
+            "placeholder": "Select a phone number...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "twilio_phone_number"
+        },
+        "to_number": {
+          "description": "The number to call, in international format (+1\u2026).",
+          "title": "To",
+          "type": "string"
+        },
+        "goal": {
+          "description": "What this call should achieve, in plain words \u2014 who to ask for, what to find out or arrange, and any facts the voice may state. Everything the voice knows about the call is in here.",
+          "title": "Goal",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone_number_sid",
+        "to_number",
+        "goal"
+      ],
+      "title": "Place an Agent Call",
+      "type": "object"
     },
     "TwilioPurchasePhoneNumberConfig": {
       "description": "Purchase an available phone number",
@@ -1969,7 +2187,9 @@
           "list_owned_phone_numbers": "#/$defs/TwilioListIncomingNumbersConfig",
           "lookup_phone_number_info": "#/$defs/TwilioLookupPhoneNumberConfig",
           "make_outbound_call": "#/$defs/TwilioMakeCallConfig",
+          "on_call": "#/$defs/TwilioOnCallConfig",
           "on_incoming_sms": "#/$defs/TwilioOnIncomingSmsConfig",
+          "place_call": "#/$defs/TwilioPlaceCallConfig",
           "purchase_phone_number": "#/$defs/TwilioPurchasePhoneNumberConfig",
           "release_phone_number": "#/$defs/TwilioReleasePhoneNumberConfig",
           "search_available_phone_numbers": "#/$defs/TwilioSearchAvailableNumbersConfig",
@@ -1990,6 +2210,9 @@
           "$ref": "#/$defs/TwilioOnIncomingSmsConfig"
         },
         {
+          "$ref": "#/$defs/TwilioOnCallConfig"
+        },
+        {
           "$ref": "#/$defs/TwilioSendSMSConfig"
         },
         {
@@ -2006,6 +2229,9 @@
         },
         {
           "$ref": "#/$defs/TwilioGetWhatsAppMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioPlaceCallConfig"
         },
         {
           "$ref": "#/$defs/TwilioMakeCallConfig"
@@ -2122,7 +2348,9 @@
     "Search available phone numbers in area code 415",
     "Verify a 2FA code submitted by the customer",
     "Send a transactional email via SendGrid to order@example.com",
-    "Create a conversation and add multiple participants"
+    "Create a conversation and add multiple participants",
+    "Answer calls to my Twilio number with this agent",
+    "Let the agent call the customer from my Twilio number"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "x-agent-tool-provider": true

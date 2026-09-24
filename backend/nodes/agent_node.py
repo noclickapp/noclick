@@ -1077,6 +1077,14 @@ class AgentNode(WorkflowNode):
         Returns ``None`` when the run wasn't trigger-started, the trigger
         isn't wired to this agent, or the hook declines.
         """
+        from nodes.core.agent_events import delivered_event
+
+        # Delivered straight to this agent by the platform (a finished
+        # outbound call coming back to the agent that placed it) — the same
+        # shape a fired trigger yields, so everything below it is shared.
+        delivered = delivered_event(self.node_id, getattr(self, "_workflow_nodes", None))
+        if delivered is not None:
+            return delivered
         found = self._find_fired_trigger(inputs)
         if found is None:
             return None

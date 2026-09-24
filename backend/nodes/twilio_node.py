@@ -44,10 +44,14 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.agent_events import phone_call_event
+from nodes.core.call_routing import already_answers, number_holder
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import load_paginated_options
-from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
+from utils.capabilities import PHONE_CALLS, capability
 from utils.webhook_signatures import verify_twilio_signature
+from utils.twilio_verify import check_verification, start_verification
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +61,6 @@ logger = logging.getLogger(__name__)
 
 TWILIO_API_VERSION = "2010-04-01"
 TWILIO_API_BASE = "https://api.twilio.com"
-TWILIO_VERIFY_API_BASE = "https://verify.twilio.com/v2"
 TWILIO_CONVERSATIONS_API_BASE = "https://conversations.twilio.com/v1"
 TWILIO_LOOKUPS_API_BASE = "https://lookups.twilio.com/v2"
 SENDGRID_API_BASE = "https://api.sendgrid.com/v3"
@@ -117,18 +120,31 @@ def _twilio_incoming_numbers_page_url(
 # ============================================================================
 
 
-async def set_twilio_sms_webhook(
-    account_sid: str, auth_token: str, phone_number_sid: str, sms_url: str
+async def _set_twilio_number_webhook(
+    account_sid: str, auth_token: str, phone_number_sid: str, data: Dict[str, str]
 ) -> None:
-    """Point (or clear) a Twilio phone number's inbound-SMS webhook URL."""
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(
             f"{TWILIO_API_BASE}/{TWILIO_API_VERSION}/Accounts/{account_sid}"
             f"/IncomingPhoneNumbers/{phone_number_sid}.json",
             auth=(account_sid, auth_token),
-            data={"SmsUrl": sms_url, "SmsMethod": "POST"},
+            data=data,
         )
         response.raise_for_status()
+
+
+async def set_twilio_sms_webhook(
+    account_sid: str, auth_token: str, phone_number_sid: str, sms_url: str
+) -> None:
+    """Point (or clear) a Twilio phone number's inbound-SMS webhook URL."""
+    await _set_twilio_number_webhook(account_sid, auth_token, phone_number_sid, {"SmsUrl": sms_url, "SmsMethod": "POST"})
+
+
+async def set_twilio_voice_webhook(
+    account_sid: str, auth_token: str, phone_number_sid: str, voice_url: str
+) -> None:
+    """Point (or clear) a Twilio phone number's incoming-call webhook URL."""
+    await _set_twilio_number_webhook(account_sid, auth_token, phone_number_sid, {"VoiceUrl": voice_url, "VoiceMethod": "POST"})
 
 
 # ============================================================================
@@ -1526,10 +1542,90 @@ class TwilioOnIncomingSmsConfig(BaseModel):
     )
 
 
+_PHONE_NUMBER_PICKER = {
+    "x-dynamic-options": {
+        "field_name": "phone_number_sid",
+        "placeholder": "Select a phone number...",
+        "searchable": True,
+        "allow_custom": True,
+    },
+    "x-resource-type": "twilio_phone_number",
+}
+
+
+class TwilioOnCallConfig(WebhookTriggerConfigBase):
+    """Trigger: your Twilio number is called. The wired agent answers, live,
+    on the same voice stack as a number bought inside NoClick."""
+
+    model_config = ConfigDict(title="On Incoming Call")
+
+    operation: Literal["on_call"] = Field(
+        "on_call",
+        json_schema_extra={
+            "ui:hidden": True,
+            "x-category": None,
+            "x-is-trigger": True,
+            "x-display-name": "On Incoming Call",
+            "x-keywords": ["answer calls", "phone call", "voice agent", "receive call", "inbound call", "ivr"],
+        },
+        title="On Incoming Call",
+    )
+    phone_number_sid: str = Field(
+        ...,
+        title="Phone Number",
+        description="The Twilio number that rings this agent (an Account SID + Auth Token credential is needed).",
+        json_schema_extra=_PHONE_NUMBER_PICKER,
+    )
+    greeting: Optional[str] = Field(
+        None,
+        title="Greeting",
+        description="What the agent says when it picks up. Leave empty for a plain hello.",
+    )
+    # The registration marker: loading it provisions the call receiver and
+    # points the number's voice webhook at it (the mixin's load_field_value).
+    webhook_url: Optional[str] = Field(
+        default=None,
+        title="Call routing",
+        description="Set up automatically once the number is picked: calls to it reach this workflow.",
+        json_schema_extra={"ui:widget": "webhook", "ui:loadValue": True, "readOnly": True},
+    )
+
+
+class TwilioPlaceCallConfig(BaseModel):
+    """Dial a number from your Twilio number and hold the whole conversation yourself: the agent behind this tool is the voice on the call and pursues the goal end to end (keypad menus included). Returns at once while the call runs; when it ends, the full transcript arrives in this conversation as a new message — report the outcome then, never redial."""
+
+    model_config = ConfigDict(title="Place an Agent Call")
+
+    operation: Literal["place_call"] = Field(
+        "place_call",
+        json_schema_extra={
+            "const": "place_call",
+            "ui:hidden": True,
+            "x-category": "Call",
+            "x-is-trigger": False,
+            "x-display-name": "Place an Agent Call",
+            "x-keywords": ["ai call", "agent call", "voice agent", "dial", "outbound call", "call someone"],
+        },
+        title="Place an Agent Call",
+    )
+    phone_number_sid: str = Field(
+        ...,
+        title="From Number",
+        description="The Twilio number to call from (an Account SID + Auth Token credential is needed).",
+        json_schema_extra=_PHONE_NUMBER_PICKER,
+    )
+    to_number: str = Field(..., title="To", description="The number to call, in international format (+1…).")
+    goal: str = Field(..., title="Goal", description=(
+        "What this call should achieve, in plain words — who to ask for, what to find out or arrange, and any "
+        "facts the voice may state. Everything the voice knows about the call is in here."
+    ))
+
+
 TwilioNodeConfig = Annotated[
     Union[
         # Trigger Operations
         TwilioOnIncomingSmsConfig,
+        TwilioOnCallConfig,
         # SMS/MMS Operations
         TwilioSendSMSConfig,
         TwilioGetMessageConfig,
@@ -1539,6 +1635,7 @@ TwilioNodeConfig = Annotated[
         TwilioSendWhatsAppConfig,
         TwilioGetWhatsAppMessageConfig,
         # Voice Call Operations
+        TwilioPlaceCallConfig,
         TwilioMakeCallConfig,
         TwilioGetCallConfig,
         TwilioListCallsConfig,
@@ -1617,6 +1714,8 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "Verify a 2FA code submitted by the customer",
         "Send a transactional email via SendGrid to order@example.com",
         "Create a conversation and add multiple participants",
+        "Answer calls to my Twilio number with this agent",
+        "Let the agent call the customer from my Twilio number",
     ]
 
     # Operation, not the phone_number_sid picker: the picker needs auth_token,
@@ -1737,6 +1836,21 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
             raise ValueError(
                 "Twilio trigger requires an Account SID + Auth Token credential"
             )
+        if (config or {}).get("operation") == "on_call":
+            # Calls never arrive on the worker's webhook URL: the number's
+            # voice webhook points at the platform's call receiver, which
+            # verifies Twilio's signature with THIS account's auth token.
+            calls = capability(PHONE_CALLS)
+            if calls is None:
+                raise RuntimeError("This instance cannot take live calls (no voice service is configured)")
+            webhook_id = str((config or {}).get("webhook_id") or "")
+            if not webhook_id:
+                raise RuntimeError("The call receiver is not provisioned yet")
+            holder = await number_holder(phone_sid, except_webhook_id=webhook_id)
+            if holder is not None:
+                raise RuntimeError(already_answers(phone_sid, holder))
+            await set_twilio_voice_webhook(account_sid, auth_token, phone_sid, calls.receiver_url(webhook_id))
+            return {"external_webhook_id": phone_sid, "signing_secret": auth_token}
         await set_twilio_sms_webhook(account_sid, auth_token, phone_sid, webhook_url)
         # The auth token is the X-Twilio-Signature signing key.
         return {"signing_secret": auth_token}
@@ -1746,9 +1860,16 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
         cls, *, credential, config, node_id
     ) -> None:
         credential = credential or {}
-        phone_sid = (config or {}).get("phone_number_sid")
         account_sid = credential.get("account_sid")
         auth_token = credential.get("auth_token")
+        # An on_call registration stamps the number's sid as the row's
+        # external id (the SMS one stamps nothing), so teardown knows which
+        # webhook it set even after the operation changed away.
+        routed_sid = (config or {}).get("external_webhook_id")
+        if routed_sid and account_sid and auth_token:
+            await set_twilio_voice_webhook(account_sid, auth_token, str(routed_sid), "")
+            return
+        phone_sid = (config or {}).get("phone_number_sid")
         if not (phone_sid and account_sid and auth_token):
             return
         await set_twilio_sms_webhook(account_sid, auth_token, phone_sid, "")
@@ -1758,6 +1879,8 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
         cls, body: bytes, headers: Dict[str, str], config: Dict[str, Any]
     ) -> bool:
         """Verify Twilio's ``X-Twilio-Signature`` over the form-encoded POST."""
+        if (config or {}).get("operation") == "on_call":
+            return False  # calls land on the platform's call receiver, never here
         auth_token = (config or {}).get("signing_secret")
         url = (config or {}).get("webhook_url")
         if not auth_token or not url:
@@ -1790,6 +1913,9 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
         the reply id and the ck keys on the ``sender:twilio_number`` pair — the same
         contact texting two different business numbers is two conversations.
         """
+        call = phone_call_event(output) if output.get("channel") == "phone" else None
+        if call is not None:
+            return call
         sender = str(output.get("From") or "").strip()
         if not sender:
             return super().resolve_agent_event(output)
@@ -1811,8 +1937,36 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
             "media_type": "application/xml",
         }
 
-    def _get_basic_auth_header(self, credentials) -> str:
-        """Generate Basic Authentication header for Twilio APIs"""
+    async def _place_call(self, config: "TwilioPlaceCallConfig", credentials, account_sid) -> Dict[str, Any]:
+        """The agent dials out from the user's own Twilio number, on the same
+        voice stack as a number bought here: the call's webhooks are signed
+        with this account's auth token, so an API key cannot carry it."""
+        if not isinstance(credentials, TwilioAccountCredential):
+            return {"status": "error", "error": (
+                "Live calls need an Account SID + Auth Token credential: Twilio signs each call's "
+                "webhooks with the auth token, which an API key cannot verify."
+            )}
+        calls = capability(PHONE_CALLS)
+        if calls is None:
+            return {"status": "error", "error": "Live calls are not enabled on this instance."}
+        number = await self._make_twilio_request(
+            "GET", f"{TWILIO_API_VERSION}/Accounts/{account_sid}/IncomingPhoneNumbers/{config.phone_number_sid}.json",
+            credentials,
+        )
+        from_number = number.get("phone_number")
+        if not from_number:
+            return {"status": "error", "error": f"Twilio has no number {config.phone_number_sid} on this account."}
+        return await calls.place(
+            user_id=self.user_id, workflow_id=self.workflow_id, node_id=self.node_id,
+            credential_id=self.node_data.get("credential_id"),
+            from_number=from_number, number_sid=config.phone_number_sid,
+            to_number=config.to_number, goal=config.goal, conversation_id=self.conversation_id,
+            carrier={"account_sid": account_sid, "auth_token": credentials.auth_token},
+        )
+
+    @staticmethod
+    def _basic_auth_pair(credentials) -> tuple:
+        """(username, secret) for Twilio's basic auth: an API key or the account itself"""
         if isinstance(credentials, SendGridAPIKeyCredential):
             # A plain error, not an AttributeError: the connect-time probe runs
             # this path and must read it as "cannot judge", not a broken seam.
@@ -1821,10 +1975,12 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
                 "connect a Twilio account or API key for this operation"
             )
         if isinstance(credentials, TwilioAPIKeyCredential):
-            creds_str = f"{credentials.api_key_sid}:{credentials.api_key_secret}"
-        else:  # TwilioAccountCredential
-            creds_str = f"{credentials.account_sid}:{credentials.auth_token}"
+            return (credentials.api_key_sid, credentials.api_key_secret)
+        return (credentials.account_sid, credentials.auth_token)  # TwilioAccountCredential
 
+    def _get_basic_auth_header(self, credentials) -> str:
+        """Generate Basic Authentication header for Twilio APIs"""
+        creds_str = ":".join(self._basic_auth_pair(credentials))
         encoded = base64.b64encode(creds_str.encode()).decode()
         return f"Basic {encoded}"
 
@@ -1963,6 +2119,12 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
                 ),
                 "phone_number_sid": config.phone_number_sid,
             }
+        if action == "on_call":
+            # A real call short-circuits through resolve_trigger_payload; this
+            # runs only on manual/test runs, where there is no call.
+            return self.no_event_output("On Incoming Call", "Call the number to fire it.")
+        if action == "place_call":
+            return await self._place_call(config, credentials, account_sid)
 
         # ========== SMS/MMS Operations ==========
         if action == "send_sms_message":
@@ -2194,28 +2356,17 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
         # ========== Verify API Operations ==========
         elif action == "start_verification_code":
             typed_config: TwilioStartVerificationConfig = config
-            data = {"To": typed_config.to, "Channel": typed_config.channel}
-            if typed_config.locale:
-                data["Locale"] = typed_config.locale
-
-            return await self._make_twilio_request(
-                "POST",
-                f"Services/{typed_config.verify_service_sid}/Verifications",
-                credentials,
-                data=data,
-                api_base=TWILIO_VERIFY_API_BASE,
+            return await start_verification(
+                self._basic_auth_pair(credentials), typed_config.verify_service_sid,
+                to=typed_config.to, channel=typed_config.channel,
+                locale=typed_config.locale or None,
             )
 
         elif action == "check_verification_code":
             typed_config: TwilioCheckVerificationConfig = config
-            data = {"To": typed_config.to, "Code": typed_config.code}
-
-            return await self._make_twilio_request(
-                "POST",
-                f"Services/{typed_config.verify_service_sid}/VerificationCheck",
-                credentials,
-                data=data,
-                api_base=TWILIO_VERIFY_API_BASE,
+            return await check_verification(
+                self._basic_auth_pair(credentials), typed_config.verify_service_sid,
+                code=typed_config.code, to=typed_config.to,
             )
 
         # ========== Lookup API Operations ==========

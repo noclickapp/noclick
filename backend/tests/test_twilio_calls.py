@@ -40,8 +40,39 @@ def test_on_call_is_a_trigger_and_place_call_a_tool_with_the_number_picker():
     assert {"to_number", "goal", "phone_number_sid"} <= set(place["required"])
 
 
+async def test_on_call_routes_the_number_at_the_platforms_call_receiver(monkeypatch):
+    calls = MagicMock(receiver_url=lambda webhook_id: f"https://voice.example.com/voice/incoming/number?webhook_id={webhook_id}")
+    monkeypatch.setattr("nodes.twilio_node.number_holder", AsyncMock(return_value=None))
+    config = {"operation": "on_call", "phone_number_sid": "PN1", "webhook_id": "wh1"}
+    with pytest.raises(RuntimeError, match="cannot take live calls"):
+        await TwilioNode._register_external_webhook(webhook_url="https://wh.hooks.example.test/x", credential=ACCOUNT, config=config, node_id="n1")
+    provide(PHONE_CALLS, calls)
+    with patch("nodes.twilio_node.set_twilio_voice_webhook", new=AsyncMock()) as voice, \
+            patch("nodes.twilio_node.set_twilio_sms_webhook", new=AsyncMock()) as sms:
+        extra = await TwilioNode._register_external_webhook(webhook_url="https://wh.hooks.example.test/x", credential=ACCOUNT, config=config, node_id="n1")
+    voice.assert_awaited_once_with(ACCOUNT["account_sid"], "tok", "PN1", "https://voice.example.com/voice/incoming/number?webhook_id=wh1")
+    sms.assert_not_awaited()
+    assert extra == {"external_webhook_id": "PN1", "signing_secret": "tok"}
+    with pytest.raises(RuntimeError, match="not provisioned"):
+        await TwilioNode._register_external_webhook(webhook_url="https://x", credential=ACCOUNT, config={**config, "webhook_id": ""}, node_id="n1")
+    with pytest.raises(ValueError, match="Account SID"):
+        await TwilioNode._register_external_webhook(webhook_url="https://x", credential=API_KEY, config=config, node_id="n1")
+    # One number rings one agent, whichever node holds it.
+    monkeypatch.setattr("nodes.twilio_node.number_holder", AsyncMock(return_value='"Support line"'))
+    with pytest.raises(RuntimeError, match='already answers calls for "Support line"'):
+        await TwilioNode._register_external_webhook(webhook_url="https://x", credential=ACCOUNT, config=config, node_id="n2")
+    # Calls never arrive on the worker's webhook URL.
+    assert TwilioNode.verify_webhook_signature(b"", {}, {"operation": "on_call", "signing_secret": "tok", "webhook_url": "https://x"}) is False
 
 
+async def test_teardown_clears_the_voice_webhook_it_set_even_after_the_operation_changed():
+    with patch("nodes.twilio_node.set_twilio_voice_webhook", new=AsyncMock()) as voice, \
+            patch("nodes.twilio_node.set_twilio_sms_webhook", new=AsyncMock()) as sms:
+        await TwilioNode._unregister_external_webhook(credential=ACCOUNT, config={"operation": "send_sms_message", "external_webhook_id": "PN1"}, node_id="n1")
+        voice.assert_awaited_once_with(ACCOUNT["account_sid"], "tok", "PN1", "")
+        sms.assert_not_awaited()
+        await TwilioNode._unregister_external_webhook(credential=ACCOUNT, config={"operation": "on_incoming_sms", "phone_number_sid": "PN1"}, node_id="n1")
+        sms.assert_awaited_once_with(ACCOUNT["account_sid"], "tok", "PN1", "")
 
 
 def _node(config, credentials=ACCOUNT, credential_id="cred-1"):
