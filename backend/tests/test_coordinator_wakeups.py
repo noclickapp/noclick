@@ -243,32 +243,58 @@ async def test_wakeup_table_is_private(db):
         assert not await pool.fetchval("SELECT has_table_privilege($1,'coordinator_wakeups','SELECT')", role)
 
 
+@pytest.mark.parametrize("failure", ["unavailable", "timeout"])
+async def test_email_followup_failure_preserves_chat_without_replaying_send(db, monkeypatch, failure):
+    pool, repo, _, _, _ = db
+    await complete_build(db, context={**CONTEXT, "channel": "email"})
+    event = await repo.claim()
+    await repo.finish(event, "Your request is complete.")
+    email = AsyncMock(return_value={"success": False, "error": "Email is unavailable."})
+    if failure == "timeout":
+        email.side_effect = asyncio.TimeoutError
+    phone = AsyncMock()
+    monkeypatch.setattr("coder.coordinator.reach.reach_owner", email)
+    monkeypatch.setattr(wakeups, "deliver_phone", phone)
+    monkeypatch.setattr(wakeups, "emit_notification", AsyncMock())
+
+    assert await wakeups.process_event(pool, await repo.get(event["id"]))
+    current = await repo.get(event["id"])
+    assert current["status"] == "done" and current["delivery_error"]
+    assert await wakeups.process_event(pool, current)
+    email.assert_awaited_once()
+    phone.assert_not_awaited()
+    transcript = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id=$1", f"coordinator:{USER}")
+    assert len(transcript) == 1 and transcript[0]["message"] == "Your request is complete."
+
+
 @pytest.mark.parametrize('link_kind', ['credential_request', 'credential_policy', 'credential_approval'])
-async def test_human_link_result_recovers_then_runs_same_thread_and_replies_once(db, monkeypatch, link_kind):
+@pytest.mark.parametrize('channel', ['web', 'whatsapp_text', 'email'])
+async def test_human_link_result_recovers_then_runs_same_thread_and_replies_once(db, monkeypatch, link_kind, channel):
     from repositories.credentials import CredentialsRepo
     from repositories.credential_approvals import CredentialApprovalRepo
     from repositories.local_schedules import LocalScheduleRepo
     from utils import coordinator_dispatch
     pool, repo, _, _, _ = db
+    context = {**CONTEXT, 'channel': channel}
     cid = await pool.fetchval("INSERT INTO credentials(owner_id,name,credential_type,credential) "
                               "VALUES($1::uuid,'Mail','google_gmail_oauth','encrypted') RETURNING id", USER)
     policy = CredentialApprovalRepo(pool)
     if link_kind == 'credential_request':
         row = await CredentialsRepo(pool).upsert_credential_request(
             requester_id=USER, target_email='', credential_type='google_gmail_oauth',
-            message='Connect mail', continuation=CONTEXT,
+            message='Connect mail', continuation=context,
         )
         await pool.execute("UPDATE credential_requests SET status='fulfilled',credential_id=$2 WHERE id=$1::uuid", row.id, cid)
         expected = 'fulfilled'
     elif link_kind == 'credential_policy':
-        await policy.await_human_review(str(cid), USER, CONTEXT)
+        await policy.await_human_review(str(cid), USER, context)
         await policy.replace_from_human(str(cid), USER, [], 0)
         expected = 'reviewed'
     else:
         await policy.tighten(str(cid), USER, ['automation-gmail.send_email_message'])
         approval = await policy.admit(credential_id=str(cid), user_id=USER,
             node_type='automation-gmail', operation='send_email_message', arguments={'to': 'recipient@example.test'},
-            conversation_id=f'coordinator:{USER}', continuation=CONTEXT)
+            conversation_id=f'coordinator:{USER}', continuation=context)
         await policy.decide_from_human(str(approval['id']), USER, 'approved')
         expected = 'approved'
     # Simulate a process stopping immediately after commit: no route dispatched.
@@ -300,13 +326,21 @@ async def test_human_link_result_recovers_then_runs_same_thread_and_replies_once
 
     monkeypatch.setattr(agent, 'Agent', ResumedAgent)
     phone = AsyncMock(return_value=('sent', None))
+    email = AsyncMock(return_value={'success': True})
+    monkeypatch.setattr('coder.coordinator.reach.reach_owner', email)
     monkeypatch.setattr(wakeups, 'deliver_phone', phone)
     monkeypatch.setattr(wakeups, 'emit_notification', AsyncMock())
     assert await wakeups.process_event(pool, event)
     assert await wakeups.process_event(pool, await repo.get(event['id']))  # Duplicate scheduler delivery.
     assert len(seen) == 1
-    phone.assert_awaited_once()
-    assert phone.call_args.args[2] == 'I have the result and can continue.'
+    if channel == 'whatsapp_text':
+        phone.assert_awaited_once_with(pool, USER, 'I have the result and can continue.')
+    else:
+        phone.assert_not_awaited()
+    if channel == 'email':
+        email.assert_awaited_once_with(pool, USER, 'I have the result and can continue.', channel='email')
+    else:
+        email.assert_not_awaited()
     assert (await repo.get(event['id']))['status'] == 'done'
     await pool.execute('DELETE FROM credential_requests WHERE requester_id=$1::uuid', USER)
     await pool.execute('DELETE FROM credentials WHERE id=$1', cid)

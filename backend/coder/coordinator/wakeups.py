@@ -109,7 +109,18 @@ async def deliver_reply(pool, event):
         await emit_notification(get_sio(), user_id, f"coordinator:{user_id}", event["notification"])
     except Exception:
         logger.exception("coordinator follow-up socket delivery failed: %s", event["id"])
-    if event["send_to_phone"]:
+    if event["context"].get("channel") == "email":
+        from coder.coordinator.reach import reach_owner
+        try:
+            result = await asyncio.wait_for(reach_owner(pool, user_id, event["response"], channel="email"), 45)
+            if not result.get("success"):
+                error = result.get("error") or "Email delivery failed; the reply is saved in chat."
+        except Exception:
+            # A timeout may have happened after send. Preserve the same no-replay
+            # rule as phone delivery rather than sending another email on retry.
+            logger.exception("Coordinator email follow-up delivery could not be confirmed: %s", event["id"])
+            error = "Email delivery could not be confirmed. The reply is saved in chat."
+    elif event["send_to_phone"]:
         phone_state, error = await deliver_phone(pool, user_id, event["response"])
     await CoordinatorWakeupRepo(pool).delivered(event, phone_state, error)
 
