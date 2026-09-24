@@ -283,11 +283,16 @@ def agent_email_available() -> bool:
 async def email_user_offered(pool, user_id: Optional[str], enabled: bool, in_iteration: bool = False) -> bool:
     """Whether this turn offers email_user: the node flag, the edition's mail
     channel, no iteration fan-out, and an owner with an email address (a
-    phone-only account has none, so the tool could only fail)."""
+    phone-only account has none, so the tool could only fail). ``pool`` None =
+    the native pool, resolved only once the cheap checks pass."""
     if not (enabled and user_id and not in_iteration and agent_email_available()):
         return False
     from repositories.users import get_user_email
 
+    if pool is None:
+        from utils.database_pool import get_native_pool
+
+        pool = get_native_pool()
     return bool(await get_user_email(pool, user_id))
 
 
