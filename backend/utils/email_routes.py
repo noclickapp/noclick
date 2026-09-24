@@ -180,14 +180,16 @@ async def _inline_extraction_fields(data: bytes, mime_type: str, filename: str) 
 
 
 async def get_email_config(local_part: str, domain: str) -> Optional[dict]:
-    """Resolve a reserved inbound address to its workflow + trigger node."""
+    """Resolve a reserved inbound address: a trigger node's (with its
+    workflow) or an account coordinator's (``kind='coordinator'``)."""
     row = await get_native_pool().fetchrow(
         """
         SELECT er.id, er.user_id, er.workflow_id, er.node_id, er.local_part, er.domain,
-               er.is_active, wf.workflow AS workflow_config, wf.organization_id
+               er.is_active, er.kind, wf.workflow AS workflow_config, wf.organization_id
         FROM email_reservations er
-        JOIN workflows wf ON er.workflow_id = wf.id
-        WHERE er.domain = $1 AND er.local_part = $2 AND wf.deleted_at IS NULL
+        LEFT JOIN workflows wf ON er.workflow_id = wf.id
+        WHERE er.domain = $1 AND er.local_part = $2
+          AND (er.kind = 'coordinator' OR (wf.id IS NOT NULL AND wf.deleted_at IS NULL))
         """,
         domain, local_part,
     )
@@ -227,6 +229,8 @@ async def receive_inbound_email(request: Request, background_tasks: BackgroundTa
     config = await get_email_config(local_part, domain)
     if not config:
         raise HTTPException(status_code=404, detail="No workflow is listening on this address")
+    if config.get("kind") == "coordinator":
+        return await _receive_coordinator_email(local_part, domain, payload, background_tasks)
     if not config.get("is_active"):
         raise HTTPException(status_code=410, detail="Email trigger is disabled")
 
@@ -323,6 +327,29 @@ async def receive_inbound_email(request: Request, background_tasks: BackgroundTa
     )
     logger.info("[EMAIL] Accepted inbound message for workflow %s", workflow_id)
     return EmailInboundResponse(success=True, message="Email received and workflow triggered", triggered=True)
+
+
+async def _receive_coordinator_email(
+    local_part: str, domain: str, payload: Dict[str, Any], background_tasks: BackgroundTasks,
+) -> EmailInboundResponse:
+    """Mail to an account coordinator's own address. The relay is acked at
+    once; the owner check, the turn and the reply run after it."""
+    from coder.coordinator import email_channel
+
+    text = None
+    raw_b64 = payload.get("rawBase64")
+    if raw_b64:
+        try:
+            text = _parse_mime(base64.b64decode(raw_b64)).get("text")
+        except Exception as e:
+            logger.error(f"[EMAIL] Coordinator mail MIME parse failed: {e}", exc_info=True)
+
+    async def handle() -> None:
+        outcome = await email_channel.receive(get_native_pool(), local_part, domain, payload, text)
+        logger.info("[EMAIL] Coordinator mail: %s", outcome)
+
+    background_tasks.add_task(handle)
+    return EmailInboundResponse(success=True, message="Received", triggered=True)
 
 
 async def _receive_agent_reply(

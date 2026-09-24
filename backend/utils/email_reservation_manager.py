@@ -91,6 +91,11 @@ def validate_local_part(local_part: str) -> tuple[bool, str]:
         )
     if local_part in RESERVED_LOCAL_PARTS:
         return False, "This address is reserved"
+    from utils.agent_email import AGENT_REPLY_PREFIX
+
+    if local_part.startswith(AGENT_REPLY_PREFIX):
+        # Agent reply addresses are their own routing plane (utils/agent_email.py).
+        return False, "This address is reserved"
     return True, ""
 
 

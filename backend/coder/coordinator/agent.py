@@ -104,8 +104,13 @@ VOICE_STYLE = (
 TEXT_CHANNELS = ("whatsapp_text",)
 TEXT_STYLE = (
     "\n\nYou are replying over WhatsApp text. Keep it to a few short lines: no headings, no tables, no "
-    "markdown links — WhatsApp formatting only (*bold*, _italic_), a URL on its own line. Answer from "
-    "what you already know when you can."
+    "markdown links — WhatsApp formatting only (*bold*, _italic_), a URL on its own line. A generated image "
+    "or video goes in as ![short caption](url): WhatsApp shows it as media. Answer from what you already "
+    "know when you can."
+)
+EMAIL_STYLE = (
+    "\n\nYou are replying by email: the owner wrote to your own address. Write a short email body in plain "
+    "paragraphs (no headings or tables); your reply is sent back on the same thread."
 )
 
 # What a channel hears when a turn fails: the raw provider text stays in the log.
@@ -123,6 +128,8 @@ def system_prompt_for(extra: Optional[Dict[str, Any]], note: Optional[str]) -> s
         prompt += VOICE_STYLE
     elif channel in TEXT_CHANNELS:
         prompt += TEXT_STYLE
+    elif channel == "email":
+        prompt += EMAIL_STYLE
     if note:
         prompt += "\n\n" + note.strip()
     return prompt
@@ -176,8 +183,11 @@ async def run_coordinator_turn(
 
         jobs_note = await job_context(pool, user_id)
         memories_note = await memory_context(pool, user_id, model=COORDINATOR_MODEL)
+        from coder.coordinator.reach import reach_note
+
         context_note = "\n\n".join(part for part in (
             "Current UTC time: " + datetime.now(timezone.utc).isoformat(), note, jobs_note, memories_note,
+            await reach_note(pool, user_id),
         ) if part)
         config = AgentConfiguration.from_kwargs(
             model=COORDINATOR_MODEL, enable_cmd=False, enable_editor=False, enable_mcp=False,

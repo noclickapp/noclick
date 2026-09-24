@@ -486,7 +486,11 @@ async def test_turn_composes_the_prompt_for_its_channel(turn_seams, monkeypatch)
         extra={"channel": "phone", "call_sid": "CA1"}, note="The caller is Dhruv. Their account has 2 workflows: A, B.",
     )
     prompt = captured["config"].settings.system_prompt
-    assert "no markdown" in prompt and prompt.endswith("Their account has 2 workflows: A, B.")
+    assert "no markdown" in prompt and "Their account has 2 workflows: A, B.\n\n" in prompt
+    # How to reach the owner rides every turn: here, no address yet.
+    assert "Your email address: none yet (set_email_address when email is first needed)." in prompt
+    assert prompt.endswith("How the owner likes to be reached is a memory: save it when they say, and pass that "
+                           "channel to message_owner.")
 
 
 # ── trash, restore, message_owner ────────────────────────────────────────────
@@ -513,16 +517,22 @@ async def test_trash_and_restore_run_the_shared_owner_seams(monkeypatch):
     assert restore.await_args.args[1:] == (WORKFLOW, USER)
 
 
-async def test_message_owner_exists_only_where_the_instance_can_deliver_one(own_capabilities):
-    bare = tools()
-    assert not bare.can_message_owner
-    assert "message_owner" not in {p["function"]["name"] for p in bare.tool_params()}
-    assert (await bare.execute("message_owner", {"text": "hi"}))["success"] is False
+async def test_message_owner_reaches_the_owner_on_the_channel_it_resolves(own_capabilities, monkeypatch):
+    from coder.coordinator import reach
 
-    send = AsyncMock(return_value={"success": True, "channel": "whatsapp", "message_id": "wamid.9"})
+    bare = tools()
+    names = {p["function"]["name"] for p in bare.tool_params()}
+    assert {"message_owner", "set_email_address", "submit_feedback"} <= names and "set_contact_preference" not in names
+    channel_enum = next(p for p in bare.tool_params() if p["function"]["name"] == "message_owner")[
+        "function"]["parameters"]["properties"]["channel"]["enum"]
+    assert channel_enum == ["auto", "email", "web"]  # no WhatsApp where the instance can't send it
+    monkeypatch.setattr(reach, "resolve_channel", AsyncMock(return_value="whatsapp"))
+    out = await bare.execute("message_owner", {"text": "hi"})
+    assert out == {"success": False, "channel": "whatsapp", "error": "WhatsApp isn't available on this instance."}
+
+    send = AsyncMock(return_value={"success": True, "message_id": "wamid.9"})
     capabilities.provide(OWNER_MESSAGE, send)
     t = tools()
-    assert "message_owner" in {p["function"]["name"] for p in t.tool_params()}
     out = await t.execute("message_owner", {"text": "  Your link  ", "link": "https://noclick.com/b/abc"})
     assert out["success"] is True and out["channel"] == "whatsapp"
     send.assert_awaited_once_with(t.pool, USER, "Your link", link="https://noclick.com/b/abc")

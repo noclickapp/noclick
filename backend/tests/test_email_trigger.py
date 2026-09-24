@@ -250,6 +250,20 @@ class TestInboundRoute:
         resp = self._post(email_client, {"to": "x@noclick.app"}, secret="wrong")
         assert resp.status_code == 401
 
+    def test_a_coordinator_address_is_handed_to_the_coordinator(self, email_client, monkeypatch):
+        from coder.coordinator import email_channel
+
+        received = AsyncMock(return_value="delivered")
+        monkeypatch.setattr(email_channel, "receive", received)
+        monkeypatch.setattr(email_routes, "get_native_pool", lambda: "pool")
+        config = {"id": uuid4(), "user_id": UUID(int=1), "workflow_id": None, "node_id": None,
+                  "is_active": True, "kind": "coordinator"}
+        with patch.object(email_routes, "get_email_config", AsyncMock(return_value=config)):
+            resp = self._post(email_client, {"to": f"ada@{INBOUND_DOMAIN}", "from": "a@b.com", "subject": "hi"})
+        assert resp.status_code == 200 and resp.json()["triggered"] is True
+        args = received.await_args.args
+        assert args[1:3] == ("ada", INBOUND_DOMAIN) and args[3]["subject"] == "hi"
+
     def test_unknown_address_404(self, email_client):
         with patch.object(email_routes, "get_email_config", AsyncMock(return_value=None)):
             resp = self._post(email_client, {"to": "ghost@noclick.app", "from": "a@b.com"})

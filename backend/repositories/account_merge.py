@@ -167,6 +167,10 @@ async def merge_accounts(conn, *, source: str, target: str) -> MergeResult:
     await conn.execute(
         "DELETE FROM resource_shares s WHERE s.target_user_id = $1::uuid AND EXISTS (SELECT 1 FROM resource_shares t "
         "WHERE t.target_user_id = $2::uuid AND t.resource_type = s.resource_type AND t.resource_id = s.resource_id)", *args)
+    # One coordinator address per account: the target keeps its own if it has one.
+    await conn.execute(
+        "DELETE FROM email_reservations s WHERE s.user_id = $1::uuid AND s.kind = 'coordinator' AND EXISTS "
+        "(SELECT 1 FROM email_reservations t WHERE t.user_id = $2::uuid AND t.kind = 'coordinator')", *args)
     await conn.execute(
         "DELETE FROM credential_requests s WHERE s.requester_id = $1::uuid AND EXISTS (SELECT 1 FROM credential_requests t "
         "WHERE t.requester_id = $2::uuid AND t.target_email = s.target_email AND t.credential_type = s.credential_type)", *args)

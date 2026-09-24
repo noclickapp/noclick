@@ -24,6 +24,7 @@ from utils.account_link import AccountLink, AccountLinkError
 from utils.media_generation import (
     DEFAULT_VIDEO_MODEL, DEFAULT_VIDEO_RESOLUTION, DEFAULT_VIDEO_SECONDS, MediaError, generate_image, start_video,
 )
+from nodes.agent.platform_tools import _SUBMIT_FEEDBACK_PARAM, submit_feedback_impl
 from utils.capabilities import INTERFACE_PUBLISH, OWNER_MESSAGE, PHONE_NUMBERS, capability
 from utils.tool_call_log import record_tool_call
 
@@ -39,7 +40,7 @@ MAX_CHARS = 280
 _OVERVIEW_SECTIONS = ("attention", "runs", "agents", "credentials", "triggers", "upcoming", "notifications", "files")
 
 
-def coordinator_tool_params(*, include_owner_message: bool = False, include_publishing: bool = False, include_phone_numbers: bool = False,
+def coordinator_tool_params(*, include_whatsapp: bool = False, include_publishing: bool = False, include_phone_numbers: bool = False,
                             include_account_connect: bool = False) -> List[Dict[str, Any]]:
     """ChatCompletionToolParam dicts — the shape Agent.create's custom_tools takes.
     ``message_owner`` is advertised only where the instance can deliver one."""
@@ -176,15 +177,29 @@ def coordinator_tool_params(*, include_owner_message: bool = False, include_publ
                   "phone_number": {"type": "string", "description": "An available number from find_phone_numbers, or omit to let the owner choose."}},
                  ["purpose"]),
         ])
-    if include_owner_message:
-        params.append(tool(
-            "message_owner",
-            "Send the owner a WhatsApp message on their linked phone: a link, a summary, anything they asked to have "
-            "sent there. Not needed when you are already replying over WhatsApp text.",
-            {"text": {"type": "string", "description": "The message, short and plain."},
-             "link": {"type": "string", "description": "Optional URL, sent on its own line."}},
-            ["text"],
-        ))
+    reach = ["auto", "email", "web"] + (["whatsapp"] if include_whatsapp else [])
+    params.extend([
+        tool("message_owner",
+             "Reach the owner outside this reply: a finished result, an alert, a link they asked for. Pass the channel "
+             "they prefer when your memory says (save one with save_memory when they tell you); 'auto' (the default) "
+             "uses the channel they last wrote to you on. 'email' comes from your own address and needs one "
+             "(set_email_address). Not needed to answer the message you're replying to.",
+             {"text": {"type": "string", "description": "The message, short and plain; Markdown images show inline."},
+              "link": {"type": "string", "description": "Optional URL, sent on its own line."},
+              "channel": {"type": "string", "enum": reach},
+              "subject": {"type": "string", "description": "Email subject when the channel is email."}},
+             ["text"]),
+        tool("set_email_address",
+             "Choose or rename your own email address (name@noclick domain); the owner can email you there. The first "
+             "time email is needed, pick a short readable name yourself (e.g. the owner's first name + 'assistant') or "
+             "ask them; rename it whenever they ask.",
+             {"name": {"type": "string", "description": "The part before @: lowercase letters, digits, . _ -"}},
+             ["name"]),
+        tool("submit_feedback", _SUBMIT_FEEDBACK_PARAM["function"]["description"],
+             {**_SUBMIT_FEEDBACK_PARAM["function"]["parameters"]["properties"],
+              "workflow_id": {"type": "string", "description": "The workflow it happened in, when there is one."}},
+             _SUBMIT_FEEDBACK_PARAM["function"]["parameters"].get("required", ["feedback"])),
+    ])
     if include_account_connect:
         params.extend([
             tool("connect_account",
@@ -256,19 +271,22 @@ class CoordinatorTools:
             self._tools["phone_number_request_status"] = self.phone_number_request_status
             self._tools["find_phone_numbers"] = self.find_phone_numbers
             self._tools["request_phone_number"] = self.request_phone_number
-        if capability(OWNER_MESSAGE) is not None:
-            self._tools["message_owner"] = self.message_owner
+        self._tools.update({
+            "message_owner": self.message_owner,
+            "set_email_address": self.set_email_address,
+            "submit_feedback": self.submit_feedback,
+        })
         if phone_only:
             self._tools["connect_account"] = self.connect_account
             self._tools["confirm_connect_code"] = self.confirm_connect_code
         self.connect_verified = False
 
     @property
-    def can_message_owner(self) -> bool:
-        return "message_owner" in self._tools
+    def can_whatsapp(self) -> bool:
+        return capability(OWNER_MESSAGE) is not None
 
     def tool_params(self) -> List[Dict[str, Any]]:
-        return coordinator_tool_params(include_owner_message=self.can_message_owner,
+        return coordinator_tool_params(include_whatsapp=self.can_whatsapp,
                                        include_publishing=capability(INTERFACE_PUBLISH) is not None,
                                        include_phone_numbers=capability(PHONE_NUMBERS) is not None,
                                        include_account_connect="connect_account" in self._tools)
@@ -360,7 +378,7 @@ class CoordinatorTools:
             raise ValueError("Alarms must be scheduled from an active coordinator conversation.")
         if self.continuation["depth"] >= 8:
             raise ValueError("Automatic follow-up limit reached. Ask the user before scheduling more work.")
-        if send_to_phone and not self.can_message_owner:
+        if send_to_phone and not self.can_whatsapp:
             raise ValueError("Phone delivery is unavailable on this instance.")
         return await CoordinatorAlarmRepo(self.pool).schedule(
             self.user_id, alarm_type=alarm_type, delay_or_time=delay_or_time, message=message,
@@ -577,11 +595,27 @@ class CoordinatorTools:
                        "in on the web with that email. Everything here stays as it is.")
         return {"success": True, "email": verified.email, "joins_existing_account": verified.merges, "outcome": outcome}
 
-    async def message_owner(self, text: str, link: Optional[str] = None) -> Dict[str, Any]:
-        send = capability(OWNER_MESSAGE)
-        if send is None:
-            return {"success": False, "error": "this instance has no channel to message the owner on"}
+    async def message_owner(self, text: str, link: Optional[str] = None, channel: str = "auto",
+                            subject: Optional[str] = None) -> Dict[str, Any]:
+        from coder.coordinator.reach import reach_owner
+
         text = (text or "").strip()
         if not text:
             return {"success": False, "error": "text is required"}
-        return await send(self.pool, self.user_id, text, link=(link or "").strip() or None)
+        return await reach_owner(self.pool, self.user_id, text, link=(link or "").strip() or None,
+                                 channel=channel, subject=subject, organization_id=self.organization_id)
+
+    async def set_email_address(self, name: str) -> Dict[str, Any]:
+        from coder.coordinator.email_channel import CoordinatorEmailError, set_coordinator_address
+
+        try:
+            return {"success": True, "address": await set_coordinator_address(self.pool, self.user_id, name)}
+        except CoordinatorEmailError as exc:
+            return {"success": False, "error": str(exc)}
+
+    async def submit_feedback(self, feedback: str, issue_key: Optional[str] = None,
+                              workflow_id: Optional[str] = None) -> Dict[str, Any]:
+        return await submit_feedback_impl(
+            pool=self.pool, user_id=self.user_id, workflow_id=workflow_id, node_id=COORDINATOR_NODE_ID,
+            conversation_id=self.conversation_id, model="coordinator", feedback=feedback, issue_key=issue_key,
+        )
