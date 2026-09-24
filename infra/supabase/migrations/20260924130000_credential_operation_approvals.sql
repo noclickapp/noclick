@@ -31,4 +31,4 @@ REVOKE ALL ON public.credentials, public.approval_requests FROM anon, authentica
 
 ALTER TABLE public.coordinator_wakeups DROP CONSTRAINT coordinator_wakeups_source_check;
 ALTER TABLE public.coordinator_wakeups ADD CONSTRAINT coordinator_wakeups_source_check
-    CHECK (source IN ('builder', 'agent', 'alarm', 'credential_approval'));
+    CHECK (source IN ('job', 'alarm', 'signal', 'credential_approval'));
