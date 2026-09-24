@@ -1,6 +1,7 @@
 """Socket.io handler for the interactive chat agent (chat:message)."""
 
 import logging
+from datetime import datetime, timezone
 from typing import Dict, Callable, Optional, List, Any
 
 from billing.exceptions import InsufficientBalanceError
@@ -383,6 +384,7 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
         event = {
             "role": role,
             "message": content,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         if role == "assistant":
             # Attach the turn's compacted tool timeline so the chat's step rows
