@@ -17,10 +17,10 @@ BACKEND = Path(__file__).resolve().parents[1]
 
 #: harness → the version the engine's format was validated against.
 VALIDATED_HARNESS_VERSIONS = {
-    "claude_code": "2.1.280",
+    "claude_code": "2.1.281",
     "codex": "0.156.1",
     "opencode": "1.18.32",
-    "hermes_agent": "v2026.9.21",
+    "hermes_agent": "v2026.9.24",
     "openclaw": "2026.9.1",
 }
 

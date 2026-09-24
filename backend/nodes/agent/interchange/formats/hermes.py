@@ -14,7 +14,7 @@ missing store is created here with the pinned schema's four core tables
 (``schema_version``, ``system_prompts``, ``sessions``, ``messages`` —
 verbatim from the pinned source) and the pinned schema version, and the
 Gateway adds every other table it wants at its own boot (``CREATE TABLE IF
-NOT EXISTS``). Validated against Hermes v2026.9.21 / schema 26 (boot on a
+NOT EXISTS``). Validated against Hermes v2026.9.24 / schema 26 (boot on a
 store built here, and replay) — see ``tests/test_session_interchange_drift.py``.
 """
 

@@ -44,7 +44,7 @@ EXPECTED_ROLES = ["user", "assistant", "assistant"]
 def _claude_records(cwd: str) -> list:
     ids = [str(uuid.uuid4()) for _ in range(12)]
     ts = "2026-09-12T10:00:{:02d}.000Z"
-    base = {"isSidechain": False, "userType": "external", "cwd": cwd, "sessionId": SESSION, "version": "2.1.280",
+    base = {"isSidechain": False, "userType": "external", "cwd": cwd, "sessionId": SESSION, "version": "2.1.281",
             "gitBranch": "main", "entrypoint": "cli", "slug": "auth-callback"}
     msg_id = "msg_01"
     return [
@@ -110,7 +110,7 @@ def _claude_compacted_fixture(path: Path, cwd: str = CWD) -> Path:
     old = _claude_records(cwd)
     ids = [str(uuid.uuid4()) for _ in range(4)]
     ts = "2026-09-12T11:00:{:02d}.000Z"
-    base = {"isSidechain": False, "userType": "external", "cwd": cwd, "sessionId": SESSION, "version": "2.1.280", "gitBranch": "main"}
+    base = {"isSidechain": False, "userType": "external", "cwd": cwd, "sessionId": SESSION, "version": "2.1.281", "gitBranch": "main"}
     old_leaf = next(r["leafUuid"] for r in old if r.get("type") == "last-prompt")
     new = [
         {**base, "parentUuid": None, "logicalParentUuid": old_leaf, "type": "system", "subtype": "compact_boundary", "uuid": ids[0],
@@ -257,7 +257,7 @@ class TestClaudeCodeRead:
         texts = [e.text for e in thread.events if e.is_turn]
         assert texts == ["Which tests cover the auth callback?", "Let me search the test suite.",
                          "One test covers it: tests/test_auth.py::test_auth_callback."]
-        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == (SESSION, CWD, "2.1.280", "claude-haiku-4-5-20251001")
+        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == (SESSION, CWD, "2.1.281", "claude-haiku-4-5-20251001")
         # the draft branch and the subagent sidechain are not the thread
         assert "DRAFT" not in json.dumps([e.text for e in thread.events]) and "SIDECHAIN" not in json.dumps([e.text for e in thread.events])
         assert thread.dropped["opaque:inactive_branch_records"] == 3
@@ -357,13 +357,13 @@ class TestCodexToClaude:
     def test_the_session_claude_continues(self, tmp_path):
         thread = ic.read_thread(_store("codex", _codex_home(tmp_path)))
         home = tmp_path / ".claude"
-        out = ic.translate(thread, _store("claude_code", home), ic.TargetIdentity(cli_version="2.1.280", model="sonnet"))
+        out = ic.translate(thread, _store("claude_code", home), ic.TargetIdentity(cli_version="2.1.281", model="sonnet"))
         assert out.fidelity.ok
         assert out.native_path.parent == home / "projects" / claude_fmt.project_directory_name(Path(CWD)) and out.native_path.stem == out.session_id
         rows = [json.loads(l) for l in out.native_path.read_text().splitlines()]
         assert [r["type"] for r in rows] == ["user", "assistant", "assistant", "user", "assistant"]
         assert rows[0]["parentUuid"] is None and all(rows[i]["parentUuid"] == rows[i - 1]["uuid"] for i in range(1, len(rows)))
-        assert {r["sessionId"] for r in rows} == {out.session_id} and {r["cwd"] for r in rows} == {CWD} and {r["version"] for r in rows} == {"2.1.280"}
+        assert {r["sessionId"] for r in rows} == {out.session_id} and {r["cwd"] for r in rows} == {CWD} and {r["version"] for r in rows} == {"2.1.281"}
         assert rows[0]["message"] == {"role": "user", "content": "Which tests cover the auth callback?"}
         assert rows[1]["message"]["model"] == "sonnet" and rows[1]["message"]["content"] == [{"type": "text", "text": "Let me search the test suite."}]
         assert rows[1]["message"]["stop_reason"] == "end_turn" and "usage" in rows[1]["message"] and rows[1]["requestId"]

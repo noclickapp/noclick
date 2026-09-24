@@ -17,7 +17,7 @@ carried history.
 directory of its cwd; the slug is the cwd with every non-alphanumeric
 character replaced by ``-`` — the cwd as given, not resolved (on macOS the
 CLI names ``/Users/…``, never the ``/System/Volumes/Data`` firmlink).
-Validated against Claude Code 2.1.280 (read and resume) — see
+Validated against Claude Code 2.1.281 (read and resume) — see
 ``tests/test_session_interchange_drift.py``.
 """
 
