@@ -160,6 +160,27 @@ class CredentialActions:
             raise ValueError("Operation not found or not accessible.")
         return {"operation_id": str(row["id"]), "delivery_status": row["status"], "outcome": row["payload"]}
 
+    async def load_approval_tools(self, payload):
+        """Restore schemas on a cold approval wakeup; never consume the grant.
+
+        Ordinary tools are turn-local. The durable approval already identifies
+        the operation/account, so no separate persisted tool registry is needed.
+        """
+        if payload.get("status") != "approved":
+            return
+        row = await self._credential(payload["credential_id"])
+        node_type, operation = payload["node_type"], payload["operation"]
+        if operation != "__lookup__":
+            tools, configs = operation_tool(row.credential_type, node_type, operation)
+            self.registry.load(node_type, operation, tools, configs)
+            return
+        field = payload["arguments"]["field_name"]
+        for op in operation_catalog(row.credential_type, node_type):
+            tools, configs = operation_tool(row.credential_type, node_type, op["operation"])
+            if any(field in c.get("fields", {}).values() for c in configs.values() if c["tool_type"] == "node_op_lookup"):
+                self.registry.load(node_type, op["operation"], tools, configs)
+                return
+
     async def credential_operations(self, credential_id, node_type=None, operation=None, query="", offset=0):
         from repositories.credential_approvals import CredentialApprovalRepo
         row = await self._credential(credential_id)

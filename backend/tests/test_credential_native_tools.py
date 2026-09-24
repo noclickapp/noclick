@@ -110,6 +110,12 @@ async def test_two_accounts_one_native_tool_distinct_approval_and_fresh_access(a
     mime = base64.urlsafe_b64decode(json.loads(remote.calls.last.request.content)["raw"]).decode()
     assert "From: 1@example.test" in mime
     await repo.decide_from_human(pending["approval_id"], USER, "approved")
+    # Approval may wake a fresh container: reconstruct definitions from the
+    # durable approval, without secretly retaining a tool-bound account.
+    tools = coordinator(pool)
+    await tools.credential_tools.load_approval_tools({"status": "approved", "credential_id": a,
+        "node_type": "automation-gmail", "operation": "send_email_message", "arguments": args["arguments"]})
+    assert name in tools.credential_tools.registry.routes
     assert (await tools.execute(name, {"credential_id": a, **args}))["status"] == "success"
     assert remote.calls.last.request.headers["authorization"] == f"Bearer token-{a}"
     assert (await tools.execute(name, {"credential_id": a, **args}))["status"] == "pending_approval"

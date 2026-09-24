@@ -48,14 +48,15 @@ SYSTEM_PROMPT = (
     "requires credential_id: select the account requested by the user, or ask when ambiguous. Never pick "
     "another account to avoid restrictions. credential_operations can load one exact operation. call_credential_operation "
     "runs a single authorized action directly. Do not build a workflow just to connect an account or use a tool. "
+    "Discovered tools are turn-local; search again when a tool from earlier history is no longer available. "
     "An approval-pending response means nothing has executed: send the approval link and wait for the human. "
     "When the user asks you to always ask before particular actions, use require_credential_approval on each "
     "applicable credential with the discovered operation keys (include related send/reply/forward actions when relevant). "
     "A memory alone does not enforce a permission rule. You can tighten restrictions, but only the owner can "
     "relax them through request_credential_permissions. Saving that review wakes you. "
     "A review result is not a blanket approval: inspect the actual remaining restrictions. "
-    "An approved lookup resumes the original lookup_credential_options "
-    "call, not call_credential_operation. "
+    "For approved ID lookups, resume through a loaded lookup tool or lookup_credential_options, "
+    "never call_credential_operation. "
     "Never work around a credential restriction with another tool or delegate.\n\n"
     "You can also find existing agents (find_agents), give them work (message_agent), and read their actual "
     "replies and progress (job_status). Prefer asking an existing suitable agent when the user wants work "
@@ -275,6 +276,16 @@ async def run_coordinator_turn(
             ),
         )
         try:
+            if completion and completion["source"] == "credential_approval":
+                try:
+                    await tools.credential_tools.load_approval_tools(completion["payload"])
+                    installed_discovery = tools.credential_tools.registry.tool_params()
+                    if installed_discovery:
+                        agent.set_discovered_tools(installed_discovery)
+                except Exception:
+                    # An account revoked/removed during review must still get
+                    # the wakeup. Fresh execution access checks remain binding.
+                    logger.warning("Could not restore approved operation schema", exc_info=True)
             if completion:
                 if completion["source"] == "signal":
                     from coder.coordinator.signals import describe

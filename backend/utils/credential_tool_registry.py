@@ -8,6 +8,7 @@ keeps earlier definitions for calls already in flight in the same tool batch.
 from collections import OrderedDict
 from copy import deepcopy
 import hashlib
+import re
 
 MAX_VISIBLE_TOOLS = 12
 
@@ -19,13 +20,14 @@ class CredentialToolRegistry:
 
     def load(self, node_type, operation, tools, configs):
         names = []
+        label = re.sub(r"[^a-zA-Z0-9_-]", "_", operation)
         suffix = hashlib.sha256(f"{node_type}.{operation}".encode()).hexdigest()[:10]
-        lookup_name = f"credential_lookup_{operation[:33]}_{suffix}"
+        lookup_name = f"credential_lookup_{label[:33]}_{suffix}"
         for tool in tools:
             fn = tool["function"]
             config = configs[fn["name"]]
             is_lookup = config["tool_type"] == "node_op_lookup"
-            name = lookup_name if is_lookup else f"credential_{operation[:40]}_{suffix}"
+            name = lookup_name if is_lookup else f"credential_{label[:40]}_{suffix}"
             arguments = deepcopy(fn["parameters"])
             if config.get("lookup_tool"):
                 def relabel(value):
