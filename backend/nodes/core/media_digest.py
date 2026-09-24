@@ -442,7 +442,9 @@ async def _digest_video(ref: MediaRef, data: bytes, ctx: DigestContext) -> Media
     text = (response.choices[0].message.content or "").strip()
     if not text:
         raise DigestError("Video understanding returned no content")
-    return MediaDigest(ref=ref, text=text[:ctx.char_budget], method="video_description", cost_charged=cost)
+    truncated = len(text) > ctx.char_budget
+    return MediaDigest(ref=ref, text=text[:ctx.char_budget] + ("\n[Video description truncated.]" if truncated else ""),
+                       method="video_description", cost_charged=cost, truncated=truncated)
 
 
 register_digester("video", _digest_video)

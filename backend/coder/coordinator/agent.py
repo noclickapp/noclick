@@ -170,6 +170,7 @@ async def run_coordinator_turn(
     note: Optional[str] = None,
     completion: Optional[Dict[str, Any]] = None,
     attachments: Optional[list[ContentItem]] = None,
+    prepare_input: Optional[Callable[[], Awaitable[tuple[str, list[ContentItem]]]]] = None,
 ) -> Optional[str]:
     """Persist the user's message, run one agent turn, persist the reply.
     Frames stream to the socket ``sid`` and, when given, to ``sink`` — how a
@@ -183,6 +184,10 @@ async def run_coordinator_turn(
         from repositories.coordinator_lease import CoordinatorBusy
         raise CoordinatorBusy("An interactive turn is already running")
     async with lock, coordinator_lock(pool, user_id, wait_seconds=0 if completion else 600) as turn_lease:
+        # Channel downloads/digests belong to this turn's ownership too: a
+        # later text must not overtake a slow image/document before it is seen.
+        if prepare_input is not None and not completion:
+            text, attachments = await prepare_input()
         wakeups = CoordinatorWakeupRepo(pool)
         epoch = await wakeups.epoch(user_id)
         if completion:
