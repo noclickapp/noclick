@@ -29,7 +29,7 @@ RUN pip install -r requirements.txt && pip uninstall -y pip
 FROM node:22-bookworm-slim AS cli
 RUN npm install -g --prefix /opt/noclick-cli \
         @openai/codex@0.156.1 \
-        @anthropic-ai/claude-code@2.1.280 \
+        @anthropic-ai/claude-code@2.1.281 \
         opencode-ai@1.18.32 \
         openclaw@2026.9.1 \
     && npm cache clean --force \
@@ -48,7 +48,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git build-essen
 # hermes refuses wheel builds; it is installed editable from a checkout, the
 # way its own installer and the hosted runtime do.
 RUN git clone --filter=blob:none https://github.com/NousResearch/hermes-agent.git /opt/hermes-agent \
-    && git -C /opt/hermes-agent checkout v2026.9.21 \
+    && git -C /opt/hermes-agent checkout v2026.9.24 \
     && python -m venv /opt/hermes \
     && /opt/hermes/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
     && /opt/hermes/bin/pip install --no-cache-dir -e "/opt/hermes-agent[mcp,anthropic]" "aiohttp==3.14.3" \
