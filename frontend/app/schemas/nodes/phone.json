@@ -203,7 +203,7 @@
       "x-requires-webhook": true
     },
     "PhonePlaceCallConfig": {
-      "description": "Tool: dial a number from this one, with a goal the agent pursues on the call.",
+      "description": "Dial a number from this one and hold the whole conversation yourself: the agent behind this tool is the voice on the call and pursues the goal end to end (keypad menus included). Returns at once while the call runs; when it ends, the full transcript arrives in this conversation as a new message \u2014 report the outcome then, never redial.",
       "properties": {
         "operation": {
           "const": "place_call",
@@ -228,7 +228,7 @@
           "type": "string"
         },
         "goal": {
-          "description": "What this call should achieve, in plain words.",
+          "description": "What this call should achieve, in plain words \u2014 who to ask for, what to find out or arrange, and any facts the voice may state. Everything the voice knows about the call is in here.",
           "title": "Goal",
           "type": "string"
         }

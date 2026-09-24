@@ -103,8 +103,10 @@ PHONE_NUMBERS = "phone.numbers"
 # bought OR one the user brought from their own Twilio account:
 # receiver_url(webhook_id) -> the URL a number's voice webhook points at;
 # async place(*, user_id, workflow_id, node_id, credential_id, from_number,
-# number_sid, to_number, goal, carrier=None) -> dict, where carrier is
-# {"account_sid", "auth_token"} for a brought number (None = platform account).
+# number_sid, to_number, goal, carrier=None, conversation_id=None) -> dict,
+# where carrier is {"account_sid", "auth_token"} for a brought number (None =
+# platform account) and conversation_id names the agent turn placing the call,
+# which the finished call comes back to.
 PHONE_CALLS = "phone.calls"
 
 _providers: Dict[str, Any] = {}

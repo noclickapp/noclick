@@ -238,15 +238,54 @@ def phone_call_event(output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         f"{'You' if t.get('role') != 'user' else ('They' if outbound else 'Caller')}: {t.get('text', '')}"
         for t in transcript if t.get("text")
     )
+    seconds = output.get("seconds")
+    length = f" after {int(round(float(seconds)))}s" if isinstance(seconds, (int, float)) and seconds else ""
     if outbound:
-        text = f"Your call from {caller} to {number} ended."
+        text = (f"The call you placed from {caller} to {number} ended{length}. It is over: report what was learned; "
+                f"do not place it again unless asked.")
         conversation_key, title = f"{number}:{caller}", f"Call to {number}"
     else:
-        text = f"Phone call from {caller} to your number {number}."
+        text = f"Phone call from {caller} to your number {number}{length}."
         conversation_key, title = f"{caller}:{number}", f"Call from {caller}"
-    if lines:
-        text += f"\n\nTranscript:\n{lines}"
+    text += f"\n\nTranscript:\n{lines}" if lines else "\n\nNobody spoke on the call."
     return {"text": text, "conversation_key": conversation_key, "title": title}
+
+
+DELIVERED_EVENT_KEY = "_deliveredEvent"
+
+
+def delivered_event(agent_node_id: str, nodes: Any) -> Optional[Dict[str, Any]]:
+    """An event the platform delivered straight to an agent — a finished
+    outbound call coming back to the agent that placed it — carried on the
+    agent's own run-scoped config as ``_deliveredEvent`` ({node_id,
+    node_type, label, operation, output, conversation_key?}): the node it
+    speaks for and that node's record, translated by the node class's
+    ``resolve_agent_event`` like a fired trigger, so the same persistence and
+    chat framing apply. None when this run delivered nothing."""
+    me = next((n for n in nodes or [] if isinstance(n, dict) and n.get("id") == agent_node_id), None)
+    config = me.get("config") if me else None
+    if not isinstance(config, dict):
+        config = (me.get("data") or {}).get("config") if me and isinstance(me.get("data"), dict) else None
+    delivered = config.get(DELIVERED_EVENT_KEY) if isinstance(config, dict) else None
+    if not isinstance(delivered, dict) or not isinstance(delivered.get("output"), dict):
+        return None
+    from nodes.core.registry import NODE_REGISTRY
+
+    node_cls = NODE_REGISTRY.get(str(delivered.get("node_type") or ""))
+    event = node_cls.resolve_agent_event(delivered["output"]) if node_cls else None
+    if not event:
+        return None
+    return {
+        "node_id": str(delivered.get("node_id") or agent_node_id),
+        "node_type": str(delivered.get("node_type") or ""),
+        "operation": delivered.get("operation"),
+        "source": delivered.get("label") or delivered.get("node_type") or "event",
+        "text": event.get("text") or "",
+        "conversation_key": delivered.get("conversation_key") or event.get("conversation_key"),
+        "title": event.get("title"),
+        "media": event.get("media") or [],
+        "output": delivered["output"],
+    }
 
 
 def bullet_lines(pairs: Iterable[Tuple[str, Any]]) -> List[str]:

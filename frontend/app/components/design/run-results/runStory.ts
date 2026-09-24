@@ -509,7 +509,7 @@ function derivePhoneCallLead(d: Dict): Lead | null {
     const turns = (d.transcript as unknown[])
         .map(asDict)
         .filter((t) => typeof t.text === 'string' && (t.text as string).trim())
-        .map((t) => `${t.role === 'user' ? 'Caller' : 'You'}: ${(t.text as string).trim()}`);
+        .map((t) => `${t.role === 'user' ? (outbound ? 'Them' : 'Caller') : 'You'}: ${(t.text as string).trim()}`);
     if (!other && !turns.length) return null;
     const seconds = typeof d.seconds === 'number' ? d.seconds : Number(d.seconds);
     const duration = Number.isFinite(seconds) && seconds > 0
@@ -573,7 +573,8 @@ export function deriveLead(slug: string, output: unknown): Lead | null {
         };
     }
 
-    if (slug === 'phone' && Array.isArray(d.transcript)) {
+    // A finished call: from a number bought here (phone) or brought (twilio).
+    if ((slug === 'phone' || slug === 'twilio') && Array.isArray(d.transcript)) {
         return derivePhoneCallLead(d);
     }
 

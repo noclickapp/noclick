@@ -72,7 +72,7 @@ class PhoneOnCallConfig(WebhookTriggerConfigBase):
 
 
 class PhonePlaceCallConfig(BaseModel):
-    """Tool: dial a number from this one, with a goal the agent pursues on the call."""
+    """Dial a number from this one and hold the whole conversation yourself: the agent behind this tool is the voice on the call and pursues the goal end to end (keypad menus included). Returns at once while the call runs; when it ends, the full transcript arrives in this conversation as a new message — report the outcome then, never redial."""
 
     operation: Literal["place_call"] = Field(
         "place_call",
@@ -86,7 +86,10 @@ class PhonePlaceCallConfig(BaseModel):
         title="Place a Call",
     )
     to_number: str = Field(..., title="To", description="The number to call, in international format (+1…).")
-    goal: str = Field(..., title="Goal", description="What this call should achieve, in plain words.")
+    goal: str = Field(..., title="Goal", description=(
+        "What this call should achieve, in plain words — who to ask for, what to find out or arrange, and any "
+        "facts the voice may state. Everything the voice knows about the call is in here."
+    ))
 
 
 class PhoneGetNumberConfig(BaseModel):
@@ -196,5 +199,5 @@ class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
             user_id=self.user_id, workflow_id=self.workflow_id, node_id=self.node_id,
             credential_id=self.node_data.get("credential_id"),
             from_number=credential.phone_number, number_sid=credential.number_sid,
-            to_number=config.to_number, goal=config.goal,
+            to_number=config.to_number, goal=config.goal, conversation_id=self.conversation_id,
         )
