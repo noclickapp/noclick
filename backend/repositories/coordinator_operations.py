@@ -49,11 +49,32 @@ class CoordinatorOperationRepo:
 
     @staticmethod
     async def enqueue_related(conn, *, parent_id, user_id, key, outcome):
-        """Atomically publish a late artifact with the originating turn's context."""
+        """Join an unclaimed result, or enqueue an artifact AFTER its parent.
+
+        The parent row lock serializes this with completion/claim. Once claimed,
+        its input is immutable; the artifact gets a dependent inbox event instead.
+        A merged artifact is also a receipt, so replay cannot create a late event.
+        """
+        parent = await conn.fetchrow(
+            "SELECT * FROM coordinator_wakeups WHERE id=$1::uuid AND user_id=$2::uuid "
+            "AND source='operation' FOR UPDATE", parent_id, user_id)
+        if not parent or parent["status"] == "skipped" or key in parent["payload"].get("artifacts", {}):
+            return None
         event_id = uuid.uuid5(uuid.NAMESPACE_URL, f"operation-artifact:{parent_id}:{key}")
+        if parent["status"] in ("waiting", "queued") and parent["started_at"] is None:
+            # An earlier claim may have been deferred after creating the child.
+            # Never merge its replay into the parent as well as delivering it late.
+            if await conn.fetchval("SELECT EXISTS(SELECT 1 FROM coordinator_wakeups WHERE id=$1)", event_id):
+                return None
+            row = await conn.fetchrow(
+                "UPDATE coordinator_wakeups SET payload=jsonb_set(payload,'{artifacts}',"
+                "COALESCE(payload->'artifacts','{}'::jsonb) || $2::jsonb) WHERE id=$1 RETURNING *",
+                parent["id"], {key: outcome})
+            return dict(row) if row["status"] == "queued" else None
         row = await conn.fetchrow(
             "INSERT INTO coordinator_wakeups(id,user_id,source,source_id,context,payload,send_to_phone,status) "
             "SELECT $1,user_id,'operation',$1,context,$4,send_to_phone,'queued' FROM coordinator_wakeups "
             "WHERE id=$2::uuid AND user_id=$3::uuid AND source='operation' AND status<>'skipped' "
-            "ON CONFLICT(id) DO NOTHING RETURNING *", event_id, parent_id, user_id, outcome)
+            "ON CONFLICT(id) DO NOTHING RETURNING *", event_id, parent_id, user_id,
+            {**outcome, "parent_operation_id": str(parent_id)})
         return dict(row) if row else None

@@ -153,6 +153,9 @@ class CoordinatorWakeupRepo:
         async with self.pool.acquire() as conn, conn.transaction():
             row = await conn.fetchrow(
                 """SELECT w.* FROM coordinator_wakeups w WHERE w.status='queued' AND w.not_before<=now() AND ($3::uuid IS NULL OR w.id=$3::uuid)
+                   AND (w.payload->>'parent_operation_id' IS NULL OR EXISTS (
+                     SELECT 1 FROM coordinator_wakeups parent WHERE parent.id=(w.payload->>'parent_operation_id')::uuid
+                       AND parent.user_id=w.user_id AND parent.status='done'))
                    AND NOT EXISTS (SELECT 1 FROM coordinator_wakeups busy WHERE busy.user_id=w.user_id
                                    AND busy.status IN ('running','ready','delivering'))
                    AND (w.source<>'alarm' OR (
@@ -208,12 +211,20 @@ class CoordinatorWakeupRepo:
             event["id"], event["attempt_id"],
         ) is not None
 
-    async def finish(self, event, text, *, skipped=False, reschedule=True):
-        won = await self.pool.fetchval(
-            """UPDATE coordinator_wakeups SET status=$3,response=$4,lease_until=NULL,
-                 payload=CASE WHEN $5 THEN payload || '{"stop_schedule":true}'::jsonb ELSE payload END
-               WHERE id=$1 AND attempt_id=$2 AND status='running' AND lease_until>now() RETURNING id""",
-            event["id"], event["attempt_id"], "skipped" if skipped else "ready", text, not reschedule)
+    async def finish(self, event, text, *, skipped=False, reschedule=True, delivery=None):
+        # An intentional silent completion is terminal, not an empty outbox
+        # message. Acknowledge its source too, so reconciliation cannot requeue it.
+        silent = delivery is not None and not text
+        payload = {"delivery": delivery} if delivery is not None else {}
+        if not reschedule:
+            payload["stop_schedule"] = True
+        async with self.pool.acquire() as conn, conn.transaction():
+            won = await conn.fetchrow(
+                """UPDATE coordinator_wakeups SET status=$3,response=$4,lease_until=NULL,payload=payload || $5::jsonb
+                   WHERE id=$1 AND attempt_id=$2 AND status='running' AND lease_until>now() RETURNING *""",
+                event["id"], event["attempt_id"], "skipped" if skipped else "done" if silent else "ready", text, payload)
+            if won and silent and not skipped:
+                await self._record_source_delivery(won, None, None, conn=conn)
         if won and event["source"] == "alarm" and not reschedule:
             await self._stop_alarm(event)
 

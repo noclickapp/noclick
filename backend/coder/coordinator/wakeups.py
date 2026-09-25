@@ -24,7 +24,7 @@ def outcome_summary(event):
         what = "Connection request" if payload["kind"] == "credential_request" else "Credential permissions review"
         return f"{what}: {payload['status']}."
     if event["source"] == "operation":
-        text = f"Credential operation {payload['operation']}: {payload['status']}."
+        text = f"Operation {payload['operation']}: {payload['status']}."
         if payload["status"] == "expired":
             text += " Its completion report was not received; do not repeat it without checking the outcome."
         return text
@@ -78,12 +78,15 @@ async def run_wakeup(pool, event):
         if channel in ("phone", "whatsapp", "callback", "voice") or (channel == "web" and event["send_to_phone"]):
             channel = "whatsapp_text"
         async with asyncio.timeout(600):
-            text = await run_coordinator_turn(
+            reply = await run_coordinator_turn(
                 sio=get_sio(), sid="", user_id=user_id, user_email=email, text="",
                 extra={"channel": channel}, completion=event,
             )
-        if text is not None:
-            await repo.finish(event, text or outcome_summary(event))
+        if reply is not None:
+            text = reply.text
+            if not text and reply.delivery["notify"] and event["payload"].get("operation") != "call_recording":
+                text = outcome_summary(event)
+            await repo.finish(event, text, delivery=reply.delivery)
     except CoordinatorBusy:
         await repo.defer(event)
     except asyncio.CancelledError:
@@ -129,7 +132,8 @@ async def process_event(pool, event):
     if event["status"] == "queued":
         claimed = await repo.claim(event["id"])
         if not claimed:
-            return False
+            current = await repo.get(event["id"])
+            return current is not None and current["status"] in ("done", "skipped")
         await run_wakeup(pool, claimed)
     current = await repo.get(event["id"])
     if current["status"] == "ready":

@@ -243,6 +243,57 @@ async def test_wakeup_table_is_private(db):
         assert not await pool.fetchval("SELECT has_table_privilege($1,'coordinator_wakeups','SELECT')", role)
 
 
+@pytest.mark.parametrize('source', ['alarm', 'signal', 'job'])
+async def test_background_origin_survives_next_action_and_silent_turn_acknowledges_source(db, monkeypatch, source):
+    pool, repo, builds, workflow_id, _ = db
+    request, _ = await complete_build(db, context={**CONTEXT, 'origin': 'background'} if source == 'job' else CONTEXT)
+    event = await repo.claim()
+    if source != 'job':
+        await pool.execute('UPDATE coordinator_wakeups SET source=$2 WHERE id=$1', event['id'], source)
+        event = await repo.get(event['id'])
+        if source == 'signal':
+            event['payload'] = {'kind': 'agent_message', 'message': 'Check a routine result'}
+    created = []
+
+    class QuietAgent:
+        @classmethod
+        async def create(cls, **kwargs):
+            self = cls()
+            self.kwargs = kwargs
+            return self
+
+        async def __call__(self, message):
+            # A child action inherits background provenance, including across a
+            # builder/subagent completion, instead of becoming a direct request.
+            execute = self.kwargs['custom_tool_executor']
+            result = await execute('request_build', {'workflow_id': workflow_id,
+                'instructions': 'Build the already authorized follow-up.'})
+            assert result['success']
+            created.append((await builds.list_for_user(USER, job_id=result['job_id']))[0])
+            assert (await execute('set_followup_delivery', {
+                'notify': False, 'include_recordings': False, 'reason': 'No owner attention needed.'}))['success']
+            await self.kwargs['emit_message'](ChatMessageEvent(message='Routine update.', finished=True))
+
+        async def cleanup(self):
+            pass
+
+    monkeypatch.setattr(agent, 'Agent', QuietAgent)
+    phone, socket = AsyncMock(), AsyncMock()
+    monkeypatch.setattr(wakeups, 'deliver_phone', phone)
+    monkeypatch.setattr(wakeups, 'emit_notification', socket)
+    await wakeups.run_wakeup(pool, event)
+    assert created[0]['continuation']['origin'] == 'background'
+    current = await repo.get(event['id'])
+    assert current['status'] == 'done' and not current['response']
+    assert 'stop_schedule' not in current['payload']
+    assert await wakeups.process_event(pool, current)
+    phone.assert_not_awaited()
+    socket.assert_not_awaited()
+    assert await repo.claim_delivery() is None
+    if source == 'job':
+        assert (await builds.list_for_user(USER, job_id=str(request['id'])))[0]['notified_at'] is not None
+
+
 @pytest.mark.parametrize("failure", ["unavailable", "timeout"])
 async def test_email_followup_failure_preserves_chat_without_replaying_send(db, monkeypatch, failure):
     pool, repo, _, _, _ = db

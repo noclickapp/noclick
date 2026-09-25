@@ -286,7 +286,7 @@ def bounded(value: Any, *, max_items: int = MAX_ITEMS, max_chars: int = MAX_CHAR
 
 class CoordinatorTools:
     def __init__(self, *, pool, sio, user_id: str, organization_id: Optional[str], conversation_id: str,
-                 reply_channel: str = "web", continuation=None, phone_only: bool = False):
+                 reply_channel: str = "web", continuation=None, phone_only: bool = False, followup=None):
         self.pool = pool
         self.sio = sio
         self.user_id = user_id
@@ -294,6 +294,7 @@ class CoordinatorTools:
         self.conversation_id = conversation_id
         self.reply_channel = reply_channel
         self.continuation = continuation
+        self.followup = followup
         self._tools: Dict[str, Callable[..., Awaitable[Dict[str, Any]]]] = {
             "read_attachment": self.read_attachment,
             "schedule_alarm": self.schedule_alarm,
@@ -345,6 +346,8 @@ class CoordinatorTools:
             self._tools["connect_account"] = self.connect_account
             self._tools["confirm_connect_code"] = self.confirm_connect_code
         self.connect_verified = False
+        if followup is not None:
+            self._tools["set_followup_delivery"] = followup.choose
 
     @property
     def can_whatsapp(self) -> bool:
@@ -352,11 +355,12 @@ class CoordinatorTools:
 
     def tool_params(self) -> List[Dict[str, Any]]:
         purchases = capability(PURCHASES)
-        return coordinator_tool_params(include_whatsapp=self.can_whatsapp,
+        params = coordinator_tool_params(include_whatsapp=self.can_whatsapp,
                                        include_publishing=capability(INTERFACE_PUBLISH) is not None,
                                        include_phone_numbers=capability(PHONE_NUMBERS) is not None,
                                        include_account_connect="connect_account" in self._tools,
                                        purchase_catalog=purchases.catalog() if purchases is not None else None)
+        return params + ([self.followup.tool_param()] if self.followup is not None else [])
 
     async def execute(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """The custom_tool_executor seam: dispatch, never raise, always audit."""
