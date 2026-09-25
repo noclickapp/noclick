@@ -459,18 +459,14 @@ class SocketIOProxy:
 
         sdk_permissions = session.get('sdk_permissions') if session else None
         if sdk_permissions is not None:
-            from utils.sdk_permissions import check_sdk_permission
-            # Extract workflow_id from request data for scope checking
-            request_workflow_id = None
-            if isinstance(data, dict):
-                request_workflow_id = data.get('workflow_id')
-            elif hasattr(data, 'workflow_id'):
-                request_workflow_id = getattr(data, 'workflow_id', None)
+            from utils.sdk_permissions import check_sdk_permission, resolve_request_workflow_ids
+            sdk_workflow_id = session.get('sdk_workflow_id')
+            request_workflow_ids = await resolve_request_workflow_ids(data) if sdk_workflow_id else frozenset()
 
             error = check_sdk_permission(
                 event, sdk_permissions,
-                sdk_workflow_id=session.get('sdk_workflow_id'),
-                request_workflow_id=request_workflow_id,
+                sdk_workflow_id=sdk_workflow_id,
+                request_workflow_ids=request_workflow_ids,
             )
             if error:
                 logger.warning(f"[SDK Permissions] Denied {event} for {sid}: {error}")
