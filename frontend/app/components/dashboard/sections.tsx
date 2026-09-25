@@ -283,7 +283,7 @@ function LedgerCell({ label, value, suffix, sub, tone, trend, onClick }: { label
             <span className={EYEBROW}>{label}</span>
             <span className="flex w-full items-end gap-4">
                 <span className="inline-flex items-baseline gap-1.5">
-                    <span className={cn('text-[28px] font-semibold leading-none tracking-tight', tone === 'failure' && 'text-red-600 dark:text-red-400')}>{value}</span>
+                    <span className={cn('text-[24px] font-semibold sm:text-[28px] leading-none tracking-tight', tone === 'failure' && 'text-red-600 dark:text-red-400')}>{value}</span>
                     {suffix && <span className="text-[13px] text-foreground/60 dark:text-foreground/40">{suffix}</span>}
                 </span>
                 {trend && <Sparkline values={trend} width={72} height={22} className="mb-[2px] shrink-0" />}
@@ -312,8 +312,8 @@ export function KpiLedger({ data, onFocus, className }: SectionProps & { classNa
         />,
     ];
     return (
-        <div className={cn(SURFACE, 'grid divide-x divide-border dark:divide-foreground/[0.06] overflow-hidden', className)} style={{ gridTemplateColumns: `repeat(${cells.length}, minmax(0, 1fr))` }}>
-            {cells}
+        <div className={cn(SURFACE, 'overflow-hidden', className)}>
+            <div className={LAYOUT.ledgerGrid}>{cells}</div>
         </div>
     );
 }
@@ -760,7 +760,7 @@ export function AttentionRow({
             className={cn('group/row -mx-2 rounded-lg px-2', (expandable || dense) && 'cursor-pointer', ROW_HOVER)}
             {...clickableRow(dense ? onActivate : expandable ? onToggle : undefined)}
         >
-            <div className={cn('flex items-start gap-3', dense ? 'py-2' : 'py-3')}>
+            <div className={cn('flex flex-wrap items-start gap-x-3 gap-y-2 sm:flex-nowrap', dense ? 'py-2' : 'py-3')}>
                 <AttentionMark item={item} size={dense ? 'sm' : 'md'} />
                 <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
@@ -788,7 +788,7 @@ export function AttentionRow({
                 {dense ? (
                     <ChevronRight className="mt-[5px] h-3.5 w-3.5 shrink-0 text-foreground/0 transition-colors group-hover/row:text-foreground/70 dark:group-hover/row:text-foreground/50" />
                 ) : (
-                    <div className="flex shrink-0 items-center gap-1" role="presentation" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+                    <div className="flex shrink-0 basis-full items-center justify-end gap-1 sm:basis-auto" role="presentation" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                         <AttentionActions item={item} values={values} expanded={expanded} onToggle={expandable ? onToggle : undefined} />
                     </div>
                 )}

@@ -179,11 +179,11 @@ export function NavBar({
                                 />
                             </div>
                         )}
-                        <div className="flex gap-4">
+                        <div className="flex min-w-0 gap-1 sm:gap-4">
                             <ShortcutTooltip keys={['G', 'W']}>
                                 <button
                                     onClick={() => onTabChange('flow')}
-                                    className={`px-3 py-1 rounded-md transition-colors ${
+                                    className={`whitespace-nowrap px-2.5 sm:px-3 py-1 text-sm sm:text-base rounded-md transition-colors ${
                                         selectedTab === 'flow'
                                             ? 'bg-accent text-accent-foreground dark:bg-foreground/10'
                                             : 'text-muted-foreground dark:text-white/60 hover:text-foreground'
@@ -195,7 +195,7 @@ export function NavBar({
                             <ShortcutTooltip keys={['G', 'D']}>
                                 <button
                                     onClick={() => onTabChange('dashboard')}
-                                    className={`px-3 py-1 rounded-md transition-colors flex items-center gap-1.5 ${
+                                    className={`whitespace-nowrap px-2.5 sm:px-3 py-1 text-sm sm:text-base rounded-md transition-colors flex items-center gap-1.5 ${
                                         selectedTab === 'dashboard'
                                             ? 'bg-accent text-accent-foreground dark:bg-foreground/10'
                                             : 'text-muted-foreground dark:text-white/60 hover:text-foreground'
@@ -208,7 +208,7 @@ export function NavBar({
                             {debugToolsEnabled && debugPanelVisible && (
                                 <button
                                     onClick={() => onTabChange('debug')}
-                                    className={`px-3 py-1 rounded-md transition-colors ${
+                                    className={`hidden md:block whitespace-nowrap px-2.5 sm:px-3 py-1 text-sm sm:text-base rounded-md transition-colors ${
                                         selectedTab === 'debug'
                                             ? 'bg-accent text-accent-foreground dark:bg-foreground/10'
                                             : 'text-muted-foreground dark:text-white/60 hover:text-foreground'

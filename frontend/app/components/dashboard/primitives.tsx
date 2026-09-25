@@ -42,10 +42,13 @@ export const ROWS =
  *  the placeholder can never drift from the real page. */
 export const LAYOUT = {
     pageMaxWidth: 1400,
-    pagePad: 'px-7 py-6',
-    gridGap: 'gap-[18px]',
-    cardPad: 'p-[18px]',
-    ledgerCell: 'px-5 py-4',
+    pagePad: 'px-4 py-5 sm:px-7 sm:py-6',
+    gridGap: 'gap-3 sm:gap-[18px]',
+    cardPad: 'p-4 sm:p-[18px]',
+    // Cells draw their own right/bottom hairlines; the grid's -1px margins tuck
+    // the outer ones under the card's border, so the ledger can wrap on phones.
+    ledgerGrid: 'grid -mb-px -mr-px grid-cols-2 sm:grid-cols-3 lg:grid-cols-6',
+    ledgerCell: 'border-b border-r border-border px-4 py-3.5 dark:border-foreground/[0.06] sm:px-5 sm:py-4',
     greetingGap: 'mb-5',
     ledgerGap: 'mb-4',
 } as const;

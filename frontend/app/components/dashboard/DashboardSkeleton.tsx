@@ -76,14 +76,16 @@ export function DashboardSkeleton({ memories = false }: { memories?: boolean }) 
                     <Skeleton className="h-6 w-56" />
                     <Skeleton className="h-3.5 w-80" />
                 </div>
-                <div className={cn(SURFACE, LAYOUT.ledgerGap, 'grid divide-x divide-border dark:divide-foreground/[0.06] overflow-hidden')} style={{ gridTemplateColumns: 'repeat(6, minmax(0, 1fr))' }}>
-                    {Array.from({ length: 6 }, (_, i) => (
-                        <div key={i} className={cn('space-y-2.5', LAYOUT.ledgerCell)}>
-                            <Skeleton className="h-2.5 w-16" />
-                            <Skeleton className="h-6 w-10" />
-                            <Skeleton className="h-2.5 w-28" />
-                        </div>
-                    ))}
+                <div className={cn(SURFACE, LAYOUT.ledgerGap, 'overflow-hidden')}>
+                    <div className={LAYOUT.ledgerGrid}>
+                        {Array.from({ length: 6 }, (_, i) => (
+                            <div key={i} className={cn('space-y-2.5', LAYOUT.ledgerCell)}>
+                                <Skeleton className="h-2.5 w-16" />
+                                <Skeleton className="h-6 w-10" />
+                                <Skeleton className="h-2.5 w-28" />
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 <div className={cn('grid', LAYOUT.gridGap)} style={{ gridTemplateColumns: 'repeat(12, minmax(0, 1fr))' }}>
                     {ORDER.balanced.filter((id) => id !== 'memories' || memories).map((id) => (
