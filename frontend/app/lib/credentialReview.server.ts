@@ -4,10 +4,11 @@
 import { json } from '~/lib/routerResponse';
 import { requireAuth } from '~/lib/supabase';
 import { csrfFailureResponse, generateCsrfToken } from '~/lib/csrf.server';
+import { apiBaseUrl } from '~/lib/hostedDefaults';
 
 async function backend(path: string, token: string, body?: unknown) {
     const response = await fetch(
-        `${process.env.API_URL}/api/credential-request/${path}`,
+        `${apiBaseUrl()}/api/credential-request/${path}`,
         {
             method: body === undefined ? 'GET' : 'POST',
             headers: {
@@ -18,7 +19,12 @@ async function backend(path: string, token: string, body?: unknown) {
             signal: AbortSignal.timeout(30_000),
         }
     );
-    const data = await response.json();
+    // These loaders also back in-canvas fetchers; a throw here escapes to the
+    // dashboard's error boundary and replaces the whole app, so a non-JSON
+    // reply (proxy 502 page) surfaces as the payload's `detail` instead.
+    const data = await response
+        .json()
+        .catch(() => ({ detail: `The server returned ${response.status}.` }));
     return { data, status: response.status };
 }
 
