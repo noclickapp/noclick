@@ -79,9 +79,9 @@ class ResourceRepo:
         offset: int,
     ) -> List[Dict[str, Any]]:
         """List resources the user can access, with optional workflow/type
-        filters. The access scope is: workflows the user owns, OR workflows
-        directly shared with the user, OR workflows shared with an org the
-        user is a member of. Mirrors the resource-shares access model in
+        filters. Includes the user's account files and resources from owned
+        workflows or workflows shared with the user or their organization.
+        Mirrors the resource-shares access model in
         ``utils.access_control``.
         """
         # user_id is $1 and is referenced three times in the access sub-query
@@ -89,7 +89,8 @@ class ResourceRepo:
         # filters append params starting at $2.
         conditions: List[str] = [
             """(
-                wr.workflow_id IN (SELECT id FROM workflows WHERE owner_id = $1)
+                (wr.workflow_id IS NULL AND wr.owner_id = $1)
+                OR wr.workflow_id IN (SELECT id FROM workflows WHERE owner_id = $1)
                 OR wr.workflow_id IN (
                     SELECT rs.resource_id::uuid FROM resource_shares rs
                     LEFT JOIN organization_members om ON rs.target_org_id = om.organization_id

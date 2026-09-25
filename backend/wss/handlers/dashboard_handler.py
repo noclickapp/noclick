@@ -225,7 +225,7 @@ async def build_overview(pool, user_id: str, *, days: int = 14) -> Dict[str, Any
         section("subscriptions", repo.subscription_rows(wf_ids)),
         section("tool_calls", feed.list_tool_calls(user_id=user_id, org_uuid=org_uuid, limit=120)),
         section("sandboxes", _list_sandboxes(user_id)),
-        section("resources", repo.resources(wf_ids)),
+        section("resources", repo.resources(wf_ids, user_id=user_id)),
         section("conversations", repo.agent_conversations(user_id, wf_ids)),
         section("notifications", repo.notifications(user_id)),
     )
@@ -1019,21 +1019,21 @@ def _resource_url(storage_ref: Optional[str]) -> Optional[str]:
 
 
 def _compose_files(workflows: _Workflows, resources: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    by_wf: Dict[str, List[Dict[str, Any]]] = {}
+    by_wf: Dict[Optional[str], List[Dict[str, Any]]] = {}
     for r in resources:
-        by_wf.setdefault(str(r["workflow_id"]), []).append(r)
+        wf_id = str(r["workflow_id"]) if r["workflow_id"] is not None else None
+        by_wf.setdefault(wf_id, []).append(r)
     out = []
     for wf_id, rows in by_wf.items():
-        ref = workflows.ref(wf_id)
+        ref = workflows.ref(wf_id) if wf_id else None
         out.append({
-            "id": f"resources:{wf_id}",
+            "id": f"resources:{wf_id or 'account'}",
             "kind": "resources",
-            # Uploads and deletes go through the resource events, which gate on
-            # workflow access themselves.
+            # Resource events enforce workflow access or account ownership.
             "writable": True,
-            "label": ref["name"],
-            "sublabel": "Uploads & outputs",
-            "workflow": ref,
+            "label": ref["name"] if ref else "Personal files",
+            "sublabel": "Uploads & outputs" if ref else "Uploads & attachments",
+            **({"workflow": ref} if ref else {}),
             "files": [
                 {
                     "path": r.get("name") or "file",

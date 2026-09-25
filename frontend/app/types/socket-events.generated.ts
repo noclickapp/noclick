@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Fri Sep 25 00:01:09  2026
+// Generated at: Fri Sep 25 13:20:23  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -10954,7 +10954,7 @@ export interface ResourceCreateResponse {
   resource?: ResourceInfo | null;
 }
 /**
- * Information about a workflow resource
+ * Information about a workflow or account resource
  */
 export interface ResourceInfo {
   /**
@@ -10970,9 +10970,9 @@ export interface ResourceInfo {
    */
   organization_id?: string | null;
   /**
-   * Parent workflow UUID
+   * Parent workflow UUID; null for personal account files
    */
-  workflow_id: string;
+  workflow_id?: string | null;
   /**
    * Workflow node ID that produced this resource
    */
@@ -11110,7 +11110,7 @@ export interface ResourceGetResponse {
   resource: ResourceInfo1;
 }
 /**
- * Information about a workflow resource
+ * Information about a workflow or account resource
  */
 export interface ResourceInfo1 {
   /**
@@ -11126,9 +11126,9 @@ export interface ResourceInfo1 {
    */
   organization_id?: string | null;
   /**
-   * Parent workflow UUID
+   * Parent workflow UUID; null for personal account files
    */
-  workflow_id: string;
+  workflow_id?: string | null;
   /**
    * Workflow node ID that produced this resource
    */

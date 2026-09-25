@@ -356,18 +356,19 @@ class DashboardRepo:
     # files
     # ------------------------------------------------------------------
 
-    async def resources(self, workflow_ids: List[Any], *, limit: int = 200) -> List[Dict[str, Any]]:
-        """Workflow resources (uploads, attachments, node outputs) in scope."""
-        if not workflow_ids:
-            return []
+    async def resources(self, workflow_ids: List[Any], *, user_id: str, limit: int = 200) -> List[Dict[str, Any]]:
+        """Scoped workflow files plus the viewer's private account attachments."""
         sql = """
             SELECT wr.id, wr.workflow_id, wr.node_id, wr.resource_type, wr.name, wr.mime_type,
-                   wr.size_bytes, wr.storage_ref, wr.metadata, wr.created_at, wr.updated_at
+                   wr.size_bytes, wr.storage_ref,
+                   jsonb_build_object('row_count', wr.metadata->'row_count') AS metadata,
+                   wr.created_at, wr.updated_at
             FROM workflow_resources wr
             WHERE wr.workflow_id = ANY($1::uuid[])
+               OR (wr.workflow_id IS NULL AND wr.owner_id = $2::uuid)
             ORDER BY wr.updated_at DESC
-            LIMIT $2
+            LIMIT $3
         """
         async with self._pool.acquire() as conn:
-            rows = await conn.fetch(sql, self._ids(workflow_ids), limit)
+            rows = await conn.fetch(sql, self._ids(workflow_ids), user_id, limit)
         return [dict(r) for r in rows]

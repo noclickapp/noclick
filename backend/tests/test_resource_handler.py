@@ -14,7 +14,7 @@ import pytest
 import asyncio
 import json
 from typing import Dict, Any
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 from tests.utils.base_handler_test import BaseHandlerTest
 from tests.fixtures.real_db_fixture import real_database
@@ -69,6 +69,49 @@ class TestResourceHandler(BaseHandlerTest):
         return str(row['id'])
 
     # ── Resource CRUD ────────────────────────────────────────────────────
+
+    async def test_personal_file_access_and_delete(self, real_database, frontend_sio, sid):
+        await self._setup_user_and_workflow(real_database)
+        await self._setup_user_and_workflow(real_database, USER_B, 'other-resource@example.com')
+        resources = []
+        for user in (USER_A, USER_B):
+            resources.append(await real_database.fetchval(
+                "INSERT INTO workflow_resources(owner_id,resource_type,name,mime_type,storage_ref) "
+                "VALUES ($1,'image','image.jpg','image/jpeg',$2) RETURNING id",
+                user, f"{user}/account/image.jpg",
+            ))
+        own, other = map(str, resources)
+
+        async def request(event, **kwargs):
+            await send_event(frontend_sio, sid, event(**kwargs))
+            for _ in range(40):
+                response = _find_response(self.get_main_api_emitted_events("response"), kwargs["request_id"])
+                if response:
+                    return response
+                await asyncio.sleep(0.05)
+            pytest.fail(f"No response for {kwargs['request_id']}")
+
+        listed = await request(ResourceListRequest, event_name="resource:list", request_id="personal-list")
+        listed_ids = {r["id"] for r in listed["data"]["resources"]}
+        assert own in listed_ids and other not in listed_ids
+        got = await request(ResourceGetRequest, event_name="resource:get", request_id="personal-get", resource_id=own)
+        assert got["data"]["resource"]["workflow_id"] is None
+
+        with patch("utils.r2_cloudflare.get_public_download_url", return_value="https://files.example/image.jpg") as download:
+            got = await request(ResourceDownloadUrlRequest, event_name="resource:download_url", request_id="personal-download", resource_id=own)
+            assert got["data"]["download_url"] == "https://files.example/image.jpg"
+            download.assert_called_once_with(f"{USER_A}/account/image.jpg")
+            for event, name in ((ResourceGetRequest, "get"), (ResourceDownloadUrlRequest, "download_url"), (ResourceDeleteRequest, "delete")):
+                denied = await request(event, event_name=f"resource:{name}", request_id=f"personal-denied-{name}", resource_id=other)
+                assert denied["error"] == "Resource not found"
+            assert download.call_count == 1
+        assert await real_database.fetchval("SELECT id FROM workflow_resources WHERE id=$1", other)
+
+        with patch("utils.r2_cloudflare.delete_files_from_r2_async_native", new_callable=AsyncMock) as delete_blob:
+            deleted = await request(ResourceDeleteRequest, event_name="resource:delete", request_id="personal-delete", resource_id=own)
+            assert deleted["data"]["success"] is True
+            delete_blob.assert_awaited_once_with("workflow-resources", [f"{USER_A}/account/image.jpg"])
+        assert await real_database.fetchval("SELECT id FROM workflow_resources WHERE id=$1", own) is None
 
     async def test_resource_lifecycle_create_list_get_delete(self, real_database, frontend_sio, sid):
         """

@@ -20,6 +20,7 @@ from tests.fixtures.real_db_fixture import real_database  # noqa: F401 — fixtu
 from utils.graph_nodes import node_meta_map, workflow_marks
 from wss.handlers import dashboard_handler as dh
 from repositories.dashboard import DashboardRepo
+from repositories.resources import ResourceRepo
 
 def _fresh_user() -> str:
     """Each DB test gets its own user: the Postgres container is session-scoped,
@@ -163,6 +164,33 @@ async def test_repo_webhooks_notifications_and_mark_read(real_database):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("with_workflows", [False, True])
+async def test_account_files_are_visible_only_to_owner(real_database, with_workflows):
+    user, other = _fresh_user(), _fresh_user()
+    workflow, org = await _seed(real_database, user)
+    other_workflow, _ = await _seed(real_database, other)
+    ids = []
+    for owner, wf in ((user, None), (other, None), (user, workflow), (other, other_workflow)):
+        ids.append(await real_database.fetchval(
+            "INSERT INTO workflow_resources (owner_id, organization_id, workflow_id, resource_type, name, metadata) "
+            "VALUES ($1::uuid,$2,$3::uuid,'image','image.jpg',($4::text)::jsonb) RETURNING id",
+            owner, org, wf, json.dumps({"source": "coordinator_attachment", "extracted_text": "private content"}),
+        ))
+
+    repo = DashboardRepo(real_database.pool)
+    rows = await repo.resources([workflow] if with_workflows else [], user_id=user)
+    assert {r["id"] for r in rows} == ({ids[0], ids[2]} if with_workflows else {ids[0]})
+    assert all("extracted_text" not in r["metadata"] for r in rows)
+    assert len(await repo.resources([workflow], user_id=user, limit=1)) == 1
+
+    resources = ResourceRepo(real_database.pool)
+    listed = await resources.list_accessible_resources(user_id=user, workflow_id=None, resource_type=None, limit=200, offset=0)
+    assert {r["id"] for r in listed} == {ids[0], ids[2]}
+    scoped = await resources.list_accessible_resources(user_id=user, workflow_id=workflow, resource_type=None, limit=200, offset=0)
+    assert {r["id"] for r in scoped} == {ids[2]}
+
+
+@pytest.mark.asyncio
 async def test_repo_list_workflows_and_identity(real_database):
     user = _fresh_user()
     wf_id, org = await _seed(real_database, user)
@@ -254,6 +282,20 @@ def test_resource_places_are_writable():
     places = dh._compose_files(workflows, [row])
     assert places[0]["kind"] == "resources" and places[0]["writable"] is True
     assert places[0]["files"][0]["resourceId"] == "r1"
+
+
+def test_account_files_have_a_personal_place_without_a_workflow():
+    row = {"id": "r1", "workflow_id": None, "name": "image.jpg", "mime_type": "image/jpeg", "resource_type": "image",
+           "size_bytes": 179055, "created_at": datetime(2026, 9, 25, tzinfo=timezone.utc), "storage_ref": "owner/account/r1/image.jpg"}
+    with patch.object(dh, "_resource_url", return_value="https://files.example/image.jpg"):
+        places = dh._compose_files(dh._Workflows([]), [row, {**row, "id": "r2"}])
+    assert len(places) == 1
+    place = places[0]
+    assert place["id"] == "resources:account" and place["label"] == "Personal files"
+    assert "workflow" not in place and place["writable"] is True
+    assert [f["resourceId"] for f in place["files"]] == ["r1", "r2"]
+    assert place["files"][0]["url"] == "https://files.example/image.jpg"
+    assert place["files"][0]["kind"] == "image"
 
 
 def test_stale_next_run_mirror_is_not_upcoming():

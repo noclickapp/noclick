@@ -1510,7 +1510,7 @@ const SOURCE_LABEL: Record<FileSourceKind, string> = {
 };
 
 const SOURCE_HINT: Record<FileSourceKind, string> = {
-    resources: 'Files uploaded to a workflow or produced by its nodes — attachments, downloads, generated media.',
+    resources: 'Personal attachments, workflow uploads, downloads and generated media.',
     workspace: 'Each agent conversation gets its own durable folder, mounted at /workspace in the sandbox.',
     volume: 'Named volumes wired into an agent through a Filesystem node; shared across its conversations.',
     builder: 'The scratch folder the AI builder uses to probe APIs while it designs — one per workspace.',
@@ -1651,7 +1651,7 @@ export function FilesCompact({ data, onFocus, limit = 6, footer = true, narrow =
         <div>
             <div className={ROWS}>
                 {all.slice(0, limit).map((f) => (
-                    <FileRowView key={`${f.source.id}:${f.path}`} file={f} now={data.now} showSource={!narrow} />
+                    <FileRowView key={`${f.source.id}:${f.resourceId ?? f.path}`} file={f} now={data.now} showSource={!narrow} />
                 ))}
             </div>
             <div className="flex items-center justify-between pt-2 text-[11px] text-foreground/55 dark:text-foreground/35">
@@ -1744,7 +1744,7 @@ export function FilesFull({ data }: SectionProps) {
                                     <span className="tabular-nums">
                                         {s.files.length} · {fmtBytes(s.files.reduce((a, f) => a + f.size, 0))}
                                     </span>
-                                    {s.writable && actions.uploadTo && (
+                                    {s.writable && actions.uploadTo && (s.kind === 'resources' ? s.workflow : s.uploadUrlPath) && (
                                         <TextLink onClick={() => actions.uploadTo?.(s)} icon={false}>
                                             Upload
                                         </TextLink>
@@ -1755,7 +1755,7 @@ export function FilesFull({ data }: SectionProps) {
                                 <div className={cn(ROWS, "border-t border-border dark:border-foreground/[0.06]")}>
                                     {files.map((f) => (
                                         <FileRowView
-                                            key={f.path}
+                                            key={f.resourceId ?? f.path}
                                             file={{ ...f, source: s }}
                                             now={data.now}
                                             showSource={false}

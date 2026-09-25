@@ -58,7 +58,7 @@ def _row_to_resource_info(row) -> ResourceInfo:
         id=str(row["id"]),
         owner_id=str(row["owner_id"]),
         organization_id=str(row["organization_id"]) if row.get("organization_id") else None,
-        workflow_id=str(row["workflow_id"]),
+        workflow_id=str(row["workflow_id"]) if row["workflow_id"] is not None else None,
         node_id=row.get("node_id"),
         resource_type=row["resource_type"],
         name=row["name"],
@@ -145,7 +145,7 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
         self, user_id: str, resource_id: str, request, sid,
         min_permission: Permission = Permission.VIEW,
     ) -> Optional[dict]:
-        """Fetch a resource row through the repo and check workflow access.
+        """Check workflow access, or owner-only access for account files.
 
         Returns the resource dict, or None (with an error already sent)
         when the resource is missing or the caller can't access it.
@@ -154,6 +154,14 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
         repo = ResourceRepo(pool)
         resource = await repo.get_resource(resource_id)
         if resource is None:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data={}, error="Resource not found"
+            ))
+            return None
+
+        if resource["workflow_id"] is None:
+            if str(resource["owner_id"]) == user_id:
+                return resource
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id, data={}, error="Resource not found"
             ))
@@ -331,7 +339,7 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
                 return
 
             # Build R2 key
-            storage_key = f"{row['owner_id']}/{row['workflow_id']}/{row['id']}/{request.filename}"
+            storage_key = f"{row['owner_id']}/{row['workflow_id'] or 'account'}/{row['id']}/{request.filename}"
 
             from utils.r2_cloudflare import generate_presigned_upload_url
             upload_url = generate_presigned_upload_url(

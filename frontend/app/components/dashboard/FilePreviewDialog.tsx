@@ -26,7 +26,7 @@ function toResourceInfo(file: FileEntry, source: FileSource): ResourceInfo {
         id: file.resourceId ?? '',
         owner_id: '',
         organization_id: null,
-        workflow_id: source.workflow?.id ?? '',
+        workflow_id: source.workflow?.id ?? null,
         node_id: null,
         resource_type: (file.resourceType ?? 'file') as ResourceInfo['resource_type'],
         name: file.path,
