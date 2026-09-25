@@ -2101,11 +2101,11 @@ class MCPOAuthRegisterClientResponse(BaseModel):
 # ============================================================================
 
 class ResourceInfo(BaseModel):
-    """Information about a workflow resource"""
+    """Information about a workflow or account resource"""
     id: str = Field(..., description="Resource UUID")
     owner_id: str = Field(..., description="Owner user UUID")
     organization_id: Optional[str] = Field(None, description="Organization UUID if applicable")
-    workflow_id: str = Field(..., description="Parent workflow UUID")
+    workflow_id: Optional[str] = Field(None, description="Parent workflow UUID; null for personal account files")
     node_id: Optional[str] = Field(None, description="Workflow node ID that produced this resource")
     resource_type: str = Field(..., description="Type: dataset, file, image, video, audio, document")
     name: str = Field(..., description="Display name")
