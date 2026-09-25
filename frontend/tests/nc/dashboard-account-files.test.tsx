@@ -21,7 +21,7 @@ export default async function () {
             mime: 'image/svg+xml', url: imageUrl(i ? 'blue' : 'red'), size: 100, mtime: now,
         })),
     }, {
-        id: 'resources:workflow', kind: 'resources', label: 'Workflow files',
+        id: 'resources:workflow', kind: 'resources', label: 'Workflow files', sublabel: 'Uploads & outputs',
         workflow: { id: 'workflow', name: 'Workflow files', marks: [] }, writable: true,
         files: [{ resourceId: 'workflow-file', path: 'image.jpg', kind: 'image', size: 100, mtime: now }],
     }];
