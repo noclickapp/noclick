@@ -46,3 +46,14 @@ class CoordinatorOperationRepo:
         if row and row["status"] == "queued":
             from utils.coordinator_dispatch import dispatch_event
             await dispatch_event(self.pool, row)
+
+    @staticmethod
+    async def enqueue_related(conn, *, parent_id, user_id, key, outcome):
+        """Atomically publish a late artifact with the originating turn's context."""
+        event_id = uuid.uuid5(uuid.NAMESPACE_URL, f"operation-artifact:{parent_id}:{key}")
+        row = await conn.fetchrow(
+            "INSERT INTO coordinator_wakeups(id,user_id,source,source_id,context,payload,send_to_phone,status) "
+            "SELECT $1,user_id,'operation',$1,context,$4,send_to_phone,'queued' FROM coordinator_wakeups "
+            "WHERE id=$2::uuid AND user_id=$3::uuid AND source='operation' AND status<>'skipped' "
+            "ON CONFLICT(id) DO NOTHING RETURNING *", event_id, parent_id, user_id, outcome)
+        return dict(row) if row else None

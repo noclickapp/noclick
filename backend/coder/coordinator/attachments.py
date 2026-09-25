@@ -102,8 +102,10 @@ async def read_attachment(pool, user_id, attachment_id, offset=0):
     if not row or str(row["owner_id"]) != user_id or row["workflow_id"] is not None:
         raise ValueError("Attachment not found")
     metadata = row.get("metadata") or {}
-    if metadata.get("source") != "coordinator_attachment":
+    if metadata.get("source") not in ("coordinator_attachment", "call_recording"):
         raise ValueError("Attachment not found")
+    from utils.r2_cloudflare import get_public_download_url
     return {"attachment_id": attachment_id, "filename": row["name"],
+            "mime_type": row["mime_type"], "download_url": get_public_download_url(row["storage_ref"]),
             **text_page(metadata.get("extracted_text") or "", offset),
             "error": metadata.get("extraction_error") or None}

@@ -49,7 +49,7 @@ def resource_type_for_mime(mime: str) -> str:
 async def create_resource_from_bytes(
     *,
     user_id: str,
-    workflow_id: str,
+    workflow_id: Optional[str],
     node_id: Optional[str] = None,
     organization_id: Optional[str] = None,
     body: bytes,
@@ -57,15 +57,19 @@ async def create_resource_from_bytes(
     filename: str,
     resource_type: Optional[str] = None,
     metadata: Optional[Dict[str, Any]] = None,
+    resource_id: Optional[str] = None,
+    connection=None,
 ) -> Dict[str, Any]:
     """Upload *body* to R2 and record a ``workflow_resources`` row.
 
     Returns ``{resource_id, name, mime_type, size_bytes, storage_ref,
     download_url}`` — the shape every consumer (and the media resolver) expects.
-    The storage key is ``{owner}/{workflow}/{resource_id}/{filename}``.
+    The storage key is ``{owner}/{workflow-or-account}/{resource_id}/{filename}``.
+    Supply a stable ID and pinned connection to commit a file with its producer's
+    ledger/outbox; callers must guard retries before uploading.
     """
-    resource_id = str(uuid.uuid4())
-    storage_ref = f"{user_id}/{workflow_id}/{resource_id}/{filename}"
+    resource_id = resource_id or str(uuid.uuid4())
+    storage_ref = f"{user_id}/{workflow_id or 'account'}/{resource_id}/{filename}"
     rtype = resource_type or resource_type_for_mime(content_type)
     size_bytes = len(body)
 
@@ -73,7 +77,7 @@ async def create_resource_from_bytes(
         bucket=RESOURCE_BUCKET, key=storage_ref, body=body, content_type=content_type
     )
 
-    await get_native_pool().execute(
+    await (connection or get_native_pool()).execute(
         """
         INSERT INTO workflow_resources
             (id, owner_id, organization_id, workflow_id, node_id, resource_type,
