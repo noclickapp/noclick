@@ -160,6 +160,12 @@ def registered_plan_limits():
     return _impl
 
 
+def plans_url() -> Optional[str]:
+    """Where an account picks a plan: the platform's to say, None where
+    nothing is sold."""
+    return _impl.plans_url() if _impl is not None else None
+
+
 async def _delegate(name: str, default, *args, **kwargs):
     if _impl is None:
         return default

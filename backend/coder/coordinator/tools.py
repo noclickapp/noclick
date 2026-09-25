@@ -271,6 +271,7 @@ class CoordinatorTools:
         self.conversation_id = conversation_id
         self.reply_channel = reply_channel
         self.continuation = continuation
+        self.phone_only = phone_only
         self._tools: Dict[str, Callable[..., Awaitable[Dict[str, Any]]]] = {
             "read_attachment": self.read_attachment,
             "schedule_alarm": self.schedule_alarm,
@@ -381,13 +382,24 @@ class CoordinatorTools:
 
         return await read_attachment(self.pool, self.user_id, attachment_id, offset)
 
+    def _refusal(self, exc: Exception) -> Dict[str, Any]:
+        """A refused media call: the gate's reason with the way past it, so the
+        reply can name the plans and the link instead of a bare "not available"."""
+        if not isinstance(exc, GateDenied):
+            return {"success": False, "error": str(exc)}
+        next_step = exc.next_step
+        if next_step and self.phone_only:
+            next_step += (" The owner signs in there with this phone number (Continue with phone), "
+                          "or connects an email first (connect_account).")
+        return {"success": False, "error": str(exc), "kind": exc.kind, "next": next_step}
+
     async def generate_image(self, prompt: str, model: Optional[str] = None,
                              aspect_ratio: Optional[str] = None) -> Dict[str, Any]:
         try:
             made = await generate_image(self.pool, user_id=self.user_id, organization_id=self.organization_id,
                                         prompt=prompt, model=model, aspect_ratio=aspect_ratio)
         except (GateDenied, MediaError) as exc:
-            return {"success": False, "error": str(exc)}
+            return self._refusal(exc)
         return {"success": True, "model": made["model"], "images": [i["url"] for i in made["images"]]}
 
     async def generate_video(self, prompt: str, model: Optional[str] = None, seconds: Optional[int] = None,
@@ -398,7 +410,7 @@ class CoordinatorTools:
                                     prompt=prompt, model=model, seconds=seconds, resolution=resolution,
                                     aspect_ratio=aspect_ratio, audio=audio, continuation=self.continuation)
         except (GateDenied, MediaError) as exc:
-            return {"success": False, "error": str(exc)}
+            return self._refusal(exc)
         return {"success": True, **job, "next": "It is rendering; you'll be woken with the video when it's done."}
 
     async def web_search(self, query: str, num_results: int = 5, domains: Optional[List[str]] = None):

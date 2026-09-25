@@ -546,16 +546,30 @@ async def test_message_owner_reaches_the_owner_on_the_channel_it_resolves(own_ca
 
 async def test_media_tools_answer_the_model_with_results_or_the_gate_reason(monkeypatch):
     from billing.gates import GateDenied
+    from utils.media_generation import MediaError
 
     monkeypatch.setattr(coordinator_tools, "generate_image", AsyncMock(return_value={
         "model": "openai/gpt-image-2.5-sunburst", "images": [{"url": "https://f.example/image-1.png"}]}))
     made = await tools().execute("generate_image", {"prompt": "a fern"})
     assert made == {"success": True, "model": "openai/gpt-image-2.5-sunburst", "images": ["https://f.example/image-1.png"]}
 
-    monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(
-        side_effect=GateDenied("plan", "Video generation is available on the Plus and Pro plans.")))
+    # A gate refusal carries the way past it, so the reply can name the plans and the link
+    # (a WhatsApp user was once told only "not available on your plan").
+    monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(side_effect=GateDenied(
+        "plan", "Video generation is available on the Plus and Pro plans.", next_step="Upgrade: https://noclick.com/pricing")))
     refused = await tools().execute("generate_video", {"prompt": "waves"})
-    assert refused == {"success": False, "error": "Video generation is available on the Plus and Pro plans."}
+    assert refused == {"success": False, "error": "Video generation is available on the Plus and Pro plans.",
+                       "kind": "plan", "next": "Upgrade: https://noclick.com/pricing"}
+    # A phone-only owner has no email to sign in with on the web: say how they get in.
+    phone_only = CoordinatorTools(pool=MockNativePool(), sio=object(), user_id=USER, organization_id=ORG,
+                                  conversation_id=CID, phone_only=True)
+    refused = await phone_only.execute("generate_video", {"prompt": "waves"})
+    assert refused["next"].startswith("Upgrade: https://noclick.com/pricing The owner signs in there with this phone number")
+    assert "connect_account" in refused["next"]
+    # A media error is not a gate: no next step to invent.
+    monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(side_effect=MediaError("x isn't an OpenRouter video model.")))
+    assert await tools().execute("generate_video", {"prompt": "waves"}) == {
+        "success": False, "error": "x isn't an OpenRouter video model."}
     monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(return_value={"job_id": "j1", "projected_credits": 9.6}))
     started = await tools().execute("generate_video", {"prompt": "waves", "seconds": 8})
     assert started["success"] is True and started["job_id"] == "j1" and "woken" in started["next"]
