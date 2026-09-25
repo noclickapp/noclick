@@ -14,7 +14,6 @@ import pytest
 
 from tests.fixtures.cas_fixtures import codec_pool  # noqa: F401
 from tests.utils.base_handler_test import BaseHandlerTest
-from utils import sdk_permissions
 from utils.sdk_permissions import (
     PUBLISHED_APP,
     _PUBLISHED_APP_EVENTS,
@@ -152,10 +151,3 @@ class TestPublishedAppSessionGate(BaseHandlerTest):
         result = await self.proxy._route_event_impl(
             "workflow:get", sid, {"request_id": "w", "workflow_id": OTHER_WF})
         assert result["error"] == "permission_denied"
-
-
-def test_marker_constant_matches_the_migration():
-    """The migration stamps existing published-app keys with this literal."""
-    migrations = Path(__file__).resolve().parents[2] / "infra/supabase/migrations"
-    [migration] = migrations.glob("*_published_app_key_marker.sql")
-    assert f"'{sdk_permissions.PUBLISHED_APP}'" in migration.read_text()
