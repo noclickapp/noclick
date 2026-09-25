@@ -4,7 +4,7 @@ A node or handler that has produced bytes — a generated image, an email
 attachment, an agent-uploaded file, an HTTP download — turns them into a
 resolvable ``resource_id`` by calling :func:`create_resource_from_bytes`. This
 replaces the "upload to R2 + INSERT workflow_resources" block that was
-copy-pasted across the agent node, agent tool execution, the MCP delegated tools,
+copy-pasted across the agent node, agent tool execution, the MCP tools,
 and inbound-email attachments, and is the seam the HTTP node's file-download
 path also uses.
 
@@ -64,7 +64,9 @@ async def create_resource_from_bytes(
 
     Returns ``{resource_id, name, mime_type, size_bytes, storage_ref,
     download_url}`` — the shape every consumer (and the media resolver) expects.
-    The storage key is ``{owner}/{workflow-or-account}/{resource_id}/{filename}``.
+    The storage key is ``{owner}/{workflow}/{resource_id}/{filename}``; an
+    account-level resource (no workflow, e.g. the coordinator's media) keys
+    under ``{owner}/account/``.
     Supply a stable ID and pinned connection to commit a file with its producer's
     ledger/outbox; callers must guard retries before uploading.
     """

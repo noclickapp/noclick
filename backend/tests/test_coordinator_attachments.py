@@ -21,6 +21,7 @@ async def files(builder_request_db, monkeypatch):
     upload = AsyncMock()
     monkeypatch.setattr("utils.resource_store.upload_bytes_to_r2_async", upload)
     monkeypatch.setattr("utils.resource_store.get_public_download_url", lambda key: "https://assets.example/" + key)
+    monkeypatch.setattr("utils.r2_cloudflare.get_public_download_url", lambda key: "https://assets.example/" + key)
     yield pool, upload
     await pool.execute("DELETE FROM workflow_resources WHERE owner_id=$1::uuid AND workflow_id IS NULL", USER)
 
@@ -45,6 +46,7 @@ async def test_pdf_and_long_text_are_stored_and_paged_with_owner_scope(files):
                             conversation_id=f"coordinator:{USER}")
     page = await tool.execute("read_attachment", {"attachment_id": str(row["id"]), "offset": 8000})
     assert page["text"].endswith("is 42.") and page["next_offset"] is None
+    assert page["download_url"] == "https://assets.example/" + row["storage_ref"]
     with pytest.raises(ValueError, match="not found"):
         await attachments.read_attachment(pool, "00000000-0000-0000-0000-000000000003", str(row["id"]))
     with pytest.raises(ValueError, match="nonnegative"):
