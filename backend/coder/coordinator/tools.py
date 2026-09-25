@@ -26,7 +26,7 @@ from utils.media_generation import (
     DEFAULT_VIDEO_MODEL, DEFAULT_VIDEO_RESOLUTION, DEFAULT_VIDEO_SECONDS, MediaError, generate_image, start_video,
 )
 from nodes.agent.platform_tools import _SUBMIT_FEEDBACK_PARAM, submit_feedback_impl
-from utils.capabilities import INTERFACE_PUBLISH, OWNER_MESSAGE, PHONE_NUMBERS, capability
+from utils.capabilities import INTERFACE_PUBLISH, OWNER_MESSAGE, PHONE_NUMBERS, PURCHASES, capability
 from utils.tool_call_log import record_tool_call
 
 logger = logging.getLogger(__name__)
@@ -42,9 +42,12 @@ _OVERVIEW_SECTIONS = ("attention", "runs", "agents", "credentials", "triggers", 
 
 
 def coordinator_tool_params(*, include_whatsapp: bool = False, include_publishing: bool = False, include_phone_numbers: bool = False,
-                            include_account_connect: bool = False) -> List[Dict[str, Any]]:
+                            include_account_connect: bool = False,
+                            purchase_catalog: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
     """ChatCompletionToolParam dicts — the shape Agent.create's custom_tools takes.
-    ``message_owner`` is advertised only where the instance can deliver one."""
+    ``message_owner`` is advertised only where the instance can deliver one;
+    ``purchase_link`` only where it sells something (``purchase_catalog`` is
+    what, with prices, so the tool can quote them)."""
     def tool(name: str, description: str, properties: Dict[str, Any], required: Optional[List[str]] = None):
         return {"type": "function", "function": {
             "name": name, "description": description,
@@ -156,11 +159,15 @@ def coordinator_tool_params(*, include_whatsapp: bool = False, include_publishin
                                  "action=unpublish removes the public site. Rename/unpublish require workflow_id and no instructions. "
                                  "Omit node_id only when the target is unambiguous."}}
                  if include_publishing else {})}),
-        tool("job_status", "Read the jobs you started — builds, agent requests and videos — with their status and "
+        tool("job_status", "Read the jobs you started — builds, agent requests, videos"
+             + (", purchase links" if purchase_catalog else "") + " — with their status and "
              "actual results. Builds also show their phase, questions with answer links, published URLs and delivery "
-             "outcomes; agent jobs show the agent's reply; videos show the file once ready. Pass job_id for one job "
-             "or kind to narrow the list; otherwise lists active jobs first, then recent ones.",
-             {"job_id": {"type": "string"}, "kind": {"type": "string", "enum": ["build", "agent", "video"]}}),
+             "outcomes; agent jobs show the agent's reply; videos show the file once ready"
+             + ("; purchase links show what they buy, whether they were paid, and the link while it's open"
+                if purchase_catalog else "")
+             + ". Pass job_id for one job or kind to narrow the list; otherwise lists active jobs first, then recent ones.",
+             {"job_id": {"type": "string"},
+              "kind": {"type": "string", "enum": ["build", "agent", "video"] + (["purchase"] if purchase_catalog else [])}}),
         tool("cancel_job", "Cancel a build before publishing starts. A build already running may finish, but no "
              "later steps will run. Agent requests cannot be cancelled once sent.", {"job_id": {"type": "string"}},
              ["job_id"]),
@@ -228,6 +235,22 @@ def coordinator_tool_params(*, include_whatsapp: bool = False, include_publishin
               "workflow_id": {"type": "string", "description": "The workflow it happened in, when there is one."}},
              _SUBMIT_FEEDBACK_PARAM["function"]["parameters"].get("required", ["feedback"])),
     ])
+    if purchase_catalog:
+        plans, topups = purchase_catalog["plans"], purchase_catalog["topups"]
+        params.append(tool(
+            "purchase_link",
+            "A one-tap payment link for this account: it opens payment for this account directly, no sign-in, "
+            "and the payment wakes you. Plans: "
+            + "; ".join(f"{p['label']} ${p['monthly_usd']:g}/month or ${p['yearly_usd']:g}/year — {p['description']}"
+                        for p in plans)
+            + ". Monthly credit top-ups (credits/month at $/month): "
+            + ", ".join(f"{t['credits_per_month']} (${t['monthly_usd']:g})" for t in topups)
+            + "; yearly billing is cheaper and a top-up needs a paid plan. Send the link on its own line with its price.",
+            {"kind": {"type": "string", "enum": ["plan", "topup"]},
+             "plan": {"type": "string", "enum": [p["plan"] for p in plans]},
+             "credits_per_month": {"type": "integer", "enum": [t["credits_per_month"] for t in topups]},
+             "billing_period": {"type": "string", "enum": ["monthly", "yearly"]}},
+            ["kind"]))
     if include_account_connect:
         params.extend([
             tool("connect_account",
@@ -271,7 +294,6 @@ class CoordinatorTools:
         self.conversation_id = conversation_id
         self.reply_channel = reply_channel
         self.continuation = continuation
-        self.phone_only = phone_only
         self._tools: Dict[str, Callable[..., Awaitable[Dict[str, Any]]]] = {
             "read_attachment": self.read_attachment,
             "schedule_alarm": self.schedule_alarm,
@@ -315,6 +337,8 @@ class CoordinatorTools:
             "message_owner": self.message_owner,
             "submit_feedback": self.submit_feedback,
         })
+        if capability(PURCHASES) is not None:
+            self._tools["purchase_link"] = self.purchase_link
         if not phone_only:
             self._tools["set_email_address"] = self.set_email_address
         if phone_only:
@@ -327,10 +351,12 @@ class CoordinatorTools:
         return capability(OWNER_MESSAGE) is not None
 
     def tool_params(self) -> List[Dict[str, Any]]:
+        purchases = capability(PURCHASES)
         return coordinator_tool_params(include_whatsapp=self.can_whatsapp,
                                        include_publishing=capability(INTERFACE_PUBLISH) is not None,
                                        include_phone_numbers=capability(PHONE_NUMBERS) is not None,
-                                       include_account_connect="connect_account" in self._tools)
+                                       include_account_connect="connect_account" in self._tools,
+                                       purchase_catalog=purchases.catalog() if purchases is not None else None)
 
     async def execute(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """The custom_tool_executor seam: dispatch, never raise, always audit."""
@@ -382,16 +408,39 @@ class CoordinatorTools:
 
         return await read_attachment(self.pool, self.user_id, attachment_id, offset)
 
-    def _refusal(self, exc: Exception) -> Dict[str, Any]:
-        """A refused media call: the gate's reason with the way past it, so the
-        reply can name the plans and the link instead of a bare "not available"."""
+    async def _refusal(self, exc: Exception) -> Dict[str, Any]:
+        """A refused media call: the gate's reason and, where this platform
+        sells the way past it, the purchase links already minted — one per plan
+        that includes the product, or one per suggested top-up size — so the
+        reply names them with prices instead of a bare "not available"."""
         if not isinstance(exc, GateDenied):
             return {"success": False, "error": str(exc)}
-        next_step = exc.next_step
-        if next_step and self.phone_only:
-            next_step += (" The owner signs in there with this phone number (Continue with phone), "
-                          "or connects an email first (connect_account).")
-        return {"success": False, "error": str(exc), "kind": exc.kind, "next": next_step}
+        refusal: Dict[str, Any] = {"success": False, "error": str(exc), "kind": exc.kind}
+        purchases = capability(PURCHASES)
+        if purchases is None or not exc.offer:
+            return refusal
+        if exc.offer.plans:
+            links = [await self._mint(kind="plan", plan=plan) for plan in exc.offer.plans]
+        else:
+            links = [await self._mint(kind="topup", credits_per_month=size.credits_per_month)
+                     for size in purchases.suggested_topups(exc.offer.topup_credits)]
+        refusal["purchase_links"] = links
+        refusal["next"] = ("Send these links, one per line with its price; each opens payment for this account "
+                           "directly, no sign-in, and the payment wakes you. purchase_link mints another "
+                           "(yearly billing, a different size).")
+        return refusal
+
+    async def _mint(self, **what) -> Dict[str, Any]:
+        return await capability(PURCHASES).mint(
+            self.pool, user_id=self.user_id, continuation=self.continuation,
+            send_to_phone=self.reply_channel != "web", **what,
+        )
+
+    async def purchase_link(self, kind: str, plan: Optional[str] = None, credits_per_month: Optional[int] = None,
+                            billing_period: str = "monthly") -> Dict[str, Any]:
+        link = await self._mint(kind=kind, plan=plan, credits_per_month=credits_per_month,
+                                billing_period=billing_period)
+        return {"success": True, **link}
 
     async def generate_image(self, prompt: str, model: Optional[str] = None,
                              aspect_ratio: Optional[str] = None) -> Dict[str, Any]:
@@ -399,7 +448,7 @@ class CoordinatorTools:
             made = await generate_image(self.pool, user_id=self.user_id, organization_id=self.organization_id,
                                         prompt=prompt, model=model, aspect_ratio=aspect_ratio)
         except (GateDenied, MediaError) as exc:
-            return self._refusal(exc)
+            return await self._refusal(exc)
         return {"success": True, "model": made["model"], "images": [i["url"] for i in made["images"]]}
 
     async def generate_video(self, prompt: str, model: Optional[str] = None, seconds: Optional[int] = None,
@@ -410,7 +459,7 @@ class CoordinatorTools:
                                     prompt=prompt, model=model, seconds=seconds, resolution=resolution,
                                     aspect_ratio=aspect_ratio, audio=audio, continuation=self.continuation)
         except (GateDenied, MediaError) as exc:
-            return self._refusal(exc)
+            return await self._refusal(exc)
         return {"success": True, **job, "next": "It is rendering; you'll be woken with the video when it's done."}
 
     async def web_search(self, query: str, num_results: int = 5, domains: Optional[List[str]] = None):

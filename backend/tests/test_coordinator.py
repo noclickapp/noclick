@@ -11,6 +11,7 @@ routing, gated on the coordinator rollout.
 import asyncio
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -18,7 +19,7 @@ import pytest
 from coder.coordinator import agent as coordinator
 from coder.coordinator import tools as coordinator_tools
 from coder.coordinator.tools import (
-    COORDINATOR_NODE_ID, CoordinatorTools, bounded, coordinator_tool_params,
+    COORDINATOR_NODE_ID, CoordinatorTools, bounded,
 )
 from tests.mocks.mock_asyncpg import MockNativePool
 from utils import capabilities
@@ -544,8 +545,30 @@ async def test_message_owner_reaches_the_owner_on_the_channel_it_resolves(own_ca
     assert (await t.execute("message_owner", {"text": "   "}))["success"] is False
 
 
+class FakePurchases:
+    """What a platform that sells plans registers as PURCHASES."""
+
+    def __init__(self):
+        self.minted = []
+
+    @staticmethod
+    def catalog():
+        return {"plans": [{"plan": "plus", "label": "Plus", "monthly_usd": 25.0, "yearly_usd": 180.0,
+                           "credits_per_month": 100, "description": "100 credits/month"}],
+                "topups": [{"credits_per_month": 20, "monthly_usd": 5.0, "yearly_usd": 50.0}]}
+
+    @staticmethod
+    def suggested_topups(shortfall):
+        return [SimpleNamespace(credits_per_month=c) for c in (20, 40, 100)]
+
+    async def mint(self, pool, **what):
+        self.minted.append(what)
+        buy = what.get("plan") or what.get("credits_per_month")
+        return {"job_id": f"job-{buy}", "url": f"https://noclick.com/pay/job-{buy}", "label": f"buy {buy}", "price_usd": 1}
+
+
 async def test_media_tools_answer_the_model_with_results_or_the_gate_reason(monkeypatch):
-    from billing.gates import GateDenied
+    from billing.gates import GateDenied, Offer
     from utils.media_generation import MediaError
 
     monkeypatch.setattr(coordinator_tools, "generate_image", AsyncMock(return_value={
@@ -553,21 +576,31 @@ async def test_media_tools_answer_the_model_with_results_or_the_gate_reason(monk
     made = await tools().execute("generate_image", {"prompt": "a fern"})
     assert made == {"success": True, "model": "openai/gpt-image-2.5-sunburst", "images": ["https://f.example/image-1.png"]}
 
-    # A gate refusal carries the way past it, so the reply can name the plans and the link
-    # (a WhatsApp user was once told only "not available on your plan").
-    link = "Upgrade to Plus: https://noclick.com/upgrade?plan=plus"
+    # A gate refusal carries the way past it: one link per plan that includes the product, minted for
+    # this account and delivered where the owner is (a WhatsApp user was once told only "not available").
+    purchases = FakePurchases()
+    monkeypatch.setattr(capabilities, "_providers", {**capabilities._providers, capabilities.PURCHASES: purchases})
+    t = CoordinatorTools(pool=MockNativePool(), sio=object(), user_id=USER, organization_id=ORG, conversation_id=CID,
+                         reply_channel="whatsapp_text", continuation={"turn_id": "t1"})
     monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(side_effect=GateDenied(
-        "plan", "Video generation is available on the Plus and Pro plans.", next_step=link)))
-    refused = await tools().execute("generate_video", {"prompt": "waves"})
-    assert refused == {"success": False, "error": "Video generation is available on the Plus and Pro plans.",
-                       "kind": "plan", "next": link}
-    # A phone-only owner has no email to sign in with on the web: say how they get in.
-    phone_only = CoordinatorTools(pool=MockNativePool(), sio=object(), user_id=USER, organization_id=ORG,
-                                  conversation_id=CID, phone_only=True)
-    refused = await phone_only.execute("generate_video", {"prompt": "waves"})
-    assert refused["next"].startswith(link + " The owner signs in there with this phone number")
-    assert "connect_account" in refused["next"]
-    # A media error is not a gate: no next step to invent.
+        "plan", "Video generation is available on the Plus and Pro plans.", offer=Offer(plans=("plus", "pro")))))
+    refused = await t.execute("generate_video", {"prompt": "waves"})
+    assert refused["kind"] == "plan" and refused["error"] == "Video generation is available on the Plus and Pro plans."
+    assert [link["url"] for link in refused["purchase_links"]] == ["https://noclick.com/pay/job-plus", "https://noclick.com/pay/job-pro"]
+    assert "no sign-in" in refused["next"]
+    assert purchases.minted[0] == {"user_id": USER, "kind": "plan", "plan": "plus", "continuation": {"turn_id": "t1"},
+                                   "send_to_phone": True}
+    # Short of credits on a paid plan: the top-up sizes worth offering, each with its link.
+    purchases.minted.clear()
+    monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(side_effect=GateDenied(
+        "credits", "Video generation needs 9.6 credits and the account has 0.0.", offer=Offer(topup_credits=9.6))))
+    refused = await t.execute("generate_video", {"prompt": "waves"})
+    assert [link["url"] for link in refused["purchase_links"]] == [f"https://noclick.com/pay/job-{c}" for c in (20, 40, 100)]
+    assert [m["credits_per_month"] for m in purchases.minted] == [20, 40, 100]
+    # Nothing for sale (the open edition): the reason alone, no links to invent.
+    monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(side_effect=GateDenied("credits", "x", offer=Offer())))
+    assert await t.execute("generate_video", {"prompt": "waves"}) == {"success": False, "error": "x", "kind": "credits"}
+    # A media error is not a gate.
     monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(side_effect=MediaError("x isn't an OpenRouter video model.")))
     assert await tools().execute("generate_video", {"prompt": "waves"}) == {
         "success": False, "error": "x isn't an OpenRouter video model."}
@@ -575,3 +608,20 @@ async def test_media_tools_answer_the_model_with_results_or_the_gate_reason(monk
     started = await tools().execute("generate_video", {"prompt": "waves", "seconds": 8})
     assert started["success"] is True and started["job_id"] == "j1" and "woken" in started["next"]
     assert coordinator_tools.start_video.await_args.kwargs["continuation"] is None
+
+
+async def test_the_owner_can_ask_for_any_purchase_link_the_platform_sells(monkeypatch):
+    purchases = FakePurchases()
+    monkeypatch.setattr(capabilities, "_providers", {**capabilities._providers, capabilities.PURCHASES: purchases})
+    t = tools()
+    minted = await t.execute("purchase_link", {"kind": "topup", "credits_per_month": 200, "billing_period": "yearly"})
+    assert minted["success"] is True and minted["url"] == "https://noclick.com/pay/job-200"
+    assert purchases.minted == [{"user_id": USER, "kind": "topup", "plan": None, "credits_per_month": 200,
+                                 "billing_period": "yearly", "continuation": None, "send_to_phone": False}]
+    # The tool is advertised with the catalog's prices, and only where something is for sale.
+    link_tool = next(p for p in t.tool_params() if p["function"]["name"] == "purchase_link")["function"]
+    assert "Plus $25/month or $180/year" in link_tool["description"] and "20 ($5)" in link_tool["description"]
+    assert link_tool["parameters"]["properties"]["credits_per_month"]["enum"] == [20]
+    monkeypatch.setattr(capabilities, "_providers", {k: v for k, v in capabilities._providers.items() if k != capabilities.PURCHASES})
+    bare = tools()
+    assert "purchase_link" not in bare._tools and "purchase_link" not in {p["function"]["name"] for p in bare.tool_params()}

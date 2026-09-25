@@ -6,7 +6,6 @@ reads as unlimited (None). The window helpers are real date math — the usage
 dashboard uses them for display even when nothing is capped.
 """
 
-from datetime import datetime, timedelta
 import logging
 from typing import Any, Dict, Optional, Tuple
 
@@ -158,12 +157,6 @@ def register_plan_limits(impl) -> None:
 
 def registered_plan_limits():
     return _impl
-
-
-def upgrade_url(tier: str) -> Optional[str]:
-    """The one-tap link that puts an account on ``tier``: the platform's to
-    say, None where nothing is sold."""
-    return _impl.upgrade_url(tier) if _impl is not None else None
 
 
 async def _delegate(name: str, default, *args, **kwargs):

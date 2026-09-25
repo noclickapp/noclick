@@ -32,16 +32,9 @@ def outcome_summary(event):
         if payload.get("kind") == "agent_message":
             return f"An agent in “{payload.get('workflow_name')}” messaged you: {payload.get('message', '')[:500]}"
         return f"“{payload.get('workflow_name')}” failed: {(payload.get('error') or '')[:500]}"
-    if payload["kind"] == "video":
-        if payload.get("result"):
-            return f"Your video is ready: {payload['result']['url']}"
-        return f"The video couldn't be made: {(payload.get('error') or '')[:500]}"
-    what = {"build": "Build", "agent": "Agent request"}[payload["kind"]]
-    text = f"{what} {payload.get('status', 'finished')}."
-    if payload.get("error"):
-        text += " " + payload["error"][:500]
-    url = ((payload.get("result") or {}).get("publication") or {}).get("url") if payload["kind"] == "build" else None
-    return text + ("\n" + url if url else "")
+    from coder.coordinator.jobs import job_summary
+
+    return job_summary(payload)
 
 
 async def run_wakeup(pool, event):

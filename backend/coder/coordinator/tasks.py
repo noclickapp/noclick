@@ -206,3 +206,12 @@ async def task_worker() -> None:
         for task in active:
             task.cancel()
         await asyncio.gather(*active, return_exceptions=True)
+
+
+def agent_summary(payload: dict) -> str:
+    """The one line the owner hears about a finished agent request when the
+    model cannot resume."""
+    text = f"Agent request {payload.get('status', 'finished')}."
+    if payload.get("error"):
+        text += " " + payload["error"][:500]
+    return text

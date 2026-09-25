@@ -338,35 +338,32 @@ def video_view(row: Dict[str, Any]) -> Dict[str, Any]:
             "result": row["result"], "error": row["error"]}
 
 
-async def _finish_job(pool, job: Dict[str, Any], *, status: str, result=None, error=None) -> None:
-    row = await pool.fetchrow(
-        "UPDATE coordinator_jobs SET status=$2, result=$3, error=$4, lease_until=NULL, updated_at=now() "
-        "WHERE id=$1 AND status='running' RETURNING *", job["id"], status, result, error,
-    )
-    if row and row["continuation"]:
-        from repositories.coordinator_wakeups import CoordinatorWakeupRepo
-
-        await CoordinatorWakeupRepo(pool).enqueue(job=dict(row), context=row["continuation"], payload=video_view(dict(row)))
+def video_summary(payload: Dict[str, Any]) -> str:
+    if payload.get("result"):
+        return f"Your video is ready: {payload['result']['url']}"
+    return f"The video couldn't be made: {(payload.get('error') or '')[:500]}"
 
 
 async def _poll_one(pool, client: httpx.AsyncClient, api_key: str, job: Dict[str, Any]) -> None:
+    from coder.coordinator.jobs import finish_job
+
     spec = job["spec"]
     resp = await client.get(f"{OPENROUTER_API}/videos/{spec['provider_job_id']}", headers=_headers(api_key))
     resp.raise_for_status()
     state = resp.json()
     status = state.get("status")
     if status == "failed":
-        await _finish_job(pool, job, status="failed", error=str(state.get("error") or "The video model failed.")[:1000])
+        await finish_job(pool, job["id"], status="failed", error=str(state.get("error") or "The video model failed.")[:1000])
         return
     if status != "completed":
         if time.time() - job["created_at"].timestamp() > VIDEO_TIMEOUT_S:
-            await _finish_job(pool, job, status="failed", error="The video took too long and was abandoned.")
+            await finish_job(pool, job["id"], status="failed", error="The video took too long and was abandoned.")
         return
     content = await client.get(f"{OPENROUTER_API}/videos/{spec['provider_job_id']}/content",
                                params={"index": 0}, headers=_headers(api_key), follow_redirects=True)
     content.raise_for_status()
     if len(content.content) > VIDEO_MAX_BYTES:
-        await _finish_job(pool, job, status="failed", error="The video was larger than NoClick keeps.")
+        await finish_job(pool, job["id"], status="failed", error="The video was larger than NoClick keeps.")
         return
     user_id, org = str(job["user_id"]), spec.get("organization_id")
     stored = await _store(
@@ -390,7 +387,7 @@ async def _poll_one(pool, client: httpx.AsyncClient, api_key: str, job: Dict[str
         quantity=Decimal(str(spec["params"].get("duration", DEFAULT_VIDEO_SECONDS))), unit_type="seconds",
         metadata={"model": spec["model"], "coordinator_job_id": str(job["id"]), "surface": "coordinator_video"},
     )
-    await _finish_job(pool, job, status="completed", result={**stored, "cost_usd": float(dollars)})
+    await finish_job(pool, job["id"], status="completed", result={**stored, "cost_usd": float(dollars)})
 
 
 async def poll_video_jobs(pool, limit: int = 20) -> None:

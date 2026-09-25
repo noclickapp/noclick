@@ -217,3 +217,13 @@ async def request_worker():
         for task in active:
             task.cancel()
         await asyncio.gather(*active, return_exceptions=True)
+
+
+def build_summary(payload) -> str:
+    """The one line the owner hears about a finished build when the model
+    cannot resume: its status, its error, and the live URL when one exists."""
+    text = f"Build {payload.get('status', 'finished')}."
+    if payload.get("error"):
+        text += " " + payload["error"][:500]
+    url = ((payload.get("result") or {}).get("publication") or {}).get("url")
+    return text + ("\n" + url if url else "")

@@ -111,6 +111,16 @@ PHONE_NUMBERS = "phone.numbers"
 # a goal-scoped call assistant, never the owner's account conversation.
 PHONE_CALLS = "phone.calls"
 
+# What this platform sells and the one-tap links that buy it, for the account
+# coordinator: catalog() -> {plans, topups} with the prices charged;
+# suggested_topups(shortfall) -> the sizes worth offering; async mint(pool, *,
+# user_id, kind, plan=None, credits_per_month=None, billing_period="monthly",
+# continuation=None, send_to_phone=False) -> {job_id, url, label, ...}. The
+# link needs no sign-in — it opens payment for that account alone — and the
+# payment wakes the coordinator. Without one, a refusal names the plans and
+# stops there.
+PURCHASES = "billing.purchases"
+
 _providers: Dict[str, Any] = {}
 
 
