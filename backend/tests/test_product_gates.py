@@ -21,7 +21,7 @@ USER = "11111111-1111-1111-1111-111111111111"
 def account(monkeypatch):
     state = {"tier": "free", "remaining": 50.0}
     monkeypatch.setattr(plan_limits, "registered_plan_limits", lambda: object())
-    monkeypatch.setattr(plan_limits, "plans_url", lambda: "https://app.example.test/pricing")
+    monkeypatch.setattr(plan_limits, "upgrade_url", lambda tier: f"https://app.example.test/upgrade?plan={tier}")
     monkeypatch.setattr(plan_limits, "get_user_tier_from_db", AsyncMock(side_effect=lambda conn, uid: state["tier"]))
     monkeypatch.setattr(plan_limits, "get_effective_tier", AsyncMock(side_effect=lambda conn, uid, tier: tier))
     monkeypatch.setattr(gates.usage_tracker, "resolve_billing_user_id", AsyncMock(return_value="owner"))
@@ -45,8 +45,9 @@ async def test_a_plan_product_admits_paid_plans_only(account, platform):
     with pytest.raises(GateDenied) as exc:
         await check_product(MockNativePool(), "video_generation", user_id=USER)
     assert exc.value.kind == "plan" and "Plus and Pro" in str(exc.value)
-    # The refusal says where to upgrade, and the platform hears about the cap hit.
-    assert exc.value.next_step == "Upgrade: https://app.example.test/pricing"
+    # The refusal carries one-tap checkout for the lowest plan that includes the
+    # product, and the platform hears about the cap hit.
+    assert exc.value.next_step == "Upgrade to Plus: https://app.example.test/upgrade?plan=plus"
     platform[capabilities.PLAN_GATE_ALERT].assert_called_once_with(
         {"email": "", "user_metadata": {"name": "sam"}}, "Video generation Gate Hit", {"Tier": "free"})
     for tier in ("plus", "pro", "enterprise"):
@@ -62,7 +63,7 @@ async def test_a_plan_denial_without_a_listener_still_refuses(account, monkeypat
     monkeypatch.setattr(gates, "capability", lambda name: None)
     with pytest.raises(GateDenied) as exc:
         await check_product(MockNativePool(), "video_generation", user_id=USER)
-    assert exc.value.kind == "plan" and exc.value.next_step == "Upgrade: https://app.example.test/pricing"
+    assert exc.value.kind == "plan" and exc.value.next_step == "Upgrade to Plus: https://app.example.test/upgrade?plan=plus"
 
 
 async def test_the_projected_cost_is_checked_on_the_paying_account(account, platform):

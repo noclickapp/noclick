@@ -70,9 +70,11 @@ async def _plan_denied(conn, product: Product, *, user_id: str, tier: str) -> Ga
             {"email": profile.get("email") or "", "user_metadata": {"name": profile.get("label")}},
             f"{product.label} Gate Hit", {"Tier": tier},
         )
+    # The link is the platform's one-tap checkout for the LOWEST plan that
+    # includes the product, never a plans page to click through.
     return GateDenied(
         "plan", f"{product.label} is available on the {_plan_names(product.min_tier)} plans.",
-        next_step=f"Upgrade: {plan_limits.plans_url()}",
+        next_step=f"Upgrade to {product.min_tier.capitalize()}: {plan_limits.upgrade_url(product.min_tier)}",
     )
 
 

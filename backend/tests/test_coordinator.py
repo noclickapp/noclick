@@ -555,16 +555,17 @@ async def test_media_tools_answer_the_model_with_results_or_the_gate_reason(monk
 
     # A gate refusal carries the way past it, so the reply can name the plans and the link
     # (a WhatsApp user was once told only "not available on your plan").
+    link = "Upgrade to Plus: https://noclick.com/upgrade?plan=plus"
     monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(side_effect=GateDenied(
-        "plan", "Video generation is available on the Plus and Pro plans.", next_step="Upgrade: https://noclick.com/pricing")))
+        "plan", "Video generation is available on the Plus and Pro plans.", next_step=link)))
     refused = await tools().execute("generate_video", {"prompt": "waves"})
     assert refused == {"success": False, "error": "Video generation is available on the Plus and Pro plans.",
-                       "kind": "plan", "next": "Upgrade: https://noclick.com/pricing"}
+                       "kind": "plan", "next": link}
     # A phone-only owner has no email to sign in with on the web: say how they get in.
     phone_only = CoordinatorTools(pool=MockNativePool(), sio=object(), user_id=USER, organization_id=ORG,
                                   conversation_id=CID, phone_only=True)
     refused = await phone_only.execute("generate_video", {"prompt": "waves"})
-    assert refused["next"].startswith("Upgrade: https://noclick.com/pricing The owner signs in there with this phone number")
+    assert refused["next"].startswith(link + " The owner signs in there with this phone number")
     assert "connect_account" in refused["next"]
     # A media error is not a gate: no next step to invent.
     monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(side_effect=MediaError("x isn't an OpenRouter video model.")))
