@@ -15,6 +15,7 @@ class FollowupReply:
 class FollowupDelivery:
     def __init__(self, event, *, parent=None):
         self.event = event
+        self.internal = event["source"] == "signal"
         self.background = event["source"] in ("alarm", "signal") or event["context"].get("origin") == "background"
         self.artifact_only = event["payload"].get("operation") == "call_recording"
         previous = (parent or {}).get("payload", {}).get("delivery", {})
@@ -41,14 +42,26 @@ class FollowupDelivery:
         if type(notify) is not bool or type(include_recordings) is not bool or not isinstance(reason, str):
             raise ValueError("Provide boolean notification choices and a reason.")
         self.notify, self.include_recordings, self.reason = notify, include_recordings, reason[:500]
-        return {"success": True, **self.decision(),
-                "note": "The final reply follows this choice. Do not send the same update with message_owner."}
+        return {"success": True, **self.decision(), "note": self.delivery_instructions()}
+
+    def delivery_instructions(self):
+        if self.internal:
+            return (
+                "Your final reply is only a note in the coordinator's web conversation. To deliver a message "
+                "elsewhere or take another action, use your available tools according to the owner's "
+                "instructions and the preferences in the incoming message. Mentioning a destination in your "
+                "final reply does not send it there. set_followup_delivery controls only the web note."
+            )
+        channel = self.event["context"].get("channel", "the requesting channel")
+        return (f"Your final reply is automatically delivered to {channel}; "
+                "do not use message_owner to send a duplicate to that channel. Use your available tools "
+                "for any separately requested delivery or action.")
 
     def decision(self):
         return {"notify": self.notify, "include_recordings": self.include_recordings, "reason": self.reason}
 
     def instructions(self):
-        text = (" Delivery is separate from completing work: set_followup_delivery can omit a notification "
+        text = self.delivery_instructions() + (" Delivery is separate from completing work: set_followup_delivery can omit a notification "
                 "without cancelling actions or future alarms. For scheduled, bulk or subagent work, decide whether "
                 "the owner needs a summary or audio; routine success may stay silent. For a direct one-off call, "
                 "give one concise outcome; the runtime attaches its recording by default when available. "

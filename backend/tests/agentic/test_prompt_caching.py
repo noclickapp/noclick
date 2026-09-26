@@ -61,7 +61,7 @@ def test_parts_variable_section_carries_workflow_context():
     assert 'wf-1' not in stable
 
 
-def test_coordinator_owner_alert_route_survives_request_handoff():
+def test_coordinator_free_form_messaging_survives_request_handoff():
     from coder.workflow.requests import request_context
 
     context = request_context({
@@ -69,10 +69,12 @@ def test_coordinator_owner_alert_route_survives_request_handoff():
         "workflow_id": "wf-1", "id": "request", "attempt_id": "attempt", "spec": {},
     })
     stable, variable = build_system_prompt_parts(user_context=context)
-    assert "message_coordinator" in stable and 'purpose="owner_alert"' in stable
+    assert "message_coordinator(message=...)" in stable
+    assert "message text" in stable and "free-form" in stable
+    assert "owner_alert" not in stable + variable
     assert "channel 'whatsapp'" in variable
     assert "No recipient number" in variable
-    assert "groups, or other recipients" in variable
+    assert "plain text" in variable and "delivery preferences" in variable
 
 
 def test_other_builder_origins_do_not_invent_a_coordinator_channel():

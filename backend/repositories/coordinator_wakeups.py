@@ -52,7 +52,7 @@ class CoordinatorWakeupRepo:
     async def enqueue_signal(self, *, signal, context, payload, conn=None):
         """A signal from elsewhere in the account (coder/coordinator/signals.py)."""
         return await self._transfer(
-            "signal", signal, context, payload, context.get("channel") == "whatsapp_text",
+            "signal", signal, context, payload, False,
             "SELECT id FROM coordinator_signals WHERE id=$1 AND notified_at IS NULL FOR UPDATE",
             conn=conn,
         )

@@ -33,22 +33,17 @@ _MESSAGE_COORDINATOR_PARAM = {
     "function": {
         "name": MESSAGE_COORDINATOR_TOOL,
         "description": (
-            "Message the account's coordinator: the owner's assistant that oversees every workflow and can fix, "
-            "pause or rebuild them, and reach the owner through its existing channels. For owner-requested "
-            "monitoring alerts, use purpose='owner_alert' and the requested channel; no recipient number, "
-            "WhatsApp credential or provider node is needed. The coordinator reviews the alert and delivers "
-            "its reply; queued is not confirmed delivery. Batch related results, avoid duplicates, and respect "
-            "rate-limit errors. For a problem you cannot solve, use purpose='help' (the default). "
-            "Not for progress updates or platform bugs (submit_feedback). You won't get a reply in this turn."
+            "Send a free-form message to the account's coordinator. Share information or ask it to act, "
+            "including any delivery preferences in the text. It can use its own tools and existing channels "
+            "according to the owner's instructions and permissions. No provider wiring or credential is "
+            "needed to contact it. Batch related information, avoid duplicates, and respect rate-limit errors. "
+            "Queued means the coordinator will review the message, not that the requested action is complete. "
+            "You won't get a reply in this turn."
         ),
         "parameters": {
             "type": "object",
             "properties": {
-                "message": {"type": "string", "description": "What happened and what you need."},
-                "purpose": {"type": "string", "enum": ["help", "owner_alert"],
-                            "description": "Use owner_alert for alerts the owner asked this agent to monitor."},
-                "channel": {"type": "string", "enum": ["auto", "whatsapp", "email", "web"],
-                            "description": "For owner_alert: requested delivery channel; auto uses the owner's latest coordinator channel."},
+                "message": {"type": "string", "description": "Context, any requested action, and preferences in plain text."},
             },
             "required": ["message"],
         },
@@ -890,7 +885,6 @@ async def execute_message_coordinator(node: Any, arguments: Dict[str, Any]) -> D
         node_id=getattr(node, "node_id", None),
         conversation_id=getattr(node, "conversation_id", None) or node.chat_routing_id(),
         message=str(arguments.get("message") or ""),
-        purpose=arguments.get("purpose", "help"), channel=arguments.get("channel", "auto"),
     )
 
 
@@ -980,7 +974,6 @@ async def execute_platform_tool_from_ctx(
             node_id=st_config.get("agent_node_id"),
             conversation_id=st_config.get("conversation_id"),
             message=str(arguments.get("message") or ""),
-            purpose=arguments.get("purpose", "help"), channel=arguments.get("channel", "auto"),
         )
     if tool_type == "prompt_builder":
         return await prompt_builder_impl(

@@ -102,56 +102,58 @@ async def test_a_signal_wakeup_opens_with_triage_instructions():
     assert "request_build" in signals.describe({"payload": {"kind": "agent_message"}})
 
 
-async def test_owner_alerts_have_separate_concurrent_account_and_node_caps(account, monkeypatch):
+async def test_agent_messages_have_concurrent_account_and_node_caps(account, monkeypatch):
     pool, user_id, workflow, dispatched = account
     wf = await workflow("Inbox")
-    monkeypatch.setattr(signals, "OWNER_ALERTS_PER_NODE_DAILY", 2)
-    monkeypatch.setattr(signals, "OWNER_ALERTS_DAILY", 3)
-    args = dict(user_id=user_id, workflow_id=wf, message="Invoice", purpose="owner_alert", channel="web")
+    monkeypatch.setattr(signals, "AGENT_MESSAGES_PER_NODE_DAILY", 2)
+    monkeypatch.setattr(signals, "AGENT_MESSAGES_DAILY", 3)
+    args = dict(user_id=user_id, workflow_id=wf, message="Invoice")
     results = await asyncio.gather(*(record_agent_message(pool, node_id="n1", **args) for _ in range(5)))
     assert sum(r["success"] for r in results) == 2
     assert "not queued" in next(r["error"] for r in results if not r["success"])
     assert (await record_agent_message(pool, node_id="n2", **args))["success"]
     assert not (await record_agent_message(pool, node_id="n3", **args))["success"]
-    # Alerts do not consume the allowance for asking for help.
-    assert (await record_agent_message(pool, user_id=user_id, workflow_id=wf,
+    # Different wording or intent cannot evade the shared quota.
+    assert not (await record_agent_message(pool, user_id=user_id, workflow_id=wf,
                                        node_id="n1", message="Credential expired"))["success"]
-    assert len(dispatched) == 4
+    assert len(dispatched) == 3
 
 
-async def test_alert_channel_defaults_to_owner_chat_without_leaking_other_accounts(account, monkeypatch):
+async def test_free_form_message_is_internal_and_cannot_cross_accounts(account, monkeypatch):
     from utils import capabilities
 
     pool, user_id, workflow, dispatched = account
-    wf = await workflow("Money monitor")
+    wf = await workflow("Monitor")
     await pool.execute("INSERT INTO conversations(conversation_id,user_id,events) VALUES($1,$2::uuid,$3)",
                        f"coordinator:{user_id}", user_id, [{"role": "user", "channel": "whatsapp_text", "message": "Alert me"}])
-    monkeypatch.setattr(capabilities, "_providers", {capabilities.OWNER_MESSAGE: AsyncMock()})
-    out = await record_agent_message(pool, user_id=user_id, workflow_id=wf, node_id="agent",
-                                     message="A bill arrived", purpose="owner_alert")
-    assert out["status"] == "queued" and out["channel"] == "whatsapp"
+    sender = AsyncMock()
+    monkeypatch.setattr(capabilities, "_providers", {capabilities.OWNER_MESSAGE: sender})
+    message = "Tell the user over WhatsApp that a bill arrived; call the number they gave you if urgent."
+    out = await record_agent_message(pool, user_id=user_id, workflow_id=wf, node_id="agent", message=message)
+    assert out["status"] == "queued" and "channel" not in out
     event = dispatched[0]
-    assert event["context"]["channel"] == "whatsapp_text" and event["send_to_phone"]
-    assert event["payload"]["purpose"] == "owner_alert"
-    assert "notification" in signals.describe(event)
-    capabilities._providers[capabilities.OWNER_MESSAGE].assert_not_awaited()  # delivery follows coordinator review
+    assert event["context"]["channel"] == "web" and not event["send_to_phone"]
+    assert event["payload"]["message"] == message
+    assert "purpose" not in event["payload"] and "channel" not in event["payload"]
+    assert event["payload"]["workflow_id"] == wf and event["payload"]["node_id"] == "agent"
+    sender.assert_not_awaited()  # The coordinator decides what to do, not the admission layer.
     assert not (await record_agent_message(pool, user_id=str(uuid.uuid4()), workflow_id=wf, node_id="agent",
-        message="Stolen alert", purpose="owner_alert", channel="web"))["success"]
+                                          message="Stolen message"))["success"]
     assert len(dispatched) == 1
 
 
-async def test_unsupported_alert_channels_fail_without_queuing(account, monkeypatch):
+async def test_messages_work_without_cloud_capabilities(account, monkeypatch):
     from utils import capabilities
 
     pool, user_id, workflow, dispatched = account
     wf = await workflow()
     monkeypatch.setattr(capabilities, "_providers", {})
-    args = dict(user_id=user_id, workflow_id=wf, node_id="agent", message="Alert", purpose="owner_alert")
-    for channel in ("whatsapp", "invented", None):
-        assert not (await record_agent_message(pool, channel=channel, **args))["success"]
+    args = dict(user_id=user_id, workflow_id=wf, node_id="agent")
+    assert not (await record_agent_message(pool, message="  ", **args))["success"]
     assert dispatched == []
-    # OSS web delivery remains available without any cloud provider.
-    assert (await record_agent_message(pool, channel="web", **args))["success"]
+    # Availability of the requested action is decided by the coordinator's tools.
+    assert (await record_agent_message(pool, message="Please tell the user on WhatsApp the job finished", **args))["success"]
+    assert not dispatched[0]["send_to_phone"]
 
 
 async def test_signal_and_wakeup_commit_together_before_dispatch(account, monkeypatch):
@@ -159,7 +161,7 @@ async def test_signal_and_wakeup_commit_together_before_dispatch(account, monkey
 
     pool, user_id, workflow, dispatched = account
     wf = await workflow()
-    args = dict(user_id=user_id, workflow_id=wf, node_id="agent", message="Invoice", purpose="owner_alert", channel="web")
+    args = dict(user_id=user_id, workflow_id=wf, node_id="agent", message="Invoice")
     original = CoordinatorWakeupRepo.enqueue_signal
     monkeypatch.setattr(CoordinatorWakeupRepo, "enqueue_signal", AsyncMock(side_effect=RuntimeError("database failed")))
     with pytest.raises(RuntimeError, match="database failed"):

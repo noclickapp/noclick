@@ -1,15 +1,16 @@
-"""Owner alert tool contract, shared by hosted and exported agent runtimes."""
+"""Free-form coordinator message contract, shared by hosted and exported agent runtimes."""
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from nodes.agent.platform_tools import build_platform_tools, execute_platform_tool_from_ctx
 
 
-async def test_both_agent_runtimes_preserve_owner_alert_arguments():
+async def test_both_agent_runtimes_preserve_message_and_trusted_identity():
     from types import SimpleNamespace
     from nodes.agent.platform_tools import execute_message_coordinator
 
     pool = MagicMock()
-    args = {"message": "An invoice needs attention", "purpose": "owner_alert", "channel": "whatsapp"}
+    message = "Tell the user over WhatsApp that the report is ready, then call the requested number."
+    args = {"message": message, "user_id": "other-user", "workflow_id": "other-workflow"}
     node = SimpleNamespace(user_id="u1", workflow_id="w1", node_id="n1", conversation_id="c1")
     with patch("utils.database_pool.get_native_pool", return_value=pool), patch(
         "coder.coordinator.signals.record_agent_message", new=AsyncMock(return_value={"success": True}),
@@ -19,10 +20,11 @@ async def test_both_agent_runtimes_preserve_owner_alert_arguments():
         await execute_platform_tool_from_ctx({"tool_type": "message_coordinator", "user_id": "u1",
             "workflow_id": "w1", "agent_node_id": "n1", "conversation_id": "c1"}, args, pool)
         assert record.call_args == sdk_args
-    assert sdk_args.kwargs["purpose"] == "owner_alert"
-    assert sdk_args.kwargs["channel"] == "whatsapp"
+    assert sdk_args.kwargs == {"user_id": "u1", "workflow_id": "w1", "node_id": "n1",
+                               "conversation_id": "c1", "message": message}
     # CLI discovery uses the same schema as SDK tools, not an empty wrapper.
     param, config = next(pair for pair in build_platform_tools(False)
                          if pair[0]["function"]["name"] == "message_coordinator")
-    assert "owner_alert" in config["_parameters"]["properties"]["purpose"]["enum"]
+    assert set(config["_parameters"]["properties"]) == {"message"}
+    assert config["_parameters"]["required"] == ["message"]
     assert config["_parameters"] == param["function"]["parameters"]

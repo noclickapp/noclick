@@ -4,15 +4,15 @@ from typing import Any, Dict, Optional
 
 from coder.workflow.graph_state import GraphState
 
-OWNER_ALERT_GUIDANCE = (
-    'For alerts to the workflow owner through their NoClick coordinator, agents already have the built-in '
-    '`message_coordinator` tool: use `purpose="owner_alert"` and `channel="whatsapp"`, `"email"`, `"web"`, '
-    'or `"auto"` as requested. The coordinator wakes, evaluates the alert against the owner\'s instructions, '
-    'and delivers it through its existing channel. No messaging provider node, sending credential or recipient '
-    'number is needed for this owner-only route. Put the tool, purpose, channel, alert criteria and '
-    'deduplication/batching instructions in the agent\'s goal and standing prompt. A queued alert is not confirmed '
-    'delivery; respect rate-limit errors. Use integration providers for reading messages or contacting OTHER '
-    'people/groups, or when the owner explicitly requests sending from their own messaging account.'
+COORDINATOR_MESSAGE_GUIDANCE = (
+    "Agents have a built-in `message_coordinator(message=...)` tool for free-form communication with the "
+    "account coordinator. Include relevant context, any requested action and delivery preferences in the "
+    "message text. The coordinator interprets it using the owner's instructions and its available tools and "
+    "channels. No provider node, credential or recipient number is needed to contact the coordinator; it "
+    "already knows how to reach its owner. Put the intended behavior in the agent's goal and standing "
+    "instructions. A final answer alone does not contact the coordinator. Simple events can be conveyed as "
+    "plain text. Batch related information, avoid duplicates and respect rate-limit errors; queued does not "
+    "mean the requested action is complete. Wire integrations for operations the agent needs to perform itself."
 )
 
 
@@ -30,13 +30,10 @@ def build_user_context(
         channel = normalize_channel(user_context.get("coordinator_channel")) or "auto"
         parts.append(
             f"This request came from the account coordinator on channel '{channel}'. "
-            "For alerts to this same owner, configure the agent to call its built-in "
-            "message_coordinator tool with purpose='owner_alert' and the requested channel "
-            f"(default '{channel}' unless the instructions choose another). The coordinator delivers the alert "
-            "through its existing owner channel. No recipient number, messaging credential, or outbound "
-            "provider node is needed for this route. Include this in the agent's goal and standing instructions. "
-            "This does not give the workflow access to WhatsApp inboxes, groups, or other recipients; "
-            "those still require their own integration and destination."
+            "The agent can contact it through message_coordinator with plain text describing what happened, "
+            "any requested action, and the owner's delivery preferences. Preserve those preferences in the "
+            "agent's standing instructions. No recipient number or additional messaging credential is needed "
+            "to reach this owner through the coordinator's existing channel."
         )
     has_workflow = user_context.get('has_workflow')
     workflow_id = user_context.get('workflow_id')

@@ -22,15 +22,14 @@ class CoordinatorSignalRepo:
                 """SELECT count(*) FILTER (WHERE workflow_id=$2::uuid AND node_id=$3) AS node,
                           count(*) AS account
                    FROM coordinator_signals WHERE user_id=$1::uuid AND kind='agent_message'
-                     AND COALESCE(payload->>'purpose', 'help')=$4
                      AND created_at>now()-interval '24 hours'""",
-                user_id, workflow_id, node_id, payload["purpose"],
+                user_id, workflow_id, node_id,
             )
             if counts["node"] >= node_cap or counts["account"] >= account_cap:
                 raise ValueError(
-                    "You've messaged the coordinator as often as allowed today for this purpose "
+                    "You've messaged the coordinator as often as allowed today "
                     f"({node_cap}/agent, {account_cap}/account). This message was not queued. "
-                    "Batch further alerts for a later run; do not retry in a loop or report this as a platform bug."
+                    "Batch further information for a later run; do not retry in a loop or report this as a platform bug."
                 )
             row = await conn.fetchrow(
                 """INSERT INTO coordinator_signals (user_id,kind,workflow_id,node_id,payload,woke)
@@ -38,11 +37,10 @@ class CoordinatorSignalRepo:
                 user_id, workflow_id, node_id,
                 {**payload, "workflow_id": workflow_id, "workflow_name": workflow["name"] or "Untitled", "node_id": node_id},
             )
-            channel = payload["channel"]
             epoch = await CoordinatorWakeupRepo(conn).epoch(user_id)
             return await CoordinatorWakeupRepo(self.pool).enqueue_signal(
                 signal=dict(row), conn=conn, payload={"kind": "agent_message", **row["payload"]},
                 context={"epoch": epoch, "depth": 0, "turn_id": str(uuid.uuid4()),
-                         "channel": "whatsapp_text" if channel == "whatsapp" else channel,
+                         "channel": "web",
                          "request": f"An agent in “{row['payload']['workflow_name']}” messaged you"},
             )
