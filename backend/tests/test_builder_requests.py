@@ -238,6 +238,7 @@ async def test_one_tool_contract_and_optional_publisher():
 async def test_builder_worker_and_real_answer_handler_share_the_request(builder_request_db, monkeypatch, publish_after, source):
     pool, repo, workflow_id, enqueue = builder_request_db
     queued = await enqueue(instructions="Build a dashboard", origin={"source": source, "client_reference": "test"},
+                           continuation={"channel": "whatsapp_text"},
                            **({} if publish_after else {"publish": None}))
     cid = queued["conversation_key"]
     monkeypatch.setattr(WorkflowBuilderHandler, "get_pool", AsyncMock(return_value=pool))
@@ -253,6 +254,7 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
         assert caller_user_id == USER and sid == ""
         assert request.edit_prompt == queued["spec"]["instructions"]
         assert request.user_context["source"] == source
+        assert request.user_context["coordinator_channel"] == "whatsapp_text"
         await pool.execute(ConversationRepo._UPSERT_CHAT_EVENT_SQL, cid, USER, workflow_id, None, [
             {"role": "user", "message": request.edit_prompt},
             {"role": "assistant", "message": "Connect a credential", "pending_ask": pending},
@@ -279,6 +281,7 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
         finished_request = request
         assert request.user_context["source"] == source
         assert request.user_context["client_reference"] == "test"
+        assert request.user_context["coordinator_channel"] == "whatsapp_text"
         assert request.user_context["builder_request_id"] == str(queued["id"])
         await handler._maybe_notify_agent_result(request=request, user_id=USER, builder=builder, segments=[])
 

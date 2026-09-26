@@ -37,6 +37,7 @@ def build_view(row):
 def request_context(row):
     return {**row["origin"], "workflow_id": str(row["workflow_id"]),
             "builder_request_id": str(row["id"]), "builder_attempt_id": str(row["attempt_id"]),
+            "coordinator_channel": (row.get("continuation") or {}).get("channel"),
             "publication_requested": row["spec"].get("publish")}
 
 

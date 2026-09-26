@@ -49,28 +49,36 @@ class CoordinatorWakeupRepo:
             f"SELECT id FROM coordinator_jobs WHERE id=$1 AND notified_at IS NULL AND status IN {TERMINAL} FOR UPDATE",
         )
 
-    async def enqueue_signal(self, *, signal, context, payload):
+    async def enqueue_signal(self, *, signal, context, payload, conn=None):
         """A signal from elsewhere in the account (coder/coordinator/signals.py)."""
-        await self._transfer(
-            "signal", signal, context, payload, False,
+        return await self._transfer(
+            "signal", signal, context, payload, context.get("channel") == "whatsapp_text",
             "SELECT id FROM coordinator_signals WHERE id=$1 AND notified_at IS NULL FOR UPDATE",
+            conn=conn,
         )
 
-    async def _transfer(self, source, item, context, payload, send_to_phone, still_pending_sql):
-        async with self.pool.acquire() as conn:
-            async with conn.transaction():
-                if not await conn.fetchval(still_pending_sql, item["id"]):
-                    return
-                await conn.execute(
-                    """INSERT INTO coordinator_wakeups(user_id,source,source_id,context,payload,send_to_phone)
-                       VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (source,source_id) DO NOTHING""",
-                    item["user_id"], source, item["id"], context, payload, send_to_phone,
-                )
-        row = await self.pool.fetchrow("SELECT * FROM coordinator_wakeups WHERE source=$1 AND source_id=$2",
-                                       source, item["id"])
+    async def _transfer(self, source, item, context, payload, send_to_phone, still_pending_sql, *, conn=None):
+        async def insert(connection):
+            if not await connection.fetchval(still_pending_sql, item["id"]):
+                return
+            await connection.execute(
+                """INSERT INTO coordinator_wakeups(user_id,source,source_id,context,payload,send_to_phone)
+                   VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (source,source_id) DO NOTHING""",
+                item["user_id"], source, item["id"], context, payload, send_to_phone,
+            )
+            row = await connection.fetchrow("SELECT * FROM coordinator_wakeups WHERE source=$1 AND source_id=$2",
+                                            source, item["id"])
+            return dict(row) if row else None
+
+        if conn is not None:
+            # The caller owns the source transaction and dispatches after commit.
+            return await insert(conn)
+        async with self.pool.acquire() as connection, connection.transaction():
+            row = await insert(connection)
         if row:
             from utils.coordinator_dispatch import dispatch_event
-            await dispatch_event(self.pool, dict(row))
+            await dispatch_event(self.pool, row)
+        return row
 
     async def accept_alarm(self, body):
         payload = {**body["payload"], "scheduler_revision": body["revision"]}

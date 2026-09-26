@@ -3,6 +3,7 @@ flooded (coder/coordinator/signals.py), and can look at runs, pause a
 workflow and resume exactly what it paused — against real Postgres."""
 
 import uuid
+import asyncio
 from unittest.mock import AsyncMock
 
 import pytest
@@ -99,6 +100,85 @@ async def test_a_signal_wakeup_opens_with_triage_instructions():
     assert "pause_workflow" in failure and "submit_feedback" in failure and "message_owner" in failure
     assert "memory" in failure  # an owner's opt-out is a memory, honored on waking
     assert "request_build" in signals.describe({"payload": {"kind": "agent_message"}})
+
+
+async def test_owner_alerts_have_separate_concurrent_account_and_node_caps(account, monkeypatch):
+    pool, user_id, workflow, dispatched = account
+    wf = await workflow("Inbox")
+    monkeypatch.setattr(signals, "OWNER_ALERTS_PER_NODE_DAILY", 2)
+    monkeypatch.setattr(signals, "OWNER_ALERTS_DAILY", 3)
+    args = dict(user_id=user_id, workflow_id=wf, message="Invoice", purpose="owner_alert", channel="web")
+    results = await asyncio.gather(*(record_agent_message(pool, node_id="n1", **args) for _ in range(5)))
+    assert sum(r["success"] for r in results) == 2
+    assert "not queued" in next(r["error"] for r in results if not r["success"])
+    assert (await record_agent_message(pool, node_id="n2", **args))["success"]
+    assert not (await record_agent_message(pool, node_id="n3", **args))["success"]
+    # Alerts do not consume the allowance for asking for help.
+    assert (await record_agent_message(pool, user_id=user_id, workflow_id=wf,
+                                       node_id="n1", message="Credential expired"))["success"]
+    assert len(dispatched) == 4
+
+
+async def test_alert_channel_defaults_to_owner_chat_without_leaking_other_accounts(account, monkeypatch):
+    from utils import capabilities
+
+    pool, user_id, workflow, dispatched = account
+    wf = await workflow("Money monitor")
+    await pool.execute("INSERT INTO conversations(conversation_id,user_id,events) VALUES($1,$2::uuid,$3)",
+                       f"coordinator:{user_id}", user_id, [{"role": "user", "channel": "whatsapp_text", "message": "Alert me"}])
+    monkeypatch.setattr(capabilities, "_providers", {capabilities.OWNER_MESSAGE: AsyncMock()})
+    out = await record_agent_message(pool, user_id=user_id, workflow_id=wf, node_id="agent",
+                                     message="A bill arrived", purpose="owner_alert")
+    assert out["status"] == "queued" and out["channel"] == "whatsapp"
+    event = dispatched[0]
+    assert event["context"]["channel"] == "whatsapp_text" and event["send_to_phone"]
+    assert event["payload"]["purpose"] == "owner_alert"
+    assert "notification" in signals.describe(event)
+    capabilities._providers[capabilities.OWNER_MESSAGE].assert_not_awaited()  # delivery follows coordinator review
+    assert not (await record_agent_message(pool, user_id=str(uuid.uuid4()), workflow_id=wf, node_id="agent",
+        message="Stolen alert", purpose="owner_alert", channel="web"))["success"]
+    assert len(dispatched) == 1
+
+
+async def test_unsupported_alert_channels_fail_without_queuing(account, monkeypatch):
+    from utils import capabilities
+
+    pool, user_id, workflow, dispatched = account
+    wf = await workflow()
+    monkeypatch.setattr(capabilities, "_providers", {})
+    args = dict(user_id=user_id, workflow_id=wf, node_id="agent", message="Alert", purpose="owner_alert")
+    for channel in ("whatsapp", "invented", None):
+        assert not (await record_agent_message(pool, channel=channel, **args))["success"]
+    assert dispatched == []
+    # OSS web delivery remains available without any cloud provider.
+    assert (await record_agent_message(pool, channel="web", **args))["success"]
+
+
+async def test_signal_and_wakeup_commit_together_before_dispatch(account, monkeypatch):
+    from repositories.coordinator_wakeups import CoordinatorWakeupRepo
+
+    pool, user_id, workflow, dispatched = account
+    wf = await workflow()
+    args = dict(user_id=user_id, workflow_id=wf, node_id="agent", message="Invoice", purpose="owner_alert", channel="web")
+    original = CoordinatorWakeupRepo.enqueue_signal
+    monkeypatch.setattr(CoordinatorWakeupRepo, "enqueue_signal", AsyncMock(side_effect=RuntimeError("database failed")))
+    with pytest.raises(RuntimeError, match="database failed"):
+        await record_agent_message(pool, **args)
+    assert not await pool.fetchval("SELECT count(*) FROM coordinator_signals WHERE user_id=$1::uuid", user_id)
+    assert dispatched == []
+    monkeypatch.setattr(CoordinatorWakeupRepo, "enqueue_signal", original)
+
+    async def unavailable_scheduler(_, event):
+        # Another connection can already see BOTH rows before network dispatch.
+        assert await pool.fetchval("SELECT count(*) FROM coordinator_signals WHERE id=$1", event["source_id"]) == 1
+        assert await CoordinatorWakeupRepo(pool).get(event["id"])
+        return False
+
+    monkeypatch.setattr("utils.coordinator_dispatch.dispatch_event", unavailable_scheduler)
+    assert (await record_agent_message(pool, **args))["status"] == "queued"
+    recoverable = [row for row in await CoordinatorWakeupRepo(pool).reconciliation_batch()
+                   if str(row["user_id"]) == user_id]
+    assert len(recoverable) == 1 and recoverable[0]["payload"]["message"] == "Invoice"
 
 
 async def test_runs_are_inspectable_and_pause_resumes_only_what_it_paused(account, monkeypatch):

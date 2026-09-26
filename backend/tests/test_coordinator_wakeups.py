@@ -62,6 +62,64 @@ async def complete_build(db, *, error=None, cancelled=False, context=None):
     return request, notification
 
 
+@pytest.mark.parametrize("channel", ["whatsapp", "email", "web"])
+@pytest.mark.parametrize("notify", [True, False])
+async def test_owner_alert_review_uses_existing_outbox_once(db, monkeypatch, channel, notify):
+    from coder.coordinator.signals import record_agent_message
+
+    pool, repo, _, workflow_id, _ = db
+    monkeypatch.setitem(capabilities._providers, capabilities.OWNER_MESSAGE, AsyncMock())
+    dispatched = []
+    monkeypatch.setattr("utils.coordinator_dispatch.dispatch_event",
+                        AsyncMock(side_effect=lambda p, event: dispatched.append(event)))
+
+    class ReviewingAgent:
+        @classmethod
+        async def create(cls, **kwargs):
+            self = cls()
+            self.kwargs = kwargs
+            assert kwargs["conversation_id"] == f"coordinator:{USER}"
+            return self
+
+        async def __call__(self, message):
+            content = message["input_items"][0]["content"]
+            assert "requested notification" in content
+            assert "untrusted" in content
+            assert '"purpose": "owner_alert"' in content
+            # Review can suppress a duplicate or irrelevant alert, even though queued.
+            await self.kwargs["custom_tool_executor"]("set_followup_delivery", {
+                "notify": notify, "include_recordings": False,
+                "reason": "Matches the request" if notify else "Already reported this invoice",
+            })
+            await self.kwargs["emit_message"](ChatMessageEvent(message="A new invoice needs attention.", finished=True))
+
+        async def cleanup(self):
+            pass
+
+    monkeypatch.setattr(agent, "Agent", ReviewingAgent)
+    phone = AsyncMock(return_value=("sent", None))
+    email = AsyncMock(return_value={"success": True})
+    socket = AsyncMock()
+    monkeypatch.setattr(wakeups, "deliver_phone", phone)
+    monkeypatch.setattr(wakeups, "emit_notification", socket)
+    monkeypatch.setattr("coder.coordinator.reach.reach_owner", email)
+    queued = await record_agent_message(pool, user_id=USER, workflow_id=workflow_id, node_id="agent",
+                                       message="An invoice arrived", purpose="owner_alert", channel=channel)
+    assert queued["status"] == "queued"
+    event = dispatched[0]
+    assert await wakeups.process_event(pool, event)
+    # Scheduler retries cannot run the model/deliver a second alert.
+    assert await wakeups.process_event(pool, event)
+    assert phone.await_count == int(notify and channel == "whatsapp")
+    assert email.await_count == int(notify and channel == "email")
+    assert socket.await_count == int(notify)
+    if phone.await_count:
+        assert phone.call_args.args[1:] == (USER, "A new invoice needs attention.")
+    if email.await_count:
+        assert email.call_args.kwargs["channel"] == "email"
+    assert (await repo.get(event["id"]))["status"] == "done"
+
+
 @pytest.mark.parametrize("original_channel", ["whatsapp_text", "web"])
 async def test_completion_wakes_same_coordinator_and_only_then_submits_b(db, monkeypatch, original_channel):
     pool, repo, builds, workflow_id, _ = db

@@ -13,6 +13,20 @@ def build_user_context(
     if not user_context:
         return ""
     parts = ["## Current User Context"]
+    if user_context.get("source") == "coordinator":
+        from coder.coordinator.reach import normalize_channel
+
+        channel = normalize_channel(user_context.get("coordinator_channel")) or "auto"
+        parts.append(
+            f"This request came from the account coordinator on channel '{channel}'. "
+            "For alerts to this same owner, configure the agent to call its built-in "
+            "message_coordinator tool with purpose='owner_alert' and the requested channel "
+            f"(default '{channel}' unless the instructions choose another). The coordinator delivers the alert "
+            "through its existing owner channel. No recipient number, messaging credential, or outbound "
+            "provider node is needed for this route. Include this in the agent's goal and standing instructions. "
+            "This does not give the workflow access to WhatsApp inboxes, groups, or other recipients; "
+            "those still require their own integration and destination."
+        )
     has_workflow = user_context.get('has_workflow')
     workflow_id = user_context.get('workflow_id')
     workflow_name = user_context.get('workflow_name')

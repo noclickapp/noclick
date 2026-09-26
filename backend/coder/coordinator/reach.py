@@ -16,9 +16,13 @@ _AS_CHANNEL = {"whatsapp_text": "whatsapp", "whatsapp": "whatsapp", "voice": "wh
                "callback": "whatsapp", "email": "email", "web": "web"}
 
 
+def normalize_channel(channel: Optional[str]) -> Optional[str]:
+    return _AS_CHANNEL.get(channel)
+
+
 async def last_used_channel(pool, user_id: str) -> Optional[str]:
     """The channel of the owner's newest message in the coordinator thread."""
-    return _AS_CHANNEL.get(await pool.fetchval(
+    return normalize_channel(await pool.fetchval(
         """SELECT e->>'channel' FROM conversations c, jsonb_array_elements(c.events) WITH ORDINALITY AS t(e, i)
            WHERE c.conversation_id = $1 AND c.user_id = $2::uuid AND e->>'role' = 'user'
            ORDER BY i DESC LIMIT 1""",
