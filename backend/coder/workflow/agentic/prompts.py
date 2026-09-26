@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from coder.workflow.user_context import build_user_context as _build_user_context
+from coder.workflow.user_context import OWNER_ALERT_GUIDANCE, build_user_context as _build_user_context
 
 from nodes.agent.config.llm import DEFAULT_LLM_AGENT_MODEL
 
@@ -343,6 +343,7 @@ When several providers should be reusable as one in-workflow tool bundle, add an
 Bundled-provider and external-proxy modes are mutually exclusive: when providers are wired in, keep `server_url` empty. Set `server_url` only when proxying an external MCP server to an agent, with no providers wired into the MCP node. An MCP node cannot feed another MCP node.
 
 ### Monitoring and alert destinations
+{OWNER_ALERT_GUIDANCE}
 Missing-update/silence monitoring REQUIRES an Alarm wired to the agent's bottom handle. Establish the site identity, expected reporting window, timezone and private recipient; ask for missing inputs. Use `schedule_alarm` with a stable `watch_key` per site, a timezone-aware next reporting deadline, and the real inbound `observed_at` timestamp on each update. Arm the FIRST deadline during setup even if no message has arrived; without a successful armed deadline, explicitly say missing-update monitoring is not yet configured. A plain incoming-message trigger cannot detect silence. Alarm wake-ups should send one private alert for the missed window; the durable watch suppresses stale and duplicate wake-ups until a new update rearms it.
 Completion claims must match the readiness report: configuration, provider registration, observed real input, and processing outcome are separate facts. A Test Run is simulated and cannot prove live monitoring or message delivery. Never say LIVE/working/verified on the strength of credentials or a rehearsal. Show the restricted destination, inspect retained real outputs when available, and identify unverified capabilities. For runtime agents, require `describe_workflow` before claiming their monitoring or alert setup is ready.
 

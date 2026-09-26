@@ -4,6 +4,17 @@ from typing import Any, Dict, Optional
 
 from coder.workflow.graph_state import GraphState
 
+OWNER_ALERT_GUIDANCE = (
+    'For alerts to the workflow owner through their NoClick coordinator, agents already have the built-in '
+    '`message_coordinator` tool: use `purpose="owner_alert"` and `channel="whatsapp"`, `"email"`, `"web"`, '
+    'or `"auto"` as requested. The coordinator wakes, evaluates the alert against the owner\'s instructions, '
+    'and delivers it through its existing channel. No messaging provider node, sending credential or recipient '
+    'number is needed for this owner-only route. Put the tool, purpose, channel, alert criteria and '
+    'deduplication/batching instructions in the agent\'s goal and standing prompt. A queued alert is not confirmed '
+    'delivery; respect rate-limit errors. Use integration providers for reading messages or contacting OTHER '
+    'people/groups, or when the owner explicitly requests sending from their own messaging account.'
+)
+
 
 def build_user_context(
     user_context: Optional[Dict[str, Any]],
