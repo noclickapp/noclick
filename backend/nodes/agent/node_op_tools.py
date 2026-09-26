@@ -114,24 +114,11 @@ def normalize_allowed_operations(
 @lru_cache(maxsize=None)
 def scopable_fields_for_operation(node_type: str, operation: str) -> frozenset:
     """Fields of ``operation`` that can be scoped — tagged with both
-    ``x-dynamic-options`` and ``x-resource-type``. Cached for the process
-    lifetime (depends only on import-time-static config schemas)."""
-    from nodes.core.registry import NODE_REGISTRY
-
-    node_class = NODE_REGISTRY.get(node_type)
-    if node_class is None:
-        return frozenset()
-    for entry in _iter_operation_defs(node_class):
-        if entry["operation"] != operation:
-            continue
-        out = set()
-        for field, prop in entry["member"].get("properties", {}).items():
-            if not isinstance(prop, dict):
-                continue
-            if prop.get("x-dynamic-options") and prop.get("x-resource-type"):
-                out.add(field)
-        return frozenset(out)
-    return frozenset()
+    ``x-dynamic-options`` and ``x-resource-type``. A slice of
+    ``resource_field_index``, which applies the same predicate across every
+    operation and is cached per node type, so a caller looping operations
+    parses the node's config schema once instead of once per operation."""
+    return frozenset(f for op, f, _rt in resource_field_index(node_type) if op == operation)
 
 
 @lru_cache(maxsize=None)
