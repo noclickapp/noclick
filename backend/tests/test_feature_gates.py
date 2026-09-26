@@ -31,3 +31,8 @@ def test_an_internal_feature_is_staff_only_until_an_account_is_let_in():
 def test_a_pilot_list_for_an_unknown_feature_is_a_typo():
     with pytest.raises(KeyError):
         allow_accounts("phone_numbrs", ["customer@example.com"])
+
+
+def test_phone_numbers_are_available_to_non_staff_and_phone_only_accounts():
+    assert is_feature_enabled("phone_numbers", email="customer@example.com")
+    assert is_feature_enabled("phone_numbers", email=None)

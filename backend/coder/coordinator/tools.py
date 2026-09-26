@@ -199,7 +199,9 @@ def coordinator_tool_params(*, include_whatsapp: bool = False, include_publishin
                  {"request_id": {"type": "string"}}, ["request_id"]),
             tool("request_phone_number", "Prepare a phone-number purchase and return a link for the signed-in owner to review "
                  "the selected number, purpose and recurring charge. Never buys automatically. Reuses the active request. "
-                 "After purchase, use request_build to configure the agent/workflow with its phone_number credential.",
+                 "Use when a requested phone call has no connected calling number. Checks plan and credits first; "
+                 "returns payment links if needed. Purchase wakes you with the credential_id: discover its place_call "
+                 "operation to make the original call directly. Only use request_build for ongoing agents/workflows.",
                  {"purpose": {"type": "string", "description": "What the owner wants this number used for."},
                   "phone_number": {"type": "string", "description": "An available number from find_phone_numbers, or omit to let the owner choose."}},
                  ["purpose"]),
@@ -391,6 +393,8 @@ class CoordinatorTools:
                 except TypeError as exc:
                     raise ValueError(f"bad arguments for {name}: {exc}") from exc
                 result = await method(**(arguments or {}))
+        except GateDenied as exc:
+            result = await self._refusal(exc)
         except Exception as exc:
             logger.error("coordinator tool %s failed", name, exc_info=True)
             result = {"success": False, "error": str(exc)}
@@ -413,7 +417,7 @@ class CoordinatorTools:
         return await read_attachment(self.pool, self.user_id, attachment_id, offset)
 
     async def _refusal(self, exc: Exception) -> Dict[str, Any]:
-        """A refused media call: the gate's reason and, where this platform
+        """A refused product call: the gate's reason and, where this platform
         sells the way past it, the purchase links already minted — one per plan
         that includes the product, or one per suggested top-up size — so the
         reply names them with prices instead of a bare "not available"."""

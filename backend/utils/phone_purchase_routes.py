@@ -6,6 +6,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
+from billing.gates import GateDenied
 
 from utils.auth import verify_token
 from utils.database_pool import get_native_pool
@@ -51,7 +52,7 @@ async def response(operation):
         return await operation
     except FeatureNotAvailable as exc:
         raise HTTPException(403, str(exc)) from None
-    except PhoneNumberError as exc:
+    except (PhoneNumberError, GateDenied) as exc:
         raise HTTPException(400, {"error": str(exc), "kind": exc.kind}) from None
 
 

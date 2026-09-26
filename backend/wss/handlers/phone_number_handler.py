@@ -85,7 +85,7 @@ class PhoneNumberHandler(DatabasePoolMixin, SocketIOHandler):
             await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data=data))
         except FeatureNotAvailable as e:
             await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data={"kind": "gated"}, error=str(e)))
-        except PhoneNumberError as e:
+        except (PhoneNumberError, GateDenied) as e:
             await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data={"kind": e.kind}, error=str(e)))
         except Exception as e:
             logger.error("[PhoneNumbers] request failed: %s", e, exc_info=True)
@@ -132,11 +132,10 @@ async def search_numbers_for_user(pool, *, user_id, user_tier, country="US", are
 async def _gate(pool, user_id: str, user_tier: str, *, projected_credits: Optional[float] = None) -> None:
     """A paid plan of its own or a paid org it owns (the effective tier that
     funds its credits), and for a purchase the first month's credits."""
-    try:
-        await check_product(pool, "phone_numbers", user_id=user_id, personal_tier=user_tier,
-                            projected_credits=projected_credits)
-    except GateDenied as exc:
-        raise PhoneNumberError(str(exc), exc.kind) from None
+    # Preserve the typed denial and its offer so every caller can guide the
+    # owner through the same upgrade/top-up flow.
+    await check_product(pool, "phone_numbers", user_id=user_id, personal_tier=user_tier,
+                        projected_credits=projected_credits)
 
 
 async def buy_number_for_user(pool, *, user_id: str, user_tier: str, e164: str,

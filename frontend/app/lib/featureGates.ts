@@ -17,7 +17,7 @@ export const FEATURE_ROLLOUT = {
     // The account coordinator, on every channel.
     coordinator: 'everyone',
     // Buying phone numbers for the Phone node.
-    phone_numbers: 'internal',
+    phone_numbers: 'everyone',
 } satisfies Record<string, Rollout>;
 
 export type Feature = keyof typeof FEATURE_ROLLOUT;

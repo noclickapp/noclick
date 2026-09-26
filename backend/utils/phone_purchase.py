@@ -11,6 +11,7 @@ from uuid import uuid4
 from fastapi import HTTPException
 
 from billing.plan_limits import get_user_tier_from_db
+from billing.gates import GateDenied, check_product
 from nodes.phone_node import PHONE_NUMBER_MONTHLY_CREDITS
 from repositories.credentials import CredentialsRepo
 from repositories.users import get_user_email
@@ -114,7 +115,7 @@ class PhonePurchase:
         except Exception as exc:
             # Only a definitive rejection (or a failure before the provider call)
             # may re-open selection. Never retry an uncertain paid side effect.
-            rejected = isinstance(exc, PhonePurchaseRejected) or (
+            rejected = isinstance(exc, (PhonePurchaseRejected, GateDenied)) or (
                 isinstance(exc, PhoneNumberError) and exc.kind in ("credits", "plan", "number", "unavailable")
             )
             message = str(exc) if rejected else (
@@ -129,7 +130,11 @@ class PhonePurchase:
     async def create(self, purpose: str, phone_number: str | None = None, *, continuation=None):
         if not purpose.strip() or len(purpose) > 1000:
             raise ValueError("Explain the intended use in 1–1000 characters.")
-        await self.actor()
+        tier = await self.actor()
+        # An unquoted link must check the same prerequisites as a purchase.
+        # Otherwise a free account only learns it needs a plan after sign-in.
+        await check_product(self.pool, "phone_numbers", user_id=self.user_id, personal_tier=tier,
+                            projected_credits=PHONE_NUMBER_MONTHLY_CREDITS)
         row = await self.repo.upsert_credential_request(
             requester_id=self.user_id, target_email="", credential_type="phone_number", message=purpose.strip(),
             continuation=continuation,

@@ -25,7 +25,8 @@ FEATURE_ROLLOUT: dict[str, str] = {
     # The account coordinator, on every channel (it triages every account's
     # failures, so every account needs it).
     "coordinator": EVERYONE,
-    "phone_numbers": INTERNAL,
+    # Plan, credit balance and owner confirmation still gate each purchase.
+    "phone_numbers": EVERYONE,
 }
 
 # Accounts let into an INTERNAL feature by email, lower-cased. Empty in the

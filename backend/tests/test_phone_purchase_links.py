@@ -264,3 +264,94 @@ async def test_coordinator_purchase_registers_before_confirmation_and_wakes_afte
     assert after['payload']['credential_id'] == result['credential_id']
     numbers.buy.assert_awaited_once()
     await pool.execute('DELETE FROM coordinator_wakeups WHERE id=$1', before['id'])
+
+
+async def test_coordinator_free_account_gets_upgrade_then_existing_purchase_wakeup(phone_db, monkeypatch):
+    from coder.coordinator.tools import CoordinatorTools
+    from tests.test_coordinator import FakePurchases
+    from utils.feature_gates import require_feature
+
+    pool, service, token, numbers = phone_db
+    # Exercise the real rollout with a phone-only identity, like WhatsApp signup.
+    monkeypatch.setattr(purchase, "require_feature", require_feature)
+    monkeypatch.setattr(purchase, "get_user_email", AsyncMock(return_value=None))
+    purchases = FakePurchases()
+    monkeypatch.setitem(capabilities._providers, capabilities.PURCHASES, purchases)
+    monkeypatch.setattr("billing.plan_limits.registered_plan_limits", lambda: object())
+    tier = {"value": "free"}
+    monkeypatch.setattr(purchase, "get_user_tier_from_db", AsyncMock(side_effect=lambda *a: tier["value"]))
+    monkeypatch.setattr("billing.plan_limits.get_effective_tier", AsyncMock(side_effect=lambda *a: tier["value"]))
+    monkeypatch.setattr("utils.coordinator_links.dispatch_link", lambda *a: None)
+    context = {"epoch": "", "depth": 0, "request": "Call my dentist to ask about availability",
+               "channel": "whatsapp_text"}
+    tools = CoordinatorTools(pool=pool, sio=None, user_id=USER, organization_id=None,
+                             conversation_id=f"coordinator:{USER}", phone_only=True,
+                             reply_channel="whatsapp_text", continuation=context)
+    # Both entry points must preserve the gate's upgrade offer. No carrier call
+    # or paid-resource request is started before the plan prerequisite clears.
+    for name, args in (("find_phone_numbers", {}), ("request_phone_number", {"purpose": context["request"]})):
+        result = await tools.execute(name, args)
+        assert result["kind"] == "plan"
+        assert len(result["purchase_links"]) == 2
+    assert all(p["continuation"] == context and p["send_to_phone"] for p in purchases.minted)
+    numbers.search.assert_not_awaited()
+    numbers.buy.assert_not_awaited()
+    assert not await pool.fetchval("SELECT count(*) FROM coordinator_wakeups WHERE user_id=$1::uuid", USER)
+
+    # Resume after the existing payment wakeup, with the same original request.
+    tier["value"] = "plus"
+    result = await tools.execute("request_phone_number", {"purpose": context["request"]})
+    assert result["auto_resume"] and result["approval_url"].endswith(token)
+    numbers.buy.assert_not_awaited()
+    quote = (await service.quote(token, NUMBER))["quote"]
+    bought = await service.confirm(token, quote["id"])
+    wakeup = await pool.fetchrow("SELECT * FROM coordinator_wakeups WHERE await_key=$1",
+                                f"credential_request:{result['request_id']}")
+    try:
+        assert wakeup["status"] == "queued" and wakeup["context"] == context
+        assert wakeup["payload"]["credential_id"] == bought["credential_id"]
+        found = await tools.execute("search_credential_tools", {"query": "place call", "credential_id": bought["credential_id"]})
+        call = next(op for op in found["operations"] if op["operation"] == "place_call")
+        assert call["credentials"][0]["id"] == bought["credential_id"] and call["tool_names"]
+        numbers.buy.assert_awaited_once()
+    finally:
+        await pool.execute("DELETE FROM coordinator_wakeups WHERE id=$1", wakeup["id"])
+
+
+async def test_setup_low_credits_offers_topups_and_restricted_rollout_offers_no_upgrade(phone_db, monkeypatch):
+    from coder.coordinator.tools import CoordinatorTools
+    from tests.test_coordinator import FakePurchases
+    from utils.feature_gates import FeatureNotAvailable
+
+    pool, service, token, numbers = phone_db
+    purchases = FakePurchases()
+    monkeypatch.setitem(capabilities._providers, capabilities.PURCHASES, purchases)
+    monkeypatch.setattr("billing.plan_limits.registered_plan_limits", lambda: object())
+    monkeypatch.setattr(usage_tracker, "fetch_credit_remaining", AsyncMock(return_value=0))
+    tools = CoordinatorTools(pool=pool, sio=None, user_id=USER, organization_id=None,
+                             conversation_id=f"coordinator:{USER}")
+    result = await tools.execute("request_phone_number", {"purpose": "Call my dentist"})
+    assert result["kind"] == "credits" and result["purchase_links"]
+    assert all(p["kind"] == "topup" for p in purchases.minted)
+    purchases.minted.clear()
+    monkeypatch.setattr(purchase, "require_feature", MagicMock(side_effect=FeatureNotAvailable("phone_numbers")))
+    result = await tools.execute("request_phone_number", {"purpose": "Call my dentist"})
+    assert not result["success"] and "available on your account" in result["error"]
+    assert "purchase_links" not in result and not purchases.minted
+    numbers.search.assert_not_awaited()
+    numbers.buy.assert_not_awaited()
+
+
+async def test_plan_denial_at_confirm_is_definitive_and_keeps_http_error_contract(phone_db, monkeypatch):
+    from billing.gates import GateDenied, Offer
+
+    pool, service, token, numbers = phone_db
+    quote = (await service.quote(token, NUMBER))["quote"]
+    monkeypatch.setattr(handler, "check_product", AsyncMock(side_effect=GateDenied("plan", "Upgrade required", Offer(plans=("plus",)))))
+    result = await service.confirm(token, quote["id"])
+    assert result["status"] == "pending" and result["quote"] is None
+    assert result["error"] == "Upgrade required"
+    numbers.buy.assert_not_awaited()
+    with pytest.raises(HTTPException) as exc:
+        await routes.response(service.search())
+    assert exc.value.status_code == 400 and exc.value.detail == {"kind": "plan", "error": "Upgrade required"}

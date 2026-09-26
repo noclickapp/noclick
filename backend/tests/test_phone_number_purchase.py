@@ -60,7 +60,7 @@ async def test_buy_mints_credential_and_charge_together(seams):
 async def test_the_first_month_must_be_affordable_before_anything_is_bought(seams):
     numbers, created, _, enc = seams
     usage_tracker.fetch_credit_remaining.return_value = 3.0
-    with pytest.raises(h.PhoneNumberError) as exc:
+    with pytest.raises(h.GateDenied) as exc:
         await h.buy_number_for_user(MockNativePool(), user_id=USER, user_tier="plus", e164="+15674833618", credential_name=None, encryption=enc)
     assert exc.value.kind == "credits" and "15 credits" in str(exc.value)
     numbers.buy.assert_not_awaited(); created.assert_not_awaited()
@@ -76,7 +76,7 @@ async def test_only_local_numbers_are_bought(seams):
     assert h.is_local_number("+15674833618") and not h.is_local_number("+18775550100")
 async def test_only_paid_plans_may_hold_a_number(seams, monkeypatch):
     numbers, created, _, enc = seams
-    with pytest.raises(h.PhoneNumberError) as exc:
+    with pytest.raises(h.GateDenied) as exc:
         await h.buy_number_for_user(MockNativePool(), user_id=USER, user_tier="free", e164="+15674833618", credential_name=None, encryption=enc)
     assert exc.value.kind == "plan" and "Plus and Pro" in str(exc.value)
     numbers.buy.assert_not_awaited(); created.assert_not_awaited()
@@ -110,6 +110,7 @@ async def test_handler_gates_on_the_rollout_then_the_provider(seams, monkeypatch
     monkeypatch.setattr(h, "send_event", AsyncMock(side_effect=lambda sio, sid, ev: sent.append(ev)))
     monkeypatch.setattr(h.PhoneNumberHandler, "get_pool", AsyncMock(return_value=MockNativePool()))  # CI has no live pool
     monkeypatch.setattr(feature_gates, "is_internal_user", lambda email: email.endswith("@noclick.com"))
+    monkeypatch.setitem(feature_gates.FEATURE_ROLLOUT, "phone_numbers", feature_gates.INTERNAL)
     handler = h.PhoneNumberHandler(FakeSio({"user_id": USER, "user_data": {"email": "someone@example.com"}}))
     await handler.handle_search("sid", PhoneNumberSearchRequest(request_id="r1", country="US"))
     assert sent[-1].data == {"kind": "gated"}

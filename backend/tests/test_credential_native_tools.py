@@ -206,3 +206,33 @@ async def test_tool_definitions_are_bounded_and_runtime_errors_are_not_argument_
     tools._tools["broken"] = AsyncMock(return_value={"status": "error", "error": "provider refused"})
     await tools.execute("broken", {})
     assert [r["result_status"] for r in audit] == ["error", "error"]
+
+
+async def test_empty_search_discovers_setup_without_loading_unconnected_tools(monkeypatch):
+    from utils import capabilities
+
+    monkeypatch.setitem(capabilities._providers, capabilities.PHONE_NUMBERS, object())
+    actions = CredentialActions(pool=None, user_id=USER)
+    monkeypatch.setattr(actions, "_credentials", AsyncMock(return_value=[]))
+    result = await actions.search_credential_tools("make outbound phone call call phone number")
+    assert not result["operations"] and not actions.registry.routes
+    phone = next(o for o in result["setup_options"] if o["node_type"] == "automation-phone")
+    assert phone["operation"] == "place_call"
+    assert phone["connections"] == [{"credential_type": "phone_number", "name": "Phone Number", "tool": "request_phone_number"}]
+    assert "not a calling credential" in result["instructions"]
+    mail = await actions.search_credential_tools("Gmail send email message")
+    gmail = next(o for o in mail["setup_options"] if o["node_type"] == "automation-gmail")
+    assert gmail["connections"][0]["tool"] == "connect_credential"
+    # A local instance cannot sell a number. Suggestions never load a tool or
+    # confer access to an account, and an exhausted page doesn't restart setup.
+    monkeypatch.delitem(capabilities._providers, capabilities.PHONE_NUMBERS)
+    result = await actions.search_credential_tools("place phone call")
+    assert all(c["tool"] != "request_phone_number" for o in result["setup_options"] for c in o["connections"])
+    assert "setup_options" not in await actions.search_credential_tools("place call", offset=3)
+
+
+async def test_scoped_search_does_not_suggest_switching_credentials(approval_db):
+    pool, _, (cid, _) = approval_db
+    actions = CredentialActions(pool=pool, user_id=USER)
+    result = await actions.search_credential_tools("qzxnotanoperation", credential_id=cid)
+    assert result["operations"] == [] and "setup_options" not in result

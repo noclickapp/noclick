@@ -30,6 +30,7 @@ def connection_catalog():
                 "credential_type": kind,
                 "name": schema.get("title", kind),
                 "oauth_provider": schema.get("x-oauth-provider"),
+                "connection_method": schema.get("x-credential-type"),
             })
             types.append(kind)
         if supported and types:
@@ -76,6 +77,45 @@ def operation_catalog(credential_type, node_type=None):
              "key": f"{provider}.{operation['operation']}"}
             for provider in ([node_type] if node_type else providers)
             for operation in list_node_operations(provider)]
+
+
+@lru_cache(maxsize=1)
+def _connectable_operations():
+    """Public operation metadata, not executable tools or account access."""
+    from nodes.agent.node_op_tools import list_node_operations
+
+    _, providers = connection_catalog()
+    return tuple({"node_type": provider, **operation, "credential_types": types}
+                 for provider, types in providers.items()
+                 for operation in list_node_operations(provider))
+
+
+def connection_suggestions(query):
+    """Show how to connect a missing capability using the integration registry.
+
+    Purchase credentials have their own owner-confirmation flow; never suggest
+    entering a provider's managed number ID as a manual credential.
+    """
+    from utils.capabilities import PHONE_NUMBERS, capability
+
+    methods, _ = connection_catalog()
+    results = []
+    for operation in search_operations(_connectable_operations(), query):
+        connections = []
+        for kind in operation["credential_types"]:
+            if methods[kind]["connection_method"] == "purchase":
+                if kind != "phone_number" or capability(PHONE_NUMBERS) is None:
+                    continue
+                tool = "request_phone_number"
+            else:
+                tool = "connect_credential"
+            connections.append({"credential_type": kind, "name": methods[kind]["name"], "tool": tool})
+        if connections:
+            results.append({"node_type": operation["node_type"], "operation": operation["operation"],
+                            "display_name": operation["display_name"], "connections": connections})
+        if len(results) == 3:
+            break
+    return results
 
 
 def operation_tool(credential_type, node_type, operation):

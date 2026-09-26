@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('~/lib/internalUsers', () => ({
     isInternalEmail: (email: string) => email === 'staff@example.com',
@@ -10,8 +10,18 @@ describe('feature gates', () => {
     beforeEach(() => {
         featureGateState.email = '';
     });
+    afterEach(() => {
+        Object.assign(FEATURE_ROLLOUT, { phone_numbers: 'everyone' });
+    });
+
+    it('shows phone-number setup for non-staff and phone-only accounts', () => {
+        expect(FEATURE_ROLLOUT.phone_numbers).toBe('everyone');
+        expect(isFeatureEnabled('phone_numbers', 'customer@example.com')).toBe(true);
+        expect(isFeatureEnabled('phone_numbers', null)).toBe(true);
+    });
 
     it('rolls an internal feature out to the hosted team only', () => {
+        Object.assign(FEATURE_ROLLOUT, { phone_numbers: 'internal' });
         expect(FEATURE_ROLLOUT.phone_numbers).toBe('internal');
         expect(isFeatureEnabled('phone_numbers', 'staff@example.com')).toBe(true);
         expect(isFeatureEnabled('phone_numbers', 'customer@example.com')).toBe(false);
@@ -20,6 +30,7 @@ describe('feature gates', () => {
     });
 
     it('lets a named account pilot an internal feature without joining the staff list', () => {
+        Object.assign(FEATURE_ROLLOUT, { phone_numbers: 'internal' });
         expect(isFeatureEnabled('phone_numbers', 'pilot@example.com')).toBe(false);
         allowAccounts('phone_numbers', [' Pilot@Example.com ']);
         expect(isFeatureEnabled('phone_numbers', 'pilot@example.com')).toBe(true);

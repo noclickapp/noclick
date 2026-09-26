@@ -7,7 +7,7 @@ connect a provider, discover its operations, or perform an authorized action.
 from uuid import UUID
 
 from repositories.credentials import CredentialsRepo
-from utils.credential_operations import connection_catalog, operation_catalog, operation_tool, search_operations
+from utils.credential_operations import connection_catalog, connection_suggestions, operation_catalog, operation_tool, search_operations
 from utils.credential_tool_registry import CredentialToolRegistry
 
 
@@ -26,11 +26,14 @@ def credential_tool_params(tool):
     operation = {**identity, "node_type": {"type": "string"}, "operation": {"type": "string"}}
     return [
         tool("list_credentials", "List accessible connections without secrets. No workflow is required.",
-             {"query": {"type": "string"}, "offset": {"type": "integer", "minimum": 0}}),
+             {"query": {"type": "string", "description": "Literal substring of a connection's name, type or identity. "
+                        "For natural-language actions, use search_credential_tools instead."},
+              "offset": {"type": "integer", "minimum": 0}}),
         tool("search_credential_tools", "Search operations across connected accounts and load the top matching tools "
              "for direct calls. Returns tool names and compatible credential IDs with account identities. "
              "Each loaded tool requires credential_id: select the requested account, never guess between ambiguous accounts. "
              "Use list_credentials for account identity (including email) without calling a provider. "
+             "If none match, returns setup options for supported integrations that need a connection. "
              "Optionally narrow to credential_id or use offset for more matches.",
              {"query": {"type": "string"}, **identity, "offset": {"type": "integer", "minimum": 0}}, ["query"]),
         tool("find_connections", "Find supported connection types before creating a connection link. Search by service name.",
@@ -118,10 +121,21 @@ class CredentialActions:
             results.append({**op, "tool_names": names,
                             "credentials": [credential_summary(row) for row in compatible[:30]],
                             "credential_count": len(compatible)})
-        return {"operations": results, "total": len(matches),
+        result = {"operations": results, "total": len(matches),
                 "next_offset": offset + 3 if len(matches) > offset + 3 else None,
                 "instructions": "Call the loaded tool with the chosen credential_id and typed arguments. "
                 "Search again to reload a tool no longer visible. Restrictions apply to the selected credential."}
+        if not matches and not credential_id and offset == 0 and query.strip():
+            result["setup_options"] = connection_suggestions(query)
+            result["instructions"] = (
+                "No connected account matches; this does not mean the action is unsupported. "
+                "Setup options describe integrations that need a connection, not callable tools. "
+                "Use the suggested setup tool and send its owner link, then rediscover tools after completion. "
+                "For phone calls, prefer request_phone_number when available; it checks plan/credit prerequisites. "
+                "A verified WhatsApp sender number is not a calling credential. "
+                "If no setup option matches, use find_connections with the service name."
+            )
+        return result
 
     async def find_connections(self, query):
         methods, _ = connection_catalog()
