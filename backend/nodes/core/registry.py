@@ -103,6 +103,7 @@ from nodes.elasticsearch_node import ElasticsearchNode
 from nodes.mailgun_node import MailgunNode
 from nodes.gitlab_node import GitLabNode
 from nodes.box_node import BoxNode
+from nodes.ashby_node import AshbyNode
 from nodes.clickup_node import ClickUpNode
 from nodes.devin_node import DevinNode
 from nodes.asana_node import AsanaNode
@@ -254,6 +255,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-mailgun': MailgunNode,
     'automation-gitlab': GitLabNode,
     'automation-box': BoxNode,
+    'automation-ashby': AshbyNode,
     'automation-clickup': ClickUpNode,
     'automation-devin': DevinNode,
     'automation-asana': AsanaNode,

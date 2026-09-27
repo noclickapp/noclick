@@ -230,6 +230,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Box
     'BoxOAuthCredential': 'box_oauth',
     'BoxDeveloperTokenCredential': 'box_developer_token',
+    'AshbyApiKeyCredential': 'ashby_api_key',
     // ClickUp
     'ClickUpOAuthCredential': 'clickup_oauth',
     'ClickUpPersonalTokenCredential': 'clickup_pat',

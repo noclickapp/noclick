@@ -107,6 +107,9 @@
         "on_box_event"
       ]
     },
+    "automation-ashby": {
+      "agentToolProvider": true
+    },
     "automation-brandfetch": {
       "agentToolProvider": true,
       "triggerOperations": [
