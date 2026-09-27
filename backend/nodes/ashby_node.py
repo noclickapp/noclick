@@ -33,7 +33,7 @@ class AshbyApiKeyCredential(BaseModel):
 # A trailing ! marks a required field. The names and RPC methods come from
 # Ashby's published OpenAPI definitions (v2026-01-01).
 OPERATION_SPECS: dict[str, tuple[str, str, str, str]] = {
-    "get_api_key": ("apiKey.info", "Get API Key Info", "Account", ""),
+    "get_api_key_info": ("apiKey.info", "Get API Key Info", "Account", ""),
     "list_candidates": ("candidate.list", "List Candidates", "Candidates", "cursor:s limit:i syncToken:s createdAfter:i createdBefore:i"),
     "get_candidate": ("candidate.info", "Get Candidate", "Candidates", "id:s!"),
     "search_candidates": ("candidate.search", "Search Candidates", "Candidates", "email:s name:s limit:i"),
@@ -126,7 +126,7 @@ def _request_body(config: BaseModel, spec: str) -> dict[str, Any]:
 
 class AshbyNode(WorkflowNode):
     connection_evidence = ConnectionEvidence(
-        operation="list_jobs", noun="jobs", identity_operation="get_api_key",
+        operation="list_jobs", noun="jobs", identity_operation="get_api_key_info",
     )
     edit_examples = [
         "Find candidates in Ashby", "Create an Ashby candidate",

@@ -577,11 +577,11 @@
       "title": "AshbyCreateJobPostingConfig",
       "type": "object"
     },
-    "AshbyGetApiKeyConfig": {
+    "AshbyGetApiKeyInfoConfig": {
       "properties": {
         "operation": {
-          "const": "get_api_key",
-          "default": "get_api_key",
+          "const": "get_api_key_info",
+          "default": "get_api_key_info",
           "title": "Get API Key Info",
           "type": "string",
           "ui:hidden": true,
@@ -590,7 +590,7 @@
           "x-is-trigger": false
         }
       },
-      "title": "AshbyGetApiKeyConfig",
+      "title": "AshbyGetApiKeyInfoConfig",
       "type": "object"
     },
     "AshbyGetApplicationConfig": {
@@ -1936,7 +1936,7 @@
           "create_candidate_note": "#/$defs/AshbyCreateCandidateNoteConfig",
           "create_job": "#/$defs/AshbyCreateJobConfig",
           "create_job_posting": "#/$defs/AshbyCreateJobPostingConfig",
-          "get_api_key": "#/$defs/AshbyGetApiKeyConfig",
+          "get_api_key_info": "#/$defs/AshbyGetApiKeyInfoConfig",
           "get_application": "#/$defs/AshbyGetApplicationConfig",
           "get_candidate": "#/$defs/AshbyGetCandidateConfig",
           "get_job": "#/$defs/AshbyGetJobConfig",
@@ -1963,7 +1963,7 @@
       },
       "oneOf": [
         {
-          "$ref": "#/$defs/AshbyGetApiKeyConfig"
+          "$ref": "#/$defs/AshbyGetApiKeyInfoConfig"
         },
         {
           "$ref": "#/$defs/AshbyListCandidatesConfig"
