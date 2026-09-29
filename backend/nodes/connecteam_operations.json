@@ -1,0 +1,5111 @@
+[
+  {
+    "operation": "get_account_information_me_get",
+    "title": "Get account information",
+    "description": "Retrieve the account information",
+    "category": "Account",
+    "method": "GET",
+    "path": "/me",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "account_information.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_account_information_me_get"
+  },
+  {
+    "operation": "get_users_users_v1_users_get",
+    "title": "Get users",
+    "description": "Retrieves a list of all users associated with the account. Optionally, filter by user ID to receive specific user information",
+    "category": "Users",
+    "method": "GET",
+    "path": "/users/v1/users",
+    "parameters": [
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      },
+      {
+        "name": "sort",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort key",
+        "default": null
+      },
+      {
+        "name": "order",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort order, set only if sort key is set",
+        "default": "asc"
+      },
+      {
+        "name": "userIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of user IDs for filtering.",
+        "default": null
+      },
+      {
+        "name": "userStatus",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Filter users by status. Default is active.",
+        "default": "active"
+      },
+      {
+        "name": "fullNames",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of full names to filter by. Specify the exact first and last name with a space between them as shown in the platform (ignore capitalization).",
+        "default": null
+      },
+      {
+        "name": "phoneNumbers",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of phone numbers to filter by (in format +<country code><phone number>).",
+        "default": null
+      },
+      {
+        "name": "emailAddresses",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of email addresses to filter by (in format test@test.com).",
+        "default": null
+      },
+      {
+        "name": "createdAt",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "Parameter specifying the date in Unix format (in seconds). Only users created after this date will be included in the results.",
+        "default": null
+      },
+      {
+        "name": "modifiedAt",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "Parameter specifying the date in in Unix format (in seconds). Only users with fields updated after this date will be included in the results.",
+        "default": null
+      },
+      {
+        "name": "lastLogin",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "Parameter specifying the date in in Unix format (in seconds). Only users who's logged in after this date will be included in the results.",
+        "default": null
+      },
+      {
+        "name": "archivedAt",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "Parameter specifying the date in Unix format (in seconds). Only users archived after this date will be included in the results.",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "users.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_users_users_v1_users_get"
+  },
+  {
+    "operation": "edit_users_users_v1_users_put",
+    "title": "Update users",
+    "description": "Update individual or multiple users associated with the account using the provided details. You can specify updates either by their phone number or unique userID.",
+    "category": "Users",
+    "method": "PUT",
+    "path": "/users/v1/users",
+    "parameters": [
+      {
+        "name": "editUsersByPhone",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "Optional flag to edit users by phone (default by user id).",
+        "default": false
+      },
+      {
+        "name": "includeSmartGroupIds",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "Indicates whether to include smart group IDs in the response body for the updated user(s). Please note that setting this value to true may increase the request time significantly.",
+        "default": true
+      }
+    ],
+    "body_required": true,
+    "body_description": "List of users to edit.",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/edit_users_users_v1_users_put"
+  },
+  {
+    "operation": "create_users_users_v1_users_post",
+    "title": "Create users",
+    "description": "Create individual or multiple users associated with the account using the provided details.",
+    "category": "Users",
+    "method": "POST",
+    "path": "/users/v1/users",
+    "parameters": [
+      {
+        "name": "sendActivation",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "Optional flag to send activation sms.",
+        "default": false
+      }
+    ],
+    "body_required": true,
+    "body_description": "List of users to create.",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_users_users_v1_users_post"
+  },
+  {
+    "operation": "archive_users_users_v1_users_delete",
+    "title": "Archive users",
+    "description": "Archive or permanently delete individual or multiple users associated with the account by their unique userID. In case of deletion, it will permanently delete the users from the system and cannot be undone.",
+    "category": "Users",
+    "method": "DELETE",
+    "path": "/users/v1/users",
+    "parameters": [
+      {
+        "name": "deletionType",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Determines whether to archive the users or permanently delete the users from the account. Permanent deletion is limited to 25 users per request.",
+        "default": "archive"
+      }
+    ],
+    "body_required": true,
+    "body_description": "Userids",
+    "oauth_scopes": [
+      "users.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/archive_users_users_v1_users_delete"
+  },
+  {
+    "operation": "delete_user_users_v1_users__userId__delete",
+    "title": "Delete user",
+    "description": "Delete or archive user associated with the account. In case of deletion, it will permanently delete the user from the system and cannot be undone.",
+    "category": "Users",
+    "method": "DELETE",
+    "path": "/users/v1/users/{userId}",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The ID of the user to archive or delete",
+        "default": null
+      },
+      {
+        "name": "deletionType",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Determines whether to archive the user or permanently delete the user from the account.",
+        "default": "archive"
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "users.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_user_users_v1_users__userid__delete"
+  },
+  {
+    "operation": "get_custom_fields_users_v1_custom_fields_get",
+    "title": "Get custom fields",
+    "description": "Retrieves all custom fields associated with the account. Optionally, filter the results by categories, names, types, or custom field IDs.",
+    "category": "Users",
+    "method": "GET",
+    "path": "/users/v1/custom-fields",
+    "parameters": [
+      {
+        "name": "customFieldIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Custom field ids to filter by",
+        "default": null
+      },
+      {
+        "name": "categoryIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Custom field category ids to filter by",
+        "default": null
+      },
+      {
+        "name": "customFieldTypes",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Custom field types to filter by",
+        "default": null
+      },
+      {
+        "name": "customFieldNames",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Custom field names to filter by",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      },
+      {
+        "name": "sort",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort key",
+        "default": null
+      },
+      {
+        "name": "order",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort order, set only if sort key is set",
+        "default": "asc"
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "users.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_custom_fields_users_v1_custom_fields_get"
+  },
+  {
+    "operation": "get_custom_fields_users_v1_custom_field_categories_get",
+    "title": "Get custom field categories",
+    "description": "Retrieves all custom fields categories associated with the account. Optionally, filter the results by category IDs and/or names.",
+    "category": "Users",
+    "method": "GET",
+    "path": "/users/v1/custom-field-categories",
+    "parameters": [
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      },
+      {
+        "name": "categoryIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Custom field category ids to filter by",
+        "default": null
+      },
+      {
+        "name": "categoryNames",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Custom field category names to filter by",
+        "default": null
+      },
+      {
+        "name": "sort",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort key",
+        "default": null
+      },
+      {
+        "name": "order",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort order, set only if sort key is set",
+        "default": "asc"
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "users.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_custom_fields_users_v1_custom_field_categories_get"
+  },
+  {
+    "operation": "update_custom_fields_users_v1_custom_fields_put",
+    "title": "Update custom fields",
+    "description": "Update custom fields settings by their unique ID",
+    "category": "Users",
+    "method": "PUT",
+    "path": "/users/v1/custom-fields",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Body",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_custom_fields_users_v1_custom_fields_put"
+  },
+  {
+    "operation": "create_custom_fields_users_v1_custom_fields_post",
+    "title": "Create custom fields",
+    "description": "Create individual or multiple custom fields associated with the account under a specific category.",
+    "category": "Users",
+    "method": "POST",
+    "path": "/users/v1/custom-fields",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Body",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_custom_fields_users_v1_custom_fields_post"
+  },
+  {
+    "operation": "delete_custom_fields_users_v1_custom_fields_delete",
+    "title": "Delete custom fields",
+    "description": "Delete individual or multiple custom fields associated with the account by their unique ID.",
+    "category": "Users",
+    "method": "DELETE",
+    "path": "/users/v1/custom-fields",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Body",
+    "oauth_scopes": [
+      "users.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_custom_fields_users_v1_custom_fields_delete"
+  },
+  {
+    "operation": "get_custom_field_options_users_v1_custom_fields__customFieldId__options_get",
+    "title": "Get custom field options",
+    "description": "Retrieve a list of all dropdown value options under a specified custom field",
+    "category": "Users",
+    "method": "GET",
+    "path": "/users/v1/custom-fields/{customFieldId}/options",
+    "parameters": [
+      {
+        "name": "customFieldId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the custom field",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      },
+      {
+        "name": "isDisabled",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "Parameter specifying the if to filter only for disabled options.",
+        "default": null
+      },
+      {
+        "name": "isDeleted",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "Parameter specifying the if to filter only for deleted options.",
+        "default": false
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "users.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_custom_field_options_users_v1_custom_fields__customfieldid__options_get"
+  },
+  {
+    "operation": "create_custom_field_option_users_v1_custom_fields__customFieldId__options_post",
+    "title": "Create custom field option",
+    "description": "Add new option for a specified custom field.The option will be added to the existing ones and will not overwrite them.Currently supports dropdown custom fields options.",
+    "category": "Users",
+    "method": "POST",
+    "path": "/users/v1/custom-fields/{customFieldId}/options",
+    "parameters": [
+      {
+        "name": "customFieldId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the custom field",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Option Request",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_custom_field_option_users_v1_custom_fields__customfieldid__options_post"
+  },
+  {
+    "operation": "edit_custom_field_option_users_v1_custom_fields__customFieldId__options__optionId__put",
+    "title": "Update custom field option",
+    "description": "Update the value for an option under a specified custom field",
+    "category": "Users",
+    "method": "PUT",
+    "path": "/users/v1/custom-fields/{customFieldId}/options/{optionId}",
+    "parameters": [
+      {
+        "name": "optionId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the option to update",
+        "default": null
+      },
+      {
+        "name": "customFieldId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the custom field",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Option Request",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/edit_custom_field_option_users_v1_custom_fields__customfieldid__options__optionid__put"
+  },
+  {
+    "operation": "delete_custom_field_option_users_v1_custom_fields__customFieldId__options__optionId__delete",
+    "title": "Delete custom field option",
+    "description": "Delete the value for an option under a specified custom field",
+    "category": "Users",
+    "method": "DELETE",
+    "path": "/users/v1/custom-fields/{customFieldId}/options/{optionId}",
+    "parameters": [
+      {
+        "name": "optionId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the option to delete",
+        "default": null
+      },
+      {
+        "name": "customFieldId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the custom field",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "users.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_custom_field_option_users_v1_custom_fields__customfieldid__options__optionid__delete"
+  },
+  {
+    "operation": "create_smart_group_segment_users_v1_smart_group_segments_post",
+    "title": "Create smart group segment",
+    "description": "Create a new segment for smart groups associated with the account. The segment can be assigned a name and a color.",
+    "category": "Users",
+    "method": "POST",
+    "path": "/users/v1/smart-group-segments",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_smart_group_segment_users_v1_smart_group_segments_post"
+  },
+  {
+    "operation": "create_smart_group_users_v1_smart_groups_post",
+    "title": "Create smart group",
+    "description": "Create a new smart group under a specified segment. The smart group settings are currently based only on dropdown custom field type (support for additional field types will be added in the future). The created group is dynamic, meaning any new or existing users who meet the selected value criteria will be automatically added to the smart group.",
+    "category": "Users",
+    "method": "POST",
+    "path": "/users/v1/smart-groups",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_smart_group_users_v1_smart_groups_post"
+  },
+  {
+    "operation": "get_smart_groups_users_v1_smart_groups_get",
+    "title": "Get smart groups",
+    "description": "Retrieves a list of smart groups associated with the account.",
+    "category": "Users",
+    "method": "GET",
+    "path": "/users/v1/smart-groups",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The unique identifier of the smart group.",
+        "default": null
+      },
+      {
+        "name": "name",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "The name of the smart group to filter by.",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "users.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_smart_groups_users_v1_smart_groups_get"
+  },
+  {
+    "operation": "get_smart_group_segments_users_v1_smart_group_segments_get",
+    "title": "Get smart group segments",
+    "description": "Retrieves all smart group segments associated with the account. Optionally, filter the results by segment IDs and/or names.",
+    "category": "Users",
+    "method": "GET",
+    "path": "/users/v1/smart-group-segments",
+    "parameters": [
+      {
+        "name": "segmentIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Smart group segment IDs to filter by",
+        "default": null
+      },
+      {
+        "name": "names",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Smart group segment names to filter by",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "users.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_smart_group_segments_users_v1_smart_group_segments_get"
+  },
+  {
+    "operation": "update_smart_group_users_v1_smart_groups__smartGroupId__put",
+    "title": "Update smart group",
+    "description": "Update an existing smart group by its unique identifier. Any changes to the applied filters will override the current settings and may result in changes to the users associated with the smart group.",
+    "category": "Users",
+    "method": "PUT",
+    "path": "/users/v1/smart-groups/{smartGroupId}",
+    "parameters": [
+      {
+        "name": "smartGroupId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the smart group to update",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_smart_group_users_v1_smart_groups__smartgroupid__put"
+  },
+  {
+    "operation": "delete_smart_group_users_v1_smart_groups__smartGroupId__delete",
+    "title": "Delete smart group",
+    "description": "Delete existing smart group by its unique identifier",
+    "category": "Users",
+    "method": "DELETE",
+    "path": "/users/v1/smart-groups/{smartGroupId}",
+    "parameters": [
+      {
+        "name": "smartGroupId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the smart group to update",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "users.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_smart_group_users_v1_smart_groups__smartgroupid__delete"
+  },
+  {
+    "operation": "invite_admin_users_v1_admins_post",
+    "title": "Promote to admin",
+    "description": "Promote an existing user to an admin. An invitation link will be sent to the specified email address of the user",
+    "category": "Users",
+    "method": "POST",
+    "path": "/users/v1/admins",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "The data for the user who is to be promoted",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/invite_admin_users_v1_admins_post"
+  },
+  {
+    "operation": "create_note_users_v1_users__userId__notes_post",
+    "title": "Create user note",
+    "description": "Create new note on the profile of the specified user",
+    "category": "Users",
+    "method": "POST",
+    "path": "/users/v1/users/{userId}/notes",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of user to create note for",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Note Create Request",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_note_users_v1_users__userid__notes_post"
+  },
+  {
+    "operation": "create_payslip_users_v1_users__userId__payslips_post",
+    "title": "Upload a payslip",
+    "description": "Upload a payslip for a user for a specified period. The payslip attachment must be uploaded first via the attachments endpoint.",
+    "category": "Users",
+    "method": "POST",
+    "path": "/users/v1/users/{userId}/payslips",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the user",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_payslip_users_v1_users__userid__payslips_post"
+  },
+  {
+    "operation": "update_performance_users_v1_users__userId__performance__date__put",
+    "title": "Update performance data",
+    "description": "Update or add performance data values for a specific user on a given date. If a value already exists for that date, it will be replaced with the new value. If no value exists, the new value will be added.",
+    "category": "Users",
+    "method": "PUT",
+    "path": "/users/v1/users/{userId}/performance/{date}",
+    "parameters": [
+      {
+        "name": "date",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The date to which the value(s) will be added, specified in ISO 8601 format (e.g., 2025-01-25)",
+        "default": null
+      },
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The ID of the user whose data is being accessed or modified",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Performance data values to update",
+    "oauth_scopes": [
+      "users.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_performance_users_v1_users__userid__performance__date__put"
+  },
+  {
+    "operation": "get_indicators_users_v1_performance_indicators_get",
+    "title": "Get indicators",
+    "description": "Retrieve the metric indicators of the performance data associated with account.",
+    "category": "Users",
+    "method": "GET",
+    "path": "/users/v1/performance-indicators",
+    "parameters": [
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "users.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_indicators_users_v1_performance_indicators_get"
+  },
+  {
+    "operation": "get_user_assignments_users_v1_users__userId__assignments_get",
+    "title": "Get user assignments",
+    "description": "Retrieve a list of assigned assets of a specified user within the account. The available asset types are defined in the corresponding assetTypes enumeration param.",
+    "category": "Users",
+    "method": "GET",
+    "path": "/users/v1/users/{userId}/assignments",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the user",
+        "default": null
+      },
+      {
+        "name": "assetTypes",
+        "in": "query",
+        "required": true,
+        "type": "array",
+        "description": "Specify the asset types for which you wish to retrieve details. Multiple asset types can be selected.",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "users.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_user_assignments_users_v1_users__userid__assignments_get"
+  },
+  {
+    "operation": "get_packs_onboarding_v1_packs_get",
+    "title": "Get onboarding packs",
+    "description": "Retrieve all onboarding packs for the company",
+    "category": "Onboarding",
+    "method": "GET",
+    "path": "/onboarding/v1/packs",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "onboarding.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_packs_onboarding_v1_packs_get"
+  },
+  {
+    "operation": "get_pack_assignments_onboarding_v1_packs__packId__assignments_get",
+    "title": "Get pack assignments",
+    "description": "Retrieve all user assignments for a specific onboarding pack",
+    "category": "Onboarding",
+    "method": "GET",
+    "path": "/onboarding/v1/packs/{packId}/assignments",
+    "parameters": [
+      {
+        "name": "packId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The onboarding pack ID",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "onboarding.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_pack_assignments_onboarding_v1_packs__packid__assignments_get"
+  },
+  {
+    "operation": "create_pack_assignments_onboarding_v1_packs__packId__assignments_post",
+    "title": "Assign users to pack",
+    "description": "Assign one or more users to a specific onboarding pack. All-or-nothing: if any user ID is invalid, no assignments are created.",
+    "category": "Onboarding",
+    "method": "POST",
+    "path": "/onboarding/v1/packs/{packId}/assignments",
+    "parameters": [
+      {
+        "name": "packId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The onboarding pack ID",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "onboarding.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_pack_assignments_onboarding_v1_packs__packid__assignments_post"
+  },
+  {
+    "operation": "get_scheduling_rule_policies_company_policies_v1_scheduling_rule_policies_get",
+    "title": "Get scheduling rule policies",
+    "description": "Retrieve a list of scheduling rule policies associated with the account",
+    "category": "Company Policies",
+    "method": "GET",
+    "path": "/company-policies/v1/scheduling-rule-policies",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_scheduling_rule_policies_company_policies_v1_scheduling_rule_policies_get"
+  },
+  {
+    "operation": "get_user_scheduling_rule_policies_company_policies_v1_users__userId__scheduling_rule_policies_get",
+    "title": "Get user scheduling rule policies",
+    "description": "Retrieve the scheduling rule policies assigned to a user, including employee-profile custom rules",
+    "category": "Company Policies",
+    "method": "GET",
+    "path": "/company-policies/v1/users/{userId}/scheduling-rule-policies",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the user",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_user_scheduling_rule_policies_company_policies_v1_users__userid__scheduling_rule_policies_get"
+  },
+  {
+    "operation": "list_assignments_company_policies_v1_scheduling_rule_policies__schedulingRulePolicyId__assignments_get",
+    "title": "List scheduling rule policy assignments",
+    "description": "Retrieve all assignments for a specific scheduling rule policy",
+    "category": "Company Policies",
+    "method": "GET",
+    "path": "/company-policies/v1/scheduling-rule-policies/{schedulingRulePolicyId}/assignments",
+    "parameters": [
+      {
+        "name": "schedulingRulePolicyId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the scheduling rule policy",
+        "default": null
+      },
+      {
+        "name": "userId",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "When set, return only this user's assignment on the policy",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 100
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/list_assignments_company_policies_v1_scheduling_rule_policies__schedulingrulepolicyid__assignments_get"
+  },
+  {
+    "operation": "delete_scheduling_rule_policy_company_policies_v1_scheduling_rule_policies__schedulingRulePolicyId__delete",
+    "title": "Delete scheduling rule policy",
+    "description": "Delete a scheduling rule policy and all its assignments",
+    "category": "Company Policies",
+    "method": "DELETE",
+    "path": "/company-policies/v1/scheduling-rule-policies/{schedulingRulePolicyId}",
+    "parameters": [
+      {
+        "name": "schedulingRulePolicyId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the scheduling rule policy",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_scheduling_rule_policy_company_policies_v1_scheduling_rule_policies__schedulingrulepolicyid__delete"
+  },
+  {
+    "operation": "assign_users_to_policy_company_policies_v1_scheduling_rule_policies__schedulingRulePolicyId__assignments_put",
+    "title": "Assign users to scheduling rule policy",
+    "description": "Assign one or more users to the specified scheduling rule policy. Pass the users in the userIds array. If a user is already assigned to another scheduling rule policy, that assignment is replaced.",
+    "category": "Company Policies",
+    "method": "PUT",
+    "path": "/company-policies/v1/scheduling-rule-policies/{schedulingRulePolicyId}/assignments",
+    "parameters": [
+      {
+        "name": "schedulingRulePolicyId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the scheduling rule policy to assign",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/assign_users_to_policy_company_policies_v1_scheduling_rule_policies__schedulingrulepolicyid__assignments_put"
+  },
+  {
+    "operation": "get_working_hours_policies_company_policies_v1_working_hours_policies_get",
+    "title": "Get working hours policies",
+    "description": "Retrieve shared working hours policies for the account, including disabled policies",
+    "category": "Company Policies",
+    "method": "GET",
+    "path": "/company-policies/v1/working-hours-policies",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_working_hours_policies_company_policies_v1_working_hours_policies_get"
+  },
+  {
+    "operation": "get_user_working_hours_company_policies_v1_users__userId__working_hours_get",
+    "title": "Get user working hours",
+    "description": "Retrieve the working hours assigned to a user. Returns an empty object when the user has no working hours",
+    "category": "Company Policies",
+    "method": "GET",
+    "path": "/company-policies/v1/users/{userId}/working-hours",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the user",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_user_working_hours_company_policies_v1_users__userid__working_hours_get"
+  },
+  {
+    "operation": "assign_users_to_policy_company_policies_v1_working_hours_policies__workingHoursPolicyId__assignments_put",
+    "title": "Assign users to working hours policy",
+    "description": "Assign users to the specified working hours policy. Replaces custom working hours for those users",
+    "category": "Company Policies",
+    "method": "PUT",
+    "path": "/company-policies/v1/working-hours-policies/{workingHoursPolicyId}/assignments",
+    "parameters": [
+      {
+        "name": "workingHoursPolicyId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the working hours policy",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/assign_users_to_policy_company_policies_v1_working_hours_policies__workinghourspolicyid__assignments_put"
+  },
+  {
+    "operation": "set_user_custom_working_hours_company_policies_v1_users__userId__working_hours_put",
+    "title": "Set user custom working hours",
+    "description": "Create or replace custom working hours for a user. Any shared working hours assignment is replaced",
+    "category": "Company Policies",
+    "method": "PUT",
+    "path": "/company-policies/v1/users/{userId}/working-hours",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the user",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/set_user_custom_working_hours_company_policies_v1_users__userid__working_hours_put"
+  },
+  {
+    "operation": "delete_user_custom_working_hours_company_policies_v1_users__userId__working_hours_delete",
+    "title": "Delete user custom working hours",
+    "description": "Remove custom working hours for a user. A shared working hours assignment is kept",
+    "category": "Company Policies",
+    "method": "DELETE",
+    "path": "/company-policies/v1/users/{userId}/working-hours",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the user",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_user_custom_working_hours_company_policies_v1_users__userid__working_hours_delete"
+  },
+  {
+    "operation": "unassign_user_from_policy_company_policies_v1_working_hours_policies__workingHoursPolicyId__assignments__userId__delete",
+    "title": "Unassign user from working hours policy",
+    "description": "Remove a user's assignment to this working hours policy. Custom working hours are kept",
+    "category": "Company Policies",
+    "method": "DELETE",
+    "path": "/company-policies/v1/working-hours-policies/{workingHoursPolicyId}/assignments/{userId}",
+    "parameters": [
+      {
+        "name": "workingHoursPolicyId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the working hours policy",
+        "default": null
+      },
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the user",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/unassign_user_from_policy_company_policies_v1_working_hours_policies__workinghourspolicyid__assignments__userid__delete"
+  },
+  {
+    "operation": "list_assignments_company_policies_v1_pay_rule_policies__payRulePolicyId__assignments_get",
+    "title": "List pay rule policy assignments",
+    "description": "Retrieve all assignments for a specific pay rule policy that are in effect on the given date",
+    "category": "Company Policies",
+    "method": "GET",
+    "path": "/company-policies/v1/pay-rule-policies/{payRulePolicyId}/assignments",
+    "parameters": [
+      {
+        "name": "payRulePolicyId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the pay rule policy",
+        "default": null
+      },
+      {
+        "name": "effectiveDate",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "The date to list assignments for, specified in ISO 8601 format (e.g., 2025-01-25). Defaults to today when omitted",
+        "default": null
+      },
+      {
+        "name": "userIds",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "When set, return only these users' assignments on the policy. Repeat the parameter per user",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 100
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/list_assignments_company_policies_v1_pay_rule_policies__payrulepolicyid__assignments_get"
+  },
+  {
+    "operation": "get_pay_rules_company_policies_v1_pay_rules_get",
+    "title": "Get company pay rules",
+    "description": "Retrieve a list of pay rules associated with the account.",
+    "category": "Company Policies",
+    "method": "GET",
+    "path": "/company-policies/v1/pay-rules",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_pay_rules_company_policies_v1_pay_rules_get"
+  },
+  {
+    "operation": "get_pay_rule_policies_company_policies_v1_pay_rule_policies_get",
+    "title": "Get company pay rule policies",
+    "description": "Retrieve a list of policies associated with the account. Currently supports pay rule policies.",
+    "category": "Company Policies",
+    "method": "GET",
+    "path": "/company-policies/v1/pay-rule-policies",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_pay_rule_policies_company_policies_v1_pay_rule_policies_get"
+  },
+  {
+    "operation": "add_pay_rule_to_policy_company_policies_v1_pay_rule_policies__payRulePolicyId__pay_rules__payRuleId__put",
+    "title": "Add pay rule to pay rule policy",
+    "description": "Add an existing pay rule to the specified pay rule policy. Adding a regular pay rule replaces the policy's current regular pay rule. Adding a pay rule the policy already contains succeeds unchanged.",
+    "category": "Company Policies",
+    "method": "PUT",
+    "path": "/company-policies/v1/pay-rule-policies/{payRulePolicyId}/pay-rules/{payRuleId}",
+    "parameters": [
+      {
+        "name": "payRulePolicyId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the pay rule policy",
+        "default": null
+      },
+      {
+        "name": "payRuleId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the pay rule",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/add_pay_rule_to_policy_company_policies_v1_pay_rule_policies__payrulepolicyid__pay_rules__payruleid__put"
+  },
+  {
+    "operation": "assign_user_to_policy_company_policies_v1_pay_rule_policies__payRulePolicyId__assignments_put",
+    "title": "Assign user to pay rule policy",
+    "description": "Assign user to specified pay rule policy. If the provided effective date is earlier than the currently assigned policy's effective date, the existing policy assignment will be replaced and removed.",
+    "category": "Company Policies",
+    "method": "PUT",
+    "path": "/company-policies/v1/pay-rule-policies/{payRulePolicyId}/assignments",
+    "parameters": [
+      {
+        "name": "payRulePolicyId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the pay rule policy to assign",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "company_policies.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/assign_user_to_policy_company_policies_v1_pay_rule_policies__payrulepolicyid__assignments_put"
+  },
+  {
+    "operation": "delete_assignment_company_policies_v1_pay_rule_policies__payRulePolicyId__assignments__assignmentId__delete",
+    "title": "Remove pay rule policy assignment",
+    "description": "Remove a specific assignment from a pay rule policy",
+    "category": "Company Policies",
+    "method": "DELETE",
+    "path": "/company-policies/v1/pay-rule-policies/{payRulePolicyId}/assignments/{assignmentId}",
+    "parameters": [
+      {
+        "name": "assignmentId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the assignment to remove",
+        "default": null
+      },
+      {
+        "name": "payRulePolicyId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the pay rule policy",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_assignment_company_policies_v1_pay_rule_policies__payrulepolicyid__assignments__assignmentid__delete"
+  },
+  {
+    "operation": "remove_pay_rule_from_policy_company_policies_v1_pay_rule_policies__payRulePolicyId__pay_rules__payRuleId__delete",
+    "title": "Remove pay rule from pay rule policy",
+    "description": "Remove a pay rule from the specified pay rule policy. The policy itself and its user assignments are never deleted by this operation.",
+    "category": "Company Policies",
+    "method": "DELETE",
+    "path": "/company-policies/v1/pay-rule-policies/{payRulePolicyId}/pay-rules/{payRuleId}",
+    "parameters": [
+      {
+        "name": "payRulePolicyId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the pay rule policy",
+        "default": null
+      },
+      {
+        "name": "payRuleId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the pay rule",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "company_policies.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/remove_pay_rule_from_policy_company_policies_v1_pay_rule_policies__payrulepolicyid__pay_rules__payruleid__delete"
+  },
+  {
+    "operation": "get_metadata_per_asset_assets_v1_asset__assetId__get",
+    "title": "Get asset metadata",
+    "description": "Retrieve all metadata associated with a specified asset.",
+    "category": "Assets",
+    "method": "GET",
+    "path": "/assets/v1/asset/{assetId}",
+    "parameters": [
+      {
+        "name": "assetId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the asset.",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "assets.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_metadata_per_asset_assets_v1_asset__assetid__get"
+  },
+  {
+    "operation": "get_daily_sales_sales_v1_daily_sales_get",
+    "title": "Get daily sales",
+    "description": "Retrieve daily sales totals per location for a date range. Each entry includes totalSales (aggregated from transactions) and projectedSales (set via Set projected sales). Required query parameters: startDate and endDate (ISO 8601, YYYY-MM-DD). Optionally filter by locationIds; if omitted, all account locations are included. Only days with stored daily aggregation data are returned; days with no data are omitted (not returned as zero). To record or change actual sales, use the Create transactions",
+    "category": "Sales",
+    "method": "GET",
+    "path": "/sales/v1/daily-sales",
+    "parameters": [
+      {
+        "name": "startDate",
+        "in": "query",
+        "required": true,
+        "type": "string",
+        "description": "Start of the date range, inclusive, in ISO 8601 format (YYYY-MM-DD). Must be used with endDate.",
+        "default": null
+      },
+      {
+        "name": "endDate",
+        "in": "query",
+        "required": true,
+        "type": "string",
+        "description": "End of the date range, inclusive, in ISO 8601 format (YYYY-MM-DD). Must be on or after startDate.",
+        "default": null
+      },
+      {
+        "name": "locationIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Filter by location IDs from the Get locations endpoint. Omit to include all account locations. If any ID is invalid, the request fails.",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "sales_data.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_daily_sales_sales_v1_daily_sales_get"
+  },
+  {
+    "operation": "get_locations_sales_v1_locations_get",
+    "title": "Get locations",
+    "description": "Retrieve a list of locations associated with the account",
+    "category": "Sales",
+    "method": "GET",
+    "path": "/sales/v1/locations",
+    "parameters": [
+      {
+        "name": "locationIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of location IDs to filter by",
+        "default": null
+      },
+      {
+        "name": "locationNames",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of location names to filter by",
+        "default": null
+      },
+      {
+        "name": "isActive",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "Filter by active status",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 100
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "sales_data.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_locations_sales_v1_locations_get"
+  },
+  {
+    "operation": "create_transactions_sales_v1_transactions_post",
+    "title": "Create transactions",
+    "description": "Create new sale transactions for specified locations.",
+    "category": "Sales",
+    "method": "POST",
+    "path": "/sales/v1/transactions",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "sales_data.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_transactions_sales_v1_transactions_post"
+  },
+  {
+    "operation": "create_location_sales_v1_locations_post",
+    "title": "Create location",
+    "description": "Create a new location entity, which can be used to sync sales data with third-party systems. Location can represent a physical branch, store or facility.",
+    "category": "Sales",
+    "method": "POST",
+    "path": "/sales/v1/locations",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "sales_data.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_location_sales_v1_locations_post"
+  },
+  {
+    "operation": "update_projected_sales_sales_v1_locations__locationId__daily_sales_put",
+    "title": "Set projected sales",
+    "description": "Set projected sales for a single location for one or more days in a single request. Each item in updates specifies a date and projectedSales value; each date may appear only once. This replaces the projected total for that day and does not modify totalSales. To record or change actual (totalSales) values, use the Create transactions endpoint. Location IDs are available from the Get locations endpoint.",
+    "category": "Sales",
+    "method": "PUT",
+    "path": "/sales/v1/locations/{locationId}/daily-sales",
+    "parameters": [
+      {
+        "name": "locationId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "Unique identifier of the location (from the Get locations endpoint).",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "sales_data.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_projected_sales_sales_v1_locations__locationid__daily_sales_put"
+  },
+  {
+    "operation": "delete_transaction_sales_v1_transactions__transactionId__delete",
+    "title": "Delete transaction",
+    "description": "Delete single transaction by its ID",
+    "category": "Sales",
+    "method": "DELETE",
+    "path": "/sales/v1/transactions/{transactionId}",
+    "parameters": [
+      {
+        "name": "transactionId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the transaction",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "sales_data.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_transaction_sales_v1_transactions__transactionid__delete"
+  },
+  {
+    "operation": "delete_transactions_by_period_sales_v1_transactions_delete",
+    "title": "Delete transactions",
+    "description": "Delete transactions within a specified time period. All transactions during this period will be permanently removed.",
+    "category": "Sales",
+    "method": "DELETE",
+    "path": "/sales/v1/transactions",
+    "parameters": [
+      {
+        "name": "locationId",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The location ID derived from the locations API",
+        "default": null
+      },
+      {
+        "name": "startTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The start time of the specified period in UNIX timestamp",
+        "default": null
+      },
+      {
+        "name": "endTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The end time of the specified period in UNIX timestamp",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "sales_data.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_transactions_by_period_sales_v1_transactions_delete"
+  },
+  {
+    "operation": "generate_upload_url_attachments_v1_files_generate_upload_url_post",
+    "title": "Generate upload url",
+    "description": "Generates a pre-signed URL that can be used to securely upload an attachment to the cloud. The pre-signed URL ensures temporary access for the upload (300 seconds), and it will be associated with a specific feature within the application.",
+    "category": "Attachments",
+    "method": "POST",
+    "path": "/attachments/v1/files/generate-upload-url",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "Create data for new file upload URL",
+    "oauth_scopes": [
+      "attachments.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/generate_upload_url_attachments_v1_files_generate_upload_url_post"
+  },
+  {
+    "operation": "finalize_upload_attachments_v1_files_complete_upload__fileId__put",
+    "title": "Finalize upload",
+    "description": "Finalizes the upload process for the attachment identified by the fileId. It confirms and registers the uploaded file, ensuring it is properly associated with the relevant feature.",
+    "category": "Attachments",
+    "method": "PUT",
+    "path": "/attachments/v1/files/complete-upload/{fileId}",
+    "parameters": [
+      {
+        "name": "fileId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier for the uploaded filetype",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "attachments.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/finalize_upload_attachments_v1_files_complete_upload__fileid__put"
+  },
+  {
+    "operation": "get_file_url_attachments_v1_files__fileId__get",
+    "title": "Get file metadata",
+    "description": "Retrieve detailed information about a previously uploaded attachment identified by the fileId. The response includes its metadata, and the status of the upload process.",
+    "category": "Attachments",
+    "method": "GET",
+    "path": "/attachments/v1/files/{fileId}",
+    "parameters": [
+      {
+        "name": "fileId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier for the uploaded filetype",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "attachments.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_file_url_attachments_v1_files__fileid__get"
+  },
+  {
+    "operation": "generate_download_url_attachments_v1_files_download_url_post",
+    "title": "Generate download URL",
+    "description": "Generates a time limited URL for downloading a file.",
+    "category": "Attachments",
+    "method": "POST",
+    "path": "/attachments/v1/files/download-url",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "Request data for generating download URL",
+    "oauth_scopes": [
+      "attachments.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/generate_download_url_attachments_v1_files_download_url_post"
+  },
+  {
+    "operation": "get_tasks_boards_tasks_v1_taskboards_get",
+    "title": "Get task boards",
+    "description": "Retrieve a list of task boards associated with the account",
+    "category": "Tasks",
+    "method": "GET",
+    "path": "/tasks/v1/taskboards",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "quick_tasks.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_tasks_boards_tasks_v1_taskboards_get"
+  },
+  {
+    "operation": "get_task_labels_tasks_v1_taskboards__taskBoardId__labels_get",
+    "title": "Get task labels",
+    "description": "Retrieve a list of task labels associated with the account",
+    "category": "Tasks",
+    "method": "GET",
+    "path": "/tasks/v1/taskboards/{taskBoardId}/labels",
+    "parameters": [
+      {
+        "name": "taskBoardId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the task board to filter by",
+        "default": null
+      },
+      {
+        "name": "title",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "The title (name) of the label to filter by",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "quick_tasks.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_task_labels_tasks_v1_taskboards__taskboardid__labels_get"
+  },
+  {
+    "operation": "update_task_tasks_v1_taskboards__taskBoardId__tasks__taskId__put",
+    "title": "Update task",
+    "description": "Update a quick task under a specified task board. Any new attachments will replace the existing ones.",
+    "category": "Tasks",
+    "method": "PUT",
+    "path": "/tasks/v1/taskboards/{taskBoardId}/tasks/{taskId}",
+    "parameters": [
+      {
+        "name": "taskId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the task.",
+        "default": null
+      },
+      {
+        "name": "taskBoardId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the taskBoard",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Update Task Request",
+    "oauth_scopes": [
+      "quick_tasks.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_task_tasks_v1_taskboards__taskboardid__tasks__taskid__put"
+  },
+  {
+    "operation": "delete_task_tasks_v1_taskboards__taskBoardId__tasks__taskId__delete",
+    "title": "Delete task",
+    "description": "Delete quick task under a specified task board",
+    "category": "Tasks",
+    "method": "DELETE",
+    "path": "/tasks/v1/taskboards/{taskBoardId}/tasks/{taskId}",
+    "parameters": [
+      {
+        "name": "taskId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the task",
+        "default": null
+      },
+      {
+        "name": "taskBoardId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the taskBoard",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "quick_tasks.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_task_tasks_v1_taskboards__taskboardid__tasks__taskid__delete"
+  },
+  {
+    "operation": "get_tasks_tasks_v1_taskboards__taskBoardId__tasks_get",
+    "title": "Get tasks",
+    "description": "Retrieves a list of tasks under a specified task board",
+    "category": "Tasks",
+    "method": "GET",
+    "path": "/tasks/v1/taskboards/{taskBoardId}/tasks",
+    "parameters": [
+      {
+        "name": "taskBoardId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the taskBoard",
+        "default": null
+      },
+      {
+        "name": "taskIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of task IDs to filter by",
+        "default": null
+      },
+      {
+        "name": "labelIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of label IDs to filter by. Tasks retrieved will include the specified label(s), but may also include additional labels.",
+        "default": null
+      },
+      {
+        "name": "userIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of assigned user IDs on the task to filter by. Group tasks will be also included in the results.",
+        "default": null
+      },
+      {
+        "name": "status",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "draft/published/completed/all - all is by default",
+        "default": "all"
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "quick_tasks.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_tasks_tasks_v1_taskboards__taskboardid__tasks_get"
+  },
+  {
+    "operation": "create_task_tasks_v1_taskboards__taskBoardId__tasks_post",
+    "title": "Create task",
+    "description": "Create quick task for specified users by their ID, detailing information such as title, due date and description. Attachments for the quick task must first be uploaded via the attachments endpoint.",
+    "category": "Tasks",
+    "method": "POST",
+    "path": "/tasks/v1/taskboards/{taskBoardId}/tasks",
+    "parameters": [
+      {
+        "name": "taskBoardId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the taskBoard",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "Create Task Request",
+    "oauth_scopes": [
+      "quick_tasks.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_task_tasks_v1_taskboards__taskboardid__tasks_post"
+  },
+  {
+    "operation": "create_subtask_tasks_v1_taskboards__taskBoardId__tasks__taskId__sub_tasks_post",
+    "title": "Create sub-task",
+    "description": "Create a single sub-task under a specified parent task",
+    "category": "Tasks",
+    "method": "POST",
+    "path": "/tasks/v1/taskboards/{taskBoardId}/tasks/{taskId}/sub-tasks",
+    "parameters": [
+      {
+        "name": "taskBoardId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the task board",
+        "default": null
+      },
+      {
+        "name": "taskId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the parent task",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Create Request",
+    "oauth_scopes": [
+      "quick_tasks.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_subtask_tasks_v1_taskboards__taskboardid__tasks__taskid__sub_tasks_post"
+  },
+  {
+    "operation": "get_subtasks_tasks_v1_taskboards__taskBoardId__tasks__taskId__sub_tasks_get",
+    "title": "Get sub-tasks",
+    "description": "Retrieve a list of sub-tasks under a specified parent task",
+    "category": "Tasks",
+    "method": "GET",
+    "path": "/tasks/v1/taskboards/{taskBoardId}/tasks/{taskId}/sub-tasks",
+    "parameters": [
+      {
+        "name": "taskBoardId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the task board",
+        "default": null
+      },
+      {
+        "name": "taskId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the parent task",
+        "default": null
+      },
+      {
+        "name": "subtaskIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Optional list of subtask IDs to filter by",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "quick_tasks.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_subtasks_tasks_v1_taskboards__taskboardid__tasks__taskid__sub_tasks_get"
+  },
+  {
+    "operation": "update_subtask_tasks_v1_taskboards__taskBoardId__tasks__taskId__sub_tasks__subTaskId__put",
+    "title": "Update sub-task",
+    "description": "Update a single sub-task under a specified parent task",
+    "category": "Tasks",
+    "method": "PUT",
+    "path": "/tasks/v1/taskboards/{taskBoardId}/tasks/{taskId}/sub-tasks/{subTaskId}",
+    "parameters": [
+      {
+        "name": "subTaskId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the sub-task",
+        "default": null
+      },
+      {
+        "name": "taskBoardId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the task board",
+        "default": null
+      },
+      {
+        "name": "taskId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the parent task",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Update Request",
+    "oauth_scopes": [
+      "quick_tasks.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_subtask_tasks_v1_taskboards__taskboardid__tasks__taskid__sub_tasks__subtaskid__put"
+  },
+  {
+    "operation": "delete_subtask_tasks_v1_taskboards__taskBoardId__tasks__taskId__sub_tasks__subTaskId__delete",
+    "title": "Delete sub-task",
+    "description": "Delete a single sub-task under a specified parent task",
+    "category": "Tasks",
+    "method": "DELETE",
+    "path": "/tasks/v1/taskboards/{taskBoardId}/tasks/{taskId}/sub-tasks/{subTaskId}",
+    "parameters": [
+      {
+        "name": "subTaskId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the sub-task",
+        "default": null
+      },
+      {
+        "name": "taskBoardId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the task board",
+        "default": null
+      },
+      {
+        "name": "taskId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the parent task",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "quick_tasks.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_subtask_tasks_v1_taskboards__taskboardid__tasks__taskid__sub_tasks__subtaskid__delete"
+  },
+  {
+    "operation": "get_publishers_publishers_v1_publishers_get",
+    "title": "Get publishers",
+    "description": "Retrieves a list of custom publishers associated with the account.",
+    "category": "Publishers",
+    "method": "GET",
+    "path": "/publishers/v1/publishers",
+    "parameters": [
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "publishers.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_publishers_publishers_v1_publishers_get"
+  },
+  {
+    "operation": "get_conversations_chat_v1_conversations_get",
+    "title": "Get conversations",
+    "description": "Retrieves a list of team chats and/or channels associated with the account. The list excludes private conversations.",
+    "category": "Chat",
+    "method": "GET",
+    "path": "/chat/v1/conversations",
+    "parameters": [
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "chat.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_conversations_chat_v1_conversations_get"
+  },
+  {
+    "operation": "create_conversation_chat_v1_conversations_post",
+    "title": "Create conversation",
+    "description": "Creates a team chat or channel as the authenticated user. Members are assigned via userIds (individual users) and/or smartGroupIds (dynamic cohorts) - at least one assignment is required. Use type: \"team\" for a collaborative chat where members can send messages, or type: \"channel\" for a broadcast group where only admins post. A custom publisher can subsequently post into the created group via POST /chat/v1/conversations/{conversationId}/message.",
+    "category": "Chat",
+    "method": "POST",
+    "path": "/chat/v1/conversations",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "chat.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_conversation_chat_v1_conversations_post"
+  },
+  {
+    "operation": "send_message_to_conversation_chat_v1_conversations__conversationId__message_post",
+    "title": "Send message",
+    "description": "Sends a new message to a specific chat, whether it’s channel or a team chat",
+    "category": "Chat",
+    "method": "POST",
+    "path": "/chat/v1/conversations/{conversationId}/message",
+    "parameters": [
+      {
+        "name": "conversationId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the conversation",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "chat.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/send_message_to_conversation_chat_v1_conversations__conversationid__message_post"
+  },
+  {
+    "operation": "send_message_to_private_conversation_chat_v1_conversations_privateMessage__userId__post",
+    "title": "Send private message",
+    "description": "Send a private message to a specified user within the account. The sender will be a custom publisher. If a conversation between the custom publisher and the addressed user already exists, it will send the message to the same conversation, if not, it will create a new conversation with the specified user.",
+    "category": "Chat",
+    "method": "POST",
+    "path": "/chat/v1/conversations/privateMessage/{userId}",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the user",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "chat.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/send_message_to_private_conversation_chat_v1_conversations_privatemessage__userid__post"
+  },
+  {
+    "operation": "get_jobs_jobs_v1_jobs_get",
+    "title": "Get jobs",
+    "description": "Get a list of job objects relevant to instance id (scheduler id or time clock id).\nIf unified jobs are disabled, only schedulers are supported",
+    "category": "Jobs",
+    "method": "GET",
+    "path": "/jobs/v1/jobs",
+    "parameters": [
+      {
+        "name": "instanceIds",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "List of instance IDs (schedule id or time clock id) to filter by",
+        "default": null
+      },
+      {
+        "name": "jobIds",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "List of job IDs to filter by. In cases where a job ID includes nested sub-jobs, all sub-jobs under that parent job will be retrieved alongside with the parent job. Note that this filter does not support direct querying by sub-job IDs. To retrieve specific sub-jobs, please use the Get Job endpoint",
+        "default": null
+      },
+      {
+        "name": "jobNames",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "List of job names to filter by. In case where a sub-job name is provided, the relevant sub-job with all other nested sub-jobs will be retrieved alongside with the parent job.",
+        "default": null
+      },
+      {
+        "name": "jobCodes",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "List of job codes to filter by. In case where a sub-job code is provided, the relevant sub-job with all other nested sub-jobs will be retrieved alongside with the parent job.",
+        "default": null
+      },
+      {
+        "name": "includeDeleted",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "Determines whether the response includes jobs that have been deleted. Default value is set to true.",
+        "default": true
+      },
+      {
+        "name": "sort",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort key",
+        "default": null
+      },
+      {
+        "name": "order",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort order, set only if sort key is set",
+        "default": "asc"
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "jobs.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_jobs_jobs_v1_jobs_get"
+  },
+  {
+    "operation": "get_job_jobs_v1_jobs__jobId__get",
+    "title": "Get job",
+    "description": "Retrieve a single job information by its unique ID",
+    "category": "Jobs",
+    "method": "GET",
+    "path": "/jobs/v1/jobs/{jobId}",
+    "parameters": [
+      {
+        "name": "jobId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the job",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "jobs.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_job_jobs_v1_jobs__jobid__get"
+  },
+  {
+    "operation": "create_jobs_jobs_v1_jobs_post",
+    "title": "Create jobs",
+    "description": "Create individual or multiple jobs under a specified scheduler",
+    "category": "Jobs",
+    "method": "POST",
+    "path": "/jobs/v1/jobs",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Request model for the new Jobs",
+    "oauth_scopes": [
+      "jobs.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_jobs_jobs_v1_jobs_post"
+  },
+  {
+    "operation": "update_job_jobs_v1_jobs__jobId__put",
+    "title": "Update job",
+    "description": "Update a single job by its unique identifier. Currently, updating job with nested sub-jobs is not supported.",
+    "category": "Jobs",
+    "method": "PUT",
+    "path": "/jobs/v1/jobs/{jobId}",
+    "parameters": [
+      {
+        "name": "jobId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the job",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Job Request",
+    "oauth_scopes": [
+      "jobs.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_job_jobs_v1_jobs__jobid__put"
+  },
+  {
+    "operation": "delete_job_jobs_v1_jobs__jobId__delete",
+    "title": "Delete job",
+    "description": "Delete a single job by its unique identifier.\n        Currently, deleting a sub-job and/or job with nested sub-jobs is not supported.",
+    "category": "Jobs",
+    "method": "DELETE",
+    "path": "/jobs/v1/jobs/{jobId}",
+    "parameters": [
+      {
+        "name": "jobId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the job",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "jobs.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_job_jobs_v1_jobs__jobid__delete"
+  },
+  {
+    "operation": "get_resource_custom_fields_jobs_v1_custom_fields_get",
+    "title": "Get resource custom fields",
+    "description": "Retrieves all resource custom fields associated with the account. Optionally, filter the results by custom field IDs, names, or types.",
+    "category": "Jobs",
+    "method": "GET",
+    "path": "/jobs/v1/custom-fields",
+    "parameters": [
+      {
+        "name": "customFieldIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Custom field ids to filter by",
+        "default": null
+      },
+      {
+        "name": "categoryIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Custom field category ids to filter by",
+        "default": null
+      },
+      {
+        "name": "customFieldTypes",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Custom field types to filter by",
+        "default": null
+      },
+      {
+        "name": "customFieldNames",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Custom field names to filter by",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      },
+      {
+        "name": "sort",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort key",
+        "default": null
+      },
+      {
+        "name": "order",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort order, set only if sort key is set",
+        "default": "asc"
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "jobs.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_resource_custom_fields_jobs_v1_custom_fields_get"
+  },
+  {
+    "operation": "get_schedulers_scheduler_v1_schedulers_get",
+    "title": "Get schedulers",
+    "description": "Retrieve a list of schedulers associated with the account",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v1/schedulers",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_schedulers_scheduler_v1_schedulers_get"
+  },
+  {
+    "operation": "get_unavailabilities_scheduler_v1_schedulers_user_unavailability_get",
+    "title": "Get user unavailabilities",
+    "description": "Retrieve a list of user unavailabilities, approved time-off requests and assigned shifts",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v1/schedulers/user-unavailability",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the user",
+        "default": null
+      },
+      {
+        "name": "startTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The start time to filter by in Unix format (in seconds)",
+        "default": null
+      },
+      {
+        "name": "endTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The end time to filter by in Unix format (in seconds)",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_unavailabilities_scheduler_v1_schedulers_user_unavailability_get"
+  },
+  {
+    "operation": "get_shifts_scheduler_v1_schedulers__schedulerId__shifts_get",
+    "title": "Get shifts",
+    "description": "Retrieve a list of shifts under a specific schedule",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/shifts",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "startTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The start time to filter by in Unix format (in seconds)",
+        "default": null
+      },
+      {
+        "name": "endTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The end time to filter by in Unix format (in seconds)",
+        "default": null
+      },
+      {
+        "name": "isOpenShift",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Filter shifts that are open shifts",
+        "default": null
+      },
+      {
+        "name": "isPublished",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Filter shifts that are published",
+        "default": null
+      },
+      {
+        "name": "isRequireAdminApproval",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Filter shifts that require admin approval",
+        "default": null
+      },
+      {
+        "name": "jobId",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "List of job IDs",
+        "default": null
+      },
+      {
+        "name": "assignedUserIds",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "List of user IDs",
+        "default": null
+      },
+      {
+        "name": "shiftId",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "List of shift IDs",
+        "default": null
+      },
+      {
+        "name": "title",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Title of the shift",
+        "default": null
+      },
+      {
+        "name": "sort",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort key",
+        "default": "created_at"
+      },
+      {
+        "name": "order",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort order, set only if sort key is set",
+        "default": "asc"
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_shifts_scheduler_v1_schedulers__schedulerid__shifts_get"
+  },
+  {
+    "operation": "get_shift_by_id_scheduler_v1_schedulers__schedulerId__shifts__shiftId__get",
+    "title": "Get shift",
+    "description": "Retrieve single shift information by its unique ID",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/shifts/{shiftId}",
+    "parameters": [
+      {
+        "name": "shiftId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the shift",
+        "default": null
+      },
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_shift_by_id_scheduler_v1_schedulers__schedulerid__shifts__shiftid__get"
+  },
+  {
+    "operation": "delete_shifts_by_ids_scheduler_v1_schedulers__schedulerId__shifts_delete",
+    "title": "Delete shifts",
+    "description": "Delete single or multiple shifts in a specified schedule",
+    "category": "Schedule",
+    "method": "DELETE",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/shifts",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "notifyUsers",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Indicates whether to send a notification to the users assigned to the shifts. This applies only to shifts that are published.",
+        "default": true
+      }
+    ],
+    "body_required": true,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_shifts_by_ids_scheduler_v1_schedulers__schedulerid__shifts_delete"
+  },
+  {
+    "operation": "create_shifts_scheduler_v1_schedulers__schedulerId__shifts_post",
+    "title": "Create shifts",
+    "description": "Create single or multiple shifts under a specific schedule",
+    "category": "Schedule",
+    "method": "POST",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/shifts",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "notifyUsers",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Indicates whether to send a notification to the users assigned to the shifts. This applies only to shifts that are published.",
+        "default": true
+      }
+    ],
+    "body_required": true,
+    "body_description": "Shifts",
+    "oauth_scopes": [
+      "schedule.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_shifts_scheduler_v1_schedulers__schedulerid__shifts_post"
+  },
+  {
+    "operation": "update_shifts_scheduler_v1_schedulers__schedulerId__shifts_put",
+    "title": "Update shifts",
+    "description": "Update single or multiple shifts under a specific schedule",
+    "category": "Schedule",
+    "method": "PUT",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/shifts",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "notifyUsers",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Indicates whether to send a notification to the users assigned to the shifts. This applies only to shifts that are published.",
+        "default": true
+      }
+    ],
+    "body_required": true,
+    "body_description": "Shifts",
+    "oauth_scopes": [
+      "schedule.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_shifts_scheduler_v1_schedulers__schedulerid__shifts_put"
+  },
+  {
+    "operation": "delete_shift_by_id_scheduler_v1_schedulers__schedulerId__shifts__shiftId__delete",
+    "title": "Delete shift",
+    "description": "Delete a single shift by its unique ID",
+    "category": "Schedule",
+    "method": "DELETE",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/shifts/{shiftId}",
+    "parameters": [
+      {
+        "name": "shiftId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The ID of the shift to delete",
+        "default": null
+      },
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "notifyUsers",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Indicates whether to send a notification to the users assigned to the shifts. This applies only to shifts that are published.",
+        "default": true
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_shift_by_id_scheduler_v1_schedulers__schedulerid__shifts__shiftid__delete"
+  },
+  {
+    "operation": "get_unavailabilities_scheduler_v2_schedulers_user_unavailability_get",
+    "title": "Get user unavailabilities",
+    "description": "Retrieve a list of user unavailabilities, approved time-off requests and assigned shifts",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v2/schedulers/user-unavailability",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the user",
+        "default": null
+      },
+      {
+        "name": "startTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The start time to filter by in Unix format (in seconds)",
+        "default": null
+      },
+      {
+        "name": "endTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The end time to filter by in Unix format (in seconds)",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_unavailabilities_scheduler_v2_schedulers_user_unavailability_get"
+  },
+  {
+    "operation": "get_autofill_status_scheduler_v2_schedulers__schedulerId__shifts_auto_assign__autoAssignRequestId__get",
+    "title": "Get auto-assign status",
+    "description": "Retrieve the status of an auto-assign request using its unique request ID. The response categorizes the results into 'scheduled shifts' for successfully assigned shifts and 'unscheduled shifts' for those where auto-assignment was not successful.",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v2/schedulers/{schedulerId}/shifts/auto-assign/{autoAssignRequestId}",
+    "parameters": [
+      {
+        "name": "autoAssignRequestId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the auto assign request",
+        "default": null
+      },
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_autofill_status_scheduler_v2_schedulers__schedulerid__shifts_auto_assign__autoassignrequestid__get"
+  },
+  {
+    "operation": "get_shifts_scheduler_v2_schedulers__schedulerId__shifts_get",
+    "title": "Get shifts",
+    "description": "Retrieve a list of shifts under a specific schedule",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v2/schedulers/{schedulerId}/shifts",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "startTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The start time to filter by in Unix format (in seconds)",
+        "default": null
+      },
+      {
+        "name": "endTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The end time to filter by in Unix format (in seconds)",
+        "default": null
+      },
+      {
+        "name": "isOpenShift",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Filter shifts that are open shifts",
+        "default": null
+      },
+      {
+        "name": "isPublished",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Filter shifts that are published",
+        "default": null
+      },
+      {
+        "name": "isRequireAdminApproval",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Filter shifts that require admin approval",
+        "default": null
+      },
+      {
+        "name": "jobId",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "List of job IDs",
+        "default": null
+      },
+      {
+        "name": "assignedUserIds",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "List of user IDs",
+        "default": null
+      },
+      {
+        "name": "shiftId",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "List of shift IDs",
+        "default": null
+      },
+      {
+        "name": "title",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Title of the shift",
+        "default": null
+      },
+      {
+        "name": "sort",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort key",
+        "default": "created_at"
+      },
+      {
+        "name": "order",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Sort order, set only if sort key is set",
+        "default": "asc"
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_shifts_scheduler_v2_schedulers__schedulerid__shifts_get"
+  },
+  {
+    "operation": "get_shift_by_id_scheduler_v2_schedulers__schedulerId__shifts__shiftId__get",
+    "title": "Get shift",
+    "description": "Retrieve single shift information by its unique ID",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v2/schedulers/{schedulerId}/shifts/{shiftId}",
+    "parameters": [
+      {
+        "name": "shiftId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the shift",
+        "default": null
+      },
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_shift_by_id_scheduler_v2_schedulers__schedulerid__shifts__shiftid__get"
+  },
+  {
+    "operation": "create_autofill_request_scheduler_v2_schedulers__schedulerId__shifts_auto_assign_post",
+    "title": "Create auto-assign request",
+    "description": "Initiate a request to auto-assign shifts by their IDs. If multiple IDs are provided, all corresponding shifts must occur within the same work week (e.g., Monday to Sunday). This endpoint only submits the request; processing may take a few minutes. The auto-assignment considers user preferences to work, unavailability, and approved time off. For assignment status, refer to the auto-assign status endpoint.",
+    "category": "Schedule",
+    "method": "POST",
+    "path": "/scheduler/v2/schedulers/{schedulerId}/shifts/auto-assign",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_autofill_request_scheduler_v2_schedulers__schedulerid__shifts_auto_assign_post"
+  },
+  {
+    "operation": "create_shifts_scheduler_v2_schedulers__schedulerId__shifts_post",
+    "title": "Create shifts",
+    "description": "Create single or multiple shifts under a specific schedule",
+    "category": "Schedule",
+    "method": "POST",
+    "path": "/scheduler/v2/schedulers/{schedulerId}/shifts",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "notifyUsers",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Indicates whether to send a notification to the users assigned to the shifts. This applies only to shifts that are published.",
+        "default": true
+      }
+    ],
+    "body_required": true,
+    "body_description": "Shifts",
+    "oauth_scopes": [
+      "schedule.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_shifts_scheduler_v2_schedulers__schedulerid__shifts_post"
+  },
+  {
+    "operation": "update_shifts_scheduler_v2_schedulers__schedulerId__shifts_put",
+    "title": "Update shifts",
+    "description": "Update single or multiple shifts under a specific schedule",
+    "category": "Schedule",
+    "method": "PUT",
+    "path": "/scheduler/v2/schedulers/{schedulerId}/shifts",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "notifyUsers",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Indicates whether to send a notification to the users assigned to the shifts. This applies only to shifts that are published.",
+        "default": true
+      }
+    ],
+    "body_required": true,
+    "body_description": "Shifts",
+    "oauth_scopes": [
+      "schedule.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_shifts_scheduler_v2_schedulers__schedulerid__shifts_put"
+  },
+  {
+    "operation": "delete_shifts_by_ids_scheduler_v2_schedulers__schedulerId__shifts_delete",
+    "title": "Delete shifts",
+    "description": "Delete single or multiple shifts in a specified schedule",
+    "category": "Schedule",
+    "method": "DELETE",
+    "path": "/scheduler/v2/schedulers/{schedulerId}/shifts",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "notifyUsers",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Indicates whether to send a notification to the users assigned to the shifts. This applies only to shifts that are published.",
+        "default": true
+      }
+    ],
+    "body_required": true,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_shifts_by_ids_scheduler_v2_schedulers__schedulerid__shifts_delete"
+  },
+  {
+    "operation": "delete_shift_by_id_scheduler_v2_schedulers__schedulerId__shifts__shiftId__delete",
+    "title": "Delete shift",
+    "description": "Delete a single shift by its unique ID",
+    "category": "Schedule",
+    "method": "DELETE",
+    "path": "/scheduler/v2/schedulers/{schedulerId}/shifts/{shiftId}",
+    "parameters": [
+      {
+        "name": "shiftId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The ID of the shift to delete",
+        "default": null
+      },
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "notifyUsers",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Indicates whether to send a notification to the users assigned to the shifts. This applies only to shifts that are published.",
+        "default": true
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_shift_by_id_scheduler_v2_schedulers__schedulerid__shifts__shiftid__delete"
+  },
+  {
+    "operation": "get_shift_custom_fields_scheduler_v1_schedulers__schedulerId__custom_fields_get",
+    "title": "Get shift custom fields",
+    "description": "Retrieves all shift custom fields associated with the scheduler",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/custom-fields",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_shift_custom_fields_scheduler_v1_schedulers__schedulerid__custom_fields_get"
+  },
+  {
+    "operation": "create_scheduler_unavailability_scheduler_v1_schedulers__schedulerId__unavailability_post",
+    "title": "Create schedule unavailability",
+    "description": "Create a single unavailability in the specified schedule for a designated user on a given date. The unavailability can be set for the entire day or for a specific part of it. Repeating unavailabilities are currently not supported. The timezone of the unavailability will be determined based on the schedule's settings.",
+    "category": "Schedule",
+    "method": "POST",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/unavailability",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_scheduler_unavailability_scheduler_v1_schedulers__schedulerid__unavailability_post"
+  },
+  {
+    "operation": "get_unavailabilities_scheduler_v1_schedulers__schedulerId__unavailabilities_get",
+    "title": "Get schedule unavailabilities",
+    "description": "Retrieve a list of unavailabilities under a specific schedule filtered by date range. The response is paginated and can be filtered by user ID.",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/unavailabilities",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "startTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The start time to filter by in Unix format (in seconds)",
+        "default": null
+      },
+      {
+        "name": "endTime",
+        "in": "query",
+        "required": true,
+        "type": "integer",
+        "description": "The end time to filter by in Unix format (in seconds)",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_unavailabilities_scheduler_v1_schedulers__schedulerid__unavailabilities_get"
+  },
+  {
+    "operation": "delete_scheduler_unavailability_scheduler_v1_schedulers__schedulerId__unavailability__unavailabilityId__delete",
+    "title": "Delete schedule unavailability",
+    "description": "Delete existing unavailability by its unavailability ID",
+    "category": "Schedule",
+    "method": "DELETE",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/unavailability/{unavailabilityId}",
+    "parameters": [
+      {
+        "name": "unavailabilityId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the unavailability",
+        "default": null
+      },
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_scheduler_unavailability_scheduler_v1_schedulers__schedulerid__unavailability__unavailabilityid__delete"
+  },
+  {
+    "operation": "create_autofill_request_scheduler_v1_schedulers__schedulerId__shifts_auto_assign_post",
+    "title": "Create auto-assign request",
+    "description": "Initiate a request to auto-assign shifts by their IDs. If multiple IDs are provided, all corresponding shifts must occur within the same work week (e.g., Monday to Sunday). This endpoint only submits the request; processing may take a few minutes. The auto-assignment considers user preferences to work, unavailability, and approved time off. For assignment status, refer to the auto-assign status endpoint.",
+    "category": "Schedule",
+    "method": "POST",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/shifts/auto-assign",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_autofill_request_scheduler_v1_schedulers__schedulerid__shifts_auto_assign_post"
+  },
+  {
+    "operation": "get_autofill_status_scheduler_v1_schedulers__schedulerId__shifts_auto_assign__autoAssignRequestId__get",
+    "title": "Get auto-assign status",
+    "description": "Retrieve the status of an auto-assign request using its unique request ID. The response categorizes the results into 'scheduled shifts' for successfully assigned shifts and 'unscheduled shifts' for those where auto-assignment was not successful.",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/shifts/auto-assign/{autoAssignRequestId}",
+    "parameters": [
+      {
+        "name": "autoAssignRequestId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the auto assign request",
+        "default": null
+      },
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_autofill_status_scheduler_v1_schedulers__schedulerid__shifts_auto_assign__autoassignrequestid__get"
+  },
+  {
+    "operation": "get_shift_layers_scheduler_v1_schedulers__schedulerId__shift_layers_get",
+    "title": "Get shift layers",
+    "description": "Retrieve a list of shift layers under a specified schedule",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/shift-layers",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_shift_layers_scheduler_v1_schedulers__schedulerid__shift_layers_get"
+  },
+  {
+    "operation": "get_shift_layer_values_scheduler_v1_schedulers__schedulerId__shift_layers__layerId__values_get",
+    "title": "Get shift layer values",
+    "description": "Retrieve the possible values of a shift layer",
+    "category": "Schedule",
+    "method": "GET",
+    "path": "/scheduler/v1/schedulers/{schedulerId}/shift-layers/{layerId}/values",
+    "parameters": [
+      {
+        "name": "schedulerId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the schedule",
+        "default": null
+      },
+      {
+        "name": "layerId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the layer",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "schedule.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_shift_layer_values_scheduler_v1_schedulers__schedulerid__shift_layers__layerid__values_get"
+  },
+  {
+    "operation": "get_note_daily_info_v1_daily_note__noteId__get",
+    "title": "Get note",
+    "description": "Get a single note by its unique identifier",
+    "category": "DailyNote",
+    "method": "GET",
+    "path": "/daily-info/v1/daily-note/{noteId}",
+    "parameters": [
+      {
+        "name": "noteId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the note",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "daily_note.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_note_daily_info_v1_daily_note__noteid__get"
+  },
+  {
+    "operation": "create_note_daily_info_v1_daily_notes_post",
+    "title": "Create daily note",
+    "description": "Create a note under a specified schedule for a specific date",
+    "category": "DailyNote",
+    "method": "POST",
+    "path": "/daily-info/v1/daily-notes",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Request model for the new note",
+    "oauth_scopes": [
+      "daily_note.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_note_daily_info_v1_daily_notes_post"
+  },
+  {
+    "operation": "update_note_daily_info_v1_daily_note__noteId__put",
+    "title": "Update note",
+    "description": "Update a single note by its unique identifier",
+    "category": "DailyNote",
+    "method": "PUT",
+    "path": "/daily-info/v1/daily-note/{noteId}",
+    "parameters": [
+      {
+        "name": "noteId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the note",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Note Request",
+    "oauth_scopes": [
+      "daily_note.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_note_daily_info_v1_daily_note__noteid__put"
+  },
+  {
+    "operation": "delete_note_daily_info_v1_daily_note__noteId__delete",
+    "title": "Delete note",
+    "description": "Delete a single note by its unique identifier",
+    "category": "DailyNote",
+    "method": "DELETE",
+    "path": "/daily-info/v1/daily-note/{noteId}",
+    "parameters": [
+      {
+        "name": "noteId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the note",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "daily_note.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_note_daily_info_v1_daily_note__noteid__delete"
+  },
+  {
+    "operation": "set_pay_rates_pay_rates_v1_pay_rates_put",
+    "title": "Set pay rates",
+    "description": "Creates or updates pay rates for one or more users. If a pay rate exists for the same effective date, it is replaced; otherwise, a new entry is added to the pay rate history. The effective date cannot be on or after any approved or locked timesheet days. If such days exist, the request fails with HAS_LOCKED_DAYS. For bulk requests with resource rates enabled, the system validates user eligibility and tracks all changes. When isResourceRateEnabled is true, resourcesRates must include all resource",
+    "category": "Pay Rates",
+    "method": "PUT",
+    "path": "/pay-rates/v1/pay-rates",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "The pay rates to set",
+    "oauth_scopes": [
+      "pay_rates.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/set_pay_rates_pay_rates_v1_pay_rates_put"
+  },
+  {
+    "operation": "get_pay_rates_pay_rates_v1_pay_rates_get",
+    "title": "Get pay rates",
+    "description": "Retrieves pay rate information for one or more users within your organization. This endpoint supports flexible filtering by effective dates, rate types, and resource assignments. It's designed for payroll integration scenarios where you need to fetch pay rates for multiple employees at once. The response includes historical modification data when requested, allowing you to track changes over time for audit and compliance purposes. Pagination is supported for large result sets.",
+    "category": "Pay Rates",
+    "method": "GET",
+    "path": "/pay-rates/v1/pay-rates",
+    "parameters": [
+      {
+        "name": "startDate",
+        "in": "query",
+        "required": true,
+        "type": "string",
+        "description": "Return pay rates that are in effect during the date range starting from this date, in ISO 8601 format (YYYY-MM-DD). This includes rates with an effective date before startDate if they are still the most recent rate at the start of the range. Must be used together with endDate. Date range cannot exce",
+        "default": null
+      },
+      {
+        "name": "endDate",
+        "in": "query",
+        "required": true,
+        "type": "string",
+        "description": "Return pay rates that are in effect during the date range ending at this date, in ISO 8601 format (YYYY-MM-DD). Must be used together with startDate. Date range cannot exceed 365 days.",
+        "default": null
+      },
+      {
+        "name": "userIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of user IDs to retrieve pay rates for. If omitted, pay rates for all users will be returned (subject to pagination).",
+        "default": null
+      },
+      {
+        "name": "rateType",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Filter by rate type. Valid values: hourly, monthly, yearly.",
+        "default": null
+      },
+      {
+        "name": "resourceIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Filter resource rate details to include only specific resources. This filter only affects resourcesRates; other pay rate fields are always returned.",
+        "default": null
+      },
+      {
+        "name": "isIncludeHistory",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "When set to true, includes the complete modification history for each pay rate. Note: Setting this to true may increase response time and payload size.",
+        "default": false
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 100
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "pay_rates.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_pay_rates_pay_rates_v1_pay_rates_get"
+  },
+  {
+    "operation": "delete_pay_rate_pay_rates_v1_pay_rates_users__userId___effectiveDate__delete",
+    "title": "Delete pay rate",
+    "description": "Deletes a specific pay rate entry for a user. The pay rate is identified by the user ID and effective date. This operation cannot be undone. The system validates that the effective date does not affect any approved or locked timesheet days. If the user has any approved or locked days on or after this effective date, the delete request will fail with error code HAS_LOCKED_DAYS. You cannot delete pay rates that are currently being used for finalized payroll calculations. Additionally, at least one",
+    "category": "Pay Rates",
+    "method": "DELETE",
+    "path": "/pay-rates/v1/pay-rates/users/{userId}/{effectiveDate}",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The ID of the user",
+        "default": null
+      },
+      {
+        "name": "effectiveDate",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The effective date of the pay rate (format: YYYY-MM-DD)",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "pay_rates.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_pay_rate_pay_rates_v1_pay_rates_users__userid___effectivedate__delete"
+  },
+  {
+    "operation": "get_timesheet_total_hours_time_clock_v1_time_clocks__timeClockId__timesheet_get",
+    "title": "Get timesheet totals",
+    "description": "Retrieves detailed work records for each employee within a specified date range. This endpoint is designed to support payroll processing by providing total worked hours, categorized by pay rules and resource (if applied in the account settings). Ideal for integrating with external payroll systems to ensure accurate information. The pay rate will be presented in case it is defined within the account. If an automated unpaid break is applied, it will  be deducted from the total hours value. In orde",
+    "category": "Time Clock",
+    "method": "GET",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/timesheet",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      },
+      {
+        "name": "startDate",
+        "in": "query",
+        "required": true,
+        "type": "string",
+        "description": "The start of the reporting period, in ISO 8601 format (YYYY-MM-DD). The filter includes all records from 00:00:00 on the specified date.\n            Example: A startDate of 2025-01-01 includes data starting from 2025-01-01T00:00:00",
+        "default": null
+      },
+      {
+        "name": "endDate",
+        "in": "query",
+        "required": true,
+        "type": "string",
+        "description": "The end of the reporting period, in ISO 8601 format (YYYY-MM-DD). The filter includes all records up to 23:59:59 on the specified date.\n            Example: An endDate of 2025-01-01 includes data up to 2025-01-01T23:59:59. The end date must be no more than 45 days after the start date. If there is a",
+        "default": null
+      },
+      {
+        "name": "userIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of user IDs to filter the results. Only time entries associated with these users will be included. If a user has no recorded time entries within the specified date range, they will be excluded from the results.",
+        "default": null
+      },
+      {
+        "name": "groupIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of cohort/group IDs to filter the results. Only time entries associated with users in these cohorts will be included.",
+        "default": null
+      },
+      {
+        "name": "jobIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of job IDs to filter the results. Currently supports only parent job IDs and regular job IDs. If a parent job ID is provided, only sub-jobs that have actual recorded hours will be included in the response.",
+        "default": null
+      },
+      {
+        "name": "isApproved",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "Filter by approval status. If not provided, returns all records (approved and unapproved). Set to true for approved only, false for unapproved only.",
+        "default": null
+      },
+      {
+        "name": "isSubmitted",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "Filter by submission status. If not provided, returns all records (submitted and unsubmitted). Set to true for submitted only, false for unsubmitted only.",
+        "default": null
+      },
+      {
+        "name": "isLocked",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "Filter by lock status. If not provided, returns all records (locked and unlocked). Set to true for locked only, false for unlocked only.",
+        "default": null
+      },
+      {
+        "name": "includePlanVsActual",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "When false (default), Plan vs Actual fields are omitted from the response and scheduled shifts are not fetched. When true, each daily record includes a dailyScheduledDetails object with dailyScheduledHours, dailyScheduledDifferenceHours, dailyScheduledShifts, and shifts (planned shift ids) comparing",
+        "default": false
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_clock.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_timesheet_total_hours_time_clock_v1_time_clocks__timeclockid__timesheet_get"
+  },
+  {
+    "operation": "get_time_clocks_time_clock_v1_time_clocks_get",
+    "title": "Get time clocks",
+    "description": "Retrieve a list of time clocks associated with the account",
+    "category": "Time Clock",
+    "method": "GET",
+    "path": "/time-clock/v1/time-clocks",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_clock.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_time_clocks_time_clock_v1_time_clocks_get"
+  },
+  {
+    "operation": "get_time_activities_time_clock_v1_time_clocks__timeClockId__time_activities_get",
+    "title": "Get time activities",
+    "description": "Retrieve a list of time activities in under a specified time clock.\nTime activities include shift and/or manual breaks",
+    "category": "Time Clock",
+    "method": "GET",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/time-activities",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      },
+      {
+        "name": "startDate",
+        "in": "query",
+        "required": true,
+        "type": "string",
+        "description": "The start time to filter by in ISO 8601 format (YYYY-MM-DD)",
+        "default": null
+      },
+      {
+        "name": "endDate",
+        "in": "query",
+        "required": true,
+        "type": "string",
+        "description": "The end time to filter by in ISO 8601 format (YYYY-MM-DD)",
+        "default": null
+      },
+      {
+        "name": "userIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Filter time activities by a list of user IDs. Users who are no longer assigned to the specified time clock cannot be retrieved with this filter.",
+        "default": null
+      },
+      {
+        "name": "jobIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "The job IDs of shifts",
+        "default": null
+      },
+      {
+        "name": "manualBreakIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "The manual break IDs of manual breaks",
+        "default": null
+      },
+      {
+        "name": "policyTypeIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "The policy type IDs of time offs",
+        "default": null
+      },
+      {
+        "name": "activityTypes",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "The time activity types: shift, manual_break or time_off",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_clock.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_time_activities_time_clock_v1_time_clocks__timeclockid__time_activities_get"
+  },
+  {
+    "operation": "get_shift_attachments_time_clock_v1_time_clocks__timeClockId__shift_attachments_get",
+    "title": "Get shift attachments",
+    "description": "Get shift attachments of a time clock",
+    "category": "Time Clock",
+    "method": "GET",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/shift-attachments",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_clock.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_shift_attachments_time_clock_v1_time_clocks__timeclockid__shift_attachments_get"
+  },
+  {
+    "operation": "get_manual_breaks_time_clock_v1_time_clocks__timeClockId__manual_breaks_get",
+    "title": "Get manual breaks",
+    "description": "Get multiple manual breaks of a time clock",
+    "category": "Time Clock",
+    "method": "GET",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/manual-breaks",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_clock.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_manual_breaks_time_clock_v1_time_clocks__timeclockid__manual_breaks_get"
+  },
+  {
+    "operation": "clock_user_in_time_clock_v1_time_clocks__timeClockId__clock_in_post",
+    "title": "Clock in",
+    "description": "Record the start time for the work period of an employee. The start time is automatically captured when the call is executed.",
+    "category": "Time Clock",
+    "method": "POST",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/clock-in",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "time_clock.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/clock_user_in_time_clock_v1_time_clocks__timeclockid__clock_in_post"
+  },
+  {
+    "operation": "clock_user_out_time_clock_v1_time_clocks__timeClockId__clock_out_post",
+    "title": "Clock out",
+    "description": "Record the end time for the work period of an employee. The end time is automatically captured when the call is executed. The clock-out will be associated with the current open shift.",
+    "category": "Time Clock",
+    "method": "POST",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/clock-out",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "time_clock.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/clock_user_out_time_clock_v1_time_clocks__timeclockid__clock_out_post"
+  },
+  {
+    "operation": "update_time_activities_time_clock_v1_time_clocks__timeClockId__time_activities_put",
+    "title": "Update time activities",
+    "description": "Update time activities for users assigned to a specific time clock. Time activities can include adjustments to shifts and/or manual breaks.",
+    "category": "Time Clock",
+    "method": "PUT",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/time-activities",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Timeactivities",
+    "oauth_scopes": [
+      "time_clock.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_time_activities_time_clock_v1_time_clocks__timeclockid__time_activities_put"
+  },
+  {
+    "operation": "create_time_activities_time_clock_v1_time_clocks__timeClockId__time_activities_post",
+    "title": "Create time activities",
+    "description": "Create multiple time activities in a time clock",
+    "category": "Time Clock",
+    "method": "POST",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/time-activities",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request model for the new Time Activities",
+    "oauth_scopes": [
+      "time_clock.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_time_activities_time_clock_v1_time_clocks__timeclockid__time_activities_post"
+  },
+  {
+    "operation": "update_user_lock_days_time_clock_v1_time_clocks__timeClockId__users__userId__lock_days_put",
+    "title": "Update user lock days",
+    "description": "Locks or unlocks one or more calendar days for a specific user on a given Time Clock. The isLocked boolean on the request body selects the operation: true (the default) prevents subsequent time-activity edits on those dates; false removes the per-day lock and allows edits again. Idempotent: dates already in the requested state are no-ops, and the response reflects the final state. This endpoint does not reopen approved payroll periods. If isLocked is false and any of the requested dates would ac",
+    "category": "Time Clock",
+    "method": "PUT",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/users/{userId}/lock-days",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      },
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The ID of the user whose data is being accessed or modified",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Lock-state change to apply for this user.",
+    "oauth_scopes": [
+      "time_clock.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_user_lock_days_time_clock_v1_time_clocks__timeclockid__users__userid__lock_days_put"
+  },
+  {
+    "operation": "delete_time_activity_time_clock_v1_time_clocks__timeClockId__time_activities__timeActivityId__delete",
+    "title": "Delete time activity",
+    "description": "Deletes a single time activity (a punch shift or a manual break) from a specified time clock. The activity is identified by its unique ID - the same id returned by GET .../time-activities (and used in PUT). The server resolves which user the activity belongs to; the caller supplies only the time clock and the activity ID. The activity cannot be deleted if it falls on a locked or approved timesheet day; the request fails with HAS_LOCKED_DAYS. Time-off / absence entries are not addressable here an",
+    "category": "Time Clock",
+    "method": "DELETE",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/time-activities/{timeActivityId}",
+    "parameters": [
+      {
+        "name": "timeActivityId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the time activity to delete",
+        "default": null
+      },
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_clock.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_time_activity_time_clock_v1_time_clocks__timeclockid__time_activities__timeactivityid__delete"
+  },
+  {
+    "operation": "get_geofences_time_clock_v1_time_clocks__timeClockId__geofences_get",
+    "title": "Get geofences",
+    "description": "Get all geofences for a specified time clock",
+    "category": "Time Clock",
+    "method": "GET",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/geofences",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_clock.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_geofences_time_clock_v1_time_clocks__timeclockid__geofences_get"
+  },
+  {
+    "operation": "create_geofences_time_clock_v1_time_clocks__timeClockId__geofences_post",
+    "title": "Create geofences",
+    "description": "Create one or more geofences for the specified time clock. Use jobIdsMode with jobIds to control which jobs each geofence applies to (all jobs, only listed jobs, or all jobs except listed ones). Job IDs must belong to that time clock.",
+    "category": "Time Clock",
+    "method": "POST",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/geofences",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request model for create geofences",
+    "oauth_scopes": [
+      "time_clock.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_geofences_time_clock_v1_time_clocks__timeclockid__geofences_post"
+  },
+  {
+    "operation": "get_geofence_time_clock_v1_time_clocks__timeClockId__geofences__fenceId__get",
+    "title": "Get geofence",
+    "description": "Get a geofence site under a specified time clock",
+    "category": "Time Clock",
+    "method": "GET",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/geofences/{fenceId}",
+    "parameters": [
+      {
+        "name": "fenceId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The ID of the geofence to get",
+        "default": null
+      },
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_clock.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_geofence_time_clock_v1_time_clocks__timeclockid__geofences__fenceid__get"
+  },
+  {
+    "operation": "delete_geo_fence_time_clock_v1_time_clocks__timeClockId__geofences__fenceId__delete",
+    "title": "Delete geofence",
+    "description": "Delete a geofence site under a specified time clock",
+    "category": "Time Clock",
+    "method": "DELETE",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/geofences/{fenceId}",
+    "parameters": [
+      {
+        "name": "fenceId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The ID of the geofence to delete",
+        "default": null
+      },
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_clock.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_geo_fence_time_clock_v1_time_clocks__timeclockid__geofences__fenceid__delete"
+  },
+  {
+    "operation": "download_breadcrumbs_report_time_clock_breadcrumbs_v1_report__fileId__download_get",
+    "title": "Download breadcrumbs report",
+    "description": "Stream the breadcrumbs JSON report directly from S3. Only available when the task status is 'completed'.",
+    "category": "Breadcrumbs",
+    "method": "GET",
+    "path": "/time-clock/breadcrumbs/v1/report/{fileId}/download",
+    "parameters": [
+      {
+        "name": "fileId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The request ID from the report endpoint",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_clock.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/download_breadcrumbs_report_time_clock_breadcrumbs_v1_report__fileid__download_get"
+  },
+  {
+    "operation": "get_report_status_time_clock_breadcrumbs_v1_report__fileId__get",
+    "title": "Get breadcrumbs report status",
+    "description": "Get the status of a breadcrumbs report task. Returns 'completed' when the file is ready in S3.",
+    "category": "Breadcrumbs",
+    "method": "GET",
+    "path": "/time-clock/breadcrumbs/v1/report/{fileId}",
+    "parameters": [
+      {
+        "name": "fileId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The request ID from the report endpoint",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_clock.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_report_status_time_clock_breadcrumbs_v1_report__fileid__get"
+  },
+  {
+    "operation": "generate_breadcrumbs_report_time_clock_breadcrumbs_v1_report_post",
+    "title": "Generate breadcrumbs report",
+    "description": "Initiate a breadcrumbs report for a specific date. Returns a request ID that can be used to check the report status.",
+    "category": "Breadcrumbs",
+    "method": "POST",
+    "path": "/time-clock/breadcrumbs/v1/report",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Report request with date",
+    "oauth_scopes": [
+      "time_clock.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/generate_breadcrumbs_report_time_clock_breadcrumbs_v1_report_post"
+  },
+  {
+    "operation": "clock_out_manual_break_time_clock_v1_time_clocks__timeClockId__manual_breaks_clock_out_post",
+    "title": "Clock out from a manual break",
+    "description": "End the currently open manual break for an employee. By default, if the break was started from an open shift, the shift is re-opened on the same job (mobile 'Return to job'). Set isResumeShift=false to end the break without resuming. Mandatory breaks cannot be ended before their configured minimum duration. Pass an optional timestamp to record a break that ended earlier (offline sync).",
+    "category": "Time Clock",
+    "method": "POST",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/manual-breaks/clock-out",
+    "parameters": [
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "time_clock.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/clock_out_manual_break_time_clock_v1_time_clocks__timeclockid__manual_breaks_clock_out_post"
+  },
+  {
+    "operation": "clock_in_manual_break_time_clock_v1_time_clocks__timeClockId__manual_breaks__manualBreakId__clock_in_post",
+    "title": "Clock in to a manual break",
+    "description": "Start a manual break for an employee. If the employee is clocked into a shift on the same time clock, the shift is automatically closed and the break is started in one call (attributed to the shift's job). If the employee is idle, the break starts standalone. Pass an optional timestamp to record a break that started earlier (offline sync).",
+    "category": "Time Clock",
+    "method": "POST",
+    "path": "/time-clock/v1/time-clocks/{timeClockId}/manual-breaks/{manualBreakId}/clock-in",
+    "parameters": [
+      {
+        "name": "manualBreakId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the manual break to start",
+        "default": null
+      },
+      {
+        "name": "timeClockId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the time clock",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request",
+    "oauth_scopes": [
+      "time_clock.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/clock_in_manual_break_time_clock_v1_time_clocks__timeclockid__manual_breaks__manualbreakid__clock_in_post"
+  },
+  {
+    "operation": "get_policy_groups_time_off_v1_policy_types_get",
+    "title": "Get policy types",
+    "description": "Retrieve a list of policy types associated with the account",
+    "category": "Time Off",
+    "method": "GET",
+    "path": "/time-off/v1/policy-types",
+    "parameters": [],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_off.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_policy_groups_time_off_v1_policy_types_get"
+  },
+  {
+    "operation": "get_balances_time_off_v1_policy_types__policyTypeId__balances_get",
+    "title": "Get user balances",
+    "description": "Retrieve a list of user time-off balances within a policy type",
+    "category": "Time Off",
+    "method": "GET",
+    "path": "/time-off/v1/policy-types/{policyTypeId}/balances",
+    "parameters": [
+      {
+        "name": "policyTypeId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "Policy type id",
+        "default": null
+      },
+      {
+        "name": "userIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "List of user ids",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_off.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_balances_time_off_v1_policy_types__policytypeid__balances_get"
+  },
+  {
+    "operation": "list_time_off_requests_time_off_v1_requests_get",
+    "title": "Get time off requests",
+    "description": "Retrieve a paginated list of time-off requests whose date range overlaps the requested window, with optional filtering by employees and statuses. Approved requests include duration (the amount deducted from balance, in the policy units of hours or days); it is omitted for other statuses. Defaults to approved status when no status filter is provided.",
+    "category": "Time Off",
+    "method": "GET",
+    "path": "/time-off/v1/requests",
+    "parameters": [
+      {
+        "name": "startDate",
+        "in": "query",
+        "required": true,
+        "type": "string",
+        "description": "Start of the date range, inclusive, in ISO 8601 format (YYYY-MM-DD). Any request overlapping [startDate, endDate] is returned.",
+        "default": null
+      },
+      {
+        "name": "endDate",
+        "in": "query",
+        "required": true,
+        "type": "string",
+        "description": "End of the date range, inclusive, in ISO 8601 format (YYYY-MM-DD). Must be on or after startDate. Range may not exceed 365 days.",
+        "default": null
+      },
+      {
+        "name": "userIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Filter by one or more employee IDs. Omit to include all employees.",
+        "default": null
+      },
+      {
+        "name": "statuses",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Filter by status. Allowed: approved, pending, denied. Repeat the param for multiple values. Defaults to ['approved'] when omitted.",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "time_off.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/list_time_off_requests_time_off_v1_requests_get"
+  },
+  {
+    "operation": "post_time_off_request_time_off_v1_requests_post",
+    "title": "Create time off request",
+    "description": "Create a new time-off request for a user under a specified policy. The time-off request can be either in pending or approved status.",
+    "category": "Time Off",
+    "method": "POST",
+    "path": "/time-off/v1/requests",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Request model for the new Time Off Request",
+    "oauth_scopes": [
+      "time_off.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/post_time_off_request_time_off_v1_requests_post"
+  },
+  {
+    "operation": "put_time_off_request_time_off_v1_requests__requestId__put",
+    "title": "Update time off request",
+    "description": "Update an existing time-off request. The time-off request can be modified with new dates, times, status, or notes.",
+    "category": "Time Off",
+    "method": "PUT",
+    "path": "/time-off/v1/requests/{requestId}",
+    "parameters": [
+      {
+        "name": "requestId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the time off request",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Request model for updating the Time Off Request",
+    "oauth_scopes": [
+      "time_off.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/put_time_off_request_time_off_v1_requests__requestid__put"
+  },
+  {
+    "operation": "put_user_balance_time_off_v1_policy_types__policyTypeId__balances__userId__put",
+    "title": "Update user balance",
+    "description": "Update user time-off balance within a policy type",
+    "category": "Time Off",
+    "method": "PUT",
+    "path": "/time-off/v1/policy-types/{policyTypeId}/balances/{userId}",
+    "parameters": [
+      {
+        "name": "policyTypeId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "Policy type id",
+        "default": null
+      },
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The ID of the user to update balance",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "The balance to update to",
+    "oauth_scopes": [
+      "time_off.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/put_user_balance_time_off_v1_policy_types__policytypeid__balances__userid__put"
+  },
+  {
+    "operation": "assign_user_to_policy_time_off_v1_time_off_policies__timeOffPolicyId__assignments_put",
+    "title": "Assign user to time-off policy",
+    "description": "Assign user to specified time-off policy.",
+    "category": "Time Off",
+    "method": "PUT",
+    "path": "/time-off/v1/time-off-policies/{timeOffPolicyId}/assignments",
+    "parameters": [
+      {
+        "name": "timeOffPolicyId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The time off policy id",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "The assignment request",
+    "oauth_scopes": [
+      "time_off.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/assign_user_to_policy_time_off_v1_time_off_policies__timeoffpolicyid__assignments_put"
+  },
+  {
+    "operation": "get_form_forms_v1_forms__formId__get",
+    "title": "Get form",
+    "description": "Retrieve single form information by its unique ID",
+    "category": "Forms",
+    "method": "GET",
+    "path": "/forms/v1/forms/{formId}",
+    "parameters": [
+      {
+        "name": "formId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "Form id to return",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "forms.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_form_forms_v1_forms__formid__get"
+  },
+  {
+    "operation": "get_form_submissions_forms_v1_forms__formId__form_submissions_get",
+    "title": "Get form submissions",
+    "description": "Retrieve a list of form submissions by form ID",
+    "category": "Forms",
+    "method": "GET",
+    "path": "/forms/v1/forms/{formId}/form-submissions",
+    "parameters": [
+      {
+        "name": "formId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "Filter by Form Id",
+        "default": null
+      },
+      {
+        "name": "userIds",
+        "in": "query",
+        "required": false,
+        "type": "array",
+        "description": "Filter by submitting user ids",
+        "default": null
+      },
+      {
+        "name": "submittingStartTimestamp",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "Filter form submissions that were submitted from this timestamp",
+        "default": null
+      },
+      {
+        "name": "submittingEndTime",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "Filter form submissions that were submitted until this timestamp",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "forms.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_form_submissions_forms_v1_forms__formid__form_submissions_get"
+  },
+  {
+    "operation": "get_forms_forms_v1_forms_get",
+    "title": "Get forms",
+    "description": "Retrieve a list of forms associated with the account",
+    "category": "Forms",
+    "method": "GET",
+    "path": "/forms/v1/forms",
+    "parameters": [
+      {
+        "name": "name",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "The name of the form to filter by (partial, case-insensitive match)",
+        "default": null
+      },
+      {
+        "name": "startDate",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Filter forms created on or after this date (form creation date) in ISO 8601 format (YYYY-MM-DD). Inclusive.",
+        "default": null
+      },
+      {
+        "name": "endDate",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "Filter forms created on or before this date (form creation date) in ISO 8601 format (YYYY-MM-DD). Inclusive.",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "forms.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_forms_forms_v1_forms_get"
+  },
+  {
+    "operation": "get_form_submission_forms_v1_forms__formId__form_submissions__formSubmissionId__get",
+    "title": "Get form submission",
+    "description": "Retrieve a single form submission by form submission ID",
+    "category": "Forms",
+    "method": "GET",
+    "path": "/forms/v1/forms/{formId}/form-submissions/{formSubmissionId}",
+    "parameters": [
+      {
+        "name": "formId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "Form Id",
+        "default": null
+      },
+      {
+        "name": "formSubmissionId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "Filter by Form submission id",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "forms.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_form_submission_forms_v1_forms__formid__form_submissions__formsubmissionid__get"
+  },
+  {
+    "operation": "update_form_submissions_forms_v1_forms__formId__form_submissions__formSubmissionId__put",
+    "title": "Update form submission",
+    "description": "Update a single form submission by form submission ID. Currently, updates are only supported for manager fields.",
+    "category": "Forms",
+    "method": "PUT",
+    "path": "/forms/v1/forms/{formId}/form-submissions/{formSubmissionId}",
+    "parameters": [
+      {
+        "name": "formId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "Form Id",
+        "default": null
+      },
+      {
+        "name": "formSubmissionId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "Filter by Form submission id",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Form Submission",
+    "oauth_scopes": [
+      "forms.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_form_submissions_forms_v1_forms__formid__form_submissions__formsubmissionid__put"
+  },
+  {
+    "operation": "add_dropdown_options_forms_v1_forms__formId__questions__questionId__post",
+    "title": "Add dropdown options",
+    "description": "Add a new value option under a specified question. The value will be added to the existing value options and will not override them. Make sure the question type is of dropdown one.",
+    "category": "Forms",
+    "method": "POST",
+    "path": "/forms/v1/forms/{formId}/questions/{questionId}",
+    "parameters": [
+      {
+        "name": "formId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the form",
+        "default": null
+      },
+      {
+        "name": "questionId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the question within the specified form. This question must be of type dropdown.",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "The value to be added to the dropdown options list",
+    "oauth_scopes": [
+      "forms.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/add_dropdown_options_forms_v1_forms__formid__questions__questionid__post"
+  },
+  {
+    "operation": "get_dropdown_question_options_forms_v1_forms__formId__questions__questionId__get",
+    "title": "Get dropdown question options",
+    "description": "Retrieve the list of selectable options for a dropdown-type question within a specified form.",
+    "category": "Forms",
+    "method": "GET",
+    "path": "/forms/v1/forms/{formId}/questions/{questionId}",
+    "parameters": [
+      {
+        "name": "formId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the form",
+        "default": null
+      },
+      {
+        "name": "questionId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the question within the specified form. This question must be of type dropdown.",
+        "default": null
+      },
+      {
+        "name": "includeDeleted",
+        "in": "query",
+        "required": false,
+        "type": "boolean",
+        "description": "Include deleted options",
+        "default": false
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "forms.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_dropdown_question_options_forms_v1_forms__formid__questions__questionid__get"
+  },
+  {
+    "operation": "update_dropdown_options_forms_v1_forms__formId__questions__questionId__options__optionId__put",
+    "title": "Update dropdown option",
+    "description": "Update the label of an existing option in a dropdown-type question within a specified form. This action overrides the current value.",
+    "category": "Forms",
+    "method": "PUT",
+    "path": "/forms/v1/forms/{formId}/questions/{questionId}/options/{optionId}",
+    "parameters": [
+      {
+        "name": "formId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the form",
+        "default": null
+      },
+      {
+        "name": "questionId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the question within the specified form. This question must be of type dropdown.",
+        "default": null
+      },
+      {
+        "name": "optionId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the specific option within the dropdown list.",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "The value to be updated. This will override the current option value.",
+    "oauth_scopes": [
+      "forms.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_dropdown_options_forms_v1_forms__formid__questions__questionid__options__optionid__put"
+  },
+  {
+    "operation": "delete_dropdown_option_forms_v1_forms__formId__questions__questionId__options__optionId__delete",
+    "title": "Delete dropdown option",
+    "description": "Delete an existing selectable option from a dropdown-type question within a specified form.",
+    "category": "Forms",
+    "method": "DELETE",
+    "path": "/forms/v1/forms/{formId}/questions/{questionId}/options/{optionId}",
+    "parameters": [
+      {
+        "name": "formId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the form",
+        "default": null
+      },
+      {
+        "name": "questionId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the question within the specified form. This question must be of type dropdown.",
+        "default": null
+      },
+      {
+        "name": "optionId",
+        "in": "path",
+        "required": true,
+        "type": "string",
+        "description": "The unique identifier of the specific option within the dropdown list",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "forms.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_dropdown_option_forms_v1_forms__formid__questions__questionid__options__optionid__delete"
+  },
+  {
+    "operation": "get_webhook_settings_v1_webhooks__webhookId__get",
+    "title": "Get webhook",
+    "description": "Retrieve single webhook information by its unique ID",
+    "category": "Settings",
+    "method": "GET",
+    "path": "/settings/v1/webhooks/{webhookId}",
+    "parameters": [
+      {
+        "name": "webhookId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the webhook",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "settings.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_webhook_settings_v1_webhooks__webhookid__get"
+  },
+  {
+    "operation": "update_webhook_settings_v1_webhooks__webhookId__put",
+    "title": "Update Webhook",
+    "description": "Update an existing webhook settings by its unique ID.",
+    "category": "Settings",
+    "method": "PUT",
+    "path": "/settings/v1/webhooks/{webhookId}",
+    "parameters": [
+      {
+        "name": "webhookId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the webhook",
+        "default": null
+      }
+    ],
+    "body_required": true,
+    "body_description": "Update data for new webhook",
+    "oauth_scopes": [
+      "settings.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/update_webhook_settings_v1_webhooks__webhookid__put"
+  },
+  {
+    "operation": "delete_webhook_settings_v1_webhooks__webhookId__delete",
+    "title": "Delete webhook",
+    "description": "Delete a single webhook configuration by its unique ID",
+    "category": "Settings",
+    "method": "DELETE",
+    "path": "/settings/v1/webhooks/{webhookId}",
+    "parameters": [
+      {
+        "name": "webhookId",
+        "in": "path",
+        "required": true,
+        "type": "integer",
+        "description": "The unique identifier of the webhook",
+        "default": null
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "settings.delete"
+    ],
+    "reference": "https://developer.connecteam.com/reference/delete_webhook_settings_v1_webhooks__webhookid__delete"
+  },
+  {
+    "operation": "get_webhooks_by_type_settings_v1_webhooks_get",
+    "title": "Get webhooks",
+    "description": "Retrieves a list of webhook settings associated with the account.",
+    "category": "Settings",
+    "method": "GET",
+    "path": "/settings/v1/webhooks",
+    "parameters": [
+      {
+        "name": "featureType",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "description": "The feature type of the webhook. Current options are: users, forms, time_activity, tasks",
+        "default": null
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The maximum number of results to display per page",
+        "default": 10
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "type": "integer",
+        "description": "The resource offset of the last successfully read resource will be returned as the paging.offset JSON property of a paginated response containing more results",
+        "default": 0
+      }
+    ],
+    "body_required": false,
+    "body_description": "",
+    "oauth_scopes": [
+      "settings.read"
+    ],
+    "reference": "https://developer.connecteam.com/reference/get_webhooks_by_type_settings_v1_webhooks_get"
+  },
+  {
+    "operation": "create_webhook_settings_v1_webhooks_post",
+    "title": "Create webhook",
+    "description": "Create individual webhook settings under specified details",
+    "category": "Settings",
+    "method": "POST",
+    "path": "/settings/v1/webhooks",
+    "parameters": [],
+    "body_required": true,
+    "body_description": "Create data for new webhook",
+    "oauth_scopes": [
+      "settings.write"
+    ],
+    "reference": "https://developer.connecteam.com/reference/create_webhook_settings_v1_webhooks_post"
+  }
+]

@@ -108,6 +108,7 @@ import appsheetSchema from '~/schemas/nodes/appsheet.json';
 import tableauSchema from '~/schemas/nodes/tableau.json';
 import atlasAdminSchema from '~/schemas/nodes/atlas-admin.json';
 import webflowSchema from '~/schemas/nodes/webflow.json';
+import connecteamSchema from '~/schemas/nodes/connecteam.json';
 import pagespeedSchema from '~/schemas/nodes/pagespeed.json';
 import googleTranslateSchema from '~/schemas/nodes/google-translate.json';
 import bigquerySchema from '~/schemas/nodes/bigquery.json';
@@ -272,6 +273,7 @@ const _NODE_SCHEMAS_RAW: Record<string, any> = {
     'automation-tableau': tableauSchema,
     'automation-atlas-admin': atlasAdminSchema,
     'automation-webflow': webflowSchema,
+    'automation-connecteam': connecteamSchema,
     'automation-pagespeed': pagespeedSchema,
     'automation-google-translate': googleTranslateSchema,
     'automation-bigquery': bigquerySchema,

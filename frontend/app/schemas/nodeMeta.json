@@ -175,6 +175,9 @@
         "on_new_content"
       ]
     },
+    "automation-connecteam": {
+      "agentToolProvider": true
+    },
     "automation-databricks": {
       "agentToolProvider": true,
       "triggerOperations": [

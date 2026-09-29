@@ -61,6 +61,7 @@ import googleAnalyticsSchema from '~/schemas/nodes/google-analytics.json';
 import googleAdsSchema from '~/schemas/nodes/google-ads.json';
 import googleBusinessProfileSchema from '~/schemas/nodes/google-business-profile.json';
 import googleSearchConsoleSchema from '~/schemas/nodes/google-search-console.json';
+import connecteamSchema from '~/schemas/nodes/connecteam.json';
 
 const NODE_SCHEMAS: Record<string, any> = {
     'automation-telegram': telegramSchema,
@@ -110,6 +111,7 @@ const NODE_SCHEMAS: Record<string, any> = {
     'automation-google-ads': googleAdsSchema,
     'automation-google-business-profile': googleBusinessProfileSchema,
     'automation-google-search-console': googleSearchConsoleSchema,
+    'automation-connecteam': connecteamSchema,
     'agent': agentSchema,
 };
 

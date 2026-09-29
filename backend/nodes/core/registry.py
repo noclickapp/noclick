@@ -135,6 +135,7 @@ from nodes.launchdarkly_node import LaunchDarklyNode
 from nodes.appsheet_node import AppSheetNode
 from nodes.tableau_node import TableauNode
 from nodes.webflow_node import WebflowNode
+from nodes.connecteam_node import ConnecteamNode
 from nodes.pagespeed_node import PageSpeedNode
 from nodes.google_translate_node import GoogleTranslateNode
 from nodes.bigquery_node import BigQueryNode
@@ -281,6 +282,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-appsheet': AppSheetNode,
     'automation-tableau': TableauNode,
     'automation-webflow': WebflowNode,
+    'automation-connecteam': ConnecteamNode,
     'automation-pagespeed': PageSpeedNode,
     'automation-google-translate': GoogleTranslateNode,
     'automation-bigquery': BigQueryNode,

@@ -106,6 +106,7 @@ import { AppSheetNode } from './AppSheetNode';
 import { TableauNode } from './TableauNode';
 import { AtlasAdminNode } from './AtlasAdminNode';
 import { WebflowNode } from './WebflowNode';
+import { ConnecteamNode } from './ConnecteamNode';
 import { PagespeedNode } from './PagespeedNode';
 import { GoogleTranslateNode } from './GoogleTranslateNode';
 import { BigQueryNode } from './BigQueryNode';
@@ -212,7 +213,7 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, BasedashNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, PhoneNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, PipedriveNode, ResendNode, DV360Node, QuickBooksNode, ThreadsNode, MetaNode, BigQueryNode, GoHighLevelNode, ExpensifyNode, LaunchDarklyNode, WebflowNode, PhantomBusterNode, CalComNode, CalendlyNode, HoneycombNode, SentryNode, GoogleMapsNode, PerplexityNode, PostHogNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MilvusNode, MongoDBNode, ElasticsearchNode, MailgunNode,
+        MailchimpNode, PipedriveNode, ResendNode, DV360Node, QuickBooksNode, ThreadsNode, MetaNode, BigQueryNode, GoHighLevelNode, ExpensifyNode, LaunchDarklyNode, WebflowNode, ConnecteamNode, PhantomBusterNode, CalComNode, CalendlyNode, HoneycombNode, SentryNode, GoogleMapsNode, PerplexityNode, PostHogNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MilvusNode, MongoDBNode, ElasticsearchNode, MailgunNode,
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, RecurlyNode, FindymailNode, BeehiivNode,

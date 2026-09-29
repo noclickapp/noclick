@@ -332,6 +332,8 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Webflow
     'WebflowOAuthCredential': 'webflow_oauth',
     'WebflowApiTokenCredential': 'webflow_api_token',
+    'ConnecteamApiKeyCredential': 'connecteam_api_key',
+    'ConnecteamOAuthClientCredential': 'connecteam_oauth_client',
 
     // Tableau
     'TableauPATCredential': 'tableau_pat',
