@@ -117,6 +117,7 @@ from nodes.parallel_node import ParallelNode
 from nodes.datadog_node import DatadogNode
 from nodes.loops_node import LoopsNode
 from nodes.exa_node import ExaNode
+from nodes.tavily_node import TavilyNode
 from nodes.reducto_node import ReductoNode
 from nodes.fal_node import FalNode
 from nodes.brandfetch_node import BrandfetchNode
@@ -273,6 +274,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-datadog': DatadogNode,
     'automation-loops': LoopsNode,
     'automation-exa': ExaNode,
+    'automation-tavily': TavilyNode,
     'automation-reducto': ReductoNode,
     'automation-fal': FalNode,
     'automation-brandfetch': BrandfetchNode,

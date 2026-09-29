@@ -274,6 +274,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // Exa
     'ExaApiKeyCredential': 'exa_api_key',
+    'TavilyApiKeyCredential': 'tavily_api_key',
 
     // Reducto
     'ReductoApiKeyCredential': 'reducto_api_key',
