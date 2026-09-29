@@ -225,6 +225,9 @@
         "on_mention"
       ]
     },
+    "automation-doppler": {
+      "agentToolProvider": true
+    },
     "automation-dropbox": {
       "agentToolProvider": true
     },

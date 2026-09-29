@@ -137,6 +137,7 @@ from nodes.google_meet_node import GoogleMeetNode
 from nodes.expensify_node import ExpensifyNode
 from nodes.freshsales_node import FreshsalesNode
 from nodes.launchdarkly_node import LaunchDarklyNode
+from nodes.doppler_node import DopplerNode
 from nodes.appsheet_node import AppSheetNode
 from nodes.tableau_node import TableauNode
 from nodes.webflow_node import WebflowNode
@@ -289,6 +290,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-expensify': ExpensifyNode,
     'automation-freshsales': FreshsalesNode,
     'automation-launchdarkly': LaunchDarklyNode,
+    'automation-doppler': DopplerNode,
     'automation-appsheet': AppSheetNode,
     'automation-tableau': TableauNode,
     'automation-webflow': WebflowNode,

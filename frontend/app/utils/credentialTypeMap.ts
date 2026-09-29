@@ -336,6 +336,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'FreshsalesApiKeyCredential': 'freshsales_api_key',
     // LaunchDarkly
     'LaunchDarklyTokenCredential': 'launchdarkly_token',
+    'DopplerTokenCredential': 'doppler_token',
     // AppSheet
     'AppSheetApiKeyCredential': 'appsheet_api_key',
     // Webflow
