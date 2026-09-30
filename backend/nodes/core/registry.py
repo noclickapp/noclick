@@ -131,6 +131,7 @@ from nodes.fal_node import FalNode
 from nodes.brandfetch_node import BrandfetchNode
 from nodes.recurly_node import RecurlyNode
 from nodes.findymail_node import FindymailNode
+from nodes.clay_node import ClayNode
 from nodes.beehiiv_node import BeehiivNode
 from nodes.hex_node import HexNode
 from nodes.clickhouse_node import ClickHouseNode
@@ -294,6 +295,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-brandfetch': BrandfetchNode,
     'automation-recurly': RecurlyNode,
     'automation-findymail': FindymailNode,
+    'automation-clay': ClayNode,
     'automation-beehiiv': BeehiivNode,
     'automation-hex': HexNode,
     'automation-clickhouse': ClickHouseNode,

@@ -1,4 +1,4 @@
-// Regenerates the machine-written GENERATED section of app/data/toolPresets.ts:
+// Regenerates the machine-written GENERATED section of app/cloud/data/toolPresets.ts:
 // heuristic "everyday" + "read-only" presets for every pair-page provider that
 // has no hand-curated entry, derived from the generated node schemas (reads +
 // common safe act verbs; destructive and plumbing ops excluded). Run with
@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SCHEMAS = path.join(ROOT, 'app', 'schemas', 'nodes');
-const TARGET = path.join(ROOT, 'app', 'data', 'toolPresets.ts');
+const TARGET = path.join(ROOT, 'app', 'cloud', 'data', 'toolPresets.ts');
 
 const READ = /^(list|get|fetch|search|read|query|check|find|download|count|describe|retrieve)_/;
 const ACT = /^(create|send|submit|reply|update|add|append|write|upsert|post|edit|forward|assign|upload|insert)_/;

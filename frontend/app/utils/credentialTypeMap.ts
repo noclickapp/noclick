@@ -305,6 +305,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // Findymail
     'FindymailApiKeyCredential': 'findymail_api_key',
+    'ClayApiKeyCredential': 'clay_api_key',
 
     // beehiiv
     'BeehiivApiKeyCredential': 'beehiiv_api_key',
