@@ -1,7 +1,6 @@
 import { reactRouter } from '@react-router/dev/vite';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import mdx from '@mdx-js/rollup';
 import commonjs from 'vite-plugin-commonjs';
 import { ncPlugin } from './app/lib/nc/vite-plugin';
 import path from 'path';
@@ -26,7 +25,6 @@ const bundleServer = process.env.NOCLICK_BUNDLE_SERVER === '1';
 export default defineConfig({
     plugins: [
         ncPlugin(),
-        mdx(),
         commonjs(),
         reactRouter(),
         tsconfigPaths(),

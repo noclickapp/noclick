@@ -1,7 +1,7 @@
 // Light/dark theme management for the authed app. The preference is stored in
 // localStorage and applied as a `dark` class on <html> (tailwind darkMode:
-// 'class'). Only the dashboard honors the preference — marketing, blog, and
-// public pages stay dark (their components are tokenized with dark: pins, so
+// 'class'). Only the dashboard honors the preference — marketing and public
+// pages stay dark (their components are tokenized with dark: pins, so
 // forcing the class renders the original dark design exactly).
 
 export type Theme = 'light' | 'dark' | 'system';

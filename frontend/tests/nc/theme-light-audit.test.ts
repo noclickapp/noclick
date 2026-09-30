@@ -80,8 +80,8 @@ export default async function () {
     applyTheme('/pricing');
     const marketingForcedDark =
         document.documentElement.classList.contains('dark');
-    applyTheme('/blog/some-post');
-    const blogForcedDark = document.documentElement.classList.contains('dark');
+    applyTheme('/integrations/slack');
+    const nestedForcedDark = document.documentElement.classList.contains('dark');
     applyTheme('/dashboard');
     const dashboardLight = !document.documentElement.classList.contains('dark');
 
@@ -91,7 +91,7 @@ export default async function () {
     freeze.remove();
 
     nc.assert.equal(marketingForcedDark, true, '/pricing must stay dark');
-    nc.assert.equal(blogForcedDark, true, '/blog/* must stay dark');
+    nc.assert.equal(nestedForcedDark, true, '/integrations/* must stay dark');
     nc.assert.equal(dashboardLight, true, '/dashboard honors light preference');
     nc.assert.falsy(isThemedPath('/'), 'landing is not themed');
     nc.assert.truthy(isThemedPath('/dashboard'), 'dashboard is themed');
