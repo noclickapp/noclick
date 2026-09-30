@@ -135,6 +135,7 @@ import redisSchema from '~/schemas/nodes/redis.json';
 import rssSchema from '~/schemas/nodes/rss.json';
 import hubspotSchema from '~/schemas/nodes/hubspot.json';
 import affinitySchema from '~/schemas/nodes/affinity.json';
+import nocodbSchema from '~/schemas/nodes/nocodb.json';
 import basedashSchema from '~/schemas/nodes/basedash.json';
 import jiraSchema from '~/schemas/nodes/jira.json';
 import semrushSchema from '~/schemas/nodes/semrush.json';
@@ -298,6 +299,7 @@ const _NODE_SCHEMAS_RAW: Record<string, any> = {
     'automation-rss': rssSchema,
     'automation-hubspot': hubspotSchema,
     'automation-affinity': affinitySchema,
+    'automation-nocodb': nocodbSchema,
     'automation-basedash': basedashSchema,
     'automation-jira': jiraSchema,
     'automation-semrush': semrushSchema,
@@ -825,6 +827,7 @@ function getProviderLabel(providerKey: string): string {
         'microsoft': 'Microsoft Account',
         'hubspot': 'HubSpot Account',
         'affinity': 'Affinity Account',
+        'nocodb': 'NocoDB Account',
         'basedash': 'Basedash Account',
         'salesforce': 'Salesforce Account',
         'jira': 'Jira Account',

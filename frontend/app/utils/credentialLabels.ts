@@ -16,7 +16,7 @@ const WORD_CASING: Record<string, string> = {
   openai: 'OpenAI', clickup: 'ClickUp', pagerduty: 'PagerDuty',
   bamboohr: 'BambooHR', quickbooks: 'QuickBooks', wordpress: 'WordPress',
   bigquery: 'BigQuery', sendgrid: 'SendGrid', mongodb: 'MongoDB',
-  onedrive: 'OneDrive', launchdarkly: 'LaunchDarkly', pit: 'PIT',
+  nocodb: 'NocoDB', onedrive: 'OneDrive', launchdarkly: 'LaunchDarkly', pit: 'PIT',
 };
 
 // Compound names the camel-splitter necessarily breaks apart. Audited against
@@ -25,7 +25,7 @@ const COMPOUND_BRANDS = [
   'WhatsApp', 'GitHub', 'GitLab', 'HubSpot', 'LinkedIn', 'PayPal', 'TikTok',
   'YouTube', 'PostHog', 'OpenAI', 'ClickUp', 'PagerDuty', 'BambooHR',
   'QuickBooks', 'OAuth', 'WordPress', 'AppSheet', 'ClickHouse', 'BigQuery',
-  'SendGrid', 'MongoDB', 'OneDrive', 'OneLake', 'PageSpeed', 'PhantomBuster',
+  'SendGrid', 'MongoDB', 'NocoDB', 'OneDrive', 'OneLake', 'PageSpeed', 'PhantomBuster',
   'LaunchDarkly', 'GoHighLevel',
 ];
 

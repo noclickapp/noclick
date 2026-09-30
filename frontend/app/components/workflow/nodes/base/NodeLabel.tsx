@@ -15,6 +15,7 @@ const NODES_WITHOUT_LABELS = new Set(['stickyNote']);
 // Derive a readable display name from node type (e.g., "automation-telegram" -> "Telegram")
 const LABEL_OVERRIDES: Record<string, string> = {
     'noclick': 'NoClick',
+    'automation-nocodb': 'NocoDB',
 };
 
 export function getDefaultLabelFromType(nodeType: string): string {

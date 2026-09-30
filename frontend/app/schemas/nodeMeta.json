@@ -721,6 +721,9 @@
     "automation-mongodb": {
       "agentToolProvider": true
     },
+    "automation-nocodb": {
+      "agentToolProvider": true
+    },
     "automation-notion": {
       "agentToolProvider": true,
       "triggerOperations": [

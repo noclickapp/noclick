@@ -1,0 +1,2433 @@
+{
+  "$defs": {
+    "NocoDBAddLinksConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_links",
+          "default": "add_links",
+          "title": "Add Links",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Link",
+          "x-display-name": "Add Links",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "link_field_id": {
+          "title": "Link Field Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a link field id",
+            "field_name": "link_field_id",
+            "placeholder": "Select a link field id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a record id",
+            "field_name": "record_id",
+            "placeholder": "Select a record id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "link_field_id",
+        "record_id",
+        "payload"
+      ],
+      "title": "Add Links",
+      "type": "object"
+    },
+    "NocoDBCountRecordsConfig": {
+      "properties": {
+        "operation": {
+          "const": "count_records",
+          "default": "count_records",
+          "title": "Count Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Count Records",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NocoDB filter expression.",
+          "title": "Where"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NocoDB sort expression.",
+          "title": "Sort"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id"
+      ],
+      "title": "Count Records",
+      "type": "object"
+    },
+    "NocoDBCreateBaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_base",
+          "default": "create_base",
+          "title": "Create Base",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Base",
+          "x-display-name": "Create Base",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "title": "Workspace Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workspace id",
+            "field_name": "workspace_id",
+            "placeholder": "Select a workspace id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "payload"
+      ],
+      "title": "Create Base",
+      "type": "object"
+    },
+    "NocoDBCreateCommentConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Create Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Create Comment",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a record id",
+            "field_name": "record_id",
+            "placeholder": "Select a record id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "record_id",
+        "payload"
+      ],
+      "title": "Create Comment",
+      "type": "object"
+    },
+    "NocoDBCreateFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_field",
+          "default": "create_field",
+          "title": "Create Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Field",
+          "x-display-name": "Create Field",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "payload"
+      ],
+      "title": "Create Field",
+      "type": "object"
+    },
+    "NocoDBCreateHookConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_hook",
+          "default": "create_hook",
+          "title": "Create Hook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Create Hook",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "payload"
+      ],
+      "title": "Create Hook",
+      "type": "object"
+    },
+    "NocoDBCreateRecordsConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_records",
+          "default": "create_records",
+          "title": "Create Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Create Records",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "records": {
+          "description": "JSON object or array of objects. Create: {\"fields\":{\"Title\":\"Example\"}}; update/delete: include each record's id.",
+          "title": "Record Data",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "records"
+      ],
+      "title": "Create Records",
+      "type": "object"
+    },
+    "NocoDBCreateTableConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_table",
+          "default": "create_table",
+          "title": "Create Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Create Table",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "payload"
+      ],
+      "title": "Create Table",
+      "type": "object"
+    },
+    "NocoDBCreateViewConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_view",
+          "default": "create_view",
+          "title": "Create View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "View",
+          "x-display-name": "Create View",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "payload"
+      ],
+      "title": "Create View",
+      "type": "object"
+    },
+    "NocoDBCreateWorkspaceConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_workspace",
+          "default": "create_workspace",
+          "title": "Create Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Create Workspace",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "Create Workspace",
+      "type": "object"
+    },
+    "NocoDBDeleteBaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_base",
+          "default": "delete_base",
+          "title": "Delete Base",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Base",
+          "x-display-name": "Delete Base",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "base_id"
+      ],
+      "title": "Delete Base",
+      "type": "object"
+    },
+    "NocoDBDeleteCommentConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Delete Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Delete Comment",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "comment_id": {
+          "title": "Comment Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a comment id",
+            "field_name": "comment_id",
+            "placeholder": "Select a comment id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "comment_id"
+      ],
+      "title": "Delete Comment",
+      "type": "object"
+    },
+    "NocoDBDeleteFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_field",
+          "default": "delete_field",
+          "title": "Delete Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Field",
+          "x-display-name": "Delete Field",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "field_id": {
+          "title": "Field Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a field id",
+            "depends_on": "table_id",
+            "field_name": "field_id",
+            "placeholder": "Select a field id\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "field_id"
+      ],
+      "title": "Delete Field",
+      "type": "object"
+    },
+    "NocoDBDeleteHookConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_hook",
+          "default": "delete_hook",
+          "title": "Delete Hook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Delete Hook",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "hook_id": {
+          "title": "Hook Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a hook id",
+            "depends_on": "table_id",
+            "field_name": "hook_id",
+            "placeholder": "Select a hook id\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "hook_id"
+      ],
+      "title": "Delete Hook",
+      "type": "object"
+    },
+    "NocoDBDeleteLinksConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_links",
+          "default": "delete_links",
+          "title": "Delete Links",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Link",
+          "x-display-name": "Delete Links",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "link_field_id": {
+          "title": "Link Field Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a link field id",
+            "field_name": "link_field_id",
+            "placeholder": "Select a link field id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a record id",
+            "field_name": "record_id",
+            "placeholder": "Select a record id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "link_field_id",
+        "record_id",
+        "payload"
+      ],
+      "title": "Delete Links",
+      "type": "object"
+    },
+    "NocoDBDeleteRecordsConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_records",
+          "default": "delete_records",
+          "title": "Delete Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Delete Records",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "records": {
+          "description": "JSON object or array of objects. Create: {\"fields\":{\"Title\":\"Example\"}}; update/delete: include each record's id.",
+          "title": "Record Data",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "records"
+      ],
+      "title": "Delete Records",
+      "type": "object"
+    },
+    "NocoDBDeleteTableConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_table",
+          "default": "delete_table",
+          "title": "Delete Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Delete Table",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id"
+      ],
+      "title": "Delete Table",
+      "type": "object"
+    },
+    "NocoDBDeleteViewConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_view",
+          "default": "delete_view",
+          "title": "Delete View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "View",
+          "x-display-name": "Delete View",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "view_id": {
+          "title": "View Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a view id",
+            "depends_on": "table_id",
+            "field_name": "view_id",
+            "placeholder": "Select a view id\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "view_id"
+      ],
+      "title": "Delete View",
+      "type": "object"
+    },
+    "NocoDBDeleteWorkspaceConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_workspace",
+          "default": "delete_workspace",
+          "title": "Delete Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Delete Workspace",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "title": "Workspace Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workspace id",
+            "field_name": "workspace_id",
+            "placeholder": "Select a workspace id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "Delete Workspace",
+      "type": "object"
+    },
+    "NocoDBGetBaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_base",
+          "default": "get_base",
+          "title": "Get Base",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Base",
+          "x-display-name": "Get Base",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "base_id"
+      ],
+      "title": "Get Base",
+      "type": "object"
+    },
+    "NocoDBGetFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_field",
+          "default": "get_field",
+          "title": "Get Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Field",
+          "x-display-name": "Get Field",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "field_id": {
+          "title": "Field Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a field id",
+            "depends_on": "table_id",
+            "field_name": "field_id",
+            "placeholder": "Select a field id\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "field_id"
+      ],
+      "title": "Get Field",
+      "type": "object"
+    },
+    "NocoDBGetHookConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_hook",
+          "default": "get_hook",
+          "title": "Get Hook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Get Hook",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "hook_id": {
+          "title": "Hook Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a hook id",
+            "depends_on": "table_id",
+            "field_name": "hook_id",
+            "placeholder": "Select a hook id\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "hook_id"
+      ],
+      "title": "Get Hook",
+      "type": "object"
+    },
+    "NocoDBGetRecordConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_record",
+          "default": "get_record",
+          "title": "Get Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Get Record",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a record id",
+            "field_name": "record_id",
+            "placeholder": "Select a record id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "record_id"
+      ],
+      "title": "Get Record",
+      "type": "object"
+    },
+    "NocoDBGetTableConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_table",
+          "default": "get_table",
+          "title": "Get Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Get Table",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id"
+      ],
+      "title": "Get Table",
+      "type": "object"
+    },
+    "NocoDBGetViewConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_view",
+          "default": "get_view",
+          "title": "Get View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "View",
+          "x-display-name": "Get View",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "view_id": {
+          "title": "View Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a view id",
+            "depends_on": "table_id",
+            "field_name": "view_id",
+            "placeholder": "Select a view id\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "view_id"
+      ],
+      "title": "Get View",
+      "type": "object"
+    },
+    "NocoDBGetWorkspaceConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "title": "Get Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Get Workspace",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "title": "Workspace Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workspace id",
+            "field_name": "workspace_id",
+            "placeholder": "Select a workspace id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "Get Workspace",
+      "type": "object"
+    },
+    "NocoDBListBasesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_bases",
+          "default": "list_bases",
+          "title": "List Bases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Base",
+          "x-display-name": "List Bases",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "title": "Workspace Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workspace id",
+            "field_name": "workspace_id",
+            "placeholder": "Select a workspace id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "List Bases",
+      "type": "object"
+    },
+    "NocoDBListCommentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "List Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "List Comments",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a record id",
+            "field_name": "record_id",
+            "placeholder": "Select a record id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "record_id"
+      ],
+      "title": "List Comments",
+      "type": "object"
+    },
+    "NocoDBListHooksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_hooks",
+          "default": "list_hooks",
+          "title": "List Hooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "List Hooks",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id"
+      ],
+      "title": "List Hooks",
+      "type": "object"
+    },
+    "NocoDBListLinksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_links",
+          "default": "list_links",
+          "title": "List Links",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Link",
+          "x-display-name": "List Links",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "link_field_id": {
+          "title": "Link Field Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a link field id",
+            "field_name": "link_field_id",
+            "placeholder": "Select a link field id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a record id",
+            "field_name": "record_id",
+            "placeholder": "Select a record id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NocoDB filter expression.",
+          "title": "Where"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NocoDB sort expression.",
+          "title": "Sort"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "link_field_id",
+        "record_id"
+      ],
+      "title": "List Links",
+      "type": "object"
+    },
+    "NocoDBListRecordsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_records",
+          "default": "list_records",
+          "title": "List Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "List Records",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NocoDB filter expression.",
+          "title": "Where"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NocoDB sort expression.",
+          "title": "Sort"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "view_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "View ID"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma separated field names or IDs.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id"
+      ],
+      "title": "List Records",
+      "type": "object"
+    },
+    "NocoDBListTablesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tables",
+          "default": "list_tables",
+          "title": "List Tables",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "List Tables",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "base_id"
+      ],
+      "title": "List Tables",
+      "type": "object"
+    },
+    "NocoDBListViewsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_views",
+          "default": "list_views",
+          "title": "List Views",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "View",
+          "x-display-name": "List Views",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id"
+      ],
+      "title": "List Views",
+      "type": "object"
+    },
+    "NocoDBListWorkspacesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "List Workspaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "List Workspaces",
+          "x-is-trigger": false
+        }
+      },
+      "title": "List Workspaces",
+      "type": "object"
+    },
+    "NocoDBResolveCommentConfig": {
+      "properties": {
+        "operation": {
+          "const": "resolve_comment",
+          "default": "resolve_comment",
+          "title": "Resolve Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Resolve Comment",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "comment_id": {
+          "title": "Comment Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a comment id",
+            "field_name": "comment_id",
+            "placeholder": "Select a comment id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "base_id",
+        "comment_id"
+      ],
+      "title": "Resolve Comment",
+      "type": "object"
+    },
+    "NocoDBTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "nocodb_api_token",
+          "default": "nocodb_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "description": "A NocoDB API token with access to the bases used by this workflow.",
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "base_url": {
+          "default": "https://app.nocodb.com",
+          "description": "Your NocoDB Cloud or self-hosted HTTPS origin (no /api/v3 suffix).",
+          "title": "NocoDB URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "NocoDBTokenCredential",
+      "type": "object",
+      "x-credential-instructions": "Create a scoped API token under Account settings \u2192 API Tokens. Grant read/write access for the operations you use.",
+      "x-credential-url": "https://app.nocodb.com/account/tokens"
+    },
+    "NocoDBUpdateBaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_base",
+          "default": "update_base",
+          "title": "Update Base",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Base",
+          "x-display-name": "Update Base",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "payload"
+      ],
+      "title": "Update Base",
+      "type": "object"
+    },
+    "NocoDBUpdateCommentConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_comment",
+          "default": "update_comment",
+          "title": "Update Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Update Comment",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "comment_id": {
+          "title": "Comment Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a comment id",
+            "field_name": "comment_id",
+            "placeholder": "Select a comment id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "comment_id",
+        "payload"
+      ],
+      "title": "Update Comment",
+      "type": "object"
+    },
+    "NocoDBUpdateFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_field",
+          "default": "update_field",
+          "title": "Update Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Field",
+          "x-display-name": "Update Field",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "field_id": {
+          "title": "Field Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a field id",
+            "depends_on": "table_id",
+            "field_name": "field_id",
+            "placeholder": "Select a field id\u2026",
+            "searchable": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "field_id",
+        "payload"
+      ],
+      "title": "Update Field",
+      "type": "object"
+    },
+    "NocoDBUpdateHookConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_hook",
+          "default": "update_hook",
+          "title": "Update Hook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Update Hook",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "hook_id": {
+          "title": "Hook Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a hook id",
+            "depends_on": "table_id",
+            "field_name": "hook_id",
+            "placeholder": "Select a hook id\u2026",
+            "searchable": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "hook_id",
+        "payload"
+      ],
+      "title": "Update Hook",
+      "type": "object"
+    },
+    "NocoDBUpdateRecordsConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_records",
+          "default": "update_records",
+          "title": "Update Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Update Records",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "records": {
+          "description": "JSON object or array of objects. Create: {\"fields\":{\"Title\":\"Example\"}}; update/delete: include each record's id.",
+          "title": "Record Data",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "records"
+      ],
+      "title": "Update Records",
+      "type": "object"
+    },
+    "NocoDBUpdateTableConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_table",
+          "default": "update_table",
+          "title": "Update Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Update Table",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "payload"
+      ],
+      "title": "Update Table",
+      "type": "object"
+    },
+    "NocoDBUpdateViewConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_view",
+          "default": "update_view",
+          "title": "Update View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "View",
+          "x-display-name": "Update View",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "view_id": {
+          "title": "View Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a view id",
+            "depends_on": "table_id",
+            "field_name": "view_id",
+            "placeholder": "Select a view id\u2026",
+            "searchable": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "view_id",
+        "payload"
+      ],
+      "title": "Update View",
+      "type": "object"
+    },
+    "NocoDBUpdateWorkspaceConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_workspace",
+          "default": "update_workspace",
+          "title": "Update Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Update Workspace",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "title": "Workspace Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workspace id",
+            "field_name": "workspace_id",
+            "placeholder": "Select a workspace id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "payload"
+      ],
+      "title": "Update Workspace",
+      "type": "object"
+    },
+    "NocoDBUpsertRecordsConfig": {
+      "properties": {
+        "operation": {
+          "const": "upsert_records",
+          "default": "upsert_records",
+          "title": "Upsert Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Upsert Records",
+          "x-is-trigger": false
+        },
+        "base_id": {
+          "title": "Base Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a base id",
+            "field_name": "base_id",
+            "placeholder": "Select a base id\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a table id",
+            "depends_on": "base_id",
+            "field_name": "table_id",
+            "placeholder": "Select a table id\u2026",
+            "searchable": true
+          }
+        },
+        "payload": {
+          "description": "JSON request body in NocoDB v3 API format.",
+          "title": "JSON Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "payload"
+      ],
+      "title": "Upsert Records",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_links": "#/$defs/NocoDBAddLinksConfig",
+          "count_records": "#/$defs/NocoDBCountRecordsConfig",
+          "create_base": "#/$defs/NocoDBCreateBaseConfig",
+          "create_comment": "#/$defs/NocoDBCreateCommentConfig",
+          "create_field": "#/$defs/NocoDBCreateFieldConfig",
+          "create_hook": "#/$defs/NocoDBCreateHookConfig",
+          "create_records": "#/$defs/NocoDBCreateRecordsConfig",
+          "create_table": "#/$defs/NocoDBCreateTableConfig",
+          "create_view": "#/$defs/NocoDBCreateViewConfig",
+          "create_workspace": "#/$defs/NocoDBCreateWorkspaceConfig",
+          "delete_base": "#/$defs/NocoDBDeleteBaseConfig",
+          "delete_comment": "#/$defs/NocoDBDeleteCommentConfig",
+          "delete_field": "#/$defs/NocoDBDeleteFieldConfig",
+          "delete_hook": "#/$defs/NocoDBDeleteHookConfig",
+          "delete_links": "#/$defs/NocoDBDeleteLinksConfig",
+          "delete_records": "#/$defs/NocoDBDeleteRecordsConfig",
+          "delete_table": "#/$defs/NocoDBDeleteTableConfig",
+          "delete_view": "#/$defs/NocoDBDeleteViewConfig",
+          "delete_workspace": "#/$defs/NocoDBDeleteWorkspaceConfig",
+          "get_base": "#/$defs/NocoDBGetBaseConfig",
+          "get_field": "#/$defs/NocoDBGetFieldConfig",
+          "get_hook": "#/$defs/NocoDBGetHookConfig",
+          "get_record": "#/$defs/NocoDBGetRecordConfig",
+          "get_table": "#/$defs/NocoDBGetTableConfig",
+          "get_view": "#/$defs/NocoDBGetViewConfig",
+          "get_workspace": "#/$defs/NocoDBGetWorkspaceConfig",
+          "list_bases": "#/$defs/NocoDBListBasesConfig",
+          "list_comments": "#/$defs/NocoDBListCommentsConfig",
+          "list_hooks": "#/$defs/NocoDBListHooksConfig",
+          "list_links": "#/$defs/NocoDBListLinksConfig",
+          "list_records": "#/$defs/NocoDBListRecordsConfig",
+          "list_tables": "#/$defs/NocoDBListTablesConfig",
+          "list_views": "#/$defs/NocoDBListViewsConfig",
+          "list_workspaces": "#/$defs/NocoDBListWorkspacesConfig",
+          "resolve_comment": "#/$defs/NocoDBResolveCommentConfig",
+          "update_base": "#/$defs/NocoDBUpdateBaseConfig",
+          "update_comment": "#/$defs/NocoDBUpdateCommentConfig",
+          "update_field": "#/$defs/NocoDBUpdateFieldConfig",
+          "update_hook": "#/$defs/NocoDBUpdateHookConfig",
+          "update_records": "#/$defs/NocoDBUpdateRecordsConfig",
+          "update_table": "#/$defs/NocoDBUpdateTableConfig",
+          "update_view": "#/$defs/NocoDBUpdateViewConfig",
+          "update_workspace": "#/$defs/NocoDBUpdateWorkspaceConfig",
+          "upsert_records": "#/$defs/NocoDBUpsertRecordsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/NocoDBListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBGetWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBCreateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBUpdateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBDeleteWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBListBasesConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBGetBaseConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBCreateBaseConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBUpdateBaseConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBDeleteBaseConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBListTablesConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBGetTableConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBCreateTableConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBUpdateTableConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBDeleteTableConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBGetFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBCreateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBUpdateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBDeleteFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBListViewsConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBGetViewConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBCreateViewConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBUpdateViewConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBDeleteViewConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBListRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBGetRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBCountRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBCreateRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBUpdateRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBDeleteRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBUpsertRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBListLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBAddLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBDeleteLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBListHooksConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBGetHookConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBCreateHookConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBUpdateHookConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBDeleteHookConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBUpdateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/NocoDBResolveCommentConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "$ref": "#/$defs/NocoDBTokenCredential",
+      "description": "NocoDB API token"
+    }
+  },
+  "required": [
+    "config",
+    "credentials"
+  ],
+  "title": "Nocodb Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a row in my NocoDB Customers table",
+    "Find records in the Orders table that need follow up",
+    "Update a NocoDB record and read it back"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -166,6 +166,9 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Affinity
     'AffinityAPIKeyCredential': 'affinity_api_key',
 
+    // NocoDB
+    'NocoDBTokenCredential': 'nocodb_api_token',
+
     // Basedash
     'BasedashApiKeyCredential': 'basedash_api_key',
 
