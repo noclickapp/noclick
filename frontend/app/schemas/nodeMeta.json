@@ -543,6 +543,9 @@
         "on_event_tentative"
       ]
     },
+    "automation-google-classroom": {
+      "agentToolProvider": true
+    },
     "automation-google-cloud-storage": {
       "agentToolProvider": true,
       "triggerOperations": [

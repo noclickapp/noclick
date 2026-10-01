@@ -54,6 +54,7 @@ from nodes.google_tasks_node import GoogleTasksNode
 from nodes.google_contacts_node import GoogleContactsNode
 from nodes.google_docs_node import GoogleDocsNode
 from nodes.google_forms_node import GoogleFormsNode
+from nodes.google_classroom_node import GoogleClassroomNode
 from nodes.google_slides_node import GoogleSlidesNode
 from nodes.hackernews_node import HackerNewsNode
 from nodes.hubspot_node import HubSpotNode
@@ -414,6 +415,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-google-contacts': GoogleContactsNode,
     'automation-google-docs': GoogleDocsNode,
     'automation-google-forms': GoogleFormsNode,
+    'automation-google-classroom': GoogleClassroomNode,
     'automation-google-slides': GoogleSlidesNode,
     'automation-google-analytics': GoogleAnalyticsNode,
     'automation-google-ads': GoogleAdsNode,

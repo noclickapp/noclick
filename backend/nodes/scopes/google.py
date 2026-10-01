@@ -44,6 +44,7 @@ DOCUMENTS = "https://www.googleapis.com/auth/documents"
 DRIVE = "https://www.googleapis.com/auth/drive"
 FORMS_BODY = "https://www.googleapis.com/auth/forms.body"
 FORMS_RESPONSES_READONLY = "https://www.googleapis.com/auth/forms.responses.readonly"
+CLASSROOM = "https://www.googleapis.com/auth/classroom."
 PRESENTATIONS = "https://www.googleapis.com/auth/presentations"
 SPREADSHEETS = "https://www.googleapis.com/auth/spreadsheets"
 TASKS = "https://www.googleapis.com/auth/tasks"
@@ -352,6 +353,23 @@ GOOGLE_FORMS_SCOPES = ScopeRegistry(
             DRIVE: ("list_google_drive_forms",),
         }
     ),
+)
+
+
+GOOGLE_CLASSROOM_SCOPES = ScopeRegistry(
+    provider="google-classroom",
+    requirements=_table({
+        CLASSROOM + "courses.readonly": ("list_courses", "get_course"),
+        CLASSROOM + "courses": ("create_course", "update_course"),
+        CLASSROOM + "coursework.students.readonly": ("list_coursework", "get_coursework"),
+        CLASSROOM + "coursework.students": ("create_coursework",),
+        CLASSROOM + "announcements.readonly": ("list_announcements",),
+        CLASSROOM + "announcements": ("create_announcement",),
+        CLASSROOM + "topics.readonly": ("list_topics",),
+        CLASSROOM + "topics": ("create_topic",),
+        CLASSROOM + "rosters.readonly": ("list_students",),
+        CLASSROOM + "student-submissions.students.readonly": ("list_submissions",),
+    }),
 )
 
 

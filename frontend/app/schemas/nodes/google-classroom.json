@@ -1,0 +1,836 @@
+{
+  "$defs": {
+    "CreateAnnouncement": {
+      "properties": {
+        "operation": {
+          "const": "create_announcement",
+          "default": "create_announcement",
+          "description": "Create a draft or published announcement.",
+          "title": "Create Announcement",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Announcements",
+          "x-creates-resource": true,
+          "x-display-name": "Create Announcement",
+          "x-is-trigger": false,
+          "x-resource-id-path": "id",
+          "x-resource-type": "google_classroom"
+        },
+        "course_id": {
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "text": {
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "state": {
+          "default": "DRAFT",
+          "enum": [
+            "PUBLISHED",
+            "DRAFT"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id",
+        "text"
+      ],
+      "title": "CreateAnnouncement",
+      "type": "object"
+    },
+    "CreateCourse": {
+      "properties": {
+        "operation": {
+          "const": "create_course",
+          "default": "create_course",
+          "description": "Create a course owned by the connected user or another teacher.",
+          "title": "Create Course",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Courses",
+          "x-creates-resource": true,
+          "x-display-name": "Create Course",
+          "x-is-trigger": false,
+          "x-resource-id-path": "id",
+          "x-resource-type": "google_classroom"
+        },
+        "name": {
+          "title": "Course Name",
+          "type": "string"
+        },
+        "owner_id": {
+          "default": "me",
+          "description": "Google user ID or 'me'.",
+          "title": "Owner ID",
+          "type": "string"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCourse",
+      "type": "object"
+    },
+    "CreateCourseWork": {
+      "properties": {
+        "operation": {
+          "const": "create_coursework",
+          "default": "create_coursework",
+          "description": "Create a draft or published assignment.",
+          "title": "Create Assignment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Course Work",
+          "x-creates-resource": true,
+          "x-display-name": "Create Assignment",
+          "x-is-trigger": false,
+          "x-resource-id-path": "id",
+          "x-resource-type": "google_classroom"
+        },
+        "course_id": {
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "state": {
+          "default": "DRAFT",
+          "enum": [
+            "PUBLISHED",
+            "DRAFT"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "max_points": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Points"
+        },
+        "topic_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topic Id"
+        }
+      },
+      "required": [
+        "course_id",
+        "title"
+      ],
+      "title": "CreateCourseWork",
+      "type": "object"
+    },
+    "CreateTopic": {
+      "properties": {
+        "operation": {
+          "const": "create_topic",
+          "default": "create_topic",
+          "description": "Create a topic in a course.",
+          "title": "Create Topic",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Topics",
+          "x-creates-resource": true,
+          "x-display-name": "Create Topic",
+          "x-is-trigger": false,
+          "x-resource-id-path": "id",
+          "x-resource-type": "google_classroom"
+        },
+        "course_id": {
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id",
+        "name"
+      ],
+      "title": "CreateTopic",
+      "type": "object"
+    },
+    "GetCourse": {
+      "properties": {
+        "operation": {
+          "const": "get_course",
+          "default": "get_course",
+          "description": "Read a course by its Classroom ID.",
+          "title": "Get Course",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Courses",
+          "x-display-name": "Get Course",
+          "x-is-trigger": false
+        },
+        "course_id": {
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "GetCourse",
+      "type": "object"
+    },
+    "GetCourseWork": {
+      "properties": {
+        "operation": {
+          "const": "get_coursework",
+          "default": "get_coursework",
+          "description": "Read one assignment or question.",
+          "title": "Get Course Work",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Course Work",
+          "x-display-name": "Get Course Work",
+          "x-is-trigger": false
+        },
+        "course_id": {
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "coursework_id": {
+          "title": "Course Work ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id",
+        "coursework_id"
+      ],
+      "title": "GetCourseWork",
+      "type": "object"
+    },
+    "GoogleClassroomOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "google_classroom_oauth",
+          "default": "google_classroom_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "title": "Expires At",
+          "type": "string"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleClassroomOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/classroom.courses.readonly",
+        "https://www.googleapis.com/auth/classroom.courses",
+        "https://www.googleapis.com/auth/classroom.coursework.students.readonly",
+        "https://www.googleapis.com/auth/classroom.coursework.students",
+        "https://www.googleapis.com/auth/classroom.announcements.readonly",
+        "https://www.googleapis.com/auth/classroom.announcements",
+        "https://www.googleapis.com/auth/classroom.topics.readonly",
+        "https://www.googleapis.com/auth/classroom.topics",
+        "https://www.googleapis.com/auth/classroom.rosters.readonly",
+        "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly"
+      ]
+    },
+    "ListAnnouncements": {
+      "properties": {
+        "operation": {
+          "const": "list_announcements",
+          "default": "list_announcements",
+          "description": "List course announcements.",
+          "title": "List Announcements",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Announcements",
+          "x-display-name": "List Announcements",
+          "x-is-trigger": false
+        },
+        "course_id": {
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "ListAnnouncements",
+      "type": "object"
+    },
+    "ListCourseWork": {
+      "properties": {
+        "operation": {
+          "const": "list_coursework",
+          "default": "list_coursework",
+          "description": "List assignments and questions in a course.",
+          "title": "List Course Work",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Course Work",
+          "x-display-name": "List Course Work",
+          "x-is-trigger": false
+        },
+        "course_id": {
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "ListCourseWork",
+      "type": "object"
+    },
+    "ListCourses": {
+      "properties": {
+        "operation": {
+          "const": "list_courses",
+          "default": "list_courses",
+          "description": "List courses visible to the connected teacher or student.",
+          "title": "List Courses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Courses",
+          "x-display-name": "List Courses",
+          "x-is-trigger": false
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "title": "ListCourses",
+      "type": "object"
+    },
+    "ListStudents": {
+      "properties": {
+        "operation": {
+          "const": "list_students",
+          "default": "list_students",
+          "description": "List enrolled students in a course.",
+          "title": "List Students",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Roster",
+          "x-display-name": "List Students",
+          "x-is-trigger": false
+        },
+        "course_id": {
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "ListStudents",
+      "type": "object"
+    },
+    "ListSubmissions": {
+      "properties": {
+        "operation": {
+          "const": "list_submissions",
+          "default": "list_submissions",
+          "description": "List student submissions for one assignment.",
+          "title": "List Submissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Course Work",
+          "x-display-name": "List Submissions",
+          "x-is-trigger": false
+        },
+        "course_id": {
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "coursework_id": {
+          "title": "Course Work ID",
+          "type": "string"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "course_id",
+        "coursework_id"
+      ],
+      "title": "ListSubmissions",
+      "type": "object"
+    },
+    "ListTopics": {
+      "properties": {
+        "operation": {
+          "const": "list_topics",
+          "default": "list_topics",
+          "description": "List course topics.",
+          "title": "List Topics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Topics",
+          "x-display-name": "List Topics",
+          "x-is-trigger": false
+        },
+        "course_id": {
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "ListTopics",
+      "type": "object"
+    },
+    "UpdateCourse": {
+      "properties": {
+        "operation": {
+          "const": "update_course",
+          "default": "update_course",
+          "description": "Change course details or state.",
+          "title": "Update Course",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Courses",
+          "x-display-name": "Update Course",
+          "x-is-trigger": false
+        },
+        "course_id": {
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "course_state": {
+          "anyOf": [
+            {
+              "enum": [
+                "ACTIVE",
+                "ARCHIVED",
+                "PROVISIONED",
+                "DECLINED",
+                "SUSPENDED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Course State",
+          "enum": [
+            "ACTIVE",
+            "ARCHIVED",
+            "PROVISIONED",
+            "DECLINED",
+            "SUSPENDED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "UpdateCourse",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_announcement": "#/$defs/CreateAnnouncement",
+          "create_course": "#/$defs/CreateCourse",
+          "create_coursework": "#/$defs/CreateCourseWork",
+          "create_topic": "#/$defs/CreateTopic",
+          "get_course": "#/$defs/GetCourse",
+          "get_coursework": "#/$defs/GetCourseWork",
+          "list_announcements": "#/$defs/ListAnnouncements",
+          "list_courses": "#/$defs/ListCourses",
+          "list_coursework": "#/$defs/ListCourseWork",
+          "list_students": "#/$defs/ListStudents",
+          "list_submissions": "#/$defs/ListSubmissions",
+          "list_topics": "#/$defs/ListTopics",
+          "update_course": "#/$defs/UpdateCourse"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCourses"
+        },
+        {
+          "$ref": "#/$defs/GetCourse"
+        },
+        {
+          "$ref": "#/$defs/CreateCourse"
+        },
+        {
+          "$ref": "#/$defs/UpdateCourse"
+        },
+        {
+          "$ref": "#/$defs/ListCourseWork"
+        },
+        {
+          "$ref": "#/$defs/GetCourseWork"
+        },
+        {
+          "$ref": "#/$defs/CreateCourseWork"
+        },
+        {
+          "$ref": "#/$defs/ListAnnouncements"
+        },
+        {
+          "$ref": "#/$defs/CreateAnnouncement"
+        },
+        {
+          "$ref": "#/$defs/ListTopics"
+        },
+        {
+          "$ref": "#/$defs/CreateTopic"
+        },
+        {
+          "$ref": "#/$defs/ListStudents"
+        },
+        {
+          "$ref": "#/$defs/ListSubmissions"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleClassroomOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-classroom Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List my Google Classroom courses and assignments",
+    "Create a draft assignment in my biology class",
+    "Post an announcement to the class",
+    "Read student submissions for an assignment"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

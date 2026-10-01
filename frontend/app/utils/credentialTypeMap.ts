@@ -57,6 +57,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'GoogleDocsOAuthCredential': 'google_docs_oauth',
     'GoogleSlidesOAuthCredential': 'google_slides_oauth',
     'GoogleFormsOAuthCredential': 'google_forms_oauth',
+    'GoogleClassroomOAuthCredential': 'google_classroom_oauth',
     'GoogleTasksOAuthCredential': 'google_tasks_oauth',
     'GoogleContactsOAuthCredential': 'google_contacts_oauth',
     'GoogleAnalyticsOAuthCredential': 'google_analytics_oauth',

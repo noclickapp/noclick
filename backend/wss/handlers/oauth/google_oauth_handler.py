@@ -384,7 +384,9 @@ class GoogleOAuthHandler(DatabasePoolMixin, SocketIOHandler):
         scope_set = set(scopes)
 
         # Check specific Google service scopes first (before generic drive scope)
-        if 'https://www.googleapis.com/auth/spreadsheets' in scope_set:
+        if any(scope.startswith('https://www.googleapis.com/auth/classroom.') for scope in scope_set):
+            return 'google_classroom_oauth'
+        elif 'https://www.googleapis.com/auth/spreadsheets' in scope_set:
             return 'google_sheets_oauth'
         elif 'https://www.googleapis.com/auth/gmail.readonly' in scope_set or \
              'https://www.googleapis.com/auth/gmail.send' in scope_set or \

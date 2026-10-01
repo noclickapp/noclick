@@ -523,6 +523,7 @@ function getProviderLabel(providerKey: string): string {
         'google_contacts': 'Google Account',
         'google_docs': 'Google Account',
         'google_forms': 'Google Account',
+        'google_classroom': 'Google Account',
         'google_slides': 'Google Account',
         'google_analytics': 'Google Account',
         'google_ads': 'Google Account',
