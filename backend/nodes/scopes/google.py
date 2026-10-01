@@ -360,15 +360,33 @@ GOOGLE_CLASSROOM_SCOPES = ScopeRegistry(
     provider="google-classroom",
     requirements=_table({
         CLASSROOM + "courses.readonly": ("list_courses", "get_course"),
-        CLASSROOM + "courses": ("create_course", "update_course"),
+        CLASSROOM + "courses": ("create_course", "update_course", "delete_course"),
         CLASSROOM + "coursework.students.readonly": ("list_coursework", "get_coursework"),
-        CLASSROOM + "coursework.students": ("create_coursework",),
-        CLASSROOM + "announcements.readonly": ("list_announcements",),
-        CLASSROOM + "announcements": ("create_announcement",),
-        CLASSROOM + "topics.readonly": ("list_topics",),
-        CLASSROOM + "topics": ("create_topic",),
-        CLASSROOM + "rosters.readonly": ("list_students",),
-        CLASSROOM + "student-submissions.students.readonly": ("list_submissions",),
+        CLASSROOM + "coursework.students": (
+            "create_coursework", "update_coursework", "delete_coursework",
+            "grade_submission", "return_submission",
+        ),
+        CLASSROOM + "announcements.readonly": ("list_announcements", "get_announcement"),
+        CLASSROOM + "announcements": (
+            "create_announcement", "update_announcement", "delete_announcement",
+        ),
+        CLASSROOM + "topics.readonly": ("list_topics", "get_topic"),
+        CLASSROOM + "topics": ("create_topic", "update_topic", "delete_topic"),
+        CLASSROOM + "rosters.readonly": (
+            "list_students", "get_student", "list_teachers", "get_teacher",
+            "list_invitations", "get_invitation",
+        ),
+        CLASSROOM + "rosters": (
+            "add_student", "remove_student", "add_teacher", "remove_teacher",
+            "create_invitation", "delete_invitation", "accept_invitation",
+        ),
+        CLASSROOM + "courseworkmaterials.readonly": ("list_materials", "get_material"),
+        CLASSROOM + "courseworkmaterials": (
+            "create_material", "update_material", "delete_material",
+        ),
+        CLASSROOM + "student-submissions.students.readonly": (
+            "list_submissions", "get_submission",
+        ),
     }),
 )
 
