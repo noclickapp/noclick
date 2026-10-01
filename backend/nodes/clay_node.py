@@ -7,7 +7,7 @@ separate MCP endpoint and does not authorize these Public API operations.
 
 import json
 import time
-from typing import Annotated, Any, ClassVar, Literal
+from typing import Annotated, Any, ClassVar, Literal, Union
 from urllib.parse import quote
 
 import httpx
@@ -129,13 +129,15 @@ class ClayQueryTablesConfig(BaseModel):
 
 
 ClayConfig = Annotated[
-    ClayGetMeConfig
-    | ClayGetCreditBalanceConfig
-    | ClayCreateSearchConfig
-    | ClayGetSearchResultsConfig
-    | ClayRunRoutineConfig
-    | ClayGetRoutineResultsConfig
-    | ClayQueryTablesConfig,
+    Union[
+        ClayGetMeConfig,
+        ClayGetCreditBalanceConfig,
+        ClayCreateSearchConfig,
+        ClayGetSearchResultsConfig,
+        ClayRunRoutineConfig,
+        ClayGetRoutineResultsConfig,
+        ClayQueryTablesConfig,
+    ],
     Discriminator("operation"),
 ]
 
