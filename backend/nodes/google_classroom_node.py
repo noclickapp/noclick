@@ -271,7 +271,7 @@ class GetStudent(BaseModel):
 
 
 class AddStudent(BaseModel):
-    operation: Literal["add_student"] = _operation("add_student", "Add Student", "Roster", creates=True)
+    operation: Literal["add_student"] = _operation("add_student", "Add Student", "Roster")
     course_id: str = Field(..., title="Course", json_schema_extra=COURSE_PICKER)
     user_id: str = Field(..., title="Student ID or Email")
 
@@ -296,7 +296,7 @@ class GetTeacher(BaseModel):
 
 
 class AddTeacher(BaseModel):
-    operation: Literal["add_teacher"] = _operation("add_teacher", "Add Teacher", "Roster", creates=True)
+    operation: Literal["add_teacher"] = _operation("add_teacher", "Add Teacher", "Roster")
     course_id: str = Field(..., title="Course", json_schema_extra=COURSE_PICKER)
     user_id: str = Field(..., title="Teacher ID or Email")
 

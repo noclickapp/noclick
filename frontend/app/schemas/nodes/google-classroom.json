@@ -34,11 +34,8 @@
           "type": "string",
           "ui:hidden": true,
           "x-category": "Roster",
-          "x-creates-resource": true,
           "x-display-name": "Add Student",
-          "x-is-trigger": false,
-          "x-resource-id-path": "id",
-          "x-resource-type": "google_classroom"
+          "x-is-trigger": false
         },
         "course_id": {
           "title": "Course",
@@ -74,11 +71,8 @@
           "type": "string",
           "ui:hidden": true,
           "x-category": "Roster",
-          "x-creates-resource": true,
           "x-display-name": "Add Teacher",
-          "x-is-trigger": false,
-          "x-resource-id-path": "id",
-          "x-resource-type": "google_classroom"
+          "x-is-trigger": false
         },
         "course_id": {
           "title": "Course",
