@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock, patch
 
 import httpx
 import pytest
+from pydantic import ValidationError
 
 from nodes.google_classroom_node import (
     GoogleClassroomNode, GoogleClassroomNodeConfig,
@@ -165,3 +166,11 @@ def test_google_oauth_routes_classroom_scopes_to_the_classroom_credential():
         "email", "https://www.googleapis.com/auth/classroom.courses.readonly",
     ]
     assert GoogleOAuthHandler._get_credential_type_from_scopes(None, scopes) == "google_classroom_oauth"
+
+
+def test_list_invitations_requires_a_course_filter():
+    # Classroom rejects an unfiltered invitations.list request.
+    with pytest.raises(ValidationError):
+        GoogleClassroomNodeConfig(
+            config={"operation": "list_invitations"}, credentials=CREDS,
+        )

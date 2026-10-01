@@ -309,7 +309,7 @@ class RemoveTeacher(BaseModel):
 
 class ListInvitations(BaseModel):
     operation: Literal["list_invitations"] = _operation("list_invitations", "List Invitations", "Invitations")
-    course_id: Optional[str] = Field(None, title="Course ID")
+    course_id: str = Field(..., title="Course", json_schema_extra=COURSE_PICKER)
     page_size: int = Field(50, ge=1, le=100)
     page_token: Optional[str] = None
 

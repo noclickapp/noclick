@@ -1255,16 +1255,16 @@
           "x-is-trigger": false
         },
         "course_id": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Course ID"
+          "title": "Course",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a course ID",
+            "field_name": "course_id",
+            "placeholder": "Select a course...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
         },
         "page_size": {
           "default": 50,
@@ -1286,6 +1286,9 @@
           "title": "Page Token"
         }
       },
+      "required": [
+        "course_id"
+      ],
       "title": "ListInvitations",
       "type": "object"
     },
