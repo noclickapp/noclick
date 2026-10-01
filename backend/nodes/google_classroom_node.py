@@ -505,6 +505,7 @@ class GoogleClassroomNode(WorkflowNode):
             credential_id=(self.node_data or {}).get("credential_id"),
             user_id=self.user_id, credential=credential,
             refresh=refresh_access_token, provider="google",
+            caller_path="execute",
         )
         config = self.config.config
         invitation_operation = isinstance(config, (
