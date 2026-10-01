@@ -969,6 +969,9 @@
         "on_vendorcredit_void"
       ]
     },
+    "automation-recurly": {
+      "agentToolProvider": true
+    },
     "automation-reddit": {
       "agentToolProvider": true
     },

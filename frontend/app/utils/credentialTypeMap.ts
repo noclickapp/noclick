@@ -269,6 +269,9 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Brandfetch
     'BrandfetchApiKeyCredential': 'brandfetch_api_key',
 
+    // Recurly
+    'RecurlyApiKeyCredential': 'recurly_api_key',
+
     // Findymail
     'FindymailApiKeyCredential': 'findymail_api_key',
 

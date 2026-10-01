@@ -1,0 +1,1031 @@
+{
+  "$defs": {
+    "RecurlyApiKeyCredential": {
+      "description": "A Recurly private API key, used as the HTTP Basic username.",
+      "properties": {
+        "credential_type": {
+          "const": "recurly_api_key",
+          "default": "recurly_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "Private API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "RecurlyApiKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "Create a private API key in Recurly Admin under Integrations \u2192 API Credentials. Use a sandbox key when trying billing writes.",
+      "x-credential-url": "https://docs.recurly.com/recurly-subscriptions/docs/api-keys"
+    },
+    "RecurlyCancelSubscriptionConfig": {
+      "description": "Cancel Subscription using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "cancel_subscription",
+          "default": "cancel_subscription",
+          "title": "Cancel Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Cancel Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Subscription Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "RecurlyCancelSubscriptionConfig",
+      "type": "object"
+    },
+    "RecurlyCreateAccountConfig": {
+      "description": "Create Account using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "create_account",
+          "default": "create_account",
+          "title": "Create Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Create Account",
+          "x-is-trigger": false
+        },
+        "code": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Unique account code",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "extra_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Additional account fields (JSON object)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "RecurlyCreateAccountConfig",
+      "type": "object"
+    },
+    "RecurlyCreatePlanConfig": {
+      "description": "Create Plan using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "create_plan",
+          "default": "create_plan",
+          "title": "Create Plan",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Plans",
+          "x-display-name": "Create Plan",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "description": "Recurly v3 request object. See the operation's API reference for required fields.",
+          "title": "Request body (JSON object)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "RecurlyCreatePlanConfig",
+      "type": "object"
+    },
+    "RecurlyCreateSubscriptionChangeConfig": {
+      "description": "Create Subscription Change using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "create_subscription_change",
+          "default": "create_subscription_change",
+          "title": "Create Subscription Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Create Subscription Change",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "Recurly v3 request object. See the operation's API reference for required fields.",
+          "title": "Request body (JSON object)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "subscription_id",
+        "body_json"
+      ],
+      "title": "RecurlyCreateSubscriptionChangeConfig",
+      "type": "object"
+    },
+    "RecurlyCreateSubscriptionConfig": {
+      "description": "Create Subscription using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "create_subscription",
+          "default": "create_subscription",
+          "title": "Create Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Create Subscription",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "description": "Recurly v3 request object. See the operation's API reference for required fields.",
+          "title": "Request body (JSON object)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "RecurlyCreateSubscriptionConfig",
+      "type": "object"
+    },
+    "RecurlyGetAccountConfig": {
+      "description": "Get Account using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Get Account",
+          "x-is-trigger": false
+        },
+        "account_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Account Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "RecurlyGetAccountConfig",
+      "type": "object"
+    },
+    "RecurlyGetCouponConfig": {
+      "description": "Get Coupon using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "get_coupon",
+          "default": "get_coupon",
+          "title": "Get Coupon",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Get Coupon",
+          "x-is-trigger": false
+        },
+        "coupon_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Coupon Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coupon_id"
+      ],
+      "title": "RecurlyGetCouponConfig",
+      "type": "object"
+    },
+    "RecurlyGetInvoiceConfig": {
+      "description": "Get Invoice using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Get Invoice",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "RecurlyGetInvoiceConfig",
+      "type": "object"
+    },
+    "RecurlyGetPlanConfig": {
+      "description": "Get Plan using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "get_plan",
+          "default": "get_plan",
+          "title": "Get Plan",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Plans",
+          "x-display-name": "Get Plan",
+          "x-is-trigger": false
+        },
+        "plan_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Plan Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_id"
+      ],
+      "title": "RecurlyGetPlanConfig",
+      "type": "object"
+    },
+    "RecurlyGetRenewalPreviewConfig": {
+      "description": "Get Renewal Preview using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "get_renewal_preview",
+          "default": "get_renewal_preview",
+          "title": "Get Renewal Preview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Get Renewal Preview",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Subscription Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "RecurlyGetRenewalPreviewConfig",
+      "type": "object"
+    },
+    "RecurlyGetSubscriptionConfig": {
+      "description": "Get Subscription using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Get Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Get Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Subscription Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "RecurlyGetSubscriptionConfig",
+      "type": "object"
+    },
+    "RecurlyGetTransactionConfig": {
+      "description": "Get Transaction using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "get_transaction",
+          "default": "get_transaction",
+          "title": "Get Transaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactions",
+          "x-display-name": "Get Transaction",
+          "x-is-trigger": false
+        },
+        "transaction_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Transaction Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transaction_id"
+      ],
+      "title": "RecurlyGetTransactionConfig",
+      "type": "object"
+    },
+    "RecurlyListAccountsConfig": {
+      "description": "List Accounts using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List Accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "List Accounts",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from the previous page's next URL",
+          "title": "Cursor"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exact email"
+        }
+      },
+      "title": "RecurlyListAccountsConfig",
+      "type": "object"
+    },
+    "RecurlyListCouponsConfig": {
+      "description": "List Coupons using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "list_coupons",
+          "default": "list_coupons",
+          "title": "List Coupons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "List Coupons",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from the previous page's next URL",
+          "title": "Cursor"
+        }
+      },
+      "title": "RecurlyListCouponsConfig",
+      "type": "object"
+    },
+    "RecurlyListInvoicesConfig": {
+      "description": "List Invoices using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "List Invoices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "List Invoices",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from the previous page's next URL",
+          "title": "Cursor"
+        }
+      },
+      "title": "RecurlyListInvoicesConfig",
+      "type": "object"
+    },
+    "RecurlyListPlansConfig": {
+      "description": "List Plans using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "list_plans",
+          "default": "list_plans",
+          "title": "List Plans",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Plans",
+          "x-display-name": "List Plans",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from the previous page's next URL",
+          "title": "Cursor"
+        }
+      },
+      "title": "RecurlyListPlansConfig",
+      "type": "object"
+    },
+    "RecurlyListSitesConfig": {
+      "description": "List Sites using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "list_sites",
+          "default": "list_sites",
+          "title": "List Sites",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site",
+          "x-display-name": "List Sites",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from the previous page's next URL",
+          "title": "Cursor"
+        }
+      },
+      "title": "RecurlyListSitesConfig",
+      "type": "object"
+    },
+    "RecurlyListSubscriptionsConfig": {
+      "description": "List Subscriptions using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "List Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "List Subscriptions",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from the previous page's next URL",
+          "title": "Cursor"
+        }
+      },
+      "title": "RecurlyListSubscriptionsConfig",
+      "type": "object"
+    },
+    "RecurlyListTransactionsConfig": {
+      "description": "List Transactions using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "List Transactions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactions",
+          "x-display-name": "List Transactions",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from the previous page's next URL",
+          "title": "Cursor"
+        }
+      },
+      "title": "RecurlyListTransactionsConfig",
+      "type": "object"
+    },
+    "RecurlyPreviewSubscriptionChangeConfig": {
+      "description": "Preview Subscription Change using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "preview_subscription_change",
+          "default": "preview_subscription_change",
+          "title": "Preview Subscription Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Preview Subscription Change",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "Recurly v3 request object. See the operation's API reference for required fields.",
+          "title": "Request body (JSON object)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "subscription_id",
+        "body_json"
+      ],
+      "title": "RecurlyPreviewSubscriptionChangeConfig",
+      "type": "object"
+    },
+    "RecurlyUpdateAccountConfig": {
+      "description": "Update Account using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "update_account",
+          "default": "update_account",
+          "title": "Update Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Update Account",
+          "x-is-trigger": false
+        },
+        "account_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "extra_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Additional account fields (JSON object)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "RecurlyUpdateAccountConfig",
+      "type": "object"
+    },
+    "RecurlyUpdatePlanConfig": {
+      "description": "Update Plan using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "update_plan",
+          "default": "update_plan",
+          "title": "Update Plan",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Plans",
+          "x-display-name": "Update Plan",
+          "x-is-trigger": false
+        },
+        "plan_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "Recurly v3 request object. See the operation's API reference for required fields.",
+          "title": "Request body (JSON object)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "plan_id",
+        "body_json"
+      ],
+      "title": "RecurlyUpdatePlanConfig",
+      "type": "object"
+    },
+    "RecurlyUpdateSubscriptionConfig": {
+      "description": "Update Subscription using the Recurly Subscriptions API v3.",
+      "properties": {
+        "operation": {
+          "const": "update_subscription",
+          "default": "update_subscription",
+          "title": "Update Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Update Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "description": "Recurly ID, or code prefixed with code- where supported",
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "Recurly v3 request object. See the operation's API reference for required fields.",
+          "title": "Request body (JSON object)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "subscription_id",
+        "body_json"
+      ],
+      "title": "RecurlyUpdateSubscriptionConfig",
+      "type": "object"
+    }
+  },
+  "description": "Selected Recurly operation and its API key.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_subscription": "#/$defs/RecurlyCancelSubscriptionConfig",
+          "create_account": "#/$defs/RecurlyCreateAccountConfig",
+          "create_plan": "#/$defs/RecurlyCreatePlanConfig",
+          "create_subscription": "#/$defs/RecurlyCreateSubscriptionConfig",
+          "create_subscription_change": "#/$defs/RecurlyCreateSubscriptionChangeConfig",
+          "get_account": "#/$defs/RecurlyGetAccountConfig",
+          "get_coupon": "#/$defs/RecurlyGetCouponConfig",
+          "get_invoice": "#/$defs/RecurlyGetInvoiceConfig",
+          "get_plan": "#/$defs/RecurlyGetPlanConfig",
+          "get_renewal_preview": "#/$defs/RecurlyGetRenewalPreviewConfig",
+          "get_subscription": "#/$defs/RecurlyGetSubscriptionConfig",
+          "get_transaction": "#/$defs/RecurlyGetTransactionConfig",
+          "list_accounts": "#/$defs/RecurlyListAccountsConfig",
+          "list_coupons": "#/$defs/RecurlyListCouponsConfig",
+          "list_invoices": "#/$defs/RecurlyListInvoicesConfig",
+          "list_plans": "#/$defs/RecurlyListPlansConfig",
+          "list_sites": "#/$defs/RecurlyListSitesConfig",
+          "list_subscriptions": "#/$defs/RecurlyListSubscriptionsConfig",
+          "list_transactions": "#/$defs/RecurlyListTransactionsConfig",
+          "preview_subscription_change": "#/$defs/RecurlyPreviewSubscriptionChangeConfig",
+          "update_account": "#/$defs/RecurlyUpdateAccountConfig",
+          "update_plan": "#/$defs/RecurlyUpdatePlanConfig",
+          "update_subscription": "#/$defs/RecurlyUpdateSubscriptionConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RecurlyListSitesConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyListAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyCreateAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyUpdateAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyListPlansConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyGetPlanConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyCreatePlanConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyUpdatePlanConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyListSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyGetSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyCreateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyUpdateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyPreviewSubscriptionChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyCreateSubscriptionChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyCancelSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyGetRenewalPreviewConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyGetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyListTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyGetTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyListCouponsConfig"
+        },
+        {
+          "$ref": "#/$defs/RecurlyGetCouponConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RecurlyApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Recurly Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find a customer by email and list their subscriptions",
+    "Create a Recurly account for a new customer",
+    "Preview a subscription change before applying it",
+    "Read an invoice and its payment status"
+  ],
+  "x-agent-tool-provider": true
+}

@@ -112,6 +112,7 @@ from nodes.exa_node import ExaNode
 from nodes.reducto_node import ReductoNode
 from nodes.fal_node import FalNode
 from nodes.brandfetch_node import BrandfetchNode
+from nodes.recurly_node import RecurlyNode
 from nodes.findymail_node import FindymailNode
 from nodes.beehiiv_node import BeehiivNode
 from nodes.hex_node import HexNode
@@ -257,6 +258,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-reducto': ReductoNode,
     'automation-fal': FalNode,
     'automation-brandfetch': BrandfetchNode,
+    'automation-recurly': RecurlyNode,
     'automation-findymail': FindymailNode,
     'automation-beehiiv': BeehiivNode,
     'automation-hex': HexNode,

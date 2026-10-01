@@ -82,6 +82,7 @@ import { ExaNode } from './ExaNode';
 import { ReductoNode } from './ReductoNode';
 import { FalNode } from './FalNode';
 import { BrandfetchNode } from './BrandfetchNode';
+import { RecurlyNode } from './RecurlyNode';
 import { FindymailNode } from './FindymailNode';
 import { BeehiivNode } from './BeehiivNode';
 import { HexNode } from './HexNode';
@@ -214,7 +215,7 @@ function _buildAvailable(): NodeDefinition[] {
         MailchimpNode, PipedriveNode, ResendNode, DV360Node, QuickBooksNode, ThreadsNode, MetaNode, BigQueryNode, GoHighLevelNode, ExpensifyNode, LaunchDarklyNode, WebflowNode, PhantomBusterNode, CalComNode, CalendlyNode, HoneycombNode, SentryNode, GoogleMapsNode, PerplexityNode, PostHogNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MilvusNode, MongoDBNode, ElasticsearchNode, MailgunNode,
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
-        ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
+        ExaNode, ReductoNode, FalNode, BrandfetchNode, RecurlyNode, FindymailNode, BeehiivNode,
         HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode,
         FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, PagerDutyNode, GoogleMeetNode, FreshsalesNode, AppSheetNode, TableauNode, AtlasAdminNode, PagespeedNode, SnowflakeNode, GoogleTranslateNode, VoyageNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         DatabricksNode, ZoomNode,

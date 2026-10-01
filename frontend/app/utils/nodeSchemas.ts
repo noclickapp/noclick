@@ -84,6 +84,7 @@ import exaSchema from '~/schemas/nodes/exa.json';
 import reductoSchema from '~/schemas/nodes/reducto.json';
 import falSchema from '~/schemas/nodes/fal.json';
 import brandfetchSchema from '~/schemas/nodes/brandfetch.json';
+import recurlySchema from '~/schemas/nodes/recurly.json';
 import findymailSchema from '~/schemas/nodes/findymail.json';
 import beehiivSchema from '~/schemas/nodes/beehiiv.json';
 import hexSchema from '~/schemas/nodes/hex.json';
@@ -247,6 +248,7 @@ const _NODE_SCHEMAS_RAW: Record<string, any> = {
     'automation-reducto': reductoSchema,
     'automation-fal': falSchema,
     'automation-brandfetch': brandfetchSchema,
+    'automation-recurly': recurlySchema,
     'automation-findymail': findymailSchema,
     'automation-beehiiv': beehiivSchema,
     'automation-hex': hexSchema,
