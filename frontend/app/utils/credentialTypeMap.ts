@@ -67,6 +67,9 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Apify
     'ApifyApiTokenCredential': 'apify_api_token',
 
+    // Ahrefs
+    'AhrefsAPIKeyCredential': 'ahrefs_api_key',
+
     // Apollo
     'ApolloAPIKeyCredential': 'apollo_api_key',
 

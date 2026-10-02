@@ -81,6 +81,7 @@ from nodes.youtube_node import YouTubeNode
 from nodes.mailchimp_node import MailchimpNode
 from nodes.pipedrive_node import PipedriveNode
 from nodes.resend_node import ResendNode
+from nodes.ahrefs_node import AhrefsNode
 from nodes.phantombuster_node import PhantomBusterNode
 from nodes.cal_com_node import CalComNode
 from nodes.calendly_node import CalendlyNode
@@ -229,6 +230,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-mailchimp': MailchimpNode,
     'automation-pipedrive': PipedriveNode,
     'automation-resend': ResendNode,
+    'automation-ahrefs': AhrefsNode,
     'automation-threads': ThreadsNode,
     'automation-phantombuster': PhantomBusterNode,
     'automation-cal-com': CalComNode,
