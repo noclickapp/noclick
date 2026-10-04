@@ -25,6 +25,7 @@
         "moduleResolution": "Bundler",
         "rootDirs": [".", "./.react-router/types"],
         "resolveJsonModule": true,
+        "allowImportingTsExtensions": true,
         "target": "ES2022",
         "strict": true,
         "allowJs": true,
