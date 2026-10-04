@@ -7,7 +7,7 @@
   "scripts": {
     "build-sdk": "cd ../sdk/typescript && npm install && node build.js",
     "copy-sdk": "mkdir -p public/noclick-sdk && cp ../sdk/typescript/dist/sdk.esm.js public/noclick-sdk/sdk.esm.js",
-    "build": "npm run build-sdk && npm run copy-sdk && react-router build",
+    "build": "npm run build-sdk && npm run copy-sdk && react-router build && node -e \"if (!require('fs').existsSync('build/server')) { console.error('react-router build produced no server build'); process.exit(1); }\"",
     "dev": "npm run build-sdk && npm run copy-sdk && react-router dev",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "format": "prettier --write .",
