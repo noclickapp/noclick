@@ -41,9 +41,9 @@ async def _seed_user(conn):
     return owner
 
 
-async def _seed_credential(conn, owner, connection_id, phone=None):
+async def _seed_credential(conn, owner, connection_id, phone=None, **extra_meta):
     cred_id = uuid.uuid4()
-    meta = {"provider": "wahooks", "connection_id": connection_id}
+    meta = {"provider": "wahooks", "connection_id": connection_id, **extra_meta}
     if phone:
         meta["phone_number"] = phone
     await conn.execute(
@@ -276,4 +276,40 @@ class TestFinalizeSamePhoneRebind:
         if result["success"]:
             assert result["credential_id"] != str(foreign_cred)
             assert result["created"] is True
+        await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
+
+    async def test_an_owner_scan_never_rebinds_a_row_held_for_someone_else(
+        self, postgres_db, fake_redis, stub_wahooks_reconnect  # noqa: F811
+    ):
+        owner = await _seed_user(postgres_db)
+        held = await _seed_credential(postgres_db, owner, "conn-held", phone="12025550105", hidden_from_owner=True)
+        stub_wahooks_reconnect["connections"]["conn-new"] = {"status": "connected", "phoneNumber": "12025550105"}
+        await fake_redis.set("whatsapp:qr:reserved:conn-new", str(owner))
+
+        result = await finalize_qr_connection(
+            _PoolShim(postgres_db), owner_id=str(owner), connection_id="conn-new",
+            user_tier="plus", encryption=_StubEncryption(),
+        )
+        assert result["success"] is True and result["created"] is True
+        assert result["credential_id"] != str(held)
+        row = await postgres_db.fetchrow("SELECT credential, metadata FROM credentials WHERE id = $1", held)
+        assert row["credential"] == "enc-old" and row["metadata"]["connection_id"] == "conn-held"
+        await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
+
+    async def test_a_scan_held_for_someone_else_never_rebinds_the_owners_row(
+        self, postgres_db, fake_redis, stub_wahooks_reconnect  # noqa: F811
+    ):
+        owner = await _seed_user(postgres_db)
+        own = await _seed_credential(postgres_db, owner, "conn-own", phone="12025550105")
+        stub_wahooks_reconnect["connections"]["conn-new"] = {"status": "connected", "phoneNumber": "12025550105"}
+        await fake_redis.set("whatsapp:qr:reserved:conn-new", str(owner))
+
+        result = await finalize_qr_connection(
+            _PoolShim(postgres_db), owner_id=str(owner), connection_id="conn-new",
+            user_tier="plus", encryption=_StubEncryption(), held_for_someone_else=True,
+        )
+        assert result["success"] is True and result["created"] is True
+        assert result["credential_id"] != str(own)
+        row = await postgres_db.fetchrow("SELECT credential, metadata FROM credentials WHERE id = $1", own)
+        assert row["credential"] == "enc-old" and row["metadata"]["connection_id"] == "conn-own"
         await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")

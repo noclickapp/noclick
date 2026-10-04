@@ -7,6 +7,7 @@ import { redirect, type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const PAGERDUTY_AUTH_URL = 'https://identity.pagerduty.com/oauth/authorize';
 
@@ -73,7 +74,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const scopesParam =
         url.searchParams.get('scopes') || PAGERDUTY_DEFAULT_SCOPES;
 
-    const clientId = process.env.PAGERDUTY_CLIENT_ID;
+    const clientId = (await oauthAppClientId(oauthAppToken(request), 'pagerduty')) ?? process.env.PAGERDUTY_CLIENT_ID;
     const redirectUri = process.env.PAGERDUTY_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

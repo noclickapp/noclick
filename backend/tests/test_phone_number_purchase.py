@@ -28,7 +28,7 @@ def _own_capabilities():
 @pytest.fixture
 def seams(monkeypatch):
     numbers = MagicMock()
-    numbers.buy = AsyncMock(return_value={"number_sid": "PN1", "phone_number": "+15674833618"})
+    numbers.buy = AsyncMock(return_value={"number_sid": "PN1", "phone_number": "+15674833618", "provider": "carrier-a"})
     numbers.release = AsyncMock()
     numbers.search = AsyncMock(return_value=[{"phone_number": "+15674833618", "locality": "Lucas", "region": "OH", "capabilities": ["voice"]}])
     provide(PHONE_NUMBERS, numbers)
@@ -52,7 +52,7 @@ async def test_buy_mints_credential_and_charge_together(seams):
     numbers.buy.assert_awaited_once_with("+15674833618", label=f"NoClick {USER[:8]}")
     args = created.await_args.args
     assert args[1:4] == (USER, "pro", "phone_number") and args[4] == "+15674833618" and args[5] == "enc:PN1"
-    assert args[6] == {"provider": "twilio", "phone_number": "+15674833618", "number_sid": "PN1", "monthly_credits": 15}
+    assert args[6] == {"provider": "carrier-a", "phone_number": "+15674833618", "number_sid": "PN1", "monthly_credits": 15}
     assert charge.await_args.kwargs == {"user_id": USER, "credential_id": "cred-1", "charge_type": "phone_number"}
     numbers.release.assert_not_awaited()
 
@@ -64,6 +64,21 @@ async def test_the_first_month_must_be_affordable_before_anything_is_bought(seam
         await h.buy_number_for_user(MockNativePool(), user_id=USER, user_tier="plus", e164="+15674833618", credential_name=None, encryption=enc)
     assert exc.value.kind == "credits" and "15 credits" in str(exc.value)
     numbers.buy.assert_not_awaited(); created.assert_not_awaited()
+
+
+async def test_a_caller_prices_the_first_month_and_records_the_number_before_its_charge(seams):
+    numbers, created, charge, enc = seams
+    order = []
+    charge.side_effect = lambda *a, **k: order.append("charge")
+
+    async def record(conn, held):
+        order.append("record")
+
+    usage_tracker.fetch_credit_remaining.return_value = 6.0  # short of the app's 15 credits, enough for 5.76
+    await h.buy_number_for_user(MockNativePool(), user_id=USER, user_tier="pro", e164="+15674833618",
+                                credential_name=None, encryption=enc, on_created=record, month_credits=5.76)
+    # The charge can price the number by who holds it.
+    assert order == ["record", "charge"]
 
 
 async def test_only_local_numbers_are_bought(seams):

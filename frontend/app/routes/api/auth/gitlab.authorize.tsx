@@ -7,6 +7,7 @@ import { redirect, type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const GITLAB_AUTH_URL = 'https://gitlab.com/oauth/authorize';
 
@@ -22,7 +23,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const url = new URL(request.url);
     const scopesParam = url.searchParams.get('scopes') || GITLAB_DEFAULT_SCOPES;
 
-    const clientId = process.env.GITLAB_CLIENT_ID;
+    const clientId = (await oauthAppClientId(oauthAppToken(request), 'gitlab')) ?? process.env.GITLAB_CLIENT_ID;
     const redirectUri = process.env.GITLAB_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

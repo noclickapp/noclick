@@ -352,9 +352,12 @@ async def finalize_qr_connection(
     user_tier: str,
     encryption,
     credential_name: Optional[str] = None,
+    held_for_someone_else: bool = False,
 ) -> dict[str, Any]:
     """Poll the connection; on ``connected`` bind it to ``owner_id`` as a
     ``whatsapp_qr`` credential (reservation + unique-index guarded).
+    ``held_for_someone_else``: the scan answers a request whose credential the
+    owner won't hold, so it never rebinds into one of the owner's rows.
 
     Returns ``{success, status, credential_id?, credential_name?, phone_number?,
     message, created?}``. ``created`` is True only when THIS call inserted the
@@ -451,11 +454,15 @@ async def finalize_qr_connection(
             # multiple provider-side device links. The newest
             # row wins; its replaced connection is deleted best-effort (the
             # nightly orphan sweep backstops a failed delete).
-            if phone_number:
+            # Rows held for someone else are never rebound: that would merge
+            # this scan into a credential its holder alone uses.
+            if phone_number and not held_for_someone_else:
+                from repositories.credentials import listed_to_owner_sql
+
                 prior = await conn.fetchrow(
-                    """SELECT id, name, metadata FROM credentials
+                    f"""SELECT id, name, metadata FROM credentials
                        WHERE credential_type = 'whatsapp_qr' AND owner_id = $1
-                         AND metadata->>'phone_number' = $2
+                         AND metadata->>'phone_number' = $2 AND {listed_to_owner_sql('credentials')}
                        ORDER BY updated_at DESC LIMIT 1""",
                     owner_id, phone_number,
                 )

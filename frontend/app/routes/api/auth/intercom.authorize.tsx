@@ -9,6 +9,7 @@ import { redirect, type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const INTERCOM_AUTH_URL = 'https://app.intercom.com/oauth';
 
@@ -35,7 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         url.searchParams.get('scopes') || INTERCOM_DEFAULT_SCOPES;
     const region = url.searchParams.get('region') || 'us';
 
-    const clientId = process.env.INTERCOM_CLIENT_ID;
+    const clientId = (await oauthAppClientId(oauthAppToken(request), 'intercom')) ?? process.env.INTERCOM_CLIENT_ID;
     const redirectUri = process.env.INTERCOM_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

@@ -10,7 +10,7 @@ import asyncio
 import logging
 import random
 import time
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Union
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Union
 
 import contextlib
 import json
@@ -29,6 +29,7 @@ from .billing import BillingHooks, InsufficientBalanceError, build_litellm_env
 from .config import AgentConfiguration, LLMConfig
 from .output_limits import clip_bash_result
 from .sandbox import create_sandbox_runtime
+from . import steering, turn_notes
 from .session import PostgresSession
 from utils.thread_env import override_env
 
@@ -177,6 +178,10 @@ class Agent:
         user_env: Optional[Dict[str, str]] = None,
         execution_id: Optional[str] = None,
         history_limit: Optional[int] = None,
+        sandbox_region: Optional[str] = None,
+        sandbox_volumes: Optional[Dict[str, str]] = None,
+        sandbox_network: Optional[Sequence[str]] = None,
+        shell: bool = True,
     ):
         if not emit_message:
             raise ValueError("emit_message callback is required")
@@ -209,7 +214,8 @@ class Agent:
         # agent that never touches the shell pays nothing. ``_runtime`` is
         # the attribute name tool_execution._execute_filesystem_tool reads
         # to find the sandbox for upload_file. None outside workflow runs
-        # (the interactive coder chat passes no node_id).
+        # (the interactive coder chat passes no node_id). ``shell=False``: no
+        # sandbox and no execute_bash (a platform's agent without a shell).
         self._runtime = (
             create_sandbox_runtime(
                 filesystem_configs=filesystem_configs or [],
@@ -218,8 +224,13 @@ class Agent:
                 conversation_key=conversation_key,
                 sandbox_setups=sandbox_setups or [],
                 user_env=user_env or {},
+                region=sandbox_region,
+                # Only a host that mounts named volumes is ever handed some,
+                # and only one that enforces a network limit a limit.
+                **({"volumes": sandbox_volumes} if sandbox_volumes else {}),
+                **({"network": sandbox_network} if sandbox_network is not None else {}),
             )
-            if workflow_id and node_id
+            if workflow_id and node_id and shell
             else None
         )
 
@@ -296,6 +307,10 @@ class Agent:
         history_limit: Optional[int] = None,
         memory_readonly: bool = False,
         call_model_input_filter=None,
+        sandbox_region: Optional[str] = None,
+        sandbox_volumes: Optional[Dict[str, str]] = None,
+        sandbox_network: Optional[Sequence[str]] = None,
+        shell: bool = True,
         **kwargs,
     ) -> "Agent":
         """Async factory for ``Agent``.
@@ -327,6 +342,10 @@ class Agent:
             sandbox_setups=sandbox_setups,
             user_env=user_env,
             execution_id=execution_id,
+            sandbox_region=sandbox_region,
+            sandbox_volumes=sandbox_volumes,
+            sandbox_network=sandbox_network,
+            shell=shell,
         )
         agent._build_sdk_agent()
         agent._build_billing_hooks()
@@ -665,7 +684,23 @@ class Agent:
                 _record_bash(command, fabricated, start)
                 return json.dumps(fabricated, default=str)
 
+            # Same bypass, same answer: the tool-call guard execute_tool
+            # consults. Its refusal is the tool's output; its error fails closed.
+            from nodes.agent.tool_execution import tool_call_refusal
+
             try:
+                refusal = await tool_call_refusal(
+                    user_id=self.user_id,
+                    workflow_id=self.workflow_id,
+                    node_id=self.node_id,
+                    conversation_id=self.conversation_id,
+                    tool_name="execute_bash",
+                    tool_info={"tool_type": "bash"},
+                    arguments={"command": command},
+                )
+                if refusal is not None:
+                    _record_bash(command, refusal, start)
+                    return json.dumps(refusal, default=str)
                 result = await runtime.run_bash(command)
             except Exception as e:
                 logger.error("[openai_agent] execute_bash raised: %s", e, exc_info=True)
@@ -856,12 +891,15 @@ class Agent:
             turn_had_items = False
             result = None
             env_ctx = override_env(**env_overrides) if env_overrides else contextlib.nullcontext()
+            notes = turn_notes.start()
             try:
                 with env_ctx:
                     run_options = {}
-                    if getattr(self, "_call_model_input_filter", None) is not None:
+                    input_filter = getattr(self, "_call_model_input_filter", None) or steering.filter_for(
+                        getattr(self, "conversation_id", None), getattr(self, "_session", None))
+                    if input_filter is not None:
                         from agents import RunConfig
-                        run_options["run_config"] = RunConfig(call_model_input_filter=self._call_model_input_filter)
+                        run_options["run_config"] = RunConfig(call_model_input_filter=input_filter)
                     result = Runner.run_streamed(
                         self._sdk_agent,
                         input_list,
@@ -987,6 +1025,7 @@ class Agent:
                 # after the run completes (e.g. user click race) should be a
                 # no-op, not a NoneType.cancel() crash.
                 self._active_result = None
+                turn_notes.reset(notes)
             break  # attempt succeeded
 
         # Persist updated history for multi-turn — only when running on the

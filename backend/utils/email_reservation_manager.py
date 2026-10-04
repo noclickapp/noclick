@@ -78,8 +78,10 @@ def build_email_address(local_part: str, domain: Optional[str] = None) -> str:
     return f"{local_part}@{domain or require_inbound_email_domain()}"
 
 
-def validate_local_part(local_part: str) -> tuple[bool, str]:
-    """Validate an inbound-email local-part. Returns (is_valid, error_message)."""
+def validate_local_part(local_part: str, *, reserved: bool = True) -> tuple[bool, str]:
+    """Validate an inbound-email local-part. Returns (is_valid, error_message).
+    ``reserved=False``: an address on a domain of the account's own, where
+    role and system names are its to use."""
     if not local_part:
         return False, "Address is required"
     if len(local_part) > _MAX_LOCAL_PART_LEN:
@@ -89,6 +91,8 @@ def validate_local_part(local_part: str) -> tuple[bool, str]:
             "Use lowercase letters, numbers, dots, hyphens, and underscores "
             "(cannot start or end with a separator)"
         )
+    if not reserved:
+        return True, ""
     if local_part in RESERVED_LOCAL_PARTS:
         return False, "This address is reserved"
     from utils.agent_email import AGENT_REPLY_PREFIX

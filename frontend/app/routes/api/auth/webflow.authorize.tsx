@@ -7,6 +7,7 @@ import { redirect, type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const WEBFLOW_AUTH_URL = 'https://webflow.com/oauth/authorize';
 
@@ -37,7 +38,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const scopesParam =
         url.searchParams.get('scopes') || WEBFLOW_DEFAULT_SCOPES;
 
-    const clientId = process.env.WEBFLOW_CLIENT_ID;
+    const clientId = (await oauthAppClientId(oauthAppToken(request), 'webflow')) ?? process.env.WEBFLOW_CLIENT_ID;
     const redirectUri = process.env.WEBFLOW_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

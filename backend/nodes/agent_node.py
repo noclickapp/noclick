@@ -154,6 +154,7 @@ from nodes.agent.config import (
     AgentNodeConfig,
     PROVIDER_REQUIRED_CREDENTIALS,
     WRAPPER_ID_BY_MODEL_TYPE,
+    claude_plan_refusal,
     filter_provider_credential_env,
     get_provider_credentials,
     match_model_credential,
@@ -637,6 +638,25 @@ class AgentNode(WorkflowNode):
             and e.get("targetHandle") == "bottom"
             for e in edges
         )
+
+    def _append_platform_tools(
+        self, config: Any, inputs: Dict[str, Any], custom_tools: list, tool_configs: Dict[str, Any],
+    ) -> None:
+        """Append the ambient platform tools, gated by the node's capability
+        flags, to both advertisements: ``custom_tools`` (SDK agent) and
+        ``tool_configs`` (the CLI harnesses' tool bundle). A tool left out is
+        neither advertised nor dispatchable on either path."""
+        from nodes.agent.platform_tools import build_platform_tools, inputs_are_iteration_fanout
+
+        self._in_iteration_fanout = inputs_are_iteration_fanout(inputs)
+        for param, cfg in build_platform_tools(
+            getattr(config, "enable_prompt_builder", "true") != "false",
+            getattr(config, "enable_email_updates", "true") != "false",
+            self._in_iteration_fanout,
+            enable_coordinator_messages=getattr(config, "enable_coordinator_messages", "true") != "false",
+        ):
+            custom_tools.append(param)
+            tool_configs[param["function"]["name"]] = cfg
 
     def _collect_tool_definitions(
         self, inputs: Dict[str, Any]
@@ -1305,7 +1325,8 @@ class AgentNode(WorkflowNode):
         - a non-matching attachment is IGNORED: the run behaves exactly as if
           no model credential were attached (platform keys where the platform
           serves the provider; the existing missing-credential failure where
-          it doesn't, e.g. the always-BYOK CLI harnesses);
+          it doesn't, e.g. the always-BYOK CLI harnesses), except a Claude plan
+          on an anthropic/* model, which fails with ``claude_plan_refusal``;
         - media model types retain their legacy attachment lookup, but only the
           exact keys consumed by the selected fast-path handler survive.
         """
@@ -1329,6 +1350,9 @@ class AgentNode(WorkflowNode):
         cred_ids = extract_credential_ids(self.node_data) or {}
         match = match_model_credential(config, cred_ids)
         if match is None:
+            refusal = claude_plan_refusal(config, cred_ids)
+            if refusal:
+                raise ValueError(refusal)
             if handler_bundle is not None:
                 attached = sorted(k for k in cred_ids if k != "credential_type")
                 logger.warning(
@@ -2076,27 +2100,9 @@ class AgentNode(WorkflowNode):
             )
             return media_output
 
-        # Platform tools — NoClick-provided, present on every agent (not
-        # user-wired): submit_feedback always; prompt_builder while
-        # config.enable_prompt_builder is "true" (the default). Appended after
-        # the media fast-paths (no tools there) so BOTH runtimes see them: the
-        # SDK agent via custom_tools, and the CLI harnesses via tool_configs on
-        # their turn-scoped MCP endpoint.
-        from nodes.agent.platform_tools import (
-            build_platform_tools,
-            inputs_are_iteration_fanout,
-        )
-
-        _in_iteration_fanout = inputs_are_iteration_fanout(inputs)
-        self._in_iteration_fanout = _in_iteration_fanout
-
-        for _p_param, _p_cfg in build_platform_tools(
-            getattr(config, "enable_prompt_builder", "true") != "false",
-            getattr(config, "enable_email_updates", "true") != "false",
-            _in_iteration_fanout,
-        ):
-            custom_tools.append(_p_param)
-            tool_configs[_p_param["function"]["name"]] = _p_cfg
+        # Platform tools — NoClick-provided, not user-wired. Appended after
+        # the media fast-paths (no tools there) so BOTH runtimes see them.
+        self._append_platform_tools(config, inputs, custom_tools, tool_configs)
 
         # CLI agents receive non-MCP tools through their registered runner.
         # Edge-scoped like all tool surfaces: another agent's filesystem

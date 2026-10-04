@@ -41,6 +41,8 @@ export interface ProvideCredentialMethod {
     supports_custom_client?: boolean;
     requires_custom_client?: boolean;
     oauth_redirect_uri?: string | null;
+    /** The requester brings its own OAuth app for this provider: the sign-in asks consent for it. */
+    oauth_app?: boolean;
     agent_oauth_kind?: string | null;
     credential_fields: CredentialField[];
 }
@@ -136,6 +138,7 @@ function OAuthMethod({ method, apiBase, token, serviceName, ServiceIcon, onProvi
             userScopes={method.oauth_user_scopes || []}
             supportsCustomClient={method.supports_custom_client}
             requiresCustomClient={method.requires_custom_client}
+            oauthApp={method.oauth_app}
             redirectUri={method.oauth_redirect_uri || undefined}
             serviceName={serviceName || method.label}
             ServiceIcon={ServiceIcon}

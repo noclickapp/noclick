@@ -35,9 +35,10 @@ const CLI_HARNESS_MODELS = new Set([
 export const meta: MetaFunction = ({ data }) => {
     const typedData = data as JsonPayloadOf<typeof loader> | undefined;
     const label = typedData?.meta?.agent?.label || 'Agent';
+    const brand = typedData?.meta?.brand?.name;
     return buildSeoMeta({
-        title: `${label} — NoClick Agent`,
-        description: `Chat with ${label}, an AI agent built on NoClick.`,
+        title: brand ? `${label} — ${brand}` : `${label} — NoClick Agent`,
+        description: brand ? `Chat with ${label}.` : `Chat with ${label}, an AI agent built on NoClick.`,
         indexable: false,
     });
 };

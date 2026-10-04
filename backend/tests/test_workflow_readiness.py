@@ -6,8 +6,11 @@ from unittest.mock import AsyncMock
 import pytest
 from tests.fixtures.real_db_fixture import real_database
 from utils.workflow_readiness import (
+    activation_graph_scope,
     activation_issues,
     readiness_report,
+    require_activation_ready,
+    unbound_issues,
     WorkflowNotReadyError,
 )
 from utils.webhook_manager import WebhookManager
@@ -87,6 +90,55 @@ def test_empty_agent_message_requires_an_enabled_trigger_feed(source_state):
         assert any("Message is empty" in i["message"] for i in errors)
         graph["nodes"][1]["config"]["message"] = "Review the available context."
         assert not [i for i in activation_issues(graph) if i["node_id"] == "brain"]
+
+
+def test_a_node_whose_model_requires_credentials_activates_on_its_credential_ids():
+    """A saved node holds credentialIds; the run resolves the credentials.
+    Twilio's model declares them required, which must not read as missing
+    setup when the node has its credential (and still does when it hasn't)."""
+    trigger = {"id": "rings", "type": "automation-twilio",
+               "config": {"operation": "on_call", "phone_number_sid": "PN1",
+                          "credentialIds": {"twilio_account": str(uuid.uuid4())}}}
+    agent = {"id": "brain", "type": "agent", "config": {"model": "claude-code", "message": "Answer.",
+                                                         "credentialIds": {"agent_claude_code_oauth": "c"}}}
+    graph = {"nodes": [trigger, agent], "edges": [{"source": "rings", "target": "brain"}]}
+    assert activation_issues(graph, "rings") == []
+    trigger["config"]["credentialIds"] = {}
+    assert [i["code"] for i in activation_issues(graph, "rings")] == ["missing_credentials"]
+
+
+async def test_credentials_a_product_binds_per_run_dont_block_activation(monkeypatch):
+    """A workflow whose product binds a node's credential on every run (a
+    config override, never saved) activates holding none, on every path that
+    judges readiness (``BOUND_CREDENTIALS``); nothing else is excused."""
+    from utils import capabilities
+
+    graph = monitor_graph("Inspect the update.")
+    del graph["nodes"][2]["config"]["credentialIds"]
+    assert [i["code"] for i in activation_issues(graph, "in")] == ["missing_credentials"]
+    workflow_id, other = str(uuid.uuid4()), str(uuid.uuid4())
+    bound, asked = {workflow_id: {"alerts"}}, []
+
+    async def bound_credentials(pool, wid):
+        asked.append(wid)
+        return bound.get(wid, set())
+
+    monkeypatch.setitem(capabilities._providers, capabilities.BOUND_CREDENTIALS, bound_credentials)
+    assert await unbound_issues(None, workflow_id, graph, "in") == []
+    with activation_graph_scope(workflow_id, graph):
+        await require_activation_ready(None, workflow_id, "in")
+    with activation_graph_scope(other, graph):
+        with pytest.raises(WorkflowNotReadyError, match="connect an account"):
+            await require_activation_ready(None, other, "in")
+    graph["nodes"][1]["config"]["temperature"] = 3
+    bound[workflow_id] = {"alerts", "brain"}
+    with activation_graph_scope(workflow_id, graph):
+        with pytest.raises(WorkflowNotReadyError, match="less than or equal to 2"):
+            await require_activation_ready(None, workflow_id, "in")
+    # A graph holding every credential never asks.
+    asked.clear()
+    assert await unbound_issues(None, workflow_id, monitor_graph("Inspect the update."), "in") == []
+    assert asked == []
 
 
 async def test_broken_path_cannot_register_and_repair_can(real_database, monkeypatch):

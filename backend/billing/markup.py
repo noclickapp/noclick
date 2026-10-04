@@ -4,11 +4,14 @@ An installation running on its own provider keys adds nothing: costs are
 recorded at provider list price, which is what the default below means. A
 platform reselling those calls sets `PLATFORM_MARKUP` in its environment — the
 margin is a deployment's commercial decision, not a property of the engine, and
-it is the one number here that does not belong in source.
+it is the one number here that does not belong in source. Work attributed to
+another product of the deployment can carry that product's own multiplier
+(`register_attributed_markup`).
 """
 
 import os
 from decimal import Decimal, ROUND_CEILING
+from typing import Dict
 
 def _configured_credits_per_dollar() -> Decimal:
     """How many displayed credits a dollar of recorded cost is worth. An
@@ -46,11 +49,30 @@ def _configured_markup() -> Decimal:
 PLATFORM_MIN_MARKUP = _configured_markup()
 AI_BUILDER_MARKUP = PLATFORM_MIN_MARKUP
 
+# Work attributed under a key (billing.usage_tracker.attribute_usage) priced at
+# its own multiplier: a deployment selling one product at a different margin.
+_ATTRIBUTED_MARKUPS: Dict[str, Decimal] = {}
+
+
+def register_attributed_markup(key: str, multiplier: Decimal) -> None:
+    """Price every markup applied in work attributed under ``key`` at ``multiplier``."""
+    if multiplier < 1:
+        raise ValueError(f"A markup below one would record less than the call cost; got {multiplier}.")
+    _ATTRIBUTED_MARKUPS[key] = Decimal(multiplier)
+
+
+def current_markup() -> Decimal:
+    """The multiplier for a cost recorded in this context."""
+    from billing.usage_tracker import usage_attribution
+
+    attribution = usage_attribution()
+    return next((m for key, m in _ATTRIBUTED_MARKUPS.items() if key in attribution), PLATFORM_MIN_MARKUP)
+
 
 def _apply_min_markup(cost: Decimal, user_resource: bool) -> Decimal:
     if user_resource or cost <= 0:
         return cost
-    return cost * PLATFORM_MIN_MARKUP
+    return cost * current_markup()
 
 
 def apply_openrouter_markup(cost: Decimal, user_resource: bool, model: str) -> Decimal:
@@ -97,7 +119,7 @@ def apply_ai_builder_markup(cost: Decimal) -> Decimal:
 
 def apply_ai_testing_markup(cost: Decimal) -> Decimal:
     if cost > 0:
-        return cost * PLATFORM_MIN_MARKUP
+        return cost * current_markup()
     return cost
 
 

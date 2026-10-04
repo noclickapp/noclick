@@ -22,8 +22,11 @@ class FakeRedis:
     def __init__(self):
         self.store = {}
 
-    async def set(self, key, value, ex=None):
+    async def set(self, key, value, ex=None, nx=False):
+        if nx and key in self.store:
+            return None
         self.store[key] = value.encode() if isinstance(value, str) else value
+        return True
 
     async def get(self, key):
         return self.store.get(key)
@@ -84,6 +87,28 @@ async def test_rehearsing_is_recognised_once_started(redis):
     assert await rh.is_rehearsing("conv-1") is True
     await rh.end_rehearsal("conv-1")
     assert await rh.is_rehearsing("conv-1") is False
+
+
+@pytest.mark.asyncio
+async def test_a_kept_world_keeps_what_it_answered_and_a_quiet_one_sends_no_frames(redis, monkeypatch):
+    """A caller that reads each answer itself (a simulated toolkit) starts its world
+    on every call: one already there stays as it is, and nobody is sent its frames."""
+    await rh.start_rehearsal("world-1", SCENARIO, user_id="u-1", quiet=True, keep_existing=True)
+    monkeypatch.setattr("litellm.acompletion", _reply('{"ticket": 4471}'))
+    sent = []
+
+    async def broadcast(user_id, event):
+        sent.append(user_id)
+
+    monkeypatch.setattr("utils.event_relay.broadcast_to_user_safe", broadcast)
+    await rh.mock_tool_call(conversation_id="world-1", tool_name="zendesk__create_ticket", arguments={})
+    await rh.start_rehearsal("world-1", RehearsalScenario("Another world.", "", {}), keep_existing=True)
+    state = await rh.load_rehearsal("world-1")
+    assert state["scenario"] == SCENARIO.scenario and len(state["calls"]) == 1 and state["quiet"] is True
+    assert sent == []
+    # Without keep_existing a start begins afresh, as a new rehearsal does.
+    await rh.start_rehearsal("world-1", SCENARIO)
+    assert (await rh.load_rehearsal("world-1"))["calls"] == []
 
 
 @pytest.mark.asyncio

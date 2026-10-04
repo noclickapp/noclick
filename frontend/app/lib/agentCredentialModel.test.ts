@@ -14,6 +14,7 @@ import { ModelProvider } from '~/types/provider';
 
 import {
   agentAllowsUsageBased,
+  CLAUDE_PLAN_REFUSAL,
   staleCredentialKeysForProvider,
   validateAgentCredentialsForModel,
   validateAgentSendCredentials,
@@ -41,9 +42,14 @@ describe('validateAgentCredentialsForModel', () => {
     expect(v('codex', { agent_codex_oauth: 'c1' })).toBeNull();
   });
 
-  it('accepts opencode cross-aliases (anthropic←claude_code_oauth, openai←codex_oauth)', () => {
-    expect(v('anthropic', { agent_claude_code_oauth: 'c1' })).toBeNull();
+  it('accepts the wrapper cross-alias openai←codex_oauth', () => {
     expect(v('openai', { agent_codex_oauth: 'c1' })).toBeNull();
+  });
+
+  it('refuses a Claude plan outside Claude Code, in the backend\'s words', () => {
+    expect(v('anthropic', { agent_claude_code_oauth: 'c1' })).toBe(CLAUDE_PLAN_REFUSAL);
+    // An Anthropic key beside it runs the model.
+    expect(v('anthropic', { agent_claude_code_oauth: 'c1', agent_anthropic: 'k' })).toBeNull();
   });
 
   it('flags a genuine mismatch', () => {
@@ -224,7 +230,13 @@ describe('staleCredentialKeysForProvider', () => {
   it('keeps a valid OAuth-alias credential (the reported reset-to-none bug)', () => {
     expect(s({ agent_claude_code_oauth: 'c1' }, 'claude_code')).toEqual([]);
     expect(s({ agent_codex_oauth: 'c1' }, 'codex')).toEqual([]);
-    expect(s({ agent_claude_code_oauth: 'c1' }, 'anthropic')).toEqual([]); // cross-alias
+  });
+
+  it('keeps a refused Claude plan linked so the node can say why', () => {
+    expect(s({ agent_claude_code_oauth: 'c1' }, 'anthropic')).toEqual([]);
+    // Beside a key that runs the model it is stale like any other.
+    expect(s({ agent_claude_code_oauth: 'c1', agent_anthropic: 'k' }, 'anthropic')).toEqual(['agent_claude_code_oauth']);
+    expect(s({ agent_claude_code_oauth: 'c1' }, 'openrouter')).toEqual(['agent_claude_code_oauth']);
   });
 
   it('keeps a direct credential', () => {

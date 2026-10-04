@@ -6,7 +6,7 @@
 import { type LoaderFunctionArgs, type MetaFunction } from 'react-router';
 import { json, type JsonPayloadOf } from '~/lib/routerResponse';
 import { useLoaderData } from 'react-router';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { CheckCircle2, KeyRound } from 'lucide-react';
 import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
 import { getCredentialIcon } from '~/utils/credentialIcons';
@@ -46,6 +46,17 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return json({ token, nodeIconData: getAllSerializedNodeMeta() });
 }
 
+/** The requester's return address with the result appended, from the backend
+ *  (it validates the address and reads the stored credential id). */
+async function fetchProvideReturnUrl(apiBase: string, token: string): Promise<string> {
+  const res = await fetch(`${apiBase}/api/credential-request/${token}/return`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok || typeof body.redirect_url !== 'string') {
+    throw new Error(body.detail || 'Could not find where to return you.');
+  }
+  return body.redirect_url;
+}
+
 export default function ProvideCredentialPage() {
   const { token, nodeIconData } = useLoaderData<JsonPayloadOf<typeof loader>>();
   // Populate the node-icon singleton before the credential icon resolves, so
@@ -55,6 +66,17 @@ export default function ProvideCredentialPage() {
   const [details, setDetails] = useState<ProvideRequestDetails | null>(null);
   const [provided, setProvided] = useState(false);
   const [verification, setVerification] = useState<CredentialTestConnectionResponse | null>(null);
+  const [returnError, setReturnError] = useState<string | null>(null);
+  const redirects = Boolean(details?.redirect_url);
+
+  const onProvided = useCallback((v?: CredentialTestConnectionResponse | null) => {
+    setVerification(v ?? null);
+    setProvided(true);
+    if (!redirects) return;
+    fetchProvideReturnUrl(API_BASE, token)
+      .then((url) => window.location.assign(url))
+      .catch((e: Error) => setReturnError(e.message));
+  }, [redirects, token]);
 
   const credentialIcon = useMemo(
     () => (details ? getCredentialIcon(details.credential_type) : null),
@@ -100,10 +122,14 @@ export default function ProvideCredentialPage() {
             <div className="px-6 py-10 text-center" data-testid="provide-success">
               <CheckCircle2 className="mx-auto h-7 w-7 text-emerald-500" />
               <div className="mt-3 text-sm font-semibold">Credential provided</div>
-              <p className="mt-1 text-[13px] text-muted-foreground dark:text-zinc-500">
-                {details?.requester_name} has been notified and can now use this
-                credential. You can safely close this page.
+              <p className="mt-1 text-[13px] text-muted-foreground dark:text-zinc-500" data-testid="provide-success-note">
+                {redirects && !returnError
+                  ? 'Taking you back…'
+                  : `${details?.requester_name} can now use this credential. You can safely close this page.`}
               </p>
+              {returnError && (
+                <p className="mt-2 text-[13px] text-red-600 dark:text-red-400" role="alert">{returnError}</p>
+              )}
               {/* What the connect-time probe proved — the provider's own data,
                   so the person who typed the key sees it worked, not just landed. */}
               {verification && (
@@ -126,10 +152,7 @@ export default function ProvideCredentialPage() {
                 apiBase={API_BASE}
                 compact
                 onDetails={setDetails}
-                onProvided={(v) => {
-                  setVerification(v ?? null);
-                  setProvided(true);
-                }}
+                onProvided={onProvided}
               />
             </div>
           )}

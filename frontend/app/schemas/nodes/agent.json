@@ -118,6 +118,16 @@
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
         },
+        "enable_coordinator_messages": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Allow Coordinator Messages",
+          "type": "string",
+          "ui:hidden": true
+        },
         "enable_media_transcription": {
           "default": "true",
           "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
@@ -272,6 +282,16 @@
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
         },
+        "enable_coordinator_messages": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Allow Coordinator Messages",
+          "type": "string",
+          "ui:hidden": true
+        },
         "enable_media_transcription": {
           "default": "true",
           "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
@@ -425,6 +445,16 @@
           "ui:category": "Advanced",
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
+        },
+        "enable_coordinator_messages": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Allow Coordinator Messages",
+          "type": "string",
+          "ui:hidden": true
         },
         "enable_media_transcription": {
           "default": "true",
@@ -613,6 +643,16 @@
           "ui:category": "Advanced",
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
+        },
+        "enable_coordinator_messages": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Allow Coordinator Messages",
+          "type": "string",
+          "ui:hidden": true
         },
         "enable_media_transcription": {
           "default": "true",
@@ -1111,6 +1151,16 @@
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
         },
+        "enable_coordinator_messages": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Allow Coordinator Messages",
+          "type": "string",
+          "ui:hidden": true
+        },
         "enable_media_transcription": {
           "default": "true",
           "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
@@ -1561,6 +1611,16 @@
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
         },
+        "enable_coordinator_messages": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Allow Coordinator Messages",
+          "type": "string",
+          "ui:hidden": true
+        },
         "enable_media_transcription": {
           "default": "true",
           "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
@@ -1707,6 +1767,16 @@
           "ui:category": "Advanced",
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
+        },
+        "enable_coordinator_messages": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Allow Coordinator Messages",
+          "type": "string",
+          "ui:hidden": true
         },
         "enable_media_transcription": {
           "default": "true",
@@ -1876,6 +1946,16 @@
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
         },
+        "enable_coordinator_messages": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Allow Coordinator Messages",
+          "type": "string",
+          "ui:hidden": true
+        },
         "enable_media_transcription": {
           "default": "true",
           "description": "Transcribe voice notes and audio files that arrive with a message (WhatsApp, Telegram, Discord, email, chat uploads) so the agent can read them.",
@@ -2029,6 +2109,16 @@
           "ui:category": "Advanced",
           "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
           "x-enum-searchable": true
+        },
+        "enable_coordinator_messages": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Allow Coordinator Messages",
+          "type": "string",
+          "ui:hidden": true
         },
         "enable_media_transcription": {
           "default": "true",

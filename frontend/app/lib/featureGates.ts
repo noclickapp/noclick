@@ -18,6 +18,8 @@ export const FEATURE_ROLLOUT = {
     coordinator: 'everyone',
     // Buying phone numbers for the Phone node.
     phone_numbers: 'everyone',
+    // CLI agent sandboxes reach their model through the credential proxy.
+    credential_proxy: 'internal',
 } satisfies Record<string, Rollout>;
 
 export type Feature = keyof typeof FEATURE_ROLLOUT;

@@ -7,6 +7,7 @@ import { redirect, type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const KLAVIYO_AUTH_URL = 'https://www.klaviyo.com/oauth/authorize';
 
@@ -29,7 +30,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         url.searchParams.get('scopes') ||
         'accounts:read,profiles:read,profiles:write,lists:read,lists:write';
 
-    const clientId = process.env.KLAVIYO_CLIENT_ID;
+    const clientId = (await oauthAppClientId(oauthAppToken(request), 'klaviyo')) ?? process.env.KLAVIYO_CLIENT_ID;
     const redirectUri = process.env.KLAVIYO_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

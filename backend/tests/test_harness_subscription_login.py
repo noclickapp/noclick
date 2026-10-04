@@ -147,7 +147,24 @@ def test_a_subscription_is_not_accepted_for_the_direct_api_path():
 def test_subscription_token_satisfies_the_provider_gate():
     """Otherwise the pre-flight refuses to dispatch an agent that is in fact
     signed in, which is the failure the whole flow exists to prevent."""
-    validate_provider_credentials("anthropic/claude-sonnet-4.5", {"CLAUDE_CODE_ACCESS_TOKEN": "x"})
+    validate_provider_credentials("claude-code", {"CLAUDE_CODE_ACCESS_TOKEN": "x"})
     validate_provider_credentials("openai/gpt-5.6", {"CODEX_ACCESS_TOKEN": "x"})
     with pytest.raises(ValueError, match="Claude subscription"):
-        validate_provider_credentials("anthropic/claude-sonnet-4.5", {})
+        validate_provider_credentials("claude-code", {})
+
+
+def test_a_claude_plan_signs_in_claude_code_alone():
+    """A Claude plan runs only in Claude Code: another harness on an anthropic/*
+    model neither accepts it nor offers it, and says why when one is attached."""
+    from nodes.agent.config.providers import CLAUDE_PLAN_REFUSAL, claude_plan_refusal
+
+    plan = {"agent_claude_code_oauth": "cred-plan"}
+    for config in ({"model": "opencode", "opencode_model": "anthropic/claude-sonnet-4-5"},
+                   {"model": "hermes", "hermes_agent_model": "anthropic/claude-sonnet-4-5"},
+                   {"model": "openclaw", "openclaw_model": "anthropic/claude-sonnet-4-5"}):
+        assert "agent_claude_code_oauth" not in agent_credential_requirement(config).accepted_types
+        assert claude_plan_refusal(config, plan) == CLAUDE_PLAN_REFUSAL
+    with pytest.raises(ValueError) as refused:
+        validate_provider_credentials("anthropic/claude-sonnet-4.5", {"CLAUDE_CODE_ACCESS_TOKEN": "x"})
+    assert "subscription" not in str(refused.value)
+    assert claude_plan_refusal({"model_type": "claude_code"}, plan) is None

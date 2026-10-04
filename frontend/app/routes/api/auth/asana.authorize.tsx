@@ -10,13 +10,14 @@ import { redirect, type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const ASANA_AUTH_URL = 'https://app.asana.com/-/oauth_authorize';
 
 export async function loader({ request }: LoaderFunctionArgs) {
     // Self-hosted: an OAuth app saved in Settings shows up as env vars here.
     await applyInstanceOAuthEnv(request, 'asana');
-    const clientId = process.env.ASANA_CLIENT_ID;
+    const clientId = (await oauthAppClientId(oauthAppToken(request), 'asana')) ?? process.env.ASANA_CLIENT_ID;
     const redirectUri = process.env.ASANA_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

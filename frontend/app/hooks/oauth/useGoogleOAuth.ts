@@ -3,7 +3,7 @@
 // Works with any Google API (Sheets, Gmail, Drive, etc.) - just pass different scopes.
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useOAuthExchange } from './OAuthExchangeContext';
+import { useOAuthAuthorizeParams, useOAuthExchange } from './OAuthExchangeContext';
 import { augmentScopes } from '~/utils/oauthProviders';
 
 interface GoogleOAuthResult {
@@ -36,6 +36,9 @@ export function useGoogleOAuth(options: UseGoogleOAuthOptions = {}) {
     const oauthExchange = useOAuthExchange();
     const oauthExchangeRef = useRef(oauthExchange);
     useEffect(() => { oauthExchangeRef.current = oauthExchange; }, [oauthExchange]);
+    const authorizeParams = useOAuthAuthorizeParams();
+    const authorizeParamsRef = useRef(authorizeParams);
+    useEffect(() => { authorizeParamsRef.current = authorizeParams; }, [authorizeParams]);
     const [isConnecting, setIsConnecting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const optionsRef = useRef(options);
@@ -139,6 +142,7 @@ export function useGoogleOAuth(options: UseGoogleOAuthOptions = {}) {
             name: credentialName,
             scopes: allScopes.join(','),
             ...(customClient ? { custom_client_id: customClient.client_id } : {}),
+            ...authorizeParamsRef.current,
         });
 
         // Calculate popup position (centered on screen)

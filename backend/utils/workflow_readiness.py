@@ -120,7 +120,10 @@ def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dic
             )
         if not provider:
             result = node_cls.validate_config({"config": cfg})
-            errors = list(result.get("errors") or [])
+            # A saved node holds credentialIds, never the credentials a run
+            # resolves from them: those are judged above (missing_credentials),
+            # not by a model that declares them required (Twilio's).
+            errors = [e for e in result.get("errors") or [] if e != "credentials is required"]
             if kind == "agent":
                 message_error = agent_message_error(
                     cfg,
@@ -141,6 +144,20 @@ def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dic
     return issues
 
 
+async def unbound_issues(pool, workflow_id, graph: dict, trigger_id: Optional[str] = None) -> list[dict]:
+    """``activation_issues`` less the missing credentials the workflow's
+    product binds on every run as a config override (``BOUND_CREDENTIALS``),
+    so the saved graph holds none. The product is asked only when one is missing."""
+    from utils.capabilities import BOUND_CREDENTIALS, capability
+
+    issues = activation_issues(graph, trigger_id)
+    bound = capability(BOUND_CREDENTIALS)
+    if bound is None or not any(i["code"] == "missing_credentials" for i in issues):
+        return issues
+    nodes = set(await bound(pool, str(workflow_id)))
+    return [i for i in issues if i["code"] != "missing_credentials" or i["node_id"] not in nodes]
+
+
 async def require_activation_ready(pool, workflow_id, node_id):
     from repositories.workflow import WorkflowRepo
 
@@ -157,7 +174,7 @@ async def require_activation_ready(pool, workflow_id, node_id):
         graph = parse_graph(row["workflow"])
     if node_id not in {n.get("id") for n in graph_nodes(graph)}:
         raise WorkflowNotReadyError("Save the trigger before activating it.")
-    issues = activation_issues(graph, node_id)
+    issues = await unbound_issues(pool, workflow_id, graph, node_id)
     if issues:
         raise WorkflowNotReadyError(
             "Finish setup before activation: " + "; ".join(i["message"] for i in issues)

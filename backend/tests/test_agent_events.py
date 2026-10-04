@@ -223,7 +223,7 @@ async def test_persist_writes_the_trigger_record_on_the_user_event(monkeypatch):
 
     monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: FakePool())
     fake = SimpleNamespace(
-        user_id="u-1", workflow_id="wf-1", node_id="agent_1",
+        user_id="u-1", workflow_id="wf-1", node_id="agent_1", node_data={"config": {}},
         _UPSERT_INTERFACE_EVENT_SQL=AgentNode._UPSERT_INTERFACE_EVENT_SQL,
     )
     record = {"node_id": "s1", "node_type": "automation-slack", "label": "Support",

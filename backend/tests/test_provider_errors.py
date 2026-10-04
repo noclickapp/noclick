@@ -395,3 +395,82 @@ class TestBoundaryCoercion:
         from nodes.agent.provider_errors import classify_provider_error
 
         assert classify_provider_error({"not": "a string"}) is None
+
+
+class TestProxyRefusals:
+    """A proxy that holds an agent's model credential answers some requests
+    itself, inside the provider's own error envelope. Those answers must read
+    as NoClick's, never as the provider's: an Anthropic-shaped 401
+    ``authentication_error`` from the proxy is a revoked temporary key, not a
+    bad API key the user should go and rotate."""
+
+    @staticmethod
+    def _as_relayed(kind: str):
+        import json
+
+        from nodes.agent.provider_errors import proxy_refusal_message
+
+        message = proxy_refusal_message(kind, "this temporary key was revoked")
+        anthropic = json.dumps({"type": "error", "error": {"type": "authentication_error", "message": message}})
+        openai = json.dumps({"error": {"message": message, "type": "noclick_error", "param": None, "code": kind}})
+        return [f"API Error: 401 {anthropic}", f"unexpected status 403 Forbidden: {openai}", message]
+
+    @pytest.mark.parametrize("kind", ["key_revoked", "credential_disconnected", "budget_exhausted",
+                                      "rate_limited", "model_not_allowed"])
+    def test_every_refusal_classifies_as_noclick_inside_any_envelope(self, kind):
+        for relayed in self._as_relayed(kind):
+            match = classify_provider_error(relayed, channel="error")
+            assert (match.provider, match.kind) == ("noclick", kind), relayed
+            assert "\n\nDetails: " in match.message and "NoClick: this temporary key was revoked" in match.message
+
+    def test_only_a_disconnected_credential_offers_a_button(self):
+        from nodes.agent.provider_errors import PROXY_REFUSAL_KINDS, action_for_error_text
+
+        actions = {kind: action_for_error_text(self._as_relayed(kind)[0], node_type=None)
+                   for kind in PROXY_REFUSAL_KINDS}
+        assert actions.pop("credential_disconnected") == {"type": "open_credentials", "label": "Open credentials"}
+        assert set(actions.values()) == {None}
+
+    def test_a_refusal_laundered_into_the_reply_fails_the_turn(self):
+        from nodes.agent.provider_errors import proxy_refusal_message
+
+        response, error = normalize_turn_result(proxy_refusal_message("budget_exhausted", "cap reached"), None)
+        assert response == "" and "spend cap" in error
+
+    def test_the_minted_shape_is_the_contract(self):
+        from nodes.agent.provider_errors import proxy_refusal_message
+
+        minted = proxy_refusal_message("key_revoked", "gone [see logs]\nnow")
+        assert minted == "NoClick: gone (see logs) now [key_revoked]"
+        with pytest.raises(ValueError):
+            proxy_refusal_message("made_up", "x")
+        # A provider's own text that merely mentions NoClick is not a refusal.
+        assert classify_provider_error("NoClick: [something else]", channel="error") is None
+
+    # What each pinned harness actually reported when the proxy refused its
+    # model call with a revoked key (docker rig, 2026-09-30).
+    _REVOKED = "NoClick: this temporary key was revoked [key_revoked]"
+    _HARNESS_REPORTS = {
+        # claude's daemon (stream-json) mode delivers it as the assistant's reply.
+        "claude_code": ("response", f"Failed to authenticate. API Error: 401 {_REVOKED}"),
+        "codex": ("error", f"unexpected status 401 Unauthorized: {_REVOKED}, url: https://proxy.test/v1/responses"),
+        "opencode": ("error", f"Error: {_REVOKED}"),
+        "hermes_agent": ("error", "custom rejected your API key, so the model can't be reached. Update it in "
+                                  "Settings → Providers, or run `hermes setup` in a terminal.\n"
+                                  f"Provider said: HTTP 401: {_REVOKED}"),
+    }
+
+    @pytest.mark.parametrize("harness", sorted(_HARNESS_REPORTS))
+    def test_a_revoked_key_mid_turn_fails_the_turn_as_a_revoked_key(self, harness):
+        channel, text = self._HARNESS_REPORTS[harness]
+        response, error = normalize_turn_result(text if channel == "response" else "",
+                                                text if channel == "error" else None)
+        assert response == ""
+        assert error.startswith("The temporary key this agent uses to reach its model was revoked"), error
+        assert self._REVOKED in error
+
+    def test_openclaw_rewords_the_refusal_so_the_text_alone_cannot_tell(self):
+        # Why the callback also checks the sandbox's key state (callback_routes).
+        text = ("⚠️ noclick/claude-sonnet-4-5 request failed (authentication failed, HTTP 401). "
+                "Re-authenticate the provider and try again.")
+        assert classify_provider_error(text, channel="error") is None

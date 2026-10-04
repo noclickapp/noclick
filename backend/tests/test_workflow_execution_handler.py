@@ -801,6 +801,45 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
         assert history is None, f"a live turn wrote memory: {history}"
 
     @pytest.mark.asyncio
+    async def test_an_agent_turn_executes_with_the_turns_config_overrides(self, real_database, frontend_sio, sid):
+        """What a turn binds (a phone call's per-turn credentials) merges into
+        the nodes it executes as a run's config overrides do, under the turn's
+        own message and key, and never into the saved graph."""
+        from repositories.workflow import WorkflowRepo
+        from utils.database_pool import get_native_pool
+
+        workflow_id = str(uuid.uuid4())
+        user_id = '00000000-0000-4000-8000-000000000003'
+        await self.create_test_user(real_database, user_id)
+        await self.create_workflow_in_db(real_database, workflow_id, user_id)
+        nodes = [{"id": "agent-1", "type": "agent", "position": {"x": 0, "y": 0},
+                  "config": self.wrap_node_data("agent", {"system_prompt": "Answer the phone", "message": "standing",
+                                                          "temperature": 0.5})}]
+        await real_database.execute("UPDATE workflows SET workflow = $2 WHERE id = $1", workflow_id,
+                                    {"nodes": nodes, "edges": []})
+        pool = get_native_pool()
+        async with pool.acquire() as conn:
+            execution_id = await WorkflowRepo(pool).create_execution(
+                conn, workflow_id=workflow_id, user_id=user_id, trigger_source="phone_call")
+
+        handler = WorkflowExecutionHandler(sio=None)
+        executed = AsyncMock(wraps=handler._execute_nodes_concurrent)
+        with patch.object(handler, "_execute_nodes_concurrent", executed), \
+             patch("utils.node_outputs.persist_outputs", AsyncMock()):
+            result = await handler.execute_agent_turn(
+                workflow_id=workflow_id, agent_node_id="agent-1", user_id=user_id, message="Are you open?",
+                conversation_key="+1555:+1567", execution_id=execution_id,
+                config_overrides={"agent-1": {"system_prompt": "You are the front desk.", "message": "overridden"},
+                                  "ghost": {"credentialIds": {"x": "y"}}},
+            )
+        assert result.success, result.error
+        [agent] = executed.await_args.args[0]
+        assert agent["config"]["system_prompt"] == "You are the front desk."
+        assert agent["config"]["message"] == "Are you open?" and agent["config"]["conversation_key"] == "+1555:+1567"
+        saved = await real_database.fetchval("SELECT workflow FROM workflows WHERE id = $1", workflow_id)
+        assert saved["nodes"] == nodes
+
+    @pytest.mark.asyncio
     async def test_parallel_workflow(self, real_database, frontend_sio, sid):
         """Test parallel branching and convergence: A → [B,C,D] → E."""
         # Setup database

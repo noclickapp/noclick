@@ -5,7 +5,7 @@
 // becomes null after the popup navigates through slack.com (COOP: same-origin).
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useOAuthExchange } from './OAuthExchangeContext';
+import { useOAuthAuthorizeParams, useOAuthExchange } from './OAuthExchangeContext';
 import { openOAuthPostPopup } from '~/lib/oauthPopup';
 
 interface SlackOAuthResult {
@@ -42,6 +42,11 @@ export function useSlackOAuth(options: UseSlackOAuthOptions = {}) {
     useEffect(() => {
         oauthExchangeRef.current = oauthExchange;
     }, [oauthExchange]);
+    const authorizeParams = useOAuthAuthorizeParams();
+    const authorizeParamsRef = useRef(authorizeParams);
+    useEffect(() => {
+        authorizeParamsRef.current = authorizeParams;
+    }, [authorizeParams]);
     const [isConnecting, setIsConnecting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const optionsRef = useRef(options);
@@ -154,6 +159,7 @@ export function useSlackOAuth(options: UseSlackOAuthOptions = {}) {
                     user_scopes: userScopes?.join(','),
                     client_id: customClientId,
                     client_secret: customClientSecret,
+                    ...authorizeParamsRef.current,
                 },
             });
 

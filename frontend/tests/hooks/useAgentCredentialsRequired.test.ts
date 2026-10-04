@@ -79,15 +79,33 @@ describe('useAgentCredentialsRequired — CLI harnesses are always BYOK', () => 
     });
 
     it('accepts a subscription-OAuth credential as satisfying the requirement', () => {
-        // agent_claude_code_oauth aliases ANTHROPIC inside a wrapper (opencode
-        // re-enables Anthropic OAuth via a vendored plugin).
+        // agent_codex_oauth aliases OPENAI inside a wrapper on a ChatGPT model.
         expect(
             check(
                 'opencode',
-                { opencode_model: 'anthropic/claude-sonnet-4-5' },
-                { agent_claude_code_oauth: 'c1' },
+                { opencode_model: 'openai/gpt-5.4-mini' },
+                { agent_codex_oauth: 'c1' },
             ).credentialsRequired,
         ).toBe(false);
+    });
+
+    it('never counts a Claude plan outside Claude Code', () => {
+        // A Claude plan runs only in Claude Code: an anthropic/* sub-model on
+        // any other harness still needs an Anthropic key.
+        for (const [harness, field] of [
+            ['opencode', 'opencode_model'],
+            ['hermes', 'hermes_agent_model'],
+            ['openclaw', 'openclaw_model'],
+        ]) {
+            expect(
+                check(
+                    harness,
+                    { [field]: 'anthropic/claude-sonnet-4-5' },
+                    { agent_claude_code_oauth: 'c1' },
+                ).credentialsRequired,
+                harness,
+            ).toBe(true);
+        }
     });
 
     it('still requires credentials for codex / claude-code (unchanged)', () => {

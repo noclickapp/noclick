@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
 import { oauthFormString, oauthPostFormData } from '~/lib/oauthPost.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const SLACK_AUTH_URL = 'https://slack.com/oauth/v2/authorize';
 
@@ -33,6 +34,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         userScopesParam: url.searchParams.get('user_scopes') || 'chat:write',
         customClientId: null,
         customClientSecret: null,
+        appClientId: await oauthAppClientId(oauthAppToken(request), 'slack'),
     });
 }
 
@@ -48,6 +50,7 @@ export async function action({ request }: ActionFunctionArgs) {
             oauthFormString(formData, 'user_scopes') || 'chat:write',
         customClientId: oauthFormString(formData, 'client_id'),
         customClientSecret: oauthFormString(formData, 'client_secret'),
+        appClientId: await oauthAppClientId(oauthFormString(formData, 'oauth_app'), 'slack'),
     });
 }
 
@@ -57,6 +60,8 @@ interface SlackAuthorizeInput {
     userScopesParam: string;
     customClientId: string | null;
     customClientSecret: string | null;
+    /** The client id of the OAuth app a provide link's requester brings (oauthApp.server). */
+    appClientId: string | null;
 }
 
 async function startSlackOAuth(
@@ -67,6 +72,7 @@ async function startSlackOAuth(
         userScopesParam,
         customClientId,
         customClientSecret,
+        appClientId,
     }: SlackAuthorizeInput
 ) {
     if (
@@ -79,7 +85,7 @@ async function startSlackOAuth(
         );
     }
 
-    const clientId = customClientId || process.env.SLACK_CLIENT_ID;
+    const clientId = appClientId || customClientId || process.env.SLACK_CLIENT_ID;
     const redirectUri = process.env.SLACK_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

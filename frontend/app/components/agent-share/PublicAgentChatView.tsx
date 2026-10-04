@@ -14,6 +14,7 @@ import { SerializedIcon } from '~/components/shared/SerializedIcon';
 import { ToolLogosRow, type ToolLogo } from './ToolLogosRow';
 import { PoweredByBadge } from './PoweredByBadge';
 import { getOrCreateVisitorId, getChatKey, mintChatKey } from '~/lib/agentShareVisitor';
+import { brandPresentation, type Brand } from '~/lib/brandPresentation';
 import {
   SharedAgentSendRequest,
   SharedAgentResumeRequest,
@@ -41,6 +42,8 @@ export interface PublicAgentMeta {
   agent: { label: string; model: string | null };
   tools: { node_type: string; label: string }[];
   conversation_prefix: string;
+  /** The page's own brand, when the agent belongs to a product that sets one. */
+  brand?: Brand | null;
 }
 
 export function PublicAgentChatView({
@@ -64,6 +67,7 @@ export function PublicAgentChatView({
   }, [linkId]);
 
   const { socket, status } = useShareSocket(linkId, visitorId ?? '');
+  const brand = meta.brand ? brandPresentation(meta.brand) : null;
   const ready = !!socket && !!visitorId && !!chatKey;
 
   const conversationId = ready
@@ -135,6 +139,7 @@ export function PublicAgentChatView({
   // chats grow the page and scroll the composer away (2026-07-18).
   return (
     <div className="h-dvh overflow-hidden bg-background text-foreground flex flex-col">
+      {brand?.accent ? <div data-brand-accent aria-hidden className="h-1 shrink-0" style={{ backgroundColor: brand.accent }} /> : null}
       {/* Reconnecting strip. */}
       {ready && status !== 'connected' ? (
         <div className="shrink-0 text-center text-[11px] text-amber-700 dark:text-amber-300/90 bg-amber-100/70 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-900/40 py-1">
@@ -146,6 +151,14 @@ export function PublicAgentChatView({
         {/* Header: agent identity + tools + new chat. */}
         <div className="px-6 pt-6 pb-4 shrink-0 flex items-start justify-between gap-3">
           <div className="min-w-0">
+            {brand ? (
+              <div data-testid="agent-share-brand" className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                {brand.logoUrl ? (
+                  <img src={brand.logoUrl} alt="" referrerPolicy="no-referrer" className="h-5 w-5 rounded object-contain" />
+                ) : null}
+                <span className="min-w-0 truncate">{brand.name}</span>
+              </div>
+            ) : null}
             <div className="flex items-center gap-2.5">
               {agentIcon?.iconHtml ? (
                 <SerializedIcon html={agentIcon.iconHtml} iconColor={agentIcon.iconColor} className="w-7 h-7 shrink-0" />
@@ -198,7 +211,17 @@ export function PublicAgentChatView({
           placeholder={`Message ${meta.agent.label}`}
           inputDisabled={!ready}
           sendDisabled={!draft.trim() || isStreaming || !ready}
-          footerEnd={<PoweredByBadge />}
+          footerEnd={
+            brand ? (
+              brand.supportUrl ? (
+                <a href={brand.supportUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-muted-foreground hover:text-foreground underline underline-offset-2">
+                  Get help
+                </a>
+              ) : null
+            ) : (
+              <PoweredByBadge />
+            )
+          }
         />
       </div>
     </div>

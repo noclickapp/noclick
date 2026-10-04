@@ -17,6 +17,7 @@ import { createPortal } from 'react-dom';
 import { Check, Copy, Globe, Loader2 } from 'lucide-react';
 import { Claude, MCP, OpenAI, Windsurf as WindsurfIcon } from '@lobehub/icons';
 import { HARNESS_BRANDS } from '~/lib/harnessBrand';
+import { CursorMark } from '~/components/shared/CursorMark';
 import { cursorDeeplink } from '~/data/mcpQuickSteps';
 import { mcpServerUrl } from '~/lib/hostedDefaults';
 
@@ -37,8 +38,6 @@ function ZedIcon({ size = 16 }: { size?: number }) {
     );
 }
 
-// Cursor's lobehub mark uses gradient fills that resolve near-black on our
-// dark surface — use the official simple-icons mark in currentColor instead.
 // Real harness brand marks from the shared asset map (plain strings, no
 // registry weight). monochrome art inverts on light surfaces.
 // Wide/inset art renders undersized when contain-fit into the rail's small
@@ -72,14 +71,6 @@ const harnessMarkIcon = (slug: keyof typeof HARNESS_BRANDS) =>
             </span>
         );
     };
-
-function CursorMonoIcon({ size = 16 }: { size?: number }) {
-    return (
-        <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden>
-            <path d="M11.503.131 1.891 5.678a.84.84 0 0 0-.42.726v11.188c0 .3.162.575.42.724l9.609 5.55a1 1 0 0 0 .998 0l9.61-5.55a.84.84 0 0 0 .42-.724V6.404a.84.84 0 0 0-.42-.726L12.497.131a1.01 1.01 0 0 0-.996 0M2.657 6.338h18.55c.263 0 .43.287.297.515L12.23 22.918c-.062.107-.229.064-.229-.06V12.335a.59.59 0 0 0-.295-.51l-9.11-5.257c-.109-.063-.064-.23.061-.23" />
-        </svg>
-    );
-}
 
 type GuideBlock =
     | { kind: 'code'; title: string; code: string }
@@ -204,7 +195,7 @@ export const MCP_CLIENT_GUIDES: ClientGuide[] = [
     {
         key: 'cursor',
         label: 'Cursor',
-        Icon: CursorMonoIcon,
+        Icon: CursorMark,
         blocks: (url, name) => [
             { kind: 'link', label: 'Add to Cursor', href: cursorDeeplink(url, name), trailing: 'one-click install via deeplink' },
             { kind: 'note', text: 'Or add it manually to .cursor/mcp.json in your project (or ~/.cursor/mcp.json for all projects):' },

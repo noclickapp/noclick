@@ -15,6 +15,7 @@ coordinator with the result.
 from __future__ import annotations
 
 import base64
+import io
 import logging
 import os
 import time
@@ -37,17 +38,24 @@ _pricing_cache: Dict[str, Any] = {"at": None, "models": {}}
 
 
 class MediaError(RuntimeError):
-    """A generation the person should hear about in plain words."""
+    """A generation the person should hear about in plain words; when the
+    provider refused the request, ``status`` is its HTTP status and
+    ``provider_said`` its answer."""
+
+    def __init__(self, message: str, status: Optional[int] = None, provider_said: Optional[str] = None):
+        super().__init__(message)
+        self.status, self.provider_said = status, provider_said
 
 
-def _api_key() -> str:
+def openrouter_key() -> str:
+    """The instance's OpenRouter key: every call NoClick pays for runs on it."""
     key = os.environ.get("OPENROUTER_API_KEY")
     if not key:
-        raise MediaError("Media generation isn't configured on this instance (no OpenRouter key).")
+        raise MediaError("Models aren't configured on this instance (no OpenRouter key).")
     return key
 
 
-def _headers(api_key: str) -> Dict[str, str]:
+def openrouter_headers(api_key: str) -> Dict[str, str]:
     return {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
@@ -88,7 +96,7 @@ def build_image_request(
 
 async def post_image_request(api_key: str, body: Dict[str, Any]) -> Dict[str, Any]:
     async with httpx.AsyncClient(timeout=300.0) as client:
-        resp = await client.post(f"{OPENROUTER_API}/chat/completions", headers=_headers(api_key), json=body)
+        resp = await client.post(f"{OPENROUTER_API}/chat/completions", headers=openrouter_headers(api_key), json=body)
     if resp.status_code >= 400:
         logger.error("[Image] OpenRouter API error %s: %s", resp.status_code, resp.text)
         raise RuntimeError(
@@ -188,16 +196,30 @@ async def _store(
         user_id=user_id, workflow_id=None, organization_id=organization_id, body=body,
         content_type=content_type, filename=filename, resource_type=resource_type, metadata=metadata,
     )
-    return {"url": stored["download_url"], "resource_id": stored["resource_id"], "mime_type": content_type}
+    return {"url": stored["download_url"], "resource_id": stored["resource_id"], "mime_type": content_type,
+            "storage_ref": stored["storage_ref"]}
+
+
+def _pixel_size(body: bytes) -> Tuple[Optional[int], Optional[int]]:
+    """(width, height) of a raster image; (None, None) for one Pillow can't read (an SVG)."""
+    from PIL import Image, UnidentifiedImageError
+
+    try:
+        with Image.open(io.BytesIO(body)) as image:
+            return image.size
+    except UnidentifiedImageError:
+        return None, None
 
 
 async def generate_image(
     pool, *, user_id: str, organization_id: Optional[str], prompt: str,
     model: Optional[str] = None, aspect_ratio: Optional[str] = None, email: Optional[str] = None,
+    source: str = "coordinator",
 ) -> Dict[str, Any]:
     """One image on the platform key through OpenRouter's image endpoint
     (``/api/v1/images``, where image-output models live), stored as account
-    files and billed to the account (its org owner under Owner Pays)."""
+    files and billed to the account (its org owner under Owner Pays).
+    ``source`` names the caller on the file and the usage event."""
     from billing.gates import check_product
     from billing.usage_tracker import usage_tracker
 
@@ -209,10 +231,11 @@ async def generate_image(
     if aspect_ratio:
         body["aspect_ratio"] = aspect_ratio
     async with httpx.AsyncClient(timeout=300.0) as client:
-        resp = await client.post(f"{OPENROUTER_API}/images", headers=_headers(_api_key()), json=body)
+        resp = await client.post(f"{OPENROUTER_API}/images", headers=openrouter_headers(openrouter_key()), json=body)
     if resp.status_code >= 400:
         logger.error("[Image] OpenRouter images error %s: %s", resp.status_code, resp.text)
-        raise MediaError(f"The image model refused the request (HTTP {resp.status_code}): {resp.text[:300]}")
+        raise MediaError(f"The image model refused the request (HTTP {resp.status_code}): {resp.text[:300]}",
+                         status=resp.status_code, provider_said=resp.text)
     raw = resp.json()
     images = []
     for i, item in enumerate(raw.get("data") or []):
@@ -220,11 +243,14 @@ async def generate_image(
             continue
         mime = item.get("media_type") or "image/png"
         ext = {"image/svg+xml": "svg", "image/jpeg": "jpg"}.get(mime, mime.split("/")[-1])
-        images.append(await _store(
-            user_id=user_id, organization_id=organization_id, body=base64.b64decode(item["b64_json"]),
+        data = base64.b64decode(item["b64_json"])
+        stored = await _store(
+            user_id=user_id, organization_id=organization_id, body=data,
             content_type=mime, filename=f"image-{i + 1}.{ext}", resource_type="image",
-            metadata={"source": "coordinator", "model": model, "prompt": prompt[:500]},
-        ))
+            metadata={"source": source, "model": model, "prompt": prompt[:500]},
+        )
+        stored["width"], stored["height"] = _pixel_size(data)
+        images.append(stored)
     if not images:
         raise MediaError("The image model answered without an image; try rewording the request.")
     usage = raw.get("usage") or {}
@@ -232,7 +258,7 @@ async def generate_image(
         user_id=user_id, organization_id=organization_id, model=model,
         dollars=Decimal(str(usage.get("cost") or 0)), user_resource=False,
         quantity=Decimal(len(images)), unit_type="images",
-        metadata={"model": model, "surface": "coordinator_image"},
+        metadata={"model": model, "surface": f"{source}_image"},
     )
     return {"images": images, "model": model, "cost_usd": float(charged)}
 
@@ -313,7 +339,7 @@ async def start_video(
     if aspect_ratio:
         params["aspect_ratio"] = aspect_ratio
     async with httpx.AsyncClient(timeout=60.0) as client:
-        resp = await client.post(f"{OPENROUTER_API}/videos", headers=_headers(_api_key()),
+        resp = await client.post(f"{OPENROUTER_API}/videos", headers=openrouter_headers(openrouter_key()),
                                  json={"model": model, "prompt": prompt, **params})
     if resp.status_code >= 400:
         raise MediaError(f"The video model refused the request (HTTP {resp.status_code}): {resp.text[:300]}")
@@ -348,7 +374,7 @@ async def _poll_one(pool, client: httpx.AsyncClient, api_key: str, job: Dict[str
     from coder.coordinator.jobs import finish_job
 
     spec = job["spec"]
-    resp = await client.get(f"{OPENROUTER_API}/videos/{spec['provider_job_id']}", headers=_headers(api_key))
+    resp = await client.get(f"{OPENROUTER_API}/videos/{spec['provider_job_id']}", headers=openrouter_headers(api_key))
     resp.raise_for_status()
     state = resp.json()
     status = state.get("status")
@@ -360,7 +386,7 @@ async def _poll_one(pool, client: httpx.AsyncClient, api_key: str, job: Dict[str
             await finish_job(pool, job["id"], status="failed", error="The video took too long and was abandoned.")
         return
     content = await client.get(f"{OPENROUTER_API}/videos/{spec['provider_job_id']}/content",
-                               params={"index": 0}, headers=_headers(api_key), follow_redirects=True)
+                               params={"index": 0}, headers=openrouter_headers(api_key), follow_redirects=True)
     content.raise_for_status()
     if len(content.content) > VIDEO_MAX_BYTES:
         await finish_job(pool, job["id"], status="failed", error="The video was larger than NoClick keeps.")
@@ -401,7 +427,7 @@ async def poll_video_jobs(pool, limit: int = 20) -> None:
     )
     if not jobs:
         return
-    api_key = _api_key()
+    api_key = openrouter_key()
     async with httpx.AsyncClient(timeout=120.0) as client:
         for job in jobs:
             try:

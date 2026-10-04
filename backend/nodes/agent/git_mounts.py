@@ -17,6 +17,13 @@ Without a FilesystemNode the clone lands on the sandbox's ephemeral disk
 and is wiped when the sandbox dies — push it or lose it. With one, the
 workdir is the persistent volume and the clone survives (clone-if-missing).
 
+An edition can also hand a run its checkouts directly, under the runtime
+config key ``_sandboxCheckouts`` on the agent node: setups that carry their
+own ``root`` and ``dir`` (where they land) and ``push`` (the branch globs a
+push may reach, None for read-only), and no secret. A hosted runtime makes
+each concrete before its script runs: ``clone_url`` and an ``auth_header``
+git sends to that URL alone, in place of a stored token.
+
 Subprocess calls are awaited directly so they never block the event loop.
 """
 from __future__ import annotations
@@ -28,16 +35,39 @@ from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 
+SANDBOX_CHECKOUTS_KEY = "_sandboxCheckouts"
+
+
+def checkouts_of(node: Any) -> List[Dict[str, Any]]:
+    """The checkouts an edition handed this run (``_sandboxCheckouts``), as copies."""
+    data = getattr(node, "node_data", None) or {}
+    config = data.get("config") if isinstance(data.get("config"), dict) else {}
+    checkouts = config.get(SANDBOX_CHECKOUTS_KEY) or data.get(SANDBOX_CHECKOUTS_KEY)
+    return [dict(c) for c in checkouts] if isinstance(checkouts, list) else []
+
+
+def sandbox_setups_of(node: Any) -> List[Dict[str, Any]]:
+    """Every git setup a run's sandbox applies: the providers' mounts, then its checkouts."""
+    return list(getattr(node, "_sandbox_setups", None) or []) + checkouts_of(node)
+
+
+def mount_path(setup: Dict[str, Any], workdir: str) -> str:
+    """Where a setup lands: under its own ``root`` when it carries one, else the workdir."""
+    return f"{(setup.get('root') or workdir).rstrip('/')}/{setup['dir']}"
+
 
 def assign_mount_dirs(setups: List[Dict[str, Any]]) -> None:
     """Assign a unique ``dir`` to each setup (in place).
 
-    First claimant of a repo name gets the bare name; collisions fall back
+    A setup with its own ``root`` keeps the ``dir`` it was given. Otherwise the
+    first claimant of a repo name gets the bare name; collisions fall back
     to ``owner-name`` (and a numeric suffix in the degenerate same-repo-twice
     case, which clone-if-missing would otherwise silently alias).
     """
-    taken: set = set()
+    taken: set = {setup["dir"] for setup in setups if setup.get("root")}
     for setup in setups:
+        if setup.get("root"):
+            continue
         owner, name = setup["repo"].split("/", 1)
         candidates = [name, f"{owner}-{name}"]
         chosen = None
@@ -68,21 +98,30 @@ def build_git_mount_script(setup: Dict[str, Any], workdir: str) -> str:
     (persistent-volume case); git identity is the repo's LOCAL config —
     it persists with the volume and never cross-contaminates other mounts.
     """
-    host = setup["host"]
-    repo_path = f"{host}/{setup['repo']}"
-    cred_line = f"https://x-access-token:{setup['token']}@{repo_path}.git"
-    target = f"{workdir.rstrip('/')}/{setup['dir']}"
+    target = mount_path(setup, workdir)
     clone_args = f"--branch {shlex.quote(setup['branch'])} " if setup.get("branch") else ""
+    if setup.get("auth_header"):
+        # A header git sends to this repository's URL alone; nothing is stored.
+        auth = (f"git config --global --replace-all {shlex.quote('http.' + setup['clone_url'] + '.extraHeader')} "
+                f"{shlex.quote(setup['auth_header'])}\n")
+    elif setup.get("kind") == "git_proxy":
+        raise ValueError(f"The checkout of {setup['repo']} was never given its key")
+    else:
+        repo_path = f"{setup['host']}/{setup['repo']}"
+        cred_line = f"https://x-access-token:{setup['token']}@{repo_path}.git"
+        auth = (
+            "git config --global credential.helper store\n"
+            "git config --global credential.useHttpPath true\n"
+            f"touch ~/.git-credentials && chmod 600 ~/.git-credentials\n"
+            # Replace any prior line for this exact repo, keep other repos' lines.
+            f"grep -vF {shlex.quote('@' + repo_path + '.git')} ~/.git-credentials > ~/.git-credentials.tmp || true\n"
+            f"printf '%s\\n' {shlex.quote(cred_line)} >> ~/.git-credentials.tmp\n"
+            "mv ~/.git-credentials.tmp ~/.git-credentials\n"
+        )
     return (
         "set -e\n"
-        f"mkdir -p {shlex.quote(workdir)}\n"
-        "git config --global credential.helper store\n"
-        "git config --global credential.useHttpPath true\n"
-        f"touch ~/.git-credentials && chmod 600 ~/.git-credentials\n"
-        # Replace any prior line for this exact repo, keep other repos' lines.
-        f"grep -vF {shlex.quote('@' + repo_path + '.git')} ~/.git-credentials > ~/.git-credentials.tmp || true\n"
-        f"printf '%s\\n' {shlex.quote(cred_line)} >> ~/.git-credentials.tmp\n"
-        "mv ~/.git-credentials.tmp ~/.git-credentials\n"
+        f"mkdir -p {shlex.quote(target.rsplit('/', 1)[0])}\n"
+        + auth +
         f"if [ ! -d {shlex.quote(target)}/.git ]; then\n"
         f"  git clone {clone_args}{shlex.quote(setup['clone_url'])} {shlex.quote(target)}\n"
         "fi\n"
@@ -127,17 +166,29 @@ def describe_git_mounts(setups: List[Dict[str, Any]], workdir: str) -> str:
     assign_mount_dirs(setups)
     lines = []
     for setup in setups:
-        path = f"{workdir.rstrip('/')}/{setup['dir']}"
+        path = mount_path(setup, workdir)
+        if "push" not in setup:
+            lines.append(f"Repository {setup['repo']} is cloned at {path} with authenticated "
+                         f"git (you can push branches).")
+        elif setup["push"]:
+            lines.append(f"Repository {setup['repo']} is cloned at {path} with authenticated git; you can push "
+                         f"only to branches matching {', '.join(setup['push'])}.")
+        else:
+            lines.append(f"Repository {setup['repo']} is cloned at {path}, read-only: git fetches it but can't push.")
+    if any("push" not in setup for setup in setups):
         lines.append(
-            f"Repository {setup['repo']} is cloned at {path} with authenticated "
-            f"git (you can push branches)."
+            "Both git and the gh CLI are authenticated for these hosts. To open a PR, "
+            "prefer a provider tool like github__create_pull_request when it is in your "
+            "tool list; otherwise use gh (e.g. gh pr create). Commit and push work you "
+            "want to land upstream."
         )
-    lines.append(
-        "Both git and the gh CLI are authenticated for these hosts. To open a PR, "
-        "prefer a provider tool like github__create_pull_request when it is in your "
-        "tool list; otherwise use gh (e.g. gh pr create). Commit and push work you "
-        "want to land upstream."
-    )
+    else:
+        hosts = sorted({setup["host"] for setup in setups})
+        lines.append(
+            f"gh only reads these repositories, through {', '.join(hosts)} (gh api --hostname {hosts[0]} "
+            "repos/<owner>/<name>/...); open pull requests and issues with your tools. Commit and push work you "
+            "want to land upstream."
+        )
     return " ".join(lines)
 
 async def apply_git_mounts_local(setups: List[Dict[str, Any]], workdir: str) -> None:

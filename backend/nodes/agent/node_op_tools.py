@@ -15,6 +15,7 @@ MCP endpoint both route calls through ``tool_execution.execute_tool``, where
 
 import json
 import logging
+import re
 from functools import lru_cache
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -109,6 +110,37 @@ def normalize_allowed_operations(
             if cleaned:
                 scopes_by_op[op_name] = cleaned
     return op_names, scopes_by_op
+
+
+def bindings_of(entries: Any) -> Dict[str, Dict[str, Any]]:
+    """``{operation: bound arguments}`` of an allowlist's entries that bind
+    some (``{"operation", "bind": {...}}``; ``tool_binding``)."""
+    from nodes.agent.tool_binding import BIND_KEY
+
+    return {entry["operation"]: dict(entry[BIND_KEY]) for entry in entries or []
+            if isinstance(entry, dict) and isinstance(entry.get("operation"), str)
+            and isinstance(entry.get(BIND_KEY), dict) and entry[BIND_KEY]} if isinstance(entries, list) else {}
+
+
+def _tool_visible(field: str, prop: Dict[str, Any]) -> bool:
+    """Whether a config field is one of its operation tool's parameters.
+    Most ui:hidden fields are discriminators, credentials, or runtime state
+    and must stay out of agent tools; composite editors can hide their
+    backing fields from the form while explicitly exposing them to agents
+    via x-agent-tool-visible (for example HTTP request bodies)."""
+    return field != "operation" and (not prop.get("ui:hidden") or bool(prop.get("x-agent-tool-visible")))
+
+
+def operation_parameter_names(node_type: str, operation: str) -> Optional[frozenset]:
+    """The parameters ``operation``'s tool takes (what a binding may fix); None for an unknown one."""
+    from nodes.core.registry import NODE_REGISTRY
+
+    node_class = NODE_REGISTRY.get(node_type)
+    for entry in _iter_operation_defs(node_class) if node_class is not None else ():
+        if entry["operation"] == operation:
+            return frozenset(f for f, p in entry["member"].get("properties", {}).items()
+                             if isinstance(p, dict) and _tool_visible(f, p))
+    return None
 
 
 @lru_cache(maxsize=None)
@@ -211,8 +243,9 @@ def extract_resource_id_from_output(
     return None
 
 
-def _iter_operation_defs(node_class) -> List[Dict[str, Any]]:
-    """Yield resolved per-operation member schemas from a node's config schema.
+def _iter_operation_defs(node_class, *, triggers: bool = False) -> List[Dict[str, Any]]:
+    """Yield resolved per-operation member schemas from a node's config schema:
+    its action operations, or with ``triggers`` its ``x-is-trigger`` ones.
 
     Handles both the discriminated-union shape (properties.config.oneOf of
     $refs) and a flat single-model config carrying an operation const.
@@ -248,7 +281,7 @@ def _iter_operation_defs(node_class) -> List[Dict[str, Any]]:
         const = op.get("const") or (op.get("enum") or [None])[0]
         if not const:
             continue
-        if op.get("x-is-trigger"):
+        if bool(op.get("x-is-trigger")) != triggers:
             continue
         out.append({"operation": const, "operation_schema": op, "member": member, "defs": defs})
     return out
@@ -406,7 +439,11 @@ def effective_provider_operations(node_type: str, config: Dict[str, Any]) -> Lis
     Explicit scopes win; unconfigured fields remain agent-selected. This also
     protects existing graphs that saved a fixed recipient on a provider node.
     """
-    names, scopes = normalize_allowed_operations(config.get('agent_tool_operations') or [])
+    from nodes.agent.tool_binding import BIND_KEY
+
+    entries = config.get('agent_tool_operations') or []
+    names, scopes = normalize_allowed_operations(entries)
+    binds = bindings_of(entries)
     result = []
     for operation in names:
         fields = dict(scopes.get(operation) or {})
@@ -414,7 +451,9 @@ def effective_provider_operations(node_type: str, config: Dict[str, Any]) -> Lis
             value = config.get(field)
             if field not in fields and isinstance(value, (str, int)) and not isinstance(value, bool) and str(value).strip():
                 fields[field] = [str(value)]
-        result.append({'operation': operation, 'field_scopes': fields} if fields else operation)
+        extra = {**({'field_scopes': fields} if fields else {}),
+                 **({BIND_KEY: binds[operation]} if operation in binds else {})}
+        result.append({'operation': operation, **extra} if extra else operation)
     return result
 
 
@@ -448,7 +487,12 @@ def build_provider_output(node_type: str, raw_config: Dict[str, Any]) -> Dict[st
     # bash sandbox at boot (e.g. authenticated GitHub clones). Derivation of
     # the actual setups happens later via NODE_REGISTRY[type].get_sandbox_setup.
     repos, _err = normalize_sandbox_repos(merged.get("agent_sandbox_repos"))
-    return {
+    # What the tools say instead of running when no credential is bound (e.g.
+    # where to connect one). Run-time only: a caller sets it as a config override.
+    note = merged.get("agent_tool_credential_note")
+    # The tools' name prefix when it isn't the node type's slug (an embedder's own name for it).
+    tool_slug = merged.get("agent_tool_slug")
+    output = {
         "type": "node_op_tool_provider",
         "node_type": node_type,
         "allowed_operations": allowed,
@@ -458,6 +502,11 @@ def build_provider_output(node_type: str, raw_config: Dict[str, Any]) -> Dict[st
         "label": label if isinstance(label, str) and label.strip() else None,
         "sandbox_repos": repos or [],
     }
+    if isinstance(note, str) and note.strip():
+        output["credential_note"] = note
+    if isinstance(tool_slug, str) and re.fullmatch(r"[a-z0-9][a-z0-9_]{0,40}", tool_slug):
+        output["tool_slug"] = tool_slug
+    return output
 
 
 def allowlist_requires_credentials(node_type: str, operations: List[Any]) -> bool:
@@ -544,6 +593,7 @@ def build_node_op_tools(
     slug: Optional[str] = None,
     provider_label: Optional[str] = None,
     credential_label: Optional[str] = None,
+    tool_user: Optional[Dict[str, Any]] = None,
 ) -> Tuple[List[ChatCompletionToolParam], Dict[str, Dict[str, Any]]]:
     """
     Build agent tool definitions for the allowlisted operations of a node.
@@ -561,7 +611,12 @@ def build_node_op_tools(
     credential's display name, e.g. "alex@work") are appended to every tool
     description so the MODEL can tell same-type providers apart — the slug
     alone is just a namespace, not a semantic signal.
+
+    An entry's ``bind`` (``tool_binding``) leaves the schema, filled from
+    ``tool_user`` (the person the turn acts for) into the tool's
+    ``bound_arguments``; an operation whose binding can't be filled isn't offered.
     """
+    from nodes.agent import tool_binding
     from nodes.core.registry import NODE_REGISTRY
 
     node_class = NODE_REGISTRY.get(node_type)
@@ -579,6 +634,14 @@ def build_node_op_tools(
             parts.append(f"the '{credential_label}' credential")
         provider_tag = f" Acts via {' using '.join(parts)}."
     op_names, scopes_by_op = normalize_allowed_operations(allowed_operations)
+    bound_by_op: Dict[str, Dict[str, Any]] = {}
+    for operation, bind in bindings_of(allowed_operations).items():
+        filled = tool_binding.fill(bind, tool_user)
+        if filled is None:
+            logger.info(f"[NodeOpTools] {node_type}.{operation}: its binding can't be filled this turn; not offered")
+            op_names = [op for op in op_names if op != operation]
+        else:
+            bound_by_op[operation] = filled
     allowed = set(op_names)
     # Resource types this allowlist can CREATE — derived from creator ops.
     # When a creator for a field's resource_type is allowlisted, that field's
@@ -615,14 +678,9 @@ def build_node_op_tools(
 
         properties: Dict[str, Any] = {}
         op_dyn_keys: List[str] = []
+        bound = bound_by_op.get(operation) or {}
         for field, prop in member.get("properties", {}).items():
-            # Most ui:hidden fields are discriminators, credentials, or runtime
-            # state and must stay out of agent tools. Composite editors can hide
-            # their backing fields from the form while explicitly exposing them
-            # to agents via x-agent-tool-visible (for example HTTP request bodies).
-            if field == "operation" or (
-                prop.get("ui:hidden") and not prop.get("x-agent-tool-visible")
-            ):
+            if not _tool_visible(field, prop) or field in bound:
                 continue
             cleaned = _clean_property(prop, defs)
             dyn = prop.get("x-dynamic-options")
@@ -698,6 +756,8 @@ def build_node_op_tools(
             "_description": description,
             "_parameters": parameters,
         }
+        if bound:
+            tool_configs[tool_name][tool_binding.BOUND_ARGUMENTS_KEY] = bound
         if op_scopes:
             # Server-side enforcement reads this at execute time —
             # defense-in-depth behind the schema-level enum.

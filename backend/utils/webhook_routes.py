@@ -1565,6 +1565,12 @@ async def handle_webhook_payload(
             )
         return True  # Return success but don't execute
 
+    taken = await _delivered_elsewhere(workflow_id, trigger_node, payload)
+    if taken is not None:
+        update_webhook_stats(webhook_id)
+        status_code, content = taken
+        return _json_relay_response(content, status_code=status_code) if return_response else status_code < 400
+
     # For alarm nodes, execute only the agent's subgraph to avoid side effects
     if is_alarm:
         agent_node_id = _find_connected_agent(nodes, edges, actual_node_id)
@@ -1872,6 +1878,18 @@ async def _transform_trigger_payload(
     return transformed
 
 
+async def _delivered_elsewhere(workflow_id: str, trigger_node: dict, payload: dict) -> Optional[tuple]:
+    """``(status_code, body)`` when a product took this fired trigger's
+    delivery (``TRIGGER_DELIVERY``) instead of a run of its workflow; None
+    runs the workflow."""
+    from utils.capabilities import TRIGGER_DELIVERY, capability
+
+    deliver = capability(TRIGGER_DELIVERY)
+    if deliver is None:
+        return None
+    return await deliver(workflow_id=workflow_id, node=trigger_node, payload=payload)
+
+
 def _webhook_ack_for_node(trigger_node: dict) -> Optional[Response]:
     """Provider-specific acknowledgement response for a trigger node.
 
@@ -2109,9 +2127,12 @@ async def _fire_subscription(
     # per subscription, so each workflow's run carries its own resource.
     from nodes.core.registry import NODE_REGISTRY
 
-    await _transform_trigger_payload(
+    delivered = await _transform_trigger_payload(
         NODE_REGISTRY.get(trigger_node.get("type") or ""), trigger_node, payload, workflow_id
     )
+    taken = await _delivered_elsewhere(workflow_id, trigger_node, delivered)
+    if taken is not None:
+        return taken[0] < 400
 
     background_tasks.add_task(
         _execute_workflow_with_relay,
@@ -2904,6 +2925,12 @@ async def receive_webhook(
         )
 
     payload = await _transform_trigger_payload(_node_cls, trigger_node, payload, workflow_id)
+
+    taken = await _delivered_elsewhere(workflow_id, trigger_node, payload)
+    if taken is not None:
+        update_webhook_stats(webhook_id)
+        status_code, content = taken
+        return JSONResponse(content=jsonable_encoder(content), status_code=status_code)
 
     # For alarm nodes, execute only the agent's subgraph to avoid side effects
     if is_alarm:

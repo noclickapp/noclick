@@ -94,7 +94,7 @@ BUILDER_RESULT_NOTIFY = "builder.result_notify"
 OWNER_MESSAGE = "owner.message"
 
 # Phone numbers a workflow can own: search(country, area_code, limit, *, contains=None) -> list,
-# buy(e164, *, label) -> {number_sid, phone_number}, release(number_sid),
+# buy(e164, *, label) -> {number_sid, phone_number, provider}, release(number_sid),
 # route(number_sid, *, webhook_id) / unroute(number_sid) (where its calls go),
 # exists(number_sid) -> bool. Without one, numbers cannot be bought here.
 PHONE_NUMBERS = "phone.numbers"
@@ -120,6 +120,115 @@ PHONE_CALLS = "phone.calls"
 # payment wakes the coordinator. Without one, a refusal names the plans and
 # stops there.
 PURCHASES = "billing.purchases"
+
+# Vet an agent's tool call before it runs: async (*, user_id, workflow_id,
+# node_id, conversation_id, tool_name, tool_info, arguments) -> None to run it,
+# or the result dict ({"success": False, "error": ...}) to return instead.
+# Called for every non-rehearsed call (via tool_execution.tool_call_refusal,
+# including execute_bash as tool_info {"tool_type": "bash"}), so it must answer
+# cheaply for workflows it has no say over.
+TOOL_CALL_GUARD = "agent.tool_call_guard"
+
+# The nodes of a workflow whose credential its product binds on every run as
+# a config override, so the saved graph holds none: async (pool, workflow_id)
+# -> iterable of node ids. Activation readiness (every trigger registration
+# path) doesn't ask them for a saved credential. Without one, every node's
+# credential must be saved in the graph.
+BOUND_CREDENTIALS = "workflow.bound_credentials"
+
+# Receive mail to a reserved inbound address whose kind the engine has no
+# receiver for (neither a trigger's nor the coordinator's): async (pool,
+# reservation, message, *, defer) -> str, what happened, for the log.
+# ``reservation`` is the email_reservations row; ``message`` is the parsed
+# mail (from, to, subject, text, html, headers, spf/dkim verdicts, stored
+# attachments, reply_token + timestamp for utils.email_reply); ``defer(fn,
+# *args)`` runs work after the relay is acked. Without one, such addresses
+# are unknown.
+EMAIL_ADDRESS_RECEIVER = "email.address_receiver"
+
+# The OAuth app a credential request's minting surface brings for a provider,
+# in place of the instance's own: async (pool, *, requester_id, metadata,
+# provider) -> {client_id, client_secret} or None (the instance's app).
+# ``metadata`` is the request's; raises OAuthAppUnavailable when the app it
+# named can't be used any more (the request then can't connect that provider).
+OAUTH_APPS = "credentials.oauth_apps"
+
+# Let an agent ask its user to connect an account it may then act in (the
+# ``request_connection`` tool): async (pool, *, spec, arguments) -> result dict.
+# ``spec`` is what the platform put on the turn (the agent's
+# ``_connectionRequests`` runtime config); without a provider the tool is
+# never offered.
+CONNECTION_REQUESTS = "agent.connection_requests"
+
+# Let an agent take a turn in its conversation later (the ``wake_me`` tool):
+# async (pool, *, spec, arguments) -> result dict. ``spec`` is the agent's
+# ``_wakeMe`` runtime config; without a provider the tool is never offered.
+WAKEUPS = "agent.wakeups"
+
+# Let a spawned agent reach the agent that gave it its task (the
+# ``tell_parent`` tool): async (pool, *, spec, arguments) -> result dict.
+# ``spec`` is the agent's ``_tellParent`` runtime config; without a provider
+# the tool is never offered.
+PARENT_UPDATES = "agent.parent_updates"
+
+# Let an agent manage other agents with tools a platform defines (start them on
+# work, message, ask and check on them, stop what it started): an object with
+# ``tools(spec) -> [tool params]`` (function params, unique names) and async
+# ``call(pool, *, spec, arguments) -> result dict``. ``spec`` is the agent's
+# ``_agentTools`` runtime config; each offered tool's own spec adds ``tool``,
+# its function name. Without a provider no tool is offered.
+AGENT_COORDINATION = "agent.coordination"
+
+# Tools a platform defines whole for an agent's turn (the runtime key
+# nodes.agent.platform_tools.PLATFORM_TOOLS_KEY): async (pool, *, spec,
+# arguments) -> result, called with the tool's own spec. ``spec["policy"]``
+# names the tool for policy where the wire name doesn't.
+PLATFORM_TOOLS = "agent.platform_tools"
+
+# Let an agent keep named notes across its conversations (the memory__search,
+# memory__read, memory__save and memory__delete tools of nodes.agent.agent_memory):
+# async (pool, *, spec, arguments) -> result dict. ``spec`` is the agent's
+# ``_agentMemory`` runtime config plus ``tool``, the function's name; without a
+# provider the tools are never offered.
+AGENT_MEMORY = "agent.memory"
+
+# Text steered into an in-process agent's running turn before its next model
+# call (a question asked mid-turn, a progress check): async (conversation_id)
+# -> [text], each taken once. Asked before every model call, so it must
+# answer cheaply for conversations it has no say over.
+TURN_STEERING = "agent.turn_steering"
+
+# Environment variables an edition keeps itself for an agent's sandbox (named
+# secrets): async (spec) -> {NAME: value}. ``spec`` is the agent's
+# ``_sandboxEnv`` runtime config (nodes.agent.user_env.SANDBOX_ENV_KEY); the
+# values join the agent_env credential's and are checked the same way.
+SANDBOX_ENV = "agent.sandbox_env"
+
+# Take a fired trigger's delivery in place of a run of its workflow, for a
+# trigger node a product delivers its own way: async (*, workflow_id, node,
+# payload) -> None (not one of its nodes: the workflow runs as usual) or
+# (status_code, body) for the sender. Asked once the delivery passed the
+# node's own checks (signature, filters, fire budget, transform), so it must
+# answer cheaply for nodes it has no say over.
+TRIGGER_DELIVERY = "trigger.delivery"
+
+# Watch an agent's turns as they happen: (conversation_id, event) -> None,
+# synchronous and fire-and-forget, for each piece of reply text
+# ({type: text, text}), each tool call about to run or held ({type: tool_call,
+# tool, arguments, held?}) and each tool result ({type: tool_result, tool,
+# result, is_error}). Called on every turn's hot path, so it must answer
+# cheaply for conversations it has no say over.
+TURN_EVENTS = "agent.turn_events"
+
+# Run a shared agent link's visitor turns a product's own way (its billing,
+# budgets and credentials) for an agent it owns: async (pool, link) -> None
+# (not its agent: the engine runs the turn) or an object with
+# ``conversation_prefix`` (a visitor's thread is ``{prefix}:{visitor id}:{chat
+# key}``), async ``send(conversation_id, text) -> None`` (accepted) or the
+# refusal's reason (``busy``, ``agent_unavailable``), and ``brand`` (the page's
+# name, logo_url, color and support_url, or None). ``link`` is
+# ``SharedAgentLinkRepo.load_for_visit``'s row.
+SHARED_AGENT_TURNS = "agent.shared_turns"
 
 _providers: Dict[str, Any] = {}
 

@@ -1065,7 +1065,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                                 old_cfg, new_cfg, user_id=_uid,
                             )
                         from utils.graph_nodes import graph_nodes, node_config
-                        from utils.workflow_readiness import activation_issues
+                        from utils.workflow_readiness import unbound_issues
                         for trigger in graph_nodes(_new_wf):
                             cfg = node_config(trigger)
                             kind, nid = trigger.get('type'), trigger.get('id')
@@ -1075,7 +1075,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                                 continue
                             if cfg.get('webhook_url') and not cfg.get('trigger_error'):
                                 continue
-                            if activation_issues(_new_wf, nid):
+                            if await unbound_issues(_pool, _wid, _new_wf, nid):
                                 continue
                             try:
                                 patch = await WebhookManager.provision_node_webhook(

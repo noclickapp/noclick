@@ -12,7 +12,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { augmentScopes } from '~/utils/oauthProviders';
-import { useOAuthExchange } from './OAuthExchangeContext';
+import { useOAuthAuthorizeParams, useOAuthExchange } from './OAuthExchangeContext';
 import { oauthChannelName } from '~/lib/oauthChannel';
 
 export interface OAuthHookResult {
@@ -112,6 +112,8 @@ export function createOAuthHook(config: OAuthHookConfig) {
         const credentialNameRef = useRef<string>('');
         const exchange = useOAuthExchange();
         const exchangeRef = useRef(exchange);
+        const authorizeParams = useOAuthAuthorizeParams();
+        const authorizeParamsRef = useRef(authorizeParams);
         const channelRef = useRef<BroadcastChannel | null>(null);
         const callbackRef = useRef<
             ((data: OAuthCallbackData) => Promise<void>) | null
@@ -123,6 +125,9 @@ export function createOAuthHook(config: OAuthHookConfig) {
         useEffect(() => {
             exchangeRef.current = exchange;
         }, [exchange]);
+        useEffect(() => {
+            authorizeParamsRef.current = authorizeParams;
+        }, [authorizeParams]);
 
         useEffect(() => {
             const handleCallback = async (data: OAuthCallbackData) => {
@@ -254,6 +259,9 @@ export function createOAuthHook(config: OAuthHookConfig) {
                     buildAuthorizeUrl(config, credentialName, scopes, options),
                     window.location.origin
                 );
+                for (const [field, value] of Object.entries(authorizeParamsRef.current)) {
+                    authorizeUrl.searchParams.set(field, value);
+                }
                 if (config.broadcastChannel) {
                     try {
                         const attempt = crypto.randomUUID();

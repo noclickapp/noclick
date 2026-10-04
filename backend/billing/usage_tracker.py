@@ -13,9 +13,10 @@ because the failure mode is silent: a stale binding means a platform records
 nothing and charges nobody, and every call still returns cleanly.
 """
 
+import inspect
 import logging
 from contextvars import ContextVar
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 from cachetools import TTLCache
 
@@ -35,6 +36,30 @@ ORG_OWNER_CACHE = TTLCache(maxsize=16, ttl=60)
 CURRENT_WORKFLOW_ID: ContextVar[Optional[str]] = ContextVar(
     "billing_workflow_id", default=None
 )
+
+# Who else a context's spend is attributed to (the key or end user a request
+# acted for). Tasks started in the context inherit it.
+USAGE_ATTRIBUTION: ContextVar[Optional[Dict[str, Any]]] = ContextVar(
+    "billing_usage_attribution", default=None
+)
+
+
+def attribute_usage(**metadata: Any) -> None:
+    """Stamp ``metadata`` onto every usage event recorded from here on in this
+    context. Later keys replace earlier ones. The attribution wins over an
+    event's own value for the same key; only the running workflow_id yields to
+    an explicit one."""
+    USAGE_ATTRIBUTION.set({**(USAGE_ATTRIBUTION.get() or {}), **metadata})
+
+
+def usage_attribution() -> Dict[str, Any]:
+    """The metadata the write choke point merges into an event: the context's
+    attribution and the running workflow."""
+    attribution = dict(USAGE_ATTRIBUTION.get() or {})
+    workflow_id = CURRENT_WORKFLOW_ID.get()
+    if workflow_id:
+        attribution.setdefault("workflow_id", workflow_id)
+    return attribution
 
 
 def invalidate_credit_cache(user_id: str) -> None:
@@ -121,6 +146,15 @@ class _UsageTrackerProxy:
 
     def __getattr__(self, name: str) -> Any:
         return getattr(self._impl, name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        # Writing back the tracker's own method (a patch restored by value) ends
+        # the override; stored, it would shadow every later registration.
+        if (name != "_impl" and inspect.ismethod(value) and value.__self__ is self.__dict__.get("_impl")
+                and value.__func__ is getattr(type(value.__self__), name, None)):
+            self.__dict__.pop(name, None)
+        else:
+            object.__setattr__(self, name, value)
 
     def __repr__(self) -> str:  # pragma: no cover - diagnostics
         return f"<usage_tracker -> {type(self._impl).__name__}>"

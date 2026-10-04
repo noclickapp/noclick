@@ -270,8 +270,11 @@ class _FakeRedis:
     def __init__(self):
         self.store = {}
 
-    async def set(self, key, value, ex=None):
+    async def set(self, key, value, ex=None, nx=False):
+        if nx and key in self.store:
+            return None
         self.store[key] = value.encode() if isinstance(value, str) else value
+        return True
 
     async def get(self, key):
         return self.store.get(key)

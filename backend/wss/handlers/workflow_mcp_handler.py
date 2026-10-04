@@ -67,7 +67,7 @@ from nodes.core.registry import NODE_REGISTRY
 from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
 from repositories.workflow import WorkflowRepo
 from repositories.organization import OrgRepo
-from repositories.credentials import credential_access_predicate
+from repositories.credentials import credential_access_predicate, listed_to_owner_sql
 
 logger = logging.getLogger(__name__)
 
@@ -587,10 +587,10 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
 
         try:
             async with pool.acquire() as conn:
-                row = await conn.fetchrow("""
+                row = await conn.fetchrow(f"""
                     SELECT id, name
-                    FROM credentials
-                    WHERE owner_id = $1 AND credential_type = $2
+                    FROM credentials c
+                    WHERE owner_id = $1 AND credential_type = $2 AND {listed_to_owner_sql()}
                     ORDER BY created_at DESC
                     LIMIT 1
                 """, user_id, credential_type)
@@ -2282,17 +2282,17 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
 
             async with pool.acquire() as conn:
                 if request.credential_type:
-                    rows = await conn.fetch("""
+                    rows = await conn.fetch(f"""
                         SELECT id, name, credential_type, metadata, created_at, updated_at
-                        FROM credentials
-                        WHERE owner_id = $1 AND credential_type = $2
+                        FROM credentials c
+                        WHERE owner_id = $1 AND credential_type = $2 AND {listed_to_owner_sql()}
                         ORDER BY created_at DESC
                     """, user_id, request.credential_type)
                 else:
-                    rows = await conn.fetch("""
+                    rows = await conn.fetch(f"""
                         SELECT id, name, credential_type, metadata, created_at, updated_at
-                        FROM credentials
-                        WHERE owner_id = $1
+                        FROM credentials c
+                        WHERE owner_id = $1 AND {listed_to_owner_sql()}
                         ORDER BY created_at DESC
                     """, user_id)
 
@@ -2387,10 +2387,10 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
                         WHERE id = $1 AND owner_id = $2
                     """, request.credential_id, user_id)
                 elif credential_type:
-                    row = await conn.fetchrow("""
+                    row = await conn.fetchrow(f"""
                         SELECT id, credential
-                        FROM credentials
-                        WHERE owner_id = $1 AND credential_type = $2
+                        FROM credentials c
+                        WHERE owner_id = $1 AND credential_type = $2 AND {listed_to_owner_sql()}
                         ORDER BY created_at DESC
                         LIMIT 1
                     """, user_id, credential_type)

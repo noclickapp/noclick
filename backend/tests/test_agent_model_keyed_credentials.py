@@ -324,6 +324,32 @@ class TestResolveModelEnvOverrides:
         )
         assert env is None
 
+    @pytest.mark.parametrize("config", [
+        SimpleNamespace(model="opencode", model_type="opencode", opencode_model="anthropic/claude-sonnet-4-5"),
+        SimpleNamespace(model="hermes", model_type="hermes_agent", hermes_agent_model="anthropic/claude-sonnet-4-5"),
+        SimpleNamespace(model="openclaw", model_type="openclaw", openclaw_model="anthropic/claude-sonnet-4-5"),
+        _cfg("anthropic/claude-sonnet-4-5"),
+    ])
+    async def test_a_claude_plan_outside_claude_code_fails_the_run_saying_why(
+        self, identity_freshen, config
+    ):
+        """A Claude plan runs only in Claude Code: attached to an anthropic/*
+        model on any other harness, the run stops before dispatch with the one
+        message rather than as 'missing credentials'."""
+        from nodes.agent.config.providers import CLAUDE_PLAN_REFUSAL
+
+        node = _make_node({"agent_claude_code_oauth": GROQ_ID}, decrypted_id=GROQ_ID)
+        with pytest.raises(ValueError) as refused:
+            await node._resolve_model_env_overrides(
+                config,
+                _bundle({"CLAUDE_CODE_ACCESS_TOKEN": "access", "CLAUDE_CODE_REFRESH_TOKEN": "refresh"}),
+                "user-1",
+                provider_name="anthropic",
+                required_vars=["ANTHROPIC_API_KEY"],
+                cred_model="anthropic/claude-sonnet-4-5",
+            )
+        assert str(refused.value) == CLAUDE_PLAN_REFUSAL
+
     async def test_nothing_attached_returns_none(self, identity_freshen):
         node = _make_node({})
         env = await node._resolve_model_env_overrides(

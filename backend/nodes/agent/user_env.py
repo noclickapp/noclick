@@ -49,8 +49,26 @@ RESERVED_NAMES = _RESERVED_RUNTIME | _RESERVED_PROVIDER
 _MAX_VALUE_LEN = 32_768
 
 
+# Environment an edition keeps itself (a platform's named secrets): the runtime
+# config key names it as the edition's SANDBOX_ENV capability reads it.
+SANDBOX_ENV_KEY = "_sandboxEnv"
+
+
 def is_reserved(name: str) -> bool:
     return name in RESERVED_NAMES or name.startswith(_RESERVED_PREFIXES)
+
+
+def is_runtime_reserved(name: str) -> bool:
+    """Reserved wherever code runs, an agent's sandbox or any other: the
+    process's own variables and NoClick's namespace (provider keys aren't)."""
+    return name in _RESERVED_RUNTIME or name.startswith(_RESERVED_PREFIXES)
+
+
+def sandbox_env_spec(node: Any) -> Any:
+    """What the edition set under ``SANDBOX_ENV_KEY`` on this turn, if anything."""
+    data = getattr(node, "node_data", None) or {}
+    config = data.get("config") if isinstance(data.get("config"), dict) else {}
+    return config.get(SANDBOX_ENV_KEY) or data.get(SANDBOX_ENV_KEY)
 
 
 def validate_env_name(name: str) -> Optional[str]:

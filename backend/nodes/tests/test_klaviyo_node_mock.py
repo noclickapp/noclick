@@ -152,8 +152,6 @@ class TestKlaviyoRevoke:
             assert await revoke_token("", client_id="c", client_secret="s") is False
         mock_post.assert_not_called()
 
-    def test_revoke_importable_from_handler(self):
-        from wss.handlers.credentials_handler import revoke_klaviyo_token  # noqa: F401
 
 
 class TestKlaviyoJsonApi:

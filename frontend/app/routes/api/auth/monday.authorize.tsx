@@ -7,6 +7,7 @@ import { redirect, type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const MONDAY_AUTH_URL = 'https://auth.monday.com/oauth2/authorize';
 
@@ -42,7 +43,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const url = new URL(request.url);
     const scopesParam = url.searchParams.get('scopes') || MONDAY_DEFAULT_SCOPES;
 
-    const clientId = process.env.MONDAY_CLIENT_ID;
+    const clientId = (await oauthAppClientId(oauthAppToken(request), 'monday')) ?? process.env.MONDAY_CLIENT_ID;
     const redirectUri = process.env.MONDAY_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

@@ -344,6 +344,40 @@ class TestAgentNodeInjection:
         field = BaseAgentFields.model_fields["enable_email_updates"]
         assert field.default == "true"
 
+    def test_enable_coordinator_messages_config_default_true(self):
+        from nodes.agent.config.base import BaseAgentFields
+
+        field = BaseAgentFields.model_fields["enable_coordinator_messages"]
+        assert field.default == "true"
+
+    def test_coordinator_messages_switch(self):
+        assert MESSAGE_COORDINATOR_TOOL in _tool_names(build_platform_tools(True))
+        names = _tool_names(build_platform_tools(True, enable_coordinator_messages=False))
+        assert MESSAGE_COORDINATOR_TOOL not in names
+        assert names[0] == SUBMIT_FEEDBACK_TOOL
+
+    def test_node_flag_gates_both_advertisements(self):
+        # custom_tools feeds the SDK agent, tool_configs the CLI tool bundle:
+        # a disabled tool must be absent from both.
+        from types import SimpleNamespace
+
+        from nodes.agent_node import AgentNode
+
+        agent = AgentNode(
+            node_id="agent_1", node_type="agent", node_data={}, config=None,
+            sio=None, sid=None, workflow_id="wf",
+        )
+        agent._email_user_offered = False
+        for flag, present in (("true", True), ("false", False)):
+            custom_tools, tool_configs = [], {}
+            agent._append_platform_tools(
+                SimpleNamespace(enable_coordinator_messages=flag), {}, custom_tools, tool_configs,
+            )
+            names = [t["function"]["name"] for t in custom_tools]
+            assert (MESSAGE_COORDINATOR_TOOL in names) is present
+            assert (MESSAGE_COORDINATOR_TOOL in tool_configs) is present
+            assert SUBMIT_FEEDBACK_TOOL in names and SUBMIT_FEEDBACK_TOOL in tool_configs
+
     def test_disabled_string_excludes_prompt_builder(self):
         # The injection site gates on config.enable_prompt_builder != "false".
         assert _tool_names(build_platform_tools("false" != "false")) == [

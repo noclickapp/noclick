@@ -76,19 +76,24 @@ def reply_text(output: Any) -> str:
     return _reply_text(output) or ""
 
 
-async def settle_output(repo: CoordinatorTaskRepo, task_id: str, output: Any, error: Optional[str] = None) -> None:
-    from coder.coordinator.tools import bounded
-
-    if isinstance(output, dict) and output.get("status") == "awaiting_agent_turn":
-        await repo.wait_for_reply(task_id)
-        return
+def turn_error(output: Any, error: Optional[str] = None) -> Optional[str]:
+    """Why a finished agent turn failed, or None when it replied."""
     if isinstance(output, dict):
         error = error or output.get("error")
         if output.get("status") in ("failed", "error", "turn_lost"):
             error = error or "The agent could not complete the request."
     if not error and not reply_text(output):
         error = "The agent finished without a reply."
-    await repo.finish(task_id, result=bounded(output, max_chars=32000, max_items=30), error=str(error) if error else None)
+    return str(error) if error else None
+
+
+async def settle_output(repo: CoordinatorTaskRepo, task_id: str, output: Any, error: Optional[str] = None) -> None:
+    from coder.coordinator.tools import bounded
+
+    if isinstance(output, dict) and output.get("status") == "awaiting_agent_turn":
+        await repo.wait_for_reply(task_id)
+        return
+    await repo.finish(task_id, result=bounded(output, max_chars=32000, max_items=30), error=turn_error(output, error))
 
 
 async def complete_agent_deliveries(*, workflow_id: str, node_id: str, conversation_id: Optional[str], output: dict) -> None:

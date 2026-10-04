@@ -17,7 +17,7 @@ pytestmark = pytest.mark.asyncio
 @pytest.fixture
 async def files(builder_request_db, monkeypatch):
     pool = builder_request_db[0]
-    monkeypatch.setattr("utils.resource_store.get_native_pool", lambda: pool)
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: pool)
     upload = AsyncMock()
     monkeypatch.setattr("utils.resource_store.upload_bytes_to_r2_async", upload)
     monkeypatch.setattr("utils.resource_store.get_public_download_url", lambda key: "https://assets.example/" + key)

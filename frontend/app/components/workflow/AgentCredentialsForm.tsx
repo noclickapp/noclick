@@ -31,6 +31,8 @@ import { AgentOAuthConnect } from './AgentOAuthConnect';
 import { AgentEnvVarsSection } from './AgentEnvVarsSection';
 import {
     agentAllowsUsageBased,
+    agentVendorKeyAlias,
+    claudePlanRefusal,
     getAgentConfigRecord,
     getAgentCredentialIdForProvider,
     getAgentCredentialType,
@@ -243,13 +245,14 @@ export function AgentCredentialsForm({
         credentialIds,
         provider
     );
+    const planRefusal = claudePlanRefusal(credentialIds, provider);
 
     // Which agent OAuth sign-in (if any) applies to the selected model. The
     // provider→component mapping lives in AgentOAuthConnect; here we only decide
     // WHICH credential type applies, gated by wrapper/subscription eligibility:
     //  - Codex: standalone CODEX, or OPENAI inside a CLI wrapper whose sub-model is
     //    ChatGPT-Plus-eligible (agent_codex_oauth is interchangeable with codex CLI).
-    //  - Claude Code: standalone CLAUDE_CODE, or ANTHROPIC inside any CLI wrapper.
+    //  - Claude Code: CLAUDE_CODE only; a Claude plan runs in no other harness.
     //  - GitHub Copilot / xAI: their respective providers, where this instance
     //    offers the sign-in (the backend reports which flows can complete).
     const { agentSignIns } = useInstanceCapabilities();
@@ -266,10 +269,7 @@ export function AgentCredentialsForm({
         ) {
             return offered('codex') ? 'agent_codex_oauth' : null;
         }
-        if (
-            provider === ModelProvider.CLAUDE_CODE ||
-            (provider === ModelProvider.ANTHROPIC && isCliAgentModel(selectedModel))
-        ) {
+        if (provider === ModelProvider.CLAUDE_CODE) {
             return offered('claude_code') ? 'agent_claude_code_oauth' : null;
         }
         if (provider === ModelProvider.GITHUB_COPILOT && offered('github_copilot')) {
@@ -305,9 +305,9 @@ export function AgentCredentialsForm({
     }, [loadCredentials]);
 
     // Filter credentials by provider (include both API key and OAuth
-    // types for agent CLIs and for the OpenCode wrapper context where
-    // anthropic/* / openai/* sub-models can also use Claude Pro / ChatGPT
-    // Plus OAuth credentials interchangeably).
+    // types for agent CLIs and for the wrapper context where openai/* /
+    // xai/* sub-models can also use ChatGPT Plus / SuperGrok OAuth
+    // credentials interchangeably).
     const matchingCredentials = useMemo(() => {
         if (!credentialType) return [];
         // Map of providers → extra OAuth credential types to fold in.
@@ -327,12 +327,11 @@ export function AgentCredentialsForm({
             [ModelProvider.CODEX]: ['agent_codex_oauth'],
             [ModelProvider.CLAUDE_CODE]: ['agent_claude_code_oauth'],
             [ModelProvider.GITHUB_COPILOT]: ['agent_github_copilot_oauth'],
-            // OpenCode wrapper subscription-OAuth aliases: an existing
-            // ChatGPT / Claude / xAI sign-in is valid for the matching
-            // openai/* / anthropic/* / xai/* sub-model inside OpenCode too.
+            // Wrapper subscription-OAuth aliases: an existing ChatGPT /
+            // xAI sign-in is valid for the matching openai/* / xai/*
+            // sub-model too. Never a Claude plan (Claude Code only).
             [ModelProvider.OPENAI]: [],
             [ModelProvider.XAI]: ['agent_xai_oauth'],
-            [ModelProvider.ANTHROPIC]: ['agent_claude_code_oauth'],
         };
 
         // ChatGPT Plus OAuth eligibility for OPENAI: gate by the
@@ -358,6 +357,8 @@ export function AgentCredentialsForm({
         }
 
         const acceptedTypes = new Set<string>([credentialType]);
+        const vendorKey = agentVendorKeyAlias(provider as ModelProvider);
+        if (vendorKey) acceptedTypes.add(vendorKey);
         for (const t of oauthAliases[provider as ModelProvider] || []) {
             acceptedTypes.add(t);
         }
@@ -646,6 +647,15 @@ export function AgentCredentialsForm({
                     </p>
                 )}
             </div>
+
+            {/* A Claude plan attached to an anthropic/* model on another
+                harness: say why it no longer counts, in the backend's words. */}
+            {planRefusal && !isCreating && (
+                <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
+                    <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span>{planRefusal}</span>
+                </div>
+            )}
 
             {/* Credential Selection Dropdown */}
             {matchingCredentials.length > 0 && !isCreating && (
@@ -969,6 +979,7 @@ export function AgentCredentialsForm({
             {!allowUsageBased &&
                 !selectedCredentialId &&
                 !isCreating &&
+                !planRefusal &&
                 matchingCredentials.length === 0 && (
                     <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
                         <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />

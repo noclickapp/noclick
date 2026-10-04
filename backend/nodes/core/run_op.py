@@ -36,6 +36,18 @@ def needs_credential_hint(node_type: str, operation: Optional[str], config=None)
     return not is_operation_credentials_optional(node_type, operation, config)
 
 
+def credential_note_result(tool_info: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """A provider with no credential but a ``credential_note`` (e.g. where to
+    connect one) answers with the note instead of running a call that needs
+    auth; an operation that needs no account still runs (on NoClick's key)."""
+    note = tool_info.get("credential_note")
+    if not note or tool_info.get("credential_id"):
+        return None
+    if not needs_credential_hint(tool_info.get("node_type", ""), tool_info.get("operation")):
+        return None
+    return {"success": False, "error": note}
+
+
 async def resolve_operation_credential(
     credential_id: str,
     user_id: str,
@@ -293,26 +305,19 @@ async def run_node_op_tool(
     from nodes.agent.rehearsal import is_rehearsing
 
     if await is_rehearsing(conversation_id):
-        from nodes.agent.rehearsal import RehearsalUnavailable, mock_tool_call
+        from nodes.agent.rehearsal import rehearse_tool
 
-        try:
-            simulated = await mock_tool_call(
-                conversation_id=conversation_id,
-                tool_name=info.get("name") or info.get("operation") or "tool",
-                arguments=arguments or {},
-                description=info.get("_description") or info.get("description"),
-                node_type=info.get("node_type"),
-                operation=info.get("operation"),
-            )
-        except RehearsalUnavailable as e:
-            return {"success": False, "error": f"rehearsal could not simulate this call: {e}"}
-        return simulated if isinstance(simulated, dict) else {"success": True, "data": simulated}
+        return await rehearse_tool(
+            conversation_id, info.get("name") or info.get("operation") or "tool", arguments, info)
 
     if info.get("tool_type") == "node_op_lookup":
         fields = info.get("fields") or {}
         field = (arguments or {}).get("field")
         if field not in fields:
             return {"success": False, "error": f"Unknown field '{field}'. Valid fields: {sorted(fields)}"}
+        unconnected = credential_note_result(info)
+        if unconnected:
+            return unconnected
         context = (arguments or {}).get("context")
         scopes = info.get("field_scopes") or {}
         scope_for_field = scopes.get(field) if isinstance(scopes, dict) else None
@@ -334,6 +339,9 @@ async def run_node_op_tool(
     scope_error = _check_field_scopes(arguments or {}, info.get("field_scopes"))
     if scope_error:
         return {"success": False, "error": scope_error}
+    unconnected = credential_note_result(info)
+    if unconnected:
+        return unconnected
 
     return await run_node_operation(
         node_type=info["node_type"],

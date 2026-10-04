@@ -11,6 +11,7 @@ import re
 import uuid
 from typing import Any, Dict, Optional, Tuple
 
+from nodes.agent.agent_memory import MEMORY_READ_TOOL_TYPE, MEMORY_WRITE_TOOL_TYPE
 from utils.edition import is_local_edition
 
 logger = logging.getLogger(__name__)
@@ -21,12 +22,151 @@ BUILDER_RESPOND_TOOL = "builder_respond"
 DESCRIBE_WORKFLOW_TOOL = "describe_workflow"
 EMAIL_USER_TOOL = "email_user"
 MESSAGE_COORDINATOR_TOOL = "message_coordinator"
+REQUEST_CONNECTION_TOOL = "request_connection"
+WAKE_ME_TOOL = "wake_me"
+TELL_PARENT_TOOL = "tell_parent"
+# The tool type of every tool a platform offers an agent to manage other agents.
+AGENTS_TOOL_TYPE = "agents"
+# The tool type of every tool a platform defines whole for a turn (``PLATFORM_TOOLS_KEY``).
+PLATFORM_TOOL_TYPE = "platform"
 # Excluded from per-harness capability gates (e.g. codex's API-key model gate):
 # platform tools are ambient, not user-wired capability the run depends on.
 PLATFORM_TOOL_TYPES = {
     "submit_feedback", "prompt_builder", "builder_respond", "describe_workflow",
-    "email_user", "message_coordinator",
+    "email_user", "message_coordinator", "request_connection", "wake_me", "tell_parent", AGENTS_TOOL_TYPE,
+    PLATFORM_TOOL_TYPE,
+    MEMORY_READ_TOOL_TYPE, MEMORY_WRITE_TOOL_TYPE,
 }
+# The runtime config key a platform sets on an agent's turn to offer
+# request_connection: {"integrations": [names] | "*", ...whatever it needs back}.
+# Keep it the same on every turn of a conversation: it rides the tool config a
+# warm CLI sandbox is fingerprinted by, so a per-turn value cold-starts each turn.
+CONNECTION_REQUESTS_KEY = "_connectionRequests"
+# The same for wake_me: whatever the platform needs to find the conversation, per-thread stable.
+WAKE_ME_KEY = "_wakeMe"
+# And tell_parent, on an agent another agent gave a task to.
+TELL_PARENT_KEY = "_tellParent"
+# And the tools to manage other agents (AGENT_COORDINATION): {"tools": [names], ...}.
+AGENT_TOOLS_KEY = "_agentTools"
+# And tools a platform defines whole (a bucket's operations), each called through
+# PLATFORM_TOOLS with its spec: {"tools": [{name, description, parameters, spec,
+# bound_arguments?}]}, the parameters already without what bound_arguments fix.
+PLATFORM_TOOLS_KEY = "_platformTools"
+
+_TELL_PARENT_PARAM = {
+    "type": "function",
+    "function": {
+        "name": TELL_PARENT_TOOL,
+        "description": (
+            "Tell the agent that gave you your task something now, without stopping: what your instructions say "
+            "to report, or something it must hear before you finish. It takes a turn to read it; you carry on. "
+            "At most one a minute and 30 an hour; your final reply reaches it anyway, so don't repeat it."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "message": {"type": "string", "description": "What it should hear, up to 4,000 characters."},
+            },
+            "required": ["message"],
+        },
+    },
+}
+
+_WAKE_ME_PARAM = {
+    "type": "function",
+    "function": {
+        "name": WAKE_ME_TOOL,
+        "description": (
+            "Take a turn in this conversation later, to come back to something on your own: check again in an "
+            "hour, follow up tomorrow morning, or carry on once an operation you were given the id of (a "
+            "person's answer, a connect link) finishes. Give exactly one of at, after_minutes and operation_id. "
+            "When it comes due you get a turn whose message is your note, then what woke you; a turn running "
+            "then goes first. Write the note for your future self: what to do and why."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "note": {"type": "string",
+                         "description": "What you'll be told when you wake, up to 4,000 characters."},
+                "at": {"type": "string",
+                       "description": "An ISO 8601 time a minute to a year ahead; UTC unless it has an offset."},
+                "after_minutes": {"type": "number", "description": "Minutes from now, 1 to 525,600."},
+                "operation_id": {"type": "string",
+                                 "description": "Wake once this operation finishes (at once if it has)."},
+            },
+            "required": ["note"],
+        },
+    },
+}
+
+
+def _request_connection_param(integrations: Any) -> Dict[str, Any]:
+    integration: Dict[str, Any] = {"type": "string", "description": "The service, e.g. gmail."}
+    if isinstance(integrations, list):
+        integration["enum"] = list(integrations)
+    return {
+        "type": "function",
+        "function": {
+            "name": REQUEST_CONNECTION_TOOL,
+            "description": (
+                "Ask the user to connect an account on another service so you can act in it. Returns a link: "
+                "share it with the user and stop there; once they connect, that account's tools are yours from "
+                "your next turn. Ask only when the user's request needs an account you don't have, and only "
+                "for the operations it needs."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "integration": integration,
+                    "operations": {
+                        "type": "array", "items": {"type": "string"},
+                        "description": "The operations you need (omit for all of them).",
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "A short name for the connection, e.g. work-gmail (defaults to the service).",
+                    },
+                    "reason": {"type": "string", "description": "Why, in one sentence, shown to the user."},
+                },
+                "required": ["integration", "reason"],
+            },
+        },
+    }
+
+
+def connection_requests_of(node: Any) -> Optional[Dict[str, Any]]:
+    """The turn's request_connection spec, when a platform offers the tool."""
+    data = getattr(node, "node_data", None) or {}
+    config = data.get("config") if isinstance(data.get("config"), dict) else {}
+    spec = config.get(CONNECTION_REQUESTS_KEY) or data.get(CONNECTION_REQUESTS_KEY)
+    return spec if isinstance(spec, dict) and spec.get("integrations") else None
+
+
+def _runtime_spec(node: Any, key: str) -> Optional[Dict[str, Any]]:
+    data = getattr(node, "node_data", None) or {}
+    config = data.get("config") if isinstance(data.get("config"), dict) else {}
+    spec = config.get(key) or data.get(key)
+    return spec if isinstance(spec, dict) and spec else None
+
+
+def wake_me_of(node: Any) -> Optional[Dict[str, Any]]:
+    """The turn's wake_me spec, when a platform offers the tool."""
+    return _runtime_spec(node, WAKE_ME_KEY)
+
+
+def tell_parent_of(node: Any) -> Optional[Dict[str, Any]]:
+    """The turn's tell_parent spec, when a platform offers the tool."""
+    return _runtime_spec(node, TELL_PARENT_KEY)
+
+
+def agent_tools_of(node: Any) -> Optional[Dict[str, Any]]:
+    """The turn's spec for the tools that manage other agents, when a platform offers them."""
+    return _runtime_spec(node, AGENT_TOOLS_KEY)
+
+
+def platform_tools_of(node: Any) -> Optional[Dict[str, Any]]:
+    """The tools a platform defines whole for the turn, when it offers some."""
+    return _runtime_spec(node, PLATFORM_TOOLS_KEY)
 
 _MESSAGE_COORDINATOR_PARAM = {
     "type": "function",
@@ -299,13 +439,51 @@ async def email_user_offered(pool, user_id: Optional[str], enabled: bool, in_ite
 
 def build_platform_tools(
     enable_prompt_builder: bool, enable_email_updates: bool = False,
-    in_iteration: bool = False,
+    in_iteration: bool = False, *, enable_coordinator_messages: bool = True,
+    connection_requests: Optional[Dict[str, Any]] = None, wake_me: Optional[Dict[str, Any]] = None,
+    tell_parent: Optional[Dict[str, Any]] = None, agent_tools: Optional[Dict[str, Any]] = None,
+    agent_memory: Optional[Dict[str, Any]] = None,
+    platform_tools: Optional[Dict[str, Any]] = None,
 ) -> list:
     """``(tool_param, tool_config)`` pairs to append to the agent's collected
     tool set. The config carries the tool type and its model-facing schema;
     execution context comes from the active agent turn."""
-    pairs = [_platform_pair(_SUBMIT_FEEDBACK_PARAM, "submit_feedback"),
-             _platform_pair(_MESSAGE_COORDINATOR_PARAM, "message_coordinator")]
+    from nodes.agent.agent_memory import memory_params
+    from utils.capabilities import (
+        AGENT_COORDINATION, AGENT_MEMORY, CONNECTION_REQUESTS, PARENT_UPDATES, PLATFORM_TOOLS, WAKEUPS, capability,
+    )
+
+    pairs = [_platform_pair(_SUBMIT_FEEDBACK_PARAM, "submit_feedback")]
+    if connection_requests and capability(CONNECTION_REQUESTS) is not None:
+        param, cfg = _platform_pair(_request_connection_param(connection_requests["integrations"]),
+                                    REQUEST_CONNECTION_TOOL)
+        pairs.append((param, {**cfg, "spec": connection_requests}))
+    if wake_me and capability(WAKEUPS) is not None:
+        param, cfg = _platform_pair(_WAKE_ME_PARAM, WAKE_ME_TOOL)
+        pairs.append((param, {**cfg, "spec": wake_me}))
+    if tell_parent and capability(PARENT_UPDATES) is not None:
+        param, cfg = _platform_pair(_TELL_PARENT_PARAM, TELL_PARENT_TOOL)
+        pairs.append((param, {**cfg, "spec": tell_parent}))
+    coordination = capability(AGENT_COORDINATION) if agent_tools else None
+    if coordination is not None:
+        for param in coordination.tools(agent_tools):
+            param, cfg = _platform_pair(param, AGENTS_TOOL_TYPE)
+            pairs.append((param, {**cfg, "spec": {**agent_tools, "tool": param["function"]["name"]}}))
+    if agent_memory and capability(AGENT_MEMORY) is not None:
+        for param, tool_type in memory_params(agent_memory):
+            param, cfg = _platform_pair(param, tool_type)
+            pairs.append((param, {**cfg, "spec": {**agent_memory, "tool": param["function"]["name"]}}))
+    if platform_tools and capability(PLATFORM_TOOLS) is not None:
+        from nodes.agent.tool_binding import BOUND_ARGUMENTS_KEY
+
+        for tool in platform_tools.get("tools") or []:
+            param, cfg = _platform_pair({"type": "function", "function": {
+                "name": tool["name"], "description": tool["description"], "parameters": tool["parameters"],
+            }}, PLATFORM_TOOL_TYPE)
+            bound = {BOUND_ARGUMENTS_KEY: tool["bound_arguments"]} if tool.get("bound_arguments") else {}
+            pairs.append((param, {**cfg, "spec": tool["spec"], **bound}))
+    if enable_coordinator_messages:
+        pairs.append(_platform_pair(_MESSAGE_COORDINATOR_PARAM, "message_coordinator"))
     if enable_prompt_builder:
         pairs.append(_platform_pair(_PROMPT_BUILDER_PARAM, "prompt_builder"))
         pairs.append(_platform_pair(_BUILDER_RESPOND_PARAM, "builder_respond"))
@@ -944,6 +1122,81 @@ async def execute_prompt_builder(node: Any, arguments: Dict[str, Any]) -> Dict[s
     )
 
 
+async def request_connection_impl(pool, spec: Optional[Dict[str, Any]], arguments: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.capabilities import CONNECTION_REQUESTS, capability
+
+    provider = capability(CONNECTION_REQUESTS)
+    if provider is None or not spec:
+        return {"success": False, "error": "Connecting accounts isn't available here."}
+    return await provider(pool, spec=spec, arguments=arguments)
+
+
+async def execute_request_connection(node: Any, arguments: Dict[str, Any], tool_info: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.database_pool import get_native_pool
+
+    return await request_connection_impl(get_native_pool(), tool_info.get("spec"), arguments)
+
+
+async def wake_me_impl(pool, spec: Optional[Dict[str, Any]], arguments: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.capabilities import WAKEUPS, capability
+
+    provider = capability(WAKEUPS)
+    if provider is None or not spec:
+        return {"success": False, "error": "Wake-ups aren't available here."}
+    return await provider(pool, spec=spec, arguments=arguments)
+
+
+async def execute_wake_me(node: Any, arguments: Dict[str, Any], tool_info: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.database_pool import get_native_pool
+
+    return await wake_me_impl(get_native_pool(), tool_info.get("spec"), arguments)
+
+
+async def tell_parent_impl(pool, spec: Optional[Dict[str, Any]], arguments: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.capabilities import PARENT_UPDATES, capability
+
+    provider = capability(PARENT_UPDATES)
+    if provider is None or not spec:
+        return {"success": False, "error": "There's no parent to tell here."}
+    return await provider(pool, spec=spec, arguments=arguments)
+
+
+async def execute_tell_parent(node: Any, arguments: Dict[str, Any], tool_info: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.database_pool import get_native_pool
+
+    return await tell_parent_impl(get_native_pool(), tool_info.get("spec"), arguments)
+
+
+async def agent_tools_impl(pool, spec: Optional[Dict[str, Any]], arguments: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.capabilities import AGENT_COORDINATION, capability
+
+    provider = capability(AGENT_COORDINATION)
+    if provider is None or not spec:
+        return {"success": False, "error": "Managing other agents isn't available here."}
+    return await provider.call(pool, spec=spec, arguments=arguments)
+
+
+async def execute_agent_tool(node: Any, arguments: Dict[str, Any], tool_info: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.database_pool import get_native_pool
+
+    return await agent_tools_impl(get_native_pool(), tool_info.get("spec"), arguments)
+
+
+async def platform_tool_impl(pool, spec: Optional[Dict[str, Any]], arguments: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.capabilities import PLATFORM_TOOLS, capability
+
+    provider = capability(PLATFORM_TOOLS)
+    if provider is None or not spec:
+        return {"success": False, "error": "This tool isn't available here."}
+    return await provider(pool, spec=spec, arguments=arguments)
+
+
+async def execute_platform_tool(node: Any, arguments: Dict[str, Any], tool_info: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.database_pool import get_native_pool
+
+    return await platform_tool_impl(get_native_pool(), tool_info.get("spec"), arguments)
+
+
 async def execute_platform_tool_from_ctx(
     st_config: Dict[str, Any], arguments: Dict[str, Any], pool,
 ) -> Dict[str, Any]:
@@ -952,6 +1205,20 @@ async def execute_platform_tool_from_ctx(
     pool), so this runs identically in any backend process — no executor
     callback required."""
     tool_type = st_config.get("tool_type")
+    if tool_type == REQUEST_CONNECTION_TOOL:
+        return await request_connection_impl(pool, st_config.get("spec"), arguments)
+    if tool_type == WAKE_ME_TOOL:
+        return await wake_me_impl(pool, st_config.get("spec"), arguments)
+    if tool_type == TELL_PARENT_TOOL:
+        return await tell_parent_impl(pool, st_config.get("spec"), arguments)
+    if tool_type == AGENTS_TOOL_TYPE:
+        return await agent_tools_impl(pool, st_config.get("spec"), arguments)
+    if tool_type == PLATFORM_TOOL_TYPE:
+        return await platform_tool_impl(pool, st_config.get("spec"), arguments)
+    if tool_type in (MEMORY_READ_TOOL_TYPE, MEMORY_WRITE_TOOL_TYPE):
+        from nodes.agent.agent_memory import memory_impl
+
+        return await memory_impl(pool, st_config.get("spec"), arguments)
     if tool_type == "submit_feedback":
         return await submit_feedback_impl(
             pool=pool,

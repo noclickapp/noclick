@@ -136,8 +136,8 @@ export function getAgentCredentialType(provider: ModelProvider): string {
 // credential is stored under the OAuth-specific type — so every surface that
 // asks "is this provider credentialed?" has to accept it too.
 //
-// The OpenCode wrapper entries (OPENAI / XAI / ANTHROPIC) exist because
-// opencode-ai can reach those providers over the same OAuth clients:
+// The wrapper entries (OPENAI / XAI) exist because the CLI wrappers can reach
+// those providers over the same OAuth clients:
 //
 // OPENAI ← agent_codex_oauth: opencode-ai's CodexAuthPlugin uses the same
 // OAuth CLIENT_ID as OpenAI's codex CLI. Eligible models are limited to the
@@ -150,48 +150,79 @@ export function getAgentCredentialType(provider: ModelProvider): string {
 // XAI ← agent_xai_oauth: opencode-ai's xAI plugin uses the same Grok-CLI
 // client. Tokens are interchangeable for all xai/* models.
 //
-// ANTHROPIC ← agent_claude_code_oauth: opencode-ai dropped its bundled
-// Anthropic OAuth provider in v1.3.0, but NoClick re-enables it via a vendored
-// community plugin bundled with the hosted OpenCode runtime (see backend/nodes/agent/
-// handlers/opencode_plugins/anthropic_oauth.mjs). The plugin's fetch
-// interceptor reads the OAuth credential out of auth.json and rewrites
-// api.anthropic.com requests to use Bearer auth + the anthropic-beta flags.
+// ANTHROPIC has none: a Claude plan runs only in Claude Code, so anthropic/*
+// on any other harness takes an API key (claudePlanRefusal says so).
 //
 // Mirrors backend AGENT_OAUTH_CREDENTIAL_TYPES (nodes/agent/config/providers.py).
 const AGENT_OAUTH_ALIAS: Partial<Record<ModelProvider, string>> = {
     [ModelProvider.CODEX]: 'agent_codex_oauth',
     [ModelProvider.OPENAI]: 'agent_codex_oauth',
     [ModelProvider.CLAUDE_CODE]: 'agent_claude_code_oauth',
-    [ModelProvider.ANTHROPIC]: 'agent_claude_code_oauth',
     [ModelProvider.XAI]: 'agent_xai_oauth',
     [ModelProvider.GITHUB_COPILOT]: 'agent_github_copilot_oauth',
 };
 
+const CLAUDE_PLAN_CREDENTIAL_TYPE = 'agent_claude_code_oauth';
+// Mirrors backend CLAUDE_PLAN_REFUSAL (nodes/agent/config/providers.py).
+export const CLAUDE_PLAN_REFUSAL =
+    'A Claude plan runs only in Claude Code. Use an Anthropic API key, or switch the agent to Claude Code.';
+
+// A vendor's CLI harness and its models read the same API key
+// (ANTHROPIC_API_KEY, OPENAI_API_KEY), so a key saved under either type serves
+// both. Mirrors backend AGENT_VENDOR_KEY_ALIASES (nodes/agent/config/providers.py).
+const AGENT_VENDOR_KEY_ALIAS: Partial<Record<ModelProvider, string>> = {
+    [ModelProvider.CLAUDE_CODE]: 'agent_anthropic',
+    [ModelProvider.ANTHROPIC]: 'agent_claude_code',
+    [ModelProvider.CODEX]: 'agent_openai',
+    [ModelProvider.OPENAI]: 'agent_codex',
+};
+
+/** The other vendor type an API key for `provider` may be saved under. */
+export function agentVendorKeyAlias(
+    provider: ModelProvider | null
+): string | undefined {
+    return provider ? AGENT_VENDOR_KEY_ALIAS[provider] : undefined;
+}
+
 /** Every credential_type that satisfies `provider` for an agent: the direct
- *  `agent_<provider>` key plus its OAuth alias (agent_codex_oauth etc.).
- *  The listing-side twin of getAgentCredentialIdForProvider — used to match
- *  a user's saved credentials against a harness, not a node's attachment. */
+ *  `agent_<provider>` key, its vendor key alias and its OAuth alias
+ *  (agent_codex_oauth etc.). The listing-side twin of
+ *  getAgentCredentialIdForProvider — used to match a user's saved credentials
+ *  against a harness, not a node's attachment. */
 export function acceptedAgentCredentialTypes(
     provider: ModelProvider | null
 ): string[] {
     if (!provider) return [];
-    const out = [getAgentCredentialType(provider)];
-    const alias = AGENT_OAUTH_ALIAS[provider];
-    if (alias) out.push(alias);
-    return out;
+    return [
+        getAgentCredentialType(provider),
+        AGENT_VENDOR_KEY_ALIAS[provider],
+        AGENT_OAUTH_ALIAS[provider],
+    ].filter((type): type is string => !!type);
 }
 
 export function getAgentCredentialIdForProvider(
     credentialIds: Record<string, string>,
     provider: ModelProvider | null
 ): string | undefined {
-    if (!provider) return undefined;
+    for (const type of acceptedAgentCredentialTypes(provider)) {
+        const id = credentialIds[type]?.trim();
+        if (id) return credentialIds[type];
+    }
+    return undefined;
+}
 
-    const direct = credentialIds[getAgentCredentialType(provider)];
-    if (direct?.trim()) return direct;
-
-    const alias = AGENT_OAUTH_ALIAS[provider];
-    return (alias && credentialIds[alias]?.trim()) || undefined;
+/** CLAUDE_PLAN_REFUSAL when a Claude plan is attached to an anthropic/* model
+ *  (any harness but Claude Code) and nothing attached runs it, else null.
+ *  Mirrors backend claude_plan_refusal (nodes/agent/config/providers.py). */
+export function claudePlanRefusal(
+    credentialIds: Record<string, string>,
+    provider: ModelProvider | null
+): string | null {
+    return provider === ModelProvider.ANTHROPIC &&
+        credentialIds[CLAUDE_PLAN_CREDENTIAL_TYPE]?.trim() &&
+        !getAgentCredentialIdForProvider(credentialIds, provider)
+        ? CLAUDE_PLAN_REFUSAL
+        : null;
 }
 
 /** The linked `agent_*` credential keys that are NOT valid for `provider` — callers
@@ -199,17 +230,23 @@ export function getAgentCredentialIdForProvider(
  *  wrong-provider token. "Valid" is getAgentCredentialIdForProvider (direct key +
  *  OAuth aliases), so a valid OAuth credential (e.g. agent_claude_code_oauth for
  *  claude_code) is never treated as stale. A naive `agent_<provider>` match wrongly
- *  deleted those, resetting the agent's credential to none on mount. */
+ *  deleted those, resetting the agent's credential to none on mount. A refused
+ *  Claude plan stays linked so the node can say why (claudePlanRefusal), and
+ *  switching the agent to Claude Code takes it back. */
 export function staleCredentialKeysForProvider(
     credentialIds: Record<string, string>,
     provider: ModelProvider | null
 ): string[] {
     const validId = getAgentCredentialIdForProvider(credentialIds, provider);
+    const refusedPlan = claudePlanRefusal(credentialIds, provider)
+        ? CLAUDE_PLAN_CREDENTIAL_TYPE
+        : null;
     return Object.keys(credentialIds).filter(
         (k) =>
             isPrimaryAgentCredentialKey(k) &&
             credentialIds[k] &&
-            credentialIds[k] !== validId
+            credentialIds[k] !== validId &&
+            k !== refusedPlan
     );
 }
 
@@ -250,10 +287,11 @@ export function agentAllowsUsageBased(
  *  getAgentCredentialIdForProvider — the SAME resolver the credentials form and the
  *  backend loader use — so the gate accepts everything they do: a direct
  *  agent_<provider> key AND subscription-OAuth aliases (agent_claude_code_oauth for
- *  claude_code, cross-aliases like anthropic←agent_claude_code_oauth). A naive
+ *  claude_code, cross-aliases like openai←agent_codex_oauth). A naive
  *  agent_<provider> match used to reject those valid credentials. Usage-based
  *  providers may run credential-less; a hard mismatch (some other agent_* set, but
- *  nothing valid for this provider) is flagged. */
+ *  nothing valid for this provider) is flagged, a refused Claude plan in the
+ *  backend's words. */
 export function validateAgentCredentialsForModel(args: {
     effectiveProvider: string | null;
     /** True if the provider supports usage-based billing (cred optional). */
@@ -270,6 +308,11 @@ export function validateAgentCredentialsForModel(args: {
         )
     )
         return null;
+    const refusal = claudePlanRefusal(
+        linked,
+        effectiveProvider as ModelProvider
+    );
+    if (refusal) return refusal;
     const otherAgentKey = Object.keys(linked).find(
         (k) => isPrimaryAgentCredentialKey(k) && linked[k]
     );

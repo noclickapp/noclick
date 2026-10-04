@@ -43,6 +43,20 @@
           "title": "Schedules",
           "ui:widget": "schedules"
         },
+        "cron_expression": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A five-field cron expression (minute hour day-of-month month day-of-week) read in the timezone; when set it is the schedule, in place of `schedules`.",
+          "title": "Cron expression",
+          "ui:hidden": true
+        },
         "timezone": {
           "default": "UTC",
           "description": "Timezone for the cron schedule",

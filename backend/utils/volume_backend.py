@@ -8,11 +8,17 @@ FilesystemNode file browser and the workspace Files panel list exactly what
 local agents wrote.
 
 Backend surface:
-    async list_entries(name, path="/") -> {exists, entries: [{path, type}]}
+    async list_entries(name, path="/", recursive=False)
+        -> {exists, entries: [{path, type, size, mtime}]}   (type "dir" or "file")
     async list_files(name) -> {exists, files: [{path, size, mtime}]}   (recursive)
     def  iter_file(name, path) -> async byte-chunk iterator (VolumeFileNotFound)
     async write_file(name, path, data) -> None   (creates the volume if missing)
+    async write_files(name, files) -> None       ({path: data}, in one commit)
     async delete_file(name, path) -> None        (idempotent — no-op if absent)
+    async remove_path(name, path, recursive=False) -> None
+        (a file or a folder; idempotent; a non-empty folder needs recursive,
+        else VolumeDirectoryNotEmpty)
+    async copy_file(name, src, dst) -> None      (one file, replacing dst)
     async delete_volume(name) -> bool
     async list_volume_names() -> [str]
 """
@@ -29,15 +35,22 @@ class VolumeFileNotFound(Exception):
     """The requested file (or volume) does not exist."""
 
 
+class VolumeDirectoryNotEmpty(Exception):
+    """A folder with entries was removed without ``recursive``."""
+
+
 class VolumeBackend(Protocol):
     """The contract every volume backend implements (structural typing —
     the hosted implementation registers itself; no inheritance required)."""
 
-    async def list_entries(self, name: str, path: str = "/") -> Dict[str, Any]: ...
+    async def list_entries(self, name: str, path: str = "/", recursive: bool = False) -> Dict[str, Any]: ...
     async def list_files(self, name: str) -> Dict[str, Any]: ...
     async def iter_file(self, name: str, path: str) -> Any: ...
     async def write_file(self, name: str, path: str, data: bytes) -> None: ...
+    async def write_files(self, name: str, files: Dict[str, bytes]) -> None: ...
     async def delete_file(self, name: str, path: str) -> None: ...
+    async def remove_path(self, name: str, path: str, recursive: bool = False) -> None: ...
+    async def copy_file(self, name: str, src: str, dst: str) -> None: ...
     async def delete_volume(self, name: str) -> bool: ...
     async def list_volume_names(self) -> List[str]: ...
 
@@ -120,18 +133,21 @@ class LocalVolumeBackend:
             raise ValueError(f"path escapes volume: {path!r}")
         return target
 
-    async def list_entries(self, name: str, path: str = "/") -> Dict[str, Any]:
+    async def list_entries(self, name: str, path: str = "/", recursive: bool = False) -> Dict[str, Any]:
         base = self._dir(name)
         target = self._file(name, path)
         if not base.is_dir() or not target.is_dir():
             return {"exists": False, "entries": []}
-        entries = [
-            {
+        children = target.rglob("*") if recursive else target.iterdir()
+        entries = []
+        for child in sorted(children):
+            stat = child.stat()
+            entries.append({
                 "path": str(child.relative_to(base)),
                 "type": "dir" if child.is_dir() else "file",
-            }
-            for child in sorted(target.iterdir())
-        ]
+                "size": stat.st_size if child.is_file() else 0,
+                "mtime": int(stat.st_mtime),
+            })
         return {"exists": True, "entries": entries}
 
     async def list_files(self, name: str) -> Dict[str, Any]:
@@ -170,10 +186,35 @@ class LocalVolumeBackend:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)
 
+    async def write_files(self, name: str, files: Dict[str, bytes]) -> None:
+        for path, data in files.items():
+            await self.write_file(name, path, data)
+
     async def delete_file(self, name: str, path: str) -> None:
         target = self._file(name, path)
         if target.is_file():
             target.unlink()
+
+    async def remove_path(self, name: str, path: str, recursive: bool = False) -> None:
+        import shutil
+
+        target = self._file(name, path)
+        if target.is_dir():
+            if not recursive and any(target.iterdir()):
+                raise VolumeDirectoryNotEmpty(f"{name}:{path}")
+            shutil.rmtree(target)
+        elif target.exists():
+            target.unlink()
+
+    async def copy_file(self, name: str, src: str, dst: str) -> None:
+        import shutil
+
+        source = self._file(name, src)
+        if not source.is_file():
+            raise VolumeFileNotFound(f"{name}:{src}")
+        target = self._file(name, dst)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
 
     async def delete_volume(self, name: str) -> bool:
         import shutil

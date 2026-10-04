@@ -34,7 +34,8 @@ _CPD = CREDITS_PER_DOLLAR
 # in _store_builder_usage_event, and no row is written — credits never
 # decrement and the chip stays at full balance.
 UsageType = Literal["ai_usage", "ai_builder", "ai_testing", "cpu_usage", "gpu_usage", "api_usage"]
-UnitType = Literal["tokens", "cpu_hours", "gpu_hours", "requests", "mb", "gb_hours", "seconds", "images"]
+UnitType = Literal["tokens", "cpu_hours", "gpu_hours", "requests", "mb", "gb_hours", "seconds", "images", "rows",
+                   "million_requests"]
 
 
 class UsageEventData(BaseModel):

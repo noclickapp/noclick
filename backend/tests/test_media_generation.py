@@ -49,7 +49,8 @@ def seams(monkeypatch):
 
     async def store(**kw):
         stored.append(kw)
-        return {"download_url": f"https://files.example/{kw['filename']}", "resource_id": str(uuid.uuid4())}
+        return {"download_url": f"https://files.example/{kw['filename']}", "resource_id": str(uuid.uuid4()),
+                "storage_ref": f"{kw['user_id']}/account/{kw['filename']}"}
 
     async def track(event, sio=None, sid=None):
         billed.append(event)

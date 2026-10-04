@@ -228,6 +228,13 @@ def _schedule_trigger_class(node_type: Optional[str]):
     return None
 
 
+def fires_on_schedule(node_type: Optional[str], operation: Optional[str]) -> bool:
+    """Whether a node on ``operation`` is a trigger NoClick's scheduler fires
+    (the cron node, a poll trigger), which can also be fired at any moment."""
+    schedule_class = _schedule_trigger_class(node_type)
+    return bool(schedule_class and schedule_class._is_schedule_operation(operation))
+
+
 def _schedule_registration_fingerprint(
     operation: Optional[str], spec, scope: Optional[str],
     credential_id: Optional[str],
@@ -702,8 +709,7 @@ class WebhookManager:
         # Cron-schedule family: covers members invisible to the schema-marker
         # gate (bespoke pollers without x-requires-webhook, the operation-less
         # cron node) so their op/config changes reach the reconciler.
-        schedule_class = _schedule_trigger_class(node_type)
-        return bool(schedule_class and schedule_class._is_schedule_operation(operation))
+        return fires_on_schedule(node_type, operation)
 
     @staticmethod
     def get_webhook_field(schema: Dict[str, Any]) -> Optional[str]:

@@ -11,7 +11,7 @@ import pytest
 
 from repositories import account_merge
 from repositories.account_merge import (
-    KEEP_COLUMNS, MOVE_COLUMNS, ORG_KEEP_TABLES, ORG_MOVE_TABLES, SPECIAL_COLUMNS, merge_accounts, personal_workspace,
+    ORG_KEEP_TABLES, SPECIAL_COLUMNS, merge_accounts, personal_workspace,
 )
 from repositories.phones import PhoneRepo
 from tests.test_phone_accounts_postgres import FakeAuthAdmin, phones_db  # noqa: F401 — the shared fixture
@@ -44,7 +44,7 @@ WHERE cl.relkind IN ('r', 'p') AND (
 async def test_every_user_keyed_column_has_a_merge_decision(phones_db):
     pool, *_ = phones_db
     in_schema = {(r["table_name"], r["column_name"]) for r in await pool.fetch(USER_KEYED)}
-    planned = set(MOVE_COLUMNS) | set(SPECIAL_COLUMNS) | set(KEEP_COLUMNS)
+    planned = set(account_merge.move_columns()) | set(SPECIAL_COLUMNS) | set(account_merge.keep_columns())
     # Decide MOVE or KEEP in repositories/account_merge.py for any column listed here.
     assert sorted(in_schema - planned) == []
     # The plan spans both editions; what this schema lacks must be the other edition's.
@@ -55,10 +55,10 @@ async def test_every_user_keyed_column_has_a_merge_decision(phones_db):
         "SELECT cl.relname FROM pg_class cl JOIN pg_namespace n ON n.oid = cl.relnamespace AND n.nspname = 'public' "
         "JOIN pg_attribute a ON a.attrelid = cl.oid AND a.attname = 'organization_id' AND NOT a.attisdropped "
         "WHERE cl.relkind IN ('r', 'p')")}
-    org_planned = set(ORG_MOVE_TABLES) | set(ORG_KEEP_TABLES)
+    org_planned = set(account_merge.org_move_tables()) | set(ORG_KEEP_TABLES)
     assert org_planned - with_org in ({"workflow_embeddings"}, set())
     assert with_org <= org_planned
-    assert set(ORG_MOVE_TABLES) <= {t for t, _ in MOVE_COLUMNS}
+    assert set(account_merge.org_move_tables()) <= {t for t, _ in account_merge.move_columns()}
 
 
 async def make_email_account(pool, email):

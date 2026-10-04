@@ -121,7 +121,7 @@ def oauth_expires_ms(
     server-side by ``ensure_fresh_harness_tokens``). The launch-time
     ``now + *_EXPIRES_IN`` fabrication survives only as the fallback for blobs
     minted before ``*_EXPIRES_AT`` existed; 0 means "unknown — refresh on
-    first use" for consumers that treat it as such (opencode/openclaw)."""
+    first use"."""
     expires_at_iso = env.get(expires_at_key)
     if expires_at_iso:
         try:
@@ -294,6 +294,7 @@ async def ensure_fresh_harness_tokens(
     credential_id: Optional[str],
     pool=None,
     caller_path: str = "execute",
+    force_refresh: bool = False,
 ) -> Optional[Dict[str, str]]:
     """Refresh any harness subscription-OAuth tokens in *env* that are expiring.
 
@@ -304,6 +305,8 @@ async def ensure_fresh_harness_tokens(
     one refresh instead of each minting a token. Raises ``OAuthRefreshError``
     (a ``ValueError``) when the provider rejects the refresh — fail loud with
     "reconnect" guidance rather than dispatching a sandbox that 401s mid-turn.
+    ``force_refresh`` refreshes a token the provider just rejected although its
+    expiry says it is fine, for a caller that replays the rejected request.
     """
     if not env:
         return env
@@ -331,6 +334,7 @@ async def ensure_fresh_harness_tokens(
             # A refresh rotates the id token too; adopting a sibling's row must
             # carry it, or the sandbox boots in API-key mode on a stale one.
             additional_token_fields=spec.companion_keys,
+            force_refresh=force_refresh,
             provider=spec.provider,
             caller_path=caller_path,
             store=store,

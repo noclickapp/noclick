@@ -1436,14 +1436,3 @@ class TestTwitterOAuthUtils:
 # ============================================================================
 # Credential Deletion Revocation Tests
 # ============================================================================
-
-
-@pytest.mark.asyncio
-class TestCredentialDeletionRevocation:
-    """Test that Twitter token is revoked when credential is deleted."""
-
-    async def test_revoke_twitter_token_import(self):
-        """Verify revoke_twitter_token is importable from credentials_handler."""
-        from wss.handlers.credentials_handler import revoke_twitter_token
-
-        assert callable(revoke_twitter_token)

@@ -25,6 +25,7 @@ from .hermes_agent import HermesAgentConfig
 from .providers import (
     PROVIDER_REQUIRED_CREDENTIALS,
     WRAPPER_ID_BY_MODEL_TYPE,
+    claude_plan_refusal,
     filter_provider_credential_env,
     get_provider_credentials,
     match_model_credential,
@@ -162,6 +163,7 @@ __all__ = [
     'WRAPPER_ID_BY_MODEL_TYPE',
     'filter_provider_credential_env',
     'get_provider_credentials',
+    'claude_plan_refusal',
     'match_model_credential',
     'provider_has_credentials',
     'model_credential_accepted_types',

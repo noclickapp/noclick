@@ -8,6 +8,7 @@ import { redirect, type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const CLICKUP_AUTH_URL = 'https://app.clickup.com/api';
 
@@ -17,7 +18,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const url = new URL(request.url);
     const scopesParam = url.searchParams.get('scopes') || '';
 
-    const clientId = process.env.CLICKUP_CLIENT_ID;
+    const clientId = (await oauthAppClientId(oauthAppToken(request), 'clickup')) ?? process.env.CLICKUP_CLIENT_ID;
     const redirectUri = process.env.CLICKUP_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

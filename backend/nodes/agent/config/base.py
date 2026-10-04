@@ -97,6 +97,14 @@ class BaseAgentFields(BaseModel):
             "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
         }
     )
+    # Gates the injected message_coordinator platform tool. Not a user switch
+    # (owners opt out through a coordinator memory): agents whose callers aren't
+    # the owner set it to "false".
+    enable_coordinator_messages: str = Field(
+        default="true",
+        title="Allow Coordinator Messages",
+        json_schema_extra={"enum": ["true", "false"], "ui:hidden": True},
+    )
     # Gates the AI half of the media digest (nodes/core/media_digest.py): voice
     # notes and audio files that arrive with a message are transcribed into
     # the agent's turn. Free digests (document text) are never gated.

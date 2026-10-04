@@ -32,3 +32,25 @@ def test_a_platform_publishes_its_conversion_and_markup():
     assert _probe({"CREDITS_PER_DOLLAR": "4", "PLATFORM_MARKUP": "3"}) == [
         Decimal("4"), Decimal("0.0025"), Decimal("3"), Decimal("0.005")
     ]
+
+
+def test_work_attributed_to_a_product_carries_its_markup(monkeypatch):
+    import contextvars
+
+    from billing import markup
+    from billing.usage_tracker import attribute_usage
+
+    monkeypatch.setitem(markup._ATTRIBUTED_MARKUPS, "acme_api", Decimal("1.25"))
+
+    def attributed():
+        attribute_usage(acme_api={"key_id": "k"})
+        return markup.current_markup(), markup.apply_platform_markup(Decimal("2"), False, "m")
+
+    assert contextvars.copy_context().run(attributed) == (Decimal("1.25"), Decimal("2.50"))
+    # Work attributed to nothing, or to something else, keeps the deployment's markup.
+    assert markup.current_markup() == markup.PLATFORM_MIN_MARKUP
+    assert contextvars.copy_context().run(lambda: (attribute_usage(other=1), markup.current_markup())[1]) == (
+        markup.PLATFORM_MIN_MARKUP)
+    # BYOK stays at cost whatever the markup.
+    assert contextvars.copy_context().run(lambda: (attributed(), markup.apply_platform_markup(Decimal("2"), True, "m"))[1]) == (
+        Decimal("2"))

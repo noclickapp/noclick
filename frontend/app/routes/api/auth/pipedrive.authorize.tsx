@@ -8,13 +8,14 @@ import { redirect, type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const PIPEDRIVE_AUTH_URL = 'https://oauth.pipedrive.com/oauth/authorize';
 
 export async function loader({ request }: LoaderFunctionArgs) {
     // Self-hosted: an OAuth app saved in Settings shows up as env vars here.
     await applyInstanceOAuthEnv(request, 'pipedrive');
-    const clientId = process.env.PIPEDRIVE_CLIENT_ID;
+    const clientId = (await oauthAppClientId(oauthAppToken(request), 'pipedrive')) ?? process.env.PIPEDRIVE_CLIENT_ID;
     const redirectUri = process.env.PIPEDRIVE_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

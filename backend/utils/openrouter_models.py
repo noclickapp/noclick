@@ -20,6 +20,7 @@ _models_cache = TTLCache(maxsize=1, ttl=CACHE_TTL)
 CACHE_KEY = "models"
 
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/models"
+_catalogs = TTLCache(maxsize=8, ttl=CACHE_TTL)
 
 
 async def get_openrouter_models() -> List[Dict[str, Any]]:
@@ -43,6 +44,18 @@ async def get_openrouter_models() -> List[Dict[str, Any]]:
     logger.info(f"[OPENROUTER] Cached {len(models)} models with {CACHE_TTL}s TTL")
 
     return models
+
+
+async def get_openrouter_catalog(path: str) -> List[Dict[str, Any]]:
+    """Another catalog OpenRouter publishes beside the chat models, by its path
+    under ``/api/v1`` (``embeddings/models``, ``images/models``), cached alike."""
+    if path in _catalogs:
+        return _catalogs[path]
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        response = await client.get(f"https://openrouter.ai/api/v1/{path}")
+        response.raise_for_status()
+    _catalogs[path] = response.json().get("data", [])
+    return _catalogs[path]
 
 
 async def _fetch_models_from_api() -> List[Dict[str, Any]]:

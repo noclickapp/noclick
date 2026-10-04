@@ -9,6 +9,7 @@ import { redirect, type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const BOX_AUTH_URL = 'https://account.box.com/api/oauth2/authorize';
 
@@ -30,7 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const url = new URL(request.url);
     const scopesParam = url.searchParams.get('scopes') || BOX_DEFAULT_SCOPES;
 
-    const clientId = process.env.BOX_CLIENT_ID;
+    const clientId = (await oauthAppClientId(oauthAppToken(request), 'box')) ?? process.env.BOX_CLIENT_ID;
     const redirectUri = process.env.BOX_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

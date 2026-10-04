@@ -323,6 +323,12 @@ class TestCredentialsHandler(BaseHandlerTest):
             )
             await send_event(frontend_sio, sid, create_request)
             await asyncio.sleep(0.1)
+        # Held for someone else: resolvable by id, never listed to its owner.
+        hidden_id = str(await real_database.fetchval(
+            "INSERT INTO credentials (owner_id, name, credential_type, credential, metadata) "
+            "VALUES ($1, 'Held for someone else', 'database', 'x', '{\"hidden_from_owner\": true}'::jsonb) RETURNING id",
+            user_id,
+        ))
 
         # List credentials
         list_request = CredentialListRequest(
@@ -345,6 +351,7 @@ class TestCredentialsHandler(BaseHandlerTest):
         assert 'data' in list_response
         credentials = list_response['data']['credentials']
         assert len(credentials) >= 2, "Should have at least 2 credentials"
+        assert hidden_id not in {c['id'] for c in credentials}
 
         # Verify no decrypted data in list
         for cred in credentials:

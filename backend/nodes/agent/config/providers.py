@@ -165,7 +165,6 @@ def resolve_zen_gateway_route(model: str) -> Optional[ZenGatewayRoute]:
 # an OAuth credential is attached). A model with no API key is still credentialed
 # if its provider's OAuth token is present.
 _PROVIDER_OAUTH_TOKEN: Dict[str, Tuple[str, str]] = {
-    "anthropic": ("CLAUDE_CODE_ACCESS_TOKEN", "a Claude subscription"),
     "claude-code": ("CLAUDE_CODE_ACCESS_TOKEN", "a Claude subscription"),
     "openai": ("CODEX_ACCESS_TOKEN", "a ChatGPT subscription"),
     "codex": ("CODEX_ACCESS_TOKEN", "a ChatGPT subscription"),
@@ -179,12 +178,6 @@ _PROVIDER_OAUTH_TOKEN: Dict[str, Tuple[str, str]] = {
 # are the only subscription-login fields our OAuth flows mint and runtimes
 # consume for each matching provider.
 _PROVIDER_OAUTH_ENV_KEYS: Dict[str, Tuple[str, ...]] = {
-    "anthropic": (
-        "CLAUDE_CODE_ACCESS_TOKEN",
-        "CLAUDE_CODE_REFRESH_TOKEN",
-        "CLAUDE_CODE_EXPIRES_AT",
-        "CLAUDE_CODE_EXPIRES_IN",
-    ),
     "claude-code": (
         "CLAUDE_CODE_ACCESS_TOKEN",
         "CLAUDE_CODE_REFRESH_TOKEN",
@@ -517,15 +510,22 @@ WRAPPER_ID_BY_MODEL_TYPE: Dict[str, str] = {
     "hermes_agent": "hermes",
 }
 
-# Subscription-OAuth credential_type per provider stem. Mirrors the FE alias
-# map in agentCredentialModel.ts:getAgentCredentialIdForProvider; the OAuth
-# socket handlers (wss/handlers/oauth/*) mint exactly these type strings.
+# Subscription-OAuth credential_type per provider stem. Mirrors the FE
+# AGENT_OAUTH_ALIAS (agentCredentialModel.ts); the OAuth socket handlers
+# (wss/handlers/oauth/*) mint exactly these type strings. A Claude plan signs in
+# Claude Code alone, so anthropic/* models take a key (claude_plan_refusal).
 AGENT_OAUTH_CREDENTIAL_TYPES: Dict[str, str] = {
     "codex": "agent_codex_oauth",
     "openai": "agent_codex_oauth",
     "claude-code": "agent_claude_code_oauth",
-    "anthropic": "agent_claude_code_oauth",
 }
+
+CLAUDE_PLAN_CREDENTIAL_TYPE = AGENT_OAUTH_CREDENTIAL_TYPES["claude-code"]
+# Mirrored by the FE CLAUDE_PLAN_REFUSAL (agentCredentialModel.ts).
+CLAUDE_PLAN_REFUSAL = (
+    "A Claude plan runs only in Claude Code. Use an Anthropic API key, "
+    "or switch the agent to Claude Code."
+)
 
 
 def register_subscription_provider(
@@ -603,11 +603,25 @@ def resolve_agent_cred_model(config: Any) -> str:
     return sub or _submodel_default(model) or model
 
 
+# A vendor's CLI harness and its models read the same key (ANTHROPIC_API_KEY,
+# OPENAI_API_KEY), so a key saved under either type serves both. Mirrors the FE
+# AGENT_VENDOR_KEY_ALIAS (agentCredentialModel.ts).
+AGENT_VENDOR_KEY_ALIASES: Dict[str, str] = {
+    "claude-code": "agent_anthropic",
+    "anthropic": "agent_claude_code",
+    "codex": "agent_openai",
+    "openai": "agent_codex",
+}
+
+
 def _requirement_for(cred_model: str, *, oauth_capable: bool) -> AgentCredentialRequirement:
     env_vars, provider_name = get_provider_credentials(cred_model)
     stem = provider_name.replace("-", "_")
     primary = f"agent_{stem}"
-    accepted = [primary, "agent_api_key"]  # legacy generic env-var bundles
+    accepted = [primary]
+    if provider_name in AGENT_VENDOR_KEY_ALIASES:
+        accepted.append(AGENT_VENDOR_KEY_ALIASES[provider_name])
+    accepted.append("agent_api_key")  # legacy generic env-var bundles
     if provider_name == "opencode":
         accepted.append("agent_opencode_go")  # pre-fold rows saved under the Go stem
     if oauth_capable:
@@ -662,16 +676,9 @@ def agent_credential_requirement(config: Optional[Dict[str, Any]]) -> AgentCrede
     return _requirement_for(cred_model, oauth_capable=True)
 
 
-def model_credential_accepted_types(config: Any) -> Tuple[str, ...]:
-    """Every credentialIds key that can AUTHENTICATE the selected model.
-
-    Companion to agent_credential_requirement asking a different question:
-    that one's ``required`` encodes the billing rule (openrouter/media run on
-    platform keys — no credential demanded), while this one always names the
-    provider-matched types, so an OPTIONAL BYOK key (agent_openrouter on an
-    openrouter/* model) is honored and a mismatched one can be rejected.
-    Media model types return () — flat platform pricing, no provider inference.
-    """
+def _model_requirement(config: Any) -> Optional[AgentCredentialRequirement]:
+    """What authenticates the selected model (a CLI harness's subscription
+    included); None for media model types and an empty model."""
     from .base import infer_model_type
 
     get = config.get if isinstance(config, dict) else (lambda k: getattr(config, k, None))
@@ -682,22 +689,37 @@ def model_credential_accepted_types(config: Any) -> Tuple[str, ...]:
     model_type = infer_model_type(probe).get("model_type", "llm")
 
     if model_type in ("image", "video", "kling"):
-        return ()
+        return None
 
     if model_type == "llm":
         cred_model = resolve_agent_cred_model(config)
-        if not cred_model:
-            return ()
-        return _requirement_for(cred_model, oauth_capable=False).accepted_types
+        return _requirement_for(cred_model, oauth_capable=False) if cred_model else None
 
     if isinstance(config, dict) and not model:
         wrapper_id = WRAPPER_ID_BY_MODEL_TYPE.get(model_type, "")
         cred_model = resolve_agent_cred_model({**config, "model": wrapper_id})
     else:
         cred_model = resolve_agent_cred_model(config)
-    if not cred_model:
-        return ()
-    return _requirement_for(cred_model, oauth_capable=True).accepted_types
+    return _requirement_for(cred_model, oauth_capable=True) if cred_model else None
+
+
+def model_credential_accepted_types(config: Any) -> Tuple[str, ...]:
+    """Every credentialIds key that can AUTHENTICATE the selected model.
+
+    Companion to agent_credential_requirement asking a different question:
+    that one's ``required`` encodes the billing rule (openrouter/media run on
+    platform keys — no credential demanded), while this one always names the
+    provider-matched types, so an OPTIONAL BYOK key (agent_openrouter on an
+    openrouter/* model) is honored and a mismatched one can be rejected.
+    Media model types return () — flat platform pricing, no provider inference.
+    """
+    requirement = _model_requirement(config)
+    return requirement.accepted_types if requirement else ()
+
+
+def _attached(value: Any) -> bool:
+    """A usable credentialIds entry. Mirrors utils.credentials.pick_credential_id."""
+    return isinstance(value, str) and bool(value.strip()) and "{{" not in value
 
 
 def match_model_credential(
@@ -705,13 +727,25 @@ def match_model_credential(
 ) -> Optional[Tuple[str, str]]:
     """The ``(credential_type, credential_id)`` entry in ``credential_ids``
     that matches the selected model's provider — accepted-type order, primary
-    first. None when nothing attached satisfies the model. Validity predicate
-    mirrors utils.credentials.pick_credential_id."""
+    first. None when nothing attached satisfies the model."""
     for cred_type in model_credential_accepted_types(config):
         value = (credential_ids or {}).get(cred_type)
-        if isinstance(value, str) and value.strip() and "{{" not in value:
+        if _attached(value):
             return cred_type, value
     return None
+
+
+def claude_plan_refusal(config: Any, credential_ids: Optional[Dict[str, Any]]) -> Optional[str]:
+    """``CLAUDE_PLAN_REFUSAL`` when a Claude plan is attached to an anthropic/*
+    model (on any harness but Claude Code) and nothing attached runs it, else
+    None. The one rule the run's pre-flight and the builder and MCP validation
+    report."""
+    if not isinstance(credential_ids, dict) or not _attached(credential_ids.get(CLAUDE_PLAN_CREDENTIAL_TYPE)):
+        return None
+    if match_model_credential(config, credential_ids) is not None:
+        return None
+    requirement = _model_requirement(config)
+    return CLAUDE_PLAN_REFUSAL if requirement and requirement.provider == "anthropic" else None
 
 
 def agent_credential_types() -> frozenset:

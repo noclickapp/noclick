@@ -104,7 +104,7 @@ async def revoke_key(request: Request, key_id: str):
     user_id = await _get_user_id(request)
     pool = get_native_pool()
     async with pool.acquire() as conn:
-        success = await revoke_api_key(conn, key_id, user_id)
+        success = await revoke_api_key(conn, key_id, user_id, legacy_only=True)
     if not success:
         raise HTTPException(status_code=404, detail="Key not found or already revoked")
     return {"success": True}

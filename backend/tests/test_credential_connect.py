@@ -271,6 +271,32 @@ async def test_agent_types_route_to_key_validation(monkeypatch):
     assert verdict.credential_data == {"credentials": {"ANTHROPIC_API_KEY": "bad"}}
 
 
+@pytest.mark.parametrize("credential_type,env_var", [
+    ("agent_claude_code", "ANTHROPIC_API_KEY"), ("agent_anthropic", "ANTHROPIC_API_KEY"),
+    ("agent_codex", "OPENAI_API_KEY"), ("agent_openai", "OPENAI_API_KEY"),
+])
+async def test_a_vendor_key_is_probed_alike_under_its_harness_or_model_type(monkeypatch, credential_type, env_var):
+    """A vendor key serves its CLI harness and its models under either type
+    (providers.AGENT_VENDOR_KEY_ALIASES), so connecting it under either runs the
+    same provider probe on the same variable and refuses it the same way."""
+    from nodes.agent import key_validation
+
+    probed = []
+
+    async def probe(var, key):
+        if key:
+            probed.append((var, key))
+        return key_validation.Rejection("anthropic" if "ANTHROPIC" in var else "openai", "invalid_key",
+                                        "invalid x-api-key") if key else None
+
+    monkeypatch.setattr(key_validation, "validate_provider_key", probe)
+    monkeypatch.setattr(cc, "_validate_agent_api_key", key_validation.validate_agent_api_key)
+    verdict = await cc.validate_for_connect(
+        credential_type=credential_type, credential_data={"credentials": {env_var: "sk-dead"}}, user_id="u")
+    assert probed == [(env_var, "sk-dead")]
+    assert verdict.rejection and "invalid x-api-key" in verdict.rejection
+
+
 # ------------------------------------------------------ evidence additions
 
 

@@ -22,7 +22,7 @@ Deliberately best-effort at-least-once, biased toward firing:
 import logging
 from typing import Optional
 
-from utils.redis_client import get_shared_redis
+from utils import redis_client
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ def _key(provider: str, event_id: str) -> str:
 async def was_delivered(provider: str, event_id: Optional[str]) -> bool:
     if not event_id:
         return False
-    client = get_shared_redis()
+    client = redis_client.get_shared_redis()
     if client is None:
         return False
     try:
@@ -50,7 +50,7 @@ async def was_delivered(provider: str, event_id: Optional[str]) -> bool:
 async def mark_delivered(provider: str, event_id: Optional[str]) -> None:
     if not event_id:
         return
-    client = get_shared_redis()
+    client = redis_client.get_shared_redis()
     if client is None:
         return
     try:

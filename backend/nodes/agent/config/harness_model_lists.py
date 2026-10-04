@@ -140,22 +140,13 @@ async def fetch_opencode_models() -> List[Dict[str, str]]:
           • CodexAuthPlugin (codex.ts): ChatGPT Plus accepts the
             gpt-5.X subset defined in _is_chatgpt_plus_supported.
           • Registered sign-ins (register_provider_badge) add their own badge.
-          • Anthropic Claude Pro/Max: badge added when our vendored
-            opencode-claude-auth plugin is bundled (see the Modal
-            image setup — re-enables OAuth that opencode-ai itself
-            dropped in v1.3.0).
+        A Claude plan runs only in Claude Code, so anthropic/* gets none.
         """
         badges: List[str] = []
         if provider_id == 'openai' and _is_chatgpt_plus_supported(model_id):
             badges.append('ChatGPT Plus')
         if provider_id in SUBSCRIPTION_BADGES:
             badges.append(SUBSCRIPTION_BADGES[provider_id])
-        if provider_id == 'anthropic':
-            # Re-enabled via the vendored opencode-claude-auth plugin;
-            # the badge tells users a Claude Pro/Max subscription works
-            # here. Anthropic doesn't officially support this but does
-            # not enforce against it in practice.
-            badges.append('Claude Pro/Max')
         return badges
 
     for provider_id in priority_providers:

@@ -24,6 +24,8 @@ can supply a sink that matches their own retention and privacy policy.
 """
 
 import asyncio
+import functools
+import inspect
 import logging
 import time
 from contextlib import contextmanager
@@ -349,6 +351,30 @@ async def freshen_oauth_credential(
     return credential_data
 
 
+# How a provider module's exchange and refresh take an OAuth app of the
+# requester's own in place of the instance's.
+CLIENT_PARAMS = (("custom_client_id", "custom_client_secret"), ("client_id", "client_secret"))
+
+
+def own_client_kwargs(fn: Callable[..., Any], client: Dict[str, str]) -> Optional[Dict[str, str]]:
+    """``fn``'s keyword arguments for ``client`` ({client_id, client_secret}),
+    or None when it takes no client of its own."""
+    params = inspect.signature(fn).parameters
+    for id_key, secret_key in CLIENT_PARAMS:
+        if id_key in params and secret_key in params:
+            return {id_key: client["client_id"], secret_key: client["client_secret"]}
+    return None
+
+
+def _on_own_client(refresh: Callable[..., Awaitable[Any]], credential: Dict[str, Any]) -> Callable[..., Awaitable[Any]]:
+    """A credential minted on its own OAuth app (it holds ``client_id`` and
+    ``client_secret``) refreshes on that app, not the instance's."""
+    if not (credential.get("client_id") and credential.get("client_secret")):
+        return refresh
+    own = own_client_kwargs(refresh, credential)
+    return functools.partial(refresh, **own) if own else refresh
+
+
 async def ensure_fresh_oauth_token(
     *,
     pool=None,
@@ -404,6 +430,7 @@ async def ensure_fresh_oauth_token(
             installation row is the single chain of record.
     """
     started_at = datetime.now(timezone.utc)
+    refresh = _on_own_client(refresh, credential)
     if store is None and credential_id and user_id:
         store = CredentialsTableStore(pool, user_id, credential_id)
     if force_refresh and store is not None:

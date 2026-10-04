@@ -1,9 +1,10 @@
 """
 Inbound-email HTTP route for the inbound-email trigger node.
 
-An operator-configured email relay receives mail for ``INBOUND_EMAIL_DOMAIN``,
-HMAC-signs a JSON payload (from/to/subject/rawBase64/headers/spf/dkim), and
-POSTs it here. This route:
+An operator-configured email relay receives mail for ``INBOUND_EMAIL_DOMAIN``
+(and for any other domain a platform routes to it, where only an address a
+registered receiver reserved takes mail), HMAC-signs a JSON payload
+(from/to/subject/rawBase64/headers/spf/dkim), and POSTs it here. This route:
 1. Verifies the relay auth (Bearer token + optional HMAC signature)
 2. Resolves the recipient local-part to a reserved workflow + trigger node
 3. Parses the MIME message, stores attachments in object storage
@@ -181,7 +182,8 @@ async def _inline_extraction_fields(data: bytes, mime_type: str, filename: str) 
 
 async def get_email_config(local_part: str, domain: str) -> Optional[dict]:
     """Resolve a reserved inbound address: a trigger node's (with its
-    workflow) or an account coordinator's (``kind='coordinator'``)."""
+    workflow), or one with no workflow (an account coordinator's, or a kind
+    a registered ``EMAIL_ADDRESS_RECEIVER`` handles)."""
     row = await get_native_pool().fetchrow(
         """
         SELECT er.id, er.user_id, er.workflow_id, er.node_id, er.local_part, er.domain,
@@ -189,7 +191,7 @@ async def get_email_config(local_part: str, domain: str) -> Optional[dict]:
         FROM email_reservations er
         LEFT JOIN workflows wf ON er.workflow_id = wf.id
         WHERE er.domain = $1 AND er.local_part = $2
-          AND (er.kind = 'coordinator' OR (wf.id IS NOT NULL AND wf.deleted_at IS NULL))
+          AND (er.kind <> 'trigger' OR (wf.id IS NOT NULL AND wf.deleted_at IS NULL))
         """,
         domain, local_part,
     )
@@ -217,7 +219,12 @@ async def receive_inbound_email(request: Request, background_tasks: BackgroundTa
         raise HTTPException(status_code=400, detail="Missing recipient address")
     local_part, _, domain = to_addr.lower().partition("@")
     if domain != configured_domain:
-        raise HTTPException(status_code=404, detail="No workflow is listening on this address")
+        # A domain of a platform's own that routes its mail here: only an
+        # address a registered receiver reserved on it takes mail.
+        config = await get_email_config(local_part, domain)
+        if not config or config.get("workflow_id") is not None or config.get("kind") == "coordinator":
+            raise HTTPException(status_code=404, detail="No workflow is listening on this address")
+        return await _receive_reserved_kind(config, to_addr, payload, background_tasks)
 
     # Agent-reply addresses (email_user tool) are their own routing plane —
     # resolved from agent_email_replies, never from email_reservations.
@@ -231,6 +238,8 @@ async def receive_inbound_email(request: Request, background_tasks: BackgroundTa
         raise HTTPException(status_code=404, detail="No workflow is listening on this address")
     if config.get("kind") == "coordinator":
         return await _receive_coordinator_email(local_part, domain, payload, background_tasks)
+    if config.get("workflow_id") is None:  # only a trigger's address names a workflow
+        return await _receive_reserved_kind(config, to_addr, payload, background_tasks)
     if not config.get("is_active"):
         raise HTTPException(status_code=410, detail="Email trigger is disabled")
 
@@ -266,47 +275,11 @@ async def receive_inbound_email(request: Request, background_tasks: BackgroundTa
         logger.info("[EMAIL] Sender did not match the trigger allowlist; skipping")
         return EmailInboundResponse(success=True, message="Sender not allowed", triggered=False)
 
-    # Parse the MIME message and store attachments (best-effort — never block the trigger).
-    parsed: Dict[str, Any] = {"text": None, "html": None, "attachments": []}
-    raw_b64 = payload.get("rawBase64")
-    if raw_b64:
-        try:
-            parsed = _parse_mime(base64.b64decode(raw_b64))
-        except Exception as e:
-            logger.error("[EMAIL] MIME parse failed: %s", e, exc_info=True)
-
-    stored_attachments: List[Dict[str, Any]] = []
-    if parsed["attachments"]:
-        try:
-            stored_attachments = await _store_attachments(
-                config["user_id"], organization_id, config["workflow_id"], node_id, parsed["attachments"]
-            )
-        except Exception as e:
-            logger.error("[EMAIL] Attachment storage failed: %s", e, exc_info=True)
-
-    email_payload = {
+    node_cfg["_triggerPayload"] = {
         "type": "email-trigger",
         "status": "received",
-        "timestamp": time.time(),
-        "from": from_addr or payload.get("from"),
-        "to": to_addr,
-        "subject": payload.get("subject"),
-        "text": parsed.get("text"),
-        "html": parsed.get("html"),
-        "attachments": stored_attachments,
-        "headers": payload.get("headers", {}),
-        "spf_pass": payload.get("spfPass"),
-        "dkim_pass": payload.get("dkimPass"),
+        **await _received_email(payload, to_addr, config["user_id"], organization_id, config["workflow_id"], node_id),
     }
-    # Authorizes the agent's locked email__reply tool for THIS email only — a
-    # payload fabricated in a saved config can't mint one (utils/email_reply.py).
-    email_payload["reply_token"] = mint_reply_token(
-        to_addr=to_addr,
-        sender=email_payload["from"],
-        message_id=(payload.get("headers") or {}).get("message-id"),
-        timestamp=email_payload["timestamp"],
-    )
-    node_cfg["_triggerPayload"] = email_payload
 
     # Count the delivery only after the trigger node accepts it.
     try:
@@ -327,6 +300,71 @@ async def receive_inbound_email(request: Request, background_tasks: BackgroundTa
     )
     logger.info("[EMAIL] Accepted inbound message for workflow %s", workflow_id)
     return EmailInboundResponse(success=True, message="Email received and workflow triggered", triggered=True)
+
+
+async def _received_email(
+    payload: Dict[str, Any], to_addr: str, owner_id: Any, organization_id: Any,
+    workflow_id: Any, node_id: Optional[str],
+) -> Dict[str, Any]:
+    """The relayed mail as its receiver reads it: MIME parsed and attachments
+    stored (both best-effort — never block delivery), plus the reply token."""
+    parsed: Dict[str, Any] = {"text": None, "html": None, "attachments": []}
+    raw_b64 = payload.get("rawBase64")
+    if raw_b64:
+        try:
+            parsed = _parse_mime(base64.b64decode(raw_b64))
+        except Exception as e:
+            logger.error("[EMAIL] MIME parse failed: %s", e, exc_info=True)
+
+    stored_attachments: List[Dict[str, Any]] = []
+    if parsed["attachments"]:
+        try:
+            stored_attachments = await _store_attachments(
+                owner_id, organization_id, workflow_id, node_id, parsed["attachments"]
+            )
+        except Exception as e:
+            logger.error("[EMAIL] Attachment storage failed: %s", e, exc_info=True)
+
+    _, from_addr = parseaddr(payload.get("from") or "")
+    email = {
+        "timestamp": time.time(),
+        "from": from_addr or payload.get("from"),
+        "to": to_addr,
+        "subject": payload.get("subject"),
+        "text": parsed.get("text"),
+        "html": parsed.get("html"),
+        "attachments": stored_attachments,
+        "headers": payload.get("headers", {}),
+        "spf_pass": payload.get("spfPass"),
+        "dkim_pass": payload.get("dkimPass"),
+    }
+    # Authorizes a locked reply to THIS email only — a payload fabricated in a
+    # saved config can't mint one (utils/email_reply.py).
+    email["reply_token"] = mint_reply_token(
+        to_addr=to_addr,
+        sender=email["from"],
+        message_id=(payload.get("headers") or {}).get("message-id"),
+        timestamp=email["timestamp"],
+    )
+    return email
+
+
+async def _receive_reserved_kind(
+    config: Dict[str, Any], to_addr: str, payload: Dict[str, Any], background_tasks: BackgroundTasks,
+) -> EmailInboundResponse:
+    """Mail to an address whose kind a registered receiver owns. Attachments
+    are stored as the reservation owner's account-level resources."""
+    from utils.capabilities import EMAIL_ADDRESS_RECEIVER, capability
+
+    receiver = capability(EMAIL_ADDRESS_RECEIVER)
+    if receiver is None:
+        raise HTTPException(status_code=404, detail="No workflow is listening on this address")
+    if not config.get("is_active"):
+        raise HTTPException(status_code=410, detail="This address is disabled")
+    email = await _received_email(payload, to_addr, config["user_id"], None, None, None)
+    outcome = await receiver(get_native_pool(), config, email, defer=background_tasks.add_task)
+    logger.info("[EMAIL] %s address: %s", config.get("kind"), outcome)
+    return EmailInboundResponse(success=True, message=outcome, triggered=True)
 
 
 async def _receive_coordinator_email(

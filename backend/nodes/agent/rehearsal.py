@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
@@ -61,8 +62,9 @@ _KEY = "nc:rehearsal:{conversation_id}"
 #
 # describe_workflow is exempt because the agent's own configuration IS real
 # during a rehearsal; fabricating it would have the agent reason about a
-# workflow that does not exist.
-REHEARSAL_PASSTHROUGH_TOOL_TYPES = frozenset({"describe_workflow"})
+# workflow that does not exist. Reading the agent's memory is exempt for the
+# same reason (a rehearsal sees what the agent knows); saving to it is not.
+REHEARSAL_PASSTHROUGH_TOOL_TYPES = frozenset({"describe_workflow", "memory_read"})
 
 
 _SYSTEM = """You are simulating third-party APIs for a rehearsal of an automation agent.
@@ -123,8 +125,21 @@ class RehearsalUnavailable(RuntimeError):
     """
 
 
+# An agent turn's effective conversation id wraps its key: ck:{workflow}:{node}:{key}.
+_THREAD_FORM = re.compile(r"ck:[^:]+:[^:]+:(rehearsal:.+)")
+
+
+def rehearsal_key(conversation_id: Optional[str]) -> Optional[str]:
+    """The rehearsal id a conversation id names: as given, or the key of the
+    rehearsing agent's thread ``ck:{workflow}:{node}:{rehearsal id}``, the id
+    the in-process agent (its ``execute_bash`` fence, its thought rows) holds.
+    A forged thread id fails safe: it can only make a call fabricated."""
+    found = _THREAD_FORM.fullmatch(conversation_id or "")
+    return found.group(1) if found else conversation_id
+
+
 def _key(conversation_id: str) -> str:
-    return _KEY.format(conversation_id=conversation_id)
+    return _KEY.format(conversation_id=rehearsal_key(conversation_id))
 
 
 async def start_rehearsal(
@@ -134,12 +149,17 @@ async def start_rehearsal(
     sid: Optional[str] = None,
     organization_id: Optional[str] = None,
     public: bool = False,
+    quiet: bool = False,
+    keep_existing: bool = False,
 ) -> None:
     """Mark a conversation as rehearsing and seed its fabricated world.
 
     ``sid`` is the socket that asked, and it is the primary delivery target:
     that client is by definition present and listening. ``user_id`` is the
-    fallback for their other tabs.
+    fallback for their other tabs, and who pays for the world's answers.
+    ``quiet``: nobody watches (the caller reads each answer itself), so no
+    socket is sent its frames. ``keep_existing``: a world already seeded for
+    the conversation stays as it is, with everything it answered.
 
     Neither is the workflow room, deliberately — a rehearsal is watched from
     surfaces that never opened the workflow (onboarding, a template preview),
@@ -165,10 +185,11 @@ async def start_rehearsal(
         # Anonymous template-page runs: progress frames ALSO buffer in Redis
         # so a visitor with no socket can poll them (utils/public_routes).
         "public": public,
+        "quiet": quiet,
         "calls": [],
     }
-    await client.set(_key(conversation_id), json.dumps(state), ex=REHEARSAL_TTL_S)
-    logger.info("[rehearsal] started for conversation %s", conversation_id)
+    if await client.set(_key(conversation_id), json.dumps(state), ex=REHEARSAL_TTL_S, nx=keep_existing):
+        logger.info("[rehearsal] started for conversation %s", conversation_id)
 
 
 async def end_rehearsal(conversation_id: str) -> None:
@@ -436,6 +457,32 @@ async def mock_tool_call(
     return result
 
 
+async def rehearse_tool(
+    conversation_id: str, tool_name: str, arguments: Optional[Dict[str, Any]], tool_info: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Answer a tool call from the fabricated world instead of the real one.
+
+    The result carries no "this was rehearsed" marker: the model should behave
+    exactly as it would on a real run, and telling it otherwise changes the
+    behaviour we are trying to show. Labelling is the UI's job, and it already
+    knows — the whole run is a rehearsal.
+    """
+    try:
+        simulated = await mock_tool_call(
+            conversation_id=conversation_id,
+            tool_name=tool_name,
+            arguments=arguments or {},
+            description=tool_info.get("_description") or tool_info.get("description"),
+            node_type=tool_info.get("node_type"),
+            operation=tool_info.get("operation"),
+        )
+    except RehearsalUnavailable as e:
+        # A tool failure rather than nothing, so the trace shows a broken
+        # rehearsal instead of an agent reasoning over an empty response.
+        return {"success": False, "error": f"rehearsal could not simulate this call: {e}"}
+    return simulated if isinstance(simulated, dict) else {"success": True, "data": simulated}
+
+
 async def _charge_world_call(
     state: Dict[str, Any],
     conversation_id: str,
@@ -545,7 +592,7 @@ def is_rehearsal_conversation(conversation_id: Optional[str]) -> bool:
     (per-node in the execution runner). The ids are minted by run_rehearsal;
     a forged prefix fails SAFE — it makes nodes skip, never execute.
     ``is_rehearsing`` stays the authority wherever fabrication happens."""
-    return bool(conversation_id) and str(conversation_id).startswith(
+    return bool(conversation_id) and str(rehearsal_key(str(conversation_id))).startswith(
         REHEARSAL_CONVERSATION_PREFIX
     )
 
@@ -614,6 +661,7 @@ async def _emit_progress(
     """Tell whoever is watching. Never raises — a dropped frame costs a row in a
     trace, and must never fail the run it is describing."""
     state = state or {}
+    conversation_id = rehearsal_key(conversation_id)
     if state.get("public"):
         # Anonymous watchers have no socket: buffer every frame in Redis for
         # the public polling endpoint. Same never-raises doctrine.
@@ -622,7 +670,7 @@ async def _emit_progress(
         except Exception as e:
             logger.warning("[rehearsal] public frame push failed: %s", e)
     sid, user_id = state.get("sid"), state.get("user_id")
-    if not sid and not user_id:
+    if state.get("quiet") or (not sid and not user_id):
         return
     try:
         from wss.sender.events import RehearsalProgressEvent
@@ -658,7 +706,7 @@ _PUBLIC_FRAMES_TTL_S = 900
 
 
 def public_frames_key(conversation_id: str) -> str:
-    return f"rehearsal:frames:{conversation_id}"
+    return f"rehearsal:frames:{rehearsal_key(conversation_id)}"
 
 
 async def _push_public_frame(conversation_id: str, fields: Dict[str, Any]) -> None:

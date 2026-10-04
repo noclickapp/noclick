@@ -127,6 +127,14 @@ def build_node_run_statuses(
     return statuses
 
 
+def apply_config_overrides(nodes: List[Dict[str, Any]], overrides: Optional[Dict[str, Dict[str, Any]]]) -> None:
+    """Merge per-node config overrides (keyed by node id) into ``nodes`` in place."""
+    for node in nodes:
+        node_overrides = (overrides or {}).get(node.get('id', ''))
+        if node_overrides:
+            node.setdefault('config', {}).update(node_overrides)
+
+
 def _is_awaiting_marker(output: Any) -> bool:
     """An agent's delivery marker: the turn was handed to a sandbox and the
     response arrives as a separate run."""
@@ -174,6 +182,9 @@ class WorkflowExecutionResult:
     node_outputs: Dict[str, Any] = field(default_factory=dict)
     last_output_node_id: Optional[str] = None
     suspended: bool = False
+    # What THIS run executed, node id -> {status, error}: ``node_outputs`` also
+    # holds the context a sliced run preloads from earlier runs.
+    node_statuses: Dict[str, Dict[str, Any]] = field(default_factory=dict)
 
 
 class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
@@ -541,6 +552,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         start_time = time.time()
         completion_event_sent = False
         last_output_node_id: Optional[str] = None
+        node_statuses: Dict[str, Dict[str, Any]] = {}
 
         def _result(
             *,
@@ -560,6 +572,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 node_outputs=node_outputs or {},
                 last_output_node_id=last_output_node_id,
                 suspended=suspended,
+                node_statuses=node_statuses,
             )
 
         # Pre-bind so the outer except (which alerts on headless failures) can
@@ -673,14 +686,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 else:
                     snapshot_nodes = copy.deepcopy(snapshot_nodes)
 
-                def _apply_config_overrides(target_nodes: List[Dict[str, Any]]) -> None:
-                    for node in target_nodes:
-                        overrides = request.config_overrides.get(node.get('id', ''))
-                        if overrides:
-                            node.setdefault('config', {}).update(overrides)
-
-                _apply_config_overrides(nodes)
-                _apply_config_overrides(snapshot_nodes)
+                apply_config_overrides(nodes, request.config_overrides)
+                apply_config_overrides(snapshot_nodes, request.config_overrides)
 
             # Inject inputs if provided (for template/app use)
             if request.inputs:
@@ -1004,6 +1011,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 error_msg = relay.connect_error or USER_STOPPED_ERROR
                 node_outputs = {}
                 last_output_node_id = None
+            # Before the persist below consumes them.
+            node_statuses = dict(self._execution_node_statuses.get(execution_id) or {})
 
             duration = time.time() - start_time
             success = error_msg is None
@@ -1330,15 +1339,17 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
     async def execute_agent_turn(
         self, *, workflow_id: str, agent_node_id: str, user_id: str, message: str,
         conversation_key: str, execution_id: str,
+        config_overrides: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> WorkflowExecutionResult:
         """One conversational turn of an agent node inside an EXISTING run —
         a phone call's — with none of a run's bookkeeping: no execution row,
         no graph snapshot, no output persist. The agent and its tool providers
         execute exactly as they would in a run (same executor, tools, memory,
-        billing, tool audit under this execution id); its downstream nodes do
-        NOT — a spoken reply is not a dataflow output, and the whole call
-        reaches them at hang-up as the trigger's event. Node events ride the
-        run's own relay, so the canvas follows the call live."""
+        billing, tool audit under this execution id, ``config_overrides``
+        merged in as a run's are); its downstream nodes do NOT — a spoken
+        reply is not a dataflow output, and the whole call reaches them at
+        hang-up as the trigger's event. Node events ride the run's own relay,
+        so the canvas follows the call live."""
         from utils.execution_relay import create_execution_relay
         from wss.sender import _active_execution_relay
 
@@ -1357,6 +1368,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         nodes, edges, workflow_org_id, workflow_variables, _settings = fetched
         import copy
         nodes = copy.deepcopy(nodes)
+        apply_config_overrides(nodes, config_overrides)
         agent = next((n for n in nodes if n.get('id') == agent_node_id), None)
         if agent is None:
             return _result(False, f"Agent node {agent_node_id} not found")

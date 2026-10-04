@@ -20,7 +20,14 @@ import type { CredentialTestConnectionResponse } from '~/types/socket-events.gen
 import { CredentialCreateEntryButton } from '~/components/credential/CredentialCreateEntryButton';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { kindFromCredentialType } from '~/lib/credentialMethodKind';
-import { getAgentConfigRecord, getAgentSelectedModel, isPrimaryAgentCredentialKey } from '~/lib/agentCredentialModel';
+import {
+    claudePlanRefusal,
+    getAgentConfigRecord,
+    getAgentEffectiveModel,
+    getAgentSelectedModel,
+    inferProviderFromPrefix,
+    isPrimaryAgentCredentialKey,
+} from '~/lib/agentCredentialModel';
 import { isCliAgentModel } from '~/lib/agentChat';
 import { useCredentialOAuth, type Credential } from '~/hooks/useCredentialOAuth';
 // Lazy: the agent credential form pulls useModels (~159KB gz) which otherwise
@@ -170,15 +177,21 @@ export function getProviderFromModelId(modelId: string): string | null {
  * false and left CLI agents invisible to canvas validation entirely.
  *
  * `agent_env` deliberately does NOT count — it carries sandbox env vars, never
- * auth (see isPrimaryAgentCredentialKey).
+ * auth (see isPrimaryAgentCredentialKey), and neither does a Claude plan on an
+ * anthropic/* model outside Claude Code (claudePlanRefusal).
  */
 function agentRequiresCredentials(nodeData: Record<string, any>, credentialIds: Record<string, string>): boolean {
+    const config = getAgentConfigRecord(nodeData);
     const hasPrimaryCredential = Object.entries(credentialIds).some(
         ([key, id]) => isPrimaryAgentCredentialKey(key) && id && id.trim() !== ''
     );
-    if (hasPrimaryCredential) return false;
+    const refusedPlan = claudePlanRefusal(
+        credentialIds,
+        inferProviderFromPrefix(getAgentEffectiveModel(undefined, config))
+    );
+    if (hasPrimaryCredential && !refusedPlan) return false;
 
-    return isCliAgentModel(getAgentSelectedModel(undefined, getAgentConfigRecord(nodeData)));
+    return isCliAgentModel(getAgentSelectedModel(undefined, config));
 }
 
 /**

@@ -175,6 +175,7 @@ class CronScheduleTriggerMixin:
             "disabled": bool(cfg.get("disabled")),
             "schedule": cfg.get("schedule"),
             "schedules": cfg.get("schedules"),
+            "cron_expression": cfg.get("cron_expression"),
             "timezone": cfg.get("timezone"),
             "scope": cls.schedule_poll_scope(cfg),
             "credential": pick_credential_id(cfg.get("credentialIds") or {}),

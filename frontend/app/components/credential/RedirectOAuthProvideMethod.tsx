@@ -8,7 +8,7 @@
 
 import { useMemo, type ComponentType } from 'react';
 import { AlertCircle } from 'lucide-react';
-import { OAuthExchangeProvider } from '~/hooks/oauth/OAuthExchangeContext';
+import { OAuthAuthorizeProvider, OAuthExchangeProvider } from '~/hooks/oauth/OAuthExchangeContext';
 import { oauthNeedsInAppSelection } from '~/utils/oauthProviders';
 import { useOAuthConnect } from '~/hooks/useOAuthConnect';
 import { OAuthConnectForm } from './OAuthConnectForm';
@@ -24,6 +24,8 @@ interface RedirectOAuthProvideMethodProps {
     userScopes?: string[];
     supportsCustomClient?: boolean;
     requiresCustomClient?: boolean;
+    /** The requester brings its own OAuth app: the sign-in names this link so the authorize route asks consent for it. */
+    oauthApp?: boolean;
     redirectUri?: string;
     serviceName: string;
     ServiceIcon: ComponentType<{ className?: string }> | null;
@@ -35,7 +37,7 @@ interface RedirectOAuthProvideMethodProps {
 function ConnectForm({
     provider, credentialType, scopes, userScopes, supportsCustomClient, requiresCustomClient,
     redirectUri, serviceName, ServiceIcon, onProvided,
-}: Omit<RedirectOAuthProvideMethodProps, 'apiBase' | 'token'>) {
+}: Omit<RedirectOAuthProvideMethodProps, 'apiBase' | 'token' | 'oauthApp'>) {
     const {
         connect, connectOrgConsent, isConnecting, connectingProvider, error, planLimitError,
         clearError, pendingSelection, resolvePendingSelection, cancelConnect,
@@ -68,12 +70,17 @@ function ConnectForm({
 
 export function RedirectOAuthProvideMethod({
     apiBase, token, credentialType, provider, scopes, userScopes,
-    supportsCustomClient, requiresCustomClient, redirectUri, serviceName, ServiceIcon, onProvided,
+    supportsCustomClient, requiresCustomClient, oauthApp, redirectUri, serviceName, ServiceIcon, onProvided,
 }: RedirectOAuthProvideMethodProps) {
     const transport = useMemo(
         () => provideLinkTransport(apiBase, token, credentialType),
         [apiBase, token, credentialType],
     );
+    const authorizeParams = useMemo(() => {
+        const params: Record<string, string> = {};
+        if (oauthApp) params.oauth_app = token;
+        return params;
+    }, [oauthApp, token]);
     // Some providers (Facebook/Instagram account, Supabase project) finish OAuth with an
     // in-popup selection the HTTP provide transport can't complete. Rather than let the
     // user hit a dead end mid-flow, say so up front — a sibling method (if any) stays
@@ -93,18 +100,20 @@ export function RedirectOAuthProvideMethod({
     }
     return (
         <OAuthExchangeProvider value={transport}>
-            <ConnectForm
-                provider={provider}
-                credentialType={credentialType}
-                scopes={scopes}
-                userScopes={userScopes}
-                supportsCustomClient={supportsCustomClient}
-                requiresCustomClient={requiresCustomClient}
-                redirectUri={redirectUri}
-                serviceName={serviceName}
-                ServiceIcon={ServiceIcon}
-                onProvided={onProvided}
-            />
+            <OAuthAuthorizeProvider value={authorizeParams}>
+                <ConnectForm
+                    provider={provider}
+                    credentialType={credentialType}
+                    scopes={scopes}
+                    userScopes={userScopes}
+                    supportsCustomClient={supportsCustomClient}
+                    requiresCustomClient={requiresCustomClient}
+                    redirectUri={redirectUri}
+                    serviceName={serviceName}
+                    ServiceIcon={ServiceIcon}
+                    onProvided={onProvided}
+                />
+            </OAuthAuthorizeProvider>
         </OAuthExchangeProvider>
     );
 }

@@ -95,9 +95,14 @@ def unwrap_trigger_output(output: Any) -> Tuple[Any, Dict[str, Any]]:
     return payload, {}
 
 
-def compact_json(value: Any, *, limit: int = DEFAULT_EVENT_CHARS) -> str:
+def compact_json(
+    value: Any,
+    *,
+    limit: int = DEFAULT_EVENT_CHARS,
+    cut_note: str = "the trigger node's output holds the full payload",
+) -> str:
     """Pruned, pretty-printed JSON cut at ``limit`` with a note saying so —
-    a model that sees a cut knows the full payload is on the trigger node."""
+    ``cut_note`` tells the model where the rest lives."""
     pruned = prune_empty(value)
     try:
         text = json.dumps(pruned, indent=2, ensure_ascii=False, default=str)
@@ -105,11 +110,7 @@ def compact_json(value: Any, *, limit: int = DEFAULT_EVENT_CHARS) -> str:
         text = str(pruned)
     if len(text) <= limit:
         return text
-    return (
-        text[:limit]
-        + f"\n… [truncated {len(text) - limit} more chars; the trigger node's "
-        "output holds the full payload]"
-    )
+    return text[:limit] + f"\n… [truncated {len(text) - limit} more chars; {cut_note}]"
 
 
 def event_kind(envelope: Dict[str, Any], payload: Any = None) -> Optional[str]:

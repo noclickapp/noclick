@@ -46,6 +46,23 @@ describe('hasUnconnectedCredentials — CLI-harness agent nodes', () => {
         expect(missing({ model: 'codex' }, { agent_codex_oauth: 'c1' })).toBe(false);
     });
 
+    it('does not count a Claude plan outside Claude Code', () => {
+        // A Claude plan runs only in Claude Code: on an anthropic/* sub-model of
+        // any other harness the node stays incomplete until a key is linked.
+        const plan = { agent_claude_code_oauth: 'c1' };
+        for (const [harness, field] of [
+            ['opencode', 'opencode_model'],
+            ['hermes', 'hermes_agent_model'],
+            ['openclaw', 'openclaw_model'],
+        ]) {
+            expect(missing({ model: harness, [field]: 'anthropic/claude-sonnet-4-5' }, plan), harness).toBe(true);
+        }
+        expect(missing({ model: 'claude-code' }, plan)).toBe(false);
+        expect(
+            missing({ model: 'opencode', opencode_model: 'anthropic/claude-sonnet-4-5' }, { ...plan, agent_anthropic: 'k' })
+        ).toBe(false);
+    });
+
     it('does not count agent_env as satisfying the requirement', () => {
         // agent_env carries sandbox env vars, never auth — it rides the same
         // credentialIds map only so the pre-delete impact scan can see it.

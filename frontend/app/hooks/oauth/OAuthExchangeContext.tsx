@@ -22,3 +22,15 @@ export const OAuthExchangeProvider = OAuthExchangeContext.Provider;
 export function useOAuthExchange(): OAuthExchange {
     return useContext(OAuthExchangeContext);
 }
+
+// What a sign-in adds to its authorize request. The provide page names its link
+// (`oauth_app`) when the requester brings its own OAuth app, which the authorize
+// route then asks consent for (lib/oauthApp.server.ts). Empty elsewhere.
+const OAuthAuthorizeContext = createContext<Record<string, string>>({});
+
+export const OAuthAuthorizeProvider = OAuthAuthorizeContext.Provider;
+
+/** The extra authorize-request fields for the current surface. */
+export function useOAuthAuthorizeParams(): Record<string, string> {
+    return useContext(OAuthAuthorizeContext);
+}

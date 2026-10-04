@@ -58,6 +58,13 @@ def credential_access_predicate(require_edit: bool = False) -> str:
           )"""
 
 
+def listed_to_owner_sql(alias: str = "c") -> str:
+    """WHERE fragment for owner-facing lists and auto-picks. A row stamped
+    ``metadata.hidden_from_owner`` is held for someone else and is only ever
+    used by explicit id, so access checks never apply this."""
+    return f"NOT COALESCE({alias}.metadata @> '{{\"hidden_from_owner\": true}}'::jsonb, false)"
+
+
 @dataclass(frozen=True)
 class PendingTransfer:
     """One credential_request row that survived the fulfilled-and-still-
@@ -275,9 +282,10 @@ class CredentialsRepo:
             AND os.target_org_id = $2
         LEFT JOIN auth.users owner ON owner.id = c.owner_id
         WHERE
-            c.owner_id = $1
-            OR us.id IS NOT NULL
-            OR ($2::uuid IS NOT NULL AND os.id IS NOT NULL)
+            (c.owner_id = $1
+             OR us.id IS NOT NULL
+             OR ($2::uuid IS NOT NULL AND os.id IS NOT NULL))
+            AND {listed_to_owner_sql()}
         ORDER BY c.id, sort_order, c.created_at DESC
     """
 
@@ -655,12 +663,13 @@ class CredentialsRepo:
     # ------------------------------------------------------------------
 
     _UPSERT_REQUEST_SQL = """
-        INSERT INTO credential_requests (requester_id, target_email, credential_type, message)
-        VALUES ($1, LOWER($2), $3, $4)
+        INSERT INTO credential_requests (requester_id, target_email, credential_type, message, metadata)
+        VALUES ($1, LOWER($2), $3, $4, $5)
         ON CONFLICT (requester_id, target_email, credential_type)
         WHERE credential_type <> 'phone_number'
         DO UPDATE SET
             message = EXCLUDED.message,
+            metadata = EXCLUDED.metadata,
             token = encode(gen_random_bytes(32), 'hex'),
             expires_at = NOW() + INTERVAL '7 days',
             status = 'pending',
@@ -681,11 +690,14 @@ class CredentialsRepo:
         message: Optional[str],
         reuse_pending: bool = False,
         continuation: Optional[dict] = None,
+        metadata: Optional[dict] = None,
     ) -> Optional[CredentialRequestRow]:
         """Insert-or-refresh a credential request. On conflict, rotates the
         token, resets expiry, and re-opens the request. Returns the shape
         the handler needs (including ``token``, needed to compose the
-        outbound email)."""
+        outbound email). ``metadata`` carries the request's options
+        (``redirect_url``, ``notify_requester``, ``hidden_from_owner``)."""
+        metadata = metadata or {}
         async with self._pool.acquire() as conn:
             async with conn.transaction():
                 row = None
@@ -716,13 +728,13 @@ class CredentialsRepo:
                             "AND status='pending' AND expires_at<=now()", requester_id, target_email,
                         )
                         row = await conn.fetchrow(
-                            "INSERT INTO credential_requests (requester_id,target_email,credential_type,message) "
-                            "VALUES ($1::uuid,LOWER($2),'phone_number',$3) RETURNING *",
-                            requester_id, target_email, message,
+                            "INSERT INTO credential_requests (requester_id,target_email,credential_type,message,metadata) "
+                            "VALUES ($1::uuid,LOWER($2),'phone_number',$3,$4) RETURNING *",
+                            requester_id, target_email, message, metadata,
                         )
                 if row is None:
                     row = await conn.fetchrow(
-                        self._UPSERT_REQUEST_SQL, requester_id, target_email, credential_type, message,
+                        self._UPSERT_REQUEST_SQL, requester_id, target_email, credential_type, message, metadata,
                     )
                 if row and continuation is not None:
                     from repositories.coordinator_links import CoordinatorLinkRepo
@@ -838,11 +850,11 @@ class CredentialsRepo:
         self, requester_id: str
     ) -> List[CredentialRequestRow]:
         """Outgoing credential requests for the current user."""
-        sql = """
+        sql = f"""
             SELECT id, target_email, credential_type, message, status,
                    credential_id, expires_at, created_at, fulfilled_at, token
             FROM credential_requests
-            WHERE requester_id = $1
+            WHERE requester_id = $1 AND {listed_to_owner_sql("credential_requests")}
             ORDER BY created_at DESC
         """
         async with self._pool.acquire() as conn:

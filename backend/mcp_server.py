@@ -3317,14 +3317,16 @@ class NoClickMCPServer(DatabasePoolMixin):
         agent_cred_hint = None
         stripped_trigger_refs: List[str] = []
         if node_type == "agent":
-            from nodes.agent.config.providers import agent_credential_requirement
+            from nodes.agent.config.providers import agent_credential_requirement, claude_plan_refusal
 
             req = agent_credential_requirement(config)
-            if req.required and not node_has_credential(config):
+            refusal = claude_plan_refusal(config, config.get("credentialIds"))
+            if req.required and (refusal or not node_has_credential(config)):
                 agent_cred_hint = {
                     "credential_type": req.credential_type,
                     "accepted_types": list(req.accepted_types),
                     "label": req.label,
+                    **({"refused": refusal} if refusal else {}),
                 }
             # Templated refs to a direct-upstream trigger in `message` break
             # at runtime (event delivery is automatic) — strip, like C3.

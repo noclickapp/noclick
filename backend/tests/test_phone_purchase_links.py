@@ -32,7 +32,7 @@ async def phone_db(postgres_db, postgres_container, monkeypatch):
     saved = dict(capabilities._providers)
     numbers = MagicMock(
         search=AsyncMock(return_value=[{"phone_number": NUMBER, "locality": "Lucas", "region": "OH", "capabilities": ["voice"]}]),
-        buy=AsyncMock(return_value={"phone_number": NUMBER, "number_sid": "PN_test"}), release=AsyncMock(),
+        buy=AsyncMock(return_value={"phone_number": NUMBER, "number_sid": "PN_test", "provider": "carrier-a"}), release=AsyncMock(),
     )
     capabilities.provide(capabilities.PHONE_NUMBERS, numbers)
     monkeypatch.setattr(purchase, "require_feature", lambda *a, **k: None)

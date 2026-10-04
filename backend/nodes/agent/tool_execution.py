@@ -13,8 +13,12 @@ import logging
 from nodes.agent.rehearsal import (
     REHEARSAL_PASSTHROUGH_TOOL_TYPES,
     is_rehearsing,
+    rehearse_tool,
 )
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
+
+from nodes.agent.tool_binding import BOUND_ARGUMENTS_KEY, apply as apply_bound
+from utils.capabilities import TOOL_CALL_GUARD, capability
 
 if TYPE_CHECKING:
     from nodes.core.base import WorkflowNode
@@ -37,6 +41,54 @@ def _conversation_id_for(node) -> Optional[str]:
     routing = getattr(node, "chat_routing_id", None)
     return getattr(node, "conversation_id", None) or (
         routing() if callable(routing) else None
+    )
+
+
+async def tool_call_refusal(
+    *,
+    user_id: Optional[str],
+    workflow_id: Optional[Any],
+    node_id: Optional[str],
+    conversation_id: Optional[str],
+    tool_name: str,
+    tool_info: Dict[str, Any],
+    arguments: Dict[str, Any],
+) -> Optional[Dict[str, Any]]:
+    """The registered tool-call guard's refusal for this call, or None to run it.
+
+    Also called by the tool paths that bypass ``execute_tool`` (``execute_bash``,
+    the CLI shadow pool's direct dispatch); callers check rehearsal first. Every
+    path passes here once per call, so this is where a watcher hears the call.
+    """
+    from utils.turn_events import publish
+
+    guard = capability(TOOL_CALL_GUARD)
+    refusal = None if guard is None else await guard(
+        user_id=user_id,
+        workflow_id=str(workflow_id) if workflow_id else None,
+        node_id=node_id,
+        conversation_id=conversation_id,
+        tool_name=tool_name,
+        tool_info=tool_info,
+        arguments=arguments,
+    )
+    held = refusal.get("approval_required") if isinstance(refusal, dict) else None
+    publish(conversation_id, {"type": "tool_call", "tool": tool_name, "arguments": arguments,
+                              **({"held": held} if held else {})})
+    return refusal
+
+
+async def _guard_refusal(
+    node, tool_name: str, arguments: Dict[str, Any], tool_info: Dict[str, Any]
+) -> Optional[Dict[str, Any]]:
+    return await tool_call_refusal(
+        user_id=getattr(node, "user_id", None),
+        workflow_id=getattr(node, "workflow_id", None),
+        node_id=getattr(node, "node_id", None),
+        conversation_id=_conversation_id_for(node),
+        tool_name=tool_name,
+        tool_info=tool_info,
+        arguments=arguments,
     )
 
 
@@ -63,6 +115,9 @@ async def execute_tool(
 
     tool_info = tool_configs[tool_name]
     tool_type = tool_info.get("tool_type", "workflow")
+    if tool_info.get(BOUND_ARGUMENTS_KEY):
+        # Before the guard, so it judges the final arguments.
+        arguments = apply_bound(arguments, tool_info[BOUND_ARGUMENTS_KEY], tool_info.get("_parameters"))
     dispatch_arguments = arguments
     if tool_info.get("node_type") == "automation-shopify":
         from utils.tool_call_log import mark_protected_tool_arguments
@@ -113,13 +168,10 @@ async def execute_tool(
                 rehearsal_conversation
             ):
                 span.set_attribute("tool.rehearsed", True)
-                result = await _rehearse_tool(
-                    rehearsal_conversation,
-                    tool_name,
-                    tool_type,
-                    dispatch_arguments,
-                    tool_info,
-                )
+                result = await rehearse_tool(rehearsal_conversation, tool_name, dispatch_arguments, tool_info)
+            elif (refusal := await _guard_refusal(node, tool_name, dispatch_arguments, tool_info)) is not None:
+                span.set_attribute("tool.refused", True)
+                result = refusal
             elif tool_type == "mcp":
                 result = await _execute_mcp_tool(
                     node, tool_name, dispatch_arguments, tool_info
@@ -168,6 +220,30 @@ async def execute_tool(
                 from nodes.agent.platform_tools import execute_email_user
 
                 result = await execute_email_user(node, dispatch_arguments)
+            elif tool_type == "request_connection":
+                from nodes.agent.platform_tools import execute_request_connection
+
+                result = await execute_request_connection(node, dispatch_arguments, tool_info)
+            elif tool_type == "wake_me":
+                from nodes.agent.platform_tools import execute_wake_me
+
+                result = await execute_wake_me(node, dispatch_arguments, tool_info)
+            elif tool_type == "tell_parent":
+                from nodes.agent.platform_tools import execute_tell_parent
+
+                result = await execute_tell_parent(node, dispatch_arguments, tool_info)
+            elif tool_type == "agents":
+                from nodes.agent.platform_tools import execute_agent_tool
+
+                result = await execute_agent_tool(node, dispatch_arguments, tool_info)
+            elif tool_type == "platform":
+                from nodes.agent.platform_tools import execute_platform_tool
+
+                result = await execute_platform_tool(node, dispatch_arguments, tool_info)
+            elif tool_type in ("memory_read", "memory_write"):
+                from nodes.agent.agent_memory import execute_memory_tool
+
+                result = await execute_memory_tool(node, dispatch_arguments, tool_info)
             else:
                 result = await _execute_workflow_tool(
                     node, tool_name, dispatch_arguments, tool_info
@@ -279,40 +355,6 @@ async def _execute_workflow_tool(
 
 
 
-async def _rehearse_tool(
-    conversation_id: str,
-    tool_name: str,
-    tool_type: str,
-    arguments: Dict[str, Any],
-    tool_info: Dict[str, Any],
-) -> Dict[str, Any]:
-    """Answer a tool call from the fabricated world instead of the real one.
-
-    The result carries no "this was rehearsed" marker: the model should behave
-    exactly as it would on a real run, and telling it otherwise changes the
-    behaviour we are trying to show. Labelling is the UI's job, and it already
-    knows — the whole run is a rehearsal.
-    """
-    from nodes.agent.rehearsal import RehearsalUnavailable, mock_tool_call
-
-    try:
-        simulated = await mock_tool_call(
-            conversation_id=conversation_id,
-            tool_name=tool_name,
-            arguments=arguments or {},
-            description=tool_info.get("_description") or tool_info.get("description"),
-            node_type=tool_info.get("node_type"),
-            operation=tool_info.get("operation"),
-        )
-    except RehearsalUnavailable as e:
-        # Surfaced to the model as a tool failure rather than silently returning
-        # nothing, so the trace shows a broken rehearsal instead of an agent
-        # confidently reasoning over an empty response.
-        return {"success": False, "error": f"rehearsal could not simulate this call: {e}"}
-
-    return simulated if isinstance(simulated, dict) else {"success": True, "data": simulated}
-
-
 async def _execute_node_op_tool(
     node, tool_name, arguments, tool_info, tool_configs,
 ) -> Dict[str, Any]:
@@ -323,7 +365,7 @@ async def _execute_node_op_tool(
     come from the live agent node. Errors propagate to execute_tool's
     catch-all and return to the model as {success: False, error}.
     """
-    from nodes.core.run_op import run_node_operation
+    from nodes.core.run_op import credential_note_result, run_node_operation
 
     node_type = tool_info.get("node_type")
     operation = tool_info.get("operation")
@@ -339,6 +381,9 @@ async def _execute_node_op_tool(
     scope_error = _enforce_field_scopes(arguments or {}, tool_info)
     if scope_error:
         return {"success": False, "error": scope_error}
+    unconnected = credential_note_result(tool_info)
+    if unconnected:
+        return unconnected
 
     try:
         result = await run_node_operation(
@@ -379,54 +424,22 @@ async def _maybe_autoextend_field_scopes(
     field_scopes (DB + broadcast + live tool_configs). Pure side effect —
     failures are logged, never re-raised; a broken writeback must not fail
     the tool call that just succeeded."""
-    if not isinstance(result, dict):
-        return
-    node_type = tool_info.get("node_type")
-    operation = tool_info.get("operation")
-    provider_node_id = tool_info.get("node_id")
-    workflow_id = getattr(node, "workflow_id", None)
-    if not (node_type and operation and provider_node_id and workflow_id):
-        return
-
-    from nodes.agent.node_op_tools import (
-        extract_resource_id_from_output,
-        resource_creators,
-    )
-
-    new_ids: Dict[str, str] = {}
-    for creator_op, resource_type, id_path in resource_creators(node_type):
-        if creator_op != operation:
-            continue
-        new_id = extract_resource_id_from_output(result, id_path)
-        if new_id:
-            new_ids[resource_type] = new_id
-    if not new_ids:
-        return
-
-    from utils.database_pool import get_native_pool
     from utils.workflow_node_writeback import (
         apply_new_id_to_live_tool_configs,
-        extend_node_field_scopes,
+        autoextend_field_scopes,
     )
 
-    try:
-        await extend_node_field_scopes(
-            workflow_id=str(workflow_id),
-            provider_node_id=str(provider_node_id),
-            new_resource_ids_by_type=new_ids,
-        )
-    except Exception as e:
-        logger.warning(
-            f"[ToolExec] auto-extend field_scopes failed for "
-            f"{provider_node_id}: {e}"
-        )
+    new_ids = await autoextend_field_scopes(
+        workflow_id=getattr(node, "workflow_id", None), tool_info=tool_info, result=result,
+    )
+    if not new_ids:
         return
-
+    provider_node_id = str(tool_info["node_id"])
     # In-process mirror — so the SAME agent turn can immediately read/edit
     # the just-created resource without re-collecting tools. Idempotent.
     try:
         apply_new_id_to_live_tool_configs(
-            tool_configs, str(provider_node_id), node_type, new_ids,
+            tool_configs, provider_node_id, tool_info["node_type"], new_ids,
         )
     except Exception as e:
         logger.warning(
@@ -500,7 +513,7 @@ async def _execute_node_op_lookup(node, tool_name, arguments, tool_info) -> Dict
     {provider}__lookup_options tool). tool_info['fields'] maps the agent-facing
     config key to the loader's field_name; the field arg is validated against
     it so the loader only ever sees fields this provider exposes."""
-    from nodes.core.run_op import run_node_lookup
+    from nodes.core.run_op import credential_note_result, run_node_lookup
 
     node_type = tool_info.get("node_type")
     fields = tool_info.get("fields") or {}
@@ -510,6 +523,9 @@ async def _execute_node_op_lookup(node, tool_name, arguments, tool_info) -> Dict
             "success": False,
             "error": f"Unknown field '{field}'. Valid fields: {sorted(fields)}",
         }
+    unconnected = credential_note_result(tool_info)
+    if unconnected:
+        return unconnected
 
     context = (arguments or {}).get("context")
     scopes = tool_info.get("field_scopes") or {}

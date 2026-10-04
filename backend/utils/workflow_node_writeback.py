@@ -28,13 +28,54 @@ import uuid
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from nodes.agent.node_op_tools import (
+    extract_resource_id_from_output,
     normalize_allowed_operations,
+    resource_creators,
     resource_field_index,
 )
 from utils.event_relay import broadcast_to_user_safe
 from wss.sender.events import MCPBuilderEvent
 
 logger = logging.getLogger(__name__)
+
+
+def created_resource_ids(tool_info: Dict[str, Any], result: Any) -> Dict[str, str]:
+    """``{resource_type: new_id}`` for what a successful creator-operation call
+    (a node_op tool config) minted, read from its output; ``{}`` otherwise."""
+    node_type, operation = tool_info.get("node_type"), tool_info.get("operation")
+    if not (node_type and operation and isinstance(result, dict)) or result.get("success") is False:
+        return {}
+    new_ids: Dict[str, str] = {}
+    for creator_op, resource_type, id_path in resource_creators(node_type):
+        if creator_op == operation:
+            new_id = extract_resource_id_from_output(result, id_path)
+            if new_id:
+                new_ids[resource_type] = new_id
+    return new_ids
+
+
+async def autoextend_field_scopes(
+    *, workflow_id: Optional[str], tool_info: Dict[str, Any], result: Any,
+) -> Dict[str, str]:
+    """After a tool call, append what it created to its provider node's
+    field_scopes (DB + broadcast, ``extend_node_field_scopes``) and return
+    those ids, for the caller to mirror into the scopes its agent enforces for
+    the rest of the session. ``{}`` when nothing was created or the writeback
+    failed: logged, never raised, since the call itself already succeeded."""
+    provider_node_id = tool_info.get("node_id")
+    new_ids = created_resource_ids(tool_info, result)
+    if not (new_ids and provider_node_id and workflow_id):
+        return {}
+    try:
+        await extend_node_field_scopes(
+            workflow_id=str(workflow_id),
+            provider_node_id=str(provider_node_id),
+            new_resource_ids_by_type=new_ids,
+        )
+    except Exception as e:
+        logger.warning(f"[ScopeWriteback] auto-extend failed for {provider_node_id}: {e}")
+        return {}
+    return new_ids
 
 
 async def extend_node_field_scopes(
@@ -293,5 +334,7 @@ def apply_new_id_to_live_tool_configs(
 
 __all__ = [
     "apply_new_id_to_live_tool_configs",
+    "autoextend_field_scopes",
+    "created_resource_ids",
     "extend_node_field_scopes",
 ]

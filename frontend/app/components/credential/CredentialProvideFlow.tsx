@@ -33,6 +33,8 @@ export interface ProvideRequestDetails {
   oauth_user_scopes?: string[];
   supports_custom_client?: boolean;
   requires_custom_client?: boolean;
+  /** The requester brings its own OAuth app for this provider. */
+  oauth_app?: boolean;
   requires_pkce: boolean;
   credential_fields: CredentialField[];
   /** Where the values come from, in steps (the schema's x-credential-instructions). */
@@ -40,6 +42,8 @@ export interface ProvideRequestDetails {
   available_methods: ProvideCredentialMethod[];
   status: string;
   expires_at: string;
+  /** Where the requester asked the person to be sent once provided. */
+  redirect_url?: string | null;
 }
 
 /** Convert credential_type to human-readable label */
@@ -142,6 +146,7 @@ export function CredentialProvideFlow({
       oauth_user_scopes: details.oauth_user_scopes,
       supports_custom_client: details.supports_custom_client,
       requires_custom_client: details.requires_custom_client,
+      oauth_app: details.oauth_app,
       credential_fields: details.credential_fields,
       instructions: details.instructions,
     }];

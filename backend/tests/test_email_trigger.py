@@ -5,6 +5,7 @@ EmailReservationManager lifecycle (mocked pool), the inbound-route pure helpers
 route dispatch (mocked DB + execution).
 """
 
+import base64
 import json
 import os
 from email.message import EmailMessage
@@ -264,10 +265,59 @@ class TestInboundRoute:
         args = received.await_args.args
         assert args[1:3] == ("ada", INBOUND_DOMAIN) and args[3]["subject"] == "hi"
 
+    def test_another_kind_goes_to_the_registered_receiver(self, email_client, monkeypatch):
+        from utils import capabilities
+        from utils.email_reply import verify_reply_token
+
+        config = {"id": uuid4(), "user_id": UUID(int=1), "workflow_id": None, "node_id": None,
+                  "is_active": True, "kind": "mailbox"}
+        raw = EmailMessage()
+        raw["From"], raw["To"], raw["Subject"] = "a@b.com", f"box@{INBOUND_DOMAIN}", "hi"
+        raw.set_content("Code 1234")
+        body = {"to": f"box@{INBOUND_DOMAIN}", "from": "A <a@b.com>", "subject": "hi",
+                "rawBase64": base64.b64encode(bytes(raw)).decode(),
+                "headers": {"message-id": "<x@b.com>"}, "dkimPass": True}
+        with patch.object(email_routes, "get_email_config", AsyncMock(return_value=config)):
+            monkeypatch.delitem(capabilities._providers, capabilities.EMAIL_ADDRESS_RECEIVER, raising=False)
+            assert self._post(email_client, body).status_code == 404
+
+            received = AsyncMock(return_value="stored")
+            monkeypatch.setattr(email_routes, "get_native_pool", lambda: "pool")
+            monkeypatch.setitem(capabilities._providers, capabilities.EMAIL_ADDRESS_RECEIVER, received)
+            resp = self._post(email_client, body)
+        assert resp.status_code == 200 and resp.json() == {"success": True, "message": "stored", "triggered": True}
+        pool, reservation, message = received.await_args.args
+        assert pool == "pool" and reservation is config and callable(received.await_args.kwargs["defer"])
+        assert (message["from"], message["to"], message["subject"]) == ("a@b.com", f"box@{INBOUND_DOMAIN}", "hi")
+        assert message["text"].strip() == "Code 1234" and message["dkim_pass"] is True
+        assert verify_reply_token(message["reply_token"], to_addr=message["to"], sender="a@b.com",
+                                  message_id="<x@b.com>", timestamp=message["timestamp"])
+
     def test_unknown_address_404(self, email_client):
         with patch.object(email_routes, "get_email_config", AsyncMock(return_value=None)):
             resp = self._post(email_client, {"to": "ghost@noclick.app", "from": "a@b.com"})
         assert resp.status_code == 404
+
+    def test_another_domain_reaches_only_a_registered_receivers_address(self, email_client, monkeypatch):
+        """A platform's own domain routes its mail here too: an address a receiver reserved on it
+        is delivered; a trigger's address there, or nobody's, isn't."""
+        from utils import capabilities
+
+        mailbox = {"id": uuid4(), "user_id": UUID(int=1), "workflow_id": None, "node_id": None, "is_active": True,
+                   "kind": "mailbox"}
+        trigger = {**mailbox, "workflow_id": uuid4(), "node_id": "n1", "kind": "trigger"}
+        body = {"to": "help@mail.acme.test", "from": "A <a@b.com>", "subject": "hi", "headers": {}}
+        received = AsyncMock(return_value="stored")
+        monkeypatch.setattr(email_routes, "get_native_pool", lambda: "pool")
+        monkeypatch.setitem(capabilities._providers, capabilities.EMAIL_ADDRESS_RECEIVER, received)
+        lookup = AsyncMock(return_value=mailbox)
+        with patch.object(email_routes, "get_email_config", lookup):
+            resp = self._post(email_client, body)
+        assert resp.status_code == 200 and lookup.await_args.args == ("help", "mail.acme.test")
+        assert received.await_args.args[1] is mailbox
+        for config in (trigger, None):
+            with patch.object(email_routes, "get_email_config", AsyncMock(return_value=config)):
+                assert self._post(email_client, body).status_code == 404
 
     def test_triggers_workflow_and_injects_payload(self, email_client):
         wf_id = str(uuid4())
@@ -379,10 +429,10 @@ class TestStoreAttachments:
         scalar that reads back as str, fails ResourceInfo validation, and breaks the whole
         resource:list for the workflow (the email-trigger Resources-tab bug). The INSERT now
         lives in the shared resource_store writer, so patch there."""
-        from utils import resource_store
+        from utils import database_pool, resource_store
 
         pool = MockNativePool()
-        with patch.object(resource_store, "get_native_pool", lambda: pool), \
+        with patch.object(database_pool, "get_native_pool", lambda: pool), \
              patch.object(resource_store, "upload_bytes_to_r2_async", AsyncMock()), \
              patch.object(resource_store, "get_public_download_url", lambda key: f"https://assets/{key}"):
             out = await email_routes._store_attachments(

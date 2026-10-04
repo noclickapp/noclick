@@ -110,6 +110,41 @@ COORDINATOR_REFERENCES = (
 )
 
 
+# Tables outside the open schema declare their decisions at
+# startup; the ratchet reads the combined plan.
+_REGISTERED_MOVE: list = []
+_REGISTERED_KEEP: list = []
+_REGISTERED_ORG_MOVE: list = []
+
+
+_REGISTERED_RESOLVERS: list = []
+
+
+def register_collision_resolver(resolve) -> None:
+    """``await resolve(conn, source, target)`` runs before rows move, for
+    registered tables whose uniqueness the plain move would break."""
+    if resolve not in _REGISTERED_RESOLVERS:
+        _REGISTERED_RESOLVERS.append(resolve)
+
+
+def register_columns(*, move=(), keep=(), org_move=()) -> None:
+    _REGISTERED_MOVE.extend(c for c in move if c not in _REGISTERED_MOVE)
+    _REGISTERED_KEEP.extend(c for c in keep if c not in _REGISTERED_KEEP)
+    _REGISTERED_ORG_MOVE.extend(t for t in org_move if t not in _REGISTERED_ORG_MOVE)
+
+
+def move_columns() -> tuple:
+    return MOVE_COLUMNS + tuple(_REGISTERED_MOVE)
+
+
+def keep_columns() -> tuple:
+    return KEEP_COLUMNS + tuple(_REGISTERED_KEEP)
+
+
+def org_move_tables() -> tuple:
+    return ORG_MOVE_TABLES + tuple(_REGISTERED_ORG_MOVE)
+
+
 @dataclass(frozen=True)
 class MergeResult:
     moved: Dict[str, int]  # "table.column" -> rows
@@ -143,11 +178,13 @@ async def merge_accounts(conn, *, source: str, target: str) -> MergeResult:
         "SELECT c.relname, a.attname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace "
         "JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum > 0 AND NOT a.attisdropped "
         "WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p') AND c.relname = ANY($1::text[])",
-        sorted({t for t, _ in MOVE_COLUMNS}))}
+        sorted({t for t, _ in move_columns()}))}
     s_org, t_org = await personal_workspace(conn, source), await personal_workspace(conn, target)
     args = (source, target)
 
     # Collisions the plain UPDATE would trip on, resolved first.
+    for resolve in _REGISTERED_RESOLVERS:
+        await resolve(conn, source, target)
     await conn.execute(
         "UPDATE coordinator_memories s SET name = left(s.name, 91) || '-' || left($1::text, 8) WHERE s.user_id = $1::uuid "
         "AND EXISTS (SELECT 1 FROM coordinator_memories t WHERE t.user_id = $2::uuid AND t.name = s.name)", *args)
@@ -198,15 +235,15 @@ async def merge_accounts(conn, *, source: str, target: str) -> MergeResult:
         "WHERE origin->>'coordinator_conversation_id' = $1", s_conv, t_conv)
 
     if s_org and t_org:
-        for table in ORG_MOVE_TABLES:
+        for table in org_move_tables():
             if (table, "organization_id") not in present:
                 continue
-            owner = next(c for t, c in MOVE_COLUMNS if t == table)
+            owner = next(c for t, c in move_columns() if t == table)
             status = await conn.execute(
                 f"UPDATE {table} SET organization_id = $3::uuid WHERE {owner} = $1::uuid AND organization_id = $2::uuid",
                 source, s_org, t_org)
             moved[f"{table}.organization_id"] = _count(status)
-    for table, column in MOVE_COLUMNS:
+    for table, column in move_columns():
         if (table, column) not in present:
             continue
         # Uncast: most user columns are uuid, a few (local_cron_schedules) text.

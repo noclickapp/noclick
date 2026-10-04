@@ -17,7 +17,7 @@ import logging
 import uuid
 from typing import Any, Dict, Optional
 
-from utils.database_pool import get_native_pool
+from utils import database_pool
 from utils.r2_cloudflare import get_public_download_url, upload_bytes_to_r2_async
 
 logger = logging.getLogger(__name__)
@@ -79,7 +79,7 @@ async def create_resource_from_bytes(
         bucket=RESOURCE_BUCKET, key=storage_ref, body=body, content_type=content_type
     )
 
-    await (connection or get_native_pool()).execute(
+    await (connection or database_pool.get_native_pool()).execute(
         """
         INSERT INTO workflow_resources
             (id, owner_id, organization_id, workflow_id, node_id, resource_type,

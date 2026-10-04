@@ -14,6 +14,8 @@ from typing import Any, Callable, Dict, List, Optional
 from billing.exceptions import InsufficientBalanceError
 from coder.openai_agent import Agent
 from coder.openai_agent.config import AgentConfiguration
+from nodes.agent.placement import sandbox_network_of, sandbox_region_of, sandbox_volumes_of, shell_of
+from nodes.agent.git_mounts import sandbox_setups_of
 from nodes.agent.provider_errors import classify_and_rewrite_provider_error
 from wss.sender.schema import ContentItem, ImageUrl
 
@@ -68,11 +70,12 @@ async def execute_llm_model(
     workspace_path = f"{workspace_base}/workflow_agents/{node.node_id}"
 
     # Provider-requested sandbox environment (resolved by
-    # AgentNode._resolve_sandbox_mounts before dispatch) and user env vars
+    # AgentNode._resolve_sandbox_mounts before dispatch, plus the run's
+    # checkouts) and user env vars
     # (agent_env credential). Every workflow agent gets a lazy bash sandbox
     # (Agent.create constructs the runtime; nothing boots until the first
     # execute_bash call) — these just shape its environment.
-    sandbox_setups = getattr(node, "_sandbox_setups", None) or []
+    sandbox_setups = sandbox_setups_of(node)
     user_env = getattr(node, "_user_env", None) or {}
     agent_config = AgentConfiguration.from_kwargs(
         model=config.model,
@@ -117,6 +120,10 @@ async def execute_llm_model(
             sandbox_setups=sandbox_setups or None,
             user_env=user_env or None,
             execution_id=node.execution_id,
+            sandbox_region=sandbox_region_of(node),
+            sandbox_volumes=sandbox_volumes_of(node),
+            sandbox_network=sandbox_network_of(node),
+            shell=shell_of(node),
             memory_readonly=memory_readonly,
             # A turn that leaves no memory needs only recent memory, and it is
             # answered while a caller waits — a bounded replay keeps it quick.

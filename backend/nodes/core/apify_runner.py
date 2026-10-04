@@ -75,13 +75,13 @@ class ApifyRunnerMixin:
         platform: str = "unknown",
     ) -> None:
         """Apply the platform markup to the actor's actual cost and record a UsageEventData."""
-        from billing.markup import apply_apify_markup, PLATFORM_MIN_MARKUP
+        from billing.markup import apply_apify_markup, current_markup
         from billing.schema import UsageEventData
         from billing.usage_tracker import usage_tracker
 
         raw = Decimal(str(raw_cost_usd or 0))
         charged = apply_apify_markup(raw)
-        markup_pct = int((PLATFORM_MIN_MARKUP - 1) * 100)
+        markup_pct = int((current_markup() - 1) * 100)
 
         if not self.user_id:
             logger.error(f"[{type(self).__name__}] No user_id; skipping usage tracking")

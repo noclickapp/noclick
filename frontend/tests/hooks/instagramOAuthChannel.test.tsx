@@ -23,6 +23,7 @@ vi.mock('react-router', async (original) => ({
 }));
 vi.mock('~/hooks/oauth/OAuthExchangeContext', () => ({
     useOAuthExchange: () => state.exchange,
+    useOAuthAuthorizeParams: () => ({}),
 }));
 import { useInstagramLoginOAuth } from '~/hooks/oauth/useInstagramLoginOAuth';
 import { createOAuthHook } from '~/hooks/oauth/createOAuthHook';

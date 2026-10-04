@@ -63,8 +63,9 @@ _DETAIL_MAX_LEN = 300
 
 @dataclass(frozen=True)
 class ProviderError:
-    provider: str  # 'anthropic' | 'openai' | 'openrouter' | 'gemini' | 'xai' | 'unknown'
+    provider: str  # 'anthropic' | 'openai' | 'openrouter' | 'gemini' | 'xai' | 'noclick' | 'unknown'
     kind: str      # 'no_credits' | 'invalid_key' | 'plan_limit' | 'account_blocked' | 'provider_outage' | 'bad_request'
+                   # | a PROXY_REFUSAL_KINDS entry (provider 'noclick')
     message: str   # full user-facing rewrite (includes the original detail)
     detail: str    # provider's verbatim text, trimmed
 
@@ -86,11 +87,29 @@ def _r(provider: str, kind: str, pattern: str) -> _Rule:
     return _Rule(provider, kind, re.compile(pattern, re.IGNORECASE))
 
 
-# Platform credit failures are checked before provider rules. OpenRouter also
-# emits the phrase "insufficient credits", so provenance is decided by the
-# platform gate's exact X < Y shape rather than by a loose substring match.
+# Refusals from the proxy that holds an agent's model credential and hands the
+# sandbox a temporary key instead. They reach us inside a provider-shaped error
+# body ("authentication_error", 401), so they must win over the provider rules.
+# Minted ONLY by proxy_refusal_message; the bracketed code is the contract.
+PROXY_REFUSAL_KINDS: Tuple[str, ...] = (
+    "key_revoked", "credential_disconnected", "budget_exhausted", "rate_limited", "model_not_allowed",
+)
+
+
+def proxy_refusal_message(kind: str, sentence: str) -> str:
+    if kind not in PROXY_REFUSAL_KINDS:
+        raise ValueError(f"unknown proxy refusal kind {kind!r}")
+    # Brackets and line breaks belong to the code, never the sentence.
+    sentence = " ".join(sentence.replace("[", "(").replace("]", ")").split())
+    return f"NoClick: {sentence} [{kind}]"
+
+
+# Platform failures are checked before provider rules. OpenRouter also emits
+# the phrase "insufficient credits", so provenance is decided by the platform
+# gate's exact X < Y shape rather than by a loose substring match.
 _PLATFORM_RULES: Tuple[_Rule, ...] = (
     _Rule("noclick", "no_credits", INSUFFICIENT_CREDITS_RE),
+    *(_Rule("noclick", kind, re.compile(r"NoClick: [^\[\n]*\[" + kind + r"\]")) for kind in PROXY_REFUSAL_KINDS),
 )
 
 # Ordered: first match wins. Provider-specific slugs before generic phrasings.
@@ -251,11 +270,32 @@ _TEMPLATE_OVERRIDES: Dict[Tuple[str, str], str] = {
         "You've run out of NoClick credits. This is your NoClick balance — "
         "your model provider's account is unaffected.{billing_hint}"
     ),
+    ("key_revoked", "noclick"): (
+        "The temporary key this agent uses to reach its model was revoked or has "
+        "expired, usually because its sandbox ended or its credential changed. "
+        "Run the agent again."
+    ),
+    ("credential_disconnected", "noclick"): (
+        "The model credential behind this agent is disconnected or was rejected. "
+        "Reconnect it on the agent node."
+    ),
+    ("budget_exhausted", "noclick"): (
+        "This agent reached the model spend cap set on its key. Raise the cap to "
+        "keep going."
+    ),
+    ("rate_limited", "noclick"): (
+        "This agent is sending model requests faster than its key allows. Slow "
+        "it down or raise the key's rate limit."
+    ),
+    ("model_not_allowed", "noclick"): (
+        "This agent's key isn't allowed to use the model it asked for. Pick an "
+        "allowed model or widen the key's model list."
+    ),
 }
 
 # Provider-specific extra guidance appended per (kind, provider).
 _EXTRA_GUIDANCE: Dict[Tuple[str, str], str] = {
-    ("no_credits", "anthropic"): " Or connect a Claude Pro/Max subscription on the agent node instead of an API key.",
+    ("no_credits", "anthropic"): " Or, on Claude Code, sign in with a Claude plan instead of an API key.",
     ("no_credits", "openai"): " Or connect a ChatGPT subscription on the agent node instead of an API key.",
     ("provider_outage", "openrouter"): " Free (:free) model variants fail this way far more often than paid ones.",
 }
@@ -296,7 +336,7 @@ def _action_for(kind: str, provider: str) -> Optional[Dict[str, str]]:
         # and BalanceDisplay owns the tier-correct top-up/upgrade flow. The
         # url rides along for surfaces without that listener.
         return {"type": "open_topup", "label": "Add credits", "url": meta["billing_url"]}
-    if kind == "invalid_key":
+    if kind in ("invalid_key", "credential_disconnected"):
         return {"type": "open_credentials", "label": "Open credentials"}
     if kind in ("no_credits", "account_blocked"):
         if not meta["billing_url"]:

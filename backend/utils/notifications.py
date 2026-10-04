@@ -39,6 +39,7 @@ from urllib.parse import urlencode
 from billing.exceptions import match_insufficient_credits
 from utils.email import FRONTEND_URL, _send_email
 from utils.email_unsubscribe import DISABLE_LINK_BASE, _relay_secret
+from repositories.credentials import listed_to_owner_sql
 from repositories.users import USER_EMAIL_SQL
 from utils.notification_templates import (
     AMBER,
@@ -781,11 +782,11 @@ async def send_credential_revoked_alert(
     reconnect it; the runner just sees downstream run-failure emails."""
     row = await _fetch_row(
         pool,
-        "SELECT owner_id, name, credential_type FROM credentials WHERE id = $1",
+        f"SELECT owner_id, name, credential_type FROM credentials WHERE id = $1 AND {listed_to_owner_sql('credentials')}",
         credential_id,
     )
     if not row:
-        # Slack installation ids (workspace bot chain) land here: the row of
+        # A credential held for someone else never alerts its owner. Slack installation ids (workspace bot chain) land here: the row of
         # record isn't a credentials row and has no single owner to alert.
         logger.info(f"[Notify] no credentials row for revoked {credential_id} — skipping alert")
         return False
@@ -933,7 +934,8 @@ async def send_channel_reconnected_notice(
     if not recent:
         return False
     row = await _fetch_row(
-        pool, "SELECT owner_id, name FROM credentials WHERE id = $1", credential_id,
+        pool, f"SELECT owner_id, name FROM credentials WHERE id = $1 AND {listed_to_owner_sql('credentials')}",
+        credential_id,
     )
     if not row:
         return False
@@ -1019,7 +1021,7 @@ async def send_channel_disconnected_alert(
     )
     row = await _fetch_row(
         pool,
-        "SELECT owner_id, name, credential_type FROM credentials WHERE id = $1",
+        f"SELECT owner_id, name, credential_type FROM credentials WHERE id = $1 AND {listed_to_owner_sql('credentials')}",
         credential_id,
     )
     if not row:

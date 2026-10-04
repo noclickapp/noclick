@@ -19,24 +19,27 @@ checking four.
 
 from __future__ import annotations
 
-from typing import Any, Iterator, Set
+from typing import Any, Iterator, Set, Tuple
 
 
-def iter_route_paths(app_or_routes: Any, prefix: str = "") -> Iterator[str]:
-    """Yield the full path of every route, descending through included routers."""
+def iter_routes(app_or_routes: Any, prefix: str = "") -> Iterator[Tuple[str, Any]]:
+    """Yield ``(full path, route)`` for every route, descending through included routers."""
     routes = getattr(app_or_routes, "routes", app_or_routes)
     for route in routes:
         path = getattr(route, "path", None)
         if path is not None:
-            yield prefix + path
+            yield prefix + path, route
             continue
         # Starlette >= 1.6: an included router, carrying its own prefix.
         included = getattr(route, "original_router", None)
         if included is not None:
             context = getattr(route, "include_context", None)
-            yield from iter_route_paths(
-                included.routes, prefix + (getattr(context, "prefix", "") or "")
-            )
+            yield from iter_routes(included.routes, prefix + (getattr(context, "prefix", "") or ""))
+
+
+def iter_route_paths(app_or_routes: Any, prefix: str = "") -> Iterator[str]:
+    """Yield the full path of every route, descending through included routers."""
+    return (path for path, _ in iter_routes(app_or_routes, prefix))
 
 
 def route_paths(app_or_routes: Any) -> Set[str]:

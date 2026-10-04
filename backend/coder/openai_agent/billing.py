@@ -15,6 +15,7 @@ from typing import Any, Dict, Optional
 
 from agents import RunHooks
 
+from . import turn_notes
 from .litellm_model import CostCapturingLitellmModel, extract_cost_from_response
 
 logger = logging.getLogger(__name__)
@@ -142,6 +143,8 @@ class BillingHooks(RunHooks):
     # Post-call: usage tracking
     # ------------------------------------------------------------------ #
     async def on_llm_end(self, context, agent, response) -> None:  # noqa: ARG002
+        # The response's text is the reason the model gave for its tool calls.
+        turn_notes.remember(response)
         try:
             await self._record_usage(response)
         except Exception as e:

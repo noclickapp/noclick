@@ -22,6 +22,7 @@ requires_hosted_signins = pytest.mark.skipif(
 
 from nodes.agent.config.providers import (
     AGENT_OAUTH_CREDENTIAL_TYPES,
+    CLAUDE_PLAN_REFUSAL,
     HARNESS_SUBMODEL_FIELDS,
     WRAPPER_ID_BY_MODEL_TYPE,
     agent_credential_requirement,
@@ -60,8 +61,10 @@ def test_no_user_credential_needed(config):
     ({"model": "codex"}, "agent_codex", "agent_codex_oauth"),
     ({"model": "claude-code"}, "agent_claude_code", "agent_claude_code_oauth"),
     ({"model": "opencode"}, "agent_opencode", None),  # Zen default sub-model
-    ({"model": "opencode", "opencode_model": "anthropic/claude-sonnet-4-5"},
-     "agent_anthropic", "agent_claude_code_oauth"),
+    # A Claude plan runs only in Claude Code: anthropic/* elsewhere takes a key.
+    ({"model": "opencode", "opencode_model": "anthropic/claude-sonnet-4-5"}, "agent_anthropic", None),
+    ({"model": "hermes", "hermes_agent_model": "anthropic/claude-sonnet-4-5"}, "agent_anthropic", None),
+    ({"model": "openclaw", "openclaw_model": "anthropic/claude-sonnet-4-5"}, "agent_anthropic", None),
     ({"model": "openclaw"}, "agent_openrouter", None),  # default sub is openrouter/*
     ({"model": "hermes"}, "agent_openrouter", None),    # default sub is openrouter/*
     pytest.param(
@@ -84,6 +87,93 @@ def test_user_credential_required(config, expected_type, expected_oauth):
         assert expected_oauth in req.accepted_types
     else:
         assert not any(t.endswith("_oauth") for t in req.accepted_types)
+
+
+@pytest.mark.parametrize("config,primary,alias", [
+    ({"model": "claude-code"}, "agent_claude_code", "agent_anthropic"),
+    ({"model": "codex"}, "agent_codex", "agent_openai"),
+    ({"model": "anthropic/claude-sonnet-4-5"}, "agent_anthropic", "agent_claude_code"),
+    ({"model": "openai/gpt-5"}, "agent_openai", "agent_codex"),
+    ({"model": "opencode", "opencode_model": "anthropic/claude-sonnet-4-5"}, "agent_anthropic", "agent_claude_code"),
+    ({"model": "hermes", "hermes_agent_model": "openai/gpt-5"}, "agent_openai", "agent_codex"),
+])
+def test_a_vendor_key_serves_its_harness_and_its_models_under_either_type(config, primary, alias):
+    """One Anthropic (OpenAI) key is the same ANTHROPIC_API_KEY (OPENAI_API_KEY)
+    whether it was saved for claude-code (codex) or anthropic/* (openai/*), so
+    one connection serves both; the provider's own type still wins."""
+    from nodes.agent.config.providers import match_model_credential, model_credential_accepted_types
+
+    accepted = model_credential_accepted_types(config)
+    assert accepted[:2] == (primary, alias)
+    assert agent_credential_requirement(config).accepted_types[:2] == (primary, alias)
+    assert match_model_credential(config, {alias: "cred-alias"}) == (alias, "cred-alias")
+    assert match_model_credential(config, {alias: "cred-alias", primary: "cred-own"}) == (primary, "cred-own")
+
+
+def test_vendor_keys_never_cross_vendors():
+    from nodes.agent.config.providers import match_model_credential
+
+    assert match_model_credential({"model": "claude-code"}, {"agent_openai": "c"}) is None
+    assert match_model_credential({"model": "codex"}, {"agent_anthropic": "c"}) is None
+    assert match_model_credential({"model": "openrouter/x"}, {"agent_openai": "c"}) is None
+    assert "agent_codex" not in agent_credential_requirement({"model": "hermes"}).accepted_types
+
+
+_ANTHROPIC_ELSEWHERE = [
+    {"model": "opencode", "opencode_model": "anthropic/claude-sonnet-4-5"},
+    {"model": "hermes", "hermes_agent_model": "anthropic/claude-sonnet-4-5"},
+    {"model": "openclaw", "openclaw_model": "anthropic/claude-sonnet-4-5"},
+    {"model": "anthropic/claude-sonnet-4-5"},
+]
+
+
+class TestClaudePlanRunsOnlyInClaudeCode:
+    """A Claude plan satisfies the claude-code provider alone. Attached to an
+    anthropic/* model on another harness it runs nothing, and every surface
+    says so in the one message."""
+
+    @pytest.mark.parametrize("config", _ANTHROPIC_ELSEWHERE)
+    def test_refused_with_the_one_message(self, config):
+        from nodes.agent.config.providers import claude_plan_refusal, match_model_credential
+
+        plan = {"agent_claude_code_oauth": "cred-plan"}
+        assert match_model_credential(config, plan) is None
+        assert claude_plan_refusal(config, plan) == CLAUDE_PLAN_REFUSAL
+        assert "agent_claude_code_oauth" not in node_accepted_credential_types("agent", None, config)
+
+    @pytest.mark.parametrize("config", _ANTHROPIC_ELSEWHERE)
+    def test_an_anthropic_key_beside_it_runs(self, config):
+        from nodes.agent.config.providers import claude_plan_refusal, match_model_credential
+
+        ids = {"agent_claude_code_oauth": "cred-plan", "agent_anthropic": "cred-key"}
+        assert match_model_credential(config, ids) == ("agent_anthropic", "cred-key")
+        assert claude_plan_refusal(config, ids) is None
+
+    @pytest.mark.parametrize("config,ids", [
+        ({"model": "claude-code"}, {"agent_claude_code_oauth": "cred-plan"}),
+        ({"model_type": "claude_code"}, {"agent_claude_code_oauth": "cred-plan"}),
+        # Not an Anthropic model: an ordinary stale attachment, nothing to explain.
+        ({"model": "opencode", "opencode_model": "openrouter/anthropic/claude-sonnet-4.5"},
+         {"agent_claude_code_oauth": "cred-plan"}),
+        ({"model": "opencode", "opencode_model": "anthropic/claude-sonnet-4-5"}, {"agent_claude_code_oauth": "{{x}}"}),
+        ({"model": "opencode", "opencode_model": "anthropic/claude-sonnet-4-5"}, {}),
+        ({"model": "opencode", "opencode_model": "anthropic/claude-sonnet-4-5"}, None),
+    ])
+    def test_not_refused(self, config, ids):
+        from nodes.agent.config.providers import claude_plan_refusal
+
+        assert claude_plan_refusal(config, ids) is None
+
+    def test_the_plan_tokens_never_ride_an_anthropic_model(self):
+        from nodes.agent.config.providers import filter_provider_credential_env
+
+        plan = {"CLAUDE_CODE_ACCESS_TOKEN": "a", "CLAUDE_CODE_REFRESH_TOKEN": "r"}
+        assert filter_provider_credential_env(
+            plan, provider_name="anthropic", required_vars=["ANTHROPIC_API_KEY"],
+            cred_model="anthropic/claude-sonnet-4-5") is None
+        assert filter_provider_credential_env(
+            plan, provider_name="claude-code", required_vars=["ANTHROPIC_API_KEY"],
+            cred_model="claude-code") == plan
 
 
 def test_model_type_only_config_resolves_wrapper():
@@ -147,6 +237,34 @@ class TestRegistryMirrors:
         for cred_type in set(AGENT_OAUTH_CREDENTIAL_TYPES.values()):
             assert cred_type in src, f"{cred_type} missing from agentCredentialModel.ts"
 
+    @requires_hosted_signins
+    def test_fe_oauth_aliases_match(self):
+        """Exact both ways: the FE offers a sign-in for exactly the providers the
+        engine accepts one for (no Claude plan on anthropic/*)."""
+        src = _read_repo_file("frontend/app/lib/agentCredentialModel.ts")
+        block = re.search(r"AGENT_OAUTH_ALIAS[^=]*=\s*\{(.*?)\}", src, re.S)
+        assert block, "AGENT_OAUTH_ALIAS not found"
+        fe = dict(re.findall(r"\[ModelProvider\.(\w+)\]:\s*'(agent_\w+)'", block.group(1)))
+        assert {k.lower(): v for k, v in fe.items()} == {
+            k.replace("-", "_"): v for k, v in AGENT_OAUTH_CREDENTIAL_TYPES.items()}
+
+    def test_fe_claude_plan_refusal_matches(self):
+        from nodes.agent.config.providers import CLAUDE_PLAN_REFUSAL
+
+        src = _read_repo_file("frontend/app/lib/agentCredentialModel.ts")
+        fe = re.search(r"CLAUDE_PLAN_REFUSAL\s*=\s*'([^']*)'", src)
+        assert fe and fe.group(1) == CLAUDE_PLAN_REFUSAL
+
+    def test_fe_vendor_key_aliases_match(self):
+        from nodes.agent.config.providers import AGENT_VENDOR_KEY_ALIASES
+
+        src = _read_repo_file("frontend/app/lib/agentCredentialModel.ts")
+        block = re.search(r"AGENT_VENDOR_KEY_ALIAS[^=]*=\s*\{(.*?)\}", src, re.S)
+        assert block, "AGENT_VENDOR_KEY_ALIAS not found"
+        fe = dict(re.findall(r"\[ModelProvider\.(\w+)\]:\s*'(agent_\w+)'", block.group(1)))
+        assert {k.lower(): v for k, v in fe.items()} == {
+            k.replace("-", "_"): v for k, v in AGENT_VENDOR_KEY_ALIASES.items()}
+
 
 
 # ---------------------------------------------------------------------------
@@ -164,7 +282,7 @@ def test_accepted_types_for_agent():
     # agent_credential_requirement().accepted_types, or it would satisfy the MODEL
     # credential — that separation is asserted below.
     accepted = node_accepted_credential_types("agent", None, {"model": "codex"})
-    assert accepted == {"agent_codex", "agent_api_key", "agent_codex_oauth", "agent_env"}
+    assert accepted == {"agent_codex", "agent_openai", "agent_api_key", "agent_codex_oauth", "agent_env"}
     # Even a platform-billed agent (no model credential needed) still accepts an
     # env bundle as an attach target.
     assert node_accepted_credential_types("agent", None, {"model": "openrouter/x"}) == {"agent_env"}
@@ -218,6 +336,15 @@ class TestCredentialStatusLine:
             {"model": "codex", "credentialIds": {"agent_codex_oauth": "c1"}}, "agent-1",
         )
         assert line == "[credentials: codex ✓]"
+
+    def test_a_refused_claude_plan_says_why(self):
+        line = credential_status_line(
+            "agent", None,
+            {"model": "opencode", "opencode_model": "anthropic/claude-sonnet-4-5",
+             "credentialIds": {"agent_claude_code_oauth": "c1"}}, "agent-1",
+        )
+        assert line.startswith(f"[credentials: anthropic ✗ {CLAUDE_PLAN_REFUSAL}]")
+        assert 'type="agent_anthropic"' in line
 
     def test_platform_billed_gets_positive_line(self):
         # The positive signal stops the brain pattern-matching

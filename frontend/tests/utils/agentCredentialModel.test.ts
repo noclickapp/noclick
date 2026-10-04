@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { ModelProvider } from '~/types/provider';
 import {
+    acceptedAgentCredentialTypes,
+    CLAUDE_PLAN_REFUSAL,
+    claudePlanRefusal,
     getAgentConfigRecord,
+    staleCredentialKeysForProvider,
     validateAgentSendCredentials,
     getAgentCredentialIdForProvider,
     getAgentEffectiveModel,
@@ -66,6 +70,61 @@ describe('agent credential model helpers', () => {
                 ModelProvider.OPENROUTER
             )
         ).toBeUndefined();
+    });
+
+    it('folds a vendor API key across its CLI harness and its models', () => {
+        // One Anthropic key serves claude_code and anthropic/*, one OpenAI key
+        // codex and openai/*, saved under either type — the backend's
+        // AGENT_VENDOR_KEY_ALIASES (providers._requirement_for).
+        const cases: [Record<string, string>, ModelProvider][] = [
+            [{ agent_anthropic: 'k' }, ModelProvider.CLAUDE_CODE],
+            [{ agent_claude_code: 'k' }, ModelProvider.ANTHROPIC],
+            [{ agent_openai: 'k' }, ModelProvider.CODEX],
+            [{ agent_codex: 'k' }, ModelProvider.OPENAI],
+        ];
+        for (const [credentialIds, provider] of cases) {
+            expect(getAgentCredentialIdForProvider(credentialIds, provider)).toBe('k');
+            // Valid, so switching to that model never purges it.
+            expect(staleCredentialKeysForProvider(credentialIds, provider)).toEqual([]);
+        }
+        // The provider's own type still wins, and vendors never cross.
+        expect(
+            getAgentCredentialIdForProvider(
+                { agent_anthropic: 'alias', agent_claude_code: 'direct' },
+                ModelProvider.CLAUDE_CODE
+            )
+        ).toBe('direct');
+        expect(
+            getAgentCredentialIdForProvider({ agent_openai: 'k' }, ModelProvider.CLAUDE_CODE)
+        ).toBeUndefined();
+        expect(acceptedAgentCredentialTypes(ModelProvider.CODEX)).toEqual([
+            'agent_codex',
+            'agent_openai',
+            'agent_codex_oauth',
+        ]);
+        expect(acceptedAgentCredentialTypes(ModelProvider.OPENROUTER)).toEqual([
+            'agent_openrouter',
+        ]);
+    });
+
+    it('takes a Claude plan for Claude Code alone', () => {
+        // A Claude plan runs only in Claude Code: anthropic/* on any other
+        // harness takes a key, and an attached plan says why it runs nothing.
+        expect(acceptedAgentCredentialTypes(ModelProvider.CLAUDE_CODE)).toContain(
+            'agent_claude_code_oauth'
+        );
+        expect(acceptedAgentCredentialTypes(ModelProvider.ANTHROPIC)).toEqual([
+            'agent_anthropic',
+            'agent_claude_code',
+        ]);
+        const plan = { agent_claude_code_oauth: 'plan' };
+        expect(getAgentCredentialIdForProvider(plan, ModelProvider.ANTHROPIC)).toBeUndefined();
+        expect(claudePlanRefusal(plan, ModelProvider.ANTHROPIC)).toBe(CLAUDE_PLAN_REFUSAL);
+        expect(claudePlanRefusal(plan, ModelProvider.CLAUDE_CODE)).toBeNull();
+        expect(claudePlanRefusal(plan, ModelProvider.OPENROUTER)).toBeNull();
+        expect(
+            claudePlanRefusal({ ...plan, agent_anthropic: 'k' }, ModelProvider.ANTHROPIC)
+        ).toBeNull();
     });
 
     describe('opencode wrapper credential routing', () => {
@@ -226,5 +285,16 @@ describe('validateAgentSendCredentials', () => {
                 resolveProvider,
             })
         ).toContain('needs a opencode credential');
+    });
+
+    it('refuses a Claude plan on an anthropic/* sub-model, saying why', () => {
+        expect(
+            validateAgentSendCredentials({
+                sendModel: 'opencode',
+                config: { model: 'opencode', opencode_model: 'anthropic/claude-sonnet-4-5' },
+                credentialIds: { agent_claude_code_oauth: 'plan' },
+                resolveProvider: (m) => (m.startsWith('anthropic/') ? 'anthropic' : null),
+            })
+        ).toBe(CLAUDE_PLAN_REFUSAL);
     });
 });

@@ -27,6 +27,9 @@ FEATURE_ROLLOUT: dict[str, str] = {
     "coordinator": EVERYONE,
     # Plan, credit balance and owner confirmation still gate each purchase.
     "phone_numbers": EVERYONE,
+    # CLI agent sandboxes reach their model through the credential proxy (a
+    # temporary key, never the real one); off, a sandbox holds the credential.
+    "credential_proxy": INTERNAL,
 }
 
 # Accounts let into an INTERNAL feature by email, lower-cased. Empty in the

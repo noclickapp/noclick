@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { isLocalEdition } from '~/lib/edition';
 import { backendAuthHeaders } from '~/lib/apiAuth';
+import { getDeveloperSettingsNote } from '~/lib/developerSettingsNote';
 
 // Backend API base URL
 const API_BASE = import.meta.env.VITE_API_URL || '';
@@ -219,6 +220,7 @@ export function DeveloperSettings() {
   const activeKeys = userKeys.filter(k => !k.revoked_at);
   const revokedKeys = userKeys.filter(k => !!k.revoked_at);
   const workflowName = (id: string | null) => workflows.find(w => w.id === id)?.name;
+  const Note = getDeveloperSettingsNote();
 
   return (
     <div>
@@ -227,6 +229,7 @@ export function DeveloperSettings() {
         <p className="text-sm text-muted-foreground dark:text-white/40 mt-1">
           API keys for connecting external apps via the NoClick SDK.
         </p>
+        {Note && <Note />}
         <div className="flex gap-2 mt-3">
           <a href="https://docs.noclick.com/sdk/typescript" target="_blank" rel="noopener"
             className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-card dark:bg-foreground/[0.05] border border-border dark:border-white/[0.08] hover:bg-muted dark:hover:bg-foreground/[0.08] hover:border-muted-foreground/30 dark:hover:border-white/[0.12] text-foreground/80 rounded-lg transition-colors">

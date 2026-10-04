@@ -61,3 +61,20 @@ def test_returns_verdict_shape_for_normal_node():
     verdict = srv._postprocess_config("automation-http-request", "get", {})
     # Either a verdict (with config_valid) or None if the op has no config class.
     assert verdict is None or "config_valid" in verdict
+
+
+def test_a_claude_plan_outside_claude_code_is_reported_with_the_one_message():
+    """A Claude plan runs only in Claude Code: an opencode agent on an anthropic/*
+    model holding one still needs its key, and the hint says why."""
+    from nodes.agent.config.providers import CLAUDE_PLAN_REFUSAL
+
+    srv = _srv()
+    config = {"model": "opencode", "model_type": "opencode", "opencode_model": "anthropic/claude-sonnet-4-5",
+              "message": "hi", "credentialIds": {"agent_claude_code_oauth": "cred-plan"}}
+    hint = srv._postprocess_config("agent", None, config)["agent_credential_hint"]
+    assert hint["refused"] == CLAUDE_PLAN_REFUSAL
+    assert hint["credential_type"] == "agent_anthropic" and "agent_claude_code_oauth" not in hint["accepted_types"]
+
+    claude_code = {"model": "claude-code", "model_type": "claude_code", "message": "hi",
+                   "credentialIds": {"agent_claude_code_oauth": "cred-plan"}}
+    assert "agent_credential_hint" not in (srv._postprocess_config("agent", None, claude_code) or {})

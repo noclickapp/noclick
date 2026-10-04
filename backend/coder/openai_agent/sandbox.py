@@ -94,6 +94,7 @@ class LocalSandboxRuntime:
         conversation_key: Optional[str] = None,
         sandbox_setups: Optional[List[Dict[str, Any]]] = None,
         user_env: Optional[Dict[str, str]] = None,
+        region: Optional[str] = None,  # a host's placement; the local machine is where it is
     ) -> None:
         if not workflow_id:
             raise ValueError("LocalSandboxRuntime requires workflow_id for workspace naming")

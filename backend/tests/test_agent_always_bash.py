@@ -54,6 +54,16 @@ def test_conversation_key_makes_workspace_durable():
     assert agent._runtime.persistent is True
 
 
+def test_a_platform_can_take_the_shell_away():
+    """``_noShell`` on the agent node (a platform's agent defined without a
+    shell): no sandbox runtime, so no execute_bash."""
+    from nodes.agent.placement import NO_SHELL_KEY, shell_of
+
+    assert _make_agent(workflow_id="wf-1", node_id="agent-1", shell=False)._runtime is None
+    assert shell_of(SimpleNamespace(node_data={"config": {NO_SHELL_KEY: True}})) is False
+    assert shell_of(SimpleNamespace(node_data={"config": {}})) is True
+
+
 def test_interactive_chat_agent_stays_runtimeless():
     """The dashboard coder chat passes workflow_id but no node_id — it keeps
     its own working-directory model and must not gain a sandbox."""
@@ -132,6 +142,75 @@ async def test_normal_run_executes_real_bash():
         result = await _invoke(agent)
     assert result["stdout"] == "REAL"
     agent._runtime.run_bash.assert_awaited_once_with("ls")
+
+
+# ============================================================================
+# Tool-call guard: execute_bash bypasses execute_tool, so it asks the guard
+# ============================================================================
+
+
+@pytest.fixture
+def guard(monkeypatch):
+    from utils import capabilities
+
+    calls = []
+    verdict = {"value": None}
+
+    async def fake_guard(**kwargs):
+        calls.append(kwargs)
+        if isinstance(verdict["value"], Exception):
+            raise verdict["value"]
+        return verdict["value"]
+
+    monkeypatch.setitem(capabilities._providers, capabilities.TOOL_CALL_GUARD, fake_guard)
+    return SimpleNamespace(calls=calls, verdict=verdict)
+
+
+async def test_guard_refusal_is_the_tool_output_and_no_sandbox_boots(guard):
+    agent = _bare_agent_with_runtime()
+    refusal = {"success": False, "error": "Refused by policy: no shell."}
+    guard.verdict["value"] = refusal
+    with patch("nodes.agent.rehearsal.is_rehearsing", AsyncMock(return_value=False)), \
+         patch("utils.tool_call_log.record_tool_call") as record:
+        tool = agent._make_execute_bash_tool()
+        result = json.loads(await tool.on_invoke_tool(None, json.dumps({"command": "rm -rf /tmp/x"})))
+    assert result == refusal
+    agent._runtime.run_bash.assert_not_awaited()
+    assert guard.calls == [{
+        "user_id": agent.user_id, "workflow_id": "wf-1", "node_id": "agent-1",
+        "conversation_id": "reh-conv-1", "tool_name": "execute_bash",
+        "tool_info": {"tool_type": "bash"}, "arguments": {"command": "rm -rf /tmp/x"},
+    }]
+    # Audited like any refused tool call.
+    assert record.call_args.kwargs["result_status"] == "error"
+    assert record.call_args.kwargs["error"] == refusal["error"]
+
+
+async def test_guard_that_lets_the_call_through_runs_it(guard):
+    agent = _bare_agent_with_runtime()
+    with patch("nodes.agent.rehearsal.is_rehearsing", AsyncMock(return_value=False)):
+        result = await _invoke(agent)
+    assert result["stdout"] == "REAL" and len(guard.calls) == 1
+    agent._runtime.run_bash.assert_awaited_once_with("ls")
+
+
+async def test_guard_error_fails_closed(guard):
+    agent = _bare_agent_with_runtime()
+    guard.verdict["value"] = RuntimeError("policy store down")
+    with patch("nodes.agent.rehearsal.is_rehearsing", AsyncMock(return_value=False)):
+        result = await _invoke(agent)
+    assert result == {"error": "policy store down"}
+    agent._runtime.run_bash.assert_not_awaited()
+
+
+async def test_rehearsal_never_consults_the_guard(guard):
+    agent = _bare_agent_with_runtime()
+    guard.verdict["value"] = AssertionError("a rehearsed call must not reach the guard")
+    fabricated = {"stdout": "fake\n", "stderr": "", "exit_code": 0}
+    with patch("nodes.agent.rehearsal.is_rehearsing", AsyncMock(return_value=True)), \
+         patch("nodes.agent.rehearsal.mock_tool_call", AsyncMock(return_value=fabricated)):
+        result = await _invoke(agent)
+    assert result["stdout"] == "fake\n" and guard.calls == []
 
 
 # ============================================================================

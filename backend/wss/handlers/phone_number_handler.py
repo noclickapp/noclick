@@ -139,39 +139,26 @@ async def _gate(pool, user_id: str, user_tier: str, *, projected_credits: Option
 
 
 async def buy_number_for_user(pool, *, user_id: str, user_tier: str, e164: str,
-                              credential_name: Optional[str], encryption, on_created=None) -> Dict[str, str]:
-    """Buy at the provider, then mint the credential and charge its first
-    month in ONE transaction (the provider bills a month in advance, and so
-    do we: the charge renews on each anniversary while the number is kept);
-    a credential that cannot be written releases the number again, so nothing
-    is ever billed to nobody. The account needs a paid plan and the first
-    month must be affordable before anything is bought."""
+                              credential_name: Optional[str], encryption, on_created=None,
+                              month_credits: float = PHONE_NUMBER_MONTHLY_CREDITS) -> Dict[str, str]:
+    """Buy at the provider, then make the number the user's (``hold_number_for_user``);
+    a number that cannot be recorded is released again, so nothing is ever
+    billed to nobody. The account needs a paid plan and the first month
+    (``month_credits``, at the caller's price) must be affordable
+    before anything is bought."""
     numbers = capability(PHONE_NUMBERS)
     if numbers is None:
         raise PhoneNumberError("Phone numbers cannot be bought on this instance.", "unavailable")
-    await _gate(pool, user_id, user_tier, projected_credits=PHONE_NUMBER_MONTHLY_CREDITS)
+    await _gate(pool, user_id, user_tier, projected_credits=month_credits)
     if not is_local_number(e164):
         # Only the provider's local numbers are offered (the search only asks
         # for them); toll-free and short codes cost several times more.
         raise PhoneNumberError("Only local US numbers can be bought.", "number")
     bought = await numbers.buy(e164, label=f"NoClick {user_id[:8]}")
-    blob = {"credential_type": PHONE_NUMBER_CREDENTIAL_TYPE, "phone_number": bought["phone_number"],
-            "number_sid": bought["number_sid"]}
-    metadata = {"provider": "twilio", "phone_number": bought["phone_number"], "number_sid": bought["number_sid"],
-                "monthly_credits": PHONE_NUMBER_MONTHLY_CREDITS}
     try:
-        async with pool.acquire() as conn:
-            async with conn.transaction():
-                row, error = await create_credential_with_limit_check(
-                    conn, user_id, user_tier, PHONE_NUMBER_CREDENTIAL_TYPE,
-                    (credential_name or "").strip() or bought["phone_number"],
-                    encryption.encrypt_credential(blob), metadata,
-                )
-                if error or row is None:
-                    raise PhoneNumberError(error or "Could not save the number", "credential")
-                await start_connection_charge(conn, user_id=user_id, credential_id=row["id"], charge_type=CHARGE_TYPE)
-                if on_created is not None:
-                    await on_created(conn, {"credential_id": str(row["id"]), "phone_number": bought["phone_number"]})
+        held = await hold_number_for_user(pool, user_id=user_id, user_tier=user_tier, held=bought,
+                                          credential_name=credential_name, encryption=encryption,
+                                          on_created=on_created)
     except Exception:
         try:
             await numbers.release(bought["number_sid"])
@@ -179,4 +166,31 @@ async def buy_number_for_user(pool, *, user_id: str, user_tier: str, e164: str,
             logger.error("[PhoneNumbers] bought %s but could not save it AND could not release it", bought["number_sid"], exc_info=True)
         raise
     logger.info("[PhoneNumbers] user=%s bought %s (%s)", user_id, bought["phone_number"], bought["number_sid"])
-    return {"credential_id": str(row["id"]), "phone_number": bought["phone_number"]}
+    return held
+
+
+async def hold_number_for_user(pool, *, user_id: str, user_tier: str, held: Dict[str, str],
+                               credential_name: Optional[str], encryption, on_created=None) -> Dict[str, str]:
+    """Make a number the provider now holds for the platform (``held``: the
+    capability's ``{number_sid, phone_number, provider}``, bought or moved in)
+    the user's: mint the credential and charge its first month in ONE
+    transaction (the provider bills a month in advance, and so do we: the
+    charge renews on each anniversary while the number is kept). ``on_created``
+    records the number first, so its charge can price it by who holds it."""
+    blob = {"credential_type": PHONE_NUMBER_CREDENTIAL_TYPE, "phone_number": held["phone_number"],
+            "number_sid": held["number_sid"]}
+    metadata = {"provider": held["provider"], "phone_number": held["phone_number"], "number_sid": held["number_sid"],
+                "monthly_credits": PHONE_NUMBER_MONTHLY_CREDITS}
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            row, error = await create_credential_with_limit_check(
+                conn, user_id, user_tier, PHONE_NUMBER_CREDENTIAL_TYPE,
+                (credential_name or "").strip() or held["phone_number"],
+                encryption.encrypt_credential(blob), metadata,
+            )
+            if error or row is None:
+                raise PhoneNumberError(error or "Could not save the number", "credential")
+            if on_created is not None:
+                await on_created(conn, {"credential_id": str(row["id"]), "phone_number": held["phone_number"]})
+            await start_connection_charge(conn, user_id=user_id, credential_id=row["id"], charge_type=CHARGE_TYPE)
+    return {"credential_id": str(row["id"]), "phone_number": held["phone_number"]}

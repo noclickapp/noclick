@@ -79,6 +79,7 @@ def test_every_credential_optional_operation_declares_who_pays():
 
 def test_a_missing_key_names_the_fix_for_each_edition(monkeypatch):
     monkeypatch.delenv("EXA_API_KEY", raising=False)
+    monkeypatch.delenv("APIFY_API_TOKEN", raising=False)
     monkeypatch.setenv("NOCLICK_LOCAL", "1")
     with pytest.raises(RuntimeError) as local:
         require_platform_key("EXA_API_KEY", "Exa", byok=True)

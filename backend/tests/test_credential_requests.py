@@ -175,6 +175,19 @@ class TestCredentialRequestHandler(BaseHandlerTest):
         assert list_response is not None
         assert len(list_response['data']['requests']) >= 2
 
+        # A request minted hidden (held for someone else) never lists for its requester.
+        await real_database.execute(
+            "UPDATE credential_requests SET metadata = '{\"hidden_from_owner\": true}'::jsonb "
+            "WHERE requester_id = $1 AND target_email = 'other@example.com'", TEST_USER_ID,
+        )
+        await send_event(frontend_sio, sid, CredentialRequestListRequest(request_id="test-list-2"))
+        await asyncio.sleep(0.2)
+        hidden_response = next(
+            e[1] for e in self.get_main_api_emitted_events("response") if e[1].get('request_id') == 'test-list-2'
+        )
+        targets = [r['target_email'] for r in hidden_response['data']['requests']]
+        assert TARGET_EMAIL in targets and 'other@example.com' not in targets
+
     @patch('utils.email.send_credential_request_email', new_callable=AsyncMock, return_value=True)
     async def test_cancel_credential_request(self, mock_send_email, real_database, frontend_sio, sid):
         """Test cancelling a pending credential request."""
@@ -404,6 +417,68 @@ class TestCredentialRequestHTTPAPI:
 
         # Verify notification email was sent
         mock_send_email.assert_called_once()
+
+    @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
+    async def test_request_metadata_silences_the_requester_and_returns_the_person(
+        self, mock_send_email, real_database, db, setup_db,
+    ):
+        """A request minted with ``notify_requester: false`` sends no email, and
+        its ``redirect_url`` comes back with the result once fulfilled."""
+        from fastapi import HTTPException
+        from utils.credential_request_routes import (
+            ProvideCredentialBody, credential_request_return, get_credential_request, provide_credential,
+        )
+
+        token = setup_db['token']
+        with pytest.raises(HTTPException) as no_redirect:
+            await credential_request_return(token)
+        assert no_redirect.value.status_code == 404
+
+        db.execute(
+            "UPDATE credential_requests SET metadata = $2 WHERE id = $1",
+            setup_db['request_id'], {'notify_requester': False, 'redirect_url': 'https://app.example/cb?x=1'},
+        )
+        assert (await get_credential_request(token)).redirect_url == 'https://app.example/cb?x=1'
+        with pytest.raises(HTTPException) as pending:
+            await credential_request_return(token)
+        assert pending.value.status_code == 409
+
+        result = await provide_credential(token, ProvideCredentialBody(credential_data={'api_key': 'sk-test-key-12345'}))
+        mock_send_email.assert_not_awaited()
+        assert await credential_request_return(token) == {
+            'redirect_url': f"https://app.example/cb?x=1&credential_id={result['credential_id']}&status=success"}
+
+    async def test_a_request_held_for_someone_else_never_names_its_account(self, real_database, db, setup_db):
+        """A request minted with ``hidden_from_owner`` is answered by a person
+        the account's owner doesn't know: the page shows the label its minting
+        surface stamped (or a neutral name), never the owner's name or email."""
+        from utils.credential_request_routes import HELD_REQUESTER_NAME, get_credential_request
+
+        db.execute("UPDATE credential_requests SET metadata = $2 WHERE id = $1",
+                   setup_db['request_id'], {'hidden_from_owner': True})
+        details = await get_credential_request(setup_db['token'])
+        assert (details.requester_name, details.requester_email) == (HELD_REQUESTER_NAME, None)
+
+        db.execute("UPDATE credential_requests SET metadata = $2 WHERE id = $1",
+                   setup_db['request_id'], {'hidden_from_owner': True, 'requester_label': 'Acme Books'})
+        details = await get_credential_request(setup_db['token'])
+        assert (details.requester_name, details.requester_email) == ('Acme Books', None)
+        assert TEST_USER_EMAIL not in details.model_dump_json() and 'Test Requester' not in details.model_dump_json()
+
+    async def test_return_never_redirects_off_https(self, real_database, db, setup_db):
+        """A stored address that is not https (or local http) is refused, never followed."""
+        from utils.credential_request_routes import credential_request_return, validated_return_url
+
+        db.execute(
+            "UPDATE credential_requests SET status = 'fulfilled', metadata = $2 WHERE id = $1",
+            setup_db['request_id'], {'redirect_url': 'http://evil.example/cb'},
+        )
+        with pytest.raises(ValueError):
+            await credential_request_return(setup_db['token'])
+        assert validated_return_url('http://127.0.0.1:8080/cb') == 'http://127.0.0.1:8080/cb'
+        for bad in ('ftp://app.example', 'https://u:p@app.example', '/relative', 'https://'):
+            with pytest.raises(ValueError):
+                validated_return_url(bad)
 
     @pytest.fixture
     def node_request(self, db):
@@ -672,6 +747,58 @@ class TestCredentialRequestHTTPAPI:
             db.execute("DELETE FROM credentials WHERE credential_type = 'agent_codex_oauth'")
             db.execute("DELETE FROM credential_requests WHERE credential_type = 'agent_codex'")
 
+
+    async def test_a_request_names_the_sign_in_it_offers_beside_the_key(self, real_database, db):
+        """``metadata.agent_oauth_type`` replaces the provider's own sign-in on
+        an agent key request: a named plan is offered (and only it may be
+        minted), null offers the key alone."""
+        from fastapi import HTTPException
+        from utils.credential_request_routes import (
+            AgentOAuthStartBody, _resolve_agent_oauth_flow, agent_oauth_start, get_credential_request,
+        )
+
+        db.execute(
+            "INSERT INTO auth.users (id, email, raw_user_meta_data) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING",
+            TEST_USER_ID, TEST_USER_EMAIL, {'name': 'Test Requester'},
+        )
+        requests = {}
+        try:
+            for cred_type, metadata in (('agent_anthropic', {'agent_oauth_type': 'agent_claude_code_oauth'}),
+                                        ('agent_codex', {'agent_oauth_type': None})):
+                db.execute("DELETE FROM credential_requests WHERE credential_type = $1", cred_type)
+                requests[cred_type] = db.fetchrow(
+                    "INSERT INTO credential_requests (requester_id, target_email, credential_type, metadata) "
+                    "VALUES ($1, '', $2, $3) RETURNING token",
+                    TEST_USER_ID, cred_type, metadata,
+                )
+            plan = await get_credential_request(requests['agent_anthropic']['token'])
+            assert [(m.credential_type, m.agent_oauth_kind) for m in plan.available_methods] == [
+                ('agent_anthropic', None), ('agent_claude_code_oauth', 'pkce')]
+            assert _resolve_agent_oauth_flow(
+                {'credential_type': 'agent_anthropic', 'metadata': {'agent_oauth_type': 'agent_claude_code_oauth'}},
+                'agent_claude_code_oauth') is not None
+
+            # Unnamed, a provider offers only its own sign-in: a Claude plan runs
+            # only in Claude Code, so an Anthropic key request asks for the key.
+            from utils.credential_request_routes import _agent_methods
+
+            assert [m['credential_type'] for m in _agent_methods('agent_anthropic')] == ['agent_anthropic']
+            assert [m['credential_type'] for m in _agent_methods('agent_claude_code')] == [
+                'agent_claude_code', 'agent_claude_code_oauth']
+            with pytest.raises(HTTPException):
+                _resolve_agent_oauth_flow({'credential_type': 'agent_anthropic', 'metadata': {}},
+                                          'agent_claude_code_oauth')
+
+            key_only = await get_credential_request(requests['agent_codex']['token'])
+            assert [(m.credential_type, m.agent_oauth_kind) for m in key_only.available_methods] == [
+                ('agent_codex', None)]
+            with pytest.raises(HTTPException) as exc:
+                await agent_oauth_start(requests['agent_codex']['token'],
+                                        AgentOAuthStartBody(credential_type='agent_codex_oauth'))
+            assert exc.value.status_code == 400
+        finally:
+            for cred_type in requests:
+                db.execute("DELETE FROM credential_requests WHERE credential_type = $1", cred_type)
 
     async def test_provide_credential_expired(self, real_database, db, setup_db):
         """Test that expired requests are rejected."""
@@ -1026,9 +1153,10 @@ class TestWhatsAppQRProvideLink:
         assert result['status'] == 'connected'
         assert result['credential_id'] == cred_id
 
-        # Core was invoked bound to the requester as owner.
+        # Core was invoked bound to the requester as owner, free to rebind the owner's own row.
         assert mock_finalize.await_args.kwargs['owner_id'] == TEST_USER_ID
         assert mock_finalize.await_args.kwargs['connection_id'] == 'conn-xyz'
+        assert mock_finalize.await_args.kwargs['held_for_someone_else'] is False
 
         # Request is fulfilled with that credential.
         req = db.fetchrow(
@@ -1039,6 +1167,18 @@ class TestWhatsAppQRProvideLink:
         assert str(req['credential_id']) == cred_id
         # Copy-link request (empty target_email) → no fulfillment email.
         mock_email.assert_not_called()
+
+    @patch('utils.whatsapp_qr.finalize_qr_connection', new_callable=AsyncMock)
+    async def test_qr_status_for_a_held_request_never_rebinds_owner_rows(self, mock_finalize, real_database, db, setup_db):
+        """A request whose credential is held for someone else tells the core so,
+        and a scan of a phone the owner already connected mints its own row."""
+        from utils.credential_request_routes import qr_status, QRStatusBody
+
+        db.execute("UPDATE credential_requests SET metadata = $2 WHERE id = $1",
+                   setup_db['request_id'], {'hidden_from_owner': True})
+        mock_finalize.return_value = {'success': True, 'status': 'pending', 'message': 'Waiting for QR code scan...'}
+        await qr_status(setup_db['token'], QRStatusBody(connection_id='conn-xyz'))
+        assert mock_finalize.await_args.kwargs['held_for_someone_else'] is True
 
     @patch('utils.whatsapp_qr.start_qr_connection', new_callable=AsyncMock)
     async def test_qr_start_rate_limited_per_token(self, mock_start, monkeypatch, real_database, setup_db):

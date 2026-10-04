@@ -9,7 +9,7 @@ import json
 import logging
 import uuid as _uuid
 from typing import Dict, Any, List, Optional
-from repositories.credentials import credential_access_predicate
+from repositories.credentials import credential_access_predicate, listed_to_owner_sql
 from repositories.workflow import WorkflowRepo
 from utils.database_pool import get_native_pool
 from utils.encryption import get_encryption
@@ -341,7 +341,7 @@ async def list_credentials(user_id: str, pool=None, org_id: Optional[str] = None
             # 1. Credentials they own
             # 2. Credentials shared with them directly
             # 3. Credentials shared with their current org (only when org_id provided)
-            rows = await conn.fetch("""
+            rows = await conn.fetch(f"""
                 SELECT DISTINCT ON (c.id)
                     c.id, c.name, c.credential_type, c.metadata, c.created_at, c.updated_at,
                     c.owner_id,
@@ -358,9 +358,10 @@ async def list_credentials(user_id: str, pool=None, org_id: Optional[str] = None
                     AND os.target_type = 'organization'
                     AND os.target_org_id = $2
                 WHERE
-                    c.owner_id = $1
-                    OR us.id IS NOT NULL
-                    OR ($2::uuid IS NOT NULL AND os.id IS NOT NULL)
+                    (c.owner_id = $1
+                     OR us.id IS NOT NULL
+                     OR ($2::uuid IS NOT NULL AND os.id IS NOT NULL))
+                    AND {listed_to_owner_sql()}
                 ORDER BY c.id, sort_order, c.created_at DESC
             """, user_id, org_id)
 

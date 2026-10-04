@@ -15,6 +15,7 @@ from nodes.core.base import runtime_config_view
 from nodes.core.registry import NODE_REGISTRY
 from nodes.agent.config.providers import (
     agent_credential_requirement,
+    claude_plan_refusal,
     agent_credential_types,
 )
 from .workflow_ops import find_placeholder_tokens
@@ -841,9 +842,10 @@ def credential_status_line(
                 or f"[credentials: {req.provider} ✓]"
             )
         else:
+            refusal = claude_plan_refusal(config or {}, cred_ids)
             base = (
-                f"[credentials needed: {req.label}] "
-                f"Use <search_credentials type=\"{req.credential_type}\" /> to find credentials, "
+                (f"[credentials: {req.provider} ✗ {refusal}] " if refusal else f"[credentials needed: {req.label}] ")
+                + f"Use <search_credentials type=\"{req.credential_type}\" /> to find credentials, "
                 f"then <set_credentials node=\"{node_id}\" id=\"CREDENTIAL_ID\" />"
             )
         return f"{base} {env_line}" if env_line else base

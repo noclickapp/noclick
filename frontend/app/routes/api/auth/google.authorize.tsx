@@ -6,6 +6,7 @@ import { oauthRedirect } from '~/lib/oauthFlow.server';
 import { redirect, type LoaderFunctionArgs } from 'react-router';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
+import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
 
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 
@@ -19,7 +20,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         'https://www.googleapis.com/auth/spreadsheets';
     const customClientId = url.searchParams.get('custom_client_id');
 
-    const clientId = customClientId || process.env.GOOGLE_CLIENT_ID;
+    const clientId = (await oauthAppClientId(oauthAppToken(request), 'google')) || customClientId || process.env.GOOGLE_CLIENT_ID;
     const redirectUri = process.env.GOOGLE_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {

@@ -231,13 +231,17 @@ def validate_agent_tool_operations(
     name (string, unscoped) or ``{"operation": str, "field_scopes":
     {field_name: [allowed_ids]}}`` (scoped to specific resource IDs).
     ``field_scopes`` keys must be ``x-dynamic-options`` + ``x-resource-type``
-    fields on that operation; values are non-empty string lists.
+    fields on that operation; values are non-empty string lists. An object
+    entry may also ``bind`` some of the operation's parameters
+    (``{param: value}``, ``nodes.agent.tool_binding``).
     """
     from nodes.agent.node_op_tools import (
         list_node_operations,
         node_supports_op_tools,
+        operation_parameter_names,
         scopable_fields_for_operation,
     )
+    from nodes.agent.tool_binding import BIND_KEY, template_error
 
     if not node_supports_op_tools(node_type):
         return None, f"'{node_type}' cannot provide agent tools (it exposes no operations)."
@@ -271,6 +275,9 @@ def validate_agent_tool_operations(
                     f"'{op_name}': field_scopes must be an object mapping "
                     f"field_name → [allowed_ids]."
                 )
+            bind = entry.get(BIND_KEY)
+            if bind is not None and (not isinstance(bind, dict) or not bind):
+                return None, f"'{op_name}': bind must be an object mapping parameter → value."
         else:
             return None, (
                 f"agent_tool_operations entry must be a string or "
@@ -285,8 +292,20 @@ def validate_agent_tool_operations(
             return None, f"Duplicate operation entry: '{op_name}'."
         seen_ops.add(op_name)
 
+        bound: Dict[str, Any] = {}
+        if isinstance(entry, dict) and entry.get(BIND_KEY):
+            takes = operation_parameter_names(node_type, op_name) or frozenset()
+            unknown = sorted(set(entry[BIND_KEY]) - takes)
+            if unknown:
+                return None, (f"'{op_name}' takes no parameter {', '.join(map(repr, unknown))} to bind. "
+                              f"Its parameters: {', '.join(sorted(takes))}.")
+            problem = template_error(entry[BIND_KEY])
+            if problem:
+                return None, f"'{op_name}': {problem}"
+            bound = {BIND_KEY: dict(entry[BIND_KEY])}
+
         if not field_scopes_raw:
-            normalized.append(op_name)
+            normalized.append({"operation": op_name, **bound} if bound else op_name)
             continue
 
         scopable = scopable_fields_for_operation(node_type, op_name)
@@ -311,10 +330,10 @@ def validate_agent_tool_operations(
             if dedup:
                 field_scopes_clean[field_name] = dedup
         if field_scopes_clean:
-            normalized.append({"operation": op_name, "field_scopes": field_scopes_clean})
+            normalized.append({"operation": op_name, "field_scopes": field_scopes_clean, **bound})
         else:
             # All field_scopes entries normalized to empty — treat as unscoped.
-            normalized.append(op_name)
+            normalized.append({"operation": op_name, **bound} if bound else op_name)
     return normalized, None
 
 

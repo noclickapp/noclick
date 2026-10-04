@@ -34,6 +34,18 @@ router.include_router(credential_approval_router)
 
 MAX_PROVISION_ATTEMPTS = 5
 
+
+def validated_return_url(url: str) -> str:
+    """``url`` when a person may be sent there after providing a credential:
+    https, or http on localhost for development. Raises ValueError otherwise."""
+    from urllib.parse import urlsplit
+
+    parsed = urlsplit(url)
+    local = parsed.scheme == "http" and parsed.hostname in ("localhost", "127.0.0.1")
+    if not parsed.hostname or parsed.username or parsed.password or not (parsed.scheme == "https" or local):
+        raise ValueError("redirect_url must be an https URL (or http://localhost).")
+    return url
+
 # ---------------------------------------------------------------------------
 # OAuth provider registry — auto-discovered from node schemas and module conventions
 # ---------------------------------------------------------------------------
@@ -103,14 +115,53 @@ def _is_oauth_type(credential_type: str) -> bool:
     return _get_oauth_provider(credential_type) is not None
 
 
+class OAuthAppUnavailable(Exception):
+    """The OAuth app a request's minting surface named can't be used (``OAUTH_APPS``)."""
+
+
+def oauth_app_providers() -> set[str]:
+    """The OAuth providers whose sign-in, code exchange and refresh can all
+    run on an OAuth app brought by the requester (``OAUTH_APPS``)."""
+    import importlib
+
+    from nodes.core.oauth_refresh import own_client_kwargs
+
+    supported = set()
+    for provider in _discover_oauth_providers():
+        try:
+            mod = importlib.import_module(f'nodes.oauth.{provider}_oauth')
+        except ImportError:
+            continue
+        exchange, refresh = getattr(mod, 'exchange_code_for_tokens', None), getattr(mod, 'refresh_access_token', None)
+        probe = {'client_id': 'x', 'client_secret': 'x'}
+        if exchange and refresh and own_client_kwargs(exchange, probe) and own_client_kwargs(refresh, probe):
+            supported.add(provider)
+    return supported
+
+
+async def _oauth_app(pool, row, provider: Optional[str]) -> Optional[dict[str, str]]:
+    """The OAuth app the request's minting surface brings for ``provider``, or
+    None for the instance's own. Raises ``OAuthAppUnavailable``."""
+    from utils.capabilities import OAUTH_APPS, capability
+
+    resolver = capability(OAUTH_APPS)
+    if resolver is None or not provider:
+        return None
+    return await resolver(pool, requester_id=str(row['requester_id']), metadata=row['metadata'] or {},
+                          provider=provider)
+
+
 async def _exchange_oauth_code(
     provider: str,
     code: str,
     redirect_uri: str,
     scopes: list[str],
     code_verifier: Optional[str] = None,
+    client: Optional[dict[str, str]] = None,
 ) -> dict[str, Any]:
-    """Exchange an OAuth code for tokens and return credential_data dict."""
+    """Exchange an OAuth code for tokens and return credential_data dict.
+    ``client``: an OAuth app of the requester's, which the credential keeps
+    (its refreshes run on it too)."""
     import importlib
 
     mod = importlib.import_module(f'nodes.oauth.{provider}_oauth')
@@ -119,6 +170,13 @@ async def _exchange_oauth_code(
     kwargs: dict[str, Any] = {'code': code, 'redirect_uri': redirect_uri}
     if _is_pkce_provider(provider) and code_verifier:
         kwargs['code_verifier'] = code_verifier
+    if client is not None:
+        from nodes.core.oauth_refresh import own_client_kwargs
+
+        own = own_client_kwargs(exchange_fn, client)
+        if own is None:
+            raise OAuthAppUnavailable(f"{provider} can't sign in with an OAuth app of your own here.")
+        kwargs.update(own)
 
     result = await exchange_fn(**kwargs)
 
@@ -136,6 +194,8 @@ async def _exchange_oauth_code(
     email = getattr(user_info, 'email', None) or getattr(user_info, 'name', None)
     if email:
         credential_data['email'] = email
+    if client is not None:
+        credential_data.update(client_id=client['client_id'], client_secret=client['client_secret'])
 
     return credential_data
 
@@ -401,9 +461,21 @@ def _agent_oauth_method(oauth_type: str) -> dict:
     }
 
 
-def _agent_methods(credential_type: str) -> Optional[list[dict]]:
+def _agent_oauth_offered(credential_type: str, options: dict) -> Optional[str]:
+    """The agent sign-in an ``agent_<provider>`` key request offers beside the
+    key: its minting surface's ``agent_oauth_type`` option when set (None: the
+    key only), else the provider's own sign-in."""
+    provider = _get_agent_provider(credential_type)
+    if not provider:
+        return None
+    oauth_type = options["agent_oauth_type"] if "agent_oauth_type" in options else AGENT_PROVIDER_OAUTH_TYPE.get(provider)
+    return oauth_type if oauth_type and get_agent_oauth_flow(oauth_type) else None
+
+
+def _agent_methods(credential_type: str, options: Optional[dict] = None) -> Optional[list[dict]]:
     """Auth methods offered for an agent credential request: the provider's API-key
-    field(s) and/or an OAuth sign-in. None when ``credential_type`` isn't an agent type."""
+    field(s) and/or an OAuth sign-in (``_agent_oauth_offered`` over the request's
+    ``options``, its metadata). None when ``credential_type`` isn't an agent type."""
     provider = _get_agent_provider(credential_type)
     methods: list[dict] = []
     if provider:
@@ -422,7 +494,7 @@ def _agent_methods(credential_type: str) -> Optional[list[dict]]:
                 "agent_oauth_kind": None,
                 "method_kind": "api_key",
             })
-        oauth_type = AGENT_PROVIDER_OAUTH_TYPE.get(provider)
+        oauth_type = _agent_oauth_offered(credential_type, options or {})
         if oauth_type:
             methods.append(_agent_oauth_method(oauth_type))
     elif get_agent_oauth_flow(credential_type):
@@ -472,6 +544,12 @@ class CredentialMethod(BaseModel):
     supports_custom_client: bool = False
     requires_custom_client: bool = False
     oauth_redirect_uri: Optional[str] = None
+    # The requester brings its own OAuth app for this provider (``OAUTH_APPS``):
+    # the sign-in asks GET /{token}/oauth-client/{provider} for its client id.
+    oauth_app: bool = False
+
+
+HELD_REQUESTER_NAME = "An app"
 
 
 class CredentialRequestDetails(BaseModel):
@@ -491,8 +569,12 @@ class CredentialRequestDetails(BaseModel):
     instructions: Optional[str] = None
     # All available auth methods for this service (populated when > 1 method exists)
     available_methods: list[CredentialMethod] = []
+    # The requested type's own: the requester brings its own OAuth app (see CredentialMethod).
+    oauth_app: bool = False
     status: str
     expires_at: str
+    # Where the page sends the person once provided (GET /{token}/return).
+    redirect_url: Optional[str] = None
 
 
 class ProvideCredentialBody(BaseModel):
@@ -549,8 +631,8 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
     pool = get_native_pool()
     row = await pool.fetchrow(
         f"""
-        SELECT cr.id, cr.credential_type, cr.message, cr.status, cr.expires_at,
-               cr.provision_attempts,
+        SELECT cr.id, cr.requester_id, cr.credential_type, cr.message, cr.status, cr.expires_at,
+               cr.provision_attempts, cr.metadata,
                {user_label_sql('u')} as requester_name,
                u.email as requester_email
         FROM credential_requests cr
@@ -585,7 +667,7 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
     # for a single node-schema credential — its own method (so its OAuth scopes + connect
     # requirements still reach the provide page instead of an empty methods list).
     siblings = _get_sibling_methods(cred_type)
-    agent_methods = _agent_methods(cred_type)
+    agent_methods = _agent_methods(cred_type, row['metadata'])
     if siblings:
         method_dicts = siblings
     elif agent_methods:
@@ -614,29 +696,88 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
         )
         for m in method_dicts
     ]
+    # A requester's own OAuth app replaces the instance's, and the person never types one.
+    brought: dict[str, bool] = {}
+
+    async def brings(provider_of: Optional[str]) -> bool:
+        if provider_of and provider_of not in brought:
+            try:
+                brought[provider_of] = await _oauth_app(pool, row, provider_of) is not None
+            except OAuthAppUnavailable:
+                brought[provider_of] = True  # named, but unusable: its sign-in says why
+        return bool(provider_of) and brought[provider_of]
+
+    for method in available:
+        if method.is_oauth and await brings(method.oauth_provider):
+            method.oauth_app = True
+            method.supports_custom_client = method.requires_custom_client = False
+    own_app = await brings(provider)
 
     # Top-level OAuth metadata for the requested type (drives the FE fallback method when
     # available_methods is empty). Read from the requested type's own method dict.
     own = next((m for m in method_dicts if m['credential_type'] == cred_type), None)
 
+    # A request held for someone else never names the account behind it; its
+    # minting surface may stamp the name to show instead.
+    if row['metadata'].get('hidden_from_owner'):
+        requester_name, requester_email = row['metadata'].get('requester_label') or HELD_REQUESTER_NAME, None
+    else:
+        requester_name, requester_email = row['requester_name'] or "A NoClick user", row['requester_email']
     return CredentialRequestDetails(
         credential_type=cred_type,
-        requester_name=row['requester_name'] or "A NoClick user",
-        requester_email=row['requester_email'],
+        requester_name=requester_name,
+        requester_email=requester_email,
         message=row['message'],
         is_oauth=provider is not None,
         oauth_provider=provider,
         oauth_scopes=own.get('oauth_scopes', []) if own else [],
         requires_pkce=_is_pkce_provider(provider) if provider else False,
-        supports_custom_client=own.get('supports_custom_client', False) if own else False,
-        requires_custom_client=own.get('requires_custom_client', False) if own else False,
+        supports_custom_client=own.get('supports_custom_client', False) if own and not own_app else False,
+        requires_custom_client=own.get('requires_custom_client', False) if own and not own_app else False,
+        oauth_app=own_app,
         oauth_user_scopes=own.get('oauth_user_scopes', []) if own else [],
         credential_fields=[CredentialField(**f) for f in fields],
         instructions=own.get('instructions') if own else None,
         available_methods=available,
         status=row['status'],
         expires_at=row['expires_at'].isoformat() if row['expires_at'] else '',
+        redirect_url=row['metadata'].get('redirect_url'),
     )
+
+
+@router.get("/{token}/oauth-client/{provider}")
+async def credential_request_oauth_client(token: str, provider: str) -> dict[str, Optional[str]]:
+    """The client id of the OAuth app the request's requester brings for
+    ``provider``, for the sign-in to ask its consent with (null: the instance's
+    own app). Public: a client id rides every consent URL. 409 when the app it
+    named can't be used."""
+    pool = get_native_pool()
+    row = await _load_active_request(token, pool)
+    try:
+        client = await _oauth_app(pool, row, provider)
+    except OAuthAppUnavailable as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from None
+    return {"client_id": client['client_id'] if client else None}
+
+
+@router.get("/{token}/return")
+async def credential_request_return(token: str) -> dict[str, str]:
+    """Where the provide page sends the person after a fulfilled request: the
+    request's own ``redirect_url`` with ``credential_id`` and ``status``
+    appended. Public; a request that set no redirect has none."""
+    from mcp_adapter.auth.endpoints import _oauth_redirect_url
+
+    row = await get_native_pool().fetchrow(
+        "SELECT status, credential_id, metadata FROM credential_requests WHERE token = $1", token,
+    )
+    if not row or not row['metadata'].get('redirect_url'):
+        raise HTTPException(status_code=404, detail="This request has no return address")
+    url = validated_return_url(row['metadata']['redirect_url'])
+    if row['status'] != 'fulfilled':
+        raise HTTPException(status_code=409, detail="This credential request has not been fulfilled")
+    if row['credential_id'] is None:
+        raise HTTPException(status_code=410, detail="The provided credential no longer exists")
+    return {"redirect_url": _oauth_redirect_url(url, credential_id=str(row['credential_id']), status="success")}
 
 
 async def _provided_credential_owner(pool, row, credential_type: str) -> str:
@@ -696,7 +837,7 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
     row = await pool.fetchrow(
         """
         SELECT cr.id, cr.token, cr.requester_id, cr.credential_type, cr.status, cr.expires_at,
-               cr.provision_attempts, cr.target_email,
+               cr.provision_attempts, cr.target_email, cr.metadata,
                u.email as requester_email
         FROM credential_requests cr
         JOIN auth.users u ON u.id = cr.requester_id
@@ -749,12 +890,14 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
             if not body.oauth_code or not body.redirect_uri:
                 raise HTTPException(status_code=400, detail="OAuth credentials require oauth_code and redirect_uri")
 
+            client = await _oauth_app(pool, row, provider)
             credential_data = await _exchange_oauth_code(
                 provider=provider,
                 code=body.oauth_code,
                 redirect_uri=body.redirect_uri,
                 scopes=body.scopes or [],
                 code_verifier=body.code_verifier,
+                client=client,
             )
             credential_name = credential_data.get('email', f'{provider.title()} Account')
             metadata = {
@@ -762,6 +905,7 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
                 'email': credential_data.get('email'),
                 'scopes': body.scopes or [],
                 'provided_by': row['target_email'],
+                **({'oauth_client_id': client['client_id']} if client else {}),
             }
         else:
             # API key / manual credential
@@ -818,6 +962,8 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
 
     except HTTPException:
         raise
+    except OAuthAppUnavailable as e:
+        raise HTTPException(status_code=409, detail=str(e))
     except ValueError as e:
         logger.error(f"Token exchange failed for request {row['id']}: {e}")
         raise HTTPException(status_code=400, detail=f"Failed to exchange OAuth code: {e}")
@@ -845,7 +991,7 @@ async def _load_active_request(token: str, pool):
     row = await pool.fetchrow(
         """
         SELECT cr.id, cr.token, cr.requester_id, cr.credential_type, cr.status, cr.expires_at,
-               cr.target_email, u.email as requester_email
+               cr.target_email, cr.metadata, u.email as requester_email
         FROM credential_requests cr
         JOIN auth.users u ON u.id = cr.requester_id
         WHERE cr.token = $1
@@ -861,17 +1007,17 @@ async def _load_active_request(token: str, pool):
     return row
 
 
-def _resolve_agent_oauth_flow(row_credential_type: str, requested_type: str):
+def _resolve_agent_oauth_flow(row, requested_type: str):
     """Return the flow for ``requested_type`` iff it's a legitimate OAuth method for the
-    request — the request's own type, or the OAuth sibling of its agent provider. Blocks
-    a request for provider X from minting an unrelated credential."""
+    request — the request's own type, or the sign-in it offers beside its key
+    (``_agent_oauth_offered``). Blocks a request for provider X from minting an
+    unrelated credential, and a key-only request from minting a sign-in."""
     flow = get_agent_oauth_flow(requested_type)
     if not flow:
         raise HTTPException(status_code=400, detail=f"Not an agent OAuth credential type: {requested_type}")
-    if requested_type == row_credential_type:
+    if requested_type == row['credential_type']:
         return flow
-    provider = _get_agent_provider(row_credential_type)
-    if provider and AGENT_PROVIDER_OAUTH_TYPE.get(provider) == requested_type:
+    if _agent_oauth_offered(row['credential_type'], row['metadata'] or {}) == requested_type:
         return flow
     raise HTTPException(status_code=400, detail="This OAuth method is not valid for this request")
 
@@ -889,7 +1035,7 @@ async def agent_oauth_start(token: str, body: AgentOAuthStartBody) -> dict[str, 
         )
     pool = get_native_pool()
     row = await _load_active_request(token, pool)
-    flow = _resolve_agent_oauth_flow(row['credential_type'], body.credential_type)
+    flow = _resolve_agent_oauth_flow(row, body.credential_type)
     await _provided_credential_owner(pool, row, flow.credential_type)
     try:
         result = await flow.start()
@@ -913,7 +1059,7 @@ async def agent_oauth_complete(token: str, body: AgentOAuthCompleteBody) -> dict
         )
     pool = get_native_pool()
     row = await _load_active_request(token, pool)
-    flow = _resolve_agent_oauth_flow(row['credential_type'], body.credential_type)
+    flow = _resolve_agent_oauth_flow(row, body.credential_type)
     await _provided_credential_owner(pool, row, flow.credential_type)
     try:
         result = await flow.complete(body.poll or {})
@@ -991,8 +1137,9 @@ async def _requester_effective_tier(pool, requester_id) -> str:
 
 async def _notify_requester_fulfilled(row, credential_type: str) -> None:
     """Email the requester that their request landed; a phone-only requester
-    has no address and is skipped."""
-    if not row["requester_email"]:
+    has no address, and a request minted with ``notify_requester: false`` asked
+    not to be."""
+    if not row["requester_email"] or row["metadata"].get("notify_requester") is False:
         return
     try:
         await send_credential_fulfilled_email(
@@ -1061,6 +1208,7 @@ async def qr_status(token: str, body: QRStatusBody) -> dict[str, Any]:
     result = await finalize_qr_connection(
         pool, owner_id=str(row["requester_id"]), connection_id=body.connection_id,
         user_tier=tier, encryption=get_encryption(),
+        held_for_someone_else=bool(row["metadata"].get("hidden_from_owner")),
     )
     if result.get("status") == "connected" and result.get("credential_id"):
         claimed = await _claim_qr_fulfillment(pool, row, result["credential_id"])
