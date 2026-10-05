@@ -54,6 +54,7 @@ import utils.ws_compression_patch  # noqa: F401 — kills permessage_deflate on 
 
 import asyncio
 import logging
+import re
 import threading
 import traceback
 from contextlib import asynccontextmanager
@@ -125,6 +126,8 @@ load_dotenv()
 ORIGINS = [
     "http://localhost:3000",
     *[f"http://localhost:{port}" for port in range(5173, 5191)],
+    # Local dev serves each worktree from its own host (frontend/app/lib/devHost.ts).
+    *[f"http://wt{port}.localhost:{port}" for port in range(5173, 5191)],
     "https://noclick.com",
     "https://www.noclick.com",
     # MCP client origins (needed for OAuth flow + widget communication)
@@ -134,9 +137,10 @@ ORIGINS = [
 
 
 def _origin_aliases(url: str) -> list:
-    """The origin plus its loopback spelling. A browser sends the origin exactly
+    """The origin plus its loopback spellings. A browser sends the origin exactly
     as typed, so an install configured as 127.0.0.1 still fails CORS when its
-    operator visits localhost (and vice versa)."""
+    operator visits localhost (and vice versa), and the dev server moves page
+    loads on either to wt<port>.localhost."""
     origin = url.strip().rstrip("/")
     if not origin:
         return []
@@ -145,6 +149,10 @@ def _origin_aliases(url: str) -> list:
         aliases.add(origin.replace("//localhost", "//127.0.0.1"))
     elif "//127.0.0.1" in origin:
         aliases.add(origin.replace("//127.0.0.1", "//localhost"))
+    loopback = re.fullmatch(r"http://(?:localhost|127\.0\.0\.1):(\d+)", origin)
+    if loopback:
+        port = loopback.group(1)
+        aliases.add(f"http://wt{port}.localhost:{port}")
     return sorted(aliases)
 
 

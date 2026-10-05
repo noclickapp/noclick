@@ -1,5 +1,6 @@
-"""How the coordinator reaches its owner outside a reply: WhatsApp (where the
-instance can send it), its own email address, or the web conversation.
+"""How the coordinator reaches its owner outside a reply: their phone over
+WhatsApp or iMessage (where the instance can send them), its own email
+address, or the web conversation.
 
 How the owner likes to be reached is a memory, not a setting: the coordinator
 reads it and names the channel. ``auto`` is the channel the owner last wrote
@@ -11,9 +12,12 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
-CHANNELS = ("whatsapp", "email", "web")
+CHANNELS = ("whatsapp", "imessage", "email", "web")
 _AS_CHANNEL = {"whatsapp_text": "whatsapp", "whatsapp": "whatsapp", "voice": "whatsapp", "phone": "whatsapp",
-               "callback": "whatsapp", "email": "email", "web": "web"}
+               "callback": "whatsapp", "imessage_text": "imessage", "imessage": "imessage",
+               "email": "email", "web": "web"}
+PHONE_APPS = ("whatsapp", "imessage")
+_PHONE_EVENT_CHANNELS = [c for c, app in _AS_CHANNEL.items() if app in PHONE_APPS]
 
 
 def normalize_channel(channel: Optional[str]) -> Optional[str]:
@@ -30,6 +34,22 @@ async def last_used_channel(pool, user_id: str) -> Optional[str]:
     ) or "web")
 
 
+async def last_phone_app(pool, user_id: str) -> Optional[str]:
+    """The app ("whatsapp" | "imessage") of the owner's newest message from their phone, if any."""
+    return normalize_channel(await pool.fetchval(
+        """SELECT e->>'channel' FROM conversations c, jsonb_array_elements(c.events) WITH ORDINALITY AS t(e, i)
+           WHERE c.conversation_id = $1 AND c.user_id = $2::uuid AND e->>'role' = 'user'
+             AND e->>'channel' = ANY($3::text[])
+           ORDER BY i DESC LIMIT 1""",
+        f"coordinator:{user_id}", user_id, _PHONE_EVENT_CHANNELS,
+    ))
+
+
+async def phone_text_channel(pool, user_id: str) -> str:
+    """The text channel a follow-up for the owner's phone runs as: the app they text on, WhatsApp by default."""
+    return "imessage_text" if await last_phone_app(pool, user_id) == "imessage" else "whatsapp_text"
+
+
 async def resolve_channel(pool, user_id: str, channel: str = "auto") -> str:
     if channel != "auto":
         return channel
@@ -43,11 +63,12 @@ async def reach_owner(
     from utils.capabilities import OWNER_MESSAGE, capability
 
     resolved = await resolve_channel(pool, user_id, channel)
-    if resolved == "whatsapp":
+    if resolved in PHONE_APPS:
         send = capability(OWNER_MESSAGE)
         if send is None:
-            return {"success": False, "channel": resolved, "error": "WhatsApp isn't available on this instance."}
-        return {**await send(pool, user_id, text, link=link), "channel": resolved}
+            label = "WhatsApp" if resolved == "whatsapp" else "iMessage"
+            return {"success": False, "channel": resolved, "error": f"{label} isn't available on this instance."}
+        return {**await send(pool, user_id, text, link=link, channel=resolved), "channel": resolved}
     if resolved == "email":
         from coder.coordinator.email_channel import send_owner_email
 

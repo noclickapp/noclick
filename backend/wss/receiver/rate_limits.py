@@ -29,6 +29,7 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "phone:status": SocketIORateLimit(second=5, minute=30),
             "phone:link:start": SocketIORateLimit(second=1, minute=5),
             "phone:link:check": SocketIORateLimit(second=2, minute=10),
+            "phone:link:code": SocketIORateLimit(second=1, minute=10),
             "phone_number:search": SocketIORateLimit(second=2, minute=20),
             "phone_number:buy": SocketIORateLimit(second=1, minute=5),
             "phone:unlink": SocketIORateLimit(second=1, minute=5),
@@ -36,6 +37,8 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             # Account coordinator (a send is one billed agent turn)
             "coordinator:open": SocketIORateLimit(second=5, minute=30),
             "coordinator:send": SocketIORateLimit(second=1, minute=12),
+            "coordinator:attachment:upload_url": SocketIORateLimit(second=5, minute=60),
+            "coordinator:attachments:list": SocketIORateLimit(second=5, minute=60),
             "coordinator:reset": SocketIORateLimit(second=1, minute=5),
             "coordinator:memories:list": SocketIORateLimit(second=5, minute=60),
             "coordinator:memories:get": SocketIORateLimit(second=5, minute=60),
@@ -143,6 +146,7 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
 
             # Dashboard tab
             "dashboard:overview": SocketIORateLimit(second=3, minute=30),
+            "dashboard:attention": SocketIORateLimit(second=3, minute=30),
             "dashboard:notifications:read": SocketIORateLimit(second=3, minute=30),
 
             # Internal system events

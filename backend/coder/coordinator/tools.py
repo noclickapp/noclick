@@ -26,7 +26,7 @@ from utils.media_generation import (
     DEFAULT_VIDEO_MODEL, DEFAULT_VIDEO_RESOLUTION, DEFAULT_VIDEO_SECONDS, MediaError, generate_image, start_video,
 )
 from nodes.agent.platform_tools import _SUBMIT_FEEDBACK_PARAM, submit_feedback_impl
-from utils.capabilities import INTERFACE_PUBLISH, OWNER_MESSAGE, PHONE_NUMBERS, PURCHASES, capability
+from utils.capabilities import COORDINATOR_IMESSAGE, INTERFACE_PUBLISH, OWNER_MESSAGE, PHONE_NUMBERS, PURCHASES, capability
 from utils.tool_call_log import record_tool_call
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,8 @@ MAX_CHARS = 280
 _OVERVIEW_SECTIONS = ("attention", "runs", "agents", "credentials", "triggers", "upcoming", "notifications", "files")
 
 
-def coordinator_tool_params(*, include_whatsapp: bool = False, include_publishing: bool = False, include_phone_numbers: bool = False,
+def coordinator_tool_params(*, include_whatsapp: bool = False, include_imessage: bool = False,
+                            include_publishing: bool = False, include_phone_numbers: bool = False,
                             include_account_connect: bool = False,
                             purchase_catalog: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
     """ChatCompletionToolParam dicts — the shape Agent.create's custom_tools takes.
@@ -208,7 +209,8 @@ def coordinator_tool_params(*, include_whatsapp: bool = False, include_publishin
         ])
     # A phone-only account (include_account_connect) has no email to send to or read mail from.
     has_email = not include_account_connect
-    reach = ["auto"] + (["email"] if has_email else []) + ["web"] + (["whatsapp"] if include_whatsapp else [])
+    reach = (["auto"] + (["email"] if has_email else []) + ["web"] + (["whatsapp"] if include_whatsapp else [])
+             + (["imessage"] if include_whatsapp and include_imessage else []))
     email_hint = ("'email' comes from your own address and needs one (set_email_address). " if has_email
                   else "Email opens up once the owner connects one (connect_account). ")
     params.extend([
@@ -389,7 +391,9 @@ class CoordinatorTools:
 
     def tool_params(self) -> List[Dict[str, Any]]:
         purchases = capability(PURCHASES)
+        imessage = capability(COORDINATOR_IMESSAGE)
         params = coordinator_tool_params(include_whatsapp=self.can_whatsapp,
+                                       include_imessage=bool(imessage and imessage()),
                                        include_publishing=capability(INTERFACE_PUBLISH) is not None,
                                        include_phone_numbers=capability(PHONE_NUMBERS) is not None,
                                        include_account_connect="connect_account" in self._tools,

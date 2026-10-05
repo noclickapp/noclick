@@ -141,19 +141,25 @@ VOICE_CHANNELS = ("phone", "whatsapp", "callback", "voice")
 VOICE_STYLE = (
     "\n\nYou are speaking on a phone call. Answer in plain spoken sentences: no markdown, no bullet "
     "points, no headings, no emoji, and never read a URL or an id aloud — say what it is, and when the "
-    "caller wants it, send it to their WhatsApp with message_owner and say that you did. Two or three "
+    "caller wants it, text it to them with message_owner and say that you did. Two or three "
     "sentences unless the caller asks for detail. If the caller's words "
     "are an incomplete fragment, say 'Go on.' and nothing else. On a call, answer from what you already "
     "know when you can; reach for list_workflows or describe_workflow rather than account_overview unless "
     "the caller asks what needs attention."
 )
 
-TEXT_CHANNELS = ("whatsapp_text",)
+TEXT_CHANNELS = ("whatsapp_text", "imessage_text")
 TEXT_STYLE = (
     "\n\nYou are replying over WhatsApp text. Keep it to a few short lines: no headings, no tables, no "
     "markdown links — WhatsApp formatting only (*bold*, _italic_), a URL on its own line. A generated image "
     "or video or audio goes in as ![short caption](url): WhatsApp shows it as media. Answer from what you already "
     "know when you can."
+)
+IMESSAGE_STYLE = (
+    "\n\nYou are replying over iMessage. Keep it to a few short lines of plain text: iMessage shows no "
+    "formatting, so no markdown at all (no asterisks, headings, tables or link syntax), a URL on its own line. "
+    "A generated image or video or audio goes in as ![short caption](url): it is sent as an attachment. Answer "
+    "from what you already know when you can."
 )
 EMAIL_STYLE = (
     "\n\nYou are replying by email: the owner wrote to your own address. Write a short email body in plain "
@@ -174,7 +180,7 @@ def system_prompt_for(extra: Optional[Dict[str, Any]], note: Optional[str]) -> s
     if channel in VOICE_CHANNELS:
         prompt += VOICE_STYLE
     elif channel in TEXT_CHANNELS:
-        prompt += TEXT_STYLE
+        prompt += IMESSAGE_STYLE if channel == "imessage_text" else TEXT_STYLE
     elif channel == "email":
         prompt += EMAIL_STYLE
     if note:
@@ -195,12 +201,15 @@ async def run_coordinator_turn(
     completion: Optional[Dict[str, Any]] = None,
     attachments: Optional[list[ContentItem]] = None,
     prepare_input: Optional[Callable[[], Awaitable[tuple[str, list[ContentItem]]]]] = None,
+    user_event: Optional[Dict[str, Any]] = None,
 ) -> Optional[str | FollowupReply]:
     """Persist the user's message, run one agent turn, persist the reply.
     Frames stream to the socket ``sid`` and, when given, to ``sink`` — how a
     channel with no socket (a voice call) hears the same turn. ``extra`` is
-    stamped on the persisted events (e.g. the channel). Turns of one account
-    never interleave."""
+    stamped on the persisted events (e.g. the channel). ``user_event`` is what
+    the persisted user message shows instead of the model's input: its
+    ``message`` and fields only that event carries (the web composer's files
+    and references). Turns of one account never interleave."""
     pool = get_native_pool()
     conversation_id = conversation_id_for(user_id)
     lock = _turn_locks.setdefault(user_id, asyncio.Lock())
@@ -285,10 +294,12 @@ async def run_coordinator_turn(
                 await chat_emit(event)
 
         if not completion:
+            shown = dict(user_event or {})
+            content = shown.pop("message", text)
             await chat._persist_chat_event(
                 conversation_id=conversation_id, user_id=user_id, workflow_id=None,
-                node_id=COORDINATOR_NODE_ID, source="user", content=text,
-                model=COORDINATOR_MODEL, label="Coordinator", extra=extra,
+                node_id=COORDINATOR_NODE_ID, source="user", content=content,
+                model=COORDINATOR_MODEL, label="Coordinator", extra={**(extra or {}), **shown} or None,
             )
 
         tool_guard = asyncio.Lock()

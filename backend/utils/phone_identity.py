@@ -5,8 +5,11 @@ Twilio Verify sends it, and only Twilio's own ``approved`` verdict on the
 challenge minted for that exact user and number binds the two. On a channel
 whose provider authenticates the sender (a Meta-signed WhatsApp message),
 first contact binds the number to the account it already has, or to a new
-phone-only account (``claim_for_channel``). Caller id, a ``pending`` result
-or anything a client asserts never binds. An account holds up to
+phone-only account (``claim_for_channel``) — unless the message carries a
+one-time code the signed-in owner minted on the web (``channel_link_code``),
+which binds the number to that owner's account instead (``link_by_code``):
+the web session proves the account, the channel proves the number. Caller id,
+a ``pending`` result or anything a client asserts never binds. An account holds up to
 ``MAX_PHONES_PER_ACCOUNT`` live numbers, each one more channel to it; a live
 number belongs to one account. A rebind bumps ``link_version`` so work queued
 for the old binding can be told from the new one. Whether a number belongs to
@@ -17,15 +20,17 @@ from __future__ import annotations
 
 import logging
 import re
+import secrets
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import asyncpg
 
 from repositories.phones import PhoneRepo
 from utils.database_pool import get_native_pool
 from utils.phone_numbers import mask_e164, normalize_e164
+from utils.redis_client import get_shared_redis
 from utils.supabase_admin import SupabaseAdminClient, get_supabase_admin
 from utils.twilio_verify import PlatformVerify, TwilioVerifyError
 
@@ -37,6 +42,20 @@ MAX_STARTS_PER_NUMBER = 5              # per hour, across accounts
 MAX_PHONES_PER_ACCOUNT = 5
 MAX_CHECKS = 5                         # Twilio's own cap, refused here first so the wording is ours
 _CODE = re.compile(r"^[0-9]{4,10}$")
+
+LINK_CODE_TTL = timedelta(minutes=10)
+# Every code handed out has at least this long left: time to scan it, open the app and send. Pages swap a code out
+# with a minute to spare above this, so the one they ask to replace is always below it and comes back new.
+LINK_CODE_FRESH = timedelta(minutes=4)
+# Crockford's base32 without I, L, O, U: nothing to misread when it's typed back.
+_LINK_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+LINK_CODE = re.compile(r"\bNC-([0-9A-HJKMNP-TV-Z]{4})-([0-9A-HJKMNP-TV-Z]{4})\b", re.IGNORECASE)
+
+
+def link_code_in(text: str) -> Optional[str]:
+    """The link code a message carries, normalised ("NC-7K4Q-9PXA"), if any."""
+    match = LINK_CODE.search(text or "")
+    return f"NC-{match.group(1)}-{match.group(2)}".upper() if match else None
 
 _MESSAGES = {
     "not_configured": "Phone verification isn't set up on this instance",
@@ -51,7 +70,52 @@ _MESSAGES = {
     "too_many_phones": f"An account can link up to {MAX_PHONES_PER_ACCOUNT} numbers. Unlink one first",
     "not_linked": "That number isn't linked to this account",
     "last_way_in": "This number is the only way into this account. Add an email before unlinking it",
+    "codes_unavailable": "Linking by text isn't available on this instance",
+    "code_expired": "That link code has expired or was already used. Scan the code in NoClick again for a new one",
 }
+
+
+class LinkCodes:
+    """One-time link codes in Redis, consumed on first use. An account's live code is handed out again (to another tab,
+    or a page asking twice) while it has ``fresh`` left; after that a new one replaces it, and the old one lives out
+    its last minutes instead of being revoked, so a phone that scanned it just before the swap still links. Using
+    either spends both."""
+
+    def __init__(self, client):
+        self._client = client
+
+    @classmethod
+    def from_env(cls) -> Optional["LinkCodes"]:
+        client = get_shared_redis()
+        return cls(client) if client is not None else None
+
+    async def mint(self, user_id: str, ttl: timedelta, fresh: timedelta) -> Tuple[str, int]:
+        """(code, seconds it has left)."""
+        current = await self._client.get(f"phone:link_code_of:{user_id}")
+        if current:
+            left_ms = await self._client.pttl(f"phone:link_code:{current.decode()}")
+            if left_ms > fresh.total_seconds() * 1000:
+                return current.decode(), left_ms // 1000
+            if left_ms > 0:
+                await self._client.set(f"phone:link_code_prev_of:{user_id}", current, px=left_ms)
+        code = "NC-" + "-".join("".join(secrets.choice(_LINK_ALPHABET) for _ in range(4)) for _ in range(2))
+        seconds = int(ttl.total_seconds())
+        await self._client.set(f"phone:link_code:{code}", user_id, ex=seconds)
+        await self._client.set(f"phone:link_code_of:{user_id}", code, ex=seconds)
+        return code, seconds
+
+    async def take(self, code: str) -> Optional[str]:
+        """The account a code was minted for; the code, and the other one the account may hold, are gone after this,
+        whatever the outcome."""
+        user_id = await self._client.getdel(f"phone:link_code:{code}")
+        if user_id is None:
+            return None
+        owner = user_id.decode()
+        for pointer in (f"phone:link_code_of:{owner}", f"phone:link_code_prev_of:{owner}"):
+            other = await self._client.getdel(pointer)
+            if other and other.decode() != code:
+                await self._client.delete(f"phone:link_code:{other.decode()}")
+        return owner
 
 
 @dataclass(frozen=True)
@@ -74,10 +138,12 @@ class PhoneIdentity:
     def __init__(
         self, repo: PhoneRepo, verify: Optional[PlatformVerify],
         admin: Callable[[], SupabaseAdminClient] = get_supabase_admin,
+        codes: Optional[LinkCodes] = None,
     ):
         self.repo = repo
         self.verify = verify
         self._admin = admin
+        self.codes = codes
 
     @staticmethod
     def _now() -> datetime:
@@ -249,6 +315,47 @@ class PhoneIdentity:
         logger.info("phone_claimed user=%s phone=%s source=%s created=%s", user_id, mask_e164(phone_e164), source, created)
         return ChannelClaim(user_id=user_id, created=created)
 
+    async def channel_link_code(self, user_id: str) -> Dict[str, Any]:
+        """A one-time code for the signed-in owner to text NoClick from their
+        phone, with the seconds it has left (a count, so a client's clock can't
+        skew it)."""
+        if self.codes is None:
+            raise PhoneLinkError("codes_unavailable")
+        if len(await self.repo.list_active_phones(user_id)) >= MAX_PHONES_PER_ACCOUNT:
+            raise PhoneLinkError("too_many_phones")
+        code, left = await self.codes.mint(user_id, LINK_CODE_TTL, LINK_CODE_FRESH)
+        return {"code": code, "expires_in": left}
+
+    async def link_by_code(self, phone_e164: str, code: str, *, source: str) -> Dict[str, Any]:
+        """Bind a channel-authenticated number to the account that minted
+        ``code``, recorded as reached over ``source`` ("whatsapp", "imessage").
+        A phone-only account the number already made folds in, as a Verify
+        approval does; one with an email keeps its number."""
+        if self.codes is None:
+            raise PhoneLinkError("codes_unavailable")
+        user_id = await self.codes.take(code)
+        if user_id is None:
+            raise PhoneLinkError("code_expired")
+        holder = await self.repo.get_user_by_phone(phone_e164)
+        already = holder is not None and str(holder["user_id"]) == user_id
+        if holder is not None and not already:
+            if await self.repo.account_email(str(holder["user_id"])):
+                raise PhoneLinkError("linked_elsewhere")
+            await self.repo.absorb(source=str(holder["user_id"]), target=user_id)
+            logger.info("phone_only_account_absorbed source=%s target=%s", holder["user_id"], user_id)
+        linked = {p["phone_e164"] for p in await self.repo.list_active_phones(user_id)}
+        if phone_e164 not in linked:
+            if len(linked) >= MAX_PHONES_PER_ACCOUNT:
+                raise PhoneLinkError("too_many_phones")
+            async with self.repo.claiming(phone_e164) as conn:
+                holder = await self.repo.get_user_by_phone(phone_e164, conn=conn)
+                if holder is not None and str(holder["user_id"]) != user_id:
+                    raise PhoneLinkError("linked_elsewhere")
+                if holder is None:
+                    await self.repo.bind_channel(conn, user_id=user_id, phone_e164=phone_e164, source=source)
+            logger.info("phone_linked_by_code user=%s phone=%s", user_id, mask_e164(phone_e164))
+        return {"user_id": user_id, "phone": phone_e164, "already": already}
+
     @staticmethod
     def _from_provider(exc: TwilioVerifyError) -> PhoneLinkError:
         if exc.kind == "provider":
@@ -258,4 +365,4 @@ class PhoneIdentity:
 
 
 def default_service() -> PhoneIdentity:
-    return PhoneIdentity(PhoneRepo(get_native_pool()), PlatformVerify.from_env())
+    return PhoneIdentity(PhoneRepo(get_native_pool()), PlatformVerify.from_env(), codes=LinkCodes.from_env())

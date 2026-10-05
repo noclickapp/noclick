@@ -434,3 +434,13 @@ def test_platform_verify_needs_all_three_env_vars(monkeypatch):
     assert PlatformVerify.from_env() is None
     monkeypatch.setenv("TWILIO_VERIFY_SERVICE_SID", "VA1")
     assert PlatformVerify.is_configured()
+
+
+def test_a_link_code_is_found_in_the_drafted_message_however_it_was_typed():
+    from utils.phone_identity import link_code_in
+
+    assert link_code_in("Link this WhatsApp to my NoClick account: NC-7K4Q-9PXA") == "NC-7K4Q-9PXA"
+    assert link_code_in("nc-7k4q-9pxa please") == "NC-7K4Q-9PXA"
+    assert link_code_in("my code is NC-7K4Q") is None
+    assert link_code_in("NC-7K4Q-9PXI") is None  # I is not in the alphabet
+    assert link_code_in("") is None

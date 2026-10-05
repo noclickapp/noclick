@@ -30,10 +30,12 @@ from utils import feature_gates
 from wss.receiver.client_events import (
     CoordinatorOpenRequest, CoordinatorResetRequest, CoordinatorSendRequest,
     CoordinatorMemoriesListRequest, CoordinatorMemoryGetRequest, CoordinatorMemorySaveRequest,
-    CoordinatorMemoryDeleteRequest,
+    CoordinatorMemoryDeleteRequest, CoordinatorAttachmentUploadUrlRequest, CoordinatorAttachmentsListRequest,
+    CoordinatorReference,
 )
 from wss.sender import send_event
 from wss.sender.events import ChatMessageEvent
+from wss.sender.schema import ContentItem, ImageUrl
 
 USER = "11111111-1111-1111-1111-111111111111"
 ORG = "22222222-2222-2222-2222-222222222222"
@@ -395,6 +397,20 @@ async def test_turn_sink_hears_every_frame_and_extra_stamps_both_persisted_event
     assert FakeChat.persisted[1][4] == {"channel": "voice", "call_sid": "CA1"}  # the reply's emit callback
 
 
+async def test_a_web_turn_shows_the_typed_text_and_the_model_reads_the_files(turn_seams):
+    image = ContentItem(type="image_url", image_url=ImageUrl(url="https://assets.example/a.png"))
+
+    async def prepare_input():
+        return "look\n\n[image a.png; attachment_id=A]", [image]
+    shown = {"image_urls": ["https://assets.example/a.png"],
+             "references": [{"kind": "automation", "id": WORKFLOW, "label": "Digest"}]}
+    await coordinator.run_coordinator_turn(sio=object(), sid="s", user_id=USER, user_email=None, text="look",
+                                           prepare_input=prepare_input, user_event={"message": "look", **shown})
+    assert FakeAgent.calls[0] == ("start", USER, "look\n\n[image a.png; attachment_id=A]")
+    assert FakeChat.persisted[0] == ("user", CID, COORDINATOR_NODE_ID, "look", shown)
+    assert FakeChat.persisted[1][4] is None  # the reply isn't stamped with the user's files
+
+
 # ── the socket handler ───────────────────────────────────────────────────────
 
 class TestCoordinatorHandler(BaseHandlerTest):
@@ -410,6 +426,7 @@ class TestCoordinatorHandler(BaseHandlerTest):
         self.turn = AsyncMock()
         monkeypatch.setattr(coordinator, "run_coordinator_turn", self.turn)
         monkeypatch.setattr("wss.handlers.coordinator_handler.plan_allows_turn", AsyncMock(return_value=(True, None)))
+        monkeypatch.setattr("wss.handlers.coordinator_handler.get_user_org_context", AsyncMock(return_value=ORG))
 
     async def _send(self, frontend_sio, sid, request):
         await send_event(frontend_sio, sid, request)
@@ -419,8 +436,17 @@ class TestCoordinatorHandler(BaseHandlerTest):
 
     @pytest.mark.asyncio
     async def test_open_send_and_reset_over_the_socket(self, frontend_sio, sid, monkeypatch):
+        monkeypatch.delitem(capabilities._providers, capabilities.COORDINATOR_NUMBER, raising=False)
         opened = await self._send(frontend_sio, sid, CoordinatorOpenRequest(request_id="o1"))
-        assert opened["data"] == {"conversation_id": "coordinator:uuid-test-user", "model": coordinator.COORDINATOR_MODEL}
+        assert opened["data"] == {
+            "conversation_id": "coordinator:uuid-test-user", "model": coordinator.COORDINATOR_MODEL,
+            "reach": {"phone": None, "imessage": None, "email": None},
+        }
+        monkeypatch.setitem(capabilities._providers, capabilities.COORDINATOR_NUMBER, lambda: "+14242421064")
+        monkeypatch.setitem(capabilities._providers, capabilities.COORDINATOR_IMESSAGE, lambda: "+14245550123")
+        opened = await self._send(frontend_sio, sid, CoordinatorOpenRequest(request_id="o2"))
+        assert opened["data"]["reach"]["phone"] == "+14242421064"
+        assert opened["data"]["reach"]["imessage"] == "+14245550123"
 
         sent = await self._send(frontend_sio, sid, CoordinatorSendRequest(request_id="s1", text="  what's failing?  "))
         assert sent["data"] == {"ok": True}
@@ -433,6 +459,43 @@ class TestCoordinatorHandler(BaseHandlerTest):
         monkeypatch.setattr("repositories.coordinator_wakeups.CoordinatorWakeupRepo.reset", AsyncMock(return_value=True))
         reset = await self._send(frontend_sio, sid, CoordinatorResetRequest(request_id="r1"))
         assert reset["data"] == {"reset": True}
+
+    @pytest.mark.asyncio
+    async def test_files_and_references_ride_a_send_and_are_checked_before_the_turn(self, frontend_sio, sid, monkeypatch):
+        prepare, shown = AsyncMock(), {"message": "", "image_urls": ["https://assets.example/a.png"]}
+        checked = AsyncMock(return_value=(prepare, shown))
+        monkeypatch.setattr("wss.handlers.coordinator_handler.web_turn_input", checked)
+        refs = [CoordinatorReference(kind="automation", id=WORKFLOW)]
+        sent = await self._send(frontend_sio, sid, CoordinatorSendRequest(
+            request_id="f1", text="  ", attachment_ids=["A"], references=refs))
+        assert sent["data"] == {"ok": True}
+        assert checked.await_args.kwargs == {"user_id": "uuid-test-user", "text": "", "attachment_ids": ["A"], "references": refs}
+        assert self.turn.await_args.kwargs["prepare_input"] is prepare and self.turn.await_args.kwargs["user_event"] is shown
+
+        self.turn.reset_mock()
+        checked.side_effect = ValueError("“late.txt” hasn't finished uploading. Attach it again.")
+        refused = await self._send(frontend_sio, sid, CoordinatorSendRequest(request_id="f2", text="hi", attachment_ids=["B"]))
+        assert "hasn't finished uploading" in refused["error"]
+        empty = await self._send(frontend_sio, sid, CoordinatorSendRequest(request_id="f3", text=" "))
+        assert empty["error"] == "message is empty"
+        self.turn.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_uploads_and_the_file_list_are_the_session_owners(self, frontend_sio, sid, monkeypatch):
+        from coder.coordinator import attachments
+
+        start = AsyncMock(return_value={"attachment_id": "A", "upload_url": "https://r2/put", "url": "https://cdn/a"})
+        listing = AsyncMock(return_value={"attachments": []})
+        monkeypatch.setattr(attachments, "start_upload", start)
+        monkeypatch.setattr(attachments, "list_account_attachments", listing)
+        reserved = await self._send(frontend_sio, sid, CoordinatorAttachmentUploadUrlRequest(
+            request_id="u1", name="a.png", mime_type="image/png", size_bytes=3))
+        assert reserved["data"] == {"attachment_id": "A", "upload_url": "https://r2/put", "url": "https://cdn/a"}
+        assert start.await_args.kwargs == {"user_id": "uuid-test-user", "organization_id": ORG,
+                                           "name": "a.png", "mime_type": "image/png", "size_bytes": 3}
+        listed = await self._send(frontend_sio, sid, CoordinatorAttachmentsListRequest(request_id="l1", query="inv"))
+        assert listed["data"] == {"attachments": []}
+        assert listing.await_args.args[1:] == ("uuid-test-user",) and listing.await_args.kwargs == {"query": "inv", "limit": 30}
 
     @pytest.mark.asyncio
     async def test_plan_cap_blocks_a_send_before_the_turn(self, frontend_sio, sid, monkeypatch):
@@ -451,7 +514,9 @@ class TestCoordinatorHandler(BaseHandlerTest):
                         CoordinatorMemoryGetRequest(request_id="g4", memory_id=WORKFLOW),
                         CoordinatorMemorySaveRequest(request_id="g5", memory={
                             "name": "pref", "description": "When to read", "memory_type": "user", "content": "Details"}),
-                        CoordinatorMemoryDeleteRequest(request_id="g6", memory_id=WORKFLOW, expected_version=1)):
+                        CoordinatorMemoryDeleteRequest(request_id="g6", memory_id=WORKFLOW, expected_version=1),
+                        CoordinatorAttachmentUploadUrlRequest(request_id="g7", name="a.png", mime_type="image/png", size_bytes=3),
+                        CoordinatorAttachmentsListRequest(request_id="g8")):
             response = await self._send(frontend_sio, sid, request)
             assert response["data"] == {"kind": "gated"} and "available on your account" in response["error"], request
         self.turn.assert_not_awaited()
@@ -541,7 +606,8 @@ async def test_message_owner_reaches_the_owner_on_the_channel_it_resolves(own_ca
     t = tools()
     out = await t.execute("message_owner", {"text": "  Your link  ", "link": "https://noclick.com/b/abc"})
     assert out["success"] is True and out["channel"] == "whatsapp"
-    send.assert_awaited_once_with(t.pool, USER, "Your link", link="https://noclick.com/b/abc")
+    # The resolved app is named, so the hosted sender knows whether it's WhatsApp or iMessage.
+    send.assert_awaited_once_with(t.pool, USER, "Your link", link="https://noclick.com/b/abc", channel="whatsapp")
     assert (await t.execute("message_owner", {"text": "   "}))["success"] is False
 
 

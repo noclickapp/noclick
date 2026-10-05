@@ -285,6 +285,11 @@ class PhoneLinkCheckRequest(ClientEventBase):
     code: str = Field(..., description="The code the user received")
 
 
+class PhoneLinkCodeRequest(ClientEventBase):
+    """Mint a one-time code that links the phone it is sent from on WhatsApp to this account"""
+    event_name: ClassVar[str] = "phone:link:code"
+
+
 class PhoneUnlinkRequest(ClientEventBase):
     """Unlink one of the user's numbers"""
     event_name: ClassVar[str] = "phone:unlink"
@@ -298,11 +303,36 @@ class CoordinatorOpenRequest(ClientEventBase):
     event_name: ClassVar[str] = "coordinator:open"
 
 
+class CoordinatorReference(BaseModel):
+    """Something the owner pointed the coordinator at from the composer"""
+    kind: Literal["automation", "account"] = Field(..., description="An automation (workflow) or a connected account (credential)")
+    id: str = Field(..., min_length=36, max_length=36, description="The workflow or credential id")
+
+
 class CoordinatorSendRequest(ClientEventBase):
     """Send the coordinator a message; the reply streams as chat:message frames"""
     event_name: ClassVar[str] = "coordinator:send"
 
-    text: str = Field(..., min_length=1, max_length=8000, description="The user's message")
+    text: str = Field("", max_length=8000, description="The user's message; may be empty when it carries attachments or references")
+    attachment_ids: List[str] = Field(default_factory=list, description="Account attachments sent with it (up to 10): uploaded through coordinator:attachment:upload_url or picked from coordinator:attachments:list")
+    references: List[CoordinatorReference] = Field(default_factory=list, description="Automations and accounts the message points at (up to 10)")
+
+
+class CoordinatorAttachmentUploadUrlRequest(ClientEventBase):
+    """Reserve an account attachment for the composer and get a presigned PUT for its bytes"""
+    event_name: ClassVar[str] = "coordinator:attachment:upload_url"
+
+    name: str = Field(..., min_length=1, max_length=255, description="The file's name")
+    mime_type: str = Field(..., min_length=1, max_length=255, description="The file's type; the PUT must send exactly this Content-Type")
+    size_bytes: int = Field(..., ge=1, description="The file's exact size in bytes; the PUT must send exactly this many")
+
+
+class CoordinatorAttachmentsListRequest(ClientEventBase):
+    """The account's attachments sent so far on any channel, newest first"""
+    event_name: ClassVar[str] = "coordinator:attachments:list"
+
+    query: str = Field("", max_length=200, description="Only files whose name contains this")
+    limit: int = Field(30, ge=1, le=100)
 
 
 class CoordinatorResetRequest(ClientEventBase):
@@ -3156,6 +3186,13 @@ class DashboardOverviewRequest(ClientEventBase):
     event_name: ClassVar[str] = "dashboard:overview"
 
     days: int = Field(14, ge=1, le=90, description="Run-history window in days")
+
+
+class DashboardAttentionRequest(ClientEventBase):
+    """How many things wait on the caller in their workspace: the overview's
+    attention list, counted, without its runs, agents or files. Feeds the
+    sidebar badge and the home's line, which every page shows."""
+    event_name: ClassVar[str] = "dashboard:attention"
 
 
 class DashboardNotificationsReadRequest(ClientEventBase):

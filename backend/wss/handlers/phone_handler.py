@@ -15,6 +15,7 @@ from utils.feature_gates import FeatureNotAvailable, require_feature
 from utils.phone_identity import PhoneIdentity, PhoneLinkError, default_service
 from wss.receiver.client_events import (
     PhoneLinkCheckRequest,
+    PhoneLinkCodeRequest,
     PhoneLinkStartRequest,
     PhoneStatusRequest,
     PhoneUnlinkRequest,
@@ -41,6 +42,7 @@ class PhoneHandler(SocketIOHandler):
             "phone:status": self.handle_status,
             "phone:link:start": self.handle_link_start,
             "phone:link:check": self.handle_link_check,
+            "phone:link:code": self.handle_link_code,
             "phone:unlink": self.handle_unlink,
         }
 
@@ -82,6 +84,9 @@ class PhoneHandler(SocketIOHandler):
         await self._respond(
             sid, request.request_id,
             lambda svc, uid: svc.check_link(uid, request.challenge_id, request.code))
+
+    async def handle_link_code(self, sid: str, request: PhoneLinkCodeRequest) -> None:
+        await self._respond(sid, request.request_id, lambda svc, uid: svc.channel_link_code(uid))
 
     async def handle_unlink(self, sid: str, request: PhoneUnlinkRequest) -> None:
         async def op(svc: PhoneIdentity, uid: str) -> Dict[str, Any]:

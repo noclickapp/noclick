@@ -5,7 +5,10 @@ what needs the user (approvals, builder questions, agent proposals, bridge
 links, credential requests, dead credentials, broken triggers), runs, agents,
 files, credentials, triggers, upcoming runs and notifications. Sections are
 gathered concurrently and isolated — one failing query empties its section and
-reports under ``errors`` instead of blanking the whole tab. SQL lives in
+reports under ``errors`` instead of blanking the whole tab.
+``dashboard:attention`` returns the first of those alone, from the same sources:
+the items the Needs you page asks one at a time, and their count for the badge
+and the home's line. SQL lives in
 ``repositories/dashboard.py``; this file is composition only. The payload is
 camelCase on purpose: it IS the frontend's ``DashboardData`` contract
 (``frontend/app/components/dashboard/types.ts``).
@@ -17,8 +20,9 @@ import asyncio
 import json
 import logging
 import uuid as uuid_module
+from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from nodes.agent.config.providers import WRAPPER_ID_BY_MODEL_TYPE
 from repositories.conversation import ConversationRepo
@@ -40,7 +44,7 @@ from utils.graph_nodes import (
     node_type,
     workflow_marks,
 )
-from wss.receiver.client_events import DashboardNotificationsReadRequest, DashboardOverviewRequest
+from wss.receiver.client_events import DashboardAttentionRequest, DashboardNotificationsReadRequest, DashboardOverviewRequest
 from wss.schema import SocketIOHandler
 from wss.sender import ResponseEvent, send_event
 
@@ -131,6 +135,7 @@ class DashboardHandler(DatabasePoolMixin, SocketIOHandler):
     def get_events(self) -> Dict[str, Callable]:
         return {
             "dashboard:overview": self.handle_overview,
+            "dashboard:attention": self.handle_attention,
             "dashboard:notifications:read": self.handle_notifications_read,
         }
 
@@ -147,20 +152,34 @@ class DashboardHandler(DatabasePoolMixin, SocketIOHandler):
     # dashboard:overview
     # ------------------------------------------------------------------
 
-    async def handle_overview(self, sid: str, request: DashboardOverviewRequest) -> None:
+    async def _respond(self, sid: str, request_id: Optional[str], name: str, build: Callable[[Any, str], Awaitable[Any]]) -> None:
+        """Answer one request with ``build(pool, user_id)`` for the caller."""
         try:
             user_id, pool = await self._user_and_pool(sid)
             if not user_id:
-                await send_event(self.sio, sid, ResponseEvent(request_id=request.request_id, data=None, error="User not authenticated"))
+                await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data=None, error="User not authenticated"))
                 return
             if pool is None:
-                await send_event(self.sio, sid, ResponseEvent(request_id=request.request_id, data=None, error="Database connection not available"))
+                await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data=None, error="Database connection not available"))
                 return
-            payload = await build_overview(pool, user_id, days=request.days)
-            await send_event(self.sio, sid, ResponseEvent(request_id=request.request_id, data=payload))
+            await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data=await build(pool, user_id)))
         except Exception as e:
-            logger.error(f"[DashboardHandler] overview failed: {e}", exc_info=True)
-            await send_event(self.sio, sid, ResponseEvent(request_id=request.request_id, data=None, error=str(e)))
+            logger.error(f"[DashboardHandler] {name} failed: {e}", exc_info=True)
+            await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data=None, error=str(e)))
+
+    async def handle_overview(self, sid: str, request: DashboardOverviewRequest) -> None:
+        await self._respond(sid, request.request_id, "overview", lambda pool, user_id: build_overview(pool, user_id, days=request.days))
+
+    # ------------------------------------------------------------------
+    # dashboard:attention
+    # ------------------------------------------------------------------
+
+    async def handle_attention(self, sid: str, request: DashboardAttentionRequest) -> None:
+        async def attention(pool, user_id: str) -> Dict[str, Any]:
+            items = await build_attention(pool, user_id)
+            return {"count": len(items), "items": items}
+
+        await self._respond(sid, request.request_id, "attention", attention)
 
     # ------------------------------------------------------------------
     # dashboard:notifications:read
@@ -183,18 +202,15 @@ class DashboardHandler(DatabasePoolMixin, SocketIOHandler):
 # Composition — a module-level function so tests can drive it without sockets.
 # ----------------------------------------------------------------------
 
-async def build_overview(pool, user_id: str, *, days: int = 14) -> Dict[str, Any]:
-    repo = DashboardRepo(pool)
+async def _scope(pool, user_id: str) -> Tuple[DashboardRepo, FeedRepo, Optional[str], Optional[uuid_module.UUID]]:
     feed = FeedRepo(pool)
     org_id = await feed.get_primary_org_id(user_id)
-    org_uuid = uuid_module.UUID(org_id) if org_id else None
+    return DashboardRepo(pool), feed, org_id, (uuid_module.UUID(org_id) if org_id else None)
 
-    identity, wf_rows = await asyncio.gather(
-        repo.workspace_identity(user_id, org_uuid),
-        repo.list_workflows(user_id, org_uuid),
-    )
-    workflows = _Workflows(wf_rows)
-    errors: Dict[str, str] = {}
+
+def _isolating(errors: Dict[str, str]) -> Callable[[str, Awaitable[Any]], Awaitable[Any]]:
+    """A section runner: a failing query yields None and is reported under
+    ``errors`` instead of blanking everything gathered beside it."""
 
     async def section(name: str, coro):
         try:
@@ -204,31 +220,97 @@ async def build_overview(pool, user_id: str, *, days: int = 14) -> Dict[str, Any
             errors[name] = str(e)
             return None
 
-    # Scope is resolved once, in list_workflows; the per-workflow queries take
-    # the ids so each stays on its own table's (workflow_id, …) index.
-    wf_ids = [str(r["id"]) for r in wf_rows]
-    (
-        approvals, asks, prompts, bridge_links, cred_requests, credentials,
-        runs_window, recent, delayed, webhook_rows, subscription_rows,
-        tool_calls, sandboxes, resources, conversations, notifications,
-    ) = await asyncio.gather(
+    return section
+
+
+@dataclass
+class _AttentionInputs:
+    """Every source of something waiting on the user, as gathered."""
+
+    approvals: Any
+    asks: Any
+    prompts: Any
+    bridge_links: Any
+    cred_requests: Any
+    credentials: Any
+    webhook_rows: Any
+    subscription_rows: Any
+
+
+def _attention_sources(pool, repo: DashboardRepo, feed: FeedRepo, user_id: str, org_id, org_uuid, wf_ids: List[str], section) -> List[Awaitable[Any]]:
+    """The queries behind _AttentionInputs, in its field order."""
+    return [
         section("approvals", feed.list_approvals(user_id=user_id, org_uuid=org_uuid)),
         section("builder_asks", ConversationRepo(pool).list_pending_asks(user_id, None, limit=50)),
         section("builder_prompts", repo.unanswered_builder_prompts(user_id)),
         section("bridge_links", repo.pending_bridge_links(user_id)),
         section("credential_requests", CredentialsRepo(pool).list_credential_requests(user_id)),
         section("credentials", CredentialsRepo(pool).list_accessible(user_id, org_id)),
+        section("webhooks", repo.webhook_rows(wf_ids)),
+        section("subscriptions", repo.subscription_rows(wf_ids)),
+    ]
+
+
+async def _attention_from(pool, workflows: _Workflows, inputs: _AttentionInputs, section) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, Any]]:
+    """(attention, triggers, credential health) from the gathered sources."""
+    health = await section("credential_health", _credential_health(pool, inputs.credentials or [])) or {}
+    triggers, broken_triggers = _compose_triggers(workflows, inputs.webhook_rows or [], inputs.subscription_rows or [])
+    attention = _compose_attention(
+        workflows,
+        inputs.approvals[0] if inputs.approvals else [],
+        inputs.asks or [],
+        inputs.prompts or [],
+        inputs.bridge_links or [],
+        inputs.cred_requests or [],
+        inputs.credentials or [],
+        health,
+        broken_triggers,
+    )
+    return attention, triggers, health
+
+
+async def build_attention(pool, user_id: str) -> List[Dict[str, Any]]:
+    """What needs the user and nothing else: the overview's attention list
+    without its runs, agents, files or alarm fan-out."""
+    repo, feed, org_id, org_uuid = await _scope(pool, user_id)
+    wf_rows = await repo.list_workflows(user_id, org_uuid)
+    section = _isolating({})
+    sources = _attention_sources(pool, repo, feed, user_id, org_id, org_uuid, [str(r["id"]) for r in wf_rows], section)
+    inputs = _AttentionInputs(*await asyncio.gather(*sources))
+    attention, _, _ = await _attention_from(pool, _Workflows(wf_rows), inputs, section)
+    return attention
+
+
+async def build_overview(pool, user_id: str, *, days: int = 14) -> Dict[str, Any]:
+    repo, feed, org_id, org_uuid = await _scope(pool, user_id)
+
+    identity, wf_rows = await asyncio.gather(
+        repo.workspace_identity(user_id, org_uuid),
+        repo.list_workflows(user_id, org_uuid),
+    )
+    workflows = _Workflows(wf_rows)
+    errors: Dict[str, str] = {}
+    section = _isolating(errors)
+
+    # Scope is resolved once, in list_workflows; the per-workflow queries take
+    # the ids so each stays on its own table's (workflow_id, …) index.
+    wf_ids = [str(r["id"]) for r in wf_rows]
+    sources = _attention_sources(pool, repo, feed, user_id, org_id, org_uuid, wf_ids, section)
+    gathered = await asyncio.gather(
+        *sources,
         section("runs", repo.runs_window(wf_ids, days=days)),
         section("recent_runs", repo.recent_runs(wf_ids, days=days)),
         section("awaiting_delay", repo.awaiting_delay(wf_ids)),
-        section("webhooks", repo.webhook_rows(wf_ids)),
-        section("subscriptions", repo.subscription_rows(wf_ids)),
         section("tool_calls", feed.list_tool_calls(user_id=user_id, org_uuid=org_uuid, limit=120)),
         section("sandboxes", _list_sandboxes(user_id)),
         section("resources", repo.resources(wf_ids, user_id=user_id)),
         section("conversations", repo.agent_conversations(user_id, wf_ids)),
         section("notifications", repo.notifications(user_id)),
     )
+    inputs = _AttentionInputs(*gathered[: len(sources)])
+    runs_window, recent, delayed, tool_calls, sandboxes, resources, conversations, notifications = gathered[len(sources):]
+    approvals = inputs.approvals
+    credentials = inputs.credentials
     run_days = runs_window["by_day"] if runs_window else None
     by_workflow = runs_window["by_workflow"] if runs_window else None
 
@@ -256,21 +338,8 @@ async def build_overview(pool, user_id: str, *, days: int = 14) -> Dict[str, Any
             if wf is not None and not wf.get("name") and row.workflow_name:
                 wf["name"] = row.workflow_name
 
-    health = await section("credential_health", _credential_health(pool, credentials or []))
+    attention, triggers, health = await _attention_from(pool, workflows, inputs, section)
     upcoming_alarms = await section("alarms", _alarm_fanout(workflows))
-
-    triggers, broken_triggers = _compose_triggers(workflows, webhook_rows or [], subscription_rows or [])
-    attention = _compose_attention(
-        workflows,
-        approvals[0] if approvals else [],
-        asks or [],
-        prompts or [],
-        bridge_links or [],
-        cred_requests or [],
-        credentials or [],
-        health or {},
-        broken_triggers,
-    )
     turns = await _compose_turns(pool, workflows, tool_calls) if tool_calls else []
 
     return {
@@ -303,7 +372,7 @@ async def build_overview(pool, user_id: str, *, days: int = 14) -> Dict[str, Any
         },
         "files": _compose_files(workflows, resources or []),
         "workspaces": _compose_workspaces(workflows, conversations or []),
-        "credentials": _compose_credentials(workflows, credentials or [], health or {}),
+        "credentials": _compose_credentials(workflows, credentials or [], health),
         "triggers": triggers,
         "upcoming": _compose_upcoming(workflows, delayed or [], upcoming_alarms or []),
         "notifications": _compose_notifications(workflows, notifications[0] if notifications else []),

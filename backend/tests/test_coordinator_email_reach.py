@@ -108,3 +108,31 @@ async def test_auto_is_the_last_used_channel_and_a_named_channel_wins(owner, mon
     assert out == {"success": True, "channel": "web"}
     events = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id = $1", f"coordinator:{user_id}")
     assert events[-1]["message"] == "Heads up" and events[-1]["notification"] is True
+
+
+async def test_the_phone_app_is_the_one_the_owner_last_texted_on(owner, monkeypatch):
+    from utils import capabilities
+
+    pool, user_id, _ = owner
+    assert await reach.last_phone_app(pool, user_id) is None
+    assert await reach.phone_text_channel(pool, user_id) == "whatsapp_text"  # WhatsApp until they text otherwise
+    await pool.execute(
+        "INSERT INTO conversations (conversation_id, user_id, events) VALUES ($1, $2::uuid, $3)",
+        f"coordinator:{user_id}", user_id,
+        [{"role": "user", "message": "hi", "channel": "whatsapp_text"},
+         {"role": "user", "message": "from my iPhone", "channel": "imessage_text"},
+         {"role": "user", "message": "back at my desk", "channel": "web"}])
+    # The web message after it is not a phone: follow-ups for the phone still go over iMessage.
+    assert await reach.last_phone_app(pool, user_id) == "imessage"
+    assert await reach.phone_text_channel(pool, user_id) == "imessage_text"
+    assert await reach.resolve_channel(pool, user_id) == "web"
+
+    sent = []
+
+    async def send(pool, user_id, text, *, link=None, channel=None):
+        sent.append((text, channel))
+        return {"success": True}
+
+    monkeypatch.setitem(capabilities._providers, capabilities.OWNER_MESSAGE, send)
+    out = await reach.reach_owner(pool, user_id, "Your build finished", channel="imessage")
+    assert out == {"success": True, "channel": "imessage"} and sent == [("Your build finished", "imessage")]

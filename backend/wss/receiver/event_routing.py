@@ -133,11 +133,14 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         "phone:status": Handler.PHONE,
         "phone:link:start": Handler.PHONE,
         "phone:link:check": Handler.PHONE,
+        "phone:link:code": Handler.PHONE,
         "phone:unlink": Handler.PHONE,
 
         # Account coordinator
         "coordinator:open": Handler.COORDINATOR,
         "coordinator:send": Handler.COORDINATOR,
+        "coordinator:attachment:upload_url": Handler.COORDINATOR,
+        "coordinator:attachments:list": Handler.COORDINATOR,
         "coordinator:reset": Handler.COORDINATOR,
         "coordinator:memories:list": Handler.COORDINATOR,
         "coordinator:memories:get": Handler.COORDINATOR,
@@ -611,6 +614,7 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
 
         # Dashboard tab
         "dashboard:overview": Handler.DASHBOARD,
+        "dashboard:attention": Handler.DASHBOARD,
         "dashboard:notifications:read": Handler.DASHBOARD,
 
         # Publishing events

@@ -88,9 +88,11 @@ BUILDER_ASK_NOTIFY = "builder.ask_notify"
 BUILDER_RESULT_NOTIFY = "builder.result_notify"
 
 # Message the account owner on a channel of their own the engine does not
-# have (a WhatsApp number): async (pool, user_id, text, *, link=None) ->
-# {"success", "channel"} or {"success": False, "error"}. Without one the
-# coordinator has no message_owner tool.
+# have (their phone, over WhatsApp or iMessage): async (pool, user_id, text, *,
+# link=None, channel=None) -> {"success", "channel"} or {"success": False,
+# "error"}. ``channel`` ("whatsapp" | "imessage") names the app; None means the
+# one the owner last texted on. Without one the coordinator has no
+# message_owner tool.
 OWNER_MESSAGE = "owner.message"
 
 # Phone numbers a workflow can own: search(country, area_code, limit, *, contains=None) -> list,
@@ -229,6 +231,16 @@ TURN_EVENTS = "agent.turn_events"
 # name, logo_url, color and support_url, or None). ``link`` is
 # ``SharedAgentLinkRepo.load_for_visit``'s row.
 SHARED_AGENT_TURNS = "agent.shared_turns"
+
+# The number the account coordinator answers on, WhatsApp texts and calls
+# alike: () -> E.164 str, or None when this deployment has none. Without one,
+# the web offers no phone channel.
+COORDINATOR_NUMBER = "coordinator.number"
+
+# The handle the coordinator answers iMessages on: () -> E.164 str, or None
+# when this deployment has no iMessage line. Without one, the web offers no
+# iMessage channel and message_owner can't send over iMessage.
+COORDINATOR_IMESSAGE = "coordinator.imessage"
 
 _providers: Dict[str, Any] = {}
 

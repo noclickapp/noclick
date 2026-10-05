@@ -1,20 +1,31 @@
 """
 Account coordinator (web transport).
 
-coordinator:open hands the client the account's one conversation id,
-coordinator:send runs a turn that streams the usual chat:message frames, and
-coordinator:reset starts the thread over. Gated on the coordinator rollout;
-the turn itself lives in coder/coordinator/agent.py so channels can share it.
+coordinator:open hands the client the account's one conversation id and
+the other ways into it (the number it answers on, its email address),
+coordinator:send runs a turn that streams the usual chat:message frames (with
+any files and references the composer added), and coordinator:reset starts the
+thread over. coordinator:attachment:upload_url reserves a file the composer
+uploads straight to storage; coordinator:attachments:list offers the ones sent
+before. Gated on the coordinator rollout; the turn itself lives in
+coder/coordinator/agent.py so channels can share it.
 """
 
 import logging
 from typing import Any, Awaitable, Callable, Dict
 
 from coder.coordinator import agent as coordinator
+from coder.coordinator import attachments
+from coder.coordinator.email_channel import coordinator_address
+from coder.coordinator.web_input import web_turn_input
 from repositories.coordinator_memories import CoordinatorMemoryRepo, MemoryConflict
+from utils.capabilities import COORDINATOR_IMESSAGE, COORDINATOR_NUMBER, capability
 from utils.database_pool import DatabasePoolMixin
+from wss.handlers.workflow_handler import get_user_org_context
 from utils.feature_gates import FeatureNotAvailable, require_feature
 from wss.receiver.client_events import (
+    CoordinatorAttachmentsListRequest,
+    CoordinatorAttachmentUploadUrlRequest,
     CoordinatorMemoriesListRequest,
     CoordinatorMemoryGetRequest,
     CoordinatorMemorySaveRequest,
@@ -46,6 +57,8 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
         return {
             "coordinator:open": self.handle_open,
             "coordinator:send": self.handle_send,
+            "coordinator:attachment:upload_url": self.handle_attachment_upload_url,
+            "coordinator:attachments:list": self.handle_attachments_list,
             "coordinator:reset": self.handle_reset,
             "coordinator:memories:list": self.handle_memories_list,
             "coordinator:memories:get": self.handle_memory_get,
@@ -77,21 +90,57 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
 
     async def handle_open(self, sid: str, request: CoordinatorOpenRequest) -> None:
         async def op(user_id: str, _email):
-            return {"conversation_id": coordinator.conversation_id_for(user_id), "model": coordinator.COORDINATOR_MODEL}
+            number, imessage = capability(COORDINATOR_NUMBER), capability(COORDINATOR_IMESSAGE)
+            return {
+                "conversation_id": coordinator.conversation_id_for(user_id),
+                "model": coordinator.COORDINATOR_MODEL,
+                # The other ways into this same conversation.
+                "reach": {
+                    "phone": number() if number else None,
+                    "imessage": imessage() if imessage else None,
+                    "email": await coordinator_address(await self.get_pool(), user_id),
+                },
+            }
         await self._respond(sid, request.request_id, op)
 
     async def handle_send(self, sid: str, request: CoordinatorSendRequest) -> None:
         async def op(user_id: str, email):
             text = request.text.strip()
-            if not text:
+            if not (text or request.attachment_ids or request.references):
                 raise ValueError("message is empty")
-            allowed, limit_error = await plan_allows_turn(await self.get_pool(), user_id)
+            pool = await self.get_pool()
+            allowed, limit_error = await plan_allows_turn(pool, user_id)
             if not allowed:
                 raise ValueError(limit_error)
+            extras = {}
+            if request.attachment_ids or request.references:
+                prepare_input, user_event = await web_turn_input(
+                    pool, user_id=user_id, text=text,
+                    attachment_ids=request.attachment_ids, references=request.references,
+                )
+                extras = {"prepare_input": prepare_input, "user_event": user_event}
             await coordinator.run_coordinator_turn(
-                sio=self.sio, sid=sid, user_id=user_id, user_email=email, text=text,
+                sio=self.sio, sid=sid, user_id=user_id, user_email=email, text=text, **extras,
             )
             return {"ok": True}
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_attachment_upload_url(self, sid: str, request: CoordinatorAttachmentUploadUrlRequest) -> None:
+        async def op(user_id: str, _email):
+            pool = await self.get_pool()
+            async with pool.acquire() as conn:
+                organization_id = await get_user_org_context(conn, user_id)
+            return await attachments.start_upload(
+                pool, user_id=user_id, organization_id=organization_id,
+                name=request.name, mime_type=request.mime_type, size_bytes=request.size_bytes,
+            )
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_attachments_list(self, sid: str, request: CoordinatorAttachmentsListRequest) -> None:
+        async def op(user_id: str, _email):
+            return await attachments.list_account_attachments(
+                await self.get_pool(), user_id, query=request.query, limit=request.limit,
+            )
         await self._respond(sid, request.request_id, op)
 
     async def handle_reset(self, sid: str, request: CoordinatorResetRequest) -> None:

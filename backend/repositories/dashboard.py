@@ -364,8 +364,9 @@ class DashboardRepo:
                    jsonb_build_object('row_count', wr.metadata->'row_count') AS metadata,
                    wr.created_at, wr.updated_at
             FROM workflow_resources wr
-            WHERE wr.workflow_id = ANY($1::uuid[])
-               OR (wr.workflow_id IS NULL AND wr.owner_id = $2::uuid)
+            WHERE (wr.workflow_id = ANY($1::uuid[])
+                   OR (wr.workflow_id IS NULL AND wr.owner_id = $2::uuid))
+              AND NOT COALESCE(wr.metadata ? 'pending', false)  -- a chat upload still in flight
             ORDER BY wr.updated_at DESC
             LIMIT $3
         """

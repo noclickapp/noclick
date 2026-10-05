@@ -155,6 +155,24 @@ async def download_bytes_from_r2_async_native(
     return response.content, content_type
 
 
+async def r2_object_exists_async(bucket: str, key: str) -> bool:
+    """Whether an object exists: a one-byte ranged GET over a presigned URL.
+
+    A missing object is False; any other failure raises, since an unknown
+    answer is not an absent object.
+    """
+    if _local.enabled():
+        return _local.object_path(bucket, key).is_file()
+    url = generate_presigned_download_url(bucket=bucket, key=key)
+    client = _get_r2_http_client()
+    async with _get_r2_request_gate():
+        response = await client.get(url, headers={"Range": "bytes=0-0"})
+    if response.status_code == 404:
+        return False
+    response.raise_for_status()
+    return True
+
+
 def create_s3_client():
     """
     Return a cached boto3 S3 client configured for R2.

@@ -117,6 +117,7 @@ async def instance_status():
     confusing "log in to the thing you just installed". Reveals only whether
     any account exists, and only for a local edition; hosted always reports
     configured."""
+    from billing.markup import CREDITS_PER_DOLLAR
     from utils.edition import is_local_edition
 
     import os
@@ -131,6 +132,9 @@ async def instance_status():
         "email": bool(os.getenv("RESEND_API_KEY")),
         # Managed publishing and checkout are not part of this edition.
         "publishing": False,
+        # Usage is metered in credits and shown in dollars; an install that
+        # bills nobody counts dollars (1) unless its operator sets a rate.
+        "creditsPerDollar": float(CREDITS_PER_DOLLAR),
     }
 
     if not is_local_edition():

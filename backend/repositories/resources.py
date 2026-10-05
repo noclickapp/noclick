@@ -88,6 +88,8 @@ class ResourceRepo:
         # (owner_id, target_user_id, org member's user_id). Additional
         # filters append params starting at $2.
         conditions: List[str] = [
+            # A reserved chat upload whose bytes may never have landed isn't a file yet.
+            "NOT COALESCE(wr.metadata ? 'pending', false)",
             """(
                 (wr.workflow_id IS NULL AND wr.owner_id = $1)
                 OR wr.workflow_id IN (SELECT id FROM workflows WHERE owner_id = $1)
@@ -126,6 +128,28 @@ class ResourceRepo:
             rows = await conn.fetch(query, *params)
         return [dict(r) for r in rows]
 
+    async def list_account_attachments(
+        self, owner_id: str, sources, *, query: str, limit: int,
+    ) -> List[Dict[str, Any]]:
+        """The owner's account-level files (no workflow) from ``sources``,
+        newest first, name containing ``query``; a reserved upload that no
+        turn has read yet (``metadata.pending``) isn't listed."""
+        async with self._pool.acquire() as conn:
+            rows = await conn.fetch(
+                """
+                SELECT id, name, mime_type, size_bytes, storage_ref, created_at
+                FROM workflow_resources
+                WHERE owner_id = $1 AND workflow_id IS NULL
+                  AND metadata->>'source' = ANY($2::text[])
+                  AND NOT metadata ? 'pending'
+                  AND ($3 = '' OR strpos(lower(name), lower($3)) > 0)
+                ORDER BY created_at DESC
+                LIMIT $4
+                """,
+                owner_id, list(sources), query, limit,
+            )
+        return [dict(r) for r in rows]
+
     # ── Resource writes ───────────────────────────────────────────────
 
     async def create_resource(
@@ -133,7 +157,7 @@ class ResourceRepo:
         *,
         owner_id: str,
         organization_id: Optional[str],
-        workflow_id: str,
+        workflow_id: Optional[str],
         node_id: Optional[str],
         resource_type: str,
         name: str,
@@ -162,6 +186,14 @@ class ResourceRepo:
         async with self._pool.acquire() as conn:
             await conn.execute(
                 "DELETE FROM workflow_resources WHERE id = $1", resource_id,
+            )
+
+    async def set_metadata(self, resource_id: str, metadata: Dict[str, Any]) -> None:
+        """Replace a resource's metadata (e.g. a file's saved reading)."""
+        async with self._pool.acquire() as conn:
+            await conn.execute(
+                "UPDATE workflow_resources SET metadata = $1, updated_at = NOW() WHERE id = $2",
+                metadata, resource_id,
             )
 
     async def update_storage_ref(

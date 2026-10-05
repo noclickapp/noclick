@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Fri Sep 25 13:20:23  2026
+// Generated at: Sun Oct 04 21:53:13  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -2120,6 +2120,43 @@ export interface CodexDeviceCodeStartRequest {
   [k: string]: unknown;
 }
 /**
+ * Reserve an account attachment for the composer and get a presigned PUT for its bytes
+ */
+export interface CoordinatorAttachmentUploadUrlRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * The file's name
+   */
+  name: string;
+  /**
+   * The file's type; the PUT must send exactly this Content-Type
+   */
+  mime_type: string;
+  /**
+   * The file's exact size in bytes; the PUT must send exactly this many
+   */
+  size_bytes: number;
+  [k: string]: unknown;
+}
+/**
+ * The account's attachments sent so far on any channel, newest first
+ */
+export interface CoordinatorAttachmentsListRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Only files whose name contains this
+   */
+  query?: string;
+  limit?: number;
+  [k: string]: unknown;
+}
+/**
  * Search the account's memory headers without loading full bodies
  */
 export interface CoordinatorMemoriesListRequest {
@@ -2184,6 +2221,19 @@ export interface CoordinatorOpenRequest {
   [k: string]: unknown;
 }
 /**
+ * Something the owner pointed the coordinator at from the composer
+ */
+export interface CoordinatorReference {
+  /**
+   * An automation (workflow) or a connected account (credential)
+   */
+  kind: "automation" | "account";
+  /**
+   * The workflow or credential id
+   */
+  id: string;
+}
+/**
  * Start the coordinator conversation over
  */
 export interface CoordinatorResetRequest {
@@ -2202,9 +2252,17 @@ export interface CoordinatorSendRequest {
    */
   request_id?: string | null;
   /**
-   * The user's message
+   * The user's message; may be empty when it carries attachments or references
    */
-  text: string;
+  text?: string;
+  /**
+   * Account attachments sent with it (up to 10): uploaded through coordinator:attachment:upload_url or picked from coordinator:attachments:list
+   */
+  attachment_ids?: string[];
+  /**
+   * Automations and accounts the message points at (up to 10)
+   */
+  references?: CoordinatorReference[];
   [k: string]: unknown;
 }
 /**
@@ -2446,6 +2504,18 @@ export interface CredentialValidateAccessRequest {
    * Node type to look up the validate_credential_access classmethod
    */
   node_type: string;
+  [k: string]: unknown;
+}
+/**
+ * How many things wait on the caller in their workspace: the overview's
+ * attention list, counted, without its runs, agents or files. Feeds the
+ * sidebar badge and the home's line, which every page shows.
+ */
+export interface DashboardAttentionRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -4091,6 +4161,16 @@ export interface PhoneLinkCheckRequest {
    * The code the user received
    */
   code: string;
+  [k: string]: unknown;
+}
+/**
+ * Mint a one-time code that links the phone it is sent from on WhatsApp to this account
+ */
+export interface PhoneLinkCodeRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -13752,6 +13832,8 @@ export interface ClientToServerEvents {
   'conversation:list_for_agent': (data: ListConversationsForAgentRequest) => void;
   'conversation:resume': (data: ResumeConversationRequest) => void;
   'conversations:list': (data: ListConversationsRequest) => void;
+  'coordinator:attachment:upload_url': (data: CoordinatorAttachmentUploadUrlRequest) => void;
+  'coordinator:attachments:list': (data: CoordinatorAttachmentsListRequest) => void;
   'coordinator:memories:delete': (data: CoordinatorMemoryDeleteRequest) => void;
   'coordinator:memories:get': (data: CoordinatorMemoryGetRequest) => void;
   'coordinator:memories:list': (data: CoordinatorMemoriesListRequest) => void;
@@ -13771,6 +13853,7 @@ export interface ClientToServerEvents {
   'credential:test_connection': (data: CredentialTestConnectionRequest) => void;
   'credential:update': (data: CredentialUpdateRequest) => void;
   'credential:validate_access': (data: CredentialValidateAccessRequest) => void;
+  'dashboard:attention': (data: DashboardAttentionRequest) => void;
   'dashboard:notifications:read': (data: DashboardNotificationsReadRequest) => void;
   'dashboard:overview': (data: DashboardOverviewRequest) => void;
   'discord:oauth:exchange': (data: DiscordOAuthExchangeRequest) => void;
@@ -13851,6 +13934,7 @@ export interface ClientToServerEvents {
   'parallel:oauth:exchange': (data: ParallelOAuthExchangeRequest) => void;
   'parallel:oauth:validate': (data: ParallelOAuthValidateRequest) => void;
   'phone:link:check': (data: PhoneLinkCheckRequest) => void;
+  'phone:link:code': (data: PhoneLinkCodeRequest) => void;
   'phone:link:start': (data: PhoneLinkStartRequest) => void;
   'phone:status': (data: PhoneStatusRequest) => void;
   'phone:unlink': (data: PhoneUnlinkRequest) => void;
@@ -14086,6 +14170,8 @@ export const ClientEventNames = {
   CloudflareOAuthValidateRequest: 'cloudflare:oauth:validate',
   CodexDeviceCodePollRequest: 'codex:auth:poll',
   CodexDeviceCodeStartRequest: 'codex:auth:start',
+  CoordinatorAttachmentUploadUrlRequest: 'coordinator:attachment:upload_url',
+  CoordinatorAttachmentsListRequest: 'coordinator:attachments:list',
   CoordinatorMemoriesListRequest: 'coordinator:memories:list',
   CoordinatorMemoryDeleteRequest: 'coordinator:memories:delete',
   CoordinatorMemoryGetRequest: 'coordinator:memories:get',
@@ -14105,6 +14191,7 @@ export const ClientEventNames = {
   CredentialTestConnectionRequest: 'credential:test_connection',
   CredentialUpdateRequest: 'credential:update',
   CredentialValidateAccessRequest: 'credential:validate_access',
+  DashboardAttentionRequest: 'dashboard:attention',
   DashboardNotificationsReadRequest: 'dashboard:notifications:read',
   DashboardOverviewRequest: 'dashboard:overview',
   DeleteConversationRequest: 'conversation:delete',
@@ -14198,6 +14285,7 @@ export const ClientEventNames = {
   ParallelOAuthExchangeRequest: 'parallel:oauth:exchange',
   ParallelOAuthValidateRequest: 'parallel:oauth:validate',
   PhoneLinkCheckRequest: 'phone:link:check',
+  PhoneLinkCodeRequest: 'phone:link:code',
   PhoneLinkStartRequest: 'phone:link:start',
   PhoneNumberBuyRequest: 'phone_number:buy',
   PhoneNumberSearchRequest: 'phone_number:search',
@@ -14429,6 +14517,8 @@ interface ClientEventMap {
   CloudflareOAuthValidateRequest: CloudflareOAuthValidateRequest
   CodexDeviceCodePollRequest: CodexDeviceCodePollRequest
   CodexDeviceCodeStartRequest: CodexDeviceCodeStartRequest
+  CoordinatorAttachmentUploadUrlRequest: CoordinatorAttachmentUploadUrlRequest
+  CoordinatorAttachmentsListRequest: CoordinatorAttachmentsListRequest
   CoordinatorMemoriesListRequest: CoordinatorMemoriesListRequest
   CoordinatorMemoryDeleteRequest: CoordinatorMemoryDeleteRequest
   CoordinatorMemoryGetRequest: CoordinatorMemoryGetRequest
@@ -14448,6 +14538,7 @@ interface ClientEventMap {
   CredentialTestConnectionRequest: CredentialTestConnectionRequest
   CredentialUpdateRequest: CredentialUpdateRequest
   CredentialValidateAccessRequest: CredentialValidateAccessRequest
+  DashboardAttentionRequest: DashboardAttentionRequest
   DashboardNotificationsReadRequest: DashboardNotificationsReadRequest
   DashboardOverviewRequest: DashboardOverviewRequest
   DeleteConversationRequest: DeleteConversationRequest
@@ -14541,6 +14632,7 @@ interface ClientEventMap {
   ParallelOAuthExchangeRequest: ParallelOAuthExchangeRequest
   ParallelOAuthValidateRequest: ParallelOAuthValidateRequest
   PhoneLinkCheckRequest: PhoneLinkCheckRequest
+  PhoneLinkCodeRequest: PhoneLinkCodeRequest
   PhoneLinkStartRequest: PhoneLinkStartRequest
   PhoneNumberBuyRequest: PhoneNumberBuyRequest
   PhoneNumberSearchRequest: PhoneNumberSearchRequest
@@ -15181,6 +15273,14 @@ export const CodexDeviceCodeStartRequest = {
   event_name: 'codex:auth:start' as const,
   create: (data: CodexDeviceCodeStartRequest) => ({ event_name: 'codex:auth:start' as const, ...data })
 };
+export const CoordinatorAttachmentUploadUrlRequest = {
+  event_name: 'coordinator:attachment:upload_url' as const,
+  create: (data: CoordinatorAttachmentUploadUrlRequest) => ({ event_name: 'coordinator:attachment:upload_url' as const, ...data })
+};
+export const CoordinatorAttachmentsListRequest = {
+  event_name: 'coordinator:attachments:list' as const,
+  create: (data: CoordinatorAttachmentsListRequest) => ({ event_name: 'coordinator:attachments:list' as const, ...data })
+};
 export const CoordinatorMemoriesListRequest = {
   event_name: 'coordinator:memories:list' as const,
   create: (data: CoordinatorMemoriesListRequest) => ({ event_name: 'coordinator:memories:list' as const, ...data })
@@ -15256,6 +15356,10 @@ export const CredentialUpdateRequest = {
 export const CredentialValidateAccessRequest = {
   event_name: 'credential:validate_access' as const,
   create: (data: CredentialValidateAccessRequest) => ({ event_name: 'credential:validate_access' as const, ...data })
+};
+export const DashboardAttentionRequest = {
+  event_name: 'dashboard:attention' as const,
+  create: (data: DashboardAttentionRequest) => ({ event_name: 'dashboard:attention' as const, ...data })
 };
 export const DashboardNotificationsReadRequest = {
   event_name: 'dashboard:notifications:read' as const,
@@ -15628,6 +15732,10 @@ export const ParallelOAuthValidateRequest = {
 export const PhoneLinkCheckRequest = {
   event_name: 'phone:link:check' as const,
   create: (data: PhoneLinkCheckRequest) => ({ event_name: 'phone:link:check' as const, ...data })
+};
+export const PhoneLinkCodeRequest = {
+  event_name: 'phone:link:code' as const,
+  create: (data: PhoneLinkCodeRequest) => ({ event_name: 'phone:link:code' as const, ...data })
 };
 export const PhoneLinkStartRequest = {
   event_name: 'phone:link:start' as const,
@@ -16339,6 +16447,8 @@ export const EventRouting = {
   'conversation:list_for_agent': 'API',
   'conversation:resume': 'API',
   'conversations:list': 'API',
+  'coordinator:attachment:upload_url': 'API',
+  'coordinator:attachments:list': 'API',
   'coordinator:memories:delete': 'API',
   'coordinator:memories:get': 'API',
   'coordinator:memories:list': 'API',
@@ -16358,6 +16468,7 @@ export const EventRouting = {
   'credential:test_connection': 'API',
   'credential:update': 'API',
   'credential:validate_access': 'API',
+  'dashboard:attention': 'API',
   'dashboard:notifications:read': 'API',
   'dashboard:overview': 'API',
   'discord:oauth:exchange': 'API',
@@ -16460,6 +16571,7 @@ export const EventRouting = {
   'parallel:oauth:exchange': 'API',
   'parallel:oauth:validate': 'API',
   'phone:link:check': 'API',
+  'phone:link:code': 'API',
   'phone:link:start': 'API',
   'phone:status': 'API',
   'phone:unlink': 'API',

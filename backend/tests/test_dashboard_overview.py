@@ -176,6 +176,12 @@ async def test_account_files_are_visible_only_to_owner(real_database, with_workf
             "VALUES ($1::uuid,$2,$3::uuid,'image','image.jpg',($4::text)::jsonb) RETURNING id",
             owner, org, wf, json.dumps({"source": "coordinator_attachment", "extracted_text": "private content"}),
         ))
+    # A chat upload reserved but never sent has no bytes: no listing shows it.
+    await real_database.fetchval(
+        "INSERT INTO workflow_resources (owner_id, organization_id, workflow_id, resource_type, name, metadata) "
+        "VALUES ($1::uuid,$2,NULL,'image','pending.png',($3::text)::jsonb) RETURNING id",
+        user, org, json.dumps({"source": "coordinator_attachment", "pending": True}),
+    )
 
     repo = DashboardRepo(real_database.pool)
     rows = await repo.resources([workflow] if with_workflows else [], user_id=user)
@@ -416,3 +422,81 @@ def test_registered_but_deaf_app_event_trigger_needs_the_owner():
     graph["nodes"][0]["config"].pop("trigger_action")
     _, broken = dh._compose_triggers(_wf(graph=graph), [], [{"workflow_id": "wf-1", "node_id": "slack", "event_type": "message"}])
     assert broken[0]["meta"] == {"nodeId": "slack"}
+
+
+@pytest.mark.asyncio
+async def test_attention_count_is_the_overviews_list_without_the_rest():
+    """The badge and the home's line count exactly what Activity lists as needing
+    the user, from the same sources, without touching runs, agents, files,
+    notifications or the alarm fan-out that only the full page shows."""
+    pool = object()
+    graph = {"nodes": [{"id": "cron", "type": "trigger-cron", "config": {"label": "Daily", "trigger_registered": False, "trigger_error": "Schedule not registered: timezone is required"}}]}
+    approval = SimpleNamespace(
+        id="ap1", workflow_id="wf-1", execution_id="ex1", node_id="approve", title="Send outreach", content="{}",
+        created_at=datetime(2026, 9, 2, 5, tzinfo=timezone.utc), workflow_name="WF",
+    )
+    dead = SimpleNamespace(
+        id="cred-hub", name="HubSpot", credential_type="hubspot_oauth", access_type="owner",
+        revoked_at=datetime(2026, 9, 2, 1, tzinfo=timezone.utc), updated_at=None, created_at=datetime(2026, 8, 1, tzinfo=timezone.utc),
+    )
+
+    async def empty(*_a, **_k):
+        return []
+
+    page_only = {
+        (dh.DashboardRepo, "runs_window"): AsyncMock(return_value=None),
+        (dh.DashboardRepo, "recent_runs"): AsyncMock(return_value=[]),
+        (dh.DashboardRepo, "awaiting_delay"): AsyncMock(return_value=[]),
+        (dh.DashboardRepo, "resources"): AsyncMock(return_value=[]),
+        (dh.DashboardRepo, "agent_conversations"): AsyncMock(return_value=[]),
+        (dh.DashboardRepo, "notifications"): AsyncMock(return_value=([], 0)),
+        (dh.DashboardRepo, "workspace_identity"): AsyncMock(return_value={"userName": "Dhruv", "isPersonal": True}),
+        (dh.FeedRepo, "list_tool_calls"): AsyncMock(return_value=([], {})),
+        (dh, "_list_sandboxes"): AsyncMock(return_value=[]),
+        (dh, "_alarm_fanout"): AsyncMock(return_value=[]),
+    }
+    shared = [
+        patch.object(dh.FeedRepo, "get_primary_org_id", AsyncMock(return_value=None)),
+        patch.object(dh.FeedRepo, "list_approvals", AsyncMock(return_value=([approval], []))),
+        patch.object(dh.ConversationRepo, "list_pending_asks", empty),
+        patch.object(dh.CredentialsRepo, "list_credential_requests", empty),
+        patch.object(dh.CredentialsRepo, "list_accessible", AsyncMock(return_value=[dead])),
+        patch.object(dh.DashboardRepo, "list_workflows", AsyncMock(return_value=[{"id": "wf-1", "name": "WF", "workflow": graph, "updated_at": None}])),
+        patch.object(dh.DashboardRepo, "unanswered_builder_prompts", empty),
+        patch.object(dh.DashboardRepo, "pending_bridge_links", empty),
+        patch.object(dh.DashboardRepo, "webhook_rows", empty),
+        patch.object(dh.DashboardRepo, "subscription_rows", empty),
+        patch.object(dh, "_credential_health", AsyncMock(return_value={})),
+    ]
+    with ExitStack() as stack:
+        for p in shared:
+            stack.enter_context(p)
+        for (target, attr), mock in page_only.items():
+            stack.enter_context(patch.object(target, attr, mock))
+        attention = await dh.build_attention(pool, USER)
+        touched = [attr for (_t, attr), mock in page_only.items() if mock.await_count]
+        overview = await dh.build_overview(pool, USER)
+
+    assert touched == [], f"the count read page-only sources: {touched}"
+    assert [a["kind"] for a in attention] == ["approval", "credential_dead", "trigger_broken"]
+    assert [a["id"] for a in attention] == [a["id"] for a in overview["attention"]]
+    assert overview["errors"] == {}
+
+
+@pytest.mark.asyncio
+async def test_attention_event_answers_with_the_items_and_their_count():
+    handler = dh.DashboardHandler(sio=object())
+    sent = []
+
+    async def capture(_sio, _sid, event):
+        sent.append(event)
+
+    with (
+        patch.object(dh.DashboardHandler, "_user_and_pool", AsyncMock(return_value=(USER, object()))),
+        patch.object(dh, "build_attention", AsyncMock(return_value=[{"id": "a"}, {"id": "b"}])),
+        patch.object(dh, "send_event", capture),
+    ):
+        await handler.handle_attention("sid", dh.DashboardAttentionRequest(request_id="r1"))
+
+    assert sent[0].request_id == "r1" and not sent[0].error
+    assert sent[0].data == {"count": 2, "items": [{"id": "a"}, {"id": "b"}]}

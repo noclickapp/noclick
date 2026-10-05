@@ -76,7 +76,9 @@ async def run_wakeup(pool, event):
         channel = event["context"]["channel"]
         # A call may have ended hours ago. Its follow-up is delivered as text.
         if channel in ("phone", "whatsapp", "callback", "voice") or (channel == "web" and event["send_to_phone"]):
-            channel = "whatsapp_text"
+            from coder.coordinator.reach import phone_text_channel
+
+            channel = await phone_text_channel(pool, user_id)
         async with asyncio.timeout(600):
             reply = await run_coordinator_turn(
                 sio=get_sio(), sid="", user_id=user_id, user_email=email, text="",

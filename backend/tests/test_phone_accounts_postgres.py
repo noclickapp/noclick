@@ -187,3 +187,90 @@ async def test_a_first_phone_sign_in_binds_its_number_to_the_new_account(phones_
     await verify_link(repo, EMAIL_USER, "+15550100011")
     assert await svc.bind_signed_in(squatter) is None
     assert str((await repo.get_user_by_phone("+15550100011"))["user_id"]) == EMAIL_USER
+
+
+# ── Linking from WhatsApp with a code minted on the web ─────────────────────
+
+@pytest.fixture
+async def code_svc(phones_db):
+    from fakeredis import aioredis
+
+    from utils.phone_identity import LinkCodes
+
+    pool, repo, admin, _ = phones_db
+    # A fresh email account per test: the database outlives a test, and the shared seed user collects numbers.
+    owner = str(await pool.fetchval("INSERT INTO auth.users (email) VALUES ('owner-' || gen_random_uuid() || '@example.com') RETURNING id"))
+    yield pool, repo, admin, owner, PhoneIdentity(repo, None, admin=lambda: admin, codes=LinkCodes(aioredis.FakeRedis()))
+
+
+async def test_a_link_code_binds_the_sending_number_to_the_account_that_minted_it(code_svc):
+    _, repo, admin, owner, svc = code_svc
+    minted = await svc.channel_link_code(owner)
+    assert minted["code"].startswith("NC-")
+    linked = await svc.link_by_code("+15550100020", minted["code"], source="whatsapp")
+    assert linked == {"user_id": owner, "phone": "+15550100020", "already": False}
+    binding = await repo.get_user_by_phone("+15550100020")
+    assert str(binding["user_id"]) == owner and binding["source"] == "whatsapp"
+    assert admin.created == []  # no phone-only account was made for it
+
+
+async def test_a_live_code_is_handed_out_again_until_it_runs_low(code_svc):
+    from utils.phone_identity import LINK_CODE_FRESH, LINK_CODE_TTL
+
+    _, _, _, owner, svc = code_svc
+    first = await svc.channel_link_code(owner)
+    assert first["expires_in"] == LINK_CODE_TTL.total_seconds()
+    # A second tab, or the same page asking again, gets the same code: neither revokes the other's.
+    again = await svc.channel_link_code(owner)
+    assert again["code"] == first["code"] and 0 < again["expires_in"] <= first["expires_in"]
+    # Once it has less than the time a scan needs, the next ask gets a new one with the full lifetime.
+    await svc.codes._client.pexpire(f"phone:link_code:{first['code']}", int(LINK_CODE_FRESH.total_seconds() * 1000) - 1000)
+    fresh = await svc.channel_link_code(owner)
+    assert fresh["code"] != first["code"] and fresh["expires_in"] == LINK_CODE_TTL.total_seconds()
+
+
+async def test_a_replaced_code_still_links_and_using_either_spends_both(code_svc):
+    from utils.phone_identity import PhoneLinkError
+
+    _, repo, _, owner, svc = code_svc
+    stale = (await svc.channel_link_code(owner))["code"]
+    await svc.codes._client.pexpire(f"phone:link_code:{stale}", 60_000)
+    fresh = (await svc.channel_link_code(owner))["code"]
+    # Scanned just before the page swapped it: the message still links.
+    await svc.link_by_code("+15550100021", stale, source="whatsapp")
+    assert str((await repo.get_user_by_phone("+15550100021"))["user_id"]) == owner
+    for spent_code in (stale, fresh):
+        with pytest.raises(PhoneLinkError) as spent:
+            await svc.link_by_code("+15550100022", spent_code, source="whatsapp")
+        assert spent.value.kind == "code_expired"
+    assert await repo.get_user_by_phone("+15550100022") is None
+
+
+async def test_the_phone_only_account_a_number_already_made_folds_into_the_code_account(code_svc):
+    pool, repo, _, owner, svc = code_svc
+    first = await svc.claim_for_channel("+15550100023", name="", source="whatsapp")
+    code = (await svc.channel_link_code(owner))["code"]
+    linked = await svc.link_by_code("+15550100023", code, source="whatsapp")
+    assert linked["already"] is False
+    assert str((await repo.get_user_by_phone("+15550100023"))["user_id"]) == owner
+    assert first.user_id != owner
+
+
+async def test_a_number_an_email_account_holds_is_not_taken_by_a_code(code_svc):
+    from utils.phone_identity import PhoneLinkError
+
+    pool, repo, _, owner, svc = code_svc
+    holder = await pool.fetchval("INSERT INTO auth.users (email) VALUES ('holder@example.com') RETURNING id")
+    await verify_link(repo, str(holder), "+15550100024")
+    code = (await svc.channel_link_code(owner))["code"]
+    with pytest.raises(PhoneLinkError) as refused:
+        await svc.link_by_code("+15550100024", code, source="whatsapp")
+    assert refused.value.kind == "linked_elsewhere"
+    assert str((await repo.get_user_by_phone("+15550100024"))["user_id"]) == str(holder)
+
+
+async def test_a_code_from_the_number_already_linked_says_so(code_svc):
+    _, repo, _, owner, svc = code_svc
+    await verify_link(repo, owner, "+15550100025")
+    code = (await svc.channel_link_code(owner))["code"]
+    assert (await svc.link_by_code("+15550100025", code, source="whatsapp"))["already"] is True

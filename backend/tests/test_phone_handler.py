@@ -17,7 +17,7 @@ from tests.utils.base_handler_test import BaseHandlerTest
 from utils import feature_gates
 from utils.phone_identity import PhoneIdentity
 from wss.receiver.client_events import (
-    PhoneLinkCheckRequest, PhoneLinkStartRequest, PhoneStatusRequest, PhoneUnlinkRequest,
+    PhoneLinkCheckRequest, PhoneLinkCodeRequest, PhoneLinkStartRequest, PhoneStatusRequest, PhoneUnlinkRequest,
 )
 from wss.sender import send_event
 
@@ -70,6 +70,23 @@ class TestPhoneHandler(BaseHandlerTest):
         assert (await self._send(frontend_sio, sid, PhoneStatusRequest(request_id="s3")))["data"]["phones"] == []
 
     @pytest.mark.asyncio
+    async def test_a_whatsapp_link_code_over_the_socket_links_the_phone_that_sends_it(self, frontend_sio, sid):
+        from fakeredis import aioredis
+
+        from utils.phone_identity import LinkCodes
+
+        # Without a code store the instance says so, as a typed kind the panel can read.
+        missing = await self._send(frontend_sio, sid, PhoneLinkCodeRequest(request_id="k0"))
+        assert missing["data"] == {"kind": "codes_unavailable"} and missing["error"]
+
+        service = PhoneIdentity(self.repo, self.verify, codes=LinkCodes(aioredis.FakeRedis()))
+        with patch("wss.handlers.phone_handler.default_service", return_value=service):
+            minted = await self._send(frontend_sio, sid, PhoneLinkCodeRequest(request_id="k1"))
+        assert minted.get("error") is None and minted["data"]["code"].startswith("NC-") and minted["data"]["expires_in"] > 0
+        # The code is the user's, not the socket's: it links whatever number sends it, to this account.
+        assert await service.codes.take(minted["data"]["code"]) == USER_ID
+
+    @pytest.mark.asyncio
     async def test_bad_number_is_a_typed_error_and_never_reaches_the_provider(self, frontend_sio, sid):
         response = await self._send(frontend_sio, sid, PhoneLinkStartRequest(request_id="a2", phone="4242421064"))
         assert response["data"] == {"kind": "invalid_number"} and "country code" in response["error"]
@@ -84,6 +101,7 @@ class TestPhoneHandler(BaseHandlerTest):
             PhoneLinkStartRequest(request_id="g1", phone=PHONE),
             PhoneLinkCheckRequest(request_id="g2", challenge_id="ch-1", code="123456"),
             PhoneUnlinkRequest(request_id="g3", phone=PHONE),
+            PhoneLinkCodeRequest(request_id="g5"),
         )):
             response = await self._send(frontend_sio, sid, request)
             assert response["data"] == {"kind": "gated"} and "available on your account" in response["error"], request
