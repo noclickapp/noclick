@@ -15,7 +15,7 @@ from billing.exceptions import InsufficientBalanceError
 from coder.coordinator.compaction import CoordinatorCompactor
 from coder.coordinator.followup import FollowupDelivery, FollowupReply
 from coder.coordinator.memory import MEMORY_INSTRUCTIONS, memory_context
-from coder.coordinator.tools import COORDINATOR_NODE_ID, CoordinatorTools
+from coder.coordinator.tools import COORDINATOR_NODE_ID, CoordinatorTools, step_preview
 from coder.openai_agent import Agent
 from coder.openai_agent.config import AgentConfiguration
 from nodes.agent.config.llm import DEFAULT_LLM_AGENT_MODEL
@@ -323,7 +323,7 @@ async def run_coordinator_turn(
         agent = await Agent.create(
             emit_message=emit, config=config, conversation_id=conversation_id, sid=sid,
             user_id=user_id, user_email=user_email, sio=sio, enable_persistence=True,
-            custom_tool_executor=execute, organization_id=organization_id,
+            custom_tool_executor=execute, organization_id=organization_id, tool_step_preview=step_preview,
             call_model_input_filter=CoordinatorCompactor(
                 pool, user_id, epoch=epoch, model=COORDINATOR_MODEL,
                 user_email=user_email, organization_id=organization_id,

@@ -307,6 +307,7 @@ class Agent:
         history_limit: Optional[int] = None,
         memory_readonly: bool = False,
         call_model_input_filter=None,
+        tool_step_preview: Optional[Callable[[Any], str]] = None,
         sandbox_region: Optional[str] = None,
         sandbox_volumes: Optional[Dict[str, str]] = None,
         sandbox_network: Optional[Sequence[str]] = None,
@@ -350,6 +351,9 @@ class Agent:
         agent._build_sdk_agent()
         agent._build_billing_hooks()
         agent._call_model_input_filter = call_model_input_filter
+        # Shapes a tool call's arguments and result for the live step rows: a
+        # consumer whose chat draws from them keeps them whole (the coordinator).
+        agent._tool_step_preview = tool_step_preview
         # Hook up the durable Session iff caller asked for persistence AND
         # gave us a conversation_id to key it on. Falls through to the
         # transient in-memory ``_history`` path otherwise.
@@ -783,9 +787,12 @@ class Agent:
                         args = json.loads(arg_json) if isinstance(arg_json, str) else arg_json
             except Exception:
                 args = None
-            await self._emit_message(
-                tool_step_event(str(call_id), tool_call_step_text(tool_name, args), "in_progress")
-            )
+            preview = getattr(self, "_tool_step_preview", None)
+            if preview is not None:
+                step = tool_step_event(str(call_id), f"Calling {tool_name}({preview(args or {})})", "in_progress", limit=None)
+            else:
+                step = tool_step_event(str(call_id), tool_call_step_text(tool_name, args), "in_progress")
+            await self._emit_message(step)
         elif name == "tool_output":
             call_id = getattr(item, "call_id", None) or "tool"
             # ToolCallOutputItem stores the output in different fields across
@@ -793,9 +800,16 @@ class Agent:
             # Completes the AgenticStep matching the tool_called id above —
             # the chat UI keys steps by id and updates the row in place.
             output = getattr(item, "output", None) or getattr(item, "result", None)
-            await self._emit_message(
-                tool_step_event(str(call_id), str(output) if output is not None else "", "completed")
-            )
+            text = str(output) if output is not None else ""
+            preview = getattr(self, "_tool_step_preview", None)
+            if preview is not None and text:
+                try:
+                    shaped = preview(json.loads(text))
+                except ValueError:
+                    shaped = preview(text)
+                await self._emit_message(tool_step_event(str(call_id), shaped, "completed", limit=None))
+            else:
+                await self._emit_message(tool_step_event(str(call_id), text, "completed"))
         # All other RunItem kinds intentionally not surfaced.
 
     @staticmethod

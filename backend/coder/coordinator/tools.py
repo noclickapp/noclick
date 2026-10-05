@@ -288,6 +288,21 @@ def bounded(value: Any, *, max_items: int = MAX_ITEMS, max_chars: int = MAX_CHAR
     return value
 
 
+STEP_PREVIEW_CHARS = 4000
+
+
+def step_preview(value: Any) -> str:
+    """A tool call's arguments or result as the chat draws them: the whole
+    value as JSON, every key kept, lists and strings capped, tighter when it
+    would still be long. The chat's cards read their fields from it, so a cut
+    never drops a link or an id that sits after a long field."""
+    for max_items, max_chars in ((MAX_ITEMS, MAX_CHARS), (5, 120)):
+        text = json.dumps(bounded(value, max_items=max_items, max_chars=max_chars), default=str)
+        if len(text) <= STEP_PREVIEW_CHARS:
+            return text
+    return text[:STEP_PREVIEW_CHARS]
+
+
 async def exa_web_search(*, user_id: str, organization_id: Optional[str], query: str,
                          num_results: int = 5, domains: Optional[List[str]] = None) -> Dict[str, Any]:
     """Exa search through the node's own execution and billing, bounded to cited excerpts."""
@@ -442,7 +457,7 @@ class CoordinatorTools:
             operation=route[1] if route else audit_arguments.get("operation"),
             credential_id=audit_arguments.get("credential_id"),
             arguments=arguments, error=str(result.get("error")) if failed else None,
-            result_preview=json.dumps(result, default=str)[:500],
+            result_preview=step_preview(result),
             duration_ms=(time.monotonic() - started) * 1000,
         )
         return result
