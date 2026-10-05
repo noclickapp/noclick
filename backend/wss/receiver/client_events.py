@@ -6,7 +6,7 @@ enabling type validation and automatic TypeScript generation.
 A more appropriate name would just be request_events.py since the source of the request
 can now be frontend or API given the addition of sandboxes.
 """
-from typing import ClassVar, Optional, List, Dict, Any, Union, Literal
+from typing import Annotated, ClassVar, Optional, List, Dict, Any, Union, Literal
 from pydantic import BaseModel, Field, ConfigDict
 from wss.sender.schema import ContentItem
 from utils.coordinator_memory import CoordinatorMemoryWrite
@@ -364,6 +364,12 @@ class CoordinatorMemoryDeleteRequest(ClientEventBase):
     event_name: ClassVar[str] = "coordinator:memories:delete"
     memory_id: str = Field(min_length=36, max_length=36)
     expected_version: int = Field(ge=1)
+
+
+class CoordinatorJobsRequest(ClientEventBase):
+    """Read the account's own coordinator jobs by id, for the chat's live cards"""
+    event_name: ClassVar[str] = "coordinator:jobs"
+    job_ids: List[Annotated[str, Field(pattern=r"^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$")]] = Field(min_length=1, max_length=50)
 
 
 # Instance OAuth app configuration (self-hosted: one OAuth client per provider)

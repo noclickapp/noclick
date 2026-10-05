@@ -44,6 +44,7 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "coordinator:memories:get": SocketIORateLimit(second=5, minute=60),
             "coordinator:memories:save": SocketIORateLimit(second=2, minute=30),
             "coordinator:memories:delete": SocketIORateLimit(second=2, minute=30),
+            "coordinator:jobs": SocketIORateLimit(second=5, minute=60),
 
             # Proving a credential works: each call is a real provider round
             # trip, so it is bounded well below a click-happy user.

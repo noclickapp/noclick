@@ -146,6 +146,7 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         "coordinator:memories:get": Handler.COORDINATOR,
         "coordinator:memories:save": Handler.COORDINATOR,
         "coordinator:memories:delete": Handler.COORDINATOR,
+        "coordinator:jobs": Handler.COORDINATOR,
         "instance_oauth:list": Handler.INSTANCE_OAUTH,
         "instance_oauth:set": Handler.INSTANCE_OAUTH,
         "instance_oauth:delete": Handler.INSTANCE_OAUTH,

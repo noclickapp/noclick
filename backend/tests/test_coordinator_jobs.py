@@ -72,3 +72,21 @@ async def test_finish_job_closes_a_job_once_and_hands_its_outcome_to_the_inbox(r
     quiet = MockNativePool({"UPDATE coordinator_jobs SET status": {**row, "continuation": None}})
     assert await jobs.finish_job(quiet, "j1", status="completed") is not None
     enqueue.assert_awaited_once()
+
+
+async def test_the_chat_reads_back_only_the_accounts_own_jobs(postgres_db):
+    """coordinator:jobs reads by id for the chat's live cards: an id that is someone else's comes back as nothing."""
+    from repositories.coordinator_jobs import CoordinatorJobRepo
+
+    owner, other = "00000000-0000-0000-0000-000000000001", "00000000-0000-0000-0000-0000000000a2"
+    await postgres_db.execute("INSERT INTO auth.users (id, email) VALUES ($1::uuid, 'other@example.com') ON CONFLICT DO NOTHING", other)
+    spec = {"model": "m", "prompt": "a teaser", "params": {"duration": 8, "resolution": "720p"}, "projected_credits": 2.5}
+    insert = "INSERT INTO coordinator_jobs (user_id, kind, status, spec) VALUES ($1::uuid, 'video', $2, $3) RETURNING id"
+    mine = str(await postgres_db.fetchval(insert, owner, "running", spec))
+    theirs = str(await postgres_db.fetchval(insert, other, "completed", spec))
+
+    rows = await CoordinatorJobRepo(postgres_db).list_by_ids(owner, [mine, theirs])
+    assert [str(r["id"]) for r in rows] == [mine]
+    view = jobs.job_view(rows[0])
+    assert view["status"] == "running" and view["prompt"] == "a teaser"
+    assert await CoordinatorJobRepo(postgres_db).list_by_ids(other, [mine]) == []

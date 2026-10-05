@@ -7,17 +7,20 @@ coordinator:send runs a turn that streams the usual chat:message frames (with
 any files and references the composer added), and coordinator:reset starts the
 thread over. coordinator:attachment:upload_url reserves a file the composer
 uploads straight to storage; coordinator:attachments:list offers the ones sent
-before. Gated on the coordinator rollout; the turn itself lives in
+before; coordinator:jobs reads back the work its turns started (for the chat's
+live cards). Gated on the coordinator rollout; the turn itself lives in
 coder/coordinator/agent.py so channels can share it.
 """
 
 import logging
+import uuid
 from typing import Any, Awaitable, Callable, Dict
 
 from coder.coordinator import agent as coordinator
 from coder.coordinator import attachments
 from coder.coordinator.email_channel import coordinator_address
 from coder.coordinator.web_input import web_turn_input
+from repositories.coordinator_jobs import CoordinatorJobRepo
 from repositories.coordinator_memories import CoordinatorMemoryRepo, MemoryConflict
 from utils.capabilities import COORDINATOR_IMESSAGE, COORDINATOR_NUMBER, capability
 from utils.database_pool import DatabasePoolMixin
@@ -30,6 +33,7 @@ from wss.receiver.client_events import (
     CoordinatorMemoryGetRequest,
     CoordinatorMemorySaveRequest,
     CoordinatorMemoryDeleteRequest,
+    CoordinatorJobsRequest,
     CoordinatorOpenRequest,
     CoordinatorResetRequest,
     CoordinatorSendRequest,
@@ -64,6 +68,7 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             "coordinator:memories:get": self.handle_memory_get,
             "coordinator:memories:save": self.handle_memory_save,
             "coordinator:memories:delete": self.handle_memory_delete,
+            "coordinator:jobs": self.handle_jobs,
         }
 
     async def _respond(self, sid: str, request_id: str, op: Callable[[str, Any], Awaitable[Any]]) -> None:
@@ -174,4 +179,15 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             return await CoordinatorMemoryRepo(await self.get_pool()).delete(
                 user_id, request.memory_id, request.expected_version,
             )
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_jobs(self, sid: str, request: CoordinatorJobsRequest) -> None:
+        async def op(user_id: str, _email):
+            from coder.coordinator.jobs import job_view
+
+            ids = [str(uuid.UUID(job_id)) for job_id in request.job_ids]
+            rows = await CoordinatorJobRepo(await self.get_pool()).list_by_ids(user_id, ids)
+            # The coordinator's own view of each job, and when it started and last moved for the card's clock.
+            return {"jobs": [{**job_view(row), "created_at": row["created_at"].isoformat(),
+                              "updated_at": row["updated_at"].isoformat()} for row in rows]}
         await self._respond(sid, request.request_id, op)

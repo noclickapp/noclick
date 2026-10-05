@@ -18,3 +18,10 @@ class CoordinatorJobRepo:
             user_id, job_id, kind, limit,
         )
         return [dict(r) for r in rows]
+
+    async def list_by_ids(self, user_id, job_ids):
+        """The account's own jobs among ``job_ids``; an id that isn't one of them is simply absent."""
+        rows = await self.pool.fetch(
+            "SELECT * FROM coordinator_jobs WHERE user_id=$1::uuid AND id = ANY($2::uuid[])", user_id, job_ids,
+        )
+        return [dict(r) for r in rows]

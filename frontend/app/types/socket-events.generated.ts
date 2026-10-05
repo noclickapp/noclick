@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Tue Oct 06 01:41:04  2026
+// Generated at: Tue Oct 06 13:07:34  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -2166,6 +2166,21 @@ export interface CoordinatorAttachmentsListRequest {
    */
   query?: string;
   limit?: number;
+  [k: string]: unknown;
+}
+/**
+ * Read the account's own coordinator jobs by id, for the chat's live cards
+ */
+export interface CoordinatorJobsRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * @minItems 1
+   * @maxItems 50
+   */
+  job_ids: [string, ...string[]];
   [k: string]: unknown;
 }
 /**
@@ -13846,6 +13861,7 @@ export interface ClientToServerEvents {
   'conversations:list': (data: ListConversationsRequest) => void;
   'coordinator:attachment:upload_url': (data: CoordinatorAttachmentUploadUrlRequest) => void;
   'coordinator:attachments:list': (data: CoordinatorAttachmentsListRequest) => void;
+  'coordinator:jobs': (data: CoordinatorJobsRequest) => void;
   'coordinator:memories:delete': (data: CoordinatorMemoryDeleteRequest) => void;
   'coordinator:memories:get': (data: CoordinatorMemoryGetRequest) => void;
   'coordinator:memories:list': (data: CoordinatorMemoriesListRequest) => void;
@@ -14184,6 +14200,7 @@ export const ClientEventNames = {
   CodexDeviceCodeStartRequest: 'codex:auth:start',
   CoordinatorAttachmentUploadUrlRequest: 'coordinator:attachment:upload_url',
   CoordinatorAttachmentsListRequest: 'coordinator:attachments:list',
+  CoordinatorJobsRequest: 'coordinator:jobs',
   CoordinatorMemoriesListRequest: 'coordinator:memories:list',
   CoordinatorMemoryDeleteRequest: 'coordinator:memories:delete',
   CoordinatorMemoryGetRequest: 'coordinator:memories:get',
@@ -14531,6 +14548,7 @@ interface ClientEventMap {
   CodexDeviceCodeStartRequest: CodexDeviceCodeStartRequest
   CoordinatorAttachmentUploadUrlRequest: CoordinatorAttachmentUploadUrlRequest
   CoordinatorAttachmentsListRequest: CoordinatorAttachmentsListRequest
+  CoordinatorJobsRequest: CoordinatorJobsRequest
   CoordinatorMemoriesListRequest: CoordinatorMemoriesListRequest
   CoordinatorMemoryDeleteRequest: CoordinatorMemoryDeleteRequest
   CoordinatorMemoryGetRequest: CoordinatorMemoryGetRequest
@@ -15292,6 +15310,10 @@ export const CoordinatorAttachmentUploadUrlRequest = {
 export const CoordinatorAttachmentsListRequest = {
   event_name: 'coordinator:attachments:list' as const,
   create: (data: CoordinatorAttachmentsListRequest) => ({ event_name: 'coordinator:attachments:list' as const, ...data })
+};
+export const CoordinatorJobsRequest = {
+  event_name: 'coordinator:jobs' as const,
+  create: (data: CoordinatorJobsRequest) => ({ event_name: 'coordinator:jobs' as const, ...data })
 };
 export const CoordinatorMemoriesListRequest = {
   event_name: 'coordinator:memories:list' as const,
@@ -16461,6 +16483,7 @@ export const EventRouting = {
   'conversations:list': 'API',
   'coordinator:attachment:upload_url': 'API',
   'coordinator:attachments:list': 'API',
+  'coordinator:jobs': 'API',
   'coordinator:memories:delete': 'API',
   'coordinator:memories:get': 'API',
   'coordinator:memories:list': 'API',

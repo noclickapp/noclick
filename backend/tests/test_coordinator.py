@@ -30,8 +30,8 @@ from utils import feature_gates
 from wss.receiver.client_events import (
     CoordinatorOpenRequest, CoordinatorResetRequest, CoordinatorSendRequest,
     CoordinatorMemoriesListRequest, CoordinatorMemoryGetRequest, CoordinatorMemorySaveRequest,
-    CoordinatorMemoryDeleteRequest, CoordinatorAttachmentUploadUrlRequest, CoordinatorAttachmentsListRequest,
-    CoordinatorReference,
+    CoordinatorMemoryDeleteRequest, CoordinatorJobsRequest, CoordinatorAttachmentUploadUrlRequest,
+    CoordinatorAttachmentsListRequest, CoordinatorReference,
 )
 from wss.sender import send_event
 from wss.sender.events import ChatMessageEvent
@@ -516,7 +516,8 @@ class TestCoordinatorHandler(BaseHandlerTest):
                             "name": "pref", "description": "When to read", "memory_type": "user", "content": "Details"}),
                         CoordinatorMemoryDeleteRequest(request_id="g6", memory_id=WORKFLOW, expected_version=1),
                         CoordinatorAttachmentUploadUrlRequest(request_id="g7", name="a.png", mime_type="image/png", size_bytes=3),
-                        CoordinatorAttachmentsListRequest(request_id="g8")):
+                        CoordinatorAttachmentsListRequest(request_id="g8"),
+                        CoordinatorJobsRequest(request_id="g9", job_ids=[WORKFLOW])):
             response = await self._send(frontend_sio, sid, request)
             assert response["data"] == {"kind": "gated"} and "available on your account" in response["error"], request
         self.turn.assert_not_awaited()
@@ -534,6 +535,26 @@ class TestCoordinatorHandler(BaseHandlerTest):
         conflict = await self._send(frontend_sio, sid, CoordinatorMemoryDeleteRequest(
             request_id="md", memory_id=WORKFLOW, expected_version=1))
         assert conflict["data"] == {"kind": "conflict"} and conflict["error"] == "Memory changed"
+
+
+    async def test_jobs_read_is_the_session_owners_with_each_jobs_clock(self, frontend_sio, sid, monkeypatch):
+        created, moved = datetime(2026, 10, 5, 9, 0, tzinfo=timezone.utc), datetime(2026, 10, 5, 9, 4, tzinfo=timezone.utc)
+        row = {"id": WORKFLOW, "kind": "agent", "workflow_id": WORKFLOW, "node_id": "agent-1", "status": "completed",
+               "spec": {"agent_name": "Inbox", "message": "Triage today"}, "parent_job_id": None, "execution_id": None,
+               "created_at": created, "updated_at": moved, "error": None, "result": {"reply": "Done"}, "delivery_error": None}
+        listing = AsyncMock(return_value=[row])
+        monkeypatch.setattr("repositories.coordinator_jobs.CoordinatorJobRepo.list_by_ids", listing)
+        response = await self._send(frontend_sio, sid, CoordinatorJobsRequest(request_id="j1", job_ids=[WORKFLOW.upper()]))
+        assert listing.await_args.args == ("uuid-test-user", [WORKFLOW])
+        [job] = response["data"]["jobs"]
+        assert job["kind"] == "agent" and job["status"] == "completed" and job["agent_name"] == "Inbox"
+        assert job["created_at"] == created.isoformat() and job["updated_at"] == moved.isoformat()
+
+    def test_jobs_read_takes_job_ids_only(self):
+        from pydantic import ValidationError
+        for bad in ([], ["x" * 36], [WORKFLOW] * 51):
+            with pytest.raises(ValidationError):
+                CoordinatorJobsRequest(job_ids=bad)
 
 
 def test_voice_turns_get_the_spoken_style_and_the_callers_note():
