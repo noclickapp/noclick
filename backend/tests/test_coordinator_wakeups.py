@@ -123,12 +123,19 @@ async def test_free_form_message_wakes_coordinator_to_choose_action_once(db, mon
     # A duplicate callback for a completed wakeup cannot run another action.
     assert await wakeups.process_event(pool, event)
     assert len(model_calls) == 1
-    assert reach.await_count == int(act)
-    if act:
-        assert reach.call_args.args[1:] == (USER, "Your report is ready.")
-        assert reach.call_args.kwargs["channel"] == channel
+    if act and channel == "web":
+        # The turn's reply is only a web note, so a message to the web IS that note: one message, not two.
+        reach.assert_not_awaited()
+        transcript = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id=$1", f"coordinator:{USER}")
+        assert [e["message"] for e in transcript] == ["Your report is ready."]
+        socket.assert_awaited_once()
+    else:
+        assert reach.await_count == int(act)
+        if act:
+            assert reach.call_args.args[1:] == (USER, "Your report is ready.")
+            assert reach.call_args.kwargs["channel"] == channel
+        socket.assert_not_awaited()
     phone.assert_not_awaited()
-    socket.assert_not_awaited()
     assert (await repo.get(event["id"]))["status"] == "done"
 
 
@@ -311,6 +318,66 @@ async def test_wakeup_table_is_private(db):
     assert await pool.fetchval("SELECT relrowsecurity FROM pg_class WHERE oid='coordinator_wakeups'::regclass")
     for role in ("anon", "authenticated"):
         assert not await pool.fetchval("SELECT has_table_privilege($1,'coordinator_wakeups','SELECT')", role)
+
+
+async def test_a_triage_turn_leaves_one_note_about_its_automation(db, monkeypatch):
+    """A failure wake-up that tells the owner on the web leaves ONE note, its link once, stamped with the
+    automation; the builder review it starts carries the stamp to its own note."""
+    from coder.coordinator.signals import record_run_failure
+
+    pool, repo, builds, workflow_id, _ = db
+    monkeypatch.setattr("utils.coordinator_dispatch.dispatch_event", AsyncMock())
+    assert await record_run_failure(pool, workflow_id=workflow_id, execution_id=None, trigger_source="cron",
+                                    error="GET timed out") == "woke"
+    event = await repo.claim()
+    link = "https://noclick.com/b/abc"
+    told = f"Build test keeps timing out. Answer here: {link}"
+    started = []
+
+    class TriageAgent:
+        @classmethod
+        async def create(cls, **kwargs):
+            self = cls()
+            self.kwargs = kwargs
+            return self
+
+        async def __call__(self, message):
+            execute = self.kwargs["custom_tool_executor"]
+            sent = await execute("message_owner", {"text": told, "link": link})
+            assert sent["success"] and sent["channel"] == "web"
+            review = await execute("request_build", {"workflow_id": workflow_id, "instructions": "Diagnose it."})
+            started.append(review["job_id"])
+            await self.kwargs["emit_message"](ChatMessageEvent(message="I notified you and asked the builder.",
+                                                               finished=True))
+
+        async def cleanup(self):
+            pass
+
+    monkeypatch.setattr(agent, "Agent", TriageAgent)
+    socket = AsyncMock()
+    monkeypatch.setattr(wakeups, "emit_notification", socket)
+    await wakeups.run_wakeup(pool, event)
+    assert await wakeups.process_event(pool, await repo.get(event["id"]))
+    signal = {"kind": "run_failure", "workflow_id": workflow_id, "workflow_name": "Build test"}
+    transcript = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id=$1", f"coordinator:{USER}")
+    assert [(e["message"], e["signal"]) for e in transcript] == [(told, signal)]
+    assert socket.call_args.args[3]["signal"] == signal
+    assert (await builds.list_for_user(USER, job_id=started[0]))[0]["continuation"]["signal"] == signal
+
+
+async def test_a_note_frame_names_its_automation(monkeypatch):
+    from utils import task_notifications
+
+    sent = AsyncMock()
+    monkeypatch.setattr(task_notifications, "send_event", sent)
+    signal = {"kind": "agent_message", "workflow_id": "w1", "workflow_name": "Inbox"}
+    event = task_notifications.notification_event("Handled.", "coordinator-wakeup:1", signal=signal)
+    await task_notifications.emit_notification(None, USER, f"coordinator:{USER}", event)
+    frame = sent.call_args.args[2]
+    assert frame.notification and frame.signal.workflow_name == "Inbox"
+    await task_notifications.emit_notification(None, USER, f"coordinator:{USER}",
+                                               task_notifications.notification_event("Done.", "t2"))
+    assert sent.call_args.args[2].signal is None
 
 
 @pytest.mark.parametrize('source', ['alarm', 'signal', 'job'])

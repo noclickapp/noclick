@@ -52,6 +52,8 @@ async def test_one_workflows_failures_fold_into_one_wakeup(account):
     assert wake["source"] == "signal" and wake["send_to_phone"] is False and wake["context"]["channel"] == "web"
     assert wake["payload"]["kind"] == "run_failure" and wake["payload"]["error"] == "Slack 401"
     assert wake["payload"]["workflow_name"] == "Digest" and wake["payload"]["node_label"] == "Post summary"
+    # What the turn leaves in the chat says which automation it's about.
+    assert wake["context"]["signal"] == {"kind": "run_failure", "workflow_id": wf, "workflow_name": "Digest"}
 
     for _ in range(3):  # a high-frequency workflow keeps failing
         assert await record_run_failure(pool, workflow_id=wf, execution_id=str(uuid.uuid4()),
@@ -59,6 +61,45 @@ async def test_one_workflows_failures_fold_into_one_wakeup(account):
     row = await pool.fetchrow("SELECT repeats, payload FROM coordinator_signals WHERE workflow_id = $1::uuid", wf)
     assert row["repeats"] == 3 and row["payload"]["last_error"] == "Slack 401 again"
     assert len(dispatched) == 1
+
+
+async def test_the_same_error_again_stays_quiet_until_the_workflow_changes(account):
+    pool, user_id, workflow, dispatched = account
+    wf = str(await pool.fetchval(  # last edited long before it started failing
+        "INSERT INTO workflows (owner_id, name, workflow, updated_at) "
+        "VALUES ($1::uuid, 'Keepalive', '{}'::jsonb, now() - interval '30 days') RETURNING id", user_id))
+    timeout = "GET https://{}.example.com failed: request {} timed out after 30s"
+
+    async def fail(error):
+        return await record_run_failure(pool, workflow_id=wf, execution_id=str(uuid.uuid4()), error=error,
+                                        trigger_source="cron")
+
+    async def age(hours):
+        await pool.execute("UPDATE coordinator_signals SET created_at = created_at - make_interval(hours => $2) "
+                           "WHERE workflow_id = $1::uuid", wf, hours)
+
+    assert await fail(timeout.format(uuid.uuid4(), 81234)) == "woke"
+    await age(signals.FAILURE_WINDOW_HOURS + 2)
+    # The coordinator has looked at it, so the same failure again is not news, whatever its ids.
+    assert await fail(timeout.format(uuid.uuid4(), 95678)) == "folded"
+    assert await pool.fetchval("SELECT repeats FROM coordinator_signals WHERE workflow_id = $1::uuid", wf) == 1
+    assert len(dispatched) == 1
+    assert await fail("GET https://x.example.com failed: HTTP 503") == "woke"  # a different error is
+    await age(signals.FAILURE_WINDOW_HOURS + 2)
+    await pool.execute("UPDATE workflows SET workflow = workflow || '{\"edited\": true}'::jsonb WHERE id = $1::uuid", wf)
+    assert await fail(timeout.format(uuid.uuid4(), 1)) == "woke"  # and so is the old one once a fix didn't hold
+    await age(24 * signals.KNOWN_FAILURE_DAYS)
+    assert await fail(timeout.format(uuid.uuid4(), 2)) == "woke"  # and once a week if it never stops
+    assert len(dispatched) == 4
+
+
+async def test_a_failure_fingerprint_ignores_ids_and_times_but_not_status_codes():
+    fp = signals.failure_fingerprint
+    assert fp("nc_daemon did not become ready within 120s (sandbox 3f9a2c1d4e5f6a7b)") == \
+        fp("nc_daemon did not become ready within 120s (sandbox 0123456789abcdef)")
+    assert fp(f"POST /r/{uuid.uuid4()} at 2026-10-05T08:30:00Z: HTTP 429") == \
+        fp(f"POST /r/{uuid.uuid4()} at 2026-10-06T02:30:12.5Z: HTTP 429")
+    assert fp("Slack 401") != fp("Slack 403")
 
 
 async def test_credit_exhaustion_never_wakes_it(account):
@@ -92,6 +133,8 @@ async def test_an_agent_can_message_the_coordinator_a_few_times_a_day(account):
     assert (await record_agent_message(pool, user_id=user_id, workflow_id=wf, node_id="agent-1", message=" "))["success"] is False
     payload = (await pool.fetchrow("SELECT payload FROM coordinator_wakeups WHERE id = $1", dispatched[0]["id"]))["payload"]
     assert payload["kind"] == "agent_message" and payload["workflow_name"] == "Support inbox"
+    context = (await pool.fetchrow("SELECT context FROM coordinator_wakeups WHERE id = $1", dispatched[0]["id"]))["context"]
+    assert context["signal"] == {"kind": "agent_message", "workflow_id": wf, "workflow_name": "Support inbox"}
     assert "revoked" in payload["message"]
 
 

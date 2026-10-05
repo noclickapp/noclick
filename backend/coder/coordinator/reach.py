@@ -50,6 +50,13 @@ async def phone_text_channel(pool, user_id: str) -> str:
     return "imessage_text" if await last_phone_app(pool, user_id) == "imessage" else "whatsapp_text"
 
 
+def with_link(text: str, link: Optional[str]) -> str:
+    """The message with its link on a line of its own, once: the text often carries it already."""
+    if not link or link in text:
+        return text
+    return f"{text}\n{link}" if text else link
+
+
 async def resolve_channel(pool, user_id: str, channel: str = "auto") -> str:
     if channel != "auto":
         return channel
@@ -72,11 +79,11 @@ async def reach_owner(
     if resolved == "email":
         from coder.coordinator.email_channel import send_owner_email
 
-        body = f"{text}\n{link}" if link else text
-        return {**await send_owner_email(pool, user_id, body, subject=subject, organization_id=organization_id),
+        return {**await send_owner_email(pool, user_id, with_link(text, link), subject=subject,
+                                         organization_id=organization_id),
                 "channel": resolved}
     if resolved == "web":
-        return {**await _post_to_web(pool, user_id, f"{text}\n{link}" if link else text), "channel": resolved}
+        return {**await _post_to_web(pool, user_id, with_link(text, link)), "channel": resolved}
     return {"success": False, "error": f"channel must be auto or one of {', '.join(CHANNELS)}"}
 
 

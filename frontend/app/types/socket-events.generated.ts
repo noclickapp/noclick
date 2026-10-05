@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Sun Oct 04 21:53:13  2026
+// Generated at: Tue Oct 06 01:41:04  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -369,9 +369,21 @@ export interface ChatMessageEvent {
    */
   notification?: boolean;
   /**
+   * On a coordinator note: the failed run or agent message that woke the turn, so the chat can keep one automation's notes together.
+   */
+  signal?: CoordinatorSignalRef | null;
+  /**
    * Approval card for the agent's prompt_builder tool (interactive chats only): {prompt, node_id, proposal_id}. The chat renders approve/dismiss; approving opens the builder sidebar and submits the prompt. Standalone frame — no message text, no streaming implications.
    */
   builder_prompt?: BuilderPromptProposal | null;
+}
+/**
+ * The automation a coordinator note is about, when its turn was woken from elsewhere in the account.
+ */
+export interface CoordinatorSignalRef {
+  kind: "run_failure" | "agent_message";
+  workflow_id: string;
+  workflow_name: string;
 }
 /**
  * Event emitted when voice transcription is received

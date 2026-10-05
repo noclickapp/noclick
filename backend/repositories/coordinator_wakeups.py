@@ -294,8 +294,9 @@ class CoordinatorWakeupRepo:
                 )
                 if row is None:
                     return None
+                about = {"signal": row["context"]["signal"]} if row["context"].get("signal") else {}
                 event = notification_event(row["response"], f"coordinator-wakeup:{row['id']}",
-                                           coordinator_wakeup_id=str(row["id"]))
+                                           coordinator_wakeup_id=str(row["id"]), **about)
                 await conn.execute(
                     ConversationRepo._UPSERT_CHAT_EVENT_SQL,
                     f"coordinator:{row['user_id']}", row["user_id"], None, "__coordinator__", [event], "Coordinator", None,

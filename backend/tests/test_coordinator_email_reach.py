@@ -108,6 +108,12 @@ async def test_auto_is_the_last_used_channel_and_a_named_channel_wins(owner, mon
     assert out == {"success": True, "channel": "web"}
     events = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id = $1", f"coordinator:{user_id}")
     assert events[-1]["message"] == "Heads up" and events[-1]["notification"] is True
+    # A link the text already carries is not added again.
+    link = "https://noclick.com/b/abc"
+    await reach.reach_owner(pool, user_id, f"Answer here: {link}", link=link, channel="web")
+    await reach.reach_owner(pool, user_id, "Answer here:", link=link, channel="web")
+    events = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id = $1", f"coordinator:{user_id}")
+    assert [e["message"] for e in events[-2:]] == [f"Answer here: {link}", f"Answer here:\n{link}"]
 
 
 async def test_the_phone_app_is_the_one_the_owner_last_texted_on(owner, monkeypatch):

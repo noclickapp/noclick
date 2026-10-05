@@ -847,12 +847,16 @@ class CoordinatorTools:
 
     async def message_owner(self, text: str, link: Optional[str] = None, channel: str = "auto",
                             subject: Optional[str] = None) -> Dict[str, Any]:
-        from coder.coordinator.reach import reach_owner
+        from coder.coordinator.reach import reach_owner, resolve_channel, with_link
 
         text = (text or "").strip()
         if not text:
             return {"success": False, "error": "text is required"}
-        return await reach_owner(self.pool, self.user_id, text, link=(link or "").strip() or None,
+        link = (link or "").strip() or None
+        if self.followup is not None and self.followup.internal and \
+                await resolve_channel(self.pool, self.user_id, channel) == "web":
+            return self.followup.note(with_link(text, link))
+        return await reach_owner(self.pool, self.user_id, text, link=link,
                                  channel=channel, subject=subject, organization_id=self.organization_id)
 
     async def set_email_address(self, name: str) -> Dict[str, Any]:

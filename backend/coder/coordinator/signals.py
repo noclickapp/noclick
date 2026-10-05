@@ -2,7 +2,9 @@
 a workflow run failed, or an agent node messaged it (``message_coordinator``).
 
 Flood control lives here, not in the callers. Failures of one workflow within
-``FAILURE_WINDOW`` fold into one signal (``repeats``); at most
+``FAILURE_WINDOW`` fold into one signal (``repeats``), and so does the same
+error again after the coordinator has looked at it, for ``KNOWN_FAILURE_DAYS``
+unless the workflow is edited (a repeat of a known issue is not news); at most
 ``DAILY_FAILURE_WAKEUPS`` failure signals a day wake the coordinator, and an
 agent can message it ``AGENT_MESSAGES_PER_NODE_DAILY`` times a day, within an
 account-wide cap. Capped run failures remain recorded; capped agent messages
@@ -13,18 +15,35 @@ a coordinator turn would need the credits that ran out.
 
 from __future__ import annotations
 
+import hashlib
 import logging
+import re
 import uuid
 from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
 FAILURE_WINDOW_HOURS = 6
+KNOWN_FAILURE_DAYS = 7
 DAILY_FAILURE_WAKEUPS = 6
 AGENT_MESSAGES_PER_NODE_DAILY = 24
 AGENT_MESSAGES_DAILY = 100
 _MESSAGE_MAX = 2000
 _ERROR_MAX = 1500
+# Ids, dates, times and long numbers; a status code or a timeout's seconds still tell two failures apart.
+_VOLATILE = re.compile(r"[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}|\d{4}-\d\d-\d\d(?:[t ][\d:.]+)?"
+                       r"|\b\d{1,2}:\d\d(?::\d\d)?\b|\b[0-9a-f]{12,}\b|\d{4,}")
+
+
+def failure_fingerprint(error: Optional[str]) -> str:
+    """The same failure again: its error with ids, numbers and spacing ignored."""
+    text = " ".join(_VOLATILE.sub("#", (error or "").lower()).split())
+    return hashlib.sha256(text[:200].encode()).hexdigest()[:16]
+
+
+def signal_ref(kind: str, workflow_id: str, workflow_name: Optional[str]) -> Dict[str, Any]:
+    """What a wake-up and every note its turn leaves are about, so the chat can keep them together."""
+    return {"kind": kind, "workflow_id": workflow_id, "workflow_name": workflow_name or "Untitled"}
 
 
 async def _wake(pool, signal: Dict[str, Any], *, request: str) -> None:
@@ -33,7 +52,8 @@ async def _wake(pool, signal: Dict[str, Any], *, request: str) -> None:
     repo = CoordinatorWakeupRepo(pool)
     user_id = str(signal["user_id"])
     context = {"epoch": await repo.epoch(user_id), "depth": 0, "request": request, "channel": "web",
-               "turn_id": str(uuid.uuid4())}
+               "turn_id": str(uuid.uuid4()),
+               "signal": signal_ref(signal["kind"], str(signal["workflow_id"]), signal["payload"].get("workflow_name"))}
     await repo.enqueue_signal(signal=signal, context=context, payload={"kind": signal["kind"], **signal["payload"]})
 
 
@@ -48,11 +68,13 @@ async def record_run_failure(
 
     if error and match_insufficient_credits(error):
         return "credits"
+    fingerprint = failure_fingerprint(error)
     async with pool.acquire() as conn:
         async with conn.transaction():
             await conn.execute("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", f"signal:{workflow_id}")
             wf = await conn.fetchrow(
-                "SELECT owner_id, name FROM workflows WHERE id = $1::uuid AND deleted_at IS NULL", workflow_id)
+                "SELECT owner_id, name, updated_at FROM workflows WHERE id = $1::uuid AND deleted_at IS NULL",
+                workflow_id)
             if wf is None:
                 return "no workflow"
             owner = user_id or str(wf["owner_id"])
@@ -60,10 +82,12 @@ async def record_run_failure(
                 f"""UPDATE coordinator_signals SET repeats = repeats + 1, last_seen_at = now(),
                       payload = payload || jsonb_build_object('last_error', $2::text, 'last_execution_id', $3::text)
                     WHERE id = (SELECT id FROM coordinator_signals WHERE workflow_id = $1::uuid AND kind = 'run_failure'
-                                AND created_at > now() - interval '{FAILURE_WINDOW_HOURS} hours'
+                                AND (created_at > now() - interval '{FAILURE_WINDOW_HOURS} hours'
+                                     OR (woke AND payload->>'fingerprint' = $4 AND created_at >= $5
+                                         AND created_at > now() - interval '{KNOWN_FAILURE_DAYS} days'))
                                 ORDER BY created_at DESC LIMIT 1)
                     RETURNING id""",
-                workflow_id, (error or "")[:_ERROR_MAX], execution_id,
+                workflow_id, (error or "")[:_ERROR_MAX], execution_id, fingerprint, wf["updated_at"],
             )
             if folded:
                 return "folded"
@@ -80,7 +104,7 @@ async def record_run_failure(
                 owner, workflow_id, node_id, execution_id,
                 {"workflow_id": workflow_id, "workflow_name": wf["name"], "execution_id": execution_id,
                  "trigger_source": trigger_source, "node_label": node_label, "error": (error or "")[:_ERROR_MAX],
-                 "failed_runs_last_24h": failures_24h},
+                 "failed_runs_last_24h": failures_24h, "fingerprint": fingerprint},
                 wake,
             )
     if not wake:
@@ -138,5 +162,7 @@ def describe(event: Dict[str, Any]) -> str:
         "3. If it's broken and fixable, have the builder fix it.\n"
         "4. If it can't be fixed, or it's a NoClick platform problem, submit_feedback.\n"
         "5. If it keeps failing (failed_runs_last_24h, repeats) or needs the owner (a credential, a decision), "
-        "tell them with message_owner. Otherwise don't bother them: a short note here is enough."
+        "tell them with message_owner. Otherwise don't bother them: a short note here is enough.\n"
+        f"The same error again won't wake you for {KNOWN_FAILURE_DAYS} days unless the workflow is edited; a "
+        "different error will."
     )

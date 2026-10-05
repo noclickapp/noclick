@@ -22,6 +22,7 @@ class FollowupDelivery:
         self.notify = previous.get("notify", True)
         self.include_recordings = previous.get("include_recordings", not self.background)
         self.reason = ""
+        self.notes = []
 
     @staticmethod
     def tool_param():
@@ -44,10 +45,17 @@ class FollowupDelivery:
         self.notify, self.include_recordings, self.reason = notify, include_recordings, reason[:500]
         return {"success": True, **self.decision(), "note": self.delivery_instructions()}
 
+    def note(self, text):
+        """A message to the web conversation from a turn whose reply is only a note there is that note."""
+        self.notes.append(text)
+        return {"success": True, "channel": "web",
+                "note": "Posted as this turn's note in the owner's web conversation, in place of your final reply."}
+
     def delivery_instructions(self):
         if self.internal:
             return (
-                "Your final reply is only a note in the coordinator's web conversation. To deliver a message "
+                "Your final reply is only a note in the coordinator's web conversation; a message_owner to the web "
+                "takes its place, so the owner reads one note. To deliver a message "
                 "elsewhere or take another action, use your available tools according to the owner's "
                 "instructions and the preferences in the incoming message. Mentioning a destination in your "
                 "final reply does not send it there. set_followup_delivery controls only the web note."
@@ -75,6 +83,9 @@ class FollowupDelivery:
         return text
 
     def reply(self, text):
+        if self.notes:
+            # Its closing line would only repeat what it told the owner.
+            return FollowupReply("\n\n".join(self.notes), {**self.decision(), "notify": True})
         payload = self.event["payload"]
         artifacts = [payload] if self.artifact_only else list(payload.get("artifacts", {}).values())
         recordings = [item for item in artifacts if item.get("operation") == "call_recording"]
