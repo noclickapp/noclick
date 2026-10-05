@@ -32,6 +32,8 @@ async def db(builder_request_db, monkeypatch, local_scheduler):
     monkeypatch.setattr(agent, "get_native_pool", lambda: pool)
     monkeypatch.setattr(agent, "get_user_org_context", AsyncMock(return_value=None))
     monkeypatch.setattr(wakeups, "get_sio", lambda: object())
+    # Imported inside the stub below, the handler would bind it for every later test.
+    import wss.handlers.coordinator_handler  # noqa: F401
     monkeypatch.setattr("utils.feature_gates.require_feature", lambda *a, **kw: None)
     monkeypatch.setattr("wss.handlers.coordinator_handler.plan_allows_turn", AsyncMock(return_value=(True, None)))
     monkeypatch.setattr(capabilities, "_providers", {capabilities.INTERFACE_PUBLISH: AsyncMock()})

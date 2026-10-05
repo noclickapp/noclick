@@ -74,9 +74,21 @@ class BuilderPromptProposal(BaseModel):
     decision: Optional[Literal["approved", "dismissed"]] = None
 
 
+class CoordinatorSignalRef(BaseModel):
+    """The automation a coordinator note is about, when its turn was woken from elsewhere in the account."""
+    kind: Literal["run_failure", "agent_message"]
+    workflow_id: str
+    workflow_name: str
+
+
 class ChatMessageEvent(BaseModel):
     turn_id: Optional[str] = None
     notification: bool = Field(False, description="Standalone background update; never finish the in-progress reply.")
+    signal: Optional[CoordinatorSignalRef] = Field(
+        None,
+        description="On a coordinator note: the failed run or agent message that woke the turn, so the chat "
+                    "can keep one automation's notes together."
+    )
     """
     Event emitted for chat messages including AI responses and component generation.
     
