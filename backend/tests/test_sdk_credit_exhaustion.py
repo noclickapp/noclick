@@ -12,6 +12,7 @@ from coder.openai_agent.billing import BillingHooks
 from nodes.agent.handlers.llm import execute_llm_model
 from wss.handlers.agent_handler import AgentHandler
 from wss.sender import AgentStateEvent, ChatMessageEvent
+from wss.sender.events import tool_step_event
 from wss.sender.schema import AgenticStep
 from wss.sender.schema import ContentItem
 
@@ -198,3 +199,25 @@ async def test_a_mirrored_turn_reaches_the_owners_tabs_with_its_steps_and_its_sa
     assert order[0][1] is step and order[1] == ("persist", "Hello")
     assert order[2][1].finished is True and order[3][1].state == "finished"
     assert {entry[2] for entry in order if entry[0] == "send"} == {"u1"}
+
+
+async def test_every_frame_of_a_turn_names_its_conversation(monkeypatch):
+    """The agent wrapper builds its frames without a conversation id, and the coordinator's chat drops any
+    frame that isn't its own: on the web and mirrored alike, every frame leaves naming the conversation."""
+    sent = []
+
+    async def send(sio, sid, event, **kwargs):
+        sent.append(event)
+    monkeypatch.setattr("wss.handlers.agent_handler.send_event", send)
+    handler = AgentHandler(MagicMock())
+    monkeypatch.setattr(handler, "_persist_chat_event", AsyncMock())
+    for sid, mirror in (("sid-1", False), ("", True)):
+        emit = await handler._create_emit_callback(
+            sid, "gpt-4o", conversation_id="coordinator:u1", user_id="u1", workflow_id=None, mirror_to_user=mirror,
+        )
+        for event in (tool_step_event("c1", "Calling list_runs({})", "in_progress"), ChatMessageEvent(message="Hi"),
+                      ChatMessageEvent(message=None, finished=True), AgentStateEvent(state="finished")):
+            await emit(event)
+
+    assert len(sent) == 7  # web: step, token, end, state; mirrored: step, end, state
+    assert {event.conversation_id for event in sent} == {"coordinator:u1"}

@@ -502,6 +502,10 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
 
         async def emit_message(event):
             """Callback to emit events to the frontend."""
+            if isinstance(event, (ChatMessageEvent, AgentStateEvent)) and not event.conversation_id:
+                # The agent wrapper's frames name no conversation, and a chat keyed on
+                # one (the coordinator's) drops every frame that isn't its own.
+                event.conversation_id = conversation_id
             if isinstance(event, ChatMessageEvent):
                 # Add model information so the chat UI shows which model
                 # produced this reply.
