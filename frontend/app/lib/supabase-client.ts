@@ -28,9 +28,8 @@ let clientEnv: { SUPABASE_URL: string; SUPABASE_ANON_KEY: string } | null =
  * Gated on a **localhost host**, not merely on port presence: in production the
  * server's request.url host/port comes from forwarded headers and can't be
  * trusted (same reason auth.server.ts uses NODE_ENV, not request.url). Gating
- * on a localhost host guarantees prod returns undefined on BOTH server and
- * browser — the default Supabase cookie name, unchanged — so a deploy never
- * invalidates anyone's session and a spoofed Host can't touch the real cookie.
+ * on a localhost host guarantees prod never gets a dev name on either side, so
+ * a spoofed Host can't touch the real cookie.
  */
 /**
  * One auth-cookie name for the whole self-hosted installation, on BOTH sides.
@@ -41,21 +40,27 @@ let clientEnv: { SUPABASE_URL: string; SUPABASE_ANON_KEY: string } | null =
  * and derives `sb-<public-host>-auth-token` — so the browser never finds the
  * session the server set, every socket connects with no token (`missing_auth`
  * loop; first seen on a Railway deploy, 2026-08-31), and nothing looks wrong
- * until the dashboard is dead. Hosted keeps the library defaults untouched —
- * its two sides share one real Supabase URL, and renaming would log everyone
- * out.
+ * until the dashboard is dead.
  */
 export const SELF_HOST_AUTH_COOKIE_NAME = 'sb-noclick-auth-token';
 
+/**
+ * The hosted service's auth-cookie name, pinned to the one every hosted session
+ * was born under: the library derives the name from the Supabase URL's first
+ * label, which was `api` there. Without the pin, moving that URL (to the
+ * project's own address, or to another custom domain) renames the cookie and
+ * signs everyone out.
+ */
+export const HOSTED_AUTH_COOKIE_NAME = 'sb-api-auth-token';
+
 /** The cookie name for this request/host: the per-worktree dev name on
- *  localhost, the pinned self-host name in the local edition, else the
- *  library default (hosted). Server and browser must call this with the same
- *  host they serve/see. */
+ *  localhost, else the pinned name of the self-hosted or the hosted edition.
+ *  Server and browser must call this with the same host they serve/see. */
 export function authCookieName(
     hostname: string | null | undefined,
     port: string | null | undefined
-): string | undefined {
-    return devAuthCookieName(hostname, port) ?? (isLocalEdition() ? SELF_HOST_AUTH_COOKIE_NAME : undefined);
+): string {
+    return devAuthCookieName(hostname, port) ?? (isLocalEdition() ? SELF_HOST_AUTH_COOKIE_NAME : HOSTED_AUTH_COOKIE_NAME);
 }
 
 export function devAuthCookieName(
