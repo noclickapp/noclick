@@ -175,6 +175,7 @@ from nodes.hex_node import HexNode
 from nodes.clickhouse_node import ClickHouseNode
 from nodes.extend_node import ExtendNode
 from nodes.fellow_node import FellowNode
+from nodes.stream_chat_node import StreamChatNode
 from nodes.fathom_node import FathomNode
 from nodes.sigma_node import SigmaNode
 from nodes.openstatus_node import OpenStatusNode
@@ -377,6 +378,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-clickhouse': ClickHouseNode,
     'automation-extend': ExtendNode,
     'automation-fellow': FellowNode,
+    'automation-stream-chat': StreamChatNode,
     'automation-fathom': FathomNode,
     'automation-sigma': SigmaNode,
     'automation-openstatus': OpenStatusNode,
