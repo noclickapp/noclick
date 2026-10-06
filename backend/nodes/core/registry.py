@@ -156,6 +156,7 @@ from nodes.threads_node import ThreadsNode
 from nodes.bamboohr_node import BambooHRNode
 from nodes.dv360_node import DV360Node
 from nodes.typeform_node import TypeformNode
+from nodes.formbuilder123_node import FormBuilder123Node
 from nodes.filter_node import FilterNode
 from nodes.split_out_node import SplitOutNode
 from nodes.conditional_node import ConditionalNode
@@ -307,6 +308,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-send-email': SendEmailNode,
     'automation-table': TableNode,
     'automation-typeform': TypeformNode,
+    'automation-123formbuilder': FormBuilder123Node,
     'automation-supabase': SupabaseNode,
     'automation-twilio': TwilioNode,
     'automation-twitter': TwitterNode,
