@@ -758,6 +758,9 @@
         "on_database_created"
       ]
     },
+    "automation-nylas": {
+      "agentToolProvider": true
+    },
     "automation-onedrive": {
       "agentToolProvider": true
     },
