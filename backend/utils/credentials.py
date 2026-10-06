@@ -452,6 +452,7 @@ async def resolve_credential_with_owner_fallback(
     org_id: Optional[str] = None,
     workflow_id: Optional[str] = None,
     get_owner_id=None,
+    load_credential_fn=None,
 ) -> Optional[Dict[str, Any]]:
     """THE owner-fallback credential resolution policy — single definition.
 
@@ -467,7 +468,10 @@ async def resolve_credential_with_owner_fallback(
 
     Returns the decrypted credential dict, or None if unresolvable.
     """
-    credential_data = await get_credential(credential_id, user_id, pool, org_id)
+    # Trusted adapters may load richer current-row authority while keeping
+    # this exact actor-first / positive workflow-owner fallback policy.
+    loader = load_credential_fn or get_credential
+    credential_data = await loader(credential_id, user_id, pool, org_id)
     if not credential_data and workflow_id:
         if get_owner_id is not None:
             owner_id = await get_owner_id(workflow_id)

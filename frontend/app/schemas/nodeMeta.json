@@ -202,6 +202,9 @@
         "cloudflare_kv_key_updated"
       ]
     },
+    "automation-cloudzero": {
+      "agentToolProvider": true
+    },
     "automation-confluence": {
       "agentToolProvider": true,
       "triggerOperations": [
