@@ -442,6 +442,9 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'BigQueryOAuthCredential': 'bigquery_oauth',
     'BigQueryServiceAccountCredential': 'bigquery_service_account',
 
+    // ProductPlan
+    'ProductPlanPATCredential': 'productplan_pat',
+
     // Snowflake
     'SnowflakePatCredential': 'snowflake_pat',
 
