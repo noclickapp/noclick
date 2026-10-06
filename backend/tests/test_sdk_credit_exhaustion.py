@@ -12,6 +12,7 @@ from coder.openai_agent.billing import BillingHooks
 from nodes.agent.handlers.llm import execute_llm_model
 from wss.handlers.agent_handler import AgentHandler
 from wss.sender import AgentStateEvent, ChatMessageEvent
+from wss.sender.schema import AgenticStep
 from wss.sender.schema import ContentItem
 
 
@@ -168,3 +169,32 @@ async def test_interactive_chat_still_reports_unexpected_failures(monkeypatch):
     send.assert_awaited_once()
     event = send.await_args.args[2]
     assert event.finished is True and "unexpected" in event.message
+
+
+async def test_a_mirrored_turn_reaches_the_owners_tabs_with_its_steps_and_its_saved_end(monkeypatch):
+    """A turn with no socket (a text, a call) is mirrored through the user room: steps and the end, never
+    each token, and the end only once the reply is in the transcript."""
+    order = []
+
+    async def send(sio, sid, event, **kwargs):
+        order.append(("send", event, kwargs.get("user_id")))
+    monkeypatch.setattr("wss.handlers.agent_handler.send_event", send)
+    handler = AgentHandler(MagicMock())
+
+    async def persist(**kwargs):
+        order.append(("persist", kwargs["content"]))
+    monkeypatch.setattr(handler, "_persist_chat_event", persist)
+    emit = await handler._create_emit_callback(
+        "", "gpt-4o", conversation_id="coordinator:u1", user_id="u1", workflow_id=None, mirror_to_user=True,
+    )
+    step = ChatMessageEvent(conversation_id="coordinator:u1", agentic_steps=[
+        AgenticStep(id="c1", text="Calling list_runs({})", status="in_progress")])
+    for event in (step, ChatMessageEvent(message="Hel"), ChatMessageEvent(message="lo"),
+                  ChatMessageEvent(finished=True)):
+        await emit(event)
+    await emit(AgentStateEvent(state="finished", conversation_id="coordinator:u1"))
+
+    assert [entry[0] for entry in order] == ["send", "persist", "send", "send"]
+    assert order[0][1] is step and order[1] == ("persist", "Hello")
+    assert order[2][1].finished is True and order[3][1].state == "finished"
+    assert {entry[2] for entry in order if entry[0] == "send"} == {"u1"}

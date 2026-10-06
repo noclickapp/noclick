@@ -477,6 +477,7 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
         workflow_id: Optional[str],
         node_id: Optional[str] = None,
         extra: Optional[Dict[str, Any]] = None,
+        mirror_to_user: bool = False,
     ):
         """Create an emit callback for a specific session.
 
@@ -490,6 +491,12 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
             (anonymous flows).
           - On AgentStateEvent(state='error'), write a terminal error
             event matching the CLI handlers' shape.
+
+        ``mirror_to_user`` is for a turn with no socket of its own (a text or
+        a call to the coordinator): the owner's open tabs get its tool steps,
+        its end and its states through their user room, never each token (a
+        relay round trip apiece), and the end only once the reply is saved, so
+        a tab can read the whole turn back when it hears it.
         """
         accumulated: List[str] = []
 
@@ -499,7 +506,8 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
                 # Add model information so the chat UI shows which model
                 # produced this reply.
                 event.model = model
-                await send_event(self.sio, sid, event)
+                if not mirror_to_user:
+                    await send_event(self.sio, sid, event)
 
                 if event.message:
                     accumulated.append(event.message)
@@ -521,8 +529,10 @@ class AgentHandler(DatabasePoolMixin, SocketIOHandler):
                             extra=extra,
                         )
                     accumulated.clear()
+                if mirror_to_user and (event.finished or event.agentic_steps):
+                    await send_event(self.sio, sid, event, user_id=user_id)
             elif isinstance(event, AgentStateEvent):
-                await send_event(self.sio, sid, event)
+                await send_event(self.sio, sid, event, user_id=user_id if mirror_to_user else None)
                 if event.state == "error" and user_id:
                     reason = event.reason or "Agent terminated with an error."
                     await self._persist_chat_error(

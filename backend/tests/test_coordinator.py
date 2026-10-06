@@ -213,11 +213,15 @@ class FakeAgent:
 
 class FakeChat:
     persisted = []
+    mirrored = []
 
     def __init__(self, sio):
         pass
 
-    async def _create_emit_callback(self, sid, model, *, conversation_id, user_id, workflow_id, node_id=None, extra=None):
+    async def _create_emit_callback(self, sid, model, *, conversation_id, user_id, workflow_id, node_id=None, extra=None,
+                                    mirror_to_user=False):
+        FakeChat.mirrored.append(mirror_to_user)
+
         async def emit(event):
             FakeChat.persisted.append(("emit", conversation_id, node_id, event, extra))
         return emit
@@ -237,6 +241,7 @@ def turn_seams(monkeypatch):
     monkeypatch.setattr(coordinator.CoordinatorWakeupRepo, "epoch", AsyncMock(return_value=""))
     FakeAgent.calls.clear()
     FakeChat.persisted.clear()
+    FakeChat.mirrored.clear()
     monkeypatch.setattr(coordinator, "Agent", FakeAgent)
     monkeypatch.setattr(coordinator, "AgentHandler", FakeChat)
     monkeypatch.setattr(coordinator, "get_native_pool", lambda: MockNativePool())
@@ -395,6 +400,24 @@ async def test_turn_sink_hears_every_frame_and_extra_stamps_both_persisted_event
     assert [e.message for e in heard] == ["reply:hi"] and heard[0].finished is True
     assert FakeChat.persisted[0][4] == {"channel": "voice", "call_sid": "CA1"}  # the user turn
     assert FakeChat.persisted[1][4] == {"channel": "voice", "call_sid": "CA1"}  # the reply's emit callback
+
+
+async def test_a_turn_from_another_app_is_mirrored_to_the_open_web_chat(turn_seams, monkeypatch):
+    announced = []
+
+    async def send(sio, sid, event, **kwargs):
+        # Announced once the user's turn is saved, so the chat reads it back.
+        announced.append((event, kwargs.get("user_id"), len(FakeChat.persisted)))
+    monkeypatch.setattr(coordinator, "send_event", send)
+    await coordinator.run_coordinator_turn(sio=object(), sid="", user_id=USER, user_email=None, text="hi",
+                                           extra={"channel": "whatsapp_text"})
+    (event, to, saved), = announced
+    assert event.state == "running" and event.conversation_id == CID and to == USER and saved == 1
+    assert FakeChat.mirrored == [True]
+
+    announced.clear()
+    await coordinator.run_coordinator_turn(sio=object(), sid="s", user_id=USER, user_email=None, text="hi")
+    assert announced == [] and FakeChat.mirrored == [True, False]  # a web turn streams to its own socket
 
 
 async def test_a_web_turn_shows_the_typed_text_and_the_model_reads_the_files(turn_seams):

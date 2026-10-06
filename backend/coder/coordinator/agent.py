@@ -25,7 +25,7 @@ from utils.database_pool import get_native_pool
 from wss.handlers.agent_handler import AgentHandler
 from wss.handlers.workflow_handler import get_user_org_context
 from wss.sender import send_event
-from wss.sender.events import ChatMessageEvent
+from wss.sender.events import AgentStateEvent, ChatMessageEvent
 from wss.sender.schema import ContentItem
 
 logger = logging.getLogger(__name__)
@@ -269,7 +269,7 @@ async def run_coordinator_turn(
         chat = AgentHandler(sio)
         chat_emit = None if completion else await chat._create_emit_callback(
             sid, COORDINATOR_MODEL, conversation_id=conversation_id, user_id=user_id,
-            workflow_id=None, node_id=COORDINATOR_NODE_ID, extra=extra,
+            workflow_id=None, node_id=COORDINATOR_NODE_ID, extra=extra, mirror_to_user=not sid,
         )
 
         failed: Dict[str, bool] = {}
@@ -301,6 +301,10 @@ async def run_coordinator_turn(
                 node_id=COORDINATOR_NODE_ID, source="user", content=content,
                 model=COORDINATOR_MODEL, label="Coordinator", extra={**(extra or {}), **shown} or None,
             )
+            if not sid:
+                # A text, a call or an email: the owner's open chat reads it back now and follows the reply.
+                await send_event(sio, "", AgentStateEvent(state="running", conversation_id=conversation_id),
+                                 user_id=user_id)
 
         tool_guard = asyncio.Lock()
         installed_discovery = []
