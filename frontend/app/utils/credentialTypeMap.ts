@@ -290,6 +290,8 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Google Maps
     'GoogleMapsApiKeyCredential': 'google_maps_api_key',
     // Perplexity
+    'QonversionSecretKeyCredential': 'qonversion_secret_key',
+    'Qonversion Secret Key': 'qonversion_secret_key',
     'PerplexityApiKeyCredential': 'perplexity_api_key',
     'PostHogPersonalApiKeyCredential': 'posthog_personal_api_key',
     'PostHogProjectApiKeyCredential': 'posthog_project_api_key',

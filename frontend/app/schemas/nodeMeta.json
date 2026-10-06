@@ -1002,6 +1002,9 @@
     "automation-qdrant": {
       "agentToolProvider": true
     },
+    "automation-qonversion": {
+      "agentToolProvider": true
+    },
     "automation-quickbooks": {
       "agentToolProvider": true,
       "triggerOperations": [

@@ -99,6 +99,7 @@ from nodes.submit_external_form_node import SubmitExternalFormNode
 from nodes.youtube_node import YouTubeNode
 from nodes.powerdns_node import PowerDNSNode
 from nodes.mailchimp_node import MailchimpNode
+from nodes.qonversion_node import QonversionNode
 from nodes.pipedrive_node import PipedriveNode
 from nodes.resend_node import ResendNode
 from nodes.rippling_node import RipplingNode
@@ -296,6 +297,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-shopify': ShopifyNode,
     'automation-slack': SlackNode,
     'automation-mailchimp': MailchimpNode,
+    'automation-qonversion': QonversionNode,
     'automation-pipedrive': PipedriveNode,
     'automation-resend': ResendNode,
     'automation-rippling': RipplingNode,
