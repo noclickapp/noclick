@@ -2180,17 +2180,22 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                     ))
                     return
 
-                async with pool.acquire() as conn:
-                    # Get user's current org context
-                    org_id = await get_user_org_context(conn, user_id)
+                from utils.credential_loader import load_credential
 
-                    # Check if user has access (owner, user share, or org share in current context)
-                    row = await conn.fetchrow(f"""
-                        SELECT c.credential
-                        FROM credentials c
-                        WHERE c.id = $1
-                          AND {credential_access_predicate()}
-                    """, request.credential_id, user_id, org_id)
+                try:
+                    credential_data = await load_credential(
+                        pool, user_id, request.credential_id, raise_on_error=True,
+                    )
+                except Exception as e:
+                    logger.error(f"Error loading credential for options: {e}")
+                    await send_event(self.sio, sid, ResponseEvent(
+                        request_id=request.request_id,
+                        data=WorkflowNodeLoadOptionsResponse(
+                            success=False,
+                            message="Failed to load credential"
+                        ).model_dump()
+                    ))
+                    return
 
                 if credential_data is None:
                     await send_event(self.sio, sid, ResponseEvent(

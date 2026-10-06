@@ -214,6 +214,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Slack
     'SlackOAuthCredential': 'slack_oauth',
     'SlackBotTokenCredential': 'slack_bot_token',
+    'TalkJSServerSecretCredential': 'talkjs_server_secret',
 
     // Supabase
     'SupabaseOAuthCredential': 'supabase_oauth',
