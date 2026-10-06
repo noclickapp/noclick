@@ -1228,6 +1228,9 @@
         "on_export_completed"
       ]
     },
+    "automation-singlestore": {
+      "agentToolProvider": true
+    },
     "automation-slack": {
       "agentToolProvider": true,
       "triggerOperations": [

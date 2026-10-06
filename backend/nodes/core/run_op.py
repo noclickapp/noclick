@@ -256,12 +256,16 @@ async def run_node_lookup(
         credential_data = await resolve_operation_credential(
             credential_id, user_id, pool, organization_id, workflow_id
         )
+        refresh_context = {}
+        if getattr(node_class, "workflow_credential_refresh", False):
+            refresh_context = {"workflow_id": workflow_id, "organization_id": organization_id}
         with caller_path_scope("dropdown"):
             credential_data = await node_class.freshen_credential(
                 credential_data,
                 pool=pool,
                 user_id=user_id,
                 credential_id=credential_id,
+                **refresh_context,
             )
 
     lookup_context = loader_context(context, user_id=user_id, workflow_id=workflow_id)
