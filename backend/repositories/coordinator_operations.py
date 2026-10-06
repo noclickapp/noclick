@@ -35,6 +35,14 @@ class CoordinatorOperationRepo:
             operation_id, user_id)
         return dict(row) if row else None
 
+    async def note(self, operation_id, user_id, fields):
+        """Merge what a running operation learned (a call's id, when it was
+        answered) into its payload. None once it has completed."""
+        row = await self.pool.fetchrow(
+            "UPDATE coordinator_wakeups SET payload=payload || $3::jsonb WHERE id=$1::uuid AND user_id=$2::uuid "
+            "AND source='operation' AND status='waiting' RETURNING *", operation_id, user_id, fields)
+        return dict(row) if row else None
+
     async def complete(self, operation_id, user_id, outcome):
         # Callback retries cannot overwrite an outcome or re-wake a consumed
         # turn. Reset's skipped rows also remain fenced.

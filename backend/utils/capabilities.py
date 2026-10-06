@@ -111,6 +111,8 @@ PHONE_NUMBERS = "phone.numbers"
 # which the finished call comes back to. With no workflow, the trusted runtime's
 # operation_context registers a coordinator completion; remote speech stays in
 # a goal-scoped call assistant, never the owner's account conversation.
+# async hang_up(*, call_sid, operation_id) ends such a call from the owner's
+# chat (ValueError when it can't).
 PHONE_CALLS = "phone.calls"
 
 # What this platform sells and the one-tap links that buy it, for the account
