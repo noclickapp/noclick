@@ -1197,6 +1197,9 @@
         "on_file_shared"
       ]
     },
+    "automation-sling": {
+      "agentToolProvider": true
+    },
     "automation-snowflake": {
       "agentToolProvider": true,
       "triggerOperations": [
