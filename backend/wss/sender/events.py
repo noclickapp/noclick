@@ -161,16 +161,19 @@ def tool_call_step_text(tool_name: str, arguments: Any) -> str:
 
 
 def tool_step_event(
-    step_id: str, text: str, status: str, conversation_id: Optional[str] = None
+    step_id: str, text: str, status: str, conversation_id: Optional[str] = None,
+    limit: Optional[int] = TOOL_STEP_TEXT_CHARS,
 ) -> ChatMessageEvent:
     """One id-keyed AgenticStep frame (in_progress → completed updates the same
     row in place on the frontend). Text is bounded — completed frames carry a
-    result preview, and full payloads live in tool_call_events anyway."""
+    result preview, and full payloads live in tool_call_events anyway. A caller
+    that bounds its own text (a structured preview) passes ``limit=None``."""
+    text = str(text)
     return ChatMessageEvent(
         conversation_id=conversation_id,
         message=None,
         finished=False,
-        agentic_steps=[AgenticStep(id=step_id, text=str(text)[:TOOL_STEP_TEXT_CHARS], status=status)],
+        agentic_steps=[AgenticStep(id=step_id, text=text if limit is None else text[:limit], status=status)],
     )
 
 
