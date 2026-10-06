@@ -766,6 +766,9 @@
     "automation-milvus": {
       "agentToolProvider": true
     },
+    "automation-mindbody": {
+      "agentToolProvider": true
+    },
     "automation-monday": {
       "agentToolProvider": true,
       "triggerOperations": [
