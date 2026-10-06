@@ -270,6 +270,9 @@
     "automation-dropbox": {
       "agentToolProvider": true
     },
+    "automation-dropcontact": {
+      "agentToolProvider": true
+    },
     "automation-dv360": {
       "agentToolProvider": true,
       "triggerOperations": [
