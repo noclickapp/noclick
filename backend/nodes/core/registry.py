@@ -63,6 +63,7 @@ from nodes.salesforce_node import SalesforceNode
 from nodes.semrush_node import SemrushNode
 from nodes.serverless_function_node import ServerlessFunctionNode
 from nodes.shopify_node import ShopifyNode
+from nodes.botpress_node import BotpressNode
 from nodes.slack_node import SlackNode
 from nodes.supabase_node import SupabaseNode
 from nodes.tool_node import ToolNode
@@ -236,6 +237,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-salesforce': SalesforceNode,
     'automation-semrush': SemrushNode,
     'automation-shopify': ShopifyNode,
+    'automation-botpress': BotpressNode,
     'automation-slack': SlackNode,
     'automation-mailchimp': MailchimpNode,
     'automation-pipedrive': PipedriveNode,

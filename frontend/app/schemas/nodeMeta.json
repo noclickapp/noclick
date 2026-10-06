@@ -104,6 +104,9 @@
     "automation-bluesky": {
       "agentToolProvider": true
     },
+    "automation-botpress": {
+      "agentToolProvider": true
+    },
     "automation-box": {
       "agentToolProvider": true,
       "triggerOperations": [
