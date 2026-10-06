@@ -31,6 +31,7 @@ from nodes.nocodb_node import NocoDBNode
 from nodes.airtable_node import AirtableNode
 from nodes.nylas_node import NylasNode
 from nodes.stripe_node import StripeNode
+from nodes.cliniko_node import ClinikoNode
 from nodes.apify_node import ApifyNode
 from nodes.apollo_node import ApolloNode
 from nodes.bluesky_node import BlueSkyNode
@@ -229,6 +230,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-airtable': AirtableNode,
     'automation-nylas': NylasNode,
     'automation-stripe': StripeNode,
+    'automation-cliniko': ClinikoNode,
     'automation-apify': ApifyNode,
     'automation-apollo': ApolloNode,
     'automation-bluesky': BlueSkyNode,

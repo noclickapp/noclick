@@ -171,6 +171,9 @@
         "on_task_event"
       ]
     },
+    "automation-cliniko": {
+      "agentToolProvider": true
+    },
     "automation-cloudflare": {
       "agentToolProvider": true,
       "triggerOperations": [

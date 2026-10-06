@@ -71,6 +71,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Stripe
     'StripeOAuthCredential': 'stripe_oauth',
     'StripeApiKeyCredential': 'stripe_api_key',
+    'ClinikoApiKeyCredential': 'cliniko_api_key',
 
     // GitHub
     'GithubPATCredential': 'github_pat',

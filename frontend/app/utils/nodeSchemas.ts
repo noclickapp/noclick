@@ -532,6 +532,7 @@ function getProviderLabel(providerKey: string): string {
         'slack': 'Slack Workspace',
         'airtable': 'Airtable Account',
         'stripe': 'Stripe Account',
+        'cliniko': 'Cliniko User API Connection',
         'notion': 'Notion Workspace',
         'linear': 'Linear Account',
         'discord': 'Discord Account',
