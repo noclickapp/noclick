@@ -884,6 +884,12 @@ def build_node_op_tools(
             # config key → loader field_name, used by the dispatch branch to
             # validate the field arg and translate to the loader's key
             "fields": {k: v["field_name"] for k, v in dynamic_fields.items()},
+            # Declared parent dependencies, not caller-supplied scope authority.
+            # Scoped children require an explicit allowed parent before lookup I/O.
+            "field_dependencies": {
+                k: v["depends_on"] for k, v in dynamic_fields.items()
+                if isinstance(v.get("depends_on"), str) and v["depends_on"]
+            },
             # config key → allowlist of valid IDs (subset of dynamic_fields keys).
             # When set, run_node_lookup intersects loaded options with this set
             # so the model can't discover off-list IDs even via search.

@@ -59,6 +59,7 @@ from nodes.postgres_node import PostgresNode
 from nodes.reddit_node import RedditNode
 from nodes.rss_node import RSSNode
 from nodes.redis_node import RedisNode
+from nodes.adapty_node import AdaptyNode
 from nodes.salesforce_node import SalesforceNode
 from nodes.semrush_node import SemrushNode
 from nodes.serverless_function_node import ServerlessFunctionNode
@@ -239,6 +240,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-reddit': RedditNode,
     'automation-rss': RSSNode,
     'automation-redis': RedisNode,
+    'automation-adapty': AdaptyNode,
     'automation-salesforce': SalesforceNode,
     'automation-semrush': SemrushNode,
     'automation-shopify': ShopifyNode,
