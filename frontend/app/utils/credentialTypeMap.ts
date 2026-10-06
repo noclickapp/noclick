@@ -105,6 +105,10 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'SlingUserTokenCredential': 'sling_user_token',
     'ClinikoApiKeyCredential': 'cliniko_api_key',
 
+    // Cyclr accepts a supplied console token with a saved account and region.
+    // Account-level DataOnDemand tokens have a different documented purpose.
+    'CyclrOAuthTokenCredential': 'cyclr_oauth_token',
+
     // GitHub
     'GithubPATCredential': 'github_pat',
     'ForgejoPATCredential': 'forgejo_pat',
