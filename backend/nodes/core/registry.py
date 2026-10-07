@@ -10,6 +10,7 @@ from typing import Dict, Optional, Type, Any
 from nodes.core.base import WorkflowNode
 from nodes.porkbun_node import PorkbunNode
 from nodes.telegram_node import TelegramNode
+from nodes.hetrixtools_node import HetrixToolsNode
 from nodes.phone_node import PhoneNode
 from nodes.agent_node import AgentNode
 from nodes.google_sheets_node import GoogleSheetsNode
@@ -189,6 +190,7 @@ logger = logging.getLogger(__name__)
 
 # Registry mapping node types to their implementation classes
 _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
+    'automation-hetrixtools': HetrixToolsNode,
     # Trigger nodes (entry points for workflows)
     'trigger-run': RunTriggerNode,
     'trigger-webhook': WebhookTriggerNode,

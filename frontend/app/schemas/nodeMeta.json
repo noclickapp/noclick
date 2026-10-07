@@ -562,6 +562,9 @@
     "automation-hackernews": {
       "agentToolProvider": true
     },
+    "automation-hetrixtools": {
+      "agentToolProvider": true
+    },
     "automation-hex": {
       "agentToolProvider": true,
       "triggerOperations": [

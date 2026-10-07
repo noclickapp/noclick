@@ -9,6 +9,7 @@
 // Casings plain Title Case gets wrong — single-token acronyms and brands
 // (used on the snake_case path, where tokens arrive whole).
 const WORD_CASING: Record<string, string> = {
+  hetrixtools: 'HetrixTools',
   qr: 'QR', api: 'API', oauth: 'OAuth', pat: 'PAT', id: 'ID', url: 'URL',
   sso: 'SSO', ai: 'AI', whatsapp: 'WhatsApp', github: 'GitHub',
   gitlab: 'GitLab', hubspot: 'HubSpot', linkedin: 'LinkedIn',
@@ -24,6 +25,7 @@ const WORD_CASING: Record<string, string> = {
 // Compound names the camel-splitter necessarily breaks apart. Audited against
 // every credential class title in the node schemas (2026-07-19).
 const COMPOUND_BRANDS = [
+  'HetrixTools',
   'WhatsApp', 'GitHub', 'GitLab', 'HubSpot', 'LinkedIn', 'PayPal', 'TikTok',
   'YouTube', 'PostHog', 'OpenAI', 'ClickUp', 'PagerDuty', 'BambooHR',
   'QuickBooks', 'OAuth', 'WordPress', 'AppSheet', 'ClickHouse', 'BigQuery',

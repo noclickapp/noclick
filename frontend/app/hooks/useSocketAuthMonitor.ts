@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router';
 import { useSocketConnection } from './useSocketConnection';
 import { socketReceiver } from '~/lib/socket-receiver';
 import { getExistingBrowserClient } from '~/lib/supabase-client';
+import { diagnosticSocketText, projectSocketDiagnostics } from '~/lib/socket-diagnostics';
 
 interface AuthMonitorConfig {
     enabled?: boolean;
@@ -58,7 +59,7 @@ export function useSocketAuthMonitor({
 
         if (authFailureStartRef.current === null) {
             authFailureStartRef.current = Date.now();
-            console.log('🔴 Auth-related socket error:', { status, lastErrorCode, lastError });
+            console.log('🔴 Auth-related socket error:', { status, lastErrorCode, lastError: diagnosticSocketText('auth:connection', lastError) });
         }
 
         // Recoverable: refresh the session once, then let the reconnect's auth
@@ -77,9 +78,9 @@ export function useSocketAuthMonitor({
                         socketReceiver.updateAllAuth();
                         return;
                     }
-                    console.warn('token_expired refresh failed:', error);
+                    console.warn('token_expired refresh failed:', projectSocketDiagnostics('auth:refresh', error));
                 } catch (err) {
-                    console.warn('token_expired refresh threw:', err);
+                    console.warn('token_expired refresh threw:', projectSocketDiagnostics('auth:refresh', err));
                 }
                 hasRedirectedRef.current = true;
                 navigate('/auth/login', { replace: true });

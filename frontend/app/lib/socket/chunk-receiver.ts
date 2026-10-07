@@ -7,6 +7,7 @@
  */
 
 import pako from 'pako';
+import { projectSocketDiagnostics } from '~/lib/socket-diagnostics';
 
 // Chunk metadata received from backend (matches ChunkMetadata in chunk_sender.py)
 export interface ChunkMetadata {
@@ -216,7 +217,11 @@ export class ChunkReassemblyManager {
     } catch (error) {
       // Keep the format string constant: chunk ids arrive over the socket and
       // may contain printf-style tokens interpreted by console implementations.
-      console.error('[ChunkReceiver] Failed to reassemble chunk:', __chunk_id, error);
+      console.error(
+        '[ChunkReceiver] Failed to reassemble chunk:',
+        __chunk_id,
+        projectSocketDiagnostics(undefined, error)
+      );
       this.buffers.delete(__chunk_id);
       return null;
     }
