@@ -229,6 +229,9 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'PulseticAPIKeyCredential': 'pulsetic_api_key',
     'Pulsetic API Key': 'pulsetic_api_key',
 
+    // ilert user REST key; Events integration keys are a different family.
+    'IlertAPIKeyCredential': 'ilert_api_key',
+
     // HubSpot
     'HubSpotOAuthCredential': 'hubspot_oauth',
     'HubSpotPATCredential': 'hubspot_pat',

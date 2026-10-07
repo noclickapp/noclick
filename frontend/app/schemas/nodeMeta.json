@@ -638,6 +638,9 @@
         "on_ticket_created"
       ]
     },
+    "automation-ilert": {
+      "agentToolProvider": true
+    },
     "automation-instagram": {
       "agentToolProvider": true,
       "triggerOperations": [
