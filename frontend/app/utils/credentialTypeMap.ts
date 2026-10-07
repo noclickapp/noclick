@@ -42,6 +42,9 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'AgentCredentials': 'agent_api_key',
     'CloudZeroAPIKeyCredential': 'cloudzero_api_key',
 
+    // Keila supplied existing API token
+    'KeilaAPIKeyCredential': 'keila_api_key',
+
     // Telegram
     'TelegramBotTokenCredential': 'telegram_bot_token',
 
