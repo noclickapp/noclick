@@ -763,6 +763,9 @@
         "on_inbound_email"
       ]
     },
+    "automation-mediasilo": {
+      "agentToolProvider": true
+    },
     "automation-meta": {
       "agentToolProvider": true,
       "triggerOperations": [
