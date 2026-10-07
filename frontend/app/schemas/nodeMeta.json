@@ -1426,6 +1426,9 @@
         "comment_created"
       ]
     },
+    "automation-websupport": {
+      "agentToolProvider": true
+    },
     "automation-whatsapp": {
       "agentToolProvider": true,
       "triggerOperations": [
