@@ -611,6 +611,22 @@ class ConversationRepo:
             agent_model = COALESCE(conversations.agent_model, EXCLUDED.agent_model)
     """
 
+    # The same append, skipped when an event with this turn_id is already there:
+    # a retried request can't post its note twice.
+    _APPEND_CHAT_EVENT_ONCE_SQL = _UPSERT_CHAT_EVENT_SQL + """
+        WHERE NOT COALESCE(conversations.events, '[]'::jsonb) @> jsonb_build_array(jsonb_build_object('turn_id', $8::text))
+        RETURNING true
+    """
+
+    async def append_chat_event_once(
+        self, *, conversation_id: str, user_id: str, node_id: Optional[str], event: Dict[str, Any], label: Optional[str],
+    ) -> bool:
+        """Append ``event`` unless one with its ``turn_id`` is already in the conversation; True when it was added."""
+        return bool(await self._pool.fetchval(
+            self._APPEND_CHAT_EVENT_ONCE_SQL,
+            conversation_id, user_id, None, node_id, [event], label, None, event["turn_id"],
+        ))
+
     async def append_chat_event(
         self,
         *,

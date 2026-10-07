@@ -366,6 +366,13 @@ class CoordinatorMemoryDeleteRequest(ClientEventBase):
     expected_version: int = Field(ge=1)
 
 
+class CoordinatorArrivalRequest(ClientEventBase):
+    """Finish setting up a workflow the owner started on a public page, in the coordinator's thread"""
+    event_name: ClassVar[str] = "coordinator:arrival"
+    workflow_id: str = Field(..., pattern=r"^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$", description="The workflow the page created")
+    client: Optional[str] = Field(None, pattern=r"^[a-z0-9-]{1,32}$", description="The agent the owner came for (claude-code, opencode, …), which the setup card leads with")
+
+
 class CoordinatorJobsRequest(ClientEventBase):
     """Read the account's own coordinator jobs by id, for the chat's live cards"""
     event_name: ClassVar[str] = "coordinator:jobs"

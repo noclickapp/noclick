@@ -8,8 +8,9 @@ any files and references the composer added), and coordinator:reset starts the
 thread over. coordinator:attachment:upload_url reserves a file the composer
 uploads straight to storage; coordinator:attachments:list offers the ones sent
 before; coordinator:jobs reads back the work its turns started (for the chat's
-live cards). Gated on the coordinator rollout; the turn itself lives in
-coder/coordinator/agent.py so channels can share it.
+live cards); coordinator:arrival posts the setup note for a workflow the owner
+started on a public page. Gated on the coordinator rollout; the turn itself
+lives in coder/coordinator/agent.py so channels can share it.
 """
 
 import logging
@@ -27,6 +28,7 @@ from utils.database_pool import DatabasePoolMixin
 from wss.handlers.workflow_handler import get_user_org_context
 from utils.feature_gates import FeatureNotAvailable, require_feature
 from wss.receiver.client_events import (
+    CoordinatorArrivalRequest,
     CoordinatorAttachmentsListRequest,
     CoordinatorAttachmentUploadUrlRequest,
     CoordinatorMemoriesListRequest,
@@ -69,6 +71,7 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             "coordinator:memories:save": self.handle_memory_save,
             "coordinator:memories:delete": self.handle_memory_delete,
             "coordinator:jobs": self.handle_jobs,
+            "coordinator:arrival": self.handle_arrival,
         }
 
     async def _respond(self, sid: str, request_id: str, op: Callable[[str, Any], Awaitable[Any]]) -> None:
@@ -190,4 +193,13 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             # The coordinator's own view of each job, and when it started and last moved for the card's clock.
             return {"jobs": [{**job_view(row), "created_at": row["created_at"].isoformat(),
                               "updated_at": row["updated_at"].isoformat()} for row in rows]}
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_arrival(self, sid: str, request: CoordinatorArrivalRequest) -> None:
+        async def op(user_id: str, _email):
+            from coder.coordinator.arrival import post_arrival
+
+            return await post_arrival(
+                await self.get_pool(), user_id, workflow_id=str(uuid.UUID(request.workflow_id)), client=request.client,
+            )
         await self._respond(sid, request.request_id, op)

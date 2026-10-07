@@ -81,6 +81,13 @@ class CoordinatorSignalRef(BaseModel):
     workflow_name: str
 
 
+class CoordinatorSetupRef(BaseModel):
+    """A workflow the owner started on a public page, to finish setting up from its card in the thread."""
+    kind: Literal["mcp", "agent"] = Field(..., description="mcp: a hosted link the owner's own agent calls; agent: an agent NoClick runs")
+    workflow_id: str
+    client: Optional[str] = Field(None, description="The agent the owner came for (claude-code, opencode, …)")
+
+
 class ChatMessageEvent(BaseModel):
     turn_id: Optional[str] = None
     notification: bool = Field(False, description="Standalone background update; never finish the in-progress reply.")
@@ -88,6 +95,10 @@ class ChatMessageEvent(BaseModel):
         None,
         description="On a coordinator note: the failed run or agent message that woke the turn, so the chat "
                     "can keep one automation's notes together."
+    )
+    setup: Optional[CoordinatorSetupRef] = Field(
+        None,
+        description="On a coordinator note: the workflow whose setup card the chat draws under it."
     )
     """
     Event emitted for chat messages including AI responses and component generation.
