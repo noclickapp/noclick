@@ -1442,6 +1442,9 @@
     "automation-wordpress": {
       "agentToolProvider": true
     },
+    "automation-xata": {
+      "agentToolProvider": true
+    },
     "automation-youtube": {
       "agentToolProvider": true
     },
