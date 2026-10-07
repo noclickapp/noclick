@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Tue Oct 06 19:25:30  2026
+// Generated at: Thu Oct 08 00:12:14  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -373,6 +373,10 @@ export interface ChatMessageEvent {
    */
   signal?: CoordinatorSignalRef | null;
   /**
+   * On a coordinator note: the workflow whose setup card the chat draws under it.
+   */
+  setup?: CoordinatorSetupRef | null;
+  /**
    * Approval card for the agent's prompt_builder tool (interactive chats only): {prompt, node_id, proposal_id}. The chat renders approve/dismiss; approving opens the builder sidebar and submits the prompt. Standalone frame — no message text, no streaming implications.
    */
   builder_prompt?: BuilderPromptProposal | null;
@@ -384,6 +388,20 @@ export interface CoordinatorSignalRef {
   kind: "run_failure" | "agent_message";
   workflow_id: string;
   workflow_name: string;
+}
+/**
+ * A workflow the owner started on a public page, to finish setting up from its card in the thread.
+ */
+export interface CoordinatorSetupRef {
+  /**
+   * mcp: a hosted link the owner's own agent calls; agent: an agent NoClick runs
+   */
+  kind: "mcp" | "agent";
+  workflow_id: string;
+  /**
+   * The agent the owner came for (claude-code, opencode, …)
+   */
+  client?: string | null;
 }
 /**
  * Event emitted when voice transcription is received
@@ -2129,6 +2147,24 @@ export interface CodexDeviceCodeStartRequest {
    * UUID for request/response correlation
    */
   request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Finish setting up a workflow the owner started on a public page, in the coordinator's thread
+ */
+export interface CoordinatorArrivalRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * The workflow the page created
+   */
+  workflow_id: string;
+  /**
+   * The agent the owner came for (claude-code, opencode, …), which the setup card leads with
+   */
+  client?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -13859,6 +13895,7 @@ export interface ClientToServerEvents {
   'conversation:list_for_agent': (data: ListConversationsForAgentRequest) => void;
   'conversation:resume': (data: ResumeConversationRequest) => void;
   'conversations:list': (data: ListConversationsRequest) => void;
+  'coordinator:arrival': (data: CoordinatorArrivalRequest) => void;
   'coordinator:attachment:upload_url': (data: CoordinatorAttachmentUploadUrlRequest) => void;
   'coordinator:attachments:list': (data: CoordinatorAttachmentsListRequest) => void;
   'coordinator:jobs': (data: CoordinatorJobsRequest) => void;
@@ -14198,6 +14235,7 @@ export const ClientEventNames = {
   CloudflareOAuthValidateRequest: 'cloudflare:oauth:validate',
   CodexDeviceCodePollRequest: 'codex:auth:poll',
   CodexDeviceCodeStartRequest: 'codex:auth:start',
+  CoordinatorArrivalRequest: 'coordinator:arrival',
   CoordinatorAttachmentUploadUrlRequest: 'coordinator:attachment:upload_url',
   CoordinatorAttachmentsListRequest: 'coordinator:attachments:list',
   CoordinatorJobsRequest: 'coordinator:jobs',
@@ -14546,6 +14584,7 @@ interface ClientEventMap {
   CloudflareOAuthValidateRequest: CloudflareOAuthValidateRequest
   CodexDeviceCodePollRequest: CodexDeviceCodePollRequest
   CodexDeviceCodeStartRequest: CodexDeviceCodeStartRequest
+  CoordinatorArrivalRequest: CoordinatorArrivalRequest
   CoordinatorAttachmentUploadUrlRequest: CoordinatorAttachmentUploadUrlRequest
   CoordinatorAttachmentsListRequest: CoordinatorAttachmentsListRequest
   CoordinatorJobsRequest: CoordinatorJobsRequest
@@ -15302,6 +15341,10 @@ export const CodexDeviceCodePollRequest = {
 export const CodexDeviceCodeStartRequest = {
   event_name: 'codex:auth:start' as const,
   create: (data: CodexDeviceCodeStartRequest) => ({ event_name: 'codex:auth:start' as const, ...data })
+};
+export const CoordinatorArrivalRequest = {
+  event_name: 'coordinator:arrival' as const,
+  create: (data: CoordinatorArrivalRequest) => ({ event_name: 'coordinator:arrival' as const, ...data })
 };
 export const CoordinatorAttachmentUploadUrlRequest = {
   event_name: 'coordinator:attachment:upload_url' as const,
@@ -16481,6 +16524,7 @@ export const EventRouting = {
   'conversation:list_for_agent': 'API',
   'conversation:resume': 'API',
   'conversations:list': 'API',
+  'coordinator:arrival': 'API',
   'coordinator:attachment:upload_url': 'API',
   'coordinator:attachments:list': 'API',
   'coordinator:jobs': 'API',
