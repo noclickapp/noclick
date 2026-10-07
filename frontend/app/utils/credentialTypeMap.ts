@@ -222,6 +222,8 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // Affinity
     'AffinityAPIKeyCredential': 'affinity_api_key',
+    'AprimoBearerCredential': 'aprimo_bearer',
+    'Aprimo DAM Bearer Token': 'aprimo_bearer',
 
     // NocoDB
     'NocoDBTokenCredential': 'nocodb_api_token',
