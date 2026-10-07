@@ -372,6 +372,9 @@
         "on_document_changed"
       ]
     },
+    "automation-forgejo": {
+      "agentToolProvider": true
+    },
     "automation-freshsales": {
       "agentToolProvider": true,
       "triggerOperations": [

@@ -217,6 +217,10 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'TwitterOAuthCredential': 'twitter_oauth',
     'TwitterBearerTokenCredential': 'twitter_bearer_token',
 
+    // Forgejo
+    'Forgejo Personal Access Token': 'forgejo_pat',
+    'ForgejoPATCredential': 'forgejo_pat',
+
     // Cloudflare
     'CloudflareAPITokenCredential': 'cloudflare_api_token',
     'CloudflareAPIKeyCredential': 'cloudflare_api_key',
