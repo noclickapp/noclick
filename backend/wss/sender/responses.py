@@ -219,7 +219,7 @@ class CredentialTestConnectionResponse(BaseModel):
     hint: Optional[str] = Field(None, description="What the refusal usually means and what to check, when its shape says so")
 
     @classmethod
-    def from_evidence(cls, result: Any, proves: str = "account") -> "CredentialTestConnectionResponse":
+    def from_evidence(cls, result: Any, proves: Optional[str] = None) -> "CredentialTestConnectionResponse":
         """Wire shape of an ``EvidenceResult`` — the one translation, shared by the
         on-demand test and the connect flow's verification."""
         return cls(
@@ -229,7 +229,7 @@ class CredentialTestConnectionResponse(BaseModel):
             total=result.total,
             account_label=result.account_label,
             answers_field=result.answers_field,
-            proves=proves,
+            proves=proves if proves is not None else getattr(result, "proves", "account"),
             error=result.error,
             hint=getattr(result, "hint", None),
         )

@@ -1,0 +1,12 @@
+{
+   "bytes" : 5780,
+   "conversion" : false,
+   "discovery" : "https://docspell.org/docs/api/intro/",
+   "flowcanvas_capture" : "pending",
+   "http_status" : 200,
+   "mime" : "image/svg+xml",
+   "provider" : "Docspell",
+   "raw_vendor_bytes_unchanged" : true,
+   "sha256" : "d105cef6ef8fded268f382ee7f3b1fbcc2937d72e1795b162fb7453a64e69d4c",
+   "source" : "https://docspell.org/icons/logo-only-36.svg"
+}
