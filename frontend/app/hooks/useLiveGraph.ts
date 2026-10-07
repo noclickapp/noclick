@@ -17,11 +17,21 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useSnapshot } from 'valtio';
 import type { Node, Edge } from '@xyflow/react';
 import { graphRecords, createGraphRecord } from '~/lib/liveGraphStore';
+import { authorizeCommittedAutoSelectedCredentials, clearPendingAutoSelectedCredentials } from '~/utils/credentialAutoSelect';
 
 type Updater<T> = T | ((prev: T) => T);
 
 function applyUpdater<T>(prev: T, u: Updater<T>): T {
     return typeof u === 'function' ? (u as (p: T) => T)(prev) : u;
+}
+
+/** Keep fresh selection authorization behind the actual React commit boundary. */
+export function useCommittedAutoSelectedCredentials(
+    setNodes: (updater: (prev: Node[]) => Node[]) => void,
+    nodes: Node[],
+): void {
+    useEffect(() => { authorizeCommittedAutoSelectedCredentials(setNodes, nodes); }, [setNodes, nodes]);
+    useEffect(() => () => { clearPendingAutoSelectedCredentials(setNodes); }, [setNodes]);
 }
 
 export function useLiveGraph(workflowId: string, isSkill: boolean, opts?: {
@@ -90,6 +100,10 @@ export function useLiveGraph(workflowId: string, isSkill: boolean, opts?: {
     // hook's lifetime to workflowId — keeps the surface clean.
     const idRef = useRef(workflowId);
     useEffect(() => { idRef.current = workflowId; }, [workflowId]);
+
+    // Fresh credential authorization follows the actual committed snapshot, never
+    // evaluation of a state updater that React may replay or discard.
+    useCommittedAutoSelectedCredentials(setNodes, nodes);
 
     return { nodes, edges, setNodes, setEdges };
 }
