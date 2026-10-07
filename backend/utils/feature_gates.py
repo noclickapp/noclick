@@ -30,8 +30,8 @@ FEATURE_ROLLOUT: dict[str, str] = {
     # CLI agent sandboxes reach their model through the credential proxy (a
     # temporary key, never the real one); off, a sandbox holds the credential.
     "credential_proxy": INTERNAL,
-    # The hosted developer API, every call and every key it would mint, until it launches.
-    "platform_api": INTERNAL,
+    # The hosted developer API: every call, and every key it mints. INTERNAL closes it again.
+    "platform_api": EVERYONE,
 }
 
 # Accounts let into an INTERNAL feature by email, lower-cased. Empty in the
