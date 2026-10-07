@@ -73,6 +73,7 @@ from nodes.alarm_node import AlarmNode
 from nodes.filesystem_node import FilesystemNode
 from nodes.twitter_node import TwitterNode
 from nodes.cloudflare_node import CloudflareNode
+from nodes.bitrise_node import BitriseNode
 from nodes.twilio_node import TwilioNode
 from nodes.webhook_trigger_node import WebhookTriggerNode
 from nodes.inbound_email_trigger_node import InboundEmailTriggerNode
@@ -339,6 +340,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-twilio': TwilioNode,
     'automation-twitter': TwitterNode,
     'automation-cloudflare': CloudflareNode,
+    'automation-bitrise': BitriseNode,
     'automation-whatsapp': WhatsAppNode,
     'automation-elevenlabs': ElevenLabsNode,
 
