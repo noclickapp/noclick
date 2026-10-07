@@ -14,6 +14,7 @@ from nodes.agent.node_op_tools import is_trigger_operation
 from nodes.core.agent_events import phone_call_event
 from nodes.twilio_node import TWILIO_API_BASE, TwilioNode, TwilioNodeFullConfig
 from utils import capabilities
+from utils.call_safety import emergency_refusal
 from utils.capabilities import PHONE_CALLS, provide
 
 ACCOUNT = {"credential_type": "twilio_account", "account_sid": "AC" + "1" * 32, "auth_token": "tok"}
@@ -75,10 +76,10 @@ async def test_teardown_clears_the_voice_webhook_it_set_even_after_the_operation
         sms.assert_awaited_once_with(ACCOUNT["account_sid"], "tok", "PN1", "")
 
 
-def _node(config, credentials=ACCOUNT, credential_id="cred-1"):
+def _node(config, credentials=ACCOUNT, credential_id="cred-1", conversation_id=None):
     node_config = TwilioNodeFullConfig(config=config, credentials=credentials)
     return TwilioNode(node_id="n1", node_type="automation-twilio", node_data={"credential_id": credential_id}, config=node_config,
-                      workflow_id="wf-1", user_id="u1")
+                      workflow_id="wf-1", user_id="u1", conversation_id=conversation_id)
 
 
 async def test_on_call_without_a_live_call_says_so():
@@ -105,6 +106,26 @@ async def test_place_call_dials_from_the_users_number_on_their_own_account():
     out = await node.execute({})
     assert out["status"] == "error" and "Auth Token" in out["error"]
     calls.place.assert_awaited_once()
+
+
+@respx.mock
+async def test_no_call_of_either_kind_dials_an_emergency_number():
+    """place_call meets the rule in PHONE_CALLS; make_outbound_call goes
+    straight to Twilio's REST API, so it meets the same rule itself."""
+    dial = respx.post(f"{TWILIO_API_BASE}/2010-04-01/Accounts/{ACCOUNT['account_sid']}/Calls.json").mock(
+        return_value=httpx.Response(201, json={"sid": "CA1"}))
+    make = {"operation": "make_outbound_call", "from_number": "+15674833618", "url": "https://example.com/twiml"}
+    for to in ("911", "+1 911", "1-911", "988", "+44 999", "112", "933", "711"):
+        out = await _node({**make, "to_number": to}).execute({})
+        assert out["status"] == "error" and out["error"].startswith("No call was placed: "), to
+        assert "call or text 911 themselves" not in out["error"]
+    assert dial.call_count == 0
+    # The owner's coordinator relays how to get help.
+    out = await _node({**make, "to_number": "911"}, conversation_id="coordinator:u1").execute({})
+    assert out["error"] == emergency_refusal("911", for_owner=True) and "text-to-911" in out["error"]
+    # Any other number still dials.
+    assert (await _node({**make, "to_number": "+14155550100"}).execute({}))["sid"] == "CA1"
+    assert dial.call_count == 1
 
 
 def test_a_finished_call_is_the_agents_event_on_either_node():

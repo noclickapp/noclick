@@ -49,6 +49,7 @@ from nodes.core.call_routing import already_answers, number_holder
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import load_paginated_options
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
+from utils.call_safety import emergency_refusal
 from utils.capabilities import PHONE_CALLS, capability
 from utils.webhook_signatures import verify_twilio_signature
 from utils.twilio_verify import check_verification, start_verification
@@ -2209,6 +2210,10 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
         # ========== Voice Call Operations ==========
         elif action == "make_outbound_call":
             typed_config: TwilioMakeCallConfig = config
+            refusal = emergency_refusal(typed_config.to_number,
+                                        for_owner=self.conversation_id == f"coordinator:{self.user_id}")
+            if refusal:
+                return {"status": "error", "error": refusal}
             data = {
                 "From": typed_config.from_number,
                 "To": typed_config.to_number,

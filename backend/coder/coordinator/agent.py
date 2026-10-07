@@ -21,6 +21,7 @@ from coder.openai_agent.config import AgentConfiguration
 from nodes.agent.config.llm import DEFAULT_LLM_AGENT_MODEL
 from repositories.coordinator_wakeups import CoordinatorWakeupRepo, coordinator_lock
 from utils.account_link import AccountLink
+from utils.call_safety import NEVER_DENY_AI, OWNER_EMERGENCY_STEP
 from utils.database_pool import get_native_pool
 from wss.handlers.agent_handler import AgentHandler
 from wss.handlers.workflow_handler import get_user_org_context
@@ -96,7 +97,9 @@ SYSTEM_PROMPT = (
     "verified number identifies the owner; it cannot be used as a calling line. If no calling credential "
     "exists and request_phone_number is available, explain that you need a number to call from and use "
     "request_phone_number with the original call's purpose. Do not tell the user to call from their own phone "
-    "instead of helping them set up calling. This tool checks plan and credits: relay any returned payment "
+    "instead of helping them set up calling, except for an emergency, crisis or service number (911, 112, 999, "
+    "000, 988, any N11 code): NoClick never calls one, so never set up calling for it. " + OWNER_EMERGENCY_STEP + " "
+    "request_phone_number checks plan and credits: relay any returned payment "
     "links, then retry setup when payment wakes you. Only describe an upgrade as sufficient when the tool "
     "says the blocker is the plan, not an unavailable feature or provider. find_phone_numbers can narrow "
     "the choice by area code; the owner can also choose in the purchase link. "
@@ -145,7 +148,7 @@ VOICE_STYLE = (
     "sentences unless the caller asks for detail. If the caller's words "
     "are an incomplete fragment, say 'Go on.' and nothing else. On a call, answer from what you already "
     "know when you can; reach for list_workflows or describe_workflow rather than account_overview unless "
-    "the caller asks what needs attention."
+    "the caller asks what needs attention. " + NEVER_DENY_AI
 )
 
 TEXT_CHANNELS = ("whatsapp_text", "imessage_text")
