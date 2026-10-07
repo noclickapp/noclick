@@ -91,15 +91,20 @@ def _discover_oauth_providers() -> set[str]:
 def _is_pkce_provider(provider: str) -> bool:
     """Check if an OAuth provider requires PKCE by inspecting its exchange function signature.
 
-    A provider requires PKCE if ``exchange_code_for_tokens`` has a ``code_verifier``
-    parameter with no default value (i.e. it's required, not Optional).
+    The ticketed public/native flow uses ``exchange_credential`` when declared,
+    otherwise the existing ``exchange_code_for_tokens`` contract. A verifier
+    without a default is required; an optional verifier remains optional.
+    This inspects metadata only and never exchanges a code or creates fallback.
     """
     if provider in _pkce_cache:
         return _pkce_cache[provider]
     try:
         import importlib
         mod = importlib.import_module(f'nodes.oauth.{provider}_oauth')
-        sig = inspect.signature(mod.exchange_code_for_tokens)
+        exchange_fn = getattr(mod, 'exchange_credential', None)
+        if exchange_fn is None:
+            exchange_fn = mod.exchange_code_for_tokens
+        sig = inspect.signature(exchange_fn)
         param = sig.parameters.get('code_verifier')
         result = param is not None and param.default is inspect.Parameter.empty
     except Exception:
@@ -172,6 +177,71 @@ def _resolve_credential_type(title: str, defn: dict) -> str | None:
     the ``Literal["..."]`` field on each credential model.
     """
     return defn.get('properties', {}).get('credential_type', {}).get('const')
+
+
+def _credential_union_leaves(schema: dict) -> list[tuple[str, dict, bool]]:
+    """Resolve native credentials refs/unions, without walking unrelated fields.
+
+    Pydantic nullable discriminated unions nest oneOf inside anyOf. Only local
+    $defs refs and auth union edges are followed, in declared order. Bad refs,
+    cycles, malformed unions or bounded-work exhaustion refuse the entire
+    sibling group before it is changed. Hidden metadata is inherited through
+    wrappers; callers retain the existing sibling visibility policy.
+    """
+    if not isinstance(schema, dict):
+        raise ValueError("Invalid credential discovery schema")
+    properties = schema.get('properties', {})
+    definitions = schema.get('$defs', {})
+    if not isinstance(properties, dict) or not isinstance(definitions, dict):
+        raise ValueError("Invalid credential discovery schema")
+    credential = properties.get('credentials')
+    if credential is None:
+        return []
+    stack = [(credential, (), 0, None, False)]
+    leaves: list[tuple[str, dict, bool]] = []
+    seen_types: set[str] = set()
+    visited = 0
+    while stack:
+        branch, ancestors, depth, title, inherited_hidden = stack.pop()
+        visited += 1
+        if visited > 1024 or depth > 32 or not isinstance(branch, dict):
+            raise ValueError("Invalid or excessive credential discovery graph")
+        hidden = inherited_hidden or bool(branch.get('x-credential-hidden'))
+        if '$ref' in branch:
+            reference = branch['$ref']
+            if not isinstance(reference, str) or not reference.startswith('#/$defs/'):
+                raise ValueError("Credential discovery requires a local definition ref")
+            raw_name = reference[len('#/$defs/'):]
+            if (not raw_name or len(raw_name) > 1024 or '/' in raw_name
+                    or re.search(r'~(?![01])', raw_name)):
+                raise ValueError("Invalid credential definition ref")
+            name = raw_name.replace('~1', '/').replace('~0', '~')
+            if name in ancestors or name not in definitions:
+                raise ValueError("Unresolved or cyclic credential definition ref")
+            stack.append((definitions[name], (*ancestors, name), depth + 1, name, hidden))
+            continue
+        children = []
+        for keyword in ('anyOf', 'oneOf'):
+            if keyword in branch:
+                union = branch[keyword]
+                if not isinstance(union, list) or not union:
+                    raise ValueError("Invalid credential discovery union")
+                if visited + len(stack) + len(children) + len(union) > 1024:
+                    raise ValueError("Excessive credential discovery graph")
+                children.extend(union)
+        if children:
+            for child in reversed(children):
+                stack.append((child, ancestors, depth + 1, None, hidden))
+            continue
+        credential_type = _resolve_credential_type('', branch)
+        if not isinstance(credential_type, str) or not credential_type or credential_type in seen_types:
+            continue  # Null, config, token fields and repeated credential leaves.
+        seen_types.add(credential_type)
+        leaf_title = title or branch.get('title') or credential_type
+        if not isinstance(leaf_title, str):
+            raise ValueError("Invalid credential discovery title")
+        leaves.append((leaf_title, branch, hidden))
+    return leaves
 
 
 def _method_kind(defn: dict) -> str:
@@ -292,28 +362,23 @@ def _build_caches() -> tuple[dict[str, list[dict]], dict[str, list[dict]], dict[
                     if method:
                         methods_cache[cred_type] = method
 
-                # --- Build sibling groups from the credentials anyOf union ---
-                cred_prop = schema.get('properties', {}).get('credentials', {})
-                any_of = cred_prop.get('anyOf', [])
-                refs = [e for e in any_of if '$ref' in e]
-                if len(refs) <= 1:
-                    continue  # no siblings to map
-
+                # --- Build siblings from resolved credentials union leaves ---
+                leaves = _credential_union_leaves(schema)
                 sibling_methods: list[dict] = []
-                for ref in refs:
-                    title = ref['$ref'].split('/')[-1]
-                    defn = defs.get(title, {})
+                for title, defn, hidden in leaves:
                     # x-credential-hidden methods (e.g. OAuth pending provider app
                     # approval) are hidden in-app — don't offer them here either.
-                    if defn.get('x-credential-hidden'):
+                    if hidden:
                         continue
                     method = _method_dict_from_defn(title, defn)
                     if method:
                         sibling_methods.append(method)
 
-                # Map every credential_type in this group to the full list
-                for method in sibling_methods:
-                    siblings_cache[method['credential_type']] = sibling_methods
+                # Preserve the direct-ref singleton fallback and visible-only
+                # sibling policy, including a hidden sibling beside one method.
+                if len(leaves) > 1:
+                    for method in sibling_methods:
+                        siblings_cache[method['credential_type']] = sibling_methods
             except Exception:
                 continue
     except Exception as e:

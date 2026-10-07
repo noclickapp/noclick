@@ -128,6 +128,7 @@ from nodes.extend_node import ExtendNode
 from nodes.fellow_node import FellowNode
 from nodes.fathom_node import FathomNode
 from nodes.sigma_node import SigmaNode
+from nodes.openstatus_node import OpenStatusNode
 from nodes.trello_node import TrelloNode
 from nodes.firecrawl_node import FirecrawlNode
 from nodes.attio_node import AttioNode
@@ -283,6 +284,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-fellow': FellowNode,
     'automation-fathom': FathomNode,
     'automation-sigma': SigmaNode,
+    'automation-openstatus': OpenStatusNode,
     'automation-trello': TrelloNode,
     'automation-firecrawl': FirecrawlNode,
     'automation-attio': AttioNode,

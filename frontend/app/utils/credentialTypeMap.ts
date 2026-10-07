@@ -310,6 +310,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // Sigma Computing
     'SigmaApiKeyCredential': 'sigma_api_key',
+    'OpenStatusApiKeyCredential': 'openstatus_api_key',
 
     // Trello
     'TrelloApiKeyCredential': 'trello_api_key',
