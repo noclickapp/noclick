@@ -240,6 +240,10 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'TwitterOAuthCredential': 'twitter_oauth',
     'TwitterBearerTokenCredential': 'twitter_bearer_token',
 
+    // DNSimple
+    'DNSimple Account Token': 'dnsimple_account_token',
+    'DNSimpleAccountTokenCredential': 'dnsimple_account_token',
+
     // Cloudflare
     'STACKIT DNS Access Token': 'stackitdns_access_token',
     'STACKITDNSAccessTokenCredential': 'stackitdns_access_token',

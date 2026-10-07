@@ -529,6 +529,7 @@ function getProviderLabel(providerKey: string): string {
         'google_ads': 'Google Account',
         'google_business_profile': 'Google Account',
         'youtube': 'Google Account',
+        'dnsimple': 'DNSimple',
         'github': 'GitHub Account',
         'github_rest': 'GitHub Account',
         'slack': 'Slack Workspace',
