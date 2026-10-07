@@ -1113,6 +1113,9 @@
         "on_report_threshold_crossed"
       ]
     },
+    "automation-sematext": {
+      "agentToolProvider": true
+    },
     "automation-semrush": {
       "agentToolProvider": true
     },
