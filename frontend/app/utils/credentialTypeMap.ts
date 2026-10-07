@@ -14,6 +14,7 @@
  * Example: 'GoogleSheetsOAuthCredential' -> 'google_sheets_oauth'
  */
 export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
+    'PorkbunCredential': 'porkbun_api_key',
     // Agent credentials
     'AgentCredentials': 'agent_api_key',
 

@@ -1,6 +1,5 @@
 /**
- * schemaFieldRenderer - Shared field rendering logic for JSON Schema-based config forms.
- * Used by both NodeConfig (workflow editor) and SchemaConfigForm (workflow generation).
+ * Shared choice controls for native config forms and the legacy generation renderer.
  *
  * Provides two variants:
  * - 'editor': Full-featured with DroppableTextField for drag-drop support
@@ -9,6 +8,9 @@
 
 import type { ReactElement } from 'react';
 import { renderSchemaWidget, hasRegisteredWidget, type WidgetRenderProps } from './schemaWidgetRegistry';
+import { MultiSelectEnumField } from './MultiSelectEnumField';
+import { SearchableEnumField } from './SearchableEnumField';
+import { enumLabel, fieldAllowsNull, fieldValueSchema, numericFieldValue } from '~/utils/schemaFieldValues';
 
 // Re-export widget registry for consumers that need it
 export { renderSchemaWidget, hasRegisteredWidget, type WidgetRenderProps } from './schemaWidgetRegistry';
@@ -41,6 +43,40 @@ export interface SchemaFieldRenderOptions {
 const editorInputClasses = "w-full px-3 py-2 text-sm bg-foreground/[0.02] border border-border dark:border-white/[0.05] rounded-lg text-foreground/80 placeholder:text-[hsl(var(--placeholder))] focus:outline-none focus:border-border dark:focus:border-white/[0.15] transition-colors";
 
 const generationInputClasses = "w-full px-3 py-2 rounded-lg border border-border dark:border-white/[0.08] bg-foreground/[0.03] text-foreground text-sm outline-none placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/20 focus:bg-foreground/[0.05]";
+
+/** DOM option values are indices; saved values retain their schema types. */
+export function renderSchemaChoice({ fieldKey, fieldSchema, value, onChange }: SchemaFieldRenderOptions, className: string): ReactElement | null {
+    const prop = fieldValueSchema(fieldSchema);
+    const expression = typeof value === 'string' && value.includes('{{');
+    const labels = prop.enumNames ?? prop.enumLabels ?? prop.items?.enumNames ?? prop.items?.enumLabels;
+    if (prop.type === 'array' && (Array.isArray(prop.enum) || Array.isArray(prop.items?.enum)) && !expression) {
+        return <MultiSelectEnumField fieldKey={fieldKey} value={Array.isArray(value) ? value : []}
+            enumValues={prop.enum ?? prop.items.enum} enumLabels={labels} onChange={onChange}
+            placeholder={prop['ui:placeholder'] || prop.placeholder || prop.description || 'Select one or more...'} />;
+    }
+    const isEnum = prop.type !== 'array' && Array.isArray(prop.enum);
+    if (!isEnum && (prop.type !== 'boolean' || expression)) return null;
+    const options = isEnum ? [...prop.enum] : [true, false];
+    if (fieldAllowsNull(fieldSchema) && !options.includes(null)) options.push(null);
+    const optionLabels = options.map((option, index) => !isEnum && typeof option === 'boolean'
+        ? option ? 'Yes' : 'No' : enumLabel(option, index, labels));
+    if (isEnum && prop['x-enum-searchable'] === true) {
+        return <SearchableEnumField fieldKey={fieldKey} value={value} enumValues={options}
+            enumLabels={optionLabels} onChange={onChange}
+            placeholder={prop['ui:placeholder'] || prop.placeholder || prop.description || 'Select an option...'} />;
+    }
+    const selected = options.findIndex(option => option === value);
+    return <select value={selected < 0 ? '' : String(selected)} className={className} data-field-key={fieldKey}
+        onChange={event => {
+            const index = event.target.value;
+            if (index === '') onChange(fieldKey, undefined);
+            else if (/^(0|[1-9]\d*)$/.test(index) && Number(index) < options.length) onChange(fieldKey, options[Number(index)]);
+        }}>
+        <option value="" className="bg-card">{prop.default !== undefined && prop.default !== null
+            ? `Default (${typeof prop.default === 'boolean' ? prop.default ? 'Yes' : 'No' : prop.default})` : 'Not set'}</option>
+        {options.map((option, index) => <option key={index} value={String(index)} className="bg-card">{optionLabels[index]}</option>)}
+    </select>;
+}
 
 // ============================================================================
 // Field Renderer (generation variant - simple inputs)
@@ -76,23 +112,9 @@ export function renderGenerationField({
         return widgetElement;
     }
 
-    // Enum (select dropdown)
-    if (prop.enum) {
-        return (
-            <select
-                value={value || ''}
-                onChange={(e) => onChange(fieldKey, e.target.value)}
-                className={inputClasses}
-            >
-                <option value="" className="bg-card">Select...</option>
-                {prop.enum.map((opt: string) => (
-                    <option key={opt} value={opt} className="bg-card">
-                        {(prop.enumLabels || {})[opt] || opt}
-                    </option>
-                ))}
-            </select>
-        );
-    }
+    const choice = renderSchemaChoice({ fieldKey, fieldSchema: prop, value, onChange }, inputClasses);
+    if (choice) return choice;
+    prop = fieldValueSchema(prop);
 
     // Textarea (when explicitly requested via ui:widget but not in registry)
     if (prop['ui:widget'] === 'textarea') {
@@ -107,21 +129,6 @@ export function renderGenerationField({
         );
     }
 
-    // Boolean checkbox
-    if (prop.type === 'boolean') {
-        return (
-            <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                    type="checkbox"
-                    checked={!!value}
-                    onChange={(e) => onChange(fieldKey, e.target.checked)}
-                    className="w-4 h-4 rounded border-foreground/20 bg-foreground/5 text-emerald-500 focus:ring-emerald-500/20"
-                />
-                <span className="text-sm text-muted-foreground">{prop.description || 'Enable'}</span>
-            </label>
-        );
-    }
-
     // Number/integer input
     if (prop.type === 'number' || prop.type === 'integer') {
         return (
@@ -133,8 +140,7 @@ export function renderGenerationField({
                     if (newValue === '') {
                         onChange(fieldKey, '');
                     } else {
-                        const num = prop.type === 'integer' ? parseInt(newValue, 10) : parseFloat(newValue);
-                        onChange(fieldKey, isNaN(num) ? newValue : num);
+                        onChange(fieldKey, numericFieldValue(newValue, prop.type));
                     }
                 }}
                 placeholder={prop.placeholder || prop.description}

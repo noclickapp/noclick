@@ -8,6 +8,7 @@ and handles instantiation of nodes based on type.
 import logging
 from typing import Dict, Optional, Type, Any
 from nodes.core.base import WorkflowNode
+from nodes.porkbun_node import PorkbunNode
 from nodes.telegram_node import TelegramNode
 from nodes.phone_node import PhoneNode
 from nodes.agent_node import AgentNode
@@ -191,6 +192,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'trigger-cron': CronTriggerNode,
 
     # Automation nodes
+    'automation-porkbun': PorkbunNode,
     'automation-telegram': TelegramNode,
     'automation-phone': PhoneNode,
     'automation-http-request': HttpRequestNode,

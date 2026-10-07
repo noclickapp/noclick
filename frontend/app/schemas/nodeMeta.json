@@ -841,6 +841,9 @@
         "on_pipedrive_any_event"
       ]
     },
+    "automation-porkbun": {
+      "agentToolProvider": true
+    },
     "automation-postgres": {
       "agentToolProvider": true
     },

@@ -319,6 +319,43 @@ describe('applyNodeUpdate data model', () => {
             });
         });
 
+        it('preserves explicit null through form update, save and authoritative reload', () => {
+            const start = createWorkflowNode('n1', 'automation-test', { x: 0, y: 0 }, { active: true });
+            const updated = applyNodeUpdate(start, {
+                config: { active: null },
+                preserveConfigNulls: true,
+            });
+            expect(updated.data.config).toEqual({ active: null });
+            expect(updated.data).not.toHaveProperty('preserveConfigNulls');
+            const saved = JSON.parse(JSON.stringify(buildSaveConfig(updated)));
+            expect(saved).toEqual({ active: null });
+            const reloaded = createWorkflowNode('n1', 'automation-test', { x: 0, y: 0 }, saved);
+            expect(reloaded.data.config).toEqual({ active: null });
+        });
+
+        it('preserves null snapshots in both flat and legacy nested config', () => {
+            for (const raw of [{ active: null }, { config: { active: null } }]) {
+                const loaded = createWorkflowNode('n1', 'automation-test', { x: 0, y: 0 }, raw);
+                expect(buildSaveConfig(loaded)).toEqual({ active: null });
+            }
+        });
+
+        it('passes the literal-null policy through collaborative normalization without persisting it', () => {
+            const start = createWorkflowNode('n1', 'automation-test', { x: 0, y: 0 }, { active: true });
+            const wire = JSON.parse(JSON.stringify({ config: { active: null }, preserveConfigNulls: true }));
+            const payload = normalizeNodeUpdatePayload(wire);
+            expect(payload.extras).toBeUndefined();
+            expect(buildSaveConfig(applyNodeUpdate(start, payload))).toEqual({ active: null });
+        });
+
+        it('keeps raw partial-update null tombstones and requires an explicit true policy', () => {
+            const start = createWorkflowNode('n1', 'automation-test', { x: 0, y: 0 }, { active: true });
+            expect(buildSaveConfig(applyNodeUpdate(start, rawConfigToPayload({ active: null })))).toEqual({});
+            expect(buildSaveConfig(applyNodeUpdate(start, {
+                config: { active: null }, preserveConfigNulls: 'true' as any,
+            }))).toEqual({});
+        });
+
         it('mockedOutput === null deletes it from top-level data', () => {
             const start = createWorkflowNode(
                 'n1',
