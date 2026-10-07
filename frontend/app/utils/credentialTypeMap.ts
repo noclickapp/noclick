@@ -227,6 +227,8 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'TwitterBearerTokenCredential': 'twitter_bearer_token',
 
     // Cloudflare
+    'STACKIT DNS Access Token': 'stackitdns_access_token',
+    'STACKITDNSAccessTokenCredential': 'stackitdns_access_token',
     'CloudflareAPITokenCredential': 'cloudflare_api_token',
     'CloudflareAPIKeyCredential': 'cloudflare_api_key',
     'BitriseAPITokenCredential': 'bitrise_api_token',
