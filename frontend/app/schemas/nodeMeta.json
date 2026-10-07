@@ -1398,6 +1398,9 @@
     "automation-upstash-vector": {
       "agentToolProvider": true
     },
+    "automation-uptimecom": {
+      "agentToolProvider": true
+    },
     "automation-voyage": {
       "agentToolProvider": true
     },
