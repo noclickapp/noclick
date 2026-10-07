@@ -2180,17 +2180,22 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                     ))
                     return
 
-                async with pool.acquire() as conn:
-                    # Get user's current org context
-                    org_id = await get_user_org_context(conn, user_id)
+                from utils.credential_loader import load_credential
 
-                    # Check if user has access (owner, user share, or org share in current context)
-                    row = await conn.fetchrow(f"""
-                        SELECT c.credential
-                        FROM credentials c
-                        WHERE c.id = $1
-                          AND {credential_access_predicate()}
-                    """, request.credential_id, user_id, org_id)
+                try:
+                    credential_data = await load_credential(
+                        pool, user_id, request.credential_id, raise_on_error=True,
+                    )
+                except Exception as e:
+                    logger.error(f"Error loading credential for options: {e}")
+                    await send_event(self.sio, sid, ResponseEvent(
+                        request_id=request.request_id,
+                        data=WorkflowNodeLoadOptionsResponse(
+                            success=False,
+                            message="Failed to load credential"
+                        ).model_dump()
+                    ))
+                    return
 
                 if credential_data is None:
                     await send_event(self.sio, sid, ResponseEvent(
@@ -2219,12 +2224,30 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 # don't override freshen_credential).
                 if request.credential_id and credential_data:
                     from nodes.core.oauth_audit import caller_path_scope
+                    refresh_context = {}
+                    if getattr(node_class, "workflow_credential_refresh", False):
+                        # Authority comes from the signed-in user's current
+                        # organization, never the request's picker context.
+                        try:
+                            async with pool.acquire() as conn:
+                                refresh_org_id = await get_user_org_context(conn, user_id)
+                        except Exception:
+                            await send_event(self.sio, sid, ResponseEvent(
+                                request_id=request.request_id,
+                                data=WorkflowNodeLoadOptionsResponse(
+                                    success=False,
+                                    message="Credential access context could not be verified",
+                                ).model_dump(),
+                            ))
+                            return
+                        refresh_context = {"organization_id": refresh_org_id}
                     with caller_path_scope("dropdown"):
                         credential_data = await node_class.freshen_credential(
                             credential_data,
                             pool=pool,
                             user_id=user_id,
                             credential_id=request.credential_id,
+                            **refresh_context,
                         )
 
                 result = await node_class.load_field_options(
