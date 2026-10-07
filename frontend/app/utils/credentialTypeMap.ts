@@ -131,6 +131,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'ApolloAPIKeyCredential': 'apollo_api_key',
 
     // BlueSky
+    'ExoscaleAPIKeyCredential': 'exoscale_api_key',
     'BlueSkyAppPasswordCredential': 'bluesky_handle_password',
 
     // Canva

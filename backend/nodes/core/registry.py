@@ -39,6 +39,7 @@ from nodes.sling_node import SlingNode
 from nodes.cliniko_node import ClinikoNode
 from nodes.apify_node import ApifyNode
 from nodes.apollo_node import ApolloNode
+from nodes.exoscale_node import ExoscaleNode
 from nodes.bluesky_node import BlueSkyNode
 from nodes.canva_node import CanvaNode
 from nodes.cron_trigger_node import CronTriggerNode
@@ -257,6 +258,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-cliniko': ClinikoNode,
     'automation-apify': ApifyNode,
     'automation-apollo': ApolloNode,
+    'automation-exoscale': ExoscaleNode,
     'automation-bluesky': BlueSkyNode,
     'automation-canva': CanvaNode,
     'automation-discord': DiscordNode,

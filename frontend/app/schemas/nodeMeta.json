@@ -300,6 +300,9 @@
     "automation-excel": {
       "agentToolProvider": true
     },
+    "automation-exoscale": {
+      "agentToolProvider": true
+    },
     "automation-expensify": {
       "agentToolProvider": true,
       "triggerOperations": [

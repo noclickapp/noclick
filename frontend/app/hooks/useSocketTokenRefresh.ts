@@ -14,6 +14,7 @@ import { useEffect, useRef } from 'react';
 import { useLoaderData } from 'react-router';
 import { createBrowserSupabaseClient } from '~/lib/supabase';
 import { socketReceiver } from '~/lib/socket-receiver';
+import { projectSocketDiagnostics } from '~/lib/socket-diagnostics';
 
 interface TokenRefreshConfig {
     enabled?: boolean;
@@ -31,10 +32,10 @@ function syncAuthWithBackend(logPrefix: string) {
         if (result.success) {
             console.log(`✅ ${logPrefix}: Backend session synced`);
         } else {
-            console.warn(`⚠️ ${logPrefix}: Failed to sync backend session:`, result.error);
+            console.warn(`⚠️ ${logPrefix}: Failed to sync backend session:`, projectSocketDiagnostics('update_auth', result.error));
         }
     }).catch((err) => {
-        console.warn(`⚠️ ${logPrefix}: Error syncing backend session:`, err);
+        console.warn(`⚠️ ${logPrefix}: Error syncing backend session:`, projectSocketDiagnostics('update_auth', err));
     });
 }
 
@@ -102,7 +103,7 @@ export function useSocketTokenRefresh({ enabled = true }: TokenRefreshConfig = {
                             await supabase.auth.refreshSession();
                         }
                     } catch (err) {
-                        console.warn('[useSocketTokenRefresh] visibility refresh failed', err);
+                        console.warn('[useSocketTokenRefresh] visibility refresh failed', projectSocketDiagnostics('auth:refresh', err));
                     }
                 })();
             };
@@ -130,7 +131,7 @@ export function useSocketTokenRefresh({ enabled = true }: TokenRefreshConfig = {
                     refresh_token: refreshToken,
                 }).then(({ error }) => {
                     if (error) {
-                        console.error('❌ Failed to set session from URL tokens:', error);
+                        console.error('❌ Failed to set session from URL tokens:', projectSocketDiagnostics('auth:callback', error));
                         window.location.href = '/auth/login';
                     } else {
                         console.log('✅ Session established from URL tokens');
