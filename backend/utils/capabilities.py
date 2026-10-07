@@ -116,7 +116,9 @@ PHONE_NUMBERS = "phone.numbers"
 PHONE_CALLS = "phone.calls"
 
 # What this platform sells and the one-tap links that buy it, for the account
-# coordinator: catalog() -> {plans, topups} with the prices charged;
+# coordinator: catalog() -> {plans, topups, checkout_note} with the prices
+# charged (checkout_note: what checkout charges instead where it charges
+# another currency, "" where it never does);
 # suggested_topups(shortfall) -> the sizes worth offering; async mint(pool, *,
 # user_id, kind, plan=None, credits_per_month=None, billing_period="monthly",
 # continuation=None, send_to_phone=False) -> {job_id, url, label, ...}. The

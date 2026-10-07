@@ -249,7 +249,8 @@ def coordinator_tool_params(*, include_whatsapp: bool = False, include_imessage:
                         for p in plans)
             + ". Monthly credit top-ups (credits/month at $/month): "
             + ", ".join(f"{t['credits_per_month']} (${t['monthly_usd']:g})" for t in topups)
-            + "; yearly billing is cheaper and a top-up needs a paid plan. Send the link on its own line with its price.",
+            + "; yearly billing is cheaper and a top-up needs a paid plan. " + purchase_catalog["checkout_note"]
+            + " Send the link on its own line with its price.",
             {"kind": {"type": "string", "enum": ["plan", "topup"]},
              "plan": {"type": "string", "enum": [p["plan"] for p in plans]},
              "credits_per_month": {"type": "integer", "enum": [t["credits_per_month"] for t in topups]},

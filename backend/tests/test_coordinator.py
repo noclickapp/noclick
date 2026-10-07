@@ -665,7 +665,8 @@ class FakePurchases:
     def catalog():
         return {"plans": [{"plan": "plus", "label": "Plus", "monthly_usd": 25.0, "yearly_usd": 180.0,
                            "credits_per_month": 100, "description": "100 credits/month"}],
-                "topups": [{"credits_per_month": 20, "monthly_usd": 5.0, "yearly_usd": 50.0}]}
+                "topups": [{"credits_per_month": 20, "monthly_usd": 5.0, "yearly_usd": 50.0}],
+                "checkout_note": "Buyers abroad pay the local price at checkout."}
 
     @staticmethod
     def suggested_topups(shortfall):
@@ -731,6 +732,9 @@ async def test_the_owner_can_ask_for_any_purchase_link_the_platform_sells(monkey
     # The tool is advertised with the catalog's prices, and only where something is for sale.
     link_tool = next(p for p in t.tool_params() if p["function"]["name"] == "purchase_link")["function"]
     assert "Plus $25/month or $180/year" in link_tool["description"] and "20 ($5)" in link_tool["description"]
+    # Where checkout charges another currency, the platform says so and the model can quote it.
+    assert "a top-up needs a paid plan. Buyers abroad pay the local price at checkout. Send the link" \
+        in link_tool["description"]
     assert link_tool["parameters"]["properties"]["credits_per_month"]["enum"] == [20]
     monkeypatch.setattr(capabilities, "_providers", {k: v for k, v in capabilities._providers.items() if k != capabilities.PURCHASES})
     bare = tools()
