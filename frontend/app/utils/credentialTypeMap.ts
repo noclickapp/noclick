@@ -35,6 +35,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'GoogleDriveOAuthCredential': 'google_drive_oauth',
     'GmailOAuthCredential': 'google_gmail_oauth',
     'GoogleCalendarOAuthCredential': 'google_calendar_oauth',
+    'PowerDNSCredential': 'powerdns_api_key',
     'YouTubeOAuthCredential': 'google_youtube_oauth',
     'GoogleDocsOAuthCredential': 'google_docs_oauth',
     'GoogleSlidesOAuthCredential': 'google_slides_oauth',

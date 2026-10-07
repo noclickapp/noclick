@@ -2676,7 +2676,7 @@ const FlowCanvasInner = ({
     // agent_tool_operations allowlist) — not the agent block's own config.
     const handleWiredNodeConfigPatch = useCallback(
         (nodeId: string, config: Record<string, unknown>) => {
-            setNodes((prev) => updateNodeInList(prev, nodeId, { config }));
+            setNodes((prev) => updateNodeInList(prev, nodeId, { config, preserveConfigNulls: true }));
         },
         [setNodes]
     );
@@ -4992,6 +4992,7 @@ const FlowCanvasInner = ({
             const config = (node.data?.config ?? {}) as Record<string, unknown>;
             handleNodeDataUpdateRef.current(nodeId, {
                 config: { ...config, [fieldKey]: value },
+                preserveConfigNulls: true,
             });
         },
         []

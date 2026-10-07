@@ -888,6 +888,9 @@
         "on_custom_event"
       ]
     },
+    "automation-powerdns": {
+      "agentToolProvider": true
+    },
     "automation-qdrant": {
       "agentToolProvider": true
     },

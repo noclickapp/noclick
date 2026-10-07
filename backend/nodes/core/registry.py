@@ -80,6 +80,7 @@ from nodes.table_node import TableNode
 from nodes.run_trigger_node import RunTriggerNode
 from nodes.submit_external_form_node import SubmitExternalFormNode
 from nodes.youtube_node import YouTubeNode
+from nodes.powerdns_node import PowerDNSNode
 from nodes.mailchimp_node import MailchimpNode
 from nodes.pipedrive_node import PipedriveNode
 from nodes.resend_node import ResendNode
@@ -330,6 +331,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-google-sheets': GoogleSheetsNode,
     'automation-google-drive': GoogleDriveNode,
     'automation-gmail': GmailNode,
+    'automation-powerdns': PowerDNSNode,
     'automation-youtube': YouTubeNode,
     'automation-google-calendar': GoogleCalendarNode,
     'automation-google-tasks': GoogleTasksNode,

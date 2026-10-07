@@ -1,6 +1,6 @@
 // MultiSelectEnumField — multi-select dropdown with chips for array-typed enum
 // fields (JSON schema `type: array` with a static enum/items.enum + enumNames).
-// Emits a string[] (fixing the "must be array" bug on array-enum fields, e.g. the
+// Emits the original enum values (fixing the "must be array" bug, e.g. the
 // Pipedrive trigger's event_types). Mirrors the app's standard multi-select-chips
 // UX (WorkflowPickerWidget): selected values as removable chips above, a
 // click-to-open search dropdown below — but over a STATIC option list instead of
@@ -9,15 +9,16 @@
 import { type ReactElement, useState, useRef, useEffect, useMemo } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
+import { enumLabel } from '~/utils/schemaFieldValues';
 
 const inputClasses = "w-full px-3 py-2 rounded-lg border border-foreground/[0.08] bg-card dark:bg-foreground/[0.03] text-foreground text-sm outline-none placeholder:text-foreground/30 focus:border-foreground/20 focus:bg-foreground/[0.05]";
 
 interface MultiSelectEnumFieldProps {
     fieldKey: string;
-    value: string[];
-    enumValues: string[];
-    enumLabels?: string[];
-    onChange: (key: string, value: string[]) => void;
+    value: unknown[];
+    enumValues: unknown[];
+    enumLabels?: unknown[];
+    onChange: (key: string, value: unknown[]) => void;
     placeholder?: string;
 }
 
@@ -29,14 +30,14 @@ export function MultiSelectEnumField({
     onChange,
     placeholder,
 }: MultiSelectEnumFieldProps): ReactElement {
-    const selected = Array.isArray(value) ? value : value ? [value] : [];
+    const selected = Array.isArray(value) ? value : [];
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const labelFor = (v: string) => {
+    const labelFor = (v: unknown) => {
         const i = enumValues.indexOf(v);
-        return i >= 0 && enumLabels?.[i] ? enumLabels[i] : v;
+        return enumLabel(v, i, enumLabels);
     };
 
     // Close on outside click
@@ -51,19 +52,19 @@ export function MultiSelectEnumField({
         return () => document.removeEventListener('mousedown', handler);
     }, []);
 
-    const addValue = (v: string) => {
+    const addValue = (v: unknown) => {
         if (!selected.includes(v)) onChange(fieldKey, [...selected, v]);
         setSearch('');
     };
-    const removeValue = (v: string) => onChange(fieldKey, selected.filter(x => x !== v));
+    const removeValue = (v: unknown) => onChange(fieldKey, selected.filter(x => x !== v));
 
     const filtered = useMemo(() => {
         const available = enumValues
-            .map((v, i) => ({ value: v, label: enumLabels?.[i] || v }))
+            .map((v, i) => ({ value: v, index: i, label: enumLabel(v, i, enumLabels) }))
             .filter(o => !selected.includes(o.value));
         return fuzzyFilter(available, search, o => [
             { text: o.label.toLowerCase(), weight: 1, fuzzy: true },
-            { text: o.value.toLowerCase(), weight: 0.6, fuzzy: true },
+            { text: String(o.value).toLowerCase(), weight: 0.6, fuzzy: true },
         ]);
     }, [search, enumValues, enumLabels, selected]);
 
@@ -72,9 +73,9 @@ export function MultiSelectEnumField({
             {/* Selected values as chips */}
             {selected.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                    {selected.map(v => (
+                    {selected.map((v, index) => (
                         <span
-                            key={v}
+                            key={index}
                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-foreground/[0.06] border border-foreground/[0.1] text-xs text-muted-foreground dark:text-zinc-300"
                         >
                             <span className="truncate max-w-[160px]">{labelFor(v)}</span>
@@ -122,7 +123,7 @@ export function MultiSelectEnumField({
                         )}
                         {filtered.map(o => (
                             <button
-                                key={o.value}
+                                key={o.index}
                                 type="button"
                                 className="w-full text-left px-3 py-1.5 text-sm text-muted-foreground dark:text-zinc-300 hover:bg-foreground/[0.06] hover:text-foreground transition-colors"
                                 onClick={() => addValue(o.value)}
