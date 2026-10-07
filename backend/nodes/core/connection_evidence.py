@@ -187,6 +187,8 @@ class EvidenceResult:
     #: error says so (a web page instead of JSON = wrong host). Beside the
     #: provider's words, never instead of them.
     hint: Optional[str] = None
+    #: What the declared probe demonstrates, carried through every verdict.
+    proves: str = "account"
 
     @property
     def is_empty_but_working(self) -> bool:
@@ -276,6 +278,25 @@ class _ProviderRefused(Exception):
     whole layer exists to remove. Raised so both the operation and identity paths
     funnel into the one place that classifies provider failures.
     """
+
+
+class _ProbeNotExecuted(Exception):
+    """The framework halted the probe without producing provider evidence."""
+
+
+def _raise_if_probe_not_executed(payload: Any) -> None:
+    """Recognize explicit outer control flags, leaving provider data alone.
+
+    ``WorkflowNode.run`` returns these flags when credential admission parks or
+    rejects an operation. Such a result proves nothing about the provider and
+    must stop collection, including any identity fallback. Successful native
+    outputs need not declare a status or ``executed=True``; nested record flags,
+    asynchronous provider statuses and HTTP 202/204 remain ordinary data.
+    """
+    if isinstance(payload, dict) and (
+        payload.get("executed") is False or payload.get("_halt_downstream") is True
+    ):
+        raise _ProbeNotExecuted
 
 
 def _raise_if_error_envelope(payload: Any) -> None:
@@ -563,7 +584,7 @@ async def collect_evidence(
     if node_cls is None or spec is None:
         return EvidenceResult(reachable=None, noun="items")
 
-    result = EvidenceResult(noun=spec.noun)
+    result = EvidenceResult(noun=spec.noun, proves=spec.proves)
 
     async def _run() -> None:
         rows: List[Any] = []
@@ -615,6 +636,7 @@ async def collect_evidence(
             payload = await node_cls.load_field_options(
                 field_name=spec.field, credential_data=loaded
             )
+            _raise_if_probe_not_executed(payload)
             _raise_if_error_envelope(payload)
             rows = _rows_from_options(payload or {})
             result.reachable = True
@@ -639,6 +661,7 @@ async def collect_evidence(
                 organization_id=organization_id,
                 workflow_id=workflow_id,
             )
+            _raise_if_probe_not_executed(payload)
             _raise_if_error_envelope(payload)
             rows = _rows_from_operation(payload)
             result.reachable = True
@@ -681,6 +704,7 @@ async def collect_evidence(
                 organization_id=organization_id,
                 workflow_id=workflow_id,
             )
+            _raise_if_probe_not_executed(ident)
             _raise_if_error_envelope(ident)
             result.reachable = True
             if isinstance(ident, dict):
@@ -693,7 +717,7 @@ async def collect_evidence(
         return EvidenceResult(reachable=None, noun=spec.noun)
     except asyncio.TimeoutError:
         logger.info("[evidence] %s timed out after %ss", node_type, EVIDENCE_TIMEOUT_S)
-        return EvidenceResult(reachable=None, noun=spec.noun)
+        return EvidenceResult(reachable=None, noun=spec.noun, proves=spec.proves)
     except _BROKEN_DECLARATION as e:
         # OUR bug, not the provider's: a field or operation that does not resolve,
         # or a seam whose signature moved. Degrading these to "cannot judge" is
@@ -703,7 +727,7 @@ async def collect_evidence(
         logger.error(
             "[evidence] %s declaration is broken: %s", node_type, e, exc_info=True
         )
-        return EvidenceResult(reachable=None, noun=spec.noun)
+        return EvidenceResult(reachable=None, noun=spec.noun, proves=spec.proves)
     except Exception as e:
         # A provider REJECTING us is a real, reportable verdict; anything else
         # (shape surprises, transport blips) is not something to accuse a user's
@@ -714,7 +738,7 @@ async def collect_evidence(
                 reachable=False, noun=spec.noun, error=provider_message(text)[:300], hint=hint_for_rejection(text, labels)
             )
         logger.info("[evidence] %s could not be judged: %s", node_type, text[:200])
-        return EvidenceResult(reachable=None, noun=spec.noun)
+        return EvidenceResult(reachable=None, noun=spec.noun, proves=spec.proves)
 
     return result
 

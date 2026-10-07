@@ -137,6 +137,9 @@
         "receive_webhook"
       ]
     },
+    "automation-bytescale": {
+      "agentToolProvider": true
+    },
     "automation-cal-com": {
       "agentToolProvider": true,
       "triggerOperations": [
