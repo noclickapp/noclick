@@ -6,6 +6,14 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from './types';
 
+
+// Unmodified compact brand asset from https://skyvia.com
+import type { CSSProperties as BrandCSSProperties } from 'react';
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/skyvia-brand.png" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+);
+
 const SkyviaIcon: SvgIconComponent = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTMLImageElement>>(
     (props, ref) => <img {...props} ref={ref} src="/icons/skyvia.svg" alt="" />
 );
@@ -13,6 +21,6 @@ SkyviaIcon.displayName = 'SkyviaIcon';
 export const SkyviaNode: NodeDefinition = {
     type: 'automation-skyvia', label: 'Skyvia',
     description: 'Read workspace, connection, integration, backup and automation metadata',
-    Icon: SkyviaIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 64 },
-    component: memo((props: NodeProps) => <AutomationNode {...props} Icon={SkyviaIcon} iconColor="" />),
+    Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 64 },
+    component: memo((props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />),
 };
