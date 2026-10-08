@@ -6,10 +6,10 @@ import AutomationNode from './base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from './types';
 
 
-// Unmodified compact brand asset from https://www.keila.io
 import type { CSSProperties as BrandCSSProperties } from 'react';
+// Vector brand artwork from https://www.keila.io
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/keila-brand.ico" alt="" aria-hidden="true" className={className}
+    <img src="/icons/keila-brand-vector.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
