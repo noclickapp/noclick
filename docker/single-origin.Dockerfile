@@ -62,8 +62,8 @@ RUN mkdir /runtime && cd /runtime && npm init -y >/dev/null \
 # (backend/nodes/agent/config/_cli_models.json); a test keeps them in step.
 FROM node:22-bookworm-slim AS cli
 RUN npm install -g --prefix /opt/noclick-cli \
-        @openai/codex@0.160.1 \
-        @anthropic-ai/claude-code@2.1.292 \
+        @openai/codex@0.161.0 \
+        @anthropic-ai/claude-code@2.1.293 \
         opencode-ai@1.18.35 \
         openclaw@2026.9.1 \
     && npm cache clean --force \
