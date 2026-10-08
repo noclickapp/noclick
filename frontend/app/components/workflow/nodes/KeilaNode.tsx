@@ -5,15 +5,23 @@ import { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from './types';
 
+
+// Unmodified compact brand asset from https://www.keila.io
+import type { CSSProperties as BrandCSSProperties } from 'react';
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/keila-brand.ico" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+);
+
 const KeilaIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => <img ref={ref} src="/icons/keila.svg" alt="" className={className} style={style} {...props} />
 );
 KeilaIcon.displayName = 'KeilaIcon';
-const KeilaNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={KeilaIcon} iconColor="" />;
+const KeilaNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const KeilaNode: NodeDefinition = {
     type: 'automation-keila', label: 'Keila',
     description: 'Keila campaign and template metadata reads',
-    Icon: KeilaIcon, iconColor: '',
+    Icon: OfficialBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: KeilaNodeComponent,
 };
