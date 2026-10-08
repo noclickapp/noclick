@@ -7,6 +7,14 @@ import { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from './types';
 
+
+// Unmodified compact brand asset from https://ahrefs.com
+import type { CSSProperties as BrandCSSProperties } from 'react';
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/ahrefs-brand.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+);
+
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };
 
 const AhrefsIcon: SvgIconComponent = forwardRef<
@@ -18,14 +26,14 @@ const AhrefsIcon: SvgIconComponent = forwardRef<
 AhrefsIcon.displayName = 'AhrefsIcon';
 
 const AhrefsNodeComponent = (props: NodeProps) => {
-    return <AutomationNode {...props} Icon={AhrefsIcon} iconColor="" />;
+    return <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 };
 
 export const AhrefsNode: NodeDefinition = {
     type: 'automation-ahrefs',
     label: 'Ahrefs',
     description: 'Ahrefs SEO automation',
-    Icon: AhrefsIcon,
+    Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: DIMENSIONS,
     component: memo(AhrefsNodeComponent),
