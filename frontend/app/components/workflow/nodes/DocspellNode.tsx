@@ -6,10 +6,10 @@ import AutomationNode from './base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from './types';
 
 
-// Unmodified compact brand asset from https://docspell.org
 import type { CSSProperties as BrandCSSProperties } from 'react';
+// Vector brand artwork from https://docspell.org
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/docspell-brand.ico" alt="" aria-hidden="true" className={className}
+    <img src="/icons/docspell-brand-vector.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
