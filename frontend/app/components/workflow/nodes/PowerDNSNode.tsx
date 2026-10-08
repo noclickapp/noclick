@@ -4,6 +4,14 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import type { NodeDefinition } from './types';
 
+
+// Unmodified compact brand asset from https://www.powerdns.com/
+import type { CSSProperties as BrandCSSProperties } from 'react';
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/powerdns-brand.png" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+);
+
 export const PowerDNSIcon = ({ className, style }: SVGProps<SVGSVGElement>) => (
   <img src="/icons/powerdns.png" alt="PowerDNS" className={className} style={style} />
 );
@@ -12,9 +20,9 @@ export const PowerDNSNode: NodeDefinition = {
   type: 'automation-powerdns',
   label: 'PowerDNS Authoritative',
   description: 'Read authoritative server, zone and RRset metadata',
-  Icon: PowerDNSIcon as any,
+  Icon: OfficialBrandIcon,
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },
-  component: memo((props: NodeProps) => <AutomationNode {...props} Icon={PowerDNSIcon as any} iconColor="" />),
+  component: memo((props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />),
 };
 
