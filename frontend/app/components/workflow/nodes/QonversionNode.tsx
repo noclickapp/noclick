@@ -6,10 +6,10 @@ import AutomationNode from './base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from './types';
 
 
-// Unmodified compact brand asset from https://qonversion.io
 import type { CSSProperties as BrandCSSProperties } from 'react';
+// Vector brand artwork from https://raw.githubusercontent.com/qonversion/android-sdk/adeeeae489191328b1c75190d96c2930f5101737/sample/src/main/res/drawable/ic_qonversion.xml
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/qonversion-brand.png" alt="" aria-hidden="true" className={className}
+    <img src="/icons/qonversion-brand-vector.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
