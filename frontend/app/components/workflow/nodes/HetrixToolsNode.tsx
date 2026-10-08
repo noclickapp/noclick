@@ -5,10 +5,10 @@ import { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from './types';
 
-// Unmodified compact brand asset from https://hetrixtools.com
 import type { CSSProperties as BrandCSSProperties } from 'react';
+// Vector brand artwork from https://hetrixtools.com
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/hetrixtools-brand.ico" alt="" aria-hidden="true" className={className}
+    <img src="/icons/hetrixtools-brand-vector.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
