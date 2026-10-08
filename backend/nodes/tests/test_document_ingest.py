@@ -10,7 +10,7 @@ import io
 import types
 
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 from nodes.core import document_ingest as di
 
@@ -126,7 +126,7 @@ class _FakeNode:
 
 @pytest.mark.asyncio
 async def test_ingest_document_embeds_and_charges():
-    tracker = Mock()
+    tracker = AsyncMock()
     with patch("nodes.core.media_resolver.resolve_media_input", return_value=_fake_resolved()), \
          patch("litellm.aembedding", side_effect=_fake_aembedding), \
          patch("billing.usage_tracker.usage_tracker", tracker):
@@ -139,9 +139,9 @@ async def test_ingest_document_embeds_and_charges():
     assert r["metadata"]["source"] == "doc.txt"
     assert r["metadata"]["chunk_index"] == 0
     assert "text" in r["metadata"]
-    # Gate + charge both fired.
-    assert tracker.enforce_credit_gate.called
-    assert tracker.track_usage_event.called
+    # Gate + charge both ran: the tracker is async, so being called isn't enough.
+    tracker.enforce_credit_gate.assert_awaited_once()
+    tracker.track_usage_event.assert_awaited_once()
 
 
 @pytest.mark.asyncio
