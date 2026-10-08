@@ -6,6 +6,14 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from './types';
 
+
+// Unmodified compact brand asset from https://www.mindbodyonline.com/
+import type { CSSProperties as BrandCSSProperties } from 'react';
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/mindbody-brand.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+);
+
 const MindbodyIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
   ({ className, style, ...props }, ref) => (
     <img {...props} ref={ref} src="/icons/mindbody.svg" alt="" className={className}
@@ -19,8 +27,8 @@ export const MindbodyNode: NodeDefinition = {
   label: 'Mindbody',
   description: 'Read business metadata and manage client profiles and preferences',
   keywords: ['fitness', 'wellness', 'staff', 'clients', 'classes', 'appointments'],
-  Icon: MindbodyIcon,
+  Icon: OfficialBrandIcon,
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },
-  component: memo((props: NodeProps) => <AutomationNode {...props} Icon={MindbodyIcon} iconColor="" />),
+  component: memo((props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />),
 };
