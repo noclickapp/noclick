@@ -5,6 +5,14 @@ import { NodeDefinition, SvgIconComponent } from './types';
 
 // Both marks are official Tavily assets. The UI's class theme selects the
 // appropriate supplied color without altering the logo.
+
+// Unmodified compact brand asset from https://www.tavily.com/
+import type { CSSProperties as BrandCSSProperties } from 'react';
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/tavily-brand.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+);
+
 const TavilyIcon: SvgIconComponent = ({
     className,
     style,
@@ -28,10 +36,10 @@ export const TavilyNode: NodeDefinition = {
     label: 'Tavily',
     description: 'Web search, extraction, crawling, mapping, and research',
     keywords: ['web search', 'web research', 'crawl', 'extract'],
-    Icon: TavilyIcon,
+    Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => (
-        <AutomationNode {...props} Icon={TavilyIcon} iconColor="" />
+        <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />
     )),
 };
