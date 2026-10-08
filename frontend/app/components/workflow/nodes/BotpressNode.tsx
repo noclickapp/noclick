@@ -6,6 +6,14 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import type { NodeDefinition } from './types';
 
+
+// Unmodified compact brand asset from https://botpress.com
+import type { CSSProperties as BrandCSSProperties } from 'react';
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/botpress-brand.png" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+);
+
 export const BotpressIcon = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
         <img ref={ref} src="/icons/botpress.svg" alt="" className={className} style={style} {...props} />
@@ -18,8 +26,8 @@ export const BotpressNode: NodeDefinition = {
     label: 'Botpress',
     description: 'Botpress workspace, bot, table data and file metadata workflows',
     keywords: ['administration', 'workspace', 'bots', 'tables', 'rows', 'files'],
-    Icon: BotpressIcon,
+    Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
-    component: memo((props: NodeProps) => <AutomationNode {...props} Icon={BotpressIcon} iconColor="" />),
+    component: memo((props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />),
 };
