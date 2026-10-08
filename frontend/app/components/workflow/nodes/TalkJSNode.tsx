@@ -4,10 +4,10 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from './types';
 
-// Unmodified compact brand asset from https://talkjs.com
 import type { CSSProperties as BrandCSSProperties } from 'react';
+// Vector brand artwork from https://talkjs.com
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/talkjs-brand.png" alt="" aria-hidden="true" className={className}
+    <img src="/icons/talkjs-brand-vector.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
