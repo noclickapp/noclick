@@ -3,15 +3,22 @@ import { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from './types';
 
+import type { CSSProperties as BrandCSSProperties } from 'react';
+// Vector brand artwork from https://statuspal.io/
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/statuspal-brand-vector.svg" alt="" aria-hidden="true" className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
+        style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
+);
+
 const StatusPalIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => <img ref={ref} src="/icons/statuspal.png" alt="" className={className} style={style} {...props} />
 );
 StatusPalIcon.displayName = 'StatusPalIcon';
-const StatusPalNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={StatusPalIcon} iconColor="" />;
+const StatusPalNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const StatusPalNode: NodeDefinition = {
     type: 'automation-statuspal', label: 'StatusPal',
     description: 'StatusPal protected status-page and service metadata reads',
-    Icon: StatusPalIcon, iconColor: '',
+    Icon: OfficialBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: StatusPalNodeComponent,
 };
