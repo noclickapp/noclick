@@ -4,11 +4,11 @@ import AutomationNode from './base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from './types';
 
 
-// Unmodified compact brand asset from https://www.ashbyhq.com
 import type { CSSProperties as BrandCSSProperties } from 'react';
+// Vector brand artwork from https://www.ashbyhq.com
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/ashby-brand.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+    <img src="/icons/ashby-brand-vector.svg" alt="" aria-hidden="true" className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
+        style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
 const AshbyIcon: SvgIconComponent = forwardRef<
