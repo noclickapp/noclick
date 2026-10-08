@@ -5,14 +5,22 @@ import { type NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import { type NodeDefinition } from './types';
 
+
+// Unmodified compact brand asset from https://www.ilert.com/
+import type { CSSProperties as BrandCSSProperties } from 'react';
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/ilert-brand.png" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+);
+
 export const IlertIcon = ({ style, ...props }: ImgHTMLAttributes<HTMLImageElement>) => (
     <img {...props} src="/icons/ilert.svg" alt="ilert"
         style={{ objectFit: 'contain', background: '#162c50', borderRadius: 8, padding: 8, ...style }} />
 );
-const IlertNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={IlertIcon} iconColor="" />;
+const IlertNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const IlertNode: NodeDefinition = {
     type: 'automation-ilert', label: 'ilert',
     description: 'Read current-user, team, service, incident and status-page metadata',
-    Icon: IlertIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
+    Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: IlertNodeComponent,
 };
