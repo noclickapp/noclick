@@ -3,10 +3,10 @@ import AutomationNode from './base/AutomationNode';
 import type { NodeDefinition } from './types';
 import STACKITDNSIcon from '~/components/icons/STACKITDNSIcon';
 
-// Unmodified compact brand asset from https://stackit.com/de
 import type { CSSProperties as BrandCSSProperties } from 'react';
+// Vector brand artwork from https://stackit.com/de
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/stackitdns-brand.png" alt="" aria-hidden="true" className={className}
+    <img src="/icons/stackitdns-brand-vector.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
