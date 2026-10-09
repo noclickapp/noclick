@@ -9,8 +9,10 @@ import type { NodeDefinition, SvgIconComponent } from './types';
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://acculynx.com
-const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/acculynx-brand-vector.svg" alt="" aria-hidden="true" className={className}
+
+// Sourced brand artwork: https://acculynx.com/wp-content/uploads/2023/05/acculynx-logo-navy-orange-gray.svg
+const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/acculynx-preferred-brand.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
@@ -23,8 +25,8 @@ export const AccuLynxNode: NodeDefinition = {
     type: 'automation-acculynx',
     label: 'AccuLynx',
     description: 'AccuLynx contacts, leads, jobs and company CRM metadata',
-    Icon: OfficialBrandIcon,
+    Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
-    component: (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />,
+    component: (props: NodeProps) => <AutomationNode {...props} Icon={PreferredBrandIcon} iconColor="" />,
 };
