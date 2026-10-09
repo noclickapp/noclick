@@ -9,9 +9,11 @@ import type { NodeDefinition, SvgIconComponent } from './types';
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://skyvia.com
-const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/skyvia-brand-vector.svg" alt="" aria-hidden="true" className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
-        style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
+
+// Sourced brand artwork: https://skyvia.com/assets/img/sprite.svg#logo
+const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/skyvia-preferred-brand.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
 const SkyviaIcon: SvgIconComponent = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTMLImageElement>>(
@@ -21,6 +23,6 @@ SkyviaIcon.displayName = 'SkyviaIcon';
 export const SkyviaNode: NodeDefinition = {
     type: 'automation-skyvia', label: 'Skyvia',
     description: 'Read workspace, connection, integration, backup and automation metadata',
-    Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 64 },
-    component: memo((props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />),
+    Icon: PreferredBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 64 },
+    component: memo((props: NodeProps) => <AutomationNode {...props} Icon={PreferredBrandIcon} iconColor="" />),
 };
