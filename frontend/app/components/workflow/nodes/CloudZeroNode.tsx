@@ -6,20 +6,22 @@ import { NodeDefinition, SvgIconComponent } from './types';
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://cloudzero.com
-const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/cloudzero-brand-vector.svg" alt="" aria-hidden="true" className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
-        style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
+
+// Sourced brand artwork: https://www.cloudzero.com/
+const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/cloudzero-preferred-brand.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
 const CloudZeroIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => <img ref={ref} src="/icons/cloudzero.svg" alt="" className={className} style={style} {...props} />
 );
 CloudZeroIcon.displayName = 'CloudZeroIcon';
-const CloudZeroNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
+const CloudZeroNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={PreferredBrandIcon} iconColor="" />;
 export const CloudZeroNode: NodeDefinition = {
     type: 'automation-cloudzero', label: 'CloudZero',
     description: 'CloudZero cost, dimension and saved-view metadata reads',
-    Icon: OfficialBrandIcon, iconColor: '',
+    Icon: PreferredBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: CloudZeroNodeComponent,
 };
