@@ -24,6 +24,8 @@ API Base URL: https://api.canva.com/rest
 Documentation: https://www.canva.dev/docs/connect/
 """
 
+import base64
+import json
 import logging
 import time
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
@@ -32,6 +34,7 @@ import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.media_resolver import resolve_media_input
 from nodes.oauth.canva_oauth import is_token_expired, refresh_access_token
 from nodes.scopes.content_storage import CANVA_SCOPES
 
@@ -763,10 +766,16 @@ class CanvaCreateDesignImportConfig(BaseModel):
         title="Import Design from Binary File",
     )
     file_data: str = Field(
-        ..., title="File Data (Base64)", description="Base64-encoded binary file data"
+        ...,
+        title="File Data",
+        description="Base64, data URI, media URL or workflow resource ID (max 50MB)",
     )
-    title: Optional[str] = Field(
-        None, title="Title", description="Title for the imported design"
+    title: str = Field(
+        ...,
+        min_length=1,
+        max_length=50,
+        title="Title",
+        description="Title for the imported design (1–50 characters)",
     )
 
     model_config = ConfigDict(title="Create Design Import")
@@ -814,14 +823,20 @@ class CanvaCreateAssetUploadConfig(BaseModel):
     )
     file_data: str = Field(
         ...,
-        title="File Data (Base64)",
-        description="Base64-encoded binary file data (max 50MB for images)",
+        title="File Data",
+        description="Base64, data URI, media URL or workflow resource ID (max 50MB)",
     )
-    name: Optional[str] = Field(
-        None, title="Asset Name", description="Name for the asset"
+    name: str = Field(
+        ...,
+        min_length=1,
+        max_length=50,
+        title="Asset Name",
+        description="Name for the asset (1–50 characters)",
     )
     tags: Optional[List[str]] = Field(
-        None, title="Tags", description="Tags to organize the asset"
+        None,
+        title="Tags",
+        description="Upload metadata does not accept tags; use Update Asset Name or Tags after upload completes",
     )
 
     model_config = ConfigDict(title="Create Asset Upload")
@@ -1505,6 +1520,8 @@ class CanvaNode(WorkflowNode):
         params: Optional[Dict[str, Any]] = None,
         json_body: Optional[Dict[str, Any]] = None,
         action_name: str = "request",
+        binary_body: Optional[bytes] = None,
+        upload_metadata: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
         """
         Make an HTTP request to the Canva API.
@@ -1516,19 +1533,30 @@ class CanvaNode(WorkflowNode):
             params: Query parameters
             json_body: JSON request body
             action_name: Name of the action (for response metadata)
+            binary_body: Raw bytes for upload/import endpoints
+            upload_metadata: Documented upload/import headers
 
         Returns:
             Dict with status, action, data, status_code, and timing
         """
         url = f"{CANVA_API_BASE}{endpoint}"
 
+        if binary_body is not None and json_body is not None:
+            raise ValueError("Canva requests cannot contain both JSON and binary bodies")
+
         # Get access token (handles refresh)
         access_token = await self._get_access_token(credentials)
 
         headers = {
             "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json",
+            "Content-Type": (
+                "application/octet-stream"
+                if binary_body is not None
+                else "application/json"
+            ),
         }
+        if upload_metadata:
+            headers.update(upload_metadata)
 
         # Clean params (remove None values)
         if params:
@@ -1544,6 +1572,7 @@ class CanvaNode(WorkflowNode):
                     headers=headers,
                     params=params,
                     json=json_body,
+                    content=binary_body,
                 )
 
                 api_time = (time.time() - start_time) * 1000
@@ -1998,15 +2027,19 @@ class CanvaNode(WorkflowNode):
         self, config: CanvaCreateDesignImportConfig, credentials: CanvaOAuthCredential
     ) -> Dict[str, Any]:
         """Import design from binary file data."""
-        body: Dict[str, Any] = {"file_data": config.file_data}
-        if config.title:
-            body["title"] = config.title
+        media = await resolve_media_input(
+            config.file_data, max_bytes=50 * 1024 * 1024, workflow_id=self.workflow_id
+        )
+        metadata = {
+            "title_base64": base64.b64encode(config.title.encode("utf-8")).decode("ascii")
+        }
 
         return await self._make_request(
             method="POST",
             endpoint="/v1/imports",
             credentials=credentials,
-            json_body=body,
+            binary_body=media.data,
+            upload_metadata={"Import-Metadata": json.dumps(metadata)},
             action_name="import_design_from_binary_file",
         )
 
@@ -2029,17 +2062,24 @@ class CanvaNode(WorkflowNode):
         self, config: CanvaCreateAssetUploadConfig, credentials: CanvaOAuthCredential
     ) -> Dict[str, Any]:
         """Upload asset from binary data."""
-        body: Dict[str, Any] = {"file_data": config.file_data}
-        if config.name:
-            body["name"] = config.name
         if config.tags:
-            body["tags"] = config.tags
+            raise ValueError(
+                "Canva binary upload does not accept tags; "
+                "use Update Asset Name or Tags after the upload completes"
+            )
+        media = await resolve_media_input(
+            config.file_data, max_bytes=50 * 1024 * 1024, workflow_id=self.workflow_id
+        )
+        metadata = {
+            "name_base64": base64.b64encode(config.name.encode("utf-8")).decode("ascii")
+        }
 
         return await self._make_request(
             method="POST",
             endpoint="/v1/asset-uploads",
             credentials=credentials,
-            json_body=body,
+            binary_body=media.data,
+            upload_metadata={"Asset-Upload-Metadata": json.dumps(metadata)},
             action_name="upload_asset_from_binary",
         )
 

@@ -213,7 +213,7 @@ class TestBinaryImportOperations:
     async def test_create_design_import(self, create_node):
         """Test importing design from binary data."""
         config = CanvaCreateDesignImportConfig(
-            file_data="base64encodeddata==", title="Imported Design"
+            file_data="YmluYXJ5LWRlc2lnbg==", title="Imported Design"
         )
         node = create_node(config)
 
@@ -230,6 +230,10 @@ class TestBinaryImportOperations:
 
             mock_request.assert_called_once()
             assert mock_request.call_args.kwargs["endpoint"] == "/v1/imports"
+            assert mock_request.call_args.kwargs["binary_body"] == b"binary-design"
+            assert mock_request.call_args.kwargs["upload_metadata"] == {
+                "Import-Metadata": '{"title_base64": "SW1wb3J0ZWQgRGVzaWdu"}'
+            }
             assert result["status"] == "success"
 
     @pytest.mark.asyncio
@@ -268,7 +272,7 @@ class TestBinaryAssetUploadOperations:
     async def test_create_asset_upload(self, create_node):
         """Test uploading asset from binary data."""
         config = CanvaCreateAssetUploadConfig(
-            file_data="base64encodeddata==", name="Test Asset", tags=["test", "image"]
+            file_data="YmluYXJ5LWFzc2V0", name="Test Asset"
         )
         node = create_node(config)
 
@@ -285,6 +289,10 @@ class TestBinaryAssetUploadOperations:
 
             mock_request.assert_called_once()
             assert mock_request.call_args.kwargs["endpoint"] == "/v1/asset-uploads"
+            assert mock_request.call_args.kwargs["binary_body"] == b"binary-asset"
+            assert mock_request.call_args.kwargs["upload_metadata"] == {
+                "Asset-Upload-Metadata": '{"name_base64": "VGVzdCBBc3NldA=="}'
+            }
             assert result["status"] == "success"
 
     @pytest.mark.asyncio

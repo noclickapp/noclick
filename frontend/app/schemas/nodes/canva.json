@@ -14,22 +14,16 @@
           "x-is-trigger": false
         },
         "file_data": {
-          "description": "Base64-encoded binary file data (max 50MB for images)",
-          "title": "File Data (Base64)",
+          "description": "Base64, data URI, media URL or workflow resource ID (max 50MB)",
+          "title": "File Data",
           "type": "string"
         },
         "name": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Name for the asset",
-          "title": "Asset Name"
+          "description": "Name for the asset (1\u201350 characters)",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Asset Name",
+          "type": "string"
         },
         "tags": {
           "anyOf": [
@@ -44,12 +38,13 @@
             }
           ],
           "default": null,
-          "description": "Tags to organize the asset",
+          "description": "Upload metadata does not accept tags; use Update Asset Name or Tags after upload completes",
           "title": "Tags"
         }
       },
       "required": [
-        "file_data"
+        "file_data",
+        "name"
       ],
       "title": "Create Asset Upload",
       "type": "object"
@@ -214,26 +209,21 @@
           "x-is-trigger": false
         },
         "file_data": {
-          "description": "Base64-encoded binary file data",
-          "title": "File Data (Base64)",
+          "description": "Base64, data URI, media URL or workflow resource ID (max 50MB)",
+          "title": "File Data",
           "type": "string"
         },
         "title": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Title for the imported design",
-          "title": "Title"
+          "description": "Title for the imported design (1\u201350 characters)",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
         }
       },
       "required": [
-        "file_data"
+        "file_data",
+        "title"
       ],
       "title": "Create Design Import",
       "type": "object"
