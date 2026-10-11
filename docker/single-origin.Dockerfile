@@ -64,7 +64,7 @@ FROM node:22-bookworm-slim AS cli
 RUN npm install -g --prefix /opt/noclick-cli \
         @openai/codex@0.162.1 \
         @anthropic-ai/claude-code@2.1.296 \
-        opencode-ai@1.18.35 \
+        opencode-ai@1.19.0 \
         openclaw@2026.9.1 \
     && npm cache clean --force \
     # opencode's postinstall hard-links the platform binary into bin/, leaving
