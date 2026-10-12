@@ -4,10 +4,10 @@ import AutomationNode from './base/AutomationNode';
 import type { NodeDefinition, SvgIconComponent } from './types';
 
 
-// Unmodified compact brand asset from https://getstream.io
+// Complete native company favicon published by https://getstream.io/chat/docs/sdk/react/
 import type { CSSProperties as BrandCSSProperties } from 'react';
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/stream-chat-brand.png" alt="" aria-hidden="true" className={className}
+    <img src="/icons/stream-chat-native-brand-20261012.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
