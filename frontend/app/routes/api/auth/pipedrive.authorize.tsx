@@ -4,29 +4,43 @@
 // per-app in the Developer Hub and are NOT passed at the authorize endpoint.
 
 import { oauthRedirect } from '~/lib/oauthFlow.server';
-import { redirect, type LoaderFunctionArgs } from 'react-router';
+import { type LoaderFunctionArgs } from 'react-router';
 import crypto from 'crypto';
 import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
 import { oauthAppClientId, oauthAppToken } from '~/lib/oauthApp.server';
+import { requirePipedriveInstallAuth } from '~/lib/pipedriveInstall.server';
 
 const PIPEDRIVE_AUTH_URL = 'https://oauth.pipedrive.com/oauth/authorize';
 
 export async function loader({ request }: LoaderFunctionArgs) {
+    const install = new URL(request.url).searchParams.get('mode') === 'install';
+    // Authenticate before consent and bind the resulting grant to this owner.
+    // A login redirect must not preserve arbitrary query parameters or codes.
+    const auth = install ? await requirePipedriveInstallAuth(request) : null;
     // Self-hosted: an OAuth app saved in Settings shows up as env vars here.
     await applyInstanceOAuthEnv(request, 'pipedrive');
-    const clientId = (await oauthAppClientId(oauthAppToken(request), 'pipedrive')) ?? process.env.PIPEDRIVE_CLIENT_ID;
+    const clientId =
+        (install
+            ? null
+            : await oauthAppClientId(oauthAppToken(request), 'pipedrive')) ??
+        process.env.PIPEDRIVE_CLIENT_ID;
     const redirectUri = process.env.PIPEDRIVE_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {
         console.error(
             '[pipedrive.authorize] Missing PIPEDRIVE_CLIENT_ID or PIPEDRIVE_REDIRECT_URI env vars'
         );
-        return oauthNotConfiguredResponse({
+        const response = oauthNotConfiguredResponse({
             request,
             provider: 'pipedrive',
             missing: ['PIPEDRIVE_CLIENT_ID', 'PIPEDRIVE_REDIRECT_URI'],
         });
+        if (auth) {
+            for (const cookie of auth.headers.getSetCookie())
+                response.headers.append('Set-Cookie', cookie);
+        }
+        return response;
     }
 
     // State contains metadata to pass through OAuth flow; base64url encoded so
@@ -35,6 +49,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         JSON.stringify({
             nonce: crypto.randomUUID(), // CSRF protection
             timestamp: Date.now(),
+            ...(auth ? { mode: 'install', userId: auth.user.id } : {}),
         })
     ).toString('base64url');
 
@@ -47,5 +62,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     const authUrl = `${PIPEDRIVE_AUTH_URL}?${params.toString()}`;
 
-    return oauthRedirect(request, authUrl);
+    return oauthRedirect(
+        request,
+        authUrl,
+        auth ? { headers: auth.headers } : undefined
+    );
 }

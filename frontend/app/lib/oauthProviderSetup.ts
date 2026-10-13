@@ -2,9 +2,9 @@
 // console URLs from the schemas' x-credential-url where declared, hand-filled
 // otherwise; env vars read from the source that actually consumes them —
 // frontendEnv from the Remix authorize/callback routes, backendEnv from the
-// Python OAuth modules. The split matters: CLIENT_ID is needed by BOTH
-// processes, CLIENT_SECRET only by the backend, REDIRECT_URI only by the
-// frontend — telling someone to put them all in one file does not work.
+// Python OAuth modules and standalone install handlers. CLIENT_SECRET stays
+// on the backend; standalone exchanges also validate REDIRECT_URI there —
+// telling someone to put every variable in only one file does not work.
 //
 // Standalone rather than reusing utils/oauthProviders.ts: that module pulls
 // react-icons, and this map is imported by server-only routes.
@@ -56,7 +56,7 @@ export const OAUTH_PROVIDER_SETUP: Record<string, OAuthProviderSetup> = {
     "notion": { label: "Notion", consoleUrl: "https://www.notion.so/my-integrations", frontendEnv: ["NOTION_CLIENT_ID", "NOTION_REDIRECT_URI"], backendEnv: ["NOTION_CLIENT_ID", "NOTION_CLIENT_SECRET"] },
     "pagerduty": { label: "PagerDuty", consoleUrl: "https://developer.pagerduty.com/docs/register-an-app", frontendEnv: ["PAGERDUTY_CLIENT_ID", "PAGERDUTY_REDIRECT_URI"], backendEnv: ["PAGERDUTY_CLIENT_ID", "PAGERDUTY_CLIENT_SECRET"] },
     "parallel": { label: "Parallel", consoleUrl: "https://platform.parallel.ai", frontendEnv: ["PARALLEL_CLIENT_ID"], backendEnv: ["PARALLEL_CLIENT_ID"] },
-    "pipedrive": { label: "Pipedrive", consoleUrl: "https://developers.pipedrive.com", frontendEnv: ["PIPEDRIVE_CLIENT_ID", "PIPEDRIVE_REDIRECT_URI"], backendEnv: ["PIPEDRIVE_CLIENT_ID", "PIPEDRIVE_CLIENT_SECRET"] },
+    "pipedrive": { label: "Pipedrive", consoleUrl: "https://developers.pipedrive.com", frontendEnv: ["PIPEDRIVE_CLIENT_ID", "PIPEDRIVE_REDIRECT_URI"], backendEnv: ["PIPEDRIVE_CLIENT_ID", "PIPEDRIVE_CLIENT_SECRET", "PIPEDRIVE_REDIRECT_URI"] },
     "posthog": { label: "PostHog", consoleUrl: "https://posthog.com/docs/api/oauth", frontendEnv: ["POSTHOG_CLIENT_ID", "POSTHOG_REDIRECT_URI"], backendEnv: ["POSTHOG_CLIENT_ID"] },
     "reddit": { label: "Reddit", consoleUrl: "https://www.reddit.com/prefs/apps", frontendEnv: ["REDDIT_CLIENT_ID", "REDDIT_REDIRECT_URI"], backendEnv: ["REDDIT_CLIENT_ID", "REDDIT_CLIENT_SECRET"] },
     "salesforce": { label: "Salesforce", consoleUrl: "https://help.salesforce.com/s/articleView?id=sf.connected_app_create.htm", frontendEnv: ["SALESFORCE_CLIENT_ID", "SALESFORCE_REDIRECT_URI"], backendEnv: ["SALESFORCE_CLIENT_ID", "SALESFORCE_CLIENT_SECRET"] },

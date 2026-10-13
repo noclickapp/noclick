@@ -1,17 +1,32 @@
 // Pipedrive OAuth callback route.
-// Handles the redirect from Pipedrive after the user grants permission (GET →
-// passes the authorization code back to the opener window via postMessage).
+// Handles both editor popups and standalone Marketplace installations.
+// Installs use a fresh owner/browser-bound flow and save the credential server-side;
+// editor popups return their validated authorization to the editor.
 // Pipedrive's Developer Hub allows a SINGLE Callback URL, and it ALSO sends the
 // app-uninstall notification here as a DELETE (HTTP Basic auth, body carries
 // company_id/user_id) — handled by `action` below, which deletes the matching
 // Pipedrive credential(s) so uninstalling in Pipedrive cleans up in NoClick.
 
 import { oauthCallbackUrl } from '~/lib/oauthFlow.server';
-import { type ActionFunctionArgs, type LoaderFunctionArgs } from 'react-router';
+import {
+    redirect,
+    type ActionFunctionArgs,
+    type LoaderFunctionArgs,
+} from 'react-router';
 import { useLoaderData } from 'react-router';
 import { useEffect, useState } from 'react';
 import crypto from 'node:crypto';
 import { createServiceRoleClient } from '~/lib/supabase';
+import { apiBaseUrl } from '~/lib/hostedDefaults';
+import { json } from '~/lib/routerResponse';
+
+import {
+    PIPEDRIVE_INSTALL_PATH as INSTALL_PATH,
+    PIPEDRIVE_INSTALL_HEADERS as PRIVATE_HEADERS,
+} from '~/lib/pipedriveInstall';
+import { requirePipedriveInstallAuth } from '~/lib/pipedriveInstall.server';
+
+export const headers = () => PRIVATE_HEADERS;
 
 interface LoaderData {
     success: boolean;
@@ -19,54 +34,137 @@ interface LoaderData {
     redirectUri?: string;
     scopes?: string[];
     error?: string;
+    mode?: 'install';
 }
 
-export async function loader({
-    request,
-}: LoaderFunctionArgs): Promise<LoaderData> {
+export async function loader({ request }: LoaderFunctionArgs) {
+    const incoming = new URL(request.url);
+    if (
+        incoming.searchParams.get('code') &&
+        !incoming.searchParams.get('state') &&
+        !incoming.searchParams.has('error')
+    ) {
+        // Marketplace starts consent without our state. Discard that unbound
+        // code; a fresh flow after sign-in establishes browser and owner binding.
+        return redirect(INSTALL_PATH, { headers: PRIVATE_HEADERS });
+    }
     const url = await oauthCallbackUrl(request);
     const code = url.searchParams.get('code');
     const stateB64 = url.searchParams.get('state');
     const error = url.searchParams.get('error');
-    const errorDescription = url.searchParams.get('error_description');
-
     if (error) {
-        console.error(
-            '[pipedrive.callback] OAuth error:',
-            error,
-            errorDescription
+        return json<LoaderData>(
+            {
+                success: false,
+                error:
+                    error === 'user_denied'
+                        ? 'Pipedrive installation was cancelled. No connection was saved.'
+                        : 'Pipedrive could not authorize the connection. Please try again.',
+                ...(!stateB64 ? { mode: 'install' as const } : {}),
+            },
+            { headers: PRIVATE_HEADERS }
         );
-        return {
-            success: false,
-            error: errorDescription || `Pipedrive OAuth error: ${error}`,
-        };
     }
 
     if (!code || !stateB64) {
         console.error('[pipedrive.callback] Missing code or state');
-        return {
-            success: false,
-            error: 'Missing authorization code or state parameter',
-        };
+        return json<LoaderData>(
+            {
+                success: false,
+                error: 'Missing authorization code or state parameter',
+            },
+            { headers: PRIVATE_HEADERS }
+        );
     }
 
     // Decode state (validates the base64url round-trip)
     try {
         const stateJson = Buffer.from(stateB64, 'base64url').toString('utf-8');
-        JSON.parse(stateJson);
+        const state = JSON.parse(stateJson) as {
+            mode?: string;
+            userId?: string;
+        };
 
-        return {
-            success: true,
-            code,
-            redirectUri: process.env.PIPEDRIVE_REDIRECT_URI,
-            scopes: [],
-        };
+        if (state.mode === 'install') {
+            // If the NoClick session expired, restart after login without the
+            // authorization code appearing in a login URL or client loader data.
+            const { user, session, headers } =
+                await requirePipedriveInstallAuth(request);
+            const fail = (message: string) =>
+                json<LoaderData>(
+                    { success: false, mode: 'install', error: message },
+                    { headers }
+                );
+            if (!state.userId || state.userId !== user.id) {
+                return fail(
+                    'Your NoClick account changed during installation. Please restart the connection.'
+                );
+            }
+            const redirectUri = process.env.PIPEDRIVE_REDIRECT_URI;
+            if (!redirectUri)
+                return fail('Pipedrive is not configured on this instance.');
+            try {
+                const response = await fetch(
+                    `${apiBaseUrl()}/api/credential-request/pipedrive/install/exchange`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            authorization: `Bearer ${session.access_token}`,
+                            'content-type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            code,
+                            redirect_uri: redirectUri,
+                        }),
+                        signal: AbortSignal.timeout(30_000),
+                    }
+                );
+                if (!response.ok)
+                    return fail(
+                        'Could not save the Pipedrive connection. Please restart installation or contact support.'
+                    );
+                const result = (await response.json()) as {
+                    success?: boolean;
+                    credential_id?: string;
+                };
+                if (
+                    !result.success ||
+                    typeof result.credential_id !== 'string' ||
+                    !result.credential_id
+                ) {
+                    return fail(
+                        'Pipedrive did not finish connecting. Please restart installation.'
+                    );
+                }
+                return redirect(
+                    `/dashboard?tab=settings&section=credentials&account=${encodeURIComponent(result.credential_id)}`,
+                    { headers }
+                );
+            } catch {
+                return fail(
+                    'Could not finish the Pipedrive installation. Please try again.'
+                );
+            }
+        }
+
+        return json<LoaderData>(
+            {
+                success: true,
+                code,
+                redirectUri: process.env.PIPEDRIVE_REDIRECT_URI,
+                scopes: [],
+            },
+            { headers: PRIVATE_HEADERS }
+        );
     } catch (e) {
-        console.error('[pipedrive.callback] Failed to decode state:', e);
-        return {
-            success: false,
-            error: 'Invalid state parameter',
-        };
+        if (e instanceof Response) throw e;
+        return json<LoaderData>(
+            {
+                success: false,
+                error: 'Invalid state parameter',
+            },
+            { headers: PRIVATE_HEADERS }
+        );
     }
 }
 
@@ -151,13 +249,20 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function PipedriveOAuthCallback() {
-    const data = useLoaderData<typeof loader>() as LoaderData;
+    const data = useLoaderData() as LoaderData;
     const [status, setStatus] = useState<'sending' | 'success' | 'error'>(
         'sending'
     );
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
+        if (data.mode === 'install') {
+            setStatus('error');
+            setErrorMessage(
+                data.error || 'Please restart the Pipedrive installation.'
+            );
+            return;
+        }
         // Send result back to opener window via postMessage
         if (window.opener) {
             window.opener.postMessage(
@@ -182,7 +287,8 @@ export default function PipedriveOAuthCallback() {
             // No opener - user navigated directly to this page
             setStatus('error');
             setErrorMessage(
-                'This page should be opened from the workflow editor. Please try connecting again.'
+                data.error ||
+                    'The editor window is no longer available. Restart installation to connect Pipedrive in this tab.'
             );
         }
     }, [data]);
@@ -220,10 +326,11 @@ export default function PipedriveOAuthCallback() {
                             </svg>
                         </div>
                         <div className="text-foreground mb-2">
-                            Connected Successfully!
+                            Authorization received
                         </div>
                         <div className="text-muted-foreground/70 dark:text-zinc-500 text-sm">
-                            This window will close automatically.
+                            Return to the editor to finish connecting. This
+                            window will close automatically.
                         </div>
                     </>
                 )}
@@ -251,6 +358,12 @@ export default function PipedriveOAuthCallback() {
                         <div className="text-red-600 dark:text-red-400 text-sm mb-4">
                             {errorMessage}
                         </div>
+                        <a
+                            href={INSTALL_PATH}
+                            className="block text-foreground underline mb-4"
+                        >
+                            Restart Pipedrive installation
+                        </a>
                         <button
                             onClick={() => window.close()}
                             className="px-4 py-2 text-sm text-foreground bg-secondary hover:bg-accent dark:hover:bg-zinc-700 rounded-lg transition-colors"
