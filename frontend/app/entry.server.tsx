@@ -10,25 +10,34 @@ import { isCacheableMarketingPath } from '~/lib/marketingCache';
 
 const ABORT_DELAY = 5_000;
 
+// Vercel's CDN reads these ahead of Cache-Control.
+const CDN_CACHE_HEADERS = ['Vercel-CDN-Cache-Control', 'CDN-Cache-Control'];
+
 // Root reads the visitor's session on every path but the cacheable marketing
-// ones, so a route's shared-cache header stands only there: anywhere else the
-// document or its .data could carry one person's data to the next visitor.
-function keepPersonalResponsesPrivate(request: Request, headers: Headers) {
+// ones, so a shared-cache header stands only there: anywhere else the document
+// or its .data could carry one person's data to the next visitor.
+function keepPersonalResponsesPrivate(pathname: string, headers: Headers) {
+    if (isCacheableMarketingPath(pathname)) return;
+    for (const name of CDN_CACHE_HEADERS) headers.delete(name);
     const cacheControl = headers.get('Cache-Control');
-    if (
-        cacheControl &&
-        !/\b(private|no-store)\b/i.test(cacheControl) &&
-        !isCacheableMarketingPath(new URL(request.url).pathname)
-    ) {
-        headers.set('Cache-Control', 'private, no-store');
+    if (cacheControl && !/\b(private|no-store)\b/i.test(cacheControl)) {
+        headers.set('Cache-Control', 'private');
     }
+}
+
+// The path React Router hands a .data request's loaders, root's included.
+function dataRequestPath(pathname: string): string {
+    return pathname === '/_root.data' ? '/' : pathname.replace(/\.data$/, '');
 }
 
 export const handleDataRequest: HandleDataRequestFunction = (
     response,
     { request }
 ) => {
-    keepPersonalResponsesPrivate(request, response.headers);
+    keepPersonalResponsesPrivate(
+        dataRequestPath(new URL(request.url).pathname),
+        response.headers
+    );
     return response;
 };
 
@@ -38,7 +47,10 @@ export default async function handleRequest(
     responseHeaders: Headers,
     reactRouterContext: EntryContext
 ) {
-    keepPersonalResponsesPrivate(request, responseHeaders);
+    keepPersonalResponsesPrivate(
+        new URL(request.url).pathname,
+        responseHeaders
+    );
     return isbot(request.headers.get('user-agent') || '')
         ? handleBotRequest(
               request,
