@@ -4,7 +4,7 @@
 // editor popups return their validated authorization to the editor.
 // Pipedrive's Developer Hub allows a SINGLE Callback URL, and it ALSO sends the
 // app-uninstall notification here as a DELETE (HTTP Basic auth, body carries
-// company_id/user_id) — handled by `action` below, which deletes the matching
+// client_id/company_id/user_id) — handled by `action` below, which removes the matching
 // Pipedrive credential(s) so uninstalling in Pipedrive cleans up in NoClick.
 
 import { oauthCallbackUrl } from '~/lib/oauthFlow.server';
@@ -15,8 +15,6 @@ import {
 } from 'react-router';
 import { useLoaderData } from 'react-router';
 import { useEffect, useState } from 'react';
-import crypto from 'node:crypto';
-import { createServiceRoleClient } from '~/lib/supabase';
 import { apiBaseUrl } from '~/lib/hostedDefaults';
 import { json } from '~/lib/routerResponse';
 
@@ -171,81 +169,86 @@ export async function loader({ request }: LoaderFunctionArgs) {
 // Pipedrive app-uninstall callback. Same URL as the OAuth callback (Developer
 // Hub allows only one), differentiated by the DELETE method. Authenticated with
 // HTTP Basic client_id:client_secret; body = { client_id, company_id, user_id,
-// timestamp }. We revoke access by deleting the stored Pipedrive credential(s)
-// for that company/user (the user has already uninstalled on Pipedrive's side,
-// which invalidates the grant — this cleans up our copy). Idempotent.
+// timestamp }. The backend holds the secret, authenticates the provider and
+// atomically removes only the exact app/company/user grant. No redirect/retry:
+// authorization must never follow a different destination or mask failed cleanup.
 export async function action({ request }: ActionFunctionArgs) {
     if (request.method !== 'DELETE') {
         return new Response('Method Not Allowed', { status: 405 });
     }
 
-    const clientId = process.env.PIPEDRIVE_CLIENT_ID;
-    const clientSecret = process.env.PIPEDRIVE_CLIENT_SECRET;
-    if (!clientId || !clientSecret) {
-        console.error(
-            '[pipedrive.callback] uninstall: missing PIPEDRIVE_CLIENT_ID/SECRET'
-        );
-        return new Response('Not configured', { status: 500 });
-    }
-
-    // Authenticate: HTTP Basic base64(client_id:client_secret), constant-time.
-    const expected =
-        'Basic ' +
-        Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-    const provided = request.headers.get('authorization') || '';
-    const a = Buffer.from(provided);
-    const b = Buffer.from(expected);
-    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
-        console.warn('[pipedrive.callback] uninstall: basic auth mismatch');
+    const authorization = request.headers.get('authorization');
+    if (!authorization || !/^Basic [A-Za-z0-9+/]+=*$/i.test(authorization)) {
         return new Response('Unauthorized', { status: 401 });
     }
 
-    let body: { company_id?: unknown; user_id?: unknown } = {};
+    let body: { client_id?: unknown; company_id?: unknown; user_id?: unknown };
     try {
         body = await request.json();
+        if (!body || typeof body !== 'object' || Array.isArray(body))
+            throw new Error();
     } catch {
-        // empty/invalid body — fall through to the no-op below
+        return new Response('Invalid uninstall identity', { status: 400 });
     }
-
-    // Pipedrive ids are numeric; coerce to a safe digit string (guards the
-    // PostgREST .or filter against injection).
     const digits = (v: unknown) => {
-        const s = String(v ?? '');
-        return /^\d+$/.test(s) ? s : '';
+        if (
+            typeof v !== 'string' &&
+            (typeof v !== 'number' || !Number.isSafeInteger(v))
+        )
+            return '';
+        return /^[1-9][0-9]{0,19}$/.test(String(v)) ? String(v) : '';
     };
     const companyId = digits(body.company_id);
     const userId = digits(body.user_id);
-    if (!companyId && !userId) {
-        return Response.json({ success: true, removed: 0 });
+    if (
+        !companyId ||
+        !userId ||
+        typeof body.client_id !== 'string' ||
+        !body.client_id ||
+        body.client_id.length > 128
+    ) {
+        return new Response('Invalid uninstall identity', { status: 400 });
     }
-
-    const supabase = createServiceRoleClient();
-    const filters: string[] = [];
-    if (companyId)
-        filters.push(`metadata->>pipedrive_company_id.eq.${companyId}`);
-    if (userId) filters.push(`metadata->>pipedrive_user_id.eq.${userId}`);
-
-    const { data: creds, error } = await supabase
-        .from('credentials')
-        .select('id')
-        .eq('credential_type', 'pipedrive_oauth')
-        .or(filters.join(','));
-
-    if (error) {
-        console.error('[pipedrive.callback] uninstall lookup failed:', error);
-        return new Response('Lookup failed', { status: 500 });
+    try {
+        const response = await fetch(
+            `${apiBaseUrl()}/api/credential-request/pipedrive/install/uninstall`,
+            {
+                method: 'POST',
+                headers: { authorization, 'content-type': 'application/json' },
+                body: JSON.stringify({
+                    client_id: body.client_id,
+                    company_id: companyId,
+                    user_id: userId,
+                }),
+                signal: AbortSignal.timeout(30_000),
+                redirect: 'error',
+            }
+        );
+        if (!response.ok) {
+            const status = [400, 401, 500].includes(response.status)
+                ? response.status
+                : 502;
+            return new Response('Pipedrive cleanup failed', { status });
+        }
+        const result = (await response.json()) as {
+            success?: unknown;
+            removed?: unknown;
+        };
+        if (
+            result?.success !== true ||
+            typeof result.removed !== 'number' ||
+            !Number.isSafeInteger(result.removed) ||
+            result.removed < 0
+        ) {
+            return new Response('Invalid cleanup result', { status: 502 });
+        }
+        return json(
+            { success: true, removed: result.removed },
+            { headers: PRIVATE_HEADERS }
+        );
+    } catch {
+        return new Response('Pipedrive cleanup unavailable', { status: 502 });
     }
-
-    const ids = (creds ?? []).map((c: { id: string }) => c.id);
-    if (ids.length) {
-        await supabase
-            .from('resource_shares')
-            .delete()
-            .eq('resource_type', 'credential')
-            .in('resource_id', ids);
-        await supabase.from('credentials').delete().in('id', ids);
-    }
-    return Response.json({ success: true, removed: ids.length });
 }
 
 export default function PipedriveOAuthCallback() {

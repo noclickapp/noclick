@@ -6,7 +6,7 @@ the isolated Postgres testcontainer, never production or customer accounts.
 
 import asyncio
 import uuid
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import httpx
 import pytest
@@ -364,17 +364,97 @@ async def test_provider_errors_do_not_expose_codes_or_response_bodies(provider, 
     assert "private provider response" not in caplog.text
 
 
-async def test_refresh_failure_keeps_the_oauth_code_not_the_body(provider, caplog):
+@pytest.mark.parametrize("status", [200, 400])
+async def test_refresh_failure_keeps_the_oauth_code_not_the_body(
+    provider, caplog, monkeypatch, status
+):
+    span = MagicMock()
+    span.is_recording = lambda: True
+    monkeypatch.setattr("nodes.oauth.token_errors.trace.get_current_span", lambda: span)
     token, _ = provider
     token.respond(
-        400,
-        json={"error": "invalid_grant", "error_description": "private provider response"},
+        status,
+        json={
+            "error": "invalid_grant",
+            "error_description": "private provider response",
+        },
     )
     with pytest.raises(ValueError) as caught:
         await refresh_access_token("fixture-refresh")
     # The refresh choke point reads the code to tell the owner to reconnect.
     assert "invalid_grant" in str(caught.value)
     assert "private provider response" not in str(caught.value) + caplog.text
+    span.set_attribute.assert_called_once_with(
+        "oauth.provider_error_code", "invalid_grant"
+    )
+
+
+@pytest.mark.parametrize("status", [200, 400])
+@pytest.mark.parametrize("code", ["private-marker", {"secret": "private-marker"}, None])
+async def test_refresh_does_not_echo_nonstandard_error_codes(
+    provider, caplog, monkeypatch, status, code
+):
+    span = MagicMock()
+    span.is_recording = lambda: True
+    monkeypatch.setattr("nodes.oauth.token_errors.trace.get_current_span", lambda: span)
+    token, _ = provider
+    token.respond(status, json={"error": code, "error_description": "private-marker"})
+    with pytest.raises(ValueError) as caught:
+        await refresh_access_token("fixture-refresh")
+    assert str(caught.value) == f"Token refresh failed: HTTP {status}"
+    assert "private-marker" not in str(caught.value) + caplog.text
+    span.set_attribute.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        [],
+        {},
+        {"access_token": ""},
+        {"access_token": {"secret": "private-marker"}},
+        {"access_token": "fixture-access", "expires_in": "private-marker"},
+        {
+            "access_token": "fixture-access",
+            "api_domain": "https://private-marker.invalid",
+        },
+    ],
+)
+async def test_refresh_malformed_success_is_sanitized(provider, caplog, body):
+    token, _ = provider
+    token.respond(200, json=body)
+    with pytest.raises(ValueError) as caught:
+        await refresh_access_token("fixture-refresh")
+    assert str(caught.value) == "Token refresh failed: invalid response"
+    assert "private-marker" not in str(caught.value) + caplog.text
+
+
+async def test_refresh_invalid_json_is_sanitized(provider, caplog):
+    token, _ = provider
+    token.respond(200, text="private-marker")
+    with pytest.raises(ValueError, match="invalid response") as caught:
+        await refresh_access_token("fixture-refresh")
+    assert "private-marker" not in str(caught.value) + caplog.text
+
+
+async def test_refresh_rotation_and_documented_omission_keep_real_token_values(
+    provider,
+):
+    token, _ = provider
+    for replacement in ("fixture-rotated", None):
+        body = {
+            "access_token": "fixture-new-access",
+            "expires_in": 3600,
+            "api_domain": DOMAIN,
+        }
+        if replacement is not None:
+            body["refresh_token"] = replacement
+        token.respond(200, json=body)
+        result = await refresh_access_token("fixture-refresh")
+        assert result.access_token == "fixture-new-access"
+        assert result.refresh_token == (replacement or "fixture-refresh")
+        assert result.api_domain == DOMAIN
+        assert result.expires_at is not None
 
 
 async def test_missing_grant_is_not_fabricated(accounts, provider):

@@ -32,7 +32,6 @@ from typing import Tuple, Optional
 from urllib.parse import urlencode
 
 import httpx
-from opentelemetry import trace
 from pydantic import BaseModel, field_validator
 
 from nodes.oauth.token_errors import token_error_detail
@@ -270,35 +269,40 @@ async def refresh_access_token(
             logger.error("[PipedriveOAuth] Token refresh failed: %s", detail)
             raise ValueError(f"Token refresh failed: {detail}")
 
-        token_data = response.json()
-
+        try:
+            token_data = response.json()
+        except ValueError:
+            raise ValueError("Token refresh failed: invalid response") from None
+        if not isinstance(token_data, dict):
+            raise ValueError("Token refresh failed: invalid response")
         if "error" in token_data:
-            error_msg = token_data.get(
-                "error_description", token_data.get("error", "Unknown error")
+            detail = token_error_detail(response)
+            logger.error("[PipedriveOAuth] Token refresh failed: %s", detail)
+            raise ValueError(f"Token refresh failed: {detail}")
+
+        try:
+            if (
+                not isinstance(token_data.get("access_token"), str)
+                or not token_data["access_token"]
+            ):
+                raise ValueError("Missing access token")
+            expires_at = None
+            if "expires_in" in token_data:
+                expires_at = (
+                    datetime.now(timezone.utc)
+                    + timedelta(seconds=token_data["expires_in"])
+                ).isoformat()
+            tokens = PipedriveTokens(
+                access_token=token_data["access_token"],
+                # Rotation may omit a replacement; keep the current refresh token.
+                refresh_token=token_data.get("refresh_token", refresh_token),
+                expires_at=expires_at,
+                api_domain=token_data.get("api_domain"),
+                token_type=token_data.get("token_type", "Bearer"),
             )
-            logger.error(f"[PipedriveOAuth] Token refresh failed: {error_msg}")
-            error_code = token_data.get("error") if isinstance(token_data, dict) else None
-            span = trace.get_current_span()
-            if span and span.is_recording() and error_code:
-                span.set_attribute("oauth.provider_error_code", str(error_code))
-            raise ValueError(f"Token refresh failed: {error_msg}")
-
-        expires_at = None
-        if "expires_in" in token_data:
-            expires_at = (
-                datetime.now(timezone.utc)
-                + timedelta(seconds=token_data["expires_in"])
-            ).isoformat()
-
-        tokens = PipedriveTokens(
-            access_token=token_data["access_token"],
-            # Keep the existing refresh token if the provider doesn't return a
-            # fresh one (rotation is not guaranteed on every refresh).
-            refresh_token=token_data.get("refresh_token", refresh_token),
-            expires_at=expires_at,
-            api_domain=token_data.get("api_domain"),
-            token_type=token_data.get("token_type", "Bearer"),
-        )
+        except (ValueError, TypeError, KeyError, OverflowError):
+            # Validation errors may echo provider values, including tokens.
+            raise ValueError("Token refresh failed: invalid response") from None
 
         logger.info("[PipedriveOAuth] Successfully refreshed access token")
         return tokens

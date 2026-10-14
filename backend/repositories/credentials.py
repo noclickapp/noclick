@@ -703,6 +703,55 @@ class CredentialsRepo:
             for r in rows
         ]
 
+    async def remove_pipedrive_install(
+        self,
+        client_id: str,
+        company_id: str,
+        provider_user_id: str,
+    ) -> int:
+        """Remove only copies of the provider-authenticated app/company/user grant.
+
+        Unbound legacy rows cannot prove app identity and remain untouched.
+        Row locks serialize duplicate uninstall deliveries; both deletes roll back
+        if either fails or a trigger suppresses a selected credential's deletion.
+        """
+        async with self._pool.acquire() as conn:
+            async with conn.transaction():
+                rows = await conn.fetch(
+                    """
+                    SELECT id FROM credentials
+                    WHERE credential_type = 'pipedrive_oauth'
+                      AND metadata->>'oauth_client_id' = $1
+                      AND metadata->>'pipedrive_company_id' = $2
+                      AND metadata->>'pipedrive_user_id' = $3
+                    ORDER BY id FOR UPDATE
+                    """,
+                    client_id,
+                    company_id,
+                    provider_user_id,
+                )
+                ids = [row["id"] for row in rows]
+                if not ids:
+                    return 0
+                await conn.execute(
+                    "DELETE FROM resource_shares "
+                    "WHERE resource_type = 'credential' AND resource_id = ANY($1::uuid[])",
+                    ids,
+                )
+                if await conn.fetchval(
+                    "SELECT EXISTS(SELECT 1 FROM resource_shares "
+                    "WHERE resource_type = 'credential' AND resource_id = ANY($1::uuid[]))",
+                    ids,
+                ):
+                    raise RuntimeError("Pipedrive share cleanup was incomplete")
+                deleted = await conn.fetch(
+                    "DELETE FROM credentials WHERE id = ANY($1::uuid[]) RETURNING id",
+                    ids,
+                )
+                if len(deleted) != len(ids):
+                    raise RuntimeError("Pipedrive credential cleanup was incomplete")
+                return len(deleted)
+
     async def delete_credential_and_shares(self, credential_id: str) -> None:
         """Delete the credential row AND its ``resource_shares`` entries in
         one transaction. The ownership check ran earlier via

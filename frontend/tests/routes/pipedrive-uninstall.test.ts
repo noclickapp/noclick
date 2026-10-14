@@ -1,123 +1,164 @@
-// Unit tests for the Pipedrive OAuth callback route's `action` (DELETE) — the
-// app-uninstall handler. Pipedrive sends the uninstall to the SAME callback URL
-// as install (only one is allowed), so this verifies: DELETE-only, HTTP Basic
-// auth is enforced, and matching Pipedrive credentials are deleted by
-// company_id / user_id. Supabase is mocked so the test checks routing/auth/
-// cleanup logic, not network I/O.
+// Exercise the public uninstall callback's authenticated backend handoff.
+// Provider requests stay synthetic; exact identity matching and transactional
+// deletion are covered by backend tests against an isolated Postgres container.
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('~/lib/supabase', () => ({ createServiceRoleClient: vi.fn() }));
+vi.mock('~/lib/supabase', () => ({ requireAuth: vi.fn() }));
+vi.mock('~/lib/hostedDefaults', () => ({
+    apiBaseUrl: () => 'https://api.example.test',
+}));
 
-import { createServiceRoleClient } from '~/lib/supabase';
 import { action } from '~/routes/api/auth/pipedrive.callback';
 
-const BASIC = 'Basic ' + Buffer.from('cid:secret').toString('base64');
+const BASIC = 'Basic ' + Buffer.from('cid:fixture-secret').toString('base64');
+const IDENTITY = { client_id: 'cid', company_id: 42, user_id: 7 };
+const fetchMock = vi.fn();
 
-function fakeClient(creds: { id: string }[]) {
-    const calls: {
-        orFilter?: string;
-        deletedShareIds?: string[];
-        deletedCredIds?: string[];
-    } = {};
-    const client = {
-        from(table: string) {
-            if (table === 'credentials') {
-                return {
-                    select: () => ({
-                        eq: () => ({
-                            or: (f: string) => {
-                                calls.orFilter = f;
-                                return Promise.resolve({ data: creds, error: null });
-                            },
-                        }),
-                    }),
-                    delete: () => ({
-                        in: (_c: string, ids: string[]) => {
-                            calls.deletedCredIds = ids;
-                            return Promise.resolve({ error: null });
-                        },
-                    }),
-                };
-            }
-            return {
-                delete: () => ({
-                    eq: () => ({
-                        in: (_c: string, ids: string[]) => {
-                            calls.deletedShareIds = ids;
-                            return Promise.resolve({ error: null });
-                        },
-                    }),
-                }),
-            };
-        },
+function del(
+    body: unknown = IDENTITY,
+    auth: string | null = BASIC,
+    method = 'DELETE'
+) {
+    const headers: Record<string, string> = {
+        'content-type': 'application/json',
     };
-    return { client, calls };
-}
-
-function del(body: unknown, auth: string | null = BASIC, method = 'DELETE') {
-    const headers: Record<string, string> = { 'content-type': 'application/json' };
     if (auth) headers.authorization = auth;
     return action({
-        request: new Request('https://noclick.com/api/auth/pipedrive/callback', {
-            method,
-            headers,
-            body: method === 'GET' ? undefined : JSON.stringify(body),
-        }),
+        request: new Request(
+            'https://frontend.example.test/api/auth/pipedrive/callback',
+            {
+                method,
+                headers,
+                body: method === 'GET' ? undefined : JSON.stringify(body),
+            }
+        ),
     } as never) as Promise<Response>;
 }
 
 beforeEach(() => {
-    process.env.PIPEDRIVE_CLIENT_ID = 'cid';
-    process.env.PIPEDRIVE_CLIENT_SECRET = 'secret';
-    vi.mocked(createServiceRoleClient).mockReset();
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubEnv('PIPEDRIVE_CLIENT_SECRET', '');
+    fetchMock.mockReset();
+    fetchMock.mockResolvedValue(Response.json({ success: true, removed: 1 }));
+});
+afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
 });
 
 describe('pipedrive uninstall action', () => {
-    it('deletes matching credential(s) and returns 200', async () => {
-        const { client, calls } = fakeClient([{ id: 'cred-1' }]);
-        vi.mocked(createServiceRoleClient).mockReturnValue(client as never);
-
-        const res = await del({ client_id: 'cid', company_id: 42, user_id: 7 });
+    it('works without a frontend secret and forwards only the exact identity to the fixed backend', async () => {
+        const res = await del({
+            ...IDENTITY,
+            timestamp: 123,
+            ignored: 'private-marker',
+        });
         expect(res.status).toBe(200);
         expect(await res.json()).toEqual({ success: true, removed: 1 });
-        expect(calls.deletedCredIds).toEqual(['cred-1']);
-        expect(calls.deletedShareIds).toEqual(['cred-1']);
-        // both identifiers become PostgREST .or filters (numeric-sanitized)
-        expect(calls.orFilter).toContain('pipedrive_company_id.eq.42');
-        expect(calls.orFilter).toContain('pipedrive_user_id.eq.7');
-    });
-
-    it('rejects a bad Basic auth with 401 and never touches the DB', async () => {
-        const res = await del(
-            { company_id: 42 },
-            'Basic ' + Buffer.from('cid:WRONG').toString('base64')
+        expect(res.headers.get('cache-control')).toContain('no-store');
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const [url, options] = fetchMock.mock.calls[0];
+        expect(url).toBe(
+            'https://api.example.test/api/credential-request/pipedrive/install/uninstall'
         );
-        expect(res.status).toBe(401);
-        expect(createServiceRoleClient).not.toHaveBeenCalled();
+        expect(options.method).toBe('POST');
+        expect(options.headers.authorization).toBe(BASIC);
+        expect(options.redirect).toBe('error');
+        expect(options.signal).toBeInstanceOf(AbortSignal);
+        expect(JSON.parse(options.body)).toEqual({
+            client_id: 'cid',
+            company_id: '42',
+            user_id: '7',
+        });
     });
 
-    it('rejects missing auth with 401', async () => {
-        const res = await del({ company_id: 42 }, null);
-        expect(res.status).toBe(401);
+    it('returns a verified idempotent zero, not a count of selected credentials', async () => {
+        fetchMock.mockResolvedValue(
+            Response.json({ success: true, removed: 0 })
+        );
+        expect(await (await del()).json()).toEqual({
+            success: true,
+            removed: 0,
+        });
     });
 
-    it('rejects non-DELETE with 405', async () => {
-        const res = await del(undefined, BASIC, 'GET');
-        expect(res.status).toBe(405);
-        expect(createServiceRoleClient).not.toHaveBeenCalled();
+    it.each([null, 'Bearer fixture', 'Basic invalid!'])(
+        'rejects absent/non-Basic authentication locally: %s',
+        async (auth) => {
+            expect((await del(IDENTITY, auth)).status).toBe(401);
+            expect(fetchMock).not.toHaveBeenCalled();
+        }
+    );
+
+    it('rejects non-DELETE', async () => {
+        expect((await del(IDENTITY, BASIC, 'GET')).status).toBe(405);
+        expect(fetchMock).not.toHaveBeenCalled();
     });
 
-    it('no-ops (removed:0) when the body carries no company/user id', async () => {
-        const res = await del({ client_id: 'cid' });
-        expect(res.status).toBe(200);
-        expect(await res.json()).toEqual({ success: true, removed: 0 });
-        expect(createServiceRoleClient).not.toHaveBeenCalled();
+    it.each([
+        null,
+        [],
+        {},
+        { company_id: 42, user_id: 7 },
+        { ...IDENTITY, client_id: '' },
+        { ...IDENTITY, client_id: 123 },
+        { ...IDENTITY, client_id: 'x'.repeat(129) },
+        { ...IDENTITY, company_id: '42; DROP TABLE credentials' },
+        { ...IDENTITY, company_id: 0 },
+        { ...IDENTITY, user_id: true },
+        { ...IDENTITY, user_id: 7.1 },
+        { ...IDENTITY, user_id: 9007199254740992 },
+        { ...IDENTITY, user_id: '1'.repeat(21) },
+    ])('fails closed on incomplete/malformed identity: %j', async (body) => {
+        expect((await del(body)).status).toBe(400);
+        expect(fetchMock).not.toHaveBeenCalled();
     });
 
-    it('ignores non-numeric ids (injection guard) → treated as absent', async () => {
-        const res = await del({ company_id: "42; DROP TABLE credentials" });
-        expect(res.status).toBe(200);
-        expect(await res.json()).toEqual({ success: true, removed: 0 });
+    it('rejects invalid JSON instead of pretending cleanup succeeded', async () => {
+        const res = (await action({
+            request: new Request('https://frontend.example.test', {
+                method: 'DELETE',
+                headers: { authorization: BASIC },
+                body: '{',
+            }),
+        } as never)) as Response;
+        expect(res.status).toBe(400);
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it.each([400, 401, 500, 404, 302])(
+        'preserves honest failure without exposing provider/backend bodies: %s',
+        async (status) => {
+            fetchMock.mockResolvedValue(
+                new Response('private-marker', { status })
+            );
+            const res = await del();
+            expect(res.status).toBe(
+                [400, 401, 500].includes(status) ? status : 502
+            );
+            expect(await res.text()).not.toContain('private-marker');
+            expect(fetchMock).toHaveBeenCalledTimes(1);
+        }
+    );
+
+    it.each([
+        null,
+        { success: false, removed: 1 },
+        { success: true, removed: -1 },
+        { success: true, removed: 0.5 },
+        { success: true, removed: '1' },
+        { success: true, removed: 9007199254740992 },
+    ])('rejects an unverified cleanup result: %j', async (result) => {
+        fetchMock.mockResolvedValue(Response.json(result));
+        expect((await del()).status).toBe(502);
+    });
+
+    it('does not expose or retry a timeout', async () => {
+        fetchMock.mockRejectedValue(new Error('private-marker'));
+        const res = await del();
+        expect(res.status).toBe(502);
+        expect(await res.text()).not.toContain('private-marker');
+        expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 });
