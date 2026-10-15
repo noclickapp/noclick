@@ -63,7 +63,7 @@ RUN mkdir /runtime && cd /runtime && npm init -y >/dev/null \
 FROM node:22-bookworm-slim AS cli
 RUN npm install -g --prefix /opt/noclick-cli \
         @openai/codex@0.162.1 \
-        @anthropic-ai/claude-code@2.1.299 \
+        @anthropic-ai/claude-code@2.1.300 \
         opencode-ai@1.19.0 \
         openclaw@2026.9.1 \
     && npm cache clean --force \
