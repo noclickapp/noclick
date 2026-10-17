@@ -37,7 +37,7 @@ chardet==5.2.0
 python-engineio==4.13.4
 # Pinned for provider-reported OpenRouter streaming costs and Gemini 3
 # thought-signature round trips.
-litellm==1.96.0
+litellm==1.96.2
 # LiteLLM's Vertex AI path imports google.auth at request time. It is an
 # optional LiteLLM dependency, so keep it explicit in the container image.
 google-auth==2.43.0
