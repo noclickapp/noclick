@@ -82,7 +82,7 @@ async def test_openrouter_401_is_rewritten_on_the_agent_event():
     # library name. The raw text still rides along after "Provider message:" —
     # a misclassification has to degrade to extra guidance, never lost detail.
     assert "OpenRouter" in guidance and "API key" in guidance
-    assert "reconnect it on the agent node" in guidance
+    assert "Re-check the key" in guidance and "connect it again" in guidance
     assert "litellm" not in guidance, "raw library framing must not lead"
     assert "User not found" in verbatim
 

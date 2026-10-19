@@ -90,3 +90,34 @@ async def test_the_chat_reads_back_only_the_accounts_own_jobs(postgres_db):
     view = jobs.job_view(rows[0])
     assert view["status"] == "running" and view["prompt"] == "a teaser"
     assert await CoordinatorJobRepo(postgres_db).list_by_ids(other, [mine]) == []
+
+
+async def test_cancel_job_withdraws_by_its_kinds_own_rule_and_cards_learn_which_kinds_push(registry, postgres_db):
+    owner = "00000000-0000-0000-0000-000000000001"
+    insert = "INSERT INTO coordinator_jobs (user_id, kind, status, spec) VALUES ($1::uuid, $2, 'waiting', $3) RETURNING *"
+    withdrawable = dict(await postgres_db.fetchrow(insert, owner, "video", {"model": "m", "prompt": "a teaser"}))
+    fixed = dict(await postgres_db.fetchrow(insert, owner, "purchase", {
+        "kind": "plan", "plan": "plus", "billing_period": "monthly", "price_usd": 25.0,
+        "expires_at": "2026-10-15T00:00:00+00:00"}))
+    withdrawn = []
+
+    async def cancel(pool, user_id, job_id):
+        withdrawn.append((user_id, job_id))
+        return {**withdrawable, "status": "cancelled"}
+
+    jobs.register_job_kind("video", view=lambda r: {"kind": r["kind"], "status": r["status"]}, summary=lambda p: "",
+                           cancel=cancel, pushes=True)
+    jobs.register_job_kind("purchase", view=lambda r: {"kind": r["kind"], "status": r["status"]}, summary=lambda p: "")
+
+    assert await jobs.cancel_job(postgres_db, owner, str(withdrawable["id"])) == {"kind": "video", "status": "cancelled"}
+    assert withdrawn == [(owner, str(withdrawable["id"]))]
+    with pytest.raises(ValueError, match="A purchase job can't be cancelled"):
+        await jobs.cancel_job(postgres_db, owner, str(fixed["id"]))
+    # Another account's job is no job of this one's.
+    with pytest.raises(ValueError, match="No job of this account"):
+        await jobs.cancel_job(postgres_db, "00000000-0000-0000-0000-0000000000a2", str(withdrawable["id"]))
+    assert withdrawn == [(owner, str(withdrawable["id"]))]
+
+    # The chat's cards are told which jobs announce every change themselves, so they never re-read those on a timer.
+    assert jobs.job_entry(withdrawable)["pushed"] is True
+    assert "pushed" not in jobs.job_entry(fixed)

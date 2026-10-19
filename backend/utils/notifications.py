@@ -36,7 +36,7 @@ from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 from urllib.parse import urlencode
 
-from billing.exceptions import match_insufficient_credits
+from billing.exceptions import match_insufficient_credits, match_spend_cap
 from utils.email import FRONTEND_URL, _send_email
 from utils.email_unsubscribe import DISABLE_LINK_BASE, _relay_secret
 from repositories.credentials import listed_to_owner_sql
@@ -45,10 +45,11 @@ from utils.notification_templates import (
     AMBER,
     RED,
     build_alert_html,
-    credit_bars,
+    spend_bars,
     day_bars,
     error_panel,
     kv_rows,
+    link_panel,
     para,
     progress_bar,
     section_label,
@@ -61,7 +62,7 @@ logger = logging.getLogger(__name__)
 
 CATEGORIES = frozenset({
     "run_failure", "credits", "digest", "credential_revoked", "channel_disconnected",
-    "schedule_paused",
+    "schedule_paused", "topup", "phone_numbers", "platform_paused", "spend_cap", "referrals",
 })
 CATEGORY_LABELS = {
     "run_failure": "workflow failure alerts",
@@ -70,6 +71,11 @@ CATEGORY_LABELS = {
     "credential_revoked": "credential disconnection alerts",
     "channel_disconnected": "channel connection alerts",
     "schedule_paused": "paused schedule alerts",
+    "topup": "balance and auto top-up alerts",
+    "phone_numbers": "phone number order updates",
+    "platform_paused": "alerts before and when apps and databases pause",
+    "spend_cap": "monthly spending cap alerts",
+    "referrals": "news of people you invited",
 }
 
 # Suppression window after a run-failure email per workflow — a cron flow
@@ -183,7 +189,11 @@ _LOCAL_WINDOWS_MAX = 4096
 # per-workflow windows can't exceed the run_failure cap.
 ALERT_DAILY_CAPS = {
     "run_failure": 3, "credits": 2, "digest": None, "credential_revoked": 3,
-    "channel_disconnected": 3, "schedule_paused": 3,
+    "channel_disconnected": 3, "schedule_paused": 3, "topup": 3, "phone_numbers": 3, "platform_paused": 3,
+    # Once a period by its own key; the cap is room for a raised cap reached again the same day.
+    "spend_cap": 2,
+    # Sent only when the coordinator can't say it (cloud/referrals/notice.py), once a reward.
+    "referrals": 3,
 }
 assert set(ALERT_DAILY_CAPS) == CATEGORIES  # every category decides its cap explicitly
 
@@ -483,6 +493,11 @@ async def send_run_failure_alert(
     """Alert the owner that a headless run failed. Per-workflow suppression:
     the first failure emails immediately; failures inside the window are
     counted and folded into the next email as 'N more failures'."""
+    from utils.capabilities import AGENT_WORKFLOW, capability
+
+    agent_workflow = capability(AGENT_WORKFLOW)
+    if agent_workflow and await agent_workflow(_resolve_pool(pool), workflow_id):
+        return False
     # A run blocked by the credit gate is a billing problem, not a workflow
     # bug — delegate to the credits-exhausted alert (deduped for 24h)
     # and hand it the blocked workflow/node so the email can say exactly what
@@ -491,6 +506,9 @@ async def send_run_failure_alert(
     # anchored to the gate's exact message shape — a bare substring also
     # matched provider balance errors, incorrectly attributing a BYOK provider
     # failure to the instance credit policy.
+    # The account's monthly cap stopped it: the cap's own notice (once a period) says so, never a failure email.
+    if match_spend_cap(error):
+        return False
     gate_match = match_insufficient_credits(error)
     if gate_match:
         from billing.usage_tracker import usage_tracker
@@ -582,6 +600,21 @@ async def send_run_failure_alert(
 
 # ── Credits ──────────────────────────────────────────────────────────────────
 
+def _usd(credits: float) -> str:
+    """A credit amount from the gate, as the dollars a person reads."""
+    from billing.markup import CREDITS_PER_DOLLAR
+
+    return f"${float(credits) / float(CREDITS_PER_DOLLAR):,.2f}"
+
+
+async def _in_credits(billing_user_id: str, pool=None) -> bool:
+    """Whether the account's billing emails speak in credits: it still bills on
+    the old plans (``billing.gates.bills_on_old_plans``); else in dollars."""
+    from billing.gates import bills_on_old_plans
+
+    return await bills_on_old_plans(_resolve_pool(pool), user_id=billing_user_id)
+
+
 async def _credit_cta(billing_user_id: str, pool=None) -> tuple:
     """(button label, url) for the credit alerts. What an empty balance calls
     for is the platform's to say (`CREDIT_CTA`); without one, the dashboard
@@ -592,6 +625,14 @@ async def _credit_cta(billing_user_id: str, pool=None) -> tuple:
     if cta is None:
         return "Open Dashboard", f"{FRONTEND_URL}/dashboard"
     return await cta(billing_user_id, pool=_resolve_pool(pool))
+
+
+async def _referral_offer(billing_user_id: str, pool=None) -> Optional[dict]:
+    """What else the payer can do than add funds, where the platform offers something (``REFERRAL_OFFER``)."""
+    from utils.capabilities import REFERRAL_OFFER, capability
+
+    offer = capability(REFERRAL_OFFER)
+    return await offer(_resolve_pool(pool), billing_user_id) if offer else None
 
 
 async def send_credits_exhausted_alert(
@@ -605,49 +646,58 @@ async def send_credits_exhausted_alert(
     pool=None,
 ) -> bool:
     cta_text, cta_url = await _credit_cta(billing_user_id, pool=pool)
+    credits = await _in_credits(billing_user_id, pool)
     remaining = max(remaining, 0)
     wf_html = html_lib.escape(blocked_workflow) if blocked_workflow else None
+    balance = "credit balance" if credits else "balance"
+    left = f"{remaining:.2f} credits" if credits else _usd(remaining)
 
     if wf_html:
         intro = para(
-            f"A run of {strong(wf_html)} was just blocked because your credit "
-            "balance ran out. Runs and agents will keep failing until the balance is restored."
+            f"A run of {strong(wf_html)} was just blocked because your "
+            f"{balance} ran out. Runs and agents will keep failing until the balance is restored."
         )
     else:
         intro = para(
-            "A workflow run was just blocked because your credit balance ran out. "
+            f"A workflow run was just blocked because your {balance} ran out. "
             "Runs and agents will keep failing until the balance is restored."
         )
 
     blocks = intro + progress_bar(
-        100, "Monthly credits", f"{remaining:.2f} left", fill=RED,
+        100, "Monthly credits" if credits else "This month's usage",
+        f"{remaining:.2f} left" if credits else f"{_usd(remaining)} left", fill=RED,
     )
     details = []
     if wf_html:
         details.append(("Blocked workflow", wf_html))
     if blocked_node:
         details.append(("Stopped at", html_lib.escape(blocked_node)))
-    details.append(("Balance", f"{remaining:.2f} credits"))
+    details.append(("Balance", left))
     blocks += kv_rows(details)
     if organization_id:
         blocks += para(
             "This run belongs to one of your organizations — as its owner, "
-            "your credit pool funds the whole team's workflows."
+            f"your {'credit pool' if credits else 'balance'} funds the whole team's workflows."
         )
+    offer = await _referral_offer(billing_user_id, pool)
+    if offer:
+        blocks += link_panel(
+            f"{strong(offer['headline'])} Share your link, and it goes into your balance once they do.", offer["url"])
 
     text_body = (
         (f'A run of "{blocked_workflow}" was just blocked' if blocked_workflow
          else "A workflow run was just blocked")
-        + " because your credit balance ran out.\n"
+        + f" because your {balance} ran out.\n"
         + (f"Stopped at: {blocked_node}\n" if blocked_node else "")
-        + f"Balance: {remaining:.2f} credits\n"
+        + f"Balance: {left}\n"
         + "Runs and agents will keep failing until the balance is restored."
+        + (f"\n\n{offer['line']}" if offer else "")
     )
 
     return await send_system_alert(
         billing_user_id, "credits",
-        subject="You're out of credits on NoClick",
-        heading="You're out of credits",
+        subject="You're out of credits on NoClick" if credits else "Your NoClick balance ran out",
+        heading="You're out of credits" if credits else "Your balance ran out",
         eyebrow="Billing alert",
         blocks_html=blocks,
         text_body=text_body,
@@ -678,35 +728,46 @@ async def send_recurring_grace_alert(
     grace_ends_at,
     remaining: float,
     grace_ttl_s: int,
+    limit: Optional[str] = None,
     pool=None,
 ) -> bool:
     """Warn that a recurring resource (e.g. a WhatsApp connection) can't be
     funded and will be disconnected when the grace window ends. Once per
-    credential per grace window."""
+    credential per grace window. ``limit``: what can't cover it when that's a
+    budget it renews within (an app's, ``remaining`` dollars of it left)
+    rather than the account's balance."""
+    if limit is not None:
+        return await _budget_grace_alert(billing_user_id, credential_id=credential_id,
+                                         credential_name=credential_name, charge_label=charge_label,
+                                         grace_ends_at=grace_ends_at, remaining=remaining, grace_ttl_s=grace_ttl_s,
+                                         limit=limit, pool=pool)
     cta_text, cta_url = await _credit_cta(billing_user_id, pool=pool)
+    credits = await _in_credits(billing_user_id, pool)
     name_html = html_lib.escape(credential_name)
     label_html = html_lib.escape(charge_label)
     ends_str = grace_ends_at.strftime("%b %-d, %H:%M UTC")
+    balance = "credit balance" if credits else "balance"
+    left = f"{max(remaining, 0):.2f} credits" if credits else _usd(max(remaining, 0))
 
     blocks = para(
-        f"Your credit balance can't cover the recurring charge for your "
+        f"Your {balance} can't cover the recurring charge for your "
         f"{label_html} {strong(name_html)}. It keeps working for now, but it "
         f"will be {strong('disconnected on ' + ends_str)} unless the balance is restored."
     ) + kv_rows([
         (charge_label, name_html),
-        ("Balance", f"{max(remaining, 0):.2f} credits"),
+        ("Balance", left),
         ("Disconnects", ends_str),
     ])
     text_body = (
-        f"Your credit balance can't cover the recurring charge for your "
+        f"Your {balance} can't cover the recurring charge for your "
         f"{charge_label} \"{credential_name}\".\n"
-        f"Balance: {max(remaining, 0):.2f} credits\n"
+        f"Balance: {left}\n"
         f"It will be disconnected on {ends_str} unless the balance is restored."
     )
     return await send_system_alert(
         billing_user_id, "credits",
         subject=f"Your {charge_label} will be disconnected soon",
-        heading=f"Your {charge_label} needs credits",
+        heading=f"Your {charge_label} needs {'credits' if credits else 'funds'}",
         eyebrow="Billing alert",
         blocks_html=blocks,
         text_body=text_body,
@@ -720,28 +781,67 @@ async def send_recurring_grace_alert(
     )
 
 
+async def _budget_grace_alert(billing_user_id: str, *, credential_id: str, credential_name: str, charge_label: str,
+                              grace_ends_at, remaining: float, grace_ttl_s: int, limit: str, pool=None) -> bool:
+    """``send_recurring_grace_alert`` for a renewal a budget can't cover: raising it is the way to keep it."""
+    name_html = html_lib.escape(credential_name)
+    ends_str = grace_ends_at.strftime("%b %-d, %H:%M UTC")
+    blocks = para(
+        f"{html_lib.escape(limit[0].upper() + limit[1:])} can't cover the renewal of your "
+        f"{html_lib.escape(charge_label)} {strong(name_html)}. It keeps working for now, but it will be "
+        f"{strong('released on ' + ends_str)} unless the budget is raised."
+    ) + kv_rows([(charge_label, name_html), ("Left of the budget", _usd(max(remaining, 0))), ("Released", ends_str)])
+    text_body = (
+        f"{limit[0].upper() + limit[1:]} can't cover the renewal of your {charge_label} \"{credential_name}\".\n"
+        f"Left of the budget: {_usd(max(remaining, 0))}\n"
+        f"It will be released on {ends_str} unless the budget is raised."
+    )
+    return await send_system_alert(
+        billing_user_id, "credits",
+        subject=f"Your {charge_label} will be released soon",
+        heading=f"Your {charge_label} is over its budget",
+        eyebrow="Billing alert",
+        blocks_html=blocks,
+        text_body=text_body,
+        preheader=f"Raise the budget before {ends_str} to keep {credential_name}",
+        cta_text="Open Dashboard",
+        cta_url=f"{FRONTEND_URL}/dashboard",
+        dedupe_key=f"recurring_grace:{credential_id}",
+        dedupe_ttl_s=grace_ttl_s,
+        metadata={"credential_id": credential_id, "remaining": round(max(remaining, 0), 4), "limit": limit},
+        pool=pool,
+    )
+
+
 async def send_recurring_disconnected_alert(
     billing_user_id: str,
     *,
     credential_id: str,
     credential_name: str,
     charge_label: str,
+    limit: Optional[str] = None,
     pool=None,
 ) -> bool:
     """Tell the owner a recurring resource was disconnected after the grace
-    window elapsed with the balance still exhausted."""
+    window elapsed with the balance (or ``limit``, the budget it renews
+    within) still exhausted."""
     cta_text, cta_url = await _credit_cta(billing_user_id, pool=pool)
     name_html = html_lib.escape(credential_name)
     label_html = html_lib.escape(charge_label)
+    ran_out = ("credit balance stayed exhausted" if await _in_credits(billing_user_id, pool)
+               else "balance stayed empty")
+    if limit is not None:
+        ran_out = f"{limit} stayed used up"
+        cta_text, cta_url = "Open Dashboard", f"{FRONTEND_URL}/dashboard"
 
     blocks = para(
         f"Your {label_html} {strong(name_html)} was disconnected because your "
-        "credit balance stayed exhausted through the grace period. Workflows "
+        f"{ran_out} through the grace period. Workflows "
         "using it will fail until the balance is restored and it is reconnected."
     )
     text_body = (
         f"Your {charge_label} \"{credential_name}\" was disconnected because your "
-        "credit balance stayed exhausted through the grace period.\n"
+        f"{ran_out} through the grace period.\n"
         "Workflows using it will fail until the balance is restored and it is reconnected."
     )
     return await send_system_alert(
@@ -1116,31 +1216,38 @@ async def send_low_balance_alert(
     except ValueError:
         pass
 
-    details = [("Used", f"{pct}% of your monthly credits"), ("Remaining", f"{remaining:.1f} credits")]
+    if await _in_credits(billing_user_id, pool):
+        details = [("Used", f"{pct}% of your monthly credits"), ("Remaining", f"{remaining:.1f} credits")]
+        intro = ("Your credits are running low. When they run out, workflow runs and "
+                 "agents will be blocked until the next reset.")
+        bar = progress_bar(pct, "Monthly credits", f"{remaining:.1f} left", fill=AMBER)
+        subject, heading = f"You've used {pct}% of your NoClick credits", "Your credits are running low"
+        text_body = (f"You've used {pct}% of your monthly NoClick credits ({remaining:.1f} left"
+                     + (f", resets {reset_str}" if reset_str else "") + "). "
+                     "When they run out, workflow runs and agents will be blocked until the next reset.")
+        preheader = f"{remaining:.1f} credits left this month"
+    else:
+        details = [("Used", f"{pct}% of this month's included usage"), ("Remaining", _usd(remaining))]
+        intro = ("Your included usage is running low. When it runs out, workflow runs and "
+                 "agents will be blocked until the next reset, or until you add funds.")
+        bar = progress_bar(pct, "Included usage", f"{_usd(remaining)} left", fill=AMBER)
+        subject, heading = f"You've used {pct}% of your NoClick usage this month", "Your included usage is running low"
+        text_body = (f"You've used {pct}% of this month's included NoClick usage ({_usd(remaining)} left"
+                     + (f", resets {reset_str}" if reset_str else "") + "). "
+                     "When it runs out, workflow runs and agents will be blocked until the next reset, "
+                     "or until you add funds.")
+        preheader = f"{_usd(remaining)} of usage left this month"
     if reset_str:
         details.append(("Resets", reset_str))
 
-    blocks = (
-        para(
-            "Your credits are running low. When they run out, workflow runs and "
-            "agents will be blocked until the next reset."
-        )
-        + progress_bar(pct, "Monthly credits", f"{remaining:.1f} left", fill=AMBER)
-        + kv_rows(details)
-    )
-
     return await send_system_alert(
         billing_user_id, "credits",
-        subject=f"You've used {pct}% of your NoClick credits",
-        heading="Your credits are running low",
+        subject=subject,
+        heading=heading,
         eyebrow="Billing alert",
-        blocks_html=blocks,
-        text_body=(
-            f"You've used {pct}% of your monthly NoClick credits ({remaining:.1f} left"
-            + (f", resets {reset_str}" if reset_str else "") + "). "
-            "When they run out, workflow runs and agents will be blocked until the next reset."
-        ),
-        preheader=f"{remaining:.1f} credits left this month",
+        blocks_html=para(intro) + bar + kv_rows(details),
+        text_body=text_body,
+        preheader=preheader,
         cta_text=cta_text,
         cta_url=cta_url,
         dedupe_key=f"low_balance:{billing_user_id}:{window_key}",
@@ -1192,7 +1299,12 @@ async def send_weekly_digests(pool) -> int:
                       AND created_at >= now() - interval '7 days'""",
                 u["user_id"],
             )
-            credits_used = float(spent or 0) * float(CREDITS_PER_DOLLAR)
+            spent_usd = float(spent or 0)
+            # The old plans read spend in credits.
+            credits = await _in_credits(user_id, pool)
+            per = float(CREDITS_PER_DOLLAR) if credits else 1.0
+            used, used_label = ((f"{spent_usd * per:.1f}", "Credits used") if credits
+                                else (f"${spent_usd:,.2f}", "Usage"))
 
             # Credit spend per workflow — attribution comes from the
             # metadata.workflow_id stamp (usage_tracker.CURRENT_WORKFLOW_ID);
@@ -1232,7 +1344,7 @@ async def send_weekly_digests(pool) -> int:
                 + stat_tiles([
                     (f"{runs:,}", "Runs"),
                     (f"{success_rate}%", "Success rate"),
-                    (f"{credits_used:.1f}", "Credits used"),
+                    (used, used_label),
                 ])
                 + section_label("Daily activity")
                 + day_bars(day_data)
@@ -1242,13 +1354,11 @@ async def send_weekly_digests(pool) -> int:
                     for w in per_wf
                 ])
             )
-            credit_rows = [
-                (html_lib.escape(r["name"]), float(r["dollars"] or 0) * float(CREDITS_PER_DOLLAR))
-                for r in spend_rows
-            ]
-            credit_rows = [r for r in credit_rows if r[1] >= 0.05]
-            if credit_rows:
-                blocks += section_label("Top credit consumers") + credit_bars(credit_rows)
+            spend = [(html_lib.escape(r["name"]), float(r["dollars"] or 0) * per) for r in spend_rows]
+            spend = [r for r in spend if r[1] >= (0.05 if credits else 0.01)]
+            if spend:
+                blocks += (section_label("Top credit consumers" if credits else "Where it went")
+                           + spend_bars(spend, in_credits=credits))
             if failures:
                 blocks += para(
                     f"{strong(str(failures))} run{'s' if failures != 1 else ''} failed this week — "
@@ -1263,19 +1373,20 @@ async def send_weekly_digests(pool) -> int:
                 blocks_html=blocks,
                 text_body=(
                     f"Your week on NoClick ({date_range}):\n"
-                    f"Runs: {runs}\nSuccess rate: {success_rate}%\nCredits used: {credits_used:.1f}\n\n"
+                    f"Runs: {runs}\nSuccess rate: {success_rate}%\n{used_label}: {used}\n\n"
                     + "\n".join(
                         f"- {w['name']}: {w['runs']} run(s), {w['failures']} failed" for w in per_wf
                     )
                 ),
-                preheader=f"{runs} runs · {success_rate}% success · {credits_used:.1f} credits used",
+                preheader=(f"{runs} runs · {success_rate}% success · {used} "
+                           + ("credits used" if credits else "of usage")),
                 cta_text="Open Dashboard",
                 cta_url=f"{FRONTEND_URL}/dashboard",
                 metadata={
                     "runs": runs,
                     "failures": failures,
                     "success_rate": success_rate,
-                    "credits_used": round(credits_used, 2),
+                    "credits_used" if credits else "usage_usd": round(spent_usd * per, 2),
                 },
                 pool=pool,
             )

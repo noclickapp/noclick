@@ -12,8 +12,12 @@ Contracts under test:
   refuse with an agent-facing DigestError;
 - digest_media NEVER raises: a ref's failure is a note on its digest,
   AI kinds are refused without billing or with allow_ai=False, the per-turn
-  AI cap holds, and a broken seam logs at ERROR instead of blaming media;
+  AI and document caps hold, and a broken seam logs at ERROR instead of blaming media;
 - documents digest through the free extraction path and never bill;
+- with ``readings``, a stored file is read once: a kept reading is reused
+  (a document's within the turn's budget) without a fetch, a charge or a
+  slot of the AI cap, a read is kept for the next reader, a failed one
+  keeps nothing, and a reader waits out another's lease;
 - refs_from_entries drops entries with nothing to fetch; a digest annotates
   the provider's record (``transcript``) for the chat surface;
 - format_media_digests fences what was read and says what to do about
@@ -205,18 +209,39 @@ async def test_video_uses_bounded_probe_and_bills_provider_cost(monkeypatch):
         model.assert_not_awaited()
 
 
-def test_unreported_cost_still_lands_a_zero_row(caplog):
+def test_an_unreported_cost_is_charged_from_openrouters_record():
+    from billing.markup import apply_platform_markup
+
     tracker = _tracker()
+    response = _response(cost=None)
+    response.id = "gen-voice"
+    lookup = AsyncMock(return_value=Decimal("0.0031"))
     with patch("billing.usage_tracker.usage_tracker", tracker), \
-         patch("litellm.acompletion", new=AsyncMock(return_value=_response(cost=None))), \
-         caplog.at_level(logging.WARNING):
+         patch("litellm.acompletion", new=AsyncMock(return_value=response)), \
+         patch("utils.openrouter_cost.generation_cost", new=lookup):
         text, cost = asyncio.run(md.transcribe_audio(
             b"x", mime_type="audio/mpeg", filename="a.mp3", billing=_billing()
         ))
-    assert text and cost == Decimal("0")
+    lookup.assert_awaited_once_with("gen-voice")
     event = tracker.track_usage_event.await_args.args[0]
-    assert event.total_cost == Decimal("0") and event.metadata["cost_reported"] is False
-    assert "reported no cost" in caplog.text
+    assert event.cost_usd == Decimal("0.0031") and event.metadata["cost_reported"] is False
+    assert text and cost == event.total_cost == apply_platform_markup(Decimal("0.0031"), False, event.metadata["model"])
+
+
+def test_a_cost_priced_nowhere_is_logged_never_charged_as_zero(caplog):
+    from utils.openrouter_cost import CostUnknown
+
+    tracker = _tracker()
+    with patch("billing.usage_tracker.usage_tracker", tracker), \
+         patch("litellm.acompletion", new=AsyncMock(return_value=_response(cost=None))), \
+         patch("utils.openrouter_cost.generation_cost", new=AsyncMock(side_effect=CostUnknown("none"))), \
+         caplog.at_level(logging.CRITICAL):
+        text, cost = asyncio.run(md.transcribe_audio(
+            b"x", mime_type="audio/mpeg", filename="a.mp3", billing=_billing()
+        ))
+    assert text and cost is None
+    tracker.track_usage_event.assert_not_awaited()
+    assert "not billed" in caplog.text
 
 
 @pytest.mark.parametrize(
@@ -342,6 +367,20 @@ def test_documents_digest_free_and_passthrough_kinds_produce_nothing():
     tracker.track_usage_event.assert_not_awaited()
 
 
+def test_digest_media_reads_a_bounded_number_of_documents_per_turn():
+    """A message may carry many files; a turn reads only so many documents' text into itself, and says so of the
+    rest, as it does past the audio and video cap."""
+    docs = [md.MediaRef(kind="document", mime_type="application/pdf", url=f"https://a/{i}.pdf", filename=f"{i}.pdf",
+                        record={}) for i in range(md.MAX_DOCUMENT_DIGESTS_PER_TURN + 2)]
+    resolver = _resolver(text_pdf(), "application/pdf")
+    with patch("nodes.core.media_resolver.resolve_media_input", resolver):
+        digests = asyncio.run(md.digest_media(docs, md.DigestContext(billing=None)))
+    assert sum(1 for d in digests if d.text) == md.MAX_DOCUMENT_DIGESTS_PER_TURN
+    assert [d.error for d in digests[md.MAX_DOCUMENT_DIGESTS_PER_TURN:]] == [
+        f"at most {md.MAX_DOCUMENT_DIGESTS_PER_TURN} documents are read per message"] * 2
+    assert resolver.await_count == md.MAX_DOCUMENT_DIGESTS_PER_TURN  # the rest are never fetched
+
+
 def test_register_digester_swaps_a_kind_and_rejects_unknown_kinds():
     async def describe(ref, data, ctx):
         return md.MediaDigest(ref=ref, text="a red bicycle", method="description")
@@ -376,6 +415,82 @@ def test_format_media_digests_fences_text_and_explains_failures():
     assert 'Document q.pdf — extracted text:\n"""\nline 1\n"""\n(truncated' in block
     assert "Voice message: audio format audio/webm is not supported. Ask the sender to type it out" in block
     assert md.format_media_digests([]) == ""
+
+
+class _Readings:
+    """``readings`` in memory: what ``take`` answers, and what was kept."""
+
+    def __init__(self, *states):
+        self.states = list(states)
+        self.kept = []
+
+    async def take(self, resource_id, *, lease_s):
+        return self.states.pop(0)
+
+    async def keep(self, resource_id, reading):
+        self.kept.append((resource_id, reading))
+
+
+RID = "00000000-0000-4000-8000-0000000000aa"
+
+
+def test_a_kept_reading_is_reused_without_a_fetch_a_charge_or_the_ai_cap():
+    tracker = _tracker()
+    kept = {"extracted_text": "call me back", "extraction_method": "transcription"}
+    readings = _Readings(*[("read", kept)] * (md.MAX_AI_DIGESTS_PER_TURN + 1))
+    refs = [_voice_ref(resource_id=RID) for _ in range(md.MAX_AI_DIGESTS_PER_TURN + 1)]
+    with patch("billing.usage_tracker.usage_tracker", tracker), \
+         patch("nodes.core.media_resolver.resolve_media_input", _resolver()) as resolver:
+        digests = asyncio.run(md.digest_media(refs, md.DigestContext(billing=_billing(), readings=readings)))
+    assert [d.text for d in digests] == ["call me back"] * len(refs) and all(d.kept for d in digests)
+    resolver.assert_not_awaited()
+    tracker.enforce_credit_gate.assert_not_awaited()
+    tracker.track_usage_event.assert_not_awaited()
+    assert readings.kept == []
+
+
+def test_a_kept_document_is_clipped_to_the_turns_budget():
+    readings = _Readings(("read", {"extracted_text": "x" * 50, "extraction_method": "pdf"}))
+    ref = md.MediaRef(kind="document", mime_type="application/pdf", filename="q.pdf", resource_id=RID)
+    (digest,) = asyncio.run(md.digest_media([ref], md.DigestContext(billing=_billing(), readings=readings, char_budget=20)))
+    assert (digest.text, digest.method, digest.truncated) == ("x" * 20, "pdf", True)
+
+
+def test_a_first_read_is_kept_and_a_failed_one_keeps_nothing():
+    tracker = _tracker()
+    readings = _Readings(("claimed", None), ("claimed", None))
+    with patch("billing.usage_tracker.usage_tracker", tracker), \
+         patch("litellm.acompletion", new=AsyncMock(return_value=_response(text="call me back"))), \
+         patch("nodes.core.media_resolver.resolve_media_input", _resolver()):
+        (read,) = asyncio.run(md.digest_media([_voice_ref(resource_id=RID)], md.DigestContext(billing=_billing(), readings=readings)))
+        tracker.enforce_credit_gate.side_effect = InsufficientBalanceError("Insufficient credits: 0 < 1 required")
+        (refused,) = asyncio.run(md.digest_media([_voice_ref(resource_id=RID)], md.DigestContext(billing=_billing(), readings=readings)))
+    assert read.text == "call me back" and not read.kept and refused.error
+    assert readings.kept == [
+        (RID, {"extracted_text": "call me back", "extraction_method": "transcription", "extraction_truncated": False}),
+        (RID, None),  # nothing to keep: the lease ends, and the next reader tries for itself
+    ]
+
+
+def test_a_reader_waits_out_another_readers_lease(monkeypatch):
+    monkeypatch.setattr(md, "READING_POLL_S", 0)
+    kept = {"extracted_text": "call me back", "extraction_method": "transcription"}
+    readings = _Readings(("busy", None), ("busy", None), ("read", kept))
+    with patch("nodes.core.media_resolver.resolve_media_input", _resolver()) as resolver:
+        (digest,) = asyncio.run(md.digest_media([_voice_ref(resource_id=RID)], md.DigestContext(billing=_billing(), readings=readings)))
+    assert digest.kept and digest.text == "call me back"
+    resolver.assert_not_awaited()
+
+
+def test_a_file_it_cant_keep_a_reading_on_is_read_as_before():
+    tracker = _tracker()
+    readings = _Readings(("absent", None))
+    with patch("billing.usage_tracker.usage_tracker", tracker), \
+         patch("litellm.acompletion", new=AsyncMock(return_value=_response(text="call me back"))), \
+         patch("nodes.core.media_resolver.resolve_media_input", _resolver()):
+        (digest,) = asyncio.run(md.digest_media([_voice_ref(resource_id=RID)], md.DigestContext(billing=_billing(), readings=readings)))
+    assert digest.text == "call me back" and readings.kept == []
+    tracker.track_usage_event.assert_awaited_once()
 
 
 def test_rehearsal_note_names_audio_only():

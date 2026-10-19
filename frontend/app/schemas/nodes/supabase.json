@@ -16,7 +16,7 @@
           "type": "string"
         },
         "api_key": {
-          "description": "Your Supabase API key (anon key respects RLS, service_role bypasses RLS)",
+          "description": "Your Supabase API key: the service_role key reads and writes everything; the anon key only what your row level security allows.",
           "title": "API Key",
           "type": "string",
           "ui:widget": "password"

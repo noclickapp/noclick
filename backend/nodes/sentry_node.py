@@ -96,7 +96,7 @@ class SentryAuthTokenCredential(BaseModel):
     host: Optional[str] = _HOST_FIELD
     auth_token: str = Field(
         ..., title="Auth Token",
-        description="A Sentry auth token (User/Org/Internal-Integration). Sent as a Bearer token.",
+        description="A Sentry auth token: a personal one, an organization token or an internal integration's.",
         json_schema_extra={"ui:widget": "password"},
     )
     organization_slug: str = Field(

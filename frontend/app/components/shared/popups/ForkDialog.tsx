@@ -4,23 +4,20 @@
  * or an organization they belong to.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useId } from 'react';
+import type { ReactNode } from 'react';
 import {
+    Check,
     GitFork,
     User,
-    Building2,
     Loader2,
     Database,
     Workflow,
     Copy,
 } from 'lucide-react';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from '~/components/ui/dialog';
-import { Button } from '~/components/ui/button';
+import { ShellDialog } from '~/components/shell/ShellDialog';
+import { BUTTON_GHOST, BUTTON_PRIMARY } from '~/components/shell/buttons';
+import { FIELD, FIELD_LABEL } from '~/components/shell/fields';
 import { cn } from '~/lib/utils';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { useOrganization } from '~/hooks/useOrganization';
@@ -64,6 +61,44 @@ function getOrgInitials(name: string): string {
     return name.slice(0, 2).toUpperCase();
 }
 
+const TILE =
+    'grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-lg bg-foreground/[0.06] text-foreground/80';
+
+function DestinationRow({
+    selected,
+    onSelect,
+    tile,
+    label,
+}: {
+    selected: boolean;
+    onSelect: () => void;
+    tile: ReactNode;
+    label: string;
+}) {
+    return (
+        <button
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            onClick={onSelect}
+            className={cn(
+                'flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                selected
+                    ? 'bg-foreground/[0.06] text-foreground'
+                    : 'text-foreground/80 hover:bg-foreground/[0.04] hover:text-foreground'
+            )}
+        >
+            {tile}
+            <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium">
+                {label}
+            </span>
+            {selected && (
+                <Check className="h-4 w-4 shrink-0" strokeWidth={2} />
+            )}
+        </button>
+    );
+}
+
 export function ForkDialog({
     isOpen,
     onOpenChange,
@@ -81,6 +116,8 @@ export function ForkDialog({
     const [organizations, setOrganizations] = useState<UserOrg[]>([]);
     const [loadingOrgs, setLoadingOrgs] = useState(false);
     const { listMyOrganizations } = useOrganization();
+    const ids = useId();
+    const noun = resourceType === 'workflow' ? 'automation' : 'database';
 
     // Reset state when dialog opens
     useEffect(() => {
@@ -115,7 +152,7 @@ export function ForkDialog({
 
         // Validate org selection
         if (destinationType === 'organization' && !selectedOrgId) {
-            setError('Please select an organization');
+            setError('Choose a workspace.');
             return;
         }
 
@@ -153,10 +190,10 @@ export function ForkDialog({
                     response.forked_resource.name
                 );
             } else {
-                setError(response.message || 'Failed to fork resource');
+                setError(response.message || `Couldn’t fork this ${noun}.`);
             }
         } catch (err) {
-            const errMsg = err instanceof Error ? err.message : 'Failed to fork resource';
+            const errMsg = err instanceof Error ? err.message : `Couldn’t fork this ${noun}.`;
             if (isPlanLimitError(errMsg)) {
                 setPlanLimitError(errMsg);
             } else {
@@ -170,231 +207,169 @@ export function ForkDialog({
     const ResourceIcon = resourceType === 'workflow' ? Workflow : Database;
 
     return (<>
-        <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="bg-sunken border-border text-foreground max-w-md p-6">
-                <DialogHeader className="pb-4">
-                    <DialogTitle className="text-xl text-foreground flex items-center gap-2">
-                        <GitFork className="h-5 w-5" />
-                        Fork {resourceType === 'workflow' ? 'Workflow' : 'Database'}
-                    </DialogTitle>
-                    <div className="text-sm text-muted-foreground pt-1.5">
-                        Create an independent copy you can modify freely
-                    </div>
-                </DialogHeader>
-
-                <div className="space-y-6">
-                    {/* Source resource display */}
-                    {resource && (
-                        <div className="flex items-center gap-3 p-3 bg-card/50 rounded-lg border border-border/50 dark:border-zinc-800/50">
-                            <div className="p-2 rounded-full bg-secondary">
-                                <ResourceIcon className="w-4 h-4 text-muted-foreground" />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                                <p className="text-sm font-medium text-foreground truncate">
-                                    {resource.name}
-                                </p>
-                                <p className="text-xs text-muted-foreground dark:text-zinc-500">
-                                    Original {resourceType}
-                                </p>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Destination selector */}
-                    <div className="space-y-3">
-                        <label className="text-sm font-medium text-foreground/80">
-                            Fork to
-                        </label>
-                        <div className="grid grid-cols-2 gap-2">
-                            <button
-                                type="button"
-                                onClick={() => setDestinationType('personal')}
-                                className={cn(
-                                    'flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
-                                    destinationType === 'personal'
-                                        ? 'bg-accent/80 border-muted-foreground/50 dark:border-zinc-600 ring-1 ring-muted-foreground/50 dark:ring-zinc-600'
-                                        : 'bg-card/50 border-border/50 dark:border-zinc-800/50 hover:border-muted-foreground/40 dark:hover:border-zinc-700 hover:bg-card'
-                                )}
-                            >
-                                <div className={cn(
-                                    'p-1.5 rounded-full transition-colors',
-                                    destinationType === 'personal' ? 'bg-foreground/10' : 'bg-secondary'
-                                )}>
-                                    <User className={cn(
-                                        'w-4 h-4',
-                                        destinationType === 'personal' ? 'text-foreground' : 'text-muted-foreground dark:text-zinc-500'
-                                    )} />
-                                </div>
-                                <span className={cn(
-                                    'text-sm font-medium',
-                                    destinationType === 'personal' ? 'text-foreground' : 'text-muted-foreground'
-                                )}>
-                                    Personal
-                                </span>
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setDestinationType('organization')}
-                                disabled={organizations.length === 0 && !loadingOrgs}
-                                className={cn(
-                                    'flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
-                                    destinationType === 'organization'
-                                        ? 'bg-accent/80 border-muted-foreground/50 dark:border-zinc-600 ring-1 ring-muted-foreground/50 dark:ring-zinc-600'
-                                        : 'bg-card/50 border-border/50 dark:border-zinc-800/50 hover:border-muted-foreground/40 dark:hover:border-zinc-700 hover:bg-card',
-                                    organizations.length === 0 && !loadingOrgs && 'opacity-50 cursor-not-allowed hover:bg-card/50 hover:border-border/50 dark:hover:border-zinc-800/50'
-                                )}
-                            >
-                                <div className={cn(
-                                    'p-1.5 rounded-full transition-colors',
-                                    destinationType === 'organization' ? 'bg-foreground/10' : 'bg-secondary'
-                                )}>
-                                    <Building2 className={cn(
-                                        'w-4 h-4',
-                                        destinationType === 'organization' ? 'text-foreground' : 'text-muted-foreground dark:text-zinc-500'
-                                    )} />
-                                </div>
-                                <span className={cn(
-                                    'text-sm font-medium',
-                                    destinationType === 'organization' ? 'text-foreground' : 'text-muted-foreground'
-                                )}>
-                                    Organization
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Organization selector (when organization is selected) */}
-                    {destinationType === 'organization' && (
-                        <div className="space-y-3">
-                            <label className="text-sm font-medium text-foreground/80">
-                                Select organization
-                            </label>
-                            {loadingOrgs ? (
-                                <div className="flex items-center justify-center py-4">
-                                    <Loader2 className="w-5 h-5 animate-spin text-muted-foreground dark:text-zinc-500" />
-                                </div>
-                            ) : (
-                                <div className="space-y-1 max-h-32 overflow-y-auto rounded-lg border border-border/50 dark:border-zinc-800/50 bg-card/30">
-                                    {organizations.map((org) => (
-                                        <button
-                                            key={org.id}
-                                            type="button"
-                                            onClick={() => setSelectedOrgId(org.id)}
-                                            className={cn(
-                                                'w-full flex items-center gap-3 p-2.5 transition-colors',
-                                                selectedOrgId === org.id
-                                                    ? 'bg-accent/80 text-foreground'
-                                                    : 'hover:bg-accent/50 text-foreground/80'
-                                            )}
-                                        >
-                                            {org.icon_url ? (
-                                                <img
-                                                    src={org.icon_url}
-                                                    alt=""
-                                                    className="w-6 h-6 rounded-full object-cover"
-                                                />
-                                            ) : (
-                                                <div className={cn(
-                                                    "w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium",
-                                                    selectedOrgId === org.id
-                                                        ? "bg-foreground/20 text-foreground"
-                                                        : "bg-muted-foreground/30 dark:bg-zinc-700 text-foreground/80"
-                                                )}>
-                                                    {getOrgInitials(org.name)}
-                                                </div>
-                                            )}
-                                            <span className="text-sm truncate">{org.name}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Name input */}
-                    <div className="space-y-3">
-                        <label className="text-sm font-medium text-foreground/80">
-                            Name
-                        </label>
-                        <div className="bg-card/90 backdrop-blur-sm rounded-full transition-all duration-200 border border-input dark:border-zinc-700/60 focus-within:border-muted-foreground/40 dark:focus-within:border-zinc-600/80">
-                            <input
-                                type="text"
-                                value={newName}
-                                onChange={(e) => setNewName(e.target.value)}
-                                placeholder={`Copy of ${resource?.name || ''}`}
-                                className="bg-transparent text-foreground px-4 py-2.5 outline-none w-full text-sm placeholder:text-[hsl(var(--placeholder))]"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Include data checkbox (databases only) */}
-                    {resourceType === 'database' && (
-                        <label className="flex items-center gap-3 cursor-pointer group">
-                            <div className={cn(
-                                'w-5 h-5 rounded border-2 flex items-center justify-center transition-all',
-                                includeData
-                                    ? 'bg-primary border-primary'
-                                    : 'border-muted-foreground/50 dark:border-zinc-600 group-hover:border-muted-foreground/70 dark:group-hover:border-zinc-500'
-                            )}>
-                                {includeData && (
-                                    <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none">
-                                        <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    </svg>
-                                )}
-                            </div>
-                            <input
-                                type="checkbox"
-                                checked={includeData}
-                                onChange={(e) => setIncludeData(e.target.checked)}
-                                className="sr-only"
-                            />
-                            <div>
-                                <span className="text-sm text-foreground">Include existing data</span>
-                                <p className="text-xs text-muted-foreground dark:text-zinc-500">Copy all rows from the original table</p>
-                            </div>
-                        </label>
-                    )}
-
-                    {/* Error message */}
-                    {error && (
-                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-                        </div>
-                    )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex justify-end gap-2 pt-6">
-                    <Button
+        <ShellDialog
+            open={isOpen}
+            onOpenChange={onOpenChange}
+            size="sm"
+            mark={<GitFork className="h-5 w-5" strokeWidth={1.75} />}
+            title={`Fork ${noun}`}
+            description="An independent copy you can change freely."
+            onSubmit={(e) => {
+                e.preventDefault();
+                void handleFork();
+            }}
+            footer={
+                <>
+                    <button
                         type="button"
-                        variant="outline"
                         onClick={() => onOpenChange(false)}
                         disabled={forking}
-                        className="h-10 bg-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] border border-border hover:border-muted-foreground/40 dark:hover:border-zinc-700 rounded-md"
+                        className={BUTTON_GHOST}
                     >
                         Cancel
-                    </Button>
-                    <Button
-                        type="button"
-                        onClick={handleFork}
+                    </button>
+                    <button
+                        type="submit"
                         disabled={forking || !resource}
-                        className="h-10 bg-primary hover:bg-primary text-primary-foreground font-medium rounded-md border-0 shadow-[0_2.5px_0_0_hsl(var(--primary)/0.6)] hover:shadow-[0_1px_0_0_hsl(var(--primary)/0.6)] hover:translate-y-[1.5px] active:shadow-none active:translate-y-[2.5px] transition-all duration-100 disabled:opacity-40 min-w-[100px]"
+                        className={BUTTON_PRIMARY}
                     >
                         {forking ? (
                             <>
-                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                Forking...
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Forking…
                             </>
                         ) : (
                             <>
-                                <Copy className="w-4 h-4 mr-2" />
-                                Create Copy
+                                <Copy className="h-4 w-4" strokeWidth={1.75} />
+                                Create copy
                             </>
                         )}
-                    </Button>
+                    </button>
+                </>
+            }
+        >
+            <div className="space-y-5">
+                {/* Source resource display */}
+                {resource && (
+                    <div className="flex items-center gap-3 rounded-xl bg-foreground/[0.04] px-3 py-2.5">
+                        <span className={TILE}>
+                            <ResourceIcon className="h-4 w-4" strokeWidth={1.75} />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                            <p className="truncate text-[13.5px] font-medium text-foreground">
+                                {resource.name}
+                            </p>
+                            <p className="text-[12.5px] text-muted-foreground">
+                                Original {noun}
+                            </p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Destination: personal, or one of the user's workspaces */}
+                <div>
+                    <p id={`${ids}-destination`} className={FIELD_LABEL}>
+                        Fork to
+                    </p>
+                    <div
+                        role="radiogroup"
+                        aria-labelledby={`${ids}-destination`}
+                        className="space-y-1"
+                    >
+                        <DestinationRow
+                            selected={destinationType === 'personal'}
+                            onSelect={() => setDestinationType('personal')}
+                            tile={
+                                <span className={TILE}>
+                                    <User className="h-4 w-4" strokeWidth={1.75} />
+                                </span>
+                            }
+                            label="Personal"
+                        />
+                        {organizations.map((org) => (
+                            <DestinationRow
+                                key={org.id}
+                                selected={destinationType === 'organization' && selectedOrgId === org.id}
+                                onSelect={() => {
+                                    setDestinationType('organization');
+                                    setSelectedOrgId(org.id);
+                                }}
+                                tile={
+                                    <span className={cn(TILE, 'text-[11px] font-medium')}>
+                                        {org.icon_url ? (
+                                            <img
+                                                src={org.icon_url}
+                                                alt=""
+                                                className="h-full w-full object-cover"
+                                            />
+                                        ) : (
+                                            getOrgInitials(org.name)
+                                        )}
+                                    </span>
+                                }
+                                label={org.name}
+                            />
+                        ))}
+                        {loadingOrgs && organizations.length === 0 && (
+                            <div className="flex items-center gap-2 px-3 py-2 text-[13px] text-muted-foreground">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Loading workspaces…
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </DialogContent>
-        </Dialog>
+
+                {/* Name input */}
+                <div>
+                    <label htmlFor={`${ids}-name`} className={FIELD_LABEL}>
+                        Name
+                    </label>
+                    <input
+                        id={`${ids}-name`}
+                        type="text"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        placeholder={`Copy of ${resource?.name || ''}`}
+                        className={FIELD}
+                    />
+                </div>
+
+                {/* Include data checkbox (databases only) */}
+                {resourceType === 'database' && (
+                    <label className="group flex cursor-pointer items-start gap-3">
+                        <input
+                            type="checkbox"
+                            checked={includeData}
+                            onChange={(e) => setIncludeData(e.target.checked)}
+                            className="peer sr-only"
+                        />
+                        <span
+                            className={cn(
+                                'mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-[5px] border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring',
+                                includeData
+                                    ? 'border-primary bg-primary text-primary-foreground'
+                                    : 'border-foreground/25 group-hover:border-foreground/40'
+                            )}
+                        >
+                            {includeData && (
+                                <Check className="h-3 w-3" strokeWidth={2.5} />
+                            )}
+                        </span>
+                        <span>
+                            <span className="block text-[13.5px] text-foreground">Include existing data</span>
+                            <span className="block text-[12.5px] text-muted-foreground">Copy all rows from the original table</span>
+                        </span>
+                    </label>
+                )}
+
+                {/* Error message */}
+                {error && (
+                    <p role="alert" className="text-[13px] text-red-600 dark:text-red-400">
+                        {error}
+                    </p>
+                )}
+            </div>
+        </ShellDialog>
 
         <UpgradePopup
             isOpen={!!planLimitError}

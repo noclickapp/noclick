@@ -15,7 +15,6 @@ import { NodeCredentials } from '~/components/workflow/NodeCredentials';
 import { ConnectionVerdict, verdictState } from '~/components/credential/ConnectionVerdict';
 import { sendEventAsync, CredentialTestConnectionRequest } from '~/lib/socket-sender';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
-import { CredentialSurface } from './CredentialSurface';
 import { Mark } from './primitives';
 
 // Mark moved to primitives (registry-free) so the marketing wizard can share
@@ -226,7 +225,8 @@ export function CredentialPhase({
             {/* The real product credential UI: lists the account's credentials for
                 this node type, runs the actual OAuth flow, creates/deletes over
                 the socket. Same component the config panel renders. */}
-            <CredentialSurface className="mt-5" ref={credentialRef}>
+            {/* The connect flow draws on any ground (shell tokens), so it needs no restyle here. */}
+            <div className="mt-5" ref={credentialRef}>
                 <NodeCredentials
                     nodeType={step.id}
                     credentialIds={credentialIds}
@@ -242,7 +242,7 @@ export function CredentialPhase({
                     }}
                     compact
                 />
-            </CredentialSurface>
+            </div>
 
             {/* What this credential buys the agent, as a sentence. The overflow
                 link names the areas it covers, so it informs before it is

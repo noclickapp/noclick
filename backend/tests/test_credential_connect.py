@@ -186,14 +186,16 @@ class _Cred(BaseModel):
 
 async def test_rejection_blocks_with_provider_words_and_hint(probe_registry):
     calls = probe_registry(
-        EvidenceResult(reachable=False, noun="things", error="invalid_auth (HTTP 401)", hint="The key or token was rejected.")
+        EvidenceResult(reachable=False, noun="things", error="invalid_auth (HTTP 401)", hint="The API key was rejected.")
     )
     verdict = await cc.validate_for_connect(
         credential_type="probe_key", credential_data={"api_key": "k"}, user_id="u"
     )
     assert not verdict.ok
     assert verdict.rejection == "invalid_auth (HTTP 401)"
-    assert verdict.hint.startswith("The key")
+    # The probe is told the form's labels, so its hint (read once, from the raw words) names the field to fix.
+    assert calls["labels"] == ce.FieldLabels(secret="API key", address=None)
+    assert verdict.hint == "The API key was rejected."
     # Shaped blob, not the raw one; unset defaults are not invented into it.
     assert calls["credential_data"] == {"api_key": "k"}
     assert verdict.verified_metadata() == {}
@@ -219,7 +221,9 @@ async def test_answer_saves_with_verification_and_stamps_the_row(probe_registry)
     assert verdict.ok
     assert verdict.credential_data["api_key"] == "k"
     meta = verdict.verified_metadata()
-    assert meta["verified_as"] == "Sales" and meta["verified_at"]
+    # A board it can read is what it reached, not who it is.
+    assert meta["verified_with"] == "Sales" and meta["verified_at"]
+    assert "verified_as" not in meta
 
 
 async def test_shape_errors_short_circuit_the_probe(probe_registry):
@@ -319,11 +323,132 @@ def test_hint_for_rejection_stays_quiet_on_unknown_shapes():
     assert ce.hint_for_rejection("") is None
 
 
+def test_hint_for_rejection_names_the_field_by_its_label():
+    labels = ce.FieldLabels(secret="token secret", address="server URL")
+    assert ce.hint_for_rejection("invalid_auth (HTTP 401)", labels).startswith("The token secret was rejected.")
+    assert "check the server URL" in ce.hint_for_rejection("<html><body>Sign in</body></html>", labels)
+    assert ce.hint_for_rejection("Not Found (HTTP 404)", labels) == "Nothing answered at that address. Check the server URL for typos."
+    # A form with no address field never sends the person looking for one.
+    keyonly = ce.FieldLabels(secret="secret key", address=None)
+    assert ce.hint_for_rejection("Not Found (HTTP 404)", keyonly) is None
+    assert ce.hint_for_rejection("missing_scope (HTTP 403)", keyonly).startswith("The secret key was recognised")
+
+
+def test_field_labels_read_the_credential_class():
+    class Site(BaseModel):
+        server_url: str = Field(..., title="Server URL")
+        pat_secret: str = Field(..., title="Token Secret", json_schema_extra={"ui:widget": "password"})
+
+    class Keys(BaseModel):
+        api_key: str
+        app_secret: str = Field(..., title="App Secret")
+
+    class Tableau(Site):
+        pat_name: str = Field(..., title="Token Name")
+
+    assert cc._field_labels(Site) == ce.FieldLabels(secret="token secret", address="server URL")
+    # Two secrets: the hint says "credential" rather than pick one; no address field: none is named.
+    assert cc._field_labels(Keys) == ce.FieldLabels(secret="credential", address=None)
+    # A masked field outranks a name that only looks secret.
+    assert cc._field_labels(Tableau).secret == "token secret"
+    assert cc._as_phrase("Api key") == "API key"
+
+    class Keyfile(BaseModel):
+        private_key: str = Field(..., title="Private Key", json_schema_extra={"ui:widget": "password"})
+        token_uri: str = Field("https://oauth2.googleapis.com/token", title="Token URI")
+
+    # An optional override (a token URI, a self-hosted base URL) is never the address a hint points at.
+    assert cc._field_labels(Keyfile).address is None
+    assert cc._as_phrase("Jira Domain", frozenset({"jira"})) == "Jira domain"
+
+
 def test_redact_secrets_strips_keys_quoted_in_urls():
     text = "Client error '403 Forbidden' for url 'https://api.semrush.com/?type=rank&key=abc123&display_limit=1'"
     assert "abc123" not in ce.redact_secrets(text)
     assert "key=***" in ce.redact_secrets(text)
     assert ce.redact_secrets("invalid_auth") == "invalid_auth"
+
+
+NOTION_401 = (
+    'Notion API error: {"object":"error","status":401,"code":"unauthorized","message":"API token is invalid.",'
+    '"additional_data":{"reason":"token_invalid"},"request_id":"0c6b7c0e-d4ac-4144-a008-dc0deb1fcddc"}'
+)
+
+
+def test_provider_message_reads_a_json_error_body():
+    # Notion's real 401: the provider's own sentence and its status, not the envelope.
+    assert ce.provider_message(NOTION_401) == "API token is invalid. (HTTP 401)"
+    # Each shape a provider answers in; a status already written beside the body is kept.
+    assert ce.provider_message('{"error":{"code":401,"message":"Request had invalid authentication credentials."}}') == (
+        "Request had invalid authentication credentials. (HTTP 401)"
+    )
+    assert ce.provider_message('{"error":"invalid_grant","error_description":"Token has been expired or revoked.","status":400}') == (
+        "Token has been expired or revoked. (invalid_grant, HTTP 400)"
+    )
+    assert ce.provider_message('{"ok":false,"error":"invalid_auth"} (HTTP 401)') == "invalid_auth (HTTP 401)"
+    assert ce.provider_message('GitHub API error 401: {"message":"Bad credentials"}') == "Bad credentials (HTTP 401)"
+
+
+def test_provider_message_keeps_the_code_and_reads_the_last_body():
+    # An error code beside a different sentence is kept: it is the provider's word too.
+    assert ce.provider_message('{"error":"invalid_grant","error_description":"Token has been expired or revoked."}') == (
+        "Token has been expired or revoked. (invalid_grant)"
+    )
+    assert ce.provider_message('HTTP error: {"error":"Forbidden","message":"Your plan does not include API access"}') == (
+        "Your plan does not include API access (Forbidden)"
+    )
+    # A node can quote the request it sent; the provider's answer is the last body.
+    assert ce.provider_message('… payload {"message":"hello world"} -> {"message":"Unauthorized"}') == "Unauthorized"
+    # The status is the one written just before that body, not before the first one.
+    assert ce.provider_message('{"ok":true,"message":"queued"} then 401 {"error":"invalid_auth"}') == "invalid_auth (HTTP 401)"
+    # ...and never a number inside a quoted body.
+    assert ce.provider_message('sent {"amount":404} got {"message":"Unauthorized"}') == "Unauthorized"
+
+
+def test_the_hint_comes_from_the_providers_raw_words():
+    raw = 'HTTP error: {"error":"Forbidden","message":"Your plan does not include API access"}'
+    assert "permissions" in ce.hint_for_rejection(raw)
+
+
+async def test_a_refused_key_keeps_the_hint_its_raw_words_gave(monkeypatch):
+    """The connect seam takes the evidence's hint as it is: read once, from the raw text, with the form's labels."""
+    from nodes.core import registry as reg, run_op
+
+    monkeypatch.setitem(reg.NODE_REGISTRY, "automation-probe", _Node)
+
+    async def refused(**kwargs):
+        raise ValueError('HTTP error: {"error":"Forbidden","message":"Your plan does not include API access"}')
+
+    monkeypatch.setattr(run_op, "run_node_operation", refused)
+    result = await ce.collect_evidence(
+        node_type="automation-probe", credential_data={"api_key": "k"}, user_id="u", labels=ce.FieldLabels(secret="API key", address=None)
+    )
+    assert result.error == "Your plan does not include API access (Forbidden)"
+    assert result.hint == "The API key was recognised but refused. Check its permissions or scopes."
+
+
+def test_provider_message_leaves_other_text_as_it_is():
+    assert ce.provider_message("Slack API error: account_inactive") == "Slack API error: account_inactive"
+    assert ce.provider_message("Invalid API Key provided: sk_test_****0000 (HTTP 401)") == (
+        "Invalid API Key provided: sk_test_****0000 (HTTP 401)"
+    )
+    # JSON with no message to read keeps the whole body.
+    assert ce.provider_message('{"ok":false,"code":42}') == '{"ok":false,"code":42}'
+
+
+async def test_a_rejection_reads_the_providers_own_message(monkeypatch):
+    from nodes.core import registry as reg, run_op
+
+    monkeypatch.setitem(reg.NODE_REGISTRY, "automation-probe", _Node)
+
+    async def refused(**kwargs):
+        raise ValueError(NOTION_401)
+
+    monkeypatch.setattr(run_op, "run_node_operation", refused)
+    result = await ce.collect_evidence(node_type="automation-probe", credential_data={"api_key": "k"}, user_id="u")
+    assert result.reachable is False
+    assert result.error == "API token is invalid. (HTTP 401)"
+    assert result.hint and "rejected" in result.hint
 
 
 def test_error_envelope_summarises_web_pages():

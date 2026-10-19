@@ -21,6 +21,12 @@ export interface SerializedNodeMeta {
     /** Operation consts stamped `x-is-trigger` in the schema; absent when none.
      *  Lets light surfaces answer isTriggerSource without the schema bundle. */
     triggerOps?: string[];
+    /** Credential types (and legacy raw schema titles) that wear this node's mark: each is listed on the first node
+     *  (in schema order) declaring it. Lets credential icons resolve without the schema bundle. */
+    credentialKeys?: string[];
+    /** The credential types this node accepts, its primary first (absent for a node that takes none). Lets the
+     *  credential-service lists (Connections, the create dialog) render without the registry or the schemas. */
+    acceptedCredentialTypes?: string[];
 }
 
 export interface FieldInfo {

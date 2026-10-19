@@ -46,18 +46,37 @@ MCP_REQUEST_TOOLS = "mcp.request_tools"
 # node catalog says about itself: load(node_type, section) -> str | None.
 NODE_GUIDANCE = "builder.node_guidance"
 
-# The domain published interface apps are served under. Publishing one needs
-# that front door; without it there are none.
-PUBLISHED_APP_DOMAIN = "publish_app.domain"
+# Where a workflow's published interfaces are: async (pool, workflow_id) ->
+# {node_id: url}. Publishing needs a host serving them; without one there are none.
+PUBLISHED_APP_URLS = "publish_app.urls"
 
 # Publish a saved, owned interface: async (pool, *, user_id, workflow_id,
-# node_id, subdomain, title) -> {url, app_id, node_id, subdomain}.
+# node_id, subdomain, title, action) -> {url, app_id, node_id, subdomain, state}.
 INTERFACE_PUBLISH = "interface.publish"
+
+# Take down what was published from interface nodes that left their graph (all
+# of a workflow deleted for good: node_ids None): async (pool, workflow_id,
+# node_ids) -> None; raises when one couldn't be.
+INTERFACES_REMOVED = "interface.removed"
 
 # What a user whose balance ran out should do next, for the credit alerts:
 # async (billing_user_id, pool=None) -> (button label, url). Without one the
 # alerts point at the dashboard.
 CREDIT_CTA = "billing.credit_cta"
+
+# What an account that ran out of money can do besides add funds, for the credit
+# alerts and the coordinator's refusal: async (pool, user_id, *, organization_id=None,
+# request=None) -> {headline, line, url, reward_usd} | None (None: nothing to offer this
+# account). ``request`` is what the refusal turned down. Without one, nothing.
+REFERRAL_OFFER = "billing.referral_offer"
+
+# The money behind the usage page, where the deployment bills: an object with
+# ``columns`` ({name: (row expression, group aggregate)}: how each charge was
+# paid, added to the page's reads), ``async period(pool, user_id)`` -> {window_start,
+# window_end, previous_start, billing} and ``async names(pool, user_id, ids)`` ->
+# {kind: {id: {name}}} for the ids it owns. Without one the period is the UTC
+# calendar month and the page shows what each thing cost, with nothing billed.
+USAGE_BILLING = "usage.billing"
 
 # Tell whoever runs this instance that a user hit a plan cap, as a sales signal:
 # (user_data, gate, details=None) -> None, fire-and-forget.
@@ -68,8 +87,10 @@ PLAN_GATE_ALERT = "billing.plan_gate_alert"
 ACTIVITY_SIGNAL = "activity.signal"
 
 # The live public URLs a workflow is reachable at (published apps, hosted MCP
-# links) for the builder's and the agent's view of it: async (pool, workflow_id)
-# -> list. Without one a workflow has no public endpoints to describe.
+# links) for the builder's and the agent's view of it: async (pool, workflow_id,
+# *, mint_hosted_for=None, user_id=None) -> {node_id: endpoint}; the builder
+# passes the hosting nodes whose link should exist (minted as user_id). Without
+# one a workflow has no public endpoints to describe.
 PUBLIC_ENDPOINTS = "workflow.public_endpoints"
 
 # Tell whoever runs this instance that one node's execution grew the process
@@ -87,6 +108,11 @@ BUILDER_ASK_NOTIFY = "builder.ask_notify"
 # builder_conversation_id, summary, success, error, user_context) -> None.
 BUILDER_RESULT_NOTIFY = "builder.result_notify"
 
+# A builder run's step as it happens (its status line: "Reading schema for
+# Gmail"), for whatever follows the run outside the canvas: async (pool, *,
+# user_context, step) -> None, fire-and-forget.
+BUILDER_STEP_NOTIFY = "builder.step_notify"
+
 # Message the account owner on a channel of their own the engine does not
 # have (their phone, over WhatsApp or iMessage): async (pool, user_id, text, *,
 # link=None, channel=None) -> {"success", "channel"} or {"success": False,
@@ -95,10 +121,28 @@ BUILDER_RESULT_NOTIFY = "builder.result_notify"
 # message_owner tool.
 OWNER_MESSAGE = "owner.message"
 
-# Phone numbers a workflow can own: search(country, area_code, limit, *, contains=None) -> list,
-# buy(e164, *, label) -> {number_sid, phone_number, provider}, release(number_sid),
-# route(number_sid, *, webhook_id) / unroute(number_sid) (where its calls go),
-# exists(number_sid) -> bool. Without one, numbers cannot be bought here.
+# Phone numbers a workflow can own: coverage() -> [{country, number_types, texting_types, documents_types,
+# steps_types}] (where they're in stock, the kinds that text, the kinds bought with documents the provider reviews
+# first and the kinds that ask a step that can't be taken here; CoverageNotReady until that's first found out),
+# places(country, number_type) -> [{kind, value, region}] (the cities,
+# or area codes, with numbers for sale), search(query) -> [offer] (query: phone_number_handler.number_query),
+# offer(e164, *, country, number_type) -> offer | None (as it's for sale now), where an offer is
+# {phone_number, country, number_type, locality, region, capabilities, monthly_usd, upfront_usd
+# (the provider's prices, decimal strings), requirements: {needs: none | address | documents | steps,
+# items: [{id, kind, name, description, example, values}]}, texting: registration | unavailable | none};
+# buy(offer, *, label, user_id, holder=None, answers=None, credential_name=None, origin=None) ->
+# {number_sid, phone_number, provider}, or {order_id, phone_number, status} while the provider reviews what was
+# filed (holder: the name and address a country that asks who holds it gets; answers: by requirement id, text or
+# a document's id from upload_document; origin: how the order is finished once it completes;
+# PhonePurchaseRejected when the provider refuses), release(number_sid), route(number_sid, *, webhook_id) /
+# unroute(number_sid) (where its calls go), exists(number_sid) -> bool; documents(user_id) -> [{id,
+# requirement_id, requirement_name, filename, uploaded_at}], upload_document(user_id, *, country, number_type,
+# requirement_id, filename, content) -> one of those, remove_document(user_id, document_id) -> {id, removed,
+# kept_by_carrier} (PhoneDocumentRefused for a file or document it can't take); orders(user_id) -> [order] (in
+# review or sent back), order(user_id, order_id) -> order (PhoneOrderNotFound), resubmit(user_id, order_id, *,
+# holder, answers) -> order, where an order is {id, phone_number, country, number_type, status (in_review |
+# rejected | completed | failed), reason, deadline, monthly_usd, upfront_usd, credential_id, created_at,
+# updated_at, requirements (while open)}. Without one, numbers cannot be bought here.
 PHONE_NUMBERS = "phone.numbers"
 
 # Live calls with the wired agent as the voice, on a number the platform
@@ -116,16 +160,41 @@ PHONE_NUMBERS = "phone.numbers"
 PHONE_CALLS = "phone.calls"
 
 # What this platform sells and the one-tap links that buy it, for the account
-# coordinator: catalog() -> {plans, topups, checkout_note} with the prices
-# charged (checkout_note: what checkout charges instead where it charges
-# another currency, "" where it never does);
-# suggested_topups(shortfall) -> the sizes worth offering; async mint(pool, *,
-# user_id, kind, plan=None, credits_per_month=None, billing_period="monthly",
-# continuation=None, send_to_phone=False) -> {job_id, url, label, ...}. The
+# coordinator: catalog(email=None) -> {plans, funds: {presets_usd, min_usd, max_usd},
+# checkout_note} with the prices charged to the account with that email
+# (yearly_usd None: sold monthly only; checkout_note: what checkout charges
+# instead where it charges another currency, "" where it never does), or, for
+# an account on the old plans (billing.gates.bills_on_old_plans), topups:
+# [{credits_per_month, monthly_usd, ...}] in place of funds;
+# suggested_funds(shortfall_usd) / suggested_topups(shortfall_credits) -> the
+# amounts (top-up offers) worth offering; purchases_for(offer) -> mint's
+# arguments for each purchase that lifts a billing.gates.Offer; async mint(pool, *, user_id, kind
+# ("plan" | "funds" | "topup"), plan=None, amount_usd=None,
+# credits_per_month=None, billing_period="monthly", continuation=None,
+# send_to_phone=False) -> {job_id, url, label, ...}. The
 # link needs no sign-in — it opens payment for that account alone — and the
 # payment wakes the coordinator. Without one, a refusal names the plans and
 # stops there.
 PURCHASES = "billing.purchases"
+
+# A merchant's UPI payment request (India) the account coordinator hands its
+# owner, who pays it from their own UPI app with their PIN; no money moves
+# through this instance: async request(pool, *, user_id, upi_link=None,
+# vpa=None, payee_name=None, amount_inr=None, note=None, continuation=None,
+# send_to_phone=False) -> {job_id, url, payee_name, vpa, amount_inr, note,
+# expires_at, ...} (ValueError for details it refuses). The request is a
+# ``upi_payment`` coordinator job; the owner's answer on its page ("I've paid",
+# "it didn't work", their word rather than proof) finishes it and wakes the
+# coordinator. Without one, the coordinator has no request_upi_payment tool.
+UPI_PAYMENTS = "payments.upi"
+
+# Automatic refills of the account's balance, for the account coordinator:
+# async status(pool, user_id) -> dict; async lower(pool, user_id, *,
+# threshold_usd=None, amount_usd=None, monthly_cap_usd=None, turn_off=False)
+# -> the new status. The coordinator may lower them or turn them off, never
+# turn them on or raise them (lower raises ValueError). Without one, the
+# coordinator has no auto_topup tool.
+AUTO_TOPUP = "billing.auto_topup"
 
 # Vet an agent's tool call before it runs: async (*, user_id, workflow_id,
 # node_id, conversation_id, tool_name, tool_info, arguments) -> None to run it,
@@ -141,6 +210,11 @@ TOOL_CALL_GUARD = "agent.tool_call_guard"
 # path) doesn't ask them for a saved credential. Without one, every node's
 # credential must be saved in the graph.
 BOUND_CREDENTIALS = "workflow.bound_credentials"
+
+# Nodes left their workflow's graph, or the whole workflow left the account
+# (trashed or deleted: node_ids None): async (pool, workflow_id, node_ids) ->
+# None, for what a product keeps of those nodes by id (a channel's agents).
+WORKFLOW_NODES_REMOVED = "workflow.nodes_removed"
 
 # Receive mail to a reserved inbound address whose kind the engine has no
 # receiver for (neither a trigger's nor the coordinator's): async (pool,
@@ -170,6 +244,14 @@ CONNECTION_REQUESTS = "agent.connection_requests"
 # async (pool, *, spec, arguments) -> result dict. ``spec`` is the agent's
 # ``_wakeMe`` runtime config; without a provider the tool is never offered.
 WAKEUPS = "agent.wakeups"
+
+# Where an agent's conversation keeps its context checkpoint, so its turns
+# compact a long history (``coder.openai_agent.compaction``):
+# (pool, *, spec, conversation_id) -> CheckpointStore | None. ``spec`` is the
+# turn's ``_agentMemory`` (the platform keeps the checkpoint in that memory);
+# without a provider, on a turn without memory, or where the provider keeps no
+# checkpoint (None), nothing compacts.
+CONVERSATION_CHECKPOINTS = "agent.conversation_checkpoints"
 
 # Let a spawned agent reach the agent that gave it its task (the
 # ``tell_parent`` tool): async (pool, *, spec, arguments) -> result dict.
@@ -218,6 +300,12 @@ SANDBOX_ENV = "agent.sandbox_env"
 # answer cheaply for nodes it has no say over.
 TRIGGER_DELIVERY = "trigger.delivery"
 
+# Refuse a delivery to a trigger node's webhook that stopped (deactivated: its
+# trigger was removed) in a product's own words, for a node it delivers its own
+# way: async (*, workflow_id, node_id) -> None (not one of its nodes: the
+# engine's own 410) or (status_code, body) for the sender.
+TRIGGER_STOPPED = "trigger.stopped"
+
 # Watch an agent's turns as they happen: (conversation_id, event) -> None,
 # synchronous and fire-and-forget, for each piece of reply text
 # ({type: text, text}), each tool call about to run or held ({type: tool_call,
@@ -236,6 +324,44 @@ TURN_EVENTS = "agent.turn_events"
 # ``SharedAgentLinkRepo.load_for_visit``'s row.
 SHARED_AGENT_TURNS = "agent.shared_turns"
 
+# Something happened in an account that the platform running this engine
+# publishes as one of its events, which its subscribers may be woken by:
+# async (pool, type, data, *, account_user_id, dedupe_key=None) -> None.
+# Without one, nothing is published.
+ACCOUNT_EVENTS = "account.events"
+
+# Whether a workflow is the one a platform runs one of its agents on: async
+# (pool, workflow_id) -> bool. Its runs are the agent's turns, whose outcome
+# reaches whoever asked for them, so a failed one is neither a failed run the
+# coordinator triages nor a failure email. Without one, no workflow is.
+AGENT_WORKFLOW = "agent.workflow"
+
+# The agent that answers an account's owner in the coordinator's place, when
+# the account has one: async (pool, user_id, *, ensure=False, timezone=None)
+# -> {"id", "conversation"} or None; ``ensure`` makes it first where the account
+# is meant to have one, with ``timezone`` the IANA zone of the browser the owner
+# is opening the chat in. Without one (or on None), the coordinator answers.
+ACCOUNT_AGENT = "account.agent"
+
+# What would have woken the coordinator, handed to the agent that answers the
+# account's owner in its place (``ACCOUNT_AGENT``): async (pool, user_id, note,
+# *, from_outside=False) -> the wake-up's id, or None when no agent answers the
+# account. The agent is made first where the account is meant to have one, and
+# its turn reads ``note`` in its owner's conversation (``from_outside``: the
+# note quotes what someone outside the account wrote). Without one, the
+# coordinator is woken.
+ACCOUNT_AGENT_HANDOVER = "account.agent_handover"
+
+# The email of the agent that answers an account's owner in the coordinator's
+# place (``ACCOUNT_AGENT``): its address stands in for the coordinator's. An
+# object with async ``reach(pool, user_id, *, ensure=False)`` -> {"address",
+# "paused", "anyone"} (``anyone``: mail from anyone wakes it, not only the
+# owner's; ``ensure`` makes the agent and an address first), ``rename(pool,
+# user_id, name)`` -> the new address and ``take_mail(pool, user_id, on)`` ->
+# {"address", "paused"}; each answers None for an account no agent answers,
+# whose coordinator keeps its own address. Without one, every account's does.
+ACCOUNT_AGENT_EMAIL = "account.agent_email"
+
 # The number the account coordinator answers on, WhatsApp texts and calls
 # alike: () -> E.164 str, or None when this deployment has none. Without one,
 # the web offers no phone channel.
@@ -245,6 +371,24 @@ COORDINATOR_NUMBER = "coordinator.number"
 # when this deployment has no iMessage line. Without one, the web offers no
 # iMessage channel and message_owner can't send over iMessage.
 COORDINATOR_IMESSAGE = "coordinator.imessage"
+
+# Tools a platform gives the account coordinator on top of its own: async
+# (pool, *, user_id, turn_id, untrusted, voice, cards, discovered,
+# continuation) -> the turn's tools, or None when the account has none this
+# turn. Judged once, at the turn's start: ``untrusted`` says the turn was woken
+# by text from outside the owner (a failure signal, a job's result, an
+# operation's report), ``voice`` that it is spoken, ``cards`` that the web chat
+# draws its tools' results as cards below the reply, ``discovered`` is the turn's
+# utils.discovered_tools.DiscoveredTools, where they install what they load
+# mid-turn, and ``continuation`` is the turn's, which the coordinator jobs its
+# tools open carry so their outcome wakes it. A turn's tools have
+# ``supersedes`` (the coordinator's own tools they replace), ``instructions``
+# (for its prompt), ``tool_params()``, async
+# ``call(name, arguments, *, call_id) -> result dict`` (``call_id``: the
+# model's id for the call, which keys its writes) and
+# ``shown_arguments(arguments, result)`` (what the audit row keeps). Without
+# one the coordinator has exactly its own tools.
+COORDINATOR_PLATFORM_TOOLS = "coordinator.platform_tools"
 
 _providers: Dict[str, Any] = {}
 

@@ -17,6 +17,8 @@ const WORD_CASING: Record<string, string> = {
   bamboohr: 'BambooHR', quickbooks: 'QuickBooks', wordpress: 'WordPress',
   bigquery: 'BigQuery', sendgrid: 'SendGrid', mongodb: 'MongoDB',
   nocodb: 'NocoDB', onedrive: 'OneDrive', launchdarkly: 'LaunchDarkly', pit: 'PIT',
+  acl: 'ACL', rss: 'RSS', rest: 'REST', openrouter: 'OpenRouter',
+  opencode: 'OpenCode', openclaw: 'OpenClaw', xai: 'xAI',
 };
 
 // Compound names the camel-splitter necessarily breaks apart. Audited against

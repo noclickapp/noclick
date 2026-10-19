@@ -10,14 +10,20 @@
  * 4. Child components receive updated props and render immediately
  */
 
+import { isLocalEdition } from '~/lib/edition';
+
 // ============================================================================
 // Types
 // ============================================================================
 
-export type DashboardTab = 'vite' | 'databases' | 'flow' | 'debug' | 'analytics' | 'dashboard' | 'settings';
-// Drill-down sections of the Dashboard tab (?focus=). Kept here, next to the tab
+export type DashboardTab = 'vite' | 'databases' | 'flow' | 'debug' | 'analytics' | 'dashboard' | 'settings' | ShellPageTab;
+// The app shell's own pages: the coordinator chat (home), agent channels, the
+// account's resources and its connections. Each is `?tab=<id>` in the URL.
+export const SHELL_PAGE_TABS = ['chat', 'channels', 'resources', 'connections'] as const;
+export type ShellPageTab = (typeof SHELL_PAGE_TABS)[number];
+// Drill-down sections of the Activity page (?focus=). Kept here, next to the tab
 // vocabulary, so URL encoding and the tab component agree on the names.
-export const DASHBOARD_FOCUS_IDS = ['attention', 'runs', 'agents', 'files', 'credentials', 'triggers', 'upcoming', 'credits', 'notifications', 'memories'] as const;
+export const DASHBOARD_FOCUS_IDS = ['attention', 'runs', 'agents', 'triggers', 'upcoming', 'notifications'] as const;
 export type DashboardFocus = (typeof DASHBOARD_FOCUS_IDS)[number];
 // Single source of truth for valid settings sections — Dashboard's URL parser
 // and Settings' useUrlSyncedTab both validate against this list, so a section
@@ -33,6 +39,8 @@ export interface TabSwitchEventDetail {
   orgTab?: OrgSettingsTab;
   /** Dashboard tab only: open this section full-screen. */
   focus?: DashboardFocus;
+  /** The page's own params (Resources' `kind`), set after the tab's; null clears one. */
+  params?: Record<string, string | null>;
 }
 
 /** A command-palette browser action handled by WorkflowBrowser. */
@@ -53,9 +61,9 @@ export type FlowIntent =
  * Navigate to a specific dashboard tab.
  * @param tab - The tab to navigate to
  */
-export function navigateToTab(tab: DashboardTab): void {
+export function navigateToTab(tab: DashboardTab, params?: Record<string, string | null>): void {
   window.dispatchEvent(new CustomEvent<TabSwitchEventDetail>('noclick:switch-tab', {
-    detail: { tab },
+    detail: { tab, params },
     bubbles: true,
   }));
 }
@@ -76,6 +84,13 @@ export function goToWorkflowNode(workflowId: string, nodeId: string): void {
   setTimeout(() => {
     document.dispatchEvent(new CustomEvent('noclick:workflow:select-node', { detail: { workflowId, nodeId } }));
   }, 200);
+}
+
+/** Open one connected account: its page under Connections, or Settings → Credentials where the open edition keeps
+ *  accounts. */
+export function navigateToAccount(credentialId: string): void {
+  if (isLocalEdition()) navigateToSettings({ section: 'credentials' });
+  else navigateToTab('connections', { account: credentialId });
 }
 
 /**
@@ -178,12 +193,28 @@ export function applyTabToSearchParams(params: URLSearchParams, tab: string): vo
     params.set('tab', 'analytics');
   } else if (tab === 'dashboard') {
     params.set('tab', 'dashboard');
-    // Leaving the flow editor for the dashboard — drop the open-workflow deep-link params.
+  } else if (tab === 'settings') {
+    params.set('tab', 'settings');
+  } else if ((SHELL_PAGE_TABS as readonly string[]).includes(tab)) {
+    params.set('tab', tab);
+  }
+  // An open workflow's deep link belongs to the flow tab (settings keeps it so
+  // a round trip lands back on the same canvas).
+  if (tab !== 'flow' && tab !== 'settings') {
     params.delete('workflow');
     params.delete('node');
     params.delete('field');
-  } else if (tab === 'settings') {
-    params.set('tab', 'settings');
+  }
+  if (tab !== 'channels') params.delete('channel');
+  if (tab !== 'resources') {
+    params.delete('kind');
+    params.delete('resource');
+    params.delete('path');
+    params.delete('new');
+  }
+  if (tab !== 'connections') {
+    params.delete('view');
+    params.delete('account');
   }
   // Settings-only params don't belong on any other tab.
   if (tab !== 'settings') {
@@ -214,7 +245,7 @@ export function createTabSwitchHandler(callbacks: {
     const customEvent = e as CustomEvent<TabSwitchEventDetail>;
     if (!customEvent.detail?.tab) return;
 
-    const { tab, section, orgTab, focus } = customEvent.detail;
+    const { tab, section, orgTab, focus, params } = customEvent.detail;
 
     // Optimistic, SYNCHRONOUS state update — this is what makes event-based
     // navigation as fast as a direct NavBar click (the tab switches in the same
@@ -236,6 +267,10 @@ export function createTabSwitchHandler(callbacks: {
       if (tab === 'dashboard') {
         if (focus) newParams.set('focus', focus);
         else newParams.delete('focus');
+      }
+      for (const [key, value] of Object.entries(params ?? {})) {
+        if (value === null) newParams.delete(key);
+        else newParams.set(key, value);
       }
 
       // The event path owns the settings section in the URL (there's no Settings

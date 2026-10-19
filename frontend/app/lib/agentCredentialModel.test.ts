@@ -9,10 +9,15 @@
  * every credential they do (direct keys, OAuth aliases, opencode cross-aliases).
  */
 import { describe, it, expect } from 'vitest';
+import type { Node } from '@xyflow/react';
 
 import { ModelProvider } from '~/types/provider';
+import { applyNodeUpdate, createWorkflowNode, type NodeUpdatePayload } from '~/lib/applyNodeUpdate';
 
 import {
+  AGENT_HARNESS_NAMES,
+  HARNESS_OWN_FIELDS,
+  withAgentHarnessSwitch,
   agentAllowsUsageBased,
   CLAUDE_PLAN_REFUSAL,
   staleCredentialKeysForProvider,
@@ -249,5 +254,69 @@ describe('staleCredentialKeysForProvider', () => {
 
   it('keeps the valid credential and flags only the rest', () => {
     expect(s({ agent_claude_code_oauth: 'c1', agent_slack: 'c2' }, 'claude_code')).toEqual(['agent_slack']);
+  });
+});
+
+describe('withAgentHarnessSwitch', () => {
+  // The /agents scaffold's agent, as it lands on the canvas.
+  const scaffold = createWorkflowNode('agent-1', 'agent', { x: 0, y: 0 }, {
+    label: 'OpenCode', model: 'opencode', opencode_model: 'opencode/big-pickle', message: 'Sync the boards',
+  });
+  const pick = (node: Node, config: Record<string, unknown>, rest: Partial<NodeUpdatePayload> = {}) =>
+    applyNodeUpdate(node, withAgentHarnessSwitch(node, { config, ...rest }));
+
+  it('moving the scaffold to Claude Code leaves nothing of OpenCode', () => {
+    const next = pick(scaffold, { model: 'claude-code' });
+    expect(next.data.label).toBe('Claude Code');
+    expect(next.data.config).toEqual({ model: 'claude-code', message: 'Sync the boards' });
+  });
+
+  it('clears the old harness fields even when the edit carries the whole config', () => {
+    const config = (scaffold.data as { config: Record<string, unknown> }).config;
+    const next = pick(scaffold, { ...config, model: 'codex' });
+    expect(next.data.config).not.toHaveProperty('opencode_model');
+    expect(next.data.label).toBe('Codex');
+  });
+
+  it.each(['opencode agent', ' OpenCode Agent '])('renames a node called %j', (label) => {
+    const node = applyNodeUpdate(scaffold, { label });
+    expect(pick(node, { model: 'hermes' }).data.label).toBe('Hermes');
+  });
+
+  it('names a node moved to NoClick’s own runtime like a new agent', () => {
+    const next = pick(scaffold, { model: 'openrouter/~openai/gpt-luna-latest' });
+    expect(next.data.label).toBe('AI Agent');
+    expect(next.data.config).not.toHaveProperty('opencode_model');
+  });
+
+  it.each(['Board Sync', 'OpenCode helper'])('keeps a label the user wrote (%j)', (label) => {
+    const node = applyNodeUpdate(scaffold, { label });
+    expect(pick(node, { model: 'claude-code' }).data.label).toBe(label);
+  });
+
+  it('keeps a label the same edit sets', () => {
+    expect(pick(scaffold, { model: 'claude-code' }, { label: 'Board Sync' }).data.label).toBe('Board Sync');
+  });
+
+  it('changes nothing when the harness stays', () => {
+    const update = { config: { model: 'opencode', opencode_model: 'anthropic/claude-sonnet-4-5' } };
+    expect(withAgentHarnessSwitch(scaffold, update)).toBe(update);
+    const sub = { config: { opencode_model: 'opencode/glm-5' } };
+    expect(withAgentHarnessSwitch(scaffold, sub)).toBe(sub);
+  });
+
+  it('ignores other node types', () => {
+    const slack = createWorkflowNode('s', 'automation-slack', { x: 0, y: 0 }, { label: 'OpenCode', model: 'opencode' });
+    const update = { config: { model: 'claude-code' } };
+    expect(withAgentHarnessSwitch(slack, update)).toBe(update);
+  });
+
+  it('reads every CLI harness’s own fields from the schema', () => {
+    for (const harness of Object.keys(CLI_MODEL_PROVIDER)) {
+      expect(HARNESS_OWN_FIELDS[harness]?.length, harness).toBeGreaterThan(0);
+      expect(AGENT_HARNESS_NAMES[harness]?.length, harness).toBeGreaterThan(0);
+    }
+    expect(HARNESS_OWN_FIELDS.opencode).toEqual(['opencode_model']);
+    expect([...HARNESS_OWN_FIELDS.openclaw].sort()).toEqual(['openclaw_model', 'timeout_seconds']);
   });
 });

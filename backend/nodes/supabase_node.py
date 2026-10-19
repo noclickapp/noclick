@@ -52,7 +52,7 @@ class SupabaseApiKeyCredential(BaseModel):
     api_key: str = Field(
         ...,
         title="API Key",
-        description="Your Supabase API key (anon key respects RLS, service_role bypasses RLS)",
+        description="Your Supabase API key: the service_role key reads and writes everything; the anon key only what your row level security allows.",
         json_schema_extra={"ui:widget": "password"},
     )
 

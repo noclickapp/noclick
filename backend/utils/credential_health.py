@@ -17,6 +17,7 @@ absent rows as healthy (non-definitive-signal, same stance as webhook/cron
 teardown).
 """
 
+import asyncio
 import logging
 from dataclasses import dataclass
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence
@@ -144,8 +145,9 @@ async def _discord_bot_install_health(rows: Sequence[Any]) -> Dict[str, Credenti
         return {}
     import httpx
 
+    guilds = sorted(set(guild_by_cred.values()))
     async with httpx.AsyncClient(timeout=10, headers={"Authorization": f"Bot {token}"}) as client:
-        statuses = {gid: await _probe_discord_guild(client, gid) for gid in set(guild_by_cred.values())}
+        statuses = dict(zip(guilds, await asyncio.gather(*(_probe_discord_guild(client, gid) for gid in guilds))))
     out: Dict[str, CredentialHealth] = {}
     for row in rows:
         cred_id = str(_row_field(row, "id"))
@@ -276,11 +278,16 @@ async def get_credential_health(rows: Sequence[Any]) -> Dict[str, CredentialHeal
         if ctype in CREDENTIAL_HEALTH_CHECKS:
             by_type.setdefault(ctype, []).append(row)
 
-    out: Dict[str, CredentialHealth] = {}
-    for ctype, typed_rows in by_type.items():
+    async def check(ctype: str, typed_rows: List[Any]) -> Dict[str, CredentialHealth]:
         try:
-            out.update(await CREDENTIAL_HEALTH_CHECKS[ctype](typed_rows))
+            return await CREDENTIAL_HEALTH_CHECKS[ctype](typed_rows)
         except Exception as e:
             # Unknown, never dead: a failing checker yields no verdicts.
             logger.warning(f"[CredentialHealth] {ctype} checker failed: {e}")
+            return {}
+
+    out: Dict[str, CredentialHealth] = {}
+    # Each provider is asked at once, so the slowest one bounds the wait, not their sum.
+    for verdicts in await asyncio.gather(*(check(ctype, typed) for ctype, typed in by_type.items())):
+        out.update(verdicts)
     return out

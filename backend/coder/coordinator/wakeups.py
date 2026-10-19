@@ -38,7 +38,8 @@ def outcome_summary(event):
 
 
 async def run_wakeup(pool, event):
-    from coder.coordinator.agent import COORDINATOR_FEATURE, run_coordinator_turn
+    from coder.coordinator.agent import COORDINATOR_FEATURE, FollowupFailed, run_coordinator_turn
+    from coder.coordinator.handover import hand_over_wakeup
     from utils.feature_gates import require_feature
     from wss.handlers.coordinator_handler import plan_allows_turn
 
@@ -62,6 +63,10 @@ async def run_wakeup(pool, event):
     try:
         if event["context"]["epoch"] != await repo.epoch(user_id):
             await repo.finish(event, "", skipped=True)
+            return
+        # An account an agent answers hears it there: a silent finish acknowledges the source, so nothing requeues it.
+        if await hand_over_wakeup(pool, event):
+            await repo.finish(event, "", delivery={"handed_over": True})
             return
         email = await get_user_email(pool, user_id)
         require_feature(COORDINATOR_FEATURE, email=email)
@@ -88,20 +93,24 @@ async def run_wakeup(pool, event):
             text = reply.text
             if not text and reply.delivery["notify"] and event["payload"].get("operation") != "call_recording":
                 text = outcome_summary(event)
-            await repo.finish(event, text, delivery=reply.delivery)
+            await repo.finish(event, text, delivery=reply.delivery, tool_calls=reply.tool_calls)
     except CoordinatorBusy:
         await repo.defer(event)
     except asyncio.CancelledError:
         # The reaper retries only turns that never started. Started turns may
         # have taken actions, so their uncertain outcome is surfaced instead.
         raise
-    except Exception:
+    except Exception as exc:
         logger.exception("coordinator completion turn failed: %s", event["id"])
         await repo.finish(event, outcome_summary(event) +
-                          " I couldn't finish the follow-up. Please check the result before retrying.", reschedule=False)
+                          " I couldn't finish the follow-up. Please check the result before retrying.", reschedule=False,
+                          tool_calls=exc.tool_calls if isinstance(exc, FollowupFailed) else None)
     finally:
         lease.cancel()
         await asyncio.gather(lease, return_exceptions=True)
+
+
+EMAIL_UNCONFIRMED = "Email delivery could not be confirmed. The reply is saved in chat."
 
 
 async def deliver_reply(pool, event):
@@ -116,13 +125,15 @@ async def deliver_reply(pool, event):
         from coder.coordinator.reach import reach_owner
         try:
             result = await asyncio.wait_for(reach_owner(pool, user_id, event["response"], channel="email"), 45)
-            if not result.get("success"):
+            if result.get("unconfirmed"):
+                error = EMAIL_UNCONFIRMED
+            elif not result.get("success"):
                 error = result.get("error") or "Email delivery failed; the reply is saved in chat."
         except Exception:
             # A timeout may have happened after send. Preserve the same no-replay
             # rule as phone delivery rather than sending another email on retry.
             logger.exception("Coordinator email follow-up delivery could not be confirmed: %s", event["id"])
-            error = "Email delivery could not be confirmed. The reply is saved in chat."
+            error = EMAIL_UNCONFIRMED
     elif event["send_to_phone"]:
         phone_state, error = await deliver_phone(pool, user_id, event["response"])
     await CoordinatorWakeupRepo(pool).delivered(event, phone_state, error)

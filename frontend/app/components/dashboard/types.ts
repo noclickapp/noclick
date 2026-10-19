@@ -1,6 +1,7 @@
-// The data contract the Dashboard tab renders. Every field maps to something the
-// backend already stores (see the per-section notes) so a winning design
-// translates 1:1 into socket events later; nothing here is invented UI state.
+// The data contract the Activity page renders. Every field maps to something the
+// backend already stores (see the per-section notes); nothing here is invented
+// UI state. Files and credentials ride the same overview for the Resources and
+// Connections pages, which own them.
 //
 // Sources, per section:
 //   attention    approval_requests · conversations.pending_ask · builder_input_links
@@ -8,12 +9,9 @@
 //                · credentials.revoked_at / connection_status · trigger_error mirrors
 //   runs         workflow_executions (+ cas_manifests for per-node truth)
 //   agents       tool_call_events · conversations · sandbox presence registry
-//   files        workflow_resources (R2) · noclick-ws-* per-conversation volumes
-//                · noclick-fs-* FilesystemNode volumes · the builder's org workspace
-//   credentials  credentials (+ credential_refresh_events, recurring_charges)
 //   triggers     webhooks · webhook_subscriptions · schedule mirrors in node config
-//   credits      user_usage_events via plan_limits.get_credit_usage
 //   notifications user_notifications (read_at reserved for exactly this feed)
+//   files (Resources) workflow_resources (R2) · noclick-ws-* per-conversation volumes
 
 export interface WorkflowRef {
     id: string;
@@ -222,6 +220,9 @@ export interface FileEntry {
     resourceType?: string | null;
     /** Dataset row count, for datasets (they have no blob). */
     rows?: number | null;
+    /** A dataset kept in a database of its own (hosted: its automation's): that database, and its table there. */
+    databaseId?: string | null;
+    table?: string | null;
 }
 
 export interface FileSource {
@@ -315,19 +316,7 @@ export interface UpcomingRun {
 }
 
 // ---------------------------------------------------------------------------
-// Credits + notifications
-
-export interface CreditsSummary {
-    used: number;
-    cap: number;
-    period: 'day' | 'month';
-    nextRefreshAt: string;
-    topup: number;
-    tier: string;
-    /** Same window as runs.days. */
-    spendByDay: number[];
-    topSpenders: { workflow: WorkflowRef; credits: number }[];
-}
+// Notifications
 
 export type NotificationCategory =
     | 'run_failure'
@@ -335,7 +324,9 @@ export type NotificationCategory =
     | 'digest'
     | 'credential_revoked'
     | 'channel_disconnected'
-    | 'schedule_paused';
+    | 'schedule_paused'
+    | 'topup'
+    | 'phone_numbers';
 
 export interface NotificationEntry {
     id: string;
@@ -358,36 +349,19 @@ export interface DashboardData {
     attention: AttentionItem[];
     runs: RunsData;
     agents: AgentsData;
-    files: FileSource[];
-    credentials: CredentialEntry[];
     triggers: TriggerEntry[];
     upcoming: UpcomingRun[];
-    credits: CreditsSummary;
     notifications: NotificationEntry[];
 }
 
 /** A drill-down target: the section shown full-screen. */
-export type FocusId =
-    | 'attention'
-    | 'memories'
-    | 'runs'
-    | 'agents'
-    | 'files'
-    | 'credentials'
-    | 'triggers'
-    | 'upcoming'
-    | 'credits'
-    | 'notifications';
+export type FocusId = 'attention' | 'runs' | 'agents' | 'triggers' | 'upcoming' | 'notifications';
 
 export const FOCUS_TITLES: Record<FocusId, string> = {
     attention: 'Needs you',
     runs: 'Runs',
     agents: 'Agents',
-    files: 'Files',
-    credentials: 'Credentials',
     triggers: 'Triggers',
     upcoming: 'Upcoming',
-    credits: 'Credits',
-    memories: 'Memories',
     notifications: 'Notifications',
 };

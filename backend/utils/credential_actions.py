@@ -8,7 +8,7 @@ from uuid import UUID
 
 from repositories.credentials import CredentialsRepo
 from utils.credential_operations import connection_catalog, connection_suggestions, operation_catalog, operation_tool, search_operations
-from utils.credential_tool_registry import CredentialToolRegistry
+from utils.discovered_tools import DiscoveredTools
 
 
 def credential_summary(row):
@@ -22,64 +22,56 @@ def credential_summary(row):
 
 
 def credential_tool_params(tool):
+    """The coordinator's tools over connections, built with ``tool(name, description, properties, required)``;
+    descriptions come from the ``coordinator_tools`` prompt pack."""
+    from utils.prompts import PromptPack
+
+    prompts = PromptPack("coordinator_tools")
+    described = prompts.DESCRIPTIONS
     identity = {"credential_id": {"type": "string"}}
     operation = {**identity, "node_type": {"type": "string"}, "operation": {"type": "string"}}
     return [
-        tool("list_credentials", "List accessible connections without secrets. No workflow is required.",
-             {"query": {"type": "string", "description": "Literal substring of a connection's name, type or identity. "
-                        "For natural-language actions, use search_credential_tools instead."},
+        tool("list_credentials", described["list_credentials"],
+             {"query": {"type": "string", "description": prompts.PARAMETERS["list_credentials.query"]},
               "offset": {"type": "integer", "minimum": 0}}),
-        tool("search_credential_tools", "Search operations across connected accounts and load the top matching tools "
-             "for direct calls. Returns tool names and compatible credential IDs with account identities. "
-             "Each loaded tool requires credential_id: select the requested account, never guess between ambiguous accounts. "
-             "Use list_credentials for account identity (including email) without calling a provider. "
-             "If none match, returns setup options for supported integrations that need a connection. "
-             "Optionally narrow to credential_id or use offset for more matches.",
+        tool("search_credential_tools", described["search_credential_tools"],
              {"query": {"type": "string"}, **identity, "offset": {"type": "integer", "minimum": 0}}, ["query"]),
-        tool("find_connections", "Find supported connection types before creating a connection link. Search by service name.",
+        tool("find_connections", described["find_connections"],
              {"query": {"type": "string"}}, ["query"]),
-        tool("connect_credential", "Create a secure NoClick link to connect an account without creating a workflow. "
-             "Return the link to the user; never ask for tokens or verification codes in chat. "
-             "Completion wakes you automatically; do not ask for a confirmation message in chat. "
-             "Use find_connections for credential_type. Paid phone numbers use request_phone_number instead.",
+        tool("connect_credential", described["connect_credential"],
              {"credential_type": {"type": "string"}, "message": {"type": "string", "maxLength": 1000}}, ["credential_type"]),
-        tool("credential_connection_status", "Check whether a standalone connection was completed. Returns its credential ID when ready.",
+        tool("credential_connection_status", described["credential_connection_status"],
              {"request_id": {"type": "string"}}, ["request_id"]),
-        tool("credential_operation_status", "Inspect a long-running credential operation by operation_id. "
-             "Pending or expired is not success and is not permission to repeat the action.",
+        tool("credential_operation_status", described["credential_operation_status"],
              {"operation_id": {"type": "string"}}, ["operation_id"]),
-        tool("request_credential_permissions", "Send the owner a link to review this connection's approval rules. "
-             "Only the human can unlock tools. Saving the review wakes you automatically; inspect the result before continuing.",
+        tool("request_credential_permissions", described["request_credential_permissions"],
              identity, ["credential_id"]),
-        tool("credential_operations", "Discover this connection's available operations. Pass node_type and operation to get "
-             "the complete argument schema and optional lookup schema before calling it. Provider OAuth scopes may require reconnection.",
+        tool("credential_operations", described["credential_operations"],
              {**operation, "query": {"type": "string"}, "offset": {"type": "integer", "minimum": 0}}, ["credential_id"]),
-        tool("call_credential_operation", "Perform one discovered operation using this credential directly. "
-             "Only act within the user's authorization. Restrictions create a pending human approval; "
-             "pending is NOT success. Do not evade restrictions with another operation, credential or agent.",
+        tool("call_credential_operation", described["call_credential_operation"],
              {**operation, "arguments": {"type": "object"}}, [*operation, "arguments"]),
-        tool("require_credential_approval", "Require human approval for operations on this specific credential. "
-             "This only adds restrictions; you cannot remove them. Use operation keys from credential_operations "
-             "or '*' for every operation. Changes apply to all callers including MCP and agents.",
+        tool("require_credential_approval", described["require_credential_approval"],
              {**identity, "operations": {"type": "array", "items": {"type": "string"}, "minItems": 1}},
              ["credential_id", "operations"]),
-        tool("lookup_credential_options", "Resolve valid IDs for an operation's fields using the lookup schema returned "
-             "by credential_operations. Restricted credentials also require approval for these reads.",
+        tool("lookup_credential_options", described["lookup_credential_options"],
              {**operation, "field": {"type": "string"}, "context": {"type": "object"},
               "search": {"type": "string"}, "page_token": {"type": "string"}}, [*operation, "field"]),
     ]
 
 
 class CredentialActions:
-    def __init__(self, *, pool, user_id, organization_id=None, conversation_id=None, continuation=None, native_tools=False):
+    def __init__(self, *, pool, user_id, organization_id=None, conversation_id=None, continuation=None, native_tools=False,
+                 notify_requester=True):
         self.pool = pool
         self.user_id = user_id
         self.organization_id = organization_id
         self.conversation_id = conversation_id
         self.continuation = continuation
         self.repo = CredentialsRepo(pool)
-        self.registry = CredentialToolRegistry()
+        self.registry = DiscoveredTools()
         self.native_tools = native_tools
+        # False: a connection request's fulfilment sends its requester no email (the caller reports it itself).
+        self.notify_requester = notify_requester
 
     async def _credentials(self):
         return await self.repo.list_accessible(self.user_id, self.organization_id)
@@ -155,7 +147,7 @@ class CredentialActions:
         row = await self.repo.upsert_credential_request(
             requester_id=self.user_id, target_email="", credential_type=credential_type,
             message=(message or "Connect this account for your coordinator.")[:1000], reuse_pending=True,
-            continuation=self.continuation,
+            continuation=self.continuation, metadata=None if self.notify_requester else {"notify_requester": False},
         )
         return {"status": row.status, "request_id": row.id,
                 "url": credential_provide_url(row.token, get_frontend_url()),

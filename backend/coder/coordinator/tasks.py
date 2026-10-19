@@ -1,16 +1,25 @@
 """Dispatch durable coordinator requests through the existing agent runtime.
 Immediate and deferred replies settle the same task; a persisted notification
 returns the result to the account even when the original container is gone.
+
+Another surface may ask an agent for turns on this same path, on a
+conversation of its own (``register_agent_job_source``, then
+``CoordinatorTaskRepo.enqueue_turn``): each finished job's outcome goes back to
+that surface the moment it settles, never to the coordinator.
 """
 
 from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Any, Optional
+import uuid
+from typing import Any, Awaitable, Callable, Dict, List, Optional
 
-from repositories.coordinator_tasks import CoordinatorTaskRepo
+from billing.usage_tracker import attribute_usage
+from coder.coordinator.jobs import outcome_for, register_job_source
+from repositories.coordinator_tasks import COORDINATOR_KEY_PREFIX, COORDINATOR_SOURCE, CoordinatorTaskRepo
 from utils.access_control import Permission, check_resource_access
+from utils.async_helpers import spawn
 from utils.database_pool import get_native_pool
 from utils.graph_nodes import node_disabled, node_label
 from utils.socket_singleton import get_sio
@@ -19,10 +28,29 @@ from utils.task_notifications import deliver_phone, emit_notification, notificat
 logger = logging.getLogger(__name__)
 POLL_SECONDS = 5
 MAX_CONCURRENT = 4
+# Every usage event a job's turn records names the job.
+JOB_ATTRIBUTION_KEY = "coordinator_job_id"
+
+
+# A surface's agent turns run on conversation keys that start with its prefix.
+_KEY_PREFIXES: Dict[str, str] = {}
+
+
+def register_agent_job_source(source: str, *, key_prefix: str,
+                              deliver: Callable[[Any, Dict[str, Any]], Awaitable[None]]) -> None:
+    """A surface that asks agents for turns: its conversation keys start with
+    ``key_prefix``, and ``deliver(pool, job)`` takes each finished job back
+    (it may get one twice, at once and from the worker's backstop)."""
+    _KEY_PREFIXES[source] = key_prefix
+    register_job_source(source, deliver)
+
+
+def _source(job: Dict[str, Any]) -> str:
+    return (job.get("origin") or {}).get("source") or COORDINATOR_SOURCE
 
 
 def agent_view(row: dict, *, include_result: bool = True) -> dict:
-    from coder.coordinator.tools import bounded
+    from utils.previews import bounded
 
     result = {
         "job_id": str(row["id"]), "kind": "agent", "workflow_id": str(row["workflow_id"]),
@@ -38,12 +66,28 @@ def agent_view(row: dict, *, include_result: bool = True) -> dict:
     return result
 
 
+async def account_agents(pool, user_id: str, organization_id: Optional[str]) -> List[Dict[str, Any]]:
+    """Every agent node in the workflows of the user's workspace (``organization_id``,
+    else its own), the most recently edited workflow first."""
+    from repositories.dashboard import DashboardRepo
+    from utils.graph_nodes import graph_nodes, node_config, node_model
+
+    rows = await DashboardRepo(pool).list_workflows(user_id, uuid.UUID(organization_id) if organization_id else None)
+    return [{"workflow_id": str(row["id"]), "workflow_name": row["name"], "node_id": node["id"],
+             "name": node_label(node) or "Agent",
+             "purpose": str(node_config(node).get("goal") or (node.get("data") or {}).get("goal") or "")[:500],
+             "model": node_model(node), "disabled": node_disabled(node)}
+            for row in rows for node in graph_nodes(row["workflow"]) if node.get("type") == "agent"]
+
+
 async def agent_target(pool, sio, *, user_id: str, workflow_id: str, node_id: str) -> dict:
     from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
 
     async with pool.acquire() as conn:
         access = await check_resource_access(conn, user_id, "workflow", workflow_id)
-    if not access.has_access or access.permission not in (Permission.OWNER, Permission.EDIT):
+    # The owner of a workflow NoClick runs itself only views it, and still talks to its agent.
+    if not access.has_access or (access.permission not in (Permission.OWNER, Permission.EDIT)
+                                 and access.via != "owner"):
         raise ValueError("You need edit access to message this workflow's agent.")
     fetched = await WorkflowExecutionHandler(sio)._fetch_workflow(workflow_id, user_id)
     if not fetched:
@@ -87,22 +131,41 @@ def turn_error(output: Any, error: Optional[str] = None) -> Optional[str]:
     return str(error) if error else None
 
 
+async def deliver_outcome(pool, job: Dict[str, Any]) -> None:
+    """Hand a surface's finished job back to it, then mark it delivered; one
+    that fails stays for the worker's next pass (``notify_results``)."""
+    try:
+        await outcome_for(job)(pool, job)
+    except Exception:
+        logger.exception("agent job %s: delivering its outcome to %s failed", job["id"], _source(job))
+        return
+    await CoordinatorTaskRepo(pool).mark_notified(str(job["id"]))
+
+
+async def finish(repo: CoordinatorTaskRepo, task_id: str, *, result: Optional[dict] = None,
+                 error: Optional[str] = None) -> None:
+    """Finish a job once; a surface's goes back to it at once (the coordinator's
+    own reach it through ``notify_results``)."""
+    row = await repo.finish(task_id, result=result, error=error)
+    if row is not None and _source(row) != COORDINATOR_SOURCE:
+        await deliver_outcome(repo.pool, row)
+
+
 async def settle_output(repo: CoordinatorTaskRepo, task_id: str, output: Any, error: Optional[str] = None) -> None:
-    from coder.coordinator.tools import bounded
+    from utils.previews import bounded
 
     if isinstance(output, dict) and output.get("status") == "awaiting_agent_turn":
         await repo.wait_for_reply(task_id)
         return
-    await repo.finish(task_id, result=bounded(output, max_chars=32000, max_items=30), error=turn_error(output, error))
+    await finish(repo, task_id, result=bounded(output, max_chars=32000, max_items=30), error=turn_error(output, error))
 
 
 async def complete_agent_deliveries(*, workflow_id: str, node_id: str, conversation_id: Optional[str], output: dict) -> None:
     """Match the response package's deliveries, never a conversation's latest message."""
     prefix = f"ck:{workflow_id}:{node_id}:"
-    if not conversation_id or not conversation_id.startswith(prefix + "coordinator-"):
+    keys = (COORDINATOR_KEY_PREFIX, *_KEY_PREFIXES.values())
+    if not conversation_id or not conversation_id.startswith(tuple(prefix + key for key in keys)):
         return
-    import uuid
-
     ids = []
     for value in output.get("input_execution_ids") or []:
         try:
@@ -124,6 +187,7 @@ async def run_task(pool, task: dict) -> None:
 
     repo = CoordinatorTaskRepo(pool)
     task_id, user_id, workflow_id = str(task["id"]), str(task["user_id"]), str(task["workflow_id"])
+    attribute_usage(**{JOB_ATTRIBUTION_KEY: task_id})
 
     async def heartbeat():
         while True:
@@ -134,14 +198,16 @@ async def run_task(pool, task: dict) -> None:
     try:
         # Access and node state may have changed while this request was queued.
         await agent_target(pool, get_sio(), user_id=user_id, workflow_id=workflow_id, node_id=task["node_id"])
-        message = task["spec"]["message"]
+        spec = task["spec"]
         handler = WorkflowExecutionHandler(get_sio())
         request = WorkflowExecuteRequest(
             request_id=f"coordinator-task-{task_id}", workflow_id=workflow_id, start_node_id=task["node_id"],
             trigger_source="coordinator",
             conversation_id=f"ck:{workflow_id}:{task['node_id']}:{task['conversation_key']}",
             config_overrides={task["node_id"]: {
-                "message": message, "conversation_key": task["conversation_key"], "mockedOutput": None,
+                "message": spec["message"], "conversation_key": task["conversation_key"], "mockedOutput": None,
+                **({"message_attachments": spec["attachments"]} if spec.get("attachments") else {}),
+                **(spec.get("config") or {}),
             }},
         )
         result = await handler.handle_execute("", request, str(task["execution_id"]), caller_user_id=user_id)
@@ -152,15 +218,27 @@ async def run_task(pool, task: dict) -> None:
         raise
     except Exception as exc:
         logger.exception("coordinator agent task failed: %s", task_id)
-        await repo.finish(task_id, error=str(exc))
+        await finish(repo, task_id, error=str(exc))
     finally:
         lease.cancel()
         await asyncio.gather(lease, return_exceptions=True)
 
 
+async def start_now(pool, job_id: str) -> None:
+    """Run a queued job now instead of at the worker's next poll; when another
+    process claims it first, that one runs it."""
+    task = await CoordinatorTaskRepo(pool).claim(job_id)
+    if task is not None:
+        spawn(run_task(pool, task), name=f"coordinator-agent-task:{job_id}")
+
+
 async def notify_results(pool) -> None:
     repo = CoordinatorTaskRepo(pool)
     for task in await repo.pending_notifications():
+        if _source(task) != COORDINATOR_SOURCE:
+            # A surface's job its immediate delivery missed (a crash, a reaped lease).
+            await deliver_outcome(pool, task)
+            continue
         if task["continuation"]:
             from repositories.coordinator_wakeups import CoordinatorWakeupRepo
 

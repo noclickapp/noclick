@@ -21,6 +21,7 @@ import {
     KeyRound,
     Plus,
     ShieldCheck,
+    MoreHorizontal,
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -35,14 +36,13 @@ import type {
 } from '~/types/socket-events.generated';
 import {
     ShareDeleteRequest,
-    ShareLeaveRequest,
     ShareUpdateRequest,
 } from '~/types/socket-events.generated';
+import { leaveSharedCredential, revokedReasonLabel } from '~/lib/credentialAccess';
 import { formatCredentialTypeLabel } from '~/utils/credentialTypes';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { getCredentialIcon } from '~/utils/credentialIcons';
 import { BrandIcon } from '~/components/shared/BrandIcon';
-import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
 import { ShareDialog } from '~/components/shared/popups/ShareDialog';
 import { CredentialDeleteDialog } from '~/components/credential/CredentialDeleteDialog';
 import {
@@ -79,11 +79,8 @@ function getInitials(name: string): string {
 // Main component
 // ---------------------------------------------------------------------------
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function CredentialsSettings({
-    embedded,
     hideTitle = false,
-    onNavigateBack,
 }: CredentialsSettingsProps) {
     const [orgContext] = useOrgContext();
     const hasOrg = !!orgContext.id;
@@ -222,32 +219,13 @@ export function CredentialsSettings({
         []
     );
 
-    // share:leave, not share:delete — dropping your OWN access needs no
-    // manage-shares permission, which a share recipient never has.
     const handleUnshare = useCallback((credentialId: string) => {
-        sendEventWithCallback(
-            ShareLeaveRequest.create({
-                resource_type: 'credential',
-                resource_id: credentialId,
-            }),
-            (response) => {
-                if (response.error) {
-                    toast.error(response.error);
-                    return;
-                }
-                if (!response.removed) {
-                    toast.error(
-                        'Access comes from an organization share — ask the owner to remove it.'
-                    );
-                    return;
-                }
-                setCredentials((prev) =>
-                    prev.filter((c) => c.id !== credentialId)
-                );
-                invalidateCredentialsCache();
+        leaveSharedCredential(credentialId)
+            .then(() => {
+                setCredentials((prev) => prev.filter((c) => c.id !== credentialId));
                 toast.success('Credential removed');
-            }
-        );
+            })
+            .catch((err: Error) => toast.error(err.message));
     }, []);
 
     const personalCredentials = useMemo(
@@ -298,10 +276,11 @@ export function CredentialsSettings({
     const newCredentialButton = (
         <button
             onClick={() => openCreateCredential()}
-            className="flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-sm text-foreground bg-card dark:bg-foreground/[0.08] hover:bg-muted dark:hover:bg-foreground/[0.12] border border-border dark:border-white/[0.08] rounded-lg transition-colors"
+            aria-label="New credential"
+            className="flex shrink-0 items-center gap-1.5 px-2 py-1.5 text-sm text-foreground bg-card dark:bg-foreground/[0.08] hover:bg-muted dark:hover:bg-foreground/[0.12] border border-border dark:border-white/[0.08] rounded-lg transition-colors sm:px-3"
         >
             <Plus className="w-4 h-4" />
-            New credential
+            <span className="hidden sm:inline">New credential</span>
         </button>
     );
     const showTabs = !loading && credentials.length > 0;
@@ -330,12 +309,12 @@ export function CredentialsSettings({
             {/* Tabs */}
             {showTabs && (
                 <div className="flex items-center justify-between gap-3 mb-4">
-                <div className="flex gap-1">
+                <div className="flex min-w-0 gap-1 overflow-x-auto scrollbar-hide">
                     {hasOrg && (
                         <button
                             onClick={() => setActiveTab('organization')}
                             className={cn(
-                                'flex items-center gap-2 px-3 py-1.5 text-sm rounded-md transition-colors',
+                                'flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-1.5 text-sm rounded-md transition-colors',
                                 activeTab === 'organization'
                                     ? 'bg-foreground/[0.08] text-accent-foreground dark:text-white/90'
                                     : 'text-muted-foreground dark:text-white/50 hover:text-foreground/80 hover:bg-foreground/[0.04]'
@@ -353,7 +332,7 @@ export function CredentialsSettings({
                     <button
                         onClick={() => setActiveTab('personal')}
                         className={cn(
-                            'flex items-center gap-2 px-3 py-1.5 text-sm rounded-md transition-colors',
+                            'flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-1.5 text-sm rounded-md transition-colors',
                             activeTab === 'personal'
                                 ? 'bg-foreground/[0.08] text-accent-foreground dark:text-white/90'
                                 : 'text-muted-foreground dark:text-white/50 hover:text-foreground/80 hover:bg-foreground/[0.04]'
@@ -370,14 +349,14 @@ export function CredentialsSettings({
                     <button
                         onClick={() => setActiveTab('shared')}
                         className={cn(
-                            'flex items-center gap-2 px-3 py-1.5 text-sm rounded-md transition-colors',
+                            'flex shrink-0 items-center gap-2 whitespace-nowrap px-3 py-1.5 text-sm rounded-md transition-colors',
                             activeTab === 'shared'
                                 ? 'bg-foreground/[0.08] text-accent-foreground dark:text-white/90'
                                 : 'text-muted-foreground dark:text-white/50 hover:text-foreground/80 hover:bg-foreground/[0.04]'
                         )}
                     >
                         <Users className="w-3.5 h-3.5" />
-                        Shared With Me
+                        Shared with me
                         {sharedCredentials.length > 0 && (
                             <span className="text-xs text-muted-foreground/70 dark:text-white/30">
                                 {sharedCredentials.length}
@@ -447,7 +426,7 @@ export function CredentialsSettings({
 
             {/* Credential list */}
             {!loading && filteredCredentials.length > 0 && (
-                <div className="space-y-1">
+                <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card dark:divide-foreground/[0.06] dark:border-foreground/[0.08] dark:bg-foreground/[0.02]">
                     {filteredCredentials.map((cred) => {
                         const shares = credentialShares[cred.id] ?? [];
                         const isExpanded = expandedIds.has(cred.id);
@@ -555,14 +534,6 @@ export function CredentialsSettings({
 // Credential row
 // ---------------------------------------------------------------------------
 
-/** "F29_user_revoked" → "disconnected"; other auto-revoke codes keep their
- *  prose with the incident prefix stripped. */
-function revokedReasonLabel(reason?: string | null): string | null {
-    if (!reason) return null;
-    const cleaned = reason.replace(/^F\d+_/, '').replace(/_/g, ' ');
-    return cleaned === 'user revoked' ? 'disconnected' : cleaned;
-}
-
 function CredentialRow({
     credential,
     shares,
@@ -603,17 +574,15 @@ function CredentialRow({
     return (
         <div
             className={cn(
-                'rounded-lg bg-card dark:bg-foreground/[0.03] border border-border dark:border-white/[0.06] overflow-hidden',
-                isExpandable && 'border-l-2 border-l-border'
+                'group/cred'
             )}
         >
             {/* Main row */}
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
             <div
                 className={cn(
-                    'flex items-center px-3 py-2.5 transition-colors',
-                    isExpandable &&
-                        'hover:bg-muted dark:hover:bg-foreground/[0.03] cursor-pointer'
+                    'flex items-center px-4 py-3 transition-colors hover:bg-foreground/[0.02]',
+                    isExpandable && 'cursor-pointer'
                 )}
                 onClick={isExpandable ? onToggleExpand : undefined}
             >
@@ -622,7 +591,7 @@ function CredentialRow({
             like GitHub/X stay visible) and dimmed for the generic key. */}
                 <div
                     className={cn(
-                        'flex items-center justify-center w-11 h-11 rounded-lg bg-foreground/[0.06] flex-shrink-0 mr-3',
+                        'flex items-center justify-center w-10 h-10 rounded-xl bg-foreground/[0.05] flex-shrink-0 mr-3.5',
                         isRevoked && 'opacity-50'
                     )}
                 >
@@ -634,7 +603,7 @@ function CredentialRow({
                                 ? 'text-foreground'
                                 : 'text-muted-foreground dark:text-white/50')
                         }
-                        className="w-7 h-7"
+                        className="w-6 h-6"
                     />
                 </div>
 
@@ -661,7 +630,7 @@ function CredentialRow({
                             </span>
                         )}
                     </div>
-                    <div className="flex items-center gap-1.5 mt-1 text-[0.8125rem] text-muted-foreground">
+                    <div className="mt-1 truncate text-[0.8125rem] text-muted-foreground [&>.sep]:mx-1.5 [&>.sep]:text-muted-foreground/60">
                         <span>
                             {formatCredentialTypeLabel(
                                 credential.credential_type
@@ -669,15 +638,15 @@ function CredentialRow({
                         </span>
                         {metadataEmail && metadataEmail !== credential.name && (
                                 <>
-                                    <span>/</span>
+                                    <span className="sep">·</span>
                                     <span>{metadataEmail}</span>
                                 </>
                             )}
-                        <span>/</span>
+                        <span className="sep">·</span>
                         <span>{formatDate(credential.created_at)}</span>
                         {!isShared && hasShares && (
                             <>
-                                <span>/</span>
+                                <span className="sep">·</span>
                                 <span>
                                     {shares.length}{' '}
                                     {shares.length === 1 ? 'share' : 'shares'}
@@ -686,7 +655,7 @@ function CredentialRow({
                         )}
                         {isRevoked && (
                             <>
-                                <span>/</span>
+                                <span className="sep">·</span>
                                 <span className="text-red-600 dark:text-red-400">
                                     revoked{' '}
                                     {formatDate(credential.revoked_at!)}
@@ -725,50 +694,83 @@ function CredentialRow({
                     </div>
                 )}
 
-                {/* Action buttons */}
+                {/* Actions: revealed on hover from sm up, one overflow menu on phones */}
                 <Link to={`/credential/permissions/${credential.id}`} aria-label={`Tool permissions for ${credential.name}`}
                     title="Tool permissions" onClick={event => event.stopPropagation()}
-                    className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground">
+                    className="ml-2 hidden h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-[color,background-color,opacity] hover:bg-foreground/[0.06] hover:text-foreground sm:flex sm:opacity-0 sm:group-hover/cred:opacity-100 sm:focus-visible:opacity-100">
                     <ShieldCheck className="h-4 w-4" />
                 </Link>
                 {(onShare || onDelete || onUnshare) && (
                     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                     <div
-                        className="flex items-center gap-1 flex-shrink-0 ml-2"
+                        className="ml-1 hidden shrink-0 items-center gap-1 transition-opacity sm:flex sm:opacity-0 sm:group-hover/cred:opacity-100 sm:focus-within:opacity-100"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {onShare && (
                             <button
+                                type="button"
                                 onClick={onShare}
-                                className="flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground dark:text-white/40 hover:text-foreground/80 hover:bg-foreground/[0.06] transition-colors"
+                                aria-label={`Share ${credential.name}`}
+                                title="Share"
+                                className="flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] transition-colors"
                             >
                                 <Share2 className="w-4 h-4" />
                             </button>
                         )}
-                        {onDelete && (
+                        {(onDelete || onUnshare) && (
                             <button
-                                onClick={onDelete}
-                                className="flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground dark:text-white/40 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/15 transition-colors"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </button>
-                        )}
-                        {onUnshare && (
-                            <button
-                                onClick={onUnshare}
-                                className="flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground dark:text-white/40 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/15 transition-colors"
+                                type="button"
+                                onClick={onDelete ?? onUnshare}
+                                aria-label={`${onDelete ? 'Delete' : 'Remove'} ${credential.name}`}
+                                title={onDelete ? 'Delete' : 'Remove from my list'}
+                                className="flex items-center justify-center h-8 w-8 rounded-md text-muted-foreground hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/15 transition-colors"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
                         )}
                     </div>
                 )}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button
+                            type="button"
+                            aria-label={`Actions for ${credential.name}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="-mr-1.5 ml-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground data-[state=open]:bg-foreground/[0.06] data-[state=open]:text-foreground sm:hidden"
+                        >
+                            <MoreHorizontal className="h-[18px] w-[18px]" />
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" sideOffset={4} className="min-w-[200px] rounded-xl p-1">
+                        <DropdownMenuItem asChild className="gap-2.5 rounded-lg px-2.5 py-2 text-[14px]">
+                            <Link to={`/credential/permissions/${credential.id}`}>
+                                <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                                Tool permissions
+                            </Link>
+                        </DropdownMenuItem>
+                        {onShare && (
+                            <DropdownMenuItem onSelect={onShare} className="gap-2.5 rounded-lg px-2.5 py-2 text-[14px]">
+                                <Share2 className="h-4 w-4 text-muted-foreground" />
+                                Share
+                            </DropdownMenuItem>
+                        )}
+                        {(onDelete || onUnshare) && (
+                            <DropdownMenuItem
+                                onSelect={onDelete ?? onUnshare}
+                                className="gap-2.5 rounded-lg px-2.5 py-2 text-[14px] text-red-600 focus:bg-red-500/10 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                                {onDelete ? 'Delete' : 'Remove from my list'}
+                            </DropdownMenuItem>
+                        )}
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
 
             {/* Expanded section — share recipients (owned credentials only) */}
             {isExpanded && !isShared && hasShares && (
                 <div className="border-t border-border dark:border-white/[0.06] px-4 py-3">
-                    <p className="text-[0.6875rem] font-medium text-muted-foreground/70 dark:text-white/30 uppercase tracking-wider mb-2">
+                    <p className="mb-2 text-[12.5px] font-medium text-muted-foreground">
                         Shared with
                     </p>
                     <div className="space-y-1">

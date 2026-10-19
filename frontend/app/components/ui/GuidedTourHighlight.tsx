@@ -693,10 +693,9 @@ export function GuidedTourHighlight({
                 );
             })()}
 
-            {/* Redesigned Tooltip Card. Width shrinks on small/short viewports (vmin)
-                while still honoring the global low-res root-font scaling at <=1366 via
-                the rem bounds; caps at 26.25rem (=420px @16px root) so large screens are
-                unchanged. Inline style (not a Tailwind class) so the clamp() is reliable. */}
+            {/* Redesigned Tooltip Card. Width shrinks on small/short viewports (vmin),
+                capped at 26.25rem (420px). Inline style (not a Tailwind class) so the
+                clamp() is reliable. */}
             <div
                 ref={tooltipRef}
                 className="absolute pointer-events-auto z-10"

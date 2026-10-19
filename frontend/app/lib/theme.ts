@@ -1,22 +1,34 @@
-// Light/dark theme management for the authed app. The preference is stored in
-// localStorage and applied as a `dark` class on <html> (tailwind darkMode:
-// 'class'). Only the dashboard honors the preference — marketing and public
-// pages stay dark (their components are tokenized with dark: pins, so
-// forcing the class renders the original dark design exactly).
+// Light/dark theme management. The preference is stored in localStorage and
+// applied as a `dark` class on <html> (tailwind darkMode: 'class'). Themed paths
+// honor it; every other page stays dark (its components are tokenized with dark:
+// pins, so forcing the class renders the original dark design exactly).
 
 export type Theme = 'light' | 'dark' | 'system';
 
 export const THEME_STORAGE_KEY = 'nc-theme';
 export const THEME_CHANGE_EVENT = 'noclick:theme-change';
 
-// Keep in sync with the no-flash inline script in root.tsx. /dashboard (the
-// workflow editor + canvas + settings + usage) is themed, plus /b (the public
-// builder input bridge — fully tokenized and carries its own subtle toggle
-// for visitors who prefer light).
-const THEMED_PATH_RE = /^\/(dashboard|b|credential\/provide)(\/|$)/;
+// The engine's own themed paths: /dashboard (the workflow editor + canvas +
+// settings + usage), /b (the public builder input bridge, which carries its own
+// toggle) and /credential/provide. A deployment adds the pages it builds for both
+// themes with registerThemedPaths (the hosted site's in cloud/bootstrap.ts). The
+// no-flash inline script in root.tsx tests the same patterns (themedPathSources).
+const THEMED_PATH_RE = /^\/(?:dashboard|b|credential\/provide)(?:\/|$)/;
+const registeredThemedPaths: RegExp[] = [];
+
+/** Idempotent: a dev server re-runs the registering module on every reload, and a repeat would make the server's
+ *  inline script differ from the browser's. */
+export function registerThemedPaths(pattern: RegExp): void {
+    if (!registeredThemedPaths.some((p) => p.source === pattern.source)) registeredThemedPaths.push(pattern);
+}
 
 export function isThemedPath(pathname: string): boolean {
-    return THEMED_PATH_RE.test(pathname);
+    return THEMED_PATH_RE.test(pathname) || registeredThemedPaths.some((pattern) => pattern.test(pathname));
+}
+
+/** Every themed pattern's source, for the inline script that applies the theme before hydration. */
+export function themedPathSources(): string[] {
+    return [THEMED_PATH_RE.source, ...registeredThemedPaths.map((pattern) => pattern.source)];
 }
 
 /** The user's stored choice — 'system' defers to prefers-color-scheme. The

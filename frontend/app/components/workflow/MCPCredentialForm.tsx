@@ -7,8 +7,10 @@ import { Key, Link2, ExternalLink, AlertCircle, CheckCircle2, Loader2 } from 'lu
 import { useMCPOAuth } from '~/hooks/oauth/useMCPOAuth';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
+import { CREATE_FORM } from '~/components/credential/CredentialCreatePanel';
 import { UpgradePopup } from '~/components/utils/UpgradePopup';
 import { isPlanLimitError } from '~/lib/planLimitErrors';
+import { cn } from '~/lib/utils';
 
 interface Credential {
     id: string;
@@ -18,6 +20,11 @@ interface Credential {
     created_at: string;
     updated_at: string;
 }
+
+const AUTH_CHOICES = [
+    { value: 'none', label: 'No Auth' },
+    { value: 'api_key', label: 'API Key' },
+] as const;
 
 interface MCPCredentialFormProps {
     /** Server URL from config (triggers OAuth discovery) */
@@ -196,11 +203,9 @@ export function MCPCredentialForm({
     // Don't show if no server URL
     if (!serverUrl) {
         return (
-            <div className="p-4 rounded-lg bg-card/30 border border-border/50 dark:border-zinc-800/50">
-                <div className="flex items-center gap-2 text-muted-foreground dark:text-zinc-500 text-sm">
-                    <Link2 className="w-4 h-4" />
-                    <span>Enter a server URL above to configure authentication</span>
-                </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground dark:text-zinc-500">
+                <Link2 className="w-4 h-4" />
+                <span>Enter a server URL above to configure authentication</span>
             </div>
         );
     }
@@ -231,16 +236,14 @@ export function MCPCredentialForm({
 
             {/* OAuth Required Banner */}
             {discoveryResult?.requires_oauth && !isDiscovering && (
-                <div className="p-3 rounded-lg bg-muted/50 border border-border/50 dark:border-zinc-700/50">
-                    <div className="flex items-start gap-2">
-                        <Key className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                        <div className="flex-1">
-                            <div className="text-sm text-foreground/80 font-medium">
-                                {discoveryResult.provider_name || 'OAuth'} Authentication Required
-                            </div>
-                            <div className="text-xs text-muted-foreground dark:text-zinc-500 mt-1">
-                                This MCP server requires OAuth authentication to access its tools.
-                            </div>
+                <div className="flex items-start gap-2">
+                    <Key className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                        <div className="text-sm text-foreground/80 font-medium">
+                            {discoveryResult.provider_name || 'OAuth'} Authentication Required
+                        </div>
+                        <div className="text-xs text-muted-foreground dark:text-zinc-500 mt-1">
+                            This MCP server requires OAuth authentication to access its tools.
                         </div>
                     </div>
                 </div>
@@ -248,39 +251,31 @@ export function MCPCredentialForm({
 
             {/* Error Banner */}
             {(oauthError || createError) && (
-                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                    <div className="flex items-start gap-2">
-                        <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
-                        <div className="text-sm text-red-600 dark:text-red-400">{oauthError || createError}</div>
-                    </div>
+                <div role="alert" className="flex items-start gap-2 text-sm text-red-600 dark:text-red-400">
+                    <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                    <div className="break-words">{oauthError || createError}</div>
                 </div>
             )}
 
             {/* Auth Type Selector (only show if not OAuth required) */}
             {!discoveryResult?.requires_oauth && !isDiscovering && (
-                <div className="flex gap-2">
-                    <button
-                        type="button"
-                        onClick={() => setAuthType('none')}
-                        className={`flex-1 px-3 py-2 text-xs rounded-lg border transition-all ${
-                            authType === 'none'
-                                ? 'bg-secondary border-foreground/30 text-foreground'
-                                : 'bg-card/50 border-border text-muted-foreground dark:text-zinc-500 hover:border-foreground/20'
-                        }`}
-                    >
-                        No Auth
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setAuthType('api_key')}
-                        className={`flex-1 px-3 py-2 text-xs rounded-lg border transition-all ${
-                            authType === 'api_key'
-                                ? 'bg-secondary border-foreground/30 text-foreground'
-                                : 'bg-card/50 border-border text-muted-foreground dark:text-zinc-500 hover:border-foreground/20'
-                        }`}
-                    >
-                        API Key
-                    </button>
+                <div className="flex rounded-full bg-muted p-0.5 dark:bg-foreground/[0.05]">
+                    {AUTH_CHOICES.map(({ value, label }) => (
+                        <button
+                            key={value}
+                            type="button"
+                            aria-pressed={authType === value}
+                            onClick={() => setAuthType(value)}
+                            className={cn(
+                                'h-7 flex-1 rounded-full text-xs transition-colors',
+                                authType === value
+                                    ? 'bg-background text-foreground shadow-sm ring-1 ring-inset ring-border dark:bg-foreground/[0.14] dark:ring-0'
+                                    : 'text-muted-foreground hover:text-foreground'
+                            )}
+                        >
+                            {label}
+                        </button>
+                    ))}
                 </div>
             )}
 
@@ -343,7 +338,7 @@ export function MCPCredentialForm({
                         type="button"
                         onClick={() => connect(serverUrl)}
                         disabled={isConnecting}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-foreground bg-foreground/20 hover:bg-zinc-600 disabled:bg-muted disabled:text-muted-foreground dark:disabled:text-zinc-500 disabled:cursor-not-allowed rounded-lg transition-all"
+                        className={cn(CREATE_FORM.save, 'h-9 w-full gap-2 text-sm', isConnecting && CREATE_FORM.saving)}
                     >
                         {isConnecting ? (
                             <>
@@ -362,7 +357,7 @@ export function MCPCredentialForm({
 
             {/* API Key Form */}
             {authType === 'api_key' && !discoveryResult?.requires_oauth && !selectedCredential && (
-                <div className="space-y-3 p-4 rounded-lg bg-card/50 border border-border">
+                <div className="space-y-3">
                     <div className="space-y-1.5">
                         <label htmlFor="mcp-api-key-input" className="block text-xs text-muted-foreground dark:text-zinc-500">API Key</label>
                         <input
@@ -379,7 +374,7 @@ export function MCPCredentialForm({
                         type="button"
                         onClick={handleCreateApiKeyCredential}
                         disabled={!apiKey || createLoading}
-                        className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-foreground bg-foreground/20 hover:bg-zinc-600 disabled:bg-muted disabled:text-muted-foreground dark:disabled:text-zinc-600 disabled:cursor-not-allowed rounded-lg transition-all"
+                        className={cn(CREATE_FORM.save, 'h-9 w-full gap-2 text-sm', createLoading && CREATE_FORM.saving)}
                     >
                         {createLoading ? (
                             <>

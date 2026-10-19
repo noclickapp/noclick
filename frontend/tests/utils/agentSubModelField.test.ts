@@ -33,6 +33,6 @@ describe('getCliSubModelField', () => {
     expect(getCliSubModelField(undefined)).toBeNull();
     expect(getCliSubModelField('')).toBeNull();
     expect(getCliSubModelField('openrouter/openai/dall-e-3')).toBeNull();
-    expect(getCliSubModelField('openrouter/google/veo-2')).toBeNull();
+    expect(getCliSubModelField('openrouter/google/veo-3.1-fast')).toBeNull();
   });
 });

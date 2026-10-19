@@ -17,14 +17,14 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections import Counter
+from collections import Counter, deque
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Deque, Dict, Iterable, List, Optional, Tuple
 
 #: Bumped whenever a writer's output changes shape. Recorded in every
 #: manifest and verdict so a store can be traced to the code that wrote it.
-INTERCHANGE_VERSION = "1"
+INTERCHANGE_VERSION = "3"
 
 # ── event kinds ──────────────────────────────────────────────────────────────
 MESSAGE = "message"          # a user or assistant turn (role + text)
@@ -124,7 +124,11 @@ class Skeleton:
     """What a faithful translation must preserve: every user/assistant
     message with its text, every tool call paired with its result, in order.
     Ids are deliberately not part of it — a writer may mint one for a call
-    that had none — but names, texts and pairing are."""
+    that had none — but names, texts and pairing are: each result counts
+    with the position of the call it answers. Results that arrive together
+    (parallel calls) are taken in the order of those calls: the model matches
+    them by id, and a store that keeps each result in its call's record
+    (OpenCode) cannot hold the order they finished in."""
 
     roles: List[str]
     digest: str
@@ -145,20 +149,36 @@ def skeleton_of(thread: Thread) -> Skeleton:
     roles: List[str] = []
     material: List[Any] = []
     calls = results = 0
-    open_calls: set = set()
+    open_calls: Dict[str, int] = {}  # call id → the call's position
+    unnamed: Deque[int] = deque()  # calls without an id: a writer mints theirs, pairing results in order
+    batch: List[Tuple[Optional[int], str]] = []  # results since the last call or message
+
+    def flush() -> None:
+        batch.sort(key=lambda r: float("inf") if r[0] is None else r[0])
+        material.extend(["result", position, text] for position, text in batch)
+        batch.clear()
+
     for event in thread.events:
         if event.is_turn:
+            flush()
             roles.append(event.role)  # type: ignore[arg-type]
             material.append([event.role, event.text])
         elif event.kind == TOOL_CALL:
-            calls += 1
+            flush()
             material.append(["call", event.tool_name or ""])
             if event.tool_call_id:
-                open_calls.add(event.tool_call_id)
+                open_calls[event.tool_call_id] = calls
+            else:
+                unnamed.append(calls)
+            calls += 1
         elif event.kind == TOOL_RESULT:
             results += 1
-            material.append(["result", event.text or ""])
-            open_calls.discard(event.tool_call_id)
+            if event.tool_call_id:
+                position = open_calls.pop(event.tool_call_id, None)
+            else:
+                position = unnamed.popleft() if unnamed else None
+            batch.append((position, event.text or ""))
+    flush()
     digest = hashlib.sha256(json.dumps(material, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
     return Skeleton(roles=roles, digest=digest, tool_calls=calls, tool_results=results, unpaired_tool_calls=len(open_calls))
 

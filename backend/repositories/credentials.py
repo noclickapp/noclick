@@ -27,6 +27,9 @@ from utils.analytics_events import Events
 from .organization import PRIMARY_ORG_SQL
 from .users import user_name_sql
 
+# Tries at providing one credential request (a refused key counts) before its link stops taking them.
+MAX_PROVISION_ATTEMPTS = 5
+
 
 def credential_access_predicate(require_edit: bool = False) -> str:
     """THE credential access boundary — owner, direct user-share, or org-share
@@ -35,7 +38,9 @@ def credential_access_predicate(require_edit: bool = False) -> str:
     Placeholders are fixed: $2 = user_id, $3 = org_id (nullable uuid). The
     credential id binds through ``c.id``, which the caller pins itself
     (``c.id = $1`` or ``c.id = ANY($1::uuid[])``). ``require_edit`` narrows
-    both share branches to edit-permission shares. Compose from this —
+    both share branches to edit-permission shares. The org branch holds only
+    for a member of that org, so an org id from anywhere (a client, a
+    workflow) grants nothing to someone outside it. Compose from this —
     never copy the predicate.
     """
     edit = "\n                AND permission = 'edit'" if require_edit else ""
@@ -54,6 +59,9 @@ def credential_access_predicate(require_edit: bool = False) -> str:
                 AND resource_id = c.id
                 AND target_type = 'organization'
                 AND target_org_id = $3{edit}
+            ) AND EXISTS (
+              SELECT 1 FROM organization_members
+              WHERE organization_id = $3 AND user_id = $2
             ))
           )"""
 
@@ -428,6 +436,42 @@ class CredentialsRepo:
             )
         return dict(row) if row else None
 
+    async def find_or_create_pipedrive_install(
+        self, owner_id: str, user_tier: str, credential_name: str,
+        encrypted_data: str, metadata: Dict[str, Any],
+    ) -> Tuple[Optional[Dict[str, Any]], bool, Optional[str]]:
+        """Reinstallation targets only this owner's exact provider identity.
+
+        Serialize concurrent installs of the same company/user so they cannot
+        consume duplicate credential slots. Reconnect writes still use the
+        guarded credential-update helper, never a raw token UPDATE here.
+        """
+        company_id = str(metadata['pipedrive_company_id'])
+        provider_user_id = str(metadata['pipedrive_user_id'])
+        async with self._pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute(
+                    'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+                    f'pipedrive-install:{owner_id}:{company_id}:{provider_user_id}',
+                )
+                existing = await conn.fetchrow(f"""
+                    SELECT id, name FROM credentials
+                    WHERE owner_id = $1::uuid
+                      AND credential_type = 'pipedrive_oauth'
+                      AND metadata->>'pipedrive_company_id' = $2
+                      AND metadata->>'pipedrive_user_id' = $3
+                      AND COALESCE(metadata->>'oauth_client_id', $4) = $4
+                      AND {listed_to_owner_sql('credentials')}
+                    ORDER BY created_at ASC LIMIT 1
+                """, owner_id, company_id, provider_user_id, metadata['oauth_client_id'])
+                if existing:
+                    return dict(existing), False, None
+                row, error = await create_credential_with_limit_check(
+                    conn, owner_id, user_tier, 'pipedrive_oauth',
+                    credential_name, encrypted_data, metadata,
+                )
+                return row, bool(row), error
+
     # ------------------------------------------------------------------
     # get_credential
     # ------------------------------------------------------------------
@@ -704,12 +748,20 @@ class CredentialsRepo:
                 if reuse_pending and credential_type != "phone_number":
                     await conn.execute("SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
                                        f"credential-request:{requester_id}:{target_email.lower()}:{credential_type}")
+                    # A request out of tries is replaced below (new token, tries reset), never handed out again.
                     row = await conn.fetchrow(
                         "SELECT * FROM credential_requests WHERE requester_id=$1::uuid "
                         "AND target_email=LOWER($2) AND credential_type=$3 "
-                        "AND status='pending' AND expires_at>now() FOR UPDATE",
-                        requester_id, target_email, credential_type,
+                        "AND status='pending' AND expires_at>now() AND provision_attempts<$4 FOR UPDATE",
+                        requester_id, target_email, credential_type, MAX_PROVISION_ATTEMPTS,
                     )
+                    if row and (row['metadata'] or {}).get('notify_requester') is False \
+                            and metadata.get('notify_requester') is not False:
+                        # Another surface asked for it too and wants its requester told: the email comes back.
+                        row = await conn.fetchrow(
+                            "UPDATE credential_requests SET metadata=metadata - 'notify_requester' "
+                            "WHERE id=$1 RETURNING *", row['id'],
+                        )
                 if credential_type == "phone_number":
                     # Keep a paid request's token stable while it is actionable or
                     # in flight. Re-minting a builder link must not reset a purchase.
@@ -817,14 +869,17 @@ class CredentialsRepo:
             "AND status='pending' AND expires_at>now() RETURNING id", token, user_id, quote,
         ) is not None
 
-    async def claim_phone_purchase(self, token: str, user_id: str, quote_id: str, monthly_credits: float):
+    async def claim_phone_purchase(self, token: str, user_id: str, quote_id: str, monthly_credits: float,
+                                   upfront_credits: float):
+        """Claim the quoted purchase while the number's price is still the quoted one."""
         row = await self._pool.fetchrow(
             """UPDATE credential_requests SET status='provisioning', provisioning_started_at=now(), provision_error=NULL
                WHERE token=$1 AND requester_id=$2::uuid AND credential_type='phone_number'
                  AND status='pending' AND expires_at>now() AND purchase_quote->>'id'=$3
                  AND (purchase_quote->>'expires_at')::timestamptz>now()
-                 AND (purchase_quote->>'monthly_credits')::numeric=$4 RETURNING *""",
-            token, user_id, quote_id, monthly_credits,
+                 AND (purchase_quote->>'monthly_credits')::numeric=$4
+                 AND (purchase_quote->>'upfront_credits')::numeric=$5 RETURNING *""",
+            token, user_id, quote_id, monthly_credits, upfront_credits,
         )
         return dict(row) if row else None
 
@@ -834,6 +889,13 @@ class CredentialsRepo:
                status=CASE WHEN $3 THEN 'pending' ELSE status END,
                purchase_quote=CASE WHEN $3 THEN NULL ELSE purchase_quote END
                WHERE id=$1::uuid AND status='provisioning'""", request_id, error, rejected,
+        )
+
+    async def set_phone_purchase_order(self, request_id: str, order_id: str):
+        """The claimed purchase's number is ordered, in the carrier's review: the request waits on the order."""
+        await self._pool.execute(
+            """UPDATE credential_requests SET purchase_quote = purchase_quote || jsonb_build_object('order_id', $2::text)
+               WHERE id=$1::uuid AND status='provisioning'""", request_id, order_id,
         )
 
     @staticmethod

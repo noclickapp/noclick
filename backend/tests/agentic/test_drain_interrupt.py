@@ -57,7 +57,7 @@ def _aret(value):
 def _make_request(cid: str) -> SimpleNamespace:
     """A WorkflowBuilderEditRequest stand-in carrying every field the finalizers
     read (conversation_id, request_id, edit_prompt, current_graph, target/selected
-    node ids, user_context)."""
+    node ids, user_context, n8n_workflow)."""
     return SimpleNamespace(
         conversation_id=cid,
         request_id="req-1",
@@ -66,6 +66,7 @@ def _make_request(cid: str) -> SimpleNamespace:
         target_node_ids=None,
         selected_node_id=None,
         user_context=None,
+        n8n_workflow=None,
     )
 
 

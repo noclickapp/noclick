@@ -10,6 +10,7 @@ import { useDrawer } from '~/hooks/useDrawer';
 import { useResizableDrawer } from '~/hooks/useResizableDrawer';
 import { useEmphasizedCutouts } from '~/hooks/useEmphasizedCutouts';
 import { BorderBeam } from '~/components/ui/BorderBeam';
+import { MENU_SURFACE } from '~/components/shell/menus';
 import { EmphasizedBackdrop } from './EmphasizedBackdrop';
 
 const DEFAULT_MAX_HEIGHT = 'calc(50vh - 2rem)';
@@ -48,7 +49,8 @@ export const ChatDrawer = memo(function ChatDrawer() {
         }
     }, [isOpen, isClosing]);
 
-    if (!content && !isOpen) {
+    // A docked drawer is drawn by DockedDrawer, in the flow above the composer.
+    if ((!content && !isOpen) || visibleDrawer?.options?.docked) {
         return null;
     }
 
@@ -77,12 +79,12 @@ export const ChatDrawer = memo(function ChatDrawer() {
         <div
             ref={drawerRef}
             className={cn(
-                'bg-popover/70 dark:bg-zinc-800/70 rounded-t-xl backdrop-blur-md flex flex-col',
-                isResizable ? 'fixed max-h-[90vh]' : 'absolute left-6 right-6 max-h-full bottom-0',
+                'flex flex-col',
+                isResizable ? 'fixed max-h-[90vh] rounded-t-xl bg-popover/70 backdrop-blur-md dark:bg-zinc-800/70' : cn('absolute bottom-2 left-3 right-3 max-h-full overflow-hidden rounded-2xl', MENU_SURFACE),
                 isEmphasized && 'z-[61]',
-                (isOpen && !isClosing && content) && 'border border-border dark:border-zinc-600/50 shadow-2xl',
-                (isOpen && !isClosing) ? 'translate-y-0 pointer-events-auto' : 'translate-y-[calc(100%+2px)] pointer-events-none',
-                !(isDragging && isResizable) && 'transition-transform duration-150 ease-out',
+                (isOpen && !isClosing && content && isResizable) && 'border border-border dark:border-zinc-600/50 shadow-2xl',
+                (isOpen && !isClosing) ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-3 opacity-0 pointer-events-none',
+                !(isDragging && isResizable) && 'transition-[transform,opacity] duration-150 ease-out',
                 (isDragging && isResizable) && 'select-none'
             )}
             role="dialog"
@@ -105,9 +107,7 @@ export const ChatDrawer = memo(function ChatDrawer() {
                             isDragging ? "bg-muted-foreground" : "bg-border dark:bg-zinc-600/50 group-hover:bg-muted-foreground/70 dark:group-hover:bg-zinc-500"
                         )} />
                     </div>
-                ) : (
-                    <div className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-border dark:bg-zinc-600/50 rounded-full z-10" />
-                )
+                ) : null
             )}
 
             {/* Content */}
@@ -155,4 +155,11 @@ export const ChatDrawer = memo(function ChatDrawer() {
             {drawer}
         </>
     );
+});
+
+/** The visible drawer when it's docked: in the flow just above the composer, where you'd answer anyway. */
+export const DockedDrawer = memo(function DockedDrawer() {
+    const { visibleDrawer } = useDrawer();
+    if (!visibleDrawer?.options?.docked || visibleDrawer.isClosing) return null;
+    return <div className="tl-open px-3 pb-1.5">{visibleDrawer.content}</div>;
 });

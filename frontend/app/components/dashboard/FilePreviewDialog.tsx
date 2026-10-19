@@ -1,16 +1,19 @@
-// In-place preview for a dashboard file: workflow resources render through the
-// shared ResourceRenderer (image/video/audio/pdf/dataset/markdown/csv/text by
-// mime), agent-workspace files through their signed URL. Download is always a
-// click away; nothing opens a new tab unless the type has no inline preview.
+// In-place preview for a file: workflow resources render through the shared
+// ResourceRenderer (image/video/audio/pdf/dataset/markdown/csv/text by mime),
+// agent-workspace files through their signed URL. Download is always a click
+// away; nothing opens a new tab unless the type has no inline preview. The body
+// is its own component so a resource's detail page shows the same preview inline.
 import { useEffect, useState } from 'react';
-import { Download, ExternalLink, FileText } from 'lucide-react';
+import { toast } from 'sonner';
+import { Download, ExternalLink, FileText, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';
 import { ResourceRenderer, isWidePreview } from '~/components/resource/ResourceRenderer';
-import { MarkdownRenderer } from '~/components/chat/MarkdownRenderer';
+import { MarkdownRenderer } from '~/components/chat/MarkdownRendererLazy';
 import { workspaceFileUrl } from '~/hooks/useAgentWorkspaceFiles';
+import { downloadTableCsv } from '~/lib/tableCsv';
 import type { ResourceInfo } from '~/types/socket-events.generated';
 import { cn } from '~/lib/utils';
-import { dateLabel, fmtBytes } from '~/components/dashboard/primitives';
+import { countOf, dateLabel, fmtBytes } from '~/components/dashboard/primitives';
 import type { FileEntry, FileSource } from '~/components/dashboard/types';
 
 const MAX_TEXT_PREVIEW_BYTES = 512 * 1024;
@@ -21,7 +24,7 @@ export interface FilePreviewRequest {
 }
 
 /** The ResourceInfo shape the shared renderer keys on (mime, type, name, id). */
-function toResourceInfo(file: FileEntry, source: FileSource): ResourceInfo {
+export function toResourceInfo(file: FileEntry, source: FileSource): ResourceInfo {
     return {
         id: file.resourceId ?? '',
         owner_id: '',
@@ -90,18 +93,44 @@ function WorkspacePreview({ file }: { file: FileEntry }) {
     );
 }
 
+/** The preview itself: the shared renderer for resources, the signed URL for workspace files. */
+export function FilePreviewBody({ file, source }: { file: FileEntry; source: FileSource }) {
+    return source.kind === 'resources' ? <ResourceRenderer resource={toResourceInfo(file, source)} url={file.url ?? undefined} /> : <WorkspacePreview file={file} />;
+}
+
+/** Where a file downloads from: its resource URL, or its workspace file as an attachment. */
+export function fileDownloadHref(file: FileEntry, source: FileSource): string | undefined {
+    if (source.kind === 'resources') return file.url ?? undefined;
+    return file.urlPath ? workspaceFileUrl(file.urlPath, { download: true }) : undefined;
+}
+
+/** Saves a table as CSV, every row of it. */
+export function DownloadCsvButton({ file, className }: { file: FileEntry; className?: string }) {
+    const [busy, setBusy] = useState(false);
+    if (!file.resourceId) return null;
+    const save = async () => {
+        setBusy(true);
+        try {
+            await downloadTableCsv(file.resourceId!, file.path);
+        } catch (err) {
+            toast.error(`Download failed: ${err instanceof Error ? err.message : String(err)}`);
+        } finally {
+            setBusy(false);
+        }
+    };
+    return (
+        <button type="button" onClick={() => void save()} disabled={busy} className={className}>
+            {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />} Download CSV
+        </button>
+    );
+}
+
 export function FilePreviewDialog({ request, onClose, onOpenWorkflow }: { request: FilePreviewRequest | null; onClose: () => void; onOpenWorkflow?: (source: FileSource) => void }) {
     const file = request?.file;
     const source = request?.source;
     const isResource = source?.kind === 'resources';
     const resource = file && source && isResource ? toResourceInfo(file, source) : null;
-    const downloadHref = file
-        ? isResource
-            ? file.url ?? undefined
-            : file.urlPath
-              ? workspaceFileUrl(file.urlPath, { download: true })
-              : undefined
-        : undefined;
+    const downloadHref = file && source ? fileDownloadHref(file, source) : undefined;
     const wide = resource ? isWidePreview(resource) : file?.kind === 'image' || file?.kind === 'video';
     return (
         <Dialog open={!!request} onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -113,13 +142,16 @@ export function FilePreviewDialog({ request, onClose, onOpenWorkflow }: { reques
                     </DialogTitle>
                     {file && source && (
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                            <span>{file.rows != null ? `${file.rows} rows` : fmtBytes(file.size)}</span>
+                            <span>{file.rows != null ? countOf(file.rows, 'row') : fmtBytes(file.size)}</span>
                             <span>{dateLabel(file.mtime)}</span>
                             <span className="truncate">{source.label}</span>
                             {downloadHref && (
-                                <a href={downloadHref} download target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-foreground/80 transition-colors hover:text-foreground">
+                                <a href={downloadHref} download={file.path.slice(file.path.lastIndexOf('/') + 1)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-foreground/80 transition-colors hover:text-foreground">
                                     <Download className="h-3.5 w-3.5" /> Download
                                 </a>
+                            )}
+                            {file.resourceType === 'dataset' && (
+                                <DownloadCsvButton file={file} className="inline-flex items-center gap-1 text-foreground/80 transition-colors hover:text-foreground disabled:opacity-60" />
                             )}
                             {source.workflow && onOpenWorkflow && (
                                 <button type="button" onClick={() => onOpenWorkflow(source)} className="inline-flex items-center gap-1 text-foreground/80 transition-colors hover:text-foreground">
@@ -130,7 +162,7 @@ export function FilePreviewDialog({ request, onClose, onOpenWorkflow }: { reques
                     )}
                 </DialogHeader>
                 <div className="scrollbar-subtle min-h-0 flex-1 overflow-y-auto">
-                    {file && source && (resource ? <ResourceRenderer resource={resource} url={file.url ?? undefined} /> : <WorkspacePreview file={file} />)}
+                    {file && source && <FilePreviewBody file={file} source={source} />}
                 </div>
             </DialogContent>
         </Dialog>

@@ -70,11 +70,70 @@ class TestValidateLocalPart:
         with pytest.raises(RuntimeError, match="INBOUND_EMAIL_DOMAIN"):
             build_email_address("invoices")
 
-    def test_local_install_rejects_hosted_domain_even_if_set(self, monkeypatch):
+    @pytest.mark.parametrize("hosted", ["noclick.app", "noclick.email"])
+    def test_local_install_rejects_hosted_domain_even_if_set(self, monkeypatch, hosted):
         monkeypatch.setenv("NOCLICK_LOCAL", "1")
-        monkeypatch.setenv("INBOUND_EMAIL_DOMAIN", "noclick.app")
+        monkeypatch.setenv("INBOUND_EMAIL_DOMAIN", hosted)
         with pytest.raises(RuntimeError, match="INBOUND_EMAIL_DOMAIN"):
             build_email_address("invoices")
+
+
+class TestMailDomains:
+    """``inbound_email_domains``: the one rule for where new addresses go and
+    which domains the inbound route takes as the installation's own."""
+
+    @pytest.fixture
+    def platform(self, monkeypatch):
+        from utils import email_reservation_manager
+
+        monkeypatch.delenv("INBOUND_EMAIL_DOMAIN", raising=False)
+        monkeypatch.delenv("NOCLICK_LOCAL", raising=False)
+        monkeypatch.setattr(email_reservation_manager, "_platform_mail", ((), None))
+        email_reservation_manager.register_mail_domains("Mail.New.Test", "mail.old.test")
+
+    def test_a_platform_mints_on_its_first_domain_and_owns_them_all(self, platform):
+        from utils.email_reservation_manager import address_domains, get_inbound_email_domain, inbound_email_domains
+
+        assert inbound_email_domains() == ("mail.new.test", "mail.old.test")
+        assert get_inbound_email_domain() == "mail.new.test"
+        assert build_email_address("invoices") == "invoices@mail.new.test"
+        # A name is one address across the installation's domains, and only them.
+        assert address_domains("mail.old.test") == ["mail.new.test", "mail.old.test"]
+        assert address_domains("mail.acme.test") == ["mail.acme.test"]
+
+    def test_a_configured_domain_is_minted_on_and_the_platforms_still_deliver(self, platform, monkeypatch):
+        from utils import email_reservation_manager
+        from utils.email_reservation_manager import inbound_email_domains
+
+        monkeypatch.setenv("INBOUND_EMAIL_DOMAIN", " @Mail.Self.Test ")
+        assert inbound_email_domains() == ("mail.self.test", "mail.new.test", "mail.old.test")
+        monkeypatch.setenv("INBOUND_EMAIL_DOMAIN", "mail.old.test")
+        assert inbound_email_domains() == ("mail.old.test", "mail.new.test")
+        # Without a platform's domains, the configured one is the only one.
+        monkeypatch.setattr(email_reservation_manager, "_platform_mail", ((), None))
+        assert inbound_email_domains() == ("mail.old.test",)
+
+    def test_a_local_install_never_takes_a_platforms_domains(self, platform, monkeypatch):
+        from utils.email_reservation_manager import inbound_email_domains
+
+        monkeypatch.setenv("NOCLICK_LOCAL", "1")
+        assert inbound_email_domains() == ()
+
+    def test_sender_identities_stay_on_the_registered_sender_domain(self, platform, monkeypatch):
+        """Inboxes move with the minting domain; a sender identity (notifications@) does not."""
+        from utils import email_reservation_manager
+        from utils.email_reservation_manager import sender_email_domain
+
+        assert sender_email_domain() == "mail.new.test"  # none registered: the minting domain
+        email_reservation_manager.register_mail_domains("mail.new.test", "mail.old.test", sender="Mail.Old.Test")
+        assert (sender_email_domain(), build_email_address("invoices")) == ("mail.old.test", "invoices@mail.new.test")
+        monkeypatch.setenv("INBOUND_EMAIL_DOMAIN", "mail.self.test")
+        assert sender_email_domain() == "mail.old.test"
+        # A local install never takes a platform's, so its senders use its one domain.
+        monkeypatch.setenv("NOCLICK_LOCAL", "1")
+        assert sender_email_domain() == "mail.self.test"
+        with pytest.raises(ValueError, match="sender domain"):
+            email_reservation_manager.register_mail_domains("mail.new.test", sender="mail.else.test")
 
 
 # ---------------------------------------------------------------------------
@@ -258,10 +317,11 @@ class TestInboundRoute:
         monkeypatch.setattr(email_channel, "receive", received)
         monkeypatch.setattr(email_routes, "get_native_pool", lambda: "pool")
         config = {"id": uuid4(), "user_id": UUID(int=1), "workflow_id": None, "node_id": None,
-                  "is_active": True, "kind": "coordinator"}
+                  "is_active": True, "kind": "coordinator", "local_part": "ada", "domain": INBOUND_DOMAIN}
         with patch.object(email_routes, "get_email_config", AsyncMock(return_value=config)):
-            resp = self._post(email_client, {"to": f"ada@{INBOUND_DOMAIN}", "from": "a@b.com", "subject": "hi"})
+            resp = self._post(email_client, {"to": f"Ada@{INBOUND_DOMAIN}", "from": "a@b.com", "subject": "hi"})
         assert resp.status_code == 200 and resp.json()["triggered"] is True
+        # The coordinator hears it at the address its reservation holds.
         args = received.await_args.args
         assert args[1:3] == ("ada", INBOUND_DOMAIN) and args[3]["subject"] == "hi"
 
@@ -395,6 +455,51 @@ class TestInboundRoute:
         monkeypatch.setenv("NOCLICK_LOCAL", "1")
         monkeypatch.delenv("INBOUND_EMAIL_DOMAIN")
         resp = self._post(email_client, {"to": "x@noclick.app", "from": "a@b.com"})
+        assert resp.status_code == 503
+
+
+class TestSendingEventsRoute:
+    """The relay forwards each Email Sending lifecycle event on its own; it goes to the coordinator's receipts,
+    and only an event that couldn't be applied is answered with an error, so the relay retries it alone."""
+
+    def _post(self, client, body, secret="test-secret", signature=None):
+        import hashlib
+        import hmac
+
+        raw = json.dumps(body)
+        sig = signature or hmac.new(secret.encode(), raw.encode(), hashlib.sha256).hexdigest()
+        return client.post("/email/events", content=raw, headers={
+            "Authorization": f"Bearer {secret}", "X-Email-Signature": sig, "Content-Type": "application/json"})
+
+    def test_only_the_relay_is_heard(self, email_client, monkeypatch):
+        from coder.coordinator import email_channel
+
+        applied = AsyncMock()
+        monkeypatch.setattr(email_channel, "apply_delivery_event", applied)
+        assert self._post(email_client, {}, secret="wrong").status_code == 401
+        assert self._post(email_client, {}, signature="0" * 64).status_code == 401
+        applied.assert_not_awaited()
+
+    def test_an_event_is_applied_and_answered_with_its_outcome(self, email_client, monkeypatch):
+        from coder.coordinator import email_channel
+
+        applied = AsyncMock(return_value="moved")
+        monkeypatch.setattr(email_channel, "apply_delivery_event", applied)
+        monkeypatch.setattr(email_routes, "get_native_pool", lambda: "pool")
+        event = {"type": "cf.email.sending.message.delivered", "payload": {"messageId": "m1"}}
+        resp = self._post(email_client, event)
+        assert resp.status_code == 200 and resp.json() == {"outcome": "moved"}
+        assert applied.await_args.args == ("pool", event)
+        # Something that isn't an event is answered (and so acked), never retried.
+        assert self._post(email_client, ["not", "an", "event"]).json() == {"outcome": "ignored"}
+        assert applied.await_count == 1
+
+    def test_an_event_that_could_not_be_applied_is_refused_for_a_retry(self, email_client, monkeypatch):
+        from coder.coordinator import email_channel
+
+        monkeypatch.setattr(email_channel, "apply_delivery_event", AsyncMock(side_effect=ConnectionError("db down")))
+        monkeypatch.setattr(email_routes, "get_native_pool", lambda: "pool")
+        resp = self._post(email_client, {"type": "cf.email.sending.message.delivered", "payload": {}})
         assert resp.status_code == 503
 
 

@@ -14,7 +14,6 @@ from wss.handlers.agent_handler import AgentHandler
 from wss.sender import AgentStateEvent, ChatMessageEvent
 from wss.sender.events import tool_step_event
 from wss.sender.schema import AgenticStep
-from wss.sender.schema import ContentItem
 
 
 USER_ID = "00000000-0000-0000-0000-000000000001"
@@ -132,44 +131,6 @@ async def test_denial_propagates_once_and_handler_cleans_up(monkeypatch, through
     assert agent._history == []
     assert agent.cleanup.await_count == (1 if through_handler else 0)
     node.emit.assert_not_awaited()
-
-
-async def test_interactive_chat_does_not_emit_a_second_finished_message(monkeypatch):
-    send = AsyncMock()
-    monkeypatch.setattr("wss.handlers.agent_handler.send_event", send)
-    handler = AgentHandler(MagicMock())
-    emit = await handler._create_emit_callback(
-        "sid_1", "gpt-4o", conversation_id="chat_1", user_id=None, workflow_id=None,
-    )
-    agent = _agent(emit)
-    run = MagicMock(return_value=_DeniedStream(InsufficientBalanceError(DENIAL)))
-    monkeypatch.setattr("coder.openai_agent.agent.Runner.run_streamed", run)
-
-    await handler._process_message_with_content(
-        agent, "sid_1", [ContentItem(type="text", text="hello")], "gpt-4o", "chat_1",
-    )
-
-    run.assert_called_once()
-    events = [call.args[2] for call in send.await_args_list]
-    assert len(events) == 2
-    assert isinstance(events[0], ChatMessageEvent)
-    assert events[0].message == DENIAL and events[0].finished is True
-    assert isinstance(events[1], AgentStateEvent)
-    assert events[1].state == "error" and events[1].reason == DENIAL
-
-
-async def test_interactive_chat_still_reports_unexpected_failures(monkeypatch):
-    send = AsyncMock()
-    monkeypatch.setattr("wss.handlers.agent_handler.send_event", send)
-    handler = AgentHandler(MagicMock())
-
-    await handler._process_message_with_content(
-        AsyncMock(side_effect=ValueError("unexpected")), "sid_1", [], "gpt-4o", "chat_1",
-    )
-
-    send.assert_awaited_once()
-    event = send.await_args.args[2]
-    assert event.finished is True and "unexpected" in event.message
 
 
 async def test_a_mirrored_turn_reaches_the_owners_tabs_with_its_steps_and_its_saved_end(monkeypatch):

@@ -66,6 +66,16 @@ def _stripe_token_from_credential(credential: Dict[str, Any]) -> Optional[str]:
     return cred.get("api_key") or cred.get("access_token")
 
 
+def _error_message(response: httpx.Response) -> str:
+    """What Stripe said about a failed request: its error's message, else the body as it came."""
+    try:
+        payload = response.json()
+    except ValueError:  # not JSON: a proxy's page, say
+        return response.text
+    error = payload.get("error") if isinstance(payload, dict) else None
+    return str((error.get("message") if isinstance(error, dict) else error) or response.text)
+
+
 # Stripe amounts are integer minor units except in zero-decimal currencies.
 _ZERO_DECIMAL_CURRENCIES = frozenset(
     {"bif", "clp", "djf", "gnf", "jpy", "kmf", "krw", "mga", "pyg", "rwf", "ugx", "vnd", "vuv", "xaf", "xof", "xpf"}
@@ -2682,18 +2692,16 @@ class StripeNode(ExternalWebhookTriggerMixin, WorkflowNode):
         params: List[Tuple[str, str]] = [("limit", "100")]
         if page_token:
             params.append(("starting_after", page_token))
-        try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                response = await client.get(
-                    f"{STRIPE_API_BASE}{endpoint}",
-                    headers={"Authorization": f"Bearer {token}"},
-                    params=params,
-                )
-                response.raise_for_status()
-                body = response.json() or {}
-        except Exception as e:
-            logger.warning(f"[StripeNode] load_field_options({field_name}) failed: {e}")
-            return {"options": [], "next_page_token": None}
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.get(
+                f"{STRIPE_API_BASE}{endpoint}",
+                headers={"Authorization": f"Bearer {token}"},
+                params=params,
+            )
+        # Stripe's refusal in its own words: an empty list would read as a working key with nothing in it.
+        if response.status_code >= 400:
+            raise ValueError(f"{_error_message(response)} (HTTP {response.status_code})")
+        body = response.json() or {}
 
         items = body.get("data") or []
         options = []

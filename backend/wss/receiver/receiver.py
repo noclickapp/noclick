@@ -554,6 +554,7 @@ class SocketIOProxy:
         from wss.handlers.ypy_handler import YPYHandler
         from wss.handlers.cache_valtio_handler import CacheValtioHandler
         from wss.handlers.usage_dashboard_handler import UsageDashboardHandler
+        from wss.handlers.usage_page_handler import UsagePageHandler
         from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
         from wss.handlers.workflow_handler import WorkflowHandler
         from wss.handlers.workflow_mcp_handler import WorkflowMCPHandler
@@ -602,6 +603,7 @@ class SocketIOProxy:
         agent_handler = AgentHandler(self.sio)
         # Initialize usage dashboard handler (API only)
         usage_dashboard_handler = UsageDashboardHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
+        usage_page_handler = UsagePageHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize workflow execution handler (API only)
         workflow_execution_handler = WorkflowExecutionHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize workflow handler (API only)
@@ -768,6 +770,7 @@ class SocketIOProxy:
 
             Handler.CACHE_VALTIO: cache_valtio_handler,
             Handler.USAGE_DASHBOARD: usage_dashboard_handler,
+            Handler.USAGE_PAGE: usage_page_handler,
             Handler.WORKFLOW_EXECUTION: workflow_execution_handler,
             Handler.WORKFLOW: workflow_handler,
             Handler.WORKFLOW_MCP: workflow_mcp_handler,

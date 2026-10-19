@@ -87,6 +87,7 @@ import utils.r2_cloudflare  # noqa: F401
 # or `wss.receiver`, so it cannot cycle.
 import nodes.agent.handlers.llm  # noqa: F401
 from socketio.exceptions import ConnectionRefusedError as SocketIOConnectionError
+from utils.async_helpers import spawn
 from utils.auth import verify_socket_token
 from utils.slack import (
     login_notifications_enabled,
@@ -267,6 +268,8 @@ async def app_lifespan(app: FastAPI):
     try:
         yield
     finally:
+        # Before anything drains, so no worker claims work it can't finish.
+        await run_shutdown_hooks("stop")
         coordinator_worker.cancel()
         await asyncio.gather(coordinator_worker, return_exceptions=True)
         builder_worker.cancel()
@@ -381,6 +384,10 @@ fastapi_app.include_router(models_router)
 # Register credential request routes for external credential provision
 from utils.credential_request_routes import router as credential_request_router
 fastapi_app.include_router(credential_request_router)
+
+# A phone number's requirement documents, posted to the signed link the buy flow minted (/api/phone-numbers/documents).
+from utils.phone_purchase_routes import documents_router as phone_documents_router
+fastapi_app.include_router(phone_documents_router)
 
 # Builder input bridge (/api/builder-bridge/{id}) — public capability links for
 # answering a parked builder run's questions without an account.
@@ -575,22 +582,9 @@ async def connect(sid, environ, auth):
             logger.warning(f"Authentication rejected for {sid}: {payload.get('reason', payload['message'])}")
             raise SocketIOConnectionError(payload) from verification_error
 
-        # Login notifications are an operator opt-in. Gate before even
-        # extracting the address so a default self-hosted login cannot trigger
-        # geo-IP work or log proxy/client address headers.
-        slack_result = None
-        if login_notifications_enabled():
-            client_ip = extract_client_ip(environ)
-            slack_result = await send_login_notification(user_id, user_data, client_ip)
-        slack_thread_ts = slack_result.get('ts') if slack_result else None
-        slack_channel = slack_result.get('channel') if slack_result else None
-
-        # Store user info in socket session (including slack thread for replies)
         session_data = {
             'user_id': user_id,
             'user_data': user_data,
-            'slack_thread_ts': slack_thread_ts,  # Thread for activity notifications
-            'slack_channel': slack_channel,  # Channel where login was posted
         }
         # Platform-side session state (analytics identity, admin
         # impersonation) is added by whatever registered a connect hook.
@@ -599,6 +593,15 @@ async def connect(sid, environ, auth):
         await sio.save_session(sid, session_data)
 
         await socketio_proxy.setup_user(sid)
+
+        # Login notifications are an operator opt-in. Gate before even
+        # extracting the address so a default self-hosted login cannot trigger
+        # geo-IP work or log proxy/client address headers.
+        if login_notifications_enabled():
+            spawn(
+                _post_login_notification(sid, user_id, user_data, extract_client_ip(environ)),
+                name=f"slack-login-notification:{sid}",
+            )
 
         logger.info(f"Client authenticated and connected: {sid} (user_id: {session_data['user_id']}, pid={os.getpid()})")
         return True
@@ -613,6 +616,26 @@ async def connect(sid, environ, auth):
         logger.error(f"Authentication failed for {sid}: {str(e)}")
         logger.error(f"Formatted Traceback: {traceback.format_exc()}")
         raise SocketIOConnectionError({'message': 'Authentication failed', 'detail': 'internal_error'}) from e
+
+
+async def _post_login_notification(sid, user_id, user_data, client_ip):
+    """Post the login to Slack after the handshake, then thread this socket's
+    activity under it. Activity before it lands posts unthreaded."""
+    result = await send_login_notification(user_id, user_data, client_ip)
+    if not result:
+        return
+    if not sio.manager.is_connected(sid, '/'):
+        # Disconnect ran before the post landed, so it found no thread to close.
+        await mark_session_complete(result.get('channel'), result.get('ts'))
+        return
+    # Read the session now, not at connect: hooks and update_auth save it too.
+    session = await sio.get_session(sid)
+    if str(session.get('real_user_id') or session.get('user_id') or '') != user_id:
+        return
+    session['slack_thread_ts'] = result.get('ts')  # Thread for activity notifications
+    session['slack_channel'] = result.get('channel')  # Channel where login was posted
+    await sio.save_session(sid, session)
+
 
 @sio.event
 async def disconnect(sid):
@@ -643,7 +666,6 @@ async def disconnect(sid):
             logger.error(f"Error in disconnect handler: {str(e)}")
             logger.error(f"Formatted Traceback: {traceback.format_exc()}")
 
-    from utils.async_helpers import spawn
     spawn(_cleanup(), name=f"socket-disconnect-cleanup:{sid}")
 
 @sio.event

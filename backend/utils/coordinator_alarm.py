@@ -32,12 +32,10 @@ def alarm_time(alarm_type, delay_or_time, timezone_name="UTC"):
         due = next_cron(delay_or_time, timezone_name, now)
         # Reject obvious high-frequency schedules up front. The durable
         # admission limiter also enforces spacing across *all* alarm series.
-        previous = due
-        for _ in range(32):
-            following = next_cron(delay_or_time, timezone_name, previous)
-            if (following - previous).total_seconds() < MIN_REPEAT_SECONDS:
-                raise ValueError("Recurring coordinator alarms must be at least 15 minutes apart.")
-            previous = following
+        from utils.cron_timing import shortest_gap
+
+        if shortest_gap(delay_or_time, timezone_name, after=now) < MIN_REPEAT_SECONDS:
+            raise ValueError("Recurring coordinator alarms must be at least 15 minutes apart.")
     else:
         raise ValueError("alarm_type must be countdown, datetime or cron.")
     minimum = now if alarm_type == "cron" else now + timedelta(seconds=60)

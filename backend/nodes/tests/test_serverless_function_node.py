@@ -14,7 +14,9 @@ from nodes.serverless_function_node import (
     JavaScriptRuntimeConfig,
     FunctionInput,
     HardwareConfig,
+    GPU_MAX_COUNT,
     GPU_OPTIONS,
+    GPU_TYPE_SPELLINGS,
     REGION_OPTIONS,
 )
 
@@ -387,6 +389,96 @@ class TestConfigModels:
         assert config.gpu_count == 2
         assert config.cpu_cores == 4.0
         assert config.memory_mb == 8192
+
+    def test_gpu_caps_match_the_hosted_runtime(self):
+        """The most GPUs of each type one hosted sandbox attaches; the
+        provider refuses A10G:5 and H100:9 at create."""
+        assert GPU_MAX_COUNT == {"T4": 8, "L4": 8, "A10G": 4, "A100-40GB": 8, "A100-80GB": 8, "H100": 8}
+        assert set(GPU_MAX_COUNT) == {o["value"] for o in GPU_OPTIONS} - {"none"}
+
+    @pytest.mark.parametrize("gpu_type, gpu_count", [("A10G", 4), ("H100", 8), ("T4", 1), ("none", 8)])
+    def test_hardware_config_takes_counts_the_type_allows(self, gpu_type, gpu_count):
+        assert HardwareConfig(gpu_type=gpu_type, gpu_count=gpu_count).gpu_count == gpu_count
+
+    @pytest.mark.parametrize("gpu_type, gpu_count", [("A10G", 5), ("H100", 9)])
+    def test_hardware_config_refuses_more_gpus_than_the_type_takes(self, gpu_type, gpu_count):
+        with pytest.raises(ValueError, match="at most|less than or equal"):
+            HardwareConfig(gpu_type=gpu_type, gpu_count=gpu_count)
+
+    def test_a10g_cap_is_in_the_schema_the_form_validates(self):
+        schema = HardwareConfig.model_json_schema()
+        assert schema["allOf"] == [{
+            "if": {"properties": {"gpu_type": {"const": "A10G"}}, "required": ["gpu_type"]},
+            "then": {"properties": {"gpu_count": {"maximum": 4}}},
+        }]
+        assert schema["properties"]["gpu_count"]["maximum"] == 8
+
+    def test_a_too_large_count_fails_node_validation(self):
+        result = ServerlessFunctionNode.validate_config({"config": {
+            "operation": "run_python_function", "function_body": "return 1",
+            "hardware": {"gpu_type": "A10G", "gpu_count": 5},
+        }})
+        assert not result["valid"]
+        assert "A10G takes at most 4 GPUs" in " ".join(result["errors"])
+
+    def test_timeout_floor_is_the_hosted_runtimes(self):
+        """The hosted runtime refuses a sandbox timeout under 10 seconds."""
+        assert PythonRuntimeConfig(function_body="return 1", timeout_seconds=10).timeout_seconds == 10
+        with pytest.raises(ValueError):
+            PythonRuntimeConfig(function_body="return 1", timeout_seconds=9)
+
+    # Every gpu_type value stored on a Python node in production, plus a
+    # lowercase type: the unambiguous ones become the offered type, the rest
+    # are refused with the list of types (never guessed).
+    @pytest.mark.parametrize("stored, offered", [
+        ("T4", "T4"),
+        ("NVIDIA_T4", "T4"),
+        ("CPU Only", "none"),
+        ("a10g", "A10G"),
+        ("NVIDIA H100", "H100"),
+        ("NVIDIA A100 (80GB)", "A100-80GB"),
+    ])
+    def test_unambiguous_gpu_spellings_become_the_offered_type(self, stored, offered):
+        assert HardwareConfig(gpu_type=stored).gpu_type == offered
+
+    @pytest.mark.parametrize("stored", ["NVIDIA", "GPU", "NVIDIA A100", "NVIDIA V100", "A100", "V100", "TPU"])
+    def test_ambiguous_or_unoffered_gpu_types_are_refused(self, stored):
+        with pytest.raises(ValueError, match="Use one of: none \\(CPU only\\), T4, L4, A10G, A100-40GB, A100-80GB, H100"):
+            HardwareConfig(gpu_type=stored)
+
+    def test_every_option_value_and_label_names_its_own_type(self):
+        for option in GPU_OPTIONS:
+            assert GPU_TYPE_SPELLINGS[option["value"].lower()] == option["value"]
+            assert GPU_TYPE_SPELLINGS[option["label"].lower()] == option["value"]
+
+    def test_a_reference_is_left_for_the_run_to_resolve(self):
+        assert HardwareConfig(gpu_type="{{ $('pick').gpu }}").gpu_type == "{{ $('pick').gpu }}"
+
+    def test_a_normalized_type_still_meets_its_gpu_cap(self):
+        with pytest.raises(ValueError, match="A10G takes at most 4 GPUs"):
+            HardwareConfig(gpu_type="a10g", gpu_count=5)
+
+    def test_saved_config_validation_names_the_offered_types(self):
+        result = ServerlessFunctionNode.validate_saved_config({
+            "operation": "run_python_function", "function_body": "return 1",
+            "hardware": {"gpu_type": "NVIDIA V100", "gpu_count": 1},
+        })
+        assert not result["valid"]
+        assert "GPU type 'NVIDIA V100' isn't one offered here" in " ".join(result["errors"])
+
+    def test_the_run_parses_a_legacy_spelling_and_refuses_an_unknown_one(self):
+        from nodes.core.base import ConfigValidationError
+
+        parsed = ServerlessFunctionNode.parse_config({"config": {
+            "operation": "run_python_function", "function_body": "return 1",
+            "hardware": {"gpu_type": "NVIDIA_T4", "gpu_count": 1},
+        }})
+        assert parsed.config.hardware.gpu_type == "T4"
+        with pytest.raises(ConfigValidationError, match="NVIDIA"):
+            ServerlessFunctionNode.parse_config({"config": {
+                "operation": "run_python_function", "function_body": "return 1",
+                "hardware": {"gpu_type": "NVIDIA", "gpu_count": 1},
+            }})
 
     def test_python_config_defaults(self):
         """Test PythonRuntimeConfig defaults."""

@@ -11,27 +11,19 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
     Share2,
-    Users,
     Building2,
     Trash2,
     Loader2,
     Check,
     ChevronDown,
     Clock,
-    AlertCircle,
-    Globe,
     Link,
     Copy,
 } from 'lucide-react';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from '~/components/ui/dialog';
-import { Button } from '~/components/ui/button';
+import { ShellDialog } from '~/components/shell/ShellDialog';
+import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '~/components/shell/buttons';
+import { FIELD, FIELD_LABEL } from '~/components/shell/fields';
 import { Switch } from '~/components/ui/switch';
-import { Input } from '~/components/ui/input';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -74,6 +66,16 @@ interface ShareDialogProps {
     /** Type of resource (workflow, workflow_folder, database, credential, saved_output, or skill) */
     resourceType: 'workflow' | 'workflow_folder' | 'database' | 'credential' | 'saved_output' | 'skill';
 }
+
+/** What each resource is called where people see it. */
+const RESOURCE_NOUNS: Record<ShareDialogProps['resourceType'], string> = {
+    workflow: 'automation',
+    workflow_folder: 'folder',
+    database: 'database',
+    credential: 'account',
+    saved_output: 'saved output',
+    skill: 'skill',
+};
 
 export function ShareDialog({
     isOpen,
@@ -379,150 +381,103 @@ export function ShareDialog({
     }, []);
 
     return (
-    <>
-        <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="bg-sunken border-border text-foreground max-w-md p-6">
-                <DialogHeader className="pb-4">
-                    <DialogTitle className="text-xl text-foreground flex items-center gap-2">
-                        <Share2 className="h-5 w-5" />
-                        Share {{ workflow: 'Workflow', workflow_folder: 'Folder', database: 'Database', credential: 'Credential', saved_output: 'Saved Output', skill: 'Skill' }[resourceType]}
-                    </DialogTitle>
-                    <div className="text-sm text-muted-foreground pt-1.5">
-                        {resource?.name || 'Resource'}
-                    </div>
-                </DialogHeader>
+        <>
+            <ShellDialog
+                open={isOpen}
+                onOpenChange={onOpenChange}
+                size="sm"
+                title={`Share ${RESOURCE_NOUNS[resourceType]}`}
+                description={<span className="block truncate">{resource?.name || 'Resource'}</span>}
+                mark={<Share2 className="h-5 w-5" strokeWidth={1.75} />}
+                footer={
+                    <button type="button" onClick={() => onOpenChange(false)} className={BUTTON_PRIMARY}>
+                        Done
+                    </button>
+                }
+            >
+                {error && (
+                    <p role="alert" className="mb-3 text-[13px] text-red-600 dark:text-red-400">
+                        {error}
+                    </p>
+                )}
 
-                <div className="space-y-6">
-                    {/* Error display */}
-                    {error && (
-                        <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/50 rounded-lg text-red-600 dark:text-red-400 text-sm">
-                            <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                            <span>{error}</span>
-                        </div>
-                    )}
-
-                    {/* Public link sharing (workflows only) */}
-                    {resourceType === 'workflow' && (
-                        <div className="space-y-3">
-                            <div className="flex items-center justify-between p-3 rounded-lg bg-card/50 border border-border">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center">
-                                        <Globe className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                                    </div>
-                                    <div>
-                                        <div className="text-sm font-medium text-foreground">
-                                            Public access
-                                        </div>
-                                        <div className="text-xs text-muted-foreground dark:text-zinc-500">
-                                            Anyone with the link can view
-                                        </div>
-                                    </div>
-                                </div>
-                                <Switch
-                                    checked={isPublic}
-                                    onCheckedChange={handlePublicToggle}
-                                    disabled={togglingPublic}
-                                />
+                {/* Public link sharing (workflows only) */}
+                {resourceType === 'workflow' && (
+                    <div className="mb-4 border-b border-border pb-4 dark:border-foreground/[0.08]">
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="min-w-0">
+                                <div className="text-[14px] font-medium text-foreground">Public access</div>
+                                <div className="mt-0.5 text-[12.5px] text-muted-foreground">Anyone with the link can view</div>
                             </div>
+                            <Switch
+                                checked={isPublic}
+                                onCheckedChange={handlePublicToggle}
+                                disabled={togglingPublic}
+                                aria-label="Public access"
+                            />
+                        </div>
 
-                            {/* Public URL display when enabled */}
-                            {isPublic && publicUrl && (
-                                <div className="flex items-center gap-2">
-                                    <div className="flex-1 relative">
-                                        <Input
-                                            value={publicUrl}
-                                            readOnly
-                                            className="pr-10 bg-card border-input dark:border-zinc-700 text-foreground/80 text-sm"
-                                        />
-                                        <Link className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground dark:text-zinc-500" />
-                                    </div>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={handleCopyUrl}
-                                        className="bg-secondary border-border dark:border-zinc-700 hover:bg-accent dark:hover:bg-zinc-700 hover:border-muted-foreground/40"
-                                    >
-                                        {copied ? (
+                        {isPublic && publicUrl && (
+                            <div className="mt-3 flex items-center gap-2">
+                                <div className="relative min-w-0 flex-1">
+                                    <input value={publicUrl} readOnly aria-label="Public link" className={cn(FIELD, 'pr-10 text-foreground/80')} />
+                                    <Link className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                </div>
+                                <button type="button" onClick={handleCopyUrl} className={cn(BUTTON_SECONDARY, 'h-10 min-w-[6.25rem] justify-center')}>
+                                    {copied ? (
+                                        <>
                                             <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
-                                        ) : (
+                                            Copied
+                                        </>
+                                    ) : (
+                                        <>
                                             <Copy className="h-4 w-4" />
-                                        )}
-                                    </Button>
-                                </div>
-                            )}
-
-                        </div>
-                    )}
-
-                    {/* Divider between public and restricted sharing */}
-                    {resourceType === 'workflow' && (
-                        <div className="flex items-center gap-3">
-                            <div className="flex-1 border-t border-border" />
-                            <span className="text-xs text-muted-foreground dark:text-zinc-500">or share with specific people</span>
-                            <div className="flex-1 border-t border-border" />
-                        </div>
-                    )}
-
-                    {/* Unified recipient input with autocomplete */}
-                    <ShareRecipientInput
-                        suggestions={suggestions}
-                        loading={loadingSuggestions}
-                        permission={permission}
-                        onPermissionChange={setPermission}
-                        onSelect={handleSelectRecipient}
-                        onSubmit={handleEmailSubmit}
-                        submitting={sharing}
-                        placeholder="Add people or organizations..."
-                        hidePermission={hidePermission}
-                    />
-
-                    {/* Current shares list */}
-                    <div className="space-y-3 pt-2 border-t border-border">
-                        <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm font-medium text-foreground/80">
-                                People with access
-                            </span>
-                        </div>
-
-                        {loading ? (
-                            <div className="flex items-center justify-center py-6">
-                                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground dark:text-zinc-500" />
-                            </div>
-                        ) : shares.length === 0 ? (
-                            <div className="text-sm text-muted-foreground dark:text-zinc-500 py-4 text-center">
-                                No one else has access yet
-                            </div>
-                        ) : (
-                            <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                                {shares.map((share) => (
-                                    <ShareItem
-                                        key={share.id}
-                                        share={share}
-                                        onUpdatePermission={handleUpdatePermission}
-                                        onRemove={handleRemoveShare}
-                                        hidePermission={hidePermission}
-                                    />
-                                ))}
+                                            Copy
+                                        </>
+                                    )}
+                                </button>
                             </div>
                         )}
                     </div>
-                </div>
+                )}
 
-                {/* Footer */}
-                <div className="flex justify-end pt-4">
-                    <Button
-                        variant="outline"
-                        onClick={() => onOpenChange(false)}
-                        className="h-10 bg-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] border border-border hover:border-muted-foreground/40 dark:hover:border-zinc-700 rounded-md"
-                    >
-                        Done
-                    </Button>
-                </div>
-            </DialogContent>
-        </Dialog>
+                {resourceType === 'workflow' && <div className={FIELD_LABEL}>Or share with specific people</div>}
+                <ShareRecipientInput
+                    suggestions={suggestions}
+                    loading={loadingSuggestions}
+                    permission={permission}
+                    onPermissionChange={setPermission}
+                    onSelect={handleSelectRecipient}
+                    onSubmit={handleEmailSubmit}
+                    submitting={sharing}
+                    hidePermission={hidePermission}
+                />
 
-    </>
+                {/* Current shares list */}
+                <div className="mt-5">
+                    <div className="mb-1.5 text-[13px] font-medium text-foreground/85">People with access</div>
+                    {loading ? (
+                        <div className="flex items-center justify-center py-6">
+                            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                        </div>
+                    ) : shares.length === 0 ? (
+                        <div className="py-4 text-center text-[13px] text-muted-foreground">No one else has access yet</div>
+                    ) : (
+                        <div className="-mx-2 max-h-[200px] space-y-0.5 overflow-y-auto">
+                            {shares.map((share) => (
+                                <ShareItem
+                                    key={share.id}
+                                    share={share}
+                                    onUpdatePermission={handleUpdatePermission}
+                                    onRemove={handleRemoveShare}
+                                    hidePermission={hidePermission}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </ShellDialog>
+        </>
     );
 }
 
@@ -535,6 +490,8 @@ function getInitials(name: string): string {
     // Otherwise use first two chars of name
     return name.slice(0, 2).toUpperCase();
 }
+
+const AVATAR_TILE = 'grid h-8 w-8 shrink-0 place-items-center bg-foreground/[0.06] text-muted-foreground';
 
 /** Individual share item in the list */
 function ShareItem({
@@ -556,22 +513,15 @@ function ShareItem({
               share.target_email ||
               'Unknown user';
 
-    // Render avatar/icon based on type and available data
+    // Render avatar/icon based on type and available data: organizations on a square tile, people on a round one
     const renderAvatar = () => {
         if (share.target_type === 'organization') {
-            // Organization: show icon_url or fallback to Building2 icon
             if (share.target_org_icon_url) {
-                return (
-                    <img
-                        src={share.target_org_icon_url}
-                        alt=""
-                        className="w-8 h-8 rounded-full object-cover"
-                    />
-                );
+                return <img src={share.target_org_icon_url} alt="" className="h-8 w-8 shrink-0 rounded-lg object-cover" />;
             }
             return (
-                <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center">
-                    <Building2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <div className={cn(AVATAR_TILE, 'rounded-lg')}>
+                    <Building2 className="h-4 w-4" strokeWidth={1.75} />
                 </div>
             );
         }
@@ -579,85 +529,67 @@ function ShareItem({
         // User: pending invites show Clock, existing users show avatar or initials
         if (share.is_pending) {
             return (
-                <div className="w-8 h-8 rounded-full bg-amber-600/20 flex items-center justify-center">
-                    <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                <div className={cn(AVATAR_TILE, 'rounded-full')}>
+                    <Clock className="h-4 w-4" strokeWidth={1.75} />
                 </div>
             );
         }
 
-        // Existing user: show avatar_url or initials
         if (share.target_avatar_url) {
             return (
                 <img
                     src={share.target_avatar_url}
                     alt=""
-                    className="w-8 h-8 rounded-full object-cover"
+                    className="h-8 w-8 shrink-0 rounded-full object-cover"
                     referrerPolicy="no-referrer"
                 />
             );
         }
 
-        // Fallback: show initials
-        return (
-            <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-xs font-medium text-foreground/80">
-                {getInitials(displayName)}
-            </div>
-        );
+        return <div className={cn(AVATAR_TILE, 'rounded-full text-[11px] font-medium text-foreground/80')}>{getInitials(displayName)}</div>;
     };
 
     return (
-        <div className="flex items-center justify-between p-2.5 bg-card/50 rounded-lg border border-border/50 dark:border-zinc-800/50 group">
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="group flex items-center justify-between gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-foreground/[0.04]">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
                 {renderAvatar()}
                 <div className="min-w-0 flex-1">
-                    <div className="text-sm text-foreground truncate">{displayName}</div>
-                    {share.is_pending && (
-                        <div className="text-xs text-amber-500">Pending invite</div>
-                    )}
-                    {share.target_type === 'organization' && (
-                        <div className="text-xs text-muted-foreground dark:text-zinc-500">All members</div>
-                    )}
+                    <div className="truncate text-[13.5px] text-foreground">{displayName}</div>
+                    {share.is_pending && <div className="text-[12px] text-amber-600 dark:text-amber-400">Pending invite</div>}
+                    {share.target_type === 'organization' && <div className="text-[12px] text-muted-foreground">All members</div>}
                 </div>
             </div>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex shrink-0 items-center gap-1">
                 {/* Permission dropdown (hidden for credentials/saved outputs and public shares) */}
                 {!hidePermission && share.target_type !== 'public' && (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground hover:bg-accent"
+                            <button
+                                type="button"
+                                className="inline-flex h-7 items-center gap-1 rounded-full px-2.5 text-[12.5px] text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-foreground/[0.06] data-[state=open]:text-foreground"
                             >
                                 <span className="capitalize">{share.permission}</span>
-                                <ChevronDown className="h-3 w-3 ml-1 opacity-60" />
-                            </Button>
+                                <ChevronDown className="h-3 w-3 opacity-60" />
+                            </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                            align="end"
-                            className="bg-card border-border"
-                        >
+                        <DropdownMenuContent align="end" className="rounded-xl">
                             <DropdownMenuItem
                                 onClick={() => onUpdatePermission(share.id, 'view')}
-                                className="text-foreground/80 focus:text-foreground focus:bg-accent"
+                                className="text-foreground/80 focus:bg-accent focus:text-foreground"
                             >
-                                <span className="flex items-center justify-between w-full">
+                                <span className="flex w-full items-center justify-between">
                                     Can view
-                                    {share.permission === 'view' && (
-                                        <Check className="h-4 w-4 ml-2" />
-                                    )}
+                                    {share.permission === 'view' && <Check className="ml-2 h-4 w-4" />}
                                 </span>
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => onUpdatePermission(share.id, 'edit')}
-                                className="text-foreground/80 focus:text-foreground focus:bg-accent"
+                                className="text-foreground/80 focus:bg-accent focus:text-foreground"
                             >
-                                <span className="flex items-center justify-between w-full">
+                                <span className="flex w-full items-center justify-between">
                                     Can edit
-                                    {share.permission === 'edit' && (
-                                        <Check className="h-4 w-4 ml-2" />
-                                    )}
+                                    {share.permission === 'edit' && <Check className="ml-2 h-4 w-4" />}
                                 </span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -665,20 +597,17 @@ function ShareItem({
                 )}
                 {/* Show static "View" label for public shares */}
                 {share.target_type === 'public' && (
-                    <span className="h-7 px-2 text-xs text-muted-foreground dark:text-zinc-500 flex items-center">
-                        View only
-                    </span>
+                    <span className="flex h-7 items-center px-2.5 text-[12.5px] text-muted-foreground">View only</span>
                 )}
 
-                {/* Remove button */}
-                <Button
-                    variant="ghost"
-                    size="sm"
+                <button
+                    type="button"
                     onClick={() => onRemove(share.id)}
-                    className="h-7 w-7 p-0 text-muted-foreground dark:text-zinc-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50"
+                    aria-label={`Remove ${displayName}`}
+                    className="grid h-7 w-7 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:text-red-400"
                 >
                     <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                </button>
             </div>
         </div>
     );

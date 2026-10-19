@@ -14,7 +14,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '~/components/ui/dialog';
 import { useAnchoredPopover } from '~/components/interface/blocks/useAnchoredPopover';
-import { MarkdownRenderer } from '~/components/chat/MarkdownRenderer';
+import { MarkdownRenderer } from '~/components/chat/MarkdownRendererLazy';
 import { formatSize } from '~/components/resource/ResourceRenderer';
 import {
   uploadWorkspaceFiles,

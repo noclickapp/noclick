@@ -4,6 +4,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useOAuthExchange } from './OAuthExchangeContext';
+import { isLoopbackHostname } from '~/lib/loopback';
 
 interface AtlassianOAuthResult {
     success: boolean;
@@ -75,14 +76,14 @@ function isTrustedCallbackOrigin(origin: string): boolean {
         return false;
     }
 
-    if (parsed.protocol !== 'https:' && parsed.hostname !== 'localhost') {
+    if (parsed.protocol !== 'https:' && !isLoopbackHostname(parsed.hostname)) {
         return false;
     }
 
     return (
         parsed.hostname === 'noclick.com' ||
         parsed.hostname === 'www.noclick.com' ||
-        parsed.hostname === 'localhost'
+        isLoopbackHostname(parsed.hostname)
     );
 }
 

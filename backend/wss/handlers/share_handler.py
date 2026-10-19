@@ -10,6 +10,7 @@ import uuid
 from typing import Dict, Callable, Optional
 from utils.database_pool import DatabasePoolMixin
 from utils.access_control import check_resource_access
+from utils.system_workflows import SYSTEM_KEY
 from wss.schema import SocketIOHandler
 from wss.sender import send_event
 from wss.sender.events import ResponseEvent, ShareNotificationEvent
@@ -1352,8 +1353,8 @@ class ShareHandler(DatabasePoolMixin, SocketIOHandler):
         # Author-declared variables ride the fork, but per-user ones arrive
         # unfilled: the author's value (their repo, their channel) is exactly
         # what a new owner must replace, and an empty declared variable is what
-        # the Setup tab turns into a question.
-        fork_settings = dict(source.settings or {})
+        # the Setup tab turns into a question. A copy is never NoClick's own.
+        fork_settings = {k: v for k, v in (source.settings or {}).items() if k != SYSTEM_KEY}
         _defs = fork_settings.get("variable_definitions")
         if isinstance(_defs, list):
             fork_settings["variable_definitions"] = [

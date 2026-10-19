@@ -16,8 +16,8 @@ import {
     getDisplayOnlyCredentials,
     invalidateCredentialsCache,
     setActiveCredentialWorkflow,
-    autoSelectCredentialFromCache,
 } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 
 type Cred = { id: string; name?: string; credential_type?: string; owner_name?: string | null };
 

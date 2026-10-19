@@ -94,6 +94,21 @@ async def hold(conversation_id: str, holder: str, *, ttl_s: int = TTL_S) -> None
         logger.warning(f"[TurnLock] could not hand over {conversation_id}: {e}")
 
 
+async def pass_on(conversation_id: str, *, holder: str, to: str, ttl_s: int = TTL_S) -> bool:
+    """Hand the lock from ``holder`` to ``to`` with nothing free in between, only while ``holder`` still has it."""
+    redis = _redis()
+    if redis is None:
+        return False
+    key = _key(conversation_id)
+    try:
+        # Not atomic, as ``_delete_if_held_by``.
+        current = await redis.get(key)
+        return current is not None and _text(current) == holder and bool(await redis.set(key, to, xx=True, ex=ttl_s))
+    except _FAILURES as e:
+        logger.warning(f"[TurnLock] could not pass {key} on: {e}")
+        return False
+
+
 async def release(conversation_id: str, *, holder: Optional[str] = None) -> None:
     """Free the lock; with ``holder``, only while that holder still has it."""
     redis = _redis()

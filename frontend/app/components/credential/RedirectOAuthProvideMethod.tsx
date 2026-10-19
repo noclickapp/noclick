@@ -6,8 +6,8 @@
 // come straight from the method; nothing is hand-rolled here (the Linear "Invalid scope:
 // email" and the Shopify "no shop field on the link" bugs both came from a bespoke button).
 
-import { useMemo, type ComponentType } from 'react';
-import { AlertCircle } from 'lucide-react';
+import { useMemo } from 'react';
+import { Info } from 'lucide-react';
 import { OAuthAuthorizeProvider, OAuthExchangeProvider } from '~/hooks/oauth/OAuthExchangeContext';
 import { oauthNeedsInAppSelection } from '~/utils/oauthProviders';
 import { useOAuthConnect } from '~/hooks/useOAuthConnect';
@@ -28,16 +28,19 @@ interface RedirectOAuthProvideMethodProps {
     oauthApp?: boolean;
     redirectUri?: string;
     serviceName: string;
-    ServiceIcon: ComponentType<{ className?: string }> | null;
+    /** The line under the sign-in's button (where it goes, that NoClick never sees the password). */
+    note?: string | null;
     onProvided: () => void;
+    /** Told when the exchange finds the request can't be provided any more. */
+    onRequestEnded?: () => void;
 }
 
 // The connect form must render INSIDE the transport provider so the provider hooks'
 // exchange lands on the credential-request endpoints (not the authed socket).
 function ConnectForm({
     provider, credentialType, scopes, userScopes, supportsCustomClient, requiresCustomClient,
-    redirectUri, serviceName, ServiceIcon, onProvided,
-}: Omit<RedirectOAuthProvideMethodProps, 'apiBase' | 'token' | 'oauthApp'>) {
+    redirectUri, serviceName, note, onProvided,
+}: Omit<RedirectOAuthProvideMethodProps, 'apiBase' | 'token' | 'oauthApp' | 'onRequestEnded'>) {
     const {
         connect, connectOrgConsent, isConnecting, connectingProvider, error, planLimitError,
         clearError, pendingSelection, resolvePendingSelection, cancelConnect,
@@ -48,7 +51,7 @@ function ConnectForm({
             provider={provider}
             credentialType={credentialType}
             displayName={serviceName}
-            Icon={ServiceIcon || (() => null)}
+            note={note}
             scopes={scopes}
             userScopes={userScopes}
             supportsCustomClient={supportsCustomClient}
@@ -70,11 +73,11 @@ function ConnectForm({
 
 export function RedirectOAuthProvideMethod({
     apiBase, token, credentialType, provider, scopes, userScopes,
-    supportsCustomClient, requiresCustomClient, oauthApp, redirectUri, serviceName, ServiceIcon, onProvided,
+    supportsCustomClient, requiresCustomClient, oauthApp, redirectUri, serviceName, note, onProvided, onRequestEnded,
 }: RedirectOAuthProvideMethodProps) {
     const transport = useMemo(
-        () => provideLinkTransport(apiBase, token, credentialType),
-        [apiBase, token, credentialType],
+        () => provideLinkTransport(apiBase, token, credentialType, onRequestEnded),
+        [apiBase, token, credentialType, onRequestEnded],
     );
     const authorizeParams = useMemo(() => {
         const params: Record<string, string> = {};
@@ -86,16 +89,12 @@ export function RedirectOAuthProvideMethod({
     // user hit a dead end mid-flow, say so up front — a sibling method (if any) stays
     // selectable, otherwise this integration must be connected inside NoClick.
     if (oauthNeedsInAppSelection(provider)) {
-        // Tokenized (not zinc) so it reads correctly on BOTH surfaces — the
-        // dark provide page resolves these to the same dark look.
         return (
-            <div className="flex items-start gap-2.5 p-4 rounded-xl bg-foreground/[0.04] border border-border">
-                <AlertCircle className="h-4 w-4 text-amber-500 dark:text-amber-400 mt-0.5 flex-shrink-0" />
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                    {serviceName} can&apos;t be connected through a shared link — it needs an account
-                    selection step inside NoClick. Please connect it from your NoClick workspace.
-                </p>
-            </div>
+            <p className="flex items-start gap-2 text-[13px] leading-relaxed text-muted-foreground">
+                <Info className="mt-0.5 h-4 w-4 shrink-0" />
+                {serviceName} can’t be connected through a shared link: signing in asks which account to use, a step that
+                only runs inside NoClick. Connect it from a NoClick workspace instead.
+            </p>
         );
     }
     return (
@@ -110,7 +109,7 @@ export function RedirectOAuthProvideMethod({
                     requiresCustomClient={requiresCustomClient}
                     redirectUri={redirectUri}
                     serviceName={serviceName}
-                    ServiceIcon={ServiceIcon}
+                    note={note}
                     onProvided={onProvided}
                 />
             </OAuthAuthorizeProvider>

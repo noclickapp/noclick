@@ -158,6 +158,7 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                         message=verdict.message,
                         field_errors=verdict.field_errors,
                         hint=verdict.hint,
+                        reachable=False if verdict.rejection else None,
                     ).model_dump(),
                     error=verdict.message,
                 ))
@@ -263,10 +264,11 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
             # explicit ``conn`` — the repo owns its own SQL, not theirs — so we
             # borrow one connection to run both. The main list query runs on a
             # separate acquire inside ``repo.list_accessible``.
-            from billing.plan_limits import get_context_tier, get_limit
+            from billing.plan_limits import count_limit, get_context_tier
             async with pool.acquire() as conn:
                 org_id = await get_user_org_context(conn, user_id)
                 tier = await get_context_tier(conn, user_id)
+                cap = await count_limit(conn, user_id, tier, 'credentials_per_type')
 
             # Fetch all credentials the user can access:
             # 1. Credentials they own (personal + org where they're owner)
@@ -287,7 +289,6 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
             # In personal context: owned + shared credentials count against the personal cap.
             hidden_shared_count = 0
             over_cap_ids: set[str] = set()
-            cap = get_limit(tier, 'credentials_per_type')
             if cap is not None:
                 org_id_str = str(org_id) if org_id else None
                 # Separate rows into: context-relevant (count against cap) vs personal (always shown)
@@ -655,6 +656,7 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                             message=verdict.message,
                             field_errors=verdict.field_errors,
                             hint=verdict.hint,
+                            reachable=False if verdict.rejection else None,
                         ).model_dump(),
                         error=verdict.message,
                     ))

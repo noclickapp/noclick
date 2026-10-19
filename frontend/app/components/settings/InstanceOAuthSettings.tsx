@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Check, ChevronDown, KeyRound, Search, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '~/lib/utils';
+import { FIELD_LABEL } from '~/components/shell/fields';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { getOAuthProviderIcon } from '~/utils/credentialIcons';
@@ -57,7 +58,7 @@ function ProviderPicker({
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <button className="h-9 px-3 rounded-lg text-sm border border-input dark:border-white/[0.08] bg-background/40 text-foreground hover:border-muted-foreground/30 dark:hover:border-white/[0.12] transition-colors flex items-center gap-2 w-full">
+                <button className="flex h-10 w-full items-center gap-2 rounded-xl border border-border px-3.5 text-[14px] text-foreground transition-colors hover:border-foreground/25 dark:border-foreground/[0.1] dark:hover:border-foreground/25">
                     {selected ? (
                         <ProviderIcon provider={selected.key} className="w-4 h-4 flex-shrink-0" />
                     ) : (
@@ -178,13 +179,11 @@ export function InstanceOAuthSettings() {
                 </p>
             </div>
 
-            {/* Add a provider — mirrors the "create key" card in Developer settings. */}
-            <div className="mb-6 p-4 bg-card dark:bg-foreground/[0.03] border border-border dark:border-white/[0.06] rounded-xl">
-                <div className="flex items-end gap-3">
-                    <div className="flex-1 max-w-[260px]">
-                        <label className="block text-xs font-medium text-muted-foreground dark:text-white/50 mb-1.5">
-                            Provider
-                        </label>
+            {/* Add a provider: a form on the page, as Developer settings' "create key" is. */}
+            <div className="mb-8">
+                <div className="flex flex-wrap items-end gap-x-3 gap-y-2">
+                    <div className="w-full max-w-[280px]">
+                        <span className={FIELD_LABEL}>Provider</span>
                         <ProviderPicker
                             value={draftProvider}
                             taken={taken}
@@ -195,13 +194,13 @@ export function InstanceOAuthSettings() {
                         />
                     </div>
                     {!draftProvider && (
-                        <p className="text-xs text-muted-foreground/60 dark:text-white/25 pb-2.5">
+                        <p className="pb-2.5 text-[13px] text-muted-foreground">
                             Pick one to see the redirect URL it needs.
                         </p>
                     )}
                 </div>
                 {draftProvider && (
-                    <div className="mt-4 pt-4 border-t border-border dark:border-white/[0.06]">
+                    <div className="mt-5">
                         <InstanceOAuthAppForm
                             provider={draftProvider}
                             onSaved={() => {
@@ -221,16 +220,13 @@ export function InstanceOAuthSettings() {
                     No OAuth apps yet. Add one above, or connect an integration and you&apos;ll be prompted there.
                 </div>
             ) : (
-                <div className="space-y-2">
+                <div className="divide-y divide-border dark:divide-foreground/[0.08]">
                     {stored.map((app) => {
                         const label = OAUTH_PROVIDER_SETUP[app.provider]?.label ?? app.provider;
                         const isEditing = editing === app.provider;
                         return (
-                            <div
-                                key={app.provider}
-                                className="bg-card dark:bg-foreground/[0.03] border border-border dark:border-white/[0.06] rounded-xl"
-                            >
-                                <div className="flex items-center gap-4 px-4 py-3">
+                            <div key={app.provider} className="py-3.5 first:pt-0">
+                                <div className="flex items-center gap-4">
                                     <ProviderIcon provider={app.provider} className="w-4 h-4 shrink-0" />
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2">
@@ -265,7 +261,7 @@ export function InstanceOAuthSettings() {
                                     </button>
                                 </div>
                                 {isEditing && (
-                                    <div className="px-4 pb-4 border-t border-border dark:border-white/[0.06]">
+                                    <div className="pl-8 pb-1">
                                         <div className="pt-4">
                                             <InstanceOAuthAppForm
                                                 provider={app.provider}
@@ -287,9 +283,9 @@ export function InstanceOAuthSettings() {
                     {/* Env-configured providers are inert here; saying so beats showing
                         them as missing and inviting an edit that would be ignored. */}
                     {fromEnv.length > 0 && (
-                        <div className="flex items-start gap-3 px-4 py-3 bg-card dark:bg-foreground/[0.02] border border-border dark:border-white/[0.04] rounded-xl">
-                            <KeyRound className="w-4 h-4 text-muted-foreground/50 dark:text-white/20 shrink-0 mt-0.5" />
-                            <p className="text-xs text-muted-foreground dark:text-white/40">
+                        <div className="flex items-start gap-3 py-3.5">
+                            <KeyRound className="w-4 h-4 text-muted-foreground/70 shrink-0 mt-0.5" />
+                            <p className="text-[13px] text-muted-foreground">
                                 Set by environment variables, which take precedence over anything saved here:{' '}
                                 <span className="text-foreground/80">{fromEnv.join(', ')}</span>
                             </p>

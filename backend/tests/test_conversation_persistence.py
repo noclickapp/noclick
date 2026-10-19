@@ -21,6 +21,7 @@ from wss.receiver.client_events import (
 from wss.sender import send_event
 from wss.sender.events import ConversationListEvent
 from wss.receiver.event_routing import Handler
+from repositories.conversation import ConversationRepo
 
 # Use the user id seeded in postgres_fixtures._initialize_database_once
 TEST_USER_ID = "00000000-0000-0000-0000-000000000001"
@@ -459,6 +460,28 @@ class TestResumeConversation(BaseHandlerTest):
         await asyncio.sleep(0.3)
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "resume-deleted-1")
+        assert resp["data"]["messages"] == []
+
+    async def test_resume_failure_is_an_error_not_an_empty_thread(
+        self, real_database, frontend_sio, sid, monkeypatch
+    ):
+        """A read that fails says so: a chat painting a copy of the thread must not take it for an empty one."""
+        await _setup_test_user(real_database)
+
+        async def broken(*_args, **_kwargs):
+            raise RuntimeError("database unavailable")
+
+        monkeypatch.setattr(ConversationRepo, "get_for_resume", broken)
+        request = ResumeConversationRequest(
+            event_name="conversation:resume",
+            request_id="resume-broken-1",
+            session_id=f"coordinator:{TEST_USER_ID}",
+        )
+        await send_event(frontend_sio, sid, request)
+        await asyncio.sleep(0.3)
+
+        resp = _find_response(self.get_main_api_emitted_events("response"), "resume-broken-1")
+        assert resp["error"] == "Could not load the conversation"
         assert resp["data"]["messages"] == []
 
     async def test_resume_other_users_conversation_returns_empty(

@@ -163,32 +163,52 @@ async def _ai_ocr_pdf(data: bytes, filename: str, billing: BillingContext) -> Ex
             ],
         }],
         temperature=0.0,
+        # OpenRouter's usage accounting: the call's cost rides back on response.usage.
+        **({"extra_body": {"usage": {"include": True}}} if AI_EXTRACTION_MODEL.startswith("openrouter/") else {}),
     )
     text = (response.choices[0].message.content or "").strip()
     if not text:
         raise ExtractionError(f"AI OCR produced no text for '{filename}'.")
 
+    from coder.openai_agent.litellm_model import extract_cost_from_response
+    from utils.openrouter_cost import CostUnknown, generation_id_of, settle
+
+    from billing.exceptions import UnpricedUsage
+
     cost = AI_EXTRACTION_PRICE_PER_PAGE * pages
-    await usage_tracker.track_usage_event(
-        UsageEventData(
-            user_id=billing.user_id,
-            total_cost=cost,
-            usage_type="api_usage",
-            usage_subtype="extraction/ai_ocr",
-            quantity=Decimal(pages),  # pages billed as request units
-            unit_type="requests",
-            user_resource=False,
-            organization_id=billing.organization_id,
-            metadata={
-                "filename": filename,
-                "workflow_id": billing.workflow_id,
-                "node_id": billing.node_id,
-                "model": AI_EXTRACTION_MODEL,
-            },
-        ),
-        sio=billing.sio,
-        sid=billing.sid,
-    )
+    # Old plans pay the flat price per page; Free/Member pay what the model charged
+    # for reading them: reported, else OpenRouter's record of the call.
+    try:
+        model_cost = await settle(*extract_cost_from_response(response), generation_id_of(response))
+    except CostUnknown as exc:
+        logger.warning(f"[content_extraction] {AI_EXTRACTION_MODEL} OCR cost is unknown "
+                       f"(user {billing.user_id}, {pages} pages): {exc}")
+        model_cost = None
+    try:
+        await usage_tracker.track_usage_event(
+            UsageEventData(
+                user_id=billing.user_id,
+                total_cost=cost,
+                cost_usd=model_cost,
+                usage_type="api_usage",
+                usage_subtype="extraction/ai_ocr",
+                quantity=Decimal(pages),  # pages billed as request units
+                unit_type="requests",
+                user_resource=False,
+                organization_id=billing.organization_id,
+                metadata={
+                    "filename": filename,
+                    "workflow_id": billing.workflow_id,
+                    "node_id": billing.node_id,
+                    "model": AI_EXTRACTION_MODEL,
+                },
+            ),
+            sio=billing.sio,
+            sid=billing.sid,
+        )
+    except UnpricedUsage:
+        # A payer billed at vendor cost, with no cost to bill: the tracker logged it CRITICAL.
+        return ExtractedContent(text=text, method="ai_ocr", total_chars=len(text), pages=pages)
     return ExtractedContent(text=text, method="ai_ocr", total_chars=len(text), pages=pages, cost_charged=cost)
 
 

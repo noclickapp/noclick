@@ -26,9 +26,13 @@ import logging
 import re
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
+
+from utils.prompts import PromptPack
 
 logger = logging.getLogger(__name__)
+
+PROMPTS = PromptPack("rehearsal")
 
 REHEARSAL_CONVERSATION_PREFIX = "rehearsal:"
 
@@ -65,37 +69,6 @@ _KEY = "nc:rehearsal:{conversation_id}"
 # workflow that does not exist. Reading the agent's memory is exempt for the
 # same reason (a rehearsal sees what the agent knows); saving to it is not.
 REHEARSAL_PASSTHROUGH_TOOL_TYPES = frozenset({"describe_workflow", "memory_read"})
-
-
-_SYSTEM = """You are simulating third-party APIs for a rehearsal of an automation agent.
-
-The agent calling these tools is real and believes your responses. Your job is to
-return what each API would plausibly return in the situation described.
-
-Rules:
-1. Reply with JSON only. No prose, no markdown fences. When a response schema is
-   given, match it exactly — the same field names, nesting and types.
-2. Stay consistent with everything you have already returned in this session. If
-   you said a ticket has id 4471, it still has id 4471, and anything created
-   earlier still exists.
-3. THE WORLD IS BUSY. This account belongs to an active team: channels have
-   yesterday's messages, inboxes have mail, boards have tickets. A read or list
-   call ALWAYS returns populated data — 3 to 8 realistic entries with authors,
-   timestamps and substantive content that fits the situation. `null`, `[]`,
-   `{{}}` or an empty `data` field is a WRONG answer for a read; the one
-   exception is a search for something the situation says does not exist.
-4. Never invent a failure or an error envelope unless the scenario explicitly
-   calls for one. Return the successful response the agent would get on a good
-   day; a write/send returns its normal acknowledgement.
-5. Fabricate concrete specifics: real-sounding names, plausible ids, timestamps,
-   quantities, wording. Placeholder output like "Example Customer", "Lorem
-   ipsum" or "test@test.com" makes the rehearsal look broken.
-6. Answer the call that was actually made. If the agent searched for "refund not
-   received", return results about refunds, not unrelated records.
-
-The situation:
-{scenario}
-"""
 
 
 @dataclass(frozen=True)
@@ -236,6 +209,24 @@ async def is_rehearsing(conversation_id: Optional[str]) -> bool:
     return await load_rehearsal(conversation_id) is not None
 
 
+# Conversations whose every tool call must answer from a simulated world (a platform's preview threads):
+# ``predicate(conversation_id) -> bool``. For one of these, a fence that can't be read (Redis away, its state
+# lapsed mid-turn) refuses the call rather than run it for real.
+_MUST_REHEARSE: List[Callable[[str], bool]] = []
+
+UNFENCED_RESULT = {"success": False, "error": "This conversation's tools answer from a simulated world, which can't "
+                                              "be reached right now, so nothing was done. Try again shortly."}
+
+
+def register_must_rehearse(predicate: Callable[[str], bool]) -> None:
+    _MUST_REHEARSE.append(predicate)
+
+
+def must_rehearse(conversation_id: Optional[str]) -> bool:
+    """Whether a tool call in ``conversation_id`` may only ever be fabricated (``register_must_rehearse``)."""
+    return bool(conversation_id) and any(predicate(str(conversation_id)) for predicate in _MUST_REHEARSE)
+
+
 def _messages(state: Dict[str, Any], ask: str) -> List[Dict[str, str]]:
     """Rebuild the session transcript, newest exchanges preserved.
 
@@ -243,7 +234,7 @@ def _messages(state: Dict[str, Any], ask: str) -> List[Dict[str, str]]:
     what makes a created-then-read-back entity stay the same entity.
     """
     msgs: List[Dict[str, str]] = [
-        {"role": "system", "content": _SYSTEM.format(scenario=state.get("scenario", ""))}
+        {"role": "system", "content": PROMPTS.world_system(state.get("scenario", ""))}
     ]
     for call in (state.get("calls") or [])[-MAX_REMEMBERED_CALLS:]:
         msgs.append({"role": "user", "content": call["ask"]})
@@ -258,28 +249,9 @@ def _build_ask(
     arguments: Dict[str, Any],
     output_schema: Optional[Any],
 ) -> str:
-    parts = [f"The agent called `{tool_name}`."]
-    if description:
-        parts.append(f"What it does: {description}")
-    parts.append(f"Arguments: {json.dumps(arguments, default=str)[:2000]}")
-    if output_schema:
-        parts.append(
-            "Respond with JSON matching this observed response schema:\n"
-            + json.dumps(output_schema, default=str)[:4000]
-            + "\n\nThe schema shows SHAPE only — populate it fully. Every list "
-            "field carries several realistic entries; nullable fields carry "
-            "values, not null. A response whose data payload is null or empty "
-            "is wrong."
-        )
-    else:
-        # No learned schema for this operation. Say so plainly — the model
-        # improvising a shape is the known weak spot, and pretending otherwise
-        # would hide it.
-        parts.append(
-            "No response schema is on record for this operation. Return the JSON "
-            "object this API would realistically return."
-        )
-    return "\n\n".join(parts)
+    """What the world model is asked about one call: with the learned response schema, when there is one."""
+    schema = json.dumps(output_schema, default=str)[:4000] if output_schema else None
+    return PROMPTS.world_ask(tool_name, description, json.dumps(arguments, default=str)[:2000], schema)
 
 
 # Argument names that carry a message a human would read, rather than an id or a
@@ -393,8 +365,9 @@ async def mock_tool_call(
                          args=arguments or {})
 
     # Provider $ + tokens accumulated across the call (and its one retry) —
-    # charged as ONE Agent Testing usage event after success.
-    spent: Dict[str, float] = {"cost": 0.0, "tokens": 0.0}
+    # charged as ONE Agent Testing usage event once they answered, even if
+    # the answer can't be used.
+    spent: Dict[str, float] = {"cost": 0.0, "tokens": 0.0, "answers": 0}
 
     async def _fabricate(messages: list) -> tuple[str, Any]:
         response = await litellm.acompletion(
@@ -416,9 +389,14 @@ async def mock_tool_call(
             },
         )
         from coder.openai_agent.litellm_model import extract_cost_from_response
+        from utils.openrouter_cost import CostUnknown, generation_id_of, settle
 
-        cost, _ = extract_cost_from_response(response)
-        spent["cost"] += cost or 0.0
+        spent["answers"] += 1
+        try:
+            spent["cost"] += float(await settle(*extract_cost_from_response(response), generation_id_of(response)))
+        except CostUnknown as exc:
+            logger.critical("[rehearsal] world-model call not billed, its cost is unknown (%s): %s",
+                            conversation_id, exc)
         usage = getattr(response, "usage", None)
         spent["tokens"] += float(getattr(usage, "total_tokens", 0) or 0)
         raw = response.choices[0].message.content
@@ -432,19 +410,15 @@ async def mock_tool_call(
         # which is worth a second cheap call; write acks pass through.
         if _looks_like_empty_world(result):
             logger.info("[rehearsal] %s fabricated empty — retrying once", tool_name)
-            nudge = (
-                ask
-                + "\n\nYour previous answer had a null/empty data payload. The "
-                "world is BUSY: return the same shape fully populated with "
-                "several realistic entries."
-            )
+            nudge = ask + "\n\n" + PROMPTS.EMPTY_WORLD_NUDGE
             text, result = await _fabricate(_messages(state, nudge))
     except Exception as e:
         logger.error("[rehearsal] %s could not be simulated: %s", tool_name, e)
         raise RehearsalUnavailable(f"could not simulate {tool_name}: {e}") from e
-
-    await _charge_world_call(state, conversation_id, tool_name,
-                             spent["cost"], int(spent["tokens"]))
+    finally:
+        if spent["answers"]:
+            await _charge_world_call(state, conversation_id, tool_name,
+                                     spent["cost"], int(spent["tokens"]))
 
     # Append to the ledger before returning, so the next call sees this one even
     # if the agent fires them back to back.
@@ -517,6 +491,7 @@ async def _charge_world_call(
         event = UsageEventData(
             user_id=str(user_id),
             total_cost=apply_ai_testing_markup(Decimal(str(provider_cost))),
+            cost_usd=Decimal(str(provider_cost)),
             usage_type="ai_testing",
             usage_subtype="noclick/testing-1",
             quantity=Decimal(str(total_tokens or 0)),

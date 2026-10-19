@@ -37,7 +37,7 @@ import re
 from dataclasses import dataclass
 from typing import Dict, Optional, Tuple
 
-from billing.exceptions import INSUFFICIENT_CREDITS_RE, InsufficientBalanceError
+from billing.exceptions import INSUFFICIENT_CREDITS_RE, SPEND_CAP_RE, InsufficientBalanceError, SpendCapReached
 
 
 def _coerce_text(value) -> Optional[str]:
@@ -65,7 +65,7 @@ _DETAIL_MAX_LEN = 300
 class ProviderError:
     provider: str  # 'anthropic' | 'openai' | 'openrouter' | 'gemini' | 'xai' | 'noclick' | 'unknown'
     kind: str      # 'no_credits' | 'invalid_key' | 'plan_limit' | 'account_blocked' | 'provider_outage' | 'bad_request'
-                   # | a PROXY_REFUSAL_KINDS entry (provider 'noclick')
+                   # | 'spend_cap' or a PROXY_REFUSAL_KINDS entry (provider 'noclick')
     message: str   # full user-facing rewrite (includes the original detail)
     detail: str    # provider's verbatim text, trimmed
 
@@ -108,6 +108,7 @@ def proxy_refusal_message(kind: str, sentence: str) -> str:
 # the phrase "insufficient credits", so provenance is decided by the platform
 # gate's exact X < Y shape rather than by a loose substring match.
 _PLATFORM_RULES: Tuple[_Rule, ...] = (
+    _Rule("noclick", "spend_cap", SPEND_CAP_RE),
     _Rule("noclick", "no_credits", INSUFFICIENT_CREDITS_RE),
     *(_Rule("noclick", kind, re.compile(r"NoClick: [^\[\n]*\[" + kind + r"\]")) for kind in PROXY_REFUSAL_KINDS),
 )
@@ -162,6 +163,9 @@ _RULES: Tuple[_Rule, ...] = (
     _r("gemini", "invalid_key", r"api key not valid"),
     # ── xAI ───────────────────────────────────────────────────────────────
     _r("xai", "no_credits", r"doesn'?t have any credits"),
+    # ── OpenCode Zen ──────────────────────────────────────────────────────
+    # Zen's answer to a key it doesn't know, on any model, as OpenCode relays it.
+    _r("opencode", "invalid_key", r"upstream request failed: invalid credential"),
     # ── Generic (no provider-identifying slug in the text) ────────────────
     _r("unknown", "invalid_key", r"invalid api key"),
 )
@@ -230,9 +234,10 @@ _TEMPLATES: Dict[str, str] = {
         "{label} account — not your NoClick credits, which are unaffected."
         "{billing_hint}{extra}"
     ),
+    # Read on the canvas, in the app's connect form and through the platform API alike: no surface's words.
     "invalid_key": (
-        "{label} rejected the API key on this agent's credential. Re-check the "
-        "key{keys_hint} and reconnect it on the agent node."
+        "{label} rejected the API key. Re-check the key{keys_hint} and connect "
+        "it again.{extra}"
     ),
     "plan_limit": (
         "Your {label} subscription hit its usage limit. This is {label}'s plan "
@@ -277,7 +282,7 @@ _TEMPLATE_OVERRIDES: Dict[Tuple[str, str], str] = {
     ),
     ("credential_disconnected", "noclick"): (
         "The model credential behind this agent is disconnected or was rejected. "
-        "Reconnect it on the agent node."
+        "Connect it again."
     ),
     ("budget_exhausted", "noclick"): (
         "This agent reached the model spend cap set on its key. Raise the cap to "
@@ -296,8 +301,9 @@ _TEMPLATE_OVERRIDES: Dict[Tuple[str, str], str] = {
 # Provider-specific extra guidance appended per (kind, provider).
 _EXTRA_GUIDANCE: Dict[Tuple[str, str], str] = {
     ("no_credits", "anthropic"): " Or, on Claude Code, sign in with a Claude plan instead of an API key.",
-    ("no_credits", "openai"): " Or connect a ChatGPT subscription on the agent node instead of an API key.",
+    ("no_credits", "openai"): " Or connect a ChatGPT subscription instead of an API key.",
     ("provider_outage", "openrouter"): " Free (:free) model variants fail this way far more often than paid ones.",
+    ("invalid_key", "opencode"): " Or remove it: OpenCode's free models need no key.",
 }
 
 
@@ -329,6 +335,9 @@ def _meta(provider: str) -> Dict[str, str]:
 
 def _action_for(kind: str, provider: str) -> Optional[Dict[str, str]]:
     meta = _meta(provider)
+    if provider == "noclick" and kind == "spend_cap":
+        # Raising it is the owner's, in the app's settings: never a payment.
+        return {"type": "open_billing", "label": "Raise the cap"}
     if provider == "noclick" and kind == "no_credits":
         if not meta["billing_url"]:
             return None  # nothing to buy in this edition
@@ -355,6 +364,8 @@ def format_provider_message(provider: str, kind: str, detail: str) -> str:
 
     Shared with connect-time key validation so the connect-form rejection and
     the runtime failure read identically."""
+    if kind == "spend_cap":
+        return (detail or "").strip()  # minted whole by billing.exceptions.spend_cap_message
     meta = _meta(provider)
     billing_hint = f" Add credits at {meta['billing_url']}." if meta["billing_url"] else ""
     keys_hint = f" or create a new one at {meta['keys_url']}" if meta["keys_url"] else ""
@@ -446,10 +457,11 @@ def classify_provider_exception(exc: BaseException) -> Optional[ProviderError]:
     """
     if isinstance(exc, InsufficientBalanceError):
         detail = str(exc)
+        kind = "spend_cap" if isinstance(exc, SpendCapReached) else "no_credits"
         return ProviderError(
             provider="noclick",
-            kind="no_credits",
-            message=format_provider_message("noclick", "no_credits", detail),
+            kind=kind,
+            message=format_provider_message("noclick", kind, detail),
             detail=detail.strip()[:_DETAIL_MAX_LEN],
         )
 

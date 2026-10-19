@@ -2,17 +2,27 @@
 // Lets users create, view, copy, and revoke API keys for external app access.
 
 import { useState, useEffect, useCallback } from 'react';
-import { Copy, Check, Trash2, Plus, Shield, Eye, EyeOff, ChevronDown, ChevronRight, Globe, Lock, Search, Workflow, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router';
+import { Copy, Check, Trash2, Plus, Shield, Eye, EyeOff, ChevronDown, ChevronRight, Globe, Lock, Search, Workflow, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { isLocalEdition } from '~/lib/edition';
 import { backendAuthHeaders } from '~/lib/apiAuth';
-import { getDeveloperSettingsNote } from '~/lib/developerSettingsNote';
+import { getDeveloperConsoleHref } from '~/lib/developerConsole';
+import { BUTTON_PRIMARY } from '~/components/shell/buttons';
+import { FIELD, FIELD_LABEL, QUIET_LINK } from '~/components/shell/fields';
+import { SettingsEmpty, SettingsGroup, SettingsGroupTitle, SettingsHeader, SettingsRow } from '~/components/settings/SettingsParts';
 
 // Backend API base URL
 const API_BASE = import.meta.env.VITE_API_URL || '';
+
+const DOC_LINKS = [
+  { label: 'TypeScript SDK', href: 'https://docs.noclick.com/sdk/typescript' },
+  { label: 'Python SDK', href: 'https://docs.noclick.com/sdk/python' },
+  { label: 'API reference', href: 'https://docs.noclick.com/sdk/api-reference' },
+];
 
 // Both SDKs default to the hosted API (see lib/hostedDefaults), so a copied
 // snippet on a self-hosted instance would talk to the hosted service. Spell the
@@ -64,7 +74,7 @@ function ScopeDropdown({ value, workflows, onChange }: {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="h-9 px-3 rounded-lg text-xs font-medium border border-input dark:border-white/[0.08] bg-background/40 text-muted-foreground hover:text-foreground/80 hover:border-muted-foreground/30 dark:hover:border-white/[0.12] transition-colors flex items-center gap-1.5 max-w-[220px] w-full">
+        <button className="flex h-10 w-full max-w-[220px] items-center gap-1.5 rounded-xl border border-border px-3.5 text-[13.5px] text-foreground/85 transition-colors hover:border-foreground/25 dark:border-foreground/[0.1] dark:hover:border-foreground/25">
           {selected ? <Lock className="w-3.5 h-3.5 flex-shrink-0 text-indigo-600 dark:text-indigo-400" /> : <Globe className="w-3.5 h-3.5 flex-shrink-0" />}
           <span className="truncate flex-1 text-left">{selected ? selected.name : 'All workflows'}</span>
           <ChevronDown className="w-3 h-3 flex-shrink-0 text-muted-foreground/70 dark:text-zinc-600" />
@@ -220,34 +230,88 @@ export function DeveloperSettings() {
   const activeKeys = userKeys.filter(k => !k.revoked_at);
   const revokedKeys = userKeys.filter(k => !!k.revoked_at);
   const workflowName = (id: string | null) => workflows.find(w => w.id === id)?.name;
-  const Note = getDeveloperSettingsNote();
+  const consoleHref = getDeveloperConsoleHref();
+  const keyRow = (key: APIKey) => (
+    <SettingsRow
+      key={key.id}
+      label={
+        <span className="flex items-center gap-2">
+          {key.name}
+          <code className="font-mono text-xs font-normal text-muted-foreground">{key.key_prefix}…</code>
+        </span>
+      }
+      description={
+        <span className="flex flex-wrap items-center gap-x-3">
+          <span>Created {new Date(key.created_at).toLocaleDateString()}</span>
+          {key.last_used_at && <span>Last used {new Date(key.last_used_at).toLocaleDateString()}</span>}
+          {key.workflow_id ? (
+            <span className="inline-flex items-center gap-1">
+              <Lock className="h-3 w-3" />
+              {workflowName(key.workflow_id) || key.workflow_id.substring(0, 8)}
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1">
+              <Globe className="h-3 w-3" />
+              All workflows
+            </span>
+          )}
+        </span>
+      }
+      control={
+        <button
+          onClick={() => handleRevoke(key.id)}
+          className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400"
+          title="Revoke key"
+          aria-label={`Revoke ${key.name}`}
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      }
+    />
+  );
+
+  // A deployment with a developer console makes keys there: this section opens it, and lists the older keys that
+  // still work so they can be revoked.
+  if (consoleHref) {
+    return (
+      <div>
+        <SettingsHeader title="Developer" description="Build on NoClick from your own code." />
+        <SettingsGroup>
+          <SettingsRow
+            label="Developer console"
+            description="API keys, users, agents, logs and usage."
+            control={
+              <Link to={consoleHref} className={BUTTON_PRIMARY}>
+                Open console
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            }
+          />
+        </SettingsGroup>
+        {error && <p role="alert" className="mt-3 text-[13px] text-red-600 dark:text-red-400">{error}</p>}
+        {activeKeys.length > 0 && (
+          <div className="mt-8">
+            <SettingsGroupTitle title="Older keys" description="They keep working. New keys are made in the console." />
+            <SettingsGroup>{activeKeys.map(keyRow)}</SettingsGroup>
+          </div>
+        )}
+      </div>
+    );
+  }
+
 
   return (
     <div>
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold text-foreground">Developer</h2>
-        <p className="text-sm text-muted-foreground dark:text-white/40 mt-1">
-          API keys for connecting external apps via the NoClick SDK.
-        </p>
-        {Note && <Note />}
-        <div className="flex gap-2 mt-3">
-          <a href="https://docs.noclick.com/sdk/typescript" target="_blank" rel="noopener"
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-card dark:bg-foreground/[0.05] border border-border dark:border-white/[0.08] hover:bg-muted dark:hover:bg-foreground/[0.08] hover:border-muted-foreground/30 dark:hover:border-white/[0.12] text-foreground/80 rounded-lg transition-colors">
-            <ExternalLink className="w-3.5 h-3.5" />
-            TypeScript SDK
-          </a>
-          <a href="https://docs.noclick.com/sdk/python" target="_blank" rel="noopener"
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-card dark:bg-foreground/[0.05] border border-border dark:border-white/[0.08] hover:bg-muted dark:hover:bg-foreground/[0.08] hover:border-muted-foreground/30 dark:hover:border-white/[0.12] text-foreground/80 rounded-lg transition-colors">
-            <ExternalLink className="w-3.5 h-3.5" />
-            Python SDK
-          </a>
-          <a href="https://docs.noclick.com/sdk/api-reference" target="_blank" rel="noopener"
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-card dark:bg-foreground/[0.05] border border-border dark:border-white/[0.08] hover:bg-muted dark:hover:bg-foreground/[0.08] hover:border-muted-foreground/30 dark:hover:border-white/[0.12] text-foreground/80 rounded-lg transition-colors">
-            <ExternalLink className="w-3.5 h-3.5" />
-            API Reference
-          </a>
+      <SettingsHeader title="Developer" description="API keys for connecting external apps via the NoClick SDK.">
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
+          {DOC_LINKS.map(({ label, href }) => (
+            <a key={href} href={href} target="_blank" rel="noopener noreferrer" className={QUIET_LINK}>
+              {label}
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </a>
+          ))}
         </div>
-      </div>
+      </SettingsHeader>
 
       {error && (
         <div className="mb-6 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl text-sm text-red-700 dark:text-red-300">
@@ -285,43 +349,38 @@ export function DeveloperSettings() {
       )}
 
       {/* Create new key */}
-      <div className="mb-6 p-4 bg-card dark:bg-foreground/[0.03] border border-border dark:border-white/[0.06] rounded-xl">
-        <div className="flex items-end gap-3">
-          <div className="flex-1">
-            <label className="block text-xs font-medium text-muted-foreground dark:text-white/50 mb-1.5">Key Name</label>
-            <input
-              value={newKeyName}
-              onChange={e => setNewKeyName(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleCreate()}
-              placeholder="e.g. My Dashboard App"
-              className="w-full h-9 px-3 text-sm bg-background/40 border border-input dark:border-white/[0.08] rounded-lg text-foreground placeholder:text-[hsl(var(--placeholder))] outline-none focus:border-muted-foreground/40 dark:focus:border-white/20"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-muted-foreground dark:text-white/50 mb-1.5">Scope</label>
-            <ScopeDropdown value={newKeyWorkflow} workflows={workflows} onChange={setNewKeyWorkflow} />
-          </div>
-          <button
-            onClick={handleCreate}
-            disabled={creating || !newKeyName.trim()}
-            className="flex items-center gap-2 h-9 px-4 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-foreground/90 disabled:opacity-40 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Create
-          </button>
+      <div className="mb-6 flex flex-wrap items-end gap-2.5">
+        <div className="min-w-[12rem] flex-1">
+          <label htmlFor="new-key-name" className={FIELD_LABEL}>Key name</label>
+          <input
+            id="new-key-name"
+            value={newKeyName}
+            onChange={e => setNewKeyName(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleCreate()}
+            placeholder="e.g. My Dashboard App"
+            className={FIELD}
+          />
         </div>
+        <div>
+          <span className={FIELD_LABEL}>Scope</span>
+          <ScopeDropdown value={newKeyWorkflow} workflows={workflows} onChange={setNewKeyWorkflow} />
+        </div>
+        <button onClick={handleCreate} disabled={creating || !newKeyName.trim()} className={cn(BUTTON_PRIMARY, 'h-10 px-4')}>
+          <Plus className="w-4 h-4" />
+          Create
+        </button>
       </div>
 
       {/* Quickstart — collapsible */}
       <button
         onClick={() => setShowQuickstart(!showQuickstart)}
-        className="flex items-center gap-2 text-xs text-muted-foreground/70 dark:text-white/30 hover:text-muted-foreground dark:hover:text-white/50 mb-4 transition-colors"
+        className="mb-8 flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
       >
         {showQuickstart ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
         Quick start
       </button>
       {showQuickstart && (
-        <div className="mb-6 p-4 bg-card dark:bg-foreground/[0.02] border border-border dark:border-white/[0.04] rounded-xl">
+        <div className="-mt-5 mb-8 p-4 bg-card dark:bg-foreground/[0.02] border border-border dark:border-white/[0.04] rounded-xl">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <p className="text-xs text-muted-foreground/70 dark:text-white/30 mb-1">TypeScript</p>
@@ -341,83 +400,42 @@ await sdk.connect()`}</code>
       )}
 
       {/* Active keys */}
-      {loading ? (
-        <div className="text-sm text-muted-foreground/70 dark:text-white/30 py-8 text-center">Loading...</div>
-      ) : activeKeys.length === 0 && !newKeyRaw ? (
-        <div className="text-sm text-muted-foreground/70 dark:text-white/30 py-8 text-center">
-          No API keys yet. Create one above to get started.
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {activeKeys.map(key => (
-            <div key={key.id} className="flex items-center gap-4 px-4 py-3 bg-card dark:bg-foreground/[0.03] border border-border dark:border-white/[0.06] rounded-xl">
-              <Shield className="w-4 h-4 text-muted-foreground/70 dark:text-white/30 shrink-0" />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-foreground">{key.name}</span>
-                  <code className="text-xs font-mono text-muted-foreground/70 dark:text-white/30">{key.key_prefix}...</code>
-                </div>
-                <div className="flex items-center gap-3 mt-0.5">
-                  <span className="text-xs text-muted-foreground/50 dark:text-white/20">
-                    Created {new Date(key.created_at).toLocaleDateString()}
-                  </span>
-                  {key.last_used_at && (
-                    <span className="text-xs text-muted-foreground/50 dark:text-white/20">
-                      Last used {new Date(key.last_used_at).toLocaleDateString()}
-                    </span>
-                  )}
-                  {key.workflow_id ? (
-                    <span className="inline-flex items-center gap-1 text-xs text-indigo-600/70 dark:text-indigo-400/60">
-                      <Lock className="w-3 h-3" />
-                      {workflowName(key.workflow_id) || key.workflow_id.substring(0, 8)}
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/50 dark:text-white/15">
-                      <Globe className="w-3 h-3" />
-                      All workflows
-                    </span>
-                  )}
-                </div>
-              </div>
-              <button
-                onClick={() => handleRevoke(key.id)}
-                className="p-2 text-muted-foreground/50 dark:text-white/20 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                title="Revoke key"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <SettingsGroupTitle title="Keys" />
+      <SettingsGroup>
+        {loading ? (
+          <SettingsEmpty>Loading…</SettingsEmpty>
+        ) : activeKeys.length === 0 ? (
+          <SettingsEmpty>No keys yet. Create one above.</SettingsEmpty>
+        ) : (
+          activeKeys.map(keyRow)
+        )}
+      </SettingsGroup>
 
       {/* Revoked keys */}
       {revokedKeys.length > 0 && (
         <div className="mt-6">
           <button
             onClick={() => setShowRevoked(!showRevoked)}
-            className="flex items-center gap-2 text-xs text-muted-foreground/50 dark:text-white/20 hover:text-muted-foreground dark:hover:text-white/40 transition-colors"
+            className="flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
           >
             {showRevoked ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
             {showRevoked ? 'Hide' : 'Show'} {revokedKeys.length} revoked key{revokedKeys.length !== 1 ? 's' : ''}
           </button>
           {showRevoked && (
-            <div className="mt-2 space-y-2 opacity-50">
+            <SettingsGroup className="mt-2 opacity-60">
               {revokedKeys.map(key => (
-                <div key={key.id} className="flex items-center gap-4 px-4 py-3 bg-card dark:bg-foreground/[0.02] border border-border dark:border-white/[0.04] rounded-xl">
-                  <Shield className="w-4 h-4 text-muted-foreground/50 dark:text-white/15 shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground dark:text-white/40 line-through">{key.name}</span>
-                      <code className="text-xs font-mono text-muted-foreground/50 dark:text-white/15">{key.key_prefix}...</code>
-                    </div>
-                    <span className="text-xs text-red-600/50 dark:text-red-400/40">
-                      Revoked {new Date(key.revoked_at!).toLocaleDateString()}
+                <SettingsRow
+                  key={key.id}
+                  label={
+                    <span className="flex items-center gap-2 text-muted-foreground line-through">
+                      {key.name}
+                      <code className="font-mono text-xs font-normal">{key.key_prefix}…</code>
                     </span>
-                  </div>
-                </div>
+                  }
+                  description={`Revoked ${new Date(key.revoked_at!).toLocaleDateString()}`}
+                />
               ))}
-            </div>
+            </SettingsGroup>
           )}
         </div>
       )}

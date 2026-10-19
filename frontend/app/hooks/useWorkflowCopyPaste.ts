@@ -10,7 +10,7 @@ import { useCallback, useEffect, useRef, type MutableRefObject, type RefObject }
 import { Node, Edge } from '@xyflow/react';
 import { toast } from 'sonner';
 import { parseClipboardContent, detectN8nWorkflow } from '~/utils/clipboard-parsers';
-import { autoSelectCredentialsForNewNode } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialsForNewNode } from '~/utils/credentialAutoSelectForNode';
 import { buildSaveConfig } from '~/lib/applyNodeUpdate';
 import { getBlockTypeForNodeType } from '~/components/interface/blockRegistry';
 import type { InterfaceGridState, WorkflowInterfaceHandle } from '~/components/interface/WorkflowInterface';

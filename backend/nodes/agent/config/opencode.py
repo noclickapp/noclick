@@ -20,9 +20,9 @@ class OpenCodeConfig(BaseAgentFields):
         json_schema_extra={"ui:hidden": True}
     )
     opencode_model: str = Field(
-        # Must be a currently-servable Zen free model (the picker filters to
-        # the live servable set); Zen rotates its free tier, so update the
-        # default_model in _cli_models.json when this one stops serving.
+        # Must be a model OpenCode runs today (opencode_model_refusal); Zen
+        # rotates its free tier, and nodes/tests/test_opencode_default_model_live.py
+        # fails daily once this one goes: change default_model in _cli_models.json.
         default=harness_default_model("opencode"),
         title="OpenCode Model",
         json_schema_extra={

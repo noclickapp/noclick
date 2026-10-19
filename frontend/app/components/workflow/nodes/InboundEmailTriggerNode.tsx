@@ -1,5 +1,5 @@
 // Inbound-email trigger node definition.
-// Entry point for workflows triggered by email sent to a reserved address (localpart@noclick.app).
+// Entry point for workflows triggered by email sent to a reserved address (localpart@<inbound domain>).
 // Uses the shared AutomationNode component with a mail icon; config UI is the email_trigger widget.
 
 import { memo } from 'react';

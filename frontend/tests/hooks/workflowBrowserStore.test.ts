@@ -54,6 +54,22 @@ const lastReq = (name: string) => {
     return (evs[evs.length - 1]?.data as { request_id?: string })?.request_id;
 };
 
+describe('workflowBrowserStore — loading the root', () => {
+    it('asks for the root workflows beside the folder tree, not after it answers', async () => {
+        setCurrentScope('personal');
+        fetchTree('personal');
+        // Both are on the wire before the tree has answered: the grid waits on one round trip.
+        expect(socket.sentEvents.map((e) => e.name)).toEqual(expect.arrayContaining(['workflow_folder:get_tree', 'workflow:list']));
+        socket.serverEmit('response', { request_id: lastReq('workflow:list'), data: { workflows: [wf('w1', 'Root flow')] } });
+        await flush();
+        expect(browserStore.scopes['personal'].workflows[''].map((w) => w.id)).toEqual(['w1']);
+        // The tree's answer doesn't ask again.
+        socket.serverEmit('response', { request_id: lastReq('workflow_folder:get_tree'), data: { folders: [] } });
+        await flush();
+        expect(socket.sentEvents.filter((e) => e.name === 'workflow:list')).toHaveLength(1);
+    });
+});
+
 describe('workflowBrowserStore — scope isolation', () => {
     it('a late response for scope A cannot touch scope B (the contamination invariant)', async () => {
         // Issue a root workflow fetch for org_a, then switch to org_b and fetch there.

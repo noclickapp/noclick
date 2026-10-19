@@ -185,6 +185,22 @@ class PhoneRepo:
             phone_e164,
         )
 
+    async def record_app(self, phone_e164: str, app: str) -> None:
+        """This number just texted the instance's own lines over ``app`` ("whatsapp" | "imessage")."""
+        await self._pool.execute(
+            "UPDATE public.user_phones SET last_seen_app = $2 WHERE phone_e164 = $1 AND unlinked_at IS NULL",
+            phone_e164, app,
+        )
+
+    async def last_seen_app(self, user_id: str) -> Optional[str]:
+        """The app ("whatsapp" | "imessage") the account last texted the instance's own lines on, if any."""
+        return await self._pool.fetchval(
+            "SELECT last_seen_app FROM public.user_phones "
+            "WHERE user_id = $1 AND unlinked_at IS NULL AND last_seen_app IS NOT NULL "
+            "ORDER BY last_seen_at DESC NULLS LAST LIMIT 1",
+            user_id,
+        )
+
     async def unlink(self, user_id: str, phone_e164: str) -> bool:
         """Unlink one number. The account's auth phone is cleared with it, so
         whoever holds the number next cannot sign in to this account by it."""

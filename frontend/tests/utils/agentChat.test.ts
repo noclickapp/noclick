@@ -49,7 +49,7 @@ const MODEL_VARIANTS: ReadonlyArray<{
     { id: 'hermes', kind: 'cli' },
     // Modality-specific models.
     { id: 'openrouter/openai/dall-e-3', kind: 'image' },
-    { id: 'openrouter/google/veo-2', kind: 'video' },
+    { id: 'openrouter/google/veo-3.1-fast', kind: 'video' },
 ];
 
 describe('deriveAgentChatConversationId', () => {

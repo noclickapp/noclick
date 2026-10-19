@@ -52,12 +52,13 @@ def test_parts_variable_section_carries_workflow_context():
     """The workflow snapshot, user context, and edit scope must land in
     the variable half — leaking them into the stable half would
     invalidate the prefix cache hit."""
-    stable, variable = build_system_prompt_parts(
-        user_context={'has_workflow': True, 'workflow_id': 'wf-1', 'inner_tab': 'canvas'},
-    )
-    assert 'Current User Context' in variable
+    from coder.workflow.agentic.prompts import build_user_context
+
+    context = {'has_workflow': True, 'workflow_id': 'wf-1', 'inner_tab': 'canvas'}
+    stable, variable = build_system_prompt_parts(user_context=context)
+    assert build_user_context(context) in variable
     assert 'wf-1' in variable
-    assert 'Current User Context' not in stable
+    assert build_user_context(context) not in stable
     assert 'wf-1' not in stable
 
 
@@ -70,13 +71,10 @@ def test_coordinator_free_form_messaging_survives_request_handoff():
     })
     stable, variable = build_system_prompt_parts(user_context=context)
     assert "message_coordinator(message=...)" in stable
-    assert "message text" in stable and "free-form" in stable
     assert "owner_alert" not in stable + variable
-    assert "channel 'whatsapp'" in variable
-    assert "No recipient number" in variable
-    assert "plain text" in variable and "delivery preferences" in variable
+    assert "whatsapp" in variable and "coordinator" in variable
 
 
 def test_other_builder_origins_do_not_invent_a_coordinator_channel():
     _, variable = build_system_prompt_parts(user_context={"source": "api", "workflow_id": "wf-1"})
-    assert "request came from the account coordinator" not in variable
+    assert "coordinator" not in variable

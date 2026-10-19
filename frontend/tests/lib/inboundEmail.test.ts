@@ -17,7 +17,7 @@ describe('inboundEmailDomain', () => {
     it('keeps the hosted service owned default', () => {
         delete env.VITE_NOCLICK_LOCAL;
         delete env.VITE_INBOUND_EMAIL_DOMAIN;
-        expect(inboundEmailDomain()).toBe('noclick.app');
+        expect(inboundEmailDomain()).toBe('noclick.email');
     });
 
     it('disables inbound email in an unconfigured community build', () => {
@@ -32,11 +32,14 @@ describe('inboundEmailDomain', () => {
         expect(inboundEmailDomain()).toBe('mail.automation.example.test');
     });
 
-    it('refuses NoClick hosted mail in a community build', () => {
-        env.VITE_NOCLICK_LOCAL = '1';
-        env.VITE_INBOUND_EMAIL_DOMAIN = 'noclick.app';
-        expect(inboundEmailDomain()).toBeNull();
-    });
+    it.each(['noclick.app', 'noclick.email'])(
+        'refuses NoClick hosted mail (%s) in a community build',
+        (domain) => {
+            env.VITE_NOCLICK_LOCAL = '1';
+            env.VITE_INBOUND_EMAIL_DOMAIN = domain;
+            expect(inboundEmailDomain()).toBeNull();
+        }
+    );
 
     it('refuses malformed configured domains', () => {
         env.VITE_NOCLICK_LOCAL = '1';

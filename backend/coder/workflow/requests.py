@@ -2,11 +2,15 @@
 
 Callers submit an outcome and consume one request's state. The builder owns
 phase transitions; the publisher remains the authority for published apps.
+A request whose origin names a registered reporter (``register_reporter``)
+hands it the request after every attempt (asking, finished, failed), so its
+caller follows it without polling; the rest are posted to their conversation.
 """
 
 import asyncio
 import logging
 
+from billing.usage_tracker import attributed
 from repositories.builder_requests import BuilderRequestRepo
 from utils.builder_request import PublicationOptions
 from utils.capabilities import INTERFACE_PUBLISH, capability
@@ -15,6 +19,29 @@ from utils.socket_singleton import get_sio
 from utils.task_notifications import deliver_phone, emit_notification, notification_event
 
 logger = logging.getLogger(__name__)
+
+# Passed as ``organization_id``: the new workflow lands in the user's current workspace, as the app's own builds do.
+CURRENT_ORG = object()
+# How often a running attempt renews its lease and looks for a cancel.
+HEARTBEAT_S = 10
+
+_REPORTERS = {}
+
+
+def register_reporter(source, report):
+    """``report(pool, request_row)`` runs after each attempt of a request whose ``origin.source`` is ``source``."""
+    _REPORTERS[source] = report
+
+
+async def report(pool, request_id):
+    row = await pool.fetchrow("SELECT * FROM coordinator_jobs WHERE id=$1::uuid AND kind='build'", request_id)
+    reporter = row and _REPORTERS.get((row["origin"] or {}).get("source"))
+    if reporter is None:
+        return
+    try:
+        await reporter(pool, dict(row))
+    except Exception:
+        logger.exception("reporting builder request %s failed", request_id)
 
 
 def build_view(row):
@@ -43,7 +70,7 @@ def request_context(row):
 
 async def submit_request(pool, *, user_id, workflow_id=None, instructions=None, name=None, publish=None,
                          origin=None, continuation=None, reply_conversation_id=None, reply_node_id=None,
-                         send_to_phone=False):
+                         send_to_phone=False, organization_id=CURRENT_ORG):
     instructions = (instructions or "").strip() or None
     if instructions and len(instructions) > 16000:
         raise ValueError("Instructions must contain at most 16000 characters.")
@@ -54,30 +81,55 @@ async def submit_request(pool, *, user_id, workflow_id=None, instructions=None, 
         raise ValueError("Provide build instructions, or an existing workflow and publish options.")
     if publication is not None and capability(INTERFACE_PUBLISH) is None:
         raise ValueError("Interface publishing is unavailable on this instance.")
+    created_id = None
     if not workflow_id:
-        from wss.handlers.workflow_builder_handler import create_workflow_as_user
+        from wss.handlers.workflow_handler import create_workflow_as_user
+
+        placed = {} if organization_id is CURRENT_ORG else {"organization_id": organization_id}
+        from repositories.workflow import NEW_WORKFLOW_NAME
 
         created = await create_workflow_as_user(
-            pool, user_id, name=(name or "New workflow").strip()[:120], description=instructions[:300],
+            pool, user_id, name=(name or NEW_WORKFLOW_NAME).strip()[:120], description=instructions[:300], **placed,
         )
         if created.get("error"):
             raise ValueError(created["error"])
-        workflow_id = created["workflow_id"]
-    return await BuilderRequestRepo(pool).enqueue(
-        user_id=user_id, workflow_id=workflow_id, instructions=instructions, publish=publication,
-        origin=origin, continuation=continuation, reply_conversation_id=reply_conversation_id, reply_node_id=reply_node_id,
-        send_to_phone=send_to_phone,
-    )
+        workflow_id = created_id = created["workflow_id"]
+    try:
+        return await BuilderRequestRepo(pool).enqueue(
+            user_id=user_id, workflow_id=workflow_id, instructions=instructions, publish=publication,
+            origin=origin, continuation=continuation, reply_conversation_id=reply_conversation_id,
+            reply_node_id=reply_node_id, send_to_phone=send_to_phone,
+        )
+    except ValueError:
+        if created_id:
+            # Refused before anything was built: no empty workflow left behind.
+            from wss.handlers.workflow_handler import trash_workflow_as_owner
+
+            await trash_workflow_as_owner(pool, created_id, user_id)
+        raise
 
 
 async def _run_attempt(pool, request, build):
+    # What the build spends is attributed as its submitter asked (``origin.attribution``, ``usage_attribution()``).
+    with attributed((request["origin"] or {}).get("attribution")):
+        await _attempt(pool, request, build)
+
+
+async def _attempt(pool, request, build):
     repo = BuilderRequestRepo(pool)
     request_id, attempt_id = str(request["id"]), str(request["attempt_id"])
 
     async def heartbeat():
         while True:
-            await asyncio.sleep(30)
-            await repo.heartbeat(request_id, attempt_id)
+            await asyncio.sleep(HEARTBEAT_S)
+            if await repo.heartbeat(request_id, attempt_id) == "cancelled":
+                # Cancelled while it builds (from anywhere): stop the builder working on it here.
+                from utils.cancellation import get_builder_scope
+
+                scope = get_builder_scope(request["conversation_key"])
+                if scope is not None:
+                    scope.cancel("user")
+                return
 
     lease = asyncio.create_task(heartbeat())
     try:
@@ -85,6 +137,15 @@ async def _run_attempt(pool, request, build):
         workflow = await repo.accessible_workflow(str(request["user_id"]), str(request["workflow_id"]),
                                                   publishing="publish" in request["spec"])
         if request["phase"] == "building":
+            from billing.plan_limits import ai_builder_limit_error
+
+            # Refused here, the request says why (the builder's own refusal reaches only a socket), on the pool
+            # the build bills to: its workflow's organization's owner, as the builder gates it.
+            organization_id = workflow["organization_id"]
+            limit_error = await ai_builder_limit_error(pool, str(request["user_id"]),
+                                                       str(organization_id) if organization_id else None)
+            if limit_error:
+                raise ValueError(limit_error)
             await build(workflow["workflow"])
             # A finish or question changes the request in the builder callback.
             await repo.finish(request_id, attempt_id, error="The build ended without a completed result. Check it before retrying.")
@@ -109,6 +170,7 @@ async def _run_attempt(pool, request, build):
     finally:
         lease.cancel()
         await asyncio.gather(lease, return_exceptions=True)
+        await report(pool, request_id)
 
 
 async def run_request(pool, request):
@@ -125,9 +187,14 @@ async def run_request(pool, request):
     await _run_attempt(pool, request, build)
 
 
-async def resume_request(handler, sid, data, user_id):
+async def resume_request(handler, sid, data, user_id, *, taken=None):
+    """Build on the answer to a request's question. ``taken()`` runs once the answer is claimed, before the build:
+    the build runs until the builder next stops, far longer than anyone waiting on the answer should."""
     pool = await handler.get_pool()
     request = await BuilderRequestRepo(pool).claim_resume(user_id, data["conversation_id"], data.get("ask_id"))
+    await report(pool, str(request["id"]))
+    if taken is not None:
+        await taken()
 
     async def build(_graph):
         await handler._handle_input_response_impl(sid, data, caller_user_id=user_id)
@@ -148,7 +215,7 @@ async def record_result(pool, user_id, context, *, success, summary, error):
 async def notify_result(pool, request):
     if request["continuation"]:
         from repositories.coordinator_wakeups import CoordinatorWakeupRepo
-        from coder.coordinator.tools import bounded
+        from utils.previews import bounded
 
         await CoordinatorWakeupRepo(pool).enqueue(
             job=request, context=request["continuation"],

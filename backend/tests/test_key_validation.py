@@ -9,6 +9,7 @@ never make credential creation depend on provider availability.
 import json
 from unittest.mock import patch
 
+import httpx
 import pytest
 
 from nodes.agent import key_validation
@@ -157,39 +158,97 @@ async def test_unrecognized_env_vars_allow_without_probing(monkeypatch):
     ) is None
 
 
-def _stub_zen_servable(monkeypatch, ids):
-    async def _servable(tier):
-        return ids
+# OpenCode Zen as a caller outside OpenCode meets it (read 2026-10-17): its
+# free tier refuses every completion before it looks at the key, while /models
+# lists the models to no key and answers a key it doesn't know with 401.
+_ZEN_FREE_TIER_REFUSAL = {"type": "error", "error": {
+    "type": "FreeTierError",
+    "message": "OpenCode's free tier can only be used from within OpenCode. "
+               "Download it at https://opencode.ai and keep building."}}
+_ZEN_INVALID_CREDENTIAL = {"error": {"type": "server_error", "message": "Invalid credential"}}
+_ZEN_MODELS = {"object": "list", "data": [{"id": "big-pickle"}, {"id": "deepseek-v4.1-flash-free"}, {"id": "glm-5.1"}]}
 
-    monkeypatch.setattr("utils.opencode_zen.get_zen_servable_ids", _servable)
+
+class _ZenResp(_Resp):
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise RuntimeError(self.status_code)
+
+    def json(self):
+        return json.loads(self.text)
 
 
-async def test_opencode_invalid_key_rejected(monkeypatch):
-    # Zen validates a PROVIDED key even on free models — definitive 401.
-    _stub_zen_servable(monkeypatch, {"deepseek-v4-flash-free", "glm-5"})
-    _patch(monkeypatch, _Resp(
-        401, {"type": "error", "error": {"type": "AuthError", "message": "Invalid API key."}}
-    ))
+def _zen(monkeypatch, *, good_key):
+    calls = []
+
+    class _ZenClient(_Client):
+        async def get(self, url, headers=None, **k):
+            calls.append(("GET", url, headers))
+            auth = (headers or {}).get("Authorization")
+            if auth and auth != f"Bearer {good_key}":
+                return _ZenResp(401, _ZEN_INVALID_CREDENTIAL)
+            return _ZenResp(200, _ZEN_MODELS)
+
+        async def post(self, url, headers=None, **k):
+            calls.append(("POST", url, headers))
+            return _ZenResp(403, _ZEN_FREE_TIER_REFUSAL)
+
+    monkeypatch.setattr(key_validation.httpx, "AsyncClient", _ZenClient)
+    return calls
+
+
+async def test_opencode_key_zen_refuses_is_refused_in_zens_words(monkeypatch):
+    # The free-model completion this used to send now meets the free tier's
+    # refusal, so every key looked fine and a dead one was saved (2026-10-16).
+    calls = _zen(monkeypatch, good_key="zen-good")
     msg = await validate_agent_api_key(
         "agent_opencode", _blob({"OPENCODE_API_KEY": "zen-bad"})
     )
-    assert msg and "rejected the API key" in msg
+    assert msg and "OpenCode Zen rejected the API key" in msg
+    assert "Invalid credential" in msg
     assert "opencode.ai/auth" in msg
+    # Judged without a completion: nothing is spent and the free tier isn't asked.
+    assert calls == [("GET", "https://opencode.ai/zen/v1/models", {"Authorization": "Bearer zen-bad"})]
 
 
-async def test_opencode_valid_key_allows(monkeypatch):
-    _stub_zen_servable(monkeypatch, {"deepseek-v4-flash-free"})
-    _patch(monkeypatch, _Resp(200, {"choices": [{"message": {"content": "hi"}}]}))
+async def test_opencode_key_zen_accepts_is_saved(monkeypatch):
+    _zen(monkeypatch, good_key="zen-good")
     assert await validate_agent_api_key(
         "agent_opencode", _blob({"OPENCODE_API_KEY": "zen-good"})
     ) is None
 
 
-async def test_opencode_probe_without_live_free_model_allows(monkeypatch):
-    # Free tier rotated away entirely (or servable set unavailable) — the
-    # probe is inconclusive and must allow without any HTTP call.
-    _stub_zen_servable(monkeypatch, {"glm-5"})
-    _patch(monkeypatch)  # empty queue — a probe attempt would IndexError
+@pytest.mark.parametrize("body", [
+    _ZEN_INVALID_CREDENTIAL,
+    # The words Zen's own proxy answers a key it can't place with.
+    {"type": "error", "error": {"type": "AuthError", "message": "Invalid API key."}},
+])
+async def test_opencode_key_zen_names_invalid_is_refused(monkeypatch, body):
+    class _Refusing(_Client):
+        async def get(self, *a, **k):
+            return _ZenResp(401, body)
+
+    monkeypatch.setattr(key_validation.httpx, "AsyncClient", _Refusing)
+    assert await validate_agent_api_key("agent_opencode", _blob({"OPENCODE_API_KEY": "zen-x"}))
+
+
+@pytest.mark.parametrize("answer", [
+    httpx.ReadTimeout("Zen took too long"),
+    httpx.ConnectError("Zen unreachable"),
+    _ZenResp(503, "Inference routing is unavailable. Please retry later."),
+    # A 401 that doesn't say the key is invalid judges nothing: if valid keys
+    # ever met one here, every OpenCode key would be refused.
+    _ZenResp(401, {"type": "error", "error": {"type": "AuthError", "message": "Missing API key."}}),
+    _ZenResp(401, ""),
+])
+async def test_opencode_key_zen_cannot_judge_is_saved_unverified(monkeypatch, answer):
+    class _Unjudged(_Client):
+        async def get(self, *a, **k):
+            if isinstance(answer, Exception):
+                raise answer
+            return answer
+
+    monkeypatch.setattr(key_validation.httpx, "AsyncClient", _Unjudged)
     assert await validate_agent_api_key(
         "agent_opencode", _blob({"OPENCODE_API_KEY": "zen-x"})
     ) is None

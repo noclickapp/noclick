@@ -373,7 +373,7 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
                     return f"Workflow not found or access denied: {workflow_id}"
 
                 if access.permission not in (Permission.EDIT, Permission.OWNER):
-                    return "You don't have permission to edit this workflow"
+                    return access.edit_refusal("You don't have permission to edit this workflow")
 
                 result = await WorkflowRepo(pool).replace_workflow_data(
                     conn, uuid.UUID(workflow_id), workflow_data,
@@ -1806,7 +1806,7 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
                         data=WorkflowMCPDeleteWorkflowResponse(
                             success=False,
                             workflow_id=request.workflow_id,
-                            message="Only the owner can delete this workflow"
+                            message=access.edit_refusal("Only the owner can delete this workflow")
                         )
                     ))
                     return
@@ -1912,7 +1912,7 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
                         data=WorkflowMCPUpdateWorkflowMetadataResponse(
                             success=False,
                             workflow_id=request.workflow_id,
-                            message="You don't have permission to edit this workflow"
+                            message=access.edit_refusal("You don't have permission to edit this workflow")
                         )
                     ))
                     return

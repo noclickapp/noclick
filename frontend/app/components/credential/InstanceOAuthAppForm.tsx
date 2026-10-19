@@ -11,7 +11,7 @@
 // stored or echoed by the client.
 
 import { useState } from 'react';
-import { ExternalLink } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { CopyableReadonlyField } from '~/components/ui/CopyableReadonlyField';
 import { sendEventAsync } from '~/lib/socket-sender';
@@ -89,7 +89,7 @@ export function InstanceOAuthAppForm({
                     className={INSTANCE_FORM.chip}
                 >
                     Open the {label} console
-                    <ExternalLink className="h-3.5 w-3.5" />
+                    <ArrowUpRight className="h-4 w-4" />
                 </a>
             )}
             <div>
@@ -135,6 +135,7 @@ export function InstanceOAuthAppForm({
 
             <div className="flex items-center gap-2">
                 <button
+                    type="button"
                     onClick={save}
                     disabled={saving || !clientId.trim()}
                     className={INSTANCE_FORM.primaryButton}
@@ -142,10 +143,7 @@ export function InstanceOAuthAppForm({
                     {saving ? 'Saving…' : 'Save'}
                 </button>
                 {onCancel && (
-                    <button
-                        onClick={onCancel}
-                        className="h-9 px-3 text-sm text-muted-foreground dark:text-white/40 hover:text-foreground/80 transition-colors"
-                    >
+                    <button type="button" onClick={onCancel} className={INSTANCE_FORM.cancelButton}>
                         Cancel
                     </button>
                 )}

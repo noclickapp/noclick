@@ -4,39 +4,18 @@
 // Default panel width as a percentage of viewport width
 export const DEFAULT_PANEL_WIDTH_VW = 30;
 
-// Sidebar default width is `vwToPixels(30) * scale` where `scale` matches
-// the root-font-size tier in tailwind.css. Mirrors those media queries:
-//   mobile (<=768)    → 1.0   (mobile has its own layout, no shrinking)
-//   1152 < w <= 1366  → 0.85
-//   768  < w <= 1152  → 0.75
-//   w > 1366          → 1.0
-// Without this, JS-computed pixel widths (sidebar, panels, node previews)
-// wouldn't track the rest of the (rem-based) UI on low-res screens.
-export function lowResScale(): number {
-    if (typeof window === 'undefined') return 1;
-    const w = window.innerWidth;
-    if (w <= 768) return 1;
-    if (w <= 1152) return 0.75;
-    if (w <= 1366) return 0.85;
-    return 1;
-}
-
-// Shorthand for `base * lowResScale()`. Used by px-based dimensions that
-// can't be expressed in rem (e.g. JS-set widths, decorative sizes that
-// would look wrong as text-relative). Variadic form scales a tuple.
-export function scaled(base: number): number {
-    return base * lowResScale();
-}
-
-// Min / max sidebar width in REM so the bounds shrink automatically with the
-// global font-size scaling on low-res. At default 16px font: 18rem = 288px
-// floor, 44rem = 704px ceiling. At 13.6px (≤1366px): 245px / 598px.
+// Min / max sidebar width in rem, so the bounds follow the browser's font size:
+// 18rem = 288px floor, 44rem = 704px ceiling at the default 16px.
 const MIN_PANEL_WIDTH_REM = 18;
 const MAX_PANEL_WIDTH_REM = 44;
+// Read once: reading it on every call forced a style recalculation mid-render
+// (ResizablePanel's width bounds read it on each render).
+let rootFontSize: number | null = null;
+
 function remToPixels(rem: number): number {
     if (typeof window === 'undefined') return rem * 16;
-    const fs = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-    return rem * fs;
+    rootFontSize ??= parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    return rem * rootFontSize;
 }
 
 // Convert viewport width units to pixels
@@ -57,10 +36,9 @@ export function getMaxPanelWidth(): number {
     return remToPixels(MAX_PANEL_WIDTH_REM);
 }
 
-// Get the default panel width in pixels, scaled to match the low-res
-// font-size tiers and clamped to the min/max bounds.
+// Get the default panel width in pixels, clamped to the min/max bounds.
 export function getDefaultPanelWidth(): number {
     if (typeof window === 'undefined') return 400;
-    const raw = vwToPixels(DEFAULT_PANEL_WIDTH_VW) * lowResScale();
+    const raw = vwToPixels(DEFAULT_PANEL_WIDTH_VW);
     return Math.min(getMaxPanelWidth(), Math.max(getMinPanelWidth(), raw));
 }

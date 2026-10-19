@@ -94,8 +94,8 @@ def build_email_reply_tool(
 async def execute_email_reply(
     node, arguments: Dict[str, Any], tool_info: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Verify the locked context, gate + charge credits, send via Cloudflare
-    Email Service.
+    """Verify the locked context, gate + charge credits, send through the
+    shared email transport.
 
     Gate failures raise (InsufficientBalanceError / OwnerResolutionError) and
     surface to the model through execute_tool's catch-all.
@@ -105,6 +105,7 @@ async def execute_email_reply(
     from billing.schema import UsageEventData
     from billing.usage_tracker import usage_tracker
     from utils.email_reply import reply_refusal, send_email_reply
+    from utils.email_sending import message_usd
 
     body = (arguments or {}).get("body")
     if not body or not str(body).strip():
@@ -142,28 +143,26 @@ async def execute_email_reply(
 
     # Pass the raw runner + org; track_usage_event's organization attribution policy choke point
     # resolves the billed pool.
-    await usage_tracker.track_usage_event(
-        UsageEventData(
-            user_id=node.user_id,
-            total_cost=EMAIL_SEND_PRICE,
-            usage_type="api_usage",
-            usage_subtype="email/agent_reply",
-            quantity=Decimal("1"),
-            unit_type="requests",
-            user_resource=False,
-            organization_id=node.organization_id,
-            metadata={
-                "to": context.get("to"),
-                "from": context.get("from_addr"),
-                "workflow_id": str(node.workflow_id) if getattr(node, "workflow_id", None) else None,
-                "trigger_node_id": tool_info.get("node_id"),
-                "message_id": result.get("message_id"),
-                "delivery_status": result.get("delivery_status"),
-            },
-        ),
-        sio=node.sio,
-        sid=node.sid,
+    charge = UsageEventData(
+        user_id=node.user_id,
+        total_cost=EMAIL_SEND_PRICE,
+        cost_usd=message_usd(),
+        usage_type="api_usage",
+        usage_subtype="email/agent_reply",
+        quantity=Decimal("1"),
+        unit_type="requests",
+        user_resource=False,
+        organization_id=node.organization_id,
+        metadata={
+            "to": context.get("to"),
+            "from": context.get("from_addr"),
+            "workflow_id": str(node.workflow_id) if getattr(node, "workflow_id", None) else None,
+            "trigger_node_id": tool_info.get("node_id"),
+            "message_id": result.get("message_id"),
+            "delivery_status": result.get("delivery_status"),
+        },
     )
+    await usage_tracker.track_usage_event(charge, sio=node.sio, sid=node.sid)
     return {
         "success": True,
         "to": result["to"],
@@ -173,5 +172,5 @@ async def execute_email_reply(
         # tell the user when the reply hard-bounced (still charged: a bounce
         # consumes sending quota and reputation).
         "delivery_status": result.get("delivery_status"),
-        "credits_charged": float(dollars_to_credits(EMAIL_SEND_PRICE)),
+        "credits_charged": float(dollars_to_credits(charge.total_cost)),
     }

@@ -24,13 +24,27 @@ export const EDIT_ICON_SIZE = 28;
 // Constants used here match AutomationNode's existing values.
 export const EDIT_TRANSITION = 'width 300ms ease-out, height 300ms ease-out';
 
+/** A build the canvas didn't start itself (the coordinator's, an MCP client's, one
+ *  reattached after a reload) reaches it through liveGraphStore / useMCPBuilderEvents,
+ *  which mark the node being added or configured in its data (`mcpAnimationState`).
+ *  The card opens for those as it does for the canvas's own builder. */
+export function buildEditInfo(state: unknown): NodeEditInfo | null {
+    if (state === 'adding') return { status: 'processing', action: 'added' };
+    if (state === 'editing') return { status: 'processing', action: 'updated' };
+    return null;
+}
+
 /** Per-node AI editing state. Polls the workflow editor store (a module-level Map,
  *  not React-reactive) every 100ms so callers can render an editing overlay. Set
  *  options.skip to true to disable the polling (e.g. for read-only canvases that
- *  never enter the editing state). */
+ *  never enter the editing state). `building` is the node's `mcpAnimationState`. */
 export function useNodeEditingState(
     nodeId: string,
-    options: { skip?: boolean; previewEditInfo?: NodeEditInfo | null } = {}
+    options: {
+        skip?: boolean;
+        previewEditInfo?: NodeEditInfo | null;
+        building?: unknown;
+    } = {}
 ) {
     const [state, setState] = useState<{
         isBeingEdited: boolean;
@@ -39,6 +53,10 @@ export function useNodeEditingState(
     }>({ isBeingEdited: false });
     const skip = options.skip ?? false;
     const previewEditInfo = options.previewEditInfo;
+    const fromBuild = useMemo(
+        () => buildEditInfo(options.building),
+        [options.building]
+    );
     // Product demos and other read-only surfaces can opt into the exact
     // production editing treatment without mutating the editor singleton. This
     // keeps the preview honest while preventing it from interfering with a real
@@ -95,7 +113,10 @@ export function useNodeEditingState(
         const interval = setInterval(check, 100);
         return () => clearInterval(interval);
     }, [nodeId, previewEditInfo, skip]);
-    return previewState ?? state;
+    if (previewState) return previewState;
+    return state.isBeingEdited || !fromBuild
+        ? state
+        : { isBeingEdited: true, editInfo: fromBuild, remoteEditorName: undefined };
 }
 
 /** Status line label — mirrors AutomationNode's getStatusText behavior. */

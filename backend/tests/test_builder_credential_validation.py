@@ -91,7 +91,8 @@ async def test_filters_to_existing_accessible_unrevoked(real_database):
 @pytest.mark.asyncio
 async def test_org_share_requires_matching_org(real_database):
     """An org-shared credential is accessible only when the matching org_id is
-    passed — the builder (no org context) must not silently authorize it."""
+    passed — the builder (no org context) must not silently authorize it — and
+    only to a member of that org: an org id alone grants an outsider nothing."""
     pool = real_database.pool
     org_id = "00000000-0000-4000-8000-0000000000cc"
     await _user(real_database, OWNER, "owner@example.com")
@@ -109,6 +110,13 @@ async def test_org_share_requires_matching_org(real_database):
         org_cred, org_id, OTHER,
     )
 
+    # Not a member: the org id alone grants nothing.
+    assert await filter_accessible_credential_ids([org_cred], OWNER, pool=pool, org_id=org_id) == set()
+    await real_database.execute(
+        "INSERT INTO organization_members (organization_id, user_id, role) VALUES ($1, $2, 'member') "
+        "ON CONFLICT (organization_id, user_id) DO NOTHING",
+        org_id, OWNER,
+    )
     # No org context → not accessible.
     assert await filter_accessible_credential_ids([org_cred], OWNER, pool=pool) == set()
     # Matching org context → accessible.

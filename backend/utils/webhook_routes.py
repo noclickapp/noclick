@@ -31,7 +31,7 @@ from utils.async_helpers import spawn
 from utils.webhook_delivery import get_webhook_base_url
 from utils.database_pool import get_native_pool
 from utils.graph_nodes import node_disabled, node_label
-from billing.exceptions import match_insufficient_credits
+from billing.exceptions import match_spend_refusal
 from utils.shopify_routes import compliance_router as shopify_compliance_router
 from wss.receiver.client_events import WorkflowExecuteRequest
 from wss.handlers.workflow_execution_handler import WorkflowExecutionResult
@@ -1112,38 +1112,44 @@ _SCHEDULE_BREAKER_LOOKBACK = 60
 
 @dataclass(frozen=True)
 class FailureStreak:
-    """The workflow's latest runs from one trigger source all failed alike."""
+    """One trigger's latest runs all failed alike."""
     count: int
     error: str
     span_s: float
 
     @property
     def trips_breaker(self) -> bool:
-        # Credit exhaustion is a billing state, not a broken workflow: a top-up
-        # must resume the schedule by itself, so it never pauses one.
+        # Credit exhaustion and the account's monthly cap are billing states, not a
+        # broken workflow: a top-up, a raised cap or the next period must resume the
+        # schedule by itself, so neither ever pauses one.
         return (
             self.count >= SCHEDULE_BREAKER_MIN_FAILURES
             and self.span_s >= SCHEDULE_BREAKER_MIN_SPAN_S
-            and match_insufficient_credits(self.error) is None
+            and match_spend_refusal(self.error) is None
         )
 
 
 async def _schedule_failure_streak(
-    workflow_id: str, trigger_source: str
+    workflow_id: str, trigger_source: str, node_id: str
 ) -> Optional[FailureStreak]:
-    """Walk the workflow's recent runs from ``trigger_source`` newest-first and
-    count how many, from the latest, failed with the SAME error. None when the
-    latest run did not fail — and on a DB error (fail OPEN: a blip dispatches
-    the tick, it never pauses a schedule)."""
+    """Walk trigger ``node_id``'s recent runs from ``trigger_source`` newest-first
+    and count how many, from the latest, failed with the SAME error. A run is the
+    trigger's when the trigger ran in it, or when nothing did (it failed before
+    any node ran): a workflow's other schedules interleave their runs, which
+    would otherwise break every streak. None when the latest run did not fail —
+    and on a DB error (fail OPEN: a blip dispatches the tick, it never pauses a
+    schedule)."""
     try:
         rows = await get_native_pool().fetch(
             """
-            SELECT status, error, started_at FROM workflow_executions
-            WHERE workflow_id = $1 AND trigger_source = $2
-            ORDER BY started_at DESC
-            LIMIT $3
+            SELECT e.status, e.error, e.started_at FROM workflow_executions e
+            WHERE e.workflow_id = $1 AND e.trigger_source = $2
+              AND (EXISTS (SELECT 1 FROM cas_manifests m WHERE m.execution_id = e.id AND m.node_id = $3)
+                   OR NOT EXISTS (SELECT 1 FROM cas_manifests m WHERE m.execution_id = e.id))
+            ORDER BY e.started_at DESC
+            LIMIT $4
             """,
-            uuid_module.UUID(workflow_id), trigger_source, _SCHEDULE_BREAKER_LOOKBACK,
+            uuid_module.UUID(workflow_id), trigger_source, node_id, _SCHEDULE_BREAKER_LOOKBACK,
         )
     except Exception as e:
         logger.warning(f"[WEBHOOK] failure-streak lookup failed for {workflow_id}: {e}")
@@ -1254,7 +1260,7 @@ async def _schedule_tick_verdict(
         # Previously-working trigger now failing validation: dispatch so the
         # config error surfaces as a visible run failure.
     trigger_source = _webhook_trigger_source(nodes, node_id)
-    streak = await _schedule_failure_streak(workflow_id, trigger_source)
+    streak = await _schedule_failure_streak(workflow_id, trigger_source, node_id)
     if streak and streak.trips_breaker and await _pause_stuck_schedule(
         workflow_id, node_id, trigger_node,
         user_id=user_id, trigger_source=trigger_source, streak=streak,
@@ -1371,6 +1377,9 @@ async def handle_webhook_payload(
 
     if not config.get("is_active"):
         logger.warning(f"[WEBHOOK] Webhook is disabled: {webhook_id}")
+        refused = await _stopped_elsewhere(config)
+        if refused is not None:
+            return _json_relay_response(refused[1], status_code=refused[0]) if return_response else False
         return _json_relay_response({"detail": "Webhook is disabled"}, status_code=410) if return_response else False
 
     # Signature verification is the trigger node class's job — every provider
@@ -1888,6 +1897,18 @@ async def _delivered_elsewhere(workflow_id: str, trigger_node: dict, payload: di
     if deliver is None:
         return None
     return await deliver(workflow_id=workflow_id, node=trigger_node, payload=payload)
+
+
+async def _stopped_elsewhere(config: dict) -> Optional[tuple]:
+    """``(status_code, body)`` when a product refuses a delivery to its stopped
+    trigger node's webhook in its own words (``TRIGGER_STOPPED``); None
+    answers with the engine's own 410."""
+    from utils.capabilities import TRIGGER_STOPPED, capability
+
+    stopped = capability(TRIGGER_STOPPED)
+    if stopped is None or not config.get("node_id"):
+        return None
+    return await stopped(workflow_id=str(config["workflow_id"]), node_id=str(config["node_id"]))
 
 
 def _webhook_ack_for_node(trigger_node: dict) -> Optional[Response]:
@@ -2607,6 +2628,9 @@ async def receive_webhook(
         return PlainTextResponse(content=validation_token, status_code=200)
 
     if not config.get("is_active"):
+        refused = await _stopped_elsewhere(config)
+        if refused is not None:
+            return JSONResponse(content=jsonable_encoder(refused[1]), status_code=refused[0])
         raise HTTPException(status_code=410, detail="Webhook is disabled")
 
     # Read body once for methods that can carry payloads (needed for signature check and payload parsing)

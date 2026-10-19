@@ -1,22 +1,25 @@
 /**
- * Unified Settings component with sidebar navigation.
- * Consolidates Usage Dashboard and Organization Settings into a single view.
- * Organization section only appears when user is in an organization context.
- * On mobile: shows a menu landing page first; tapping an item drills into that section.
- * On desktop: classic left sidebar + content layout.
+ * Settings: one page, its sections listed in groups in a column of their own
+ * beside the open one on a laptop (rows like the app sidebar's). On a phone the
+ * list is the page and a section opens over it, the shell's bar going back. The
+ * organization section only appears in an organization or a personal workspace
+ * that has one.
  */
 
 import { useEffect, useState, lazy, Suspense } from 'react';
-import { ArrowLeft, BarChart3, Bell, Brain, Building2, ChevronRight, Code2, KeyRound, Eye, Plug, Smartphone } from 'lucide-react';
+import { BarChart3, Bell, Brain, Building2, ChevronRight, Code2, KeyRound, Eye, Plug, Smartphone } from 'lucide-react';
 import { cn } from '~/lib/utils';
+import { HAIRLINE } from '~/components/dashboard/primitives';
 import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
 import { COMMAND_SHORTCUT_KEYS } from '~/lib/shortcuts';
 import { useOrgContext } from '~/hooks/useOrgContext';
 import { useValtioState } from '~/hooks/useValtioState';
 import { useIsMobile } from '~/hooks/useIsMobile';
 import { useUrlSyncedTab } from '~/hooks/useUrlSyncedTab';
-import { navigateToTab, SETTINGS_SECTIONS, type SettingsSection } from '~/lib/navigation';
-import { UsageDashboard } from '~/components/usage/UsageDashboard';
+import { SETTINGS_SECTIONS, type SettingsSection } from '~/lib/navigation';
+import { PhoneBarBack, useInPhoneShell } from '~/components/shell/AppShell';
+import { SidebarItem } from '~/components/shell/AppSidebar';
+import { UsagePage } from '~/components/usage/page/UsagePage';
 import { OrganizationSettings } from '~/components/organization/OrganizationSettings';
 import { CredentialsSettings } from '~/components/settings/CredentialsSettings';
 import { DeveloperSettings } from '~/components/settings/DeveloperSettings';
@@ -27,6 +30,7 @@ import { PhoneSettings } from '~/components/settings/PhoneSettings';
 import { PopupPreferencesSettings } from '~/components/settings/PopupPreferencesSettings';
 import { isLocalEdition } from '~/lib/edition';
 import { usePhoneLinkingAvailable } from '~/hooks/usePhoneLinking';
+import { DISPLAY, PAGE_TITLE } from '~/components/shell/titles';
 // Lazy: the Skills section embeds workflow canvases (SkillEditor → FlowCanvas and
 // SkillRowExpansion → ReadOnlyFlowCanvas), which pull the node-component registry
 // (~4.7MB). Settings is always mounted on the dashboard, so loading Skills eagerly
@@ -36,12 +40,21 @@ const SkillsSettings = lazy(() =>
     import('~/components/settings/SkillsSettings').then(m => ({ default: m.SkillsSettings }))
 );
 
+/** The section list's groups, in order; a section shows in the first that names it. */
+const GROUPS: readonly { label: string; sections: readonly SettingsSection[] }[] = [
+  { label: 'Workspace', sections: ['usage', 'organization'] },
+  { label: 'Preferences', sections: ['notifications', 'phone', 'popups'] },
+  { label: 'Build', sections: ['skills', 'credentials', 'developer', 'oauth-apps'] },
+];
+
 interface SettingsProps {
   initialSection?: SettingsSection;
-  onNavigateBack?: () => void;
+  /** Sections the host shows as pages of their own (the app shell's
+   *  Connections and Resources), left out of the section list. */
+  hiddenSections?: readonly SettingsSection[];
 }
 
-export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
+export function Settings({ initialSection, hiddenSections = [] }: SettingsProps) {
   const [orgContext] = useOrgContext();
   const hasOrg = !!orgContext.id;
   const isPersonalWorkspace = orgContext.isPersonalWorkspace;
@@ -49,7 +62,9 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
   // Organization ID for the members/org settings panel
   // In org context: use the org ID. In personal workspace: use the personal workspace org ID.
   const settingsOrgId = hasOrg ? orgContext.id! : personalWsOrgId;
-  const isMobile = useIsMobile(640);
+  const inPhone = useInPhoneShell();
+  const narrow = useIsMobile(640);
+  const isMobile = inPhone || narrow;
 
   // On mobile, null means "show the menu page"; a value means drill into that section.
   // Only pre-select a section if explicitly deep-linked (i.e. not the default 'usage').
@@ -78,14 +93,6 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
     }
   }, [activeSection, mobileSection, hasOrg, personalWsOrgId, setActiveSection]);
 
-  const handleNavigateBack = () => {
-    if (onNavigateBack) {
-      onNavigateBack();
-    } else {
-      navigateToTab('flow');
-    }
-  };
-
   const phoneLinking = usePhoneLinkingAvailable();
   const navItems = [
     {
@@ -104,22 +111,22 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
     },
     {
       id: 'organization' as const,
-      label: hasOrg ? 'Organization' : 'Members',
-      description: hasOrg ? 'Manage your team and organization' : 'Invite members to your workspace',
+      label: 'Members',
+      description: hasOrg ? 'Who’s in this workspace and how they sign in' : 'Invite people to your workspace',
       icon: Building2,
       visible: hasOrg || !!personalWsOrgId,
     },
     {
       id: 'skills' as const,
       label: 'Skills',
-      description: 'Reusable agent context — text and workflows',
+      description: 'Reusable agent context: text and workflows',
       icon: Brain,
       visible: true,
     },
     {
       id: 'notifications' as const,
       label: 'Notifications',
-      description: 'Email alerts for failures, credits, and digests',
+      description: 'Email alerts for failures, your balance, and digests',
       icon: Bell,
       visible: true,
     },
@@ -140,7 +147,7 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
     {
       id: 'developer' as const,
       label: 'Developer',
-      description: 'API keys for external SDK access',
+      description: 'API keys and the SDKs',
       icon: Code2,
       visible: true,
     },
@@ -153,168 +160,124 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
       // the self-hosted alternative to editing two .env files by hand.
       visible: isLocalEdition(),
     },
-  ].filter(item => item.visible);
+  ].filter(item => item.visible && !hiddenSections.includes(item.id));
+  const groups = GROUPS.map((g) => ({ label: g.label, items: navItems.filter((item) => g.sections.includes(item.id)) })).filter((g) => g.items.length);
 
-  // Which section is currently active (mobile: mobileSection, desktop: activeSection)
-  const currentSection = isMobile ? mobileSection : activeSection;
+  const renderSection = (currentSection: SettingsSection | null) => (
+    <>
+      {currentSection === 'usage' && <UsagePage />}
+      {currentSection === 'credentials' && <CredentialsSettings embedded />}
+      {currentSection === 'skills' && (
+        <Suspense fallback={<div className="h-40" />}>
+          <SkillsSettings />
+        </Suspense>
+      )}
+      {currentSection === 'developer' && <DeveloperSettings />}
+      {currentSection === 'oauth-apps' && (
+        <>
+          <InstanceProviderKeysSettings />
+          <InstanceOAuthSettings />
+        </>
+      )}
+      {currentSection === 'notifications' && <NotificationsSettings />}
+      {currentSection === 'phone' && <PhoneSettings />}
+      {currentSection === 'popups' && <PopupPreferencesSettings />}
+      {currentSection === 'organization' && settingsOrgId && (
+        <OrganizationSettings organizationId={settingsOrgId} embedded isPersonalWorkspace={isPersonalWorkspace} />
+      )}
+    </>
+  );
 
-  // ── Mobile menu landing page ──────────────────────────────────────────────
+  // ── Phone: the sections as one list ───────────────────────────────────────
   if (isMobile && mobileSection === null) {
     return (
-      <div className="flex flex-col h-full bg-background">
-        {/* Top bar */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border dark:border-white/[0.06] flex-shrink-0">
-          <button
-            onClick={handleNavigateBack}
-            className="flex items-center justify-center w-8 h-8 text-muted-foreground dark:text-white/40 hover:text-foreground/80 hover:bg-foreground/[0.05] rounded-full transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <h1 className="text-lg font-semibold text-foreground tracking-tight">Settings</h1>
-        </div>
-
-        {/* Menu items */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setMobileSection(item.id)}
-                className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl bg-foreground/[0.04] hover:bg-foreground/[0.07] border border-border dark:border-white/[0.06] transition-colors text-left"
-              >
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-foreground/[0.06] flex-shrink-0">
-                  <Icon className="w-5 h-5 text-muted-foreground dark:text-white/70" />
+      <div className="h-full overflow-y-auto scrollbar-subtle">
+        <div className="mx-auto w-full max-w-[640px] px-4 pb-24 pt-3">
+          {!inPhone && <h1 className={cn('mb-5', PAGE_TITLE, 'text-[30px]')}>Settings</h1>}
+          <div className="space-y-6">
+            {groups.map((group) => (
+              <section key={group.label}>
+                <h2 className="mb-2 px-1 text-[12.5px] font-medium text-muted-foreground">{group.label}</h2>
+                <div className={cn('divide-y overflow-hidden rounded-2xl border bg-card dark:divide-foreground/[0.06] dark:bg-transparent', HAIRLINE)}>
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setMobileSection(item.id)}
+                        className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-foreground/[0.03] focus-visible:bg-foreground/[0.03] focus-visible:outline-none"
+                      >
+                        <Icon className="h-5 w-5 shrink-0 text-foreground/75" strokeWidth={1.6} />
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[15px] text-foreground">{item.label}</span>
+                          <span className="block truncate text-[13px] text-muted-foreground">{item.description}</span>
+                        </span>
+                        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/60" />
+                      </button>
+                    );
+                  })}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">{item.label}</p>
-                  <p className="text-xs text-muted-foreground dark:text-white/40 mt-0.5">{item.description}</p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground/70 dark:text-white/30 flex-shrink-0" />
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-
-  // ── Mobile section detail view ────────────────────────────────────────────
-  if (isMobile && mobileSection !== null) {
-    const activeItem = navItems.find(item => item.id === mobileSection);
-    return (
-      <div className="flex flex-col h-full bg-background">
-        {/* Top bar with back-to-menu */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border dark:border-white/[0.06] flex-shrink-0">
-          <button
-            onClick={() => setMobileSection(null)}
-            className="flex items-center justify-center w-8 h-8 text-muted-foreground dark:text-white/40 hover:text-foreground/80 hover:bg-foreground/[0.05] rounded-full transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <h1 className="text-base font-semibold text-foreground tracking-tight">
-            {activeItem?.label ?? 'Settings'}
-          </h1>
-        </div>
-
-        {/* Section content */}
-        <div className="flex-1 overflow-y-auto scrollbar-subtle">
-          <div className="p-4">
-            {mobileSection === 'usage' && <UsageDashboard embedded />}
-            {mobileSection === 'credentials' && <CredentialsSettings embedded />}
-            {mobileSection === 'skills' && (
-              <Suspense fallback={<div className="h-40" />}>
-                <SkillsSettings />
-              </Suspense>
-            )}
-            {mobileSection === 'developer' && <DeveloperSettings />}
-            {mobileSection === 'oauth-apps' && (
-              <>
-                <InstanceProviderKeysSettings />
-                <InstanceOAuthSettings />
-              </>
-            )}
-            {mobileSection === 'notifications' && <NotificationsSettings />}
-            {mobileSection === 'phone' && <PhoneSettings />}
-            {mobileSection === 'popups' && <PopupPreferencesSettings />}
-            {mobileSection === 'organization' && settingsOrgId && (
-              <OrganizationSettings organizationId={settingsOrgId} embedded isPersonalWorkspace={isPersonalWorkspace} />
-            )}
+              </section>
+            ))}
           </div>
         </div>
       </div>
     );
   }
 
-  // ── Desktop layout: sidebar + content ────────────────────────────────────
+  // ── Phone: one section, the bar going back to the list ─────────────────────
+  if (isMobile && mobileSection !== null) {
+    return (
+      <div className="h-full overflow-y-auto scrollbar-subtle">
+        <PhoneBarBack label="Settings" onBack={() => setMobileSection(null)} />
+        <div className="px-4 pb-24 pt-3">
+          {!inPhone && (
+            <button
+              type="button"
+              onClick={() => setMobileSection(null)}
+              className="-ml-1 mb-4 inline-flex items-center gap-0.5 rounded-md px-1 py-0.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ChevronRight className="h-3.5 w-3.5 rotate-180" />
+              Settings
+            </button>
+          )}
+          {renderSection(mobileSection)}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Laptop: the sections in their column beside the open one ─────────────
   return (
     <div className="flex h-full">
-      {/* Sidebar */}
-      <div className="w-56 flex-shrink-0">
-        <div className="p-5 pt-6">
-          <div className="flex items-center gap-3 mb-8">
-            <button
-              onClick={handleNavigateBack}
-              className="flex items-center justify-center w-10 h-10 text-muted-foreground dark:text-white/40 hover:text-foreground/80 hover:bg-foreground/[0.05] rounded-full transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="text-xl font-semibold text-foreground tracking-tight">Settings</h1>
-          </div>
-
-          <nav className="space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeSection === item.id;
-              const keys = COMMAND_SHORTCUT_KEYS[`nav:settings:${item.id}`]?.keys;
-              return (
-                <ShortcutTooltip key={item.id} keys={keys} side="right">
-                  <button
-                    onClick={() => setActiveSection(item.id)}
-                    className={cn(
-                      "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[0.9375rem] font-medium transition-all duration-150",
-                      isActive
-                        ? "bg-foreground/[0.08] text-accent-foreground"
-                        : "text-muted-foreground dark:text-white/50 hover:text-foreground/80 hover:bg-foreground/[0.04]"
-                    )}
-                  >
-                    <Icon className={cn(
-                      "w-[18px] h-[18px]",
-                      isActive ? "text-foreground/90" : "text-muted-foreground dark:text-white/40"
-                    )} />
-                    <span>{item.label}</span>
-                  </button>
-                </ShortcutTooltip>
-              );
-            })}
-          </nav>
+      <nav aria-label="Settings" className={cn('flex w-[248px] shrink-0 flex-col border-r', HAIRLINE)}>
+        <div className="flex h-14 shrink-0 items-center px-5">
+          <h1 className={cn(DISPLAY, 'text-[26px] leading-none text-foreground')}>Settings</h1>
         </div>
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto scrollbar-subtle flex flex-col">
-        <div className="p-8 pt-6 flex-1">
-          {currentSection === 'usage' && <UsageDashboard embedded />}
-          {currentSection === 'credentials' && <CredentialsSettings embedded />}
-          {currentSection === 'skills' && (
-            <Suspense fallback={<div className="h-40" />}>
-              <SkillsSettings />
-            </Suspense>
-          )}
-          {currentSection === 'developer' && <DeveloperSettings />}
-          {currentSection === 'oauth-apps' && (
-            <>
-              <InstanceProviderKeysSettings />
-              <InstanceOAuthSettings />
-            </>
-          )}
-          {currentSection === 'notifications' && <NotificationsSettings />}
-          {currentSection === 'phone' && <PhoneSettings />}
-          {currentSection === 'popups' && <PopupPreferencesSettings />}
-          {currentSection === 'organization' && settingsOrgId && (
-            <OrganizationSettings organizationId={settingsOrgId} embedded isPersonalWorkspace={isPersonalWorkspace} />
-          )}
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-2 pb-8 pt-1 scrollbar-subtle">
+          {groups.map((group) => (
+            <div key={group.label}>
+              <p className="px-3 pb-1.5 text-[12.5px] font-medium text-muted-foreground">{group.label}</p>
+              <div className="flex flex-col gap-0.5">
+                {group.items.map((item) => {
+                  const keys = COMMAND_SHORTCUT_KEYS[`nav:settings:${item.id}`]?.keys;
+                  return (
+                    <ShortcutTooltip key={item.id} keys={keys} side="right">
+                      <div>
+                        <SidebarItem label={item.label} icon={item.icon} current={activeSection === item.id} collapsed={false} onSelect={() => setActiveSection(item.id)} />
+                      </div>
+                    </ShortcutTooltip>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
+      </nav>
+
+      <div className="min-w-0 flex-1 overflow-y-auto scrollbar-subtle">
+        <div className="mx-auto w-full max-w-[880px] px-10 pb-24 pt-10">{renderSection(activeSection)}</div>
       </div>
     </div>
   );

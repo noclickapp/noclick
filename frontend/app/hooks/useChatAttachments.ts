@@ -1,12 +1,13 @@
 // Attachment-tray state for chat composers: accepts files from the picker,
-// paste, or drag-drop, uploads them to R2 immediately (useResourceUpload), and
-// exposes the ready set for the send payload. Added for the agent chat
-// interface's image/file attachments; reusable by any chat surface scoped to a
-// workflow + node.
+// paste, or drag-drop, uploads each at once through the caller's uploader, and
+// exposes the ready set for the send payload. `addReady` takes a file that is
+// already uploaded (one picked from your files). An agent node's chat uploads
+// to the workflow's resources (useChatAttachments); the coordinator's to the
+// account's own files (useAttachmentTray with its uploader).
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useResourceUpload } from '~/hooks/useResourceUpload';
-import type { AgentChatAttachment } from '~/lib/agentChat';
+import { isImageAttachment, type AgentChatAttachment } from '~/lib/agentChat';
 
 export interface PendingChatAttachment {
     localId: string;
@@ -24,13 +25,12 @@ export interface PendingChatAttachment {
     uploaded?: AgentChatAttachment;
 }
 
+/** Uploads one file, reporting byte progress, and resolves to what the send payload carries. */
+export type ChatUpload = (file: File, onProgress: (fraction: number) => void) => Promise<AgentChatAttachment>;
+
 let nextLocalId = 0;
 
-export function useChatAttachments(
-    workflowId: string | undefined,
-    nodeId: string
-) {
-    const { uploadFile } = useResourceUpload();
+export function useAttachmentTray(upload: ChatUpload | null) {
     const [attachments, setAttachments] = useState<PendingChatAttachment[]>([]);
 
     // Object URLs leak until revoked; revoke everything still minted on
@@ -45,9 +45,10 @@ export function useChatAttachments(
 
     const addFiles = useCallback(
         (files: File[] | FileList) => {
-            if (!workflowId) return;
+            if (!upload) return;
             for (const file of Array.from(files)) {
                 const localId = `chat-att-${nextLocalId++}`;
+                const name = file.name || 'pasted-image.png';
                 const previewUrl = file.type.startsWith('image/')
                     ? URL.createObjectURL(file)
                     : undefined;
@@ -55,7 +56,7 @@ export function useChatAttachments(
                 setAttachments((prev) =>
                     prev.concat({
                         localId,
-                        name: file.name || 'pasted-image.png',
+                        name,
                         mimeType: file.type || 'application/octet-stream',
                         sizeBytes: file.size,
                         previewUrl,
@@ -63,7 +64,7 @@ export function useChatAttachments(
                         progress: 0,
                     })
                 );
-                uploadFile(file, workflowId, nodeId, (fraction) =>
+                upload(file, (fraction) =>
                     setAttachments((prev) =>
                         prev.map((a) =>
                             a.localId === localId && a.status === 'uploading'
@@ -72,21 +73,11 @@ export function useChatAttachments(
                         )
                     )
                 ).then(
-                    (res) =>
+                    (uploaded) =>
                         setAttachments((prev) =>
                             prev.map((a) =>
                                 a.localId === localId
-                                    ? {
-                                          ...a,
-                                          status: 'ready',
-                                          uploaded: {
-                                              resourceId: res.resourceId,
-                                              url: res.publicUrl,
-                                              name: a.name,
-                                              mimeType: res.mimeType,
-                                              sizeBytes: res.sizeBytes,
-                                          },
-                                      }
+                                    ? { ...a, status: 'ready', uploaded: { ...uploaded, name } }
                                     : a
                             )
                         ),
@@ -108,11 +99,28 @@ export function useChatAttachments(
                 );
             }
         },
-        [workflowId, nodeId, uploadFile]
+        [upload]
     );
 
+    /** A file that's already uploaded, straight into the tray as ready (once). */
+    const addReady = useCallback((attachment: AgentChatAttachment) => {
+        setAttachments((prev) =>
+            prev.some((a) => a.uploaded?.resourceId === attachment.resourceId)
+                ? prev
+                : prev.concat({
+                      localId: `chat-att-${nextLocalId++}`,
+                      name: attachment.name,
+                      mimeType: attachment.mimeType,
+                      sizeBytes: attachment.sizeBytes,
+                      previewUrl: isImageAttachment(attachment) ? attachment.url : undefined,
+                      status: 'ready',
+                      uploaded: attachment,
+                  })
+        );
+    }, []);
+
     const revoke = useCallback((a: PendingChatAttachment) => {
-        if (a.previewUrl) {
+        if (a.previewUrl && previewUrlsRef.current.has(a.previewUrl)) {
             URL.revokeObjectURL(a.previewUrl);
             previewUrlsRef.current.delete(a.previewUrl);
         }
@@ -144,9 +152,26 @@ export function useChatAttachments(
     return {
         attachments,
         addFiles,
+        addReady,
         removeAttachment,
         clearAttachments,
         uploading,
         readyAttachments,
     };
+}
+
+/** An agent node's chat: files upload as the workflow's resources, produced by the node. */
+export function useChatAttachments(workflowId: string | undefined, nodeId: string) {
+    const { uploadFile } = useResourceUpload();
+    const upload = useMemo<ChatUpload | null>(
+        () =>
+            workflowId
+                ? async (file, onProgress) => {
+                      const res = await uploadFile(file, workflowId, nodeId, onProgress);
+                      return { resourceId: res.resourceId, url: res.publicUrl, name: res.name, mimeType: res.mimeType, sizeBytes: res.sizeBytes };
+                  }
+                : null,
+        [workflowId, nodeId, uploadFile]
+    );
+    return useAttachmentTray(upload);
 }

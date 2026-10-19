@@ -1,235 +1,184 @@
-// Reusable "ask someone else for a credential" actions: an email-request
-// dialog plus a copy-shareable-link button, both targeting a single
-// credential_type. Extracted from NodeCredentials so the AI-agent credential
-// form (which renders its own custom credential UI) can offer the same flow.
+// Asking someone else for a credential: their email (sent as a request whose page lets them connect it without a
+// NoClick account) or a link to send however you like. The connect flow swaps its body to `AskSomeoneForm`.
 
-import { useState, useCallback } from 'react';
-import { Check, Send, Loader2, Link2 } from 'lucide-react';
+import { useCallback, useId, useState } from 'react';
+import { Check, Link2, Loader2, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { sendEventAsync } from '~/lib/socket-sender';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from '~/components/ui/dialog';
-import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
+import type { OAuthExchange } from '~/hooks/oauth/OAuthExchangeContext';
+import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '~/components/shell/buttons';
+import { FIELD, FIELD_LABEL, QUIET_LINK } from '~/components/shell/fields';
+import { cn } from '~/lib/utils';
 
-interface CredentialRequestActionsProps {
-    /** The credential_type to request (e.g. 'apollo_api_key', 'agent_anthropic'). */
-    credentialType: string;
-}
+/** A `sendEventAsync`-shaped transport, so a design lab can answer the request itself. */
+export type AskTransport = OAuthExchange;
 
-export function CredentialRequestActions({
-    credentialType,
-}: CredentialRequestActionsProps) {
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [requestEmail, setRequestEmail] = useState('');
-    const [requestMessage, setRequestMessage] = useState('');
-    const [requestLoading, setRequestLoading] = useState(false);
-    const [requestSuccess, setRequestSuccess] = useState(false);
-    const [copyLinkLoading, setCopyLinkLoading] = useState(false);
-    const [copyLinkCopied, setCopyLinkCopied] = useState(false);
+/** A switch inside a line of text (another way in, asking someone, back): ink that underlines on hover, so it reads as
+ *  an action beside the muted words around it without competing with the primary. */
+export const INLINE_ACTION =
+    'self-start rounded-sm text-[13px] text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
-    // Create a link-mode credential request (no email) and copy its provision
-    // URL, so the user can hand it off however they like (Slack, DM, etc.).
-    const handleCopyRequestLink = useCallback(async () => {
-        setCopyLinkLoading(true);
+/** Asking someone else for a credential: by email, or as a link to send however you like. Both make a credential
+ *  request whose page (/credential/provide) lets them connect it without a NoClick account. */
+export function useAskForCredential(credentialType: string, send: AskTransport = sendEventAsync) {
+    const [sending, setSending] = useState(false);
+    const [sentTo, setSentTo] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [copying, setCopying] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    // A link-mode request (no email), its provide URL copied for the user to hand off (Slack, DM, etc.).
+    const copyLink = useCallback(async () => {
+        setCopying(true);
         try {
-            const response = (await sendEventAsync({
+            const response = await send({
                 event_name: 'credential:request:create',
                 request_id: `cred-req-link-${Date.now()}`,
                 credential_type: credentialType,
                 frontend_url: window.location.origin,
-            } as any)) as any;
+            });
             if (response?.provide_url) {
                 await navigator.clipboard.writeText(response.provide_url);
-                setCopyLinkCopied(true);
-                toast.success(
-                    'Request link copied — anyone with it can provide this credential'
-                );
-                setTimeout(() => setCopyLinkCopied(false), 2000);
+                setCopied(true);
+                toast.success('Link copied. Anyone with it can connect this account for you.');
+                setTimeout(() => setCopied(false), 2000);
             } else {
-                toast.error('Failed to create request link');
+                toast.error(response?.error || 'Couldn’t make a link');
             }
         } catch (err) {
             console.error('Failed to copy credential request link:', err);
-            toast.error('Failed to copy request link');
+            toast.error('Couldn’t copy the link');
         } finally {
-            setCopyLinkLoading(false);
+            setCopying(false);
         }
-    }, [credentialType]);
+    }, [credentialType, send]);
 
-    const openDialog = useCallback(() => {
-        setRequestEmail('');
-        setRequestMessage('');
-        setRequestSuccess(false);
-        setDialogOpen(true);
-    }, []);
+    const sendEmail = useCallback(
+        async (email: string, message: string) => {
+            if (!email.trim()) return;
+            setSending(true);
+            setError(null);
+            try {
+                const response = await send({
+                    event_name: 'credential:request:create',
+                    request_id: `cred-req-${Date.now()}`,
+                    target_email: email.trim(),
+                    credential_type: credentialType,
+                    message: message.trim() || undefined,
+                    frontend_url: window.location.origin,
+                });
+                if (response?.success) setSentTo(email.trim());
+                else setError(response?.error || 'Couldn’t send the request. Try again, or copy a link instead.');
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Couldn’t send the request. Try again, or copy a link instead.');
+            } finally {
+                setSending(false);
+            }
+        },
+        [credentialType, send]
+    );
+
+    return { copyLink, copying, copied, sendEmail, sending, sentTo, error };
+}
+
+/** Asking someone else, drawn in place: their email (a note tucked behind a link), sent as a request whose page
+ *  lets them connect `app` without a NoClick account; or a link to send however you like. Sent, it says to whom. */
+export function AskSomeoneForm({
+    credentialType,
+    app,
+    send,
+    initialEmail = '',
+    sent,
+}: {
+    credentialType: string;
+    app: string;
+    send?: AskTransport;
+    initialEmail?: string;
+    /** Open on the sent state, for the design lab. */
+    sent?: string;
+}) {
+    const ask = useAskForCredential(credentialType, send);
+    const [email, setEmail] = useState(initialEmail);
+    const [message, setMessage] = useState('');
+    const [noting, setNoting] = useState(false);
+    const [missing, setMissing] = useState(false);
+    const id = useId();
+    const sentTo = ask.sentTo ?? sent;
+
+    if (sentTo) {
+        return (
+            <div className="flex items-start gap-3.5" data-testid="ask-sent">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-foreground/[0.06] text-foreground">
+                    <Send className="h-4 w-4" strokeWidth={1.75} />
+                </span>
+                <div className="min-w-0 pt-1.5">
+                    <p className="text-[14.5px] font-medium leading-snug text-foreground">Sent to {sentTo}</p>
+                    <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+                        They get a link to connect {app}, no NoClick account needed. It appears in your Connections once they have.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <>
-            <div className="flex items-center gap-3 max-w-md pt-1">
-                <div className="flex-1 border-t border-border" />
-                <span className="text-[10px] text-muted-foreground/60 dark:text-zinc-600 uppercase tracking-wider">
-                    or
-                </span>
-                <div className="flex-1 border-t border-border" />
+        <form
+            className="space-y-4"
+            data-testid="ask-someone-form"
+            onSubmit={(e) => {
+                e.preventDefault();
+                // A dialog portals its content, but React still bubbles a submit to any form around it.
+                e.stopPropagation();
+                if (!email.trim()) return setMissing(true);
+                void ask.sendEmail(email, message);
+            }}
+        >
+            <div>
+                <label htmlFor={`${id}-email`} className={FIELD_LABEL}>
+                    Their email
+                </label>
+                <input
+                    id={`${id}-email`}
+                    type="email"
+                    value={email}
+                    onChange={(e) => {
+                        setEmail(e.target.value);
+                        setMissing(false);
+                    }}
+                    placeholder="colleague@company.com"
+                    aria-invalid={missing || undefined}
+                    className={cn(FIELD, missing && 'border-red-500/60 dark:border-red-400/50')}
+                    autoComplete="off"
+                />
+                {missing && <p className="mt-1.5 text-[12.5px] text-red-600 dark:text-red-400">Enter their email.</p>}
             </div>
-            <div className="flex items-center gap-2 max-w-md">
-                <button
-                    onClick={openDialog}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground/80 bg-card dark:bg-zinc-900/50 hover:bg-accent dark:hover:bg-zinc-900 border border-border hover:border-foreground/20 rounded-lg transition-all"
-                >
-                    <Send className="h-3.5 w-3.5" />
-                    Request via email
+            {noting ? (
+                <div>
+                    <label htmlFor={`${id}-note`} className={FIELD_LABEL}>
+                        Note <span className="font-normal text-muted-foreground">(optional)</span>
+                    </label>
+                    <textarea id={`${id}-note`} value={message} onChange={(e) => setMessage(e.target.value)} rows={2} placeholder={`Can you connect our ${app} for the weekly report?`} className={cn(FIELD, 'h-auto resize-none py-2.5')} />
+                </div>
+            ) : (
+                <button type="button" onClick={() => setNoting(true)} className={cn(QUIET_LINK, 'text-[13px]')}>
+                    Add a note
                 </button>
-                <button
-                    onClick={handleCopyRequestLink}
-                    disabled={copyLinkLoading}
-                    title="Create a shareable link and copy it to your clipboard"
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground/80 bg-card dark:bg-zinc-900/50 hover:bg-accent dark:hover:bg-zinc-900 border border-border hover:border-foreground/20 rounded-lg transition-all disabled:opacity-40"
-                >
-                    {copyLinkLoading ? (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : copyLinkCopied ? (
-                        <Check className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
-                    ) : (
-                        <Link2 className="h-3.5 w-3.5" />
-                    )}
-                    {copyLinkCopied ? 'Link copied' : 'Copy request link'}
+            )}
+            {ask.error && (
+                <p role="alert" className="text-[13px] leading-relaxed text-red-600 dark:text-red-400">
+                    {ask.error}
+                </p>
+            )}
+            <div className="flex flex-col gap-2 pt-1">
+                <button type="submit" aria-busy={ask.sending || undefined} className={cn(BUTTON_PRIMARY, 'h-10 w-full justify-center', ask.sending && 'cursor-wait')}>
+                    {ask.sending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                    {ask.sending ? 'Sending…' : 'Send request'}
+                </button>
+                <button type="button" onClick={ask.copyLink} disabled={ask.copying} className={cn(BUTTON_SECONDARY, 'h-10 w-full justify-center')}>
+                    {ask.copying ? <Loader2 className="h-4 w-4 animate-spin" /> : ask.copied ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+                    {ask.copied ? 'Link copied' : 'Copy a link instead'}
                 </button>
             </div>
-
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogContent className="bg-sunken border-border text-foreground max-w-md p-6">
-                    <DialogHeader className="pb-2">
-                        <DialogTitle className="text-xl text-foreground flex items-center gap-2">
-                            <Send className="h-5 w-5" />
-                            Request Credential
-                        </DialogTitle>
-                        <div className="text-sm text-muted-foreground pt-1.5">
-                            Send a request via email. They can provide it
-                            without a NoClick account.
-                        </div>
-                    </DialogHeader>
-
-                    {requestSuccess ? (
-                        <div className="text-center py-6 space-y-3">
-                            <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
-                                <Check className="w-6 h-6 text-green-500" />
-                            </div>
-                            <div>
-                                <p className="text-sm text-foreground/90">
-                                    Request sent to{' '}
-                                    <span className="text-foreground font-medium">
-                                        {requestEmail}
-                                    </span>
-                                </p>
-                                <p className="text-xs text-muted-foreground/70 dark:text-zinc-500 mt-1">
-                                    They'll receive an email with a link to
-                                    provide the credential.
-                                </p>
-                            </div>
-                            <div className="pt-2">
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setDialogOpen(false)}
-                                    className="h-10 bg-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] border border-border hover:border-foreground/20 rounded-md"
-                                >
-                                    Done
-                                </Button>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="space-y-4">
-                            <div className="space-y-3">
-                                <div className="space-y-1.5">
-                                    <label className="text-xs text-muted-foreground">
-                                        Email address
-                                    </label>
-                                    <Input
-                                        type="email"
-                                        value={requestEmail}
-                                        onChange={(e) =>
-                                            setRequestEmail(e.target.value)
-                                        }
-                                        placeholder="colleague@company.com"
-                                        className="bg-card border-input dark:border-zinc-700 text-foreground text-sm placeholder:text-[hsl(var(--placeholder))]"
-                                        autoFocus
-                                    />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <label className="text-xs text-muted-foreground">
-                                        Message (optional)
-                                    </label>
-                                    <textarea
-                                        value={requestMessage}
-                                        onChange={(e) =>
-                                            setRequestMessage(e.target.value)
-                                        }
-                                        placeholder="e.g., Need your credentials for the marketing workflow"
-                                        rows={2}
-                                        className="flex w-full rounded-md border border-input dark:border-zinc-700 bg-card px-3 py-2 text-sm text-foreground placeholder:text-[hsl(var(--placeholder))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background resize-none"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end gap-2 pt-2">
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setDialogOpen(false)}
-                                    className="h-10 bg-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] border border-border hover:border-foreground/20 rounded-md"
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    onClick={async () => {
-                                        if (!requestEmail.trim()) return;
-                                        setRequestLoading(true);
-                                        try {
-                                            const response =
-                                                (await sendEventAsync({
-                                                    event_name:
-                                                        'credential:request:create',
-                                                    request_id: `cred-req-${Date.now()}`,
-                                                    target_email:
-                                                        requestEmail.trim(),
-                                                    credential_type:
-                                                        credentialType,
-                                                    message:
-                                                        requestMessage.trim() ||
-                                                        undefined,
-                                                    frontend_url:
-                                                        window.location.origin,
-                                                } as any)) as any;
-                                            if (response?.success) {
-                                                setRequestSuccess(true);
-                                            }
-                                        } finally {
-                                            setRequestLoading(false);
-                                        }
-                                    }}
-                                    disabled={
-                                        !requestEmail.trim() || requestLoading
-                                    }
-                                    className="h-10 bg-primary hover:bg-primary text-primary-foreground font-medium rounded-md border-0 shadow-[0_2.5px_0_0_#a0a0a0] hover:shadow-[0_1px_0_0_#a0a0a0] hover:translate-y-[1.5px] active:shadow-none active:translate-y-[2.5px] transition-all duration-100 disabled:opacity-40"
-                                >
-                                    {requestLoading ? (
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                    ) : (
-                                        <>
-                                            <Send className="h-3.5 w-3.5 mr-1.5" />
-                                            Send Request
-                                        </>
-                                    )}
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                </DialogContent>
-            </Dialog>
-        </>
+        </form>
     );
 }

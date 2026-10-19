@@ -139,6 +139,17 @@ async def setup_supabase_basics(conn: asyncpg.Connection) -> None:
         )
     """)
 
+    # Supabase's audit log: every sign-up, change and deletion, with the account's email and phone then
+    await conn.execute("""
+        CREATE TABLE IF NOT EXISTS auth.audit_log_entries (
+            instance_id UUID,
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            payload JSON,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            ip_address VARCHAR(64) NOT NULL DEFAULT ''
+        )
+    """)
+
     # Create auth.mfa_amr_claims table for MFA
     await conn.execute("""
         CREATE TABLE IF NOT EXISTS auth.mfa_amr_claims (
@@ -255,6 +266,30 @@ async def apply_seed_data(conn: asyncpg.Connection) -> None:
         # Don't raise - seed data is optional and may conflict with test data
 
 
+class _TestPostgres(PostgresContainer):
+    """The container every DB-backed test connects to, several times per test.
+
+    Trust auth skips the SCRAM handshake, whose 4096 HMAC rounds asyncpg runs in
+    Python on every connect, and the address is asked of Docker once rather
+    than on every connect.
+    """
+
+    def __init__(self):
+        super().__init__("pgvector/pgvector:pg16")
+        self.with_env("POSTGRES_HOST_AUTH_METHOD", "trust")
+        self._address = {}
+
+    def get_container_host_ip(self) -> str:
+        if "host" not in self._address:
+            self._address["host"] = super().get_container_host_ip()
+        return self._address["host"]
+
+    def get_exposed_port(self, port: int) -> int:
+        if port not in self._address:
+            self._address[port] = super().get_exposed_port(port)
+        return self._address[port]
+
+
 @pytest.fixture(scope="session")
 def postgres_container():
     """
@@ -262,7 +297,7 @@ def postgres_container():
 
     The container is started once per test session and reused across all tests.
     """
-    with PostgresContainer("pgvector/pgvector:pg16") as postgres:
+    with _TestPostgres() as postgres:
         logger.info(f"Started PostgreSQL container: {postgres.get_connection_url()}")
         # Mark container as not initialized (use container object for state)
         postgres._test_db_initialized = False

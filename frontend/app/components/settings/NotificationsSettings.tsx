@@ -4,10 +4,10 @@
 // and the one-click unsubscribe links in alert emails.
 
 import { useEffect, useState } from 'react';
-import { AlertTriangle, CalendarRange, CirclePause, Coins, KeyRound, Unplug } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '~/lib/utils';
 import { Switch } from '~/components/ui/switch';
+import { SettingsGroup, SettingsHeader, SettingsRow } from '~/components/settings/SettingsParts';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { useInstanceCapabilities } from '~/hooks/useInstanceCapabilities';
 import {
@@ -20,39 +20,63 @@ type NotificationPrefs = Record<string, boolean>;
 const CATEGORIES = [
     {
         key: 'run_failure',
-        label: 'Workflow failures',
-        description: 'When a workflow triggered by a webhook, schedule, or email fails.',
-        icon: AlertTriangle,
+        label: 'Automation failures',
+        description: 'When an automation started by a webhook, schedule or email fails.',
     },
     {
         key: 'credits',
-        label: 'Credit balance',
-        description: 'When your credits run low or a run is blocked at zero.',
-        icon: Coins,
+        label: 'Balance',
+        description: 'When your balance runs low, or a run stops because it ran out.',
+    },
+    {
+        key: 'topup',
+        label: 'Funds and auto top-up',
+        description: 'When funds you added fall below your line, or auto top-up pauses or stops.',
+        billingOnly: true,
     },
     {
         key: 'credential_revoked',
-        label: 'Credential disconnections',
-        description: 'When a connected account stops working and needs to be reconnected.',
-        icon: KeyRound,
+        label: 'Disconnected accounts',
+        description: 'When a connected account stops working and needs connecting again.',
     },
     {
         key: 'channel_disconnected',
         label: 'Channel disconnections',
         description: 'When a live channel connection (like WhatsApp) drops and messages stop arriving.',
-        icon: Unplug,
     },
     {
         key: 'schedule_paused',
         label: 'Paused schedules',
         description: 'When a schedule is paused because its runs kept failing the same way.',
-        icon: CirclePause,
+    },
+    {
+        key: 'spend_cap',
+        label: 'Monthly spending cap',
+        description: 'When your account reaches the monthly cap you set and work that costs money stops.',
+        billingOnly: true,
+    },
+    {
+        key: 'platform_paused',
+        label: 'Paused apps and databases',
+        description: "When your balance can't pay for your apps and databases: before they pause, and when they do.",
+        billingOnly: true,
+    },
+    {
+        key: 'referrals',
+        label: 'People you invited',
+        description: 'When someone you invited starts using NoClick and NoClick can’t tell you in the chat.',
+        billingOnly: true,
+    },
+    {
+        key: 'phone_numbers',
+        label: 'Phone number orders',
+        description: 'When the carrier approves the documents for a number, sends them back for changes, or ends the order.',
+        billingOnly: true,
     },
     {
         key: 'digest',
         label: 'Weekly digest',
-        description: 'A Monday summary of runs, failures, and credits used.',
-        icon: CalendarRange,
+        description: 'A Monday summary of runs, failures, and what they spent.',
     },
 ] as const;
 
@@ -96,13 +120,8 @@ export function NotificationsSettings() {
     };
 
     return (
-        <div className="max-w-2xl">
-            <div className="mb-6">
-                <h2 className="text-lg font-semibold text-foreground">Notifications</h2>
-                <p className="text-sm text-muted-foreground dark:text-white/40 mt-1">
-                    Email alerts sent to your account email.
-                </p>
-            </div>
+        <div>
+            <SettingsHeader title="Notifications" description="Email alerts sent to your account email." />
 
             {/* Without a mail provider these toggles govern mail that is never
                 sent — send_system_alert logs a warning and returns. Say so,
@@ -121,34 +140,19 @@ export function NotificationsSettings() {
                 </div>
             )}
 
-            {/* Apple-style grouped list: one card, hairline-divided rows */}
-            <div
-                className={cn(
-                    'rounded-xl border border-border dark:border-white/[0.06] bg-card dark:bg-foreground/[0.03] divide-y divide-border dark:divide-white/[0.06] overflow-hidden transition-opacity',
-                    isLoading && 'opacity-60',
-                )}
+            <SettingsGroup
+                className={cn('transition-opacity', isLoading && 'opacity-60')}
+                note="Every alert email also carries a one-click unsubscribe link for its category."
             >
-                {CATEGORIES.map(({ key, label, description, icon: Icon }) => (
-                    <div key={key} className="flex items-center gap-3.5 px-4 py-3.5">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-foreground/[0.06] flex-shrink-0">
-                            <Icon className="w-4 h-4 text-muted-foreground dark:text-white/60 stroke-[1.5]" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-[0.9375rem] font-medium text-foreground leading-tight">{label}</p>
-                            <p className="text-xs text-muted-foreground dark:text-white/40 mt-0.5 truncate">{description}</p>
-                        </div>
-                        <Switch
-                            checked={prefs?.[key] ?? true}
-                            disabled={isLoading}
-                            onCheckedChange={(checked) => handleToggle(key, checked)}
-                        />
-                    </div>
+                {CATEGORIES.filter((c) => !('billingOnly' in c) || capabilities.billing).map(({ key, label, description }) => (
+                    <SettingsRow
+                        key={key}
+                        label={label}
+                        description={description}
+                        control={<Switch checked={prefs?.[key] ?? true} disabled={isLoading} aria-label={label} onCheckedChange={(checked) => handleToggle(key, checked)} />}
+                    />
                 ))}
-            </div>
-
-            <p className="text-xs text-muted-foreground/70 dark:text-white/30 mt-3 px-1">
-                Every alert email also carries a one-click unsubscribe link for its category.
-            </p>
+            </SettingsGroup>
         </div>
     );
 }

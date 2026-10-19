@@ -19,6 +19,7 @@ import {
 } from '~/types/socket-events.generated';
 import { useWorkflowId } from '~/components/workflow/WorkflowContext';
 import { BlockHeaderSlotContext } from '../BlockWrapper';
+import { csvToRows } from '~/lib/tableCsv';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -38,22 +39,6 @@ const SAMPLE_ROWS: Row[] = [
   { id: 4, name: 'Delta', category: 'C', value: 90 },
   { id: 5, name: 'Epsilon', category: 'B', value: 450 },
 ];
-
-function parseCSV(text: string): Row[] {
-  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-  if (lines.length < 2) return [];
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-  return lines.slice(1).map(line => {
-    const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
-    const row: Row = {};
-    headers.forEach((h, i) => {
-      const v = values[i] ?? '';
-      const num = Number(v);
-      row[h] = v !== '' && !isNaN(num) ? num : v;
-    });
-    return row;
-  });
-}
 
 function nonEmptyArray(value: unknown): Row[] | null {
   return Array.isArray(value) && value.length > 0 ? (value as Row[]) : null;
@@ -113,7 +98,7 @@ export function DataframeBlock({ id, config, output, onConfigChange }: BlockComp
     setUploading(true);
     try {
       const text = await file.text();
-      const rows = parseCSV(text);
+      const rows = csvToRows(text);
       if (rows.length === 0) return;
 
       setCsvData(rows);

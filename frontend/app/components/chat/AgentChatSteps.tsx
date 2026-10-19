@@ -16,10 +16,7 @@ import {
     XCircle,
 } from 'lucide-react';
 import { cn } from '~/lib/utils';
-import {
-    BrandIcon,
-    type BrandIconComponent,
-} from '~/components/shared/BrandIcon';
+import { SerializedIcon } from '~/components/shared/SerializedIcon';
 import { ToolDetailBlock } from '~/components/shared/ToolDetailBlock';
 import { resolveToolProviderMeta } from '~/lib/toolBrand';
 import type { AgentChatStep } from '~/hooks/useAgentChat';
@@ -164,9 +161,9 @@ function StepRow({ step }: { step: AgentChatStep }) {
                         <Check className="h-3 w-3 text-muted-foreground/50" />
                     )}
                 </span>
-                {brand?.Icon ? (
-                    <BrandIcon
-                        Icon={brand.Icon as BrandIconComponent}
+                {brand ? (
+                    <SerializedIcon
+                        html={brand.iconHtml}
                         iconColor={brand.iconColor}
                         className="h-3.5 w-3.5 flex-shrink-0"
                     />

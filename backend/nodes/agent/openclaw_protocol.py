@@ -1,7 +1,28 @@
-"""Receipt reduction for OpenClaw's public gateway transcript and chat events."""
+"""What NoClick asks of an OpenClaw gateway: the bridge's time bounds, the
+tools it withholds, and receipt reduction for its transcript and chat events."""
 from __future__ import annotations
 
 from collections import OrderedDict
+
+# The bridge (openclaw_bridge.mjs, through ``bridge_env``) gives each gateway
+# start this long to accept a connection, and one `doctor --fix` repair of
+# state an older OpenClaw left its own bound: a large session store takes a
+# while to migrate, and a repair cut short never finishes.
+GATEWAY_START_S = 60
+DOCTOR_S = 180
+# The longest the bridge can take to report ready: a start the gateway
+# refuses, the repair, and the start after it. Whoever waits on the bridge
+# waits at least this long.
+BRIDGE_READY_S = 2 * GATEWAY_START_S + DOCTOR_S
+# OpenClaw's scheduler never runs in a gateway NoClick owns (the bridge sets
+# OPENCLAW_SKIP_CRON), so its scheduling tool would accept a reminder that
+# never fires.
+DENIED_TOOLS = ("cron",)
+
+
+def bridge_env() -> dict:
+    return {"NOCLICK_OPENCLAW_START_MS": str(GATEWAY_START_S * 1000),
+            "NOCLICK_OPENCLAW_DOCTOR_MS": str(DOCTOR_S * 1000)}
 
 
 class OpenClawReceipts:

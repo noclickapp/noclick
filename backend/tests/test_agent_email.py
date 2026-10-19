@@ -297,12 +297,27 @@ async def test_send_agent_email_gates(monkeypatch):
     )
     assert result["success"] is False
 
+    owner = MagicMock()
+    owner.fetchval = AsyncMock(return_value="o@x.com")  # owner email (get_user_email)
+
+    # A phone-only owner has no address: refused before a cap counter is spent.
+    execution_cap = AsyncMock(return_value=False)
+    monkeypatch.setattr(agent_email, "_execution_cap_hit", execution_cap)
+    no_email = MagicMock()
+    no_email.fetchval = AsyncMock(return_value=None)
+    result = await agent_email.send_agent_email(
+        no_email, user_id="u", organization_id=None, workflow_id="wf",
+        node_id="n", conversation_id=None, subject="s", body="b",
+    )
+    assert result["success"] is False and "no email" in result["error"]
+    execution_cap.assert_not_awaited()
+
     # One send per execution — the fan-out backstop runs before the daily cap.
     monkeypatch.setattr(agent_email, "_execution_cap_hit", AsyncMock(return_value=True))
     daily = AsyncMock(return_value=False)
     monkeypatch.setattr(agent_email, "_daily_cap_hit", daily)
     result = await agent_email.send_agent_email(
-        MagicMock(), user_id="u", organization_id=None, workflow_id="wf",
+        owner, user_id="u", organization_id=None, workflow_id="wf",
         node_id="n", conversation_id=None, subject="s", body="b",
         execution_id="exec-1",
     )
@@ -313,7 +328,7 @@ async def test_send_agent_email_gates(monkeypatch):
     monkeypatch.setattr(agent_email, "_execution_cap_hit", AsyncMock(return_value=False))
     monkeypatch.setattr(agent_email, "_daily_cap_hit", AsyncMock(return_value=True))
     result = await agent_email.send_agent_email(
-        MagicMock(), user_id="u", organization_id=None, workflow_id="wf",
+        owner, user_id="u", organization_id=None, workflow_id="wf",
         node_id="n", conversation_id=None, subject="s", body="b",
     )
     assert result["success"] is False and "cap" in result["error"].lower()
@@ -396,6 +411,13 @@ async def test_inbound_reply_verifies_owner_and_fires(monkeypatch):
     tasks.reset_mock()
     resp = await _receive_agent_reply(
         "agent-reply-abc", {**payload, "from": "evil@z.com"}, tasks
+    )
+    assert resp.triggered is False and tasks.add_task.call_count == 0
+    # The owner's From address, even one a DKIM signature aligns with, is not the envelope sender checked.
+    resp = await _receive_agent_reply(
+        "agent-reply-abc",
+        {**payload, "from": "bounce@mailer.example", "headerFrom": "owner@x.com", "dkimAligned": True},
+        tasks,
     )
     assert resp.triggered is False and tasks.add_task.call_count == 0
 

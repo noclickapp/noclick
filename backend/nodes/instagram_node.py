@@ -24,7 +24,6 @@ Total Operations: 23
 import asyncio
 import json
 import logging
-import os
 import time
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
@@ -1623,46 +1622,28 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
                                    label="Instagram", params=params, data=data)
 
     @classmethod
-    async def _read_subscribed_fields(cls, client, account_id: str, app_id: str) -> set[str]:
-        from utils.instagram_webhooks import instagram_account_id
-        from utils.meta_subscriptions import read_subscribed_fields
-
-        expected_ids = {app_id}
-        product_id = os.environ.get("INSTAGRAM_CLIENT_ID") or os.environ.get("INSTAGRAM_APP_ID")
-        if product_id:
-            if not instagram_account_id(product_id):
-                raise ValueError("The configured Instagram product app ID is invalid.")
-            expected_ids.add(product_id)
-        # Instagram Login can return an internal subscription identity distinct
-        # from both dashboard app IDs. Trust only an operator-verified alias,
-        # never whichever app happens to be the sole row on this edge.
-        subscribed_app_id = os.environ.get("INSTAGRAM_SUBSCRIBED_APP_ID")
-        if subscribed_app_id:
-            if not instagram_account_id(subscribed_app_id):
-                raise ValueError("The configured Instagram subscribed app ID is invalid.")
-            expected_ids.add(subscribed_app_id)
-        # Some Instagram Login subscription identities differ by account.
-        # Scope verified aliases to that account so one customer's identity
-        # cannot satisfy another customer's readback.
-        account_aliases = os.environ.get("INSTAGRAM_SUBSCRIBED_APP_IDS_BY_ACCOUNT")
-        if account_aliases:
-            try:
-                aliases = json.loads(account_aliases)
-                if not isinstance(aliases, dict) or any(
-                    not instagram_account_id(account) or not instagram_account_id(alias)
-                    for account, alias in aliases.items()
-                ):
-                    raise ValueError
-            except (ValueError, TypeError):
-                raise ValueError("The configured Instagram account subscription IDs are invalid.") from None
-            alias = aliases.get(account_id)
-            if alias:
-                expected_ids.add(str(alias))
+    async def _read_subscription_fields(cls, client, account_id: str) -> list[set[str]]:
+        # Rows on this edge carry a per-account object id, never an app ID, so
+        # they can't be matched to our app; callers only check field coverage.
+        from utils.meta_subscriptions import read_subscription_field_sets
 
         async def request(method, path, **kwargs):
             return await cls._registration_request(client, method, path, **kwargs)
 
-        return await read_subscribed_fields(request, account_id, expected_ids, label="Instagram")
+        return await read_subscription_field_sets(request, account_id, label="Instagram")
+
+    @classmethod
+    async def _desired_subscription_fields(cls, pool, account_id, workflow_id, node_id, event_types) -> set[str]:
+        """Fields this app needs on the account: every other trigger's local rows plus this node's events.
+
+        NoClick is the only writer of this app's account subscription, so its rows are the system of record.
+        """
+        from nodes.core.webhook_subscriptions import list_subscriptions_for_tenant
+
+        rows = await list_subscriptions_for_tenant(pool, cls._app_provider, account_id)
+        events = {row["event_type"] for row in rows if (str(row["workflow_id"]), row["node_id"]) != (str(workflow_id), node_id)}
+        # Instagram Login delivers mentions through the comments field.
+        return {"comments" if event == "mentions" else event for event in events | set(event_types)}
 
     @staticmethod
     def _registration_lease(account_id: str, app_id: str):
@@ -1720,36 +1701,32 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
             if str(identity.get("user_id")) != account_id:
                 raise ValueError("Instagram Login account identity changed; reconnect the intended account before activating this trigger.")
             async with cls._registration_lease(account_id, app_id) as check_owner:
-                current = await cls._read_subscribed_fields(client, account_id, app_id)
-                # Instagram Login delivers mentions through the comments field.
-                remote_fields = {"comments" if event == "mentions" else event for event in event_types}
-                wanted = current | remote_fields
-                if wanted != current:
-                    await check_owner()
-                    result = await cls._registration_request(
-                        client, "POST", f"{account_id}/subscribed_apps",
-                        data={"subscribed_fields": ",".join(sorted(wanted))},
-                    )
-                    if result.get("success") is not True:
-                        raise ValueError("Instagram did not confirm the account subscription; no workflow subscription was saved.")
-                    try:
-                        verified = await cls._read_subscribed_fields(client, account_id, app_id)
-                    except ValueError:
-                        # POST already succeeded. Do not falsely claim the
-                        # provider was unchanged, or activate a local row.
-                        raise ValueError(
-                            "Instagram accepted the subscription update but its readback could not be verified; "
-                            "remote fields may have changed and no workflow subscription was saved."
-                        ) from None
-                    if not wanted.issubset(verified):
-                        raise ValueError("Instagram subscription readback did not confirm every field; no workflow subscription was saved.")
-        # A provider failure above never creates a local active registration.
-        # Shared cleanup intentionally only removes this node's local rows; it
-        # must not unsubscribe an account used by another workflow/application.
-        return await super().register_node_subscriptions(
-            pool, user_id=user_id, workflow_id=workflow_id, node_id=node_id,
-            operation=operation, credential_id=credential_id, credential=credential, config=config,
-        )
+                wanted = await cls._desired_subscription_fields(pool, account_id, workflow_id, node_id, event_types)
+                await check_owner()
+                # The POST replaces this app's field set, so it converges the account to exactly `wanted`.
+                result = await cls._registration_request(
+                    client, "POST", f"{account_id}/subscribed_apps",
+                    data={"subscribed_fields": ",".join(sorted(wanted))},
+                )
+                if result.get("success") is not True:
+                    raise ValueError("Instagram did not confirm the account subscription; no workflow subscription was saved.")
+                try:
+                    subscriptions = await cls._read_subscription_fields(client, account_id)
+                except ValueError:
+                    # POST already succeeded. Do not falsely claim the
+                    # provider was unchanged, or activate a local row.
+                    raise ValueError(
+                        "Instagram accepted the subscription update but its readback could not be verified; "
+                        "remote fields may have changed and no workflow subscription was saved."
+                    ) from None
+                if not any(wanted <= fields for fields in subscriptions):
+                    raise ValueError("Instagram subscription readback did not confirm every field; no workflow subscription was saved.")
+                # Saved inside the lease so the next registration's desired set includes this node.
+                # Cleanup only removes this node's local rows; the next registration drops its fields.
+                return await super().register_node_subscriptions(
+                    pool, user_id=user_id, workflow_id=workflow_id, node_id=node_id,
+                    operation=operation, credential_id=credential_id, credential=credential, config=config,
+                )
 
     @classmethod
     async def check_registration_health(cls, credential, operation, config):

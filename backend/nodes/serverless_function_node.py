@@ -16,14 +16,15 @@ import json
 import re
 import time
 from typing import Dict, Any, Optional, Union, Type, List, Literal, Annotated
-from pydantic import BaseModel, Field, Discriminator
+from pydantic import BaseModel, ConfigDict, Field, Discriminator, field_validator, model_validator
 
 from nodes.core.base import WorkflowNode, NodeConfig
 
 logger = logging.getLogger(__name__)
 
 
-# GPU options with metadata for display
+# GPU options with metadata for display. `max_count` is the most GPUs of that
+# type one sandbox attaches; the hosted runtime refuses more at create.
 GPU_OPTIONS = [
     {
         "value": "none",
@@ -33,34 +34,57 @@ GPU_OPTIONS = [
     {
         "value": "T4",
         "label": "NVIDIA T4",
-        "metadata": {"description": "16GB VRAM, good for inference"},
+        "metadata": {"description": "16GB VRAM, good for inference", "max_count": 8},
     },
     {
         "value": "L4",
         "label": "NVIDIA L4",
-        "metadata": {"description": "24GB VRAM, efficient inference"},
+        "metadata": {"description": "24GB VRAM, efficient inference", "max_count": 8},
     },
     {
         "value": "A10G",
         "label": "NVIDIA A10G",
-        "metadata": {"description": "24GB VRAM, versatile"},
+        "metadata": {"description": "24GB VRAM, versatile, up to 4 per run", "max_count": 4},
     },
     {
         "value": "A100-40GB",
         "label": "NVIDIA A100 (40GB)",
-        "metadata": {"description": "40GB VRAM, high performance"},
+        "metadata": {"description": "40GB VRAM, high performance", "max_count": 8},
     },
     {
         "value": "A100-80GB",
         "label": "NVIDIA A100 (80GB)",
-        "metadata": {"description": "80GB VRAM, large models"},
+        "metadata": {"description": "80GB VRAM, large models", "max_count": 8},
     },
     {
         "value": "H100",
         "label": "NVIDIA H100",
-        "metadata": {"description": "80GB VRAM, fastest available"},
+        "metadata": {"description": "80GB VRAM, fastest available", "max_count": 8},
     },
 ]
+
+GPU_MAX_COUNT = {o["value"]: o["metadata"]["max_count"] for o in GPU_OPTIONS if "max_count" in o["metadata"]}
+_MOST_GPUS = max(GPU_MAX_COUNT.values())
+_LOWER_GPU_CAPS = {gpu: cap for gpu, cap in GPU_MAX_COUNT.items() if cap < _MOST_GPUS}
+
+
+def _gpu_type_spellings() -> Dict[str, str]:
+    """Each unambiguous way a stored config names an offered GPU type, lowercased,
+    to that type's value: the value and the picker label in any case ('a10g',
+    'CPU Only') and an NVIDIA-prefixed value ('NVIDIA_T4'). A name that could
+    mean two types ('NVIDIA', 'NVIDIA A100': 40GB or 80GB) is in none of them."""
+    spellings: Dict[str, str] = {}
+    for option in GPU_OPTIONS:
+        value = option["value"]
+        names = {value, option["label"]} | ({f"NVIDIA_{value}", f"NVIDIA {value}"} if value != "none" else set())
+        for name in names:
+            if spellings.setdefault(name.lower(), value) != value:
+                raise ValueError(f"GPU spelling {name!r} names two types")
+    return spellings
+
+
+GPU_TYPE_SPELLINGS = _gpu_type_spellings()
+_GPU_TYPE_CHOICES = ", ".join("none (CPU only)" if o["value"] == "none" else o["value"] for o in GPU_OPTIONS)
 
 # Region options with metadata
 REGION_OPTIONS = [
@@ -107,6 +131,13 @@ class FunctionInput(BaseModel):
 class HardwareConfig(BaseModel):
     """Hardware configuration for the serverless function sandbox."""
 
+    # The per-type GPU cap in the schema too, so the config form refuses it.
+    model_config = ConfigDict(json_schema_extra={"allOf": [
+        {"if": {"properties": {"gpu_type": {"const": gpu}}, "required": ["gpu_type"]},
+         "then": {"properties": {"gpu_count": {"maximum": cap}}}}
+        for gpu, cap in _LOWER_GPU_CAPS.items()
+    ]})
+
     gpu_type: str = Field(
         default="none",
         title="GPU Type",
@@ -124,9 +155,10 @@ class HardwareConfig(BaseModel):
     gpu_count: int = Field(
         default=1,
         ge=1,
-        le=8,
+        le=_MOST_GPUS,
         title="GPU Count",
-        description="Number of GPUs (only applies if GPU type is not 'CPU Only')",
+        description=f"Number of GPUs (only applies if GPU type is not 'CPU Only'). Up to {_MOST_GPUS}"
+        + "".join(f", {cap} for {gpu}" for gpu, cap in _LOWER_GPU_CAPS.items()) + ".",
     )
 
     cpu_cores: float = Field(
@@ -144,6 +176,25 @@ class HardwareConfig(BaseModel):
         title="Memory (MB)",
         description="Memory limit in MiB",
     )
+
+    @field_validator("gpu_type", mode="before")
+    @classmethod
+    def _offered_gpu_type(cls, value: Any) -> Any:
+        """An offered type, by any unambiguous spelling; anything else is refused
+        here rather than at sandbox create, and never guessed."""
+        if not isinstance(value, str) or "{{" in value:
+            return value  # a reference is resolved before the run parses it
+        offered = GPU_TYPE_SPELLINGS.get(value.strip().lower())
+        if offered is None:
+            raise ValueError(f"GPU type {value!r} isn't one offered here. Use one of: {_GPU_TYPE_CHOICES}.")
+        return offered
+
+    @model_validator(mode="after")
+    def _gpu_count_fits_the_type(self) -> "HardwareConfig":
+        cap = GPU_MAX_COUNT.get(self.gpu_type)
+        if cap is not None and self.gpu_count > cap:
+            raise ValueError(f"{self.gpu_type} takes at most {cap} GPUs; set GPU Count to {cap} or fewer.")
+        return self
 
 
 # ============================================================================
@@ -210,7 +261,7 @@ class PythonRuntimeConfig(BaseModel):
 
     timeout_seconds: int = Field(
         default=300,
-        ge=1,
+        ge=10,  # the hosted runtime's shortest sandbox timeout
         le=3600,
         title="Timeout (seconds)",
         description="Maximum execution time",

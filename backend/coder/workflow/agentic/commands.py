@@ -20,6 +20,7 @@ from ..workflow_ops import (
     STRUCTURAL_TOOL_TYPES,
     drop_stale_agent_discriminator,
     find_unknown_output_references,
+    misplaced_agent_model,
     is_trigger_source,
     resolve_sticky_note_position,
     create_sticky_note_dict,
@@ -29,6 +30,7 @@ from ..workflow_ops import (
     strip_agent_trigger_message_refs,
     strip_label_sidecars,
     strip_placeholder_auth_headers,
+    switch_agent_harness,
     http_auth_credential_hint,
     mcp_hosting_conflict,
     provider_dataflow_conflict,
@@ -48,6 +50,7 @@ from ..operation_catalog import (
     missing_required_fields,
     node_accepted_credential_types,
     node_requires_credentials,
+    operation_properties,
     reject_invalid_config_values,
     validate_node_config,
 )
@@ -548,13 +551,16 @@ def extract_ask_requests(
     return requests, rejections
 
 
-def _get_valid_config_keys(node_type: str, operation: Optional[str] = None) -> Optional[Set[str]]:
-    """Return the set of valid config field names for a node type + operation.
+def _get_valid_config_keys(
+    node_type: str, operation: Optional[str] = None, config: Optional[Dict[str, Any]] = None,
+) -> Optional[Set[str]]:
+    """Return the set of valid config field names for a node type + operation
+    (and, for an agent, the model kind its ``config`` picks).
 
     Uses the Pydantic schema to determine which keys are real config fields.
     Returns ``None`` if the schema can't be resolved (caller should skip filtering).
     """
-    return GraphState._get_valid_config_keys(node_type, operation)
+    return GraphState._get_valid_config_keys(node_type, operation, config)
 
 
 def group_ops(ops: List[XmlOp]) -> Dict[str, List[XmlOp]]:
@@ -1020,12 +1026,17 @@ def execute_field_ops(
     # node's runtime parse, which the brain never sees).
     _ABSENT = object()
     prior_values: Dict[Tuple[str, str], Any] = {}
+    # Each agent's config before a model write, to judge a harness move.
+    prior_agent_configs: Dict[str, Dict[str, Any]] = {}
     for op in ops:
         _n = graph_state.get_node(op.attrs.get('node', ''))
         _f = op.attrs.get('name', '')
         _key = (op.attrs.get('node', ''), _f)
         if _n and _key not in prior_values:
             prior_values[_key] = _n.config.get(_f, _ABSENT)
+        if _n and _n.type == 'agent' and _f in ('model', 'model_type'):
+            prior_agent_configs.setdefault(_n.id, dict(_n.config))
+    refused_ops: Set[int] = set()
 
     for op in ops:
         node_name = op.attrs.get('node', '')
@@ -1047,6 +1058,15 @@ def execute_field_ops(
                 f"'{field_name[: -len('__label')]}' and the UI derives the label."
             )
             continue
+
+        # Judged on the value as written: resolution would rewrite a model id
+        # the catalog doesn't offer into some other model.
+        if node.type == 'agent':
+            misplaced = misplaced_agent_model({field_name: raw_value})
+            if misplaced:
+                refused_ops.add(id(op))
+                results.append(f"REJECTED {node_name}.{field_name}: {misplaced} The value was NOT saved.")
+                continue
 
         # Provider sandbox mounts: canvas-level field. Normalize + validate
         # early so the brain gets feedback this turn instead of a boot
@@ -1118,9 +1138,8 @@ def execute_field_ops(
         field_schema: Optional[Dict[str, Any]] = None
         meta_fields = {'label', 'goal', 'operation', 'fullscreen', 'disabled'}
         if field_name not in meta_fields:
-            schema = get_operation_schema(node.type, node.operation or 'default')
-            if schema:
-                properties = schema.get('properties', {})
+            properties = operation_properties(node.type, node.operation or 'default')
+            if properties:
                 valid_fields = set(properties.keys())
                 field_schema = properties.get(field_name)
                 if valid_fields and field_name not in valid_fields:
@@ -1200,9 +1219,22 @@ def execute_field_ops(
         # explicit discriminator regardless of op order.
         changed_fields = {
             op.attrs.get('name', '') for op in ops
-            if op.attrs.get('node', '') == node_name
+            if op.attrs.get('node', '') == node_name and id(op) not in refused_ops
         }
         drop_stale_agent_discriminator(node.type, changed_fields, node.config)
+        if node_name in prior_agent_configs:
+            switch = switch_agent_harness(
+                node.type, prior_agent_configs[node_name], node.config,
+                label=node.config.get('label', node.label), keep_label='label' in changed_fields,
+            )
+            if switch:
+                graph_state.harness_switches.append((switch.old, switch.new))
+                if switch.label:
+                    node.label = switch.label
+                    if 'label' in node.config:
+                        node.config['label'] = switch.label
+                if switch.changed_node:
+                    results.append(switch.summary(node_name))
         # http-request: strip placeholder auth headers (Bearer {{API_KEY}}) —
         # they resolve to nothing at runtime; auth comes from an attached
         # credential. Feed the removal back so the brain asks for one.
@@ -1492,7 +1524,7 @@ def execute_read_config(ops: List[XmlOp], graph_state: GraphState) -> List[str]:
             continue
 
         # Determine valid config keys from schema to filter out metadata
-        valid_keys = _get_valid_config_keys(node.type, node.operation)
+        valid_keys = _get_valid_config_keys(node.type, node.operation, node.config)
 
         if not field_name:
             # List all config fields with actual values (clipped for long ones)
@@ -2379,7 +2411,7 @@ def build_node_summary(node: NodeState, graph_state: Optional[GraphState] = None
     parts = [f"- {node.id} ({node.type}): operation={node.operation or 'default'}"]
 
     if node.config:
-        valid_keys = _get_valid_config_keys(node.type, node.operation)
+        valid_keys = _get_valid_config_keys(node.type, node.operation, node.config)
         for k, v in node.config.items():
             if v is None or v == '':
                 continue

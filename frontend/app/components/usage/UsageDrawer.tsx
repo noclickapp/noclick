@@ -35,7 +35,7 @@ import { useOrgContext } from '~/hooks/useOrgContext';
 import { useCreditUsage } from '~/hooks/useCreditUsage';
 import { useSocketEvent } from '~/hooks/useSocketEvent';
 import type { UsageEventUpdateEvent } from '~/types/socket-events.generated';
-import { formatCredits } from '~/lib/formatCredits';
+import { formatUsage } from '~/lib/money';
 import {
     applyEventToUsageData,
     assignSeriesColors,
@@ -199,7 +199,7 @@ function CompactBarChart({
                             fontSize={9}
                             textAnchor="end"
                         >
-                            {formatCredits(tick)}
+                            {formatUsage(tick)}
                         </text>
                     ))}
                     {/* X-axis ticks */}
@@ -231,7 +231,7 @@ function CompactBarChart({
                         {getDisplayName(tooltipData.key)}
                     </div>
                     <div style={{ color: tooltipData.color }}>
-                        {formatCredits(
+                        {formatUsage(
                             tooltipData.entry.by_subtype[tooltipData.key] || 0
                         )}
                     </div>
@@ -243,7 +243,7 @@ function CompactBarChart({
                             fontSize: '10px',
                         }}
                     >
-                        Total: {formatCredits(tooltipData.entry.total_cost)}
+                        Total: {formatUsage(tooltipData.entry.total_cost)}
                     </div>
                 </TooltipInPortal>
             )}
@@ -383,7 +383,7 @@ function CompactPieChart({
                         fontWeight={700}
                         dy="1em"
                     >
-                        {formatCredits(
+                        {formatUsage(
                             hoveredSlice ? hoveredSlice.value : total
                         )}
                     </text>
@@ -410,7 +410,7 @@ function CompactPieChart({
                         {tooltipData.label}
                     </div>
                     <div style={{ color: tooltipData.color }}>
-                        {formatCredits(tooltipData.value)}
+                        {formatUsage(tooltipData.value)}
                     </div>
                     <div
                         style={{

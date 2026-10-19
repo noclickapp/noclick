@@ -17,28 +17,70 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from .openrouter_models import get_openrouter_models, get_openrouter_models_sync
+from .openrouter_models import (
+    get_openrouter_catalog,
+    get_openrouter_catalog_sync,
+    get_openrouter_models,
+    get_openrouter_models_sync,
+)
 
 logger = logging.getLogger(__name__)
 
 
 # ── Video-gen pattern allowlist ──────────────────────────────────────────
-# Mirrors frontend/app/config/videoGenerationModels.ts. Neither OpenRouter
-# nor LiteLLM reliably tag video-gen models, so we keyword-match the id.
+# A model id alone says whether it makes video: the catalog's video flag and
+# the agent's model_type (nodes/agent/config/base.py) both read this. Kling is
+# anchored ("/kling", "kling-v") so a chat model like "inkling" isn't caught.
 _VIDEO_GENERATION_PATTERNS: tuple[str, ...] = (
-    "sora", "veo", "runway", "runwayml", "gen-3", "gen3", "gen-4", "gen4",
-    "kling", "luma", "dream-machine", "pika", "hailuo", "seedance",
-    "cogvideo", "hunyuan-video", "mochi", "ltx-video", "stable-video",
+    "sora", "veo", "runway", "gen-3", "gen3", "gen-4", "gen4",
+    "/kling", "kling-v", "luma", "dream-machine", "pika", "hailuo", "seedance",
+    "cogvideo", "mochi", "stable-video", "-video", "/wan-", "happyhorse", "heygen/",
     "text-to-video", "image-to-video", "video-to-video", "video-generat",
 )
 
+# OpenRouter's chat catalog leaves its video models out; this lists them.
+_OPENROUTER_VIDEO_CATALOG = "models?output_modalities=video"
 
-def _is_video_generation_model(model_id: str) -> bool:
+
+def is_video_generation_model(model_id: str) -> bool:
     lower = model_id.lower()
     return any(p in lower for p in _VIDEO_GENERATION_PATTERNS)
+
+
+# The agent's old video ids (Google AI Studio and LiteLLM names, bare or behind
+# the prefix of the route that took them) and the OpenRouter id of the same
+# model. Migration 20261009130000_agent_video_openrouter_models renamed saved
+# nodes with this table (its literal is pinned to it), and the run applies it
+# again to an old id an older client still writes, like its default "veo-3".
+LEGACY_VIDEO_MODELS: Dict[str, str] = {
+    "veo-3": "google/veo-3.1-fast",
+    "veo-3.1-fast-generate-001": "google/veo-3.1-fast",
+    "veo-3.1-fast-generate-preview": "google/veo-3.1-fast",
+    "veo-3.1-generate-001": "google/veo-3.1",
+    "veo-3.1-generate-preview": "google/veo-3.1",
+    "veo-3.1-lite-generate-001": "google/veo-3.1-lite",
+    "veo-3.1-lite-generate-preview": "google/veo-3.1-lite",
+    "veo-3.0-fast-generate-001": "google/veo-3.1-fast",
+    "veo-3.0-fast-generate-preview": "google/veo-3.1-fast",
+    "veo-3.0-generate-001": "google/veo-3.1",
+    "veo-3.0-generate-preview": "google/veo-3.1",
+    "veo-2.0-generate-001": "google/veo-3.1-lite",
+    "runwayml/gen4.5": "runway/gen-4.5",
+    "runwayml/aleph2": "runway/aleph-2",
+    "runwayml/hailuo3": "minimax/hailuo-3",
+    "runwayml/veo3.1": "google/veo-3.1",
+    "runwayml/veo3.1_fast": "google/veo-3.1-fast",
+}
+_LEGACY_VIDEO_ROUTE = re.compile(r"^(gemini|google|vertex_ai)/")
+
+
+def current_video_model(model_id: str) -> str:
+    """The OpenRouter id for an old video id (the migration's rule), else ``model_id`` as it is."""
+    return LEGACY_VIDEO_MODELS.get(_LEGACY_VIDEO_ROUTE.sub("", model_id.lower()), model_id)
 
 
 # ── Unified Model dataclass ──────────────────────────────────────────────
@@ -118,12 +160,13 @@ def _translate_openrouter(api_model: Dict[str, Any]) -> Model:
             tools="tools" in supported_parameters,
             video_generation=(
                 "video" in output_modalities
-                or _is_video_generation_model(or_id)
+                or is_video_generation_model(or_id)
             ),
         ),
         source="openrouter",
         created=created,
-        free=_openrouter_is_free(api_model.get("pricing")),
+        # A video model's token prices read zero; it is priced per second.
+        free="video" not in output_modalities and _openrouter_is_free(api_model.get("pricing")),
     )
 
 
@@ -165,6 +208,27 @@ async def list_openrouter_models_async() -> List[Model]:
     return await asyncio.to_thread(_translate_openrouter_all, raw)
 
 
+def list_openrouter_video_models() -> List[Model]:
+    """OpenRouter's video models, the ones the agent node's video path runs
+    (utils/media_generation.py)."""
+    try:
+        raw = get_openrouter_catalog_sync(_OPENROUTER_VIDEO_CATALOG)
+    except Exception as e:
+        logger.warning(f"[model_catalog] OpenRouter video catalog fetch failed: {e}")
+        return []
+    return _translate_openrouter_all(raw)
+
+
+async def list_openrouter_video_models_async() -> List[Model]:
+    """Async sibling of :func:`list_openrouter_video_models` (same cache)."""
+    try:
+        raw = await get_openrouter_catalog(_OPENROUTER_VIDEO_CATALOG)
+    except Exception as e:
+        logger.warning(f"[model_catalog] OpenRouter video catalog fetch failed: {e}")
+        return []
+    return _translate_openrouter_all(raw)
+
+
 # ── LiteLLM translator ───────────────────────────────────────────────────
 # Originally a Python port of translateLiteLLMModel from
 # frontend/app/hooks/useLiteLLMModels.ts (now deleted — FE consumes
@@ -198,8 +262,6 @@ def _determine_litellm_modalities(
         input_modalities.append("audio")
     elif mode == "audio_speech":
         output_modalities.append("audio")
-    elif mode == "video_generation":
-        output_modalities[0:1] = ["video"]
     elif mode == "moderation":
         output_modalities[0:1] = ["moderation"]
 
@@ -254,6 +316,9 @@ def _translate_litellm(model_id: str, api_model: Dict[str, Any]) -> Optional[Mod
         return None
     if api_model.get("deprecation_date"):
         return None
+    # Video runs only through OpenRouter's video API (list_openrouter_video_models).
+    if api_model.get("mode") == "video_generation":
+        return None
 
     raw_provider = api_model.get("litellm_provider")
     if not raw_provider:
@@ -287,7 +352,7 @@ def _translate_litellm(model_id: str, api_model: Dict[str, Any]) -> Optional[Mod
             tools=bool(api_model.get("supports_function_calling")),
             video_generation=(
                 "video" in output_modalities
-                or _is_video_generation_model(model_id)
+                or is_video_generation_model(model_id)
             ),
         ),
         source="litellm",
@@ -351,19 +416,16 @@ def _translate_zen_model(tier: str, model_id: str, meta: Dict[str, Any]) -> Opti
     input_modalities = list(modalities.get("input") or ["text"])
     output_modalities = list(modalities.get("output") or ["text"])
     cost = meta.get("cost") or {}
-    is_free = (
-        "input" in cost and "output" in cost
-        and not cost["input"] and not cost["output"]
-    )
+    if "input" in cost and "output" in cost and not cost["input"] and not cost["output"]:
+        # Zen serves its free models only to OpenCode itself; the gateway refuses
+        # them ("free tier can only be used from within OpenCode").
+        return None
 
     desc_parts = [_ZEN_TIER_LABELS[tier]]
     ctx = (meta.get("limit") or {}).get("context") or 0
     if ctx:
         desc_parts.append(f"{ctx // 1000}K context")
-    desc_parts.append(
-        "Free" if is_free
-        else f"${cost.get('input', 0)}/M in, ${cost.get('output', 0)}/M out"
-    )
+    desc_parts.append(f"${cost.get('input', 0)}/M in, ${cost.get('output', 0)}/M out")
     return Model(
         id=f"{tier}/{model_id}",
         provider="opencode",
@@ -377,7 +439,6 @@ def _translate_zen_model(tier: str, model_id: str, meta: Dict[str, Any]) -> Opti
             tools=True,
         ),
         source="opencode-zen",
-        free=is_free,
     )
 
 
@@ -585,8 +646,8 @@ def list_static_models() -> List[Model]:
 # ── Aggregator ────────────────────────────────────────────────────────────
 
 def list_all_models() -> List[Model]:
-    """Return the unified live catalog: OpenRouter + OpenCode Zen/Go + LiteLLM
-    + static stragglers.
+    """Return the unified live catalog: OpenRouter (chat, then video) +
+    OpenCode Zen/Go + LiteLLM + static stragglers.
 
     Order: OpenRouter first (the preferred default route), then the Zen
     gateways, then LiteLLM direct-provider entries (alternatives), then the
@@ -595,6 +656,7 @@ def list_all_models() -> List[Model]:
     """
     return [
         *list_openrouter_models(),
+        *list_openrouter_video_models(),
         *list_opencode_zen_models(),
         *list_litellm_models(),
         *list_static_models(),
@@ -613,6 +675,7 @@ async def list_all_models_async() -> List[Model]:
     slice is a list copy and stays inline."""
     return [
         *(await list_openrouter_models_async()),
+        *(await list_openrouter_video_models_async()),
         *(await list_opencode_zen_models_async()),
         *(await asyncio.to_thread(list_litellm_models)),
         *list_static_models(),

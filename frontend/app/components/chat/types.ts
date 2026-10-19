@@ -25,7 +25,9 @@ export type WorkflowEditEventType =
     | 'status'
     | 'open_workflow'
     | 'complete'
-    | 'error';
+    | 'error'
+    // One op the builder ran and what it acted on (lib/builderSteps).
+    | 'builder_step';
 
 export interface WorkflowEditEvent {
     id: string;
@@ -48,6 +50,17 @@ export interface WorkflowEditEvent {
     targetNodeId?: string;
     targetNodeLabel?: string;
     targetNodeType?: string;
+    // builder_step: the op, what it acted on, the app of a step it only knows by type, the field it set, an edge's
+    // ends; its batch and place in it, and how it went (running, then ok or failed with why)
+    op?: string;
+    target?: string;
+    node_type?: string;
+    field?: string;
+    ends?: { label?: string; node_type?: string }[];
+    batch?: number;
+    index?: number;
+    state?: 'running' | 'ok' | 'failed';
+    reason?: string;
 }
 
 // Inline edit segment for interleaving text and events in order
@@ -80,15 +93,18 @@ export interface Message {
     // Set on `started`; absent on user messages and on legacy persisted
     // messages from before this field existed.
     generationId?: string;
-    // True for assistant messages whose run was cancelled by the user.
-    // MessagesView reads this to render the "Response interrupted by user"
-    // notice and to skip the live activity spinner.
+    // True for assistant messages whose run was cancelled by the user: the
+    // panel says it was stopped there and shows no live activity.
     wasInterrupted?: boolean;
     // Set for assistant messages whose run ended with outcome='failed' (e.g. a
-    // mid-stream LLM error). BuilderProgress renders the error + a Retry instead
-    // of vanishing or showing a success summary.
+    // mid-stream LLM error): the panel says so with a Try again instead of
+    // vanishing or showing a success summary.
     failed?: boolean;
     error?: string;
+    // Set for assistant messages whose run stopped without the builder saying it
+    // had finished (outcome='incomplete', and the persisted row's `incomplete`):
+    // no error happened, and the panel says it stopped with a Try again.
+    incomplete?: boolean;
     /** Machine-readable failure class from the terminal frame (e.g. provider_key_missing). */
     errorCode?: string;
     errorMeta?: Record<string, string>;

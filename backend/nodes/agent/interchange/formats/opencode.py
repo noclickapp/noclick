@@ -6,7 +6,15 @@ A session row holds the id (``ses_…``), directory, title and version; a
 time, model, parentID for assistant replies) and ``part`` rows under it
 (``data``: ``text``, ``reasoning``, ``tool`` — one part carries the call
 AND its result in ``state`` — ``step-start``/``step-finish``, files,
-snapshots). Ids are ``<prefix>_<12 hex><14 alnum>``.
+snapshots). Ids are ``<prefix>_<12 hex><14 alnum>``. The CLI lists a
+session's messages by ``time_created`` and each message's parts by id, and
+writes one assistant message per model step: a step that called tools ends
+there, and the reply that follows is the next assistant message. Parallel
+calls are tool parts of one step, and the CLI replays a step (the parts
+from one ``step-start`` to the next) as its text and calls in part order,
+then every call's result: the reader keeps that order, except that text
+after a tool part follows its result (threads moved in by interchange
+version 1 hold a whole turn — text, call, reply — in one step).
 
 The database is the CLI's; a thread is written through its public importer
 (``opencode import <bundle.json>``: ``{info, messages: [{info, parts}]}``,
@@ -15,7 +23,7 @@ binary must be on PATH where a move runs — it is, in the target's sandbox.
 Reading is direct, since the source volume is mounted in a sandbox that has
 no ``opencode``. NoClick's runner resumes by the id in its pointer file
 (``.nc_session`` beside the database hosted, ``.noclick-opencode-session``
-in the local workdir). Validated against OpenCode 1.18.32 (import and
+in the local workdir). Validated against OpenCode 1.18.35 (import and
 resume) — see ``tests/test_session_interchange_drift.py``.
 """
 
@@ -43,8 +51,8 @@ _ALNUM = _string.ascii_letters + _string.digits
 
 
 def native_id(prefix: str, at_ms: int) -> str:
-    """``<prefix>_<12 hex of the millisecond clock><14 random alnum>`` — the
-    CLI's own id scheme, so ordering by id agrees with time."""
+    """``<prefix>_<12 hex of the millisecond clock><14 random alnum>``: ids
+    sort by time, and two minted in one millisecond sort at random."""
     return f"{prefix}_{at_ms:012x}{''.join(secrets.choice(_ALNUM) for _ in range(14))}"
 
 
@@ -82,7 +90,7 @@ class OpenCodeFormat(ThreadFormat):
             if session is None:
                 raise InterchangeError("source_unreadable", f"opencode session {sid} vanished from {db}")
             messages = conn.execute("SELECT id, data FROM message WHERE session_id = ? ORDER BY time_created, id", (sid,)).fetchall()
-            parts = conn.execute("SELECT message_id, data FROM part WHERE session_id = ? ORDER BY time_created, id", (sid,)).fetchall()
+            parts = conn.execute("SELECT message_id, data FROM part WHERE session_id = ? ORDER BY message_id, id", (sid,)).fetchall()
         by_message: Dict[str, List[Any]] = {}
         for message_id, data in parts:
             by_message.setdefault(message_id, []).append(_json(data))
@@ -94,8 +102,14 @@ class OpenCodeFormat(ThreadFormat):
             ts = _iso(((info.get("time") or {}).get("created")))
             if role == ASSISTANT:
                 model = model or string(info.get("modelID"))
+            step_results: List[Event] = []
             for i, part in enumerate(by_message.get(message_id, [])):
                 prov = Provenance(index, f"message:{role}", i)
+                # Text after a tool part replies to its result: interchange
+                # version 1 wrote a whole turn as one step.
+                if isinstance(part, dict) and part.get("type") in ("step-start", "text"):
+                    events.extend(step_results)
+                    step_results.clear()
                 if not isinstance(part, dict):
                     events.append(Event(OPAQUE, prov, role=role, timestamp=ts, reason="part_not_object"))
                     continue
@@ -117,14 +131,15 @@ class OpenCodeFormat(ThreadFormat):
                     events.append(Event(TOOL_CALL, prov, role=ASSISTANT, timestamp=ts, tool_name=string(part.get("tool")),
                                         tool_call_id=call_id, tool_input=state.get("input", {})))
                     output = state.get("output") if status == "completed" else (state.get("error") or state.get("output"))
-                    events.append(Event(TOOL_RESULT, prov, timestamp=ts, tool_call_id=call_id, text=text_of(output) if not isinstance(output, str) else output,
-                                        is_error=status == "error"))
+                    step_results.append(Event(TOOL_RESULT, prov, timestamp=ts, tool_call_id=call_id, text=text_of(output) if not isinstance(output, str) else output,
+                                              is_error=status == "error"))
                 elif ptype in ("step-start", "step-finish"):
                     events.append(Event(OPAQUE, prov, role=role, timestamp=ts, reason=f"part_{ptype}"))
                 elif ptype in ("file", "snapshot", "patch", "agent", "subtask", "compaction"):
                     events.append(Event(CONTEXT, prov, role=role, timestamp=ts, reason=f"part_{ptype}"))
                 else:
                     events.append(Event(OPAQUE, prov, role=role, timestamp=ts, reason=f"part_{ptype}"))
+            events.extend(step_results)
         thread = Thread(
             harness=self.harness, source=ref, session_id=sid, cwd=session[0], started_at=_iso(session[3]),
             cli_version=session[1], model=model, events=events, records=len(messages) + len(parts), sha256=None,
@@ -146,9 +161,11 @@ class OpenCodeFormat(ThreadFormat):
         last_user_id: Optional[str] = None
         open_calls: Dict[str, Dict[str, Any]] = {}
 
-        def tick() -> int:
+        def tick(floor: Optional[int] = None) -> int:
+            """The next millisecond, never before ``floor``. Every id gets its
+            own: the CLI orders a message's parts by id alone."""
             nonlocal clock
-            clock += 1
+            clock = max(clock + 1, floor or 0)
             return clock
 
         def close_assistant() -> None:
@@ -167,33 +184,38 @@ class OpenCodeFormat(ThreadFormat):
                                           tokens={"total": 0, "input": 0, "output": 0, "reasoning": 0, "cache": {"read": 0, "write": 0}}))
             current = None
 
-        def open_assistant(at: int) -> Dict[str, Any]:
+        def open_assistant(floor: Optional[int]) -> Dict[str, Any]:
             nonlocal current
+            if current is not None and not open_calls and any(p["type"] == "tool" for p in current["parts"]):
+                close_assistant()  # its tool calls are answered: what follows is the next step
             if current is None:
-                message_id = native_id("msg", at)
+                created = tick(floor)
+                message_id = native_id("msg", created)
                 current = {"info": {
-                    "id": message_id, "sessionID": session_id, "role": "assistant", "time": {"created": at},
+                    "id": message_id, "sessionID": session_id, "role": "assistant", "time": {"created": created},
                     "parentID": last_user_id, "modelID": model, "providerID": provider, "mode": "build", "agent": "build",
                     "path": {"cwd": str(store.cwd), "root": str(store.cwd)}, "cost": 0,
                     "tokens": {"total": 0, "input": 0, "output": 0, "reasoning": 0, "cache": {"read": 0, "write": 0}},
-                }, "parts": [_part("step-start", session_id, message_id, at)]}
+                }, "parts": [_part("step-start", session_id, message_id, tick())]}
                 messages.append(current)
             return current
 
         for event in thread.events:
-            at = _ms(event.timestamp) or tick()
-            clock = max(clock, at)
+            floor = _ms(event.timestamp)
             if event.is_turn and event.role == USER:
                 close_assistant()
+                at = tick(floor)
                 last_user_id = native_id("msg", at)
                 messages.append({"info": {"id": last_user_id, "sessionID": session_id, "role": "user", "time": {"created": at},
                                           "agent": "build", "model": {"providerID": provider, "modelID": model}},
                                  "parts": [_part("text", session_id, last_user_id, at, text=event.text)]})
             elif event.is_turn:
-                message = open_assistant(at)
+                message = open_assistant(floor)
+                at = tick(floor)
                 message["parts"].append(_part("text", session_id, message["info"]["id"], at, text=event.text, time={"start": at, "end": at}))
             elif event.kind == TOOL_CALL:
-                message = open_assistant(at)
+                message = open_assistant(floor)
+                at = tick(floor)
                 call_id = event.tool_call_id
                 if not call_id:
                     call_id = f"call_nc_{len(open_calls) + 1:04d}"
@@ -214,7 +236,7 @@ class OpenCodeFormat(ThreadFormat):
                     dropped["tool_result:orphan_id"] += 1
                     continue
                 part["state"]["output"] = event.text or ""
-                part["state"]["time"]["end"] = at
+                part["state"]["time"]["end"] = tick(floor)
                 if event.is_error:
                     part["state"]["status"] = "error"
                     part["state"]["error"] = event.text or "error"

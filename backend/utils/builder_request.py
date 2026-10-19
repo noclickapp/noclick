@@ -15,9 +15,10 @@ class PublicationOptions(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
     action: Literal["publish", "rename", "unpublish"] = "publish"
-    subdomain: str | None = Field(default=None, min_length=3, max_length=63,
+    subdomain: str | None = Field(default=None, min_length=3, max_length=40,
                                  pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
-                                 description="New address. Omit when republishing at the existing address.")
+                                 description="New address (the app's label on the apps domain). Omit when "
+                                             "republishing at the existing address.")
     node_id: str | None = Field(default=None, min_length=1, max_length=200)
     title: str = Field(default="", max_length=200)
 

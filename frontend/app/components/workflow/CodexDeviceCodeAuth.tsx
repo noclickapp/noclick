@@ -2,10 +2,12 @@
 // Handles the full device code auth lifecycle: start → show code → poll → complete.
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { ExternalLink, Loader2, Check, AlertCircle } from 'lucide-react';
+import { ExternalLink, Check, AlertCircle } from 'lucide-react';
+import { DeviceCodePanel, SignInStarting } from './DeviceCodePanel';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { useAgentOAuthAnalytics } from '~/hooks/useAgentOAuthAnalytics';
 import { isPrimaryAgentCredentialKey } from '~/lib/agentCredentialModel';
+import type { AgentOAuthComponentProps } from './AgentOAuthConnect';
 
 interface CodexDeviceCodeAuthProps {
     credentialIds: Record<string, string>;
@@ -14,6 +16,8 @@ interface CodexDeviceCodeAuthProps {
     // Transport override (default: socket). The public credential-provide page
     // passes an HTTP shim so this exact component works without an authed socket.
     sendEvent?: (event: any) => Promise<any>;
+    /** See AgentOAuthComponentProps.renderStart. */
+    renderStart?: AgentOAuthComponentProps['renderStart'];
 }
 
 interface DeviceCodeState {
@@ -30,6 +34,7 @@ export function CodexDeviceCodeAuth({
     onCredentialIdsChange,
     onCredentialCreated,
     sendEvent,
+    renderStart,
 }: CodexDeviceCodeAuthProps) {
     const [state, setState] = useState<DeviceCodeState>({ status: 'idle' });
     const analytics = useAgentOAuthAnalytics('codex');
@@ -129,77 +134,46 @@ export function CodexDeviceCodeAuth({
     }, []);
 
     if (state.status === 'idle') {
+        const note = (
+            <>
+                Requires{' '}
+                <a href="https://chatgpt.com/settings/security" target="_blank" rel="noopener noreferrer" className="text-muted-foreground dark:text-zinc-500 hover:text-foreground/80 underline">
+                    device code auth
+                </a>
+                {' '}enabled in ChatGPT security settings
+            </>
+        );
+        if (renderStart) return <>{renderStart(startFlow, note)}</>;
         return (
             <div className="space-y-1.5">
                 <button
                     onClick={startFlow}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-foreground/80 hover:text-foreground bg-muted dark:bg-zinc-800/50 hover:bg-accent border border-border dark:border-zinc-700 hover:border-muted-foreground/40 dark:hover:border-zinc-600 rounded-lg transition-all"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-foreground/80 hover:text-foreground bg-muted dark:bg-zinc-800/50 hover:bg-accent border border-border dark:border-zinc-700 hover:border-muted-foreground/40 dark:hover:border-zinc-600 rounded-full transition-all"
                 >
                     <ExternalLink className="h-3.5 w-3.5" />
                     Connect with ChatGPT account
                 </button>
                 <p className="text-[11px] text-muted-foreground/70 dark:text-zinc-600 text-center">
-                    Requires{' '}
-                    <a href="https://chatgpt.com/settings/security" target="_blank" rel="noopener noreferrer" className="text-muted-foreground dark:text-zinc-500 hover:text-foreground/80 underline">
-                        device code auth
-                    </a>
-                    {' '}enabled in ChatGPT security settings
+                    {note}
                 </p>
             </div>
         );
     }
 
     if (state.status === 'loading') {
-        return (
-            <div className="flex items-center justify-center gap-2 px-3 py-3 text-xs text-muted-foreground bg-card/50 border border-border rounded-lg">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Starting device code flow...
-            </div>
-        );
+        return <SignInStarting />;
     }
 
     if (state.status === 'awaiting_approval' || state.status === 'polling') {
         return (
-            <div className="p-4 rounded-lg bg-card/50 border border-border space-y-3">
-                <div className="text-[11px] text-muted-foreground uppercase tracking-wider">
-                    ChatGPT Authentication
-                </div>
-                <div className="text-center space-y-2">
-                    <p className="text-xs text-muted-foreground">Enter this code at the verification page:</p>
-                    <div className="font-mono text-2xl font-bold text-foreground tracking-widest bg-secondary rounded-lg py-3 select-all">
-                        {state.userCode}
-                    </div>
-                    {state.verificationUrl && (
-                        <a
-                            href={state.verificationUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                        >
-                            Open verification page <ExternalLink className="h-3 w-3" />
-                        </a>
-                    )}
-                </div>
-                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground dark:text-zinc-500">
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                    {state.status === 'polling' ? 'Checking...' : 'Waiting for approval...'}
-                </div>
-                <div className="flex gap-2">
-                    <button
-                        onClick={cancel}
-                        className="flex-1 px-3 py-2 text-xs text-muted-foreground hover:text-foreground/80 bg-card hover:bg-accent border border-border rounded-lg transition-all"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={poll}
-                        disabled={state.status === 'polling'}
-                        className="flex-1 px-3 py-2 text-xs text-foreground bg-foreground/20 hover:bg-foreground/25 disabled:bg-muted disabled:text-muted-foreground/70 dark:disabled:text-zinc-600 disabled:cursor-not-allowed border border-border dark:border-zinc-700 rounded-lg transition-all"
-                    >
-                        {state.status === 'polling' ? 'Checking...' : "I've approved it"}
-                    </button>
-                </div>
-            </div>
+            <DeviceCodePanel
+                provider="ChatGPT"
+                userCode={state.userCode}
+                verificationUrl={state.verificationUrl}
+                polling={state.status === 'polling'}
+                onCancel={cancel}
+                onApproved={poll}
+            />
         );
     }
 
@@ -212,7 +186,7 @@ export function CodexDeviceCodeAuth({
                 </div>
                 <button
                     onClick={() => setState({ status: 'idle' })}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground dark:text-zinc-500 hover:text-foreground/80 bg-muted/50 dark:bg-zinc-900/50 hover:bg-accent dark:hover:bg-zinc-900 border border-border hover:border-muted-foreground/40 dark:hover:border-zinc-700 rounded-lg transition-all"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground dark:text-zinc-500 hover:text-foreground/80 bg-muted/50 dark:bg-zinc-900/50 hover:bg-accent dark:hover:bg-zinc-900 border border-border hover:border-muted-foreground/40 dark:hover:border-zinc-700 rounded-full transition-all"
                 >
                     <ExternalLink className="h-3.5 w-3.5" />
                     Connect another account

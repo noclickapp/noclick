@@ -613,10 +613,10 @@ export function fetchTree(scopeId: string) {
         s.foldersLoaded = true; // attempted — clears the tree spinner even on error
         if (response.error) return; // keep whatever we have on a transient error
         s.folders = response.folders ? response.folders.map(convertFolderToTreeNode) : [];
-        // Fetch root workflows right after so the grid fills without a second trip.
-        fetchWorkflows(scopeId, null);
     });
 
+    // The root's workflows don't depend on the tree: ask beside it, so the grid waits on one round trip, not two.
+    fetchWorkflows(scopeId, null);
     fetchSharedResources();
 }
 

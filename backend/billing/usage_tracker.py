@@ -16,6 +16,8 @@ nothing and charges nobody, and every call still returns cleanly.
 import inspect
 import logging
 from contextvars import ContextVar
+from decimal import Decimal
+from contextlib import contextmanager
 from typing import Any, Dict, Optional
 
 from cachetools import TTLCache
@@ -44,6 +46,59 @@ USAGE_ATTRIBUTION: ContextVar[Optional[Dict[str, Any]]] = ContextVar(
 )
 
 
+# What the running work is (the node, its run, the chat with NoClick). Unlike
+# USAGE_ATTRIBUTION it yields to an event's own value for the same key, as the
+# running workflow_id does.
+RUN_ATTRIBUTION: ContextVar[Optional[Dict[str, Any]]] = ContextVar(
+    "billing_run_attribution", default=None
+)
+
+
+class running:
+    """Every usage event recorded in this block (``with`` or ``async with``) is
+    the work of ``metadata`` (``node_id``, ``execution_id``, ``surface``)
+    unless it names its own."""
+
+    def __init__(self, **metadata: Any):
+        self._stamped = {k: v for k, v in metadata.items() if v}
+        self._token = None
+
+    def __enter__(self) -> "running":
+        if self._stamped:
+            self._token = RUN_ATTRIBUTION.set({**(RUN_ATTRIBUTION.get() or {}), **self._stamped})
+        return self
+
+    def __exit__(self, *exc: Any) -> bool:
+        if self._token is not None:
+            RUN_ATTRIBUTION.reset(self._token)
+        return False
+
+    async def __aenter__(self) -> "running":
+        return self.__enter__()
+
+    async def __aexit__(self, *exc: Any) -> bool:
+        return self.__exit__(*exc)
+
+
+def attribute_running(**metadata: Any) -> None:
+    """``running`` for the rest of this context (a callback recording the work
+    of a turn that ran elsewhere)."""
+    stamped = {k: v for k, v in metadata.items() if v}
+    if stamped:
+        RUN_ATTRIBUTION.set({**(RUN_ATTRIBUTION.get() or {}), **stamped})
+
+
+# The keys ``usage_attribution()`` flattens out of RUN_ATTRIBUTION, so a replay of
+# it can put them back where they yield.
+RUN_KEYS = ("node_id", "execution_id", "surface")
+
+
+def split_running(attribution: Optional[Dict[str, Any]]) -> tuple:
+    """``usage_attribution()`` taken elsewhere, as (attribution, running work)."""
+    rest = dict(attribution or {})
+    return rest, {k: rest.pop(k) for k in RUN_KEYS if k in rest}
+
+
 def attribute_usage(**metadata: Any) -> None:
     """Stamp ``metadata`` onto every usage event recorded from here on in this
     context. Later keys replace earlier ones. The attribution wins over an
@@ -52,10 +107,30 @@ def attribute_usage(**metadata: Any) -> None:
     USAGE_ATTRIBUTION.set({**(USAGE_ATTRIBUTION.get() or {}), **metadata})
 
 
+@contextmanager
+def attributed(metadata: Optional[Dict[str, Any]]):
+    """Attribute what this block records to ``metadata`` too: work billed after
+    the context that started it (a job's charge on a later poll) keeps that
+    context's attribution (``usage_attribution()`` taken then)."""
+    metadata, run = split_running(metadata)
+    if not metadata:
+        with running(**run):
+            yield
+        return
+    token = USAGE_ATTRIBUTION.set({**(USAGE_ATTRIBUTION.get() or {}), **metadata})
+    try:
+        with running(**run):
+            yield
+    finally:
+        USAGE_ATTRIBUTION.reset(token)
+
+
 def usage_attribution() -> Dict[str, Any]:
     """The metadata the write choke point merges into an event: the context's
-    attribution and the running workflow."""
+    attribution, then the running work and workflow where it names none."""
     attribution = dict(USAGE_ATTRIBUTION.get() or {})
+    for key, value in (RUN_ATTRIBUTION.get() or {}).items():
+        attribution.setdefault(key, value)
     workflow_id = CURRENT_WORKFLOW_ID.get()
     if workflow_id:
         attribution.setdefault("workflow_id", workflow_id)
@@ -116,11 +191,20 @@ class UsageTracker:
     ):
         await self.track_usage_event(usage_event, sio=sio, sid=sid)
 
+    async def quote(self, usage_event: UsageEventData, *, conn=None) -> Decimal:
+        """What the event would record for whoever pays for it: here, as its caller priced it."""
+        return usage_event.total_cost
+
     async def check_credit_balance(self, user_id: str, use_cache: bool = True):
         return None  # None = unlimited; callers treat it as "always ok"
 
     async def fetch_credit_remaining(self, user_id: str):
         return None  # a definitive read: unlimited
+
+    async def spend_cap_refusal(self, user_id: str, *, price_usd: Optional[Decimal] = None):
+        """The ``SpendCapReached`` a monthly cap the paying account set would raise for
+        new work (or for something costing ``price_usd``), else None. Nothing is capped here."""
+        return None
 
     async def enforce_credit_gate(
         self,
@@ -134,6 +218,7 @@ class UsageTracker:
         surface: str = "agent",
         message: Optional[str] = None,
         min_credits: float = MIN_CREDITS,
+        renewal: bool = False,
     ) -> None:
         return None  # always passes
 
@@ -172,3 +257,9 @@ def register_usage_tracker(impl: Any) -> None:
 def registered_usage_tracker() -> Any:
     """The implementation currently behind the proxy (tests, diagnostics)."""
     return usage_tracker._impl
+
+
+def charges_usage() -> bool:
+    """Whether a platform registered a tracker that charges for usage: an
+    instance that bills nobody keeps the default, which records nothing."""
+    return not isinstance(usage_tracker._impl, UsageTracker)

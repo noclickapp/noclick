@@ -12,8 +12,11 @@ import logging
 from typing import Any, Dict, Optional
 
 from utils.graph_nodes import graph_edges, graph_nodes, node_config, node_label, parse_graph
+from utils.prompts import PromptPack
 
 logger = logging.getLogger(__name__)
+
+PROMPTS = PromptPack("coordinator")
 
 
 def setup_kind(graph: Dict[str, Any]) -> Optional[str]:
@@ -33,15 +36,9 @@ def setup_kind(graph: Dict[str, Any]) -> Optional[str]:
 
 def _context_line(kind: str, name: str, workflow_id: str, graph: Dict[str, Any]) -> str:
     nodes = graph_nodes(graph)
-    apps = ", ".join(node_label(n) for n in nodes if n.get("type", "").startswith("automation-")) or "its apps"
-    if kind == "mcp":
-        return (f"(Picked on a public page: {name}, workflow_id={workflow_id}, a hosted MCP link serving {apps} "
-                f"tools to the owner's own agent on their computer. Its card above connects {apps} and shows how to "
-                "add the link; describe_workflow shows the link and what is connected.)")
-    agent = next(n for n in nodes if n.get("type") == "agent")
-    return (f"(Picked on a public page: {name}, workflow_id={workflow_id}, agent node_id={agent['id']}, an agent "
-            f"NoClick runs with {apps} as tools. Its card above connects the agent's AI account and {apps}; once "
-            "they're connected, send it work with message_agent.)")
+    apps = [node_label(n) for n in nodes if n.get("type", "").startswith("automation-")]
+    agent_node_id = None if kind == "mcp" else next(n for n in nodes if n.get("type") == "agent")["id"]
+    return PROMPTS.arrival_context(kind, name=name, workflow_id=workflow_id, apps=apps, agent_node_id=agent_node_id)
 
 
 async def post_arrival(pool, user_id: str, *, workflow_id: str, client: Optional[str]) -> Dict[str, Any]:

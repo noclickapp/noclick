@@ -201,7 +201,8 @@ async def test_heartbeats_carry_last_sequence_and_track_acks():
         conn = await server.connection(0)
         await conn.dispatch("MESSAGE_CREATE", {"id": "m1"}, 7)
         await _until(lambda: 7 in conn.heartbeats)
-        assert client.status.last_heartbeat_ack_at is not None
+        # The gateway records a heartbeat before its ACK reaches the client.
+        await _until(lambda: client.status.last_heartbeat_ack_at is not None)
         await _finish(client, task)
 
 
@@ -233,6 +234,8 @@ async def test_invalid_session_reidentifies_from_scratch():
         first = await server.connection(0)
         await first.send({"op": gw.OP_INVALID_SESSION, "d": False})
         second = await server.connection(1)
+        # The gateway has sent READY; the client takes it up in its own time.
+        await _until(lambda: client.status.session_id == "sess-2")
         assert second.resume is None
         assert second.identify is not None
         assert client.status.identifies == 2

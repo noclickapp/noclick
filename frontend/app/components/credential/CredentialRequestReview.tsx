@@ -118,7 +118,7 @@ export function CredentialRequestReview({
                     to="/dashboard?tab=dashboard&focus=attention"
                     className="mb-8 flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
-                    <ArrowLeft className="h-4 w-4" /> Needs you
+                    <ArrowLeft className="h-4 w-4" /> Back
                 </Link>
                 <div className="mb-4 inline-flex items-center gap-2 text-xs font-medium text-muted-foreground">
                     {unlock ? (

@@ -96,6 +96,8 @@ class StreamingCostResult:
     # OpenRouter generation id (gen-...). Used to resolve ``provider`` via
     # the generation endpoint when litellm strips the inline field.
     generation_id: Optional[str] = None
+    # Whether ``cost`` is the call's real cost (False: no source had it).
+    cost_reported: bool = False
 
 
 def extract_response_provider(combined: Any, chunks: list) -> Optional[str]:
@@ -202,12 +204,32 @@ def extract_streaming_cost(chunks: list, messages: list) -> StreamingCostResult:
         openrouter_cost = getattr(combined.usage, 'cost', None)
         if openrouter_cost is not None:
             result.cost = float(openrouter_cost)
+            result.cost_reported = True
             return result
 
     try:
         result.cost = float(litellm.completion_cost(completion_response=combined) or 0.0)
+        result.cost_reported = True
     except Exception:
         pass
+    return result
+
+
+async def extract_settled_cost(chunks: list, messages: list, *, what: str) -> StreamingCostResult:
+    """``extract_streaming_cost``, with a cost the stream didn't carry looked
+    up from OpenRouter's record of the generation (``utils.openrouter_cost``).
+    One found nowhere is logged CRITICAL and stays out of the total."""
+    from utils.openrouter_cost import CostUnknown, settle
+
+    result = extract_streaming_cost(chunks, messages)
+    if not chunks or result.cost_reported:
+        return result
+    try:
+        result.cost = float(await settle(None, False, result.generation_id))
+        result.cost_reported = True
+    except CostUnknown as exc:
+        logger.critical("[%s] LLM call cost unknown: model=%s tokens=%d generation=%s: %s",
+                        what, result.model, result.total_tokens, result.generation_id, exc)
     return result
 
 

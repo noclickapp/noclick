@@ -144,6 +144,7 @@ class TestCredentialsHandler(BaseHandlerTest):
         assert response['data']['success'] is False
         assert 'web address' in response['data']['field_errors']['api_key']
         assert response['data']['field_errors']['api_key'] == response['error']
+        assert response['data']['reachable'] is None, 'a shape problem is not the provider refusing'
 
         count = await real_database.fetchval(
             "SELECT count(*) FROM credentials WHERE owner_id = $1 AND name = 'Firecrawl (url pasted)'",
@@ -236,6 +237,8 @@ class TestCredentialsHandler(BaseHandlerTest):
         assert response['data']['success'] is False
         assert 'web page' in response['error']
         assert response['data']['hint'].startswith('That address')
+        # The provider itself refused it, which the form reads differently from a failure of ours.
+        assert response['data']['reachable'] is False
         count = await real_database.fetchval(
             "SELECT count(*) FROM credentials WHERE owner_id = $1 AND name = 'Tableau (rejected by provider)'", user_id,
         )

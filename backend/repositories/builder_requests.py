@@ -20,7 +20,8 @@ class BuilderRequestRepo:
             if not access.has_access or access.permission not in allowed:
                 raise ValueError("Workflow not found or insufficient permission for this request.")
             row = await conn.fetchrow(
-                "SELECT name, workflow FROM workflows WHERE id=$1::uuid AND deleted_at IS NULL", workflow_id,
+                "SELECT name, workflow, organization_id FROM workflows WHERE id=$1::uuid AND deleted_at IS NULL",
+                workflow_id,
             )
             if row is None:
                 raise ValueError("Workflow not found or has been trashed.")
@@ -96,10 +97,22 @@ class BuilderRequestRepo:
             raise ValueError("This build is not waiting for that answer, or has already resumed.")
         return dict(row)
 
+    async def running_attempt(self, job_id, attempt_id) -> bool:
+        """Whether ``attempt_id`` is the attempt of the request running now; one a resume superseded isn't."""
+        if not job_id or not attempt_id:
+            return False
+        return bool(await self.pool.fetchval(
+            "SELECT EXISTS(SELECT 1 FROM coordinator_jobs WHERE id=$1::uuid AND attempt_id=$2::uuid AND status='running')",
+            job_id, attempt_id,
+        ))
+
     async def heartbeat(self, job_id, attempt_id):
-        await self.pool.execute(
-            "UPDATE coordinator_jobs SET lease_until=now()+interval '2 minutes' "
-            "WHERE id=$1::uuid AND attempt_id=$2::uuid AND status='running'", job_id, attempt_id,
+        """Renew a running attempt's lease; the request's status either way (``cancelled`` once someone cancelled it)."""
+        return await self.pool.fetchval(
+            """WITH renewed AS (UPDATE coordinator_jobs SET lease_until=now()+interval '2 minutes'
+                 WHERE id=$1::uuid AND attempt_id=$2::uuid AND status='running' RETURNING status)
+               SELECT COALESCE((SELECT status FROM renewed),
+                               (SELECT status FROM coordinator_jobs WHERE id=$1::uuid))""", job_id, attempt_id,
         )
 
     async def waiting(self, user_id, job_id, attempt_id, pending_ask):
@@ -172,8 +185,7 @@ class BuilderRequestRepo:
                 )
                 if row is None:
                     return False
-                await conn.execute(
-                    ConversationRepo._UPSERT_CHAT_EVENT_SQL,
-                    job["reply_conversation_id"], row["user_id"], None, job["reply_node_id"], [event], None, None,
+                await ConversationRepo.write_chat_event(
+                    conn, job["reply_conversation_id"], row["user_id"], None, job["reply_node_id"], [event], None, None,
                 )
         return True

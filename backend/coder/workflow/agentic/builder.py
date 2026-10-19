@@ -14,7 +14,7 @@ import json
 import logging
 import re
 import uuid
-from typing import Any, AsyncIterator, Dict, List, Optional, Set
+from typing import Any, AsyncIterator, Callable, Dict, Iterable, List, Optional, Set
 
 from ..builder_events import BuilderStreamEvent
 from ..graph_state import GraphState
@@ -110,8 +110,14 @@ class AgenticBuilder:
         user_id: Optional[str] = None,
         brain: Optional[BrainProtocol] = None,
         cancel_scope: Optional[CancelScope] = None,
+        skill_provider: Optional[Callable[[], Any]] = None,
+        billing_organization_id: Optional[str] = None,
     ) -> None:
         self.config = config or DEFAULT_AGENTIC_CONFIG
+        # Unused: this builder's config names no skill-picking model.
+        self._skill_provider = skill_provider
+        # The organization this run's work bills to (None: its user pays).
+        self.billing_organization_id = billing_organization_id
         self.generation_id = generation_id or str(uuid.uuid4())
         self.debug_callback = debug_callback
         self.platform_ops = platform_ops
@@ -373,11 +379,10 @@ class AgenticBuilder:
             # later no-action completion after checking the resulting graph.
             if actionable:
                 self._last_turn_result = TurnResult(next_action="continue")
-            elif (
-                not self._gate_on_missing_credentials("Done")
-                and not self._gate_on_invalid_configs("Done")
-            ):
-                self._last_turn_result = TurnResult(next_action="done")
+            elif not self._gate_on_missing_credentials("Done"):
+                await self._read_model_catalog()
+                if not self._gate_on_invalid_configs("Done"):
+                    self._last_turn_result = TurnResult(next_action="done")
         else:
             self._last_turn_result = TurnResult(next_action="continue")
 
@@ -429,6 +434,20 @@ class AgenticBuilder:
             "public <field> operations or ask the user for unknown values:\n"
             + "\n".join(problems)
         )
+
+    async def _read_model_catalog(self, ops: Iterable[XmlOp] = ()) -> None:
+        """Read models.dev off the event loop for the agents' Models, saved or
+        written by ``ops``: <field> writes, the credential checks and the done
+        gate judge them against it synchronously (``misplaced_agent_model``,
+        ``agent_credential_requirement``)."""
+        from nodes.agent.config.harness_model_lists import AGENT_ZEN_MODEL_FIELDS, read_zen_catalog
+
+        await read_zen_catalog([
+            *((n.config or {}).get(f) for n in self.graph_state.nodes.values() if n.type == "agent"
+              for f in AGENT_ZEN_MODEL_FIELDS),
+            *(op.attrs.get("value", op.body) for op in ops
+              if op.tag == "field" and op.attrs.get("name") in AGENT_ZEN_MODEL_FIELDS),
+        ])
 
     def _gate_on_invalid_configs(self, _where: str = "done") -> bool:
         """Keep the conversation open when the current graph cannot execute."""
@@ -489,6 +508,7 @@ class AgenticBuilder:
         ops: List[XmlOp],
         draft_node_ids: Optional[Set[str]] = None,
     ) -> AsyncIterator[BuilderStreamEvent | str]:
+        await self._read_model_catalog(ops)
         mutation_results: List[str] = []
         field_results: List[str] = []
         query_results: List[str] = []
@@ -597,11 +617,16 @@ class AgenticBuilder:
         field_ops = [op for op in ops if op.tag == "field"]
         if field_ops:
             operation_changes: Dict[str, tuple] = {}
+            # Config keys + label before the write, so node_updated can name
+            # what it removed (a harness move drops the old harness's fields).
+            before_fields: Dict[str, tuple] = {}
             for op in field_ops:
-                if op.attrs.get("name") != "operation":
-                    continue
                 node_id = op.attrs.get("node", "")
                 node = self.graph_state.get_node(node_id)
+                if node and node_id not in before_fields:
+                    before_fields[node_id] = (set(node.config or {}), node.label)
+                if op.attrs.get("name") != "operation":
+                    continue
                 if node and node_id not in operation_changes:
                     operation_changes[node_id] = (
                         node.operation,
@@ -617,12 +642,19 @@ class AgenticBuilder:
             for node_id in sorted(touched - {""}):
                 node = self.graph_state.get_node(node_id)
                 if node:
+                    # The canvas merges config: a removed key goes out as None,
+                    # which applyNodeUpdate deletes.
+                    keys, label = before_fields.get(node.id, (set(), node.label))
                     yield BuilderStreamEvent(
                         type="node_updated",
                         data={
                             "nodeId": node.id,
                             "operation": node.operation,
-                            "config": node.config,
+                            "config": {
+                                **{k: None for k in keys - set(node.config)},
+                                **node.config,
+                            },
+                            **({"label": node.label} if node.label != label else {}),
                         },
                     )
 

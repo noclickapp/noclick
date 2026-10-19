@@ -6,15 +6,20 @@
  * with change detection, validation, and delete functionality.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type KeyboardEvent } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from '~/components/ui/dialog';
-import { Button } from '~/components/ui/button';
+import { ShellDialog } from '~/components/shell/ShellDialog';
+import { BUTTON_GHOST, BUTTON_PRIMARY } from '~/components/shell/buttons';
+import { FIELD, FIELD_LABEL } from '~/components/shell/fields';
+import { cn } from '~/lib/utils';
+
+/** ⌘↵ in a dialog's textarea submits its form, as Enter does in its fields. */
+export function submitOnModEnter(e: KeyboardEvent<HTMLTextAreaElement>) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        e.currentTarget.closest('form')?.requestSubmit();
+    }
+}
 
 interface EditableItem {
     id: string;
@@ -93,98 +98,64 @@ export function EditItemPopup<T extends EditableItem>({
     // Check if changes have been made
     const hasChanges = name.trim() !== originalName || description.trim() !== originalDescription;
 
+    const noun = itemType.toLowerCase();
+
     return (
-        <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="bg-sunken border-border text-foreground max-w-md p-6">
-                <DialogHeader className="pb-4">
-                    <DialogTitle className="text-xl text-foreground flex items-center gap-2">
-                        <Icon className="h-5 w-5" />
-                        {canEdit ? `Edit ${itemType}` : itemType}
-                    </DialogTitle>
-                    <div className="text-sm text-muted-foreground pt-1.5">
-                        {canEdit
-                            ? `Update your ${itemType.toLowerCase()} details and settings`
-                            : `You don't own this ${itemType.toLowerCase()}. Only the owner can edit it, but you can remove it from your list.`}
-                    </div>
-                </DialogHeader>
-
-                <form onSubmit={handleSubmit}>
-                    <div className="space-y-6">
-                        <div className="space-y-3">
-                            <label className="text-sm font-medium text-foreground/80">
-                                {itemType} Name
-                            </label>
-                            <div className="bg-card/90 backdrop-blur-sm rounded-full transition-all duration-200 border border-input dark:border-zinc-700/60 focus-within:border-muted-foreground/40 dark:focus-within:border-zinc-600/80">
-                                <input
-                                    type="text"
-                                    required
-                                    autoFocus={canEdit}
-                                    disabled={!canEdit}
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="bg-transparent text-foreground px-4 py-2.5 outline-none w-full text-sm placeholder:text-[hsl(var(--placeholder))] disabled:cursor-not-allowed disabled:text-muted-foreground"
-                                    placeholder={`My awesome ${itemType.toLowerCase()}`}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-3">
-                            <label className="text-sm font-medium text-foreground/80">
-                                Description
-                            </label>
-                            <div className="bg-card/90 backdrop-blur-sm rounded-lg transition-all duration-200 border border-input dark:border-zinc-700/60 focus-within:border-muted-foreground/40 dark:focus-within:border-zinc-600/80">
-                                <textarea
-                                    rows={4}
-                                    disabled={!canEdit}
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    className="bg-transparent text-foreground px-4 py-2.5 outline-none w-full text-sm placeholder:text-[hsl(var(--placeholder))] resize-none disabled:cursor-not-allowed disabled:text-muted-foreground"
-                                    placeholder={`Tell us about your ${itemType.toLowerCase()}...`}
-                                    onKeyDown={(e) => {
-                                        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                                            e.preventDefault();
-                                            const form = e.currentTarget.closest('form');
-                                            if (form) {
-                                                form.requestSubmit();
-                                            }
-                                        }
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between pt-6">
-                        <Button
-                            type="button"
-                            variant="destructive"
-                            onClick={() => item && onDelete(item.id)}
-                            className="h-10 bg-red-900 hover:bg-red-800 rounded-md shadow-[0_2.5px_0_0_#991b1b] hover:shadow-[0_1px_0_0_#991b1b] hover:translate-y-[1.5px] active:shadow-none active:translate-y-[2.5px] transition-all duration-100"
-                        >
-                            {canEdit ? 'Delete' : 'Remove'} {itemType}
-                        </Button>
-                        <div className="flex gap-2">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => onOpenChange(false)}
-                                className="h-10 bg-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] border border-border hover:border-muted-foreground/40 dark:hover:border-zinc-700 rounded-md"
-                            >
-                                {canEdit ? 'Cancel' : 'Close'}
-                            </Button>
-                            {canEdit && (
-                                <Button
-                                    type="submit"
-                                    disabled={!name.trim() || !hasChanges}
-                                    className="h-10 bg-primary hover:bg-primary text-primary-foreground font-medium rounded-md border-0 shadow-[0_2.5px_0_0_hsl(var(--primary)/0.6)] hover:shadow-[0_1px_0_0_hsl(var(--primary)/0.6)] hover:translate-y-[1.5px] active:shadow-none active:translate-y-[2.5px] transition-all duration-100 disabled:opacity-40 min-w-[120px]"
-                                >
-                                    Save Changes
-                                </Button>
-                            )}
-                        </div>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
+        <ShellDialog
+            open={isOpen}
+            onOpenChange={onOpenChange}
+            mark={<Icon className="h-5 w-5" strokeWidth={1.75} />}
+            title={canEdit ? `Edit ${noun}` : itemType}
+            description={canEdit ? 'Its name and what it’s for.' : `It’s shared with you, so only its owner can change it. You can remove it from your list.`}
+            onSubmit={handleSubmit}
+            footer={
+                <>
+                    <button
+                        type="button"
+                        onClick={() => item && onDelete(item.id)}
+                        className={cn(BUTTON_GHOST, 'mr-auto -ml-3 text-red-600 hover:bg-red-500/10 hover:text-red-600 dark:text-red-400 dark:hover:text-red-400')}
+                    >
+                        {canEdit ? 'Delete' : 'Remove'} {noun}
+                    </button>
+                    <button type="button" onClick={() => onOpenChange(false)} className={BUTTON_GHOST}>
+                        {canEdit ? 'Cancel' : 'Close'}
+                    </button>
+                    {canEdit && (
+                        <button type="submit" disabled={!name.trim() || !hasChanges} className={BUTTON_PRIMARY}>
+                            Save
+                        </button>
+                    )}
+                </>
+            }
+        >
+            <div className="space-y-4 pt-2">
+                <label className="block">
+                    <span className={FIELD_LABEL}>Name</span>
+                    <input
+                        type="text"
+                        required
+                        // eslint-disable-next-line jsx-a11y/no-autofocus -- the dialog opens to rename
+                        autoFocus={canEdit}
+                        disabled={!canEdit}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className={cn(FIELD, 'disabled:cursor-not-allowed')}
+                        placeholder={`Name the ${noun}`}
+                    />
+                </label>
+                <label className="block">
+                    <span className={FIELD_LABEL}>Description</span>
+                    <textarea
+                        rows={3}
+                        disabled={!canEdit}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        className={cn(FIELD, 'h-auto resize-none py-2.5 leading-relaxed disabled:cursor-not-allowed')}
+                        placeholder="What it does"
+                        onKeyDown={submitOnModEnter}
+                    />
+                </label>
+            </div>
+        </ShellDialog>
     );
 }

@@ -15,7 +15,7 @@ import {
 
 afterEach(cleanup); // no global setup file → unmount between tests ourselves
 
-const base = { connectingProvider: null, isConnecting: false, Icon: () => null } as const;
+const base = { connectingProvider: null, isConnecting: false } as const;
 
 function renderForm(props: Partial<OAuthConnectFormProps>) {
     const connect = vi.fn();
@@ -42,10 +42,17 @@ describe('OAuthConnectForm — shared connect mechanisms', () => {
     it('shopify requires a store name and passes the normalized shop (4th arg)', () => {
         const connect = renderForm({ provider: 'shopify', credentialType: 'shopify_oauth', displayName: 'Shopify', scopes: ['read_products'] });
         expect(screen.getByText('.myshopify.com')).toBeTruthy();
-        const btn = screen.getByRole('button', { name: /Connect Shopify Account/i }) as HTMLButtonElement;
-        expect(btn.disabled).toBe(true); // no shop yet
-        fireEvent.change(screen.getByPlaceholderText('my-store'), { target: { value: 'https://My-Store.myshopify.com/admin' } });
+        const btn = screen.getByRole('button', { name: /Continue with Shopify/i }) as HTMLButtonElement;
+        // Never greyed out: pressed before the store is in, it says what's missing and opens nothing.
         expect(btn.disabled).toBe(false);
+        fireEvent.click(btn);
+        expect(connect).not.toHaveBeenCalled();
+        // Said under the field it is about, tied to it, which takes focus.
+        const input = screen.getByPlaceholderText('my-store');
+        expect(screen.getByRole('alert').textContent).toBe('Enter your store name.');
+        expect(input.getAttribute('aria-describedby')).toBe(screen.getByRole('alert').id);
+        expect(document.activeElement).toBe(input);
+        fireEvent.change(screen.getByPlaceholderText('my-store'), { target: { value: 'https://My-Store.myshopify.com/admin' } });
         fireEvent.click(btn);
         expect(connect).toHaveBeenCalledTimes(1);
         const args = connect.mock.calls[0];
@@ -56,14 +63,14 @@ describe('OAuthConnectForm — shared connect mechanisms', () => {
     it('atlassian passes the site as the 5th arg', () => {
         const connect = renderForm({ provider: 'atlassian', credentialType: 'jira_oauth', displayName: 'Jira', scopes: ['read:jira-work'] });
         fireEvent.change(screen.getByPlaceholderText('your-company'), { target: { value: 'acme.atlassian.net' } });
-        fireEvent.click(screen.getByRole('button', { name: /Connect Jira Account/i }));
+        fireEvent.click(screen.getByRole('button', { name: /Continue with Jira/i }));
         expect(connect.mock.calls[0][4]).toBe('acme');
     });
 
     it('a plain provider (linear) has no tenant input and connects immediately', () => {
         const connect = renderForm({ provider: 'linear', credentialType: 'linear_oauth', displayName: 'Linear', scopes: ['read'] });
         expect(screen.queryByText('.myshopify.com')).toBeNull();
-        const btn = screen.getByRole('button', { name: /Connect Linear Account/i }) as HTMLButtonElement;
+        const btn = screen.getByRole('button', { name: /Continue with Linear/i }) as HTMLButtonElement;
         expect(btn.disabled).toBe(false);
         fireEvent.click(btn);
         expect(connect).toHaveBeenCalledWith('linear', expect.any(String), ['read'], undefined, undefined, undefined, undefined);
@@ -72,11 +79,11 @@ describe('OAuthConnectForm — shared connect mechanisms', () => {
     it('BYOO (requiresCustomClient) blocks connect until client id + secret, then passes them (7th arg)', () => {
         const connect = renderForm({ provider: 'google', credentialType: 'google_business_profile_oauth', displayName: 'Google', scopes: ['x'], requiresCustomClient: true, redirectUri: '/api/auth/google/callback' });
         expect(screen.getByText(`${window.location.origin}/api/auth/google/callback`)).toBeTruthy();
-        const btn = screen.getByRole('button', { name: /Connect Google Account/i }) as HTMLButtonElement;
-        expect(btn.disabled).toBe(true);
-        fireEvent.change(screen.getByPlaceholderText(/apps\.googleusercontent\.com/), { target: { value: 'cid' } });
-        fireEvent.change(screen.getByPlaceholderText('GOCSPX-...'), { target: { value: 'sec' } });
-        expect(btn.disabled).toBe(false);
+        const btn = screen.getByRole('button', { name: /Continue with Google/i }) as HTMLButtonElement;
+        fireEvent.click(btn);
+        expect(connect).not.toHaveBeenCalled();
+        fireEvent.change(screen.getByPlaceholderText('Your OAuth client ID'), { target: { value: 'cid' } });
+        fireEvent.change(screen.getByPlaceholderText('Your OAuth client secret'), { target: { value: 'sec' } });
         fireEvent.click(btn);
         expect(connect.mock.calls[0][6]).toEqual({ client_id: 'cid', client_secret: 'sec' });
     });
@@ -94,11 +101,11 @@ describe('OAuthConnectForm — self-hosted instance OAuth app', () => {
         renderForm({ provider: 'linear', credentialType: 'linear_oauth', displayName: 'Linear', scopes: ['read'], canConfigureInstanceApp: true });
         expect(screen.getByText(/Create an OAuth app in the Linear console/)).toBeTruthy();
         expect(screen.getByText('Client ID')).toBeTruthy();
-        expect(screen.queryByRole('button', { name: /Connect Linear Account/i })).toBeNull();
+        expect(screen.queryByRole('button', { name: /Continue with Linear/i })).toBeNull();
     });
     it('shows the Connect button when the caller cannot configure an app', () => {
         renderForm({ provider: 'linear', credentialType: 'linear_oauth', displayName: 'Linear', scopes: ['read'] });
-        expect(screen.getByRole('button', { name: /Connect Linear Account/i })).toBeTruthy();
+        expect(screen.getByRole('button', { name: /Continue with Linear/i })).toBeTruthy();
         expect(screen.queryByText('Client ID')).toBeNull();
     });
 });

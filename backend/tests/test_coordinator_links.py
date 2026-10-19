@@ -76,6 +76,96 @@ async def test_real_provide_path_commits_credential_share_and_followup_together(
                                result["credential_id"], USER) == 1
 
 
+async def test_a_provided_request_tells_the_requesters_open_pages(links_db, monkeypatch):
+    """The connect card in the owner's chat folds on the request's own result, whichever device provided it: the
+    requester's user room gets one frame naming the request and the credential it made. A request held for someone
+    else never names its credential to the owner."""
+    from utils import credential_request_routes as routes
+    pool, _, _ = links_db
+    frames = []
+
+    async def broadcast(user_id, event, **_):
+        frames.append((user_id, event))
+        return {"success": True}
+
+    monkeypatch.setattr("utils.event_relay.broadcast_to_user_safe", broadcast)
+    monkeypatch.setattr(routes, "get_native_pool", lambda: pool)
+    monkeypatch.setattr(routes, "_provided_credential_owner", AsyncMock(return_value=USER))
+    monkeypatch.setattr(routes, "get_encryption", lambda: type("Encryption", (), {
+        "encrypt_credential": lambda self, value: "encrypted-only"})())
+    request = await connection(pool)
+    result = await routes.provide_credential(request.token, routes.ProvideCredentialBody(credential_data={"api_key": "test-secret"}))
+    await asyncio.sleep(0)
+    [(user_id, event)] = frames
+    assert user_id == USER and event.event_name == "credential_request:fulfilled"
+    assert event.model_dump() == {"request_id": request.id, "credential_id": result["credential_id"],
+                                  "credential_type": "openai_api_key"}
+
+    held = await CredentialsRepo(pool).upsert_credential_request(
+        requester_id=USER, target_email="someone@example.com", credential_type="openai_api_key",
+        message="Held for someone else", metadata={"hidden_from_owner": True},
+    )
+    await routes.provide_credential(held.token, routes.ProvideCredentialBody(credential_data={"api_key": "test-secret"}))
+    await asyncio.sleep(0)
+    assert len(frames) == 1
+
+
+@pytest.mark.parametrize("coordinator", [True, False])
+async def test_only_a_request_the_coordinator_reports_itself_skips_the_fulfilled_email(links_db, monkeypatch, coordinator):
+    """The owner connects what the coordinator asked for and hears back from the coordinator when it's woken, so that
+    request emails nobody. Another caller of the same tool (the workflow MCP server) still has its requester emailed."""
+    from coder.coordinator.tools import CoordinatorTools
+    from utils import credential_request_routes as routes
+    pool, _, _ = links_db
+    email = AsyncMock(return_value=True)
+    monkeypatch.setattr(routes, "send_credential_fulfilled_email", email)
+    monkeypatch.setattr(routes, "get_native_pool", lambda: pool)
+    monkeypatch.setattr(routes, "_provided_credential_owner", AsyncMock(return_value=USER))
+    monkeypatch.setattr(routes, "get_encryption", lambda: type("Encryption", (), {
+        "encrypt_credential": lambda self, value: "encrypted-only"})())
+    actions = (CoordinatorTools(pool=pool, sio=object(), user_id=USER, organization_id=None, conversation_id=f"coordinator:{USER}")
+               .credential_tools if coordinator else CredentialActions(pool=pool, user_id=USER))
+    link = await actions.connect_credential("notion_integration_token")
+    metadata = await pool.fetchval("SELECT metadata FROM credential_requests WHERE id=$1::uuid", link["request_id"])
+    assert metadata.get("notify_requester") is (False if coordinator else None)
+    await routes.provide_credential(link["url"].rsplit("/", 1)[1],
+                                    routes.ProvideCredentialBody(credential_data={"integration_token": "test-secret"}))
+    assert email.await_count == (0 if coordinator else 1)
+
+
+async def test_asking_again_replaces_a_request_out_of_tries(links_db):
+    """A request whose link took its last try is never handed out again: asking again gives the same request a fresh
+    link with its tries reset, so "ask NoClick again" leads somewhere. One with tries left is reused as it is."""
+    from repositories.credentials import MAX_PROVISION_ATTEMPTS
+    pool, _, _ = links_db
+    actions = CredentialActions(pool=pool, user_id=USER, continuation=CONTEXT)
+    first = await actions.connect_credential("notion_integration_token")
+    await pool.execute("UPDATE credential_requests SET provision_attempts=$2 WHERE id=$1::uuid", first["request_id"], MAX_PROVISION_ATTEMPTS - 1)
+    assert (await actions.connect_credential("notion_integration_token"))["url"] == first["url"]
+    await pool.execute("UPDATE credential_requests SET provision_attempts=$2 WHERE id=$1::uuid", first["request_id"], MAX_PROVISION_ATTEMPTS)
+    again = await actions.connect_credential("notion_integration_token")
+    assert again["request_id"] == first["request_id"] and again["url"] != first["url"]
+    assert await pool.fetchval("SELECT provision_attempts FROM credential_requests WHERE id=$1::uuid", again["request_id"]) == 0
+    assert (await event_for(pool, again["request_id"]))["status"] == "waiting"
+
+
+async def test_the_no_email_choice_holds_only_while_the_coordinator_alone_asked(links_db):
+    """Requests are one per (requester, address, type), so the workflow MCP server asking for the same account reuses
+    the coordinator's pending request: its requester gets the fulfilled email back. The coordinator asking again
+    keeps its own choice."""
+    from coder.coordinator.tools import CoordinatorTools
+    pool, _, _ = links_db
+    coordinator = CoordinatorTools(pool=pool, sio=object(), user_id=USER, organization_id=None,
+                                   conversation_id=f"coordinator:{USER}").credential_tools
+    asked = await coordinator.connect_credential("notion_integration_token")
+    flag = "SELECT metadata->'notify_requester' FROM credential_requests WHERE id=$1::uuid"
+    assert (await coordinator.connect_credential("notion_integration_token"))["url"] == asked["url"]
+    assert await pool.fetchval(flag, asked["request_id"]) is False
+    reused = await CredentialActions(pool=pool, user_id=USER).connect_credential("notion_integration_token")
+    assert reused["url"] == asked["url"]
+    assert await pool.fetchval(flag, asked["request_id"]) is None
+
+
 async def test_request_transition_and_wakeup_rollback_together(links_db):
     pool, _, (cid, _) = links_db
     request = await connection(pool)

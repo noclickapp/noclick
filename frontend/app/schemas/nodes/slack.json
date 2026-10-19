@@ -6116,7 +6116,7 @@
       "type": "object"
     },
     "SlackBotTokenCredential": {
-      "description": "Bot Token credential for Slack. Get your Bot Token at: https://api.slack.com/apps (OAuth & Permissions page) Bot tokens start with 'xoxb-'",
+      "description": "Bot Token credential for Slack. Copy the Bot User OAuth Token from your app's OAuth & Permissions page at https://api.slack.com/apps. Bot tokens start with 'xoxb-'.",
       "properties": {
         "credential_type": {
           "const": "slack_bot_token",

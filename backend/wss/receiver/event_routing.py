@@ -14,6 +14,7 @@ class Handler(Enum):
     YPY = "ypy_handler"
     CACHE_VALTIO = "cache_valtio_handler"
     USAGE_DASHBOARD = "usage_dashboard_handler"
+    USAGE_PAGE = "usage_page_handler"
     WORKFLOW_EXECUTION = "workflow_execution_handler"
     WORKFLOW = "workflow_handler"
     WORKFLOW_MCP = "workflow_mcp_handler"
@@ -105,9 +106,7 @@ HandlerKey = Union[Handler, str]
 EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
     "API": {
         # Chat and agent events
-        "chat:message": Handler.AGENT,
         "agent:update_model": Handler.AGENT, # TODO: this event is likely deprecated
-        "agent:set:cwd": Handler.AGENT,
         "agent:pause": Handler.AGENT,
         "agent:warm_sandboxes": Handler.AGENT,  # per-node warm/active sandbox count (canvas badge)
         "agent:builder_decision": Handler.AGENT,  # approve/dismiss verdict on a prompt_builder card
@@ -148,6 +147,9 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         "coordinator:memories:delete": Handler.COORDINATOR,
         "coordinator:jobs": Handler.COORDINATOR,
         "coordinator:arrival": Handler.COORDINATOR,
+        "coordinator:email:ensure": Handler.COORDINATOR,
+        "coordinator:email:set": Handler.COORDINATOR,
+        "coordinator:email:inbound": Handler.COORDINATOR,
         "instance_oauth:list": Handler.INSTANCE_OAUTH,
         "instance_oauth:set": Handler.INSTANCE_OAUTH,
         "instance_oauth:delete": Handler.INSTANCE_OAUTH,
@@ -410,6 +412,9 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         # Usage dashboard events
         "usage:data": Handler.USAGE_DASHBOARD,
         "usage:logs": Handler.USAGE_DASHBOARD,
+        "usage:page": Handler.USAGE_PAGE,
+        "usage:charges": Handler.USAGE_PAGE,
+        # Settings → Plan and billing: the account's monthly spending cap
 
         # Workflow operations
         "workflow:create": Handler.WORKFLOW,
@@ -444,6 +449,7 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         "email:reserve_address": Handler.WORKFLOW,
         "workflow:node:schema": Handler.WORKFLOW,
         "workflow:collab_token": Handler.WORKFLOW,
+        "relay:user_token": Handler.WORKFLOW,
         "workflow:clear_node_state": Handler.WORKFLOW,
         "workflow:save_node_state": Handler.WORKFLOW,
         "workflow:load_node_state": Handler.WORKFLOW,
@@ -607,8 +613,15 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         # WhatsApp QR code auth events
         "whatsapp:qr:start": Handler.WHATSAPP_QR,
         "whatsapp:qr:status": Handler.WHATSAPP_QR,
+        "phone_number:coverage": Handler.PHONE_NUMBER,
+        "phone_number:places": Handler.PHONE_NUMBER,
         "phone_number:search": Handler.PHONE_NUMBER,
         "phone_number:buy": Handler.PHONE_NUMBER,
+        "phone_number:documents": Handler.PHONE_NUMBER,
+        "phone_number:document_upload": Handler.PHONE_NUMBER,
+        "phone_number:document_remove": Handler.PHONE_NUMBER,
+        "phone_number:orders": Handler.PHONE_NUMBER,
+        "phone_number:resubmit": Handler.PHONE_NUMBER,
 
         # Approval feed events
         "approval:list": Handler.FEED,

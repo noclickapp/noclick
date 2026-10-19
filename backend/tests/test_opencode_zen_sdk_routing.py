@@ -117,9 +117,15 @@ _CATALOG = {
     "opencode": {
         "name": "OpenCode Zen",
         "models": {
+            # Free: Zen serves it only to OpenCode itself, so the gateway refuses it.
             "deepseek-v4-flash-free": {
                 "name": "DeepSeek V4 Flash Free", "tool_call": True, "reasoning": True,
                 "cost": {"input": 0, "output": 0}, "limit": {"context": 200000},
+                "modalities": {"input": ["text"], "output": ["text"]},
+            },
+            "glm-5.1": {
+                "name": "GLM-5.1", "tool_call": True, "reasoning": True,
+                "cost": {"input": 1.4, "output": 4.4}, "limit": {"context": 200000},
                 "modalities": {"input": ["text"], "output": ["text"]},
             },
             # Rotated out of the live gateway — must be filtered.
@@ -152,21 +158,23 @@ def test_catalog_zen_source_filters_and_folds_provider(monkeypatch):
     from utils.model_catalog import list_opencode_zen_models
 
     servable = {
-        "opencode": {"deepseek-v4-flash-free", "prose-only"},
+        "opencode": {"deepseek-v4-flash-free", "glm-5.1", "prose-only"},
         "opencode-go": {"glm-5"},
     }
     monkeypatch.setattr(zen, "fetch_models_dev_sync", lambda: _CATALOG)
     monkeypatch.setattr(zen, "get_zen_servable_ids_sync", lambda tier: servable[tier])
 
     models = {m.id: m for m in list_opencode_zen_models()}
-    assert set(models) == {"opencode/deepseek-v4-flash-free", "opencode-go/glm-5"}
+    # A free Zen model is servable, but only to OpenCode itself: this path
+    # (the gateway) gets "OpenCode's free tier can only be used from within OpenCode".
+    assert set(models) == {"opencode/glm-5.1", "opencode-go/glm-5"}
 
-    free = models["opencode/deepseek-v4-flash-free"]
+    zen_model = models["opencode/glm-5.1"]
     # Both tiers carry provider "opencode" — the FE resolves the credential
     # type catalog-first, and the tiers share one credential.
-    assert free.provider == "opencode"
-    assert free.free is True  # drives the picker's Free tag + "free" search
-    assert free.capabilities.tools and free.capabilities.reasoning
+    assert zen_model.provider == "opencode"
+    assert zen_model.free is False
+    assert zen_model.capabilities.tools and zen_model.capabilities.reasoning
 
     paid = models["opencode-go/glm-5"]
     assert paid.provider == "opencode"
@@ -214,3 +222,70 @@ def test_registry_variant_distinguishes_wrapper_from_zen_models():
                 capabilities=Capabilities(tools=True))
     assert _variant_for(wrapper) == "variant:opencode"
     assert _variant_for(zen) == "variant:llm"
+
+
+# ---------------------------------------------------------------------------
+# Pre-flight: Zen's free models run only inside OpenCode
+# ---------------------------------------------------------------------------
+
+def _stub_catalog(monkeypatch, catalog):
+    import nodes.agent.config.harness_model_lists as lists
+
+    async def models_dev(timeout=None):
+        if catalog is None:
+            raise OSError("models.dev unreachable")
+        return catalog
+
+    monkeypatch.setattr(lists, "_fetch_models_dev", models_dev)
+
+
+@pytest.mark.asyncio
+async def test_gateway_refuses_a_free_zen_model_and_says_how_to_run_it(monkeypatch):
+    from nodes.agent.config.harness_model_lists import zen_gateway_refusal
+
+    _stub_catalog(monkeypatch, _CATALOG)
+    assert await zen_gateway_refusal("opencode/deepseek-v4-flash-free") == (
+        "'opencode/deepseek-v4-flash-free' is an OpenCode Model: OpenCode Zen serves it free only to "
+        "OpenCode itself, never as an agent's Model (model). To use it, set this agent's Model (model) "
+        "to 'opencode' and its OpenCode Model (opencode_model) to 'opencode/deepseek-v4-flash-free'; "
+        "or pick a model that isn't free."
+    )
+
+
+@pytest.mark.asyncio
+async def test_gateway_runs_paid_zen_and_every_other_model(monkeypatch):
+    from nodes.agent.config.harness_model_lists import zen_gateway_refusal
+
+    _stub_catalog(monkeypatch, _CATALOG)
+    assert await zen_gateway_refusal("opencode/glm-5.1") is None
+    assert await zen_gateway_refusal("opencode-go/glm-5") is None
+    assert await zen_gateway_refusal("openrouter/anthropic/claude-sonnet-4-5") is None
+    # A model models.dev doesn't list is one this can't judge.
+    assert await zen_gateway_refusal("opencode/unlisted") is None
+    _stub_catalog(monkeypatch, None)
+    assert await zen_gateway_refusal("opencode/deepseek-v4-flash-free") is None
+
+
+@pytest.mark.asyncio
+async def test_an_sdk_turn_on_a_free_zen_model_fails_before_any_call(monkeypatch):
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock, patch
+
+    from nodes.agent.handlers.llm import execute_llm_model
+
+    _stub_catalog(monkeypatch, _CATALOG)
+    emitted = []
+
+    async def emit(payload):
+        emitted.append(payload)
+
+    node = SimpleNamespace(node_id="agent_1", sid=None, sio=None, organization_id=None, workflow_id="wf_1",
+                           execution_id="exec_1", conversation_id=None, emit=emit, node_data={})
+    config = SimpleNamespace(model="opencode/deepseek-v4-flash-free", temperature=0.7, system_prompt="",
+                             conversation_key=None, message="hi")
+    create = AsyncMock()
+    with patch("nodes.agent.handlers.llm.Agent.create", new=create):
+        with pytest.raises(ValueError, match="free only to OpenCode itself"):
+            await execute_llm_model(node, config, {"OPENCODE_API_KEY": "zen-key"}, "user-1", "u@example.com")
+    create.assert_not_awaited()
+    assert any("free only to OpenCode itself" in (e.get("error") or "") for e in emitted)

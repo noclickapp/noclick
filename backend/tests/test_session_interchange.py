@@ -4,7 +4,7 @@ A thread moves as the target harness's own session store, and the verdict
 is what the TARGET's reader sees after the write — the same skeleton of
 messages and paired tool calls the source held. Fixtures are fictional
 threads in the record shapes the pinned harnesses write today (Claude Code
-2.1.26x with its bookkeeping records, abandoned branches, subagent
+2.1.295 with its bookkeeping records, abandoned branches, subagent
 sidechains and compaction; a paginated Codex rollout with ordinals, injected
 context, custom tool calls, encrypted reasoning and a compaction window),
 so a harness bump that changes those shapes fails here before it fails a
@@ -44,7 +44,7 @@ EXPECTED_ROLES = ["user", "assistant", "assistant"]
 def _claude_records(cwd: str) -> list:
     ids = [str(uuid.uuid4()) for _ in range(12)]
     ts = "2026-09-12T10:00:{:02d}.000Z"
-    base = {"isSidechain": False, "userType": "external", "cwd": cwd, "sessionId": SESSION, "version": "2.1.281",
+    base = {"isSidechain": False, "userType": "external", "cwd": cwd, "sessionId": SESSION, "version": "2.1.295",
             "gitBranch": "main", "entrypoint": "cli", "slug": "auth-callback"}
     msg_id = "msg_01"
     return [
@@ -52,7 +52,8 @@ def _claude_records(cwd: str) -> list:
         {"type": "bridge-session", "bridgeSessionId": "b1", "sessionId": SESSION, "lastSequenceNum": 0},
         {"type": "queue-operation", "operation": "enqueue", "timestamp": ts.format(0), "sessionId": SESSION, "content": "Which tests cover the auth callback?"},
         {**base, "parentUuid": None, "type": "user", "uuid": ids[0], "timestamp": ts.format(1), "promptId": str(uuid.uuid4()),
-         "turnOrigin": "sdk", "message": {"role": "user", "content": "Which tests cover the auth callback?"}},
+         "permissionMode": "bypassPermissions", "promptSource": "sdk", "turnOrigin": "sdk", "turnPosition": {"promptIndex": 0, "turnIndex": 1},
+         "message": {"role": "user", "content": "Which tests cover the auth callback?"}},
         # the CLI's own context injection: never a turn
         {**base, "parentUuid": ids[0], "type": "user", "uuid": ids[1], "timestamp": ts.format(1), "isMeta": True,
          "message": {"role": "user", "content": "# AGENTS.md\nBe terse."}},
@@ -61,20 +62,22 @@ def _claude_records(cwd: str) -> list:
          "content": "SessionStart hook ran", "hookCount": 1, "isMeta": True},
         {**base, "parentUuid": ids[2], "type": "attachment", "uuid": ids[3], "timestamp": ts.format(1),
          "attachment": {"type": "total_tokens_reminder", "text": "<total_tokens>1000 tokens left</total_tokens>"},
-         "rendered": "<total_tokens>1000 tokens left</total_tokens>"},
+         "rendered": "<total_tokens>1000 tokens left</total_tokens>", "renderedRole": "system"},
         {**base, "parentUuid": ids[3], "type": "attachment", "uuid": ids[11], "timestamp": ts.format(1),
          "attachment": {"type": "prompt_snapshot", "prompt": "Which tests cover the auth callback?"}},
         {**base, "parentUuid": ids[11], "type": "assistant", "uuid": ids[4], "timestamp": ts.format(2), "requestId": "req_1", "apiBlockIndex": 0,
-         "perTurnEffort": "medium",
+         "requestedModel": "claude-haiku-4-5-20251001", "effort": "medium", "perTurnEffort": "medium",
          "message": {"model": "claude-haiku-4-5-20251001", "id": msg_id, "type": "message", "role": "assistant",
                      "content": [{"type": "thinking", "thinking": "look for callback tests", "signature": "sig"},
                                  {"type": "text", "text": "Let me search the test suite."}],
                      "stop_reason": None, "usage": {"input_tokens": 12, "output_tokens": 8}}},
         {**base, "parentUuid": ids[4], "type": "assistant", "uuid": ids[5], "timestamp": ts.format(3), "requestId": "req_1", "apiBlockIndex": 1,
+         "requestedModel": "claude-haiku-4-5-20251001", "effort": "medium", "perTurnEffort": "medium",
          "message": {"model": "claude-haiku-4-5-20251001", "id": msg_id, "type": "message", "role": "assistant",
                      "content": [{"type": "tool_use", "id": "toolu_01", "name": "Grep", "input": {"pattern": "auth_callback", "path": "tests"}, "caller": {"type": "direct"}}],
                      "stop_reason": "tool_use", "usage": {"input_tokens": 12, "output_tokens": 20}}},
-        {**base, "parentUuid": ids[5], "type": "user", "uuid": ids[6], "timestamp": ts.format(4), "sourceToolUseID": "toolu_01",
+        {**base, "parentUuid": ids[5], "type": "user", "uuid": ids[6], "timestamp": ts.format(4), "sourceToolAssistantUUID": ids[5],
+         "permissionDecision": {"decision": "accept", "source": "config", "reasonType": "mode"},
          "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "toolu_01", "content": "tests/test_auth.py:12:def test_auth_callback", "is_error": False}]},
          "toolUseResult": {"mode": "content", "numFiles": 1}},
         # an abandoned branch: a draft reply the user backed out of
@@ -110,7 +113,7 @@ def _claude_compacted_fixture(path: Path, cwd: str = CWD) -> Path:
     old = _claude_records(cwd)
     ids = [str(uuid.uuid4()) for _ in range(4)]
     ts = "2026-09-12T11:00:{:02d}.000Z"
-    base = {"isSidechain": False, "userType": "external", "cwd": cwd, "sessionId": SESSION, "version": "2.1.281", "gitBranch": "main"}
+    base = {"isSidechain": False, "userType": "external", "cwd": cwd, "sessionId": SESSION, "version": "2.1.295", "gitBranch": "main"}
     old_leaf = next(r["leafUuid"] for r in old if r.get("type") == "last-prompt")
     new = [
         {**base, "parentUuid": None, "logicalParentUuid": old_leaf, "type": "system", "subtype": "compact_boundary", "uuid": ids[0],
@@ -136,37 +139,57 @@ CODEX_SID = "01a0a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a5b"
 def _codex_rows(cwd: str) -> list:
     turn = "01a0a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a5c"
     sid = CODEX_SID
+    attribution = {"turn_id": turn, "turn_trigger": None, "parent_turn_id": None, "initiating_agent_path": None, "root_turn_id": turn}
+
+    def kept(message_id: str, role: str, order: int) -> dict:
+        return {"retained_source": {"id": {"message_id": message_id, "turn_id": turn, "role": role}, "revision": f"retained_{message_id}", "complete": True},
+                "client_authored": False, "user_input_order": order}
+
     return [
         ("session_meta", {"session_id": sid, "id": sid, "timestamp": "2026-09-12T10:00:00.000Z", "cwd": cwd, "originator": "codex_cli_rs",
-                          "cli_version": "0.156.1", "source": "cli", "model_provider": "openai", "history_mode": "paginated",
-                          "base_instructions": {"text": "You are Codex."}, "git": {"branch": "main"}, "runtime_workspace_roots": [cwd]}),
-        ("event_msg", {"type": "task_started", "turn_id": turn, "root_turn_id": turn, "started_at": 1789200000, "model_context_window": 258400}),
-        ("response_item", {"type": "message", "id": "msg_dev", "role": "developer", "content": [{"type": "input_text", "text": "# AGENTS.md instructions\nBe terse."}]}),
+                          "cli_version": "0.162.0", "source": "cli", "model_provider": "openai", "history_mode": "paginated",
+                          "base_instructions": {"text": "You are Codex."}, "git": {"branch": "main"}, "runtime_workspace_roots": [cwd],
+                          "context_window": {"window_id": "01a0a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a5d"}}),
+        ("event_msg", {"type": "task_started", "turn_attribution": attribution, "turn_id": turn, "root_turn_id": turn, "started_at": 1789200000,
+                       "model_context_window": 258400, "collaboration_mode_kind": "default"}),
+        ("response_item", {"type": "message", "id": "msg_dev", "role": "developer", "content": [{"type": "input_text", "text": "# AGENTS.md instructions\nBe terse."}]},
+         {"client_authored": False, "mcp_attribution": {"status": "none"}}),
         ("response_item", {"type": "message", "id": "msg_env", "role": "user", "content": [{"type": "input_text", "text": f"<environment_context>\n  <cwd>{cwd}</cwd>\n</environment_context>"}]}),
         ("world_state", {"full": True, "state": {"agents_md": {"directory": cwd, "text": "Be terse."}}}),
-        ("turn_context", {"turn_id": turn, "root_turn_id": turn, "cwd": cwd, "workspace_roots": [cwd], "model": "gpt-5-codex", "disabled_plugin_ids": []}),
-        ("event_msg", {"type": "user_message", "message": "Which tests cover the auth callback?", "client_id": "c1"}),
-        ("response_item", {"type": "message", "id": "msg_u1", "role": "user", "content": [{"type": "input_text", "text": "Which tests cover the auth callback?"}]}),
+        ("turn_context", {"turn_id": turn, "root_turn_id": turn, "disabled_plugin_ids": [], "cwd": cwd, "approval_policy": "never",
+                          "sandbox_policy": {"type": "danger-full-access"}, "model": "gpt-5-codex", "summary": "none"}),
+        ("response_item", {"type": "message", "id": "msg_u1", "role": "user", "content": [{"type": "input_text", "text": "Which tests cover the auth callback?"}],
+                           "internal_chat_message_metadata_passthrough": {"turn_id": turn, "content_item_kinds": ["user.text"]}},
+         {**kept("msg_u1", "user", 0), "mcp_attribution": {"status": "none"}}),
         ("event_msg", {"type": "item_completed", "turn_id": turn, "thread_id": sid, "item": {"type": "UserMessage", "id": "it1", "content": [{"type": "text", "text": "Which tests cover the auth callback?"}]}}),
         ("response_item", {"type": "reasoning", "id": "rs_1", "summary": [], "encrypted_content": "gAAAAABopaque"}),
-        ("event_msg", {"type": "agent_message", "message": "Let me search the test suite.", "phase": "commentary"}),
-        ("response_item", {"type": "message", "id": "msg_a1", "role": "assistant", "content": [{"type": "output_text", "text": "Let me search the test suite."}], "phase": "commentary"}),
-        ("response_item", {"type": "custom_tool_call", "id": "ctc_1", "status": "completed", "call_id": "call_1", "name": "exec", "input": "rg -n auth_callback tests"}),
+        ("response_item", {"type": "message", "id": "msg_a1", "role": "assistant", "content": [{"type": "output_text", "text": "Let me search the test suite."}], "phase": "commentary"},
+         kept("msg_a1", "assistant", 1)),
+        ("response_item", {"type": "custom_tool_call", "id": "ctc_1", "status": "completed", "call_id": "call_1", "name": "exec", "input": "rg -n auth_callback tests"},
+         {"client_authored": False, "user_input_order": 2}),
         ("token_usage_record", {"thread_id": sid, "turn_id": turn, "usage": {"input_tokens": 300, "output_tokens": 20}}),
-        ("response_item", {"type": "custom_tool_call_output", "id": "ctco_1", "call_id": "call_1", "output": [{"type": "input_text", "text": "tests/test_auth.py:12:def test_auth_callback"}], "metadata": {}}),
+        ("response_item", {"type": "custom_tool_call_output", "id": "ctco_1", "call_id": "call_1", "output": [{"type": "input_text", "text": "tests/test_auth.py:12:def test_auth_callback"}], "metadata": {}},
+         {"client_authored": False, "fallback_token_limit_override": 3000}),
         ("event_msg", {"type": "token_count", "info": {"total_token_usage": {"input_tokens": 300, "output_tokens": 20, "total_tokens": 320}}}),
-        ("event_msg", {"type": "agent_message", "message": "One test covers it: tests/test_auth.py::test_auth_callback.", "phase": "final_answer"}),
-        ("response_item", {"type": "message", "id": "msg_a2", "role": "assistant", "content": [{"type": "output_text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}], "phase": "final_answer"}),
+        ("response_item", {"type": "message", "id": "msg_a2", "role": "assistant", "content": [{"type": "output_text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}], "phase": "final_answer"},
+         kept("msg_a2", "assistant", 3)),
         ("event_msg", {"type": "item_completed", "turn_id": turn, "thread_id": sid, "item": {"type": "AgentMessage", "id": "it2", "content": [{"type": "Text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}]}}),
-        ("event_msg", {"type": "task_complete", "turn_id": turn, "last_agent_message": "One test covers it.", "started_at": 1789200000, "completed_at": 1789200009}),
+        ("event_msg", {"type": "task_complete", "turn_id": turn, "root_turn_id": turn, "last_agent_message": "One test covers it.", "started_at": 1789200000, "completed_at": 1789200009}),
     ]
 
 
 def _write_rollout(path: Path, rows: list) -> Path:
+    """Rows are ``(type, payload)`` or ``(type, payload, metadata)``: codex
+    0.162 keeps a ``metadata`` sibling beside most response items."""
     path.parent.mkdir(parents=True, exist_ok=True)
     t = "2026-09-12T10:00:{:02d}.000Z"
-    path.write_text("".join(json.dumps({"timestamp": t.format(i % 60), "ordinal": i, "type": kind, "payload": payload}) + "\n"
-                            for i, (kind, payload) in enumerate(rows)))
+    lines = []
+    for i, (kind, payload, *metadata) in enumerate(rows):
+        record = {"timestamp": t.format(i % 60), "ordinal": i, "type": kind, "payload": payload}
+        if metadata:
+            record["metadata"] = metadata[0]
+        lines.append(json.dumps(record) + "\n")
+    path.write_text("".join(lines))
     return path
 
 
@@ -257,7 +280,7 @@ class TestClaudeCodeRead:
         texts = [e.text for e in thread.events if e.is_turn]
         assert texts == ["Which tests cover the auth callback?", "Let me search the test suite.",
                          "One test covers it: tests/test_auth.py::test_auth_callback."]
-        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == (SESSION, CWD, "2.1.281", "claude-haiku-4-5-20251001")
+        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == (SESSION, CWD, "2.1.295", "claude-haiku-4-5-20251001")
         # the draft branch and the subagent sidechain are not the thread
         assert "DRAFT" not in json.dumps([e.text for e in thread.events]) and "SIDECHAIN" not in json.dumps([e.text for e in thread.events])
         assert thread.dropped["opaque:inactive_branch_records"] == 3
@@ -285,7 +308,9 @@ class TestClaudeCodeRead:
         project = home / "projects" / claude_fmt.project_directory_name(Path(CWD))
         older = _claude_fixture(project / f"{uuid.uuid4()}.jsonl")
         os.utime(older, (time.time() - 3600, time.time() - 3600))
-        _claude_fixture(home / "projects" / "-some-other-cwd" / "x.jsonl", cwd="/some/other/cwd")
+        newer = _claude_fixture(home / "projects" / "-some-other-cwd" / "x.jsonl", cwd="/some/other/cwd")
+        # Written just after the session file can share its mtime on a coarse filesystem clock.
+        os.utime(newer, (time.time() + 60, time.time() + 60))
         fmt = ic.format_for("claude_code")
         assert fmt.locate(_store("claude_code", home)) == str(project / f"{SESSION}.jsonl")
         assert fmt.locate(_store("claude_code", home, cwd="/elsewhere")).endswith("x.jsonl")
@@ -303,7 +328,7 @@ class TestCodexRead:
         thread = ic.read_thread(_store("codex", _codex_home(tmp_path)))
         sk = ic.skeleton_of(thread)
         assert sk.roles == EXPECTED_ROLES and sk.tool_calls == 1 and sk.tool_results == 1 and sk.unpaired_tool_calls == 0
-        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == (CODEX_SID, CWD, "0.156.1", "gpt-5-codex")
+        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == (CODEX_SID, CWD, "0.162.0", "gpt-5-codex")
         assert thread.dropped["context:injected"] == 1 and thread.dropped["context:system_message"] == 1
         assert thread.dropped["thinking"] == 1 and thread.dropped["context:turn_context"] == 1
         assert thread.dropped["opaque:record_world_state"] == 1 and thread.dropped["opaque:event_token_count"] == 1
@@ -332,12 +357,12 @@ class TestClaudeToCodex:
     def test_the_rollout_codex_resumes(self, tmp_path):
         thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
         home = tmp_path / ".codex"
-        out = ic.translate(thread, _store("codex", home), ic.TargetIdentity(cli_version="0.156.1", model_provider="custom", model="gpt-5-codex"))
+        out = ic.translate(thread, _store("codex", home), ic.TargetIdentity(cli_version="0.162.0", model_provider="custom", model="gpt-5-codex"))
         assert out.fidelity.ok and out.native_path.is_relative_to(home / "sessions") and out.native_path.name.endswith(f"{out.session_id}.jsonl")
         rows = [json.loads(l) for l in out.native_path.read_text().splitlines()]
         head = rows[0]
         assert head["type"] == "session_meta" and set(head["payload"]) >= {"session_id", "id", "timestamp", "cwd", "originator", "cli_version", "source", "model_provider", "history_mode"}
-        assert head["payload"]["model_provider"] == "custom" and head["payload"]["cli_version"] == "0.156.1" and head["payload"]["cwd"] == CWD
+        assert head["payload"]["model_provider"] == "custom" and head["payload"]["cli_version"] == "0.162.0" and head["payload"]["cwd"] == CWD
         items = [r["payload"] for r in rows if r["type"] == "response_item"]
         assert [i["type"] for i in items] == ["message", "message", "function_call", "function_call_output", "message"]
         assert items[0]["role"] == "user" and items[0]["content"] == [{"type": "input_text", "text": "Which tests cover the auth callback?"}]
@@ -357,13 +382,13 @@ class TestCodexToClaude:
     def test_the_session_claude_continues(self, tmp_path):
         thread = ic.read_thread(_store("codex", _codex_home(tmp_path)))
         home = tmp_path / ".claude"
-        out = ic.translate(thread, _store("claude_code", home), ic.TargetIdentity(cli_version="2.1.281", model="sonnet"))
+        out = ic.translate(thread, _store("claude_code", home), ic.TargetIdentity(cli_version="2.1.295", model="sonnet"))
         assert out.fidelity.ok
         assert out.native_path.parent == home / "projects" / claude_fmt.project_directory_name(Path(CWD)) and out.native_path.stem == out.session_id
         rows = [json.loads(l) for l in out.native_path.read_text().splitlines()]
         assert [r["type"] for r in rows] == ["user", "assistant", "assistant", "user", "assistant"]
         assert rows[0]["parentUuid"] is None and all(rows[i]["parentUuid"] == rows[i - 1]["uuid"] for i in range(1, len(rows)))
-        assert {r["sessionId"] for r in rows} == {out.session_id} and {r["cwd"] for r in rows} == {CWD} and {r["version"] for r in rows} == {"2.1.281"}
+        assert {r["sessionId"] for r in rows} == {out.session_id} and {r["cwd"] for r in rows} == {CWD} and {r["version"] for r in rows} == {"2.1.295"}
         assert rows[0]["message"] == {"role": "user", "content": "Which tests cover the auth callback?"}
         assert rows[1]["message"]["model"] == "sonnet" and rows[1]["message"]["content"] == [{"type": "text", "text": "Let me search the test suite."}]
         assert rows[1]["message"]["stop_reason"] == "end_turn" and "usage" in rows[1]["message"] and rows[1]["requestId"]
@@ -447,7 +472,7 @@ class TestMoveThread:
         codex_home = tmp_path / "codex-home"
         codex_pointer = workdir / ".noclick-codex-thread"
         out = ic.move_thread(_store("claude_code", claude_home, str(workdir)), _store("codex", codex_home, str(workdir), pointer=codex_pointer),
-                             ic.TargetIdentity(cli_version="0.156.1", model_provider="openai"))
+                             ic.TargetIdentity(cli_version="0.162.0", model_provider="openai"))
         assert out.fidelity.ok and codex_pointer.read_text() == out.session_id
         marker = workdir / ".noclick-turns"
         back = ic.move_thread(_store("codex", codex_home, str(workdir), pointer=codex_pointer),
@@ -492,7 +517,7 @@ class TestCommand:
         pointer = tmp_path / "codex-home" / "sessions" / ".nc_thread"
         verdict = self._run("move", "--source-harness", "claude_code", "--source-home", str(home), "--source-cwd", str(workdir),
                             "--target-harness", "codex", "--target-home", str(tmp_path / "codex-home"), "--cwd", str(workdir),
-                            "--target-pointer", str(pointer), "--target-cli-version", "0.156.1",
+                            "--target-pointer", str(pointer), "--target-cli-version", "0.162.0",
                             "--target-model-provider", "custom", "--target-model", "gpt-5-codex")
         assert verdict["ok"] and verdict["fidelity"]["ok"] and pointer.read_text() == verdict["session_id"]
         assert verdict["interchange_version"] == ic.INTERCHANGE_VERSION
@@ -653,7 +678,7 @@ async def test_report_fallback_is_loud_for_drift_quiet_for_limits_and_never_rais
     monkeypatch.setattr("utils.feedback.record_feedback", fake_feedback)
     monkeypatch.setattr("repositories.conversation.ConversationRepo", FakeRepo)
     await si.report_fallback(object(), user_id="u1", conversation_id="ck:wf:agent:thread", source_harness="claude_code",
-                             target_harness="codex", reason="readback_mismatch", detail="lost a message", versions={"codex": "0.156.1"})
+                             target_harness="codex", reason="readback_mismatch", detail="lost a message", versions={"codex": "0.162.0"})
     assert seen["feedback"]["feedback_type"] == "interchange_fallback" and seen["feedback"]["dedupe_key"] == "claude_code:codex:readback_mismatch"
     assert seen["meta"][1] == "last_interchange" and seen["meta"][2]["ok"] is False
     seen.clear()
@@ -798,6 +823,34 @@ CREATE VIRTUAL TABLE session_transcript_fts USING fts5(
 );"""
 
 
+OPENCODE_TABLES = """
+    CREATE TABLE project (id text PRIMARY KEY, worktree text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, sandboxes text NOT NULL);
+    CREATE TABLE session (id text PRIMARY KEY, project_id text NOT NULL, parent_id text, slug text NOT NULL, directory text NOT NULL, title text NOT NULL,
+        version text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, time_archived integer);
+    CREATE TABLE message (id text PRIMARY KEY, session_id text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, data text NOT NULL);
+    CREATE TABLE part (id text PRIMARY KEY, message_id text NOT NULL, session_id text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, data text NOT NULL);
+"""
+
+
+def _import_bundle(home: Path, bundle: dict) -> None:
+    """Land a bundle the way ``opencode import`` does (observed on 1.18.35):
+    a message keeps its ``time.created``, and parts are inserted in bundle
+    order, each stamped with the time it was written."""
+    db = home / "opencode" / "opencode.db"
+    db.parent.mkdir(parents=True, exist_ok=True)
+    info, written_at = bundle["info"], 1799999999999
+    with sqlite3.connect(db) as conn:
+        conn.executescript(OPENCODE_TABLES)
+        conn.execute("INSERT INTO session VALUES (?, 'global', NULL, ?, ?, ?, ?, ?, ?, NULL)",
+                     (info["id"], info["slug"], info["directory"], info["title"], info["version"], info["time"]["created"], info["time"]["updated"]))
+        for message in bundle["messages"]:
+            mid, created = message["info"]["id"], message["info"]["time"]["created"]
+            conn.execute("INSERT INTO message VALUES (?, ?, ?, ?, ?)", (mid, info["id"], created, created, json.dumps(message["info"])))
+            for part in message["parts"]:
+                written_at += 1
+                conn.execute("INSERT INTO part VALUES (?, ?, ?, ?, ?, ?)", (part["id"], mid, info["id"], written_at, written_at, json.dumps(part)))
+
+
 def _opencode_home(root: Path, cwd: str = CWD) -> Path:
     """A 1.18-shaped opencode database: user text; assistant with step-start,
     reasoning, text, a completed tool part carrying its result, step-finish;
@@ -808,15 +861,9 @@ def _opencode_home(root: Path, cwd: str = CWD) -> Path:
     sid = "ses_01a09500000feTeSt0000000001"
     t = 1789200000000
     with sqlite3.connect(db) as conn:
-        conn.executescript("""
-            CREATE TABLE project (id text PRIMARY KEY, worktree text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, sandboxes text NOT NULL);
-            CREATE TABLE session (id text PRIMARY KEY, project_id text NOT NULL, parent_id text, slug text NOT NULL, directory text NOT NULL, title text NOT NULL,
-                version text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, time_archived integer);
-            CREATE TABLE message (id text PRIMARY KEY, session_id text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, data text NOT NULL);
-            CREATE TABLE part (id text PRIMARY KEY, message_id text NOT NULL, session_id text NOT NULL, time_created integer NOT NULL, time_updated integer NOT NULL, data text NOT NULL);
-        """)
+        conn.executescript(OPENCODE_TABLES)
         conn.execute("INSERT INTO project VALUES ('global', '/', ?, ?, '[]')", (t, t))
-        conn.execute("INSERT INTO session VALUES (?, 'global', NULL, 'curious-panda', ?, 'Auth callback tests', '1.18.29', ?, ?, NULL)", (sid, cwd, t, t + 9000))
+        conn.execute("INSERT INTO session VALUES (?, 'global', NULL, 'curious-panda', ?, 'Auth callback tests', '1.18.35', ?, ?, NULL)", (sid, cwd, t, t + 9000))
         u, a1, a2 = "msg_01a0950000010000000000u1", "msg_01a0950000020000000000a1", "msg_01a0950000030000000000a2"
         conn.execute("INSERT INTO message VALUES (?, ?, ?, ?, ?)", (u, sid, t + 1000, t + 1000, json.dumps(
             {"id": u, "sessionID": sid, "role": "user", "time": {"created": t + 1000}, "agent": "build", "model": {"providerID": "anthropic", "modelID": "claude-sonnet-4-5"}})))
@@ -928,7 +975,7 @@ class TestOpenCodeStore:
         thread = ic.read_thread(ic.StoreRef("opencode", home, Path(CWD)))
         sk = ic.skeleton_of(thread)
         assert sk.roles == EXPECTED_ROLES and sk.tool_calls == 1 and sk.tool_results == 1 and sk.unpaired_tool_calls == 0
-        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == ("ses_01a09500000feTeSt0000000001", CWD, "1.18.29", "claude-sonnet-4-5")
+        assert (thread.session_id, thread.cwd, thread.cli_version, thread.model) == ("ses_01a09500000feTeSt0000000001", CWD, "1.18.35", "claude-sonnet-4-5")
         call = next(e for e in thread.events if e.kind == ic.ir.TOOL_CALL)
         assert (call.tool_name, call.tool_call_id, call.tool_input) == ("grep", "call_function_abc_1", {"pattern": "auth_callback", "path": "tests"})
         assert thread.dropped["thinking"] == 1 and thread.dropped["opaque:part_step-start"] == 2 and ic.classify_drops(dict(thread.dropped)) == {}
@@ -944,22 +991,86 @@ class TestOpenCodeStore:
     def test_bundle_is_the_importers_shape(self, tmp_path):
         thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
         fmt = ic.format_for("opencode")
-        written = fmt.write(thread, ic.StoreRef("opencode", tmp_path / "xdg", Path(CWD)), ic.TargetIdentity(cli_version="1.18.29", model="anthropic/claude-sonnet-4-5"))
+        written = fmt.write(thread, ic.StoreRef("opencode", tmp_path / "xdg", Path(CWD)), ic.TargetIdentity(cli_version="1.18.35", model="anthropic/claude-sonnet-4-5"))
         bundle = written.records[0]
         assert set(bundle) == {"info", "messages"} and bundle["info"]["id"] == written.session_id and bundle["info"]["directory"] == CWD
-        assert bundle["info"]["version"] == "1.18.29" and bundle["info"]["title"] == "Which tests cover the auth callback?"
-        roles = [m["info"]["role"] for m in bundle["messages"]]
-        assert roles == ["user", "assistant"]  # one assistant message carries text, the tool part, and the reply
-        assistant = bundle["messages"][1]
-        assert assistant["info"]["parentID"] == bundle["messages"][0]["info"]["id"] and assistant["info"]["finish"] == "tool-calls"
-        assert assistant["info"]["providerID"] == "anthropic" and assistant["info"]["modelID"] == "claude-sonnet-4-5"
-        assert [p["type"] for p in assistant["parts"]] == ["step-start", "text", "tool", "text", "step-finish"]
-        tool = assistant["parts"][2]
+        assert bundle["info"]["version"] == "1.18.35" and bundle["info"]["title"] == "Which tests cover the auth callback?"
+        # one assistant message per model step, as the CLI writes them: a merged
+        # message is sent to the model with the reply ahead of the call it followed
+        user, step, reply = bundle["messages"]
+        assert [m["info"]["role"] for m in bundle["messages"]] == ["user", "assistant", "assistant"]
+        assert step["info"]["parentID"] == reply["info"]["parentID"] == user["info"]["id"]
+        assert (step["info"]["finish"], reply["info"]["finish"]) == ("tool-calls", "stop")
+        assert step["info"]["providerID"] == "anthropic" and step["info"]["modelID"] == "claude-sonnet-4-5"
+        assert [p["type"] for p in step["parts"]] == ["step-start", "text", "tool", "step-finish"]
+        assert [p["type"] for p in reply["parts"]] == ["step-start", "text", "step-finish"]
+        tool = step["parts"][2]
         assert (tool["callID"], tool["tool"], tool["state"]["status"], tool["state"]["input"], tool["state"]["output"]) == \
             ("toolu_01", "Grep", "completed", {"pattern": "auth_callback", "path": "tests"}, "tests/test_auth.py:12:def test_auth_callback")
         assert all(re.fullmatch(r"(ses|msg|prt)_[0-9a-f]{12}[0-9A-Za-z]{14}", x) for x in
                    [bundle["info"]["id"]] + [m["info"]["id"] for m in bundle["messages"]] + [p["id"] for m in bundle["messages"] for p in m["parts"]])
         assert written.dropped["thinking"] == 1 and ic.classify_drops(dict(written.dropped)) == {}
+
+    def test_parts_keep_their_order_when_the_source_shares_a_millisecond(self, tmp_path):
+        """Codex stamps a reply and the call it makes with one timestamp, and
+        the CLI orders a message's parts by id alone, so each part gets its
+        own millisecond (a moved codex thread used to read back with the call
+        ahead of its text)."""
+        thread = ic.read_thread(_store("codex", _codex_home(tmp_path)))
+        for event in thread.events:
+            event.timestamp = "2026-09-12T10:00:00.000Z"
+        fmt = ic.format_for("opencode")
+        store = ic.StoreRef("opencode", tmp_path / "xdg", Path(CWD))
+        written = fmt.write(thread, store, ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
+        messages = written.records[0]["messages"]
+        assert [m["info"]["time"]["created"] for m in messages] == sorted({m["info"]["time"]["created"] for m in messages})
+        for message in messages:
+            clocks = [p["id"][4:16] for p in message["parts"]]
+            assert clocks == sorted(set(clocks)), message["info"]["role"]
+        _import_bundle(store.home, written.records[0])
+        assert ic.skeleton_of(fmt.read(fmt.ref_for(written, store))).digest == ic.skeleton_of(thread).digest
+
+    def test_the_reader_orders_parts_as_the_cli_does(self, tmp_path):
+        """The CLI sends a message's parts in id order, whenever each was
+        written. The verdict reads the store the same way, or parts that land
+        out of order pass the readback and resume scrambled."""
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
+        fmt = ic.format_for("opencode")
+        store = ic.StoreRef("opencode", tmp_path / "xdg", Path(CWD))
+        written = fmt.write(thread, store, ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
+        bundle = written.records[0]
+        _import_bundle(store.home, {**bundle, "messages": [{**m, "parts": m["parts"][::-1]} for m in bundle["messages"]]})  # last part written first
+        assert ic.skeleton_of(fmt.read(fmt.ref_for(written, store))).digest == ic.skeleton_of(thread).digest
+
+    def test_a_turn_moved_in_as_one_step_reads_in_the_order_it_ran(self, tmp_path):
+        """Interchange version 1 wrote a whole turn into one step — text, the
+        call, the reply — and stores it moved in are still on users' volumes.
+        The reply follows the call's result, or a move out sends the model
+        the reply ahead of the result it answered."""
+        thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path / "source")))
+        t, sid, u, a = 1789200000000, "ses_01a09500000fVeRsIoN100001", "msg_01a0950000010000000000u1", "msg_01a0950000020000000000a1"
+        turn = [{"type": "step-start"}, {"type": "text", "text": "Let me search the test suite."},
+                {"type": "tool", "tool": "Grep", "callID": "toolu_01", "state": {"status": "completed", "input": {"pattern": "auth_callback", "path": "tests"},
+                                                                                 "output": "tests/test_auth.py:12:def test_auth_callback", "title": "Grep", "metadata": {}}},
+                {"type": "text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}, {"type": "step-finish", "reason": "tool-calls"}]
+        home = tmp_path / "xdg"
+        _import_bundle(home, {
+            "info": {"id": sid, "slug": "moved-thread", "directory": CWD, "title": "Which tests cover the auth callback?", "version": "1.18.35", "time": {"created": t, "updated": t + 9}},
+            "messages": [
+                {"info": {"id": u, "role": "user", "time": {"created": t + 1}}, "parts": [{"id": "prt_01a0950000100000000000p0", "type": "text", "text": "Which tests cover the auth callback?"}]},
+                {"info": {"id": a, "role": "assistant", "time": {"created": t + 2}, "parentID": u, "modelID": "claude-sonnet-4-5", "providerID": "anthropic", "finish": "tool-calls"},
+                 "parts": [{"id": f"prt_01a09500002{i}0000000000p{i}", **p} for i, p in enumerate(turn)]},
+            ],
+        })
+        moved = ic.read_thread(ic.StoreRef("opencode", home, Path(CWD)))
+        assert [(e.kind, e.text) for e in moved.events if e.kind in (ic.ir.MESSAGE, ic.ir.TOOL_CALL, ic.ir.TOOL_RESULT)] == [
+            ("message", "Which tests cover the auth callback?"), ("message", "Let me search the test suite."), ("tool_call", None),
+            ("tool_result", "tests/test_auth.py:12:def test_auth_callback"), ("message", "One test covers it: tests/test_auth.py::test_auth_callback.")]
+        assert ic.skeleton_of(moved).digest == ic.skeleton_of(thread).digest
+        out = ic.translate(moved, _store("claude_code", tmp_path / ".claude"), ic.TargetIdentity(model="sonnet"))
+        rows = [json.loads(line) for line in out.native_path.read_text().splitlines()]
+        assert [(r["type"], [b["type"] for b in r["message"]["content"]] if isinstance(r["message"]["content"], list) else "text") for r in rows] == [
+            ("user", "text"), ("assistant", ["text"]), ("assistant", ["tool_use"]), ("user", ["tool_result"]), ("assistant", ["text"])]
 
     def test_install_needs_the_cli(self, tmp_path, monkeypatch):
         thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path)))
@@ -1148,3 +1259,239 @@ class TestSqliteCompat:
         with pytest.raises(ic.InterchangeError) as e:
             ic.read_thread(ic.StoreRef("hermes_agent", tmp_path, Path(CWD), session_id="noclick"))
         assert e.value.reason == "source_unreadable" and "hermes_agent store at" in e.value.detail
+
+
+# ── parallel tool calls ─────────────────────────────────────────────────────
+#
+# One response that calls two tools at once, in the shapes the pinned
+# binaries record it (captured from Claude Code 2.1.295, Codex 0.162.0 and
+# OpenCode 1.18.35 against a scripted model): Claude Code writes each block
+# of the response as its own record under one message.id and hangs each
+# result off its own call's record, in the order the tools finished; Codex
+# lists both calls, then both outputs; OpenCode keeps both calls, each with
+# its result, in one step. Each resumes the batch as one assistant turn
+# holding both calls, followed by both results.
+
+PARALLEL_PROMPT = "Where is the auth callback tested and documented?"
+PARALLEL_TEXT = "Searching the tests and the docs."
+PARALLEL_REPLY = "tests/test_auth.py tests it and docs/auth.md documents it."
+PARALLEL_CALLS = [  # (id, input, output)
+    ("toolu_pa", {"pattern": "auth_callback", "path": "tests"}, "tests/test_auth.py:12:def test_auth_callback"),
+    ("toolu_pb", {"pattern": "auth_callback", "path": "docs"}, "docs/auth.md:3:The auth callback checks the state parameter."),
+]
+
+
+def _claude_parallel_home(root: Path, cwd: str = CWD) -> Path:
+    ids = {k: str(uuid.uuid4()) for k in ("prompt", "snapshot", "text", "call_a", "call_b", "result_b", "result_a", "after", "reply")}
+    ts = "2026-09-12T10:00:{:02d}.000Z"
+    base = {"isSidechain": False, "userType": "external", "entrypoint": "sdk-cli", "cwd": cwd, "sessionId": SESSION, "version": "2.1.295", "gitBranch": "main"}
+    usage = {"input_tokens": 10, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "output_tokens": 10}
+
+    def block(key: str, parent: str, index: int, content: dict, at: int) -> dict:
+        return {**base, "parentUuid": ids[parent], "type": "assistant", "uuid": ids[key], "timestamp": ts.format(at), "requestId": "req_p1",
+                "apiBlockIndex": index, "requestedModel": "claude-haiku-4-5",
+                "message": {"model": "claude-haiku-4-5-20251001", "id": "msg_p1", "type": "message", "role": "assistant", "content": [content],
+                            "stop_reason": "tool_use", "stop_sequence": None, "usage": usage}}
+
+    def result(key: str, call: str, call_id: str, output: str, at: int) -> dict:
+        return {**base, "parentUuid": ids[call], "type": "user", "uuid": ids[key], "timestamp": ts.format(at), "sourceToolAssistantUUID": ids[call],
+                "permissionDecision": {"decision": "accept", "source": "config", "reasonType": "mode"},
+                "message": {"role": "user", "content": [{"tool_use_id": call_id, "type": "tool_result", "content": output, "is_error": False}]},
+                "toolUseResult": {"stdout": output, "stderr": "", "interrupted": False}}
+
+    (a_id, a_input, a_output), (b_id, b_input, b_output) = PARALLEL_CALLS
+    records = [
+        {**base, "parentUuid": None, "type": "user", "uuid": ids["prompt"], "timestamp": ts.format(1), "promptSource": "sdk",
+         "message": {"role": "user", "content": PARALLEL_PROMPT}},
+        {**base, "parentUuid": ids["prompt"], "type": "attachment", "uuid": ids["snapshot"], "timestamp": ts.format(1),
+         "attachment": {"type": "prompt_snapshot", "prompt": PARALLEL_PROMPT}},
+        block("text", "snapshot", 0, {"type": "text", "text": PARALLEL_TEXT}, 2),
+        block("call_a", "text", 1, {"type": "tool_use", "id": a_id, "name": "Grep", "input": a_input}, 2),
+        block("call_b", "call_a", 2, {"type": "tool_use", "id": b_id, "name": "Grep", "input": b_input}, 2),
+        {"type": "last-prompt", "lastPrompt": PARALLEL_PROMPT, "leafUuid": ids["call_b"], "sessionId": SESSION},
+        result("result_b", "call_b", b_id, b_output, 3),  # the second call finished first
+        result("result_a", "call_a", a_id, a_output, 3),
+        {**base, "parentUuid": ids["result_a"], "type": "attachment", "uuid": ids["after"], "timestamp": ts.format(3),
+         "attachment": {"type": "prompt_snapshot", "prompt": PARALLEL_PROMPT}},
+        {**base, "parentUuid": ids["after"], "type": "assistant", "uuid": ids["reply"], "timestamp": ts.format(4), "requestId": "req_p2",
+         "message": {"model": "claude-haiku-4-5-20251001", "id": "msg_p2", "type": "message", "role": "assistant",
+                     "content": [{"type": "text", "text": PARALLEL_REPLY}], "stop_reason": "end_turn", "stop_sequence": None, "usage": usage}},
+        {"type": "last-prompt", "lastPrompt": PARALLEL_PROMPT, "leafUuid": ids["reply"], "sessionId": SESSION},
+    ]
+    home = root / "claude-home"
+    path = home / "projects" / claude_fmt.project_directory_name(Path(cwd)) / f"{SESSION}.jsonl"
+    path.parent.mkdir(parents=True)
+    path.write_text("".join(json.dumps(r) + "\n" for r in records))
+    return home
+
+
+def _codex_parallel_home(root: Path, cwd: str = CWD) -> Path:
+    turn = "01a0a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a6c"
+    calls = [(f"call_p{i}", json.dumps({"cmd": f"rg -n auth_callback {inp['path']}"}), out) for i, (_, inp, out) in enumerate(PARALLEL_CALLS)]
+    rows = [
+        ("session_meta", {"session_id": CODEX_SID, "id": CODEX_SID, "timestamp": "2026-09-12T10:00:00.000Z", "cwd": cwd, "originator": "codex_cli_rs",
+                          "cli_version": "0.162.0", "source": "cli", "model_provider": "openai", "history_mode": "paginated"}),
+        ("event_msg", {"type": "task_started", "turn_id": turn, "model_context_window": 258400}),
+        ("turn_context", {"turn_id": turn, "cwd": cwd, "approval_policy": "never", "model": "gpt-5-codex"}),
+        ("response_item", {"type": "message", "role": "user", "content": [{"type": "input_text", "text": PARALLEL_PROMPT}]}),
+        ("response_item", {"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": PARALLEL_TEXT}], "phase": "commentary"}),
+        *[("response_item", {"type": "function_call", "name": "exec_command", "arguments": args, "call_id": cid}) for cid, args, _ in calls],
+        ("token_usage_record", {"thread_id": CODEX_SID, "turn_id": turn, "usage": {"input_tokens": 300, "output_tokens": 20}}),
+        *[("response_item", {"type": "function_call_output", "call_id": cid, "output": out}) for cid, _, out in calls],
+        ("response_item", {"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": PARALLEL_REPLY}], "phase": "final_answer"}),
+        ("event_msg", {"type": "task_complete", "turn_id": turn, "last_agent_message": PARALLEL_REPLY}),
+    ]
+    home = root / "codex-home"
+    _write_rollout(home / "sessions" / "2026" / "09" / "12" / f"rollout-2026-09-12T10-00-00-{CODEX_SID}.jsonl", rows)
+    return home
+
+
+def _opencode_parallel_home(root: Path, cwd: str = CWD) -> Path:
+    """The prompt; one step whose two tool parts each carry their call and
+    result; the reply in the next step."""
+    t = 1789200000000
+    sid, u, a1, a2 = "ses_01a09500000fPaRaLlEl00001", "msg_01a0950000010000000000u1", "msg_01a0950000020000000000a1", "msg_01a0950000030000000000a2"
+    step = {"role": "assistant", "parentID": u, "modelID": "claude-sonnet-4-5", "providerID": "anthropic", "mode": "build", "agent": "build",
+            "path": {"cwd": cwd, "root": "/"}, "cost": 0, "tokens": {"total": 20, "input": 10, "output": 10, "reasoning": 0, "cache": {"read": 0, "write": 0}}}
+    tool_parts = [{"type": "tool", "tool": "grep", "callID": cid, "state": {"status": "completed", "input": inp, "output": out, "metadata": {}, "title": inp["path"],
+                                                                          "time": {"start": t + 3000 + i, "end": t + 3100 + i}}}
+                  for i, (cid, inp, out) in enumerate(PARALLEL_CALLS)]
+    _import_bundle(root / "xdg", {
+        "info": {"id": sid, "slug": "brave-otter", "directory": cwd, "title": PARALLEL_PROMPT, "version": "1.18.35", "time": {"created": t, "updated": t + 9000}},
+        "messages": [
+            {"info": {"id": u, "role": "user", "time": {"created": t + 1000}, "agent": "build"}, "parts": [{"id": "prt_01a0950000100000000000p0", "type": "text", "text": PARALLEL_PROMPT}]},
+            {"info": {**step, "id": a1, "time": {"created": t + 2000, "completed": t + 5000}, "finish": "tool-calls"},
+             "parts": [{"id": f"prt_01a09500002{i}0000000000p{i}", **p} for i, p in enumerate(
+                 [{"type": "step-start"}, {"type": "text", "text": PARALLEL_TEXT}, *tool_parts, {"type": "step-finish", "reason": "tool-calls"}])]},
+            {"info": {**step, "id": a2, "time": {"created": t + 6000, "completed": t + 9000}, "finish": "stop"},
+             "parts": [{"id": f"prt_01a09500003{i}0000000000p{i}", **p} for i, p in enumerate(
+                 [{"type": "step-start"}, {"type": "text", "text": PARALLEL_REPLY}, {"type": "step-finish", "reason": "stop"}])]},
+        ],
+    })
+    return root / "xdg"
+
+
+PARALLEL_SOURCES = {
+    "claude_code": lambda root: _store("claude_code", _claude_parallel_home(root)),
+    "codex": lambda root: _store("codex", _codex_parallel_home(root)),
+    "opencode": lambda root: ic.StoreRef("opencode", _opencode_parallel_home(root), Path(CWD)),
+}
+
+
+def _parallel_target(harness: str, root: Path, monkeypatch) -> ic.StoreRef:
+    if harness == "opencode":  # the CLI's importer, as observed (the real one: test_moves_into_opencode_through_the_real_importer)
+        monkeypatch.setattr(opencode_fmt.OpenCodeFormat, "install",
+                            lambda self, written, store=None: (_import_bundle(store.home, written.records[0]), self.db_path(store))[1])
+    if harness == "openclaw":  # the primed store; priming itself needs the binary
+        db = root / "agents" / "main" / "agent" / "openclaw-agent.sqlite"
+        db.parent.mkdir(parents=True)
+        with sqlite3.connect(db) as conn:
+            conn.executescript(OPENCLAW_TABLES)
+        return ic.StoreRef("openclaw", root, Path(CWD), session_id="noclick-0123456789abcdef")
+    return ic.StoreRef(harness, root, Path(CWD), session_id="noclick" if harness == "hermes_agent" else None)
+
+
+def _tool_events(thread: ic.Thread) -> list:
+    return [(e.kind, e.tool_call_id) for e in thread.events if e.kind in (ic.ir.TOOL_CALL, ic.ir.TOOL_RESULT)]
+
+
+class TestParallelToolCalls:
+    @pytest.mark.parametrize("source", sorted(PARALLEL_SOURCES))
+    def test_every_store_reads_one_turn_with_both_calls_then_both_results(self, tmp_path, source):
+        thread = ic.read_thread(PARALLEL_SOURCES[source](tmp_path))
+        sk = ic.skeleton_of(thread)
+        assert sk.roles == EXPECTED_ROLES and (sk.tool_calls, sk.tool_results, sk.unpaired_tool_calls) == (2, 2, 0)
+        assert [e.text for e in thread.events if e.is_turn] == [PARALLEL_PROMPT, PARALLEL_TEXT, PARALLEL_REPLY]
+        assert [kind for kind, _ in _tool_events(thread)] == ["tool_call", "tool_call", "tool_result", "tool_result"]
+        assert sorted(e.text for e in thread.events if e.kind == ic.ir.TOOL_RESULT) == sorted(out for _, _, out in PARALLEL_CALLS)
+        assert ic.classify_drops(dict(thread.dropped)) == {}
+
+    def test_claude_code_rejoins_the_calls_the_parent_walk_orphans(self, tmp_path):
+        """Each result hangs off its own call's record, so the walk from the
+        leaf passes through the first call alone. The CLI rejoins the other
+        call and its result by message.id on resume, in the order it wrote
+        them (a moved thread used to lose the second call)."""
+        thread = ic.read_thread(PARALLEL_SOURCES["claude_code"](tmp_path))
+        assert _tool_events(thread) == [("tool_call", "toolu_pa"), ("tool_call", "toolu_pb"), ("tool_result", "toolu_pb"), ("tool_result", "toolu_pa")]
+        assert thread.dropped["opaque:inactive_branch_records"] == 0 and thread.dropped["opaque:record_attachment"] == 2
+
+    def test_opencode_sends_a_steps_results_after_all_its_calls(self, tmp_path):
+        """The CLI replays the parts from one step-start to the next as the
+        text and calls, then every result. A message holding two steps
+        (written by older versions) reads as two."""
+        home = _opencode_parallel_home(tmp_path)
+        assert _tool_events(ic.read_thread(ic.StoreRef("opencode", home, Path(CWD)))) == \
+            [("tool_call", "toolu_pa"), ("tool_call", "toolu_pb"), ("tool_result", "toolu_pa"), ("tool_result", "toolu_pb")]
+        db = home / "opencode" / "opencode.db"
+        with sqlite3.connect(db) as conn:  # a second step-start between the two tool parts
+            conn.execute("INSERT INTO part VALUES ('prt_01a0950000225000000000p9', 'msg_01a0950000020000000000a1', 'ses_01a09500000fPaRaLlEl00001', 0, 0, ?)",
+                         (json.dumps({"type": "step-start"}),))
+        assert _tool_events(ic.read_thread(ic.StoreRef("opencode", home, Path(CWD)))) == \
+            [("tool_call", "toolu_pa"), ("tool_result", "toolu_pa"), ("tool_call", "toolu_pb"), ("tool_result", "toolu_pb")]
+
+    def test_results_that_arrive_together_compare_in_call_order(self):
+        prov = ic.Provenance(0)
+
+        def skeleton(*steps):
+            events = [ic.Event(ic.ir.MESSAGE, prov, role="user", text="go")]
+            for kind, call_id, text in steps:
+                events.append(ic.Event(ic.ir.TOOL_CALL, prov, tool_name="Grep", tool_call_id=call_id) if kind == "call"
+                              else ic.Event(ic.ir.TOOL_RESULT, prov, tool_call_id=call_id, text=text))
+            return ic.skeleton_of(ic.Thread("x", "x", None, None, None, None, None, events, 0))
+
+        call_order = skeleton(("call", "a", None), ("call", "b", None), ("result", "a", "A"), ("result", "b", "B"))
+        assert skeleton(("call", "a", None), ("call", "b", None), ("result", "b", "B"), ("result", "a", "A")).digest == call_order.digest
+        # one step with two calls is not two steps with one each
+        assert skeleton(("call", "a", None), ("result", "a", "A"), ("call", "b", None), ("result", "b", "B")).digest != call_order.digest
+        # and each result still answers its own call, even when a step's results straddle a later call
+        assert skeleton(("call", "a", None), ("call", "b", None), ("result", "a", "B"), ("result", "b", "A")).digest != call_order.digest
+        assert skeleton(("call", "a", None), ("call", "b", None), ("result", "a", "A"), ("call", "c", None), ("result", "b", "B"), ("result", "c", "C")).digest != \
+            skeleton(("call", "a", None), ("call", "b", None), ("result", "b", "A"), ("call", "c", None), ("result", "a", "B"), ("result", "c", "C")).digest
+        # a writer mints ids for calls that had none and pairs their results in order
+        assert skeleton(("call", None, None), ("call", None, None), ("result", None, "A"), ("result", None, "B")).digest == \
+            skeleton(("call", "nc_1", None), ("call", "nc_2", None), ("result", "nc_1", "A"), ("result", "nc_2", "B")).digest
+
+    @pytest.mark.parametrize("source,target", [(s, t) for s in sorted(PARALLEL_SOURCES) for t in sorted(ic.FORMATS) if s != t])
+    def test_moves_natively_with_both_calls_in_one_turn(self, tmp_path, monkeypatch, source, target):
+        thread = ic.read_thread(PARALLEL_SOURCES[source](tmp_path / "source"))
+        store = _parallel_target(target, tmp_path / "target", monkeypatch)
+        out = ic.translate(thread, store, ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
+        assert out.fidelity.ok and (out.fidelity.target.tool_calls, out.fidelity.target.tool_results) == (2, 2)
+        back = ic.read_thread(ic.StoreRef(target, store.home, Path(CWD), session_id=out.session_id))
+        assert [kind for kind, _ in _tool_events(back)] == ["tool_call", "tool_call", "tool_result", "tool_result"]
+
+    def test_into_opencode_each_result_stays_with_its_call_in_one_step(self, tmp_path):
+        thread = ic.read_thread(PARALLEL_SOURCES["claude_code"](tmp_path))
+        written = ic.format_for("opencode").write(thread, ic.StoreRef("opencode", tmp_path / "xdg", Path(CWD)), ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
+        user, step, reply = written.records[0]["messages"]
+        assert [p["type"] for p in step["parts"]] == ["step-start", "text", "tool", "tool", "step-finish"]
+        assert (step["info"]["finish"], reply["info"]["finish"]) == ("tool-calls", "stop")
+        assert [(p["callID"], p["state"]["status"], p["state"]["input"], p["state"]["output"]) for p in step["parts"] if p["type"] == "tool"] == \
+            [(cid, "completed", inp, out) for cid, inp, out in PARALLEL_CALLS]
+
+    @pytest.mark.parametrize("source", ["codex", "opencode"])
+    def test_into_claude_code_the_blocks_of_a_turn_share_one_response(self, tmp_path, source):
+        """The CLI merges records by message.id when it resumes; under
+        separate ids the first call resumed as 'Tool result missing'."""
+        thread = ic.read_thread(PARALLEL_SOURCES[source](tmp_path / "source"))
+        out = ic.translate(thread, _store("claude_code", tmp_path / ".claude"), ic.TargetIdentity(cli_version="2.1.295", model="sonnet"))
+        rows = [json.loads(line) for line in out.native_path.read_text().splitlines()]
+        assert [r["type"] for r in rows] == ["user", "assistant", "assistant", "assistant", "user", "user", "assistant"]
+        turn = rows[1:4]
+        assert [b["type"] for r in turn for b in r["message"]["content"]] == ["text", "tool_use", "tool_use"]
+        assert len({r["message"]["id"] for r in turn}) == 1 and len({r["requestId"] for r in turn}) == 1
+        assert rows[6]["message"]["id"] != rows[1]["message"]["id"] and rows[6]["requestId"] != rows[1]["requestId"]
+        assert all(rows[i]["parentUuid"] == rows[i - 1]["uuid"] for i in range(1, len(rows)))
+
+    @pytest.mark.skipif(not shutil.which("opencode"), reason="requires the opencode CLI")
+    @pytest.mark.parametrize("source", ["claude_code", "codex"])
+    def test_moves_into_opencode_through_the_real_importer(self, tmp_path, source):
+        thread = ic.read_thread(PARALLEL_SOURCES[source](tmp_path / "source"))
+        home = tmp_path / "xdg"
+        environ = {**os.environ, **{f"XDG_{d.upper()}_HOME": str(tmp_path / d) for d in ("config", "state", "cache")}}
+        out = ic.translate(thread, ic.StoreRef("opencode", home, Path(CWD), environ=environ), ic.TargetIdentity(model="anthropic/claude-sonnet-4-5"))
+        assert out.fidelity.ok and (out.fidelity.target.tool_calls, out.fidelity.target.tool_results) == (2, 2)
+        with sqlite3.connect(home / "opencode" / "opencode.db") as conn:
+            tools = conn.execute("SELECT message_id, json_extract(data, '$.state.output') FROM part WHERE session_id = ? AND json_extract(data, '$.type') = 'tool' ORDER BY id",
+                                 (out.session_id,)).fetchall()
+        assert len({message for message, _ in tools}) == 1 and [output for _, output in tools] == [out_ for _, _, out_ in PARALLEL_CALLS]

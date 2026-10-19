@@ -7,9 +7,10 @@ import {
   Image, Volume2, Video, FileText, Database, File, Loader2,
   Table2, Braces, Code, Terminal, FileCode2, FileType,
 } from 'lucide-react';
-import { MarkdownRenderer } from '~/components/chat/MarkdownRenderer';
+import { MarkdownRenderer } from '~/components/chat/MarkdownRendererLazy';
 import { ResourceDatasetRowsRequest, type ResourceInfo } from '~/types/socket-events.generated';
 import { sendEventAsync } from '~/lib/socket-sender';
+import { parseCsv } from '~/lib/tableCsv';
 
 // -- Type resolution ----------------------------------------------------------
 
@@ -193,22 +194,12 @@ function MarkdownRendererPreview({ url }: { url: string }) {
   );
 }
 
-function parseCSV(text: string): { headers: string[]; rows: string[][] } {
-  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-  if (lines.length < 1) return { headers: [], rows: [] };
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-  const rows = lines.slice(1).map(line =>
-    line.split(',').map(v => v.trim().replace(/^"|"$/g, ''))
-  );
-  return { headers, rows };
-}
-
 function CsvRenderer({ url }: { url: string }) {
   const { text, failed } = useFetchText(url);
   if (failed) return <IframeFallback url={url} title="CSV preview" />;
   if (text === null) return <FetchLoading />;
 
-  const { headers, rows } = parseCSV(text);
+  const { headers, rows } = parseCsv(text);
   if (headers.length === 0) {
     return <pre className="w-full p-5 text-sm text-muted-foreground dark:text-zinc-300 font-mono">{text}</pre>;
   }

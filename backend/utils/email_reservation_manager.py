@@ -13,46 +13,105 @@ the ``email_reservations`` UNIQUE constraints.
 import logging
 import os
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 
 import asyncpg
 
 logger = logging.getLogger(__name__)
 
-def get_inbound_email_domain() -> Optional[str]:
-    """Domain this installation owns and routes into ``/email/inbound``.
+# NoClick's own mail domains: a community installation may never mint on them.
+_NOCLICK_MAIL_DOMAINS = frozenset({"noclick.app", "noclick.email"})
 
-    The hosted service retains its own default. A community installation must
-    opt in explicitly; otherwise all inbound/reply address minting is disabled
-    so it can never hand a user an address on somebody else's mail system.
+# A platform's registration: its mail domains, and the one its sender identities use.
+_platform_mail: Tuple[Tuple[str, ...], Optional[str]] = ((), None)
+
+
+def register_mail_domains(*domains: str, sender: Optional[str] = None) -> None:
+    """A platform's own mail domains: new addresses go on the first (unless
+    ``INBOUND_EMAIL_DOMAIN`` names another), and every one keeps taking the
+    mail of the addresses minted on it. The platform's schema must keep a
+    local part unique across them. ``sender`` is the one of them its own
+    sender identities send from (``sender_email_domain``); the first when
+    omitted."""
+    global _platform_mail
+    registered = tuple(d.strip().lower() for d in domains)
+    chosen = (sender or registered[0]).strip().lower()
+    if chosen not in registered:
+        raise ValueError(f"sender domain {chosen!r} is not one of the registered mail domains")
+    _platform_mail = (registered, chosen)
+
+
+def inbound_email_domains() -> Tuple[str, ...]:
+    """The domains this installation owns and routes into ``/email/inbound``,
+    the one new addresses are minted on first. A local part names one address
+    across all of them, so a domain a platform moved off still delivers.
+
+    ``INBOUND_EMAIL_DOMAIN`` names the domain to mint on. A community
+    installation must set it; otherwise all inbound/reply address minting is
+    disabled so it can never hand a user an address on somebody else's mail
+    system.
     """
     from utils.edition import is_local_edition
 
+    registered = () if is_local_edition() else _platform_mail[0]
     configured = (os.getenv("INBOUND_EMAIL_DOMAIN") or "").strip().lower().lstrip("@")
-    if configured:
-        if not re.fullmatch(r"[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?", configured):
-            logger.error("INBOUND_EMAIL_DOMAIN is not a valid DNS domain; inbound email disabled")
-            return None
-        if is_local_edition() and configured == "noclick.app":
-            logger.error(
-                "INBOUND_EMAIL_DOMAIN cannot use NoClick's hosted mail domain in the "
-                "community edition; inbound email disabled"
-            )
-            return None
-        return configured
+    if not configured:
+        return registered
+    if not re.fullmatch(r"[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?", configured):
+        logger.error("INBOUND_EMAIL_DOMAIN is not a valid DNS domain; inbound email disabled")
+        return ()
+    if is_local_edition() and configured in _NOCLICK_MAIL_DOMAINS:
+        logger.error(
+            "INBOUND_EMAIL_DOMAIN cannot use NoClick's hosted mail domain in the "
+            "community edition; inbound email disabled"
+        )
+        return ()
+    return (configured, *(d for d in registered if d != configured))
 
-    return None if is_local_edition() else "noclick.app"
+
+def get_inbound_email_domain() -> Optional[str]:
+    """The domain new addresses are minted on; None when inbound email is off."""
+    domains = inbound_email_domains()
+    return domains[0] if domains else None
 
 
-def require_inbound_email_domain() -> str:
-    domain = get_inbound_email_domain()
+def sender_email_domain() -> Optional[str]:
+    """The domain NoClick's own sender identities (the send-email node's
+    ``notifications@``) send from. Unlike the inboxes NoClick creates, they
+    don't follow a platform's new minting domain: they stay on the sender
+    domain it registered. Elsewhere it is the minting domain; None when
+    inbound email is off."""
+    domains = inbound_email_domains()
+    if not domains:
+        return None
+    # A platform's registration counts only where its domains do (never in the local edition).
+    sender = _platform_mail[1]
+    return sender if sender in domains else domains[0]
+
+
+def address_domains(domain: str) -> List[str]:
+    """The domains a local part on ``domain`` is the same address across: all of
+    this installation's own when ``domain`` is one of them, else ``domain`` alone."""
+    own = inbound_email_domains()
+    return list(own) if domain in own else [domain]
+
+
+def _required(domain: Optional[str]) -> str:
     if not domain:
         raise RuntimeError(
             "Inbound email is disabled; set INBOUND_EMAIL_DOMAIN to a domain "
             "whose provider forwards mail to this installation's /email/inbound route"
         )
     return domain
+
+
+def require_inbound_email_domain() -> str:
+    return _required(get_inbound_email_domain())
+
+
+def require_sender_email_domain() -> str:
+    return _required(sender_email_domain())
 
 
 # Local-part: lowercase alnum segments separated by . _ - (no leading/trailing separator).
@@ -120,8 +179,8 @@ class EmailReservationManager:
         domain = domain or require_inbound_email_domain()
         async with pool.acquire() as conn:
             row = await conn.fetchrow(
-                "SELECT workflow_id, node_id FROM email_reservations WHERE domain = $1 AND local_part = $2",
-                domain,
+                "SELECT workflow_id, node_id FROM email_reservations WHERE domain = ANY($1::text[]) AND local_part = $2",
+                address_domains(domain),
                 local_part,
             )
         if not row:
@@ -161,7 +220,8 @@ class EmailReservationManager:
         domain: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Reserve (or re-point) the inbound address for a node. Idempotent per
-        (workflow_id, node_id). Raises ValueError if the local-part is invalid or
+        (workflow_id, node_id): a node keeping its local part keeps the domain
+        it was minted on. Raises ValueError if the local-part is invalid or
         already taken by another node."""
         domain = domain or require_inbound_email_domain()
         local_part = (local_part or "").strip().lower()
@@ -177,8 +237,9 @@ class EmailReservationManager:
                     INSERT INTO email_reservations (user_id, workflow_id, node_id, local_part, domain)
                     VALUES ($1, $2, $3, $4, $5)
                     ON CONFLICT (workflow_id, node_id)
-                    DO UPDATE SET local_part = EXCLUDED.local_part,
-                                  domain = EXCLUDED.domain,
+                    DO UPDATE SET domain = CASE WHEN email_reservations.local_part = EXCLUDED.local_part
+                                                THEN email_reservations.domain ELSE EXCLUDED.domain END,
+                                  local_part = EXCLUDED.local_part,
                                   is_active = true
                     RETURNING id, local_part, domain
                     """,
@@ -189,18 +250,16 @@ class EmailReservationManager:
                     domain,
                 )
         except asyncpg.UniqueViolationError:
-            # email_reservations_address_unique — the address is held by another node.
+            # The address (on any of the installation's domains) is held by another node.
             raise ValueError("This address is already taken")
 
-        logger.info(
-            f"[EMAIL] Reserved {build_email_address(local_part, domain)} for "
-            f"workflow={workflow_uuid} node={node_id}"
-        )
+        address = build_email_address(row["local_part"], row["domain"])
+        logger.info(f"[EMAIL] Reserved {address} for workflow={workflow_uuid} node={node_id}")
         return {
             "reservation_id": str(row["id"]),
             "local_part": row["local_part"],
             "domain": row["domain"],
-            "email_address": build_email_address(row["local_part"], row["domain"]),
+            "email_address": address,
         }
 
     @staticmethod

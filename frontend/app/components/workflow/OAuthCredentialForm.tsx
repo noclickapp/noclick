@@ -112,11 +112,12 @@ export const OAuthCredentialForm = ({
 
             {/* Custom Client Credentials Toggle */}
             {supportsCustomClient && customClientFields.length > 0 && (
-                <div className="pt-2 border-t border-border">
+                <div className="space-y-3 border-t border-border pt-3">
                     <button
                         type="button"
+                        aria-expanded={showCustomFields}
                         onClick={() => setShowCustomFields(!showCustomFields)}
-                        className="w-full flex items-center justify-between px-3 py-2 text-xs text-muted-foreground hover:text-foreground/80 bg-muted/50 dark:bg-zinc-900/50 hover:bg-accent dark:hover:bg-zinc-900 border border-border hover:border-muted-foreground/40 dark:hover:border-zinc-700 rounded-lg transition-all"
+                        className="w-full flex items-center justify-between py-1 text-xs text-muted-foreground hover:text-foreground/80 transition-colors"
                     >
                         <span className="flex items-center gap-2">
                             {showCustomFields ? (
@@ -133,16 +134,12 @@ export const OAuthCredentialForm = ({
 
                     {/* Custom Client Credential Fields (shown when toggle is on) */}
                     {showCustomFields && (
-                        <div className="mt-3 space-y-3 p-3 bg-muted/50 dark:bg-zinc-900/30 rounded-lg border border-border/50 dark:border-zinc-800/50">
+                        <div className="space-y-3">
                             <div className="text-[10px] text-muted-foreground dark:text-zinc-500 leading-relaxed space-y-2">
                                 <p>
                                     By default, NoClick's OAuth app is used for authentication. If you have your own OAuth app with premium features or custom rate limits, enter your credentials below.
                                 </p>
-                                {customClientHelp && (
-                                    <p className="text-amber-600 dark:text-amber-400/80 bg-amber-500/10 border border-amber-500/20 rounded px-2 py-1.5">
-                                        ⚠️ {customClientHelp}
-                                    </p>
-                                )}
+                                {customClientHelp && <p className="text-foreground/80">{customClientHelp}</p>}
                             </div>
                             {customClientFields.map(renderField)}
                         </div>

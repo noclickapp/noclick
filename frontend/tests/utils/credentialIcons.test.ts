@@ -9,16 +9,21 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { KeyRound } from 'lucide-react';
 import { getCredentialIcon, getOAuthProviderIcon } from '~/utils/credentialIcons';
 import { OAUTH_PROVIDER_SETUP } from '~/lib/oauthProviderSetup';
-import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, credentialMarks } from '~/utils/nodeSchemas';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
+import type { SerializedNodeMeta } from '~/lib/nodeCatalogTypes';
 import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
 
 // getCredentialIcon resolves node-backed types from the icon singleton (normally
-// populated by the dashboard loader). Seed the two nodes the node-backed cases
-// below need before any node-backed lookup builds the internal cache.
+// populated by the dashboard loader, whose entries name the credential keys each
+// node's mark stands for). Seed it as the loader does before any node-backed
+// lookup builds the internal cache.
 beforeAll(() => {
     const dims = { width: 90, height: 90, iconSize: 48 };
-    setNodeIconData({
+    const marks = credentialMarks(() => true);
+    const withMarks = (data: Record<string, SerializedNodeMeta>) =>
+        Object.fromEntries(Object.entries(data).map(([type, meta]) => [type, { ...meta, credentialKeys: marks.get(type) }]));
+    setNodeIconData(withMarks({
         'automation-instagram': {
             type: 'automation-instagram',
             label: 'Instagram',
@@ -38,7 +43,7 @@ beforeAll(() => {
             iconHtml: '<svg data-icon="telegram" />',
             dimensions: dims,
         },
-    });
+    }));
 });
 
 describe('getCredentialIcon — agent provider credentials', () => {

@@ -16,7 +16,8 @@ Three layers, cheapest first:
    keys keep their dedicated probe (``nodes.agent.key_validation``).
 3. **Show.** A saved credential answers with what was proven — the user's own
    channels, the account it signed in as — so a form can show proof instead
-   of a tick, and the row remembers it (``verified_at`` / ``verified_as``).
+   of a tick, and the row remembers it (``verified_at``; who it is as
+   ``verified_as``, or else one of the things it reached as ``verified_with``).
 
 Never blocks on a non-definitive signal (the doctrine evidence, credential
 health and webhook teardown already follow): a provider outage, a timeout or
@@ -38,8 +39,12 @@ from typing import Any, Dict, List, Optional, Tuple, Type
 
 from pydantic import BaseModel, ValidationError
 
-from nodes.core.connection_evidence import EvidenceResult, collect_evidence as _collect_evidence
-from nodes.core.credential_fields import clean_secret, looks_like_secret_field
+from nodes.core.connection_evidence import (
+    EvidenceResult,
+    FieldLabels,
+    collect_evidence as _collect_evidence,
+)
+from nodes.core.credential_fields import clean_secret, looks_like_address_field, looks_like_secret_field
 
 logger = logging.getLogger(__name__)
 
@@ -80,9 +85,11 @@ class ConnectVerdict:
         if ev is None or ev.reachable is not True:
             return {}
         out: Dict[str, Any] = {"verified_at": datetime.now(timezone.utc).isoformat()}
-        label = ev.account_label or (ev.samples[0].label if ev.samples else None)
-        if label:
-            out["verified_as"] = label
+        # Who the account is, never one of its things: a board named "Sales" is not who it signed in as.
+        if ev.account_label:
+            out["verified_as"] = ev.account_label
+        elif ev.samples:
+            out["verified_with"] = ev.samples[0].label
         return out
 
 
@@ -167,6 +174,50 @@ def _secret_fields(cls: Type[BaseModel]) -> Dict[str, str]:
         if extra.get("ui:widget") == "password" or looks_like_secret_field(name):
             out[name] = fld.title or name.replace("_", " ").capitalize()
     return out
+
+
+# Words a generated label ("Api key" from ``api_key``) spells in lower case that a form shows in capitals.
+_ACRONYMS = {"api", "url", "uri", "id", "ip", "pat", "jwt", "ssh", "sql", "dsn"}
+
+
+def _as_phrase(label: str, names: frozenset = frozenset()) -> str:
+    """A field's label mid-sentence: "Secret Key" reads "secret key", "Api key" reads "API key", and the app's
+    own name (``names``, lower case) keeps its capital: "Jira Domain" reads "Jira domain"."""
+    words = []
+    for w in label.split():
+        if w.lower() in _ACRONYMS:
+            words.append(w.upper())
+        elif w.isupper() or any(ch.isupper() for ch in w[1:]) or w.lower() in names:
+            words.append(w)
+        else:
+            words.append(w.lower())
+    return " ".join(words)
+
+
+def _label(name: str, fld: Any) -> str:
+    return fld.title or name.replace("_", " ").capitalize()
+
+
+def _field_labels(cls: Type[BaseModel], node_type: str = "") -> FieldLabels:
+    """The secret and the address a rejection hint can name: each by its label when the form has exactly one,
+    generically when it has several, None when it has none. A masked field is the secret before a name that
+    merely looks like one (Tableau's ``pat_name`` beside its masked ``pat_secret``)."""
+    fields = [(name, fld) for name, fld in cls.model_fields.items() if name != "credential_type"]
+    masked = [
+        _label(name, fld)
+        for name, fld in fields
+        if isinstance(fld.json_schema_extra, dict) and fld.json_schema_extra.get("ui:widget") == "password"
+    ]
+    secrets = masked or list(_secret_fields(cls).values())
+    # Only an address the form requires: an optional override (a token URI, a self-hosted base URL) is rarely typed.
+    addresses = [_label(name, fld) for name, fld in fields if looks_like_address_field(name) and fld.is_required()]
+
+    names = frozenset(node_type.removeprefix("automation-").split("-"))
+
+    def one(labels: List[str], several: str) -> Optional[str]:
+        return _as_phrase(labels[0], names) if len(labels) == 1 else (several if labels else None)
+
+    return FieldLabels(secret=one(secrets, "credential"), address=one(addresses, "address"))
 
 
 def _human_error(cls: Type[BaseModel], name: str, err: Dict[str, Any]) -> str:
@@ -281,6 +332,7 @@ async def validate_for_connect(
         user_id=user_id,
         pool=pool,
         organization_id=organization_id,
+        labels=_field_labels(resolved[1], node_type),
     )
     verdict.evidence = result
     if result.reachable is False:

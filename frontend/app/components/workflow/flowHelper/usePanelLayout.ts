@@ -1,9 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
-import { scaled } from '~/lib/constants';
 import { beginResizeDrag } from './resize';
 
-// Default + clamp constants for the input/output panels. Scaled by the
-// active root-font-size tier so the limits track the rem-based UI.
+// Default + clamp constants for the input/output panels.
 const DEFAULT_PANEL_WIDTH = 260;
 const MIN_PANEL_WIDTH = 200;
 const CENTER_CONTENT_RESERVE = 280;
@@ -13,8 +11,8 @@ const CENTER_CONTENT_RESERVE = 280;
 // panels share a collapsed split ratio; the consumer is responsible for
 // the activeTab-aware style. Header-strip compaction is delegated to useFit.
 export function usePanelLayout() {
-    const [inputPanelWidth, setInputPanelWidth] = useState(() => scaled(DEFAULT_PANEL_WIDTH));
-    const [outputPanelWidth, setOutputPanelWidth] = useState(() => scaled(DEFAULT_PANEL_WIDTH));
+    const [inputPanelWidth, setInputPanelWidth] = useState(DEFAULT_PANEL_WIDTH);
+    const [outputPanelWidth, setOutputPanelWidth] = useState(DEFAULT_PANEL_WIDTH);
     // 0-1, where 0.5 = 50/50 split between input and output in collapsed mode
     const [collapsedSplitRatio, setCollapsedSplitRatio] = useState(0.5);
 
@@ -31,14 +29,12 @@ export function usePanelLayout() {
     // Clamp so both panels keep at least MIN_PANEL_WIDTH and leave
     // CENTER_CONTENT_RESERVE for the middle content.
     const startResize = useCallback((e: React.MouseEvent, panel: 'input' | 'output') => {
-        const minWidth = scaled(MIN_PANEL_WIDTH);
-        const centerReserve = scaled(CENTER_CONTENT_RESERVE);
         const startWidth = panel === 'input' ? inputPanelWidth : outputPanelWidth;
         const clampPanelWidth = (rawWidth: number) => {
             const contentAreaWidth = contentAreaRef.current?.clientWidth || 1200;
             const otherPanelWidth = panel === 'input' ? outputPanelWidth : inputPanelWidth;
-            const maxAllowed = Math.max(minWidth, contentAreaWidth - otherPanelWidth - centerReserve);
-            return Math.max(minWidth, Math.min(maxAllowed, rawWidth));
+            const maxAllowed = Math.max(MIN_PANEL_WIDTH, contentAreaWidth - otherPanelWidth - CENTER_CONTENT_RESERVE);
+            return Math.max(MIN_PANEL_WIDTH, Math.min(maxAllowed, rawWidth));
         };
         const widthFor = (dx: number) => clampPanelWidth(startWidth + (panel === 'input' ? dx : -dx));
         const ref = panel === 'input' ? inputPanelRef : outputPanelRef;

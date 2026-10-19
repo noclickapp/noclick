@@ -87,9 +87,10 @@ async def test_free_form_message_wakes_coordinator_to_choose_action_once(db, mon
         async def __call__(self, message):
             model_calls.append(message)
             content = message["input_items"][0]["content"]
-            assert "free-form message" in content and "untrusted" in content
-            assert "only a note in the coordinator's web conversation" in content
-            assert "automatically delivered to the requesting channel" not in content
+            # Worded by whichever coordinator prompt pack is registered.
+            assert content.startswith(agent.PROMPTS.AGENT_MESSAGE_WAKEUP)
+            assert agent.PROMPTS.followup_delivery(internal=True, context={}) in content
+            assert agent.PROMPTS.followup_delivery(internal=False, context={}) not in content
             payload = json.loads(content.split("\n", 1)[1])
             assert payload["outcome"]["message"] == request
             assert "purpose" not in payload["outcome"] and "channel" not in payload["outcome"]
@@ -103,7 +104,7 @@ async def test_free_form_message_wakes_coordinator_to_choose_action_once(db, mon
                 "notify": False, "include_recordings": False,
                 "reason": "Delivered with message_owner" if act else "Already delivered earlier",
             })
-            assert "controls only the web note" in choice["note"]
+            assert choice["note"] == agent.PROMPTS.followup_delivery(internal=True, context={})
             await self.kwargs["emit_message"](ChatMessageEvent(message="Handled the report.", finished=True))
 
         async def cleanup(self):
@@ -367,6 +368,63 @@ async def test_a_triage_turn_leaves_one_note_about_its_automation(db, monkeypatc
     assert (await builds.list_for_user(USER, job_id=started[0]))[0]["continuation"]["signal"] == signal
 
 
+@pytest.mark.parametrize("fails", [False, True])
+async def test_a_followups_note_carries_its_turns_tool_calls(db, monkeypatch, fails):
+    """The web chat draws a follow-up's cards (a site now served at its domain) under its note: the note, saved
+    and framed, carries the tool calls its turn made, a failed turn's too, and the next reply no longer gathers
+    them."""
+    from coder.coordinator.tools import COORDINATOR_NODE_ID
+    from utils import tool_call_log
+    from utils.async_helpers import drain_spawned_tasks
+
+    pool, repo, *_ = db
+    boundaries = {}
+
+    class Boundaries:
+        async def get(self, key):
+            return boundaries.get(key)
+
+        async def set(self, key, value, ex=None):
+            boundaries[key] = value
+
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: pool)
+    monkeypatch.setattr(tool_call_log, "_get_boundary_redis", lambda: Boundaries())
+    request, _ = await complete_build(db, context={**CONTEXT, "channel": "web"})
+    event = await repo.claim()
+
+    class ResumedAgent:
+        @classmethod
+        async def create(cls, **kwargs):
+            self = cls()
+            self.kwargs = kwargs
+            return self
+
+        async def __call__(self, message):
+            assert (await self.kwargs["custom_tool_executor"]("job_status", {"job_id": str(request["id"])}))["success"]
+            await drain_spawned_tasks(timeout=5)  # the audit row lands, as it has by a real turn's end
+            await self.kwargs["emit_message"](ChatMessageEvent(
+                message="Error: provider down" if fails else "Unpublished.", finished=True,
+                status="error" if fails else None))
+
+        async def cleanup(self):
+            pass
+
+    monkeypatch.setattr(agent, "Agent", ResumedAgent)
+    socket = AsyncMock()
+    monkeypatch.setattr(wakeups, "emit_notification", socket)
+    try:
+        await wakeups.run_wakeup(pool, event)
+        await wakeups.deliver_reply(pool, await repo.claim_delivery())
+        [note] = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id=$1", f"coordinator:{USER}")
+        assert note["notification"] is True and [c["tool_name"] for c in note["tool_calls"]] == ["job_status"]
+        assert ("I couldn't finish the follow-up" in note["message"]) is fails
+        assert socket.call_args.args[3]["tool_calls"] == note["tool_calls"]
+        assert await tool_call_log.gather_turn_tool_calls(node_id=COORDINATOR_NODE_ID,
+                                                          conversation_id=f"coordinator:{USER}") == []
+    finally:
+        await pool.execute("DELETE FROM tool_call_events WHERE user_id=$1::uuid", USER)
+
+
 async def test_a_note_frame_names_its_automation(monkeypatch):
     from utils import task_notifications
 
@@ -379,7 +437,12 @@ async def test_a_note_frame_names_its_automation(monkeypatch):
     assert frame.notification and frame.signal.workflow_name == "Inbox"
     await task_notifications.emit_notification(None, USER, f"coordinator:{USER}",
                                                task_notifications.notification_event("Done.", "t2"))
-    assert sent.call_args.args[2].signal is None
+    assert sent.call_args.args[2].signal is None and sent.call_args.args[2].tool_calls is None
+    calls = [{"tool_name": "api_call", "arguments_preview": '{"operation": "projects_domains_create"}',
+              "result_status": "success", "result_preview": '{"success": true}', "duration_ms": 40, "created_at": None}]
+    await task_notifications.emit_notification(None, USER, f"coordinator:{USER}",
+                                               task_notifications.notification_event("Live.", "t3", tool_calls=calls))
+    assert sent.call_args.args[2].tool_calls == calls
 
 
 @pytest.mark.parametrize('source', ['alarm', 'signal', 'job'])

@@ -1,5 +1,5 @@
 // Client-side visitor session for cookie-free marketing pages: fetches
-// {isAuthenticated, userID, csrfToken, country} once per page load from the uncached
+// {isAuthenticated, userID, csrfToken, country, fields} once per page load from the uncached
 // /api/public-session endpoint (which also sets the csrf cookie) and shares the
 // result across all consumers via a module-level cache. Replaces the per-route
 // createPublicLoaderData pattern, whose Set-Cookie made every marketing document
@@ -15,6 +15,8 @@ export interface PublicSession {
     csrfToken: string | undefined;
     /** ISO country of the visitor's IP (Vercel geolocation); null when unknown. */
     country: string | null;
+    /** What the deployment adds per visitor (lib/publicSessionFields.ts), read on the server. */
+    fields: Record<string, string | null>;
 }
 
 const ANONYMOUS: PublicSession = {
@@ -22,6 +24,7 @@ const ANONYMOUS: PublicSession = {
     userID: null,
     csrfToken: undefined,
     country: null,
+    fields: {},
 };
 
 let cached: PublicSession | null = null;

@@ -9,8 +9,9 @@
  */
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Building2, User, Mail, ChevronDown, Check, Loader2 } from 'lucide-react';
+import { Building2, Mail, ChevronDown, Loader2 } from 'lucide-react';
 import { cn } from '~/lib/utils';
+import { FIELD } from '~/components/shell/fields';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 
 export interface ShareSuggestion {
@@ -63,7 +64,7 @@ export function ShareRecipientInput({
     onSelect,
     onSubmit,
     submitting = false,
-    placeholder = "Add people or organizations...",
+    placeholder = "Add people by email, or a workspace",
     disabled = false,
     hidePermission = false,
 }: ShareRecipientInputProps) {
@@ -183,91 +184,55 @@ export function ShareRecipientInput({
         }
     }, [selectedIndex, showDropdown]);
 
-    // Get icon for suggestion type (compact: 5x5 instead of 6x6)
+    // A suggestion's face: its picture, else a neutral tile (square for a workspace, round for a person).
     const getSuggestionIcon = (suggestion: ShareSuggestion) => {
-        if (suggestion.type === 'organization') {
-            if (suggestion.icon_url) {
-                return <img src={suggestion.icon_url} alt="" className="w-5 h-5 rounded-full" />;
-            }
-            return (
-                <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center">
-                    <Building2 className="h-3 w-3 text-blue-600 dark:text-blue-400" />
-                </div>
-            );
-        }
-        if (suggestion.type === 'email') {
-            return (
-                <div className="w-5 h-5 rounded-full bg-foreground/20 flex items-center justify-center">
-                    <Mail className="h-3 w-3 text-muted-foreground" />
-                </div>
-            );
-        }
-        // User
-        if (suggestion.icon_url) {
-            return <img src={suggestion.icon_url} alt="" className="w-5 h-5 rounded-full" />;
-        }
+        const shape = suggestion.type === 'organization' ? 'rounded-md' : 'rounded-full';
+        if (suggestion.icon_url) return <img src={suggestion.icon_url} alt="" className={cn('h-7 w-7 shrink-0 object-cover', shape)} />;
         return (
-            <div className="w-5 h-5 rounded-full bg-foreground/20 flex items-center justify-center text-[9px] font-medium text-foreground/80">
-                {getInitials(suggestion.name)}
-            </div>
+            <span className={cn('grid h-7 w-7 shrink-0 place-items-center bg-foreground/[0.08] text-[10.5px] font-medium text-foreground/80', shape)}>
+                {suggestion.type === 'organization' ? <Building2 className="h-3.5 w-3.5" /> : suggestion.type === 'email' ? <Mail className="h-3.5 w-3.5" /> : getInitials(suggestion.name)}
+            </span>
         );
     };
 
     return (
-        <div className="relative">
-            {/* Input row - compact */}
-            <div className="flex items-center gap-1.5">
-                <div className="flex-1 relative">
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        value={query}
-                        onChange={handleChange}
-                        onKeyDown={handleKeyDown}
-                        onFocus={() => setShowDropdown(true)}
-                        placeholder={placeholder}
-                        disabled={disabled || submitting}
-                        className={cn(
-                            "w-full px-2.5 py-1.5 text-sm rounded-md transition-all",
-                            "bg-card/80 border border-border",
-                            "text-foreground placeholder:text-[hsl(var(--placeholder))]",
-                            "focus:outline-none focus:border-border dark:focus:border-zinc-700",
-                            (disabled || submitting) && "opacity-50 cursor-not-allowed"
-                        )}
-                    />
-                </div>
-
-                {/* Permission selector - compact (hidden for credentials/saved outputs) */}
+        <div>
+            <div className="flex items-center gap-2">
+                <input
+                    ref={inputRef}
+                    type="text"
+                    value={query}
+                    onChange={handleChange}
+                    onKeyDown={handleKeyDown}
+                    onFocus={() => setShowDropdown(true)}
+                    placeholder={placeholder}
+                    disabled={disabled || submitting}
+                    aria-label="Add people"
+                    className={cn(FIELD, 'min-w-0 flex-1')}
+                />
+                {/* Hidden for credentials and saved outputs, which are only ever shared to view. */}
                 {!hidePermission && (
                     <button
                         type="button"
                         onClick={() => onPermissionChange(permission === 'view' ? 'edit' : 'view')}
                         disabled={disabled || submitting}
-                        className={cn(
-                            "flex items-center gap-1 px-2 py-1.5 text-xs rounded-md transition-all whitespace-nowrap",
-                            "bg-card/80 border border-border text-muted-foreground",
-                            "hover:bg-accent hover:text-foreground",
-                            (disabled || submitting) && "opacity-50 cursor-not-allowed"
-                        )}
+                        className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-border px-3 text-[13px] text-foreground/85 transition-colors hover:bg-foreground/[0.04] disabled:opacity-50 dark:border-foreground/[0.1]"
                     >
                         {permission === 'edit' ? 'Can edit' : 'Can view'}
-                        <ChevronDown className="h-2.5 w-2.5 opacity-60" />
+                        <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                     </button>
                 )}
             </div>
 
-            {/* Dropdown - compact */}
+            {/* In the flow under the field, so a dialog's scrolling body never clips it. */}
             {showDropdown && (query.trim() || suggestions.length > 0) && (
-                <div
-                    ref={dropdownRef}
-                    className="absolute z-50 w-full mt-1 bg-card border border-border rounded-md shadow-xl overflow-hidden"
-                >
+                <div ref={dropdownRef} className="mt-1.5">
                     {loading ? (
                         <div className="flex items-center justify-center py-3">
-                            <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground dark:text-zinc-500" />
+                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                         </div>
                     ) : allSuggestions.length > 0 ? (
-                        <div className="max-h-48 overflow-y-auto py-1">
+                        <div className="max-h-56 overflow-y-auto scrollbar-subtle">
                             {allSuggestions.map((suggestion, index) => (
                                 <button
                                     key={suggestion.id || suggestion.email || index}
@@ -276,40 +241,19 @@ export function ShareRecipientInput({
                                     onMouseDown={(e) => e.preventDefault()}
                                     onClick={() => handleSelect(suggestion)}
                                     onMouseEnter={() => setSelectedIndex(index)}
-                                    className={cn(
-                                        "w-full px-2.5 py-1.5 flex items-center gap-2 transition-colors",
-                                        index === selectedIndex
-                                            ? "bg-secondary"
-                                            : "hover:bg-accent dark:hover:bg-zinc-800/50"
-                                    )}
+                                    className={cn('flex w-full items-center gap-3 rounded-xl px-2 py-1.5 text-left transition-colors', index === selectedIndex && 'bg-foreground/[0.06]')}
                                 >
                                     {getSuggestionIcon(suggestion)}
-                                    <div className="flex-1 min-w-0 text-left">
-                                        <div className="text-xs text-foreground truncate">
-                                            {suggestion.name}
-                                        </div>
-                                        {suggestion.subtitle && (
-                                            <div className="text-[10px] text-muted-foreground dark:text-zinc-500 truncate">
-                                                {suggestion.subtitle}
-                                            </div>
-                                        )}
-                                    </div>
-                                    {/* Type badge - subtle */}
-                                    <span className={cn(
-                                        "text-[9px] px-1 py-0.5 rounded font-medium",
-                                        suggestion.type === 'organization'
-                                            ? "bg-blue-500/15 text-blue-600 dark:text-blue-400"
-                                            : "bg-secondary text-muted-foreground dark:text-zinc-500"
-                                    )}>
-                                        {suggestion.type === 'organization' ? 'org' : 'user'}
+                                    <span className="min-w-0 flex-1">
+                                        <span className="block truncate text-[14px] text-foreground">{suggestion.name}</span>
+                                        {suggestion.subtitle && <span className="block truncate text-[12px] text-muted-foreground">{suggestion.subtitle}</span>}
                                     </span>
+                                    <span className="shrink-0 text-[12px] text-muted-foreground">{suggestion.type === 'organization' ? 'Workspace' : suggestion.type === 'email' ? 'Invite' : 'Person'}</span>
                                 </button>
                             ))}
                         </div>
                     ) : query.trim() && !isNewEmail ? (
-                        <div className="px-2.5 py-3 text-xs text-muted-foreground dark:text-zinc-500 text-center">
-                            No matches. Enter a valid email to invite.
-                        </div>
+                        <p className="px-2 py-2 text-[13px] text-muted-foreground">No matches. Type an email address to invite someone.</p>
                     ) : null}
                 </div>
             )}

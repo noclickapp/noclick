@@ -115,6 +115,16 @@ class CodexSession(LineSession):
             self.complete(self.receipts.pop(tid), text, error)
 
 
+def _opencode_error(err):
+    """A human message from opencode's error, a string or its {name, data:{message}} shape."""
+    if not err:
+        return None
+    if isinstance(err, str):
+        return err
+    data = err.get("data") or {}
+    return data.get("message") or err.get("message") or err.get("name") or "OpenCode reported an error with no detail"
+
+
 class OpenCodeSession(Session):
     mode = "steering"
 
@@ -185,24 +195,40 @@ class OpenCodeSession(Session):
             # Concurrent synchronous requests join OpenCode's live session loop.
             # Each remains subscribed to completion, including at the idle race.
             response = await self.http.post(f"/session/{self.session_id}/message", json=body)
-            response.raise_for_status()
+            if response.is_error:
+                # OpenCode says why in the body: that, never a bare status line.
+                try:
+                    detail = _opencode_error(response.json())
+                except ValueError:
+                    detail = None
+                raise RuntimeError(detail or f"HTTP {response.status_code}")
             data = response.json()
             info = data.get("info") or {}
             mid = info.get("id")
             if not mid or info.get("role") != "assistant":
                 raise RuntimeError("OpenCode returned no identifiable assistant response")
-            if mid in self.seen or receipt not in self.pending:
+            if receipt not in self.pending:
                 return
-            self.seen[mid] = None
-            if len(self.seen) > 256:
-                self.seen.popitem(last=False)
-            text = "".join(p.get("text", "") for p in data.get("parts", []) if p.get("type") == "text")
+            error = _opencode_error(info.get("error"))
             parent = self.message_ids.get(info.get("parentID"))
-            if parent not in self.pending:
+            consumed = []
+            if mid not in self.seen and parent in self.pending:
+                self.seen[mid] = None
+                if len(self.seen) > 256:
+                    self.seen.popitem(last=False)
+                text = "".join(p.get("text", "") for p in data.get("parts", []) if p.get("type") == "text")
+                ids = list(self.pending)
+                consumed = ids[:ids.index(parent) + 1]
+                self.complete(consumed, text, error)
+            elif not error:
+                if mid in self.seen:
+                    return
                 raise RuntimeError("OpenCode returned an unknown response parent")
-            ids = list(self.pending)
-            consumed = ids[:ids.index(parent) + 1]
-            self.complete(consumed, text, info.get("error"))
+            if error and receipt in self.pending:
+                # The run failed before reaching this input (it overlapped the one the failed reply answers): OpenCode
+                # answers it with that failed reply, so it fails with OpenCode's own words too.
+                consumed.append(receipt)
+                self.complete([receipt], "", error)
             self.message_ids = {mid: rid for mid, rid in self.message_ids.items() if rid not in consumed}
         except asyncio.CancelledError:
             raise

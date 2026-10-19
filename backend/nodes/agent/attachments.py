@@ -22,17 +22,18 @@ ATTACHMENTS_BLOCK_HEADER = "--- Attached files ---"
 # handlers' structured input-image seams, never the message text.
 MEDIA_MODEL_TYPES = ("image", "video", "kling")
 
-# Composed under the URL list so agents know the files are user-provided and
+# Composed under the URL list so agents know the files came with the message and
 # how to reach non-image contents (SDK vision handles images separately).
 _ATTACHMENTS_BLOCK_HINT = (
-    "The user attached these files to this message. "
+    "These files are attached to this message. "
     "Fetch a URL (e.g. with curl) if you need a file's contents."
 )
 
 
 def normalize_message_attachments(raw: Any) -> List[Dict[str, Any]]:
     """Validate + normalize ``config.message_attachments`` into
-    ``[{url, name, mime_type, size_bytes, resource_id}]``. Entries without a
+    ``[{url, name, mime_type, size_bytes, resource_id, duration_s, voice}]``
+    (a recorded voice clip carries ``voice`` and its length). Entries without a
     usable http(s) URL are dropped — the URL is the one field every consumer
     (message block, persistence, vision injection) needs."""
     if not isinstance(raw, list):
@@ -46,12 +47,15 @@ def normalize_message_attachments(raw: Any) -> List[Dict[str, Any]]:
             continue
         name = item.get("name")
         size = item.get("size_bytes")
+        duration = item.get("duration_s")
         out.append({
             "url": url,
             "name": (str(name).strip() if name else "") or url.rsplit("/", 1)[-1],
             "mime_type": str(item.get("mime_type") or "application/octet-stream").lower(),
             "size_bytes": int(size) if isinstance(size, (int, float)) and size >= 0 else None,
             "resource_id": str(item["resource_id"]) if item.get("resource_id") else None,
+            "duration_s": float(duration) if isinstance(duration, (int, float)) and duration > 0 else None,
+            "voice": item.get("voice") is True,
         })
     return out
 

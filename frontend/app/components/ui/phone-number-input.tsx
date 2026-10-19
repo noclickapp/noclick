@@ -12,13 +12,13 @@ import {
 } from 'libphonenumber-js';
 import examples from 'libphonenumber-js/mobile/examples';
 import metadata from 'libphonenumber-js/min/metadata';
-import * as Flags from 'country-flag-icons/react/3x2';
-import { Check, ChevronDown, Globe, Search } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '~/components/ui/popover';
+    CountryFlag,
+    CountryPicker,
+    countryName,
+    type CountryOption,
+} from '~/components/ui/country-picker';
 import { useDetectedCountry } from '~/hooks/useDetectedCountry';
 import { cn } from '~/lib/utils';
 
@@ -39,18 +39,10 @@ interface Formatted {
     country?: CountryCode;
 }
 
-const regionNames =
-    typeof Intl !== 'undefined' && 'DisplayNames' in Intl
-        ? new Intl.DisplayNames(['en'], { type: 'region' })
-        : null;
-
-const COUNTRIES = getCountries()
-    .map((code) => ({
-        code,
-        name: regionNames?.of(code) ?? code,
-        callingCode: getCountryCallingCode(code),
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+const COUNTRIES: CountryOption[] = getCountries().map((code) => {
+    const callingCode = getCountryCallingCode(code);
+    return { code, detail: `+${callingCode}`, keywords: [callingCode] };
+});
 
 // The main country of a calling code shared by several (+1 → US, +44 → GB).
 function mainCountry(callingCode: string): CountryCode | undefined {
@@ -85,28 +77,6 @@ export function formatPhone(raw: string, country?: CountryCode): Formatted {
     };
 }
 
-function Flag({
-    country,
-    className,
-}: {
-    country?: CountryCode;
-    className?: string;
-}) {
-    const Icon = country
-        ? (Flags as Record<string, typeof Flags.US>)[country]
-        : undefined;
-    if (!Icon)
-        return (
-            <Globe className={cn('h-4 w-5 text-muted-foreground', className)} />
-        );
-    return (
-        <Icon
-            title=""
-            className={cn('h-4 w-6 rounded-[2px] object-cover', className)}
-        />
-    );
-}
-
 export function PhoneNumberInput({
     name,
     id,
@@ -119,8 +89,6 @@ export function PhoneNumberInput({
     const [country, setCountry] = useState<CountryCode | undefined>(detected);
     const [picked, setPicked] = useState(false);
     const [field, setField] = useState<Formatted>({ text: '', e164: '' });
-    const [open, setOpen] = useState(false);
-    const [query, setQuery] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
 
     // Detection lands after mount; it never overrides a country the person chose.
@@ -132,6 +100,14 @@ export function PhoneNumberInput({
     useEffect(() => {
         if (value === '' && field.e164) setField({ text: '', e164: '' });
     }, [value, field.e164]);
+
+    // One it sets to another number (a prefill) shows that number.
+    useEffect(() => {
+        if (!value || value === field.e164) return;
+        const given = formatPhone(value);
+        setField(given);
+        if (given.country) setCountry(given.country);
+    }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const commit = (next: Formatted) => {
         setField(next);
@@ -183,8 +159,6 @@ export function PhoneNumberInput({
     const pick = (code: CountryCode) => {
         setCountry(code);
         setPicked(true);
-        setOpen(false);
-        setQuery('');
         if (field.text) {
             const national = new AsYouType();
             national.input(field.text);
@@ -205,23 +179,6 @@ export function PhoneNumberInput({
         );
     }, [country]);
 
-    const matches = useMemo(() => {
-        const q = query.trim().toLowerCase().replace(/^\+/, '');
-        if (!q) {
-            // The current country first, so the list opens on it.
-            const current = COUNTRIES.find((c) => c.code === country);
-            return current
-                ? [current, ...COUNTRIES.filter((c) => c !== current)]
-                : COUNTRIES;
-        }
-        return COUNTRIES.filter(
-            (c) =>
-                c.name.toLowerCase().includes(q) ||
-                c.code.toLowerCase() === q ||
-                c.callingCode.startsWith(q)
-        );
-    }, [query, country]);
-
     return (
         <div
             className={cn(
@@ -230,84 +187,30 @@ export function PhoneNumberInput({
                 className
             )}
         >
-            <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
+            <CountryPicker
+                value={country}
+                options={COUNTRIES}
+                detailBeside
+                onPick={(code) => pick(code as CountryCode)}
+                disabled={disabled}
+                // Above the auth modal (z-[100]) this picker can sit inside.
+                zIndexClassName="z-[120]"
+                trigger={
                     <button
                         type="button"
                         disabled={disabled}
                         aria-label={
                             country
-                                ? `Country: ${regionNames?.of(country) ?? country}`
+                                ? `Country: ${countryName(country)}`
                                 : 'Choose a country'
                         }
                         className="flex h-full shrink-0 items-center gap-2 rounded-l-xl pl-4 pr-3 outline-none transition-colors hover:bg-foreground/[0.04] focus-visible:bg-foreground/[0.06]"
                     >
-                        <Flag country={country} />
+                        <CountryFlag country={country} />
                         <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                     </button>
-                </PopoverTrigger>
-                <PopoverContent
-                    align="start"
-                    sideOffset={6}
-                    // Above the auth modal (z-[100]) this picker can sit inside.
-                    className="z-[120] w-72 overflow-hidden p-0"
-                    onOpenAutoFocus={(e) => e.preventDefault()}
-                >
-                    <div className="flex items-center gap-2 border-b border-border px-3">
-                        <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                        <input
-                            // eslint-disable-next-line jsx-a11y/no-autofocus -- the picker opens to search
-                            autoFocus
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' && matches[0]) {
-                                    e.preventDefault();
-                                    pick(matches[0].code);
-                                }
-                            }}
-                            placeholder="Search countries"
-                            className="h-10 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-                        />
-                    </div>
-                    <div
-                        className="max-h-72 overflow-y-auto py-1"
-                        role="listbox"
-                    >
-                        {matches.map((c) => (
-                            <button
-                                key={c.code}
-                                type="button"
-                                role="option"
-                                aria-selected={c.code === country}
-                                onClick={() => pick(c.code)}
-                                className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-accent"
-                            >
-                                <Flag country={c.code} />
-                                <span className="flex-1 truncate">
-                                    {c.name}
-                                </span>
-                                <span className="text-muted-foreground">
-                                    +{c.callingCode}
-                                </span>
-                                <Check
-                                    className={cn(
-                                        'h-3.5 w-3.5',
-                                        c.code === country
-                                            ? 'opacity-100'
-                                            : 'opacity-0'
-                                    )}
-                                />
-                            </button>
-                        ))}
-                        {matches.length === 0 && (
-                            <p className="px-3 py-6 text-center text-sm text-muted-foreground">
-                                No country matches
-                            </p>
-                        )}
-                    </div>
-                </PopoverContent>
-            </Popover>
+                }
+            />
             <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
             <input
                 ref={inputRef}

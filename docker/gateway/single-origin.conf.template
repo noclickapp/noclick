@@ -165,10 +165,18 @@ server {
         include /etc/nginx/noclick-proxy.conf;
     }
 
-    # /api is shared: the app owns /api/auth, the backend owns these four.
+    # /api is shared: the app owns /api/auth, the backend owns these.
     location /api/credential-request/ {
         proxy_pass http://127.0.0.1:8000;
         include /etc/nginx/noclick-proxy.conf;
+    }
+
+    # A phone number's requirement documents, posted to the signed link the buy
+    # flow minted. The backend takes a document up to 20 MB.
+    location /api/phone-numbers/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+        client_max_body_size 21m;
     }
 
     location /api/keys {

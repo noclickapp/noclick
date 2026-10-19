@@ -6,11 +6,14 @@ predicate."""
 
 import asyncio
 import time
+from datetime import datetime, timezone
 from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
 import pytest
 
 import utils.notifications as notifications
+from utils import capabilities, feature_gates
 from utils.notifications import (
     ALERT_DAILY_CAPS,
     CATEGORIES,
@@ -27,6 +30,8 @@ from utils.notifications import (
 def _relay_secret(monkeypatch):
     monkeypatch.setenv("EMAIL_RELAY_SECRET", "test-secret")
     notifications._LOCAL_WINDOWS.clear()
+    # Whether a workflow is a platform agent's is the platform's (test_coordinator_agent); these are the engine's.
+    monkeypatch.delitem(capabilities._providers, capabilities.AGENT_WORKFLOW, raising=False)
 
 
 # ── Fake backend: routes the module's SQL onto an in-memory notification log ─
@@ -57,6 +62,9 @@ class _FakeBackend:
         # The window claim runs its own transaction on a real conn; hand it a
         # fake pool whose conn routes SQL back into this backend.
         monkeypatch.setattr(notifications, "_resolve_pool", lambda pool: _FakePool(self))
+        # The wording under test is the engine's; what a platform offers besides funds is pinned against Postgres.
+        monkeypatch.setattr(capabilities, "_providers",
+                            {k: v for k, v in capabilities._providers.items() if k != capabilities.REFERRAL_OFFER})
         return self
 
     async def fetch_row(self, pool, query, *args):
@@ -176,6 +184,11 @@ class _FakePool:
     async def fetchrow(self, query, *args):
         # The credit CTA reads the tier through the pool it is handed.
         return await self.b.fetch_row(self, query, *args)
+
+    async def fetchval(self, query, *args):
+        # Whether the account bills on Free/Member is read from its email.
+        row = await self.b.fetch_row(self, query, *args)
+        return next(iter(row.values())) if row else None
 
     def acquire(self):
         backend = self.b
@@ -427,6 +440,7 @@ async def test_run_failure_delegates_credit_exhaustion(monkeypatch):
     this path is the only one that knows them. Deduped 24h like any credits
     alert, however many cron workflows are affected."""
     be = _FakeBackend().install(monkeypatch)
+    monkeypatch.setitem(feature_gates.FEATURE_ALLOWLIST, "free_member", {be.email})  # bills on Free/Member
     ok = await send_run_failure_alert(
         user_id="user-1", workflow_id="wf-1", execution_id="ex-1",
         trigger_source="cron", node_label="Enrich with Apollo",
@@ -434,10 +448,12 @@ async def test_run_failure_delegates_credit_exhaustion(monkeypatch):
     )
     assert ok and len(be.sends) == 1
     sent = be.sends[0]
-    assert sent["subject"] == "You're out of credits on NoClick"
+    assert sent["subject"] == "Your NoClick balance ran out"
     assert "My Flow" in sent["html"]           # blocked workflow named
     assert "Enrich with Apollo" in sent["html"]  # blocked node named
-    assert "0.05" in sent["html"]              # remaining parsed from the error
+    from billing.markup import CREDITS_PER_DOLLAR
+    # The remaining parsed from the error (in the gate's credits), shown in dollars.
+    assert f"${0.05 / float(CREDITS_PER_DOLLAR):,.2f}" in sent["html"]
     assert be.rows[0]["category"] == "credits"
 
     # A second blocked workflow inside the window folds into the same alert.
@@ -447,6 +463,52 @@ async def test_run_failure_delegates_credit_exhaustion(monkeypatch):
         error="Node n9 failed: Insufficient credits: 0.05 < 0.20 required",
     )
     assert not ok2 and len(be.sends) == 1
+
+
+async def test_billing_emails_speak_credits_to_an_account_on_the_old_plans(monkeypatch):
+    """An account still on the old plans bills in credits, so its billing emails
+    keep their words: credits, never dollars or a balance."""
+    old_plans = AsyncMock(return_value=True)
+    monkeypatch.setattr("billing.plan_limits.on_old_plans", old_plans)
+    be = _FakeBackend().install(monkeypatch)
+    await notifications.send_credits_exhausted_alert("user-1", 0.5, organization_id="org-1",
+                                                      blocked_workflow="My Flow")
+    sent = be.sends[-1]
+    assert sent["subject"] == "You're out of credits on NoClick"
+    assert "your credit balance ran out" in sent["html"] and "Monthly credits" in sent["html"]
+    assert "0.50 credits" in sent["html"] and "credit pool funds" in sent["html"] and "$" not in sent["text"]
+    assert "Balance: 0.50 credits" in sent["text"]
+
+    await notifications.send_low_balance_alert("user-1", remaining=12.5, used_fraction=0.85,
+                                               window_key="2026-10-01")
+    sent = be.sends[-1]
+    assert sent["subject"] == "You've used 85% of your NoClick credits"
+    assert "Your credits are running low" in sent["html"] and "12.5 credits" in sent["html"]
+    assert "add funds" not in sent["text"] and "12.5 left, resets Nov 1" in sent["text"]
+
+    be = _FakeBackend().install(monkeypatch)  # a fresh day: credits alerts are capped at two
+    await notifications.send_recurring_grace_alert(
+        "user-1", credential_id="c1", credential_name="+1 555", charge_label="Phone number",
+        grace_ends_at=datetime(2026, 10, 12, tzinfo=timezone.utc), remaining=-1, grace_ttl_s=3600)
+    sent = be.sends[-1]
+    assert "Your credit balance can't cover" in sent["text"] and "Balance: 0.00 credits" in sent["text"]
+    assert "needs credits" in sent["html"]
+    await notifications.send_recurring_disconnected_alert("user-1", credential_id="c1", credential_name="+1 555",
+                                                          charge_label="Phone number")
+    assert "credit balance stayed exhausted" in be.sends[-1]["text"]
+
+    # On Free/Member the same alerts read in dollars.
+    be = _FakeBackend().install(monkeypatch)
+    old_plans.return_value = False
+    await notifications.send_low_balance_alert("user-1", remaining=12.5, used_fraction=0.85,
+                                               window_key="2026-11-01")
+    sent = be.sends[-1]
+    assert sent["subject"] == "You've used 85% of your NoClick usage this month"
+    from billing.markup import CREDITS_PER_DOLLAR
+    assert f"${12.5 / float(CREDITS_PER_DOLLAR):,.2f} left" in sent["text"] and "add funds" in sent["text"]
+    await notifications.send_recurring_disconnected_alert("user-1", credential_id="c2", credential_name="+1 555",
+                                                          charge_label="Phone number")
+    assert "balance stayed empty" in be.sends[-1]["text"]
 
 
 async def test_credential_revoked_alert_targets_owner(monkeypatch):
@@ -525,13 +587,56 @@ async def test_maybe_alert_run_failure_headless_only(monkeypatch, trigger_source
 def test_bar_fill_corners_rounded():
     """Partial fills must carry the track's corner radius — square fills
     inside rounded tracks was a reported visual bug."""
-    from utils.notification_templates import credit_bars, workflow_bars
+    from utils.notification_templates import spend_bars, workflow_bars
 
     split = workflow_bars([("Flow", 10, 3), ("Quiet", 2, 0)])
     assert "border-top-left-radius:3px" in split
     assert "border-bottom-right-radius:3px" in split
-    single = credit_bars([("Flow", 12.5), ("Other", 1.0)])
-    assert "border-top-left-radius:3px" in single and "12.5 cr" in single
+    single = spend_bars([("Flow", 12.5), ("Other", 1.0)])
+    assert "border-top-left-radius:3px" in single and "$12.50" in single
+    assert "12.5 cr" in spend_bars([("Flow", 12.5)], in_credits=True)
+
+
+class _DigestPool:
+    """The reads the weekly digest makes: one user, one workflow, $2.50 spent."""
+
+    async def fetch(self, query, *args):
+        if "GROUP BY user_id" in query:
+            return [{"user_id": "user-1", "runs": 4, "failures": 1}]
+        if "AS dollars" in query:
+            return [{"name": "My Flow", "dollars": 2.5}]
+        if "GROUP BY e.workflow_id" in query:
+            return [{"workflow_id": "wf-1", "name": "My Flow", "runs": 4, "failures": 1}]
+        return []  # runs by day
+
+    async def fetchval(self, query, *args):
+        return "user@example.com" if "auth.users" in query else 2.5
+
+
+@pytest.mark.asyncio
+async def test_the_weekly_digest_reads_spend_in_the_accounts_own_unit(monkeypatch):
+    """Credits on the old plans, dollars on Free/Member."""
+    from billing.markup import CREDITS_PER_DOLLAR
+
+    sent = []
+    old_plans = AsyncMock(return_value=True)
+    monkeypatch.setattr("billing.plan_limits.on_old_plans", old_plans)
+    monkeypatch.setattr(notifications, "send_system_alert", lambda *a, **k: _record(sent, k))
+    await notifications.send_weekly_digests(_DigestPool())
+    credits = 2.5 * float(CREDITS_PER_DOLLAR)
+    assert f"Credits used: {credits:.1f}" in sent[-1]["text_body"] and "Top credit consumers" in sent[-1]["blocks_html"]
+    assert sent[-1]["preheader"].endswith(f"{credits:.1f} credits used") and "$" not in sent[-1]["text_body"]
+    assert sent[-1]["metadata"]["credits_used"] == round(credits, 2)
+
+    old_plans.return_value = False
+    await notifications.send_weekly_digests(_DigestPool())
+    assert "Usage: $2.50" in sent[-1]["text_body"] and "Where it went" in sent[-1]["blocks_html"]
+    assert sent[-1]["preheader"].endswith("$2.50 of usage") and sent[-1]["metadata"]["usage_usd"] == 2.5
+
+
+async def _record(sent, kwargs):
+    sent.append(kwargs)
+    return True
 
 
 # ── Prefs store contract ─────────────────────────────────────────────────────
@@ -548,8 +653,13 @@ async def test_get_prefs_defaults_and_overrides(monkeypatch):
         "credential_revoked": True,
         "credits": True,
         "digest": False,
+        "phone_numbers": True,
+        "platform_paused": True,
+        "referrals": True,
         "run_failure": True,
         "schedule_paused": True,
+        "spend_cap": True,
+        "topup": True,
     }
     assert set(prefs) == set(CATEGORIES)
 

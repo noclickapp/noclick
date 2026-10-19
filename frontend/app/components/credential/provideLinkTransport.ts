@@ -10,8 +10,26 @@
 
 import type { OAuthExchange } from '~/hooks/oauth/OAuthExchangeContext';
 
-export function provideLinkTransport(apiBase: string, token: string, credentialType: string): OAuthExchange {
+/** Whether a token-scoped call found the request can't be provided any more: gone (a newer request replaced it,
+ *  or it never existed), ended (fulfilled elsewhere, cancelled, expired), or, on /provide, out of tries (the QR
+ *  start's own 429 is a short rate limit, not the end). */
+export function requestEnded(res: Response, url: string): boolean {
+    return res.status === 404 || res.status === 410 || (res.status === 429 && url.endsWith('/provide'));
+}
+
+export function provideLinkTransport(
+    apiBase: string,
+    token: string,
+    credentialType: string,
+    /** Told when a call finds the request can't be provided any more, so the surface can read it again. */
+    onRequestEnded?: () => void,
+): OAuthExchange {
     const base = `${apiBase}/api/credential-request/${token}`;
+    const fetch = async (url: string, init?: RequestInit) => {
+        const res = await globalThis.fetch(url, init);
+        if (requestEnded(res, url)) onRequestEnded?.();
+        return res;
+    };
 
     return async (event) => {
         const name: string = event?.event_name || '';

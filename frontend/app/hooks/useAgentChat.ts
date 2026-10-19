@@ -19,7 +19,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useSnapshot } from 'valtio';
 import { onSocketEvent } from '~/lib/socket-receiver';
-import { splitCarryOverContext } from '~/lib/agentChat';
+import { splitCarryOverContext, type ChatReference } from '~/lib/agentChat';
 import { sendEventAsync, ResumeConversationRequest } from '~/lib/socket-sender';
 import {
     agentChatSessionStore,
@@ -28,6 +28,9 @@ import {
 import type {
     ChatMessageEvent,
     AgentStateEvent,
+    CoordinatorEmailReply,
+    CoordinatorSetupRef,
+    CoordinatorSignalRef,
 } from '~/types/socket-events.generated';
 import type { AgenticStep, ContentItem } from '~/types/socket-schema.generated';
 
@@ -102,6 +105,10 @@ export interface AgentChatFileAttachment {
 export interface AgentChatMessage {
     turnId?: string;
     notification?: boolean;
+    /** On a coordinator note: the automation whose failed run or agent message woke the turn. */
+    signal?: CoordinatorSignalRef;
+    /** On a coordinator note: a workflow started on a public page, set up from the card drawn under it. */
+    setup?: CoordinatorSetupRef;
     isUser: boolean;
     text: string;
     isComplete: boolean;
@@ -111,6 +118,8 @@ export interface AgentChatMessage {
     content?: ContentItem[];
     /** Files the user attached to this turn (non-image — see above). */
     attachments?: AgentChatFileAttachment[];
+    /** What the user pointed the agent at with this turn (an automation, an account). */
+    references?: ChatReference[];
     /** In-flight status emitted by the agent (e.g. "Starting sandbox…"). Only
      *  meaningful while the bubble is still streaming; cleared once text or
      *  content lands. Used by the UI to give the user feedback during long
@@ -127,10 +136,29 @@ export interface AgentChatMessage {
      *  only). When set, the message renders as an approve/dismiss card instead
      *  of a text bubble; `text` is empty. Not persisted — live-session only. */
     builderPrompt?: BuilderPromptProposal;
+    /** The channel a turn arrived on when not this chat (the coordinator's
+     *  thread is shared by WhatsApp, calls and email): its persisted
+     *  `channel` stamp, e.g. "whatsapp_text", "voice", "email". */
+    channel?: string;
+    /** When the turn happened (epoch ms), from its persisted timestamp. */
+    sentAt?: number;
+    /** The call a spoken turn belongs to (its persisted `call_sid`), so a call reads as one. */
+    callId?: string;
+    /** An email the owner sent the coordinator: who it was from and to, and its subject, as it arrived. */
+    email?: ChatEmailHeader;
+    /** The coordinator's reply to an email: what became of the email that carried it back. */
+    emailReply?: CoordinatorEmailReply;
     /** The trigger that started this turn (a user turn the fired event took,
      *  not something typed): the transcript frames its output natively and
      *  keeps `text` — the agent's concise view of the event — as the fallback. */
     trigger?: ChatTriggerEvent;
+}
+
+/** The header of an email turn, persisted as `email` (coder/coordinator/email_channel.run_email_turn). */
+export interface ChatEmailHeader {
+    from?: string | null;
+    to?: string | null;
+    subject?: string | null;
 }
 
 /** A trigger-started user turn's provenance, persisted by
@@ -174,8 +202,14 @@ export interface UseAgentChatResult {
     addUserMessage: (
         text: string,
         content?: ContentItem[],
-        attachments?: AgentChatFileAttachment[]
+        attachments?: AgentChatFileAttachment[],
+        references?: ChatReference[]
     ) => void;
+    /** The server refused the send before any turn ran: stop waiting and say why. */
+    failTurn: (reason: string) => void;
+    /** A frame a request's own reply carried (it can land before this tab's relay connects); the live copy, if it
+     *  also comes, dedupes by turn_id. */
+    receiveFrame: (frame: ChatEventData) => void;
     /** Epoch ms of the most recent terminal signal seen for this conversation
      *  (finished frame / terminal agent:state / reconciler adoption); 0 if none.
      *  Lets the caller suppress the presence-driven working indicator right
@@ -191,6 +225,8 @@ export interface UseAgentChatResult {
 interface PersistedEvent {
     turn_id?: string;
     notification?: boolean;
+    signal?: CoordinatorSignalRef | null;
+    setup?: CoordinatorSetupRef | null;
     id?: number;
     /** Legacy action/source shape — pre-Phase-9 events written by the previous
      *  OpenHands-era PostgresStore. Still present in older conversations.events rows. */
@@ -229,6 +265,8 @@ interface PersistedEvent {
     /** Non-image files the user attached to a user turn — restored as chips
      *  on the bubble. */
     attachments?: { name?: string; url?: string; mime_type?: string }[] | null;
+    /** What a user turn pointed at (coordinator: automations, accounts). */
+    references?: { kind?: string; id?: string; label?: string }[] | null;
     /** Compacted tool timeline persisted with a CLI turn's assistant event
      *  (tool_call_log.compact_tool_calls_for_transcript) — restored as the
      *  bubble's step rows so the activity timeline survives reloads. */
@@ -236,6 +274,13 @@ interface PersistedEvent {
     /** prompt_builder approval card persisted mid-turn (platform_tools) —
      *  restored as a card message so reconcile adoption / reload keep it. */
     builder_prompt?: BuilderPromptProposal | null;
+    /** Channel stamp on coordinator turns (web, whatsapp_text, voice, email, …). */
+    channel?: string;
+    /** The call a spoken coordinator turn was on. */
+    call_sid?: string;
+    /** An email turn's header (user) and its reply's receipt (assistant). */
+    email?: ChatEmailHeader | null;
+    email_reply?: CoordinatorEmailReply | null;
     /** Trigger-started user turn: the fired node + its bounded output
      *  (see ChatTriggerEvent). */
     trigger?: {
@@ -322,10 +367,14 @@ const defaultTransport: AgentChatTransport = {
         event: 'chat:message' | 'agent:state',
         handler: (data: never) => void
     ) => onSocketEvent(event, handler as never),
-    resume: async (conversationId: string) =>
-        (await sendEventAsync(
+    resume: async (conversationId: string) => {
+        const resp = (await sendEventAsync(
             ResumeConversationRequest.create({ session_id: conversationId })
-        )) as ResumeResponse,
+        )) as ResumeResponse & { error?: string };
+        // A failed read is not an empty thread.
+        if (resp.error) throw new Error(resp.error);
+        return resp;
+    },
 };
 
 /** User-side `message:user` events are stored with a JSON-encoded multimodal
@@ -406,6 +455,15 @@ function fileAttachmentsFromEvent(
             mimeType: f.mime_type ?? undefined,
         });
     }
+    return out.length > 0 ? out : undefined;
+}
+
+/** A user event's persisted references, as the bubble's chips. */
+function referencesFromEvent(ev: PersistedEvent): ChatReference[] | undefined {
+    if (!Array.isArray(ev.references)) return undefined;
+    const out = ev.references.flatMap((r): ChatReference[] =>
+        (r?.kind === 'automation' || r?.kind === 'account') && r.id ? [{ kind: r.kind, id: r.id, label: r.label || r.id }] : []
+    );
     return out.length > 0 ? out : undefined;
 }
 
@@ -596,6 +654,7 @@ export function persistedEventsToChatMessages(
             const fileAttachments = isUser
                 ? fileAttachmentsFromEvent(ev)
                 : undefined;
+            const references = isUser ? referencesFromEvent(ev) : undefined;
             const trigger = isUser ? triggerFromEvent(ev) : undefined;
             // A model change starts a fresh conversation and folds the old
             // thread into the first message so the new model has context. Put
@@ -613,7 +672,7 @@ export function persistedEventsToChatMessages(
                     carriedOver: true,
                 });
             }
-            if (!text && !content && !fileAttachments && !trigger) continue;
+            if (!text && !content && !fileAttachments && !references && !trigger) continue;
             if (isUser) flushCards(); // cards belong to the PREVIOUS turn
             out.push({
                 isUser,
@@ -621,9 +680,17 @@ export function persistedEventsToChatMessages(
                 isComplete: true,
                 content,
                 attachments: fileAttachments,
+                references,
                 trigger,
+                channel: ev.channel && ev.channel !== 'web' ? ev.channel : undefined,
+                sentAt: ev.timestamp ? Date.parse(ev.timestamp) || undefined : undefined,
+                callId: ev.call_sid || undefined,
+                email: isUser ? (ev.email ?? undefined) : undefined,
+                emailReply: isUser ? undefined : (ev.email_reply ?? undefined),
                 turnId: ev.turn_id,
                 notification: ev.notification || undefined,
+                signal: ev.signal ?? undefined,
+                setup: ev.setup ?? undefined,
                 steps: isUser
                     ? undefined
                     : stepsFromPersistedToolCalls(ev.tool_calls),
@@ -688,9 +755,13 @@ export function persistedEventsToChatMessages(
     return out;
 }
 
-type ChatEventData = {
+export type ChatEventData = {
     turn_id?: string | null;
     notification?: boolean;
+    signal?: CoordinatorSignalRef | null;
+    setup?: CoordinatorSetupRef | null;
+    /** On a note: its turn's tool calls, as the saved event keeps them. */
+    tool_calls?: unknown;
     message?: string | null;
     finished?: boolean;
     content?: ContentItem[] | null;
@@ -872,8 +943,13 @@ export function applyChatMessageEvent(
             text: data.message ?? '',
             isComplete: true,
             content: data.content ?? undefined,
+            // The turn that wrote the note: its saved shape, read as a restored transcript reads it.
+            steps: stepsFromPersistedToolCalls(data.tool_calls),
             turnId: data.turn_id ?? undefined,
             notification: true,
+            signal: data.signal ?? undefined,
+            setup: data.setup ?? undefined,
+            sentAt: Date.now(),
         });
     }
     // prompt_builder approval card: a standalone frame arriving MID-turn (the
@@ -977,7 +1053,12 @@ export function useAgentChat(
      *  so the finished response is adopted even if the live frames were missed.
      *  Deliberately does NOT flip isStreaming: presence is node/conversation
      *  level and must not block the composer. */
-    externallyBusy = false
+    externallyBusy = false,
+    /** The conversation also takes turns from other apps (the coordinator: texts,
+     *  calls, email), announced by agent:state `running`. The chat shows what
+     *  started such a turn, follows it, and reads it back from the transcript
+     *  at its end, since only its steps and its end are mirrored live. */
+    followsTurnsElsewhere = false
 ): UseAgentChatResult {
     // Session state lives in a MODULE-LEVEL store keyed by conversation_id
     // (agentChatSessionStore), not component state: the chat surface unmounts on
@@ -1040,6 +1121,30 @@ export function useAgentChat(
         if (id) getAgentChatSession(id).lastFinishedAt = at;
     }, []);
 
+    // A turn from another app: the transcript holds what started it (and, at its
+    // end, the reply), so take that and keep only the bubble still in flight.
+    const adoptPersisted = useCallback(async () => {
+        const id = conversationIdRef.current;
+        if (!id) return;
+        try {
+            const resp = await transport.resume(id);
+            if (conversationIdRef.current !== id) return;
+            const persisted = dedupeConsecutiveErrors(
+                persistedEventsToChatMessages(resp.messages)
+            );
+            setMessages((prev) => {
+                const tail = prev[prev.length - 1];
+                const inFlight =
+                    tail && !tail.isUser && !tail.isComplete && !tail.notification
+                        ? [tail]
+                        : [];
+                return appendMissingNotifications([...persisted, ...inFlight], prev);
+            });
+        } catch (err) {
+            console.warn('[useAgentChat] reading back a turn from another app failed', err);
+        }
+    }, [transport, setMessages]);
+
     // Cold-fetch persisted history. The session store makes remounts (tab away →
     // back) an INSTANT restore — a session that has already streamed or loaded
     // is never reset, and a mid-turn remount doesn't even refetch (the reconcile
@@ -1066,8 +1171,15 @@ export function useAgentChat(
                 const resp = await transport.resume(conversationId);
                 if (cancelled) return;
                 const persisted = persistedEventsToChatMessages(resp.messages);
+                const cached = session.cached;
+                session.cached = 0;
                 session.resumedOnce = true;
-                if (persisted.length === 0) return;
+                session.resumeError = null;
+                if (persisted.length === 0) {
+                    // A cached copy of a thread the server no longer holds goes with it.
+                    if (cached) session.messages = session.messages.slice(cached);
+                    return;
+                }
                 // If a terminal frame landed during the resume window, the live
                 // tail already shows the same turn the persisted snapshot just
                 // re-includes. Skip the apply to avoid the duplicate bubble.
@@ -1092,7 +1204,7 @@ export function useAgentChat(
                     const turnIds = new Set(
                         persisted.map((m) => m.turnId).filter(Boolean)
                     );
-                    const live = prev.filter(
+                    const live = prev.slice(cached).filter(
                         (m) =>
                             (!m.turnId || !turnIds.has(m.turnId)) &&
                             (!m.builderPrompt?.proposal_id ||
@@ -1101,8 +1213,9 @@ export function useAgentChat(
                     return dedupeConsecutiveErrors([...persisted, ...live]);
                 });
             } catch (err) {
-                if (!cancelled)
-                    console.warn('[useAgentChat] resume failed', err);
+                if (cancelled) return;
+                console.warn('[useAgentChat] resume failed', err);
+                session.resumeError = err instanceof Error ? err.message : String(err);
             }
         })();
         return () => {
@@ -1124,6 +1237,11 @@ export function useAgentChat(
                 if (data.finished && !data.notification) {
                     setIsStreaming(false);
                     markFinished(Date.now());
+                    const session = getAgentChatSession(conversationId);
+                    if (session.turnElsewhere) {
+                        session.turnElsewhere = false;
+                        void adoptPersisted();
+                    }
                     // A turn that ended cleanly retires the previous turn's banner. The
                     // clear used to live only in addUserMessage, so it ran for turns the
                     // CHAT started and not for turns dispatched from the canvas — and a
@@ -1143,8 +1261,18 @@ export function useAgentChat(
             (data: AgentStateEvent) => {
                 if (data.conversation_id !== conversationId) return;
                 const state = (data.state || '').toLowerCase();
+                if (followsTurnsElsewhere && state === 'running') {
+                    const session = getAgentChatSession(conversationId);
+                    if (!session.isStreaming) {
+                        session.turnElsewhere = true;
+                        setIsStreaming(true);
+                        void adoptPersisted();
+                    }
+                    return;
+                }
                 if (TERMINAL_AGENT_STATES.has(state)) {
                     setIsStreaming(false);
+                    getAgentChatSession(conversationId).turnElsewhere = false;
                     // Mark the turn resolved so a resume fetch already in flight skips its
                     // prepend (the same guard chat:message uses) — without this an error
                     // turn's persisted copy is prepended on top of this live bubble.
@@ -1210,6 +1338,8 @@ export function useAgentChat(
         conversationId,
         transport,
         markFinished,
+        adoptPersisted,
+        followsTurnsElsewhere,
         setMessages,
         setIsStreaming,
         setErrorReason,
@@ -1219,7 +1349,8 @@ export function useAgentChat(
         (
             text: string,
             content?: ContentItem[],
-            attachments?: AgentChatFileAttachment[]
+            attachments?: AgentChatFileAttachment[],
+            references?: ChatReference[]
         ) => {
             setMessages((prev) =>
                 prev.concat({
@@ -1228,6 +1359,7 @@ export function useAgentChat(
                     isComplete: true,
                     content,
                     attachments,
+                    references,
                 })
             );
             setIsStreaming(true);
@@ -1341,11 +1473,26 @@ export function useAgentChat(
         setErrorReason,
     ]);
 
+    const failTurn = useCallback(
+        (reason: string) => {
+            setIsStreaming(false);
+            setErrorReason(reason);
+        },
+        [setIsStreaming, setErrorReason]
+    );
+
+    const receiveFrame = useCallback(
+        (frame: ChatEventData) => setMessages((prev) => applyChatMessageEvent(prev, frame)),
+        [setMessages]
+    );
+
     return {
         messages,
         isStreaming,
         errorReason,
         addUserMessage,
+        failTurn,
+        receiveFrame,
         lastFinishedAt,
     };
 }

@@ -374,18 +374,12 @@ async def test_fenced_json_is_tolerated(redis, monkeypatch):
 # ------------------------------------------------------ prompt contract
 
 
-def test_the_mock_is_told_not_to_invent_failures():
-    """A random fabricated outage misrepresents the agent's behaviour, and the
-    user cannot distinguish it from a scripted one."""
-    assert "Never invent a failure" in rh._SYSTEM
-
-
-def test_the_mock_is_told_to_avoid_placeholder_output():
-    assert "Example Customer" in rh._SYSTEM
-
-
-def test_the_mock_is_told_to_stay_consistent():
-    assert "consistent with everything you have already returned" in rh._SYSTEM
+def test_the_mock_is_told_the_situation_by_the_rehearsal_pack():
+    """The world model's instructions are the rehearsal prompt pack's, with the
+    staged situation in them."""
+    system = rh._messages({"scenario": "A lead emailed sales."}, "ask")[0]
+    assert system == {"role": "system", "content": rh.PROMPTS.world_system("A lead emailed sales.")}
+    assert "A lead emailed sales." in system["content"]
 
 
 # ------------------------------------------------------- the artifact
@@ -893,6 +887,37 @@ async def test_world_model_billing_never_kills_the_rehearsal(redis, monkeypatch)
     )
     assert result == {"ok": True}
     assert len(called) == 1
+
+
+@pytest.mark.asyncio
+async def test_an_unusable_answer_is_still_paid_for_at_openrouters_record(redis, monkeypatch):
+    """The world model was paid even when its answer can't be parsed, and a
+    call whose response carried no cost is priced from OpenRouter's record."""
+    from decimal import Decimal
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from billing.usage_tracker import usage_tracker
+
+    await rh.start_rehearsal("conv-junk", SCENARIO, user_id=RUNNER_ID)
+    response = SimpleNamespace(id="gen-world", usage=SimpleNamespace(total_tokens=300),
+                               choices=[SimpleNamespace(message=SimpleNamespace(content="not json"))])
+    lookup = AsyncMock(return_value=Decimal("0.0006"))
+    events = []
+
+    async def capture(event, **kw):
+        events.append(event)
+
+    monkeypatch.setattr("litellm.acompletion", AsyncMock(return_value=response))
+    monkeypatch.setattr("utils.openrouter_cost.generation_cost", lookup)
+    monkeypatch.setattr(usage_tracker, "track_usage_event", capture)
+    monkeypatch.setattr(usage_tracker, "_impl", SimpleNamespace())  # a platform that charges for usage
+    with pytest.raises(RehearsalUnavailable):
+        await rh.mock_tool_call(conversation_id="conv-junk", tool_name="slack__send_message", arguments={})
+
+    lookup.assert_awaited_once_with("gen-world")
+    [event] = events
+    assert (event.cost_usd, event.quantity, event.usage_type) == (Decimal("0.0006"), Decimal("300"), "ai_testing")
 
 
 # ------------------------------------------- the public template-page model pin

@@ -1,29 +1,31 @@
-"""Video generation config — Veo, Sora, RunwayML."""
+"""Video generation config — OpenRouter video models (Veo, Kling, Wan, …)."""
 
 from typing import Literal
 from pydantic import Field
 
 from .base import BaseAgentFields
+from utils.media_generation import DEFAULT_VIDEO_MODEL
 
 
+# The handler applies these settings to Veo models only (handlers/video.py).
 _VEO_SHOW_IF = {"field": "model", "contains": "veo"}
 
 
 class VideoConfig(BaseAgentFields):
-    """Configuration for video generation models (Veo, Sora, RunwayML)."""
+    """Configuration for video generation models, run through OpenRouter."""
     model_type: Literal["video"] = Field(
         default="video",
         title="Model Type",
         json_schema_extra={"ui:hidden": True}
     )
     model: str = Field(
-        default="veo-3",
+        default=DEFAULT_VIDEO_MODEL,
         title="Model",
         description="Video generation model",
         json_schema_extra={
             "x-queryable-enum": "models",
             "x-enum-hint": (
-                "LiteLLM identifier for a video-generation model. Fuzzy input is "
+                "OpenRouter video model id (e.g. google/veo-3.1-fast). Fuzzy input is "
                 "auto-resolved to the closest registered id."
             ),
         },
@@ -44,10 +46,9 @@ class VideoConfig(BaseAgentFields):
         title="Duration (seconds)",
         json_schema_extra={
             "enum": ["4", "6", "8"],
-            "enumNames": ["4s (Veo 3+ only)", "6s", "8s"],
+            "enumNames": ["4s", "6s", "8s"],
             "x-enum-searchable": True,
             "ui:category": "Video Settings",
-            "ui:help": "Veo 3/3.1: 4, 6, or 8s. Veo 2: min 5s (4s is clamped to 5s).",
             "ui:show-if": _VEO_SHOW_IF,
         }
     )

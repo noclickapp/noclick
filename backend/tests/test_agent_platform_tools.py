@@ -101,11 +101,12 @@ class TestBuildPlatformTools:
     def test_submit_feedback_requires_a_stable_issue_key(self):
         submit_param = build_platform_tools(False)[0][0]["function"]
 
+        from nodes.agent.platform_tools import PROMPTS
+
         assert submit_param["parameters"]["required"] == ["feedback", "issue_key"]
-        description = submit_param["description"]
-        assert "progress narration" in description
-        assert "missing user input" in description
-        assert "Reuse the exact same issue_key" in description
+        assert submit_param["parameters"]["properties"]["issue_key"]["pattern"] == "^[a-z0-9][a-z0-9_]{2,79}$"
+        # What it says about when to report is the agent_platform_tools prompt pack's.
+        assert submit_param["description"] == PROMPTS.DESCRIPTIONS["submit_feedback"]
 
 
 class TestPlatformToolsNote:
@@ -132,21 +133,20 @@ class TestPlatformToolsNote:
         assert "email_user" not in platform_tools_note(True, True, in_iteration=True)
 
     def test_feedback_note_excludes_non_platform_failures(self):
-        from nodes.agent.platform_tools import platform_tools_note
+        from nodes.agent.platform_tools import PROMPTS, platform_tools_note
 
-        note = platform_tools_note(False)
-        assert "Never use it for progress updates" in note
-        assert "missing user input/data/credentials" in note
+        assert platform_tools_note(False) == PROMPTS.platform_tools_note(prompt_builder=False, email=False)
 
 
 class TestAnchoredBuilderPrompt:
     def test_names_the_requesting_agent(self):
         from nodes.agent.platform_tools import anchored_builder_prompt
 
+        from nodes.agent.platform_tools import PROMPTS
+
         out = anchored_builder_prompt("add telegram support", "agent_a")
-        assert out.startswith("add telegram support")
+        assert out == "add telegram support\n\n" + PROMPTS.builder_anchor("agent_a")
         assert "'agent_a'" in out
-        assert "other agent nodes" in out
 
     def test_no_node_id_passes_through(self):
         from nodes.agent.platform_tools import anchored_builder_prompt

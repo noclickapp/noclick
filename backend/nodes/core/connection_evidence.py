@@ -53,10 +53,11 @@ unverified nodes.
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 from dataclasses import dataclass, field as dc_field
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -316,31 +317,112 @@ def summarize_provider_text(text: str, status_code: Any = None) -> str:
     )
 
 
-def hint_for_rejection(error_text: Optional[str]) -> Optional[str]:
+_HTTP_STATUS = re.compile(r"\(HTTP (\d{3})\)")
+_ERROR_STATUS = re.compile(r"\b([45]\d{2})\b")
+
+
+def _json_objects(text: str) -> List[Tuple[int, int, Dict[str, Any]]]:
+    """Every JSON object written in ``text`` with where it starts and ends, in order (a node can quote a request beside
+    the provider's answer)."""
+    found: List[Tuple[int, int, Dict[str, Any]]] = []
+    decoder = json.JSONDecoder()
+    i = text.find("{")
+    while i >= 0:
+        try:
+            obj, length = decoder.raw_decode(text[i:])
+        except ValueError:
+            i = text.find("{", i + 1)
+            continue
+        if isinstance(obj, dict):
+            found.append((i, i + length, obj))
+        i = text.find("{", i + length)
+    return found
+
+
+def _said(body: Dict[str, Any]) -> Optional[str]:
+    err = body.get("error")
+    candidates = (body.get("message"), body.get("error_description"), err.get("message") if isinstance(err, dict) else None, body.get("detail"), err)
+    return next((c.strip() for c in candidates if isinstance(c, str) and c.strip()), None)
+
+
+def provider_message(text: str) -> str:
+    """A JSON error body read for the provider's own message, never the envelope around it.
+
+    Reads the last JSON object in the text that carries one (the provider's
+    answer comes after anything the node quoted): a top-level ``message``,
+    ``error_description``, ``error.message`` or ``detail`` string, else a string
+    ``error`` (Slack's ``invalid_auth``). A string ``error`` code that differs
+    from the message, and the HTTP status, stay beside it:
+    ``Token has been expired or revoked. (invalid_grant, HTTP 400)``. Text with
+    no JSON object carrying such a string stays as it is.
+    """
+    objects = _json_objects(text or "")
+    chosen = next((n for n in reversed(range(len(objects))) if _said(objects[n][2])), None)
+    if chosen is None:
+        return text
+    start, _, body = objects[chosen]
+    said = _said(body)
+    err = body.get("error")
+    extras: List[str] = []
+    if isinstance(err, str) and err.strip() and err.strip() != said:
+        extras.append(err.strip())
+    status = _HTTP_STATUS.search(text)
+    code = status.group(1) if status else None
+    if code is None:
+        for value in (body.get("status"), body.get("status_code"), body.get("statusCode"), err.get("code") if isinstance(err, dict) else None):
+            if isinstance(value, int) and 400 <= value < 600:
+                code = str(value)
+                break
+    if code is None:
+        # "GitHub API error 401: {...}": the status the node wrote just before this body, after anything it quoted.
+        before = _ERROR_STATUS.findall(text[objects[chosen - 1][1] if chosen else 0 : start])
+        code = before[-1] if before else None
+    if code:
+        extras.append(f"HTTP {code}")
+    return f"{said} ({', '.join(extras)})" if extras else said
+
+
+class FieldLabels(NamedTuple):
+    """How the connect form labels the fields a rejection is about, so a hint names the one to fix.
+
+    ``None`` for a field the form doesn't have; a hint about an address nobody typed would mislead.
+    """
+
+    secret: Optional[str]
+    address: Optional[str]
+
+
+def hint_for_rejection(error_text: Optional[str], labels: Optional[FieldLabels] = None) -> Optional[str]:
     """What a refusal usually means, from the shape of the error alone.
 
     Provider-agnostic on purpose: a node that knows more (a console host that
     is never the API host) says so in its own error text, and this line sits
-    under it. None when the text carries no recognisable shape — a hint that
-    guesses is worse than no hint.
+    under it. With ``labels`` (the credential's own form is known) it names the
+    field to fix by its label. None when the text carries no recognisable shape,
+    or names a field the form doesn't have: a hint that guesses is worse than
+    no hint.
     """
     low = (error_text or "").lower()
     if not low:
         return None
+    secret = labels.secret if labels else "key or token"
+    address = labels.address if labels else "host or server URL"
     if looks_like_web_page(low) or "web page instead of an api response" in low:
+        if not address:
+            return None
         return (
             "That address serves a web page, not an API. It is probably a sign-in "
-            "page or admin console — check the server URL."
+            f"page or admin console: check the {address}."
         )
     if "404" in low or "not found" in low or "no such host" in low or "name or service not known" in low:
-        return "Nothing answered at that address. Check the host or server URL for typos."
+        return f"Nothing answered at that address. Check the {address} for typos." if address else None
     if any(m in low for m in ("401", "invalid", "unauthorized", "unauthenticated", "not_authed", "authentication failed", "expired", "revoked")):
         return (
-            "The key or token was rejected. Copy it again from the provider — it may "
+            f"The {secret or 'credential'} was rejected. Copy it again from the provider: it may "
             "be truncated, expired or revoked."
         )
     if any(m in low for m in ("403", "forbidden", "permission", "missing_scope", "insufficient")):
-        return "The credential was recognised but refused. Check its permissions or scopes."
+        return f"The {secret or 'credential'} was recognised but refused. Check its permissions or scopes."
     return None
 
 
@@ -449,6 +531,7 @@ async def collect_evidence(
     organization_id: Optional[str] = None,
     workflow_id: Optional[str] = None,
     credential_data: Optional[Dict[str, Any]] = None,
+    labels: Optional[FieldLabels] = None,
 ) -> EvidenceResult:
     """Ask a provider to prove itself, and shape the answer for a human.
 
@@ -459,7 +542,9 @@ async def collect_evidence(
 
     Takes either a stored ``credential_id`` or the raw ``credential_data`` of a
     credential that is not saved yet — the connect flow proves a typed-in key
-    BEFORE storing it, so a dead key never becomes a row.
+    BEFORE storing it, so a dead key never becomes a row. ``labels`` (the
+    form's own, when the caller knows the credential class) let a rejection's
+    hint name the field to fix.
     """
     if credential_id is None and credential_data is None:
         raise ValueError("collect_evidence needs a credential_id or credential_data")
@@ -609,7 +694,7 @@ async def collect_evidence(
         text = redact_secrets(str(e))
         if _looks_like_auth_rejection(text):
             return EvidenceResult(
-                reachable=False, noun=spec.noun, error=text[:300], hint=hint_for_rejection(text)
+                reachable=False, noun=spec.noun, error=provider_message(text)[:300], hint=hint_for_rejection(text, labels)
             )
         logger.info("[evidence] %s could not be judged: %s", node_type, text[:200])
         return EvidenceResult(reachable=None, noun=spec.noun)

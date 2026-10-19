@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 import logging
 import asyncio
 from contextvars import ContextVar
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union, get_args, get_origin
+from typing import Any, Dict, Iterable, List, Literal, Optional, Tuple, Union, get_args, get_origin
 
 import litellm
 
@@ -48,6 +48,9 @@ from coder.workflow.workflow_ops import (
     agent_message_error,
     deep_merge_config,
     drop_stale_agent_discriminator,
+    misplaced_agent_model,
+    rename_workflow_for_harness_switches,
+    switch_agent_harness,
     is_trigger_source,
     strip_agent_trigger_message_refs,
     strip_label_sidecars,
@@ -873,8 +876,8 @@ class NoClickMCPServer(DatabasePoolMixin):
         """Load workflow from database. Returns (workflow_data, error).
 
         Pass ``meta_out={}`` to also capture the row's ``updated_at`` (for the
-        optimistic-concurrency guard in _save_workflow) without polluting the
-        returned blob."""
+        optimistic-concurrency guard in _save_workflow) and ``name`` without
+        polluting the returned blob."""
         pool = await self.get_pool()
         if not pool:
             return None, "Database connection not available"
@@ -885,7 +888,7 @@ class NoClickMCPServer(DatabasePoolMixin):
                     return None, f"Workflow not found or access denied: {workflow_id}"
 
                 row = await conn.fetchrow(
-                    "SELECT workflow, updated_at FROM workflows WHERE id = $1",
+                    "SELECT workflow, updated_at, name FROM workflows WHERE id = $1",
                     uuid.UUID(workflow_id),
                 )
                 if not row:
@@ -896,6 +899,7 @@ class NoClickMCPServer(DatabasePoolMixin):
                 data.setdefault("edges", [])
                 if meta_out is not None:
                     meta_out["updated_at"] = row["updated_at"]
+                    meta_out["name"] = row["name"]
                 return data, None
         except Exception as e:
             logger.error(f"[MCP Server] Error loading workflow: {e}", exc_info=True)
@@ -904,13 +908,15 @@ class NoClickMCPServer(DatabasePoolMixin):
     async def _save_workflow(
         self, user_id: str, workflow_id: str, workflow_data: Dict[str, Any],
         expected_updated_at: Optional[Any] = None,
+        name: Optional[str] = None,
     ) -> Optional[str]:
         """Save workflow to database. Returns error string or None.
 
         S1: when ``expected_updated_at`` is provided, the write is compare-and-swap
         on ``updated_at`` — a concurrent canvas edit (YJS autosave) or another MCP
         call that changed the row since load loses with a 'conflict' error instead
-        of silently clobbering the other writer's changes."""
+        of silently clobbering the other writer's changes. ``name`` renames the
+        workflow in the same write."""
         pool = await self.get_pool()
         if not pool:
             return "Database connection not available"
@@ -924,9 +930,9 @@ class NoClickMCPServer(DatabasePoolMixin):
 
                 if expected_updated_at is not None:
                     result = await conn.execute(
-                        "UPDATE workflows SET workflow = $1, updated_at = NOW() "
+                        "UPDATE workflows SET workflow = $1, name = COALESCE($4, name), updated_at = NOW() "
                         "WHERE id = $2 AND updated_at = $3",
-                        workflow_data, uuid.UUID(workflow_id), expected_updated_at,
+                        workflow_data, uuid.UUID(workflow_id), expected_updated_at, name,
                     )
                     if result == "UPDATE 0":
                         exists = await conn.fetchval(
@@ -941,9 +947,11 @@ class NoClickMCPServer(DatabasePoolMixin):
                     return None
 
                 result = await conn.execute(
-                    "UPDATE workflows SET workflow = $1, updated_at = NOW() WHERE id = $2",
+                    "UPDATE workflows SET workflow = $1, name = COALESCE($3, name), updated_at = NOW() "
+                    "WHERE id = $2",
                     workflow_data,
                     uuid.UUID(workflow_id),
+                    name,
                 )
                 if result == "UPDATE 0":
                     return f"Workflow not found: {workflow_id}"
@@ -1470,6 +1478,12 @@ class NoClickMCPServer(DatabasePoolMixin):
 
         nodes = data["nodes"]
         edges = data["edges"]
+        from nodes.agent.config.harness_model_lists import AGENT_ZEN_MODEL_FIELDS
+
+        await self._read_model_catalog(nodes, [
+            *(op["attrs"].get(f) for op in parsed_ops for f in AGENT_ZEN_MODEL_FIELDS),
+            *(op.get("body") for op in parsed_ops if op["attrs"].get("field") in AGENT_ZEN_MODEL_FIELDS),
+        ])
         alias_map: Dict[str, str] = {}  # name → real node_id
         operations_log: List[dict] = []
         errors: List[dict] = []
@@ -1503,6 +1517,10 @@ class NoClickMCPServer(DatabasePoolMixin):
         input_requests: List[dict] = []
         # Per-call cache for credential autoselection lookups, keyed by node type
         cred_autoselect_cache: Dict[str, Optional[Dict[str, Any]]] = {}
+        # (old, new) harness of each agent an update moved — a scaffolded
+        # workflow's name follows them at the save.
+        harness_switches: List[Tuple[str, str]] = []
+        workflow_renamed: Optional[Dict[str, str]] = None
 
         def _resolve_id(ref: str) -> str:
             """Resolve an alias or pass through a real node id."""
@@ -1551,6 +1569,10 @@ class NoClickMCPServer(DatabasePoolMixin):
                 for k, v in attrs.items():
                     if k not in reserved:
                         config[k] = _coerce_field_value(node_type, operation, k, v)
+                if node_type == "agent":
+                    misplaced = misplaced_agent_model(config)
+                    if misplaced:
+                        raise ValueError(misplaced)
                 if operation:
                     # Detect discriminator field name for this node type
                     disc_field = get_discriminator_field(node_type)
@@ -1949,6 +1971,13 @@ class NoClickMCPServer(DatabasePoolMixin):
                         raise ValueError(f"agent_env_requested: {reqd_err}")
                     config_updates["agent_env_requested"] = reqd
 
+                # Judged before resolution, which would rewrite a model id the
+                # catalog doesn't offer into some other model.
+                if target_type == "agent":
+                    misplaced = misplaced_agent_model(config_updates)
+                    if misplaced:
+                        raise ValueError(misplaced)
+
                 # Inbound-email trigger: the chosen inbox name must be unique
                 # across all workflows. Validate + claim the reservation now
                 # (mirrors the FE email:reserve_address commit) so the AI can't
@@ -2054,7 +2083,11 @@ class NoClickMCPServer(DatabasePoolMixin):
                     ),
                     changed_keys=set(config_updates.keys()),
                     prior_config=existing_config,
+                    harness_prior=existing_config if node_type == "agent" else None,
                 )
+                harness_switch = (config_verdict or {}).get("harness_switch")
+                if harness_switch:
+                    harness_switches.append((harness_switch["from"], harness_switch["to"]))
 
                 # Builder parity: a model flip that lands on a BYOK harness
                 # auto-attaches the sole matching credential instead of only
@@ -2074,8 +2107,11 @@ class NoClickMCPServer(DatabasePoolMixin):
                 else:
                     target["config"] = merged
 
+                # The canvas merges config: a key this update removed goes out
+                # as None, which applyNodeUpdate deletes.
                 await self._emit_builder_event(user_id, workflow_id, "node_updated", {
-                    "nodeId": node_id, "config": merged,
+                    "nodeId": node_id,
+                    "config": {**{k: None for k in existing_config if k not in merged}, **merged},
                 })
                 affected_node_ids.add(node_id)
 
@@ -2900,11 +2936,15 @@ class NoClickMCPServer(DatabasePoolMixin):
                 user_id, workflow_id, "layout_applied", layout_data,
             )
 
+            renamed = rename_workflow_for_harness_switches(load_meta.get("name") or "", harness_switches)
             save_err = await self._save_workflow(
                 user_id, workflow_id, data, expected_updated_at=load_meta.get("updated_at"),
+                name=renamed,
             )
             if save_err:
                 return {"error": save_err, "operations": operations_log}
+            if renamed:
+                workflow_renamed = {"from": load_meta.get("name"), "to": renamed}
 
             # Deferred webhook lifecycle hooks — AFTER the save, so the
             # reconciler's desired-state read sees the graph these ops built.
@@ -2996,6 +3036,8 @@ class NoClickMCPServer(DatabasePoolMixin):
             "alias_map": alias_map,
             "errors": errors,
         }
+        if workflow_renamed:
+            response["workflow_renamed"] = workflow_renamed
 
         # Progressive disclosure: include operations for added node types
         if include_operations and added_node_types:
@@ -3141,6 +3183,19 @@ class NoClickMCPServer(DatabasePoolMixin):
 
         return response
 
+    @staticmethod
+    async def _read_model_catalog(nodes: List[Dict[str, Any]], written: Iterable[Any] = ()) -> None:
+        """Read models.dev off the event loop for the agents' Models, saved or
+        ``written``: writes and verdicts judge them against it synchronously
+        (``misplaced_agent_model``, ``agent_credential_requirement``)."""
+        from nodes.agent.config.harness_model_lists import AGENT_ZEN_MODEL_FIELDS, read_zen_catalog
+
+        await read_zen_catalog([
+            *(((n.get("data") or n).get("config") or {}).get(f) for n in nodes if n.get("type") == "agent"
+              for f in AGENT_ZEN_MODEL_FIELDS),
+            *written,
+        ])
+
     def _get_current_operation(self, node: Dict[str, Any]) -> Optional[str]:
         """Get the current operation value from a node's config."""
         config = node.get("config", {}) or {}
@@ -3254,11 +3309,17 @@ class NoClickMCPServer(DatabasePoolMixin):
         upstream_trigger_ids: Optional[set] = None,
         changed_keys: Optional[set] = None,
         prior_config: Optional[Dict[str, Any]] = None,
+        harness_prior: Optional[Dict[str, Any]] = None,
     ) -> Optional[Dict[str, Any]]:
         """Canonicalize + validate a merged node config IN PLACE, returning a
         structured verdict for the response — the MCP equivalent of the builder's
         shared configuration validation routine (resolve queryable enums → strip placeholder auth
         headers → Pydantic/JSX/placeholder validation → missing-required).
+
+        ``harness_prior`` is the whole config before an update: an agent the
+        update moved to another harness drops the old one's leftovers
+        (``switch_agent_harness``, judged on the resolved model), reported as
+        ``harness_switch``.
 
         Mutates *config*: queryable-enum values are rewritten to their canonical
         id, ``__label`` display-cache sidecars are dropped (the FE re-derives
@@ -3276,13 +3337,26 @@ class NoClickMCPServer(DatabasePoolMixin):
         # Sidecar strip applies to every AI write, provider-wired or not.
         strip_label_sidecars(config)
 
+        def _switch_harness() -> Optional[Dict[str, Any]]:
+            if harness_prior is None:
+                return None
+            switch = switch_agent_harness(
+                node_type, harness_prior, config,
+                label=config.get("label", ""), keep_label="label" in (changed_keys or ()),
+            )
+            if switch and switch.label:
+                config["label"] = switch.label
+            return switch.as_dict() if switch else None
+
         if is_provider or (self._CANVAS_ONLY_CONFIG_KEYS & set(config.keys())):
-            return None
+            harness_switch = _switch_harness()
+            return {"harness_switch": harness_switch} if harness_switch else None
 
         op = operation or "default"
 
         # C4: canonicalize queryable-enum fields (e.g. agent model) in place.
         resolutions = resolve_config_dict(get_operation_schema(node_type, op), config)
+        harness_switch = _switch_harness()
 
         # C4b: parse stringified-JSON values for structured fields in place,
         # then revert changed keys whose values are still wrong-typed.
@@ -3373,6 +3447,8 @@ class NoClickMCPServer(DatabasePoolMixin):
         res_lines = [line for r in resolutions for line in format_resolution_block(r)]
         if res_lines:
             verdict["resolutions"] = res_lines
+        if harness_switch:
+            verdict["harness_switch"] = harness_switch
         return verdict
 
     def _validate_references(
@@ -4263,6 +4339,7 @@ class NoClickMCPServer(DatabasePoolMixin):
                 return {"error": err}
             nodes = data["nodes"]
             edges = data["edges"]
+            await self._read_model_catalog(nodes)
             want = set(node_ids) if node_ids else None
             # Provider-session health for attached credentials (whatsapp_qr etc.) —
             # an attached-but-dead credential passes every config check while the

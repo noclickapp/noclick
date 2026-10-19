@@ -9,6 +9,8 @@ import logging
 import time
 import uuid
 from datetime import datetime
+from decimal import Decimal
+from collections import OrderedDict
 from typing import Dict, Callable, Any, ClassVar, Optional, List, Tuple
 
 from wss.schema import SocketIOHandler
@@ -20,12 +22,15 @@ from wss.receiver.client_events import (
     ListConversationsRequest, ResumeConversationRequest, DeleteConversationRequest,
     GetLatestConversationForWorkflowRequest, ListConversationsForAgentRequest,
 )
+from billing.exceptions import OwnerResolutionError, match_spend_cap
+from utils.access_control import Permission, check_resource_access
 from utils.database_pool import DatabasePoolMixin
 from utils.credentials import get_workflow_owner_id, authorize_credentials_for_workflow
+from repositories.credentials import listed_to_owner_sql
 from coder.workflow.agentic import AgenticBuilder, AgenticBuilderConfig
 from coder.workflow.agentic.commands import PlatformOps
 from coder.workflow.agentic.name_generator import generate_workflow_name
-from coder.workflow.workflow_ops import preserve_existing_credentials
+from coder.workflow.workflow_ops import preserve_existing_credentials, rename_workflow_for_harness_switches
 from utils.cancellation import (
     CancelScope,
     register_builder_scope,
@@ -33,17 +38,46 @@ from utils.cancellation import (
 )
 from coder.workflow import resume_checkpoint
 from coder.workflow.builder_events import BuilderStreamEvent
-from coder.workflow.builder_config import missing_brain_key, resolve_brain_model
+from coder.workflow.builder_config import missing_brain_key
 from coder.workflow.agentic.builder import NODE_METADATA_KEYS, USER_INPUT_MARKER
-from coder.workflow.agentic.state import PendingAsk
+from coder.workflow.agentic.state import INPUT_DISMISSED_MARKER, PendingAsk
 from coder.workflow.graph_state import GraphState
+# Session-debug capture is a platform capability; without one these are no-ops.
+from utils.capabilities import (
+    ACTIVITY_SIGNAL, BUILDER_ASK_NOTIFY, BUILDER_RESULT_NOTIFY, BUILDER_STEP_NOTIFY, DEBUG_CAPTURE, PLAN_GATE_ALERT,
+    PUBLIC_ENDPOINTS, capability,
+)
+
+# A skipped <ask>, as the brain reads it. A prompt with a strongly worded
+# no-re-ask: replace_pending=True stops re-asks stacking, but a brain told only
+# that would still spend a turn asking again.
+INPUT_DISMISSED_ANSWER = (
+    f"{INPUT_DISMISSED_MARKER}\n"
+    "The user declined to provide this input. Do NOT re-ask for "
+    "the same information. Either continue the workflow without "
+    "what was asked for (skipping the affected step if necessary), "
+    "or finish: say briefly what couldn't be completed and end with <done/>."
+)
 
 
+def get_debug_handler():
+    capture = capability(DEBUG_CAPTURE)
+    return capture.handler() if capture else None
 
+
+def get_debug_user_context(*args, **kwargs):
+    capture = capability(DEBUG_CAPTURE)
+    return capture.user_context(*args, **kwargs) if capture else None
+from repositories.skills import (
+    LoadedSkill,
+    SkillDescriptor,
+    SkillRepo,
+)
 from utils.slack import send_activity_notification_background, extract_user_name
+from utils.internal_users import is_internal_user
 from utils.analytics import log_activity_background
 from utils.analytics_events import Events
-from repositories.workflow import WorkflowRepo
+from repositories.workflow import PLACEHOLDER_WORKFLOW_NAMES, WorkflowRepo
 from repositories.organization import OrgRepo
 from repositories.conversation import ConversationRepo
 
@@ -110,41 +144,181 @@ def merge_builder_run_graph(
     return nodes, normalized_edges
 
 
-async def create_workflow_as_user(pool, user_id: str, *, name: str, description: str) -> Dict[str, Any]:
-    """Create an empty workflow owned by ``user_id`` in their current org context,
-    shared with the org when there is one, under the plan's workflow cap. The
-    builder's ``create_workflow`` op and the account coordinator both use it."""
-    from billing.plan_limits import check_workflow_limit, get_user_tier_from_db
-    from wss.handlers.workflow_handler import get_user_org_context
+BUILDER_NOT_SIGNED_IN = "Sign in to use the AI builder."
+BUILDER_NO_EDIT_ACCESS = "You don't have edit access to this workflow."
+BUILDER_FOREIGN_CONVERSATION = "This chat belongs to another account. Start a new chat."
+BUILDER_INVALID_CONVERSATION = "This chat can't be started here. Start a new chat."
+BUILDER_GATE_UNAVAILABLE = "The AI builder couldn't check your account just now. Try again in a moment."
+
+# What a socket request's user_context may carry: what the canvas tells the
+# builder about itself. The keys that route a run's outcome to an agent, the
+# coordinator or a build request are set only by the server's own callers.
+CLIENT_USER_CONTEXT_KEYS = frozenset({"workflow_id", "workflow_name", "has_workflow", "inner_tab", "selected_node_id", "theme"})
+
+
+async def builder_organization_id(pool, user_id: str, workflow_id: Optional[str]) -> Optional[str]:
+    """The organization AI builder work on ``workflow_id`` bills to, so its owner
+    is gated and charged (Owner Pays) as for every workflow charge: the
+    workflow's, once ``user_id`` can edit it; None (``user_id`` pays) for no
+    workflow or one they can only view or not open. A failed read raises, so
+    org work never bills the member by default."""
+    if not workflow_id:
+        return None
+    from utils.access_control import Permission, check_resource_access
 
     async with pool.acquire() as conn:
-        org_id = await get_user_org_context(conn, user_id)
-        user_tier = await get_user_tier_from_db(conn, user_id)
-        can_create, limit_error = await check_workflow_limit(conn, user_id, user_tier)
-        if not can_create:
-            return {"error": limit_error}
-        repo = WorkflowRepo(pool)
-        workflow_id = await repo.create_workflow_builder(
-            conn,
-            name=name,
-            description=description,
-            owner_id=uuid.UUID(user_id),
-            organization_id=uuid.UUID(org_id) if org_id else None,
-            workflow_data={"nodes": [], "edges": []},
-        )
-        if org_id:
-            await repo.insert_workflow_org_share(
-                conn,
-                workflow_id=workflow_id,
-                organization_id=uuid.UUID(org_id),
-                permission='edit',
-                shared_by=uuid.UUID(user_id),
+        access = await check_resource_access(conn, user_id, "workflow", str(workflow_id))
+        if access.permission not in (Permission.OWNER, Permission.EDIT):
+            return None
+        return await WorkflowRepo(pool).get_organization_id(conn, str(workflow_id))
+
+
+async def builder_limit_error(user_id: str, organization_id: Optional[str] = None, *, pool=None) -> Optional[str]:
+    """Why the AI builder's credit gate refuses this work now, or None, on the
+    pool it bills to (``plan_limits.ai_builder_limit_error``). A spend gate
+    fails closed: a check that errors refuses the work."""
+    from billing.plan_limits import ai_builder_limit_error
+    from utils.database_pool import get_native_pool
+
+    try:
+        return await ai_builder_limit_error(pool or get_native_pool(), user_id, organization_id)
+    except Exception:
+        logger.exception("[WorkflowBuilder] AI builder credit gate failed for %s (org %s)", user_id, organization_id)
+        return BUILDER_GATE_UNAVAILABLE
+
+
+async def builder_gate(pool, user_id: str, workflow_id: Optional[str]) -> Tuple[Optional[str], Optional[str]]:
+    """The organization a builder turn on ``workflow_id`` bills to, and why its
+    credit gate refuses the turn now (None: it may run). Fails closed: a payer
+    that can't be read refuses the turn rather than bill the member."""
+    try:
+        organization_id = await builder_organization_id(pool, user_id, workflow_id)
+    except Exception:
+        logger.exception("[WorkflowBuilder] AI builder payer lookup failed for %s on %s", user_id, workflow_id)
+        return None, BUILDER_GATE_UNAVAILABLE
+    return organization_id, await builder_limit_error(user_id, organization_id, pool=pool)
+
+
+async def charge_builder_usage(
+    user_id: str, provider_cost: Optional[float], total_tokens: int, model: Optional[str], generation_id: str,
+    *, sio=None, sid: Optional[str] = None, organization_id: Optional[str] = None,
+) -> None:
+    """Charge AI builder work (a builder turn, an autofill) against the user's
+    credit budget: its raw LLM cost with the AI builder adjustment applied at
+    write time. ``sid`` only targets the realtime ``usage:event`` push.
+
+    Record-everything policy: only skip when no cost could be determined at
+    all (None). A genuinely-zero cost still gets a row. Negative is a data bug;
+    log and skip to keep the SUM safe.
+    """
+    try:
+        from billing.markup import apply_ai_builder_markup
+        from billing.schema import UsageEventData
+        from billing.usage_tracker import usage_tracker
+
+        if provider_cost is None:
+            return
+        if provider_cost < 0:
+            logger.warning(
+                f"[WorkflowBuilder] Negative provider_cost for user={user_id}, "
+                f"generation={generation_id}: {provider_cost}; skipping"
             )
-    return {"success": True, "workflow_id": str(workflow_id), "name": name}
+            return
+
+        total_cost = apply_ai_builder_markup(Decimal(str(provider_cost)))
+
+        # usage_subtype is a fixed name, so usage lists show the builder
+        # rather than the model it ran on; the model is kept in metadata.
+        event = UsageEventData(
+            user_id=user_id,
+            total_cost=total_cost,
+            cost_usd=Decimal(str(provider_cost)),
+            usage_type='ai_builder',
+            # Versioned sentinel ('-1' suffix lets us bump if we ever
+            # need to differentiate cohorts post-major-prompt-changes
+            # without losing the privacy property).
+            usage_subtype='noclick/builder-1',
+            quantity=Decimal(str(total_tokens or 0)),
+            unit_type='tokens',
+            user_resource=False,  # NoClick-paid keys; informational only here
+            organization_id=organization_id,
+            metadata={
+                'generation_id': generation_id,
+                # Private to BE — kept for cost reconciliation, not surfaced via API.
+                '_internal_model': model or 'unknown',
+            },
+        )
+        await usage_tracker.track_usage_event(event, sio=sio, sid=sid)
+        logger.info(
+            f"[WorkflowBuilder] Charged AI builder usage: user={user_id}, "
+            f"provider_cost=${provider_cost:.6f}, charged=${total_cost:.6f}, model={model}"
+        )
+    except OwnerResolutionError as e:
+        # The work ran and has no payer: never a quiet "no usage row".
+        logger.critical(f"[WorkflowBuilder] AI builder usage NOT recorded — its organization's owner can't be "
+                        f"resolved ({e}); cost incurred but unbilled: {event.model_dump_json()}")
+    except Exception as e:
+        logger.error(f"[WorkflowBuilder] Failed to record builder usage event: {e}", exc_info=True)
+
+
+def _alert_plan_gate(session: Optional[Dict[str, Any]], gate: str, details: Dict[str, Any], *, refusal: str) -> None:
+    """A builder run refused at the credit gate, as a plan-gate signal to whoever runs this instance; never a
+    failed read, or the spending cap the owner set (no plan lifts it)."""
+    if refusal == BUILDER_GATE_UNAVAILABLE or match_spend_cap(refusal):
+        return
+    alert = capability(PLAN_GATE_ALERT)
+    if alert is not None:
+        alert((session or {}).get('user_data', {}), gate, details)
+
+
+class _RunState:
+    """What the handler keeps about one run while it streams: an id its steps carry (a run that starts again under the
+    same generation numbers its batches from 1 again), how much of its text it has sent, in UTF-16 units as the
+    browser counts it (so a turn's mark says where its words begin), and its last status line to whatever follows the
+    run, with that send in flight (so lines land in order, each once)."""
+
+    __slots__ = ("id", "text_sent", "said", "tail")
+
+    def __init__(self) -> None:
+        self.id = uuid.uuid4().hex[:12]
+        self.text_sent = 0
+        self.said: Optional[Tuple[str, Tuple[str, ...]]] = None
+        self.tail: Optional[asyncio.Task] = None
+
+
+def _n8n_import_node_count(request) -> Optional[int]:
+    """How many steps an n8n workflow the request imports has; None when it imports none."""
+    return len(request.n8n_workflow.get('nodes') or []) if request.n8n_workflow else None
+
+
+def _request_row(request) -> Dict[str, Any]:
+    """A run's request as its chat keeps it. An import's request is a sentence; the workflow it imports went in a
+    field of its own, so the row says it was an import (never a request to send again as it is)."""
+    row: Dict[str, Any] = {"role": "user", "message": request.edit_prompt}
+    count = _n8n_import_node_count(request)
+    if count is not None:
+        row["n8n_import"] = {"node_count": count}
+    return row
+
+
+# Runs this process is streaming, by generation id; the oldest go first once there are too many to keep.
+_RUNS: "OrderedDict[str, _RunState]" = OrderedDict()
+_MAX_RUNS = 512
+
+
+def _run_state(generation_id: str) -> _RunState:
+    run = _RUNS.pop(generation_id, None) or _RunState()
+    _RUNS[generation_id] = run
+    while len(_RUNS) > _MAX_RUNS:
+        _RUNS.popitem(last=False)
+    return run
 
 
 class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
     """Handler for AI-powered workflow editing via AgenticBuilder."""
+
+    # Track call index for debug events within a session
+    _call_index: int = 0
 
     # Map active gen_id → originating ChatMessageRequest.request_id so that
     # text_chunk/status frames (which only know gen_id) can echo the
@@ -165,6 +339,83 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         except (ValueError, AttributeError):
             return False
 
+    async def _access_refusal(
+        self, user_id: Optional[str], workflow_id: Optional[str], conversation_id: Optional[str],
+        *, from_client: bool = False,
+    ) -> Optional[str]:
+        """Why ``user_id`` may not run the builder on this workflow and
+        conversation, or None. A run saves the workflow's graph, reads its
+        stored outputs and settings, and runs its shell in the workflow's org
+        workspace on that org's pool, so its caller must be able to edit the
+        workflow (the rule ``workflow:update`` saves by); the conversation it
+        writes must be theirs or new. A new one a client names must be an id a
+        client mints (a UUID): every other form is the server's to mint, and a
+        client starting one would hold the thread an agent or the coordinator
+        later writes to. A check that errors refuses."""
+        if not user_id:
+            return BUILDER_NOT_SIGNED_IN
+        try:
+            pool = await self.get_pool()
+            if workflow_id:
+                if not self._is_valid_uuid(str(workflow_id)):
+                    return BUILDER_NO_EDIT_ACCESS
+                async with pool.acquire() as conn:
+                    access = await check_resource_access(conn, user_id, "workflow", str(workflow_id))
+                if access.permission not in (Permission.EDIT, Permission.OWNER):
+                    return access.edit_refusal(BUILDER_NO_EDIT_ACCESS)
+            if conversation_id:
+                owner_id = await ConversationRepo(pool).owner_id(conversation_id)
+                if owner_id is not None and owner_id != str(user_id):
+                    return BUILDER_FOREIGN_CONVERSATION
+                if owner_id is None and from_client and not self._is_valid_uuid(conversation_id):
+                    return BUILDER_INVALID_CONVERSATION
+        except Exception:
+            logger.exception("[WorkflowBuilder] access check failed for %s on %s", user_id, workflow_id)
+            return BUILDER_GATE_UNAVAILABLE
+        return None
+
+    async def _refuse_run(self, sid: str, request_id: Optional[str], generation_id: str, error: str) -> None:
+        """Answer a refused run on both keys the FE listens on: the request's
+        (sendEventAsync) and the generation's (the canvas edit stream). A
+        headless resume carries no request id."""
+        if request_id:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request_id, data={'success': False}, error=error,
+            ))
+        await send_event(self.sio, sid, ResponseEvent(
+            request_id=generation_id, data={'success': False, 'event_type': 'error'}, error=error,
+        ))
+
+    def _create_skill_provider(self, user_id: str) -> Callable[[], Any]:
+        """
+        Build the (sync) callable that AgenticBuilder's P0 pass invokes each
+        turn to get (a) the user's currently-accessible skill descriptors and
+        (b) a body loader for the IDs P0 picks. Both lazily acquire fresh DB
+        connections so the closure stays trivially safe to call from anywhere.
+
+        The builder is internal infrastructure — system skills are loaded
+        regardless of whether the user is internal-staff (the `is_internal=True`
+        flag here governs visibility, not the agent's loading rights).
+        """
+        async def provider():
+            pool = await self.get_pool()
+            if not pool:
+                return None
+            repo = SkillRepo(pool)
+            skills = await repo.accessible_skills(
+                user_id, is_internal=True,
+                include_disabled=False, include_muted=False,
+            )
+
+            async def body_loader(skill_ids: List[str]) -> List[LoadedSkill]:
+                pool_inner = await self.get_pool()
+                if not pool_inner:
+                    return []
+                return await SkillRepo(pool_inner).load_bodies(skill_ids)
+
+            return skills, body_loader
+
+        return provider
 
     def _create_platform_ops(self, user_id: str, sid: str, workflow_id: str | None = None) -> PlatformOps:
         """Create platform ops implementation with DB and socket access for the agentic builder."""
@@ -215,6 +466,18 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 from utils.credential_health import fetch_credential_health_for_ids
                 return await fetch_credential_health_for_ids(pool, credential_ids)
 
+            async def fetch_public_endpoints(
+                self, mint_hosted_mcp_node_ids: List[str]
+            ) -> Dict[str, Dict[str, Any]]:
+                fetch = capability(PUBLIC_ENDPOINTS)
+                pool = await handler.get_pool()
+                if fetch is None or not pool or not wf_id:
+                    return {}
+                return await fetch(
+                    pool, wf_id,
+                    mint_hosted_for=mint_hosted_mcp_node_ids,
+                    user_id=user_id,
+                )
 
             async def run_node(self, node_id: str, include_downstream: bool = False) -> Dict[str, Any]:
                 pool = await handler.get_pool()
@@ -309,7 +572,8 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                     from wss.handlers.workflow_handler import get_user_org_context
                     org_id = await get_user_org_context(conn, user_id)
                     conditions = [
-                        "(c.owner_id = $1 OR us.id IS NOT NULL OR ($2::uuid IS NOT NULL AND os.id IS NOT NULL))"
+                        "(c.owner_id = $1 OR us.id IS NOT NULL OR ($2::uuid IS NOT NULL AND os.id IS NOT NULL))",
+                        listed_to_owner_sql(),
                     ]
                     params: list = [uuid.UUID(user_id), uuid.UUID(org_id) if org_id else None]
                     idx = 3
@@ -453,6 +717,8 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 return {"success": True, "workflow_id": workflow_id}
 
             async def create_workflow(self, name: str, description: str) -> Dict[str, Any]:
+                from wss.handlers.workflow_handler import create_workflow_as_user
+
                 pool = await handler.get_pool()
                 if not pool:
                     return {"error": "Database not available"}
@@ -535,24 +801,11 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 pool = await handler.get_pool()
                 if not pool:
                     return {"error": "Database not available"}
+                from wss.handlers.folder_handler import move_workflow_for_user
+
                 async with pool.acquire() as conn:
-                    from utils.access_control import check_resource_access
-                    access = await check_resource_access(conn, user_id, "workflow", workflow_id)
-                    if not access.has_access:
-                        return {"error": "Workflow not found or access denied"}
-                    repo = WorkflowRepo(pool)
-                    if folder_id:
-                        has_access = await OrgRepo(pool).can_access_folder(
-                            conn, uuid.UUID(user_id), uuid.UUID(folder_id),
-                        )
-                        if not has_access:
-                            return {"error": "Target folder not found or access denied"}
-                    await repo.set_workflow_folder(
-                        conn,
-                        uuid.UUID(workflow_id),
-                        uuid.UUID(folder_id) if folder_id else None,
-                    )
-                return {"success": True}
+                    error = await move_workflow_for_user(conn, user_id, workflow_id, folder_id)
+                return {"error": error} if error else {"success": True}
 
         return _HandlerPlatformOps()
 
@@ -562,38 +815,46 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         user_id: str,
         workflow_id: str,
         prompt: str,
-        placeholder_only: bool = False,
     ) -> None:
         """
-        Generate a short name + description for a freshly-created empty workflow
+        Generate a short name + description for a workflow nobody has named
+        yet (its name is still a placeholder, ``PLACEHOLDER_WORKFLOW_NAMES``)
         using a cheap LLM call, persist to the workflows row, and broadcast the
-        rename to the initiating client.
+        rename to the initiating client. A name its creator gave (the platform
+        API's, the app's) is never replaced, and no naming call is paid for.
 
         Fire-and-forget — any failure stays silent so the placeholder name
-        (prompt slice written by WorkflowCreator) remains in place.
-
-        placeholder_only: retry path for later turns (the first turn's naming
-        call can blow its LLM budget and fail silently, stranding "Untitled"
-        forever — a 2026-07 workflow-naming incident). The rename then only lands if
-        the name is still a default placeholder, so a user-typed name wins.
+        remains in place, and a later turn tries again (the first turn's
+        naming call can blow its LLM budget and fail silently, stranding
+        "Untitled" forever — a 2026-07 workflow-naming incident).
         """
-        try:
-            result = await generate_workflow_name(prompt)
-            if not result:
-                return
-            name, description = result
+        async def charge(model: str, response) -> None:
+            try:
+                await self._charge_naming_call(user_id, workflow_id, model, response, sid)
+            except asyncio.CancelledError:
+                logger.critical(f"[WorkflowBuilder:name] naming call for {workflow_id} (user {user_id}) not billed: "
+                                f"the process stopped before it was charged (generation {getattr(response, 'id', None)})")
+                raise
+            except Exception as e:  # the rename still lands; the unbilled call is named
+                logger.error(f"[WorkflowBuilder:name] naming call for {workflow_id} not billed: {e}", exc_info=True)
 
+        try:
             pool = await self.get_pool()
             if not pool:
                 logger.warning("[WorkflowBuilder:name] No DB pool; skipping rename")
                 return
+            repo = WorkflowRepo(pool)
+            if not await repo.has_placeholder_name(workflow_id, user_id):
+                return
 
-            row = await WorkflowRepo(pool).rename_workflow_if_owner(
-                workflow_id, name, description, user_id,
-                placeholder_only=placeholder_only,
-            )
+            result = await generate_workflow_name(prompt, charge=charge)
+            if not result:
+                return
+            name, description = result
+
+            row = await repo.rename_workflow_if_owner(workflow_id, name, description, user_id)
             if not row:
-                logger.info(f"[WorkflowBuilder:name] No ownership row for {workflow_id}; skipping rename")
+                logger.info(f"[WorkflowBuilder:name] {workflow_id} was named meanwhile, or isn't {user_id}'s")
                 return
 
             logger.info(f"[WorkflowBuilder:name] Renamed {workflow_id} → '{name}'")
@@ -608,6 +869,28 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             )
         except Exception as e:
             logger.warning(f"[WorkflowBuilder:name] Background rename failed for {workflow_id}: {e}")
+
+    async def _charge_naming_call(self, user_id: str, workflow_id: str, model: str, response, sid: str) -> None:
+        """Charge the account the workflow bills to (its org's owner, by Owner
+        Pays) for one naming call: as ``ai_usage`` at its cost, reported or
+        from OpenRouter's record of it; priced nowhere, it's logged CRITICAL."""
+        from coder.openai_agent.litellm_model import extract_cost_from_response
+        from utils.media_generation import bill_openrouter
+        from utils.openrouter_cost import CostUnknown, generation_id_of, settle
+
+        try:
+            dollars = await settle(*extract_cost_from_response(response), generation_id_of(response))
+        except CostUnknown as exc:
+            logger.critical(f"[WorkflowBuilder:name] naming call not billed, its cost is unknown "
+                            f"(user {user_id}, workflow {workflow_id}): {exc}")
+            return
+        organization_id = await builder_organization_id(await self.get_pool(), user_id, workflow_id)
+        usage = getattr(response, "usage", None)
+        await bill_openrouter(
+            user_id=user_id, organization_id=organization_id, model=model, dollars=dollars, user_resource=False,
+            quantity=Decimal(str(getattr(usage, "total_tokens", 0) or 0)), unit_type="tokens",
+            metadata={"surface": "workflow_name", "workflow_id": workflow_id}, sio=self.sio, sid=sid,
+        )
 
     def _summarize_graph(self, graph: Dict[str, Any]) -> Dict[str, Any]:
         """Create a summary of a workflow graph for analytics storage."""
@@ -637,56 +920,64 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         sid: Optional[str] = None,
         organization_id: Optional[str] = None,
     ) -> None:
-        """Record one builder turn through the installation's usage-policy seam.
+        """Charge an AI builder turn (``charge_builder_usage``). provider_cost
+        is the raw LLM $ cost accumulated across all passes for the turn
+        (builder._total_cost), with NO markup applied yet."""
+        await charge_builder_usage(user_id, provider_cost, total_tokens, model, generation_id,
+                                   sio=self.sio, sid=sid, organization_id=organization_id)
 
-        The operator policy owns any adjustment and attribution. A missing
-        value is skipped, while zero is retained as an auditable event.
-        """
-        try:
-            from decimal import Decimal
-            from billing.markup import apply_ai_builder_markup
-            from billing.schema import UsageEventData
-            from billing.usage_tracker import usage_tracker
+    def _store_build_request(
+        self,
+        user_id: str,
+        request_type: str,
+        prompt: str,
+        model: Optional[str],
+        generation_id: str,
+        success: bool,
+        error_message: Optional[str] = None,
+        result_graph: Optional[Dict[str, Any]] = None,
+        result_summary: Optional[Dict[str, Any]] = None,
+        duration_ms: Optional[int] = None,
+        current_graph: Optional[Dict[str, Any]] = None,
+        current_graph_summary: Optional[Dict[str, Any]] = None,
+        target_node_ids: Optional[List[str]] = None,
+        selected_node_id: Optional[str] = None,
+    ) -> None:
+        """Store a workflow build request for analytics (fire-and-forget).
 
-            # Record-everything policy: only skip when the caller couldn't
-            # determine a cost at all (None). A genuinely-zero cost still
-            # gets a row — useful for audit ("this builder turn happened,
-            # provider just didn't charge for it") and avoids the appearance
-            # of silently dropping events. Negative is a data bug; log and
-            # skip to keep the SUM safe.
-            if provider_cost is None:
-                return
-            if provider_cost < 0:
-                logger.warning(
-                    f"[WorkflowBuilder] Negative provider_cost for user={user_id}, "
-                    f"generation={generation_id}: {provider_cost}; skipping"
+        Spawns the actual INSERT via WorkflowRepo so the caller (which
+        invokes this without await) doesn't block. Any DB error stays
+        silent so analytics never breaks the main flow."""
+        async def _do_insert() -> None:
+            try:
+                pool = await self.get_pool()
+                if not pool:
+                    return
+                await WorkflowRepo(pool).insert_build_request_pool(
+                    user_id=user_id,
+                    request_type=request_type,
+                    prompt=prompt,
+                    model=model,
+                    generation_id=generation_id,
+                    success=success,
+                    error_message=error_message,
+                    result_graph=result_graph,
+                    result_summary=result_summary,
+                    duration_ms=duration_ms,
+                    current_graph=current_graph,
+                    current_graph_summary=current_graph_summary,
+                    target_node_ids=target_node_ids,
+                    selected_node_id=selected_node_id,
                 )
-                return
+                logger.debug(f"[WorkflowBuilder] Stored build request {generation_id}")
+            except Exception as e:
+                logger.warning(f"[WorkflowBuilder] Failed to store build request: {e}")
 
-            total_cost = apply_ai_builder_markup(Decimal(str(provider_cost)))
-            # Use a stable, provider-neutral subtype for aggregate reporting.
-            event = UsageEventData(
-                user_id=user_id,
-                total_cost=total_cost,
-                usage_type='ai_builder',
-                usage_subtype='builder/turn',
-                quantity=Decimal(str(total_tokens or 0)),
-                unit_type='tokens',
-                user_resource=False,  # installation-provided credentials
-                organization_id=organization_id,
-                metadata={
-                    'generation_id': generation_id,
-                    'model': model or 'unknown',
-                },
-            )
-            await usage_tracker.track_usage_event(event, sio=self.sio, sid=sid)
-            logger.info(
-                f"[WorkflowBuilder] Recorded builder usage: user={user_id}, "
-                f"value={total_cost:.6f}, model={model}"
-            )
+        try:
+            from utils.async_helpers import spawn
+            spawn(_do_insert(), name=f"store-build-request:{generation_id}")
         except Exception as e:
-            logger.warning(f"[WorkflowBuilder] Failed to record builder usage event: {e}")
-
+            logger.warning(f"[WorkflowBuilder] Failed to spawn build-request write: {e}")
 
     # Event types that represent graph mutations (for editSegments accumulation)
     _GRAPH_EVENT_TYPES = frozenset({
@@ -956,6 +1247,11 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                     prior_asst["cancelled"] = True
                 else:
                     prior_asst.pop("cancelled", None)
+                for flag in ("incomplete", "incomplete_reason"):
+                    if new_asst.get(flag):
+                        prior_asst[flag] = new_asst[flag]
+                    else:
+                        prior_asst.pop(flag, None)
                 existing = existing[:-2]
                 new_messages = [prior_user, prior_asst]
             else:
@@ -989,6 +1285,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             "workflow:builder:list_pending": self.handle_list_pending,
             "workflow:builder:share_ask": self.handle_share_ask,
             "workflow:builder:usage": self.get_credit_usage,
+            "workflow:builder:client_timing": self.handle_client_timing,
             "conversations:list": self.handle_list_conversations,
             "conversation:resume": self.handle_resume_conversation,
             "conversation:delete": self.handle_delete_conversation,
@@ -996,14 +1293,65 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             "conversation:list_for_agent": self.handle_list_conversations_for_agent,
         }
 
+    @staticmethod
+    def _paused_request(events: List[Dict[str, Any]]) -> str:
+        """The request of the turn a chat paused on: its last. The resumed run goes on with it, and the turn it
+        saves continues that one (a chat's first request would replace it)."""
+        for msg in reversed(events):
+            if msg.get("role") == "user" and msg.get("message"):
+                return msg["message"]
+        return ""
+
+    async def handle_client_timing(self, sid: str, data: dict) -> None:
+        """Receive BE→FE wire latency reported back from the browser.
+
+        The FE measures Date.now() - emit_at_ms on the FIRST text_chunk per
+        gen and posts it here so the SessionViewer's per-session "client
+        timing" surface can attribute "the LLM was fast but the user saw
+        nothing for N seconds" delays to wire / event-loop / rendering.
+
+        Logged via a fresh SessionLogger keyed by the same conversation_id
+        the builder writes under, so the JSONL line appends to the right
+        file without needing to find the live worker process. Fire-and-
+        forget — telemetry never holds up the FE event loop.
+        """
+        try:
+            conversation_id = data.get('conversation_id')
+            generation_id = data.get('generation_id') or data.get('gen_id')
+            if not conversation_id or not generation_id:
+                return
+            first_chunk_wire_ms = data.get('first_chunk_wire_ms')
+            first_chunk_received_at_ms = data.get('first_chunk_received_at_ms')
+            # Construct a thin SessionLogger that just appends one line. The
+            # JSONL is keyed on conversation_id so the line lands in the
+            # right file regardless of which process owns the builder.
+            from coder.workflow.session_logger import SessionLogger
+            sl = SessionLogger(
+                generation_id=str(generation_id),
+                conversation_id=str(conversation_id),
+            )
+            sl.log_client_timing(
+                first_chunk_wire_ms=(
+                    float(first_chunk_wire_ms) if first_chunk_wire_ms is not None else None
+                ),
+                first_chunk_received_at_ms=(
+                    int(first_chunk_received_at_ms) if first_chunk_received_at_ms is not None else None
+                ),
+            )
+            sl.close()
+        except Exception as e:
+            # Pure telemetry path — never let a malformed FE post crash the
+            # socket handler. Debug-log so we can spot a regression in CI
+            # without polluting prod warnings.
+            logger.debug(f"[client_timing] write failed: {e}")
 
     async def handle_input_response(
         self, sid: str, data: dict, caller_user_id: Optional[str] = None,
     ) -> None:
         """Public entry — runs the resume turn inline on the asyncio loop.
 
-        Mirrors edit_workflow: the resume runs the same AgenticBuilder
-        builder, just seeded with the user's <ask/> answer.
+        Mirrors edit_workflow: the resume runs the same AgenticBuilder,
+        just seeded with the user's <ask/> answer.
         ``caller_user_id`` is the HEADLESS identity override (same seam as
         edit_workflow) — the builder input bridge resumes a parked run as the
         workflow owner with an empty sid; empty-sid emits are dropped by
@@ -1019,16 +1367,23 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 user_id = caller_user_id or (session or {}).get('user_id')
                 if not user_id:
                     raise ValueError("Not authenticated")
-                await resume_request(self, sid, data, user_id)
+
+                async def taken():
+                    if data.get('request_id'):
+                        await send_event(self.sio, sid, ResponseEvent(request_id=data['request_id'], data={'success': True}))
+
+                # Answered once taken; the build that follows is the request's to report.
+                await resume_request(self, sid, {**data, 'request_id': None}, user_id, taken=taken)
             else:
                 await self._handle_input_response_impl(sid, data, caller_user_id=caller_user_id)
         except Exception as e:
             logger.exception("[BuilderHandler] inline input_response failed: %s", e)
-            await send_event(self.sio, sid, ResponseEvent(
-                request_id=data.get('request_id'),
-                data={'success': False},
-                error=f"Input response failed: {e}",
-            ))
+            if data.get('request_id'):  # a headless resume has none to answer
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=data.get('request_id'),
+                    data={'success': False},
+                    error=f"Input response failed: {e}",
+                ))
 
     async def _handle_input_response_impl(
         self, sid: str, data: dict, caller_user_id: Optional[str] = None,
@@ -1074,30 +1429,24 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         generation_id = data.get('generation_id') or str(uuid.uuid4())
         request_id = data.get('request_id')
 
+        # The workflow this conversation builds, re-authorized on every resume:
+        # access can change while a run waits on its question.
+        pool = await self.get_pool()
+        workflow_id = await ConversationRepo(pool).get_workflow_id(conversation_id, user_id)
+        refusal = await self._access_refusal(user_id, workflow_id, conversation_id)
+        if refusal:
+            await self._refuse_run(sid, request_id, generation_id, refusal)
+            return
+
         # Gate the resume against the AI builder cap — resuming a paused-on-ask
-        # conversation drives a full builder turn, so it must consume a credit.
-        try:
-            pool = await self.get_pool()
-            if pool:
-                async with pool.acquire() as conn:
-                    from billing.plan_limits import check_ai_builder_limit
-                    can_use, limit_error = await check_ai_builder_limit(conn, user_id)
-                    if not can_use:
-                        await send_event(self.sio, sid, ResponseEvent(
-                            request_id=request_id,
-                            data={'success': False},
-                            error=limit_error,
-                        ))
-                        await send_event(self.sio, sid, ResponseEvent(
-                            request_id=generation_id,
-                            data={'success': False, 'event_type': 'error'},
-                            error=limit_error,
-                        ))
-                        user_data = session.get('user_data', {}) if session else {}
-                        pass
-                        return
-        except Exception as e:
-            logger.warning(f"[WorkflowBuilder] AI builder limit check failed, proceeding: {e}")
+        # conversation drives a full builder turn, so it must consume a credit —
+        # on the pool the turn bills to (the workflow's organization's owner).
+        organization_id, limit_error = await builder_gate(pool, user_id, workflow_id)
+        if limit_error:
+            await self._refuse_run(sid, request_id, generation_id, limit_error)
+            _alert_plan_gate(session, "AI Builder Limit Hit (resume)", {"Conversation": str(conversation_id)},
+                             refusal=limit_error)
+            return
 
         # Load the conversation row + the trailing pending assistant.
         events = await self._read_conversation_events(conversation_id, user_id)
@@ -1131,14 +1480,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         except Exception:
             logger.warning("[WorkflowBuilder] bridge-link voiding failed", exc_info=True)
 
-        # Look up workflow_id and the original first-turn prompt for the synth request.
-        _conv_repo = ConversationRepo(await self.get_pool())
-        workflow_id = await _conv_repo.get_workflow_id(conversation_id, user_id)
-        original_prompt = ""
-        for msg in events:
-            if msg.get("role") == "user" and msg.get("message"):
-                original_prompt = msg["message"]
-                break
+        original_prompt = self._paused_request(events)
 
         # Fetch the current workflow graph so the brain's system prompt
         # reflects the post-pause state (nodes the brain added in the prior
@@ -1179,11 +1521,12 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         conversation_history = await self._load_conversation_history(conversation_id, user_id)
 
         start_time = time.time()
-        agentic_config = AgenticBuilderConfig(brain_model=resolve_brain_model())
+        agentic_config = AgenticBuilderConfig()
         model_used = agentic_config.brain_model
         # generation_id was resolved at the top of this method (before the cap
         # check) so the limit-error response can address it. The FE keys live
         # response listeners on it for THIS resume only.
+        debug_callback = self._create_debug_callback(sid, generation_id)
         platform_ops = self._create_platform_ops(
             user_id, sid, workflow_id=workflow_id,
         ) if user_id else None
@@ -1192,13 +1535,16 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         builder = AgenticBuilder(
             config=agentic_config,
             generation_id=generation_id,
+            debug_callback=debug_callback,
             platform_ops=platform_ops,
             conversation_id=conversation_id,
             workflow_id=workflow_id,
             user_id=user_id,
+            skill_provider=self._create_skill_provider(user_id),
             cancel_scope=cancel_scope,
+            billing_organization_id=organization_id,
         )
-        register_builder_scope(conversation_id, cancel_scope)
+        register_builder_scope(conversation_id, cancel_scope, user_id)
 
         # Active-gen lifecycle: a resume IS a fresh gen (per-resume gen_id).
         # The FE store registers it; deltas patch it; terminal evicts it.
@@ -1221,14 +1567,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         # prompt to be strongly worded so the brain doesn't waste a turn
         # immediately re-asking for the same thing.
         if dismissed:
-            answer_content = (
-                "[System: Input Request Dismissed]\n"
-                "The user declined to provide this input. Do NOT re-ask for "
-                "the same information. Either continue the workflow without "
-                "what was asked for (skipping the affected step if necessary), "
-                "or finalize with a brief explanation of what couldn't be "
-                "completed."
-            )
+            answer_content = INPUT_DISMISSED_ANSWER
         else:
             # Render the answered fields so the brain can attribute and apply
             # each one without guessing the opaque positional ask_i (B6) —
@@ -1466,8 +1805,24 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             ))
             return
 
+        # Autofill is the builder's own node drafting: the builder's gate and charge, on the workflow's payer.
+        user_id = session.get('user_id') if session else None
+        autofill_workflow_id = (request.current_graph or {}).get('workflow_id')
+        organization_id = (await builder_organization_id(await self.get_pool(), user_id, autofill_workflow_id)
+                           if user_id else None)
+        limit_error = await builder_limit_error(user_id, organization_id) if user_id else None
+        if limit_error:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id,
+                data={'success': False},
+                error=limit_error,
+            ))
+            return
+
+        debug_callback = self._create_debug_callback(sid, generation_id)
         processor = create_node_drafter(
             generation_id=generation_id,
+            debug_callback=debug_callback,
         )
         processor.graph_state = graph_state
         if request.user_prompt:
@@ -1478,16 +1833,14 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             ) or node.goal or node.label or ""
 
         # Write a session JSONL so session viewer can replay this autofill
-        # alongside full builder edits. Use the actual node drafting config from
-        # the node drafter; AgenticBuilderConfig can diverge between
-        # deployments and is not needed for single-node autofill.
-        autofill_workflow_id = (request.current_graph or {}).get('workflow_id')
+        # alongside full builder edits. The drafter names its own model;
+        # AgenticBuilderConfig is not needed for single-node autofill.
         session_log = SessionLogger(
             generation_id,
             workflow_id=autofill_workflow_id,
             user_id=session.get('user_id') if session else None,
         )
-        drafter_model = getattr(processor.config, 'model', '(installation default)')
+        drafter_model = processor.drafting_model
         session_log.log_session_start(
             mode=f"autofill_{request.mode}",
             prompt=processor.user_prompt or f"Autofill {request.mode} on {request.node_id}",
@@ -1498,6 +1851,16 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         )
         processor.session_log = session_log
 
+        try:
+            await self._autofill(sid, request, generation_id, graph_state, processor, session, session_log)
+        finally:
+            if user_id:
+                await charge_builder_usage(
+                    user_id, processor.accumulated_cost, processor.accumulated_tokens, drafter_model, generation_id,
+                    sio=self.sio, sid=sid, organization_id=organization_id,
+                )
+
+    async def _autofill(self, sid, request, generation_id, graph_state, processor, session, session_log) -> None:
         try:
             autofill_error: Optional[str] = None
             async for event in processor.autofill_node(
@@ -1654,15 +2017,30 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                     'period': 'day' if daily_cap is not None else 'month',
                     'monthly_used': usage['monthly_credits_used'],
                     'monthly_cap': usage['monthly_credit_cap'],
-                    # Server-provided next refresh for the primary credit window.
-                    # ISO 8601 when configured, otherwise None.
+                    # Expose topup_credits so the FE can tell whether the user
+                    # has an active recurring top-up subscription — TopUpModal
+                    # uses this to switch between the tier picker (no topup)
+                    # and the "manage existing" panel (topup > 0).
+                    'topup_credits': usage['topup_credits'],
+                    # Server-provided next refresh of the plan's credit window,
+                    # for the credit-limit banner countdown. ISO 8601, or None
+                    # with no plan period (FE falls back to calendar).
                     'next_refresh_at': usage.get('plan_credits_period_end'),
                     # Exact start of the current monthly plan window — the usage
                     # popover's period range can't derive it from the end alone
                     # (day-clamping on 29-31 billing anchors isn't invertible).
                     'plan_window_start': usage.get('plan_window_start'),
-                    # Live policy tier from the backend. Consumers may use it to
-                    # reconcile a stale tier claim in the current auth token.
+                    # The topup's next MONTHLY quota reset (≠ the raw coverage
+                    # end, which is a year out for yearly topups whose quota
+                    # still refills monthly). The popover shows it as the topup
+                    # renewal date and the credit-limit banner counts down to
+                    # the sooner of this and the plan refresh.
+                    'topup_next_reset_at': usage.get('topup_next_reset_at'),
+                    # The live tier from the backend (terminal — event-driven).
+                    # The FE compares this to its JWT-claimed tier and, if the JWT
+                    # is stale (claims paid, backend says free after a
+                    # subscription.deleted), forces a session refresh so the UI
+                    # downgrades promptly instead of waiting for the token TTL.
                     'effective_tier': usage['tier'],
                     # True when the numbers above reflect the org owner's
                     # pool rather than the caller's personal pool. Echoed
@@ -1670,16 +2048,83 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                     'is_org_credits': is_org_credits,
                     'organization_id': organization_id if is_org_credits else None,
                     # The user whose pool these numbers describe (= the billing
-                    # entity get_credit_usage summed: org owner under the configured attribution policy,
+                    # entity get_credit_usage summed: org owner under Owner Pays,
                     # else the caller). The chip matches live usage:event
                     # billing_user_id against this to deduct only charges that
                     # hit the displayed pool — including someone else's org pool.
                     'pool_user_id': billing_user_id,
+                    # The pool's dollar balance, drawn once the counters above
+                    # are spent (absent where nothing sells one).
+                    'balance_usd': usage.get('balance_usd'),
+                    # 'free_member' where the pool bills on Free/Member (usage at
+                    # cost; fee_rate is the plan's fee on funds added), else
+                    # 'legacy' (absent: no plans at all).
+                    'billing_model': usage.get('billing_model'),
+                    'fee_rate': usage.get('fee_rate'),
                 },
             ))
         except Exception as e:
             logger.warning(f"[WorkflowBuilder] Failed to fetch credit usage: {e}")
 
+    def _create_debug_callback(self, sid: str, generation_id: str) -> Callable[[Dict[str, Any]], Any]:
+        """Create a debug callback that emits LLM call events to the frontend."""
+        async def debug_callback(event_data: Dict[str, Any]) -> None:
+            debug_handler = get_debug_handler()
+            if not debug_handler:
+                return
+
+            user_email, _ = get_debug_user_context()
+            if not user_email:
+                return
+
+            # Increment call index
+            self._call_index += 1
+
+            # Extract data from event
+            messages = event_data.get('messages', [])
+            system_prompt = None
+            for msg in messages:
+                if msg.get('role') == 'system':
+                    system_prompt = msg.get('content', '')
+                    break
+
+            response_text = event_data.get('response', '')
+            elapsed_ms = event_data.get('elapsed_seconds', 0) * 1000
+            ttft_ms = event_data.get('ttft_seconds', 0) * 1000
+
+            debug_handler.emit_llm_call(
+                sid=sid,
+                user_email=user_email,
+                conversation_id=generation_id,
+                call_id=event_data.get('call_id', ''),
+                index=self._call_index,
+                timestamp=event_data.get('timestamp', datetime.now().isoformat()),
+                status='completed' if not event_data.get('error') else 'error',
+                model=event_data.get('model', ''),
+                request_tokens=None,  # Not tracked in streaming
+                response_tokens=None,
+                tokens_per_second=None,
+                system_prompt=system_prompt,
+                tools_count=0,
+                tools=None,
+                messages=messages,
+                messages_count=len(messages),
+                full_kwargs=None,
+                full_response={'content': response_text},
+                response_preview=response_text[:500] if response_text else None,
+                is_streaming=True,
+                streaming_chunks=0,
+                duration_ms=elapsed_ms,
+                ttft_ms=ttft_ms,
+                cost=None,
+                success=not event_data.get('error'),
+                error=event_data.get('error'),
+                workflow_pass=event_data.get('pass'),
+                node_id=event_data.get('node_id'),
+                sub_events=event_data.get('sub_events'),
+            )
+
+        return debug_callback
 
     # ── Active-generation channel ────────────────────────────────────────
     #
@@ -1697,6 +2142,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         prompt: str,
         user_id: Optional[str],
         request_id: Optional[str] = None,
+        n8n_import_node_count: Optional[int] = None,
     ) -> None:
         if not user_id:
             return
@@ -1719,6 +2165,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                     prompt=prompt,
                     started_at=time.time(),
                     request_id=request_id,
+                    n8n_import_node_count=n8n_import_node_count,
                 ),
                 user_id=user_id,
             )
@@ -1746,12 +2193,19 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             if event.type == 'text_chunk':
                 text = event.data.get('text') or ''
                 if text:
+                    _run_state(generation_id).text_sent += len(text.encode('utf-16-le')) // 2
                     await send_event(
                         self.sio, sid,
                         ActiveGenTextChunkEvent(
                             gen_id=generation_id,
                             delta=text,
                             request_id=request_id,
+                            # Server wall-clock at emit. FE diffs against
+                            # Date.now() on receive to compute BE→FE
+                            # latency for the FIRST chunk per gen, then
+                            # ships back via debug:client_timing for
+                            # SessionViewer attribution.
+                            emit_at_ms=int(time.time() * 1000),
                         ),
                         user_id=user_id,
                     )
@@ -1770,6 +2224,27 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                         ActiveGenEditStepEvent(gen_id=generation_id, step=status),
                         user_id=user_id,
                     )
+                # Each op the batch is about to run, as a graph event the open panel draws ("Adding step · Gmail").
+                for entry in self._step_entries(event, run=_run_state(generation_id).id, running=True):
+                    await send_event(
+                        self.sio, sid, ActiveGenGraphEventEvent(gen_id=generation_id, event=entry), user_id=user_id,
+                    )
+            elif event.type == 'builder_steps':
+                # Each op once it ran, ok or failed: the panel's line for it settles.
+                for entry in self._step_entries(event, run=_run_state(generation_id).id):
+                    await send_event(
+                        self.sio, sid, ActiveGenGraphEventEvent(gen_id=generation_id, event=entry), user_id=user_id,
+                    )
+            elif event.type == 'builder_turn':
+                # A brain turn begins: its words are the run's text from here.
+                await send_event(
+                    self.sio, sid,
+                    ActiveGenGraphEventEvent(gen_id=generation_id, event={
+                        "type": "builder_turn", "turn": event.data.get('turn'),
+                        "text_at": _run_state(generation_id).text_sent,
+                    }),
+                    user_id=user_id,
+                )
             elif event.type == 'token_progress':
                 # Ephemeral live counter — absolute cumulative heuristic, no
                 # persistence. FE overwrites its displayed value per frame.
@@ -1806,7 +2281,9 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
     ) -> None:
         """Tell the FE store to drop this gen and patch persistedMessages.
 
-        Outcome ∈ {'complete', 'paused', 'cancelled', 'failed', 'interrupted'}.
+        Outcome ∈ {'complete', 'paused', 'cancelled', 'failed', 'incomplete', 'interrupted'}.
+        'incomplete' is a run that stopped without the builder saying it had
+        finished: its turn is committed with ``incomplete`` set, as on reload.
         'interrupted' (container drain) is the SAME signal the event relay sends:
         the FE keeps the gen and auto-resumes from the checkpoint instead of
         evicting. committed_messages carries the new full conversations.events
@@ -1815,6 +2292,8 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         # Prefer the explicit request_id from the caller; fall back to the
         # one we registered on started so callers that didn't thread it (the
         # input-response resume path) still emit a correlated terminal.
+        # The gen ends here; one that resumes under the same id streams its text afresh.
+        _RUNS.pop(gen_id, None)
         effective_request_id = request_id or self._gen_to_request_id.pop(gen_id, None)
         if request_id:
             # If caller passed it explicitly, evict any cached entry too so
@@ -1832,9 +2311,9 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                     committed_conversation_id=committed_conversation_id,
                     committed_messages=committed_messages,
                     error=error,
+                    request_id=effective_request_id,
                     error_code=error_code,
                     error_meta=error_meta,
-                    request_id=effective_request_id,
                 ),
                 user_id=user_id,
             )
@@ -1842,6 +2321,72 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             logger.warning(f"[WorkflowBuilder] active_gen:terminal emit failed: {e}")
 
     # ── Turn-driven execution helpers ────────────────────────────────────
+
+    @staticmethod
+    def _step_entries(event, *, run: str, running: bool = False) -> List[Dict[str, Any]]:
+        """A batch's steps as the graph events the panel reads (``agentic.steps``): each numbered by its run, its batch
+        and its place in it, and ``running`` (planned, from the batch's status) or ``ok``/``failed`` once it ran."""
+        batch = event.data.get('batch')
+        entries = []
+        for index, step in enumerate(event.data.get('steps') or []):
+            if not isinstance(step, dict) or not step.get('op'):
+                continue
+            said = {k: v for k, v in step.items() if k not in ('ok', 'reason')}
+            state = 'running' if running else 'ok' if step.get('ok') else 'failed'
+            reason = {} if running or step.get('ok') or not step.get('reason') else {"reason": step['reason']}
+            entries.append({"type": "builder_step", "run": run, "batch": batch, "index": index, "state": state, **reason, **said})
+        return entries
+
+    @staticmethod
+    def _keep_events(segments: List[Dict[str, Any]], entries: List[Dict[str, Any]]) -> None:
+        """Keep graph events with the latest events kept, or as a segment of their own after words."""
+        if not entries:
+            return
+        if segments and segments[-1].get("type") == "events":
+            segments[-1]["events"].extend(entries)
+        else:
+            segments.append({"type": "events", "events": list(entries)})
+
+    @classmethod
+    def _settle_steps(cls, segments: List[Dict[str, Any]], entries: List[Dict[str, Any]]) -> None:
+        """Each step as it ran, kept where its plan was; one whose plan wasn't kept goes with the latest events."""
+        planned = {
+            (e.get("run"), e.get("batch"), e.get("index")): (segment["events"], i)
+            for segment in segments if segment.get("type") == "events"
+            for i, e in enumerate(segment["events"]) if e.get("type") == "builder_step"
+        }
+        unplanned = []
+        for entry in entries:
+            at = planned.get((entry["run"], entry["batch"], entry["index"]))
+            if at:
+                at[0][at[1]] = entry
+            else:
+                unplanned.append(entry)
+        cls._keep_events(segments, unplanned)
+
+    async def _notify_step(self, generation_id: str, user_context: Optional[Dict[str, Any]], step: str,
+                           steps: Optional[List[Dict[str, Any]]] = None) -> None:
+        """A run's new status line and the ops behind it, for whatever follows it outside the canvas
+        (``BUILDER_STEP_NOTIFY``): each line once per run, sent after the one before it."""
+        notify = capability(BUILDER_STEP_NOTIFY)
+        if notify is None or not step:
+            return
+        run = _run_state(generation_id)
+        said = (step, tuple(s.get('target') or s.get('node_type') or '' for s in steps or ()))
+        if said == run.said:
+            return
+        run.said = said
+        pool = await self.get_pool()
+        previous = run.tail
+
+        async def send() -> None:
+            if previous is not None:
+                await asyncio.wait([previous])
+            await notify(pool, user_context=user_context or {}, step=step, steps=list(steps or ()))
+
+        from utils.async_helpers import spawn
+
+        run.tail = spawn(send(), name="builder-step-notify")
 
     async def _emit_builder_event(
         self,
@@ -1859,25 +2404,48 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         """Emit one BuilderStreamEvent to the client, update segments, and return new pending_text."""
         if event.type == 'text_chunk':
             pending_text += event.data.get('text', '')
-        elif event.type == 'status' and edit_steps is not None:
+        elif event.type == 'status':
             # Mirror the FE's editSteps accumulator (NoClick.tsx 'status' case)
             # so the expandable reasoning log persists across resume / refresh.
             status_text = event.data.get('status') or ''
-            if status_text and (not edit_steps or edit_steps[-1] != status_text):
+            if status_text and edit_steps is not None and (not edit_steps or edit_steps[-1] != status_text):
                 edit_steps.append(status_text)
+            if event.data.get('steps'):
+                # A batch's ops are kept as it starts, after the words before them, so a run cut off mid-batch keeps
+                # what it was doing; its line to whatever follows the run waits until it has run.
+                if pending_text:
+                    segments.append({"type": "text", "text": pending_text})
+                    pending_text = ""
+                run = _run_state(generation_id).id
+                self._keep_events(segments, [{**e, "status": "completed"} for e in self._step_entries(event, run=run, running=True)])
+            else:
+                await self._notify_step(generation_id, user_context, status_text)
+        elif event.type == 'builder_steps':
+            # Each op as it ran replaces its plan where that was kept, so a reloaded chat draws the same steps.
+            if pending_text:
+                segments.append({"type": "text", "text": pending_text})
+                pending_text = ""
+            self._settle_steps(segments, [
+                {**e, "status": "completed"} for e in self._step_entries(event, run=_run_state(generation_id).id)
+            ])
+            # The line names what happened; a batch where nothing did has no line.
+            happened = [step for step in event.data.get('steps') or [] if isinstance(step, dict) and step.get('ok')]
+            if happened:
+                await self._notify_step(generation_id, user_context, event.data.get('status') or '', happened)
+        elif event.type == 'builder_turn':
+            # A turn's words are a segment of their own, kept beside the ops they came with.
+            if pending_text:
+                segments.append({"type": "text", "text": pending_text})
+                pending_text = ""
         elif event.type in self._GRAPH_EVENT_TYPES:
             if pending_text:
                 segments.append({"type": "text", "text": pending_text})
                 pending_text = ""
-            entry = {"type": event.type, "status": "completed", **event.data}
-            if segments and segments[-1].get("type") == "events":
-                segments[-1]["events"].append(entry)
-            else:
-                segments.append({"type": "events", "events": [entry]})
+            self._keep_events(segments, [{"type": event.type, "status": "completed", **event.data}])
 
         event_data = {'event_type': event.type, **event.data}
         logger.debug(f"[WorkflowBuilder:edit] Sending event: {event.type}")
-        # Route through event relay when we have user_id so cross-container events
+        # Route through the event relay when we have user_id so cross-container events
         # reach the browser; Socket.IO direct for SDK/headless flows.
         if user_id:
             await send_event(
@@ -2207,17 +2775,19 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             if not pool:
                 return
             workflow_data = builder.graph_state.to_workflow_data()
+            switches = builder.graph_state.harness_switches
+            renamed: Optional[str] = None
             async with pool.acquire() as conn:
                 # This write is unconditional and whole-blob, so a client that
                 # handed us a graph missing a credential would DELETE it from
-                # the DB. Carry stored credentialIds forward — no DSL op
-                # removes a credential, so absent always means "this writer
-                # didn't know", never "the user detached it" (2026-08-02).
+                # the DB. Carry stored credentialIds forward — absent means
+                # "this writer didn't know", never "the user detached it"
+                # (2026-08-02), except a slot an agent's harness move unlinked.
                 # Best-effort by design: a failed pre-read must not block the
                 # persist itself, which is what makes resume-after-ask work.
                 try:
                     existing = await conn.fetchrow(
-                        "SELECT workflow FROM workflows WHERE id = $1", uuid.UUID(workflow_id)
+                        "SELECT workflow, name FROM workflows WHERE id = $1", uuid.UUID(workflow_id)
                     )
                     old = (existing or {})["workflow"] if existing else None
                     if isinstance(old, str):
@@ -2226,6 +2796,8 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                         preserve_existing_credentials(
                             workflow_data.get("nodes") or [], old.get("nodes") or []
                         )
+                    if existing and switches:
+                        renamed = rename_workflow_for_harness_switches(existing["name"], switches)
                 except Exception:
                     logger.warning(
                         "[WorkflowBuilder] credential-preserve pre-read failed for %s "
@@ -2233,13 +2805,15 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                         workflow_id, exc_info=True,
                     )
                 saved = await WorkflowRepo(pool).update_workflow_dynamic(
-                    conn, uuid.UUID(workflow_id), workflow_data=workflow_data,
+                    conn, uuid.UUID(workflow_id), workflow_data=workflow_data, name=renamed,
                 )
             if saved is None:
                 logger.warning(
                     "[WorkflowBuilder] graph persist matched no row for workflow %s",
                     workflow_id,
                 )
+            else:
+                switches.clear()
         except Exception:
             logger.error(
                 "[WorkflowBuilder] failed to persist builder graph for workflow %s",
@@ -2354,7 +2928,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 # serialized conversation row.
                 assistant_msg["edit_steps"] = list(edit_steps)
             new_messages = [
-                {"role": "user", "message": request.edit_prompt},
+                _request_row(request),
                 assistant_msg,
             ]
             # replace_pending=True handles the resume-after-ask case: when
@@ -2382,7 +2956,21 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         if user_id:
             duration_ms = int((time.time() - start_time) * 1000)
             result_summary = self._summarize_graph(result)
-            pass
+            self._store_build_request(
+                user_id=user_id,
+                request_type='edit',
+                prompt=request.edit_prompt,
+                model=model_used,
+                generation_id=builder.generation_id,
+                success=True,
+                result_graph=result,
+                result_summary=result_summary,
+                duration_ms=duration_ms,
+                current_graph=request.current_graph,
+                current_graph_summary=current_graph_summary,
+                target_node_ids=request.target_node_ids,
+                selected_node_id=request.selected_node_id,
+            )
             await self._store_builder_usage_event(
                 user_id=user_id,
                 provider_cost=builder._total_cost,
@@ -2390,6 +2978,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 model=model_used,
                 generation_id=builder.generation_id,
                 sid=sid,
+                organization_id=builder.billing_organization_id,
             )
 
             user_data = session.get('user_data', {}) if session else {}
@@ -2406,6 +2995,12 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 },
                 thread_ts=slack_thread_ts,
             )
+            signal_activity = capability(ACTIVITY_SIGNAL)
+            if signal_activity is not None and not is_internal_user(user_email):
+                signal_activity(
+                    user_data, "✏️  Edited Workflow",
+                    {"Prompt": request.edit_prompt, "Nodes": str(node_count), "Model": model_used},
+                )
 
         # Agent-originated run: relay what the builder actually did to the
         # agent's conversation (delivered on the agent's next turn).
@@ -2461,7 +3056,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             if edit_steps:
                 assistant_msg["edit_steps"] = list(edit_steps)
             new_messages = [
-                {"role": "user", "message": request.edit_prompt},
+                _request_row(request),
                 assistant_msg,
             ]
             # replace_pending=True so resume-then-pause replaces the prior
@@ -2492,7 +3087,18 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             # tokens up to the <ask/>, so the credit is owed even though the
             # run didn't complete. Without this, a user could cycle through
             # ask/answer/ask/answer indefinitely without ever being gated.
-            pass
+            self._store_build_request(
+                user_id=user_id,
+                request_type='edit',
+                prompt=request.edit_prompt,
+                model=builder.config.brain_model if builder.config else None,
+                generation_id=builder.generation_id,
+                success=False,
+                error_message='paused_for_ask',
+                current_graph=request.current_graph,
+                target_node_ids=request.target_node_ids,
+                selected_node_id=request.selected_node_id,
+            )
             await self._store_builder_usage_event(
                 user_id=user_id,
                 provider_cost=builder._total_cost,
@@ -2500,6 +3106,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 model=builder.config.brain_model if builder.config else None,
                 generation_id=builder.generation_id,
                 sid=sid,
+                organization_id=builder.billing_organization_id,
             )
 
         # End this generation's session row (is_active=false). The run paused and
@@ -2537,15 +3144,31 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         self, *, request: WorkflowBuilderEditRequest, user_id: Optional[str],
         builder: AgenticBuilder, pending_ask: PendingAsk,
     ) -> None:
-        """Bridge-link mint + builder_ask relay for HEADLESS agent-originated
-        runs (user_context.source == 'agent_prompt_builder'). Best-effort —
-        the run is already durably parked either way."""
+        """Every sink for a parked run: the platform's own (BUILDER_ASK_NOTIFY)
+        and, for HEADLESS agent-originated runs (user_context.source ==
+        'agent_prompt_builder'), the bridge-link mint + builder_ask relay.
+        Best-effort — the run is already durably parked either way."""
         ctx = request.user_context or {}
         if user_id and ctx.get('builder_request_id'):
             from coder.workflow.requests import record_question
 
             if not await record_question(await self.get_pool(), user_id, ctx, pending_ask.to_dict()):
                 return  # A cancelled or superseded attempt cannot ask more questions.
+        notify = capability(BUILDER_ASK_NOTIFY)
+        if notify is not None and user_id:
+            from utils.async_helpers import spawn
+
+            ask_dict = pending_ask.to_dict()
+            spawn(
+                notify(
+                    await self.get_pool(), user_id=user_id, workflow_id=ctx.get('workflow_id'),
+                    workflow_name=builder.graph_state.workflow_name,
+                    builder_conversation_id=request.conversation_id,
+                    ask_id=ask_dict.get('ask_id') or '', inputs=ask_dict.get('inputs') or [],
+                    user_context=ctx,
+                ),
+                name=f"builder-ask-notify:{request.conversation_id}",
+            )
         agent_cid = ctx.get('agent_conversation_id')
         if ctx.get('source') != 'agent_prompt_builder' or not (user_id and agent_cid):
             return
@@ -2607,8 +3230,10 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         builder: AgenticBuilder, segments: List[Dict[str, Any]],
         success: bool = True, error: Optional[str] = None,
     ) -> None:
-        """builder_result relay for HEADLESS agent-originated runs — the agent
-        learns what the builder actually did on its next turn."""
+        """Every sink for a finished run: the platform's own
+        (BUILDER_RESULT_NOTIFY) and, for HEADLESS agent-originated runs, the
+        builder_result relay — the agent learns what the builder actually did
+        on its next turn."""
         ctx = request.user_context or {}
         if user_id and ctx.get('builder_request_id'):
             from coder.workflow.requests import record_result
@@ -2617,6 +3242,29 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             summary = (text or builder.graph_state.summary or "Run completed.")[:1500] if success else (error or "Build failed.")
             await record_result(await self.get_pool(), user_id, ctx, success=success, summary=summary, error=error)
             return  # The builder request owns follow-through and terminal delivery.
+        final_text = "\n".join(
+            s.get("text", "") for s in segments if s.get("type") == "text"
+        ).strip()
+        if success:
+            summary = (final_text or builder.graph_state.summary or "Run completed.")[:1500]
+        else:
+            # Earlier streamed prose may be a promise to build — the exact
+            # misleading text this protocol catches. Never relay that to
+            # the parent agent as the outcome of an incomplete run.
+            summary = (error or "Builder run ended incomplete.")[:1500]
+        notify = capability(BUILDER_RESULT_NOTIFY)
+        if notify is not None and user_id:
+            from utils.async_helpers import spawn
+
+            spawn(
+                notify(
+                    await self.get_pool(), user_id=user_id, workflow_id=ctx.get('workflow_id'),
+                    workflow_name=builder.graph_state.workflow_name,
+                    builder_conversation_id=request.conversation_id,
+                    summary=summary, success=success, error=error, user_context=ctx,
+                ),
+                name=f"builder-result-notify:{request.conversation_id}",
+            )
         agent_cid = ctx.get('agent_conversation_id')
         if ctx.get('source') != 'agent_prompt_builder' or not (user_id and agent_cid):
             return
@@ -2625,16 +3273,6 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
 
             from utils.builder_bridge import append_agent_builder_event
 
-            final_text = "\n".join(
-                s.get("text", "") for s in segments if s.get("type") == "text"
-            ).strip()
-            if success:
-                summary = (final_text or builder.graph_state.summary or "Run completed.")[:1500]
-            else:
-                # Earlier streamed prose may be a promise to build — the exact
-                # misleading text this protocol catches. Never relay that to
-                # the parent agent as the outcome of an incomplete run.
-                summary = (error or "Builder run ended incomplete.")[:1500]
             pool = await self.get_pool()
             await append_agent_builder_event(
                 pool,
@@ -2707,7 +3345,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             if edit_steps:
                 assistant_msg["edit_steps"] = list(edit_steps)
             new_messages = [
-                {"role": "user", "message": request.edit_prompt},
+                _request_row(request),
                 assistant_msg,
             ]
             # If the cancel happened during a paused-on-ask resume, the prior
@@ -2735,7 +3373,18 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             # consumed LLM tokens before the user hit Stop, so the credit is
             # owed. Without this, a user could spam start-then-cancel to burn
             # provider tokens with no consumption against their plan.
-            pass
+            self._store_build_request(
+                user_id=user_id,
+                request_type='edit',
+                prompt=request.edit_prompt,
+                model=builder.config.brain_model if builder.config else None,
+                generation_id=builder.generation_id,
+                success=False,
+                error_message='cancelled',
+                current_graph=request.current_graph,
+                target_node_ids=request.target_node_ids,
+                selected_node_id=request.selected_node_id,
+            )
             await self._store_builder_usage_event(
                 user_id=user_id,
                 provider_cost=builder._total_cost,
@@ -2743,6 +3392,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 model=builder.config.brain_model if builder.config else None,
                 generation_id=builder.generation_id,
                 sid=sid,
+                organization_id=builder.billing_organization_id,
             )
         await send_event(self.sio, sid, ResponseEvent(
             request_id=generation_id,
@@ -2801,7 +3451,18 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             request_id=request.request_id,
         )
         if user_id:
-            pass
+            self._store_build_request(
+                user_id=user_id,
+                request_type='edit',
+                prompt=request.edit_prompt,
+                model=builder.config.brain_model if builder.config else None,
+                generation_id=builder.generation_id,
+                success=False,
+                error_message='interrupted',
+                current_graph=request.current_graph,
+                target_node_ids=request.target_node_ids,
+                selected_node_id=request.selected_node_id,
+            )
             await self._store_builder_usage_event(
                 user_id=user_id,
                 provider_cost=builder._total_cost,
@@ -2809,6 +3470,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 model=builder.config.brain_model if builder.config else None,
                 generation_id=builder.generation_id,
                 sid=sid,
+                organization_id=builder.billing_organization_id,
             )
         # Persist whatever the brain built before the interruption so a resumed
         # or reopened run doesn't lose those nodes (the checkpoint drives resume,
@@ -2881,7 +3543,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 request.conversation_id,
                 user_id,
                 [
-                    {"role": "user", "message": request.edit_prompt},
+                    _request_row(request),
                     assistant_msg,
                 ],
                 workflow_id=(
@@ -2906,10 +3568,11 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             },
             error=error_msg,
         ))
+        # Its own outcome, not a failure: nothing went wrong, the builder stopped before saying it had finished.
         await self._emit_active_gen_terminal(
             sid,
             gen_id=builder.generation_id,
-            outcome='failed',
+            outcome='incomplete',
             committed_conversation_id=request.conversation_id,
             committed_messages=committed,
             user_id=user_id,
@@ -2918,7 +3581,22 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         )
 
         if user_id:
-            pass
+            self._store_build_request(
+                user_id=user_id,
+                request_type='edit',
+                prompt=request.edit_prompt,
+                model=model_used,
+                generation_id=builder.generation_id,
+                success=False,
+                error_message=reason,
+                result_graph=result_graph,
+                result_summary=self._summarize_graph(result_graph),
+                duration_ms=int((time.time() - start_time) * 1000),
+                current_graph=request.current_graph,
+                current_graph_summary=current_graph_summary,
+                target_node_ids=request.target_node_ids,
+                selected_node_id=request.selected_node_id,
+            )
             await self._store_builder_usage_event(
                 user_id=user_id,
                 provider_cost=builder._total_cost,
@@ -2926,6 +3604,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 model=model_used,
                 generation_id=builder.generation_id,
                 sid=sid,
+                organization_id=builder.billing_organization_id,
             )
 
         await builder.log_session_end(success=False, terminal_reason=reason)
@@ -2960,6 +3639,12 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             data={'success': False},
             error=error_msg,
         ))
+        ctx = request.user_context or {}
+        if user_id and ctx.get('builder_request_id'):
+            from coder.workflow.requests import record_result
+
+            # A headless request learns why, not only that the build ended without a result.
+            await record_result(await self.get_pool(), user_id, ctx, success=False, summary=error_msg, error=error_msg)
         # Drop the failed gen from the FE active map. No conversation
         # commit on failure — events array unchanged.
         await self._emit_active_gen_terminal(
@@ -2976,7 +3661,20 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         )
         if user_id:
             duration_ms = int((time.time() - start_time) * 1000)
-            pass
+            self._store_build_request(
+                user_id=user_id,
+                request_type='edit',
+                prompt=request.edit_prompt,
+                model=model_used,
+                generation_id=generation_id,
+                success=False,
+                error_message=error_msg,
+                duration_ms=duration_ms,
+                current_graph=request.current_graph,
+                current_graph_summary=current_graph_summary,
+                target_node_ids=request.target_node_ids,
+                selected_node_id=request.selected_node_id,
+            )
             # Cost-bearing failures still consumed tokens before the exception.
             # builder may be None for failures that occur before the builder
             # is instantiated — those have no cost to record.
@@ -2988,6 +3686,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                     model=model_used,
                     generation_id=generation_id,
                     sid=sid,
+                    organization_id=builder.billing_organization_id,
                 )
 
         # End the failed generation's session row (is_active=false) so it isn't
@@ -3194,7 +3893,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         self, sid: str, request: WorkflowBuilderEditRequest,
         caller_user_id: Optional[str] = None,
     ) -> None:
-        """Run the builder edit builder in the current process.
+        """Run the builder edit in the current process.
 
         ONLY called from inside an edit-worker subprocess (via
         workers.builder_edit_worker._run_edit). The public edit_workflow()
@@ -3204,17 +3903,6 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         generation_id = request.generation_id or str(uuid.uuid4())
         start_time = time.time()
 
-        # Create + register the cancel scope BEFORE any awaits so a user-pause
-        # arriving during the limit-check / history-load / builder-construction
-        # window is captured. Without this, an early stop click would race with
-        # registration and be lost (handle_pause finds no scope, no agent).
-        # Late wiring of cancel_scope into the AgenticBuilder still works — the
-        # scope is created once and passed in below.
-        cancel_scope = CancelScope()
-        conv_id_for_pause = getattr(request, 'conversation_id', None)
-        if conv_id_for_pause:
-            register_builder_scope(conv_id_for_pause, cancel_scope)
-
         # Get user_id from session for analytics; headless callers (empty sid)
         # supply it directly and have NO session — every later `session` read
         # must tolerate None (an unconditional read crashed all headless runs).
@@ -3223,6 +3911,29 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         if not user_id:
             session = await self.sio.get_session(sid)
             user_id = session.get('user_id') if session else None
+            if request.user_context:
+                request.user_context = {
+                    k: v for k, v in request.user_context.items() if k in CLIENT_USER_CONTEXT_KEYS
+                }
+
+        # Nothing below runs until the caller may use the workflow and the
+        # conversation this request names: every read and write keys on them.
+        edit_workflow_id = (request.user_context or {}).get('workflow_id')
+        refusal = await self._access_refusal(
+            user_id, edit_workflow_id, request.conversation_id, from_client=caller_user_id is None,
+        )
+        if refusal:
+            await self._refuse_run(sid, request.request_id, generation_id, refusal)
+            return
+
+        # Register the cancel scope before the remaining awaits so a pause
+        # arriving during the limit check / history load / builder construction
+        # is captured; after the access check, so a refused request never
+        # displaces the registration of the conversation's own run.
+        cancel_scope = CancelScope()
+        conv_id_for_pause = getattr(request, 'conversation_id', None)
+        if conv_id_for_pause:
+            register_builder_scope(conv_id_for_pause, cancel_scope, user_id)
 
         # Ensure the conversation exists in the chat history dropdown from the
         # first moment of the edit — paused runs never reach the completion
@@ -3230,7 +3941,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         if user_id and request.conversation_id:
             await self._ensure_conversation_row(
                 request.conversation_id, user_id, request.edit_prompt,
-                workflow_id=request.user_context.get('workflow_id') if request.user_context else None,
+                workflow_id=edit_workflow_id,
             )
 
         # Active-gen lifecycle: announce the run so the FE store registers
@@ -3241,18 +3952,19 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             await self._emit_active_gen_started(
                 sid,
                 gen_id=generation_id,
-                workflow_id=(request.user_context or {}).get('workflow_id') if request.user_context else None,
+                workflow_id=edit_workflow_id,
                 conversation_id=request.conversation_id,
                 prompt=request.edit_prompt,
                 user_id=user_id,
                 request_id=request.request_id,
+                n8n_import_node_count=_n8n_import_node_count(request),
             )
 
         # Fire BUILDER_PROMPT_SUBMITTED before the gate check so we capture intent
         # even for users who are blocked by the daily limit (needed to size the
         # gated cohort vs. the completion funnel).
         existing_node_count = len(request.current_graph.get('nodes') or []) if request.current_graph else 0
-        agentic_config = AgenticBuilderConfig(brain_model=resolve_brain_model())
+        agentic_config = AgenticBuilderConfig()
         model_used = agentic_config.brain_model
         log_activity_background(Events.BUILDER_PROMPT_SUBMITTED, user_id, {
             "generation_id": generation_id,
@@ -3263,34 +3975,16 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             "conversation_id": request.conversation_id,
         })
 
-        # Check daily AI builder limit
-        if user_id:
-            try:
-                pool = await self.get_pool()
-                if pool:
-                    async with pool.acquire() as conn:
-                        from billing.plan_limits import check_ai_builder_limit
-                        can_use, limit_error = await check_ai_builder_limit(conn, user_id)
-                        if not can_use:
-                            # Send error with both request_id (for sendEventAsync callback)
-                            # and generation_id (for canvas edit response handler)
-                            await send_event(self.sio, sid, ResponseEvent(
-                                request_id=request.request_id,
-                                data={'success': False},
-                                error=limit_error
-                            ))
-                            await send_event(self.sio, sid, ResponseEvent(
-                                request_id=generation_id,
-                                data={'success': False, 'event_type': 'error'},
-                                error=limit_error
-                            ))
-                            user_data = (session or {}).get('user_data', {})
-                            pass
-                            if conv_id_for_pause:
-                                unregister_builder_scope(conv_id_for_pause, cancel_scope)
-                            return
-            except Exception as e:
-                logger.warning(f"[WorkflowBuilder] AI builder limit check failed, proceeding: {e}")
+        # Check daily AI builder limit, on the pool the turn bills to (the
+        # workflow's organization's owner).
+        organization_id, limit_error = await builder_gate(await self.get_pool(), user_id, edit_workflow_id)
+        if limit_error:
+            await self._refuse_run(sid, request.request_id, generation_id, limit_error)
+            _alert_plan_gate(session, "AI Edit Limit Hit (edit)", {"Prompt": request.edit_prompt[:100]},
+                             refusal=limit_error)
+            if conv_id_for_pause:
+                unregister_builder_scope(conv_id_for_pause, cancel_scope)
+            return
 
         # Create summary of current graph for analytics
         current_graph_summary = self._summarize_graph(request.current_graph)
@@ -3319,6 +4013,9 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 unregister_builder_scope(conv_id_for_pause, cancel_scope)
             return
 
+        # Create debug callback for observability
+        debug_callback = self._create_debug_callback(sid, generation_id)
+
         # Use AgenticBuilder for multi-turn conversational editing
         logger.info(f"[WorkflowBuilder] Starting agentic edit {generation_id} with brain model {model_used}")
 
@@ -3329,21 +4026,16 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             if conversation_history:
                 logger.info(f"[WorkflowBuilder] Loaded {len(conversation_history)} history messages for conversation {request.conversation_id}")
 
-        edit_workflow_id = (request.user_context or {}).get('workflow_id') if request.user_context else None
-
-        # Fire-and-forget: if the workflow is empty — or its name is still a
-        # default placeholder (a prior turn's naming call failed silently) —
+        # Fire-and-forget: while the workflow's name is still a placeholder
+        # (nobody named it, or a prior turn's naming call failed silently),
         # generate a real title and description with a cheap model in the
         # background and broadcast the rename to the frontend. The main brain
-        # loop runs unblocked. The retry path is placeholder-gated in SQL so
-        # it can never clobber a name the user typed between turns.
-        graph_nodes = request.current_graph.get('nodes') if request.current_graph else None
-        graph_is_empty = not graph_nodes  # None or [] → empty
+        # loop runs unblocked. The rename is placeholder-gated in SQL, so it
+        # never clobbers a name its creator gave or the user typed.
         ctx_workflow_name = (
             (request.user_context or {}).get('workflow_name') or ''
         ).strip()
-        name_is_placeholder = ctx_workflow_name in ('', 'Untitled', 'Untitled Workflow')
-        if (graph_is_empty or name_is_placeholder) and edit_workflow_id and user_id:
+        if ctx_workflow_name in PLACEHOLDER_WORKFLOW_NAMES and edit_workflow_id and user_id:
             from utils.async_helpers import spawn
             spawn(
                 self._generate_workflow_name_background(
@@ -3351,7 +4043,6 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                     user_id=user_id,
                     workflow_id=edit_workflow_id,
                     prompt=request.edit_prompt,
-                    placeholder_only=not graph_is_empty,
                 ),
                 name=f"workflow-name-gen:{edit_workflow_id}",
             )
@@ -3361,11 +4052,14 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         builder = AgenticBuilder(
             config=agentic_config,
             generation_id=generation_id,
+            debug_callback=debug_callback,
             platform_ops=platform_ops,
             conversation_id=getattr(request, 'conversation_id', None),
-            workflow_id=(request.user_context or {}).get('workflow_id') if request.user_context else None,
+            workflow_id=edit_workflow_id,
             user_id=user_id,
+            skill_provider=self._create_skill_provider(user_id) if user_id else None,
             cancel_scope=cancel_scope,
+            billing_organization_id=organization_id,
         )
         # Seed builder state (system prompt + messages + graph_state). The turn
         # loop now lives in this handler, not inside builder.edit().
@@ -3443,9 +4137,11 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             session = await self.sio.get_session(sid)
             user_id = session.get('user_id') if session else None
             if not user_id:
+                # An error, never an empty thread: a chat showing a copy of the thread would drop it for this.
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=data.request_id,
-                    data={"session_id": data.session_id, "messages": [], "workflow_id": None}))
+                    data={"session_id": data.session_id, "messages": [], "workflow_id": None},
+                    error="Not authenticated"))
                 return
 
             repo = ConversationRepo(await self.get_pool())
@@ -3500,7 +4196,8 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             logger.error(f"[WorkflowBuilder] Error resuming conversation: {e}", exc_info=True)
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=data.request_id,
-                data={"session_id": data.session_id, "messages": []}))
+                data={"session_id": data.session_id, "messages": []},
+                error="Could not load the conversation"))
 
     async def handle_get_latest_for_workflow(
         self, sid: str, data: GetLatestConversationForWorkflowRequest
@@ -3606,8 +4303,9 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 f"{data.workflow_id}: {e}",
                 exc_info=True,
             )
+            # An error, never an empty answer: that reads as "no chat yet" and opens a new one.
             await send_event(self.sio, sid, ResponseEvent(
-                request_id=request_id, data=empty_payload))
+                request_id=request_id, data=empty_payload, error="Could not look up this automation's chat"))
 
     async def handle_delete_conversation(self, sid: str, data: DeleteConversationRequest) -> None:
         """Soft-delete a conversation."""

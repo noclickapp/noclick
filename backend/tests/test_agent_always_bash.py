@@ -232,3 +232,19 @@ async def test_local_runtime_bare_end_to_end(tmp_path, monkeypatch):
         await rt.close()
     assert result["exit_code"] == 0
     assert "bare-agent-shell" in result["stdout"]
+
+
+# A model writes scripts as heredocs; their closing line must stay alone on its line.
+HEREDOC = "python3 - <<'PY'\nprint(6 * 7)\nPY"
+
+
+async def test_local_runtime_runs_a_heredoc_whole(tmp_path, monkeypatch):
+    monkeypatch.setenv("NOCLICK_HOME", str(tmp_path))
+    from coder.openai_agent.sandbox import LocalSandboxRuntime
+
+    rt = LocalSandboxRuntime(filesystem_configs=[], workflow_id="wf-heredoc", node_id="agent-1")
+    try:
+        result = await rt.run_bash(HEREDOC)
+    finally:
+        await rt.close()
+    assert (result["exit_code"], result["stdout"]) == (0, "42\n"), result["stderr"]

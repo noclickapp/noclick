@@ -34,23 +34,23 @@ def test_a_platform_publishes_its_conversion_and_markup():
     ]
 
 
-def test_work_attributed_to_a_product_carries_its_markup(monkeypatch):
+def test_work_attributed_to_a_product_sold_at_cost_carries_no_markup(monkeypatch):
     import contextvars
 
     from billing import markup
     from billing.usage_tracker import attribute_usage
 
-    monkeypatch.setitem(markup._ATTRIBUTED_MARKUPS, "acme_api", Decimal("1.25"))
+    monkeypatch.setattr(markup, "PLATFORM_MIN_MARKUP", Decimal("3"))
+    monkeypatch.setattr(markup, "_AT_COST", {"acme_api"})
 
     def attributed():
         attribute_usage(acme_api={"key_id": "k"})
-        return markup.current_markup(), markup.apply_platform_markup(Decimal("2"), False, "m")
+        return (markup.current_markup(), markup.apply_platform_markup(Decimal("2"), False, "m"),
+                markup.apply_ai_builder_markup(Decimal("2")), markup.apply_ai_testing_markup(Decimal("2")))
 
-    assert contextvars.copy_context().run(attributed) == (Decimal("1.25"), Decimal("2.50"))
+    assert contextvars.copy_context().run(attributed) == (Decimal("1"), Decimal("2"), Decimal("2"), Decimal("2"))
     # Work attributed to nothing, or to something else, keeps the deployment's markup.
-    assert markup.current_markup() == markup.PLATFORM_MIN_MARKUP
+    assert markup.current_markup() == Decimal("3")
     assert contextvars.copy_context().run(lambda: (attribute_usage(other=1), markup.current_markup())[1]) == (
-        markup.PLATFORM_MIN_MARKUP)
-    # BYOK stays at cost whatever the markup.
-    assert contextvars.copy_context().run(lambda: (attributed(), markup.apply_platform_markup(Decimal("2"), True, "m"))[1]) == (
-        Decimal("2"))
+        Decimal("3"))
+    assert markup.at_cost({"acme_api": {}}) and not markup.at_cost({"other": {}})

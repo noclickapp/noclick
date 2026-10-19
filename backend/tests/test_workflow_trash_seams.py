@@ -21,7 +21,7 @@ def seams(monkeypatch):
     monkeypatch.setattr(wh, "cleanup_workflow_operational_resources", cleanup)
     monkeypatch.setattr(wh, "restore_nodes_resources", restore_resources)
     monkeypatch.setattr(wh, "spawn", lambda coro, **kw: spawned.append(coro) or coro.close())
-    monkeypatch.setattr(wh.WorkflowRepo, "workflow_exists_for_owner", AsyncMock(return_value=True))
+    monkeypatch.setattr(wh.WorkflowRepo, "owned_workflow_system", AsyncMock(return_value=""))
     monkeypatch.setattr(wh.WorkflowRepo, "soft_delete_workflow", AsyncMock())
     monkeypatch.setattr(wh.WorkflowRepo, "restore_workflow", AsyncMock(return_value="UPDATE 1"))
     return cleanup, restore_resources, spawned
@@ -34,10 +34,22 @@ async def test_trash_tears_down_then_soft_deletes_for_the_owner_only(seams):
     cleanup.assert_awaited_once()
     assert wh.WorkflowRepo.soft_delete_workflow.await_args.args[2] == USER
 
-    wh.WorkflowRepo.workflow_exists_for_owner.return_value = False
+    wh.WorkflowRepo.owned_workflow_system.return_value = None
     assert (await wh.trash_workflow_as_owner(MockNativePool(), WORKFLOW, USER))["success"] is False
     assert cleanup.await_count == 1  # nothing torn down for a workflow the user does not own
     assert (await wh.trash_workflow_as_owner(MockNativePool(), "not-a-uuid", USER))["error"] == "Workflow not found"
+
+
+async def test_a_workflow_noclick_runs_itself_goes_only_with_what_it_runs(seams):
+    cleanup, _, _ = seams
+    wh.WorkflowRepo.owned_workflow_system.return_value = "your NoClick assistant"
+    out = await wh.trash_workflow_as_owner(MockNativePool(), WORKFLOW, USER)
+    assert out == {"success": False, "error": "This automation runs your NoClick assistant, so NoClick keeps it: "
+                                              "it can't be edited, renamed or deleted."}
+    assert cleanup.await_count == 0 and wh.WorkflowRepo.soft_delete_workflow.await_count == 0
+
+    out = await wh.trash_workflow_as_owner(MockNativePool(), WORKFLOW, USER, allow_system=True)
+    assert out["success"] is True and wh.WorkflowRepo.soft_delete_workflow.await_count == 1
 
 
 async def test_restore_undeletes_then_re_registers_in_the_background(seams, monkeypatch):

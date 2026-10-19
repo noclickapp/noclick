@@ -16,8 +16,6 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
     """
     return SocketIORateLimitConfig(
         per_event_rate_limits={
-            # Chat events
-            "chat:message": SocketIORateLimit(second=5, minute=30),
             # YJS sync events
             "yjs:sync": SocketIORateLimit(second=50, minute=500),
 
@@ -30,9 +28,22 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "phone:link:start": SocketIORateLimit(second=1, minute=5),
             "phone:link:check": SocketIORateLimit(second=2, minute=10),
             "phone:link:code": SocketIORateLimit(second=1, minute=10),
-            "phone_number:search": SocketIORateLimit(second=2, minute=20),
+            "phone_number:coverage": SocketIORateLimit(second=2, minute=20),
+            "phone_number:places": SocketIORateLimit(second=2, minute=30),
+            "phone_number:search": SocketIORateLimit(second=2, minute=30),
             "phone_number:buy": SocketIORateLimit(second=1, minute=5),
+            "phone_number:documents": SocketIORateLimit(second=2, minute=30),
+            "phone_number:document_upload": SocketIORateLimit(second=2, minute=20),
+            "phone_number:document_remove": SocketIORateLimit(second=2, minute=20),
+            "phone_number:orders": SocketIORateLimit(second=2, minute=30),
+            "phone_number:resubmit": SocketIORateLimit(second=1, minute=5),
             "phone:unlink": SocketIORateLimit(second=1, minute=5),
+
+            # Relay viewer tokens. A tab mints one per relay (re)connect and
+            # retries a failed mint with backoff; presence mints one per
+            # workflow it opens. Generous for real tabs, a wall for a loop.
+            "relay:user_token": SocketIORateLimit(second=2, minute=20),
+            "workflow:collab_token": SocketIORateLimit(second=5, minute=60),
 
             # Account coordinator (a send is one billed agent turn)
             "coordinator:open": SocketIORateLimit(second=5, minute=30),
@@ -45,7 +56,13 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "coordinator:memories:save": SocketIORateLimit(second=2, minute=30),
             "coordinator:memories:delete": SocketIORateLimit(second=2, minute=30),
             "coordinator:jobs": SocketIORateLimit(second=5, minute=60),
+            "referral:get": SocketIORateLimit(second=2, minute=30),
             "coordinator:arrival": SocketIORateLimit(second=1, minute=10),
+            "coordinator:email:ensure": SocketIORateLimit(second=2, minute=30),
+            "coordinator:email:set": SocketIORateLimit(second=1, minute=10),
+            "coordinator:email:inbound": SocketIORateLimit(second=1, minute=10),
+            # Each followed operation opens a job whose end is a billed coordinator turn.
+            "coordinator:platform:follow": SocketIORateLimit(second=1, minute=10),
 
             # Proving a credential works: each call is a real provider round
             # trip, so it is bounded well below a click-happy user.
@@ -58,6 +75,14 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
 
             # In-app feedback / bug report
             "feedback:submit": SocketIORateLimit(second=2, minute=15),
+
+            # Settings → Usage: the page re-reads at most every 5s while charges land;
+            # Download CSV pages through every charge back to back.
+            "usage:page": SocketIORateLimit(second=2, minute=30),
+            "usage:charges": SocketIORateLimit(second=20, minute=600),
+            # Settings → Plan and billing's monthly spending cap.
+            "spend_cap:get": SocketIORateLimit(second=3, minute=30),
+            "spend_cap:set": SocketIORateLimit(second=1, minute=10),
 
             # Organization operation events
             "organization:create": SocketIORateLimit(second=1, minute=1),
@@ -101,6 +126,8 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "resource:dataset:append": SocketIORateLimit(second=5, minute=30),
             "resource:dataset:update_row": SocketIORateLimit(second=5, minute=30),
             "resource:dataset:delete_rows": SocketIORateLimit(second=5, minute=30),
+            # Settings' list of published pages: one app read per page.
+            "publish:list": SocketIORateLimit(second=3, minute=30),
 
             # Resource sharing invite-link events. accept is the redemption path
             # for an open token, so cap it to blunt token enumeration/abuse.

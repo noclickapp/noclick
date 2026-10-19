@@ -272,7 +272,7 @@ class WorkflowCheckpointHandler(DatabasePoolMixin, SocketIOHandler):
                     await send_event(self.sio, sid, ResponseEvent(
                         request_id=request.request_id,
                         data={},
-                        error="You don't have permission to restore this workflow"
+                        error=access.edit_refusal("You don't have permission to restore this workflow")
                     ))
                     return
 

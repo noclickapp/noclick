@@ -23,11 +23,18 @@ export type MemoryHeader = {
 };
 export type MemoryEntry = MemoryHeader & { content: string };
 export type MemoryPage = { memories: MemoryHeader[]; has_more: boolean };
+/** What a memory's name may be, as the editor's field checks it. */
+export type MemoryNames = { pattern: string; maxLength: number; hint: string };
+const HYPHENATED: MemoryNames = { pattern: '[a-z0-9]+(-[a-z0-9]+)*', maxLength: 100, hint: 'Lowercase words separated by hyphens' };
 export type MemoryTransport = {
     list: (query: string, offset: number) => Promise<MemoryPage>;
     get: (id: string) => Promise<MemoryEntry>;
     save: (memory: CoordinatorMemoryWrite) => Promise<MemoryEntry>;
     forget: (id: string, version: number) => Promise<void>;
+    /** False where memories have no kind (an agent's): the panel neither shows nor asks one. */
+    kinds?: boolean;
+    /** Where names aren't lowercase words joined by hyphens. */
+    names?: MemoryNames;
 };
 
 async function reply<T>(pending: Promise<T & { error?: string }>): Promise<T> {
@@ -216,6 +223,8 @@ export function useCoordinatorMemories(
 
     return {
         ...page,
+        kinds: transport.kinds !== false,
+        names: transport.names ?? HYPHENATED,
         query,
         offset,
         loading,

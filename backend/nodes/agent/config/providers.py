@@ -6,9 +6,11 @@ Maps LiteLLM model prefixes to required environment variable names.
 
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 from urllib.parse import urlsplit
+
+from utils.model_catalog import current_video_model
 
 # Map of model prefixes to required environment variables
 PROVIDER_REQUIRED_CREDENTIALS: Dict[str, List[str]] = {
@@ -375,19 +377,17 @@ def _validate_vertex_metadata(key: str, value: str) -> str:
     return value
 
 
-def _media_provider_keys(
-    *, model_type: str, cred_model: str, required_vars: Sequence[str]
-) -> frozenset[str]:
-    """Credential keys actually consumed by each media fast path."""
+def _media_provider_keys(*, model_type: str, cred_model: str) -> frozenset[str]:
+    """Credential keys actually consumed by each media fast path. Video takes
+    the owner's own Google key for a Google model (handlers/video.py calls
+    Google with it); every other video runs on the platform's OpenRouter key."""
     model = cred_model.strip().lower()
     if model_type == "image":
         if "imagen" in model and "openrouter/" not in model:
             return _GOOGLE_PROVIDER_KEYS
         return frozenset({"OPENROUTER_API_KEY"})
     if model_type == "video":
-        if "gemini/" in model or "google/" in model:
-            return _GOOGLE_PROVIDER_KEYS
-        return frozenset(required_vars)
+        return _GOOGLE_PROVIDER_KEYS if current_video_model(model).startswith(("google/", "gemini/")) else frozenset()
     if model_type == "kling":
         return frozenset({"KLING_ACCESS_KEY", "KLING_SECRET_KEY"})
     return frozenset()
@@ -418,11 +418,7 @@ def filter_provider_credential_env(
 
     normalized_type = (model_type or "llm").strip().lower()
     if normalized_type in {"image", "video", "kling"}:
-        allowed = _media_provider_keys(
-            model_type=normalized_type,
-            cred_model=cred_model,
-            required_vars=required_vars,
-        )
+        allowed = _media_provider_keys(model_type=normalized_type, cred_model=cred_model)
     else:
         allowed_set = set(required_vars)
         provider = provider_name.strip().lower().replace("_", "-")
@@ -498,6 +494,14 @@ HARNESS_SUBMODEL_FIELDS: Dict[str, str] = {
     "hermes": "hermes_agent_model",
     "openclaw": "openclaw_model",
     "opencode": "opencode_model",
+}
+
+# Wrapper model id → the field holding the model that harness runs, for every
+# harness: Model (`model`) names the harness, this field its model.
+HARNESS_MODEL_FIELDS: Dict[str, str] = {
+    "codex": "codex_model",
+    "claude-code": "claude_code_model",
+    **HARNESS_SUBMODEL_FIELDS,
 }
 
 # model_type discriminator → wrapper model id (the FE mirror is agentChat.ts
@@ -645,7 +649,9 @@ def agent_credential_requirement(config: Optional[Dict[str, Any]]) -> AgentCrede
     The billing rule, not just "which env var":
     - CLI harnesses (codex / claude-code / opencode / openclaw / hermes) ALWAYS
       need a user credential — sandbox harness runs have no per-call cost
-      capture, so a platform key would fund untracked usage.
+      capture, so a platform key would fund untracked usage. Except OpenCode
+      on a free model of Zen's own tier, which it runs with no key at all; a
+      key attached anyway still runs it (``model_credential_accepted_types``).
     - The SDK LLM path on an openrouter/* model runs on NoClick's platform key
       with per-call cost capture — no user credential.
     - Media model types (image / video / kling) run on platform keys with flat
@@ -673,7 +679,13 @@ def agent_credential_requirement(config: Optional[Dict[str, Any]]) -> AgentCrede
     # CLI harness: same sub-model resolution the execute path uses.
     wrapper_id = model or WRAPPER_ID_BY_MODEL_TYPE.get(model_type, "")
     cred_model = resolve_agent_cred_model({**cfg, "model": wrapper_id})
-    return _requirement_for(cred_model, oauth_capable=True)
+    requirement = _requirement_for(cred_model, oauth_capable=True)
+    if model_type == "opencode":
+        from .harness_model_lists import opencode_runs_keyless_cached
+
+        if opencode_runs_keyless_cached(cred_model):
+            return replace(requirement, required=False)
+    return requirement
 
 
 def _model_requirement(config: Any) -> Optional[AgentCredentialRequirement]:

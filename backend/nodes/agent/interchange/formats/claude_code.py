@@ -4,6 +4,10 @@ Conversation records are ``user`` and ``assistant`` lines forming a tree
 through ``uuid``/``parentUuid``; the live conversation is the chain from the
 leaf the CLI last recorded (``last-prompt.leafUuid``) back to the root, so
 abandoned branches and subagent ``isSidechain`` trees are not the thread.
+Parallel calls are the exception the CLI repairs on resume: each block of
+a response is its own record and each tool result hangs off its own
+call's record, so the chain passes through one call of a batch and the
+others are rejoined by ``message.id``.
 ``message.content`` is a string or a list of blocks — ``text``,
 ``tool_use``, ``tool_result``, ``thinking``, ``image``. Around the
 conversation the CLI writes bookkeeping the thread does not need
@@ -17,7 +21,7 @@ carried history.
 directory of its cwd; the slug is the cwd with every non-alphanumeric
 character replaced by ``-`` — the cwd as given, not resolved (on macOS the
 CLI names ``/Users/…``, never the ``/System/Volumes/Data`` firmlink).
-Validated against Claude Code 2.1.281 (read and resume) — see
+Validated against Claude Code 2.1.295 (read and resume) — see
 ``tests/test_session_interchange_drift.py``.
 """
 
@@ -96,7 +100,7 @@ class ClaudeCodeFormat(ThreadFormat):
             raise InterchangeError("source_unreadable", f"{path.name} holds no conversation records")
         if leaf not in by_uuid:
             leaf = last_candidate
-        chain = self._active_chain(leaf, by_uuid)
+        chain = self._with_parallel_siblings(self._active_chain(leaf, by_uuid), by_uuid)
 
         events: List[Event] = []
         model: Optional[str] = None
@@ -157,6 +161,32 @@ class ClaudeCodeFormat(ThreadFormat):
         return chain
 
     @staticmethod
+    def _with_parallel_siblings(chain: List[Tuple[int, dict]], by_uuid: Dict[str, Tuple[int, dict]]) -> List[Tuple[int, dict]]:
+        """The chain plus the other blocks of each response it passes through
+        and their results, merged in file order as the CLI does on resume."""
+        on_chain = {value.get("uuid") for _, value in chain}
+        message_ids = {_message_id(value) for _, value in chain if value.get("type") == "assistant"} - {None}
+        siblings = {uuid_ for uuid_, (_, value) in by_uuid.items()
+                    if value.get("type") == "assistant" and value.get("isSidechain") is not True and _message_id(value) in message_ids}
+        answered = {b.get("tool_use_id") for _, value in chain for b in _blocks(value, "tool_result")}
+        recovered: Deque[Tuple[int, dict]] = deque()  # in file order, as by_uuid is
+        for uuid_, (index, value) in by_uuid.items():
+            if uuid_ in on_chain or value.get("isSidechain") is True:
+                continue
+            if uuid_ in siblings:
+                recovered.append((index, value))
+            elif value.get("type") == "user" and (value.get("parentUuid") in siblings or value.get("sourceToolAssistantUUID") in siblings):
+                results = {b.get("tool_use_id") for b in _blocks(value, "tool_result")}
+                if results and not results & answered:
+                    recovered.append((index, value))
+        merged: List[Tuple[int, dict]] = []
+        for entry in chain:
+            while recovered and recovered[0][0] < entry[0]:
+                merged.append(recovered.popleft())
+            merged.append(entry)
+        return merged + list(recovered)
+
+    @staticmethod
     def _events_of(prov: Provenance, role: str, content: Any, ts: Optional[str], *, compaction: bool) -> List[Event]:
         reason = "summary" if compaction else ""
         if isinstance(content, str):
@@ -205,23 +235,30 @@ class ClaudeCodeFormat(ThreadFormat):
         seen_calls: set = set()
         generated: Deque[str] = deque()
         counter = 0
+        # (message.id, requestId) of the response being written: the CLI resumes
+        # blocks as one turn only under one id; apart, parallel calls lose their results.
+        response: Optional[Tuple[str, str]] = None
 
         def emit(rtype: str, message: Dict[str, Any], ts: Optional[str]) -> None:
-            nonlocal parent
+            nonlocal parent, response
             rid = str(uuid.uuid4())
             record: Dict[str, Any] = {
                 "parentUuid": parent, "isSidechain": False, "userType": "external", "cwd": str(store.cwd),
                 "sessionId": session_id, "version": identity.cli_version or thread.cli_version or "", "gitBranch": "",
                 "uuid": rid, "timestamp": ts or fallback_ts, "type": rtype, "message": message,
             }
-            if rtype == "assistant":
-                record["requestId"] = f"req_nc_{uuid.uuid4().hex}"
+            if rtype == "user":
+                response = None
+            elif response is not None:
+                record["requestId"] = response[1]
             records.append(record)
             parent = rid
 
         def assistant(blocks: List[Dict[str, Any]], ts: Optional[str]) -> None:
+            nonlocal response
+            response = response or (f"msg_nc_{uuid.uuid4().hex}", f"req_nc_{uuid.uuid4().hex}")
             emit("assistant", {
-                "id": f"msg_nc_{uuid.uuid4().hex}", "type": "message", "role": "assistant", "model": model,
+                "id": response[0], "type": "message", "role": "assistant", "model": model,
                 "content": blocks, "stop_reason": "end_turn", "stop_sequence": None,
                 "usage": {"input_tokens": 0, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0, "output_tokens": 0},
             }, ts)
@@ -263,6 +300,17 @@ class ClaudeCodeFormat(ThreadFormat):
             else:
                 dropped[event.drop_key] += 1
         return Written(session_id=session_id, native_path=path, records=records, dropped=dropped)
+
+
+def _message_id(record: dict) -> Optional[str]:
+    message = record.get("message")
+    return string(message.get("id")) if isinstance(message, dict) else None
+
+
+def _blocks(record: dict, block_type: str) -> List[dict]:
+    message = record.get("message")
+    content = message.get("content") if isinstance(message, dict) else None
+    return [b for b in content if isinstance(b, dict) and b.get("type") == block_type] if isinstance(content, list) else []
 
 
 def _is_uuid(value: str) -> bool:

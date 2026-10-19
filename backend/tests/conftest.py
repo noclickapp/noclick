@@ -254,6 +254,31 @@ async def setup_users_table_for_folder_tests(postgres_db, request):
 
 
 @pytest.fixture(autouse=True)
+def _no_live_generation_cost_lookup(monkeypatch):
+    """A call whose response carries no cost may be priced from OpenRouter's
+    record of it (utils.openrouter_cost.generation_cost), over the network.
+    Stub it to "not found" so a fake stream never reaches OpenRouter; a test
+    about the lookup monkeypatches it with its own fake."""
+    from utils import openrouter_cost
+
+    async def _not_looked_up(generation_id):
+        raise openrouter_cost.CostUnknown(f"not looked up in tests: {generation_id}")
+
+    monkeypatch.setattr(openrouter_cost, "generation_cost", _not_looked_up)
+
+
+@pytest.fixture(autouse=True)
+def _no_models_dev_read_yet(monkeypatch):
+    """Whether an agent needs a key reads the models.dev catalog the process
+    already holds (OpenCode runs Zen's free models with none), so whichever
+    earlier test read it would decide for every later one. Each test starts
+    with none read; a test about prices stubs ``_models_dev_cached``."""
+    from nodes.agent.config import harness_model_lists
+
+    monkeypatch.setattr(harness_model_lists, "_models_dev_cached", lambda: None)
+
+
+@pytest.fixture(autouse=True)
 def _no_live_connect_probe(monkeypatch):
     """Creating a credential proves it against the REAL provider
     (credential_connect.validate_for_connect → collect_evidence). A test that

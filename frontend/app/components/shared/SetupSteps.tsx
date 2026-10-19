@@ -35,17 +35,17 @@ export function SetupSteps({ steps }: { steps: SetupStepItem[] }) {
                     )}
                     <span className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground/[0.08]">
                         {step.icon ?? (
-                            <span className="text-[12.5px] font-semibold tabular-nums text-foreground/55">
+                            <span className="text-[12.5px] font-semibold tabular-nums text-foreground/60 dark:text-foreground/55">
                                 {i + 1}
                             </span>
                         )}
                     </span>
                     <div className="min-w-0 pt-[5px]">
-                        <p className="m-0 text-sm font-medium leading-snug text-foreground/85">
+                        <p className="m-0 text-[15px] font-medium leading-snug text-foreground">
                             {step.title}
                         </p>
                         {step.body && (
-                            <p className="m-0 mt-1.5 text-[13.5px] leading-relaxed text-muted-foreground">
+                            <p className="m-0 mt-1.5 text-[14px] leading-relaxed text-foreground/60">
                                 {step.body}
                             </p>
                         )}

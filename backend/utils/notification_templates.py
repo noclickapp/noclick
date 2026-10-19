@@ -157,6 +157,19 @@ def kv_rows(rows) -> str:
     )
 
 
+def link_panel(text_html: str, url: str) -> str:
+    """A soft panel offering one link, shown in full so it can be copied: text above, the link under it."""
+    shown = url.split("://", 1)[-1]
+    return (
+        '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:6px 0 16px;"><tr>'
+        f'<td style="background-color:#fafafa;border:1px solid #e4e4e7;border-radius:9px;padding:14px 16px;'
+        f'font-family:{FONT};">'
+        f'<p style="margin:0 0 6px;font-size:14px;line-height:1.55;color:{BODY};">{text_html}</p>'
+        f'<a href="{url}" style="font-size:14px;font-weight:600;color:{INK};text-decoration:underline;'
+        f'word-break:break-all;">{shown}</a></td></tr></table>'
+    )
+
+
 def error_panel(error_html: str) -> str:
     return (
         '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 16px;"><tr>'
@@ -284,14 +297,15 @@ def workflow_bars(rows) -> str:
     return out
 
 
-def credit_bars(rows) -> str:
-    """Per-consumer credit bars, width relative to the biggest spender.
-    rows: [(name_escaped, credits_float)]."""
+def spend_bars(rows, *, in_credits: bool = False) -> str:
+    """Per-consumer spend bars, width relative to the biggest spender.
+    rows: [(name_escaped, amount_float)], in dollars (credits on the old plans)."""
     mx = max((r[1] for r in rows), default=0.0) or 1.0
     out = ""
-    for name, credits in rows:
-        width = max(6, int(round(credits / mx * 100)))
-        out += _labeled_bar(name, f"{credits:.1f} cr", _bar_segments([(width, INK)]))
+    for name, amount in rows:
+        width = max(6, int(round(amount / mx * 100)))
+        shown = f"{amount:.1f} cr" if in_credits else f"${amount:,.2f}"
+        out += _labeled_bar(name, shown, _bar_segments([(width, INK)]))
     return out
 
 

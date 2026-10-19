@@ -20,6 +20,7 @@ import {
 import type { ToolLogo } from '~/components/agent-share/ToolLogosRow';
 import { buildSeoMeta } from '~/lib/seo';
 import { LogoMark } from '~/components/shared/LogoMark';
+import { setNodeIconData } from '~/lib/nodeIconRegistry';
 
 // CLI-harness model ids get their brand mark; anything else falls back to the
 // generic agent node icon. Kept inline (tiny + stable) instead of importing
@@ -102,12 +103,14 @@ export async function loader({ params }: LoaderFunctionArgs) {
         }))
         .filter((t) => t.iconHtml);
 
-    return json({ linkId, meta, agentIcon, toolLogos });
+    return json({ linkId, meta, agentIcon, toolLogos, toolIcons: iconMap });
 }
 
 export default function SharedAgentPage() {
-    const { linkId, meta, agentIcon, toolLogos } =
+    const { linkId, meta, agentIcon, toolLogos, toolIcons } =
         useLoaderData() as JsonPayloadOf<typeof loader>;
+    // The marks the transcript's tool steps draw, without the node registry.
+    setNodeIconData(toolIcons);
     return (
         <PublicAgentChatView
             linkId={linkId}

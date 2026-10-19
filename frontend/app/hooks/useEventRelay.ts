@@ -19,6 +19,7 @@ import ReconnectingWebSocket from 'partysocket/ws';
 import { socketReceiver } from '~/lib/socket-receiver';
 import type { ServerToClientEvents } from '~/types/socket-events.generated';
 import { relayBaseUrl } from '~/lib/hostedDefaults';
+import { forgetUserRelayToken, getUserRelayToken } from '~/lib/relayToken';
 
 interface RelayMessage {
   type: string;
@@ -48,6 +49,12 @@ function setActiveRelayWs(ws: ReconnectingWebSocket | null): void {
   const w = window as unknown as { __ncRelayWs?: ReconnectingWebSocket };
   w.__ncRelayWs = ws ?? undefined;
 }
+
+// A failed token mint is retried after 1s, 2s, 4s… (capped), and a connection
+// that still has none after this many tries starts over on a fresh one.
+const MINT_RETRY_BASE_MS = 1000;
+const MINT_RETRY_MAX_MS = 30000;
+const MINT_ATTEMPTS_PER_CONNECTION = 4;
 
 /**
  * Hook for connecting to the Event Relay WebSocket.
@@ -98,6 +105,40 @@ export function useEventRelay({ userId, workflowId, enabled = true }: UseEventRe
     wsRef.current = ws;
     setActiveRelayWs(ws);
 
+    // Once the relay requires auth, an unauthenticated tab receives nothing,
+    // so a connection whose mint fails retries it with backoff and reconnects
+    // if it keeps failing. `connection` changes on every open and close, so a
+    // retry or a late token never reaches a connection it wasn't for.
+    let connection = 0;
+    let mintFailures = 0; // consecutive, across connections: grows the backoff
+    let mintRetry: ReturnType<typeof setTimeout> | null = null;
+    const clearMintRetry = () => {
+      if (mintRetry) clearTimeout(mintRetry);
+      mintRetry = null;
+    };
+    const authenticate = (conn: number, attempt: number) => {
+      getUserRelayToken(userId).then(
+        (token) => {
+          mintFailures = 0;
+          if (token && conn === connection && ws.readyState === ReconnectingWebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'auth', token }));
+          }
+        },
+        (error: unknown) => {
+          mintFailures += 1;
+          if (conn !== connection) return;
+          if (attempt + 1 >= MINT_ATTEMPTS_PER_CONNECTION) {
+            console.error('[EventRelay] No relay token after retries; reconnecting:', error);
+            ws.reconnect(4002, 'relay token unavailable');
+            return;
+          }
+          const delay = Math.min(MINT_RETRY_BASE_MS * 2 ** (mintFailures - 1), MINT_RETRY_MAX_MS);
+          console.warn(`[EventRelay] Relay token mint failed; retrying in ${delay}ms:`, error);
+          mintRetry = setTimeout(() => authenticate(conn, attempt + 1), delay);
+        },
+      );
+    };
+
     ws.addEventListener('open', () => {
       console.log('[EventRelay] Connected');
       stateRef.current = { status: 'connected' };
@@ -118,6 +159,13 @@ export function useEventRelay({ userId, workflowId, enabled = true }: UseEventRe
       if (workflowId) {
         ws.send(JSON.stringify({ type: 'subscribe', workflowId }));
       }
+
+      // Prove this tab is the user: its first frame carries a short-lived
+      // token (never the URL). Each connect sends one, so a reconnect after
+      // the last one lapsed mints another.
+      connection += 1;
+      clearMintRetry();
+      authenticate(connection, 0);
     });
 
     ws.addEventListener('message', (event: MessageEvent) => {
@@ -136,6 +184,16 @@ export function useEventRelay({ userId, workflowId, enabled = true }: UseEventRe
         }
 
         if (data.type === 'subscribed' || data.type === 'unsubscribed') {
+          return;
+        }
+
+        if (data.type === 'auth:required' || data.type === 'auth:success') {
+          return;
+        }
+        if (data.type === 'auth:error') {
+          // Drop it, so the next connect mints a fresh one.
+          console.error('[EventRelay] Relay refused the token:', data.message);
+          forgetUserRelayToken();
           return;
         }
 
@@ -166,6 +224,8 @@ export function useEventRelay({ userId, workflowId, enabled = true }: UseEventRe
     ws.addEventListener('close', (event: CloseEvent) => {
       console.log(`[EventRelay] Disconnected (code: ${event.code}, reason: ${event.reason || 'none'})`);
       stateRef.current = { status: 'disconnected' };
+      connection += 1;
+      clearMintRetry();
       if (keepaliveRef.current) {
         clearInterval(keepaliveRef.current);
         keepaliveRef.current = null;
@@ -183,6 +243,8 @@ export function useEventRelay({ userId, workflowId, enabled = true }: UseEventRe
         clearInterval(keepaliveRef.current);
         keepaliveRef.current = null;
       }
+      connection += 1;
+      clearMintRetry();
       // partysocket.close() prevents further reconnection attempts.
       ws.close();
       wsRef.current = null;

@@ -1,244 +1,87 @@
+// The hero fitted to screens of each shape, each rendered in a same-origin frame of that size: on a landscape screen the
+// "Text NoClick" card sits beside the statement; on a portrait one the headline runs across the top (in more lines as the
+// screen gets taller) and the calls to action stand at the foot, level with the card's button; on a phone the card's
+// button is the way in, in place of the signup calls to action. Every size shows the code and the button, lands on one screen and scrolls nowhere sideways.
 import { nc } from '~/lib/nc';
 
-interface ViewportExpectation {
-    width: number;
-    height: number;
-    x: string;
-    y: string;
-    size: string;
-    perspective: string;
-    tilt: string;
-    yaw: string;
-    angle: string;
-}
+const VIEWPORTS = [
+    { width: 1920, height: 1080, layout: 'beside', lines: 2 },
+    { width: 1440, height: 900, layout: 'beside', lines: 2 },
+    { width: 1280, height: 800, layout: 'beside', lines: 2 },
+    { width: 1180, height: 820, layout: 'beside', lines: 2 },
+    { width: 900, height: 900, layout: 'portrait', lines: 2 },
+    { width: 939, height: 1161, layout: 'portrait', lines: 3 },
+    { width: 785, height: 1160, layout: 'portrait', lines: 3 },
+    { width: 768, height: 1024, layout: 'portrait', lines: 3 },
+    { width: 828, height: 1592, layout: 'portrait', lines: 4 },
+    { width: 390, height: 844, layout: 'phone', lines: 2 },
+] as const;
 
-const viewports: ViewportExpectation[] = [
-    {
-        width: 1920,
-        height: 1080,
-        x: '66%',
-        y: '59%',
-        size: 'min(104vw, 1660px)',
-        perspective: '1050px',
-        tilt: '75deg',
-        yaw: '-5deg',
-        angle: '-9deg',
-    },
-    {
-        width: 1440,
-        height: 900,
-        x: '66%',
-        y: '59%',
-        size: 'min(104vw, 1660px)',
-        perspective: '1050px',
-        tilt: '75deg',
-        yaw: '-5deg',
-        angle: '-9deg',
-    },
-    {
-        width: 1280,
-        height: 800,
-        x: '66%',
-        y: '59%',
-        size: 'min(104vw, 1660px)',
-        perspective: '1050px',
-        tilt: '75deg',
-        yaw: '-5deg',
-        angle: '-9deg',
-    },
-    {
-        width: 768,
-        height: 1024,
-        x: '67%',
-        y: '63%',
-        size: 'min(162vw, 1390px)',
-        perspective: '920px',
-        tilt: '75deg',
-        yaw: '-5deg',
-        angle: '-9deg',
-    },
-    {
-        width: 390,
-        height: 844,
-        x: '70%',
-        y: '63%',
-        size: '208vw',
-        perspective: '780px',
-        tilt: '74deg',
-        yaw: '-4deg',
-        angle: '-10deg',
-    },
-];
-
-function waitForFrame(frame: HTMLIFrameElement) {
+function load(frame: HTMLIFrameElement) {
     return new Promise<void>((resolve, reject) => {
-        const timeout = window.setTimeout(
-            () => reject(new Error('Responsive hero frame did not load')),
-            15_000
-        );
-
+        const timeout = window.setTimeout(() => reject(new Error('Responsive hero frame did not load')), 15_000);
         frame.addEventListener(
             'load',
             () => {
                 window.clearTimeout(timeout);
-                window.setTimeout(resolve, 250);
+                resolve();
             },
             { once: true }
         );
     });
 }
 
-export default async function () {
-    if (
-        window.location.pathname !== '/' ||
-        new URLSearchParams(window.location.search).has('space-hero-viewport')
-    ) {
-        return { helperFrame: true };
-    }
+const shown = (el: Element | null) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().width > 0;
 
-    nc.assert.equal(
-        window.location.pathname,
-        '/',
-        'Open the landing page before running this test'
-    );
+export default async function () {
+    // The frames load this same page; only the page that opened them runs the checks.
+    if (window.location.pathname !== '/' || new URLSearchParams(window.location.search).has('hero-viewport')) return { helperFrame: true };
 
     const results = [];
-
-    for (const viewport of viewports) {
+    for (const viewport of VIEWPORTS) {
         const frame = document.createElement('iframe');
         frame.setAttribute('aria-hidden', 'true');
-        frame.style.position = 'fixed';
-        frame.style.top = '0';
-        frame.style.left = '0';
-        frame.style.width = `${viewport.width}px`;
-        frame.style.height = `${viewport.height}px`;
-        frame.style.border = '0';
-        frame.style.opacity = '0';
-        frame.style.pointerEvents = 'none';
+        Object.assign(frame.style, { position: 'fixed', top: '0', left: '0', width: `${viewport.width}px`, height: `${viewport.height}px`, border: '0', opacity: '0', pointerEvents: 'none' });
         document.body.appendChild(frame);
-
-        const loaded = waitForFrame(frame);
-        frame.src = `/?space-hero-viewport=${viewport.width}x${viewport.height}`;
+        const loaded = load(frame);
+        frame.src = `/?hero-viewport=${viewport.width}x${viewport.height}`;
         await loaded;
+        const doc = frame.contentDocument!;
+        await nc.wait.until(() => !!doc.querySelector('[data-testid="text-noclick-card"]'), 10_000);
 
-        const frameWindow = frame.contentWindow;
-        const frameDocument = frame.contentDocument;
-        nc.assert.truthy(
-            frameWindow && frameDocument,
-            'Responsive test frame should be same-origin'
-        );
-
-        const hero = frameDocument!.querySelector(
-            '[data-testid="space-hero"]'
-        ) as HTMLElement;
+        const hero = doc.querySelector('[data-testid="space-hero"]') as HTMLElement;
         const heading = hero.querySelector('h1') as HTMLElement;
-        const secondaryTitle = hero.querySelector(
-            '[data-testid="space-hero-title-secondary"]'
-        ) as HTMLElement;
-        const actions = hero.querySelector(
-            '[data-testid="launchpad-hero-actions"]'
-        ) as HTMLElement;
-        const camera = hero.querySelector(
-            '[data-testid="space-hero-galaxy-camera"]'
-        ) as HTMLElement;
-        const rig = hero.querySelector(
-            '[data-testid="space-hero-galaxy-rig"]'
-        ) as HTMLElement;
-        const mainTexture = hero.querySelector(
-            '[data-testid="space-hero-galaxy-texture-main"]'
-        ) as HTMLImageElement;
-        const heroStyle = frameWindow!.getComputedStyle(hero);
+        const actions = doc.querySelector('[data-testid="launchpad-hero-actions"]') as HTMLElement;
+        const card = doc.querySelector('[data-testid="text-noclick-card"]') as HTMLElement;
+        const qr = card.querySelector('[role="img"]');
+        const open = card.querySelector('[data-testid="text-noclick-open"]') as HTMLElement;
+        const cardRect = card.getBoundingClientRect();
+        const at = `${viewport.width}x${viewport.height}`;
+
         const headingRect = heading.getBoundingClientRect();
-        const actionsRect = actions.getBoundingClientRect();
-        const heroRect = hero.getBoundingClientRect();
+        if (viewport.layout === 'beside') {
+            nc.assert.truthy(cardRect.left >= headingRect.right - 1, `${at}: the card sits beside the statement`);
+            nc.assert.truthy(cardRect.top < actions.getBoundingClientRect().bottom, `${at}: the card shares the statement's band`);
+        } else if (viewport.layout === 'portrait') {
+            const actionsRect = actions.getBoundingClientRect();
+            nc.assert.truthy(cardRect.top >= headingRect.bottom, `${at}: the headline runs above the card`);
+            nc.assert.truthy(cardRect.left >= actionsRect.right, `${at}: the card sits beside the calls to action`);
+            nc.assert.truthy(Math.abs(actionsRect.bottom - open.getBoundingClientRect().bottom) <= 2, `${at}: the calls to action stand level with the card's button`);
+        } else {
+            // A phone texts NoClick rather than signing up: the signup calls to action give way to the card's button.
+            nc.assert.falsy(shown(actions), `${at}: no signup calls to action on a phone`);
+            nc.assert.truthy(cardRect.top >= headingRect.bottom, `${at}: the card sits under the headline`);
+            nc.assert.equal(getComputedStyle(open).backgroundColor, getComputedStyle(heading).color, `${at}: the card's button is the solid one`);
+        }
+        const lines = Math.round(headingRect.height / (parseFloat(getComputedStyle(heading).fontSize) * 0.92));
+        nc.assert.equal(lines, viewport.lines, `${at}: the headline runs ${viewport.lines} lines`);
+        nc.assert.truthy(hero.getBoundingClientRect().height <= viewport.height, `${at}: the hero lands on one screen`);
+        nc.assert.truthy(shown(qr), `${at}: the code to scan shows`);
+        nc.assert.equal(open.textContent?.trim(), 'Open WhatsApp', `${at}: the button under it opens the chat`);
+        nc.assert.truthy(doc.documentElement.scrollWidth <= viewport.width, `${at}: nothing scrolls sideways`);
 
-        nc.assert.equal(
-            heroStyle.getPropertyValue('--galaxy-x').trim(),
-            viewport.x,
-            'Responsive galaxy x position should match its tuned value'
-        );
-        nc.assert.equal(
-            heroStyle.getPropertyValue('--galaxy-y').trim(),
-            viewport.y,
-            'Responsive galaxy y position should match its tuned value'
-        );
-        nc.assert.equal(
-            heroStyle.getPropertyValue('--galaxy-size').trim(),
-            viewport.size,
-            'Responsive galaxy size should match its tuned value'
-        );
-        nc.assert.equal(
-            heroStyle.getPropertyValue('--galaxy-perspective').trim(),
-            viewport.perspective,
-            'Responsive camera perspective should match its tuned value'
-        );
-        nc.assert.equal(
-            heroStyle.getPropertyValue('--galaxy-tilt').trim(),
-            viewport.tilt,
-            'Responsive plane tilt should match its tuned value'
-        );
-        nc.assert.equal(
-            heroStyle.getPropertyValue('--galaxy-yaw').trim(),
-            viewport.yaw,
-            'Responsive plane yaw should match its tuned value'
-        );
-        nc.assert.equal(
-            heroStyle.getPropertyValue('--galaxy-screen-angle').trim(),
-            viewport.angle,
-            'Responsive screen angle should match its tuned value'
-        );
-        nc.assert.equal(
-            frameWindow!.getComputedStyle(camera).perspective,
-            viewport.perspective,
-            'The CSS camera should resolve to the intended perspective'
-        );
-        nc.assert.truthy(
-            headingRect.left >= 0 && headingRect.right <= viewport.width,
-            'Hero title should remain inside the viewport'
-        );
-        nc.assert.truthy(
-            actionsRect.left >= 0 && actionsRect.right <= viewport.width,
-            'Hero CTAs should remain inside the viewport'
-        );
-        nc.assert.truthy(
-            headingRect.bottom < heroRect.height * 0.52,
-            'Title should stay in the quiet upper half of the hero'
-        );
-        nc.assert.truthy(
-            parseFloat(
-                frameWindow!.getComputedStyle(secondaryTitle).paddingBottom
-            ) > 0,
-            'Descenders should retain explicit breathing room'
-        );
-        nc.assert.equal(
-            frameWindow!.getComputedStyle(rig).overflow,
-            'visible',
-            'The 3D rig should remain unflattened at every breakpoint'
-        );
-        nc.assert.equal(
-            mainTexture.naturalWidth,
-            1254,
-            'The full-resolution main galaxy should load'
-        );
-        nc.assert.truthy(
-            frameDocument!.documentElement.scrollWidth <= viewport.width,
-            'Artwork should not produce horizontal page overflow'
-        );
-
-        results.push({
-            viewport: `${viewport.width}x${viewport.height}`,
-            heroHeight: Math.round(heroRect.height),
-            titleBottom: Math.round(headingRect.bottom),
-            noOverflow:
-                frameDocument!.documentElement.scrollWidth <= viewport.width,
-        });
-
+        results.push({ viewport: at, layout: viewport.layout, title: getComputedStyle(heading).fontSize, cardTop: Math.round(cardRect.top), cardLeft: Math.round(cardRect.left) });
         frame.remove();
     }
-
-    localStorage.setItem(
-        'nc-space-hero-responsive-results',
-        JSON.stringify(results)
-    );
     return results;
 }

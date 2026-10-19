@@ -52,7 +52,7 @@ export default async function () {
         await nc.wait.forElement('#nc-claude-recovery input');
         nc.dom.type('#nc-claude-recovery input', 'already-used-code');
         await nc.wait.ms(40);
-        await clickButton('Confirm Token');
+        await clickButton('Confirm');
         nc.assert.ok(
             host.textContent?.includes('already used'),
             'Actual failure must be visible'

@@ -7,8 +7,8 @@
  * Resolution order:
  *  1. Special-case agent/MCP credential types that aren't tied to a workflow
  *     node schema (Codex, Claude Code, MCP servers, etc.).
- *  2. Walk AVAILABLE_NODES + NODE_SCHEMAS to find the workflow node whose
- *     schema declares this credential_type, and use its (colored) Icon.
+ *  2. The workflow node whose schema declares this credential_type (the
+ *     serialized catalog's credentialKeys), with its (colored) Icon.
  *  3. Fall back to the monochrome OAuth provider icon from oauthProviders.ts.
  *  4. Final fallback: a generic KeyRound icon.
  */
@@ -23,32 +23,14 @@ import { SiAtlassian, SiIntuit } from 'react-icons/si';
 // Node brand icons come from the serialized node-icon singleton (dashboard loader),
 // NOT the node registry — keeps this util (used by the always-mounted command
 // palette + settings) off the registry's ~4.7MB node-component graph.
-import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
+import { getNodeIconData } from '~/lib/nodeIconRegistry';
+import { serializedIconComponent } from '~/components/shared/SerializedIcon';
 import { HARNESS_BRANDS } from '~/lib/harnessBrand';
-import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
 import { OAUTH_PROVIDER_CONFIG, PROVIDER_ALIASES, getProviderConfigByCredentialType } from '~/utils/oauthProviders';
-import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypes';
 import { cn } from '~/lib/utils';
 
 type IconCmp = ComponentType<{ className?: string; style?: CSSProperties }>;
 
-// Wrap a pre-rendered icon HTML string (from the node-icon singleton) as an
-// IconCmp so node-backed credential icons stay compatible with BrandIcon (which
-// passes className + style); the child img/svg fills the sized wrapper.
-function serializedIconComponent(html: string): IconCmp {
-    return function NodeBrandIcon({ className, style }) {
-        return (
-            <span
-                className={cn(
-                    'inline-flex items-center justify-center [&>img]:w-full [&>img]:h-full [&>svg]:w-full [&>svg]:h-full',
-                    className
-                )}
-                style={style}
-                dangerouslySetInnerHTML={{ __html: html }}
-            />
-        );
-    };
-}
 /** A resolved brand icon plus its brand color ('' = multicolor / leave untinted). */
 type CredentialIconEntry = { Icon: IconCmp; iconColor: string };
 
@@ -135,48 +117,15 @@ const OAUTH_PROVIDER_BRAND_ICONS: Record<string, CredentialIconEntry> = {
 
 let _iconCache: Map<string, CredentialIconEntry> | null = null;
 
+// From the serialized node catalog (the dashboard loader's nodeIconData), whose entries name the credential keys
+// that wear each node's mark: the schema bundle stays off every page that only shows an icon.
 function buildCredentialIconMap(): Map<string, CredentialIconEntry> {
     if (_iconCache) return _iconCache;
     _iconCache = new Map();
-    // Walk the node JSON schemas (data) for credential types; resolve the owning
-    // node's brand icon from the serialized icon singleton (not the registry).
-    for (const nodeType of Object.keys(NODE_SCHEMAS)) {
-        const schema = NODE_SCHEMAS[nodeType];
-        if (!schema?.$defs) continue;
-        const credProp = schema.properties?.credentials;
-        if (!credProp) continue;
-        const refs: string[] = [];
-        if (credProp.$ref) refs.push(credProp.$ref.split('/').pop()!);
-        if (credProp.anyOf) {
-            for (const entry of credProp.anyOf) {
-                if (entry.$ref) refs.push(entry.$ref.split('/').pop()!);
-            }
-        }
-        const iconMeta = getNodeIconMeta(nodeType);
-        if (!iconMeta?.iconHtml) continue;
-        for (const title of refs) {
-            const defn = schema.$defs[title];
-            if (!defn) continue;
-            const constVal = defn.properties?.credential_type?.const;
-            // Index under the canonical const AND the lowercased raw schema title
-            // (getCredentialTypeFromSchemaTitle returns the mapped type or the
-            // lowercased title). The latter lets legacy SDK-created credentials
-            // that stored the raw title verbatim — e.g.
-            // `instagrampageaccesstokencredential` — still resolve to the node icon.
-            const keys = new Set<string>([getCredentialTypeFromSchemaTitle(title), title.toLowerCase()]);
-            if (constVal) keys.add(constVal);
-            let entry: CredentialIconEntry | null = null;
-            for (const key of keys) {
-                if (!key || _iconCache.has(key)) continue;
-                if (!entry) {
-                    entry = {
-                        Icon: serializedIconComponent(iconMeta.iconHtml),
-                        iconColor: iconMeta.iconColor,
-                    };
-                }
-                _iconCache.set(key, entry);
-            }
-        }
+    for (const meta of Object.values(getNodeIconData())) {
+        if (!meta.credentialKeys?.length || !meta.iconHtml) continue;
+        const entry = { Icon: serializedIconComponent(meta.iconHtml), iconColor: meta.iconColor };
+        for (const key of meta.credentialKeys) _iconCache.set(key, entry);
     }
     return _iconCache;
 }

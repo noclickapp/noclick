@@ -3,6 +3,8 @@
  * must never bounce authorization codes to an origin taken from untrusted
  * state without this exact-origin check.
  */
+import { isLoopbackHostname } from '~/lib/loopback';
+
 export function isTrustedAppOrigin(origin: string): boolean {
     let parsed: URL;
     try {
@@ -11,8 +13,7 @@ export function isTrustedAppOrigin(origin: string): boolean {
         return false;
     }
 
-    const isLoopback =
-        parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1';
+    const isLoopback = isLoopbackHostname(parsed.hostname);
     if (parsed.protocol !== 'https:' && !isLoopback) return false;
     if (isLoopback) return true;
 

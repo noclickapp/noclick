@@ -92,6 +92,7 @@ class ApifyRunnerMixin:
         usage_event = UsageEventData(
             user_id=self.user_id,
             total_cost=charged,
+            cost_usd=raw,
             usage_type="api_usage",
             usage_subtype=usage_subtype,
             quantity=Decimal(str(item_count)),
@@ -275,15 +276,19 @@ class ApifyRunnerMixin:
                                 "Could not refresh final cost for Apify run %s", run["id"]
                             )
                             break
-                    await self._track_apify_usage(
-                        actor_id,
-                        action_name,
-                        usage_subtype,
-                        float(run.get("usageTotalUsd") or 0),
-                        len(items),
-                        run["id"],
-                        platform=platform,
-                    )
+                    if run.get("usageTotalUsd") is None:
+                        # Never a made-up $0: the run is named for reconciliation.
+                        logger.critical("Apify run %s not billed: Apify reported no cost for it", run["id"])
+                    else:
+                        await self._track_apify_usage(
+                            actor_id,
+                            action_name,
+                            usage_subtype,
+                            float(run["usageTotalUsd"]),
+                            len(items),
+                            run["id"],
+                            platform=platform,
+                        )
                     if result_charge_event and validated and not settled:
                         raise RuntimeError(
                             f"Apify usage for run {run['id']} has not settled; "

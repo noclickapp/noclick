@@ -3,13 +3,20 @@
 The model can finish useful background work silently. Recordings for a direct
 request are attached by the delivery layer, never dependent on model phrasing.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
+from utils.prompts import PromptPack
+
+PROMPTS = PromptPack("coordinator")
+TOOL_PROMPTS = PromptPack("coordinator_tools")
 
 
 @dataclass
 class FollowupReply:
     text: str
     delivery: dict
+    # The turn's tool calls, as a saved chat event keeps them: its note carries them.
+    tool_calls: list = field(default_factory=list)
 
 
 class FollowupDelivery:
@@ -28,11 +35,7 @@ class FollowupDelivery:
     def tool_param():
         return {"type": "function", "function": {
             "name": "set_followup_delivery",
-            "description": "Choose delivery for this completion only; does not cancel work or change future preferences. "
-                "For routine scheduled, bulk or delegated work, set notify=false when the owner needs no update. "
-                "Direct one-off call requests default to sending the outcome and recording. "
-                "Use include_recordings=false to omit audio, or true to attach available recordings automatically. "
-                "A late recording sends only audio, never another call summary. Honor the owner's latest preferences.",
+            "description": TOOL_PROMPTS.DESCRIPTIONS["set_followup_delivery"],
             "parameters": {"type": "object", "properties": {
                 "notify": {"type": "boolean"}, "include_recordings": {"type": "boolean"},
                 "reason": {"type": "string", "maxLength": 500},
@@ -52,45 +55,26 @@ class FollowupDelivery:
                 "note": "Posted as this turn's note in the owner's web conversation, in place of your final reply."}
 
     def delivery_instructions(self):
-        if self.internal:
-            return (
-                "Your final reply is only a note in the coordinator's web conversation; a message_owner to the web "
-                "takes its place, so the owner reads one note. To deliver a message "
-                "elsewhere or take another action, use your available tools according to the owner's "
-                "instructions and the preferences in the incoming message. Mentioning a destination in your "
-                "final reply does not send it there. set_followup_delivery controls only the web note."
-            )
-        channel = self.event["context"].get("channel", "the requesting channel")
-        return (f"Your final reply is automatically delivered to {channel}; "
-                "do not use message_owner to send a duplicate to that channel. Use your available tools "
-                "for any separately requested delivery or action.")
+        return PROMPTS.followup_delivery(internal=self.internal, context=self.event["context"])
 
     def decision(self):
         return {"notify": self.notify, "include_recordings": self.include_recordings, "reason": self.reason}
 
     def instructions(self):
-        text = self.delivery_instructions() + (" Delivery is separate from completing work: set_followup_delivery can omit a notification "
-                "without cancelling actions or future alarms. For scheduled, bulk or subagent work, decide whether "
-                "the owner needs a summary or audio; routine success may stay silent. For a direct one-off call, "
-                "give one concise outcome; the runtime attaches its recording by default when available. "
-                "Do not embed the call recording yourself or promise another summary when it arrives. "
-                "These are defaults; respect newer user instructions and memories.")
-        text += f" Current defaults: notify={self.notify}, include_recordings={self.include_recordings}."
-        if self.artifact_only:
-            text += (" This event adds only a recording to an already handled call. Do not summarize the call again "
-                     "or say you already reported it. Delivery can contain only the recording (or its unavailability), "
-                     "and may be omitted. The parent call's delivery choice is the default for this event.")
-        return text
+        return PROMPTS.followup_instructions(self.delivery_instructions(), notify=self.notify,
+                                             include_recordings=self.include_recordings,
+                                             artifact_only=self.artifact_only)
 
-    def reply(self, text):
+    def reply(self, text, tool_calls=()):
+        tool_calls = list(tool_calls)
         if self.notes:
             # Its closing line would only repeat what it told the owner.
-            return FollowupReply("\n\n".join(self.notes), {**self.decision(), "notify": True})
+            return FollowupReply("\n\n".join(self.notes), {**self.decision(), "notify": True}, tool_calls)
         payload = self.event["payload"]
         artifacts = [payload] if self.artifact_only else list(payload.get("artifacts", {}).values())
         recordings = [item for item in artifacts if item.get("operation") == "call_recording"]
         if not self.notify:
-            return FollowupReply("", self.decision())
+            return FollowupReply("", self.decision(), tool_calls)
         # Artifact turns cannot produce a second recap, even if the model does.
         if self.artifact_only:
             text = ""
@@ -105,4 +89,4 @@ class FollowupDelivery:
                     text += ("\n\n" if text else "") + f"![Call recording]({url})"
                 elif item.get("status") == "unavailable":
                     text += ("\n\n" if text else "") + "The call recording couldn't be retrieved."
-        return FollowupReply(text.strip(), self.decision())
+        return FollowupReply(text.strip(), self.decision(), tool_calls)

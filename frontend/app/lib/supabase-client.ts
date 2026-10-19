@@ -5,6 +5,8 @@
 import { createBrowserClient, serializeCookieHeader } from '@supabase/ssr';
 
 import { isLocalEdition } from '~/lib/edition';
+import { isLoopbackHostname } from '~/lib/loopback';
+import { worktreeAuthCookieName } from '~/lib/devHost';
 
 // Use ReturnType to infer the correct type from createBrowserClient
 type BrowserClient = ReturnType<typeof createBrowserClient>;
@@ -17,7 +19,9 @@ let clientEnv: { SUPABASE_URL: string; SUPABASE_ANON_KEY: string } | null =
  * Per-worktree auth-cookie storage key for local development.
  *
  * Cookies on localhost are scoped by host only, NOT by port, so every git
- * worktree running on its own dev port (5173, 5174, …) shares one cookie jar.
+ * worktree running on its own dev port (5173, 5174, …) shared one cookie jar
+ * (dev now serves each from wt<port>.localhost, lib/devHost.ts; the name keeps
+ * a straggler on plain localhost from clobbering another worktree).
  * With Supabase's single-use rotating refresh tokens that means logging into
  * one worktree overwrites the shared cookie and invalidates every other
  * worktree's session — "logging into one worktree logs the others out".
@@ -67,12 +71,8 @@ export function devAuthCookieName(
     hostname: string | null | undefined,
     port: string | null | undefined
 ): string | undefined {
-    const isLocalHost =
-        hostname === 'localhost' ||
-        hostname === '127.0.0.1' ||
-        !!hostname?.endsWith('.localhost');
-    if (!isLocalHost || !port) return undefined;
-    return `sb-noclick-wt${port}-auth-token`;
+    if (!isLoopbackHostname(hostname) || !port) return undefined;
+    return worktreeAuthCookieName(port);
 }
 
 /**

@@ -3,13 +3,12 @@
 // Only available in development mode. Access at /test/flow-perf?nodes=10
 
 import { useSearchParams } from 'react-router';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Node, Edge } from '@xyflow/react';
 import FlowCanvas from '~/components/workflow/FlowCanvas';
 import { DndProvider } from '~/providers/DndProvider';
 import { ChatDrawerProvider } from '~/components/chat/drawer/ChatDrawerProvider';
 import { NoClick } from '~/components/chat/NoClick';
-import { NavBar } from '~/components/nav/NavBar';
 import { useValtioState } from '~/hooks/useValtioState';
 import { getDefaultPanelWidth } from '~/lib/constants';
 import { graphRecords, recordGraphSnapshot } from '~/lib/liveGraphStore';
@@ -72,15 +71,7 @@ function generateMockEdges(nodes: Node[]): Edge[] {
     return edges;
 }
 
-// Mock user for NavBar (matches production structure)
-const mockUser = {
-    email: 'perf-test@noclick.com',
-    avatar_url: undefined,
-    subscription_tier: 'pro' as const,
-    created_at: new Date().toISOString(),
-};
-
-// Full Dashboard Layout with real NoClick, NavBar, and FlowCanvas
+// Full Dashboard Layout with real NoClick and FlowCanvas (the canvas owns its header)
 function FullDashboardLayout({
     initialNodeCount,
 }: {
@@ -104,11 +95,6 @@ function FullDashboardLayout({
         'isDragging',
         false
     );
-    const [selectedTab, setSelectedTab] = useValtioState<string>(
-        valtioPath,
-        'selectedTab',
-        'flow'
-    );
 
     // Use refs to avoid subscribing to flow state (which causes re-renders during drag)
     // This is critical for performance testing - parent subscribing to flow state
@@ -116,12 +102,6 @@ function FullDashboardLayout({
     const nodesInjectedRef = useRef(false);
     const [isReady, setIsReady] = useState(false);
 
-    const handleTabChange = useCallback(
-        (tab: string) => {
-            setSelectedTab(tab);
-        },
-        [setSelectedTab]
-    );
 
     // Inject nodes via liveGraphStore. recordGraphSnapshot writes
     // straight into graphRecords[workflowId] which is what FlowCanvas
@@ -220,26 +200,9 @@ function FullDashboardLayout({
                                     : 'all 300ms ease-in-out',
                             }}
                         >
-                            {/* Real NavBar */}
-                            <div
-                                className="fixed top-0 right-0 z-10"
-                                style={{
-                                    width: `calc(100% - ${isChatExpanded ? chatWidth : 50}px)`,
-                                    transition: isDragging
-                                        ? 'none'
-                                        : 'all 300ms ease-in-out',
-                                }}
-                            >
-                                <NavBar
-                                    user={mockUser}
-                                    selectedTab={selectedTab}
-                                    onTabChange={handleTabChange}
-                                />
-                            </div>
-
                             {/* Main content area */}
                             <main
-                                className="pt-14 w-full overflow-hidden"
+                                className="w-full overflow-hidden"
                                 style={{ height: 'calc(100vh - 0px)' }}
                             >
                                 <div

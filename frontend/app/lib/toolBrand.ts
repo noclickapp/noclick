@@ -1,9 +1,12 @@
-// Resolve the integration node (registry metadata: brand icon + color) behind
-// a "{provider}__{operation}" agent-tool slug. Extracted from the Feed's
-// Agents tab so every surface that renders tool calls (feed rows, the chat's
-// step timeline) shows the same mark the canvas does.
+// Resolve the integration node (brand icon + color) behind a
+// "{provider}__{operation}" agent-tool slug, so every surface that renders tool
+// calls (feed rows, the chat's step timeline) shows the same mark the canvas
+// does. Read from the serialized icon catalog (lib/nodeIconRegistry), never the
+// node registry: the chat transcript is on the first paint of the dashboard and
+// of public agent pages, and the registry carries every node component.
 
-import { getNodeMetadata } from '~/components/workflow/nodes/nodeRegistry';
+import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
+import type { SerializedNodeMeta } from '~/lib/nodeCatalogTypes';
 
 // Candidate node types from a tool name "{provider}__{operation}". The provider
 // slug is snake_case while node types are hyphenated ("google_sheets" →
@@ -26,14 +29,31 @@ export function providerTypeCandidates(toolName: string): string[] {
 export function resolveToolProviderMeta(
     toolName: string,
     providerNodeType?: string | null
-) {
-    if (providerNodeType) {
-        const m = getNodeMetadata(providerNodeType);
-        if (m?.Icon) return m;
-    }
-    for (const t of providerTypeCandidates(toolName)) {
-        const m = getNodeMetadata(t);
-        if (m?.Icon) return m;
+): SerializedNodeMeta | undefined {
+    const candidates = providerTypeCandidates(toolName);
+    if (providerNodeType) candidates.unshift(providerNodeType);
+    for (const type of candidates) {
+        const meta = getNodeIconMeta(type);
+        if (meta?.iconHtml) return meta;
     }
     return undefined;
+}
+
+/** Agent tools that come with every agent rather than from an integration. */
+const BUILTIN_TOOL_LABELS: Record<string, string> = {
+    web_search: 'Web search',
+    web_fetch: 'Fetch pages',
+    execute_bash: 'Shell',
+};
+
+/** A tool as a compact chip shows it: the node type for its mark (null for a
+ *  built-in tool), the integration's name, and what the call did ("Create
+ *  refund"), from the icon catalog NodeMark draws from. */
+export function toolIntegration(toolName: string): { type: string | null; provider: string; action: string } {
+    const [slug, ...rest] = toolName.split('__');
+    const operation = rest.join('__').replace(/_/g, ' ').trim();
+    const meta = resolveToolProviderMeta(toolName);
+    const type = meta?.type ?? null;
+    const provider = meta?.label ?? BUILTIN_TOOL_LABELS[toolName] ?? slug.replace(/[_-]+/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
+    return { type, provider, action: operation ? operation.charAt(0).toUpperCase() + operation.slice(1) : provider };
 }

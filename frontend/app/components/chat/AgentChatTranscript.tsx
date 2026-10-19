@@ -4,8 +4,9 @@
 // settings sidebar, model pickers, or node-config plumbing.
 
 import { memo, useState } from 'react';
-import { Check, Copy, FileText } from 'lucide-react';
-import { MarkdownRenderer } from '~/components/chat/MarkdownRenderer';
+import { Check, Copy } from 'lucide-react';
+import { ChatFileCard, ChatReferenceChip } from '~/components/chat/ChatReferenceChip';
+import { MarkdownRenderer } from '~/components/chat/MarkdownRendererLazy';
 import { AgentChatSteps } from '~/components/chat/AgentChatSteps';
 import { TriggerEventMessage } from '~/components/chat/TriggerEventMessage';
 import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
@@ -15,6 +16,7 @@ import {
     type AgentChatMessage,
     type BuilderPromptProposal,
 } from '~/hooks/useAgentChat';
+import type { ChatReference } from '~/lib/agentChat';
 import type { ContentItem } from '~/types/socket-schema.generated';
 
 /** Copy-to-clipboard action under a completed agent reply. Copies the raw
@@ -213,6 +215,21 @@ export function ThinkingIndicator({ inline = false }: { inline?: boolean }) {
  *  message shapes this surface actually produces — no agentic-steps /
  *  workflow-edit machinery from the builder chat. Renders a thinking-dots
  *  row at the tail when streaming has started but no text has arrived. */
+/** How a turn that arrived on another channel is captioned under its bubble. */
+const CHANNEL_LABELS: Record<string, string> = {
+    whatsapp_text: 'via WhatsApp',
+    whatsapp: 'via WhatsApp',
+    imessage_text: 'via iMessage',
+    voice: 'on a call',
+    phone: 'on a call',
+    callback: 'on a call',
+    email: 'by email',
+};
+
+function channelLabel(channel?: string): string | null {
+    return channel ? (CHANNEL_LABELS[channel] ?? null) : null;
+}
+
 export const AgentChatTranscript = memo(function AgentChatTranscript({
     messages,
     isStreaming,
@@ -220,6 +237,10 @@ export const AgentChatTranscript = memo(function AgentChatTranscript({
     errorActions,
     onOpenWorkspaceFile,
     onBuilderDecision,
+    referenceDisplay,
+    renderMessage,
+    renderAfter,
+    renderWork,
 }: {
     messages: AgentChatMessage[];
     isStreaming: boolean;
@@ -237,6 +258,17 @@ export const AgentChatTranscript = memo(function AgentChatTranscript({
         proposal: BuilderPromptProposal,
         decision: 'approved' | 'dismissed'
     ) => void;
+    /** How a reference chip reads where the surface knows more than the stored label: the account named as
+     *  Connections names it, with its app's mark. */
+    referenceDisplay?: (reference: ChatReference) => { label: string; mark?: React.ReactNode } | undefined;
+    /** A surface's own drawing of a message (a turn that came in on another app); undefined keeps the
+     *  standard one, null shows nothing (a message another one already drew). */
+    renderMessage?: (msg: AgentChatMessage, index: number) => React.ReactNode | undefined;
+    /** What follows an agent message on this surface: the cards its tool calls made. */
+    renderAfter?: (msg: AgentChatMessage, index: number) => React.ReactNode;
+    /** A surface's own drawing of an agent at work: an agent message's steps and the wait for its reply, or, given
+     *  null, the wait before a turn has a message. Undefined keeps the standard steps and orb. */
+    renderWork?: (msg: AgentChatMessage | null) => React.ReactNode | undefined;
 }) {
     // The live tail skips trailing approval cards — they sink below the turn,
     // so an in-flight bubble can sit ABOVE a card and must still own the
@@ -260,6 +292,10 @@ export const AgentChatTranscript = memo(function AgentChatTranscript({
                 const images = imagesOfContent(msg.content);
                 const videos = videosOfContent(msg.content);
                 const showCursor = !msg.isUser && !msg.isComplete;
+                const own = renderMessage?.(msg, i);
+                if (own !== undefined) {
+                    return own === null ? null : <div key={i}>{own}</div>;
+                }
                 if (msg.error) {
                     return (
                         <div
@@ -300,47 +336,59 @@ export const AgentChatTranscript = memo(function AgentChatTranscript({
                     );
                 }
                 if (msg.isUser) {
+                    const via = channelLabel(msg.channel);
+                    const files = msg.attachments ?? [];
+                    const refs = msg.references ?? [];
+                    // What came with the words sits above them, as it does in the composer's tray.
                     return (
                         <div
                             key={i}
                             data-testid="agent-chat-user-message"
-                            className="flex justify-end"
+                            className="flex flex-col items-end gap-1.5"
                         >
-                            <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-secondary text-foreground text-[15px] leading-relaxed px-4 py-2.5 whitespace-pre-wrap break-words">
-                                {images.map((url, j) => (
-                                    <img
-                                        key={j}
-                                        src={url}
-                                        alt=""
-                                        className="rounded-lg mb-2 max-h-[400px] object-contain"
-                                    />
-                                ))}
-                                {(msg.attachments ?? []).map((f, j) => (
-                                    <a
-                                        key={j}
-                                        href={f.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        data-testid="agent-chat-file-attachment"
-                                        className="mb-2 flex items-center gap-1.5 rounded-lg border border-border/60 bg-background/40 px-2.5 py-1.5 text-xs text-foreground/90 no-underline transition-colors hover:bg-background/60"
-                                    >
-                                        <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                        <span className="truncate">
-                                            {f.name}
-                                        </span>
-                                    </a>
-                                ))}
-                                {msg.text}
-                            </div>
+                            {images.length || files.length || refs.length ? (
+                                <div className="flex max-w-[80%] flex-wrap justify-end gap-1.5">
+                                    {images.map((url, j) => (
+                                        <a
+                                            key={`image-${j}`}
+                                            href={url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="block overflow-hidden rounded-2xl ring-1 ring-inset ring-border dark:ring-foreground/[0.08]"
+                                        >
+                                            <img src={url} alt="" className="max-h-60 max-w-[260px] object-cover" />
+                                        </a>
+                                    ))}
+                                    {files.map((f, j) => (
+                                        <ChatFileCard key={`file-${j}`} name={f.name} url={f.url} mimeType={f.mimeType} />
+                                    ))}
+                                    {refs.map((r) => {
+                                        const shown = referenceDisplay?.(r);
+                                        return <ChatReferenceChip key={`${r.kind}:${r.id}`} reference={shown ? { ...r, label: shown.label } : r} mark={shown?.mark} />;
+                                    })}
+                                </div>
+                            ) : null}
+                            {msg.text ? (
+                                <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-secondary text-foreground text-[15px] leading-relaxed px-4 py-2.5 whitespace-pre-wrap break-words">
+                                    {msg.text}
+                                </div>
+                            ) : null}
+                            {via ? (
+                                <span className="px-1 text-[12px] text-muted-foreground">
+                                    {via}
+                                </span>
+                            ) : null}
                         </div>
                     );
                 }
                 const hasSteps = !!msg.steps?.length;
+                const work = renderWork?.(msg);
                 // All steps resolved but the turn hasn't: the gap between the last
                 // tool completing and the response text landing over the relay — keep
                 // a live indicator so the bubble doesn't
                 // read as finished-but-empty.
                 const awaitingResponse =
+                    work === undefined &&
                     hasSteps &&
                     showCursor &&
                     msg.steps!.every((s) => s.status === 'completed');
@@ -350,7 +398,9 @@ export const AgentChatTranscript = memo(function AgentChatTranscript({
                         data-testid="agent-chat-agent-message"
                         className="text-[15px] leading-relaxed text-foreground"
                     >
-                        {hasSteps ? (
+                        {work !== undefined ? (
+                            work
+                        ) : hasSteps ? (
                             <AgentChatSteps
                                 steps={msg.steps!}
                                 turnComplete={msg.isComplete}
@@ -374,38 +424,40 @@ export const AgentChatTranscript = memo(function AgentChatTranscript({
                             />
                         ))}
                         {msg.text ? (
-                            <>
-                                <MarkdownRenderer
-                                    content={msg.text}
-                                    cursor={
-                                        showCursor ? (
-                                            <ThinkingIndicator inline />
-                                        ) : undefined
-                                    }
-                                    onSandboxPathClick={onOpenWorkspaceFile}
-                                />
-                                {msg.isComplete ? (
-                                    // -ml aligns the ICON glyph (centered in its 28px hit area)
-                                    // with the message text's left edge, ChatGPT-style.
-                                    <div className="-ml-1.5 mt-1.5 flex items-center gap-1">
-                                        <CopyMessageButton text={msg.text} />
-                                    </div>
-                                ) : null}
-                            </>
+                            <MarkdownRenderer
+                                content={msg.text}
+                                cursor={
+                                    showCursor ? (
+                                        <ThinkingIndicator inline />
+                                    ) : undefined
+                                }
+                                onSandboxPathClick={onOpenWorkspaceFile}
+                            />
                         ) : awaitingResponse ? (
                             <ThinkingIndicator />
                         ) : images.length > 0 ||
                           videos.length > 0 ||
-                          hasSteps ? null : showCursor ||
+                          hasSteps ||
+                          work != null ? null : showCursor ||
                           (isStreaming && i === messages.length - 1) ? null : (
                             <span className="text-muted-foreground/70 dark:text-zinc-600 italic">
                                 No response.
                             </span>
                         )}
+                        {renderAfter?.(msg, i)}
+                        {msg.text && msg.isComplete ? (
+                            // Last in the turn, under what a surface adds after the reply (where else it went, its
+                            // cards). -ml aligns the ICON glyph (centered in its 28px hit area) with the text's left edge.
+                            <div className="-ml-1.5 mt-1.5 flex items-center gap-1">
+                                <CopyMessageButton text={msg.text} />
+                            </div>
+                        ) : null}
                     </div>
                 );
             })}
-            {showThinkingDots ? <ThinkingIndicator /> : null}
+            {showThinkingDots
+                ? (renderWork?.(null) ?? <ThinkingIndicator />)
+                : null}
             {/* Trailing banner for errors that aren't already shown as a message
           bubble (e.g. the frontend pre-flight credential error). A backend
           agent:state error arrives BOTH as errorReason and a msg.error bubble;

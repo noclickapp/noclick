@@ -176,6 +176,7 @@ export function sendEvent() { return false; }
 export function sendEventWithCallback() { return false; }
 export async function sendEventAsync() { return null; }
 export const YjsSyncRequest = { create: () => ({}) };
+export const CredentialTestConnectionRequest = { create: () => ({}) };
 
 // ~/lib/socket, ~/lib/socketClient
 export const socket = null;

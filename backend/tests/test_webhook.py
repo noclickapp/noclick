@@ -916,7 +916,7 @@ class TestScheduleBreaker:
         from utils.webhook_routes import _schedule_failure_streak
         with patch("utils.webhook_routes.get_native_pool") as gp:
             gp.return_value.fetch = AsyncMock(return_value=rows)
-            return await _schedule_failure_streak(self.WF, "cron")
+            return await _schedule_failure_streak(self.WF, "cron", "n1")
 
     async def test_identical_failures_sustained_for_hours_trip(self):
         streak = await self._streak(self._rows(5, self.ERR))
@@ -948,7 +948,7 @@ class TestScheduleBreaker:
         from utils.webhook_routes import _schedule_failure_streak
         with patch("utils.webhook_routes.get_native_pool") as gp:
             gp.return_value.fetch = AsyncMock(side_effect=RuntimeError("timeout"))
-            assert await _schedule_failure_streak(self.WF, "cron") is None
+            assert await _schedule_failure_streak(self.WF, "cron", "n1") is None
 
     # ── the shared tick gate ──
 
@@ -981,6 +981,14 @@ class TestScheduleBreaker:
         pause.assert_awaited_once()
         assert pause.await_args.kwargs["trigger_source"] == "cron"
         assert pause.await_args.kwargs["streak"] is streak
+
+    async def test_the_streak_is_the_ticking_triggers_own(self):
+        from utils import webhook_routes as wr
+        read = AsyncMock(return_value=None)
+        with patch.object(wr, "_schedule_failure_streak", read):
+            await wr._schedule_tick_verdict(self.HEADERS, self.WF, "wh-1", self._node(), "n1", False,
+                                            user_id="u1", nodes=[self._node()])
+        read.assert_awaited_once_with(self.WF, "cron", "n1")
 
     async def test_untripped_streak_dispatches(self):
         from utils.webhook_routes import FailureStreak

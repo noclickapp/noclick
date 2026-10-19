@@ -4,15 +4,18 @@
  * Uses useOrgContext for reactive state management - no page refresh needed on switch.
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { ChevronDown, Plus, Check, Settings, UserPlus } from 'lucide-react';
+import { useState, useEffect, useCallback, type ReactNode } from 'react';
+import { ChevronDown, Plus, Check, Settings } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
+import { ACCOUNT_MENU_ITEM } from '~/components/nav/AccountMenu';
+import { MENU_SEPARATOR, MENU_SURFACE } from '~/components/shell/menus';
 import { useOrganization } from '~/hooks/useOrganization';
 import { useOrgContext } from '~/hooks/useOrgContext';
 import { useValtioState } from '~/hooks/useValtioState';
@@ -27,6 +30,9 @@ interface OrgSwitcherProps {
     /** Shown when there is no email (a phone-only account). */
     userLabel?: string;
     userAvatarUrl?: string;
+    /** `sidebar`: the app sidebar's header, the mark and the workspace's name
+     *  beside NoClick's mark (plan and avatar live with the account at its foot). */
+    variant?: 'navbar' | 'sidebar';
 }
 
 interface UserOrg {
@@ -39,7 +45,54 @@ interface UserOrg {
     is_primary: boolean;
 }
 
-export function OrgSwitcher({ userEmail, userLabel, userAvatarUrl }: OrgSwitcherProps) {
+const ROLE_LABEL: Record<UserOrg['role'], string> = { owner: 'Owner', admin: 'Admin', member: 'Member' };
+// The footer's icons sit in a tile-wide slot, so every row's text starts on one line.
+const SLOT = 'grid h-7 w-7 shrink-0 place-items-center text-muted-foreground';
+
+/** A personal workspace goes by its person's name; a phone-only account's label is its number, which is no name. */
+function personalWorkspaceName(label: string): string {
+    return !label || label.startsWith('+') ? 'Personal' : label;
+}
+
+/** "AR" for Acme Robotics; a one-word name (or an email) gives its first two letters, as the account avatar does. */
+function tileInitials(name: string): string {
+    const words = name.trim().split(/\s+/);
+    return (words.length > 1 ? words[0][0] + words[1][0] : name.slice(0, 2)).toUpperCase();
+}
+
+/** A workspace's picture, or its initials on a neutral tile (never a brand colour); round for a person. */
+export function WorkspaceTile({ name, iconUrl, round = false, className }: { name: string; iconUrl?: string | null; round?: boolean; className?: string }) {
+    const box = cn('h-7 w-7 shrink-0', round ? 'rounded-full' : 'rounded-lg', className);
+    return iconUrl ? (
+        <img src={iconUrl} alt="" className={cn(box, 'object-cover')} referrerPolicy="no-referrer" />
+    ) : (
+        <span className={cn('grid place-items-center bg-foreground/[0.08] text-[11px] font-medium text-foreground/85 ring-1 ring-inset ring-foreground/[0.06]', box)}>
+            {tileInitials(name)}
+        </span>
+    );
+}
+
+/** A workspace to switch to: its tile, its name over who you are in it, and a check on the one you're in. */
+function WorkspaceItem({ tile, name, line, current, onSwitch }: { tile: ReactNode; name: string; line: string; current: boolean; onSwitch: () => void }) {
+    return (
+        <DropdownMenuItem
+            onSelect={(e) => {
+                e.preventDefault();
+                if (!current) onSwitch();
+            }}
+            className={cn(ACCOUNT_MENU_ITEM, 'gap-2.5 py-1.5', current && 'cursor-default')}
+        >
+            {tile}
+            <span className="min-w-0 flex-1">
+                <span className="block truncate text-[14px] leading-5 text-foreground">{name}</span>
+                <span className="block truncate text-[12px] leading-4 text-muted-foreground">{line}</span>
+            </span>
+            {current && <Check className="text-foreground" strokeWidth={2} />}
+        </DropdownMenuItem>
+    );
+}
+
+export function OrgSwitcher({ userEmail, userLabel, userAvatarUrl, variant = 'navbar' }: OrgSwitcherProps) {
     const { listMyOrganizations, switchOrganization, loading } =
         useOrganization();
     const [orgContext, setOrgContext] = useOrgContext();
@@ -52,7 +105,7 @@ export function OrgSwitcher({ userEmail, userLabel, userAvatarUrl }: OrgSwitcher
     );
     const [isOpen, setIsOpen] = useState(false);
     const [createModalOpen, setCreateModalOpen] = useState(false);
-    const [switching, setSwitching] = useState(false);
+    const [switching] = useState(false);
 
     // Extract username from email (part before @)
     const username = userEmail.split('@')[0] || userLabel || '';
@@ -175,12 +228,21 @@ export function OrgSwitcher({ userEmail, userLabel, userAvatarUrl }: OrgSwitcher
         ? getInitials(currentOrg.name)
         : getInitials(username);
 
-    return (
-        <div className="flex items-center gap-2">
-            {/* Logo */}
-            <LogoMark className="w-5 h-5 flex-shrink-0" />
+    const personalName = personalWorkspaceName(userLabel || username);
+    const personalTile = (className?: string) => <WorkspaceTile name={userEmail || userLabel || ''} iconUrl={userAvatarUrl} round className={className} />;
 
-            <span className="text-foreground/25 text-xl">/</span>
+    return (
+        <div className={cn('flex items-center', variant === 'sidebar' ? 'min-w-0 gap-1' : 'gap-2')}>
+            {/* The brand beside the workspace, its mark lined up with the sidebar's icons below. */}
+            {variant === 'sidebar' && <LogoMark className="ml-[13px] h-[18px] w-[18px] shrink-0" alt="NoClick" />}
+            {variant === 'navbar' && (
+                <>
+                    {/* Logo */}
+                    <LogoMark className="w-5 h-5 flex-shrink-0" />
+
+                    <span className="text-foreground/25 text-xl">/</span>
+                </>
+            )}
 
             {/* Dropdown trigger with avatar */}
             <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -190,249 +252,124 @@ export function OrgSwitcher({ userEmail, userLabel, userAvatarUrl }: OrgSwitcher
                         switching || (loading && organizations.length === 0)
                     }
                 >
-                    <button
-                        className={cn(
-                            'flex items-center gap-2 py-1 transition-all duration-150',
-                            'text-foreground hover:text-foreground',
-                            'focus:outline-none focus-visible:outline-none',
-                            (switching ||
-                                (loading && organizations.length === 0)) &&
-                                'opacity-50 cursor-not-allowed'
-                        )}
-                    >
-                        {/* Avatar */}
-                        {currentAvatar ? (
-                            <img
-                                src={currentAvatar}
-                                alt=""
-                                className="w-6 h-6 rounded-full object-cover flex-shrink-0"
-                                referrerPolicy="no-referrer"
-                            />
-                        ) : (
-                            <div
-                                className={cn(
-                                    'w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium flex-shrink-0',
-                                    currentOrg
-                                        ? 'bg-blue-500/20 text-blue-600 dark:text-blue-400'
-                                        : 'bg-foreground/10 text-muted-foreground dark:text-white/60'
-                                )}
-                            >
-                                {currentInitials}
-                            </div>
-                        )}
-                        <div className="flex flex-col items-start">
-                            <span className="text-sm font-medium max-w-[120px] truncate leading-tight">
-                                {displayName}
-                            </span>
-                            <span
-                                className={cn(
-                                    'text-[10px] font-medium capitalize tracking-wide leading-tight',
-                                    effectiveTier === 'enterprise' &&
-                                        'text-purple-600/80 dark:text-purple-400/80',
-                                    effectiveTier === 'pro' &&
-                                        'text-blue-600/80 dark:text-blue-400/80',
-                                    effectiveTier === 'plus' &&
-                                        'text-amber-600/80 dark:text-amber-400/80',
-                                    effectiveTier === 'free' &&
-                                        'text-foreground/35'
-                                )}
-                            >
-                                {effectiveTier}
-                            </span>
-                        </div>
-                        <ChevronDown
+                    {variant === 'sidebar' ? (
+                        <button
+                            type="button"
+                            title={currentOrg?.name ?? personalName}
                             className={cn(
-                                'w-3 h-3 text-foreground/40 transition-transform duration-150',
-                                isOpen && 'rotate-180'
-                            )}
-                        />
-                    </button>
-                </DropdownMenuTrigger>
-
-                <DropdownMenuContent
-                    align="start"
-                    sideOffset={8}
-                    onCloseAutoFocus={(e) => e.preventDefault()}
-                    className={cn(
-                        'min-w-[220px] p-1.5',
-                        'bg-popover/[0.98] dark:bg-zinc-900/98 backdrop-blur-xl',
-                        'border border-border dark:border-white/10',
-                        'shadow-xl dark:shadow-black/40',
-                        'rounded-lg'
-                    )}
-                >
-                    {/* Personal workspace */}
-                    <DropdownMenuItem
-                        onSelect={(e) => {
-                            e.preventDefault();
-                            if (orgContext.id && !switching) {
-                                handleSwitchToPersonal();
-                            }
-                        }}
-                        className={cn(
-                            'flex items-center gap-3 px-2.5 py-2 rounded-md',
-                            'transition-colors duration-100',
-                            !orgContext.id
-                                ? 'bg-foreground/10 cursor-default'
-                                : 'cursor-pointer hover:bg-foreground/[0.04]',
-                            'focus:bg-foreground/[0.06]'
-                        )}
-                    >
-                        {userAvatarUrl ? (
-                            <img
-                                src={userAvatarUrl}
-                                alt=""
-                                className="w-6 h-6 rounded-full object-cover"
-                                referrerPolicy="no-referrer"
-                            />
-                        ) : (
-                            <div
-                                className={cn(
-                                    'w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium',
-                                    !orgContext.id
-                                        ? 'bg-foreground/15 text-foreground'
-                                        : 'bg-foreground/10 text-foreground/70'
-                                )}
-                            >
-                                {getInitials(username)}
-                            </div>
-                        )}
-                        <span
-                            className={cn(
-                                'text-sm flex-1 truncate font-medium',
-                                !orgContext.id
-                                    ? 'text-foreground'
-                                    : 'text-muted-foreground dark:text-white/60'
+                                'group flex h-10 min-w-0 items-center gap-2 rounded-xl px-1.5 text-foreground transition-colors hover:bg-foreground/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-foreground/[0.05]',
+                                (switching || (loading && organizations.length === 0)) && 'cursor-not-allowed opacity-50'
                             )}
                         >
-                            {username}
-                        </span>
-                        {!orgContext.id && (
-                            <Check className="w-4 h-4 text-muted-foreground dark:text-white/70" />
-                        )}
-                    </DropdownMenuItem>
-
-                    {/* Organizations */}
-                    {organizations.length > 0 && (
-                        <>
-                            <DropdownMenuSeparator className="my-1.5 bg-foreground/[0.06]" />
-
-                            {organizations.map((org) => (
-                                <DropdownMenuItem
-                                    key={org.id}
-                                    onSelect={(e) => {
-                                        e.preventDefault();
-                                        if (
-                                            org.id !== orgContext.id &&
-                                            !switching
-                                        ) {
-                                            handleSwitchOrg(org.id);
-                                        }
-                                    }}
+                            {currentOrg ? <WorkspaceTile name={currentOrg.name} iconUrl={currentOrg.icon_url} className="h-6 w-6 rounded-md text-[10px]" /> : personalTile('h-6 w-6 text-[10px]')}
+                            <span className="truncate text-[14px] font-semibold tracking-[-0.01em]">{currentOrg?.name ?? personalName}</span>
+                            <ChevronDown className={cn('-ml-1 h-3 w-3 shrink-0 text-muted-foreground transition-transform duration-150', isOpen && 'rotate-180')} />
+                        </button>
+                    ) : (
+                        <button
+                            className={cn(
+                                'flex items-center gap-2 py-1 transition-all duration-150',
+                                'text-foreground hover:text-foreground',
+                                'focus:outline-none focus-visible:outline-none',
+                                (switching ||
+                                    (loading && organizations.length === 0)) &&
+                                    'opacity-50 cursor-not-allowed'
+                            )}
+                        >
+                            {/* Avatar */}
+                            {currentAvatar ? (
+                                <img
+                                    src={currentAvatar}
+                                    alt=""
+                                    className="w-6 h-6 rounded-full object-cover flex-shrink-0"
+                                    referrerPolicy="no-referrer"
+                                />
+                            ) : (
+                                <div
                                     className={cn(
-                                        'flex items-center gap-3 px-2.5 py-2 rounded-md',
-                                        'transition-colors duration-100',
-                                        org.id === orgContext.id
-                                            ? 'bg-foreground/10 cursor-default'
-                                            : 'cursor-pointer hover:bg-foreground/[0.04]',
-                                        'focus:bg-foreground/[0.06]'
+                                        'w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium flex-shrink-0',
+                                        currentOrg
+                                            ? 'bg-blue-500/20 text-blue-600 dark:text-blue-400'
+                                            : 'bg-foreground/10 text-muted-foreground dark:text-white/60'
                                     )}
                                 >
-                                    {org.icon_url ? (
-                                        <img
-                                            src={org.icon_url}
-                                            alt={org.name}
-                                            className="w-6 h-6 rounded-full object-cover"
-                                        />
-                                    ) : (
-                                        <div
-                                            className={cn(
-                                                'w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium',
-                                                org.id === orgContext.id
-                                                    ? 'bg-blue-500/25 text-blue-700 dark:text-blue-300'
-                                                    : 'bg-blue-500/20 text-blue-600 dark:text-blue-400'
-                                            )}
-                                        >
-                                            {getInitials(org.name)}
-                                        </div>
+                                    {currentInitials}
+                                </div>
+                            )}
+                            <div className="flex flex-col items-start">
+                                <span className="text-sm font-medium max-w-[120px] truncate leading-tight">
+                                    {displayName}
+                                </span>
+                                <span
+                                    className={cn(
+                                        'text-[10px] font-medium capitalize tracking-wide leading-tight',
+                                        effectiveTier === 'enterprise' &&
+                                            'text-purple-600/80 dark:text-purple-400/80',
+                                        effectiveTier === 'pro' &&
+                                            'text-blue-600/80 dark:text-blue-400/80',
+                                        effectiveTier === 'plus' &&
+                                            'text-amber-600/80 dark:text-amber-400/80',
+                                        effectiveTier === 'free' &&
+                                            'text-foreground/35'
                                     )}
-                                    <span
-                                        className={cn(
-                                            'text-sm flex-1 truncate font-medium',
-                                            org.id === orgContext.id
-                                                ? 'text-foreground'
-                                                : 'text-muted-foreground dark:text-white/60'
-                                        )}
-                                    >
-                                        {org.name}
-                                    </span>
-                                    {org.id === orgContext.id && (
-                                        <Check className="w-4 h-4 text-muted-foreground dark:text-white/70" />
-                                    )}
-                                </DropdownMenuItem>
-                            ))}
-                        </>
+                                >
+                                    {effectiveTier}
+                                </span>
+                            </div>
+                            <ChevronDown
+                                className={cn(
+                                    'w-3 h-3 text-foreground/40 transition-transform duration-150',
+                                    isOpen && 'rotate-180'
+                                )}
+                            />
+                        </button>
                     )}
+                </DropdownMenuTrigger>
 
-                    {/* Create organization */}
-                    <DropdownMenuSeparator className="my-1.5 bg-foreground/[0.06]" />
-
+                <DropdownMenuContent align="start" sideOffset={8} onCloseAutoFocus={(e) => e.preventDefault()} className={cn('w-72 rounded-2xl p-1.5 duration-100', MENU_SURFACE)}>
+                    <DropdownMenuLabel className="px-2 pb-1 pt-1.5 text-[12px] font-medium text-muted-foreground">Workspaces</DropdownMenuLabel>
+                    <WorkspaceItem
+                        tile={personalTile()}
+                        name={personalName}
+                        line="Personal workspace"
+                        current={!orgContext.id}
+                        onSwitch={handleSwitchToPersonal}
+                    />
+                    {organizations.map((org) => (
+                        <WorkspaceItem
+                            key={org.id}
+                            tile={<WorkspaceTile name={org.name} iconUrl={org.icon_url} />}
+                            name={org.name}
+                            line={ROLE_LABEL[org.role]}
+                            current={org.id === orgContext.id}
+                            onSwitch={() => handleSwitchOrg(org.id)}
+                        />
+                    ))}
+                    <DropdownMenuSeparator className={MENU_SEPARATOR} />
                     <DropdownMenuItem
+                        className={cn(ACCOUNT_MENU_ITEM, 'gap-2.5')}
                         onClick={() => {
                             setIsOpen(false);
                             setCreateModalOpen(true);
                         }}
-                        className={cn(
-                            'flex items-center gap-3 px-2.5 py-2 rounded-md cursor-pointer',
-                            'text-muted-foreground dark:text-white/25 hover:text-foreground/80 hover:bg-foreground/[0.04]',
-                            'transition-colors duration-100',
-                            'focus:bg-foreground/[0.06] focus:text-foreground/80'
-                        )}
                     >
-                        <div className="w-6 h-6 rounded-full border border-dashed border-border dark:border-white/20 flex items-center justify-center">
-                            <Plus className="w-3.5 h-3.5" />
-                        </div>
-                        <span className="text-sm">New organization</span>
+                        <span className={SLOT}>
+                            <Plus />
+                        </span>
+                        New workspace
                     </DropdownMenuItem>
-
-                    {/* Manage organization/members */}
-                    {orgContext.id ? (
-                        <DropdownMenuItem
-                            onClick={() => {
-                                setIsOpen(false);
-                                navigateToOrgSettings();
-                            }}
-                            className={cn(
-                                'flex items-center gap-3 px-2.5 py-2 rounded-md cursor-pointer',
-                                'text-muted-foreground dark:text-white/50 hover:text-foreground/80 hover:bg-foreground/[0.04]',
-                                'transition-colors duration-100',
-                                'focus:bg-foreground/[0.06] focus:text-foreground/80'
-                            )}
-                        >
-                            <div className="w-6 h-6 rounded-full bg-foreground/5 flex items-center justify-center">
-                                <Settings className="w-3.5 h-3.5" />
-                            </div>
-                            <span className="text-sm">Manage organization</span>
-                        </DropdownMenuItem>
-                    ) : (
-                        <DropdownMenuItem
-                            onClick={() => {
-                                setIsOpen(false);
-                                navigateToOrgSettings();
-                            }}
-                            className={cn(
-                                'flex items-center gap-3 px-2.5 py-2 rounded-md cursor-pointer',
-                                'text-muted-foreground dark:text-white/50 hover:text-foreground/80 hover:bg-foreground/[0.04]',
-                                'transition-colors duration-100',
-                                'focus:bg-foreground/[0.06] focus:text-foreground/80'
-                            )}
-                        >
-                            <div className="w-6 h-6 rounded-full bg-foreground/5 flex items-center justify-center">
-                                <Settings className="w-3.5 h-3.5" />
-                            </div>
-                            <span className="text-sm">Manage workspace</span>
-                        </DropdownMenuItem>
-                    )}
+                    <DropdownMenuItem
+                        className={cn(ACCOUNT_MENU_ITEM, 'gap-2.5')}
+                        onClick={() => {
+                            setIsOpen(false);
+                            navigateToOrgSettings();
+                        }}
+                    >
+                        <span className={SLOT}>
+                            <Settings />
+                        </span>
+                        Workspace settings
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
 

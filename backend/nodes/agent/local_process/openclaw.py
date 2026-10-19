@@ -2,8 +2,12 @@
 import asyncio
 import hashlib
 
-from nodes.agent.openclaw_protocol import OpenClawReceipts
+from nodes.agent.openclaw_protocol import BRIDGE_READY_S, OpenClawReceipts
+from nodes.core.base import FailureWithDiagnostics
 from .session import LineSession
+
+# Outwaits the bridge's worst case (a refused start, a state repair, a start).
+GATEWAY_READY_S = BRIDGE_READY_S + 5
 
 
 class OpenClawSession(LineSession):
@@ -17,10 +21,10 @@ class OpenClawSession(LineSession):
 
     async def start(self):
         await super().start()
-        async with asyncio.timeout(60):
+        async with asyncio.timeout(GATEWAY_READY_S):
             while not self.ready.is_set():
                 if self.closed:
-                    raise RuntimeError(self.stderr.decode(errors='replace') or 'OpenClaw gateway could not start')
+                    raise self._start_failure()
                 await asyncio.sleep(.02)
         legacy = 'noclick-' + hashlib.sha256(str(self.workdir).encode()).hexdigest()[:16]
         resolved = await self.request('sessions.resolve', {
@@ -31,6 +35,16 @@ class OpenClawSession(LineSession):
         elif any((self.workdir / '.openclaw').glob(f'agents/*/sessions/{legacy}.jsonl')):
             raise RuntimeError('OpenClaw could not resolve the existing conversation')
         await self.request('sessions.messages.subscribe', {'key': self.session_key})
+
+    def _start_failure(self):
+        """The bridge's output (the gateway's, and a state repair's) can quote
+        the config it was given: a person reads that the gateway didn't start,
+        and only the diagnostics carry the end of that output."""
+        shown = 'OpenClaw gateway could not start'
+        tail = self.stderr.decode(errors='replace').strip()
+        if len(tail) > 1500:
+            tail = tail[-1500:].split('\n', 1)[-1]  # whole lines only
+        return FailureWithDiagnostics(shown, f'{shown}\n{tail}' if tail else shown)
 
     async def send(self, receipt, text):
         self.receipts.add(receipt)

@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import functools
 import json
 import logging
 import re
 import time
 import uuid
 from collections import deque
+from dataclasses import dataclass
 from typing import Any, Dict, Iterator, List, Mapping, Optional, Sequence, Set, Tuple
 
 from .workflow_xml import XmlOp
@@ -424,25 +426,32 @@ def preserve_existing_credentials(new_nodes: list, old_nodes: list) -> None:
 
     Additive by construction: the incoming value wins per provider key, the
     stored value survives for keys the incoming graph doesn't carry. That is
-    safe precisely because no DSL op removes a credential (``set_credentials``
-    is the only credential mutation), so "absent" always means "this writer
-    didn't know", never "the user detached it".
+    safe because the only DSL op that removes a credential is an agent's move
+    to another harness or provider (``switch_agent_harness``), and the stored
+    config says when that happened: a key only the stored model used isn't
+    carried.
+    Otherwise "absent" means "this writer didn't know", never "the user
+    detached it".
     """
     old_by_id = {
-        n.get("id"): ((n.get("config") or {}).get("credentialIds") or {})
+        n.get("id"): n.get("config") or {}
         for n in (old_nodes or [])
         if isinstance(n, dict) and n.get("id")
     }
     for node in new_nodes or []:
         if not isinstance(node, dict):
             continue
-        stored = old_by_id.get(node.get("id"))
+        old_config = old_by_id.get(node.get("id")) or {}
+        stored = old_config.get("credentialIds") or {}
         if not stored:
             continue
         config = node.setdefault("config", {})
         incoming = config.get("credentialIds")
         if not isinstance(incoming, dict):
             incoming = {}
+        if node.get("type") == "agent":
+            unlinked = stale_model_credentials(old_config, config, {**stored, **incoming})
+            stored = {k: v for k, v in stored.items() if k not in unlinked}
         merged = {**stored, **incoming}
         if merged:
             config["credentialIds"] = merged
@@ -589,6 +598,236 @@ def drop_stale_agent_discriminator(
         and "model_type" not in changed_fields
     ):
         config.pop("model_type", None)
+
+
+# What each CLI harness is called on a node and in a scaffolded workflow's name;
+# the first is the one written. Mirrors the /agents pages' displayName
+# (frontend data/harness-content) and the provider titles (types/provider.tsx);
+# agentCredentialModel.ts AGENT_HARNESS_NAMES mirrors this table.
+AGENT_HARNESS_NAMES: Dict[str, Tuple[str, ...]] = {
+    "claude_code": ("Claude Code",),
+    "codex": ("Codex", "OpenAI Codex"),
+    "opencode": ("OpenCode",),
+    "openclaw": ("OpenClaw",),
+    "hermes_agent": ("Hermes", "Hermes Agent"),
+}
+# NoClick's own runtime (every model that isn't a CLI harness) is named like a
+# new agent node on the canvas.
+SDK_AGENT_LABEL = "AI Agent"
+
+
+@dataclass(frozen=True)
+class AgentHarnessSwitch:
+    """An agent a write moved to another harness, or to a model of another
+    provider on the same one (``old == new``: only credentials change). Harness
+    ids are ``model_type``s; NoClick's own runtime is ``llm``."""
+    old: str
+    new: str
+    dropped_fields: Tuple[str, ...]
+    unlinked_credentials: Tuple[str, ...]
+    label: Optional[str]  # the node's new label; None keeps its own
+
+    def as_dict(self) -> Dict[str, Any]:
+        return {
+            "from": self.old, "to": self.new,
+            "removed_fields": list(self.dropped_fields),
+            "unlinked_credentials": list(self.unlinked_credentials),
+            **({"label": self.label} if self.label else {}),
+        }
+
+    @property
+    def moved(self) -> bool:
+        return self.old != self.new
+
+    @property
+    def changed_node(self) -> bool:
+        return bool(self.dropped_fields or self.unlinked_credentials or self.label)
+
+    def summary(self, node: str) -> str:
+        if not self.moved:
+            return (f"{node}'s model runs on another provider now: unlinked "
+                    f"{', '.join(self.unlinked_credentials)}, which it can't use.")
+        changes = [
+            *([f"removed {', '.join(self.dropped_fields)}"] if self.dropped_fields else []),
+            *([f"unlinked {', '.join(self.unlinked_credentials)}"] if self.unlinked_credentials else []),
+            *([f"renamed it {self.label!r}"] if self.label else []),
+        ]
+        return f"{node} moved from {harness_name(self.old)} to {harness_name(self.new)}: {'; '.join(changes)}."
+
+
+def harness_name(harness: str) -> str:
+    return AGENT_HARNESS_NAMES.get(harness, (SDK_AGENT_LABEL,))[0]
+
+
+def _agent_variant(config: Mapping[str, Any]) -> Optional[str]:
+    """The agent config variant (``model_type``) a config runs as, or None for
+    a templated model, which can't be judged until run time."""
+    from nodes.agent.config.base import infer_model_type
+
+    if any("{{" in str(config.get(k) or "") for k in ("model", "model_type")):
+        return None
+    probe = {k: config[k] for k in ("model", "model_type") if config.get(k)}
+    return infer_model_type(probe).get("model_type", "llm")
+
+
+def _agent_harness(variant: str) -> str:
+    from nodes.agent.config.providers import WRAPPER_ID_BY_MODEL_TYPE
+
+    return variant if variant in WRAPPER_ID_BY_MODEL_TYPE else "llm"
+
+
+@functools.lru_cache(maxsize=None)
+def _agent_variant_fields() -> Dict[str, frozenset]:
+    """The config fields each agent variant adds to the ones every agent has,
+    read from the AgentConfig union (``opencode`` → ``opencode_model``)."""
+    import typing
+
+    from nodes.agent.config import AgentConfig, BaseAgentFields
+
+    shared = set(BaseAgentFields.model_fields) | {"model", "model_type"}
+    out: Dict[str, frozenset] = {}
+    for member in typing.get_args(typing.get_args(AgentConfig)[0]):
+        cls = typing.get_args(member)[0]
+        out[cls.model_fields["model_type"].default] = frozenset(set(cls.model_fields) - shared)
+    return out
+
+
+def _harness_switch(old_config: Mapping[str, Any], config: Mapping[str, Any]) -> Optional[Tuple[str, str]]:
+    old, new = _agent_variant(old_config), _agent_variant(config)
+    if old is None or new is None or _agent_harness(old) == _agent_harness(new):
+        return None
+    return old, new
+
+
+def _judgeable_model(config: Mapping[str, Any]) -> bool:
+    """Whether what an agent runs on can be told before run time: no templated
+    model, harness or sub-model (a templated one reads as some provider's)."""
+    from nodes.agent.config.providers import HARNESS_MODEL_FIELDS
+
+    fields = ("model", "model_type", *HARNESS_MODEL_FIELDS.values())
+    return not any("{{" in str(config.get(k) or "") for k in fields)
+
+
+def stale_model_credentials(
+    old_config: Mapping[str, Any], config: Mapping[str, Any], credential_ids: Any,
+) -> List[str]:
+    """The keys in ``credential_ids`` only the old model used, when a write
+    changed what an agent runs on (another harness, or a model or sub-model of
+    another provider): accepted by its old model, not by its new one, as on the
+    canvas (``staleCredentialKeysForProvider``). Secondary slots (``agent_env``)
+    stay, as does a Claude plan the new model refuses: ``claude_plan_refusal``
+    names the fix and moving back to Claude Code takes it back. A model that
+    can't be judged (templated, or one no credential runs) unlinks nothing."""
+    if not isinstance(credential_ids, dict) or not (_judgeable_model(old_config) and _judgeable_model(config)):
+        return []
+    from nodes.agent.config.providers import (
+        CLAUDE_PLAN_CREDENTIAL_TYPE,
+        claude_plan_refusal,
+        model_credential_accepted_types,
+    )
+    from utils.credentials import NON_PRIMARY_CREDENTIAL_TYPES
+
+    kept = set(model_credential_accepted_types(dict(config)))
+    if not kept:
+        return []
+    stale = [
+        key for key in model_credential_accepted_types(dict(old_config))
+        if key in credential_ids and key not in kept and key not in NON_PRIMARY_CREDENTIAL_TYPES
+    ]
+    if CLAUDE_PLAN_CREDENTIAL_TYPE in stale and claude_plan_refusal(dict(config), credential_ids):
+        stale.remove(CLAUDE_PLAN_CREDENTIAL_TYPE)
+    return stale
+
+
+def switch_agent_harness(
+    node_type: str,
+    old_config: Mapping[str, Any],
+    config: dict,
+    *,
+    label: str = "",
+    keep_label: bool = False,
+) -> Optional[AgentHarnessSwitch]:
+    """When a write moves an agent to another harness, take the old one's
+    leftovers off ``config`` (in place): its own fields (``opencode_model``)
+    and the credentials only it used. A node named after its old harness
+    ("OpenCode", "OpenCode agent") gets the new one's name, unless the write
+    set ``label`` itself (``keep_label``); the caller applies it, since a
+    label lives in different places. A model or sub-model of another provider
+    on the same harness unlinks the credentials only the old one used too
+    (``moved`` False). None when neither changed."""
+    if node_type != "agent":
+        return None
+    switch = _harness_switch(old_config, config)
+    ids = config.get("credentialIds")
+    unlinked = stale_model_credentials(old_config, config, ids)
+    if unlinked:
+        config["credentialIds"] = {k: v for k, v in ids.items() if k not in unlinked}
+    if switch is None:
+        if not unlinked:
+            return None
+        harness = _agent_harness(_agent_variant(config))
+        return AgentHarnessSwitch(harness, harness, (), tuple(unlinked), None)
+    old, new = switch
+    fields = _agent_variant_fields()
+    dropped = sorted(
+        key for key in fields.get(old, frozenset()) - fields.get(new, frozenset()) if key in config
+    )
+    for key in dropped:
+        config.pop(key)
+    old_harness, new_harness = _agent_harness(old), _agent_harness(new)
+    new_label = None
+    current = (label or "").strip().casefold()
+    if not keep_label and any(
+        current in (alias.casefold(), f"{alias.casefold()} agent")
+        for alias in AGENT_HARNESS_NAMES.get(old_harness, ())
+    ):
+        new_label = harness_name(new_harness)
+    return AgentHarnessSwitch(old_harness, new_harness, tuple(dropped), tuple(unlinked), new_label)
+
+
+def rename_workflow_for_harness_switches(
+    name: str, switches: Sequence[Tuple[str, str]],
+) -> Optional[str]:
+    """A workflow's name after its agent moved harness, when it is the name
+    the scaffold gave it ("OpenCode + Confluence and Monday.com",
+    lib/agentScaffold.ts); None for any other name."""
+    current = name or ""
+    for old, new in switches:
+        for alias in AGENT_HARNESS_NAMES.get(old, ()):
+            prefix = f"{alias} + "
+            if current.casefold().startswith(prefix.casefold()) and current[len(prefix):].strip():
+                current = f"{harness_name(new)} + {current[len(prefix):]}"
+                break
+    return current if current != (name or "") else None
+
+
+def misplaced_agent_model(values: Mapping[str, Any]) -> Optional[str]:
+    """Why an agent's config can't run because a model id sits in the wrong
+    field, or None: a model only a CLI harness runs in Model (``model``), or a
+    harness id in that harness's own model field (``opencode_model``, …).
+    ``values`` is a whole config or just the fields a write sets; the AI write
+    paths refuse such a write, and validation reports a saved one."""
+    from nodes.agent.config._cli_models_loader import harness_default_model
+    from nodes.agent.config.harness_model_lists import zen_gateway_refusal_sync
+    from nodes.agent.config.providers import HARNESS_MODEL_FIELDS
+
+    for field, value in values.items():
+        if not isinstance(value, str) or "{{" in value:
+            continue
+        value = value.strip()
+        if field == "model":
+            refusal = zen_gateway_refusal_sync(value)
+            if refusal:
+                return refusal
+            continue
+        harness = next((h for h, f in HARNESS_MODEL_FIELDS.items() if f == field), None)
+        if harness and value.lower() in HARNESS_MODEL_FIELDS:
+            example = harness_default_model(harness.replace("-", "_"))
+            return (
+                f"{value!r} names a harness, which belongs in Model (model). {field} holds the "
+                f"model the {harness} harness runs, such as {example!r}."
+            )
+    return None
 
 
 # ---------------------------------------------------------------------------

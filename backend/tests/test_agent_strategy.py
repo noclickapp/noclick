@@ -35,7 +35,7 @@ class _FakeCtx:
         self.completed.append(nid)
         self.node_outputs[nid] = out
 
-    async def mark_failed(self, nid, err):
+    async def mark_failed(self, nid, err, diagnostics=None):
         pass
 
     async def mark_skipped(self, nid):
@@ -104,7 +104,7 @@ async def test_failed_output_halts_downstream():
     ctx.failed = []
     original = ctx.mark_failed
 
-    async def mark_failed(nid, err):
+    async def mark_failed(nid, err, diagnostics=None):
         ctx.failed.append((nid, err))
 
     ctx.mark_failed = mark_failed

@@ -8,7 +8,7 @@ import pytest
 
 from nodes.agent.node_op_tools import is_trigger_operation, node_supports_op_tools
 from nodes.core.registry import NODE_REGISTRY
-from nodes.phone_node import PHONE_NUMBER_MONTHLY_CREDITS, PhoneNode
+from nodes.phone_node import PhoneNode
 from utils import capabilities
 from utils.capabilities import PHONE_CALLS, PHONE_NUMBERS, provide
 
@@ -32,7 +32,7 @@ def test_registered_as_a_trigger_and_a_tool_provider_with_a_purchase_credential(
     schema = PhoneNode.get_config_schema()
     cred = schema["$defs"]["PhoneNumberCredential"]
     assert cred["x-credential-type"] == "purchase"
-    assert str(PHONE_NUMBER_MONTHLY_CREDITS) in cred["x-credential-instructions"]
+    assert cred["x-credential-instructions"] == "Buy a phone number for this agent, billed monthly."
     assert cred["properties"]["number_sid"]["ui:hidden"] is True
 
 

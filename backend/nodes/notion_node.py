@@ -57,7 +57,7 @@ class NotionIntegrationTokenCredential(BaseModel):
     integration_token: str = Field(
         ...,
         title="Internal Integration Token",
-        description="Your Notion Internal Integration Token (starts with 'secret_')",
+        description="Your Notion Internal Integration Token (starts with 'ntn_' or 'secret_')",
         json_schema_extra={"ui:widget": "password"},
     )
 

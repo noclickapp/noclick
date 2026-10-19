@@ -2,7 +2,8 @@
 // terminal watermark) in a module-level valtio proxy, so the live transcript —
 // including mid-turn status/step timelines — survives the chat surface
 // unmounting (Interface ↔ Workflow tab switches used to erase in-progress
-// lines). Volatile by design: session-only, never persisted to disk.
+// lines). Volatile by design: a surface that keeps a copy on disk seeds it
+// back with seedAgentChatSession, and the persisted history replaces it.
 
 import { proxy } from 'valtio';
 
@@ -20,6 +21,13 @@ export interface AgentChatSession {
      *  (that was the erasure), it restores instantly and lets the reconcile
      *  poll heal any frames missed while unmounted. */
     resumedOnce: boolean;
+    /** A turn that came in on another app (a text, a call, an email) is
+     *  running: this chat follows it and reads the saved turn back at its end. */
+    turnElsewhere: boolean;
+    /** The persisted-history fetch failed; null once one succeeds. */
+    resumeError: string | null;
+    /** How many of `messages`, from the start, are a cached copy shown until the persisted history lands. */
+    cached: number;
 }
 
 const emptySession = (): AgentChatSession => ({
@@ -28,6 +36,9 @@ const emptySession = (): AgentChatSession => ({
     errorReason: null,
     lastFinishedAt: 0,
     resumedOnce: false,
+    turnElsewhere: false,
+    resumeError: null,
+    cached: 0,
 });
 
 export const agentChatSessionStore = proxy<{
@@ -46,6 +57,14 @@ export function getAgentChatSession(conversationId: string): AgentChatSession {
         agentChatSessionStore.sessions[conversationId] = emptySession();
     }
     return agentChatSessionStore.sessions[conversationId];
+}
+
+/** Show a cached copy of a conversation until its persisted history lands; a no-op once the session holds anything. */
+export function seedAgentChatSession(conversationId: string, messages: AgentChatMessage[]): void {
+    const session = getAgentChatSession(conversationId);
+    if (session.resumedOnce || session.isStreaming || session.messages.length > 0 || messages.length === 0) return;
+    session.messages = messages;
+    session.cached = messages.length;
 }
 
 /** Test isolation — the store is module-level state. */

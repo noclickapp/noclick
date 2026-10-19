@@ -1,8 +1,8 @@
 // Regression test for the ownership filter that replaced the dedicated
 // "Shared with me" view. Verifies the dropdown renders its three options, that
 // "Owned by me" / "Not owned by me" partition the grid (their counts sum to
-// "Owned by anyone"), and that the shared-empty state hides the New Workflow
-// card. Data-independent: it asserts the partition invariant, not fixed counts.
+// "Owned by anyone"), and that the header's New automation button stays in
+// every filter. Data-independent: it asserts the partition invariant, not fixed counts.
 import { nc } from '~/lib/nc';
 
 const TRIGGER = '[title="Filter by ownership"]';
@@ -16,8 +16,8 @@ function cardCounts() {
     };
 }
 
-function hasNewWorkflowCard(): boolean {
-    return nc.dom.qsa('h3').some((h) => h.textContent?.trim() === 'New Workflow');
+function hasNewAutomationButton(): boolean {
+    return nc.dom.qsa('button').some((b) => b.textContent?.trim() === 'New automation');
 }
 
 // Radix opens its menu on pointer events, so a bare .click() isn't enough.
@@ -71,19 +71,19 @@ export default async function () {
     // Measure each filter and assert the partition invariant.
     await selectFilter('Owned by anyone');
     const anyone = cardCounts();
-    nc.assert.truthy(hasNewWorkflowCard(), '"anyone" should show the New Workflow card');
+    nc.assert.truthy(hasNewAutomationButton(), '"anyone" should show the New automation button');
 
     await selectFilter('Owned by me');
     const owned = cardCounts();
-    nc.assert.truthy(hasNewWorkflowCard(), '"owned" should show the New Workflow card');
+    nc.assert.truthy(hasNewAutomationButton(), '"owned" should show the New automation button');
 
     await selectFilter('Not owned by me');
     const notOwned = cardCounts();
-    // The New Workflow card stays visible in every filter (creating from "Not
+    // The New automation button stays in every filter (creating from "Not
     // owned by me" switches the filter back to "Owned by anyone").
-    nc.assert.truthy(hasNewWorkflowCard(), 'New Workflow card stays visible under "not owned"');
+    nc.assert.truthy(hasNewAutomationButton(), 'New automation button stays under "not owned"');
     if (notOwned.workflows === 0 && notOwned.folders === 0) {
-        const emptyShown = nc.dom.qsa('p').some((p) => p.textContent?.includes('Nothing has been shared with you yet'));
+        const emptyShown = nc.dom.qsa('p').some((p) => p.textContent?.includes('Nothing shared with you yet'));
         nc.assert.truthy(emptyShown, 'shared-empty state message should render');
     }
 

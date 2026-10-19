@@ -8,6 +8,8 @@ import { Link, useSearchParams } from 'react-router';
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
 import { AuthLayout } from '~/components/auth/AuthLayout';
+import { AuthPageHeader } from '~/components/auth/AuthPageHeader';
+import { AUTH_LINK_CLASS, AUTH_PRIMARY_BUTTON_CLASS } from '~/components/auth/authStyle';
 import type { MetaFunction } from 'react-router';
 import { buildSeoMeta } from '~/lib/seo';
 import { useAnalytics } from '~/lib/analytics';
@@ -75,40 +77,20 @@ export default function AuthCodeError() {
     return (
         <AuthLayout>
             <div>
-                <div className="mb-10">
-                    <Link to="/auth/login" className="inline-flex items-center text-sm text-muted-foreground dark:text-white/70 hover:text-foreground mb-8 transition-colors">
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        Back to login
-                    </Link>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <h1 className="text-4xl font-bold text-foreground mb-3">
-                            Authentication Error
-                        </h1>
-                        <p className="text-muted-foreground dark:text-white/70 text-lg">
-                            There was an error verifying your authentication code
-                        </p>
-                    </motion.div>
-                </div>
+                <AuthPageHeader back={{ to: '/auth/login', label: 'Back to login' }} title="Authentication Error" description="There was an error verifying your authentication code" />
 
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.1 }}
-                    className="bg-sunken border border-border rounded-2xl p-8"
+                    className=""
                 >
-                    <p className="text-muted-foreground dark:text-zinc-300 mb-8 text-center">
+                    <p className="mb-8 text-foreground/65">
                         {message}
                     </p>
 
                     {reason && LIKELY_ALREADY_VERIFIED.has(reason) && (
-                        <p className="text-muted-foreground dark:text-zinc-300 mb-8 text-center text-sm">
+                        <p className="mb-8 text-sm text-foreground/65">
                             If you were confirming a new account, your email is likely already
                             verified. Signing in with your email and password should work.
                         </p>
@@ -116,18 +98,18 @@ export default function AuthCodeError() {
 
                     <Button
                         asChild
-                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 font-medium transition-all shadow-sm"
+                        className={AUTH_PRIMARY_BUTTON_CLASS}
                     >
                         <Link to="/auth/login">Return to Login</Link>
                     </Button>
 
-                    <div className="mt-6 text-center text-sm">
-                        <span className="text-muted-foreground">
+                    <div className="mt-6 text-sm">
+                        <span className="text-foreground/60 dark:text-foreground/55">
                             Need help?{' '}
                         </span>
                         <Link
                             to="/auth/forgot-password"
-                            className="font-medium text-foreground/90 hover:text-foreground transition-colors"
+                            className={AUTH_LINK_CLASS}
                         >
                             Reset password
                         </Link>

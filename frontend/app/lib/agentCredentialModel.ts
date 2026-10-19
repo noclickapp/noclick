@@ -1,6 +1,9 @@
+import type { Node } from '@xyflow/react';
+
 import { getProviderMetadata, ModelProvider } from '~/types/provider';
+import type { NodeUpdatePayload } from '~/lib/applyNodeUpdate';
 import { isLocalEdition } from '~/lib/edition';
-import { DEFAULT_AGENT_MODEL, LLM_HARNESS, harnessOf } from '~/lib/agentChat';
+import { CLI_MODEL_PROVIDER, DEFAULT_AGENT_MODEL, LLM_HARNESS, harnessOf } from '~/lib/agentChat';
 import agentSchema from '~/schemas/nodes/agent.json';
 
 export type AgentConfigRecord = Record<string, unknown> | null | undefined;
@@ -117,6 +120,93 @@ function readTrimmedString(value: unknown): string | undefined {
     return trimmed === '' ? undefined : trimmed;
 }
 
+/** What each CLI harness is called on a node, keyed by its model id; the first
+ *  is the one written. Mirrors backend AGENT_HARNESS_NAMES
+ *  (coder/workflow/workflow_ops.py). */
+export const AGENT_HARNESS_NAMES: Readonly<Record<string, readonly string[]>> =
+    {
+        'claude-code': ['Claude Code'],
+        codex: ['Codex', 'OpenAI Codex'],
+        opencode: ['OpenCode'],
+        openclaw: ['OpenClaw'],
+        hermes: ['Hermes', 'Hermes Agent'],
+    };
+// NoClick's own runtime (any model that isn't a CLI harness) is named like a
+// new agent node.
+const SDK_AGENT_LABEL = 'AI Agent';
+
+// Each CLI harness's own config fields — what its schema variant adds to the
+// fields every variant has (opencode → opencode_model), read from the
+// generated schema like the sub-model defaults above.
+function readHarnessOwnFields(): Record<string, string[]> {
+    const variants = Object.values(
+        (
+            agentSchema as {
+                $defs?: Record<
+                    string,
+                    { properties?: Record<string, { default?: unknown }> }
+                >;
+            }
+        ).$defs ?? {}
+    ).filter((variant) => variant.properties?.model_type);
+    const shared = variants
+        .map((variant) => Object.keys(variant.properties ?? {}))
+        .reduce((common, keys) => common.filter((key) => keys.includes(key)));
+    const out: Record<string, string[]> = {};
+    for (const variant of variants) {
+        const model = variant.properties?.model?.default;
+        if (typeof model === 'string' && model in CLI_MODEL_PROVIDER) {
+            out[model] = Object.keys(variant.properties ?? {}).filter(
+                (key) => !shared.includes(key)
+            );
+        }
+    }
+    return out;
+}
+
+export const HARNESS_OWN_FIELDS: Readonly<Record<string, readonly string[]>> =
+    readHarnessOwnFields();
+
+/** A user's edit that moves an agent to another harness also clears the old
+ *  harness's own fields (`null` deletes in applyNodeUpdate) and renames a node
+ *  named after it ("OpenCode", "OpenCode agent"), unless the edit names the
+ *  node itself. Credentials follow the provider on their own
+ *  (staleCredentialKeysForProvider). Mirrors backend switch_agent_harness
+ *  (coder/workflow/workflow_ops.py). */
+export function withAgentHarnessSwitch(
+    node: Node | undefined,
+    update: NodeUpdatePayload
+): NodeUpdatePayload {
+    const nextModel = readTrimmedString(update.config?.model);
+    if (node?.type !== 'agent' || !nextModel) return update;
+    const data = (node.data ?? {}) as Record<string, unknown>;
+    const config = getAgentConfigRecord(data);
+    const from = harnessOf(getAgentSelectedModel(undefined, config));
+    const to = harnessOf(nextModel);
+    if (from === to) return update;
+
+    const kept = HARNESS_OWN_FIELDS[to] ?? [];
+    const cleared = (HARNESS_OWN_FIELDS[from] ?? []).filter(
+        (key) => key in config && !kept.includes(key)
+    );
+    const label = (readTrimmedString(data.label) ?? '').toLowerCase();
+    const named = (AGENT_HARNESS_NAMES[from] ?? []).some(
+        (name) =>
+            label === name.toLowerCase() ||
+            label === `${name.toLowerCase()} agent`
+    );
+    return {
+        ...update,
+        config: {
+            ...update.config,
+            ...Object.fromEntries(cleared.map((key) => [key, null])),
+        },
+        ...(named && update.label === undefined
+            ? { label: AGENT_HARNESS_NAMES[to]?.[0] ?? SDK_AGENT_LABEL }
+            : {}),
+    };
+}
+
 export function getAgentConfigRecord(
     nodeData: AgentConfigRecord
 ): Record<string, unknown> {
@@ -128,6 +218,11 @@ export function getAgentConfigRecord(
 
 export function getAgentCredentialType(provider: ModelProvider): string {
     return `agent_${provider}`;
+}
+
+/** The provider an agent credential type is for (`agent_claude_code_oauth` → claude_code); null for any other type. */
+export function agentCredentialProvider(credentialType: string | undefined): ModelProvider | null {
+    return credentialType?.startsWith('agent_') ? (credentialType.slice('agent_'.length).replace(/_oauth$/, '') as ModelProvider) : null;
 }
 
 // Subscription-OAuth credential type that stands in for a provider's
@@ -183,6 +278,14 @@ export function agentVendorKeyAlias(
 ): string | undefined {
     return provider ? AGENT_VENDOR_KEY_ALIAS[provider] : undefined;
 }
+
+/** What each subscription sign-in is called: the plan it uses, and whom you sign in with. */
+export const AGENT_SIGN_IN_NAMES: Readonly<Record<string, { subscription: string; signInWith: string }>> = {
+    agent_claude_code_oauth: { subscription: 'Claude', signInWith: 'Claude' },
+    agent_codex_oauth: { subscription: 'ChatGPT', signInWith: 'ChatGPT' },
+    agent_github_copilot_oauth: { subscription: 'Copilot', signInWith: 'GitHub' },
+    agent_xai_oauth: { subscription: 'SuperGrok', signInWith: 'xAI' },
+};
 
 /** Every credential_type that satisfies `provider` for an agent: the direct
  *  `agent_<provider>` key, its vendor key alias and its OAuth alias
@@ -442,33 +545,108 @@ export function isChatGptPlusSupported(modelId: string): boolean {
     );
 }
 
+// Model-id prefix → the provider whose credential it runs on, first match wins.
+// OpenCode's priority providers first, then the free ones it reaches.
+// OpenCode Zen + Go share the same OPENCODE_API_KEY and the same opencode.ai/auth
+// dashboard, so both prefixes fold into OPENCODE and one credential serves both
+// catalogs. github-copilot signs in by device code (github.com/login/device), not
+// an env-var key: the form renders the Copilot sign-in, and the resulting
+// agent_github_copilot_oauth credential is translated by opencode.py into
+// OPENCODE_AUTH_CONTENT at sandbox-injection time.
+const AGENT_MODEL_PREFIXES: ReadonlyArray<readonly [string, ModelProvider]> = [
+    ['openrouter/', ModelProvider.OPENROUTER],
+    ['anthropic/', ModelProvider.ANTHROPIC],
+    ['openai/', ModelProvider.OPENAI],
+    ['gemini/', ModelProvider.GEMINI],
+    ['google/', ModelProvider.GEMINI],
+    ['xai/', ModelProvider.XAI],
+    ['groq/', ModelProvider.GROQ],
+    ['deepseek/', ModelProvider.DEEPSEEK],
+    ['mistral/', ModelProvider.MISTRAL],
+    ['opencode/', ModelProvider.OPENCODE],
+    ['opencode-go/', ModelProvider.OPENCODE],
+    ['github-models/', ModelProvider.GITHUB_MODELS],
+    ['nvidia/', ModelProvider.NVIDIA],
+    ['github-copilot/', ModelProvider.GITHUB_COPILOT],
+];
+
 export function inferProviderFromPrefix(model: string): ModelProvider | null {
-    // ── OpenCode priority providers ────────────────────────────────────
-    if (model.startsWith('openrouter/')) return ModelProvider.OPENROUTER;
-    if (model.startsWith('anthropic/')) return ModelProvider.ANTHROPIC;
-    if (model.startsWith('openai/')) return ModelProvider.OPENAI;
-    if (model.startsWith('gemini/') || model.startsWith('google/')) {
-        return ModelProvider.GEMINI;
+    return AGENT_MODEL_PREFIXES.find(([prefix]) => model.startsWith(prefix))?.[1] ?? null;
+}
+
+// CLI agent providers with a subscription sign-in, keyed the way the backend's
+// instance-status reports them (harness_oauth_flows.AGENT_PROVIDER_OAUTH_TYPE).
+// Which of these THIS instance can complete comes from that report.
+export const AGENT_OAUTH_PROVIDER_KEY: Partial<Record<ModelProvider, string>> = {
+    [ModelProvider.CODEX]: 'codex',
+    [ModelProvider.CLAUDE_CODE]: 'claude_code',
+    [ModelProvider.GITHUB_COPILOT]: 'github_copilot',
+    [ModelProvider.XAI]: 'xai',
+};
+
+/** Providers connected only by signing in: there is no key to paste. */
+export function isSignInOnlyAgentProvider(provider: ModelProvider | null): boolean {
+    return provider === ModelProvider.GITHUB_COPILOT;
+}
+
+/** Every provider an agent can run on: the CLI harnesses, then the providers agent models route to, each once. */
+function agentRuntimeProviders(): ModelProvider[] {
+    const all = [...(Object.values(CLI_MODEL_PROVIDER) as ModelProvider[]), ...AGENT_MODEL_PREFIXES.map(([, provider]) => provider)];
+    return all.filter((provider, i) => all.indexOf(provider) === i && !!getProviderMetadata(provider));
+}
+
+// Two providers are one account when they take the same key or the same sign-in:
+// Claude Code runs on an Anthropic key or a Claude sign-in, OpenClaw on an OpenRouter key.
+function shareAnAccount(a: ModelProvider, b: ModelProvider): boolean {
+    const key = (p: ModelProvider) => (getProviderMetadata(p)?.requiredApiKeys?.[0] ?? []).join('+');
+    return a !== b && ((!!key(a) && key(a) === key(b)) || (!!AGENT_OAUTH_ALIAS[a] && AGENT_OAUTH_ALIAS[a] === AGENT_OAUTH_ALIAS[b]));
+}
+
+/** The other providers whose credentials are this one's account: their keys hold the same secret. */
+export function sameAccountAgentProviders(provider: ModelProvider | null): ModelProvider[] {
+    return provider ? agentRuntimeProviders().filter((other) => shareAnAccount(provider, other)) : [];
+}
+
+/** A company agents run on, one entry in Connections: the providers whose keys and sign-ins it issues, its own first. */
+export interface AgentCompany {
+    id: string;
+    title: string;
+    members: ModelProvider[];
+}
+
+// Products of one company that share no key and no sign-in, so their credentials can't say they're one company.
+// GitHub's is named for Copilot, its mark leading: Connections lists it beside the GitHub app.
+const PRODUCT_FAMILIES: ReadonlyArray<{ id: string; title: string; members: readonly ModelProvider[] }> = [
+    { id: 'github', title: 'GitHub Copilot', members: [ModelProvider.GITHUB_COPILOT, ModelProvider.GITHUB_MODELS] },
+];
+
+let companies: AgentCompany[] | null = null;
+
+/** Every company agents can run on, each once. Providers that share an account are one company (a CLI harness and
+ *  the provider whose key it takes), and so is a product family; a company is its own provider, the one that isn't a
+ *  CLI harness. */
+export function agentCompanies(): AgentCompany[] {
+    if (companies) return companies;
+    const providers = agentRuntimeProviders();
+    const harnesses = new Set<string>(Object.values(CLI_MODEL_PROVIDER));
+    const familyOf = (p: ModelProvider) => PRODUCT_FAMILIES.find((family) => family.members.includes(p));
+    const linked = (a: ModelProvider, b: ModelProvider) => shareAnAccount(a, b) || (!!familyOf(a) && familyOf(a) === familyOf(b));
+    const out: AgentCompany[] = [];
+    for (const provider of providers) {
+        if (out.some((company) => company.members.includes(provider))) continue;
+        const group = [provider];
+        for (let i = 0; i < group.length; i++) {
+            for (const other of providers) if (!group.includes(other) && linked(group[i], other)) group.push(other);
+        }
+        const members = providers.filter((p) => group.includes(p));
+        const family = familyOf(provider);
+        const own = (family ? family.members.find((p) => members.includes(p)) : members.find((p) => !harnesses.has(p))) ?? members[0];
+        out.push({
+            id: family?.id ?? own,
+            title: family?.title ?? getProviderMetadata(own)!.title,
+            members: [own, ...members.filter((p) => p !== own)],
+        });
     }
-    if (model.startsWith('xai/')) return ModelProvider.XAI;
-    if (model.startsWith('groq/')) return ModelProvider.GROQ;
-    if (model.startsWith('deepseek/')) return ModelProvider.DEEPSEEK;
-    if (model.startsWith('mistral/')) return ModelProvider.MISTRAL;
-    // OpenCode Zen + Go share the same OPENCODE_API_KEY and the same
-    // opencode.ai/auth dashboard — fold both prefixes into the OPENCODE
-    // provider so credentials are reused across the two model catalogs.
-    if (model.startsWith('opencode/') || model.startsWith('opencode-go/')) {
-        return ModelProvider.OPENCODE;
-    }
-    // ── OpenCode free providers ────────────────────────────────────────
-    if (model.startsWith('github-models/')) return ModelProvider.GITHUB_MODELS;
-    if (model.startsWith('nvidia/')) return ModelProvider.NVIDIA;
-    // github-copilot uses device-code OAuth (github.com/login/device)
-    // rather than an env-var API key. The form's OAuth-path special-case
-    // renders <GithubCopilotOAuth /> instead of a paste-key field. The
-    // resulting agent_github_copilot_oauth credential is translated by
-    // opencode.py into OPENCODE_AUTH_CONTENT at sandbox-injection time.
-    if (model.startsWith('github-copilot/'))
-        return ModelProvider.GITHUB_COPILOT;
-    return null;
+    companies = out;
+    return out;
 }

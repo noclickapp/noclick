@@ -131,9 +131,14 @@ const AutomationNode = ({
     // skip the per-node setInterval polling, the per-mount rAF loop that calls
     // updateNodeInternals, and the backdrop-blur layer.
     const isReadOnly = data?.isReadOnly === true;
-    const previewEditInfo = isNodeEditInfo(data?._previewEditInfo)
-        ? data._previewEditInfo
-        : null;
+    // A preview's own edit state, null where it says "not being edited"; undefined
+    // (no preview) reads the live editor's, which null would silence.
+    const rawPreviewEditInfo = data?._previewEditInfo;
+    const previewEditInfo = isNodeEditInfo(rawPreviewEditInfo)
+        ? rawPreviewEditInfo
+        : rawPreviewEditInfo === null
+          ? null
+          : undefined;
     const isMobile = useIsMobile();
 
     // Hook to notify ReactFlow when node dimensions change (for handle/edge recalculation)
@@ -143,7 +148,11 @@ const AutomationNode = ({
     // the polling logic + status interpretation lives in one place.
     const { isBeingEdited, editInfo, remoteEditorName } = useNodeEditingState(
         id,
-        { skip: isReadOnly && !previewEditInfo, previewEditInfo }
+        {
+            skip: isReadOnly && !previewEditInfo,
+            previewEditInfo,
+            building: data?.mcpAnimationState,
+        }
     );
 
     // Notify ReactFlow to recalculate handle positions and edges when dimensions change.
@@ -589,6 +598,7 @@ export default memo(AutomationNode, (prev, next) => {
         prev.data?.mockedOutput === next.data?.mockedOutput &&
         prev.data?.label === next.data?.label &&
         prev.data?._previewEditInfo === next.data?._previewEditInfo &&
+        prev.data?.mcpAnimationState === next.data?.mcpAnimationState &&
         prev.data?._lastRunStatus === next.data?._lastRunStatus &&
         readOnError(prev.data) === readOnError(next.data) &&
         readAgentToolOpsCount(prev.data) === readAgentToolOpsCount(next.data)

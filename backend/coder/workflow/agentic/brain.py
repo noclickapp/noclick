@@ -37,7 +37,7 @@ import litellm
 
 from ..pass_base import (
     build_provider_extra_body,
-    extract_streaming_cost,
+    extract_settled_cost,
     is_transient_llm_error as _is_transient_llm_error,
 )
 from utils.cancellation import (
@@ -242,7 +242,7 @@ class LiteLLMBrain:
                 non_content_fields = {}
                 await asyncio.sleep(backoff)
 
-        cost_result = extract_streaming_cost(chunks, messages)
+        cost_result = await extract_settled_cost(chunks, messages, what="LiteLLMBrain")
         ttft_s = (
             (first_token_time - request_start)
             if first_token_time is not None and request_start is not None

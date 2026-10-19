@@ -1,22 +1,17 @@
 /**
- * Modal component for creating a new organization.
- * Used from the dashboard or account settings to create and join a new organization.
- * Supports custom slug input with real-time availability checking.
+ * Making a workspace (an organization on the wire) from the workspace menu: its name, and the identifier its
+ * sign-in link uses, checked for availability as it's typed.
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '~/components/ui/dialog';
-import { Button } from '~/components/ui/button';
+import { ShellDialog } from '~/components/shell/ShellDialog';
+import { BUTTON_GHOST, BUTTON_PRIMARY } from '~/components/shell/buttons';
+import { FIELD, FIELD_LABEL } from '~/components/shell/fields';
 import { useOrganization } from '~/hooks/useOrganization';
 import { useOrgContext } from '~/hooks/useOrgContext';
 import { toast } from 'sonner';
-import { Loader2, Building2, Check, X } from 'lucide-react';
+import { Loader2, Users, Check, X } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { UpgradePopup } from '~/components/utils/UpgradePopup';
 import { isPlanLimitError } from '~/lib/planLimitErrors';
@@ -29,7 +24,7 @@ interface CreateOrganizationModalProps {
 export function CreateOrganizationModal({ open, onOpenChange }: CreateOrganizationModalProps) {
   const navigate = useNavigate();
   const [, setOrgContext] = useOrgContext();
-  const { createOrganization, switchOrganization, checkSlugAvailability, loading, error, clearError } = useOrganization();
+  const { createOrganization, switchOrganization, checkSlugAvailability, loading, clearError } = useOrganization();
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle');
@@ -67,7 +62,7 @@ export function CreateOrganizationModal({ open, onOpenChange }: CreateOrganizati
         setSlugError(null);
       } else {
         setSlugStatus('taken');
-        setSlugError('This identifier is already taken');
+        setSlugError('That identifier is taken.');
       }
     } else {
       setSlugStatus('idle');
@@ -133,12 +128,12 @@ export function CreateOrganizationModal({ open, onOpenChange }: CreateOrganizati
     e.preventDefault();
 
     if (!name.trim()) {
-      toast.error('Organization name is required');
+      toast.error('Give the workspace a name');
       return;
     }
 
     if (slugStatus === 'taken' || slugStatus === 'invalid') {
-      toast.error('Please choose a different identifier');
+      toast.error('Choose a different identifier');
       return;
     }
 
@@ -151,7 +146,7 @@ export function CreateOrganizationModal({ open, onOpenChange }: CreateOrganizati
       await switchOrganization(org.id);
       // Update local context (creator is always owner)
       setOrgContext({ id: org.id, role: 'owner', subscription_tier: 'free', isPersonalWorkspace: false });
-      toast.success(`${org.name} created successfully!`);
+      toast.success(`${org.name} is ready`);
       setName('');
       setSlug('');
       setSlugManuallyEdited(false);
@@ -188,116 +183,75 @@ export function CreateOrganizationModal({ open, onOpenChange }: CreateOrganizati
       onOpenChange={(open) => { if (!open) setPlanLimitError(null); }}
       errorMessage={planLimitError || ''}
     />
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="bg-sunken border-border text-foreground max-w-md p-6">
-        <DialogHeader className="pb-1">
-          <DialogTitle className="text-xl text-foreground flex items-center gap-2">
-            <Building2 className="h-5 w-5" />
-            Create Organization
-          </DialogTitle>
-          <div className="text-sm text-muted-foreground pt-0.5">
-            Collaborate with team members and share resources
+    <ShellDialog
+      open={open}
+      onOpenChange={handleOpenChange}
+      mark={<Users className="h-5 w-5" strokeWidth={1.75} />}
+      title="New workspace"
+      description="Share automations and accounts with your team."
+      onSubmit={handleSubmit}
+      footer={
+        <>
+          <button type="button" onClick={() => onOpenChange(false)} disabled={creating || loading} className={BUTTON_GHOST}>
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={!name.trim() || creating || loading || slugStatus === 'taken' || slugStatus === 'invalid' || slugStatus === 'checking'}
+            className={BUTTON_PRIMARY}
+          >
+            {creating && <Loader2 className="h-4 w-4 animate-spin" />}
+            {creating ? 'Creating…' : 'Create workspace'}
+          </button>
+        </>
+      }
+    >
+      <div className="space-y-4 pt-2">
+        <label className="block">
+          <span className={FIELD_LABEL}>Name</span>
+          <input
+            id="orgName"
+            name="name"
+            type="text"
+            required
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- the dialog opens to type a name
+            autoFocus
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={FIELD}
+            placeholder="Acme Inc."
+          />
+        </label>
+        <div>
+          <label htmlFor="orgSlug" className={FIELD_LABEL}>
+            Identifier
+          </label>
+          <div className="relative">
+            <input
+              id="orgSlug"
+              name="slug"
+              type="text"
+              value={slug}
+              onChange={(e) => {
+                setSlugManuallyEdited(true);
+                handleSlugChange(e.target.value);
+              }}
+              className={cn(FIELD, 'pr-10', slugStatus === 'taken' && 'border-red-500/60 focus:border-red-500/60 dark:border-red-400/50', slugStatus === 'invalid' && 'border-amber-500/60 dark:border-amber-400/50')}
+              placeholder="acme"
+              aria-invalid={slugStatus === 'taken' || slugStatus === 'invalid'}
+            />
+            <span className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center">
+              {slugStatus === 'checking' && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+              {slugStatus === 'available' && <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />}
+              {(slugStatus === 'taken' || slugStatus === 'invalid') && <X className="h-4 w-4 text-red-600 dark:text-red-400" />}
+            </span>
           </div>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-5">
-            {/* Organization Name */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground/80">
-                Organization Name
-              </label>
-              <div className="bg-card/90 backdrop-blur-sm rounded-full transition-all duration-200 border border-border/60 dark:border-zinc-700/60 focus-within:border-muted-foreground/80 dark:focus-within:border-zinc-600/80">
-                <input
-                  id="orgName"
-                  name="name"
-                  type="text"
-                  required
-                  autoFocus
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="bg-transparent text-foreground px-4 py-2.5 outline-none w-full text-sm placeholder:text-[hsl(var(--placeholder))] rounded-full"
-                  placeholder="Acme Inc."
-                />
-              </div>
-            </div>
-
-            {/* Identifier (Slug) */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground/80">
-                Identifier
-              </label>
-              <div className={cn(
-                "bg-card/90 backdrop-blur-sm rounded-full transition-all duration-200 border flex items-center",
-                slugStatus === 'taken' && "border-red-500/50",
-                slugStatus === 'invalid' && "border-amber-500/50",
-                (slugStatus === 'idle' || slugStatus === 'checking' || slugStatus === 'available') && "border-border/60 dark:border-zinc-700/60 focus-within:border-muted-foreground/80 dark:focus-within:border-zinc-600/80"
-              )}>
-                <input
-                  id="orgSlug"
-                  name="slug"
-                  type="text"
-                  value={slug}
-                  onChange={(e) => {
-                    setSlugManuallyEdited(true);
-                    handleSlugChange(e.target.value);
-                  }}
-                  className="bg-transparent text-foreground px-4 py-2.5 outline-none flex-1 text-sm placeholder:text-[hsl(var(--placeholder))] rounded-l-full"
-                  placeholder="acme-corp"
-                />
-                <div className="pr-4 flex items-center justify-center w-8">
-                  {slugStatus === 'checking' && (
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  )}
-                  {slugStatus === 'available' && (
-                    <Check className="h-4 w-4 text-muted-foreground dark:text-white/70" />
-                  )}
-                  {(slugStatus === 'taken' || slugStatus === 'invalid') && (
-                    <X className="h-4 w-4 text-red-600 dark:text-red-400" />
-                  )}
-                </div>
-              </div>
-              <p className={cn(
-                "text-xs",
-                slugError ? "text-red-600 dark:text-red-400" : "text-muted-foreground dark:text-zinc-500"
-              )}>
-                {slugError || (
-                  <>
-                    Used for SSO login URL · <span className="text-muted-foreground">Cannot be changed later</span>
-                  </>
-                )}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex justify-between pt-6">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={creating || loading}
-              className="h-10 bg-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] border border-border hover:border-border dark:hover:border-zinc-700 rounded-md"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={!name.trim() || creating || loading || slugStatus === 'taken' || slugStatus === 'invalid' || slugStatus === 'checking'}
-              className="h-10 bg-primary hover:bg-primary text-primary-foreground font-medium rounded-md border-0 shadow-[0_2.5px_0_0_#a0a0a0] hover:shadow-[0_1px_0_0_#a0a0a0] hover:translate-y-[1.5px] active:shadow-none active:translate-y-[2.5px] transition-all duration-100 disabled:opacity-40 min-w-[100px]"
-            >
-              {creating ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Creating...
-                </>
-              ) : (
-                'Create'
-              )}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+          <p className={cn('mt-1.5 text-[12.5px]', slugError ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground')} role={slugError ? 'alert' : undefined}>
+            {slugError || 'Used in its single sign-on link. It can’t be changed later.'}
+          </p>
+        </div>
+      </div>
+    </ShellDialog>
     </>
   );
 }

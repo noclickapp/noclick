@@ -21,9 +21,35 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any, Dict, List, Optional
+import re
+import uuid
+from typing import Any, Callable, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
+
+_AGENT_THREAD_RE = re.compile(r"ck:([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}):")
+
+
+# A note the account added to an agent's conversation (``{"note": {key, text, data}}``), relayed to its next turn once.
+NOTE_EVENT_KINDS: Dict[str, str] = {"note": "key"}
+
+
+def agent_thread_workflow(conversation_id: Optional[str]) -> Optional[str]:
+    """The workflow of an agent's thread (``ck:{workflow}:{node}:{key}``), else None."""
+    match = _AGENT_THREAD_RE.match(conversation_id or "")
+    return match.group(1) if match else None
+
+
+def _landed(status: str, conversation_id: str, user_id: str) -> bool:
+    """Whether an upsert's status says it wrote; one that wrote nothing named a
+    conversation the writer may not change, and is reported loudly."""
+    if status.endswith(" 0"):
+        logger.error(
+            "[ConversationRepo] write to conversation %s by %s changed nothing: it belongs to another account",
+            conversation_id, user_id,
+        )
+        return False
+    return True
 
 
 def _normalize_events(value: Any) -> List[Dict[str, Any]]:
@@ -144,6 +170,30 @@ class ConversationRepo:
                 conversation_id, user_id,
             )
         return row["wfid"] if row else None
+
+    async def owner_id(self, conversation_id: str) -> Optional[str]:
+        """The user a conversation belongs to, or None when there is none."""
+        async with self._pool.acquire() as conn:
+            return await conn.fetchval(
+                "SELECT user_id::text FROM conversations WHERE conversation_id::text = $1::text",
+                conversation_id,
+            )
+
+    async def run_may_use(self, conversation_id: str, user_id: str, workflow_id: str) -> bool:
+        """Whether a run of ``workflow_id`` that ``user_id`` started may use
+        ``conversation_id`` as its agents' memory: one of this workflow's
+        agent threads, or the caller's own conversation; a new id must be a
+        UUID (a client mints one), never a form the server mints for someone
+        else."""
+        if agent_thread_workflow(conversation_id) == str(workflow_id):
+            return True
+        owner_id = await self.owner_id(conversation_id)
+        if owner_id is not None:
+            return owner_id == str(user_id)
+        try:
+            return str(uuid.UUID(conversation_id)) == conversation_id.lower()
+        except ValueError:
+            return False
 
     async def list_builder_conversations(
         self, user_id: str, *, limit: int = 50,
@@ -384,16 +434,18 @@ class ConversationRepo:
         title = (prompt or "Workflow Edit")[:50]
         preview = (prompt or "")[:100]
         async with self._pool.acquire() as conn:
-            await conn.execute(
+            status = await conn.execute(
                 """
                 INSERT INTO conversations (conversation_id, user_id, workflow_id, title, preview, events, created_at, last_activity)
                 VALUES ($1, $2, $3, $4, $5, '[]'::jsonb, NOW(), NOW())
                 ON CONFLICT (conversation_id) DO UPDATE SET
                     workflow_id = COALESCE(conversations.workflow_id, EXCLUDED.workflow_id),
                     last_activity = NOW()
+                WHERE conversations.user_id = EXCLUDED.user_id
                 """,
                 conversation_id, user_id, workflow_id, title, preview,
             )
+        _landed(status, conversation_id, user_id)
 
     async def upsert_events(
         self,
@@ -421,7 +473,7 @@ class ConversationRepo:
         history.
         """
         async with self._pool.acquire() as conn:
-            await conn.execute(
+            status = await conn.execute(
                 """
                 INSERT INTO conversations (
                     conversation_id, user_id, workflow_id, title, preview,
@@ -442,11 +494,13 @@ class ConversationRepo:
                     total_tokens = conversations.total_tokens + $9,
                     turn_count   = conversations.turn_count   + $10,
                     last_activity = NOW()
+                WHERE conversations.user_id = EXCLUDED.user_id
                 """,
                 conversation_id, user_id, workflow_id, title, preview,
                 events, pending_ask,
                 cost_delta, token_delta, turn_delta,
             )
+        _landed(status, conversation_id, user_id)
 
     async def get_agent_model(self, conversation_id: str) -> Optional[str]:
         """The harness/model that ran the conversation's last turn (None when
@@ -593,7 +647,7 @@ class ConversationRepo:
     # working unchanged. ``title``/``preview`` are locked on the first
     # non-empty write via ``COALESCE(NULLIF(..., ''), ...)`` so they always
     # reflect the user's opening message, not a later assistant reply.
-    _UPSERT_CHAT_EVENT_SQL = """
+    _UPSERT_ANY_CHAT_EVENT_SQL = """
         INSERT INTO conversations (
             conversation_id, user_id, workflow_id, node_id,
             events, title, preview, agent_model,
@@ -610,22 +664,151 @@ class ConversationRepo:
             preview = COALESCE(NULLIF(conversations.preview, ''), EXCLUDED.preview),
             agent_model = COALESCE(conversations.agent_model, EXCLUDED.agent_model)
     """
+    # Like every write here, it changes only the writer's own conversation: an
+    # id that names someone else's row is left as it is (write_chat_event
+    # opens an agent's thread to everyone who can open its workflow).
+    _UPSERT_CHAT_EVENT_SQL = _UPSERT_ANY_CHAT_EVENT_SQL + """
+        WHERE conversations.user_id = EXCLUDED.user_id
+    """
 
     # The same append, skipped when an event with this turn_id is already there:
     # a retried request can't post its note twice.
     _APPEND_CHAT_EVENT_ONCE_SQL = _UPSERT_CHAT_EVENT_SQL + """
-        WHERE NOT COALESCE(conversations.events, '[]'::jsonb) @> jsonb_build_array(jsonb_build_object('turn_id', $8::text))
+          AND NOT COALESCE(conversations.events, '[]'::jsonb) @> jsonb_build_array(jsonb_build_object('turn_id', $8::text))
         RETURNING true
     """
 
+    @staticmethod
+    async def agent_thread_open_to(conn, conversation_id: str, user_id: str) -> bool:
+        """Whether ``conversation_id`` is an agent's thread (``ck:{workflow}:…``)
+        in a workflow ``user_id`` can open. Everyone who can run that agent
+        writes its threads (collaborators share one: the default chat key), so
+        such a thread is theirs to write whoever wrote it first."""
+        workflow_id = agent_thread_workflow(conversation_id)
+        if workflow_id is None:
+            return False
+        from utils.access_control import check_resource_access
+
+        return (await check_resource_access(conn, str(user_id), "workflow", workflow_id)).has_access
+
+    @classmethod
+    async def write_chat_event(
+        cls, conn, conversation_id: str, user_id: str, workflow_id: Optional[str], node_id: Optional[str],
+        events: List[Dict[str, Any]], label: Optional[str], model: Optional[str],
+    ) -> bool:
+        """Append ``events`` on ``conn`` to the writer's own conversation, or to an
+        agent's thread of a workflow the writer can open. A write that lands
+        nowhere is logged, never dropped quietly. True when it landed."""
+        shared = await cls.agent_thread_open_to(conn, conversation_id, user_id)
+        status = await conn.execute(
+            cls._UPSERT_ANY_CHAT_EVENT_SQL if shared else cls._UPSERT_CHAT_EVENT_SQL,
+            conversation_id, user_id, workflow_id, node_id, events, label, model,
+        )
+        return _landed(status, conversation_id, user_id)
+
     async def append_chat_event_once(
         self, *, conversation_id: str, user_id: str, node_id: Optional[str], event: Dict[str, Any], label: Optional[str],
+        workflow_id: Optional[str] = None,
     ) -> bool:
         """Append ``event`` unless one with its ``turn_id`` is already in the conversation; True when it was added."""
+        async with self._pool.acquire() as conn:
+            added = bool(await conn.fetchval(
+                self._APPEND_CHAT_EVENT_ONCE_SQL,
+                conversation_id, user_id, workflow_id, node_id, [event], label, None, event["turn_id"],
+            ))
+            if not added:
+                owner = await conn.fetchval(
+                    "SELECT user_id::text FROM conversations WHERE conversation_id = $1", conversation_id,
+                )
+                if owner is not None and owner != str(user_id):
+                    _landed("INSERT 0 0", conversation_id, user_id)
+        return added
+
+    async def holds_event(
+        self, conversation_id: str, user_id: str, workflow_id: str, field: str, match: Dict[str, Any],
+    ) -> bool:
+        """Whether a conversation about ``workflow_id`` that ``user_id`` may write
+        holds an event whose ``field`` object contains ``match``: an agent's
+        thread in that workflow (whoever started it; the caller is expected to
+        have checked they can open the workflow), or their own conversation."""
         return bool(await self._pool.fetchval(
-            self._APPEND_CHAT_EVENT_ONCE_SQL,
-            conversation_id, user_id, None, node_id, [event], label, None, event["turn_id"],
+            """
+            SELECT EXISTS (
+                SELECT 1
+                FROM conversations c,
+                     jsonb_array_elements(CASE WHEN jsonb_typeof(c.events) = 'array'
+                                               THEN c.events ELSE '[]'::jsonb END) e
+                WHERE c.conversation_id = $1 AND c.deleted_at IS NULL
+                  AND (c.conversation_id LIKE 'ck:' || $3::text || ':%'
+                       OR (c.user_id::text = $2::text AND c.workflow_id::text = $3::text))
+                  AND e.value->$4 @> $5::jsonb
+            )
+            """,
+            conversation_id, user_id, workflow_id, field, match,
         ))
+
+    async def latest_event_object(self, conversation_id: str, user_id: str, field: str) -> Optional[Dict[str, Any]]:
+        """The ``field`` object of the newest event that carries one."""
+        return await self._pool.fetchval(
+            """
+            SELECT e.value->$3
+            FROM conversations c,
+                 jsonb_array_elements(CASE WHEN jsonb_typeof(c.events) = 'array'
+                                           THEN c.events ELSE '[]'::jsonb END) WITH ORDINALITY e
+            WHERE c.conversation_id = $1 AND c.user_id::text = $2::text AND c.deleted_at IS NULL AND e.value ? $3
+            ORDER BY e.ordinality DESC LIMIT 1
+            """,
+            conversation_id, user_id, field,
+        )
+
+    async def update_event_object(
+        self,
+        conversation_id: str,
+        user_id: str,
+        *,
+        field: str,
+        match: Dict[str, Any],
+        change: Callable[[Dict[str, Any]], Optional[Dict[str, Any]]],
+    ) -> Optional[Dict[str, Any]]:
+        """Rewrite the ``field`` object of the events whose ``field`` contains ``match`` (a turn's own record, found
+        by its key, never by position) to ``change(current)``, under the row lock so concurrent updates of it
+        serialize and appends wait. Returns the new object; None when no event matches or ``change`` returns None
+        (nothing to change)."""
+        async with self._pool.acquire() as conn:
+            async with conn.transaction():
+                # Lock first, read after: a statement that waits on the lock rechecks the row, not the array
+                # elements it already read, so reading in the locking statement judged a receipt a concurrent
+                # update had moved on.
+                locked = await conn.fetchval(
+                    "SELECT 1 FROM conversations WHERE conversation_id = $1 AND user_id::text = $2::text "
+                    "AND deleted_at IS NULL FOR UPDATE",
+                    conversation_id, user_id,
+                )
+                if locked is None:
+                    return None
+                rows = await conn.fetch(
+                    """
+                    SELECT e.ordinality - 1 AS position, e.value->$2 AS current
+                    FROM conversations c,
+                         jsonb_array_elements(CASE WHEN jsonb_typeof(c.events) = 'array'
+                                                   THEN c.events ELSE '[]'::jsonb END) WITH ORDINALITY e
+                    WHERE c.conversation_id = $1 AND e.value->$2 @> $3::jsonb
+                    ORDER BY e.ordinality
+                    """,
+                    conversation_id, field, match,
+                )
+                if not rows:
+                    return None
+                updated = change(rows[-1]["current"])
+                if updated is None:
+                    return None
+                for row in rows:
+                    await conn.execute(
+                        "UPDATE conversations SET events = jsonb_set(events, ARRAY[$2::text, $3::text], $4::jsonb) "
+                        "WHERE conversation_id = $1",
+                        conversation_id, str(row["position"]), field, updated,
+                    )
+                return updated
 
     async def append_chat_event(
         self,
@@ -650,16 +833,7 @@ class ConversationRepo:
         write, so later calls with ``label=None`` leave them alone.
         """
         async with self._pool.acquire() as conn:
-            await conn.execute(
-                self._UPSERT_CHAT_EVENT_SQL,
-                conversation_id,
-                user_id,
-                workflow_id,
-                node_id,
-                [event],
-                label,
-                model,
-            )
+            await self.write_chat_event(conn, conversation_id, user_id, workflow_id, node_id, [event], label, model)
 
     # Builder outcome events relayed to the agent's next turn: the kind key on
     # the event object → the payload field that identifies it for exactly-once
@@ -678,6 +852,20 @@ class ConversationRepo:
         results) not yet relayed to the agent — consumed by
         ``AgentNode._relay_builder_updates`` when composing the next turn.
         Returns ``[{kind, payload}]`` in event order."""
+        return await self.fetch_unrelayed_events(conversation_id, self._BUILDER_EVENT_KINDS)
+
+    async def mark_builder_events_relayed(
+        self, conversation_id: str, relay_keys: List[tuple]
+    ) -> None:
+        """Stamp ``relayed: true`` on the given ``(kind, id)`` events so each
+        outcome is delivered to the agent exactly once."""
+        await self.mark_events_relayed(conversation_id, relay_keys, self._BUILDER_EVENT_KINDS)
+
+    async def fetch_unrelayed_events(
+        self, conversation_id: str, kinds: Dict[str, str]
+    ) -> List[Dict[str, Any]]:
+        """The events of ``kinds`` (the kind key on the event → the payload field
+        naming it) not yet relayed to the agent, as ``[{kind, payload}]`` in event order."""
         async with self._pool.acquire() as conn:
             rows = await conn.fetch(
                 """
@@ -688,7 +876,7 @@ class ConversationRepo:
                 ORDER BY e.ordinality
                 """,
                 conversation_id,
-                list(self._BUILDER_EVENT_KINDS),
+                list(kinds),
             )
         out: List[Dict[str, Any]] = []
         for r in rows:
@@ -697,28 +885,28 @@ class ConversationRepo:
                 import json
 
                 ev = json.loads(ev)
-            for kind in self._BUILDER_EVENT_KINDS:
+            for kind in kinds:
                 payload = ev.get(kind)
                 if isinstance(payload, dict) and not payload.get("relayed"):
                     out.append({"kind": kind, "payload": payload})
         return out
 
-    async def mark_builder_events_relayed(
-        self, conversation_id: str, relay_keys: List[tuple]
+    async def mark_events_relayed(
+        self, conversation_id: str, relay_keys: List[tuple], kinds: Dict[str, str]
     ) -> None:
-        """Stamp ``relayed: true`` on the given ``(kind, id)`` events so each
-        outcome is delivered to the agent exactly once."""
+        """Stamp ``relayed: true`` on the given ``(kind, id)`` events of ``kinds``,
+        so each reaches the agent exactly once."""
         if not relay_keys:
             return
         ids_by_kind: Dict[str, List[str]] = {}
         for kind, rid in relay_keys:
-            if kind in self._BUILDER_EVENT_KINDS and rid:
+            if kind in kinds and rid:
                 ids_by_kind.setdefault(kind, []).append(str(rid))
         if not ids_by_kind:
             return
         async with self._pool.acquire() as conn:
             for kind, ids in ids_by_kind.items():
-                id_field = self._BUILDER_EVENT_KINDS[kind]
+                id_field = kinds[kind]
                 await conn.execute(
                     f"""
                     UPDATE conversations SET events = (

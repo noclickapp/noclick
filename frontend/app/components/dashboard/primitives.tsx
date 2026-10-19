@@ -2,14 +2,15 @@
 // tiles, the runs chart, meters and the small formatters. Black/zinc/white by
 // design — brand marks are the only colour, red is reserved for failure, and a
 // succeeded thing gets a zinc check, never a green one.
-import React, { createContext, useContext, useState, type CSSProperties, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, type ReactNode } from 'react';
 import { ArrowUpRight, Box, Check, Circle, X } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
 import { SerializedIcon } from '~/components/shared/SerializedIcon';
 import { getCredentialIcon } from '~/utils/credentialIcons';
 import { formatCredentialTypeLabel } from '~/utils/credentialTypes';
-import type { AgentTurn, AttentionItem, AttentionKind, CredentialEntry, DayBucket, FileEntry, FileSource, NotificationEntry, RunRow, WorkflowRef } from './types';
+import { MONTHS } from './formatters';
+import type { AgentTurn, AttentionItem, AttentionKind, DayBucket, NotificationEntry, RunRow, WorkflowRef } from './types';
 
 export const SURFACE =
     'rounded-xl border border-border bg-card [--surface:hsl(var(--card))] dark:border-foreground/[0.08] dark:bg-foreground/[0.02] dark:[--surface:color-mix(in_srgb,hsl(var(--foreground))_2%,hsl(var(--background)))]';
@@ -47,7 +48,8 @@ export const LAYOUT = {
     cardPad: 'p-4 sm:p-[18px]',
     // Cells draw their own right/bottom hairlines; the grid's -1px margins tuck
     // the outer ones under the card's border, so the ledger can wrap on phones.
-    ledgerGrid: 'grid -mb-px -mr-px grid-cols-2 sm:grid-cols-3 lg:grid-cols-6',
+    // Five cells: pairs on a narrow screen with the last one across, one row wide.
+    ledgerGrid: 'grid -mb-px -mr-px grid-cols-2 lg:grid-cols-5 [&>*:last-child]:col-span-2 lg:[&>*:last-child]:col-span-1',
     ledgerCell: 'border-b border-r border-border px-4 py-3.5 dark:border-foreground/[0.06] sm:px-5 sm:py-4',
     greetingGap: 'mb-5',
     ledgerGap: 'mb-4',
@@ -80,28 +82,16 @@ export interface DashboardActions {
     resendCredentialRequest?: (item: AttentionItem) => void;
     reconnectCredential: (target: { credentialId?: string; credentialType?: string; name?: string }) => void;
     openRun: (run: RunRow) => void;
-    /** Open a run's Story popup by execution id (turns know their execution). */
     /** Open the run's Story popup (persisted executions only). */
     openExecution?: (run: RunRow) => void;
     retryRun?: (run: RunRow) => void;
     loadOlderRuns?: () => void;
     openConversation: (turn: AgentTurn) => void;
-    openFile: (file: FileEntry, source: FileSource) => void;
-    uploadTo?: (source: FileSource) => void;
-    /** Remove one file from a writable place; rejects with the reason. */
-    deleteFile?: (file: FileEntry, source: FileSource) => Promise<void>;
-    /** Open THIS credential's dialog (the same one the command palette opens). */
-    manageCredential: (credential: CredentialEntry) => void;
-    /** Settings → Credentials, for the "all of them" hand-off. */
-    openCredentialsSettings: () => void;
-    /** Confirm-and-delete a credential (the same dialog Settings uses). */
-    deleteCredential?: (credential: CredentialEntry) => void;
-    connectAccount: () => void;
-    topUp?: () => void;
-    openUsage: () => void;
     markNotificationsRead: (ids?: string[]) => void;
     openNotification: (notification: NotificationEntry) => void;
     openPreferences: () => void;
+    /** Where a workspace with nothing in it yet goes to make something. */
+    startAutomation?: () => void;
 }
 
 const noop = () => {};
@@ -117,11 +107,6 @@ export const DashboardActionsContext = createContext<DashboardActions>({
     reconnectCredential: noop,
     openRun: noop,
     openConversation: noop,
-    openFile: noop,
-    manageCredential: noop,
-    openCredentialsSettings: noop,
-    connectAccount: noop,
-    openUsage: noop,
     markNotificationsRead: noop,
     openNotification: noop,
     openPreferences: noop,
@@ -131,68 +116,7 @@ export const useDashboardActions = () => useContext(DashboardActionsContext);
 // ---------------------------------------------------------------------------
 // Formatters
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const pad2 = (n: number) => String(n).padStart(2, '0');
-
-/** "3m ago" · "2h ago" · "yesterday" · "Aug 24". Relative to the fixture clock. */
-export function relTime(iso: string, now: string): string {
-    const t = Date.parse(iso);
-    const n = Date.parse(now);
-    if (Number.isNaN(t) || Number.isNaN(n)) return '';
-    const diff = n - t;
-    const future = diff < 0;
-    const abs = Math.abs(diff);
-    const m = Math.round(abs / 60_000);
-    if (m < 1) return 'now';
-    if (m < 60) return future ? `in ${m}m` : `${m}m ago`;
-    const hrs = Math.round(m / 60);
-    if (hrs < 24) return future ? `in ${hrs}h` : `${hrs}h ago`;
-    const dd = Math.round(hrs / 24);
-    if (dd === 1) return future ? 'tomorrow' : 'yesterday';
-    if (dd < 7) return future ? `in ${dd}d` : `${dd}d ago`;
-    const dt = new Date(t);
-    return `${MONTHS[dt.getMonth()]} ${dt.getDate()}`;
-}
-
-export function clockLabel(iso: string): string {
-    const dt = new Date(iso);
-    return `${pad2(dt.getHours())}:${pad2(dt.getMinutes())}`;
-}
-
-export function dateLabel(iso: string): string {
-    const dt = new Date(iso);
-    return `${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${pad2(dt.getHours())}:${pad2(dt.getMinutes())}`;
-}
-
-export function fmtBytes(n: number): string {
-    if (n < 1024) return `${n} B`;
-    if (n < 1024 * 1024) return `${(n / 1024).toFixed(n < 10 * 1024 ? 1 : 0)} KB`;
-    if (n < 1024 * 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;
-    return `${(n / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
-
-export function fmtDuration(ms: number | null): string {
-    if (ms == null) return '';
-    if (ms < 1000) return `${ms}ms`;
-    const s = Math.round(ms / 1000);
-    if (s < 60) return `${s}s`;
-    const m = Math.floor(s / 60);
-    const rest = s % 60;
-    if (m < 60) return rest ? `${m}m ${rest}s` : `${m}m`;
-    return `${Math.floor(m / 60)}h ${m % 60}m`;
-}
-
-export function compactNumber(n: number): string {
-    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-    if (n >= 10_000) return `${(n / 1000).toFixed(1)}K`;
-    return n.toLocaleString('en-US');
-}
-
-export function fmtCredits(n: number): string {
-    if (n >= 100) return Math.round(n).toLocaleString('en-US');
-    if (n >= 10) return n.toFixed(1);
-    return n.toFixed(2);
-}
+export { clockLabel, compactNumber, countOf, dateLabel, fmtBytes, fmtDuration, relTime } from './formatters';
 
 export const ATTENTION_KIND_LABEL: Record<AttentionKind, string> = {
     approval: 'Approval',
@@ -266,6 +190,11 @@ export function nodeLabel(type: string): string {
     return getNodeIconMeta(type)?.label ?? type;
 }
 
+export function credentialLabel(credentialType: string, nodeType?: string | null): string {
+    if (nodeType && getNodeIconMeta(nodeType)) return nodeLabel(nodeType);
+    return formatCredentialTypeLabel(credentialType);
+}
+
 /** A credential's provider mark: the node's brand mark when the node type is
  *  known, else the credential-type icon the Settings list uses. */
 export function CredentialMark({ credentialType, nodeType, size = 'sm', className }: { credentialType: string; nodeType?: string | null; size?: MarkSize; className?: string }) {
@@ -277,11 +206,6 @@ export function CredentialMark({ credentialType, nodeType, size = 'sm', classNam
             <Icon className="h-full w-full" />
         </span>
     );
-}
-
-export function credentialLabel(credentialType: string, nodeType?: string | null): string {
-    if (nodeType && getNodeIconMeta(nodeType)) return nodeLabel(nodeType);
-    return formatCredentialTypeLabel(credentialType);
 }
 
 /** The marks that identify a workflow, in a tight row with +N overflow. */
@@ -395,7 +319,7 @@ export function SectionHeader({
                     <span className="text-[15px] font-semibold tracking-tight text-foreground">{title}</span>
                 )}
                 {count != null && count > 0 && (
-                    <span className="text-[11px] tabular-nums text-foreground/55 dark:text-foreground/35">{count}</span>
+                    <span className={cn('tabular-nums text-foreground/55 dark:text-foreground/40', as === 'title' ? 'text-[13px]' : 'text-[11px]')}>{count}</span>
                 )}
                 {meta && <span className="truncate text-[11px] text-foreground/55 dark:text-foreground/35">{meta}</span>}
             </div>
@@ -628,26 +552,3 @@ function dayShort(date: string): string {
     return `${MONTHS[m - 1]} ${d}`;
 }
 
-/** A single ratio against a limit. Fill is ink; the last tenth turns red. */
-export function Meter({ value, max, className, style }: { value: number; max: number; className?: string; style?: CSSProperties }) {
-    const pct = Math.max(0, Math.min(1, max ? value / max : 0));
-    const critical = pct >= 0.9;
-    return (
-        <div className={cn('h-1.5 w-full overflow-hidden rounded-full', className)} style={{ background: 'hsl(var(--foreground) / 0.08)', ...style }}>
-            <div
-                className={cn('h-full rounded-full', critical && 'bg-red-600 dark:bg-red-400')}
-                style={{ width: `${pct * 100}%`, ...(critical ? {} : { background: 'hsl(var(--foreground) / 0.55)' }) }}
-            />
-        </div>
-    );
-}
-
-/** Small ink bar for ranked lists (credits by workflow, files by source). */
-export function InkBar({ value, max, className }: { value: number; max: number; className?: string }) {
-    const pct = Math.max(0, Math.min(1, max ? value / max : 0));
-    return (
-        <div className={cn('h-1 w-full overflow-hidden rounded-full', className)} style={{ background: 'hsl(var(--foreground) / 0.06)' }}>
-            <div className="h-full rounded-full" style={{ width: `${pct * 100}%`, background: 'hsl(var(--foreground) / 0.4)' }} />
-        </div>
-    );
-}

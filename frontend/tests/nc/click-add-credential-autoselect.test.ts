@@ -14,9 +14,8 @@ export default async function () {
         return { skipped: 'No workflow open — open a workflow, then re-run.' };
     }
 
-    const { prefetchCredentials, autoSelectCredentialFromCache } = await import(
-        '~/utils/credentialAutoSelect'
-    );
+    const { prefetchCredentials } = await import('~/utils/credentialAutoSelect');
+    const { autoSelectCredentialFromCache } = await import('~/utils/credentialAutoSelectForNode');
     await prefetchCredentials();
 
     // Find a credentialed node type that has a cached credential to auto-select.

@@ -166,13 +166,28 @@ def _rejected_unset_fields(model: Any):
     return frozenset(rejects_none), frozenset(rejects_empty)
 
 
+def _scalar_as_str(value: Any) -> Any:
+    """A bool or number as the string a str field holds (``True`` → "true",
+    ``5.0`` → "5"); anything else unchanged."""
+    if isinstance(value, bool):
+        return str(value).lower()
+    if isinstance(value, float) and value == int(value):
+        return str(int(value))
+    if isinstance(value, (int, float)):
+        return str(value)
+    return value
+
+
 def _coerce_str_fields(config_data: Dict[str, Any], config_model: type) -> None:
     """
-    In-place coerce non-str values to str for fields typed as str.
+    In-place coerce non-str values to str for fields typed as str or
+    Optional[str].
 
     YJS/JSON/XML layers often convert string values to native types
-    (e.g., "5" → 5, "" → None, "" → false). Pydantic v2 rejects
-    non-str values for str fields, so we coerce them before validation.
+    (e.g., "5" → 5, "" → None, "" → false), and a tool call's arguments are
+    the model's or an MCP client's JSON (``num_results: 5``). Pydantic v2
+    rejects non-str values for str fields, so we coerce them before
+    validation. An Optional[str] keeps None, which it holds.
 
     Handles both flat dicts and nested {"config": {...}} structures
     used by NodeConfig subclasses, including discriminated unions.
@@ -183,6 +198,7 @@ def _coerce_str_fields(config_data: Dict[str, Any], config_model: type) -> None:
 
     # Collect str fields and their defaults across all union members
     str_field_defaults: Dict[str, str] = {}
+    optional_str_fields: set = set()
     # Collect int/float fields with concrete defaults (to restore None → default)
     # Handles '' from frontend that _resolve_credentials converts to None
     num_field_defaults: Dict[str, Any] = {}
@@ -190,6 +206,8 @@ def _coerce_str_fields(config_data: Dict[str, Any], config_model: type) -> None:
         for name, f in model.model_fields.items():
             if f.annotation is str and name not in str_field_defaults:
                 str_field_defaults[name] = f.default if isinstance(f.default, str) else ""
+            elif f.annotation == Optional[str]:
+                optional_str_fields.add(name)
             elif f.annotation in (int, float) and name not in num_field_defaults:
                 if isinstance(f.default, (int, float)):
                     num_field_defaults[name] = f.default
@@ -197,15 +215,11 @@ def _coerce_str_fields(config_data: Dict[str, Any], config_model: type) -> None:
     for key, default in str_field_defaults.items():
         if key not in target:
             continue
-        v = target[key]
-        if v is None:
-            target[key] = default
-        elif isinstance(v, bool):
-            target[key] = str(v).lower()
-        elif isinstance(v, float) and v == int(v):
-            target[key] = str(int(v))
-        elif isinstance(v, (int, float)):
-            target[key] = str(v)
+        target[key] = default if target[key] is None else _scalar_as_str(target[key])
+
+    for key in optional_str_fields - set(str_field_defaults):
+        if key in target:
+            target[key] = _scalar_as_str(target[key])
 
     for key, default in num_field_defaults.items():
         if key in target and target[key] is None:
@@ -475,6 +489,17 @@ class ConfigValidationError(ValueError):
     failure path can tag it in telemetry (config_validation_error span attr):
     a regression in the build→run config contract surfaces as a queryable
     signal instead of an anonymous run failure."""
+
+
+class FailureWithDiagnostics(RuntimeError):
+    """A failure whose message is all a person sees (the chat, a shared link's
+    visitor, the run, the email) and whose ``diagnostics`` (a harness's log
+    and traceback, already redacted) go only to the logs and the account
+    coordinator's triage."""
+
+    def __init__(self, message: str, diagnostics: str) -> None:
+        super().__init__(message)
+        self.diagnostics = diagnostics
 
 
 class NodeStateConflict(Exception):

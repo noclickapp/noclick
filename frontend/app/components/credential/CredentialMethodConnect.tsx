@@ -19,8 +19,10 @@ import { CredentialCreatePanel, type CredentialSaveResult } from './CredentialCr
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import { RedirectOAuthProvideMethod } from './RedirectOAuthProvideMethod';
 import { AgentOAuthProvideMethod } from './AgentOAuthProvideMethod';
-import { provideLinkTransport } from './provideLinkTransport';
+import { provideLinkTransport, requestEnded } from './provideLinkTransport';
 import { WhatsAppQRCredentialForm } from '~/components/workflow/WhatsAppQRCredentialForm';
+import { KeySteps } from './connect/ConnectApp';
+import { copyMethodOf, howToGet } from '~/utils/credentialCopy';
 
 // One backend auth method (from GET /credential-request/{token}). Carries method_kind
 // plus everything the kind's component needs (oauth provider/scopes, fields).
@@ -54,20 +56,25 @@ export interface CredentialMethodConnectProps {
     apiBase: string;
     token: string;
     serviceName?: string;
-    ServiceIcon: ComponentType<{ className?: string }> | null;
     /** Fires once the credential lands. Manual credentials carry what the
      *  connect-time probe proved, so the success state can show it. */
     onProvided: (verification?: CredentialTestConnectionResponse | null) => void;
-    /** Collapse affordance for panel-style methods (api_key): renders the
-     *  panel's X / Cancel. Ignored by kinds without a collapse concept. */
-    onCancel?: () => void;
+    /** Told when a save finds the request can't be provided any more (a newer
+     *  request replaced it, it ended, or it ran out of tries). */
+    onRequestEnded?: () => void;
+    /** The connect dialog's context for this way in (ConnectApp): the steps it shows above the form, whether each
+     *  field links where its value comes from, and the line under a sign-in's button. */
+    howTo?: string | null;
+    showSources?: boolean;
+    note?: string | null;
+    /** Draw a key as its numbered steps itself, for a surface that shows one way in outside the connect flow (the
+     *  coordinator's connect card); inside it, the flow draws them. */
+    steps?: boolean;
 }
 
-/** api_key — the app's own "New Credential" panel (shared with NodeCredentials,
- *  so this IS the drawer's create UX) persisting through the token-scoped
- *  /provide endpoint. Anonymous surfaces can't name the owner's credential,
- *  so the name field is hidden and the backend applies its default. */
-function ApiKeyMethod({ method, apiBase, token, onProvided, onCancel }: CredentialMethodConnectProps) {
+/** api_key — the connect form the in-app UI uses (CredentialCreatePanel) persisting through the token-scoped
+ *  /provide endpoint. Anonymous surfaces can't name the owner's credential; the backend applies its default name. */
+function ApiKeyMethod({ method, apiBase, token, serviceName, onProvided, onRequestEnded, howTo, showSources = true, steps = false }: CredentialMethodConnectProps) {
     // The wire shape is snake_case; the shared field renderer speaks camelCase.
     const fields: CredentialField[] = method.credential_fields.length > 0
         ? method.credential_fields.map((f) => ({
@@ -81,7 +88,8 @@ function ApiKeyMethod({ method, apiBase, token, onProvided, onCancel }: Credenti
 
     const save = useCallback(async (_name: string, data: Record<string, string>): Promise<CredentialSaveResult> => {
         try {
-            const res = await fetch(`${apiBase}/api/credential-request/${token}/provide`, {
+            const url = `${apiBase}/api/credential-request/${token}/provide`;
+            const res = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 // Always name the chosen sibling; the backend keeps the request's own
@@ -89,6 +97,7 @@ function ApiKeyMethod({ method, apiBase, token, onProvided, onCancel }: Credenti
                 body: JSON.stringify({ credential_data: data, credential_type: method.credential_type }),
             });
             if (!res.ok) {
+                if (requestEnded(res, url)) onRequestEnded?.();
                 const e = await res.json().catch(() => ({}));
                 // The connect seam refuses with {message, field_errors, hint};
                 // older/other errors are a plain detail string.
@@ -98,6 +107,7 @@ function ApiKeyMethod({ method, apiBase, token, onProvided, onCancel }: Credenti
                         error: detail.message || 'Failed to provide credential',
                         fieldErrors: detail.field_errors ?? null,
                         hint: detail.hint ?? null,
+                        rejected: detail.reachable === false,
                     };
                 }
                 return detail || 'Failed to provide credential';
@@ -108,25 +118,31 @@ function ApiKeyMethod({ method, apiBase, token, onProvided, onCancel }: Credenti
         } catch {
             return 'Failed to submit credential. Please try again.';
         }
-    }, [apiBase, token, method.credential_type, onProvided]);
+    }, [apiBase, token, method.credential_type, onProvided, onRequestEnded]);
 
-    return (
+    const app = serviceName ?? method.label;
+    const form = (
         <CredentialCreatePanel
-            label={method.label}
             fields={fields}
             onSave={save}
-            onCancel={onCancel}
-            saveLabel="Connect"
-            hideName
-            instructions={method.instructions}
+            app={app}
+            instructions={howTo ?? (steps ? howToGet(copyMethodOf(method), app) : method.instructions)}
+            showSources={steps ? false : showSources}
         />
+    );
+    return steps ? (
+        <KeySteps method={method} app={app}>
+            {form}
+        </KeySteps>
+    ) : (
+        form
     );
 }
 
 
 /** oauth — the shared redirect-OAuth connect form (incl. Shopify/Zendesk/Atlassian/BYOO
  *  inputs) under the HTTP transport. */
-function OAuthMethod({ method, apiBase, token, serviceName, ServiceIcon, onProvided }: CredentialMethodConnectProps) {
+function OAuthMethod({ method, apiBase, token, serviceName, onProvided, onRequestEnded, note }: CredentialMethodConnectProps) {
     if (!method.oauth_provider) return null;
     return (
         <RedirectOAuthProvideMethod
@@ -141,28 +157,30 @@ function OAuthMethod({ method, apiBase, token, serviceName, ServiceIcon, onProvi
             oauthApp={method.oauth_app}
             redirectUri={method.oauth_redirect_uri || undefined}
             serviceName={serviceName || method.label}
-            ServiceIcon={ServiceIcon}
+            note={note}
             onProvided={onProvided}
+            onRequestEnded={onRequestEnded}
         />
     );
 }
 
 /** agent_oauth — the shared agent CLI sign-in components under the HTTP transport. */
-function AgentOAuthMethod({ method, apiBase, token, onProvided }: CredentialMethodConnectProps) {
+function AgentOAuthMethod({ method, apiBase, token, onProvided, onRequestEnded }: CredentialMethodConnectProps) {
     return (
         <AgentOAuthProvideMethod
             apiBase={apiBase}
             token={token}
             credentialType={method.credential_type}
             onProvided={onProvided}
+            onRequestEnded={onRequestEnded}
         />
     );
 }
 
 /** qr_scan — the same transport-aware QR form the in-app UI uses, bound to the
  *  requester through the provide transport's whatsapp:qr:* route. */
-function QrScanMethod({ method, apiBase, token, onProvided }: CredentialMethodConnectProps) {
-    const transport = provideLinkTransport(apiBase, token, method.credential_type);
+function QrScanMethod({ method, apiBase, token, onProvided, onRequestEnded }: CredentialMethodConnectProps) {
+    const transport = provideLinkTransport(apiBase, token, method.credential_type, onRequestEnded);
     return (
         <WhatsAppQRCredentialForm
             credentialType={method.credential_type}

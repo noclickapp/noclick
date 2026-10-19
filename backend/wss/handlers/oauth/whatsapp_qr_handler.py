@@ -87,6 +87,7 @@ class WhatsAppQRHandler(DatabasePoolMixin, SocketIOHandler):
                     connection_id=result.get("connection_id"),
                     qr_code=result.get("qr_code"),
                     message=result.get("message", ""),
+                    code=result.get("code"),
                 ).model_dump(),
             ))
         except Exception as e:

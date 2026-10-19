@@ -185,6 +185,33 @@ async def test_discord_install_health_marks_a_removed_bot_and_never_guesses(monk
     assert await ch.get_credential_health(rows) == {}
 
 
+async def test_providers_and_servers_are_asked_side_by_side(monkeypatch):
+    """Each provider's check, and each Discord server's probe, runs at once:
+    the slowest answer bounds the wait, not the sum of them."""
+    import asyncio
+    import time
+
+    from utils import credential_health as ch
+
+    async def slow_probe(client, guild_id):
+        await asyncio.sleep(0.3)
+        return 200
+
+    async def slow_whatsapp(rows):
+        await asyncio.sleep(0.3)
+        return {str(r["id"]): CredentialHealth(status="connected", healthy=True, hint=None) for r in rows}
+
+    monkeypatch.setenv("DISCORD_BOT_TOKEN", "platform-token")
+    monkeypatch.setattr(ch, "_probe_discord_guild", slow_probe)
+    monkeypatch.setitem(ch.CREDENTIAL_HEALTH_CHECKS, "whatsapp_qr", slow_whatsapp)
+    rows = [_qr_row("c-wa", "c1"), *({"id": f"c-{g}", "credential_type": "discord_bot_install",
+                                      "metadata": {"guild_id": g}} for g in ("g1", "g2", "g3"))]
+    started = time.perf_counter()
+    health = await ch.get_credential_health(rows)
+    assert sorted(health) == ["c-g1", "c-g2", "c-g3", "c-wa"]
+    assert time.perf_counter() - started < 0.55  # one at a time: 1.2s
+
+
 def test_an_unhealthy_verdict_must_carry_repair_guidance():
     """The picker renders the hint where a hardcoded WhatsApp sentence used to
     sit, so a dead verdict without one would show a blank banner."""

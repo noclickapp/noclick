@@ -110,3 +110,25 @@ it('maps stored agent results to ordinary visible assistant bubbles', () => {
         notification: true,
     });
 });
+
+it('draws a note’s turn steps, framed live as on reload', async () => {
+    const tool_calls = [
+        {
+            tool_name: 'api_call',
+            arguments_preview: '{"operation": "projects_domains_create"}',
+            result_preview: '{"success": true}',
+            duration_ms: 40,
+            created_at: '2026-10-14T00:00:00+00:00',
+        },
+    ];
+    const framed = { ...notification, turn_id: 'coordinator-wakeup:two', tool_calls };
+    const { result } = renderHook(() => useAgentChat(cid));
+    await act(async () => {});
+    act(() => socket.serverEmit('chat:message', framed));
+    const [live] = result.current.messages;
+    expect(live.steps?.map((s) => [s.title, s.detail, s.status])).toEqual([
+        ['Calling api_call({"operation": "projects_domains_create"})', '{"success": true}', 'completed'],
+    ]);
+    const [restored] = persistedEventsToChatMessages([{ role: 'assistant', ...framed }]);
+    expect(restored.steps?.map((s) => s.title)).toEqual(live.steps?.map((s) => s.title));
+});

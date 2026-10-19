@@ -60,10 +60,10 @@ export function HarnessWordmark({
             <span
                 className={
                     chip
-                        ? 'font-brand text-[13px] font-medium tracking-tight text-white leading-none'
+                        ? 'font-brand text-[13px] font-medium tracking-tight text-foreground leading-none'
                         : card
-                        ? 'font-brand text-[17px] font-semibold tracking-tight text-white leading-none'
-                        : 'font-brand text-4xl font-semibold tracking-tight text-white leading-none'
+                        ? 'font-brand text-[17px] font-semibold tracking-tight text-foreground leading-none'
+                        : 'font-brand text-4xl font-semibold tracking-tight text-foreground leading-none'
                 }
             >
                 {name}

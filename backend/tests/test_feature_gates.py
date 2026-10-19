@@ -28,6 +28,15 @@ def test_an_internal_feature_is_staff_only_until_an_account_is_let_in():
     require_feature("pilot_feature", email="customer@example.com")
 
 
+def test_a_domain_entry_lets_in_every_address_at_that_domain_and_no_other():
+    allow_accounts("pilot_feature", ["@QA.Example.test"])
+    assert is_feature_enabled("pilot_feature", email="todoist-qa-20260929@qa.example.test")
+    assert is_feature_enabled("pilot_feature", email="Someone@QA.example.TEST")
+    assert not is_feature_enabled("pilot_feature", email="someone@example.test")
+    assert not is_feature_enabled("pilot_feature", email="someone@sub.qa.example.test")
+    assert not is_feature_enabled("pilot_feature", email="qa.example.test")
+
+
 def test_a_pilot_list_for_an_unknown_feature_is_a_typo():
     with pytest.raises(KeyError):
         allow_accounts("phone_numbrs", ["customer@example.com"])
@@ -36,3 +45,8 @@ def test_a_pilot_list_for_an_unknown_feature_is_a_typo():
 def test_phone_numbers_are_available_to_non_staff_and_phone_only_accounts():
     assert is_feature_enabled("phone_numbers", email="customer@example.com")
     assert is_feature_enabled("phone_numbers", email=None)
+
+
+def test_the_coordinator_acts_on_the_platform_for_non_staff_and_phone_only_accounts():
+    assert is_feature_enabled("coordinator_platform_tools", email="customer@example.com")
+    assert is_feature_enabled("coordinator_platform_tools", email=None)

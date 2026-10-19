@@ -2003,7 +2003,7 @@
           "ui:hidden": true
         },
         "opencode_model": {
-          "default": "opencode/deepseek-v4-flash-free",
+          "default": "opencode/big-pickle",
           "title": "OpenCode Model",
           "type": "string",
           "ui:show-if": {
@@ -2024,7 +2024,7 @@
       "x-flatten-union": true
     },
     "VideoConfig": {
-      "description": "Configuration for video generation models (Veo, Sora, RunwayML).",
+      "description": "Configuration for video generation models, run through OpenRouter.",
       "properties": {
         "system_prompt": {
           "default": "You are a helpful assistant.",
@@ -2161,11 +2161,11 @@
           "ui:hidden": true
         },
         "model": {
-          "default": "veo-3",
+          "default": "google/veo-3.1-fast",
           "description": "Video generation model",
           "title": "Model",
           "type": "string",
-          "x-enum-hint": "LiteLLM identifier for a video-generation model. Fuzzy input is auto-resolved to the closest registered id.",
+          "x-enum-hint": "OpenRouter video model id (e.g. google/veo-3.1-fast). Fuzzy input is auto-resolved to the closest registered id.",
           "x-queryable-enum": "models"
         },
         "veo_aspect_ratio": {
@@ -2195,14 +2195,13 @@
             "8"
           ],
           "enumNames": [
-            "4s (Veo 3+ only)",
+            "4s",
             "6s",
             "8s"
           ],
           "title": "Duration (seconds)",
           "type": "string",
           "ui:category": "Video Settings",
-          "ui:help": "Veo 3/3.1: 4, 6, or 8s. Veo 2: min 5s (4s is clamped to 5s).",
           "ui:show-if": {
             "contains": "veo",
             "field": "model"

@@ -10,6 +10,7 @@ import nodeMetaJson from '~/schemas/nodeMeta.json';
 interface NodeMetaEntry {
     agentToolProvider?: boolean;
     triggerOperations?: string[];
+    platformVendorOperations?: string[];
 }
 
 const NODE_META: Record<string, NodeMetaEntry> = (
@@ -47,6 +48,22 @@ export function resolveNodeType(nodeType: string): string {
  */
 export function isAgentToolProviderType(nodeType: string | undefined | null): boolean {
     return !!(nodeType && NODE_META[resolveNodeType(nodeType)]?.agentToolProvider === true);
+}
+
+/**
+ * Whether NoClick buys this operation from the node's own provider, on NoClick's
+ * key: an `x-platform-key` the node's credential could replace (byok,
+ * nodes/core/platform_billing.py). That provider is one NoClick picks and pays
+ * for, not one the person chose (Exa's web search). A platform-keyed operation
+ * another service performs (Apify reading Instagram) isn't one: its node names
+ * the site it reads.
+ */
+export function isPlatformVendorOperation(
+    nodeType: string | undefined | null,
+    operation: string | undefined | null,
+): boolean {
+    if (!nodeType || !operation) return false;
+    return NODE_META[resolveNodeType(nodeType)]?.platformVendorOperations?.includes(operation) ?? false;
 }
 
 /**

@@ -58,7 +58,9 @@ async def test_scanned_pdf_uses_billed_ocr_and_paging_does_not_repeat_it(files, 
     from billing.usage_tracker import usage_tracker
 
     gate, track = AsyncMock(), AsyncMock()
-    model = AsyncMock(return_value=SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content="Scanned receipt: $42"))]))
+    # The model's answer carries its cost (OpenRouter's usage accounting), which the charge records.
+    model = AsyncMock(return_value=SimpleNamespace(usage=SimpleNamespace(cost=0.003, total_tokens=900),
+                                                   choices=[SimpleNamespace(message=SimpleNamespace(content="Scanned receipt: $42"))]))
     monkeypatch.setattr(usage_tracker, "enforce_credit_gate", gate)
     monkeypatch.setattr(usage_tracker, "track_usage_event", track)
     monkeypatch.setattr("litellm.acompletion", model)
@@ -79,6 +81,7 @@ async def test_unsupported_document_is_retained_with_caption_and_honest_error(fi
 
 async def test_image_uses_url_vision_input_without_base64_in_history(files):
     from coder.openai_agent import Agent
+    from coder.openai_agent.compaction import IMAGE_TOKENS
 
     text, images = await prepare(b"image", kind="image", mime_type="image/jpeg", filename="photo.jpg")
     assert "Please read this" in text
@@ -87,13 +90,14 @@ async def test_image_uses_url_vision_input_without_base64_in_history(files):
     content = Agent._build_user_input({"content_items": [ContentItem(type="text", text=text), *images]})
     assert content[1]["type"] == "input_image" and content[1]["image_url"].startswith("https://assets.example/")
     assert "base64" not in str(content)
-    assert compaction.token_count([{"role": "user", "content": content}], "gpt-4o") >= 4096
+    assert compaction.token_count([{"role": "user", "content": content}], "gpt-4o") >= IMAGE_TOKENS
 
 
 async def test_checkpoint_summarizer_receives_native_images(monkeypatch):
     from agents.models.interface import Model
     from openai.types.responses import Response, ResponseCompletedEvent, ResponseOutputMessage, ResponseOutputText
     from coder.openai_agent import Agent
+    from coder.openai_agent.compaction import IMAGE_TOKENS
 
     captured = []
     class VisionModel(Model):
@@ -102,7 +106,8 @@ async def test_checkpoint_summarizer_receives_native_images(monkeypatch):
 
         async def stream_response(self, system_instructions, input, *a, **kw):
             captured.extend(input)
-            text = '{"description":"Photo of a receipt with an exact total.","content":"The receipt in photo.jpg shows a total of $42. Keep that fact for the pending report."}'
+            text = ("<description>Photo of a receipt with an exact total.</description>\n<checkpoint>The receipt in "
+                    "photo.jpg shows a total of $42. Keep that fact for the pending report.</checkpoint>")
             output = [ResponseOutputMessage(id="m1", type="message", role="assistant", status="completed",
                         content=[ResponseOutputText(type="output_text", text=text, annotations=[])])]
             yield ResponseCompletedEvent(type="response.completed", sequence_number=0,

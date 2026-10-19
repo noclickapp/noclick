@@ -1,24 +1,26 @@
 // The reusable core of the public credential-provide experience: fetch a
-// credential request by token, pick an auth method, and connect via the
+// credential request by token and connect it through the same flow the app's
+// dialog uses (ConnectApp), each way in drawn by the
 // method-kind registry (CredentialMethodConnect — API keys, redirect OAuth,
 // agent sign-ins, WhatsApp QR, and any future kind). Extracted from
 // credential.provide.$token so OTHER anonymous surfaces (the builder input
 // bridge) embed the exact same logic and UX instead of re-implementing
 // per-node credential UIs (2026-07-19: the bridge's hand-rolled connect
-// button silently did nothing for WhatsApp).
-import { useEffect, useMemo, useState, type ComponentType } from 'react';
+// button silently did nothing for WhatsApp). The coordinator's connect card
+// reads the same request (useCredentialRequest) and draws its own chrome
+// around the same CredentialMethodConnect.
+import { useEffect, useMemo, useState } from 'react';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
-import { Loader2, Shield, ExternalLink, Clock, X } from 'lucide-react';
+import { Loader2, Shield, Clock, X } from 'lucide-react';
 import { cn } from '~/lib/utils';
-import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
-import { getCredentialIcon } from '~/utils/credentialIcons';
+import { getProviderConfig, getProviderConfigByCredentialType } from '~/utils/oauthProviders';
+import { getServiceForCredentialType } from '~/utils/credentialTypes';
+import { ConnectApp } from './connect/ConnectApp';
 import {
   CredentialMethodConnect,
   type ProvideCredentialMethod,
 } from './CredentialMethodConnect';
-import { kindFromBackendMethod } from '~/lib/credentialMethodKind';
 import { fixWordCasing, humanizeCredentialLabel } from '~/utils/credentialLabels';
-import { CredentialCreateEntryButton } from './CredentialCreateEntryButton';
 import type { CredentialField } from './CredentialFieldInput';
 
 export interface ProvideRequestDetails {
@@ -64,15 +66,106 @@ export function formatCredentialType(type: string): string {
     .split(' ').map(w => fixWordCasing(w)).join(' ');
 }
 
+/** Why a request can't be provided (the provide page words each for a stranger, the chat's card for its owner):
+ *  ended (`fulfilled`, `cancelled`, `expired`, as the backend types its 410), gone (`not_found`: never existed, or
+ *  replaced by a newer request), out of tries, or unreadable. */
+export type ProvideRequestProblem = 'fulfilled' | 'cancelled' | 'expired' | 'not_found' | 'too_many' | 'failed' | 'unreachable';
+
+const ENDED: ProvideRequestProblem[] = ['fulfilled', 'cancelled', 'expired'];
+
+export type ProvideRequestState =
+  | { status: 'loading' }
+  | { status: 'ready'; details: ProvideRequestDetails; methods: ProvideCredentialMethod[] }
+  /** `credentialId`: what a fulfilled request made. */
+  | { status: 'unavailable'; problem: ProvideRequestProblem; credentialId?: string };
+
+/** A credential request by its token, read once: its details and the methods it can be provided with (the
+ *  backend's list, or a single method built from the details for a pre-methods request). `held` is a request the
+ *  page already has (a demo's), read from nothing. */
+export function useCredentialRequest(token: string, apiBase: string, held?: ProvideRequestDetails): ProvideRequestState {
+  const [state, setState] = useState<ProvideRequestState>(
+    held ? { status: 'ready', details: held, methods: methodsOf(held) } : { status: 'loading' },
+  );
+
+  useEffect(() => {
+    if (held) return;
+    let mounted = true;
+    const fail = (problem: ProvideRequestProblem, credentialId?: string) =>
+      mounted && setState({ status: 'unavailable', problem, credentialId });
+    setState((prev) => (prev.status === 'loading' ? prev : { status: 'loading' }));
+    (async () => {
+      try {
+        const res = await fetch(`${apiBase}/api/credential-request/${token}`);
+        if (!mounted) return;
+        if (res.status === 410) {
+          const detail = (await res.json().catch(() => ({})))?.detail;
+          const ended = ENDED.find((p) => p === detail?.status) ?? 'expired';
+          return fail(ended, typeof detail?.credential_id === 'string' ? detail.credential_id : undefined);
+        }
+        if (res.status === 429) return fail('too_many');
+        if (res.status === 404) return fail('not_found');
+        if (!res.ok) return fail('failed');
+        const details: ProvideRequestDetails = await res.json();
+        if (mounted) setState({ status: 'ready', details, methods: methodsOf(details) });
+      } catch {
+        fail('unreachable');
+      }
+    })();
+    return () => { mounted = false; };
+  }, [token, apiBase, held]);
+
+  return state;
+}
+
+function methodsOf(details: ProvideRequestDetails): ProvideCredentialMethod[] {
+  if (details.available_methods.length > 0) {
+    return details.available_methods.map(m => ({
+      ...m,
+      label: humanizeCredentialLabel(m.label),
+    }));
+  }
+  return [{
+    credential_type: details.credential_type,
+    label: formatCredentialType(details.credential_type),
+    is_oauth: details.is_oauth,
+    oauth_provider: details.oauth_provider,
+    oauth_scopes: details.oauth_scopes,
+    oauth_user_scopes: details.oauth_user_scopes,
+    supports_custom_client: details.supports_custom_client,
+    requires_custom_client: details.requires_custom_client,
+    oauth_app: details.oauth_app,
+    credential_fields: details.credential_fields,
+    instructions: details.instructions,
+  }];
+}
+
+const PROBLEMS: Record<ProvideRequestProblem, string> = {
+  fulfilled: 'This credential request has already been fulfilled.',
+  cancelled: 'This credential request was cancelled.',
+  expired: 'This credential request has expired.',
+  too_many: 'Too many attempts. Please contact the requester for a new link.',
+  not_found: 'Credential request not found.',
+  failed: 'Something went wrong loading this request. Please try again in a moment.',
+  unreachable: 'Failed to load credential request details.',
+};
+
+/** The app a request is for, as the catalog names it ("Notion"), else its sign-in's provider, else its type. */
+export function appNameForCredentialType(credentialType: string): string {
+  return getServiceForCredentialType(credentialType)?.label ?? getProviderConfigByCredentialType(credentialType)?.name ?? formatCredentialType(credentialType);
+}
+
 export function CredentialProvideFlow({
   token,
   apiBase,
+  held,
   onProvided,
   onDetails,
   compact = false,
 }: {
   token: string;
   apiBase: string;
+  /** The request when the page already holds it (a demo's), so nothing is fetched. */
+  held?: ProvideRequestDetails;
   /** Fires once the credential lands — the parent owns the success state.
       Manual credentials carry what the connect-time probe proved. */
   onProvided: (verification?: CredentialTestConnectionResponse | null) => void;
@@ -81,202 +174,66 @@ export function CredentialProvideFlow({
   /** Tighter paddings for embedded surfaces (the builder input bridge card). */
   compact?: boolean;
 }) {
-  const [status, setStatus] = useState<'loading' | 'ready' | 'error' | 'expired'>('loading');
-  const [details, setDetails] = useState<ProvideRequestDetails | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const request = useCredentialRequest(token, apiBase, held);
+  const details = request.status === 'ready' ? request.details : null;
 
   useEffect(() => {
-    let mounted = true;
-    const fetchDetails = async () => {
-      try {
-        const res = await fetch(`${apiBase}/api/credential-request/${token}`);
-        if (!mounted) return;
-        if (res.status === 410) {
-          setStatus('expired');
-          setErrorMessage('This credential request has expired or already been fulfilled.');
-          return;
-        }
-        if (res.status === 429) {
-          setStatus('error');
-          setErrorMessage('Too many attempts. Please contact the requester for a new link.');
-          return;
-        }
-        if (!res.ok) {
-          setStatus('error');
-          setErrorMessage(
-            res.status === 404
-              ? 'Credential request not found.'
-              : 'Something went wrong loading this request. Please try again in a moment.',
-          );
-          return;
-        }
-        const data: ProvideRequestDetails = await res.json();
-        setDetails(data);
-        setStatus('ready');
-        onDetails?.(data);
-        if (data.credential_type === 'phone_number' && data.status === 'fulfilled') onProvided();
-      } catch {
-        if (mounted) {
-          setStatus('error');
-          setErrorMessage('Failed to load credential request details.');
-        }
-      }
-    };
-    void fetchDetails();
-    return () => { mounted = false; };
+    if (!details) return;
+    onDetails?.(details);
+    if (details.credential_type === 'phone_number' && details.status === 'fulfilled') onProvided();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, apiBase]);
-
-  // Effective methods list — backend-provided, or a single method built from
-  // the top-level details for pre-methods requests.
-  const methods: ProvideCredentialMethod[] = useMemo(() => {
-    if (!details) return [];
-    if (details.available_methods.length > 0) {
-      return details.available_methods.map(m => ({
-        ...m,
-        label: humanizeCredentialLabel(m.label),
-      }));
-    }
-    return [{
-      credential_type: details.credential_type,
-      label: formatCredentialType(details.credential_type),
-      is_oauth: details.is_oauth,
-      oauth_provider: details.oauth_provider,
-      oauth_scopes: details.oauth_scopes,
-      oauth_user_scopes: details.oauth_user_scopes,
-      supports_custom_client: details.supports_custom_client,
-      requires_custom_client: details.requires_custom_client,
-      oauth_app: details.oauth_app,
-      credential_fields: details.credential_fields,
-      instructions: details.instructions,
-    }];
   }, [details]);
 
-  const credentialIcon = useMemo(
-    () => (details ? getCredentialIcon(details.credential_type) : null),
-    [details],
-  );
-  const ServiceIcon: ComponentType<{ className?: string }> | null =
-    credentialIcon?.hasServiceIcon ? credentialIcon.Icon : null;
-  const serviceName = useMemo(
-    () => (details ? getProviderConfigByCredentialType(details.credential_type)?.name : undefined),
-    [details],
-  );
+  const app = useMemo(() => (details ? appNameForCredentialType(details.credential_type) : ''), [details]);
 
-  if (status === 'loading') {
+  if (request.status === 'loading') {
     return (
-      <div className={cn('text-center', compact ? 'py-6' : 'p-12')}>
-        <Loader2 className={'w-6 h-6 text-muted-foreground animate-spin mx-auto mb-3'} />
-        <div className={'text-sm text-muted-foreground'}>Loading request details...</div>
+      <div className={cn('flex items-center justify-center gap-2 text-[13px] text-muted-foreground', compact ? 'py-6' : 'py-12')}>
+        <Loader2 className="h-4 w-4 animate-spin" />
+        Loading the request…
       </div>
     );
   }
-  if (status === 'expired' || status === 'error') {
-    const Icon = status === 'expired' ? Clock : X;
-    const tone = status === 'expired' ? 'text-amber-400 bg-amber-500/15' : 'text-red-400 bg-red-500/15';
+  if (request.status === 'unavailable') {
+    const Icon = ENDED.includes(request.problem) ? Clock : X;
     return (
-      <div className={cn('text-center', compact ? 'py-6' : 'p-12')}>
-        <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3', tone.split(' ')[1])}>
-          <Icon className={cn('w-5 h-5', tone.split(' ')[0])} />
-        </div>
-        <div className={'text-sm text-muted-foreground'}>{errorMessage}</div>
+      <div className={cn('flex items-start gap-3', compact ? 'py-2' : 'py-6')}>
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-foreground/[0.06] text-muted-foreground">
+          <Icon className="h-4 w-4" />
+        </span>
+        <p className="pt-2 text-[13.5px] leading-relaxed text-muted-foreground">{PROBLEMS[request.problem]}</p>
       </div>
     );
   }
-  if (!details || !methods.length) return null;
+  const { methods } = request;
+  if (!methods.length) return null;
 
   return (
-    <div className={cn('space-y-5', compact && 'space-y-4')}>
-      {/* Every auth method as its own section — heading, schema description,
-          credential link, then the method's connect affordance. Mirrors
-          NodeCredentials' REQUIRED CREDENTIALS layout (stacked sections, not
-          a picker); api_key methods collapse behind the app's "+ Create new"
-          entry point. */}
-      {methods.map((method) => (
-        <MethodSection
-          key={method.credential_type}
-          method={method}
-          apiBase={apiBase}
-          token={token}
-          serviceName={serviceName}
-          ServiceIcon={ServiceIcon}
-          onProvided={onProvided}
-          showHeading={methods.length > 1}
-        />
-      ))}
-
-      {/* Security note */}
-      <div className="flex items-center gap-2 pt-1">
-        <Shield className="w-3.5 h-3.5 text-muted-foreground/60 dark:text-zinc-600 flex-shrink-0" />
-        <p className="text-[11px] leading-relaxed text-muted-foreground/60 dark:text-zinc-600">
-          Your credential is encrypted end-to-end.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-
-/** One auth method as a NodeCredentials-style section: label heading, schema
- *  description, "Get your credentials here" link, then the method's own
- *  affordance — OAuth/QR/agent connect directly; api_key collapses behind the
- *  app's "+ Create new" entry point. */
-function MethodSection({
-  method,
-  apiBase,
-  token,
-  serviceName,
-  ServiceIcon,
-  onProvided,
-  showHeading,
-}: {
-  method: ProvideCredentialMethod;
-  apiBase: string;
-  token: string;
-  serviceName?: string;
-  ServiceIcon: ComponentType<{ className?: string }> | null;
-  onProvided: (verification?: CredentialTestConnectionResponse | null) => void;
-  showHeading: boolean;
-}) {
-  const kind = kindFromBackendMethod(method);
-  const [creating, setCreating] = useState(kind !== 'api_key');
-  return (
-    <div className="space-y-2 max-w-md">
-      {showHeading && (
-        <div>
-          <div className="text-sm font-semibold text-foreground">{method.label}</div>
-          {method.description && (
-            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{method.description}</p>
-          )}
-        </div>
-      )}
-      {method.credential_url && (
-        <a
-          href={method.credential_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline underline-offset-2"
-        >
-          Get your credentials here
-          <ExternalLink className="w-3 h-3" />
-        </a>
-      )}
-      {kind === 'api_key' && !creating ? (
-        <CredentialCreateEntryButton label="Create new" onClick={() => setCreating(true)} />
-      ) : (
-        <CredentialMethodConnect
-          method={method}
-          apiBase={apiBase}
-          token={token}
-          serviceName={serviceName}
-          ServiceIcon={ServiceIcon}
-          onProvided={onProvided}
-          // api_key panels collapse back to "+ Create new" — the X/Cancel the
-          // real panel carries. Non-panel kinds (OAuth/QR/agent) have no
-          // collapse concept.
-          onCancel={kind === 'api_key' ? () => setCreating(false) : undefined}
-        />
-      )}
+    <div className="space-y-2">
+      {/* The same connect flow as the app's dialog: a switch between the ways in, a key as get-it-then-paste-it
+          steps. No asking someone else: whoever opened this link is the someone. */}
+      <ConnectApp
+        app={app}
+        methods={methods}
+        showResult={false}
+        providerName={(method) => getProviderConfig(method.oauth_provider ?? undefined)?.name ?? app}
+        renderMethod={(method, ctx) => (
+          <CredentialMethodConnect
+            method={method}
+            apiBase={apiBase}
+            token={token}
+            serviceName={app}
+            onProvided={onProvided}
+            howTo={ctx.howTo}
+            showSources={ctx.showSources}
+            note={ctx.note}
+          />
+        )}
+      />
+      <p className="flex items-center gap-2 text-[12.5px] leading-relaxed text-muted-foreground">
+        <Shield className="h-3.5 w-3.5 shrink-0" />
+        It’s encrypted as soon as you send it.
+      </p>
     </div>
   );
 }

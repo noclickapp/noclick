@@ -1,17 +1,48 @@
 """
-Video generation handler — Veo (Google), Sora (OpenAI), RunwayML.
+Video generation handler: one OpenRouter video job through the machinery the
+coordinator uses (``utils/media_generation.py``), priced from the model's
+per-second SKUs and gated on that projection before anything runs, recorded as
+a ``video`` job, then stored and charged once by the shared poller.
 
-Routes to Google AI Studio REST API for Veo, LiteLLM for other providers.
-Video generation is async with polling.
+Like every media fast path, the node returns its media as its output, so it
+drives its own job and waits for it, bounded by the job's own timeout. If the
+wait is cut short (a stopped run, a lost container), the per-minute poll
+finishes the job, keeps the file with the workflow and charges it once.
+
+A node that brings its own Google key runs a Veo model on Google AI Studio with
+that key instead, and is charged nothing. An old video id (an older
+client's default "veo-3") runs as the OpenRouter model it was renamed to
+(``model_catalog.current_video_model``).
 """
 
 import asyncio
 import logging
-import os
-from decimal import Decimal
+import time
 from typing import Any, Dict, Optional
 
+from nodes.agent.handlers._media_utils import fetch_image_as_base64
+from repositories.coordinator_jobs import AGENT_NODE_SOURCE
+from utils import media_generation as media
+from utils.model_catalog import current_video_model
+
 logger = logging.getLogger(__name__)
+
+POLL_INTERVAL_S = 10.0
+# Veo's own passthrough for a negative prompt; only the matched provider's options are forwarded.
+_VEO_PROVIDERS = ("google-vertex", "google-ai-studio")
+
+AISTUDIO_API = "https://generativelanguage.googleapis.com/v1beta"
+# OpenRouter's Veo ids (the ones migration 20261009130000_agent_video_openrouter_models
+# renamed saved nodes to) as Google AI Studio names them; any other id is sent as named.
+AISTUDIO_MODELS = {
+    "veo-3.1": "veo-3.1-generate-preview",
+    "veo-3.1-fast": "veo-3.1-fast-generate-preview",
+    "veo-3.1-lite": "veo-3.1-lite-generate-preview",
+}
+AISTUDIO_POLL_S = 15
+AISTUDIO_MAX_POLLS = 40
+# A Google credential's key, as the node's credential env carries it (config/providers.py).
+OWN_KEYS = ("GEMINI_API_KEY", "GOOGLE_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY")
 
 
 async def execute_video_model(
@@ -20,317 +51,120 @@ async def execute_video_model(
     env_overrides: Optional[Dict[str, str]],
     user_id: Optional[str],
 ) -> Dict[str, Any]:
-    """Fast-path for video generation models."""
-    import httpx
+    """Generate one video, on the node's own Google key when it has one, else on
+    the platform's OpenRouter key, and return it."""
+    from utils.database_pool import get_native_pool
 
+    if not user_id:
+        raise ValueError("Video generation needs the account it runs for.")
     prompt = f"{config.system_prompt}\n\n{config.message}" if config.system_prompt else config.message
-    model_lower = config.model.lower()
-    user_resource = env_overrides is not None
+    model = current_video_model(config.model)
+    await node.emit({"type": "agent", "status": "running"})
+    own_key = next((env_overrides[k] for k in OWN_KEYS if (env_overrides or {}).get(k)), None)
+    if own_key:
+        return await _veo_on_own_key(node, config, model, own_key, prompt)
 
-    await node.emit({'type': 'agent', 'status': 'running'})
-
-    if 'gemini/' in model_lower or 'google/' in model_lower:
-        return await _execute_veo(node, config, env_overrides, user_id, prompt, user_resource)
-    else:
-        return await _execute_litellm_video(node, config, env_overrides, user_id, prompt, user_resource)
-
-
-async def _execute_veo(node, config, env_overrides, user_id, prompt, user_resource) -> Dict[str, Any]:
-    """Google Veo via AI Studio REST API."""
-    import httpx
-
-    api_key = None
-    if env_overrides:
-        api_key = env_overrides.get('GEMINI_API_KEY') or env_overrides.get('GOOGLE_API_KEY')
-    if not api_key:
-        api_key = os.environ.get('GEMINI_API_KEY') or os.environ.get('GOOGLE_API_KEY')
-    if not api_key:
-        raise ValueError("GEMINI_API_KEY required for Google Veo video generation")
-
-    # Pre-flight credit gate (standardized). See usage_tracker.enforce_credit_gate.
-    if node.user_id:
-        from billing.usage_tracker import usage_tracker
-        await usage_tracker.enforce_credit_gate(
-            node.user_id,
-            organization_id=node.organization_id,
-            sio=node.sio,
-            sid=node.sid,
-            user_resource=user_resource,
-            surface="veo",
-        )
-
-    # Resolve model name
-    model_name = config.model
-    for prefix in ('gemini/', 'google/'):
-        model_name = model_name.removeprefix(prefix)
-
-    _AISTUDIO_ALIASES: Dict[str, str] = {
-        'veo-3.1-generate-001': 'veo-3.1-generate-preview',
-        'veo-3.1-fast-generate-001': 'veo-3.1-fast-generate-preview',
-    }
-    model_name = _AISTUDIO_ALIASES.get(model_name, model_name)
-
-    base_url = "https://generativelanguage.googleapis.com/v1beta"
-    headers = {"x-goog-api-key": api_key, "Content-Type": "application/json"}
-    veo_version = 2 if 'veo-2' in model_name.lower() else 3
-
-    # Parse duration
-    try:
-        duration = int(config.veo_duration_seconds)
-    except (ValueError, AttributeError):
-        duration = 8
-    if veo_version == 2:
-        duration = max(5, min(8, duration))
-    else:
-        duration = min([4, 6, 8], key=lambda x: abs(x - duration))
-
-    params: Dict[str, Any] = {
-        "aspectRatio": config.veo_aspect_ratio,
-        "durationSeconds": duration,
-        "resolution": config.veo_resolution,
-    }
-    if config.veo_negative_prompt:
-        params["negativePrompt"] = config.veo_negative_prompt
-
-    # Build instance — optionally include image for image-to-video
-    instance: Dict[str, Any] = {"prompt": prompt}
+    # The Video Settings are shown for Veo models only (VideoConfig's ui:show-if);
+    # any other model takes the durations and resolutions it publishes.
+    settings: Dict[str, Any] = {}
+    if "veo" in model.lower():
+        settings = {"seconds": int(config.veo_duration_seconds), "resolution": config.veo_resolution,
+                    "aspect_ratio": config.veo_aspect_ratio}
+        if config.veo_negative_prompt:
+            settings["provider_options"] = {
+                slug: {"parameters": {"negativePrompt": config.veo_negative_prompt}} for slug in _VEO_PROVIDERS}
     if config.veo_image_url:
-        from nodes.agent.handlers._media_utils import fetch_image_as_base64
-        img_b64, img_mime = await fetch_image_as_base64(config.veo_image_url)
-        instance["image"] = {"bytesBase64Encoded": img_b64, "mimeType": img_mime}
+        image_b64, mime = await fetch_image_as_base64(config.veo_image_url)
+        settings["first_frame"] = f"data:{mime};base64,{image_b64}"
 
-    body = {"instances": [instance], "parameters": params}
+    pool = get_native_pool()
+    started = await media.start_video(
+        pool, user_id=user_id, organization_id=node.organization_id, prompt=prompt, model=model,
+        source=AGENT_NODE_SOURCE, workflow_id=node.workflow_id, node_id=node.node_id, **settings,
+    )
+    job = await _wait(node, pool, started["job_id"])
+    if job["status"] != "completed":
+        raise RuntimeError(f"Video generation failed: {job['error']}")
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        resp = await client.post(
-            f"{base_url}/models/{model_name}:predictLongRunning",
-            headers=headers, json=body,
-        )
-        if resp.status_code >= 400:
-            logger.error(f"[Video] Veo API error {resp.status_code}: {resp.text}")
-            resp.raise_for_status()
-
-        operation_name = resp.json().get("name")
-        if not operation_name:
-            raise ValueError(f"No operation name in predictLongRunning response: {resp.json()}")
-
-        logger.info(f"[Video] Veo generation started: operation={operation_name}")
-
-        # Poll until done
-        poll_interval = 15
-        max_polls = 40
-        poll_data: Dict[str, Any] = {}
-
-        for attempt in range(max_polls):
-            await asyncio.sleep(poll_interval)
-            await node.emit({'type': 'agent', 'status': 'running'})
-
-            poll_resp = await client.get(f"{base_url}/{operation_name}", headers=headers)
-            poll_data = poll_resp.json()
-            logger.info(f"[Video] Poll {attempt + 1}: done={poll_data.get('done', False)}")
-
-            if poll_data.get("done"):
-                break
-        else:
-            raise TimeoutError(f"Video generation timed out after {max_polls * poll_interval}s")
-
-    # Extract video URLs
-    response_data = poll_data.get("response", {})
-    video_response = response_data.get("generateVideoResponse", response_data)
-    samples = video_response.get("generatedSamples", [])
-
-    if not samples:
-        raise ValueError(f"Video generation returned no samples: {poll_data}")
-
-    video_urls = [
-        {"url": s["video"]["uri"], "mime_type": s["video"].get("mimeType", "video/mp4")}
-        for s in samples if s.get("video", {}).get("uri")
-    ]
-    if not video_urls:
-        raise ValueError(f"No video URIs in response samples: {samples}")
-
-    # Upload to R2
-    video_urls = await node._upload_videos_to_r2(video_urls, api_key=api_key)
-
-    # Track billing
-    if not user_resource and node.user_id:
-        try:
-            from billing.usage_tracker import usage_tracker
-            from billing.schema import UsageEventData
-            from billing.markup import apply_gemini_markup
-            from billing.pricing import get_veo_cost, VEO_PRICE_PER_SECOND
-
-            n_videos = len(video_urls)
-            price_per_sec = VEO_PRICE_PER_SECOND.get(model_name, Decimal("0.50"))
-            raw_cost = get_veo_cost(model_name, duration, n_videos)
-            total_cost = apply_gemini_markup(raw_cost, user_resource=False, model=config.model)
-
-            usage_event = UsageEventData(
-                # Raw runner; track_usage_event resolves to the org owner centrally.
-                user_id=node.user_id,
-                total_cost=total_cost,
-                usage_type="ai_usage",
-                usage_subtype=config.model,
-                quantity=Decimal(str(duration * n_videos)),
-                unit_type="seconds",
-                user_resource=False,
-                organization_id=node.organization_id,
-                metadata={
-                    "model": config.model,
-                    "n_videos": n_videos,
-                    "duration_seconds": duration,
-                    "price_per_second": str(price_per_sec),
-                },
-            )
-            await usage_tracker.track_usage_event(
-                usage_event,
-                sio=node.sio,
-                sid=node.sid,
-            )
-            logger.info(f"[Video] Tracked Veo billing: videos={n_videos}, duration={duration}s, cost=${total_cost:.6f}")
-        except Exception as e:
-            logger.warning(f"[Video] Failed to track billing: {e}")
-
+    video = {key: job["result"][key] for key in ("url", "resource_id", "mime_type")}
     return {
         "type": "agent",
         "status": "completed",
-        "response": f"Generated {len(video_urls)} video(s)",
+        "response": "Generated 1 video",
         "model": config.model,
         "temperature": config.temperature,
-        "videos": video_urls,
-        "video_url": video_urls[0]["url"],
+        "videos": [video],
+        "video_url": video["url"],
     }
 
 
-async def _execute_litellm_video(node, config, env_overrides, user_id, prompt, user_resource) -> Dict[str, Any]:
-    """Other video providers (OpenAI Sora, Azure) via LiteLLM."""
-    import litellm
-    from coder.openai_agent.billing import ENV_MASK, _PROVIDER_KEY_ALIASES
-    from utils.thread_env import override_env
+async def _wait(node, pool, job_id: str) -> Dict[str, Any]:
+    """The job once it's finished; it fails itself past ``VIDEO_TIMEOUT_S``."""
+    deadline = time.monotonic() + media.VIDEO_TIMEOUT_S + 2 * POLL_INTERVAL_S
+    while time.monotonic() < deadline:
+        await asyncio.sleep(POLL_INTERVAL_S)
+        job = await media.advance_video_job(pool, job_id)
+        if job["status"] != "running":
+            return job
+        await node.emit({"type": "agent", "status": "running"})
+    raise TimeoutError(f"The video didn't finish within {media.VIDEO_TIMEOUT_S // 60} minutes; "
+                       "if it finishes later, it's saved to this workflow's files.")
 
-    # Pre-flight credit gate (standardized). See usage_tracker.enforce_credit_gate.
-    if node.user_id:
-        from billing.usage_tracker import usage_tracker
-        await usage_tracker.enforce_credit_gate(
-            node.user_id,
-            organization_id=node.organization_id,
-            sio=node.sio,
-            sid=node.sid,
-            user_resource=user_resource,
-            surface="video",
-        )
 
-    loop = asyncio.get_event_loop()
+async def _veo_on_own_key(node, config, model: str, api_key: str, prompt: str) -> Dict[str, Any]:
+    """A Veo model (``model``, its OpenRouter id) on Google AI Studio with the
+    node's own key: Google bills its owner, so nothing is gated or charged here."""
+    import httpx
 
-    effective_env: Dict[str, str] = {}
-    if env_overrides:
-        effective_env = {**ENV_MASK, **env_overrides}
-        for user_key, litellm_key in _PROVIDER_KEY_ALIASES.items():
-            if user_key in env_overrides:
-                effective_env[litellm_key] = env_overrides[user_key]
+    bare = model
+    for prefix in ("google/", "gemini/"):
+        bare = bare.removeprefix(prefix)
+    model = AISTUDIO_MODELS.get(bare, bare)
+    duration = min((4, 6, 8), key=lambda s: abs(s - int(config.veo_duration_seconds)))
+    params: Dict[str, Any] = {"aspectRatio": config.veo_aspect_ratio, "durationSeconds": duration,
+                              "resolution": config.veo_resolution}
+    if config.veo_negative_prompt:
+        params["negativePrompt"] = config.veo_negative_prompt
+    instance: Dict[str, Any] = {"prompt": prompt}
+    if config.veo_image_url:
+        image_b64, mime = await fetch_image_as_base64(config.veo_image_url)
+        instance["image"] = {"bytesBase64Encoded": image_b64, "mimeType": mime}
+    headers = {"x-goog-api-key": api_key, "Content-Type": "application/json"}
 
-    def _with_env(fn, **kwargs):
-        if effective_env:
-            with override_env(**effective_env):
-                return fn(**kwargs)
-        return fn(**kwargs)
-
-    init_response = await loop.run_in_executor(
-        None,
-        lambda: _with_env(litellm.video_generation, model=config.model, prompt=prompt),
-    )
-    logger.info(f"[Video] LiteLLM video generation started: id={getattr(init_response, 'id', 'N/A')}")
-
-    video_id = init_response.id
-    poll_interval = 15
-    max_polls = 40
-    status_response = None
-
-    for attempt in range(max_polls):
-        await asyncio.sleep(poll_interval)
-        await node.emit({'type': 'agent', 'status': 'running'})
-
-        status_response = await loop.run_in_executor(
-            None,
-            lambda: _with_env(litellm.video_status, id=video_id, model=config.model),
-        )
-        current_status = getattr(status_response, 'status', 'unknown')
-        logger.info(f"[Video] Poll {attempt + 1}: status={current_status}")
-
-        if current_status == 'completed':
-            break
-        if current_status in ('failed', 'error', 'cancelled'):
-            err = (
-                getattr(status_response, 'error', None)
-                or getattr(status_response, 'failure_reason', None)
-                or 'Unknown provider error'
-            )
-            raise RuntimeError(f"Video generation failed ({current_status}): {err}")
-    else:
-        raise TimeoutError(f"Video generation timed out after {max_polls * poll_interval}s")
-
-    video_url = getattr(status_response, 'video_url', None)
-    if not video_url:
-        raise ValueError("Video generation completed but no video_url in response")
-
-    # Billing — track whatever cost LiteLLM reports on the completion response.
-    # Sora/RunwayML pricing isn't in billing/pricing.py yet, so we rely on the
-    # provider-reported cost (via litellm.completion_cost / response._hidden_params)
-    # and skip billing if unavailable (logged, not silent).
-    if not user_resource and node.user_id:
-        try:
-            from billing.usage_tracker import usage_tracker
-            from billing.schema import UsageEventData
-            from billing.markup import apply_openrouter_markup
-            from decimal import Decimal
-
-            raw_cost: Optional[Decimal] = None
-            hidden = getattr(status_response, '_hidden_params', None) or {}
-            if isinstance(hidden, dict) and hidden.get('response_cost') is not None:
-                raw_cost = Decimal(str(hidden['response_cost']))
-            if raw_cost is None:
-                try:
-                    computed = litellm.completion_cost(completion_response=status_response)
-                    if computed:
-                        raw_cost = Decimal(str(computed))
-                except Exception:
-                    raw_cost = None
-
-            if raw_cost and raw_cost > 0:
-                total_cost = apply_openrouter_markup(raw_cost, user_resource=False, model=config.model)
-                usage_event = UsageEventData(
-                    # Raw runner; track_usage_event resolves to the org owner centrally.
-                    user_id=node.user_id,
-                    total_cost=total_cost,
-                    usage_type="ai_usage",
-                    usage_subtype=config.model,
-                    quantity=Decimal("1"),
-                    unit_type="videos",
-                    user_resource=False,
-                    organization_id=node.organization_id,
-                    metadata={"model": config.model, "video_id": video_id},
-                )
-                await usage_tracker.track_usage_event(
-                    usage_event,
-                    sio=node.sio,
-                    sid=node.sid,
-                )
-                logger.info(f"[Video] Tracked LiteLLM billing: cost=${total_cost:.6f}")
-            else:
-                logger.warning(
-                    f"[Video] No cost reported by LiteLLM for {config.model}; "
-                    f"skipping usage tracking. Add pricing to billing/pricing.py."
-                )
-        except Exception as e:
-            logger.warning(f"[Video] Failed to track LiteLLM billing: {e}")
-
-    logger.info(f"[Video] Complete: {video_url[:80]}...")
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        resp = await client.post(f"{AISTUDIO_API}/models/{model}:predictLongRunning", headers=headers,
+                                 json={"instances": [instance], "parameters": params})
+        if resp.status_code >= 400:
+            raise RuntimeError(f"Google refused the video request (HTTP {resp.status_code}): {resp.text[:300]}")
+        operation = resp.json().get("name")
+        if not operation:
+            raise RuntimeError(f"Google started no video job: {resp.text[:300]}")
+        logger.info("[Video] Veo on the owner's key started: operation=%s model=%s", operation, model)
+        for _ in range(AISTUDIO_MAX_POLLS):
+            await asyncio.sleep(AISTUDIO_POLL_S)
+            await node.emit({"type": "agent", "status": "running"})
+            poll = await client.get(f"{AISTUDIO_API}/{operation}", headers=headers)
+            poll.raise_for_status()
+            state = poll.json()
+            if state.get("done"):
+                break
+        else:
+            raise TimeoutError(f"The video didn't finish within {AISTUDIO_MAX_POLLS * AISTUDIO_POLL_S // 60} minutes.")
+    if state.get("error"):
+        raise RuntimeError(f"Video generation failed: {state['error'].get('message') or state['error']}")
+    response = state.get("response", {})
+    samples = response.get("generateVideoResponse", response).get("generatedSamples", [])
+    videos = [{"url": s["video"]["uri"], "mime_type": s["video"].get("mimeType", "video/mp4")}
+              for s in samples if s.get("video", {}).get("uri")]
+    if not videos:
+        raise RuntimeError(f"Google returned no video: {str(state)[:300]}")
+    videos = await node._upload_videos_to_r2(videos, api_key=api_key)
     return {
-        'type': 'agent',
-        'status': 'completed',
-        'response': 'Video generated successfully',
-        'model': config.model,
-        'temperature': config.temperature,
-        'video_url': video_url,
-        'videos': [{'url': video_url}],
+        "type": "agent",
+        "status": "completed",
+        "response": f"Generated {len(videos)} video{'s' if len(videos) != 1 else ''}",
+        "model": config.model,
+        "temperature": config.temperature,
+        "videos": videos,
+        "video_url": videos[0]["url"],
     }

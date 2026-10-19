@@ -51,7 +51,7 @@
       ],
       "title": "Phone Number",
       "type": "object",
-      "x-credential-instructions": "Buy a phone number for this agent, 15 credits a month (Plus and Pro plans).",
+      "x-credential-instructions": "Buy a phone number for this agent, billed monthly.",
       "x-credential-type": "purchase"
     },
     "PhoneOnCallConfig": {

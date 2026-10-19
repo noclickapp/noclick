@@ -56,6 +56,36 @@ export function stripNodeTransitions(nodes: Node[]): Node[] {
     });
 }
 
+/** The canvas as the builder reads it, for an edit or an autofill. ``workflow_id``
+ * names the workflow the work is on: the account its usage bills to. */
+function builderGraph(workflowId: string | undefined, nodes: Node[], edges: Edge[]) {
+    return {
+        workflow_id: workflowId,
+        nodes: nodes.map(n => ({
+            id: n.id,
+            type: n.type,
+            label: String(n.data?.label ?? ''),
+            goal: n.data?.goal || '',
+            operation: n.data?.operation,
+            config: buildSaveConfig(n),
+            error: n.data?.error || (n.data?.output as any)?.error || null,
+            position: n.position,
+            ...(n.width != null ? { width: n.width } : {}),
+            ...(n.height != null ? { height: n.height } : {}),
+        })),
+        edges: edges.map(e => ({
+            id: e.id,
+            sourceId: e.source,
+            targetId: e.target,
+            ...(e.sourceHandle ? { sourceHandle: e.sourceHandle } : {}),
+            // targetHandle="bottom" is the load-bearing tool-provider signal the
+            // backend reads (autolayout + provider detection) — it must survive the
+            // round-trip or providers get laid out as upstream dataflow.
+            ...(e.targetHandle ? { targetHandle: e.targetHandle } : {}),
+        })),
+    };
+}
+
 export type CanvasEditPhase = 'idle' | 'editing' | 'complete' | 'error';
 
 export interface CanvasEditState {
@@ -605,6 +635,7 @@ export function useCanvasWorkflowEdit({
                                 operationReason: eventData.operationReason,
                                 userFields: eventData.userFields,
                                 goal: eventData.goal,
+                                label: eventData.label,
                                 credentialIds: eventData.credentialIds ?? cfgPayload.credentialIds,
                             });
                         });
@@ -943,32 +974,7 @@ export function useCanvasWorkflowEdit({
             isRecording: true,
         });
 
-        // Convert current nodes/edges to the format expected by the backend
-        const currentGraph = {
-            workflow_id: workflowId,
-            nodes: nodesRef.current.map(n => ({
-                id: n.id,
-                type: n.type,
-                label: String(n.data?.label ?? ''),
-                goal: n.data?.goal || '',
-                operation: n.data?.operation,
-                config: buildSaveConfig(n),
-                error: n.data?.error || (n.data?.output as any)?.error || null,
-                position: n.position,
-                ...(n.width != null ? { width: n.width } : {}),
-                ...(n.height != null ? { height: n.height } : {}),
-            })),
-            edges: edgesRef.current.map(e => ({
-                id: e.id,
-                sourceId: e.source,
-                targetId: e.target,
-                ...(e.sourceHandle ? { sourceHandle: e.sourceHandle } : {}),
-                // targetHandle="bottom" is the load-bearing tool-provider signal the
-                // backend reads (autolayout + provider detection) — it must survive the
-                // round-trip or providers get laid out as upstream dataflow.
-                ...(e.targetHandle ? { targetHandle: e.targetHandle } : {}),
-            })),
-        };
+        const currentGraph = builderGraph(workflowId, nodesRef.current, edgesRef.current);
 
         // Cleanup any previous listener before setting up new one
         cleanupSocketListener();
@@ -1267,30 +1273,7 @@ export function useCanvasWorkflowEdit({
             isRecording: true,
         });
 
-        const currentGraph = {
-            nodes: nodesRef.current.map(n => ({
-                id: n.id,
-                type: n.type,
-                label: String(n.data?.label ?? ''),
-                goal: n.data?.goal || '',
-                operation: n.data?.operation,
-                config: buildSaveConfig(n),
-                error: n.data?.error || (n.data?.output as any)?.error || null,
-                position: n.position,
-                ...(n.width != null ? { width: n.width } : {}),
-                ...(n.height != null ? { height: n.height } : {}),
-            })),
-            edges: edgesRef.current.map(e => ({
-                id: e.id,
-                sourceId: e.source,
-                targetId: e.target,
-                ...(e.sourceHandle ? { sourceHandle: e.sourceHandle } : {}),
-                // targetHandle="bottom" is the load-bearing tool-provider signal the
-                // backend reads (autolayout + provider detection) — it must survive the
-                // round-trip or providers get laid out as upstream dataflow.
-                ...(e.targetHandle ? { targetHandle: e.targetHandle } : {}),
-            })),
-        };
+        const currentGraph = builderGraph(workflowId, nodesRef.current, edgesRef.current);
 
         cleanupSocketListener();
         const unsubscribe = subscribeToBuilderResponse(generationId, {
@@ -1345,7 +1328,7 @@ export function useCanvasWorkflowEdit({
         } finally {
             setAutofillStatus({ nodeId: null, mode: null, targetField: null });
         }
-    }, [saveToHistory, handleEditEvent, cleanupSocketListener, broadcastAiEditingStart]);
+    }, [saveToHistory, handleEditEvent, cleanupSocketListener, broadcastAiEditingStart, workflowId]);
 
     // Cancel an ongoing edit
     const cancelEdit = useCallback(() => {

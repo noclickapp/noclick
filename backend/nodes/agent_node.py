@@ -991,6 +991,7 @@ class AgentNode(WorkflowNode):
         and mark them relayed, so each reaches the model exactly once.
         Best-effort: None on any failure."""
         try:
+            from nodes.agent.platform_tools import builder_updates_note
             from repositories.conversation import ConversationRepo
             from utils.database_pool import get_native_pool
 
@@ -998,72 +999,9 @@ class AgentNode(WorkflowNode):
             events = await repo.fetch_unrelayed_builder_events(conversation_id)
             if not events:
                 return None
-            lines = []
-            relay_keys = []
-            for ev in events:
-                kind, p = ev["kind"], ev["payload"]
-                if kind == "builder_decision":
-                    verdict = (
-                        "APPROVED — the user sent it to the workflow builder"
-                        if p.get("decision") == "approved"
-                        else "DISMISSED by the user"
-                    )
-                    lines.append(f"- Your proposal {p.get('proposal_id')}: {verdict}")
-                    relay_keys.append((kind, p.get("proposal_id")))
-                elif kind == "builder_ask":
-                    input_lines = []
-                    has_credential = False
-                    has_answerable = False
-                    for inp in p.get("inputs") or []:
-                        kind_str = inp.get("type") or "text"
-                        if kind_str == "credential":
-                            has_credential = True
-                        else:
-                            has_answerable = True
-                        opts = inp.get("options") or []
-                        opts_str = ""
-                        if opts:
-                            names = [o.get("label") or o.get("value") if isinstance(o, dict) else str(o) for o in opts]
-                            opts_str = f"; options: {' | '.join(str(n) for n in names)}"
-                        req_str = "required" if inp.get("required", True) else "optional"
-                        input_lines.append(
-                            f"    - [{inp.get('id')}] {inp.get('label')} ({kind_str}, {req_str}{opts_str})"
-                        )
-                    if not input_lines:
-                        input_lines = ["    - " + q for q in (p.get("questions") or ["additional input"])]
-                        has_answerable = True
-                    guidance = []
-                    if has_answerable:
-                        guidance.append(
-                            "Answer the non-credential questions YOURSELF with the "
-                            "builder_respond tool (answers keyed by [id]) if you can "
-                            "sensibly decide them — the run resumes immediately."
-                        )
-                    if has_credential:
-                        guidance.append(
-                            "Credential inputs can ONLY be connected by a human: "
-                            f"share this no-login link through your channel: {p.get('bridge_url')}"
-                        )
-                    else:
-                        guidance.append(
-                            f"If a question needs the user, share this no-login link instead: {p.get('bridge_url')}"
-                        )
-                    lines.append(
-                        "- The builder run PAUSED on questions:\n"
-                        + "\n".join(input_lines)
-                        + "\n  " + " ".join(guidance)
-                        + "\n  You'll be woken with the next update either way."
-                    )
-                    relay_keys.append((kind, p.get("relay_id")))
-                elif kind == "builder_result":
-                    lines.append(f"- The builder run FINISHED: {p.get('summary')}")
-                    relay_keys.append((kind, p.get("relay_id")))
+            note, relay_keys = builder_updates_note(events)
             await repo.mark_builder_events_relayed(conversation_id, relay_keys)
-            return (
-                "--- Platform note ---\n"
-                "Workflow-builder updates since your last turn:\n"
-                + "\n".join(lines)
-            )
+            return note
         except Exception:
             logger.warning("[AgentNode] builder-update relay failed", exc_info=True)
             return None
@@ -1176,6 +1114,8 @@ class AgentNode(WorkflowNode):
                 ) if self.user_id else None,
                 allow_ai=getattr(config, "enable_media_transcription", "true") != "false",
                 workflow_id=self.workflow_id,
+                # The runner's own account files are read by id as well.
+                owner_id=self.user_id,
             ),
         )
         logger.info(
@@ -1916,16 +1856,10 @@ class AgentNode(WorkflowNode):
             and self.user_id
             and agent_email_available()
         ):
-            from nodes.agent.platform_tools import prompt_builder_mode
-            from utils.user_presence import describe_owner_presence
+            from nodes.agent.platform_tools import owner_presence_note, prompt_builder_mode
 
             if prompt_builder_mode(self._conversation_key) != "interactive":
-                presence_note = (
-                    "--- Platform note ---\n"
-                    f"The workflow owner is {await describe_owner_presence(self.user_id)}. "
-                    "If you need them and they are AWAY, use the email_user tool; "
-                    "if they are ACTIVE, they'll see your chat/channel output."
-                )
+                presence_note = await owner_presence_note(self.user_id)
                 base = (config.message or "").strip()
                 config.message = f"{base}\n\n{presence_note}" if base else presence_note
 

@@ -14,9 +14,12 @@ from typing import Any, Callable, Dict, List, Optional
 from billing.exceptions import InsufficientBalanceError
 from coder.openai_agent import Agent
 from coder.openai_agent.config import AgentConfiguration
+from nodes.agent.agent_memory import conversation_compactor
+from nodes.agent.config.harness_model_lists import zen_gateway_refusal
 from nodes.agent.placement import sandbox_network_of, sandbox_region_of, sandbox_volumes_of, shell_of
 from nodes.agent.git_mounts import sandbox_setups_of
 from nodes.agent.provider_errors import classify_and_rewrite_provider_error
+from utils.turn_events import turn_wrap_up_of
 from wss.sender.schema import ContentItem, ImageUrl
 
 logger = logging.getLogger(__name__)
@@ -95,12 +98,21 @@ async def execute_llm_model(
     # successfully created runtime, including runtimes that own external resources.
     agent = None
     try:
+        refusal = await zen_gateway_refusal(config.model)
+        if refusal:
+            raise ValueError(refusal)
+
         # Create tool executor callback
         async def tool_executor(tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
             return await node._execute_tool(tool_name, arguments, tool_configs or {})
 
         enable_persistence = bool(config.conversation_key or node.conversation_id)
         memory_readonly = memory_is_readonly(node)
+        # A long conversation keeps a checkpoint where the platform keeps the agent's memory; a turn that
+        # leaves no memory (a live call's) only replays a bounded tail, so it doesn't compact.
+        context_filter = None if memory_readonly or not enable_persistence else conversation_compactor(
+            node, conversation_id=effective_conversation_id, user_id=user_id, user_email=user_email,
+            organization_id=node.organization_id)
         agent = await Agent.create(
             emit_message=emit_callback,
             config=agent_config,
@@ -125,6 +137,8 @@ async def execute_llm_model(
             sandbox_network=sandbox_network_of(node),
             shell=shell_of(node),
             memory_readonly=memory_readonly,
+            context_filter=context_filter,
+            wrap_up=turn_wrap_up_of((getattr(node, "node_data", None) or {}).get("config")),
             # A turn that leaves no memory needs only recent memory, and it is
             # answered while a caller waits — a bounded replay keeps it quick.
             history_limit=READONLY_HISTORY_LIMIT if memory_readonly else None,

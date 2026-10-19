@@ -52,20 +52,11 @@ type ResolvedResponse<T, E extends EventWithName> = WithSocketError<
  * @returns true if sent successfully, false if not connected
  * 
  * @example
- * import { ChatMessageRequest } from '~/types/socket-events.generated';
+ * import { AgentPauseRequest } from '~/types/socket-events.generated';
  *
  * // Create and send an event (just like Python)
- * const event = ChatMessageRequest.create({
- *   content: [{ type: 'text', text: 'Hello world' }],
- *   model: 'gpt-4o'
- * });
+ * const event = AgentPauseRequest.create({ conversation_id: conversationId });
  * sendEvent(event);
- *
- * // Or inline
- * sendEvent(ChatMessageRequest.create({
- *   content: [{ type: 'text', text: 'Hello' }],
- *   model: 'gpt-4o'
- * }));
  */
 export function sendEvent(event: EventWithName, env?: SocketEnvironment): boolean {
   const { event_name, tag, ...data } = event;

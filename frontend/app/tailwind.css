@@ -10,32 +10,6 @@ body {
     min-height: 100%;
 }
 
-/* Global low-res scaling via root font-size. Most of the chrome was designed
-   at >=1440 and feels squished on 1280-1366 laptops. Tailwind's spacing/text
-   utilities are rem-based, so dropping the root font-size from 16px to 13.6px
-   (85%) cascades through paddings, gaps, text, and rem-sized widths/heights
-   — uniformly shrinking the UI. Crucially this leaves the coordinate system
-   intact (unlike CSS `zoom`), so drag handlers (ReactFlow node drag, panel
-   resize, sidebar resize) continue to work because clientX and element rects
-   stay in the same un-scaled pixel space.
-
-   Pixel-based values (vw/vh, explicit `px`, JS-computed pixel widths) don't
-   shrink — those are audited and converted to rem-aware values per-component
-   where they're load-bearing. */
-/* min-width: 769px so mobile (<=768px, the project's mobile breakpoint per
-   useIsMobile) keeps the default 16px root font — mobile has its own layout
-   that was already tuned for narrow viewports and doesn't need shrinking. */
-@media (min-width: 769px) and (max-width: 1366px) {
-    html {
-        font-size: 13.6px;
-    }
-}
-@media (min-width: 769px) and (max-width: 1152px) {
-    html {
-        font-size: 12px;
-    }
-}
-
 .text-gradient {
     background-clip: text;
     -webkit-background-clip: text;
@@ -67,6 +41,8 @@ body {
         --foreground: 240 10% 3.9%;
         --card: 0 0% 100%;
         --card-foreground: 240 10% 3.9%;
+        /* Where you type to NoClick: a raised card in light, a near-black slab in dark. */
+        --composer: 0 0% 100%;
         /* Sunken/recessed surface (folder sidebar, setup views, logs): white in
            light like a card, the deeper zinc-950 in dark — the third dark
            near-black level below --card (zinc-900) and above --background (#000). */
@@ -94,6 +70,16 @@ body {
         --border: 240 5.9% 90%;
         --input: 240 5.9% 90%;
         --ring: 240 10% 3.9%;
+        /* Syntax colours for code the app shows (repo files, READMEs), after
+           GitHub's light palette so code reads the way people know it. */
+        --code-comment: 212 8% 47%;
+        --code-keyword: 356 72% 47%;
+        --code-string: 216 83% 23%;
+        --code-function: 262 69% 59%;
+        --code-number: 213 94% 35%;
+        --code-tag: 137 71% 23%;
+        --code-variable: 23 100% 29%;
+        --code-punctuation: 213 13% 16%;
         --chart-1: 12 76% 61%;
         --chart-2: 173 58% 39%;
         --chart-3: 197 37% 24%;
@@ -151,6 +137,7 @@ body {
         --foreground: 0 0% 98%;
         --card: 240 6% 10%;
         --card-foreground: 0 0% 98%;
+        --composer: 0 0% 7%;
         --sunken: 240 10% 3.9%; /* zinc-950 #09090b */
         --popover: 0 0% 10%;
         --popover-foreground: 0 0% 98%;
@@ -168,6 +155,14 @@ body {
         --border: 240 3.7% 15.9%;
         --input: 240 3.7% 15.9%;
         --ring: 240 4.9% 83.9%;
+        --code-comment: 210 10% 51%;
+        --code-keyword: 4 86% 68%;
+        --code-string: 207 100% 79%;
+        --code-function: 272 88% 86%;
+        --code-number: 210 100% 71%;
+        --code-tag: 120 53% 70%;
+        --code-variable: 28 90% 64%;
+        --code-punctuation: 210 18% 73%;
         --chart-1: 220 70% 50%;
         --chart-2: 160 60% 45%;
         --chart-3: 30 80% 55%;
@@ -290,6 +285,27 @@ body {
     }
     body {
         @apply bg-background text-foreground;
+    }
+    ::selection {
+        background: hsl(var(--foreground) / 0.16);
+    }
+}
+
+/* The chat composer's move from the middle of the empty page to the foot of
+   the thread when the first message is sent (CoordinatorHome). */
+::view-transition-group(nc-composer) {
+    animation-duration: 460ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 240ms;
+}
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
     }
 }
 
@@ -670,4 +686,29 @@ body {
     to {
         stroke-dashoffset: 0;
     }
+}
+
+/* The usage page's chart ink (components/usage/page): five service hues, validated for colour-blind separation in
+   both themes, and the one-ink steps the rest of its marks use. */
+.usage-page {
+    --svc-1: #2a78d6;
+    --svc-2: #eb6834;
+    --svc-3: #1baf7a;
+    --svc-4: #4a3aa7;
+    --svc-5: #e87ba4;
+    --svc-rest: hsl(var(--foreground) / 0.22);
+    --ink: hsl(var(--foreground) / 0.62);
+    --ink-strong: hsl(var(--foreground) / 0.9);
+    --ink-faint: hsl(var(--foreground) / 0.16);
+    --grid: hsl(var(--foreground) / 0.07);
+}
+.dark .usage-page {
+    --svc-1: #3987e5;
+    --svc-2: #d95926;
+    --svc-3: #199e70;
+    --svc-4: #9085e9;
+    --svc-5: #d55181;
+    --ink: hsl(var(--foreground) / 0.58);
+    --ink-faint: hsl(var(--foreground) / 0.14);
+    --grid: hsl(var(--foreground) / 0.08);
 }

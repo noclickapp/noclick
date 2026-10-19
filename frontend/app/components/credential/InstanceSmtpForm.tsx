@@ -16,9 +16,12 @@ import { INSTANCE_FORM, InstanceSetupCard } from './InstanceSetupCard';
 export function InstanceSmtpForm({
     onSaved,
     submitLabel = 'Check and save',
+    titled = true,
 }: {
     onSaved?: () => void;
     submitLabel?: string;
+    /** False where the surrounding section already names and explains it (Settings). */
+    titled?: boolean;
 }) {
     const [host, setHost] = useState('');
     const [port, setPort] = useState('587');
@@ -80,69 +83,77 @@ export function InstanceSmtpForm({
         </div>
     );
 
+    const form = (
+        <form
+            className="space-y-3.5"
+            onSubmit={(e) => {
+                e.preventDefault();
+                void save();
+            }}
+        >
+            <div className="grid grid-cols-[1fr_6rem] gap-3">
+                {field('SMTP host', host, setHost, {
+                    placeholder: 'smtp.yourdomain.com',
+                    'aria-label': 'SMTP host',
+                })}
+                {field('Port', port, setPort, {
+                    inputMode: 'numeric',
+                    'aria-label': 'SMTP port',
+                })}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+                {field('Username', username, setUsername, {
+                    placeholder: 'optional',
+                    'aria-label': 'SMTP username',
+                })}
+                {field('Password', password, setPassword, {
+                    type: 'password',
+                    placeholder: 'optional',
+                    'aria-label': 'SMTP password',
+                })}
+            </div>
+            {field('Send as', fromEmail, setFromEmail, {
+                placeholder: 'NoClick <noclick@yourdomain.com>',
+                'aria-label': 'Sender address',
+            })}
+            {error && (
+                <p
+                    role="alert"
+                    className="text-xs text-red-600 dark:text-red-400"
+                >
+                    {error}
+                </p>
+            )}
+            <div className="flex items-center gap-2">
+                <button
+                    type="submit"
+                    disabled={saving || !ready}
+                    className={INSTANCE_FORM.primaryButton}
+                >
+                    {saving ? 'Checking\u2026' : submitLabel}
+                </button>
+                <span className={INSTANCE_FORM.note}>
+                    Checked with a real login — stored encrypted
+                </span>
+            </div>
+        </form>
+    );
+
     return (
         <div data-testid="instance-smtp-form">
-            <InstanceSetupCard
-                title="Send through your mail server"
-                steps={[
-                    'Any SMTP server works — your domain\u2019s mail provider, a Gmail app password, Mailgun, Postmark.',
-                    'Enter its details. Every email this instance sends leaves through it, from the sender below.',
-                ]}
-            >
-                <form
-                    className="space-y-3.5"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        void save();
-                    }}
+            {titled ? (
+                <InstanceSetupCard
+                    title="Send through your mail server"
+                    steps={[
+                        'Any SMTP server works — your domain\u2019s mail provider, a Gmail app password, Mailgun, Postmark.',
+                        'Enter its details. Every email this instance sends leaves through it, from the sender below.',
+                    ]}
                 >
-                    <div className="grid grid-cols-[1fr_6rem] gap-3">
-                        {field('SMTP host', host, setHost, {
-                            placeholder: 'smtp.yourdomain.com',
-                            'aria-label': 'SMTP host',
-                        })}
-                        {field('Port', port, setPort, {
-                            inputMode: 'numeric',
-                            'aria-label': 'SMTP port',
-                        })}
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                        {field('Username', username, setUsername, {
-                            placeholder: 'optional',
-                            'aria-label': 'SMTP username',
-                        })}
-                        {field('Password', password, setPassword, {
-                            type: 'password',
-                            placeholder: 'optional',
-                            'aria-label': 'SMTP password',
-                        })}
-                    </div>
-                    {field('Send as', fromEmail, setFromEmail, {
-                        placeholder: 'NoClick <noclick@yourdomain.com>',
-                        'aria-label': 'Sender address',
-                    })}
-                    {error && (
-                        <p
-                            role="alert"
-                            className="text-xs text-red-600 dark:text-red-400"
-                        >
-                            {error}
-                        </p>
-                    )}
-                    <div className="flex items-center gap-2">
-                        <button
-                            type="submit"
-                            disabled={saving || !ready}
-                            className={INSTANCE_FORM.primaryButton}
-                        >
-                            {saving ? 'Checking\u2026' : submitLabel}
-                        </button>
-                        <span className={INSTANCE_FORM.note}>
-                            Checked with a real login — stored encrypted
-                        </span>
-                    </div>
-                </form>
-            </InstanceSetupCard>
+                    {form}
+                </InstanceSetupCard>
+            ) : (
+                form
+            )}
         </div>
     );
 }

@@ -51,11 +51,10 @@ import { requestTestRun } from '~/components/design/rehearsal/testRunHandoff';
 import { rehydrateRehearsalAuthoring } from '~/components/design/rehearsal/useRehearsalAuthoring';
 import { getLocalComponentValtio } from '~/state';
 import { CanvasBackground } from '~/components/workflow/canvasBackground';
-import { scaled } from '~/lib/constants';
 import { isTextEntryTarget, isModalOpen } from '~/lib/keyboard';
 import { setAddNodeShortcutActive } from '~/lib/shortcuts';
 import {
-    BASE_PREVIEW_SIZE,
+    PREVIEW_SIZE,
     NodePreviewIcon,
 } from './flowHelper/NodesTabContent';
 import { ForkCanvas, type ForkCanvasRef } from './forkflow/ForkCanvas';
@@ -122,7 +121,7 @@ import {
 } from '~/utils/interfaceBlocks';
 import {
     BlockPreviewCard,
-    getBlockPreviewWidth,
+    BLOCK_PREVIEW_WIDTH,
 } from '~/components/interface/BlockPreviewCard';
 import { ErrorNodeNavigator } from './ErrorNodeNavigator';
 import { IncompleteNodeNavigator } from './IncompleteNodeNavigator';
@@ -282,8 +281,8 @@ import {
     computeWiredProviderIdsKey,
     contextFromWiringKey,
 } from '~/utils/workflowNodeValidation';
+import { autoSelectCredentialsForNewNode } from '~/utils/credentialAutoSelectForNode';
 import {
-    autoSelectCredentialsForNewNode,
     prefetchCredentials,
     upsertCredentialsIntoCache,
     removeCredentialsFromCache,
@@ -296,6 +295,7 @@ import {
     prepareNodeExecution,
     serializeGraphForExecution,
 } from '~/utils/workflowNodeExecution';
+import { runGraphFields } from '~/utils/runGraphFields';
 import { getSchemaInfo } from '~/utils/schemaFieldExtractor';
 import {
     appendIfUnique,
@@ -321,6 +321,7 @@ import {
     DEFAULT_INTERFACE_CONV_KEY,
     type AgentChatAttachment,
 } from '~/lib/agentChat';
+import { withAgentHarnessSwitch } from '~/lib/agentCredentialModel';
 import {
     parseListReference,
     parseWholeReference,
@@ -384,10 +385,10 @@ const proOptions = { hideAttribution: true };
 
 // NodeTypes will be defined inside component with useMemo
 
-// Drag-overlay dimensions matching MiniNodePreview — same scaled height as
+// Drag-overlay dimensions matching MiniNodePreview — same height as
 // the source tile so the cursor stays anchored to the visual centre.
 const calculateOverlayDimensions = (node: NodeDefinition) => {
-    const targetHeight = scaled(BASE_PREVIEW_SIZE);
+    const targetHeight = PREVIEW_SIZE;
     const aspectRatio = node.dimensions.width / node.dimensions.height;
     const scaleFactor = targetHeight / node.dimensions.height;
     return {
@@ -698,6 +699,9 @@ const FlowCanvasInner = ({
     const [workflowSettings, setWorkflowSettings] = useState<
         Record<string, unknown>
     >({});
+    // Whether this user may edit the workflow (workflow:get's user_permission):
+    // a viewer's runs carry no graph and run the saved one.
+    const canEditRef = useRef(true);
     // Gates the FlowHelperView wrapper's height transition — true mid-drag so the
     // drag handler's direct DOM mutations don't trigger a 280ms interpolation each
     // tick. Reset on resize-end so subsequent programmatic resizes (auto-shrink on
@@ -2186,7 +2190,14 @@ const FlowCanvasInner = ({
     const handleInterfaceBlockConfigChanged = useCallback(
         (blockId: string, config: Record<string, unknown>) => {
             setNodes((prevNodes) =>
-                updateNodeInList(prevNodes, blockId, { config })
+                prevNodes.map((n) =>
+                    n.id === blockId
+                        ? applyNodeUpdate(
+                              n,
+                              withAgentHarnessSwitch(n, { config })
+                          )
+                        : n
+                )
             );
         },
         [setNodes]
@@ -2741,10 +2752,7 @@ const FlowCanvasInner = ({
                 sendEvent(
                     WorkflowExecuteRequest.create({
                         workflow_id: workflowId,
-                        nodes: graph.nodes,
-                        edges: graph.edges,
-                        replay_nodes: graph.nodes,
-                        replay_edges: graph.edges,
+                        ...runGraphFields(canEditRef.current, graph),
                     })
                 );
             }
@@ -2776,10 +2784,9 @@ const FlowCanvasInner = ({
             sendEvent(
                 WorkflowExecuteRequest.create({
                     workflow_id: workflowId,
-                    nodes: result.nodes,
-                    edges: result.edges,
-                    replay_nodes: replayGraph.nodes,
-                    replay_edges: replayGraph.edges,
+                    ...(canEditRef.current
+                        ? runGraphFields(true, result, replayGraph)
+                        : { start_node_id: nodeId }),
                 })
             );
 
@@ -3229,6 +3236,8 @@ const FlowCanvasInner = ({
                     if (response.workflow.settings) {
                         setWorkflowSettings(response.workflow.settings);
                     }
+                    canEditRef.current =
+                        response.workflow.user_permission !== 'view';
 
                     // Load nodes from BE; merge preserves transient FE-only
                     // state (mcpAnimationState from agentic events, output
@@ -4401,10 +4410,7 @@ const FlowCanvasInner = ({
             sendEvent(
                 WorkflowExecuteRequest.create({
                     workflow_id: workflowId,
-                    nodes: executed.nodes,
-                    edges: executed.edges,
-                    replay_nodes: graph.nodes,
-                    replay_edges: graph.edges,
+                    ...runGraphFields(canEditRef.current, executed, graph),
                     ...(selection?.configOverrides
                         ? { config_overrides: selection.configOverrides }
                         : {}),
@@ -5309,10 +5315,7 @@ const FlowCanvasInner = ({
                     workflow_id: workflowId,
                     start_node_id: formNodeId,
                     inputs: values,
-                    nodes: graph.nodes,
-                    edges: graph.edges,
-                    replay_nodes: graph.nodes,
-                    replay_edges: graph.edges,
+                    ...runGraphFields(canEditRef.current, graph),
                 })
             );
         },
@@ -5397,32 +5400,44 @@ const FlowCanvasInner = ({
                 currentNodes,
                 currentEdges
             );
+            const turnOverride = buildAgentChatRunOverride({
+                currentConfig: {},
+                message,
+                model,
+                conversationKey:
+                    conversationKey ??
+                    (typeof currentConvKey === 'string'
+                        ? currentConvKey
+                        : undefined),
+                attachments,
+            });
             const runNodes = graph.nodes.map((n) => {
                 if (n.id !== agentNodeId) return n;
                 // One-shot override for this run only.
                 return {
                     ...n,
-                    config: buildAgentChatRunOverride({
-                        currentConfig: n.config as Record<string, unknown>,
-                        message,
-                        model,
-                        conversationKey:
-                            conversationKey ??
-                            (typeof currentConvKey === 'string'
-                                ? currentConvKey
-                                : undefined),
-                        attachments,
-                    }),
+                    config: {
+                        ...(n.config as Record<string, unknown>),
+                        ...turnOverride,
+                    },
                 };
             });
             sendEvent(
                 WorkflowExecuteRequest.create({
                     workflow_id: workflowId,
                     start_node_id: agentNodeId,
-                    nodes: runNodes,
-                    edges: graph.edges,
-                    replay_nodes: runNodes,
-                    replay_edges: graph.edges,
+                    // A viewer's turn rides the saved graph: only what the
+                    // turn says (message, model, thread, attachments).
+                    ...(canEditRef.current
+                        ? runGraphFields(true, {
+                              nodes: runNodes,
+                              edges: graph.edges,
+                          })
+                        : {
+                              config_overrides: {
+                                  [agentNodeId]: turnOverride,
+                              },
+                          }),
                 })
             );
         },
@@ -5579,27 +5594,32 @@ const FlowCanvasInner = ({
                     start_node_id: nodeId,
                     forward_only: !hasUpstreamRefs,
                     background,
-                    nodes: executionGraph.nodes.map((n) => {
-                        const config = {
-                            ...(n.config as Record<string, unknown>),
-                        };
-                        // Inject carousel-selected output as mockedOutput so backend uses it
-                        // Skip the start node — it should execute for real, not use stale output
-                        const selection =
-                            n.id !== nodeId
-                                ? nodeOutputSelectionsRef.current[
-                                      n.id as string
-                                  ]
-                                : undefined;
-                        if (selection) config.mockedOutput = selection.output;
-                        return {
-                            ...n,
-                            config,
-                        };
-                    }),
-                    edges: executionGraph.edges,
-                    replay_nodes: replayGraph.nodes,
-                    replay_edges: replayGraph.edges,
+                    ...runGraphFields(
+                        canEditRef.current,
+                        {
+                            nodes: executionGraph.nodes.map((n) => {
+                                const config = {
+                                    ...(n.config as Record<string, unknown>),
+                                };
+                                // Inject carousel-selected output as mockedOutput so backend uses it
+                                // Skip the start node — it should execute for real, not use stale output
+                                const selection =
+                                    n.id !== nodeId
+                                        ? nodeOutputSelectionsRef.current[
+                                              n.id as string
+                                          ]
+                                        : undefined;
+                                if (selection)
+                                    config.mockedOutput = selection.output;
+                                return {
+                                    ...n,
+                                    config,
+                                };
+                            }),
+                            edges: executionGraph.edges,
+                        },
+                        replayGraph
+                    ),
                     ...(configOverrides
                         ? { config_overrides: configOverrides }
                         : {}),
@@ -5910,10 +5930,9 @@ const FlowCanvasInner = ({
             sendEvent(
                 WorkflowExecuteRequest.create({
                     workflow_id: workflowId,
-                    nodes: result.nodes,
-                    edges: result.edges,
-                    replay_nodes: replayGraph.nodes,
-                    replay_edges: replayGraph.edges,
+                    ...(canEditRef.current
+                        ? runGraphFields(true, result, replayGraph)
+                        : { start_node_id: nodeId }),
                     ...(configOverrides
                         ? { config_overrides: configOverrides }
                         : {}),
@@ -7197,7 +7216,14 @@ const FlowCanvasInner = ({
     const handleGuidedSetupConfigChange = useCallback(
         (nodeId: string, config: Record<string, any>) => {
             setNodes((current) =>
-                updateNodeInList(current, nodeId, { config })
+                current.map((n) =>
+                    n.id === nodeId
+                        ? applyNodeUpdate(
+                              n,
+                              withAgentHarnessSwitch(n, { config })
+                          )
+                        : n
+                )
             );
         },
         [setNodes]
@@ -7226,7 +7252,11 @@ const FlowCanvasInner = ({
     // Handle node data update from config editor
     const handleNodeDataUpdate = useCallback(
         (nodeId: string, newData: Record<string, any>) => {
-            const update = normalizeNodeUpdatePayload(newData);
+            const requested = normalizeNodeUpdatePayload(newData);
+            const update = withAgentHarnessSwitch(
+                nodesRef.current.find((n) => n.id === nodeId),
+                requested
+            );
             setNodes((currentNodes) => {
                 const updatedNodes = currentNodes.map((n) => {
                     if (n.id !== nodeId) return n;
@@ -7289,7 +7319,18 @@ const FlowCanvasInner = ({
             }
 
             // Broadcast node update to collaborators
-            broadcastNodeUpdate(nodeId, newData);
+            broadcastNodeUpdate(
+                nodeId,
+                update === requested
+                    ? newData
+                    : {
+                          ...newData,
+                          config: update.config,
+                          ...(update.label !== undefined && {
+                              label: update.label,
+                          }),
+                      }
+            );
         },
         [
             setNodes,
@@ -9242,7 +9283,7 @@ const FlowCanvasWithDnd = ({
             ) : isInterfaceNodeDrag && interfaceBlockType ? (
                 <div
                     className="shadow-2xl dark:shadow-black/40 rounded-lg opacity-80"
-                    style={{ width: getBlockPreviewWidth() }}
+                    style={{ width: BLOCK_PREVIEW_WIDTH }}
                 >
                     <BlockPreviewCard
                         blockType={interfaceBlockType}

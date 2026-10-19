@@ -573,6 +573,8 @@ const GenericCard = memo(function GenericCard({
                       }
                     | undefined
             )?._previewEditInfo,
+            building: (node.data as { mcpAnimationState?: string } | undefined)
+                ?.mcpAnimationState,
         }
     );
     const currentWidth = isBeingEdited ? EDIT_EXPANDED_WIDTH : w;

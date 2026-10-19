@@ -55,6 +55,7 @@ import {
     type PaletteScope,
 } from '~/lib/shortcuts';
 import { navigateToSettings, navigateToWorkflow, goToWorkflows, triggerBrowserAction, type SettingsSection, navigateToDashboard } from '~/lib/navigation';
+import { MENU_SURFACE } from '~/components/shell/menus';
 import { sendEventAsync } from '~/lib/socket-sender';
 import type { CredentialInfo } from '~/types/socket-events.generated';
 import { NoClickMCPSetupModal } from '~/components/workflow/MCPConnectModal';
@@ -72,6 +73,15 @@ import type { Theme } from '~/lib/theme';
 import { KeyHint, SequenceKeyHint } from '~/components/shared/KeyHint';
 import { NodeIconStack } from '~/components/shared/NodeIconStack';
 import { workflowIconTypes } from '~/lib/workflowBrowserStore';
+
+// The shell's menu language (the composer's "+", Connect): its surface, a roomy search, sentence-case sections.
+const SEARCH_ROW = 'flex h-14 items-center gap-3 border-b border-border px-5 dark:border-foreground/[0.07]';
+const SEARCH_ICON = 'h-[18px] w-[18px] shrink-0 text-muted-foreground';
+const SEARCH_INPUT = 'h-full w-full bg-transparent text-[15px] text-foreground placeholder:text-[hsl(var(--placeholder))] focus:outline-none';
+const LIST = 'max-h-[min(52vh,460px)] overflow-y-auto scrollbar-subtle p-2';
+const SECTION = 'px-3 pb-1.5 pt-3 text-[12.5px] font-medium text-muted-foreground first:pt-1.5';
+const EMPTY = 'px-3 py-10 text-center text-[14px] text-muted-foreground';
+const FOOTER = 'flex items-center gap-4 border-t border-border px-5 py-3 text-[12px] text-muted-foreground dark:border-foreground/[0.07]';
 
 type IconType = ComponentType<{ className?: string }>;
 // 'Credentials' is intentionally absent from SECTION_ORDER: those rows only
@@ -153,9 +163,9 @@ const SETTINGS_SECTIONS: {
     },
     {
         section: 'organization',
-        label: 'Organization',
+        label: 'Members',
         icon: Building2,
-        keywords: 'members team workspace',
+        keywords: 'members team workspace organization',
     },
     {
         section: 'skills',
@@ -735,7 +745,7 @@ export function CommandPalette() {
     return (
         <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/40" />
+                <Dialog.Overlay className="fixed inset-0 z-[100] bg-foreground/[0.08] dark:bg-background/60" />
                 <Dialog.Content
                     data-testid="command-palette"
                     aria-describedby={undefined}
@@ -747,8 +757,8 @@ export function CommandPalette() {
                     // No enter/exit animation — it pops in (and out) instantly.
                     // Without any CSS animation, Radix also unmounts immediately on
                     // close instead of waiting for animationend. Centered with
-                    // -translate-x-1/2 (a static transform, not animated).
-                    className="fixed left-1/2 top-[12vh] z-[101] w-[92vw] max-w-3xl -translate-x-1/2 overflow-hidden rounded-xl border border-border dark:border-white/10 bg-background dark:bg-[#0a0a0b] shadow-2xl dark:shadow-black/60"
+                    // -translate-x-1/2 (a static transform, not animated). In the shell's menu surface.
+                    className={cn('fixed left-1/2 top-[14vh] z-[101] w-[calc(100vw-32px)] max-w-[640px] -translate-x-1/2 overflow-hidden rounded-[26px] focus:outline-none', MENU_SURFACE)}
                 >
                     <Dialog.Title className="sr-only">
                         Command palette
@@ -758,13 +768,13 @@ export function CommandPalette() {
                         <>
                             {/* Search — in a scope ("O W") the leading glyph becomes
                                 the scope's icon (workflow) instead of the magnifier. */}
-                            <div className="flex items-center gap-2.5 px-4 pt-1">
+                            <div className={SEARCH_ROW}>
                                 {scope === 'Workflows' ? (
-                                    <WorkflowIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                    <WorkflowIcon className={SEARCH_ICON} />
                                 ) : scope === 'Credentials' ? (
-                                    <KeyRound className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                    <KeyRound className={SEARCH_ICON} />
                                 ) : (
-                                    <Search className="h-4 w-4 shrink-0 text-muted-foreground dark:text-zinc-500" />
+                                    <Search className={SEARCH_ICON} />
                                 )}
                                 <input
                                     ref={inputRef}
@@ -777,7 +787,7 @@ export function CommandPalette() {
                                               )?.label ?? 'Search…'
                                             : 'Search workflows, settings, actions…'
                                     }
-                                    className="h-12 w-full bg-transparent text-sm text-foreground placeholder:text-[hsl(var(--placeholder))] focus:outline-none"
+                                    className={SEARCH_INPUT}
                                 />
                                 <KeyHint keys={['esc']} />
                             </div>
@@ -785,10 +795,10 @@ export function CommandPalette() {
                             {/* Results */}
                             <div
                                 ref={listRef}
-                                className="max-h-[38vh] overflow-y-auto scrollbar-subtle p-1.5"
+                                className={LIST}
                             >
                                 {rows.length === 0 ? (
-                                    <div className="px-3 py-8 text-center text-sm text-muted-foreground dark:text-zinc-500">
+                                    <div className={EMPTY}>
                                         {query
                                             ? `No results for “${query}”`
                                             : scope === 'Credentials'
@@ -802,7 +812,8 @@ export function CommandPalette() {
                                         row.type === 'header' ? (
                                             <div
                                                 key={`h:${row.title}:${i}`}
-                                                className="px-2.5 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wide text-muted-foreground dark:text-zinc-500 first:pt-1.5"
+                                                data-cmd-section
+                                                className={SECTION}
                                             >
                                                 {row.title}
                                             </div>
@@ -825,7 +836,7 @@ export function CommandPalette() {
                             </div>
 
                             {/* Footer */}
-                            <div className="flex items-center gap-4 border-t border-border dark:border-white/[0.06] px-4 py-2.5 text-[11px] text-muted-foreground dark:text-zinc-500">
+                            <div className={FOOTER}>
                                 <span className="flex items-center gap-1.5">
                                     <KeyHint keys={['up', 'down']} /> Navigate
                                 </span>
@@ -865,11 +876,12 @@ function CommandRow({
         <button
             type="button"
             data-cmd-index={index}
+            data-active={active || undefined}
             onMouseMove={onHover}
             onClick={onSelect}
             className={cn(
-                'group flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors',
-                active ? 'bg-foreground/[0.08]' : 'hover:bg-foreground/[0.04]'
+                'group flex h-11 w-full items-center gap-3.5 rounded-[16px] px-3 text-left outline-none transition-colors',
+                active && 'bg-foreground/[0.07]'
             )}
         >
             {cmd.iconColor !== undefined ? (
@@ -880,14 +892,9 @@ function CommandRow({
                     className="h-[18px] w-[18px] shrink-0"
                 />
             ) : (
-                <Icon
-                    className={cn(
-                        'h-[18px] w-[18px] shrink-0',
-                        active ? 'text-foreground/80' : 'text-muted-foreground dark:text-zinc-500'
-                    )}
-                />
+                <Icon className="h-[18px] w-[18px] shrink-0 text-foreground/85 [stroke-width:1.75]" />
             )}
-            <span className="flex-1 truncate text-[13px] text-foreground">
+            <span className="flex-1 truncate text-[14.5px] text-foreground">
                 {cmd.label}
             </span>
             {cmd.nodeTypes && cmd.nodeTypes.length > 0 && (
@@ -906,7 +913,7 @@ function CommandRow({
                 />
             )}
             {cmd.meta && (
-                <span className="shrink-0 whitespace-nowrap text-[11px] text-muted-foreground dark:text-zinc-500">
+                <span className="shrink-0 whitespace-nowrap text-[12.5px] text-muted-foreground">
                     {cmd.meta}
                 </span>
             )}
@@ -928,12 +935,12 @@ function CommandRow({
                 <ArrowRight
                     className={cn(
                         'h-4 w-4 shrink-0',
-                        active ? 'text-muted-foreground' : 'text-muted-foreground/70 dark:text-zinc-600'
+                        active ? 'text-muted-foreground' : 'text-muted-foreground/60'
                     )}
                 />
             ) : (
                 active && (
-                    <CornerDownLeft className="h-3.5 w-3.5 shrink-0 text-muted-foreground dark:text-zinc-500" />
+                    <CornerDownLeft className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                 )
             )}
         </button>
@@ -968,42 +975,42 @@ function ShortcutsPage({ onBack }: { onBack: () => void }) {
         <div>
             {/* Single top row: a Back affordance, the search input, and an Esc hint
                 — mirrors the root palette so the panel has just one divider. */}
-            <div className="flex items-center gap-2.5 px-4">
+            <div className={cn(SEARCH_ROW, 'pl-3')}>
                 <button
                     type="button"
                     data-testid="command-palette-back"
                     onClick={onBack}
                     aria-label="Back"
-                    className="shrink-0 text-muted-foreground dark:text-zinc-500 hover:text-foreground"
+                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-foreground/[0.06] text-foreground/80 transition-colors hover:bg-foreground/[0.1] hover:text-foreground"
                 >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-[18px] w-[18px]" />
                 </button>
                 <input
                     ref={searchRef}
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
                     placeholder="Search shortcuts…"
-                    className="h-12 w-full bg-transparent text-sm text-foreground placeholder:text-[hsl(var(--placeholder))] focus:outline-none"
+                    className={SEARCH_INPUT}
                 />
                 <KeyHint keys={['esc']} />
             </div>
-            <div className="max-h-[38vh] overflow-y-auto scrollbar-subtle border-t border-border dark:border-white/[0.06] p-2">
+            <div className={LIST}>
                 {groups.length === 0 ? (
-                    <div className="px-3 py-8 text-center text-sm text-muted-foreground dark:text-zinc-500">
+                    <div className={EMPTY}>
                         No shortcuts for “{filter}”
                     </div>
                 ) : (
                     groups.map((g) => (
                         <div key={g.title}>
-                            <div className="px-2.5 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wide text-muted-foreground dark:text-zinc-500 first:pt-1.5">
+                            <div data-cmd-section className={SECTION}>
                                 {g.title}
                             </div>
                             {g.items.map((s) => (
                                 <div
                                     key={s.label}
-                                    className="flex items-center justify-between rounded-lg px-2.5 py-2"
+                                    className="flex h-10 items-center justify-between rounded-[14px] px-3"
                                 >
-                                    <span className="text-sm text-foreground/80">
+                                    <span className="text-[14.5px] text-foreground/90">
                                         {s.label}
                                     </span>
                                     <ShortcutKeys item={s} />

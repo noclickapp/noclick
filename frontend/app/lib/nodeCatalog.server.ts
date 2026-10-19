@@ -28,6 +28,7 @@ import {
     createRefResolver,
     getFieldsForOption,
 } from '~/utils/schemaFieldExtractor';
+import { credentialMarks, getNodeCredentialInfo } from '~/utils/nodeSchemas';
 import type {
     SerializedNodeMeta,
     OperationInfo,
@@ -223,11 +224,21 @@ const HARNESS_AGENT_LABELS: Record<string, string> = {
     hermes: 'Hermes',
 };
 
+let _credentialMarks: Map<string, string[]> | null = null;
+
 /** Serialized icon metadata for EVERY node type (for the authed app's icon paths),
  *  plus synthetic `agent:<harness>` entries so light surfaces (the workflow-browser
  *  card pill) can show an agent node's actual harness mark without brand imports. */
 export function getAllSerializedNodeMeta(): Record<string, SerializedNodeMeta> {
     const map = getSerializedNodeMetaMap(listAllNodeTypes());
+    _credentialMarks ??= credentialMarks((type) => !!map[type]?.iconHtml);
+    for (const [type, credentialKeys] of _credentialMarks) {
+        if (map[type]) map[type] = { ...map[type], credentialKeys };
+    }
+    for (const type of Object.keys(map)) {
+        const accepted = getNodeCredentialInfo(type)?.acceptedTypes;
+        if (accepted?.length) map[type] = { ...map[type], acceptedCredentialTypes: accepted };
+    }
     for (const [slug, label] of Object.entries(HARNESS_AGENT_LABELS)) {
         const icon = getHarnessIcon(slug);
         if (!icon.iconHtml) continue;

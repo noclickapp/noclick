@@ -22,6 +22,8 @@ redis==5.2.1
 soundfile==0.13.0
 httpx==0.28.1
 feedparser==6.0.11
+# The country a phone number belongs to (coordinator's default country for buying numbers)
+phonenumbers==9.0.41
 # Email body markdown rendering (utils/email_body.py)
 markdown-it-py==4.0.0
 # websockets might have a header limiter.

@@ -12,6 +12,7 @@
 
 import { useEffect, useState } from 'react';
 import { apiBaseUrl } from '~/lib/hostedDefaults';
+import { setCreditsPerDollar } from '~/lib/money';
 
 export interface InstanceCapabilities {
     /** Outbound email is configured (notification alerts can send). */
@@ -57,7 +58,9 @@ export function useInstanceCapabilities(): InstanceCapabilities {
                 if (!res.ok) return;
                 const body = await res.json();
                 if (!body?.capabilities || cancelled) return;
-                const resolved: InstanceCapabilities = { ...ASSUME_AVAILABLE, ...body.capabilities };
+                const { creditsPerDollar, ...reported } = body.capabilities;
+                if (typeof creditsPerDollar === 'number') setCreditsPerDollar(creditsPerDollar);
+                const resolved: InstanceCapabilities = { ...ASSUME_AVAILABLE, ...reported };
                 cached = resolved;
                 setCaps(resolved);
             } catch {

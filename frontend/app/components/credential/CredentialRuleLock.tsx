@@ -37,7 +37,7 @@ export function CredentialRuleLock({
             onClick={() => {
                 if (!disabled && !busy) onChange();
             }}
-            className={`group/lock inline-flex shrink-0 cursor-pointer items-center justify-center whitespace-nowrap rounded-md text-xs transition-colors duration-150 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring ${iconOnly ? 'h-7 w-7' : 'h-8 gap-2 px-2.5'} ${disabled ? 'cursor-not-allowed opacity-60' : ''} ${!iconOnly && !locked ? 'bg-foreground/[0.04]' : ''} ${locked ? 'bg-amber-500/[0.08] text-amber-600 hover:bg-amber-500/[0.14] dark:text-amber-400' : 'text-muted-foreground hover:bg-foreground/[0.08] hover:text-foreground'}`}
+            className={`group/lock inline-flex shrink-0 cursor-pointer items-center justify-center whitespace-nowrap rounded-full text-[12.5px] transition-colors duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${iconOnly ? 'h-7 w-7' : 'h-8 gap-2 pl-2.5 pr-3.5'} ${disabled ? 'cursor-not-allowed opacity-60' : ''} ${locked ? 'bg-foreground/[0.1] font-medium text-foreground ring-1 ring-inset ring-foreground/[0.14] hover:bg-foreground/[0.14]' : `text-muted-foreground hover:bg-foreground/[0.08] hover:text-foreground ${iconOnly ? '' : 'bg-foreground/[0.04]'}`}`}
         >
             <span
                 aria-hidden="true"

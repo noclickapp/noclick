@@ -29,12 +29,13 @@ from utils.credentials import (
     pick_credential_id,
     resolve_credential_with_owner_fallback,
 )
-from utils.access_control import check_resource_access, Permission
+from utils.access_control import check_resource_access, Permission, workflow_permission
 from utils.node_schema_tracker import track_node_schema
 from wss.schema import SocketIOHandler
 from wss.sender import send_event, is_sdk_client, WorkflowNodeStateEvent, WorkflowNodeOutputEvent, WorkflowStartedEvent, WorkflowCompleteEvent, ResponseEvent, CreditsExhaustedEvent
 from wss.receiver.client_events import WorkflowExecuteRequest
 from nodes import NodeFactory
+from nodes.core.base import FailureWithDiagnostics
 from nodes.core.strategy_registry import StrategyRegistry
 from nodes.core.execution_strategy import ExecutionContext
 from nodes.core.suspend_strategy import SUSPENDED_STATUSES
@@ -42,6 +43,7 @@ from nodes.agent.provider_errors import action_for_error_text, describe_failure
 from utils.slack import send_activity_notification_background, extract_user_name
 from utils.analytics import log_activity_background, set_person_properties_background
 from utils.analytics_events import Events
+from repositories.conversation import ConversationRepo
 from repositories.workflow import WorkflowRepo
 from billing.exceptions import InsufficientBalanceError
 logger = logging.getLogger(__name__)
@@ -77,6 +79,8 @@ class ConcurrentExecutionState:
     # persisted last-run record can show why a specific node failed, not just the
     # workflow-level first error.
     node_errors: Dict[str, str] = field(default_factory=dict)
+    # A failure's diagnostics (FailureWithDiagnostics), for triage only.
+    node_error_diagnostics: Dict[str, str] = field(default_factory=dict)
     last_output_node_id: Optional[str] = None
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -108,10 +112,13 @@ def build_node_run_statuses(
     failed: Set[str],
     skipped: Set[str],
     node_errors: Dict[str, str],
+    node_error_diagnostics: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Dict[str, Any]]:
     """Build the per-node last-run record persisted to the CAS (cas_manifests).
 
-    Returns {node_id: {"status": "completed"|"error"|"skipped", "error": <msg|None>}}.
+    Returns {node_id: {"status": "completed"|"error"|"skipped", "error": <msg|None>}},
+    a failure's ``diagnostics`` beside its error when it has them (held for
+    the run's triage, never persisted or sent to a browser).
     The finish timestamp is the row's created_at, so it isn't carried here. Pure
     function so it can be unit-tested without a DB. completed/failed are disjoint;
     skipped won't clobber a terminal status.
@@ -122,9 +129,27 @@ def build_node_run_statuses(
     for node_id in failed:
         err = node_errors.get(node_id)
         statuses[node_id] = {"status": "error", "error": str(err)[:2000] if err else None}
+        if (node_error_diagnostics or {}).get(node_id):
+            statuses[node_id]["diagnostics"] = node_error_diagnostics[node_id]
     for node_id in skipped:
         statuses.setdefault(node_id, {"status": "skipped", "error": None})
     return statuses
+
+
+VIEWER_RUNS_SAVED_GRAPH = "You can view this workflow, so it runs as saved. Ask for edit access to change what it runs."
+
+# What a chat turn changes on an agent for one run (the chat composer's
+# buildAgentChatRunOverride): all a viewer's run may change of the saved graph.
+CHAT_TURN_KEYS = frozenset({"message", "message_attachments", "conversation_key", "model"})
+
+
+def chat_turn_overrides_only(overrides: Optional[Dict[str, Dict[str, Any]]], nodes: List[Dict[str, Any]]) -> bool:
+    """Whether ``overrides`` only say a chat turn to the graph's agents."""
+    agents = {n.get("id") for n in nodes if n.get("type") == "agent"}
+    return all(
+        node_id in agents and isinstance(fields, dict) and set(fields) <= CHAT_TURN_KEYS
+        for node_id, fields in (overrides or {}).items()
+    )
 
 
 def apply_config_overrides(nodes: List[Dict[str, Any]], overrides: Optional[Dict[str, Dict[str, Any]]]) -> None:
@@ -185,6 +210,25 @@ class WorkflowExecutionResult:
     # What THIS run executed, node id -> {status, error}: ``node_outputs`` also
     # holds the context a sliced run preloads from earlier runs.
     node_statuses: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+
+
+def _charged_as_node(execute):
+    """Everything a node is charged for while it runs (a model turn, a tool it
+    calls, its sandbox's minutes) records the node and the run."""
+    import functools
+    import inspect
+
+    from billing.usage_tracker import running
+
+    signature = inspect.signature(execute)
+
+    @functools.wraps(execute)
+    async def charged(*args, **kwargs):
+        bound = signature.bind(*args, **kwargs).arguments
+        with running(node_id=(bound.get("node") or {}).get("id"), execution_id=bound.get("execution_id")):
+            return await execute(*args, **kwargs)
+
+    return charged
 
 
 class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
@@ -597,8 +641,35 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             workflow_org_id: Optional[str] = None
             workflow_variables: Dict[str, Any] = {}
             workflow_settings: Dict[str, Any] = {}
+            async def _deny(error: str) -> WorkflowExecutionResult:
+                await send_event(self.sio, sid, WorkflowCompleteEvent(
+                    execution_id="unknown", workflow_id=request.workflow_id, success=False,
+                    nodes_executed=0, duration=time.time() - start_time, error=error,
+                ), workflow_id=request.workflow_id)
+                return _result(success=False, nodes_executed=0, error=error)
+
+            # What a client may run. A run executes as the named workflow (its
+            # organization pays, its owner's credentials authorized for it
+            # resolve, its outputs and threads are written), so a client needs
+            # access to it; a graph of its own, or any change to the saved one
+            # beyond a chat turn, needs edit access. A server caller
+            # (caller_user_id) built its request for its user.
+            client_can_edit = True
+            if caller_user_id is None:
+                async with pool.acquire() as conn:
+                    permission = await workflow_permission(conn, user_id, request.workflow_id)
+                if permission is None:
+                    logger.error(f"[WorkflowExecution] Workflow {request.workflow_id} access denied for user {user_id}")
+                    return await _deny("Workflow not found or access denied")
+                client_can_edit = permission in (Permission.EDIT, Permission.OWNER)
+                sends_graph = any(
+                    graph is not None
+                    for graph in (request.nodes, request.edges, request.replay_nodes, request.replay_edges)
+                )
+                if sends_graph and not client_can_edit:
+                    return await _deny(VIEWER_RUNS_SAVED_GRAPH)
+
             if request.nodes is not None and request.edges is not None:
-                # Frontend provided nodes/edges directly
                 nodes = request.nodes
                 edges = request.edges
                 # Fetch the workflow's organization_id, variables, and settings
@@ -638,6 +709,24 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     ), workflow_id=request.workflow_id)
                     return _result(success=False, nodes_executed=0, error="Workflow not found or access denied")
                 nodes, edges, workflow_org_id, workflow_variables, workflow_settings = result
+
+            if not client_can_edit and not chat_turn_overrides_only(request.config_overrides, nodes):
+                return await _deny(VIEWER_RUNS_SAVED_GRAPH)
+            # Inputs become their node's output, so a viewer's may only stand in
+            # for what a trigger or a form would deliver, never for any node's.
+            if not client_can_edit and request.inputs:
+                from utils.graph_nodes import is_trigger_node
+
+                target = self._find_input_node(nodes, edges, request.start_node_id)
+                if not any(n.get("id") == target and is_trigger_node(n) for n in nodes):
+                    return await _deny(VIEWER_RUNS_SAVED_GRAPH)
+
+            # A client names its agents' memory only among conversations it may
+            # use; a server caller (caller_user_id) names its own.
+            if (caller_user_id is None and request.conversation_id
+                    and not await ConversationRepo(pool).run_may_use(
+                        request.conversation_id, user_id, request.workflow_id)):
+                return await _deny("This conversation can't be used for this run")
 
             use_execution_graph_for_snapshot = not (
                 request.replay_nodes is not None and request.replay_edges is not None
@@ -1114,13 +1203,14 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             # _persist_node_outputs pops the status record below.
             user_stopped = error_msg == USER_STOPPED_ERROR
             if not success and not user_stopped:
-                failed_node_label = failed_node_type = node_error = None
+                failed_node_label = failed_node_type = node_error = node_diagnostics = None
                 statuses = self._execution_node_statuses.get(execution_id) or {}
                 failed_id = next(
                     (nid for nid, s in statuses.items() if s.get('status') == 'error'), None,
                 )
                 if failed_id:
                     node_error = statuses[failed_id].get('error')
+                    node_diagnostics = statuses[failed_id].get('diagnostics')
                     failed_node = next(
                         (n for n in executable_nodes if n.get('id') == failed_id), None,
                     )
@@ -1130,7 +1220,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 self._maybe_alert_run_failure(
                     request, execution_id, user_id, node_error or error_msg,
                     node_label=failed_node_label, node_type=failed_node_type,
-                    duration=duration, organization_id=workflow_org_id,
+                    duration=duration, organization_id=workflow_org_id, diagnostics=node_diagnostics,
                 )
                 # Cross-workflow error routing — fire the picked workflow's
                 # on-error node (see WorkflowSettingsDialog). Sibling to the
@@ -1453,6 +1543,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         node_type: Optional[str] = None,
         duration: float = 0.0,
         organization_id: Optional[str] = None,
+        diagnostics: Optional[str] = None,
     ) -> None:
         """Fire-and-forget failure email for HEADLESS runs only. Manual runs
         show the error live on the canvas; webhook/cron/email/mcp/api runs are
@@ -1472,8 +1563,12 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
 
                 spawn(
                     record_run_failure(
+                        # The coordinator diagnoses with what the person never
+                        # sees (a harness's redacted log), kept apart from the
+                        # message it may quote back.
                         get_native_pool(), workflow_id=request.workflow_id, execution_id=execution_id,
                         error=error_msg, trigger_source=trigger_source, node_label=node_label,
+                        diagnostics=diagnostics,
                     ),
                     name=f"coordinator-failure-signal:{execution_id}",
                 )
@@ -2324,10 +2419,12 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         self, state: ConcurrentExecutionState
     ) -> Callable[[str, str], Any]:
         """Create a callback for marking a node as failed."""
-        async def mark_failed(node_id: str, error_msg: str) -> None:
+        async def mark_failed(node_id: str, error_msg: str, diagnostics: Optional[str] = None) -> None:
             async with state.lock:
                 state.failed.add(node_id)
                 state.node_errors[node_id] = error_msg
+                if diagnostics:
+                    state.node_error_diagnostics[node_id] = diagnostics
                 if state.first_error is None:
                     state.first_error = error_msg
         return mark_failed
@@ -2976,6 +3073,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     async with state.lock:
                         state.failed.add(node_id)
                         state.node_errors[node_id] = node_error
+                        if isinstance(e, FailureWithDiagnostics):
+                            state.node_error_diagnostics[node_id] = e.diagnostics
                         if state.first_error is None:
                             state.first_error = error_msg
 
@@ -2997,6 +3096,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             async with state.lock:
                 statuses = build_node_run_statuses(
                     state.completed, state.failed, state.skipped, state.node_errors,
+                    state.node_error_diagnostics,
                 )
             self._execution_node_statuses.setdefault(execution_id, {}).update(statuses)
 
@@ -3500,6 +3600,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             result['__state_input__'] = state_input
         return result
 
+    @_charged_as_node
     async def _execute_node(
         self,
         node: Dict[str, Any],
@@ -3659,7 +3760,11 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
 
         # For agent nodes, set workflow context for tool execution
         # This allows agents to execute downstream nodes when tools are called
-        if node_type == 'agent' and workflow_nodes and workflow_edges:
+        if node_type == 'agent' and workflow_nodes and not workflow_edges:
+            # Alone in its slice (a platform agent's turn): nothing to run downstream, but the agent reads its own
+            # config through the graph, the event delivered to it included. Edges stay unknown (None), as before.
+            node_instance.set_workflow_context(None, workflow_nodes, None)
+        elif node_type == 'agent' and workflow_nodes and workflow_edges:
             # Create a callback that executes the full downstream subgraph of a tool
             async def execute_tool_downstream(
                 tool_node_id: str,

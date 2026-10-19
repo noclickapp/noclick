@@ -27,6 +27,7 @@ import httpx
 from dataclasses import dataclass
 
 from nodes.agent.provider_errors import format_provider_message
+from nodes.core.connection_evidence import provider_message
 
 logger = logging.getLogger(__name__)
 
@@ -44,26 +45,11 @@ class Rejection:
     detail: str
 
     def message(self, context: str = "agent") -> str:
+        # The provider's own sentence out of its error body, as every connect-time rejection reads.
+        said = provider_message(self.detail)
         if context == "agent":
-            return format_provider_message(self.provider, self.kind, self.detail)
-        return format_provider_message(self.provider, f"{self.kind}_{context}", _provider_sentence(self.detail))
-
-
-def _provider_sentence(detail: str) -> str:
-    """The provider's own sentence out of its error body, for a form that is
-    not a debugging surface: ``{"error": {"message": "User not found."}}`` →
-    ``User not found.``. Anything unparseable is shown as it came."""
-    import json
-
-    try:
-        node = json.loads(detail or "")
-    except ValueError:
-        return detail
-    while isinstance(node, dict):
-        if isinstance(node.get("message"), str):
-            return node["message"]
-        node = node.get("error")
-    return detail
+            return format_provider_message(self.provider, self.kind, said)
+        return format_provider_message(self.provider, f"{self.kind}_{context}", said)
 
 
 def _extract_env(credential_data: Any) -> Dict[str, str]:
@@ -150,26 +136,22 @@ async def _probe_xai(key: str) -> Optional[str]:
     return None
 
 
-async def _probe_opencode(key: str) -> Optional[str]:
-    """OpenCode Zen validates a PROVIDED key even on its keyless free models —
-    a 1-token completion against a live free model is a definitive $0 auth
-    check (the /models endpoint ignores auth entirely, so it can't probe).
-    The probe model comes from the live servable set so free-tier rotation
-    can't rot it; no free model live → inconclusive → allow."""
-    from utils.opencode_zen import ZEN_TIER_BASE_URLS, get_zen_servable_ids
+# Zen's words for a key it can't place: its inference's, and its proxy's.
+_ZEN_INVALID_KEY = ("invalid credential", "invalid api key")
 
-    servable = await get_zen_servable_ids("opencode") or set()
-    probe_model = next((m for m in sorted(servable) if m.endswith("-free")), None)
-    if probe_model is None:
-        return None
+
+async def _probe_opencode(key: str) -> Optional[str]:
+    """Zen's /models serves a key its own workspace's models and answers a key
+    it can't place with 401 (anomalyco/opencode#54563), so a key is judged at
+    $0 without a completion; only a 401 that says the key is invalid refuses.
+    A completion can't judge one: the free tier refuses every caller outside
+    OpenCode before it reads the key (403 FreeTierError), and a paid model
+    would spend."""
+    from utils.opencode_zen import zen_models_url
+
     async with httpx.AsyncClient(timeout=_PROBE_TIMEOUT_S) as client:
-        resp = await client.post(
-            f"{ZEN_TIER_BASE_URLS['opencode']}/chat/completions",
-            headers={"Authorization": f"Bearer {key}"},
-            json={"model": probe_model, "max_tokens": 1,
-                  "messages": [{"role": "user", "content": "hi"}]},
-        )
-    if resp.status_code == 401:
+        resp = await client.get(zen_models_url("opencode"), headers={"Authorization": f"Bearer {key}"})
+    if resp.status_code == 401 and any(words in resp.text.lower() for words in _ZEN_INVALID_KEY):
         return Rejection("opencode", "invalid_key", resp.text)
     return None
 

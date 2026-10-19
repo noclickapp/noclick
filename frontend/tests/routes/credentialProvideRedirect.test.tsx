@@ -13,13 +13,15 @@ vi.mock('react-router', async (importOriginal) => ({
 vi.mock('~/lib/nodeCatalog.server', () => ({ getAllSerializedNodeMeta: () => ({}) }));
 vi.mock('~/components/credential/CredentialProvideFlow', () => ({
     formatCredentialType: (t: string) => t,
+    appNameForCredentialType: (t: string) => t,
     CredentialProvideFlow: ({ onDetails, onProvided }: {
         onDetails: (d: Record<string, unknown>) => void;
-        onProvided: () => void;
+        onProvided: (verification?: Record<string, unknown> | null) => void;
     }) => (
         <div>
             <button onClick={() => onDetails(mocks.details)}>load</button>
             <button onClick={() => onProvided()}>provide</button>
+            <button onClick={() => onProvided(null)}>provide unverified key</button>
         </div>
     ),
 }));
@@ -71,6 +73,16 @@ describe('provide page redirect', () => {
         expect(fetcher).not.toHaveBeenCalled();
         expect(assign).not.toHaveBeenCalled();
         expect(screen.getByTestId('provide-success-note').textContent).toContain('You can safely close this page');
+    });
+
+    it('says a key nothing vouched for is saved, never connected', async () => {
+        mocks.details = { ...baseDetails };
+        vi.stubGlobal('fetch', vi.fn());
+        render(<ProvideCredentialPage />);
+        fireEvent.click(screen.getByText('load'));
+        await act(async () => { fireEvent.click(screen.getByText('provide unverified key')); });
+        expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('affinity_api_key is saved');
+        expect(screen.getByText('Saved, not verified')).toBeTruthy();
     });
 
     it('shows why it could not return instead of hanging', async () => {

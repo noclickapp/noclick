@@ -9,6 +9,7 @@ from typing import Optional, Literal, NamedTuple
 from enum import Enum
 
 from repositories.workflow import get_workflow_owner_sql
+from utils.system_workflows import refusal
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,11 @@ class AccessResult(NamedTuple):
     has_access: bool
     permission: Permission
     via: Optional[str] = None  # "owner", "direct_share", "org_share"
+    system: Optional[str] = None  # what a workflow NoClick runs itself runs (``utils.system_workflows``)
+
+    def edit_refusal(self, default: str) -> str:
+        """Why the caller can't change this workflow: ``default``, unless NoClick runs it itself."""
+        return refusal(self.system) if self.system else default
 
 
 async def check_resource_access(
@@ -46,7 +52,8 @@ async def check_resource_access(
         resource_id: UUID of the resource
 
     Returns:
-        AccessResult with has_access, permission level, and how access was granted
+        AccessResult with has_access, permission level, and how access was granted.
+        A workflow NoClick runs itself is at most viewed (``system`` names it).
     """
     # First check if user is the owner
     if resource_type == "workflow":
@@ -63,7 +70,14 @@ async def check_resource_access(
         # Resource doesn't exist
         return AccessResult(False, Permission.NONE)
 
-    owner_id = str(owner_row["owner_id"])
+    result = await _access(conn, user_id, resource_type, resource_id, str(owner_row["owner_id"]))
+    system = owner_row.get("system") if resource_type == "workflow" else None
+    if system and result.has_access:
+        return result._replace(permission=Permission.VIEW, system=system)
+    return result
+
+
+async def _access(conn, user_id: str, resource_type: str, resource_id: str, owner_id: str) -> AccessResult:
     if owner_id == user_id:
         return AccessResult(True, Permission.OWNER, "owner")
 
@@ -161,6 +175,19 @@ async def check_resource_access(
             return AccessResult(True, perm, "org_folder_share")
 
     return AccessResult(False, Permission.NONE)
+
+
+async def workflow_permission(conn, user_id: str, workflow_id: Optional[str]) -> Optional[Permission]:
+    """``user_id``'s permission on a workflow named by a client, or None when
+    they have no access (or the id isn't a workflow id at all)."""
+    import uuid
+
+    try:
+        uuid.UUID(str(workflow_id))
+    except (TypeError, ValueError):
+        return None
+    access = await check_resource_access(conn, str(user_id), "workflow", str(workflow_id))
+    return access.permission if access.has_access else None
 
 
 async def has_view_access(

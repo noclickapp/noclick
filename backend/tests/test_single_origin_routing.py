@@ -154,10 +154,11 @@ def test_the_consent_page_belongs_to_the_app():
         ("/webhook/abc", BACKEND_UPSTREAM),
         ("/api/models", BACKEND_UPSTREAM),
         ("/api/public/instance-status", BACKEND_UPSTREAM),
+        ("/api/phone-numbers/documents", BACKEND_UPSTREAM),
         ("/.well-known/oauth-authorization-server", BACKEND_UPSTREAM),
     ],
 )
 def test_known_paths_go_where_they_should(path, upstream):
     """Both directions, because the app owns /api/auth while the backend owns
-    four other things under /api — the one place the split is not by prefix."""
+    other things under /api — the one place the split is not by prefix."""
     assert _resolve(path) == upstream

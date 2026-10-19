@@ -8,10 +8,10 @@ import type React from 'react';
 import { defaultStyles } from '@visx/tooltip';
 
 /* Theme-reactive: SVG fills/strokes accept CSS var() colors, so these follow
-   the .dark class live. Dark stays pixel-exact — --usage-chart-bg pins the
-   original zinc-950 panel, foreground/border match the old zinc-50/zinc-800. */
+   the .dark class live. A chart sits on its card and draws no panel of its
+   own; --usage-chart-bg is the tooltip's surface. */
 export const CHART_THEME = {
-    background: 'hsl(var(--usage-chart-bg))',
+    background: 'transparent',
     text: 'hsl(var(--foreground))',
     textMuted: 'hsl(var(--muted-foreground) / 0.75)',
     border: 'hsl(var(--border))',

@@ -3,19 +3,22 @@
 
 import { Children, Fragment, useEffect, useRef, useState, memo, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { type ExtraProps } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import remarkYoutube from '~/lib/remark-youtube';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import rehypeKatex from 'rehype-katex';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+// Async: each language's grammar loads with the first block that uses it, not every grammar with every chat.
+import { PrismAsync as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import panzoom from 'panzoom';
 import { cn } from '~/lib/utils';
 import { Copy, Check } from 'lucide-react';
 import { renderMermaidDiagram, initializeMermaid } from './mermaid/renderDiagram';
+import { RecordingCard, VideoCard } from '~/components/coordinator/inline/media';
+import { embedKindOf } from '~/lib/embedKind';
 import 'katex/dist/katex.min.css';
 
 export interface MarkdownRendererProps {
@@ -419,6 +422,13 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
     );
 }
 
+/** A paragraph that is only an audio or video embed: its player is a block, which a <p> can't hold. */
+function isMediaParagraph(node: ExtraProps['node']): boolean {
+    const kids = node?.children.filter((c) => !(c.type === 'text' && !c.value.trim())) ?? [];
+    const only = kids.length === 1 ? kids[0] : undefined;
+    return only?.type === 'element' && only.tagName === 'img' && embedKindOf(String(only.properties?.src ?? '')) !== 'image';
+}
+
 const MarkdownRendererComponent = function({ content, className, variant = 'default', hideHorizontalRules = false, cursor, onSandboxPathClick, breaks = false }: MarkdownRendererProps) {
     // Append the sentinel only while streaming. ReactMarkdown will land it
     // inside the last inline-text element (typically the final <p> or <li>),
@@ -475,7 +485,9 @@ const MarkdownRendererComponent = function({ content, className, variant = 'defa
                     ),
 
                     // Paragraphs and text
-                    p: ({ children }) => (
+                    p: ({ node, children }) => isMediaParagraph(node) ? (
+                        <div className="my-2">{children}</div>
+                    ) : (
                         <p className={cn(
                             "text-foreground/80 leading-relaxed",
                             isSimpleText ? "mb-0" : "mb-1.5"
@@ -612,14 +624,19 @@ const MarkdownRendererComponent = function({ content, className, variant = 'defa
                         );
                     },
 
-                    // Images
-                    img: ({ src, alt }) => (
-                        <img
-                            src={src}
-                            alt={alt}
-                            className="max-w-full h-auto rounded-lg my-2"
-                        />
-                    ),
+                    // Images, and the recordings and videos embedded the same way
+                    img: ({ src, alt }) => {
+                        const kind = typeof src === 'string' ? embedKindOf(src) : 'image';
+                        if (kind === 'audio') return <RecordingCard src={src} title={alt || 'Recording'} />;
+                        if (kind === 'video') return <VideoCard src={src} caption={alt || undefined} />;
+                        return (
+                            <img
+                                src={src}
+                                alt={alt}
+                                className="max-w-full h-auto rounded-lg my-2"
+                            />
+                        );
+                    },
                 }}
             >
                 {renderedContent}

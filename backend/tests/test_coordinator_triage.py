@@ -11,6 +11,7 @@ import pytest
 from coder.coordinator import signals
 from coder.coordinator.signals import record_agent_message, record_run_failure
 from coder.coordinator.tools import CoordinatorTools
+from utils import capabilities
 
 pytestmark = pytest.mark.asyncio
 
@@ -30,6 +31,8 @@ async def account(postgres_db, postgres_container, monkeypatch):
         f"{uuid.uuid4().hex[:8]}@example.com"))
     dispatched = []
     monkeypatch.setattr("utils.coordinator_dispatch.dispatch_event", AsyncMock(side_effect=lambda p, e: dispatched.append(e)))
+    # The coordinator triages here; an account an agent answers is cloud/tests/platform/test_coordinator_agent.py's.
+    monkeypatch.delitem(capabilities._providers, capabilities.ACCOUNT_AGENT, raising=False)
 
     async def workflow(name="Digest", nodes=None):
         return str(await pool.fetchval(
@@ -61,6 +64,29 @@ async def test_one_workflows_failures_fold_into_one_wakeup(account):
     row = await pool.fetchrow("SELECT repeats, payload FROM coordinator_signals WHERE workflow_id = $1::uuid", wf)
     assert row["repeats"] == 3 and row["payload"]["last_error"] == "Slack 401 again"
     assert len(dispatched) == 1
+
+
+async def test_a_failures_diagnostics_are_the_coordinators_context_and_never_the_owners_text(account):
+    """What the owner was shown is the error; a harness's log rides beside it
+    for the coordinator to diagnose with. Anything that reaches the owner
+    without the model (the summary of a turn that couldn't run) quotes the
+    error alone, and the model is told to say what the logs mean, never to
+    paste them."""
+    from coder.coordinator.wakeups import outcome_summary
+
+    pool, user_id, workflow, dispatched = account
+    wf = await workflow()
+    shown = "agent node agent-1 failed: nc_daemon boot failed: RuntimeError: OpenCode server exited before readiness"
+    logs = shown + "\n--- opencode log ---\nConfiguration is invalid at /root/.config/opencode/opencode.json"
+    assert await record_run_failure(pool, workflow_id=wf, execution_id=str(uuid.uuid4()), error=shown,
+                                    diagnostics=logs, trigger_source="cron") == "woke"
+    wake = await pool.fetchrow("SELECT source, payload FROM coordinator_wakeups WHERE id = $1", dispatched[0]["id"])
+    assert wake["payload"]["error"] == shown and wake["payload"]["diagnostics"] == logs
+    summary = outcome_summary({"source": wake["source"], "payload": wake["payload"]})
+    assert shown in summary and "Configuration is invalid" not in summary
+    # What the model is told about the logs is the coordinator prompt pack's.
+    assert signals.describe({"payload": wake["payload"]}) == signals.PROMPTS.run_failure_wakeup(
+        known_failure_days=signals.KNOWN_FAILURE_DAYS)
 
 
 async def test_the_same_error_again_stays_quiet_until_the_workflow_changes(account):
@@ -140,9 +166,9 @@ async def test_an_agent_can_message_the_coordinator_a_few_times_a_day(account):
 
 async def test_a_signal_wakeup_opens_with_triage_instructions():
     failure = signals.describe({"payload": {"kind": "run_failure"}})
+    assert failure == signals.PROMPTS.run_failure_wakeup(known_failure_days=signals.KNOWN_FAILURE_DAYS)
     assert "pause_workflow" in failure and "submit_feedback" in failure and "message_owner" in failure
-    assert "memory" in failure  # an owner's opt-out is a memory, honored on waking
-    assert "request_build" in signals.describe({"payload": {"kind": "agent_message"}})
+    assert signals.describe({"payload": {"kind": "agent_message"}}) == signals.PROMPTS.AGENT_MESSAGE_WAKEUP
 
 
 async def test_agent_messages_have_concurrent_account_and_node_caps(account, monkeypatch):

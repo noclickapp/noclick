@@ -17,6 +17,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from utils.access_control import Permission
+
 LOCAL_DSN = os.environ.get(
     "NC_TEST_POSTGRES_URL", "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
 )
@@ -159,7 +161,11 @@ async def test_handle_builder_decision_appends_and_acks(monkeypatch):
     )
     monkeypatch.setattr(
         "utils.access_control.check_resource_access",
-        AsyncMock(return_value=SimpleNamespace(has_access=True)),
+        AsyncMock(return_value=SimpleNamespace(has_access=True, permission=Permission.EDIT)),
+    )
+    # The proposal the verdict answers is in the caller's conversation.
+    monkeypatch.setattr(
+        "repositories.conversation.ConversationRepo.holds_event", AsyncMock(return_value=True)
     )
     handler.get_pool = AsyncMock(return_value=MagicMock(acquire=MagicMock(
         return_value=MagicMock(__aenter__=AsyncMock(), __aexit__=AsyncMock()))))
@@ -245,17 +251,17 @@ async def test_relay_builder_updates_composes_note_and_marks_once(monkeypatch):
     )
     monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: MagicMock())
 
+    from nodes.agent.platform_tools import PROMPTS
+
     note = await AgentNode._relay_builder_updates(SimpleNamespace(), "cid-1")
+    # Each event worded by the agent_platform_tools prompt pack, in order, under one platform note.
+    assert note == PROMPTS.builder_updates([PROMPTS.builder_update(e["kind"], e["payload"]) for e in fetched])
     assert note and "Platform note" in note
-    assert "p1: APPROVED" in note and "p2: DISMISSED" in note
-    # The parked ask lists inputs BY ID (builder_respond answers key on them),
-    # with options, plus the answer-vs-share guidance and the no-login link.
-    assert "[ask_0] Which channel? (config, required; options: #alerts | #general)" in note
-    assert "[ask_1] Connect Slack (credential, required)" in note
+    # The parked ask lists inputs BY ID (builder_respond answers key on them), and the no-login link.
+    assert "[ask_0] Which channel?" in note and "[ask_1] Connect Slack" in note
     assert "builder_respond" in note
-    assert "ONLY be connected by a human" in note
     assert "https://noclick.com/b/l1" in note
-    assert "FINISHED: Added a Slack provider." in note
+    assert "Added a Slack provider." in note
     assert marked == [
         ("builder_decision", "p1"), ("builder_decision", "p2"),
         ("builder_ask", "l1"), ("builder_result", "r1"),

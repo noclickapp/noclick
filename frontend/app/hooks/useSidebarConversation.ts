@@ -59,6 +59,13 @@ function liveGenConvForWorkflow(workflowId: string): string | null {
 
 export interface SidebarConversationApi {
     conversationId: string;
+    /** The workflow's chat is still being looked up: `conversationId` is a placeholder until it's found (or there's
+     *  none, and the placeholder stays). */
+    resolving: boolean;
+    /** Why the workflow's chat couldn't be looked up: `conversationId` is then a placeholder, not a new chat. */
+    error?: string;
+    /** Looks the workflow's chat up again. */
+    retry: () => void;
     setConversationId: (id: string) => void;
     startFreshConversation: () => void;
     switchToConversation: (id: string) => void;
@@ -68,12 +75,19 @@ export function useSidebarConversation(
     activeWorkflowId: string | null | undefined,
 ): SidebarConversationApi {
     const [conversationId, setConvIdState] = useState<string>(loadScratch);
+    const [resolving, setResolving] = useState(false);
+    const [error, setError] = useState<string>();
+    const [attempt, setAttempt] = useState(0);
+    const conversationRef = useRef(conversationId);
+    conversationRef.current = conversationId;
 
     // Resolve on workflow change. Synchronous-first sources (live gens,
     // local map), then async BE fallback with an optimistic placeholder
     // so a send during the lookup window doesn't write to the previous
     // slot's id.
     useEffect(() => {
+        setResolving(false);
+        setError(undefined);
         if (!activeWorkflowId) {
             setConvIdState(loadScratch());
             return;
@@ -92,13 +106,17 @@ export function useSidebarConversation(
         // No local knowledge → optimistic placeholder, then BE lookup.
         const optimistic = freshConversationId();
         setConvIdState(optimistic);
+        setResolving(true);
         let cancelled = false;
         void (async () => {
             try {
                 const lookup = await sendEventAsync(
                     GetLatestConversationForWorkflowRequest.create({ workflow_id: activeWorkflowId }),
-                ) as { conversation_id?: string | null };
+                ) as { conversation_id?: string | null; error?: string };
                 if (cancelled) return;
+                // A chat the person started or picked meanwhile is theirs.
+                if (conversationRef.current !== optimistic) return;
+                if (lookup.error) throw new Error(lookup.error);
                 // Race-check: if the user already sent on the optimistic id,
                 // their active work wins.
                 if (activeGenStore.byConversation[optimistic]?.length) {
@@ -113,11 +131,19 @@ export function useSidebarConversation(
                 // else: keep the optimistic — it'll be recorded when the
                 // user sends and a gen registers (the mirror effect below).
             } catch (err) {
+                // Not an empty chat: the placeholder stands in for one that couldn't be looked up.
                 console.warn('[useSidebarConversation] lookup failed', err);
+                if (!cancelled && conversationRef.current === optimistic) {
+                    setError(err instanceof Error ? err.message : String(err));
+                }
+            } finally {
+                if (!cancelled) setResolving(false);
             }
         })();
         return () => { cancelled = true; };
-    }, [activeWorkflowId]);
+    }, [activeWorkflowId, attempt]);
+
+    const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
     // Subscribe to activeGenStore — adopt any gen that appears for the
     // currently-active workflow, and record (workflow_id, conv_id) pairs
@@ -159,6 +185,8 @@ export function useSidebarConversation(
 
     const setConversationId = useCallback((id: string) => {
         setConvIdState(id);
+        setResolving(false);
+        setError(undefined);
         if (activeWorkflowId) {
             recordMapping(activeWorkflowId, id);
         } else {
@@ -179,6 +207,9 @@ export function useSidebarConversation(
 
     return {
         conversationId,
+        resolving,
+        error,
+        retry,
         setConversationId,
         startFreshConversation,
         switchToConversation,

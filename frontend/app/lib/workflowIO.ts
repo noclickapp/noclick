@@ -5,6 +5,7 @@
 import type { Node, Edge } from '@xyflow/react';
 import { parseClipboardContent } from '~/utils/clipboard-parsers';
 import { buildSaveConfig } from '~/lib/applyNodeUpdate';
+import { downloadText } from '~/lib/download';
 
 // ─── Export ───────────────────────────────────────────────────────────────────
 
@@ -40,18 +41,9 @@ export function buildWorkflowExport(nodes: Node[], edges: Edge[], workflowTitle:
     return JSON.stringify(workflowData, null, 2);
 }
 
-// Trigger a browser download of the given JSON string. Creates a transient
-// anchor element, clicks it, and revokes the object URL afterwards.
+// Trigger a browser download of the given JSON string.
 export function downloadWorkflowJson(jsonString: string, filename: string): void {
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${filename || 'workflow'}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    downloadText(jsonString, `${filename || 'workflow'}.json`, 'application/json');
 }
 
 // Convenience wrapper around buildWorkflowExport + downloadWorkflowJson.

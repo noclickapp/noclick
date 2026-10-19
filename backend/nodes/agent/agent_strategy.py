@@ -18,6 +18,7 @@ per-harness branching in the engine.
 import logging
 from typing import Dict, Set
 
+from nodes.core.base import FailureWithDiagnostics
 from nodes.core.execution_strategy import (
     ExecutionContext,
     ExecutionResult,
@@ -117,7 +118,9 @@ class AgentExecutionStrategy:
         except Exception as e:
             error_msg = f"agent node {node_id} failed: {e}"
             logger.error("[AgentExecutionStrategy] %s", error_msg)
-            await ctx.mark_failed(node_id, error_msg)
+            diagnostics = f"agent node {node_id} failed: {e.diagnostics}" \
+                if isinstance(e, FailureWithDiagnostics) else None
+            await ctx.mark_failed(node_id, error_msg, diagnostics=diagnostics)
             await ctx.emit_state(node_id, node_type, "error", str(e))
             # body_nodes_handled MUST be empty on failure: the node is in
             # state.failed, so successors cascade-skip normally (which sets

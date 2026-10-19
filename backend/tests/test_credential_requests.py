@@ -349,6 +349,31 @@ class TestCredentialRequestHTTPAPI:
             await get_credential_request('nonexistent_token')
         assert exc_info.value.status_code == 404
 
+    async def test_get_request_details_of_an_ended_request_says_how_it_ended(self, real_database, db, setup_db):
+        """A page holding a request it can no longer provide tells a connected account from a lapsed link: the 410
+        names the status, and a fulfilled request names the credential it made (a re-scan that repaired an
+        existing account made nothing new to find by date)."""
+        from utils.credential_request_routes import get_credential_request
+        from fastapi import HTTPException
+
+        async def ended():
+            with pytest.raises(HTTPException) as exc_info:
+                await get_credential_request(setup_db['token'])
+            assert exc_info.value.status_code == 410
+            return exc_info.value.detail
+
+        db.execute("UPDATE credential_requests SET expires_at = NOW() - INTERVAL '1 day' WHERE id = $1", setup_db['request_id'])
+        assert await ended() == {"message": "This credential request has expired", "status": "expired"}
+        db.execute("UPDATE credential_requests SET status = 'cancelled' WHERE id = $1", setup_db['request_id'])
+        assert await ended() == {"message": "This credential request has already been cancelled", "status": "cancelled"}
+        cred_id = str(db.fetchrow(
+            "INSERT INTO credentials (owner_id, name, credential_type, credential) VALUES ($1, 'Key', 'openai_api_key', 'enc') RETURNING id",
+            TEST_USER_ID,
+        )['id'])
+        db.execute("UPDATE credential_requests SET status = 'fulfilled', credential_id = $2 WHERE id = $1", setup_db['request_id'], cred_id)
+        assert await ended() == {"message": "This credential request has already been fulfilled", "status": "fulfilled",
+                                 "credential_id": cred_id}
+
     @pytest.fixture
     def phone_only_request(self, db):
         """A request minted by a WhatsApp-signup account: auth.users.email is NULL."""
@@ -518,6 +543,7 @@ class TestCredentialRequestHTTPAPI:
         detail = exc_info.value.detail
         assert 'web address' in detail['field_errors']['api_key']
         assert detail['message'] == detail['field_errors']['api_key']
+        assert detail['reachable'] is None, 'a shape problem is not the provider refusing'
 
         assert db.fetchrow("SELECT 1 FROM credentials WHERE credential_type = 'firecrawl_api_key'") is None
         req_row = db.fetchrow("SELECT status FROM credential_requests WHERE id = $1", node_request['request_id'])
@@ -1128,9 +1154,31 @@ class TestWhatsAppQRProvideLink:
         assert result['qr_code'] == 'QR=='
         mock_start.assert_awaited_once_with(ANY, owner_id=TEST_USER_ID)
 
+    @patch('utils.whatsapp_qr.start_qr_connection', new_callable=AsyncMock)
+    async def test_qr_start_without_the_requesters_credits_is_payment_required(self, mock_start, real_database, setup_db):
+        """The requester pays for the connection: its credit gate refusing is a 402, not a provider failure."""
+        from fastapi import HTTPException
+        from utils.credential_request_routes import qr_start
+        from utils.whatsapp_qr import INSUFFICIENT_CREDITS
+
+        mock_start.return_value = {'success': False, 'code': INSUFFICIENT_CREDITS,
+                                   'message': 'add funds. Insufficient credits: 0.00 < 0.20 required'}
+        with pytest.raises(HTTPException) as exc:
+            await qr_start(setup_db['token'])
+        assert exc.value.status_code == 402 and "Insufficient credits" in exc.value.detail
+
+        # So is the requester's own monthly spending cap.
+        from utils.whatsapp_qr import SPEND_CAP
+
+        mock_start.return_value = {'success': False, 'code': SPEND_CAP, 'message': "You've hit your $5 monthly cap"}
+        with pytest.raises(HTTPException) as exc:
+            await qr_start(setup_db['token'])
+        assert exc.value.status_code == 402 and exc.value.detail == "You've hit your $5 monthly cap"
+
+    @patch('utils.event_relay.broadcast_to_user_safe', new_callable=AsyncMock, return_value={"success": True})
     @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
     @patch('utils.whatsapp_qr.finalize_qr_connection', new_callable=AsyncMock)
-    async def test_qr_status_fulfills_request_for_requester(self, mock_finalize, mock_email, real_database, db, setup_db):
+    async def test_qr_status_fulfills_request_for_requester(self, mock_finalize, mock_email, mock_broadcast, real_database, db, setup_db):
         """On connect, /qr/status binds via the core (owner = requester) and CAS-fulfils
         the request with the minted credential; copy-link requests send no email."""
         from utils.credential_request_routes import qr_status, QRStatusBody
@@ -1167,6 +1215,13 @@ class TestWhatsAppQRProvideLink:
         assert str(req['credential_id']) == cred_id
         # Copy-link request (empty target_email) → no fulfillment email.
         mock_email.assert_not_called()
+        # The requester's open pages hear it: a card showing this QR folds when the phone scans it.
+        await asyncio.sleep(0)
+        mock_broadcast.assert_awaited_once()
+        user_id, event = mock_broadcast.await_args.args
+        assert user_id == TEST_USER_ID and event.event_name == "credential_request:fulfilled"
+        assert event.model_dump() == {"request_id": setup_db['request_id'], "credential_id": cred_id,
+                                      "credential_type": "whatsapp_qr"}
 
     @patch('utils.whatsapp_qr.finalize_qr_connection', new_callable=AsyncMock)
     async def test_qr_status_for_a_held_request_never_rebinds_owner_rows(self, mock_finalize, real_database, db, setup_db):
@@ -1296,3 +1351,11 @@ class TestCredentialTypeOverride:
             "SELECT credential_type FROM credentials ORDER BY created_at DESC LIMIT 1"
         )
         assert cred_row['credential_type'] == 'slack_bot_token'
+
+
+def test_a_provide_method_reads_its_class_title_not_its_schema_key():
+    """Instagram's Facebook sign-in is titled "Instagram with Facebook Login"; its $defs key would read InstagramOAuth."""
+    from utils.credential_request_routes import _get_credential_method
+
+    assert _get_credential_method('instagram_oauth')['label'] == 'Instagram with Facebook Login'
+    assert _get_credential_method('postgres_credentials')['label'] != 'Postgress'

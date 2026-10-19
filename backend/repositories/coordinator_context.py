@@ -1,16 +1,7 @@
 """Checkpoint bookkeeping only. All retained semantic context lives in a visible memory."""
 
-import hashlib
-import json
-
+from coder.openai_agent.compaction import fingerprint  # noqa: F401 (callers read it here too)
 from repositories.coordinator_memories import CoordinatorMemoryRepo, MemoryConflict
-from coder.openai_agent.session import _strip_runtime_fields
-from coder.openai_agent.output_limits import clip_history_item
-
-
-def fingerprint(items):
-    normalized = [clip_history_item(_strip_runtime_fields(item)) for item in items]
-    return hashlib.sha256(json.dumps(normalized, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
 
 
 class CoordinatorContextRepo:

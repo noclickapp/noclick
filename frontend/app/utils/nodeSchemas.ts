@@ -858,6 +858,51 @@ function getProviderLabel(providerKey: string): string {
 }
 
 /**
+ * The keys a stored credential of each of this node's credential classes may carry: the class's
+ * `credential_type` const, its mapped type, and its lowercased raw schema title (legacy SDK-created
+ * credentials stored the title verbatim, e.g. `instagrampageaccesstokencredential`).
+ */
+export function credentialKeysOf(nodeType: string): string[] {
+    const schema = NODE_SCHEMAS[nodeType];
+    const credProp = schema?.$defs ? schema.properties?.credentials : undefined;
+    if (!credProp) return [];
+    const refs: string[] = [];
+    if (credProp.$ref) refs.push(credProp.$ref.split('/').pop()!);
+    for (const entry of credProp.anyOf ?? []) {
+        if (entry.$ref) refs.push(entry.$ref.split('/').pop()!);
+    }
+    const keys = new Set<string>();
+    for (const title of refs) {
+        const defn = schema.$defs[title];
+        if (!defn) continue;
+        keys.add(getCredentialTypeFromSchemaTitle(title));
+        keys.add(title.toLowerCase());
+        const constVal = defn.properties?.credential_type?.const;
+        if (constVal) keys.add(constVal);
+    }
+    keys.delete('');
+    return [...keys];
+}
+
+/**
+ * Node type → the credential keys that wear its mark: each key goes to the first node schema (in NODE_SCHEMAS order)
+ * declaring it among those `hasIcon` accepts. Serialized with the node catalog (credentialKeys) so credential icons
+ * resolve without this bundle.
+ */
+export function credentialMarks(hasIcon: (nodeType: string) => boolean): Map<string, string[]> {
+    const claimed = new Set<string>();
+    const marks = new Map<string, string[]>();
+    for (const type of Object.keys(NODE_SCHEMAS)) {
+        if (!hasIcon(type)) continue;
+        const keys = credentialKeysOf(type).filter((key) => !claimed.has(key));
+        if (!keys.length) continue;
+        keys.forEach((key) => claimed.add(key));
+        marks.set(type, keys);
+    }
+    return marks;
+}
+
+/**
  * Extract credential info from a node schema.
  * Returns info about what credentials the node requires, or undefined if no credentials needed.
  *

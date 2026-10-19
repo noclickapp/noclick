@@ -540,7 +540,7 @@ Worth knowing before you deploy:
 - **Publishing interfaces as standalone apps is hosted-only.** The Settings tab
   for that managed publishing service is hidden here. Interfaces still work
   inside the app; expose one publicly through infrastructure you operate.
-- **No Billing tab** — there is nothing to bill. Usage still tracks real model
+- **No Plan and billing section** — there is nothing to bill. Usage still tracks real model
   spend, so you can see what your providers cost you.
 - **Operations the cloud runs on NoClick's own keys** (Exa, Perplexity,
   LinkedIn/Instagram scraping via Apify) need an instance key or a user

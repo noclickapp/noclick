@@ -75,13 +75,15 @@ export default async function () {
         }
     }
 
-    // Route gate: with a light preference, non-dashboard paths must force dark.
+    // Route gates: with a light preference, the dashboard and the marketing pages go light, and
+    // the paths still built dark-only (the docs, shared links) keep forcing dark.
     setTheme('light');
     applyTheme('/pricing');
-    const marketingForcedDark =
-        document.documentElement.classList.contains('dark');
+    const pricingLight = !document.documentElement.classList.contains('dark');
     applyTheme('/integrations/slack');
-    const nestedForcedDark = document.documentElement.classList.contains('dark');
+    const integrationsLight = !document.documentElement.classList.contains('dark');
+    applyTheme('/docs/guide/getting-started');
+    const docsForcedDark = document.documentElement.classList.contains('dark');
     applyTheme('/dashboard');
     const dashboardLight = !document.documentElement.classList.contains('dark');
 
@@ -90,18 +92,24 @@ export default async function () {
     await new Promise((r) => setTimeout(r, 100));
     freeze.remove();
 
-    nc.assert.equal(marketingForcedDark, true, '/pricing must stay dark');
-    nc.assert.equal(nestedForcedDark, true, '/integrations/* must stay dark');
+    nc.assert.equal(pricingLight, true, '/pricing honors a light preference');
+    nc.assert.equal(integrationsLight, true, '/integrations/* honors a light preference');
+    nc.assert.equal(docsForcedDark, true, '/docs stays dark');
     nc.assert.equal(dashboardLight, true, '/dashboard honors light preference');
-    nc.assert.falsy(isThemedPath('/'), 'landing is not themed');
+    nc.assert.truthy(isThemedPath('/') && isThemedPath('/pricing'), 'the landing and /pricing are themed');
+    for (const path of ['/templates', '/agents/codex', '/alternatives/zapier', '/mcp', '/app-builder', '/workflow/some-template', '/privacy-policy', '/auth/login']) {
+        nc.assert.truthy(isThemedPath(path), `${path} is themed`);
+    }
+    nc.assert.falsy(isThemedPath('/docs') || isThemedPath('/share/abc'), 'the docs and shared links are not themed');
     nc.assert.truthy(isThemedPath('/dashboard'), 'dashboard is themed');
 
     return {
         scannedElements: els.length,
         lowContrast: offenders.slice(0, 25),
         lowContrastCount: offenders.length,
-        marketingForcedDark,
-        blogForcedDark,
+        pricingLight,
+        integrationsLight,
+        docsForcedDark,
         dashboardLight,
         restoredTo: originalTheme,
     };

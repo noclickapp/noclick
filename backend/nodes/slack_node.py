@@ -164,7 +164,7 @@ class SlackOAuthCredential(BaseModel):
 
 
 class SlackBotTokenCredential(BaseModel):
-    """Bot Token credential for Slack. Get your Bot Token at: https://api.slack.com/apps (OAuth & Permissions page) Bot tokens start with 'xoxb-'"""
+    """Bot Token credential for Slack. Copy the Bot User OAuth Token from your app's OAuth & Permissions page at https://api.slack.com/apps. Bot tokens start with 'xoxb-'."""
 
     credential_type: Literal["slack_bot_token"] = Field(
         "slack_bot_token", json_schema_extra={"ui:hidden": True}

@@ -37,6 +37,15 @@ describe('feature gates', () => {
         expect(isFeatureEnabled('phone_numbers', 'other@example.com')).toBe(false);
     });
 
+    it('lets in every address at a domain named with a leading @, and no other', () => {
+        Object.assign(FEATURE_ROLLOUT, { phone_numbers: 'internal' });
+        allowAccounts('phone_numbers', ['@QA.Example.test']);
+        expect(isFeatureEnabled('phone_numbers', 'todoist-qa-20260929@qa.example.test')).toBe(true);
+        expect(isFeatureEnabled('phone_numbers', 'someone@example.test')).toBe(false);
+        expect(isFeatureEnabled('phone_numbers', 'someone@sub.qa.example.test')).toBe(false);
+        expect(isFeatureEnabled('phone_numbers', 'qa.example.test')).toBe(false);
+    });
+
     it('opens an everyone feature to every account, signed in or not', () => {
         expect(FEATURE_ROLLOUT.phone_channel).toBe('everyone');
         expect(isFeatureEnabled('phone_channel', 'customer@example.com')).toBe(true);
@@ -46,6 +55,9 @@ describe('feature gates', () => {
     it('mirrors the backend rollout table one feature at a time', () => {
         // The backend enforces; this table only hides surfaces. A feature must
         // exist on both sides under the same name (backend/utils/feature_gates.py).
-        expect(Object.keys(FEATURE_ROLLOUT)).toEqual(['phone_channel', 'coordinator', 'phone_numbers', 'credential_proxy']);
+        expect(Object.keys(FEATURE_ROLLOUT)).toEqual([
+            'phone_channel', 'coordinator', 'phone_numbers', 'credential_proxy', 'auto_topup', 'free_member',
+            'coordinator_agent',
+        ]);
     });
 });

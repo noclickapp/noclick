@@ -18,6 +18,10 @@ interface FolderBreadcrumbsProps {
     folderPath: BreadcrumbSegment[];
     onNavigate: (folderId: string | null) => void;
     className?: string;
+    /** The root crumb's name; without one it reads "All" beside a home icon. */
+    rootLabel?: string;
+    /** False when the page titles the current folder itself: the trail stops at its parent. */
+    includeCurrent?: boolean;
 }
 
 // Individual droppable breadcrumb segment
@@ -48,9 +52,17 @@ export function FolderBreadcrumbs({
     folderPath,
     onNavigate,
     className,
+    rootLabel,
+    includeCurrent = true,
 }: FolderBreadcrumbsProps) {
     // Path is derived from the shared folder tree in the parent — no backend fetch needed
-    const path = folderPath;
+    const path = includeCurrent ? folderPath : folderPath.slice(0, -1);
+    const root = rootLabel ?? (
+        <>
+            <Home className="w-4 h-4" />
+            <span>All</span>
+        </>
+    );
 
     // If no folder selected, show root only
     if (!folderId) {
@@ -60,8 +72,12 @@ export function FolderBreadcrumbs({
                     onClick={() => onNavigate(null)}
                     className="flex items-center gap-1.5 px-2 py-1 rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
                 >
-                    <Home className="w-4 h-4" />
-                    <span>All Workflows</span>
+                    {rootLabel ?? (
+                        <>
+                            <Home className="w-4 h-4" />
+                            <span>All Workflows</span>
+                        </>
+                    )}
                 </button>
             </div>
         );
@@ -73,22 +89,25 @@ export function FolderBreadcrumbs({
             <DroppableCrumb
                 folderId={null}
                 onClick={() => onNavigate(null)}
-                className="flex items-center gap-1.5 px-2 py-1 rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground flex-shrink-0"
+                className={cn(
+                    'flex items-center gap-1.5 rounded-md transition-colors text-muted-foreground hover:text-foreground flex-shrink-0',
+                    rootLabel ? 'px-1 py-0.5 text-[13px]' : 'px-2 py-1 hover:bg-accent'
+                )}
             >
-                <Home className="w-4 h-4" />
-                <span>All</span>
+                {root}
             </DroppableCrumb>
 
             {/* Breadcrumb Path — each segment is a droppable target */}
             {path.map((segment, index) => (
                 <div key={segment.id} className="flex items-center gap-1 flex-shrink-0">
-                    <ChevronRight className="w-4 h-4 text-muted-foreground/70 dark:text-zinc-600" />
+                    <ChevronRight className={cn('text-muted-foreground/70 dark:text-zinc-600', rootLabel ? 'h-3.5 w-3.5' : 'w-4 h-4')} />
                     <DroppableCrumb
                         folderId={segment.id}
                         onClick={() => onNavigate(segment.id)}
                         className={cn(
-                            'px-2 py-1 rounded hover:bg-accent transition-colors truncate max-w-[150px]',
-                            index === path.length - 1
+                            'rounded transition-colors truncate max-w-[150px]',
+                            rootLabel ? 'px-1 py-0.5 text-[13px]' : 'px-2 py-1 hover:bg-accent',
+                            includeCurrent && index === path.length - 1
                                 ? 'text-foreground font-medium'
                                 : 'text-muted-foreground hover:text-foreground'
                         )}
@@ -97,6 +116,8 @@ export function FolderBreadcrumbs({
                     </DroppableCrumb>
                 </div>
             ))}
+            {/* The page titles the current folder: the trail ends pointing at it. */}
+            {!includeCurrent && <ChevronRight className={cn('flex-shrink-0 text-muted-foreground/70 dark:text-zinc-600', rootLabel ? 'h-3.5 w-3.5' : 'w-4 h-4')} />}
         </div>
     );
 }

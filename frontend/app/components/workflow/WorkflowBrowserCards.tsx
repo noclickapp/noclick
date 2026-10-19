@@ -49,7 +49,7 @@ export function relativeShort(iso?: string): string {
 // shared cards; node count lands in the time pill's tooltip in that case.
 export function formatWorkflowLeadingPill(w: WorkflowApp): string {
     if (w.is_owner === false && w.owner_name) return w.owner_name;
-    if (typeof w.node_count !== 'number') return 'Workflow';
+    if (typeof w.node_count !== 'number') return 'Automation';
     return `${w.node_count} ${w.node_count === 1 ? 'node' : 'nodes'}`;
 }
 
@@ -234,7 +234,7 @@ export const FolderCard = ({
                 {folder.workflow_count > 0 && (
                     <div className="absolute bottom-2 right-2 z-10">
                         <span className="text-[0.625rem] px-2 py-1 rounded-full backdrop-blur-sm bg-blue-600/40 text-blue-700 dark:text-blue-300">
-                            {folder.workflow_count} workflow
+                            {folder.workflow_count} automation
                             {folder.workflow_count !== 1 ? 's' : ''}
                         </span>
                     </div>

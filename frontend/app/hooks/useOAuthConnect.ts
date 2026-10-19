@@ -22,6 +22,7 @@ import {
     useWordPressOAuth, useSupabaseOAuth, useParallelOAuth, useQuickBooksOAuth, useZoomOAuth, useCalendlyOAuth, useSentryOAuth, useThreadsOAuth, useCloudflareOAuth, usePostHogOAuth, useApolloOAuth, useMetaOAuth, useInstagramLoginOAuth,
 } from '~/hooks/oauth';
 import type { AtlassianSiteSuggestion } from '~/hooks/oauth/useAtlassianOAuth';
+import { useOAuthSignInStandIn } from '~/hooks/oauth/OAuthExchangeContext';
 
 export interface OAuthSelectionOption {
     id: string;
@@ -275,6 +276,7 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         metaOAuth, instagramLoginOAuth,
     ]);
 
+    const signInStandIn = useOAuthSignInStandIn();
     const connect = useCallback((
         provider: string,
         name: string,
@@ -297,6 +299,12 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         setPendingSelection(null);
         atlassianSuggestionRef.current = null;
         pendingSelectionResolverRef.current = null;
+        if (signInStandIn) {
+            signInStandIn(provider).then(createSuccessHandler(provider), (e) =>
+                createErrorHandler(provider)(e instanceof Error ? e.message : String(e))
+            );
+            return;
+        }
 
         if (provider === 'shopify' && shopName) {
             hook.connect(name, shopName, scopes || [], customClientCredentials?.client_id, customClientCredentials?.client_secret);
@@ -326,7 +334,7 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         } else {
             hook.connect(name, scopes || []);
         }
-    }, [oauthHookMap, onError]);
+    }, [oauthHookMap, onError, signInStandIn, createSuccessHandler, createErrorHandler]);
 
     // Tenant-wide admin consent (Microsoft's "Need admin approval" wall): the same popup
     // engine, provider-gated. Only factory hooks take the options arg, and only they carry

@@ -9,6 +9,8 @@ export interface DrawerOptions {
     resizable?: boolean;
     /** Apply emphasized treatment: dim the rest of the screen and animate a glow border around the drawer. Use for blocking flows like input requests. Default: false */
     emphasized?: boolean;
+    /** Sit in the page's flow just above the composer (DockedDrawer) instead of sliding up over the thread. */
+    docked?: boolean;
 }
 
 interface DrawerState {

@@ -6,7 +6,7 @@
  * limits (typically 8-16) that cause blank canvases when many cards are visible.
  */
 
-import { useMemo, memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 // Simplex noise implementation for organic grain
 const SIMPLEX_NOISE_GLSL = `
@@ -261,10 +261,11 @@ function createProgram(
 }
 
 // ============================================================================
-// Shared WebGL renderer — single context, renders to cached data URLs
+// Shared WebGL renderer — single context, renders to cached image URLs
 // ============================================================================
 
 const gradientCache = new Map<string, string>();
+const pendingGradients = new Map<string, Promise<string>>();
 
 let sharedGL: {
     canvas: HTMLCanvasElement;
@@ -299,13 +300,20 @@ function getSharedGL(): typeof sharedGL {
     return sharedGL;
 }
 
-function renderToDataURL(identifier: string, width: number, height: number): string {
-    const cacheKey = `${identifier}-${width}x${height}`;
+const gradientKey = (identifier: string, width: number, height: number) => `${identifier}-${width}x${height}`;
+
+/** Draws one gradient on the shared context and encodes it: toBlob copies the
+ *  pixels when called and encodes asynchronously. The draw and its readback still
+ *  cost milliseconds a card, so callers run this when the browser is idle. */
+function renderGradient(identifier: string, width: number, height: number): Promise<string> {
+    const cacheKey = gradientKey(identifier, width, height);
     const cached = gradientCache.get(cacheKey);
-    if (cached) return cached;
+    if (cached) return Promise.resolve(cached);
+    const pending = pendingGradients.get(cacheKey);
+    if (pending) return pending;
 
     const ctx = getSharedGL();
-    if (!ctx) return '';
+    if (!ctx) return Promise.reject(new Error('WebGL is unavailable'));
 
     const { canvas, gl, program } = ctx;
     canvas.width = width;
@@ -333,7 +341,7 @@ function renderToDataURL(identifier: string, width: number, height: number): str
     gl.uniform3f(gl.getUniformLocation(program, 'u_bgColor'), bgR, bgG, bgB);
 
     const colorKeys = ['color1', 'color2', 'color3', 'color4', 'color5', 'color6'] as const;
-    colorKeys.forEach((key, i) => {
+    colorKeys.forEach((key) => {
         const [r, g, b] = hexToRgb(CARBON_COLORS[key]);
         gl.uniform3f(gl.getUniformLocation(program, `u_${key}`), r, g, b);
     });
@@ -345,9 +353,20 @@ function renderToDataURL(identifier: string, width: number, height: number): str
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-    const dataURL = canvas.toDataURL('image/png');
-    gradientCache.set(cacheKey, dataURL);
-    return dataURL;
+    const encoded = new Promise<string>((resolve, reject) => {
+        canvas.toBlob((blob) => {
+            pendingGradients.delete(cacheKey);
+            if (!blob) {
+                reject(new Error('Gradient encode failed'));
+                return;
+            }
+            const url = URL.createObjectURL(blob);
+            gradientCache.set(cacheKey, url);
+            resolve(url);
+        }, 'image/png');
+    });
+    pendingGradients.set(cacheKey, encoded);
+    return encoded;
 }
 
 // ============================================================================
@@ -368,7 +387,9 @@ interface CarbonGradientProps {
 /**
  * CarbonGradient renders a WebGL gradient thumbnail with carbon colors.
  * Uses a single shared WebGL context to render once per unique identifier,
- * captures the result as a data URL, and displays it as an <img>.
+ * captures the result as an image URL, and displays it as an <img>. Until a
+ * first render lands, the box shows the gradient's own base colour, so the
+ * grid paints at once and nothing moves when the texture arrives.
  */
 function CarbonGradientComponent({
     identifier,
@@ -376,8 +397,36 @@ function CarbonGradientComponent({
     height = 180,
     className = '',
 }: CarbonGradientProps) {
-    const src = useMemo(() => renderToDataURL(identifier, width, height), [identifier, width, height]);
+    const cacheKey = gradientKey(identifier, width, height);
+    const [src, setSrc] = useState(() => gradientCache.get(cacheKey) ?? null);
+    useEffect(() => {
+        const ready = gradientCache.get(cacheKey);
+        setSrc(ready ?? null);
+        if (ready) return;
+        let live = true;
+        // After the grid has painted: a click's effects run before its paint, so drawing
+        // here directly would hold the whole grid back again.
+        const draw = () =>
+            renderGradient(identifier, width, height).then(
+                (url) => live && setSrc(url),
+                (err: unknown) => console.error('[CarbonGradient] render failed:', err)
+            );
+        if (typeof requestIdleCallback === 'function') {
+            const id = requestIdleCallback(draw, { timeout: 800 });
+            return () => {
+                live = false;
+                cancelIdleCallback(id);
+            };
+        }
+        // Older Safari has no requestIdleCallback.
+        const timer = setTimeout(draw, 50);
+        return () => {
+            live = false;
+            clearTimeout(timer);
+        };
+    }, [cacheKey, identifier, width, height]);
 
+    if (!src) return <div className={className} style={{ backgroundColor: '#0f0f0f' }} aria-hidden />;
     return (
         <img
             src={src}

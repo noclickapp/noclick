@@ -48,11 +48,11 @@ function pressOnContent(key: string) {
     );
 }
 
-// The highlighted service row carries the bg-white/[0.06] class.
+// The highlighted service row is the selected option.
 function activeRowIndex(): number {
     return Array.from(
         document.querySelectorAll<HTMLElement>(`${OPEN_DIALOG} ${SERVICE_ROW}`)
-    ).findIndex((r) => /bg-white\/\[0\.06\]/.test(r.className));
+    ).findIndex((r) => r.getAttribute('aria-selected') === 'true');
 }
 
 export default async function () {
@@ -78,8 +78,8 @@ export default async function () {
         'Palette closes when the credential action runs'
     );
     nc.assert.truthy(
-        /Add a credential/i.test(document.querySelector(OPEN_DIALOG)?.textContent ?? ''),
-        'Dialog shows the "Add a credential" picker'
+        /Connect an app/i.test(document.querySelector(OPEN_DIALOG)?.textContent ?? ''),
+        'Dialog shows the "Connect an app" picker'
     );
 
     // Service list is populated (lazy registry load resolved).

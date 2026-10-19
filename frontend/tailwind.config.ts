@@ -27,6 +27,8 @@ export default {
                     'system-ui',
                     'sans-serif',
                 ],
+                // The landing and pricing pages' headlines; their routes load the face.
+                display: ['Instrument Serif', 'ui-serif', 'Georgia', 'serif'],
             },
             borderRadius: {
                 lg: 'var(--radius)',
@@ -41,6 +43,7 @@ export default {
                     foreground: 'hsl(var(--card-foreground))',
                 },
                 sunken: 'hsl(var(--sunken))',
+                composer: 'hsl(var(--composer))',
                 popover: {
                     DEFAULT: 'hsl(var(--popover))',
                     foreground: 'hsl(var(--popover-foreground))',

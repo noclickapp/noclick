@@ -1,7 +1,8 @@
 // Unified Mermaid diagram rendering function
-// Used by both inline and popup views for consistency
+// Used by both inline and popup views for consistency. Mermaid itself (~700KB)
+// loads with the first diagram drawn, not with every chat that renders markdown.
 
-import mermaid from 'mermaid';
+import type { Mermaid } from 'mermaid';
 import { CORRECT_MERMAID_CONFIG, needsOverride, fixMindmap, createStickyNoteThemeConfig } from './minimalTheme';
 
 /**
@@ -53,6 +54,7 @@ ${Object.entries(themeConfig.themeVariables)
     }
 
     // Render the diagram (with just 2 parameters - the Mermaid v11 API)
+    const mermaid = await loadMermaid();
     const { svg } = await mermaid.render(id, finalDefinition);
 
     // Clear container and insert SVG
@@ -101,17 +103,19 @@ ${Object.entries(themeConfig.themeVariables)
   }
 }
 
-/**
- * Initialize Mermaid with dark theme configuration
- * Should be called once when the app loads
- */
-// Track if we've initialized
-let isInitialized = false;
+let mermaidLoad: Promise<Mermaid> | null = null;
 
+/** Mermaid, loaded and configured with the dark theme on first use. */
+function loadMermaid(): Promise<Mermaid> {
+  mermaidLoad ??= import('mermaid').then(({ default: mermaid }) => {
+    mermaid.initialize(CORRECT_MERMAID_CONFIG);
+    return mermaid;
+  });
+  return mermaidLoad;
+}
+
+/** Start loading Mermaid ahead of a diagram that is about to render. */
 export function initializeMermaid(): void {
-  if (typeof window === 'undefined' || isInitialized) return;
-
-  mermaid.initialize(CORRECT_MERMAID_CONFIG);
-
-  isInitialized = true;
+  if (typeof window === 'undefined') return;
+  void loadMermaid();
 }

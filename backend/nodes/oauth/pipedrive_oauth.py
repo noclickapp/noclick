@@ -35,6 +35,7 @@ import httpx
 from opentelemetry import trace
 from pydantic import BaseModel, field_validator
 
+from nodes.oauth.token_errors import token_error_detail
 from utils.ssrf import normalize_provider_https_origin
 
 logger = logging.getLogger(__name__)
@@ -61,6 +62,7 @@ class PipedriveTokens(BaseModel):
     expires_at: Optional[str] = None  # ISO 8601 timestamp
     api_domain: Optional[str] = None  # company-specific base URL for API calls
     token_type: str = "Bearer"
+    scope: Optional[str] = None  # authoritative grant, not browser-requested scopes
 
     @field_validator("api_domain")
     @classmethod
@@ -152,18 +154,15 @@ async def exchange_code_for_tokens(
 
         if token_response.status_code != 200:
             logger.error(
-                f"[PipedriveOAuth] Token exchange failed: HTTP {token_response.status_code}"
+                "[PipedriveOAuth] Token exchange failed (HTTP %s)", token_response.status_code
             )
-            raise ValueError(f"Token exchange failed: HTTP {token_response.status_code}")
+            raise ValueError("Pipedrive token exchange failed")
 
         token_data = token_response.json()
 
         if "error" in token_data:
-            error_msg = token_data.get(
-                "error_description", token_data.get("error", "Unknown error")
-            )
-            logger.error(f"[PipedriveOAuth] Token exchange failed: {error_msg}")
-            raise ValueError(f"Token exchange failed: {error_msg}")
+            logger.error("[PipedriveOAuth] Provider rejected the token exchange")
+            raise ValueError("Pipedrive token exchange failed")
 
         # Pipedrive access tokens expire in 60 minutes (expires_in seconds).
         expires_at = None
@@ -179,6 +178,7 @@ async def exchange_code_for_tokens(
             expires_at=expires_at,
             api_domain=token_data.get("api_domain"),
             token_type=token_data.get("token_type", "Bearer"),
+            scope=token_data.get("scope"),
         )
 
         user_info = await _get_user_info(
@@ -186,7 +186,7 @@ async def exchange_code_for_tokens(
         )
 
         logger.info(
-            f"[PipedriveOAuth] Successfully exchanged code for tokens for user {user_info.name}"
+            "[PipedriveOAuth] Successfully exchanged authorization code"
         )
         return tokens, user_info
 
@@ -214,7 +214,7 @@ async def _get_user_info(
     )
 
     if response.status_code != 200:
-        logger.warning(f"[PipedriveOAuth] Failed to get user info: HTTP {response.status_code}")
+        logger.warning("[PipedriveOAuth] Failed to get user info (HTTP %s)", response.status_code)
         return PipedriveUserInfo(id="unknown", name="Unknown", api_domain=base)
 
     payload = response.json()
@@ -266,8 +266,9 @@ async def refresh_access_token(
         response = await client.post(PIPEDRIVE_TOKEN_URL, data=data, headers=headers)
 
         if response.status_code != 200:
-            logger.error(f"[PipedriveOAuth] Token refresh failed: HTTP {response.status_code}")
-            raise ValueError(f"Token refresh failed: HTTP {response.status_code}")
+            detail = token_error_detail(response)
+            logger.error("[PipedriveOAuth] Token refresh failed: %s", detail)
+            raise ValueError(f"Token refresh failed: {detail}")
 
         token_data = response.json()
 

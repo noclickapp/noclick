@@ -56,6 +56,9 @@ class SessionLogger:
     def log_frontend_event(self, *args: Any, **kwargs: Any) -> None:
         return None
 
+    def log_client_timing(self, *args: Any, **kwargs: Any) -> None:
+        return None
+
     def log_event(self, *args: Any, **kwargs: Any) -> None:
         return None
 

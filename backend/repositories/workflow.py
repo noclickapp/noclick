@@ -33,6 +33,11 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 
+# The name a workflow is made with when nobody named it; the builder names a
+# workflow still called one of these, and never renames a name someone gave.
+NEW_WORKFLOW_NAME = "New workflow"
+PLACEHOLDER_WORKFLOW_NAMES = ("", "Untitled", "Untitled Workflow", NEW_WORKFLOW_NAME)
+
 # A delivery run is one whose agent handed its turn to a warm sandbox (node
 # output ``awaiting_agent_turn``); the response arrives as a SEPARATE run. It
 # is plumbing to the user but a real execution to the system: its CAS outputs
@@ -42,6 +47,7 @@ from uuid import UUID
 # every user-facing history/latest/count read hides it with the predicate.
 from repositories.run_visibility import DELIVERED_STATUS, USER_VISIBLE_RUN_SQL  # noqa: F401 — re-exported
 from repositories.users import user_label_sql
+from utils.system_workflows import SYSTEM_KEY, not_system_sql
 
 
 # ── Column allowlists ──────────────────────────────────────────────────────
@@ -70,10 +76,11 @@ def _try_parse_uuid(value: Optional[str]) -> Optional[UUID]:
 
 
 def get_workflow_owner_sql(include_deleted: bool = False) -> str:
-    """Canonical workflow-owner lookup ($1 = workflow_id). By default a
+    """Canonical workflow-owner lookup ($1 = workflow_id), with what NoClick
+    runs on it when it's a system workflow (``system``). By default a
     trashed (soft-deleted) workflow does NOT resolve; ``include_deleted``
     keeps it resolvable for run-as-owner / cleanup paths."""
-    sql = "SELECT owner_id FROM workflows WHERE id = $1"
+    sql = "SELECT owner_id, settings->>'system' AS system FROM workflows WHERE id = $1"
     return sql if include_deleted else sql + " AND deleted_at IS NULL"
 
 
@@ -210,6 +217,11 @@ class WorkflowRepo:
         )
         return dict(row) if row else None
 
+    async def get_organization_id(self, conn, workflow_id) -> Optional[str]:
+        """The workflow's organization, None for a personal or missing one."""
+        org_id = await conn.fetchval("SELECT organization_id FROM workflows WHERE id = $1", workflow_id)
+        return str(org_id) if org_id is not None else None
+
     async def get_workflow_data_and_settings(
         self, conn, workflow_id
     ) -> Optional[Dict[str, Any]]:
@@ -220,15 +232,20 @@ class WorkflowRepo:
         )
         return dict(row) if row else None
 
-    async def workflow_exists_for_owner(
-        self, conn, workflow_id, user_id
-    ) -> bool:
-        """True if the workflow exists AND is owned by ``user_id`` (soft-
-        deleted rows still count — used before soft-delete + before
-        run_node in the builder platform_ops)."""
-        return await conn.fetchval("""
-            SELECT 1 FROM workflows WHERE id = $1 AND owner_id = $2
-        """, workflow_id, user_id) is not None
+    async def mark_system(self, conn, workflow_id, what: str) -> None:
+        """Make it a workflow NoClick runs itself, running ``what`` (``utils.system_workflows``)."""
+        await conn.execute(
+            "UPDATE workflows SET settings = COALESCE(settings, '{}'::jsonb) || jsonb_build_object($2::text, $3::text) "
+            "WHERE id = $1::uuid", str(workflow_id), SYSTEM_KEY, what)
+
+    async def owned_workflow_system(self, conn, workflow_id, user_id) -> Optional[str]:
+        """None when ``user_id`` owns no such workflow (soft-deleted rows
+        count); else what NoClick runs on it ("" for a workflow of the
+        user's own)."""
+        row = await conn.fetchrow(
+            "SELECT COALESCE(settings->>'system', '') AS system FROM workflows WHERE id = $1 AND owner_id = $2",
+            workflow_id, user_id)
+        return row["system"] if row else None
 
     async def workflow_in_trash_for_owner(
         self, conn, workflow_id, user_id
@@ -454,35 +471,36 @@ class WorkflowRepo:
         row = await conn.fetchrow(query, *params)
         return dict(row) if row else None
 
+    async def has_placeholder_name(self, workflow_id: str, owner_id: str) -> bool:
+        """Whether the owner's workflow is still called a placeholder
+        (``PLACEHOLDER_WORKFLOW_NAMES``): nobody has named it yet."""
+        async with self._pool.acquire() as conn:
+            return bool(await conn.fetchval(
+                "SELECT EXISTS (SELECT 1 FROM workflows WHERE id = $1 AND owner_id = $2 AND name = ANY($3::text[]))",
+                workflow_id, owner_id, list(PLACEHOLDER_WORKFLOW_NAMES),
+            ))
+
     async def rename_workflow_if_owner(
         self,
         workflow_id: str,
         name: str,
         description: str,
         owner_id: str,
-        *,
-        placeholder_only: bool = False,
     ) -> Optional[Dict[str, Any]]:
         """Background rename run by the builder — owner-gated so a
         collaborator can't hijack the generated name. Pool-owning because
-        the caller has no other DB work in scope.
-
-        placeholder_only: only land if the current name is still a default
-        placeholder — the retry path fires on later builder turns, by which
-        point the user may have typed a real name that must win."""
-        guard = (
-            " AND name IN ('', 'Untitled', 'Untitled Workflow')"
-            if placeholder_only else ""
-        )
+        the caller has no other DB work in scope. It lands only while the
+        name is still a placeholder: a name its creator gave, or one the user
+        typed while the name was generated, always wins."""
         async with self._pool.acquire() as conn:
             row = await conn.fetchrow(
-                f"""
+                """
                 UPDATE workflows
                 SET name = $2, description = $3, updated_at = NOW()
-                WHERE id = $1 AND owner_id = $4{guard}
+                WHERE id = $1 AND owner_id = $4 AND name = ANY($5::text[])
                 RETURNING id, name, description
                 """,
-                workflow_id, name, description, owner_id,
+                workflow_id, name, description, owner_id, list(PLACEHOLDER_WORKFLOW_NAMES),
             )
         return dict(row) if row else None
 
@@ -642,7 +660,7 @@ class WorkflowRepo:
             WHERE ((w.organization_id = $1 AND w.owner_id = $2)
                OR rs.id IS NOT NULL
                OR (rs_folder_org.permission IS NOT NULL AND rs.id IS NULL))
-               AND w.deleted_at IS NULL
+               AND w.deleted_at IS NULL AND {not_system_sql()}
                {folder_condition}
             ORDER BY w.updated_at DESC
         """, *params)
@@ -693,7 +711,7 @@ class WorkflowRepo:
                 OR
                 (rs_folder_share.permission IS NOT NULL AND w.owner_id != $1 AND rs_user.id IS NULL {folder_condition})
             )
-            AND w.deleted_at IS NULL
+            AND w.deleted_at IS NULL AND {not_system_sql()}
             ORDER BY w.updated_at DESC
         """, *params)
         return [dict(r) for r in rows]
@@ -709,7 +727,7 @@ class WorkflowRepo:
         if organization_id is not None:
             conditions = [
                 "((w.organization_id = $1 AND w.owner_id = $2) OR rs.id IS NOT NULL)",
-                "w.deleted_at IS NULL",
+                "w.deleted_at IS NULL", not_system_sql(),
             ]
             params = [organization_id, user_id]
             idx = 3
@@ -722,7 +740,7 @@ class WorkflowRepo:
         else:
             conditions = [
                 "(w.owner_id = $1 AND w.organization_id IS NULL)",
-                "w.deleted_at IS NULL",
+                "w.deleted_at IS NULL", not_system_sql(),
             ]
             params = [user_id]
             idx = 2
@@ -759,7 +777,7 @@ class WorkflowRepo:
     ) -> List[Dict[str, Any]]:
         """MCP ``list_workflows`` — user-owned only (via user_id column),
         with optional name/description ILIKE search and folder filter."""
-        conditions = ["user_id = $1", "deleted_at IS NULL"]
+        conditions = ["user_id = $1", "deleted_at IS NULL", not_system_sql("")]
         params: List[Any] = [user_id]
         idx = 2
 

@@ -2,11 +2,16 @@
 // wizard (BuilderInputDrawer): credential inputs render the real credential
 // picker, choices render as options, config fields load their dynamic options,
 // and Skip/Dismiss resumes the builder without an answer — exactly what the
-// builder chat offers, so the two can never drift.
-import { BuilderInputDrawer } from '~/components/chat/drawer/BuilderInputDrawer';
+// builder chat offers, so the two can never drift. The wizard (and the credential
+// forms in it) loads when a question is drawn, not with the chat around it.
+import { lazy, Suspense } from 'react';
 import type { InputRequest } from '~/components/workflow/workflowGeneratorMock';
 import { useDashboardActions } from '~/components/dashboard/primitives';
 import type { AttentionItem } from '~/components/dashboard/types';
+
+const BuilderInputDrawer = lazy(() =>
+    import('~/components/chat/drawer/BuilderInputDrawer').then((m) => ({ default: m.BuilderInputDrawer }))
+);
 
 export function AskAnswer({ item }: { item: AttentionItem }) {
     const actions = useDashboardActions();
@@ -14,14 +19,16 @@ export function AskAnswer({ item }: { item: AttentionItem }) {
     if (!inputs.length) return null;
     return (
         <div data-testid="dashboard-ask-answer">
-            <BuilderInputDrawer
-                embedded
-                inputs={inputs}
-                title={item.title}
-                onSubmit={(values) => actions.answerAsk(item, values)}
-                onDismiss={actions.dismissAsk ? () => actions.dismissAsk?.(item) : undefined}
-                onShare={actions.shareAsk ? () => actions.shareAsk!(item) : undefined}
-            />
+            <Suspense fallback={null}>
+                <BuilderInputDrawer
+                    embedded
+                    inputs={inputs}
+                    title={item.title}
+                    onSubmit={(values) => actions.answerAsk(item, values)}
+                    onDismiss={actions.dismissAsk ? () => actions.dismissAsk?.(item) : undefined}
+                    onShare={actions.shareAsk ? () => actions.shareAsk!(item) : undefined}
+                />
+            </Suspense>
         </div>
     );
 }

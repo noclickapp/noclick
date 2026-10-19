@@ -5,6 +5,7 @@ Handles organization invites and other system notifications.
 
 import os
 import logging
+from decimal import Decimal
 from typing import Optional
 import resend
 
@@ -86,6 +87,11 @@ def _transactional_html(
         frontend_url=FRONTEND_URL,
         title=heading,
     )
+
+
+# resend.com/pricing, read 2026-10-10: past a Pro plan's 50,000 a month, $0.90 per 1,000 emails. What
+# one more email costs, which is what a send through Resend is charged where it's charged at all.
+RESEND_MESSAGE_USD = Decimal("0.0009")
 
 
 def _send_email(
@@ -340,4 +346,36 @@ The NoClick Team
         f"Your {credential_label} credential request has been fulfilled",
         html_content,
         text_content,
+    )
+
+
+async def send_account_link_code_email(to_email: str, code: str, phone_masked: str) -> bool:
+    """The code that proves a chat's owner holds this email, so the chat's
+    phone-only account can join (or become) the account on it."""
+    import asyncio
+
+    from utils.notification_templates import para, strong
+
+    html_content = _transactional_html(
+        preheader=f"Your NoClick code is {code}",
+        eyebrow="Connect your chat",
+        heading=f"Your code is {code}",
+        blocks_html=para(
+            f"Reply with this code in your NoClick chat from {strong(phone_masked)} to connect it to "
+            "the NoClick account for this email. Its workflows and conversation move into that account."
+        ),
+        cta_text="",
+        cta_url="",
+        footer_notes=[
+            "The code expires in 15 minutes.",
+            "If you didn't ask to connect a chat, ignore this email; nothing changes without the code.",
+        ],
+    )
+    text_content = (
+        f"Your NoClick code is {code}\n\n"
+        f"Reply with it in your NoClick chat from {phone_masked} to connect it to the NoClick account "
+        "for this email. The code expires in 15 minutes. If you didn't ask for this, ignore this email.\n"
+    )
+    return await asyncio.to_thread(
+        _send_email, to_email, f"Your NoClick code: {code}", html_content, text_content,
     )

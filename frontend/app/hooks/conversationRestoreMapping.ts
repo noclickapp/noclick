@@ -28,6 +28,10 @@ export interface PersistedMessage {
     agenticSteps?: AgenticStep[];
     /** Set on the cancelled assistant of a user-cancelled run. */
     cancelled?: boolean;
+    /** Set on the assistant of a run that stopped without the builder saying it had finished. */
+    incomplete?: boolean;
+    /** Set on the request of a run that imported an n8n workflow: its message is a sentence; the workflow went apart. */
+    n8n_import?: { node_count?: number } | null;
     /** Set on the paused assistant of a turn that ended on <ask/>. The trailing
      *  assistant of a paused conversation carries this so the FE can surface
      *  the ask drawer on restore — no separate generation snapshot needed. */
@@ -42,6 +46,8 @@ export interface PersistedMessage {
  *
  * Key invariants:
  *   - `cancelled: true` sets wasInterrupted (renders the "Response interrupted" notice)
+ *   - `incomplete: true` sets incomplete, as the live terminal frame's outcome does
+ *   - `n8n_import` marks the request an import (its badge; never sent again as words)
  *   - `pending_ask` is forwarded as-is so BuilderInputBridge can surface the
  *     ask drawer when the conversation is restored
  *   - all restored messages are isComplete=true. With <ask/> as a turn boundary
@@ -65,6 +71,12 @@ export function mapPersistedMessage(msg: PersistedMessage): Message {
     };
     if (msg.cancelled === true) {
         mapped.wasInterrupted = true;
+    }
+    if (msg.incomplete === true) {
+        mapped.incomplete = true;
+    }
+    if (msg.n8n_import) {
+        mapped.n8nImportNodeCount = msg.n8n_import.node_count ?? 0;
     }
     if (msg.pending_ask) {
         mapped.pendingAsk = msg.pending_ask;

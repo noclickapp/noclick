@@ -12,9 +12,11 @@ import asyncio
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, patch
+from unittest.mock import ANY, AsyncMock, patch
 
 import pytest
+
+from billing.exceptions import InsufficientBalanceError
 
 from coder.coordinator import agent as coordinator
 from coder.coordinator import tools as coordinator_tools
@@ -24,11 +26,11 @@ from coder.coordinator.tools import (
 from tests.mocks.mock_asyncpg import MockNativePool
 from utils import capabilities
 from utils.account_link import Verified
-from utils.capabilities import OWNER_MESSAGE
+from utils.capabilities import COORDINATOR_PLATFORM_TOOLS, OWNER_MESSAGE
 from tests.utils.base_handler_test import BaseHandlerTest
 from utils import feature_gates
 from wss.receiver.client_events import (
-    CoordinatorOpenRequest, CoordinatorResetRequest, CoordinatorSendRequest,
+    CoordinatorEmailInboundRequest, CoordinatorOpenRequest, CoordinatorResetRequest, CoordinatorSendRequest,
     CoordinatorMemoriesListRequest, CoordinatorMemoryGetRequest, CoordinatorMemorySaveRequest,
     CoordinatorMemoryDeleteRequest, CoordinatorJobsRequest, CoordinatorAttachmentUploadUrlRequest,
     CoordinatorAttachmentsListRequest, CoordinatorReference,
@@ -246,6 +248,8 @@ def turn_seams(monkeypatch):
     monkeypatch.setattr(coordinator, "AgentHandler", FakeChat)
     monkeypatch.setattr(coordinator, "get_native_pool", lambda: MockNativePool())
     monkeypatch.setattr(coordinator, "get_user_org_context", AsyncMock(return_value=ORG))
+    # These turns have the coordinator's own tools; a platform's are tested in test_coordinator_platform_tools.
+    monkeypatch.delitem(capabilities._providers, COORDINATOR_PLATFORM_TOOLS, raising=False)
 
 
 async def test_turn_builds_the_agent_on_the_account_and_persists_both_sides(turn_seams):
@@ -264,16 +268,19 @@ async def test_turn_wires_persistence_tools_and_billing_identity(turn_seams, mon
         captured.update(kwargs)
         return await orig_create(**kwargs)
     monkeypatch.setattr(FakeAgent, "create", classmethod(create))
+    monkeypatch.setattr(coordinator, "bills_on_old_plans", AsyncMock(return_value=False))
     await coordinator.run_coordinator_turn(sio="SIO", sid="sid-1", user_id=USER, user_email=None, text="hi")
     assert captured["conversation_id"] == CID and captured["enable_persistence"] is True
     assert captured["user_id"] == USER and captured["organization_id"] == ORG and captured["sio"] == "SIO"
     assert callable(captured["custom_tool_executor"])
     config = captured["config"]
     assert config.llm.model == coordinator.COORDINATOR_MODEL
-    assert config.settings.system_prompt.startswith(coordinator.SYSTEM_PROMPT)
+    assert config.settings.system_prompt.startswith(coordinator.PROMPTS.system_prompt(in_credits=False, phone_steps=True))
     assert "Current UTC time:" in config.settings.system_prompt
     assert callable(captured["call_model_input_filter"])
     assert captured.get("history_limit") is None
+    # A turn that makes every model call it may still tells the owner where things stand.
+    assert captured["wrap_up"] == coordinator.PROMPTS.WRAP_UP
     # An account with no email (made by a WhatsApp first contact) can connect one, and
     # is never offered the email channel it cannot use.
     names = config.capabilities.custom_tool_names
@@ -281,7 +288,7 @@ async def test_turn_wires_persistence_tools_and_billing_identity(turn_seams, mon
     assert names == [n for n in with_email if n != "set_email_address"] + ["connect_account", "confirm_connect_code"]
     message_owner = next(t for t in config.capabilities.custom_tools if t["function"]["name"] == "message_owner")
     assert "email" not in message_owner["function"]["parameters"]["properties"]["channel"]["enum"]
-    assert "Email: unavailable" in config.settings.system_prompt
+    assert coordinator.PROMPTS.reach_note(phone_only=True, address=None, paused=False) in config.settings.system_prompt
     assert not config.capabilities.enable_cmd and not config.capabilities.enable_mcp
 
     await coordinator.run_coordinator_turn(sio="SIO", sid="sid-1", user_id=USER, user_email="a@b.c", text="hi")
@@ -370,22 +377,27 @@ async def test_turn_failure_is_reported_as_a_finished_frame(turn_seams, monkeypa
     assert FakeAgent.calls[-1] == ("cleanup", USER)
 
 
-async def test_the_wrappers_failure_frame_is_spoken_as_one_plain_line(turn_seams, monkeypatch, caplog):
+@pytest.mark.parametrize("detail", [
+    "Error: litellm.BadRequestError: OpenrouterException - {'error': {'code': 400}}",
+    # A context compaction that could not be saved: a text channel hears the same line, never silence.
+    "Error: This conversation needs compaction, but a safe checkpoint could not be saved. Its history is intact.",
+])
+async def test_the_wrappers_failure_frame_is_spoken_as_one_plain_line(turn_seams, monkeypatch, caplog, detail):
     class ProviderDown(FakeAgent):
         async def __call__(self, message):
             await self.kwargs["emit_message"](ChatMessageEvent(
-                conversation_id=self.kwargs["conversation_id"], finished=True, status="error",
-                message="Error: litellm.BadRequestError: OpenrouterException - {'error': {'code': 400}}",
+                conversation_id=self.kwargs["conversation_id"], finished=True, status="error", message=detail,
             ))
     monkeypatch.setattr(coordinator, "Agent", ProviderDown)
     heard = []
 
     async def sink(event):
         heard.append(event)
-    await coordinator.run_coordinator_turn(sio=object(), sid="s", user_id=USER, user_email=None, text="hi", sink=sink)
+    await coordinator.run_coordinator_turn(sio=object(), sid="", user_id=USER, user_email=None, text="hi", sink=sink,
+                                           extra={"channel": "whatsapp_text"})
     assert [e.message for e in heard] == [coordinator.TURN_FAILED_LINE] and heard[0].status is None
     assert FakeChat.persisted[-1][3].message == coordinator.TURN_FAILED_LINE
-    assert "OpenrouterException" in caplog.text  # the detail is kept where an operator reads it
+    assert detail in caplog.text  # the detail is kept where an operator reads it
 
 
 async def test_turn_sink_hears_every_frame_and_extra_stamps_both_persisted_events(turn_seams):
@@ -400,6 +412,17 @@ async def test_turn_sink_hears_every_frame_and_extra_stamps_both_persisted_event
     assert [e.message for e in heard] == ["reply:hi"] and heard[0].finished is True
     assert FakeChat.persisted[0][4] == {"channel": "voice", "call_sid": "CA1"}  # the user turn
     assert FakeChat.persisted[1][4] == {"channel": "voice", "call_sid": "CA1"}  # the reply's emit callback
+
+
+async def test_reply_event_fields_land_on_the_reply_alone(turn_seams):
+    await coordinator.run_coordinator_turn(
+        sio=object(), sid="", user_id=USER, user_email="a@b.c", text="[email, subject: Hey]\nHey",
+        extra={"channel": "email"}, user_event={"email": {"from": "a@b.c", "to": "ada@noclick.email", "subject": "Hey"}},
+        reply_event={"email_reply": {"id": "r1", "state": "sending", "to": "a@b.c"}},
+    )
+    assert FakeChat.persisted[0] == ("user", CID, COORDINATOR_NODE_ID, "[email, subject: Hey]\nHey", {
+        "channel": "email", "email": {"from": "a@b.c", "to": "ada@noclick.email", "subject": "Hey"}})
+    assert FakeChat.persisted[1][4] == {"channel": "email", "email_reply": {"id": "r1", "state": "sending", "to": "a@b.c"}}
 
 
 async def test_a_turn_from_another_app_is_mirrored_to_the_open_web_chat(turn_seams, monkeypatch):
@@ -446,6 +469,8 @@ class TestCoordinatorHandler(BaseHandlerTest):
         # CI runs without lifespan startup, where the real get_pool() raises.
         monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: MockNativePool({}))
         monkeypatch.setitem(feature_gates.FEATURE_ROLLOUT, "coordinator", feature_gates.EVERYONE)
+        # The coordinator answers here; an agent in its place is the test below's.
+        monkeypatch.delitem(capabilities._providers, capabilities.ACCOUNT_AGENT, raising=False)
         self.turn = AsyncMock()
         monkeypatch.setattr(coordinator, "run_coordinator_turn", self.turn)
         monkeypatch.setattr("wss.handlers.coordinator_handler.plan_allows_turn", AsyncMock(return_value=(True, None)))
@@ -463,7 +488,8 @@ class TestCoordinatorHandler(BaseHandlerTest):
         opened = await self._send(frontend_sio, sid, CoordinatorOpenRequest(request_id="o1"))
         assert opened["data"] == {
             "conversation_id": "coordinator:uuid-test-user", "model": coordinator.COORDINATOR_MODEL,
-            "reach": {"phone": None, "imessage": None, "email": None},
+            # The coordinator itself answers only its owner's mail.
+            "reach": {"phone": None, "imessage": None, "email": None, "email_paused": False, "email_from_anyone": False},
         }
         monkeypatch.setitem(capabilities._providers, capabilities.COORDINATOR_NUMBER, lambda: "+14242421064")
         monkeypatch.setitem(capabilities._providers, capabilities.COORDINATOR_IMESSAGE, lambda: "+14245550123")
@@ -482,6 +508,53 @@ class TestCoordinatorHandler(BaseHandlerTest):
         monkeypatch.setattr("repositories.coordinator_wakeups.CoordinatorWakeupRepo.reset", AsyncMock(return_value=True))
         reset = await self._send(frontend_sio, sid, CoordinatorResetRequest(request_id="r1"))
         assert reset["data"] == {"reset": True}
+
+    @pytest.mark.asyncio
+    async def test_an_account_an_agent_answers_is_pointed_at_it(self, frontend_sio, sid, monkeypatch):
+        """Where an agent answers the owner in the coordinator's place (``ACCOUNT_AGENT``), opening the chat makes it
+        first (its clock where the browser is) and names it, and a send or a reset is pointed at it instead of running
+        a coordinator turn."""
+        asked = []
+
+        async def account_agent(pool, user_id, *, ensure=False, timezone=None):
+            asked.append((user_id, ensure, timezone))
+            return {"id": "agent-1", "conversation": "owner"}
+
+        monkeypatch.setitem(capabilities._providers, capabilities.ACCOUNT_AGENT, account_agent)
+        opened = await self._send(frontend_sio, sid, CoordinatorOpenRequest(request_id="o1", timezone="Europe/London"))
+        assert opened["data"]["agent"] == {"id": "agent-1", "conversation": "owner"}
+        assert asked == [("uuid-test-user", True, "Europe/London")]
+        for request in (CoordinatorSendRequest(request_id="s1", text="hi"), CoordinatorResetRequest(request_id="r1")):
+            refused = await self._send(frontend_sio, sid, request)
+            assert refused["data"] == {"kind": "agent", "agent": {"id": "agent-1", "conversation": "owner"}}
+        self.turn.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_a_page_that_never_opened_the_chat_still_reaches_the_agent(self, frontend_sio, sid, monkeypatch):
+        """A send or a reset from a page that skipped opening the chat (an older one) makes the agent, as an open
+        does, rather than running the coordinator for an account meant to move."""
+        asked = []
+
+        async def account_agent(pool, user_id, *, ensure=False, timezone=None):
+            asked.append(ensure)
+            return {"id": "agent-1", "conversation": "owner"} if ensure else None
+
+        monkeypatch.setitem(capabilities._providers, capabilities.ACCOUNT_AGENT, account_agent)
+        for request in (CoordinatorSendRequest(request_id="s1", text="hi"), CoordinatorResetRequest(request_id="r1")):
+            refused = await self._send(frontend_sio, sid, request)
+            assert refused["data"] == {"kind": "agent", "agent": {"id": "agent-1", "conversation": "owner"}}
+        assert asked == [True, True]
+        self.turn.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_mail_to_the_address_is_turned_on_and_off_for_the_session_owner_only(self, frontend_sio, sid, monkeypatch):
+        switched = AsyncMock(return_value={"address": "ada@noclick.email", "paused": True})
+        monkeypatch.setattr("wss.handlers.coordinator_handler.set_inbound_email", switched)
+        reply = await self._send(frontend_sio, sid, CoordinatorEmailInboundRequest(request_id="e1", on=False))
+        assert reply["data"] == {"address": "ada@noclick.email", "paused": True}
+        # The account is the session's: the request names no one else's.
+        assert switched.await_args.args[1:] == ("uuid-test-user", False)
+        assert "user_id" not in CoordinatorEmailInboundRequest.model_fields
 
     @pytest.mark.asyncio
     async def test_files_and_references_ride_a_send_and_are_checked_before_the_turn(self, frontend_sio, sid, monkeypatch):
@@ -581,10 +654,11 @@ class TestCoordinatorHandler(BaseHandlerTest):
 
 
 def test_voice_turns_get_the_spoken_style_and_the_callers_note():
+    base = coordinator.PROMPTS.system_prompt(in_credits=False, phone_steps=True)
     web = coordinator.system_prompt_for({"channel": "web"}, None)
-    assert web == coordinator.SYSTEM_PROMPT
+    assert web == base
     voice = coordinator.system_prompt_for({"channel": "whatsapp", "call_sid": "CA1"}, "The caller is Dhruv.")
-    assert voice.startswith(coordinator.SYSTEM_PROMPT) and "phone call" in voice and voice.endswith("The caller is Dhruv.")
+    assert voice.startswith(base) and coordinator.PROMPTS.VOICE_STYLE in voice and voice.endswith("The caller is Dhruv.")
     assert coordinator.system_prompt_for(None, "note only").endswith("note only")
 
 
@@ -601,11 +675,27 @@ async def test_turn_composes_the_prompt_for_its_channel(turn_seams, monkeypatch)
         extra={"channel": "phone", "call_sid": "CA1"}, note="The caller is Dhruv. Their account has 2 workflows: A, B.",
     )
     prompt = captured["config"].settings.system_prompt
-    assert "no markdown" in prompt and "Their account has 2 workflows: A, B.\n\n" in prompt
+    assert coordinator.PROMPTS.VOICE_STYLE in prompt and "Their account has 2 workflows: A, B.\n\n" in prompt
     # How to reach the owner rides every turn: here, no address yet.
-    assert "Your email address: none yet (set_email_address when email is first needed)." in prompt
-    assert prompt.endswith("How the owner likes to be reached is a memory: save it when they say, and pass that "
-                           "channel to message_owner.")
+    assert prompt.endswith(coordinator.PROMPTS.reach_note(phone_only=False, address=None, paused=False))
+
+
+async def test_only_a_web_turn_leaves_links_to_the_cards(turn_seams, monkeypatch):
+    """The web chat draws each tool's links as cards under the live reply; a retyped link duplicates the card and a
+    long token comes out broken. A text channel has no cards, so its reply carries the links."""
+    prompts = []
+    orig_create = FakeAgent.create
+
+    async def create(cls, **kwargs):
+        prompts.append(kwargs["config"].settings.system_prompt)
+        return await orig_create(**kwargs)
+    monkeypatch.setattr(FakeAgent, "create", classmethod(create))
+    await coordinator.run_coordinator_turn(sio=object(), sid="sid-1", user_id=USER, user_email="a@b.c", text="hi")
+    await coordinator.run_coordinator_turn(sio=object(), sid="", user_id=USER, user_email="a@b.c", text="hi",
+                                           extra={"channel": "whatsapp_text"})
+    web, whatsapp = prompts
+    assert coordinator.PROMPTS.WEB_STYLE in web
+    assert coordinator.PROMPTS.WEB_STYLE not in whatsapp and coordinator.PROMPTS.TEXT_STYLE in whatsapp
 
 
 # ── trash, restore, message_owner ────────────────────────────────────────────
@@ -662,19 +752,38 @@ class FakePurchases:
         self.minted = []
 
     @staticmethod
-    def catalog():
+    def catalog(email=None):
+        """What the account with ``email`` may buy: Member and funds on Free/Member, else
+        Plus and monthly credit top-ups (the old plans)."""
+        if email == "member@example.com":
+            return {"plans": [{"plan": "member", "label": "Member", "monthly_usd": 25.0, "yearly_usd": None,
+                               "credits_per_month": None, "description": "$10 of usage included every month"}],
+                    "funds": {"presets_usd": [10, 25], "min_usd": 10, "max_usd": 1000},
+                    "checkout_note": "Buyers abroad pay the local price at checkout."}
         return {"plans": [{"plan": "plus", "label": "Plus", "monthly_usd": 25.0, "yearly_usd": 180.0,
                            "credits_per_month": 100, "description": "100 credits/month"}],
-                "topups": [{"credits_per_month": 20, "monthly_usd": 5.0, "yearly_usd": 50.0}],
+                "topups": [{"credits_per_month": 20, "monthly_usd": 5.0, "yearly_usd": 50.0},
+                           {"credits_per_month": 40, "monthly_usd": 10.0, "yearly_usd": 100.0}],
                 "checkout_note": "Buyers abroad pay the local price at checkout."}
 
     @staticmethod
+    def suggested_funds(shortfall_usd):
+        return (10, 25) if shortfall_usd <= 10 else (25,)
+
+    @staticmethod
     def suggested_topups(shortfall):
-        return [SimpleNamespace(credits_per_month=c) for c in (20, 40, 100)]
+        return tuple(SimpleNamespace(credits_per_month=c) for c in ((20, 40) if shortfall <= 20 else (40,)))
+
+    def purchases_for(self, offer):
+        return ([{"kind": "plan", "plan": plan} for plan in offer.plans]
+                + [{"kind": "funds", "amount_usd": usd} for usd in self.suggested_funds(offer.funds_usd)
+                   if offer.funds_usd]
+                + [{"kind": "topup", "credits_per_month": size.credits_per_month}
+                   for size in self.suggested_topups(offer.topup_credits) if offer.topup_credits])
 
     async def mint(self, pool, **what):
         self.minted.append(what)
-        buy = what.get("plan") or what.get("credits_per_month")
+        buy = what.get("plan") or what.get("amount_usd") or what.get("credits_per_month")
         return {"job_id": f"job-{buy}", "url": f"https://noclick.com/pay/job-{buy}", "label": f"buy {buy}", "price_usd": 1}
 
 
@@ -698,16 +807,25 @@ async def test_media_tools_answer_the_model_with_results_or_the_gate_reason(monk
     refused = await t.execute("generate_video", {"prompt": "waves"})
     assert refused["kind"] == "plan" and refused["error"] == "Video generation is available on the Plus and Pro plans."
     assert [link["url"] for link in refused["purchase_links"]] == ["https://noclick.com/pay/job-plus", "https://noclick.com/pay/job-pro"]
-    assert "no sign-in" in refused["next"]
+    assert refused["next"] == coordinator_tools.TOOL_PROMPTS.purchase_links_next(plan_and_topup=False, by_size=False)
     assert purchases.minted[0] == {"user_id": USER, "kind": "plan", "plan": "plus", "continuation": {"turn_id": "t1"},
                                    "send_to_phone": True}
-    # Short of credits on a paid plan: the top-up sizes worth offering, each with its link.
+    # Short of credits on Free/Member: the amounts of funds worth offering, each with its link.
+    purchases.minted.clear()
+    monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(side_effect=GateDenied(
+        "credits", "Video generation needs 9.6 credits and the account has 0.0.", offer=Offer(funds_usd=2.4))))
+    refused = await t.execute("generate_video", {"prompt": "waves"})
+    assert [link["url"] for link in refused["purchase_links"]] == [f"https://noclick.com/pay/job-{usd}" for usd in (10, 25)]
+    assert [(m["kind"], m["amount_usd"]) for m in purchases.minted] == [("funds", 10), ("funds", 25)]
+    assert refused["next"] == coordinator_tools.TOOL_PROMPTS.purchase_links_next(plan_and_topup=False, by_size=False)
+    # On the old plans: the monthly top-up sizes that cover the shortfall, as main offered them.
     purchases.minted.clear()
     monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(side_effect=GateDenied(
         "credits", "Video generation needs 9.6 credits and the account has 0.0.", offer=Offer(topup_credits=9.6))))
     refused = await t.execute("generate_video", {"prompt": "waves"})
-    assert [link["url"] for link in refused["purchase_links"]] == [f"https://noclick.com/pay/job-{c}" for c in (20, 40, 100)]
-    assert [m["credits_per_month"] for m in purchases.minted] == [20, 40, 100]
+    assert [link["url"] for link in refused["purchase_links"]] == [f"https://noclick.com/pay/job-{c}" for c in (20, 40)]
+    assert [(m["kind"], m["credits_per_month"]) for m in purchases.minted] == [("topup", 20), ("topup", 40)]
+    assert refused["next"] == coordinator_tools.TOOL_PROMPTS.purchase_links_next(plan_and_topup=False, by_size=True)
     # Nothing for sale (the open edition): the reason alone, no links to invent.
     monkeypatch.setattr(coordinator_tools, "start_video", AsyncMock(side_effect=GateDenied("credits", "x", offer=Offer())))
     assert await t.execute("generate_video", {"prompt": "waves"}) == {"success": False, "error": "x", "kind": "credits"}
@@ -724,18 +842,114 @@ async def test_media_tools_answer_the_model_with_results_or_the_gate_reason(monk
 async def test_the_owner_can_ask_for_any_purchase_link_the_platform_sells(monkeypatch):
     purchases = FakePurchases()
     monkeypatch.setattr(capabilities, "_providers", {**capabilities._providers, capabilities.PURCHASES: purchases})
+    # The owner's email decides what is sold. On the old plans: Plus and Pro, and monthly credit top-ups.
     t = tools()
-    minted = await t.execute("purchase_link", {"kind": "topup", "credits_per_month": 200, "billing_period": "yearly"})
-    assert minted["success"] is True and minted["url"] == "https://noclick.com/pay/job-200"
-    assert purchases.minted == [{"user_id": USER, "kind": "topup", "plan": None, "credits_per_month": 200,
-                                 "billing_period": "yearly", "continuation": None, "send_to_phone": False}]
+    minted = await t.execute("purchase_link", {"kind": "topup", "credits_per_month": 40})
+    assert minted["success"] is True and minted["url"] == "https://noclick.com/pay/job-40"
+    assert purchases.minted == [{"user_id": USER, "kind": "topup", "plan": None, "amount_usd": None,
+                                 "credits_per_month": 40, "billing_period": "monthly", "continuation": None,
+                                 "send_to_phone": False}]
     # The tool is advertised with the catalog's prices, and only where something is for sale.
     link_tool = next(p for p in t.tool_params() if p["function"]["name"] == "purchase_link")["function"]
-    assert "Plus $25/month or $180/year" in link_tool["description"] and "20 ($5)" in link_tool["description"]
-    # Where checkout charges another currency, the platform says so and the model can quote it.
-    assert "a top-up needs a paid plan. Buyers abroad pay the local price at checkout. Send the link" \
-        in link_tool["description"]
-    assert link_tool["parameters"]["properties"]["credits_per_month"]["enum"] == [20]
+    # How the description words the prices is the coordinator_tools prompt pack's.
+    old_plans = purchases.catalog()
+    assert link_tool["description"] == coordinator_tools.TOOL_PROMPTS.purchase_link_in_credits(
+        plans=old_plans["plans"], topups=old_plans["topups"], checkout_note=old_plans["checkout_note"])
+    params = link_tool["parameters"]["properties"]
+    assert params["kind"]["enum"] == ["plan", "topup"] and "amount_usd" not in params
+    assert params["credits_per_month"]["enum"] == [20, 40]
+    # An account on Free/Member is offered Member, monthly, and funds.
+    member = CoordinatorTools(pool=MockNativePool(), sio=object(), user_id=USER, organization_id=None,
+                              conversation_id=CID, email="member@example.com")
+    purchases.minted.clear()
+    minted = await member.execute("purchase_link", {"kind": "funds", "amount_usd": 40})
+    assert minted["url"] == "https://noclick.com/pay/job-40" and purchases.minted[0]["kind"] == "funds"
+    member_tool = next(p for p in member.tool_params() if p["function"]["name"] == "purchase_link")["function"]
+    new_plans = purchases.catalog("member@example.com")
+    assert member_tool["description"] == coordinator_tools.TOOL_PROMPTS.purchase_link(
+        plans=new_plans["plans"], funds=new_plans["funds"], checkout_note=new_plans["checkout_note"])
+    member_params = member_tool["parameters"]["properties"]
+    assert member_params["plan"]["enum"] == ["member"] and member_params["kind"]["enum"] == ["plan", "funds"]
+    assert (member_params["amount_usd"]["minimum"], member_params["amount_usd"]["maximum"]) == (10, 1000)
+    assert "credits_per_month" not in member_params
     monkeypatch.setattr(capabilities, "_providers", {k: v for k, v in capabilities._providers.items() if k != capabilities.PURCHASES})
     bare = tools()
     assert "purchase_link" not in bare._tools and "purchase_link" not in {p["function"]["name"] for p in bare.tool_params()}
+
+
+async def test_refusals_and_the_out_of_usage_line_speak_the_payers_plans(turn_seams, monkeypatch):
+    """An account still on the old plans (judged on who pays: the org's owner) hears
+    credits and top-ups; one on Free/Member hears funds and usage."""
+    captured = {}
+    orig_create = FakeAgent.create
+
+    async def create(cls, **kwargs):
+        captured.update(kwargs)
+        return await orig_create(**kwargs)
+    monkeypatch.setattr(FakeAgent, "create", classmethod(create))
+    old_plans = AsyncMock(return_value=True)
+    monkeypatch.setattr(coordinator, "bills_on_old_plans", old_plans)
+    asked = []
+    real = coordinator.system_prompt_for
+    monkeypatch.setattr(coordinator, "system_prompt_for",
+                        lambda *a, **kw: asked.append(kw["in_credits"]) or real(*a, **kw))
+    await coordinator.run_coordinator_turn(sio="SIO", sid="sid-1", user_id=USER, user_email="a@b.c", text="hi")
+    old_plans.assert_awaited_once_with(ANY, user_id=USER, organization_id=ORG)
+    prompt = captured["config"].settings.system_prompt
+    assert prompt.startswith(coordinator.PROMPTS.system_prompt(in_credits=True, phone_steps=True))
+
+    old_plans.return_value = False
+    await coordinator.run_coordinator_turn(sio="SIO", sid="sid-1", user_id=USER, user_email="a@b.c", text="hi")
+    assert captured["config"].settings.system_prompt.startswith(
+        coordinator.PROMPTS.system_prompt(in_credits=False, phone_steps=True))
+    assert asked == [True, False]
+
+    lines = []
+
+    async def broke(self, message):
+        raise InsufficientBalanceError("no credits")
+    monkeypatch.setattr(FakeAgent, "__call__", broke)
+
+    async def sink(event):
+        lines.append(event.message)
+    # Where the platform has something besides funds to offer (REFERRAL_OFFER), the refusal ends with it, the
+    # link on a line of its own, and the request it turned down goes with it; without one, the line alone.
+    offered = []
+
+    async def offer(pool, user_id, *, organization_id=None, request=None):
+        offered.append((user_id, request))
+        return {"line": "Get $2 for each person who starts using NoClick. Share your link:\nhttps://noclick.com/join/K7M2QX"}
+    for provided in (True, False):
+        providers = {**capabilities._providers}
+        if provided:
+            providers[capabilities.REFERRAL_OFFER] = offer
+        else:
+            providers.pop(capabilities.REFERRAL_OFFER, None)
+        monkeypatch.setattr(capabilities, "_providers", providers)
+        for on_old_plans, line in ((True, "Your NoClick account is out of credits, so I have to stop here."),
+                                   (False, "Your NoClick account has run out of usage, so I have to stop here.")):
+            old_plans.return_value = on_old_plans
+            await coordinator.run_coordinator_turn(sio="SIO", sid="", user_id=USER, user_email="a@b.c", text="hi",
+                                                   sink=sink, extra={"channel": "whatsapp_text"})
+            assert lines[-1] == (f"{line}\n\nGet $2 for each person who starts using NoClick. Share your link:\n"
+                                 "https://noclick.com/join/K7M2QX" if provided else line)
+    assert offered == [(USER, "hi"), (USER, "hi")]
+
+
+def test_auto_topup_is_offered_only_to_its_rollout(monkeypatch):
+    from tests.fixtures.billing_plans import bill_on_free_member, bill_on_the_old_plans
+
+    def tools(email):
+        made = CoordinatorTools(pool=MockNativePool(), sio=object(), user_id=USER, organization_id=None,
+                                conversation_id=CID, email=email)
+        return set(made._tools), {p["function"]["name"] for p in made.tool_params()}
+
+    monkeypatch.setattr(capabilities, "_providers", {**capabilities._providers, capabilities.AUTO_TOPUP: object()})
+    # Open to everyone, every account's coordinator has it.
+    bill_on_free_member(monkeypatch)
+    assert all("auto_topup" in names for names in tools("customer@example.com"))
+    # Closed again, only an account let in by name.
+    bill_on_the_old_plans(monkeypatch)
+    assert not any("auto_topup" in names for names in tools("customer@example.com"))
+    monkeypatch.setitem(feature_gates.FEATURE_ALLOWLIST, "auto_topup", {"pilot@example.com"})
+    assert all("auto_topup" in names for names in tools("pilot@example.com"))

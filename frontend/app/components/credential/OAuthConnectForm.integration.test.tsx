@@ -26,7 +26,6 @@ function Harness({ provider, credentialType, displayName, scopes, onCreated }: {
             provider={provider}
             credentialType={credentialType}
             displayName={displayName}
-            Icon={() => null}
             scopes={scopes}
             connect={oauth.connect}
             connectingProvider={oauth.connectingProvider}
@@ -60,7 +59,7 @@ describe('OAuthConnectForm in-app end-to-end', () => {
             const onCreated = vi.fn();
             render(<Harness {...c} onCreated={onCreated} />);
 
-            fireEvent.click(screen.getByRole('button', { name: new RegExp(`Connect ${c.displayName} Account`, 'i') }));
+            fireEvent.click(screen.getByRole('button', { name: new RegExp(`Continue with ${c.displayName}`, 'i') }));
             expect(window.open).toHaveBeenCalledTimes(1);
 
             await act(async () => {

@@ -290,6 +290,15 @@ class WorkflowCollabTokenResponse(BaseModel):
     message: Optional[str] = Field(None, description="Error message if generation failed")
 
 
+class RelayUserTokenResponse(BaseModel):
+    """Response for relay:user_token - a token for the user's own relay room"""
+    success: bool = Field(..., description="Whether a token was minted")
+    token: Optional[str] = Field(None, description="Token the relay viewer sends as its first frame")
+    user_id: Optional[str] = Field(None, description="The user whose room the token opens (the session's own)")
+    expires_at: Optional[int] = Field(None, description="Token expiration timestamp (Unix epoch seconds)")
+    message: Optional[str] = Field(None, description="Error message if minting failed")
+
+
 # Workflow Folder Operation Responses
 class FolderInfo(BaseModel):
     """Workflow folder information structure"""

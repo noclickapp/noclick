@@ -198,6 +198,9 @@ class GraphState:
         # Summary and workflow name (from builder done tag)
         self.summary: str = ""
         self.workflow_name: str = ""
+        # (old, new) harness of each agent a write moved, in order — the
+        # persist renames a scaffolded workflow after them, then clears it.
+        self.harness_switches: List[Tuple[str, str]] = []
 
         # n8n import context: raw n8n node dicts keyed by n8n node id.
         # Populated by AgenticBuilder.edit() when an n8n workflow is attached.
@@ -745,11 +748,13 @@ class GraphState:
         return state
 
     @staticmethod
-    def _get_valid_config_keys(node_type: str, operation: Optional[str] = None) -> Optional[Set[str]]:
+    def _get_valid_config_keys(
+        node_type: str, operation: Optional[str] = None, config: Optional[Dict[str, Any]] = None,
+    ) -> Optional[Set[str]]:
         """Return valid config field names from schema, or None if unavailable."""
         # Lazy: operation_catalog pulls the full NODE_REGISTRY at import time
         from .operation_catalog import get_operation_config_class
-        config_cls = get_operation_config_class(node_type, operation or 'default')
+        config_cls = get_operation_config_class(node_type, operation or 'default', config)
         if not config_cls:
             return None
         try:
@@ -788,7 +793,7 @@ class GraphState:
 
             # Build compact config (skip empty/None, clip long values)
             # Filter to only schema-valid fields to exclude metadata like credentialIds
-            valid_keys = self._get_valid_config_keys(node.type, node.operation)
+            valid_keys = self._get_valid_config_keys(node.type, node.operation, node.config)
             config_parts = []
             if node.config:
                 for k, v in node.config.items():

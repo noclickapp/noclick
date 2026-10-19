@@ -19,6 +19,7 @@ def _clean_registry():
 async def test_nothing_registered_is_a_no_op():
     await lifecycle.run_startup_hooks("boot")
     await lifecycle.run_startup_hooks("ready")
+    await lifecycle.run_shutdown_hooks("stop")
     await lifecycle.run_shutdown_hooks("drain")
     await lifecycle.run_shutdown_hooks("final")
     await lifecycle.run_socket_connect_hooks({}, {})

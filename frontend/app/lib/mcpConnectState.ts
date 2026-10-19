@@ -21,6 +21,8 @@ export interface HostedLinkStatus {
     tool_names?: string[];
     last_method?: string | null;
     call_count?: number;
+    /** When a client first listed tools that were served (epoch seconds): the link has worked at least once. */
+    first_tools_at?: number | null;
     /** Server side: what tools/list would return right now (null = not asked / unresolvable). */
     tools_ready?: number | null;
     tools_sample?: string[];

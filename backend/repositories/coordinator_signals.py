@@ -10,7 +10,8 @@ class CoordinatorSignalRepo:
     def __init__(self, pool):
         self.pool = pool
 
-    async def agent_message(self, *, user_id, workflow_id, node_id, payload, node_cap, account_cap):
+    async def agent_message(self, *, user_id, workflow_id, node_id, payload, node_cap, account_cap, wake=True):
+        """The signal and its coordinator wake-up; without ``wake``, the signal row alone (the caps count it)."""
         async with self.pool.acquire() as conn, conn.transaction():
             await conn.execute("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", f"agent-msg:{user_id}")
             workflow = await conn.fetchrow(
@@ -34,10 +35,13 @@ class CoordinatorSignalRepo:
                 )
             row = await conn.fetchrow(
                 """INSERT INTO coordinator_signals (user_id,kind,workflow_id,node_id,payload,woke)
-                   VALUES ($1::uuid,'agent_message',$2::uuid,$3,$4,true) RETURNING *""",
+                   VALUES ($1::uuid,'agent_message',$2::uuid,$3,$4,$5) RETURNING *""",
                 user_id, workflow_id, node_id,
                 {**payload, "workflow_id": workflow_id, "workflow_name": workflow["name"] or "Untitled", "node_id": node_id},
+                wake,
             )
+            if not wake:
+                return dict(row)
             epoch = await CoordinatorWakeupRepo(conn).epoch(user_id)
             return await CoordinatorWakeupRepo(self.pool).enqueue_signal(
                 signal=dict(row), conn=conn, payload={"kind": "agent_message", **row["payload"]},

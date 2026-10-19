@@ -58,6 +58,16 @@ async def get_openrouter_catalog(path: str) -> List[Dict[str, Any]]:
     return _catalogs[path]
 
 
+def get_openrouter_catalog_sync(path: str) -> List[Dict[str, Any]]:
+    """Sync sibling of :func:`get_openrouter_catalog` (same cache)."""
+    if path in _catalogs:
+        return _catalogs[path]
+    response = requests.get(f"https://openrouter.ai/api/v1/{path}", timeout=10)
+    response.raise_for_status()
+    _catalogs[path] = response.json().get("data", [])
+    return _catalogs[path]
+
+
 async def _fetch_models_from_api() -> List[Dict[str, Any]]:
     """
     Fetch models from OpenRouter API.

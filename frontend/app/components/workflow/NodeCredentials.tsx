@@ -1,24 +1,20 @@
-// NodeCredentials component displays required credentials for a workflow node
-// and allows users to select which credentials to use from their saved credentials.
+// The node panel's account for a node: which of your accounts it runs as (a picker per kind of account that has
+// any), what connecting it proved, and connecting another through the same flow the Connections dialog uses
+// (AppConnect: a switch between the ways in, a key as get-it-then-paste-it steps, asking someone who can).
 // Supports custom credential forms for nodes with special requirements (e.g., agent nodes).
 
 import { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense, type ComponentType, type LazyExoticComponent } from 'react';
-import { Key, Plus, AlertCircle, X, Check, Edit2, Trash2, ChevronDown, CheckCircle2, Search, ExternalLink, Share2 } from 'lucide-react';
-import { SiGoogle } from 'react-icons/si';
+import { Plus, AlertCircle, X, Check, Edit2, Trash2, ChevronDown, Search, Share2, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { sendEventAsync } from '~/lib/socket-sender';
-import { getProviderConfig } from '~/utils/oauthProviders';
-import { getCredentialIcon } from '~/utils/credentialIcons';
 import { DeleteConfirmPopup } from '~/components/shared/popups/DeleteConfirmPopup';
 import { ShareDialog } from '~/components/shared/popups/ShareDialog';
-import { CredentialRequestActions } from './CredentialRequestActions';
-import { CredentialFieldInput, type CredentialField } from '~/components/credential/CredentialFieldInput';
-import { OAuthConnectForm } from '~/components/credential/OAuthConnectForm';
-import { CredentialCreatePanel, type CredentialSaveResult } from '~/components/credential/CredentialCreatePanel';
-import { ConnectionVerdict } from '~/components/credential/ConnectionVerdict';
+import { INLINE_ACTION } from './CredentialRequestActions';
+import { appNameOf, credentialRequirements, getFieldsFromSchema, methodFromRequirement, type CredentialRequirement } from '~/components/credential/credentialMethods';
+import { CREATE_FORM, CredentialCreatePanel, type CredentialSaveResult } from '~/components/credential/CredentialCreatePanel';
+import { ConnectionVerdict, StoredVerdict } from '~/components/credential/ConnectionVerdict';
+import { AppConnect } from '~/components/credential/connect/AppConnect';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
-import { CredentialCreateEntryButton } from '~/components/credential/CredentialCreateEntryButton';
-import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { kindFromCredentialType } from '~/lib/credentialMethodKind';
 import {
     claudePlanRefusal,
@@ -30,6 +26,13 @@ import {
 } from '~/lib/agentCredentialModel';
 import { isCliAgentModel } from '~/lib/agentChat';
 import { useCredentialOAuth, type Credential } from '~/hooks/useCredentialOAuth';
+import { useCredentialSchemaVisible } from '~/hooks/useCredentialSchemaVisible';
+import { useSnapshot } from 'valtio';
+import { isLocalEdition } from '~/lib/edition';
+import { instanceKeysStore, platformKeyFunds, platformKeyMarker, type PlatformKeyMarker } from '~/lib/instanceKeys';
+import { providerKeyLabel } from '~/lib/providerKeys';
+import { InstanceKeyPrompt } from '~/components/credential/InstanceKeyPrompt';
+import { InstanceSmtpForm } from '~/components/credential/InstanceSmtpForm';
 // Lazy: the agent credential form pulls useModels (~159KB gz) which otherwise
 // evaluated eagerly on the dashboard via the always-mounted credential dialog.
 // It only renders when configuring an agent (LLM) credential.
@@ -37,23 +40,14 @@ const AgentCredentialsForm = lazy(() =>
     import('./AgentCredentialsForm').then((m) => ({ default: m.AgentCredentialsForm }))
 );
 import { OAuthCredentialForm } from './OAuthCredentialForm';
-import { WhatsAppQRCredentialForm } from './WhatsAppQRCredentialForm';
 import { MCPCredentialForm } from './MCPCredentialForm';
-import { invalidateCredentialsCache, removeCredentialsFromCache, isInjectedDisplayCredential, isConnectionDropped, type CredentialDisplayMeta } from '~/utils/credentialAutoSelect';
+import { invalidateCredentialsCache, removeCredentialsFromCache, isConnectionDropped, type CredentialDisplayMeta } from '~/utils/credentialAutoSelect';
 import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
-import { getCredentialTypeFromSchema } from '~/utils/credentialTypes';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
-import { UpgradePopup } from '~/components/utils/UpgradePopup';
-import { isPlanLimitError } from '~/lib/planLimitErrors';
-import { PLAN_LIMITS } from '~/lib/pricing';
-import { useOrgContext } from '~/hooks/useOrgContext';
-import { isLocalEdition } from '~/lib/edition';
-import { useSnapshot } from 'valtio';
-import { instanceKeysStore, platformKeyFunds, platformKeyMarker, type PlatformKeyMarker } from '~/lib/instanceKeys';
-import { providerKeyLabel } from '~/lib/providerKeys';
-import { InstanceKeyPrompt } from '~/components/credential/InstanceKeyPrompt';
-import { InstanceSmtpForm } from '~/components/credential/InstanceSmtpForm';
-
+import { methodName, copyMethodOf } from '~/utils/credentialCopy';
+import { FIELD_LABEL } from '~/components/shell/fields';
+import { cn } from '~/lib/utils';
+import { hasCustomCredentialForm, type CustomCredentialFormType } from './customCredentialForms';
 /**
  * Standard interface for custom credential form components.
  * Custom forms handle all their own logic internally (state, fetching, etc.)
@@ -71,6 +65,9 @@ export interface CustomCredentialFormProps {
     /** Compact hosts (ask drawer, onboarding) hide the ask-someone-else actions,
         matching what NodeCredentials already does for its own copy of them. */
     compact?: boolean;
+    /** Hears an account the person just connected here (a sign-in that returned, a key that saved), never one picked
+        from the list. */
+    onConnected?: (credentialId: string) => void;
 }
 
 /**
@@ -90,29 +87,19 @@ const MCPCredentialFormWrapper = ({ nodeData, credentialIds, onCredentialIdsChan
 };
 
 /**
- * Registry of custom credential form components by node type.
+ * Registry of custom credential form components by node type (the types are listed in customCredentialForms).
  * Nodes listed here will use their custom form instead of the default credential UI.
  * Custom forms must implement CustomCredentialFormProps interface.
  */
 const CUSTOM_CREDENTIAL_FORMS: Record<
-    string,
+    CustomCredentialFormType,
     ComponentType<CustomCredentialFormProps> | LazyExoticComponent<ComponentType<CustomCredentialFormProps>>
 > = {
     'agent': AgentCredentialsForm,
     'mcp-server': MCPCredentialFormWrapper,
-    // Future custom forms can be added here:
-    // 'some-other-node': SomeOtherCredentialsForm,
 };
 
-/**
- * Whether a node type's credentials are created through a custom form whose
- * inputs depend on node-specific config (agent → selected model, mcp-server →
- * server URL). Such credentials can't be created standalone outside a node, so
- * the create-credential dialog excludes these node types from its service list.
- */
-export function hasCustomCredentialForm(nodeType: string): boolean {
-    return nodeType in CUSTOM_CREDENTIAL_FORMS;
-}
+export { hasCustomCredentialForm };
 
 // Node types where credentials are truly optional (can function without any credentials)
 // Most nodes with anyOf null in schema still require credentials to work - the null is for initial state
@@ -249,8 +236,8 @@ function isOperationCredentialsOptional(nodeType: string, nodeData?: Record<stri
         // Match by operation const value
         if (def.properties.operation.const === operation || def.properties.operation.default === operation) {
             const optional = def['x-credentials-optional'] === true || evaluateCondition(def['x-credentials-optional-if'], config);
-            // Optional in the cloud because NoClick's key pays; on a self-hosted
-            // instance only while the operator configured that key.
+            // Optional in the cloud because NoClick's key pays; on a self-hosted instance only while the operator
+            // configured that key.
             return optional && platformKeyFunds(platformKeyMarker(def));
         }
     }
@@ -259,11 +246,12 @@ function isOperationCredentialsOptional(nodeType: string, nodeData?: Record<stri
 }
 
 /** The platform key the selected operation runs on, if it declares one. */
-export function operationPlatformKey(nodeType: string, nodeData?: Record<string, any>): PlatformKeyMarker | null {
+export function operationPlatformKey(nodeType: string, nodeData?: Record<string, unknown>): PlatformKeyMarker | null {
+    type OperationDef = Record<string, unknown> & { properties?: { operation?: { const?: unknown; default?: unknown } } };
     const operation = nodeData?.operation as string | undefined;
     const schema = NODE_SCHEMAS[nodeType];
     const oneOf = schema?.properties?.config?.oneOf as Array<{ $ref?: string }> | undefined;
-    const defs = (schema as any)?.$defs as Record<string, any> | undefined;
+    const defs = (schema as { $defs?: Record<string, OperationDef> } | undefined)?.$defs;
     if (!operation || !oneOf || !defs) return null;
     for (const entry of oneOf) {
         const def = defs[entry.$ref?.split('/').pop() ?? ''];
@@ -314,7 +302,7 @@ export function providerCredentialsMissing(
  * available either way — an attached credential switches billing to the user's key.
  */
 export function isUsageBasedBillingAvailable(nodeType: string, nodeData?: Record<string, any>): boolean {
-    if (isLocalEdition()) return false; // hosted platform key only
+    if (isLocalEdition()) return false; // NoClick's own key pays only on the hosted service
     const ops = (nodeData?.config as Record<string, unknown> | undefined)?.agent_tool_operations;
     if (Array.isArray(ops) && ops.length > 0) return providerAllowlistAllOptional(nodeType, nodeData);
     return isOperationCredentialsOptional(nodeType, nodeData);
@@ -361,9 +349,6 @@ export function hasUnconnectedCredentials(
     // Credentials are required but none selected
     return !hasAnyCredential;
 }
-
-// Credential-UI detection routed through the single kind discriminator, so the
-// in-app UI and the public provide page classify credential types identically.
 // Edit/Share/Delete are owner-only (the backend rejects them from anyone else).
 // Gate on the backend's ownership signals, NOT on `owner_name` — that label is
 // only set on injected run-as-owner descriptors, so a credential shared with the
@@ -374,71 +359,11 @@ const isOwnedByViewer = (cred: Credential): boolean =>
 const ownerLabel = (cred: Credential): string =>
     cred.owner_name || cred.shared_by_name || cred.shared_by_email || 'another user';
 
-const isOAuthCredential = (credentialSchema: any): boolean =>
-    kindFromCredentialType(credentialSchema?.['x-credential-type']) === 'oauth';
-
-const isQRScanCredential = (credentialSchema: any): boolean =>
+const isQRScanCredential = (credentialSchema: { 'x-credential-type'?: string } | null | undefined): boolean =>
     kindFromCredentialType(credentialSchema?.['x-credential-type']) === 'qr_scan';
 
-const getOAuthProvider = (credentialSchema: any): string | undefined => {
-    return credentialSchema?.['x-oauth-provider'];
-};
-
-const getOAuthScopes = (credentialSchema: any): string[] => {
-    return credentialSchema?.['x-oauth-scopes'] || [];
-};
-
-const getOAuthUserScopes = (credentialSchema: any): string[] => {
-    return credentialSchema?.['x-oauth-user-scopes'] || [];
-};
-
-// Get credential URL where users can obtain their API key/token
-const getCredentialUrl = (credentialSchema: any): string | undefined => {
-    return credentialSchema?.['x-credential-url'];
-};
-
-// Warning notice shown above a credential (e.g. integration pending approval / unavailable)
-const getCredentialNotice = (credentialSchema: any): string | undefined => {
-    return credentialSchema?.['x-credential-notice'];
-};
-
-// Helper to extract field info from JSON Schema
-const getFieldsFromSchema = (credentialSchema: any): CredentialField[] => {
-    if (!credentialSchema?.properties) return [];
-
-    const required = credentialSchema.required || [];
-    return Object.entries(credentialSchema.properties)
-        .filter(([_name, prop]: [string, any]) => !prop['ui:hidden'])
-        .map(([name, prop]: [string, any]) => {
-            const enumValues: string[] | undefined = prop.enum;
-            const enumNames: string[] | undefined = prop.enumNames;
-            return {
-                name,
-                label: prop.title || name,
-                type: prop['ui:widget'] === 'password' ? 'password' : 'text',
-                placeholder: prop['ui:placeholder'] || prop.placeholder,
-                required: required.includes(name),
-                // ui:help is the field's own guidance; the Pydantic description
-                // is the fallback. A field-level x-credential-url says where
-                // this one value comes from.
-                description: prop['ui:help'] || prop.description,
-                helpUrl: typeof prop['x-credential-url'] === 'string' && prop['x-credential-url'].startsWith('http')
-                    ? prop['x-credential-url']
-                    : undefined,
-                default: prop.default,
-                options: Array.isArray(enumValues)
-                    ? enumValues.map((v, i) => ({ value: v, label: enumNames?.[i] ?? v }))
-                    : undefined,
-            };
-        });
-};
-
-interface CredentialRequirement {
-    credential_type: string;
-    label: string;
-    description: string;
-    schema?: any;  // JSON Schema defining credential structure
-}
+// A notice shown above the ways in (e.g. an integration pending approval / unavailable).
+const getCredentialNotice = (credentialSchema: { 'x-credential-notice'?: string } | null | undefined): string | undefined => credentialSchema?.['x-credential-notice'];
 
 /** Dead-but-recoverable: the provider session dropped (reconnecting the same
  *  credential fixes it), as opposed to revoked_at which is a terminal disconnect. */
@@ -457,46 +382,64 @@ interface NodeCredentialsProps {
     // them from their dropdowns live.
     onChange?: (credentialIds: Record<string, string>, credentialMeta?: Record<string, CredentialDisplayMeta>, credentialRemoved?: string[]) => void;
     credentialVariables?: { name: string; label: string; credentialTypes: string[] }[];  // Credential variables with type metadata from set-variable nodes
-    /** Compact mode: hides credential type title/description and share request option. Used in builder input drawer. */
+    /** Compact mode (the builder's ask drawer, the Setup step): no labels where the host has its own, no asking
+     *  someone else. */
     compact?: boolean;
     /** What the connect-time probe proved about a credential just created or
         re-keyed here (null = nothing could be judged), so hosts like the Setup
         step can show the verdict without a second provider round-trip. */
     onVerification?: (credentialId: string, verification: CredentialTestConnectionResponse | null) => void;
+    /** Hears an account the person just connected here (a sign-in, a key, a scan, a purchase), never one picked from
+        the list: the builder's one-question ask takes it as the answer. */
+    onConnected?: (credentialId: string) => void;
 }
 
-export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, onChange, credentialVariables, compact, onVerification }: NodeCredentialsProps) => {
-    const [schema, setSchema] = useState<any>(null);
-    const [requiredCredentials, setRequiredCredentials] = useState<CredentialRequirement[]>([]);
-
-    const isCredentialSchemaVisible = useCallback(
-        (credSchema: any): boolean => !credSchema?.['x-credential-hidden'],
-        []
-    );
-
+export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, onChange, credentialVariables, compact, onVerification, onConnected }: NodeCredentialsProps) => {
+    const isCredentialSchemaVisible = useCredentialSchemaVisible();
+    // Read from the bundled schemas while rendering, so the first frame never claims a step needs no account.
+    const { requiredCredentials, error } = useMemo(() => {
+        try {
+            return { requiredCredentials: credentialRequirements(nodeType, isCredentialSchemaVisible), error: null };
+        } catch (err) {
+            console.error('[NodeCredentials] Error loading schema:', err);
+            return { requiredCredentials: [] as CredentialRequirement[], error: err instanceof Error ? err.message : 'Failed to load schema' };
+        }
+    }, [nodeType, isCredentialSchemaVisible]);
     const usageBasedBillingAvailable = useMemo(
         () => isUsageBasedBillingAvailable(nodeType, nodeData),
         [nodeType, nodeData]
     );
-    // Self-hosted: a platform-keyed operation runs on the INSTANCE's key. The
-    // store flips this the moment a key is saved anywhere.
+    const app = useMemo(() => appNameOf(nodeType), [nodeType]);
+    // Self-hosted: a platform-keyed operation runs on the INSTANCE's key, which the store flips the moment one is
+    // saved anywhere.
     const instanceKeys = useSnapshot(instanceKeysStore);
     const selfHosted = isLocalEdition();
     const platformKey = useMemo(() => (selfHosted ? operationPlatformKey(nodeType, nodeData) : null), [selfHosted, nodeType, nodeData]);
     const instanceKeyConfigured = !!platformKey && instanceKeys.configured.includes(platformKey.env);
     const outboundEmailConfigured =
-        instanceKeys.configured.includes('FROM_EMAIL') &&
-        (instanceKeys.configured.includes('SMTP_HOST') || instanceKeys.configured.includes('RESEND_API_KEY'));
+        instanceKeys.configured.includes('FROM_EMAIL') && (instanceKeys.configured.includes('SMTP_HOST') || instanceKeys.configured.includes('RESEND_API_KEY'));
 
     // Check if this node type has a custom credential form
-    const CustomCredentialForm = CUSTOM_CREDENTIAL_FORMS[nodeType];
+    const CustomCredentialForm = hasCustomCredentialForm(nodeType) ? CUSTOM_CREDENTIAL_FORMS[nodeType as CustomCredentialFormType] : undefined;
 
     // Stable callback for credential ID changes (used by custom forms)
     const handleCredentialIdsChange = useCallback((newCredentialIds: Record<string, string>) => {
         onChange?.(newCredentialIds);
     }, [onChange]);
 
-    // Handle credential selection - needs to be defined before useCredentialOAuth
+    // Ref to track required credentials for selection cleanup
+    const requiredCredentialsRef = useRef<CredentialRequirement[]>([]);
+    useEffect(() => {
+        requiredCredentialsRef.current = requiredCredentials;
+    }, [requiredCredentials]);
+
+    // Ref to the resolved credential list so handleCredentialSelect can build a display descriptor for the selected
+    // credential.
+    const availableCredentialsRef = useRef<Credential[]>([]);
+    // Credentials minted from this panel (a sign-in, a key, a bought number, a scanned QR): selected before the
+    // refreshed list contains them, so the missing-credential warning must not judge them by the stale list.
+    const mintedCredentialIdsRef = useRef<Set<string>>(new Set());
+
     const handleCredentialSelect = useCallback((credentialType: string, credentialId: string, knownCredential?: { id: string; name: string; credential_type: string }) => {
         // Only keep keys that are valid current credential types — this removes stale keys
         // from old schema versions (e.g. "supabaseoauthcredential" vs "supabase_oauth") that
@@ -521,103 +464,31 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
         onChange?.({ ...cleaned, [credentialType]: credentialId }, credentialMeta);
     }, [credentialIds, onChange]);
 
-    // Ref to track required credentials for OAuth callback
-    const requiredCredentialsRef = useRef<CredentialRequirement[]>([]);
-    useEffect(() => {
-        requiredCredentialsRef.current = requiredCredentials;
-    }, [requiredCredentials]);
-
-    // Ref to the resolved credential list so handleCredentialSelect (defined before
-    // useCredentialOAuth) can build a display descriptor for the selected credential.
-    const availableCredentialsRef = useRef<Credential[]>([]);
-
-    // Use shared OAuth hook - handles all OAuth providers and credential loading
-    const {
-        availableCredentials,
-        loading,
-        loadCredentials,
-        connect: oauthConnect,
-        connectOrgConsent,
-        isConnecting: oauthIsConnecting,
-        connectingProvider,
-        error: oauthError,
-        planLimitError: oauthPlanLimitError,
-        credentialTier,
-        clearError: clearOAuthError,
-        pendingSelection,
-        resolvePendingSelection,
-        cancelConnect: cancelOAuthConnect,
-    } = useCredentialOAuth({
-        onCredentialCreated: async (credentialId, provider, credential) => {
-            // Find the matching credential requirement by provider
-            const matchingReq = requiredCredentialsRef.current.find(
-                req => isOAuthCredential(req.schema) && getOAuthProvider(req.schema) === provider
-            );
-            if (matchingReq) {
-                handleCredentialSelect(matchingReq.credential_type, credentialId, credential);
-                // Validate API access if the credential schema requires it
-                if (matchingReq.schema?.['x-oauth-validates-api-access']) {
-                    try {
-                        const result = await sendEventAsync<{
-                            valid?: boolean;
-                            error?: string;
-                            help_url?: string;
-                        }>({
-                            event_name: 'credential:validate_access',
-                            credential_id: credentialId,
-                            node_type: nodeType,
-                        });
-                        if (result && !result.valid) {
-                            setValidationError({
-                                message: result.error || 'API access validation failed.',
-                                helpUrl: result.help_url,
-                            });
-                        }
-                    } catch {
-                        // silently ignore validation failures — don't block credential selection
-                    }
-                }
-            }
-        },
-    });
-
-    // Keep the ref current so handleCredentialSelect can build a display descriptor.
+    // The account list (connecting itself runs in AppConnect).
+    const { availableCredentials, loading, loadCredentials } = useCredentialOAuth();
     availableCredentialsRef.current = availableCredentials;
 
     // Note: an owner's credential set on a node is resolved as the workflow owner
     // at execution and is NOT shared into a collaborator's account, so it won't be
     // in their credential:list. Its display info (name + owner tag) is fetched
     // workflow-scoped by FlowCanvas (credential:display_info) and merged into the
-    // cache → availableCredentials, so the dropdown resolves it here. No list-refetch
-    // backoff is needed (there is no per-user share to wait for).
+    // cache → availableCredentials, so the dropdown resolves it here.
 
-    const [error, setError] = useState<string | null>(null);
-    const [creatingCredentialType, setCreatingCredentialType] = useState<string | null>(null);
-    // Create-form state lives inside CredentialCreatePanel; createError remains
-    // for OAuth-section errors surfaced outside the panel.
-    const [createError, setCreateError] = useState<string | null>(null);
-    const [planLimitError, setPlanLimitError] = useState<string | null>(null);
-    // Post-connect API access validation error (e.g. GBP API not approved yet).
-    const [validationError, setValidationError] = useState<{ message: string; helpUrl?: string } | null>(null);
-    const [orgContext] = useOrgContext();
-    const isOrgMember = orgContext.id && orgContext.role === 'member';
+    // The connect flow, open on a way in (its credential type), or on the first; closed once an account exists.
+    const [connecting, setConnecting] = useState<string | true | null>(null);
 
     // Edit state
     const [editingCredentialId, setEditingCredentialId] = useState<string | null>(null);
     // Connect-time verdicts for credentials created or re-keyed in this
     // session, by id. Older credentials carry theirs in metadata.verified_as.
     const [verifications, setVerifications] = useState<Record<string, CredentialTestConnectionResponse | null>>({});
-    const [editFieldErrors, setEditFieldErrors] = useState<Record<string, string>>({});
-    const [editHint, setEditHint] = useState<string | null>(null);
     const recordVerification = useCallback((credentialId: string, verification: CredentialTestConnectionResponse | null | undefined) => {
         setVerifications(prev => ({ ...prev, [credentialId]: verification ?? null }));
         onVerification?.(credentialId, verification ?? null);
     }, [onVerification]);
+    // The custom-client OAuth edit form's values (every other edit is the connect form).
     const [editCredentialName, setEditCredentialName] = useState('');
     const [editCredentialFormData, setEditCredentialFormData] = useState<Record<string, string>>({});
-    const [editLoading, setEditLoading] = useState(false);
-    const [editError, setEditError] = useState<string | null>(null);
-
 
     // Dropdown state
     const [openDropdownType, setOpenDropdownType] = useState<string | null>(null);
@@ -631,133 +502,6 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
 
     // Share dialog state
     const [shareCredential, setShareCredential] = useState<{ id: string; name: string } | null>(null);
-
-    const getCredentialCap = useCallback(() => {
-        return PLAN_LIMITS[credentialTier as keyof typeof PLAN_LIMITS]?.credentials_per_type ?? Infinity;
-    }, [credentialTier]);
-
-    const getVisibleCredentialCount = useCallback((credentialType: string) => {
-        // Exclude injected run-as-owner display descriptors (never the viewer's own)
-        // so they don't inflate the viewer's plan-limit cap count — matches the
-        // backend, which counts only the viewer's own + shared creds. Keying on the
-        // display-only registry (not owner_name) also excludes a live descriptor that
-        // hasn't been owner-enriched yet.
-        return availableCredentials.filter(c => c.credential_type === credentialType && !c.over_cap && !isInjectedDisplayCredential(c.id)).length;
-    }, [availableCredentials]);
-
-    const showCredentialLimitPopup = useCallback((cap: number) => {
-        setPlanLimitError(
-            `Plan limit reached: ${credentialTier.charAt(0).toUpperCase() + credentialTier.slice(1)} plan allows up to ${cap} credentials per node type (including shared). Ask an instance administrator to adjust this limit.`
-        );
-    }, [credentialTier]);
-
-    const canCreateCredential = useCallback((credentialType: string) => {
-        const cap = getCredentialCap();
-        if (getVisibleCredentialCount(credentialType) < cap) return true;
-        if ((credentialTier === 'free' || credentialTier === 'plus') && !isOrgMember) {
-            showCredentialLimitPopup(cap);
-            return false;
-        }
-        return true;
-    }, [credentialTier, getCredentialCap, getVisibleCredentialCount, isOrgMember, showCredentialLimitPopup]);
-
-    // Load schema for this node type (synchronous - from imported JSON schemas)
-    useEffect(() => {
-        try {
-            setError(null);
-
-            // Get schema from imported schemas
-            const schemaData = NODE_SCHEMAS[nodeType];
-
-            if (!schemaData) {
-                throw new Error(`No schema found for node type: ${nodeType}`);
-            }
-
-            setSchema(schemaData);
-
-            // Extract credentials schema from root schema
-            // Root schema now has structure: { properties: { config: {...}, credentials: {...} } }
-            const credentialProp = schemaData.properties?.credentials;
-
-            if (!credentialProp || credentialProp.type === 'null') {
-                // No credentials required for this node type
-                setRequiredCredentials([]);
-                return;
-            }
-
-            // Resolve $ref if present
-            const resolveRef = (ref: string) => {
-                const path = ref.replace('#/$defs/', '');
-                return schemaData.$defs?.[path] || schemaData.definitions?.[path];
-            };
-
-            // Helper to create credential requirement from schema. The label is
-            // humanized ONCE here ('GoogleSheetsOAuth' → 'Google Sheets OAuth')
-            // so every downstream use — headings, 'Connect new X', default
-            // credential names — reads naturally.
-            const createCredentialRequirement = (credSchema: any): CredentialRequirement => {
-                const credentialType = getCredentialTypeFromSchema(credSchema);
-                const rawLabel = credSchema.title?.replace('Credential', '') || 'Credential';
-                return {
-                    credential_type: credentialType,
-                    label: humanizeCredentialLabel(rawLabel),
-                    description: credSchema.description || '',
-                    schema: credSchema
-                };
-            };
-
-            // Handle different schema structures:
-            // 1. Direct $ref: { "$ref": "#/$defs/CredentialType" }
-            // 2. anyOf with $ref: { "anyOf": [{ "$ref": "..." }, { "type": "null" }] }
-            // 3. anyOf with multiple $refs: Union types like AirtablePATCredential | AirtableOAuthCredential
-            const credentials: CredentialRequirement[] = [];
-
-            if (credentialProp.$ref) {
-                // Direct $ref - single credential type
-                const credentialSchema = resolveRef(credentialProp.$ref);
-                if (credentialSchema) {
-                    credentials.push(createCredentialRequirement(credentialSchema));
-                }
-            } else if (credentialProp.anyOf) {
-                // anyOf pattern - find ALL non-null types with $ref (supports Union types)
-                const refEntries = credentialProp.anyOf.filter((entry: any) => entry.$ref);
-                for (const refEntry of refEntries) {
-                    const credentialSchema = resolveRef(refEntry.$ref);
-                    if (credentialSchema && isCredentialSchemaVisible(credentialSchema)) {
-                        credentials.push(createCredentialRequirement(credentialSchema));
-                    }
-                }
-            } else {
-                // Direct schema (no $ref)
-                credentials.push(createCredentialRequirement(credentialProp));
-            }
-
-            if (credentials.length === 0) {
-                setRequiredCredentials([]);
-                return;
-            }
-
-            // Sort credentials: OAuth first, then API Key, then PAT, then others
-            // This provides the best UX as OAuth is typically easiest for users.
-            // Exception: OAuth that REQUIRES a bring-your-own app (no NoClick global
-            // app) is harder than a token, so it sorts last (x-oauth-requires-custom-client).
-            const credentialPriority = (cred: CredentialRequirement): number => {
-                if (isOAuthCredential(cred.schema)) {
-                    return cred.schema?.['x-oauth-requires-custom-client'] ? 4 : 0;
-                }
-                const type = cred.credential_type.toLowerCase();
-                if (type.includes('api_key') || type.includes('apikey')) return 1; // API Key second
-                if (type.includes('pat') || type.includes('personal_access_token')) return 2; // PAT third
-                return 3; // Others last
-            };
-            credentials.sort((a, b) => credentialPriority(a) - credentialPriority(b));
-
-            setRequiredCredentials(credentials);
-        } catch (err) {
-            console.error('[NodeCredentials] Error loading schema:', err);
-            setError(err instanceof Error ? err.message : 'Failed to load schema');
-        }
-    }, [nodeType, isCredentialSchemaVisible]);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -822,126 +566,51 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
         }
     }, [availableCredentials, compact, credentialIds, onChange, requiredCredentials]);
 
-    // Handle credential creation — the panel owns the form state and shows the
-    // returned error; plan-limit errors route to the shared banner instead.
-    const handleCreateCredential = useCallback(async (
-        req: CredentialRequirement, name: string, data: Record<string, string>,
-    ): Promise<CredentialSaveResult> => {
-        if (!canCreateCredential(req.credential_type)) return null;
-        try {
-            const response = await sendEventAsync({
-                event_name: 'credential:create',
-                request_id: `create-${Date.now()}`,
-                name: name || `${req.label} - ${new Date().toLocaleDateString()}`,
-                credential_type: req.credential_type,
-                credential_data: data,
-                metadata: {}
-            });
-
-            if (response?.success && response.credential) {
-                // Invalidate cache and reload credentials list
-                invalidateCredentialsCache();
-                await loadCredentials();
-
-                // Auto-select the newly created credential. Pass the created
-                // credential so its descriptor travels even though the list refresh
-                // above may not have re-rendered into availableCredentials yet.
-                handleCredentialSelect(req.credential_type, response.credential.id, response.credential);
-                recordVerification(response.credential.id, response.verification);
-                setCreatingCredentialType(null);
-                return null;
-            }
-            const errMsg = response?.error || response?.message || 'Failed to create credential';
-            if (isPlanLimitError(errMsg)) {
-                setPlanLimitError(errMsg);
-                return null;
-            }
-            // The connect seam refused: per-field verdicts land under their
-            // inputs, a provider refusal in the banner with its hint.
-            return { error: errMsg, fieldErrors: response?.field_errors ?? null, hint: response?.hint ?? null };
-        } catch (err) {
-            console.error('[NodeCredentials] Error creating credential:', err);
-            const errMsg = err instanceof Error ? err.message : 'Failed to create credential';
-            if (isPlanLimitError(errMsg)) {
-                setPlanLimitError(errMsg);
-                return null;
-            }
-            return errMsg;
-        }
-    }, [canCreateCredential, loadCredentials, handleCredentialSelect, recordVerification]);
-
-    const cancelCreate = useCallback(() => {
-        setCreatingCredentialType(null);
-    }, []);
-
     // Edit credential handlers
-    const startEditCredential = useCallback((credential: Credential, req: CredentialRequirement) => {
+    const startEditCredential = useCallback((credential: Credential) => {
         setEditingCredentialId(credential.id);
         setEditCredentialName(credential.name);
-        // Initialize form data with empty values (user will need to re-enter for security)
+        // Values start empty: the user re-enters them, since NoClick never shows a saved secret.
         setEditCredentialFormData({});
-        setEditError(null);
     }, []);
-
-    const handleUpdateCredential = useCallback(async (req: CredentialRequirement) => {
-        setEditError(null);
-        setEditFieldErrors({});
-        setEditHint(null);
-        setEditLoading(true);
-
-        try {
-            const credentialId = editingCredentialId!;
-            const response = await sendEventAsync({
-                event_name: 'credential:update',
-                request_id: `update-cred-${Date.now()}`,
-                credential_id: credentialId,
-                name: editCredentialName || undefined,
-                credential_data: editCredentialFormData
-            });
-
-            if (response?.success) {
-                // Invalidate cache and reload credentials
-                invalidateCredentialsCache();
-                await loadCredentials();
-                recordVerification(credentialId, response.verification);
-                setEditingCredentialId(null);
-                setEditCredentialName('');
-                setEditCredentialFormData({});
-            } else {
-                // A re-keyed secret is judged like a new one: field verdicts
-                // under their inputs, the provider's refusal in the banner.
-                const fieldErrors = response?.field_errors ?? {};
-                setEditFieldErrors(fieldErrors);
-                setEditHint(response?.hint ?? null);
-                const message = response?.error || response?.message || 'Failed to update credential';
-                setEditError(Object.values(fieldErrors).includes(message) ? null : message);
-            }
-        } catch (err) {
-            console.error('[NodeCredentials] Error updating credential:', err);
-            setEditError(err instanceof Error ? err.message : 'Failed to update credential');
-        } finally {
-            setEditLoading(false);
-        }
-    }, [editingCredentialId, editCredentialName, editCredentialFormData, loadCredentials, recordVerification]);
 
     const cancelEdit = useCallback(() => {
         setEditingCredentialId(null);
         setEditCredentialName('');
         setEditCredentialFormData({});
-        setEditError(null);
-        setEditFieldErrors({});
-        setEditHint(null);
     }, []);
 
-    const updateEditField = useCallback((fieldName: string, value: string) => {
-        setEditCredentialFormData(prev => ({ ...prev, [fieldName]: value }));
-        setEditFieldErrors(prev => {
-            if (!prev[fieldName]) return prev;
-            const rest = { ...prev };
-            delete rest[fieldName];
-            return rest;
-        });
-    }, []);
+    // A re-keyed secret is judged like a new one: field verdicts under their inputs, the provider's refusal under the
+    // form, and what it proved once it lands.
+    const updateCredential = useCallback(async (name: string, data: Record<string, string>): Promise<CredentialSaveResult> => {
+        const credentialId = editingCredentialId;
+        if (!credentialId) return null;
+        try {
+            const response = await sendEventAsync({
+                event_name: 'credential:update',
+                request_id: `update-cred-${Date.now()}`,
+                credential_id: credentialId,
+                name: name || undefined,
+                credential_data: data,
+            });
+            if (response?.success) {
+                invalidateCredentialsCache();
+                await loadCredentials();
+                recordVerification(credentialId, response.verification);
+                cancelEdit();
+                return null;
+            }
+            return {
+                error: response?.error || response?.message || 'Failed to update credential',
+                fieldErrors: response?.field_errors ?? null,
+                hint: response?.hint ?? null,
+                rejected: response?.reachable === false,
+            };
+        } catch (err) {
+            console.error('[NodeCredentials] Error updating credential:', err);
+            return err instanceof Error ? err.message : 'Failed to update credential';
+        }
+    }, [editingCredentialId, loadCredentials, recordVerification, cancelEdit]);
 
     // Open delete confirmation dialog
     const openDeleteDialog = useCallback((credentialId: string, credentialName: string, credentialType: string) => {
@@ -989,47 +658,52 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
     }, [credentialToDelete, loadCredentials, credentialIds, onChange]);
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center py-8">
-                <div className="text-sm text-muted-foreground dark:text-zinc-500">Loading credentials...</div>
-            </div>
-        );
+        return <div className="py-6 text-center text-[13px] text-muted-foreground">Loading your accounts…</div>;
     }
 
     if (error) {
         return (
-            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                <div className="flex items-center gap-2 text-sm text-red-500">
-                    <AlertCircle className="h-4 w-4" />
-                    <span>{error}</span>
-                </div>
-            </div>
+            <p role="alert" className="flex items-center gap-2 text-[13px] text-red-600 dark:text-red-400">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                {error}
+            </p>
         );
     }
 
-    // Self-hosted Send Email: no credential, but the instance must have somewhere to send from.
-    if (selfHosted && nodeType === 'automation-send-email' && !CustomCredentialForm) {
+    // Render custom credential form if one is registered for this node type
+    if (CustomCredentialForm) {
+        return (
+            <Suspense fallback={<div className="h-32" />}>
+                <CustomCredentialForm
+                    nodeData={nodeData}
+                    credentialIds={credentialIds}
+                    onCredentialIdsChange={handleCredentialIdsChange}
+                    compact={compact}
+                    onConnected={onConnected}
+                />
+            </Suspense>
+        );
+    }
+
+    // Self-hosted Send Email: no account, but the instance needs somewhere to send from.
+    if (selfHosted && nodeType === 'automation-send-email') {
         return outboundEmailConfigured ? (
-            <p className="text-xs text-muted-foreground">
-                Sends through this instance&apos;s mail server — change it under Settings → Self-hosted.
-            </p>
+            <p className="text-[13px] leading-relaxed text-muted-foreground">Sends through this instance’s mail server; change it under Settings → Self-hosted.</p>
         ) : (
-            <div className="max-w-md">
+            <div className="max-w-xl">
                 <InstanceSmtpForm />
             </div>
         );
     }
 
-    // Self-hosted, an operation the node's own credential cannot fund (LinkedIn
-    // scraping runs on Apify): ask for the instance's key, not a credential.
+    // Self-hosted, an operation the node's own account can't fund (LinkedIn scraping runs on Apify): the instance's
+    // key, not an account.
     if (platformKey && !platformKey.byok) {
         const label = providerKeyLabel(platformKey.env);
         return instanceKeyConfigured ? (
-            <p className="text-xs text-green-600 dark:text-green-400">
-                ✓ Runs on this instance&apos;s {label} key — no credential needed
-            </p>
+            <p className="text-[13px] leading-relaxed text-muted-foreground">Runs on this instance’s {label} key. No account needed.</p>
         ) : (
-            <div className="max-w-md">
+            <div className="max-w-xl">
                 <InstanceKeyPrompt
                     envVar={platformKey.env}
                     title={`Run this on ${label}`}
@@ -1044,41 +718,12 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
         );
     }
 
-    // If no default credentials required and no custom form, show empty state
-    if (requiredCredentials.length === 0 && !CustomCredentialForm) {
-        return (
-            <div className="flex items-center justify-center py-8">
-                <div className="text-center">
-                    <Key className="h-8 w-8 text-muted-foreground/70 dark:text-zinc-600 mx-auto mb-2" />
-                    <div className="text-sm text-muted-foreground dark:text-zinc-500">
-                        No credentials needed
-                    </div>
-                </div>
-            </div>
-        );
+    if (requiredCredentials.length === 0) {
+        return <p className="py-6 text-center text-[13px] text-muted-foreground">This step needs no account.</p>;
     }
 
-    // Render custom credential form if one is registered for this node type
-    if (CustomCredentialForm) {
-        return (
-            <div className="space-y-4">
-                <div className="text-[11px] text-muted-foreground dark:text-zinc-500 uppercase tracking-wider mb-2">
-                    API Credentials
-                </div>
-                <Suspense fallback={<div className="h-32" />}>
-                    <CustomCredentialForm
-                        nodeData={nodeData}
-                        credentialIds={credentialIds}
-                        onCredentialIdsChange={handleCredentialIdsChange}
-                        compact={compact}
-                    />
-                </Suspense>
-            </div>
-        );
-    }
-
-    // Notice surfaced once at the top of the tab (deduped across required credentials),
-    // e.g. an integration that's temporarily unavailable while its OAuth app awaits approval.
+    // Notice surfaced once (deduped across the ways in), e.g. an integration that's temporarily unavailable while its
+    // OAuth app awaits approval.
     const credentialNotices = Array.from(
         new Set(
             requiredCredentials
@@ -1087,598 +732,371 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
         )
     );
 
+    // A picker for each kind of account the viewer has (or the node already points at).
+    const pickers = requiredCredentials
+        .map((req) => ({
+            req,
+            matching: availableCredentials
+                .filter(cred => cred.credential_type === req.credential_type && !cred.over_cap)
+                .sort((a, b) => deadRank(a) - deadRank(b)),
+            vars: credentialVariables?.filter(v => v.credentialTypes.length === 0 || v.credentialTypes.includes(req.credential_type)) ?? [],
+        }))
+        .filter(({ req, matching, vars }) => matching.length > 0 || vars.length > 0 || !!credentialIds[req.credential_type]);
+
+    // A WhatsApp number whose session died is repaired by scanning again in place, never by minting a duplicate.
+    const qrRepair = requiredCredentials
+        .filter((req) => isQRScanCredential(req.schema))
+        .map((req) => availableCredentials.find((c) => c.id === credentialIds[req.credential_type]))
+        .find((cred): cred is Credential => !!cred && isDisconnected(cred) && !cred.revoked_at);
+
+    // The health of what the node points at: a revoked (or vanished) credential says why runs will fail.
+    const healthOf = (selectedCredentialId: string | undefined): 'ok' | 'revoked' | 'disconnected' | 'unknown' => {
+        if (!selectedCredentialId || selectedCredentialId.startsWith('{{')) return 'ok';
+        // Look up in the FULL list (not the type+cap-filtered view) so an over-cap credential doesn't false-alarm.
+        const fullRow = availableCredentials.find(c => c.id === selectedCredentialId);
+        // A credential this panel just minted is real before the list refresh lands.
+        const justMinted = mintedCredentialIdsRef.current.has(selectedCredentialId);
+        if (fullRow?.revoked_at) return 'revoked';
+        if (fullRow && isDisconnected(fullRow)) return 'disconnected';
+        if (!fullRow && availableCredentials.length > 0 && !justMinted) return 'unknown';
+        return 'ok';
+    };
+    const anyUnhealthy = requiredCredentials.some((req) => healthOf(credentialIds[req.credential_type]) !== 'ok');
+    // A spare QR invites a re-scan that rebinds a working number to a new connection, so one shows unasked only when
+    // no usable number exists, or to repair a dead one.
+    const usableNumber = requiredCredentials
+        .filter((req) => isQRScanCredential(req.schema))
+        .some((req) => availableCredentials.some((c) => c.credential_type === req.credential_type && !c.over_cap && !c.revoked_at && !isDisconnected(c)));
+    const connectOpen = connecting !== null || pickers.length === 0 || anyUnhealthy || !!qrRepair;
+
+    const editing = pickers.flatMap(({ req, matching }) => matching.filter((c) => c.id === editingCredentialId).map((cred) => ({ req, cred })))[0];
+
     return (
-        <div className="space-y-4">
+        // A form's measure, not the panel's: the node panel can span the whole canvas.
+        <div className="max-w-xl space-y-5" data-testid="node-credentials">
             {credentialNotices.map((notice) => (
-                <div
-                    key={notice}
-                    className="flex items-start gap-2 rounded-md border border-amber-500/25 bg-amber-500/[0.07] px-3 py-2.5"
-                >
-                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
-                    <p className="text-xs leading-[1.55] text-amber-100/90">{notice}</p>
-                </div>
+                <p key={notice} className="flex items-start gap-2 text-[13px] leading-relaxed text-muted-foreground">
+                    <Info className="mt-0.5 h-4 w-4 shrink-0" />
+                    {notice}
+                </p>
             ))}
 
-            {!compact && (
-                <div className="text-[11px] text-muted-foreground dark:text-zinc-500 uppercase tracking-wider mb-2">
-                    {usageBasedBillingAvailable ? 'API Credentials' : 'Required Credentials'}
-                </div>
+            {usageBasedBillingAvailable && (
+                <p className="text-[13px] leading-relaxed text-muted-foreground">
+                    Optional. With no account here, NoClick’s own key runs it and bills the usage.
+                </p>
+            )}
+            {platformKey && (
+                <p className="text-[13px] leading-relaxed text-muted-foreground">
+                    {instanceKeyConfigured
+                        ? `Optional. With no account here, this instance’s ${providerKeyLabel(platformKey.env)} key runs it.`
+                        : `Or add one ${providerKeyLabel(platformKey.env)} key for the whole instance under Settings → Self-hosted.`}
+                </p>
             )}
 
-            {requiredCredentials.map((req) => {
-                const matchingCredentials = availableCredentials
-                    .filter(cred => cred.credential_type === req.credential_type && !cred.over_cap)
-                    .sort((a, b) => deadRank(a) - deadRank(b));
-                const matchingVars = credentialVariables?.filter(v =>
-                    v.credentialTypes.length === 0 || v.credentialTypes.includes(req.credential_type)
-                ) ?? [];
+            {pickers.map(({ req, matching, vars }) => {
                 const selectedCredentialId = credentialIds[req.credential_type];
-                const selectedCredential = matchingCredentials.find(c => c.id === selectedCredentialId);
-
-                // Filter credentials based on search query
+                const selectedCredential = matching.find(c => c.id === selectedCredentialId);
+                const health = healthOf(selectedCredentialId);
                 const filteredCredentials = fuzzyFilter(
-                    matchingCredentials,
+                    matching,
                     credentialSearchQuery,
                     cred => [{ text: cred.name.toLowerCase(), weight: 1, fuzzy: true }]
                 );
+                // One picker reads "Account"; several are named by their way in ("Sign in with Notion", "Integration token").
+                const label = pickers.length > 1 ? methodName(copyMethodOf(methodFromRequirement(req)), app) : 'Account';
 
-                return (
-                    <div key={req.credential_type} className="space-y-2">
-                        {/* Credential Label (hidden in compact mode — drawer shows its own label).
-                            Exception: when multiple credential types are required, show just the
-                            row label in compact mode so rows are distinguishable. */}
-                        {!compact ? (
-                            <div>
-                                <div className="text-sm text-foreground font-medium mb-1">
-                                    {req.label}
-                                </div>
-                                <div className="text-xs text-muted-foreground dark:text-zinc-500">
-                                    {req.description}
-                                </div>
+                if (editing?.req === req) {
+                    return (
+                        <div key={req.credential_type} className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <p className="text-[14.5px] font-medium text-foreground">Update {editing.cred.name}</p>
+                                <button type="button" onClick={cancelEdit} aria-label="Close" className={CREATE_FORM.close}>
+                                    <X className="h-3.5 w-3.5" />
+                                </button>
                             </div>
-                        ) : requiredCredentials.length > 1 && (
-                            <div className="text-xs text-muted-foreground font-medium">
-                                {req.label}
-                            </div>
-                        )}
-
-                        {/* "Get your credentials here" link — shown in both modes so the
-                            drawer's compact view still surfaces where to obtain the key. */}
-                        {getCredentialUrl(req.schema) && (
-                            <a
-                                href={getCredentialUrl(req.schema)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                            >
-                                Get your {req.label.toLowerCase().includes('api') ? 'API key' : 'credentials'} here
-                                <ExternalLink className="w-3 h-3" />
-                            </a>
-                        )}
-
-                        {/* Usage-based billing marker — styling matches AgentCredentialsForm
-                            so credential-optional nodes read identically to the agent node. */}
-                        {usageBasedBillingAvailable && (
-                            <p className="text-xs text-green-600 dark:text-green-400">
-                                ✓ Usage-based billing available - credentials optional
-                            </p>
-                        )}
-                        {platformKey && (instanceKeyConfigured ? (
-                            <p className="text-xs text-green-600 dark:text-green-400">
-                                ✓ Runs on this instance&apos;s {providerKeyLabel(platformKey.env)} key — credentials optional
-                            </p>
-                        ) : (
-                            <p className="text-xs text-muted-foreground">
-                                Or add one {providerKeyLabel(platformKey.env)} key for the whole instance under Settings → Self-hosted.
-                            </p>
-                        ))}
-
-                        {/* Credential Selection */}
-                        <div className="space-y-2">
-                            {(matchingCredentials.length > 0 || matchingVars.length > 0) && (
-                                <div className="flex items-center gap-2 max-w-md">
-                                    {/* Dropdown */}
-                                    <div className="relative flex-1" ref={openDropdownType === req.credential_type ? dropdownRef : null}>
-                                        <button
-                                            type="button"
-                                            data-testid="credential-dropdown"
-                                            onClick={() => setOpenDropdownType(openDropdownType === req.credential_type ? null : req.credential_type)}
-                                            className="w-full px-3 py-2 text-sm bg-card dark:bg-zinc-900/50 border border-input rounded-lg text-left flex items-center justify-between hover:bg-muted dark:hover:bg-zinc-900 hover:border-foreground/20 transition-all group"
-                                        >
-                                            <span className={`truncate ${selectedCredentialId?.startsWith('{{') ? "text-emerald-600 dark:text-emerald-300" : selectedCredential?.revoked_at ? "text-red-600 dark:text-red-400" : selectedCredential && isDisconnected(selectedCredential) ? "text-amber-600 dark:text-amber-400" : (selectedCredential || selectedCredentialId) ? "text-foreground/80" : "text-muted-foreground dark:text-zinc-500"}`}>
-                                                {selectedCredentialId?.startsWith('{{')
-                                                    ? (credentialVariables?.find(v => `{{vars.${v.name}}}` === selectedCredentialId)?.name || selectedCredentialId)
-                                                    : selectedCredential ? `${selectedCredential.name}${selectedCredential.revoked_at ? ' (revoked)' : isDisconnected(selectedCredential) ? ' (disconnected)' : ''}` : selectedCredentialId ? "Connected" : "Select credential..."}
-                                            </span>
-                                            <ChevronDown
-                                                className={`h-3.5 w-3.5 text-muted-foreground dark:text-zinc-500 group-hover:text-foreground/80 transition-all flex-shrink-0 ml-2 ${
-                                                    openDropdownType === req.credential_type ? 'rotate-180' : ''
-                                                }`}
-                                            />
-                                        </button>
-
-                                        {/* Dropdown Panel */}
-                                        {openDropdownType === req.credential_type && (
-                                            <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-lg shadow-2xl overflow-hidden animate-fade-in">
-                                                {/* Search Input */}
-                                                <div className="relative border-b border-border">
-                                                    <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-3 h-3 text-muted-foreground dark:text-zinc-500" />
-                                                    <input
-                                                        ref={searchInputRef}
-                                                        type="text"
-                                                        placeholder="Search..."
-                                                        value={credentialSearchQuery}
-                                                        onChange={(e) => setCredentialSearchQuery(e.target.value)}
-                                                        className="w-full pl-8 pr-2.5 py-2 bg-transparent text-foreground/80 placeholder:text-[hsl(var(--placeholder))] text-xs focus:outline-none"
-                                                    />
-                                                </div>
-
-                                                <div className="max-h-48 overflow-y-auto scrollbar-subtle">
-                                                    {/* Empty Option */}
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            handleCredentialSelect(req.credential_type, '');
-                                                            setOpenDropdownType(null);
-                                                        }}
-                                                        className="w-full px-3 py-2 text-xs text-left hover:bg-accent transition-colors flex items-center gap-2 group"
-                                                    >
-                                                        <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${!selectedCredentialId ? 'bg-muted-foreground dark:bg-zinc-500' : 'bg-transparent'}`} />
-                                                        <span className="text-muted-foreground/70 dark:text-zinc-600 italic">None</span>
-                                                    </button>
-
-                                                    {/* Variable References — filtered by credential type */}
-                                                    {matchingVars.length > 0 && (<>
-                                                        <div className="px-3 py-1.5 text-[10px] text-emerald-600/70 dark:text-emerald-400/70 uppercase tracking-wider border-t border-border/30 dark:border-zinc-800/30">
-                                                            Variables
-                                                        </div>
-                                                        {matchingVars.map((v) => {
-                                                            const varRef = `{{vars.${v.name}}}`;
-                                                            return (
-                                                                <button
-                                                                    key={varRef}
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        handleCredentialSelect(req.credential_type, varRef);
-                                                                        setOpenDropdownType(null);
-                                                                    }}
-                                                                    className="w-full px-3 py-2 text-xs text-left hover:bg-accent transition-colors flex items-center gap-2 group border-t border-border/30 dark:border-zinc-800/30"
-                                                                >
-                                                                    <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${selectedCredentialId === varRef ? 'bg-emerald-400' : 'bg-transparent'}`} />
-                                                                    <span className="text-emerald-600 dark:text-emerald-300">{v.name}</span>
-                                                                </button>
-                                                            );
-                                                        })}
-                                                    </>)}
-
-                                                    {/* Credential Options */}
-                                                    {filteredCredentials.length > 0 ? (
-                                                        filteredCredentials.map((cred) => (
-                                                            <div
-                                                                key={cred.id}
-                                                                className="flex items-center w-full text-xs hover:bg-accent transition-colors border-t border-border/30 dark:border-zinc-800/30"
-                                                            >
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        handleCredentialSelect(req.credential_type, cred.id);
-                                                                        setOpenDropdownType(null);
-                                                                    }}
-                                                                    className="flex-1 min-w-0 px-3 py-2 text-left flex items-center gap-2"
-                                                                >
-                                                                    <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${selectedCredentialId === cred.id ? 'bg-muted-foreground' : 'bg-transparent'}`} />
-                                                                    <div className={`truncate ${cred.revoked_at ? 'text-muted-foreground/60 line-through' : isDisconnected(cred) ? 'text-muted-foreground/60' : 'text-foreground/80'}`}>
-                                                                        {cred.name}
-                                                                    </div>
-                                                                    {cred.revoked_at ? (
-                                                                        <span
-                                                                            className="flex-shrink-0 text-[10px] font-medium text-red-600 dark:text-red-400"
-                                                                            title="This credential was disconnected or revoked — reconnect the account to use it again"
-                                                                        >
-                                                                            Revoked
-                                                                        </span>
-                                                                    ) : isDisconnected(cred) ? (
-                                                                        <span
-                                                                            className="flex-shrink-0 text-[10px] font-medium text-amber-600 dark:text-amber-400"
-                                                                            title="This WhatsApp connection is no longer linked to a phone — connect a new credential by scanning a fresh QR code"
-                                                                        >
-                                                                            Disconnected
-                                                                        </span>
-                                                                    ) : null}
-                                                                </button>
-                                                                {/* Owner-only controls: hidden for any cred the viewer
-                                                                    doesn't own (backend rejects them anyway). */}
-                                                                {isOwnedByViewer(cred) && (
-                                                                <div className="flex items-center gap-0.5 pr-1.5">
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            setShareCredential({ id: cred.id, name: cred.name });
-                                                                            setOpenDropdownType(null);
-                                                                        }}
-                                                                        className="p-1 rounded text-muted-foreground dark:text-zinc-500 hover:bg-accent dark:hover:bg-zinc-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                                                                        title="Share credential"
-                                                                    >
-                                                                        <Share2 className="h-3 w-3" />
-                                                                    </button>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            openDeleteDialog(cred.id, cred.name, req.credential_type);
-                                                                            setOpenDropdownType(null);
-                                                                        }}
-                                                                        className="p-1 rounded text-muted-foreground dark:text-zinc-500 hover:bg-accent dark:hover:bg-zinc-700 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                                                                        title="Delete credential"
-                                                                    >
-                                                                        <Trash2 className="h-3 w-3" />
-                                                                    </button>
-                                                                </div>
-                                                                )}
-                                                            </div>
-                                                        ))
-                                                    ) : (
-                                                        credentialSearchQuery && (
-                                                            <div className="px-3 py-2 text-xs text-muted-foreground/70 dark:text-zinc-600 italic border-t border-border/30 dark:border-zinc-800/30">
-                                                                No match
-                                                            </div>
-                                                        )
-                                                    )}
-                                                </div>
-
-                                                {/* Persistent "Create new" footer — outside the scroll area so it stays visible.
-                                                    Hidden for QR-scan credentials, which are connected via the always-visible
-                                                    QR form below. For OAuth, kick off the connect flow directly when possible;
-                                                    for providers that need an extra input (Shopify shop, Atlassian site),
-                                                    just close the dropdown so the input is reachable. */}
-                                                {!isQRScanCredential(req.schema) && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            if (!canCreateCredential(req.credential_type)) return;
-                                                            setOpenDropdownType(null);
-                                                            setCredentialSearchQuery('');
-
-                                                            if (isOAuthCredential(req.schema)) {
-                                                                const provider = getOAuthProvider(req.schema);
-                                                                if (!provider) return;
-                                                                if (provider === 'shopify' || provider === 'atlassian' || provider === 'zendesk') return;
-                                                                const scopes = getOAuthScopes(req.schema);
-                                                                const userScopes = getOAuthUserScopes(req.schema);
-                                                                const defaultName = `${req.label} - ${new Date().toLocaleDateString()}`;
-                                                                oauthConnect(provider, defaultName, scopes, undefined, undefined, userScopes);
-                                                            } else {
-                                                                setCreatingCredentialType(req.credential_type);
-                                                            }
-                                                        }}
-                                                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground border-t border-border"
-                                                    >
-                                                        <Plus className="h-3.5 w-3.5" />
-                                                        {isOAuthCredential(req.schema) ? `Connect new ${req.label}` : `Create new ${req.label}`}
-                                                    </button>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Edit/Share/Delete Actions - only for the viewer's OWN credential.
-                                        The backend rejects edit/share/delete from a non-owner, so hide
-                                        these dead-end controls (the owner note already explains why). */}
-                                    {selectedCredential && isOwnedByViewer(selectedCredential) && editingCredentialId !== selectedCredential.id && (
-                                        <div className="flex items-center gap-1">
-                                            <button
-                                                onClick={() => startEditCredential(selectedCredential, req)}
-                                                className="p-2 hover:bg-accent rounded-lg transition-colors"
-                                                title="Edit credential"
-                                            >
-                                                <Edit2 className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-500 hover:text-foreground/80" />
-                                            </button>
-                                            <button
-                                                onClick={() => setShareCredential({ id: selectedCredential.id, name: selectedCredential.name })}
-                                                className="p-2 hover:bg-accent rounded-lg transition-colors"
-                                                title="Share credential"
-                                            >
-                                                <Share2 className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400" />
-                                            </button>
-                                            <button
-                                                onClick={() => openDeleteDialog(selectedCredential.id, selectedCredential.name, req.credential_type)}
-                                                className="p-2 hover:bg-accent rounded-lg transition-colors"
-                                                title="Delete credential"
-                                            >
-                                                <Trash2 className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-500 hover:text-red-600 dark:hover:text-red-400" />
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* Subtle owner note: why the owner-only controls above are
-                                absent. `owner_name` marks a run-as-owner cred (shared into
-                                this flow); otherwise it was shared with the viewer directly. */}
-                            {selectedCredential && !isOwnedByViewer(selectedCredential) && (
-                                <p className="text-[11px] leading-relaxed text-muted-foreground dark:text-zinc-500 max-w-md">
-                                    Owned by <span className="text-foreground/80">{ownerLabel(selectedCredential)}</span>.{' '}
-                                    {selectedCredential.owner_name
-                                        ? "It's shared with this flow."
-                                        : "It's shared with you — remove it from Settings → Credentials."}
-                                </p>
-                            )}
-
-                            {/* Attached-credential health: a revoked (or vanished)
-                                credential must say WHY runs will fail, not sit
-                                behind a bare "Connected". Empty list = not loaded
-                                yet, so no unknown-alarm before data arrives. */}
-                            {(() => {
-                                if (!selectedCredentialId || selectedCredentialId.startsWith('{{')) return null;
-                                // Look up in the FULL list (not the type+cap-filtered
-                                // view) so an over-cap credential doesn't false-alarm
-                                // as missing.
-                                const fullRow = availableCredentials.find(c => c.id === selectedCredentialId);
-                                const health = fullRow?.revoked_at
-                                    ? 'revoked'
-                                    : fullRow && isDisconnected(fullRow)
-                                        ? 'disconnected'
-                                        : !fullRow && availableCredentials.length > 0
-                                            ? 'unknown'
-                                            : 'ok';
-                                if (health === 'ok') return null;
-                                const isAmber = health === 'disconnected';
-                                return (
-                                    <div
-                                        data-testid="credential-health-warning"
-                                        className={`flex items-start gap-2 max-w-md rounded-lg border px-3 py-2 text-xs ${isAmber
-                                            ? 'border-amber-200 dark:border-amber-900/40 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400'
-                                            : 'border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400'}`}
-                                    >
-                                        <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
-                                        <span>
-                                            {health === 'disconnected'
-                                                // The provider check ships its own repair guidance (re-scan this
-                                                // WhatsApp credential, reinstall the Discord bot); the wire model
-                                                // guarantees one for every dropped verdict.
-                                                ? fullRow?.connection_hint ?? 'This connection has dropped and nothing is arriving through it. Reconnect the same credential below.'
-                                                : health === 'revoked'
-                                                    ? 'This credential was disconnected or revoked and can no longer be used — reconnect the account below or pick another credential.'
-                                                    : 'The attached credential no longer exists or is not accessible — reconnect the account below or pick another credential.'}
-                                        </span>
-                                    </div>
-                                );
-                            })()}
-
-                            {/* OAuth Credential Connection */}
-                            {isOAuthCredential(req.schema) ? (
-                                (() => {
-                                    const provider = getOAuthProvider(req.schema);
-                                    if (!provider) return null;
-                                    const providerConfigData = getProviderConfig(provider);
-                                    // For Atlassian, pick the product-specific config (confluence
-                                    // vs jira) so the button name/icon are correct.
-                                    const credSpecificConfig =
-                                        provider === 'atlassian' && req.credential_type?.startsWith('confluence')
-                                            ? getProviderConfig('confluence')
-                                            : providerConfigData;
-                                    // Fall back to the node-backed brand icon for providers not in the OAuth map.
-                                    const credIcon = getCredentialIcon(req.credential_type);
-                                    const ProviderIcon = credSpecificConfig?.Icon || providerConfigData?.Icon || credIcon.Icon;
-                                    const providerIconColor = credSpecificConfig?.iconColor || providerConfigData?.iconColor;
-                                    const providerName = credSpecificConfig?.name || providerConfigData?.name || req.label || 'your account';
-                                    return (
-                                        <div className="max-w-md space-y-3">
-                                            {/* Connected account info when a credential is selected */}
-                                            {selectedCredential && selectedCredential.metadata?.email && (
-                                                <div className="mb-2 flex items-center gap-1.5">
-                                                    <CheckCircle2 className="h-3 w-3 text-muted-foreground dark:text-zinc-500 flex-shrink-0" />
-                                                    <span className="text-[11px] text-muted-foreground dark:text-zinc-500">
-                                                        {selectedCredential.metadata.email}
-                                                    </span>
-                                                </div>
-                                            )}
-                                            <OAuthConnectForm
-                                                provider={provider}
-                                                credentialType={req.credential_type}
-                                                displayName={providerName}
-                                                Icon={ProviderIcon}
-                                                iconColor={providerIconColor}
-                                                scopes={getOAuthScopes(req.schema)}
-                                                userScopes={getOAuthUserScopes(req.schema)}
-                                                supportsCustomClient={req.schema?.['x-oauth-supports-custom-client'] === true}
-                                                requiresCustomClient={req.schema?.['x-oauth-requires-custom-client'] === true}
-                                                redirectUri={req.schema?.['x-oauth-redirect-uri'] as string | undefined}
-                                                hasExistingCredential={matchingCredentials.length > 0}
-                                                connect={oauthConnect}
-                                                connectOrgConsent={connectOrgConsent}
-                                                connectingProvider={connectingProvider}
-                                                isConnecting={oauthIsConnecting}
-                                                error={oauthError || createError || validationError?.message}
-                                                errorHelpUrl={validationError?.helpUrl}
-                                                onClearError={() => { clearOAuthError(); setCreateError(null); setValidationError(null); }}
-                                                pendingSelection={pendingSelection}
-                                                onResolvePendingSelection={resolvePendingSelection}
-                                                onCancel={cancelOAuthConnect}
-                                                canConnect={() => canCreateCredential(req.credential_type)}
-                                                // Self-hosted: no OAuth app yet → ask for it right here, not in Settings.
-                                                canConfigureInstanceApp={isLocalEdition()}
-                                            />
-                                        </div>
-                                    );
-                                })()
-                            ) : isQRScanCredential(req.schema) ? (
-                                <WhatsAppQRCredentialForm
-                                    credentialType={req.credential_type}
-                                    // Attached credential with a dead session → the scan
-                                    // REPAIRS it in place instead of minting a duplicate.
-                                    reconnectCredentialId={(() => {
-                                        const attached = availableCredentials.find(c => c.id === selectedCredentialId);
-                                        return attached && isDisconnected(attached) && !attached.revoked_at
-                                            ? attached.id : undefined;
-                                    })()}
-                                    onCredentialCreated={(credentialId) => {
-                                        handleCredentialSelect(req.credential_type, credentialId);
-                                        loadCredentials();
-                                    }}
-                                />
-                            ) : (
-                                /* Standard Form-Based Credential Creation */
-                                <>
-                                    {/* What connecting proved. A credential created or re-keyed
-                                        here shows the probe's verdict in full; one connected
-                                        earlier shows the account it was verified as, which the
-                                        row remembers. Attached-and-silent is the state this
-                                        whole layer exists to remove. */}
-                                    {selectedCredential && editingCredentialId !== selectedCredential.id && (
-                                        selectedCredentialId in verifications ? (
-                                            <ConnectionVerdict
-                                                verification={verifications[selectedCredentialId]}
-                                                providerLabel={req.label}
-                                                className="max-w-md"
-                                            />
-                                        ) : selectedCredential.metadata?.verified_as ? (
-                                            <div className="flex items-center gap-1.5" data-testid="credential-verified-as">
-                                                <CheckCircle2 className="h-3 w-3 text-muted-foreground dark:text-zinc-500 flex-shrink-0" />
-                                                <span className="text-[11px] text-muted-foreground dark:text-zinc-500">
-                                                    Verified · {String(selectedCredential.metadata.verified_as)}
-                                                </span>
-                                            </div>
-                                        ) : null
-                                    )}
-                                    {creatingCredentialType === req.credential_type ? (
-                                        <CredentialCreatePanel
-                                            label={req.label}
-                                            schema={req.schema}
-                                            fields={getFieldsFromSchema(req.schema)}
-                                            onCancel={cancelCreate}
-                                            onSave={(name, data) => handleCreateCredential(req, name, data)}
-                                            instructions={typeof req.schema?.['x-credential-instructions'] === 'string' ? req.schema['x-credential-instructions'] : undefined}
-                                        />
-                                    ) : (
-                                        /* Standalone "Create new" entry point. Always visible (not just when
-                                            no credentials exist) so users can add another credential without
-                                            having to discover the dropdown's hidden footer option. Label adapts
-                                            to "Create another" when credentials already exist, matching the
-                                            OAuth "Connect Another Account" pattern. */
-                                        <div className="max-w-md">
-                                            <CredentialCreateEntryButton
-                                                label={matchingCredentials.length > 0 ? 'Create another' : 'Create new'}
-                                                onClick={() => {
-                                                    if (!canCreateCredential(req.credential_type)) return;
-                                                    setCreatingCredentialType(req.credential_type);
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-                                </>
-                            )}
-                        </div>
-
-                        {/* Usage-based billing note (no credential selected, not creating) */}
-                        {usageBasedBillingAvailable && !selectedCredentialId && creatingCredentialType !== req.credential_type && (
-                            <div className="max-w-md text-xs text-muted-foreground dark:text-zinc-500 bg-card dark:bg-zinc-800/30 border border-border/60 dark:border-transparent rounded-lg px-3 py-2">
-                                Using NoClick's usage-based billing (no credentials needed)
-                            </div>
-                        )}
-
-                        {/* Edit Credential Form */}
-                        {selectedCredential && editingCredentialId === selectedCredential.id && (
-                            <div className="p-4 rounded-lg bg-muted/50 dark:bg-zinc-900/50 border border-border space-y-3 max-w-md">
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="text-[11px] text-muted-foreground uppercase tracking-wider">
-                                        Edit Credential
-                                    </div>
-                                    <button
-                                        onClick={cancelEdit}
-                                        className="p-1 hover:bg-accent rounded transition-colors"
-                                    >
-                                        <X className="h-3 w-3 text-muted-foreground dark:text-zinc-500" />
-                                    </button>
-                                </div>
-
-                                {/* Security Warning */}
-                                <div className="p-2 rounded bg-amber-500/10 border border-amber-500/20">
-                                    <div className="text-[10px] text-amber-700 dark:text-amber-500">
-                                        For security, you must re-enter all credential values
-                                    </div>
-                                </div>
-
-                                {/* Use custom OAuth form for credentials that support custom client */}
-                                {req.schema?.['x-oauth-supports-custom-client'] ? (
+                            {req.schema?.['x-oauth-supports-custom-client'] ? (
+                                // A sign-in through your own OAuth app keeps that app's own form.
+                                <div className={CREATE_FORM.root}>
                                     <OAuthCredentialForm
                                         schema={req.schema}
                                         formData={editCredentialFormData}
-                                        onFormDataChange={updateEditField}
+                                        onFormDataChange={(field: string, value: string) => setEditCredentialFormData(prev => ({ ...prev, [field]: value }))}
                                         credentialName={editCredentialName}
                                         onCredentialNameChange={setEditCredentialName}
                                         label={req.label}
                                     />
-                                ) : (
-                                    <>
-                                        {/* Credential Name */}
-                                        <div className="space-y-1.5">
-                                            <label className="block text-xs text-muted-foreground dark:text-zinc-500">
-                                                Name
-                                            </label>
+                                    <div className={CREATE_FORM.actions}>
+                                        <button type="button" onClick={cancelEdit} className={CREATE_FORM.cancel}>Cancel</button>
+                                        <button type="button" onClick={() => void updateCredential(editCredentialName, editCredentialFormData)} className={CREATE_FORM.save}>
+                                            <Check className="h-3 w-3" />
+                                            Save
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <CredentialCreatePanel
+                                    fields={getFieldsFromSchema(req.schema)}
+                                    app={app}
+                                    name={editing.cred.name}
+                                    note="Enter every value again: NoClick never shows a saved secret."
+                                    saveLabel="Save"
+                                    onCancel={cancelEdit}
+                                    onSave={updateCredential}
+                                />
+                            )}
+                        </div>
+                    );
+                }
+
+                return (
+                    <div key={req.credential_type}>
+                        {(!compact || pickers.length > 1) && <div className={FIELD_LABEL}>{label}</div>}
+                        <div className="flex items-center gap-1.5">
+                            <div className="relative min-w-0 flex-1" ref={openDropdownType === req.credential_type ? dropdownRef : null}>
+                                <button
+                                    type="button"
+                                    data-testid="credential-dropdown"
+                                    aria-haspopup="listbox"
+                                    aria-expanded={openDropdownType === req.credential_type}
+                                    onClick={() => setOpenDropdownType(openDropdownType === req.credential_type ? null : req.credential_type)}
+                                    className="group flex h-10 w-full items-center justify-between rounded-xl border border-border bg-transparent px-3.5 text-left text-[14px] transition-colors hover:border-foreground/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-foreground/[0.1]"
+                                >
+                                    <span className={cn('truncate', selectedCredentialId?.startsWith('{{') ? 'text-emerald-600 dark:text-emerald-300' : selectedCredential?.revoked_at || (selectedCredential && isDisconnected(selectedCredential)) ? 'text-red-600 dark:text-red-400' : selectedCredential || selectedCredentialId ? 'text-foreground' : 'text-muted-foreground')}>
+                                        {selectedCredentialId?.startsWith('{{')
+                                            ? (credentialVariables?.find(v => `{{vars.${v.name}}}` === selectedCredentialId)?.name || selectedCredentialId)
+                                            : selectedCredential ? `${selectedCredential.name}${selectedCredential.revoked_at ? ' (revoked)' : isDisconnected(selectedCredential) ? ' (disconnected)' : ''}` : selectedCredentialId ? 'Connected' : 'Choose an account'}
+                                    </span>
+                                    <ChevronDown className={cn('ml-2 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:text-foreground', openDropdownType === req.credential_type && 'rotate-180')} />
+                                </button>
+
+                                {openDropdownType === req.credential_type && (
+                                    <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-border bg-popover shadow-lg animate-fade-in dark:border-foreground/[0.1]">
+                                        <div className="relative border-b border-border dark:border-foreground/[0.08]">
+                                            <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                                             <input
+                                                ref={searchInputRef}
                                                 type="text"
-                                                value={editCredentialName}
-                                                onChange={(e) => setEditCredentialName(e.target.value)}
-                                                placeholder={`My ${req.label}`}
-                                                className="w-full px-3 py-2 text-sm bg-card border border-input rounded-md text-foreground/80 placeholder:text-[hsl(var(--placeholder))] focus:outline-none focus:border-foreground/20 transition-colors"
+                                                placeholder="Search accounts"
+                                                value={credentialSearchQuery}
+                                                onChange={(e) => setCredentialSearchQuery(e.target.value)}
+                                                className="w-full bg-transparent py-2.5 pl-9 pr-3 text-[13px] text-foreground placeholder:text-[hsl(var(--placeholder))] focus:outline-none"
                                             />
                                         </div>
 
-                                        {/* Credential Fields */}
-                                        {getFieldsFromSchema(req.schema).map((field) => (
-                                            <CredentialFieldInput
-                                                key={field.name}
-                                                field={field}
-                                                value={editCredentialFormData[field.name] || ''}
-                                                onChange={(v) => updateEditField(field.name, v)}
-                                                error={editFieldErrors[field.name]}
-                                            />
-                                        ))}
-                                    </>
-                                )}
+                                        <div className="max-h-56 overflow-y-auto scrollbar-subtle">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    handleCredentialSelect(req.credential_type, '');
+                                                    setOpenDropdownType(null);
+                                                }}
+                                                className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] text-muted-foreground transition-colors hover:bg-accent"
+                                            >
+                                                <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', !selectedCredentialId ? 'bg-muted-foreground' : 'bg-transparent')} />
+                                                None
+                                            </button>
 
-                                {/* Error Message */}
-                                {(editError || editHint) && (
-                                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 space-y-1" role="alert">
-                                        {editError && <div className="text-xs text-red-600 dark:text-red-400 break-words">{editError}</div>}
-                                        {editHint && <div className="text-[11.5px] leading-relaxed text-foreground/70">{editHint}</div>}
+                                            {/* Variable References — filtered by credential type */}
+                                            {vars.length > 0 && (<>
+                                                <div className="px-3 pb-1 pt-2 text-[12px] text-muted-foreground">Variables</div>
+                                                {vars.map((v) => {
+                                                    const varRef = `{{vars.${v.name}}}`;
+                                                    return (
+                                                        <button
+                                                            key={varRef}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                handleCredentialSelect(req.credential_type, varRef);
+                                                                setOpenDropdownType(null);
+                                                            }}
+                                                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] transition-colors hover:bg-accent"
+                                                        >
+                                                            <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', selectedCredentialId === varRef ? 'bg-emerald-500' : 'bg-transparent')} />
+                                                            <span className="text-emerald-600 dark:text-emerald-300">{v.name}</span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </>)}
+
+                                            {filteredCredentials.length > 0 ? (
+                                                filteredCredentials.map((cred) => (
+                                                    <div key={cred.id} className="flex w-full items-center text-[13px] transition-colors hover:bg-accent">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                handleCredentialSelect(req.credential_type, cred.id);
+                                                                setOpenDropdownType(null);
+                                                            }}
+                                                            className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left"
+                                                        >
+                                                            <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', selectedCredentialId === cred.id ? 'bg-foreground' : 'bg-transparent')} />
+                                                            <span className={cn('truncate', cred.revoked_at ? 'text-muted-foreground line-through' : isDisconnected(cred) ? 'text-muted-foreground' : 'text-foreground')}>
+                                                                {cred.name}
+                                                            </span>
+                                                            {cred.revoked_at ? (
+                                                                <span className="shrink-0 text-[11.5px] text-red-600 dark:text-red-400" title="Disconnected or revoked: connect the account again to use it">
+                                                                    Revoked
+                                                                </span>
+                                                            ) : isDisconnected(cred) ? (
+                                                                <span className="shrink-0 text-[11.5px] text-red-600 dark:text-red-400" title="The connection dropped: scan a fresh QR code to link it again">
+                                                                    Disconnected
+                                                                </span>
+                                                            ) : null}
+                                                        </button>
+                                                        {/* Owner-only controls: hidden for any cred the viewer doesn't own (backend rejects them anyway),
+                                                            and in a compact host, a question that offers picking or connecting only. */}
+                                                        {!compact && isOwnedByViewer(cred) && (
+                                                            <div className="flex items-center gap-0.5 pr-1.5">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setShareCredential({ id: cred.id, name: cred.name });
+                                                                        setOpenDropdownType(null);
+                                                                    }}
+                                                                    className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+                                                                    title="Share"
+                                                                    aria-label={`Share ${cred.name}`}
+                                                                >
+                                                                    <Share2 className="h-3.5 w-3.5" />
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        openDeleteDialog(cred.id, cred.name, req.credential_type);
+                                                                        setOpenDropdownType(null);
+                                                                    }}
+                                                                    className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-red-600 dark:hover:text-red-400"
+                                                                    title="Delete"
+                                                                    aria-label={`Delete ${cred.name}`}
+                                                                >
+                                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                credentialSearchQuery && (
+                                                    <div className="px-3 py-2 text-[13px] text-muted-foreground">No match</div>
+                                                )
+                                            )}
+                                        </div>
+
+                                        {/* Connecting another opens the connect flow on this way in, below the picker. */}
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setOpenDropdownType(null);
+                                                setConnecting(req.credential_type);
+                                            }}
+                                            className="flex w-full items-center gap-2 border-t border-border px-3 py-2.5 text-left text-[13px] text-foreground transition-colors hover:bg-accent dark:border-foreground/[0.08]"
+                                        >
+                                            <Plus className="h-3.5 w-3.5" />
+                                            Connect another account
+                                        </button>
                                     </div>
                                 )}
-
-                                {/* Actions */}
-                                <div className="flex gap-2 pt-1">
-                                    <button
-                                        onClick={cancelEdit}
-                                        className="flex-1 px-3 py-2 text-xs text-muted-foreground hover:text-foreground/80 bg-card hover:bg-accent border border-border rounded-lg transition-all"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={() => handleUpdateCredential(req)}
-                                        disabled={editLoading || getFieldsFromSchema(req.schema).filter(f => f.required).some(f => !editCredentialFormData[f.name])}
-                                        className="flex-1 px-3 py-2 text-xs text-primary-foreground dark:text-foreground bg-primary dark:bg-zinc-700 hover:bg-primary/90 dark:hover:bg-zinc-600 disabled:bg-muted disabled:text-muted-foreground/70 dark:disabled:text-zinc-600 disabled:cursor-not-allowed border border-transparent dark:border-zinc-700 disabled:border-border rounded-lg transition-all flex items-center justify-center gap-1.5"
-                                    >
-                                        {editLoading ? (
-                                            'Updating...'
-                                        ) : (
-                                            <>
-                                                <Check className="h-3 w-3" />
-                                                Update
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
                             </div>
+
+                            {/* Edit/Share/Delete — only for the viewer's OWN credential (the owner note says why otherwise); a compact
+                                host keeps Update alone. */}
+                            {selectedCredential && isOwnedByViewer(selectedCredential) && (
+                                <div className="flex items-center">
+                                    <button type="button" onClick={() => startEditCredential(selectedCredential)} className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground" title="Update" aria-label={`Update ${selectedCredential.name}`}>
+                                        <Edit2 className="h-3.5 w-3.5" />
+                                    </button>
+                                    {!compact && (
+                                        <>
+                                            <button type="button" onClick={() => setShareCredential({ id: selectedCredential.id, name: selectedCredential.name })} className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground" title="Share" aria-label={`Share ${selectedCredential.name}`}>
+                                                <Share2 className="h-3.5 w-3.5" />
+                                            </button>
+                                            <button type="button" onClick={() => openDeleteDialog(selectedCredential.id, selectedCredential.name, req.credential_type)} className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-red-600 dark:hover:text-red-400" title="Delete" aria-label={`Delete ${selectedCredential.name}`}>
+                                                <Trash2 className="h-3.5 w-3.5" />
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Why the owner-only controls are absent: a run-as-owner cred (shared into this flow) or one shared
+                            with the viewer directly. */}
+                        {selectedCredential && !isOwnedByViewer(selectedCredential) && (
+                            <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">
+                                Owned by <span className="text-foreground">{ownerLabel(selectedCredential)}</span>.{' '}
+                                {selectedCredential.owner_name ? 'It’s shared with this flow.' : 'It’s shared with you; remove it from Connections.'}
+                            </p>
+                        )}
+
+                        {/* Attached-credential health: a revoked (or vanished) credential must say WHY runs will fail. */}
+                        {health !== 'ok' && (
+                            <p data-testid="credential-health-warning" className="mt-1.5 flex items-start gap-1.5 text-[12.5px] leading-relaxed text-red-600 dark:text-red-400">
+                                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                                <span>
+                                    {health === 'disconnected'
+                                        // The provider check ships its own repair guidance (re-scan this WhatsApp credential,
+                                        // reinstall the Discord bot); the wire model guarantees one for every dropped verdict.
+                                        ? (availableCredentials.find(c => c.id === selectedCredentialId)?.connection_hint ?? 'This connection dropped and nothing is arriving through it. Connect the same account again below.')
+                                        : health === 'revoked'
+                                            ? 'This account was disconnected or revoked, so runs can’t use it. Connect it again below, or choose another.'
+                                            : 'The attached account no longer exists or isn’t yours to use. Connect one below, or choose another.'}
+                                </span>
+                            </p>
+                        )}
+
+                        {/* What connecting proved. A credential created or re-keyed here shows the probe's verdict in full;
+                            one connected earlier shows what its row remembers. */}
+                        {selectedCredential && selectedCredentialId && (
+                            selectedCredentialId in verifications ? (
+                                <ConnectionVerdict className="mt-3" verification={verifications[selectedCredentialId]} providerLabel={app} accountLine={selectedCredential.metadata?.email as string | undefined} />
+                            ) : (
+                                <StoredVerdict className="mt-1.5" metadata={selectedCredential.metadata} />
+                            )
                         )}
                     </div>
                 );
             })}
 
-            {/* Ask someone else for the credential (hidden in compact mode) */}
-            {!compact && requiredCredentials.length > 0 && (
-                <CredentialRequestActions credentialType={requiredCredentials[0].credential_type} />
+            {connectOpen ? (
+                <div className={cn(pickers.length > 0 && 'border-t border-border pt-5 dark:border-foreground/[0.08]')}>
+                    {pickers.length > 0 && (
+                        <div className="mb-4 flex items-center justify-between gap-3">
+                            <p className="text-[14.5px] font-medium text-foreground">Connect another account</p>
+                            {connecting !== null && (
+                                <button type="button" onClick={() => setConnecting(null)} className={INLINE_ACTION}>
+                                    Never mind
+                                </button>
+                            )}
+                        </div>
+                    )}
+                    <AppConnect
+                        key={typeof connecting === 'string' ? connecting : qrRepair?.id ?? 'connect'}
+                        nodeType={nodeType}
+                        app={app}
+                        showResult={false}
+                        // Compact surfaces (Setup, the ask drawer, the chat's setup card) belong to someone already asking.
+                        ask={!compact}
+                        initialMethod={typeof connecting === 'string' ? connecting : qrRepair?.credential_type}
+                        qrReconnectId={qrRepair?.id}
+                        qrAutoStart={!usableNumber || !!qrRepair}
+                        onConnected={(credential, verification) => {
+                            mintedCredentialIdsRef.current.add(credential.id);
+                            handleCredentialSelect(credential.credential_type, credential.id, credential);
+                            recordVerification(credential.id, verification);
+                            setConnecting(null);
+                            void loadCredentials();
+                            onConnected?.(credential.id);
+                        }}
+                    />
+                </div>
+            ) : (
+                <button type="button" onClick={() => setConnecting(true)} className={cn(INLINE_ACTION, 'inline-flex items-center gap-1.5')}>
+                    <Plus className="h-3.5 w-3.5" />
+                    Connect another account
+                </button>
             )}
 
             {/* Delete Confirmation Dialog */}
@@ -1696,12 +1114,6 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
                 onOpenChange={(open) => !open && setShareCredential(null)}
                 resource={shareCredential}
                 resourceType="credential"
-            />
-
-            <UpgradePopup
-                isOpen={!!planLimitError || !!oauthPlanLimitError}
-                onOpenChange={(open) => { if (!open) { setPlanLimitError(null); clearOAuthError(); } }}
-                errorMessage={planLimitError || oauthPlanLimitError || ''}
             />
         </div>
     );

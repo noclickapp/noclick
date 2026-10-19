@@ -4,7 +4,8 @@ The rule under test: CLI harnesses (codex / claude-code / opencode / openclaw /
 hermes) ALWAYS require a user credential — harness runs have no per-call cost
 capture, so platform keys can't fund them. The only credential-free agent
 configs are the SDK LLM path on an openrouter/* model (platform key + cost
-capture) and the media model types (flat per-unit pricing). Pins the fix for
+capture), the media model types (flat per-unit pricing) and OpenCode on a free
+model of Zen's own tier, which it runs with no key at all. Pins the fix for
 the "builder declares done, user hits disconnected-credential on the agent
 node" failure.
 """
@@ -48,7 +49,7 @@ from coder.workflow.graph_state import GraphState, NodeState
     {"model": "openrouter/~openai/gpt-mini-latest"},
     {"model": "openrouter/anthropic/claude-sonnet-4-5"},
     {"model": "gemini-image-generator"},   # image → platform key, flat pricing
-    {"model": "veo-3.0-generate-001"},     # video
+    {"model": "google/veo-3.1-fast"},      # video
     {"model": "kling-v3"},                 # kling
 ])
 def test_no_user_credential_needed(config):
@@ -358,6 +359,74 @@ class TestCredentialStatusLine:
         )
 
 
+class TestOpenCodeRunsZensFreeModelsWithNoKey:
+    """OpenCode reaches Zen's own tier with no key and Zen serves it the free
+    models, so an agent on one is asked for no key and given none: an account's
+    one OpenCode key, auto-attached, broke such an agent once that key went bad.
+    A key attached anyway still runs it."""
+
+    FREE = {"model": "opencode", "opencode_model": "opencode/big-pickle"}
+    CATALOG = {
+        "opencode": {"models": {
+            "big-pickle": {"cost": {"input": 0, "output": 0}},
+            "glm-5.1": {"cost": {"input": 1, "output": 3.2}},
+        }},
+        # Go is a subscription: its free-priced models still take the key.
+        "opencode-go": {"models": {"beam-free": {"cost": {"input": 0, "output": 0}}}},
+    }
+
+    @pytest.fixture(autouse=True)
+    def _catalog_read(self, monkeypatch):
+        import nodes.agent.config.harness_model_lists as lists
+
+        monkeypatch.setattr(lists, "_models_dev_cached", lambda: self.CATALOG)
+
+    @pytest.mark.parametrize("config", [FREE, {"model": "opencode"}, {"model_type": "opencode"}])
+    def test_a_free_zen_model_needs_no_key(self, config):
+        from nodes.agent.config.providers import match_model_credential
+
+        req = agent_credential_requirement(config)
+        assert req.required is False
+        assert node_requires_credentials("agent", None, config) is False
+        assert get_credential_info("agent", None, config) is None
+        assert "agent_opencode" in node_accepted_credential_types("agent", None, config)
+        assert match_model_credential(config, {"agent_opencode": "c1"}) == ("agent_opencode", "c1")
+
+    @pytest.mark.parametrize("opencode_model", [
+        "opencode/glm-5.1", "opencode-go/beam-free", "opencode/not-in-the-catalog", "anthropic/claude-sonnet-4-5",
+    ])
+    def test_any_other_model_still_needs_its_key(self, opencode_model):
+        assert agent_credential_requirement({"model": "opencode", "opencode_model": opencode_model}).required is True
+
+    def test_prices_never_read_judge_nothing(self, monkeypatch):
+        import nodes.agent.config.harness_model_lists as lists
+
+        monkeypatch.setattr(lists, "_models_dev_cached", lambda: None)
+        assert agent_credential_requirement(self.FREE).required is True
+
+    def test_status_line_says_no_key_is_needed_and_shows_one_attached(self):
+        assert credential_status_line("agent", None, self.FREE, "agent-1") == (
+            "[credentials: not required — this model runs with no key]"
+        )
+        attached = {**self.FREE, "credentialIds": {"agent_opencode": "c1"}}
+        assert credential_status_line("agent", None, attached, "agent-1") == "[credentials: opencode ✓]"
+
+    @pytest.mark.asyncio
+    async def test_the_accounts_one_key_is_not_attached(self):
+        from coder.workflow.agentic.commands import autoselect_single_credentials
+
+        class _Platform:
+            async def search_credentials(self, cred_type, query, limit):
+                return [{"id": "the-accounts-key"}] if cred_type == "agent_opencode" else []
+
+            async def authorize_credentials(self, ids):
+                raise AssertionError("nothing is attached, so nothing is authorized")
+
+        state = _agent_state(dict(self.FREE))
+        assert await autoselect_single_credentials(["agent-1"], state, _Platform()) == []
+        assert "credentialIds" not in state.nodes["agent-1"].config
+
+
 # ---------------------------------------------------------------------------
 # <ask field="credential"> on agent nodes
 # ---------------------------------------------------------------------------
@@ -390,6 +459,30 @@ class TestAgentCredentialAsk:
         # ask must carry the node's config so it renders the right fields.
         assert req["nodeConfig"]["model"] == "codex"
         assert req["credentialIds"] == {}
+
+    def test_ask_is_answered_only_by_a_credential_that_runs_the_model(self):
+        # An agent switched from OpenCode to Claude Code still holds its OpenCode key, which runs nothing there: the
+        # ask must arrive unanswered, while an Anthropic key in the harness's slot (or an env bundle beside it) is
+        # the answer already given.
+        from coder.workflow.agentic.commands import extract_ask_requests
+        from coder.workflow.workflow_xml import XmlOp
+
+        def ask(credential_ids):
+            ops = [XmlOp(tag="ask", attrs={"node": "agent-1", "field": "credential", "label": "Connect?"}, body=None)]
+            config = {"model": "claude-code", "opencode_model": "opencode/big-pickle", "credentialIds": credential_ids}
+            requests, rejections = extract_ask_requests(ops, _agent_state(config))
+            assert rejections == []
+            return requests[0]
+
+        stale = ask({"agent_opencode": "opencode-key"})
+        assert stale["credentialType"] == "agent_claude_code"
+        assert "defaultValue" not in stale
+        # The snapshot still travels whole: the form shows what's attached.
+        assert stale["credentialIds"] == {"agent_opencode": "opencode-key"}
+
+        assert ask({"agent_env": "env-bundle", "agent_claude_code": "anthropic-key"})["defaultValue"] == "anthropic-key"
+        assert ask({"agent_claude_code_oauth": "claude-plan"})["defaultValue"] == "claude-plan"
+        assert "defaultValue" not in ask({"agent_env": "env-bundle"})
 
     def test_ask_rejected_for_platform_billed_llm(self):
         from coder.workflow.agentic.commands import extract_ask_requests

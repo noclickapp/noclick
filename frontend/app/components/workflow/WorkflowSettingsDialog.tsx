@@ -301,14 +301,14 @@ export function WorkflowSettingsDialog({
                         <Button
                             variant="outline"
                             onClick={() => onOpenChange(false)}
-                            className="h-10 bg-foreground/[0.03] text-muted-foreground dark:text-white/60 hover:text-foreground hover:bg-foreground/[0.06] border-foreground/[0.08] hover:border-foreground/[0.12] rounded-md"
+                            className="h-10 bg-foreground/[0.03] text-muted-foreground dark:text-white/60 hover:text-foreground hover:bg-foreground/[0.06] border-foreground/[0.08] hover:border-foreground/[0.12]"
                         >
                             Cancel
                         </Button>
                         <Button
                             onClick={handleSave}
                             disabled={saving || !dirty}
-                            className="h-10 bg-primary hover:bg-primary text-primary-foreground font-medium rounded-md border-0 shadow-[0_2.5px_0_0_#a0a0a0] hover:shadow-[0_1px_0_0_#a0a0a0] hover:translate-y-[1.5px] active:shadow-none active:translate-y-[2.5px] transition-all duration-100 disabled:opacity-40 min-w-[100px]"
+                            className="h-10 bg-primary hover:bg-primary text-primary-foreground font-medium border-0 disabled:opacity-40 min-w-[100px]"
                         >
                             {saving ? 'Saving...' : 'Save'}
                         </Button>

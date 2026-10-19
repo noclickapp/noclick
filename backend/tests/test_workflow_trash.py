@@ -2,7 +2,8 @@
 Tests for the workflow soft-delete (trash) feature.
 
 Covers:
-- cleanup_workflow_operational_resources: partial cleanup for soft-delete (cron + webhooks only)
+- cleanup_workflow_operational_resources: partial cleanup for soft-delete (cron + webhooks, and
+  what other products hold of its nodes, which a trashed workflow lets go of)
 - cleanup_expired_trashed_workflows: permanent deletion of expired trash items
 - Verifies R2 storage, node state, and workflow_resources are preserved during soft-delete
 - Verifies full cleanup occurs during permanent deletion
@@ -20,6 +21,7 @@ from tests.mocks.mock_asyncpg import (
     get_executed_queries,
 )
 
+from utils import capabilities
 from utils.workflow_resource_manager import (
     cleanup_workflow_operational_resources,
     cleanup_workflow_resources,
@@ -77,13 +79,17 @@ class TestCleanupWorkflowOperationalResources:
 
         mock_delete_schedules = AsyncMock(return_value={"deleted": 0})
         mock_dereg = AsyncMock(return_value={"deregistered": 0, "failed": 0})
+        release = AsyncMock()
 
         with patch("utils.cron_scheduler_client.delete_schedules_for_workflow", mock_delete_schedules), \
-             patch("utils.webhook_manager.WebhookManager.deregister_node_webhooks", mock_dereg):
+             patch("utils.webhook_manager.WebhookManager.deregister_node_webhooks", mock_dereg), \
+             patch.dict(capabilities._providers, {capabilities.WORKFLOW_NODES_REMOVED: release}):
             result = await cleanup_workflow_operational_resources(pool, workflow_id)
 
-        # Only cron and webhooks keys should exist — no node_state, workflow_resources, or node_outputs
-        assert set(result.keys()) == {"cron", "webhooks"}
+        # Cron, webhooks and what other products hold of its nodes (a trashed
+        # workflow takes no channel turns) — no node_state, workflow_resources, or node_outputs
+        assert set(result.keys()) == {"cron", "webhooks", "released"}
+        release.assert_awaited_once_with(pool, workflow_id, None)
 
         # Verify no database queries were executed (node state deletion would require a query)
         queries = get_executed_queries()
@@ -366,10 +372,13 @@ class TestSoftDeletePreservesData:
         async def counting_row_delete(**kwargs):
             return 0
 
+        release = AsyncMock()
+
         # Run operational cleanup (soft-delete / trash)
         with patch("utils.cron_scheduler_client.delete_schedules_for_workflow", side_effect=counting_cron) as mock_cron, \
              patch("utils.webhook_manager.WebhookManager.deregister_node_webhooks", side_effect=counting_dereg) as mock_dereg, \
-             patch("utils.webhook_manager.WebhookManager.delete_webhooks_for_workflow", side_effect=counting_row_delete) as mock_rowdel:
+             patch("utils.webhook_manager.WebhookManager.delete_webhooks_for_workflow", side_effect=counting_row_delete) as mock_rowdel, \
+             patch.dict(capabilities._providers, {capabilities.WORKFLOW_NODES_REMOVED: release}):
             op_result = await cleanup_workflow_operational_resources(pool, workflow_id)
             cron_calls["operational"] = mock_cron.call_count
             dereg_calls["operational"] = mock_dereg.call_count
@@ -382,7 +391,8 @@ class TestSoftDeletePreservesData:
         with patch("utils.cron_scheduler_client.delete_schedules_for_workflow", side_effect=counting_cron) as mock_cron, \
              patch("utils.webhook_manager.WebhookManager.deregister_node_webhooks", side_effect=counting_dereg) as mock_dereg, \
              patch("utils.webhook_manager.WebhookManager.delete_webhooks_for_workflow", side_effect=counting_row_delete) as mock_rowdel, \
-             patch("utils.cas.gc.rollup_workflow_totals", AsyncMock(return_value=None)):
+             patch("utils.cas.gc.rollup_workflow_totals", AsyncMock(return_value=None)), \
+             patch.dict(capabilities._providers, {capabilities.WORKFLOW_NODES_REMOVED: release}):
             full_result = await cleanup_workflow_resources(pool, workflow_id)
             cron_calls["full"] = mock_cron.call_count
             dereg_calls["full"] = mock_dereg.call_count
@@ -406,8 +416,11 @@ class TestSoftDeletePreservesData:
         assert row_delete_calls["operational"] == 0
         assert row_delete_calls["full"] == 1
 
-        # Operational result should only have cron + webhooks
-        assert set(op_result.keys()) == {"cron", "webhooks"}
+        # Operational result should only have cron + webhooks + what other products held of its nodes
+        assert set(op_result.keys()) == {"cron", "webhooks", "released"}
+        # Both let go of every node a product holds by id, whether or not trash came first.
+        assert release.await_args_list == [call(pool, workflow_id, None), call(pool, workflow_id, None)]
+        assert full_result["released"] == {"released": True}
 
         # Full result should have additional resource types
         assert "node_state" in full_result

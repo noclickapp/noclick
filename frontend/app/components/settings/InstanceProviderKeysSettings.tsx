@@ -6,9 +6,12 @@
 //
 // Backed by instance_keys:* (backend/wss/handlers/instance_keys_handler.py).
 import { useCallback, useEffect, useState } from 'react';
-import { ExternalLink, KeyRound, Trash2 } from 'lucide-react';
+import { ArrowUpRight, KeyRound, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { sendEventAsync } from '~/lib/socket-sender';
+import { cn } from '~/lib/utils';
+import { BUTTON_PRIMARY } from '~/components/shell/buttons';
+import { FIELD, QUIET_LINK } from '~/components/shell/fields';
 import { PROVIDER_KEY_SOURCES } from '~/lib/providerKeys';
 import { InstanceSmtpForm } from '~/components/credential/InstanceSmtpForm';
 import { applyInstanceKeysState, loadInstanceKeys, type InstanceKeysState as KeysState } from '~/lib/instanceKeys';
@@ -33,9 +36,10 @@ const INSTANCE_KEYS: { envVar: string; title: string; purpose: string }[] = [
 const SMTP_VARS = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'FROM_EMAIL'];
 
 
-const inputClass =
-    'h-9 w-full px-3 text-sm font-mono bg-foreground/[0.035] dark:bg-white/[0.045] border border-input dark:border-white/[0.12] rounded-lg ' +
-    'text-foreground placeholder:text-[hsl(var(--placeholder))] outline-none focus:border-muted-foreground/40 dark:focus:border-white/20';
+// One key per row of a divided list: the field stands on its own, never inside a card.
+const ROW = 'py-5 first:pt-0 last:pb-0';
+const ROW_TITLE = 'text-[14.5px] font-medium text-foreground';
+const ROW_PURPOSE = 'mt-0.5 text-[13px] leading-snug text-muted-foreground';
 
 function KeyRow({ envVar, title, purpose, state, onChange }: { envVar: string; title: string; purpose: string; state: KeysState; onChange: (s: KeysState) => void }) {
     const [value, setValue] = useState('');
@@ -82,33 +86,28 @@ function KeyRow({ envVar, title, purpose, state, onChange }: { envVar: string; t
     };
 
     return (
-        <div className="p-4 bg-card dark:bg-foreground/[0.03] border border-border dark:border-white/[0.06] rounded-xl">
-            <div className="flex items-start justify-between gap-3">
-                <div>
-                    <div className="text-sm font-medium text-foreground">{title}</div>
-                    <p className="mt-0.5 text-xs text-muted-foreground dark:text-white/40">{purpose}</p>
+        <div className={ROW}>
+            <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                    <div className={ROW_TITLE}>{title}</div>
+                    <p className={ROW_PURPOSE}>{purpose}</p>
                 </div>
                 {source && (
-                    <a
-                        href={source.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border bg-foreground/[0.06] px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-foreground/[0.12]"
-                    >
-                        Get a {source.label} key
-                        <ExternalLink className="h-3.5 w-3.5" />
+                    <a href={source.url} target="_blank" rel="noreferrer" className={cn(QUIET_LINK, 'shrink-0 pt-0.5 text-[13px]')}>
+                        Get {/^[aeiou]/i.test(source.label) ? 'an' : 'a'} {source.label} key
+                        <ArrowUpRight className="h-3.5 w-3.5" />
                     </a>
                 )}
             </div>
 
             {fromEnv ? (
-                <p className="mt-3 text-xs text-muted-foreground">
-                    Set by the <code className="font-mono">{envVar}</code> environment variable, which takes precedence over anything saved here.
+                <p className="mt-3 text-[13px] text-muted-foreground">
+                    Set by the <code className="font-mono text-[12.5px]">{envVar}</code> environment variable, which takes precedence over anything saved here.
                 </p>
             ) : (
                 <>
                     {stored && (
-                        <div className="mt-3 flex items-center gap-2 text-xs text-foreground">
+                        <div className="mt-3 flex items-center gap-2 text-[13px] text-foreground">
                             <KeyRound className="h-3.5 w-3.5 shrink-0 text-muted-foreground" strokeWidth={2} />
                             A key is saved
                             {stored.updated_at ? <span className="text-muted-foreground/70">· updated {new Date(stored.updated_at).toLocaleDateString()}</span> : null}
@@ -123,7 +122,7 @@ function KeyRow({ envVar, title, purpose, state, onChange }: { envVar: string; t
                         </div>
                     )}
                     <form
-                        className="mt-3 flex items-center gap-2"
+                        className="mt-3 flex items-center gap-2.5"
                         onSubmit={(e) => {
                             e.preventDefault();
                             void save();
@@ -137,18 +136,14 @@ function KeyRow({ envVar, title, purpose, state, onChange }: { envVar: string; t
                             placeholder={source?.placeholder ?? envVar}
                             aria-label={`${envVar} value`}
                             aria-invalid={error ? true : undefined}
-                            className={`${inputClass} aria-[invalid]:border-red-500/60`}
+                            className={cn(FIELD, 'font-mono text-[13.5px] placeholder:font-sans aria-[invalid]:border-red-500/60')}
                         />
-                        <button
-                            type="submit"
-                            disabled={saving || !value.trim()}
-                            className="h-9 shrink-0 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity disabled:opacity-40"
-                        >
+                        <button type="submit" disabled={saving || !value.trim()} className={cn(BUTTON_PRIMARY, 'h-10 px-4')}>
                             {saving ? 'Checking…' : stored ? 'Replace' : 'Save'}
                         </button>
                     </form>
                     {error && (
-                        <p role="alert" className="mt-2 text-xs text-red-600 dark:text-red-400">
+                        <p role="alert" className="mt-2 text-[13px] text-red-600 dark:text-red-400">
                             {error}
                         </p>
                     )}
@@ -183,7 +178,7 @@ export function InstanceProviderKeysSettings() {
             {state === null ? (
                 <p className="text-sm text-muted-foreground/60">Loading…</p>
             ) : (
-                <div className="space-y-4">
+                <div className="divide-y divide-border dark:divide-foreground/[0.08]">
                     {INSTANCE_KEYS.map((k) => (
                         <KeyRow key={k.envVar} {...k} state={state} onChange={setState} />
                     ))}
@@ -226,13 +221,13 @@ function OutboundEmailRow({ state, onChange }: { state: KeysState; onChange: (s:
     };
 
     return (
-        <div className="p-4 bg-card dark:bg-foreground/[0.03] border border-border dark:border-white/[0.06] rounded-xl">
-            <div className="text-sm font-medium text-foreground">Outbound email</div>
-            <p className="mt-0.5 text-xs text-muted-foreground dark:text-white/40">
-                The Send Email node and agent updates leave through this. An SMTP server saved here, or RESEND_API_KEY + FROM_EMAIL in the environment.
+        <div className={ROW}>
+            <div className={ROW_TITLE}>Outbound email</div>
+            <p className={ROW_PURPOSE}>
+                The Send Email node and agent updates leave through this: any SMTP server saved here (your domain&apos;s mail provider, a Gmail app password, Mailgun, Postmark), or RESEND_API_KEY + FROM_EMAIL in the environment.
             </p>
             {ready && !editing ? (
-                <div className="mt-3 flex items-center gap-2 text-xs text-foreground">
+                <div className="mt-3 flex items-center gap-2 text-[13px] text-foreground">
                     <KeyRound className="h-3.5 w-3.5 shrink-0 text-muted-foreground" strokeWidth={2} />
                     {viaResend ? 'Sending through Resend' : 'Sending through the saved SMTP server'}
                     {fromEnv ? (
@@ -256,6 +251,7 @@ function OutboundEmailRow({ state, onChange }: { state: KeysState; onChange: (s:
             ) : (
                 <div className="mt-3">
                     <InstanceSmtpForm
+                        titled={false}
                         submitLabel="Check and save"
                         onSaved={() => {
                             setEditing(false);

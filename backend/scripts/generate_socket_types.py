@@ -841,9 +841,9 @@ def _assert_no_incoherent_constraints(schema_name: str, schema: dict) -> None:
         walk(def_schema, f"$defs.{def_name}.")
 
 
-def _trigger_operations(schema: dict) -> list:
-    """Operation names stamped `x-is-trigger`, walking the same
-    config → $defs refs the frontend's isTriggerSource walks."""
+def _operation_defs(schema: dict):
+    """(operation name, its config $def, its operation field) for each operation,
+    walking the same config → $defs refs the frontend's isTriggerSource walks."""
     config = (schema.get('properties') or {}).get('config') or {}
     defs = schema.get('$defs') or {}
     refs = (
@@ -851,14 +851,27 @@ def _trigger_operations(schema: dict) -> list:
         or config.get('anyOf')
         or ([{'$ref': config['$ref']}] if config.get('$ref') else [])
     )
-    ops = []
     for ref in refs:
         key = (ref.get('$ref') or '').split('/')[-1]
-        op = ((defs.get(key) or {}).get('properties') or {}).get('operation') or {}
+        definition = defs.get(key) or {}
+        op = (definition.get('properties') or {}).get('operation') or {}
         name = op.get('const') or (op.get('enum') or [None])[0]
-        if name and op.get('x-is-trigger'):
-            ops.append(name)
-    return ops
+        if name:
+            yield name, definition, op
+
+
+def _trigger_operations(schema: dict) -> list:
+    """Operation names stamped `x-is-trigger`."""
+    return [name for name, _, op in _operation_defs(schema) if op.get('x-is-trigger')]
+
+
+def _platform_vendor_operations(schema: dict) -> list:
+    """Operations NoClick buys from the node's own provider on its own key: an
+    `x-platform-key` the node's credential could replace (byok)."""
+    from nodes.core.platform_billing import platform_key_of
+
+    return [name for name, definition, _ in _operation_defs(schema)
+            if (platform_key_of(definition) or {}).get('byok') is True]
 
 
 def generate_node_schemas():
@@ -891,7 +904,7 @@ def generate_node_schemas():
         # Generate schema for each node type
         processed_count = 0
         updated_count = 0
-        # Slim per-type facts (provider flag, trigger ops) for utils/nodeMeta.ts —
+        # Slim per-type facts (provider flag, trigger ops, platform-vendor ops) for utils/nodeMeta.ts —
         # lets light surfaces (marketing previews, fork canvas, edge components)
         # answer type predicates without bundling the full ~9MB schema registry.
         node_meta = {}
@@ -932,6 +945,9 @@ def generate_node_schemas():
                 trigger_ops = _trigger_operations(schema)
                 if trigger_ops:
                     meta_entry['triggerOperations'] = trigger_ops
+                vendor_ops = _platform_vendor_operations(schema)
+                if vendor_ops:
+                    meta_entry['platformVendorOperations'] = vendor_ops
                 if meta_entry:
                     # Keyed by the FULL registry type (automation-slack), matching
                     # the frontend's NODE_SCHEMAS keys and canvas node.type values.

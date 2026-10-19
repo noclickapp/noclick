@@ -13,7 +13,9 @@ them at fixed points:
 
     startup   ``boot``   right after telemetry, before the database pool
               ``ready``  after every engine service is up, before serving
-    shutdown  ``drain``  after in-flight work was asked to stop, while the
+    shutdown  ``stop``   the moment shutdown begins: stop taking new work
+                         (quick hooks only; draining comes later)
+              ``drain``  after in-flight work was asked to stop, while the
                          pool and HTTP clients are still usable
               ``final``  after the pool and telemetry are gone
 
@@ -33,7 +35,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 logger = logging.getLogger(__name__)
 
 STARTUP_PHASES = ("boot", "ready")
-SHUTDOWN_PHASES = ("drain", "final")
+SHUTDOWN_PHASES = ("stop", "drain", "final")
 
 Hook = Callable[..., Any]
 

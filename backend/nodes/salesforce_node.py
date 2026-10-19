@@ -4813,9 +4813,14 @@ class SalesforceNode(ScheduledPollTriggerMixin, WorkflowNode):
             provider="salesforce",
         )
 
-    async def _get_access_token(self, credentials: SalesforceCredential) -> str:
+    async def _get_access_token(
+        self,
+        credentials: SalesforceCredential,
+        *,
+        rejected_access_token: Optional[str] = None,
+    ) -> str:
         """
-        Get access token from credentials, refreshing if expired.
+        Get an access token, refreshing an expired or explicitly rejected token.
 
         Args:
             credentials: OAuth credentials
@@ -4840,6 +4845,11 @@ class SalesforceNode(ScheduledPollTriggerMixin, WorkflowNode):
             refresh=_refresh,
             additional_token_fields=("instance_url",),
             provider="salesforce",
+            stale=(
+                (lambda fresh: fresh.get("access_token") == rejected_access_token)
+                if rejected_access_token is not None
+                else None
+            ),
         )
         credentials.access_token = cred_dict["access_token"]
         credentials.expires_at = cred_dict.get("expires_at")
@@ -4917,6 +4927,39 @@ class SalesforceNode(ScheduledPollTriggerMixin, WorkflowNode):
                     params=params,
                     json=json_body,
                 )
+
+                invalid_session = False
+                if method.upper() in ("GET", "HEAD") and response.status_code == 401:
+                    try:
+                        errors = response.json()
+                    except ValueError:
+                        errors = None
+                    if isinstance(errors, dict):
+                        errors = [errors]
+                    invalid_session = isinstance(errors, list) and any(
+                        isinstance(error, dict)
+                        and error.get("errorCode") == "INVALID_SESSION_ID"
+                        for error in errors
+                    )
+
+                if invalid_session:
+                    # The in-lock stale check reuses a concurrent repair; never replay writes.
+                    access_token = await self._get_access_token(
+                        credentials, rejected_access_token=access_token
+                    )
+                    instance_origin = normalize_salesforce_instance_url(
+                        credentials.instance_url
+                    )
+                    if not use_full_url:
+                        url = f"{self._get_base_url(credentials)}{endpoint}"
+                    assert_exact_url_origin(url, instance_origin)
+                    response = await client.request(
+                        method=method,
+                        url=url,
+                        headers={**headers, "Authorization": f"Bearer {access_token}"},
+                        params=params,
+                        json=json_body,
+                    )
 
                 api_time = (time.time() - start_time) * 1000
 

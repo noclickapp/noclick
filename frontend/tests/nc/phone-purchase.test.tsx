@@ -7,7 +7,11 @@ import { flushSync } from 'react-dom';
 import PhonePurchasePage from '~/routes/credential.purchase.$token';
 import { nc } from '~/lib/nc';
 
-const quote = { id: 'review-quote', phone_number: '+15674833618', monthly_credits: 15, expires_at: '2099-01-01T00:00:00Z' };
+const quote = {
+    id: 'review-quote', phone_number: '+15674833618', country: 'US', number_type: 'local', locality: 'Lucas', region: 'OH',
+    capabilities: ['voice'], requirements: { needs: 'none', items: [] }, texting: 'none', monthly_credits: 4, upfront_credits: 4,
+    expires_at: '2099-01-01T00:00:00Z',
+};
 let cleanup: (() => void) | undefined;
 
 function mount() {
@@ -17,11 +21,11 @@ function mount() {
     Object.assign(host.style, { position: 'fixed', inset: '0', zIndex: '9999', overflow: 'auto' });
     document.body.appendChild(host);
     const App = createRoutesStub([{
-        path: '/', Component: PhonePurchasePage,
+        path: '/credential/purchase/:token', Component: PhonePurchasePage,
         loader: () => ({ purchase: { status: 'pending', purpose: 'A dedicated line for the studio’s receptionist agent.', quote }, csrfToken: 'test-csrf', email: 'owner@example.com', returnTo: '/b/review-link' }),
     }]);
     const root = createRoot(host);
-    flushSync(() => root.render(<App initialEntries={['/']} />));
+    flushSync(() => root.render(<App initialEntries={['/credential/purchase/review-token']} />));
     cleanup = () => { root.unmount(); host.remove(); cleanup = undefined; };
     return host;
 }
@@ -39,8 +43,13 @@ export default async function () {
     const original = window.fetch;
     const calls: string[] = [];
     window.fetch = async (input, init) => {
-        if (String(input) !== window.location.href || !(init?.body instanceof FormData)) return original(input, init);
-        calls.push(String(init.body.get('operation')));
+        if (String(input) !== '/credential/purchase/review-token/action' || !(init?.body instanceof FormData)) return original(input, init);
+        const operation = String(init.body.get('operation'));
+        // Where numbers are sold and what's for sale load behind the review; they buy nothing.
+        if (operation === 'coverage') return Response.json({ countries: [{ country: 'US', number_types: ['local'], texting_types: [] }] });
+        if (operation === 'places') return Response.json({ places: [] });
+        if (operation === 'search') return Response.json({ numbers: [] });
+        calls.push(operation);
         nc.assert.equal(init.body.get('payload'), JSON.stringify({ quote_id: 'review-quote' }), 'Only the server quote is confirmed');
         return Response.json({ status: 'fulfilled', credential_id: 'test-credential', phone_number: quote.phone_number });
     };

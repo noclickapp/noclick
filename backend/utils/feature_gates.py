@@ -32,6 +32,20 @@ FEATURE_ROLLOUT: dict[str, str] = {
     "credential_proxy": INTERNAL,
     # The hosted developer API: every call, and every key it mints. INTERNAL closes it again.
     "platform_api": EVERYONE,
+    # The account coordinator acting on the developer API through its own grant, whatever
+    # platform_api says: judged when a turn starts and on every call it makes. INTERNAL is
+    # its off switch.
+    "coordinator_platform_tools": EVERYONE,
+    # Automatic refills of a prepaid balance, enforced where accounts enrol;
+    # only enrolled accounts are ever charged.
+    "auto_topup": EVERYONE,
+    # The Free and Member plans: usage at cost plus the plan's fee, one dollar
+    # wallet, no credits. Closed, an account bills as Plus/Pro with credits.
+    "free_member": EVERYONE,
+    # The account's coordinator as an ordinary platform agent of the account's own, its
+    # owner's texts, calls and mail routed to it. Closing it again doesn't move an account
+    # back: once moved, its lines stay routed to its agent.
+    "coordinator_agent": EVERYONE,
 }
 
 # Accounts let into an INTERNAL feature by email, lower-cased. Empty in the
@@ -46,7 +60,8 @@ class FeatureNotAvailable(PermissionError):
 
 
 def allow_accounts(feature: str, emails: Iterable[str]) -> None:
-    """Let these accounts use an INTERNAL feature ahead of its launch."""
+    """Let these accounts use an INTERNAL feature ahead of its launch; an entry
+    starting with "@" lets in every address at that domain."""
     FEATURE_ROLLOUT[feature]  # a typo is a KeyError, never a silent no-op
     FEATURE_ALLOWLIST.setdefault(feature, set()).update(e.strip().lower() for e in emails if e and e.strip())
 
@@ -57,7 +72,10 @@ def is_feature_enabled(feature: str, *, email: str | None) -> bool:
         return True
     if not email:
         return False
-    return is_internal_user(email) or email.lower() in FEATURE_ALLOWLIST.get(feature, ())
+    allowed = FEATURE_ALLOWLIST.get(feature, ())
+    address = email.lower()
+    _, at, domain = address.rpartition("@")
+    return is_internal_user(email) or address in allowed or (bool(at) and f"@{domain}" in allowed)
 
 
 def require_feature(feature: str, *, email: str | None) -> None:

@@ -270,24 +270,25 @@ async def _daily_cap_hit(workflow_id: str, node_id: str) -> bool:
 _DEFAULT_AGENT_LABELS = {"agent", "agent chat", "ai agent", "assistant"}
 
 
-def _render_email(
-    *, body: str, workflow_name: str, node_label: str, disable_url: str,
-) -> str:
-    """Concise, informal, human — the agent's words verbatim as real
-    paragraphs with clickable links, a provenance footer, and a visible
-    "Unsubscribe" link (the literal word matters: Gmail and spam filters key
-    on it, alongside the List-Unsubscribe headers). Deliberately NOT the
-    branded notification shell — this should read like a colleague's email.
-    The body is ENTIRELY the model's voice (intro included, steered by the
-    tool description); only the header fields + footer are platform-owned."""
+def render_conversational_email(body: str, footer_html: str) -> str:
+    """Concise, informal, human — the sender's words verbatim as real
+    paragraphs with clickable links (and Markdown images shown inline), then a
+    platform-owned footer. Deliberately NOT the branded notification shell:
+    this should read like a colleague's email."""
     import html as _html
     import re as _re
 
-    def _linkify(escaped: str) -> str:
+    def _inline(escaped: str) -> str:
         # Runs on already-escaped text; hrefs keep the &amp; encoding (valid
         # HTML). break-all so long bridge/credential URLs wrap on mobile.
+        escaped = _re.sub(
+            r"!\[([^\]]*)\]\((https?://[^)\s]+)\)",
+            lambda m: (f'<img src="{m.group(2)}" alt="{m.group(1)}" '
+                       f'style="display:block;max-width:100%;border-radius:8px;margin:8px 0;">'),
+            escaped,
+        )
         return _re.sub(
-            r"https?://[^\s<]+",
+            r'(?<!src=")https?://[^\s<"]+',
             lambda m: (
                 f'<a href="{m.group(0)}" '
                 f'style="color:#2563eb;word-break:break-all;">{m.group(0)}</a>'
@@ -298,17 +299,32 @@ def _render_email(
     newline = "\n"
     paragraphs = "".join(
         f'<p style="margin:0 0 14px;">'
-        f'{_linkify(_html.escape(p.strip())).replace(newline, "<br>")}</p>'
+        f'{_inline(_html.escape(p.strip())).replace(newline, "<br>")}</p>'
         for p in body.split("\n\n")
         if p.strip()
     )
     return f"""<div style="margin:0 auto;max-width:560px;padding:8px 4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.65;color:#1a1a1a;">
 {paragraphs}
 <div style="margin-top:30px;padding-top:14px;border-top:1px solid #e4e4e7;font-size:12px;color:#8b8b93;line-height:1.7;">
-Sent by your agent “{_html.escape(node_label)}” in the NoClick workflow “{_html.escape(workflow_name)}”.<br>
-Reply directly to this email to talk to the agent.<br>
-<a href="{disable_url}" style="color:#8b8b93;text-decoration:underline;">Unsubscribe</a> — stops emails from this agent only; other agents are unaffected.
+{footer_html}
 </div></div>"""
+
+
+def _render_email(
+    *, body: str, workflow_name: str, node_label: str, disable_url: str,
+) -> str:
+    """An agent's email: its words, then provenance and a visible
+    "Unsubscribe" link (the literal word matters: Gmail and spam filters key
+    on it, alongside the List-Unsubscribe headers). The body is ENTIRELY the
+    model's voice; only the header fields + footer are platform-owned."""
+    import html as _html
+
+    return render_conversational_email(body, (
+        f"Sent by your agent “{_html.escape(node_label)}” in the NoClick workflow “{_html.escape(workflow_name)}”.<br>\n"
+        f"Reply directly to this email to talk to the agent.<br>\n"
+        f'<a href="{disable_url}" style="color:#8b8b93;text-decoration:underline;">Unsubscribe</a> '
+        f"— stops emails from this agent only; other agents are unaffected."
+    ))
 
 
 async def send_agent_email(
@@ -341,6 +357,11 @@ async def send_agent_email(
     if not subject or not body:
         return {"success": False, "error": "subject and body are both required"}
 
+    # Before the caps: they consume their counters, and a phone-only owner has no address.
+    to_email = await get_user_email(pool, user_id)
+    if not to_email:
+        return {"success": False, "error": "workflow owner has no email on file"}
+
     if await _execution_cap_hit(workflow_id, node_id, execution_id):
         return {
             "success": False,
@@ -359,10 +380,6 @@ async def send_agent_email(
                 "Fold further updates into your next reply instead."
             ),
         }
-
-    to_email = await get_user_email(pool, user_id)
-    if not to_email:
-        return {"success": False, "error": "workflow owner has no email on file"}
 
     # Credit gate + flat charge — same containment as the send-email node.
     from billing.exceptions import InsufficientBalanceError, OwnerResolutionError
@@ -463,11 +480,13 @@ async def send_agent_email(
     from decimal import Decimal
 
     from billing.schema import UsageEventData
+    from utils.email_sending import message_usd
 
     await usage_tracker.track_usage_event(UsageEventData(
         user_id=user_id,
         organization_id=organization_id,
         total_cost=EMAIL_SEND_PRICE,
+        cost_usd=message_usd(),
         usage_type="api_usage",
         usage_subtype="email/agent_update",
         quantity=Decimal("1"),
@@ -476,6 +495,7 @@ async def send_agent_email(
         metadata={
             "workflow_id": str(workflow_id), "node_id": node_id,
             "execution_id": str(execution_id) if execution_id else None,
+            "from": reply_addr,
             "subject": subject[:100],
             "message_id": result.get("message_id"),
             "delivery_status": result.get("delivery_status"),

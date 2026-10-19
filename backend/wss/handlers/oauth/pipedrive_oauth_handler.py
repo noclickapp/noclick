@@ -8,10 +8,10 @@ from typing import Dict, Callable
 from utils.database_pool import DatabasePoolMixin
 from utils.encryption import get_encryption
 from nodes.oauth.pipedrive_oauth import (
-    exchange_code_for_tokens,
     refresh_access_token,
     is_token_expired,
 )
+from utils.pipedrive_connection import PipedriveConnectionError, connect_pipedrive
 from wss.schema import SocketIOHandler
 from wss.sender import send_event, ResponseEvent
 from wss.sender.responses import (
@@ -65,44 +65,6 @@ class PipedriveOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
-            try:
-                tokens, user_info = await exchange_code_for_tokens(
-                    code=request.code,
-                    redirect_uri=request.redirect_uri,
-                )
-            except ValueError as e:
-                logger.error(f"[PipedriveOAuthHandler] Token exchange failed: {e}")
-                await send_event(self.sio, sid, ResponseEvent(
-                    request_id=request.request_id,
-                    data=PipedriveOAuthExchangeResponse(
-                        success=False,
-                        message=str(e)
-                    ).model_dump()
-                ))
-                return
-
-            credential_data = {
-                'access_token': tokens.access_token,
-                'refresh_token': tokens.refresh_token,
-                'expires_at': tokens.expires_at,
-                'api_domain': tokens.api_domain,
-                'name': user_info.name,
-                'email': user_info.email,
-            }
-
-            try:
-                encrypted_data = self.encryption.encrypt_credential(credential_data)
-            except Exception as e:
-                logger.error(f"[PipedriveOAuthHandler] Encryption failed: {e}")
-                await send_event(self.sio, sid, ResponseEvent(
-                    request_id=request.request_id,
-                    data=PipedriveOAuthExchangeResponse(
-                        success=False,
-                        message="Failed to encrypt credential"
-                    ).model_dump()
-                ))
-                return
-
             pool = await self.get_pool()
             if not pool:
                 await send_event(self.sio, sid, ResponseEvent(
@@ -114,45 +76,22 @@ class PipedriveOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
-            credential_name = user_info.name or user_info.email or f"Pipedrive ({user_info.id})"
-
-            async with pool.acquire() as conn:
-                from repositories.credentials import create_credential_with_limit_check
-                user_tier = session.get('user_data', {}).get('subscription_tier', 'free')
-                row, error = await create_credential_with_limit_check(
-                    conn, user_id, user_tier, 'pipedrive_oauth',
-                    credential_name, encrypted_data, {
-                        'provider': 'pipedrive',
-                        'name': user_info.name,
-                        'email': user_info.email,
-                        'pipedrive_user_id': user_info.id,
-                        'pipedrive_company_id': user_info.company_id,
-                        'api_domain': tokens.api_domain,
-                        'scopes': request.scopes,
-                    },
+            try:
+                result = await connect_pipedrive(
+                    user_id=user_id,
+                    user_tier=session.get('user_data', {}).get('subscription_tier', 'free'),
+                    code=request.code, redirect_uri=request.redirect_uri, pool=pool,
                 )
-                if error:
-                    await send_event(self.sio, sid, ResponseEvent(
-                        request_id=request.request_id, data={}, error=error
-                    ))
-                    return
-
-                response = PipedriveOAuthExchangeResponse(
-                    success=True,
-                    credential_id=str(row['id']),
-                    credential_name=row['name'],
-                    name=user_info.name,
-                    email=user_info.email,
-                    message="Pipedrive account connected successfully"
-                )
-                await send_event(self.sio, sid, ResponseEvent(
-                    request_id=request.request_id,
-                    data=response.model_dump()
-                ))
-                logger.info(f"[PipedriveOAuthHandler] Created Pipedrive credential {row['id']} for user {user_id} ({user_info.name})")
+                response = PipedriveOAuthExchangeResponse(**result)
+            except PipedriveConnectionError as exc:
+                response = PipedriveOAuthExchangeResponse(success=False, message=str(exc))
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id,
+                data=response.model_dump()
+            ))
 
         except Exception as e:
-            logger.error(f"[PipedriveOAuthHandler] Error in exchange_oauth_code: {e}", exc_info=True)
+            logger.error("[PipedriveOAuthHandler] Exchange failed (%s)", type(e).__name__)
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id,
                 data=PipedriveOAuthExchangeResponse(

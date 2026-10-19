@@ -100,6 +100,11 @@ class ChatMessageEvent(BaseModel):
         None,
         description="On a coordinator note: the workflow whose setup card the chat draws under it."
     )
+    tool_calls: Optional[List[Dict[str, Any]]] = Field(
+        None,
+        description="On a coordinator note: the tool calls of the turn that wrote it, as its saved event keeps them "
+                    "(compact_tool_calls_for_transcript), so the chat draws their cards under it."
+    )
     """
     Event emitted for chat messages including AI responses and component generation.
     
@@ -118,6 +123,10 @@ class ChatMessageEvent(BaseModel):
     message: Optional[str] = Field(
         None,
         description="Text to add to the response. Streamable - multiple events can be sent and text will be concatenated"
+    )
+    thought: Optional[str] = Field(
+        None,
+        description="One short line of the model's reasoning, sent when it completes (a section's title or first sentence)"
     )
     component: Optional[Union[bool, str]] = Field(
         None,
@@ -154,6 +163,43 @@ class ChatMessageEvent(BaseModel):
                     "approving opens the builder sidebar and submits the prompt. Standalone "
                     "frame — no message text, no streaming implications."
     )
+
+
+class CoordinatorEmailReply(BaseModel):
+    """What became of the email that carried a coordinator turn's reply (the turn's assistant event's
+    ``email_reply``): who it went to, and how far it got."""
+    id: str = Field(..., description="The turn's receipt id, minted when the email turn started")
+    state: Literal["sending", "sent", "delayed", "delivered", "bounced", "failed", "unknown"] = Field(
+        ..., description="sending: not sent yet; sent: the mail service accepted it; delayed: the recipient's server "
+                         "asked it to retry; delivered: the recipient's server accepted it; bounced: it was refused "
+                         "after sending; failed: it was never sent; unknown: sending hit an error, so whether it "
+                         "went out isn't known")
+    to: str = Field(..., description="The owner's address it went to")
+    subject: Optional[str] = None
+    at: Optional[str] = Field(None, description="When it was handed to the mail service (ISO 8601)")
+    message_id: Optional[str] = Field(None, description="The sent message's Message-ID, without angle brackets")
+    reason: Optional[Literal["empty", "no_address", "no_owner_email", "credits", "send_failed", "error"]] = Field(
+        None, description="state=failed or unknown: why")
+    error: Optional[str] = Field(None, description="The mail service's or the credit gate's own words, when it gave some")
+
+
+class CoordinatorEmailReplyEvent(BaseModel):
+    """An email reply's receipt moved (sent, delivered, bounced, or couldn't be sent), for the reply it sits under
+    in the owner's chat (sent to the user room)."""
+    event_name: ClassVar[str] = "coordinator:email_reply"
+
+    conversation_id: str = Field(..., description="The owner's coordinator conversation")
+    reply: CoordinatorEmailReply
+
+
+class CredentialRequestFulfilledEvent(BaseModel):
+    """A credential request was fulfilled, for the requester's open pages (sent to the user room): the coordinator's
+    connect card folds to its receipt whichever device the account was connected on."""
+    event_name: ClassVar[str] = "credential_request:fulfilled"
+
+    request_id: str = Field(..., description="The fulfilled credential request")
+    credential_id: str = Field(..., description="The credential it made")
+    credential_type: str = Field(..., description="Its type: the request's own, or the sibling method it was provided as")
 
 
 # The live tool-step stream is emitted from TWO places into one transcript —
@@ -275,6 +321,7 @@ class ActiveGenStartedEvent(BaseModel):
     # this gen's lifecycle (started → text_chunk → terminal) back to the
     # send-side timestamp and report exact user-perceived latency.
     request_id: Optional[str] = Field(None, description="Echoes the originating client request's request_id for FE latency correlation")
+    n8n_import_node_count: Optional[int] = Field(None, description="Set when the run imports an n8n workflow: how many steps it has (its request is then an import, not words to send again)")
 
 
 class ActiveGenTextChunkEvent(BaseModel):
@@ -284,6 +331,7 @@ class ActiveGenTextChunkEvent(BaseModel):
     gen_id: str = Field(..., description="Generation this delta belongs to")
     delta: str = Field(..., description="Text fragment to append")
     request_id: Optional[str] = Field(None, description="Echoes the originating client request's request_id for FE latency correlation")
+    emit_at_ms: Optional[int] = Field(None, description="Server wall-clock at emit time (ms). FE uses this to compute BE→FE wire latency for the first chunk per gen.")
 
 
 class ActiveGenStatusEvent(BaseModel):

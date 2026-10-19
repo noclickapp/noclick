@@ -14,14 +14,13 @@ interface ResizablePanelProps {
     onWidthChange?: (width: number) => void;
     onExpandChange?: (expanded: boolean) => void;
     onDragChange?: (isDragging: boolean) => void;
+    /** Where the panel's left edge sits (e.g. right of the app sidebar). */
+    offsetLeft?: number;
 }
 
 export const ResizablePanel = memo(function ResizablePanel({
     isExpanded,
     noAnimation,
-    // Defaults derive from the low-res-aware getters so the resize clamp,
-    // mount-time width, and ceiling all shrink together on smaller laptops
-    // instead of leaving a 420px floor while the rest of the UI is at 75%.
     minWidth = getMinPanelWidth(),
     maxWidth = getMaxPanelWidth(),
     defaultWidth = getDefaultPanelWidth(),
@@ -29,6 +28,7 @@ export const ResizablePanel = memo(function ResizablePanel({
     onWidthChange,
     onExpandChange,
     onDragChange,
+    offsetLeft = 0,
 }: ResizablePanelProps) {
     const [width, setWidth] = useState(defaultWidth);
     const [isDragging, setIsDragging] = useState(false);
@@ -42,7 +42,7 @@ export const ResizablePanel = memo(function ResizablePanel({
         if (isDragging) {
             const handleGlobalMouseMove = (e: globalThis.MouseEvent) => {
                 if (isDragging && isExpanded) {
-                    const newWidth = e.clientX;
+                    const newWidth = e.clientX - offsetLeft;
                     const constrainedWidth = Math.min(
                         Math.max(minWidth, newWidth),
                         maxWidth
@@ -67,7 +67,7 @@ export const ResizablePanel = memo(function ResizablePanel({
                 document.removeEventListener('mouseup', handleGlobalMouseUp);
             };
         }
-    }, [isDragging, isExpanded, minWidth, maxWidth, onWidthChange]);
+    }, [isDragging, isExpanded, minWidth, maxWidth, onWidthChange, offsetLeft]);
 
     useEffect(() => {
         onDragChange?.(isDragging);
@@ -78,12 +78,13 @@ export const ResizablePanel = memo(function ResizablePanel({
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
             <div
                 data-tour-target={!isExpanded ? 'sidebar-collapsed' : 'sidebar-expanded'}
-                className={`fixed left-0 top-0 h-screen bg-background border-r border-border z-20
+                className={`fixed top-0 h-screen bg-background border-r border-border z-20
             ${!isExpanded && 'cursor-pointer'}
             ${isDragging ? 'select-none' : ''}`}
                 style={{
+                    left: offsetLeft,
                     width: isExpanded ? `${width}px` : '50px',
-                    transition: isDragging || noAnimation ? 'none' : 'width 300ms ease-in-out',
+                    transition: isDragging || noAnimation ? 'none' : 'width 300ms ease-in-out, left 200ms ease-in-out',
                     // CSS containment to isolate sidebar from affecting main canvas
                     // layout/paint. When collapsed we drop `paint` so the
                     // "Open chat" hover tooltip can overflow the 50px bar (paint

@@ -1,6 +1,8 @@
 // The ONE OAuth connect UI: pre-connect inputs (Shopify store, Zendesk subdomain,
 // Atlassian site, BYOO client id/secret), their normalization, the multi-account
-// selection step, the error/reconnect panel, and the Connect button. It is presentational
+// selection step, an error, and one full-width primary that says where it goes ("Continue
+// with Notion"), never greyed out: pressed before a needed input is in, it says what is
+// missing. In flight it says what it waits for, with a way to cancel. It is presentational
 // — the connect ENGINE (useOAuthConnect / useCredentialOAuth) is injected — so the in-app
 // credential UI and the public provide link render this exact component and therefore expose
 // the exact same credential mechanisms. Provider-intrinsic inputs come from the provider
@@ -8,18 +10,20 @@
 // in (from the node schema in-app, from the backend method on the provide link). Added so a
 // provider that needs an extra input can't work in one surface and silently break the other.
 
-import { useEffect, useState, type ComponentType } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowUpRight, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 import { SecretInput } from '~/components/workflow/SecretInput';
-import { BrandIcon } from '~/components/shared/BrandIcon';
-import { OAuthErrorPanel } from '~/components/workflow/OAuthErrorPanel';
 import { getOAuthConnectInput, providerSupportsOrgConsent } from '~/utils/oauthProviders';
 import { getSchemaTitleFromCredentialType } from '~/utils/credentialTypes';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
+import { inSentence } from '~/utils/credentialCopy';
 import type { OAuthSelectionOption } from '~/hooks/useOAuthConnect';
 import { useInstanceOAuthApp } from '~/hooks/useInstanceOAuthApp';
 import { InstanceOAuthAppForm } from '~/components/credential/InstanceOAuthAppForm';
 import { InstanceSetupCard } from '~/components/credential/InstanceSetupCard';
+import { BUTTON_PRIMARY } from '~/components/shell/buttons';
+import { FIELD, FIELD_LABEL, QUIET_LINK } from '~/components/shell/fields';
+import { cn } from '~/lib/utils';
 
 /** The injected connect engine's connect() — positional, provider-routed (see useOAuthConnect). */
 export type OAuthConnectFn = (
@@ -40,8 +44,6 @@ export interface OAuthConnectFormProps {
     credentialType: string;
     /** Provider display name (button/help copy). */
     displayName: string;
-    Icon: ComponentType<{ className?: string }>;
-    iconColor?: string;
     scopes: string[];
     userScopes?: string[];
     /** `x-oauth-supports-custom-client`: offer an optional BYOO OAuth app. */
@@ -50,8 +52,6 @@ export interface OAuthConnectFormProps {
     requiresCustomClient?: boolean;
     /** `x-oauth-redirect-uri`: redirect URI to display when requiring a custom client. */
     redirectUri?: string;
-    /** Existing credential of this type? → "Connect Another Account". */
-    hasExistingCredential?: boolean;
     // --- injected engine (shared between surfaces) ---
     connect: OAuthConnectFn;
     /** Offered only when the provider supports org-wide consent; omitted = no offer. */
@@ -59,7 +59,7 @@ export interface OAuthConnectFormProps {
     connectingProvider: string | null;
     isConnecting: boolean;
     error?: string | null;
-    /** Optional help URL forwarded to OAuthErrorPanel (e.g. apply for API access). */
+    /** Where to fix what the error names (e.g. apply for API access). */
     errorHelpUrl?: string;
     onClearError?: () => void;
     pendingSelection?: {
@@ -76,10 +76,16 @@ export interface OAuthConnectFormProps {
      * builder passes it, the public credential-provide page must not.
      */
     canConfigureInstanceApp?: boolean;
+    /** The primary's words; defaults to "Continue with <displayName>". */
+    connectLabel?: string;
+    /** A line under the primary (where it goes, that NoClick never sees the password). */
+    note?: string | null;
+    /** Set while the host finishes the connect (asking the provider what the new account holds): the primary waits. */
+    busyLabel?: string | null;
 }
 
-const INPUT_CLASS =
-    'w-full px-3 py-2 text-sm bg-card border border-input rounded-md text-foreground/80 placeholder:text-[hsl(var(--placeholder))] focus:outline-none focus:border-ring/30 transition-colors font-mono';
+// An action inside a line of text: ink that underlines on hover, as the connect dialog's switches are.
+const SHELL_INLINE = 'rounded-sm text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
 function escapeRegExp(s: string): string {
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -114,14 +120,11 @@ export function OAuthConnectForm({
     provider,
     credentialType,
     displayName,
-    Icon,
-    iconColor,
     scopes,
     userScopes,
     supportsCustomClient,
     requiresCustomClient,
     redirectUri,
-    hasExistingCredential,
     connect,
     connectOrgConsent,
     connectingProvider,
@@ -134,6 +137,9 @@ export function OAuthConnectForm({
     onCancel,
     canConnect,
     canConfigureInstanceApp = false,
+    connectLabel,
+    note,
+    busyLabel,
 }: OAuthConnectFormProps) {
     const connectInput = getOAuthConnectInput(provider, credentialType);
     // No-op on hosted: the hook reports configured without a request.
@@ -143,6 +149,8 @@ export function OAuthConnectForm({
     const [clientId, setClientId] = useState('');
     const [clientSecret, setClientSecret] = useState('');
     const [installationOrigin, setInstallationOrigin] = useState('');
+    // Pressed before a needed input is in, the primary says what is missing rather than sitting greyed out.
+    const [tried, setTried] = useState(false);
 
     useEffect(() => {
         setInstallationOrigin(window.location.origin);
@@ -154,6 +162,7 @@ export function OAuthConnectForm({
     );
 
     const isThisProviderConnecting = connectingProvider === provider;
+    const waiting = isThisProviderConnecting || !!busyLabel;
     const showPendingSelection =
         pendingSelection?.provider === provider &&
         Array.isArray(pendingSelection.options) &&
@@ -163,6 +172,8 @@ export function OAuthConnectForm({
         ? normalizeConnectInput(inputValue, connectInput.suffix)
         : '';
     const inputMissing = connectInput ? !normalizedTenant : false;
+    // Pressed before the tenant is in: said under the field it is about, which takes focus.
+    const tenantMissing = tried && inputMissing && !isConnecting;
     const byooMissing =
         !!requiresCustomClient && (!clientId.trim() || !clientSecret.trim());
 
@@ -187,7 +198,10 @@ export function OAuthConnectForm({
         let shopArg: string | undefined;
         let siteArg: string | undefined;
         if (connectInput) {
-            if (!normalizedTenant) return;
+            if (!normalizedTenant) {
+                document.getElementById(`${provider}-tenant`)?.focus();
+                return;
+            }
             if (connectInput.kind === 'site') siteArg = normalizedTenant;
             else shopArg = normalizedTenant; // shop | subdomain both ride the 4th arg
         }
@@ -244,249 +258,173 @@ export function OAuthConnectForm({
         );
     }
 
+    const shellInput = cn(FIELD, 'font-mono placeholder:font-sans');
+    const redirect = displayedRedirectUri && (
+        <div>
+            <span className={FIELD_LABEL}>Redirect URL for your app</span>
+            <code className="block w-full select-all break-all rounded-xl bg-foreground/[0.04] px-3.5 py-2.5 font-mono text-[12.5px] text-foreground/80">{displayedRedirectUri}</code>
+        </div>
+    );
+    const clientFields = (
+        <>
+            <div>
+                <label className={FIELD_LABEL} htmlFor={`${provider}-client-id`}>Client ID</label>
+                <input id={`${provider}-client-id`} type="text" value={clientId} onChange={(e) => setClientId(e.target.value)} placeholder="Your OAuth client ID" className={shellInput} autoComplete="off" spellCheck={false} />
+            </div>
+            <div>
+                <label className={FIELD_LABEL} htmlFor={`${provider}-client-secret`}>Client secret</label>
+                <SecretInput id={`${provider}-client-secret`} value={clientSecret} onChange={(e) => setClientSecret(e.target.value)} placeholder="Your OAuth client secret" inputClassName={shellInput} autoComplete="off" />
+            </div>
+        </>
+    );
     return (
-        <div className="max-w-md space-y-3">
+        <div className="space-y-4">
             {error && (
-                <OAuthErrorPanel
-                    message={error}
-                    onReconnect={triggerConnect}
-                    onDismiss={() => onClearError?.()}
-                    isReconnecting={isThisProviderConnecting}
-                    helpUrl={errorHelpUrl}
-                />
+                <div role="alert" className="text-[13px] leading-relaxed">
+                    <p className="font-medium text-red-600 dark:text-red-400">{error.includes("didn't grant") ? 'Permissions missing' : `Couldn’t connect ${displayName}`}</p>
+                    <p className="mt-1 text-foreground/80">{error}</p>
+                    <p className="mt-1.5 flex flex-wrap gap-x-4">
+                        {errorHelpUrl && (
+                            <a href={errorHelpUrl} target="_blank" rel="noopener noreferrer" className={QUIET_LINK}>
+                                How to fix it
+                                <ArrowUpRight className="h-3.5 w-3.5" />
+                            </a>
+                        )}
+                        <button type="button" onClick={() => onClearError?.()} className={QUIET_LINK}>
+                            Dismiss
+                        </button>
+                    </p>
+                </div>
             )}
 
             {/* Multi-account selection (Facebook pages, Supabase projects, Atlassian sites). */}
             {showPendingSelection && (
-                <div className="p-3 rounded-lg bg-foreground/[0.04] border border-border space-y-2.5">
-                    <div className="text-xs text-foreground/80 font-medium">
-                        {provider === 'atlassian'
-                            ? 'Use an available Jira site instead?'
-                            : 'Select an account to connect'}
-                    </div>
-                    <div className="space-y-1.5">
+                <div>
+                    <p className="mb-1 text-[13.5px] font-medium text-foreground">{provider === 'atlassian' ? 'Use an available Jira site instead?' : 'Which one should NoClick use?'}</p>
+                    <div className="divide-y divide-border dark:divide-foreground/[0.07]">
                         {(pendingSelection?.options || []).map((option) => (
                             <button
                                 key={option.id}
-                                onClick={() =>
-                                    onResolvePendingSelection?.(option.id)
-                                }
+                                type="button"
+                                onClick={() => onResolvePendingSelection?.(option.id)}
                                 disabled={isConnecting}
-                                className="w-full text-left px-3 py-2 rounded-lg border border-border hover:border-foreground/20 bg-card hover:bg-accent disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                                className="group flex w-full items-center gap-3 py-2.5 text-left disabled:cursor-not-allowed disabled:opacity-60"
                             >
-                                <div className="text-sm text-foreground/90">
-                                    {option.label || option.id}
-                                </div>
-                                {option.description && (
-                                    <div className="text-[11px] text-muted-foreground mt-0.5">
-                                        {option.description}
-                                    </div>
-                                )}
-                                {provider === 'atlassian' && (
-                                    <div className="text-[11px] text-blue-600 dark:text-blue-300 mt-1">
-                                        Use that
-                                    </div>
-                                )}
+                                <span className="min-w-0 flex-1">
+                                    <span className="block truncate text-[14px] text-foreground">{option.label || option.id}</span>
+                                    {option.description && <span className="block truncate text-[12.5px] text-muted-foreground">{option.description}</span>}
+                                </span>
+                                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/60 transition-colors group-hover:text-foreground" />
                             </button>
                         ))}
                     </div>
                 </div>
             )}
 
-            {/* Optional BYOO OAuth app (premium API users). */}
-            {supportsCustomClient && (
-                <div className="border border-border rounded-lg">
-                    <button
-                        type="button"
-                        onClick={() => setShowCustomFields((v) => !v)}
-                        className="w-full flex items-center justify-between px-3 py-2 text-xs text-muted-foreground hover:text-foreground/80 hover:bg-accent transition-all rounded-lg"
-                    >
-                        <span className="flex items-center gap-2">
-                            {showCustomFields ? (
-                                <ChevronDown className="h-3.5 w-3.5" />
-                            ) : (
-                                <ChevronRight className="h-3.5 w-3.5" />
-                            )}
-                            Use custom OAuth app credentials
-                        </span>
-                        <span className="text-[10px] text-muted-foreground/70">
-                            Optional
-                        </span>
-                    </button>
-                    {showCustomFields && (
-                        <div className="px-3 pb-3 space-y-3 border-t border-border pt-3 mt-0">
-                            <div className="text-[10px] text-muted-foreground leading-relaxed space-y-2">
-                                <p>
-                                    By default, NoClick&apos;s OAuth app is
-                                    used. If you have your own {displayName}{' '}
-                                    OAuth app with premium features, enter your
-                                    credentials below.
-                                </p>
-                                {displayedRedirectUri && (
-                                    <div className="space-y-1">
-                                        <span className="text-[10px] text-muted-foreground/70">Redirect URI to add in your OAuth app:</span>
-                                        <code className="block w-full text-[10px] font-mono bg-foreground/[0.05] border border-border rounded px-2 py-1.5 text-foreground/70 break-all select-all">{displayedRedirectUri}</code>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="space-y-1.5">
-                                <span className="block text-xs text-muted-foreground">
-                                    Client ID
-                                </span>
-                                <input
-                                    type="text"
-                                    value={clientId}
-                                    onChange={(e) =>
-                                        setClientId(e.target.value)
-                                    }
-                                    placeholder="Your OAuth 2.0 Client ID"
-                                    className={INPUT_CLASS}
-                                />
-                            </div>
-                            <div className="space-y-1.5">
-                                <span className="block text-xs text-muted-foreground">
-                                    Client Secret
-                                </span>
-                                <SecretInput
-                                    value={clientSecret}
-                                    onChange={(e) =>
-                                        setClientSecret(e.target.value)
-                                    }
-                                    placeholder="Your OAuth 2.0 Client Secret"
-                                    inputClassName={INPUT_CLASS}
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )}
-
             {/* Provider-intrinsic tenant input (Shopify store / Zendesk subdomain / Atlassian site). */}
             {connectInput && (
-                <div className="space-y-1.5">
-                    <span className="block text-xs text-muted-foreground">
-                        {connectInput.label}
-                    </span>
-                    <div className="flex items-center">
+                <div>
+                    <label className={FIELD_LABEL} htmlFor={`${provider}-tenant`}>{connectInput.label}</label>
+                    <div className="flex items-center gap-2">
                         <input
+                            id={`${provider}-tenant`}
                             type="text"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             placeholder={connectInput.placeholder}
-                            className={INPUT_CLASS}
+                            className={FIELD}
+                            autoComplete="off"
+                            spellCheck={false}
+                            aria-invalid={tenantMissing || undefined}
+                            aria-describedby={tenantMissing ? `${provider}-tenant-missing` : undefined}
                         />
-                        <span className="ml-2 text-xs text-muted-foreground/70 whitespace-nowrap">
-                            {connectInput.suffix}
-                        </span>
+                        <span className="shrink-0 text-[13px] text-muted-foreground">{connectInput.suffix}</span>
                     </div>
-                    {connectInput.help && (
-                        <div className="text-[11px] text-muted-foreground/70">
-                            {connectInput.help}
-                        </div>
+                    {tenantMissing && (
+                        <p id={`${provider}-tenant-missing`} role="alert" className="mt-1.5 text-[12.5px] text-red-600 dark:text-red-400">
+                            Enter your {inSentence(connectInput.label)}.
+                        </p>
                     )}
+                    {connectInput.help && <p className="mt-1.5 text-[12.5px] leading-snug text-muted-foreground">{connectInput.help}</p>}
                 </div>
             )}
 
             {/* Mandatory BYOO OAuth app (e.g. Google Business Profile). */}
             {requiresCustomClient && (
-                <div className="space-y-3 p-3 bg-foreground/[0.03] rounded-lg border border-border">
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">
-                        This integration requires your own OAuth app. Create a
-                        Web Application OAuth 2.0 client and add this app&apos;s
-                        callback URL as an Authorised Redirect URI.
+                <div className="space-y-4">
+                    <p className="text-[13px] leading-relaxed text-muted-foreground">
+                        {displayName} signs in through an OAuth app of your own. Create a web application client, add the redirect URL below to it, then paste its client ID and secret.
                     </p>
-                    {displayedRedirectUri && (
-                        <div className="space-y-1">
-                            <span className="text-[10px] text-muted-foreground/70">Redirect URI to add in your OAuth app:</span>
-                            <code className="block w-full text-[10px] font-mono bg-foreground/[0.05] border border-border rounded px-2 py-1.5 text-foreground/70 break-all select-all">{displayedRedirectUri}</code>
-                        </div>
-                    )}
-                    <div className="space-y-1.5">
-                        <span className="block text-xs text-muted-foreground">
-                            Client ID
-                        </span>
-                        <input
-                            type="text"
-                            value={clientId}
-                            onChange={(e) => setClientId(e.target.value)}
-                            placeholder="123456789-abcdef.apps.googleusercontent.com"
-                            className={INPUT_CLASS}
-                        />
-                    </div>
-                    <div className="space-y-1.5">
-                        <span className="block text-xs text-muted-foreground">
-                            Client Secret
-                        </span>
-                        <input
-                            type="password"
-                            value={clientSecret}
-                            onChange={(e) => setClientSecret(e.target.value)}
-                            placeholder="GOCSPX-..."
-                            className={INPUT_CLASS}
-                        />
-                    </div>
+                    {redirect}
+                    {clientFields}
                 </div>
             )}
 
             <button
-                onClick={triggerConnect}
-                disabled={
-                    isConnecting ||
-                    showPendingSelection ||
-                    inputMissing ||
-                    byooMissing
-                }
-                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg border border-border bg-card text-foreground transition-colors hover:border-foreground/20 hover:bg-accent disabled:cursor-not-allowed disabled:border-border disabled:bg-muted disabled:text-muted-foreground"
+                type="button"
+                onClick={() => {
+                    setTried(true);
+                    triggerConnect();
+                }}
+                disabled={isConnecting || showPendingSelection || !!busyLabel}
+                aria-busy={waiting || undefined}
+                // In flight it keeps its look (dimmed, it read as dead) and says what it waits for.
+                className={cn(BUTTON_PRIMARY, 'h-10 w-full justify-center', waiting && 'cursor-wait disabled:opacity-100')}
             >
-                {isThisProviderConnecting ? (
+                {waiting ? (
                     <>
-                        <div className="animate-spin w-4 h-4 border-2 border-foreground/30 border-t-foreground rounded-full" />
-                        Connecting...
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        {busyLabel ?? `Waiting for ${displayName}…`}
                     </>
                 ) : (
-                    <>
-                        {/* QuickBooks/Apollo/Pipedrive brand marks are green circles; neutralize
-                            them in the credentials view only (their node/canvas icon keeps the
-                            brand color). */}
-                        <BrandIcon
-                            Icon={Icon}
-                            iconColor={iconColor}
-                            className={`h-4 w-4${['quickbooks', 'apollo', 'pipedrive'].includes(provider) ? ' grayscale' : ''}`}
-                        />
-                        {hasExistingCredential
-                            ? 'Connect Another Account'
-                            : `Connect ${displayName} Account`}
-                    </>
+                    connectLabel ?? `Continue with ${displayName}`
                 )}
             </button>
+            {note && !waiting && <p className="-mt-1.5 text-[12.5px] leading-snug text-muted-foreground">{note}</p>}
+            {tried && byooMissing && !inputMissing && !isConnecting && (
+                <p className="-mt-2 text-[12.5px] text-muted-foreground">Paste your OAuth app’s client ID and secret first.</p>
+            )}
 
-            {/* Tenant-wide admin consent: the way past Microsoft's "Need admin approval"
-                wall. One admin approves NoClick for the whole directory, then the same
-                popup continues into their own sign-in. */}
-            {offersOrgConsent && !isThisProviderConnecting && (
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Work or school account stuck on &ldquo;Need admin approval&rdquo;? An admin can{' '}
-                    <button
-                        type="button"
-                        onClick={triggerOrgConsent}
-                        disabled={isConnecting}
-                        className="underline underline-offset-2 hover:text-foreground/80 disabled:cursor-not-allowed transition-colors"
-                    >
-                        approve NoClick for your organization
-                    </button>{' '}
-                    once; after that everyone there can connect.
+            {isThisProviderConnecting && onCancel && (
+                <p className="-mt-1.5 text-[12.5px] leading-snug text-muted-foreground">
+                    Finish in the {displayName} window.{' '}
+                    <button type="button" onClick={onCancel} className={SHELL_INLINE}>
+                        Cancel
+                    </button>
                 </p>
             )}
 
-            {/* Manual cancel — covers popup-close auto-detection misses (COOP blocks popup.closed). */}
-            {isThisProviderConnecting && onCancel && (
-                <button
-                    type="button"
-                    onClick={onCancel}
-                    className="mx-auto flex items-center justify-center rounded-md px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground/80"
-                >
-                    Cancel
-                </button>
+            {/* Tenant-wide admin consent: the way past Microsoft's "Need admin approval" wall. */}
+            {offersOrgConsent && !isThisProviderConnecting && (
+                <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+                    Work or school account stuck on “Need admin approval”? An admin can{' '}
+                    <button type="button" onClick={triggerOrgConsent} disabled={isConnecting} className={cn(SHELL_INLINE, 'disabled:cursor-not-allowed')}>
+                        approve NoClick for your organization
+                    </button>{' '}
+                    once, then everyone there can connect.
+                </p>
+            )}
+
+            {/* Optional BYOO OAuth app (premium API users). */}
+            {supportsCustomClient && !requiresCustomClient && (
+                <div className="space-y-4">
+                    <button
+                        type="button"
+                        aria-expanded={showCustomFields}
+                        onClick={() => setShowCustomFields((v) => !v)}
+                        className="inline-flex items-center gap-1 rounded-md text-[13px] text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                        Use your own {displayName} OAuth app
+                        <ChevronDown className={cn('h-3.5 w-3.5 transition-transform duration-200', showCustomFields && 'rotate-180')} />
+                    </button>
+                    {showCustomFields && (
+                        <>
+                            <p className="text-[12.5px] leading-relaxed text-muted-foreground">NoClick’s own app is used unless you add yours here.</p>
+                            {redirect}
+                            {clientFields}
+                        </>
+                    )}
+                </div>
             )}
         </div>
     );

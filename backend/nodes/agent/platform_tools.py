@@ -13,8 +13,11 @@ from typing import Any, Dict, Optional, Tuple
 
 from nodes.agent.agent_memory import MEMORY_READ_TOOL_TYPE, MEMORY_WRITE_TOOL_TYPE
 from utils.edition import is_local_edition
+from utils.prompts import PromptPack
 
 logger = logging.getLogger(__name__)
+
+PROMPTS = PromptPack("agent_platform_tools")
 
 SUBMIT_FEEDBACK_TOOL = "submit_feedback"
 PROMPT_BUILDER_TOOL = "prompt_builder"
@@ -53,85 +56,63 @@ AGENT_TOOLS_KEY = "_agentTools"
 # bound_arguments?}]}, the parameters already without what bound_arguments fix.
 PLATFORM_TOOLS_KEY = "_platformTools"
 
-_TELL_PARENT_PARAM = {
-    "type": "function",
-    "function": {
-        "name": TELL_PARENT_TOOL,
-        "description": (
-            "Tell the agent that gave you your task something now, without stopping: what your instructions say "
-            "to report, or something it must hear before you finish. It takes a turn to read it; you carry on. "
-            "At most one a minute and 30 an hour; your final reply reaches it anyway, so don't repeat it."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "message": {"type": "string", "description": "What it should hear, up to 4,000 characters."},
-            },
-            "required": ["message"],
-        },
-    },
-}
+def _described(name: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    """A platform tool's param, its description read from the ``agent_platform_tools`` prompt pack."""
+    return {"type": "function", "function": {"name": name, "description": PROMPTS.DESCRIPTIONS[name],
+                                             "parameters": parameters}}
 
-_WAKE_ME_PARAM = {
-    "type": "function",
-    "function": {
-        "name": WAKE_ME_TOOL,
-        "description": (
-            "Take a turn in this conversation later, to come back to something on your own: check again in an "
-            "hour, follow up tomorrow morning, or carry on once an operation you were given the id of (a "
-            "person's answer, a connect link) finishes. Give exactly one of at, after_minutes and operation_id. "
-            "When it comes due you get a turn whose message is your note, then what woke you; a turn running "
-            "then goes first. Write the note for your future self: what to do and why."
-        ),
-        "parameters": {
+
+def _about(key: str, **schema: Any) -> Dict[str, Any]:
+    """A parameter's schema with its description (``tool.parameter`` in the pack)."""
+    return {**schema, "description": PROMPTS.PARAMETERS[key]}
+
+
+def _tell_parent_param() -> Dict[str, Any]:
+    return _described(TELL_PARENT_TOOL, {
+        "type": "object",
+        "properties": {"message": _about("tell_parent.message", type="string")},
+        "required": ["message"],
+    })
+
+
+def _wake_me_params() -> Tuple[Dict[str, Any], ...]:
+    """wake_me, list_wakeups and cancel_wakeup."""
+    return (
+        _described(WAKE_ME_TOOL, {
             "type": "object",
             "properties": {
-                "note": {"type": "string",
-                         "description": "What you'll be told when you wake, up to 4,000 characters."},
-                "at": {"type": "string",
-                       "description": "An ISO 8601 time a minute to a year ahead; UTC unless it has an offset."},
-                "after_minutes": {"type": "number", "description": "Minutes from now, 1 to 525,600."},
-                "operation_id": {"type": "string",
-                                 "description": "Wake once this operation finishes (at once if it has)."},
+                "note": _about("wake_me.note", type="string"),
+                "at": _about("wake_me.at", type="string"),
+                "after_minutes": _about("wake_me.after_minutes", type="number"),
+                "operation_id": _about("wake_me.operation_id", type="string"),
+                "every": _about("wake_me.every", type="string"),
+                "wakeup_id": _about("wake_me.wakeup_id", type="string"),
             },
             "required": ["note"],
-        },
-    },
-}
+        }),
+        _described("list_wakeups", {"type": "object", "properties": {}}),
+        _described("cancel_wakeup", {
+            "type": "object",
+            "properties": {"wakeup_id": _about("cancel_wakeup.wakeup_id", type="string")},
+            "required": ["wakeup_id"],
+        }),
+    )
 
 
 def _request_connection_param(integrations: Any) -> Dict[str, Any]:
-    integration: Dict[str, Any] = {"type": "string", "description": "The service, e.g. gmail."}
+    integration: Dict[str, Any] = _about("request_connection.integration", type="string")
     if isinstance(integrations, list):
         integration["enum"] = list(integrations)
-    return {
-        "type": "function",
-        "function": {
-            "name": REQUEST_CONNECTION_TOOL,
-            "description": (
-                "Ask the user to connect an account on another service so you can act in it. Returns a link: "
-                "share it with the user and stop there; once they connect, that account's tools are yours from "
-                "your next turn. Ask only when the user's request needs an account you don't have, and only "
-                "for the operations it needs."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "integration": integration,
-                    "operations": {
-                        "type": "array", "items": {"type": "string"},
-                        "description": "The operations you need (omit for all of them).",
-                    },
-                    "name": {
-                        "type": "string",
-                        "description": "A short name for the connection, e.g. work-gmail (defaults to the service).",
-                    },
-                    "reason": {"type": "string", "description": "Why, in one sentence, shown to the user."},
-                },
-                "required": ["integration", "reason"],
-            },
+    return _described(REQUEST_CONNECTION_TOOL, {
+        "type": "object",
+        "properties": {
+            "integration": integration,
+            "operations": _about("request_connection.operations", type="array", items={"type": "string"}),
+            "name": _about("request_connection.name", type="string"),
+            "reason": _about("request_connection.reason", type="string"),
         },
-    }
+        "required": ["integration", "reason"],
+    })
 
 
 def connection_requests_of(node: Any) -> Optional[Dict[str, Any]]:
@@ -168,234 +149,68 @@ def platform_tools_of(node: Any) -> Optional[Dict[str, Any]]:
     """The tools a platform defines whole for the turn, when it offers some."""
     return _runtime_spec(node, PLATFORM_TOOLS_KEY)
 
-_MESSAGE_COORDINATOR_PARAM = {
-    "type": "function",
-    "function": {
-        "name": MESSAGE_COORDINATOR_TOOL,
-        "description": (
-            "Send a free-form message to the account's coordinator. Share information or ask it to act, "
-            "including any delivery preferences in the text. It can use its own tools and existing channels "
-            "according to the owner's instructions and permissions. No provider wiring or credential is "
-            "needed to contact it. Batch related information, avoid duplicates, and respect rate-limit errors. "
-            "Queued means the coordinator will review the message, not that the requested action is complete. "
-            "You won't get a reply in this turn."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "message": {"type": "string", "description": "Context, any requested action, and preferences in plain text."},
-            },
-            "required": ["message"],
-        },
-    },
-}
+def _message_coordinator_param() -> Dict[str, Any]:
+    return _described(MESSAGE_COORDINATOR_TOOL, {
+        "type": "object",
+        "properties": {"message": _about("message_coordinator.message", type="string")},
+        "required": ["message"],
+    })
+
 
 _FEEDBACK_MAX_LEN = 4000
 _PROMPT_MAX_LEN = 8000
 _FEEDBACK_DEDUPE_HOURS = 24
 
-_SUBMIT_FEEDBACK_PARAM = {
-    "type": "function",
-    "function": {
-        "name": SUBMIT_FEEDBACK_TOOL,
-        "description": (
-            "Report a confirmed NoClick PLATFORM bug to the engineering team, "
-            "after a platform-provided operation or tool actually failed or "
-            "returned a provably wrong result. Include what you expected, what "
-            "you observed, and exact errors or paths, then keep working around "
-            "the failure if possible. Do NOT use this for progress narration "
-            "(starting, searching, waiting, or what you plan to do), missing "
-            "user input or source data, missing credentials/configuration, an "
-            "unavailable user, lack of a capability you were never given, "
-            "expected validation errors, or a task you have not attempted. If "
-            "you cannot distinguish a platform defect from one of those cases, "
-            "do not report it. Submit one report per root cause, never per "
-            "retry, item, city, or scheduled run. Reuse the exact same "
-            "issue_key whenever the same root cause recurs."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "feedback": {
-                    "type": "string",
-                    "description": "The bug report: what you did, what happened, what you expected.",
-                },
-                "issue_key": {
-                    "type": "string",
-                    "description": (
-                        "Stable snake_case root-cause key, reused across retries "
-                        "and runs, e.g. firecrawl_http_500 or workspace_file_missing."
-                    ),
-                    "pattern": "^[a-z0-9][a-z0-9_]{2,79}$",
-                },
-            },
-            "required": ["feedback", "issue_key"],
+
+def submit_feedback_param() -> Dict[str, Any]:
+    return _described(SUBMIT_FEEDBACK_TOOL, {
+        "type": "object",
+        "properties": {
+            "feedback": _about("submit_feedback.feedback", type="string"),
+            "issue_key": {"type": "string", "description": PROMPTS.PARAMETERS["submit_feedback.issue_key"],
+                          "pattern": "^[a-z0-9][a-z0-9_]{2,79}$"},
         },
-    },
-}
+        "required": ["feedback", "issue_key"],
+    })
 
-_PROMPT_BUILDER_PARAM = {
-    "type": "function",
-    "function": {
-        "name": PROMPT_BUILDER_TOOL,
-        "description": (
-            "Add new integrations, tools, or capabilities to yourself, or "
-            "change THIS workflow (add/remove/rewire/configure nodes), by "
-            "submitting a natural-language prompt to the NoClick AI workflow "
-            "builder. This is the ONLY way to gain new INTEGRATION tools "
-            "(e.g. Telegram, Slack, Gmail): those come from integration "
-            "nodes wired to you in the workflow, with credentials managed by "
-            "NoClick. (Your platform tools — like this one, or email_user "
-            "when present in your tool list — are built in and need no "
-            "wiring.) Do NOT "
-            "install packages, SDKs, or MCP servers in your sandbox to add an "
-            "integration — sandbox-installed bridges have no credentials and "
-            "are not real NoClick tools. ALWAYS call describe_workflow first "
-            "and write prompts that FIT the existing structure — blind edits "
-            "can break the surrounding workflow. You may also ask the builder "
-            "a question (it answers without editing), but every builder run "
-            "consumes the user's build credits: get facts from the free "
-            "describe_workflow and reserve builder questions for judgment "
-            "calls. In interactive chats the user is asked to approve before "
-            "the builder runs; in background runs the builder runs headlessly. "
-            "Describe the desired end state, not click-by-click steps."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "prompt": {
-                    "type": "string",
-                    "description": "The edit to make, e.g. \"add a Slack node that posts the agent's summary to #alerts\".",
-                },
-            },
-            "required": ["prompt"],
+
+def _prompt_builder_param() -> Dict[str, Any]:
+    return _described(PROMPT_BUILDER_TOOL, {
+        "type": "object",
+        "properties": {"prompt": _about("prompt_builder.prompt", type="string")},
+        "required": ["prompt"],
+    })
+
+
+def _describe_workflow_param() -> Dict[str, Any]:
+    return _described(DESCRIBE_WORKFLOW_TOOL, {
+        "type": "object",
+        "properties": {"focus": _about("describe_workflow.focus", type="string")},
+        "required": [],
+    })
+
+
+def _builder_respond_param() -> Dict[str, Any]:
+    return _described(BUILDER_RESPOND_TOOL, {
+        "type": "object",
+        "properties": {
+            "answers": {"type": "object", "description": PROMPTS.PARAMETERS["builder_respond.answers"],
+                        "additionalProperties": {"type": "string"}},
+            "message": _about("builder_respond.message", type="string"),
         },
-    },
-}
+        "required": [],
+    })
 
 
-_DESCRIBE_WORKFLOW_PARAM = {
-    "type": "function",
-    "function": {
-        "name": DESCRIBE_WORKFLOW_TOOL,
-        "description": (
-            "See the workflow you are embedded in: every node, its operation "
-            "and field values, the wiring between them, which triggers feed "
-            "you, and which nodes provide your tools — the SAME snapshot the "
-            "workflow builder reads. FREE and instant (a database read, no "
-            "credits, no builder run). ALWAYS call this before proposing "
-            "workflow edits with prompt_builder, and whenever you are unsure "
-            "what you are connected to or capable of — edit prompts written "
-            "blind can break the surrounding workflow. For factual questions "
-            "about the workflow, this tool IS the answer; only ask the "
-            "builder (via prompt_builder) when you need its judgment, since "
-            "builder runs consume the user's build credits."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "focus": {
-                    "type": "string",
-                    "description": "Optional node id to spotlight (defaults to yourself).",
-                },
-            },
-            "required": [],
+def _email_user_param() -> Dict[str, Any]:
+    return _described(EMAIL_USER_TOOL, {
+        "type": "object",
+        "properties": {
+            "subject": _about("email_user.subject", type="string"),
+            "body": _about("email_user.body", type="string"),
         },
-    },
-}
-
-_BUILDER_RESPOND_PARAM = {
-    "type": "function",
-    "function": {
-        "name": BUILDER_RESPOND_TOOL,
-        "description": (
-            "Answer the workflow builder's pending questions so a build you "
-            "started with prompt_builder keeps moving WITHOUT waiting for the "
-            "user. When a '--- Platform note ---' says the builder PAUSED with "
-            "questions, answer every design/configuration question you can "
-            "decide yourself (channel names, schedules, options — reference "
-            "inputs by their [id]); the builder resumes immediately and you "
-            "will be woken with the next update. CREDENTIAL inputs are the "
-            "exception: only a human can connect an account, via the shared "
-            "no-login link in the note — send that link through your channel "
-            "and do NOT call this tool when only credential inputs remain. "
-            "Answers you make up badly waste the user's build credits, so "
-            "only answer what you genuinely know or can sensibly decide."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "answers": {
-                    "type": "object",
-                    "description": "Input id → answer value, e.g. {\"ask_0\": \"#alerts\"}. Ids come from the platform note.",
-                    "additionalProperties": {"type": "string"},
-                },
-                "message": {
-                    "type": "string",
-                    "description": "Optional free-form reply for anything the structured answers don't cover (the builder's brain reads it).",
-                },
-            },
-            "required": [],
-        },
-    },
-}
-
-
-_EMAIL_USER_PARAM = {
-    "type": "function",
-    "function": {
-        "name": EMAIL_USER_TOOL,
-        "description": (
-            "Email the workflow owner directly. This tool IS your built-in "
-            "email capability — it needs NO email node or wiring in the "
-            "workflow, and it works even though it never appears in the "
-            "graph. Primarily your channel to the user when they are AWAY "
-            "from the NoClick app: deliver things that need a human and "
-            "can't wait for them to come back — builder or credential links "
-            "that are blocking you, questions only they can answer, reports "
-            "of failures or important updates. (If the user explicitly asks "
-            "you to email them, just do it, active or not.) The owner "
-            "can REPLY to the email and their reply arrives as your next "
-            "message, so write like a real conversation: each conversation is "
-            "ONE email thread — follow-up sends automatically continue it as "
-            "replies (your subject is only used on the first email). Each "
-            "turn's platform note tells you whether the owner is currently "
-            "active; when they are ACTIVE (or you're already talking with "
-            "them in a chat or channel), speak there instead of emailing. "
-            "Tone: informal and CONCISE — write like a sharp colleague "
-            "emailing an executive: their time is scarce, lead with the "
-            "point, keep it short, no corporate boilerplate, no markdown "
-            "headers. Open the FIRST email of a thread with a one-line "
-            "introduction in your own words — which workflow you're the "
-            "agent in and what you do there (e.g. \"I'm the agent in your "
-            "Support Desk workflow — I watch the inbox and triage tickets\"); "
-            "never re-introduce yourself in later replies on the same thread "
-            "(the tool result says whether a send opened a thread or replied "
-            "into one). NoClick adds the provenance footer and unsubscribe "
-            "link automatically — never add your own footers or sign-offs. "
-            "Sends are capped per day and cost the owner a small credit fee "
-            "— at most ONE email can be sent per workflow execution. Batch "
-            "related updates into that email. When running inside an iteration, "
-            "email_user is withheld because per-item sends would spam and charge "
-            "the owner; use a downstream notification node for intentional "
-            "per-item delivery."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "subject": {
-                    "type": "string",
-                    "description": "Short, specific subject line, e.g. \"Need you to connect Slack\".",
-                },
-                "body": {
-                    "type": "string",
-                    "description": "The message (plain text; links pasted inline). Concise and informal.",
-                },
-            },
-            "required": ["subject", "body"],
-        },
-    },
-}
+        "required": ["subject", "body"],
+    })
 
 
 def _platform_pair(param: Dict[str, Any], tool_type: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
@@ -453,16 +268,18 @@ def build_platform_tools(
         AGENT_COORDINATION, AGENT_MEMORY, CONNECTION_REQUESTS, PARENT_UPDATES, PLATFORM_TOOLS, WAKEUPS, capability,
     )
 
-    pairs = [_platform_pair(_SUBMIT_FEEDBACK_PARAM, "submit_feedback")]
+    pairs = [_platform_pair(submit_feedback_param(), "submit_feedback")]
     if connection_requests and capability(CONNECTION_REQUESTS) is not None:
         param, cfg = _platform_pair(_request_connection_param(connection_requests["integrations"]),
                                     REQUEST_CONNECTION_TOOL)
         pairs.append((param, {**cfg, "spec": connection_requests}))
     if wake_me and capability(WAKEUPS) is not None:
-        param, cfg = _platform_pair(_WAKE_ME_PARAM, WAKE_ME_TOOL)
-        pairs.append((param, {**cfg, "spec": wake_me}))
+        # One tool type for the three: the spec's ``tool`` says which was called.
+        for wakeup_param in _wake_me_params():
+            param, cfg = _platform_pair(wakeup_param, WAKE_ME_TOOL)
+            pairs.append((param, {**cfg, "spec": {**wake_me, "tool": param["function"]["name"]}}))
     if tell_parent and capability(PARENT_UPDATES) is not None:
-        param, cfg = _platform_pair(_TELL_PARENT_PARAM, TELL_PARENT_TOOL)
+        param, cfg = _platform_pair(_tell_parent_param(), TELL_PARENT_TOOL)
         pairs.append((param, {**cfg, "spec": tell_parent}))
     coordination = capability(AGENT_COORDINATION) if agent_tools else None
     if coordination is not None:
@@ -483,16 +300,16 @@ def build_platform_tools(
             bound = {BOUND_ARGUMENTS_KEY: tool["bound_arguments"]} if tool.get("bound_arguments") else {}
             pairs.append((param, {**cfg, "spec": tool["spec"], **bound}))
     if enable_coordinator_messages:
-        pairs.append(_platform_pair(_MESSAGE_COORDINATOR_PARAM, "message_coordinator"))
+        pairs.append(_platform_pair(_message_coordinator_param(), "message_coordinator"))
     if enable_prompt_builder:
-        pairs.append(_platform_pair(_PROMPT_BUILDER_PARAM, "prompt_builder"))
-        pairs.append(_platform_pair(_BUILDER_RESPOND_PARAM, "builder_respond"))
-        pairs.append(_platform_pair(_DESCRIBE_WORKFLOW_PARAM, "describe_workflow"))
+        pairs.append(_platform_pair(_prompt_builder_param(), "prompt_builder"))
+        pairs.append(_platform_pair(_builder_respond_param(), "builder_respond"))
+        pairs.append(_platform_pair(_describe_workflow_param(), "describe_workflow"))
     # email_user requires a configured inbound/reply mail channel. Community
     # installs advertise it only after the operator configures that channel.
     # Hosted callers pass email_user_offered()'s verdict (owner has an email).
     if enable_email_updates and not in_iteration and agent_email_available():
-        pairs.append(_platform_pair(_EMAIL_USER_PARAM, "email_user"))
+        pairs.append(_platform_pair(_email_user_param(), "email_user"))
     return pairs
 
 
@@ -513,13 +330,7 @@ def anchored_builder_prompt(prompt: str, node_id: Optional[str]) -> str:
     so the two paths can't drift."""
     if not node_id:
         return prompt
-    return (
-        f"{prompt}\n\n"
-        f"(Requested by the existing agent node with id '{node_id}'. Apply the "
-        f"change to that agent — e.g. wire new tool-provider nodes into it — "
-        f"and leave other agent nodes unchanged unless the request says "
-        f"otherwise.)"
-    )
+    return f"{prompt}\n\n{PROMPTS.builder_anchor(node_id)}"
 
 
 def platform_tools_note(
@@ -534,31 +345,34 @@ def platform_tools_note(
     UNCONDITIONAL —
     that tool is always injected, so disabling prompt_builder must not strip
     the report-platform-bugs guidance with it."""
-    prompt_builder_part = (
-        "Your NoClick integrations come from nodes wired to you in this "
-        "workflow — never from software installed in this sandbox. To gain a "
-        "new integration or capability (Telegram, Slack, Gmail, …), call the "
-        "prompt_builder tool with the change you want: the NoClick builder "
-        "wires real nodes with managed credentials. Do not install packages "
-        "or configure MCP servers in the sandbox for this — such bridges have "
-        "no credentials and are not NoClick tools. "
-    ) if enable_prompt_builder else ""
-    email_part = (
-        "When the workflow owner is AWAY from the app (each turn's platform "
-        "note says), the email_user tool is your channel to them: send "
-        "blocking links, questions, and failure reports there instead of "
-        "waiting silently — they can reply to the email to answer you. "
-    ) if enable_email_updates and not in_iteration and agent_email_available() else ""
-    return (
-        f"{prompt_builder_part}"
-        f"{email_part}"
-        "Use submit_feedback only after a platform-provided operation actually "
-        "fails or returns a provably wrong result. Never use it for progress "
-        "updates, missing user input/data/credentials, an unavailable user, or "
-        "a capability you were never given. Report one root cause once, reuse "
-        "the same issue_key across retries and scheduled runs, then continue "
-        "the task or work around the failure."
+    return PROMPTS.platform_tools_note(
+        prompt_builder=enable_prompt_builder,
+        email=enable_email_updates and not in_iteration and agent_email_available(),
     )
+
+
+async def owner_presence_note(user_id: str) -> str:
+    """The per-turn platform note on whether the workflow owner is in the app (steering email_user)."""
+    from utils.user_presence import describe_owner_presence
+
+    return PROMPTS.presence_note(await describe_owner_presence(user_id))
+
+
+# Each builder outcome event, and the payload key it's marked relayed by.
+_BUILDER_RELAY_KEYS = {"builder_decision": "proposal_id", "builder_ask": "relay_id", "builder_result": "relay_id"}
+
+
+def builder_updates_note(events: list) -> Tuple[str, list]:
+    """``(note, relay_keys)`` for a conversation's undelivered builder outcome events (card verdicts, parked asks
+    with their bridge links, run results): the platform note composed from them, and the keys that mark them
+    relayed."""
+    lines, relay_keys = [], []
+    for event in events:
+        kind, payload = event["kind"], event["payload"]
+        if kind in _BUILDER_RELAY_KEYS:
+            lines.append(PROMPTS.builder_update(kind, payload))
+            relay_keys.append((kind, payload.get(_BUILDER_RELAY_KEYS[kind])))
+    return PROMPTS.builder_updates(lines), relay_keys
 
 
 def prompt_builder_mode(conversation_key: Optional[str]) -> str:

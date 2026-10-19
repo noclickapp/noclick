@@ -2,16 +2,15 @@
 
 An installation running on its own provider keys adds nothing: costs are
 recorded at provider list price, which is what the default below means. A
-platform reselling those calls sets `PLATFORM_MARKUP` in its environment — the
+platform reselling those calls may set `PLATFORM_MARKUP` in its environment: the
 margin is a deployment's commercial decision, not a property of the engine, and
-it is the one number here that does not belong in source. Work attributed to
-another product of the deployment can carry that product's own multiplier
-(`register_attributed_markup`).
+it is the one number here that does not belong in source. Work attributed to a
+product the deployment sells at cost (`register_at_cost`) carries none.
 """
 
 import os
 from decimal import Decimal, ROUND_CEILING
-from typing import Dict
+from typing import Mapping, Set
 
 def _configured_credits_per_dollar() -> Decimal:
     """How many displayed credits a dollar of recorded cost is worth. An
@@ -47,26 +46,27 @@ def _configured_markup() -> Decimal:
 
 
 PLATFORM_MIN_MARKUP = _configured_markup()
-AI_BUILDER_MARKUP = PLATFORM_MIN_MARKUP
 
-# Work attributed under a key (billing.usage_tracker.attribute_usage) priced at
-# its own multiplier: a deployment selling one product at a different margin.
-_ATTRIBUTED_MARKUPS: Dict[str, Decimal] = {}
+# Keys of work (billing.usage_tracker.attribute_usage) that a deployment sells at
+# cost whatever its own markup: a product of its own priced at what it pays.
+_AT_COST: Set[str] = set()
 
 
-def register_attributed_markup(key: str, multiplier: Decimal) -> None:
-    """Price every markup applied in work attributed under ``key`` at ``multiplier``."""
-    if multiplier < 1:
-        raise ValueError(f"A markup below one would record less than the call cost; got {multiplier}.")
-    _ATTRIBUTED_MARKUPS[key] = Decimal(multiplier)
+def register_at_cost(key: str) -> None:
+    """Record every cost metered in work attributed under ``key`` at cost."""
+    _AT_COST.add(key)
+
+
+def at_cost(attribution: Mapping) -> bool:
+    """Whether ``attribution`` (an event's metadata or the context's) names work sold at cost."""
+    return any(key in attribution for key in _AT_COST)
 
 
 def current_markup() -> Decimal:
     """The multiplier for a cost recorded in this context."""
     from billing.usage_tracker import usage_attribution
 
-    attribution = usage_attribution()
-    return next((m for key, m in _ATTRIBUTED_MARKUPS.items() if key in attribution), PLATFORM_MIN_MARKUP)
+    return Decimal(1) if at_cost(usage_attribution()) else PLATFORM_MIN_MARKUP
 
 
 def _apply_min_markup(cost: Decimal, user_resource: bool) -> Decimal:
@@ -112,15 +112,11 @@ def apply_modal_compute_markup(cost: Decimal) -> Decimal:
 
 
 def apply_ai_builder_markup(cost: Decimal) -> Decimal:
-    if cost > 0:
-        return cost * max(AI_BUILDER_MARKUP, PLATFORM_MIN_MARKUP)
-    return cost
+    return _apply_min_markup(cost, False)
 
 
 def apply_ai_testing_markup(cost: Decimal) -> Decimal:
-    if cost > 0:
-        return cost * current_markup()
-    return cost
+    return _apply_min_markup(cost, False)
 
 
 def round_up_to_credit_step(cost: Decimal) -> Decimal:

@@ -40,6 +40,8 @@ export interface ActiveGeneration {
     workflow_id: string | null;
     conversation_id: string;
     prompt: string;
+    /** Set when the run imports an n8n workflow: its prompt is then a sentence, the import went apart. */
+    n8n_import_node_count?: number;
     started_at: number;
     /** Brain text accumulated from active_gen:text_chunk deltas. */
     text: string;
@@ -215,6 +217,7 @@ export function ensureActiveGenListener(): void {
             workflow_id: data.workflow_id || null,
             conversation_id: incomingConv,
             prompt: data.prompt || '',
+            ...(typeof data.n8n_import_node_count === 'number' ? { n8n_import_node_count: data.n8n_import_node_count } : {}),
             started_at: typeof data.started_at === 'number' ? data.started_at : Date.now() / 1000,
             text: '',
             events: [],
@@ -293,8 +296,9 @@ export function ensureActiveGenListener(): void {
         }
         // outcome:'failed' = the run errored (e.g. a mid-stream LLM error). Like
         // interrupted, KEEP the gen (don't evict) so the bubble stays with the
-        // error + a Retry, instead of silently vanishing.
-        if (data.outcome === 'failed') {
+        // error + a Retry, instead of silently vanishing. This edition's chat
+        // shows a run that stopped unfinished ('incomplete') the same way.
+        if (data.outcome === 'failed' || data.outcome === 'incomplete') {
             const gen = activeGenStore.gens[gen_id];
             if (gen && !gen.stopped) {
                 gen.failed = true;

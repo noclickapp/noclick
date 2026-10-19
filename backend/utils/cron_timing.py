@@ -115,6 +115,24 @@ def _compute_next_run(
     return _next_standard(expr, tz_name, now_utc)
 
 
+def next_run(expression: str, tz_name: str, *, after: Optional[datetime] = None) -> datetime:
+    """The next time (UTC) a five-field ``expression`` fires in ``tz_name``,
+    strictly after ``after`` (now when omitted)."""
+    return _next_standard(expression, tz_name, after or datetime.now(timezone.utc))
+
+
+def shortest_gap(expression: str, tz_name: str, *, after: Optional[datetime] = None, runs: int = 32) -> float:
+    """The shortest time in seconds between the next ``runs`` fires: how often
+    a schedule can come round."""
+    previous = next_run(expression, tz_name, after=after)
+    gap = float("inf")
+    for _ in range(runs):
+        following = next_run(expression, tz_name, after=previous)
+        gap = min(gap, (following - previous).total_seconds())
+        previous = following
+    return gap
+
+
 def _parse_run_at(run_at: str) -> datetime:
     dt = datetime.fromisoformat(run_at.replace("Z", "+00:00"))
     if dt.tzinfo is None:

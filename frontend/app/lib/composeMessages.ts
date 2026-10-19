@@ -1,5 +1,5 @@
 // Pure projection: persisted committed history + active in-flight gens →
-// the Message[] that MessagesView renders.
+// the Message[] the builder panel renders.
 //
 // This is the entire "how does the chat look right now" computation.
 // It's a pure function over two inputs, so it's trivial to test and
@@ -10,7 +10,8 @@
 //   • Persisted prefix always comes first (in the order of conversations.events)
 //   • Each active gen contributes exactly two bubbles: [user_prompt, asst_in_flight]
 //   • The asst bubble's isComplete=false signals streaming to ChatBox
-//   • An active gen's text + events + edit_steps live on the asst bubble
+//   • An active gen's words, events and edit_steps live on the asst bubble, in
+//     the order they came (each turn's words, then its events: genSegments)
 //     ─ no separate streaming-state surface to keep in sync
 //
 // On terminal: the gen evicts from activeGenStore and the BE's committed
@@ -21,8 +22,7 @@
 import type { Message, EditSegment } from '~/components/chat/types';
 import type { ActiveGeneration } from '~/lib/activeGenStore';
 import { mapPersistedMessages, type PersistedMessage } from '~/hooks/conversationRestoreMapping';
-
-type EditEvents = Extract<EditSegment, { type: 'events' }>['events'];
+import { genSegments } from '~/lib/builderSteps';
 
 /** Convert one active gen into bubbles.
  *
@@ -33,19 +33,10 @@ type EditEvents = Extract<EditSegment, { type: 'events' }>['events'];
  * bubble continuing rather than a new turn appearing.
  */
 function activeGenToBubbles(gen: ActiveGeneration): Message[] {
-    // Assemble edit_segments from the gen's accumulated text + graph events.
-    // Same shape conversations.events uses, so MessagesView's renderer
-    // doesn't need a special case for in-flight content.
-    const segments: EditSegment[] = [];
-    if (gen.text) {
-        segments.push({ type: 'text', text: gen.text });
-    }
-    if (gen.events.length > 0) {
-        segments.push({
-            type: 'events',
-            events: gen.events.map(e => ({ ...(e as Record<string, unknown>), status: 'completed' as const })) as EditEvents,
-        });
-    }
+    // Assemble edit_segments from the gen's words and graph events, in the
+    // order they came. Same shape conversations.events uses, so the panel
+    // reads in-flight content the way it reads a committed turn.
+    const segments = genSegments(gen.text, gen.events as Record<string, unknown>[]);
     // A gen the user stopped (`wasInterrupted` → "interrupted by user" notice)
     // OR one the watchdog flagged as interrupted (container drained/killed — no
     // terminal frame is coming) renders as a completed turn: no streaming
@@ -69,25 +60,22 @@ function activeGenToBubbles(gen: ActiveGeneration): Message[] {
         return [assistant];
     }
     return [
-        { text: gen.prompt, isUser: true, isComplete: true },
+        {
+            text: gen.prompt,
+            isUser: true,
+            isComplete: true,
+            ...(gen.n8n_import_node_count !== undefined ? { n8nImportNodeCount: gen.n8n_import_node_count } : {}),
+        },
         assistant,
     ];
 }
 
-/** Build the extra segments + steps an active gen contributes. */
+/** Build the extra segments + steps an active gen contributes: its words and events in the order they came. */
 function genExtras(gen: ActiveGeneration): {
     segments: EditSegment[];
     steps: string[];
 } {
-    const segments: EditSegment[] = [];
-    if (gen.text) segments.push({ type: 'text', text: gen.text });
-    if (gen.events.length > 0) {
-        segments.push({
-            type: 'events',
-            events: gen.events.map(e => ({ ...(e as Record<string, unknown>), status: 'completed' as const })) as EditEvents,
-        });
-    }
-    return { segments, steps: [...gen.edit_steps] };
+    return { segments: genSegments(gen.text, gen.events as Record<string, unknown>[]), steps: [...gen.edit_steps] };
 }
 
 export function composeMessages(
@@ -123,6 +111,10 @@ export function composeMessages(
                     ...last,
                     isComplete: ended,
                     pendingAsk: undefined,
+                    // Taken up again, it ends as this run does, not as it last did.
+                    incomplete: undefined,
+                    failed: undefined,
+                    error: undefined,
                     editSegments: [...(last.editSegments || []), ...extras.segments],
                     editSteps: [...(last.editSteps || []), ...extras.steps],
                     editStatus: ended ? undefined : (gen.status || last.editStatus),

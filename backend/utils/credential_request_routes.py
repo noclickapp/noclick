@@ -6,11 +6,13 @@ via a token-based link received by email.
 
 import inspect
 import logging
+import re
 from typing import Any, Optional
 from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from repositories.credentials import MAX_PROVISION_ATTEMPTS
 from repositories.organization import PRIMARY_ORG_SQL
 from repositories.users import user_label_sql
 from utils.async_helpers import spawn
@@ -18,6 +20,7 @@ from utils.database_pool import get_native_pool
 from utils.encryption import get_encryption
 from utils.email import send_credential_fulfilled_email
 from utils.shopify_routes import install_router as shopify_install_router
+from utils.pipedrive_install import router as pipedrive_install_router
 from utils.phone_purchase_routes import router as phone_purchase_router
 from utils.credential_approval_routes import router as credential_approval_router
 
@@ -29,10 +32,9 @@ router = APIRouter(prefix="/api/credential-request", tags=["credential-request"]
 # authenticated API front door instead of adding another root-level backend
 # prefix that self-hosted gateways would have to discover independently.
 router.include_router(shopify_install_router)
+router.include_router(pipedrive_install_router)
 router.include_router(phone_purchase_router)
 router.include_router(credential_approval_router)
-
-MAX_PROVISION_ATTEMPTS = 5
 
 
 def validated_return_url(url: str) -> str:
@@ -281,9 +283,9 @@ def _method_dict_from_defn(title: str, defn: dict) -> Optional[dict]:
         return None
     is_oauth = defn.get('x-credential-type') == 'oauth'
     provider = _get_oauth_provider(cred_type) if is_oauth else None
-    raw_label = title.replace('Credential', '').strip()
-    raw_desc = defn.get('description', '')
-    short_desc = raw_desc.split('\n')[0].strip() if raw_desc else ''
+    raw_label = re.sub(r'Credentials?$', '', defn.get('title') or title).strip()
+    # Whole, not its first line: the page derives the steps to get the value from it, as the app does.
+    description = (defn.get('description') or '').strip()
     # credential_url: prefer definition-level, fall back to first field-level.
     cred_url = defn.get('x-credential-url')
     if not cred_url:
@@ -295,7 +297,7 @@ def _method_dict_from_defn(title: str, defn: dict) -> Optional[dict]:
     return {
         'credential_type': cred_type,
         'label': raw_label,
-        'description': short_desc,
+        'description': description,
         'credential_url': cred_url,
         'instructions': defn.get('x-credential-instructions') or None,
         'is_oauth': is_oauth,
@@ -625,6 +627,15 @@ except ImportError:  # pragma: no cover - exercised in the open build
     AGENT_OAUTH_AVAILABLE = False
 
 
+def _request_ended(status: str, message: str, credential_id=None) -> HTTPException:
+    """A request that can't be provided any more, typed (``status``: fulfilled, cancelled, expired) so a page that
+    holds it can tell a connected account from a lapsed link; a fulfilled one names the credential it made."""
+    detail = {"message": message, "status": status}
+    if credential_id:
+        detail["credential_id"] = str(credential_id)
+    return HTTPException(status_code=410, detail=detail)
+
+
 @router.get("/{token}")
 async def get_credential_request(token: str) -> CredentialRequestDetails:
     """Get credential request details by token. Public — no auth required."""
@@ -632,7 +643,7 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
     row = await pool.fetchrow(
         f"""
         SELECT cr.id, cr.requester_id, cr.credential_type, cr.message, cr.status, cr.expires_at,
-               cr.provision_attempts, cr.metadata,
+               cr.provision_attempts, cr.metadata, cr.credential_id,
                {user_label_sql('u')} as requester_name,
                u.email as requester_email
         FROM credential_requests cr
@@ -647,10 +658,11 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
 
     phone_result = row['credential_type'] == 'phone_number' and row['status'] in ('fulfilled', 'provisioning')
     if row['status'] != 'pending' and not phone_result:
-        raise HTTPException(status_code=410, detail=f"This credential request has already been {row['status']}")
+        raise _request_ended(row['status'], f"This credential request has already been {row['status']}",
+                             row['credential_id'] if row['status'] == 'fulfilled' else None)
 
     if not phone_result and row['expires_at'] and row['expires_at'].replace(tzinfo=timezone.utc) < datetime.now(timezone.utc):
-        raise HTTPException(status_code=410, detail="This credential request has expired")
+        raise _request_ended("expired", "This credential request has expired")
 
     if row['provision_attempts'] >= MAX_PROVISION_ATTEMPTS:
         raise HTTPException(status_code=429, detail="Too many provision attempts for this request")
@@ -821,9 +833,25 @@ async def _store_and_fulfill(
         f"Credential request {row['id']} fulfilled: type={credential_type}, "
         f"requester={row['requester_id']}, provider={row['target_email']}"
     )
-    from utils.coordinator_links import dispatch_link
-    dispatch_link(pool, "credential_request", row['id'])
+    _announce_fulfilled(pool, row, credential_id, credential_type)
     return {"status": "success", "message": "Credential provided successfully", "credential_id": credential_id}
+
+
+def _announce_fulfilled(pool, row, credential_id: str, credential_type: str) -> None:
+    """Tell whoever waits on a fulfilled request: the coordinator it would wake,
+    and the requester's open pages (a frame to their user room), so a card
+    connecting this request folds whichever device it was provided on. A
+    credential held for someone else is never named to the owner."""
+    from utils.coordinator_links import dispatch_link
+    from utils.event_relay import broadcast_to_user_safe
+    from wss.sender.events import CredentialRequestFulfilledEvent
+
+    dispatch_link(pool, "credential_request", row['id'])
+    if (row['metadata'] or {}).get('hidden_from_owner'):
+        return
+    spawn(broadcast_to_user_safe(str(row['requester_id']), CredentialRequestFulfilledEvent(
+        request_id=str(row['id']), credential_id=str(credential_id), credential_type=credential_type,
+    )), name=f"credential-request-fulfilled:{row['id']}")
 
 
 @router.post("/{token}/provide")
@@ -946,6 +974,7 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
                         "message": verdict.message,
                         "field_errors": verdict.field_errors,
                         "hint": verdict.hint,
+                        "reachable": False if verdict.rejection else None,
                     },
                 )
             credential_data = verdict.credential_data
@@ -1175,8 +1204,7 @@ async def _claim_qr_fulfillment(pool, row, credential_id: str) -> bool:
     if row["target_email"]:
         await _notify_requester_fulfilled(row, "whatsapp_qr")
     logger.info(f"Credential request {row['id']} fulfilled via WhatsApp QR: credential={credential_id}")
-    from utils.coordinator_links import dispatch_link
-    dispatch_link(pool, "credential_request", row['id'])
+    _announce_fulfilled(pool, row, credential_id, "whatsapp_qr")
     return True
 
 
@@ -1189,10 +1217,12 @@ async def qr_start(token: str) -> dict[str, Any]:
     _assert_qr_request(row["credential_type"])
     if await _qr_start_over_limit(token):
         raise HTTPException(status_code=429, detail="Too many QR attempts for this request. Please try again later.")
-    from utils.whatsapp_qr import start_qr_connection
+    from utils.whatsapp_qr import INSUFFICIENT_CREDITS, SPEND_CAP, start_qr_connection
+
     result = await start_qr_connection(pool, owner_id=str(row["requester_id"]))
     if not result.get("success"):
-        raise HTTPException(status_code=502, detail=result.get("message") or "Failed to start WhatsApp connection")
+        status = 402 if result.get("code") in (INSUFFICIENT_CREDITS, SPEND_CAP) else 502
+        raise HTTPException(status_code=status, detail=result.get("message") or "Failed to start WhatsApp connection")
     return result
 
 

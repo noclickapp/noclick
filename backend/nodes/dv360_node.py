@@ -193,8 +193,7 @@ class DV360ServiceAccountCredential(BaseModel):
             "x-credential-instructions": (
                 "Create a JSON key for a service account, then link that service "
                 "account's email to a DV360 user profile (Admin → Users) with the "
-                "required role. Prefer user OAuth for user-delegated access; use a "
-                "service account for server-to-server automation."
+                "required role."
             ),
         }
     )

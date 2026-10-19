@@ -16,6 +16,12 @@ beforeAll(() => {
     // jsdom has no matchMedia; the composer asks it about the pointer.
     window.matchMedia = ((query: string) =>
         ({ matches: false, media: query, addEventListener: () => {}, removeEventListener: () => {}, addListener: () => {}, removeListener: () => {} }) as unknown as MediaQueryList);
+    // Nor ResizeObserver; the transcript follows its content's growth with one.
+    globalThis.ResizeObserver ??= class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+    } as unknown as typeof ResizeObserver;
 });
 
 const meta: PublicAgentMeta = {

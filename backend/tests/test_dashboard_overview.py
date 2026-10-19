@@ -72,10 +72,17 @@ def test_marks_tolerate_string_and_empty_blobs():
 # repository — real Postgres
 # ----------------------------------------------------------------------
 
-async def _seed(db, user):
+def _inside_utc_day():
+    """Now, or 01:10 UTC while earlier: today's seeded runs start up to an hour
+    before it, and in the first hour of a UTC day they'd land on yesterday."""
+    now = datetime.now(timezone.utc)
+    return max(now, now.replace(hour=1, minute=10, second=0))
+
+
+async def _seed(db, user, now=None):
     """A user, their (auto-created) personal-workspace org, one workflow with
-    runs / a delayed run / a webhook row / two notifications. Returns
-    (workflow_id, org_uuid) — the org is what production scopes on."""
+    runs / a delayed run / a webhook row / two notifications, timed back from
+    ``now``. Returns (workflow_id, org_uuid) — the org is what production scopes on."""
     await db.execute("INSERT INTO auth.users (id, email) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING", user, f"dash-{user[:8]}@example.com")
     org_id = await db.fetchval("SELECT organization_id FROM organization_members WHERE user_id = $1 AND is_primary = true", uuid.UUID(user))
     wf = await db.fetchrow(
@@ -84,7 +91,7 @@ async def _seed(db, user):
     )
     wf_id = wf["id"]
     USER = user  # noqa: N806 — the seed rows below key on this user
-    now = datetime.now(timezone.utc)
+    now = now or datetime.now(timezone.utc)
     for offset_days, status in ((0, "completed"), (0, "error"), (1, "completed"), (13, "completed"), (20, "completed")):
         await db.execute(
             "INSERT INTO workflow_executions (workflow_id, user_id, status, started_at, finished_at, trigger_source) VALUES ($1, $2, $3, $4, $5, 'cron')",
@@ -114,7 +121,7 @@ async def _seed(db, user):
 @pytest.mark.asyncio
 async def test_repo_runs_are_zero_filled_and_scoped(real_database):
     user = _fresh_user()
-    wf_id, org = await _seed(real_database, user)
+    wf_id, org = await _seed(real_database, user, now=_inside_utc_day())
     repo = DashboardRepo(real_database.pool)
 
     window = await repo.runs_window([wf_id], days=14)
@@ -215,7 +222,7 @@ async def test_build_overview_end_to_end(real_database):
     schedule mirror becomes an upcoming run, the delayed run resumes, the
     webhook row arms the HubSpot trigger, notifications count unread."""
     user = _fresh_user()
-    wf_id, _org = await _seed(real_database, user)
+    wf_id, _org = await _seed(real_database, user, now=_inside_utc_day())
     payload = await dh.build_overview(real_database.pool, user, days=14)
 
     assert payload["workspace"]["userName"] == f"dash-{user[:8]}" and payload["workspace"]["kind"] == "personal"
@@ -333,47 +340,74 @@ def test_triggers_read_mirror_and_rows():
     assert [b["kind"] for b in broken] == ["trigger_broken"] and "Daily" in broken[0]["title"]
 
 
-@pytest.mark.asyncio
-async def test_build_overview_isolates_a_failing_section():
-    """One broken query empties its section and lands in `errors`; the rest renders."""
-    pool = object()
+async def _ok(*_a, **_k):
+    return []
 
-    async def boom(*_a, **_k):
-        raise RuntimeError("relation does not exist")
 
-    async def ok(*_a, **_k):
-        return []
-
+def _overview_patches(**overrides):
+    """Every source of the overview faked, ``overrides`` (by attribute name) replacing any."""
     async def two(*_a, **_k):
         return [], 0
 
-    patches = [
-        patch.object(dh.FeedRepo, "get_primary_org_id", AsyncMock(return_value=None)),
-        patch.object(dh.FeedRepo, "list_approvals", AsyncMock(return_value=([], []))),
-        patch.object(dh.FeedRepo, "list_tool_calls", AsyncMock(return_value=([], {}))),
-        patch.object(dh.ConversationRepo, "list_pending_asks", ok),
-        patch.object(dh.CredentialsRepo, "list_credential_requests", ok),
-        patch.object(dh.CredentialsRepo, "list_accessible", ok),
-        patch.object(dh.DashboardRepo, "workspace_identity", AsyncMock(return_value={"userName": "Dhruv", "orgName": "Acme", "isPersonal": False})),
-        patch.object(dh.DashboardRepo, "list_workflows", AsyncMock(return_value=[{"id": "wf-1", "name": "WF", "workflow": SAVE_SHAPE, "updated_at": None}])),
-        patch.object(dh.DashboardRepo, "unanswered_builder_prompts", ok),
-        patch.object(dh.DashboardRepo, "pending_bridge_links", ok),
-        patch.object(dh.DashboardRepo, "runs_window", boom),
-        patch.object(dh.DashboardRepo, "recent_runs", ok),
-        patch.object(dh.DashboardRepo, "awaiting_delay", ok),
-        patch.object(dh.DashboardRepo, "webhook_rows", ok),
-        patch.object(dh.DashboardRepo, "subscription_rows", ok),
-        patch.object(dh.DashboardRepo, "resources", ok),
-        patch.object(dh.DashboardRepo, "agent_conversations", ok),
-        patch.object(dh.DashboardRepo, "notifications", two),
-        patch.object(dh, "_list_sandboxes", ok),
-        patch.object(dh, "_alarm_fanout", ok),
-        patch.object(dh, "_credential_health", AsyncMock(return_value={})),
+    sources = [
+        (dh.FeedRepo, "get_primary_org_id", AsyncMock(return_value=None)),
+        (dh.FeedRepo, "list_approvals", AsyncMock(return_value=([], []))),
+        (dh.FeedRepo, "list_tool_calls", AsyncMock(return_value=([], {}))),
+        (dh.ConversationRepo, "list_pending_asks", _ok),
+        (dh.CredentialsRepo, "list_credential_requests", _ok),
+        (dh.CredentialsRepo, "list_accessible", _ok),
+        (dh.DashboardRepo, "workspace_identity", AsyncMock(return_value={"userName": "Dhruv", "orgName": "Acme", "isPersonal": False})),
+        (dh.DashboardRepo, "list_workflows", AsyncMock(return_value=[{"id": "wf-1", "name": "WF", "workflow": SAVE_SHAPE, "updated_at": None}])),
+        (dh.DashboardRepo, "unanswered_builder_prompts", _ok),
+        (dh.DashboardRepo, "pending_bridge_links", _ok),
+        (dh.DashboardRepo, "runs_window", _ok),
+        (dh.DashboardRepo, "recent_runs", _ok),
+        (dh.DashboardRepo, "awaiting_delay", _ok),
+        (dh.DashboardRepo, "webhook_rows", _ok),
+        (dh.DashboardRepo, "subscription_rows", _ok),
+        (dh.DashboardRepo, "resources", _ok),
+        (dh.DashboardRepo, "agent_conversations", _ok),
+        (dh.DashboardRepo, "notifications", two),
+        (dh, "_list_sandboxes", _ok),
+        (dh, "_alarm_fanout", _ok),
+        (dh, "_credential_health", AsyncMock(return_value={})),
     ]
+    return [patch.object(owner, name, overrides.get(name, fake)) for owner, name, fake in sources]
+
+
+@pytest.mark.asyncio
+async def test_build_overview_asks_providers_and_the_scheduler_side_by_side():
+    """Credential health and the alarm fan-out both wait on outside services: run together, the slower bounds the
+    overview, not their sum."""
+    import asyncio
+    import time
+
+    async def slow_alarms(*_a, **_k):
+        await asyncio.sleep(0.3)
+        return []
+
+    async def slow_health(*_a, **_k):
+        await asyncio.sleep(0.3)
+        return {}
+
     with ExitStack() as stack:
-        for p in patches:
+        for p in _overview_patches(_alarm_fanout=slow_alarms, _credential_health=slow_health):
             stack.enter_context(p)
-        payload = await dh.build_overview(pool, USER)
+        started = time.perf_counter()
+        payload = await dh.build_overview(object(), USER)
+    assert payload["errors"] == {} and time.perf_counter() - started < 0.55  # one after the other: 0.6s
+
+
+@pytest.mark.asyncio
+async def test_build_overview_isolates_a_failing_section():
+    """One broken query empties its section and lands in `errors`; the rest renders."""
+    async def boom(*_a, **_k):
+        raise RuntimeError("relation does not exist")
+
+    with ExitStack() as stack:
+        for p in _overview_patches(runs_window=boom):
+            stack.enter_context(p)
+        payload = await dh.build_overview(object(), USER)
 
     assert payload["errors"] == {"runs": "relation does not exist"}
     assert payload["runs"]["days"] == [] and payload["workspace"] == {"name": "Acme", "kind": "org", "userName": "Dhruv"}

@@ -1,11 +1,14 @@
 """
 Inbound-email HTTP route for the inbound-email trigger node.
 
-An operator-configured email relay receives mail for ``INBOUND_EMAIL_DOMAIN``
-(and for any other domain a platform routes to it, where only an address a
-registered receiver reserved takes mail), HMAC-signs a JSON payload
+An operator-configured email relay receives mail for the installation's own
+domains (``inbound_email_domains``; a local part is one address across them)
+and for any other domain a platform routes to it, where only an address a
+registered receiver reserved takes mail. It HMAC-signs a JSON payload
 (from/to/subject/rawBase64/headers/spf/dkim), and POSTs it here. This route:
-1. Verifies the relay auth (Bearer token + optional HMAC signature)
+1. Verifies the relay auth (Bearer token + optional HMAC signature), and
+   receives each relayed message (its ``requestId``) once, however often the
+   relay's queue delivers it (``repositories/email_deliveries.py``)
 2. Resolves the recipient local-part to a reserved workflow + trigger node
 3. Parses the MIME message, stores attachments in object storage
 4. Injects the parsed email as the trigger node's ``_triggerPayload`` and
@@ -24,19 +27,18 @@ import os
 import time
 from email.policy import default as email_default_policy
 from email.utils import parseaddr
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Request, BackgroundTasks, HTTPException
 from pydantic import BaseModel
 
 from utils.database_pool import get_native_pool
 from utils.email_reply import mint_reply_token
-from utils.email_reservation_manager import (
-    get_inbound_email_domain,
-)
+from utils.email_reservation_manager import address_domains, inbound_email_domains
 from utils.hosted_defaults import frontend_url
 from utils.resource_store import create_resource_from_bytes
 from utils.webhook_routes import _execute_workflow_with_relay
+from repositories.email_deliveries import EmailDeliveryRepo
 from repositories.users import get_user_email
 
 logger = logging.getLogger(__name__)
@@ -183,17 +185,18 @@ async def _inline_extraction_fields(data: bytes, mime_type: str, filename: str) 
 async def get_email_config(local_part: str, domain: str) -> Optional[dict]:
     """Resolve a reserved inbound address: a trigger node's (with its
     workflow), or one with no workflow (an account coordinator's, or a kind
-    a registered ``EMAIL_ADDRESS_RECEIVER`` handles)."""
+    a registered ``EMAIL_ADDRESS_RECEIVER`` handles). On one of the
+    installation's own domains, the local part held on any of them."""
     row = await get_native_pool().fetchrow(
         """
         SELECT er.id, er.user_id, er.workflow_id, er.node_id, er.local_part, er.domain,
                er.is_active, er.kind, wf.workflow AS workflow_config, wf.organization_id
         FROM email_reservations er
         LEFT JOIN workflows wf ON er.workflow_id = wf.id
-        WHERE er.domain = $1 AND er.local_part = $2
+        WHERE er.domain = ANY($1::text[]) AND er.local_part = $2
           AND (er.kind <> 'trigger' OR (wf.id IS NOT NULL AND wf.deleted_at IS NULL))
         """,
-        domain, local_part,
+        address_domains(domain), local_part,
     )
     return dict(row) if row else None
 
@@ -201,8 +204,8 @@ async def get_email_config(local_part: str, domain: str) -> Optional[dict]:
 @router.post("/inbound")
 async def receive_inbound_email(request: Request, background_tasks: BackgroundTasks) -> EmailInboundResponse:
     """Receive relayed inbound email and trigger the matching workflow."""
-    configured_domain = get_inbound_email_domain()
-    if not configured_domain:
+    own_domains = inbound_email_domains()
+    if not own_domains:
         raise HTTPException(status_code=503, detail="Inbound email is not configured")
 
     body = await request.body()
@@ -214,11 +217,41 @@ async def receive_inbound_email(request: Request, background_tasks: BackgroundTa
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON payload")
 
+    # The relay retries a delivery until it hears back, so the one it names may already be received.
+    request_id = payload.get("requestId")
+    if not request_id:
+        return await _receive(payload, own_domains, background_tasks)
+    deliveries = EmailDeliveryRepo(get_native_pool())
+    attempt = await deliveries.claim(request_id)
+    if attempt is None:
+        if await deliveries.received(request_id):
+            return EmailInboundResponse(success=True, message="Already received", triggered=False)
+        raise HTTPException(status_code=409, detail="This message is being received")
+    try:
+        response = await _receive(payload, own_domains, background_tasks)
+    except BaseException:
+        try:
+            await deliveries.release(request_id, attempt)
+        except Exception:
+            logger.exception("[EMAIL] Delivery %s not released; it waits out its lease", request_id)
+        raise
+    try:
+        await deliveries.settle(request_id, attempt)
+    except Exception:
+        # Received all the same: a retry after the lease would receive it twice, so the relay is told it landed.
+        logger.exception("[EMAIL] Delivery %s received but not marked", request_id)
+    return response
+
+
+async def _receive(
+    payload: Dict[str, Any], own_domains: Tuple[str, ...], background_tasks: BackgroundTasks,
+) -> EmailInboundResponse:
+    """Hand one relayed message to whatever takes mail at its address."""
     _, to_addr = parseaddr(payload.get("to") or "")
     if "@" not in to_addr:
         raise HTTPException(status_code=400, detail="Missing recipient address")
     local_part, _, domain = to_addr.lower().partition("@")
-    if domain != configured_domain:
+    if domain not in own_domains:
         # A domain of a platform's own that routes its mail here: only an
         # address a registered receiver reserved on it takes mail.
         config = await get_email_config(local_part, domain)
@@ -237,7 +270,15 @@ async def receive_inbound_email(request: Request, background_tasks: BackgroundTa
     if not config:
         raise HTTPException(status_code=404, detail="No workflow is listening on this address")
     if config.get("kind") == "coordinator":
-        return await _receive_coordinator_email(local_part, domain, payload, background_tasks)
+        from coder.coordinator.email_channel import _agent_reach
+
+        # An account meant to have an agent answer its owner gets it now: the address becomes the agent's inbox,
+        # and this mail goes there.
+        if await _agent_reach(get_native_pool(), str(config["user_id"]), ensure=True) is not None:
+            moved = await get_email_config(local_part, domain)
+            if moved and moved.get("kind") != "coordinator":
+                return await _receive_reserved_kind(moved, to_addr, payload, background_tasks)
+        return await _receive_coordinator_email(config["local_part"], config["domain"], payload, background_tasks)
     if config.get("workflow_id") is None:  # only a trigger's address names a workflow
         return await _receive_reserved_kind(config, to_addr, payload, background_tasks)
     if not config.get("is_active"):
@@ -337,6 +378,10 @@ async def _received_email(
         "headers": payload.get("headers", {}),
         "spf_pass": payload.get("spfPass"),
         "dkim_pass": payload.get("dkimPass"),
+        # The From address, and whether a DKIM signature aligned with it verified: for who mail shows as from,
+        # never for who it is from (``from`` and ``dkim_pass`` decide that).
+        "header_from": payload.get("headerFrom"),
+        "dkim_aligned": payload.get("dkimAligned"),
     }
     # Authorizes a locked reply to THIS email only — a payload fabricated in a
     # saved config can't mint one (utils/email_reply.py).
@@ -365,6 +410,30 @@ async def _receive_reserved_kind(
     outcome = await receiver(get_native_pool(), config, email, defer=background_tasks.add_task)
     logger.info("[EMAIL] %s address: %s", config.get("kind"), outcome)
     return EmailInboundResponse(success=True, message=outcome, triggered=True)
+
+
+@router.post("/events")
+async def receive_sending_event(request: Request) -> Dict[str, str]:
+    """One lifecycle event for mail NoClick sent (delivered, deferred, bounced, …), which the relay forwards from
+    Cloudflare Email Sending's event subscription, one per request so each is acked or retried on its own. A
+    coordinator reply's receipt moves on its events; any other mail's are answered and dropped. A failure to
+    apply one answers 503, and the relay's queue retries it."""
+    from coder.coordinator.email_channel import apply_delivery_event
+
+    body = await request.body()
+    if not _verify_relay_auth(request, body):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    try:
+        event = json.loads(body)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON payload")
+    if not isinstance(event, dict):
+        return {"outcome": "ignored"}
+    try:
+        return {"outcome": await apply_delivery_event(get_native_pool(), event)}
+    except Exception:
+        logger.exception("[EMAIL] Sending event %s could not be applied", event.get("type"))
+        raise HTTPException(status_code=503, detail="Could not apply the event")
 
 
 async def _receive_coordinator_email(

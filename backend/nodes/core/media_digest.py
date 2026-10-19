@@ -21,6 +21,12 @@ raises into the turn: media the layer cannot read yields an agent-facing note
 instead (format unsupported, too long, no credits, provider down), so the
 agent can ask the sender for text rather than guess. A platform may swap a
 kind's digester with :func:`register_digester`.
+
+A stored file (a ref with a ``resource_id``) is read once when the caller
+passes ``DigestContext.readings``: the reading is kept on the file, a reader
+holds a short lease while it reads, and every reader after it (another agent
+woken by the same message) reuses what was kept, so a transcript is paid for
+once.
 """
 
 from __future__ import annotations
@@ -32,7 +38,7 @@ import logging
 import os
 from dataclasses import dataclass, field
 from decimal import Decimal
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Protocol, Tuple
 
 from utils.content_extraction import (
     AI_EXTRACTION_MODEL,
@@ -48,6 +54,7 @@ logger = logging.getLogger(__name__)
 MAX_TRANSCRIBE_BYTES = 20 * 1024 * 1024   # a WhatsApp/Telegram voice note is ~100KB/min
 MAX_TRANSCRIBE_SECONDS = 10 * 60          # bounds the per-message charge when the duration is known
 MAX_AI_DIGESTS_PER_TURN = 3               # bounds a media-heavy message's charge
+MAX_DOCUMENT_DIGESTS_PER_TURN = 10        # bounds the text a file-heavy message puts in the turn
 DEFAULT_DIGEST_CHARS = 8_000              # per-document extracted text carried into the turn
 TRANSCRIBE_TIMEOUT_S = 90.0
 MAX_VIDEO_SECONDS = 120
@@ -84,6 +91,11 @@ _NO_SPEECH = "[no speech]"
 
 KINDS = ("audio", "image", "video", "document", "file")
 _AI_KINDS = frozenset({"audio", "video"})
+# A reading in progress holds its file this long; a reader waiting on it gives up and reads it itself after
+# READING_WAIT_S, which outlasts one transcription (TRANSCRIBE_TIMEOUT_S) with the fetch before it.
+READING_LEASE_S = 150.0
+READING_WAIT_S = 120.0
+READING_POLL_S = 0.5
 
 
 class DigestError(ValueError):
@@ -216,17 +228,34 @@ class MediaDigest:
     error: Optional[str] = None      # agent-facing reason nothing was produced
     truncated: bool = False
     cost_charged: Optional[Decimal] = None
+    kept: bool = False               # reused from the file, read (and paid for) by an earlier turn
+
+
+class Readings(Protocol):
+    """Where readings of stored files are kept (``repositories.resources.ResourceReadings``)."""
+
+    async def take(self, resource_id: str, *, lease_s: float) -> Tuple[str, Optional[Dict[str, Any]]]:
+        """("read", kept) | ("claimed", None) | ("busy", None) | ("absent", None)."""
+
+    async def keep(self, resource_id: str, reading: Optional[Dict[str, Any]]) -> None:
+        """Save the reading (None: nothing to keep) and end the lease."""
 
 
 @dataclass
 class DigestContext:
     """Who pays and what is allowed. ``billing`` None or ``allow_ai`` False
-    refuses AI digests with a note; free digests still run."""
+    refuses AI digests with a note; free digests still run. A ref's
+    ``resource_id`` names a file of ``workflow_id`` or one of ``owner_id``'s
+    own account files (no workflow): the turn's runner, whose files
+    ``readings`` keeps; never another account's. ``readings`` keeps a stored
+    file's reading so it's read (and paid for) once."""
 
     billing: Optional[BillingContext] = None
     allow_ai: bool = True
     workflow_id: Optional[str] = None
     char_budget: int = DEFAULT_DIGEST_CHARS
+    readings: Optional[Readings] = None
+    owner_id: Optional[str] = None
 
 
 # ── Registry ─────────────────────────────────────────────────────────────────
@@ -398,28 +427,30 @@ async def _record_media_cost(
     fmt: str,
     *, subtype: str = "ai_transcription",
 ) -> Optional[Decimal]:
-    """One ``extraction/<subtype>`` usage event per media model call —
-    recorded even when the provider reported no cost (a $0 row is still the
-    record that the call happened)."""
+    """One ``extraction/<subtype>`` usage event per media model call, at the
+    cost the provider reported or, failing that, OpenRouter's record of the
+    call. One priced nowhere is logged CRITICAL and not charged (None)."""
     from billing.markup import apply_platform_markup
     from billing.schema import UsageEventData
     from billing.usage_tracker import usage_tracker
     from coder.openai_agent.litellm_model import extract_cost_from_response
+    from utils.openrouter_cost import CostUnknown, generation_id_of, settle
 
     provider_cost, reported = extract_cost_from_response(response)
-    if not reported:
-        logger.warning(
-            f"[media_digest] {model} reported no cost for media understanding — recording $0"
-        )
-    charged = apply_platform_markup(
-        Decimal(str(provider_cost or 0.0)), user_resource=False, model=model
-    )
+    try:
+        cost_usd = await settle(provider_cost, reported, generation_id_of(response))
+    except CostUnknown as exc:
+        logger.critical("[media_digest] %s call not billed, its cost is unknown (user %s): %s",
+                        model, billing.user_id, exc)
+        return None
+    charged = apply_platform_markup(cost_usd, user_resource=False, model=model)
     usage = getattr(response, "usage", None)
     total_tokens = getattr(usage, "total_tokens", None) or 0
     await usage_tracker.track_usage_event(
         UsageEventData(
             user_id=billing.user_id,
             total_cost=charged,
+            cost_usd=cost_usd,
             usage_type="api_usage",
             usage_subtype=f"extraction/{subtype}",
             quantity=Decimal(1),
@@ -530,7 +561,7 @@ async def _fetch(ref: MediaRef, ctx: DigestContext, max_bytes: int) -> bytes:
     value = ref.resource_id or ref.url
     resolved = await resolve_media_input(
         value, max_bytes=max_bytes, default_mime=ref.mime_type or "application/octet-stream",
-        workflow_id=ctx.workflow_id,
+        workflow_id=ctx.workflow_id, owner_id=ctx.owner_id,
     )
     if not ref.mime_type and resolved.mime_type:
         ref.mime_type = resolved.mime_type
@@ -554,13 +585,17 @@ async def digest_media(refs: List[MediaRef], ctx: DigestContext) -> List[MediaDi
     seam, not an unhappy provider) log at ERROR with the traceback so they
     are never mistaken for bad media."""
     results: List[MediaDigest] = []
-    ai_used = 0
+    ai_used = documents = 0
     for ref in refs:
         fn = digester_for(ref.kind)
         if fn is None:
             continue
         needs_ai = ref.kind in _AI_KINDS
-        if needs_ai and not ctx.allow_ai:
+        if ref.kind == "document" and documents >= MAX_DOCUMENT_DIGESTS_PER_TURN:
+            digest = MediaDigest(
+                ref=ref, error=f"at most {MAX_DOCUMENT_DIGESTS_PER_TURN} documents are read per message"
+            )
+        elif needs_ai and not ctx.allow_ai:
             digest = MediaDigest(ref=ref, error="AI media understanding is turned off for this agent")
         elif needs_ai and ctx.billing is None:
             digest = MediaDigest(ref=ref, error="no billing context for media understanding")
@@ -570,14 +605,48 @@ async def digest_media(refs: List[MediaRef], ctx: DigestContext) -> List[MediaDi
             )
         else:
             digest = await _run_one(ref, fn, ctx)
-            if needs_ai and digest.text:
+            if needs_ai and digest.text and not digest.kept:  # the cap bounds what this message pays for
                 ai_used += 1
+            documents += ref.kind == "document"
         _annotate(ref, digest)
         results.append(digest)
     return results
 
 
+def _kept_digest(ref: MediaRef, kept: Dict[str, Any], ctx: DigestContext) -> MediaDigest:
+    """A reading kept on the file, as this turn takes it: a transcript whole, other text within the budget."""
+    text, method = kept["extracted_text"], kept.get("extraction_method") or None
+    if method == "transcription":
+        return MediaDigest(ref=ref, text=text, method=method, kept=True)
+    truncated = bool(kept.get("extraction_truncated")) or len(text) > ctx.char_budget
+    return MediaDigest(ref=ref, text=text[:ctx.char_budget], method=method, truncated=truncated, kept=True)
+
+
 async def _run_one(ref: MediaRef, fn: Digester, ctx: DigestContext) -> MediaDigest:
+    """Read one ref; a stored file through ``ctx.readings``, so whoever reads it
+    first pays and keeps the reading, and anyone reading it meanwhile waits for it."""
+    readings = ctx.readings
+    if readings is None or not ref.resource_id:
+        return await _read(ref, fn, ctx)
+    loop = asyncio.get_running_loop()
+    deadline = loop.time() + READING_WAIT_S
+    while True:
+        state, kept = await readings.take(ref.resource_id, lease_s=READING_LEASE_S)
+        if state == "read":
+            return _kept_digest(ref, kept or {}, ctx)
+        if state != "busy" or loop.time() >= deadline:
+            break
+        await asyncio.sleep(READING_POLL_S)
+    digest = await _read(ref, fn, ctx)
+    if state != "absent":
+        await readings.keep(ref.resource_id, {
+            "extracted_text": digest.text, "extraction_method": digest.method,
+            "extraction_truncated": digest.truncated,
+        } if digest.text else None)
+    return digest
+
+
+async def _read(ref: MediaRef, fn: Digester, ctx: DigestContext) -> MediaDigest:
     from billing.exceptions import InsufficientBalanceError
 
     max_bytes = MAX_TRANSCRIBE_BYTES if ref.kind in _AI_KINDS else 15 * 1024 * 1024

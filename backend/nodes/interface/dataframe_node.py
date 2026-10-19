@@ -108,48 +108,14 @@ class DataframeInterfaceNode(WorkflowNode):
 
         # If resource_id is set, load data from the persisted dataset
         if config.resource_id:
+            from repositories.resources import ResourceRepo
+            from utils import dataset_store
             from utils.database_pool import get_native_pool
-            # Dataset pickers intentionally support resources from other
-            # workflows the executing user can view. Reapply that access
-            # boundary here: a UUID alone must never disclose dataset rows.
-            rows = await get_native_pool().fetch(
-                """
-                SELECT dr.data
-                FROM dataset_rows dr
-                JOIN workflow_resources wr ON wr.id = dr.resource_id
-                WHERE dr.resource_id = $1
-                  AND wr.resource_type = 'dataset'
-                  AND (
-                      wr.workflow_id = $2
-                      OR (
-                          $3::uuid IS NOT NULL
-                          AND (
-                              wr.workflow_id IN (
-                                  SELECT id FROM workflows WHERE owner_id = $3
-                              )
-                              OR wr.workflow_id IN (
-                                  SELECT rs.resource_id::uuid
-                                  FROM resource_shares rs
-                                  LEFT JOIN organization_members om
-                                    ON rs.target_org_id = om.organization_id
-                                  WHERE rs.resource_type = 'workflow'
-                                    AND (
-                                        (rs.target_type = 'user'
-                                         AND rs.target_user_id = $3)
-                                        OR (rs.target_type = 'organization'
-                                            AND om.user_id = $3)
-                                    )
-                              )
-                          )
-                      )
-                  )
-                ORDER BY dr.row_index
-                LIMIT 10000
-                """,
-                config.resource_id,
-                self.workflow_id,
-                self.user_id,
-            )
+
+            pool = get_native_pool()
+            resource = await ResourceRepo(pool).dataset_for_run(config.resource_id, self.workflow_id, self.user_id)
+            rows = (await dataset_store.read_rows(pool, resource, limit=dataset_store.MAX_PAGE_ROWS))[0] \
+                if resource else []
             data = [r["data"] for r in rows]
         else:
             # Fallback: use upstream input or inline configured data

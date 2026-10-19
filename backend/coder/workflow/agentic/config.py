@@ -4,11 +4,11 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 from ..builder_config import (
-    BRAIN_FALLBACK_MODEL,
-    BRAIN_PRIMARY_MODEL,
     BRAIN_PROVIDER_ORDER,
     ModelCallConfig,
     model_call_config,
+    resolve_brain_fallback_model,
+    resolve_brain_model,
 )
 
 
@@ -16,12 +16,13 @@ from ..builder_config import (
 class AgenticBuilderConfig:
     """Models and safety limits for conversational workflow generation."""
 
-    brain_model: str = BRAIN_PRIMARY_MODEL
+    # Resolved per run, so a key saved while the instance runs is used at once.
+    brain_model: str = field(default_factory=resolve_brain_model)
     brain_provider_order: Optional[List[str]] = field(
         default_factory=lambda: list(BRAIN_PROVIDER_ORDER)
     )
     brain_provider_sort: Optional[str] = None
-    brain_fallback_model: Optional[str] = BRAIN_FALLBACK_MODEL
+    brain_fallback_model: Optional[str] = field(default_factory=resolve_brain_fallback_model)
     brain_fallback_provider_order: Optional[List[str]] = None
 
     node_drafter: ModelCallConfig = field(

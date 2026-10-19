@@ -141,18 +141,19 @@ async def embed_texts(texts: List[str]) -> Tuple[List[List[float]], int]:
         resp = await litellm.aembedding(model=EMBEDDING_MODEL, input=batch)
         embeddings.extend(item["embedding"] for item in resp.data)
         usage = getattr(resp, "usage", None)
-        if usage is not None:
-            total_tokens += int(getattr(usage, "total_tokens", 0) or 0)
-        elif isinstance(resp, dict) and resp.get("usage"):
-            total_tokens += int(resp["usage"].get("total_tokens", 0) or 0)
+        if usage is None and isinstance(resp, dict):
+            usage = resp.get("usage")
+        tokens = (usage.get("total_tokens") if isinstance(usage, dict) else getattr(usage, "total_tokens", None))
+        # No usage reported: the model's own tokenizer counts what was embedded, never $0.
+        total_tokens += int(tokens) if tokens else sum(
+            litellm.token_counter(model=EMBEDDING_MODEL, text=text) for text in batch)
     return embeddings, total_tokens
 
 
 async def _embed_and_charge(node, chunks: List[str]) -> List[List[float]]:
     """Gate the runner's credit balance, embed the chunks with NoClick's model,
-    then charge the real embedding cost through the organization-attribution choke point.
+    then charge the real embedding cost through the Owner-Pays choke point.
     Mirrors the send-email node's gate+charge pattern."""
-    import asyncio
     from decimal import Decimal
 
     from billing.usage_tracker import usage_tracker
@@ -160,15 +161,13 @@ async def _embed_and_charge(node, chunks: List[str]) -> List[List[float]]:
     if not getattr(node, "user_id", None):
         raise ValueError("Document embedding requires a user context")
 
-    await asyncio.to_thread(
-        usage_tracker.enforce_credit_gate,
+    await usage_tracker.enforce_credit_gate(
         node.user_id,
         organization_id=node.organization_id,
         sio=node.sio,
         sid=node.sid,
         user_resource=False,
         surface="document_embedding",
-        loop=asyncio.get_running_loop(),
     )
 
     embeddings, tokens = await embed_texts(chunks)
@@ -176,11 +175,11 @@ async def _embed_and_charge(node, chunks: List[str]) -> List[List[float]]:
     from billing.pricing import get_embedding_cost
     from billing.schema import UsageEventData
 
-    await asyncio.to_thread(
-        usage_tracker.track_usage_event,
+    await usage_tracker.track_usage_event(
         UsageEventData(
             user_id=node.user_id,
             total_cost=get_embedding_cost(tokens),
+            cost_usd=get_embedding_cost(tokens),
             usage_type="api_usage",
             usage_subtype=f"embedding/{EMBEDDING_MODEL}",
             quantity=Decimal(tokens),

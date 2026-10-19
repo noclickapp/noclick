@@ -16,6 +16,7 @@ from utils.media_generation import (
     bill_openrouter,
     build_image_request,
     image_model_family,
+    openrouter_dollars,
     parse_image_response,
     post_image_request,
 )
@@ -226,7 +227,8 @@ async def execute_image_model(
     image_urls.extend({"url": u} for u in extracted if u.startswith("http"))
 
     usage_data = raw_data.get("usage", {})
-    if user_id:
+    dollars = await openrouter_dollars(raw_data, user_resource=user_resource) if user_id else None
+    if dollars is not None:
         try:
             from decimal import Decimal
 
@@ -236,7 +238,7 @@ async def execute_image_model(
                 user_id=user_id,
                 organization_id=node.organization_id,
                 model=config.model,
-                dollars=Decimal(str(usage_data.get("cost") or 0)),
+                dollars=dollars,
                 user_resource=user_resource,
                 quantity=Decimal(str(usage_data.get("total_tokens", 0))),
                 unit_type="tokens",

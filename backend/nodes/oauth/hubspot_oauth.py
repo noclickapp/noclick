@@ -9,18 +9,14 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional, Tuple
 
 import httpx
-from opentelemetry import trace
 from pydantic import BaseModel
+
+from nodes.oauth.token_errors import token_error_detail
 
 logger = logging.getLogger(__name__)
 
 HUBSPOT_AUTH_URL = "https://app.hubspot.com/oauth/authorize"
 HUBSPOT_TOKEN_URL = "https://api.hubapi.com/oauth/2026-03/token"
-_OAUTH_ERROR_CODES = frozenset({
-    "invalid_request", "invalid_client", "invalid_grant", "unauthorized_client",
-    "unsupported_grant_type", "invalid_scope", "access_denied", "server_error",
-    "temporarily_unavailable",
-})
 
 
 class HubSpotTokens(BaseModel):
@@ -59,19 +55,7 @@ async def _request_tokens(data: dict) -> Tuple[HubSpotTokens, HubSpotUserInfo]:
             raise ValueError("HubSpot OAuth token request failed") from None
 
     if response.status_code != 200:
-        # Retain standard failure classification, never provider text or echoed inputs.
-        code = None
-        try:
-            error = response.json()
-            candidate = error.get("error") if isinstance(error, dict) else None
-            if isinstance(candidate, str) and candidate in _OAUTH_ERROR_CODES:
-                code = candidate
-        except ValueError:
-            pass
-        span = trace.get_current_span()
-        if code and span and span.is_recording():
-            span.set_attribute("oauth.provider_error_code", code)
-        detail = f"HTTP {response.status_code}" + (f" ({code})" if code else "")
+        detail = token_error_detail(response)
         logger.error("[HubSpot OAuth] Token request failed: %s", detail)
         raise ValueError(f"HubSpot OAuth token request failed: {detail}")
 

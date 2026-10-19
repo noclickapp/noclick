@@ -1,6 +1,8 @@
 /**
  * Visual-structure smoke test for both /workflow/:slug and
- * /workflow/:slug/with/:harness template landing pages.
+ * /workflow/:slug/with/:harness template landing pages, in the marketing pages'
+ * look: a serif title over the real canvas, sections set apart by space, and a
+ * centred close.
  */
 import { nc } from '~/lib/nc';
 
@@ -19,42 +21,33 @@ export default async function () {
     const preview = document.querySelector(
         '[data-testid="template-detail-preview"]'
     ) as HTMLElement | null;
-    const previewTint = preview?.querySelector(
-        '[data-testid="template-detail-preview-tint"]'
-    ) as HTMLElement | null;
     const title = hero?.querySelector('h1') as HTMLElement | null;
     const bottomCta = document.querySelector(
         '[data-testid="template-detail-bottom-cta"]'
     ) as HTMLElement | null;
 
     nc.assert.truthy(page, 'the redesigned template shell should mount');
-    nc.assert.truthy(
+    nc.assert.falsy(
         document.querySelector('[data-testid="template-detail-backdrop"]'),
-        'template pages should share the soft editorial backdrop'
+        'template pages should have no glow backdrop'
     );
     nc.assert.truthy(
         !hero?.className.includes('rounded-[2rem]'),
-        'the hero should keep the original flat detail-page composition'
+        'the hero should keep the flat detail-page composition'
     );
     nc.assert.truthy(
-        title?.className.includes('md:text-5xl'),
-        'the template title should keep the original compact scale'
+        title && getComputedStyle(title).fontFamily.includes('Instrument Serif'),
+        'the template title should speak in the display serif'
     );
     nc.assert.truthy(
         preview?.className.includes('h-[440px]'),
         'the real workflow should keep a useful fixed visual stage'
     );
     nc.assert.truthy(
-        previewTint,
-        'the preview should add only the templates gradient tint'
-    );
-    nc.assert.truthy(
-        previewTint?.className.includes('from-chart-1/[0.035]'),
-        'single-canvas detail previews should keep the gradient tint subtle'
-    );
-    nc.assert.truthy(
-        bottomCta?.className.includes('dark:bg-zinc-950'),
-        'the closing CTA should match the templates-page dark surface'
+        bottomCta &&
+            getComputedStyle(bottomCta).backgroundColor === 'rgba(0, 0, 0, 0)' &&
+            getComputedStyle(bottomCta).backgroundImage === 'none',
+        'the closing CTA should sit on the page, not a gradient card'
     );
 
     const sectionCards = Array.from(

@@ -1,33 +1,11 @@
-// The Dashboard's sections, each in two registers: a COMPACT block for the
+// Activity's sections, each in two registers: a COMPACT block for the
 // overview and a FULL view for the drill-down. Variants only arrange these;
 // the content and its affordances are the same in every skeleton so a design
 // decision is about layout, never about what the tab can do.
-import { useEffect, useMemo, useState, type CSSProperties, type ReactElement, type ReactNode, type SyntheticEvent, type ButtonHTMLAttributes } from 'react';
-import {
-    Archive,
-    ArrowUpRight,
-    Bell,
-    Check,
-    ChevronDown,
-    ChevronUp,
-    Clock,
-    Settings2,
-    ChevronRight,
-    Code2,
-    Copy,
-    File,
-    FileText,
-    Image as ImageIcon,
-    RefreshCw,
-    Table2,
-    Terminal,
-    X,
-    Trash2,
-    Film,
-    Music,
-
-} from 'lucide-react';
+import { useEffect, useMemo, useState, type CSSProperties, type ReactElement, type ReactNode, type ButtonHTMLAttributes } from 'react';
+import { ArrowUpRight, Bell, Check, ChevronDown, ChevronUp, Clock, ChevronRight, Copy, RefreshCw, Terminal } from 'lucide-react';
 import { cn } from '~/lib/utils';
+import { formatUsd } from '~/lib/money';
 import { IODataDisplay } from '~/components/workflow/IODataDisplay';
 import { OutboundMessage, type Mark } from '~/components/design/rehearsal/native';
 import { buildRunStory, deriveSends, type RunStory as Story, type StoryInput } from '~/components/design/run-results/runStory';
@@ -36,8 +14,6 @@ import type { ReplayToolCall } from '~/components/workflow/ReplayToolCallsPanel'
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
 import { ApprovalField } from '~/components/dashboard/ApprovalFields';
 import { isPersistedExecutionId, loadRunStory } from '~/lib/runResults';
-import { workspaceFileUrl } from '~/hooks/useAgentWorkspaceFiles';
-import { useValtioState } from '~/hooks/useValtioState';
 import { AskAnswer } from '~/components/dashboard/AskAnswer';
 import { InlineCredentialApproval } from '~/components/dashboard/InlineCredentialApproval';
 import {
@@ -47,10 +23,8 @@ import {
     EmptyState,
     Eyebrow,
     LAYOUT,
-    KindPill,
     LiveDot,
     MarkRow,
-    Meter,
     NodeMark,
     ROW_HOVER,
     ROWS,
@@ -65,11 +39,8 @@ import {
     agentMarkType,
     clockLabel,
     compactNumber,
-    credentialLabel,
     clickableRow,
     dateLabel,
-    fmtBytes,
-    fmtCredits,
     fmtDuration,
     harnessLabel,
     relTime,
@@ -80,12 +51,7 @@ import type { ToolCallSummary,
     AgentTurn,
     AttentionItem,
     AttentionKind,
-    CredentialEntry,
     DashboardData,
-    FileEntry,
-    FileKind,
-    FileSource,
-    FileSourceKind,
     FocusId,
     NotificationEntry,
     RunRow,
@@ -144,7 +110,7 @@ export function Greeting({ data, size = 'md', className, summary = true }: { dat
     const parts = summaryLine(data, attention);
     return (
         <div className={className}>
-            <h1 className={cn('m-0 font-semibold tracking-tight', size === 'lg' ? 'text-[32px]' : 'text-[26px]')}>
+            <h1 className={cn('m-0 font-brand font-semibold tracking-[-0.02em]', size === 'lg' ? 'text-[32px]' : 'text-[26px]')}>
                 {greetingFor(data.now, firstName(data.workspace.userName))}
             </h1>
             {summary && <p className="m-0 mt-1.5 text-[15px] text-foreground/70 dark:text-foreground/50">{parts.join(' · ')}</p>}
@@ -178,7 +144,6 @@ export function useKpiFacts(data: DashboardData) {
             agentsUp: data.agents.running.length,
             busy: data.agents.running.filter((r) => r.busy).length,
             next: nextUpcoming(data),
-            credits: data.credits,
         };
     }, [data, attention]);
 }
@@ -186,7 +151,7 @@ export function useKpiFacts(data: DashboardData) {
 // ---------------------------------------------------------------------------
 // KPI row
 
-export type KpiKey = 'attention' | 'runs' | 'failed' | 'agents' | 'next' | 'credits';
+export type KpiKey = 'attention' | 'runs' | 'failed' | 'agents' | 'next';
 
 export function KpiRow({ data, onFocus, className, items, tileClassName, tileStyle }: SectionProps & { className?: string; items?: KpiKey[]; tileClassName?: string; tileStyle?: CSSProperties }) {
     const attention = useVisibleAttention(data);
@@ -244,17 +209,8 @@ export function KpiRow({ data, onFocus, className, items, tileClassName, tileSty
                 onClick={() => onFocus?.('agents')}
             />
         ),
-        credits: (
-            <StatTile
-                key="credits"
-                label="Credits used"
-                value={`${fmtCredits(data.credits.used)}`}
-                delta={{ text: `of ${compactNumber(data.credits.cap)} · resets ${relTime(data.credits.nextRefreshAt, data.now)}`, good: data.credits.used / data.credits.cap < 0.9 }}
-                onClick={() => onFocus?.('credits')}
-            />
-        ),
     };
-    const order: KpiKey[] = items ?? ['attention', 'runs', 'failed', 'agents', 'next', 'credits'];
+    const order: KpiKey[] = items ?? ['attention', 'runs', 'failed', 'agents', 'next'];
     return (
         <div className={cn('grid gap-6', className)} style={{ gridTemplateColumns: `repeat(${order.length}, minmax(0, 1fr))` }}>
             {order.map((k) =>
@@ -275,21 +231,26 @@ export function KpiRow({ data, onFocus, className, items, tileClassName, tileSty
 
 const EYEBROW = 'text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground/55 dark:text-foreground/35';
 
-function LedgerCell({ label, value, suffix, sub, tone, trend, onClick }: { label: string; value: string; suffix?: string; sub: ReactNode; tone?: 'failure'; trend?: number[]; onClick?: () => void }) {
+export function LedgerCell({ label, value, suffix, sub, tone, trend, onClick }: { label: string; value: string; suffix?: string; sub: ReactNode; tone?: 'failure'; trend?: number[]; onClick?: () => void }) {
     // Every cell is exactly label / value / sub, so the grid's equal heights hold
     // no dead space (an extra element in one cell stretches all the others).
+    // A cell with nowhere to go is not a button.
+    const Cell = onClick ? 'button' : 'div';
     return (
-        <button type="button" onClick={onClick} className={cn('flex min-w-0 flex-col items-start gap-2 text-left transition-colors hover:bg-foreground/[0.025]', LAYOUT.ledgerCell)}>
+        <Cell
+            {...(onClick ? { type: 'button' as const, onClick } : {})}
+            className={cn('flex min-w-0 flex-col items-start gap-2 text-left', onClick && 'transition-colors hover:bg-foreground/[0.025]', LAYOUT.ledgerCell)}
+        >
             <span className={EYEBROW}>{label}</span>
-            <span className="flex w-full items-end gap-4">
-                <span className="inline-flex items-baseline gap-1.5">
+            <span className="flex w-full min-w-0 items-end gap-4 overflow-hidden">
+                <span className="inline-flex shrink-0 items-baseline gap-1.5">
                     <span className={cn('text-[24px] font-semibold sm:text-[28px] leading-none tracking-tight', tone === 'failure' && 'text-red-600 dark:text-red-400')}>{value}</span>
                     {suffix && <span className="text-[13px] text-foreground/60 dark:text-foreground/40">{suffix}</span>}
                 </span>
                 {trend && <Sparkline values={trend} width={72} height={22} className="mb-[2px] shrink-0" />}
             </span>
             <span className="w-full truncate text-[12.5px] text-foreground/65 dark:text-foreground/45">{sub}</span>
-        </button>
+        </Cell>
     );
 }
 
@@ -302,14 +263,6 @@ export function KpiLedger({ data, onFocus, className }: SectionProps & { classNa
         <LedgerCell key="failed" label="Failed" value={String(f.failedToday)} tone={f.failedToday ? 'failure' : undefined} sub={`${f.failed14} in 14 days`} onClick={() => onFocus?.('runs')} />,
         <LedgerCell key="agents" label="Agents up" value={String(f.agentsUp)} sub={f.agentsUp ? `${f.busy} working now` : 'none running'} onClick={() => onFocus?.('agents')} />,
         <LedgerCell key="next" label="Next run" value={f.next ? relTime(f.next.at!, data.now) : '—'} sub={f.next ? `${f.next.agent?.label ?? f.next.workflow.name} · ${UPCOMING_KIND_LABEL[f.next.kind].toLowerCase()}` : 'nothing scheduled'} onClick={() => onFocus?.('upcoming')} />,
-        <LedgerCell
-            key="credits"
-            label="Credits"
-            value={fmtCredits(f.credits.used)}
-            suffix={`/ ${compactNumber(f.credits.cap)}`}
-            sub={`resets ${relTime(f.credits.nextRefreshAt, data.now)}${f.credits.topup ? ` · ${compactNumber(f.credits.topup)} top-up` : ''}`}
-            onClick={() => onFocus?.('credits')}
-        />,
     ];
     return (
         <div className={cn(SURFACE, 'overflow-hidden', className)}>
@@ -343,10 +296,10 @@ export function KpiStrip({ data, onFocus, className }: SectionProps & { classNam
             {f.next ? (
                 <StripStat n={relTime(f.next.at!, data.now)} text={`next run · ${f.next.agent?.label ?? f.next.workflow.name}`} onClick={() => onFocus?.('upcoming')} />
             ) : (
-                <StripStat n="—" text="nothing scheduled" onClick={() => onFocus?.('upcoming')} />
+                <button type="button" onClick={() => onFocus?.('upcoming')} className="whitespace-nowrap text-[13px] text-foreground/70 transition-colors hover:text-foreground dark:text-foreground/50">
+                    nothing scheduled
+                </button>
             )}
-            {dot}
-            <StripStat n={fmtCredits(f.credits.used)} text={`of ${compactNumber(f.credits.cap)} credits`} onClick={() => onFocus?.('credits')} />
         </div>
     );
 }
@@ -370,7 +323,7 @@ function Group({ label, sub, children, onClick }: { label: string; sub: ReactNod
     );
 }
 
-/** Four semantic clusters separated by hairlines; the sparkline lives with the runs. */
+/** Three semantic clusters separated by hairlines; the sparkline lives with the runs. */
 export function KpiGrouped({ data, onFocus, className }: SectionProps & { className?: string }) {
     const f = useKpiFacts(data);
     return (
@@ -386,12 +339,6 @@ export function KpiGrouped({ data, onFocus, className }: SectionProps & { classN
             <Group label="Agents" sub={f.next ? `next run ${relTime(f.next.at!, data.now)} · ${f.next.agent?.label ?? f.next.workflow.name}` : 'nothing scheduled'} onClick={() => onFocus?.('agents')}>
                 <Figure n={String(f.agentsUp)} word="up" />
                 <Figure n={String(f.busy)} word="working" />
-            </Group>
-            <Group label="Credits" sub={`resets ${relTime(f.credits.nextRefreshAt, data.now)}${f.credits.topup ? ` · ${compactNumber(f.credits.topup)} top-up in reserve` : ''}`} onClick={() => onFocus?.('credits')}>
-                <span className="flex flex-col gap-2" style={{ minWidth: 140 }}>
-                    <Figure n={fmtCredits(f.credits.used)} word={`/ ${compactNumber(f.credits.cap)}`} />
-                    <Meter value={f.credits.used} max={f.credits.cap} />
-                </span>
             </Group>
         </div>
     );
@@ -502,14 +449,21 @@ export function UpcomingFull({ data, onFocus }: SectionProps) {
 // ---------------------------------------------------------------------------
 // Attention
 
-function AttentionMark({ item, size }: { item: AttentionItem; size: 'sm' | 'md' }) {
-    if (item.provider) return <NodeMark type={item.provider} size={size} className="mt-[3px]" />;
-    if (item.credentialType) return <CredentialMark credentialType={item.credentialType} size={size} className="mt-[3px]" />;
-    if (item.from) return <NodeMark type={agentMarkType(item.from.model)} size={size} className="mt-[3px]" />;
-    return <NodeMark type={item.workflow?.marks[0] ?? 'agent'} size={size} className="mt-[3px]" />;
+function AttentionMark({ item, size, className = 'mt-[3px]' }: { item: AttentionItem; size: 'sm' | 'md' | 'lg'; className?: string }) {
+    if (item.provider) return <NodeMark type={item.provider} size={size} className={className} />;
+    if (item.credentialType) return <CredentialMark credentialType={item.credentialType} size={size} className={className} />;
+    if (item.from) return <NodeMark type={agentMarkType(item.from.model)} size={size} className={className} />;
+    return <NodeMark type={item.workflow?.marks[0] ?? 'agent'} size={size} className={className} />;
 }
 
-function PrimaryButton({ children, onClick, className }: { children: ReactNode; onClick?: () => void; className?: string }) {
+/** Row buttons are small and square-ish; a card asking one thing at a time gets full-size pills. */
+type ActionSize = 'sm' | 'lg';
+const ACTION_SIZE: Record<ActionSize, { primary: string; quiet: string; icon: string; glyph: string }> = {
+    sm: { primary: 'h-7 gap-1 rounded-md px-2.5 text-[12px]', quiet: 'h-7 gap-1 rounded-md px-2 text-[12px]', icon: 'w-7', glyph: 'h-3 w-3' },
+    lg: { primary: 'h-10 gap-1.5 rounded-full px-5 text-[14px]', quiet: 'h-10 gap-1.5 rounded-full px-4 text-[14px]', icon: 'w-10', glyph: 'h-4 w-4' },
+};
+
+function PrimaryButton({ children, onClick, className, size = 'sm' }: { children: ReactNode; onClick?: () => void; className?: string; size?: ActionSize }) {
     return (
         <button
             type="button"
@@ -517,17 +471,14 @@ function PrimaryButton({ children, onClick, className }: { children: ReactNode; 
                 e.stopPropagation();
                 onClick?.();
             }}
-            className={cn(
-                'inline-flex h-7 items-center gap-1 rounded-md bg-primary px-2.5 text-[12px] font-medium text-primary-foreground transition-opacity hover:opacity-90',
-                className
-            )}
+            className={cn('inline-flex items-center bg-primary font-medium text-primary-foreground transition-opacity hover:opacity-90', ACTION_SIZE[size].primary, className)}
         >
             {children}
         </button>
     );
 }
 
-function QuietButton({ children, onClick, className, ...rest }: { children: ReactNode; onClick?: () => void; className?: string } & Pick<ButtonHTMLAttributes<HTMLButtonElement>, 'aria-label' | 'title'>) {
+function QuietButton({ children, onClick, className, size = 'sm', ...rest }: { children: ReactNode; onClick?: () => void; className?: string; size?: ActionSize } & Pick<ButtonHTMLAttributes<HTMLButtonElement>, 'aria-label' | 'title'>) {
     return (
         <button
             type="button"
@@ -537,7 +488,8 @@ function QuietButton({ children, onClick, className, ...rest }: { children: Reac
                 onClick?.();
             }}
             className={cn(
-                'inline-flex h-7 items-center gap-1 rounded-md px-2 text-[12px] text-foreground/75 dark:text-foreground/60 transition-colors hover:bg-foreground/[0.06] hover:text-foreground',
+                'inline-flex items-center text-foreground/75 transition-colors hover:bg-foreground/[0.06] hover:text-foreground dark:text-foreground/60',
+                ACTION_SIZE[size].quiet,
                 className
             )}
         >
@@ -584,13 +536,14 @@ function inlineChoices(item: AttentionItem): { inputId: string; options: { id: s
 
 /** Icon-only "copy link": a secondary act that should not compete with the row's
  *  verbs. The icon flips to a check while the copy is fresh. */
-function CopyLinkButton({ onCopy, className }: { onCopy: () => Promise<boolean> | boolean; className?: string }) {
+function CopyLinkButton({ onCopy, className, size = 'sm' }: { onCopy: () => Promise<boolean> | boolean; className?: string; size?: ActionSize }) {
     const [copied, setCopied] = useState(false);
     return (
         <QuietButton
+            size={size}
             aria-label={copied ? 'Link copied' : 'Copy link'}
             title="Copy link"
-            className={cn('w-7 justify-center px-0 text-foreground/60 dark:text-foreground/40', className)}
+            className={cn(ACTION_SIZE[size].icon, 'justify-center px-0 text-foreground/60 dark:text-foreground/40', className)}
             onClick={async () => {
                 if (!(await onCopy())) return;
                 setCopied(true);
@@ -603,11 +556,12 @@ function CopyLinkButton({ onCopy, className }: { onCopy: () => Promise<boolean> 
 }
 
 /** Mint the ask's public link and copy it. */
-function CopyAskLink({ item }: { item: AttentionItem }) {
+function CopyAskLink({ item, size = 'sm' }: { item: AttentionItem; size?: ActionSize }) {
     const { shareAsk } = useDashboardActions();
     if (!shareAsk) return null;
     return (
         <CopyLinkButton
+            size={size}
             onCopy={async () => {
                 const url = await shareAsk(item);
                 if (!url) return false;
@@ -618,73 +572,75 @@ function CopyAskLink({ item }: { item: AttentionItem }) {
     );
 }
 
-function AttentionActions({ item, values, expanded, onToggle }: { item: AttentionItem; values: Record<string, unknown>; expanded?: boolean; onToggle?: () => void }) {
+function AttentionActions({ item, values, expanded, onToggle, size = 'sm' }: { item: AttentionItem; values: Record<string, unknown>; expanded?: boolean; onToggle?: () => void; size?: ActionSize }) {
     const actions = useDashboardActions();
+    const glyph = ACTION_SIZE[size].glyph;
     switch (item.kind) {
         case 'builder_ask':
             // Expanded, the wizard's own footer carries Copy link and Skip.
             return (
                 <>
-                    {!expanded && <CopyAskLink item={item} />}
-                    {!expanded && actions.dismissAsk && <QuietButton onClick={() => actions.dismissAsk?.(item)}>Skip</QuietButton>}
+                    {!expanded && <CopyAskLink item={item} size={size} />}
+                    {!expanded && actions.dismissAsk && <QuietButton size={size} onClick={() => actions.dismissAsk?.(item)}>Skip</QuietButton>}
                     {onToggle && (
-                        <PrimaryButton onClick={onToggle}>
-                            {expanded ? 'Hide' : askVerb(item)} {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                        <PrimaryButton size={size} onClick={onToggle}>
+                            {expanded ? 'Hide' : askVerb(item)} {expanded ? <ChevronUp className={glyph} /> : <ChevronDown className={glyph} />}
                         </PrimaryButton>
                     )}
                 </>
             );
         case 'approval':
             if (item.meta?.credentialAction) {
-                return <PrimaryButton onClick={onToggle}>{expanded ? 'Hide details' : 'Review action'} {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}</PrimaryButton>;
+                return <PrimaryButton size={size} onClick={onToggle}>{expanded ? 'Hide details' : 'Review action'} {expanded ? <ChevronUp className={glyph} /> : <ChevronDown className={glyph} />}</PrimaryButton>;
             }
             return (
                 <>
-                    <QuietButton onClick={() => actions.respondApproval(item, 'rejected', values)}>Reject</QuietButton>
-                    <PrimaryButton onClick={() => actions.respondApproval(item, 'approved', values)}>
-                        <Check className="h-3 w-3" strokeWidth={2.5} /> Approve
+                    <QuietButton size={size} onClick={() => actions.respondApproval(item, 'rejected', values)}>Reject</QuietButton>
+                    <PrimaryButton size={size} onClick={() => actions.respondApproval(item, 'approved', values)}>
+                        <Check className={glyph} strokeWidth={2.5} /> Approve
                     </PrimaryButton>
                 </>
             );
         case 'builder_prompt':
             return (
                 <>
-                    <QuietButton onClick={() => actions.decideProposal(item, 'dismissed')}>Dismiss</QuietButton>
-                    <PrimaryButton onClick={() => actions.decideProposal(item, 'approved')}>Build it</PrimaryButton>
+                    <QuietButton size={size} onClick={() => actions.decideProposal(item, 'dismissed')}>Dismiss</QuietButton>
+                    <PrimaryButton size={size} onClick={() => actions.decideProposal(item, 'approved')}>Build it</PrimaryButton>
                 </>
             );
         case 'bridge_link':
             return (
                 <>
                     <CopyLinkButton
+                        size={size}
                         onCopy={() => {
                             actions.copyLink(item);
                             return true;
                         }}
                     />
-                    <PrimaryButton onClick={() => actions.openLink(item)}>Connect</PrimaryButton>
+                    <PrimaryButton size={size} onClick={() => actions.openLink(item)}>Connect</PrimaryButton>
                 </>
             );
         case 'credential_request':
             if (item.credentialType === 'phone_number' && item.link) return (
                 <>
-                    <PrimaryButton onClick={() => window.location.assign(item.link!)}>{item.meta?.status === 'provisioning' ? 'Check purchase' : 'Review purchase'}</PrimaryButton>
-                    {item.meta?.status !== 'provisioning' && <QuietButton onClick={() => actions.cancelCredentialRequest(item)}>Cancel</QuietButton>}
+                    <PrimaryButton size={size} onClick={() => window.location.assign(item.link!)}>{item.meta?.status === 'provisioning' ? 'Check purchase' : 'Review purchase'}</PrimaryButton>
+                    {item.meta?.status !== 'provisioning' && <QuietButton size={size} onClick={() => actions.cancelCredentialRequest(item)}>Cancel</QuietButton>}
                 </>
             );
             return (
                 <>
-                    <QuietButton onClick={() => actions.cancelCredentialRequest(item)}>Cancel</QuietButton>
+                    <QuietButton size={size} onClick={() => actions.cancelCredentialRequest(item)}>Cancel</QuietButton>
                     {actions.resendCredentialRequest && (
-                        <QuietButton onClick={() => actions.resendCredentialRequest?.(item)}>
-                            <RefreshCw className="h-3 w-3" /> Resend
+                        <QuietButton size={size} onClick={() => actions.resendCredentialRequest?.(item)}>
+                            <RefreshCw className={glyph} /> Resend
                         </QuietButton>
                     )}
                 </>
             );
         case 'credential_dead':
             return (
-                <PrimaryButton onClick={() => actions.reconnectCredential({ credentialId: item.meta?.credentialId as string | undefined, credentialType: item.credentialType, name: item.title })}>
+                <PrimaryButton size={size} onClick={() => actions.reconnectCredential({ credentialId: item.meta?.credentialId as string | undefined, credentialType: item.credentialType, name: item.title })}>
                     Reconnect
                 </PrimaryButton>
             );
@@ -696,30 +652,33 @@ function AttentionActions({ item, values, expanded, onToggle }: { item: Attentio
             if (action && actions.fixTrigger) {
                 return (
                     <>
-                        <QuietButton onClick={open}>Open trigger</QuietButton>
-                        <PrimaryButton onClick={() => actions.fixTrigger?.(item)}>{action.label}</PrimaryButton>
+                        <QuietButton size={size} onClick={open}>Open trigger</QuietButton>
+                        <PrimaryButton size={size} onClick={() => actions.fixTrigger?.(item)}>{action.label}</PrimaryButton>
                     </>
                 );
             }
-            return <PrimaryButton onClick={open}>Open trigger</PrimaryButton>;
+            return <PrimaryButton size={size} onClick={open}>Open trigger</PrimaryButton>;
         }
         default:
             return null;
     }
 }
 
-function AskChoices({ item, className }: { item: AttentionItem; className?: string }) {
+function AskChoices({ item, className, size = 'sm' }: { item: AttentionItem; className?: string; size?: ActionSize }) {
     const { answerAsk } = useDashboardActions();
     const choices = inlineChoices(item);
     if (!choices) return null;
     return (
-        <div className={cn('flex flex-wrap gap-1.5', className)} role="presentation" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+        <div className={cn('flex flex-wrap', size === 'lg' ? 'gap-2' : 'gap-1.5', className)} role="presentation" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
             {choices.options.map((o) => (
                 <button
                     key={o.id}
                     type="button"
                     onClick={() => answerAsk(item, { [choices.inputId]: o.id })}
-                    className="rounded-md border border-border dark:border-foreground/10 px-2.5 py-1 text-[12px] text-foreground/80 transition-colors hover:border-foreground/30 hover:bg-foreground/[0.04] hover:text-foreground"
+                    className={cn(
+                        'border border-border text-foreground/80 transition-colors hover:border-foreground/30 hover:bg-foreground/[0.04] hover:text-foreground dark:border-foreground/10',
+                        size === 'lg' ? 'h-10 rounded-full px-4 text-[14px]' : 'rounded-md px-2.5 py-1 text-[12px]'
+                    )}
                 >
                     {o.label}
                 </button>
@@ -1364,7 +1323,7 @@ function TurnCard({ turn, now, compact = false }: { turn: AgentTurn; now: string
                     </p>
                     <div className="mt-1 truncate text-[11px] text-foreground/60 dark:text-foreground/40">
                         {turn.workflow.name} · {turn.toolCalls.length} {turn.toolCalls.length === 1 ? 'tool call' : 'tool calls'} · {fmtDuration(turn.durationMs)}
-                        {turn.credits != null && ` · ${fmtCredits(turn.credits)} cr`}
+                        {turn.credits != null && ` · ${formatUsd(turn.credits)}`}
                     </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[11px] tabular-nums text-foreground/60 dark:text-foreground/40">
@@ -1500,444 +1459,6 @@ export function AgentsFull({ data }: SectionProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Files
-
-const SOURCE_LABEL: Record<FileSourceKind, string> = {
-    resources: 'Uploads & outputs',
-    workspace: 'Agent workspaces',
-    volume: 'Volumes',
-    builder: 'Builder workspace',
-};
-
-const SOURCE_HINT: Record<FileSourceKind, string> = {
-    resources: 'Personal attachments, workflow uploads, downloads and generated media.',
-    workspace: 'Each agent conversation gets its own durable folder, mounted at /workspace in the sandbox.',
-    volume: 'Named volumes wired into an agent through a Filesystem node; shared across its conversations.',
-    builder: 'The scratch folder the AI builder uses to probe APIs while it designs — one per workspace.',
-};
-
-function FileGlyph({ kind, className }: { kind: FileKind; className?: string }) {
-    const c = cn('h-4 w-4 shrink-0 text-foreground/65 dark:text-foreground/45', className);
-    switch (kind) {
-        case 'image':
-            return <ImageIcon className={c} />;
-        case 'video':
-            return <Film className={c} />;
-        case 'audio':
-            return <Music className={c} />;
-        case 'doc':
-            return <FileText className={c} />;
-        case 'data':
-            return <Table2 className={c} />;
-        case 'code':
-            return <Code2 className={c} />;
-        case 'archive':
-            return <Archive className={c} />;
-        default:
-            return <File className={c} />;
-    }
-}
-
-interface FlatFile extends FileEntry {
-    source: FileSource;
-}
-
-function flattenFiles(sources: FileSource[]): FlatFile[] {
-    return sources
-        .flatMap((s) => s.files.map((f) => ({ ...f, source: s })))
-        .sort((a, b) => Date.parse(b.mtime) - Date.parse(a.mtime));
-}
-
-function basename(path: string): string {
-    const i = path.lastIndexOf('/');
-    return i >= 0 ? path.slice(i + 1) : path;
-}
-
-/** A real thumbnail for images that already have a URL; the type glyph otherwise. */
-function FileThumb({ file }: { file: FileEntry }) {
-    const src = file.kind === 'image' || file.kind === 'video' ? (file.url ?? (file.urlPath ? workspaceFileUrl(file.urlPath) : null)) : null;
-    if (src) {
-        return (
-            <span className="h-8 w-8 shrink-0 overflow-hidden rounded-md border border-border dark:border-foreground/[0.08] bg-foreground/[0.04]">
-                {file.kind === 'video' ? (
-                    // The first frame is the thumbnail; metadata-only, so no download.
-                    <video src={src} muted playsInline preload="metadata" className="h-full w-full object-cover" />
-                ) : (
-                    <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" />
-                )}
-            </span>
-        );
-    }
-    return (
-        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md border border-border dark:border-foreground/[0.06] bg-foreground/[0.03]">
-            <FileGlyph kind={file.kind} />
-        </span>
-    );
-}
-
-function fileSizeLabel(file: FileEntry): string {
-    if (file.rows != null) return `${compactNumber(file.rows)} rows`;
-    return fmtBytes(file.size);
-}
-
-function FileRowView({ file, now, showSource = true, showDir = false, onDelete }: { file: FlatFile; now: string; showSource?: boolean; showDir?: boolean; onDelete?: () => Promise<void> }) {
-    const { openFile } = useDashboardActions();
-    // Deleting is a two-step inline confirm on the row itself — no modal.
-    const [confirm, setConfirm] = useState<'idle' | 'asking' | 'deleting'>('idle');
-    const dir = file.path.includes('/') ? file.path.slice(0, file.path.lastIndexOf('/') + 1) : '';
-    const swallow = { role: 'presentation' as const, onClick: (e: SyntheticEvent) => e.stopPropagation(), onKeyDown: (e: SyntheticEvent) => e.stopPropagation() };
-    return (
-        <div {...clickableRow(() => openFile(file, file.source))} className={cn('group/file -mx-2 flex w-[calc(100%+1rem)] items-center gap-3 rounded-lg px-2 py-2 text-left', ROW_HOVER)}>
-            <FileThumb file={file} />
-            <span className="min-w-0 flex-1 truncate text-[13.5px]">
-                {showDir && dir && <span className="text-foreground/55 dark:text-foreground/35">{dir}</span>}
-                {basename(file.path)}
-            </span>
-            {showSource && (
-                <span className="hidden min-w-0 max-w-[240px] shrink truncate text-[12px] text-foreground/60 dark:text-foreground/40 sm:inline">{file.source.label}</span>
-            )}
-            {confirm === 'idle' ? (
-                <>
-                    <span className="w-16 shrink-0 text-right text-[12px] tabular-nums text-foreground/60 dark:text-foreground/40">{fileSizeLabel(file)}</span>
-                    <span className="w-14 shrink-0 text-right text-[12px] tabular-nums text-foreground/60 dark:text-foreground/40">{relTime(file.mtime, now)}</span>
-                    {onDelete ? (
-                        <span {...swallow} className="shrink-0">
-                            <button
-                                type="button"
-                                aria-label={`Delete ${basename(file.path)}`}
-                                onClick={() => setConfirm('asking')}
-                                className="grid h-6 w-6 place-items-center rounded-md text-foreground/45 transition-colors hover:bg-foreground/[0.06] hover:text-red-600 dark:text-foreground/35 dark:hover:text-red-400"
-                            >
-                                <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                        </span>
-                    ) : (
-                        <ArrowUpRight className="h-3 w-3 shrink-0 text-foreground/0 transition-colors group-hover/file:text-foreground/70 dark:group-hover/file:text-foreground/50" />
-                    )}
-                </>
-            ) : (
-                <span {...swallow} className="flex shrink-0 items-center gap-3 text-[12px]">
-                    {confirm === 'deleting' ? (
-                        <span className="text-foreground/60 dark:text-foreground/40">Deleting…</span>
-                    ) : (
-                        <>
-                            <span className="text-foreground/70 dark:text-foreground/50">Delete this file?</span>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setConfirm('deleting');
-                                    onDelete?.().finally(() => setConfirm('idle'));
-                                }}
-                                className="font-medium text-red-600 hover:underline dark:text-red-400"
-                            >
-                                Delete
-                            </button>
-                            <button type="button" onClick={() => setConfirm('idle')} className="text-foreground/70 dark:text-foreground/50 hover:text-foreground">
-                                Keep
-                            </button>
-                        </>
-                    )}
-                </span>
-            )}
-        </div>
-    );
-}
-
-export function FilesCompact({ data, onFocus, limit = 6, footer = true, narrow = false }: SectionProps & { limit?: number; footer?: boolean; narrow?: boolean }) {
-    const all = flattenFiles(data.files);
-    if (!all.length) return <EmptyState title="No files yet" hint="Uploads, agent workspaces, volumes and the builder’s scratch folder all show up here." />;
-    const totalBytes = all.reduce((a, f) => a + f.size, 0);
-    return (
-        <div>
-            <div className={ROWS}>
-                {all.slice(0, limit).map((f) => (
-                    <FileRowView key={`${f.source.id}:${f.resourceId ?? f.path}`} file={f} now={data.now} showSource={!narrow} />
-                ))}
-            </div>
-            <div className="flex items-center justify-between pt-2 text-[11px] text-foreground/55 dark:text-foreground/35">
-                {footer ? (
-                    <span>
-                        {all.length} files · {fmtBytes(totalBytes)} across {data.files.length} places
-                    </span>
-                ) : (
-                    <span />
-                )}
-                {all.length > limit && <TextLink onClick={() => onFocus?.('files')}>{all.length - limit} more</TextLink>}
-            </div>
-        </div>
-    );
-}
-
-export function FilesFull({ data }: SectionProps) {
-    const actions = useDashboardActions();
-    const [facet, setFacet] = useState<'all' | FileSourceKind>('all');
-    const [query, setQuery] = useState('');
-    // Folded places stay folded for the session, so a long list is scanned once.
-    const [collapsed, setCollapsed] = useValtioState<string[]>('dashboard', 'files_collapsed', []);
-    const toggle = (id: string) => setCollapsed(collapsed.includes(id) ? collapsed.filter((x) => x !== id) : [...collapsed, id]);
-    const kinds: FileSourceKind[] = ['resources', 'workspace', 'volume', 'builder'];
-    const sources = data.files.filter((s) => (facet === 'all' ? true : s.kind === facet));
-    const q = query.trim().toLowerCase();
-    const bytes = (ss: FileSource[]) => ss.reduce((a, s) => a + s.files.reduce((b, f) => b + f.size, 0), 0);
-    const count = (ss: FileSource[]) => ss.reduce((a, s) => a + s.files.length, 0);
-    const facetBtn = (key: 'all' | FileSourceKind, label: string, ss: FileSource[]) => (
-        <button
-            key={key}
-            type="button"
-            onClick={() => setFacet(key)}
-            className={cn('flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-[12.5px] transition-colors', facet === key ? 'bg-foreground/[0.08] text-foreground' : 'text-foreground/70 dark:text-foreground/55 hover:text-foreground')}
-        >
-            <span className="flex-1 truncate">{label}</span>
-            <span className="tabular-nums text-foreground/55 dark:text-foreground/35">{count(ss)}</span>
-        </button>
-    );
-    return (
-        <div className="grid gap-8 md:grid-cols-[200px_1fr]">
-            <aside className="space-y-4">
-                <div className="space-y-0.5">
-                    {facetBtn('all', 'All files', data.files)}
-                    {kinds.map((k) => facetBtn(k, SOURCE_LABEL[k], data.files.filter((s) => s.kind === k)))}
-                </div>
-                <p className="m-0 px-2.5 text-[11px] leading-relaxed text-foreground/55 dark:text-foreground/35">
-                    {facet === 'all' ? `${count(data.files)} files · ${fmtBytes(bytes(data.files))}` : SOURCE_HINT[facet]}
-                </p>
-            </aside>
-            <div className="min-w-0 space-y-6">
-                <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Filter by name"
-                    className="w-full rounded-md border border-border dark:border-foreground/10 bg-transparent px-3 py-1.5 text-[12.5px] outline-none placeholder:text-foreground/45 dark:placeholder:text-foreground/30 focus:border-foreground/30"
-                />
-                {sources.length === 0 && <EmptyState title="Nothing here yet" hint={facet !== 'all' ? SOURCE_HINT[facet] : undefined} />}
-                {sources.map((s) => {
-                    const files = s.files.filter((f) => !q || f.path.toLowerCase().includes(q));
-                    if (q && !files.length) return null;
-                    if (s.kind === 'workspace' && !s.files.length) return null;
-                    const folded = collapsed.includes(s.id) && !q;
-                    return (
-                        <section key={s.id}>
-                            <div className="mb-1 flex items-center gap-2">
-                                <button
-                                    type="button"
-                                    onClick={() => toggle(s.id)}
-                                    aria-expanded={!folded}
-                                    aria-label={folded ? `Expand ${s.label}` : `Collapse ${s.label}`}
-                                    className="-ml-1 grid h-5 w-5 shrink-0 place-items-center rounded text-foreground/45 transition-colors hover:bg-foreground/[0.06] hover:text-foreground dark:text-foreground/35"
-                                >
-                                    <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', folded && '-rotate-90')} />
-                                </button>
-                                {s.workflow ? <MarkRow types={s.workflow.marks} size="xs" max={3} /> : s.agent ? <NodeMark type={agentMarkType(s.agent.model)} size="xs" /> : null}
-                                {s.workflow ? (
-                                    <button
-                                        type="button"
-                                        onClick={() => actions.openWorkflow(s.workflow!, s.agent?.nodeId)}
-                                        className="min-w-0 truncate text-left text-[14px] font-medium decoration-foreground/30 underline-offset-4 hover:underline"
-                                    >
-                                        {s.label}
-                                    </button>
-                                ) : (
-                                    <span className="min-w-0 truncate text-[14px] font-medium">{s.label}</span>
-                                )}
-                                <span className="hidden shrink-0 text-[12px] text-foreground/60 dark:text-foreground/40 md:inline">{s.sublabel}</span>
-                                <span className="ml-auto flex shrink-0 items-center gap-3 text-[11px] text-foreground/55 dark:text-foreground/35">
-                                    <span className="tabular-nums">
-                                        {s.files.length} · {fmtBytes(s.files.reduce((a, f) => a + f.size, 0))}
-                                    </span>
-                                    {s.writable && actions.uploadTo && (s.kind === 'resources' ? s.workflow : s.uploadUrlPath) && (
-                                        <TextLink onClick={() => actions.uploadTo?.(s)} icon={false}>
-                                            Upload
-                                        </TextLink>
-                                    )}
-                                </span>
-                            </div>
-                            {folded ? null : files.length ? (
-                                <div className={cn(ROWS, "border-t border-border dark:border-foreground/[0.06]")}>
-                                    {files.map((f) => (
-                                        <FileRowView
-                                            key={f.resourceId ?? f.path}
-                                            file={{ ...f, source: s }}
-                                            now={data.now}
-                                            showSource={false}
-                                            showDir
-                                            onDelete={s.writable && actions.deleteFile ? () => actions.deleteFile!(f, s) : undefined}
-                                        />
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className="m-0 border-t border-border dark:border-foreground/[0.06] py-3 text-[12px] text-foreground/55 dark:text-foreground/35">Empty.</p>
-                            )}
-                            {s.truncated && <p className="m-0 pt-1.5 text-[11px] text-foreground/55 dark:text-foreground/35">Showing the first entries · the volume has more.</p>}
-                        </section>
-                    );
-                })}
-                {(() => {
-                    const empty = sources.filter((s) => s.kind === 'workspace' && !s.files.length).length;
-                    return empty > 0 ? (
-                        <p className="m-0 text-[12px] text-foreground/55 dark:text-foreground/35">
-                            {empty} agent {empty === 1 ? 'workspace is' : 'workspaces are'} empty — agents save into them only when asked to.
-                        </p>
-                    ) : null;
-                })()}
-            </div>
-        </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Credentials
-
-function credentialVerdict(c: CredentialEntry): VerdictStatus {
-    return c.health === 'ok' ? 'ok' : c.health === 'unknown' ? 'idle' : 'failed';
-}
-
-const ACCESS_LABEL: Record<CredentialEntry['access'], string> = { owner: 'Yours', shared: 'Shared with you', shared_org: 'Workspace' };
-
-function CredentialRowView({ c, now }: { c: CredentialEntry; now: string }) {
-    const actions = useDashboardActions();
-    const dead = c.health === 'disconnected' || c.health === 'revoked';
-    return (
-        <div className={cn('-mx-2 flex items-center gap-3 rounded-lg px-2 py-2', ROW_HOVER)}>
-            <CredentialMark credentialType={c.credentialType} nodeType={c.nodeType} size="md" />
-            <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 text-[14px]">
-                    <span className="truncate">{c.name}</span>
-                    <span className="shrink-0 text-[11.5px] text-foreground/55 dark:text-foreground/35">{credentialLabel(c.credentialType, c.nodeType)}</span>
-                    {c.access !== 'owner' && <KindPill>{ACCESS_LABEL[c.access]}</KindPill>}
-                </div>
-                <div className="mt-0.5 flex items-center gap-2 text-[11px] text-foreground/60 dark:text-foreground/40">
-                    {dead ? (
-                        <span className="text-red-600 dark:text-red-400">{c.healthDetail}</span>
-                    ) : c.lastRefreshAt ? (
-                        <span>refreshed {relTime(c.lastRefreshAt, now)}</span>
-                    ) : (
-                        <span>added {relTime(c.createdAt, now)}</span>
-                    )}
-                    {c.recurringPerHour != null && <span>· {c.recurringPerHour} cr/h</span>}
-                    {c.usedBy.length > 0 && (
-                        <span className="inline-flex min-w-0 items-center gap-1 truncate">
-                            · used by {c.usedBy.map((w) => w.name).join(', ')}
-                        </span>
-                    )}
-                    {c.usedBy.length === 0 && <span>· not used yet</span>}
-                </div>
-            </div>
-            <div className="flex shrink-0 items-center gap-2">
-                {dead ? (
-                    <PrimaryButton onClick={() => actions.reconnectCredential({ credentialId: c.id, credentialType: c.credentialType, name: c.name })}>Reconnect</PrimaryButton>
-                ) : (
-                    <>
-                        <TextLink onClick={() => actions.manageCredential(c)} icon={false}>
-                            Manage
-                        </TextLink>
-                        {actions.deleteCredential && (
-                            <TextLink onClick={() => actions.deleteCredential?.(c)} icon={false} className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
-                                Delete
-                            </TextLink>
-                        )}
-                    </>
-                )}
-                <Verdict status={credentialVerdict(c)} className="w-4" label={c.health} />
-            </div>
-        </div>
-    );
-}
-
-export function CredentialsCompact({ data, onFocus, style = 'tiles', footer = true }: SectionProps & { style?: 'tiles' | 'rows'; footer?: boolean }) {
-    const actions = useDashboardActions();
-    const creds = data.credentials;
-    if (!creds.length) return <EmptyState title="No accounts connected" hint="Every service you connect shows up here with its health." />;
-    const dead = creds.filter((c) => c.health === 'disconnected' || c.health === 'revoked');
-    const sorted = [...dead, ...creds.filter((c) => !dead.includes(c))];
-    if (style === 'rows') {
-        return (
-            <div>
-                <div className={ROWS}>
-                    {sorted.slice(0, 5).map((c) => (
-                        <CredentialRowView key={c.id} c={c} now={data.now} />
-                    ))}
-                </div>
-                {creds.length > 5 && (
-                    <div className="pt-2">
-                        <TextLink onClick={() => onFocus?.('credentials')}>{creds.length - 5} more</TextLink>
-                    </div>
-                )}
-            </div>
-        );
-    }
-    return (
-        <div>
-            <div className="flex flex-wrap gap-1.5">
-                {sorted.map((c) => {
-                    const isDead = dead.includes(c);
-                    return (
-                        <span key={c.id} className="group/cred relative inline-flex">
-                            <button
-                                type="button"
-                                onClick={() => (isDead ? actions.reconnectCredential({ credentialId: c.id, credentialType: c.credentialType, name: c.name }) : actions.manageCredential(c))}
-                                title={`${c.name} · ${credentialLabel(c.credentialType, c.nodeType)}${isDead ? ` · ${c.healthDetail}` : ''}`}
-                                className={cn(
-                                    'inline-flex h-8 items-center gap-2 rounded-md border px-2 text-[12px] transition-colors',
-                                    isDead ? 'border-red-500/30 text-foreground hover:bg-red-500/[0.06]' : 'border-border dark:border-foreground/[0.08] text-foreground/70 hover:border-foreground/20 hover:text-foreground'
-                                )}
-                            >
-                                <CredentialMark credentialType={c.credentialType} nodeType={c.nodeType} size="sm" />
-                                <span className="max-w-[140px] truncate">{c.name}</span>
-                                {isDead && <X className="h-3 w-3 text-red-600 dark:text-red-400" strokeWidth={2.5} />}
-                            </button>
-                            {actions.deleteCredential && (
-                                <button
-                                    type="button"
-                                    aria-label={`Delete ${c.name}`}
-                                    title="Delete credential"
-                                    onClick={() => actions.deleteCredential?.(c)}
-                                    className="absolute right-[3px] top-1/2 grid h-[24px] w-[26px] -translate-y-1/2 place-items-center rounded bg-[var(--surface)] text-foreground/55 opacity-0 shadow-[-10px_0_8px_-4px_var(--surface)] transition-opacity hover:text-red-600 focus-visible:opacity-100 group-hover/cred:opacity-100 dark:text-foreground/45 dark:hover:text-red-400"
-                                >
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                </button>
-                            )}
-                        </span>
-                    );
-                })}
-            </div>
-            {footer && (
-                <div className="flex items-center justify-between pt-2.5 text-[11px] text-foreground/55 dark:text-foreground/35">
-                    <span>
-                        {creds.length} connected
-                        {dead.length > 0 && (
-                            <>
-                                {' · '}
-                                <span className="text-red-600 dark:text-red-400">{dead.length} need attention</span>
-                            </>
-                        )}
-                    </span>
-                    <TextLink onClick={() => onFocus?.('credentials')}>Manage</TextLink>
-                </div>
-            )}
-        </div>
-    );
-}
-
-/** The drill-down for credentials is Settings → Credentials itself (the
- *  product mounts that component here); this stands in wherever it can't. */
-export function CredentialsFull({ onFocus }: SectionProps) {
-    return <SettingsHandoff title="Credentials" section="credentials" onFocus={onFocus} />;
-}
-
-function SettingsHandoff({ title, section, onFocus }: { title: string; section: string; onFocus?: SectionProps['onFocus'] }) {
-    const actions = useDashboardActions();
-    return (
-        <div className="flex flex-col items-start gap-3 py-6">
-            <p className="m-0 inline-flex items-center gap-2 text-[14px] text-foreground/70">
-                <Settings2 className="h-4 w-4 text-foreground/65 dark:text-foreground/45" /> {title} live in Settings — the same view opens here.
-            </p>
-            <PrimaryButton onClick={() => (section === 'credentials' ? actions.openCredentialsSettings : actions.openUsage)()}>Open Settings → {title}</PrimaryButton>
-            {onFocus && <TextLink onClick={() => onFocus(null as unknown as FocusId)} icon={false}>Back</TextLink>}
-        </div>
-    );
-}
-
-// ---------------------------------------------------------------------------
 // Triggers
 
 function TriggerRowView({ t, now }: { t: TriggerEntry; now: string }) {
@@ -2033,42 +1554,6 @@ export function TriggersFull({ data }: SectionProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Credits
-
-export function CreditsCompact({ data, onFocus }: SectionProps) {
-    const { credits } = data;
-    const pct = credits.cap ? credits.used / credits.cap : 0;
-    return (
-        <div>
-            <div className="flex items-baseline justify-between">
-                <span className="text-[22px] font-semibold tracking-tight">
-                    {fmtCredits(credits.used)}
-                    <span className="text-[13px] font-normal text-foreground/60 dark:text-foreground/40"> / {compactNumber(credits.cap)}</span>
-                </span>
-                <span className="text-[11px] text-foreground/60 dark:text-foreground/40">
-                    resets {relTime(credits.nextRefreshAt, data.now)}
-                    {credits.topup > 0 && ` · ${compactNumber(credits.topup)} top-up in reserve`}
-                </span>
-            </div>
-            <Meter value={credits.used} max={credits.cap} className="mt-2" />
-            <div className="mt-2 flex items-center justify-between gap-3 text-[11px] text-foreground/60 dark:text-foreground/40">
-                <span className="shrink-0">{Math.round(pct * 100)}% of this {credits.period === 'month' ? 'month' : 'day'}’s {credits.tier} credits</span>
-                {credits.topSpenders[0] && (
-                    <button type="button" onClick={() => onFocus?.('credits')} className="min-w-0 truncate text-left transition-colors hover:text-foreground">
-                        top: {credits.topSpenders[0].workflow.name} · {compactNumber(credits.topSpenders[0].credits)}
-                    </button>
-                )}
-            </div>
-        </div>
-    );
-}
-
-/** The drill-down for credits is Settings → Usage itself (mounted by the product). */
-export function CreditsFull({ onFocus }: SectionProps) {
-    return <SettingsHandoff title="Usage" section="usage" onFocus={onFocus} />;
-}
-
-// ---------------------------------------------------------------------------
 // Notifications
 
 function NotificationRow({ n, now }: { n: NotificationEntry; now: string }) {
@@ -2090,7 +1575,7 @@ function NotificationRow({ n, now }: { n: NotificationEntry; now: string }) {
 }
 
 export function NotificationsCompact({ data, onFocus, limit = 3 }: SectionProps & { limit?: number }) {
-    if (!data.notifications.length) return <EmptyState title="No notifications" hint="Failures, credit alerts and your weekly digest." />;
+    if (!data.notifications.length) return <EmptyState title="No notifications" hint="Failures, balance alerts and your weekly digest." />;
     return (
         <div>
             <div className={ROWS}>
@@ -2137,15 +1622,12 @@ export function NotificationsFull({ data }: SectionProps) {
 
 // ---------------------------------------------------------------------------
 
-export const FULL_VIEWS: Record<Exclude<FocusId, 'memories'>, (p: SectionProps) => ReactElement> = {
+export const FULL_VIEWS: Record<FocusId, (p: SectionProps) => ReactElement> = {
     attention: AttentionFull,
     runs: RunsFull,
     agents: AgentsFull,
-    files: FilesFull,
-    credentials: CredentialsFull,
     triggers: TriggersFull,
     upcoming: UpcomingFull,
-    credits: CreditsFull,
     notifications: NotificationsFull,
 };
 
@@ -2157,10 +1639,6 @@ export function focusCount(data: DashboardData, id: FocusId, attention: Attentio
             return data.runs.days.reduce((a, b) => a + b.ok + b.failed, 0);
         case 'agents':
             return data.agents.running.length;
-        case 'files':
-            return data.files.reduce((a, s) => a + s.files.length, 0);
-        case 'credentials':
-            return data.credentials.length;
         case 'triggers':
             return data.triggers.length;
         case 'upcoming':

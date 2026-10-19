@@ -5,22 +5,56 @@
 // yields an empty list, and health helpers treat that as no-signal.
 
 import { useEffect, useState } from 'react';
+import { CREDENTIALS_CHANGED_EVENT } from '~/components/shared/popups/CreateCredentialDialog';
+import type { CredentialInfo } from '~/types/socket-events.generated';
 import {
     getAllCredentialsFromCache,
+    invalidateCredentialsCache,
+    prefetchCredentials,
     subscribeCredentialCache,
 } from '~/utils/credentialAutoSelect';
-import type { CredentialHealthRow } from '~/lib/credentialHealth';
 
-export function useCachedCredentialList(): CredentialHealthRow[] {
-    const [creds, setCreds] = useState<CredentialHealthRow[]>(() =>
-        getAllCredentialsFromCache()
-    );
+function useCacheRows() {
+    const state = useState<CredentialInfo[]>(() => getAllCredentialsFromCache());
+    const setCreds = state[1];
     useEffect(
         () =>
             subscribeCredentialCache(() =>
                 setCreds(getAllCredentialsFromCache())
             ),
-        []
+        [setCreds]
     );
-    return creds;
+    return state;
+}
+
+export function useCachedCredentialList(): CredentialInfo[] {
+    return useCacheRows()[0];
+}
+
+/** The same rows, owned: fetched on mount and again whenever a credential is
+ *  created, renamed or deleted anywhere in the app. `loaded` turns true once
+ *  the first fetch has answered, so an empty list can be told from a pending one. */
+export function useCredentialList(): { credentials: CredentialInfo[]; loaded: boolean } {
+    const [credentials, setCreds] = useCacheRows();
+    const [loaded, setLoaded] = useState(false);
+    useEffect(() => {
+        let live = true;
+        // A refetch replaces the cache without notifying subscribers, so read it back here.
+        const reload = () =>
+            void prefetchCredentials()
+                .then(() => live && setCreds(getAllCredentialsFromCache()))
+                .catch((err: unknown) => console.warn('[credentials] list failed:', err))
+                .finally(() => live && setLoaded(true));
+        const onChanged = () => {
+            invalidateCredentialsCache();
+            reload();
+        };
+        reload();
+        window.addEventListener(CREDENTIALS_CHANGED_EVENT, onChanged);
+        return () => {
+            live = false;
+            window.removeEventListener(CREDENTIALS_CHANGED_EVENT, onChanged);
+        };
+    }, [setCreds]);
+    return { credentials, loaded };
 }

@@ -4,7 +4,7 @@
 // importing the heavy node registry into the client bundle. It mirrors BrandIcon's
 // color rule exactly (text-* class vs raw hex via style.color vs multicolor) so
 // icons look identical to the in-app surfaces that use BrandIcon directly.
-import { type CSSProperties, useId, useMemo } from 'react';
+import { type ComponentType, type CSSProperties, useId, useMemo } from 'react';
 import { cn } from '~/lib/utils';
 import { monochromeIconClassFromHtml } from '~/lib/monochromeIcons';
 
@@ -94,4 +94,21 @@ export function SerializedIcon({
             dangerouslySetInnerHTML={{ __html: scopedHtml }}
         />
     );
+}
+
+/** A pre-rendered icon (from the node-icon singleton) as an icon component, for the surfaces that draw icons through
+ *  BrandIcon (which passes className + style); the child img/svg fills the sized wrapper. */
+export function serializedIconComponent(html: string): ComponentType<{ className?: string; style?: CSSProperties }> {
+    return function NodeBrandIcon({ className, style }) {
+        return (
+            <span
+                className={cn(
+                    'inline-flex items-center justify-center [&>img]:w-full [&>img]:h-full [&>svg]:w-full [&>svg]:h-full',
+                    className
+                )}
+                style={style}
+                dangerouslySetInnerHTML={{ __html: html }}
+            />
+        );
+    };
 }

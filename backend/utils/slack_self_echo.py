@@ -11,8 +11,8 @@ and the app-webhook path drops inbound message events that match.
 Fingerprints are deliberately global (not per-workflow): per-workflow keys
 would still allow A→B→A cross-workflow loops. NoClick-authored messages never
 trigger NoClick Slack triggers — same containment stance as inbound email
-(which refuses all @noclick.app senders). Chain workflows directly, not via a
-Slack channel.
+(which refuses senders on NoClick's mail domains). Chain workflows directly,
+not via a Slack channel.
 
 Failure posture: recording must never fail the user's send, and a Redis blip
 fails OPEN on the check (one extra fire — today's behavior) rather than eating

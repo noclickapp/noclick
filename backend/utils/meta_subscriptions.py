@@ -95,7 +95,17 @@ async def read_subscribed_fields(request, account_id, app_ids, *, label, require
         raise ValueError(f"{label} subscribed-app identity does not match the configured webhook app; existing fields were not changed.")
     if not matching:
         return set()
-    fields = matching[0].get("subscribed_fields")
+    return _subscribed_fields(matching[0], label)
+
+
+async def read_subscription_field_sets(request, account_id, *, label):
+    """Every row's field set, for edges whose rows carry no app identity (Instagram Login)."""
+    rows = await read_edge(request, f"{account_id}/subscribed_apps", fields="subscribed_fields", label=label)
+    return [_subscribed_fields(row, label) for row in rows]
+
+
+def _subscribed_fields(row, label):
+    fields = row.get("subscribed_fields")
     if not isinstance(fields, list) or any(not isinstance(field, str) or not _FIELD.fullmatch(field) for field in fields):
         raise ValueError(f"{label} did not return a valid subscribed-fields list; existing fields were not changed.")
     return set(fields)

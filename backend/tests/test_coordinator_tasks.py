@@ -14,7 +14,7 @@ import pytest
 from coder.coordinator import tasks
 from repositories.coordinator_tasks import CoordinatorTaskRepo
 from utils import task_notifications
-from utils.access_control import Permission
+from utils.access_control import AccessResult, Permission
 
 pytestmark = pytest.mark.asyncio
 USER = "00000000-0000-0000-0000-000000000001"
@@ -163,13 +163,25 @@ async def test_task_table_is_inaccessible_to_browser_roles(task_db):
 async def test_message_requires_edit_access(permission):
     from tests.mocks.mock_asyncpg import MockNativePool
 
-    with patch.object(tasks, "check_resource_access", AsyncMock(return_value=SimpleNamespace(
-        has_access=permission is not None, permission=permission,
+    with patch.object(tasks, "check_resource_access", AsyncMock(return_value=AccessResult(
+        permission is not None, permission or Permission.NONE, "direct_share" if permission else None,
     ))), patch("wss.handlers.workflow_execution_handler.WorkflowExecutionHandler._fetch_workflow", AsyncMock()) as fetch:
         with pytest.raises(ValueError, match="edit access"):
             await tasks.request_agent_message(MockNativePool(), None, user_id=USER, workflow_id=str(uuid.uuid4()),
                                               node_id="agent", message="Hello", send_to_phone=False)
         fetch.assert_not_called()
+
+
+async def test_the_owner_messages_the_agent_of_a_workflow_noclick_runs_itself():
+    from tests.mocks.mock_asyncpg import MockNativePool
+
+    agent = {"id": "agent", "type": "agent", "config": {}}
+    with patch.object(tasks, "check_resource_access", AsyncMock(return_value=AccessResult(
+        True, Permission.VIEW, "owner", "your NoClick assistant",
+    ))), patch("wss.handlers.workflow_execution_handler.WorkflowExecutionHandler._fetch_workflow",
+               AsyncMock(return_value=([agent], []))):
+        assert await tasks.agent_target(MockNativePool(), None, user_id=USER, workflow_id=str(uuid.uuid4()),
+                                        node_id="agent") == agent
 
 
 @pytest.mark.parametrize("output,success,error,expected", [
@@ -196,3 +208,88 @@ async def test_dispatch_uses_saved_delivery_and_conversation(task_db, monkeypatc
     }
     assert request.conversation_id.endswith(claimed["conversation_key"])
     assert (await repo.list_for_user(USER))[0]["status"] == expected
+
+
+@pytest.fixture
+def surface(monkeypatch):
+    """Another surface that asks agents for turns on its own conversations (``room:``)."""
+    from coder.coordinator import jobs as coordinator_jobs_registry
+    from repositories import coordinator_jobs
+
+    monkeypatch.setattr(coordinator_jobs, "_OUTSIDE_SOURCES", list(coordinator_jobs._OUTSIDE_SOURCES))
+    monkeypatch.setattr(tasks, "_KEY_PREFIXES", dict(tasks._KEY_PREFIXES))
+    monkeypatch.setattr(coordinator_jobs_registry, "_OUTCOMES", dict(coordinator_jobs_registry._OUTCOMES))
+    delivered = []
+
+    async def deliver(pool, job):
+        delivered.append((job["id"], job["status"], tasks.reply_text(job["result"])))
+
+    tasks.register_agent_job_source("room", key_prefix="room:", deliver=deliver)
+    return delivered
+
+
+async def _turn(pool, workflow_id, node_id="agent", **kw):
+    async with pool.acquire() as conn:
+        return await CoordinatorTaskRepo.enqueue_turn(
+            conn, source="room", user_id=USER, workflow_id=workflow_id, node_id=node_id, conversation_key="room:1",
+            agent_name="Researcher", message="You are @Researcher in the room.", context={"room": "1"}, **kw)
+
+
+async def test_another_surfaces_turns_go_back_to_it_never_to_the_coordinator(task_db, surface, monkeypatch):
+    pool, repo, enqueue = task_db
+    coordinator = await enqueue()
+    workflow_id = str(coordinator["workflow_id"])
+    first = await _turn(pool, workflow_id, attachments=[{"url": "https://files.test/a.pdf", "name": "a.pdf"}],
+                        config={"enable_email_updates": "false"})
+    behind = await _turn(pool, workflow_id)
+    writer = await _turn(pool, workflow_id, node_id="writer")
+    assert first["origin"] == {"room": "1", "source": "room"}
+    # The coordinator's reads and follow-ups leave another surface's jobs out.
+    assert [j["id"] for j in await repo.list_for_user(USER)] == [coordinator["id"]]
+    with pytest.raises(ValueError, match="prior job"):
+        await enqueue(parent_job_id=str(first["id"]))
+
+    # One turn at a time in an agent node's conversation; another node's runs alongside.
+    claimed = {c["id"]: c for c in [await repo.claim() for _ in range(4)] if c}
+    assert set(claimed) == {coordinator["id"], first["id"], writer["id"]}
+
+    seen = {}
+
+    async def execute(sid, request, execution_id, caller_user_id=None):
+        from billing.usage_tracker import usage_attribution
+
+        seen.update(overrides=request.config_overrides["agent"], attribution=usage_attribution())
+        return SimpleNamespace(node_outputs={"agent": {"response": "Found it"}}, success=True, error=None)
+
+    monkeypatch.setattr(tasks, "agent_target", AsyncMock(return_value={"id": "agent"}))
+    monkeypatch.setattr(tasks, "get_sio", lambda: object())
+    with patch("wss.handlers.workflow_execution_handler.WorkflowExecutionHandler.handle_execute",
+               AsyncMock(side_effect=execute)):
+        await tasks.run_task(pool, claimed[first["id"]])
+    assert seen["overrides"] == {
+        "message": "You are @Researcher in the room.", "conversation_key": "room:1", "mockedOutput": None,
+        "message_attachments": [{"url": "https://files.test/a.pdf", "name": "a.pdf"}],
+        "enable_email_updates": "false",
+    }
+    assert seen["attribution"]["coordinator_job_id"] == str(first["id"])
+    # Delivered back at once, and once: the worker's pass finds it delivered and tells the coordinator nothing.
+    assert surface == [(first["id"], "completed", "Found it")]
+    monkeypatch.setattr(tasks, "get_sio", lambda: None)
+    await tasks.notify_results(pool)
+    assert len(surface) == 1
+    assert await pool.fetchval("SELECT events FROM conversations WHERE conversation_id = $1",
+                               f"coordinator:{USER}") is None
+
+    # A CLI reply in its conversation settles by its response package, as the coordinator's do.
+    monkeypatch.setattr(tasks, "get_native_pool", lambda: pool)
+    await repo.wait_for_reply(str(writer["id"]))
+    await tasks.complete_agent_deliveries(
+        workflow_id=workflow_id, node_id="writer", conversation_id=f"ck:{workflow_id}:writer:room:1",
+        output={"response": "Drafted", "input_execution_ids": [str(claimed[writer["id"]]["execution_id"])]})
+    assert surface[-1] == (writer["id"], "completed", "Drafted")
+
+    # A turn the surface dropped before it ran never runs, and nothing is delivered for it.
+    await repo.drop_queued([behind["id"]], "The room closed.")
+    assert await repo.claim(str(behind["id"])) is None
+    await tasks.notify_results(pool)
+    assert len(surface) == 2

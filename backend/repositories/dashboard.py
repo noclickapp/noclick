@@ -361,7 +361,8 @@ class DashboardRepo:
         sql = """
             SELECT wr.id, wr.workflow_id, wr.node_id, wr.resource_type, wr.name, wr.mime_type,
                    wr.size_bytes, wr.storage_ref,
-                   jsonb_build_object('row_count', wr.metadata->'row_count') AS metadata,
+                   jsonb_strip_nulls(jsonb_build_object('row_count', wr.metadata->'row_count',
+                                                     'database_id', wr.metadata->'database_id')) AS metadata,
                    wr.created_at, wr.updated_at
             FROM workflow_resources wr
             WHERE (wr.workflow_id = ANY($1::uuid[])

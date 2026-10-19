@@ -34,6 +34,15 @@ describe('detectMentionToken', () => {
   it('returns null when there is no @ before the caret', () => {
     expect(detectMentionToken('plain text', 10)).toBeNull();
   });
+
+  it('detects other triggers the same way', () => {
+    expect(detectMentionToken('/rem', 4, '/')).toEqual({ start: 0, query: 'rem' });
+    expect(detectMentionToken('nice :tad', 9, ':')).toEqual({ start: 5, query: 'tad' });
+    // A time is not an emoji token: the colon sits mid-word.
+    expect(detectMentionToken('at 10:30', 8, ':')).toBeNull();
+    // Another trigger's character is just text.
+    expect(detectMentionToken('@rep', 4, '/')).toBeNull();
+  });
 });
 
 describe('applyMention', () => {

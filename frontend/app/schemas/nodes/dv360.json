@@ -1623,7 +1623,7 @@
       ],
       "title": "DV360ServiceAccountCredential",
       "type": "object",
-      "x-credential-instructions": "Create a JSON key for a service account, then link that service account's email to a DV360 user profile (Admin \u2192 Users) with the required role. Prefer user OAuth for user-delegated access; use a service account for server-to-server automation.",
+      "x-credential-instructions": "Create a JSON key for a service account, then link that service account's email to a DV360 user profile (Admin \u2192 Users) with the required role.",
       "x-credential-url": "https://console.cloud.google.com/iam-admin/serviceaccounts"
     },
     "DV360UpdateAdvertiserConfig": {

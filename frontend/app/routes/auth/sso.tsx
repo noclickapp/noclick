@@ -21,6 +21,8 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { motion } from 'framer-motion';
 import { AuthLayout } from '~/components/auth/AuthLayout';
+import { AuthPageHeader } from '~/components/auth/AuthPageHeader';
+import { AUTH_INPUT_CLASS, AUTH_LABEL_CLASS, AUTH_LINK_CLASS, AUTH_PRIMARY_BUTTON_CLASS } from '~/components/auth/authStyle';
 import { useState, useEffect, useRef } from 'react';
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -101,7 +103,7 @@ export default function SSOLogin() {
                 <div className="flex min-h-[400px] items-center justify-center">
                     <div className="text-center">
                         <div className="animate-spin h-8 w-8 border-4 border-foreground border-t-transparent rounded-full mx-auto"></div>
-                        <p className="mt-4 text-muted-foreground">Connecting to your identity provider...</p>
+                        <p className="mt-4 text-foreground/60">Connecting to your identity provider...</p>
                     </div>
                 </div>
             </AuthLayout>
@@ -114,36 +116,16 @@ export default function SSOLogin() {
     return (
         <AuthLayout>
             <div>
-                <div className="mb-10">
-                    <Link to={`/auth/login${nextParam}`} className="inline-flex items-center text-sm text-muted-foreground dark:text-white/70 hover:text-foreground mb-8 transition-colors">
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        Back to login
-                    </Link>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <h1 className="text-4xl font-bold text-foreground mb-3">
-                            Enterprise SSO
-                        </h1>
-                        <p className="text-muted-foreground dark:text-white/70 text-lg">
-                            Sign in with your company's identity provider
-                        </p>
-                    </motion.div>
-                </div>
+                <AuthPageHeader back={{ to: `/auth/login${nextParam}`, label: 'Back to login' }} title="Enterprise SSO" description="Sign in with your company's identity provider" />
 
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.1 }}
-                    className="bg-sunken border border-border rounded-2xl p-8"
+                    className=""
                 >
                     {displayError && (
-                        <div className="mb-6 p-4 text-red-600 dark:text-red-400 bg-red-500/10 rounded-lg text-sm">
+                        <div className="mb-6 p-4 text-red-600 dark:text-red-400 bg-red-500/10 rounded-2xl text-sm">
                             {displayError}
                         </div>
                     )}
@@ -152,7 +134,7 @@ export default function SSOLogin() {
                         <div>
                             <Label
                                 htmlFor="slug"
-                                className="block text-sm font-medium text-muted-foreground dark:text-zinc-300 mb-2"
+                                className={AUTH_LABEL_CLASS}
                             >
                                 Organization
                             </Label>
@@ -166,33 +148,33 @@ export default function SSOLogin() {
                                 value={slug}
                                 onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                                 placeholder="acme-corp"
-                                className="w-full bg-card/90 border border-border dark:border-zinc-700/60 text-foreground placeholder:text-[hsl(var(--placeholder))] h-11 focus:border-foreground/40 focus:ring-0 transition-all rounded-lg backdrop-blur-sm"
+                                className={AUTH_INPUT_CLASS}
                             />
-                            <p className="mt-2 text-sm text-muted-foreground/70 dark:text-zinc-500">
+                            <p className="mt-2 text-[13px] text-foreground/60 dark:text-foreground/50">
                                 Enter your organization's NoClick workspace identifier
                             </p>
                         </div>
 
                         <Button
                             type="submit"
-                            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 font-medium transition-all shadow-sm"
+                            className={AUTH_PRIMARY_BUTTON_CLASS}
                         >
                             Continue with SSO
                         </Button>
                     </Form>
 
-                    <div className="mt-6 p-4 bg-muted/50 dark:bg-zinc-900/50 rounded-lg">
-                        <p className="text-sm text-muted-foreground">
+                    <div className="mt-6 rounded-2xl bg-foreground/[0.04] p-4">
+                        <p className="text-sm text-foreground/60">
                             <span className="font-medium text-foreground">How it works:</span>{' '}
                             You'll be redirected to your company's identity provider to authenticate, then returned to NoClick.
                         </p>
                     </div>
 
-                    <div className="mt-6 text-center text-sm">
-                        <span className="text-muted-foreground">Don't have SSO? </span>
+                    <div className="mt-6 text-sm">
+                        <span className="text-foreground/60 dark:text-foreground/55">Don't have SSO? </span>
                         <Link
                             to={`/auth/login${nextParam}`}
-                            className="font-medium text-foreground/90 hover:text-foreground transition-colors"
+                            className={AUTH_LINK_CLASS}
                         >
                             Sign in with email
                         </Link>

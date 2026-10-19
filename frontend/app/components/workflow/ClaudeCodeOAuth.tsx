@@ -2,10 +2,13 @@
 // Handles the full OAuth flow: generate auth URL → user authenticates → paste code → exchange for tokens.
 
 import { useState, useCallback, useMemo, useRef } from 'react';
-import { ExternalLink, Loader2, Check, AlertCircle, ClipboardPaste } from 'lucide-react';
+import { ExternalLink, Loader2, Check, AlertCircle } from 'lucide-react';
+import { Button } from '~/components/ui/button';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { useAgentOAuthAnalytics } from '~/hooks/useAgentOAuthAnalytics';
 import { isPrimaryAgentCredentialKey } from '~/lib/agentCredentialModel';
+import type { AgentOAuthComponentProps } from './AgentOAuthConnect';
+import { SignInStarting } from './DeviceCodePanel';
 
 interface ClaudeCodeOAuthProps {
     credentialIds: Record<string, string>;
@@ -13,6 +16,8 @@ interface ClaudeCodeOAuthProps {
     onCredentialCreated: () => Promise<void>;
     // Transport override (default: socket); the public provide page passes an HTTP shim.
     sendEvent?: (event: any) => Promise<any>;
+    /** See AgentOAuthComponentProps.renderStart. */
+    renderStart?: AgentOAuthComponentProps['renderStart'];
 }
 
 interface OAuthState {
@@ -28,6 +33,7 @@ export function ClaudeCodeOAuth({
     onCredentialIdsChange,
     onCredentialCreated,
     sendEvent,
+    renderStart,
 }: ClaudeCodeOAuthProps) {
     const [state, setState] = useState<OAuthState>({ status: 'idle' });
     const [pastedCode, setPastedCode] = useState('');
@@ -126,92 +132,81 @@ export function ClaudeCodeOAuth({
     }, []);
 
     if (state.status === 'idle') {
+        const note = (
+            <>
+                {credentialId ? 'Your saved connection is selected. Reconnect only if it stopped working.' : 'For Claude Pro, Max, Teams, or Enterprise subscribers'}
+            </>
+        );
+        if (renderStart) return <>{renderStart(startFlow, note)}</>;
         return (
             <div className="space-y-1.5">
                 <button
                     onClick={startFlow}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-foreground/80 hover:text-foreground bg-muted dark:bg-zinc-800/50 hover:bg-accent border border-border dark:border-zinc-700 hover:border-muted-foreground/40 dark:hover:border-zinc-600 rounded-lg transition-all"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-foreground/80 hover:text-foreground bg-muted dark:bg-zinc-800/50 hover:bg-accent border border-border dark:border-zinc-700 hover:border-muted-foreground/40 dark:hover:border-zinc-600 rounded-full transition-all"
                 >
                     <ExternalLink className="h-3.5 w-3.5" />
                     {credentialId ? 'Reconnect selected Claude account' : 'Connect with Claude account'}
                 </button>
                 <p className="text-[11px] text-muted-foreground/70 dark:text-zinc-600 text-center">
-                    {credentialId ? 'Your saved connection is selected. Reconnect only if it stopped working.' : 'For Claude Pro, Max, Teams, or Enterprise subscribers'}
+                    {note}
                 </p>
             </div>
         );
     }
 
     if (state.status === 'loading') {
-        return (
-            <div className="flex items-center justify-center gap-2 px-3 py-3 text-xs text-muted-foreground bg-card/50 border border-border rounded-lg">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Preparing authentication...
-            </div>
-        );
+        return <SignInStarting />;
     }
 
     if (state.status === 'awaiting_code' || state.status === 'exchanging') {
+        const confirming = state.status === 'exchanging';
         return (
-            <div className="p-4 rounded-lg bg-card/50 border border-border space-y-3">
-                <div className="text-[11px] text-muted-foreground uppercase tracking-wider">
-                    Claude Authentication
-                </div>
-                <div className="space-y-2">
-                    <p className="text-xs text-muted-foreground">
-                        1. Authenticate in the browser window that opened
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                        2. Copy the authorization code shown after login
-                    </p>
-                    {state.authUrl && (
-                        <a
-                            href={state.authUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                        >
-                            Open authentication page <ExternalLink className="h-3 w-3" />
-                        </a>
-                    )}
-                </div>
-                <div className="space-y-2">
-                    <label className="block text-xs text-muted-foreground dark:text-zinc-500">Paste authorization code</label>
-                    <input
-                        type="text"
-                        value={pastedCode}
-                        onChange={(e) => setPastedCode(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter' && pastedCode.trim()) exchangeCode(); }}
-                        placeholder="Paste code here..."
-                        className="w-full px-3 py-2 text-sm bg-card border border-input rounded-md text-foreground/80 placeholder:text-[hsl(var(--placeholder))] focus:outline-none focus:border-ring/30 transition-colors font-mono"
-                        disabled={state.status === 'exchanging'}
-                    />
-                    <button
-                        onClick={exchangeCode}
-                        disabled={!pastedCode.trim() || state.status === 'exchanging'}
-                        className="w-full px-3 py-2 text-xs text-foreground bg-foreground/20 hover:bg-foreground/25 disabled:bg-muted disabled:text-muted-foreground/70 dark:disabled:text-zinc-600 disabled:cursor-not-allowed border border-border dark:border-zinc-700 rounded-md transition-all flex items-center justify-center gap-2"
-                    >
-                        {state.status === 'exchanging' ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+            <div className="space-y-3">
+                <p className="text-[14.5px] font-medium text-foreground">Finish signing in with Claude</p>
+                <ol className="list-decimal space-y-1 pl-4 text-[13px] text-muted-foreground">
+                    <li>
+                        Sign in on{' '}
+                        {state.authUrl ? (
+                            <a
+                                href={state.authUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+                            >
+                                Claude’s sign-in page
+                            </a>
                         ) : (
-                            <ClipboardPaste className="h-4 w-4" />
+                            'Claude’s sign-in page'
                         )}
-                        {state.status === 'exchanging' ? 'Confirming...' : 'Confirm Token'}
-                    </button>
-                </div>
+                        .
+                    </li>
+                    <li>Copy the code it shows you and paste it here.</li>
+                </ol>
+                <input
+                    type="text"
+                    value={pastedCode}
+                    onChange={(e) => setPastedCode(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' && pastedCode.trim()) exchangeCode(); }}
+                    placeholder="Paste the code"
+                    aria-label="Authorization code"
+                    className="h-10 w-full rounded-xl border border-border bg-transparent px-3 font-mono text-[13.5px] text-foreground outline-none transition-colors placeholder:font-sans placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1]"
+                    disabled={confirming}
+                />
                 {state.message && (
-                    <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400">
-                        <AlertCircle className="h-3 w-3 flex-shrink-0" />
-                        <span>{state.message}</span>
-                    </div>
+                    <p className="flex items-center gap-1.5 text-[13px] text-red-600 dark:text-red-400">
+                        <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                        {state.message}
+                    </p>
                 )}
-                <button
-                    onClick={cancel}
-                    disabled={state.status === 'exchanging'}
-                    className="w-full px-3 py-2 text-xs text-muted-foreground hover:text-foreground/80 bg-card hover:bg-accent border border-border rounded-lg transition-all"
-                >
-                    Cancel
-                </button>
+                <div className="flex items-center justify-end gap-1">
+                    <button type="button" onClick={cancel} disabled={confirming} className="inline-flex h-9 items-center rounded-full px-3 text-[13px] text-muted-foreground transition-colors hover:text-foreground">
+                        Cancel
+                    </button>
+                    <Button type="button" size="sm" onClick={exchangeCode} disabled={!pastedCode.trim() || confirming}>
+                        {confirming && <Loader2 className="h-4 w-4 animate-spin" />}
+                        {confirming ? 'Confirming…' : 'Confirm'}
+                    </Button>
+                </div>
             </div>
         );
     }
@@ -225,7 +220,7 @@ export function ClaudeCodeOAuth({
                 </div>
                 <button
                     onClick={() => { setAddingAccount(true); setState({ status: 'idle' }); }}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground dark:text-zinc-500 hover:text-foreground/80 bg-muted/50 dark:bg-zinc-900/50 hover:bg-accent dark:hover:bg-zinc-900 border border-border hover:border-muted-foreground/40 dark:hover:border-zinc-700 rounded-lg transition-all"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground dark:text-zinc-500 hover:text-foreground/80 bg-muted/50 dark:bg-zinc-900/50 hover:bg-accent dark:hover:bg-zinc-900 border border-border hover:border-muted-foreground/40 dark:hover:border-zinc-700 rounded-full transition-all"
                 >
                     <ExternalLink className="h-3.5 w-3.5" />
                     Connect another account

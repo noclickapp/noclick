@@ -104,7 +104,7 @@ async def test_video_output_emits_video_url_content_and_persists():
 
     with patch("nodes.agent_node.send_event", new=AsyncMock()) as mock_send:
         await AgentNode._emit_media_chat_result(
-            node, output, conversation_id="ck:wf:n1:k", model="veo-3"
+            node, output, conversation_id="ck:wf:n1:k", model="google/veo-3.1-fast"
         )
 
     event = mock_send.call_args.args[2]

@@ -10,6 +10,7 @@ both bounded and free of plumbing.
 """
 
 import json
+from datetime import datetime
 
 import pytest
 
@@ -234,5 +235,6 @@ async def test_persist_writes_the_trigger_record_on_the_user_event(monkeypatch):
     )
     args = executed[-1]
     [event] = args[4]
+    assert datetime.fromisoformat(event.pop("timestamp"))
     assert event == {"role": "user", "message": "Slack message from U1 in #support:\nhi", "trigger": record}
     assert args[5] == "#support"  # the conversation's title

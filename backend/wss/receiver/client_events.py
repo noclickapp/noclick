@@ -7,9 +7,9 @@ A more appropriate name would just be request_events.py since the source of the 
 can now be frontend or API given the addition of sandboxes.
 """
 from typing import Annotated, ClassVar, Optional, List, Dict, Any, Union, Literal
-from pydantic import BaseModel, Field, ConfigDict
-from wss.sender.schema import ContentItem
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 from utils.coordinator_memory import CoordinatorMemoryWrite
+from utils.phone_numbers import valid_e164
 
 
 # Base class for client events with TypeScript type generation support
@@ -33,29 +33,6 @@ class ClientEventBase(BaseModel):
         Return None to use the default interface name.
         """
         return None
-
-
-# Chat Events
-class ChatMessageContext(BaseModel):
-    """Context information sent with each chat message to ensure accurate workspace targeting."""
-    app_id: Optional[str] = Field(None, description="Current app ID the user is viewing/editing")
-    app_name: Optional[str] = Field(None, description="Current app name for display purposes")
-    workflow_id: Optional[str] = Field(None, description="Active workflow ID — stamped on the conversation row so the sidebar can later auto-restore the latest conversation per workflow")
-
-
-class ChatMessageRequest(ClientEventBase):
-    """Request sent when user sends a chat message"""
-    event_name: ClassVar[str] = "chat:message"
-    expects_response: ClassVar[bool] = False  # One-way event
-
-    conversation_id: Optional[str] = Field(
-        None,
-        description="Conversation session ID for associating messages with specific conversation context"
-    )
-    content: List[ContentItem] = Field(..., description="Sequence-sensitive content items")
-    model: str = Field(..., description="Model to use for this request (e.g., 'gpt-4o', 'claude-3-sonnet')")
-    env: Optional[Dict[str, str]] = Field(None, description="Environment variables for model configuration (e.g., API keys)")
-    context: Optional[ChatMessageContext] = Field(None, description="Message context including current app info for accurate cwd targeting")
 
 
 # YJS Sync Events
@@ -97,16 +74,6 @@ class AgentRunCommandRequest(ClientEventBase):
     command: str = Field(..., description="Bash command to execute")
     cwd: Optional[str] = Field(None, description="Working directory for the command")
     timeout: Optional[int] = Field(None, description="Command timeout in seconds")
-
-
-class AgentSetCwdRequest(ClientEventBase):
-    """Request to update the agent's working directory"""
-    event_name: ClassVar[str] = "agent:set:cwd"
-    path: str = Field(..., description="Absolute path within the mounted workspace")
-    conversation_id: Optional[str] = Field(None, description="Conversation ID to target specific agent (defaults to sid)")
-    app_id: Optional[str] = Field(None, description="App ID if working within an app context")
-    app_name: Optional[str] = Field(None, description="App name if working within an app context")
-    expects_response: ClassVar[bool] = False
 
 
 class AgentPauseRequest(ClientEventBase):
@@ -301,6 +268,8 @@ class PhoneUnlinkRequest(ClientEventBase):
 class CoordinatorOpenRequest(ClientEventBase):
     """Get the account's coordinator conversation id"""
     event_name: ClassVar[str] = "coordinator:open"
+    timezone: Optional[str] = Field(None, max_length=64,
+                                    description="The browser's IANA timezone: where the owner is opening the chat")
 
 
 class CoordinatorReference(BaseModel):
@@ -364,6 +333,23 @@ class CoordinatorMemoryDeleteRequest(ClientEventBase):
     event_name: ClassVar[str] = "coordinator:memories:delete"
     memory_id: str = Field(min_length=36, max_length=36)
     expected_version: int = Field(ge=1)
+
+
+class CoordinatorEmailEnsureRequest(ClientEventBase):
+    """Get the coordinator's email address, claiming a readable one the first time"""
+    event_name: ClassVar[str] = "coordinator:email:ensure"
+
+
+class CoordinatorEmailSetRequest(ClientEventBase):
+    """Rename the coordinator's email address"""
+    event_name: ClassVar[str] = "coordinator:email:set"
+    name: str = Field(min_length=1, max_length=64, description="The part before the @")
+
+
+class CoordinatorEmailInboundRequest(ClientEventBase):
+    """Take mail to the coordinator's email address, or ignore it (the address stays reserved)"""
+    event_name: ClassVar[str] = "coordinator:email:inbound"
+    on: bool = Field(..., description="True to take mail from the owner's address, false to ignore all mail to it")
 
 
 class CoordinatorArrivalRequest(ClientEventBase):
@@ -570,6 +556,25 @@ class UsageLogsRequest(ClientEventBase):
     search: Optional[str] = Field(None, description="Case-insensitive substring filter on usage_subtype (model/service name)")
     before: Optional[str] = Field(None, description="Pagination cursor: return events strictly older than this ISO timestamp (the last row of the previous page)")
     organization_id: Optional[str] = Field(None, description="Organization workspace to scope to; omit/null for personal (events with organization_id IS NULL)")
+
+
+class UsagePageRequest(ClientEventBase):
+    """The usage page in one read: its period, the charges grouped every way it
+    breaks them down, the names for what they were for, and the first page of
+    charges. The money behind it where the deployment bills."""
+    event_name: ClassVar[str] = "usage:page"
+
+
+class UsageChargesRequest(ClientEventBase):
+    """A page of the signed-in account's charges, newest first."""
+    event_name: ClassVar[str] = "usage:charges"
+
+    start: str = Field(..., description="Period start (ISO), as usage:page returned it")
+    end: str = Field(..., description="Period end (ISO), exclusive")
+    keys: Optional[List[str]] = Field(None, description="Only charges in these groups (usage:page's `k`); omit for all")
+    day: Optional[str] = Field(None, description="Only charges on this UTC day (YYYY-MM-DD)")
+    cursor: Optional[str] = Field(None, description="The previous page's `next`")
+    limit: int = Field(50, ge=1, le=500, description="Charges per page")
 
 
 # Debug Events
@@ -857,6 +862,14 @@ class WorkflowCollabTokenRequest(ClientEventBase):
     event_name: ClassVar[str] = "workflow:collab_token"
 
     workflow_id: str = Field(..., description="UUID of the workflow to get collaboration token for")
+
+
+class RelayUserTokenRequest(ClientEventBase):
+    """Request a short-lived token for the signed-in user's own relay room.
+
+    A relay viewer sends it as its first frame; it opens that user's room only.
+    """
+    event_name: ClassVar[str] = "relay:user_token"
 
 
 class WorkflowNodeConfigSchemaRequest(ClientEventBase):
@@ -3348,21 +3361,147 @@ class CloudflareOAuthValidateRequest(ClientEventBase):
     credential_id: str = Field(..., description="UUID of the credential to validate")
 
 
+PhoneNumberType = Literal["local", "mobile", "toll_free", "national", "shared_cost"]
+
+
+class PhoneNumberCoverageRequest(ClientEventBase):
+    """The countries numbers are for sale in, and the kinds of number sold in each."""
+    event_name: ClassVar[str] = "phone_number:coverage"
+
+
+class PhoneNumberPlacesRequest(ClientEventBase):
+    """The cities (area codes in North America) where numbers of a kind are for sale in a country."""
+    event_name: ClassVar[str] = "phone_number:places"
+
+    country: str = Field(..., description="ISO 3166 alpha-2 country code")
+    number_type: PhoneNumberType = Field("local", description="The kind of number")
+
+
 class PhoneNumberSearchRequest(ClientEventBase):
-    """Numbers available to buy for a workflow (voice-capable, local)."""
+    """Numbers available to buy for a workflow, each with its price for the account."""
     event_name: ClassVar[str] = "phone_number:search"
 
-    country: str = Field("US", description="ISO country code; US only at launch")
-    area_code: Optional[str] = Field(None, description="Optional area code to search within")
+    country: str = Field("US", description="ISO 3166 alpha-2 country code")
+    number_type: PhoneNumberType = Field("local", description="The kind of number")
+    area_code: Optional[str] = Field(None, description="Area code (national destination code) to search within")
+    locality: Optional[str] = Field(None, description="City the number is local to")
+    region: Optional[str] = Field(None, description="State, province or region the number is in")
     contains: Optional[str] = Field(
         None, description="Optional pattern the number must contain: digits, letters (keypad-mapped) and * for any digit",
+    )
+    starts_with: Optional[str] = Field(None, description="Digits the national number starts with")
+    ends_with: Optional[str] = Field(None, description="Digits the number ends with")
+    features: Literal["voice", "voice_sms"] = Field(
+        "voice", description="What every number must do: take calls (voice), or calls and texts (voice_sms)",
     )
     limit: int = Field(10, ge=1, le=20, description="How many numbers to return")
 
 
+# What a purchase answers, by requirement id (requirements.items[].id).
+ANSWERS = ("What the number's country asks, by requirement id (requirements.items[].id): the text a textual "
+           "requirement takes (one of its values where it lists them), the id of the document a document requirement "
+           "takes (as its upload returned it)")
+ANSWER_MAX = 1000
+
+
+def requirement_answers(value: Dict[str, str]) -> Dict[str, str]:
+    """Answers trimmed, each to a requirement id and at most ``ANSWER_MAX`` characters."""
+    if len(value) > 50:
+        raise ValueError("Answer at most 50 requirements.")
+    out = {}
+    for requirement, answer in value.items():
+        answer = (answer or "").strip()
+        if not 1 <= len(requirement) <= 64 or len(answer) > ANSWER_MAX:
+            raise ValueError(f"An answer is up to {ANSWER_MAX} characters, keyed by its requirement's id.")
+        out[requirement] = answer
+    return out
+
+
+class PhoneNumberHolder(BaseModel):
+    """Who a number is registered to, where its country asks who holds it (a requirement's kind is address or
+    contact)."""
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(..., min_length=3, max_length=100, pattern=r"\S+\s+\S+", description="First and last name")
+    business_name: Optional[str] = Field(None, max_length=100, description="The business, for a business's number")
+    street: str = Field(..., min_length=1, max_length=100)
+    street2: Optional[str] = Field(None, max_length=100)
+    city: str = Field(..., min_length=1, max_length=100)
+    region: Optional[str] = Field(None, max_length=100, description="State, province or county, where there is one")
+    postal_code: str = Field(..., min_length=1, max_length=20)
+    country: str = Field(..., pattern=r"^[A-Z]{2}$", description="ISO 3166 alpha-2 country code")
+    phone: Optional[str] = Field(None, max_length=32, description=(
+        "A phone to contact the holder on, in E.164 (+…): required where one of the number's requirements is a "
+        "contact requirement (requirements.items[].kind is contact)"))
+
+    @field_validator("phone")
+    @classmethod
+    def _e164(cls, value: Optional[str]) -> Optional[str]:
+        if value is None or not value.strip():
+            return None
+        e164 = valid_e164(value)
+        if e164 is None:
+            raise ValueError("A contact phone is a full international number, like +31 6 1234 5678.")
+        return e164
+
+
 class PhoneNumberBuyRequest(ClientEventBase):
-    """Buy a number and mint the phone_number credential that IS the number."""
+    """Buy a number and mint the phone_number credential that IS the number, at the price the person was shown."""
     event_name: ClassVar[str] = "phone_number:buy"
 
     phone_number: str = Field(..., description="The E.164 number picked from a search")
+    country: str = Field("US", description="The number's country, as the search gave it")
+    number_type: PhoneNumberType = Field("local", description="The number's kind, as the search gave it")
+    # Older clients send neither: the number is then bought at its price for the account, read here.
+    monthly_credits: Optional[float] = Field(None, ge=0,
+                                             description="Its monthly price the person agreed to, in credits")
+    upfront_credits: Optional[float] = Field(None, ge=0,
+                                             description="Its one-time price the person agreed to, in credits")
+    holder: Optional[PhoneNumberHolder] = Field(None, description="Where the number's country asks who holds it")
+    answers: Dict[str, str] = Field(default_factory=dict, description=ANSWERS)
     credential_name: Optional[str] = Field(None, description="Display name for the credential")
+
+    @field_validator("answers")
+    @classmethod
+    def _answers(cls, value: Dict[str, str]) -> Dict[str, str]:
+        return requirement_answers(value)
+
+
+class PhoneNumberDocumentsRequest(ClientEventBase):
+    """The account's documents that can be filed for a number's requirements again."""
+    event_name: ClassVar[str] = "phone_number:documents"
+
+
+class PhoneNumberDocumentUploadRequest(ClientEventBase):
+    """Where to upload a document for one of a country's requirements: a short-lived link the file is POSTed to."""
+    event_name: ClassVar[str] = "phone_number:document_upload"
+
+    country: str = Field(..., pattern=r"^[A-Z]{2}$", description="ISO 3166 alpha-2 country code")
+    number_type: PhoneNumberType = Field("local", description="The kind of number")
+    requirement_id: str = Field(..., min_length=1, max_length=64, description="The document requirement's id")
+
+
+class PhoneNumberDocumentRemoveRequest(ClientEventBase):
+    """Remove one of the account's documents."""
+    event_name: ClassVar[str] = "phone_number:document_remove"
+
+    document_id: str = Field(..., min_length=1, max_length=64)
+
+
+class PhoneNumberOrdersRequest(ClientEventBase):
+    """The account's numbers the carrier is reviewing, or sent back."""
+    event_name: ClassVar[str] = "phone_number:orders"
+
+
+class PhoneNumberResubmitRequest(ClientEventBase):
+    """File corrected answers for a number order the carrier sent back."""
+    event_name: ClassVar[str] = "phone_number:resubmit"
+
+    order_id: str = Field(..., min_length=1, max_length=64)
+    holder: Optional[PhoneNumberHolder] = Field(None, description="Where the number's country asks who holds it")
+    answers: Dict[str, str] = Field(default_factory=dict, description=ANSWERS)
+
+    @field_validator("answers")
+    @classmethod
+    def _answers(cls, value: Dict[str, str]) -> Dict[str, str]:
+        return requirement_answers(value)

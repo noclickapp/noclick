@@ -6,16 +6,9 @@
  * with optional warning icon and item name highlighting.
  */
 
-import { AlertTriangle } from 'lucide-react';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-} from '~/components/ui/dialog';
-import { Button } from '~/components/ui/button';
-import { cn } from '~/lib/utils';
+import { Trash2 } from 'lucide-react';
+import { ShellDialog } from '~/components/shell/ShellDialog';
+import { BUTTON_DANGER, BUTTON_GHOST } from '~/components/shell/buttons';
 
 interface DeleteConfirmPopupProps {
     /** The ID of the item to delete (optional - some items don't need IDs) */
@@ -65,11 +58,10 @@ export function DeleteConfirmPopup({
     subText,
     dialogClassName,
 }: DeleteConfirmPopupProps) {
-    const titleText = title ?? (softDelete ? 'Move to Trash' : `Delete ${itemType}`);
-    const confirmText = confirmLabel ?? (softDelete ? 'Move to Trash' : `Delete ${itemType}`);
-    const subTextContent = subText ?? (softDelete
-        ? 'You can restore this workflow within 30 days.'
-        : 'This action cannot be undone. All data will be permanently removed.');
+    const noun = itemType.toLowerCase();
+    const titleText = title ?? (softDelete ? 'Move to Trash?' : `Delete ${noun}?`);
+    const confirmText = confirmLabel ?? (softDelete ? 'Move to Trash' : 'Delete');
+    const subTextContent = subText ?? (softDelete ? 'You can restore it from Trash for 30 days.' : 'This can’t be undone.');
     const handleConfirm = () => {
         // Close dialog first to prevent duplicate calls from React Strict Mode
         onOpenChange(false);
@@ -85,66 +77,43 @@ export function DeleteConfirmPopup({
         defaultMessage = (
             <>
                 Are you sure you want to delete{' '}
-                <span className="font-semibold text-foreground">{itemCount} {itemType.toLowerCase()}{itemCount > 1 ? 's' : ''}</span>?
+                <span className="font-medium text-foreground">{itemCount} {noun}{itemCount > 1 ? 's' : ''}</span>?
             </>
         );
     } else if (itemName) {
         defaultMessage = (
             <>
                 Are you sure you want to delete{' '}
-                <span className="font-semibold text-foreground">"{itemName}"</span>?
+                <span className="font-medium text-foreground">“{itemName}”</span>?
             </>
         );
+    } else if (softDelete) {
+        defaultMessage = `This ${noun} moves to Trash.`;
     } else {
-        defaultMessage = `Are you sure you want to delete this ${itemType.toLowerCase()}?`;
+        defaultMessage = `Are you sure you want to delete this ${noun}?`;
     }
 
     return (
-        <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className={cn("bg-sunken border-border text-foreground max-w-md p-6", dialogClassName)}>
-                <DialogHeader className="pb-2">
-                    <DialogTitle className="text-xl text-foreground flex items-center gap-2.5">
-                        {showWarningIcon && (
-                            <div className={cn("p-2 rounded-full", softDelete ? "bg-amber-500/10" : "bg-red-500/10")}>
-                                <AlertTriangle className={cn("h-5 w-5", softDelete ? "text-amber-600 dark:text-amber-400" : "text-red-600 dark:text-red-400")} />
-                            </div>
-                        )}
-                        {titleText}
-                    </DialogTitle>
-                    <DialogDescription className="text-[15px] text-foreground/80 leading-relaxed pt-4">
-                        {defaultMessage}
-                    </DialogDescription>
-                </DialogHeader>
-
-                <div className="py-2 pb-4">
-                    <p className="text-sm text-muted-foreground dark:text-zinc-500 leading-relaxed">
-                        {subTextContent}
-                    </p>
-                </div>
-
-                <div className="flex justify-between pt-4">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => onOpenChange(false)}
-                        className="h-10 bg-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] border border-border hover:border-muted-foreground/40 dark:hover:border-zinc-700 rounded-md"
-                    >
+        <ShellDialog
+            open={isOpen}
+            onOpenChange={onOpenChange}
+            mark={showWarningIcon ? <Trash2 className="h-5 w-5" strokeWidth={1.75} /> : undefined}
+            tone={softDelete ? 'neutral' : 'danger'}
+            title={titleText}
+            className={dialogClassName}
+            footer={
+                <>
+                    <button type="button" onClick={() => onOpenChange(false)} className={BUTTON_GHOST}>
                         Cancel
-                    </Button>
-                    <Button
-                        type="button"
-                        onClick={handleConfirm}
-                        className={cn(
-                            "h-10 text-white shadow-sm font-medium min-w-[100px] rounded-md shadow-[0_2.5px_0_0_#991b1b] hover:shadow-[0_1px_0_0_#991b1b] hover:translate-y-[1.5px] active:shadow-none active:translate-y-[2.5px] transition-all duration-100",
-                            softDelete
-                                ? "bg-amber-600 hover:bg-amber-700"
-                                : "bg-red-600 hover:bg-red-700"
-                        )}
-                    >
+                    </button>
+                    <button type="button" onClick={handleConfirm} className={BUTTON_DANGER}>
                         {confirmText}
-                    </Button>
-                </div>
-            </DialogContent>
-        </Dialog>
+                    </button>
+                </>
+            }
+        >
+            <p className="text-[14px] leading-relaxed text-foreground/85">{defaultMessage}</p>
+            {subTextContent && <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">{subTextContent}</p>}
+        </ShellDialog>
     );
 }

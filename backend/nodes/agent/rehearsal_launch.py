@@ -152,6 +152,14 @@ async def launch_rehearsal(
     billing_user = await _usage_tracker.resolve_billing_user_id(
         user_id, str(_org) if _org else None
     )
+    # The monthly cap first: adding funds wouldn't lift it. Unread, it refuses like a failed balance read.
+    try:
+        capped = await _usage_tracker.spend_cap_refusal(billing_user)
+    except Exception:
+        logger.warning("[Rehearsal] spending cap read failed for %s", billing_user, exc_info=True)
+        return None, "NoClick couldn't check this account's monthly spending cap just now. Try again in a moment."
+    if capped is not None:
+        return None, str(capped)
     remaining = await _usage_tracker.check_credit_balance(billing_user)
     if remaining is not None and remaining <= 0:
         from billing.exceptions import insufficient_credits_message

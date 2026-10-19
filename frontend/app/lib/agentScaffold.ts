@@ -84,13 +84,15 @@ export interface ScaffoldBlob {
     edges: ScaffoldEdge[];
 }
 
-/** The pair-page wizard's pre-auth choices, carried through the sign-in
-    round-trip inside the stashed intent. Present ⇒ the dashboard consumer
-    opens the full-screen Setup takeover and does NOT auto-run the AI builder
-    (allowlists are already baked from the chosen presets). */
+/** The page's pre-auth choices, carried through the sign-in round-trip inside
+    the stashed intent. Present ⇒ the chat finishes the setup in its thread and
+    the AI builder stays out of it (allowlists are already baked from the
+    chosen presets). */
 export interface ScaffoldSetupIntent {
     /** Runtime supplied by the agent setup wizard. */
     runtime: 'cloud';
+    /** Harness slug the visitor came from — the setup card leads with that agent. */
+    harnessSlug?: string;
     /** Chosen preset id per provider node type — funnel analytics only. */
     presetIds?: Record<string, string>;
 }

@@ -219,11 +219,13 @@ class CoordinatorWakeupRepo:
             event["id"], event["attempt_id"],
         ) is not None
 
-    async def finish(self, event, text, *, skipped=False, reschedule=True, delivery=None):
+    async def finish(self, event, text, *, skipped=False, reschedule=True, delivery=None, tool_calls=None):
         # An intentional silent completion is terminal, not an empty outbox
         # message. Acknowledge its source too, so reconciliation cannot requeue it.
         silent = delivery is not None and not text
         payload = {"delivery": delivery} if delivery is not None else {}
+        if tool_calls:
+            payload["tool_calls"] = tool_calls
         if not reschedule:
             payload["stop_schedule"] = True
         async with self.pool.acquire() as conn, conn.transaction():
@@ -295,11 +297,13 @@ class CoordinatorWakeupRepo:
                 if row is None:
                     return None
                 about = {"signal": row["context"]["signal"]} if row["context"].get("signal") else {}
+                if row["payload"].get("tool_calls"):
+                    about["tool_calls"] = row["payload"]["tool_calls"]
                 event = notification_event(row["response"], f"coordinator-wakeup:{row['id']}",
                                            coordinator_wakeup_id=str(row["id"]), **about)
-                await conn.execute(
-                    ConversationRepo._UPSERT_CHAT_EVENT_SQL,
-                    f"coordinator:{row['user_id']}", row["user_id"], None, "__coordinator__", [event], "Coordinator", None,
+                await ConversationRepo.write_chat_event(
+                    conn, f"coordinator:{row['user_id']}", row["user_id"], None, "__coordinator__", [event],
+                    "Coordinator", None,
                 )
         return {**dict(row), "notification": event}
 

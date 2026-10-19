@@ -34,3 +34,15 @@ export const OAuthAuthorizeProvider = OAuthAuthorizeContext.Provider;
 export function useOAuthAuthorizeParams(): Record<string, string> {
     return useContext(OAuthAuthorizeContext);
 }
+
+// A page that must sign no one in (the landing's demo of a connect link) answers a sign-in itself: given the
+// provider, it resolves to the credential a sign-in would have made, and no consent window opens. Unset everywhere real.
+export type OAuthSignInStandIn = (provider: string) => Promise<{ credentialId: string; credentialName: string; credentialType: string; email?: string }>;
+
+const OAuthSignInStandInContext = createContext<OAuthSignInStandIn | null>(null);
+
+export const OAuthSignInStandInProvider = OAuthSignInStandInContext.Provider;
+
+export function useOAuthSignInStandIn(): OAuthSignInStandIn | null {
+    return useContext(OAuthSignInStandInContext);
+}

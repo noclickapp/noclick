@@ -34,6 +34,7 @@ from wss.sender.responses import (
     RehearsalScenariosResponse,
     WorkflowNodeLoadValueResponse,
     WorkflowCollabTokenResponse,
+    RelayUserTokenResponse,
     FieldOption,
 )
 from wss.receiver.client_events import (
@@ -48,6 +49,7 @@ from wss.receiver.client_events import (
     WorkflowExecutionListRequest,
     WorkflowExecutionCountsRequest,
     WorkflowCollabTokenRequest,
+    RelayUserTokenRequest,
     WorkflowNodeConfigSchemaRequest,
     WorkflowNodeValidateConfigRequest,
     WorkflowNodeEvaluateExpressionRequest,
@@ -70,7 +72,9 @@ from utils.workflow_resource_manager import (
     cleanup_nodes_resources, cleanup_workflow_operational_resources, cleanup_workflow_resources, restore_nodes_resources,
 )
 from utils.webhook_manager import WebhookManager
-from utils.access_control import check_resource_access, Permission
+from utils.access_control import check_resource_access, Permission, workflow_permission
+from utils.system_workflows import SYSTEM_KEY, refusal
+from utils.relay_tokens import mint_user_room_token
 from utils.slack import send_activity_notification_background, send_workflow_update_notification_background, extract_user_name
 from utils.analytics import log_activity_background
 from utils.analytics_events import Events
@@ -121,19 +125,67 @@ async def get_user_org_context(conn, user_id: str) -> Optional[str]:
     return str(row["organization_id"]) if row else None
 
 
+_CURRENT_ORG_CONTEXT = object()
 
-async def trash_workflow_as_owner(pool, workflow_id, user_id: str) -> Dict[str, Any]:
+
+async def create_workflow_as_user(pool, user_id: str, *, name: str, description: str,
+                                  workflow_data: Optional[Dict[str, Any]] = None,
+                                  organization_id: Any = _CURRENT_ORG_CONTEXT, capped: bool = True) -> Dict[str, Any]:
+    """Create a workflow (empty unless ``workflow_data`` is given) owned by
+    ``user_id`` in their current org context, or in ``organization_id`` when the
+    caller pins one (None = no org), shared with that org when there is one,
+    under the plan's workflow cap; refused, ``plans`` are the plans that lift
+    it. The builder's ``create_workflow`` op, build requests and the account
+    coordinator use it. A workflow a platform makes to run one of its own
+    objects on (``capped=False``) takes no slot of the cap."""
+    from billing.plan_limits import check_workflow_limit, get_user_tier_from_db, plans_lifting
+
+    async with pool.acquire() as conn:
+        if organization_id is _CURRENT_ORG_CONTEXT:
+            org_id = await get_user_org_context(conn, user_id)
+        else:
+            org_id = str(organization_id) if organization_id else None
+        if capped:
+            user_tier = await get_user_tier_from_db(conn, user_id)
+            can_create, limit_error = await check_workflow_limit(conn, user_id, user_tier)
+            if not can_create:
+                return {"error": limit_error, "plans": list(await plans_lifting(conn, user_id, "workflows"))}
+        repo = WorkflowRepo(pool)
+        workflow_id = await repo.create_workflow_builder(
+            conn,
+            name=name,
+            description=description,
+            owner_id=uuid.UUID(user_id),
+            organization_id=uuid.UUID(org_id) if org_id else None,
+            workflow_data=workflow_data or {"nodes": [], "edges": []},
+        )
+        if org_id:
+            await repo.insert_workflow_org_share(
+                conn,
+                workflow_id=workflow_id,
+                organization_id=uuid.UUID(org_id),
+                permission='edit',
+                shared_by=uuid.UUID(user_id),
+            )
+    return {"success": True, "workflow_id": str(workflow_id), "name": name}
+
+
+async def trash_workflow_as_owner(pool, workflow_id, user_id: str, *, allow_system: bool = False) -> Dict[str, Any]:
     """Move a workflow the user owns to the trash, restorable for 30 days:
     schedules and provider webhooks are torn down now, storage and node state
-    are kept for restore. The socket handler, MCP and the coordinator share it."""
+    are kept for restore. The socket handler, MCP and the coordinator share it.
+    A workflow NoClick runs itself goes only with what it runs (``allow_system``)."""
     try:
         wid = uuid.UUID(str(workflow_id))
     except (TypeError, ValueError):
         return {"success": False, "error": "Workflow not found"}
     repo = WorkflowRepo(pool)
     async with pool.acquire() as conn:
-        if not await repo.workflow_exists_for_owner(conn, wid, user_id):
-            return {"success": False, "error": "Workflow not found"}
+        system = await repo.owned_workflow_system(conn, wid, user_id)
+    if system is None:
+        return {"success": False, "error": "Workflow not found"}
+    if system and not allow_system:
+        return {"success": False, "error": refusal(system)}
     await cleanup_workflow_operational_resources(pool=pool, workflow_id=str(wid))
     async with pool.acquire() as conn:
         await repo.soft_delete_workflow(conn, wid, user_id)
@@ -188,6 +240,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
             "workflow:get_node_output": self.get_node_output,
             "workflow:get_agent_inputs": self.get_agent_inputs,
             "workflow:collab_token": self.get_collab_token,
+            "relay:user_token": self.get_relay_user_token,
             "workflow:node:get_config_schema": self.get_node_config_schema,
             "workflow:node:validate_config": self.validate_node_config,
             "workflow:node:evaluate_expression": self.evaluate_expression,
@@ -499,8 +552,9 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 # would silently re-acquire per method call, so this worked
                 # dedented outside the block; native asyncpg correctly
                 # invalidates conn after __aexit__, so it must be in-scope.
-                from billing.plan_limits import get_context_tier, get_limit
+                from billing.plan_limits import count_limit, get_context_tier
                 tier = await get_context_tier(conn, user_id)
+                cap = await count_limit(conn, user_id, tier, 'workflows')
 
             # Convert to WorkflowInfo objects
             workflows = []
@@ -532,7 +586,6 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
 
             # Enforce combined workflow cap: personal shown first, shared fills remaining slots
             hidden_shared_count = 0
-            cap = get_limit(tier, 'workflows')
             if cap is not None:
                 owned = [w for w in workflows if w.is_owner]
                 shared = [w for w in workflows if not w.is_owner]
@@ -683,7 +736,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 access = await check_resource_access(conn, user_id, "workflow", request.workflow_id)
                 if not access.has_access or access.permission not in (Permission.EDIT, Permission.OWNER):
                     await send_event(self.sio, sid, ResponseEvent(
-                        request_id=request.request_id, data={}, error="No edit access"))
+                        request_id=request.request_id, data={}, error=access.edit_refusal("No edit access")))
                     return
 
                 # Strip internal runtime fields that SDK clients should not write
@@ -874,7 +927,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                     await send_event(self.sio, sid, ResponseEvent(
                         request_id=request.request_id,
                         data={},
-                        error="You don't have permission to edit this workflow"
+                        error=access.edit_refusal("You don't have permission to edit this workflow")
                     ))
                     return
 
@@ -918,7 +971,9 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                     workflow_data=request.workflow_data,
                     permissions=request.permissions,
                     display_metadata=request.display_metadata,
-                    settings=request.settings,
+                    # Only NoClick marks a workflow it runs itself.
+                    settings={k: v for k, v in request.settings.items() if k != SYSTEM_KEY}
+                    if request.settings is not None else None,
                     expected_graph_version=request.expected_graph_version,
                 )
 
@@ -1859,6 +1914,35 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 ).model_dump()
             ))
 
+    async def get_relay_user_token(self, sid: str, request: RelayUserTokenRequest) -> None:
+        """Mint the token that lets this browser session into its own user's relay room."""
+        session = await self.sio.get_session(sid)
+        user_id = session.get('user_id') if session else None
+        # An API-key session acts for its key, not as the signed-in user, so it
+        # never gets the owner's whole event stream (the receiver refuses it
+        # this event too).
+        if not user_id or session.get('sdk_permissions') is not None:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id,
+                data=RelayUserTokenResponse(success=False, message="User not authenticated").model_dump(),
+            ))
+            return
+        try:
+            token, expires_at = mint_user_room_token(user_id)
+        except RuntimeError as e:
+            logger.error(f"Relay user token not minted: {e}")
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id,
+                data=RelayUserTokenResponse(success=False, message=str(e)).model_dump(),
+            ))
+            return
+        await send_event(self.sio, sid, ResponseEvent(
+            request_id=request.request_id,
+            data=RelayUserTokenResponse(
+                success=True, token=token, expires_at=expires_at, user_id=str(user_id),
+            ).model_dump(),
+        ))
+
     async def get_node_config_schema(self, sid: str, request: WorkflowNodeConfigSchemaRequest) -> None:
         """Get configuration schema for a node type (returns JSON Schema)"""
         try:
@@ -2102,13 +2186,22 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
             ))
             return
 
+        # A workflow lends its owner's credentials authorized for it only to
+        # someone who can edit it; anyone else proves what they hold themselves.
+        # (An organization grants only to its members: credential_access_predicate.)
+        workflow_id = request.workflow_id
+        if workflow_id:
+            async with get_native_pool().acquire() as conn:
+                if await workflow_permission(conn, user_id, workflow_id) not in (Permission.EDIT, Permission.OWNER):
+                    workflow_id = None
+
         result = await collect_evidence(
             node_type=request.node_type,
             credential_id=request.credential_id,
             user_id=user_id,
             pool=get_native_pool(),
             organization_id=request.organization_id,
-            workflow_id=request.workflow_id,
+            workflow_id=workflow_id,
         )
         node_class = NODE_REGISTRY.get(request.node_type)
         spec = getattr(node_class, 'connection_evidence', None)
@@ -2914,7 +3007,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 access = await check_resource_access(conn, user_id, "workflow", request.workflow_id)
                 if not access.has_access or access.permission not in (Permission.EDIT, Permission.OWNER):
                     await send_event(self.sio, sid, ResponseEvent(
-                        request_id=request.request_id, data={}, error="No edit access"))
+                        request_id=request.request_id, data={}, error=access.edit_refusal("No edit access")))
                     return
 
                 sm_node_id = await self._find_state_manager_node(conn, request.workflow_id, getattr(request, 'node_id', None))

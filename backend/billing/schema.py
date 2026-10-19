@@ -33,9 +33,9 @@ _CPD = CREDITS_PER_DOLLAR
 # Pydantic validation, the exception is swallowed by the warning catch
 # in _store_builder_usage_event, and no row is written — credits never
 # decrement and the chip stays at full balance.
-UsageType = Literal["ai_usage", "ai_builder", "ai_testing", "cpu_usage", "gpu_usage", "api_usage"]
+UsageType = Literal["ai_usage", "ai_builder", "ai_testing", "cpu_usage", "gpu_usage", "api_usage", "recurring"]
 UnitType = Literal["tokens", "cpu_hours", "gpu_hours", "requests", "mb", "gb_hours", "seconds", "images", "rows",
-                   "million_requests"]
+                   "million_requests", "hour", "month"]
 
 
 class UsageEventData(BaseModel):
@@ -63,6 +63,12 @@ class UsageEventData(BaseModel):
 
     # Organization billing
     organization_id: Optional[str] = Field(None, description="Organization ID if org workflow (charges org balance)")
+
+    # What the work cost its vendor, before any markup: a platform that sells at
+    # cost charges exactly this. ``fee_usd`` is anything that platform charged on
+    # top; it is set where the event is priced, never by a caller.
+    cost_usd: Optional[Decimal] = Field(None, ge=0, description="The vendor's cost in dollars")
+    fee_usd: Optional[Decimal] = Field(None, description="The platform fee in dollars, set by the ledger")
 
     # Optional fields (can be provided or auto-generated)
     id: Optional[str] = Field(None, description="UUID - can be provided or auto-generated")
@@ -99,28 +105,9 @@ class UsageEventData(BaseModel):
             raise ValueError("user_id must be a valid UUID string")
         return v
 
-    def to_db_params(
-        self,
-        include_id: bool = False,
-        topup_window_start=None,
-        now=None,
-    ) -> tuple:
-        """Convert to database parameters tuple for insertion.
-
-        Args:
-            include_id: If True, includes the id field at the beginning of the tuple.
-            topup_window_start: Lower bound of the CURRENT topup monthly window
-                (from plan_limits.topup_window_start), used by the INSERT to derive
-                this event's topup_paid from SUM(topup_paid in window) — so a yearly
-                topup's monthly reset is actually spendable. None when the user has
-                no active topup (the INSERT then allocates 0 to topup).
-            now: billing_now() — used for the coverage-expiry check and as the row's
-                created_at, so a dev Stripe test clock drives both. None → the INSERT
-                falls back to SQL NOW() (prod real clock).
-
-        The two trailing params are appended in the same order both INSERT
-        variants expect.
-        """
+    def to_db_params(self, include_id: bool = False) -> tuple:
+        """The event's fields as insert parameters, led by its id when
+        ``include_id``. A ledger appends whatever its own pools need."""
         base_params = (
             self.user_id,
             float(self.total_cost),  # Convert Decimal to float for database
@@ -131,8 +118,10 @@ class UsageEventData(BaseModel):
             self.user_resource,
             json.dumps(self.metadata) if self.metadata else '{}',
             self.organization_id,
+            None if self.cost_usd is None else float(self.cost_usd),
+            None if self.fee_usd is None else float(self.fee_usd),
         )
 
         if include_id and self.id:
-            return (self.id,) + base_params + (topup_window_start, now)
-        return base_params + (topup_window_start, now)
+            return (self.id,) + base_params
+        return base_params

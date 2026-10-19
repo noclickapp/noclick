@@ -22,6 +22,27 @@
       "type": "object"
     },
     "HardwareConfig": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "gpu_type": {
+                "const": "A10G"
+              }
+            },
+            "required": [
+              "gpu_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "gpu_count": {
+                "maximum": 4
+              }
+            }
+          }
+        }
+      ],
       "description": "Hardware configuration for the serverless function sandbox.",
       "properties": {
         "gpu_type": {
@@ -38,7 +59,7 @@
         },
         "gpu_count": {
           "default": 1,
-          "description": "Number of GPUs (only applies if GPU type is not 'CPU Only')",
+          "description": "Number of GPUs (only applies if GPU type is not 'CPU Only'). Up to 8, 4 for A10G.",
           "maximum": 8,
           "minimum": 1,
           "title": "GPU Count",
@@ -181,7 +202,7 @@
           "default": 300,
           "description": "Maximum execution time",
           "maximum": 3600,
-          "minimum": 1,
+          "minimum": 10,
           "title": "Timeout (seconds)",
           "type": "integer"
         },

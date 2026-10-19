@@ -5,7 +5,7 @@
 // it for the whole instance (the same store as Settings → Self-hosted) and
 // hands control back to the caller to retry what failed.
 import { useState } from 'react';
-import { ExternalLink } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { InstanceKeysSetRequest } from '~/types/socket-events.generated';
@@ -85,7 +85,7 @@ export function InstanceKeyPrompt({
                         className={INSTANCE_FORM.chip}
                     >
                         Get your {label} key
-                        <ExternalLink className="h-3.5 w-3.5" />
+                        <ArrowUpRight className="h-4 w-4" />
                     </a>
                 )}
                 <form

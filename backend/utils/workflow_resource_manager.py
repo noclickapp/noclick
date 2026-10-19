@@ -15,6 +15,19 @@ logger = logging.getLogger(__name__)
 RESOURCE_NODE_TYPES = {'trigger-webhook', 'trigger-cron'}
 
 
+async def _release_nodes(pool, workflow_id: str, node_ids: Optional[List[str]]) -> Dict[str, Any]:
+    """What a product keeps of these nodes (all of them: ``node_ids`` None) by id lets them go."""
+    from utils.capabilities import WORKFLOW_NODES_REMOVED, capability
+
+    release = capability(WORKFLOW_NODES_REMOVED)
+    if release is None:
+        return {'released': False}
+    try:
+        await release(pool, workflow_id, node_ids)
+        return {'released': True}
+    except Exception as e:
+        logger.exception(f"[WorkflowResourceManager] Failed to release removed nodes of workflow {workflow_id}")
+        return {'error': str(e)}
 
 
 async def cleanup_nodes_resources(
@@ -31,6 +44,7 @@ async def cleanup_nodes_resources(
     This includes:
     - Cron schedules (external Cloudflare scheduler)
     - Provider-side webhook deregistration (Stripe, Linear, …)
+    - What a product keeps of the nodes by id (``WORKFLOW_NODES_REMOVED``)
 
     ``old_nodes`` carries the deleted nodes' dicts (with config) when the caller
     has already overwritten the workflow blob — the canvas node-delete path saves
@@ -139,7 +153,7 @@ async def cleanup_nodes_resources(
     except Exception as e:
         logger.warning(f"[WorkflowResourceManager] Failed to cleanup managed workspace volumes for nodes: {e}")
         results['workspace_volumes'] = {'error': str(e)}
-
+    results['released'] = await _release_nodes(pool, workflow_id, node_ids)
 
     # Cleanup agent-chat conversations scoped to deleted nodes (soft-delete to
     # match the rest of the conversation lifecycle — the AgentChatBlock's
@@ -314,7 +328,7 @@ async def cleanup_workflow_resources(
     except Exception as e:
         logger.warning(f"[WorkflowResourceManager] Failed to cleanup managed workspace volumes: {e}")
         results['workspace_volumes'] = {'error': str(e)}
-
+    results['released'] = await _release_nodes(pool, workflow_id, None)
 
     return results
 
@@ -362,6 +376,9 @@ async def cleanup_workflow_operational_resources(
     except Exception as e:
         logger.warning(f"[WorkflowResourceManager] Failed to deregister external webhooks for workflow: {e}")
         results['webhooks'] = {'error': str(e)}
+
+    # Unlike its storage, what other products hold of it doesn't wait for a restore.
+    results['released'] = await _release_nodes(pool, workflow_id, None)
 
     return results
 

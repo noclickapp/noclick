@@ -1,23 +1,23 @@
 // Tracks the ACTUAL rendered theme — the `dark` class on <html> — not the
-// stored preference. Routes outside the /dashboard theme gate render dark even
-// with a light preference stored, so components that must match what's on
-// screen (canvas SVG colors, sticky tints, monochrome brand-icon inversion)
-// key off this. Re-renders on every toggle via a MutationObserver.
-import { useEffect, useState } from 'react';
+// stored preference. Routes outside the theme gate render dark even with a
+// light preference stored, so components that must match what's on screen
+// (canvas SVG colors, sticky tints, monochrome brand-icon inversion) key off
+// this. Re-renders on every toggle via a MutationObserver.
+//
+// The server renders dark, so hydration reads dark too (no mismatch on a
+// light page) and React re-renders with the real class straight after; a
+// component mounted later reads the class directly.
+import { useSyncExternalStore } from 'react';
+
+function subscribe(onChange: () => void): () => void {
+    const observer = new MutationObserver(onChange);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+}
+
+const isDarkNow = () => document.documentElement.classList.contains('dark');
+const isDarkOnServer = () => true;
 
 export function useIsDark(): boolean {
-    const [isDark, setIsDark] = useState(() =>
-        typeof document === 'undefined'
-            ? true
-            : document.documentElement.classList.contains('dark')
-    );
-    useEffect(() => {
-        const el = document.documentElement;
-        const update = () => setIsDark(el.classList.contains('dark'));
-        update();
-        const mo = new MutationObserver(update);
-        mo.observe(el, { attributes: true, attributeFilter: ['class'] });
-        return () => mo.disconnect();
-    }, []);
-    return isDark;
+    return useSyncExternalStore(subscribe, isDarkNow, isDarkOnServer);
 }

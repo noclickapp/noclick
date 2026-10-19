@@ -46,4 +46,23 @@ describe('builder snapshots', () => {
         unmount();
         update.mockRestore();
     });
+
+    // The builder bills its work to the account the workflow bills to, which it reads from here.
+    it.each(['edit', 'autofill'] as const)('%s names the workflow it works on', async (mode) => {
+        const node = createWorkflowNode('agent', 'agent', { x: 0, y: 0 }, { message: 'Summarise the inbox' });
+        const { result, unmount } = renderHook(() => useCanvasWorkflowEdit({
+            workflowId: 'workflow-7', currentNodes: [node], currentEdges: [],
+            onNodesChange: vi.fn(), onEdgesChange: vi.fn(),
+        }));
+        await act(async () => {
+            if (mode === 'edit') await result.current.startEdit('Change the threshold');
+            else await result.current.startAutofill('agent', 'fields');
+        });
+        const request = vi.mocked(sendEventAsync).mock.calls.at(-1)?.[0] as unknown as {
+            event_name: string; current_graph: { workflow_id?: string };
+        };
+        expect(request.event_name).toBe(mode === 'edit' ? 'workflow:builder:edit' : 'workflow:builder:autofill');
+        expect(request.current_graph.workflow_id).toBe('workflow-7');
+        unmount();
+    });
 });

@@ -3,31 +3,15 @@
  * Used by NodeCredentials for schema parsing and credentialAutoSelect for auto-selection logic.
  */
 
-// IMPORTANT: do NOT import AVAILABLE_NODES at module top-level — that pulls in the
-// entire 92-node-component registry, which transitively re-enters this file via the
-// FieldRenderer → credentialTypes chain and triggers a TDZ error during lazy loads
-// of individual node files. Resolve it dynamically inside the function instead.
 import type { ComponentType, CSSProperties } from 'react';
 import {
     CREDENTIAL_TYPE_MAP,
     getCredentialTypeFromSchemaTitle,
 } from './credentialTypeMap';
-import { getNodeCredentialInfo } from '~/utils/nodeSchemas';
+import { fixWordCasing } from './credentialLabels';
+import { getNodeIconData } from '~/lib/nodeIconRegistry';
+import { serializedIconComponent } from '~/components/shared/SerializedIcon';
 type ServiceIconType = ComponentType<{ className?: string; style?: CSSProperties }>;
-type AvailableNode = { type: string; label: string; Icon: ServiceIconType; iconColor?: string };
-let _availableNodesCache: AvailableNode[] | null = null;
-let _loadInflight: Promise<void> | null = null;
-function ensureAvailableNodes(): Promise<void> {
-    if (_availableNodesCache) return Promise.resolve();
-    if (_loadInflight) return _loadInflight;
-    _loadInflight = import('~/components/workflow/nodes/nodeRegistry').then((m) => {
-        // Cast through unknown: NodeDefinition.Icon is a wider union than the
-        // className-only component type we expose, but every variant renders the
-        // same way.
-        _availableNodesCache = m.AVAILABLE_NODES as unknown as AvailableNode[];
-    });
-    return _loadInflight;
-}
 
 // CREDENTIAL_TYPE_MAP + getCredentialTypeFromSchemaTitle live in a leaf module
 // so nodeSchemas.ts can read the lookup without importing this file — the two
@@ -61,17 +45,14 @@ export function getSchemaTitleFromCredentialType(credentialType: string): string
     return null;
 }
 
-const ABBREVIATIONS: Record<string, string> = {
-    oauth: 'OAuth', api: 'API', pat: 'PAT', url: 'URL',
-    acl: 'ACL', rss: 'RSS', rest: 'REST',
-};
-
-/** Convert DB credential type strings (e.g. `google_sheets_oauth`) to friendly labels (e.g. `Google Sheets OAuth`). */
+/** Convert DB credential type strings (e.g. `github_pat`) to friendly labels (e.g. `GitHub PAT`). */
 export function formatCredentialTypeLabel(dbType: string): string {
-    return dbType
-        .split('_')
-        .map(w => ABBREVIATIONS[w] || (w.charAt(0).toUpperCase() + w.slice(1)))
-        .join(' ');
+    return fixWordCasing(
+        dbType
+            .split('_')
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ')
+    );
 }
 
 /** All unique DB credential type values, for use in searchable dropdowns. */
@@ -101,26 +82,21 @@ export interface ServiceCredentialOption {
 
 let _serviceCredentialCache: ServiceCredentialOption[] | null = null;
 
-/** Returns a list of services that require credentials, derived from node schemas.
- *  Each entry maps a node type to all credential types it supports.
- *  First call returns [] while it kicks off the async registry import; subsequent calls
- *  (after the registry has resolved) return the populated list. */
+/** Returns a list of services that require credentials: each node type with the credential types it accepts, from
+ *  the serialized node catalog the dashboard loader hands over (lib/nodeIconRegistry), so listing services never
+ *  loads the node registry or the schemas. Empty until that catalog is set. */
 export function getServiceCredentialOptions(): ServiceCredentialOption[] {
     if (_serviceCredentialCache) return _serviceCredentialCache;
-    if (!_availableNodesCache) {
-        // Trigger lazy load; the next call (after promise resolves) will populate.
-        void ensureAvailableNodes();
-        return [];
-    }
 
     const options: ServiceCredentialOption[] = [];
     const seenPrimaryTypes = new Set<string>();
 
-    for (const node of _availableNodesCache) {
-        const credInfo = getNodeCredentialInfo(node.type);
-        if (!credInfo || credInfo.acceptedTypes.length === 0) continue;
+    // The catalog lists nodes in the registry's order, so the first node to claim a primary type keeps it.
+    for (const node of Object.values(getNodeIconData())) {
+        const acceptedTypes = node.acceptedCredentialTypes;
+        if (!acceptedTypes?.length) continue;
 
-        const primaryType = credInfo.acceptedTypes[0];
+        const primaryType = acceptedTypes[0];
         if (seenPrimaryTypes.has(primaryType)) continue;
         seenPrimaryTypes.add(primaryType);
 
@@ -128,12 +104,13 @@ export function getServiceCredentialOptions(): ServiceCredentialOption[] {
             value: node.type,
             label: node.label,
             primaryCredentialType: primaryType,
-            acceptedCredentialTypes: credInfo.acceptedTypes,
-            Icon: node.Icon,
+            acceptedCredentialTypes: acceptedTypes,
+            Icon: serializedIconComponent(node.iconHtml),
             iconColor: node.iconColor,
         });
     }
 
+    if (!options.length) return options;
     options.sort((a, b) => a.label.localeCompare(b.label));
     _serviceCredentialCache = options;
     return options;

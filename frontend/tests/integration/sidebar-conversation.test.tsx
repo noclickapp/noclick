@@ -18,7 +18,7 @@
 // failing test if our resolver has a real race.
 
 import { afterEach, describe, expect, test } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { installMockSocket, MockSocket } from './helpers/mockSocket';
 import { useSidebarConversation } from '~/hooks/useSidebarConversation';
 import { activeGenStore } from '~/lib/activeGenStore';
@@ -605,5 +605,44 @@ describe('useSidebarConversation', () => {
         // That second case is documented behavior (BE lookup is the
         // source of truth on workflow reopen).
         expect(result.current.conversationId).toBe('conv-Picked');
+    });
+
+    test('a chat the person starts while the workflow’s chat is looked up stays theirs', async () => {
+        const socket = setup(); // nothing answers the lookup until the test does
+        const { result } = renderSidebar('wf-A');
+        await waitFor(() => expect(result.current.resolving).toBe(true));
+        act(() => result.current.startFreshConversation());
+        const theirs = result.current.conversationId;
+        expect(result.current.resolving).toBe(false);
+        const lookup = socket.expectSent('conversation:get_latest_for_workflow');
+        act(() => {
+            socket.serverEmit('response', {
+                request_id: (lookup.data as { request_id: string }).request_id,
+                data: { workflow_id: 'wf-A', conversation_id: 'conv-A', has_user_messages: true, has_pending_ask: false, active_generation_id: null },
+            });
+        });
+        await new Promise((r) => setTimeout(r, 20));
+        expect(result.current.conversationId).toBe(theirs);
+    });
+
+    test('a lookup that fails says so instead of opening a new chat, and is tried again on retry', async () => {
+        const socket = setup();
+        const { result } = renderSidebar('wf-A');
+        await waitFor(() => expect(result.current.resolving).toBe(true));
+        const lookup = socket.expectSent('conversation:get_latest_for_workflow');
+        act(() => {
+            socket.serverEmit('response', {
+                request_id: (lookup.data as { request_id: string }).request_id,
+                data: { workflow_id: 'wf-A', conversation_id: null, has_user_messages: false, has_pending_ask: false, active_generation_id: null },
+                error: "Could not look up this automation's chat",
+            });
+        });
+        await waitFor(() => expect(result.current.error).toBe("Could not look up this automation's chat"));
+        expect(result.current.resolving).toBe(false);
+
+        mockBELookups(socket, { 'wf-A': 'conv-A' });
+        act(() => result.current.retry());
+        await waitFor(() => expect(result.current.conversationId).toBe('conv-A'));
+        expect(result.current.error).toBeUndefined();
     });
 });

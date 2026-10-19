@@ -38,4 +38,5 @@ async def emit_notification(sio, user_id, conversation_id, event):
     await send_event(sio, "", ChatMessageEvent(
         conversation_id=conversation_id, message=event["message"], finished=True,
         turn_id=event["turn_id"], notification=True, signal=event.get("signal"), setup=event.get("setup"),
+        tool_calls=event.get("tool_calls"),
     ), user_id=user_id)

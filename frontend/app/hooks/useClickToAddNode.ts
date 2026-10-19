@@ -3,7 +3,7 @@ import { Position, useStoreApi, type Node, type Edge } from '@xyflow/react';
 import { toast } from 'sonner';
 import { EVENTS } from '~/lib/analytics-events';
 import { createWorkflowNode } from '~/lib/applyNodeUpdate';
-import { autoSelectCredentialsForNewNode } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialsForNewNode } from '~/utils/credentialAutoSelectForNode';
 import { getBlockTypeForNodeType } from '~/components/interface/blockRegistry';
 import { generateNodeId } from '~/utils/nodeIdGenerator';
 import {

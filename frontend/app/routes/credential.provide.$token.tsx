@@ -8,7 +8,6 @@ import { json, type JsonPayloadOf } from '~/lib/routerResponse';
 import { useLoaderData } from 'react-router';
 import { useCallback, useMemo, useState } from 'react';
 import { CheckCircle2, KeyRound } from 'lucide-react';
-import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
 import { getCredentialIcon } from '~/utils/credentialIcons';
 import { getAllSerializedNodeMeta } from '~/lib/nodeCatalog.server';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
@@ -18,10 +17,12 @@ import { PublicThemeToggle } from '~/components/shared/PublicThemeToggle';
 import { ConnectionVerdict } from '~/components/credential/ConnectionVerdict';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import {
+  appNameForCredentialType,
   CredentialProvideFlow,
-  formatCredentialType,
   type ProvideRequestDetails,
 } from '~/components/credential/CredentialProvideFlow';
+import { DIALOG_MARK } from '~/components/shell/ShellDialog';
+import { connectDialogHeader } from '~/components/credential/connect/connectHeader';
 import { buildSeoMeta } from '~/lib/seo';
 
 export const meta: MetaFunction = () =>
@@ -65,12 +66,14 @@ export default function ProvideCredentialPage() {
 
   const [details, setDetails] = useState<ProvideRequestDetails | null>(null);
   const [provided, setProvided] = useState(false);
-  const [verification, setVerification] = useState<CredentialTestConnectionResponse | null>(null);
+  // What landed: undefined for a sign-in (or a scan, a bought number), whose completing is the proof; null for a key
+  // nothing could vouch for; else what the connect-time check proved.
+  const [verification, setVerification] = useState<CredentialTestConnectionResponse | null | undefined>(undefined);
   const [returnError, setReturnError] = useState<string | null>(null);
   const redirects = Boolean(details?.redirect_url);
 
   const onProvided = useCallback((v?: CredentialTestConnectionResponse | null) => {
-    setVerification(v ?? null);
+    setVerification(v);
     setProvided(true);
     if (!redirects) return;
     fetchProvideReturnUrl(API_BASE, token)
@@ -82,70 +85,61 @@ export default function ProvideCredentialPage() {
     () => (details ? getCredentialIcon(details.credential_type) : null),
     [details],
   );
-  const serviceName = useMemo(
-    () => (details ? getProviderConfigByCredentialType(details.credential_type)?.name : undefined),
-    [details],
-  );
-  const title = details
-    ? `Connect ${serviceName || formatCredentialType(details.credential_type)}`
-    : 'Credential request';
+  const app = useMemo(() => (details ? appNameForCredentialType(details.credential_type) : null), [details]);
+  const doneTitle = connectDialogHeader(app ?? 'It', 'done', { kind: verification === undefined ? 'oauth' : 'api_key', verification }).title;
+  const requester = details ? `${details.requester_name}${details.requester_email ? ` (${details.requester_email})` : ''}` : 'Someone';
 
+  // The connect dialog's composition as a page: the app's mark, the title in the brand face with one line under it,
+  // what the requester wrote, then the connect flow itself, never boxed.
   return (
-    <div className="min-h-dvh bg-background text-foreground flex flex-col items-center px-4 py-12">
+    <div className="min-h-dvh bg-background text-foreground flex flex-col items-center px-4 py-12 sm:py-16">
       <PublicThemeToggle />
-      <div className="w-full max-w-md flex flex-col">
-        {/* Page header — the shared public-page idiom (matches /b). */}
-        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground dark:text-zinc-500">
-          Credential request
-        </div>
-        <div className="mt-1.5 flex items-center gap-2.5">
+      <div className="w-full max-w-[440px] flex flex-col">
+        <span className={DIALOG_MARK}>
           {credentialIcon?.hasServiceIcon ? (
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.05]">
-              <BrandIcon Icon={credentialIcon.Icon} iconColor={credentialIcon.iconColor || 'text-foreground'} className="w-4 h-4" />
-            </span>
+            <BrandIcon Icon={credentialIcon.Icon} iconColor={credentialIcon.iconColor || 'text-foreground'} className="h-[22px] w-[22px]" />
           ) : (
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.05]">
-              <KeyRound className="w-4 h-4 text-muted-foreground" />
-            </span>
+            <KeyRound className="h-5 w-5 text-muted-foreground" />
           )}
-          <h1 className="text-lg font-semibold tracking-tight truncate">{title}</h1>
-        </div>
-        <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground dark:text-zinc-500">
-          {details
-            ? `${details.requester_name}${details.requester_email ? ` (${details.requester_email})` : ''} is asking you to securely connect an account for their NoClick workflow. No account needed.`
-            : 'Someone is asking you to securely connect an account for their NoClick workflow. No account needed.'}
+        </span>
+        <h1 className="mt-5 font-brand text-[26px] font-medium leading-tight tracking-[-0.02em] [text-wrap:balance]">
+          {provided ? doneTitle : app ? `Connect ${app}` : 'Connect an account'}
+        </h1>
+        <p
+          className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground [text-wrap:balance]"
+          data-testid={provided ? 'provide-success-note' : undefined}
+        >
+          {provided
+            ? redirects && !returnError
+              ? 'Taking you back…'
+              : `${details?.requester_name ?? 'They'} can use it now. You can safely close this page.`
+            : `${requester} asked you to connect ${app ?? 'an account'} for their NoClick automations. You don’t need a NoClick account.`}
         </p>
 
-        {/* Card — message + the shared connect flow. */}
-        <div className="mt-6 rounded-2xl border border-border bg-card overflow-hidden" data-testid="provide-card">
+        <div className="mt-7" data-testid="provide-card">
           {provided ? (
-            <div className="px-6 py-10 text-center" data-testid="provide-success">
-              <CheckCircle2 className="mx-auto h-7 w-7 text-emerald-500" />
-              <div className="mt-3 text-sm font-semibold">Credential provided</div>
-              <p className="mt-1 text-[13px] text-muted-foreground dark:text-zinc-500" data-testid="provide-success-note">
-                {redirects && !returnError
-                  ? 'Taking you back…'
-                  : `${details?.requester_name} can now use this credential. You can safely close this page.`}
-              </p>
+            <div data-testid="provide-success">
               {returnError && (
-                <p className="mt-2 text-[13px] text-red-600 dark:text-red-400" role="alert">{returnError}</p>
+                <p className="mb-4 text-[13px] text-red-600 dark:text-red-400" role="alert">{returnError}</p>
               )}
-              {/* What the connect-time probe proved — the provider's own data,
-                  so the person who typed the key sees it worked, not just landed. */}
-              {verification && (
-                <ConnectionVerdict
-                  verification={verification}
-                  providerLabel={serviceName || (details ? formatCredentialType(details.credential_type) : 'The provider')}
-                  className="mt-5 text-left"
-                />
+              {/* What the connect-time probe proved: the provider's own data, so the person who typed the key sees it
+                  worked, not just landed, and "Saved, not verified" when nothing could vouch for it. A sign-in has no
+                  probe here (this page can't ask the provider as anyone); its completing is the proof. */}
+              {verification !== undefined ? (
+                <ConnectionVerdict verification={verification} providerLabel={app ?? 'The provider'} />
+              ) : (
+                <p className="flex items-center gap-2.5 text-[14.5px] font-medium">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  Connected
+                </p>
               )}
             </div>
           ) : (
-            <div className="px-5 py-5">
+            <>
               {details?.message && (
-                <div className="mb-4 border-l-2 border-foreground/20 pl-3 text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap break-words">
+                <blockquote className="mb-6 whitespace-pre-wrap break-words border-l-2 border-foreground/20 pl-3 text-[14px] leading-relaxed text-foreground/90">
                   {details.message}
-                </div>
+                </blockquote>
               )}
               <CredentialProvideFlow
                 token={token}
@@ -154,11 +148,11 @@ export default function ProvideCredentialPage() {
                 onDetails={setDetails}
                 onProvided={onProvided}
               />
-            </div>
+            </>
           )}
         </div>
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-10 flex justify-center">
           <PoweredByBadge />
         </div>
       </div>

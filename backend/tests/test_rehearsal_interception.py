@@ -326,8 +326,12 @@ def _launch_rig(monkeypatch, agent_output):
     async def _balance(user_id):
         return None
 
+    async def _uncapped(user_id, price_usd=None):
+        return None
+
     monkeypatch.setattr(usage_tracker, "resolve_billing_user_id", _owner)
     monkeypatch.setattr(usage_tracker, "check_credit_balance", _balance)
+    monkeypatch.setattr(usage_tracker, "spend_cap_refusal", _uncapped)
 
     finished = []
 
@@ -409,3 +413,33 @@ def test_reply_text_serializes_rawless_structured_output():
     assert _reply_text({"output": "plain text"}) == "plain text"
     assert _reply_text("bare string") == "bare string"
     assert _reply_text(None) is None
+
+
+@pytest.mark.asyncio
+async def test_the_monthly_cap_is_judged_before_credits_and_an_unread_one_refuses_in_words(monkeypatch):
+    """A Test Run spends: at the paying account's monthly cap it's refused in the cap's words (adding funds
+    wouldn't lift it), even with no credits left; a cap that can't be read refuses as an error, never a raise."""
+    from billing.exceptions import SpendCapReached, spend_cap_message
+    from billing.usage_tracker import usage_tracker
+    from nodes.agent.rehearsal_launch import launch_rehearsal
+
+    _launch_rig(monkeypatch, {"response": "Booked it."})
+
+    async def _empty(user_id):
+        return 0.0
+
+    async def _capped(user_id, price_usd=None):
+        return SpendCapReached(spend_cap_message(5, "November 1"))
+
+    async def _unread(user_id, price_usd=None):
+        raise ConnectionError("the database is away")
+
+    monkeypatch.setattr(usage_tracker, "check_credit_balance", _empty)
+    monkeypatch.setattr(usage_tracker, "spend_cap_refusal", _capped)
+    cid, error = await launch_rehearsal(workflow_id="wf-1", scenario_key="generic:automation-telegram",
+                                        user_id="user-1")
+    assert cid is None and error == spend_cap_message(5, "November 1")
+    monkeypatch.setattr(usage_tracker, "spend_cap_refusal", _unread)
+    cid, error = await launch_rehearsal(workflow_id="wf-1", scenario_key="generic:automation-telegram",
+                                        user_id="user-1")
+    assert cid is None and "spending cap" in error

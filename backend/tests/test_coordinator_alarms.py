@@ -14,6 +14,8 @@ from repositories.coordinator_wakeups import CoordinatorWakeupRepo
 from repositories.local_schedules import LocalScheduleRepo
 from tests.fixtures.local_scheduler import local_scheduler  # noqa: F401
 from tests.test_builder_requests import USER, builder_request_db  # noqa: F401
+from utils import capabilities
+from utils.capabilities import COORDINATOR_PLATFORM_TOOLS
 from utils.coordinator_alarm import alarm_time
 from utils.scheduler_delivery import delivery_headers
 
@@ -214,6 +216,10 @@ async def test_due_message_wakes_same_coordinator_and_delivers_once(alarm_db, mo
     monkeypatch.setattr(worker, "get_sio", lambda: None)
     monkeypatch.setattr("utils.feature_gates.require_feature", lambda *args, **kwargs: None)
     monkeypatch.setattr("wss.handlers.coordinator_handler.plan_allows_turn", AsyncMock(return_value=(True, None)))
+    # The coordinator's own tools: a platform's are tested in test_coordinator_platform_tools.
+    monkeypatch.delitem(capabilities._providers, COORDINATOR_PLATFORM_TOOLS, raising=False)
+    # The coordinator answers this account; one an agent answers is handed over (test_coordinator_agent).
+    monkeypatch.delitem(capabilities._providers, capabilities.ACCOUNT_AGENT, raising=False)
     captured = []
 
     class ResumedAgent:
@@ -226,7 +232,7 @@ async def test_due_message_wakes_same_coordinator_and_delivers_once(alarm_db, mo
 
         async def __call__(self, message):
             content = message["input_items"][0]["content"]
-            assert content.startswith("A scheduled coordinator message is due.")
+            assert content.startswith(agent.PROMPTS.ALARM_WAKEUP)
             captured.append(content)
             # A five-connection pool remains fully available while a model runs.
             connections = await asyncio.gather(*(pool.acquire() for _ in range(5)))

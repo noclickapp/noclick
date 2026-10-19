@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { AppNavbar } from '~/components/ui/AppNavbar';
+import { PhoneBarBack, useInPhoneShell } from '~/components/shell/AppShell';
 import { Button } from '~/components/ui/button';
 import {
     DropdownMenu,
@@ -144,6 +145,9 @@ export function CanvasTopBar(props: CanvasTopBarProps) {
         onStop,
         onHoveredExecutionChange,
     } = props;
+    // In the phone shell the top bar already carries the way back, so the
+    // automation's name and Back move up there and this bar keeps the tabs.
+    const inPhone = useInPhoneShell();
 
     // Measure the bar's own width (not the viewport) to drive compaction.
     const [navRef, navWidth] = useElementWidth<HTMLDivElement>();
@@ -154,10 +158,14 @@ export function CanvasTopBar(props: CanvasTopBarProps) {
     const actionsCompact = density === 'compact';
 
     return (
+        <>
+        {inPhone && onBack && (
+            <PhoneBarBack label="Automations" title={<span className="truncate">{workflowTitle}</span>} onBack={onBack} />
+        )}
         <AppNavbar
-            title={workflowTitle}
+            title={inPhone ? undefined : workflowTitle}
             onTitleChange={onTitleChange}
-            onBack={onBack}
+            onBack={inPhone ? undefined : onBack}
             compact={barCompact}
             rootRef={navRef}
             leftContent={
@@ -200,6 +208,7 @@ export function CanvasTopBar(props: CanvasTopBarProps) {
                 />
             }
         />
+        </>
     );
 }
 

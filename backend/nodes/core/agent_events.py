@@ -228,7 +228,8 @@ def media_entry(
 def phone_call_event(output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """A finished phone call, as the wired agent reads it: who called which
     number (or which number was called), and what was said. One conversation
-    per (other party, our number). None when the output is not a call record."""
+    per (other party, our number), unless the call ran in one the record names
+    (``conversation_key``). None when the output is not a call record."""
     caller = str(output.get("caller") or "").strip()
     number = str(output.get("to") or "").strip()
     if not caller:
@@ -249,7 +250,8 @@ def phone_call_event(output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         text = f"Phone call from {caller} to your number {number}{length}."
         conversation_key, title = f"{caller}:{number}", f"Call from {caller}"
     text += f"\n\nTranscript:\n{lines}" if lines else "\n\nNobody spoke on the call."
-    return {"text": text, "conversation_key": conversation_key, "title": title}
+    named = str(output.get("conversation_key") or "").strip()
+    return {"text": text, "conversation_key": named or conversation_key, "title": title}
 
 
 DELIVERED_EVENT_KEY = "_deliveredEvent"

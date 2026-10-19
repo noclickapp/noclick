@@ -10,7 +10,7 @@
 // onEscapeKeyDown stops propagation so the close doesn't also reach Dashboard's
 // handler (which would close the chat sidebar / flow helper).
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
     MessageSquarePlus,
     Bug,
@@ -21,6 +21,7 @@ import {
 import { toast } from 'sonner';
 import {
     Popover,
+    PopoverAnchor,
     PopoverContent,
     PopoverTrigger,
 } from '~/components/ui/popover';
@@ -40,7 +41,9 @@ const TYPES: { key: FeedbackType; label: string; icon: typeof Bug }[] = [
     { key: 'idea', label: 'Idea', icon: Lightbulb },
 ];
 
-export function FeedbackButton() {
+/** With `children`, there's no button of its own: the popover opens over them, from the
+ *  "H then H" chord or a menu item that calls `openFeedback()`. */
+export function FeedbackButton({ children }: { children?: ReactNode } = {}) {
     const { logActivity } = useAnalytics();
     const [open, setOpen] = useState(false);
     const [type, setType] = useState<FeedbackType>('general');
@@ -126,18 +129,23 @@ export function FeedbackButton() {
                 else reset();
             }}
         >
-            <ShortcutTooltip keys={['H', 'H']}>
-                <PopoverTrigger asChild>
-                    <button className="hidden md:flex items-center gap-2 rounded-lg bg-secondary dark:bg-foreground/[0.06] px-2.5 py-1.5 text-sm text-foreground/80 transition-colors hover:bg-accent dark:hover:bg-foreground/[0.1]">
-                        <MessageSquarePlus className="h-4 w-4 text-muted-foreground dark:text-zinc-500" />
-                        Feedback
-                    </button>
-                </PopoverTrigger>
-            </ShortcutTooltip>
+            {children ? (
+                <PopoverAnchor asChild>{children}</PopoverAnchor>
+            ) : (
+                <ShortcutTooltip keys={['H', 'H']}>
+                    <PopoverTrigger asChild>
+                        <button className="hidden md:flex items-center gap-2 rounded-lg bg-secondary dark:bg-foreground/[0.06] px-2.5 py-1.5 text-sm text-foreground/80 transition-colors hover:bg-accent dark:hover:bg-foreground/[0.1]">
+                            <MessageSquarePlus className="h-4 w-4 text-muted-foreground dark:text-zinc-500" />
+                            Feedback
+                        </button>
+                    </PopoverTrigger>
+                </ShortcutTooltip>
+            )}
             <PopoverContent
                 role="dialog"
                 aria-label="Send feedback"
-                align="end"
+                side={children ? 'top' : undefined}
+                align={children ? 'start' : 'end'}
                 sideOffset={8}
                 collisionPadding={16}
                 // Move focus straight into the textarea on open (instead of the
@@ -153,7 +161,7 @@ export function FeedbackButton() {
                 // Don't yank focus back to the trigger on close — that lit up a
                 // focus-visible ring on the navbar button after Escape.
                 onCloseAutoFocus={(e) => e.preventDefault()}
-                className="w-[calc(100vw-2rem)] rounded-xl border border-foreground/10 bg-popover dark:bg-[#0a0a0b] p-3 text-foreground shadow-2xl sm:w-96"
+                className="w-[calc(100vw-2rem)] rounded-2xl border border-foreground/10 bg-popover dark:bg-[#0a0a0b] p-3.5 text-foreground shadow-2xl sm:w-96"
             >
                 <div className="flex items-center justify-between">
                     <h3 className="text-sm font-semibold text-foreground">
@@ -172,7 +180,7 @@ export function FeedbackButton() {
                             type="button"
                             onClick={() => setType(key)}
                             className={cn(
-                                'flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs transition-colors',
+                                'flex h-7 items-center gap-1.5 rounded-full px-3 text-xs transition-colors',
                                 type === key
                                     ? 'bg-primary text-primary-foreground'
                                     : 'bg-secondary text-foreground/75 hover:bg-accent hover:text-foreground dark:bg-foreground/[0.04] dark:text-foreground/60 dark:hover:bg-foreground/[0.08]'
@@ -197,15 +205,15 @@ export function FeedbackButton() {
                             ? 'What went wrong? Steps to reproduce help a lot.'
                             : "What's on your mind?"
                     }
-                    className="scrollbar-subtle mt-2 max-h-[15rem] min-h-[7rem] w-full resize-none overflow-y-auto rounded-lg border border-border bg-card dark:border-foreground/[0.08] dark:bg-foreground/[0.03] px-3 py-2.5 text-sm text-foreground placeholder:text-foreground/30 focus:border-foreground/25 focus:outline-none"
+                    className="scrollbar-subtle mt-2.5 max-h-[15rem] min-h-[7rem] w-full resize-none overflow-y-auto rounded-xl border border-border bg-card dark:border-foreground/[0.08] dark:bg-foreground/[0.03] px-3 py-2.5 text-sm text-foreground placeholder:text-foreground/30 focus:border-foreground/25 focus:outline-none"
                 />
 
-                <div className="mt-2 flex justify-end">
+                <div className="mt-2.5 flex justify-end">
                     <button
                         type="button"
                         onClick={handleSubmit}
                         disabled={!message.trim() || submitting}
-                        className="flex items-center gap-2 rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex h-9 items-center gap-2 rounded-full bg-primary pl-4 pr-3 text-[13.5px] font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         {submitting ? (
                             <Loader2 className="h-3.5 w-3.5 animate-spin" />

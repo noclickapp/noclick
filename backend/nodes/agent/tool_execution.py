@@ -8,11 +8,14 @@ workflow_id, user_id, sio, sid, etc.
 """
 
 import asyncio
+import json
 import logging
 
 from nodes.agent.rehearsal import (
     REHEARSAL_PASSTHROUGH_TOOL_TYPES,
+    UNFENCED_RESULT,
     is_rehearsing,
+    must_rehearse,
     rehearse_tool,
 )
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
@@ -29,6 +32,17 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 # Main dispatcher
 # ============================================================================
+
+
+def _result_preview(result: Any) -> str:
+    """A tool's answer as its audit row and the chat's restored step keep it: JSON, so a card can read it back
+    (a dict's repr can't be), cut to the log's bound."""
+    if not isinstance(result, str):
+        try:
+            result = json.dumps(result, default=str, ensure_ascii=False)
+        except (TypeError, ValueError):
+            result = str(result)
+    return result[:500]
 
 
 def _conversation_id_for(node) -> Optional[str]:
@@ -59,19 +73,24 @@ async def tool_call_refusal(
     Also called by the tool paths that bypass ``execute_tool`` (``execute_bash``,
     the CLI shadow pool's direct dispatch); callers check rehearsal first. Every
     path passes here once per call, so this is where a watcher hears the call.
+    A conversation whose tools may only be fabricated (``must_rehearse``) that
+    reaches here couldn't read its fence: the call is refused, never run.
     """
     from utils.turn_events import publish
 
     guard = capability(TOOL_CALL_GUARD)
-    refusal = None if guard is None else await guard(
-        user_id=user_id,
-        workflow_id=str(workflow_id) if workflow_id else None,
-        node_id=node_id,
-        conversation_id=conversation_id,
-        tool_name=tool_name,
-        tool_info=tool_info,
-        arguments=arguments,
-    )
+    if tool_info.get("tool_type") not in REHEARSAL_PASSTHROUGH_TOOL_TYPES and must_rehearse(conversation_id):
+        refusal = dict(UNFENCED_RESULT)
+    else:
+        refusal = None if guard is None else await guard(
+            user_id=user_id,
+            workflow_id=str(workflow_id) if workflow_id else None,
+            node_id=node_id,
+            conversation_id=conversation_id,
+            tool_name=tool_name,
+            tool_info=tool_info,
+            arguments=arguments,
+        )
     held = refusal.get("approval_required") if isinstance(refusal, dict) else None
     publish(conversation_id, {"type": "tool_call", "tool": tool_name, "arguments": arguments,
                               **({"held": held} if held else {})})
@@ -169,6 +188,10 @@ async def execute_tool(
             ):
                 span.set_attribute("tool.rehearsed", True)
                 result = await rehearse_tool(rehearsal_conversation, tool_name, dispatch_arguments, tool_info)
+            elif tool_type not in REHEARSAL_PASSTHROUGH_TOOL_TYPES and must_rehearse(rehearsal_conversation):
+                # Its fence can't be read: refused, never run for real.
+                span.set_attribute("tool.refused", True)
+                result = dict(UNFENCED_RESULT)
             elif (refusal := await _guard_refusal(node, tool_name, dispatch_arguments, tool_info)) is not None:
                 span.set_attribute("tool.refused", True)
                 result = refusal
@@ -278,7 +301,7 @@ async def execute_tool(
         credential_id=tool_info.get("credential_id"),
         arguments=arguments,
         error=error or None,
-        result_preview=None if error else str(result)[:500],
+        result_preview=None if error else _result_preview(result),
         duration_ms=(time.monotonic() - start) * 1000,
         model=getattr(node, "_effective_model", None),
     )
@@ -921,6 +944,10 @@ async def _execute_filesystem_tool(
         logger.info(
             f"[ToolExec] Uploaded {file_path} → {ref['download_url']} ({ref['size_bytes']} bytes)"
         )
+        from utils.turn_events import made_file
+
+        made_file(_conversation_id_for(node), {"name": ref["name"], "url": ref["download_url"],
+                                               "mime_type": ref["mime_type"], "size_bytes": ref["size_bytes"]})
 
         return {
             "success": True,

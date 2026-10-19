@@ -73,6 +73,9 @@ POSITIVE_CORPUS = [
      'Provider returned error: upstream connect error or disconnect/reset before headers'),
     # Google / Gemini.
     ("gemini", "invalid_key", "API key not valid. Please pass a valid API key."),
+    # OpenCode Zen refusing the key an OpenCode turn sent, as the CLI relays it
+    # (an agent on a free model with a dead key attached, 2026-10-17).
+    ("opencode", "invalid_key", "Upstream request failed: Invalid credential"),
     # xAI.
     ("xai", "no_credits",
      "Your newly created team doesn't have any credits yet. You can purchase "
@@ -136,6 +139,18 @@ def test_short_corpus_strings_classify_on_response_channel(provider, kind, text)
 @pytest.mark.parametrize("text", NEGATIVE_RESPONSES)
 def test_legitimate_responses_never_classify(text):
     assert classify_provider_error(text, channel="response") is None
+
+
+def test_a_key_zen_refuses_fails_the_turn_with_both_ways_out():
+    """Every turn of an agent with a dead OpenCode key failed with Zen's bare
+    words. The way out is a working key, or none: OpenCode runs Zen's free
+    models without one."""
+    response, error = normalize_turn_result("", "Upstream request failed: Invalid credential")
+    assert response == ""
+    assert error.startswith("OpenCode Zen rejected the API key.")
+    assert "https://opencode.ai/auth" in error
+    assert "OpenCode's free models need no key" in error
+    assert error.endswith("Provider message: Upstream request failed: Invalid credential")
 
 
 # ── Exception-type classification ──────────────────────────────────────────

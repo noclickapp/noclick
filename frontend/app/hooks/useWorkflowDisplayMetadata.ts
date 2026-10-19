@@ -7,7 +7,6 @@ import { useCachedValtioState } from './useCachedValtioState';
 import { useDebounce } from './useDebounce';
 import { sendEventWithCallback } from '~/lib/socket-sender';
 import { WorkflowUpdateRequest } from '~/types/socket-events.generated';
-import { lowResScale } from '~/lib/constants';
 
 // Display metadata structure for persisting UI state
 export interface WorkflowDisplayMetadata {
@@ -23,11 +22,10 @@ export interface WorkflowDisplayMetadata {
     activeTab: 'canvas' | 'logs' | 'interface' | 'setup' | 'resources';
 }
 
-// Default FlowHelper height tracks 40% of viewport, scaled by the active
-// low-res font tier so the panel stays proportional to its (rem-based) contents.
+// Default FlowHelper height tracks 40% of viewport.
 const getDefaultFlowHelperHeight = () => {
     if (typeof window === 'undefined') return 400; // SSR fallback
-    return Math.round(window.innerHeight * 0.4 * lowResScale());
+    return Math.round(window.innerHeight * 0.4);
 };
 
 export const DEFAULT_DISPLAY_METADATA: WorkflowDisplayMetadata = {

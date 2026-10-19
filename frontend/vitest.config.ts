@@ -28,4 +28,10 @@ export default defineConfig({
       '~': resolve(__dirname, './app'),
     },
   },
+  // As in vite.config.ts: modules may read files beside frontend/ (the docs import the SDK READMEs).
+  server: {
+    fs: {
+      allow: [resolve(__dirname, '..')],
+    },
+  },
 });

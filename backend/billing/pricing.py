@@ -2,8 +2,8 @@
 
 Two kinds of number live here, and the difference is who publishes them.
 
-A provider's list price is public: Google says what a second of Veo costs, and
-an installation calling Veo on its own key pays exactly that. Those tables are
+A provider's list price is public: Kling says what a second of video costs, and
+an installation calling Kling on its own key pays exactly that. Those tables are
 below, and they are the same in every edition — recording a provider cost of
 zero would make the usage ledger a lie, and `markup.py` already says costs are
 recorded at list price.
@@ -72,24 +72,6 @@ def _rate(name: str, *args, **kwargs) -> Decimal:
 
 def get_modal_compute_cost(*args, **kwargs) -> Decimal:
     return _rate("get_modal_compute_cost", *args, **kwargs)
-
-
-# ── Google Veo (Video Generation) ────────────────────────────────────────────
-# Per-second pricing: https://ai.google.dev/gemini-api/docs/video
-VEO_PRICE_PER_SECOND: Dict[str, Decimal] = {
-    "veo-2.0-generate-001":          Decimal("0.35"),
-    "veo-3.0-generate-001":          Decimal("0.50"),
-    "veo-3.0-generate-preview":      Decimal("0.50"),
-    "veo-3.0-fast-generate-preview": Decimal("0.15"),
-    "veo-3.1-generate-preview":      Decimal("0.50"),
-    "veo-3.1-fast-generate-preview": Decimal("0.15"),
-}
-
-
-def get_veo_cost(model_name: str, duration: int, n_videos: int) -> Decimal:
-    """Calculate Veo video generation cost: per-second x duration x clip count."""
-    price_per_sec = VEO_PRICE_PER_SECOND.get(model_name, Decimal("0.50"))
-    return price_per_sec * duration * n_videos
 
 
 # ── Kling AI (Video Generation) ─────────────────────────────────────────────

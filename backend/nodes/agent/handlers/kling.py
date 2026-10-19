@@ -195,7 +195,7 @@ async def _execute_image(node, config, client, api_headers, jwt_gen,
 
             usage_event = UsageEventData(
                 # Raw runner; track_usage_event resolves to the org owner centrally.
-                user_id=node.user_id, total_cost=total_cost,
+                user_id=node.user_id, total_cost=total_cost, cost_usd=raw_cost,
                 usage_type="ai_usage", usage_subtype=config.model,
                 quantity=Decimal("1"), unit_type="images",
                 user_resource=False, organization_id=node.organization_id,
@@ -305,7 +305,7 @@ async def _execute_video(node, config, client, api_headers, jwt_gen,
 
             usage_event = UsageEventData(
                 # Raw runner; track_usage_event resolves to the org owner centrally.
-                user_id=node.user_id, total_cost=total_cost,
+                user_id=node.user_id, total_cost=total_cost, cost_usd=raw_cost,
                 usage_type="ai_usage", usage_subtype=config.model,
                 quantity=Decimal(str(duration)), unit_type="seconds",
                 user_resource=False, organization_id=node.organization_id,

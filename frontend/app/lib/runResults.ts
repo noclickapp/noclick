@@ -5,6 +5,7 @@
 // popup (the agent-inputs rail) ride the story-enricher seam below: this module
 // ships to the open edition and must not import hosted modules.
 import { sendEventAsync } from '~/lib/socket-sender';
+import { runStoryEnrichers } from '~/lib/runStoryEnrichers';
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
 import { toReplayToolCalls, type ReplayToolCall } from '~/components/workflow/ReplayToolCallsPanel';
 import type { NodeRunResult } from '~/components/workflow/RunResultsDialog';
@@ -65,20 +66,12 @@ export interface RunStory extends RunSnapshot {
     extras: RunStoryExtras;
 }
 
-type RunStoryEnricher = (workflowId: string, snapshot: RunSnapshot) => Promise<RunStoryExtras>;
-const enrichers: RunStoryEnricher[] = [];
-
-/** Hosted bootstrap registers what the hosted popup shows beyond the snapshot
- *  (mirrors backend/cloud/bootstrap.py: the engine owns the seam and a working
- *  default, cloud registers implementations). */
-export function registerRunStoryEnricher(enricher: RunStoryEnricher): void {
-    enrichers.push(enricher);
-}
+export { registerRunStoryEnricher } from '~/lib/runStoryEnrichers';
 
 /** Everything the Story popup needs for one past run, off the stored snapshot. */
 export async function loadRunStory(workflowId: string, executionId: string): Promise<RunStory> {
     const snapshot = await loadRunSnapshot(workflowId, executionId);
-    const extras = Object.assign({}, ...(await Promise.all(enrichers.map((e) => e(workflowId, snapshot))))) as RunStoryExtras;
+    const extras = Object.assign({}, ...(await Promise.all(runStoryEnrichers.map((e) => e(workflowId, snapshot))))) as RunStoryExtras;
     return { ...snapshot, extras };
 }
 

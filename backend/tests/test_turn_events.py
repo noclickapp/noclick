@@ -39,6 +39,32 @@ async def test_a_held_call_names_its_approval(monkeypatch, heard):
     assert event["held"] == {"approval_id": "ap1", "approver": "owner"}
 
 
+async def test_a_file_the_turn_makes_is_heard(monkeypatch, heard):
+    from types import SimpleNamespace
+
+    from nodes.agent.tool_execution import _execute_filesystem_tool
+
+    async def read_file(path):
+        return b"a,b\n1,2\n"
+
+    async def store(**kwargs):
+        return {"download_url": "https://files/x/report.csv", "resource_id": "r1", "name": kwargs["filename"],
+                "size_bytes": len(kwargs["body"]), "mime_type": kwargs["content_type"]}
+
+    class Pool:
+        async def fetchrow(self, *args):
+            return None
+
+    monkeypatch.setattr("utils.resource_store.create_resource_from_bytes", store)
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: Pool())
+    node = SimpleNamespace(_active_agent=SimpleNamespace(_runtime=SimpleNamespace(read_file=read_file)),
+                           workflow_id="wf", user_id="u", node_id="n", conversation_id="ck:wf:n:k")
+    result = await _execute_filesystem_tool(node, "upload_file", {"file_path": "/workspace/report.csv"}, {})
+    assert result["success"] is True
+    assert heard == [("ck:wf:n:k", {"type": "file", "role": "assistant", "file": {
+        "name": "report.csv", "url": "https://files/x/report.csv", "mime_type": "text/csv", "size_bytes": 8}})]
+
+
 def test_publishing_never_fails_the_turn(monkeypatch):
     def broken(conversation_id, event):
         raise RuntimeError("down")

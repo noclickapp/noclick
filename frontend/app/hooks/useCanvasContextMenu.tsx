@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { generateNodeId } from '~/utils/nodeIdGenerator';
 import { createWorkflowNode, removeById } from '~/lib/applyNodeUpdate';
-import { autoSelectCredentialsForNewNode } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialsForNewNode } from '~/utils/credentialAutoSelectForNode';
 import { EVENTS } from '~/lib/analytics-events';
 import type { WorkflowInterfaceHandle } from '~/components/interface/WorkflowInterface';
 import { CanvasContextMenu, type ContextMenuItem } from '~/components/workflow/CanvasContextMenu';

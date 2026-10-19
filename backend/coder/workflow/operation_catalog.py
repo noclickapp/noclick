@@ -11,6 +11,8 @@ import logging
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union, get_args, get_origin
 
+from pydantic import Tag
+
 from nodes.core.base import runtime_config_view
 from nodes.core.registry import NODE_REGISTRY
 from nodes.agent.config.providers import (
@@ -18,7 +20,7 @@ from nodes.agent.config.providers import (
     claude_plan_refusal,
     agent_credential_types,
 )
-from .workflow_ops import find_placeholder_tokens
+from .workflow_ops import find_placeholder_tokens, misplaced_agent_model
 from .structural_tools import get_structural_agent_tool_definitions
 
 logger = logging.getLogger(__name__)
@@ -43,6 +45,9 @@ class OperationInfo:
     display_name: Optional[str] = None
     category: Optional[str] = None
     is_trigger: bool = False
+    # The union member's tag, where members share one operation (the agent:
+    # one member per model kind, tagged by model_type).
+    variant: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -142,10 +147,12 @@ def get_operations_for_node_type(node_type: str) -> List[OperationInfo]:
         if not op_field:
             # Single-operation node (no discriminator) - treat the config itself as the operation
             # Use "default" as the operation name for single-operation nodes
+            tags = get_args(member)[1:] if get_origin(member) is _typing.Annotated else ()
             operations.append(OperationInfo(
                 name="default",
                 description=f"Execute {node_type} node",
                 config_class=member,
+                variant=next((t.tag for t in tags if isinstance(t, Tag)), None),
             ))
             continue
 
@@ -210,16 +217,41 @@ def get_operation_schema(node_type: str, operation: str) -> Optional[Dict[str, A
     return None
 
 
-def get_operation_config_class(node_type: str, operation: str):
+def get_operation_config_class(node_type: str, operation: str, config: Optional[Dict[str, Any]] = None):
     """Get the Pydantic config model class for a specific operation.
 
+    Where union members share the operation (the agent's model kinds), ``config``
+    picks the member it parses as at run time; without it, the first.
     Returns None if node type or operation not found.
     """
-    operations = get_operations_for_node_type(node_type)
-    for op in operations:
+    matches = [op for op in get_operations_for_node_type(node_type) if op.name == operation]
+    if not matches:
+        return None
+    if config and len(matches) > 1:
+        variant = _config_variant(node_type, config)
+        return next((op.config_class for op in matches if op.variant == variant), matches[0].config_class)
+    return matches[0].config_class
+
+
+def _config_variant(node_type: str, config: Dict[str, Any]) -> Optional[str]:
+    """The union member tag ``config`` parses as, for a node whose members share
+    one operation: the agent's model_type, inferred from its model when unset."""
+    if node_type != "agent":
+        return None
+    from nodes.agent.config import infer_model_type
+
+    return infer_model_type(dict(config)).get("model_type")
+
+
+def operation_properties(node_type: str, operation: str) -> Dict[str, Any]:
+    """Every field the operation's config can carry, name → schema: across all
+    union members that share the operation (an agent's Model picks among them)."""
+    props: Dict[str, Any] = {}
+    for op in get_operations_for_node_type(node_type):
         if op.name == operation:
-            return op.config_class
-    return None
+            for name, schema in op.config_class.model_json_schema().get("properties", {}).items():
+                props.setdefault(name, schema)
+    return props
 
 
 def is_operation_credentials_optional(
@@ -305,7 +337,7 @@ def validate_node_config(node_type: str, operation: str, config: Dict[str, Any])
     Used by both node drafter (node drafter retry) and the brain (field ops feedback).
     Includes compile checks for code fields (e.g. JSX transpilation).
     """
-    config_class = get_operation_config_class(node_type, operation)
+    config_class = get_operation_config_class(node_type, operation, config)
     if not config_class or not config:
         return None
     try:
@@ -317,6 +349,11 @@ def validate_node_config(node_type: str, operation: str, config: Dict[str, Any])
     except Exception as e:
         err = str(e)
         return err[:300] + '...' if len(err) > 300 else err
+
+    if node_type == 'agent':
+        misplaced = misplaced_agent_model(config)
+        if misplaced:
+            return misplaced
 
     # Post-validation compile checks for code fields
     if node_type == 'interface-html-react' and operation == 'render_jsx_react_interface':
@@ -380,7 +417,7 @@ def config_value_errors(
     (non-pydantic) validation failures return [] — enforcement backs off and
     validate_node_config's advisory string still covers them.
     """
-    config_class = get_operation_config_class(node_type, operation)
+    config_class = get_operation_config_class(node_type, operation, config)
     if not config_class or not config:
         return []
     from pydantic import ValidationError
@@ -823,7 +860,7 @@ def credential_status_line(
         # the brain has declared names AND no agent_env credential is attached yet.
         env_line = _agent_env_status_line(config, node_id)
         req = agent_credential_requirement(config)
-        if not req.required:
+        if not req.required and not req.accepted_types:
             base = (
                 "[credentials: not required — this model runs on NoClick's "
                 "platform key and is billed per use]"
@@ -841,6 +878,8 @@ def credential_status_line(
                 _attached_unhealthy_line(req.provider, attached_id, health)
                 or f"[credentials: {req.provider} ✓]"
             )
+        elif not req.required:
+            base = "[credentials: not required — this model runs with no key]"
         else:
             refusal = claude_plan_refusal(config or {}, cred_ids)
             base = (

@@ -2,7 +2,8 @@
 Account coordinator (web transport).
 
 coordinator:open hands the client the account's one conversation id and
-the other ways into it (the number it answers on, its email address),
+the other ways into it (the number it answers on, its email address and
+whether mail to it is taken; coordinator:email:inbound turns that on or off),
 coordinator:send runs a turn that streams the usual chat:message frames (with
 any files and references the composer added), and coordinator:reset starts the
 thread over. coordinator:attachment:upload_url reserves a file the composer
@@ -15,15 +16,21 @@ lives in coder/coordinator/agent.py so channels can share it.
 
 import logging
 import uuid
-from typing import Any, Awaitable, Callable, Dict
+from typing import Any, Awaitable, Callable, Dict, Optional
 
 from coder.coordinator import agent as coordinator
 from coder.coordinator import attachments
-from coder.coordinator.email_channel import coordinator_address
+from coder.coordinator.email_channel import (
+    CoordinatorEmailError,
+    email_reach,
+    ensure_coordinator_address,
+    set_coordinator_address,
+    set_inbound_email,
+)
 from coder.coordinator.web_input import web_turn_input
 from repositories.coordinator_jobs import CoordinatorJobRepo
 from repositories.coordinator_memories import CoordinatorMemoryRepo, MemoryConflict
-from utils.capabilities import COORDINATOR_IMESSAGE, COORDINATOR_NUMBER, capability
+from utils.capabilities import ACCOUNT_AGENT, COORDINATOR_IMESSAGE, COORDINATOR_NUMBER, capability
 from utils.database_pool import DatabasePoolMixin
 from wss.handlers.workflow_handler import get_user_org_context
 from utils.feature_gates import FeatureNotAvailable, require_feature
@@ -31,6 +38,9 @@ from wss.receiver.client_events import (
     CoordinatorArrivalRequest,
     CoordinatorAttachmentsListRequest,
     CoordinatorAttachmentUploadUrlRequest,
+    CoordinatorEmailEnsureRequest,
+    CoordinatorEmailInboundRequest,
+    CoordinatorEmailSetRequest,
     CoordinatorMemoriesListRequest,
     CoordinatorMemoryGetRequest,
     CoordinatorMemorySaveRequest,
@@ -46,6 +56,20 @@ from wss.sender.events import ResponseEvent
 from wss.session_actor import session_actor
 
 logger = logging.getLogger(__name__)
+
+
+class AnsweredByAgent(Exception):
+    """The account's owner is answered by an agent in the coordinator's place: its chat talks to that agent."""
+
+    def __init__(self, agent: Dict[str, Any]):
+        super().__init__("Your assistant answers in its own conversation now.")
+        self.agent = agent
+
+
+async def account_agent(pool, user_id: str, *, ensure: bool = False, timezone: Optional[str] = None):
+    """The agent answering the account's owner in the coordinator's place (``ACCOUNT_AGENT``), or None."""
+    agent = capability(ACCOUNT_AGENT)
+    return await agent(pool, user_id, ensure=ensure, timezone=timezone) if agent else None
 
 
 async def plan_allows_turn(pool, user_id: str):
@@ -72,6 +96,9 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             "coordinator:memories:delete": self.handle_memory_delete,
             "coordinator:jobs": self.handle_jobs,
             "coordinator:arrival": self.handle_arrival,
+            "coordinator:email:ensure": self.handle_email_ensure,
+            "coordinator:email:set": self.handle_email_set,
+            "coordinator:email:inbound": self.handle_email_inbound,
         }
 
     async def _respond(self, sid: str, request_id: str, op: Callable[[str, Any], Awaitable[Any]]) -> None:
@@ -85,9 +112,15 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             require_feature(coordinator.COORDINATOR_FEATURE, email=email)
             data = await op(user_id, email)
             await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data=data))
+        except AnsweredByAgent as e:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request_id, data={"kind": "agent", "agent": e.agent}, error=str(e)))
         except MemoryConflict as e:
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request_id, data={"kind": "conflict"}, error=str(e)))
+        except CoordinatorEmailError as e:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request_id, data={"kind": "email"}, error=str(e)))
         except FeatureNotAvailable as e:
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request_id, data={"kind": "gated"}, error=str(e)))
@@ -99,14 +132,19 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
     async def handle_open(self, sid: str, request: CoordinatorOpenRequest) -> None:
         async def op(user_id: str, _email):
             number, imessage = capability(COORDINATOR_NUMBER), capability(COORDINATOR_IMESSAGE)
+            pool = await self.get_pool()
+            # The agent that answers instead, when the account has one: the chat talks to it over /v1, and its clock
+            # is where this browser is.
+            agent = await account_agent(pool, user_id, ensure=True, timezone=request.timezone)
             return {
                 "conversation_id": coordinator.conversation_id_for(user_id),
                 "model": coordinator.COORDINATOR_MODEL,
+                **({"agent": agent} if agent else {}),
                 # The other ways into this same conversation.
                 "reach": {
                     "phone": number() if number else None,
                     "imessage": imessage() if imessage else None,
-                    "email": await coordinator_address(await self.get_pool(), user_id),
+                    **await email_reach(pool, user_id),
                 },
             }
         await self._respond(sid, request.request_id, op)
@@ -117,6 +155,9 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             if not (text or request.attachment_ids or request.references):
                 raise ValueError("message is empty")
             pool = await self.get_pool()
+            # A page that never opened the chat (an older one) still reaches the agent, made here if need be.
+            if agent := await account_agent(pool, user_id, ensure=True):
+                raise AnsweredByAgent(agent)
             allowed, limit_error = await plan_allows_turn(pool, user_id)
             if not allowed:
                 raise ValueError(limit_error)
@@ -156,6 +197,8 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             from repositories.coordinator_wakeups import CoordinatorWakeupRepo, coordinator_lock
 
             pool = await self.get_pool()
+            if agent := await account_agent(pool, user_id, ensure=True):
+                raise AnsweredByAgent(agent)
             async with coordinator_lock(pool, user_id):
                 return {"reset": await CoordinatorWakeupRepo(pool).reset(user_id)}
         await self._respond(sid, request.request_id, op)
@@ -186,13 +229,26 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
 
     async def handle_jobs(self, sid: str, request: CoordinatorJobsRequest) -> None:
         async def op(user_id: str, _email):
-            from coder.coordinator.jobs import job_view
+            from coder.coordinator.jobs import job_entry
 
             ids = [str(uuid.UUID(job_id)) for job_id in request.job_ids]
             rows = await CoordinatorJobRepo(await self.get_pool()).list_by_ids(user_id, ids)
-            # The coordinator's own view of each job, and when it started and last moved for the card's clock.
-            return {"jobs": [{**job_view(row), "created_at": row["created_at"].isoformat(),
-                              "updated_at": row["updated_at"].isoformat()} for row in rows]}
+            return {"jobs": [job_entry(row) for row in rows]}
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_email_ensure(self, sid: str, request: CoordinatorEmailEnsureRequest) -> None:
+        async def op(user_id: str, _email):
+            return {"address": await ensure_coordinator_address(await self.get_pool(), user_id)}
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_email_set(self, sid: str, request: CoordinatorEmailSetRequest) -> None:
+        async def op(user_id: str, _email):
+            return {"address": await set_coordinator_address(await self.get_pool(), user_id, request.name)}
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_email_inbound(self, sid: str, request: CoordinatorEmailInboundRequest) -> None:
+        async def op(user_id: str, _email):
+            return await set_inbound_email(await self.get_pool(), user_id, request.on)
         await self._respond(sid, request.request_id, op)
 
     async def handle_arrival(self, sid: str, request: CoordinatorArrivalRequest) -> None:

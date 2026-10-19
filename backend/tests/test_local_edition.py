@@ -15,7 +15,7 @@ import time
 
 import jwt
 import pytest
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocketDisconnect
 from fastapi.testclient import TestClient
 
 import utils.local_relay as local_relay_module
@@ -252,21 +252,80 @@ def _collab_token(workflow_id: str, user_id: str = "u1", name: str = "Tester") -
     )
 
 
+def _user_room_token(user_id: str = "u1") -> str:
+    from utils.relay_tokens import mint_user_room_token
+
+    return mint_user_room_token(user_id)[0]
+
+
 def test_user_room_protocol(relay_app, fresh_hub):
     client = TestClient(relay_app)
     with client.websocket_connect("/relay/u1?workflowId=wfA") as ws:
-        hello = ws.receive_json()
-        assert hello["type"] == "connected"
-        assert hello["connectionCount"] == 1
+        assert ws.receive_json() == {"type": "auth:required"}
 
         # Raw-text keepalive (relay auto-response parity — the FE checks the raw string)
         ws.send_text("ping")
         assert ws.receive_text() == "pong"
 
+        ws.send_text(json.dumps({"type": "auth", "token": _user_room_token("u1")}))
+        assert ws.receive_json() == {"type": "auth:success"}
+        hello = ws.receive_json()
+        assert hello["type"] == "connected"
+        assert hello["connectionCount"] == 1
+
         ws.send_text(json.dumps({"type": "subscribe", "workflowId": "wfB"}))
         assert ws.receive_json() == {"type": "subscribed", "workflowId": "wfB"}
         ws.send_text(json.dumps({"type": "unsubscribe"}))
         assert ws.receive_json() == {"type": "unsubscribed"}
+
+
+def test_user_room_events_wait_for_auth(relay_app, fresh_hub):
+    with TestClient(relay_app) as client, client.websocket_connect("/relay/u1") as ws:
+        assert ws.receive_json() == {"type": "auth:required"}
+        # Not yet in the room: nothing is delivered and it can't answer requests.
+        assert client.portal.call(fresh_hub.publish_user_event, "u1", {"type": "chat:message"}) == 0
+        ws.send_text(json.dumps({"type": "mcp_response", "request_id": "r1", "data": 1}))
+        assert ws.receive_json() == {"type": "error", "message": "Not authenticated"}
+
+        ws.send_text(json.dumps({"type": "auth", "token": _user_room_token("u1")}))
+        assert ws.receive_json()["type"] == "auth:success"
+        assert ws.receive_json()["type"] == "connected"
+        assert client.portal.call(fresh_hub.publish_user_event, "u1", {"type": "chat:message"}) == 1
+        assert ws.receive_json() == {"type": "chat:message"}
+
+
+def _signed(claims: dict, secret: str = "test-secret") -> str:
+    now = int(time.time())
+    return jwt.encode({"iat": now, "exp": now + 300, **claims}, secret, algorithm="HS256")
+
+
+@pytest.mark.parametrize("token", [
+    pytest.param(_signed({"sub": "u1", "aud": "relay:user"}, secret="other-secret"), id="forged"),
+    pytest.param(_signed({"sub": "u1", "aud": "relay:user", "exp": int(time.time()) - 60}), id="expired"),
+    pytest.param(_signed({"sub": "someone-else", "aud": "relay:user"}), id="other-user"),
+    pytest.param(_signed({"sub": "u1"}), id="no-audience"),
+    pytest.param(_signed({"sub": "u1", "workflowId": "wfA", "name": "T"}), id="workflow-collab"),
+    pytest.param(_signed({"sub": "u1", "workflowId": "wfA", "role": "executor", "executionId": "e"}), id="executor"),
+    pytest.param("not-a-token", id="garbage"),
+])
+def test_user_room_refuses_wrong_tokens(relay_app, fresh_hub, token):
+    client = TestClient(relay_app)
+    with client.websocket_connect("/relay/u1") as ws:
+        assert ws.receive_json() == {"type": "auth:required"}
+        ws.send_text(json.dumps({"type": "auth", "token": token}))
+        assert ws.receive_json()["type"] == "auth:error"
+        with pytest.raises(WebSocketDisconnect) as closed:
+            ws.receive_json()
+        assert closed.value.code == 4401
+    assert "u1" not in fresh_hub._user_conns
+
+
+def test_workflow_room_rejects_user_room_token(relay_app, fresh_hub):
+    client = TestClient(relay_app)
+    with client.websocket_connect("/relay/workflow/wfA") as ws:
+        assert ws.receive_json()["type"] == "auth:required"
+        ws.send_text(json.dumps({"type": "auth", "token": _user_room_token("u1")}))
+        assert ws.receive_json()["type"] == "auth:error"
 
 
 def test_workflow_room_auth_and_execution_replay(relay_app, fresh_hub):

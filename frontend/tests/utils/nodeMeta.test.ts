@@ -7,15 +7,18 @@
 // node types, or if the generator's x-is-trigger walk diverges from the
 // frontend semantics the predicates replaced.
 import { describe, it, expect } from 'vitest';
+import { platformKeyMarker } from '~/lib/instanceKeys';
+import { isPlatformVendorOperation } from '~/utils/nodeMeta';
 import { NODE_SCHEMAS, isAgentToolProviderType, isTriggerSource } from '~/utils/nodeSchemas';
 
 type OpSchema = { const?: string; enum?: string[]; 'x-is-trigger'?: boolean };
+type OpDef = Record<string, unknown> & { properties?: { operation?: OpSchema } };
 
-// Mirrors the schema walk isTriggerSource performed before the nodeMeta split.
-function schemaTriggerOps(schema: {
+// Mirrors the schema walk isTriggerSource performed before the nodeMeta split: each operation with its config $def.
+function schemaOperations(schema: {
     properties?: { config?: Record<string, unknown> };
-    $defs?: Record<string, { properties?: { operation?: OpSchema } }>;
-}): Map<string, boolean> {
+    $defs?: Record<string, OpDef>;
+}): Map<string, OpDef> {
     const config = (schema.properties?.config ?? {}) as {
         oneOf?: Array<{ $ref?: string }>;
         anyOf?: Array<{ $ref?: string }>;
@@ -23,14 +26,19 @@ function schemaTriggerOps(schema: {
     };
     const defs = schema.$defs ?? {};
     const refs = config.oneOf ?? config.anyOf ?? (config.$ref ? [{ $ref: config.$ref }] : []);
-    const ops = new Map<string, boolean>();
+    const ops = new Map<string, OpDef>();
     for (const ref of refs) {
         const key = ref.$ref?.split('/').pop();
-        const op = key ? defs[key]?.properties?.operation : undefined;
+        const def = key ? defs[key] : undefined;
+        const op = def?.properties?.operation;
         const name = op?.const ?? op?.enum?.[0];
-        if (name) ops.set(name, Boolean(op?.['x-is-trigger']));
+        if (name && def) ops.set(name, def);
     }
     return ops;
+}
+
+function schemaTriggerOps(schema: Parameters<typeof schemaOperations>[0]): Map<string, boolean> {
+    return new Map([...schemaOperations(schema)].map(([name, def]) => [name, Boolean(def.properties?.operation?.['x-is-trigger'])]));
 }
 
 describe('nodeMeta.json stays in lockstep with NODE_SCHEMAS', () => {
@@ -61,5 +69,19 @@ describe('nodeMeta.json stays in lockstep with NODE_SCHEMAS', () => {
                 expect(isTriggerSource(type, op), `${type}.${op}`).toBe(isTrigger);
             }
         }
+    });
+
+    it('isPlatformVendorOperation matches an x-platform-key the node’s own credential could pay for', () => {
+        let vendors = 0;
+        for (const type of types) {
+            for (const [op, def] of schemaOperations(NODE_SCHEMAS[type])) {
+                const vendor = platformKeyMarker(def)?.byok === true;
+                vendors += Number(vendor);
+                expect(isPlatformVendorOperation(type, op), `${type}.${op}`).toBe(vendor);
+            }
+        }
+        // NoClick's web search runs on one: the walk must be finding them.
+        expect(isPlatformVendorOperation('automation-exa', 'search')).toBe(true);
+        expect(vendors).toBeGreaterThan(1);
     });
 });

@@ -20,9 +20,13 @@ export default async function () {
     );
 
     nc.assert.truthy(page, 'the redesigned agent page shell should mount');
-    nc.assert.truthy(
+    nc.assert.falsy(
         document.querySelector('[data-testid="template-detail-backdrop"]'),
-        'agent pages should share the soft ambient backdrop'
+        'agent pages should have no ambient glow backdrop'
+    );
+    nc.assert.truthy(
+        getComputedStyle(page!.querySelector('h1')!).fontFamily.includes('Instrument Serif'),
+        'the page title should speak in the display serif'
     );
     nc.assert.gt(
         sections.length,
@@ -39,10 +43,8 @@ export default async function () {
 
     if (isHarness) {
         nc.assert.truthy(
-            document.querySelector(
-                '[data-testid="template-detail-preview-tint"]'
-            ),
-            'the live harness preview should use the subtle shared tint'
+            document.querySelector('[data-testid="template-detail-preview"]'),
+            'the live harness preview should render'
         );
         nc.assert.truthy(
             document.querySelector('button[aria-pressed]'),

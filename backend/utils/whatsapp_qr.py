@@ -35,6 +35,9 @@ logger = logging.getLogger(__name__)
 # Generously covers display → scan → status poll; a stale reservation must
 # expire so an abandoned idle connection can be handed out again.
 QR_RESERVATION_TTL_S = 15 * 60
+# start_qr_connection's failure codes when the owner's credit gate refused: credits, or the monthly spending cap.
+INSUFFICIENT_CREDITS = "insufficient_credits"
+SPEND_CAP = "spend_cap"
 
 
 # Status enrichment for credential lists: one WAHooks list call covers the
@@ -261,14 +264,31 @@ async def start_qr_connection(
     If the old connection is gone at WAHooks, falls through to a fresh scan —
     finalize's same-phone rebind then repairs the credential in place.
 
-    Returns ``{success, connection_id?, qr_code?, message, reconnect?}``.
-    Never raises for the expected WAHooks/config failure modes — callers map
-    ``success`` to their own transport response.
+    A new connection is billed by the hour once scanned, so it needs the
+    owner's credit gate first; a re-scan of an existing one starts no new
+    charge and is never refused for credits.
+
+    Returns ``{success, connection_id?, qr_code?, message, reconnect?, code?}``
+    (``code`` ``insufficient_credits`` or ``spend_cap`` when the gate refused). Never raises for
+    the expected WAHooks/config/credit failure modes — callers map ``success``
+    to their own transport response.
     """
     try:
         api_key = get_wahooks_api_key()
     except ValueError as e:
         return {"success": False, "message": str(e)}
+
+    if not reconnect_credential_id:
+        from billing.exceptions import InsufficientBalanceError, SpendCapReached
+        from billing.usage_tracker import usage_tracker
+
+        try:
+            await usage_tracker.enforce_credit_gate(owner_id, surface="whatsapp_connection")
+        except SpendCapReached as e:  # adding funds wouldn't lift it
+            return {"success": False, "code": SPEND_CAP, "message": str(e)}
+        except InsufficientBalanceError as e:
+            return {"success": False, "code": INSUFFICIENT_CREDITS,
+                    "message": f"A connected WhatsApp number is billed by the hour; add funds to connect one. {e}"}
 
     from wahooks import WAHooks, WAHooksError
 

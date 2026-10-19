@@ -9,11 +9,13 @@ prices the job from its per-second SKUs,
 gates it (``billing/gates.py``) and records a ``video`` coordinator job;
 ``poll_video_jobs`` (run by the per-minute coordinator reconcile) finishes
 it — download, store, bill the provider's reported cost — and wakes the
-coordinator with the result.
+coordinator with the result. The agent node's video handler starts its jobs
+here too and drives its own job with ``advance_video_job`` while it waits.
 """
 
 from __future__ import annotations
 
+import asyncio
 import base64
 import io
 import logging
@@ -167,33 +169,59 @@ def parse_image_response(raw: Dict[str, Any]) -> Tuple[str, List[str]]:
     return text, [u for u in (_image_url(img) for img in images) if u]
 
 
+async def openrouter_dollars(raw: Dict[str, Any], *, user_resource: bool) -> Optional[Decimal]:
+    """What an OpenRouter call cost, from its JSON response: the ``usage.cost``
+    it reported, else (on NoClick's key) OpenRouter's record of the call. None
+    when it's found nowhere, logged CRITICAL; on the caller's own key an
+    unreported cost is an informational $0."""
+    from utils.openrouter_cost import CostUnknown, generation_id_of, settle
+
+    cost = (raw.get("usage") or {}).get("cost")
+    if user_resource:
+        return Decimal(str(cost or 0))
+    try:
+        return await settle(cost, cost is not None, generation_id_of(raw))
+    except CostUnknown as exc:
+        logger.critical("[media] OpenRouter call not billed, its cost is unknown (%s): %s", raw.get("model"), exc)
+        return None
+
+
 async def bill_openrouter(
     *, user_id: str, organization_id: Optional[str], model: str, dollars: Decimal,
     user_resource: bool, quantity: Decimal, unit_type: str, metadata: Dict[str, Any],
     sio=None, sid=None,
 ) -> Decimal:
-    """Charge a provider cost with the OpenRouter markup; returns what was charged."""
-    from billing.markup import apply_openrouter_markup
-    from billing.schema import UsageEventData
+    """Charge a provider cost: the OpenRouter markup, or the payer's plan fee; returns what was charged."""
     from billing.usage_tracker import usage_tracker
 
-    total = apply_openrouter_markup(dollars, user_resource, model)
-    await usage_tracker.track_usage_event(UsageEventData(
-        user_id=user_id, total_cost=total, usage_type="ai_usage", usage_subtype=model,
-        quantity=quantity, unit_type=unit_type, user_resource=user_resource,
-        organization_id=organization_id, metadata=metadata,
-    ), sio=sio, sid=sid)
-    return total
+    event = _openrouter_event(user_id=user_id, organization_id=organization_id, model=model, dollars=dollars,
+                              user_resource=user_resource, quantity=quantity, unit_type=unit_type,
+                              metadata=metadata)
+    await usage_tracker.track_usage_event(event, sio=sio, sid=sid)
+    return event.total_cost
+
+
+def _openrouter_event(*, user_id: str, organization_id: Optional[str], model: str, dollars: Decimal,
+                      user_resource: bool, quantity: Decimal, unit_type: str, metadata: Dict[str, Any]):
+    from billing.markup import apply_openrouter_markup
+    from billing.schema import UsageEventData
+
+    return UsageEventData(
+        user_id=user_id, total_cost=apply_openrouter_markup(dollars, user_resource, model), cost_usd=dollars,
+        usage_type="ai_usage", usage_subtype=model, quantity=quantity, unit_type=unit_type,
+        user_resource=user_resource, organization_id=organization_id, metadata=metadata,
+    )
 
 
 async def _store(
     *, user_id: str, organization_id: Optional[str], body: bytes, content_type: str,
     filename: str, resource_type: str, metadata: Dict[str, Any],
+    workflow_id: Optional[str] = None, node_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     from utils.resource_store import create_resource_from_bytes
 
     stored = await create_resource_from_bytes(
-        user_id=user_id, workflow_id=None, organization_id=organization_id, body=body,
+        user_id=user_id, workflow_id=workflow_id, node_id=node_id, organization_id=organization_id, body=body,
         content_type=content_type, filename=filename, resource_type=resource_type, metadata=metadata,
     )
     return {"url": stored["download_url"], "resource_id": stored["resource_id"], "mime_type": content_type,
@@ -224,7 +252,7 @@ async def generate_image(
     from billing.usage_tracker import usage_tracker
 
     model = (model or DEFAULT_IMAGE_MODEL).removeprefix("openrouter/")
-    await check_product(pool, "image_generation", user_id=user_id, email=email)
+    await check_product(pool, "image_generation", user_id=user_id, email=email, organization_id=organization_id)
     await usage_tracker.enforce_credit_gate(user_id, organization_id=organization_id, user_resource=False,
                                             surface="image")
     body: Dict[str, Any] = {"model": model, "prompt": prompt, "n": 1}
@@ -253,10 +281,12 @@ async def generate_image(
         images.append(stored)
     if not images:
         raise MediaError("The image model answered without an image; try rewording the request.")
-    usage = raw.get("usage") or {}
+    dollars = await openrouter_dollars(raw, user_resource=False)
+    if dollars is None:
+        return {"images": images, "model": model, "cost_usd": None}
     charged = await bill_openrouter(
         user_id=user_id, organization_id=organization_id, model=model,
-        dollars=Decimal(str(usage.get("cost") or 0)), user_resource=False,
+        dollars=dollars, user_resource=False,
         quantity=Decimal(len(images)), unit_type="images",
         metadata={"model": model, "surface": f"{source}_image"},
     )
@@ -284,6 +314,23 @@ def _supported(spec: Dict[str, Any], field: str, value: Any, label: str) -> None
         raise MediaError(f"{spec['id']} supports {label} {', '.join(str(a) for a in allowed)}; not {value}.")
 
 
+def _fitted(spec: Dict[str, Any], field: str, default: Any) -> Any:
+    """The default where the model takes it; else the duration nearest it, or
+    the model's first listed resolution."""
+    allowed = spec.get(field)
+    if not allowed or default in allowed:
+        return default
+    if isinstance(default, int):
+        return min(allowed, key=lambda value: abs(value - default))
+    return allowed[0]
+
+
+def default_clip(spec: Dict[str, Any]) -> Tuple[int, str]:
+    """The duration and resolution a request that names neither makes on the model ``spec``."""
+    return (_fitted(spec, "supported_durations", DEFAULT_VIDEO_SECONDS),
+            _fitted(spec, "supported_resolutions", DEFAULT_VIDEO_RESOLUTION))
+
+
 def projected_video_dollars(
     pricing: Dict[str, str], *, seconds: int, resolution: str, audio: bool,
 ) -> Optional[Decimal]:
@@ -304,52 +351,75 @@ def projected_video_dollars(
     return None
 
 
-def dollars_as_credits(dollars: Decimal, model: str) -> float:
-    from billing.markup import apply_openrouter_markup, dollars_to_credits
+async def dollars_as_credits(dollars: Decimal, model: str, *, user_id: str, organization_id: Optional[str]) -> float:
+    """What a provider cost of ``dollars`` would charge the account that pays, in credits."""
+    from billing.markup import dollars_to_credits
+    from billing.usage_tracker import usage_tracker
 
-    return float(dollars_to_credits(apply_openrouter_markup(dollars, False, model)))
+    event = _openrouter_event(user_id=user_id, organization_id=organization_id, model=model, dollars=dollars,
+                              user_resource=False, quantity=Decimal(1), unit_type="requests", metadata={})
+    return float(dollars_to_credits(await usage_tracker.quote(event)))
 
 
 async def start_video(
     pool, *, user_id: str, organization_id: Optional[str], prompt: str, model: Optional[str] = None,
     seconds: Optional[int] = None, resolution: Optional[str] = None, aspect_ratio: Optional[str] = None,
     audio: bool = True, email: Optional[str] = None, continuation: Optional[Dict[str, Any]] = None,
+    first_frame: Optional[str] = None, provider_options: Optional[Dict[str, Any]] = None,
+    source: str = "coordinator", workflow_id: Optional[str] = None, node_id: Optional[str] = None,
+    origin: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Price, gate and submit one video; the job finishes in the background."""
+    """Price, gate and submit one video; the job finishes in the background.
+    Unset durations and resolutions fit the model's published limits.
+    ``source`` names the caller on the job, its file and its charge (``origin``
+    adds to it: what the job's outcome goes back to); a job a workflow node
+    starts keeps its file with that workflow. Its charge, made when it
+    finishes, keeps the attribution of the context that started it."""
     from billing.gates import check_product
+    from billing.usage_tracker import usage_attribution
 
     model = (model or DEFAULT_VIDEO_MODEL).removeprefix("openrouter/")
-    seconds = int(seconds or DEFAULT_VIDEO_SECONDS)
-    resolution = (resolution or DEFAULT_VIDEO_RESOLUTION).lower()
     spec = await video_model(model)
     if spec is None:
-        raise MediaError(f"{model} isn't an OpenRouter video model.")
+        raise MediaError(f"{model} isn't an OpenRouter video model (the default is {DEFAULT_VIDEO_MODEL}).")
+    seconds = int(seconds) if seconds else _fitted(spec, "supported_durations", DEFAULT_VIDEO_SECONDS)
+    resolution = resolution or _fitted(spec, "supported_resolutions", DEFAULT_VIDEO_RESOLUTION)
     _supported(spec, "supported_durations", seconds, "durations (seconds)")
     _supported(spec, "supported_resolutions", resolution, "resolutions")
     if aspect_ratio:
         _supported(spec, "supported_aspect_ratios", aspect_ratio, "aspect ratios")
+    if first_frame and "first_frame" not in (spec.get("supported_frame_images") or []):
+        raise MediaError(f"{model} can't start from an image; pick a model that takes a first frame.")
     audio = audio and bool(spec.get("generate_audio", True))
     dollars = projected_video_dollars(spec.get("pricing_skus") or {}, seconds=seconds, resolution=resolution, audio=audio)
     if dollars is None:
         raise MediaError(f"{model} can't be priced before it runs; pick a model priced per second.")
-    credits = dollars_as_credits(dollars, model)
-    await check_product(pool, "video_generation", user_id=user_id, email=email, projected_credits=credits)
+    credits = await dollars_as_credits(dollars, model, user_id=user_id, organization_id=organization_id)
+    await check_product(pool, "video_generation", user_id=user_id, email=email, projected_credits=credits,
+                        organization_id=organization_id)
 
     params: Dict[str, Any] = {"duration": seconds, "resolution": resolution, "generate_audio": audio}
     if aspect_ratio:
         params["aspect_ratio"] = aspect_ratio
+    body: Dict[str, Any] = {"model": model, "prompt": prompt, **params}
+    if first_frame:
+        body["frame_images"] = [{"type": "image_url", "image_url": {"url": first_frame}, "frame_type": "first_frame"}]
+    if provider_options:
+        body["provider"] = {"options": provider_options}
     async with httpx.AsyncClient(timeout=60.0) as client:
-        resp = await client.post(f"{OPENROUTER_API}/videos", headers=openrouter_headers(openrouter_key()),
-                                 json={"model": model, "prompt": prompt, **params})
+        resp = await client.post(f"{OPENROUTER_API}/videos", headers=openrouter_headers(openrouter_key()), json=body)
     if resp.status_code >= 400:
         raise MediaError(f"The video model refused the request (HTTP {resp.status_code}): {resp.text[:300]}")
     submitted = resp.json()
     job_id = await pool.fetchval(
-        """INSERT INTO coordinator_jobs (user_id, kind, status, spec, origin, continuation, send_to_phone)
-           VALUES ($1::uuid, 'video', 'running', $2, '{"source": "coordinator"}'::jsonb, $3, $4) RETURNING id""",
+        """INSERT INTO coordinator_jobs (user_id, kind, status, spec, origin, continuation, send_to_phone,
+                                         workflow_id, node_id)
+           VALUES ($1::uuid, 'video', 'running', $2, $3, $4, $5, $6::uuid, $7) RETURNING id""",
         user_id, {"model": model, "prompt": prompt, "params": params, "provider_job_id": submitted["id"],
-                  "projected_credits": credits, "organization_id": organization_id},
-        continuation, (continuation or {}).get("channel", "web") != "web",
+                  "projected_credits": credits, "projected_usd": str(dollars), "organization_id": organization_id,
+                  "attribution": usage_attribution() or None},
+        {"source": source, **(origin or {})}, continuation, (continuation or {}).get("channel", "web") != "web",
+        workflow_id, node_id,
     )
     logger.info("[Video] submitted job=%s provider=%s model=%s credits=%.2f", job_id, submitted["id"], model, credits)
     return {"job_id": str(job_id), "model": model, "seconds": seconds, "resolution": resolution,
@@ -370,6 +440,10 @@ def video_summary(payload: Dict[str, Any]) -> str:
     return f"The video couldn't be made: {(payload.get('error') or '')[:500]}"
 
 
+_PROVIDER_ENDED = {"failed": "The video model failed.", "cancelled": "The video model cancelled the job.",
+                   "expired": "The video job expired before it finished."}
+
+
 async def _poll_one(pool, client: httpx.AsyncClient, api_key: str, job: Dict[str, Any]) -> None:
     from coder.coordinator.jobs import finish_job
 
@@ -378,8 +452,8 @@ async def _poll_one(pool, client: httpx.AsyncClient, api_key: str, job: Dict[str
     resp.raise_for_status()
     state = resp.json()
     status = state.get("status")
-    if status == "failed":
-        await finish_job(pool, job["id"], status="failed", error=str(state.get("error") or "The video model failed.")[:1000])
+    if status in _PROVIDER_ENDED:
+        await finish_job(pool, job["id"], status="failed", error=str(state.get("error") or _PROVIDER_ENDED[status])[:1000])
         return
     if status != "completed":
         if time.time() - job["created_at"].timestamp() > VIDEO_TIMEOUT_S:
@@ -392,38 +466,58 @@ async def _poll_one(pool, client: httpx.AsyncClient, api_key: str, job: Dict[str
         await finish_job(pool, job["id"], status="failed", error="The video was larger than NoClick keeps.")
         return
     user_id, org = str(job["user_id"]), spec.get("organization_id")
+    source = job["origin"].get("source", "coordinator")
+    workflow_id = str(job["workflow_id"]) if job.get("workflow_id") else None
     stored = await _store(
-        user_id=user_id, organization_id=org, body=content.content,
+        user_id=user_id, organization_id=org, body=content.content, workflow_id=workflow_id, node_id=job.get("node_id"),
         content_type=content.headers.get("content-type", "video/mp4").split(";")[0], filename="video.mp4",
-        resource_type="video", metadata={"source": "coordinator", "model": spec["model"], "prompt": spec["prompt"][:500]},
+        resource_type="video", metadata={"source": source, "model": spec["model"], "prompt": spec["prompt"][:500]},
     )
     reported = (state.get("usage") or {}).get("cost")
     if reported is None:
         # The job was priced from the provider's own SKUs before it ran.
         logger.warning("[Video] job %s reported no cost; charging its projection", job["id"])
-        params = spec["params"]
-        pricing = ((await video_model(spec["model"])) or {}).get("pricing_skus") or {}
-        dollars = projected_video_dollars(pricing, seconds=params.get("duration", DEFAULT_VIDEO_SECONDS),
-                                          resolution=params.get("resolution", DEFAULT_VIDEO_RESOLUTION),
-                                          audio=params.get("generate_audio", True)) or Decimal(0)
+        dollars = await _projected_video_dollars(spec)
     else:
         dollars = Decimal(str(reported))
-    await bill_openrouter(
-        user_id=user_id, organization_id=org, model=spec["model"], dollars=dollars, user_resource=False,
-        quantity=Decimal(str(spec["params"].get("duration", DEFAULT_VIDEO_SECONDS))), unit_type="seconds",
-        metadata={"model": spec["model"], "coordinator_job_id": str(job["id"]), "surface": "coordinator_video"},
-    )
-    await finish_job(pool, job["id"], status="completed", result={**stored, "cost_usd": float(dollars)})
+    # Only the close that wins is charged: a poller whose lease ran out never bills a finished job twice.
+    cost = float(dollars) if dollars is not None else None
+    if await finish_job(pool, job["id"], status="completed", result={**stored, "cost_usd": cost}) is None:
+        return
+    if dollars is None:
+        logger.critical("[Video] job %s not billed: it reported no cost and its price can't be projected", job["id"])
+        return
+    from billing.usage_tracker import attributed
+
+    with attributed(spec.get("attribution")):
+        await bill_openrouter(
+            user_id=user_id, organization_id=org, model=spec["model"], dollars=dollars, user_resource=False,
+            quantity=Decimal(str(spec["params"].get("duration", DEFAULT_VIDEO_SECONDS))), unit_type="seconds",
+            metadata={"model": spec["model"], "coordinator_job_id": str(job["id"]), "surface": f"{source}_video"},
+        )
 
 
-async def poll_video_jobs(pool, limit: int = 20) -> None:
-    """Advance running video jobs; each job is leased so two pollers never
-    finish (and bill) the same one."""
+async def _projected_video_dollars(spec: Dict[str, Any]) -> Optional[Decimal]:
+    """A job's price from its model's per-second SKUs: as projected when it was
+    submitted, or (a job submitted before that was kept) projected again."""
+    if spec.get("projected_usd") is not None:
+        return Decimal(spec["projected_usd"])
+    params = spec["params"]
+    pricing = ((await video_model(spec["model"])) or {}).get("pricing_skus") or {}
+    return projected_video_dollars(pricing, seconds=params.get("duration", DEFAULT_VIDEO_SECONDS),
+                                   resolution=params.get("resolution", DEFAULT_VIDEO_RESOLUTION),
+                                   audio=params.get("generate_audio", True))
+
+
+async def poll_video_jobs(pool, limit: int = 20, *, job_id: Optional[str] = None) -> None:
+    """Advance running video jobs (only ``job_id`` when given); each job is
+    leased so two pollers never finish (and bill) the same one."""
     jobs = await pool.fetch(
         """WITH due AS (SELECT id FROM coordinator_jobs WHERE kind='video' AND status='running'
-             AND (lease_until IS NULL OR lease_until < now()) ORDER BY created_at LIMIT $1 FOR UPDATE SKIP LOCKED)
+             AND (lease_until IS NULL OR lease_until < now()) AND ($2::uuid IS NULL OR id = $2::uuid)
+             ORDER BY created_at LIMIT $1 FOR UPDATE SKIP LOCKED)
            UPDATE coordinator_jobs j SET lease_until = now() + interval '5 minutes' FROM due WHERE j.id = due.id
-           RETURNING j.*""", limit,
+           RETURNING j.*""", limit, job_id,
     )
     if not jobs:
         return
@@ -437,3 +531,11 @@ async def poll_video_jobs(pool, limit: int = 20) -> None:
             # Still rendering (or a failed poll): the next minute looks again.
             await pool.execute("UPDATE coordinator_jobs SET lease_until = NULL WHERE id = $1 AND status = 'running'",
                                job["id"])
+
+
+async def advance_video_job(pool, job_id: str) -> Dict[str, Any]:
+    """Advance one job now, under the same lease the minute poll takes, and
+    read it back. Shielded, so a caller cancelled mid-poll never leaves a
+    finished video stored but unclosed, or closed but uncharged."""
+    await asyncio.shield(poll_video_jobs(pool, job_id=job_id))
+    return dict(await pool.fetchrow("SELECT * FROM coordinator_jobs WHERE id = $1::uuid", job_id))

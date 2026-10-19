@@ -220,7 +220,7 @@ class FirestoreServiceAccountCredential(BaseModel):
     token_uri: str = Field(
         GOOGLE_TOKEN_URL,
         title="Token URI",
-        description="OAuth 2.0 token endpoint for the service account",
+        description="The token_uri from the JSON key. The default fits almost every key.",
     )
 
     model_config = ConfigDict(

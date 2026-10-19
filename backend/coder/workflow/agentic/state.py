@@ -14,6 +14,10 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Literal, Optional
 
 
+# What the builder hears when the user skips an <ask>.
+INPUT_DISMISSED_MARKER = "[System: Input Request Dismissed]"
+
+
 @dataclass
 class PendingAsk:
     """An <ask/> the brain emitted that terminated the current turn."""

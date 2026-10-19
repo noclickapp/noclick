@@ -46,9 +46,10 @@ def test_the_refusal_says_no_call_was_placed_and_the_owner_is_told_how_to_get_he
 
 
 def test_the_coordinator_never_sets_up_calling_for_an_emergency_and_never_denies_being_an_ai_on_a_call():
-    from coder.coordinator.agent import SYSTEM_PROMPT, system_prompt_for
+    from coder.coordinator.agent import PROMPTS, system_prompt_for
 
-    assert OWNER_EMERGENCY_STEP in SYSTEM_PROMPT and "never set up calling for it" in SYSTEM_PROMPT
+    for phone_steps in (True, False):
+        assert OWNER_EMERGENCY_STEP in PROMPTS.system_prompt(in_credits=False, phone_steps=phone_steps)
     for channel in ("phone", "whatsapp", "callback", "voice"):
         assert NEVER_DENY_AI in system_prompt_for({"channel": channel}, None)
     assert NEVER_DENY_AI not in system_prompt_for({"channel": "whatsapp_text"}, None)

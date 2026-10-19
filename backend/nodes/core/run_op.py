@@ -302,13 +302,15 @@ async def run_node_op_tool(
     # Keyed on the conversation, which the hosted-MCP endpoint also reaches this
     # function with — its `mcp-host:{id}` conversations can never match a
     # rehearsal key, so sharing this function is safe.
-    from nodes.agent.rehearsal import is_rehearsing
+    from nodes.agent.rehearsal import UNFENCED_RESULT, is_rehearsing, must_rehearse
 
     if await is_rehearsing(conversation_id):
         from nodes.agent.rehearsal import rehearse_tool
 
         return await rehearse_tool(
             conversation_id, info.get("name") or info.get("operation") or "tool", arguments, info)
+    if must_rehearse(conversation_id):  # its fence can't be read: refused, never run for real
+        return dict(UNFENCED_RESULT)
 
     if info.get("tool_type") == "node_op_lookup":
         fields = info.get("fields") or {}

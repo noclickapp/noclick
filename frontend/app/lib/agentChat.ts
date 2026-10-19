@@ -5,6 +5,7 @@
 // without spinning up the backend or socket.
 
 import agentSchema from '~/schemas/nodes/agent.json';
+import type { ContentItem } from '~/types/socket-schema.generated';
 
 /** Default conversation_key applied to agent nodes that opt into the
  *  Interface-tab chat. Required because handlers/llm.py:73 only enables
@@ -171,6 +172,24 @@ export interface AgentChatAttachment {
 
 export function isImageAttachment(a: { mimeType: string }): boolean {
     return a.mimeType.startsWith('image/');
+}
+
+/** How a sent turn's attachments show in its bubble, in the shapes the persisted transcript restores: images as
+ *  image_url content, other files as chips. */
+export function attachmentEcho(attachments: AgentChatAttachment[]): {
+    content?: ContentItem[];
+    files?: { name: string; url: string; mimeType: string }[];
+} {
+    const content = attachments.filter(isImageAttachment).map((a): ContentItem => ({ type: 'image_url', image_url: { url: a.url } }));
+    const files = attachments.filter((a) => !isImageAttachment(a)).map((a) => ({ name: a.name, url: a.url, mimeType: a.mimeType }));
+    return { content: content.length ? content : undefined, files: files.length ? files : undefined };
+}
+
+/** Something the user pointed an agent at from the composer: one of their automations or connected accounts. */
+export interface ChatReference {
+    kind: 'automation' | 'account';
+    id: string;
+    label: string;
 }
 
 /** Build the one-shot config override applied to the target agent node when

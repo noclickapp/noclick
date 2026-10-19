@@ -1,7 +1,6 @@
 // Shared preview card for UX blocks. Used in both the FlowHelperView palette
 // and as the drag overlay when dragging interface nodes onto the canvas.
 
-import { scaled } from '~/lib/constants';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 
@@ -12,8 +11,8 @@ interface BlockPreviewCardProps {
 }
 
 // Sized to scale with the active root-font-size tier.
-const BASE_CARD_WIDTH = 190;
-const BASE_SKELETON_H = 28;
+export const BLOCK_PREVIEW_WIDTH = 190;
+const SKELETON_H = 28;
 
 /** Miniature skeleton that visually represents each block type.
  *  Every case must render content that looks correct inside a 28px-tall zone. */
@@ -97,30 +96,29 @@ export function BlockPreviewCard({
     label,
     Icon,
 }: BlockPreviewCardProps) {
-    const skeletonH = scaled(BASE_SKELETON_H);
     return (
         <div
             className="rounded-lg border border-border dark:border-white/[0.07] overflow-hidden bg-card dark:bg-[linear-gradient(145deg,rgba(39,39,42,0.6),rgba(24,24,27,0.75))]"
-            style={{ width: scaled(BASE_CARD_WIDTH) }}
+            style={{ width: BLOCK_PREVIEW_WIDTH }}
         >
             <div className="flex items-center gap-1.5 px-2.5 py-2 border-b border-border/60 dark:border-white/[0.04]">
                 <BrandIcon
                     Icon={Icon}
                     className="w-3 h-3 text-muted-foreground flex-shrink-0"
                 />
-                <span className="text-[10px] font-medium text-foreground/80 leading-none truncate">
+                <span className="text-[10px] font-medium text-foreground/80 leading-tight truncate">
                     {label}
                 </span>
             </div>
             <div
                 className="px-2.5 pointer-events-none"
                 style={{
-                    height: skeletonH + scaled(16),
+                    height: SKELETON_H + 16,
                     display: 'flex',
                     alignItems: 'center',
                 }}
             >
-                <div className="w-full" style={{ height: skeletonH }}>
+                <div className="w-full" style={{ height: SKELETON_H }}>
                     <Skeleton blockType={blockType} />
                 </div>
             </div>
@@ -128,8 +126,3 @@ export function BlockPreviewCard({
     );
 }
 
-// Rendered width (with the low-res scale baked in), for callers aligning
-// an overlay or layout slot to the card width — e.g. the drag overlay.
-export function getBlockPreviewWidth(): number {
-    return scaled(BASE_CARD_WIDTH);
-}

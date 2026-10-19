@@ -20,6 +20,9 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, HTTPException, Request, Response
 
+from nodes.agent.openclaw_protocol import DENIED_TOOLS, bridge_env
+from nodes.core.base import FailureWithDiagnostics
+
 logger = logging.getLogger(__name__)
 
 LOCAL_HARNESS_MODEL_TYPES = ("claude_code", "codex", "opencode", "hermes_agent", "openclaw")
@@ -484,7 +487,7 @@ def _build_command(
                     "sandbox": {"mode": "off"},
                 }
             },
-            "tools": {"exec": {"ask": "off", "security": "full"}},
+            "tools": {"exec": {"ask": "off", "security": "full"}, "deny": list(DENIED_TOOLS)},
         }
         if mcp_url:
             oc_config["mcp"] = {
@@ -739,10 +742,17 @@ async def run_local_harness_turn(
     scope = str(conversation_key) if conversation_key is not None and str(conversation_key) else secrets.token_hex(16)
     workdir = _workspace_dir(workflow_id, node_id, scope)
     key = (str(workdir), workflow_id, node_id, scope)
-    model_field = {"claude_code": "claude_code_model", "codex": "codex_model",
-                   "opencode": "opencode_model", "hermes_agent": "hermes_agent_model",
-                   "openclaw": "openclaw_model"}[model_type]
-    model = getattr(config, model_field, "") or ""
+    from nodes.agent.config.providers import HARNESS_MODEL_FIELDS, WRAPPER_ID_BY_MODEL_TYPE
+
+    model = getattr(config, HARNESS_MODEL_FIELDS[WRAPPER_ID_BY_MODEL_TYPE[model_type]], "") or ""
+    if model_type == "opencode" and model:
+        from nodes.agent.config.harness_model_lists import opencode_model_refusal
+
+        # The operator's own opencode config can define models, so only Zen's
+        # live list judges here.
+        refusal = await opencode_model_refusal(model, env_overrides, catalog_is_the_cli_list=False)
+        if refusal:
+            raise ValueError(refusal)
     fingerprint = hashlib.sha256(json.dumps({
         "harness": model_type, "model": model, "user": str(user_id),
         "system": getattr(config, "system_prompt", ""), "env": env_overrides,
@@ -835,7 +845,7 @@ async def run_local_harness_turn(
                 env.update(OPENCLAW_STATE_DIR=str(home), OPENCLAW_GATEWAY_TOKEN=secrets.token_urlsafe(24),
                     OPENCLAW_DISABLE_BONJOUR="1", OPENCLAW_NO_RESPAWN="1", OPENCLAW_SKIP_CHANNELS="1",
                     OPENCLAW_EXEC_SHELL_SNAPSHOT="0", NOCLICK_OPENCLAW_URL=f"ws://127.0.0.1:{port}",
-                    NOCLICK_OPENCLAW_COMMAND=json.dumps([*cmd, "--port", str(port)]))
+                    NOCLICK_OPENCLAW_COMMAND=json.dumps([*cmd, "--port", str(port)]), **bridge_env())
                 bridge = Path(__file__).with_name("openclaw_bridge.mjs")
                 common["command"] = [_require_binary("node", "Install Node.js 22.22.3 or later"), str(bridge)]
                 session = OpenClawSession(**common)
@@ -893,6 +903,8 @@ async def run_local_harness_turn(
     except Exception as exc:
         error = (f"Local {model_type} turn timed out after {TURN_TIMEOUT_S:.0f}s"
                  if isinstance(exc, TimeoutError) else str(exc))
+        if isinstance(exc, FailureWithDiagnostics):  # its output is for the log, not the chat
+            logger.error("Local %s failed: %s", model_type, exc.diagnostics)
         if session:
             await session.close(error)
         output = {"type": "agent", "status": "failed", "response": "", "error": error,

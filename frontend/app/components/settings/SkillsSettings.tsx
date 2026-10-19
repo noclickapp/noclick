@@ -5,7 +5,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-    Brain,
     Plus,
     Share2,
     Trash2,
@@ -15,6 +14,10 @@ import {
     Lock,
 } from 'lucide-react';
 import { sendEventWithCallback } from '~/lib/socket-sender';
+import { cn } from '~/lib/utils';
+import { BUTTON_PRIMARY } from '~/components/shell/buttons';
+import { FIELD, FIELD_LABEL } from '~/components/shell/fields';
+import { SettingsEmpty, SettingsGroup, SettingsGroupTitle, SettingsHeader } from '~/components/settings/SettingsParts';
 import { ShareDialog } from '~/components/shared/popups/ShareDialog';
 import { DeleteConfirmPopup } from '~/components/shared/popups/DeleteConfirmPopup';
 import { SkillEditor } from '~/components/skills/SkillEditor';
@@ -158,14 +161,10 @@ export function SkillsSettings() {
 
     return (
         <div>
-            {/* Header */}
-            <div className="mb-6">
-                <h2 className="text-lg font-semibold text-foreground">Skills</h2>
-                <p className="text-sm text-muted-foreground dark:text-white/40 mt-1">
-                    Reusable agent context — a description plus optional text and a workflow body.
-                    Enabled skills are loaded into every builder call so the agent can use them on demand.
-                </p>
-            </div>
+            <SettingsHeader
+                title="Skills"
+                description="Reusable agent context: a description plus optional text and a workflow body. Enabled skills are loaded into every builder call so the agent can use them on demand."
+            />
 
             {/* Error banner */}
             {error && (
@@ -178,23 +177,18 @@ export function SkillsSettings() {
             )}
 
             {/* Create new skill */}
-            <div className="mb-6 p-4 bg-card dark:bg-foreground/[0.03] border border-border dark:border-white/[0.06] rounded-xl">
-                <div className="flex items-end gap-3">
-                    <div className="flex-1">
-                        <label className="block text-xs font-medium text-muted-foreground dark:text-white/50 mb-1.5">Skill name</label>
-                        <input
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
-                            placeholder="e.g. Apple-style copy guidelines"
-                            className="w-full h-9 px-3 text-sm bg-background/40 border border-input dark:border-white/[0.08] rounded-lg text-foreground placeholder:text-[hsl(var(--placeholder))] outline-none focus:border-muted-foreground/40 dark:focus:border-white/20"
-                        />
-                    </div>
-                    <button
-                        onClick={handleCreate}
-                        disabled={creating || !newName.trim()}
-                        className="flex items-center gap-2 h-9 px-4 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-foreground/90 disabled:opacity-40 transition-colors"
-                    >
+            <div className="mb-8">
+                <label htmlFor="new-skill-name" className={FIELD_LABEL}>Skill name</label>
+                <div className="flex items-center gap-2.5">
+                    <input
+                        id="new-skill-name"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
+                        placeholder="e.g. Apple-style copy guidelines"
+                        className={FIELD}
+                    />
+                    <button onClick={handleCreate} disabled={creating || !newName.trim()} className={cn(BUTTON_PRIMARY, 'h-10 px-4')}>
                         <Plus className="w-4 h-4" />
                         Create
                     </button>
@@ -203,23 +197,26 @@ export function SkillsSettings() {
 
             {/* List */}
             {loading && totalCount === 0 ? (
-                <div className="text-sm text-muted-foreground/70 dark:text-white/30 py-8 text-center">Loading…</div>
+                <SettingsGroup>
+                    <SettingsEmpty>Loading…</SettingsEmpty>
+                </SettingsGroup>
             ) : totalCount === 0 ? (
-                <div className="text-sm text-muted-foreground/70 dark:text-white/30 py-8 text-center">
-                    No skills yet. Create one above to give the agent persistent context.
-                </div>
+                <SettingsGroup>
+                    <SettingsEmpty>No skills yet. Create one above to give the agent persistent context.</SettingsEmpty>
+                </SettingsGroup>
             ) : (
-                <div className="space-y-6">
+                <div className="space-y-8">
                     {sections.map((section) => (
                         <div key={section.scope}>
-                            <div className="mb-2 flex items-baseline justify-between">
-                                <div>
-                                    <h3 className="text-xs font-semibold text-muted-foreground dark:text-white/60 uppercase tracking-wide">{section.title}</h3>
-                                    {section.help && <p className="text-[0.6875rem] text-muted-foreground/70 dark:text-white/30 mt-0.5">{section.help}</p>}
-                                </div>
-                                <span className="text-[0.6875rem] text-muted-foreground/70 dark:text-white/30">{section.skills.length}</span>
-                            </div>
-                            <div className="space-y-2">
+                            <SettingsGroupTitle
+                                title={
+                                    <>
+                                        {section.title} <span className="ml-1 font-normal tabular-nums text-muted-foreground">{section.skills.length}</span>
+                                    </>
+                                }
+                                description={section.help}
+                            />
+                            <SettingsGroup>
                                 {section.skills.map((skill) => (
                                     <SkillRowCompact
                                         key={skill.id}
@@ -231,7 +228,7 @@ export function SkillsSettings() {
                                         onDelete={() => setPendingDelete({ skill })}
                                     />
                                 ))}
-                            </div>
+                            </SettingsGroup>
                         </div>
                     ))}
                 </div>
@@ -299,21 +296,20 @@ function SkillRowCompact({
                     onClick();
                 }
             }}
-            className={`group flex items-center gap-4 px-4 py-3 bg-card dark:bg-foreground/[0.03] border border-border dark:border-white/[0.06] rounded-xl hover:bg-foreground/[0.05] hover:border-muted-foreground/30 dark:hover:border-white/[0.10] transition-colors cursor-pointer ${active ? '' : 'opacity-60'}`}
+            className={cn('group flex min-h-[64px] cursor-pointer items-center gap-4 px-5 py-3.5 transition-colors hover:bg-foreground/[0.03]', !active && 'opacity-60')}
         >
-            <Brain className="w-4 h-4 text-muted-foreground/70 dark:text-white/30 shrink-0" />
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-medium text-foreground truncate">{skill.name || 'Untitled skill'}</span>
+                    <span className="truncate text-[14.5px] font-medium text-foreground">{skill.name || 'Untitled skill'}</span>
                     {skill.is_system && <Pill icon={ShieldCheck} tone="violet">System</Pill>}
                     {skill.has_workflow && <Pill icon={WorkflowIcon} tone="indigo">Workflow</Pill>}
                     {skill.has_text && <Pill icon={FileText} tone="zinc">Text</Pill>}
                     {!editable && <Pill icon={Lock} tone="zinc">Read-only</Pill>}
                 </div>
                 {skill.description ? (
-                    <div className="text-xs text-muted-foreground dark:text-white/40 mt-0.5 line-clamp-1">{skill.description}</div>
+                    <div className="mt-0.5 line-clamp-1 text-[13px] text-muted-foreground">{skill.description}</div>
                 ) : (
-                    <div className="text-xs text-muted-foreground/50 dark:text-white/20 mt-0.5 italic">No description</div>
+                    <div className="mt-0.5 text-[13px] text-muted-foreground/60">No description</div>
                 )}
             </div>
             <div className="flex items-center gap-1 shrink-0">
@@ -417,11 +413,12 @@ function SwitchControl({
     );
 }
 
+// Tags stay quiet; only amber (a warning) keeps its colour.
 const pillTone: Record<string, string> = {
-    violet: 'bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30',
-    indigo: 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-500/30',
-    amber: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30',
-    zinc: 'bg-foreground/[0.05] text-muted-foreground dark:text-white/50 border-border dark:border-white/[0.08]',
+    violet: 'bg-foreground/[0.06] text-foreground/75',
+    indigo: 'bg-foreground/[0.06] text-foreground/75',
+    amber: 'bg-amber-500/10 text-amber-700 dark:text-amber-300',
+    zinc: 'bg-foreground/[0.05] text-muted-foreground',
 };
 
 function Pill({
@@ -435,9 +432,9 @@ function Pill({
 }) {
     return (
         <span
-            className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[0.625rem] font-medium uppercase tracking-wide ${pillTone[tone]}`}
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11.5px] font-medium ${pillTone[tone]}`}
         >
-            {Icon && <Icon className="h-2.5 w-2.5" />}
+            {Icon && <Icon className="h-3 w-3" />}
             {children}
         </span>
     );

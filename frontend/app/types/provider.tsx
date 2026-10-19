@@ -1,7 +1,7 @@
 // Provider types and utilities for AI model providers
 // Contains provider enum, metadata mappings, and utility functions
 
-import { ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import {
     OpenAI, Anthropic, Cohere, Azure, Bedrock, Aws, VertexAI,
     Ai21, XAI, Perplexity, Cerebras, Groq, Together, Fireworks, Anyscale,
@@ -15,8 +15,16 @@ import {
 import OpenRouter from '~/components/icons/OpenRouterIcon';
 import { HARNESS_BRANDS } from '~/lib/harnessBrand';
 
+// Each Avatar's own glyph (the brand colour variant where the icon has one), for
+// surfaces that draw a provider's mark on their own tile instead of its avatar.
+const PROVIDER_GLYPHS = new WeakMap<object, ComponentType<{ className?: string; size?: number | string }>>();
+
 // Helper function to create colored icons - using Avatar variant which typically shows colored logos
-const createIcon = (IconComponent: any) => <IconComponent.Avatar size={32} />;
+const createIcon = (IconComponent: any) => {
+    const avatar = <IconComponent.Avatar size={32} />;
+    PROVIDER_GLYPHS.set(avatar, IconComponent.Color ?? IconComponent);
+    return avatar;
+};
 // Compact harness brand mark (from the shared HARNESS_BRANDS registry) at the 32px
 // size PROVIDER_METADATA icons render at. The full wordmark is reserved for the
 // large node-body icon (see AgentModelIcon).
@@ -1045,6 +1053,13 @@ export const PROVIDER_METADATA: Record<ModelProvider, ProviderMetadata> = {
 };
 
 // Utility functions for working with provider metadata
+
+/** A provider's brand glyph, sized by its className; undefined where the provider draws a harness mark instead. */
+export const providerGlyph = (provider: ModelProvider): ComponentType<{ className?: string; size?: number | string }> | undefined => {
+    const icon = PROVIDER_METADATA[provider]?.icon;
+    return icon && typeof icon === 'object' ? PROVIDER_GLYPHS.get(icon) : undefined;
+};
+
 export const getProviderMetadata = (provider: ModelProvider): ProviderMetadata | undefined => {
     return PROVIDER_METADATA[provider];
 };

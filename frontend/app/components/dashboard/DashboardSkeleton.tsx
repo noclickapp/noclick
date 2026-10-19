@@ -1,4 +1,4 @@
-// First-load skeleton for the Dashboard tab: the same greeting, ledger and card
+// First-load skeleton for the Activity page: the same greeting, ledger and card
 // grid as the Hairline layout, drawn as pulsing placeholders so the page keeps
 // its shape while `dashboard:overview` is in flight. It reads the layout's own
 // rhythm tokens, card order and column spans, so it cannot drift from the real
@@ -10,17 +10,13 @@ import { ORDER, SPANS } from '~/components/dashboard/variants';
 import type { FocusId } from '~/components/dashboard/types';
 
 /** What each card's body looks like while loading. */
-const SHAPES: Record<FocusId, { rows: number; chart?: boolean; chips?: boolean }> = {
+const SHAPES: Record<FocusId, { rows: number; chart?: boolean }> = {
     attention: { rows: 4 },
     runs: { rows: 3, chart: true },
     agents: { rows: 3 },
     upcoming: { rows: 4 },
-    files: { rows: 4 },
-    credentials: { rows: 0, chips: true },
     triggers: { rows: 3 },
-    credits: { rows: 2 },
     notifications: { rows: 3 },
-    memories: { rows: 3 },
 };
 
 function Row({ wide = false }: { wide?: boolean }) {
@@ -37,7 +33,7 @@ function Row({ wide = false }: { wide?: boolean }) {
 }
 
 function Card({ id }: { id: FocusId }) {
-    const { rows, chart, chips } = SHAPES[id];
+    const { rows, chart } = SHAPES[id];
     return (
         <section className={cn(SURFACE, 'flex min-w-0 flex-col', LAYOUT.cardPad, SPANS.balanced[id])} data-card={id}>
             <div className="mb-3 flex items-center justify-between">
@@ -51,26 +47,18 @@ function Card({ id }: { id: FocusId }) {
                     ))}
                 </div>
             )}
-            {chips ? (
-                <div className="flex flex-wrap gap-1.5">
-                    {[88, 120, 96, 104, 80, 132, 72].map((w, i) => (
-                        <Skeleton key={i} className="h-8 rounded-md" style={{ width: w }} />
-                    ))}
-                </div>
-            ) : (
-                <div className={ROWS}>
-                    {Array.from({ length: rows }, (_, i) => (
-                        <Row key={i} wide={i % 2 === 0} />
-                    ))}
-                </div>
-            )}
+            <div className={ROWS}>
+                {Array.from({ length: rows }, (_, i) => (
+                    <Row key={i} wide={i % 2 === 0} />
+                ))}
+            </div>
         </section>
     );
 }
 
-export function DashboardSkeleton({ memories = false }: { memories?: boolean }) {
+export function DashboardSkeleton() {
     return (
-        <div className="scrollbar-subtle h-full overflow-y-auto" data-testid="dashboard-tab-loading" aria-busy="true" aria-label="Loading your dashboard">
+        <div className="scrollbar-subtle h-full overflow-y-auto" data-testid="dashboard-tab-loading" aria-busy="true" aria-label="Loading activity">
             <div className={cn('mx-auto', LAYOUT.pagePad)} style={{ maxWidth: LAYOUT.pageMaxWidth }}>
                 <div className={cn('space-y-2', LAYOUT.greetingGap)}>
                     <Skeleton className="h-6 w-56" />
@@ -78,7 +66,7 @@ export function DashboardSkeleton({ memories = false }: { memories?: boolean }) 
                 </div>
                 <div className={cn(SURFACE, LAYOUT.ledgerGap, 'overflow-hidden')}>
                     <div className={LAYOUT.ledgerGrid}>
-                        {Array.from({ length: 6 }, (_, i) => (
+                        {Array.from({ length: 5 }, (_, i) => (
                             <div key={i} className={cn('space-y-2.5', LAYOUT.ledgerCell)}>
                                 <Skeleton className="h-2.5 w-16" />
                                 <Skeleton className="h-6 w-10" />
@@ -88,12 +76,12 @@ export function DashboardSkeleton({ memories = false }: { memories?: boolean }) 
                     </div>
                 </div>
                 <div className={cn('grid', LAYOUT.gridGap)} style={{ gridTemplateColumns: 'repeat(12, minmax(0, 1fr))' }}>
-                    {ORDER.balanced.filter((id) => id !== 'memories' || memories).map((id) => (
+                    {ORDER.balanced.map((id) => (
                         <Card key={id} id={id} />
                     ))}
                 </div>
             </div>
-            <span className={cn('sr-only', HAIRLINE)}>Loading your dashboard</span>
+            <span className={cn('sr-only', HAIRLINE)}>Loading activity</span>
         </div>
     );
 }

@@ -191,6 +191,32 @@ def describe_git_mounts(setups: List[Dict[str, Any]], workdir: str) -> str:
         )
     return " ".join(lines)
 
+
+# git's common errors, in words a person can act on. Anything else reads as
+# its exit code.
+_GIT_REASONS = (
+    ("repository not found", "the repository wasn't found, or its account can't read it"),
+    ("authentication failed", "the credential for it was refused"),
+    ("could not read username", "the credential for it was refused"),
+    ("not found in upstream", "that branch doesn't exist"),
+    ("could not resolve host", "the git host couldn't be reached"),
+)
+
+
+def mount_failure_line(what: str, code: int, output: str) -> str:
+    """What a person reads about a failed mount step: what failed and, for
+    git's common errors, why. Never the output: it can quote anything the
+    script was handed, and the line reaches a chat a shared link's visitor
+    reads."""
+    lowered = output.lower()
+    return f"{what} failed: {next((why for needle, why in _GIT_REASONS if needle in lowered), f'exit {code}')}"
+
+
+def mount_secrets(setups: List[Dict[str, Any]]) -> List[str]:
+    """What the mount scripts are handed that their output could quote."""
+    return [value for setup in setups for value in (setup.get("token"), setup.get("auth_header")) if value]
+
+
 async def apply_git_mounts_local(setups: List[Dict[str, Any]], workdir: str) -> None:
     """Run the same mount bootstrap on the local machine (self-hosted sandbox).
 
@@ -198,19 +224,27 @@ async def apply_git_mounts_local(setups: List[Dict[str, Any]], workdir: str) -> 
     Raises on the first failed setup, same as the handle-based applier.
     """
     assign_mount_dirs(setups)
+    secrets = mount_secrets(setups)
     for setup in setups:
-        await _run_local(build_git_mount_script(setup, workdir), f"Local mount of {setup['repo']}")
+        await _run_local(build_git_mount_script(setup, workdir), f"Local mount of {setup['repo']}", secrets)
         logger.info("[sandbox-git] mounted %s at %s/%s (local)",
                     setup["repo"], workdir.rstrip("/"), setup["dir"])
-    await _run_local(build_gh_auth_script(setups), "gh CLI auth")
+    await _run_local(build_gh_auth_script(setups), "gh CLI auth", secrets)
 
 
-async def _run_local(script: str, what: str) -> None:
+async def _run_local(script: str, what: str, secrets: List[str]) -> None:
     process = await asyncio.create_subprocess_exec(
         "sh", "-c", script,
         stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
     )
     stdout_b, stderr_b = await process.communicate()
     if process.returncode != 0:
-        detail = (stderr_b or stdout_b).decode(errors="replace")[-500:]
-        raise RuntimeError(f"{what} failed (exit {process.returncode}): {detail}")
+        from nodes.core.base import FailureWithDiagnostics
+
+        output = (stderr_b or stdout_b).decode(errors="replace").strip()
+        for secret in secrets:
+            output = output.replace(secret, "[REDACTED]")
+        kept = output if len(output) <= 500 else output[-500:].partition("\n")[2]
+        diagnostics = f"{what} failed (exit {process.returncode}): {kept}"
+        logger.error("[sandbox-git] %s", diagnostics)
+        raise FailureWithDiagnostics(mount_failure_line(what, process.returncode, output), diagnostics)

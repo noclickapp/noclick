@@ -166,8 +166,7 @@ class GoogleCloudStorageServiceAccountCredential(BaseModel):
             "x-credential-url": "https://console.cloud.google.com/iam-admin/serviceaccounts",
             "x-credential-instructions": (
                 "Create a JSON key for a service account that has the required "
-                "Cloud Storage IAM roles. Prefer user OAuth for user-delegated "
-                "access; use service accounts for server-to-server automation."
+                "Cloud Storage IAM roles."
             ),
         }
     )

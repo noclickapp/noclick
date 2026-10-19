@@ -36,6 +36,27 @@ from wss.receiver.client_events import (
 logger = logging.getLogger(__name__)
 
 
+async def move_workflow_for_user(conn, user_id: str, workflow_id: str, folder_id: Optional[str]) -> Optional[str]:
+    """Move ``workflow_id`` into ``folder_id`` (None: the root) for ``user_id``;
+    why it can't be moved, or None once it is. A move changes who a workflow
+    is shared with (folder shares), so it takes edit access. An owner or an org
+    member moves the workflow itself (the org's folders are everyone's); a
+    person it was shared with files only their own copy of the share."""
+    repo = OrgRepo(None)
+    access = await check_resource_access(conn, user_id, "workflow", workflow_id)
+    if not access.has_access:
+        return "Workflow not found or access denied"
+    if access.permission == Permission.VIEW:
+        return access.edit_refusal("You need edit permission to move this workflow")
+    if folder_id and not await repo.can_access_folder(conn, user_id, folder_id):
+        return "Invalid folder or access denied"
+    if access.permission == Permission.OWNER or access.via == "org_share":
+        await repo.set_workflow_folder(conn, workflow_id, folder_id)
+    else:
+        await repo.set_share_target_folder(conn, workflow_id, user_id, folder_id)
+    return None
+
+
 # Class-level singleton for the module-level shim below — never uses its pool
 # attribute (get_primary_org_id takes an outer conn), so passing None is safe.
 _ORG_REPO_STATELESS = OrgRepo(None)
@@ -673,48 +694,13 @@ class FolderHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
-            repo = OrgRepo(pool)
             async with pool.acquire() as conn:
-                # Check access via owner, direct share, or org share
-                access = await check_resource_access(conn, user_id, "workflow", request.workflow_id)
-
-                if not access.has_access:
+                error = await move_workflow_for_user(conn, user_id, request.workflow_id, request.folder_id)
+                if error:
                     await send_event(self.sio, sid, ResponseEvent(
-                        request_id=request.request_id,
-                        data={},
-                        error="Workflow not found or access denied"
+                        request_id=request.request_id, data={}, error=error,
                     ))
                     return
-
-                if access.permission == Permission.VIEW:
-                    await send_event(self.sio, sid, ResponseEvent(
-                        request_id=request.request_id,
-                        data={},
-                        error="You need edit permission to move this workflow"
-                    ))
-                    return
-
-                # Validate folder access if folder_id is provided
-                if request.folder_id:
-                    if not await repo.can_access_folder(conn, user_id, request.folder_id):
-                        await send_event(self.sio, sid, ResponseEvent(
-                            request_id=request.request_id,
-                            data={},
-                            error="Invalid folder or access denied"
-                        ))
-                        return
-
-                if access.permission == Permission.OWNER or access.via == "org_share":
-                    # Owner or org share: update the workflow's folder_id directly
-                    # (org folder structure is shared across all org members)
-                    await repo.set_workflow_folder(
-                        conn, request.workflow_id, request.folder_id
-                    )
-                else:
-                    # Direct user share recipient: update their personal target_folder_id
-                    await repo.set_share_target_folder(
-                        conn, request.workflow_id, user_id, request.folder_id
-                    )
 
                 # Send success response
                 await send_event(self.sio, sid, ResponseEvent(

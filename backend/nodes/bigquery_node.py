@@ -115,9 +115,7 @@ class BigQueryServiceAccountCredential(BaseModel):
             "x-credential-url": "https://console.cloud.google.com/iam-admin/serviceaccounts",
             "x-credential-instructions": (
                 "Create a JSON key for a service account with the required BigQuery IAM "
-                "roles (e.g. BigQuery Job User + BigQuery Data Editor). Prefer user OAuth "
-                "for user-delegated access; use service accounts for server-to-server "
-                "automation."
+                "roles (e.g. BigQuery Job User + BigQuery Data Editor)."
             ),
         }
     )

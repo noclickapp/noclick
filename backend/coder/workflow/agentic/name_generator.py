@@ -10,21 +10,13 @@ from __future__ import annotations
 import json
 import logging
 import re
-from typing import Optional, Tuple
+from typing import Any, Awaitable, Callable, Optional, Tuple
 
 import litellm
 
+from .prompts import PROMPTS
+
 logger = logging.getLogger(__name__)
-
-_NAMING_SYSTEM_PROMPT = """You generate short, descriptive titles and one-line summaries for workflow automations.
-
-Given a user's build request, respond with ONLY a single JSON object on one line:
-{"name": "...", "description": "..."}
-
-Rules:
-- "name" is 3-6 words, Title Case, no quotes, no trailing punctuation, ≤60 characters.
-- "description" is one sentence (≤140 chars) describing what the workflow does.
-- Do not include any other text, code fences, or explanations. JSON only."""
 
 
 async def generate_workflow_name(
@@ -32,6 +24,7 @@ async def generate_workflow_name(
     model: str = "openrouter/openai/gpt-oss-120b",
     timeout: float = 25.0,
     max_attempts: int = 2,
+    charge: Optional[Callable[[str, Any], Awaitable[None]]] = None,
 ) -> Optional[Tuple[str, str]]:
     """
     Return (name, description) for the given build prompt, or None on failure.
@@ -41,8 +34,11 @@ async def generate_workflow_name(
     name (prompt slice) remains in place.
 
     Retries once on timeout since openrouter cold-starts occasionally blow past
-    the budget even though typical latency is ~2s.
+    the budget even though typical latency is ~2s. ``charge(model, response)``
+    is awaited for every answer the model gave, used or not: each was paid for.
     """
+    from coder.workflow.pass_base import build_provider_extra_body
+
     content = ""
     last_error: Optional[Exception] = None
     for attempt in range(1, max_attempts + 1):
@@ -50,18 +46,23 @@ async def generate_workflow_name(
             response = await litellm.acompletion(
                 model=model,
                 messages=[
-                    {"role": "system", "content": _NAMING_SYSTEM_PROMPT},
+                    {"role": "system", "content": PROMPTS.NAMING_SYSTEM_PROMPT},
                     {"role": "user", "content": prompt.strip()},
                 ],
                 temperature=0.3,
                 max_tokens=120,
                 timeout=timeout,
+                # The call's cost in its response (OpenRouter's usage accounting).
+                **({"extra_body": extra} if (extra := build_provider_extra_body(model)) else {}),
             )
-            content = response.choices[0].message.content or ""
-            break
         except Exception as e:
             last_error = e
             logger.warning(f"[NameGen] LLM call attempt {attempt}/{max_attempts} failed: {e}")
+            continue
+        if charge is not None:
+            await charge(model, response)
+        content = response.choices[0].message.content or ""
+        break
     if not content:
         logger.warning(f"[NameGen] Giving up after {max_attempts} attempts: {last_error}")
         return None

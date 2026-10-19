@@ -7,11 +7,13 @@
 // guards, and dispatch stay with the caller. Attachment UI renders only when
 // the caller passes `onAddFiles` (the public share page doesn't, yet).
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { ArrowUp, FileText, Loader2, Paperclip, X } from 'lucide-react';
 import { UploadProgressBar } from '~/components/ui/upload-progress';
 import { cn } from '~/lib/utils';
 import { useIsMobile } from '~/hooks/useIsMobile';
+import { useAutoGrowTextarea } from '~/hooks/useAutoGrowTextarea';
+import { useSurfaceFocus } from '~/hooks/useSurfaceFocus';
 import type { PendingChatAttachment } from '~/hooks/useChatAttachments';
 import { MentionMenu, type MentionMenuFile } from '~/components/chat/MentionMenu';
 import {
@@ -26,7 +28,7 @@ import { fuzzyFilter } from '~/utils/fuzzySearch';
 const MAX_TEXTAREA_HEIGHT_PX = 220;
 const MAX_TEXTAREA_HEIGHT_PX_MOBILE = 120;
 
-function AttachmentTrayItem({
+export function AttachmentTrayItem({
     attachment,
     onRemove,
 }: {
@@ -38,7 +40,7 @@ function AttachmentTrayItem({
             type="button"
             onClick={() => onRemove(attachment.localId)}
             aria-label={`Remove ${attachment.name}`}
-            className="absolute -right-1.5 -top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-popover text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground group-hover:opacity-100"
+            className="absolute -right-1.5 -top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-popover text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
         >
             <X className="h-3 w-3" strokeWidth={2.5} />
         </button>
@@ -128,6 +130,27 @@ function AttachmentTrayItem({
     );
 }
 
+/** Send: a filled circle, greyed out while there is nothing to send. */
+export function ComposerSendButton({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            disabled={disabled}
+            aria-label="Send"
+            title="Send (Enter) · new line (Shift+Enter)"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-[background-color,color,opacity] hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:bg-foreground/[0.08] disabled:text-foreground/35 disabled:hover:opacity-100"
+        >
+            <ArrowUp className="h-[18px] w-[18px]" strokeWidth={2.25} />
+        </button>
+    );
+}
+
+/** The composer's surface: a raised card in light, a hairline ring in dark. The
+ *  builder's chat box wears it too, so every place you type to NoClick matches. */
+export const COMPOSER_SURFACE =
+    'bg-composer shadow-[0_1px_2px_rgba(0,0,0,0.04),0_10px_30px_-18px_rgba(0,0,0,0.25)] ring-1 ring-inset ring-border transition-shadow focus-within:ring-foreground/20 dark:shadow-[inset_0_1px_0_hsl(var(--foreground)/0.06)] dark:ring-foreground/[0.09] dark:focus-within:ring-foreground/[0.18]';
+
 export function AgentChatComposer({
     value,
     onChange,
@@ -143,6 +166,14 @@ export function AgentChatComposer({
     mentionFiles,
     mentionMount,
     onMentionRefresh,
+    below,
+    transitionName,
+    footerStart,
+    addMenu,
+    tray,
+    cardRef,
+    size = 'default',
+    className,
 }: {
     value: string;
     onChange: (value: string) => void;
@@ -167,12 +198,32 @@ export function AgentChatComposer({
     /** Refresh the workspace listing — called once when `@` first opens a menu,
      *  so a chat that never mentions a file pays nothing. */
     onMentionRefresh?: () => void;
+    /** Content attached under the box, inside its column (e.g. a tray of options). */
+    below?: React.ReactNode;
+    /** view-transition-name for the box, so a layout change can move it as one piece. */
+    transitionName?: string;
+    /** Content at the start of the controls row (e.g. the coordinator's phone channels). */
+    footerStart?: React.ReactNode;
+    /** Replaces the paperclip with a menu of ways to add things (the coordinator's "+"); paste and drop still land
+     *  in the same tray through `onAddFiles`. */
+    addMenu?: React.ReactNode;
+    /** More chips in the attachment tray, before the files (things the message refers to). */
+    tray?: React.ReactNode;
+    /** The box itself, for a menu that opens against it. */
+    cardRef?: React.Ref<HTMLDivElement>;
+    /** `tall` opens with room for a few lines, for a page whose point is the box. */
+    size?: 'default' | 'tall';
+    /** The outer frame's spacing, for a host that lays the box out itself. */
+    className?: string;
 }) {
     const localRef = useRef<HTMLTextAreaElement>(null);
     const ref = textareaRef ?? localRef;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragOver, setDragOver] = useState(false);
     const attachEnabled = !!onAddFiles && !inputDisabled;
+    // With nothing but Send to show, a toolbar row is dead height: Send sits
+    // beside the text instead.
+    const toolbar = attachEnabled || !!footerEnd || !!footerStart || !!addMenu;
 
     // --- @-mention state ---
     const mentionEnabled = !!mentionFiles && !inputDisabled;
@@ -236,38 +287,29 @@ export function AgentChatComposer({
         : MAX_TEXTAREA_HEIGHT_PX;
 
     // Grow with the draft; the controls row below keeps the card from reading
-    // like a search field even at one line. Recomputes when the mobile cap
-    // changes so a tall desktop draft shrinks when the viewport goes mobile.
-    // Hidden mounts measure NOTHING: a second agent's interface block mounts
-    // display:none (tab kept alive), scrollHeight reads 0, and the pinned
-    // 0px height survived the reveal as a squished composer — so measurement
-    // skips while hidden and a ResizeObserver re-fires it on the 0→real flip.
-    useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-        const measure = () => {
-            // display:none ancestor → offsetParent null → nothing to measure.
-            if (el.offsetParent === null) return;
-            el.style.height = 'auto';
-            el.style.height = `${Math.min(el.scrollHeight, maxTextareaHeight)}px`;
-        };
-        measure();
-        if (typeof ResizeObserver === 'undefined') return;
-        const ro = new ResizeObserver(measure);
-        ro.observe(el);
-        return () => ro.disconnect();
-    }, [value, ref, maxTextareaHeight]);
+    // like a search field even at one line. The cap follows the viewport, so a
+    // tall desktop draft shrinks when the viewport goes mobile.
+    useAutoGrowTextarea(ref, value, maxTextareaHeight);
+    const focusText = useSurfaceFocus(ref);
+
+    const sendButton = <ComposerSendButton onClick={onSubmit} disabled={sendDisabled} />;
 
     return (
-        <div className="shrink-0 px-3 sm:px-6 pb-5 pt-2">
+        <div className={cn('shrink-0 px-3 sm:px-6 pb-5 pt-2', className)}>
             <div className="mx-auto w-full max-w-3xl">
                 {/* Raised card, not sunken — --sunken is near-identical to the page
-            black in dark mode, which read as a flat wireframe box. */}
+            black in dark mode, which read as a flat wireframe box. A press anywhere
+            that isn't a control puts the caret in the text (pointer only; Tab reaches it too). */}
+                {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
                 <div
+                    ref={cardRef}
+                    onMouseDown={focusText}
                     className={cn(
-                        'relative rounded-2xl border border-border/70 bg-card shadow-lg shadow-black/20 transition-colors focus-within:border-foreground/25',
-                        dragOver && 'border-primary/60'
+                        'relative z-10 cursor-text rounded-[26px]',
+                        COMPOSER_SURFACE,
+                        dragOver && 'ring-primary/60 dark:ring-primary/60'
                     )}
+                    style={transitionName ? { viewTransitionName: transitionName } : undefined}
                     onDragOver={
                         attachEnabled
                             ? (e) => {
@@ -293,12 +335,13 @@ export function AgentChatComposer({
                             : undefined
                     }
                 >
-                    {attachments && attachments.length > 0 ? (
+                    {tray || (attachments && attachments.length > 0) ? (
                         <div
-                            className="flex flex-wrap gap-2 px-3 pt-3"
+                            className="flex flex-wrap items-center gap-2 px-4 pt-4"
                             data-testid="chat-attachment-tray"
                         >
-                            {attachments.map((a) => (
+                            {tray}
+                            {(attachments ?? []).map((a) => (
                                 <AttachmentTrayItem
                                     key={a.localId}
                                     attachment={a}
@@ -315,77 +358,87 @@ export function AgentChatComposer({
                             onHover={setMentionIndex}
                         />
                     ) : null}
-                    <textarea
-                        ref={ref}
-                        value={value}
-                        onChange={(e) => {
-                            onChange(e.target.value);
-                            syncMention(e.target);
-                        }}
-                        onKeyDown={(e) => {
-                            // The mention menu must preempt Enter-to-send, so its
-                            // keys are handled here (a child listener can't
-                            // reliably win the race — R6/B7).
-                            if (menuOpen) {
-                                if (e.key === 'ArrowDown') {
+                    <div className={cn(!toolbar && 'flex items-end gap-2 pr-2.5')}>
+                        <textarea
+                            ref={ref}
+                            value={value}
+                            onChange={(e) => {
+                                onChange(e.target.value);
+                                syncMention(e.target);
+                            }}
+                            onKeyDown={(e) => {
+                                // The mention menu must preempt Enter-to-send, so its
+                                // keys are handled here (a child listener can't
+                                // reliably win the race — R6/B7).
+                                if (menuOpen) {
+                                    if (e.key === 'ArrowDown') {
+                                        e.preventDefault();
+                                        setMentionIndex((i) => (i + 1) % filteredMentions.length);
+                                        return;
+                                    }
+                                    if (e.key === 'ArrowUp') {
+                                        e.preventDefault();
+                                        setMentionIndex((i) =>
+                                            (i - 1 + filteredMentions.length) % filteredMentions.length,
+                                        );
+                                        return;
+                                    }
+                                    if (e.key === 'Enter' || e.key === 'Tab') {
+                                        e.preventDefault();
+                                        acceptMention(mentionIndex);
+                                        return;
+                                    }
+                                    if (e.key === 'Escape') {
+                                        e.preventDefault();
+                                        closeMention();
+                                        return;
+                                    }
+                                }
+                                if (e.key === 'Enter' && !e.shiftKey) {
                                     e.preventDefault();
-                                    setMentionIndex((i) => (i + 1) % filteredMentions.length);
+                                    onSubmit();
+                                }
+                            }}
+                            onKeyUp={(e) => {
+                                // Caret moved via arrows/click without editing text →
+                                // re-evaluate the token, but don't fight the menu's own
+                                // navigation keys (handled in onKeyDown).
+                                if (
+                                    menuOpen &&
+                                    ['ArrowDown', 'ArrowUp', 'Enter', 'Tab', 'Escape'].includes(e.key)
+                                ) {
                                     return;
                                 }
-                                if (e.key === 'ArrowUp') {
-                                    e.preventDefault();
-                                    setMentionIndex((i) =>
-                                        (i - 1 + filteredMentions.length) % filteredMentions.length,
-                                    );
-                                    return;
-                                }
-                                if (e.key === 'Enter' || e.key === 'Tab') {
-                                    e.preventDefault();
-                                    acceptMention(mentionIndex);
-                                    return;
-                                }
-                                if (e.key === 'Escape') {
-                                    e.preventDefault();
-                                    closeMention();
-                                    return;
-                                }
-                            }
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                onSubmit();
-                            }
-                        }}
-                        onKeyUp={(e) => {
-                            // Caret moved via arrows/click without editing text →
-                            // re-evaluate the token, but don't fight the menu's own
-                            // navigation keys (handled in onKeyDown).
-                            if (
-                                menuOpen &&
-                                ['ArrowDown', 'ArrowUp', 'Enter', 'Tab', 'Escape'].includes(e.key)
-                            ) {
-                                return;
-                            }
-                            syncMention(e.currentTarget);
-                        }}
-                        onBlur={() => closeMention()}
-                        onPaste={
-                            attachEnabled
-                                ? (e) => {
-                                      const files = e.clipboardData?.files;
-                                      if (files?.length) {
-                                          e.preventDefault();
-                                          onAddFiles(Array.from(files));
+                                syncMention(e.currentTarget);
+                            }}
+                            onBlur={() => closeMention()}
+                            onPaste={
+                                attachEnabled
+                                    ? (e) => {
+                                          const files = e.clipboardData?.files;
+                                          if (files?.length) {
+                                              e.preventDefault();
+                                              onAddFiles(Array.from(files));
+                                          }
                                       }
-                                  }
-                                : undefined
-                        }
-                        placeholder={placeholder}
-                        rows={1}
-                        className="block w-full resize-none overflow-y-auto bg-transparent px-4 pb-1 pt-3.5 text-base leading-relaxed text-foreground outline-none placeholder:text-[hsl(var(--placeholder))] scrollbar-subtle"
-                        disabled={inputDisabled}
-                    />
-                    <div className="flex items-center justify-between gap-3 pb-2.5 pl-2.5 pr-2.5 pt-1">
+                                    : undefined
+                            }
+                            placeholder={placeholder}
+                            rows={1}
+                            className={cn(
+                                'block w-full resize-none overflow-y-auto bg-transparent px-5 pt-4 text-[16px] leading-6 text-foreground outline-none placeholder:text-[hsl(var(--placeholder))] scrollbar-subtle',
+                                toolbar ? 'pb-1' : 'pb-4',
+                                size === 'tall' && 'min-h-[68px] sm:min-h-[92px]'
+                            )}
+                            disabled={inputDisabled}
+                        />
+                        {!toolbar && <div className="shrink-0 pb-2.5">{sendButton}</div>}
+                    </div>
+                    {toolbar && (
+                    <div className="flex items-center justify-between gap-3 px-3 pb-3 pt-1.5">
                         <div className="flex min-w-0 items-center gap-2">
+                            {addMenu}
+                            {footerStart}
                             {attachEnabled ? (
                                 <>
                                     <input
@@ -404,49 +457,31 @@ export function AgentChatComposer({
                                             e.target.value = '';
                                         }}
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            fileInputRef.current?.click()
-                                        }
-                                        aria-label="Attach files"
-                                        title="Attach images or files"
-                                        data-testid="chat-attach-button"
-                                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.07] hover:text-foreground"
-                                    >
-                                        <Paperclip className="h-4 w-4" />
-                                    </button>
+                                    {!addMenu && (
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                fileInputRef.current?.click()
+                                            }
+                                            aria-label="Attach files"
+                                            title="Attach images or files"
+                                            data-testid="chat-attach-button"
+                                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.07] hover:text-foreground"
+                                        >
+                                            <Paperclip className="h-4 w-4" />
+                                        </button>
+                                    )}
                                 </>
                             ) : null}
-                            {/* Keyboard hint is desktop-only — on mobile it wraps
-                                and squeezes footerEnd (the share page's Powered-by
-                                badge) into a broken two-line pill. */}
-                            <span
-                                className={cn(
-                                    'hidden select-none text-[11px] text-muted-foreground/50 sm:block',
-                                    !attachEnabled && 'pl-1.5'
-                                )}
-                            >
-                                Enter to send · Shift+Enter for newline
-                            </span>
                         </div>
                         <div className="ml-auto flex shrink-0 items-center gap-2.5 whitespace-nowrap">
                             {footerEnd}
-                            <button
-                                type="button"
-                                onClick={onSubmit}
-                                disabled={sendDisabled}
-                                aria-label="Send"
-                                className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-foreground/[0.07] disabled:text-muted-foreground/50"
-                            >
-                                <ArrowUp
-                                    className="h-4 w-4"
-                                    strokeWidth={2.5}
-                                />
-                            </button>
+                            {sendButton}
                         </div>
                     </div>
+                    )}
                 </div>
+                {below}
             </div>
         </div>
     );

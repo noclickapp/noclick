@@ -6,20 +6,22 @@
 // live connect status through the modal's slots. Client icons: @lobehub/icons (Mono
 // variants where the brand mark is too dark for our theme), official
 // simple-icons paths inline for VS Code/Zed. Tab rail is a keyboard-navigable
-// ARIA tablist; arrows work from anywhere in the modal. Snippets verified
-// against each client's current official docs (2026-09) — key names diverge
-// (url vs serverUrl vs TOML); keep in sync when client docs move. What makes
-// each client actually connect lives beside the snippets in
-// data/mcpQuickSteps.ts (MCP_CONNECT_HINTS).
+// ARIA tablist; arrows work from anywhere in the modal. The snippets and what
+// makes each client connect come from data/mcpQuickSteps.ts (MCP_CLIENTS), the
+// one source the docs are generated from too.
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { Check, Copy, Globe, Loader2 } from 'lucide-react';
+import { Check, Copy, Loader2, X } from 'lucide-react';
 import { Claude, MCP, OpenAI, Windsurf as WindsurfIcon } from '@lobehub/icons';
 import { HARNESS_BRANDS } from '~/lib/harnessBrand';
 import { CursorMark } from '~/components/shared/CursorMark';
-import { cursorDeeplink } from '~/data/mcpQuickSteps';
-import { mcpServerUrl } from '~/lib/hostedDefaults';
+import { MCP_CLIENTS, type GuideBlock } from '~/data/mcpQuickSteps';
+import { noclickMcp } from '~/lib/noclickMcp';
+import { KeyHint } from '~/components/shared/KeyHint';
+import { BUTTON_SECONDARY } from '~/components/shell/buttons';
+import { DISPLAY } from '~/components/shell/titles';
+import { cn } from '~/lib/utils';
 
 // Official brand marks from simple-icons (CC0) — not in @lobehub/icons.
 function VSCodeIcon({ size = 16 }: { size?: number }) {
@@ -47,12 +49,13 @@ const RAIL_MARK_SCALE: Record<string, number> = {
     openclaw: 1.35,
 };
 
-const harnessMarkIcon = (slug: keyof typeof HARNESS_BRANDS) =>
+const harnessMarkIcon = (slug: keyof typeof HARNESS_BRANDS, brand = false) =>
     function HarnessMark({ size = 16 }: { size?: number }) {
         const b = HARNESS_BRANDS[slug];
         const scale = (b.inset ?? 1) * (RAIL_MARK_SCALE[slug] ?? 1);
-        // Grayscaled so colored brand art (clawd's salmon, hermes' gold)
-        // sits quietly beside the mono client icons in the rail.
+        // Grayscaled so colored brand art (clawd's salmon, hermes' gold) sits quietly beside the mono client icons in
+        // the rail; `brand` keeps its colour, where the mark alone stands for the client (the chat's connect card).
+        const quiet = brand ? '' : ' grayscale opacity-80';
         return (
             <span
                 className="inline-flex shrink-0 items-center justify-center"
@@ -61,239 +64,51 @@ const harnessMarkIcon = (slug: keyof typeof HARNESS_BRANDS) =>
                 <img
                     src={b.markSrc}
                     alt=""
-                    className={
-                        b.monochrome
-                            ? 'h-full w-full object-contain grayscale opacity-80 invert dark:invert-0'
-                            : 'h-full w-full object-contain grayscale opacity-80'
-                    }
+                    className={b.monochrome ? `h-full w-full object-contain${quiet} invert dark:invert-0` : `h-full w-full object-contain${quiet}`}
                     style={scale !== 1 ? { transform: `scale(${scale})` } : undefined}
                 />
             </span>
         );
     };
 
-type GuideBlock =
-    | { kind: 'code'; title: string; code: string }
-    | { kind: 'steps'; title?: string; steps: string[] }
-    | { kind: 'link'; label: string; href: string; trailing?: string }
-    | { kind: 'note'; text: string };
-
 export interface ClientGuide {
     key: string;
     label: string;
     Icon: React.ComponentType<{ size?: number }>;
+    /** Its mark in its own colours, where it stands alone (a card's tile); the rail's `Icon` is quieted. */
+    BrandIcon: React.ComponentType<{ size?: number }>;
     blocks: (url: string, name: string) => GuideBlock[];
 }
 
-// Exported for the Setup finale's inline connect guide (same snippets,
-// different layout — the modal keeps its vertical-rail chrome).
-export const MCP_CLIENT_GUIDES: ClientGuide[] = [
-    {
-        key: 'claude',
-        label: 'Claude',
-        Icon: Claude,
-        blocks: url => [
-            { kind: 'note', text: 'Works on claude.ai, the Claude desktop app and mobile through custom connectors — Free (one connector), Pro, Max, Team and Enterprise.' },
-            {
-                kind: 'steps',
-                steps: [
-                    'Open Customize → Connectors (on Team and Enterprise an Owner adds it under Organization settings → Connectors first).',
-                    'Click + and choose Add custom connector.',
-                    'Paste the server URL and click Add.',
-                    'In a chat, click + → Connectors and turn it on.',
-                ],
-            },
-            { kind: 'code', title: 'Server URL', code: url },
-        ],
-    },
-    {
-        key: 'claude-code',
-        label: 'Claude Code',
-        Icon: harnessMarkIcon('claude-code'),
-        blocks: (url, name) => [
-            { kind: 'code', title: 'Terminal', code: `claude mcp add --transport http ${name} ${url}` },
-            { kind: 'note', text: 'Verify with claude mcp list (it connects and shows ✔ Connected) or /mcp inside a session. To share it with your team instead, add it to .mcp.json in the project root:' },
-            {
-                kind: 'code',
-                title: '.mcp.json',
-                code: JSON.stringify({ mcpServers: { [name]: { type: 'http', url } } }, null, 2),
-            },
-        ],
-    },
-    {
-        key: 'chatgpt',
-        label: 'ChatGPT',
-        Icon: OpenAI,
-        blocks: url => [
-            { kind: 'note', text: 'Custom MCP connectors need developer mode (Plus, Pro, Business, Enterprise and Edu — set up on the web app; on team plans an admin must allow it first).' },
-            {
-                kind: 'steps',
-                steps: [
-                    'Open Settings → Apps & Connectors.',
-                    'Under Advanced settings, toggle Developer mode on.',
-                    'Back in Apps & Connectors, click Create.',
-                    'Enter a name and paste the server URL as the MCP Server URL.',
-                    'Set Authentication to No Authentication, check "I trust this application", and save.',
-                    'In a chat, enable the connector from the + / tools menu.',
-                ],
-            },
-            { kind: 'code', title: 'MCP Server URL', code: url },
-        ],
-    },
-    {
-        key: 'codex',
-        label: 'Codex',
-        Icon: OpenAI,
-        blocks: (url, name) => [
-            { kind: 'code', title: 'Terminal', code: `codex mcp add ${name} --url ${url}` },
-            { kind: 'note', text: 'Verify with codex mcp list, or /mcp inside a Codex session. Or configure it directly:' },
-            { kind: 'code', title: '~/.codex/config.toml', code: `[mcp_servers.${name}]\nurl = "${url}"` },
-        ],
-    },
-    {
-        key: 'opencode',
-        label: 'OpenCode',
-        Icon: harnessMarkIcon('opencode'),
-        blocks: (url, name) => [
-            { kind: 'code', title: 'Terminal', code: 'opencode mcp add' },
-            { kind: 'note', text: 'Choose Remote, paste the server URL, and answer No to OAuth — the link itself is the key. This only saves the config: OpenCode connects when it starts, and opencode mcp list checks (and connects) from your side. Or add it to opencode.json directly:' },
-            {
-                kind: 'code',
-                title: '~/.config/opencode/opencode.json',
-                code: JSON.stringify({ mcp: { [name]: { type: 'remote', url, enabled: true } } }, null, 2),
-            },
-        ],
-    },
-    {
-        key: 'openclaw',
-        label: 'OpenClaw',
-        Icon: harnessMarkIcon('openclaw'),
-        blocks: (url, name) => [
-            { kind: 'code', title: 'Terminal', code: `openclaw mcp add ${name} --url ${url}` },
-            { kind: 'note', text: 'It probes the server before saving. Or add it to openclaw.json directly:' },
-            {
-                kind: 'code',
-                title: '~/.openclaw/openclaw.json',
-                code: JSON.stringify({ mcp: { servers: { [name]: { transport: 'streamable-http', url } } } }, null, 2),
-            },
-        ],
-    },
-    {
-        key: 'hermes',
-        label: 'Hermes',
-        Icon: harnessMarkIcon('hermes'),
-        blocks: (url, name) => [
-            { kind: 'code', title: 'Terminal', code: `hermes mcp add ${name} --url ${url}` },
-            { kind: 'note', text: 'Answer no when it asks if the server requires authentication (the link itself is the key). Or add it to your profile config directly:' },
-            {
-                kind: 'code',
-                title: '~/.hermes/config.yaml',
-                code: `mcp_servers:\n  ${name}:\n    url: "${url}"`,
-            },
-        ],
-    },
-    {
-        key: 'cursor',
-        label: 'Cursor',
-        Icon: CursorMark,
-        blocks: (url, name) => [
-            { kind: 'link', label: 'Add to Cursor', href: cursorDeeplink(url, name), trailing: 'one-click install via deeplink' },
-            { kind: 'note', text: 'Or add it manually to .cursor/mcp.json in your project (or ~/.cursor/mcp.json for all projects):' },
-            {
-                kind: 'code',
-                title: '.cursor/mcp.json',
-                code: JSON.stringify({ mcpServers: { [name]: { url } } }, null, 2),
-            },
-            { kind: 'note', text: 'Cursor Settings → MCP shows a green dot and the tool list once it is live.' },
-        ],
-    },
-    {
-        key: 'vscode',
-        label: 'VS Code',
-        Icon: VSCodeIcon,
-        blocks: (url, name) => [
-            { kind: 'code', title: 'Terminal', code: `code --add-mcp '${JSON.stringify({ name, type: 'http', url })}'` },
-            { kind: 'note', text: 'Or from the Command Palette:' },
-            {
-                kind: 'steps',
-                steps: [
-                    'CTRL/CMD + SHIFT + P and search for MCP: Add Server.',
-                    'Select HTTP (HTTP or Server-Sent Events).',
-                    `Paste the server URL and hit enter: ${url}`,
-                    `Enter the name ${name} and hit enter.`,
-                ],
-            },
-            { kind: 'note', text: 'Or add it to .vscode/mcp.json directly. MCP: List Servers shows it and can start it right away:' },
-            {
-                kind: 'code',
-                title: '.vscode/mcp.json',
-                code: JSON.stringify({ servers: { [name]: { type: 'http', url } } }, null, 2),
-            },
-        ],
-    },
-    {
-        key: 'windsurf',
-        label: 'Windsurf',
-        Icon: WindsurfIcon,
-        blocks: (url, name) => [
-            {
-                kind: 'steps',
-                steps: [
-                    'Open Windsurf Settings → Cascade → MCP Servers (or the MCPs icon in the Cascade panel).',
-                    'Select Add custom server and enter the configuration below.',
-                    'Save, then refresh the servers list.',
-                ],
-            },
-            {
-                kind: 'code',
-                title: '~/.codeium/windsurf/mcp_config.json',
-                code: JSON.stringify({ mcpServers: { [name]: { serverUrl: url } } }, null, 2),
-            },
-        ],
-    },
-    {
-        key: 'zed',
-        label: 'Zed',
-        Icon: ZedIcon,
-        blocks: (url, name) => [
-            { kind: 'steps', steps: ['CMD + , to open Zed settings.', 'Add the server under context_servers:'] },
-            {
-                kind: 'code',
-                title: 'settings.json',
-                code: JSON.stringify({ context_servers: { [name]: { url } } }, null, 2),
-            },
-            { kind: 'note', text: 'Settings → AI → MCP Servers shows a green dot ("Server is active") once it connects. Older Zed builds without remote support can bridge through mcp-remote:' },
-            {
-                kind: 'code',
-                title: 'settings.json (legacy bridge)',
-                code: JSON.stringify(
-                    { context_servers: { [name]: { source: 'custom', command: 'npx', args: ['-y', 'mcp-remote', url], env: {} } } },
-                    null,
-                    2,
-                ),
-            },
-        ],
-    },
-    {
-        key: 'other',
-        label: 'Others',
-        Icon: MCP as unknown as React.ComponentType<{ size?: number }>,
-        blocks: (url, name) => [
-            { kind: 'note', text: 'Any client that speaks Streamable HTTP just needs the URL — if a JSON config asks for a transport type, use "streamable-http".' },
-            {
-                kind: 'code',
-                title: 'Standard config',
-                code: JSON.stringify({ mcpServers: { [name]: { type: 'streamable-http', url } } }, null, 2),
-            },
-            { kind: 'note', text: 'Stdio-only clients can bridge through mcp-remote:' },
-            { kind: 'code', title: 'mcp-remote bridge', code: `Command: npx\nArguments: -y mcp-remote ${url}\nEnvironment: none` },
-        ],
-    },
-];
+const CLIENT_ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
+    claude: Claude,
+    'claude-code': harnessMarkIcon('claude-code'),
+    chatgpt: OpenAI,
+    codex: OpenAI,
+    opencode: harnessMarkIcon('opencode'),
+    openclaw: harnessMarkIcon('openclaw'),
+    hermes: harnessMarkIcon('hermes'),
+    cursor: CursorMark,
+    vscode: VSCodeIcon,
+    windsurf: WindsurfIcon,
+    zed: ZedIcon,
+};
+const GENERIC_ICON = MCP as unknown as React.ComponentType<{ size?: number }>;
+const BRAND_ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
+    claude: Claude.Color,
+    'claude-code': harnessMarkIcon('claude-code', true),
+    opencode: harnessMarkIcon('opencode', true),
+    openclaw: harnessMarkIcon('openclaw', true),
+    hermes: harnessMarkIcon('hermes', true),
+};
 
-// QuickStep + MCP_QUICK_STEPS moved to ~/data/mcpQuickSteps (leaf module) so
-// the edge-cached /agents pages can render the same snippets without this
-// file's icon/socket deps; re-exported here so existing importers keep working.
+// The clients' guides (data/mcpQuickSteps, the one source), each with its icon: the modal's rail, the Setup finale
+// and the coordinator's setup card.
+export const MCP_CLIENT_GUIDES: ClientGuide[] = MCP_CLIENTS.map((c) => {
+    const Icon = CLIENT_ICONS[c.key] ?? GENERIC_ICON;
+    return { key: c.key, label: c.label, Icon, BrandIcon: BRAND_ICONS[c.key] ?? Icon, blocks: c.guide };
+});
+
 export { MCP_QUICK_STEPS, type QuickStep } from '~/data/mcpQuickSteps';
 
 /** Click-anywhere-to-copy code block: the copy affordance lives top-right as
@@ -308,13 +123,13 @@ export function CopyBlock({ title, code, action }: { title: string; code: string
     };
     return (
         <div>
-            <div className="mb-1 flex items-center justify-between gap-2">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground dark:text-zinc-500">{title}</span>
+            <div className="mb-1.5 flex items-center justify-between gap-2">
+                <span className="text-[13px] font-medium text-foreground/85">{title}</span>
                 <span className="flex items-center gap-1.5">
                     {action}
-                    <span className={`inline-flex items-center gap-1 text-[11px] ${copied ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground dark:text-zinc-500'}`}>
-                        {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                        {copied ? 'Copied' : 'Click to copy'}
+                    <span className={cn('inline-flex items-center gap-1 text-[12px]', copied ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground')}>
+                        {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                        {copied ? 'Copied' : 'Copy'}
                     </span>
                 </span>
             </div>
@@ -322,9 +137,9 @@ export function CopyBlock({ title, code, action }: { title: string; code: string
                 type="button"
                 onClick={copy}
                 title="Copy to clipboard"
-                className="scrollbar-subtle block w-full cursor-pointer overflow-x-auto rounded-lg border border-border dark:border-white/[0.06] bg-muted dark:bg-black/40 px-3 py-2.5 text-left transition-colors hover:border-foreground/20 hover:bg-accent dark:hover:bg-black/60"
+                className="scrollbar-subtle block w-full cursor-pointer overflow-x-auto rounded-xl bg-foreground/[0.04] px-3.5 py-3 text-left ring-1 ring-inset ring-border transition-colors hover:bg-foreground/[0.06] dark:ring-foreground/[0.08]"
             >
-                <pre className="text-[12px] leading-relaxed text-foreground">
+                <pre className="m-0 font-mono text-[12.5px] leading-relaxed text-foreground">
                     <code>{code}</code>
                 </pre>
             </button>
@@ -347,11 +162,11 @@ export function TerminalBlock({ code }: { code: string }) {
             title="Copy to clipboard"
             className="relative block w-full cursor-pointer rounded-lg border border-white/[0.08] bg-black text-left transition-colors hover:border-white/20"
         >
-            <pre className="scrollbar-subtle m-0 flex items-start gap-2 overflow-x-auto px-3.5 py-3 pr-20 text-[12.5px] leading-relaxed">
+            {/* A long command (a link's secret path) wraps: scrolled sideways, its start or end was out of view. */}
+            <pre className="m-0 flex items-start gap-2 px-3.5 py-3 pr-20 text-[12.5px] leading-relaxed">
                 <span className="select-none text-emerald-400/80">$</span>
-                <code className="whitespace-pre text-zinc-100">{code}</code>
+                <code className="min-w-0 whitespace-pre-wrap text-zinc-100 [overflow-wrap:anywhere]">{code}</code>
             </pre>
-            {/* Pinned outside the scroll flow — long commands scroll under the fade. */}
             <span className="pointer-events-none absolute inset-y-px right-px flex items-start rounded-r-lg bg-gradient-to-l from-black via-black/90 to-transparent py-3 pl-8 pr-3.5 text-[11px] select-none text-zinc-500">
                 {copied ? 'Copied' : 'Copy'}
             </span>
@@ -364,10 +179,10 @@ export function GuideBlockView({ block }: { block: GuideBlock }) {
         case 'code':
             return <CopyBlock title={block.title} code={block.code} />;
         case 'note':
-            return <p className="text-xs leading-relaxed text-muted-foreground">{block.text}</p>;
+            return <p className="text-[13.5px] leading-relaxed text-muted-foreground">{block.text}</p>;
         case 'steps':
             return (
-                <ol className="list-decimal space-y-1.5 pl-5 text-xs leading-relaxed text-foreground/80">
+                <ol className="list-decimal space-y-2 pl-5 text-[13.5px] leading-relaxed text-foreground/85 marker:text-muted-foreground">
                     {block.steps.map(s => (
                         <li key={s}>{s}</li>
                     ))}
@@ -376,13 +191,10 @@ export function GuideBlockView({ block }: { block: GuideBlock }) {
         case 'link':
             return (
                 <div className="flex items-center gap-2.5">
-                    <a
-                        href={block.href}
-                        className="inline-flex items-center gap-1.5 rounded-md bg-foreground/[0.1] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-foreground/[0.16]"
-                    >
+                    <a href={block.href} className={cn(BUTTON_SECONDARY, 'h-8 px-3.5 text-[13px]')}>
                         {block.label}
                     </a>
-                    {block.trailing && <span className="text-[11px] text-muted-foreground dark:text-zinc-500">{block.trailing}</span>}
+                    {block.trailing && <span className="text-[12.5px] text-muted-foreground">{block.trailing}</span>}
                 </div>
             );
     }
@@ -468,43 +280,49 @@ export function MCPSetupModal({ open, onClose, url, urlError, serverName, title,
     return createPortal(
         <>
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-            <div className="fixed inset-0 z-[100] bg-black/60" onMouseDown={onClose} />
+            <div className="fixed inset-0 z-[100] bg-foreground/[0.08] dark:bg-background/60" onMouseDown={onClose} />
+            {/* The app's dialog (ShellDialog): the page's surface, a mark beside the title in the brand face, pill buttons. */}
             <div
                 role="dialog"
                 aria-modal="true"
                 aria-label={title}
-                className="fixed left-1/2 top-[8vh] z-[101] w-[92vw] max-w-3xl -translate-x-1/2 overflow-hidden rounded-xl border border-border dark:border-white/10 bg-background dark:bg-[#0a0a0b] shadow-2xl dark:shadow-black/60"
+                className="fixed left-1/2 top-[7vh] z-[101] flex max-h-[86dvh] w-[calc(100vw-32px)] max-w-[820px] -translate-x-1/2 flex-col overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-lg dark:border-foreground/[0.12] dark:bg-sunken"
             >
-                <div className="border-b border-border dark:border-white/[0.06] px-4 py-3">
-                    <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                        <Globe className="h-4 w-4 text-muted-foreground" />
-                        {title}
-                    </div>
-                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground dark:text-zinc-500">{intro}</p>
+                <div className="min-w-0 px-6 pb-5 pr-14 pt-6">
+                    <h2 className={cn(DISPLAY, 'm-0 text-[32px] leading-[1.05] text-foreground')}>{title}</h2>
+                    <p className="m-0 mt-2 text-[14px] leading-snug text-muted-foreground">{intro}</p>
                 </div>
+                <button
+                    type="button"
+                    onClick={onClose}
+                    aria-label="Close"
+                    className="absolute right-4 top-5 inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                    <X className="h-4 w-4" />
+                </button>
 
-                <div className="border-b border-border dark:border-white/[0.06] px-4 py-2.5">
+                <div className="px-6 pb-5">
                     {url ? (
                         <div className="space-y-2">
                             <CopyBlock title="Server URL" code={url} action={urlAction} />
                             {urlNotice}
                         </div>
                     ) : urlError ? (
-                        <div className="text-xs text-red-600 dark:text-red-400">{urlError}</div>
+                        <div className="text-[13px] text-red-600 dark:text-red-400">{urlError}</div>
                     ) : (
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground dark:text-zinc-500">
+                        <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
                             <Loader2 className="h-3.5 w-3.5 animate-spin" />
                             Creating server link…
                         </div>
                     )}
                 </div>
 
-                <div className="flex min-h-[300px]">
+                <div className="flex min-h-[300px] min-w-0 flex-1 border-t border-border dark:border-foreground/[0.08]">
                     <div
                         role="tablist"
                         aria-orientation="vertical"
                         aria-label="MCP clients"
-                        className="scrollbar-subtle w-44 shrink-0 space-y-0.5 overflow-y-auto border-r border-border dark:border-white/[0.06] p-2"
+                        className="scrollbar-subtle w-48 shrink-0 space-y-0.5 overflow-y-auto border-r border-border p-2 dark:border-foreground/[0.08]"
                     >
                         {MCP_CLIENT_GUIDES.map((c, i) => (
                             <button
@@ -516,11 +334,10 @@ export function MCPSetupModal({ open, onClose, url, urlError, serverName, title,
                                 tabIndex={i === activeIndex ? 0 : -1}
                                 onClick={() => setActiveIndex(i)}
                                 onKeyDown={onTablistKeyDown}
-                                className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors ${
-                                    i === activeIndex
-                                        ? 'bg-foreground/[0.1] text-foreground'
-                                        : 'text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground'
-                                }`}
+                                className={cn(
+                                    'flex h-9 w-full items-center gap-3 rounded-[12px] px-3 text-left text-[14px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+                                    i === activeIndex ? 'bg-foreground/[0.07] text-foreground' : 'text-foreground/70 hover:bg-foreground/[0.04] hover:text-foreground'
+                                )}
                             >
                                 <span className="flex h-4 w-4 shrink-0 items-center justify-center">
                                     <c.Icon size={16} />
@@ -533,7 +350,7 @@ export function MCPSetupModal({ open, onClose, url, urlError, serverName, title,
                     <div
                         role="tabpanel"
                         aria-label={client.label}
-                        className="scrollbar-subtle max-h-[46vh] flex-1 space-y-3 overflow-y-auto px-4 py-3"
+                        className="scrollbar-subtle min-w-0 flex-1 space-y-4 overflow-y-auto px-6 py-5"
                     >
                         {client.blocks(displayUrl, serverName).map((b, i) => (
                             <GuideBlockView key={i} block={b} />
@@ -542,20 +359,13 @@ export function MCPSetupModal({ open, onClose, url, urlError, serverName, title,
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-border dark:border-white/[0.06] px-4 py-2.5">
-                    <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                        <kbd className="rounded border border-border dark:border-white/[0.15] bg-foreground/[0.06] px-1.5 py-0.5 font-sans text-[10px] text-foreground/80">↑</kbd>
-                        <kbd className="rounded border border-border dark:border-white/[0.15] bg-foreground/[0.06] px-1.5 py-0.5 font-sans text-[10px] text-foreground/80">↓</kbd>
-                        switch client
-                        <span className="px-1 text-muted-foreground/70 dark:text-zinc-600">·</span>
-                        <kbd className="rounded border border-border dark:border-white/[0.15] bg-foreground/[0.06] px-1.5 py-0.5 font-sans text-[10px] text-foreground/80">esc</kbd>
-                        close
+                <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-4 dark:border-foreground/[0.08]">
+                    <span className="hidden items-center gap-1.5 text-[12px] text-muted-foreground sm:flex">
+                        <KeyHint keys={['up', 'down']} /> Switch client
+                        <span className="px-1 text-muted-foreground/50">·</span>
+                        <KeyHint keys={['esc']} /> Close
                     </span>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="rounded-md bg-foreground/[0.08] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-foreground/[0.12]"
-                    >
+                    <button type="button" onClick={onClose} className={cn(BUTTON_SECONDARY, 'ml-auto')}>
                         Done
                     </button>
                 </div>
@@ -565,21 +375,9 @@ export function MCPSetupModal({ open, onClose, url, urlError, serverName, title,
     );
 }
 
-/** Platform surface: setup guides for the main NoClick MCP server (build and
- *  run workflows from any MCP client). Static URL; clients run the OAuth
- *  sign-in on first connect. Opened from the command palette. */
+/** Setup guides for NoClick's own MCP server, the one `noclickMcp()` names. Static URL; clients run the OAuth
+ *  sign-in on first connect. Opened from Connect, the command palette and Connections. */
 export function NoClickMCPSetupModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-    // The public MCP endpoint is the Cloudflare-proxied custom domain — NOT
-    // VITE_API_URL, which prod sets to the raw Modal URL for socket traffic.
-    const url = mcpServerUrl();
-    return (
-        <MCPSetupModal
-            open={open}
-            onClose={onClose}
-            url={url}
-            serverName="noclick"
-            title="Set up the NoClick MCP server"
-            intro="Build, edit, and run your NoClick workflows from any MCP client. Your client will take you through a NoClick sign-in the first time it connects."
-        />
-    );
+    const { url, intro } = noclickMcp();
+    return <MCPSetupModal open={open} onClose={onClose} url={url} serverName="noclick" title="Connect over MCP" intro={intro} />;
 }

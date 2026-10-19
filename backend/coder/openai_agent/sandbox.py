@@ -9,6 +9,9 @@ workspace without gating access to the shell tool.
 
 Runtime implementations provide ``persistent``, ``mount_path``, and async
 methods to initialize, run commands, read files, and close resources.
+Construction also names who pays for a runtime's time (``user_id``,
+``organization_id``) for an edition that meters it; a local subprocess costs
+nothing extra.
 """
 from __future__ import annotations
 
@@ -95,6 +98,8 @@ class LocalSandboxRuntime:
         sandbox_setups: Optional[List[Dict[str, Any]]] = None,
         user_env: Optional[Dict[str, str]] = None,
         region: Optional[str] = None,  # a host's placement; the local machine is where it is
+        user_id: Optional[str] = None,  # who would pay for a metered runtime's time
+        organization_id: Optional[str] = None,
     ) -> None:
         if not workflow_id:
             raise ValueError("LocalSandboxRuntime requires workflow_id for workspace naming")

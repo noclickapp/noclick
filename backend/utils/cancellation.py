@@ -144,12 +144,19 @@ async def aclose_quietly(response) -> None:
 # Keyed by conversation_id (not generation_id) because the frontend sends
 # conversation_id on AgentPauseRequest.
 _ACTIVE_BUILDER_SCOPES: dict[str, CancelScope] = {}
+# The user whose run registered each scope: the one who may pause it, even
+# before the run's conversation row exists.
+_BUILDER_SCOPE_OWNERS: dict[str, str] = {}
 
 
-def register_builder_scope(conversation_id: str, scope: CancelScope) -> None:
+def register_builder_scope(conversation_id: str, scope: CancelScope, user_id: Optional[str] = None) -> None:
     """Register a builder run's CancelScope so external pause events can find it."""
     if conversation_id:
         _ACTIVE_BUILDER_SCOPES[conversation_id] = scope
+        if user_id:
+            _BUILDER_SCOPE_OWNERS[conversation_id] = str(user_id)
+        else:
+            _BUILDER_SCOPE_OWNERS.pop(conversation_id, None)
 
 
 def unregister_builder_scope(conversation_id: str, scope: CancelScope) -> None:
@@ -159,11 +166,17 @@ def unregister_builder_scope(conversation_id: str, scope: CancelScope) -> None:
     existing = _ACTIVE_BUILDER_SCOPES.get(conversation_id)
     if existing is scope:
         _ACTIVE_BUILDER_SCOPES.pop(conversation_id, None)
+        _BUILDER_SCOPE_OWNERS.pop(conversation_id, None)
 
 
 def get_builder_scope(conversation_id: str) -> Optional[CancelScope]:
     """Return the active builder scope for a conversation, or None."""
     return _ACTIVE_BUILDER_SCOPES.get(conversation_id)
+
+
+def builder_scope_owner(conversation_id: str) -> Optional[str]:
+    """The user whose run registered the conversation's scope, when it said."""
+    return _BUILDER_SCOPE_OWNERS.get(conversation_id)
 
 
 def cancel_all_builder_scopes(reason: CancelReason = "shutdown") -> int:

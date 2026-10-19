@@ -48,7 +48,17 @@ export function writeString(key: string, value: string): void {
     }
 }
 
+// Conversations started in this tab: they have no history anywhere yet.
+const startedHere = new Set<string>();
+
 /** Crypto-quality random id. */
 export function freshConversationId(): string {
-    return secureRandomId();
+    const id = secureRandomId();
+    startedHere.add(id);
+    return id;
+}
+
+/** A conversation this tab started, so one with nothing to fetch. */
+export function isFreshConversation(id: string): boolean {
+    return startedHere.has(id);
 }

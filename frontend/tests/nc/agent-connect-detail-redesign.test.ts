@@ -24,9 +24,10 @@ export default async function () {
 
     nc.assert.truthy(page, 'the agent connection detail shell should mount');
     nc.assert.truthy(hero, 'the compact shared hero should render');
+    nc.assert.truthy(preview, 'the real workflow preview should render');
     nc.assert.truthy(
-        preview?.querySelector('[data-testid="template-detail-preview-tint"]'),
-        'the real workflow preview should use the subtle gradient tint'
+        getComputedStyle(hero!.querySelector('h1')!).fontFamily.includes('Instrument Serif'),
+        'the title should speak in the display serif'
     );
     nc.assert.gt(
         sections.length,

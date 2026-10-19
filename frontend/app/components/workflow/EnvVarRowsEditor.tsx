@@ -59,7 +59,7 @@ export function EnvVarRowsEditor({
                         <button
                             type="button"
                             onClick={() => onChange(rows.filter((_, j) => j !== i))}
-                            className="flex-shrink-0 p-1.5 text-muted-foreground dark:text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                            className="flex-shrink-0 p-1.5 text-muted-foreground dark:text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-full transition-colors"
                             title="Remove variable"
                         >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -72,7 +72,7 @@ export function EnvVarRowsEditor({
                 <button
                     type="button"
                     onClick={() => onChange([...rows, emptyEnvRow()])}
-                    className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] rounded transition-colors border border-dashed border-border dark:border-zinc-700 hover:border-foreground/20 w-full justify-center"
+                    className="flex items-center gap-1.5 px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] rounded-full transition-colors border border-dashed border-border dark:border-zinc-700 hover:border-foreground/20 w-full justify-center"
                 >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Add variable</span>

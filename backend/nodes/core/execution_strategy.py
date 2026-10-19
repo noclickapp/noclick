@@ -85,8 +85,9 @@ class ExecutionContext:
     mark_completed: Callable[[str, Any], Awaitable[None]]
     """Mark a node as completed with output: (node_id, output)"""
 
-    mark_failed: Callable[[str, str], Awaitable[None]]
-    """Mark a node as failed: (node_id, error_message)"""
+    mark_failed: Callable[..., Awaitable[None]]
+    """Mark a node as failed: (node_id, error_message, diagnostics=None), the
+    diagnostics (a FailureWithDiagnostics's) going to triage, never a person"""
 
     mark_skipped: Callable[[str], Awaitable[None]]
     """Mark a node as skipped (e.g., inactive conditional branch): (node_id)"""

@@ -74,9 +74,9 @@ export default async function () {
     // mounts FlowCanvas, which registers the harness socket sender), then
     // add a node and let the autosave land. ──
     const newBtn = Array.from(document.querySelectorAll('button')).find(
-        (b) => b.textContent?.trim() === 'New Workflow'
+        (b) => b.textContent?.trim() === 'New automation'
     ) as HTMLElement | undefined;
-    if (!newBtn) throw new Error('New Workflow button not found');
+    if (!newBtn) throw new Error('New automation button not found');
     newBtn.click();
     await nc.wait.until(() => !!nc.nodes.workflowId(), 20000);
     const wfId = nc.nodes.workflowId()!;

@@ -10,6 +10,7 @@ import logging
 from typing import Any, Dict, Optional, Tuple
 
 from .clock import billing_now, billing_month_start_utc
+from .exceptions import OwnerLookupFailed, OwnerResolutionError
 
 # Caps are None = unlimited across the board.
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ PLAN_LIMITS: Dict[str, Dict[str, Optional[int]]] = {
     "enterprise": {},
 }
 
-TIER_RANK = {"free": 0, "plus": 1, "pro": 2, "enterprise": 3}
+TIER_RANK = {"free": 0, "plus": 1, "member": 1, "pro": 2, "enterprise": 3}
 
 # Org tiers owned by a user (paid, non-personal orgs). Used by credit-tier
 # resolution; functional so org-aware call sites behave.
@@ -50,6 +51,39 @@ def get_limit(tier: str, limit_key: str) -> Optional[int]:
     if _impl is not None:
         return _impl.get_limit(tier, limit_key)
     return PLAN_LIMITS.get(tier, {}).get(limit_key)
+
+
+async def count_limit(conn, user_id: str, tier: str, limit_key: str) -> Optional[int]:
+    """A count cap (workflows, credentials, ...) for ``tier`` as ``user_id`` sees it:
+    a platform's plans may cap the same tier differently by account."""
+    if _impl is not None:
+        return await _impl.count_limit(conn, user_id, tier, limit_key)
+    return get_limit(tier, limit_key)
+
+
+async def plans_including(conn, user_id: str, min_tier: str) -> Tuple[str, ...]:
+    """The paid plans this account could buy that include ``min_tier``'s products, lowest first."""
+    if _impl is not None:
+        return await _impl.plans_including(conn, user_id, min_tier)
+    return tuple(t for t in ("plus", "pro") if TIER_RANK[t] >= TIER_RANK[min_tier])
+
+
+async def plans_lifting(conn, user_id: str, limit_key: str) -> Tuple[str, ...]:
+    """The paid plans this account could buy whose ``limit_key`` count cap is above its own, lowest first.
+    Nothing is capped where no plans are registered."""
+    if _impl is not None:
+        return await _impl.plans_lifting(conn, user_id, limit_key)
+    return ()
+
+
+async def on_old_plans(conn, user_id: str) -> bool:
+    """Whether this account still bills on a platform's old plans (credits,
+    their markup and flat prices) rather than at cost: what it's offered, what
+    it pays and how it's told stay the old ones until it moves. Nobody does
+    where no plans are registered."""
+    if _impl is not None:
+        return await _impl.on_old_plans(conn, user_id)
+    return False
 
 
 def resolve_credit_tier(personal_tier: Optional[str], owned_org_tiers) -> str:
@@ -208,6 +242,31 @@ async def check_saved_output_limit(conn, user_id: str, *args, **kwargs) -> Tuple
 
 async def check_ai_builder_limit(conn, user_id: str, *args, **kwargs) -> Tuple[bool, Optional[str]]:
     return await _delegate("check_ai_builder_limit", (True, None), conn, user_id, *args, **kwargs)
+
+
+NO_OWNER_TO_BILL = ("This workflow's organization has no owner to bill, so the AI builder can't work on it until "
+                    "the organization has an owner again.")
+
+
+async def ai_builder_limit_error(pool, user_id: str, organization_id: Optional[str] = None) -> Optional[str]:
+    """Why the AI builder's gate refuses work now, or None, judged on the pool the
+    work bills to: ``organization_id``'s owner (Owner Pays), else ``user_id``: its
+    monthly spending cap first, then its plan. An organization with no owner is
+    refused; a failed read of its owner or its cap raises."""
+    from billing.usage_tracker import usage_tracker
+
+    try:
+        payer = await usage_tracker.resolve_billing_user_id_strict(user_id, organization_id)
+    except OwnerLookupFailed:
+        raise
+    except OwnerResolutionError:
+        return NO_OWNER_TO_BILL
+    capped = await usage_tracker.spend_cap_refusal(payer)
+    if capped is not None:
+        return str(capped)
+    async with pool.acquire() as conn:
+        can_use, limit_error = await check_ai_builder_limit(conn, payer)
+    return None if can_use else limit_error
 
 
 async def get_credit_usage(conn, user_id: str) -> Dict[str, Any]:

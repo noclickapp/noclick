@@ -338,8 +338,11 @@ async def build_overview(pool, user_id: str, *, days: int = 14) -> Dict[str, Any
             if wf is not None and not wf.get("name") and row.workflow_name:
                 wf["name"] = row.workflow_name
 
-    attention, triggers, health = await _attention_from(pool, workflows, inputs, section)
-    upcoming_alarms = await section("alarms", _alarm_fanout(workflows))
+    # Both ask outside services (providers, the scheduler): side by side, the slower one bounds the wait.
+    (attention, triggers, health), upcoming_alarms = await asyncio.gather(
+        _attention_from(pool, workflows, inputs, section),
+        section("alarms", _alarm_fanout(workflows)),
+    )
     turns = await _compose_turns(pool, workflows, tool_calls) if tool_calls else []
 
     return {
@@ -370,7 +373,7 @@ async def build_overview(pool, user_id: str, *, days: int = 14) -> Dict[str, Any
             "running": _compose_running(workflows, sandboxes or [], conversations or []),
             "turns": turns,
         },
-        "files": _compose_files(workflows, resources or []),
+        "files": _compose_files(workflows, resources or [], await _table_locations(pool, resources or [])),
         "workspaces": _compose_workspaces(workflows, conversations or []),
         "credentials": _compose_credentials(workflows, credentials or [], health),
         "triggers": triggers,
@@ -1087,7 +1090,17 @@ def _resource_url(storage_ref: Optional[str]) -> Optional[str]:
         return None
 
 
-def _compose_files(workflows: _Workflows, resources: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+async def _table_locations(pool, resources: List[Dict[str, Any]]) -> Dict[str, Dict[str, str]]:
+    """Where each table's rows live when that's a database of their own (the dataset store's answer)."""
+    from utils import dataset_store
+
+    return await dataset_store.locations(pool, [{**r, "metadata": _parse_json(r.get("metadata"), {}) or {}}
+                                                for r in resources])
+
+
+def _compose_files(workflows: _Workflows, resources: List[Dict[str, Any]],
+                   tables: Optional[Dict[str, Dict[str, str]]] = None) -> List[Dict[str, Any]]:
+    tables = tables or {}
     by_wf: Dict[Optional[str], List[Dict[str, Any]]] = {}
     for r in resources:
         wf_id = str(r["workflow_id"]) if r["workflow_id"] is not None else None
@@ -1114,6 +1127,9 @@ def _compose_files(workflows: _Workflows, resources: List[Dict[str, Any]]) -> Li
                     "mime": r.get("mime_type"),
                     "url": _resource_url(r.get("storage_ref")),
                     "rows": (_parse_json(r.get("metadata"), {}) or {}).get("row_count") if r.get("resource_type") == "dataset" else None,
+                    # A table kept in a database of its own: that database and the table's name in it.
+                    **({"databaseId": tables[str(r["id"])]["database_id"], "table": tables[str(r["id"])]["table"]}
+                       if str(r["id"]) in tables else {}),
                 }
                 for r in rows
             ],

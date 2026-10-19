@@ -36,6 +36,11 @@ class NodeDrafter(Protocol):
     accumulated_cost: float
     accumulated_tokens: int
 
+    @property
+    def drafting_model(self) -> str:
+        """The model this drafter writes node configs with (logs, usage records)."""
+        ...
+
     def draft_nodes(self, node_ids: Set[str]) -> AsyncIterator[BuilderStreamEvent]:
         """Fill operation + config for each node id, streaming progress."""
         ...
@@ -113,6 +118,12 @@ class SinglePassNodeDrafter:
         self.accumulated_tokens: int = 0
         self.accumulated_output_tokens: int = 0
 
+    @property
+    def drafting_model(self) -> str:
+        from .builder_config import BRAIN_PRIMARY_MODEL
+
+        return getattr(self.config, "model", None) or BRAIN_PRIMARY_MODEL
+
     def get_total_cost(self) -> float:
         """Return model cost accumulated by this drafter."""
         return self.accumulated_cost
@@ -162,12 +173,11 @@ class SinglePassNodeDrafter:
         """Run one JSON completion and record its cost/token usage."""
         import litellm
 
-        from .builder_config import BRAIN_FALLBACK_MODEL, BRAIN_PRIMARY_MODEL
-        from .pass_base import build_provider_extra_body
+        from .builder_config import BRAIN_FALLBACK_MODEL
         from .pass_base import build_provider_extra_body
 
         config = self.config
-        model = getattr(config, "model", None) or BRAIN_PRIMARY_MODEL
+        model = self.drafting_model
         fallback_model = (
             getattr(config, "fallback_model", None) or BRAIN_FALLBACK_MODEL
         )
@@ -258,6 +268,7 @@ class SinglePassNodeDrafter:
             get_operations_for_node_type,
             validate_node_config,
         )
+        from nodes.agent.config.harness_model_lists import read_zen_catalog
         from .workflow_schema import compact_schema, resolve_schema_refs
 
         node = self.graph_state.nodes.get(node_id) if self.graph_state else None
@@ -335,6 +346,9 @@ class SinglePassNodeDrafter:
             config = {k: v for k, v in config.items() if k == target_field}
         if isinstance(config, dict):
             merged = {**(node.config or {}), **config, "operation": operation}
+            if _node_kind(node) == "agent":
+                # validate_node_config judges an agent's Model against models.dev synchronously.
+                await read_zen_catalog([merged.get("model")])
             # Use the same validator as the canvas — an invalid
             # draft is dropped rather than written onto the node.
             error = validate_node_config(_node_kind(node), operation, merged)

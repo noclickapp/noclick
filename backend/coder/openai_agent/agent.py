@@ -13,10 +13,15 @@ import time
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Union
 
 import contextlib
+import dataclasses
+import hashlib
 import json
+from contextvars import ContextVar
 
 from agents import Agent as SDKAgent, ModelSettings, Runner
+from agents.exceptions import MaxTurnsExceeded
 from agents.extensions.models.litellm_model import LitellmModel  # noqa: F401 — re-exported for callers
+from agents.run_error_handlers import RunErrorHandlerInput, RunErrorHandlerResult
 
 from .litellm_model import CostCapturingLitellmModel
 from agents.stream_events import RawResponsesStreamEvent, RunItemStreamEvent
@@ -27,13 +32,16 @@ from wss.sender.schema import ContentItem, ImageUrl
 
 from .billing import BillingHooks, InsufficientBalanceError, build_litellm_env
 from .config import AgentConfiguration, LLMConfig
-from .output_limits import clip_bash_result
+from .output_limits import clip_bash_result, tool_output
 from .sandbox import create_sandbox_runtime
 from . import steering, turn_notes
 from .session import PostgresSession
 from utils.thread_env import override_env
 
 logger = logging.getLogger(__name__)
+
+# The model's id for the tool call being run, for an executor that keys the call's effects on it.
+CURRENT_TOOL_CALL_ID: ContextVar[Optional[str]] = ContextVar("current_tool_call_id", default=None)
 
 # Cap on model turns (tool-call round-trips) in one agent run. The SDK Runner
 # defaults to 10, which cut off multi-step tasks mid-work ("Max turns (10)
@@ -54,6 +62,14 @@ _RETRY_BASE_DELAY_S = 1.0
 _RETRY_MAX_DELAY_S = 8.0
 
 
+def _refusing(tool: FunctionTool) -> FunctionTool:
+    """``tool`` as the model sees it, but never run."""
+    async def refuse(context, arguments: str) -> str:
+        return "Not run: this turn has no steps left."
+
+    return dataclasses.replace(tool, on_invoke_tool=refuse, needs_approval=False)
+
+
 def _apply_exacto_variant(model: str) -> str:
     """Route a user-selected OpenRouter model through OpenRouter's ``:exacto`` variant,
     which pins the request to providers vetted for tool-calling accuracy — agents lean
@@ -70,8 +86,13 @@ def _apply_exacto_variant(model: str) -> str:
     return f"{model}:exacto"
 
 
+def _session_key(conversation_id: str) -> str:
+    """The id OpenRouter keys a conversation's provider on: a hash, so its ids stay ours."""
+    return hashlib.sha256(conversation_id.encode()).hexdigest()[:32]
+
+
 def _build_model_settings(
-    model: str, temperature: Optional[float], *, rehearsing: bool = False
+    model: str, temperature: Optional[float], *, rehearsing: bool = False, conversation: Optional[str] = None
 ) -> ModelSettings:
     """Model settings for ``model`` — shared by construction and update_model.
 
@@ -94,10 +115,20 @@ def _build_model_settings(
       unified reasoning param, riding inside the same openrouter/ gate (the
       Groq lesson applies to it too). Rehearsals only — production turns keep
       their tuned latency/cost profile.
+    - ``conversation``: OpenRouter's ``session_id``, so every call of the
+      conversation goes to the provider holding its prompt cache. Without it
+      OpenRouter keys that on a hash of the opening messages, which compaction
+      rewrites, and sticks only once a call has read from cache.
     """
     if not model.startswith("openrouter/"):
         return ModelSettings(temperature=temperature, include_usage=True)
     extra_body: Dict[str, Any] = {"usage": {"include": True}}
+    if model.removeprefix("openrouter/").removeprefix("~").startswith("anthropic/"):
+        # Anthropic caches only what a request marks (other providers cache on their own): OpenRouter's top-level
+        # mark caches the longest prefix and moves with the conversation.
+        extra_body["cache_control"] = {"type": "ephemeral"}
+    if conversation:
+        extra_body["session_id"] = _session_key(conversation)
     if rehearsing:
         extra_body["reasoning"] = {"effort": "low"}
     return ModelSettings(
@@ -146,6 +177,15 @@ def _is_retryable_llm_error(exc: BaseException) -> bool:
 def _retry_delay(attempt: int) -> float:
     """Exponential backoff with full jitter (attempt is 0-based)."""
     return random.uniform(0.0, min(_RETRY_MAX_DELAY_S, _RETRY_BASE_DELAY_S * (2 ** attempt)))
+
+
+def _segment_break(so_far: str, text: str) -> str:
+    """What goes before ``text``, a new segment of a reply (a model call's text after its tool calls), so it reads
+    as a paragraph of its own after ``so_far``: the newlines a paragraph break still lacks."""
+    if not so_far.strip() or not text:
+        return ""
+    newlines = len(so_far) - len(so_far.rstrip("\n")) + len(text) - len(text.lstrip("\n"))
+    return "\n" * max(0, 2 - newlines)
 
 
 class Agent:
@@ -225,6 +265,9 @@ class Agent:
                 sandbox_setups=sandbox_setups or [],
                 user_env=user_env or {},
                 region=sandbox_region,
+                # Its time bills like any NoClick compute, BYOK or not.
+                user_id=user_id,
+                organization_id=organization_id,
                 # Only a host that mounts named volumes is ever handed some,
                 # and only one that enforces a network limit a limit.
                 **({"volumes": sandbox_volumes} if sandbox_volumes else {}),
@@ -307,7 +350,9 @@ class Agent:
         history_limit: Optional[int] = None,
         memory_readonly: bool = False,
         call_model_input_filter=None,
+        context_filter=None,
         tool_step_preview: Optional[Callable[[Any], str]] = None,
+        wrap_up: Optional[str] = None,
         sandbox_region: Optional[str] = None,
         sandbox_volumes: Optional[Dict[str, str]] = None,
         sandbox_network: Optional[Sequence[str]] = None,
@@ -350,10 +395,16 @@ class Agent:
         )
         agent._build_sdk_agent()
         agent._build_billing_hooks()
+        # ``call_model_input_filter`` replaces the run's input shaping whole (the coordinator's compactor);
+        # ``context_filter`` (a ``compaction.Compactor``) runs after the product's steering.
         agent._call_model_input_filter = call_model_input_filter
+        agent._context_filter = context_filter
         # Shapes a tool call's arguments and result for the live step rows: a
         # consumer whose chat draws from them keeps them whole (the coordinator).
         agent._tool_step_preview = tool_step_preview
+        # What the model is told once a run has made AGENT_MAX_TURNS model calls: it answers once more without
+        # tools, instead of the run failing (the coordinator). Unset, the run fails as before.
+        agent._wrap_up = wrap_up
         # Hook up the durable Session iff caller asked for persistence AND
         # gave us a conversation_id to key it on. Falls through to the
         # transient in-memory ``_history`` path otherwise.
@@ -465,7 +516,7 @@ class Agent:
             tools=tools,
             model_settings=_build_model_settings(
                 model_name, self.config.llm.temperature,
-                rehearsing=is_rehearsal_conversation(self.conversation_id),
+                rehearsing=is_rehearsal_conversation(self.conversation_id), conversation=self.conversation_id,
             ),
         )
         logger.info(
@@ -550,18 +601,17 @@ class Agent:
             if executor is None:
                 return json.dumps({"error": f"No executor registered for tool {name!r}"})
 
+            called = CURRENT_TOOL_CALL_ID.set(getattr(ctx, "tool_call_id", None))
             try:
                 result = await executor(name, args)
             except Exception as e:
                 logger.error("[openai_agent] tool %r raised: %s", name, e, exc_info=True)
-                return json.dumps({"error": str(e), "tool": name})
+                return tool_output({"error": str(e), "tool": name})
+            finally:
+                CURRENT_TOOL_CALL_ID.reset(called)
 
-            # Feed the result back to the model as a JSON string. The SDK
-            # expects str output from on_invoke_tool.
-            try:
-                return json.dumps(result, default=str)
-            except (TypeError, ValueError):
-                return str(result)
+            # The SDK expects str output from on_invoke_tool.
+            return tool_output(result)
 
         return FunctionTool(
             name=name,
@@ -675,7 +725,7 @@ class Agent:
                 except RehearsalUnavailable as e:
                     result = {"error": f"rehearsal could not simulate this call: {e}"}
                     _record_bash(command, result, start)
-                    return json.dumps(result)
+                    return tool_output(result)
                 if not isinstance(fabricated, dict) or "exit_code" not in fabricated:
                     # World model drifted off the pinned shape — wrap so the
                     # agent still sees the execute_bash contract.
@@ -686,7 +736,7 @@ class Agent:
                     }
                 fabricated = clip_bash_result(fabricated)
                 _record_bash(command, fabricated, start)
-                return json.dumps(fabricated, default=str)
+                return tool_output(fabricated)
 
             # Same bypass, same answer: the tool-call guard execute_tool
             # consults. Its refusal is the tool's output; its error fails closed.
@@ -704,19 +754,19 @@ class Agent:
                 )
                 if refusal is not None:
                     _record_bash(command, refusal, start)
-                    return json.dumps(refusal, default=str)
+                    return tool_output(refusal)
                 result = await runtime.run_bash(command)
             except Exception as e:
                 logger.error("[openai_agent] execute_bash raised: %s", e, exc_info=True)
                 _record_bash(command, {"error": str(e)}, start)
-                return json.dumps({"error": str(e)})
+                return tool_output({"error": str(e)})
 
             # Uncapped output once put a cat'ed PDF (millions of tokens) into
             # the model request + persisted history, bricking the conversation
             # (2026-08-24) — every result is bounded before it leaves the tool.
             result = clip_bash_result(result)
             _record_bash(command, result, start)
-            return json.dumps(result, default=str)
+            return tool_output(result)
 
         # Mounted-repo note: the one sentence that lets the model compose
         # clone → edit → push → create_pull_request without prompt engineering.
@@ -893,6 +943,8 @@ class Agent:
         from nodes.agent.rehearsal import is_rehearsal_conversation
         rehearsing = is_rehearsal_conversation(getattr(self, "conversation_id", None))
         thought_buf: List[str] = []
+        from coder.openai_agent.reasoning import ReasoningLines
+        reasoning_lines = ReasoningLines()
         # Apply the env overrides LiteLLM expects for the duration of this
         # run. build_litellm_env() returns the platform-key mask + user-key
         # overlay if env was provided, or just provider aliases (e.g.
@@ -900,6 +952,9 @@ class Agent:
         env_overrides = build_litellm_env(self._env)
         for attempt in range(_LLM_RUN_ATTEMPTS):
             accumulated_text = ""
+            # Whether the reply's text is mid-segment: a run item (a tool call, a finished message) ends one.
+            in_segment = False
+            reasoning_lines.reset()
             # Run items (tool calls/outputs) are side effects — a turn that
             # produced ANY is never retried (see _is_retryable_llm_error).
             turn_had_items = False
@@ -909,11 +964,39 @@ class Agent:
             try:
                 with env_ctx:
                     run_options = {}
-                    input_filter = getattr(self, "_call_model_input_filter", None) or steering.filter_for(
-                        getattr(self, "conversation_id", None), getattr(self, "_session", None))
+                    from coder.openai_agent.compaction import chain
+
+                    input_filter = getattr(self, "_call_model_input_filter", None) or chain(
+                        steering.filter_for(getattr(self, "conversation_id", None), getattr(self, "_session", None)),
+                        getattr(self, "_context_filter", None))
                     if input_filter is not None:
                         from agents import RunConfig
                         run_options["run_config"] = RunConfig(call_model_input_filter=input_filter)
+                    if getattr(self, "_wrap_up", None):
+                        async def wrap_up(failed: RunErrorHandlerInput) -> Optional[RunErrorHandlerResult]:
+                            # The last model call is spent: one more says where the work stands. Its tools stay
+                            # declared (some providers require them beside tool calls in history) but never run,
+                            # so a model that calls one anyway does nothing, and the run fails as it would have.
+                            nonlocal accumulated_text
+                            closing_agent = self._sdk_agent.clone(
+                                tools=[_refusing(t) for t in self._sdk_agent.tools if isinstance(t, FunctionTool)],
+                                mcp_servers=[],
+                                model_settings=dataclasses.replace(self._sdk_agent.model_settings,
+                                                                   tool_choice="none"))
+                            try:
+                                closing = await Runner.run(
+                                    closing_agent,
+                                    [*failed.run_data.history, {"role": "developer", "content": self._wrap_up}],
+                                    hooks=self._billing_hooks, max_turns=1, run_config=run_options.get("run_config"))
+                            except MaxTurnsExceeded:
+                                return None
+                            text = str(closing.final_output or "")
+                            text = _segment_break(accumulated_text, text) + text
+                            accumulated_text += text
+                            await self._emit_message(ChatMessageEvent(message=text, finished=False))
+                            return RunErrorHandlerResult(final_output=text)
+
+                        run_options["error_handlers"] = {"max_turns": wrap_up}
                     result = Runner.run_streamed(
                         self._sdk_agent,
                         input_list,
@@ -937,6 +1020,11 @@ class Agent:
                             if not delta:
                                 continue
                             if data_type == "response.output_text.delta":
+                                reasoning_lines.reset()
+                                if not in_segment:
+                                    # Text after a tool round is a paragraph of its own, live and as saved.
+                                    delta = _segment_break(accumulated_text, delta) + delta
+                                    in_segment = True
                                 accumulated_text += delta
                                 if rehearsing:
                                     thought_buf.append(delta)
@@ -964,11 +1052,16 @@ class Agent:
                                     status="Thinking",
                                     finished=False,
                                 ))
+                                for line in reasoning_lines.feed(delta):
+                                    await self._emit_message(ChatMessageEvent(
+                                        message=None, status="Thinking", thought=line, finished=False))
                         elif isinstance(ev, RunItemStreamEvent):
                             # Item completions (full message, tool_called, tool_output, …).
                             # Surface tool_called + tool_output to the frontend so
                             # the activity feed can render what the agent did.
                             turn_had_items = True
+                            in_segment = False
+                            reasoning_lines.reset()
                             if rehearsing and ev.name == "tool_called" and thought_buf:
                                 # Flush the reasoning/text accumulated since the
                                 # last call as a thought row ABOVE the tool row
@@ -1256,7 +1349,7 @@ class Agent:
 
             self._sdk_agent.model_settings = _build_model_settings(
                 model, self.config.llm.temperature,
-                rehearsing=is_rehearsal_conversation(self.conversation_id),
+                rehearsing=is_rehearsal_conversation(self.conversation_id), conversation=self.conversation_id,
             )
 
         # Rebuild: model name is baked into UsageEventData + cost lookups.

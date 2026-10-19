@@ -10,9 +10,11 @@
 // model-credential purges from deleting it.
 
 import { type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AlertCircle, Check, ChevronDown, Edit2, Loader2, Plus, Trash2, X } from 'lucide-react';
+import { Check, ChevronDown, Edit2, Loader2, Plus, Trash2, X } from 'lucide-react';
+import { CREATE_FORM } from '~/components/credential/CredentialCreatePanel';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { useCredentialOAuth } from '~/hooks/useCredentialOAuth';
+import { cn } from '~/lib/utils';
 import {
     invalidateCredentialsCache,
     removeCredentialsFromCache,
@@ -332,7 +334,7 @@ export function AgentEnvVarsSection({
                     <button
                         type="button"
                         onClick={startEdit}
-                        className="p-2 hover:bg-accent rounded-lg transition-colors flex-shrink-0"
+                        className="p-2 hover:bg-accent rounded-full transition-colors flex-shrink-0"
                         title="Edit variable set"
                     >
                         <Edit2 className="h-3.5 w-3.5 text-muted-foreground dark:text-zinc-500 hover:text-foreground/80" />
@@ -353,7 +355,7 @@ export function AgentEnvVarsSection({
                             ? startFromRequest()
                             : setCreating(true)
                     }
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground dark:text-zinc-500 hover:text-foreground/80 bg-card dark:bg-card/50 hover:bg-accent dark:hover:bg-card border border-border hover:border-foreground/20 rounded-lg transition-all"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground dark:text-zinc-500 hover:text-foreground/80 bg-card dark:bg-card/50 hover:bg-accent dark:hover:bg-card border border-border hover:border-foreground/20 rounded-full transition-all"
                 >
                     <Plus className="h-3.5 w-3.5" />
                     Create new variable set
@@ -374,22 +376,22 @@ export function AgentEnvVarsSection({
                 </div>
             )}
 
-            {/* Same panel as the credential-create form above: raised surface,
-                border, uppercase header and an × — so it reads as a temporary form
-                that must be saved or dismissed, not as more inline fields. */}
+            {/* The credential-create form's look (CREATE_FORM): its header and × mark
+                a temporary form that must be saved or dismissed, not more inline fields. */}
             {creating && (
-                <div className="p-4 rounded-lg bg-card/50 border border-border space-y-3">
-                    <div className="flex items-center justify-between mb-2">
-                        <div className="text-[11px] text-muted-foreground uppercase tracking-wider">
+                <div className={CREATE_FORM.root}>
+                    <div className={CREATE_FORM.header}>
+                        <div className={CREATE_FORM.title}>
                             {editingId ? 'Edit Variable Set' : 'New Variable Set'}
                         </div>
                         <button
                             type="button"
                             onClick={resetForm}
-                            className="p-1 hover:bg-accent rounded transition-colors"
+                            className={CREATE_FORM.close}
                             title="Cancel"
+                            aria-label="Close"
                         >
-                            <X className="h-3 w-3 text-muted-foreground dark:text-zinc-500" />
+                            <X className="h-3.5 w-3.5" />
                         </button>
                     </div>
 
@@ -415,7 +417,7 @@ export function AgentEnvVarsSection({
                         only re-set them. Say so up front rather than letting the
                         blank fields read as "unchanged". */}
                     {editingId && (
-                        <div className="text-[11px] text-muted-foreground dark:text-zinc-500">
+                        <div className={CREATE_FORM.note}>
                             Saved values are hidden and can&apos;t be read back — re-enter
                             each one. You can rename, add and remove variables here too.
                         </div>
@@ -426,9 +428,8 @@ export function AgentEnvVarsSection({
                     <EnvVarRowsEditor rows={rows} onChange={setRows} />
 
                     {error && (
-                        <div className="flex items-start gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                            <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 mt-px" />
-                            <span>{error}</span>
+                        <div role="alert" className={CREATE_FORM.error}>
+                            {error}
                         </div>
                     )}
 
@@ -437,30 +438,27 @@ export function AgentEnvVarsSection({
                         panel edits autosave, so say so rather than relying on the
                         button being noticed. */}
                     {hasEnteredVariables && !saving && (
-                        <div className="text-[11px] text-muted-foreground dark:text-zinc-500">
+                        <div className={CREATE_FORM.note}>
                             Not saved yet — press Save to store these securely.
                         </div>
                     )}
 
-                    {/* Same action row as the credential-create form above: equal
-                        halves, filled primary, disabled until there's something to
-                        save (so it visibly lights up once you type a name). */}
-                    <div className="flex gap-2 pt-1">
-                        <button
-                            type="button"
-                            onClick={resetForm}
-                            className="flex-1 px-3 py-2 text-xs text-muted-foreground hover:text-foreground/80 bg-card hover:bg-accent border border-border rounded-lg transition-all"
-                        >
+                    {/* Disabled until there's something to save, so it visibly lights
+                        up once you type a name. */}
+                    <div className={CREATE_FORM.actions}>
+                        <button type="button" onClick={resetForm} className={CREATE_FORM.cancel}>
                             Cancel
                         </button>
                         <button
                             type="button"
                             onClick={handleCreate}
                             disabled={saving || !hasEnteredVariables}
-                            className="flex-1 px-3 py-2 text-xs text-primary-foreground dark:text-foreground bg-primary dark:bg-zinc-700 hover:bg-primary/90 dark:hover:bg-zinc-600 disabled:bg-muted disabled:text-muted-foreground dark:disabled:text-zinc-600 disabled:cursor-not-allowed border border-transparent dark:border-zinc-700 dark:hover:border-zinc-600 disabled:border-border rounded-lg transition-all flex items-center justify-center gap-1.5"
+                            className={cn(CREATE_FORM.save, saving && CREATE_FORM.saving)}
                         >
                             {saving ? (
-                                editingId ? 'Saving...' : 'Creating...'
+                                <>
+                                    <Loader2 className="h-3 w-3 animate-spin" /> {editingId ? 'Saving...' : 'Creating...'}
+                                </>
                             ) : (
                                 <>
                                     <Check className="h-3 w-3" /> Save

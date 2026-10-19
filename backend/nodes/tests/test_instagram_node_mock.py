@@ -1481,7 +1481,6 @@ class TestPhotoContainerReadiness:
 # against MockTransport. No live credentials, Redis, or database are accessed.
 TRIGGER_ACCOUNT = "17841400000000001"
 TRIGGER_APP = "19461100000000001"
-TRIGGER_PRODUCT_APP = "28360000000000001"
 TRIGGER_CREDENTIAL_ID = "00000000-0000-4000-8000-000000000001"
 TRIGGER_USER = "00000000-0000-4000-8000-000000000002"
 TRIGGER_WORKFLOW = "00000000-0000-4000-8000-000000000003"
@@ -1523,9 +1522,6 @@ def instagram_registration(monkeypatch):
         "instagram_user_id": TRIGGER_ACCOUNT, "expires_at": "2099-01-01T00:00:00Z",
     }
     state.credential = credential
-    monkeypatch.setenv("INSTAGRAM_CLIENT_ID", TRIGGER_PRODUCT_APP)
-    monkeypatch.delenv("INSTAGRAM_SUBSCRIBED_APP_ID", raising=False)
-    monkeypatch.delenv("INSTAGRAM_SUBSCRIBED_APP_IDS_BY_ACCOUNT", raising=False)
     monkeypatch.setattr("utils.instagram_webhooks.require_instagram_webhook_configuration", lambda: TRIGGER_APP)
     monkeypatch.setattr("utils.redis_client.get_shared_redis", lambda: state.redis)
     state.freshen = AsyncMock(side_effect=lambda data, **kwargs: data)
@@ -1538,6 +1534,7 @@ def instagram_registration(monkeypatch):
         state.rows[(kwargs["workflow_id"], kwargs["node_id"])] = [
             dict(provider=kwargs["provider"], tenant_id=kwargs["tenant_id"],
                  credential_id=kwargs["credential_id"], user_id=kwargs["user_id"],
+                 workflow_id=kwargs["workflow_id"], node_id=kwargs["node_id"],
                  event_type=event) for event in kwargs["event_types"]
         ]
 
@@ -1547,7 +1544,12 @@ def instagram_registration(monkeypatch):
     state.save = AsyncMock(side_effect=save)
     monkeypatch.setattr("nodes.core.webhook_subscriptions.get_node_subscriptions", existing)
     monkeypatch.setattr("nodes.core.webhook_subscriptions.save_subscriptions", state.save)
+    async def for_tenant(pool, provider, tenant_id):
+        return [copy.deepcopy(row) for rows in state.rows.values() for row in rows
+                if row["provider"] == provider and row["tenant_id"] == tenant_id]
+
     monkeypatch.setattr("nodes.core.webhook_subscriptions.delete_subscriptions", delete)
+    monkeypatch.setattr("nodes.core.webhook_subscriptions.list_subscriptions_for_tenant", for_tenant)
     original_client = httpx.AsyncClient
 
     async def transport(request):
@@ -1591,131 +1593,97 @@ def instagram_registration(monkeypatch):
 
 class TestInstagramEventRegistration:
     @pytest.mark.asyncio
-    async def test_subscription_alias_is_scoped_to_its_account(self, instagram_registration, monkeypatch):
+    async def test_per_account_subscription_id_registers_without_configuration(self, instagram_registration):
+        # Live Instagram Login rows carry a per-account object id, never an app ID.
         s = instagram_registration
-        s.response_app = "18054700000000001"
+        s.response_app = "18054705530638612"
         s.fields = {"messages"}
-        monkeypatch.setenv("INSTAGRAM_SUBSCRIBED_APP_IDS_BY_ACCOUNT", json.dumps({
-            TRIGGER_ACCOUNT: s.response_app, "17841400000000002": "18054700000000002",
-        }))
-        await s.register("on_mention")
+        assert (await s.register("on_message", "ig-messages")).startswith("Registered — listening")
+        assert s.posts == [{"messages"}]
+        assert s.rows[(TRIGGER_WORKFLOW, "ig-messages")][0]["event_type"] == "messages"
+        assert not s.redis.values
+
+    @pytest.mark.asyncio
+    async def test_desired_fields_come_from_local_rows_for_this_account(self, instagram_registration):
+        s = instagram_registration
+        other_workflow = "00000000-0000-4000-8000-000000000004"
+        row = dict(provider="instagram", tenant_id=TRIGGER_ACCOUNT, credential_id=TRIGGER_CREDENTIAL_ID,
+                   user_id=TRIGGER_USER, workflow_id=other_workflow, node_id="ig-dm")
+        s.rows[(other_workflow, "ig-dm")] = [dict(row, event_type="messages")]
+        s.rows[(other_workflow, "ig-mention")] = [dict(row, node_id="ig-mention", event_type="mentions")]
+        s.rows[(other_workflow, "elsewhere")] = [dict(row, node_id="elsewhere", tenant_id="17841400000000002", event_type="story_insights")]
+        s.rows[(other_workflow, "fb-route")] = [dict(row, node_id="fb-route", provider="instagram_facebook", event_type="feed")]
+        await s.register()
         assert s.posts == [{"comments", "messages"}]
-        assert s.save.await_count == 1
 
     @pytest.mark.asyncio
-    async def test_another_accounts_subscription_alias_is_rejected(self, instagram_registration, monkeypatch):
+    async def test_reregistering_a_node_drops_its_previous_events(self, instagram_registration):
         s = instagram_registration
-        s.response_app = "18054700000000001"
-        s.fields = {"messages"}
-        monkeypatch.setenv("INSTAGRAM_SUBSCRIBED_APP_IDS_BY_ACCOUNT", json.dumps({
-            "17841400000000002": s.response_app,
-        }))
-        with pytest.raises(ValueError, match="identity does not match"):
-            await s.register("on_mention")
-        assert not s.posts
-        s.save.assert_not_awaited()
+        await s.register("on_message")
+        await s.register("on_comment")
+        assert s.posts == [{"messages"}, {"comments"}]
+        assert [r["event_type"] for r in s.rows[(TRIGGER_WORKFLOW, "ig-comments")]] == ["comments"]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("configured", ["{", "[]", '"123"', '{"bad-account":"123"}', '{"123":"bad-id"}'])
-    async def test_invalid_account_subscription_map_is_rejected(self, instagram_registration, monkeypatch, configured):
+    async def test_union_idempotence_and_local_cleanup(self, instagram_registration):
         s = instagram_registration
-        monkeypatch.setenv("INSTAGRAM_SUBSCRIBED_APP_IDS_BY_ACCOUNT", configured)
-        with pytest.raises(ValueError, match="account subscription IDs are invalid"):
-            await s.register("on_mention")
-        assert not s.posts
-        s.save.assert_not_awaited()
-
-    @pytest.mark.asyncio
-    async def test_verified_subscription_identity_preserves_remote_fields(self, instagram_registration, monkeypatch):
-        s = instagram_registration
-        s.response_app = "18054700000000001"
-        s.fields = {"messages"}
-        monkeypatch.setenv("INSTAGRAM_SUBSCRIBED_APP_ID", s.response_app)
-        await s.register("on_mention")
-        assert s.posts == [{"comments", "messages"}]
-        assert s.save.await_count == 1
-
-    @pytest.mark.asyncio
-    @pytest.mark.parametrize("configured", ["not-an-id", "18054700000000002"])
-    async def test_subscription_identity_must_match_explicit_configuration(self, instagram_registration, monkeypatch, configured):
-        s = instagram_registration
-        s.response_app = "18054700000000001"
-        s.fields = {"messages"}
-        monkeypatch.setenv("INSTAGRAM_SUBSCRIBED_APP_ID", configured)
-        with pytest.raises(ValueError, match="app ID is invalid|identity does not match"):
-            await s.register("on_mention")
-        assert not s.posts
-        s.save.assert_not_awaited()
-
-    @pytest.mark.asyncio
-    async def test_incremental_union_idempotence_and_local_cleanup(self, instagram_registration):
-        s = instagram_registration
+        # Fields no local trigger needs converge away.
         s.fields = {"messaging_seen"}
         assert (await s.register()).startswith("Registered — listening")
-        assert s.posts == [{"comments", "messaging_seen"}]
+        assert s.posts == [{"comments"}]
         assert s.rows[(TRIGGER_WORKFLOW, "ig-comments")][0]["tenant_id"] == TRIGGER_ACCOUNT
         await s.register("on_message", "ig-messages")
-        assert s.posts[-1] == {"comments", "messages", "messaging_seen"}
+        assert s.posts[-1] == {"comments", "messages"}
         assert s.rows[(TRIGGER_WORKFLOW, "ig-messages")][0]["event_type"] == "messages"
         await s.register("on_message", "ig-messages")
-        assert len(s.posts) == 2 and s.save.await_count == 2
+        assert s.posts[-1] == {"comments", "messages"} and s.save.await_count == 2
         before = len(s.requests)
         await InstagramNode.cleanup_external_webhook(object(), TRIGGER_WORKFLOW, "ig-comments", {})
         assert len(s.requests) == before
         assert (TRIGGER_WORKFLOW, "ig-messages") in s.rows
-        assert s.fields == {"comments", "messages", "messaging_seen"}
+        assert s.fields == {"comments", "messages"}
         assert not s.redis.values
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("app_id", [TRIGGER_APP, TRIGGER_PRODUCT_APP])
-    async def test_known_configured_app_identities_are_verified(self, instagram_registration, app_id):
+    async def test_readback_accepts_any_row_covering_the_desired_fields(self, instagram_registration):
         s = instagram_registration
-        s.response_app = app_id
+
+        def response(request):
+            if request.url.path.endswith("/me"):
+                return httpx.Response(200, json={"user_id": TRIGGER_ACCOUNT})
+            if request.method == "POST":
+                s.posts.append(set(parse_qs(request.content.decode())["subscribed_fields"][0].split(",")))
+                return httpx.Response(200, json={"success": True})
+            return httpx.Response(200, json={"data": [
+                {"id": "18054700000000009", "subscribed_fields": ["feed"]},
+                {"id": "18054700000000001", "subscribed_fields": ["comments", "messages"]},
+            ]})
+
+        s.failure = response
         await s.register()
-        assert s.posts == [{"comments"}]
-        assert s.save.await_count == 1
-
-    @pytest.mark.asyncio
-    async def test_unknown_existing_app_id_stops_before_write(self, instagram_registration):
-        s = instagram_registration
-        s.fields = {"messages"}
-        s.response_app = "99999999999999999"
-        with pytest.raises(ValueError, match="identity"):
-            await s.register()
-        assert not s.posts and not s.rows and not s.redis.values
-
-    @pytest.mark.asyncio
-    async def test_unknown_readback_app_reports_partial_remote_update(self, instagram_registration):
-        s = instagram_registration
-        s.response_app = "99999999999999999"
-        with pytest.raises(ValueError, match="accepted the subscription update") as error:
-            await s.register()
-        assert "remote fields may have changed" in str(error.value)
-        assert "existing fields were not changed" not in str(error.value)
-        assert s.posts == [{"comments"}] and s.fields == {"comments"}
-        assert not s.rows and not s.redis.values
-        s.save.assert_not_awaited()
+        assert s.posts == [{"comments"}] and s.save.await_count == 1
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("case", [
         "invalid_data", "invalid_row", "invalid_paging", "missing_cursor",
-        "invalid_cursor", "repeated_cursor", "page_bound", "ambiguous_app", "invalid_fields",
+        "invalid_cursor", "repeated_cursor", "page_bound", "invalid_fields",
     ])
-    async def test_incomplete_subscription_listing_never_overwrites_fields(self, instagram_registration, case):
+    async def test_incomplete_readback_listing_never_activates(self, instagram_registration, case):
         s = instagram_registration
         pages = []
 
         def response(request):
             if request.url.path.endswith("/me"):
                 return httpx.Response(200, json={"user_id": TRIGGER_ACCOUNT})
-            assert request.method == "GET"
+            if request.method == "POST":
+                s.posts.append(set(parse_qs(request.content.decode())["subscribed_fields"][0].split(",")))
+                return httpx.Response(200, json={"success": True})
             pages.append(dict(request.url.params))
-            body = {"data": [{"id": TRIGGER_APP, "subscribed_fields": ["messages"]}]}
+            body = {"data": [{"id": TRIGGER_APP, "subscribed_fields": ["comments"]}]}
             if case == "invalid_data": body["data"] = {}
             elif case == "invalid_row": body["data"] = ["not-a-row"]
             elif case == "invalid_paging": body["paging"] = ["invalid"]
-            elif case == "ambiguous_app": body["data"].append({"id": TRIGGER_PRODUCT_APP, "subscribed_fields": []})
-            elif case == "invalid_fields": body["data"][0]["subscribed_fields"] = "messages"
+            elif case == "invalid_fields": body["data"][0]["subscribed_fields"] = "comments"
             else:
                 cursor = len(pages) if case == "invalid_cursor" else f"cursor-{len(pages)}"
                 if case == "repeated_cursor": cursor = "same-cursor"
@@ -1724,9 +1692,9 @@ class TestInstagramEventRegistration:
             return httpx.Response(200, json=body)
 
         s.failure = response
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="readback could not be verified"):
             await s.register()
-        assert not s.posts and not s.rows and not s.redis.values
+        assert s.posts == [{"comments"}] and not s.rows and not s.redis.values
         assert len(pages) == (5 if case == "page_bound" else 2 if case == "repeated_cursor" else 1)
         if len(pages) > 1:
             assert pages[1]["after"] == ("same-cursor" if case == "repeated_cursor" else "cursor-1")
@@ -1746,8 +1714,8 @@ class TestInstagramEventRegistration:
 
         s.failure = response
         async with httpx.AsyncClient(headers={"Authorization": "Bearer synthetic-instagram-token"}) as client:
-            fields = await InstagramNode._read_subscribed_fields(client, TRIGGER_ACCOUNT, TRIGGER_APP)
-        assert fields == {"comments", "messaging_seen"}
+            fields = await InstagramNode._read_subscription_fields(client, TRIGGER_ACCOUNT)
+        assert fields == [{"messages"}, {"comments", "messaging_seen"}]
         assert len(seen) == 2 and all(r.url.host == "graph.instagram.com" for r in seen)
 
     @pytest.mark.asyncio
@@ -1871,7 +1839,8 @@ class TestInstagramEventRegistration:
         registration.cancel()
         with pytest.raises(asyncio.CancelledError):
             await registration
-        assert not s.redis.values and not s.rows and not s.posts
+        # Canceled during readback, after the POST: no local activation and the lease is freed.
+        assert not s.redis.values and not s.rows and s.posts == [{"comments"}]
 
     @pytest.mark.asyncio
     async def test_registration_freshens_credential_before_provider_call(self, instagram_registration):
@@ -2241,6 +2210,10 @@ class TestInstagramMentionTrigger:
 
     async def test_mentions_register_comments_remotely_without_clobbering_messages(self, instagram_registration):
         s = instagram_registration
+        other_workflow = "00000000-0000-4000-8000-000000000004"
+        s.rows[(other_workflow, "ig-dm")] = [dict(
+            provider="instagram", tenant_id=TRIGGER_ACCOUNT, credential_id=TRIGGER_CREDENTIAL_ID,
+            user_id=TRIGGER_USER, workflow_id=other_workflow, node_id="ig-dm", event_type="messages")]
         s.fields = {"messages"}
         status = await s.register("on_mention", "ig-mentions")
         assert "comments and post/Reel captions" in status
@@ -2248,8 +2221,8 @@ class TestInstagramMentionTrigger:
         assert s.rows[(TRIGGER_WORKFLOW, "ig-mentions")][0]["event_type"] == "mentions"
         await s.register("on_comment", "ig-comments")
         await s.register("on_mention", "ig-mentions")
-        assert len(s.posts) == 1
-        assert len(s.rows) == 2
+        assert s.posts == [{"comments", "messages"}] * 3
+        assert len(s.rows) == 3 and s.save.await_count == 2
 
     @pytest.mark.parametrize("field", ["comments", "mentions"])
     async def test_id_only_comment_does_not_invent_author(self, http_mock, field):

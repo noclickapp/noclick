@@ -214,6 +214,18 @@ def stub_wahooks(monkeypatch):
     return calls
 
 
+@pytest.fixture
+def funded_owner(monkeypatch):
+    """Starting a new connection passes the owner's credit gate
+    (tests/test_whatsapp_qr_credit_gate.py); these owners have credits."""
+    from unittest.mock import AsyncMock
+
+    from billing.usage_tracker import registered_usage_tracker
+
+    monkeypatch.setattr(registered_usage_tracker(), "check_credit_balance", AsyncMock(return_value=40.0))
+    monkeypatch.setattr(type(registered_usage_tracker()), "spend_cap_refusal", AsyncMock(return_value=None))
+
+
 @pytest.mark.asyncio
 class TestRecycledConnectionGuard:
     """Guard 3: a recycled connection bound to another owner's credential is
@@ -236,7 +248,7 @@ class TestRecycledConnectionGuard:
         assert await _bound_to_other_owner(_PoolShim(postgres_db), "conn-nobody", str(uuid.uuid4())) is False
 
     async def test_start_mints_fresh_when_recycled_is_bound(
-        self, postgres_db, fake_redis, stub_wahooks
+        self, postgres_db, fake_redis, stub_wahooks, funded_owner
     ):
         await _seed_binding(postgres_db, "conn-recycled")
         result = await start_qr_connection(_PoolShim(postgres_db), owner_id=str(uuid.uuid4()))
@@ -246,7 +258,7 @@ class TestRecycledConnectionGuard:
         assert stub_wahooks["virgin_only"] is True
         await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
 
-    async def test_start_reuses_own_bound_connection(self, postgres_db, fake_redis, stub_wahooks):
+    async def test_start_reuses_own_bound_connection(self, postgres_db, fake_redis, stub_wahooks, funded_owner):
         owner = await _seed_binding(postgres_db, "conn-recycled")
         result = await start_qr_connection(_PoolShim(postgres_db), owner_id=str(owner))
         assert result["success"] is True

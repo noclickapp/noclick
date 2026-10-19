@@ -236,8 +236,12 @@ async def resolve_media_input(
     max_bytes: int = _DEFAULT_MAX_BYTES,
     default_mime: str = "application/octet-stream",
     workflow_id: Optional[str] = None,
+    owner_id: Optional[str] = None,
 ) -> ResolvedMedia:
-    """Resolve a media value (URL / resource_id / data URI / base64) to bytes."""
+    """Resolve a media value (URL / resource_id / data URI / base64) to bytes.
+
+    A resource id names a file of ``workflow_id`` or, with ``owner_id``, one of
+    that account's own files (no workflow); never another account's."""
     value = (value or "").strip()
     if not value:
         raise ValueError("No media value provided.")
@@ -257,13 +261,13 @@ async def resolve_media_input(
         _check_size(len(data), max_bytes)
         return ResolvedMedia(data, mime, f"file{_ext_for_mime(mime)}")
 
-    # workflow resource_id — resolve via DB, stream from the presigned URL
+    # resource_id — resolve via DB, stream from the presigned URL
     if _UUID_RE.match(value):
         from utils.database_pool import get_native_pool
         from utils.r2_cloudflare import generate_presigned_download_url
 
         resource_workflow_id = workflow_id or _MEDIA_WORKFLOW_ID.get()
-        if not resource_workflow_id:
+        if not resource_workflow_id and not owner_id:
             raise ValueError(
                 "Uploaded media references require a workflow execution context."
             )
@@ -271,10 +275,12 @@ async def resolve_media_input(
             """
             SELECT storage_ref, mime_type, name, size_bytes
             FROM workflow_resources
-            WHERE id = $1 AND workflow_id = $2
+            WHERE id = $1::uuid
+              AND (workflow_id = $2::uuid OR (workflow_id IS NULL AND owner_id = $3::uuid))
             """,
             value,
             resource_workflow_id,
+            owner_id,
         )
         if not row:
             raise ValueError(f"Resource not found: {value}")

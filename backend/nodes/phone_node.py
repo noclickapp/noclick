@@ -22,7 +22,9 @@ from utils.capabilities import PHONE_CALLS, PHONE_NUMBERS, capability
 logger = logging.getLogger(__name__)
 
 PHONE_NUMBER_CREDENTIAL_TYPE = "phone_number"
-PHONE_NUMBER_MONTHLY_CREDITS = 15
+# What a bought number is billed as: each month, and once when it's bought.
+PHONE_NUMBER_CHARGE_TYPE = "phone_number"
+PHONE_NUMBER_SETUP_CHARGE_TYPE = "phone_number_setup"
 
 
 class PhoneNumberCredential(BaseModel):
@@ -36,9 +38,8 @@ class PhoneNumberCredential(BaseModel):
 
     model_config = ConfigDict(title="Phone Number", json_schema_extra={
         "x-credential-type": "purchase",
-        "x-credential-instructions": (
-            f"Buy a phone number for this agent, {PHONE_NUMBER_MONTHLY_CREDITS} credits a month (Plus and Pro plans)."
-        ),
+        # The price depends on the account's plan: the purchase shows it.
+        "x-credential-instructions": "Buy a phone number for this agent, billed monthly.",
     })
 
 

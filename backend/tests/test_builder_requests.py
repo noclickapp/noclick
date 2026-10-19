@@ -11,6 +11,7 @@ from coder.coordinator.tools import CoordinatorTools, coordinator_tool_params
 from coder.workflow import requests
 from repositories.builder_requests import BuilderRequestRepo
 from repositories.conversation import ConversationRepo
+from repositories.coordinator_jobs import outside_sources
 from wss.handlers.workflow_builder_handler import WorkflowBuilderHandler
 from utils import capabilities, task_notifications
 from utils.builder_request import PublicationOptions
@@ -21,9 +22,14 @@ USER = "00000000-0000-0000-0000-000000000001"
 
 
 @pytest.fixture
-async def builder_request_db(postgres_db, postgres_container):
+async def builder_request_db(postgres_db, postgres_container, monkeypatch):
+    from billing.usage_tracker import registered_usage_tracker
     from tests.fixtures.postgres_fixtures import asyncpg
     from utils.database_pool import setup_asyncpg_codecs
+
+    # The builder's gate reads the payer's monthly spending cap on the main pool, not this container's. On the
+    # class: a patch of the instance is restored as an instance attribute that outlives the test.
+    monkeypatch.setattr(type(registered_usage_tracker()), "spend_cap_refusal", AsyncMock(return_value=None))
 
     pool = await asyncpg.create_pool(
         host=postgres_container.get_container_host_ip(), port=postgres_container.get_exposed_port(5432),
@@ -264,7 +270,11 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
     # The worker uses the normal headless builder entry point; only the model is replaced.
     monkeypatch.setattr(WorkflowBuilderHandler, "_edit_workflow_impl", start_build)
     await requests.run_request(pool, await repo.claim())
-    assert (await repo.list_for_user(USER))[0]["status"] == "waiting"
+    # Read as the builder reads it: a surface other than the coordinator may
+    # have started it, and the coordinator's own list leaves those out.
+    assert (await repo.for_conversation(USER, cid))["status"] == "waiting"
+    coordinator_sees = [r["id"] for r in await repo.list_for_user(USER)]
+    assert coordinator_sees == ([] if source in outside_sources() else [queued["id"]])
 
     # Exercise the actual answer handler: it restores caller context from the
     # builder request, independent of coordinator-specific conversation naming.
@@ -300,7 +310,7 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
     else:
         assert await repo.claim() is None
         publish.assert_not_awaited()
-    row = (await repo.list_for_user(USER))[0]
+    row = await repo.for_conversation(USER, cid)
     assert row["status"] == "completed" and row["result"]["summary"] == "Created dashboard"
     assert ("publication" in row["result"]) is publish_after
     await handler._maybe_notify_agent_result(request=finished_request, user_id=USER, builder=builder, segments=[])
@@ -363,13 +373,13 @@ async def test_publication_lifecycle_results_and_notifications(builder_request_d
 
 
 async def test_build_only_result_cannot_claim_deployment(builder_request_db, monkeypatch):
-    from coder.workflow.agentic.prompts import _build_user_context
+    from coder.workflow.agentic.prompts import build_user_context
 
     pool, repo, _, enqueue = builder_request_db
     await enqueue(instructions="Make the theme black", publish=None)
     task = await repo.claim()
     context = requests.request_context(task)
-    assert "only saves changes" in _build_user_context(context)
+    assert "only saves changes" in build_user_context(context)
     await repo.build_finished(USER, task["id"], task["attempt_id"], success=True, summary="Your edits are now live!")
     view = requests.build_view((await repo.list_for_user(USER))[0])
     assert view["publication_status"] == "not_requested" and "does not update" in view["deployment_note"]
@@ -381,13 +391,13 @@ async def test_build_only_result_cannot_claim_deployment(builder_request_db, mon
 
 
 async def test_managed_builder_knows_publication_runs_after_done(builder_request_db):
-    from coder.workflow.agentic.prompts import _build_user_context
+    from coder.workflow.agentic.prompts import build_user_context
 
     _, repo, _, enqueue = builder_request_db
     await enqueue(instructions="Make the theme black")
     context = requests.request_context(await repo.claim())
     assert context["publication_requested"]["action"] == "publish"
-    assert "publication is pending" in _build_user_context(context)
+    assert "publication is pending" in build_user_context(context)
 
 
 @pytest.mark.parametrize("options", [{"action": "rename"}, {"action": "unpublish", "subdomain": "site"}, {"action": "delete"}])
@@ -402,3 +412,122 @@ async def test_rename_and_unpublish_do_not_start_an_unrelated_build(builder_requ
         with pytest.raises(ValueError, match="omit instructions"):
             await requests.submit_request(pool, user_id=USER, workflow_id=workflow_id, instructions="Edit the draft",
                                           publish={"action": action, **({"subdomain": "new-site"} if action == "rename" else {})})
+
+
+async def _allow_builds(monkeypatch, allowed=True, error=None):
+    import billing.plan_limits as plan_limits
+
+    monkeypatch.setattr(plan_limits, "check_ai_builder_limit", AsyncMock(return_value=(allowed, error)))
+
+
+async def test_a_cancel_stops_the_builder_mid_attempt(builder_request_db, monkeypatch):
+    from utils.cancellation import CancelScope, register_builder_scope, unregister_builder_scope
+
+    pool, repo, _, enqueue = builder_request_db
+    await _allow_builds(monkeypatch)
+    monkeypatch.setattr(requests, "HEARTBEAT_S", 0.05)
+    await enqueue(instructions="Build an agent", publish=None)
+    claimed = await repo.claim()
+    scope = CancelScope()
+
+    async def build(_graph):
+        register_builder_scope(claimed["conversation_key"], scope)
+        try:
+            await repo.cancel(USER, str(claimed["id"]))
+            for _ in range(100):
+                if scope.cancelled:
+                    return
+                await asyncio.sleep(0.05)
+        finally:
+            unregister_builder_scope(claimed["conversation_key"], scope)
+
+    await requests._run_attempt(pool, claimed, build)
+    assert scope.cancelled
+    assert await pool.fetchval("SELECT status FROM coordinator_jobs WHERE id=$1", claimed["id"]) == "cancelled"
+
+
+async def test_a_refused_build_records_why(builder_request_db, monkeypatch):
+    pool, repo, _, enqueue = builder_request_db
+    await _allow_builds(monkeypatch, False, "You've used today's AI builds.")
+    await enqueue(instructions="Build an agent", publish=None)
+    claimed = await repo.claim()
+    build = AsyncMock()
+
+    await requests._run_attempt(pool, claimed, build)
+    build.assert_not_called()
+    row = await pool.fetchrow("SELECT status, error FROM coordinator_jobs WHERE id=$1", claimed["id"])
+    assert (row["status"], row["error"]) == ("failed", "You've used today's AI builds.")
+
+
+async def test_each_attempt_reports_to_its_origins_reporter(builder_request_db, monkeypatch):
+    pool, repo, _, enqueue = builder_request_db
+    await _allow_builds(monkeypatch)
+    seen = []
+
+    async def reporter(_pool, row):
+        seen.append((row["status"], row["error"]))
+
+    monkeypatch.setitem(requests._REPORTERS, "test-origin", reporter)
+    await enqueue(instructions="Build an agent", publish=None, origin={"source": "test-origin"},
+                  reply_conversation_id=None, reply_node_id=None)
+    claimed = await repo.claim()
+
+    await requests._run_attempt(pool, claimed, AsyncMock())
+    assert seen == [("failed", "The build ended without a completed result. Check it before retrying.")]
+
+
+async def test_a_refused_request_leaves_no_empty_workflow(builder_request_db, monkeypatch):
+    pool, *_ = builder_request_db
+
+    async def refuse(self, **kwargs):
+        raise ValueError("Ten builds are already pending. Check job_status before starting more.")
+
+    monkeypatch.setattr(BuilderRequestRepo, "enqueue", refuse)
+    before = await pool.fetchval("SELECT count(*) FROM workflows WHERE owner_id=$1::uuid AND deleted_at IS NULL", USER)
+    with pytest.raises(ValueError, match="Ten builds"):
+        await requests.submit_request(pool, user_id=USER, instructions="Build an agent", name="Refused",
+                                      organization_id=None)
+    assert await pool.fetchval(
+        "SELECT count(*) FROM workflows WHERE owner_id=$1::uuid AND deleted_at IS NULL", USER) == before
+    assert await pool.fetchval(
+        "SELECT deleted_at IS NOT NULL FROM workflows WHERE owner_id=$1::uuid AND name='Refused'", USER)
+
+
+async def test_an_answer_is_acknowledged_once_taken_before_its_build_runs(builder_request_db, monkeypatch):
+    """A card's answer hears back when the build takes it, not when the builder next stops (its socket call gives up
+    long before, and the person answers again), and the request reports building before the build runs."""
+    pool, repo, _, enqueue = builder_request_db
+    await _allow_builds(monkeypatch)
+    reported = []
+
+    async def reporter(_pool, row):
+        reported.append(row["status"])
+
+    monkeypatch.setitem(requests._REPORTERS, "test-origin", reporter)
+    await enqueue(instructions="Build an agent", publish=None, origin={"source": "test-origin"},
+                  reply_conversation_id=None, reply_node_id=None)
+    claimed = await repo.claim()
+    await repo.waiting(USER, claimed["id"], claimed["attempt_id"], {"ask_id": "q1", "inputs": []})
+    sent = []
+
+    async def send(_sio, sid, event, **_kwargs):
+        sent.append((sid, event.request_id, event.data, event.error))
+
+    monkeypatch.setattr("wss.handlers.workflow_builder_handler.send_event", send)
+    handler = WorkflowBuilderHandler(SimpleNamespace(get_session=AsyncMock(return_value={"user_id": USER})))
+    monkeypatch.setattr(handler, "get_pool", AsyncMock(return_value=pool))
+    building = []
+
+    async def build(sid, data, caller_user_id=None):
+        building.append((list(sent), data.get("request_id"), list(reported)))
+
+    monkeypatch.setattr(handler, "_handle_input_response_impl", build)
+    answer = {"conversation_id": claimed["conversation_key"], "ask_id": "q1", "values": {}, "request_id": "r1"}
+    await handler.handle_input_response("sid-1", answer)
+    [(sent_first, request_id, reported_first)] = building
+    assert sent_first == [("sid-1", "r1", {"success": True}, None)]
+    assert request_id is None and reported_first == ["running"]
+
+    # A second answer to the same question is refused, the one reply it gets.
+    await handler.handle_input_response("sid-1", {**answer, "request_id": "r2"})
+    assert len(building) == 1 and sent[-1][1] == "r2" and "not waiting" in sent[-1][3]

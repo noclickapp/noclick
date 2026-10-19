@@ -5,9 +5,6 @@ This mock handler extends the real AgentHandler but patches litellm
 to avoid actual LLM API calls while keeping all other logic intact.
 """
 
-# Import mocks BEFORE importing modules that use them
-from .mock_stripe import mock_stripe  # Prevents Stripe API calls
-
 # Apply litellm patch BEFORE importing AgentHandler
 # This ensures litellm is mocked before any module can import it
 from .mock_litellm import patch_litellm_components

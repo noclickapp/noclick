@@ -46,6 +46,11 @@ def looks_like_secret_field(name: str) -> bool:
     return bool(_SECRET_FIELD.search(name or "")) and not _ADDRESS_FIELD.search(name or "")
 
 
+def looks_like_address_field(name: str) -> bool:
+    """Field names that hold where the provider answers (``server_url``, ``subdomain``)."""
+    return bool(_ADDRESS_FIELD.search(name or ""))
+
+
 def clean_secret(value: object, *, field_name: str = "This value") -> str:
     """A secret with the paste noise removed, or a ValueError naming what is wrong.
 

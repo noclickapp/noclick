@@ -55,7 +55,7 @@ describe('ConnectionVerdict', () => {
                 verification={{ reachable: false, error: 'HTTP 403 with a web page', hint: 'That address serves a web page, not an API.' }}
             />,
         );
-        expect(screen.getByText('Tableau rejected this credential')).toBeTruthy();
+        expect(screen.getByText('Tableau turned it down')).toBeTruthy();
         expect(screen.getByText('HTTP 403 with a web page')).toBeTruthy();
         expect(screen.getByText(/serves a web page/)).toBeTruthy();
         fireEvent.click(screen.getByText(/Reconnect Tableau/));

@@ -1,7 +1,7 @@
-"""ResourceRepo — SQL for workflow_resources + dataset_rows.
+"""ResourceRepo — SQL for workflow_resources.
 
-Owns the CRUD for `workflow_resources` and the row-level operations on
-`dataset_rows`. Reads and writes are typed at the repo boundary: rows
+Owns the CRUD for `workflow_resources`; a table's rows go through
+``utils.dataset_store`` (in Postgres, ``repositories.datasets``). Reads and writes are typed at the repo boundary: rows
 returned to callers are plain ``dict[str, Any]`` mapped from asyncpg
 records — handlers never see raw ``asyncpg.Record``.
 
@@ -19,7 +19,10 @@ Rules recap (see ``utils/DB_MIGRATION.md``):
 
 from __future__ import annotations
 
+import uuid
 from typing import Any, Dict, List, Optional, Tuple
+
+from repositories.workflow import WorkflowRepo
 
 
 def _row_to_dict(row) -> Dict[str, Any]:
@@ -28,7 +31,7 @@ def _row_to_dict(row) -> Dict[str, Any]:
 
 
 class ResourceRepo:
-    """Read+write SQL for workflow_resources and dataset_rows.
+    """Read+write SQL for workflow_resources.
 
     Constructor takes a pool proxy from ``DatabasePoolMixin.get_pool()``.
     Each method opens its own ``async with self._pool.acquire()`` so
@@ -50,13 +53,7 @@ class ResourceRepo:
         stamp the org context onto the new resource row.
         """
         async with self._pool.acquire() as conn:
-            row = await conn.fetchrow(
-                "SELECT organization_id FROM workflows WHERE id = $1", workflow_id,
-            )
-        if not row:
-            return None
-        org_id = row["organization_id"]
-        return str(org_id) if org_id is not None else None
+            return await WorkflowRepo(self._pool).get_organization_id(conn, workflow_id)
 
     async def get_resource(self, resource_id: str) -> Optional[Dict[str, Any]]:
         """Fetch a single resource row by id. Returns the row as a plain
@@ -182,7 +179,7 @@ class ResourceRepo:
         return dict(row)
 
     async def delete_resource(self, resource_id: str) -> None:
-        """DELETE a resource row. dataset_rows cascade at the DB level."""
+        """DELETE a resource row (a table's rows in Postgres cascade with it)."""
         async with self._pool.acquire() as conn:
             await conn.execute(
                 "DELETE FROM workflow_resources WHERE id = $1", resource_id,
@@ -212,149 +209,94 @@ class ResourceRepo:
                 storage_ref, mime_type, resource_id,
             )
 
-    # ── Dataset row reads ─────────────────────────────────────────────
-
-    async def list_dataset_rows_with_count(
-        self, resource_id: str, limit: int, offset: int,
-    ) -> Tuple[List[Dict[str, Any]], int]:
-        """Return (page_rows, total_count) in a single pinned acquire so
-        the two reads see a consistent snapshot of the dataset.
-        """
+    async def dataset_for_run(self, resource_id: str, workflow_id: Optional[str],
+                              user_id: Optional[str]) -> Optional[Dict[str, Any]]:
+        """The table a run of ``workflow_id`` reads, or None: one of its own, or
+        (a picker offers them) one in another workflow ``user_id`` may view. A
+        UUID alone never discloses a table."""
         async with self._pool.acquire() as conn:
-            total_count = await conn.fetchval(
-                "SELECT COUNT(*) FROM dataset_rows WHERE resource_id = $1",
-                resource_id,
-            )
-            rows = await conn.fetch(
+            row = await conn.fetchrow(
                 """
-                SELECT id, row_index, data, created_at
-                FROM dataset_rows
-                WHERE resource_id = $1
-                ORDER BY row_index
-                LIMIT $2 OFFSET $3
+                SELECT wr.* FROM workflow_resources wr
+                WHERE wr.id = $1 AND wr.resource_type = 'dataset'
+                  AND (
+                      wr.workflow_id = $2
+                      OR (
+                          $3::uuid IS NOT NULL
+                          AND (
+                              wr.workflow_id IN (SELECT id FROM workflows WHERE owner_id = $3)
+                              OR wr.workflow_id IN (
+                                  SELECT rs.resource_id::uuid
+                                  FROM resource_shares rs
+                                  LEFT JOIN organization_members om ON rs.target_org_id = om.organization_id
+                                  WHERE rs.resource_type = 'workflow'
+                                    AND (
+                                        (rs.target_type = 'user' AND rs.target_user_id = $3)
+                                        OR (rs.target_type = 'organization' AND om.user_id = $3)
+                                    )
+                              )
+                          )
+                      )
+                  )
                 """,
-                resource_id, limit, offset,
+                resource_id, workflow_id, user_id,
             )
-        return [dict(r) for r in rows], int(total_count or 0)
+        return _row_to_dict(row) if row is not None else None
 
-    # ── Dataset row writes ────────────────────────────────────────────
 
-    async def append_dataset_rows(
-        self,
-        resource_id: str,
-        rows_data: List[Any],
-        existing_metadata: Dict[str, Any],
-    ) -> int:
-        """Append rows to a dataset atomically: MAX(row_index) probe →
-        multi-VALUES INSERT → metadata.row_count update.
+class ResourceReadings:
+    """What the media digest read from an owner's stored files (a transcript,
+    a document's text), kept on each file's metadata under the keys account
+    attachments already use (``extracted_text``, ``extraction_method``), so a
+    file read in one agent's turn is reused by every turn after it: one paid
+    read. ``reading_until`` (database epoch seconds) leases the read to one
+    reader at a time; ``extraction_truncated`` records a clipped document.
+    The pool resolves on first use (``None``: the runtime pool)."""
 
-        Returns the number of rows inserted (== len(rows_data)). The
-        metadata update always runs — matches the handler's prior behavior
-        of bumping ``updated_at`` even for a zero-row append.
-        """
-        async with self._pool.acquire() as conn:
-            async with conn.transaction():
-                max_index = await conn.fetchval(
-                    "SELECT COALESCE(MAX(row_index), -1) FROM dataset_rows "
-                    "WHERE resource_id = $1",
-                    resource_id,
-                )
+    def __init__(self, owner_id: str, pool=None):
+        self._owner_id = owner_id
+        self._pool = pool
 
-                if rows_data:
-                    # $1 = resource_id; each row uses two positional params
-                    # (row_index, data) starting at $2.
-                    values_sql: List[str] = []
-                    params: List[Any] = [resource_id]
-                    idx = 2
-                    for i, row_data in enumerate(rows_data):
-                        values_sql.append(f"($1, ${idx}, ${idx + 1})")
-                        params.extend([max_index + 1 + i, row_data])
-                        idx += 2
-                    await conn.execute(
-                        "INSERT INTO dataset_rows (resource_id, row_index, data) "
-                        f"VALUES {', '.join(values_sql)}",
-                        *params,
-                    )
+    def _db(self):
+        if self._pool is None:
+            from utils.database_pool import get_native_pool
 
-                new_count = int(max_index) + 1 + len(rows_data)
-                metadata = dict(existing_metadata or {})
-                metadata["row_count"] = new_count
-                await conn.execute(
-                    """
-                    UPDATE workflow_resources
-                    SET metadata = $1, updated_at = NOW()
-                    WHERE id = $2
-                    """,
-                    metadata, resource_id,
-                )
+            self._pool = get_native_pool()
+        return self._pool
 
-        return len(rows_data)
+    async def take(self, resource_id: str, *, lease_s: float) -> Tuple[str, Optional[Dict[str, Any]]]:
+        """``("read", metadata)`` when a reading is kept; ``("claimed", None)``
+        when this reader should read it (it holds the lease now); ``("busy",
+        None)`` while another reader's lease runs; ``("absent", None)`` for a
+        file that isn't the owner's (nothing is kept for it)."""
+        try:
+            uuid.UUID(str(resource_id))
+        except ValueError:
+            return "absent", None
+        async with self._db().acquire() as conn, conn.transaction():
+            row = await conn.fetchrow(
+                """SELECT metadata, extract(epoch FROM clock_timestamp())::float8 AS now FROM workflow_resources
+                   WHERE id = $1::uuid AND owner_id = $2::uuid FOR UPDATE""",
+                str(resource_id), self._owner_id,
+            )
+            if row is None:
+                return "absent", None
+            metadata = row["metadata"] or {}
+            if metadata.get("extracted_text"):
+                return "read", metadata
+            if float(metadata.get("reading_until") or 0) > row["now"]:
+                return "busy", None
+            await conn.execute(
+                """UPDATE workflow_resources SET metadata = metadata || jsonb_build_object('reading_until', $2::float8)
+                   WHERE id = $1::uuid""",
+                str(resource_id), row["now"] + lease_s,
+            )
+        return "claimed", None
 
-    async def update_dataset_row_and_touch(
-        self, row_id: str, resource_id: str, data: Any,
-    ) -> bool:
-        """UPDATE a single dataset row + touch the parent resource's
-        ``updated_at``. Returns False when the row_id/resource_id pair
-        doesn't match a row (handler surfaces "Row not found").
-
-        The touch and the update ride the same transaction — the parent
-        row's ``updated_at`` should only advance if the child update
-        actually landed.
-        """
-        async with self._pool.acquire() as conn:
-            async with conn.transaction():
-                result = await conn.execute(
-                    """
-                    UPDATE dataset_rows SET data = $1
-                    WHERE id = $2 AND resource_id = $3
-                    """,
-                    data, row_id, resource_id,
-                )
-                if result == "UPDATE 0":
-                    return False
-                await conn.execute(
-                    "UPDATE workflow_resources SET updated_at = NOW() WHERE id = $1",
-                    resource_id,
-                )
-        return True
-
-    async def delete_dataset_rows(
-        self,
-        resource_id: str,
-        row_ids: List[str],
-        existing_metadata: Dict[str, Any],
-    ) -> int:
-        """Delete rows and refresh metadata.row_count atomically. Returns
-        the number of rows actually removed (parsed from the DELETE tag).
-        """
-        async with self._pool.acquire() as conn:
-            async with conn.transaction():
-                result = await conn.execute(
-                    """
-                    DELETE FROM dataset_rows
-                    WHERE id = ANY($1::uuid[]) AND resource_id = $2
-                    """,
-                    row_ids, resource_id,
-                )
-                # asyncpg returns "DELETE N".
-                try:
-                    deleted_count = int(result.split()[-1])
-                except (ValueError, IndexError):
-                    deleted_count = 0
-
-                new_count = await conn.fetchval(
-                    "SELECT COUNT(*) FROM dataset_rows WHERE resource_id = $1",
-                    resource_id,
-                )
-                metadata = dict(existing_metadata or {})
-                metadata["row_count"] = int(new_count or 0)
-                await conn.execute(
-                    """
-                    UPDATE workflow_resources
-                    SET metadata = $1, updated_at = NOW()
-                    WHERE id = $2
-                    """,
-                    metadata, resource_id,
-                )
-
-        return deleted_count
+    async def keep(self, resource_id: str, reading: Optional[Dict[str, Any]]) -> None:
+        """Save ``reading`` (None: nothing worth keeping) and end the lease."""
+        await self._db().execute(
+            """UPDATE workflow_resources SET metadata = (metadata - 'reading_until') || $3::jsonb, updated_at = NOW()
+               WHERE id = $1::uuid AND owner_id = $2::uuid""",
+            str(resource_id), self._owner_id, reading or {},
+        )

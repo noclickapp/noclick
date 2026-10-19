@@ -15,6 +15,7 @@ import jwt
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from utils.local_relay import UserConn, get_local_relay_hub
+from utils.relay_tokens import verify_user_room_token
 
 logger = logging.getLogger(__name__)
 
@@ -126,20 +127,21 @@ async def workflow_room(websocket: WebSocket, workflow_id: str):
 
 @router.websocket("/relay/{user_id}")
 async def user_room(websocket: WebSocket, user_id: str):
-    """event relay: broadcast channel for webhook/cron/builder events + mcp requests."""
+    """event relay: broadcast channel for webhook/cron/builder events + mcp requests.
+
+    A viewer proves it is the user with its first frame, {type: "auth", token}
+    (utils.relay_tokens). Until then it gets no events and can't answer the
+    backend's requests; it may only set its own subscription filter.
+    """
     hub = get_local_relay_hub()
     await websocket.accept()
+    await websocket.send_json({"type": "auth:required"})
     conn = UserConn(
         socket=websocket,
         user_id=user_id,
         workflow_id=websocket.query_params.get("workflowId") or None,
     )
-    count = hub.register_user_conn(conn)
-    await websocket.send_json({
-        "type": "connected",
-        "connectionCount": count,
-        "timestamp": int(time.time() * 1000),
-    })
+    authenticated = False
 
     try:
         while True:
@@ -155,13 +157,31 @@ async def user_room(websocket: WebSocket, user_id: str):
                 continue
             mtype = msg.get("type")
 
-            if mtype == "subscribe":
+            if mtype == "auth":
+                try:
+                    verify_user_room_token(str(msg.get("token") or ""), user_id)
+                except (jwt.InvalidTokenError, RuntimeError) as e:
+                    await websocket.send_json({"type": "auth:error", "message": str(e) or "Invalid token"})
+                    await websocket.close(code=4401)
+                    return
+                await websocket.send_json({"type": "auth:success"})
+                if not authenticated:
+                    authenticated = True
+                    count = hub.register_user_conn(conn)
+                    await websocket.send_json({
+                        "type": "connected",
+                        "connectionCount": count,
+                        "timestamp": int(time.time() * 1000),
+                    })
+            elif mtype == "subscribe":
                 if msg.get("workflowId"):
                     conn.workflow_id = str(msg["workflowId"])
                     await websocket.send_json({"type": "subscribed", "workflowId": conn.workflow_id})
             elif mtype == "unsubscribe":
                 conn.workflow_id = None
                 await websocket.send_json({"type": "unsubscribed"})
+            elif not authenticated:
+                await websocket.send_json({"type": "error", "message": "Not authenticated"})
             elif mtype == "mcp_response":
                 hub.resolve_frontend_response(
                     str(msg.get("request_id", "")), msg.get("data"), msg.get("error") or None,

@@ -11,12 +11,14 @@ interface AgentOAuthProvideMethodProps {
     token: string;
     credentialType: string;
     onProvided: () => void;
+    /** Told when a sign-in call finds the request can't be provided any more. */
+    onRequestEnded?: () => void;
 }
 
-export function AgentOAuthProvideMethod({ apiBase, token, credentialType, onProvided }: AgentOAuthProvideMethodProps) {
+export function AgentOAuthProvideMethod({ apiBase, token, credentialType, onProvided, onRequestEnded }: AgentOAuthProvideMethodProps) {
     const sendEvent = useMemo(
-        () => provideLinkTransport(apiBase, token, credentialType),
-        [apiBase, token, credentialType],
+        () => provideLinkTransport(apiBase, token, credentialType, onRequestEnded),
+        [apiBase, token, credentialType, onRequestEnded],
     );
 
     // The provide page has no credentialIds to manage — it only cares that the

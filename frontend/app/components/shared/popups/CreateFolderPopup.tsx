@@ -1,15 +1,12 @@
-// CreateFolderPopup component for creating new workflow folders
-// Modeled on CreateAppPopup with name + description inputs in a Dialog
+// Making a folder for automations: a name and, if it helps, a line on what goes in it.
 
 import { useState } from 'react';
 import { FolderPlus } from 'lucide-react';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from '~/components/ui/dialog';
-import { Button } from '~/components/ui/button';
+import { ShellDialog } from '~/components/shell/ShellDialog';
+import { BUTTON_GHOST, BUTTON_PRIMARY } from '~/components/shell/buttons';
+import { FIELD, FIELD_LABEL } from '~/components/shell/fields';
+import { cn } from '~/lib/utils';
+import { submitOnModEnter } from './EditItemPopup';
 
 interface CreateFolderPopupProps {
     isOpen: boolean;
@@ -42,82 +39,44 @@ export function CreateFolderPopup({ isOpen, onOpenChange, onCreateFolder, isCrea
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-            <DialogContent className="bg-sunken border-border text-foreground max-w-md p-6">
-                <DialogHeader className="pb-1">
-                    <DialogTitle className="text-xl text-foreground flex items-center gap-2">
-                        <FolderPlus className="h-5 w-5" />
-                        {parentFolderName ? 'Create Subfolder' : 'Create New Folder'}
-                    </DialogTitle>
-                    {parentFolderName && (
-                        <div className="text-sm text-muted-foreground pt-0.5">
-                            Inside <span className="text-foreground/80">{parentFolderName}</span>
-                        </div>
-                    )}
-                </DialogHeader>
-
-                <form onSubmit={handleSubmit}>
-                    <div className="space-y-4">
-                        <div className="space-y-3">
-                            <label className="text-sm font-medium text-foreground/80">
-                                Folder Name
-                            </label>
-                            <div className="bg-card/90 backdrop-blur-sm rounded-full transition-all duration-200 border border-input dark:border-zinc-700/60 focus-within:border-muted-foreground/40 dark:focus-within:border-zinc-600/80">
-                                <input
-                                    type="text"
-                                    required
-                                    autoFocus
-                                    value={folderName}
-                                    onChange={(e) => setFolderName(e.target.value)}
-                                    className="bg-transparent text-foreground px-4 py-2.5 outline-none w-full text-sm placeholder:text-[hsl(var(--placeholder))]"
-                                    placeholder="My folder"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-3">
-                            <label className="text-sm font-medium text-foreground/80">
-                                Description <span className="text-muted-foreground/70 dark:text-zinc-600 font-normal">(optional)</span>
-                            </label>
-                            <div className="bg-card/90 backdrop-blur-sm rounded-lg transition-all duration-200 border border-input dark:border-zinc-700/60 focus-within:border-muted-foreground/40 dark:focus-within:border-zinc-600/80">
-                                <textarea
-                                    rows={3}
-                                    value={folderDescription}
-                                    onChange={(e) => setFolderDescription(e.target.value)}
-                                    className="bg-transparent text-foreground px-4 py-2.5 outline-none w-full text-sm placeholder:text-[hsl(var(--placeholder))] resize-none"
-                                    placeholder="What will this folder contain?"
-                                    onKeyDown={(e) => {
-                                        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                                            e.preventDefault();
-                                            const form = e.currentTarget.closest('form');
-                                            if (form) form.requestSubmit();
-                                        }
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between pt-8">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => handleOpenChange(false)}
-                            disabled={isCreating}
-                            className="h-10 bg-transparent text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] border border-border hover:border-muted-foreground/40 dark:hover:border-zinc-700 rounded-md"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                            disabled={!folderName.trim() || isCreating}
-                            className="h-10 bg-primary hover:bg-primary text-primary-foreground font-medium rounded-md border-0 shadow-[0_2.5px_0_0_hsl(var(--primary)/0.6)] hover:shadow-[0_1px_0_0_hsl(var(--primary)/0.6)] hover:translate-y-[1.5px] active:shadow-none active:translate-y-[2.5px] transition-all duration-100 disabled:opacity-40 min-w-[100px]"
-                        >
-                            {isCreating ? 'Creating...' : 'Create Folder'}
-                        </Button>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
+        <ShellDialog
+            open={isOpen}
+            onOpenChange={handleOpenChange}
+            mark={<FolderPlus className="h-5 w-5" strokeWidth={1.75} />}
+            title={parentFolderName ? 'New subfolder' : 'New folder'}
+            description={parentFolderName ? `Inside ${parentFolderName}.` : 'Keep related automations together.'}
+            onSubmit={handleSubmit}
+            footer={
+                <>
+                    <button type="button" onClick={() => handleOpenChange(false)} disabled={isCreating} className={BUTTON_GHOST}>
+                        Cancel
+                    </button>
+                    <button type="submit" disabled={!folderName.trim() || isCreating} className={BUTTON_PRIMARY}>
+                        {isCreating ? 'Creating…' : 'Create folder'}
+                    </button>
+                </>
+            }
+        >
+            <div className="space-y-4 pt-2">
+                <label className="block">
+                    <span className={FIELD_LABEL}>Name</span>
+                    {/* eslint-disable-next-line jsx-a11y/no-autofocus -- the dialog opens to type a name */}
+                    <input type="text" required autoFocus value={folderName} onChange={(e) => setFolderName(e.target.value)} className={FIELD} placeholder="Client work" />
+                </label>
+                <label className="block">
+                    <span className={FIELD_LABEL}>
+                        Description <span className="font-normal text-muted-foreground">(optional)</span>
+                    </span>
+                    <textarea
+                        rows={3}
+                        value={folderDescription}
+                        onChange={(e) => setFolderDescription(e.target.value)}
+                        className={cn(FIELD, 'h-auto resize-none py-2.5 leading-relaxed')}
+                        placeholder="What goes in it"
+                        onKeyDown={submitOnModEnter}
+                    />
+                </label>
+            </div>
+        </ShellDialog>
     );
 }

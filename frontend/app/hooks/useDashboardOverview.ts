@@ -1,7 +1,8 @@
-// The Dashboard tab's data: one `dashboard:overview` round trip held in a
-// module-level valtio store so the tab and the navbar badge share a single
-// fetch. Refetches when the workspace changes and when approvals are created or
-// resolved; exposes `refresh` for the actions that change what needs the user.
+// The Activity page's data: one `dashboard:overview` round trip held in a
+// module-level valtio store. Refetches when the workspace changes and when
+// approvals are created or resolved; exposes `refresh` for the actions that
+// change what needs the user. The badge count every page shows comes from the
+// overview.
 import { useCallback, useEffect } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 import { sendEventAsync } from '~/lib/socket-sender';
@@ -67,11 +68,13 @@ interface DashboardStore {
     loading: boolean;
     error: string | null;
     fetchedAt: number | null;
+    /** What needs the user, from the overview. */
+    attention: AttentionItem[] | null;
     /** Attention items answered locally, hidden until the next refetch confirms. */
     dismissed: string[];
 }
 
-const store = proxy<DashboardStore>({ overview: null, loading: false, error: null, fetchedAt: null, dismissed: [] });
+const store = proxy<DashboardStore>({ overview: null, loading: false, error: null, fetchedAt: null, attention: null, dismissed: [] });
 
 const BADGE_PATH = 'noclick-ui';
 const BADGE_KEY = 'dashboardAttentionCount';
@@ -96,6 +99,7 @@ export function fetchDashboardOverview(): Promise<void> {
             store.overview = data;
             store.error = null;
             store.fetchedAt = Date.now();
+            store.attention = data.attention;
             store.dismissed = [];
             writeBadge(data.attention.length);
         })
@@ -112,7 +116,7 @@ export function fetchDashboardOverview(): Promise<void> {
 /** Hide an attention item now; the next fetch is the source of truth. */
 export function dismissAttention(id: string) {
     if (!store.dismissed.includes(id)) store.dismissed.push(id);
-    const remaining = (store.overview?.attention ?? []).filter((a) => !store.dismissed.includes(a.id)).length;
+    const remaining = (store.attention ?? []).filter((a) => !store.dismissed.includes(a.id)).length;
     writeBadge(remaining);
 }
 

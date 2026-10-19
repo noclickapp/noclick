@@ -2,8 +2,10 @@
 Resource handler for managing workflow resources (datasets, blobs).
 Handles CRUD for resources, presigned URL generation, and dataset row operations.
 
-SQL for ``workflow_resources`` and ``dataset_rows`` lives in
-``repositories/resources.py`` (``ResourceRepo``). Access control still uses
+SQL for ``workflow_resources`` lives in ``repositories/resources.py``
+(``ResourceRepo``); a table's rows go through ``utils.dataset_store``, which
+holds their limits and reaches the store this instance keeps them in. Access
+control still uses
 ``utils.access_control.check_resource_access`` — that's a cross-domain
 concern (workflows + resource_shares + org membership) that doesn't belong
 to a resource repo.
@@ -45,11 +47,20 @@ from wss.receiver.client_events import (
     ResourceDatasetDeleteRowsRequest,
 )
 from utils.access_control import check_resource_access, Permission
+from utils import dataset_store
+from utils.dataset_store import DatasetError
 from repositories.resources import ResourceRepo
 
 logger = logging.getLogger(__name__)
 
 RESOURCE_BUCKET = "workflow-resources"
+
+
+def _iso(value) -> str:
+    """A timestamp as the wire carries it (a store may hand back an ISO string already)."""
+    if not value:
+        return ""
+    return value if isinstance(value, str) else value.isoformat()
 
 
 def _row_to_resource_info(row) -> ResourceInfo:
@@ -210,6 +221,9 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
                 storage_ref=request.storage_ref,
                 metadata=request.metadata or {},
             )
+            if row["resource_type"] == "dataset":
+                await dataset_store.create_dataset(pool, row)
+                row = await repo.get_resource(str(row["id"]))
 
             response = ResourceCreateResponse(
                 success=True,
@@ -299,16 +313,18 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
             if not row:
                 return
 
+            if row["resource_type"] == "dataset":
+                await dataset_store.drop_dataset(pool, row)
+
             # Delete R2 blob if storage_ref exists
             storage_ref = row.get("storage_ref")
-            if storage_ref:
+            if storage_ref and row["resource_type"] != "dataset":
                 try:
                     from utils.r2_cloudflare import delete_files_from_r2_async_native
                     await delete_files_from_r2_async_native(RESOURCE_BUCKET, [storage_ref])
                 except Exception as e:
                     logger.warning(f"Failed to delete R2 blob {storage_ref}: {e}")
 
-            # Delete from DB (CASCADE handles dataset_rows)
             repo = ResourceRepo(pool)
             await repo.delete_resource(request.resource_id)
 
@@ -418,16 +434,8 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
             if not row:
                 return
 
-            if row["resource_type"] != "dataset":
-                await send_event(self.sio, sid, ResponseEvent(
-                    request_id=request.request_id, data={},
-                    error="Resource is not a dataset"
-                ))
-                return
-
-            repo = ResourceRepo(pool)
-            page_rows, total_count = await repo.list_dataset_rows_with_count(
-                request.resource_id, request.limit, request.offset,
+            page_rows, total_count = await dataset_store.read_rows(
+                pool, row, limit=request.limit, offset=request.offset,
             )
 
             dataset_rows = [
@@ -435,7 +443,7 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
                     id=str(r["id"]),
                     row_index=r["row_index"],
                     data=r["data"],
-                    created_at=r["created_at"].isoformat() if r.get("created_at") else "",
+                    created_at=_iso(r.get("created_at")),
                 )
                 for r in page_rows
             ]
@@ -447,6 +455,10 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
                 request_id=request.request_id, data=response.model_dump()
             ))
 
+        except DatasetError as e:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data={}, error=str(e)
+            ))
         except Exception as e:
             logger.error(f"Error getting dataset rows: {e}", exc_info=True)
             await send_event(self.sio, sid, ResponseEvent(
@@ -466,19 +478,7 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
             if not row:
                 return
 
-            if row["resource_type"] != "dataset":
-                await send_event(self.sio, sid, ResponseEvent(
-                    request_id=request.request_id, data={},
-                    error="Resource is not a dataset"
-                ))
-                return
-
-            repo = ResourceRepo(pool)
-            inserted = await repo.append_dataset_rows(
-                request.resource_id,
-                request.rows,
-                row.get("metadata") or {},
-            )
+            inserted = await dataset_store.append_rows(pool, row, request.rows)
 
             response = ResourceDatasetAppendResponse(
                 success=True, inserted_count=inserted
@@ -487,6 +487,10 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
                 request_id=request.request_id, data=response.model_dump()
             ))
 
+        except DatasetError as e:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data={}, error=str(e)
+            ))
         except Exception as e:
             logger.error(f"Error appending dataset rows: {e}", exc_info=True)
             await send_event(self.sio, sid, ResponseEvent(
@@ -506,10 +510,7 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
             if not row:
                 return
 
-            repo = ResourceRepo(pool)
-            updated = await repo.update_dataset_row_and_touch(
-                request.row_id, request.resource_id, request.data,
-            )
+            updated = await dataset_store.update_row(pool, row, request.row_id, request.data)
 
             if not updated:
                 await send_event(self.sio, sid, ResponseEvent(
@@ -522,6 +523,10 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
                 request_id=request.request_id, data=response.model_dump()
             ))
 
+        except DatasetError as e:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data={}, error=str(e)
+            ))
         except Exception as e:
             logger.error(f"Error updating dataset row: {e}", exc_info=True)
             await send_event(self.sio, sid, ResponseEvent(
@@ -541,12 +546,7 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
             if not row:
                 return
 
-            repo = ResourceRepo(pool)
-            deleted_count = await repo.delete_dataset_rows(
-                request.resource_id,
-                request.row_ids,
-                row.get("metadata") or {},
-            )
+            deleted_count = await dataset_store.delete_rows(pool, row, request.row_ids)
 
             response = ResourceDatasetDeleteRowsResponse(
                 success=True, deleted_count=deleted_count
@@ -555,6 +555,10 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
                 request_id=request.request_id, data=response.model_dump()
             ))
 
+        except DatasetError as e:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data={}, error=str(e)
+            ))
         except Exception as e:
             logger.error(f"Error deleting dataset rows: {e}", exc_info=True)
             await send_event(self.sio, sid, ResponseEvent(

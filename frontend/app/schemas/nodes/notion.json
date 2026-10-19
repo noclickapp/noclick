@@ -457,7 +457,7 @@
           "ui:hidden": true
         },
         "integration_token": {
-          "description": "Your Notion Internal Integration Token (starts with 'secret_')",
+          "description": "Your Notion Internal Integration Token (starts with 'ntn_' or 'secret_')",
           "title": "Internal Integration Token",
           "type": "string",
           "ui:widget": "password"

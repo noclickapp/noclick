@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Thu Oct 08 00:12:14  2026
+// Generated at: Sun Oct 18 23:45:21  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -84,6 +84,10 @@ export interface ActiveGenStartedEvent {
    * Echoes the originating client request's request_id for FE latency correlation
    */
   request_id?: string | null;
+  /**
+   * Set when the run imports an n8n workflow: how many steps it has (its request is then an import, not words to send again)
+   */
+  n8n_import_node_count?: number | null;
 }
 /**
  * A status update (e.g. 'Modifying workflow', 'Searching credentials').
@@ -112,7 +116,7 @@ export interface ActiveGenTerminalEvent {
    */
   gen_id: string;
   /**
-   * One of: complete, paused, cancelled, failed, interrupted
+   * One of: complete, paused, cancelled, failed, incomplete, interrupted
    */
   outcome: string;
   /**
@@ -329,6 +333,10 @@ export interface ChatMessageEvent {
    */
   message?: string | null;
   /**
+   * One short line of the model's reasoning, sent when it completes (a section's title or first sentence)
+   */
+  thought?: string | null;
+  /**
    * Component to render. False=no component expected, True=show skeleton loader, str=render component code
    */
   component?: boolean | string | null;
@@ -376,6 +384,14 @@ export interface ChatMessageEvent {
    * On a coordinator note: the workflow whose setup card the chat draws under it.
    */
   setup?: CoordinatorSetupRef | null;
+  /**
+   * On a coordinator note: the tool calls of the turn that wrote it, as its saved event keeps them (compact_tool_calls_for_transcript), so the chat draws their cards under it.
+   */
+  tool_calls?:
+    | {
+        [k: string]: unknown;
+      }[]
+    | null;
   /**
    * Approval card for the agent's prompt_builder tool (interactive chats only): {prompt, node_id, proposal_id}. The chat renders approve/dismiss; approving opens the builder sidebar and submits the prompt. Standalone frame — no message text, no streaming implications.
    */
@@ -453,6 +469,70 @@ export interface ConversationResumeEvent {
         [k: string]: unknown;
       }[]
     | null;
+}
+/**
+ * What became of the email that carried a coordinator turn's reply (the turn's assistant event's
+ * ``email_reply``): who it went to, and how far it got.
+ */
+export interface CoordinatorEmailReply {
+  /**
+   * The turn's receipt id, minted when the email turn started
+   */
+  id: string;
+  /**
+   * sending: not sent yet; sent: the mail service accepted it; delayed: the recipient's server asked it to retry; delivered: the recipient's server accepted it; bounced: it was refused after sending; failed: it was never sent; unknown: sending hit an error, so whether it went out isn't known
+   */
+  state: "sending" | "sent" | "delayed" | "delivered" | "bounced" | "failed" | "unknown";
+  /**
+   * The owner's address it went to
+   */
+  to: string;
+  subject?: string | null;
+  /**
+   * When it was handed to the mail service (ISO 8601)
+   */
+  at?: string | null;
+  /**
+   * The sent message's Message-ID, without angle brackets
+   */
+  message_id?: string | null;
+  /**
+   * state=failed or unknown: why
+   */
+  reason?: ("empty" | "no_address" | "no_owner_email" | "credits" | "send_failed" | "error") | null;
+  /**
+   * The mail service's or the credit gate's own words, when it gave some
+   */
+  error?: string | null;
+}
+/**
+ * An email reply's receipt moved (sent, delivered, bounced, or couldn't be sent), for the reply it sits under
+ * in the owner's chat (sent to the user room).
+ */
+export interface CoordinatorEmailReplyEvent {
+  /**
+   * The owner's coordinator conversation
+   */
+  conversation_id: string;
+  reply: CoordinatorEmailReply;
+}
+/**
+ * A credential request was fulfilled, for the requester's open pages (sent to the user room): the coordinator's
+ * connect card folds to its receipt whichever device the account was connected on.
+ */
+export interface CredentialRequestFulfilledEvent {
+  /**
+   * The fulfilled credential request
+   */
+  request_id: string;
+  /**
+   * The credential it made
+   */
+  credential_id: string;
+  /**
+   * Its type: the request's own, or the sibling method it was provided as
+   */
+  credential_type: string;
 }
 /**
  * Event emitted when the user's credit pool is too low to run a cost-bearing operation.
@@ -1190,32 +1270,6 @@ export interface AgentRunCommandRequest {
   [k: string]: unknown;
 }
 /**
- * Request to update the agent's working directory
- */
-export interface AgentSetCwdRequest {
-  /**
-   * UUID for request/response correlation
-   */
-  request_id?: string | null;
-  /**
-   * Absolute path within the mounted workspace
-   */
-  path: string;
-  /**
-   * Conversation ID to target specific agent (defaults to sid)
-   */
-  conversation_id?: string | null;
-  /**
-   * App ID if working within an app context
-   */
-  app_id?: string | null;
-  /**
-   * App name if working within an app context
-   */
-  app_name?: string | null;
-  [k: string]: unknown;
-}
-/**
  * Mint (or fetch) the shareable public chat link for an agent node.
  * Owner-only: the link bills the owner's credits and exposes the agent's
  * tools (owner credentials) to anyone with the URL.
@@ -1919,55 +1973,6 @@ export interface CanvaOAuthValidateRequest {
   [k: string]: unknown;
 }
 /**
- * Context information sent with each chat message to ensure accurate workspace targeting.
- */
-export interface ChatMessageContext {
-  /**
-   * Current app ID the user is viewing/editing
-   */
-  app_id?: string | null;
-  /**
-   * Current app name for display purposes
-   */
-  app_name?: string | null;
-  /**
-   * Active workflow ID — stamped on the conversation row so the sidebar can later auto-restore the latest conversation per workflow
-   */
-  workflow_id?: string | null;
-}
-/**
- * Request sent when user sends a chat message
- */
-export interface ChatMessageRequest {
-  /**
-   * UUID for request/response correlation
-   */
-  request_id?: string | null;
-  /**
-   * Conversation session ID for associating messages with specific conversation context
-   */
-  conversation_id?: string | null;
-  /**
-   * Sequence-sensitive content items
-   */
-  content: ContentItem[];
-  /**
-   * Model to use for this request (e.g., 'gpt-4o', 'claude-3-sonnet')
-   */
-  model: string;
-  /**
-   * Environment variables for model configuration (e.g., API keys)
-   */
-  env?: {
-    [k: string]: string;
-  } | null;
-  /**
-   * Message context including current app info for accurate cwd targeting
-   */
-  context?: ChatMessageContext | null;
-  [k: string]: unknown;
-}
-/**
  * Exchange OAuth authorization code for tokens
  */
 export interface ClaudeCodeAuthExchangeRequest {
@@ -2205,6 +2210,44 @@ export interface CoordinatorAttachmentsListRequest {
   [k: string]: unknown;
 }
 /**
+ * Get the coordinator's email address, claiming a readable one the first time
+ */
+export interface CoordinatorEmailEnsureRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Take mail to the coordinator's email address, or ignore it (the address stays reserved)
+ */
+export interface CoordinatorEmailInboundRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * True to take mail from the owner's address, false to ignore all mail to it
+   */
+  on: boolean;
+  [k: string]: unknown;
+}
+/**
+ * Rename the coordinator's email address
+ */
+export interface CoordinatorEmailSetRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * The part before the @
+   */
+  name: string;
+  [k: string]: unknown;
+}
+/**
  * Read the account's own coordinator jobs by id, for the chat's live cards
  */
 export interface CoordinatorJobsRequest {
@@ -2281,6 +2324,10 @@ export interface CoordinatorOpenRequest {
    * UUID for request/response correlation
    */
   request_id?: string | null;
+  /**
+   * The browser's IANA timezone: where the owner is opening the chat
+   */
+  timezone?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -4251,7 +4298,7 @@ export interface PhoneLinkStartRequest {
   [k: string]: unknown;
 }
 /**
- * Buy a number and mint the phone_number credential that IS the number.
+ * Buy a number and mint the phone_number credential that IS the number, at the price the person was shown.
  */
 export interface PhoneNumberBuyRequest {
   /**
@@ -4263,13 +4310,171 @@ export interface PhoneNumberBuyRequest {
    */
   phone_number: string;
   /**
+   * The number's country, as the search gave it
+   */
+  country?: string;
+  /**
+   * The number's kind, as the search gave it
+   */
+  number_type?: "local" | "mobile" | "toll_free" | "national" | "shared_cost";
+  /**
+   * Its monthly price the person agreed to, in credits
+   */
+  monthly_credits?: number | null;
+  /**
+   * Its one-time price the person agreed to, in credits
+   */
+  upfront_credits?: number | null;
+  /**
+   * Where the number's country asks who holds it
+   */
+  holder?: PhoneNumberHolder | null;
+  /**
+   * What the number's country asks, by requirement id (requirements.items[].id): the text a textual requirement takes (one of its values where it lists them), the id of the document a document requirement takes (as its upload returned it)
+   */
+  answers?: {
+    [k: string]: string;
+  };
+  /**
    * Display name for the credential
    */
   credential_name?: string | null;
   [k: string]: unknown;
 }
 /**
- * Numbers available to buy for a workflow (voice-capable, local).
+ * Who a number is registered to, where its country asks who holds it (a requirement's kind is address or
+ * contact).
+ */
+export interface PhoneNumberHolder {
+  /**
+   * First and last name
+   */
+  name: string;
+  /**
+   * The business, for a business's number
+   */
+  business_name?: string | null;
+  street: string;
+  street2?: string | null;
+  city: string;
+  /**
+   * State, province or county, where there is one
+   */
+  region?: string | null;
+  postal_code: string;
+  /**
+   * ISO 3166 alpha-2 country code
+   */
+  country: string;
+  /**
+   * A phone to contact the holder on, in E.164 (+…): required where one of the number's requirements is a contact requirement (requirements.items[].kind is contact)
+   */
+  phone?: string | null;
+}
+/**
+ * The countries numbers are for sale in, and the kinds of number sold in each.
+ */
+export interface PhoneNumberCoverageRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Remove one of the account's documents.
+ */
+export interface PhoneNumberDocumentRemoveRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  document_id: string;
+  [k: string]: unknown;
+}
+/**
+ * Where to upload a document for one of a country's requirements: a short-lived link the file is POSTed to.
+ */
+export interface PhoneNumberDocumentUploadRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * ISO 3166 alpha-2 country code
+   */
+  country: string;
+  /**
+   * The kind of number
+   */
+  number_type?: "local" | "mobile" | "toll_free" | "national" | "shared_cost";
+  /**
+   * The document requirement's id
+   */
+  requirement_id: string;
+  [k: string]: unknown;
+}
+/**
+ * The account's documents that can be filed for a number's requirements again.
+ */
+export interface PhoneNumberDocumentsRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * The account's numbers the carrier is reviewing, or sent back.
+ */
+export interface PhoneNumberOrdersRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * The cities (area codes in North America) where numbers of a kind are for sale in a country.
+ */
+export interface PhoneNumberPlacesRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * ISO 3166 alpha-2 country code
+   */
+  country: string;
+  /**
+   * The kind of number
+   */
+  number_type?: "local" | "mobile" | "toll_free" | "national" | "shared_cost";
+  [k: string]: unknown;
+}
+/**
+ * File corrected answers for a number order the carrier sent back.
+ */
+export interface PhoneNumberResubmitRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  order_id: string;
+  /**
+   * Where the number's country asks who holds it
+   */
+  holder?: PhoneNumberHolder | null;
+  /**
+   * What the number's country asks, by requirement id (requirements.items[].id): the text a textual requirement takes (one of its values where it lists them), the id of the document a document requirement takes (as its upload returned it)
+   */
+  answers?: {
+    [k: string]: string;
+  };
+  [k: string]: unknown;
+}
+/**
+ * Numbers available to buy for a workflow, each with its price for the account.
  */
 export interface PhoneNumberSearchRequest {
   /**
@@ -4277,17 +4482,41 @@ export interface PhoneNumberSearchRequest {
    */
   request_id?: string | null;
   /**
-   * ISO country code; US only at launch
+   * ISO 3166 alpha-2 country code
    */
   country?: string;
   /**
-   * Optional area code to search within
+   * The kind of number
+   */
+  number_type?: "local" | "mobile" | "toll_free" | "national" | "shared_cost";
+  /**
+   * Area code (national destination code) to search within
    */
   area_code?: string | null;
+  /**
+   * City the number is local to
+   */
+  locality?: string | null;
+  /**
+   * State, province or region the number is in
+   */
+  region?: string | null;
   /**
    * Optional pattern the number must contain: digits, letters (keypad-mapped) and * for any digit
    */
   contains?: string | null;
+  /**
+   * Digits the national number starts with
+   */
+  starts_with?: string | null;
+  /**
+   * Digits the number ends with
+   */
+  ends_with?: string | null;
+  /**
+   * What every number must do: take calls (voice), or calls and texts (voice_sms)
+   */
+  features?: "voice" | "voice_sms";
   /**
    * How many numbers to return
    */
@@ -4588,6 +4817,18 @@ export interface RehearsalScenariosRequest {
    * Workflow whose rehearsable situations are being listed
    */
   workflow_id: string;
+  [k: string]: unknown;
+}
+/**
+ * Request a short-lived token for the signed-in user's own relay room.
+ *
+ * A relay viewer sends it as its first frame; it opens that user's room only.
+ */
+export interface RelayUserTokenRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -5954,6 +6195,40 @@ export interface UpdateAuthRequest {
   [k: string]: unknown;
 }
 /**
+ * A page of the signed-in account's charges, newest first.
+ */
+export interface UsageChargesRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Period start (ISO), as usage:page returned it
+   */
+  start: string;
+  /**
+   * Period end (ISO), exclusive
+   */
+  end: string;
+  /**
+   * Only charges in these groups (usage:page's `k`); omit for all
+   */
+  keys?: string[] | null;
+  /**
+   * Only charges on this UTC day (YYYY-MM-DD)
+   */
+  day?: string | null;
+  /**
+   * The previous page's `next`
+   */
+  cursor?: string | null;
+  /**
+   * Charges per page
+   */
+  limit?: number;
+  [k: string]: unknown;
+}
+/**
  * Request to fetch usage data with optional filters
  */
 export interface UsageDataRequest {
@@ -6019,6 +6294,18 @@ export interface UsageLogsRequest {
    * Organization workspace to scope to; omit/null for personal (events with organization_id IS NULL)
    */
   organization_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * The usage page in one read: its period, the charges grouped every way it
+ * breaks them down, the names for what they were for, and the first page of
+ * charges. The money behind it where the deployment bills.
+ */
+export interface UsagePageRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -8683,6 +8970,10 @@ export interface CredentialCreateResponse {
    */
   hint?: string | null;
   /**
+   * False when the provider itself refused the value (not a shape problem, and not a failure of ours)
+   */
+  reachable?: boolean | null;
+  /**
    * What the connect-time probe proved about the saved credential; null when no probe ran
    */
   verification?: CredentialTestConnectionResponse | null;
@@ -8984,6 +9275,10 @@ export interface CredentialUpdateResponse {
    * What a provider refusal usually means, when its shape says so
    */
   hint?: string | null;
+  /**
+   * False when the provider itself refused the value (not a shape problem, and not a failure of ours)
+   */
+  reachable?: boolean | null;
   /**
    * What the connect-time probe proved about the replaced secret; null when no probe ran
    */
@@ -11083,6 +11378,31 @@ export interface RehearsalSituationModel {
  * The staged message, for display
  */
 
+/**
+ * Response for relay:user_token - a token for the user's own relay room
+ */
+export interface RelayUserTokenResponse {
+  /**
+   * Whether a token was minted
+   */
+  success: boolean;
+  /**
+   * Token the relay viewer sends as its first frame
+   */
+  token?: string | null;
+  /**
+   * The user whose room the token opens (the session's own)
+   */
+  user_id?: string | null;
+  /**
+   * Token expiration timestamp (Unix epoch seconds)
+   */
+  expires_at?: number | null;
+  /**
+   * Error message if minting failed
+   */
+  message?: string | null;
+}
 /**
  * Response for resource:create request
  */
@@ -13805,6 +14125,8 @@ export interface ServerToClientEvents {
   'conversation:latest_for_workflow': (data: LatestConversationForWorkflowEvent) => void;
   'conversation:resume': (data: ConversationResumeEvent) => void;
   'conversations:list': (data: ConversationListEvent) => void;
+  'coordinator:email_reply': (data: CoordinatorEmailReplyEvent) => void;
+  'credential_request:fulfilled': (data: CredentialRequestFulfilledEvent) => void;
   'credits:exhausted': (data: CreditsExhaustedEvent) => void;
   'error': (data: ErrorEvent) => void;
   'mcp:builder_event': (data: MCPBuilderEvent) => void;
@@ -13839,7 +14161,6 @@ export interface ClientToServerEvents {
   'agent:pause': (data: AgentPauseRequest) => void;
   'agent:read:file': (data: AgentReadFileRequest) => void;
   'agent:run:command': (data: AgentRunCommandRequest) => void;
-  'agent:set:cwd': (data: AgentSetCwdRequest) => void;
   'agent:warm_sandboxes': (data: AgentWarmSandboxesRequest) => void;
   'agent:write:file': (data: AgentWriteFileRequest) => void;
   'agent_share:get_or_create': (data: AgentShareGetOrCreateRequest) => void;
@@ -13879,7 +14200,6 @@ export interface ClientToServerEvents {
   'canva:oauth:exchange': (data: CanvaOAuthExchangeRequest) => void;
   'canva:oauth:refresh': (data: CanvaOAuthRefreshRequest) => void;
   'canva:oauth:validate': (data: CanvaOAuthValidateRequest) => void;
-  'chat:message': (data: ChatMessageRequest) => void;
   'claude-code:auth:exchange': (data: ClaudeCodeAuthExchangeRequest) => void;
   'claude-code:auth:start': (data: ClaudeCodeAuthStartRequest) => void;
   'clickup:oauth:exchange': (data: ClickUpOAuthExchangeRequest) => void;
@@ -13898,6 +14218,9 @@ export interface ClientToServerEvents {
   'coordinator:arrival': (data: CoordinatorArrivalRequest) => void;
   'coordinator:attachment:upload_url': (data: CoordinatorAttachmentUploadUrlRequest) => void;
   'coordinator:attachments:list': (data: CoordinatorAttachmentsListRequest) => void;
+  'coordinator:email:ensure': (data: CoordinatorEmailEnsureRequest) => void;
+  'coordinator:email:inbound': (data: CoordinatorEmailInboundRequest) => void;
+  'coordinator:email:set': (data: CoordinatorEmailSetRequest) => void;
   'coordinator:jobs': (data: CoordinatorJobsRequest) => void;
   'coordinator:memories:delete': (data: CoordinatorMemoryDeleteRequest) => void;
   'coordinator:memories:get': (data: CoordinatorMemoryGetRequest) => void;
@@ -14004,6 +14327,13 @@ export interface ClientToServerEvents {
   'phone:status': (data: PhoneStatusRequest) => void;
   'phone:unlink': (data: PhoneUnlinkRequest) => void;
   'phone_number:buy': (data: PhoneNumberBuyRequest) => void;
+  'phone_number:coverage': (data: PhoneNumberCoverageRequest) => void;
+  'phone_number:document_remove': (data: PhoneNumberDocumentRemoveRequest) => void;
+  'phone_number:document_upload': (data: PhoneNumberDocumentUploadRequest) => void;
+  'phone_number:documents': (data: PhoneNumberDocumentsRequest) => void;
+  'phone_number:orders': (data: PhoneNumberOrdersRequest) => void;
+  'phone_number:places': (data: PhoneNumberPlacesRequest) => void;
+  'phone_number:resubmit': (data: PhoneNumberResubmitRequest) => void;
   'phone_number:search': (data: PhoneNumberSearchRequest) => void;
   'pipedrive:oauth:exchange': (data: PipedriveOAuthExchangeRequest) => void;
   'pipedrive:oauth:refresh': (data: PipedriveOAuthRefreshRequest) => void;
@@ -14019,6 +14349,7 @@ export interface ClientToServerEvents {
   'reddit:oauth:validate': (data: RedditOAuthValidateRequest) => void;
   'rehearsal:run': (data: RehearsalRunRequest) => void;
   'rehearsal:scenarios': (data: RehearsalScenariosRequest) => void;
+  'relay:user_token': (data: RelayUserTokenRequest) => void;
   'resource:create': (data: ResourceCreateRequest) => void;
   'resource:dataset:append': (data: ResourceDatasetAppendRequest) => void;
   'resource:dataset:delete_rows': (data: ResourceDatasetDeleteRowsRequest) => void;
@@ -14084,8 +14415,10 @@ export interface ClientToServerEvents {
   'twitter:oauth:validate': (data: TwitterOAuthValidateRequest) => void;
   'typeform:oauth:exchange': (data: TypeformOAuthExchangeRequest) => void;
   'update_auth': (data: UpdateAuthRequest) => void;
+  'usage:charges': (data: UsageChargesRequest) => void;
   'usage:data': (data: UsageDataRequest) => void;
   'usage:logs': (data: UsageLogsRequest) => void;
+  'usage:page': (data: UsagePageRequest) => void;
   'webflow:oauth:exchange': (data: WebflowOAuthExchangeRequest) => void;
   'webflow:oauth:refresh': (data: WebflowOAuthRefreshRequest) => void;
   'webflow:oauth:validate': (data: WebflowOAuthValidateRequest) => void;
@@ -14184,7 +14517,6 @@ export const ClientEventNames = {
   AgentPauseRequest: 'agent:pause',
   AgentReadFileRequest: 'agent:read:file',
   AgentRunCommandRequest: 'agent:run:command',
-  AgentSetCwdRequest: 'agent:set:cwd',
   AgentShareGetOrCreateRequest: 'agent_share:get_or_create',
   AgentShareRotateRequest: 'agent_share:rotate',
   AgentShareSetActiveRequest: 'agent_share:set_active',
@@ -14224,7 +14556,6 @@ export const ClientEventNames = {
   CanvaOAuthExchangeRequest: 'canva:oauth:exchange',
   CanvaOAuthRefreshRequest: 'canva:oauth:refresh',
   CanvaOAuthValidateRequest: 'canva:oauth:validate',
-  ChatMessageRequest: 'chat:message',
   ClaudeCodeAuthExchangeRequest: 'claude-code:auth:exchange',
   ClaudeCodeAuthStartRequest: 'claude-code:auth:start',
   ClickUpOAuthExchangeRequest: 'clickup:oauth:exchange',
@@ -14238,6 +14569,9 @@ export const ClientEventNames = {
   CoordinatorArrivalRequest: 'coordinator:arrival',
   CoordinatorAttachmentUploadUrlRequest: 'coordinator:attachment:upload_url',
   CoordinatorAttachmentsListRequest: 'coordinator:attachments:list',
+  CoordinatorEmailEnsureRequest: 'coordinator:email:ensure',
+  CoordinatorEmailInboundRequest: 'coordinator:email:inbound',
+  CoordinatorEmailSetRequest: 'coordinator:email:set',
   CoordinatorJobsRequest: 'coordinator:jobs',
   CoordinatorMemoriesListRequest: 'coordinator:memories:list',
   CoordinatorMemoryDeleteRequest: 'coordinator:memories:delete',
@@ -14355,6 +14689,13 @@ export const ClientEventNames = {
   PhoneLinkCodeRequest: 'phone:link:code',
   PhoneLinkStartRequest: 'phone:link:start',
   PhoneNumberBuyRequest: 'phone_number:buy',
+  PhoneNumberCoverageRequest: 'phone_number:coverage',
+  PhoneNumberDocumentRemoveRequest: 'phone_number:document_remove',
+  PhoneNumberDocumentUploadRequest: 'phone_number:document_upload',
+  PhoneNumberDocumentsRequest: 'phone_number:documents',
+  PhoneNumberOrdersRequest: 'phone_number:orders',
+  PhoneNumberPlacesRequest: 'phone_number:places',
+  PhoneNumberResubmitRequest: 'phone_number:resubmit',
   PhoneNumberSearchRequest: 'phone_number:search',
   PhoneStatusRequest: 'phone:status',
   PhoneUnlinkRequest: 'phone:unlink',
@@ -14372,6 +14713,7 @@ export const ClientEventNames = {
   RedditOAuthValidateRequest: 'reddit:oauth:validate',
   RehearsalRunRequest: 'rehearsal:run',
   RehearsalScenariosRequest: 'rehearsal:scenarios',
+  RelayUserTokenRequest: 'relay:user_token',
   ResourceCreateRequest: 'resource:create',
   ResourceDatasetAppendRequest: 'resource:dataset:append',
   ResourceDatasetDeleteRowsRequest: 'resource:dataset:delete_rows',
@@ -14440,8 +14782,10 @@ export const ClientEventNames = {
   TwitterOAuthValidateRequest: 'twitter:oauth:validate',
   TypeformOAuthExchangeRequest: 'typeform:oauth:exchange',
   UpdateAuthRequest: 'update_auth',
+  UsageChargesRequest: 'usage:charges',
   UsageDataRequest: 'usage:data',
   UsageLogsRequest: 'usage:logs',
+  UsagePageRequest: 'usage:page',
   WebflowOAuthExchangeRequest: 'webflow:oauth:exchange',
   WebflowOAuthRefreshRequest: 'webflow:oauth:refresh',
   WebflowOAuthValidateRequest: 'webflow:oauth:validate',
@@ -14533,7 +14877,6 @@ interface ClientEventMap {
   AgentPauseRequest: AgentPauseRequest
   AgentReadFileRequest: AgentReadFileRequest
   AgentRunCommandRequest: AgentRunCommandRequest
-  AgentSetCwdRequest: AgentSetCwdRequest
   AgentShareGetOrCreateRequest: AgentShareGetOrCreateRequest
   AgentShareRotateRequest: AgentShareRotateRequest
   AgentShareSetActiveRequest: AgentShareSetActiveRequest
@@ -14573,7 +14916,6 @@ interface ClientEventMap {
   CanvaOAuthExchangeRequest: CanvaOAuthExchangeRequest
   CanvaOAuthRefreshRequest: CanvaOAuthRefreshRequest
   CanvaOAuthValidateRequest: CanvaOAuthValidateRequest
-  ChatMessageRequest: ChatMessageRequest
   ClaudeCodeAuthExchangeRequest: ClaudeCodeAuthExchangeRequest
   ClaudeCodeAuthStartRequest: ClaudeCodeAuthStartRequest
   ClickUpOAuthExchangeRequest: ClickUpOAuthExchangeRequest
@@ -14587,6 +14929,9 @@ interface ClientEventMap {
   CoordinatorArrivalRequest: CoordinatorArrivalRequest
   CoordinatorAttachmentUploadUrlRequest: CoordinatorAttachmentUploadUrlRequest
   CoordinatorAttachmentsListRequest: CoordinatorAttachmentsListRequest
+  CoordinatorEmailEnsureRequest: CoordinatorEmailEnsureRequest
+  CoordinatorEmailInboundRequest: CoordinatorEmailInboundRequest
+  CoordinatorEmailSetRequest: CoordinatorEmailSetRequest
   CoordinatorJobsRequest: CoordinatorJobsRequest
   CoordinatorMemoriesListRequest: CoordinatorMemoriesListRequest
   CoordinatorMemoryDeleteRequest: CoordinatorMemoryDeleteRequest
@@ -14704,6 +15049,13 @@ interface ClientEventMap {
   PhoneLinkCodeRequest: PhoneLinkCodeRequest
   PhoneLinkStartRequest: PhoneLinkStartRequest
   PhoneNumberBuyRequest: PhoneNumberBuyRequest
+  PhoneNumberCoverageRequest: PhoneNumberCoverageRequest
+  PhoneNumberDocumentRemoveRequest: PhoneNumberDocumentRemoveRequest
+  PhoneNumberDocumentUploadRequest: PhoneNumberDocumentUploadRequest
+  PhoneNumberDocumentsRequest: PhoneNumberDocumentsRequest
+  PhoneNumberOrdersRequest: PhoneNumberOrdersRequest
+  PhoneNumberPlacesRequest: PhoneNumberPlacesRequest
+  PhoneNumberResubmitRequest: PhoneNumberResubmitRequest
   PhoneNumberSearchRequest: PhoneNumberSearchRequest
   PhoneStatusRequest: PhoneStatusRequest
   PhoneUnlinkRequest: PhoneUnlinkRequest
@@ -14721,6 +15073,7 @@ interface ClientEventMap {
   RedditOAuthValidateRequest: RedditOAuthValidateRequest
   RehearsalRunRequest: RehearsalRunRequest
   RehearsalScenariosRequest: RehearsalScenariosRequest
+  RelayUserTokenRequest: RelayUserTokenRequest
   ResourceCreateRequest: ResourceCreateRequest
   ResourceDatasetAppendRequest: ResourceDatasetAppendRequest
   ResourceDatasetDeleteRowsRequest: ResourceDatasetDeleteRowsRequest
@@ -14789,8 +15142,10 @@ interface ClientEventMap {
   TwitterOAuthValidateRequest: TwitterOAuthValidateRequest
   TypeformOAuthExchangeRequest: TypeformOAuthExchangeRequest
   UpdateAuthRequest: UpdateAuthRequest
+  UsageChargesRequest: UsageChargesRequest
   UsageDataRequest: UsageDataRequest
   UsageLogsRequest: UsageLogsRequest
+  UsagePageRequest: UsagePageRequest
   WebflowOAuthExchangeRequest: WebflowOAuthExchangeRequest
   WebflowOAuthRefreshRequest: WebflowOAuthRefreshRequest
   WebflowOAuthValidateRequest: WebflowOAuthValidateRequest
@@ -14999,6 +15354,7 @@ export interface RequestResponseMap {
   RedditOAuthValidateRequest: RedditOAuthValidateResponse;
   RehearsalRunRequest: RehearsalRunResponse;
   RehearsalScenariosRequest: RehearsalScenariosResponse;
+  RelayUserTokenRequest: RelayUserTokenResponse;
   ResourceCreateRequest: ResourceCreateResponse;
   ResourceDatasetAppendRequest: ResourceDatasetAppendResponse;
   ResourceDatasetDeleteRowsRequest: ResourceDatasetDeleteRowsResponse;
@@ -15137,10 +15493,6 @@ export const AgentReadFileRequest = {
 export const AgentRunCommandRequest = {
   event_name: 'agent:run:command' as const,
   create: (data: AgentRunCommandRequest) => ({ event_name: 'agent:run:command' as const, ...data })
-};
-export const AgentSetCwdRequest = {
-  event_name: 'agent:set:cwd' as const,
-  create: (data: AgentSetCwdRequest) => ({ event_name: 'agent:set:cwd' as const, ...data })
 };
 export const AgentShareGetOrCreateRequest = {
   event_name: 'agent_share:get_or_create' as const,
@@ -15298,10 +15650,6 @@ export const CanvaOAuthValidateRequest = {
   event_name: 'canva:oauth:validate' as const,
   create: (data: CanvaOAuthValidateRequest) => ({ event_name: 'canva:oauth:validate' as const, ...data })
 };
-export const ChatMessageRequest = {
-  event_name: 'chat:message' as const,
-  create: (data: ChatMessageRequest) => ({ event_name: 'chat:message' as const, ...data })
-};
 export const ClaudeCodeAuthExchangeRequest = {
   event_name: 'claude-code:auth:exchange' as const,
   create: (data: ClaudeCodeAuthExchangeRequest) => ({ event_name: 'claude-code:auth:exchange' as const, ...data })
@@ -15353,6 +15701,18 @@ export const CoordinatorAttachmentUploadUrlRequest = {
 export const CoordinatorAttachmentsListRequest = {
   event_name: 'coordinator:attachments:list' as const,
   create: (data: CoordinatorAttachmentsListRequest) => ({ event_name: 'coordinator:attachments:list' as const, ...data })
+};
+export const CoordinatorEmailEnsureRequest = {
+  event_name: 'coordinator:email:ensure' as const,
+  create: (data: CoordinatorEmailEnsureRequest) => ({ event_name: 'coordinator:email:ensure' as const, ...data })
+};
+export const CoordinatorEmailInboundRequest = {
+  event_name: 'coordinator:email:inbound' as const,
+  create: (data: CoordinatorEmailInboundRequest) => ({ event_name: 'coordinator:email:inbound' as const, ...data })
+};
+export const CoordinatorEmailSetRequest = {
+  event_name: 'coordinator:email:set' as const,
+  create: (data: CoordinatorEmailSetRequest) => ({ event_name: 'coordinator:email:set' as const, ...data })
 };
 export const CoordinatorJobsRequest = {
   event_name: 'coordinator:jobs' as const,
@@ -15822,6 +16182,34 @@ export const PhoneNumberBuyRequest = {
   event_name: 'phone_number:buy' as const,
   create: (data: PhoneNumberBuyRequest) => ({ event_name: 'phone_number:buy' as const, ...data })
 };
+export const PhoneNumberCoverageRequest = {
+  event_name: 'phone_number:coverage' as const,
+  create: (data: PhoneNumberCoverageRequest) => ({ event_name: 'phone_number:coverage' as const, ...data })
+};
+export const PhoneNumberDocumentRemoveRequest = {
+  event_name: 'phone_number:document_remove' as const,
+  create: (data: PhoneNumberDocumentRemoveRequest) => ({ event_name: 'phone_number:document_remove' as const, ...data })
+};
+export const PhoneNumberDocumentUploadRequest = {
+  event_name: 'phone_number:document_upload' as const,
+  create: (data: PhoneNumberDocumentUploadRequest) => ({ event_name: 'phone_number:document_upload' as const, ...data })
+};
+export const PhoneNumberDocumentsRequest = {
+  event_name: 'phone_number:documents' as const,
+  create: (data: PhoneNumberDocumentsRequest) => ({ event_name: 'phone_number:documents' as const, ...data })
+};
+export const PhoneNumberOrdersRequest = {
+  event_name: 'phone_number:orders' as const,
+  create: (data: PhoneNumberOrdersRequest) => ({ event_name: 'phone_number:orders' as const, ...data })
+};
+export const PhoneNumberPlacesRequest = {
+  event_name: 'phone_number:places' as const,
+  create: (data: PhoneNumberPlacesRequest) => ({ event_name: 'phone_number:places' as const, ...data })
+};
+export const PhoneNumberResubmitRequest = {
+  event_name: 'phone_number:resubmit' as const,
+  create: (data: PhoneNumberResubmitRequest) => ({ event_name: 'phone_number:resubmit' as const, ...data })
+};
 export const PhoneNumberSearchRequest = {
   event_name: 'phone_number:search' as const,
   create: (data: PhoneNumberSearchRequest) => ({ event_name: 'phone_number:search' as const, ...data })
@@ -15889,6 +16277,10 @@ export const RehearsalRunRequest = {
 export const RehearsalScenariosRequest = {
   event_name: 'rehearsal:scenarios' as const,
   create: (data: RehearsalScenariosRequest) => ({ event_name: 'rehearsal:scenarios' as const, ...data })
+};
+export const RelayUserTokenRequest = {
+  event_name: 'relay:user_token' as const,
+  create: (data: RelayUserTokenRequest) => ({ event_name: 'relay:user_token' as const, ...data })
 };
 export const ResourceCreateRequest = {
   event_name: 'resource:create' as const,
@@ -16162,6 +16554,10 @@ export const UpdateAuthRequest = {
   event_name: 'update_auth' as const,
   create: (data: UpdateAuthRequest) => ({ event_name: 'update_auth' as const, ...data })
 };
+export const UsageChargesRequest = {
+  event_name: 'usage:charges' as const,
+  create: (data: UsageChargesRequest) => ({ event_name: 'usage:charges' as const, ...data })
+};
 export const UsageDataRequest = {
   event_name: 'usage:data' as const,
   create: (data: UsageDataRequest) => ({ event_name: 'usage:data' as const, ...data })
@@ -16169,6 +16565,10 @@ export const UsageDataRequest = {
 export const UsageLogsRequest = {
   event_name: 'usage:logs' as const,
   create: (data: UsageLogsRequest) => ({ event_name: 'usage:logs' as const, ...data })
+};
+export const UsagePageRequest = {
+  event_name: 'usage:page' as const,
+  create: (data: UsagePageRequest) => ({ event_name: 'usage:page' as const, ...data })
 };
 export const WebflowOAuthExchangeRequest = {
   event_name: 'webflow:oauth:exchange' as const,
@@ -16468,7 +16868,6 @@ export const ZoomOAuthValidateRequest = {
 export const EventRouting = {
   'agent:builder_decision': 'API',
   'agent:pause': 'API',
-  'agent:set:cwd': 'API',
   'agent:update_model': 'API',
   'agent:warm_sandboxes': 'API',
   'agent_share:get_or_create': 'API',
@@ -16508,7 +16907,6 @@ export const EventRouting = {
   'canva:oauth:exchange': 'API',
   'canva:oauth:refresh': 'API',
   'canva:oauth:validate': 'API',
-  'chat:message': 'API',
   'claude-code:auth:exchange': 'API',
   'claude-code:auth:start': 'API',
   'clickup:oauth:exchange': 'API',
@@ -16527,6 +16925,9 @@ export const EventRouting = {
   'coordinator:arrival': 'API',
   'coordinator:attachment:upload_url': 'API',
   'coordinator:attachments:list': 'API',
+  'coordinator:email:ensure': 'API',
+  'coordinator:email:inbound': 'API',
+  'coordinator:email:set': 'API',
   'coordinator:jobs': 'API',
   'coordinator:memories:delete': 'API',
   'coordinator:memories:get': 'API',
@@ -16655,6 +17056,13 @@ export const EventRouting = {
   'phone:status': 'API',
   'phone:unlink': 'API',
   'phone_number:buy': 'API',
+  'phone_number:coverage': 'API',
+  'phone_number:document_remove': 'API',
+  'phone_number:document_upload': 'API',
+  'phone_number:documents': 'API',
+  'phone_number:orders': 'API',
+  'phone_number:places': 'API',
+  'phone_number:resubmit': 'API',
   'phone_number:search': 'API',
   'pipedrive:oauth:exchange': 'API',
   'pipedrive:oauth:refresh': 'API',
@@ -16670,6 +17078,7 @@ export const EventRouting = {
   'reddit:oauth:validate': 'API',
   'rehearsal:run': 'API',
   'rehearsal:scenarios': 'API',
+  'relay:user_token': 'API',
   'resource:create': 'API',
   'resource:dataset:append': 'API',
   'resource:dataset:delete_rows': 'API',
@@ -16736,8 +17145,10 @@ export const EventRouting = {
   'typeform:oauth:exchange': 'API',
   'typeform:oauth:refresh': 'API',
   'typeform:oauth:validate': 'API',
+  'usage:charges': 'API',
   'usage:data': 'API',
   'usage:logs': 'API',
+  'usage:page': 'API',
   'webflow:oauth:exchange': 'API',
   'webflow:oauth:refresh': 'API',
   'webflow:oauth:validate': 'API',

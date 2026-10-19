@@ -20,7 +20,6 @@ import {
     doesAgentQueryMatch,
 } from '~/lib/agentModelMatch';
 import { useModels } from '~/hooks/useModels';
-import { scaled } from '~/lib/constants';
 import type { Model } from '~/types/model';
 import {
     buildNodeSearchIndexEntry,
@@ -29,13 +28,12 @@ import {
     type NodeSearchIndexEntry,
 } from '~/utils/nodeSearchMatch';
 
-// Sized to scale with the active root-font-size tier.
-// BASE_PREVIEW_SIZE is exported so FlowCanvas's drag overlay can match it
+// PREVIEW_SIZE is exported so FlowCanvas's drag overlay can match it
 // — the overlay must be the same visual size as the source tile or the
 // drag feels detached from the cursor.
-export const BASE_PREVIEW_SIZE = 90;
-const BASE_TILE_HEIGHT = 118;
-const BASE_ROW_GAP = 12;
+export const PREVIEW_SIZE = 90;
+const TILE_HEIGHT = 118;
+const ROW_GAP = 12;
 
 interface NodeSearchMatch {
     node: NodeDefinition;
@@ -71,12 +69,12 @@ function paletteDimsForNode(node: NodeDefinition): NodeDimensions {
 }
 
 // Preview width follows the node's aspect ratio so wider nodes (e.g. Agent,
-// 1.43:1) render true to shape; height matches the scaled preview size.
+// 1.43:1) render true to shape; height matches the preview size.
 function previewSizeForNode(node: NodeDefinition): {
     width: number;
     height: number;
 } {
-    const previewSize = scaled(BASE_PREVIEW_SIZE);
+    const previewSize = PREVIEW_SIZE;
     const dims = paletteDimsForNode(node);
     const aspectRatio = dims.width / dims.height;
     return { width: previewSize * aspectRatio, height: previewSize };
@@ -292,7 +290,7 @@ export function NodesTabContent({
             </div>
             <div
                 className="flex flex-wrap"
-                style={{ rowGap: `${scaled(BASE_ROW_GAP)}px` }}
+                style={{ rowGap: `${ROW_GAP}px` }}
             >
                 {displayMatches.map((match, i) => (
                     <DraggableNodePreview
@@ -366,9 +364,7 @@ function DraggableNodePreview({
     // doesn't squeeze the preview. Catalog matches can have longer names
     // (e.g. "DeepSeek V3 Chat") — allow two wrapped lines so the tile shows
     // the full name instead of clamping to an ellipsis.
-    const tileHeight = scaled(
-        seedLabel ? BASE_TILE_HEIGHT + 26 : BASE_TILE_HEIGHT
-    );
+    const tileHeight = seedLabel ? TILE_HEIGHT + 26 : TILE_HEIGHT;
     const addNode = () => {
         document.dispatchEvent(
             new CustomEvent('noclick:add-connected-node', {
@@ -432,7 +428,7 @@ function DraggableNodePreview({
                 }}
             >
                 {isStickyNote ? (
-                    <MiniStickyNotePreview size={scaled(BASE_PREVIEW_SIZE)} />
+                    <MiniStickyNotePreview size={PREVIEW_SIZE} />
                 ) : (
                     <MiniNodePreview
                         node={node}

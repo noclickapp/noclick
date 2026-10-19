@@ -4,6 +4,8 @@
 // classify the failure and build the redirect target so all three routes stay in lockstep.
 // Also owns post-auth redirect validation (getValidRedirectUrl) for the same routes.
 
+import { isLoopbackHostname } from '~/lib/loopback';
+
 // Validate a ?next= redirect target to prevent open redirects: relative paths and
 // same-origin URLs pass through; localhost is allowed for dev (backend on another port);
 // anything else falls back to /dashboard.
@@ -28,7 +30,7 @@ export function getValidRedirectUrl(nextUrl: string | null, origin: string): str
         }
 
         // Allow localhost URLs (for local dev with backend on different port)
-        if (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1') {
+        if (isLoopbackHostname(parsed.hostname)) {
             return decoded;
         }
 

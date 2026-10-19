@@ -270,14 +270,7 @@ class TestResourceHandler(BaseHandlerTest):
         update_resp = _find_response(self.get_main_api_emitted_events("response"), "ds-update")
         assert update_resp['data']['success']
 
-        # Verify updated data in DB
-        db_row = await real_database.fetchrow(
-            "SELECT data FROM dataset_rows WHERE id = $1", row_id_alice
-        )
-        assert db_row['data']['age'] == 31
-
-        # Delete Bob (row index 1)
-        # First, get Bob's row_id from page 2
+        # Read everything back: Alice's object was replaced, the order kept
         await send_event(frontend_sio, sid, ResourceDatasetRowsRequest(
             event_name="resource:dataset:rows", request_id="ds-read2",
             resource_id=resource_id, limit=10, offset=0,
@@ -286,6 +279,13 @@ class TestResourceHandler(BaseHandlerTest):
         all_rows = _find_response(
             self.get_main_api_emitted_events("response"), "ds-read2"
         )['data']['rows']
+        assert [r['data'] for r in all_rows] == [
+            {"name": "Alice", "age": 31}, {"name": "Bob", "age": 25}, {"name": "Charlie", "age": 35},
+        ]
+        assert [r['row_index'] for r in all_rows] == [0, 1, 2]
+        assert all_rows[0]['id'] == row_id_alice
+
+        # Delete Bob (row index 1)
         bob_id = [r for r in all_rows if r['data']['name'] == "Bob"][0]['id']
 
         await send_event(frontend_sio, sid, ResourceDatasetDeleteRowsRequest(
@@ -298,17 +298,28 @@ class TestResourceHandler(BaseHandlerTest):
         assert del_resp['data']['success']
         assert del_resp['data']['deleted_count'] == 1
 
-        # Verify final count
-        count = await real_database.fetchval(
-            "SELECT COUNT(*) FROM dataset_rows WHERE resource_id = $1", resource_id
-        )
-        assert count == 2
+        # What's left, and a new row goes after the last one (a deleted position isn't reused)
+        await send_event(frontend_sio, sid, ResourceDatasetAppendRequest(
+            event_name="resource:dataset:append", request_id="ds-append2",
+            resource_id=resource_id, rows=[{"name": "Dana", "age": 41}],
+        ))
+        await asyncio.sleep(0.2)
+        await send_event(frontend_sio, sid, ResourceDatasetRowsRequest(
+            event_name="resource:dataset:rows", request_id="ds-read3",
+            resource_id=resource_id, limit=10, offset=0,
+        ))
+        await asyncio.sleep(0.2)
+        final = _find_response(self.get_main_api_emitted_events("response"), "ds-read3")['data']
+        assert final['total_count'] == 3
+        assert [(r['row_index'], r['data']['name']) for r in final['rows']] == [
+            (0, "Alice"), (2, "Charlie"), (3, "Dana"),
+        ]
 
-        # Verify metadata row_count was updated
+        # metadata.row_count follows what the table holds, a delete then an append included
         meta = await real_database.fetchrow(
             "SELECT metadata FROM workflow_resources WHERE id = $1", resource_id
         )
-        assert meta['metadata']['row_count'] == 2
+        assert meta['metadata']['row_count'] == 3
 
     async def test_dataset_rows_rejects_non_dataset_resource(self, real_database, frontend_sio, sid):
         """Attempting to append/read rows on a non-dataset resource returns an error."""

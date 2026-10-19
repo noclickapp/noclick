@@ -40,7 +40,7 @@ class DecodoRunnerMixin:
         charged = apply_platform_markup(raw, False, "decodo")
         event = UsageEventData(
             user_id=self.user_id, organization_id=self.organization_id,
-            total_cost=charged, usage_type="api_usage", usage_subtype=f"{platform}_scraping",
+            total_cost=charged, cost_usd=raw, usage_type="api_usage", usage_subtype=f"{platform}_scraping",
             quantity=Decimal(client.billable_requests), unit_type="requests", user_resource=False,
             metadata={
                 "provider": "decodo", "platform": platform, "operation": action_name,

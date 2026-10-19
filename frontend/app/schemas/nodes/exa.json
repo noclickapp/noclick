@@ -478,7 +478,7 @@
         },
         "include_text": {
           "default": "true",
-          "description": "Return full parsed page text",
+          "description": "Return parsed page text, up to Max Characters per page",
           "enum": [
             "true",
             "false"
@@ -490,6 +490,14 @@
           "title": "Include Text",
           "type": "string",
           "x-enum-searchable": true
+        },
+        "max_characters": {
+          "default": 20000,
+          "description": "Most characters of text each page returns, when Include Text is on",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Max Characters",
+          "type": "integer"
         },
         "include_highlights": {
           "default": "false",
@@ -1153,7 +1161,7 @@
         },
         "include_text": {
           "default": "false",
-          "description": "Return parsed page text inline with each result",
+          "description": "Return parsed page text inline with each result, up to Max Characters each",
           "enum": [
             "true",
             "false"
@@ -1165,6 +1173,14 @@
           "title": "Include Page Text",
           "type": "string",
           "x-enum-searchable": true
+        },
+        "max_characters": {
+          "default": 3000,
+          "description": "Most characters of page text each result returns, when Include Page Text is on",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Max Characters",
+          "type": "integer"
         }
       },
       "required": [

@@ -8,6 +8,8 @@ the common fields (system_prompt, message, temperature, conversation_key).
 from typing import Any, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
+from utils.model_catalog import is_video_generation_model
+
 
 class BaseAgentFields(BaseModel):
     """Fields shared by all agent model types."""
@@ -158,11 +160,12 @@ def infer_model_type(data: dict) -> dict:
         data['model_type'] = 'openclaw'
     elif model == 'hermes':
         data['model_type'] = 'hermes_agent'
-    elif 'kling' in model:
+    # Kling's own API; OpenRouter's Kling ids (kwaivgi/kling-…) are video models.
+    elif 'kling' in model and (model.startswith('kling/') or '/' not in model):
         data['model_type'] = 'kling'
     elif any(kw in model for kw in ['image', 'imagen', 'dall-e', 'dalle']):
         data['model_type'] = 'image'
-    elif any(kw in model for kw in ['veo', 'sora', 'runwayml/']):
+    elif is_video_generation_model(model):
         data['model_type'] = 'video'
     else:
         data['model_type'] = 'llm'

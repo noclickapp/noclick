@@ -232,6 +232,12 @@
       "agentToolProvider": true,
       "triggerOperations": [
         "on_monitor_results"
+      ],
+      "platformVendorOperations": [
+        "search",
+        "get_contents",
+        "answer",
+        "find_similar"
       ]
     },
     "automation-excel": {
@@ -772,7 +778,14 @@
       ]
     },
     "automation-perplexity": {
-      "agentToolProvider": true
+      "agentToolProvider": true,
+      "platformVendorOperations": [
+        "chat_completion",
+        "search",
+        "academic_search",
+        "sec_search",
+        "structured_output"
+      ]
     },
     "automation-phantombuster": {
       "agentToolProvider": true,
