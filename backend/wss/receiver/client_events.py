@@ -588,7 +588,6 @@ class UsageChargesRequest(ClientEventBase):
 
 # Debug Events
 # Trigger Tests Events (internal only — dev Debug tab + 12h scheduled worker)
-# Analytics Events (internal team only)
 # Workflow Events
 class WorkflowCreateRequest(ClientEventBase):
     """Request to create a new workflow"""

@@ -42,6 +42,13 @@ DEBUG_CAPTURE = "debug.capture"
 # this server owns. An agent sandbox reaches back in this way.
 MCP_REQUEST_TOOLS = "mcp.request_tools"
 
+# Each tool call this instance's MCP server answered, for whatever keeps a
+# record of them: async (*, user_id, client, tool, arguments, response,
+# duration_ms) -> None, run off the response path. ``response`` is the
+# JSON-RPC reply's body; ``client`` the name the client registered under.
+# Without one, nothing is kept.
+MCP_TOOL_CALLED = "mcp.tool_called"
+
 # Curated per-node authoring guidance for the builder, over and above what the
 # node catalog says about itself: load(node_type, section) -> str | None.
 NODE_GUIDANCE = "builder.node_guidance"

@@ -555,8 +555,6 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         # Trigger Tests (internal-only Debug tab + 12h scheduled worker — runs the
         # live OAuth refresh and trigger renewal paths against real providers)
 
-        # Analytics operations (internal team metrics - developers only)
-
         # Workflow MCP operations (for AI agent workflow manipulation)
         "workflow:mcp:response": Handler.WORKFLOW_MCP,
         "workflow:mcp:search_nodes": Handler.WORKFLOW_MCP,
