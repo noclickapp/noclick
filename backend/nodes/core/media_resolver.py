@@ -30,6 +30,8 @@ _UUID_RE = re.compile(
 )
 _DEFAULT_MAX_BYTES = 200 * 1024 * 1024  # 200 MB — videos are large
 _CHUNK = 65536
+# Says who is asking: hosts with a User-Agent policy (Wikimedia) refuse httpx's default.
+FETCH_USER_AGENT = "Mozilla/5.0 (compatible; NoClick/1.0; +https://noclick.com)"
 _TRUSTED_MEDIA_URLS: ContextVar[frozenset[str]] = ContextVar(
     "trusted_media_urls", default=frozenset()
 )
@@ -90,6 +92,7 @@ async def _stream_to_bytes(
         async with guarded_async_client(
             timeout=httpx.Timeout(60.0),
             follow_redirects=True,
+            headers={"User-Agent": FETCH_USER_AGENT},
             trusted_exact_urls=(
                 (normalized_trusted_url,) if normalized_trusted_url else ()
             ),
