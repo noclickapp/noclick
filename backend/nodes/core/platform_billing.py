@@ -9,10 +9,12 @@ key pays for the call and meters it to credits. Those declare the key:
 
 ``byok`` says whether the node's own credential is an alternative — an Exa
 credential replaces the platform key; a LinkedIn credential funds none of the
-Apify-backed scraping. The hosted service holds every platform key. A
-self-hosted instance holds none unless its operator adds one (environment or
-Settings → Self-hosted), so there the marker applies only while the key is
-configured. This module is the one place that verdict is made — the builder,
+Apify-backed scraping. ``vendor`` names whose price a call is charged at (Apify's
+for a LinkedIn scrape): what the vendor says the call cost, or the price per
+call a node's ``platform_call_usd`` names where it's fixed. The hosted service
+holds every platform key. A self-hosted instance holds none unless its operator
+adds one (environment or Settings → Self-hosted), so there the marker applies
+only while the key is configured. This module is the one place that verdict is made — the builder,
 the tool-provider allowlist, the credential UI's backend mirrors and the
 runtime all ask it, so "the panel said optional, the run said missing" cannot
 happen.
@@ -28,9 +30,10 @@ from utils.edition import is_local_edition
 PLATFORM_KEY_MARKER = "x-platform-key"
 
 
-def platform_keyed_operation(env_var: str, *, byok: bool) -> Dict[str, Any]:
+def platform_keyed_operation(env_var: str, *, byok: bool, vendor: Optional[str] = None) -> Dict[str, Any]:
     """``json_schema_extra`` for an operation the platform key pays for."""
-    return {"x-credentials-optional": True, PLATFORM_KEY_MARKER: {"env": env_var, "byok": byok}}
+    marker: Dict[str, Any] = {"env": env_var, "byok": byok, **({"vendor": vendor} if vendor else {})}
+    return {"x-credentials-optional": True, PLATFORM_KEY_MARKER: marker}
 
 
 def platform_key_of(schema: Mapping[str, Any]) -> Optional[Dict[str, Any]]:

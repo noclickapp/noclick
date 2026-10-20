@@ -1569,7 +1569,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "DECODO_AUTH_TOKEN"
+        "env": "DECODO_AUTH_TOKEN",
+        "vendor": "Decodo"
       }
     },
     "RedditGetSubredditRulesConfig": {

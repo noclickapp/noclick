@@ -41,7 +41,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": true,
-        "env": "PERPLEXITY_API_KEY"
+        "env": "PERPLEXITY_API_KEY",
+        "vendor": "Perplexity"
       }
     },
     "PerplexityAgentResponseConfig": {
@@ -276,7 +277,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": true,
-        "env": "PERPLEXITY_API_KEY"
+        "env": "PERPLEXITY_API_KEY",
+        "vendor": "Perplexity"
       }
     },
     "PerplexityCreateAsyncCompletionConfig": {
@@ -614,7 +616,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": true,
-        "env": "PERPLEXITY_API_KEY"
+        "env": "PERPLEXITY_API_KEY",
+        "vendor": "Perplexity"
       }
     },
     "PerplexitySecSearchConfig": {
@@ -658,7 +661,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": true,
-        "env": "PERPLEXITY_API_KEY"
+        "env": "PERPLEXITY_API_KEY",
+        "vendor": "Perplexity"
       }
     },
     "PerplexityStructuredOutputConfig": {
@@ -709,7 +713,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": true,
-        "env": "PERPLEXITY_API_KEY"
+        "env": "PERPLEXITY_API_KEY",
+        "vendor": "Perplexity"
       }
     },
     "PerplexityUsageAnalyticsConfig": {

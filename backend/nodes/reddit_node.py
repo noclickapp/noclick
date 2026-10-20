@@ -192,7 +192,7 @@ class RedditGetSubredditPostsConfig(BaseModel):
                 "Includes full post text, timestamps, scores, comment counts, media, "
                 "and optional threaded comments. Uses NoClick credits; no Reddit login is needed."
             ),
-            **platform_keyed_operation("DECODO_AUTH_TOKEN", byok=False),
+            **platform_keyed_operation("DECODO_AUTH_TOKEN", byok=False, vendor="Decodo"),
         }
     )
 

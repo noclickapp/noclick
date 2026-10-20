@@ -315,7 +315,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     },
     "LinkedInScrapeProfileConfig": {
@@ -361,7 +362,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     },
     "LinkedInSearchCompaniesConfig": {
@@ -431,7 +433,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     },
     "LinkedInSearchJobsConfig": {
@@ -510,7 +513,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     },
     "LinkedInSearchPostsConfig": {
@@ -561,7 +565,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     },
     "LinkedInSearchProfilesConfig": {
@@ -657,7 +662,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     }
   },

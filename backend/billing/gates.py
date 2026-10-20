@@ -71,7 +71,11 @@ async def funds_usd(conn, payer: str) -> Optional[Decimal]:
     balance the platform credited it rather than it paying (``referral_credit_usd``),
     which it spends but didn't add. None where usage is unlimited (no plan system, or an
     uncapped plan)."""
-    usage = await plan_limits.get_credit_usage(conn, payer)
+    return funds_in(await plan_limits.get_credit_usage(conn, payer))
+
+
+def funds_in(usage: dict) -> Optional[Decimal]:
+    """``funds_usd`` from a ``plan_limits.get_credit_usage`` reading already in hand."""
     if usage["total_credits_remaining"] is None:
         return None
     return (Decimal(str(usage["topup_credits_remaining"])) / CREDITS_PER_DOLLAR

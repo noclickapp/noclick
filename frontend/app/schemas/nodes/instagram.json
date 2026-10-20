@@ -1602,7 +1602,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     },
     "InstagramScrapeHashtagConfig": {
@@ -1640,7 +1641,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     },
     "InstagramScrapePostConfig": {
@@ -1671,7 +1673,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     },
     "InstagramScrapePostsConfig": {
@@ -1710,7 +1713,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     },
     "InstagramScrapeProfileConfig": {
@@ -1749,7 +1753,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     },
     "InstagramScrapeReelsConfig": {
@@ -1787,7 +1792,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": false,
-        "env": "APIFY_API_TOKEN"
+        "env": "APIFY_API_TOKEN",
+        "vendor": "Apify"
       }
     },
     "InstagramSearchHashtagConfig": {

@@ -42,7 +42,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": true,
-        "env": "EXA_API_KEY"
+        "env": "EXA_API_KEY",
+        "vendor": "Exa"
       }
     },
     "ExaApiKeyCredential": {
@@ -430,7 +431,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": true,
-        "env": "EXA_API_KEY"
+        "env": "EXA_API_KEY",
+        "vendor": "Exa"
       }
     },
     "ExaGetAgentRunConfig": {
@@ -566,7 +568,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": true,
-        "env": "EXA_API_KEY"
+        "env": "EXA_API_KEY",
+        "vendor": "Exa"
       }
     },
     "ExaGetMonitorConfig": {
@@ -1191,7 +1194,8 @@
       "x-credentials-optional": true,
       "x-platform-key": {
         "byok": true,
-        "env": "EXA_API_KEY"
+        "env": "EXA_API_KEY",
+        "vendor": "Exa"
       }
     },
     "ExaTriggerMonitorConfig": {

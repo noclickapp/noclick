@@ -22,7 +22,7 @@ from nodes.core.apify_runner import ApifyRunnerMixin
 from nodes.core.platform_billing import platform_keyed_operation
 
 # Scraping runs on Apify with NoClick's token; the node's own credential funds none of it.
-PLATFORM_KEYED = platform_keyed_operation("APIFY_API_TOKEN", byok=False)
+PLATFORM_KEYED = platform_keyed_operation("APIFY_API_TOKEN", byok=False, vendor="Apify")
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.oauth.linkedin_oauth import is_token_expired, refresh_access_token

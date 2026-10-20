@@ -7,6 +7,7 @@ Each node type (Telegram, Agent, etc.) should inherit from this class.
 
 import json
 from abc import ABC, abstractmethod
+from decimal import Decimal
 from functools import lru_cache
 from typing import (
     TYPE_CHECKING,
@@ -888,6 +889,12 @@ class WorkflowNode(ABC):
     ) -> None:
         """Override to clean up external webhooks when this node is removed. No-op by default."""
         pass
+
+    @classmethod
+    def platform_call_usd(cls, operation: str) -> Optional[Decimal]:
+        """What one call of ``operation`` on NoClick's key costs, where its vendor's price is fixed per call
+        (``nodes/core/platform_billing.py``); None where the charge is what the vendor says the call cost."""
+        return None
 
     @classmethod
     async def freshen_credential(
