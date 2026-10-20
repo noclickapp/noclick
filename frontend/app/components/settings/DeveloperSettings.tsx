@@ -18,10 +18,10 @@ import { SettingsEmpty, SettingsGroup, SettingsGroupTitle, SettingsHeader, Setti
 // Backend API base URL
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
+// Shown only without a developer console, where these keys work with the open repo's own SDK clients.
 const DOC_LINKS = [
-  { label: 'TypeScript SDK', href: 'https://docs.noclick.com/sdk/typescript' },
-  { label: 'Python SDK', href: 'https://docs.noclick.com/sdk/python' },
-  { label: 'API reference', href: 'https://docs.noclick.com/sdk/api-reference' },
+  { label: 'TypeScript SDK', href: 'https://github.com/noclickapp/noclick/tree/main/sdk/typescript#readme' },
+  { label: 'Python SDK', href: 'https://github.com/noclickapp/noclick/tree/main/sdk/python#readme' },
 ];
 
 // Both SDKs default to the hosted API (see lib/hostedDefaults), so a copied
