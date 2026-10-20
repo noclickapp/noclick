@@ -75,7 +75,8 @@ from utils.webhook_manager import WebhookManager
 from utils.access_control import check_resource_access, Permission, workflow_permission
 from utils.system_workflows import SYSTEM_KEY, refusal
 from utils.relay_tokens import mint_user_room_token
-from utils.slack import send_activity_notification_background, send_workflow_update_notification_background, extract_user_name
+from utils.activity import signal_activity
+from utils.workflow_delta import compute_workflow_delta
 from utils.analytics import log_activity_background
 from utils.analytics_events import Events
 from repositories.workflow import WorkflowRepo
@@ -130,14 +131,17 @@ _CURRENT_ORG_CONTEXT = object()
 
 async def create_workflow_as_user(pool, user_id: str, *, name: str, description: str,
                                   workflow_data: Optional[Dict[str, Any]] = None,
-                                  organization_id: Any = _CURRENT_ORG_CONTEXT, capped: bool = True) -> Dict[str, Any]:
+                                  organization_id: Any = _CURRENT_ORG_CONTEXT, capped: bool = True,
+                                  by: Optional[str] = None) -> Dict[str, Any]:
     """Create a workflow (empty unless ``workflow_data`` is given) owned by
     ``user_id`` in their current org context, or in ``organization_id`` when the
     caller pins one (None = no org), shared with that org when there is one,
     under the plan's workflow cap; refused, ``plans`` are the plans that lift
     it. The builder's ``create_workflow`` op, build requests and the account
     coordinator use it. A workflow a platform makes to run one of its own
-    objects on (``capped=False``) takes no slot of the cap."""
+    objects on (``capped=False``) takes no slot of the cap. ``by``: who made it
+    for the person (``utils.activity.built_by``), an automation of theirs the
+    activity feed hears of; without one, the workflow backs something else."""
     from billing.plan_limits import check_workflow_limit, get_user_tier_from_db, plans_lifting
 
     async with pool.acquire() as conn:
@@ -167,6 +171,8 @@ async def create_workflow_as_user(pool, user_id: str, *, name: str, description:
                 permission='edit',
                 shared_by=uuid.UUID(user_id),
             )
+    if by is not None:
+        signal_activity(user_id, "automation.create", {"name": name, "by": by})
     return {"success": True, "workflow_id": str(workflow_id), "name": name}
 
 
@@ -491,6 +497,8 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                     "has_folder": bool(request.folder_id),
                     "has_initial_data": bool(request.workflow_data),
                 })
+                signal_activity(session.get('user_data') or user_id, "automation.create",
+                                {"name": request.name, "by": "app"})
 
         except Exception as e:
             logger.error(f"Error creating workflow: {e}", exc_info=True)
@@ -1184,20 +1192,16 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 data=response.model_dump()
             ))
 
-            # Send Slack notification for meaningful workflow changes
-            if request.workflow_data is not None:
-                user_data = session.get('user_data', {})
-                user_name = extract_user_name(user_data)
-                user_email = user_data.get('email', 'unknown@example.com')
-                slack_thread_ts = session.get('slack_thread_ts')
-                send_workflow_update_notification_background(
-                    user_name, user_email,
-                    workflow_name=row['name'] or row['old_name'] or 'Untitled',
-                    old_workflow=row['old_workflow'],
-                    new_workflow=request.workflow_data,
-                    deleted_node_ids=request.deleted_node_ids,
-                    thread_ts=slack_thread_ts
-                )
+            # An autosave that added, removed or reconfigured a node; saves of one sitting are one line.
+            delta = (compute_workflow_delta(row['old_workflow'], request.workflow_data, request.deleted_node_ids)
+                     if request.workflow_data is not None else None)
+            if delta:
+                changed = {"added": delta['added_labels'], "removed": delta['deleted_labels'],
+                           "changed": [label for label, _ in delta['modified_details']]}
+                signal_activity(session.get('user_data') or user_id, "automation.edit", {
+                    "name": row['name'] or row['old_name'] or 'Untitled', "by": "canvas",
+                    **{k: v for k, v in changed.items() if v},
+                }, key=f"edit:{request.workflow_id}:canvas")
 
         except Exception as e:
             logger.error(f"Error updating workflow: {e}", exc_info=True)

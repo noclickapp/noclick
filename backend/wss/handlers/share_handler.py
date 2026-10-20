@@ -40,6 +40,7 @@ from wss.receiver.client_events import (
     ShareInviteAcceptRequest,
     ResourceForkRequest,
 )
+from utils.activity import signal_activity
 from utils.slack import send_activity_notification_background, extract_user_name
 from utils.analytics import log_activity_background, set_person_properties_background
 from utils.analytics_events import Events
@@ -1242,20 +1243,9 @@ class ShareHandler(DatabasePoolMixin, SocketIOHandler):
                 )
                 return
 
-            # Send Slack activity notification for workflow forks
             if request.resource_type == "workflow":
-                user_data = session.get("user_data", {})
-                user_name = extract_user_name(user_data)
-                user_email = user_data.get("email", "unknown@example.com")
-                slack_thread_ts = session.get("slack_thread_ts")
-                send_activity_notification_background(
-                    user_name, user_email, "🍴 Forked Workflow",
-                    details={
-                        "Original": forked.forked_from_name,
-                        "New name": forked.name,
-                    },
-                    thread_ts=slack_thread_ts
-                )
+                signal_activity(session.get("user_data") or user_id, "automation.create",
+                                {"name": forked.name, "by": "copy", "from": forked.forked_from_name})
                 new_id = getattr(forked, 'id', None)
                 log_activity_background(Events.WORKFLOW_FORKED, user_id, {
                     "source_workflow_id": str(request.resource_id),

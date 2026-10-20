@@ -44,7 +44,7 @@ from coder.workflow.agentic.state import INPUT_DISMISSED_MARKER, PendingAsk
 from coder.workflow.graph_state import GraphState
 # Session-debug capture is a platform capability; without one these are no-ops.
 from utils.capabilities import (
-    ACTIVITY_SIGNAL, BUILDER_ASK_NOTIFY, BUILDER_RESULT_NOTIFY, BUILDER_STEP_NOTIFY, DEBUG_CAPTURE, PLAN_GATE_ALERT,
+    BUILDER_ASK_NOTIFY, BUILDER_RESULT_NOTIFY, BUILDER_STEP_NOTIFY, DEBUG_CAPTURE, PLAN_GATE_ALERT,
     PUBLIC_ENDPOINTS, capability,
 )
 
@@ -74,7 +74,7 @@ from repositories.skills import (
     SkillRepo,
 )
 from utils.slack import send_activity_notification_background, extract_user_name
-from utils.internal_users import is_internal_user
+from utils.activity import built_by, signal_activity
 from utils.analytics import log_activity_background
 from utils.analytics_events import Events
 from repositories.workflow import PLACEHOLDER_WORKFLOW_NAMES, WorkflowRepo
@@ -301,6 +301,13 @@ def _request_row(request) -> Dict[str, Any]:
     return row
 
 
+def signal_build(user_id: str, user_context: Dict[str, Any], *, name: Optional[str], prompt: str, nodes: int,
+                 model: str) -> None:
+    """A finished build is an edit of its automation, by whoever asked for it (``utils.activity.built_by``)."""
+    signal_activity(user_id, "automation.edit", {"name": name, "by": built_by(user_context),
+                                                  "prompt": prompt, "nodes": nodes, "model": model})
+
+
 # Runs this process is streaming, by generation id; the oldest go first once there are too many to keep.
 _RUNS: "OrderedDict[str, _RunState]" = OrderedDict()
 _MAX_RUNS = 512
@@ -417,8 +424,10 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
 
         return provider
 
-    def _create_platform_ops(self, user_id: str, sid: str, workflow_id: str | None = None) -> PlatformOps:
-        """Create platform ops implementation with DB and socket access for the agentic builder."""
+    def _create_platform_ops(self, user_id: str, sid: str, workflow_id: str | None = None,
+                             by: str = "builder") -> PlatformOps:
+        """Create platform ops implementation with DB and socket access for the agentic builder. ``by``: who the
+        run builds for, as the activity feed names a workflow it creates (``utils.activity.built_by``)."""
         handler = self
         wf_id = workflow_id  # Captured in closure — safe for concurrent edits
 
@@ -722,7 +731,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 pool = await handler.get_pool()
                 if not pool:
                     return {"error": "Database not available"}
-                return await create_workflow_as_user(pool, user_id, name=name, description=description)
+                return await create_workflow_as_user(pool, user_id, name=name, description=description, by=by)
 
             async def list_folders(self) -> List[Dict[str, Any]]:
                 pool = await handler.get_pool()
@@ -2983,26 +2992,8 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 organization_id=builder.billing_organization_id,
             )
 
-            user_data = session.get('user_data', {}) if session else {}
-            user_name = extract_user_name(user_data)
-            user_email = user_data.get('email', 'unknown@example.com')
-            slack_thread_ts = session.get('slack_thread_ts') if session else None
-            node_count = len(result.get('nodes', []))
-            send_activity_notification_background(
-                user_name, user_email, "✏️  Edited Workflow",
-                details={
-                    "Prompt": request.edit_prompt,
-                    "Nodes": str(node_count),
-                    "Model": model_used,
-                },
-                thread_ts=slack_thread_ts,
-            )
-            signal_activity = capability(ACTIVITY_SIGNAL)
-            if signal_activity is not None and not is_internal_user(user_email):
-                signal_activity(
-                    user_data, "✏️  Edited Workflow",
-                    {"Prompt": request.edit_prompt, "Nodes": str(node_count), "Model": model_used},
-                )
+            signal_build(user_id, request.user_context or {}, name=builder.graph_state.workflow_name,
+                         prompt=request.edit_prompt, nodes=len(result.get('nodes', [])), model=model_used)
 
         # Agent-originated run: relay what the builder actually did to the
         # agent's conversation (delivered on the agent's next turn).
@@ -4049,7 +4040,10 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 name=f"workflow-name-gen:{edit_workflow_id}",
             )
 
-        platform_ops = self._create_platform_ops(user_id, sid, workflow_id=edit_workflow_id) if user_id else None
+        platform_ops = self._create_platform_ops(
+            user_id, sid, workflow_id=edit_workflow_id,
+            by=built_by(request.user_context or {}),
+        ) if user_id else None
 
         builder = AgenticBuilder(
             config=agentic_config,

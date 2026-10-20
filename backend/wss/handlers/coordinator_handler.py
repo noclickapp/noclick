@@ -30,6 +30,7 @@ from coder.coordinator.email_channel import (
 from coder.coordinator.web_input import web_turn_input
 from repositories.coordinator_jobs import CoordinatorJobRepo
 from repositories.coordinator_memories import CoordinatorMemoryRepo, MemoryConflict
+from utils.activity import signal_activity
 from utils.capabilities import ACCOUNT_AGENT, COORDINATOR_IMESSAGE, COORDINATOR_NUMBER, capability
 from utils.database_pool import DatabasePoolMixin
 from wss.handlers.workflow_handler import get_user_org_context
@@ -161,6 +162,7 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             allowed, limit_error = await plan_allows_turn(pool, user_id)
             if not allowed:
                 raise ValueError(limit_error)
+            signal_activity(user_id, "chat", {"text": text, "files": len(request.attachment_ids)}, key="chat")
             extras = {}
             if request.attachment_ids or request.references:
                 prepare_input, user_event = await web_turn_input(

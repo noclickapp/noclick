@@ -83,7 +83,11 @@ USAGE_BILLING = "usage.billing"
 PLAN_GATE_ALERT = "billing.plan_gate_alert"
 
 # Tell whoever runs this instance what its users are doing, as an activity feed:
-# (user_data, action, details=None) -> None, fire-and-forget.
+# (user, action, details=None, *, key=None) -> None, fire-and-forget. ``user`` is a
+# user id or the session's user_data, ``action`` one of the feed's names ("text",
+# "chat", "connect", "automation.create", "automation.edit", "buy.number",
+# "search.numbers", ...) and ``details`` its facts; records sharing ``key`` in a
+# row are one line. Call it through ``utils.activity.signal_activity``.
 ACTIVITY_SIGNAL = "activity.signal"
 
 # The live public URLs a workflow is reachable at (published apps, hosted MCP

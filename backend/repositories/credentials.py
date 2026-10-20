@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
+from utils.activity import signal_activity
 from utils.analytics import log_activity_background
 from utils.analytics_events import Events
 
@@ -831,7 +832,8 @@ class CredentialsRepo:
                     "VALUES('credential',$1,'user',$2::uuid,'edit',$3::uuid) ON CONFLICT DO NOTHING",
                     credential_id, requester_id, owner_id,
                 )
-            return str(credential_id)
+        signal_connected(owner_id, credential_type, metadata, via="connect link")
+        return str(credential_id)
 
     async def connection_request_status(self, request_id: str, user_id: str):
         from datetime import timezone
@@ -1016,4 +1018,14 @@ async def create_credential_with_limit_check(
         "credential_type": credential_type,
         "method": method,
     })
+    signal_connected(user_id, credential_type, metadata)
     return dict(row), None
+
+
+def signal_connected(owner_id: str, credential_type: str, metadata: Optional[Dict[str, Any]], *,
+                     via: Optional[str] = None) -> None:
+    """A new credential is its owner connecting an account, named to the activity feed by its type alone, never
+    its values. A number bought is not (its purchase is), nor a credential held for someone else."""
+    if credential_type == "phone_number" or (metadata or {}).get("hidden_from_owner"):
+        return
+    signal_activity(owner_id, "connect", {"credential_type": credential_type, **({"via": via} if via else {})})

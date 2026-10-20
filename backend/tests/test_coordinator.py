@@ -23,6 +23,7 @@ from coder.coordinator import tools as coordinator_tools
 from coder.coordinator.tools import (
     COORDINATOR_NODE_ID, CoordinatorTools, bounded,
 )
+from tests.fixtures.activity_fixtures import activity_signals  # noqa: F401
 from tests.mocks.mock_asyncpg import MockNativePool
 from utils import capabilities
 from utils.account_link import Verified
@@ -599,6 +600,16 @@ class TestCoordinatorHandler(BaseHandlerTest):
         sent = await self._send(frontend_sio, sid, CoordinatorSendRequest(request_id="s2", text="hi"))
         assert sent["error"] == "Daily AI limit reached"
         self.turn.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_a_message_sent_from_the_web_chat_is_activity(self, frontend_sio, sid, monkeypatch,
+                                                                activity_signals):
+        await self._send(frontend_sio, sid, CoordinatorSendRequest(request_id="s1", text="  what's failing?  "))
+        monkeypatch.setattr("wss.handlers.coordinator_handler.plan_allows_turn",
+                            AsyncMock(return_value=(False, "Daily AI limit reached")))
+        await self._send(frontend_sio, sid, CoordinatorSendRequest(request_id="s2", text="refused"))
+
+        assert activity_signals == [("uuid-test-user", "chat", {"text": "what's failing?", "files": 0}, "chat")]
 
     @pytest.mark.asyncio
     async def test_every_event_is_gated_on_the_rollout(self, frontend_sio, sid, monkeypatch):

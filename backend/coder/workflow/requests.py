@@ -88,8 +88,11 @@ async def submit_request(pool, *, user_id, workflow_id=None, instructions=None, 
         placed = {} if organization_id is CURRENT_ORG else {"organization_id": organization_id}
         from repositories.workflow import NEW_WORKFLOW_NAME
 
+        from utils.activity import built_by
+
         created = await create_workflow_as_user(
             pool, user_id, name=(name or NEW_WORKFLOW_NAME).strip()[:120], description=instructions[:300], **placed,
+            by=built_by(origin or {}),
         )
         if created.get("error"):
             raise ValueError(created["error"])

@@ -65,13 +65,5 @@ def send_to_channel_background(*args, **kwargs) -> None:
     return None
 
 
-def compute_workflow_delta(*args, **kwargs) -> None:
-    return None
-
-
-def send_workflow_update_notification_background(*args, **kwargs) -> None:
-    return None
-
-
 async def send_login_notification(*args, **kwargs) -> None:
     return None

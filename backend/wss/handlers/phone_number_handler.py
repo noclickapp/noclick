@@ -33,6 +33,7 @@ from billing.recurring import charge_credits, start_connection_charge
 from nodes.phone_node import PHONE_NUMBER_CHARGE_TYPE, PHONE_NUMBER_CREDENTIAL_TYPE, PHONE_NUMBER_SETUP_CHARGE_TYPE
 from repositories.credentials import create_credential_with_limit_check
 from repositories.phones import PhoneRepo
+from utils.activity import signal_activity
 from utils.capabilities import PHONE_NUMBERS, capability
 from utils.database_pool import DatabasePoolMixin
 from utils.encryption import get_encryption
@@ -314,10 +315,18 @@ async def search_offers(**filters) -> list:
     return await numbers.search(number_query(**filters))
 
 
+def searched(filters: Mapping[str, Any], found: int) -> Dict[str, Any]:
+    """A search as the activity feed names it: what was asked for, as the provider was asked, and how many came back."""
+    query = number_query(**filters)
+    asked = ("country", "number_type", "area_code", "locality", "region", "contains", "starts_with", "ends_with")
+    return {**{k: query[k] for k in asked if query.get(k)}, "found": found}
+
+
 async def search_numbers_for_user(*, user_id, **filters) -> Dict[str, Any]:
     """Numbers for sale matching ``filters``, each with its price for this account,
     and the one monthly price they share where they do (the old plans' flat price)."""
     offers = await search_offers(**filters)
+    signal_activity(user_id, "search.numbers", searched(filters, len(offers)), key="search:numbers")
     numbers = await priced_offers(user_id, offers)
     monthly = {n["monthly_credits"] for n in numbers}
     return PhoneNumberSearchResponse(numbers=numbers,
@@ -482,6 +491,9 @@ async def buy_number_for_user(pool, *, user_id: str, user_tier: str, offer: Dict
             logger.error("[PhoneNumbers] bought %s but could not save it AND could not release it", bought["number_sid"], exc_info=True)
         raise
     logger.info("[PhoneNumbers] user=%s bought %s (%s)", user_id, bought["phone_number"], bought["number_sid"])
+    if not (origin or {}).get("tenant_id"):  # a platform user's number is theirs to tell of, not the account's
+        signal_activity(user_id, "buy.number", {"number": held["phone_number"], "monthly_usd": offer["monthly_usd"],
+                                                "upfront_usd": offer["upfront_usd"]})
     return held
 
 

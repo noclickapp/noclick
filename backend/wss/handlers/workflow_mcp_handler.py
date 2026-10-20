@@ -60,6 +60,7 @@ from wss.receiver.client_events import (
     WorkflowGetNodeOutputsRequest,
     WorkflowGetNodeOutputHistoryRequest,
 )
+from utils.activity import signal_activity
 from utils.database_pool import DatabasePoolMixin
 from utils.access_control import check_resource_access, Permission
 from wss.handlers.workflow_handler import get_user_org_context
@@ -1605,6 +1606,7 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
                     return
 
                 workflow_id = str(row['id'])
+            signal_activity(user_id, "automation.create", {"name": row['name'], "by": "mcp"})
 
             # Notify frontend to navigate to the new workflow
             await self._request_frontend(

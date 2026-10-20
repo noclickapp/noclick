@@ -9,6 +9,7 @@ import pytest
 from billing.markup import CREDITS_PER_DOLLAR
 from billing.usage_tracker import usage_tracker
 
+from tests.fixtures.activity_fixtures import activity_signals  # noqa: F401
 from tests.mocks.mock_asyncpg import MockNativePool
 from utils import capabilities
 from utils.capabilities import PHONE_NUMBERS, provide
@@ -469,3 +470,33 @@ async def test_documents_orders_and_resubmission_go_through_the_capability(seams
     await handler.handle_resubmit("sid", PhoneNumberResubmitRequest(
         request_id="r7", order_id="order-1", holder=holder, answers={"r-type": "Passport", "r-id": "doc-2"}))
     assert sent[-1].data == {"kind": "order"}
+
+
+# ── the activity feed ────────────────────────────────────────────────────────
+
+async def test_a_number_bought_is_the_buyers_activity_once(seams, activity_signals):
+    numbers, _, _, enc = seams
+    await _buy(MockNativePool(), numbers, enc)
+
+    assert activity_signals == [(USER, "buy.number", {"number": "+15674833618", "monthly_usd": "1.00",
+                                                      "upfront_usd": "1.00"}, None)]
+
+
+async def test_a_number_in_review_or_bought_for_a_platform_user_is_not_yet_the_accounts_activity(seams,
+                                                                                               activity_signals):
+    numbers, _, _, enc = seams
+    await _buy(MockNativePool(), numbers, enc, origin={"kind": "api", "tenant_id": "t-1"})
+    numbers.offer.side_effect = lambda number, country, number_type: offer(number, country=country,
+                                                                           number_type=number_type, needs="documents")
+    numbers.buy.return_value = {"order_id": "order-1", "phone_number": "+390212345678", "status": "in_review"}
+    await _buy(MockNativePool(), numbers, enc, number="+390212345678", country="IT", holder=HOLDER,
+               answers={"r-type": "Passport", "r-id": "doc-1"})
+
+    assert activity_signals == []  # the order's own completion reports the number it buys
+
+
+async def test_a_search_is_activity_keyed_to_its_session(seams, activity_signals):
+    await h.search_numbers_for_user(user_id=USER, country="us", number_type="local", area_code="415")
+
+    assert activity_signals == [(USER, "search.numbers", {"country": "US", "number_type": "local",
+                                                          "area_code": "415", "found": 2}, "search:numbers")]
