@@ -10,6 +10,7 @@
  * 4. Child components receive updated props and render immediately
  */
 
+import { debugPageParams } from '~/lib/debugPage';
 import { isLocalEdition } from '~/lib/edition';
 
 // ============================================================================
@@ -224,6 +225,10 @@ export function applyTabToSearchParams(params: URLSearchParams, tab: string): vo
   // The dashboard's drill-down param doesn't belong on any other tab.
   if (tab !== 'dashboard') {
     params.delete('focus');
+  }
+  // Nor do the Debug page's own.
+  if (tab !== 'debug' && tab !== 'analytics') {
+    for (const key of debugPageParams()) params.delete(key);
   }
 }
 

@@ -8,7 +8,7 @@
 import { forwardRef, useEffect, useState, type ButtonHTMLAttributes, type ComponentType, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { FaDiscord } from 'react-icons/fa6';
-import { ArrowUpRight, Bug, ChartLine, ChevronRight, PanelLeft, PanelLeftClose, Search, X } from 'lucide-react';
+import { ArrowUpRight, Bug, ChevronRight, PanelLeft, PanelLeftClose, Search, X } from 'lucide-react';
 import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
 import { FeedbackButton } from '~/components/nav/FeedbackButton';
 import { CountBadge } from '~/components/nav/CountBadge';
@@ -365,10 +365,6 @@ function AccountRow({
                             <Bug className="mr-2 h-4 w-4 text-muted-foreground" />
                             <span>Debug</span>
                             {dev && <span className="ml-auto font-mono text-[11px] text-muted-foreground">{dev}</span>}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className={ACCOUNT_MENU_ITEM} onClick={() => go('analytics')}>
-                            <ChartLine className="mr-2 h-4 w-4 text-muted-foreground" />
-                            <span>Analytics</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className={MENU_SEPARATOR} />
                     </>
