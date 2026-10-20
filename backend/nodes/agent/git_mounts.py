@@ -22,7 +22,8 @@ config key ``_sandboxCheckouts`` on the agent node: setups that carry their
 own ``root`` and ``dir`` (where they land) and ``push`` (the branch globs a
 push may reach, None for read-only), and no secret. A hosted runtime makes
 each concrete before its script runs: ``clone_url`` and an ``auth_header``
-git sends to that URL alone, in place of a stored token.
+git sends to that URL alone, in place of a stored token. One that carries a
+``repo_id`` is the edition's own repo, which ``gh`` doesn't reach.
 
 Subprocess calls are awaited directly so they never block the event loop.
 """
@@ -130,6 +131,11 @@ def build_git_mount_script(setup: Dict[str, Any], workdir: str) -> str:
     )
 
 
+def _gh_reaches(setup: Dict[str, Any]) -> bool:
+    """Whether ``gh`` reaches a setup's repository: a git host's, not the edition's own repo (``repo_id``)."""
+    return not setup.get("repo_id")
+
+
 def build_gh_auth_script(setups: List[Dict[str, Any]]) -> str:
     """Shell script that authenticates the ``gh`` CLI via ~/.config/gh/hosts.yml.
 
@@ -138,7 +144,7 @@ def build_gh_auth_script(setups: List[Dict[str, Any]]) -> str:
     config dir lives in the container home, not the volume.
     """
     hosts: Dict[str, Dict[str, Any]] = {}
-    for setup in setups:
+    for setup in filter(_gh_reaches, setups):
         hosts.setdefault(setup["host"], setup)
     yaml_lines: List[str] = []
     for host, setup in hosts.items():
@@ -183,12 +189,13 @@ def describe_git_mounts(setups: List[Dict[str, Any]], workdir: str) -> str:
             "want to land upstream."
         )
     else:
-        hosts = sorted({setup["host"] for setup in setups})
-        lines.append(
-            f"gh only reads these repositories, through {', '.join(hosts)} (gh api --hostname {hosts[0]} "
-            "repos/<owner>/<name>/...); open pull requests and issues with your tools. Commit and push work you "
-            "want to land upstream."
-        )
+        reached = [setup for setup in setups if _gh_reaches(setup)]
+        if reached:
+            hosts = sorted({setup["host"] for setup in reached})
+            which = "these repositories" if len(reached) == len(setups) else ", ".join(s["repo"] for s in reached)
+            lines.append(f"gh only reads {which}, through {', '.join(hosts)} (gh api --hostname {hosts[0]} "
+                         "repos/<owner>/<name>/...); open pull requests and issues with your tools.")
+        lines.append("Commit and push work you want to land upstream.")
     return " ".join(lines)
 
 
