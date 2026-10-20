@@ -8,7 +8,7 @@ export function OpenPill({ label = 'Open', onClick, className }: { label?: strin
             type="button"
             onClick={onClick}
             className={cn(
-                'absolute right-4 top-4 z-10 inline-flex h-9 items-center gap-1.5 rounded-full bg-background/80 px-4 text-[13px] font-medium text-foreground ring-1 ring-inset ring-foreground/10 backdrop-blur-xl transition-colors hover:bg-background',
+                'absolute right-4 top-4 z-10 inline-flex h-9 items-center gap-1.5 rounded-full bg-foreground/[0.09] px-4 text-[13px] font-medium text-foreground ring-1 ring-inset ring-foreground/10 backdrop-blur-xl transition-colors hover:bg-foreground/[0.15]',
                 className,
             )}
         >
