@@ -761,6 +761,23 @@ class ConversationRepo:
             conversation_id, user_id, field,
         )
 
+    async def latest_person_message(self, conversation_id: str, user_id: str) -> Optional[Dict[str, Any]]:
+        """The newest message a person sent in the conversation: a ``user`` event no trigger or wake-up
+        started (``trigger``), not cancelled."""
+        return await self._pool.fetchval(
+            """
+            SELECT e.value
+            FROM conversations c,
+                 jsonb_array_elements(CASE WHEN jsonb_typeof(c.events) = 'array'
+                                           THEN c.events ELSE '[]'::jsonb END) WITH ORDINALITY e
+            WHERE c.conversation_id = $1 AND c.user_id::text = $2::text AND c.deleted_at IS NULL
+              AND e.value->>'role' = 'user' AND NOT e.value ? 'trigger'
+              AND COALESCE(e.value->>'cancelled', 'false') <> 'true'
+            ORDER BY e.ordinality DESC LIMIT 1
+            """,
+            conversation_id, user_id,
+        )
+
     async def update_event_object(
         self,
         conversation_id: str,
