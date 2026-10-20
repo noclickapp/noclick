@@ -35,6 +35,7 @@ import asyncio
 import base64
 import json
 import logging
+import math
 import os
 import shutil
 import tempfile
@@ -59,6 +60,10 @@ MAX_AI_DIGESTS_PER_TURN = 3               # bounds a media-heavy message's charg
 MAX_DOCUMENT_DIGESTS_PER_TURN = 10        # bounds the text a file-heavy message puts in the turn
 DEFAULT_DIGEST_CHARS = 8_000              # per-document extracted text carried into the turn
 TRANSCRIBE_TIMEOUT_S = 90.0
+# Output budget per minute of audio, several times what speech needs (~300 tokens/min). Unbounded, a model
+# stuck repeating itself runs to its 64k-token ceiling: ~100x a voice note's normal charge.
+TRANSCRIBE_TOKENS_PER_MINUTE = 1_500
+TRANSCRIBE_MIN_TOKENS = 1_024
 MAX_VIDEO_SECONDS = 120
 
 # Audio input rides OpenRouter's ``input_audio`` content part (base64 + a
@@ -342,6 +347,11 @@ async def _audio_ready(data: bytes, mime_type: str, filename: Optional[str],
     return data, fmt
 
 
+def _transcript_token_budget(duration_s: Optional[float]) -> int:
+    minutes = (duration_s or MAX_TRANSCRIBE_SECONDS) / 60
+    return max(TRANSCRIBE_MIN_TOKENS, math.ceil(minutes * TRANSCRIBE_TOKENS_PER_MINUTE))
+
+
 async def _transcription_call(
     data: bytes, fmt: str, *, prompt: str, billing: BillingContext, duration_s: Optional[float],
     model: str, json_output: bool = False,
@@ -380,12 +390,16 @@ async def _transcription_call(
             ],
         }],
         temperature=0.0,
+        max_tokens=_transcript_token_budget(duration_s),
         timeout=TRANSCRIBE_TIMEOUT_S,
         extra_body=extra_body,
         **({"response_format": {"type": "json_object"}} if json_output else {}),
     )
     text = (response.choices[0].message.content or "").strip()
     cost = await _record_media_cost(response, billing, model, len(data), duration_s, fmt)
+    if getattr(response.choices[0], "finish_reason", None) == "length":
+        raise DigestError("the transcription ran past its length limit (the model was repeating itself), "
+                          "so it was dropped")
     return text, cost
 
 

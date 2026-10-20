@@ -8,8 +8,9 @@ Contracts under test:
 - one transcription records ONE ``extraction/ai_transcription`` usage event
   at the provider's reported cost × platform markup through the Owner Pays
   choke point, and a provider that reports no cost still lands a $0 row;
-- byte/duration caps, an unsupported container and a ``[no speech]`` answer
-  refuse with an agent-facing DigestError;
+- byte/duration caps, an unsupported container, a ``[no speech]`` answer and
+  a transcript cut off at its duration-scaled output budget refuse with an
+  agent-facing DigestError;
 - a container the model refuses but ffmpeg reads (an iPhone's Opus-in-CAF voice
   message, AMR, 3GP, WebM) is transcribed as MP3, and one that won't decode
   refuses before any spend;
@@ -329,6 +330,25 @@ def test_no_speech_is_a_refusal_not_a_transcript():
         with pytest.raises(md.DigestError, match="no speech"):
             asyncio.run(md.transcribe_audio(b"x", mime_type="audio/ogg", filename="v.oga", billing=_billing()))
     tracker.track_usage_event.assert_awaited_once()  # the call happened and is recorded
+
+
+def test_output_is_budgeted_by_duration_and_a_cut_off_transcript_is_refused():
+    """Unbounded, a model stuck repeating itself on a 6s voice note ran to its 64k-token ceiling (~$0.57 each)."""
+    tracker = _tracker()
+    response = _response(text="okay " * 500)
+    response.choices[0].finish_reason = "length"
+    model = AsyncMock(return_value=response)
+    with patch("billing.usage_tracker.usage_tracker", tracker), patch("litellm.acompletion", new=model):
+        with pytest.raises(md.DigestError, match="length limit"):
+            asyncio.run(md.transcribe_audio(b"x", mime_type="audio/ogg", filename="v.oga", billing=_billing(),
+                                            duration_s=6))
+    assert model.await_args.kwargs["max_tokens"] == md.TRANSCRIBE_MIN_TOKENS
+    tracker.track_usage_event.assert_awaited_once()  # the call happened and is recorded
+
+
+@pytest.mark.parametrize("duration_s, budget", [(6, 1_024), (120, 3_000), (None, 15_000)])
+def test_the_output_budget_scales_with_the_audio(duration_s, budget):
+    assert md._transcript_token_budget(duration_s) == budget
 
 
 # ── digest_media: never raises, gates AI, annotates ─────────────────────────
