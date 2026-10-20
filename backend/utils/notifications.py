@@ -62,7 +62,7 @@ logger = logging.getLogger(__name__)
 
 CATEGORIES = frozenset({
     "run_failure", "credits", "digest", "credential_revoked", "channel_disconnected",
-    "schedule_paused", "topup", "phone_numbers", "platform_paused", "spend_cap", "referrals",
+    "schedule_paused", "topup", "phone_numbers", "platform_paused", "spend_cap", "referrals", "machines",
 })
 CATEGORY_LABELS = {
     "run_failure": "workflow failure alerts",
@@ -76,6 +76,7 @@ CATEGORY_LABELS = {
     "platform_paused": "alerts before and when apps and databases pause",
     "spend_cap": "monthly spending cap alerts",
     "referrals": "news of people you invited",
+    "machines": "decisions on your requests for machines",
 }
 
 # Suppression window after a run-failure email per workflow — a cron flow
@@ -194,6 +195,8 @@ ALERT_DAILY_CAPS = {
     "spend_cap": 2,
     # Sent only when the coordinator can't say it (cloud/referrals/notice.py), once a reward.
     "referrals": 3,
+    # One a decision on a request for machines.
+    "machines": 3,
 }
 assert set(ALERT_DAILY_CAPS) == CATEGORIES  # every category decides its cap explicitly
 

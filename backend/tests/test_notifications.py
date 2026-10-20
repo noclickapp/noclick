@@ -653,6 +653,7 @@ async def test_get_prefs_defaults_and_overrides(monkeypatch):
         "credential_revoked": True,
         "credits": True,
         "digest": False,
+        "machines": True,
         "phone_numbers": True,
         "platform_paused": True,
         "referrals": True,

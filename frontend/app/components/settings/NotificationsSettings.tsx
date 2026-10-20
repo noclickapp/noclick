@@ -68,6 +68,12 @@ const CATEGORIES = [
         billingOnly: true,
     },
     {
+        key: 'machines',
+        label: 'Machines',
+        description: 'When NoClick decides your request for machines: approved, or declined with the reason.',
+        billingOnly: true,
+    },
+    {
         key: 'phone_numbers',
         label: 'Phone number orders',
         description: 'When the carrier approves the documents for a number, sends them back for changes, or ends the order.',
