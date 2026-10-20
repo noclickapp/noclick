@@ -66,7 +66,8 @@ def _response(text="hello from the voice note", cost=0.0012, tokens=80):
 def _tracker():
     tracker = MagicMock()
     tracker.enforce_credit_gate = AsyncMock()
-    tracker.track_usage_event = AsyncMock()
+    # None: the charge was priced for its payer and submitted, as the tracker answers.
+    tracker.track_usage_event = AsyncMock(return_value=None)
     return tracker
 
 
@@ -177,6 +178,20 @@ def test_transcription_gates_before_model_and_records_cost_with_markup():
     assert event.metadata["duration_s"] == 14
     assert event.metadata["cost_reported"] is True
     assert event.metadata["tokens"] == 80
+
+
+def test_the_cost_charged_is_what_the_tracker_charged_the_payer():
+    """A payer billed at cost (cloud/billing/plans.price) pays the model's cost, not the old plans' markup."""
+    tracker = _tracker()
+
+    async def at_cost(event, **_):
+        event.total_cost = event.cost_usd
+
+    tracker.track_usage_event.side_effect = at_cost
+    with patch("billing.usage_tracker.usage_tracker", tracker), \
+         patch("litellm.acompletion", new=AsyncMock(return_value=_response(cost=0.0012))):
+        _, cost = asyncio.run(md.transcribe_audio(b"x", mime_type="audio/mpeg", filename="a.mp3", billing=_billing()))
+    assert cost == Decimal("0.0012")
 
 
 def test_gate_raise_means_zero_spend():

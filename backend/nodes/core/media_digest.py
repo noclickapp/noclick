@@ -6,8 +6,8 @@ into the chat composer. This is the one place that turns those into text the
 model can act on, keyed by media KIND, so how a kind is understood is decided
 once for every medium:
 
-    audio    → transcription (AI, credit-gated, charged at provider cost plus
-               the platform markup — the same accounting as rehearsals)
+    audio    → transcription (AI, credit-gated, charged at provider cost; the
+               old plans add the platform markup, as for rehearsals)
     document → text extraction (the free CPU path in utils.content_extraction)
     image    → nothing here: the SDK path injects image URLs as vision content
                (handlers/_media_utils) and CLI harnesses fetch the URL
@@ -347,7 +347,7 @@ async def _transcription_call(
     model: str, json_output: bool = False,
 ) -> Tuple[str, Optional[Decimal]]:
     """One audio-understanding call: credit-gated BEFORE the model call and
-    charged at the provider's reported cost with the platform markup (a
+    charged the provider's reported cost (the old plans add their markup; a
     ``:free`` model records $0). Returns ``(the model's text, cost_charged)``."""
     from billing.usage_tracker import usage_tracker
 
@@ -398,7 +398,7 @@ async def transcribe_audio(
     duration_s: Optional[float] = None,
 ) -> Tuple[str, Optional[Decimal]]:
     """Audio bytes → transcript. Credit-gated BEFORE the model call; charged
-    at the provider's reported cost with the platform markup (a
+    the provider's reported cost (the old plans add their markup; a
     ``:free`` model records $0). Returns ``(text, cost_charged)``."""
     data, fmt = await _audio_ready(data, mime_type, filename, duration_s)
     text, cost = await _transcription_call(
@@ -470,10 +470,11 @@ async def _record_media_cost(
 ) -> Optional[Decimal]:
     """One ``extraction/<subtype>`` usage event per media model call, at the
     cost the provider reported or, failing that, OpenRouter's record of the
-    call. One priced nowhere is logged CRITICAL and not charged (None)."""
+    call. Answers what its payer was charged (``billing.usage_tracker.charge``); one
+    priced nowhere is logged CRITICAL and not charged (None)."""
     from billing.markup import apply_platform_markup
     from billing.schema import UsageEventData
-    from billing.usage_tracker import usage_tracker
+    from billing.usage_tracker import charge
     from coder.openai_agent.litellm_model import extract_cost_from_response
     from utils.openrouter_cost import CostUnknown, generation_id_of, settle
 
@@ -484,13 +485,12 @@ async def _record_media_cost(
         logger.critical("[media_digest] %s call not billed, its cost is unknown (user %s): %s",
                         model, billing.user_id, exc)
         return None
-    charged = apply_platform_markup(cost_usd, user_resource=False, model=model)
     usage = getattr(response, "usage", None)
     total_tokens = getattr(usage, "total_tokens", None) or 0
-    await usage_tracker.track_usage_event(
+    return await charge(
         UsageEventData(
             user_id=billing.user_id,
-            total_cost=charged,
+            total_cost=apply_platform_markup(cost_usd, user_resource=False, model=model),
             cost_usd=cost_usd,
             usage_type="api_usage",
             usage_subtype=f"extraction/{subtype}",
@@ -513,7 +513,6 @@ async def _record_media_cost(
         sio=billing.sio,
         sid=billing.sid,
     )
-    return charged
 
 
 async def _digest_audio(ref: MediaRef, data: bytes, ctx: DigestContext) -> MediaDigest:

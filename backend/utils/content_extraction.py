@@ -4,8 +4,8 @@ One entry point — ``extract_content`` — shared by every email pathway (Gmail
 Outlook fetch ops, the inbound-email trigger) and any future caller. Documents
 extract through the existing ``nodes.core.document_ingest.extract_text``
 pipeline (pure CPU, free, size-capped). Scanned PDFs with no text layer fall
-back to AI OCR — credit-gated and charged flat per page
-(``billing.pricing.AI_EXTRACTION_PRICE_PER_PAGE``). The method registry is
+back to AI OCR — credit-gated and charged what the model cost (the old plans'
+flat ``billing.pricing.AI_EXTRACTION_PRICE_PER_PAGE``). The method registry is
 deliberately general: image/video description land here later as new AI
 methods without reshaping callers.
 
@@ -70,7 +70,7 @@ class ExtractedContent:
     truncated: bool = False
     total_chars: int = 0             # pre-truncation length
     pages: Optional[int] = None      # PDFs only
-    cost_charged: Optional[Decimal] = None  # set only when an AI method billed
+    cost_charged: Optional[Decimal] = None  # what an AI method charged the payer, once priced
 
 
 @dataclass
@@ -127,10 +127,12 @@ def _pdf_page_count(data: bytes) -> int:
 # ── AI OCR (first AI method; the registry pattern for image/video later) ─────
 
 async def _ai_ocr_pdf(data: bytes, filename: str, billing: BillingContext) -> ExtractedContent:
-    """OCR a scanned PDF with a vision model. Credit-gated, charged flat per page."""
+    """OCR a scanned PDF with a vision model. Credit-gated, then charged for reading
+    the pages whatever the model answered."""
+    from billing.exceptions import UnpricedUsage
     from billing.pricing import AI_EXTRACTION_PRICE_PER_PAGE
     from billing.schema import UsageEventData
-    from billing.usage_tracker import usage_tracker
+    from billing.usage_tracker import charge, usage_tracker
 
     pages = await asyncio.to_thread(_pdf_page_count, data)
     if pages > AI_OCR_MAX_PAGES:
@@ -167,17 +169,11 @@ async def _ai_ocr_pdf(data: bytes, filename: str, billing: BillingContext) -> Ex
         **({"extra_body": {"usage": {"include": True}}} if AI_EXTRACTION_MODEL.startswith("openrouter/") else {}),
     )
     text = (response.choices[0].message.content or "").strip()
-    if not text:
-        raise ExtractionError(f"AI OCR produced no text for '{filename}'.")
 
     from coder.openai_agent.litellm_model import extract_cost_from_response
     from utils.openrouter_cost import CostUnknown, generation_id_of, settle
 
-    from billing.exceptions import UnpricedUsage
-
-    cost = AI_EXTRACTION_PRICE_PER_PAGE * pages
-    # Old plans pay the flat price per page; Free/Member pay what the model charged
-    # for reading them: reported, else OpenRouter's record of the call.
+    # What reading the pages cost: reported with the answer, else OpenRouter's record of the call.
     try:
         model_cost = await settle(*extract_cost_from_response(response), generation_id_of(response))
     except CostUnknown as exc:
@@ -185,10 +181,11 @@ async def _ai_ocr_pdf(data: bytes, filename: str, billing: BillingContext) -> Ex
                        f"(user {billing.user_id}, {pages} pages): {exc}")
         model_cost = None
     try:
-        await usage_tracker.track_usage_event(
+        # The tracker prices it for the payer: the model's cost, or the old plans' flat price per page.
+        charged = await charge(
             UsageEventData(
                 user_id=billing.user_id,
-                total_cost=cost,
+                total_cost=AI_EXTRACTION_PRICE_PER_PAGE * pages,
                 cost_usd=model_cost,
                 usage_type="api_usage",
                 usage_subtype="extraction/ai_ocr",
@@ -207,9 +204,11 @@ async def _ai_ocr_pdf(data: bytes, filename: str, billing: BillingContext) -> Ex
             sid=billing.sid,
         )
     except UnpricedUsage:
-        # A payer billed at vendor cost, with no cost to bill: the tracker logged it CRITICAL.
-        return ExtractedContent(text=text, method="ai_ocr", total_chars=len(text), pages=pages)
-    return ExtractedContent(text=text, method="ai_ocr", total_chars=len(text), pages=pages, cost_charged=cost)
+        # A payer billed at cost, with no cost to bill: refused, and the tracker logged it CRITICAL.
+        charged = None
+    if not text:
+        raise ExtractionError(f"AI OCR produced no text for '{filename}'.")
+    return ExtractedContent(text=text, method="ai_ocr", total_chars=len(text), pages=pages, cost_charged=charged)
 
 
 # ── Public API ───────────────────────────────────────────────────────────────

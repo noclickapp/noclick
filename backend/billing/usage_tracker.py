@@ -181,6 +181,8 @@ class UsageTracker:
         return ORG_OWNER_CACHE[org_id]
 
     async def track_usage_event(self, usage_event: UsageEventData, sio=None, sid=None):
+        """None once the event is priced for its payer, in place; a platform that
+        can't price it yet returns the awaitable still recording it instead."""
         logger.debug(
             f"[usage] {usage_event.usage_type}/{usage_event.usage_subtype} "
             f"cost=${usage_event.total_cost} (not recorded — no billing backend)"
@@ -246,6 +248,14 @@ class _UsageTrackerProxy:
 
 
 usage_tracker = _UsageTrackerProxy(UsageTracker())
+
+
+async def charge(usage_event: UsageEventData, sio=None, sid=None) -> Optional[Decimal]:
+    """Record ``usage_event`` and answer what its payer was charged: the event as the
+    tracker priced it for the payer's plan (what ``quote`` answers), or None while that
+    pricing waits on the database. Raises what ``track_usage_event`` raises."""
+    recording = await usage_tracker.track_usage_event(usage_event, sio=sio, sid=sid)
+    return usage_event.total_cost if recording is None else None
 
 
 def register_usage_tracker(impl: Any) -> None:
