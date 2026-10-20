@@ -10,7 +10,7 @@ describe('userDisplay', () => {
 
   it('never reads a missing email on a phone-only account', () => {
     expect(userDisplayName({ username: 'Priya', email: null })).toBe('Priya');
-    expect(userDisplayName({ email: '', phone: '12066368280' })).toBe('+1 206 636 8280');
+    expect(userDisplayName({ email: '', phone: '12065550142' })).toBe('+1 206 555 0142');
     expect(userDisplayName({ email: null }, '')).toBe('');
     expect(userInitials({ username: 'Priya', email: null })).toBe('PR');
     expect(userInitials({ email: null })).toBe('?');

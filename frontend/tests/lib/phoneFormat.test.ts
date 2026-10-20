@@ -4,7 +4,7 @@ import { formatPhoneForDisplay, patternSpan } from '~/lib/phoneFormat';
 describe('phone formatting', () => {
     it('groups a number for display', () => {
         expect(formatPhoneForDisplay('+15674833618')).toBe('+1 567 483 3618');
-        expect(formatPhoneForDisplay('+919717440092')).toBe('+91 971 744 0092');
+        expect(formatPhoneForDisplay('+919812345678')).toBe('+91 981 234 5678');
     });
 
     it('finds where a keypad pattern matched', () => {

@@ -843,10 +843,10 @@ describe('phone call lead', () => {
             handle: 'from +15551234567 · on +15674833618',
             body: 'You: This is Luke. What do you want?!\nCaller: Do you have time to talk',
         });
-        const out = deriveLead('phone', { caller: '+15674833618', to: '+919717440092', seconds: 52, direction: 'outbound', transcript: [{ role: 'user', text: 'Hello?' }] });
-        expect(out).toMatchObject({ title: 'Outbound call', meta: '0:52', author: '+919717440092', handle: 'to +919717440092 · from +15674833618', body: 'Them: Hello?' });
+        const out = deriveLead('phone', { caller: '+15674833618', to: '+919812345678', seconds: 52, direction: 'outbound', transcript: [{ role: 'user', text: 'Hello?' }] });
+        expect(out).toMatchObject({ title: 'Outbound call', meta: '0:52', author: '+919812345678', handle: 'to +919812345678 · from +15674833618', body: 'Them: Hello?' });
         // A call on a number brought from the user's own Twilio account frames the same way.
-        expect(deriveLead('twilio', { caller: '+15674833618', to: '+919717440092', seconds: 52, direction: 'outbound', transcript: [{ role: 'user', text: 'Hello?' }] })).toMatchObject({ title: 'Outbound call', body: 'Them: Hello?' });
+        expect(deriveLead('twilio', { caller: '+15674833618', to: '+919812345678', seconds: 52, direction: 'outbound', transcript: [{ role: 'user', text: 'Hello?' }] })).toMatchObject({ title: 'Outbound call', body: 'Them: Hello?' });
         expect(deriveLead('phone', { status: 'no_event', message: 'No live event' })).toBeNull();
         expect(deriveLead('phone', { type: 'node_op_tool_provider' })).toBeNull();
     });

@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Wed Oct 21 01:06:42  2026
+// Generated at: Wed Oct 21 02:25:09  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
