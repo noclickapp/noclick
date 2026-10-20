@@ -33,6 +33,7 @@
         "storage/repo_clone": "Code download",
         "storage/repo_push": "Code upload",
         "storage/bucket": "File storage",
+        "storage/bucket_requests": "File requests",
         "volume/storage": "Volume storage",
         "database/storage": "Database storage",
         "database/rows_read": "Database reads",
