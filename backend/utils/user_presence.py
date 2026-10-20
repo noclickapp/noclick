@@ -1,14 +1,25 @@
-"""Coarse user presence: is this user looking at NoClick right now?
+"""User presence: is this user looking at NoClick right now?
 
-Every authenticated socket event stamps ``nc:user:last_seen:{uid}`` in Redis
-(throttled per process, spawned off the hot path). The agent's email_user
-steering reads it to tell "the owner is active in the app — talk in chat"
-from "the owner is away — email is the channel". Advisory only: every reader
-fails open to "unknown".
+Two signals. The coarse one: every authenticated socket event stamps
+``nc:user:last_seen:{uid}`` in Redis (throttled per process, spawned off the
+hot path), so a tab left open in the background still counts. The agent's
+email_user steering reads it to tell "the owner is active in the app — talk in
+chat" from "the owner is away — email is the channel". Advisory only: every
+reader fails open to "unknown".
+
+The strict one, ``watching_chat``: whether the owner is watching their chat
+this moment, so a message the chat shows need not also go out by text. Each
+browser tab claims it with ``presence:chat`` beats while the chat is on screen
+in the focused window and touched within the last minute
+(``hooks/useChatPresence.ts``). A claim is a member of
+``nc:user:chat_live:{uid}`` scored with the time it lapses, so one tab leaving
+never clears another's, and a tab that dies without a word stops counting
+within ``CHAT_LIVE_TTL_SECONDS``. Any doubt reads as not watching: a wrong
+"watching" loses the message, a wrong "away" only sends it twice.
 """
 import logging
 import time
-from typing import Optional
+from typing import Iterable, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -84,3 +95,61 @@ async def describe_owner_presence(user_id: str) -> str:
     if age < 86400:
         return f"AWAY (last active ~{int(age // 3600)} hours ago)"
     return f"AWAY (last active ~{int(age // 86400)} days ago)"
+
+
+# A live tab beats every 15s; a claim it stops renewing lapses after this.
+CHAT_LIVE_TTL_SECONDS = 35
+
+
+def _chat_key(user_id: str) -> str:
+    return f"nc:user:chat_live:{user_id}"
+
+
+async def claim_chat_live(user_id: str, tab_id: str) -> None:
+    """Record that this tab shows the user their chat right now. Never raises."""
+    try:
+        from utils.redis_client import get_shared_redis
+
+        redis = get_shared_redis()
+        if redis is None:
+            return
+        now = time.time()
+        key = _chat_key(user_id)
+        async with redis.pipeline(transaction=True) as pipe:
+            pipe.zadd(key, {tab_id: now + CHAT_LIVE_TTL_SECONDS})
+            pipe.zremrangebyscore(key, "-inf", now)
+            pipe.expire(key, CHAT_LIVE_TTL_SECONDS)
+            await pipe.execute()
+    except Exception:
+        logger.warning("[UserPresence] chat claim failed", exc_info=True)
+
+
+async def release_chat_live(user_id: str, tab_ids: Iterable[str]) -> None:
+    """Withdraw these tabs' claims (any other tab's stands). Never raises."""
+    tab_ids = list(tab_ids)
+    if not tab_ids:
+        return
+    try:
+        from utils.redis_client import get_shared_redis
+
+        redis = get_shared_redis()
+        if redis is None:
+            return
+        await redis.zrem(_chat_key(user_id), *tab_ids)
+    except Exception:
+        # The claim still lapses on its own within CHAT_LIVE_TTL_SECONDS.
+        logger.warning("[UserPresence] chat release failed", exc_info=True)
+
+
+async def watching_chat(user_id: str) -> bool:
+    """True only while one of the user's tabs holds a fresh claim; False on any doubt. Never raises."""
+    try:
+        from utils.redis_client import get_shared_redis
+
+        redis = get_shared_redis()
+        if redis is None:
+            return False
+        return await redis.zcount(_chat_key(user_id), f"({time.time()}", "+inf") > 0
+    except Exception:
+        logger.warning("[UserPresence] chat read failed", exc_info=True)
+        return False

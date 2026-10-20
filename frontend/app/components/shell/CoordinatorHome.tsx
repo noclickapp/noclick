@@ -23,6 +23,7 @@ import { Status } from '~/components/coordinator/inline/primitives';
 import { UpgradePopup } from '~/components/utils/UpgradePopup';
 import { useCredentialList } from '~/hooks/useCachedCredentialList';
 import { useAttachmentTray } from '~/hooks/useChatAttachments';
+import { useChatPresence } from '~/hooks/useChatPresence';
 import { useCoordinatorChat } from '~/hooks/useCoordinatorChat';
 import { useScaffoldArrival } from '~/hooks/useScaffoldArrival';
 import { useStickToBottom } from '~/hooks/useStickToBottom';
@@ -134,6 +135,8 @@ function withViewTransition(update: () => void) {
 export function CoordinatorHome() {
     // The thread's markdown renders from its own chunk: fetch it while the history is on its way.
     useEffect(preloadMarkdownRenderer, []);
+    // Whichever chat it draws, someone watching it here isn't also texted what it shows.
+    useChatPresence();
     const known = useFeatureGatesKnown();
     const platform = useFeatureGate('coordinator_agent') && hasPlatformCoordinatorChat();
     // Which chat an account has is known once its gates are; until then, neither opens.

@@ -365,6 +365,15 @@ class CoordinatorJobsRequest(ClientEventBase):
     job_ids: List[Annotated[str, Field(pattern=r"^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$")]] = Field(min_length=1, max_length=50)
 
 
+class PresenceChatRequest(ClientEventBase):
+    """A tab's claim that its person is watching their chat right now, renewed every 15s, or its withdrawal"""
+    event_name: ClassVar[str] = "presence:chat"
+    expects_response: ClassVar[bool] = False
+
+    tab_id: str = Field(..., pattern=r"^[A-Za-z0-9-]{8,64}$", description="The claiming tab's own random id")
+    live: bool = Field(..., description="True while the chat is on screen in the focused window and touched in the last minute")
+
+
 # Instance OAuth app configuration (self-hosted: one OAuth client per provider)
 class InstanceOAuthListRequest(ClientEventBase):
     """List the providers this instance has an OAuth app configured for"""

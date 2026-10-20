@@ -578,6 +578,7 @@ class SocketIOProxy:
         from wss.handlers.onboarding_handler import OnboardingHandler
         from wss.handlers.notification_prefs_handler import NotificationPrefsHandler
         from wss.handlers.phone_handler import PhoneHandler
+        from wss.handlers.presence_handler import PresenceHandler
         from wss.handlers.phone_number_handler import PhoneNumberHandler
         from wss.handlers.coordinator_handler import CoordinatorHandler
         from wss.handlers.instance_oauth_handler import InstanceOAuthHandler
@@ -727,6 +728,8 @@ class SocketIOProxy:
         notification_prefs_handler = NotificationPrefsHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize phone handler (API only - verified phone identity for channels)
         phone_handler = PhoneHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
+        # Initialize presence handler (API only - whether the person is watching their chat)
+        presence_handler = PresenceHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize coordinator handler (API only - the account's own agent)
         coordinator_handler = CoordinatorHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         instance_oauth_handler = InstanceOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
@@ -836,6 +839,7 @@ class SocketIOProxy:
             Handler.ONBOARDING: onboarding_handler,
             Handler.NOTIFICATION_PREFS: notification_prefs_handler,
             Handler.PHONE: phone_handler,
+            Handler.PRESENCE: presence_handler,
             Handler.COORDINATOR: coordinator_handler,
             Handler.INSTANCE_OAUTH: instance_oauth_handler,
             Handler.INSTANCE_KEYS: instance_keys_handler,

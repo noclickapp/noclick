@@ -78,6 +78,7 @@ class Handler(Enum):
     ONBOARDING = "onboarding_handler"
     NOTIFICATION_PREFS = "notification_prefs_handler"
     PHONE = "phone_handler"
+    PRESENCE = "presence_handler"
     COORDINATOR = "coordinator_handler"
     INSTANCE_OAUTH = "instance_oauth_handler"
     INSTANCE_KEYS = "instance_keys_handler"
@@ -134,6 +135,9 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         "phone:link:check": Handler.PHONE,
         "phone:link:code": Handler.PHONE,
         "phone:unlink": Handler.PHONE,
+
+        # Whether the person is watching their chat (a tab's beats)
+        "presence:chat": Handler.PRESENCE,
 
         # Account coordinator
         "coordinator:open": Handler.COORDINATOR,

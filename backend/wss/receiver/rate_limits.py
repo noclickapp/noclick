@@ -39,6 +39,11 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "phone_number:resubmit": SocketIORateLimit(second=1, minute=5),
             "phone:unlink": SocketIORateLimit(second=1, minute=5),
 
+            # A live tab beats every 15s and withdraws on blur. The hook spaces its
+            # claims, so focus flapping stays well inside this: a refused withdrawal
+            # would leave a claim standing until it lapses.
+            "presence:chat": SocketIORateLimit(second=4, minute=60),
+
             # Relay viewer tokens. A tab mints one per relay (re)connect and
             # retries a failed mint with backoff; presence mints one per
             # workflow it opens. Generous for real tabs, a wall for a loop.

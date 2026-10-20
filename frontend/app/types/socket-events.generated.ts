@@ -4652,6 +4652,24 @@ export interface PostHogOAuthValidateRequest {
   [k: string]: unknown;
 }
 /**
+ * A tab's claim that its person is watching their chat right now, renewed every 15s, or its withdrawal
+ */
+export interface PresenceChatRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * The claiming tab's own random id
+   */
+  tab_id: string;
+  /**
+   * True while the chat is on screen in the focused window and touched in the last minute
+   */
+  live: boolean;
+  [k: string]: unknown;
+}
+/**
  * Exchange OAuth authorization code for tokens and store as credential
  */
 export interface QuickBooksOAuthExchangeRequest {
@@ -14341,6 +14359,7 @@ export interface ClientToServerEvents {
   'posthog:oauth:exchange': (data: PostHogOAuthExchangeRequest) => void;
   'posthog:oauth:refresh': (data: PostHogOAuthRefreshRequest) => void;
   'posthog:oauth:validate': (data: PostHogOAuthValidateRequest) => void;
+  'presence:chat': (data: PresenceChatRequest) => void;
   'quickbooks:oauth:exchange': (data: QuickBooksOAuthExchangeRequest) => void;
   'quickbooks:oauth:refresh': (data: QuickBooksOAuthRefreshRequest) => void;
   'quickbooks:oauth:validate': (data: QuickBooksOAuthValidateRequest) => void;
@@ -14705,6 +14724,7 @@ export const ClientEventNames = {
   PostHogOAuthExchangeRequest: 'posthog:oauth:exchange',
   PostHogOAuthRefreshRequest: 'posthog:oauth:refresh',
   PostHogOAuthValidateRequest: 'posthog:oauth:validate',
+  PresenceChatRequest: 'presence:chat',
   QuickBooksOAuthExchangeRequest: 'quickbooks:oauth:exchange',
   QuickBooksOAuthRefreshRequest: 'quickbooks:oauth:refresh',
   QuickBooksOAuthValidateRequest: 'quickbooks:oauth:validate',
@@ -15065,6 +15085,7 @@ interface ClientEventMap {
   PostHogOAuthExchangeRequest: PostHogOAuthExchangeRequest
   PostHogOAuthRefreshRequest: PostHogOAuthRefreshRequest
   PostHogOAuthValidateRequest: PostHogOAuthValidateRequest
+  PresenceChatRequest: PresenceChatRequest
   QuickBooksOAuthExchangeRequest: QuickBooksOAuthExchangeRequest
   QuickBooksOAuthRefreshRequest: QuickBooksOAuthRefreshRequest
   QuickBooksOAuthValidateRequest: QuickBooksOAuthValidateRequest
@@ -16246,6 +16267,10 @@ export const PostHogOAuthValidateRequest = {
   event_name: 'posthog:oauth:validate' as const,
   create: (data: PostHogOAuthValidateRequest) => ({ event_name: 'posthog:oauth:validate' as const, ...data })
 };
+export const PresenceChatRequest = {
+  event_name: 'presence:chat' as const,
+  create: (data: PresenceChatRequest) => ({ event_name: 'presence:chat' as const, ...data })
+};
 export const QuickBooksOAuthExchangeRequest = {
   event_name: 'quickbooks:oauth:exchange' as const,
   create: (data: QuickBooksOAuthExchangeRequest) => ({ event_name: 'quickbooks:oauth:exchange' as const, ...data })
@@ -17070,6 +17095,7 @@ export const EventRouting = {
   'posthog:oauth:exchange': 'API',
   'posthog:oauth:refresh': 'API',
   'posthog:oauth:validate': 'API',
+  'presence:chat': 'API',
   'quickbooks:oauth:exchange': 'API',
   'quickbooks:oauth:refresh': 'API',
   'quickbooks:oauth:validate': 'API',
