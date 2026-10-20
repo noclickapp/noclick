@@ -42,7 +42,7 @@ ALL_TAGS: Set[str] = {
     # Sticky notes
     'add_sticky_note',
     # Workflow management (agentic)
-    'list_workflows', 'open_workflow', 'create_workflow',
+    'list_workflows', 'open_workflow', 'create_workflow', 'set_description',
     # Folder management (agentic)
     'list_folders', 'create_folder', 'delete_folder', 'move_workflow',
     # Config inspection (agentic)
@@ -63,7 +63,7 @@ _BODY_TAGS: Set[str] = {
     # Sticky notes
     'add_sticky_note',
     # Agentic
-    'message', 'input', 'ask',
+    'message', 'input', 'ask', 'set_description',
     # Workflow variables + test runs (body = value / staged message body)
     'define_variable', 'add_test_run',
     # Deprecated

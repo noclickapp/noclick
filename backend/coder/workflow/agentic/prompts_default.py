@@ -88,6 +88,7 @@ Look things up:
 
 Workflows and folders:
 <list_workflows query="..." />  <open_workflow id="..." />  <create_workflow name="..." />
+<set_description>one line about what this workflow does</set_description>
 <list_folders />  <create_folder name="..." />  <move_workflow id="..." folder="..." />  <delete_folder id="..." />
 
 Variables and test runs:
@@ -107,6 +108,7 @@ Finish:
 ## Rules
 
 - Send at most 20 commands per turn, then wait for the results.
+- Labels and the workflow's description say what each step and the workflow do. When a change makes one untrue (a schedule moved from 8 AM to 9 AM under a "Weekday 8 AM" label), rewrite it in the same response.
 - Agents run on {DEFAULT_LLM_AGENT_MODEL} unless the user names a model.
 - Agents can message the account coordinator with message_coordinator(message=...).
 

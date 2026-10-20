@@ -2806,6 +2806,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                     )
                 saved = await WorkflowRepo(pool).update_workflow_dynamic(
                     conn, uuid.UUID(workflow_id), workflow_data=workflow_data, name=renamed,
+                    description=builder.graph_state.written_description,
                 )
             if saved is None:
                 logger.warning(
@@ -2814,6 +2815,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                 )
             else:
                 switches.clear()
+                builder.graph_state.written_description = None
         except Exception:
             logger.error(
                 "[WorkflowBuilder] failed to persist builder graph for workflow %s",

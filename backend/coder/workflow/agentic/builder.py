@@ -44,6 +44,7 @@ from .commands import (
     execute_query_schema,
     execute_read,
     execute_read_config,
+    execute_description_ops,
     execute_settings_ops,
     execute_sticky_note_ops,
     execute_workflow_content_ops,
@@ -195,6 +196,7 @@ class AgenticBuilder:
         self.graph_state = GraphState.from_dict(current_graph or {})
         if self.platform_ops and hasattr(self.platform_ops, "_graph_state"):
             self.platform_ops._graph_state = self.graph_state
+        await self._read_description()
         self._initial_graph_fingerprint = self._graph_fingerprint()
         self._user_prompt = edit_prompt
         self._host_theme = (user_context or {}).get("theme")
@@ -239,6 +241,24 @@ class AgenticBuilder:
             ),
             workflow_id=self.workflow_id,
         )
+
+    async def _read_description(self) -> None:
+        """The workflow's description, for the snapshot (it isn't part of the
+        graph blob). Fails open: the brain then sees no description."""
+        if not self.workflow_id:
+            return
+        try:
+            from repositories.workflow import WorkflowRepo
+            from utils.database_pool import get_native_pool
+
+            pool = get_native_pool()
+            if not pool:
+                return
+            async with pool.acquire() as conn:
+                row = await WorkflowRepo(pool).get_workflow_data_and_settings(conn, uuid.UUID(self.workflow_id))
+            self.graph_state.workflow_description = (row or {}).get("description")
+        except Exception as exc:
+            logger.warning("Workflow description pre-fetch failed: %s", exc)
 
     async def run_one_turn(self) -> AsyncIterator[BuilderStreamEvent]:
         """Run one turn with cooperative cancellation and clean message rollback."""
@@ -773,6 +793,10 @@ class AgenticBuilder:
                             "config": node.config,
                         },
                     )
+
+        description_ops = [op for op in ops if op.tag == "set_description"]
+        if description_ops:
+            field_results.extend(execute_description_ops(description_ops, self.graph_state))
 
         async for event in self._provision_trigger_webhooks(
             ops, new_node_ids, field_results

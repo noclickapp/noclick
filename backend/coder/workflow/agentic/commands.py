@@ -87,7 +87,7 @@ AGENTIC_TAGS: Set[str] = {
     # Queries
     'query_operations', 'query_schema', 'search_credentials', 'read',
     # Workflow management
-    'list_workflows', 'open_workflow', 'create_workflow',
+    'list_workflows', 'open_workflow', 'create_workflow', 'set_description',
     # Folder management
     'list_folders', 'create_folder', 'delete_folder', 'move_workflow',
     # Config inspection
@@ -1008,6 +1008,10 @@ def nodes_missing_credentials(graph_state: GraphState) -> List[NodeState]:
     ]
 
 
+# Fields a node's label never names: writing them leaves the label true.
+_LABEL_FREE_FIELDS = frozenset({'goal', 'disabled', 'fullscreen'})
+
+
 def execute_field_ops(
     ops: List[XmlOp],
     graph_state: GraphState,
@@ -1266,6 +1270,16 @@ def execute_field_ops(
                     f"the agent automatically; message holds STANDING instructions "
                     f"(now: {node.config.get('message')!r})."
                 )
+        # A trigger's label often names its settings ("Weekday 8 AM"): a write that changes them under the old
+        # label leaves the step saying what it did before, unless the brain renames it.
+        label = node.config.get('label', node.label)
+        if (label and 'label' not in changed_fields and changed_fields - _LABEL_FREE_FIELDS
+                and is_trigger_source(node.type, node.operation)):
+            results.append(
+                f"{node_name} is still labeled {label!r}: if that names what you changed, rename it "
+                f"(<field name=\"label\" node=\"{node_name}\">…</field>), and rewrite the workflow's "
+                f"description with <set_description> if it says the same."
+            )
         # Any AI write of a node invalidates its __label display caches —
         # canonicalization may have rewritten values, and a stale sidecar
         # both shows the wrong label and blocks the FE's self-heal.
@@ -1323,6 +1337,26 @@ def execute_field_ops(
                 f"{unknown_output_reference_error(path, ref_node, key, known)}"
             )
 
+    return results
+
+
+# A description is one line about the workflow, as the platform and the coordinator write one.
+MAX_DESCRIPTION_CHARS = 300
+
+
+def execute_description_ops(ops: List[XmlOp], graph_state: GraphState) -> List[str]:
+    """<set_description>: the workflow's one-line description, kept for the
+    persist to save (``GraphState.written_description``) and shown in the
+    snapshot from now on."""
+    results: List[str] = []
+    for op in ops:
+        line = " ".join((op.body or op.attrs.get('value', '')).split())
+        if not line or len(line) > MAX_DESCRIPTION_CHARS:
+            results.append(f"ERROR: set_description takes one line of 1 to {MAX_DESCRIPTION_CHARS} characters "
+                           f"about what the workflow does; the description was NOT changed.")
+            continue
+        graph_state.workflow_description = graph_state.written_description = line
+        results.append(f"Set the workflow's description: {line!r}")
     return results
 
 

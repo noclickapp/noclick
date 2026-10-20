@@ -198,6 +198,10 @@ class GraphState:
         # Summary and workflow name (from builder done tag)
         self.summary: str = ""
         self.workflow_name: str = ""
+        # The workflow's one-line description as the snapshot shows it (None: not read), and one the brain
+        # wrote (<set_description>) that the persist hasn't saved yet.
+        self.workflow_description: Optional[str] = None
+        self.written_description: Optional[str] = None
         # (old, new) harness of each agent a write moved, in order — the
         # persist renames a scaffolded workflow after them, then clears it.
         self.harness_switches: List[Tuple[str, str]] = []
@@ -771,7 +775,10 @@ class GraphState:
         Inlines operation and config directly on the node to avoid a separate
         "Node details" section and save context tokens.
         """
-        lines = ['<workflow>']
+        from .workflow_xml import escape_xml_attr
+
+        description = (self.workflow_description or '').strip()
+        lines = [f'<workflow description="{escape_xml_attr(description)}">' if description else '<workflow>']
 
         # Lazy: operation_catalog pulls the full NODE_REGISTRY at import time
         from .operation_catalog import (

@@ -225,9 +225,9 @@ class WorkflowRepo:
     async def get_workflow_data_and_settings(
         self, conn, workflow_id
     ) -> Optional[Dict[str, Any]]:
-        """(workflow, settings) — used on the resume path."""
+        """(workflow, settings, description) — used on the resume path."""
         row = await conn.fetchrow(
-            "SELECT workflow, settings FROM workflows WHERE id = $1",
+            "SELECT workflow, settings, description FROM workflows WHERE id = $1",
             workflow_id,
         )
         return dict(row) if row else None
