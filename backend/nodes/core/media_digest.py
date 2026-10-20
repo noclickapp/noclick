@@ -33,7 +33,6 @@ from __future__ import annotations
 
 import asyncio
 import base64
-import json
 import logging
 import math
 import os
@@ -354,7 +353,7 @@ def _transcript_token_budget(duration_s: Optional[float]) -> int:
 
 async def _transcription_call(
     data: bytes, fmt: str, *, prompt: str, billing: BillingContext, duration_s: Optional[float],
-    model: str, json_output: bool = False,
+    model: str,
 ) -> Tuple[str, Optional[Decimal]]:
     """One audio-understanding call: credit-gated BEFORE the model call and
     charged the provider's reported cost (the old plans add their markup; a
@@ -393,7 +392,6 @@ async def _transcription_call(
         max_tokens=_transcript_token_budget(duration_s),
         timeout=TRANSCRIBE_TIMEOUT_S,
         extra_body=extra_body,
-        **({"response_format": {"type": "json_object"}} if json_output else {}),
     )
     text = (response.choices[0].message.content or "").strip()
     cost = await _record_media_cost(response, billing, model, len(data), duration_s, fmt)
@@ -420,57 +418,6 @@ async def transcribe_audio(
     if not text or text.strip("`\"' ").lower() == _NO_SPEECH:
         raise DigestError("no speech was detected in the audio")
     return text, cost
-
-
-@dataclass
-class TimedTranscript:
-    text: str
-    # ISO 639-1; None when nothing was said.
-    language: Optional[str]
-    # ``{start_s, end_s, text}`` per sentence or speaker turn, in order.
-    segments: List[Dict[str, Any]]
-    cost_charged: Optional[Decimal]
-
-
-def _timed_prompt(language: Optional[str]) -> str:
-    spoken = (f"The audio is in the language with ISO 639-1 code {language!r}. " if language
-              else "Detect the language actually spoken. ")
-    return (
-        "Transcribe this audio verbatim. " + spoken +
-        "Answer with only a JSON object: {\"language\": <the ISO 639-1 code of the main spoken language>, "
-        "\"segments\": [{\"start_s\": <seconds>, \"end_s\": <seconds>, \"text\": <what was said>}]}, "
-        "one segment per sentence or speaker turn, in order, with timestamps from the start of the audio. "
-        "No commentary and no translation. If there is no speech, answer {\"language\": null, \"segments\": []}."
-    )
-
-
-async def transcribe_audio_timed(
-    data: bytes,
-    *,
-    mime_type: str,
-    filename: Optional[str],
-    billing: BillingContext,
-    duration_s: Optional[float] = None,
-    model: Optional[str] = None,
-    language: Optional[str] = None,
-) -> TimedTranscript:
-    """``transcribe_audio`` with timed segments and the spoken language, on
-    ``model`` (an audio-input model; ``AI_TRANSCRIPTION_MODEL`` by default).
-    ``language`` (ISO 639-1) skips detection. Silence is an empty transcript."""
-    data, fmt = await _audio_ready(data, mime_type, filename, duration_s)
-    raw, cost = await _transcription_call(
-        data, fmt, prompt=_timed_prompt(language), billing=billing, duration_s=duration_s,
-        model=model or AI_TRANSCRIPTION_MODEL, json_output=True)
-    try:
-        parsed = json.loads(raw.removeprefix("```json").removeprefix("```").removesuffix("```").strip())
-        segments = [{"start_s": float(s["start_s"]), "end_s": float(s["end_s"]), "text": str(s["text"]).strip()}
-                    for s in parsed["segments"]]
-    except (ValueError, KeyError, TypeError) as exc:
-        raise DigestError(f"the transcription model answered in a form that isn't a transcript: {exc}") from None
-    segments = [s for s in segments if s["text"]]
-    detected = parsed.get("language") if isinstance(parsed.get("language"), str) else None
-    return TimedTranscript(text=" ".join(s["text"] for s in segments), language=language or (detected if segments else None),
-                           segments=segments, cost_charged=cost)
 
 
 async def _record_media_cost(
