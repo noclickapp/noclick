@@ -36,6 +36,8 @@ import base64
 import json
 import logging
 import os
+import shutil
+import tempfile
 from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Protocol, Tuple
@@ -80,6 +82,14 @@ _AUDIO_EXTENSIONS: Dict[str, str] = {
     ".ogg": "ogg", ".oga": "ogg", ".opus": "ogg", ".mp3": "mp3", ".m4a": "m4a",
     ".aac": "aac", ".wav": "wav", ".flac": "flac", ".aiff": "aiff", ".aif": "aiff",
 }
+# Containers input_audio refuses but ffmpeg reads, by its demuxer: an iPhone's voice message is Core Audio,
+# some Android recorders write AMR or 3GP, a browser records WebM. Each becomes mono 16 kHz MP3 to transcribe.
+_CONVERTIBLE: Dict[str, str] = {
+    "audio/x-caf": "caf", "audio/caf": "caf", "audio/amr": "amr", "audio/3gpp": "mov", "video/3gpp": "mov",
+    "audio/webm": "matroska",
+}
+_CONVERTIBLE_EXTENSIONS: Dict[str, str] = {".caf": "caf", ".amr": "amr", ".3gp": "mov", ".webm": "matroska"}
+CONVERT_TIMEOUT_S = 60.0
 
 _TRANSCRIBE_PROMPT = (
     "Transcribe this audio verbatim, in the language(s) actually spoken. "
@@ -280,9 +290,40 @@ def digester_for(kind: str) -> Optional[Digester]:
 
 # ── Transcription ────────────────────────────────────────────────────────────
 
-def _audio_checked(data: bytes, mime_type: str, filename: Optional[str], duration_s: Optional[float]) -> str:
-    """The ``input_audio`` format of audio within the caps; refuses the rest."""
+async def _as_mp3(data: bytes, demuxer: str) -> bytes:
+    """``data``, read as ``demuxer``'s container only, as mono 16 kHz MP3."""
+    if shutil.which("ffmpeg") is None:
+        raise DigestError("this audio needs converting before transcription, and ffmpeg isn't installed here")
+    with tempfile.NamedTemporaryFile(suffix=".audio") as source:
+        source.write(data)
+        source.flush()
+        process = await asyncio.create_subprocess_exec(
+            "ffmpeg", "-nostdin", "-hide_banner", "-nostats", "-loglevel", "error", "-protocol_whitelist", "file",
+            "-f", demuxer, "-i", source.name, "-vn", "-ac", "1", "-ar", "16000", "-c:a", "libmp3lame", "-b:a", "64k",
+            "-f", "mp3", "pipe:1", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+        try:
+            out, err = await asyncio.wait_for(process.communicate(), CONVERT_TIMEOUT_S)
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            raise DigestError("converting the audio for transcription took too long") from None
+    if process.returncode or not out:
+        logger.warning("audio conversion failed demuxer=%s: %s", demuxer, err.decode(errors="replace")[-300:])
+        raise DigestError("the audio couldn't be read for transcription")
+    return out
+
+
+async def _audio_ready(data: bytes, mime_type: str, filename: Optional[str],
+                       duration_s: Optional[float]) -> Tuple[bytes, str]:
+    """The audio and its ``input_audio`` format within the caps, converted to MP3 first when it's in a container
+    the model doesn't take but ffmpeg reads; refuses the rest."""
     fmt = audio_format(mime_type, filename)
+    if not fmt:
+        name = (filename or "").lower()
+        demuxer = _CONVERTIBLE.get(base_mime(mime_type)) or next(
+            (d for ext, d in _CONVERTIBLE_EXTENSIONS.items() if name.endswith(ext)), None)
+        if demuxer:
+            data, fmt = await _as_mp3(data, demuxer), "mp3"
     if not fmt:
         raise DigestError(
             f"audio format {base_mime(mime_type) or 'unknown'} is not supported for "
@@ -298,7 +339,7 @@ def _audio_checked(data: bytes, mime_type: str, filename: Optional[str], duratio
             f"audio is {int(duration_s // 60)} minutes long — transcription is capped at "
             f"{MAX_TRANSCRIBE_SECONDS // 60} minutes"
         )
-    return fmt
+    return data, fmt
 
 
 async def _transcription_call(
@@ -359,7 +400,7 @@ async def transcribe_audio(
     """Audio bytes → transcript. Credit-gated BEFORE the model call; charged
     at the provider's reported cost with the platform markup (a
     ``:free`` model records $0). Returns ``(text, cost_charged)``."""
-    fmt = _audio_checked(data, mime_type, filename, duration_s)
+    data, fmt = await _audio_ready(data, mime_type, filename, duration_s)
     text, cost = await _transcription_call(
         data, fmt, prompt=_TRANSCRIBE_PROMPT, billing=billing, duration_s=duration_s, model=AI_TRANSCRIPTION_MODEL)
     if not text or text.strip("`\"' ").lower() == _NO_SPEECH:
@@ -402,7 +443,7 @@ async def transcribe_audio_timed(
     """``transcribe_audio`` with timed segments and the spoken language, on
     ``model`` (an audio-input model; ``AI_TRANSCRIPTION_MODEL`` by default).
     ``language`` (ISO 639-1) skips detection. Silence is an empty transcript."""
-    fmt = _audio_checked(data, mime_type, filename, duration_s)
+    data, fmt = await _audio_ready(data, mime_type, filename, duration_s)
     raw, cost = await _transcription_call(
         data, fmt, prompt=_timed_prompt(language), billing=billing, duration_s=duration_s,
         model=model or AI_TRANSCRIPTION_MODEL, json_output=True)

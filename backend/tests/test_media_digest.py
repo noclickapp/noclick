@@ -10,6 +10,9 @@ Contracts under test:
   choke point, and a provider that reports no cost still lands a $0 row;
 - byte/duration caps, an unsupported container and a ``[no speech]`` answer
   refuse with an agent-facing DigestError;
+- a container the model refuses but ffmpeg reads (an iPhone's Opus-in-CAF voice
+  message, AMR, 3GP, WebM) is transcribed as MP3, and one that won't decode
+  refuses before any spend;
 - digest_media NEVER raises: a ref's failure is a note on its digest,
   AI kinds are refused without billing or with allow_ai=False, the per-turn
   AI and document caps hold, and a broken seam logs at ERROR instead of blaming media;
@@ -25,7 +28,11 @@ Contracts under test:
 """
 
 import asyncio
+import base64
 import logging
+import shutil
+import subprocess
+import tempfile
 from decimal import Decimal
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -247,7 +254,8 @@ def test_a_cost_priced_nowhere_is_logged_never_charged_as_zero(caplog):
 @pytest.mark.parametrize(
     "kwargs, match",
     [
-        (dict(data=b"x", mime_type="audio/webm", filename="clip.webm"), "not supported"),
+        (dict(data=b"x", mime_type="audio/x-ms-wma", filename="clip.wma"), "not supported"),
+        (dict(data=b"not caf", mime_type="audio/x-caf", filename="Audio Message.caf"), "couldn't be read"),
         (dict(data=b"x" * (md.MAX_TRANSCRIBE_BYTES + 1), mime_type="audio/ogg", filename="v.oga"), "capped"),
         (dict(data=b"x", mime_type="audio/ogg", filename="v.oga", duration_s=md.MAX_TRANSCRIBE_SECONDS + 1), "minutes"),
     ],
@@ -260,6 +268,43 @@ def test_caps_refuse_before_any_spend(kwargs, match):
             asyncio.run(md.transcribe_audio(billing=_billing(), **kwargs))
     tracker.enforce_credit_gate.assert_not_awaited()
     model.assert_not_awaited()
+
+
+def _iphone_voice_message() -> bytes:
+    """A second of tone as an iPhone records a voice message: Opus in a Core Audio (CAF) container."""
+    if shutil.which("ffmpeg") is None:
+        pytest.skip("ffmpeg makes the recording")
+    with tempfile.NamedTemporaryFile(suffix=".caf") as out:
+        made = subprocess.run(["ffmpeg", "-nostdin", "-y", "-loglevel", "error", "-f", "lavfi", "-i",
+                               "sine=frequency=440:duration=1", "-ac", "1", "-ar", "48000", "-c:a", "libopus",
+                               "-f", "caf", out.name], capture_output=True)
+        if made.returncode:
+            pytest.skip("this ffmpeg can't write Opus in CAF")
+        return open(out.name, "rb").read()
+
+
+def test_an_iphone_voice_message_is_transcribed_as_mp3():
+    caf = _iphone_voice_message()
+    tracker = _tracker()
+    model = AsyncMock(return_value=_response(text="hello there"))
+    with patch("billing.usage_tracker.usage_tracker", tracker), patch("litellm.acompletion", new=model):
+        text, _ = asyncio.run(md.transcribe_audio(
+            caf, mime_type="audio/x-caf", filename="45NLhReg_Audio_Message.caf", billing=_billing()))
+    assert text == "hello there"
+    sent = model.await_args.kwargs["messages"][0]["content"][1]["input_audio"]
+    assert sent["format"] == "mp3"
+    mp3 = base64.b64decode(sent["data"])
+    assert mp3 != caf and (mp3[:3] == b"ID3" or mp3[0] == 0xFF)
+    tracker.enforce_credit_gate.assert_awaited_once()
+
+
+def test_a_caf_named_only_by_its_extension_is_converted_too():
+    caf = _iphone_voice_message()
+    model = AsyncMock(return_value=_response(text="hi"))
+    with patch("billing.usage_tracker.usage_tracker", _tracker()), patch("litellm.acompletion", new=model):
+        asyncio.run(md.transcribe_audio(caf, mime_type="application/octet-stream", filename="Audio Message.caf",
+                                        billing=_billing()))
+    assert model.await_args.kwargs["messages"][0]["content"][1]["input_audio"]["format"] == "mp3"
 
 
 def test_no_speech_is_a_refusal_not_a_transcript():
