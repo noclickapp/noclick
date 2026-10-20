@@ -340,7 +340,11 @@ async def app_lifespan(app: FastAPI):
 from utils.instagram_webhook_privacy import instagram_webhook_request_hook
 from utils.outbound_trace_privacy import OutboundTraceProvider
 
-fastapi_app = FastAPI(lifespan=app_lifespan)
+# No /openapi.json, /docs or /redoc: these routes serve the engine's own clients (the frontend, sockets,
+# webhooks), not a published API, and a public schema would list every one of them.
+NO_SCHEMA_ROUTES = dict(openapi_url=None, docs_url=None, redoc_url=None)
+
+fastapi_app = FastAPI(lifespan=app_lifespan, **NO_SCHEMA_ROUTES)
 FastAPIInstrumentor.instrument_app(fastapi_app, server_request_hook=instagram_webhook_request_hook)
 _outbound_trace_provider = OutboundTraceProvider()
 HTTPXClientInstrumentor().instrument(tracer_provider=_outbound_trace_provider)
@@ -453,7 +457,7 @@ web_app = socketio.ASGIApp(
 # ingress (scheduler fan-out, provider events) then never competes with
 # interactive traffic; execution events reach the user through the relay,
 # which any process can publish to.
-webhook_fastapi_app = FastAPI(lifespan=app_lifespan)
+webhook_fastapi_app = FastAPI(lifespan=app_lifespan, **NO_SCHEMA_ROUTES)
 FastAPIInstrumentor.instrument_app(webhook_fastapi_app, server_request_hook=instagram_webhook_request_hook)
 webhook_fastapi_app.add_middleware(
     CORSMiddleware,

@@ -30,8 +30,9 @@ NOT_PUBLISHED = {
     # container. It is a capability URL; there is no reason for the internet to
     # be able to reach it.
     "/local-agent-mcp",
-    # FastAPI's own docs. Publishing the API surface of a self-hosted instance
-    # to anonymous visitors is a choice its operator should make, not a default.
+    # FastAPI's own docs, which server.py turns off. Should they come back,
+    # publishing the API surface of a self-hosted instance to anonymous
+    # visitors is a choice its operator should make, not a default.
     "/docs",
     "/redoc",
     "/openapi.json",
