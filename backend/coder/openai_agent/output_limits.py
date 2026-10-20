@@ -17,7 +17,9 @@ context limit (even a bare "hi"). Independent bounds fix the class:
 Several results of one turn can still outgrow the model's context together
 (three web searches with page text did, 2026-10); the compactor cuts them in
 the model's view to ``TOOL_OUTPUT_FLOOR``, and the ones already acted on to
-``TOOL_OUTPUT_STUB`` when the turn can't fold any further.
+``TOOL_OUTPUT_STUB`` when the turn can't fold any further. A call's own
+arguments (a commit carrying whole files) are cut the same way
+(``clip_arguments``), keeping the call's JSON.
 
 Deliberately dependency-free so both agent.py and session.py import it.
 """
@@ -46,6 +48,10 @@ BASH_HINT = "output clipped; re-run with head/tail/grep to see specific parts"
 TOOL_HINT = ("the tool's result was clipped; call it again for a narrower part "
              "(fewer results, one page or URL, a filter) to see the rest")
 CONTEXT_HINT = "cut to fit the model's context; call the tool again for the part you need"
+# The least of each long string a cut call's arguments keep: its head and tail, so a stub still says what it held.
+ARGUMENT_STRING_FLOOR = 64
+# A copy of a cut argument (a file it wrote) would write the marker back, so it says where the whole value is.
+ARGUMENTS_HINT = "cut to fit the model's context; the call ran with the whole value, so read it back before reusing it"
 
 
 def clip_text(text: str, cap: int, hint: str = BASH_HINT) -> str:
@@ -57,6 +63,42 @@ def clip_text(text: str, cap: int, hint: str = BASH_HINT) -> str:
     tail = cap - head
     omitted = len(text) - head - tail
     return f"{text[:head]}\n... <{omitted} chars omitted: {hint}> ...\n{text[-tail:]}"
+
+
+def _clip_strings(value: Any, cap: int, hint: str) -> Any:
+    """``value`` with each string longer than ``cap`` clipped, where clipping shortens it; keys untouched."""
+    if isinstance(value, str):
+        clipped = clip_text(value, cap, hint)
+        return clipped if len(clipped) < len(value) else value
+    if isinstance(value, list):
+        return [_clip_strings(item, cap, hint) for item in value]
+    if isinstance(value, dict):
+        return {key: _clip_strings(item, cap, hint) for key, item in value.items()}
+    return value
+
+
+def clip_arguments(arguments: str, cap: int, hint: str = ARGUMENTS_HINT) -> str:
+    """A tool call's JSON arguments in about ``cap`` characters, still the call's JSON: every key and short value as
+    it was, each long string its head and tail around a marker, all clipped to the longest length that fits (to
+    ``ARGUMENT_STRING_FLOOR`` when even that passes ``cap``). Arguments that aren't JSON clip as text."""
+    if len(arguments) <= cap:
+        return arguments
+    try:
+        value = json.loads(arguments)
+    except ValueError:
+        return clip_text(arguments, cap, hint)
+
+    def dump(limit: int) -> str:
+        return json.dumps(_clip_strings(value, limit, hint), ensure_ascii=False, separators=(",", ":"))
+
+    low, high = ARGUMENT_STRING_FLOOR, len(arguments)
+    while low < high:
+        mid = (low + high + 1) // 2
+        if len(dump(mid)) <= cap:
+            low = mid
+        else:
+            high = mid - 1
+    return dump(low)
 
 
 def tool_output(result: Any) -> str:

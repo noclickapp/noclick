@@ -24,7 +24,9 @@ from typing import Any, Awaitable, Callable, Dict, List, Optional, Protocol, Tup
 from agents.run_config import ModelInputData
 from pydantic import BaseModel, Field
 
-from coder.openai_agent.output_limits import CONTEXT_HINT, TOOL_OUTPUT_FLOOR, TOOL_OUTPUT_STUB, clip_text
+from coder.openai_agent.output_limits import (
+    CONTEXT_HINT, TOOL_OUTPUT_FLOOR, TOOL_OUTPUT_STUB, clip_arguments, clip_text,
+)
 from utils.prompts import PromptPack
 
 logger = logging.getLogger(__name__)
@@ -143,32 +145,52 @@ def safe_boundaries(items):
     return boundaries
 
 
+_CUTTABLE = {"function_call_output": "output", "function_call": "arguments"}
+
+
+def _cuttable(item):
+    """What a cut shortens in ``item``: a tool result's output, a tool call's arguments (a commit's files); else
+    None."""
+    field = _CUTTABLE.get(item.get("type"))
+    return field if field and isinstance(item.get(field), str) else None
+
+
+def _cut_key(item):
+    # A call and its result share a call id, and each is cut on its own.
+    return item.get("type"), item.get("call_id")
+
+
+def _clipped(item, field, cap):
+    text = item[field]
+    cut = clip_text(text, cap, CONTEXT_HINT) if field == "output" else clip_arguments(text, cap)
+    return {**item, field: cut} if len(cut) < len(text) else item
+
+
 def cut_to_floor(item, floor=TOOL_OUTPUT_FLOOR):
-    """``item`` with its tool result cut to the least the compactor keeps of one (``TOOL_OUTPUT_FLOOR``, or
-    ``TOOL_OUTPUT_STUB`` for one the model already acted on when nothing else makes room), marked as cut: the same
-    cut of the same result every time. ``item`` itself when there's nothing to cut."""
-    output = item.get("output") if item.get("type") == "function_call_output" else None
-    if not isinstance(output, str) or len(output) <= floor:
+    """``item`` with its tool result, or its tool call's arguments, cut to the least the compactor keeps of one
+    (``TOOL_OUTPUT_FLOOR``, or ``TOOL_OUTPUT_STUB`` for one the model already acted on when nothing else makes room),
+    marked as cut: the same cut of the same item every time. ``item`` itself when there's nothing to cut."""
+    field = _cuttable(item)
+    if field is None or len(item[field]) <= floor:
         return item
-    return {**item, "output": clip_text(output, floor, CONTEXT_HINT)}
+    return _clipped(item, field, floor)
 
 
-def cut_tool_results(items, excess, count):
-    """``items`` with their tool results cut, oldest first, until ``excess`` tokens (as ``count`` counts
-    them) are gone, none below ``TOOL_OUTPUT_FLOOR`` characters. Every call keeps its result, marked
-    with what was cut; the stored items are untouched."""
+def cut_tool_calls(items, excess, count):
+    """``items`` with their tool calls' arguments and results cut, oldest first, until ``excess`` tokens (as
+    ``count`` counts them) are gone, none below ``TOOL_OUTPUT_FLOOR`` characters. Every call keeps its shape and its
+    result, marked with what was cut; the stored items are untouched."""
     out = list(items)
     for i, item in enumerate(out):
         if excess <= 0:
             break
-        output = item.get("output") if item.get("type") == "function_call_output" else None
-        if not isinstance(output, str) or len(output) <= TOOL_OUTPUT_FLOOR:
+        field = _cuttable(item)
+        if field is None or len(item[field]) <= TOOL_OUTPUT_FLOOR:
             continue
-        cost = count(item)
+        text, cost = item[field], count(item)
         # Its share of the characters it may keep, less the room the marker takes.
-        marker = len(clip_text(output, TOOL_OUTPUT_FLOOR, CONTEXT_HINT)) - TOOL_OUTPUT_FLOOR
-        keep = max(TOOL_OUTPUT_FLOOR, len(output) * (cost - excess) // cost - marker)
-        cut = {**item, "output": clip_text(output, keep, CONTEXT_HINT)}
+        marker = len(clip_text(text, TOOL_OUTPUT_FLOOR, CONTEXT_HINT)) - TOOL_OUTPUT_FLOOR
+        cut = _clipped(item, field, max(TOOL_OUTPUT_FLOOR, len(text) * (cost - excess) // cost - marker))
         saved = cost - count(cut)
         if saved > 0:
             out[i] = cut
@@ -238,19 +260,20 @@ class Compactor:
     """A run's ``call_model_input_filter``: the model sees the checkpoint, the
     latest request and the recent tail once the input passes the budget, and
     older history is folded into the checkpoint in bounded chunks. Tool results
-    that can't fold yet (the turn's own, the tail's), and once the turn has made
-    ``MAX_SUMMARIES`` every one not folded, are cut in the model's view instead
-    when they'd pass the hard ceiling (``cut_to_floor``); and when that still
-    leaves the call past it, the ones the model already acted on are cut to a
-    stub, so a long turn's next call goes on rather than fails. ``notify``
+    and tool calls' arguments (a commit's files) that can't fold yet (the turn's
+    own, the tail's), and once the turn has made ``MAX_SUMMARIES`` every one not
+    folded, are cut in the model's view instead when they'd pass the hard
+    ceiling (``cut_to_floor``); and when that still leaves the call past it, the
+    ones the model already acted on are cut to a stub, so a long turn's next
+    call goes on rather than fails. ``notify``
     hears ``compacting`` before the first summary of a call and ``compacted``
     when that call's folding ends, so a watcher can say why the turn is quiet.
 
     One instance serves one run, whose calls each extend the prompt the call
     before sent (a run's first call, the last run's), which the provider has
     cached; a fold or a cut rewrites that prompt from the item it touches on.
-    So a call folds only past the hard ceiling, and a result cut in the view
-    stays cut, the same way, for the rest of the run (``cut``)."""
+    So a call folds only past the hard ceiling, and a call or result cut in the
+    view stays cut, the same way, for the rest of the run (``cut``)."""
 
     def __init__(self, store: CheckpointStore, *, model, user_id, user_email=None, organization_id=None,
                  budget=None, notify: Optional[Callable[[str], None]] = None):
@@ -261,8 +284,8 @@ class Compactor:
         self.budget = budget or Budget()
         self.failed = False
         self.summaries = 0
-        # The tool results this run cut in the model's view: each call id, and the floor it was cut to.
-        self.cut: Dict[str, int] = {}
+        # The tool calls and results this run cut in the model's view: by ``_cut_key``, its floor and its cut.
+        self.cut: Dict[Tuple[Optional[str], Optional[str]], Tuple[int, Dict[str, Any]]] = {}
 
     async def __call__(self, data):
         # CPU tokenization stays off the event loop.
@@ -293,11 +316,10 @@ class Compactor:
                 request = next((i for i in range(covered - 1, -1, -1) if raw[i].get("role") == "user"), None)
                 if request is not None and (covered == len(raw) or raw[covered].get("role") != "user"):
                     items.append(raw[request])
-            return items + [cut_to_floor(item, self.cut[item["call_id"]]) if item.get("call_id") in self.cut else item
-                            for item in raw[covered:]]
+            return items + [self.cut.get(_cut_key(item), (None, item))[1] for item in raw[covered:]]
 
-        # A cut is made from the result as it was, so the same result reads the same in every call of the run.
-        self._results = {item["call_id"]: item for item in raw if item.get("type") == "function_call_output"}
+        # A cut is made from the item as it was, so the same call or result reads the same in every call of the run.
+        self._originals = {_cut_key(item): item for item in raw if _cuttable(item)}
 
         tool_schemas = [{"name": getattr(t, "name", ""), "description": getattr(t, "description", ""),
                          "parameters": getattr(t, "params_json_schema", {})} for t in data.agent.tools]
@@ -338,10 +360,11 @@ class Compactor:
                             break
                         end = i
                     if end is None:
-                        # One call group outgrows the chunk alone: the summarizer reads it with its results cut.
+                        # One call group outgrows the chunk alone: the summarizer reads it with its calls and
+                        # results cut.
                         end = cuts[0]
                         chunk = await asyncio.to_thread(
-                            cut_tool_results, raw[covered:end],
+                            cut_tool_calls, raw[covered:end],
                             cumulative[end] - cumulative[covered] - self.budget.chunk, self._count)
                     else:
                         chunk = raw[covered:end]
@@ -367,8 +390,9 @@ class Compactor:
             finally:
                 if compacting:
                     self._notify("compacted")
-            # What can't fold (this turn's tool results, the recent tail's) is cut instead, in the model's view;
-            # once the turn has spent its summaries or one failed, so is everything past the checkpoint, oldest first.
+            # What can't fold (this turn's tool calls and results, the recent tail's) is cut instead, in the model's
+            # view; once the turn has spent its summaries or one failed, so is everything past the checkpoint, oldest
+            # first.
             capped = self.summaries >= MAX_SUMMARIES or self.failed
             start = len(effective) - (len(raw) - (covered if capped else foldable))
             if total > self.budget.hard:
@@ -379,21 +403,22 @@ class Compactor:
                                          "saved. Its history is intact; retry after resolving the memory or model "
                                          "error.")
             raise ContextBudgetError("The latest messages are too large for the model's context, even with their "
-                                     "tool results cut short. The conversation's history is intact; send a shorter "
-                                     "message, or ask for less at a time.")
+                                     "tool calls and results cut short. The conversation's history is intact; send a "
+                                     "shorter message, or ask for less at a time.")
         return ModelInputData(input=effective, instructions=data.model_data.instructions)
 
     async def _cut(self, items, start, total, size):
-        """``items`` with tool results past ``start`` cut to the floor, oldest first: the older ones down to the
-        target, as a fold goes, so the calls after this one extend the cut view until the ceiling comes round
-        again; the latest call's own results only while still past the ceiling. Before those, a call still past
-        it (a long turn whose summaries are spent: the older results alone outgrow the context at their floor)
-        has the older ones, which the model already acted on, cut to a stub, down to the target as before."""
+        """``items`` with tool calls' arguments and tool results past ``start`` cut to the floor, oldest first: the
+        older ones down to the target, as a fold goes, so the calls after this one extend the cut view until the
+        ceiling comes round again; the latest call group only while still past the ceiling. Before those, a call
+        still past it (a long turn whose summaries are spent: the older ones alone outgrow the context at their
+        floor) has the older ones, which the model already acted on, cut to a stub, down to the target as before."""
         items = list(items)
-        latest = len(items)  # where the latest call's group starts: its calls, then their results
+        latest = len(items)  # where the latest call's group starts: its response (calls and any text), then results
         while latest > start and items[latest - 1].get("type") == "function_call_output":
             latest -= 1
-        while latest > start and items[latest - 1].get("type") in ("function_call", "reasoning"):
+        while latest > start and (items[latest - 1].get("type") in ("function_call", "reasoning") or (
+                items[latest - 1].get("type") == "message" and items[latest - 1].get("role") == "assistant")):
             latest -= 1
         older, newest = range(start, latest), range(latest, len(items))
         passes = ((older, self.budget.target, TOOL_OUTPUT_FLOOR), (older, self.budget.target, TOOL_OUTPUT_STUB),
@@ -404,14 +429,14 @@ class Compactor:
             for i in span:
                 if total <= goal:
                     break
-                call_id = items[i].get("call_id")
-                if items[i].get("type") != "function_call_output" or self.cut.get(call_id, floor + 1) <= floor:
+                key = _cut_key(items[i])
+                if not _cuttable(items[i]) or self.cut.get(key, (floor + 1,))[0] <= floor:
                     continue
-                cut = cut_to_floor(self._results.get(call_id, items[i]), floor)
+                cut = cut_to_floor(self._originals.get(key, items[i]), floor)
                 if cut is not items[i]:
                     total -= await asyncio.to_thread(lambda: self._count(items[i]) - self._count(cut))
                     items[i] = cut
-                    self.cut[call_id] = floor
+                    self.cut[key] = (floor, cut)
         return items, await size(items)
 
     def _notify(self, status: str) -> None:
