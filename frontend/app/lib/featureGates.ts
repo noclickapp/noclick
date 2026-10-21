@@ -19,7 +19,7 @@ export const FEATURE_ROLLOUT = {
     // Buying phone numbers for the Phone node.
     phone_numbers: 'everyone',
     // CLI agent sandboxes reach their model through the credential proxy.
-    credential_proxy: 'internal',
+    credential_proxy: 'everyone',
     // Automatic refills of a prepaid balance, enforced where accounts enrol.
     auto_topup: 'everyone',
     // The Free and Member plans in place of Plus/Pro and credits.

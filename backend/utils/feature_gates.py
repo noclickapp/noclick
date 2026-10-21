@@ -29,7 +29,7 @@ FEATURE_ROLLOUT: dict[str, str] = {
     "phone_numbers": EVERYONE,
     # CLI agent sandboxes reach their model through the credential proxy (a
     # temporary key, never the real one); off, a sandbox holds the credential.
-    "credential_proxy": INTERNAL,
+    "credential_proxy": EVERYONE,
     # The hosted developer API: every call, and every key it mints. INTERNAL closes it again.
     "platform_api": EVERYONE,
     # The account coordinator acting on the developer API through its own grant, whatever
