@@ -77,11 +77,6 @@ jobs:
         working-directory: sdk/typescript
         run: npm test
 
-      - name: Check the launcher parses
-        # It ships as the package's `bin`, so a syntax error here is a broken
-        # `npx noclick` for everyone until the next publish.
-        run: node --check sdk/typescript/bin/noclick.mjs
-
       - name: Set next version from the npm registry
         working-directory: sdk/typescript
         # Derive from what's actually published, not the source baseline. This

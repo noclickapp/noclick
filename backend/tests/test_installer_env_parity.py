@@ -1,25 +1,18 @@
-"""The three installers must produce the same set of settings.
+"""The installer must generate every setting the compose file requires.
 
 `docker compose up` fails loudly when a required variable is missing — the
 compose file marks them `:?` — but only at the moment someone runs it, which is
-the moment a first install is meant to succeed. There are three ways in
-(`scripts/noclick-setup.sh`, `install.sh` which calls it, and `npx noclick`,
-which generates the file itself so it can also run on Windows), and a setting
-added to one and not the others is invisible until then.
-
-Compares the KEYS, not the values: two installs must not share a secret.
+the moment a first install is meant to succeed. `scripts/noclick-setup.sh`
+(which `install.sh` calls) writes the `.env`, so a variable the compose file
+starts requiring and the script does not generate is invisible until then.
 """
 
 import os
 import pathlib
 import re
-import shutil
 import subprocess
 
-import pytest
-
 REPO = pathlib.Path(__file__).resolve().parents[2]
-CLI = REPO / "sdk" / "typescript" / "bin" / "noclick.mjs"
 SETUP = REPO / "scripts" / "noclick-setup.sh"
 
 
@@ -42,46 +35,6 @@ def _shell_env(tmp_path: pathlib.Path) -> set[str]:
         capture_output=True,
     )
     return _keys(env_file.read_text())
-
-
-def _cli_env(tmp_path: pathlib.Path) -> set[str]:
-    """Drive the CLI's generator without Docker: `where` is a pure command, so
-    the generator is exercised through a small harness that imports nothing."""
-    workdir = tmp_path / "cli-install"
-    workdir.mkdir(parents=True)
-    # The CLI writes .env beside a checkout; a docker-compose.yml is all it
-    # needs to consider the directory an install.
-    (workdir / "docker-compose.yml").write_text("services: {}\n")
-    (workdir / ".git").mkdir()
-    # ensureEnv is not exported: run the real entry point with nothing on PATH,
-    # which writes .env and then fails on the missing Docker — exactly the order
-    # a first install depends on.
-    subprocess.run(
-        ["node", str(CLI), "start"],
-        cwd=workdir,
-        # node must be reachable; docker must not be, so the run stops right
-        # after .env is written.
-        env={
-            "PATH": str(pathlib.Path(shutil.which("node")).parent),
-            "NOCLICK_DIR": str(workdir),
-            "HOME": str(tmp_path),
-        },
-        capture_output=True,
-    )
-    env_file = workdir / ".env"
-    assert env_file.exists(), "the CLI did not write .env before needing Docker"
-    return _keys(env_file.read_text())
-
-
-@pytest.mark.skipif(shutil.which("node") is None, reason="node is not installed")
-def test_shell_and_cli_installers_agree(tmp_path):
-    shell = _shell_env(tmp_path / "a")
-    cli = _cli_env(tmp_path / "b")
-    assert shell == cli, (
-        "the shell installer and `npx noclick` disagree about the settings:\n"
-        f"  only in scripts/noclick-setup.sh: {sorted(shell - cli)}\n"
-        f"  only in npx noclick:              {sorted(cli - shell)}"
-    )
 
 
 def test_every_required_compose_variable_is_generated(tmp_path):

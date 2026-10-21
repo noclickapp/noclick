@@ -42,21 +42,8 @@
 One line:
 
 ```bash
-# macOS / Linux / WSL2 -- needs Docker: https://docs.docker.com/get-docker/
+# macOS / Linux / Windows in WSL2 -- needs Docker: https://docs.docker.com/get-docker/
 curl -fsSL https://noclick.com/install.sh | sh
-```
-
-```powershell
-# Windows PowerShell -- installs Docker Desktop itself; Windows restarts once
-# the first time, and the installer continues after you sign back in
-irm https://noclick.com/install.ps1 | iex
-```
-
-Already have Docker, [Node.js](https://nodejs.org) 18+ and Git? The launcher
-the Windows installer hands off to runs everywhere:
-
-```bash
-npx noclick
 ```
 
 Or by hand — the same thing, visibly:
@@ -76,10 +63,18 @@ release with `NOCLICK_REF=<tag>` from the
 `NOCLICK_REF=main` runs the development line. The frontend image is built for
 the default local URLs, so an install with other public URLs builds that one
 image itself, and `NOCLICK_BUILD=1` builds everything from the checkout. Every
-installer option is documented at the top of [`install.sh`](./install.sh) and
-[`install.ps1`](./install.ps1).
+installer option is documented at the top of [`install.sh`](./install.sh).
 
 Then open the editor at [http://localhost:3000](http://localhost:3000).
+
+To run it from a clone instead, as you would to work on NoClick itself, install
+Docker, the [Supabase CLI](https://supabase.com/docs/guides/cli), Python 3.12,
+Node.js 20+ and pnpm, then:
+
+```bash
+pip install -r requirements.txt
+make local
+```
 
 ---
 

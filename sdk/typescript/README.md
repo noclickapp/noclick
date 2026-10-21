@@ -1,29 +1,7 @@
 # noclick
 
-Two things in one package, because they are two halves of the same product.
-
-## Run an instance
-
-```bash
-npx noclick
-```
-
-Fetches [NoClick](https://github.com/noclickapp/noclick), generates the secrets
-that have to be unique to your installation, and starts it. Docker is the only
-prerequisite. Then:
-
-```bash
-npx noclick logs        # follow them
-npx noclick update      # fetch the latest version and restart
-npx noclick stop        # stop, keeping the data
-npx noclick help        # the rest
-```
-
-Back up the `.env` it writes (`npx noclick where` prints the directory). Every
-stored integration credential is encrypted with the `CREDENTIALS_ENCRYPTION_KEY`
-in it, and a restored database without that key cannot read any of them.
-
-## Build against one
+The SDK for NoClick workflows. To run an instance of your own, see the
+[self-hosting guide](https://github.com/noclickapp/noclick/blob/main/docs/self-hosting.md).
 
 ```bash
 npm install noclick
