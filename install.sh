@@ -131,13 +131,28 @@ else
     $COMPOSE up -d || start_failed
 fi
 
-APP_URL="$(sed -n 's/^NOCLICK_APP_URL=//p' .env | head -1)"
+APP_URL="$(env_value NOCLICK_APP_URL)"
+API_URL="$(env_value NOCLICK_API_URL)"
+SUPABASE_URL="$(env_value NOCLICK_SUPABASE_URL)"
 : "${APP_URL:=http://localhost:3000}"
+: "${API_URL:=http://api.localhost:8000}"
+: "${SUPABASE_URL:=http://supabase.localhost:8001}"
+
+# Ready means every origin the browser talks to answers, not only the page:
+# the page answers well before the backend listens, and until then its port
+# resets every socket, relay and signed-URL upload. Auth and PostgREST are
+# asked through the gateway, which answers before they do.
+unanswered() {
+    for url in "$APP_URL" "$API_URL/health" "$SUPABASE_URL/auth/v1/health" "$SUPABASE_URL/rest/v1/"; do
+        curl -fsS -o /dev/null "$url" 2>/dev/null || { echo "$url"; return; }
+    done
+}
 
 say "Waiting for the app to answer"
 i=0
 until [ "$i" -ge 90 ]; do
-    if curl -fsS -o /dev/null "$APP_URL" 2>/dev/null; then
+    PENDING="$(unanswered)"
+    if [ -z "$PENDING" ]; then
         printf '\n\033[32m✓\033[0m NoClick is running at %s\n\n' "$APP_URL"
         printf '  Create the first account there; sign-ups are confirmed without\n'
         printf '  email until you configure SMTP.\n\n'
@@ -152,7 +167,7 @@ until [ "$i" -ge 90 ]; do
     sleep 2
 done
 
-red "The app did not answer at $APP_URL within three minutes."
+red "The app did not answer at $PENDING within three minutes."
 red "The containers are still running; see what they say:"
 red "  cd $DIR && $COMPOSE logs --tail 50"
 exit 1
