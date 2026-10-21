@@ -48,7 +48,7 @@ The SDK talks to a NoClick instance — self-hosted or managed — over its sock
 API: running workflows and individual nodes, streaming their output, reading and
 writing state, and uploading resources. Inside a custom interface component it
 initialises itself over `postMessage` and needs no key. See
-[the docs](https://docs.noclick.com) for the full surface.
+[the docs](https://www.noclick.com/docs) for the full surface.
 
 For external WebSocket clients, omitting `url` intentionally connects to the
 managed `https://api.noclick.io` service. Self-hosted applications should pass

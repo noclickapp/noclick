@@ -38,7 +38,7 @@
     "sdk"
   ],
   "license": "Apache-2.0",
-  "homepage": "https://docs.noclick.com/sdk/overview",
+  "homepage": "https://www.noclick.com/docs/guide/intro",
   "repository": {
     "type": "git",
     "url": "https://github.com/noclickapp/noclick",

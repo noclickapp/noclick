@@ -198,12 +198,12 @@ function LoopbackCallbackDelivery({ callbackUrl, clientName }: { callbackUrl: st
         localhost — copy the URL above and open it from there (e.g.{' '}
         <code className="text-muted-foreground/70 dark:text-zinc-500">curl &apos;&lt;url&gt;&apos;</code>), or see the{' '}
         <a
-          href="https://docs.noclick.com/mcp/setup"
+          href="https://www.noclick.com/docs/guide/mcp#troubleshooting"
           target="_blank"
           rel="noopener noreferrer"
           className="text-muted-foreground/70 dark:text-zinc-500 underline hover:text-muted-foreground"
         >
-          setup guide
+          troubleshooting steps
         </a>
         .
       </p>

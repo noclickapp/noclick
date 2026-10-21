@@ -65,7 +65,7 @@ asyncio.run(main())
 
 ## Documentation
 
-Full documentation at [docs.noclick.com/sdk](https://docs.noclick.com/sdk/overview).
+Full documentation at [noclick.com/docs](https://www.noclick.com/docs).
 
 ## License
 

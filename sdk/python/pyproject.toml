@@ -25,8 +25,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://docs.noclick.com/sdk/overview"
-Documentation = "https://docs.noclick.com/sdk/external-apps"
+Homepage = "https://www.noclick.com/docs/guide/intro"
+Documentation = "https://www.noclick.com/docs/guide/getting-started"
 
 [project.optional-dependencies]
 dev = ["pytest", "pytest-asyncio"]

@@ -12,7 +12,7 @@
 
 <p align="center">
   <a href="https://noclick.com">Website</a> ·
-  <a href="https://docs.noclick.com">Docs</a> ·
+  <a href="https://www.noclick.com/docs">Docs</a> ·
   <a href="./docs/self-hosting.md">Self-hosting</a> ·
   <a href="https://discord.com/invite/sHC2mrnss8">Discord</a> ·
   <a href="./CONTRIBUTING.md">Contributing</a>
