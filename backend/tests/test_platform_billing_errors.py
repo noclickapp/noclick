@@ -40,11 +40,12 @@ GATE_MSG = insufficient_credits_message(0.0, 0.20)  # the incident string
 
 # ── Mint ↔ recognizer roundtrip ─────────────────────────────────────────────
 
-@pytest.mark.parametrize("remaining,required", [(0.0, 0.20), (1.5, 5.0), (12.25, 1.0)])
+@pytest.mark.parametrize("remaining,required", [(0.0, 0.20), (1.5, 5.0), (12.25, 1.0), (-39.99, 0.20)])
 def test_minted_message_matches_the_recognizer(remaining, required):
     m = match_insufficient_credits(insufficient_credits_message(remaining, required))
     assert m is not None
-    assert float(m.group(1)) == pytest.approx(remaining, abs=0.005)
+    # A balance in debt reads as none left.
+    assert float(m.group(1)) == pytest.approx(max(remaining, 0.0), abs=0.005)
     assert float(m.group(2)) == pytest.approx(required, abs=0.005)
 
 

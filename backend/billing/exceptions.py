@@ -15,7 +15,8 @@ INSUFFICIENT_CREDITS_RE = re.compile(
 
 
 def insufficient_credits_message(remaining: float, required: float) -> str:
-    return f"Insufficient credits: {remaining:.2f} < {required:.2f} required"
+    # A balance in debt reads as none left: the recognizer takes no sign.
+    return f"Insufficient credits: {max(remaining, 0.0):.2f} < {required:.2f} required"
 
 
 def match_insufficient_credits(text: Optional[str]) -> Optional[re.Match]:
