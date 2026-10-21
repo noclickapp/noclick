@@ -9,6 +9,8 @@ import { nc } from '~/lib/nc';
 import { getSchemaInfo } from '~/utils/schemaFieldExtractor';
 
 export default async function () {
+    // The operations are read from the node's schema, which loads per type.
+    await (await import('~/utils/nodeSchemas')).loadAllNodeSchemas();
   // ── helpers ───────────────────────────────────────────────────────────────
   function opsFromSchema(nodeType: string): { value: string; label: string; isTrigger: boolean }[] {
     const info = getSchemaInfo(nodeType);

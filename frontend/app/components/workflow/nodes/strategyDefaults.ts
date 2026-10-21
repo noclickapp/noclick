@@ -10,7 +10,7 @@
 // nodeRegistry.ts and ReferenceAutocompleteContext.tsx can both import it
 // without re-entering the lazy nodeRegistry TDZ chain.
 
-import type { JsonValue, JsonObject, ReferenceSuggestion } from './types';
+import type { JsonValue, JsonObject, NodeDefinition, NodeDisplayStrategy, ReferenceSuggestion } from './types';
 
 function getValueType(value: JsonValue): ReferenceSuggestion['valueType'] {
     if (value === null) return 'null';
@@ -102,4 +102,16 @@ export function validatePathDefault(output: JsonValue, path: string): { valid: b
     }
 
     return { valid: true };
+}
+
+/** A node's complete display strategy: its overrides (if any) over these defaults. An unknown node (no
+ *  definition) still gets path-based suggestions from its output. */
+export function displayStrategyOf(definition: Pick<NodeDefinition, 'displayStrategy'> | undefined): NodeDisplayStrategy {
+    const overrides = definition?.displayStrategy;
+    return {
+        buildSuggestions: overrides?.buildSuggestions ?? extractPathsFromData,
+        validateReference: overrides?.validateReference ?? validatePathDefault,
+        buildSuggestionsFromConfig: overrides?.buildSuggestionsFromConfig,
+        OutputPanelContent: overrides?.OutputPanelContent,
+    };
 }

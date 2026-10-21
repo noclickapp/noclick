@@ -1,47 +1,19 @@
 // ReferenceAutocompleteContext provides input node data to DroppableTextField components.
 // This enables autocomplete suggestions when users type {{}} references and validation
 // of reference paths against actual available data from connected input nodes.
-// Uses node-defined strategies from nodeRegistry for custom behavior, with default fallback.
+// Uses node-defined strategies for custom behavior: a node on the canvas has its
+// definition loaded (./nodes/nodeDefinitions), and the defaults stand in until it does.
 
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import type { Node } from '@xyflow/react';
-import type { ReferenceSuggestion, JsonValue } from './nodes/nodeRegistry';
-import type { NodeDisplayStrategy } from './nodes/types';
+import type { ReferenceSuggestion, JsonValue } from './nodes/types';
+import { getDisplayStrategy } from './nodes/nodeDefinitions';
 import { extractPathsFromData, validatePathDefault } from './nodes/strategyDefaults';
 import { scanBlocks, isJsExpression, parsePureAccessor, normalizeAccessorRef } from './expressionSyntax';
 import { isJsonValue } from '~/utils/jsonValue';
 
-// Avoid a static import of the heavy nodeRegistry — it transitively re-enters this file
-// (FieldRenderer → SchedulesWidget → DroppableTextField → here → registry) and triggers
-// a TDZ on every lazy load of any node component file. Resolve dynamically: while the
-// registry chunk is loading, fall back to the baseline default strategy so consumers
-// can keep calling required methods (buildSuggestions / validateReference) without
-// guarding. Once the registry resolves, subsequent calls go through the real lookup.
-let _getDisplayStrategyImpl: ((type: string | undefined) => NodeDisplayStrategy) | null = null;
-let _registryLoading: Promise<void> | null = null;
-function ensureRegistryLoaded(): Promise<void> {
-    if (_getDisplayStrategyImpl) return Promise.resolve();
-    if (_registryLoading) return _registryLoading;
-    _registryLoading = import('./nodes/nodeRegistry').then((m) => {
-        _getDisplayStrategyImpl = m.getDisplayStrategy;
-    });
-    return _registryLoading;
-}
-function getDisplayStrategy(type: string | undefined): NodeDisplayStrategy {
-    if (!_getDisplayStrategyImpl) {
-        void ensureRegistryLoaded();
-        // Registry chunk not loaded yet — return the baseline so callers can still
-        // produce default suggestions/validation until the real strategy is available.
-        return {
-            buildSuggestions: extractPathsFromData,
-            validateReference: validatePathDefault,
-        };
-    }
-    return _getDisplayStrategyImpl(type);
-}
-
 // Re-export for backward compatibility
-export type { ReferenceSuggestion } from './nodes/nodeRegistry';
+export type { ReferenceSuggestion } from './nodes/types';
 
 interface ReferenceAutocompleteContextValue {
     // All available suggestions built from input nodes

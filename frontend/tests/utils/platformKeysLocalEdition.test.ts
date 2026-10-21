@@ -13,6 +13,8 @@ vi.mock('~/lib/socket-sender', () => ({
     sendEventAsync: vi.fn(async () => null),
 }));
 
+// The operations' markers are read from the nodes' schemas.
+await (await import('~/utils/nodeSchemas')).loadNodeSchemas(['automation-exa', 'automation-linkedin', 'automation-reddit']);
 const {
     hasUnconnectedCredentials,
     providerCredentialsMissing,

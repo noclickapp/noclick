@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { filterConfigForExecution, NODE_SCHEMAS, isTriggerSource } from '~/utils/nodeSchemas';
+import { filterConfigForExecution, NODE_SCHEMAS, isTriggerSource, loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 describe('Instagram direct reads', () => {
     it('exposes a real Get Comment action with the documented identity fields', () => {

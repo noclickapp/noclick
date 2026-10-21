@@ -4,7 +4,7 @@
    renders, with the backend's scenario key riding along for rehearsal:run. */
 
 import { useEffect, useState } from 'react';
-import { AVAILABLE_NODES } from '~/components/workflow/nodes/nodeRegistry';
+import { getNodeDefinition } from '~/components/workflow/nodes/nodeDefinitions';
 import { RehearsalScenariosRequest, sendEventAsync } from '~/lib/socket-sender';
 import type { Provider, TriggerFixture } from './fixture';
 
@@ -74,7 +74,7 @@ export function useLiveScenarios(workflowId: string | null): LiveScenarios {
                         // today" beats waiting for a native rendering, and a
                         // prettified type string under an amber bolt read as
                         // unsupported (the cal.com report).
-                        const def = AVAILABLE_NODES.find((n) => n.type === t.node_type);
+                        const def = getNodeDefinition(t.node_type);
                         const meta = NODE_TYPE_META[t.node_type] ?? {
                             provider: 'generic' as const,
                             nodeName: def?.label ?? prettifyNodeType(t.node_type),

@@ -9,10 +9,11 @@ import { beforeAll, describe, expect, test, vi } from 'vitest';
 import type { Edge, Node } from '@xyflow/react';
 
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
-// The registry pulls every canvas node component; the merge only needs the
-// display-name seam.
-vi.mock('~/components/workflow/nodes/nodeRegistry', () => ({
-    getNodeDisplayName: (type: string) =>
+// A name comes from the node's definition or the dashboard's catalog, neither
+// loaded here; the merge only needs the display-name seam.
+vi.mock('~/components/workflow/nodes/nodeDefinitions', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('~/components/workflow/nodes/nodeDefinitions')>()),
+    nodeDisplayName: (type: string) =>
         ({
             'automation-whatsapp': 'WhatsApp',
             'automation-telegram': 'Telegram',
@@ -26,6 +27,10 @@ beforeAll(async () => {
     ({ deriveUnmetConnections } = await import(
         '~/components/workflow/setup/readiness'
     ));
+    // Each connection is judged by its node's schema.
+    await (await import('~/utils/nodeSchemas')).loadNodeSchemas([
+        'agent', 'automation-discord', 'automation-telegram', 'automation-whatsapp', 'tool', 'trigger-webhook',
+    ]);
 }, 30000);
 
 function makeNode(id: string, type: string, data: Record<string, unknown> = {}): Node {

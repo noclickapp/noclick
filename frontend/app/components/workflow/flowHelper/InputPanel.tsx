@@ -6,7 +6,8 @@ import { useNodeOutputSchema } from '~/hooks/useNodeOutputSchema';
 import { navigateToNode } from '~/utils/workflowNavigation';
 import { IODataDisplay } from '../IODataDisplay';
 import { getDefaultLabelFromType } from '../nodes/base/NodeLabel';
-import { getDisplayStrategy, getNodeMetadata, type JsonValue } from '../nodes/nodeRegistry';
+import { getDisplayStrategy, getNodeDefinition } from '../nodes/nodeDefinitions';
+import type { JsonValue } from '../nodes/types';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { HistoryCarousel } from './HistoryCarousel';
 import { getNodeOperation } from './utils';
@@ -75,7 +76,7 @@ const InputNodeDisplay = ({
     const sourceHandle = connectingEdge?.sourceHandle;
 
     // Get node metadata for icon
-    const nodeMetadata = node.type ? getNodeMetadata(node.type) : undefined;
+    const nodeMetadata = node.type ? getNodeDefinition(node.type) : undefined;
 
     // Default label from node type
     const defaultLabel = getDefaultLabelFromType(node.type || '');

@@ -7,6 +7,10 @@
 // (agent_tool_operations allowlist) modes.
 
 import { describe, expect, it } from 'vitest';
+import { loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 const { hasUnconnectedCredentials, providerCredentialsMissing, isUsageBasedBillingAvailable } =
     await import('~/components/workflow/NodeCredentials');

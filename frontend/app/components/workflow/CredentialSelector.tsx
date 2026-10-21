@@ -17,6 +17,7 @@ import { sendEventAsync } from '~/lib/socket-sender';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import type { CredentialRequest } from './credentialRequest';
 import type { CredentialVariable } from '~/hooks/useCredentialVariables';
@@ -184,7 +185,7 @@ function getNonOAuthCredentialSchemas(nodeType: string | undefined): CredentialS
 // ============================================================================
 
 export function CredentialSelector(props: CredentialSelectorProps) {
-    return <CredentialSelectorInner {...props} />;
+    return useNodeSchemas([props.nodeType]) ? <CredentialSelectorInner {...props} /> : null;
 }
 
 function CredentialSelectorInner({

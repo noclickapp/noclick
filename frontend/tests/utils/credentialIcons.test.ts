@@ -9,7 +9,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { KeyRound } from 'lucide-react';
 import { getCredentialIcon, getOAuthProviderIcon } from '~/utils/credentialIcons';
 import { OAUTH_PROVIDER_SETUP } from '~/lib/oauthProviderSetup';
-import { NODE_SCHEMAS, credentialMarks } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, credentialMarks, loadAllNodeSchemas } from '~/utils/nodeSchemas';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
 import type { SerializedNodeMeta } from '~/lib/nodeCatalogTypes';
 import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
@@ -17,8 +17,9 @@ import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
 // getCredentialIcon resolves node-backed types from the icon singleton (normally
 // populated by the dashboard loader, whose entries name the credential keys each
 // node's mark stands for). Seed it as the loader does before any node-backed
-// lookup builds the internal cache.
-beforeAll(() => {
+// lookup builds the internal cache. The loader reads every node schema for the keys.
+beforeAll(async () => {
+    await loadAllNodeSchemas();
     const dims = { width: 90, height: 90, iconSize: 48 };
     const marks = credentialMarks(() => true);
     const withMarks = (data: Record<string, SerializedNodeMeta>) =>

@@ -10,10 +10,12 @@ import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import { useReactFlow } from '@xyflow/react';
 import { BrandIcon } from '~/components/shared/BrandIcon';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { getNodeCredentialInfo, type AgentTriggerSource, type AgentWiredTool } from '~/utils/nodeSchemas';
 import { AgentWiringPalette, type PaletteConfigNode, type WiredNodeData } from './AgentWiringPalette';
 import { FieldRequirementBadge } from './FieldRequirementBadge';
-import { getNodeDisplayName, getNodeMetadata } from './nodes/nodeRegistry';
+import { getNodeDefinition, nodeDisplayName } from './nodes/nodeDefinitions';
+import { useNodeDefinitions } from '~/hooks/useNodeDefinitions';
 
 interface AgentWiringChipsProps {
     /** 'agent' (default): triggers + tools sections under the Message field.
@@ -48,7 +50,8 @@ function Chip({
     onRemove: () => void;
     removeTitle: string;
 }) {
-    const meta = getNodeMetadata(nodeType);
+    useNodeDefinitions([nodeType]);
+    const meta = getNodeDefinition(nodeType);
     const body = (
         <>
             {meta?.Icon && (
@@ -98,6 +101,8 @@ export function AgentWiringChips({
     const [palette, setPalette] = useState<
         { role: 'trigger' | 'tool'; configNode?: PaletteConfigNode } | null
     >(null);
+    // Whether a trigger takes credentials (so its chip opens them) is read from its schema.
+    useNodeSchemas(triggers.map((t) => t.nodeType));
     if (!triggers.length && !tools.length && !onAdd) return null;
 
     const canConfigure = !!getWiredNodeData;
@@ -117,7 +122,7 @@ export function AgentWiringChips({
                         <Chip
                             key={t.edgeId}
                             nodeType={t.nodeType}
-                            label={t.label || getNodeDisplayName(t.nodeType)}
+                            label={t.label || nodeDisplayName(t.nodeType)}
                             badge={t.operation}
                             chipTitle="Configure trigger credentials"
                             onOpen={
@@ -164,7 +169,7 @@ export function AgentWiringChips({
                         <Chip
                             key={t.edgeId}
                             nodeType={t.nodeType}
-                            label={t.label || getNodeDisplayName(t.nodeType)}
+                            label={t.label || nodeDisplayName(t.nodeType)}
                             badge={
                                 t.nodeType === 'mcp-server' ? 'MCP server'
                                 : t.nodeType === 'alarm' ? '4 alarm tools'

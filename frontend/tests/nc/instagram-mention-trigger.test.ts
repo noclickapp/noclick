@@ -3,6 +3,8 @@ import { getSchemaInfo } from '~/utils/schemaFieldExtractor';
 import { isTriggerSource } from '~/utils/nodeMeta';
 
 export default async function () {
+    // The operations are read from the node's schema, which loads per type.
+    await (await import('~/utils/nodeSchemas')).loadNodeSchemas(['automation-instagram']);
     const info = getSchemaInfo('automation-instagram');
     nc.assert.truthy(info?.hasDiscriminator, 'Instagram operation picker is available');
     const index = info!.options.findIndex((_, i) =>

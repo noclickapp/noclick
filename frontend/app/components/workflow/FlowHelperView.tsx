@@ -15,6 +15,7 @@ import { ImportCurlButton } from './ImportCurlButton';
 import { hasUnconnectedCredentials, providerCredentialsMissing } from './NodeCredentials';
 import { useDroppable } from '@dnd-kit/core';
 import { useAgentCredentialsRequired } from '~/hooks/useAgentCredentialsRequired';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { ReferenceHoverProvider } from './ReferenceHoverContext';
 import { ReferenceAutocompleteProvider } from './ReferenceAutocompleteContext';
 import { useInputNodeSchemas } from '~/hooks/useNodeOutputSchema';
@@ -430,12 +431,15 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
         selectedNode?.type === 'agent' ? (selectedNode?.data?.config as Record<string, any> | undefined) : undefined
     );
 
+    // Credential needs below are read from the nodes' schemas: recomputed as they land.
+    const schemasReady = useNodeSchemas(nodes.map((n) => n.type));
+
     // Check if selected node has unconnected credentials that need attention
     // (drives the red Credentials header tab). Provider-wired nodes are judged
     // by their allowlist — the plain check saw operation=None (providers skip
     // the node drafter) and flagged usage-based providers that need no credential.
     const needsCredentialConnection = useMemo(() => {
-        if (!selectedNode?.type) return false;
+        if (!selectedNode?.type || !schemasReady) return false;
         // For agent nodes, use the hook result; for others, use hasUnconnectedCredentials
         if (selectedNode.type === 'agent') {
             return agentCredentialsCheck.credentialsRequired;
@@ -444,7 +448,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
             return providerCredentialsMissing(selectedNode.type, credentialIds, selectedNode.data);
         }
         return hasUnconnectedCredentials(selectedNode.type, credentialIds, selectedNode.data);
-    }, [selectedNode?.type, selectedNode?.data, credentialIds, agentCredentialsCheck.credentialsRequired, agentToolProviderMode]);
+    }, [selectedNode?.type, selectedNode?.data, credentialIds, agentCredentialsCheck.credentialsRequired, agentToolProviderMode, schemasReady]);
 
     // Wiring of a selected agent — trigger + tool chips under the Message
     // field (the agent runs when a trigger fires; tools are services it may
@@ -461,7 +465,8 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
             selectedNode?.type === 'agent' || selectedNode?.type === 'mcp-server'
                 ? getAgentToolProviders(selectedNode.id, nodes, edges, providerCredentialsMissing)
                 : [],
-        [selectedNode, nodes, edges]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [selectedNode, nodes, edges, schemasReady]
     );
     const configFieldAddons = useMemo(() => {
         const isMcp = selectedNode?.type === 'mcp-server';

@@ -1,20 +1,17 @@
-import { memo } from 'react';
+import { lazy, memo, Suspense, type ComponentType } from 'react';
 import type { BlockComponentProps } from './types';
-import { FormBlock } from './blocks/FormBlock';
-import { FileBlock } from './blocks/FileBlock';
-import { DataframeBlock } from './blocks/DataframeBlock';
-import { HtmlReactBlock } from './blocks/HtmlReactBlock';
-import { FileUploadBlock } from './blocks/FileUploadBlock';
 import { GenericBlock } from './blocks/GenericBlock';
-import { AgentChatBlock } from './blocks/AgentChatBlock';
 
-const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>> = {
-  form: FormBlock,
-  file: FileBlock,
-  dataframe: DataframeBlock,
-  'html-react': HtmlReactBlock,
-  'file-upload': FileUploadBlock,
-  'agent-chat': AgentChatBlock,
+// Each block loads with the first one of its kind drawn: a table brings ag-grid, a
+// chat its transcript, a component the SDK bridge. An interface node, the interface
+// tab and the fork canvas draw only the blocks they hold.
+const BLOCK_COMPONENTS: Record<string, ComponentType<BlockComponentProps>> = {
+  form: lazy(() => import('./blocks/FormBlock').then((m) => ({ default: m.FormBlock }))),
+  file: lazy(() => import('./blocks/FileBlock').then((m) => ({ default: m.FileBlock }))),
+  dataframe: lazy(() => import('./blocks/DataframeBlock').then((m) => ({ default: m.DataframeBlock }))),
+  'html-react': lazy(() => import('./blocks/HtmlReactBlock').then((m) => ({ default: m.HtmlReactBlock }))),
+  'file-upload': lazy(() => import('./blocks/FileUploadBlock').then((m) => ({ default: m.FileUploadBlock }))),
+  'agent-chat': lazy(() => import('./blocks/AgentChatBlock').then((m) => ({ default: m.AgentChatBlock }))),
 };
 
 interface BlockRendererProps extends BlockComponentProps {
@@ -23,5 +20,9 @@ interface BlockRendererProps extends BlockComponentProps {
 
 export const BlockRenderer = memo(function BlockRenderer({ blockType, ...props }: BlockRendererProps) {
   const Component = BLOCK_COMPONENTS[blockType] || GenericBlock;
-  return <Component {...props} />;
+  return (
+    <Suspense fallback={null}>
+      <Component {...props} />
+    </Suspense>
+  );
 });

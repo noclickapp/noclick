@@ -3,7 +3,7 @@
 // Ported from backend/debug_autolayout.py to work with React Flow's Node/Edge types.
 
 import type { Node, Edge } from '@xyflow/react';
-import { getDimensionsByType } from '~/components/workflow/nodes/nodeRegistry';
+import { nodeDimensions } from '~/components/workflow/nodes/nodeDefinitions';
 
 // ─── Layout Constants ────────────────────────────────────────────────────────
 
@@ -45,7 +45,7 @@ function getDims(node: Node): Dims {
     if (node.width && node.height) {
         return [node.width, node.height];
     }
-    const regDims = node.type ? getDimensionsByType(node.type) : undefined;
+    const regDims = node.type ? nodeDimensions(node.type) : undefined;
     if (regDims) {
         return [regDims.width, regDims.height];
     }

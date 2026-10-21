@@ -13,7 +13,11 @@ import {
 } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { AgentToolOperationsPicker } from '~/components/workflow/AgentToolOperationsPicker';
+import { loadNodeSchemas } from '~/utils/nodeSchemas';
 import type { CredentialPolicyState } from './CredentialPermissions';
+
+// The picker's operations are read from the node's schema.
+await loadNodeSchemas(['automation-gmail']);
 
 const NativeRequest = Request;
 beforeEach(() => {

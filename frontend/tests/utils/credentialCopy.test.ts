@@ -3,6 +3,10 @@
 import { describe, expect, it } from 'vitest';
 import { credentialRequirements, methodFromRequirement } from '~/components/credential/credentialMethods';
 import { asNamed, copyMethodOf, fieldHelp, fieldLabel, methodCopy, sentenceCase, stepsFromDescription, withArticle, withoutAppName } from '~/utils/credentialCopy';
+import { loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 const methodsOf = (nodeType: string) => credentialRequirements(nodeType).map((r) => copyMethodOf(methodFromRequirement(r)));
 

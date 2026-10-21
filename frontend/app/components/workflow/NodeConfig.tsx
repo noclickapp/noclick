@@ -16,12 +16,13 @@ import { DynamicOptionsField } from './DynamicOptionsField';
 import { DroppableTextField, getInsertReferenceForField } from './DroppableTextField';
 import { useReferenceAutocomplete } from './ReferenceAutocompleteContext';
 import { OperationPicker } from './OperationPicker';
-import { getNodeMetadata } from './nodes/nodeRegistry';
+import { getNodeDefinition } from './nodes/nodeDefinitions';
 import { SearchableEnumField } from './SearchableEnumField';
 import { MultiSelectEnumField } from './MultiSelectEnumField';
 import { renderSchemaWidget } from './schemaWidgetRegistry';
 import { getOptionDisplayName } from '~/utils/operationHelpers';
 import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { BANNER_PULSE_CYCLES, pulseElement } from '~/lib/pulseHighlight';
 import { hasUnconnectedCredentials } from './NodeCredentials';
 import { useAgentCredentialsRequired } from '~/hooks/useAgentCredentialsRequired';
@@ -95,7 +96,7 @@ function highlightConfigField(fieldKey: string, opts?: { focus?: boolean }): boo
     return true;
 }
 
-interface NodeConfigProps{
+export interface NodeConfigProps {
     nodeType: string;
     config: Record<string, any>;
     onChange: (config: Record<string, any>, sourceNodeId?: string) => void;  // sourceNodeId prevents race conditions when switching nodes
@@ -250,7 +251,12 @@ function detectDiscriminator(options: any[], resolveRef: (ref: string) => any): 
     return result;
 }
 
-export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fieldHoldsArrayRef, operation: operationProp, onOperationChange, onValidationChange, onSwitchToCredentials, credentialIds = {}, workflowId, nodeId, fieldErrors = {}, activeView: propActiveView, onActiveViewChange, onValidationStateChange, onAutofillField, onAutofillOperation, isAutofilling, autofillingFieldKey, isAutofillingOperation, autoFocusOperationPicker = true, showInputPrompt = false, onShowInputPrompt, showOutputPrompt = false, onShowOutputPrompt, fieldAddons, hideOperationPicker = false, focusFields, workflowVariables, onVariableValueChange }: NodeConfigProps) {
+/** The node's config form, drawn once its schema has loaded (the form, its defaults and its checks come from it). */
+export function NodeConfig(props: NodeConfigProps) {
+    return useNodeSchemas([props.nodeType]) ? <NodeConfigForm {...props} /> : null;
+}
+
+function NodeConfigForm({ nodeType, config, onChange, onInjectIteration, fieldHoldsArrayRef, operation: operationProp, onOperationChange, onValidationChange, onSwitchToCredentials, credentialIds = {}, workflowId, nodeId, fieldErrors = {}, activeView: propActiveView, onActiveViewChange, onValidationStateChange, onAutofillField, onAutofillOperation, isAutofilling, autofillingFieldKey, isAutofillingOperation, autoFocusOperationPicker = true, showInputPrompt = false, onShowInputPrompt, showOutputPrompt = false, onShowOutputPrompt, fieldAddons, hideOperationPicker = false, focusFields, workflowVariables, onVariableValueChange }: NodeConfigProps) {
     const { logActivity } = useAnalytics();
     // Per-field AI Fill button — rendered in every field-label row (regular,
     // collapsible widgets, and nested objects) so users see the same affordance
@@ -1580,8 +1586,8 @@ export function NodeConfig({ nodeType, config, onChange, onInjectIteration, fiel
                     onOpen={() => setPickerOpen(true)}
                     onClose={() => setPickerOpen(false)}
                     hasExplicitSelection={Boolean(operationProp)}
-                    NodeIcon={nodeType ? getNodeMetadata(nodeType)?.Icon : undefined}
-                    nodeIconColor={nodeType ? getNodeMetadata(nodeType)?.iconColor : undefined}
+                    NodeIcon={nodeType ? getNodeDefinition(nodeType)?.Icon : undefined}
+                    nodeIconColor={nodeType ? getNodeDefinition(nodeType)?.iconColor : undefined}
                     headerAction={onAutofillOperation ? (
                         <button
                             type="button"

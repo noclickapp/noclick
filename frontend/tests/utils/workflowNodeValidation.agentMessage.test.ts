@@ -18,6 +18,8 @@ let contextFromWiringKey: typeof import('~/utils/workflowNodeValidation').contex
 beforeAll(async () => {
     ({ validateNode, buildNodeValidationContext, computeWiredProviderIdsKey, contextFromWiringKey } =
         await import('~/utils/workflowNodeValidation'));
+    // The nodes are judged by their schemas.
+    await (await import('~/utils/nodeSchemas')).loadNodeSchemas(['agent', 'automation-slack', 'trigger-cron']);
 }, 30000);
 
 function node(id: string, type: string, data: Record<string, unknown>): Node {

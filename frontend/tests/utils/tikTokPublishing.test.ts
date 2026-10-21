@@ -4,6 +4,10 @@
 import { describe, expect, it } from 'vitest';
 import type { Node } from '@xyflow/react';
 import { tikTokNodePublishingError } from '~/utils/tikTokPublishing';
+import { loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 function node(operation: string, config: Record<string, unknown>): Node {
     return {

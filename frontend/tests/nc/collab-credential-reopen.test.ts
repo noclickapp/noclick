@@ -22,6 +22,8 @@ import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNo
 type Cred = { id: string; name?: string; credential_type?: string; owner_name?: string | null };
 
 export default async function () {
+    // Auto-select reads the node's schema, which loads per type.
+    await (await import('~/utils/nodeSchemas')).loadNodeSchemas(['automation-telegram']);
     const out: Record<string, unknown> = {};
     const t = 'telegram_bot_token';
     const WF_X = 'reopen-wf-x';

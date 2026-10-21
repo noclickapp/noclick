@@ -18,6 +18,7 @@ import { sendEventAsync } from '~/lib/socket-sender';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { NodeCredentials } from './NodeCredentials';
 import type { InputRequest } from './workflowGeneratorMock';
@@ -210,10 +211,11 @@ function AgentGenerationCredential({
 }
 
 export function GenerationCredentialSelector(props: GenerationCredentialSelectorProps) {
+    const schemaReady = useNodeSchemas([props.nodeType]);
     if (props.input.nodeType === 'agent') {
         return <AgentGenerationCredential input={props.input} onCredentialSelect={props.onCredentialSelect} />;
     }
-    return <GenerationCredentialSelectorInner {...props} />;
+    return schemaReady ? <GenerationCredentialSelectorInner {...props} /> : null;
 }
 
 function GenerationCredentialSelectorInner({

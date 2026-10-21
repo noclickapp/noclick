@@ -9,7 +9,7 @@
 // the rest of the panel), so it keeps its own wiring; the per-option accessors
 // underneath are what the two share.
 import { useState } from 'react';
-import { getNodeMetadata } from './nodes/nodeRegistry';
+import { getNodeDefinition } from './nodes/nodeDefinitions';
 import { OperationPicker } from './OperationPicker';
 import { getSchemaInfo } from '~/utils/schemaFieldExtractor';
 import {
@@ -43,7 +43,7 @@ export function NodeOperationPicker({
     const selectedIndex = operation
         ? (discriminator.valueToOptionIndex.get(operation) ?? 0)
         : 0;
-    const meta = getNodeMetadata(nodeType);
+    const meta = getNodeDefinition(nodeType);
 
     return (
         <OperationPicker

@@ -9,6 +9,10 @@ import { getSchemaInfo } from '~/utils/schemaFieldExtractor';
 import { getOptionDisplayName } from '~/utils/operationHelpers';
 import { scoreFields, type SearchField } from '~/utils/fuzzySearch';
 import { expandQueryTerm } from '~/utils/operationSynonyms';
+import { loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 function rankerFor(nodeType: string) {
     const info = getSchemaInfo(nodeType);

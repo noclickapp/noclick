@@ -17,7 +17,7 @@
 // wording is awkward; it takes precedence over the generated entry.
 
 import type { InputRequest } from '~/components/workflow/workflowGeneratorMock';
-import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, NODE_SCHEMA_TYPES } from '~/utils/nodeSchemas';
 
 export interface FieldAffordance {
     label: string;
@@ -74,55 +74,50 @@ function resourceLabel(resourceType: string): string {
     return tail.join(' ');
 }
 
-/** Build the (nodeType::fieldKey -> affordance) map from the node schemas. */
-function buildAffordances(): Record<string, FieldAffordance> {
+/** One node type's (nodeType::fieldKey -> affordance) entries, from its schema. */
+function nodeAffordances(nodeType: string, schema: unknown): Record<string, FieldAffordance> {
     const out: Record<string, FieldAffordance> = {};
+    const variants = operationVariants(schema);
+    if (!variants.length) return out;
 
-    for (const [nodeType, schema] of Object.entries(NODE_SCHEMAS)) {
-        const variants = operationVariants(schema);
-        if (!variants.length) continue;
+    // resourceType -> the create op that produces it (first wins)
+    const creators: Record<string, CreateOp> = {};
+    for (const v of variants) {
+        const op = v.properties?.operation;
+        if (!op || !op['x-creates-resource']) continue;
+        const resourceType = op['x-resource-type'];
+        const operation = op.const ?? op.default;
+        if (!resourceType || !operation || creators[resourceType]) continue;
+        creators[resourceType] = {
+            operation,
+            resourceType,
+            label: op['x-display-name'] || `Create new ${resourceLabel(resourceType)}`,
+        };
+    }
+    if (!Object.keys(creators).length) return out;
 
-        // resourceType -> the create op that produces it (first wins)
-        const creators: Record<string, CreateOp> = {};
-        for (const v of variants) {
-            const op = v.properties?.operation;
-            if (!op || !op['x-creates-resource']) continue;
-            const resourceType = op['x-resource-type'];
-            const operation = op.const ?? op.default;
-            if (!resourceType || !operation || creators[resourceType]) continue;
-            creators[resourceType] = {
-                operation,
-                resourceType,
-                label: op['x-display-name'] || `Create new ${resourceLabel(resourceType)}`,
+    // resource-picker fields (x-dynamic-options + x-resource-type) whose
+    // resource type has a creator in this same node.
+    for (const v of variants) {
+        for (const [fieldKey, fieldSchema] of Object.entries<any>(v.properties || {})) {
+            if (fieldKey === 'operation' || !fieldSchema || typeof fieldSchema !== 'object') continue;
+            if (!fieldSchema['x-dynamic-options']) continue;
+            const resourceType = fieldSchema['x-resource-type'];
+            if (!resourceType) continue;
+            const creator = creators[resourceType];
+            if (!creator) continue;
+            const key = `${nodeType}::${fieldKey}`;
+            if (out[key]) continue;
+            const resource = resourceLabel(resourceType);
+            out[key] = {
+                label: creator.label,
+                message: createNewMessage({
+                    resource,
+                    nodeType,
+                    operation: creator.operation,
+                    idDescription: `${resource} ID`,
+                }),
             };
-        }
-        if (!Object.keys(creators).length) continue;
-
-        // resource-picker fields (x-dynamic-options + x-resource-type) whose
-        // resource type has a creator in this same node.
-        const seen = new Set<string>();
-        for (const v of variants) {
-            for (const [fieldKey, fieldSchema] of Object.entries<any>(v.properties || {})) {
-                if (fieldKey === 'operation' || !fieldSchema || typeof fieldSchema !== 'object') continue;
-                if (!fieldSchema['x-dynamic-options']) continue;
-                const resourceType = fieldSchema['x-resource-type'];
-                if (!resourceType) continue;
-                const creator = creators[resourceType];
-                if (!creator) continue;
-                const key = `${nodeType}::${fieldKey}`;
-                if (seen.has(key)) continue;
-                seen.add(key);
-                const resource = resourceLabel(resourceType);
-                out[key] = {
-                    label: creator.label,
-                    message: createNewMessage({
-                        resource,
-                        nodeType,
-                        operation: creator.operation,
-                        idDescription: `${resource} ID`,
-                    }),
-                };
-            }
         }
     }
     return out;
@@ -133,19 +128,25 @@ function buildAffordances(): Record<string, FieldAffordance> {
 // schema's x-display-name / x-resource-type over adding entries here.
 const OVERRIDES: Record<string, FieldAffordance> = {};
 
-let _cache: Record<string, FieldAffordance> | null = null;
-function affordances(): Record<string, FieldAffordance> {
-    if (_cache) return _cache;
-    _cache = { ...buildAffordances(), ...OVERRIDES };
-    return _cache;
+// Per node type, derived once its schema has loaded (the drawer loads the asked node's schema).
+const _cache = new Map<string, Record<string, FieldAffordance>>();
+function affordancesFor(nodeType: string): Record<string, FieldAffordance> {
+    const cached = _cache.get(nodeType);
+    if (cached) return cached;
+    const schema = NODE_SCHEMAS[nodeType];
+    if (!schema) return {};
+    const entries = nodeAffordances(nodeType, schema);
+    _cache.set(nodeType, entries);
+    return entries;
 }
 
 export function getFieldAffordance(input: InputRequest | undefined): FieldAffordance | null {
     if (!input || input.type !== 'config' || !input.nodeType || !input.fieldKey) return null;
-    return affordances()[`${input.nodeType}::${input.fieldKey}`] ?? null;
+    const key = `${input.nodeType}::${input.fieldKey}`;
+    return OVERRIDES[key] ?? affordancesFor(input.nodeType)[key] ?? null;
 }
 
-// Test/introspection helper: the full derived map.
+// Test/introspection helper: the full derived map (every schema loaded).
 export function _getAllFieldAffordances(): Record<string, FieldAffordance> {
-    return affordances();
+    return Object.assign({}, ...NODE_SCHEMA_TYPES.map(affordancesFor), OVERRIDES);
 }

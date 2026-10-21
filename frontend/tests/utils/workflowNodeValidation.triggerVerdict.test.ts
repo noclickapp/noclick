@@ -16,6 +16,8 @@ let getIncompleteRunPrompt: typeof import('~/utils/incompleteRunPrompt').getInco
 beforeAll(async () => {
     ({ validateNode, getNodeIssueSummary, issueBlocksRun } = await import('~/utils/workflowNodeValidation'));
     ({ getIncompleteRunPrompt } = await import('~/utils/incompleteRunPrompt'));
+    // The nodes are judged by their schemas.
+    await (await import('~/utils/nodeSchemas')).loadNodeSchemas(['automation-slack']);
 }, 30000);
 
 const VERDICT = "@noclick isn't in #support, so Slack won't send its events here.";

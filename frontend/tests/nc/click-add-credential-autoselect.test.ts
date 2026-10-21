@@ -9,6 +9,8 @@
 import { nc } from '~/lib/nc';
 
 export default async function () {
+    // Auto-select reads the nodes' schemas, which load per type.
+    await (await import('~/utils/nodeSchemas')).loadAllNodeSchemas();
     // Requires an open workflow canvas (the click-add handler lives there).
     if (!window.screenToFlowPosition) {
         return { skipped: 'No workflow open — open a workflow, then re-run.' };

@@ -9,10 +9,13 @@
 // in FlowCanvas keeps the debounce from firing). If it fails, the hook itself
 // is broken.
 
-import { describe, expect, test, vi } from 'vitest';
+import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import type { Node } from '@xyflow/react';
 import { useNodeConfigValidation } from '~/hooks/useNodeConfigValidation';
+import { loadNodeSchemas } from '~/utils/nodeSchemas';
+
+beforeAll(() => loadNodeSchemas(['agent']));
 
 function makeNode(id: string, type: string, data: Record<string, unknown>): Node {
     return { id, type, position: { x: 0, y: 0 }, data } as Node;
@@ -34,7 +37,7 @@ describe('useNodeConfigValidation', () => {
         });
         const isDraggingRef = { current: false };
 
-        renderHook(() => useNodeConfigValidation({ nodes: current, setNodes, isDraggingRef }));
+        renderHook(() => useNodeConfigValidation({ nodes: current, setNodes, isDraggingRef, schemasReady: true }));
 
         await waitFor(() => expect(setNodes).toHaveBeenCalled(), { timeout: 1000 });
 
@@ -58,7 +61,7 @@ describe('useNodeConfigValidation', () => {
 
         const { rerender } = renderHook(
             (props: { nodes: Node[] }) =>
-                useNodeConfigValidation({ nodes: props.nodes, setNodes, isDraggingRef }),
+                useNodeConfigValidation({ nodes: props.nodes, setNodes, isDraggingRef, schemasReady: true }),
             { initialProps: { nodes: captured } },
         );
 
@@ -80,6 +83,29 @@ describe('useNodeConfigValidation', () => {
         await waitFor(() => expect(captured[0].data?.configValid).toBe(true), { timeout: 1000 });
     });
 
+    test('waits for the nodes’ schemas, then validates once they land', async () => {
+        // A node of a type whose schema hasn't loaded can't be judged: no pass may
+        // call it complete. The pass runs when the canvas says the schemas are in.
+        let current: Node[] = [
+            makeNode('a2', 'agent', { operation: 'default', config: { model: 'opencode' }, credentialIds: AGENT_CRED }),
+        ];
+        const setNodes = vi.fn((updater: (prev: Node[]) => Node[]) => {
+            current = updater(current);
+        });
+        const isDraggingRef = { current: false };
+        const { rerender } = renderHook(
+            (props: { schemasReady: boolean }) =>
+                useNodeConfigValidation({ nodes: current, setNodes, isDraggingRef, schemasReady: props.schemasReady }),
+            { initialProps: { schemasReady: false } },
+        );
+
+        await new Promise((r) => setTimeout(r, 300));
+        expect(setNodes).not.toHaveBeenCalled();
+
+        rerender({ schemasReady: true });
+        await waitFor(() => expect(current[0].data?.configValid).toBe(false), { timeout: 1000 });
+    });
+
     test('does not run while a drag is in progress', async () => {
         const current: Node[] = [
             makeNode('a1', 'agent', { operation: 'default', config: { model: 'opencode', message: 'Hi' }, credentialIds: AGENT_CRED }),
@@ -87,7 +113,7 @@ describe('useNodeConfigValidation', () => {
         const setNodes = vi.fn();
         const isDraggingRef = { current: true };
 
-        renderHook(() => useNodeConfigValidation({ nodes: current, setNodes, isDraggingRef }));
+        renderHook(() => useNodeConfigValidation({ nodes: current, setNodes, isDraggingRef, schemasReady: true }));
 
         await new Promise((r) => setTimeout(r, 300));
         expect(setNodes).not.toHaveBeenCalled();

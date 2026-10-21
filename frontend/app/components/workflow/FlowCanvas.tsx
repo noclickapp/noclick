@@ -59,7 +59,6 @@ import {
 } from './flowHelper/NodesTabContent';
 import { ForkCanvas, type ForkCanvasRef } from './forkflow/ForkCanvas';
 import { loadNodeDefsFor } from './nodeRegistryLazy';
-// NodeDefinition is already imported below from './nodes/nodeRegistry' — reuse that one.
 import { toast } from 'sonner';
 import {
     WorkflowProvider,
@@ -110,6 +109,17 @@ const WorkflowInterface = React.lazy(() =>
         default: m.WorkflowInterface,
     }))
 );
+// Shown on demand (the Setup tab, a Run with steps to finish): their forms load with them.
+const WorkflowSetupView = React.lazy(() =>
+    import('./setup/WorkflowSetupView').then((m) => ({
+        default: m.WorkflowSetupView,
+    }))
+);
+const IncompleteRunDialog = React.lazy(() =>
+    import('./IncompleteRunDialog').then((m) => ({
+        default: m.IncompleteRunDialog,
+    }))
+);
 import type {
     WorkflowInterfaceHandle,
     InterfaceGridState,
@@ -126,11 +136,13 @@ import {
 import { ErrorNodeNavigator } from './ErrorNodeNavigator';
 import { IncompleteNodeNavigator } from './IncompleteNodeNavigator';
 import { CanvasNavigatorPills } from './canvas/CanvasNavigatorPills';
-import { WorkflowSetupView } from './setup/WorkflowSetupView';
 import { useWelcomeFlow } from '~/hooks/useWelcomeFlow';
 import { useCanvasViewport } from '~/hooks/useCanvasViewport';
 import { useClickToAddNode } from '~/hooks/useClickToAddNode';
 import { useNodeConfigValidation } from '~/hooks/useNodeConfigValidation';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
+import { onIdle } from '~/lib/onIdle';
+import { preloadNodeConfig } from './NodeConfigLazy';
 import {
     MobileResourcesPill,
     MobileRunPill,
@@ -139,7 +151,6 @@ import {
 import { CanvasDialogs } from './canvas/CanvasDialogs';
 import { CanvasTopBar } from './canvas/CanvasTopBar';
 import { TriggerInfoDialog } from './TriggerInfoDialog';
-import { IncompleteRunDialog } from './IncompleteRunDialog';
 import { RunResultsDialog, type NodeRunResult } from './RunResultsDialog';
 import { RunHistoryPill } from './canvas/RunHistoryPill';
 import {
@@ -211,12 +222,11 @@ import {
     repositionImportedNodes,
 } from '~/lib/workflowIO';
 import { useStickyNoteNode } from '~/hooks/nodes/useStickyNoteNode';
-import {
-    buildReactFlowNodeTypes,
-    NodeDefinition,
-    getNodeMetadata,
-    CONNECTIONLESS_TYPES,
-} from './nodes/nodeRegistry';
+import type { NodeDefinition } from './nodes/types';
+import { buildLazyNodeTypes } from './nodes/lazyNodeTypes';
+import { getNodeDefinition, nodeDimensions } from './nodes/nodeDefinitions';
+import { CONNECTIONLESS_TYPES } from '~/utils/nodeMeta';
+import { useNodeDefinitions } from '~/hooks/useNodeDefinitions';
 import { EXTERNAL_LINK_CONFIG } from '~/utils/externalNodeLinks';
 import { MiniStickyNotePreview } from './nodes/MiniStickyNotePreview';
 import { fromHintHandleId } from './nodes/base/NextStepHint';
@@ -270,6 +280,8 @@ import {
     canFeedAgentBottom,
     isAgentToolProviderType,
     isTriggerSource,
+    loadNodeSchemas,
+    nodeSchemasLoaded,
     type AgentTriggerSource,
     type AgentWiredTool,
 } from '~/utils/nodeSchemas';
@@ -1237,6 +1249,25 @@ const FlowCanvasInner = ({
                 .join(','),
         [nodes]
     );
+    // Each node type's schema and definition load as the type first appears on
+    // the canvas: the open workflow's, then one added from the palette, the
+    // builder or a collaborator. What's derived from schemas (validation, agent
+    // wiring) recomputes as they land.
+    const workflowNodeTypes = useMemo(
+        () => (distinctNodeTypes ? distinctNodeTypes.split(',') : []),
+        [distinctNodeTypes]
+    );
+    const nodeSchemasReady = useNodeSchemas(workflowNodeTypes);
+    useNodeDefinitions(workflowNodeTypes);
+
+    // A node click opens its config form: warm it once the workflow is drawn
+    // (the phone canvas has no config panel).
+    useEffect(() => {
+        if (useForkCanvas || !workflowLoadedTrigger || !nodeSchemasReady)
+            return;
+        return onIdle(preloadNodeConfig);
+    }, [useForkCanvas, workflowLoadedTrigger, nodeSchemasReady]);
+
     useEffect(() => {
         if (!useForkCanvas) return;
         let cancelled = false;
@@ -1333,12 +1364,11 @@ const FlowCanvasInner = ({
             if (unresolved || !fieldValue.trim() || fieldValue.includes('{{'))
                 return null;
         }
-        const metadata = getNodeMetadata(selectedNode.type);
         return {
             url: config.urlTemplate(fieldValue),
             label: config.label,
             bgColor: config.bgColor,
-            Icon: metadata?.Icon,
+            Icon: getNodeDefinition(selectedNode.type)?.Icon,
         };
     }, [selectedNode?.type, selectedNode?.data, workflowVariables]);
 
@@ -1433,6 +1463,7 @@ const FlowCanvasInner = ({
         validationContext,
         setNodes,
         isDraggingRef,
+        schemasReady: nodeSchemasReady,
     });
 
     // Keep nodesRefForTour in sync with nodes for guided tour callback
@@ -2137,7 +2168,9 @@ const FlowCanvasInner = ({
             };
         }
         return map;
-    }, [nodes, edges]);
+        // A tool's missing credentials are read from its schema.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [nodes, edges, nodeSchemasReady]);
 
 
     // Auto-sync: when a block is added in the Interface grid, create a corresponding ReactFlow node
@@ -2161,10 +2194,10 @@ const FlowCanvasInner = ({
                 }
                 const newNode = createWorkflowNode(blockId, nodeType, pos, {});
                 // Set initial dimensions for resizable interface nodes
-                const nodeDef = getNodeMetadata(nodeType);
+                const dims = nodeDimensions(nodeType);
                 newNode.style = {
-                    width: nodeDef?.dimensions.width ?? 350,
-                    height: nodeDef?.dimensions.height ?? 200,
+                    width: dims?.width ?? 350,
+                    height: dims?.height ?? 200,
                 };
                 return [...prevNodes, newNode];
             });
@@ -2951,11 +2984,11 @@ const FlowCanvasInner = ({
         setNodes,
     });
 
-    // Build ReactFlow nodeTypes mapping from registry
-    // Includes collaborator cursor as a special non-interactive node type
+    // ReactFlow nodeTypes, each loading its node's definition with the first node
+    // of the type drawn. Includes collaborator cursor as a special non-interactive node type
     const nodeTypes = useMemo(
         () =>
-            buildReactFlowNodeTypes({
+            buildLazyNodeTypes({
                 stickyNote: stickyNoteRenderer,
                 collaboratorCursor: CollaboratorCursorNode,
             }),
@@ -3024,11 +3057,11 @@ const FlowCanvasInner = ({
                     height: node.height,
                 };
             } else if (node.type?.startsWith('interface-')) {
-                const nodeDef = getNodeMetadata(node.type);
-                if (nodeDef) {
+                const dims = nodeDimensions(node.type);
+                if (dims) {
                     (reactFlowNode as any).style = {
-                        width: nodeDef.dimensions.width,
-                        height: nodeDef.dimensions.height,
+                        width: dims.width,
+                        height: dims.height,
                     };
                 }
             }
@@ -3829,13 +3862,11 @@ const FlowCanvasInner = ({
             const position = n.position || n.data?.position || { x: 0, y: 0 };
             const config = n.data?.config ?? n.config ?? {};
             const nodeType = n.type || 'default';
-            const nodeDef = nodeType.startsWith('interface-')
-                ? getNodeMetadata(nodeType)
-                : null;
-            const width =
-                n.width ?? n.style?.width ?? nodeDef?.dimensions.width;
-            const height =
-                n.height ?? n.style?.height ?? nodeDef?.dimensions.height;
+            const dims = nodeType.startsWith('interface-')
+                ? nodeDimensions(nodeType)
+                : undefined;
+            const width = n.width ?? n.style?.width ?? dims?.width;
+            const height = n.height ?? n.style?.height ?? dims?.height;
             const parsed = createWorkflowNode(
                 n.id,
                 nodeType,
@@ -4466,6 +4497,18 @@ const FlowCanvasInner = ({
     // popup would never let go. Always go through runWithoutGate — see there.
     const bypassRunGateRef = useRef(false);
 
+    /** True when a run must wait for its nodes' schemas, which judge what is
+     *  incomplete and trim each config to its operation; `retry` starts it
+     *  again once they have loaded. */
+    const waitForNodeSchemas = useCallback((retry: () => void): boolean => {
+        const types = nodesRef.current.map((n) => n.type);
+        if (nodeSchemasLoaded(types)) return false;
+        loadNodeSchemas(types).then(retry, (error) =>
+            console.error('[FlowCanvas] Node schemas failed to load', error)
+        );
+        return true;
+    }, []);
+
     /**
      * Start `proceed` with the gate disarmed, and re-arm it no matter what.
      *
@@ -4712,6 +4755,7 @@ const FlowCanvasInner = ({
     // triggers (webhook, inbound email, schedule, "new row on Sheets", …) with
     // no manual Run trigger. Both popups are soft gates with a "Run anyway".
     const requestRunWorkflow = useCallback(() => {
+        if (waitForNodeSchemas(requestRunWorkflow)) return;
         // Mobile has no room for the explainer popup / config — just run.
         if (isMobileRef.current) {
             runWorkflow();
@@ -4749,7 +4793,7 @@ const FlowCanvasInner = ({
             return;
         }
         runWorkflow();
-    }, [runWorkflow, workflowId, gateRunOnIncompleteSteps]);
+    }, [runWorkflow, workflowId, gateRunOnIncompleteSteps, waitForNodeSchemas]);
 
     // "Add a Run step" from the trigger-info popup: drop an unconnected manual
     // Run trigger near the existing triggers and pan to it — the user wires it up.
@@ -5258,6 +5302,8 @@ const FlowCanvasInner = ({
                 console.warn('[FlowCanvas] Form submit blocked: no workflowId');
                 return;
             }
+            if (waitForNodeSchemas(() => handleFormSubmit(formNodeId, values)))
+                return;
 
             logActivity(EVENTS.APP_SESSION_FORM_SUBMITTED, {
                 workflow_id: workflowId,
@@ -5319,7 +5365,13 @@ const FlowCanvasInner = ({
                 })
             );
         },
-        [workflowId, workflowSettings, logActivity, resetNodesRunState]
+        [
+            workflowId,
+            workflowSettings,
+            logActivity,
+            resetNodesRunState,
+            waitForNodeSchemas,
+        ]
     );
 
     // Runs an agent node with a fresh `message` (and optional model swap) when
@@ -5348,6 +5400,18 @@ const FlowCanvasInner = ({
                 );
                 return;
             }
+            if (
+                waitForNodeSchemas(() =>
+                    handleAgentChatSend(
+                        agentNodeId,
+                        message,
+                        model,
+                        conversationKey,
+                        attachments
+                    )
+                )
+            )
+                return;
 
             const currentNodes = nodesRef.current;
             const currentEdges = edgesRef.current;
@@ -5441,7 +5505,7 @@ const FlowCanvasInner = ({
                 })
             );
         },
-        [workflowId, setNodes]
+        [workflowId, setNodes, waitForNodeSchemas]
     );
 
     // Stop a specific execution, or all if no id is given.
@@ -5504,6 +5568,16 @@ const FlowCanvasInner = ({
             background = false
         ) => {
             if (!workflowId) return;
+            if (
+                waitForNodeSchemas(() =>
+                    runFromNodeRef.current?.(
+                        nodeId,
+                        configOverrides,
+                        background
+                    )
+                )
+            )
+                return;
 
             const currentNodes = nodesRef.current;
             const currentEdges = edgesRef.current;
@@ -5631,6 +5705,7 @@ const FlowCanvasInner = ({
             resetNodesRunState,
             gateRunOnIncompleteSteps,
             nodesForExecutionIds,
+            waitForNodeSchemas,
         ]
     );
     runFromNodeRef.current = runFromNode;
@@ -5867,6 +5942,14 @@ const FlowCanvasInner = ({
             if (!workflowId) {
                 return { success: false, error: 'No workflow ID' };
             }
+            // Like the gate below: nothing failed, the run waits.
+            if (
+                waitForNodeSchemas(() =>
+                    runSingleNodeRef.current?.(nodeId, configOverrides)
+                )
+            ) {
+                return { success: true };
+            }
 
             // Prepare the subset graph for single node execution using refs
             const result = prepareNodeExecution(
@@ -5947,6 +6030,7 @@ const FlowCanvasInner = ({
             resetNodesRunState,
             gateRunOnIncompleteSteps,
             nodesForExecutionIds,
+            waitForNodeSchemas,
         ]
     );
     runSingleNodeRef.current = runSingleNode;
@@ -6078,8 +6162,7 @@ const FlowCanvasInner = ({
                                 (erroredNode.data?.label as
                                     | string
                                     | undefined) ||
-                                getNodeMetadata(erroredNode.type ?? 'default')
-                                    ?.label ||
+                                getNodeDefinition(erroredNode.type)?.label ||
                                 erroredNode.type ||
                                 'Node';
                             const errorMsg =
@@ -7696,38 +7779,45 @@ const FlowCanvasInner = ({
                                     <X className="h-4 w-4" />
                                 </button>
                             )}
-                            <WorkflowSetupView
-                                nodes={nodes}
-                                edges={edges}
-                                onOperationChange={
-                                    handleGuidedSetupOperationChange
-                                }
-                                onConfigChange={handleGuidedSetupConfigChange}
-                                onCredentialIdsChange={
-                                    handleGuidedSetupCredentialIdsChange
-                                }
-                                onOpenTestRun={() => {
-                                    // Test Run leaves the onboarding: land on
-                                    // the interface testing page in the normal
-                                    // workspace, never inside the overlay.
-                                    // Un-hiding may be what CREATES the
-                                    // interface surface, so decide the tab
-                                    // from its result, not the stale memo.
-                                    const agentVisible =
-                                        ensureAgentChatVisible();
-                                    setSetupFullscreen(false);
-                                    setActiveTab(
-                                        agentVisible || hasInterfaceBlocks
-                                            ? 'interface'
-                                            : 'canvas'
-                                    );
-                                }}
-                                workflowId={workflowId}
-                                variableDefinitions={variableDefinitions}
-                                onVariableDefinitionsChange={
-                                    handleVariableDefinitionsChange
-                                }
-                            />
+                                <React.Suspense fallback={null}>
+                                    <WorkflowSetupView
+                                        nodes={nodes}
+                                        edges={edges}
+                                        onOperationChange={
+                                            handleGuidedSetupOperationChange
+                                        }
+                                        onConfigChange={
+                                            handleGuidedSetupConfigChange
+                                        }
+                                        onCredentialIdsChange={
+                                            handleGuidedSetupCredentialIdsChange
+                                        }
+                                        onOpenTestRun={() => {
+                                            // Test Run leaves the onboarding: land on
+                                            // the interface testing page in the normal
+                                            // workspace, never inside the overlay.
+                                            // Un-hiding may be what CREATES the
+                                            // interface surface, so decide the tab
+                                            // from its result, not the stale memo.
+                                            const agentVisible =
+                                                ensureAgentChatVisible();
+                                            setSetupFullscreen(false);
+                                            setActiveTab(
+                                                agentVisible ||
+                                                    hasInterfaceBlocks
+                                                    ? 'interface'
+                                                    : 'canvas'
+                                            );
+                                        }}
+                                        workflowId={workflowId}
+                                        variableDefinitions={
+                                            variableDefinitions
+                                        }
+                                        onVariableDefinitionsChange={
+                                            handleVariableDefinitionsChange
+                                        }
+                                    />
+                                </React.Suspense>
                         </div>
                         )
                     ) : activeTab === 'canvas' ? (
@@ -8740,53 +8830,59 @@ const FlowCanvasInner = ({
                 as an empty shell. */}
             {incompleteDialogOpen &&
                 (incompleteSteps.length > 0 || runPaths.length > 0) && (
-                    <IncompleteRunDialog
-                        steps={incompleteSteps}
-                        valuesForNode={incompleteStepValues}
-                        credentialsForNode={incompleteStepCredentials}
-                        workflowId={workflowId}
-                        onFieldChange={handleIncompleteFieldChange}
-                        onOperationChange={handleIncompleteOperationChange}
-                        onCredentialsChange={handleIncompleteCredentialsChange}
-                        onClose={() => setIncompleteDialogOpen(false)}
-                        onOpenStepConfig={handleOpenIncompleteConfig}
-                        onOpenStepCredentials={handleOpenIncompleteCredentials}
-                        paths={runPaths}
-                        selectedPathIds={selectedPathIds}
-                        onTogglePath={handleToggleRunPath}
-                        onToggleAllPaths={handleToggleAllRunPaths}
-                        pathMessages={pathMessages}
-                        onPathMessageChange={handleRunPathMessageChange}
-                        handsOffToChat={runPathsScope === 'workflow'}
-                        onRun={() => {
-                            track('workflow.incomplete_run_prompt_run', {
-                                workflow_id: workflowId,
-                                step_count: incompleteSteps.length,
-                                unresolved: incompleteSteps.filter(
-                                    (s) => !s.resolved
-                                ).length,
-                                paths_selected: selectedPathIds.size,
-                            });
-                            setIncompleteDialogOpen(false);
-                            // Replays the run this popup interrupted — the whole
-                            // workflow, a single node, or from a node down.
-                            const pending = incompletePendingRunRef.current;
-                            incompletePendingRunRef.current = null;
-                            runWithoutGate(() => {
-                                // A node-scoped run already knows what it
-                                // runs, so the popup only collected the
-                                // agent's opening message — hand it to the
-                                // very call the gate intercepted.
-                                if (runPathsScope === 'node')
-                                    (pending ?? runWorkflow)(
-                                        agentMessageOverrides(runPaths)
-                                    );
-                                else if (runPaths.length > 0)
-                                    startSelectedRunPaths();
-                                else (pending ?? runWorkflow)();
-                            });
-                        }}
-                    />
+                    <React.Suspense fallback={null}>
+                        <IncompleteRunDialog
+                            steps={incompleteSteps}
+                            valuesForNode={incompleteStepValues}
+                            credentialsForNode={incompleteStepCredentials}
+                            workflowId={workflowId}
+                            onFieldChange={handleIncompleteFieldChange}
+                            onOperationChange={handleIncompleteOperationChange}
+                            onCredentialsChange={
+                                handleIncompleteCredentialsChange
+                            }
+                            onClose={() => setIncompleteDialogOpen(false)}
+                            onOpenStepConfig={handleOpenIncompleteConfig}
+                            onOpenStepCredentials={
+                                handleOpenIncompleteCredentials
+                            }
+                            paths={runPaths}
+                            selectedPathIds={selectedPathIds}
+                            onTogglePath={handleToggleRunPath}
+                            onToggleAllPaths={handleToggleAllRunPaths}
+                            pathMessages={pathMessages}
+                            onPathMessageChange={handleRunPathMessageChange}
+                            handsOffToChat={runPathsScope === 'workflow'}
+                            onRun={() => {
+                                track('workflow.incomplete_run_prompt_run', {
+                                    workflow_id: workflowId,
+                                    step_count: incompleteSteps.length,
+                                    unresolved: incompleteSteps.filter(
+                                        (s) => !s.resolved
+                                    ).length,
+                                    paths_selected: selectedPathIds.size,
+                                });
+                                setIncompleteDialogOpen(false);
+                                // Replays the run this popup interrupted — the whole
+                                // workflow, a single node, or from a node down.
+                                const pending = incompletePendingRunRef.current;
+                                incompletePendingRunRef.current = null;
+                                runWithoutGate(() => {
+                                    // A node-scoped run already knows what it
+                                    // runs, so the popup only collected the
+                                    // agent's opening message — hand it to the
+                                    // very call the gate intercepted.
+                                    if (runPathsScope === 'node')
+                                        (pending ?? runWorkflow)(
+                                            agentMessageOverrides(runPaths)
+                                        );
+                                    else if (runPaths.length > 0)
+                                        startSelectedRunPaths();
+                                    else (pending ?? runWorkflow)();
+                                });
+                            }}
+                        />
+                    </React.Suspense>
                 )}
 
             {triggerDialogOpen && (
@@ -9161,10 +9257,10 @@ const FlowCanvasWithDnd = ({
             if (nodeType === 'stickyNote') {
                 newNode.style = { width: 200, height: 200 };
             } else if (nodeType.startsWith('interface-')) {
-                const nodeDef = getNodeMetadata(nodeType);
+                const dims = nodeDimensions(nodeType);
                 newNode.style = {
-                    width: nodeDef?.dimensions.width ?? 350,
-                    height: nodeDef?.dimensions.height ?? 200,
+                    width: dims?.width ?? 350,
+                    height: dims?.height ?? 200,
                 };
             }
 

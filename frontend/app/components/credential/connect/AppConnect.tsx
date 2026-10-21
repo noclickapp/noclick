@@ -16,6 +16,7 @@ import { UpgradePopup } from '~/components/utils/UpgradePopup';
 import { useCredentialOAuth, type OAuthCreatedCredential } from '~/hooks/useCredentialOAuth';
 import { probeConnection } from '~/hooks/useConnectionProbe';
 import { useCredentialSchemaVisible } from '~/hooks/useCredentialSchemaVisible';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { useOrgContext } from '~/hooks/useOrgContext';
 import { kindFromBackendMethod } from '~/lib/credentialMethodKind';
 import { isLocalEdition } from '~/lib/edition';
@@ -67,7 +68,12 @@ function useCredentialCap(credentials: { credential_type: string; over_cap?: boo
     return { canCreate, planLimitError, setPlanLimitError };
 }
 
-export function AppConnect({
+/** The ways into an app, drawn once its node's schema (which names them) has loaded. */
+export function AppConnect(props: Parameters<typeof AppConnectForm>[0]) {
+    return useNodeSchemas([props.nodeType]) ? <AppConnectForm {...props} /> : null;
+}
+
+function AppConnectForm({
     nodeType,
     app,
     accounts,

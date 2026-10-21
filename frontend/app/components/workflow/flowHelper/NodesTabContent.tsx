@@ -1,16 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
-import { X } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { OpenAI } from '@lobehub/icons';
 import { isTextEntryTarget } from '~/lib/keyboard';
 import { KeyHint } from '~/components/shared/KeyHint';
 import { DragHintBadge } from '../DragHintBadge';
 import { MiniStickyNotePreview } from '../nodes/MiniStickyNotePreview';
-import {
-    getSearchableNodes,
-    type NodeDefinition,
-    type NodeDimensions,
-} from '../nodes/nodeRegistry';
+import { NODE_DEFINITION_TYPES, offeredNodeDefinitions } from '../nodes/nodeDefinitions';
+import type { NodeDefinition, NodeDimensions } from '../nodes/types';
+import { useNodeDefinitions } from '~/hooks/useNodeDefinitions';
 import { IMG_META } from '../nodes/base/AgentModelIcon';
 import { resolveAgentModelKind } from '~/lib/harnessBrand';
 import { BrandIcon } from '~/components/shared/BrandIcon';
@@ -27,6 +25,9 @@ import {
     getOperationSearchMatch,
     type NodeSearchIndexEntry,
 } from '~/utils/nodeSearchMatch';
+import { NODE_SCHEMA_TYPES, nodeSchemasLoaded } from '~/utils/nodeSchemas';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
+import { onIdle } from '~/lib/onIdle';
 
 // PREVIEW_SIZE is exported so FlowCanvas's drag overlay can match it
 // — the overlay must be the same visual size as the source tile or the
@@ -98,7 +99,7 @@ function getPaletteNodes(): NodeDefinition[] {
     // Sticky notes pinned first (common quick-access); Agent pinned right after so
     // it lands in a full first row alongside other 1×1 tiles (if it were last it
     // would often be alone on its own flex row and `flex-grow: 1` would stretch it).
-    const nodes = getSearchableNodes();
+    const nodes = offeredNodeDefinitions();
     _paletteNodes = [...nodes].sort((a, b) => {
         if (a.type === 'stickyNote') return -1;
         if (b.type === 'stickyNote') return 1;
@@ -109,19 +110,32 @@ function getPaletteNodes(): NodeDefinition[] {
     return _paletteNodes;
 }
 
-let _searchIndex: Map<string, NodeSearchIndexEntry> | null = null;
-function getNodeSearchIndex(): Map<string, NodeSearchIndexEntry> {
-    if (_searchIndex) return _searchIndex;
-    _searchIndex = new Map(
+// Two indexes: the nodes' own names, ready at once, and the full one with every
+// operation's schema, built once every schema has loaded.
+const _searchIndexes: Partial<Record<'names' | 'operations', Map<string, NodeSearchIndexEntry>>> = {};
+function getNodeSearchIndex(withOperations: boolean): Map<string, NodeSearchIndexEntry> {
+    const kind = withOperations ? 'operations' : 'names';
+    return (_searchIndexes[kind] ??= new Map(
         getPaletteNodes().map((node) => [
             node.type,
-            buildNodeSearchIndexEntry(node),
+            buildNodeSearchIndexEntry(node, withOperations),
         ])
-    );
-    return _searchIndex;
+    ));
 }
 
-export function NodesTabContent({
+/** The palette lists every node: their definitions (icons, labels) load with it, apart from the canvas. */
+export function NodesTabContent(props: NodesTabContentProps) {
+    if (!useNodeDefinitions(NODE_DEFINITION_TYPES)) {
+        return (
+            <div className="flex h-full items-center justify-center text-muted-foreground" aria-label="Loading nodes">
+                <Loader2 className="h-4 w-4 animate-spin" />
+            </div>
+        );
+    }
+    return <PaletteNodes {...props} />;
+}
+
+function PaletteNodes({
     searchQuery,
     onClearSearch,
 }: NodesTabContentProps) {
@@ -133,30 +147,27 @@ export function NodesTabContent({
     // Stable module singletons — no per-mount rebuild.
     const availableNodes = getPaletteNodes();
 
-    // Warm the search index in the background on first open so the first
-    // keystroke is instant, without ever blocking the browse-open path — the
-    // index is only consumed once the user actually types a query.
-    useEffect(() => {
-        if (_searchIndex) return;
-        const w = window as Window & {
-            requestIdleCallback?: (cb: () => void) => number;
-            cancelIdleCallback?: (id: number) => void;
-        };
-        const id = w.requestIdleCallback
-            ? w.requestIdleCallback(() => getNodeSearchIndex())
-            : window.setTimeout(() => getNodeSearchIndex(), 0);
-        return () => {
-            if (w.cancelIdleCallback) w.cancelIdleCallback(id);
-            else clearTimeout(id);
-        };
-    }, []);
-
     const trimmedQuery = searchQuery.trim();
+
+    // Searching operations takes every node's schema: they load once the palette
+    // is idle or a query is typed, off the canvas's path. Until then a query
+    // matches the nodes' own names.
+    const [wantSchemas, setWantSchemas] = useState(() => nodeSchemasLoaded(NODE_SCHEMA_TYPES));
+    useEffect(() => (wantSchemas ? undefined : onIdle(() => setWantSchemas(true))), [wantSchemas]);
+    useEffect(() => {
+        if (trimmedQuery) setWantSchemas(true);
+    }, [trimmedQuery]);
+    const schemasReady = useNodeSchemas(wantSchemas ? NODE_SCHEMA_TYPES : []) && wantSchemas;
+
+    // Warm the full index in the background so the first keystroke is instant,
+    // without ever blocking the browse-open path.
+    useEffect(() => (schemasReady && !_searchIndexes.operations ? onIdle(() => getNodeSearchIndex(true)) : undefined), [schemasReady]);
+
     const filteredMatches = useMemo<NodeSearchMatch[]>(() => {
         if (!trimmedQuery) return [];
         const q = trimmedQuery.toLowerCase();
         // Built lazily + cached at module scope; the browse path never reaches here.
-        const searchIndex = getNodeSearchIndex();
+        const searchIndex = getNodeSearchIndex(schemasReady);
         // Free-form CLI/model queries (e.g. "claude code", "codex", "opus",
         // "gpt-5.2", "deepseek r1") surface the Agent tile even though those
         // words don't appear in its label/description/type. The drop path
@@ -194,7 +205,7 @@ export function NodesTabContent({
             if (nodeScore !== null) return [{ node, score: nodeScore }];
             return [];
         });
-    }, [trimmedQuery, availableNodes, models]).sort(
+    }, [trimmedQuery, availableNodes, models, schemasReady]).sort(
         (a, b) => b.score - a.score || a.node.label.localeCompare(b.node.label)
     );
 

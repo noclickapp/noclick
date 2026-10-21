@@ -1,7 +1,7 @@
 // A step's config field as a person reads it: the field's title from the node's schema ("calendar_id" → "calendar"),
 // or for the keys the canvas keeps with no schema of their own, what they mean ("agent_tool_operations" → "its
-// actions"). The schemas are large, so they load on first use off the panel's path; until then a key reads as its words.
-import { useEffect } from 'react';
+// actions"). The steps' schemas load on first use off the panel's path; until then a key reads as its words.
+import { useEffect, useMemo } from 'react';
 import { proxy, useSnapshot } from 'valtio';
 
 type Schemas = typeof import('~/utils/nodeSchemas');
@@ -17,16 +17,18 @@ const CANVAS_KEYS: Record<string, string> = {
     label: 'its name',
 };
 
-const state = proxy({ loaded: false });
+const state = proxy({ version: 0 });
 let schemas: Schemas | null = null;
-let loading: Promise<void> | null = null;
+let schemasModule: Promise<Schemas> | null = null;
 
-function load(): Promise<void> {
-    loading ??= import('~/utils/nodeSchemas').then((module) => {
-        schemas = module;
-        state.loaded = true;
+/** Loads the schemas of the steps of `types`. */
+function load(types: Iterable<string | undefined>): Promise<void> {
+    schemasModule ??= import('~/utils/nodeSchemas');
+    return schemasModule.then(async (loaded) => {
+        schemas = loaded;
+        await loaded.loadNodeSchemas(types);
+        state.version += 1;
     });
-    return loading;
 }
 
 /** A config key as words: "agent_tool_operations" → "agent tool operations". */
@@ -55,18 +57,20 @@ function schemaTitle(schema: unknown, key: string): string | undefined {
 /** A field of a step of `nodeType`, in words. */
 export function fieldTitle(nodeType: string | undefined, key: string): string {
     if (CANVAS_KEYS[key]) return CANVAS_KEYS[key];
-    const title = schemas && nodeType ? schemaTitle(schemas.getNodeSchema(nodeType), key) : undefined;
+    const title =
+        schemas && nodeType && schemas.nodeSchemasLoaded([nodeType]) ? schemaTitle(schemas.getNodeSchema(nodeType), key) : undefined;
     return title ? asWords(title) : fieldWords(key);
 }
 
-/** Loads the schemas the titles come from, and re-renders once they're in. */
-export function useFieldTitles(): boolean {
-    const snap = useSnapshot(state);
+/** Loads the schemas the titles of `types`' fields come from, and re-renders once they're in. */
+export function useFieldTitles(types: Iterable<string | undefined>): boolean {
+    const { version } = useSnapshot(state);
+    const key = useMemo(() => [...new Set([...types].filter((type): type is string => !!type))].sort().join(','), [types]);
     useEffect(() => {
-        void load();
-    }, []);
-    return snap.loaded;
+        if (key) void load(key.split(','));
+    }, [key]);
+    return !key || (version > 0 && !!schemas?.nodeSchemasLoaded(key.split(',')));
 }
 
-/** The schemas the titles come from, loaded (tests, and anything that can wait for them). */
+/** The schemas the titles of `types`' fields come from, loaded (tests, and anything that can wait for them). */
 export const loadFieldTitles = load;

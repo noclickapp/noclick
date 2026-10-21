@@ -5,7 +5,7 @@
  */
 import { memo, useState, useRef, useEffect } from 'react';
 import { NodeProps, NodeResizer } from '@xyflow/react';
-import { MarkdownRenderer } from '~/components/chat/MarkdownRenderer';
+import { MarkdownRenderer } from '~/components/chat/MarkdownRendererLazy';
 import { Edit2, Trash2 } from 'lucide-react';
 import { stickyColors, stickyScheme } from '~/lib/stickyColors';
 import { useIsDark } from '~/hooks/useIsDark';

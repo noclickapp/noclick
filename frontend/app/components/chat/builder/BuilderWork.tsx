@@ -36,7 +36,7 @@ function Said({ head, tail, muted }: { head: string; tail?: string; muted?: bool
 
 /** What a running turn is on: the op of the batch running now, else the run's status; then the words of its turn. */
 export function BuilderLive({ step, said, status }: { step?: BuilderStep; said?: string; status?: string }) {
-    useFieldTitles();
+    useFieldTitles([step?.node_type]);
     const line = step ? stepWords(step, 'doing') : { head: status || 'Thinking' };
     return (
         <div className="flex flex-col gap-1" data-testid="builder-live">
@@ -76,7 +76,7 @@ function Action({ step }: { step: BuilderStep }) {
 /** A finished turn's actions, folded to how many there were; open, each in order with what was said on the way.
  *  `legacy`: a turn from before the builder reported its ops has only its status lines. */
 export function BuilderActions({ items, legacy }: { items: WorkItem[]; legacy: string[] }) {
-    useFieldTitles();
+    useFieldTitles(items.map((item) => (item.kind === 'step' ? item.step.node_type : undefined)));
     const [open, setOpen] = useState(false);
     const count = items.filter((item) => item.kind === 'step').length || legacy.length;
     const failed = items.some((item) => item.kind === 'step' && wentWrong(item.step));
@@ -166,7 +166,7 @@ const nameOf = (part: BuilderProgressNode) => (part.label !== part.nodeId ? part
 
 /** The steps a turn touched, one row each; a row opens its step on the canvas. */
 export function BuilderParts({ parts, workflowId, frozen }: { parts: BuilderProgressNode[]; workflowId?: string; /** Stopped or failed: nothing is at work. */ frozen?: boolean }) {
-    useFieldTitles();
+    useFieldTitles(parts.map((part) => part.type));
     const fresh = useJustDone(parts);
     return (
         <ul className="flex flex-col" data-testid="builder-parts">

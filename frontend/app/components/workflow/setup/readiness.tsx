@@ -17,8 +17,8 @@ import {
     buildNodeValidationContext,
     validateNode,
 } from '~/utils/workflowNodeValidation';
-import { isTriggerSource } from '~/utils/nodeSchemas';
-import { getNodeDisplayName } from '../nodes/nodeRegistry';
+import { isTriggerSource, loadNodeSchemas } from '~/utils/nodeSchemas';
+import { nodeDisplayName } from '../nodes/nodeDefinitions';
 
 export interface UnmetConnection {
     /** Representative node (the trigger member when the group has one) —
@@ -100,7 +100,7 @@ export function deriveUnmetConnections(
         if (!unmet) continue;
         raw.push({
             node,
-            label: (data.label as string) || getNodeDisplayName(node.type),
+            label: (data.label as string) || nodeDisplayName(node.type),
             role: isTool ? 'tool' : isTrigger ? 'trigger' : 'node',
         });
     }
@@ -123,7 +123,7 @@ export function deriveUnmetConnections(
         const hasTool = group.some((m) => m.role === 'tool');
         const rep = trigger ?? group[0];
         const label =
-            group.length > 1 ? getNodeDisplayName(rep.node.type!) : rep.label;
+            group.length > 1 ? nodeDisplayName(rep.node.type!) : rep.label;
         let copy: { headline: string; body: string };
         let soleWakePath: boolean | undefined;
         if (trigger) {
@@ -220,6 +220,8 @@ export function useWorkflowReadiness(
                 const blob = res?.workflow?.workflow_data ?? res?.workflow?.workflow;
                 if (cancelled || !blob) return;
                 const { nodes, edges } = adaptBlobGraph(blob);
+                await loadNodeSchemas(nodes.map((n) => n.type));
+                if (cancelled) return;
                 let items = deriveUnmetConnections(nodes, edges);
                 if (agentNodeId) {
                     const wired = new Set(

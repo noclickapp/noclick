@@ -14,6 +14,7 @@
 // is pre-rendered to an HTML string here and the client renders it via
 // <SerializedIcon> (app/components/shared/SerializedIcon) — so the registry stays
 // entirely server-side and the client bundle carries only serialized data.
+import '~/lib/nodeSchemas.server';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement, type ComponentType } from 'react';
 import { OpenAI } from '@lobehub/icons';

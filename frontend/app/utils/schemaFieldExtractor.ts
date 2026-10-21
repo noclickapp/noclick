@@ -6,7 +6,7 @@
  * Any changes to how fields are extracted should be made here.
  */
 
-import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, nodeSchemasLoaded } from '~/utils/nodeSchemas';
 
 // ============================================================================
 // Types
@@ -113,7 +113,7 @@ export function detectDiscriminator(options: any[], resolveRef: (ref: string) =>
     return result;
 }
 
-// getSchemaInfo is a pure function of the static NODE_SCHEMAS, yet it's called
+// getSchemaInfo is a pure function of a node type's schema, yet it's called
 // thousands of times per node-palette open (the search index calls it once per
 // operation across ~9.5k operations, and each call re-runs createRefResolver +
 // detectDiscriminator over every option — an O(operations²) blowup). Memoize by
@@ -128,7 +128,8 @@ export function getSchemaInfo(nodeType: string): SchemaInfo | null {
     const cached = schemaInfoCache.get(nodeType);
     if (cached !== undefined) return cached;
     const info = computeSchemaInfo(nodeType);
-    schemaInfoCache.set(nodeType, info);
+    // A schema still loading has no info yet; only a settled answer is kept.
+    if (info || nodeSchemasLoaded([nodeType])) schemaInfoCache.set(nodeType, info);
     return info;
 }
 

@@ -33,7 +33,7 @@ import {
     applyNodeChanges as xyApplyNodeChanges,
     applyEdgeChanges as xyApplyEdgeChanges,
 } from '@xyflow/react';
-import { MarkdownRenderer } from '~/components/chat/MarkdownRenderer';
+import { MarkdownRenderer } from '~/components/chat/MarkdownRendererLazy';
 import { BlockRenderer } from '~/components/interface/BlockRenderer';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 import {

@@ -25,6 +25,8 @@ beforeAll(async () => {
         '~/utils/workflowNodeValidation'
     ));
     ({ setNodeIconData } = await import('~/lib/nodeIconRegistry'));
+    // The steps are read from the nodes' schemas.
+    await (await import('~/utils/nodeSchemas')).loadNodeSchemas(['agent', 'automation-slack']);
 }, 30000);
 
 function makeNode(

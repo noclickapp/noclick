@@ -10,8 +10,10 @@ import { Plus, Settings2, Wrench, X, Zap } from 'lucide-react';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { AgentWiringPalette, type PaletteConfigNode, type WiredNodeData } from '~/components/workflow/AgentWiringPalette';
 import { getNodeCredentialInfo } from '~/utils/nodeSchemas';
-import { getNodeDisplayName, getNodeMetadata } from '~/components/workflow/nodes/nodeRegistry';
+import { getNodeDefinition, nodeDisplayName } from '~/components/workflow/nodes/nodeDefinitions';
+import { useNodeDefinitions } from '~/hooks/useNodeDefinitions';
 import { useCachedCredentialList } from '~/hooks/useCachedCredentialList';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { attachedCredentialsHealth } from '~/lib/credentialHealth';
 import type { AgentTriggerSource, AgentWiredTool } from '~/utils/nodeSchemas';
 import type { AgentWiring } from '../types';
@@ -28,10 +30,11 @@ interface AgentWiringSectionsProps {
 }
 
 const nodeLabel = (label: string, nodeType: string) =>
-    label || getNodeDisplayName(nodeType);
+    label || nodeDisplayName(nodeType);
 
 function NodeGlyph({ nodeType, className = 'h-4 w-4' }: { nodeType: string; className?: string }) {
-    const meta = getNodeMetadata(nodeType);
+    useNodeDefinitions([nodeType]);
+    const meta = getNodeDefinition(nodeType);
     if (!meta?.Icon) return null;
     return <BrandIcon Icon={meta.Icon} iconColor={meta.iconColor} className={`${className} flex-shrink-0`} />;
 }
@@ -87,6 +90,8 @@ export function AgentWiringSections({
     // called out explicitly, not sit behind the same dot as "none connected".
     const credentialList = useCachedCredentialList();
     const canEdit = !isReadOnly && !!onAdd;
+    // Whether a trigger takes credentials (so it opens them) is read from its schema.
+    useNodeSchemas(triggers.map((t) => t.nodeType));
 
     return (
         <>

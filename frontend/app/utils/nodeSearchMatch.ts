@@ -69,9 +69,14 @@ function addFieldSearchText(parts: string[], fieldKey: string, prop: unknown) {
     addSearchText(parts, schemaProp.enumLabels);
 }
 
-export function buildNodeSearchIndexEntry(node: NodeDefinition): NodeSearchIndexEntry {
+/** A node's search entry: its own name, description and keywords, and with `withOperations` (its schema loaded)
+ *  each operation and field. */
+export function buildNodeSearchIndexEntry(node: NodeDefinition, withOperations = true): NodeSearchIndexEntry {
     const identityHaystack = `${node.label} ${node.type}`.toLowerCase();
     const baseParts: string[] = [node.label, node.description, node.type, ...(node.keywords ?? [])].map((value) => value.toLowerCase());
+    if (!withOperations) {
+        return { label: node.label.toLowerCase(), identityHaystack, baseHaystack: baseParts.join(' '), operations: [] };
+    }
     const schemaInfo = getSchemaInfo(node.type);
     const operations = getAvailableOperations(node.type);
     const operationEntries: OperationSearchIndexEntry[] = [];

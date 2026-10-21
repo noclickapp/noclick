@@ -11,10 +11,7 @@ import {
     DEFAULT_NODE_HEIGHT,
     DEFAULT_NODE_WIDTH,
 } from '~/utils/workflowLayout';
-import {
-    getDimensionsByType,
-    getNodeMetadata,
-} from '~/components/workflow/nodes/nodeRegistry';
+import { nodeDimensions } from '~/components/workflow/nodes/nodeDefinitions';
 import type { WorkflowInterfaceHandle } from '~/components/interface/WorkflowInterface';
 
 interface AddConnectedNodeDetail {
@@ -102,7 +99,7 @@ function nodeSize(node: Node): { width: number; height: number } {
  *  components actually render at; workflowLayout's DEFAULT_NODE_* covers the
  *  standard automation node for types that declare none. */
 function typeSize(type: string | undefined): { width: number; height: number } {
-    const dims = type ? getDimensionsByType(type) : undefined;
+    const dims = type ? nodeDimensions(type) : undefined;
     return dims
         ? { width: dims.width, height: dims.height }
         : { width: DEFAULT_NODE_WIDTH, height: DEFAULT_NODE_HEIGHT };
@@ -609,10 +606,10 @@ export function useClickToAddNode({
             if (nodeType === 'stickyNote') {
                 newNode.style = { width: 200, height: 200 };
             } else if (nodeType.startsWith('interface-')) {
-                const nodeDef = getNodeMetadata(nodeType);
+                const dims = nodeDimensions(nodeType);
                 newNode.style = {
-                    width: nodeDef?.dimensions.width ?? 350,
-                    height: nodeDef?.dimensions.height ?? 200,
+                    width: dims?.width ?? 350,
+                    height: dims?.height ?? 200,
                 };
             }
 

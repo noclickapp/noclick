@@ -9,11 +9,11 @@ Steps to complete after running the MCP Node Generator (`scripts/generate_node_f
 
 ## Generated Files
 
-The generator creates three files that need manual registration:
+The generator creates three files; two need manual registration:
 
 ```
 backend/nodes/{name}_node.py          → Backend Registry
-frontend/app/schemas/nodes/{name}.json → Schema Imports
+frontend/app/schemas/nodes/{name}.json → (loaded per type, nothing to register)
 frontend/app/components/workflow/nodes/{ClassName}Node.tsx → Frontend Registry
 ```
 
@@ -57,26 +57,11 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
 ];
 ```
 
-## Step 3: Schema Import (1 file)
+## Step 3: Schema (nothing to register)
 
-MCP-generated nodes use API key credentials by default (not OAuth), so registration is simpler.
-
-### 3a. nodeSchemas.ts (centralized schema registry)
-
-**File:** `frontend/app/utils/nodeSchemas.ts`
-
-```typescript
-// Add import at top with other schema imports
-import {name}Schema from '~/schemas/nodes/{name}.json';
-
-// Add to NODE_SCHEMAS object (this is the SINGLE SOURCE OF TRUTH)
-export const NODE_SCHEMAS: Record<string, any> = {
-    // ... existing schemas ...
-    'automation-{name-with-dashes}': {name}Schema,
-};
-```
-
-This is the only file that needs the schema import. `NodeConfig.tsx` and execution logic both import from `nodeSchemas.ts`.
+The generator writes `frontend/app/schemas/nodes/{name}.json` and lists the type in `frontend/app/schemas/nodeMeta.json`;
+`utils/nodeSchemas.ts` loads each file per type from there. Never import a schema file directly
+(`tests/utils/nodeSchemaLoading.test.ts` fails it).
 
 ## Registration Checklist
 

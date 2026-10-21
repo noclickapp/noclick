@@ -63,6 +63,8 @@ beforeAll(async () => {
     ({ IncompleteNodeNavigator } = await import('~/components/workflow/IncompleteNodeNavigator'));
     ({ getIncompleteNodes, isFieldEmpty, isFieldRequired, validateNode, getNodeIssueSummary, buildNodeValidationContext } =
         await import('~/utils/workflowNodeValidation'));
+    // The nodes are judged by their schemas.
+    await (await import('~/utils/nodeSchemas')).loadNodeSchemas(['agent', 'automation-slack', 'automation-google-sheets']);
 }, 30000);
 
 afterEach(cleanup);

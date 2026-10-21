@@ -3,7 +3,10 @@
 // when sending execution requests to the backend.
 
 import { describe, it, expect } from 'vitest';
-import { filterConfigForExecution } from '~/utils/nodeSchemas';
+import { filterConfigForExecution, loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 describe('filterConfigForExecution', () => {
     describe('nodes without discriminated unions', () => {

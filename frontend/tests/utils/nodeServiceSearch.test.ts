@@ -12,6 +12,10 @@ import {
     scoreNodeService,
     type NodeServiceTarget,
 } from '~/utils/nodeServiceSearch';
+import { loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 // Real NodeDefinitions (imported individually — the palette rows are built from
 // these, so the test pins the authored label/keywords too, not just the scorer).

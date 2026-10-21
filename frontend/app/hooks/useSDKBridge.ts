@@ -85,24 +85,23 @@ const READ_ONLY_ALLOWED_METHODS = new Set([
  *   - x-oauth-scopes = ['https://...'] (the required scopes)
  *   - x-oauth-provider = 'google' (the provider key)
  */
-function findOAuthScopesForCredentialType(credentialType: string): { scopes: string[]; provider: string } | null {
-  try {
-    const { NODE_SCHEMAS } = require('~/utils/nodeSchemas');
-    for (const schema of Object.values(NODE_SCHEMAS) as any[]) {
-      const defs = schema?.$defs || schema?.definitions || {};
-      for (const def of Object.values(defs) as any[]) {
-        if (
-          def?.['x-oauth-scopes'] &&
-          def?.properties?.credential_type?.const === credentialType
-        ) {
-          return {
-            scopes: def['x-oauth-scopes'],
-            provider: def['x-oauth-provider'] || '',
-          };
-        }
+async function findOAuthScopesForCredentialType(credentialType: string): Promise<{ scopes: string[]; provider: string } | null> {
+  const { NODE_SCHEMAS, loadAllNodeSchemas } = await import('~/utils/nodeSchemas');
+  await loadAllNodeSchemas();
+  for (const schema of Object.values(NODE_SCHEMAS) as any[]) {
+    const defs = schema?.$defs || schema?.definitions || {};
+    for (const def of Object.values(defs) as any[]) {
+      if (
+        def?.['x-oauth-scopes'] &&
+        def?.properties?.credential_type?.const === credentialType
+      ) {
+        return {
+          scopes: def['x-oauth-scopes'],
+          provider: def['x-oauth-provider'] || '',
+        };
       }
     }
-  } catch { /* schema lookup unavailable */ }
+  }
   return null;
 }
 
@@ -581,11 +580,9 @@ export function useSDKBridge(params: UseSDKBridgeParams | null) {
             respondError(id, 'OAuth not available in this context');
             break;
           }
-          // Look up provider and scopes from the node schema (most reliable source)
-          const schemaInfo = findOAuthScopesForCredentialType(credType);
-
-          // Fall back to provider config if schema lookup fails
-          import('~/utils/oauthProviders').then(({ getProviderKeyFromCredentialType }) => {
+          // Provider and scopes from the node schema that declares the type (most reliable source), else the
+          // provider config.
+          Promise.all([findOAuthScopesForCredentialType(credType), import('~/utils/oauthProviders')]).then(([schemaInfo, { getProviderKeyFromCredentialType }]) => {
             const providerKey = schemaInfo?.provider || getProviderKeyFromCredentialType(credType);
             if (!providerKey) {
               respondError(id, `Unknown credential type: ${credType}`);
@@ -612,7 +609,7 @@ export function useSDKBridge(params: UseSDKBridgeParams | null) {
             const credName = credType.replace(/_oauth$/, '').replace(/_/g, ' ');
             oauthConnect(providerKey, credName, scopes);
           }).catch((e) => {
-            respondError(id, e instanceof Error ? e.message : 'Failed to load OAuth providers');
+            respondError(id, e instanceof Error ? e.message : 'Failed to look up the credential type');
           });
           break;
         }

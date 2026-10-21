@@ -6,6 +6,8 @@ import { buildSaveConfig } from '~/lib/applyNodeUpdate';
 import { getSchemaInfo } from '~/utils/schemaFieldExtractor';
 
 export default async function () {
+  // The operations are read from the node's schema, which loads per type.
+  await (await import('~/utils/nodeSchemas')).loadNodeSchemas(['automation-google-sheets']);
   const results: Record<string, any> = {};
   const testId = '__test_create_op';
 

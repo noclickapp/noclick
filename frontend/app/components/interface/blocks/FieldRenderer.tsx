@@ -12,6 +12,7 @@ import type { InputRequest } from '~/components/workflow/workflowGeneratorMock';
 import { getServiceForCredentialType } from '~/utils/credentialTypes';
 import { useCredentialVariablesContext } from '~/contexts/CredentialVariablesContext';
 import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { useResourceUpload } from '~/hooks/useResourceUpload';
 import { useRenewableResourceUrl } from '~/hooks/useRenewableResourceUrl';
 import { UploadProgressBar } from '~/components/ui/upload-progress';
@@ -373,11 +374,12 @@ function CredentialFieldRenderer({
   const serviceNodeType = useMemo(() => getServiceForCredentialType(credType)?.value, [credType]);
   // Credential variables from set-variable nodes in the workflow (provided via context from FlowCanvas)
   const credentialVariables = useCredentialVariablesContext();
+  const schemaReady = useNodeSchemas([serviceNodeType]);
 
   // QR scan credentials (e.g. whatsapp_qr) need the dedicated QR flow, not a standard form
   const isQRScan = useMemo(
-    () => isQRScanCredentialType(credType, serviceNodeType),
-    [credType, serviceNodeType],
+    () => schemaReady && isQRScanCredentialType(credType, serviceNodeType),
+    [schemaReady, credType, serviceNodeType],
   );
 
   // Build the input request for GenerationCredentialSelector (always computed, conditionally used)
@@ -395,6 +397,8 @@ function CredentialFieldRenderer({
     }),
     [field.id, field.label, field.placeholder, field.required, credType, acceptedTypes, value],
   );
+
+  if (!schemaReady) return null;
 
   // QR scan credentials (e.g. whatsapp_qr) bypass the standard selector and show the scan flow
   if (isQRScan) {

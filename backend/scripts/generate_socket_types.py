@@ -907,6 +907,8 @@ def generate_node_schemas():
         # Slim per-type facts (provider flag, trigger ops, platform-vendor ops) for utils/nodeMeta.ts —
         # lets light surfaces (marketing previews, fork canvas, edge components)
         # answer type predicates without bundling the full ~9MB schema registry.
+        # Every type with a schema gets an entry: its keys are the list the frontend
+        # loads each schema file by (utils/nodeSchemas.ts).
         node_meta = {}
         for schema_name, node_class in NODE_CLASSES.items():
             try:
@@ -942,16 +944,17 @@ def generate_node_schemas():
                 meta_entry = {}
                 if schema.get('x-agent-tool-provider'):
                     meta_entry['agentToolProvider'] = True
+                if schema.get('x-connectionless'):
+                    meta_entry['connectionless'] = True
                 trigger_ops = _trigger_operations(schema)
                 if trigger_ops:
                     meta_entry['triggerOperations'] = trigger_ops
                 vendor_ops = _platform_vendor_operations(schema)
                 if vendor_ops:
                     meta_entry['platformVendorOperations'] = vendor_ops
-                if meta_entry:
-                    # Keyed by the FULL registry type (automation-slack), matching
-                    # the frontend's NODE_SCHEMAS keys and canvas node.type values.
-                    node_meta[SCHEMA_TO_TYPE[schema_name]] = meta_entry
+                # Keyed by the FULL registry type (automation-slack), matching
+                # the frontend's NODE_SCHEMAS keys and canvas node.type values.
+                node_meta[SCHEMA_TO_TYPE[schema_name]] = meta_entry
 
                 # Write to file with pretty formatting (only if content changed)
                 json_content = json.dumps(schema, indent=2)

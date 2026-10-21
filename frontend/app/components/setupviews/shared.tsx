@@ -23,7 +23,7 @@ import {
     type LucideIcon,
 } from 'lucide-react';
 import { cn } from '~/lib/utils';
-import { getNodeMetadata } from '~/components/workflow/nodes/nodeRegistry';
+import { getNodeDefinition } from '~/components/workflow/nodes/nodeDefinitions';
 import { BrandIcon, type BrandIconComponent } from '~/components/shared/BrandIcon';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
 
@@ -46,7 +46,7 @@ export type FieldKind = 'text' | 'textarea' | 'enum' | 'boolean' | 'number' | 'd
 
 export interface SetupNodeMeta {
     nodeId: string;
-    /** Real registry node type (e.g. 'automation-slack') so getNodeMetadata resolves the brand icon. */
+    /** Real registry node type (e.g. 'automation-slack') so its definition gives the brand icon. */
     nodeType: string;
     /** Display label — a custom node label or the node-type label. */
     label: string;
@@ -201,7 +201,7 @@ export function groupByNode(steps: SetupStep[], nodes: Record<string, SetupNodeM
 
 /** Resolve a registry node type to its icon/label/color, with a safe fallback. */
 export function resolveNode(nodeType: string): { label: string; Icon?: BrandIconComponent; iconColor: string } {
-    const meta = getNodeMetadata(nodeType);
+    const meta = getNodeDefinition(nodeType);
     return {
         label: meta?.label || nodeType || 'Unknown',
         Icon: meta?.Icon,

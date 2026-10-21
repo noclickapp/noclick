@@ -16,7 +16,7 @@ nodes/my_node.py                          schemas/nodes/my-node.json
   - Pydantic models (config, creds)         - Generated JSON Schema
   - Node class with execute()
   - load_field_options() for dropdowns    utils/
-                                            - nodeSchemas.ts (NODE_SCHEMAS registry + filterConfigForExecution)
+                                            - nodeSchemas.ts (loads each schema per type; filterConfigForExecution)
 nodes/node_registry.py                    components/workflow/
   - NODE_REGISTRY entry                     - FlowCanvas.tsx (typeMap for auto-select)
                                             - NodeCredentials.tsx (CREDENTIAL_TYPE_MAP)
@@ -37,7 +37,7 @@ wss/handlers/
 ```
 
 **Key Frontend Registrations** (easy to miss):
-- `utils/nodeSchemas.ts`: NODE_SCHEMAS (centralized schema registry for config form + execution filtering)
+- `utils/nodeSchemas.ts`: NODE_SCHEMAS, loaded per node type from the generated files (config form + execution filtering)
 - `FlowCanvas.tsx`: typeMap (for credential auto-select on drag)
 - `NodeCredentials.tsx`: **CREDENTIAL_TYPE_MAP** (for OAuth credential display)
 
@@ -295,20 +295,14 @@ print(json.dumps(schema, indent=2))
 " > ../frontend/app/schemas/nodes/my-node.json
 ```
 
-## Step 4: Register Schema in Frontend (2 files)
+## Step 4: Register Schema in Frontend (1 file)
 
-**IMPORTANT**: Schema must be added to TWO files. Missing any will cause bugs.
+**IMPORTANT**: The credential map must name every credential class. Missing one will cause bugs.
 
 ```typescript
-// ============ utils/nodeSchemas.ts (centralized schema registry) ============
-// This is the SINGLE SOURCE OF TRUTH for node schemas.
-// Used by NodeConfig for rendering forms and by execution logic for filtering configs.
-import myServiceSchema from '~/schemas/nodes/my-service.json';
-
-export const NODE_SCHEMAS: Record<string, any> = {
-    // ... existing schemas ...
-    'automation-my-service': myServiceSchema,
-};
+// ============ utils/nodeSchemas.ts ============
+// Nothing to add: it loads each generated schema file per node type (listed in schemas/nodeMeta.json).
+// Never import a schema file directly (tests/utils/nodeSchemaLoading.test.ts fails it).
 
 // ============ NodeCredentials.tsx ============
 // Only needs CREDENTIAL_TYPE_MAP (imports NODE_SCHEMAS from nodeSchemas.ts)
@@ -569,7 +563,6 @@ When a webhook is received:
 
 ### Frontend
 - [ ] Generate schema to `schemas/nodes/my-node.json`
-- [ ] `utils/nodeSchemas.ts` - NODE_SCHEMAS (centralized schema registry)
 - [ ] `NodeCredentials.tsx` - **CREDENTIAL_TYPE_MAP**
 - [ ] `FlowCanvas.tsx` - typeMap (for credential auto-select)
 - [ ] `nodes/MyServiceNode.tsx` - NodeDefinition

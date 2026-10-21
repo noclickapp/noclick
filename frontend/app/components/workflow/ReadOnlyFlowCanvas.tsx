@@ -11,7 +11,6 @@ import {
     useState,
     useRef,
     useEffect,
-    type ComponentType,
 } from 'react';
 import { useIsMobile, useMediaQuery } from '~/hooks/useIsMobile';
 import { useCtrlPan } from '~/hooks/useCtrlPan';
@@ -33,9 +32,9 @@ import {
 } from '@xyflow/react';
 import { perfState } from '~/lib/perf-state';
 import '@xyflow/react/dist/style.css';
-// nodeRegistry is dynamically imported so its ~92 node-component modules
-// only load once the desktop canvas mounts (mobile takes the ForkCanvas path).
 import AnimatedWorkflowEdge from './edges/AnimatedWorkflowEdge';
+import { buildLazyNodeTypes } from './nodes/lazyNodeTypes';
+import { useNodeDefinitions } from '~/hooks/useNodeDefinitions';
 import { ReadOnlyFlowHelperView } from './ReadOnlyFlowHelperView';
 import { applyEdgeStyle } from '~/utils/workflowLayout';
 import {
@@ -210,22 +209,10 @@ function ReadOnlyFlowCanvasInner({
     const canvasRef = useRef<HTMLDivElement>(null);
     const panActivationKeyCode = useCtrlPan(canvasRef);
 
-    // nodeTypes is lazily resolved from the eager registry — the registry
-    // pulls in all ~92 node-component modules, so we keep it out of the
-    // initial bundle and hydrate the map asynchronously.
-    const [nodeTypes, setNodeTypes] = useState<
-        Record<string, ComponentType<any>>
-    >({});
-    useEffect(() => {
-        let cancelled = false;
-        import('./nodes/nodeRegistry').then((m) => {
-            if (cancelled) return;
-            setNodeTypes(m.buildReactFlowNodeTypes());
-        });
-        return () => {
-            cancelled = true;
-        };
-    }, []);
+    // nodeTypes load each node's definition with the first node of its type
+    // drawn; the panel reads the same definitions.
+    const nodeTypes = useMemo(() => buildLazyNodeTypes(), []);
+    useNodeDefinitions(initialNodes.map((node) => node.type));
 
     // Process nodes to ensure they have proper styling for read-only mode.
     // Parse backend format (node.config) into proper data model via createWorkflowNode.

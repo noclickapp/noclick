@@ -38,6 +38,10 @@ vi.mock('~/components/credential/PhoneNumberPurchaseForm', () => ({
 }));
 
 import { AppConnect } from './AppConnect';
+import { loadNodeSchemas } from '~/utils/nodeSchemas';
+
+// The ways in are read from the node's schema.
+await loadNodeSchemas(['automation-whatsapp', 'automation-phone']);
 
 afterEach(cleanup);
 

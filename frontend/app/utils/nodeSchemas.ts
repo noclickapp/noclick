@@ -1,383 +1,99 @@
 /**
- * Centralized schema registry for workflow nodes.
- * Single source of truth for node JSON schemas used by NodeConfig (UI) and execution filtering.
+ * Node JSON schemas, the generated files under ~/schemas/nodes (backend/scripts/generate_socket_types.py),
+ * loaded per node type: each file is its own lazy chunk, so a page fetches only the schemas of the node
+ * types it shows. Every helper here reads synchronously over what has loaded, so a reader sits behind a
+ * load: useNodeSchemas in a component, `await loadNodeSchemas(types)` elsewhere, and loadAllNodeSchemas
+ * for the few that walk every type (search, the agent wiring palette). The server registers every file up
+ * front (lib/nodeSchemas.server).
  */
 
-// Import credential type mapping
 // From the leaf, NOT credentialTypes: that module imports getNodeCredentialInfo
 // from this one, and the resulting cycle made module-evaluation order load-bearing
-// — any new import edge into the pair could 500 Vite SSR. This file now has no
-// non-JSON imports at all.
+// — any new import edge into the pair could 500 Vite SSR.
 import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypeMap';
-
-// Import JSON schemas
-import telegramSchema from '~/schemas/nodes/telegram.json';
-import agentSchema from '~/schemas/nodes/agent.json';
-import googleSheetsSchema from '~/schemas/nodes/google-sheets.json';
-import googleDriveSchema from '~/schemas/nodes/google-drive.json';
-import gmailSchema from '~/schemas/nodes/gmail.json';
-import iterationSchema from '~/schemas/nodes/iteration.json';
-import delaySchema from '~/schemas/nodes/delay.json';
-import httpRequestSchema from '~/schemas/nodes/http-request.json';
-import linearSchema from '~/schemas/nodes/linear.json';
-import githubRestSchema from '~/schemas/nodes/github-rest.json';
-import airtableSchema from '~/schemas/nodes/airtable.json';
-import stripeSchema from '~/schemas/nodes/stripe.json';
-import apifySchema from '~/schemas/nodes/apify.json';
-import salesforceSchema from '~/schemas/nodes/salesforce.json';
-import youtubeSchema from '~/schemas/nodes/youtube.json';
-import linkedinSchema from '~/schemas/nodes/linkedin.json';
-import redditSchema from '~/schemas/nodes/reddit.json';
-import webhookTriggerSchema from '~/schemas/nodes/trigger-webhook.json';
-import inboundEmailTriggerSchema from '~/schemas/nodes/trigger-email.json';
-import sendEmailSchema from '~/schemas/nodes/send-email.json';
-import cronTriggerSchema from '~/schemas/nodes/trigger-cron.json';
-import serverlessFunctionSchema from '~/schemas/nodes/serverless-function.json';
-import outlookSchema from '~/schemas/nodes/outlook.json';
-import excelSchema from '~/schemas/nodes/excel.json';
-import onedriveSchema from '~/schemas/nodes/onedrive.json';
-import microsoftTodoSchema from '~/schemas/nodes/microsoft-todo.json';
-import wordSchema from '~/schemas/nodes/word.json';
-import googleCalendarSchema from '~/schemas/nodes/google-calendar.json';
-import notionSchema from '~/schemas/nodes/notion.json';
-import toolSchema from '~/schemas/nodes/tool.json';
-import mcpServerSchema from '~/schemas/nodes/mcp-server.json';
-import discordSchema from '~/schemas/nodes/discord.json';
-import apolloSchema from '~/schemas/nodes/apollo.json';
-import instagramSchema from '~/schemas/nodes/instagram.json';
-import facebookSchema from '~/schemas/nodes/facebook.json';
-import instantlySchema from '~/schemas/nodes/instantly.json';
-import pipedriveSchema from '~/schemas/nodes/pipedrive.json';
-import resendSchema from '~/schemas/nodes/resend.json';
-import threadsSchema from '~/schemas/nodes/threads.json';
-import metaSchema from '~/schemas/nodes/meta.json';
-import phantombusterSchema from '~/schemas/nodes/phantombuster.json';
-import pineconeSchema from '~/schemas/nodes/pinecone.json';
-import calComSchema from '~/schemas/nodes/cal-com.json';
-import calendlySchema from '~/schemas/nodes/calendly.json';
-import honeycombSchema from '~/schemas/nodes/honeycomb.json';
-import sentrySchema from '~/schemas/nodes/sentry.json';
-import googleMapsSchema from '~/schemas/nodes/google-maps.json';
-import perplexitySchema from '~/schemas/nodes/perplexity.json';
-import posthogSchema from '~/schemas/nodes/posthog.json';
-import voyageSchema from '~/schemas/nodes/voyage.json';
-import qdrantSchema from '~/schemas/nodes/qdrant.json';
-import upstashVectorSchema from '~/schemas/nodes/upstash-vector.json';
-import weaviateSchema from '~/schemas/nodes/weaviate.json';
-import chromaSchema from '~/schemas/nodes/chroma.json';
-import milvusSchema from '~/schemas/nodes/milvus.json';
-import mongodbSchema from '~/schemas/nodes/mongodb.json';
-import elasticsearchSchema from '~/schemas/nodes/elasticsearch.json';
-import mailgunSchema from '~/schemas/nodes/mailgun.json';
-import gitlabSchema from '~/schemas/nodes/gitlab.json';
-import boxSchema from '~/schemas/nodes/box.json';
-import clickupSchema from '~/schemas/nodes/clickup.json';
-import devinSchema from '~/schemas/nodes/devin.json';
-import asanaSchema from '~/schemas/nodes/asana.json';
-import firestoreSchema from '~/schemas/nodes/firestore.json';
-import googleCloudStorageSchema from '~/schemas/nodes/google-cloud-storage.json';
-import mondaySchema from '~/schemas/nodes/monday.json';
-import parallelSchema from '~/schemas/nodes/parallel.json';
-import datadogSchema from '~/schemas/nodes/datadog.json';
-import loopsSchema from '~/schemas/nodes/loops.json';
-import exaSchema from '~/schemas/nodes/exa.json';
-import reductoSchema from '~/schemas/nodes/reducto.json';
-import falSchema from '~/schemas/nodes/fal.json';
-import brandfetchSchema from '~/schemas/nodes/brandfetch.json';
-import recurlySchema from '~/schemas/nodes/recurly.json';
-import findymailSchema from '~/schemas/nodes/findymail.json';
-import beehiivSchema from '~/schemas/nodes/beehiiv.json';
-import hexSchema from '~/schemas/nodes/hex.json';
-import clickhouseSchema from '~/schemas/nodes/clickhouse.json';
-import extendSchema from '~/schemas/nodes/extend.json';
-import fellowSchema from '~/schemas/nodes/fellow.json';
-import fathomSchema from '~/schemas/nodes/fathom.json';
-import sigmaSchema from '~/schemas/nodes/sigma.json';
-import trelloSchema from '~/schemas/nodes/trello.json';
-import firecrawlSchema from '~/schemas/nodes/firecrawl.json';
-import attioSchema from '~/schemas/nodes/attio.json';
-import intercomSchema from '~/schemas/nodes/intercom.json';
-import zendeskSchema from '~/schemas/nodes/zendesk.json';
-import confluenceSchema from '~/schemas/nodes/confluence.json';
-import pagerdutySchema from '~/schemas/nodes/pagerduty.json';
-import googleMeetSchema from '~/schemas/nodes/google-meet.json';
-import expensifySchema from '~/schemas/nodes/expensify.json';
-import freshsalesSchema from '~/schemas/nodes/freshsales.json';
-import launchdarklySchema from '~/schemas/nodes/launchdarkly.json';
-import appsheetSchema from '~/schemas/nodes/appsheet.json';
-import tableauSchema from '~/schemas/nodes/tableau.json';
-import atlasAdminSchema from '~/schemas/nodes/atlas-admin.json';
-import webflowSchema from '~/schemas/nodes/webflow.json';
-import connecteamSchema from '~/schemas/nodes/connecteam.json';
-import pagespeedSchema from '~/schemas/nodes/pagespeed.json';
-import googleTranslateSchema from '~/schemas/nodes/google-translate.json';
-import bigquerySchema from '~/schemas/nodes/bigquery.json';
-import snowflakeSchema from '~/schemas/nodes/snowflake.json';
-import databricksSchema from '~/schemas/nodes/databricks.json';
-import microsoftTeamsSchema from '~/schemas/nodes/microsoft-teams.json';
-import gohighlevelSchema from '~/schemas/nodes/gohighlevel.json';
-import quickbooksSchema from '~/schemas/nodes/quickbooks.json';
-import zoomSchema from '~/schemas/nodes/zoom.json';
-import onelakeSchema from '~/schemas/nodes/onelake.json';
-import bamboohrSchema from '~/schemas/nodes/bamboohr.json';
-import klaviyoSchema from '~/schemas/nodes/klaviyo.json';
-import dv360Schema from '~/schemas/nodes/dv360.json';
-import tiktokSchema from '~/schemas/nodes/tiktok.json';
-import twitterSchema from '~/schemas/nodes/twitter.json';
-import cloudflareSchema from '~/schemas/nodes/cloudflare.json';
-import shopifySchema from '~/schemas/nodes/shopify.json';
-import slackSchema from '~/schemas/nodes/slack.json';
-import postgresSchema from '~/schemas/nodes/postgres.json';
-import blueskySchema from '~/schemas/nodes/bluesky.json';
-import canvaSchema from '~/schemas/nodes/canva.json';
-import hackernewsSchema from '~/schemas/nodes/hackernews.json';
-import redisSchema from '~/schemas/nodes/redis.json';
-import rssSchema from '~/schemas/nodes/rss.json';
-import hubspotSchema from '~/schemas/nodes/hubspot.json';
-import affinitySchema from '~/schemas/nodes/affinity.json';
-import nocodbSchema from '~/schemas/nodes/nocodb.json';
-import basedashSchema from '~/schemas/nodes/basedash.json';
-import jiraSchema from '~/schemas/nodes/jira.json';
-import semrushSchema from '~/schemas/nodes/semrush.json';
-import mailchimpSchema from '~/schemas/nodes/mailchimp.json';
-import typeformSchema from '~/schemas/nodes/typeform.json';
-import supabaseSchema from '~/schemas/nodes/supabase.json';
-import twilioSchema from '~/schemas/nodes/twilio.json';
-import phoneSchema from '~/schemas/nodes/phone.json';
-import whatsappSchema from '~/schemas/nodes/whatsapp.json';
-import elevenlabsSchema from '~/schemas/nodes/elevenlabs.json';
-import dropboxSchema from '~/schemas/nodes/dropbox.json';
-import wordpressSchema from '~/schemas/nodes/wordpress.json';
-import googleTasksSchema from '~/schemas/nodes/google-tasks.json';
-import googleContactsSchema from '~/schemas/nodes/google-contacts.json';
-import googleDocsSchema from '~/schemas/nodes/google-docs.json';
-import googleFormsSchema from '~/schemas/nodes/google-forms.json';
-import googleSlidesSchema from '~/schemas/nodes/google-slides.json';
-import googleAnalyticsSchema from '~/schemas/nodes/google-analytics.json';
-import googleAdsSchema from '~/schemas/nodes/google-ads.json';
-import googleBusinessProfileSchema from '~/schemas/nodes/google-business-profile.json';
-import googleSearchConsoleSchema from '~/schemas/nodes/google-search-console.json';
-import filterSchema from '~/schemas/nodes/filter.json';
-import splitOutSchema from '~/schemas/nodes/split-out.json';
-import approvalSchema from '~/schemas/nodes/approval.json';
-import logSchema from '~/schemas/nodes/log.json';
-import submitExternalFormSchema from '~/schemas/nodes/submit-external-form.json';
-import conditionalSchema from '~/schemas/nodes/conditional.json';
-import switchSchema from '~/schemas/nodes/switch.json';
-import mergeSchema from '~/schemas/nodes/merge.json';
-import stateManagerSchema from '~/schemas/nodes/state-manager.json';
-import setVariableSchema from '~/schemas/nodes/set-variable.json';
-import interfaceFormSchema from '~/schemas/nodes/interface-form.json';
-import interfaceFileSchema from '~/schemas/nodes/interface-file.json';
-import interfaceDataframeSchema from '~/schemas/nodes/interface-dataframe.json';
-import interfaceComponentSchema from '~/schemas/nodes/interface-html-react.json';
-import interfaceFileUploadSchema from '~/schemas/nodes/interface-file-upload.json';
-import alarmSchema from '~/schemas/nodes/alarm.json';
-import filesystemSchema from '~/schemas/nodes/filesystem.json';
-import noclickSchema from '~/schemas/nodes/noclick.json';
-
-// Schema registry mapping node types to their JSON schemas
-const _NODE_SCHEMAS_RAW: Record<string, any> = {
-    // Trigger nodes
-    'trigger-webhook': webhookTriggerSchema,
-    'trigger-email': inboundEmailTriggerSchema,
-    'automation-send-email': sendEmailSchema,
-    'trigger-cron': cronTriggerSchema,
-    // Automation nodes
-    'automation-telegram': telegramSchema,
-    'automation-google-sheets': googleSheetsSchema,
-    'automation-google-drive': googleDriveSchema,
-    'automation-gmail': gmailSchema,
-    'automation-outlook': outlookSchema,
-    'automation-excel': excelSchema,
-    'automation-onedrive': onedriveSchema,
-    'automation-microsoft-todo': microsoftTodoSchema,
-    'automation-word': wordSchema,
-    'automation-http-request': httpRequestSchema,
-    'automation-linear': linearSchema,
-    'automation-github-rest': githubRestSchema,
-    'automation-airtable': airtableSchema,
-    'automation-stripe': stripeSchema,
-    'automation-apify': apifySchema,
-    'automation-salesforce': salesforceSchema,
-    'automation-youtube': youtubeSchema,
-    'automation-linkedin': linkedinSchema,
-    'automation-reddit': redditSchema,
-    'automation-redis': redisSchema,
-    'automation-google-calendar': googleCalendarSchema,
-    'automation-notion': notionSchema,
-    'automation-postgres': postgresSchema,
-    'automation-discord': discordSchema,
-    'automation-apollo': apolloSchema,
-    'automation-instagram': instagramSchema,
-    'automation-facebook': facebookSchema,
-    'automation-instantly': instantlySchema,
-    'automation-pipedrive': pipedriveSchema,
-    'automation-resend': resendSchema,
-    'automation-quickbooks': quickbooksSchema,
-    'automation-threads': threadsSchema,
-    'automation-meta': metaSchema,
-    'automation-phantombuster': phantombusterSchema,
-    'automation-pinecone': pineconeSchema,
-    'automation-cal-com': calComSchema,
-    'automation-calendly': calendlySchema,
-    'automation-honeycomb': honeycombSchema,
-    'automation-sentry': sentrySchema,
-    'automation-google-maps': googleMapsSchema,
-    'automation-perplexity': perplexitySchema,
-    'automation-posthog': posthogSchema,
-    'automation-voyage': voyageSchema,
-    'automation-qdrant': qdrantSchema,
-    'automation-upstash-vector': upstashVectorSchema,
-    'automation-weaviate': weaviateSchema,
-    'automation-chroma': chromaSchema,
-    'automation-milvus': milvusSchema,
-    'automation-mongodb': mongodbSchema,
-    'automation-elasticsearch': elasticsearchSchema,
-    'automation-mailgun': mailgunSchema,
-    'automation-gitlab': gitlabSchema,
-    'automation-box': boxSchema,
-    'automation-clickup': clickupSchema,
-    'automation-devin': devinSchema,
-    'automation-asana': asanaSchema,
-    'automation-firestore': firestoreSchema,
-    'automation-google-cloud-storage': googleCloudStorageSchema,
-    'automation-monday': mondaySchema,
-    'automation-parallel': parallelSchema,
-    'automation-datadog': datadogSchema,
-    'automation-loops': loopsSchema,
-    'automation-exa': exaSchema,
-    'automation-reducto': reductoSchema,
-    'automation-fal': falSchema,
-    'automation-brandfetch': brandfetchSchema,
-    'automation-recurly': recurlySchema,
-    'automation-findymail': findymailSchema,
-    'automation-beehiiv': beehiivSchema,
-    'automation-hex': hexSchema,
-    'automation-clickhouse': clickhouseSchema,
-    'automation-extend': extendSchema,
-    'automation-fellow': fellowSchema,
-    'automation-fathom': fathomSchema,
-    'automation-sigma': sigmaSchema,
-    'automation-trello': trelloSchema,
-    'automation-firecrawl': firecrawlSchema,
-    'automation-attio': attioSchema,
-    'automation-intercom': intercomSchema,
-    'automation-zendesk': zendeskSchema,
-    'automation-confluence': confluenceSchema,
-    'automation-pagerduty': pagerdutySchema,
-    'automation-google-meet': googleMeetSchema,
-    'automation-expensify': expensifySchema,
-    'automation-freshsales': freshsalesSchema,
-    'automation-launchdarkly': launchdarklySchema,
-    'automation-appsheet': appsheetSchema,
-    'automation-tableau': tableauSchema,
-    'automation-atlas-admin': atlasAdminSchema,
-    'automation-webflow': webflowSchema,
-    'automation-connecteam': connecteamSchema,
-    'automation-pagespeed': pagespeedSchema,
-    'automation-google-translate': googleTranslateSchema,
-    'automation-bigquery': bigquerySchema,
-    'automation-snowflake': snowflakeSchema,
-    'automation-databricks': databricksSchema,
-    'automation-microsoft-teams': microsoftTeamsSchema,
-    'automation-gohighlevel': gohighlevelSchema,
-    'automation-zoom': zoomSchema,
-    'automation-onelake': onelakeSchema,
-    'automation-bamboohr': bamboohrSchema,
-    'automation-klaviyo': klaviyoSchema,
-    'automation-dv360': dv360Schema,
-    'automation-serverless-function': serverlessFunctionSchema,
-    'automation-tiktok': tiktokSchema,
-    'automation-twitter': twitterSchema,
-    'automation-cloudflare': cloudflareSchema,
-    'automation-shopify': shopifySchema,
-    'automation-slack': slackSchema,
-    'automation-bluesky': blueskySchema,
-    'automation-canva': canvaSchema,
-    'automation-hackernews': hackernewsSchema,
-    'automation-rss': rssSchema,
-    'automation-hubspot': hubspotSchema,
-    'automation-affinity': affinitySchema,
-    'automation-nocodb': nocodbSchema,
-    'automation-basedash': basedashSchema,
-    'automation-jira': jiraSchema,
-    'automation-semrush': semrushSchema,
-    'automation-mailchimp': mailchimpSchema,
-    'automation-typeform': typeformSchema,
-    'automation-supabase': supabaseSchema,
-    'automation-twilio': twilioSchema,
-    'automation-phone': phoneSchema,
-    'automation-whatsapp': whatsappSchema,
-    'automation-elevenlabs': elevenlabsSchema,
-    'automation-dropbox': dropboxSchema,
-    'automation-wordpress': wordpressSchema,
-    'automation-google-tasks': googleTasksSchema,
-    'automation-google-contacts': googleContactsSchema,
-    'automation-google-docs': googleDocsSchema,
-    'automation-google-forms': googleFormsSchema,
-    'automation-google-slides': googleSlidesSchema,
-    'automation-google-analytics': googleAnalyticsSchema,
-    'automation-google-ads': googleAdsSchema,
-    'automation-google-business-profile': googleBusinessProfileSchema,
-    'automation-google-search-console': googleSearchConsoleSchema,
-    'agent': agentSchema,
-    'iteration': iterationSchema,
-    'delay': delaySchema,
-    'filter': filterSchema,
-    'split-out': splitOutSchema,
-    'approval': approvalSchema,
-    'log': logSchema,
-    'automation-submit-external-form': submitExternalFormSchema,
-    'conditional': conditionalSchema,
-    'switch': switchSchema,
-    'merge': mergeSchema,
-    'state-manager': stateManagerSchema,
-    'set-variable': setVariableSchema,
-    'tool': toolSchema,
-    'mcp-server': mcpServerSchema,
-    'noclick': noclickSchema,
-    'alarm': alarmSchema,
-    'filesystem': filesystemSchema,
-    // Interface nodes
-    'interface-form': interfaceFormSchema,
-    'interface-file': interfaceFileSchema,
-    'interface-dataframe': interfaceDataframeSchema,
-    'interface-html-react': interfaceComponentSchema,
-    'interface-file-upload': interfaceFileUploadSchema,
-};
-
+import { createLazyTypeStore, type LazyTypeStore } from '~/lib/lazyTypeStore';
 // Type predicates + legacy-alias resolution live in the schema-free leaf
-// utils/nodeMeta (backed by the slim generated nodeMeta.json) so weight-
-// sensitive chunks can use them without bundling this module's ~9MB of JSON.
-// Re-exported here so existing consumers keep a single import site.
+// utils/nodeMeta (backed by the slim generated nodeMeta.json), which also lists
+// every type with a schema. Re-exported here so existing consumers keep a single import site.
 import {
     LEGACY_NODE_TYPE_ALIASES,
+    NODE_SCHEMA_TYPES,
     resolveNodeType,
     isAgentToolProviderType,
     isTriggerSource,
 } from '~/utils/nodeMeta';
 
-export { LEGACY_NODE_TYPE_ALIASES, resolveNodeType, isAgentToolProviderType, isTriggerSource };
+export { LEGACY_NODE_TYPE_ALIASES, NODE_SCHEMA_TYPES, resolveNodeType, isAgentToolProviderType, isTriggerSource };
 
-export const NODE_SCHEMAS: Record<string, any> = new Proxy(_NODE_SCHEMAS_RAW, {
+type Schema = Record<string, any>;
+
+// One lazy chunk per file. A file is named after its registry type minus `automation-`.
+const SCHEMA_FILES = import.meta.glob<Schema>('../schemas/nodes/*.json', { import: 'default' });
+const fileStem = (path: string) => path.slice(path.lastIndexOf('/') + 1, -'.json'.length);
+const TYPE_BY_STEM = new Map(NODE_SCHEMA_TYPES.map((type) => [type.replace(/^automation-/, ''), type]));
+const LOADER_BY_TYPE = new Map<string, () => Promise<Schema>>();
+for (const [path, load] of Object.entries(SCHEMA_FILES)) {
+    const type = TYPE_BY_STEM.get(fileStem(path));
+    if (type) LOADER_BY_TYPE.set(type, load);
+}
+
+/** The schemas, loaded per node type (useNodeSchemas reads it). */
+export const nodeSchemaStore: LazyTypeStore<Schema> = createLazyTypeStore((type) => LOADER_BY_TYPE.get(type));
+
+const _warnedUnloaded = new Set<string>();
+
+/**
+ * The schemas loaded so far, by node type. A type whose schema hasn't loaded reads undefined (in development
+ * it also says so on the console: the reader needs a load in front of it). Legacy aliases resolve on property
+ * READ only — Object.keys/values/entries stay clean (no legacy keys leak into listings or credential scans).
+ */
+export const NODE_SCHEMAS: Record<string, any> = new Proxy(nodeSchemaStore.values as Record<string, Schema>, {
     get(target, prop) {
-        if (
-            typeof prop === 'string' &&
-            !(prop in target) &&
-            prop in LEGACY_NODE_TYPE_ALIASES
-        ) {
-            return target[LEGACY_NODE_TYPE_ALIASES[prop]];
+        if (typeof prop !== 'string') return (target as Record<string | symbol, unknown>)[prop];
+        const type = prop in target ? prop : resolveNodeType(prop);
+        const schema = target[type];
+        if (schema === undefined && import.meta.env.DEV && LOADER_BY_TYPE.has(type) && !_warnedUnloaded.has(type)) {
+            _warnedUnloaded.add(type);
+            console.error(`[nodeSchemas] ${type}'s schema was read before it loaded`);
         }
-        return (target as Record<string, unknown>)[prop as string];
+        return schema;
     },
 });
 
-/**
- * Gets the schema for a node type.
- */
+/** Gets the schema for a node type (undefined until it has loaded). */
 export function getNodeSchema(nodeType: string): any | undefined {
     return NODE_SCHEMAS[nodeType];
+}
+
+/** Whether every listed type's schema has loaded. A type with no schema has nothing to load. */
+export function nodeSchemasLoaded(types: Iterable<string | null | undefined>): boolean {
+    return nodeSchemaStore.loaded(types);
+}
+
+/** Loads the listed types' schemas (each once; a type with no schema is skipped). */
+export function loadNodeSchemas(types: Iterable<string | null | undefined>): Promise<void> {
+    return nodeSchemaStore.load(types);
+}
+
+/** Loads every schema: for the readers that walk every type. */
+export function loadAllNodeSchemas(): Promise<void> {
+    return nodeSchemaStore.load(NODE_SCHEMA_TYPES);
+}
+
+/** Registers schema files already in hand (the server's eager import), keyed by their path. */
+export function registerNodeSchemaFiles(files: Record<string, Schema>): void {
+    const byType: Record<string, Schema> = {};
+    for (const [path, schema] of Object.entries(files)) {
+        const type = TYPE_BY_STEM.get(fileStem(path));
+        if (type) byType[type] = schema;
+    }
+    nodeSchemaStore.put(byType);
+}
+
+function requireAllLoaded(reader: string): void {
+    if (!nodeSchemasLoaded(NODE_SCHEMA_TYPES)) {
+        throw new Error(`${reader} walks every node schema: await loadAllNodeSchemas() first`);
+    }
 }
 
 /**
@@ -746,13 +462,14 @@ let _wirableCatalog: { triggers: Array<{ nodeType: string; triggerOps: TriggerOp
  * operation, and tool-provider-capable types — both operation-allowlist
  * providers (~58 integrations exposing node_op tools) AND the four
  * structural tool types in STRUCTURAL_AGENT_TOOL_TYPES. Schema walk over
- * the full registry — computed once and cached (NODE_SCHEMAS is static).
+ * every type (after loadAllNodeSchemas) — computed once and cached.
  */
 export function getAgentWirableCatalog(): { triggers: Array<{ nodeType: string; triggerOps: TriggerOperation[] }>; tools: string[] } {
     if (_wirableCatalog) return _wirableCatalog;
+    requireAllLoaded('getAgentWirableCatalog');
     const triggers: Array<{ nodeType: string; triggerOps: TriggerOperation[] }> = [];
     const tools: string[] = [];
-    for (const nodeType of Object.keys(NODE_SCHEMAS)) {
+    for (const nodeType of NODE_SCHEMA_TYPES) {
         if (nodeType.startsWith('trigger-') && nodeType !== 'trigger-run') {
             triggers.push({ nodeType, triggerOps: [] });
         } else {
@@ -885,14 +602,15 @@ export function credentialKeysOf(nodeType: string): string[] {
 }
 
 /**
- * Node type → the credential keys that wear its mark: each key goes to the first node schema (in NODE_SCHEMAS order)
- * declaring it among those `hasIcon` accepts. Serialized with the node catalog (credentialKeys) so credential icons
- * resolve without this bundle.
+ * Node type → the credential keys that wear its mark: each key goes to the first node schema (in NODE_SCHEMA_TYPES
+ * order) declaring it among those `hasIcon` accepts. Serialized with the node catalog (credentialKeys) so credential
+ * icons resolve without the schemas.
  */
 export function credentialMarks(hasIcon: (nodeType: string) => boolean): Map<string, string[]> {
+    requireAllLoaded('credentialMarks');
     const claimed = new Set<string>();
     const marks = new Map<string, string[]>();
-    for (const type of Object.keys(NODE_SCHEMAS)) {
+    for (const type of NODE_SCHEMA_TYPES) {
         if (!hasIcon(type)) continue;
         const keys = credentialKeysOf(type).filter((key) => !claimed.has(key));
         if (!keys.length) continue;

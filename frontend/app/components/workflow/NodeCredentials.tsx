@@ -43,6 +43,7 @@ import { OAuthCredentialForm } from './OAuthCredentialForm';
 import { MCPCredentialForm } from './MCPCredentialForm';
 import { invalidateCredentialsCache, removeCredentialsFromCache, isConnectionDropped, type CredentialDisplayMeta } from '~/utils/credentialAutoSelect';
 import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { methodName, copyMethodOf } from '~/utils/credentialCopy';
 import { FIELD_LABEL } from '~/components/shell/fields';
@@ -394,9 +395,13 @@ interface NodeCredentialsProps {
     onConnected?: (credentialId: string) => void;
 }
 
-export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, onChange, credentialVariables, compact, onVerification, onConnected }: NodeCredentialsProps) => {
+/** The node's credential pickers, drawn once its schema has loaded (until then, nothing: never "needs no account"). */
+export const NodeCredentials = (props: NodeCredentialsProps) =>
+    useNodeSchemas([props.nodeType]) ? <NodeCredentialsForm {...props} /> : null;
+
+const NodeCredentialsForm = ({ nodeType, nodeData = {}, credentialIds = {}, onChange, credentialVariables, compact, onVerification, onConnected }: NodeCredentialsProps) => {
     const isCredentialSchemaVisible = useCredentialSchemaVisible();
-    // Read from the bundled schemas while rendering, so the first frame never claims a step needs no account.
+    // Read from the loaded schema while rendering, so the first frame never claims a step needs no account.
     const { requiredCredentials, error } = useMemo(() => {
         try {
             return { requiredCredentials: credentialRequirements(nodeType, isCredentialSchemaVisible), error: null };

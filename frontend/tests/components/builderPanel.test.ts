@@ -14,13 +14,15 @@ import { loadFieldTitles } from '~/lib/fieldTitles';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
 import type { SerializedNodeMeta } from '~/lib/nodeCatalogTypes';
 
-// Field titles come from the node schemas; a light stand-in keeps the 9MB of real ones out of the test.
+// Field titles come from the node schemas; a light stand-in keeps the real ones out of the test.
 vi.mock('~/utils/nodeSchemas', () => ({
     getNodeSchema: (type: string) =>
         ({
             'automation-slack': { $defs: { Post: { properties: { channel: { title: 'Channel' } } } } },
             'automation-google-calendar': { properties: { calendar_id: { title: 'Calendar' } } },
         })[type],
+    loadNodeSchemas: async () => undefined,
+    nodeSchemasLoaded: () => true,
 }));
 
 beforeAll(async () => {
@@ -29,7 +31,7 @@ beforeAll(async () => {
         'automation-slack': { label: 'Slack' } as SerializedNodeMeta,
         'automation-gmail': { label: 'Gmail' } as SerializedNodeMeta,
     });
-    await loadFieldTitles();
+    await loadFieldTitles(['automation-slack', 'automation-google-calendar']);
 });
 
 const step = (e: Record<string, unknown>) => ({ type: 'builder_step', status: 'completed', id: '', timestamp: 0, ...e }) as never;

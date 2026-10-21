@@ -16,6 +16,7 @@ import { useState, useEffect, useMemo, memo } from 'react';
 import { Node } from '@xyflow/react';
 import { ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 import { getIncompleteNodes, getNodeIssueSummary, type NodeValidationContext } from '~/utils/workflowNodeValidation';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
 
 interface IncompleteNodeNavigatorProps {
@@ -38,10 +39,11 @@ export const IncompleteNodeNavigator = memo(function IncompleteNodeNavigator({
     // workflows), runs against the latest data so there's no debounce window
     // where the pill disagrees with what the user just changed. FlowCanvas
     // freezes `nodes` during drag (via stableNodesForNav), so the memo only
-    // recomputes when meaningful state changes.
+    // recomputes when meaningful state changes — or the nodes' schemas land.
+    const schemasReady = useNodeSchemas(nodes.map((n) => n.type));
     const incompleteNodes = useMemo(
-        () => getIncompleteNodes(nodes, validationContext),
-        [nodes, validationContext]
+        () => (schemasReady ? getIncompleteNodes(nodes, validationContext) : []),
+        [nodes, validationContext, schemasReady]
     );
     const incompleteCount = incompleteNodes.length;
 

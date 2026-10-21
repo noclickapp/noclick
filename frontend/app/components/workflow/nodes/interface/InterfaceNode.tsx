@@ -21,8 +21,7 @@ import {
 } from '~/lib/applyNodeUpdate';
 import { resolveInterfaceBlockLabel } from '~/utils/interfaceNodes';
 import { useWorkflowId } from '../../WorkflowContext';
-import { CONNECTIONLESS_TYPES } from '../connectionlessTypes';
-import { isTriggerSource } from '~/utils/nodeSchemas';
+import { CONNECTIONLESS_TYPES, isTriggerSource } from '~/utils/nodeMeta';
 import { TriggerBoltBadge } from '../base/TriggerBoltBadge';
 import { InterfaceBlockHeader } from './InterfaceBlockHeader';
 import { InterfaceFormLinkButton } from './InterfaceFormLinkButton';

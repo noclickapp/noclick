@@ -16,7 +16,8 @@ import { useNodeOutputSchema } from '~/hooks/useNodeOutputSchema';
 import { useSavedOutputs } from '~/hooks/useSavedOutputs';
 import type { SavedOutputInfo } from '~/types/socket-events.generated';
 import { IODataDisplay } from '../IODataDisplay';
-import { getDisplayStrategy, type JsonValue } from '../nodes/nodeRegistry';
+import { getDisplayStrategy } from '../nodes/nodeDefinitions';
+import type { JsonValue } from '../nodes/types';
 import { HistoryCarousel } from './HistoryCarousel';
 import { getNodeOperation } from './utils';
 

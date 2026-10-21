@@ -5,6 +5,10 @@
 
 import { describe, it, expect } from 'vitest';
 import { getFieldAffordance, _getAllFieldAffordances } from '~/components/chat/drawer/builderInputAffordances';
+import { loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 const affordance = (nodeType: string, fieldKey: string) =>
     getFieldAffordance({ type: 'config', nodeType, fieldKey } as any);

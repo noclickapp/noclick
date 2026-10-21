@@ -7,6 +7,10 @@ import { buildWiringServices } from '~/components/workflow/AgentWiringPalette';
 import { filterNodeServices } from '~/utils/nodeServiceSearch';
 
 export default async function () {
+    // The services are read from every node's schema and definition, which load per type.
+    await (await import('~/utils/nodeSchemas')).loadAllNodeSchemas();
+    const { NODE_DEFINITION_TYPES, loadNodeDefinitions } = await import('~/components/workflow/nodes/nodeDefinitions');
+    await loadNodeDefinitions(NODE_DEFINITION_TYPES);
     const triggers = buildWiringServices('trigger');
     const tools = buildWiringServices('tool');
     if (triggers.length < 10 || tools.length < 10)

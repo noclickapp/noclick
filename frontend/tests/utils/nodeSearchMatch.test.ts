@@ -6,6 +6,10 @@ import {
     getOperationSearchMatch,
     type NodeSearchIndexEntry,
 } from '~/utils/nodeSearchMatch';
+import { loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 // buildNodeSearchIndexEntry only reads label/description/type off the node and
 // pulls everything else from the generated JSON schema, so a minimal stub is a

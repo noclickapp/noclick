@@ -17,6 +17,10 @@
 // useAgentCredentialsRequired, which has the model catalog.
 
 import { describe, expect, it } from 'vitest';
+import { loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 // nodeSchemas pulls the full generated schema set; the credential helpers only
 // read NODE_SCHEMAS['agent'].properties.credentials, which is present there.

@@ -17,6 +17,12 @@ beforeAll(async () => {
     ({ getRunStartPaths, toolProviderTitles } = await import(
         '~/utils/incompleteRunPrompt'
     ));
+    // The paths are read from the nodes' schemas.
+    await (await import('~/utils/nodeSchemas')).loadNodeSchemas([
+        'agent', 'automation-airtable', 'automation-gmail', 'automation-google-drive', 'automation-google-sheets',
+        'automation-notion', 'automation-slack', 'automation-telegram', 'interface-file', 'interface-form',
+        'interface-html-react', 'trigger-run',
+    ]);
 }, 30000);
 
 const node = (

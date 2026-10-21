@@ -8,14 +8,16 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowLeft, CornerDownLeft, Search, Wrench, Zap } from 'lucide-react';
+import { ArrowLeft, CornerDownLeft, Loader2, Search, Wrench, Zap } from 'lucide-react';
 import { BrandIcon } from '~/components/shared/BrandIcon';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { usePickerKeyboardNav } from '~/hooks/usePickerKeyboardNav';
 import { AgentToolOperationsPicker, SANDBOX_MOUNT_TYPES } from './AgentToolOperationsPicker';
-import { NodeConfig } from './NodeConfig';
+import { NodeConfig } from './NodeConfigLazy';
 import { NodeCredentials, providerCredentialsMissing } from './NodeCredentials';
-import { getNodeDisplayName, getNodeMetadata } from './nodes/nodeRegistry';
-import { getAgentWirableCatalog, getNodeCredentialInfo, STRUCTURAL_AGENT_TOOL_TYPES, type TriggerOperation } from '~/utils/nodeSchemas';
+import { NODE_DEFINITION_TYPES, getNodeDefinition, nodeDisplayName } from './nodes/nodeDefinitions';
+import { useNodeDefinitions } from '~/hooks/useNodeDefinitions';
+import { getAgentWirableCatalog, getNodeCredentialInfo, NODE_SCHEMA_TYPES, STRUCTURAL_AGENT_TOOL_TYPES, type TriggerOperation } from '~/utils/nodeSchemas';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { filterNodeServices, type NodeServiceTarget } from '~/utils/nodeServiceSearch';
 
@@ -74,10 +76,10 @@ export function buildWiringServices(role: 'trigger' | 'tool'): ServiceEntry[] {
             : catalog.tools.map(nodeType => ({ nodeType, triggerOps: [] as TriggerOperation[] }));
     return wirable
         .map(e => {
-            const meta = getNodeMetadata(e.nodeType);
+            const meta = getNodeDefinition(e.nodeType);
             return {
                 ...e,
-                label: getNodeDisplayName(e.nodeType),
+                label: nodeDisplayName(e.nodeType),
                 description: meta?.description,
                 keywords: meta?.keywords,
             };
@@ -154,9 +156,16 @@ export function AgentWiringPalette({
     const listRef = useRef<HTMLDivElement>(null);
     const searchRef = useRef<HTMLInputElement>(null);
 
+    // Which services can be wired, and the actions they're searched by, come from every node's schema and
+    // definition; a node being configured needs only its own.
+    const configTarget = configNode ?? configNodeProp ?? null;
+    const neededTypes = !open ? [] : configTarget ? [configTarget.nodeType] : NODE_SCHEMA_TYPES;
+    const schemasLoaded = useNodeSchemas(neededTypes);
+    const definitionsLoaded = useNodeDefinitions(!open ? [] : configTarget ? [configTarget.nodeType] : NODE_DEFINITION_TYPES);
+    const schemasReady = schemasLoaded && definitionsLoaded && open;
     const services = useMemo<ServiceEntry[]>(
-        () => (open ? buildWiringServices(wiringRole) : []),
-        [open, wiringRole],
+        () => (schemasReady && !configTarget ? buildWiringServices(wiringRole) : []),
+        [schemasReady, configTarget, wiringRole],
     );
 
     const step: 'list' | 'trigger-ops' | 'node-config' = configNode
@@ -322,7 +331,7 @@ export function AgentWiringPalette({
                     <>
                         <div className="flex items-center gap-2.5 border-b border-border dark:border-white/[0.06] px-4 py-3">
                             {(() => {
-                                const meta = getNodeMetadata(configNode.nodeType);
+                                const meta = getNodeDefinition(configNode.nodeType);
                                 return meta?.Icon ? (
                                     <BrandIcon Icon={meta.Icon} iconColor={meta.iconColor} className="h-4 w-4 shrink-0" />
                                 ) : (
@@ -330,7 +339,7 @@ export function AgentWiringPalette({
                                 );
                             })()}
                             <span className="flex-1 text-sm text-foreground">
-                                {getNodeDisplayName(configNode.nodeType)}
+                                {nodeDisplayName(configNode.nodeType)}
                                 <span className="ml-2 text-xs text-muted-foreground dark:text-zinc-500">
                                     {configNode.role === 'tool'
                                         ? 'credentials + the actions the agent may call'
@@ -491,7 +500,7 @@ export function AgentWiringPalette({
                             {step === 'trigger-ops' && opsService && (
                                 <span className="flex shrink-0 items-center gap-1.5 rounded-md bg-foreground/[0.06] px-2 py-1 text-xs text-foreground/80">
                                     {(() => {
-                                        const meta = getNodeMetadata(opsService.nodeType);
+                                        const meta = getNodeDefinition(opsService.nodeType);
                                         return meta?.Icon ? (
                                             <BrandIcon Icon={meta.Icon} iconColor={meta.iconColor} className="h-3.5 w-3.5" />
                                         ) : null;
@@ -524,12 +533,16 @@ export function AgentWiringPalette({
                             />
                         </div>
                         <div ref={listRef} className="max-h-[38vh] overflow-y-auto scrollbar-subtle p-1.5">
-                            {rows.length === 0 && (
+                            {!schemasReady ? (
+                                <div className="flex justify-center px-3 py-8 text-muted-foreground" aria-label="Loading services">
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                </div>
+                            ) : rows.length === 0 && (
                                 <div className="px-3 py-8 text-center text-sm text-muted-foreground dark:text-zinc-500">No matches.</div>
                             )}
                             {step === 'list' &&
                                 (rows as ServiceEntry[]).map((s, idx) => {
-                                    const meta = getNodeMetadata(s.nodeType);
+                                    const meta = getNodeDefinition(s.nodeType);
                                     return (
                                         <PaletteRow
                                             key={s.nodeType}

@@ -15,115 +15,66 @@ import {
     isDeadCredential,
     isInjectedDisplayCredential,
 } from '~/utils/credentialAutoSelect';
+import { NODE_SCHEMAS, loadNodeSchemas, nodeSchemasLoaded } from '~/utils/nodeSchemas';
 
-// Import node schemas directly
-import telegramSchema from '~/schemas/nodes/telegram.json';
-import agentSchema from '~/schemas/nodes/agent.json';
-import googleSheetsSchema from '~/schemas/nodes/google-sheets.json';
-import googleDriveSchema from '~/schemas/nodes/google-drive.json';
-import gmailSchema from '~/schemas/nodes/gmail.json';
-import outlookSchema from '~/schemas/nodes/outlook.json';
-import excelSchema from '~/schemas/nodes/excel.json';
-import wordSchema from '~/schemas/nodes/word.json';
-import linearSchema from '~/schemas/nodes/linear.json';
-import airtableSchema from '~/schemas/nodes/airtable.json';
-import stripeSchema from '~/schemas/nodes/stripe.json';
-import clickupSchema from '~/schemas/nodes/clickup.json';
-import apolloSchema from '~/schemas/nodes/apollo.json';
-import blueskySchema from '~/schemas/nodes/bluesky.json';
-import canvaSchema from '~/schemas/nodes/canva.json';
-import discordSchema from '~/schemas/nodes/discord.json';
-import githubRestSchema from '~/schemas/nodes/github-rest.json';
-import apifySchema from '~/schemas/nodes/apify.json';
-import googleCalendarSchema from '~/schemas/nodes/google-calendar.json';
-import googleDocsSchema from '~/schemas/nodes/google-docs.json';
-import googleSlidesSchema from '~/schemas/nodes/google-slides.json';
-import googleFormsSchema from '~/schemas/nodes/google-forms.json';
-import googleTasksSchema from '~/schemas/nodes/google-tasks.json';
-import googleContactsSchema from '~/schemas/nodes/google-contacts.json';
-import instagramSchema from '~/schemas/nodes/instagram.json';
-import instantlySchema from '~/schemas/nodes/instantly.json';
-import jiraSchema from '~/schemas/nodes/jira.json';
-import linkedinSchema from '~/schemas/nodes/linkedin.json';
-import notionSchema from '~/schemas/nodes/notion.json';
-import postgresSchema from '~/schemas/nodes/postgres.json';
-import redditSchema from '~/schemas/nodes/reddit.json';
-import rssSchema from '~/schemas/nodes/rss.json';
-import salesforceSchema from '~/schemas/nodes/salesforce.json';
-import shopifySchema from '~/schemas/nodes/shopify.json';
-import slackSchema from '~/schemas/nodes/slack.json';
-import supabaseSchema from '~/schemas/nodes/supabase.json';
-import twitterSchema from '~/schemas/nodes/twitter.json';
-import youtubeSchema from '~/schemas/nodes/youtube.json';
-import hubspotSchema from '~/schemas/nodes/hubspot.json';
-import mailchimpSchema from '~/schemas/nodes/mailchimp.json';
-import firestoreSchema from '~/schemas/nodes/firestore.json';
-import redisSchema from '~/schemas/nodes/redis.json';
-import elevenlabsSchema from '~/schemas/nodes/elevenlabs.json';
-import cloudflareSchema from '~/schemas/nodes/cloudflare.json';
-import googleAnalyticsSchema from '~/schemas/nodes/google-analytics.json';
-import googleAdsSchema from '~/schemas/nodes/google-ads.json';
-import googleBusinessProfileSchema from '~/schemas/nodes/google-business-profile.json';
-import googleSearchConsoleSchema from '~/schemas/nodes/google-search-console.json';
-import connecteamSchema from '~/schemas/nodes/connecteam.json';
-
-const NODE_SCHEMAS: Record<string, any> = {
-    'automation-telegram': telegramSchema,
-    'automation-google-sheets': googleSheetsSchema,
-    'automation-google-drive': googleDriveSchema,
-    'automation-gmail': gmailSchema,
-    'automation-outlook': outlookSchema,
-    'automation-excel': excelSchema,
-    'automation-word': wordSchema,
-    'automation-linear': linearSchema,
-    'automation-airtable': airtableSchema,
-    'automation-stripe': stripeSchema,
-    'automation-github-rest': githubRestSchema,
-    'automation-apify': apifySchema,
-    'automation-apollo': apolloSchema,
-    'automation-bluesky': blueskySchema,
-    'automation-canva': canvaSchema,
-    'automation-discord': discordSchema,
-    'automation-google-calendar': googleCalendarSchema,
-    'automation-google-docs': googleDocsSchema,
-    'automation-google-slides': googleSlidesSchema,
-    'automation-google-forms': googleFormsSchema,
-    'automation-google-tasks': googleTasksSchema,
-    'automation-google-contacts': googleContactsSchema,
-    'automation-instagram': instagramSchema,
-    'automation-instantly': instantlySchema,
-    'automation-jira': jiraSchema,
-    'automation-clickup': clickupSchema,
-    'automation-linkedin': linkedinSchema,
-    'automation-notion': notionSchema,
-    'automation-postgres': postgresSchema,
-    'automation-reddit': redditSchema,
-    'automation-rss': rssSchema,
-    'automation-redis': redisSchema,
-    'automation-salesforce': salesforceSchema,
-    'automation-shopify': shopifySchema,
-    'automation-slack': slackSchema,
-    'automation-supabase': supabaseSchema,
-    'automation-twitter': twitterSchema,
-    'automation-youtube': youtubeSchema,
-    'automation-hubspot': hubspotSchema,
-    'automation-mailchimp': mailchimpSchema,
-    'automation-firestore': firestoreSchema,
-    'automation-elevenlabs': elevenlabsSchema,
-    'automation-cloudflare': cloudflareSchema,
-    'automation-google-analytics': googleAnalyticsSchema,
-    'automation-google-ads': googleAdsSchema,
-    'automation-google-business-profile': googleBusinessProfileSchema,
-    'automation-google-search-console': googleSearchConsoleSchema,
-    'automation-connecteam': connecteamSchema,
-    'agent': agentSchema,
-};
+// The node types whose new nodes pick a credential on their own.
+const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
+    'automation-telegram',
+    'automation-google-sheets',
+    'automation-google-drive',
+    'automation-gmail',
+    'automation-outlook',
+    'automation-excel',
+    'automation-word',
+    'automation-linear',
+    'automation-airtable',
+    'automation-stripe',
+    'automation-github-rest',
+    'automation-apify',
+    'automation-apollo',
+    'automation-bluesky',
+    'automation-canva',
+    'automation-discord',
+    'automation-google-calendar',
+    'automation-google-docs',
+    'automation-google-slides',
+    'automation-google-forms',
+    'automation-google-tasks',
+    'automation-google-contacts',
+    'automation-instagram',
+    'automation-instantly',
+    'automation-jira',
+    'automation-clickup',
+    'automation-linkedin',
+    'automation-notion',
+    'automation-postgres',
+    'automation-reddit',
+    'automation-rss',
+    'automation-redis',
+    'automation-salesforce',
+    'automation-shopify',
+    'automation-slack',
+    'automation-supabase',
+    'automation-twitter',
+    'automation-youtube',
+    'automation-hubspot',
+    'automation-mailchimp',
+    'automation-firestore',
+    'automation-elevenlabs',
+    'automation-cloudflare',
+    'automation-google-analytics',
+    'automation-google-ads',
+    'automation-google-business-profile',
+    'automation-google-search-console',
+    'automation-connecteam',
+    'agent',
+]);
 
 /**
  * Helper to get credential type from node schema.
  */
 function getCredentialTypeForNode(nodeType: string): string | null {
-    const schema = NODE_SCHEMAS[nodeType];
+    const schema = AUTO_SELECT_TYPES.has(nodeType) ? NODE_SCHEMAS[nodeType] : undefined;
     if (!schema) return null;
 
     const credentialProp = schema.properties?.credentials;
@@ -148,7 +99,7 @@ function getCredentialTypeForNode(nodeType: string): string | null {
 /**
  * Synchronously selects credential from memory cache.
  * Returns empty object if cache is not populated or no matching credential found.
- * This is instant and never makes network requests.
+ * This is instant and never makes network requests; the node type's schema must have loaded.
  *
  * @param nodeType - The node type (e.g., 'automation-google-sheets')
  * @returns { [credentialType]: credentialId } or empty object
@@ -184,6 +135,7 @@ export function autoSelectCredentialFromCache(nodeType: string): Record<string, 
  */
 export async function autoSelectCredential(nodeType: string): Promise<Record<string, string>> {
     try {
+        await loadNodeSchemas([nodeType]);
         const mappedType = getCredentialTypeForNode(nodeType);
         if (!mappedType) return {};
 
@@ -229,18 +181,23 @@ export function autoSelectCredentialsForNewNode(
     }
 
     const nodeType = node.type || '';
-    // Immediate update from the local cache (synchronous, no network).
-    const cached = autoSelectCredentialFromCache(nodeType);
-    if (Object.keys(cached).length > 0) {
-        setNodes((prev) => updateNodeInList(prev, node.id, { credentialIds: cached }));
-        authorizeCredentialsForWorkflow(workflowId, cached);
-    }
-
-    // Background fetch — only re-applies when fresh data differs from the cache.
-    autoSelectCredential(nodeType).then((fresh) => {
-        if (Object.keys(fresh).length > 0 && JSON.stringify(fresh) !== JSON.stringify(cached)) {
-            setNodes((prev) => updateNodeInList(prev, node.id, { credentialIds: fresh }));
-            authorizeCredentialsForWorkflow(workflowId, fresh);
+    const select = () => {
+        // Immediate update from the local cache (synchronous, no network).
+        const cached = autoSelectCredentialFromCache(nodeType);
+        if (Object.keys(cached).length > 0) {
+            setNodes((prev) => updateNodeInList(prev, node.id, { credentialIds: cached }));
+            authorizeCredentialsForWorkflow(workflowId, cached);
         }
-    });
+
+        // Background fetch — only re-applies when fresh data differs from the cache.
+        autoSelectCredential(nodeType).then((fresh) => {
+            if (Object.keys(fresh).length > 0 && JSON.stringify(fresh) !== JSON.stringify(cached)) {
+                setNodes((prev) => updateNodeInList(prev, node.id, { credentialIds: fresh }));
+                authorizeCredentialsForWorkflow(workflowId, fresh);
+            }
+        });
+    };
+    // A node of a type new to the canvas picks once its schema has loaded.
+    if (nodeSchemasLoaded([nodeType])) select();
+    else loadNodeSchemas([nodeType]).then(select, (err) => console.error('[autoSelectCredentialsForNewNode]', err));
 }

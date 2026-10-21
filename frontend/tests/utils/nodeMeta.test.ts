@@ -9,7 +9,10 @@
 import { describe, it, expect } from 'vitest';
 import { platformKeyMarker } from '~/lib/instanceKeys';
 import { isPlatformVendorOperation } from '~/utils/nodeMeta';
-import { NODE_SCHEMAS, isAgentToolProviderType, isTriggerSource } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, isAgentToolProviderType, isTriggerSource, loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 type OpSchema = { const?: string; enum?: string[]; 'x-is-trigger'?: boolean };
 type OpDef = Record<string, unknown> & { properties?: { operation?: OpSchema } };

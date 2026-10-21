@@ -30,6 +30,7 @@ import {
     type SetupNodeMeta,
     type SetupStep as RailStep,
 } from '~/components/setupviews/shared';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { useValtioState } from '~/hooks/useValtioState';
 import type { WorkflowVariableDefinition } from '~/hooks/useWorkflowVariables';
 import { humanizeVariableName } from '~/hooks/useWorkflowVariables';
@@ -40,11 +41,12 @@ import {
 import { CredentialPhase, Mark } from '~/components/design/onboarding/phases';
 import { SetupHeader, StepProgress } from '~/components/design/onboarding/primitives';
 import type { CredentialStep } from '~/components/design/onboarding/types';
-import { AVAILABLE_NODES, getNodeDisplayName } from '../nodes/nodeRegistry';
+import { getNodeDefinition, nodeDisplayName } from '../nodes/nodeDefinitions';
+import { useNodeDefinitions } from '~/hooks/useNodeDefinitions';
 import { getNodeSchema } from '~/utils/nodeSchemas';
 import { getFieldsForOption } from '~/utils/schemaFieldExtractor';
 import { DynamicOptionsField } from '../DynamicOptionsField';
-import { NodeConfig } from '../NodeConfig';
+import { NodeConfig } from '../NodeConfigLazy';
 import { AgentRuntimePhase, buildModelPatch } from './AgentRuntimePhase';
 import { SetupTestRunPreview } from './SetupTestRunPreview';
 import { ReadinessCard, deriveUnmetConnections } from './readiness';
@@ -84,7 +86,7 @@ interface SetupStep {
 }
 
 function nodeIcon(type: string | undefined, className = 'h-4 w-4') {
-    const def = AVAILABLE_NODES.find((n) => n.type === type);
+    const def = getNodeDefinition(type);
     if (!def?.Icon) return null;
     const Icon = def.Icon;
     return <Icon className={className} style={{ color: def.iconColor }} />;
@@ -110,7 +112,7 @@ function toCredentialStep(node: Node, labelOverride?: string): CredentialStep {
     return {
         kind: 'credential',
         id: type,
-        label: labelOverride || (node.data?.label as string) || getNodeDisplayName(type),
+        label: labelOverride || (node.data?.label as string) || nodeDisplayName(type),
         iconHtml: '',
         iconColor: undefined as unknown as string,
         iconNode: nodeIcon(type, 'h-7 w-7'),
@@ -249,17 +251,7 @@ function findVariableBinding(nodes: Node[], name: string): VariableBinding | nul
     return null;
 }
 
-export function WorkflowSetupView({
-    nodes,
-    edges,
-    workflowId,
-    onConfigChange,
-    onOperationChange,
-    onCredentialIdsChange,
-    onOpenTestRun,
-    variableDefinitions,
-    onVariableDefinitionsChange,
-}: {
+interface WorkflowSetupViewProps {
     nodes: Node[];
     edges: Edge[];
     workflowId?: string;
@@ -272,7 +264,32 @@ export function WorkflowSetupView({
         ones become steps; filling writes through onVariableDefinitionsChange. */
     variableDefinitions?: WorkflowVariableDefinition[];
     onVariableDefinitionsChange?: (definitions: WorkflowVariableDefinition[]) => void;
-}) {
+}
+
+export function WorkflowSetupView(props: WorkflowSetupViewProps) {
+    // The steps are read from the nodes' schemas and definitions: the view opens
+    // once they've loaded, then recomputes as a later node's land (staying mounted).
+    const types = props.nodes.map((n) => n.type);
+    const schemasLoaded = useNodeSchemas(types);
+    const definitionsLoaded = useNodeDefinitions(types);
+    const schemasReady = schemasLoaded && definitionsLoaded;
+    const [opened, setOpened] = useState(schemasReady);
+    if (schemasReady && !opened) setOpened(true);
+    return opened ? <WorkflowSetupSteps {...props} schemasReady={schemasReady} /> : null;
+}
+
+function WorkflowSetupSteps({
+    nodes,
+    edges,
+    workflowId,
+    onConfigChange,
+    onOperationChange,
+    onCredentialIdsChange,
+    onOpenTestRun,
+    variableDefinitions,
+    onVariableDefinitionsChange,
+    schemasReady,
+}: WorkflowSetupViewProps & { schemasReady: boolean }) {
     const ctx = useMemo(() => buildNodeValidationContext(nodes, edges), [nodes, edges]);
     const { getModelById } = useModels();
     const agentNode = nodes.find((n) => n.type === 'agent');
@@ -320,7 +337,7 @@ export function WorkflowSetupView({
             if (!node.type || node.type === 'sticky-note') continue;
             const { issues } = validateNode(node, ctx);
             const label =
-                (node.data?.label as string | undefined) || getNodeDisplayName(node.type);
+                (node.data?.label as string | undefined) || nodeDisplayName(node.type);
             // The agent's model credential is OWNED by the runtime step
             // ("Which agent runs it") - a generic credential step here asked
             // the same question earlier with the wrong UI (raw provider
@@ -341,7 +358,7 @@ export function WorkflowSetupView({
                 );
                 if (twin) {
                     twin.groupNodeIds = [...(twin.groupNodeIds ?? [twin.node!.id]), node.id];
-                    twin.title = getNodeDisplayName(node.type);
+                    twin.title = nodeDisplayName(node.type);
                     twin.unmet = twin.unmet || creds.length > 0;
                     twin.detail = twin.unmet ? 'Connect an account' : 'Connected';
                 } else {
@@ -436,7 +453,8 @@ export function WorkflowSetupView({
         ];
         for (const s of out) seenRef.current.set(s.key, s);
         return out;
-    }, [nodes, ctx, variableDefinitions, agentNode, getModelById]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [nodes, ctx, variableDefinitions, agentNode, getModelById, schemasReady]);
 
     const [selectedKey, setSelectedKey] = useState<string | null>(null);
     // Footer slot the credential phase portals its Test Connection button into.
@@ -476,7 +494,8 @@ export function WorkflowSetupView({
     // finale names it with consequences instead of a count.
     const unmetConnections = useMemo(
         () => deriveUnmetConnections(nodes, edges),
-        [nodes, edges]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [nodes, edges, schemasReady]
     );
     const index = Math.max(
         0,
@@ -546,7 +565,7 @@ export function WorkflowSetupView({
                 // step's "Which agent runs it" must not rename its group.
                 label:
                     (s.node.data?.label as string | undefined) ||
-                    getNodeDisplayName(s.node.type as string),
+                    nodeDisplayName(s.node.type as string),
                 upstream: [],
             };
         }

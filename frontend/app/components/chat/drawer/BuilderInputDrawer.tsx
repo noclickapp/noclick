@@ -13,6 +13,7 @@ import { AgentEnvVarsSection } from '~/components/workflow/AgentEnvVarsSection';
 import { AGENT_ENV_CREDENTIAL_TYPE } from '~/components/workflow/agentEnvVars';
 import { agentCredentialProvider, getAgentCredentialIdForProvider } from '~/lib/agentCredentialModel';
 import { getFieldAffordance } from './builderInputAffordances';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { CredentialAskHeading } from './CredentialAskHeading';
 import { MULTI_PREFIX, encodeMultiValue, flattenMultiValue, parseMultiValue } from './multiSelectValue';
 
@@ -503,7 +504,10 @@ export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmi
         else onDismiss?.();
     };
 
-    if (!current) return null;
+    // The questions' forms, headings and shortcuts read their nodes' schemas.
+    const schemasReady = useNodeSchemas(inputs.map((input) => input.nodeType));
+
+    if (!current || !schemasReady) return null;
 
     // An embedded host already shows the title, so a question whose label
     // repeats it is not labelled a second time.

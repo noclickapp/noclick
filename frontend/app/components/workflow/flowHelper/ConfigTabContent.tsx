@@ -17,11 +17,12 @@ import {
 } from '~/components/ui/dropdown-menu';
 import { EVENTS } from '~/lib/analytics-events';
 import { useAnalytics } from '~/lib/analytics';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { getFieldErrorMap, parseExecutionError } from '~/utils/pydanticErrorParser';
 import { getDefaultLabelFromType } from '../nodes/base/NodeLabel';
 import { AgentToolOperationsPicker } from '../AgentToolOperationsPicker';
 import { hasUnconnectedCredentials, providerCredentialsMissing } from '../NodeCredentials';
-import { NodeConfig } from '../NodeConfig';
+import { NodeConfig } from '../NodeConfigLazy';
 import { NodeExecutionErrorBanner } from './NodeExecutionErrorBanner';
 
 type AutofillMode = 'full' | 'operation' | 'fields' | 'single_field';
@@ -140,6 +141,9 @@ export function ConfigTabContent({
         setNodeValidationState({ validating: false, valid: true });
     }, [selectedNode?.id]);
 
+    // What the panel says about credentials is read from the node's schema.
+    const schemaReady = useNodeSchemas([selectedNode?.type]);
+
     if (!selectedNode) {
         return (
             <div className="flex items-center justify-center h-full">
@@ -149,6 +153,7 @@ export function ConfigTabContent({
             </div>
         );
     }
+    if (!schemaReady) return null;
 
     const defaultLabel = getDefaultLabelFromType(selectedNode.type || '');
     const executionError = selectedNode.data?.error;

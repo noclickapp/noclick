@@ -12,6 +12,8 @@ interface UseNodeConfigValidationParams {
     setNodes: (updater: (prev: Node[]) => Node[]) => void;
     /** When true, skip validation entirely — run will resume on drag end. */
     isDraggingRef: React.MutableRefObject<boolean>;
+    /** Whether every node's schema has loaded: until then a node can't be judged, so no pass runs. */
+    schemasReady: boolean;
 }
 
 // Runs validateNode on every non-cursor node and updates its configValid
@@ -30,11 +32,11 @@ interface UseNodeConfigValidationParams {
 //
 // Validation is skipped entirely while dragging (configValid can't change
 // mid-drag, and running validateNode in the drag's raf loop tanks framerate).
-export function useNodeConfigValidation({ nodes, validationContext, setNodes, isDraggingRef }: UseNodeConfigValidationParams) {
+export function useNodeConfigValidation({ nodes, validationContext, setNodes, isDraggingRef, schemasReady }: UseNodeConfigValidationParams) {
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
-        if (isDraggingRef.current) return;
+        if (isDraggingRef.current || !schemasReady) return;
 
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
@@ -63,5 +65,5 @@ export function useNodeConfigValidation({ nodes, validationContext, setNodes, is
         return () => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
-    }, [nodes, validationContext, setNodes, isDraggingRef]);
+    }, [nodes, validationContext, setNodes, isDraggingRef, schemasReady]);
 }

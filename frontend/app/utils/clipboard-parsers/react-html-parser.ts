@@ -17,7 +17,7 @@ import { Node } from '@xyflow/react';
 import { ClipboardParser, ClipboardParseResult } from './types';
 import { generateNodeId } from '~/utils/nodeIdGenerator';
 import { createWorkflowNode } from '~/lib/applyNodeUpdate';
-import { getNodeMetadata } from '~/components/workflow/nodes/nodeRegistry';
+import { nodeDimensions } from '~/components/workflow/nodes/nodeDefinitions';
 
 // React code reliably imports react / react-dom — the Artifacts shape always does.
 const REACT_IMPORT_RE =
@@ -76,7 +76,7 @@ export const reactHtmlParser: ClipboardParser = {
         // Size the node to the interface block's default dimensions, matching
         // the click-to-add / drag-drop paths — without this the pasted node
         // renders at ReactFlow's auto size (much smaller than usual).
-        const dims = getNodeMetadata('interface-html-react')?.dimensions;
+        const dims = nodeDimensions('interface-html-react');
         const node: Node = {
             ...createWorkflowNode(
                 nodeId,

@@ -9,6 +9,7 @@ import nodeMetaJson from '~/schemas/nodeMeta.json';
 
 interface NodeMetaEntry {
     agentToolProvider?: boolean;
+    connectionless?: boolean;
     triggerOperations?: string[];
     platformVendorOperations?: string[];
 }
@@ -16,6 +17,9 @@ interface NodeMetaEntry {
 const NODE_META: Record<string, NodeMetaEntry> = (
     nodeMetaJson as { types: Record<string, NodeMetaEntry> }
 ).types;
+
+/** Every node type with a generated schema (~/schemas/nodes), keyed as on the canvas ('automation-slack'). */
+export const NODE_SCHEMA_TYPES: readonly string[] = Object.keys(NODE_META);
 
 /**
  * The separate image/audio/video interface nodes were merged into the universal
@@ -49,6 +53,11 @@ export function resolveNodeType(nodeType: string): string {
 export function isAgentToolProviderType(nodeType: string | undefined | null): boolean {
     return !!(nodeType && NODE_META[resolveNodeType(nodeType)]?.agentToolProvider === true);
 }
+
+/** SDK-based node types (x-connectionless) that talk through @noclick/sdk, not edges. */
+export const CONNECTIONLESS_TYPES: ReadonlySet<string> = new Set(
+    NODE_SCHEMA_TYPES.filter((type) => NODE_META[type].connectionless === true),
+);
 
 /**
  * Whether NoClick buys this operation from the node's own provider, on NoClick's

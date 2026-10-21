@@ -3,9 +3,9 @@
 // resolves null per the SDK contract instead of hanging until the 30s timeout.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Decouple from the real provider map + avoid loading the big node registry.
+// Decouple from the real provider map and the node schemas.
 vi.mock('~/utils/oauthProviders', () => ({ getProviderKeyFromCredentialType: () => 'github' }));
-vi.mock('~/utils/nodeSchemas', () => ({ NODE_SCHEMAS: {} }));
+vi.mock('~/utils/nodeSchemas', () => ({ NODE_SCHEMAS: {}, loadAllNodeSchemas: async () => undefined }));
 
 import { mountBridge } from './helpers/mountBridge';
 import { installMockSocket, type MockSocket } from '../integration/helpers/mockSocket';

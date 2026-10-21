@@ -14,6 +14,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertCircle, ArrowUpRight, Check, ChevronDown, GitBranch, Info, Loader2, Lock, Search, SlidersHorizontal, Wrench, X } from 'lucide-react';
 import { BrandIcon } from '~/components/shared/BrandIcon';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { usePickerKeyboardNav } from '~/hooks/usePickerKeyboardNav';
 import { scoreFields } from '~/utils/fuzzySearch';
 import { isReadOperation } from '~/utils/readOperations';
@@ -24,7 +25,7 @@ import {
     type AgentToolOperationEntry,
     type AgentToolScopableField,
 } from '~/utils/nodeSchemas';
-import { getNodeMetadata } from './nodes/nodeRegistry';
+import { getNodeDefinition } from './nodes/nodeDefinitions';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { WorkflowNodeLoadOptionsRequest } from '~/types/socket-events.generated';
 import type { WorkflowNodeLoadOptionsResponse } from '~/types/socket-events.generated';
@@ -71,6 +72,9 @@ export const SANDBOX_MOUNT_TYPES: Record<string, { field: string }> = {
 };
 
 export function AgentToolOperationsPicker(props: AgentToolOperationsPickerProps) {
+    // The operations offered are read from the node's schema.
+    const schemaReady = useNodeSchemas([props.nodeType]);
+    if (!schemaReady) return null;
     if (!props.credentialIds) return <OperationsPicker {...props} />;
     return (
         <ToolCredentialPermissions credentialIds={props.credentialIds} nodeType={props.nodeType} hideSummary={props.hidePermissionSummary}>
@@ -112,7 +116,7 @@ function OperationsPicker({
     }, [selectedOperations]);
 
     const selected = useMemo(() => new Set(entriesByOp.keys()), [entriesByOp]);
-    const meta = getNodeMetadata(nodeType);
+    const meta = getNodeDefinition(nodeType);
     const readOps = useMemo(
         () => operations.filter(op => isReadOperation(op.operation)).map(op => op.operation),
         [operations],

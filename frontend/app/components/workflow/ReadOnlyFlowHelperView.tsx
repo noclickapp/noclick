@@ -8,14 +8,16 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { X, Boxes, Settings, Key, ArrowDownToLine, ArrowUpFromLine, Maximize2, Minimize2 } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
-import { getNodeMetadata, getDisplayStrategy, type JsonValue } from './nodes/nodeRegistry';
+import { getDisplayStrategy, getNodeDefinition } from './nodes/nodeDefinitions';
+import type { JsonValue } from './nodes/types';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { IODataDisplay } from './IODataDisplay';
-import { NodeConfig } from './NodeConfig';
+import { NodeConfig } from './NodeConfigLazy';
 import { NodesTabContent } from './flowHelper/NodesTabContent';
 import { CredentialsTabContent } from './flowHelper/CredentialsTabContent';
 import { AgentToolOperationsPicker } from './AgentToolOperationsPicker';
 import { getToolProviderConsumerTypes } from '~/utils/nodeSchemas';
+import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { hasUnconnectedCredentials, providerCredentialsMissing } from './NodeCredentials';
 
 type TabType = 'nodes' | 'config' | 'credentials';
@@ -78,7 +80,7 @@ const InputPanel = ({ inputNodes }: { inputNodes: Node[] }) => {
                 const displayOutput = mockedOutput !== undefined ? mockedOutput : liveOutput;
                 const isMocked = mockedOutput !== undefined;
                 const OutputPanelContent = getDisplayStrategy(node.type).OutputPanelContent;
-                const nodeDef = getNodeMetadata(node.type || 'default');
+                const nodeDef = getNodeDefinition(node.type || 'default');
 
                 return (
                     <div key={node.id} className="space-y-2">
@@ -248,7 +250,7 @@ export function ReadOnlyFlowHelperView({
 
     // Get node metadata for display
     const nodeDefinition = useMemo(() => {
-        return selectedNode?.type ? getNodeMetadata(selectedNode.type) : undefined;
+        return selectedNode?.type ? getNodeDefinition(selectedNode.type) : undefined;
     }, [selectedNode?.type]);
 
     // NodeConfig wants the nested config blob, not the whole data object.
@@ -264,6 +266,9 @@ export function ReadOnlyFlowHelperView({
         const data = selectedNode?.data as Record<string, any> | undefined;
         return (data?.credentialIds as Record<string, string>) || {};
     }, [selectedNode?.data]);
+
+    // Its credential needs are read from the node's schema; re-render once it lands.
+    useNodeSchemas([selectedNode?.type]);
 
     // Detect if selected node is wired as a tool provider to an agent
     const toolProviderConsumerTypes = useMemo(

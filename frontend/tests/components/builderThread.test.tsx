@@ -10,7 +10,7 @@ import type { Message } from '~/components/chat/types';
 import { mapPersistedMessage } from '~/hooks/conversationRestoreMapping';
 
 // The panel's field titles read the node schemas; none are needed here.
-vi.mock('~/utils/nodeSchemas', () => ({ getNodeSchema: () => undefined }));
+vi.mock('~/utils/nodeSchemas', () => ({ getNodeSchema: () => undefined, loadNodeSchemas: async () => undefined, nodeSchemasLoaded: () => true }));
 
 beforeEach(() => {
     vi.stubGlobal(

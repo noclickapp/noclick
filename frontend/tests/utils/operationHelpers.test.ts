@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { getAvailableOperations, getOptionDisplayName } from '~/utils/operationHelpers';
 import { getSchemaInfo } from '~/utils/schemaFieldExtractor';
+import { loadAllNodeSchemas } from '~/utils/nodeSchemas';
+
+// The subjects read node schemas, which load per type (some at collection time).
+await loadAllNodeSchemas();
 
 describe('operation label helpers', () => {
   it('does not surface auto-generated discriminator titles as operation labels', () => {

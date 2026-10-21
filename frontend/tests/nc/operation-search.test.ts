@@ -8,6 +8,8 @@ import { getAgentToolOperations } from '~/utils/nodeSchemas';
 import { scoreFields, type SearchField } from '~/utils/fuzzySearch';
 
 export default async function () {
+    // The operations are read from the nodes' schemas, which load per type.
+    await (await import('~/utils/nodeSchemas')).loadAllNodeSchemas();
     const nodeType = 'automation-gmail';
     const info = rawSchemaInfo(nodeType);
     if (!info?.hasDiscriminator) throw new Error('gmail should be a discriminated node');
