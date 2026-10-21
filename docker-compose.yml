@@ -112,27 +112,8 @@ services:
         aliases:
           - supabase.localhost
 
-  storage:
-    <<: *restart
-    # MinIO publishes to quay.io; the Docker Hub repository vanished on
-    # 2026-09-14 and every fresh install died pulling it (installer E2E).
-    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
-    command: server /data --address ":${NOCLICK_STORAGE_PORT:-9000}"
-    environment:
-      MINIO_ROOT_USER: ${OBJECT_STORAGE_ACCESS_KEY_ID:?set OBJECT_STORAGE_ACCESS_KEY_ID — run ./scripts/noclick-setup.sh}
-      MINIO_ROOT_PASSWORD: ${OBJECT_STORAGE_SECRET_ACCESS_KEY:?set OBJECT_STORAGE_SECRET_ACCESS_KEY — run ./scripts/noclick-setup.sh}
-    volumes:
-      - storage-data:/data
-    ports:
-      # Published because the browser uploads and downloads directly against
-      # presigned URLs; nothing here is readable without one.
-      - "${NOCLICK_STORAGE_PORT:-9000}:${NOCLICK_STORAGE_PORT:-9000}"
-    networks:
-      default:
-        aliases:
-          - storage.localhost
-
-  # Applies the schema and creates both private storage buckets, then exits.
+  # Applies the schema, then exits. Files live on the backend's own volume
+  # (backend-state), served through signed URLs — no object-storage service.
   bootstrap:
     image: ${NOCLICK_BACKEND_IMAGE:-ghcr.io/noclickapp/noclick-backend:${NOCLICK_VERSION:-latest}}
     pull_policy: missing
@@ -144,8 +125,6 @@ services:
         condition: service_healthy
       auth:
         condition: service_started
-      storage:
-        condition: service_started
     restart: "no"
     working_dir: /app
     command: ["python", "docker/bootstrap.py"]
@@ -154,12 +133,18 @@ services:
       # the repository right here — and applying a stale copy of a migration
       # someone just edited is a confusing way to spend an afternoon.
       - ./infra/supabase/migrations:/app/infra/supabase/migrations:ro
+      - backend-state:/var/lib/noclick
     environment:
       POSTGRES_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
-      OBJECT_STORAGE_ENDPOINT: http://storage:${NOCLICK_STORAGE_PORT:-9000}
-      OBJECT_STORAGE_ACCESS_KEY_ID: ${OBJECT_STORAGE_ACCESS_KEY_ID}
-      OBJECT_STORAGE_SECRET_ACCESS_KEY: ${OBJECT_STORAGE_SECRET_ACCESS_KEY}
-      OBJECT_STORAGE_REGION: ${OBJECT_STORAGE_REGION:-us-east-1}
+      # Releases up to v0.4.1 kept files in a MinIO service, and MinIO no
+      # longer publishes images. Compose leaves an upgraded install's MinIO
+      # container running beside this stack, and bootstrap copies its files
+      # onto the backend's volume once (docs/self-hosting.md, "Upgrading").
+      LEGACY_MINIO_URL: http://storage:${NOCLICK_STORAGE_PORT:-9000}
+      LEGACY_MINIO_ACCESS_KEY_ID: ${OBJECT_STORAGE_ACCESS_KEY_ID:-}
+      LEGACY_MINIO_SECRET_ACCESS_KEY: ${OBJECT_STORAGE_SECRET_ACCESS_KEY:-}
+      # The copy writes through the backend's own store module.
+      PYTHONPATH: /app/backend
 
   backend:
     <<: *restart
@@ -189,10 +174,6 @@ services:
       PUBLIC_WEBHOOK_URL: ${NOCLICK_API_URL:-http://api.localhost:${NOCLICK_API_PORT:-8000}}
       APP_WEBHOOK_BASE_URL: ${NOCLICK_API_URL:-http://api.localhost:${NOCLICK_API_PORT:-8000}}
       MCP_BASE_URL: ${NOCLICK_API_URL:-http://api.localhost:${NOCLICK_API_PORT:-8000}}
-      OBJECT_STORAGE_ENDPOINT: ${NOCLICK_STORAGE_URL:-http://storage.localhost:${NOCLICK_STORAGE_PORT:-9000}}
-      OBJECT_STORAGE_ACCESS_KEY_ID: ${OBJECT_STORAGE_ACCESS_KEY_ID}
-      OBJECT_STORAGE_SECRET_ACCESS_KEY: ${OBJECT_STORAGE_SECRET_ACCESS_KEY}
-      OBJECT_STORAGE_REGION: ${OBJECT_STORAGE_REGION:-us-east-1}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       FROM_EMAIL: ${FROM_EMAIL:-}
@@ -277,6 +258,5 @@ services:
 
 volumes:
   db-data:
-  storage-data:
   backend-state:
   redis-data:

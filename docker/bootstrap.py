@@ -23,7 +23,8 @@ Three commands, because a one-click deploy has only a database to start from:
               anything absent is generated once and kept in the database, which
               on a host that can neither generate a value nor mount a disk is
               the only place a key can survive a redeploy
-    (default) the claim accessors, the schema migrations and the buckets
+    (default) the claim accessors, the schema migrations and the buckets, and
+              once, the files an install from v0.4.1 or earlier kept in MinIO
 """
 
 import asyncio
@@ -298,21 +299,25 @@ async def _apply_migrations(conn: asyncpg.Connection) -> None:
             )
 
 
+# Runtime call sites use these names as part of the storage contract. Do not
+# expose bootstrap-only bucket overrides that would provision one pair while
+# the application writes to another.
+BUCKETS = ("workflow-resources", "workflow-cas")
+
+# How long a MinIO left behind by an upgrade gets to answer (it restarts with
+# the Docker daemon) before bootstrap says it is gone.
+LEGACY_MINIO_WAIT_SECONDS = 30.0
+
+
 def _ensure_buckets() -> None:
     endpoint = os.environ.get("OBJECT_STORAGE_ENDPOINT")
     if not endpoint:
         log("no S3 endpoint configured — objects live on this instance's disk under NOCLICK_HOME/storage")
         return
 
-    import time
-
     import boto3
     from botocore.exceptions import ClientError
 
-    # Runtime call sites use these names as part of the storage contract. Do
-    # not expose bootstrap-only bucket overrides that would provision one pair
-    # while the application writes to another.
-    buckets = ("workflow-resources", "workflow-cas")
     client = boto3.client(
         "s3",
         endpoint_url=endpoint,
@@ -323,7 +328,7 @@ def _ensure_buckets() -> None:
     # The object store has no healthcheck to depend on — its image carries no
     # shell to probe with — so reachability is established by retrying here.
     deadline = time.monotonic() + DEADLINE_SECONDS
-    for bucket in buckets:
+    for bucket in BUCKETS:
         while True:
             try:
                 client.head_bucket(Bucket=bucket)
@@ -344,6 +349,87 @@ def _ensure_buckets() -> None:
                 if time.monotonic() > deadline:
                     raise SystemExit(f"object storage never became reachable: {exc}")
                 time.sleep(1.0)
+
+
+def _import_legacy_minio() -> None:
+    """Copy the files an install from v0.4.1 or earlier kept in MinIO onto the
+    backend's volume, once.
+
+    MinIO no longer publishes images, and its volume is in MinIO's own format,
+    so the copy reads through the MinIO container the upgrade left behind:
+    compose keeps running a container whose service the file no longer names,
+    on the same network, under the same name.
+    """
+    access_key = os.environ.get("LEGACY_MINIO_ACCESS_KEY_ID")
+    if not access_key:
+        return
+
+    import boto3
+    from botocore.exceptions import EndpointConnectionError
+
+    from utils import local_object_store as store
+
+    marker = store.storage_root() / ".imported-from-minio.json"
+    if marker.exists():
+        return
+
+    url = os.environ["LEGACY_MINIO_URL"]
+    client = boto3.client(
+        "s3",
+        endpoint_url=url,
+        aws_access_key_id=access_key,
+        aws_secret_access_key=os.environ["LEGACY_MINIO_SECRET_ACCESS_KEY"],
+        region_name="us-east-1",
+    )
+    deadline = time.monotonic() + LEGACY_MINIO_WAIT_SECONDS
+    while True:
+        try:
+            present = {bucket["Name"] for bucket in client.list_buckets()["Buckets"]}
+            break
+        except EndpointConnectionError:
+            if time.monotonic() > deadline:
+                raise SystemExit(
+                    f"this install kept its files in MinIO (v0.4.1 and earlier) and they\n"
+                    f"  have not been copied yet, but nothing answers at {url}.\n"
+                    "  Start the old MinIO container again — docs/self-hosting.md, \"Upgrading\n"
+                    "  from v0.4.1 or earlier\" — then run `docker compose up -d`. To start without\n"
+                    "  those files, delete OBJECT_STORAGE_ACCESS_KEY_ID and\n"
+                    "  OBJECT_STORAGE_SECRET_ACCESS_KEY from .env."
+                )
+            time.sleep(1.0)
+
+    files = size = 0
+    skipped: list[str] = []
+    for bucket in BUCKETS:
+        if bucket not in present:
+            continue
+        for page in client.get_paginator("list_objects_v2").paginate(Bucket=bucket):
+            for item in page.get("Contents", []):
+                key = item["Key"]
+                try:
+                    store.object_path(bucket, key)
+                except ValueError:
+                    skipped.append(f"{bucket}/{key}")
+                    log(f"not copied, not a valid file path: {bucket}/{key}")
+                    continue
+                obj = client.get_object(Bucket=bucket, Key=key)
+                store.put(
+                    bucket,
+                    key,
+                    obj["Body"].read(),
+                    obj.get("ContentType") or "application/octet-stream",
+                    obj.get("Metadata") or {},
+                )
+                files += 1
+                size += item["Size"]
+
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text(json.dumps({"files": files, "bytes": size, "skipped": skipped, "from": url}))
+    log(
+        f"copied {files} files ({size} bytes) from MinIO onto this instance's volume.\n"
+        "  MinIO is no longer used: remove its container (`docker rm -f noclick-storage-1`)\n"
+        "  and, once your files check out, its volume (`docker volume rm noclick_storage-data`)."
+    )
 
 
 async def _provision_secrets(conn: asyncpg.Connection) -> dict:
@@ -461,6 +547,7 @@ async def main() -> None:
         await conn.close()
 
     _ensure_buckets()
+    _import_legacy_minio()
     log("ready")
 
 

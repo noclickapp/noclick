@@ -61,8 +61,6 @@ OBJECT_STORAGE_SECRET_ACCESS_KEY="$(get_existing OBJECT_STORAGE_SECRET_ACCESS_KE
 [ -n "$WORKFLOW_JWT_SECRET" ] || WORKFLOW_JWT_SECRET="$(rand 64)"
 [ -n "$CRON_SCHEDULER_SECRET" ] || CRON_SCHEDULER_SECRET="$(rand 64)"
 [ -n "$SESSION_SECRET" ] || SESSION_SECRET="$(rand 64)"
-[ -n "$OBJECT_STORAGE_ACCESS_KEY_ID" ] || OBJECT_STORAGE_ACCESS_KEY_ID="noclick-$(rand 12)"
-[ -n "$OBJECT_STORAGE_SECRET_ACCESS_KEY" ] || OBJECT_STORAGE_SECRET_ACCESS_KEY="$(rand 40)"
 # The API keys are only valid for the secret they were signed with.
 [ -n "$ANON_KEY" ] || ANON_KEY="$(sign_jwt anon "$JWT_SECRET")"
 [ -n "$SERVICE_ROLE_KEY" ] || SERVICE_ROLE_KEY="$(sign_jwt service_role "$JWT_SECRET")"
@@ -72,21 +70,31 @@ OBJECT_STORAGE_SECRET_ACCESS_KEY="$(get_existing OBJECT_STORAGE_SECRET_ACCESS_KE
 APP_PORT="${NOCLICK_APP_PORT:-$(get_existing NOCLICK_APP_PORT)}"
 API_PORT="${NOCLICK_API_PORT:-$(get_existing NOCLICK_API_PORT)}"
 SUPABASE_PORT="${NOCLICK_SUPABASE_PORT:-$(get_existing NOCLICK_SUPABASE_PORT)}"
-STORAGE_PORT="${NOCLICK_STORAGE_PORT:-$(get_existing NOCLICK_STORAGE_PORT)}"
 : "${APP_PORT:=3000}"
 : "${API_PORT:=8000}"
 : "${SUPABASE_PORT:=8001}"
-: "${STORAGE_PORT:=9000}"
 APP_URL="${NOCLICK_APP_URL:-$(get_existing NOCLICK_APP_URL)}"
 API_URL="${NOCLICK_API_URL:-$(get_existing NOCLICK_API_URL)}"
 SUPABASE_URL="${NOCLICK_SUPABASE_URL:-$(get_existing NOCLICK_SUPABASE_URL)}"
-STORAGE_URL="${NOCLICK_STORAGE_URL:-$(get_existing NOCLICK_STORAGE_URL)}"
 RELAY_URL="${NOCLICK_RELAY_URL:-$(get_existing NOCLICK_RELAY_URL)}"
 : "${APP_URL:=http://localhost:$APP_PORT}"
 : "${API_URL:=http://api.localhost:$API_PORT}"
 : "${SUPABASE_URL:=http://supabase.localhost:$SUPABASE_PORT}"
-: "${STORAGE_URL:=http://storage.localhost:$STORAGE_PORT}"
 : "${RELAY_URL:=ws://api.localhost:$API_PORT/relay}"
+
+# Releases up to v0.4.1 ran MinIO and generated these. They are kept, never
+# generated: a fresh install has no MinIO.
+LEGACY_MINIO=""
+if [ -n "$OBJECT_STORAGE_ACCESS_KEY_ID" ]; then
+    LEGACY_MINIO="
+
+# ── Files from v0.4.1 and earlier ────────────────────────────────────────────
+# MinIO's credentials: bootstrap copies the files it held onto the backend's
+# volume once. Delete these lines after removing the old MinIO container.
+OBJECT_STORAGE_ACCESS_KEY_ID=$OBJECT_STORAGE_ACCESS_KEY_ID
+OBJECT_STORAGE_SECRET_ACCESS_KEY=$OBJECT_STORAGE_SECRET_ACCESS_KEY
+NOCLICK_STORAGE_PORT=${NOCLICK_STORAGE_PORT:-$(get_existing NOCLICK_STORAGE_PORT)}"
+fi
 
 umask 077
 cat > "$ENV_FILE" <<ENV
@@ -98,19 +106,17 @@ cat > "$ENV_FILE" <<ENV
 # ── Public URLs ──────────────────────────────────────────────────────────────
 # The browser, the frontend server and the backend all use these exact strings.
 # Defaults resolve to this machine both inside and outside Docker. Replace all
-# five with real hostnames (https://) to publish the instance, then rebuild:
+# four with real hostnames (https://) to publish the instance, then rebuild:
 # the VITE_ values are compiled into the browser bundle.
 NOCLICK_APP_URL=$APP_URL
 NOCLICK_API_URL=$API_URL
 NOCLICK_RELAY_URL=$RELAY_URL
 NOCLICK_SUPABASE_URL=$SUPABASE_URL
-NOCLICK_STORAGE_URL=$STORAGE_URL
 
 # Published ports on the host; the services listen on the same ports inside.
 NOCLICK_APP_PORT=$APP_PORT
 NOCLICK_API_PORT=$API_PORT
 NOCLICK_SUPABASE_PORT=$SUPABASE_PORT
-NOCLICK_STORAGE_PORT=$STORAGE_PORT
 
 # ── Secrets ──────────────────────────────────────────────────────────────────
 POSTGRES_PASSWORD=$POSTGRES_PASSWORD
@@ -120,9 +126,7 @@ SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY
 CREDENTIALS_ENCRYPTION_KEY=$CREDENTIALS_ENCRYPTION_KEY
 WORKFLOW_JWT_SECRET=$WORKFLOW_JWT_SECRET
 CRON_SCHEDULER_SECRET=$CRON_SCHEDULER_SECRET
-SESSION_SECRET=$SESSION_SECRET
-OBJECT_STORAGE_ACCESS_KEY_ID=$OBJECT_STORAGE_ACCESS_KEY_ID
-OBJECT_STORAGE_SECRET_ACCESS_KEY=$OBJECT_STORAGE_SECRET_ACCESS_KEY
+SESSION_SECRET=$SESSION_SECRET$LEGACY_MINIO
 
 # ── Optional ─────────────────────────────────────────────────────────────────
 # Accounts are confirmed without email until an SMTP server is configured.

@@ -53,6 +53,18 @@ jobs:
             sleep 2
           done
           exit 1
+      - name: A file round-trips through the signed URLs a browser uploads to
+        # The backend mints the URLs exactly as for an upload in the app; the
+        # PUT and GET then go over the published port, as the browser's do.
+        run: |
+          cd "$HOME/noclick"
+          docker compose exec -T backend python -c '
+          from utils.r2_cloudflare import generate_presigned_download_url, generate_presigned_upload_url
+          key = "installer-e2e/hello.txt"
+          print(generate_presigned_upload_url("workflow-resources", key, "text/plain", content_length=5))
+          print(generate_presigned_download_url("workflow-resources", key))' > urls.txt
+          curl -fsS -X PUT -H "Content-Type: text/plain" --data-binary hello "$(sed -n 1p urls.txt)"
+          test "$(curl -fsS "$(sed -n 2p urls.txt)")" = hello
       - name: What the stack says, if it broke
         if: failure()
         run: cd "$HOME/noclick" && docker compose ps && docker compose logs --tail 80

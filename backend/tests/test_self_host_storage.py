@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import io
 from pathlib import Path
 from unittest.mock import patch
 
@@ -92,6 +93,107 @@ def test_bootstrap_creates_resource_and_cas_buckets(monkeypatch):
         bootstrap._ensure_buckets()
 
     assert created == ["workflow-resources", "workflow-cas"]
+
+
+class _OldMinio:
+    """The S3 surface bootstrap reads an upgraded install's MinIO through."""
+
+    def __init__(self, objects: dict[tuple[str, str], tuple[bytes, str]], reachable: bool = True):
+        self.objects = objects
+        self.reachable = reachable
+
+    def list_buckets(self):
+        if not self.reachable:
+            from botocore.exceptions import EndpointConnectionError
+
+            raise EndpointConnectionError(endpoint_url="http://storage:9000")
+        return {"Buckets": [{"Name": bucket} for bucket in {b for b, _ in self.objects}]}
+
+    def get_paginator(self, name):
+        assert name == "list_objects_v2"
+        objects = self.objects
+
+        class _Pages:
+            def paginate(self, *, Bucket):
+                # One object per page, so the copy has to follow the pages.
+                for key in sorted(k for b, k in objects if b == Bucket):
+                    yield {"Contents": [{"Key": key, "Size": len(objects[(Bucket, key)][0])}]}
+
+        return _Pages()
+
+    def get_object(self, *, Bucket, Key):
+        body, content_type = self.objects[(Bucket, Key)]
+        return {"Body": io.BytesIO(body), "ContentType": content_type, "Metadata": {"source": "minio"}}
+
+
+@pytest.fixture
+def upgraded_install(monkeypatch, tmp_path):
+    monkeypatch.setenv("NOCLICK_LOCAL", "1")
+    monkeypatch.setenv("NOCLICK_HOME", str(tmp_path))
+    monkeypatch.setenv("WORKFLOW_JWT_SECRET", "test-secret")
+    monkeypatch.setenv("PUBLIC_API_URL", "http://testserver")
+    monkeypatch.delenv("OBJECT_STORAGE_ENDPOINT", raising=False)
+    monkeypatch.setenv("LEGACY_MINIO_URL", "http://storage:9000")
+    monkeypatch.setenv("LEGACY_MINIO_ACCESS_KEY_ID", "noclick-old")
+    monkeypatch.setenv("LEGACY_MINIO_SECRET_ACCESS_KEY", "old-secret")
+    return tmp_path
+
+
+def test_bootstrap_copies_an_upgraded_installs_minio_files_once(upgraded_install):
+    """Releases up to v0.4.1 kept files in MinIO, which no longer publishes
+    images. On upgrade every file comes across to the backend's own store and
+    is served through the same signed URLs a fresh upload gets."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    from utils import local_object_store as store
+    from utils.local_storage_routes import router
+
+    bootstrap = _bootstrap_module()
+    minio = _OldMinio({
+        ("workflow-resources", "u1/wf1/r1/report.pdf"): (b"%PDF-1.7 report", "application/pdf"),
+        ("workflow-resources", "u1/wf1/r2/photo.png"): (b"\x89PNG photo", "image/png"),
+        ("workflow-cas", "chunks/ab/abcdef"): (b'{"big": "output"}', "application/json"),
+        ("workflow-resources", "u1/../escape"): (b"nope", "text/plain"),
+    })
+    with patch("boto3.client", return_value=minio) as client:
+        bootstrap._import_legacy_minio()
+    assert client.call_args.kwargs["endpoint_url"] == "http://storage:9000"
+    assert client.call_args.kwargs["aws_access_key_id"] == "noclick-old"
+
+    assert store.get("workflow-resources", "u1/wf1/r1/report.pdf") == (b"%PDF-1.7 report", "application/pdf")
+    assert store.get("workflow-cas", "chunks/ab/abcdef") == (b'{"big": "output"}', "application/json")
+    assert not (upgraded_install / "storage" / "workflow-resources" / "escape").exists()
+
+    app = FastAPI()
+    app.include_router(router)
+    url = store.presign("GET", "workflow-resources", "u1/wf1/r2/photo.png", expires_in=60)
+    got = TestClient(app).get(url)
+    assert (got.status_code, got.content, got.headers["content-type"]) == (200, b"\x89PNG photo", "image/png")
+
+    # Once copied, a later boot neither needs MinIO nor reads it.
+    with patch("boto3.client", side_effect=AssertionError("MinIO read again")):
+        bootstrap._import_legacy_minio()
+
+
+def test_bootstrap_stops_when_an_upgraded_installs_minio_is_gone(upgraded_install, monkeypatch):
+    """Starting without the files would look like lost uploads, so bootstrap
+    refuses and says how to bring MinIO back, or to skip the copy."""
+    bootstrap = _bootstrap_module()
+    monkeypatch.setattr(bootstrap, "LEGACY_MINIO_WAIT_SECONDS", 0)
+    with patch("boto3.client", return_value=_OldMinio({}, reachable=False)):
+        with pytest.raises(SystemExit) as stopped:
+            bootstrap._import_legacy_minio()
+    message = str(stopped.value)
+    assert "http://storage:9000" in message and "Upgrading" in message
+    assert "OBJECT_STORAGE_ACCESS_KEY_ID" in message
+    assert not (upgraded_install / "storage" / ".imported-from-minio.json").exists()
+
+
+def test_a_fresh_install_has_no_minio_to_copy(upgraded_install, monkeypatch):
+    monkeypatch.delenv("LEGACY_MINIO_ACCESS_KEY_ID")
+    with patch("boto3.client", side_effect=AssertionError("no MinIO to read")):
+        _bootstrap_module()._import_legacy_minio()
 
 
 @pytest.mark.asyncio

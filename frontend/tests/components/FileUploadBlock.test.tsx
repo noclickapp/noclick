@@ -84,7 +84,7 @@ describe('FileUploadBlock copy link', () => {
 
     it('requests a fresh authenticated URL when a private resource link is copied', async () => {
         const signedUrl =
-            'http://minio:9000/workflow-resources/private/object.pdf?X-Amz-Signature=fresh';
+            'http://objects.example.test/workflow-resources/private/object.pdf?X-Amz-Signature=fresh';
         mockResource(signedUrl);
         renderBlock();
 
@@ -131,9 +131,9 @@ describe('FileUploadBlock copy link', () => {
 
     it('renews the link for a newly uploaded private resource instead of caching its first signed URL', async () => {
         const firstSignedUrl =
-            'http://minio:9000/workflow-resources/private/new.pdf?X-Amz-Signature=first';
+            'http://objects.example.test/workflow-resources/private/new.pdf?X-Amz-Signature=first';
         const freshSignedUrl =
-            'http://minio:9000/workflow-resources/private/new.pdf?X-Amz-Signature=fresh';
+            'http://objects.example.test/workflow-resources/private/new.pdf?X-Amz-Signature=fresh';
         mocks.uploadFile.mockResolvedValue({
             resourceId: RESOURCE_ID,
             publicUrl: firstSignedUrl,

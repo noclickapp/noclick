@@ -78,6 +78,42 @@ from the defaults). The single-origin image avoids the question entirely — it
 bakes no URL and asks the origin it was served from, which is why the
 one-click deploys use it.
 
+### Upgrading from v0.4.1 or earlier
+
+Releases up to v0.4.1 ran a MinIO container for files. MinIO no longer
+publishes images, so a fresh install of those releases fails pulling it, and
+from v0.4.2 the Compose stack keeps files on the backend's own volume, as the
+single-origin image always has (see [File storage](#file-storage)).
+
+Upgrading (re-run the installer, or check out the new release and run
+`docker compose up -d`) copies your files across once. Compose leaves the old MinIO container running
+when its service disappears from the file, and bootstrap reads every file
+through it onto the backend's volume. After that, MinIO is unused:
+
+```bash
+docker rm -f noclick-storage-1          # the old MinIO container
+docker volume rm noclick_storage-data   # its data, once your files check out in the app
+```
+
+Then delete the `OBJECT_STORAGE_ACCESS_KEY_ID`, `OBJECT_STORAGE_SECRET_ACCESS_KEY`
+and `NOCLICK_STORAGE_PORT` lines from `.env`.
+
+If the old container is already gone (say you ran `docker compose down` before
+upgrading), bootstrap stops and says so. Start it again from the MinIO image
+this machine still has, then run `docker compose up -d`. The image below is
+v0.4.1's; `docker images | grep minio` names yours:
+
+```bash
+docker run -d --name noclick-storage-1 --network noclick_default --network-alias storage \
+  -v noclick_storage-data:/data \
+  -e MINIO_ROOT_USER="$(sed -n 's/^OBJECT_STORAGE_ACCESS_KEY_ID=//p' .env)" \
+  -e MINIO_ROOT_PASSWORD="$(sed -n 's/^OBJECT_STORAGE_SECRET_ACCESS_KEY=//p' .env)" \
+  quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z server /data --address :9000
+```
+
+Use your `NOCLICK_STORAGE_PORT` in place of 9000 if you changed it. To start
+without the old files instead, delete those three `.env` lines.
+
 ## Hosted deployments
 
 The hosted paths all run the same single-origin image: one backend, one
@@ -340,18 +376,20 @@ environment — users paste the key in the UI and it's encrypted with your
 
 By default, uploads, generated images, workflow resources and large node
 outputs live on the instance's own disk, under `NOCLICK_HOME/storage` — the
-persistent volume of the single-origin image — and are served by the backend
+persistent volume of the single-origin image, and the backend's
+`backend-state` volume in the Compose stack — and are served by the backend
 through short-lived signed URLs. Nothing to configure.
 
-To keep them in an S3-compatible bucket instead (the Compose stack ships
-MinIO for this), set:
+To keep them in an S3-compatible bucket instead, set these on the backend (in
+the Compose stack, on the `backend` and `bootstrap` services through a
+`docker-compose.override.yml`):
 
-| Variable                           | Notes                                                                                                                         |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `OBJECT_STORAGE_ENDPOINT`          | S3-compatible endpoint. Supabase Storage works: `$SUPABASE_URL/storage/v1/s3`. Cloudflare R2, MinIO, and AWS S3 all work too. |
-| `OBJECT_STORAGE_ACCESS_KEY_ID`     |                                                                                                                               |
-| `OBJECT_STORAGE_SECRET_ACCESS_KEY` |                                                                                                                               |
-| `OBJECT_STORAGE_REGION`            | Optional region; defaults to `us-east-1`.                                                                                     |
+| Variable                           | Notes                                                                                                             |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `OBJECT_STORAGE_ENDPOINT`          | S3-compatible endpoint. Supabase Storage works: `$SUPABASE_URL/storage/v1/s3`. Cloudflare R2 and AWS S3 work too. |
+| `OBJECT_STORAGE_ACCESS_KEY_ID`     |                                                                                                                   |
+| `OBJECT_STORAGE_SECRET_ACCESS_KEY` |                                                                                                                   |
+| `OBJECT_STORAGE_REGION`            | Optional region; defaults to `us-east-1`.                                                                         |
 
 Create two **private** buckets named `workflow-resources` and `workflow-cas`.
 The first stores uploads/media; the second stores graph snapshots and node

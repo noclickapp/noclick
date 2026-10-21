@@ -42,6 +42,17 @@ def test_upload_download_delete_through_signed_urls(client):
     assert client.get(get_url).status_code == 404
 
 
+def test_a_download_answers_range_requests(client):
+    """A video player seeks with Range requests, and Safari plays nothing
+    without them; S3 answers them, so the instance's own store must too."""
+    store.put("workflow-resources", "u1/clip.mp4", b"0123456789", "video/mp4")
+    url = store.presign("GET", "workflow-resources", "u1/clip.mp4", expires_in=60)
+    part = client.get(url, headers={"Range": "bytes=2-5"})
+    assert (part.status_code, part.content, part.headers["content-range"]) == (206, b"2345", "bytes 2-5/10")
+    assert part.headers["content-type"] == "video/mp4"
+    assert client.get(url).headers["accept-ranges"] == "bytes"
+
+
 def test_a_link_is_bound_to_its_method_size_and_expiry(client):
     put_url = store.presign("PUT", "workflow-resources", "k", expires_in=60, content_length=5)
     assert client.get(put_url).status_code == 403, "a PUT capability is not a GET capability"

@@ -112,16 +112,23 @@ custom_urls() {
         || [ "$(env_value NOCLICK_API_URL)" != "http://api.localhost:8000" ] \
         || [ "$(env_value NOCLICK_RELAY_URL)" != "ws://api.localhost:8000/relay" ]
 }
+# Bootstrap prepares the database (and, on an install from v0.4.1 or earlier,
+# copies the files MinIO held) before anything serves; when it stops, its log
+# says why.
+start_failed() {
+    die "NoClick did not start. See what bootstrap and the backend say:
+  cd $DIR && $COMPOSE logs --tail 50 bootstrap backend"
+}
 if [ "${NOCLICK_BUILD:-}" = "1" ]; then
     say "Building and starting from the checkout (this takes a while)"
-    $COMPOSE up -d --build
+    $COMPOSE up -d --build || start_failed
 else
     if custom_urls; then
         say "Custom public URLs: building the frontend for them (a few minutes)"
         $COMPOSE build frontend
     fi
     say "Downloading and starting NoClick $NOCLICK_VERSION (about 1.5 GB to download the first time)"
-    $COMPOSE up -d
+    $COMPOSE up -d || start_failed
 fi
 
 APP_URL="$(sed -n 's/^NOCLICK_APP_URL=//p' .env | head -1)"

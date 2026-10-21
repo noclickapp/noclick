@@ -98,11 +98,6 @@ is not a substitute for the full release-specific dependency inventory.
 
 ## Container services
 
-The default Docker Compose stack runs MinIO as a separate S3-compatible object
-storage service. MinIO uses the GNU Affero General Public License, version 3.
-Its source and license are available from
-[minio/minio](https://github.com/minio/minio).
-
 The `redis` Compose service runs Valkey, a Redis-protocol-compatible
 cache server, under the BSD 3-Clause License. Its source and license are
 available from [valkey-io/valkey](https://github.com/valkey-io/valkey). The

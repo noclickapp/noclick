@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 
 from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi.responses import FileResponse
 
 from utils import local_object_store as store
 
@@ -43,11 +44,14 @@ async def put_object(bucket: str, key: str, request: Request) -> Response:
 @router.get("/{bucket}/{key:path}")
 async def get_object(bucket: str, key: str, request: Request) -> Response:
     _authorize(request, "GET", bucket, key)
-    try:
-        body, content_type = store.get(bucket, key)
-    except FileNotFoundError:
+    path = store.object_path(bucket, key)
+    if not path.is_file():
         raise HTTPException(status_code=404, detail="No such object")
-    return Response(content=body, media_type=content_type, headers={"Cache-Control": "private, max-age=0"})
+    # Streamed from disk, and Range requests answered as S3 does: a video
+    # player seeks with them, and Safari plays no video without them.
+    return FileResponse(
+        path, media_type=store.content_type(bucket, key), headers={"Cache-Control": "private, max-age=0"}
+    )
 
 
 @router.delete("/{bucket}/{key:path}")
