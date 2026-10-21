@@ -464,6 +464,14 @@ class CredentialAffectedWorkflow(BaseModel):
     workflow_name: str = Field(..., description="Workflow display name")
 
 
+class CredentialAffectedHolder(BaseModel):
+    """Something else holding a credential pending deletion (``utils.capabilities.CREDENTIAL_HOLDERS``)."""
+    kind: str = Field(..., description="What it is: a named connection, an agent")
+    id: str = Field(..., description="Its id")
+    name: str = Field(..., description="Its name")
+    used_by: List[str] = Field(default_factory=list, description="What uses it in turn, by name")
+
+
 class CredentialDeleteResponse(BaseModel):
     """Response for credential:delete request"""
     success: bool = Field(..., description="Whether deletion was successful")
@@ -473,6 +481,10 @@ class CredentialDeleteResponse(BaseModel):
     affected_workflows: List[CredentialAffectedWorkflow] = Field(
         default_factory=list,
         description="Workflows referencing this credential (populated on dry runs)",
+    )
+    affected_holders: List[CredentialAffectedHolder] = Field(
+        default_factory=list,
+        description="What else holds this credential and loses it with the delete (populated on dry runs)",
     )
 
 

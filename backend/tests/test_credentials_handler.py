@@ -661,6 +661,35 @@ class TestCredentialsHandler(BaseHandlerTest):
         """, credential_id)
         assert row is None, "Credential should be deleted from database"
 
+    async def test_a_dry_run_names_what_else_holds_the_credential(self, real_database, frontend_sio, sid,
+                                                                 monkeypatch):
+        """Deleting the credential behind a deployment's named connection gave no warning, and the connection
+        went disconnected (2026-10-21): the dry run names what the deployment says holds it (the
+        ``CREDENTIAL_HOLDERS`` capability), beside the workflows."""
+        from utils import capabilities
+
+        user_id = '00000000-0000-4000-8000-000000000001'
+        await self.create_test_user(real_database, user_id)
+        credential_id = str(await real_database.fetchval(
+            "INSERT INTO credentials (owner_id, name, credential_type, credential) "
+            "VALUES ($1, 'WhatsApp', 'whatsapp_qr', 'x') RETURNING id", user_id))
+        asked = []
+
+        async def holders(pool, credential, owner):
+            asked.append((credential, owner))
+            return [{"kind": "connection", "id": "c1", "name": "whatsapp", "used_by": ["support"]}]
+
+        monkeypatch.setitem(capabilities._providers, capabilities.CREDENTIAL_HOLDERS, holders)
+        await send_event(frontend_sio, sid, CredentialDeleteRequest(
+            event_name="credential:delete", request_id="test-delete-holders", credential_id=credential_id))
+        await asyncio.sleep(0.2)
+        response = next(e[1] for e in self.get_main_api_emitted_events("response")
+                        if e[1]['request_id'] == 'test-delete-holders')
+        assert response['data']['deleted'] is False
+        assert response['data']['affected_holders'] == [
+            {"kind": "connection", "id": "c1", "name": "whatsapp", "used_by": ["support"]}]
+        assert asked == [(credential_id, user_id)]
+
     async def test_delete_rejected_for_non_owner_with_edit_share(
         self, real_database, frontend_sio, sid
     ):

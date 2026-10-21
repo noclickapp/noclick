@@ -222,6 +222,12 @@ TOOL_CALL_GUARD = "agent.tool_call_guard"
 # credential must be saved in the graph.
 BOUND_CREDENTIALS = "workflow.bound_credentials"
 
+# What a product keeps that holds a credential, beyond the workflows whose
+# nodes name it (a named connection, an agent): async (pool, credential_id,
+# owner_id) -> [{kind, id, name, used_by: [names]}], named before the owner
+# deletes it. Without one, only workflows are named.
+CREDENTIAL_HOLDERS = "credentials.holders"
+
 # Nodes left their workflow's graph, or the whole workflow left the account
 # (trashed or deleted: node_ids None): async (pool, workflow_id, node_ids) ->
 # None, for what a product keeps of those nodes by id (a channel's agents).

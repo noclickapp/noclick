@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Wed Oct 21 04:43:16  2026
+// Generated at: Thu Oct 22 04:03:30  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -8945,6 +8945,27 @@ export interface CodexDeviceCodeStartResponse {
   message?: string | null;
 }
 /**
+ * Something else holding a credential pending deletion (``utils.capabilities.CREDENTIAL_HOLDERS``).
+ */
+export interface CredentialAffectedHolder {
+  /**
+   * What it is: a named connection, an agent
+   */
+  kind: string;
+  /**
+   * Its id
+   */
+  id: string;
+  /**
+   * Its name
+   */
+  name: string;
+  /**
+   * What uses it in turn, by name
+   */
+  used_by?: string[];
+}
+/**
  * A workflow whose nodes reference a credential pending deletion.
  */
 export interface CredentialAffectedWorkflow {
@@ -9153,6 +9174,10 @@ export interface CredentialDeleteResponse {
    * Workflows referencing this credential (populated on dry runs)
    */
   affected_workflows?: CredentialAffectedWorkflow[];
+  /**
+   * What else holds this credential and loses it with the delete (populated on dry runs)
+   */
+  affected_holders?: CredentialAffectedHolder[];
 }
 /**
  * Response for credential:get request (includes decrypted data)

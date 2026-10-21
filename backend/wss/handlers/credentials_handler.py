@@ -773,12 +773,16 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 request.credential_id, user_id, row.organization_id
             )
             if not request.confirm:
+                from utils.capabilities import CREDENTIAL_HOLDERS, capability
+
+                holders = capability(CREDENTIAL_HOLDERS)
                 response = CredentialDeleteResponse(
                     success=True,
                     message="Dry run — nothing deleted",
                     credential_id=request.credential_id,
                     deleted=False,
                     affected_workflows=affected,
+                    affected_holders=await holders(pool, request.credential_id, user_id) if holders else [],
                 )
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id,
