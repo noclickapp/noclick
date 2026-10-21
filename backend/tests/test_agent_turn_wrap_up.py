@@ -44,12 +44,18 @@ async def test_any_other_turn_ends_on_the_limits_line(monkeypatch):
     assert (await _created_with(monkeypatch, {}))["wrap_up"] is None
 
 
-async def test_a_turn_goes_as_far_as_the_platform_says_and_the_defaults_otherwise(monkeypatch):
+async def test_a_workflow_agent_nodes_turn_keeps_its_30_steps_and_no_spend_or_time_limit(monkeypatch):
+    """A node has no wrap-up, so a limit fails its run: one on an expensive model must not start failing on a
+    spend or time limit it never had. The account's credits and spend cap still bound it."""
+    limits = (await _created_with(monkeypatch, {}))["limits"]
+    assert limits == TurnLimits() == TurnLimits(steps=30, spend_usd=None, minutes=None)
+
+
+async def test_a_turn_goes_as_far_as_the_platform_says(monkeypatch):
     kwargs = await _created_with(monkeypatch, {TURN_LIMITS_KEY: {"steps": 100}})
-    assert kwargs["limits"] == TurnLimits(steps=100, spend_usd=1.0, minutes=15.0)
+    assert kwargs["limits"] == TurnLimits(steps=100, spend_usd=None, minutes=None)
     kwargs = await _created_with(monkeypatch, {TURN_LIMITS_KEY: {"steps": 40, "usd": 2.5, "minutes": 30}})
     assert kwargs["limits"] == TurnLimits(steps=40, spend_usd=2.5, minutes=30.0)
-    assert (await _created_with(monkeypatch, {}))["limits"] == TurnLimits()
 
 
 async def test_the_output_says_which_limit_ended_the_turn(monkeypatch):

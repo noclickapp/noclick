@@ -41,11 +41,12 @@ _now = time.monotonic
 @dataclass(frozen=True)
 class TurnLimits:
     """How far one turn goes: ``steps`` model calls, ``spend_usd`` of model calls (None: no ceiling) and
-    ``minutes`` of wall clock (None: no limit)."""
+    ``minutes`` of wall clock (None: no limit). By default only the steps: a caller with no wrap-up (a workflow's
+    agent node, whose run a limit fails) never meets a spend or time limit it didn't ask for."""
 
     steps: int = 30
-    spend_usd: Optional[float] = 1.0
-    minutes: Optional[float] = 15.0
+    spend_usd: Optional[float] = None
+    minutes: Optional[float] = None
 
     @classmethod
     def of(cls, given: Optional[Mapping[str, Any]]) -> "TurnLimits":

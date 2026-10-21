@@ -20,6 +20,7 @@ from billing.exceptions import InsufficientBalanceError
 
 from coder.coordinator import agent as coordinator
 from coder.coordinator import tools as coordinator_tools
+from coder.openai_agent.guards import TurnLimits
 from coder.coordinator.tools import (
     COORDINATOR_NODE_ID, CoordinatorTools, bounded,
 )
@@ -282,7 +283,7 @@ async def test_turn_wires_persistence_tools_and_billing_identity(turn_seams, mon
     assert captured.get("history_limit") is None
     # A turn one of its limits ends still tells the owner where things stand, and it goes further than a workflow's.
     assert captured["wrap_up"] == coordinator.PROMPTS.WRAP_UP
-    assert captured["limits"].steps == 100 and captured["limits"] == coordinator.COORDINATOR_LIMITS
+    assert captured["limits"] == coordinator.COORDINATOR_LIMITS == TurnLimits(steps=100, spend_usd=1.0, minutes=15)
     # An account with no email (made by a WhatsApp first contact) can connect one, and
     # is never offered the email channel it cannot use.
     names = config.capabilities.custom_tool_names

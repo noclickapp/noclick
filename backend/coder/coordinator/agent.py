@@ -41,8 +41,8 @@ logger = logging.getLogger(__name__)
 COORDINATOR_FEATURE = "coordinator"
 COORDINATOR_MODEL = DEFAULT_LLM_AGENT_MODEL
 # Building a site or shipping an app takes more model calls than a workflow agent's turn: the account's agent goes
-# further in one turn, its spend and time limits the engine's own.
-COORDINATOR_LIMITS = TurnLimits(steps=100)
+# further in one turn, and wraps up at a dollar or a quarter of an hour.
+COORDINATOR_LIMITS = TurnLimits(steps=100, spend_usd=1.0, minutes=15)
 
 PROMPTS = PromptPack("coordinator")
 
