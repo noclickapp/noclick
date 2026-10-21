@@ -72,8 +72,9 @@ async def _run(pool, summary, compact, text, lookups, monkeypatch):
     async def lookup(name, arguments):
         return {"text": f"Result {arguments['n']}: " + "fact " * 800}
 
+    parameters = {"type": "object", "properties": {"n": {"type": "integer"}}}
     tool = {"type": "function", "function": {"name": "lookup", "description": "Look something up",
-                                             "parameters": {"type": "object", "properties": {"n": {"type": "integer"}}}}}
+                                             "parameters": parameters}}
     instance = await Agent.create(emit_message=AsyncMock(), conversation_id=CONVERSATION, enable_persistence=True,
                                   user_id=USER, custom_tool_executor=lookup, call_model_input_filter=compact,
                                   config=AgentConfiguration.from_kwargs(model="gpt-4o", system_prompt="Look things up.",
