@@ -117,9 +117,10 @@ async def test_run_scopes_resource_ids_resolved_from_dynamic_inputs() -> None:
             return {"filename": media.filename}
 
     class _Pool:
-        async def fetchrow(self, query, resource_id, workflow_id):
+        async def fetchrow(self, query, resource_id, workflow_id, owner_id):
             assert "workflow_id = $2" in query
-            assert (resource_id, workflow_id) == (RESOURCE_ID, WORKFLOW_ID)
+            # A run names no owner: the id resolves only as a file of its workflow.
+            assert (resource_id, workflow_id, owner_id) == (RESOURCE_ID, WORKFLOW_ID, None)
             return {
                 "storage_ref": "owner/workflow/resource/file.png",
                 "mime_type": "image/png",
