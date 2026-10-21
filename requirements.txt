@@ -7,7 +7,7 @@ starlette==1.6.0
 fastapi-cli==0.0.4
 openai==2.38.0
 openai-agents==0.17.3
-pillow==12.3.0
+pillow==13.0.0
 pydantic==2.13.4
 pydantic_core==2.46.4
 requests==2.34.2
