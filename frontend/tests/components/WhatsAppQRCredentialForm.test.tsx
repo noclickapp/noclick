@@ -5,6 +5,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { WhatsAppQRCredentialForm } from '~/components/workflow/WhatsAppQRCredentialForm';
 
+const socketSend = vi.hoisted(() => vi.fn());
+vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: socketSend }));
+
 // Every whatsapp:qr:start mints a WAHooks connection, and scanning it rebinds
 // an already-linked phone's credential to that connection (2026-08-29: two
 // needless re-scans from a panel that showed a QR beside a healthy credential).
@@ -79,5 +82,12 @@ describe('WhatsAppQRCredentialForm', () => {
         await screen.findByTestId('instance-key-prompt');
         expect(screen.getByRole('button', { name: /Save and show QR/i })).toBeTruthy();
         expect(screen.queryByText(/Retry/)).toBeNull();
+    });
+
+    it('waits on the socket as long as the backend waits for a QR', async () => {
+        // The backend may wait about a minute for WhatsApp's linking service; the socket's 30s default gave up first.
+        socketSend.mockResolvedValue({ success: true, connection_id: 'c', qr_code: 'QR' });
+        render(<WhatsAppQRCredentialForm credentialType="whatsapp_qr" onCredentialCreated={() => {}} />);
+        await waitFor(() => expect(socketSend).toHaveBeenCalledWith({ event_name: 'whatsapp:qr:start' }, undefined, 90_000));
     });
 });

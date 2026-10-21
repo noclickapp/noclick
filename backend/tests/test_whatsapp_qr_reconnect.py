@@ -75,8 +75,9 @@ def stub_wahooks_reconnect(monkeypatch):
         def get_qr(self, connection_id):
             calls["get_qr"].append(connection_id)
             if connection_id == "conn-gone":
-                raise mod.WAHooksError("404 connection not found")
-            return {"qr": f"QR-{connection_id}"}
+                raise mod.WAHooksError("Connection not found", 404)
+            # WAHooks' GET /connections/{id}/qr answer.
+            return {"value": f"QR-{connection_id}", "mimetype": "image/png"}
 
         def get_or_create_scannable_connection(self, virgin_only=False):
             calls["get_or_create"] += 1
@@ -84,7 +85,7 @@ def stub_wahooks_reconnect(monkeypatch):
 
         def create_connection(self):
             calls["created"] += 1
-            return {"id": "conn-fresh", "qr": "QR-fresh"}
+            return {"id": "conn-fresh", "status": "scan_qr"}  # no QR until asked for
 
         def get_connection(self, connection_id):
             return calls["connections"].get(
@@ -93,7 +94,7 @@ def stub_wahooks_reconnect(monkeypatch):
 
         def list_webhooks(self, connection_id):
             if connection_id == "conn-broken":
-                raise mod.WAHooksError("500 webhooks unavailable")
+                raise mod.WAHooksError("webhooks unavailable", 500)
             return list(calls["webhooks"].get(connection_id, []))
 
         def create_webhook(self, connection_id, url, events):
@@ -102,9 +103,11 @@ def stub_wahooks_reconnect(monkeypatch):
                 {"id": f"wh-{len(calls['seq'])}", "url": url, "events": events}
             )
 
+    from wahooks import WAHooksError
+
     mod = types.ModuleType("wahooks")
     mod.WAHooks = StubClient
-    mod.WAHooksError = type("WAHooksError", (Exception,), {})
+    mod.WAHooksError = WAHooksError
     monkeypatch.setitem(sys.modules, "wahooks", mod)
     monkeypatch.setenv("WAHOOKS_API_KEY", "test-key")
     return calls

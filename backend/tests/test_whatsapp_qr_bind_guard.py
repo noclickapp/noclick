@@ -204,7 +204,10 @@ def stub_wahooks(monkeypatch):
 
         def create_connection(self):
             calls["created"] += 1
-            return {"id": "conn-fresh", "qr": "QR-FRESH"}
+            return {"id": "conn-fresh", "status": "scan_qr"}  # no QR until asked for
+
+        def get_qr(self, connection_id):
+            return {"value": f"QR-{connection_id}", "mimetype": "image/png"}
 
     mod = types.ModuleType("wahooks")
     mod.WAHooks = StubClient

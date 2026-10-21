@@ -32,6 +32,11 @@ interface WhatsAppQRCredentialFormProps {
 
 type QRFlowState = 'idle' | 'loading' | 'scanning' | 'connected' | 'error' | 'needs_key';
 
+// A start can wait about a minute for WhatsApp's linking service to show a QR
+// (QR_WAIT_S in backend/utils/whatsapp_qr.py), past the socket's 30s default.
+const QR_START_TIMEOUT_MS = 90_000;
+const sendOverSocket: OAuthExchange = (event) => sendEventAsync(event, undefined, QR_START_TIMEOUT_MS);
+
 export const WhatsAppQRCredentialForm = ({
     onCredentialCreated, sendEvent, reconnectCredentialId, autoStart = true,
     startLabel = 'Connect a different WhatsApp number',
@@ -43,8 +48,8 @@ export const WhatsAppQRCredentialForm = ({
     const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const pollCountRef = useRef(0);
     const startedRef = useRef(false);
-    const sendRef = useRef(sendEvent ?? sendEventAsync);
-    useEffect(() => { sendRef.current = sendEvent ?? sendEventAsync; }, [sendEvent]);
+    const sendRef = useRef(sendEvent ?? sendOverSocket);
+    useEffect(() => { sendRef.current = sendEvent ?? sendOverSocket; }, [sendEvent]);
 
     const stopPolling = useCallback(() => {
         if (pollIntervalRef.current) {

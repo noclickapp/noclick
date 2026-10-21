@@ -24,9 +24,10 @@ import asyncio
 import logging
 import os
 import time
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable, NamedTuple, Optional
 
 import asyncpg
+import httpx
 
 from utils.redis_client import get_shared_redis
 
@@ -38,6 +39,15 @@ QR_RESERVATION_TTL_S = 15 * 60
 # start_qr_connection's failure codes when the owner's credit gate refused: credits, or the monthly spending cap.
 INSUFFICIENT_CREDITS = "insufficient_credits"
 SPEND_CAP = "spend_cap"
+# How long a scan waits for WAHooks' first QR. Its get-or-create answers "pending" (fetch the QR yourself) when
+# its own ~20s poll found none, and a session it has just made needs a worker and a booted WhatsApp client first;
+# a start that gave up at that "pending" left the page saying the connection failed.
+QR_WAIT_S = 60.0
+# A re-scan of a credential's own connection waits this long before a fresh scan is tried instead.
+RECONNECT_QR_WAIT_S = 15.0
+QR_POLL_S = 2.0
+NO_QR_MESSAGE = ("WhatsApp's linking service didn't send a QR code in time; it may be busy. "
+                 "Please try again in a few minutes.")
 
 
 # Status enrichment for credential lists: one WAHooks list call covers the
@@ -112,20 +122,38 @@ async def dead_session_status(connection_id: str) -> Optional[str]:
     return None if status == "connected" else status
 
 
-def _poll_qr(client, connection_id: str, qr: str = "", attempts: int = 5) -> str:
-    """Blocking QR poll (thread-pool): a just-created/reset session boots its
-    QR within seconds; transient fetch errors count as a spent attempt."""
+class QrAnswer(NamedTuple):
+    qr: str = ""
+    why: str = ""  # why there's no QR, for the log
+    linked: bool = False  # a phone already scanned it
+
+
+def _wait_for_qr(client, connection_id: str, deadline: float) -> QrAnswer:
+    """Blocking (thread-pool): the connection's QR, asked for until ``deadline``
+    (``time.monotonic``). WAHooks answers ``{value}`` once the session shows a
+    QR, ``{connected: true}`` once a phone is linked, 503 while its worker
+    starts (it also resets a failed or stopped session), 404 for a connection
+    it doesn't have."""
     from wahooks import WAHooksError
 
-    for _ in range(attempts):
-        if qr or not connection_id:
-            break
-        time.sleep(2)
+    while True:
         try:
-            qr = client.get_qr(connection_id).get("qr", "")
-        except WAHooksError:
-            continue
-    return qr
+            answer = client.get_qr(connection_id)
+        except WAHooksError as e:
+            if getattr(e, "status_code", None) == 404:
+                return QrAnswer(why=f"WAHooks has no connection {connection_id}")
+            why = f"WAHooks answered {getattr(e, 'status_code', '?')}: {e}"
+        except httpx.HTTPError as e:
+            why = f"WAHooks didn't answer ({type(e).__name__})"
+        else:
+            if answer.get("value"):
+                return QrAnswer(qr=answer["value"])
+            if answer.get("connected"):
+                return QrAnswer(why="a phone is already linked to it", linked=True)
+            why = f"WAHooks answered with no QR: {sorted(answer)}"
+        if time.monotonic() + QR_POLL_S >= deadline:
+            return QrAnswer(why=why)
+        time.sleep(QR_POLL_S)
 
 
 async def _reconnect_qr(
@@ -136,7 +164,7 @@ async def _reconnect_qr(
     repairs the credential in place). WAHooks resets a failed/stopped session
     on QR fetch, so the scan relinks the same session and finalize resolves it
     as the idempotent own-binding success — credential id and webhooks survive untouched."""
-    from wahooks import WAHooks, WAHooksError
+    from wahooks import WAHooks
     from utils.credentials import credential_metadata
 
     async with pool.acquire() as conn:
@@ -150,18 +178,14 @@ async def _reconnect_qr(
     if not own_conn_id or not await _try_reserve_connection(own_conn_id, owner_id):
         return None
 
-    def _get_own_qr():
+    def _get_own_qr() -> QrAnswer:
         with WAHooks(api_key=api_key) as client:
-            try:
-                qr = client.get_qr(own_conn_id).get("qr", "")
-            except WAHooksError:
-                return ""  # connection gone at WAHooks — fall back now, don't poll
-            return _poll_qr(client, own_conn_id, qr)
+            return _wait_for_qr(client, own_conn_id, time.monotonic() + RECONNECT_QR_WAIT_S)
 
-    qr_value = await asyncio.to_thread(_get_own_qr)
-    if not qr_value:
+    answer = await asyncio.to_thread(_get_own_qr)
+    if not answer.qr:
         logger.warning(
-            f"[WhatsAppQR] Reconnect via connection {own_conn_id} yielded no QR — "
+            f"[WhatsAppQR] Reconnect via connection {own_conn_id} yielded no QR ({answer.why}) — "
             f"falling back to a fresh scan (finalize rebinds by phone)"
         )
         return None
@@ -172,7 +196,7 @@ async def _reconnect_qr(
     return {
         "success": True,
         "connection_id": own_conn_id,
-        "qr_code": qr_value,
+        "qr_code": answer.qr,
         "reconnect": True,
         "message": "Scan this QR code to reconnect your WhatsApp.",
     }
@@ -292,15 +316,12 @@ async def start_qr_connection(
 
     from wahooks import WAHooks, WAHooksError
 
-    if reconnect_credential_id:
-        try:
-            if reconnected := await _reconnect_qr(pool, api_key, owner_id, reconnect_credential_id):
-                return reconnected
-        except WAHooksError as e:
-            logger.warning(
-                f"[WhatsAppQR] Reconnect for credential {reconnect_credential_id} "
-                f"failed ({e}) — falling back to a fresh scan"
-            )
+    if reconnect_credential_id and (
+        reconnected := await _reconnect_qr(pool, api_key, owner_id, reconnect_credential_id)
+    ):
+        return reconnected
+    if shown := await _still_shown(api_key, owner_id):
+        return shown
 
     def _get_scannable_connection():
         # wahooks ships only a sync httpx client; keep the blocking WhatsApp API
@@ -313,16 +334,20 @@ async def start_qr_connection(
             return client.get_or_create_scannable_connection(virgin_only=True)
 
     def _create_fresh_connection():
-        # The idle connection is reserved by another flow mid-scan — mint a
-        # brand-new one. Its QR may take a moment to boot.
+        # The idle connection is another flow's: mint a brand-new one, which
+        # comes with no QR of its own yet.
         with WAHooks(api_key=api_key) as client:
-            conn = client.create_connection()
-            cid = conn.get("id")
-            return {"id": cid, "qr": _poll_qr(client, cid, conn.get("qr", ""))}
+            return client.create_connection()
 
+    def _wait(connection_id: str, deadline: float) -> QrAnswer:
+        with WAHooks(api_key=api_key) as client:
+            return _wait_for_qr(client, connection_id, deadline)
+
+    started = time.monotonic()
+    connection_id = None  # the connection this start holds the reservation of
     try:
         result = await asyncio.to_thread(_get_scannable_connection)
-        connection_id = result.get("id")
+        offered = result.get("id")
 
         # A recycled connection is unusable if another owner's credential
         # already binds it (their webhooks still point at it — scanning would
@@ -330,39 +355,118 @@ async def start_qr_connection(
         # flow holds its reservation (they're looking at the same QR). Either
         # way: mint a fresh one. Binding is checked first so a rejected
         # connection is never left reserved against its real owner's reconnect.
-        rejected = False
-        if connection_id:
-            if await _bound_to_other_owner(pool, connection_id, owner_id):
-                logger.warning(
-                    f"[WhatsAppQR] Connection {connection_id} is bound to another owner's "
-                    f"credential — creating a fresh one for owner {owner_id}"
-                )
-                rejected = True
-            elif not await _try_reserve_connection(connection_id, owner_id):
-                logger.info(
-                    f"[WhatsAppQR] Connection {connection_id} reserved by another flow — "
-                    f"creating a fresh one for owner {owner_id}"
-                )
-                rejected = True
-        if rejected:
+        if offered and await _bound_to_other_owner(pool, offered, owner_id):
+            logger.warning(
+                f"[WhatsAppQR] Connection {offered} is bound to another owner's "
+                f"credential — creating a fresh one for owner {owner_id}"
+            )
+        elif offered and not await _try_reserve_connection(offered, owner_id):
+            logger.info(
+                f"[WhatsAppQR] Connection {offered} reserved by another flow — "
+                f"creating a fresh one for owner {owner_id}"
+            )
+        else:
+            connection_id = offered
+        if offered and connection_id is None:
             result = await asyncio.to_thread(_create_fresh_connection)
-            connection_id = result.get("id")
-            if connection_id and not await _try_reserve_connection(connection_id, owner_id):
-                connection_id = None  # brand-new id already claimed: give up
+            if result.get("id") and await _try_reserve_connection(result["id"], owner_id):
+                connection_id = result["id"]
 
-        qr_value = result.get("qr", "")
-        if not connection_id or not qr_value:
-            return {"success": False, "message": "Failed to get scannable WhatsApp connection"}
+        answer = QrAnswer(qr=result.get("qr") or "", why=f"WAHooks answered {result.get('status')!r} with no QR")
+        if connection_id and not answer.qr:
+            answer = await asyncio.to_thread(_wait, connection_id, started + QR_WAIT_S)
+    except (WAHooksError, httpx.HTTPError) as e:
+        answer = QrAnswer(why=f"WAHooks failed: {type(e).__name__}: {e}")
 
-        logger.info(f"[WhatsAppQR] QR code ready for owner {owner_id}, connection {connection_id}")
-        return {
-            "success": True,
-            "connection_id": connection_id,
-            "qr_code": qr_value,
-            "message": "Scan this QR code with your WhatsApp to connect.",
-        }
-    except WAHooksError as e:
-        return {"success": False, "message": f"WhatsApp error: {e}"}
+    if not connection_id or not answer.qr:
+        logger.warning(
+            f"[WhatsAppQR] No QR for owner {owner_id} on connection {connection_id} after "
+            f"{time.monotonic() - started:.0f}s: {answer.why}"
+        )
+        if connection_id and not answer.linked:
+            await _discard(pool, connection_id)
+        return {"success": False, "message": NO_QR_MESSAGE}
+
+    await _remember_shown(owner_id, connection_id)
+    logger.info(f"[WhatsAppQR] QR code ready for owner {owner_id}, connection {connection_id}")
+    return {
+        "success": True,
+        "connection_id": connection_id,
+        "qr_code": answer.qr,
+        "message": "Scan this QR code with your WhatsApp to connect.",
+    }
+
+
+def _shown_key(owner_id: str) -> str:
+    return f"whatsapp:qr:shown:{owner_id}"
+
+
+async def _remember_shown(owner_id: str, connection_id: str) -> None:
+    client = get_shared_redis()
+    if client is None:
+        return
+    try:
+        await client.set(_shown_key(owner_id), connection_id, ex=QR_RESERVATION_TTL_S)
+    except Exception as e:
+        logger.warning(f"[WhatsAppQR] Shown-QR write failed for owner {owner_id}: {e}")
+
+
+async def _still_shown(api_key: str, owner_id: str) -> Optional[dict[str, Any]]:
+    """The QR this owner's last start is showing, read again while its
+    connection is still reserved to them and unscanned. WAHooks' get-or-create
+    resets the idle session it hands out, so a second start (a page that starts
+    twice, a retry) asking it again would void the QR the first is showing."""
+    client = get_shared_redis()
+    if client is None:
+        return None
+    try:
+        held = await client.get(_shown_key(owner_id))
+    except Exception as e:
+        logger.warning(f"[WhatsAppQR] Shown-QR read failed for owner {owner_id}: {e}")
+        return None
+    if held is None:
+        return None
+    connection_id = held.decode() if isinstance(held, bytes) else str(held)
+    if await _reservation_status(connection_id, owner_id) != "held":
+        return None
+    from wahooks import WAHooks
+
+    def _read() -> QrAnswer:
+        with WAHooks(api_key=api_key) as client:
+            return _wait_for_qr(client, connection_id, time.monotonic())  # asked once
+
+    answer = await asyncio.to_thread(_read)
+    if not answer.qr:
+        return None
+    logger.info(f"[WhatsAppQR] QR still shown for owner {owner_id}, connection {connection_id}")
+    return {
+        "success": True,
+        "connection_id": connection_id,
+        "qr_code": answer.qr,
+        "message": "Scan this QR code with your WhatsApp to connect.",
+    }
+
+
+async def _discard(pool, connection_id: str) -> None:
+    """Delete a connection a start got no QR from, unless a credential binds
+    it, so it isn't handed to the next start as it was to this one."""
+    async with pool.acquire() as conn:
+        bound = await conn.fetchval(
+            """SELECT EXISTS (SELECT 1 FROM credentials
+               WHERE credential_type = 'whatsapp_qr' AND metadata->>'connection_id' = $1)""",
+            connection_id,
+        )
+    if bound:
+        return
+    from utils.wahooks_connections import delete_wahooks_connection
+
+    try:
+        await delete_wahooks_connection(connection_id)
+    except Exception as e:
+        logger.error(
+            f"[WhatsAppQR] Connection {connection_id} not deleted after its start failed ({e}); "
+            f"left for the orphan sweep"
+        )
 
 
 async def finalize_qr_connection(
