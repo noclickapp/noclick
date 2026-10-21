@@ -41,18 +41,19 @@ function Glyph({ mark, className }: { mark?: Mark; className?: string }) {
 function withMention(text: string, accent?: string) {
     // A mention starts a word — the `@example` inside casey@example.com is
     // an address, not a mention.
-    const m = text.match(/(?<![\w.])@[\w-]+/);
+    const m = text.match(/(^|[^\w.])(@[\w-]+)/);
     if (!m || m.index === undefined) return text;
+    const at = m.index + m[1].length;
     return (
         <>
-            {text.slice(0, m.index)}
+            {text.slice(0, at)}
             <span
                 className={cn('rounded px-1 py-px', !accent && 'bg-sky-400/15 text-sky-300')}
                 style={accent ? { color: accent, background: `${accent}26` } : undefined}
             >
-                {m[0]}
+                {m[2]}
             </span>
-            {text.slice(m.index + m[0].length)}
+            {text.slice(at + m[2].length)}
         </>
     );
 }

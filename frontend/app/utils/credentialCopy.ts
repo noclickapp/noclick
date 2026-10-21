@@ -273,7 +273,7 @@ function sentencesOf(text: string): string[] {
         else units.push(item ? line.replace(/^(\d+[.)]|[-•*])\s+/, '') : line);
         open = !/([.!?:]|https?:\/\/\S+)$/.test(line);
     }
-    return units.flatMap((unit) => unit.split(/(?<=[.!?])\s+(?=[A-Z])/)).map((s) => s.trim()).filter(Boolean);
+    return units.flatMap((unit) => unit.replace(/([.!?])\s+(?=[A-Z])/g, '$1\n').split('\n')).map((s) => s.trim()).filter(Boolean);
 }
 
 /** A sentence without the URLs the source link already carries; null when nothing is left without them ("Get your
@@ -331,7 +331,7 @@ export function howToGet(method: CopyMethod, app?: string): string | null {
 export function asNamed(text: string, app: string): string {
     const escaped = app.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     // Never inside a host or an address ("acme.fellow.app", "Apollo.io").
-    return text.replace(new RegExp(`(?<![./@-])\\b${escaped}\\b(?![./@:+-][\\w/])`, 'gi'), app);
+    return text.replace(new RegExp(`(^|[^./@-])\\b${escaped}\\b(?![./@:+-][\\w/])`, 'gi'), (_, before) => before + app);
 }
 
 export function sourceLink(method: CopyMethod): SourceLink | null {
