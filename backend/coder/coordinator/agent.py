@@ -21,6 +21,7 @@ from coder.coordinator.tools import COORDINATOR_NODE_ID, CoordinatorTools, step_
 from coder.openai_agent import Agent
 from coder.openai_agent.agent import CURRENT_TOOL_CALL_ID
 from coder.openai_agent.config import AgentConfiguration
+from coder.openai_agent.guards import TurnLimits
 from nodes.agent.config.llm import DEFAULT_LLM_AGENT_MODEL
 from repositories.coordinator_wakeups import CoordinatorWakeupRepo, coordinator_lock
 from utils.account_link import AccountLink
@@ -39,6 +40,9 @@ logger = logging.getLogger(__name__)
 
 COORDINATOR_FEATURE = "coordinator"
 COORDINATOR_MODEL = DEFAULT_LLM_AGENT_MODEL
+# Building a site or shipping an app takes more model calls than a workflow agent's turn: the account's agent goes
+# further in one turn, its spend and time limits the engine's own.
+COORDINATOR_LIMITS = TurnLimits(steps=100)
 
 PROMPTS = PromptPack("coordinator")
 
@@ -248,7 +252,7 @@ async def run_coordinator_turn(
             emit_message=emit, config=config, conversation_id=conversation_id, sid=sid,
             user_id=user_id, user_email=user_email, sio=sio, enable_persistence=True,
             custom_tool_executor=execute, organization_id=organization_id, tool_step_preview=step_preview,
-            wrap_up=PROMPTS.WRAP_UP,
+            wrap_up=PROMPTS.WRAP_UP, limits=COORDINATOR_LIMITS,
             call_model_input_filter=CoordinatorCompactor(
                 pool, user_id, epoch=epoch, model=COORDINATOR_MODEL,
                 user_email=user_email, organization_id=organization_id,

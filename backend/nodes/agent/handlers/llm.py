@@ -14,12 +14,13 @@ from typing import Any, Callable, Dict, List, Optional
 from billing.exceptions import InsufficientBalanceError
 from coder.openai_agent import Agent
 from coder.openai_agent.config import AgentConfiguration
+from coder.openai_agent.guards import TurnLimits
 from nodes.agent.agent_memory import conversation_compactor
 from nodes.agent.config.harness_model_lists import zen_gateway_refusal
 from nodes.agent.placement import sandbox_network_of, sandbox_region_of, sandbox_volumes_of, shell_of
 from nodes.agent.git_mounts import sandbox_setups_of
 from nodes.agent.provider_errors import classify_and_rewrite_provider_error
-from utils.turn_events import turn_first_effort_of, turn_wrap_up_of
+from utils.turn_events import turn_first_effort_of, turn_limits_of, turn_wrap_up_of
 from wss.sender.schema import ContentItem, ImageUrl
 
 logger = logging.getLogger(__name__)
@@ -140,6 +141,7 @@ async def execute_llm_model(
             memory_readonly=memory_readonly,
             context_filter=context_filter,
             wrap_up=turn_wrap_up_of(node_config),
+            limits=TurnLimits.of(turn_limits_of(node_config)),
             first_call_effort=turn_first_effort_of(node_config),
             # A turn that leaves no memory needs only recent memory, and it is
             # answered while a caller waits — a bounded replay keeps it quick.
@@ -228,6 +230,9 @@ async def execute_llm_model(
         }
         if is_failed:
             output['error'] = (final_state[1] if final_state else None) or final_response
+        if agent.turn_ended_by:
+            # Which limit ended the turn (``guards``): the platform continues a turn its step limit ended.
+            output['ended_by'] = agent.turn_ended_by
         if image_urls:
             output['images'] = image_urls
             output['image_url'] = image_urls[0]['url']

@@ -10,7 +10,7 @@ import asyncio
 import logging
 import random
 import time
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Union
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import contextlib
 import dataclasses
@@ -21,7 +21,9 @@ from contextvars import ContextVar
 from agents import Agent as SDKAgent, ModelSettings, Runner
 from agents.exceptions import MaxTurnsExceeded
 from agents.extensions.models.litellm_model import LitellmModel  # noqa: F401 — re-exported for callers
-from agents.run_error_handlers import RunErrorHandlerInput, RunErrorHandlerResult
+from agents.items import MessageOutputItem
+from agents.models.fake_id import FAKE_RESPONSES_ID
+from openai.types.responses import ResponseOutputMessage, ResponseOutputText
 
 from .litellm_model import CostCapturingLitellmModel
 from agents.stream_events import RawResponsesStreamEvent, RunItemStreamEvent
@@ -34,7 +36,8 @@ from .billing import BillingHooks, InsufficientBalanceError, build_litellm_env
 from .config import AgentConfiguration, LLMConfig
 from .output_limits import clip_bash_result, tool_output
 from .sandbox import create_sandbox_runtime
-from . import steering, turn_notes
+from . import guards, steering, turn_notes
+from .guards import TurnGuard, TurnLimits
 from .session import PostgresSession
 from utils.thread_env import override_env
 
@@ -42,12 +45,6 @@ logger = logging.getLogger(__name__)
 
 # The model's id for the tool call being run, for an executor that keys the call's effects on it.
 CURRENT_TOOL_CALL_ID: ContextVar[Optional[str]] = ContextVar("current_tool_call_id", default=None)
-
-# Cap on model turns (tool-call round-trips) in one agent run. The SDK Runner
-# defaults to 10, which cut off multi-step tasks mid-work ("Max turns (10)
-# exceeded"); 30 gives room for a real chain of tool calls without letting a
-# runaway loop bill unbounded.
-AGENT_MAX_TURNS = 30
 
 # ── Transient-error retry for the streamed agent turn ────────────────────────
 # Providers fail mid-stream (observed: OpenRouter relaying a MiniMax inference
@@ -65,7 +62,7 @@ _RETRY_MAX_DELAY_S = 8.0
 def _refusing(tool: FunctionTool) -> FunctionTool:
     """``tool`` as the model sees it, but never run."""
     async def refuse(context, arguments: str) -> str:
-        return "Not run: this turn has no steps left."
+        return "Not run: this turn can't call tools any more."
 
     return dataclasses.replace(tool, on_invoke_tool=refuse, needs_approval=False)
 
@@ -328,6 +325,10 @@ class Agent:
         # etc.) has it available.
         self._current_workdir: str = "/tmp/apps"
 
+        # The running turn's guards (``guards.TurnGuard``), and which of them ended the last turn, if one did.
+        self._turn_guard: Optional[TurnGuard] = None
+        self.turn_ended_by: Optional[str] = None
+
         # Whether create() has finished. Until then, ``__call__`` raises.
         self._initialized = False
 
@@ -360,7 +361,8 @@ class Agent:
         call_model_input_filter=None,
         context_filter=None,
         tool_step_preview: Optional[Callable[[Any], str]] = None,
-        wrap_up: Optional[str] = None,
+        wrap_up: Any = None,
+        limits: Optional[TurnLimits] = None,
         first_call_effort: Optional[str] = None,
         sandbox_region: Optional[str] = None,
         sandbox_volumes: Optional[Dict[str, str]] = None,
@@ -411,9 +413,11 @@ class Agent:
         # Shapes a tool call's arguments and result for the live step rows: a
         # consumer whose chat draws from them keeps them whole (the coordinator).
         agent._tool_step_preview = tool_step_preview
-        # What the model is told once a run has made AGENT_MAX_TURNS model calls: it answers once more without
-        # tools, instead of the run failing (the coordinator). Unset, the run fails as before.
-        agent._wrap_up = wrap_up
+        # How far each turn goes (``guards.TurnLimits``), and what the model is told once a guard ends one: per guard
+        # (``{steps|spend|time: {prompt, line?}}``, or one prompt for all), it answers once more without tools and
+        # the guard's line follows; a guard with none ends the turn on its line alone.
+        agent._limits = limits or TurnLimits()
+        agent._wrap_up = guards.wrap_ups(wrap_up)
         # The reasoning effort of each run's first model call, which someone is waiting on (its first words, or
         # its first step); the calls after it reason as the model does by default.
         agent._first_call_effort = first_call_effort
@@ -636,6 +640,7 @@ class Agent:
             # so we relax the constraint and rely on the model to honor the
             # description. Phase-4.5 follow-up: tighten schemas where we can.
             strict_json_schema=False,
+            **self._loop_guardrails(),
         )
 
     def _make_execute_bash_tool(self) -> FunctionTool:
@@ -814,7 +819,12 @@ class Agent:
             },
             on_invoke_tool=on_invoke_tool,
             strict_json_schema=False,
+            **self._loop_guardrails(),
         )
+
+    def _loop_guardrails(self) -> Dict[str, list]:
+        """A tool's loop detector, reading whichever turn is running when it's called."""
+        return guards.loop_guardrails(lambda: getattr(self, "_turn_guard", None))
 
     async def _emit_run_item_event(self, ev: RunItemStreamEvent) -> None:
         """Translate SDK RunItemStreamEvent → ChatMessageEvent.agentic_steps.
@@ -917,10 +927,22 @@ class Agent:
 
         Multi-turn: ``self._history`` accumulates the SDK input_list across
         calls. Phase 2 keeps this in-memory; Phase 7 swaps in a Session.
+
+        The turn runs under its guards (``guards.TurnGuard``): the one that ends
+        it is ``turn_ended_by`` afterwards, and on the turn's ``agent.turn`` span.
         """
         if not self._initialized or self._sdk_agent is None:
             raise RuntimeError("Agent not initialized — call await Agent.create(...)")
+        guard = TurnGuard(getattr(self, "_limits", None) or TurnLimits(), getattr(self, "_billing_hooks", None))
+        self._turn_guard, self.turn_ended_by = guard, None
+        try:
+            await self._turn(message, guard)
+        finally:
+            config = getattr(self, "config", None)
+            guards.record(guard, self.turn_ended_by, conversation_id=getattr(self, "conversation_id", None),
+                          model=config.llm.model if config else "")
 
+    async def _turn(self, message: Dict[str, Any], guard: TurnGuard) -> None:
         user_content = self._build_user_input(message)
         # str for text-only turns (compact history rows), a content-part list
         # when the turn carries images — either way it's one user turn.
@@ -962,6 +984,7 @@ class Agent:
         # overlay if env was provided, or just provider aliases (e.g.
         # GEMINI_API_KEY → GOOGLE_API_KEY) if using platform keys.
         env_overrides = build_litellm_env(self._env)
+        run_config = None
         for attempt in range(_LLM_RUN_ATTEMPTS):
             accumulated_text = ""
             # Whether the reply's text is mid-segment: a run item (a tool call, a finished message) ends one.
@@ -978,7 +1001,6 @@ class Agent:
             quick = effort and _with_effort(settings, self.config.llm.model, effort)
             try:
                 with env_ctx:
-                    run_options = {}
                     from coder.openai_agent.compaction import chain
 
                     restore = None
@@ -996,40 +1018,17 @@ class Agent:
                         getattr(self, "_context_filter", None)), restore)
                     if input_filter is not None:
                         from agents import RunConfig
-                        run_options["run_config"] = RunConfig(call_model_input_filter=input_filter)
-                    if getattr(self, "_wrap_up", None):
-                        async def wrap_up(failed: RunErrorHandlerInput) -> Optional[RunErrorHandlerResult]:
-                            # The last model call is spent: one more says where the work stands. Its tools stay
-                            # declared (some providers require them beside tool calls in history) but never run,
-                            # so a model that calls one anyway does nothing, and the run fails as it would have.
-                            nonlocal accumulated_text
-                            closing_agent = self._sdk_agent.clone(
-                                tools=[_refusing(t) for t in self._sdk_agent.tools if isinstance(t, FunctionTool)],
-                                mcp_servers=[],
-                                model_settings=dataclasses.replace(self._sdk_agent.model_settings,
-                                                                   tool_choice="none"))
-                            try:
-                                closing = await Runner.run(
-                                    closing_agent,
-                                    [*failed.run_data.history, {"role": "developer", "content": self._wrap_up}],
-                                    hooks=self._billing_hooks, max_turns=1, run_config=run_options.get("run_config"))
-                            except MaxTurnsExceeded:
-                                return None
-                            text = str(closing.final_output or "")
-                            text = _segment_break(accumulated_text, text) + text
-                            accumulated_text += text
-                            await self._emit_message(ChatMessageEvent(message=text, finished=False))
-                            return RunErrorHandlerResult(final_output=text)
-
-                        run_options["error_handlers"] = {"max_turns": wrap_up}
+                        run_config = RunConfig(call_model_input_filter=input_filter)
+                    # A guard stops the run after the calls in hand (``TurnGuard.watch``), long before this backstop.
                     result = Runner.run_streamed(
                         self._sdk_agent,
                         input_list,
-                        hooks=self._billing_hooks,
+                        hooks=guard,
                         session=self._session,
-                        max_turns=AGENT_MAX_TURNS,
-                        **run_options,
+                        max_turns=guard.limits.steps + 1,
+                        run_config=run_config,
                     )
+                    guard.watch(result)
                     # Expose to pause() so the chat UI's stop button can cancel
                     # this run. Cleared in the finally below — pause() on a
                     # completed Agent is a no-op.
@@ -1161,12 +1160,33 @@ class Agent:
                 turn_notes.reset(notes)
             break  # attempt succeeded
 
+        # A guard that stopped the run, rather than the model's answer: the turn wraps up once, or ends on its line.
+        closing: List[Dict[str, Any]] = []
+        ended_by = guard.tripped if result is not None and result.final_output is None and not guard.paused else None
+        if ended_by is not None:
+            self.turn_ended_by = ended_by
+            with override_env(**env_overrides) if env_overrides else contextlib.nullcontext():
+                wrapped = await self._wrap_up_turn(ended_by, guard, result.to_input_list(), run_config)
+            if wrapped is None:
+                line = guards.stopped_line(ended_by, guard.limits)
+                logger.warning("[openai_agent] turn ended by its %s limit with no wrap-up", ended_by)
+                await self._emit_message(ChatMessageEvent(message=line, finished=True, status="error"))
+                await self._emit_message(AgentStateEvent(state="error", reason=line))
+                return
+            text, item = wrapped
+            closing = [item]
+            if self._session is not None:
+                await self._session.add_items(closing)
+            text = _segment_break(accumulated_text, text) + text
+            accumulated_text += text
+            await self._emit_message(ChatMessageEvent(message=text, finished=False))
+
         # Persist updated history for multi-turn — only when running on the
         # in-memory backend. With a PostgresSession the SDK has already
         # written the new items via session.add_items() during the run.
         if self._session is None:
             try:
-                self._history = result.to_input_list()
+                self._history = result.to_input_list() + closing
             except Exception:
                 # If the stream ended abnormally before final state is built
                 # we fall back to appending the user + accumulated assistant
@@ -1193,6 +1213,30 @@ class Agent:
             finished=True,
         ))
         self._settle_context()
+
+    async def _wrap_up_turn(self, reason: str, guard: TurnGuard, history: List[Dict[str, Any]],
+                            run_config: Any) -> Optional[Tuple[str, Dict[str, Any]]]:
+        """The one wrap-up of a turn a guard ended: one more model call, told why (the guard's prompt), says where
+        the work stands, and the guard's line follows it; returns that text and the reply's history item. Its tools
+        stay declared (some providers require them beside tool calls in history) but never run, so a model that
+        calls one anyway does nothing and the turn ends on the line (None), as one with no wrap-up for the guard."""
+        entry = getattr(self, "_wrap_up", {}).get(reason)
+        if entry is None:
+            return None
+        closing_agent = self._sdk_agent.clone(
+            tools=[_refusing(t) for t in self._sdk_agent.tools if isinstance(t, FunctionTool)], mcp_servers=[],
+            model_settings=dataclasses.replace(self._sdk_agent.model_settings, tool_choice="none"))
+        try:
+            closing = await Runner.run(closing_agent, [*history, {"role": "developer", "content": entry["prompt"]}],
+                                       hooks=guard, max_turns=1, run_config=run_config)
+        except MaxTurnsExceeded:
+            return None
+        line = entry.get("line") or guards.stopped_line(reason, guard.limits)
+        said = str(closing.final_output or "").strip()
+        text = f"{said}\n\n{line}" if said else line
+        reply = ResponseOutputMessage(id=FAKE_RESPONSES_ID, type="message", role="assistant", status="completed",
+                                      content=[ResponseOutputText(type="output_text", text=text, annotations=[])])
+        return text, MessageOutputItem(agent=closing_agent, raw_item=reply).to_input_item()
 
     def _settle_context(self) -> None:
         """With the reply out, fold what the next turn would otherwise wait on, in the background."""
@@ -1325,6 +1369,9 @@ class Agent:
         ``agent:pause`` socket event when the user clicks "stop".
         """
         result = self._active_result
+        guard = getattr(self, "_turn_guard", None)
+        if guard is not None:
+            guard.paused = True  # a stop the person asked for is no guard's
         if result is None:
             logger.info(
                 "[openai_agent] pause requested but no active run: conversation=%s",

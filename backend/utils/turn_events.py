@@ -13,8 +13,11 @@ messages apart. ``TURN_VIA_KEY`` says how the turn's message arrived (``whatsapp
 the email's headers were), put ahead of the message after it's persisted.
 ``TURN_TRIGGER_KEY`` says what started a turn no person sent (a trigger's event,
 a schedule, a wake-up), merged into its persisted message's ``trigger``.
-``TURN_WRAP_UP_KEY`` is what a turn that has made every model call it may is
-told, for one more call without tools that says where its work stands.
+``TURN_LIMITS_KEY`` is how far a turn goes (``{steps, usd, minutes}``, each
+left out at the engine's default), and ``TURN_WRAP_UP_KEY`` what a turn one of
+those limits ended is told, for one more call without tools that says where its
+work stands, with the line a person reads after it (``{steps|spend|time:
+{prompt, line}}``).
 ``TURN_FIRST_EFFORT_KEY`` is the reasoning effort of a turn's first model call,
 for one someone waits on: its first words come sooner."""
 
@@ -34,6 +37,7 @@ TURN_VIA_KEY = "_turnVia"
 TURN_NOTE_KEY = "_turnNote"
 TURN_TRIGGER_KEY = "_turnTrigger"
 TURN_WRAP_UP_KEY = "_turnWrapUp"
+TURN_LIMITS_KEY = "_turnLimits"
 TURN_FIRST_EFFORT_KEY = "_turnFirstEffort"
 # What a person reads when a turn fails: the error's own words stay in the log and the turn's record.
 TURN_FAILED_LINE = "Sorry, I hit a problem on my side. Please try that again in a moment."
@@ -61,9 +65,16 @@ def turn_note_of(node_config: Any) -> Optional[str]:
     return _text(node_config, TURN_NOTE_KEY)
 
 
-def turn_wrap_up_of(node_config: Any) -> Optional[str]:
-    """What a turn out of model calls is told for its last, tool-less one; None: it fails there."""
-    return _text(node_config, TURN_WRAP_UP_KEY)
+def turn_wrap_up_of(node_config: Any) -> Optional[Dict[str, Any]]:
+    """What a turn a limit ended is told for its last, tool-less call, by limit; None: it ends on the limit's line."""
+    value = node_config.get(TURN_WRAP_UP_KEY) if isinstance(node_config, dict) else None
+    return value if isinstance(value, dict) and value else None
+
+
+def turn_limits_of(node_config: Any) -> Optional[Dict[str, Any]]:
+    """The limits a platform set for the turn, when it set any."""
+    value = node_config.get(TURN_LIMITS_KEY) if isinstance(node_config, dict) else None
+    return value if isinstance(value, dict) and value else None
 
 
 def turn_first_effort_of(node_config: Any) -> Optional[str]:

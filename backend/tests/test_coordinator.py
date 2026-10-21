@@ -280,8 +280,9 @@ async def test_turn_wires_persistence_tools_and_billing_identity(turn_seams, mon
     assert "Current UTC time:" in config.settings.system_prompt
     assert callable(captured["call_model_input_filter"])
     assert captured.get("history_limit") is None
-    # A turn that makes every model call it may still tells the owner where things stand.
+    # A turn one of its limits ends still tells the owner where things stand, and it goes further than a workflow's.
     assert captured["wrap_up"] == coordinator.PROMPTS.WRAP_UP
+    assert captured["limits"].steps == 100 and captured["limits"] == coordinator.COORDINATOR_LIMITS
     # An account with no email (made by a WhatsApp first contact) can connect one, and
     # is never offered the email channel it cannot use.
     names = config.capabilities.custom_tool_names
