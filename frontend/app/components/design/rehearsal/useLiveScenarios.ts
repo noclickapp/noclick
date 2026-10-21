@@ -4,7 +4,7 @@
    renders, with the backend's scenario key riding along for rehearsal:run. */
 
 import { useEffect, useState } from 'react';
-import { getNodeDefinition } from '~/components/workflow/nodes/nodeDefinitions';
+import { nodeDisplayName } from '~/components/workflow/nodes/nodeDefinitions';
 import { RehearsalScenariosRequest, sendEventAsync } from '~/lib/socket-sender';
 import type { Provider, TriggerFixture } from './fixture';
 
@@ -26,14 +26,6 @@ const NODE_TYPE_META: Record<
         label: 'Staged message · Telegram',
     },
 };
-
-function prettifyNodeType(nodeType: string): string {
-    return nodeType
-        .replace(/^(automation|trigger)-/, '')
-        .split('-')
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ');
-}
 
 export interface LiveScenarios {
     loading: boolean;
@@ -73,11 +65,11 @@ export function useLiveScenarios(workflowId: string | null): LiveScenarios {
                         // iconSlug — because "your trigger is rehearsable
                         // today" beats waiting for a native rendering, and a
                         // prettified type string under an amber bolt read as
-                        // unsupported (the cal.com report).
-                        const def = getNodeDefinition(t.node_type);
+                        // unsupported (the cal.com report). The definition may
+                        // not have loaded yet; the catalog's name stands in.
                         const meta = NODE_TYPE_META[t.node_type] ?? {
                             provider: 'generic' as const,
-                            nodeName: def?.label ?? prettifyNodeType(t.node_type),
+                            nodeName: nodeDisplayName(t.node_type),
                             label: 'Staged event',
                         };
                         return {

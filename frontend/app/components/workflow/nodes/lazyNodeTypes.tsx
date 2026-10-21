@@ -1,8 +1,8 @@
 // ReactFlow nodeTypes for the canvas, each loading its node's definition when a node of the type is first drawn.
 // Until it lands the node draws as its outline at its own size, with the catalog's icon, so the graph lays out
 // and frames as it will look.
-import type { ComponentType } from 'react';
-import type { NodeProps, NodeTypes } from '@xyflow/react';
+import { useEffect, useRef, type ComponentType } from 'react';
+import { useUpdateNodeInternals, type NodeProps, type NodeTypes } from '@xyflow/react';
 import { SerializedIcon } from '~/components/shared/SerializedIcon';
 import { useNodeDefinitions } from '~/hooks/useNodeDefinitions';
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
@@ -45,6 +45,17 @@ function lazyNodeType(type: string): ComponentType<NodeProps> {
     const LazyNode = (props: NodeProps) => {
         const loaded = useNodeDefinitions([type]);
         const definition = loaded ? getNodeDefinition(type) : undefined;
+        // React Flow reads a node's handles when it measures the node, and the outline has none. The node keeps
+        // its size when its definition lands, so nothing re-measures it: its edges stay undrawn until told to.
+        const updateNodeInternals = useUpdateNodeInternals();
+        const drewOutline = useRef(false);
+        useEffect(() => {
+            if (!definition) drewOutline.current = true;
+            else if (drewOutline.current) {
+                drewOutline.current = false;
+                updateNodeInternals(props.id);
+            }
+        }, [definition, props.id, updateNodeInternals]);
         if (!definition) return <NodeOutline type={type} />;
         const Component = componentFor(definition);
         return <Component {...props} />;
