@@ -741,7 +741,9 @@ class CredentialsRepo:
         token, resets expiry, and re-opens the request. Returns the shape
         the handler needs (including ``token``, needed to compose the
         outbound email). ``metadata`` carries the request's options
-        (``redirect_url``, ``notify_requester``, ``hidden_from_owner``)."""
+        (``redirect_url``, ``notify_requester``, ``hidden_from_owner``, and
+        ``held_by_requester`` for a hidden request whose credential the
+        requester still holds)."""
         metadata = metadata or {}
         async with self._pool.acquire() as conn:
             async with conn.transaction():

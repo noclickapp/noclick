@@ -9,6 +9,7 @@ import logging
 import re
 from typing import Any, Optional
 from datetime import datetime, timezone
+import asyncpg
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -1235,13 +1236,19 @@ async def qr_status(token: str, body: QRStatusBody) -> dict[str, Any]:
     _assert_qr_request(row["credential_type"])
     from utils.whatsapp_qr import finalize_qr_connection
     tier = await _requester_effective_tier(pool, row["requester_id"])
+    metadata = row["metadata"]
     result = await finalize_qr_connection(
         pool, owner_id=str(row["requester_id"]), connection_id=body.connection_id,
         user_tier=tier, encryption=get_encryption(),
-        held_for_someone_else=bool(row["metadata"].get("hidden_from_owner")),
+        held_for_someone_else=bool(metadata.get("hidden_from_owner")) and not metadata.get("held_by_requester"),
     )
     if result.get("status") == "connected" and result.get("credential_id"):
-        claimed = await _claim_qr_fulfillment(pool, row, result["credential_id"])
+        try:
+            claimed = await _claim_qr_fulfillment(pool, row, result["credential_id"])
+        except asyncpg.UniqueViolationError:
+            # The phone's credential already fills another of what the request's surface binds one credential to.
+            raise HTTPException(status_code=409, detail="This WhatsApp account is already connected elsewhere in "
+                                                        "this account, so it can't be connected here too.")
         if not claimed and result.get("created"):
             await _rollback_qr_credential(pool, result["credential_id"])
             raise HTTPException(status_code=410, detail="This credential request has already been fulfilled")

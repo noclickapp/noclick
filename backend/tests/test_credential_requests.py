@@ -1235,6 +1235,20 @@ class TestWhatsAppQRProvideLink:
         await qr_status(setup_db['token'], QRStatusBody(connection_id='conn-xyz'))
         assert mock_finalize.await_args.kwargs['held_for_someone_else'] is True
 
+    @patch('utils.whatsapp_qr.finalize_qr_connection', new_callable=AsyncMock)
+    async def test_qr_status_for_a_request_the_requester_holds_rebinds_its_phone(self, mock_finalize, real_database,
+                                                                               db, setup_db):
+        """A request whose page never names its requester (``hidden_from_owner``) but whose credential the
+        requester holds (``held_by_requester``: a deployment's link for the account's own account) scans like the
+        requester's own: a phone they already connected is repaired in place, never connected twice."""
+        from utils.credential_request_routes import qr_status, QRStatusBody
+
+        db.execute("UPDATE credential_requests SET metadata = $2 WHERE id = $1",
+                   setup_db['request_id'], {'hidden_from_owner': True, 'held_by_requester': True})
+        mock_finalize.return_value = {'success': True, 'status': 'pending', 'message': 'Waiting for QR code scan...'}
+        await qr_status(setup_db['token'], QRStatusBody(connection_id='conn-xyz'))
+        assert mock_finalize.await_args.kwargs['held_for_someone_else'] is False
+
     @patch('utils.whatsapp_qr.start_qr_connection', new_callable=AsyncMock)
     async def test_qr_start_rate_limited_per_token(self, mock_start, monkeypatch, real_database, setup_db):
         """Public /qr/start is capped per token so a leaked link can't mint/hold connections
