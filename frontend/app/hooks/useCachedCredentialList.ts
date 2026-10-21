@@ -31,13 +31,15 @@ export function useCachedCredentialList(): CredentialInfo[] {
     return useCacheRows()[0];
 }
 
-/** The same rows, owned: fetched on mount and again whenever a credential is
- *  created, renamed or deleted anywhere in the app. `loaded` turns true once
- *  the first fetch has answered, so an empty list can be told from a pending one. */
-export function useCredentialList(): { credentials: CredentialInfo[]; loaded: boolean } {
+/** The same rows, owned: fetched on mount (or each time `active` turns true)
+ *  and again whenever a credential is created, renamed or deleted anywhere in
+ *  the app while active. `loaded` turns true once the first fetch has answered,
+ *  so an empty list can be told from a pending one. */
+export function useCredentialList(active = true): { credentials: CredentialInfo[]; loaded: boolean } {
     const [credentials, setCreds] = useCacheRows();
     const [loaded, setLoaded] = useState(false);
     useEffect(() => {
+        if (!active) return;
         let live = true;
         // A refetch replaces the cache without notifying subscribers, so read it back here.
         const reload = () =>
@@ -55,6 +57,6 @@ export function useCredentialList(): { credentials: CredentialInfo[]; loaded: bo
             live = false;
             window.removeEventListener(CREDENTIALS_CHANGED_EVENT, onChanged);
         };
-    }, [setCreds]);
+    }, [setCreds, active]);
     return { credentials, loaded };
 }

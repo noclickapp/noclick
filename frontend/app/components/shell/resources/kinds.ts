@@ -21,11 +21,37 @@ export interface KindDef {
     /** Only the hosted platform API serves it: listed where one is registered (`platform.tsx`). Databases are
      * listed everywhere, as an automation's tables are one, and a platform adds its own. */
     platform?: boolean;
+    /** Other words people use for it, which the command palette matches. */
+    keywords: string;
+    /** Its page for getting one by hand (?kind=&new=1): `label` names it, `short` is the overview tile's button, and
+     * a `bought` one is sold with a recurring charge, so it needs billing. */
+    manual?: { label: string; short: string; bought: boolean };
 }
 
 export const KINDS: KindDef[] = [
-    { id: 'numbers', label: 'Numbers', icon: Phone, empty: 'Phone numbers your agents answer calls and texts on.', ask: 'Get me a phone number my agents can answer calls and texts on.', noun: ['number', 'numbers'], billed: 'item' },
-    { id: 'domains', label: 'Domains', icon: Globe, empty: 'Domains for your websites and your agents’ email, registered in your name.', ask: 'Help me find a domain for my website and buy it.', noun: ['domain', 'domains'], billed: 'item', platform: true },
+    {
+        id: 'numbers',
+        label: 'Numbers',
+        icon: Phone,
+        empty: 'Phone numbers your agents answer calls and texts on.',
+        ask: 'Get me a phone number my agents can answer calls and texts on.',
+        noun: ['number', 'numbers'],
+        billed: 'item',
+        keywords: 'phone phones phone number phone numbers calls texts sms telephone',
+        manual: { label: 'Buy a number', short: 'Buy', bought: true },
+    },
+    {
+        id: 'domains',
+        label: 'Domains',
+        icon: Globe,
+        empty: 'Domains for your websites and your agents’ email, registered in your name.',
+        ask: 'Help me find a domain for my website and buy it.',
+        noun: ['domain', 'domains'],
+        billed: 'item',
+        platform: true,
+        keywords: 'domain dns domain names nameservers registrar url',
+        manual: { label: 'Buy a domain', short: 'Buy', bought: true },
+    },
     {
         id: 'email',
         label: 'Email',
@@ -35,6 +61,8 @@ export const KINDS: KindDef[] = [
         noun: ['address', 'addresses'],
         billed: 'use',
         platform: true,
+        keywords: 'mail inbox inboxes email address mailbox',
+        manual: { label: 'New address', short: 'New', bought: false },
     },
     {
         id: 'apps',
@@ -45,6 +73,7 @@ export const KINDS: KindDef[] = [
         noun: ['website', 'websites'],
         billed: 'use',
         platform: true,
+        keywords: 'site sites website web pages hosting deploys deployments published interfaces apps',
     },
     {
         id: 'databases',
@@ -54,6 +83,7 @@ export const KINDS: KindDef[] = [
         ask: 'Set up a table my automations can keep records in.',
         noun: ['database', 'databases'],
         billed: 'use',
+        keywords: 'database db sql tables data postgres sqlite',
     },
     {
         id: 'storage',
@@ -64,9 +94,26 @@ export const KINDS: KindDef[] = [
         noun: ['bucket', 'buckets'],
         billed: 'use',
         platform: true,
+        keywords: 'bucket buckets uploads s3 blobs object storage',
     },
-    { id: 'repos', label: 'Code', icon: FolderGit2, empty: 'The code your websites deploy from and your agents work on, each in a repository of its own.', noun: ['repository', 'repositories'], billed: 'use', platform: true },
-    { id: 'files', label: 'Files', icon: FileText, empty: 'Uploads, outputs and what agents save in their workspaces show up here as they work.', noun: ['file', 'files'] },
+    {
+        id: 'repos',
+        label: 'Code',
+        icon: FolderGit2,
+        empty: 'The code your websites deploy from and your agents work on, each in a repository of its own.',
+        noun: ['repository', 'repositories'],
+        billed: 'use',
+        platform: true,
+        keywords: 'repo repos repository repositories git github source',
+    },
+    {
+        id: 'files',
+        label: 'Files',
+        icon: FileText,
+        empty: 'Uploads, outputs and what agents save in their workspaces show up here as they work.',
+        noun: ['file', 'files'],
+        keywords: 'file uploads documents outputs workspaces pdf',
+    },
 ];
 
 export function kindDef(id: KindId): KindDef {
@@ -76,4 +123,19 @@ export function kindDef(id: KindId): KindDef {
 /** The kinds this instance can have: the platform's kinds need a platform. */
 export function visibleKinds({ platform }: { platform: boolean }): KindDef[] {
     return KINDS.filter((k) => !k.platform || platform);
+}
+
+/** The search params a body keeps where it is inside its item: a repo's, a database's, an address's. */
+export const INNER_PARAMS = ['path', 'ref', 'view', 'sha', 'table', 'thread', 'compose'] as const;
+
+/** Resources' address for a kind (null: the overview), one of its items or its page for getting one, as
+ *  `navigateToTab` params: whatever belonged to the page before (an item, a buy page, a place inside an item) goes. */
+export function resourceAddress(kind: KindId | null, at: { resource?: string; manual?: boolean } = {}): Record<string, string | null> {
+    return {
+        kind,
+        resource: at.resource ?? null,
+        new: at.manual ? '1' : null,
+        name: null,
+        ...Object.fromEntries(INNER_PARAMS.map((p) => [p, null])),
+    };
 }

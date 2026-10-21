@@ -64,8 +64,8 @@ export interface OpenScope extends LeaderShortcut {
 // "O <key>" — open the palette pre-scoped to a category of objects. The label is
 // the scoped placeholder ("Open workflow…") and also the palette command title.
 export const OPEN_SCOPES: OpenScope[] = [
-    { key: 'w', label: 'Open workflow…', commandId: 'open:workflows', scope: 'Workflows', run: () => openCommandPaletteScoped('Workflows') },
-    { key: 'c', label: 'Open credential…', commandId: 'open:credentials', scope: 'Credentials', run: () => openCommandPaletteScoped('Credentials') },
+    { key: 'w', label: SHELL ? 'Open automation…' : 'Open workflow…', commandId: 'open:workflows', scope: 'Workflows', run: () => openCommandPaletteScoped('Workflows') },
+    { key: 'c', label: SHELL ? 'Open account…' : 'Open credential…', commandId: 'open:credentials', scope: 'Credentials', run: () => openCommandPaletteScoped('Credentials') },
 ];
 
 export interface ShortcutHint {

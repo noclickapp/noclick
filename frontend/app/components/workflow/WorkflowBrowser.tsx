@@ -1402,7 +1402,7 @@ export function WorkflowBrowser({
 
     // Run a flow intent from the command palette: open a workflow via the same
     // synchronous path a card/tree click uses (setSelectedWorkflow immediately →
-    // FlowCanvas mounts from cache), or run a browser action. The palette
+    // FlowCanvas mounts from cache), open a folder, or run a browser action. The palette
     // previously navigate()'d and relied on the URL→useEffect round-trip, which
     // felt slow even when the flow's data was already cached.
     const runFlowIntent = useCallback(
@@ -1410,11 +1410,13 @@ export function WorkflowBrowser({
             if (intent.kind === 'open') {
                 if (intent.workflow?.id)
                     handleWorkflowClickFromTree(intent.workflow);
+            } else if (intent.kind === 'folder') {
+                setSelectedFolderId(intent.folderId);
             } else {
                 runBrowserAction(intent.action);
             }
         },
-        [handleWorkflowClickFromTree, runBrowserAction]
+        [handleWorkflowClickFromTree, runBrowserAction, setSelectedFolderId]
     );
 
     // Same-tab fast path: the browser is already mounted on the flow tab, so the

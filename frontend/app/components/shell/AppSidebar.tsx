@@ -25,7 +25,7 @@ import { openCommandPalette } from '~/lib/shortcuts';
 import { userDisplayName } from '~/lib/userDisplay';
 import { cn } from '~/lib/utils';
 import { SHELL_PAGES, type ShellPage } from './pages';
-import { visibleKinds, type KindId } from './resources/kinds';
+import { resourceAddress, visibleKinds, type KindId } from './resources/kinds';
 import { hasPlatformResources } from './resources/platform';
 import { BuilderMark } from './glyphs';
 import { MENU_SEPARATOR } from './menus';
@@ -267,7 +267,7 @@ export function ResourcesNav({ page, current, collapsed, onNavigate }: { page: S
         }
     };
     const go = (kind: KindId | null) => {
-        navigateToTab('resources', { kind, resource: null, path: null });
+        navigateToTab('resources', resourceAddress(kind));
         onNavigate?.();
     };
     const select = () => {

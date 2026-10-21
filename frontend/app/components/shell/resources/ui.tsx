@@ -13,7 +13,7 @@ import { navigateToWorkflow } from '~/lib/navigation';
 import { cn } from '~/lib/utils';
 import { useInPhoneShell } from '../AppShell';
 import { BUTTON_DANGER, BUTTON_GHOST, BUTTON_SECONDARY } from '../buttons';
-import { kindDef, type KindId } from './kinds';
+import { INNER_PARAMS, kindDef, type KindId } from './kinds';
 import type { ResourceUser } from './model';
 import { impactRows, usePlatformResources, type DeletionImpact, type Removal } from './platform';
 
@@ -360,9 +360,6 @@ export function ChoiceList({ label, choices, value, onChange }: { label: string;
         </RadioGroup>
     );
 }
-
-/** The search params a body keeps where it is inside its item: a repo's, a database's, an address's. */
-export const INNER_PARAMS = ['path', 'ref', 'view', 'sha', 'table', 'thread', 'compose'] as const;
 
 /** Where another item's page is, as a link's search: a step Back undoes. */
 export function useResourceLink(): (kind: KindId, id: string) => string {

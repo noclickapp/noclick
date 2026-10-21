@@ -46,7 +46,9 @@ describe('the Resources row', () => {
 
         fireEvent.click(row());
         expect(kinds()).not.toBeNull();
-        expect(switches).toEqual([{ tab: 'resources', params: { kind: null, resource: null, path: null } }]);
+        expect(switches.map((s) => s.tab)).toEqual(['resources']);
+        // The overview: no kind, no item, no buy page and nothing from inside an item.
+        expect(switches[0].params).toMatchObject({ kind: null, resource: null, new: null, path: null });
     });
 
     it('goes to the overview from another page, keeping its kinds open', () => {
@@ -56,6 +58,16 @@ describe('the Resources row', () => {
         fireEvent.click(row());
         expect(kinds()).not.toBeNull();
         expect(switches.map((s) => s.tab)).toEqual(['resources']);
+    });
+
+    it('leaves a buy page for the kind it names', () => {
+        render(
+            <MemoryRouter initialEntries={['/dashboard?tab=resources&kind=numbers&new=1']}>
+                <ResourcesNav page={page} current collapsed={false} />
+            </MemoryRouter>
+        );
+        fireEvent.click(screen.getByRole('button', { name: 'Files' }));
+        expect(switches).toEqual([{ tab: 'resources', params: expect.objectContaining({ kind: 'files', new: null, resource: null }) }]);
     });
 
     it('has no button for the chevron of its own', () => {

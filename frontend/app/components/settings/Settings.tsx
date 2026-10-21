@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState, lazy, Suspense } from 'react';
-import { BarChart3, Bell, Brain, Building2, ChevronRight, Code2, KeyRound, Eye, Plug, Smartphone } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { HAIRLINE } from '~/components/dashboard/primitives';
 import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
@@ -28,9 +28,8 @@ import { InstanceProviderKeysSettings } from '~/components/settings/InstanceProv
 import { NotificationsSettings } from '~/components/settings/NotificationsSettings';
 import { PhoneSettings } from '~/components/settings/PhoneSettings';
 import { PopupPreferencesSettings } from '~/components/settings/PopupPreferencesSettings';
-import { isLocalEdition } from '~/lib/edition';
-import { usePhoneLinkingAvailable } from '~/hooks/usePhoneLinking';
 import { DISPLAY, PAGE_TITLE } from '~/components/shell/titles';
+import { SETTINGS_GROUPS, useSettingsSections } from '~/components/settings/sections';
 // Lazy: the Skills section embeds workflow canvases (SkillEditor → FlowCanvas and
 // SkillRowExpansion → ReadOnlyFlowCanvas), which pull the node-component registry
 // (~4.7MB). Settings is always mounted on the dashboard, so loading Skills eagerly
@@ -40,13 +39,6 @@ const SkillsSettings = lazy(() =>
     import('~/components/settings/SkillsSettings').then(m => ({ default: m.SkillsSettings }))
 );
 
-/** The section list's groups, in order; a section shows in the first that names it. */
-const GROUPS: readonly { label: string; sections: readonly SettingsSection[] }[] = [
-  { label: 'Workspace', sections: ['usage', 'organization'] },
-  { label: 'Preferences', sections: ['notifications', 'phone', 'popups'] },
-  { label: 'Build', sections: ['skills', 'credentials', 'developer', 'oauth-apps'] },
-];
-
 interface SettingsProps {
   initialSection?: SettingsSection;
   /** Sections the host shows as pages of their own (the app shell's
@@ -54,7 +46,7 @@ interface SettingsProps {
   hiddenSections?: readonly SettingsSection[];
 }
 
-export function Settings({ initialSection, hiddenSections = [] }: SettingsProps) {
+export function Settings({ initialSection, hiddenSections }: SettingsProps) {
   const [orgContext] = useOrgContext();
   const hasOrg = !!orgContext.id;
   const isPersonalWorkspace = orgContext.isPersonalWorkspace;
@@ -93,75 +85,8 @@ export function Settings({ initialSection, hiddenSections = [] }: SettingsProps)
     }
   }, [activeSection, mobileSection, hasOrg, personalWsOrgId, setActiveSection]);
 
-  const phoneLinking = usePhoneLinkingAvailable();
-  const navItems = [
-    {
-      id: 'usage' as const,
-      label: 'Usage',
-      description: 'Track AI, compute, and resource costs',
-      icon: BarChart3,
-      visible: true,
-    },
-    {
-      id: 'credentials' as const,
-      label: 'Credentials',
-      description: 'Manage API keys and connected accounts',
-      icon: KeyRound,
-      visible: true,
-    },
-    {
-      id: 'organization' as const,
-      label: 'Members',
-      description: hasOrg ? 'Who’s in this workspace and how they sign in' : 'Invite people to your workspace',
-      icon: Building2,
-      visible: hasOrg || !!personalWsOrgId,
-    },
-    {
-      id: 'skills' as const,
-      label: 'Skills',
-      description: 'Reusable agent context: text and workflows',
-      icon: Brain,
-      visible: true,
-    },
-    {
-      id: 'notifications' as const,
-      label: 'Notifications',
-      description: 'Email alerts for failures, your balance, and digests',
-      icon: Bell,
-      visible: true,
-    },
-    {
-      id: 'phone' as const,
-      label: 'Phone',
-      description: 'Link your number for WhatsApp and calls',
-      icon: Smartphone,
-      visible: phoneLinking,
-    },
-    {
-      id: 'popups' as const,
-      label: 'Popups',
-      description: 'Choose which in-app popups and banners appear',
-      icon: Eye,
-      visible: true,
-    },
-    {
-      id: 'developer' as const,
-      label: 'Developer',
-      description: 'API keys and the SDKs',
-      icon: Code2,
-      visible: true,
-    },
-    {
-      id: 'oauth-apps' as const,
-      label: 'Self-hosted',
-      description: 'The builder key and OAuth apps for this instance',
-      icon: Plug,
-      // The hosted service connects through its own registered apps; this is
-      // the self-hosted alternative to editing two .env files by hand.
-      visible: isLocalEdition(),
-    },
-  ].filter(item => item.visible && !hiddenSections.includes(item.id));
-  const groups = GROUPS.map((g) => ({ label: g.label, items: navItems.filter((item) => g.sections.includes(item.id)) })).filter((g) => g.items.length);
+  const sections = useSettingsSections(hiddenSections);
+  const groups = SETTINGS_GROUPS.map((g) => ({ label: g.label, items: sections.filter((item) => g.sections.includes(item.id)) })).filter((g) => g.items.length);
 
   const renderSection = (currentSection: SettingsSection | null) => (
     <>

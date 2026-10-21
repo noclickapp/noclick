@@ -1,36 +1,25 @@
-// Global, Linear-style command palette. Mounted once in the dashboard shell so
-// it is available on every authenticated screen (browser, editor, settings,
-// feed). Opens on ⌘K / Ctrl+K. Provides navigation (workflows, feed, every
-// settings section), quick actions (new workflow / folder), jump-to-any-workflow
-// fuzzy search, and account actions (toggle chat sidebar, keyboard shortcuts,
-// sign out). It reads workflow data from the shared WorkflowBrowserDataProvider
-// (no second data hook instance) and drives navigation via the existing URL /
-// navigation conventions, so it adds no new state ownership.
+// Global command palette, mounted once in the dashboard so it opens on ⌘K / Ctrl+K (and the sidebar's search) from
+// every screen. It goes anywhere: every page and the places inside them (destinations.ts), the places a deployment
+// registers (sources.ts), and the person's own things: automations and their folders, connected accounts, and the
+// resources and channels their pages have already read. It also creates, opens one category ("O W"), and holds the
+// account's commands. A row is found by its name, the other words people use for it and where it lives
+// (`scoreNamed`); what someone runs often floats up, and the latest are offered before anything is typed. Nothing is
+// read per keystroke: workflows and accounts are refreshed once each time it opens.
 
-import {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-    type ComponentType,
-} from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import {
     Search,
-    LayoutGrid,
-    UserCheck,
     Plus,
+    Folder,
     FolderPlus,
-    BarChart3,
     KeyRound,
-    Building2,
     Globe,
-    Brain,
-    Code2,
     MessageCircle,
+    MessageSquarePlus,
     Keyboard,
     LogOut,
+    Phone,
     Sun,
     Moon,
     Monitor,
@@ -38,11 +27,10 @@ import {
     CornerDownLeft,
     ChevronLeft,
     ArrowRight,
-    LayoutDashboard,
 } from 'lucide-react';
 import { cn } from '~/lib/utils';
-import { scoreFields } from '~/lib/fuzzyRank';
 import { isTextEntryTarget } from '~/lib/keyboard';
+import { isLocalEdition } from '~/lib/edition';
 import { useAnalytics } from '~/lib/analytics';
 import { EVENTS } from '~/lib/analytics-events';
 import {
@@ -51,21 +39,33 @@ import {
     OPEN_SCOPES,
     COMMAND_SHORTCUT_KEYS,
     OPEN_COMMAND_PALETTE_EVENT,
+    openFeedback,
     type OpenCommandPaletteDetail,
     type PaletteScope,
 } from '~/lib/shortcuts';
-import { navigateToSettings, navigateToWorkflow, goToWorkflows, triggerBrowserAction, type SettingsSection, navigateToDashboard } from '~/lib/navigation';
+import {
+    navigateToAccount,
+    navigateToFolder,
+    navigateToTab,
+    navigateToWorkflow,
+    triggerBrowserAction,
+    type SettingsSection,
+} from '~/lib/navigation';
 import { MENU_SURFACE } from '~/components/shell/menus';
-import { sendEventAsync } from '~/lib/socket-sender';
-import type { CredentialInfo } from '~/types/socket-events.generated';
+import { useConnectedAccounts } from '~/components/shell/connections/accounts';
+import { resourceAddress, visibleKinds } from '~/components/shell/resources/kinds';
+import { hasPlatformResources } from '~/components/shell/resources/platform';
+import { useSettingsSections } from '~/components/settings/sections';
 import { NoClickMCPSetupModal } from '~/components/workflow/MCPConnectModal';
 import { getCredentialIcon } from '~/utils/credentialIcons';
-import { formatCredentialTypeLabel } from '~/utils/credentialTypes';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { openCreateCredential } from '~/components/shared/popups/CreateCredentialDialog';
 import { relativeShort } from '~/components/workflow/WorkflowBrowserCards';
 import { useCachedValtioState } from '~/hooks/useCachedValtioState';
+import { useCredentialList } from '~/hooks/useCachedCredentialList';
+import { useInstanceCapabilities } from '~/hooks/useInstanceCapabilities';
+import { useOrgContext } from '~/hooks/useOrgContext';
 import { useWorkflowBrowserDataContext } from '~/hooks/WorkflowBrowserDataProvider';
 import { useListKeyboardNav } from '~/hooks/useListKeyboardNav';
 import { useTheme } from '~/hooks/useTheme';
@@ -73,6 +73,17 @@ import type { Theme } from '~/lib/theme';
 import { KeyHint, SequenceKeyHint } from '~/components/shared/KeyHint';
 import { NodeIconStack } from '~/components/shared/NodeIconStack';
 import { workflowIconTypes } from '~/lib/workflowBrowserStore';
+import { appDestinations } from './destinations';
+import { readUses, recordUse, type Use } from './history';
+import { layoutCommands, PLACES, type Cmd, type Section } from './layout';
+import {
+    forgetPaletteEntries,
+    paletteSources,
+    useRememberedPaletteEntries,
+    type HoldingPage,
+    type PaletteEntry,
+    type PaletteIcon,
+} from './sources';
 
 // The shell's menu language (the composer's "+", Connect): its surface, a roomy search, sentence-case sections.
 const SEARCH_ROW = 'flex h-14 items-center gap-3 border-b border-border px-5 dark:border-foreground/[0.07]';
@@ -83,103 +94,22 @@ const SECTION = 'px-3 pb-1.5 pt-3 text-[12.5px] font-medium text-muted-foregroun
 const EMPTY = 'px-3 py-10 text-center text-[14px] text-muted-foreground';
 const FOOTER = 'flex items-center gap-4 border-t border-border px-5 py-3 text-[12px] text-muted-foreground dark:border-foreground/[0.07]';
 
-type IconType = ComponentType<{ className?: string }>;
-// 'Credentials' is intentionally absent from SECTION_ORDER: those rows only
-// appear in the scoped ("O C") mode, never in the default browse list.
-type Section =
-    | 'Workflows'
-    | 'Credentials'
-    | 'Navigation'
-    | 'Actions'
-    | 'Open'
-    | 'Setup'
-    | 'Account';
-// Actions (create) first, then Open (scoped "Open X…"), Navigation, then
-// jump-to-workflow results capped so a long list doesn't bury the primary
-// commands. When the query matches a workflow name the other sections go empty
-// and drop out, so the matches still surface at the top. NOTE: 'Workflows' must
-// stay in this list for the scoped-open mode (scope === 'Workflows') to render.
-const SECTION_ORDER: Section[] = [
-    'Actions',
-    'Open',
-    'Navigation',
-    'Workflows',
-    'Setup',
-    'Account',
-];
+// The app shell's pages and words; the open edition runs the tabbed layout, where automations are workflows.
+const SHELL = !isLocalEdition();
 
-// Appearance options surfaced as Account commands (mirrors the NavBar avatar
-// picker). Static metadata; the active marker is stamped at build time from the
-// live theme. Selecting one calls setTheme and keeps the palette open so the
-// change is visible and comparable in place.
-const THEME_OPTIONS: {
-    value: Theme;
-    label: string;
-    icon: IconType;
-    keywords: string;
-}[] = [
+const SECTION_TITLES: Partial<Record<Section | 'Recent', string>> = {
+    Workflows: SHELL ? 'Automations' : 'Workflows',
+    Credentials: SHELL ? 'Accounts' : 'Credentials',
+};
+
+// Appearance options surfaced as Account commands (mirrors the account menu's picker). The active one is marked.
+const THEME_OPTIONS: { value: Theme; label: string; icon: PaletteIcon; keywords: string }[] = [
     { value: 'light', label: 'light', icon: Sun, keywords: 'bright day white appearance mode' },
     { value: 'dark', label: 'dark', icon: Moon, keywords: 'night black appearance mode' },
     { value: 'system', label: 'system', icon: Monitor, keywords: 'auto os default appearance mode' },
 ];
 
-interface Cmd {
-    id: string;
-    label: string;
-    section: Section;
-    icon: IconType;
-    /** Brand-icon color (Tailwind class or hex) — set for service/brand rows so
-     * the icon keeps its brand color instead of the default muted gray. */
-    iconColor?: string;
-    /** Extra terms folded into fuzzy matching (not shown). */
-    keywords?: string;
-    /** Node types for the integration-logo stack (workflow rows). */
-    nodeTypes?: string[];
-    /** Trailing metadata line (e.g. "5 nodes · 2d ago" for workflow rows). */
-    meta?: string;
-    /** When true the palette stays open after running (e.g. opening a sub-page). */
-    keepOpen?: boolean;
-    perform: () => void;
-}
-
-const SETTINGS_SECTIONS: {
-    section: SettingsSection;
-    label: string;
-    icon: IconType;
-    /** Extra search terms so natural queries (e.g. "api keys") surface the section. */
-    keywords?: string;
-}[] = [
-    {
-        section: 'usage',
-        label: 'Usage',
-        icon: BarChart3,
-        keywords: 'costs credits spend',
-    },
-    {
-        section: 'credentials',
-        label: 'Credentials',
-        icon: KeyRound,
-        keywords: 'connections oauth integrations accounts',
-    },
-    {
-        section: 'organization',
-        label: 'Members',
-        icon: Building2,
-        keywords: 'members team workspace organization',
-    },
-    {
-        section: 'skills',
-        label: 'Skills',
-        icon: Brain,
-        keywords: 'agent context knowledge',
-    },
-    {
-        section: 'developer',
-        label: 'Developer',
-        icon: Code2,
-        keywords: 'api keys api key token sdk',
-    },
-];
+const asCmd = (section: Section) => (entry: PaletteEntry): Cmd => ({ ...entry, section });
 
 // Reference shown in the searchable "Keyboard shortcuts" sub-page. The Go to / Open
 // groups are derived from the shortcut registry so they can't drift from what the
@@ -254,7 +184,10 @@ const SHORTCUT_GROUPS: { title: string; items: ShortcutItem[] }[] = [
     },
 ];
 
-export function CommandPalette() {
+type Row = { type: 'header'; title: string } | { type: 'item'; cmd: Cmd; index: number };
+
+/** `hiddenSettings`: the Settings sections the host shows as pages of their own, as it tells Settings. */
+export function CommandPalette({ hiddenSettings }: { hiddenSettings?: readonly SettingsSection[] }) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
     const { logActivity } = useAnalytics();
@@ -275,15 +208,34 @@ export function CommandPalette() {
     const [scope, setScope] = useState<PaletteScope | null>(null);
     // Platform MCP setup guides — opened by the "Set up NoClick MCP" action.
     const [mcpSetupOpen, setMcpSetupOpen] = useState(false);
-    // Credentials are loaded lazily — only when the Credentials scope ("O C") is
-    // entered, so the common palette open doesn't pay for a credential:list fetch.
-    const [credentials, setCredentials] = useState<CredentialInfo[]>([]);
-    const [credentialsLoaded, setCredentialsLoaded] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const listRef = useRef<HTMLDivElement>(null);
     const store = useWorkflowBrowserDataContext();
-    const { loadAllWorkflows } = store;
+    const { loadAllWorkflows, getAllWorkflows, getAllFolders } = store;
     const [theme, setTheme] = useTheme();
+    const { billing } = useInstanceCapabilities();
+    const settingsSections = useSettingsSections(hiddenSettings);
+    // Accounts are read again each time the palette opens, never on a closed one.
+    const { credentials } = useCredentialList(open);
+    const accounts = useConnectedAccounts(credentials);
+    const remembered = useRememberedPaletteEntries();
+    const [uses, setUses] = useState<Record<string, Use>>({});
+
+    // What registered sources add, by source.
+    const [added, setAdded] = useState<Record<number, readonly PaletteEntry[]>>({});
+    const reporters = useMemo(
+        () => paletteSources().map((_, i) => (entries: readonly PaletteEntry[]) => setAdded((prev) => ({ ...prev, [i]: entries }))),
+        []
+    );
+
+    // What pages handed over belongs to the workspace they read it in.
+    const [orgContext] = useOrgContext();
+    const workspaceRef = useRef(orgContext.id);
+    useEffect(() => {
+        if (workspaceRef.current === orgContext.id) return;
+        workspaceRef.current = orgContext.id;
+        forgetPaletteEntries();
+    }, [orgContext.id]);
 
     // Shared with Dashboard — toggling this opens/closes the chat sidebar.
     const [, setChatExpanded] = useCachedValtioState<boolean>(
@@ -335,38 +287,20 @@ export function CommandPalette() {
             window.removeEventListener(OPEN_COMMAND_PALETTE_EVENT, onScopedOpen);
     }, []);
 
-    // Lazily load credentials the first time the Credentials scope is entered.
-    useEffect(() => {
-        if (scope !== 'Credentials' || credentialsLoaded) return;
-        let cancelled = false;
-        (async () => {
-            const response = await sendEventAsync({
-                event_name: 'credential:list',
-                request_id: `palette-cred-list-${Date.now()}`,
-            });
-            if (cancelled) return;
-            setCredentials((response?.credentials ?? []) as CredentialInfo[]);
-            setCredentialsLoaded(true);
-        })();
-        return () => {
-            cancelled = true;
-        };
-    }, [scope, credentialsLoaded]);
-
-    // Reset transient state when closed; on open, force-refresh the full workflow
-    // set once so jump-to-workflow shows current node counts / types (cached
-    // entries can be stale). The ref guards against the effect re-firing when
-    // loadAllWorkflows' identity changes (folderTree updates) mid-open.
+    // Reset transient state when closed; on open, read what was run here before and
+    // force-refresh the full workflow set once so jump-to-workflow shows current node
+    // counts / types (cached entries can be stale). The ref guards against the effect
+    // re-firing when loadAllWorkflows' identity changes (folderTree updates) mid-open.
     const refreshedThisOpenRef = useRef(false);
     useEffect(() => {
         if (!open) {
             setQuery('');
             setPage('root');
             setScope(null);
-            setCredentialsLoaded(false);
             refreshedThisOpenRef.current = false;
         } else if (!refreshedThisOpenRef.current) {
             refreshedThisOpenRef.current = true;
+            setUses(readUses());
             loadAllWorkflows(true);
         }
     }, [open, loadAllWorkflows]);
@@ -394,8 +328,11 @@ export function CommandPalette() {
     const close = useCallback(() => setOpen(false), []);
     const run = useCallback(
         (cmd: Cmd) => {
-            if (!cmd.keepOpen) close();
-            cmd.perform();
+            if (!cmd.keepOpen) {
+                close();
+                recordUse(cmd.id);
+            }
+            cmd.run();
         },
         [close]
     );
@@ -405,8 +342,7 @@ export function CommandPalette() {
     // project + sort by recency here.
     const allWorkflows = useMemo(
         () =>
-            store
-                .getAllWorkflows()
+            getAllWorkflows()
                 .map((wf) => ({
                     id: wf.id,
                     name: wf.name,
@@ -417,8 +353,9 @@ export function CommandPalette() {
                     node_types: workflowIconTypes(wf),
                 }))
                 .sort((a, b) => (b.updated_at ?? '').localeCompare(a.updated_at ?? '')),
-        [store.getAllWorkflows],
+        [getAllWorkflows],
     );
+    const allFolders = useMemo(() => getAllFolders(), [getAllFolders]);
 
     // ── Command catalogue ──────────────────────────────────────────────────
     const allCommands = useMemo<Cmd[]>(() => {
@@ -426,6 +363,7 @@ export function CommandPalette() {
             await fetch('/dashboard', { method: 'POST', body: new FormData() });
             window.location.href = '/auth/login';
         };
+        const registered = Object.values(added).flat();
 
         const workflowCmds: Cmd[] = allWorkflows.map((wf) => {
             const n = wf.node_count ?? 0;
@@ -435,97 +373,74 @@ export function CommandPalette() {
                 .join(' · ');
             return {
                 id: `wf:${wf.id}`,
-                label: `Open ${wf.name || 'Untitled'}`,
+                label: wf.name || 'Untitled',
                 section: 'Workflows',
                 icon: WorkflowIcon,
-                // Keep the bare name as a keyword so typing it still ranks as an
-                // exact match despite the "Open " display prefix.
-                keywords: wf.name || 'Untitled',
                 nodeTypes: wf.node_types,
                 meta,
                 // Opens the flow synchronously (setSelectedWorkflow → FlowCanvas
                 // mounts from cache) whether the browser is already mounted
                 // (flow tab) or we're switching from another screen — no
                 // navigate() → URL → useEffect round-trip. See navigateToWorkflow.
-                perform: () =>
+                run: () =>
                     navigateToWorkflow({
                         id: wf.id,
                         name: wf.name || 'Untitled',
                     }),
             };
         });
+        const folderCmds: Cmd[] = allFolders.map((f) => ({
+            id: `folder:${f.id}`,
+            label: f.name,
+            section: 'Workflows',
+            icon: Folder,
+            keywords: 'folder',
+            run: () => navigateToFolder(f.id),
+        }));
 
-        // Credential rows — only surfaced in the Credentials scope ("O C").
-        // Selecting one opens the create-credential popup preselected to that
-        // credential (the same popup as "Create new credential", but focused).
-        const credentialCmds: Cmd[] = credentials.map((c) => {
-            const { Icon, iconColor, hasServiceIcon } = getCredentialIcon(
-                c.credential_type,
-                c.metadata
-            );
-            const email =
-                typeof c.metadata?.email === 'string' ? c.metadata.email : '';
-            const meta = [
-                formatCredentialTypeLabel(c.credential_type),
-                relativeShort(c.created_at),
-            ]
-                .filter(Boolean)
-                .join(' · ');
+        // An account opens its page under Connections; the open edition keeps accounts in Settings, so there it opens
+        // the account in the credential dialog. A phone number is a resource, with its own page.
+        const accountCmds: Cmd[] = accounts.map(({ credential, app, line, problem }) => {
+            if (SHELL && credential.credential_type === 'phone_number') {
+                return {
+                    id: `resource:numbers:${credential.id}`,
+                    label: credential.name,
+                    context: 'Numbers',
+                    section: 'Resources',
+                    icon: Phone,
+                    run: () => navigateToTab('resources', resourceAddress('numbers', { resource: credential.id })),
+                };
+            }
+            const { Icon, iconColor, hasServiceIcon } = getCredentialIcon(credential.credential_type, credential.metadata);
             return {
-                id: `cred:${c.id}`,
-                label: c.name,
+                id: `cred:${credential.id}`,
+                label: app,
+                context: line,
                 section: 'Credentials',
                 icon: Icon,
                 iconColor: iconColor || (hasServiceIcon ? 'text-foreground' : 'text-muted-foreground'),
-                keywords: `${c.credential_type} ${email}`,
-                meta,
-                perform: () =>
-                    openCreateCredential({
-                        credentialType: c.credential_type,
-                        credentialId: c.id,
-                    }),
+                keywords: `${line} ${credential.name}`,
+                meta: problem,
+                run: SHELL
+                    ? () => navigateToAccount(credential.id)
+                    : () => openCreateCredential({ credentialType: credential.credential_type, credentialId: credential.id }),
             };
         });
 
+        const heldCmds: Cmd[] = (Object.entries(remembered) as [HoldingPage, readonly PaletteEntry[]][]).flatMap(([page, entries]) =>
+            entries.map(asCmd(page))
+        );
+
         const navCmds: Cmd[] = [
-            {
-                id: 'nav:workflows',
-                label: 'Go to workflows',
-                section: 'Navigation',
-                icon: LayoutGrid,
-                keywords: 'home browser flows',
-                // Synchronous tab switch (same path as a NavBar click), not the
-                // slower navigate() URL round-trip. Reset closes any open
-                // workflow so we land on the browser.
-                perform: goToWorkflows,
-            },
-            {
-                id: 'nav:dashboard',
-                label: 'Go to dashboard',
-                section: 'Navigation',
-                icon: LayoutDashboard,
-                keywords: 'home overview feed runs agents files credentials',
-                perform: () => navigateToDashboard(),
-            },
-            {
-                id: 'nav:attention',
-                label: 'Go to needs you',
-                section: 'Navigation',
-                icon: UserCheck,
-                keywords: 'approvals feed notifications inbox questions',
-                perform: () => navigateToDashboard('attention'),
-            },
-            ...SETTINGS_SECTIONS.map(
-                (s): Cmd => ({
-                    id: `nav:settings:${s.section}`,
-                    label: `Go to ${s.label.toLowerCase()}`,
-                    section: 'Navigation',
-                    icon: s.icon,
-                    keywords: `settings ${s.section} ${s.keywords ?? ''}`,
-                    perform: () => navigateToSettings({ section: s.section }),
-                })
-            ),
-        ];
+            ...appDestinations({
+                shell: SHELL,
+                kinds: visibleKinds({ platform: hasPlatformResources() }),
+                billing,
+                inOrganization: !!orgContext.id,
+                settings: settingsSections,
+            }),
+            ...registered.filter((e) => !e.action),
+        ].map(asCmd('Go to'));
 
         const setupCmds: Cmd[] = [
             {
@@ -536,20 +451,20 @@ export function CommandPalette() {
                 keywords: 'noclick mcp server connect claude cursor codex chatgpt windsurf zed model context protocol api setup install',
                 // Per-client setup guides for the platform MCP server —
                 // build/run workflows from any MCP client.
-                perform: () => setMcpSetupOpen(true),
+                run: () => setMcpSetupOpen(true),
             },
         ];
 
         const actionCmds: Cmd[] = [
             {
                 id: 'action:new-workflow',
-                label: 'Create new workflow…',
+                label: SHELL ? 'Create new automation…' : 'Create new workflow…',
                 section: 'Actions',
                 icon: Plus,
-                keywords: 'new add blank',
+                keywords: 'new add blank workflow automation',
                 // Fires synchronously (creates + shows the spinner / opens the
                 // dialog) from any screen — see triggerBrowserAction.
-                perform: () => triggerBrowserAction('create'),
+                run: () => triggerBrowserAction('create'),
             },
             {
                 id: 'action:new-folder',
@@ -557,7 +472,7 @@ export function CommandPalette() {
                 section: 'Actions',
                 icon: FolderPlus,
                 keywords: 'new add directory',
-                perform: () => triggerBrowserAction('new-folder'),
+                run: () => triggerBrowserAction('new-folder'),
             },
             {
                 id: 'action:new-credential',
@@ -567,7 +482,7 @@ export function CommandPalette() {
                 keywords: 'new add connect service oauth api key token integration account login',
                 // Opens the global create-credential dialog over the current
                 // screen (no forced navigation) — see GlobalCreateCredentialDialog.
-                perform: () => openCreateCredential(),
+                run: () => openCreateCredential(),
             },
         ];
 
@@ -577,23 +492,24 @@ export function CommandPalette() {
             id: s.commandId,
             label: s.label,
             section: 'Open',
-            icon: WorkflowIcon,
+            icon: s.scope === 'Credentials' ? KeyRound : WorkflowIcon,
             keywords: 'open jump search',
             keepOpen: true,
-            perform: () => {
+            run: () => {
                 setQuery('');
                 setScope(s.scope);
             },
         }));
 
-        const accountCmds: Cmd[] = [
+        const accountCmdsList: Cmd[] = [
+            ...registered.filter((e) => e.action).map(asCmd('Account')),
             {
                 id: 'account:toggle-chat',
                 label: 'Toggle chat sidebar',
                 section: 'Account',
                 icon: MessageCircle,
                 keywords: 'ai assistant agent copilot collapse expand panel',
-                perform: () => setChatExpanded((p) => !p),
+                run: () => setChatExpanded((p) => !p),
             },
             ...THEME_OPTIONS.map(
                 (opt): Cmd => ({
@@ -604,7 +520,7 @@ export function CommandPalette() {
                     keywords: `theme appearance color scheme ${opt.keywords}`,
                     // Mark the active choice; closes on select like every other command.
                     meta: theme === opt.value ? 'Active' : undefined,
-                    perform: () => setTheme(opt.value),
+                    run: () => setTheme(opt.value),
                 })
             ),
             {
@@ -614,7 +530,15 @@ export function CommandPalette() {
                 icon: Keyboard,
                 keywords: 'keys help hotkeys',
                 keepOpen: true,
-                perform: () => setPage('shortcuts'),
+                run: () => setPage('shortcuts'),
+            },
+            {
+                id: 'action:send-feedback',
+                label: 'Send feedback',
+                section: 'Account',
+                icon: MessageSquarePlus,
+                keywords: 'bug report idea help support contact',
+                run: openFeedback,
             },
             {
                 id: 'account:sign-out',
@@ -622,77 +546,43 @@ export function CommandPalette() {
                 section: 'Account',
                 icon: LogOut,
                 keywords: 'log out logout exit',
-                perform: signOut,
+                run: signOut,
             },
         ];
 
+        // A page may hand over something an account row already holds (a number): the first one stays.
+        const seen = new Set<string>();
         return [
             ...workflowCmds,
-            ...credentialCmds,
+            ...folderCmds,
+            ...accountCmds,
+            ...heldCmds,
             ...navCmds,
             ...actionCmds,
             ...openCmds,
             ...setupCmds,
-            ...accountCmds,
-        ];
-    }, [allWorkflows, credentials, setChatExpanded, theme, setTheme]);
+            ...accountCmdsList,
+        ].filter((c) => {
+            if (seen.has(c.id)) return false;
+            seen.add(c.id);
+            return true;
+        });
+    }, [allWorkflows, allFolders, accounts, remembered, added, billing, orgContext.id, settingsSections, setChatExpanded, theme, setTheme]);
 
     // ── Filter + group ─────────────────────────────────────────────────────
-    // Each section is scored independently, but a fixed section order would let
-    // a weak (subsequence) match in an early section outrank a strong (substring)
-    // match in a later one — e.g. "chat" surfacing "Create new credential" above
-    // "Toggle chat sidebar". So when there's a query we reorder sections by their
-    // best item score; the curated SECTION_ORDER applies only to the browse state.
     const { rows, flat } = useMemo(() => {
-        const q = query.trim();
-        // Scoped open ("O W") restricts the palette to one section and shows more
-        // of it; the section header is then redundant and suppressed below.
-        const visibleSections = scope ? [scope] : SECTION_ORDER;
-        const sections = visibleSections.map((sec) => {
-            const inSection = allCommands.filter((c) => c.section === sec);
-            let items = inSection;
-            let best = 0;
-            if (q) {
-                const scored = inSection
-                    .map((c) => ({
-                        c,
-                        score: scoreFields(q, [c.label, c.keywords]),
-                    }))
-                    .filter(
-                        (x): x is { c: Cmd; score: number } => x.score !== null
-                    )
-                    .sort((a, b) => a.score - b.score);
-                items = scored.map((x) => x.c);
-                best = scored.length ? scored[0].score : Infinity;
-            }
-            if (sec === 'Workflows') {
-                items = items.slice(0, scope ? 50 : q ? 6 : 3);
-            } else if (sec === 'Credentials') {
-                items = items.slice(0, 50);
-            }
-            return { title: sec, items, best };
-        }).filter((s) => s.items.length > 0);
-
-        if (q) {
-            // Stable within equal scores: SECTION_ORDER is the tiebreaker since
-            // Array.prototype.sort is stable and we started in that order.
-            sections.sort((a, b) => a.best - b.best);
-        }
-
-        const builtRows: (
-            | { type: 'header'; title: string }
-            | { type: 'item'; cmd: Cmd; index: number }
-        )[] = [];
+        const builtRows: Row[] = [];
         const flatList: Cmd[] = [];
-        for (const sec of sections) {
-            if (!scope) builtRows.push({ type: 'header', title: sec.title });
-            for (const cmd of sec.items) {
+        for (const section of layoutCommands(allCommands, query, scope, uses)) {
+            // A scope ("O W") is one section, so its header would only repeat the placeholder.
+            if (!scope) builtRows.push({ type: 'header', title: SECTION_TITLES[section.title] ?? section.title });
+            for (const cmd of section.items) {
                 builtRows.push({ type: 'item', cmd, index: flatList.length });
                 flatList.push(cmd);
             }
         }
         return { rows: builtRows, flat: flatList };
-    }, [allCommands, query, scope]);
+    }, [allCommands, query, scope, uses]);
 
     const {
         index: highlighted,
@@ -743,118 +633,125 @@ export function CommandPalette() {
     }, [highlighted, open]);
 
     return (
-        <Dialog.Root open={open} onOpenChange={setOpen}>
-            <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 z-[100] bg-foreground/[0.08] dark:bg-background/60" />
-                <Dialog.Content
-                    data-testid="command-palette"
-                    aria-describedby={undefined}
-                    onOpenAutoFocus={(e) => {
-                        e.preventDefault();
-                        inputRef.current?.focus();
-                    }}
-                    onKeyDown={onContentKeyDown}
-                    // No enter/exit animation — it pops in (and out) instantly.
-                    // Without any CSS animation, Radix also unmounts immediately on
-                    // close instead of waiting for animationend. Centered with
-                    // -translate-x-1/2 (a static transform, not animated). In the shell's menu surface.
-                    className={cn('fixed left-1/2 top-[14vh] z-[101] w-[calc(100vw-32px)] max-w-[640px] -translate-x-1/2 overflow-hidden rounded-[26px] focus:outline-none', MENU_SURFACE)}
-                >
-                    <Dialog.Title className="sr-only">
-                        Command palette
-                    </Dialog.Title>
+        <>
+            {paletteSources().map((Source, i) => (
+                <Suspense key={i} fallback={null}>
+                    <Source onEntries={reporters[i]} />
+                </Suspense>
+            ))}
+            <Dialog.Root open={open} onOpenChange={setOpen}>
+                <Dialog.Portal>
+                    <Dialog.Overlay className="fixed inset-0 z-[100] bg-foreground/[0.08] dark:bg-background/60" />
+                    <Dialog.Content
+                        data-testid="command-palette"
+                        aria-describedby={undefined}
+                        onOpenAutoFocus={(e) => {
+                            e.preventDefault();
+                            inputRef.current?.focus();
+                        }}
+                        onKeyDown={onContentKeyDown}
+                        // No enter/exit animation — it pops in (and out) instantly.
+                        // Without any CSS animation, Radix also unmounts immediately on
+                        // close instead of waiting for animationend. Centered with
+                        // -translate-x-1/2 (a static transform, not animated). In the shell's menu surface.
+                        className={cn('fixed left-1/2 top-[14vh] z-[101] w-[calc(100vw-32px)] max-w-[640px] -translate-x-1/2 overflow-hidden rounded-[26px] focus:outline-none', MENU_SURFACE)}
+                    >
+                        <Dialog.Title className="sr-only">
+                            Command palette
+                        </Dialog.Title>
 
-                    {page === 'root' ? (
-                        <>
-                            {/* Search — in a scope ("O W") the leading glyph becomes
-                                the scope's icon (workflow) instead of the magnifier. */}
-                            <div className={SEARCH_ROW}>
-                                {scope === 'Workflows' ? (
-                                    <WorkflowIcon className={SEARCH_ICON} />
-                                ) : scope === 'Credentials' ? (
-                                    <KeyRound className={SEARCH_ICON} />
-                                ) : (
-                                    <Search className={SEARCH_ICON} />
-                                )}
-                                <input
-                                    ref={inputRef}
-                                    value={query}
-                                    onChange={(e) => setQuery(e.target.value)}
-                                    placeholder={
-                                        scope
-                                            ? OPEN_SCOPES.find(
-                                                  (s) => s.scope === scope
-                                              )?.label ?? 'Search…'
-                                            : 'Search workflows, settings, actions…'
-                                    }
-                                    className={SEARCH_INPUT}
-                                />
-                                <KeyHint keys={['esc']} />
-                            </div>
+                        {page === 'root' ? (
+                            <>
+                                {/* Search — in a scope ("O W") the leading glyph becomes
+                                    the scope's icon (workflow) instead of the magnifier. */}
+                                <div className={SEARCH_ROW}>
+                                    {scope === 'Workflows' ? (
+                                        <WorkflowIcon className={SEARCH_ICON} />
+                                    ) : scope === 'Credentials' ? (
+                                        <KeyRound className={SEARCH_ICON} />
+                                    ) : (
+                                        <Search className={SEARCH_ICON} />
+                                    )}
+                                    <input
+                                        ref={inputRef}
+                                        value={query}
+                                        onChange={(e) => setQuery(e.target.value)}
+                                        placeholder={
+                                            scope
+                                                ? OPEN_SCOPES.find(
+                                                      (s) => s.scope === scope
+                                                  )?.label ?? 'Search…'
+                                                : 'Search or go anywhere…'
+                                        }
+                                        className={SEARCH_INPUT}
+                                    />
+                                    <KeyHint keys={['esc']} />
+                                </div>
 
-                            {/* Results */}
-                            <div
-                                ref={listRef}
-                                className={LIST}
-                            >
-                                {rows.length === 0 ? (
-                                    <div className={EMPTY}>
-                                        {query
-                                            ? `No results for “${query}”`
-                                            : scope === 'Credentials'
-                                              ? 'No credentials yet'
-                                              : scope === 'Workflows'
-                                                ? 'No workflows yet'
-                                                : 'No results'}
-                                    </div>
-                                ) : (
-                                    rows.map((row, i) =>
-                                        row.type === 'header' ? (
-                                            <div
-                                                key={`h:${row.title}:${i}`}
-                                                data-cmd-section
-                                                className={SECTION}
-                                            >
-                                                {row.title}
-                                            </div>
-                                        ) : (
-                                            <CommandRow
-                                                key={row.cmd.id}
-                                                cmd={row.cmd}
-                                                active={
-                                                    row.index === highlighted
-                                                }
-                                                index={row.index}
-                                                onHover={() =>
-                                                    setHighlighted(row.index)
-                                                }
-                                                onSelect={() => run(row.cmd)}
-                                            />
+                                {/* Results */}
+                                <div
+                                    ref={listRef}
+                                    className={LIST}
+                                >
+                                    {rows.length === 0 ? (
+                                        <div className={EMPTY}>
+                                            {query
+                                                ? `No results for “${query}”`
+                                                : scope === 'Credentials'
+                                                  ? `No ${(SECTION_TITLES.Credentials ?? 'credentials').toLowerCase()} yet`
+                                                  : scope === 'Workflows'
+                                                    ? `No ${(SECTION_TITLES.Workflows ?? 'workflows').toLowerCase()} yet`
+                                                    : 'No results'}
+                                        </div>
+                                    ) : (
+                                        rows.map((row, i) =>
+                                            row.type === 'header' ? (
+                                                <div
+                                                    key={`h:${row.title}:${i}`}
+                                                    data-cmd-section
+                                                    className={SECTION}
+                                                >
+                                                    {row.title}
+                                                </div>
+                                            ) : (
+                                                <CommandRow
+                                                    key={row.cmd.id}
+                                                    cmd={row.cmd}
+                                                    active={
+                                                        row.index === highlighted
+                                                    }
+                                                    index={row.index}
+                                                    onHover={() =>
+                                                        setHighlighted(row.index)
+                                                    }
+                                                    onSelect={() => run(row.cmd)}
+                                                />
+                                            )
                                         )
-                                    )
-                                )}
-                            </div>
+                                    )}
+                                </div>
 
-                            {/* Footer */}
-                            <div className={FOOTER}>
-                                <span className="flex items-center gap-1.5">
-                                    <KeyHint keys={['up', 'down']} /> Navigate
-                                </span>
-                                <span className="flex items-center gap-1.5">
-                                    <KeyHint keys={['enter']} /> Open
-                                </span>
-                                <span className="flex items-center gap-1.5">
-                                    <KeyHint keys={['esc']} /> Close
-                                </span>
-                            </div>
-                        </>
-                    ) : (
-                        <ShortcutsPage onBack={() => setPage('root')} />
-                    )}
-                </Dialog.Content>
-            </Dialog.Portal>
-            <NoClickMCPSetupModal open={mcpSetupOpen} onClose={() => setMcpSetupOpen(false)} />
-        </Dialog.Root>
+                                {/* Footer */}
+                                <div className={FOOTER}>
+                                    <span className="flex items-center gap-1.5">
+                                        <KeyHint keys={['up', 'down']} /> Navigate
+                                    </span>
+                                    <span className="flex items-center gap-1.5">
+                                        <KeyHint keys={['enter']} /> Open
+                                    </span>
+                                    <span className="flex items-center gap-1.5">
+                                        <KeyHint keys={['esc']} /> Close
+                                    </span>
+                                </div>
+                            </>
+                        ) : (
+                            <ShortcutsPage onBack={() => setPage('root')} />
+                        )}
+                    </Dialog.Content>
+                </Dialog.Portal>
+                <NoClickMCPSetupModal open={mcpSetupOpen} onClose={() => setMcpSetupOpen(false)} />
+            </Dialog.Root>
+        </>
     );
 }
 
@@ -872,6 +769,7 @@ function CommandRow({
     onSelect: () => void;
 }) {
     const Icon = cmd.icon;
+    const shortcut = COMMAND_SHORTCUT_KEYS[cmd.id];
     return (
         <button
             type="button"
@@ -894,8 +792,14 @@ function CommandRow({
             ) : (
                 <Icon className="h-[18px] w-[18px] shrink-0 text-foreground/85 [stroke-width:1.75]" />
             )}
-            <span className="flex-1 truncate text-[14.5px] text-foreground">
-                {cmd.label}
+            {/* Its name, then where it lives; the place gives way first on a narrow screen. */}
+            <span className="flex min-w-0 flex-1 items-baseline gap-2">
+                <span className="truncate text-[14.5px] text-foreground">{cmd.label}</span>
+                {cmd.context && (
+                    <span data-cmd-context className="shrink-[3] truncate text-[13px] text-muted-foreground">
+                        {cmd.context}
+                    </span>
+                )}
             </span>
             {cmd.nodeTypes && cmd.nodeTypes.length > 0 && (
                 <NodeIconStack
@@ -909,29 +813,23 @@ function CommandRow({
                     // are the only non-functional type excluded.
                     filter={(t) => t !== 'sticky-note'}
                     bare
-                    className="shrink-0"
+                    className="shrink-0 max-sm:hidden"
                 />
             )}
             {cmd.meta && (
-                <span className="shrink-0 whitespace-nowrap text-[12.5px] text-muted-foreground">
+                <span className="shrink-0 whitespace-nowrap text-[12.5px] text-muted-foreground max-sm:hidden">
                     {cmd.meta}
                 </span>
             )}
             {/* Shortcut hint so people learn it in place: sequences as "G then U",
                 combos (⌘/) as adjacent keycaps. */}
-            {COMMAND_SHORTCUT_KEYS[cmd.id] &&
-                (COMMAND_SHORTCUT_KEYS[cmd.id].sequence ? (
-                    <SequenceKeyHint
-                        keys={COMMAND_SHORTCUT_KEYS[cmd.id].keys}
-                        className="shrink-0"
-                    />
+            {shortcut &&
+                (shortcut.sequence ? (
+                    <SequenceKeyHint keys={shortcut.keys} className="shrink-0 max-sm:hidden" />
                 ) : (
-                    <KeyHint
-                        keys={COMMAND_SHORTCUT_KEYS[cmd.id].keys}
-                        className="shrink-0"
-                    />
+                    <KeyHint keys={shortcut.keys} className="shrink-0 max-sm:hidden" />
                 ))}
-            {cmd.section === 'Navigation' ? (
+            {PLACES.has(cmd.section) ? (
                 <ArrowRight
                     className={cn(
                         'h-4 w-4 shrink-0',

@@ -4,7 +4,7 @@
 // sidebar) lists them all with their prices; any item opens its detail page
 // (?kind=&resource=), which Back leaves. The platform's kinds (domains, email,
 // apps, databases, repos) are read inside the registered platform's boundary.
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router';
 import { ArrowRight, ChevronRight, Plus } from 'lucide-react';
 import { MarkRow, NodeMark, agentMarkType, countOf, fmtBytes, relTime } from '~/components/dashboard/primitives';
@@ -13,7 +13,9 @@ import { useInstanceCapabilities } from '~/hooks/useInstanceCapabilities';
 import { formatDollars, formatUsd } from '~/lib/money';
 import { Skeleton } from '~/components/ui/skeleton';
 import { askNoClick } from '~/lib/askNoClick';
+import { navigateToTab } from '~/lib/navigation';
 import { cn } from '~/lib/utils';
+import { rememberPaletteEntries } from '~/components/command/sources';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from './buttons';
 import { PageFrame } from './PageFrame';
 import { BuyDomainPage } from './resources/BuyDomainPage';
@@ -21,11 +23,12 @@ import { BuyNumberPage } from './resources/BuyNumberPage';
 import { FileThumb } from './resources/fileParts';
 import { NewAddressPage } from './resources/NewAddressPage';
 import { useResourceCosts, type ResourceCosts } from './resources/costs';
+import { INNER_PARAMS, resourceAddress } from './resources/kinds';
 import { kindDef, useResourceItems, type KindDef, type KindId, type ResourceItem } from './resources/model';
 import { PlatformResourcesBoundary, usePlatformResources } from './resources/platform';
 import { ResourceDetail } from './resources/ResourceDetail';
 import { TrashSection } from './resources/TrashSection';
-import { INNER_PARAMS, ResourceUserIcon } from './resources/ui';
+import { ResourceUserIcon } from './resources/ui';
 import { TILE_GRID, Tile, TileSkeletons } from './Tile';
 
 function Lead({ item }: { item: ResourceItem }) {
@@ -199,14 +202,6 @@ function itemCost(item: ResourceItem, costs: ResourceCosts): string {
     return billed === 'use' ? 'Billed by use' : billed ? '—' : 'Included';
 }
 
-// The kinds a person can get by hand, each on its own page (?kind=&new=1): numbers and domains are bought, so they need
-// billing; `short` is the overview tile's button.
-const MANUAL: Partial<Record<KindId, { label: string; short: string; bought: boolean }>> = {
-    numbers: { label: 'Buy a number', short: 'Buy', bought: true },
-    domains: { label: 'Buy a domain', short: 'Buy', bought: true },
-    email: { label: 'New address', short: 'New', bought: false },
-};
-
 /** While the platform's reads load: the overview's frame, with its tiles waiting. */
 function Loading() {
     return (
@@ -228,6 +223,22 @@ export function ResourcesPage() {
 export function ResourcesView() {
     const [params, setParams] = useSearchParams();
     const { items, kinds, loading, errors, now, refresh } = useResourceItems();
+    // The palette can open any of these by name later, from anywhere.
+    useEffect(() => {
+        rememberPaletteEntries(
+            'Resources',
+            kinds.flatMap((k) =>
+                items[k.id].map((item) => ({
+                    id: `resource:${k.id}:${item.id}`,
+                    label: item.title,
+                    context: k.label,
+                    icon: k.icon,
+                    about: item.subtitle,
+                    run: () => navigateToTab('resources', resourceAddress(k.id, { resource: item.id })),
+                }))
+            )
+        );
+    }, [items, kinds]);
     const costs = useResourceCosts(items);
     const platform = usePlatformResources();
     // Numbers and domains are sold by the hosted service with a recurring charge, so buying one by hand needs billing.
@@ -240,8 +251,9 @@ export function ResourcesView() {
             next.delete('resource');
             return next;
         });
+    // A kind's page for getting one by hand; one that's bought needs billing.
     const manualFor = (kind: KindId) => {
-        const manual = MANUAL[kind];
+        const manual = kindDef(kind).manual;
         return manual && (billing || !manual.bought) ? { label: manual.label, short: manual.short, run: () => openBuy(kind) } : undefined;
     };
     const activeKind = kinds.find((k) => k.id === params.get('kind'))?.id ?? null;

@@ -24,6 +24,7 @@ import { AiProviderDialog } from './connections/AiProviderDialog';
 import { ConnectedList } from './connections/ConnectedList';
 import { TILE_GRID, Tile, TileSkeletons } from './Tile';
 import { useCatalogServices, useConnectedAccounts, type AccountSource, type ConnectedAccount } from './connections/accounts';
+import { CONNECTIONS_VIEWS, connectionsViews, type ConnectionsView } from './connections/views';
 import { PageFrame } from './PageFrame';
 
 const FEATURED_CLIENTS = ['claude', 'chatgpt', 'claude-code', 'cursor', 'codex'];
@@ -49,14 +50,9 @@ const POPULAR = [
     'ai:openrouter',
 ];
 
-type View = 'all' | AccountSource;
+type View = ConnectionsView;
 
-const VIEW_LABELS: Record<View, string> = {
-    all: 'All apps',
-    connected: 'Connected',
-    organization: 'Workspace',
-    shared: 'Shared with me',
-};
+const VIEW_LABELS = Object.fromEntries(CONNECTIONS_VIEWS.map((v) => [v.id, v.label])) as Record<View, string>;
 
 function UseNoClickElsewhere() {
     const [open, setOpen] = useState(false);
@@ -251,9 +247,7 @@ function AccountView({ account, backLabel, onBack }: { account: ConnectedAccount
 }
 
 function parseView(raw: string | null, hasOrg: boolean): View {
-    if (raw === 'connected' || raw === 'shared') return raw;
-    if (raw === 'organization' && hasOrg) return raw;
-    return 'all';
+    return connectionsViews(hasOrg).find((v) => v.id === raw)?.id ?? 'all';
 }
 
 export function ConnectionsPage() {
@@ -310,12 +304,10 @@ export function ConnectionsPage() {
         );
     }
 
-    const tabs: { id: View; count?: number }[] = [
-        { id: 'all', count: services.length ? services.length + companies.length : undefined },
-        { id: 'connected', count: bySource.connected.length || undefined },
-        ...(orgContext.id ? [{ id: 'organization' as const, count: bySource.organization.length || undefined }] : []),
-        { id: 'shared', count: bySource.shared.length || undefined },
-    ];
+    const tabs: { id: View; count?: number }[] = connectionsViews(!!orgContext.id).map((v) => ({
+        id: v.id,
+        count: (v.id === 'all' ? (services.length ? services.length + companies.length : 0) : bySource[v.id].length) || undefined,
+    }));
     const manage = (label: string, own: ConnectedAccount[]) => {
         if (own.length === 1) {
             go({ account: own[0].credential.id }, true);

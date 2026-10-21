@@ -155,10 +155,12 @@ export function useResourceItems() {
         void fetchDashboardOverview();
         platform?.refresh();
     }, [platform]);
+    // A platform registers before anything renders, so the kinds are fixed for the page's life.
+    const kinds = useMemo(() => visibleKinds({ platform: hasPlatformResources() }), []);
 
     return {
         items,
-        kinds: visibleKinds({ platform: hasPlatformResources() }),
+        kinds,
         loading: (!overview && loading) || !!platform?.loading,
         /** Why a platform kind couldn't be read. */
         errors: platform?.errors ?? {},

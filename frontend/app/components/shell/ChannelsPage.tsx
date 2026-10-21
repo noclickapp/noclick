@@ -17,6 +17,8 @@ import { TooltipProvider } from '~/components/ui/tooltip';
 import { useChannels, type Channels } from '~/hooks/useChannels';
 import type { VoiceClip } from '~/hooks/useVoiceClip';
 import { askNoClick } from '~/lib/askNoClick';
+import { navigateToTab } from '~/lib/navigation';
+import { rememberPaletteEntries } from '~/components/command/sources';
 import { cn } from '~/lib/utils';
 import { PhoneBarActions, PhoneBarBack, useInPhoneShell } from './AppShell';
 import { AddWorkspaceDialog } from './channels/AddWorkspaceDialog';
@@ -269,6 +271,22 @@ export function ChannelsView({ user, transport, agentsHref }: { user: AccountMen
     const [openId, setOpenId] = useState<string | null>(requested);
     const channels = useChannels(transport, openId);
     const workspaces = useMemo(() => [home, ...channels.workspaces], [home, channels.workspaces]);
+    // The palette can open any open channel by name later, from anywhere.
+    useEffect(() => {
+        rememberPaletteEntries(
+            'Channels',
+            channels.channels
+                .filter((c) => c.status !== 'closed')
+                .map((c) => ({
+                    id: `channel:${c.id}`,
+                    label: c.name,
+                    context: workspaces.find((w) => w.id === c.workspaceId)?.name,
+                    icon: Hash,
+                    about: c.topic,
+                    run: () => navigateToTab('channels', { channel: c.id }),
+                }))
+        );
+    }, [channels.channels, workspaces]);
     const located = channels.channels.find((c) => c.id === requested) ?? null;
     const workspace =
         (located && workspaces.find((w) => w.id === located.workspaceId)) ?? workspaces.find((w) => (w.id ?? 'home') === chosenId) ?? home;

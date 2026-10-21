@@ -52,6 +52,7 @@ export type BrowserAction = 'create' | 'new-folder' | 'trash';
  * WorkflowBrowser — see consumePendingFlowIntent. */
 export type FlowIntent =
   | { kind: 'open'; workflow: { id: string; name: string } }
+  | { kind: 'folder'; folderId: string }
   | { kind: 'action'; action: BrowserAction };
 
 // ============================================================================
@@ -171,6 +172,12 @@ export function navigateToWorkflow(workflow: { id: string; name: string }): void
  * new-folder dialog) from any screen, synchronously. */
 export function triggerBrowserAction(action: BrowserAction): void {
   dispatchFlowIntent({ kind: 'action', action });
+}
+
+/** Open a folder of the workflow browser from any screen, closing whatever was open. */
+export function navigateToFolder(folderId: string): void {
+  window.dispatchEvent(new CustomEvent('noclick:workflow-browser-reset'));
+  dispatchFlowIntent({ kind: 'folder', folderId });
 }
 
 

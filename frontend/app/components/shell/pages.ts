@@ -8,7 +8,8 @@ export interface ShellPage {
     id: DashboardTab;
     label: string;
     icon: LucideIcon;
-    /** Extra words the command palette matches. */
+    /** Extra words the command palette matches. What's inside a page (a Resources kind, a Settings section) is a
+     *  destination of its own, found by its own words. */
     keywords: string;
 }
 
@@ -17,8 +18,8 @@ export const SHELL_PAGES: readonly ShellPage[] = [
     { id: 'channels', label: 'Channels', icon: Hash, keywords: 'agents groups talk conversations team' },
     { id: 'flow', label: 'Automations', icon: Workflow, keywords: 'workflows flows browser canvas build' },
     { id: 'connections', label: 'Connections', icon: Plug, keywords: 'credentials accounts integrations oauth keys' },
-    { id: 'resources', label: 'Resources', icon: Layers, keywords: 'numbers phone files databases tables repos domains apps interfaces email' },
-    { id: 'settings', label: 'Settings', icon: Settings, keywords: 'usage billing plan members skills notifications popups developer preferences account' },
+    { id: 'resources', label: 'Resources', icon: Layers, keywords: 'owned purchases inventory' },
+    { id: 'settings', label: 'Settings', icon: Settings, keywords: 'preferences account options' },
 ];
 
 /** The page a tab id belongs to; debug and analytics have none. */
