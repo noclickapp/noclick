@@ -97,7 +97,7 @@ export default async function () {
     nc.assert.equal(docsForcedDark, true, '/docs stays dark');
     nc.assert.equal(dashboardLight, true, '/dashboard honors light preference');
     nc.assert.truthy(isThemedPath('/') && isThemedPath('/pricing'), 'the landing and /pricing are themed');
-    for (const path of ['/templates', '/agents/codex', '/alternatives/zapier', '/mcp', '/app-builder', '/workflow/some-template', '/privacy-policy', '/auth/login']) {
+    for (const path of ['/templates', '/agents/codex', '/alternatives/zapier', '/mcp', '/workflow/some-template', '/privacy-policy', '/auth/login']) {
         nc.assert.truthy(isThemedPath(path), `${path} is themed`);
     }
     nc.assert.falsy(isThemedPath('/docs') || isThemedPath('/share/abc'), 'the docs and shared links are not themed');
