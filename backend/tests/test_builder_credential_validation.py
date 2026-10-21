@@ -199,3 +199,40 @@ async def test_wrong_provider_credential_is_rejected(real_database):
     assert real_types[gh] == "github_oauth"
     # github_oauth is not among Slack's accepted credential types → rejected.
     assert real_types[gh] not in node_accepted_credential_types("automation-slack")
+
+
+@pytest.mark.asyncio
+async def test_mcp_set_credentials_files_an_agents_model_credential(real_database):
+    """The workflow MCP's <set_credentials> judges what an agent accepts on the
+    agent's own config, as the builder does: an OpenRouter key goes onto an
+    OpenCode agent running an openrouter/ model, a Slack credential doesn't.
+    Judged without its config, an agent accepted only agent_env."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    from mcp_server import NoClickMCPServer, _user_id_var
+
+    pool = real_database.pool
+    await _user(real_database, OWNER, "owner@example.com")
+    openrouter, slack = str(uuid.uuid4()), str(uuid.uuid4())
+    await _cred(real_database, openrouter, OWNER, credential_type="agent_openrouter")
+    await _cred(real_database, slack, OWNER, credential_type="slack_oauth")
+
+    with patch("mcp_server.DatabasePoolMixin.__init__", return_value=None):
+        server = NoClickMCPServer(MagicMock())
+    server.get_pool = AsyncMock(return_value=pool)
+    server._save_workflow = AsyncMock(return_value=None)
+    _user_id_var.set(OWNER)
+
+    async def attach(credential_type, credential_id):
+        agent = {"id": "agent-1", "type": "agent", "position": {"x": 0, "y": 0},
+                 "config": {"model": "opencode", "opencode_model": "openrouter/anthropic/claude-haiku-4.5"}}
+        server._load_workflow = AsyncMock(return_value=({"nodes": [agent], "edges": []}, None))
+        result = await server._process_update_workflow(
+            str(uuid.uuid4()), f'<set_credentials id="agent-1" {credential_type}="{credential_id}" />', False, False)
+        return result["errors"], agent["config"].get("credentialIds")
+
+    assert await attach("agent_openrouter", openrouter) == ([], {"agent_openrouter": openrouter})
+
+    errors, attached = await attach("slack_oauth", slack)
+    assert attached is None
+    assert "does not accept" in errors[0]["error"] and "agent_openrouter" in errors[0]["error"]

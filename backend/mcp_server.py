@@ -2299,6 +2299,9 @@ class NoClickMCPServer(DatabasePoolMixin):
                 cred_map = {k: v for k, v in attrs.items() if k != "id"}
                 if not cred_map:
                     raise ValueError("set_credentials requires at least one credential_type=credential_id pair")
+                existing_config = target.get("config", {})
+                if isinstance(target.get("data"), dict):
+                    existing_config = target["data"].get("config", {})
                 # Validate each credential exists + is accessible before applying.
                 # A bogus/inaccessible id would FK-violate
                 # workflow_authorized_credentials or get silently persisted to fail
@@ -2319,7 +2322,10 @@ class NoClickMCPServer(DatabasePoolMixin):
                             f"credential(s) not found or not accessible: {', '.join(missing)} — "
                             "use an id from the available credentials list, don't invent one"
                         )
-                    accepted = node_accepted_credential_types(target.get("type", ""))
+                    # What the node accepts depends on its config (an agent's model), as in the builder.
+                    accepted = node_accepted_credential_types(
+                        target.get("type", ""), self._get_current_operation(target), existing_config,
+                    )
                     rekeyed: Dict[str, str] = {}
                     for v in cred_map.values():
                         if not v:
@@ -2336,9 +2342,6 @@ class NoClickMCPServer(DatabasePoolMixin):
                 set_cred_ids.update(v for v in cred_map.values() if v)
 
                 # Use shared merge_credentials on the normalized config dict
-                existing_config = target.get("config", {})
-                if isinstance(target.get("data"), dict):
-                    existing_config = target["data"].get("config", {})
                 old_cred_ids = dict(existing_config.get("credentialIds") or {})
                 merge_credentials(existing_config, cred_map)
 
