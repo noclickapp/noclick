@@ -51,6 +51,7 @@ from nodes.core.dynamic_options import load_paginated_options
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.call_safety import emergency_refusal
 from utils.capabilities import PHONE_CALLS, capability
+from utils.phone_numbers import is_noclick_number
 from utils.webhook_signatures import verify_twilio_signature
 from utils.twilio_verify import check_verification, start_verification
 
@@ -1902,6 +1903,14 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
         parsed = dict(parse_qsl(raw))
         parsed["_webhook"] = payload.get("_webhook")
         return parsed
+
+    @classmethod
+    def filter_trigger_payload(cls, payload: Dict[str, Any], config: Dict[str, Any]) -> bool:
+        """A text from one of NoClick's own numbers never fires on_incoming_sms (``is_noclick_number``)."""
+        if (config or {}).get("operation") != "on_incoming_sms":
+            return True
+        message = cls.resolve_trigger_payload(payload, config)
+        return not (isinstance(message, dict) and is_noclick_number(message.get("From")))
 
     @classmethod
     def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:

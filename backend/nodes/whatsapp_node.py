@@ -28,6 +28,7 @@ from pydantic import BaseModel, Field, Discriminator, ConfigDict
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from utils.phone_numbers import is_noclick_number
 from utils.ssrf import assert_exact_url_origin, guarded_async_client
 from nodes.core.connection_evidence import ConnectionEvidence
 
@@ -1687,6 +1688,10 @@ class WhatsAppNode(WorkflowNode):
         noun="chats",
     )
 
+    # A QR session's incoming messages are registered with WAHooks by
+    # load_field_value; the Cloud API's go to a URL set in Meta's console.
+    self_registering_triggers = {"receive_message": ("whatsapp_qr",)}
+
     edit_examples = [
         "Send order confirmation message using approved template",
         "Reply to customer inquiry with shipping tracking info",
@@ -1812,6 +1817,26 @@ class WhatsAppNode(WorkflowNode):
 
         return super().resolve_agent_event(output)
 
+    @staticmethod
+    def _sender_number(payload: Dict[str, Any]) -> Optional[str]:
+        """The phone number an inbound message came from, in either envelope:
+        WAHooks' ``senderPhone`` (its reading of a @lid sender's number) or a
+        phone chat id, the Cloud API's ``from``. None when only a @lid names them."""
+        p = payload.get("payload")
+        if payload.get("event") == "message" and isinstance(p, dict):
+            if p.get("senderPhone"):
+                return str(p["senderPhone"])
+            key = (p.get("_data") or {}).get("key") or {}
+            jid = str(key.get("participant") or p.get("from") or key.get("remoteJid") or "")
+            user, _, server = jid.partition("@")
+            return user.split(":", 1)[0] if server in ("c.us", "s.whatsapp.net") else None
+        if payload.get("object") == "whatsapp_business_account":
+            try:
+                return payload["entry"][0]["changes"][0]["value"]["messages"][0].get("from")
+            except (KeyError, IndexError, TypeError, AttributeError):
+                return None
+        return None
+
     @classmethod
     def filter_trigger_payload(cls, payload: Dict[str, Any], config: Dict[str, Any]) -> bool:
         """Drop WAHooks events a receive_message trigger must never fire on.
@@ -1821,11 +1846,13 @@ class WhatsAppNode(WorkflowNode):
         (@newsletter), and the account's own outgoing messages (fromMe) — an
         auto-reply workflow fed those DMs arbitrary contacts (incl. replying to
         their stories) and echoes itself. Group chats are opt-in via
-        include_group_messages. Cloud API payloads (different envelope) pass
-        through untouched.
+        include_group_messages. A message from one of NoClick's own numbers
+        never fires, in either envelope (``is_noclick_number``).
         """
         if (config or {}).get("operation") != "receive_message":
             return True
+        if is_noclick_number(cls._sender_number(payload)):
+            return False
         event_payload = payload.get("payload")
         if payload.get("event") != "message" or not isinstance(event_payload, dict):
             # A WAHooks envelope (event+session keys) that isn't a message is
@@ -2183,7 +2210,7 @@ class WhatsAppNode(WorkflowNode):
         if field_name != "webhook_url":
             return {"value": None}
 
-        from utils.webhook_manager import WebhookManager
+        from utils.webhook_manager import WebhookManager, registration_fingerprint
 
         # Create our internal webhook URL
         webhook_data = await WebhookManager.get_or_create_webhook(
@@ -2241,6 +2268,9 @@ class WhatsAppNode(WorkflowNode):
                                         pool, webhook_data['webhook_id'],
                                         registered_operation='receive_message',
                                         registered_credential_id=credential_id,
+                                        registered_fingerprint=registration_fingerprint(
+                                            cls, 'receive_message', credential_id, context
+                                        ),
                                     )
                                     wahooks_registered = True
                                     logger.info(

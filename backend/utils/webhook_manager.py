@@ -50,23 +50,28 @@ def _extract_node_config(node: Dict[str, Any]) -> Dict[str, Any]:
     return cfg
 
 
-def _usable_credential_ids(node: Dict[str, Any], node_config: Dict[str, Any]) -> List[str]:
-    """All usable credential ids configured on a node (config blob or
-    ``node.data.credentialIds``), with ``pick_credential_id``'s semantics:
-    the credential_type metadata key, empties, and unresolved ``{{...}}``
-    references are not credential ids."""
+def _usable_credentials(node: Dict[str, Any], node_config: Dict[str, Any]) -> Dict[str, str]:
+    """credential type -> id for every usable credential configured on a node
+    (config blob or ``node.data.credentialIds``), with ``pick_credential_id``'s
+    semantics: the credential_type metadata key, empties, and unresolved
+    ``{{...}}`` references are not credential ids."""
     from utils.credentials import extract_credential_ids
 
     cred_ids = extract_credential_ids(node_config)
     if not cred_ids and isinstance(node.get("data"), dict):
         cred_ids = extract_credential_ids(node["data"])
-    return [
-        v for k, v in (cred_ids or {}).items()
+    return {
+        k: v for k, v in (cred_ids or {}).items()
         if k != "credential_type"
         and isinstance(v, str)
         and v.strip() != ""
         and "{{" not in v
-    ]
+    }
+
+
+def _usable_credential_ids(node: Dict[str, Any], node_config: Dict[str, Any]) -> List[str]:
+    """All usable credential ids configured on a node (``_usable_credentials``)."""
+    return list(_usable_credentials(node, node_config).values())
 
 
 def _extract_node_credential_id(node: Dict[str, Any], node_config: Dict[str, Any]) -> Optional[str]:
@@ -712,6 +717,27 @@ class WebhookManager:
         return fires_on_schedule(node_type, operation)
 
     @staticmethod
+    def registers_itself(node_type: str, operation: Optional[str], credential_type: Optional[str]) -> bool:
+        """Whether NoClick registers a trigger on ``operation`` with its provider,
+        given a credential of ``credential_type``, with no URL for anyone to
+        paste: a node of the external-webhook, app-event or schedule families
+        always does; any other only for what it declares in
+        ``self_registering_triggers`` (its loader registers it)."""
+        from nodes.core.registry import NODE_REGISTRY
+        from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
+
+        node_class = NODE_REGISTRY.get(node_type)
+        if node_class is None:
+            return False
+        if (
+            (isinstance(node_class, type) and issubclass(node_class, ExternalWebhookTriggerMixin))
+            or _app_event_trigger_class(node_type)
+            or _schedule_trigger_class(node_type)
+        ):
+            return True
+        return credential_type in node_class.self_registering_triggers.get(operation or "", ())
+
+    @staticmethod
     def get_webhook_field(schema: Dict[str, Any]) -> Optional[str]:
         """
         Get the field name that should contain the webhook URL.
@@ -1227,9 +1253,11 @@ class WebhookManager:
     ) -> Dict[str, Any]:
         """THE level-triggered converger for a trigger node's external
         registration. Compares DESIRED state (computed purely from the node's
-        CURRENT saved config: does its operation require a webhook, and the
-        registration fingerprint of operation + credential + node-declared
-        fields) against OBSERVED state (the webhooks row) and converges:
+        CURRENT saved config: does its operation require a webhook, or for a
+        node registered by its own loader its ``self_registering_triggers``,
+        and the registration fingerprint of operation + credential +
+        node-declared fields) against OBSERVED state (the webhooks row) and
+        converges:
 
         - desired None,  row live      → teardown (deregister + deactivate)
         - desired None,  row inactive  → retry a previously-failed teardown if
@@ -1346,7 +1374,17 @@ class WebhookManager:
                         exc_info=True,
                     )
 
-            desired = bool(
+            # A trigger its own loader registers (WhatsApp's messages on a QR
+            # session) is desired while the node holds a credential the loader
+            # registers its operation with, and converges through that loader.
+            loader_registered = bool(
+                node and not is_mixin
+                and any(
+                    WebhookManager.registers_itself(node_type, current_op, credential_type)
+                    for credential_type in _usable_credentials(node, node_config)
+                )
+            )
+            desired = loader_registered or bool(
                 node and is_mixin
                 and WebhookManager.operation_requires_webhook(node_type, current_op)
             )
@@ -1395,7 +1433,7 @@ class WebhookManager:
                 and row["registered_fingerprint"] is None
                 and row["registered_operation"] == current_op
                 and (row["registered_credential_id"] or None) == (credential_id or None)
-                and not node_class.webhook_registration_stale(node_config, dict(row))
+                and not (is_mixin and node_class.webhook_registration_stale(node_config, dict(row)))
             ):
                 async with pool.acquire() as conn:
                     await conn.execute(
@@ -1416,6 +1454,17 @@ class WebhookManager:
                     requesting_user_id=user_id or owner_id,
                     org_id=org_id,
                 )
+
+            if loader_registered:
+                values = await WebhookManager._provision_node_webhook(
+                    pool, user_id=user_id or owner_id, workflow_id=wf_uuid, node_id=node_id,
+                    node_type=node_type, operation=current_op, config=node_config,
+                ) or {}
+                await WebhookManager.merge_node_config_patch(pool, wf_uuid, node_id, values)
+                return {
+                    "state": "registered" if values.get("trigger_registered") is True else "failed",
+                    "fingerprint": desired_fp,
+                }
 
             cred_ids = extract_credential_ids(node_config)
             if not cred_ids and isinstance(node.get("data"), dict):
@@ -1911,13 +1960,16 @@ class WebhookManager:
         registerable_types = sorted(
             t for t, c in NODE_REGISTRY.items()
             if isinstance(c, type)
-            and issubclass(
-                c,
-                (
-                    ExternalWebhookTriggerMixin,
-                    AppEventTriggerMixin,
-                    CronScheduleTriggerMixin,
-                ),
+            and (
+                issubclass(
+                    c,
+                    (
+                        ExternalWebhookTriggerMixin,
+                        AppEventTriggerMixin,
+                        CronScheduleTriggerMixin,
+                    ),
+                )
+                or bool(getattr(c, "self_registering_triggers", None))
             )
         )
 

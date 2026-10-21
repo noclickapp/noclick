@@ -18,6 +18,7 @@ from typing import (
     Any,
     Optional,
     List,
+    Tuple,
     TypedDict,
     Type,
     Union,
@@ -554,6 +555,14 @@ class WorkflowNode(ABC):
     # tests/test_connection_evidence_coverage.py, so a new credentialed node
     # must declare this (or land on the shrinking allowlist) to merge.
     connection_evidence: ClassVar[Optional["ConnectionEvidence"]] = None
+
+    # Trigger operations this node's own ``load_field_value`` registers with
+    # the provider, as its config panel does, each with the credential types it
+    # can do that with (WhatsApp registers incoming messages on a QR session).
+    # The registration families (external-webhook, app-event and schedule
+    # mixins) need no entry; any other trigger only mints a URL someone pastes
+    # into the provider's own settings (``WebhookManager.registers_itself``).
+    self_registering_triggers: ClassVar[Dict[str, Tuple[str, ...]]] = {}
 
     def __init__(
         self,
