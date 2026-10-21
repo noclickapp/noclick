@@ -5,7 +5,7 @@
 // the action, any other key (or the timeout) disarms it. Ignored while typing in
 // a field. Mounted once in the dashboard shell.
 import { useEffect, useRef } from 'react';
-import { isTextEntryTarget } from '~/lib/keyboard';
+import { isTextEntryTarget, pressedKey } from '~/lib/keyboard';
 import {
     GOTO_DESTINATIONS,
     NEW_ACTIONS,
@@ -41,7 +41,7 @@ export function useLeaderShortcuts(): void {
         const onKey = (e: KeyboardEvent) => {
             if (e.metaKey || e.ctrlKey || e.altKey) return;
             if (isTextEntryTarget(e.target)) return;
-            const key = e.key.toLowerCase();
+            const key = pressedKey(e);
 
             const leader = leaderRef.current;
             if (leader) {

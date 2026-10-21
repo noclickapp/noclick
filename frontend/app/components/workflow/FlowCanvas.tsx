@@ -51,7 +51,7 @@ import { requestTestRun } from '~/components/design/rehearsal/testRunHandoff';
 import { rehydrateRehearsalAuthoring } from '~/components/design/rehearsal/useRehearsalAuthoring';
 import { getLocalComponentValtio } from '~/state';
 import { CanvasBackground } from '~/components/workflow/canvasBackground';
-import { isTextEntryTarget, isModalOpen } from '~/lib/keyboard';
+import { isTextEntryTarget, isModalOpen, pressedKey } from '~/lib/keyboard';
 import { setAddNodeShortcutActive } from '~/lib/shortcuts';
 import {
     PREVIEW_SIZE,
@@ -1012,7 +1012,7 @@ const FlowCanvasInner = ({
             if (e.metaKey || e.ctrlKey || e.altKey) return;
             if (isTextEntryTarget(e.target)) return;
             if (isModalOpen()) return;
-            switch (e.key.toLowerCase()) {
+            switch (pressedKey(e)) {
                 // Top-level tab navigation — safe in replay (the user might press
                 // L to jump back to Logs and pick a different run). Don't gate.
                 case 'w':
@@ -5904,7 +5904,7 @@ const FlowCanvasInner = ({
     // under a modal.
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
-            if (e.key.toLowerCase() !== 'r' || !e.shiftKey) return;
+            if (pressedKey(e) !== 'r' || !e.shiftKey) return;
             if (replayActiveRef.current) return;
             if (e.metaKey || e.ctrlKey || e.altKey) return;
             if (isTextEntryTarget(e.target)) return;

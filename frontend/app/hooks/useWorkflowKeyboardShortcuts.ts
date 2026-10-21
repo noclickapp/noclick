@@ -11,6 +11,7 @@
 
 import { useEffect } from 'react';
 import { Node } from '@xyflow/react';
+import { pressedKey } from '~/lib/keyboard';
 
 interface UseWorkflowKeyboardShortcutsProps {
     nodes: Node[];
@@ -48,7 +49,7 @@ export const useWorkflowKeyboardShortcuts = ({
             // useWorkflowCopyPaste depends on (and the same for Cmd+D/F/etc).
             if (event.metaKey || event.ctrlKey || event.altKey) return;
 
-            const key = event.key.toLowerCase();
+            const key = pressedKey(event);
 
             // 'f' toggles the flow helper view — works with or without a selection.
             if (key === 'f' && onToggleFlowHelper) {

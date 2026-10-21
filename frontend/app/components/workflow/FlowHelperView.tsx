@@ -37,7 +37,7 @@ import { ResizeHandle, VerticalResizeHandle } from './flowHelper/ResizeHandles';
 import { useIncompleteNodes } from './flowHelper/useIncompleteNodes';
 import { usePanelLayout } from './flowHelper/usePanelLayout';
 import { useFit, type FitItem } from './flowHelper/useFit';
-import { isTextEntryTarget, isModalOpen } from '~/lib/keyboard';
+import { isTextEntryTarget, isModalOpen, pressedKey } from '~/lib/keyboard';
 import { KeyHint } from '~/components/shared/KeyHint';
 import { applyCredentialSelection } from '~/lib/applyCredentialSelection';
 import { tikTokNodePublishingError } from '~/utils/tikTokPublishing';
@@ -376,7 +376,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
             }
             if (e.metaKey || e.ctrlKey || e.altKey) return;
             if (isTextEntryTarget(e.target)) return;
-            const k = e.key.toLowerCase();
+            const k = pressedKey(e);
             if (k === 'x' && selectedNode && inputNodes.length > 0) {
                 e.preventDefault();
                 setShowInput((v) => !v);
