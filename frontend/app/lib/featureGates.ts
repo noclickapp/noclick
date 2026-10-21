@@ -26,6 +26,8 @@ export const FEATURE_ROLLOUT = {
     free_member: 'everyone',
     // The account's coordinator as an ordinary platform agent (the chat talks to it over /v1).
     coordinator_agent: 'everyone',
+    // AI agents making NoClick accounts for themselves: /auth.md and the agent-skills index advertise it once open.
+    agent_signup: 'internal',
 } satisfies Record<string, Rollout>;
 
 export type Feature = keyof typeof FEATURE_ROLLOUT;

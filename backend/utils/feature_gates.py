@@ -46,6 +46,9 @@ FEATURE_ROLLOUT: dict[str, str] = {
     # owner's texts, calls and mail routed to it. Closing it again doesn't move an account
     # back: once moved, its lines stay routed to its agent.
     "coordinator_agent": EVERYONE,
+    # An AI agent making a NoClick account for itself, limited until a person claims it. No account exists
+    # yet, so it's judged on the email the agent names: INTERNAL lets in sign-ups naming a staff or pilot address.
+    "agent_signup": INTERNAL,
 }
 
 # Accounts let into an INTERNAL feature by email, lower-cased. Empty in the

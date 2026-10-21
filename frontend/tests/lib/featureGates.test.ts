@@ -57,7 +57,7 @@ describe('feature gates', () => {
         // exist on both sides under the same name (backend/utils/feature_gates.py).
         expect(Object.keys(FEATURE_ROLLOUT)).toEqual([
             'phone_channel', 'coordinator', 'phone_numbers', 'credential_proxy', 'auto_topup', 'free_member',
-            'coordinator_agent',
+            'coordinator_agent', 'agent_signup',
         ]);
     });
 });
