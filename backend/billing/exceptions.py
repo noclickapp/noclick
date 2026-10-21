@@ -26,7 +26,13 @@ def match_insufficient_credits(text: Optional[str]) -> Optional[re.Match]:
 # The account's own monthly spending cap: minted only by spend_cap_message,
 # recognised only by match_spend_cap. Group 1 is the cap in dollars.
 WHERE_CAP_IS_RAISED = "Settings → Plan and billing"
-SPEND_CAP_RE = re.compile(r"your \$([\d,]+(?:\.\d{1,2})?) monthly cap\b[^\n]*" + re.escape(WHERE_CAP_IS_RAISED))
+# An account no person has claimed yet (an agent's own sign-up) spends only funds paid into it
+# until one does: the cap's refusal in its own words, minted only by unclaimed_message and told
+# apart by match_unclaimed (group 1 is then None).
+_UNCLAIMED = "no person has claimed it yet, so it spends only funds paid into it"
+UNCLAIMED_RE = re.compile(re.escape(_UNCLAIMED))
+SPEND_CAP_RE = re.compile(r"your \$([\d,]+(?:\.\d{1,2})?) monthly cap\b[^\n]*" + re.escape(WHERE_CAP_IS_RAISED)
+                          + "|" + UNCLAIMED_RE.pattern)
 
 
 def _dollars(usd) -> str:
@@ -46,8 +52,16 @@ def spend_cap_message(cap_usd, resets_on: str, *, price_usd=None, left_usd=None)
             f"{resets_on}, or until you raise it in {WHERE_CAP_IS_RAISED}.")
 
 
+def unclaimed_message() -> str:
+    return f"This account was made by an agent and {_UNCLAIMED}, and none are left for this."
+
+
 def match_spend_cap(text: Optional[str]) -> Optional[re.Match]:
     return SPEND_CAP_RE.search(text) if text else None
+
+
+def match_unclaimed(text: Optional[str]) -> Optional[re.Match]:
+    return UNCLAIMED_RE.search(text) if text else None
 
 
 def match_spend_refusal(text: Optional[str]) -> Optional[re.Match]:
@@ -58,6 +72,10 @@ def match_spend_refusal(text: Optional[str]) -> Optional[re.Match]:
 class SpendCapReached(InsufficientBalanceError):
     """The paying account reached the monthly cap its owner set: stopped like
     credits running out, in its own words (``spend_cap_message``)."""
+
+
+class AccountUnclaimed(SpendCapReached):
+    """The paying account is one no person has claimed yet (``unclaimed_message``)."""
 
 
 class UnpricedUsage(ValueError):
