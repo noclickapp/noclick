@@ -109,6 +109,9 @@ export interface AgentChatMessage {
     signal?: CoordinatorSignalRef;
     /** On a coordinator note: a workflow started on a public page, set up from the card drawn under it. */
     setup?: CoordinatorSetupRef;
+    /** A reply that turned the request down because the account ran out of money: what its refusal carried, which
+     *  the platform's card under it reads (`registerOutOfFundsCard`). Live only, like the refusal itself. */
+    outOfFunds?: Record<string, unknown>;
     isUser: boolean;
     text: string;
     isComplete: boolean;

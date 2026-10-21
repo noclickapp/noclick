@@ -8,9 +8,6 @@ import { valtioCache } from './lib/indexeddb';
 import { valtioSessionCache } from './lib/session-cache';
 import type { Socket } from 'socket.io-client';
 
-// Import stores that register global socket listeners early
-// This ensures LLM calls are captured even when no debug drawer is open
-import './lib/llm-calls-store';
 import type { ServerToClientEvents, ClientToServerEvents } from '~/types/socket-events.generated';
 
 // Self explanatory, individual component states
