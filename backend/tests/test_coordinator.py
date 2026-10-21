@@ -401,6 +401,33 @@ async def test_the_wrappers_failure_frame_is_spoken_as_one_plain_line(turn_seams
     assert detail in caplog.text  # the detail is kept where an operator reads it
 
 
+async def test_running_out_at_the_wrappers_gate_is_said_plainly_never_as_a_failure(turn_seams, monkeypatch):
+    """The wrapper reports the credit gate's refusal of a model call with its failure frame, then raises it: the
+    turn says once that the account ran out, never the failure's plain line."""
+    from billing.exceptions import insufficient_credits_message
+
+    denial = insufficient_credits_message(0.15, 0.2)
+
+    class Gated(FakeAgent):
+        async def __call__(self, message):
+            await self.kwargs["emit_message"](ChatMessageEvent(
+                conversation_id=self.kwargs["conversation_id"], finished=True, status="error", message=denial,
+            ))
+            raise InsufficientBalanceError(denial)
+    monkeypatch.setattr(coordinator, "Agent", Gated)
+    monkeypatch.setattr(coordinator, "bills_on_old_plans", AsyncMock(return_value=False))
+    monkeypatch.setattr(capabilities, "_providers", {
+        k: v for k, v in capabilities._providers.items() if k != capabilities.REFERRAL_OFFER})
+    heard = []
+
+    async def sink(event):
+        heard.append(event)
+    await coordinator.run_coordinator_turn(sio=object(), sid="", user_id=USER, user_email=None, text="hi", sink=sink,
+                                           extra={"channel": "whatsapp_text"})
+    assert [e.message for e in heard] == ["Your NoClick account has run out of usage, so I have to stop here."]
+    assert FakeChat.persisted[-1][3].message == heard[0].message
+
+
 async def test_turn_sink_hears_every_frame_and_extra_stamps_both_persisted_events(turn_seams):
     heard = []
 

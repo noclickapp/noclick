@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any, Awaitable, Callable, Dict, Optional
 
-from billing.exceptions import InsufficientBalanceError, SpendCapReached, match_spend_cap
+from billing.exceptions import InsufficientBalanceError, SpendCapReached, match_insufficient_credits, match_spend_cap
 from billing.gates import bills_on_old_plans
 from billing.usage_tracker import running
 from coder.coordinator.compaction import CoordinatorCompactor
@@ -186,14 +186,24 @@ async def run_coordinator_turn(
         failed: Dict[str, bool] = {}
         pieces = []
 
+        async def out_of_funds() -> str:
+            # Running out (never the cap its owner set) is when there's something to offer besides funds.
+            stop = ("Your NoClick account is out of credits, so I have to stop here." if in_credits
+                    else "Your NoClick account has run out of usage, so I have to stop here.")
+            offer = capability(REFERRAL_OFFER)
+            offered = offer and await offer(pool, user_id, organization_id=organization_id,
+                                            request=None if completion else text)
+            return f"{stop}\n\n{offered['line']}" if offered else stop
+
         async def emit(event) -> None:
             if isinstance(event, ChatMessageEvent) and event.status == "error":
                 # The wrapper's failure frame carries the provider's raw text. A
                 # phone or a WhatsApp thread gets one plain line; the log keeps the detail.
                 logger.error("coordinator turn failed for %s: %s", user_id, event.message)
                 failed["turn"] = True
-                # NoClick's own words at the account's monthly cap are said as they are.
-                said = event.message if match_spend_cap(event.message) else TURN_FAILED_LINE
+                # NoClick's own words at the account's monthly cap are said as they are, and running out plainly.
+                said = (event.message if match_spend_cap(event.message)
+                        else await out_of_funds() if match_insufficient_credits(event.message) else TURN_FAILED_LINE)
                 event = event.model_copy(update={"message": said, "status": None})
             if isinstance(event, ChatMessageEvent) and event.message:
                 pieces.append(event.message)
@@ -278,15 +288,9 @@ async def run_coordinator_turn(
                     conversation_id=conversation_id, finished=True, model=COORDINATOR_MODEL, message=str(exc),
                 ))
             elif not failed:
-                # Running out (never the cap its owner set) is when there's something to offer besides funds.
-                stop = ("Your NoClick account is out of credits, so I have to stop here." if in_credits
-                        else "Your NoClick account has run out of usage, so I have to stop here.")
-                offer = capability(REFERRAL_OFFER)
-                offered = offer and await offer(pool, user_id, organization_id=organization_id,
-                                                request=None if completion else text)
                 await emit(ChatMessageEvent(
                     conversation_id=conversation_id, finished=True, model=COORDINATOR_MODEL,
-                    message=f"{stop}\n\n{offered['line']}" if offered else stop,
+                    message=await out_of_funds(),
                 ))
             failed["turn"] = True
         except Exception:
