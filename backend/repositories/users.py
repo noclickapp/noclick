@@ -49,10 +49,13 @@ async def get_user_email(db, user_id) -> Optional[str]:
 
 
 async def get_user_profile(db, user_id) -> Optional[Dict[str, Any]]:
-    """Email (None for a phone-only account), metadata name, and display
+    """Email (None for a phone-only account), metadata name, ``full_name``
+    (the person's name as their sign-in provider gave it; a phone signup has
+    none, since a chat app's display name isn't a person's name), and display
     ``label``; None when the user doesn't exist."""
     row = await db.fetchrow(
-        f"SELECT email, raw_user_meta_data->>'name' AS name, {user_label_sql()} AS label "
+        f"SELECT email, raw_user_meta_data->>'name' AS name, "
+        f"NULLIF(btrim(raw_user_meta_data->>'full_name'), '') AS full_name, {user_label_sql()} AS label "
         "FROM auth.users WHERE id = $1",
         user_id,
     )

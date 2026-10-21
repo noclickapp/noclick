@@ -3,7 +3,7 @@
 // name, with the price shown first. The registrar is a seam: the hosted
 // service answers through its platform API, and tests pass their own.
 import { useRef, useState } from 'react';
-import type { RegistrantContact } from '~/lib/domainRegistrant';
+import type { KnownRegistrant, RegistrantContact } from '~/lib/domainRegistrant';
 
 export interface DomainOffer {
     domain: string;
@@ -36,6 +36,8 @@ export interface DomainCheckout {
     agreementUrl: string;
     /** The registrant the account's own domains use when a purchase names none (null: each purchase takes details). */
     onFile: { name: string; email: string; organization?: string } | null;
+    /** With nobody on file, what NoClick already knows of the owner, so the buyer types only the rest. */
+    known?: KnownRegistrant;
 }
 
 export interface DomainPurchaseDetails {

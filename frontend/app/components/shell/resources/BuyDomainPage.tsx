@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { ExternalLink, Globe, Loader2, Search } from 'lucide-react';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Skeleton } from '~/components/ui/skeleton';
-import { EMPTY_REGISTRANT, REGISTRANT_FIELDS, registrantFrom, type RegistrantDraft } from '~/lib/domainRegistrant';
+import { EMPTY_REGISTRANT, REGISTRANT_FIELDS, registrantFrom, withKnown, type RegistrantDraft } from '~/lib/domainRegistrant';
 import {
     parseDomainQuery,
     useDomainPurchase,
@@ -122,6 +122,11 @@ function Checkout({
 }) {
     const [other, setOther] = useState(false);
     const [draft, setDraft] = useState<RegistrantDraft>(EMPTY_REGISTRANT);
+    // What NoClick knows of the owner (name, email, number) starts the details, whenever the checkout lands.
+    const known = checkout?.known;
+    useEffect(() => {
+        if (known) setDraft((d) => withKnown(d, known));
+    }, [known]);
     // When the box was ticked: the registrant's acceptance of the agreement, sent with their details.
     const [acceptedAt, setAcceptedAt] = useState<Date | null>(null);
     const [claims, setClaims] = useState(false);

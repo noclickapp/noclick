@@ -48,6 +48,18 @@ export const REGISTRANT_FIELDS: readonly RegistrantField[] = [
     { key: 'country', label: 'Country (two letters)', placeholder: 'US', autoComplete: 'country' },
 ];
 
+/** What NoClick already knows of the account's owner, as a draft's fields (each only when known). */
+export type KnownRegistrant = Partial<Pick<RegistrantDraft, 'name' | 'email' | 'phone'>>;
+
+/** The draft with what's known filled into the fields still empty: never over what the person typed. */
+export function withKnown(draft: RegistrantDraft, known: KnownRegistrant): RegistrantDraft {
+    const filled = { ...draft };
+    for (const [key, value] of Object.entries(known) as [keyof KnownRegistrant, string | undefined][]) {
+        if (value && !filled[key].trim()) filled[key] = value;
+    }
+    return filled;
+}
+
 /** The draft as a contact, or null until every required field is filled and the country is two letters. */
 export function registrantFrom(draft: RegistrantDraft): Omit<RegistrantContact, 'agreementAcceptedAt'> | null {
     const complete = REGISTRANT_FIELDS.every((f) => f.optional || draft[f.key].trim());

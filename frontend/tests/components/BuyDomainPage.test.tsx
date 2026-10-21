@@ -128,6 +128,31 @@ describe('the buy-a-domain page', () => {
         expect(registrant?.agreementAcceptedAt).toBeInstanceOf(Date);
     });
 
+    it('starts the details from what NoClick knows of the owner, so they type only their address', async () => {
+        const known = { name: 'Ana Silva', email: 'ana@example.com', phone: '+14155550123' };
+        const { registrar, purchases } = fakeRegistrar({ agreementUrl: 'https://noclick.test/legal/domains', onFile: null, known });
+        renderPage(registrar);
+        await waitFor(() => expect(rows()).toHaveLength(3));
+        fireEvent.click(within(rows()[0]).getByRole('button', { name: 'Buy' }));
+        const buy = await screen.findByRole('button', { name: 'Buy for $160.00' });
+        const value = (label: string) => (screen.getByLabelText(label) as HTMLInputElement).value;
+        await waitFor(() => expect([value('Full name'), value('Email'), value('Phone')]).toEqual([known.name, known.email, known.phone]));
+        expect(value('Street address')).toBe('');
+        const fill = (label: string, text: string) => fireEvent.change(screen.getByLabelText(label), { target: { value: text } });
+        // What they know better wins: a name typed over the one NoClick had stays.
+        fill('Full name', 'Ana M. Silva');
+        fill('Street address', '500 Market St');
+        fill('City', 'San Francisco');
+        fill('State or region', 'CA');
+        fill('Postal code', '94105');
+        fill('Country (two letters)', 'US');
+        fireEvent.click(screen.getByRole('checkbox', { name: /I accept the/ }));
+        await waitFor(() => expect((buy as HTMLButtonElement).disabled).toBe(false));
+        fireEvent.click(buy);
+        await waitFor(() => expect(purchases).toHaveLength(1));
+        expect(purchases[0].details.registrant).toMatchObject({ ...known, name: 'Ana M. Silva', address: '500 Market St', country: 'US' });
+    });
+
     it('holds a name with a trademark notice until the notice is accepted', async () => {
         const { registrar, purchases } = fakeRegistrar(ON_FILE);
         renderPage(registrar);
