@@ -357,6 +357,31 @@ class TestReadEmails:
             "%24" not in request_url
         ), f"OData params should not be percent-encoded: {request_url}"
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("order_by", [None, "receivedDateTime desc", "subject asc"])
+    async def test_read_emails_search_sends_no_orderby(self, order_by):
+        """Graph answers 400 "The query parameter '$orderBy' is not supported with '$search'", so a
+        search never carries the sort, the default one included."""
+        kwargs = {} if order_by is None else {"order_by": order_by}
+        config = OutlookReadConfig(folder="sentitems", search_query="15-20 minute call", **kwargs)
+        node = create_node(config)
+
+        with patch("httpx.AsyncClient") as mock_client:
+            mock_client.return_value.__aenter__ = AsyncMock(
+                return_value=mock_client.return_value
+            )
+            mock_client.return_value.__aexit__ = AsyncMock(return_value=None)
+            mock_client.return_value.get = AsyncMock(
+                return_value=create_mock_response(200, {"value": []})
+            )
+
+            result = await node.execute({})
+
+        assert result["status"] == "success"
+        request_url = mock_client.return_value.get.call_args[0][0]
+        assert "$search=%2215-20%20minute%20call%22" in request_url, request_url
+        assert "$orderby" not in request_url, request_url
+
 
 # ============================================================================
 # Reply to Email Tests

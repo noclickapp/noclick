@@ -295,7 +295,7 @@ class OutlookReadConfig(BaseModel):
     order_by: Optional[str] = Field(
         "receivedDateTime desc",
         title="Order By",
-        description="Sort order for results",
+        description="Sort order for results. Not applied to a search: Outlook returns search results newest first.",
         json_schema_extra={
             "enum": [
                 "receivedDateTime desc",
@@ -3753,8 +3753,8 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             "$top": config.max_results,
         }
 
-        # Add orderby if provided (user can select "Default" to omit)
-        if config.order_by:
+        # Graph refuses $orderby beside $search on messages; a search comes back newest first.
+        if config.order_by and not config.search_query:
             params["$orderby"] = config.order_by
 
         # Add filter if provided

@@ -4210,7 +4210,7 @@
             }
           ],
           "default": "receivedDateTime desc",
-          "description": "Sort order for results",
+          "description": "Sort order for results. Not applied to a search: Outlook returns search results newest first.",
           "enum": [
             "receivedDateTime desc",
             "receivedDateTime asc",
