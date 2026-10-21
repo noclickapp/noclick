@@ -148,6 +148,18 @@
       "sha256": "e3fcf84f775012f47d824c0b831612bd43762ab339aa2683504512fa850db890"
     },
     {
+      "path": "frontend/public/icons/connecteam-brand.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "957a3050ba6d2733668ca50fceeb18814ac67185da90c97acf36a06fa20ab16c"
+    },
+    {
+      "path": "frontend/public/icons/connecteam.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "9be7a9f3405d87c6c7da7baaaca5bb6ad7c7c24fb93ce9672f0cf9cb2de588c5"
+    },
+    {
       "path": "frontend/public/icons/csv.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -460,6 +472,18 @@
       "sha256": "24f2c78283460ed1383a00d7d67b0059d701fd6c5daefe6e11a9aec2041d65cb"
     },
     {
+      "path": "frontend/public/icons/nocodb-brand-vector.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "c3a31d02cc7b90eb6e68597384f7c947825325d1dd2f257d2dc1899575bace9a"
+    },
+    {
+      "path": "frontend/public/icons/nocodb.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "af5cdd2a8c36ce0afdd3f2954e34d4a95ab0657b6fbd0068e40afddaccaaeb4f"
+    },
+    {
       "path": "frontend/public/icons/notion.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -578,6 +602,18 @@
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "3d689653e65ca458953b01734d1af217d2986b7603a812bdebd25de21b870d12"
+    },
+    {
+      "path": "frontend/public/icons/recurly-preferred-brand.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "db6fe559fde944a7f0254d03ca7a640aecf3c4eff7276d8d6dedeb18c165b775"
+    },
+    {
+      "path": "frontend/public/icons/recurly.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "cd5988bd28a3d9e75af0c2bc38f22ebb8e70c1fc7c7763782f1f520ca15d6ed3"
     },
     {
       "path": "frontend/public/icons/reddit.svg",
