@@ -6,8 +6,9 @@ into the chat composer. This is the one place that turns those into text the
 model can act on, keyed by media KIND, so how a kind is understood is decided
 once for every medium:
 
-    audio    → transcription (AI, credit-gated, charged at provider cost; the
-               old plans add the platform markup, as for rehearsals)
+    audio    → transcription (ElevenLabs Scribe v2 on OpenRouter, utils.scribe;
+               credit-gated, charged its vendor price; the old plans add
+               the platform markup, as for rehearsals)
     document → text extraction (the free CPU path in utils.content_extraction)
     image    → nothing here: the SDK path injects image URLs as vision content
                (handlers/_media_utils) and CLI harnesses fetch the URL
@@ -34,14 +35,12 @@ from __future__ import annotations
 import asyncio
 import base64
 import logging
-import math
 import os
-import shutil
-import tempfile
 from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Protocol, Tuple
 
+from utils import scribe
 from utils.content_extraction import (
     AI_EXTRACTION_MODEL,
     BillingContext,
@@ -59,49 +58,19 @@ MAX_AI_DIGESTS_PER_TURN = 3               # bounds a media-heavy message's charg
 MAX_DOCUMENT_DIGESTS_PER_TURN = 10        # bounds the text a file-heavy message puts in the turn
 DEFAULT_DIGEST_CHARS = 8_000              # per-document extracted text carried into the turn
 TRANSCRIBE_TIMEOUT_S = 90.0
-# Output budget per minute of audio, several times what speech needs (~300 tokens/min). Unbounded, a model
-# stuck repeating itself runs to its 64k-token ceiling: ~100x a voice note's normal charge.
-TRANSCRIBE_TOKENS_PER_MINUTE = 1_500
-TRANSCRIBE_MIN_TOKENS = 1_024
 MAX_VIDEO_SECONDS = 120
 
-# Audio input rides OpenRouter's ``input_audio`` content part (base64 + a
-# container format) into a model with audio modality — Gemini Flash by
-# default, the same family the extraction layer OCRs with.
-AI_TRANSCRIPTION_MODEL = os.environ.get("AI_TRANSCRIPTION_MODEL", AI_EXTRACTION_MODEL)
 AI_VIDEO_DIGEST_MODEL = os.environ.get("AI_VIDEO_DIGEST_MODEL", AI_EXTRACTION_MODEL)
 
-# Formats OpenRouter accepts for input_audio, keyed by the MIME types the
-# channels emit (WhatsApp/Telegram/Discord voice notes are Ogg Opus).
-_AUDIO_FORMATS: Dict[str, str] = {
-    "audio/ogg": "ogg", "audio/opus": "ogg", "application/ogg": "ogg",
-    "audio/mpeg": "mp3", "audio/mp3": "mp3",
-    "audio/mp4": "m4a", "audio/x-m4a": "m4a", "audio/m4a": "m4a",
-    "audio/aac": "aac",
-    "audio/wav": "wav", "audio/x-wav": "wav", "audio/wave": "wav", "audio/vnd.wave": "wav",
-    "audio/flac": "flac", "audio/x-flac": "flac",
-    "audio/aiff": "aiff", "audio/x-aiff": "aiff",
-}
+# Audio by file name, for media whose MIME type doesn't say (``scribe.FORMATS`` names the rest). These also make
+# a file audio (``media_kind``).
 _AUDIO_EXTENSIONS: Dict[str, str] = {
     ".ogg": "ogg", ".oga": "ogg", ".opus": "ogg", ".mp3": "mp3", ".m4a": "m4a",
     ".aac": "aac", ".wav": "wav", ".flac": "flac", ".aiff": "aiff", ".aif": "aiff",
 }
-# Containers input_audio refuses but ffmpeg reads, by its demuxer: an iPhone's voice message is Core Audio,
-# some Android recorders write AMR or 3GP, a browser records WebM. Each becomes mono 16 kHz MP3 to transcribe.
-_CONVERTIBLE: Dict[str, str] = {
-    "audio/x-caf": "caf", "audio/caf": "caf", "audio/amr": "amr", "audio/3gpp": "mov", "video/3gpp": "mov",
-    "audio/webm": "matroska",
-}
-_CONVERTIBLE_EXTENSIONS: Dict[str, str] = {".caf": "caf", ".amr": "amr", ".3gp": "mov", ".webm": "matroska"}
-CONVERT_TIMEOUT_S = 60.0
-
-_TRANSCRIBE_PROMPT = (
-    "Transcribe this audio verbatim, in the language(s) actually spoken. "
-    "Output only the transcript: no commentary, no translation, and speaker "
-    "labels only when more than one person speaks. If it contains no speech, "
-    "output exactly [no speech]."
-)
-_NO_SPEECH = "[no speech]"
+# Named by file name too, once a channel says the file is audio: an iPhone's voice message (Core Audio), an
+# Android recorder's AMR or 3GP (a .3gp may be a video), a browser's recording.
+_CHANNEL_AUDIO_EXTENSIONS: Dict[str, str] = {".caf": "caf", ".amr": "amr", ".3gp": "3gp", ".webm": "webm"}
 
 KINDS = ("audio", "image", "video", "document", "file")
 _AI_KINDS = frozenset({"audio", "video"})
@@ -137,13 +106,13 @@ def media_kind(mime_type: Optional[str], filename: Optional[str] = None) -> str:
 
 
 def audio_format(mime_type: Optional[str], filename: Optional[str] = None) -> Optional[str]:
-    """The ``input_audio.format`` for this audio, or ``None`` when no
-    supported container matches (a browser's ``audio/webm`` recording)."""
-    fmt = _AUDIO_FORMATS.get(base_mime(mime_type))
+    """The container transcription names this audio as, or ``None`` for one it isn't sent (Windows Media)."""
+    fmt = scribe.FORMATS.get(base_mime(mime_type))
     if fmt:
         return fmt
     name = (filename or "").lower()
-    return next((f for ext, f in _AUDIO_EXTENSIONS.items() if name.endswith(ext)), None)
+    return next((f for ext, f in {**_AUDIO_EXTENSIONS, **_CHANNEL_AUDIO_EXTENSIONS}.items() if name.endswith(ext)),
+                None)
 
 
 def media_placeholder(
@@ -294,44 +263,13 @@ def digester_for(kind: str) -> Optional[Digester]:
 
 # ── Transcription ────────────────────────────────────────────────────────────
 
-async def _as_mp3(data: bytes, demuxer: str) -> bytes:
-    """``data``, read as ``demuxer``'s container only, as mono 16 kHz MP3."""
-    if shutil.which("ffmpeg") is None:
-        raise DigestError("this audio needs converting before transcription, and ffmpeg isn't installed here")
-    with tempfile.NamedTemporaryFile(suffix=".audio") as source:
-        source.write(data)
-        source.flush()
-        process = await asyncio.create_subprocess_exec(
-            "ffmpeg", "-nostdin", "-hide_banner", "-nostats", "-loglevel", "error", "-protocol_whitelist", "file",
-            "-f", demuxer, "-i", source.name, "-vn", "-ac", "1", "-ar", "16000", "-c:a", "libmp3lame", "-b:a", "64k",
-            "-f", "mp3", "pipe:1", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
-        try:
-            out, err = await asyncio.wait_for(process.communicate(), CONVERT_TIMEOUT_S)
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            raise DigestError("converting the audio for transcription took too long") from None
-    if process.returncode or not out:
-        logger.warning("audio conversion failed demuxer=%s: %s", demuxer, err.decode(errors="replace")[-300:])
-        raise DigestError("the audio couldn't be read for transcription")
-    return out
-
-
-async def _audio_ready(data: bytes, mime_type: str, filename: Optional[str],
-                       duration_s: Optional[float]) -> Tuple[bytes, str]:
-    """The audio and its ``input_audio`` format within the caps, converted to MP3 first when it's in a container
-    the model doesn't take but ffmpeg reads; refuses the rest."""
+def _audio_ready(data: bytes, mime_type: str, filename: Optional[str], duration_s: Optional[float]) -> str:
+    """The container the audio is sent as, within the caps; refuses the rest before anything is spent."""
     fmt = audio_format(mime_type, filename)
-    if not fmt:
-        name = (filename or "").lower()
-        demuxer = _CONVERTIBLE.get(base_mime(mime_type)) or next(
-            (d for ext, d in _CONVERTIBLE_EXTENSIONS.items() if name.endswith(ext)), None)
-        if demuxer:
-            data, fmt = await _as_mp3(data, demuxer), "mp3"
     if not fmt:
         raise DigestError(
             f"audio format {base_mime(mime_type) or 'unknown'} is not supported for "
-            f"transcription (supported: {', '.join(sorted(set(_AUDIO_FORMATS.values())))})"
+            f"transcription (supported: {', '.join(sorted(set(scribe.FORMATS.values())))})"
         )
     if len(data) > MAX_TRANSCRIBE_BYTES:
         raise DigestError(
@@ -343,62 +281,7 @@ async def _audio_ready(data: bytes, mime_type: str, filename: Optional[str],
             f"audio is {int(duration_s // 60)} minutes long — transcription is capped at "
             f"{MAX_TRANSCRIBE_SECONDS // 60} minutes"
         )
-    return data, fmt
-
-
-def _transcript_token_budget(duration_s: Optional[float]) -> int:
-    minutes = (duration_s or MAX_TRANSCRIBE_SECONDS) / 60
-    return max(TRANSCRIBE_MIN_TOKENS, math.ceil(minutes * TRANSCRIBE_TOKENS_PER_MINUTE))
-
-
-async def _transcription_call(
-    data: bytes, fmt: str, *, prompt: str, billing: BillingContext, duration_s: Optional[float],
-    model: str,
-) -> Tuple[str, Optional[Decimal]]:
-    """One audio-understanding call: credit-gated BEFORE the model call and
-    charged the provider's reported cost (the old plans add their markup; a
-    ``:free`` model records $0). Returns ``(the model's text, cost_charged)``."""
-    from billing.usage_tracker import usage_tracker
-
-    # Pre-flight gate BEFORE any model spend; raises InsufficientBalanceError.
-    await usage_tracker.enforce_credit_gate(
-        billing.user_id,
-        organization_id=billing.organization_id,
-        sio=billing.sio,
-        sid=billing.sid,
-        surface="media_transcription",
-    )
-
-    import litellm
-
-    extra_body: Dict[str, Any] = {}
-    if model.startswith("openrouter/"):
-        # OpenRouter usage accounting: provider-reported cost rides back on
-        # response.usage (this extra_body 400s on other providers).
-        extra_body["usage"] = {"include": True}
-    response = await litellm.acompletion(
-        model=model,
-        messages=[{
-            "role": "user",
-            "content": [
-                {"type": "text", "text": prompt},
-                {"type": "input_audio", "input_audio": {
-                    "data": base64.b64encode(data).decode(),
-                    "format": fmt,
-                }},
-            ],
-        }],
-        temperature=0.0,
-        max_tokens=_transcript_token_budget(duration_s),
-        timeout=TRANSCRIBE_TIMEOUT_S,
-        extra_body=extra_body,
-    )
-    text = (response.choices[0].message.content or "").strip()
-    cost = await _record_media_cost(response, billing, model, len(data), duration_s, fmt)
-    if getattr(response.choices[0], "finish_reason", None) == "length":
-        raise DigestError("the transcription ran past its length limit (the model was repeating itself), "
-                          "so it was dropped")
-    return text, cost
+    return fmt
 
 
 async def transcribe_audio(
@@ -409,45 +292,49 @@ async def transcribe_audio(
     billing: BillingContext,
     duration_s: Optional[float] = None,
 ) -> Tuple[str, Optional[Decimal]]:
-    """Audio bytes → transcript. Credit-gated BEFORE the model call; charged
-    the provider's reported cost (the old plans add their markup; a
-    ``:free`` model records $0). Returns ``(text, cost_charged)``."""
-    data, fmt = await _audio_ready(data, mime_type, filename, duration_s)
-    text, cost = await _transcription_call(
-        data, fmt, prompt=_TRANSCRIBE_PROMPT, billing=billing, duration_s=duration_s, model=AI_TRANSCRIPTION_MODEL)
-    if not text or text.strip("`\"' ").lower() == _NO_SPEECH:
+    """Audio bytes → transcript, from Scribe v2 on the instance's OpenRouter
+    key, the audio sent as it came. Credit-gated BEFORE the call; charged what
+    OpenRouter billed for its seconds of audio (the old plans add their
+    markup). Returns ``(text, cost_charged)``."""
+    from billing.usage_tracker import usage_tracker
+    from utils.media_generation import MediaError
+
+    fmt = _audio_ready(data, mime_type, filename, duration_s)
+    try:
+        post = scribe.openrouter_post(timeout_s=TRANSCRIBE_TIMEOUT_S)
+    except MediaError:
+        raise DigestError("transcription isn't set up on this instance (it has no OpenRouter key)") from None
+    # Pre-flight gate BEFORE any spend; raises InsufficientBalanceError.
+    await usage_tracker.enforce_credit_gate(
+        billing.user_id,
+        organization_id=billing.organization_id,
+        sio=billing.sio,
+        sid=billing.sid,
+        surface="media_transcription",
+    )
+    try:
+        heard = await scribe.transcribe(data, fmt, post=post)
+    except scribe.ScribeError as exc:
+        logger.warning("[media_digest] transcription failed (%s): %s", fmt, exc)
+        raise DigestError(f"transcription failed: {f'HTTP {exc.status}' if exc.status else exc.said}") from None
+    cost = await _charge(billing, cost_usd=heard.vendor_usd, model=scribe.MODEL, subtype="ai_transcription",
+                         metadata={"format": fmt, "size_bytes": len(data), "duration_s": duration_s,
+                                   "audio_s": float(heard.billed_s)})
+    text = heard.text.strip()
+    if not text:
         raise DigestError("no speech was detected in the audio")
     return text, cost
 
 
-async def _record_media_cost(
-    response: Any,
-    billing: BillingContext,
-    model: str,
-    size_bytes: int,
-    duration_s: Optional[float],
-    fmt: str,
-    *, subtype: str = "ai_transcription",
-) -> Optional[Decimal]:
-    """One ``extraction/<subtype>`` usage event per media model call, at the
-    cost the provider reported or, failing that, OpenRouter's record of the
-    call. Answers what its payer was charged (``billing.usage_tracker.charge``); one
-    priced nowhere is logged CRITICAL and not charged (None)."""
+async def _charge(billing: BillingContext, *, cost_usd: Decimal, model: str, subtype: str,
+                  metadata: Dict[str, Any]) -> Optional[Decimal]:
+    """One ``extraction/<subtype>`` usage event per media call, at its vendor
+    cost (the old plans add the platform markup). Answers what its payer was
+    charged (``billing.usage_tracker.charge``)."""
     from billing.markup import apply_platform_markup
     from billing.schema import UsageEventData
     from billing.usage_tracker import charge
-    from coder.openai_agent.litellm_model import extract_cost_from_response
-    from utils.openrouter_cost import CostUnknown, generation_id_of, settle
 
-    provider_cost, reported = extract_cost_from_response(response)
-    try:
-        cost_usd = await settle(provider_cost, reported, generation_id_of(response))
-    except CostUnknown as exc:
-        logger.critical("[media_digest] %s call not billed, its cost is unknown (user %s): %s",
-                        model, billing.user_id, exc)
-        return None
-    usage = getattr(response, "usage", None)
-    total_tokens = getattr(usage, "total_tokens", None) or 0
     return await charge(
         UsageEventData(
             user_id=billing.user_id,
@@ -459,21 +346,36 @@ async def _record_media_cost(
             unit_type="requests",
             user_resource=False,
             organization_id=billing.organization_id,
-            metadata={
-                "workflow_id": billing.workflow_id,
-                "node_id": billing.node_id,
-                "model": model,
-                "format": fmt,
-                "size_bytes": size_bytes,
-                "duration_s": duration_s,
-                "tokens": total_tokens,
-                "provider_cost": provider_cost,
-                "cost_reported": reported,
-            },
+            metadata={"workflow_id": billing.workflow_id, "node_id": billing.node_id, "model": model, **metadata},
         ),
         sio=billing.sio,
         sid=billing.sid,
     )
+
+
+async def _record_model_cost(
+    response: Any, billing: BillingContext, model: str, size_bytes: int, duration_s: Optional[float], fmt: str,
+    *, subtype: str,
+) -> Optional[Decimal]:
+    """Charge a media model call at the cost the provider reported or, failing
+    that, OpenRouter's record of the call; one priced nowhere is logged
+    CRITICAL and not charged (None)."""
+    from coder.openai_agent.litellm_model import extract_cost_from_response
+    from utils.openrouter_cost import CostUnknown, generation_id_of, settle
+
+    provider_cost, reported = extract_cost_from_response(response)
+    try:
+        cost_usd = await settle(provider_cost, reported, generation_id_of(response))
+    except CostUnknown as exc:
+        logger.critical("[media_digest] %s call not billed, its cost is unknown (user %s): %s",
+                        model, billing.user_id, exc)
+        return None
+    usage = getattr(response, "usage", None)
+    return await _charge(billing, cost_usd=cost_usd, model=model, subtype=subtype, metadata={
+        "format": fmt, "size_bytes": size_bytes, "duration_s": duration_s,
+        "tokens": getattr(usage, "total_tokens", None) or 0,
+        "provider_cost": provider_cost, "cost_reported": reported,
+    })
 
 
 async def _digest_audio(ref: MediaRef, data: bytes, ctx: DigestContext) -> MediaDigest:
@@ -538,8 +440,8 @@ async def _digest_video(ref: MediaRef, data: bytes, ctx: DigestContext) -> Media
         ]}], temperature=0.0, max_tokens=4000, timeout=TRANSCRIBE_TIMEOUT_S,
         extra_body={"usage": {"include": True}} if model.startswith("openrouter/") else {},
     )
-    cost = await _record_media_cost(response, ctx.billing, model, len(data), duration, mime,
-                                           subtype="ai_video_digest")
+    cost = await _record_model_cost(response, ctx.billing, model, len(data), duration, mime,
+                                    subtype="ai_video_digest")
     text = (response.choices[0].message.content or "").strip()
     if not text:
         raise DigestError("Video understanding returned no content")
