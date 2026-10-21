@@ -23,7 +23,7 @@ import re
 import secrets
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Awaitable, Callable, Optional
+from typing import Any, Awaitable, Callable, Optional
 
 from repositories.account_merge import merge_accounts
 from repositories.phones import PhoneRepo
@@ -77,12 +77,16 @@ async def _lock(conn, *user_ids: str) -> None:
         await conn.execute("SELECT pg_advisory_xact_lock(hashtext('account:' || $1))", user_id)
 
 
-async def merge_into(pool, *, source: str, target: str) -> None:
-    """The one entry to a merge: both accounts locked, one transaction."""
+async def merge_into(pool, *, source: str, target: str,
+                     then: Optional[Callable[[Any], Awaitable[None]]] = None) -> None:
+    """The one entry to a merge: both accounts locked, one transaction. ``then(conn)`` runs in it once the work
+    moved, so what the caller records about the merge lands with it or not at all."""
     async with pool.acquire() as conn:
         async with conn.transaction():
             await _lock(conn, source, target)
             result = await merge_accounts(conn, source=source, target=target)
+            if then is not None:
+                await then(conn)
     logger.info("account_merged source=%s target=%s moved=%s", source, target, result.moved)
 
 

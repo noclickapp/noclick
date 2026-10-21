@@ -94,7 +94,7 @@ from utils.slack import (
     mark_session_complete,
     send_login_notification,
 )
-from utils.geo import extract_client_ip
+from utils.client_ip import environ_ip
 from utils.edition import is_local_edition
 from dotenv import load_dotenv
 from utils.otel import init_otel, shutdown_otel
@@ -603,7 +603,7 @@ async def connect(sid, environ, auth):
         # geo-IP work or log proxy/client address headers.
         if login_notifications_enabled():
             spawn(
-                _post_login_notification(sid, user_id, user_data, extract_client_ip(environ)),
+                _post_login_notification(sid, user_id, user_data, environ_ip(environ)),
                 name=f"slack-login-notification:{sid}",
             )
 

@@ -154,7 +154,7 @@ async def test_a_post_that_lands_after_disconnect_still_closes_its_thread(live):
 async def test_without_login_notifications_connect_never_reads_the_client_address(live, monkeypatch):
     monkeypatch.setattr(server, "login_notifications_enabled", lambda: False)
     extract = Mock(return_value="203.0.113.7")
-    monkeypatch.setattr(server, "extract_client_ip", extract)
+    monkeypatch.setattr(server, "environ_ip", extract)
 
     sid = await _connect(live)
 
