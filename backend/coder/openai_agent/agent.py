@@ -43,7 +43,8 @@ from utils.thread_env import override_env
 
 logger = logging.getLogger(__name__)
 
-# The model's id for the tool call being run, for an executor that keys the call's effects on it.
+# The id of the tool call being run, for an executor that keys the call's effects on it: the model's, or for a CLI
+# harness's call over MCP that carries none, its request's.
 CURRENT_TOOL_CALL_ID: ContextVar[Optional[str]] = ContextVar("current_tool_call_id", default=None)
 
 # ── Transient-error retry for the streamed agent turn ────────────────────────
