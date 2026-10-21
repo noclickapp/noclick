@@ -1381,6 +1381,9 @@ async def handle_webhook_payload(
         if refused is not None:
             return _json_relay_response(refused[1], status_code=refused[0]) if return_response else False
         return _json_relay_response({"detail": "Webhook is disabled"}, status_code=410) if return_response else False
+    refused = await _unclaimed_refusal(config, headers)
+    if refused is not None:
+        return _json_relay_response(refused[1], status_code=refused[0]) if return_response else False
 
     # Signature verification is the trigger node class's job — every provider
     # signs differently (Stripe-Signature, Linear-Signature, Mailgun in-body,
@@ -1897,6 +1900,18 @@ async def _delivered_elsewhere(workflow_id: str, trigger_node: dict, payload: di
     if deliver is None:
         return None
     return await deliver(workflow_id=workflow_id, node=trigger_node, payload=payload)
+
+
+async def _unclaimed_refusal(config: dict, headers) -> Optional[tuple]:
+    """``(403, body)`` for a delivery to a webhook of an account no person has claimed yet (``ACCOUNT_UNCLAIMED``):
+    its URLs answer no one until then, though its schedules' own ticks still run its workflows."""
+    from utils.capabilities import ACCOUNT_UNCLAIMED, capability
+
+    unclaimed = capability(ACCOUNT_UNCLAIMED)
+    if unclaimed is None or _schedule_tick_id(headers) or not await unclaimed(str(config["user_id"])):
+        return None
+    return 403, {"detail": "This account was made by an AI agent and no person has claimed it yet, so its "
+                           "webhook URLs take no deliveries."}
 
 
 async def _stopped_elsewhere(config: dict) -> Optional[tuple]:
@@ -2632,6 +2647,9 @@ async def receive_webhook(
         if refused is not None:
             return JSONResponse(content=jsonable_encoder(refused[1]), status_code=refused[0])
         raise HTTPException(status_code=410, detail="Webhook is disabled")
+    refused = await _unclaimed_refusal(config, request.headers)
+    if refused is not None:
+        return JSONResponse(content=refused[1], status_code=refused[0])
 
     # Read body once for methods that can carry payloads (needed for signature check and payload parsing)
     body: bytes = b""

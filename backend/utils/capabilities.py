@@ -311,6 +311,12 @@ SANDBOX_ENV = "agent.sandbox_env"
 # answer cheaply for nodes it has no say over.
 TRIGGER_DELIVERY = "trigger.delivery"
 
+# Whether an account is one no person has claimed yet (an AI agent signed it up for itself): async (user_id) -> bool.
+# Until one does, its public surfaces stay closed: deliveries to its webhook URLs (its schedules' own ticks still
+# run), its hosted MCP links, and answer links that would connect someone's account or take secret values into it.
+# Without one, every account is a person's.
+ACCOUNT_UNCLAIMED = "account.unclaimed"
+
 # Refuse a delivery to a trigger node's webhook that stopped (deactivated: its
 # trigger was removed) in a product's own words, for a node it delivers its own
 # way: async (*, workflow_id, node_id) -> None (not one of its nodes: the

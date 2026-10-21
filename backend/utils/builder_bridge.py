@@ -73,6 +73,14 @@ async def create_bridge_link_for_ask(
     to it and the submit resolves the fulfilled credential id server-side.
     Returns {link_id, url, questions} or None on failure (best-effort — a
     minting failure must never fail the builder run)."""
+    from utils.capabilities import ACCOUNT_UNCLAIMED, capability
+
+    # An account no person has claimed yet takes no one's account or secret values through a link.
+    unclaimed = capability(ACCOUNT_UNCLAIMED)
+    if unclaimed is not None and any((i or {}).get("type") in ("credential", "env") for i in inputs or []) \
+            and await unclaimed(user_id):
+        logger.info("[BRIDGE] No link for ask %s: its account is unclaimed", ask_id)
+        return None
     try:
         from repositories.builder_bridge import BuilderBridgeRepo
         from repositories.credentials import CredentialsRepo
