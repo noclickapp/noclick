@@ -129,7 +129,10 @@ async def test_a_name_keeps_its_domain_and_a_new_one_goes_on_the_new_domain(move
 
 async def test_old_coordinator_and_agent_reply_addresses_route_from_either_domain(moved, monkeypatch):
     from coder.coordinator import email_channel
+    from utils import capabilities
 
+    # No agent answers this account; mail that moves an address to one is test_platform_inbox_senders'.
+    monkeypatch.delitem(capabilities._providers, capabilities.ACCOUNT_AGENT_EMAIL, raising=False)
     pool, owner, client = moved
     name = f"ada-{uuid.uuid4().hex[:6]}"
     await pool.execute("INSERT INTO email_reservations (user_id, kind, local_part, domain) "

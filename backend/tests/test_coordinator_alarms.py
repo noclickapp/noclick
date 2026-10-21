@@ -208,13 +208,16 @@ async def test_timezone_aware_timestamp_is_preserved():
 
 async def test_due_message_wakes_same_coordinator_and_delivers_once(alarm_db, monkeypatch):
     from coder.coordinator import agent, wakeups as worker
+    from utils import feature_gates
     from wss.sender.events import ChatMessageEvent
     app, pool, alarms, inbox = alarm_db
     monkeypatch.setattr(agent, "get_native_pool", lambda: pool)
     monkeypatch.setattr(agent, "get_user_org_context", AsyncMock(return_value=None))
     monkeypatch.setattr(agent, "memory_context", AsyncMock(return_value=""))
     monkeypatch.setattr(worker, "get_sio", lambda: None)
-    monkeypatch.setattr("utils.feature_gates.require_feature", lambda *args, **kwargs: None)
+    # The coordinator is open to this account through its rollout. Stubbing require_feature instead leaked: the
+    # handler, first imported by the patch below, bound the stub and let every later test past the gate.
+    monkeypatch.setitem(feature_gates.FEATURE_ROLLOUT, agent.COORDINATOR_FEATURE, feature_gates.EVERYONE)
     monkeypatch.setattr("wss.handlers.coordinator_handler.plan_allows_turn", AsyncMock(return_value=(True, None)))
     # The coordinator's own tools: a platform's are tested in test_coordinator_platform_tools.
     monkeypatch.delitem(capabilities._providers, COORDINATOR_PLATFORM_TOOLS, raising=False)

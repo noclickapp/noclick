@@ -17,6 +17,7 @@ import pytest
 import pytest_asyncio
 import asyncio
 import uuid
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional, Callable
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -673,17 +674,33 @@ class TestWorkflowMCPHandlerOpenWorkflow(BaseHandlerTest):
 
 @pytest.mark.asyncio
 class TestWorkflowMCPHandlerListWorkflows(BaseHandlerTest):
-    """Tests for list_workflows MCP tool (backend-only, database-dependent)."""
+    """Tests for list_workflows MCP tool: the session user's workflows, read
+    through the repository (whose query runs against PostgreSQL in
+    test_workflow_mcp_list_postgres.py)."""
+
+    def _database(self, rows):
+        """A database holding ``rows``, and a session signed in as TEST_USER_ID;
+        returns the connection the handler reads through."""
+        handler = self.handlers.get(Handler.WORKFLOW_MCP)
+        conn = AsyncMock()
+        conn.fetch = AsyncMock(return_value=rows)
+        pool = AsyncMock()
+        pool.acquire = MagicMock(return_value=AsyncMock(
+            __aenter__=AsyncMock(return_value=conn),
+            __aexit__=AsyncMock(return_value=None)
+        ))
+        handler.get_pool = AsyncMock(return_value=pool)
+        self.main_api_sio.get_session = AsyncMock(return_value={'user_id': TEST_USER_ID})
+        return conn
 
     async def test_list_workflows_handler_invoked(self, frontend_sio, sid):
-        """
-        Test list_workflows reaches the handler and attempts database query.
-
-        Without database connection, this verifies:
-        1. Event routing works correctly (we get a response, not a timeout)
-        2. Handler is invoked (not a 404-style routing error)
-        3. Handler attempts to query database (error indicates DB operation failed)
-        """
+        """The event reaches the handler, which lists the session user's
+        workflows (routing works, the handler ran, its rows are the answer)."""
+        updated = datetime(2026, 10, 21, tzinfo=timezone.utc)
+        conn = self._database([{
+            "id": uuid.UUID(TEST_WORKFLOW_ID), "name": "Orders", "description": None,
+            "folder_id": None, "created_at": updated, "updated_at": updated,
+        }])
         request = WorkflowMCPListWorkflowsRequest(
             request_id="test-list-1",
             limit=10
@@ -692,23 +709,19 @@ class TestWorkflowMCPHandlerListWorkflows(BaseHandlerTest):
         await asyncio.sleep(0.1)
 
         response_events = self.get_main_api_emitted_events("response")
-        # Critical: We got a response (handler was invoked, event routing worked)
         assert len(response_events) == 1
-
         response_data = response_events[0][1]
-
-        # Handler was invoked - without DB it returns an error
-        # This proves: 1) event routing works, 2) handler exists, 3) handler logic ran
-        error = response_data.get("error")
-        assert error is not None, "Expected error since no DB is connected"
-        # Error should NOT indicate a routing problem (unknown event/handler)
-        error_lower = error.lower()
-        assert "unknown" not in error_lower, f"Unexpected routing error: {error}"
-        assert "not found" not in error_lower or "output" in error_lower, \
-            f"Unexpected routing error: {error}"
+        assert response_data.get("error") is None
+        assert response_data["data"]["workflows"] == [{
+            "id": TEST_WORKFLOW_ID, "name": "Orders", "description": "", "folder_id": None,
+            "created_at": updated.isoformat(), "updated_at": updated.isoformat(),
+        }]
+        sql, *params = conn.fetch.await_args.args
+        assert "owner_id = $1" in sql and params == [TEST_USER_ID, 10]
 
     async def test_list_workflows_with_query_parameter(self, frontend_sio, sid):
         """Test list_workflows properly accepts and processes query parameter."""
+        conn = self._database([])
         request = WorkflowMCPListWorkflowsRequest(
             request_id="test-list-2",
             query="my search term",
@@ -719,12 +732,10 @@ class TestWorkflowMCPHandlerListWorkflows(BaseHandlerTest):
         assert len(response_events) == 1
 
         response_data = response_events[0][1]
-
-        # Handler was invoked (even if it fails due to no database)
-        # The error should still be about database, not about invalid parameters
-        error = response_data.get("error")
-        if error:
-            assert "query" not in error.lower(), f"Query parameter should be valid, got error: {error}"
+        assert response_data.get("error") is None
+        assert response_data["data"] == {"workflows": []}
+        _, *params = conn.fetch.await_args.args
+        assert params == [TEST_USER_ID, "%my search term%", 5]
 
 
 @pytest.mark.asyncio

@@ -462,10 +462,14 @@ async def test_guard_fails_closed_without_redis(monkeypatch):
 
 @pytest.fixture
 async def client(monkeypatch, credential_boundary):
-    from utils import webhook_routes
+    from utils import database_pool, webhook_routes
 
     pool = credential_boundary[0]
+    # A fired trigger is offered to the platform's trigger delivery, which reads the same database: no app's code
+    # made this workflow.
+    pool.fetch = AsyncMock(return_value=[])
     monkeypatch.setattr(webhook_routes, "get_native_pool", lambda: pool)
+    monkeypatch.setattr(database_pool, "get_native_pool", lambda: pool)
     app = FastAPI()
     app.include_router(webhook_routes.router)
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="https://api.example.test") as client:

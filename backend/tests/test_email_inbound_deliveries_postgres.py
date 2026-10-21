@@ -98,7 +98,10 @@ async def test_a_retried_delivery_fires_the_workflow_once(inbound, monkeypatch):
 
 async def test_a_retried_delivery_starts_one_coordinator_turn(inbound, monkeypatch):
     from coder.coordinator import email_channel
+    from utils import capabilities
 
+    # No agent answers this account; mail that moves an address to one is test_platform_inbox_senders'.
+    monkeypatch.delitem(capabilities._providers, capabilities.ACCOUNT_AGENT_EMAIL, raising=False)
     pool, owner, client = inbound
     name = f"ada-{uuid.uuid4().hex[:6]}"
     await pool.execute("INSERT INTO email_reservations (user_id, kind, local_part, domain) "

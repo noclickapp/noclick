@@ -312,7 +312,10 @@ class TestInboundRoute:
 
     def test_a_coordinator_address_is_handed_to_the_coordinator(self, email_client, monkeypatch):
         from coder.coordinator import email_channel
+        from utils import capabilities
 
+        # No agent answers this account; mail that moves an address to one is test_platform_inbox_senders'.
+        monkeypatch.delitem(capabilities._providers, capabilities.ACCOUNT_AGENT_EMAIL, raising=False)
         received = AsyncMock(return_value="delivered")
         monkeypatch.setattr(email_channel, "receive", received)
         monkeypatch.setattr(email_routes, "get_native_pool", lambda: "pool")

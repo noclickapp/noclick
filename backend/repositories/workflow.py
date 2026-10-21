@@ -775,9 +775,9 @@ class WorkflowRepo:
         self, conn, *, user_id: str, query: Optional[str],
         folder_id: Optional[str], limit: int,
     ) -> List[Dict[str, Any]]:
-        """MCP ``list_workflows`` — user-owned only (via user_id column),
-        with optional name/description ILIKE search and folder filter."""
-        conditions = ["user_id = $1", "deleted_at IS NULL", not_system_sql("")]
+        """MCP ``list_workflows`` — the workflows the user owns, with optional
+        name/description ILIKE search and folder filter."""
+        conditions = ["owner_id = $1", "deleted_at IS NULL", not_system_sql("")]
         params: List[Any] = [user_id]
         idx = 2
 
