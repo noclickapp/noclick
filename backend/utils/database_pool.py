@@ -157,6 +157,16 @@ _POOL_MAX_INACTIVE_SECS = 300
 _POOL_MAX_QUERIES = 1000
 
 
+async def release_without_session_reset(conn: asyncpg.Connection) -> None:
+    """The pool's ``reset``: nothing beyond what asyncpg always does on release
+    (roll back an open transaction, drop listeners). Its default also sends
+    ``pg_advisory_unlock_all(); CLOSE ALL; UNLISTEN *; RESET ALL`` — a round trip
+    on every release, about half a simple query's time, that undoes nothing
+    under PgBouncer's transaction pooling (the next transaction may land on
+    another server connection). Nothing on this pool keeps session state: no
+    session SET, LISTEN, cursor WITH HOLD or session advisory lock."""
+
+
 async def init_native_pool() -> None:
     """Create the asyncpg pool on the current event loop. Idempotent.
 
@@ -198,6 +208,7 @@ async def init_native_pool() -> None:
         max_inactive_connection_lifetime=_POOL_MAX_INACTIVE_SECS,
         max_queries=_POOL_MAX_QUERIES,
         init=setup_asyncpg_codecs,
+        reset=release_without_session_reset,
         **connect_kwargs,
     )
     _native_pool_loop = asyncio.get_running_loop()

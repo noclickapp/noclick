@@ -442,6 +442,7 @@ class CredentialCreateResponse(BaseModel):
     message: Optional[str] = Field(None, description="Success or error message")
     field_errors: Dict[str, str] = Field(default_factory=dict, description="Definitive shape problems keyed by credential field; nothing was saved")
     hint: Optional[str] = Field(None, description="What a provider refusal usually means, when its shape says so")
+    reachable: Optional[bool] = Field(None, description="False when the provider itself refused the value (not a shape problem, and not a failure of ours)")
     verification: Optional[CredentialTestConnectionResponse] = Field(None, description="What the connect-time probe proved about the saved credential; null when no probe ran")
 
 
@@ -453,6 +454,7 @@ class CredentialUpdateResponse(BaseModel):
     message: Optional[str] = Field(None, description="Success or error message")
     field_errors: Dict[str, str] = Field(default_factory=dict, description="Definitive shape problems keyed by credential field; nothing was saved")
     hint: Optional[str] = Field(None, description="What a provider refusal usually means, when its shape says so")
+    reachable: Optional[bool] = Field(None, description="False when the provider itself refused the value (not a shape problem, and not a failure of ours)")
     verification: Optional[CredentialTestConnectionResponse] = Field(None, description="What the connect-time probe proved about the replaced secret; null when no probe ran")
 
 

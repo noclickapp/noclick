@@ -147,6 +147,25 @@ def _topo_sort_field_asks(asks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return ordered
 
 
+def _credential_ask_context(node: NodeState) -> Dict[str, Any]:
+    """What a credential ask carries about its node: the config its form reads (an agent's harness and sub-model pick
+    the account it needs), the attached credentials, and, as the answer already given, an attached credential the
+    node's operation or model accepts. A key left from another harness or provider answers nothing."""
+    from utils.credentials import pick_credential_id
+
+    cfg = node.config or {}
+    ids = cfg.get('credentialIds') or {}
+    accepted = node_accepted_credential_types(node.type, node.operation, cfg)
+    context: Dict[str, Any] = {
+        'credentialIds': ids,
+        'nodeConfig': {k: v for k, v in cfg.items() if k != 'credentialIds'},
+    }
+    answer = pick_credential_id({t: v for t, v in ids.items() if t in accepted})
+    if answer:
+        context['defaultValue'] = answer
+    return context
+
+
 def _post_process_node_asks(requests: List[Dict[str, Any]], graph_state: 'GraphState') -> List[Dict[str, Any]]:
     """Group field-bound asks by node, auto-inject missing credential asks,
     and topo-sort by depends_on. Free-form asks (no nodeId) are passed through
@@ -180,7 +199,6 @@ def _post_process_node_asks(requests: List[Dict[str, Any]], graph_state: 'GraphS
             if not node_has_credential(node.config):
                 cred_info = get_credential_info(node.type, node.operation, node.config)
                 if cred_info:
-                    cfg = node.config or {}
                     cred_asks.append({
                         'id': f'auto_cred_{node_id}',
                         'nodeId': node_id,
@@ -191,8 +209,7 @@ def _post_process_node_asks(requests: List[Dict[str, Any]], graph_state: 'GraphS
                         'description': '',
                         'required': True,
                         'credentialType': cred_info.credential_type,
-                        'credentialIds': cfg.get('credentialIds', {}),
-                        'nodeConfig': {k: v for k, v in cfg.items() if k != 'credentialIds'},
+                        **_credential_ask_context(node),
                     })
 
         sorted_field_asks = _topo_sort_field_asks(field_asks)
@@ -462,12 +479,7 @@ def extract_ask_requests(
                         req['credentialType'] = derive_credential_type(
                             node.type, node.operation, node.config
                         )
-                    # Config-sensitive credential forms (agent: harness +
-                    # sub-model pick the fields; mcp-server: auth mode) need
-                    # the node's config to render the right inputs.
-                    cfg = node.config or {}
-                    req['credentialIds'] = cfg.get('credentialIds', {})
-                    req['nodeConfig'] = {k: v for k, v in cfg.items() if k != 'credentialIds'}
+                    req.update(_credential_ask_context(node))
             elif field == 'env':
                 # Sandbox env-var request: the variables come from the node's
                 # declared agent_env_requested (set first via <field
@@ -1030,7 +1042,8 @@ def execute_field_ops(
     # node's runtime parse, which the brain never sees).
     _ABSENT = object()
     prior_values: Dict[Tuple[str, str], Any] = {}
-    # Each agent's config before a model write, to judge a harness move.
+    # Each agent's config before the write, to judge a move to another harness or provider (a sub-model field
+    # changes the provider as much as Model does).
     prior_agent_configs: Dict[str, Dict[str, Any]] = {}
     for op in ops:
         _n = graph_state.get_node(op.attrs.get('node', ''))
@@ -1038,7 +1051,7 @@ def execute_field_ops(
         _key = (op.attrs.get('node', ''), _f)
         if _n and _key not in prior_values:
             prior_values[_key] = _n.config.get(_f, _ABSENT)
-        if _n and _n.type == 'agent' and _f in ('model', 'model_type'):
+        if _n and _n.type == 'agent':
             prior_agent_configs.setdefault(_n.id, dict(_n.config))
     refused_ops: Set[int] = set()
 
@@ -1232,7 +1245,8 @@ def execute_field_ops(
                 label=node.config.get('label', node.label), keep_label='label' in changed_fields,
             )
             if switch:
-                graph_state.harness_switches.append((switch.old, switch.new))
+                if switch.moved:
+                    graph_state.harness_switches.append((switch.old, switch.new))
                 if switch.label:
                     node.label = switch.label
                     if 'label' in node.config:

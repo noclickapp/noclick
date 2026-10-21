@@ -16,6 +16,7 @@ import os
 import json
 import logging
 import re
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional, Sequence, Tuple, List, Type, Union
 from litellm import ChatCompletionToolParam, ChatCompletionToolParamFunctionChunk
 from nodes.core.base import WorkflowNode
@@ -434,7 +435,8 @@ class AgentNode(WorkflowNode):
             return
         if not (message or image_urls or video_urls or attachments):
             return
-        event: Dict[str, Any] = {"role": role, "message": message}
+        event: Dict[str, Any] = {"role": role, "message": message,
+                                 "timestamp": datetime.now(timezone.utc).isoformat()}
         if role == "assistant":
             # Attach the turn's compacted tool timeline so the chat's step rows
             # survive reloads. The AgentHandler chat path gained this on

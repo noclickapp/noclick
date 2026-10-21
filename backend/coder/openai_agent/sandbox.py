@@ -28,6 +28,12 @@ logger = logging.getLogger(__name__)
 _LOCAL_TIMEOUT_S = 600
 
 
+def without_stdin(command: str) -> str:
+    """``command`` for ``sh -c`` with its stdin closed (a CLI waiting on input hangs the turn). Grouped on lines of
+    its own, so a heredoc's closing line stays alone and every command of it, not only the last, reads /dev/null."""
+    return f"{{\n{command}\n}} </dev/null"
+
+
 class AgentSandboxRuntime(Protocol):
     """Structural contract implemented by every registered runtime."""
 
@@ -190,7 +196,7 @@ class LocalSandboxRuntime:
             return {"error": f"Sandbox unavailable{detail}"}
 
         env = {**os.environ, **self.user_env}
-        shell_cmd = f"cd {shlex.quote(str(self._workdir))} && {command} </dev/null"
+        shell_cmd = f"cd {shlex.quote(str(self._workdir))} && {without_stdin(command)}"
         try:
             process = await asyncio.create_subprocess_exec(
                 "sh", "-c", shell_cmd,

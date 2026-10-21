@@ -2086,7 +2086,7 @@ class NoClickMCPServer(DatabasePoolMixin):
                     harness_prior=existing_config if node_type == "agent" else None,
                 )
                 harness_switch = (config_verdict or {}).get("harness_switch")
-                if harness_switch:
+                if harness_switch and harness_switch["from"] != harness_switch["to"]:
                     harness_switches.append((harness_switch["from"], harness_switch["to"]))
 
                 # Builder parity: a model flip that lands on a BYOK harness

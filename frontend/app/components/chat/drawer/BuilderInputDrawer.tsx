@@ -11,7 +11,9 @@ import { DynamicOptionsField } from '~/components/workflow/DynamicOptionsField';
 import type { InputRequest } from '~/components/workflow/workflowGeneratorMock';
 import { AgentEnvVarsSection } from '~/components/workflow/AgentEnvVarsSection';
 import { AGENT_ENV_CREDENTIAL_TYPE } from '~/components/workflow/agentEnvVars';
+import { agentCredentialProvider, getAgentCredentialIdForProvider } from '~/lib/agentCredentialModel';
 import { getFieldAffordance } from './builderInputAffordances';
+import { CredentialAskHeading } from './CredentialAskHeading';
 import { MULTI_PREFIX, encodeMultiValue, flattenMultiValue, parseMultiValue } from './multiSelectValue';
 
 // ============================================================================
@@ -98,6 +100,14 @@ function ShareAskButton({ onShare, label }: { onShare: () => Promise<string | nu
             {label && (state === 'copied' ? 'Copied' : label)}
         </button>
     );
+}
+
+/** The account a node's credential map answers the question with, empty once none is chosen: for an agent, one that
+ *  runs its model (never a key left from another harness, nor the environment bundle beside it). */
+function credentialAnswer(input: InputRequest, ids: Record<string, string>): string {
+    const provider = input.nodeType === 'agent' ? agentCredentialProvider(input.credentialType) : null;
+    if (provider) return getAgentCredentialIdForProvider(ids, provider) ?? '';
+    return Object.values(ids).find((id) => id?.trim()) ?? '';
 }
 
 // Prefix for "other" freetext values — distinguishes them from option IDs
@@ -329,6 +339,7 @@ function InputBody({
     credentialIds,
     onCredentialIdsChange,
     overrides,
+    onConnected,
 }: {
     input: InputRequest;
     value: string | undefined;
@@ -337,6 +348,8 @@ function InputBody({
     credentialIds?: Record<string, string>;
     onCredentialIdsChange?: (ids: Record<string, string>) => void;
     overrides: { credentialIds: Record<string, string>; nodeConfig: Record<string, any> };
+    /** An account the person just connected answers the question outright. */
+    onConnected?: (credentialId: string) => void;
 }) {
     return (
         <div role="presentation" onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()}>
@@ -350,9 +363,9 @@ function InputBody({
                     credentialIds={credentialIds}
                     onChange={(newIds) => {
                         onCredentialIdsChange?.(newIds);
-                        const firstId = Object.values(newIds).find(id => id && id.trim());
-                        if (firstId) onChange(firstId);
+                        onChange(credentialAnswer(input, newIds));
                     }}
+                    onConnected={onConnected}
                     compact
                 />
             )}
@@ -418,23 +431,13 @@ function EnvInput({
 // ============================================================================
 
 export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmitMessage, onValuesChange, onShare, embedded = false }: BuilderInputDrawerProps) {
-    // Seed initial values from each input's defaultValue (e.g., when drafter
-    // extracted a real value from the user's prompt — the user just confirms
-    // instead of picking from scratch).
+    // Seed initial values from each input's defaultValue: a value the drafter extracted from the user's prompt, or an
+    // account already on the node that the server judged answers a credential question (never just any id in its
+    // snapshot: a key left from another harness runs nothing). The user confirms instead of picking from scratch.
     const [values, setValues] = useState<Record<string, string>>(() => {
         const initial: Record<string, string> = {};
         for (const inp of inputs) {
-            if (inp.defaultValue) {
-                initial[inp.id] = inp.defaultValue;
-            } else if (inp.type === 'credential' && inp.credentialIds) {
-                // A credential already selected on the node arrives via the
-                // credentialIds snapshot, not defaultValue — and NodeCredentials
-                // won't re-fire onChange for it. Seed values here (mirroring the
-                // onChange firstId pick) so the step counts as answered and
-                // Continue enables without the user re-picking.
-                const preselected = Object.values(inp.credentialIds).find(id => id && id.trim());
-                if (preselected) initial[inp.id] = preselected;
-            }
+            if (inp.defaultValue) initial[inp.id] = inp.defaultValue;
         }
         return initial;
     });
@@ -475,6 +478,11 @@ export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmi
             setStep(s => s + 1);
         }
     };
+
+    // A lone question answered by an account the person just connected leaves nothing to confirm, so it is sent
+    // without a second tap; with several questions the account is only chosen.
+    const answerWithConnected =
+        inputs.length === 1 ? (inputId: string, credentialId: string) => onSubmit(cleanValues({ ...values, [inputId]: credentialId })) : undefined;
 
     const handleBack = () => {
         if (step > 0) setStep(s => s - 1);
@@ -555,9 +563,13 @@ export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmi
             </div>}
 
             {/* Current input — scrollable, takes remaining space */}
-            <div className={cn('flex-1 min-h-0 overflow-y-auto scrollbar-subtle', !embedded && 'px-4 py-3')}>
-                {/* Label + description */}
-                {(showLabel || current.description) && (
+            {/* Embedded, it grows with its question and its host scrolls: a scroll box here cut a picker's list off
+             *  at the field's own height. */}
+            <div className={cn('flex-1 min-h-0', !embedded && 'overflow-y-auto scrollbar-subtle px-4 py-3')}>
+                {/* Label + description; an account question is headed as the connect card is. */}
+                {current.type === 'credential' && current.nodeType ? (
+                    <CredentialAskHeading input={{ ...current, nodeType: current.nodeType }} />
+                ) : (showLabel || current.description) && (
                     <div className="mb-3">
                         {showLabel && (
                             <div className="flex items-center gap-2">
@@ -594,6 +606,7 @@ export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmi
                         setCredentialIdsMap(prev => ({ ...prev, [current.id]: ids }))
                     }
                     overrides={currentOverrides}
+                    onConnected={answerWithConnected && (credentialId => answerWithConnected(current.id, credentialId))}
                 />
 
                 {/* Field affordance — alternative answer that delegates to the
@@ -624,16 +637,6 @@ export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmi
             {/* Footer — always visible at bottom */}
             {embedded ? (
                 <div className="mt-5 flex items-center gap-4">
-                    {step > 0 && (
-                        <button
-                            type="button"
-                            onClick={handleBack}
-                            className="inline-flex items-center gap-0.5 text-[12.5px] text-foreground/70 dark:text-foreground/50 transition-colors hover:text-foreground"
-                        >
-                            <ChevronLeft className="h-3.5 w-3.5" />
-                            Back
-                        </button>
-                    )}
                     {inputs.length > 1 && (
                         <span className="text-[11.5px] tabular-nums text-foreground/60 dark:text-foreground/40">
                             {step + 1} of {inputs.length}
@@ -646,12 +649,23 @@ export function BuilderInputDrawer({ inputs, title, onSubmit, onDismiss, onSubmi
                                 Skip
                             </button>
                         )}
+                        {/* Beside the step it undoes, as Next is. */}
+                        {step > 0 && (
+                            <button
+                                type="button"
+                                onClick={handleBack}
+                                className="inline-flex items-center gap-0.5 text-[12.5px] text-foreground/70 dark:text-foreground/50 transition-colors hover:text-foreground"
+                            >
+                                <ChevronLeft className="h-3.5 w-3.5" />
+                                Back
+                            </button>
+                        )}
                         <button
                             type="button"
                             onClick={handleNext}
                             disabled={!canAdvance}
                             className={cn(
-                                'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors',
+                                'inline-flex h-8 items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium transition-colors',
                                 canAdvance ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'cursor-not-allowed bg-foreground/10 text-foreground/60 dark:text-foreground/40'
                             )}
                         >
