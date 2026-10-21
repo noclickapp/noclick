@@ -13,14 +13,13 @@ import random
 import asyncio
 import logging
 import mimetypes
-from datetime import datetime
-from email.utils import parsedate_to_datetime
 from typing import Dict, Any, List, Optional, Union, Type, Literal, Annotated
 from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode, unquote
 from pydantic import BaseModel, Field, Discriminator, field_validator, model_validator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from utils.http_retry import parse_retry_after
 from utils.oauth_token_cache import (
     OAuthTokenCache,
     oauth_authority_digest,
@@ -988,21 +987,7 @@ class HttpRequestNode(WorkflowNode):
             return name
         return f"download{mimetypes.guess_extension(content_type) or '.bin'}"
 
-    @staticmethod
-    def _parse_retry_after(value: Optional[str]) -> Optional[float]:
-        """Parse a Retry-After header (delta-seconds or HTTP-date) to seconds."""
-        if not value:
-            return None
-        value = value.strip()
-        if value.isdigit():
-            return float(value)
-        try:
-            when = parsedate_to_datetime(value)
-        except (TypeError, ValueError):
-            return None
-        if when is None:
-            return None
-        return max(0.0, (when - datetime.now(when.tzinfo)).total_seconds())
+    _parse_retry_after = staticmethod(parse_retry_after)
 
     @classmethod
     def _retry_delay(cls, attempt: int, response: Optional[httpx.Response] = None) -> float:

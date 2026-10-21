@@ -328,6 +328,34 @@ class TestReadEmails:
         ), f"OData params should not be percent-encoded: {request_url}"
 
     @pytest.mark.asyncio
+    async def test_read_waits_out_a_mailbox_concurrency_429(self, monkeypatch):
+        """Graph answers too many parallel requests to one mailbox 429 MailboxConcurrency, naming a wait in
+        Retry-After: the read waits it out and succeeds rather than failing the call."""
+        import httpx
+        import respx
+
+        from utils import http_retry
+
+        waits = []
+
+        async def sleep(seconds):
+            waits.append(seconds)
+
+        monkeypatch.setattr(http_retry.asyncio, "sleep", sleep)
+        node = create_node(OutlookReadConfig(folder="inbox", max_results=5, search_query="ada@example.com"))
+        throttled = {"error": {"code": "ApplicationThrottled",
+                               "message": "Application is over its MailboxConcurrency limit."}}
+        with respx.mock() as graph:
+            reads = graph.route(method="GET", host="graph.microsoft.com").mock(side_effect=[
+                httpx.Response(429, headers={"Retry-After": "1"}, json=throttled),
+                httpx.Response(200, json={"value": []}),
+            ])
+            result = await node.execute({})
+
+        assert result["status"] == "success" and result["email_count"] == 0
+        assert reads.call_count == 2 and waits == [1.0]
+
+    @pytest.mark.asyncio
     async def test_read_emails_with_filter(self):
         """Test reading emails with filter query."""
         config = OutlookReadConfig(

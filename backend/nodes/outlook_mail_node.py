@@ -28,10 +28,17 @@ from nodes.scopes.microsoft import OUTLOOK_SCOPES
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from nodes.oauth.microsoft_oauth import is_token_expired, refresh_access_token
 from utils.email_body import ensure_html_body
+from utils.http_retry import RetryAfterTransport
 
 logger = logging.getLogger(__name__)
 
 GRAPH_API_BASE = "https://graph.microsoft.com/v1.0"
+
+
+def _graph_client(**kwargs: Any) -> httpx.AsyncClient:
+    """A client that waits out Graph's throttling 429s (``ApplicationThrottled``, ``MailboxConcurrency``) as its
+    Retry-After asks."""
+    return httpx.AsyncClient(transport=RetryAfterTransport(), **kwargs)
 
 # Graph calendar-event change-notification subscriptions expire; renew well
 # within the ~3-day (4230 min) cap. The trigger's webhook is the wake signal.
@@ -57,7 +64,7 @@ async def _graph_call(
     headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
     if params:
         params = {k: v for k, v in params.items() if v not in (None, "")}
-    async with httpx.AsyncClient(timeout=30.0) as client:
+    async with _graph_client(timeout=30.0) as client:
         response = await client.request(
             method, url, headers=headers, json=json_body, params=params
         )
@@ -3699,7 +3706,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         url = f"{GRAPH_API_BASE}/me/sendMail"
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.post(
                 url,
                 headers={
@@ -3784,7 +3791,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         request_url = self._build_odata_url(url, params)
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.get(
                 request_url,
                 headers={"Authorization": f"Bearer {access_token}"},
@@ -3873,7 +3880,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         payload = {"comment": body}
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.post(
                 url,
                 headers={
@@ -3933,7 +3940,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if comment:
             payload["comment"] = comment
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.post(
                 url,
                 headers={
@@ -4021,7 +4028,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         # $expand, which would pull full contentBytes for every attachment.
         request_url = self._build_odata_url(url, {})
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.get(
                 request_url,
                 headers={"Authorization": f"Bearer {access_token}"},
@@ -4160,7 +4167,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         payload = {"isRead": config.is_read}
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.patch(
                 url,
                 headers={
@@ -4210,7 +4217,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if config.permanent:
             # Permanently delete the message
             url = f"{GRAPH_API_BASE}/me/messages/{config.message_id}"
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.delete(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -4226,7 +4233,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             # Move to deleted items folder
             url = f"{GRAPH_API_BASE}/me/messages/{config.message_id}/move"
             payload = {"destinationId": "deleteditems"}
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -4277,7 +4284,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         payload = {"destinationId": config.destination_folder}
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.post(
                 url,
                 headers={
@@ -4354,7 +4361,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
                 config.attachments
             )
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.post(
                 url,
                 headers={
@@ -4411,7 +4418,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         request_url = self._build_odata_url(url, params)
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.get(
                 request_url,
                 headers={"Authorization": f"Bearer {access_token}"},
@@ -4480,7 +4487,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         payload = {"displayName": config.folder_name}
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.post(
                 url,
                 headers={
@@ -4537,7 +4544,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/messages/{config.message_id}/attachments"
         extract = config.extract_text == "true"
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.get(
                 url, headers={"Authorization": f"Bearer {access_token}"}
             )
@@ -4638,7 +4645,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         url = f"{GRAPH_API_BASE}/me/mailboxSettings"
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.get(
                 url, headers={"Authorization": f"Bearer {access_token}"}
             )
@@ -4728,7 +4735,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         payload = {"automaticRepliesSetting": auto_reply_setting}
 
-        async with httpx.AsyncClient() as client:
+        async with _graph_client() as client:
             response = await client.patch(
                 url,
                 headers={
@@ -4774,7 +4781,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         payload = {"destinationId": config.destination_folder}
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -4828,7 +4835,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             payload["isRead"] = config.is_read
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.patch(
                     url,
                     headers={
@@ -4872,7 +4879,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/messages/{config.message_id}/send"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -4905,7 +4912,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/messages/{config.message_id}/createReply"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -4942,7 +4949,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/messages/{config.message_id}/createReplyAll"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -4977,7 +4984,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/messages/{config.message_id}/createForward"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -5031,7 +5038,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         }
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -5074,7 +5081,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/messages/{config.message_id}/attachments/{config.attachment_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.delete(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -5112,7 +5119,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         payload = {"displayName": config.display_name}
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.patch(
                     url,
                     headers={
@@ -5150,7 +5157,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/mailFolders/{config.folder_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.delete(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -5185,7 +5192,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         payload = {"destinationId": config.destination_folder_id}
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -5229,7 +5236,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         payload = {"destinationId": config.destination_folder_id}
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -5272,7 +5279,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/mailFolders/inbox/messageRules"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -5308,7 +5315,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/mailFolders/inbox/messageRules/{config.rule_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -5353,7 +5360,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
                 "actions": actions,
             }
 
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -5403,7 +5410,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             payload["actions"] = json.loads(config.actions)
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.patch(
                     url,
                     headers={
@@ -5441,7 +5448,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/mailFolders/inbox/messageRules/{config.rule_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.delete(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -5475,7 +5482,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/outlook/masterCategories"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -5511,7 +5518,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/outlook/masterCategories/{config.category_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -5546,7 +5553,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         payload = {"displayName": config.display_name, "color": config.color}
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -5588,7 +5595,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         payload = {"color": config.color}
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.patch(
                     url,
                     headers={
@@ -5626,7 +5633,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/outlook/masterCategories/{config.category_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.delete(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -5664,7 +5671,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/messages/{config.message_id}/$value"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url,
                     headers={
@@ -5713,7 +5720,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         }
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -5766,7 +5773,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         request_url = self._build_odata_url(url, params)
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     request_url,
                     headers={"Authorization": f"Bearer {access_token}"},
@@ -5839,7 +5846,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             payload["isOnlineMeeting"] = True
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -5881,7 +5888,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/events/{config.event_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -5930,7 +5937,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             }
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.patch(
                     url,
                     headers={
@@ -5968,7 +5975,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/events/{config.event_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.delete(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -6007,7 +6014,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             payload["comment"] = self._resolve_template(config.comment, inputs)
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -6051,7 +6058,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             payload["comment"] = self._resolve_template(config.comment, inputs)
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -6096,7 +6103,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             payload["comment"] = self._resolve_template(config.comment, inputs)
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -6141,7 +6148,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             payload["comment"] = self._resolve_template(config.comment, inputs)
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -6181,7 +6188,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/events/{config.event_id}/dismissReminder"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -6217,7 +6224,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         }
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -6280,7 +6287,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         }
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -6331,7 +6338,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         }
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -6375,7 +6382,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         }
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url,
                     headers={"Authorization": f"Bearer {access_token}"},
@@ -6412,7 +6419,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/calendars"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -6446,7 +6453,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/calendarGroups"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -6480,7 +6487,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/places/microsoft.graph.roomList"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -6532,7 +6539,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         request_url = self._build_odata_url(url, params)
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     request_url,
                     headers={"Authorization": f"Bearer {access_token}"},
@@ -6598,7 +6605,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             payload["companyName"] = self._resolve_template(config.company_name, inputs)
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -6639,7 +6646,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/contacts/{config.contact_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -6688,7 +6695,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
             payload["mobilePhone"] = self._resolve_template(config.mobile_phone, inputs)
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.patch(
                     url,
                     headers={
@@ -6726,7 +6733,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/contacts/{config.contact_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.delete(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -6756,7 +6763,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/contactFolders"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -6799,7 +6806,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         payload = {"displayName": config.display_name}
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
@@ -6839,7 +6846,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/contactFolders/{config.folder_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.get(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )
@@ -6874,7 +6881,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         payload = {"displayName": config.display_name}
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.patch(
                     url,
                     headers={
@@ -6912,7 +6919,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         url = f"{GRAPH_API_BASE}/me/contactFolders/{config.folder_id}"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with _graph_client() as client:
                 response = await client.delete(
                     url, headers={"Authorization": f"Bearer {access_token}"}
                 )

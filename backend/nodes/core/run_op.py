@@ -13,8 +13,10 @@ mocking, reference resolution, execution records) that don't hold for an
 ad-hoc agent-initiated call.
 """
 
+import asyncio
 import logging
-from typing import Any, Dict, Optional
+from contextlib import asynccontextmanager
+from typing import Any, AsyncIterator, Dict, List, Optional
 
 from billing.exceptions import InsufficientBalanceError, OwnerResolutionError
 from nodes.core.registry import NodeFactory
@@ -22,6 +24,29 @@ from nodes.core.oauth_audit import caller_path_scope
 from utils.credentials import resolve_credential_with_owner_fallback
 
 logger = logging.getLogger(__name__)
+
+# At most this many calls run at once against one credential (one connected account), in this process: providers
+# cap concurrent requests per account (Microsoft Graph answers a fifth to one mailbox 429 MailboxConcurrency), and an
+# agent's parallel tool calls all land on the same one.
+CREDENTIAL_CONCURRENCY = 4
+_places: Dict[str, List[Any]] = {}  # credential id -> [its semaphore, how many hold or wait on it]
+
+
+@asynccontextmanager
+async def credential_place(credential_id: Optional[str]) -> AsyncIterator[None]:
+    """One of the credential's ``CREDENTIAL_CONCURRENCY`` places, waited for; no credential, no wait."""
+    if not credential_id:
+        yield
+        return
+    place = _places.setdefault(credential_id, [asyncio.Semaphore(CREDENTIAL_CONCURRENCY), 0])
+    place[1] += 1
+    try:
+        async with place[0]:
+            yield
+    finally:
+        place[1] -= 1
+        if not place[1]:
+            del _places[credential_id]
 
 
 def needs_credential_hint(node_type: str, operation: Optional[str], config=None) -> bool:
@@ -154,8 +179,9 @@ async def run_node_operation(
 
     logger.info(f"[RunOp] Executing {node_type}.{operation} for user {user_id}")
     try:
-        with caller_path_scope("execute"):
-            return await instance.run({})
+        async with credential_place(credential_id):
+            with caller_path_scope("execute"):
+                return await instance.run({})
     except (InsufficientBalanceError, OwnerResolutionError):
         # Billing-gate verdicts are actionable as-is; the missing-credential
         # hint below would mis-blame auth for an out-of-credits abort on a
@@ -241,13 +267,14 @@ async def run_node_lookup(
 
     logger.info(f"[RunOp] Lookup {node_type}.{field_name} for user {user_id}")
     try:
-        result = await node_class.load_field_options(
-            field_name=field_name,
-            credential_data=credential_data,
-            context=lookup_context,
-            page_token=page_token,
-            search=normalize_search(search),
-        )
+        async with credential_place(credential_id):
+            result = await node_class.load_field_options(
+                field_name=field_name,
+                credential_data=credential_data,
+                context=lookup_context,
+                page_token=page_token,
+                search=normalize_search(search),
+            )
     except Exception as e:
         if credential_data is None:
             # Loaders assume an authenticated credential dict; without one they
