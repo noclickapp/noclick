@@ -17,8 +17,8 @@ class CoordinatorContextRepo:
         return metadata.get("coordinator_context") or {}, metadata.get("sdk_history") or []
 
     async def commit(self, *, previous, prefix, memory, epoch):
-        # Caller holds the account turn lock. Memory version CAS still protects
-        # concurrent dashboard edits; the pointer and memory change atomically.
+        # A turn's call, or the fold after it that holds no turn lock: the epoch, pointer and history prefix are
+        # compared here and the memory's version on save, so whatever moved first wins; both change atomically.
         async with self.pool.acquire() as conn, conn.transaction():
             metadata = await conn.fetchval(
                 "SELECT metadata FROM conversations WHERE conversation_id=$1 AND user_id=$2::uuid FOR UPDATE",

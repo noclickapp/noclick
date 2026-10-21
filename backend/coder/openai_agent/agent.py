@@ -1166,6 +1166,16 @@ class Agent:
             message=final_message,
             finished=True,
         ))
+        self._settle_context()
+
+    def _settle_context(self) -> None:
+        """With the reply out, fold what the next turn would otherwise wait on, in the background."""
+        from coder.openai_agent.compaction import Compactor
+        from utils.async_helpers import spawn
+
+        compactor = getattr(self, "_context_filter", None) or getattr(self, "_call_model_input_filter", None)
+        if isinstance(compactor, Compactor):
+            spawn(compactor.settle(), name=f"compaction.settle:{getattr(self, 'conversation_id', None)}")
 
     @staticmethod
     def _build_user_input(

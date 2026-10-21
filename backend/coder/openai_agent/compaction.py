@@ -68,13 +68,16 @@ def parse_summary(text):
 class Budget:
     # Conservative portable ceiling for a model route reached through OpenRouter.
     # Includes system/tools and reserves room for output; does not assume a
-    # provider-specific encrypted compaction format. A view folds once it would
-    # pass ``hard``, down to ``target``: every fold rewrites the prompt the
-    # provider cached, so none happens before it must.
+    # provider-specific encrypted compaction format. A call's view folds once it
+    # would pass ``hard``, down to ``target``: every fold rewrites the prompt the
+    # provider cached, so none happens mid-run before it must. Once a run is
+    # over, a conversation past ``settle`` folds down to ``target`` in the
+    # background, so the next run starts with room and rarely waits on a summary.
     target: int = 20000
     hard: int = 48000
     chunk: int = 12000
     recent: int = 6000
+    settle: int = 32000
 
 
 # A turn's summary calls at most; past them, older tool results are cut in the model's view instead.
@@ -273,7 +276,9 @@ class Compactor:
     before sent (a run's first call, the last run's), which the provider has
     cached; a fold or a cut rewrites that prompt from the item it touches on.
     So a call folds only past the hard ceiling, and a call or result cut in the
-    view stays cut, the same way, for the rest of the run (``cut``)."""
+    view stays cut, the same way, for the rest of the run (``cut``). The fold
+    the next run would otherwise wait on happens once this one is over
+    (``settle``), off its reply's path."""
 
     def __init__(self, store: CheckpointStore, *, model, user_id, user_email=None, organization_id=None,
                  budget=None, notify: Optional[Callable[[str], None]] = None):
@@ -284,6 +289,9 @@ class Compactor:
         self.budget = budget or Budget()
         self.failed = False
         self.summaries = 0
+        # What every call's view costs beside its history (instructions, tool schemas, output), as the run's last
+        # call measured it; None before its first.
+        self.overhead: Optional[int] = None
         # The tool calls and results this run cut in the model's view: by ``_cut_key``, its floor and its cut.
         self.cut: Dict[Tuple[Optional[str], Optional[str]], Tuple[int, Dict[str, Any]]] = {}
 
@@ -299,8 +307,49 @@ class Compactor:
         return token_count(value, self.model)
 
     async def filter(self, data):
+        tool_schemas = [{"name": getattr(t, "name", ""), "description": getattr(t, "description", ""),
+                         "parameters": getattr(t, "params_json_schema", {})} for t in data.agent.tools]
+        self.overhead = await asyncio.to_thread(self._count, [data.model_data.instructions, tool_schemas])
+        self.overhead += 6000  # output + framing headroom
         raw = data.model_data.input
+        covered, foldable, effective, total = await self._fold(raw, self.budget.hard)
+        if total > self.budget.hard:
+            # What can't fold (this turn's tool calls and results, the recent tail's) is cut instead, in the model's
+            # view; once the turn has spent its summaries or one failed, so is everything past the checkpoint, oldest
+            # first.
+            capped = self.summaries >= MAX_SUMMARIES or self.failed
+            start = len(effective) - (len(raw) - (covered if capped else foldable))
+            effective, total = await self._cut(effective, start, total)
+        if total > self.budget.hard:
+            if covered < foldable:
+                raise ContextBudgetError("This conversation needs compaction, but a safe checkpoint could not be "
+                                         "saved. Its history is intact; retry after resolving the memory or model "
+                                         "error.")
+            raise ContextBudgetError("The latest messages are too large for the model's context, even with their "
+                                     "tool calls and results cut short. The conversation's history is intact; send a "
+                                     "shorter message, or ask for less at a time.")
+        return ModelInputData(input=effective, instructions=data.model_data.instructions)
+
+    async def settle(self) -> None:
+        """Once the run is over (its reply sent), fold the conversation down to ``target`` when it passes
+        ``budget.settle``, so the next turn starts well under the hard ceiling and its calls don't wait on a summary.
+        Bounded by the same summaries as the run's calls; a person's edit or a turn that folds first wins, and this
+        stops."""
+        if self.overhead is None or self.failed:
+            return
+        self.cut = {}  # the run's cuts were its own view; the next run starts from the history
+        await self._fold(None, self.budget.settle, settling=True)
+
+    async def _size(self, items):
+        return self.overhead + await asyncio.to_thread(self._count, items)
+
+    async def _fold(self, raw, trigger, *, settling=False):
+        """The view of ``raw`` (None: the stored history) past the conversation's checkpoint, folding older history
+        into it in bounded chunks once the view passes ``trigger``: ``(covered, foldable, view, size)``. A conflict
+        folds no more this run (a call's view reloads the checkpoint); a failed summary leaves the history as it was.
+        ``settling``: after the run, where nobody watches and nothing reads the view."""
         checkpoint, stored = await self.store.load()
+        raw = stored if raw is None else raw
         covered = checkpoint.get("covered", 0)
         if covered > len(raw) or (covered and fingerprint(raw[:covered]) != checkpoint["fingerprint"]):
             raise ContextBudgetError("Context checkpoint no longer matches this conversation; history is preserved.")
@@ -321,19 +370,11 @@ class Compactor:
         # A cut is made from the item as it was, so the same call or result reads the same in every call of the run.
         self._originals = {_cut_key(item): item for item in raw if _cuttable(item)}
 
-        tool_schemas = [{"name": getattr(t, "name", ""), "description": getattr(t, "description", ""),
-                         "parameters": getattr(t, "params_json_schema", {})} for t in data.agent.tools]
-        overhead = await asyncio.to_thread(self._count, [data.model_data.instructions, tool_schemas])
-        overhead += 6000  # output + framing headroom
-
-        async def size(items):
-            return overhead + await asyncio.to_thread(self._count, items)
-
         effective = shaped()
-        total = await size(effective)
+        total = await self._size(effective)
         compacting = False
         foldable = len(raw)  # nothing is cut before the history is measured
-        if total > self.budget.hard:
+        if total > trigger:
             try:
                 boundaries = safe_boundaries(raw)
                 costs = await asyncio.to_thread(lambda: [self._count(item) for item in raw])
@@ -368,7 +409,7 @@ class Compactor:
                             cumulative[end] - cumulative[covered] - self.budget.chunk, self._count)
                     else:
                         chunk = raw[covered:end]
-                    if not compacting:
+                    if not compacting and not settling:
                         compacting = True
                         self._notify("compacting")
                     self.summaries += 1
@@ -377,11 +418,12 @@ class Compactor:
                                                                  summary=summary, current=memory)
                     covered = end
                     effective = shaped()
-                    total = await size(effective)
+                    total = await self._size(effective)
                     cuts = [i for i in cuts if i > covered]
             except CheckpointConflict:
                 self.failed = True
-                return await self.filter(data)  # respect concurrent user edits/deletion immediately
+                # Respect concurrent user edits/deletion (or a fold another turn made) immediately.
+                return (covered, foldable, effective, total) if settling else await self._fold(raw, trigger)
             except Exception:
                 self.failed = True  # one failure per turn; no retry storm
                 logger.exception("Compaction failed; preserving context for %s", self.user_id)
@@ -390,24 +432,9 @@ class Compactor:
             finally:
                 if compacting:
                     self._notify("compacted")
-            # What can't fold (this turn's tool calls and results, the recent tail's) is cut instead, in the model's
-            # view; once the turn has spent its summaries or one failed, so is everything past the checkpoint, oldest
-            # first.
-            capped = self.summaries >= MAX_SUMMARIES or self.failed
-            start = len(effective) - (len(raw) - (covered if capped else foldable))
-            if total > self.budget.hard:
-                effective, total = await self._cut(effective, start, total, size)
-        if total > self.budget.hard:
-            if covered < foldable:
-                raise ContextBudgetError("This conversation needs compaction, but a safe checkpoint could not be "
-                                         "saved. Its history is intact; retry after resolving the memory or model "
-                                         "error.")
-            raise ContextBudgetError("The latest messages are too large for the model's context, even with their "
-                                     "tool calls and results cut short. The conversation's history is intact; send a "
-                                     "shorter message, or ask for less at a time.")
-        return ModelInputData(input=effective, instructions=data.model_data.instructions)
+        return covered, foldable, effective, total
 
-    async def _cut(self, items, start, total, size):
+    async def _cut(self, items, start, total):
         """``items`` with tool calls' arguments and tool results past ``start`` cut to the floor, oldest first: the
         older ones down to the target, as a fold goes, so the calls after this one extend the cut view until the
         ceiling comes round again; the latest call group only while still past the ceiling. Before those, a call
@@ -437,7 +464,7 @@ class Compactor:
                     total -= await asyncio.to_thread(lambda: self._count(items[i]) - self._count(cut))
                     items[i] = cut
                     self.cut[key] = (floor, cut)
-        return items, await size(items)
+        return items, await self._size(items)
 
     def _notify(self, status: str) -> None:
         if self.notify is None:
