@@ -53,6 +53,31 @@ async def test_pdf_and_long_text_are_stored_and_paged_with_owner_scope(files):
         await attachments.read_attachment(pool, USER, str(row["id"]), -1)
 
 
+async def test_a_file_uploads_while_it_is_read(files, monkeypatch):
+    """A voice note's turn waits on its upload and its transcript: one goes while the other is made."""
+    import asyncio
+
+    pool, upload = files
+    uploading = asyncio.Event()
+
+    async def store(**kwargs):
+        uploading.set()
+
+    async def transcribe(ref, data, billing):
+        await asyncio.wait_for(uploading.wait(), timeout=2)  # the upload started before the reading ended
+        return {"extracted_text": "What's my balance?", "extraction_method": "ai_transcription",
+                "extraction_error": ""}
+
+    upload.side_effect = store
+    monkeypatch.setattr(attachments, "_read", transcribe)
+    text, _ = await prepare(b"OggS voice", kind="audio", mime_type="audio/ogg", filename="note.ogg", voice=True,
+                            caption="")
+    assert text.endswith("What's my balance?")
+    row = await pool.fetchrow("SELECT * FROM workflow_resources WHERE name = 'note.ogg'")
+    assert row["metadata"]["extracted_text"] == "What's my balance?" and row["size_bytes"] == len(b"OggS voice")
+    assert upload.await_args.kwargs["key"] == row["storage_ref"]
+
+
 async def test_scanned_pdf_uses_billed_ocr_and_paging_does_not_repeat_it(files, monkeypatch):
     pool, _ = files
     from billing.usage_tracker import usage_tracker

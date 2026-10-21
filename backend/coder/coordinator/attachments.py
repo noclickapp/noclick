@@ -17,7 +17,7 @@ from typing import NamedTuple
 
 from nodes.core.media_digest import DigestContext, DigestError, MediaRef, base_mime, digester_for, media_kind
 from utils.content_extraction import BillingContext, ExtractionError, extract_content
-from utils.resource_store import RESOURCE_BUCKET, create_resource_from_bytes, resource_type_for_mime
+from utils.resource_store import RESOURCE_BUCKET, record_resource, resource_type_for_mime, upload_resource_bytes
 from wss.sender.schema import ContentItem, ImageUrl
 
 PAGE_CHARS = 8000
@@ -121,10 +121,16 @@ async def prepare_attachment(data: bytes, *, kind: str, mime_type: str, filename
     kind = classify(kind, mime_type, filename)
     check_limits(kind, len(data))
     ref = media_ref(kind, size=len(data), voice=voice)
+    resource_id = str(uuid.uuid4())
+    # The file goes up while it's read: a voice note's turn waits on both.
+    upload = asyncio.ensure_future(upload_resource_bytes(
+        user_id=billing.user_id, workflow_id=None, resource_id=resource_id, filename=kind.name, body=data,
+        content_type=kind.mime))
     reading = EMPTY_READING if kind.visual else await _read(ref, data, billing)
-    resource = await create_resource_from_bytes(
-        user_id=billing.user_id, organization_id=billing.organization_id, workflow_id=None,
-        body=data, content_type=kind.mime, filename=kind.name, metadata={"source": SOURCE, **reading},
+    resource = await record_resource(
+        user_id=billing.user_id, organization_id=billing.organization_id, workflow_id=None, resource_id=resource_id,
+        storage_ref=await upload, size_bytes=len(data), content_type=kind.mime, filename=kind.name,
+        metadata={"source": SOURCE, **reading},
     )
     return _blocks(label=ref.label, resource_id=resource["resource_id"], url=resource["download_url"],
                    caption=caption, visual=kind.visual, reading=reading, animated=animated)

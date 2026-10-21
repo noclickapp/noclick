@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from nodes.agent.handlers.llm import execute_llm_model
-from utils.turn_events import TURN_WRAP_UP_KEY
+from utils.turn_events import TURN_FIRST_EFFORT_KEY, TURN_WRAP_UP_KEY
 
 pytestmark = pytest.mark.asyncio
 USER_ID = "00000000-0000-0000-0000-000000000001"
@@ -34,3 +34,8 @@ async def test_a_turn_the_platform_names_closing_words_for_wraps_up(monkeypatch)
 
 async def test_any_other_turn_fails_at_its_last_model_call_as_before(monkeypatch):
     assert (await _created_with(monkeypatch, {}))["wrap_up"] is None
+
+
+async def test_a_turn_someone_waits_on_starts_with_the_effort_the_platform_names(monkeypatch):
+    assert (await _created_with(monkeypatch, {TURN_FIRST_EFFORT_KEY: "low"}))["first_call_effort"] == "low"
+    assert (await _created_with(monkeypatch, {}))["first_call_effort"] is None

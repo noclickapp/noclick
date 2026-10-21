@@ -71,14 +71,43 @@ async def create_resource_from_bytes(
     ledger/outbox; callers must guard retries before uploading.
     """
     resource_id = resource_id or str(uuid.uuid4())
-    storage_ref = f"{user_id}/{workflow_id or 'account'}/{resource_id}/{filename}"
-    rtype = resource_type or resource_type_for_mime(content_type)
-    size_bytes = len(body)
+    storage_ref = await upload_resource_bytes(user_id=user_id, workflow_id=workflow_id, resource_id=resource_id,
+                                              filename=filename, body=body, content_type=content_type)
+    return await record_resource(
+        user_id=user_id, workflow_id=workflow_id, node_id=node_id, organization_id=organization_id,
+        resource_id=resource_id, storage_ref=storage_ref, size_bytes=len(body), content_type=content_type,
+        filename=filename, resource_type=resource_type, metadata=metadata, connection=connection,
+    )
 
+
+async def upload_resource_bytes(*, user_id: str, workflow_id: Optional[str], resource_id: str, filename: str,
+                                body: bytes, content_type: str) -> str:
+    """Put *body* where resource ``resource_id`` keeps it; its storage ref. ``record_resource`` then makes the row,
+    so a caller can read a file while it uploads."""
+    storage_ref = f"{user_id}/{workflow_id or 'account'}/{resource_id}/{filename}"
     await upload_bytes_to_r2_async(
         bucket=RESOURCE_BUCKET, key=storage_ref, body=body, content_type=content_type
     )
+    return storage_ref
 
+
+async def record_resource(
+    *,
+    user_id: str,
+    workflow_id: Optional[str],
+    resource_id: str,
+    storage_ref: str,
+    size_bytes: int,
+    content_type: str,
+    filename: str,
+    node_id: Optional[str] = None,
+    organization_id: Optional[str] = None,
+    resource_type: Optional[str] = None,
+    metadata: Optional[Dict[str, Any]] = None,
+    connection=None,
+) -> Dict[str, Any]:
+    """The ``workflow_resources`` row for bytes already uploaded (``upload_resource_bytes``)."""
+    rtype = resource_type or resource_type_for_mime(content_type)
     await (connection or database_pool.get_native_pool()).execute(
         """
         INSERT INTO workflow_resources

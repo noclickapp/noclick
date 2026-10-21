@@ -12,7 +12,7 @@ import pytest
 
 from agents import Agent as SDKAgent
 
-from coder.openai_agent.agent import Agent, _build_model_settings, _session_key
+from coder.openai_agent.agent import Agent, _build_model_settings, _session_key, _with_effort
 from coder.openai_agent.config import AgentConfiguration, LLMConfig
 from coder.workflow.pass_base import build_provider_extra_body
 
@@ -130,3 +130,65 @@ class TestBuilderProviderExtraBody:
     @pytest.mark.parametrize("model", NON_OPENROUTER_MODELS)
     def test_non_openrouter_model_gets_empty_body(self, model):
         assert build_provider_extra_body(model, ["Fireworks"], "price") == {}
+
+
+class TestFirstCallEffort:
+    """A turn someone waits on starts with a call that reasons little, so its first words come sooner; the calls
+    after it reason as the model does by default."""
+
+    MODEL = "openrouter/~openai/gpt-luna-latest"
+
+    def test_it_asks_openrouter_for_that_effort_and_nothing_elsewhere(self):
+        base = _build_model_settings(self.MODEL, 0.7, conversation="c1")
+        quick = _with_effort(base, self.MODEL, "low")
+        assert quick.extra_body == {**base.extra_body, "reasoning": {"effort": "low"}}
+        assert "reasoning" not in base.extra_body  # the run's own settings are untouched
+        groq = "groq/llama-3.3-70b-versatile"
+        assert _with_effort(_build_model_settings(groq, 0.7), groq, "low") is None
+
+    async def test_a_runs_first_call_goes_with_it_and_the_rest_as_the_run_was_set(self):
+        """Through the real streamed SDK: the first call reasons little, the call after its tool round as before, and
+        the next run starts the same way."""
+        from agents.models.interface import Model
+        from openai.types.responses import (
+            Response, ResponseCompletedEvent, ResponseFunctionToolCall, ResponseOutputMessage, ResponseOutputText,
+        )
+
+        sent = []
+
+        class ModelDouble(Model):
+            """Looks the balance up, then answers."""
+
+            async def get_response(self, *args, **kwargs):
+                raise AssertionError("the run streams")
+
+            async def stream_response(self, system_instructions, input, model_settings, *args, **kwargs):
+                sent.append((model_settings.extra_body or {}).get("reasoning"))
+                if len(sent) % 2:
+                    output = [ResponseFunctionToolCall(type="function_call", name="status", call_id=f"c{len(sent)}",
+                                                       arguments="{}")]
+                else:
+                    output = [ResponseOutputMessage(id="m", type="message", role="assistant", status="completed",
+                                                    content=[ResponseOutputText(type="output_text", annotations=[],
+                                                                                text="It's $0.99.")])]
+                response = Response.model_construct(id=f"r{len(sent)}", created_at=0, model="test", object="response",
+                                                    output=output, status="completed", usage=None)
+                yield ResponseCompletedEvent(type="response.completed", response=response, sequence_number=0)
+
+        async def emit(event):
+            pass
+
+        async def status(name, arguments):
+            return {"balance_usd": 0.99}
+
+        tool = {"type": "function", "function": {"name": "status", "description": "The balance",
+                                                 "parameters": {"type": "object", "properties": {}}}}
+        agent = await Agent.create(emit_message=emit, conversation_id="c1", enable_persistence=False,
+                                   custom_tool_executor=status, first_call_effort="low",
+                                   config=AgentConfiguration.from_kwargs(model=self.MODEL, custom_tools=[tool]))
+        agent._sdk_agent.model = ModelDouble()
+        settings = agent._sdk_agent.model_settings
+        for _ in range(2):
+            await agent({"content_items": [{"type": "text", "text": "what's my balance?"}]})
+        assert sent == [{"effort": "low"}, None, {"effort": "low"}, None]
+        assert agent._sdk_agent.model_settings is settings

@@ -40,10 +40,22 @@ def extract_inline_image_urls(text: str) -> List[str]:
     for pattern in (p for p in (_IMAGE_EXT_RE, _asset_url_re()) if p is not None):
         for m in pattern.finditer(text):
             url = m.group(0).rstrip('.,;:\'\")')
-            if url not in seen:
+            if url not in seen and not _names_other_media(url):
                 seen.add(url)
                 found.append(url)
     return found
+
+
+def _names_other_media(url: str) -> bool:
+    """A URL whose file name says it holds something other than an image (a voice note, a PDF): an attachment's
+    stored file keeps its name, and fetching one only to find it isn't an image holds up the turn."""
+    import mimetypes
+
+    from nodes.core.media_digest import audio_format
+
+    path = url.split('?', 1)[0].split('#', 1)[0].lower()
+    mime = mimetypes.guess_type(path)[0]
+    return (mime is not None and not mime.startswith('image/')) or audio_format(None, path) is not None
 
 
 async def fetch_image_bounded(url: str, max_bytes: int = 10 * 1024 * 1024) -> Tuple[str, str]:

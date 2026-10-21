@@ -136,6 +136,14 @@ def _build_model_settings(
     )
 
 
+def _with_effort(settings: ModelSettings, model: str, effort: str) -> Optional[ModelSettings]:
+    """``settings`` asking for ``effort`` of reasoning (OpenRouter's unified parameter, as rehearsals send it); None
+    for a model outside OpenRouter, where nothing is asked."""
+    if not model.startswith("openrouter/"):
+        return None
+    return dataclasses.replace(settings, extra_body={**(settings.extra_body or {}), "reasoning": {"effort": effort}})
+
+
 def _build_sdk_model(model: str, env: Optional[Dict[str, str]]) -> CostCapturingLitellmModel:
     """Construct the LiteLLM-backed SDK model for ``model``.
 
@@ -353,6 +361,7 @@ class Agent:
         context_filter=None,
         tool_step_preview: Optional[Callable[[Any], str]] = None,
         wrap_up: Optional[str] = None,
+        first_call_effort: Optional[str] = None,
         sandbox_region: Optional[str] = None,
         sandbox_volumes: Optional[Dict[str, str]] = None,
         sandbox_network: Optional[Sequence[str]] = None,
@@ -405,6 +414,9 @@ class Agent:
         # What the model is told once a run has made AGENT_MAX_TURNS model calls: it answers once more without
         # tools, instead of the run failing (the coordinator). Unset, the run fails as before.
         agent._wrap_up = wrap_up
+        # The reasoning effort of each run's first model call, which someone is waiting on (its first words, or
+        # its first step); the calls after it reason as the model does by default.
+        agent._first_call_effort = first_call_effort
         # Hook up the durable Session iff caller asked for persistence AND
         # gave us a conversation_id to key it on. Falls through to the
         # transient in-memory ``_history`` path otherwise.
@@ -961,14 +973,27 @@ class Agent:
             result = None
             env_ctx = override_env(**env_overrides) if env_overrides else contextlib.nullcontext()
             notes = turn_notes.start()
+            settings = self._sdk_agent.model_settings
+            effort = getattr(self, "_first_call_effort", None)
+            quick = effort and _with_effort(settings, self.config.llm.model, effort)
             try:
                 with env_ctx:
                     run_options = {}
                     from coder.openai_agent.compaction import chain
 
-                    input_filter = getattr(self, "_call_model_input_filter", None) or chain(
+                    restore = None
+                    if quick:
+                        # The SDK reads a call's settings before its input filter runs: the first call goes out with
+                        # these, and its filter puts the run's own back for the calls after it.
+                        self._sdk_agent.model_settings = quick
+
+                        async def restore(data):
+                            self._sdk_agent.model_settings = settings
+                            return data.model_data
+
+                    input_filter = chain(getattr(self, "_call_model_input_filter", None) or chain(
                         steering.filter_for(getattr(self, "conversation_id", None), getattr(self, "_session", None)),
-                        getattr(self, "_context_filter", None))
+                        getattr(self, "_context_filter", None)), restore)
                     if input_filter is not None:
                         from agents import RunConfig
                         run_options["run_config"] = RunConfig(call_model_input_filter=input_filter)
@@ -1132,6 +1157,7 @@ class Agent:
                 # after the run completes (e.g. user click race) should be a
                 # no-op, not a NoneType.cancel() crash.
                 self._active_result = None
+                self._sdk_agent.model_settings = settings
                 turn_notes.reset(notes)
             break  # attempt succeeded
 

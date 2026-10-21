@@ -14,7 +14,9 @@ the email's headers were), put ahead of the message after it's persisted.
 ``TURN_TRIGGER_KEY`` says what started a turn no person sent (a trigger's event,
 a schedule, a wake-up), merged into its persisted message's ``trigger``.
 ``TURN_WRAP_UP_KEY`` is what a turn that has made every model call it may is
-told, for one more call without tools that says where its work stands."""
+told, for one more call without tools that says where its work stands.
+``TURN_FIRST_EFFORT_KEY`` is the reasoning effort of a turn's first model call,
+for one someone waits on: its first words come sooner."""
 
 from __future__ import annotations
 
@@ -32,6 +34,7 @@ TURN_VIA_KEY = "_turnVia"
 TURN_NOTE_KEY = "_turnNote"
 TURN_TRIGGER_KEY = "_turnTrigger"
 TURN_WRAP_UP_KEY = "_turnWrapUp"
+TURN_FIRST_EFFORT_KEY = "_turnFirstEffort"
 # What a person reads when a turn fails: the error's own words stay in the log and the turn's record.
 TURN_FAILED_LINE = "Sorry, I hit a problem on my side. Please try that again in a moment."
 
@@ -61,6 +64,11 @@ def turn_note_of(node_config: Any) -> Optional[str]:
 def turn_wrap_up_of(node_config: Any) -> Optional[str]:
     """What a turn out of model calls is told for its last, tool-less one; None: it fails there."""
     return _text(node_config, TURN_WRAP_UP_KEY)
+
+
+def turn_first_effort_of(node_config: Any) -> Optional[str]:
+    """The reasoning effort of the turn's first model call, when a platform set one."""
+    return _text(node_config, TURN_FIRST_EFFORT_KEY)
 
 
 def turn_trigger_of(node_config: Any) -> Optional[Dict[str, Any]]:
