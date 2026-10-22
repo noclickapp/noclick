@@ -20,6 +20,7 @@ import { cn } from '~/lib/utils';
 import { useDroppableFolder } from '~/hooks/useDroppableFolder';
 import { NodeIconStack } from '~/components/shared/NodeIconStack';
 import { getNodeIconData } from '~/lib/nodeIconRegistry';
+import { useAutomationBudget } from './automationBudget';
 import type {
     WorkflowApp,
     FolderInfoLocal,
@@ -303,6 +304,8 @@ export const WorkflowCard = ({
     // When the flow isn't ours, the leading pill shows the owner's name, so the
     // adornment should read as a person rather than a workflow graph icon.
     const isSharedFlow = workflow.is_owner === false && !!workflow.owner_name;
+    // An agent's automation leads with its month's spend against its budget instead.
+    const budgeted = useAutomationBudget(workflow.id);
 
     return (
         <Card
@@ -426,16 +429,20 @@ export const WorkflowCard = ({
                         className="flex items-center gap-1.5 min-w-0"
                         title={formatWorkflowMetaTooltip(workflow)}
                     >
-                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm min-w-0">
-                            {isSharedFlow ? (
-                                <User className="w-3.5 h-3.5 shrink-0 text-sky-600 dark:text-sky-400" />
-                            ) : (
-                                <Workflow className="w-3.5 h-3.5 shrink-0 text-orange-600 dark:text-orange-400" />
-                            )}
-                            <span className="text-[0.625rem] text-foreground/80 truncate">
-                                {formatWorkflowLeadingPill(workflow)}
-                            </span>
-                        </div>
+                        {budgeted && canManage ? (
+                            <budgeted.Pill budget={budgeted.budget} variant="card" />
+                        ) : (
+                            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm min-w-0">
+                                {isSharedFlow ? (
+                                    <User className="w-3.5 h-3.5 shrink-0 text-sky-600 dark:text-sky-400" />
+                                ) : (
+                                    <Workflow className="w-3.5 h-3.5 shrink-0 text-orange-600 dark:text-orange-400" />
+                                )}
+                                <span className="text-[0.625rem] text-foreground/80 truncate">
+                                    {formatWorkflowLeadingPill(workflow)}
+                                </span>
+                            </div>
+                        )}
                         {relativeShort(workflow.updated_at) && (
                             <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm shrink-0">
                                 <Clock className="w-3 h-3 shrink-0 text-muted-foreground" />

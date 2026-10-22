@@ -6,7 +6,7 @@
  * with change detection, validation, and delete functionality.
  */
 
-import { useState, useEffect, type KeyboardEvent } from 'react';
+import { createContext, useContext, useEffect, useState, type KeyboardEvent, type ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { ShellDialog } from '~/components/shell/ShellDialog';
 import { BUTTON_GHOST, BUTTON_PRIMARY } from '~/components/shell/buttons';
@@ -19,6 +19,23 @@ export function submitOnModEnter(e: KeyboardEvent<HTMLTextAreaElement>) {
         e.preventDefault();
         e.currentTarget.closest('form')?.requestSubmit();
     }
+}
+
+/** What a field below name and description (`children`) holds to save with them; null while it holds no change. */
+export interface ItemFieldChange {
+    /** False while what's typed can't be saved. */
+    valid: boolean;
+    /** Saves it; throws when it couldn't, the field having said why. */
+    save(): Promise<void>;
+}
+
+const SaveWithItem = createContext<((change: ItemFieldChange | null) => void) | null>(null);
+
+/** Joins a field to its dialog's Save: `change` (memoized) is what it holds, null when unchanged. */
+export function useSaveWithItem(change: ItemFieldChange | null): void {
+    const report = useContext(SaveWithItem);
+    useEffect(() => report?.(change), [report, change]);
+    useEffect(() => () => report?.(null), [report]);
 }
 
 interface EditableItem {
@@ -50,6 +67,8 @@ interface EditItemPopupProps<T extends EditableItem> {
      * the backend would reject.
      */
     canEdit?: boolean;
+    /** Fields below name and description, saved with them (`useSaveWithItem`). */
+    children?: ReactNode;
 }
 
 export function EditItemPopup<T extends EditableItem>({
@@ -61,11 +80,14 @@ export function EditItemPopup<T extends EditableItem>({
     onUpdate,
     onDelete,
     canEdit = true,
+    children,
 }: EditItemPopupProps<T>) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [originalName, setOriginalName] = useState('');
     const [originalDescription, setOriginalDescription] = useState('');
+    const [fieldChange, setFieldChange] = useState<ItemFieldChange | null>(null);
+    const [saving, setSaving] = useState(false);
 
     // Populate form when item changes
     useEffect(() => {
@@ -85,18 +107,31 @@ export function EditItemPopup<T extends EditableItem>({
         }
     }, [item]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const renamed = name.trim() !== originalName || description.trim() !== originalDescription;
+    const hasChanges = renamed || fieldChange !== null;
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (item && name.trim()) {
+        if (!item || !name.trim() || saving) return;
+        if (fieldChange) {
+            setSaving(true);
+            try {
+                await fieldChange.save();
+            } catch {
+                return;
+            } finally {
+                setSaving(false);
+            }
+        }
+        if (renamed) {
             onUpdate(item.id, {
                 name: name.trim(),
                 description: description.trim() || ''
             });
+        } else {
+            onOpenChange(false);
         }
     };
-
-    // Check if changes have been made
-    const hasChanges = name.trim() !== originalName || description.trim() !== originalDescription;
 
     const noun = itemType.toLowerCase();
 
@@ -121,7 +156,7 @@ export function EditItemPopup<T extends EditableItem>({
                         {canEdit ? 'Cancel' : 'Close'}
                     </button>
                     {canEdit && (
-                        <button type="submit" disabled={!name.trim() || !hasChanges} className={BUTTON_PRIMARY}>
+                        <button type="submit" disabled={!name.trim() || !hasChanges || saving || fieldChange?.valid === false} className={BUTTON_PRIMARY}>
                             Save
                         </button>
                     )}
@@ -155,6 +190,7 @@ export function EditItemPopup<T extends EditableItem>({
                         onKeyDown={submitOnModEnter}
                     />
                 </label>
+                <SaveWithItem.Provider value={setFieldChange}>{children}</SaveWithItem.Provider>
             </div>
         </ShellDialog>
     );
