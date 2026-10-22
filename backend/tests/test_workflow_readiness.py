@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock
 import pytest
 from tests.fixtures.real_db_fixture import real_database
 from utils.workflow_readiness import (
+    STATUS_MEANINGS,
     activation_graph_scope,
     activation_issues,
     readiness_report,
@@ -348,4 +349,17 @@ async def test_whatsapp_repair_clears_old_registration_error(
     provider.assert_called_once()
     report = await readiness_report(db.pool, wid, graph, credential_health={})
     assert report["status"] == "waiting_for_input"
+    assert report["meaning"] == STATUS_MEANINGS["waiting_for_input"]
     assert report["registered_trigger_ids"] == ["in"]
+
+
+def test_each_status_says_what_it_means():
+    """Read alone, "waiting_for_input" sounded like a blocker: an assistant rebuilt a scheduled automation that was
+    ready and on, then told its owner it couldn't say the digest worked (2026-10-23). Every status a report can give
+    says beside it what it means, and the usual one for a new automation says nothing needs doing."""
+    from typing import get_args
+
+    from wss.sender.workflow_readiness_responses import WorkflowReadinessReport
+
+    assert set(STATUS_MEANINGS) == set(get_args(WorkflowReadinessReport.model_fields["status"].annotation))
+    assert "which is normal for a new automation: nothing needs doing" in STATUS_MEANINGS["waiting_for_input"]

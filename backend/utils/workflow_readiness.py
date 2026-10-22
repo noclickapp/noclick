@@ -20,6 +20,21 @@ class WorkflowNotReadyError(ValueError):
     pass
 
 
+# What each status means, beside it wherever a model reads one: alone, "waiting_for_input" read as a blocker, and an
+# assistant rebuilt a scheduled automation that was ready and told its owner it couldn't say it worked (2026-10-23).
+STATUS_MEANINGS = {
+    "needs_setup": "Something is in the way of it running: each issue says what, and where.",
+    "configured": "Nothing is in the way, but a trigger isn't registered with its service yet (or an Alarm step has "
+                  "no deadline armed), so nothing starts it on its own until it is.",
+    "waiting_for_input": "Ready and on: every trigger is registered (its schedule set, its webhook or subscription "
+                         "in place), and it runs the next time one fires. None has fired yet, which is normal for a "
+                         "new automation: nothing needs doing.",
+    "deadline_armed": "Ready and on: an Alarm step is watching a deadline, and fires if it passes.",
+    "input_observed": "It has run from real input to one of its triggers.",
+    "manual_only": "It has no trigger, so it runs only when started (from the app, the API or an agent).",
+}
+
+
 _activation_graph = ContextVar("activation_graph", default=None)
 
 
@@ -292,6 +307,7 @@ async def readiness_report(
         status = "manual_only"
     return {
         "status": status,
+        "meaning": STATUS_MEANINGS[status],
         "registered_trigger_ids": registered,
         "deadline_watches": watches,
         "alarm_node_ids": alarm_ids,
