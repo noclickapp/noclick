@@ -107,6 +107,76 @@ def test_a_node_whose_model_requires_credentials_activates_on_its_credential_ids
     assert [i["code"] for i in activation_issues(graph, "rings")] == ["missing_credentials"]
 
 
+def weekly_digest_graph(email_as_tool):
+    email = {"id": "email", "type": "automation-send-email", "config": {"operation": "send"}}
+    if email_as_tool:
+        email["config"]["agent_tool_operations"] = ["send"]
+    else:
+        email["config"].update(subject="Austin food events", body="{{ $('brain').response }}")
+    return {
+        "nodes": [
+            {"id": "monday", "type": "trigger-cron",
+             "config": {"schedules": [{"frequency": "week", "dayOfWeek": 1, "hour": 7, "minute": 0}]}},
+            {"id": "brain", "type": "agent", "config": {"model": "claude-code", "message": "List Austin food events.",
+                                                         "credentialIds": {"agent_claude_code_oauth": "c"}}},
+            email,
+        ],
+        "edges": [
+            {"source": "monday", "target": "brain"},
+            {"source": "email", "target": "brain", "sourceHandle": "top", "targetHandle": "bottom"}
+            if email_as_tool else {"source": "brain", "target": "email"},
+        ],
+    }
+
+
+@pytest.mark.parametrize("as_tool", [False, True], ids=["step", "agent_tool"])
+def test_a_step_that_takes_no_account_never_asks_for_one(as_tool):
+    """Send email takes no credentials (it mails the runner), so neither
+    readiness nor the builder's status line asks for an account for it, as a
+    step or as an agent's tool."""
+    from coder.workflow.operation_catalog import credential_status_line, node_requires_credentials
+
+    graph = weekly_digest_graph(as_tool)
+    assert activation_issues(graph) == []
+    assert activation_issues(graph, "monday") == []
+    email = graph["nodes"][2]["config"]
+    assert node_requires_credentials("automation-send-email", "send", email) is False
+    assert credential_status_line("automation-send-email", "send", email, "email") == (
+        "[credentials: not required for this operation]"
+    )
+
+
+def test_a_provider_that_takes_no_account_never_requires_one():
+    """Readiness judged a provider by its allowlist alone: every agent tool that takes no account (Send email) or
+    runs without one (HTTP request) needs none, whatever it allows, as the builder's step predicate says."""
+    from coder.workflow.operation_catalog import credentials_truly_optional, node_requires_credentials
+    from nodes.agent.node_op_tools import _iter_operation_defs, allowlist_requires_credentials, node_supports_op_tools
+    from nodes.core.credential_connect import credential_classes_for_node
+    from nodes.core.registry import NODE_REGISTRY
+
+    keyless = [
+        t for t, cls in NODE_REGISTRY.items()
+        if node_supports_op_tools(t) and (not credential_classes_for_node(cls) or credentials_truly_optional(t))
+    ]
+    assert {"automation-send-email", "automation-http-request"} <= set(keyless)
+    for node_type in keyless:
+        ops = [e["operation"] for e in _iter_operation_defs(NODE_REGISTRY[node_type])]
+        for allowed in (ops, []):
+            assert not allowlist_requires_credentials(node_type, allowed), node_type
+            assert not node_requires_credentials(node_type, None, {"agent_tool_operations": allowed}), node_type
+
+
+def test_a_tool_that_takes_an_account_still_asks_for_one():
+    graph = weekly_digest_graph(True)
+    graph["nodes"][2] = {"id": "email", "type": "automation-gmail",
+                         "config": {"agent_tool_operations": ["send_email_message"]}}
+    assert [(i["node_id"], i["code"]) for i in activation_issues(graph, "monday")] == [
+        ("email", "missing_credentials")
+    ]
+    graph["nodes"][2]["config"]["credentialIds"] = {"google_gmail_oauth": str(uuid.uuid4())}
+    assert activation_issues(graph, "monday") == []
+
+
 async def test_credentials_a_product_binds_per_run_dont_block_activation(monkeypatch):
     """A workflow whose product binds a node's credential on every run (a
     config override, never saved) activates holding none, on every path that

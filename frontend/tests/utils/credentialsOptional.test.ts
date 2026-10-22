@@ -88,4 +88,13 @@ describe('validation stays consistent with the UI', () => {
             })
         ).toBe(true);
     });
+
+    // Mirrors the backend's allowlist_requires_credentials and activation readiness.
+    it('a node that takes no account needs none as a step or a tool; one that takes an account does', () => {
+        const SEND_EMAIL = 'automation-send-email';
+        expect(hasUnconnectedCredentials(SEND_EMAIL, {}, singleOp('send'))).toBe(false);
+        expect(providerCredentialsMissing(SEND_EMAIL, {}, provider(['send']))).toBe(false);
+        expect(providerCredentialsMissing(SEND_EMAIL, {}, provider([]))).toBe(false);
+        expect(providerCredentialsMissing('automation-gmail', {}, provider(['send_email_message']))).toBe(true);
+    });
 });

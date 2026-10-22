@@ -514,16 +514,24 @@ def allowlist_requires_credentials(node_type: str, operations: List[Any]) -> boo
     when EVERY allowlisted op is x-credentials-optional (e.g. reddit's
     get_subreddit_posts). Conditional optionality (x-credentials-optional-if)
     is treated as requiring credentials — it depends on config values a
-    provider doesn't pin. Empty allowlist → True (conservative).
+    provider doesn't pin. Empty allowlist → True (conservative). A node whose
+    config takes no credentials (Send email) or runs without any (HTTP request)
+    needs none as a provider either, whatever it allows.
 
     Accepts the mixed (string | {operation, field_scopes}) shape.
     """
+    from coder.workflow.operation_catalog import credentials_truly_optional
+    from nodes.core.credential_connect import credential_classes_for_node
     from nodes.core.platform_billing import platform_key_funds
     from nodes.core.registry import NODE_REGISTRY
 
     op_names, _ = normalize_allowed_operations(operations)
     node_class = NODE_REGISTRY.get(node_type)
-    if node_class is None or not op_names:
+    if node_class is None:
+        return True
+    if not credential_classes_for_node(node_class) or credentials_truly_optional(node_type):
+        return False
+    if not op_names:
         return True
     by_op = {e["operation"]: e for e in _iter_operation_defs(node_class)}
     for op in op_names:
