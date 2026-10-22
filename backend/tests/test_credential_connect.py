@@ -301,6 +301,94 @@ async def test_a_vendor_key_is_probed_alike_under_its_harness_or_model_type(monk
     assert verdict.rejection and "invalid x-api-key" in verdict.rejection
 
 
+# ----------------------------------------------------------- linked fields
+#
+# Some fields name a resource NoClick's own provider account acts on: a WhatsApp session on its WAHooks account, a
+# number it bought, the server its bot was installed into, a workspace's Slack installation, a HubSpot portal's app
+# events. Only NoClick's linking flow writes them, so nothing typed in may name one, under any credential type.
+
+
+def test_the_linked_fields_are_declared_by_their_credential_classes():
+    assert cc.linked_field_names() == {"connection_id", "number_sid", "guild_id", "team_id", "hub_id"}
+    assert {t for t in cc._class_index() if cc.linked_only(t)} == {"whatsapp_qr", "phone_number", "discord_bot_install"}
+
+
+@pytest.mark.parametrize("credential_type,blob,field", [
+    ("whatsapp_qr", {"connection_id": "another-users-session"}, "connection_id"),
+    ("whatsapp_qr", {}, "connection_id"),
+    ("phone_number", {"phone_number": "+15550001111", "number_sid": "PN0123"}, "number_sid"),
+    ("discord_bot_install", {"guild_id": "1", "access_token": "a", "refresh_token": "r",
+                             "expires_at": "2099-01-01T00:00:00Z"}, "guild_id"),
+    ("slack_oauth", {"access_token": "xoxb-own", "team_id": "T0OTHER"}, "team_id"),
+    ("hubspot_oauth", {"access_token": "own", "hub_id": "12345"}, "hub_id"),
+    # Keys a class doesn't declare survive shaping, so a sibling or unknown type could carry one into a dict read.
+    ("whatsapp_access_token", {"access_token": "t", "phone_number_id": "1", "connection_id": "x"}, "connection_id"),
+    ("slack_bot_token", {"bot_token": "xoxb-own", "team_id": "T0OTHER"}, "team_id"),
+    ("hubspot_pat", {"access_token": "pat-own", "hub_id": "12345"}, "hub_id"),
+    ("mcp_api_key", {"api_key": "k", "connection_id": "x"}, "connection_id"),
+    ("agent_api_key", {"credentials": {"ANTHROPIC_API_KEY": "k"}, "connection_id": "x"}, "connection_id"),
+])
+async def test_a_typed_blob_never_names_what_only_noclick_links(credential_type, blob, field):
+    verdict = await cc.validate_for_connect(credential_type=credential_type, credential_data=blob, user_id="u")
+    assert not verdict.ok and verdict.evidence is None
+    assert list(verdict.field_errors) == [field]
+    assert "can't be entered" in verdict.message
+
+
+async def test_client_metadata_never_names_one_either():
+    verdict = await cc.validate_for_connect(
+        credential_type="discord_bot_token", credential_data={"bot_token": "own"}, user_id="u",
+        metadata={"guild_id": "someone-elses-server"})
+    assert list(verdict.field_errors) == ["guild_id"]
+
+
+async def test_the_refusal_says_how_noclick_links_it():
+    verdict = await cc.validate_for_connect(
+        credential_type="whatsapp_qr", credential_data={"connection_id": "x"}, user_id="u")
+    assert verdict.message == "Connection ID is set by NoClick when you scan the QR code; it can't be entered."
+    verdict = await cc.validate_for_connect(
+        credential_type="slack_oauth", credential_data={"access_token": "xoxb-own", "team_id": "T0"}, user_id="u")
+    assert verdict.message == "Team ID is set by NoClick when you sign in; it can't be entered."
+
+
+async def test_a_key_of_ones_own_is_still_judged_as_before():
+    verdict = await cc.validate_for_connect(
+        credential_type="slack_oauth", credential_data={"access_token": "xoxb-own"}, user_id="u")
+    assert verdict.ok
+    verdict = await cc.validate_for_connect(
+        credential_type="whatsapp_access_token", credential_data={"access_token": "t", "phone_number_id": "1"},
+        user_id="u", metadata={"provider": "meta"})
+    assert verdict.ok
+
+
+async def test_a_deployments_test_account_may_hold_a_made_up_link(monkeypatch):
+    """The one way past it: a value the deployment says its own test account may hold (hosted: a QA account and a
+    prefix no provider mints), asked with the account and the value."""
+    from utils import capabilities
+
+    asked = []
+
+    async def test_link(pool, *, user_id, value):
+        asked.append((user_id, value))
+        return user_id == "qa" and value.startswith("test-")
+
+    monkeypatch.setitem(capabilities._providers, capabilities.LINKED_TEST_VALUE, test_link)
+    ok = await cc.validate_for_connect(
+        credential_type="whatsapp_qr", credential_data={"connection_id": "test-1"}, user_id="qa")
+    assert ok.ok and ok.credential_data["connection_id"] == "test-1"
+    assert asked == [("qa", "test-1")]
+    for user_id, value in (("someone", "test-1"), ("qa", "real-session")):
+        refused = await cc.validate_for_connect(
+            credential_type="whatsapp_qr", credential_data={"connection_id": value}, user_id=user_id)
+        assert list(refused.field_errors) == ["connection_id"]
+
+
+async def test_metadata_carried_over_a_replace_is_only_the_linked_part():
+    assert cc.linked_metadata({"connection_id": "c", "phone_number": "+1", "provider": "wahooks"}) == {
+        "connection_id": "c"}
+    assert cc.linked_metadata(None) == {}
+
+
 # ------------------------------------------------------ evidence additions
 
 

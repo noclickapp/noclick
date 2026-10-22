@@ -20,7 +20,7 @@ import logging
 import copy
 import inspect
 import time
-from typing import Dict, Any, Optional, Tuple, Union, Literal, List, Annotated
+from typing import Dict, Any, ClassVar, Optional, Tuple, Union, Literal, List, Annotated
 
 import httpx
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
@@ -161,6 +161,8 @@ class SlackOAuthCredential(BaseModel):
     user_id_xoxp: Optional[str] = Field(
         None, title="OAuth User ID", json_schema_extra={"ui:hidden": True}
     )
+    # The workspace whose installation bot token and app events NoClick hands this credential: only sign-in names it.
+    linked_fields: ClassVar[tuple[str, ...]] = ("team_id",)
 
 
 class SlackBotTokenCredential(BaseModel):

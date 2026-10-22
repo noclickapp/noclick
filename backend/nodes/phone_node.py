@@ -7,7 +7,7 @@ instance without them says so instead of pretending."""
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Literal, Optional, Type, Union
+from typing import Any, ClassVar, Dict, Literal, Optional, Type, Union
 
 from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import Annotated
@@ -35,6 +35,8 @@ class PhoneNumberCredential(BaseModel):
     credential_type: Literal["phone_number"] = Field("phone_number", json_schema_extra={"ui:hidden": True})
     phone_number: str = Field(..., min_length=1, json_schema_extra={"ui:hidden": True})  # E.164
     number_sid: str = Field(..., min_length=1, json_schema_extra={"ui:hidden": True})  # provider id
+    # A number on NoClick's carrier account: only the purchase names it.
+    linked_fields: ClassVar[tuple[str, ...]] = ("number_sid",)
 
     model_config = ConfigDict(title="Phone Number", json_schema_extra={
         "x-credential-type": "purchase",

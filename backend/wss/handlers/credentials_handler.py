@@ -272,6 +272,7 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 credential_data=request.credential_data,
                 user_id=user_id,
                 pool=pool,
+                metadata=request.metadata,
             )
             if not verdict.ok:
                 await send_event(self.sio, sid, ResponseEvent(
@@ -641,35 +642,47 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
             # revoked_at — user-entered new secrets are the recovery path for
             # an auto-revoked credential. Name/metadata-only edits keep the
             # direct UPDATE (they never touch the blob).
-            verdict = None
-            if request.credential_data is not None:
-                from nodes.core.credential_connect import validate_for_connect
-                from utils.credentials import update_credential_data
+            from nodes.core.credential_connect import (
+                ConnectVerdict,
+                linked_field_errors,
+                linked_metadata,
+                validate_for_connect,
+            )
 
+            existing = await repo.fetch_with_access(request.credential_id, user_id, org_id)
+            credential_type = existing.credential_type if existing else None
+            if request.credential_data is not None:
                 # A replaced secret is judged exactly like a new one: shaped
                 # through its class and proven before it overwrites a row —
                 # resurrecting a revoked credential with a dead key would only
                 # move the failure into the next run.
-                existing = await repo.fetch_with_access(request.credential_id, user_id, org_id)
                 verdict = await validate_for_connect(
-                    credential_type=existing.credential_type if existing else None,
+                    credential_type=credential_type,
                     credential_data=request.credential_data,
                     user_id=user_id,
                     pool=pool,
+                    metadata=request.metadata,
                 )
-                if not verdict.ok:
-                    await send_event(self.sio, sid, ResponseEvent(
-                        request_id=request.request_id,
-                        data=CredentialUpdateResponse(
-                            success=False,
-                            message=verdict.message,
-                            field_errors=verdict.field_errors,
-                            hint=verdict.hint,
-                            reachable=False if verdict.rejection else None,
-                        ).model_dump(),
-                        error=verdict.message,
-                    ))
-                    return
+            else:
+                verdict = ConnectVerdict(credential_data={}, field_errors=await linked_field_errors(
+                    credential_type, None, request.metadata, user_id=user_id, pool=pool,
+                ))
+            if not verdict.ok:
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data=CredentialUpdateResponse(
+                        success=False,
+                        message=verdict.message,
+                        field_errors=verdict.field_errors,
+                        hint=verdict.hint,
+                        reachable=False if verdict.rejection else None,
+                    ).model_dump(),
+                    error=verdict.message,
+                ))
+                return
+
+            if request.credential_data is not None:
+                from utils.credentials import update_credential_data
 
                 updated = await update_credential_data(
                     credential_id=request.credential_id,
@@ -688,8 +701,13 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
 
             # Metadata is only re-applied here when the secret blob was NOT
             # replaced — the credential_data path already merged it inside
-            # update_credential_data.
-            metadata_update = request.metadata if request.credential_data is None else None
+            # update_credential_data. The replace keeps what only NoClick's
+            # linking flow writes (dropping a bot install's server would widen
+            # what its trigger hears).
+            metadata_update = (
+                {**request.metadata, **linked_metadata(existing.metadata if existing else None)}
+                if request.metadata is not None and request.credential_data is None else None
+            )
             row = await repo.update_metadata_or_fetch(
                 request.credential_id,
                 name=request.name,
@@ -719,7 +737,7 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 message="Credential updated successfully",
                 verification=(
                     CredentialTestConnectionResponse.from_evidence(verdict.evidence)
-                    if verdict is not None and verdict.evidence is not None else None
+                    if verdict.evidence is not None else None
                 ),
             )
             await send_event(self.sio, sid, ResponseEvent(

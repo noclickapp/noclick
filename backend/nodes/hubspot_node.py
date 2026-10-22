@@ -23,7 +23,7 @@ import time
 import json
 import json as json_module
 from datetime import datetime, timezone
-from typing import Dict, Any, Optional, List, Literal, Union, Annotated
+from typing import Dict, Any, ClassVar, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 import httpx
 
@@ -69,6 +69,8 @@ class HubSpotOAuthCredential(BaseModel):
     refresh_token: Optional[str] = Field(None, title="Refresh Token")
     expires_at: Optional[str] = Field(None, title="Token Expiry")  # ISO 8601
     hub_id: Optional[str] = Field(None, title="Hub ID")
+    # The portal whose app events NoClick's HubSpot app fans out to this credential: only sign-in names it.
+    linked_fields: ClassVar[tuple[str, ...]] = ("hub_id",)
 
     model_config = ConfigDict(
         json_schema_extra={

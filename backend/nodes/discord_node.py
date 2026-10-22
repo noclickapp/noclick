@@ -12,7 +12,7 @@ import logging
 import asyncio
 import os
 import time
-from typing import Dict, Any, Optional, Union, Literal, List, Annotated
+from typing import Dict, Any, ClassVar, Optional, Union, Literal, List, Annotated
 
 import httpx
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
@@ -114,6 +114,8 @@ class DiscordBotInstallCredential(BaseModel):
     refresh_token: str = Field(..., title="Refresh Token")
     expires_at: str = Field(..., title="Token Expiry")
     username: Optional[str] = Field(None, title="Discord Username")
+    # A server NoClick's bot is in, which the platform bot token acts on: only the install names it.
+    linked_fields: ClassVar[tuple[str, ...]] = ("guild_id",)
 
     model_config = ConfigDict(
         json_schema_extra={

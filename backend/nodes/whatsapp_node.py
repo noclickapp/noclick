@@ -24,7 +24,7 @@ import logging
 import os
 import time
 import json
-from typing import Dict, Any, Optional, List, Literal, Union, Annotated
+from typing import Dict, Any, ClassVar, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 import httpx
 
@@ -113,6 +113,8 @@ class WhatsAppQRCredential(BaseModel):
         description="WAHooks connection ID (auto-filled after QR scan)",
         json_schema_extra={"ui:hidden": True},
     )
+    # A session on NoClick's one WAHooks account: only the QR scan names it (utils.whatsapp_qr).
+    linked_fields: ClassVar[tuple[str, ...]] = ("connection_id",)
 
     model_config = ConfigDict(json_schema_extra={
         "x-credential-type": "qr_scan",

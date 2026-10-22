@@ -420,6 +420,12 @@ COORDINATOR_PLATFORM_TOOLS = "coordinator.platform_tools"
 # LookupError for no such account. Without one, the header is refused.
 VIEW_AS = "auth.view_as"
 
+# Whether an account may hold a made-up value in a field only NoClick's own
+# linking flow sets (nodes.core.credential_connect, ``linked_fields``): async
+# (pool, *, user_id, value) -> bool. A deployment's own test accounts, so a
+# benchmark can stand in for a QR scan no phone makes; without one, never.
+LINKED_TEST_VALUE = "credentials.linked_test_value"
+
 _providers: Dict[str, Any] = {}
 
 

@@ -301,6 +301,83 @@ class TestCredentialsHandler(BaseHandlerTest):
         stored = await get_credential(credential_id, user_id, pool=real_database.pool)
         assert stored['api_key'] == "fc-real-key", "a refused re-key leaves the row untouched"
 
+    async def _whatsapp_session(self, real_database, owner_id: str, connection_id: str) -> str:
+        """A whatsapp_qr credential as the QR scan leaves it (utils.whatsapp_qr.finalize_qr_connection)."""
+        return str(await real_database.fetchval(
+            "INSERT INTO credentials (owner_id, name, credential_type, credential, metadata) "
+            "VALUES ($1, 'WhatsApp', 'whatsapp_qr', $2, $3) RETURNING id",
+            owner_id,
+            get_encryption().encrypt_credential({"credential_type": "whatsapp_qr", "connection_id": connection_id}),
+            {"provider": "wahooks", "connection_id": connection_id, "phone_number": "+15550001111"},
+        ))
+
+    async def test_create_never_binds_a_whatsapp_session_it_did_not_scan(self, real_database, frontend_sio, sid):
+        """All sessions sit under NoClick's one WAHooks account, so a credential naming one would read and send as
+        it: another user's session id typed in (in the blob, in the metadata, under a sibling type) is refused and
+        no row is written. Only the QR scan binds a session."""
+        user_id = '00000000-0000-4000-8000-000000000001'
+        other_id = '00000000-0000-4000-8000-0000000000aa'
+        await self.create_test_user(real_database, user_id)
+        await self.create_test_user(real_database, other_id, 'wa-victim@example.com')
+        await self._whatsapp_session(real_database, other_id, 'conn-victim')
+
+        attempts = [
+            ("whatsapp_qr", {"connection_id": "conn-victim"}, None),
+            ("whatsapp_qr", {"connection_id": "conn-nobody-scanned"}, None),
+            ("whatsapp_qr", {"connection_id": "conn-victim"}, {"connection_id": "conn-victim"}),
+            ("whatsapp_access_token", {"access_token": "t", "phone_number_id": "1", "connection_id": "conn-victim"},
+             None),
+            ("api_key", {"key": "k"}, {"connection_id": "conn-victim"}),
+        ]
+        for i, (credential_type, data, metadata) in enumerate(attempts):
+            await send_event(frontend_sio, sid, CredentialCreateRequest(
+                event_name="credential:create", request_id=f"bind-{i}", name=f"Bind {i}",
+                credential_type=credential_type, credential_data=data, metadata=metadata,
+            ))
+            await asyncio.sleep(0.2)
+            response = self.get_main_api_emitted_events("response")[-1][1]
+            assert response['request_id'] == f'bind-{i}'
+            assert response['data']['success'] is False, credential_type
+            assert list(response['data']['field_errors']) == ['connection_id']
+            assert response['error'] == "Connection ID is set by NoClick when you scan the QR code; it can't be entered."
+
+        assert await real_database.fetchval(
+            "SELECT count(*) FROM credentials WHERE owner_id = $1 AND name LIKE 'Bind %'", user_id) == 0
+        assert await real_database.fetchval(
+            "SELECT owner_id::text FROM credentials WHERE metadata->>'connection_id' = 'conn-victim'") == other_id
+
+    async def test_update_never_moves_a_linked_field(self, real_database, frontend_sio, sid):
+        """An edit can't point the user's own WhatsApp at another session, in the blob or in the metadata, and a
+        metadata edit keeps the session it names (the replace would otherwise drop it from the row)."""
+        user_id = '00000000-0000-4000-8000-000000000001'
+        await self.create_test_user(real_database, user_id)
+        credential_id = await self._whatsapp_session(real_database, user_id, 'conn-own')
+
+        for i, change in enumerate(({"credential_data": {"connection_id": "conn-victim"}},
+                                    {"metadata": {"connection_id": "conn-victim"}})):
+            await send_event(frontend_sio, sid, CredentialUpdateRequest(
+                event_name="credential:update", request_id=f"move-{i}", credential_id=credential_id, **change,
+            ))
+            await asyncio.sleep(0.2)
+            response = self.get_main_api_emitted_events("response")[-1][1]
+            assert response['request_id'] == f'move-{i}'
+            assert response['data']['success'] is False
+            assert list(response['data']['field_errors']) == ['connection_id']
+
+        await send_event(frontend_sio, sid, CredentialUpdateRequest(
+            event_name="credential:update", request_id="relabel", credential_id=credential_id,
+            name="Shop WhatsApp", metadata={"note": "front desk"},
+        ))
+        await asyncio.sleep(0.2)
+        response = self.get_main_api_emitted_events("response")[-1][1]
+        assert response['request_id'] == 'relabel' and response['data']['success'] is True
+
+        row = await real_database.fetchrow("SELECT name, credential, metadata FROM credentials WHERE id = $1",
+                                           credential_id)
+        assert row['name'] == "Shop WhatsApp"
+        assert row['metadata'] == {"note": "front desk", "connection_id": "conn-own"}
+        assert get_encryption().decrypt_credential(row['credential'])["connection_id"] == "conn-own"
+
     async def test_list_credentials(self, real_database, frontend_sio, sid):
         """
         Test that credentials can be listed without exposing decrypted data.
@@ -380,20 +457,17 @@ class TestCredentialsHandler(BaseHandlerTest):
         await self.create_test_user(real_database, user_id)
         await asyncio.sleep(0.1)
 
-        await send_event(frontend_sio, sid, CredentialCreateRequest(
-            event_name="credential:create",
-            request_id="create-discord",
-            name="NoClick Sandbox",
-            credential_type="discord_bot_install",
-            # The install flow's shape — credential:create now parses the blob
-            # through the credential class before storing it.
-            credential_data={
-                "guild_id": "123456789012345678", "guild_name": "Acme",
+        # As the bot install leaves it (wss/handlers/oauth/discord_oauth_handler.py): only that flow makes one.
+        await real_database.execute(
+            "INSERT INTO credentials (owner_id, name, credential_type, credential, metadata) "
+            "VALUES ($1, 'NoClick Sandbox', 'discord_bot_install', $2, $3)",
+            user_id,
+            get_encryption().encrypt_credential({
+                "credential_type": "discord_bot_install", "guild_id": "123456", "guild_name": "NoClick Sandbox",
                 "access_token": "at", "refresh_token": "rt", "expires_at": "2099-01-01T00:00:00Z",
-            },
-            metadata={"guild_id": "123456", "guild_name": "NoClick Sandbox"},
-        ))
-        await asyncio.sleep(0.1)
+            }),
+            {"guild_id": "123456", "guild_name": "NoClick Sandbox"},
+        )
         monkeypatch.setenv("DISCORD_BOT_TOKEN", "platform-token")
 
         async def discord_rows(request_id: str):

@@ -1123,6 +1123,36 @@ class TestWhatsAppQRProvideLink:
         # The internal connection_id must never surface as a typed field.
         assert all(f.name != 'connection_id' for f in qr.credential_fields)
 
+    async def test_a_typed_connection_id_is_refused_and_nothing_is_stored(self, real_database, db, setup_db):
+        """The link's typed-in path never binds a session: only the scan this request starts does. A connection id
+        sent as data (another user's session, say) is refused, nothing is stored and the request stays pending."""
+        from fastapi import HTTPException
+        from utils.credential_request_routes import ProvideCredentialBody, provide_credential
+        from utils.encryption import get_encryption
+        import uuid
+
+        other = uuid.uuid4()
+        db.execute("INSERT INTO auth.users (id, email) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING",
+                   other, f"wa-other-{other}@example.com")
+        db.execute(
+            "INSERT INTO credentials (owner_id, credential_type, name, credential, metadata) "
+            "VALUES ($1, 'whatsapp_qr', 'Theirs', $2, $3)",
+            other, get_encryption().encrypt_credential({"credential_type": "whatsapp_qr", "connection_id": "conn-theirs"}),
+            {'provider': 'wahooks', 'connection_id': 'conn-theirs'},
+        )
+        for data in ({"credential_type": "whatsapp_qr", "connection_id": "conn-theirs"},
+                     {"credential_type": "whatsapp_qr", "connection_id": "conn-nobody-linked"}):
+            with pytest.raises(HTTPException) as exc:
+                await provide_credential(setup_db['token'], ProvideCredentialBody(credential_data=data))
+            assert exc.value.status_code == 400
+            assert exc.value.detail["field_errors"] == {
+                "connection_id": "Connection ID is set by NoClick when you scan the QR code; it can't be entered."}
+
+        assert db.fetchrow("SELECT count(*) AS n FROM credentials WHERE owner_id = $1", TEST_USER_ID)['n'] == 0
+        assert db.fetchrow("SELECT status FROM credential_requests WHERE id = $1", setup_db['request_id'])['status'] == 'pending'
+        db.execute("DELETE FROM credentials WHERE owner_id = $1", other)
+        db.execute("DELETE FROM auth.users WHERE id = $1", other)
+
     async def test_qr_start_gated_to_whatsapp_qr_type(self, real_database, db, setup_db):
         """/qr/start on a non-QR request is rejected (400)."""
         from utils.credential_request_routes import qr_start

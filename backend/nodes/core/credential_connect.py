@@ -19,6 +19,15 @@ Three layers, cheapest first:
    of a tick, and the row remembers it (``verified_at``; who it is as
    ``verified_as``, or else one of the things it reached as ``verified_with``).
 
+Before any of them, **linked fields**. A field a credential class lists in
+``linked_fields`` names a resource NoClick's own provider account acts on (a
+session on its WAHooks account, a number it bought, a server its bot is in, a
+Slack workspace's installation, a HubSpot portal's app events), so only
+NoClick's linking flow (a QR scan, a purchase, a sign-in) writes it, never
+this seam. A blob or client metadata naming one is refused under any
+credential type (keys a class doesn't declare survive shaping), and a type
+that requires one is never typed in at all.
+
 Never blocks on a non-definitive signal (the doctrine evidence, credential
 health and webhook teardown already follow): a provider outage, a timeout or
 a broken probe of ours all save the credential and say it is unverified.
@@ -278,6 +287,74 @@ def shape_credential(
     return {**data, **shaped}, {}, resolved
 
 
+# ----------------------------------------------------------- linked fields
+
+# How NoClick links each kind of credential that declares ``linked_fields``.
+_LINKED_BY = {"qr_scan": "scan the QR code", "purchase": "buy the number", "oauth": "sign in"}
+
+
+@lru_cache(maxsize=1)
+def _linked_index() -> Dict[str, Type[BaseModel]]:
+    """Each field only NoClick's own linking flow sets -> the credential class declaring it."""
+    index: Dict[str, Type[BaseModel]] = {}
+    for _, cls in _class_index().values():
+        for name in getattr(cls, "linked_fields", ()):
+            index.setdefault(name, cls)
+    return index
+
+
+def linked_field_names() -> set:
+    return set(_linked_index())
+
+
+def _required_linked(cls: Type[BaseModel]) -> List[str]:
+    return [name for name in getattr(cls, "linked_fields", ()) if cls.model_fields[name].is_required()]
+
+
+def linked_only(credential_type: Optional[str]) -> bool:
+    """A type only NoClick makes: its class requires a linked field."""
+    resolved = resolve_credential_class(credential_type)
+    return resolved is not None and bool(_required_linked(resolved[1]))
+
+
+def linked_metadata(metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """The linked part of a row's metadata, which a client's metadata replace keeps."""
+    return {k: v for k, v in (metadata or {}).items() if k in _linked_index()}
+
+
+def _linked_message(name: str) -> str:
+    cls = _linked_index()[name]
+    extra = cls.model_config.get("json_schema_extra")
+    how = _LINKED_BY.get(extra.get("x-credential-type") if isinstance(extra, dict) else None, "connect it")
+    return f"{_label(name, cls.model_fields[name])} is set by NoClick when you {how}; it can't be entered."
+
+
+async def linked_field_errors(
+    credential_type: Optional[str],
+    credential_data: Optional[Dict[str, Any]],
+    metadata: Optional[Dict[str, Any]],
+    *,
+    user_id: str,
+    pool=None,
+) -> Dict[str, str]:
+    """The linked fields a typed-in blob or client metadata names, by field.
+    ``credential_data`` None means no blob is typed (a metadata-only edit)."""
+    from utils.capabilities import LINKED_TEST_VALUE, capability
+
+    resolved = resolve_credential_class(credential_type)
+    required = set(_required_linked(resolved[1])) if resolved and credential_data is not None else set()
+    test_value = capability(LINKED_TEST_VALUE)
+    errors: Dict[str, str] = {}
+    for name in _linked_index():
+        values = [d[name] for d in (credential_data, metadata) if isinstance(d, dict) and d.get(name) not in (None, "")]
+        if not values and name not in required:
+            continue
+        if values and test_value is not None and all([await test_value(pool, user_id=user_id, value=v) for v in values]):
+            continue
+        errors[name] = _linked_message(name)
+    return errors
+
+
 # ----------------------------------------------------------------- verdict
 
 
@@ -297,12 +374,20 @@ async def validate_for_connect(
     pool=None,
     organization_id: Optional[str] = None,
     probe: bool = True,
+    metadata: Optional[Dict[str, Any]] = None,
 ) -> ConnectVerdict:
     """Judge a typed-in credential before it is stored.
 
     ``probe=False`` runs shaping only (surfaces that must not wait on a
-    provider). Never raises for a provider's sake: only our own bugs propagate.
+    provider). ``metadata``: what the client asked to store beside it. Never
+    raises for a provider's sake: only our own bugs propagate.
     """
+    linked = await linked_field_errors(
+        credential_type, credential_data or {}, metadata, user_id=user_id, pool=pool
+    )
+    if linked:
+        return ConnectVerdict(credential_data=dict(credential_data or {}), field_errors=linked)
+
     if (credential_type or "").startswith("agent"):
         # Harness credentials are {"credentials": {ENV: value}} bundles with
         # their own provider probes; key_validation owns both.
