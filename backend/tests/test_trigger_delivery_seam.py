@@ -30,10 +30,10 @@ def seam(monkeypatch):
     the stats write stand in for the engine's own."""
     taken = []
 
-    async def deliver(*, workflow_id, node, payload):
+    async def deliver(*, workflow_id, node, payload, graph):
         if node["id"] != "taken":
             return None
-        taken.append({"workflow_id": workflow_id, "node_id": node["id"], "payload": payload})
+        taken.append({"workflow_id": workflow_id, "node_id": node["id"], "payload": payload, "graph": graph})
         return 202, {"status": "taken"}
 
     run = AsyncMock(return_value=None)
@@ -58,6 +58,8 @@ async def test_the_route_hands_a_claimed_delivery_over_and_answers_with_its_repl
     [delivery] = taken
     assert delivery["workflow_id"] == WORKFLOW and delivery["payload"]["order"] == 7
     assert delivery["payload"]["_webhook"]["method"] == "POST"
+    # With the workflow's graph, for what the node is wired into.
+    assert [n["id"] for n in delivery["graph"]["nodes"]] == ["taken"] and delivery["graph"]["edges"] == []
     run.assert_not_awaited()
 
 
@@ -95,7 +97,7 @@ async def test_the_relay_twin_hands_it_over_as_a_relay_reply(seam, monkeypatch):
 async def test_the_app_event_fanout_hands_it_over(seam, monkeypatch, node_id, status, fired, ran):
     taken, _ = seam
     if status == 410:
-        async def gone(*, workflow_id, node, payload):
+        async def gone(*, workflow_id, node, payload, graph):
             return 410, {"error": {"type": "gone"}}
 
         monkeypatch.setitem(capabilities._providers, TRIGGER_DELIVERY, gone)

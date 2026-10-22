@@ -311,10 +311,11 @@ SANDBOX_ENV = "agent.sandbox_env"
 
 # Take a fired trigger's delivery in place of a run of its workflow, for a
 # trigger node a product delivers its own way: async (*, workflow_id, node,
-# payload) -> None (not one of its nodes: the workflow runs as usual) or
-# (status_code, body) for the sender. Asked once the delivery passed the
-# node's own checks (signature, filters, fire budget, transform), so it must
-# answer cheaply for nodes it has no say over.
+# payload, graph) -> None (not one of its nodes: the workflow runs as usual) or
+# (status_code, body) for the sender. ``graph`` is the workflow's
+# ``{nodes, edges}``, for what the node is wired into. Asked once the delivery
+# passed the node's own checks (signature, filters, fire budget, transform), so
+# it must answer cheaply for nodes it has no say over.
 TRIGGER_DELIVERY = "trigger.delivery"
 
 # Whether an account is one no person has claimed yet (an AI agent signed it up for itself): async (user_id) -> bool.
