@@ -361,6 +361,12 @@ class SupabaseAdminClient:
     async def update_user(self, user_id: str, **attributes: Any) -> Dict[str, Any]:
         return await self._user_request('PUT', f'/{user_id}', attributes)
 
+    async def delete_user(self, user_id: str, *, soft: bool) -> Dict[str, Any]:
+        """Delete an auth user. ``soft`` keeps the row (so rows that reference it
+        stay valid) with its email, phone, metadata and identities scrubbed and
+        every session ended."""
+        return await self._user_request('DELETE', f'/{user_id}', {"should_soft_delete": soft})
+
     def get_saml_metadata_url(self) -> str:
         """Get the SAML metadata URL for this Supabase project (SP metadata)."""
         return f"{self.base_url}/auth/v1/sso/saml/metadata"

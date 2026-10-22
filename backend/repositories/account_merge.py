@@ -103,6 +103,18 @@ ORG_KEEP_TABLES = (
     "activity_logs", "organization_invites", "organization_members", "user_billing", "user_usage_events",
 )
 
+# Every column that names an account: a foreign key to auth.users, or a name that says so.
+USER_KEYED_SQL = """
+SELECT cl.relname AS table_name, a.attname AS column_name
+FROM pg_class cl
+JOIN pg_namespace n ON n.oid = cl.relnamespace AND n.nspname = 'public'
+JOIN pg_attribute a ON a.attrelid = cl.oid AND a.attnum > 0 AND NOT a.attisdropped
+WHERE cl.relkind IN ('r', 'p') AND (
+    a.attname ~ '(^|_)(user_id|owner_id|created_by|updated_by|shared_by|forked_by|requester_id|inviter_id|redeemer_id|invited_by|decided_by|authorized_by|triggered_by)$'
+    OR EXISTS (SELECT 1 FROM pg_constraint k WHERE k.contype = 'f' AND k.confrelid = 'auth.users'::regclass
+               AND k.conrelid = cl.oid AND a.attnum = ANY(k.conkey)))
+"""
+
 # Text columns that name the retired account's coordinator conversation.
 COORDINATOR_REFERENCES = (
     ("coordinator_jobs", "reply_conversation_id"),

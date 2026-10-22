@@ -11,7 +11,7 @@ import pytest
 
 from repositories import account_merge
 from repositories.account_merge import (
-    ORG_KEEP_TABLES, SPECIAL_COLUMNS, merge_accounts, personal_workspace,
+    ORG_KEEP_TABLES, SPECIAL_COLUMNS, USER_KEYED_SQL, merge_accounts, personal_workspace,
 )
 from repositories.phones import PhoneRepo
 from tests.test_phone_accounts_postgres import FakeAuthAdmin, phones_db  # noqa: F401 — the shared fixture
@@ -29,21 +29,10 @@ HOSTED_ONLY = {("voice_calls", "user_id")}
 # The local scheduler creates its table on first use, in either edition.
 CREATED_AT_RUNTIME = {("local_cron_schedules", "user_id")}
 
-USER_KEYED = """
-SELECT cl.relname AS table_name, a.attname AS column_name
-FROM pg_class cl
-JOIN pg_namespace n ON n.oid = cl.relnamespace AND n.nspname = 'public'
-JOIN pg_attribute a ON a.attrelid = cl.oid AND a.attnum > 0 AND NOT a.attisdropped
-WHERE cl.relkind IN ('r', 'p') AND (
-    a.attname ~ '(^|_)(user_id|owner_id|created_by|updated_by|shared_by|forked_by|requester_id|inviter_id|redeemer_id|invited_by|decided_by|authorized_by|triggered_by)$'
-    OR EXISTS (SELECT 1 FROM pg_constraint k WHERE k.contype = 'f' AND k.confrelid = 'auth.users'::regclass
-               AND k.conrelid = cl.oid AND a.attnum = ANY(k.conkey)))
-"""
-
 
 async def test_every_user_keyed_column_has_a_merge_decision(phones_db):
     pool, *_ = phones_db
-    in_schema = {(r["table_name"], r["column_name"]) for r in await pool.fetch(USER_KEYED)}
+    in_schema = {(r["table_name"], r["column_name"]) for r in await pool.fetch(USER_KEYED_SQL)}
     planned = set(account_merge.move_columns()) | set(SPECIAL_COLUMNS) | set(account_merge.keep_columns())
     # Decide MOVE or KEEP in repositories/account_merge.py for any column listed here.
     assert sorted(in_schema - planned) == []

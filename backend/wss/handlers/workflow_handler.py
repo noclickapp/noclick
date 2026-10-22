@@ -221,6 +221,32 @@ async def restore_workflow_as_owner(pool, workflow_id, user_id: str) -> Dict[str
     return {"success": True, "workflow_id": str(wid), "message": "Workflow restored successfully"}
 
 
+async def permanent_delete_workflow_as_owner(pool, workflow_id, user_id: str) -> Dict[str, Any]:
+    """Delete a trashed workflow the user owns for good, with everything it
+    holds outside the row (storage, volumes, published apps). ``cleanup`` is
+    ``cleanup_workflow_resources``' per-resource results."""
+    async with pool.acquire() as conn:
+        if not await WorkflowRepo(pool).workflow_in_trash_for_owner(conn, workflow_id, user_id):
+            return {"success": False, "error": "Workflow not found in trash"}
+    # A run may have started before the workflow was moved to trash and may
+    # live on another managed worker. Stop it and wait for its row to become
+    # terminal before deleting parent rows/resources; if it can't stop
+    # promptly, the workflow stays in trash for a retry.
+    from utils.execution_stop import stop_running_workflow_executions
+    if await stop_running_workflow_executions(pool, workflow_id, user_id):
+        return {"success": False, "error": (
+            "Workflow still has an active execution. It was asked to "
+            "stop; wait a moment and try permanent deletion again.")}
+    cleanup = await cleanup_workflow_resources(pool=pool, workflow_id=str(workflow_id))
+    async with pool.acquire() as conn:
+        deleted = await WorkflowRepo(pool).hard_delete_workflow(conn, workflow_id, user_id)
+    if not deleted:
+        return {"success": False, "cleanup": cleanup, "error": (
+            "Workflow could not be permanently deleted because an "
+            "execution is still active. Try again shortly.")}
+    return {"success": True, "cleanup": cleanup}
+
+
 class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
     """Handler for workflow operations with direct socket.io communication"""
 
@@ -1390,58 +1416,12 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
-            async with pool.acquire() as conn:
-                # Verify ownership and that it's in trash
-                exists = await WorkflowRepo(pool).workflow_in_trash_for_owner(
-                    conn, request.workflow_id, user_id,
-                )
-
-                if not exists:
-                    await send_event(self.sio, sid, ResponseEvent(
-                        request_id=request.request_id,
-                        data={},
-                        error="Workflow not found in trash"
-                    ))
-                    return
-
-            # A run may have started before the workflow was moved to trash and
-            # may live on another managed worker. Stop it through workflow relay
-            # and wait for its DB row to become terminal before deleting parent
-            # rows/resources. If it cannot stop promptly, leave the workflow in
-            # trash and let the user retry instead of racing its side effects.
-            from utils.execution_stop import stop_running_workflow_executions
-            remaining = await stop_running_workflow_executions(
-                pool, request.workflow_id, user_id,
-            )
-            if remaining:
+            result = await permanent_delete_workflow_as_owner(pool, request.workflow_id, user_id)
+            if not result["success"]:
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id,
                     data={},
-                    error=(
-                        "Workflow still has an active execution. It was asked to "
-                        "stop; wait a moment and try permanent deletion again."
-                    ),
-                ))
-                return
-
-            # Full resource cleanup (R2 + everything)
-            await cleanup_workflow_resources(
-                pool=pool,
-                workflow_id=request.workflow_id
-            )
-
-            async with pool.acquire() as conn:
-                deleted = await WorkflowRepo(pool).hard_delete_workflow(
-                    conn, request.workflow_id, user_id,
-                )
-            if not deleted:
-                await send_event(self.sio, sid, ResponseEvent(
-                    request_id=request.request_id,
-                    data={},
-                    error=(
-                        "Workflow could not be permanently deleted because an "
-                        "execution is still active. Try again shortly."
-                    ),
+                    error=result["error"],
                 ))
                 return
 
