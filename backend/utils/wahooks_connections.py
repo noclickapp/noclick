@@ -3,7 +3,7 @@
 All NoClick users share ONE WAHooks account; each `whatsapp_qr` credential
 owns exactly one connection (its id lives in the encrypted blob, and — since
 2026-07 — in credential metadata). Deleting the credential must delete the
-provider connection or we keep paying for it AND the user's personal WhatsApp
+provider connection or we keep paying for it AND the user's WhatsApp
 stays linked to our account after they believe it's disconnected.
 
 Teardown failures were silent for months (the callers invoked a nonexistent

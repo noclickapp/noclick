@@ -13,7 +13,8 @@ Provides comprehensive workflow integration for WhatsApp Business Platform with 
 - Chats (QR credentials only): List chats/contacts, read message history, edit sent messages
 
 Authentication: Meta Access Token (temporary 60-day or permanent system user token)
-or WAHooks QR scan (personal account; chat/message reads are QR-only)
+or WAHooks QR scan (a phone's WhatsApp or WhatsApp Business app, linked as a device;
+chat/message reads are QR-only)
 Base URL: https://graph.facebook.com/v21.0
 Documentation: https://developers.facebook.com/docs/whatsapp/cloud-api
 """
@@ -1841,7 +1842,7 @@ class WhatsAppNode(WorkflowNode):
     def filter_trigger_payload(cls, payload: Dict[str, Any], config: Dict[str, Any]) -> bool:
         """Drop WAHooks events a receive_message trigger must never fire on.
 
-        A QR-linked personal account receives EVERY WhatsApp Web event as a
+        A QR-linked account receives EVERY WhatsApp Web event as a
         "message": contact stories (status@broadcast), Channel posts
         (@newsletter), and the account's own outgoing messages (fromMe) — an
         auto-reply workflow fed those DMs arbitrary contacts (incl. replying to
