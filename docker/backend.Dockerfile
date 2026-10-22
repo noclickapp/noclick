@@ -29,7 +29,7 @@ RUN pip install -r requirements.txt && pip uninstall -y pip
 FROM node:22-bookworm-slim AS cli
 RUN npm install -g --prefix /opt/noclick-cli \
         @openai/codex@0.163.0 \
-        @anthropic-ai/claude-code@2.1.306 \
+        @anthropic-ai/claude-code@2.1.308 \
         opencode-ai@1.19.3 \
         openclaw@2026.9.1 \
     && npm cache clean --force \
