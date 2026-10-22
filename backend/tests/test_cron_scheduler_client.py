@@ -23,6 +23,15 @@ from utils.cron_scheduler_client import (
 class TestIsCronSchedulerEnabled:
     """Test cron scheduler configuration check."""
 
+    @pytest.fixture(autouse=True)
+    def _reload_from_this_process_environment(self):
+        """Each test reloads the module under an environment of its own; reload it again once that environment is
+        restored, or every later test in the process talks to the scheduler the last one configured."""
+        yield
+        from utils import cron_scheduler_client
+        import importlib
+        importlib.reload(cron_scheduler_client)
+
     def test_enabled_when_both_vars_set(self):
         """Should return True when both URL and secret are configured."""
         with patch.dict('os.environ', {
