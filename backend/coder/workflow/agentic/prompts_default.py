@@ -147,6 +147,9 @@ def build_user_context(
         lines.append(f"Workflow {workflow_id} is open; build in it.")
     elif not has_workflow:
         lines.append("No workflow is open.")
+    if user_context.get("user_email"):
+        lines.append(f"The user's email is {user_context['user_email']}; a Send email step (automation-send-email) "
+                     "emails them with no account to connect.")
     if user_context.get("builder_request_id"):
         if user_context.get("publication_requested"):
             lines.append("Publication runs after you finish: say the edits are saved and publication is pending.")
@@ -209,7 +212,8 @@ def credential_check(missing: str, active_trigger: bool) -> str:
         "and say what is missing."
     )
     if active_trigger:
-        text += " The workflow has an active trigger, so it will run and fail until they connect."
+        text += (" Its trigger stays off until every step it reaches is connected, then starts: leave it on and "
+                 "say it starts once they connect.")
     return text
 
 
