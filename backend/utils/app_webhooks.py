@@ -391,23 +391,38 @@ async def _discord_credential_scope(pool, credential_id: str) -> Tuple[Optional[
     return ctype, guild_id
 
 
-async def _discord_scope_filter(pool, sub: Dict[str, Any], payload: Dict[str, Any]) -> Optional[str]:
-    """Interactions (slash commands) are delivered per APPLICATION, and every
-    bot-install credential shares NoClick's one application — so without this
-    a customer's slash-command trigger fires for every other customer's
-    commands. The install credential names the server it was installed into;
-    an interaction from any other server is not this trigger's. A bot-token
-    credential is the customer's own application and keeps every server.
-    Gateway messages are guild-keyed at the row and need no scope."""
-    if _is_gateway_envelope(payload) or payload.get("type") != 2:
+def _discord_event_guild(payload: Dict[str, Any]) -> Optional[str]:
+    """The server an interaction or application event happened in (an
+    authorization's ``guild``, an entitlement's ``guild_id``); None when it
+    names none."""
+    if payload.get("type") == 2:
+        return str(payload.get("guild_id") or "") or None
+    data = (payload.get("event") or {}).get("data")
+    if not isinstance(data, dict):
         return None
-    interaction_guild = str(payload.get("guild_id") or "")
+    guild = data.get("guild") if isinstance(data.get("guild"), dict) else {}
+    return str(guild.get("id") or data.get("guild_id") or "") or None
+
+
+async def _discord_scope_filter(pool, sub: Dict[str, Any], payload: Dict[str, Any]) -> Optional[str]:
+    """Interactions (slash commands) and application events (authorizations,
+    entitlements) are delivered per APPLICATION, and every bot-install
+    credential shares NoClick's one application — so without this a
+    customer's trigger fires for every other customer's. The install
+    credential names the server it was installed into: an event from any
+    other server, or one naming none (a command in a DM, a
+    deauthorization), is not this trigger's. A bot-token credential is the
+    customer's own application and keeps everything. Gateway messages are
+    guild-keyed at the row and need no scope."""
     credential_id = sub.get("credential_id")
-    if not interaction_guild or not credential_id:
+    if _is_gateway_envelope(payload) or not credential_id:
         return None
     ctype, install_guild = await _discord_credential_scope(pool, str(credential_id))
-    if ctype == "discord_bot_install" and install_guild and install_guild != interaction_guild:
-        return f"interaction from server {interaction_guild}, credential is installed in {install_guild}"
+    if ctype != "discord_bot_install":
+        return None
+    event_guild = _discord_event_guild(payload)
+    if not install_guild or event_guild != install_guild:
+        return f"event from server {event_guild or '(none)'}, credential is installed in {install_guild}"
     return None
 
 

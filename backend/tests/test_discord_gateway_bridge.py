@@ -943,12 +943,21 @@ class TestSlashCommandScope:
         sub = {"credential_id": str(uuid.uuid4()), "user_id": "u1"}
         assert await app_webhooks._discord_scope_filter(pool, sub, self._interaction("g2")) is None
 
-    async def test_gateway_messages_and_dm_interactions_need_no_scope(self):
+    async def test_gateway_messages_need_no_scope(self):
         pool = MagicMock(); pool.fetchrow = AsyncMock()
         sub = {"credential_id": str(uuid.uuid4()), "user_id": "u1"}
         assert await app_webhooks._discord_scope_filter(pool, sub, _envelope()) is None
-        assert await app_webhooks._discord_scope_filter(pool, sub, self._interaction(None)) is None
         pool.fetchrow.assert_not_awaited()
+
+    async def test_a_dm_interaction_is_no_installs(self):
+        """A command used in a DM names no server, so no install hears it; a customer's own application does."""
+        app_webhooks._credential_scope_cache.clear()
+        sub = {"credential_id": str(uuid.uuid4()), "user_id": "u1"}
+        install = self._pool("discord_bot_install", "g1")
+        assert await app_webhooks._discord_scope_filter(install, sub, self._interaction(None)) is not None
+        app_webhooks._credential_scope_cache.clear()
+        own_bot = self._pool("discord_bot_token", None)
+        assert await app_webhooks._discord_scope_filter(own_bot, sub, self._interaction(None)) is None
 
     async def test_fire_subscription_drops_another_servers_command(self):
         from utils.webhook_routes import _fire_subscription
