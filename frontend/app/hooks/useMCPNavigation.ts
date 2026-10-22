@@ -8,6 +8,7 @@
 
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router';
+import { workflowPath } from '~/lib/navigation';
 import { onSocketEvent } from '~/lib/socket-receiver';
 import { sendEvent } from '~/lib/socket-sender';
 
@@ -46,7 +47,7 @@ export function useMCPNavigation() {
         console.log('[MCPNavigation] Opening workflow:', workflow_id);
 
         // Navigate to the workflows tab with the workflow ID as a query param
-        navigate(`/dashboard?tab=workflows&workflow=${workflow_id}`);
+        navigate(workflowPath(workflow_id));
         sendResponse(requestId, { success: true });
     }, [navigate, sendResponse]);
 
@@ -55,7 +56,7 @@ export function useMCPNavigation() {
         console.log('[MCPNavigation] Opening newly created workflow:', workflow_id);
 
         // Navigate to the workflows tab with the new workflow ID
-        navigate(`/dashboard?tab=workflows&workflow=${workflow_id}`);
+        navigate(workflowPath(workflow_id));
         sendResponse(requestId, { success: true });
     }, [navigate, sendResponse]);
 

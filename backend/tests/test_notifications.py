@@ -744,3 +744,6 @@ async def test_reconnected_notice_only_after_a_recent_emailed_alert(monkeypatch)
     assert kwargs["dedupe_key"] == "channel_reconnected:cred-1"
     assert "do not re-scan" in kwargs["text_body"].lower()
     assert "TARS" in kwargs["blocks_html"]
+    # Its button opens the workflow on its canvas.
+    from utils.email import workflow_url
+    assert kwargs["cta_url"] == workflow_url("wf-1")

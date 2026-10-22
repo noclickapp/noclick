@@ -163,6 +163,11 @@ function dispatchFlowIntent(intent: FlowIntent): void {
   navigateToTab('flow');
 }
 
+/** The address that opens a workflow on its canvas (the backend's `utils.email.workflow_url` mints the same). */
+export function workflowPath(workflowId: string): string {
+  return `/dashboard?tab=workflows&workflow=${encodeURIComponent(workflowId)}`;
+}
+
 /** Open a workflow in the flow editor as fast as a card click, from any screen. */
 export function navigateToWorkflow(workflow: { id: string; name: string }): void {
   dispatchFlowIntent({ kind: 'open', workflow });

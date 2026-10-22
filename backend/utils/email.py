@@ -31,6 +31,12 @@ def credential_provide_url(token: str, frontend_url: Optional[str] = None) -> st
     base_url = frontend_url or FRONTEND_URL
     return f"{base_url}/credential/provide/{token}"
 
+
+def workflow_url(workflow_id) -> str:
+    """Where the app opens a workflow on its canvas (``/workflow/<slug>`` is a template's public page)."""
+    return f"{FRONTEND_URL}/dashboard?tab=workflows&workflow={workflow_id}"
+
+
 # Sender identities (domains must be verified in Resend). Two streams by
 # abuse-risk class: FROM_EMAIL is the default — system alerts and other mail
 # to our own users; INVITE_FROM_EMAIL is user-TRIGGERED mail to arbitrary

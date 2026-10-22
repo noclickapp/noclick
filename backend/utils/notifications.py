@@ -37,7 +37,7 @@ from typing import List, Optional
 from urllib.parse import urlencode
 
 from billing.exceptions import match_insufficient_credits, match_spend_cap
-from utils.email import FRONTEND_URL, _send_email
+from utils.email import FRONTEND_URL, _send_email, workflow_url
 from utils.email_unsubscribe import DISABLE_LINK_BASE, _relay_secret
 from repositories.credentials import listed_to_owner_sql
 from repositories.users import USER_EMAIL_SQL
@@ -546,7 +546,7 @@ async def send_run_failure_alert(
         error_text = error_text[:500] + "…"
     failed_at = datetime.now(timezone.utc).strftime("%b %-d, %Y · %H:%M UTC")
     source = TRIGGER_SOURCE_LABELS.get(trigger_source, trigger_source)
-    open_url = f"{FRONTEND_URL}/dashboard?tab=workflows&workflow={workflow_id}"
+    open_url = workflow_url(workflow_id)
 
     node_value = ""
     if node_label:
@@ -973,7 +973,7 @@ async def send_schedule_paused_alert(
     span = _span_label(span_s)
     paused_at = datetime.now(timezone.utc).strftime("%b %-d, %Y · %H:%M UTC")
     source = TRIGGER_SOURCE_LABELS.get(trigger_source, trigger_source)
-    open_url = f"{FRONTEND_URL}/dashboard?tab=workflows&workflow={workflow_id}"
+    open_url = workflow_url(workflow_id)
 
     blocks = (
         para(
@@ -1052,7 +1052,7 @@ async def send_channel_reconnected_notice(
     name_html = html_lib.escape(name)
     label_html = html_lib.escape(provider_label)
     cta_url = (
-        f"{FRONTEND_URL}/workflow/{workflow_id}" if workflow_id
+        workflow_url(workflow_id) if workflow_id
         else f"{FRONTEND_URL}/dashboard?tab=settings&section=credentials"
     )
     rows = [("Connection", name_html), ("Service", label_html), ("Status", "connected")]
@@ -1135,7 +1135,7 @@ async def send_channel_disconnected_alert(
     name_html = html_lib.escape(name)
     label_html = html_lib.escape(provider_label)
     cta_url = (
-        f"{FRONTEND_URL}/workflow/{workflow_id}" if workflow_id
+        workflow_url(workflow_id) if workflow_id
         else f"{FRONTEND_URL}/dashboard?tab=settings&section=credentials"
     )
 
