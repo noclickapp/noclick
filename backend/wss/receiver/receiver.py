@@ -442,9 +442,11 @@ class SocketIOProxy:
                 span.set_attribute("user.id", user_id)
                 # Coarse "is the user looking at NoClick" signal for agents'
                 # email-vs-chat steering. Throttled + spawned — no added latency.
-                from utils.user_presence import touch_user_presence
+                # Staff viewing an account as its owner (mimic) are not its owner.
+                if not session.get('real_user_id'):
+                    from utils.user_presence import touch_user_presence
 
-                touch_user_presence(user_id)
+                    touch_user_presence(user_id)
             user_email = session.get('user_data', {}).get('email') if isinstance(session.get('user_data'), dict) else None
             if user_email:
                 span.set_attribute("user.email", user_email)

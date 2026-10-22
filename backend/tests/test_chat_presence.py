@@ -166,6 +166,18 @@ class TestPresenceHandler(BaseHandlerTest):
         assert await watching_chat(USER_ID) is False
 
     @pytest.mark.asyncio
+    async def test_staff_viewing_the_account_as_its_owner_never_mark_the_owner_present(
+            self, frontend_sio, sid, monkeypatch):
+        touched = []
+        monkeypatch.setattr(user_presence, "touch_user_presence", touched.append)
+        mimic = f"{sid}-mimic"
+        self.main_api_sio.create_session(sid=mimic, user_id=USER_ID, real_user_id="uuid-staff")
+        await self._beat(frontend_sio, mimic, TAB_A, True)
+        assert touched == []
+        await self._beat(frontend_sio, sid, TAB_A, True)
+        assert touched == [USER_ID]
+
+    @pytest.mark.asyncio
     async def test_a_signed_out_socket_claims_nothing(self, frontend_sio, sid):
         anonymous = f"{sid}-anonymous"
         self.main_api_sio.create_session(sid=anonymous)

@@ -20,7 +20,8 @@ let inFlight: { userId: string; promise: Promise<string | null> } | null = null;
 
 /**
  * A live token for `userId`'s relay room. Resolves null when the app's socket
- * acts as another user (no token it can mint opens this room); rejects when
+ * acts as another user (a mimic starting or ending: no token it can mint opens
+ * this room until the room follows); rejects when
  * none could be minted (a timeout, a refusal, a rate limit), so the caller
  * can try again.
  */
@@ -61,8 +62,8 @@ async function mint(userId: string): Promise<string | null> {
         expiresAt: reply.expires_at,
     };
     if (reply.user_id === userId) return reply.token;
-    // The app's socket acts as another user (an admin mimicking one): this
-    // room would refuse the token.
+    // The app's socket acts as another user than this room's (a mimic
+    // starting or ending): this room would refuse the token.
     console.warn(
         '[EventRelay] relay token is for another user; not authenticating this room'
     );
