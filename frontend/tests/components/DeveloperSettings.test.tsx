@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn(async () => ({ workflows: [] })) }));
-vi.mock('~/lib/apiAuth', () => ({ backendAuthHeaders: async () => ({}) }));
+vi.mock('~/lib/apiAuth', () => ({ backendAuthHeaders: async () => ({}), backendAccountHeaders: async () => ({}) }));
 
 import { DeveloperSettings } from '~/components/settings/DeveloperSettings';
 import { registerDeveloperConsole } from '~/lib/developerConsole';

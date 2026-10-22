@@ -33,12 +33,12 @@ function returnPath(request: Request) {
 }
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-    const { session, user, headers } = await requireAuth(request);
+    const { backendHeaders, user, headers } = await requireAuth(request);
     const { token: csrfToken, cookieHeader } = await generateCsrfToken(request);
     headers.append('Set-Cookie', cookieHeader);
     headers.set('Cache-Control', 'private, no-store');
     headers.set('Referrer-Policy', 'no-referrer');
-    const result = await phonePurchaseBackend<PurchaseState>(params.token!, session!.access_token);
+    const result = await phonePurchaseBackend<PurchaseState>(params.token!, backendHeaders);
     return json({ purchase: result, csrfToken, returnTo: returnPath(request), signedInAs: user.email || (user.phone ? formatPhoneForDisplay(user.phone) : 'your account') }, { headers });
 }
 

@@ -6,15 +6,12 @@ import { requireAuth } from '~/lib/supabase';
 import { csrfFailureResponse, generateCsrfToken } from '~/lib/csrf.server';
 import { apiBaseUrl } from '~/lib/hostedDefaults';
 
-async function backend(path: string, token: string, body?: unknown) {
+async function backend(path: string, as: Record<string, string>, body?: unknown) {
     const response = await fetch(
         `${apiBaseUrl()}/api/credential-request/${path}`,
         {
             method: body === undefined ? 'GET' : 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
+            headers: { ...as, 'Content-Type': 'application/json' },
             ...(body === undefined ? {} : { body: JSON.stringify(body) }),
             signal: AbortSignal.timeout(30_000),
         }
@@ -29,12 +26,12 @@ async function backend(path: string, token: string, body?: unknown) {
 }
 
 export async function loadCredentialReview(request: Request, path: string) {
-    const { session, headers } = await requireAuth(request);
+    const { backendHeaders, headers } = await requireAuth(request);
     const { token: csrfToken, cookieHeader } = await generateCsrfToken(request);
     headers.append('Set-Cookie', cookieHeader);
     headers.set('Cache-Control', 'private, no-store');
     headers.set('Referrer-Policy', 'no-referrer');
-    const result = await backend(path, session!.access_token);
+    const result = await backend(path, backendHeaders);
     return json(
         { state: result.data, csrfToken },
         { headers, status: result.status }
@@ -42,7 +39,7 @@ export async function loadCredentialReview(request: Request, path: string) {
 }
 
 export async function submitCredentialReview(request: Request, path: string) {
-    const { session, headers } = await requireAuth(request);
+    const { backendHeaders, headers } = await requireAuth(request);
     const form = await request.formData();
     const failure = await csrfFailureResponse(request, form);
     if (failure) {
@@ -57,7 +54,7 @@ export async function submitCredentialReview(request: Request, path: string) {
     } catch {
         return json({ error: 'Invalid request.' }, { status: 400, headers });
     }
-    const result = await backend(path, session!.access_token, body);
+    const result = await backend(path, backendHeaders, body);
     return json(
         result.status < 400
             ? { saved: true }

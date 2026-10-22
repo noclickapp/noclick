@@ -20,3 +20,16 @@ export async function backendAuthHeaders(): Promise<Record<string, string>> {
     return {};
   }
 }
+
+// What a deployment adds to a call that reads or changes the account (hosted:
+// the account a staff member views, which the backend judges).
+let accountHeaders: () => Promise<Record<string, string>> = async () => ({});
+
+export function registerAccountHeaders(headers: () => Promise<Record<string, string>>): void {
+  accountHeaders = headers;
+}
+
+/** `backendAuthHeaders` for a call about the account the page shows, rather than about who is signed in. */
+export async function backendAccountHeaders(): Promise<Record<string, string>> {
+  return { ...(await backendAuthHeaders()), ...(await accountHeaders()) };
+}

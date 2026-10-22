@@ -6,18 +6,18 @@ shadow-tool credential, or the mere possession of a review URL.
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, Field
 
 from repositories.credential_approvals import CredentialApprovalRepo
-from utils.auth import verify_token
+from utils.auth import acting_user_id, verify_token
 from utils.credential_operations import operation_catalog
 from utils.database_pool import get_native_pool
 
 router = APIRouter()
 
 
-async def human(authorization: str = Header(default="")):
+async def human(request: Request, authorization: str = Header(default="")):
     scheme, _, token = authorization.partition(" ")
     if scheme.lower() != "bearer" or not token:
         raise HTTPException(401, "Sign in to review this credential.")
@@ -25,9 +25,10 @@ async def human(authorization: str = Header(default="")):
         claims = await verify_token(token)
         if claims.get("role") != "authenticated" or not claims.get("session_id"):
             raise ValueError("A browser session is required")
-        return str(UUID(claims["sub"]))
+        user_id = str(UUID(claims["sub"]))
     except Exception:
         raise HTTPException(401, "Sign in to review this credential.") from None
+    return await acting_user_id(request, user_id, claims)
 
 
 class PolicyChange(BaseModel):

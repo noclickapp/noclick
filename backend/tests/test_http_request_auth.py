@@ -91,3 +91,17 @@ async def test_api_key_routes_use_the_shared_rule():
     with pytest.raises(HTTPException) as ei:
         await _get_user_id(_Req())
     assert ei.value.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_naming_another_account_is_refused_where_no_one_may_view_one(monkeypatch):
+    from utils import capabilities
+    from utils.auth import VIEW_AS_HEADER
+
+    monkeypatch.delitem(capabilities._providers, capabilities.VIEW_AS, raising=False)
+    request = _Req(authorization="Bearer livetok")
+    request.headers[VIEW_AS_HEADER] = "someone-else"
+    with _verified({"sub": "user-42"}):
+        with pytest.raises(HTTPException) as ei:
+            await authenticate_http_request(request)
+    assert ei.value.status_code == 403

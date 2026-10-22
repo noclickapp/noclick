@@ -154,13 +154,15 @@ async def test_connect_without_workflow_or_email_reuses_live_link(approval_db):
 async def test_browser_session_required_even_with_valid_machine_identity(monkeypatch):
     from fastapi import HTTPException
     from utils import credential_approval_routes as routes
+    from starlette.requests import Request
     verifier = AsyncMock(return_value={"sub": USER, "role": "authenticated"})
     monkeypatch.setattr(routes, "verify_token", verifier)
+    request = Request({"type": "http", "method": "GET", "path": "/", "headers": [], "query_string": b""})
     with pytest.raises(HTTPException) as error:
-        await routes.human("Bearer machine-token")
+        await routes.human(request, "Bearer machine-token")
     assert error.value.status_code == 401
     verifier.return_value = {"sub": USER, "role": "authenticated", "session_id": str(uuid.uuid4())}
-    assert await routes.human("Bearer browser-token") == USER
+    assert await routes.human(request, "Bearer browser-token") == USER
 
 
 async def test_legacy_socket_decision_cannot_approve_or_edit_credential_request(approval_db):

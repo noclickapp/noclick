@@ -16,7 +16,7 @@ from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from billing.gates import GateDenied
 
-from utils.auth import verify_token
+from utils.auth import acting_user_id, verify_token
 from utils.database_pool import get_native_pool
 from utils.feature_gates import FeatureNotAvailable
 from utils.phone_numbers import PhoneDocumentRefused
@@ -35,7 +35,7 @@ _CORS = {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "PO
          "Access-Control-Allow-Headers": "Content-Type"}
 
 
-async def owner(authorization: str = Header(default="")):
+async def owner(request: Request, authorization: str = Header(default="")):
     scheme, _, token = authorization.partition(" ")
     if scheme.lower() != "bearer" or not token:
         raise HTTPException(401, "Sign in to the account that requested this number.")
@@ -44,7 +44,7 @@ async def owner(authorization: str = Header(default="")):
         user_id = str(UUID(claims["sub"]))
     except Exception:
         raise HTTPException(401, "Sign in to the account that requested this number.") from None
-    return PhonePurchase(get_native_pool(), user_id)
+    return PhonePurchase(get_native_pool(), await acting_user_id(request, user_id, claims))
 
 
 class Search(BaseModel):

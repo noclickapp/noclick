@@ -9,7 +9,7 @@ import { sendEventAsync } from '~/lib/socket-sender';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { fuzzyFilter } from '~/utils/fuzzySearch';
 import { isLocalEdition } from '~/lib/edition';
-import { backendAuthHeaders } from '~/lib/apiAuth';
+import { backendAccountHeaders } from '~/lib/apiAuth';
 import { getDeveloperConsoleHref } from '~/lib/developerConsole';
 import { BUTTON_PRIMARY } from '~/components/shell/buttons';
 import { FIELD, FIELD_LABEL, QUIET_LINK } from '~/components/shell/fields';
@@ -150,7 +150,7 @@ export function DeveloperSettings() {
 
   const fetchKeys = useCallback(async () => {
     try {
-      const resp = await fetch(`${API_BASE}/api/keys`, { credentials: 'include', headers: await backendAuthHeaders() });
+      const resp = await fetch(`${API_BASE}/api/keys`, { credentials: 'include', headers: await backendAccountHeaders() });
       if (!resp.ok) throw new Error(await responseError(resp));
       setKeys(await resp.json());
       setError(null);
@@ -182,7 +182,7 @@ export function DeveloperSettings() {
     try {
       const resp = await fetch(`${API_BASE}/api/keys`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(await backendAuthHeaders()) },
+        headers: { 'Content-Type': 'application/json', ...(await backendAccountHeaders()) },
         credentials: 'include',
         body: JSON.stringify({
           name: newKeyName.trim(),
@@ -208,7 +208,7 @@ export function DeveloperSettings() {
   const handleRevoke = async (keyId: string) => {
     try {
       const resp = await fetch(`${API_BASE}/api/keys/${keyId}`, {
-        method: 'DELETE', credentials: 'include', headers: await backendAuthHeaders(),
+        method: 'DELETE', credentials: 'include', headers: await backendAccountHeaders(),
       });
       if (!resp.ok) throw new Error(await responseError(resp));
       setError(null);

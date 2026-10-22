@@ -9,7 +9,7 @@ import { json } from '~/lib/routerResponse';
 import { requireAuth } from '~/lib/supabase';
 
 export async function action({ request, params }: ActionFunctionArgs) {
-    const { session, headers } = await requireAuth(request);
+    const { backendHeaders, headers } = await requireAuth(request);
     const form = await request.formData();
     const csrfFailure = await csrfFailureResponse(request, form);
     if (csrfFailure) {
@@ -26,5 +26,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
     } catch {
         return json({ error: 'Invalid request.' }, { status: 400, headers });
     }
-    return json(await phonePurchaseBackend(params.token!, session!.access_token, operation === 'status' ? undefined : operation, body), { headers });
+    return json(await phonePurchaseBackend(params.token!, backendHeaders, operation === 'status' ? undefined : operation, body), { headers });
 }

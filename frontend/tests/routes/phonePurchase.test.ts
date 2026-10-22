@@ -19,7 +19,7 @@ const { loader } = page;
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 function signIn() {
-    auth.mockResolvedValue({ session: { access_token: 'verified-session' }, user: { email: 'owner@example.com' }, headers: new Headers({ 'Set-Cookie': 'auth=rotated; Path=/' }) });
+    auth.mockResolvedValue({ session: { access_token: 'verified-session' }, backendHeaders: { Authorization: 'Bearer verified-session' }, user: { email: 'owner@example.com' }, headers: new Headers({ 'Set-Cookie': 'auth=rotated; Path=/' }) });
     vi.stubEnv('VITE_API_URL', 'https://backend.example');
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: 'pending', purpose: 'Receptionist' }), { headers: { 'Content-Type': 'application/json' } }));
     vi.stubGlobal('fetch', fetcher);

@@ -708,7 +708,9 @@ async def update_auth(sid, data):
             logger.warning(f"update_auth user mismatch for {sid}")
             return {'success': False, 'error': 'Token user mismatch'}
 
-        session['user_data'] = user_data  # Update user data in case it changed
+        # Update user data in case it changed: the signed-in person's, kept aside while
+        # the session acts as another account (mimic).
+        session['real_user_data' if session.get('real_user_id') else 'user_data'] = user_data
         await run_socket_auth_update_hooks(sid, session, data, socketio_proxy)
         await sio.save_session(sid, session)
 

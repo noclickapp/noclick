@@ -19,13 +19,13 @@ type PurchaseReply<T> = T & { error?: string; kind?: string };
 
 export async function phonePurchaseBackend<T = Record<string, unknown>>(
     token: string,
-    accessToken: string,
+    as: Record<string, string>,
     operation?: string,
     body?: unknown
 ): Promise<PurchaseReply<T>> {
     const res = await fetch(`${apiBaseUrl()}/api/credential-request/${encodeURIComponent(token)}/phone${operation ? `/${operation}` : ''}`, {
         method: operation ? 'POST' : 'GET',
-        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        headers: { ...as, 'Content-Type': 'application/json' },
         ...(operation ? { body: JSON.stringify(body) } : {}),
         signal: AbortSignal.timeout(90_000),
     });

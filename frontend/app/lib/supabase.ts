@@ -145,7 +145,9 @@ export async function requireAuth(request: Request) {
         throw redirect(loginUrl, { headers });
     }
 
-    return { user, session, supabase, headers };
+    // What server code sends the backend to act as this request's account.
+    const backendHeaders: Record<string, string> = { Authorization: `Bearer ${session.access_token}` };
+    return { user, session, supabase, headers, backendHeaders };
 }
 
 export async function requireGuest(request: Request) {

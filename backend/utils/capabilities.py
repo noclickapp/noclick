@@ -414,6 +414,12 @@ COORDINATOR_IMESSAGE = "coordinator.imessage"
 # one the coordinator has exactly its own tools.
 COORDINATOR_PLATFORM_TOOLS = "coordinator.platform_tools"
 
+# Who may act as another account, for a REST request naming one in
+# utils.auth.VIEW_AS_HEADER: async (request, claims, identifier) -> the
+# account's user id; raises PermissionError for someone who may not, and
+# LookupError for no such account. Without one, the header is refused.
+VIEW_AS = "auth.view_as"
+
 _providers: Dict[str, Any] = {}
 
 

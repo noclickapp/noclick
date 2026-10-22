@@ -13,7 +13,7 @@ import { loader } from '~/routes/credential.permissions.$credentialId';
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 function signIn(response: Response) {
-    auth.mockResolvedValue({ session: { access_token: 'verified-session' }, headers: new Headers() });
+    auth.mockResolvedValue({ session: { access_token: 'verified-session' }, backendHeaders: { Authorization: 'Bearer verified-session' }, headers: new Headers() });
     vi.stubEnv('API_URL', '');
     vi.stubEnv('VITE_API_URL', 'https://backend.example');
     const fetcher = vi.fn().mockResolvedValue(response);

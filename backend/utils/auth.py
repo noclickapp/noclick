@@ -484,8 +484,35 @@ async def extract_token_from_cookies(cookie_str: str) -> tuple[str, str]:
         raise ValueError("Authentication failed")
 
 
+# A signed-in session naming another account to act as (a staff member viewing it as its owner). The platform's
+# VIEW_AS capability judges each request; without one the header is refused.
+VIEW_AS_HEADER = "NoClick-View-As"
+
+
+async def acting_user_id(request: Any, user_id: str, claims: Dict[str, Any]) -> str:
+    """The account a request acts as: its signed-in user, or the one it names in ``VIEW_AS_HEADER`` when the
+    signed-in person may view it. Raises ``HTTPException`` 403 for anyone else, 404 for no such account."""
+    from fastapi import HTTPException
+
+    from utils.capabilities import VIEW_AS, capability
+
+    named = (request.headers.get(VIEW_AS_HEADER) or "").strip()
+    if not named:
+        return user_id
+    judge = capability(VIEW_AS)
+    if judge is None:
+        raise HTTPException(status_code=403, detail="This instance doesn't act as another account.")
+    try:
+        return await judge(request, claims, named)
+    except PermissionError as e:
+        raise HTTPException(status_code=403, detail=str(e)) from None
+    except LookupError as e:
+        raise HTTPException(status_code=404, detail=str(e)) from None
+
+
 async def authenticate_http_request(request: Any) -> tuple[str, Dict[str, Any]]:
-    """Resolve the caller of a REST request: ``(user_id, verified claims)``.
+    """Resolve the caller of a REST request: ``(user_id, verified claims)``; ``user_id`` is the account it acts as
+    (``acting_user_id``), the claims stay the signed-in person's.
 
     Prefers ``Authorization: Bearer <supabase access token>`` — the SPA's live
     ``getSession()`` token, which works cross-origin (the auth cookie is
@@ -513,4 +540,4 @@ async def authenticate_http_request(request: Any) -> tuple[str, Dict[str, Any]]:
         user_id, claims = await verify_socket_token(token)
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid session")
-    return user_id, claims
+    return await acting_user_id(request, user_id, claims), claims
