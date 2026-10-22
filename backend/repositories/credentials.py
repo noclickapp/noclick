@@ -106,6 +106,8 @@ class AccessibleCredential:
     shared_with_org: bool
     revoked_at: Optional[datetime]
     revoked_reason: Optional[str]
+    # Held for someone else (``listed_to_owner_sql``): only in a list that asked for these.
+    held_for_others: bool = False
 
 
 @dataclass(frozen=True)
@@ -277,7 +279,8 @@ class CredentialsRepo:
             owner.email as owner_email,
             {user_name_sql('owner')} as owner_name,
             COALESCE(us.id, os.id) as share_id,
-            (os.id IS NOT NULL) as shared_with_org
+            (os.id IS NOT NULL) as shared_with_org,
+            NOT {listed_to_owner_sql()} as held_for_others
         FROM credentials c
         LEFT JOIN resource_shares us
             ON us.resource_type = 'credential'
@@ -294,20 +297,21 @@ class CredentialsRepo:
             (c.owner_id = $1
              OR us.id IS NOT NULL
              OR ($2::uuid IS NOT NULL AND os.id IS NOT NULL))
-            AND {listed_to_owner_sql()}
+            AND ($3::bool OR {listed_to_owner_sql()})
         ORDER BY c.id, sort_order, c.created_at DESC
     """
 
     async def list_accessible(
-        self, user_id: str, org_id: Optional[str]
+        self, user_id: str, org_id: Optional[str], *, held_for_others: bool = False
     ) -> List[AccessibleCredential]:
         """Every credential the user can see: owned + shared-directly +
-        (in org context only) shared-with-current-org. Sort order in the
+        (in org context only) shared-with-current-org, plus those held for
+        someone else when ``held_for_others``. Sort order in the
         result is by-id-then-first-match; the caller re-sorts by
         (sort_order, created_at desc) — that ranking logic stays in the
         handler because it drives the cap enforcement passes."""
         async with self._pool.acquire() as conn:
-            rows = await conn.fetch(self._LIST_ACCESSIBLE_SQL, user_id, org_id)
+            rows = await conn.fetch(self._LIST_ACCESSIBLE_SQL, user_id, org_id, held_for_others)
         return [
             AccessibleCredential(
                 id=str(r['id']),
@@ -327,6 +331,7 @@ class CredentialsRepo:
                 shared_with_org=bool(r['shared_with_org']),
                 revoked_at=r['revoked_at'],
                 revoked_reason=r['revoked_reason'],
+                held_for_others=r['held_for_others'],
             )
             for r in rows
         ]

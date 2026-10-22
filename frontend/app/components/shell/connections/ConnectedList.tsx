@@ -2,6 +2,7 @@
 // with you) as the same tiles the app catalog uses: the app, then the account
 // in words you'd recognise. A broken account says what's wrong and puts
 // Reconnect in reach; any tile opens the account.
+import type { ReactNode } from 'react';
 import { Building2, ChevronRight, Plug, Users, type LucideIcon } from 'lucide-react';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { openCreateCredential } from '~/components/shared/popups/CreateCredentialDialog';
@@ -16,7 +17,7 @@ import { agentMark } from './aiAccounts';
 import { TILE_GRID, Tile, TileSkeletons } from '../Tile';
 
 /** An account's glyph: its app's icon, or (an agent key with none registered) its provider's rather than a generic key. */
-export function accountIcon(credential: CredentialInfo) {
+export function accountIcon(credential: Pick<CredentialInfo, 'credential_type' | 'metadata'>) {
     const registered = getCredentialIcon(credential.credential_type, credential.metadata);
     const agent = registered.hasServiceIcon ? undefined : agentMark(credential.credential_type);
     const hasServiceIcon = registered.hasServiceIcon || !!agent;
@@ -26,7 +27,7 @@ export function accountIcon(credential: CredentialInfo) {
     };
 }
 
-export function AccountMark({ credential, size = 'md' }: { credential: CredentialInfo; size?: 'md' | 'lg' }) {
+export function AccountMark({ credential, size = 'md' }: { credential: Pick<CredentialInfo, 'credential_type' | 'metadata' | 'revoked_at'>; size?: 'md' | 'lg' }) {
     const { Icon, iconColor } = accountIcon(credential);
     return (
         <span
@@ -53,7 +54,8 @@ export function reconnect(credential: CredentialInfo) {
     openCreateCredential({ credentialType: credential.credential_type, credentialId: credential.id, reconnect: true });
 }
 
-export function AccountTile({ account, onOpen }: { account: ConnectedAccount; onOpen: () => void }) {
+/** `trailing` and `badge` replace the tile's own Reconnect and add beside its name, for a reader who only looks (staff). */
+export function AccountTile({ account, onOpen, trailing, badge }: { account: ConnectedAccount; onOpen: () => void; trailing?: ReactNode; badge?: ReactNode }) {
     const { credential, app } = account;
     // A check run earlier this session counts too: the provider refusing it is as definitive as a revocation.
     const probe = lastConnectionProbe(credential.id);
@@ -64,11 +66,12 @@ export function AccountTile({ account, onOpen }: { account: ConnectedAccount; on
             mark={<AccountMark credential={credential} />}
             title={app}
             detail={problem ? <span className="text-red-600 dark:text-red-400">{problem}</span> : sharer ? `${sharer} · ${account.line}` : account.line}
+            badge={badge}
             label={`${app}, ${account.line}`}
             onOpen={onOpen}
             testId="connected-account"
             trailing={
-                problem && account.source === 'connected' ? (
+                trailing ?? (problem && account.source === 'connected' ? (
                     <button
                         type="button"
                         onClick={(event) => {
@@ -81,7 +84,7 @@ export function AccountTile({ account, onOpen }: { account: ConnectedAccount; on
                     </button>
                 ) : (
                     <ChevronRight className="h-4 w-4 shrink-0 text-transparent transition-colors group-hover:text-muted-foreground group-focus-visible:text-muted-foreground" />
-                )
+                ))
             }
         />
     );

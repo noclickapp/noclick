@@ -49,6 +49,129 @@ from wss.receiver.client_events import (
 logger = logging.getLogger(__name__)
 
 
+async def credential_list(pool, user_id: str, *, held_for_others: bool = False) -> CredentialListResponse:
+    """What ``credential:list`` answers ``user_id``: every credential they can use in their current workspace, those
+    past their plan's per-type cap marked ``over_cap``, each connection-backed one with its provider's live health.
+    ``held_for_others`` adds the ones held for someone else (``listed_to_owner_sql``), which no owner-facing list
+    shows."""
+    repo = CredentialsRepo(pool)
+
+    # ``get_user_org_context`` and ``get_context_tier`` both take an
+    # explicit ``conn`` — the repo owns its own SQL, not theirs — so we
+    # borrow one connection to run both. The main list query runs on a
+    # separate acquire inside ``repo.list_accessible``.
+    from billing.plan_limits import count_limit, get_context_tier
+    async with pool.acquire() as conn:
+        org_id = await get_user_org_context(conn, user_id)
+        tier = await get_context_tier(conn, user_id)
+        cap = await count_limit(conn, user_id, tier, 'credentials_per_type')
+
+    # Fetch all credentials the user can access:
+    # 1. Credentials they own (personal + org where they're owner)
+    # 2. Credentials shared with them directly
+    # 3. Credentials shared with their current org (only when in org context)
+    accessible = await repo.list_accessible(user_id, org_id, held_for_others=held_for_others)
+
+    # Sort by sort_order (owner-first) then created_at desc — same as
+    # the pre-migration Python re-sort on top of the SQL DISTINCT ON.
+    accessible = sorted(
+        accessible,
+        key=lambda r: (r.sort_order, -r.created_at.timestamp()),
+    )
+
+    # Enforce credential cap per type within the current context.
+    # In org context: only org credentials (owned by org + shared with org) count against the org cap.
+    # Personal credentials are visible but don't count against the org limit.
+    # In personal context: owned + shared credentials count against the personal cap.
+    hidden_shared_count = 0
+    over_cap_ids: set[str] = set()
+    if cap is not None:
+        org_id_str = str(org_id) if org_id else None
+        # Separate rows into: context-relevant (count against cap) vs personal (always shown)
+        # In org context, a credential is "personal" (uncapped) only if it's owned by the
+        # user, belongs to a different org, AND was NOT shared with the current org.
+        # Credentials shared with the org always count against the org's cap.
+        capped_rows = []
+        uncapped_rows = []
+        for r in accessible:
+            r_org_id = r.organization_id
+            is_own_personal = (r.owner_id == user_id and r_org_id != org_id_str)
+            # One held for someone else takes no slot of the owner's: their own list never shows it.
+            if r.held_for_others or (org_id_str and is_own_personal and not r.shared_with_org):
+                # User's own personal credential visible in org context and NOT shared with org
+                uncapped_rows.append(r)
+            else:
+                capped_rows.append(r)
+
+        # Two-pass algorithm to mark credentials that exceed the per-type cap.
+        #
+        # Why two passes: user's own credentials get priority — they fill
+        # cap slots first. Shared credentials from others only fill leftover
+        # slots. Any credential (own or shared) beyond the cap is marked
+        # over_cap so the frontend can hide it from the dropdown.
+        #
+        # First step: count the user's own credentials per type. Mark excess as over_cap.
+        #   e.g. free cap=1, user owns 2 google_oauth → second one is over_cap.
+        own_type_counts: dict[str, int] = {}
+        for r in capped_rows:
+            if r.owner_id == user_id:
+                ct = r.credential_type
+                own_type_counts[ct] = own_type_counts.get(ct, 0) + 1
+                if own_type_counts[ct] > cap:
+                    over_cap_ids.add(r.id)
+        # Second step: fill remaining slots with others' shared credentials.
+        #   hidden_shared_count tracks how many *shared* credentials are
+        #   hidden (shown as "N hidden credentials" in the frontend).
+        #   User's own over-cap credentials are NOT counted here since
+        #   they aren't "hidden shared" — they're just the user's excess.
+        type_counts: dict[str, int] = dict(own_type_counts)
+        for r in capped_rows:
+            if r.owner_id != user_id:
+                ct = r.credential_type
+                type_counts[ct] = type_counts.get(ct, 0) + 1
+                if type_counts[ct] > cap:
+                    over_cap_ids.add(r.id)
+                    hidden_shared_count += 1
+        accessible = uncapped_rows + capped_rows
+
+    # Live provider-session state for connection-backed rows — a dead
+    # session kills the credential silently, so the picker must flag it.
+    # Rows absent from the health map are unknown, never dead.
+    from utils.credential_health import get_credential_health
+    health = await get_credential_health(accessible)
+
+    credentials = []
+    for row in accessible:
+        is_shared = row.access_type in ('shared', 'shared_org')
+        row_health = health.get(str(row.id))
+        credentials.append(CredentialInfo(
+            id=row.id,
+            name=row.name,
+            credential_type=row.credential_type,
+            metadata=row.metadata,
+            created_at=row.created_at.isoformat(),
+            updated_at=row.updated_at.isoformat(),
+            access_type=row.access_type,
+            organization_id=row.organization_id,
+            shared_with_org=row.shared_with_org,
+            over_cap=row.id in over_cap_ids,
+            shared_by_email=row.owner_email if is_shared else None,
+            shared_by_name=row.owner_name if is_shared else None,
+            share_id=row.share_id if is_shared else None,
+            revoked_at=row.revoked_at.isoformat() if row.revoked_at else None,
+            revoked_reason=row.revoked_reason,
+            connection_status=row_health.status if row_health else None,
+            connection_healthy=row_health.healthy if row_health else None,
+            connection_hint=row_health.hint if row_health else None,
+        ))
+
+    return CredentialListResponse(
+        credentials=[c.model_dump() for c in credentials],
+        hidden_shared_count=hidden_shared_count,
+        subscription_tier=tier,
+    )
+
+
 class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
     """Handler for credential operations with encryption"""
 
@@ -258,126 +381,12 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
-            repo = CredentialsRepo(pool)
-
-            # ``get_user_org_context`` and ``get_context_tier`` both take an
-            # explicit ``conn`` — the repo owns its own SQL, not theirs — so we
-            # borrow one connection to run both. The main list query runs on a
-            # separate acquire inside ``repo.list_accessible``.
-            from billing.plan_limits import count_limit, get_context_tier
-            async with pool.acquire() as conn:
-                org_id = await get_user_org_context(conn, user_id)
-                tier = await get_context_tier(conn, user_id)
-                cap = await count_limit(conn, user_id, tier, 'credentials_per_type')
-
-            # Fetch all credentials the user can access:
-            # 1. Credentials they own (personal + org where they're owner)
-            # 2. Credentials shared with them directly
-            # 3. Credentials shared with their current org (only when in org context)
-            accessible = await repo.list_accessible(user_id, org_id)
-
-            # Sort by sort_order (owner-first) then created_at desc — same as
-            # the pre-migration Python re-sort on top of the SQL DISTINCT ON.
-            accessible = sorted(
-                accessible,
-                key=lambda r: (r.sort_order, -r.created_at.timestamp()),
-            )
-
-            # Enforce credential cap per type within the current context.
-            # In org context: only org credentials (owned by org + shared with org) count against the org cap.
-            # Personal credentials are visible but don't count against the org limit.
-            # In personal context: owned + shared credentials count against the personal cap.
-            hidden_shared_count = 0
-            over_cap_ids: set[str] = set()
-            if cap is not None:
-                org_id_str = str(org_id) if org_id else None
-                # Separate rows into: context-relevant (count against cap) vs personal (always shown)
-                # In org context, a credential is "personal" (uncapped) only if it's owned by the
-                # user, belongs to a different org, AND was NOT shared with the current org.
-                # Credentials shared with the org always count against the org's cap.
-                capped_rows = []
-                uncapped_rows = []
-                for r in accessible:
-                    r_org_id = r.organization_id
-                    is_own_personal = (r.owner_id == user_id and r_org_id != org_id_str)
-                    if org_id_str and is_own_personal and not r.shared_with_org:
-                        # User's own personal credential visible in org context and NOT shared with org
-                        uncapped_rows.append(r)
-                    else:
-                        capped_rows.append(r)
-
-                # Two-pass algorithm to mark credentials that exceed the per-type cap.
-                #
-                # Why two passes: user's own credentials get priority — they fill
-                # cap slots first. Shared credentials from others only fill leftover
-                # slots. Any credential (own or shared) beyond the cap is marked
-                # over_cap so the frontend can hide it from the dropdown.
-                #
-                # First step: count the user's own credentials per type. Mark excess as over_cap.
-                #   e.g. free cap=1, user owns 2 google_oauth → second one is over_cap.
-                own_type_counts: dict[str, int] = {}
-                for r in capped_rows:
-                    if r.owner_id == user_id:
-                        ct = r.credential_type
-                        own_type_counts[ct] = own_type_counts.get(ct, 0) + 1
-                        if own_type_counts[ct] > cap:
-                            over_cap_ids.add(r.id)
-                # Second step: fill remaining slots with others' shared credentials.
-                #   hidden_shared_count tracks how many *shared* credentials are
-                #   hidden (shown as "N hidden credentials" in the frontend).
-                #   User's own over-cap credentials are NOT counted here since
-                #   they aren't "hidden shared" — they're just the user's excess.
-                type_counts: dict[str, int] = dict(own_type_counts)
-                for r in capped_rows:
-                    if r.owner_id != user_id:
-                        ct = r.credential_type
-                        type_counts[ct] = type_counts.get(ct, 0) + 1
-                        if type_counts[ct] > cap:
-                            over_cap_ids.add(r.id)
-                            hidden_shared_count += 1
-                accessible = uncapped_rows + capped_rows
-
-            # Live provider-session state for connection-backed rows — a dead
-            # session kills the credential silently, so the picker must flag it.
-            # Rows absent from the health map are unknown, never dead.
-            from utils.credential_health import get_credential_health
-            health = await get_credential_health(accessible)
-
-            credentials = []
-            for row in accessible:
-                is_shared = row.access_type in ('shared', 'shared_org')
-                row_health = health.get(str(row.id))
-                credentials.append(CredentialInfo(
-                    id=row.id,
-                    name=row.name,
-                    credential_type=row.credential_type,
-                    metadata=row.metadata,
-                    created_at=row.created_at.isoformat(),
-                    updated_at=row.updated_at.isoformat(),
-                    access_type=row.access_type,
-                    organization_id=row.organization_id,
-                    shared_with_org=row.shared_with_org,
-                    over_cap=row.id in over_cap_ids,
-                    shared_by_email=row.owner_email if is_shared else None,
-                    shared_by_name=row.owner_name if is_shared else None,
-                    share_id=row.share_id if is_shared else None,
-                    revoked_at=row.revoked_at.isoformat() if row.revoked_at else None,
-                    revoked_reason=row.revoked_reason,
-                    connection_status=row_health.status if row_health else None,
-                    connection_healthy=row_health.healthy if row_health else None,
-                    connection_hint=row_health.hint if row_health else None,
-                ))
-
-            response = CredentialListResponse(
-                credentials=[c.model_dump() for c in credentials],
-                hidden_shared_count=hidden_shared_count,
-                subscription_tier=tier,
-            )
+            response = await credential_list(pool, user_id)
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id,
                 data=response.model_dump()
             ))
-            logger.info(f"[CredentialsHandler] Listed {len(credentials)} credentials for user {user_id} (hidden_shared={hidden_shared_count})")
+            logger.info(f"[CredentialsHandler] Listed {len(response.credentials)} credentials for user {user_id} (hidden_shared={response.hidden_shared_count})")
 
         except Exception as e:
             logger.error(f"[CredentialsHandler] Error listing credentials: {e}", exc_info=True)
