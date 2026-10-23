@@ -191,3 +191,114 @@ async def test_per_call_slot_reset_between_turns():
         await model._fetch_response(stream=False)
     assert model.last_call_cost is None
     assert model.last_call_cost_reported is False
+
+
+# --------------------------------------------------------------------------- #
+# A model stuck streaming whitespace
+# --------------------------------------------------------------------------- #
+def _real_chunk(*, text=None, arguments=None, name=None, call_id=None, usage=None):
+    """An OpenAI chat-completion chunk, as the SDK's stream handler reads it."""
+    from openai.types.chat import ChatCompletionChunk
+    from openai.types.chat.chat_completion_chunk import (
+        Choice, ChoiceDelta, ChoiceDeltaToolCall, ChoiceDeltaToolCallFunction,
+    )
+
+    calls = None if arguments is None else [ChoiceDeltaToolCall(
+        index=0, id=call_id, type="function" if call_id else None,
+        function=ChoiceDeltaToolCallFunction(name=name, arguments=arguments))]
+    return ChatCompletionChunk(
+        id="gen-stuck", object="chat.completion.chunk", created=0, model="test-model", usage=usage,
+        choices=[] if usage else [Choice(index=0, delta=ChoiceDelta(content=text, tool_calls=calls))])
+
+
+class _Stream:
+    """A provider stream: ``head`` chunks, then whitespace in a tool call's arguments for ``blank`` chunks (a model
+    stuck until its output cap), then a usage chunk; it records how much was read and whether it was closed."""
+
+    def __init__(self, head, blank=0):
+        from openai.types.completion_usage import CompletionUsage
+
+        self._chunks = iter([*head, *(_real_chunk(arguments="\n  ") for _ in range(blank)),
+                             _real_chunk(usage=CompletionUsage(prompt_tokens=10, completion_tokens=65536,
+                                                               total_tokens=65546))])
+        self.read = 0
+        self.closed = False
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        chunk = next(self._chunks, None)
+        if chunk is None:
+            raise StopAsyncIteration
+        self.read += 1
+        return chunk
+
+    async def aclose(self):
+        self.closed = True
+
+
+@pytest.mark.anyio
+async def test_a_model_streaming_whitespace_has_its_call_ended_and_calls_again():
+    """A shop's assistant wrote its question's arguments, then streamed newlines and spaces for minutes until the
+    model's output cap; the cut-off arguments answered it as invalid JSON and it asked again, properly. The call now
+    ends at ``STUCK_WHITESPACE_CHARS`` of whitespace in a row (the provider's stream closed, read no further), and
+    the run goes on the same way: the tool answers the cut arguments as invalid, the model calls again."""
+    import json
+
+    from agents import Agent as SDKAgent
+    from agents import FunctionTool, Runner
+
+    from coder.openai_agent import litellm_model
+
+    head = '{"question": "Dana asks who owns the bakery. What should we tell her?"'
+    stuck = _Stream([_real_chunk(arguments=head, name="human__ask", call_id="call_1")], blank=30_000)
+    answer = _Stream([_real_chunk(text="I asked the owner.")])
+    streams = iter([stuck, answer])
+    got = []
+
+    async def ask(ctx, arguments):
+        got.append(arguments)
+        try:
+            json.loads(arguments)
+        except json.JSONDecodeError as exc:
+            return json.dumps({"error": f"Invalid JSON arguments for tool 'human__ask': {exc}"})
+        return json.dumps({"success": True})
+
+    agent = SDKAgent(name="shop", instructions="Ask the owner.", model=CostCapturingLitellmModel(model="test/model"),
+                     tools=[FunctionTool(name="human__ask", description="Ask the owner.", on_invoke_tool=ask,
+                                         params_json_schema={"type": "object",
+                                                             "properties": {"question": {"type": "string"}}},
+                                         strict_json_schema=False)])
+    with patch("litellm.acompletion", new=AsyncMock(side_effect=lambda **kwargs: next(streams))) as model:
+        result = Runner.run_streamed(agent, "Dana wrote: Qui est le propriétaire ?")
+        async for _ in result.stream_events():
+            pass
+
+    assert result.final_output == "I asked the owner."
+    assert model.await_count == 2
+    # The stuck call was ended once its whitespace reached the limit: the stream was closed, barely read.
+    assert stuck.closed and stuck.read <= 1 + litellm_model.STUCK_WHITESPACE_CHARS // 3 + 1
+    [cut] = got
+    assert cut.startswith(head) and not cut[len(head):].strip()
+    # The chunk that reached the limit isn't passed on.
+    assert litellm_model.STUCK_WHITESPACE_CHARS - 3 <= len(cut) - len(head) < litellm_model.STUCK_WHITESPACE_CHARS
+    # A stream that ends on its own is read to its end and never cut.
+    assert answer.read == 2 and not answer.closed
+
+
+@pytest.mark.anyio
+async def test_whitespace_in_real_output_never_ends_a_call():
+    """Indentation, blank lines and a reply's paragraphs reset the count at each word: only a run of whitespace with
+    nothing in it ends a call."""
+    from coder.openai_agent import litellm_model
+
+    pretty = "\n".join(" " * 40 + f'"line{i}": "value",' for i in range(200))
+    chunks = [_chunk(pretty), _chunk("\n\n" + " " * (litellm_model.STUCK_WHITESPACE_CHARS - 10) + "more"),
+              _chunk(cost=0.001)]
+    model = CostCapturingLitellmModel(model="openrouter/openai/gpt-4o-mini")
+    with patch.object(CostCapturingLitellmModel.__bases__[0], "_fetch_response",
+                      new=AsyncMock(return_value=(SimpleNamespace(), _FakeStream(chunks)))):
+        _, wrapped = await model._fetch_response(stream=True)
+    assert [c async for c in wrapped] == chunks
+    assert model.last_call_cost == 0.001

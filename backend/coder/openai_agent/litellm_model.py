@@ -39,9 +39,20 @@ N never reads turn N-1's stale value.
 """
 from __future__ import annotations
 
-from typing import Any, AsyncIterator, Optional, Tuple
+import logging
+from typing import Any, AsyncIterator, Iterator, Optional, Tuple
 
 from agents.extensions.models.litellm_model import LitellmModel
+
+from utils.openrouter_cost import generation_id_of
+
+logger = logging.getLogger(__name__)
+
+# A run of this much whitespace in what a model streams (its reply, its reasoning or a tool call's arguments) is the
+# model stuck repeating it, never output: one call wrote a question's arguments, then newlines and spaces until the
+# model's output cap, minutes later. The call ends there: the cut-off arguments answer the model as invalid JSON, and
+# it calls again.
+STUCK_WHITESPACE_CHARS = 2000
 
 
 def extract_cost_from_response(response_obj: Any) -> Tuple[Optional[float], bool]:
@@ -90,15 +101,19 @@ class _StreamCostInterceptor:
     usage data so a provider that splits or repeats usage chunks can't drop
     the cost on the floor. The SDK's stream handler is duck-typed (does
     ``async for chunk in stream``), so this proxy needs only ``__aiter__`` /
-    ``__anext__``.
+    ``__anext__``. A model stuck streaming whitespace (``STUCK_WHITESPACE_CHARS``)
+    has its stream closed there and ended, its usage chunk unread: billing
+    then counts the call itself (``BillingHooks``' fallback).
     """
 
-    __slots__ = ("_inner", "_model", "_iter")
+    __slots__ = ("_inner", "_model", "_iter", "_blank")
 
     def __init__(self, inner: Any, model: "CostCapturingLitellmModel") -> None:
         self._inner = inner
         self._model = model
         self._iter: Optional[AsyncIterator[Any]] = None
+        # How much whitespace the model has streamed in a row so far.
+        self._blank = 0
 
     def __aiter__(self) -> "_StreamCostInterceptor":
         self._iter = self._inner.__aiter__()
@@ -107,13 +122,43 @@ class _StreamCostInterceptor:
     async def __anext__(self) -> Any:
         assert self._iter is not None, "__aiter__ must be called before __anext__"
         chunk = await self._iter.__anext__()
+        if self._model._call_generation_id is None:
+            self._model._call_generation_id = generation_id_of(chunk)
         usage = getattr(chunk, "usage", None)
         if usage is not None:
             cost, reported = extract_cost_from_response(chunk)
             if reported:
                 self._model._call_cost = cost
                 self._model._call_cost_reported = True
+        if self._stuck(chunk):
+            logger.warning("[openai_agent] model=%s streamed %d whitespace characters in a row; ending the call "
+                           "(generation=%s)", self._model.model, self._blank, self._model._call_generation_id)
+            close = getattr(self._inner, "aclose", None)
+            if close is not None:
+                await close()
+            raise StopAsyncIteration
         return chunk
+
+    def _stuck(self, chunk: Any) -> bool:
+        """Whether ``chunk`` brings the whitespace streamed in a row to ``STUCK_WHITESPACE_CHARS``."""
+        for text in _streamed_text(chunk):
+            kept = text.rstrip()
+            self._blank = self._blank + len(text) if not kept else len(text) - len(kept)
+        return self._blank >= STUCK_WHITESPACE_CHARS
+
+
+def _streamed_text(chunk: Any) -> Iterator[str]:
+    """What a chunk's first choice streams: its text, its reasoning and its tool calls' arguments."""
+    for choice in (getattr(chunk, "choices", None) or [])[:1]:
+        delta = getattr(choice, "delta", None)
+        for field in ("content", "reasoning_content"):
+            text = getattr(delta, field, None)
+            if isinstance(text, str) and text:
+                yield text
+        for call in getattr(delta, "tool_calls", None) or []:
+            arguments = getattr(getattr(call, "function", None), "arguments", None)
+            if isinstance(arguments, str) and arguments:
+                yield arguments
 
 
 
@@ -180,6 +225,7 @@ class CostCapturingLitellmModel(LitellmModel):
         super().__init__(*args, **kwargs)
         self._call_cost: Optional[float] = None
         self._call_cost_reported: bool = False
+        self._call_generation_id: Optional[str] = None
 
     @property
     def last_call_cost(self) -> Optional[float]:
@@ -189,9 +235,15 @@ class CostCapturingLitellmModel(LitellmModel):
     def last_call_cost_reported(self) -> bool:
         return self._call_cost_reported
 
+    @property
+    def last_call_generation_id(self) -> Optional[str]:
+        """OpenRouter's id for the call (``gen-…``), to price it from its record when it reported no cost."""
+        return self._call_generation_id
+
     async def _fetch_response(self, *args: Any, stream: bool = False, **kwargs: Any) -> Any:
         self._call_cost = None
         self._call_cost_reported = False
+        self._call_generation_id = None
 
         # `input` is positional arg 2 (after system_instructions) or a kwarg.
         # Cleaned here because this is the one place every model request passes
@@ -208,6 +260,7 @@ class CostCapturingLitellmModel(LitellmModel):
             cost, reported = extract_cost_from_response(result)
             self._call_cost = cost
             self._call_cost_reported = reported
+            self._call_generation_id = generation_id_of(result)
             return result
 
         response, raw_stream = result
