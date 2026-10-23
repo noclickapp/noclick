@@ -781,21 +781,27 @@ class TestStoriesOperationsMock:
             config=node_config,
         )
 
-        # Mock container creation
-        container_response = {"id": "story_container_123"}
-        # Mock publish response
-        publish_response = {"id": "story_123"}
-
         with mock_async_client(
             [
-                create_mock_response(container_response),
-                create_mock_response(publish_response),
+                create_mock_response({"id": "story_container_123"}),
+                create_mock_response({"status_code": "IN_PROGRESS"}),
+                create_mock_response({"status_code": "FINISHED"}),
+                create_mock_response({"id": "story_123"}),
             ]
-        ):
+        ) as client_cls, patch("asyncio.sleep", AsyncMock()):
             result = await node.execute({})
 
         assert result["action"] == "publish_photo_story"
         assert result["status"] == "success"
+        assert result["data"]["id"] == "story_123"
+        calls = client_cls.return_value.__aenter__.return_value.request.call_args_list
+        # media_publish only after the container reports FINISHED.
+        assert [(c.kwargs["method"], c.kwargs["url"].rsplit("/", 1)[-1]) for c in calls] == [
+            ("POST", "media"),
+            ("GET", "story_container_123"),
+            ("GET", "story_container_123"),
+            ("POST", "media_publish"),
+        ]
 
     @pytest.mark.asyncio
     async def test_publish_story_video(self):

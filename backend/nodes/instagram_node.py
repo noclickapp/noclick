@@ -2718,7 +2718,19 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
 
         container_id = container_result["data"]["id"]
 
-        # Step 2: Publish the container
+        # Step 2: Meta rejects media_publish ("Media ID is not available") until
+        # the story image has finished processing.
+        wait_result = await self._wait_for_media_container_ready(
+            container_id=container_id,
+            credentials=credentials,
+            action_name="publish_photo_story",
+            timeout_seconds=120,
+        )
+        if wait_result is not None:
+            wait_result["container_id"] = container_id
+            return wait_result
+
+        # Step 3: Publish the container
         publish_result = await self._make_request(
             method="POST",
             endpoint=f"/{credentials.instagram_user_id}/media_publish",
