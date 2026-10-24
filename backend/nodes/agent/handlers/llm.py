@@ -20,7 +20,7 @@ from nodes.agent.config.harness_model_lists import zen_gateway_refusal
 from nodes.agent.placement import sandbox_network_of, sandbox_region_of, sandbox_volumes_of, shell_of
 from nodes.agent.git_mounts import sandbox_setups_of
 from nodes.agent.provider_errors import classify_and_rewrite_provider_error
-from utils.turn_events import turn_first_effort_of, turn_limits_of, turn_wrap_up_of
+from utils.turn_events import turn_empty_answer_of, turn_first_effort_of, turn_limits_of, turn_wrap_up_of
 from wss.sender.schema import ContentItem, ImageUrl
 
 logger = logging.getLogger(__name__)
@@ -143,6 +143,7 @@ async def execute_llm_model(
             wrap_up=turn_wrap_up_of(node_config),
             limits=TurnLimits.of(turn_limits_of(node_config)),
             first_call_effort=turn_first_effort_of(node_config),
+            empty_answer=turn_empty_answer_of(node_config),
             # A turn that leaves no memory needs only recent memory, and it is
             # answered while a caller waits — a bounded replay keeps it quick.
             history_limit=READONLY_HISTORY_LIMIT if memory_readonly else None,

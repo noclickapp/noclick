@@ -365,6 +365,7 @@ class Agent:
         wrap_up: Any = None,
         limits: Optional[TurnLimits] = None,
         first_call_effort: Optional[str] = None,
+        empty_answer: Optional[str] = None,
         sandbox_region: Optional[str] = None,
         sandbox_volumes: Optional[Dict[str, str]] = None,
         sandbox_network: Optional[Sequence[str]] = None,
@@ -422,6 +423,9 @@ class Agent:
         # The reasoning effort of each run's first model call, which someone is waiting on (its first words, or
         # its first step); the calls after it reason as the model does by default.
         agent._first_call_effort = first_call_effort
+        # What a run is told when its model answers with nothing (no words, no call), which would end it where it
+        # stands: it runs on once with this note, and may still end without a word. None: an empty answer ends it.
+        agent._empty_answer = empty_answer
         # Hook up the durable Session iff caller asked for persistence AND
         # gave us a conversation_id to key it on. Falls through to the
         # transient in-memory ``_history`` path otherwise.
@@ -943,7 +947,9 @@ class Agent:
             guards.record(guard, self.turn_ended_by, conversation_id=getattr(self, "conversation_id", None),
                           model=config.llm.model if config else "")
 
-    async def _turn(self, message: Dict[str, Any], guard: TurnGuard) -> None:
+    async def _turn(self, message: Dict[str, Any], guard: TurnGuard, *, said: Optional[str] = None) -> None:
+        """One run of the turn. ``said``: what the turn already said, when it runs on after its model answered with
+        nothing (``_empty_answer``)."""
         user_content = self._build_user_input(message)
         # str for text-only turns (compact history rows), a content-part list
         # when the turn carries images — either way it's one user turn.
@@ -987,7 +993,7 @@ class Agent:
         env_overrides = build_litellm_env(self._env)
         run_config = None
         for attempt in range(_LLM_RUN_ATTEMPTS):
-            accumulated_text = ""
+            accumulated_text = said or ""
             # Whether the reply's text is mid-segment: a run item (a tool call, a finished message) ends one.
             in_segment = False
             reasoning_lines.reset()
@@ -998,7 +1004,7 @@ class Agent:
             env_ctx = override_env(**env_overrides) if env_overrides else contextlib.nullcontext()
             notes = turn_notes.start()
             settings = self._sdk_agent.model_settings
-            effort = getattr(self, "_first_call_effort", None)
+            effort = getattr(self, "_first_call_effort", None) if said is None else None
             quick = effort and _with_effort(settings, self.config.llm.model, effort)
             try:
                 with env_ctx:
@@ -1117,7 +1123,7 @@ class Agent:
             except Exception as e:
                 if (
                     attempt + 1 < _LLM_RUN_ATTEMPTS
-                    and not accumulated_text
+                    and accumulated_text == (said or "")
                     and not turn_had_items
                     and _is_retryable_llm_error(e)
                 ):
@@ -1198,6 +1204,11 @@ class Agent:
                     + [{"role": "assistant", "content": accumulated_text}]
                 )
 
+        if said is None and self._answered_nothing(result):
+            await self._turn({"input_items": [{"role": "developer", "content": self._empty_answer}]}, guard,
+                             said=accumulated_text)
+            return
+
         # Streamable chunks already populated the consumer's accumulator,
         # so the completion event carries no new message text — it just
         # flips ``finished=True``. If for some reason no chunks were
@@ -1214,6 +1225,13 @@ class Agent:
             finished=True,
         ))
         self._settle_context()
+
+    def _answered_nothing(self, result: Any) -> bool:
+        """Whether the run ended on a model answer with no words and no call, and the turn says what that's told
+        (``_empty_answer``). An answer is final once it calls nothing, so an empty one ended the turn where it stood:
+        a promise with nothing under way, or no reply at all."""
+        return bool(getattr(self, "_empty_answer", None)) and result is not None and \
+            result.final_output is not None and not str(result.final_output).strip()
 
     async def _wrap_up_turn(self, reason: str, guard: TurnGuard, history: List[Dict[str, Any]],
                             run_config: Any) -> Optional[Tuple[str, Dict[str, Any]]]:

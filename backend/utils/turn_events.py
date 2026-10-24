@@ -19,7 +19,9 @@ those limits ended is told, for one more call without tools that says where its
 work stands, with the line a person reads after it (``{steps|spend|time:
 {prompt, line}}``).
 ``TURN_FIRST_EFFORT_KEY`` is the reasoning effort of a turn's first model call,
-for one someone waits on: its first words come sooner."""
+for one someone waits on: its first words come sooner. ``TURN_EMPTY_ANSWER_KEY``
+is what a turn whose model answered with nothing (no words, no call) is told,
+once, to run on rather than end there."""
 
 from __future__ import annotations
 
@@ -39,6 +41,7 @@ TURN_TRIGGER_KEY = "_turnTrigger"
 TURN_WRAP_UP_KEY = "_turnWrapUp"
 TURN_LIMITS_KEY = "_turnLimits"
 TURN_FIRST_EFFORT_KEY = "_turnFirstEffort"
+TURN_EMPTY_ANSWER_KEY = "_turnEmptyAnswer"
 # What a person reads when a turn fails: the error's own words stay in the log and the turn's record.
 TURN_FAILED_LINE = "Sorry, I hit a problem on my side. Please try that again in a moment."
 
@@ -80,6 +83,11 @@ def turn_limits_of(node_config: Any) -> Optional[Dict[str, Any]]:
 def turn_first_effort_of(node_config: Any) -> Optional[str]:
     """The reasoning effort of the turn's first model call, when a platform set one."""
     return _text(node_config, TURN_FIRST_EFFORT_KEY)
+
+
+def turn_empty_answer_of(node_config: Any) -> Optional[str]:
+    """What the turn is told when its model answers with nothing, when a platform set it."""
+    return _text(node_config, TURN_EMPTY_ANSWER_KEY)
 
 
 def turn_trigger_of(node_config: Any) -> Optional[Dict[str, Any]]:

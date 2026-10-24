@@ -10,7 +10,7 @@ import pytest
 
 from coder.openai_agent.guards import TurnLimits
 from nodes.agent.handlers.llm import execute_llm_model
-from utils.turn_events import TURN_FIRST_EFFORT_KEY, TURN_LIMITS_KEY, TURN_WRAP_UP_KEY
+from utils.turn_events import TURN_EMPTY_ANSWER_KEY, TURN_FIRST_EFFORT_KEY, TURN_LIMITS_KEY, TURN_WRAP_UP_KEY
 
 pytestmark = pytest.mark.asyncio
 USER_ID = "00000000-0000-0000-0000-000000000001"
@@ -80,3 +80,9 @@ async def test_the_output_says_which_limit_ended_the_turn(monkeypatch):
 async def test_a_turn_someone_waits_on_starts_with_the_effort_the_platform_names(monkeypatch):
     assert (await _created_with(monkeypatch, {TURN_FIRST_EFFORT_KEY: "low"}))["first_call_effort"] == "low"
     assert (await _created_with(monkeypatch, {}))["first_call_effort"] is None
+
+
+async def test_a_turn_the_platform_names_a_note_for_an_empty_answer_hands_it_to_the_engine(monkeypatch):
+    note = "Your last response was empty: carry on, or end without a word."
+    assert (await _created_with(monkeypatch, {TURN_EMPTY_ANSWER_KEY: note}))["empty_answer"] == note
+    assert (await _created_with(monkeypatch, {}))["empty_answer"] is None
