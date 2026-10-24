@@ -144,6 +144,35 @@ def merge_builder_run_graph(
     return nodes, normalized_edges
 
 
+def builder_run_outcome(result: Any, node_id: str, edges: List[Dict[str, Any]], *,
+                        include_downstream: bool) -> Dict[str, Any]:
+    """What ``<run_node>`` answers, read from the run it started (a
+    ``WorkflowExecutionResult``), never from the store: a run's outputs are
+    stored after it returns, so reading them raced the run and called one that
+    went through "no output", and the brain ran it again (one build's "run it
+    once now" emailed the owner twice, 2026-10-24). Running from a node runs the
+    steps after it too, so the others that ran are named (``ran``), tool
+    providers aside (they act only when an agent calls them)."""
+    from coder.workflow.workflow_ops import PROVIDER_TARGET_HANDLE
+
+    providers = {e.get("source") for e in edges if e.get("targetHandle") == PROVIDER_TARGET_HANDLE}
+    ran = {nid: s["status"] for nid, s in result.node_statuses.items()
+           if nid != node_id and nid not in providers and s.get("status") != "skipped"}
+    target = result.node_statuses.get(node_id)
+    if target is None:
+        if not result.node_statuses:
+            return {"error": result.error or f"Nothing ran from {node_id}."}
+        return {"error": result.error or f"Node {node_id} didn't run.", "failed_node": "other",
+                "target_node": node_id, "ran": ran}
+    output = result.node_outputs.get(node_id)
+    if target["status"] == "error" or (isinstance(output, dict) and output.get("error")):
+        return {"error": target.get("error") or output["error"], "failed_node": node_id, "ran": ran}
+    if target["status"] == "skipped":
+        return {"error": f"Node {node_id} was skipped (disabled, or a branch before it didn't lead to it).",
+                "ran": ran}
+    return {"success": True, "ran": ran} if include_downstream else {"success": True, "output": output, "ran": ran}
+
+
 BUILDER_NOT_SIGNED_IN = "Sign in to use the AI builder."
 BUILDER_NO_EDIT_ACCESS = "You don't have edit access to this workflow."
 BUILDER_FOREIGN_CONVERSATION = "This chat belongs to another account. Start a new chat."
@@ -527,48 +556,9 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                         forward_only=True,
                     )
                     exec_handler = WorkflowExecutionHandler(handler.sio)
-                    await exec_handler.handle_execute(sid, exec_req, caller_user_id=user_id)
-
-                    # Check execution result — handle_execute runs to completion,
-                    # so we can read the outcome from the DB immediately.
-                    from utils.node_outputs import latest_output
-
-                    async with pool.acquire() as conn:
-                        exec_row = await WorkflowRepo(pool).get_latest_finished_execution_status(
-                            conn, uuid.UUID(wf_id),
-                        )
-
-                    output = await latest_output(pool, wf_id, node_id)
-
-                    # Target node's own output indicates an error → that's the real failure
-                    if isinstance(output, dict) and output.get("error"):
-                        return {"error": output["error"], "failed_node": node_id}
-
-                    # Target produced output → success, regardless of downstream failures.
-                    # forward_only=True means the executor runs the target *and* downstream;
-                    # when include_downstream=False, downstream failures are not the caller's
-                    # concern as long as the target itself succeeded.
-                    if output is not None:
-                        if include_downstream:
-                            return {"success": True}
-                        return {"success": True, "output": output}
-
-                    # Target produced no output. Distinguish "target failed" vs
-                    # "a different node failed and target never ran".
-                    if exec_row and exec_row["status"] == "error":
-                        err_msg = exec_row["error"] or "Execution failed"
-                        target_prefix = f"Node {node_id} failed:"
-                        if err_msg.startswith(target_prefix):
-                            return {"error": err_msg, "failed_node": node_id}
-                        # Error is from a different node — surface that explicitly so
-                        # the brain doesn't think the target failed.
-                        return {
-                            "error": err_msg,
-                            "failed_node": "other",
-                            "target_node": node_id,
-                        }
-
-                    return {"error": f"Node {node_id} produced no output. Check that credentials are configured and the node config is valid."}
+                    result = await exec_handler.handle_execute(sid, exec_req, caller_user_id=user_id)
+                    return builder_run_outcome(result, node_id, normalized_edges,
+                                               include_downstream=include_downstream)
                 except Exception as e:
                     logger.error(f"[PlatformOps] run_node error: {e}", exc_info=True)
                     return {"error": str(e)}

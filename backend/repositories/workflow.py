@@ -1082,19 +1082,6 @@ class WorkflowRepo:
         """, workflow_id, user_id)
         return dict(row) if row else None
 
-    async def get_latest_finished_execution_status(
-        self, conn, workflow_id
-    ) -> Optional[Dict[str, Any]]:
-        """Latest non-running execution — builder ``run_node`` reads this to
-        classify a failed run."""
-        row = await conn.fetchrow(
-            f"""SELECT status, error FROM workflow_executions
-               WHERE workflow_id = $1 AND status != 'running' AND {USER_VISIBLE_RUN_SQL}
-               ORDER BY finished_at DESC NULLS LAST LIMIT 1""",
-            workflow_id,
-        )
-        return dict(row) if row else None
-
     async def delete_execution(
         self, conn, execution_id
     ) -> None:
