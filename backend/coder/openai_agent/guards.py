@@ -2,12 +2,19 @@
 ceiling and its time limit. ``TurnGuard`` is the run's hooks (around the billing hooks, whose cost it reads) and
 checks them after every model call and tool call; the first to trip lets the calls in hand finish and stops the run
 after them (the SDK's own ``cancel(mode="after_turn")``), and the agent then wraps the turn up once, whichever guard
-it was. A call the model repeats with the same arguments and the same result is a loop: the ``REPEATS``th time its
-result carries a nudge, and from then on that call is refused for the rest of the turn (``loop_guardrails``). A call
-whose result changes, like a poll, never counts."""
+it was, in a call of at most ``WRAP_UP_S``. A time limit is kept by the clock too: a call still holding the run
+``OVERDUE_S`` past it is cancelled where it stands. A call the model repeats with the same arguments and the same
+result is a loop: the ``REPEATS``th time its result carries a nudge, and from then on that call is refused for the
+rest of the turn (``loop_guardrails``). A call whose result changes, like a poll, never counts.
+
+A tool whose result hands the turn's work on (``ENDS_TURN``: a platform's wake-up set on work still running) stops the
+run after the calls in hand the same way, with no wrap-up: once the turn has said something, or at once when the
+result says ``SILENTLY`` (nobody waits on its words). Left running, such turns polled the work, set the same wake-up
+again after each look and wrote one more line about work their person already knew was under way (2026-10-25)."""
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import logging
@@ -34,8 +41,34 @@ NUDGE = ("You've called {tool} with these same arguments {times} times this turn
 REFUSED = ("Not run: {tool} already returned the same result {times} times this turn for these arguments. Do "
            "something different, or answer.")
 
+ENDS_TURN = "ends_turn"
+SILENTLY = "silently"
+# How long past its time limit a call may hold a run before the run is cancelled where it stands.
+OVERDUE_S = 60.0
+# The most a turn's one wrap-up call may take; past it the turn ends on its stopped line alone.
+WRAP_UP_S = 90.0
+
 # Read through the module so a test can move the clock.
 _now = time.monotonic
+
+
+def ends_turn(output: Any) -> Any:
+    """What a tool's result says of handing the turn on: ``ENDS_TURN``'s value (true, or ``SILENTLY``), else None."""
+    if isinstance(output, str):
+        if ENDS_TURN not in output:
+            return None
+        try:
+            output = json.loads(output)
+        except ValueError:
+            return None
+    return output.get(ENDS_TURN) if isinstance(output, Mapping) else None
+
+
+def says_something(response: Any) -> bool:
+    """Whether a model response has words in it, beside its calls or alone."""
+    return any(getattr(item, "type", None) == "message" and any(
+        (getattr(part, "text", None) or "").strip() for part in getattr(item, "content", None) or [])
+        for item in getattr(response, "output", None) or [])
 
 
 @dataclass(frozen=True)
@@ -92,7 +125,7 @@ def _digest(output: Any) -> str:
 class TurnGuard(RunHooks):
     """One turn's limits as it runs. ``inner`` is the run's billing hooks, called first, whose ``spent_usd`` (what
     they priced the calls at) is the turn's spend: hooks that keep no total leave the ceiling unreached. ``tripped``
-    is the guard that tripped, once one has."""
+    is the guard that tripped, once one has; ``handed_on`` that a tool's result ended it instead (``ENDS_TURN``)."""
 
     def __init__(self, limits: TurnLimits, inner: Optional[RunHooks] = None):
         self.limits = limits
@@ -100,9 +133,12 @@ class TurnGuard(RunHooks):
         self._started = _now()
         self._spent_from = self._spent_total()
         self._stop: Optional[Callable[[], None]] = None
+        self._timers: list = []
         self.model_calls = 0
         self.tripped: Optional[str] = None
         self.paused = False
+        self.said = False
+        self.handed_on = False
         self._repeats: Dict[Tuple[str, str], Tuple[str, int]] = {}
         self._refused: Set[Tuple[str, str]] = set()
         self.nudges = 0
@@ -120,8 +156,28 @@ class TurnGuard(RunHooks):
         return _now() - self._started
 
     def watch(self, result: Any) -> None:
-        """The streamed run to stop once a guard trips."""
+        """The streamed run to stop once a guard trips; with a time limit, stopped by the clock as well, at once,
+        when a call still holds it ``OVERDUE_S`` past the limit (``_overdue``)."""
         self._stop = lambda: result.cancel(mode="after_turn")
+        if self.limits.minutes is not None:
+            left = self.limits.minutes * 60 - self.elapsed_s + OVERDUE_S
+            self._timers.append(asyncio.get_running_loop().call_later(max(left, 0.0), self._overdue, result))
+
+    def close(self) -> None:
+        """The turn is over: its clock stops."""
+        for timer in self._timers:
+            timer.cancel()
+        self._timers.clear()
+
+    def _overdue(self, result: Any) -> None:
+        """A model call that never answers ends no step, so the time limit, checked at each one, never trips: a
+        site build's turn hung on one and never said its site was live (2026-10-25)."""
+        if result.is_complete:
+            return
+        logger.warning("agent_turn_overdue: a call held the run %.0fs past its %g-minute limit", OVERDUE_S,
+                       self.limits.minutes)
+        self.tripped = self.tripped or TIME
+        result.cancel(mode="immediate")
 
     def _check(self) -> None:
         if self.tripped:
@@ -144,9 +200,15 @@ class TurnGuard(RunHooks):
         if self._inner is not None:
             await self._inner.on_llm_end(context, agent, response)
         self.model_calls += 1
+        self.said = self.said or says_something(response)
         self._check()
 
     async def on_tool_end(self, context, agent, tool, result) -> None:
+        handing_on = ends_turn(result)
+        if handing_on and not (self.tripped or self.handed_on) and (handing_on == SILENTLY or self.said):
+            self.handed_on = True
+            if self._stop is not None:
+                self._stop()
         # A long tool can run the clock out between model calls.
         self._check()
 
@@ -210,6 +272,7 @@ def record(guard: TurnGuard, ended_by: Optional[str], *, conversation_id: Option
             span.set_attribute("agent.turn.spent_usd", round(guard.spent_usd, 6))
             span.set_attribute("agent.turn.loop_nudges", guard.nudges)
             span.set_attribute("agent.turn.loop_refusals", guard.refusals)
+            span.set_attribute("agent.turn.handed_on", guard.handed_on)
             if ended_by:
                 span.set_attribute("agent.turn.ended_by", ended_by)
         finally:

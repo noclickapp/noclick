@@ -43,12 +43,14 @@ class _Spans:
 
 
 async def _run(pool, monkeypatch, *, limits, wrap_up=WRAP_UP, call=None, results=None, cost=None, tick_s=0.0,
-               answer_after=None):
+               answer_after=None, hang_at=None, wrap_up_hangs=False):
     """One turn of an agent whose model calls ``look`` with ``call(n)``'s arguments (by default a new page each
     time) until it's allowed no tool, or until ``answer_after(input)`` says it's seen enough. ``results(n)`` is
     what the tool's nth call returns; each tool call moves the turn's clock ``tick_s`` on. With a ``cost``, each
     model call reports it to the run's billing hooks (whose own work the caller fakes); without, there are none.
+    The ``hang_at``th model call, and the wrap-up with ``wrap_up_hangs``, never answer.
     Returns (model calls as (tool_choice, input), tool calls, emitted frames, agent, spans)."""
+    import asyncio
     from agents.items import ModelResponse
     from agents.models.interface import Model
     from agents.usage import Usage
@@ -93,11 +95,15 @@ async def _run(pool, monkeypatch, *, limits, wrap_up=WRAP_UP, call=None, results
 
         async def get_response(self, system_instructions, input, model_settings, *args, **kwargs):
             calls.append((model_settings.tool_choice, list(input)))
+            if wrap_up_hangs:
+                await asyncio.Event().wait()
             return ModelResponse(output=[message(STANDING)], usage=Usage(), response_id="r-close")
 
         async def stream_response(self, system_instructions, input, model_settings, *args, **kwargs):
             calls.append((model_settings.tool_choice, list(input)))
             n = len(calls)
+            if n == hang_at:
+                await asyncio.Event().wait()
             if answer_after and answer_after(list(input)):
                 output = [message("Done: nothing else to look at.")]
             else:
@@ -190,6 +196,44 @@ async def test_without_a_wrap_up_a_guard_ends_the_turn_on_one_plain_line(builder
     assert (message.message, message.finished, state.reason) == (line, True, line)
     assert not _said(emitted) and agent.turn_ended_by == "time"
     assert spans[0].attributes["agent.turn.ended_by"] == "time"
+
+
+async def test_a_call_that_never_answers_is_ended_by_the_clock(builder_request_db, monkeypatch):
+    """A site build's turn ran a shell call, then its next model call never answered: with its limits checked only
+    as a call ends, the turn hung, holding the conversation, and never told the owner the site was live
+    (2026-10-25). The time limit is kept by the clock: a call still holding the run past it is cancelled, and the
+    turn wraps up as any guard ends it."""
+    from coder.openai_agent import guards
+    from coder.openai_agent.guards import TurnLimits
+
+    monkeypatch.setattr(guards, "OVERDUE_S", 0.05)
+    pool = builder_request_db[0]
+    calls, looked, emitted, agent, spans = await _run(pool, monkeypatch, hang_at=2,
+                                                      limits=TurnLimits(steps=10, minutes=0.001))
+
+    assert [choice for choice, _ in calls] == [None, None, "none"] and len(looked) == 1
+    assert _said(emitted) == f"{STANDING}\n\nStopped on time." and not _failed(emitted)
+    assert emitted[-1].finished is True and agent.turn_ended_by == "time"
+    assert spans[0].attributes["agent.turn.ended_by"] == "time"
+    # Its clock stops with it.
+    assert agent._turn_guard._timers == []
+
+
+async def test_a_wrap_up_that_never_answers_ends_the_turn_on_its_line(builder_request_db, monkeypatch):
+    from coder.openai_agent import guards
+    from coder.openai_agent.guards import TurnLimits
+
+    monkeypatch.setattr(guards, "OVERDUE_S", 0.05)
+    monkeypatch.setattr(guards, "WRAP_UP_S", 0.1)
+    pool = builder_request_db[0]
+    calls, looked, emitted, agent, _ = await _run(pool, monkeypatch, hang_at=2, wrap_up_hangs=True,
+                                                  limits=TurnLimits(steps=10, minutes=0.001))
+
+    assert [choice for choice, _ in calls] == [None, None, "none"]
+    # As a turn with no wrap-up ends: on its one plain line.
+    [message, state] = _failed(emitted)
+    assert message.message == guards.stopped_line("time", TurnLimits(steps=10, minutes=0.001)) == state.reason
+    assert message.finished is True and agent.turn_ended_by == "time"
 
 
 async def test_a_guard_that_trips_on_the_answer_ends_nothing(builder_request_db, monkeypatch):

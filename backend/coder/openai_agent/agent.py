@@ -943,6 +943,7 @@ class Agent:
         try:
             await self._turn(message, guard)
         finally:
+            guard.close()
             config = getattr(self, "config", None)
             guards.record(guard, self.turn_ended_by, conversation_id=getattr(self, "conversation_id", None),
                           model=config.llm.model if config else "")
@@ -1246,9 +1247,15 @@ class Agent:
             tools=[_refusing(t) for t in self._sdk_agent.tools if isinstance(t, FunctionTool)], mcp_servers=[],
             model_settings=dataclasses.replace(self._sdk_agent.model_settings, tool_choice="none"))
         try:
-            closing = await Runner.run(closing_agent, [*history, {"role": "developer", "content": entry["prompt"]}],
-                                       hooks=guard, max_turns=1, run_config=run_config)
+            async with asyncio.timeout(guards.WRAP_UP_S):
+                closing = await Runner.run(closing_agent,
+                                           [*history, {"role": "developer", "content": entry["prompt"]}],
+                                           hooks=guard, max_turns=1, run_config=run_config)
         except MaxTurnsExceeded:
+            return None
+        except TimeoutError:
+            logger.warning("[openai_agent] a turn's wrap-up got no answer in %gs; it ends on its line",
+                           guards.WRAP_UP_S)
             return None
         line = entry.get("line") or guards.stopped_line(reason, guard.limits)
         said = str(closing.final_output or "").strip()
