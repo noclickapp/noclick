@@ -197,3 +197,47 @@ async def test_a_turns_first_call_folds_only_past_the_hard_ceiling(context_db):
     assert overhead + compaction.token_count(following, "test") <= budget.hard
     assert not summary.await_count  # nothing folded, on the turn's first call either
     assert extends(view, following) and following[-1] == raw[-1]
+
+
+async def test_what_a_turn_leaves_out_of_its_view_stays_out_for_the_rest_of_the_turn(context_db):
+    """A turn that can't fold (here its summary failed) and whose older calls pass the ceiling even as stubs, the
+    model's reasoning beside them whole, leaves the oldest call groups out of the model's view rather than failing.
+    What it leaves out stays out for the rest of the turn, and it leaves out down to the target as a fold goes, so the
+    prompt is rewritten from there only when the ceiling comes round again; the newest result reads whole, and the
+    history keeps it all."""
+    from coder.openai_agent import compaction as engine
+
+    pool, _, summary, budget = context_db
+    summary.side_effect = RuntimeError("provider unavailable")
+    raw = [{"role": "user", "content": "Build me a weekly digest of Hacker News."}]
+    compact = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)
+    views, marks = [], []
+    for i in range(120):
+        thought = [{"type": "summary_text", "text": f"Step {i}: checking the feed. " + "reasoning " * 100}]
+        raw = raw + [{"type": "reasoning", "summary": thought, "content": thought},
+                     {"type": "function_call", "name": "fetch", "call_id": f"f{i}", "arguments": "{}"},
+                     {"type": "function_call_output", "call_id": f"f{i}", "output": f"story {i} " + "text " * 1200}]
+        views.append(await persisted_call(pool, compact, raw))
+        marks.append(compact.left_out["calls"])
+
+    note = {"role": "developer", "content": engine.PROMPTS.LEFT_OUT_NOTE}
+    overhead = compaction.token_count([INSTRUCTIONS, []], "test") + 6000
+    assert summary.await_count == 1 and all(overhead + compaction.token_count(v, "test") <= budget.hard for v in views)
+    left = [i for i, view in enumerate(views) if note in view]
+    assert left and left == list(range(left[0], len(views)))  # once something is left out, the note stays
+    for view in views:
+        check_pairs(view)
+    assert views[-1][-1] == raw[-1] and views[-1][0] == raw[0]  # the newest result whole, the request in view
+    # A call group left out never comes back in a later call of the turn.
+    gone, before = set(), None
+    for view in views[left[0]:]:
+        shown = {item["call_id"] for item in view if item.get("type") == "function_call"}
+        assert not shown & gone
+        gone |= (before or set()) - shown
+        before = shown
+    assert gone
+    # Leaving out goes down to the target, so it comes round only every so many calls.
+    moves = [i for i in range(1, len(marks)) if marks[i] != marks[i - 1]]
+    assert moves and len(moves) <= (len(views) - left[0]) // 5
+    _, stored = await compact.repo.load()
+    assert stored == raw

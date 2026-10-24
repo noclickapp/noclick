@@ -8,6 +8,7 @@ import pytest
 from agents.run_config import ModelInputData
 
 from coder.coordinator import compaction
+from coder.openai_agent import compaction as engine
 from repositories.coordinator_context import CoordinatorContextRepo
 from repositories.coordinator_memories import CoordinatorMemoryRepo
 from tests.test_builder_requests import USER, builder_request_db  # noqa: F401
@@ -102,16 +103,24 @@ async def test_user_edit_and_forget_checkpoint_take_effect(context_db):
     assert not (await memories.list_headers(USER))["memories"]
 
 
-async def test_failed_summary_preserves_context_and_stops_at_hard_budget(context_db):
+async def test_a_failed_summary_saves_nothing_and_the_turn_runs_on_a_view_that_fits(context_db, caplog):
+    """A summary that fails saves no checkpoint and isn't retried; the turn used to stop there for good, every turn
+    after it too. It runs on a view within the hard ceiling now: the oldest tool calls past the checkpoint are left out
+    of it, with a note saying so, every message of the conversation stays, and the log says why, loudly."""
     pool, raw, summary, budget = context_db
     summary.side_effect = RuntimeError("Provider unavailable")
     compact = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)
-    with pytest.raises(compaction.ContextBudgetError):
-        await compact(model_data(raw))
+    view = (await compact(model_data(raw))).input
     assert await compact.repo.load() == ({}, raw)
     assert not (await CoordinatorMemoryRepo(pool).list_headers(USER))["memories"]
-    with pytest.raises(compaction.ContextBudgetError):
-        await compact(model_data(raw))
+    assert compact.overhead + compaction.token_count(view, "test") <= budget.hard
+    check_pairs(view)
+    note = {"role": "developer", "content": engine.PROMPTS.LEFT_OUT_NOTE}
+    assert view[:2] == [raw[0], note]  # where the first call left out stood
+    assert [i for i in view if i.get("role") and i != note] == [i for i in raw if i.get("role")]  # every message
+    assert len(view) < len(raw)
+    assert "Compaction failed" in caplog.text and "left out of the model's view" in caplog.text
+    assert (await compact(model_data(raw))).input == view  # the same view for the run's later calls
     assert summary.await_count == 1  # no repeated billing/summary retry loop
 
 
@@ -167,10 +176,16 @@ async def test_concurrent_memory_edit_wins_checkpoint_cas(context_db):
 
     summary.side_effect = user_edits_during_summary
     fresh = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)
-    with pytest.raises(compaction.ContextBudgetError):
-        await fresh(model_data(extended))
+    view = (await fresh(model_data(extended))).input
     assert (await compact.memories.get(USER, memory["id"]))["content"] == "Do not proceed. Wait for my next instruction."
     assert await compact.repo.load() == (checkpoint, extended)
+    # The turn runs on the person's edit, in a view that fits: what it can't fold is left out, its own messages
+    # too once the tool calls aren't enough, all but the request it answers.
+    assert "Do not proceed. Wait for my next instruction." in view[0]["content"]
+    assert fresh.overhead + compaction.token_count(view, "test") <= budget.hard
+    check_pairs(view)
+    assert {"role": "developer", "content": engine.PROMPTS.LEFT_OUT_NOTE} in view and view[-1] == extended[-1]
+    assert view.count(extended[-1]) < 8  # older messages left out too
 
 
 async def test_real_streamed_sdk_compacts_between_tool_rounds(context_db, monkeypatch):

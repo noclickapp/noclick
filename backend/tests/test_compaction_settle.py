@@ -254,3 +254,37 @@ async def test_a_platform_agents_compactor_settles_too_and_a_run_without_one_lea
     for coro, _ in spawned:
         assert coro.cr_code is compaction.Compactor.settle.__code__
         coro.close()
+
+
+async def test_a_turn_that_spent_its_summaries_leaves_its_backlog_to_a_settle_with_summaries_of_its_own(context_db):
+    """A long turn spent its summaries with most of what it read still unfolded, and the settle after it shared the
+    turn's bound, so it folded nothing: the next turn waited on summaries before it could answer, each reading about
+    one call's worth of results, and fell further behind with every long turn. The settle has summaries of its own,
+    and a backlog past what they can read whole is read with its tool calls and results cut (the history keeps them
+    whole), so the next turn starts with room and its first call waits on none."""
+    from coder.openai_agent.output_limits import CONTEXT_HINT
+
+    pool, _, summary, _ = context_db
+    raw = [{"role": "user", "content": "Look up sixty."}]
+    compact = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=BUDGET)
+    for i in range(60):  # one turn: every lookup is persisted before the next model call, as the session does
+        raw += _lookups(1, start=i)
+        await _store(pool, raw)
+        await compact(model_data(raw))
+    assert summary.await_count == compaction.MAX_SUMMARIES
+    raw.append({"role": "assistant", "content": "Done."})
+    await _store(pool, raw)
+    await compact.settle()
+    assert compaction.MAX_SUMMARIES < summary.await_count <= 2 * compaction.MAX_SUMMARIES
+    read = [call.args[1] for call in summary.await_args_list[compaction.MAX_SUMMARIES:]]
+    assert any(CONTEXT_HINT in item.get("output", "") for chunk in read for item in chunk)
+    for chunk in read:
+        check_pairs(chunk)
+    checkpoint, stored = await compact.repo.load()
+    assert stored == raw and checkpoint["covered"] > len(raw) // 2
+    following = raw + [{"role": "user", "content": "And the sixty-first?"}]
+    await _store(pool, following)
+    made = summary.await_count
+    view = (await compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=BUDGET)(
+        model_data(following))).input
+    assert summary.await_count == made and view[-1] == following[-1]

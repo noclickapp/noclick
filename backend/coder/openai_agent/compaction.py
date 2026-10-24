@@ -158,6 +158,12 @@ def _cuttable(item):
     return field if field and isinstance(item.get(field), str) else None
 
 
+def _message(item):
+    """A message of the conversation (the person's, a reply, a note), as against a tool call, its result or the
+    model's reasoning."""
+    return item.get("role") is not None and item.get("type", "message") == "message"
+
+
 def _cut_key(item):
     # A call and its result share a call id, and each is cut on its own.
     return item.get("type"), item.get("call_id")
@@ -267,18 +273,19 @@ class Compactor:
     own, the tail's), and once the turn has made ``MAX_SUMMARIES`` every one not
     folded, are cut in the model's view instead when they'd pass the hard
     ceiling (``cut_to_floor``); and when that still leaves the call past it, the
-    ones the model already acted on are cut to a stub, so a long turn's next
-    call goes on rather than fails. ``notify``
+    ones the model already acted on are cut to a stub, and past that the oldest
+    are left out of the view (``_leave_out``), so a long turn's next call, and
+    every turn after it, goes on rather than fails. ``notify``
     hears ``compacting`` before the first summary of a call and ``compacted``
     when that call's folding ends, so a watcher can say why the turn is quiet.
 
     One instance serves one run, whose calls each extend the prompt the call
     before sent (a run's first call, the last run's), which the provider has
     cached; a fold or a cut rewrites that prompt from the item it touches on.
-    So a call folds only past the hard ceiling, and a call or result cut in the
-    view stays cut, the same way, for the rest of the run (``cut``). The fold
-    the next run would otherwise wait on happens once this one is over
-    (``settle``), off its reply's path."""
+    So a call folds only past the hard ceiling, and a call or result cut or left
+    out of the view stays so, the same way, for the rest of the run (``cut``,
+    ``left_out``). The fold the next run would otherwise wait on happens once
+    this one is over (``settle``), off its reply's path."""
 
     def __init__(self, store: CheckpointStore, *, model, user_id, user_email=None, organization_id=None,
                  budget=None, notify: Optional[Callable[[str], None]] = None):
@@ -294,6 +301,9 @@ class Compactor:
         self.overhead: Optional[int] = None
         # The tool calls and results this run cut in the model's view: by ``_cut_key``, its floor and its cut.
         self.cut: Dict[Tuple[Optional[str], Optional[str]], Tuple[int, Dict[str, Any]]] = {}
+        # Where in the history this run's view leaves out the older tool calls ("calls") and, past them, the older
+        # messages ("messages"): every one before it, past the checkpoint.
+        self.left_out = {"calls": 0, "messages": 0}
 
     async def __call__(self, data):
         # CPU tokenization stays off the event loop.
@@ -319,12 +329,9 @@ class Compactor:
             # first.
             capped = self.summaries >= MAX_SUMMARIES or self.failed
             start = len(effective) - (len(raw) - (covered if capped else foldable))
-            effective, total = await self._cut(effective, start, total)
+            effective, total = await self._cut(effective, start, total, len(raw))
         if total > self.budget.hard:
-            if covered < foldable:
-                raise ContextBudgetError("This conversation needs compaction, but a safe checkpoint could not be "
-                                         "saved. Its history is intact; retry after resolving the memory or model "
-                                         "error.")
+            # All that's left is the request the turn answers and its newest call group.
             raise ContextBudgetError("The latest messages are too large for the model's context, even with their "
                                      "tool calls and results cut short. The conversation's history is intact; send a "
                                      "shorter message, or ask for less at a time.")
@@ -333,11 +340,12 @@ class Compactor:
     async def settle(self) -> None:
         """Once the run is over (its reply sent), fold the conversation down to ``target`` when it passes
         ``budget.settle``, so the next turn starts well under the hard ceiling and its calls don't wait on a summary.
-        Bounded by the same summaries as the run's calls; a person's edit or a turn that folds first wins, and this
-        stops."""
+        Bounded by ``MAX_SUMMARIES`` of its own: a run that spent its summaries leaves the most to fold. A person's
+        edit or a turn that folds first wins, and this stops."""
         if self.overhead is None or self.failed:
             return
         self.cut = {}  # the run's cuts were its own view; the next run starts from the history
+        self.summaries = 0
         await self._fold(None, self.budget.settle, settling=True)
 
     async def _size(self, items):
@@ -378,9 +386,6 @@ class Compactor:
             try:
                 boundaries = safe_boundaries(raw)
                 costs = await asyncio.to_thread(lambda: [self._count(item) for item in raw])
-                cumulative = [0]
-                for cost in costs:
-                    cumulative.append(cumulative[-1] + cost)
                 # Keep a useful recent tail even when old tool output is huge.
                 tail_start = len(raw)
                 tail_tokens = 0
@@ -392,6 +397,17 @@ class Compactor:
                 # Stored history before the tail folds, up to its last safe boundary.
                 foldable = max(i for i in boundaries if i <= min(tail_start, len(stored)))
                 cuts = [i for i in boundaries if covered < i <= foldable]
+                # More to fold than the summaries left can read whole (what a long turn of big tool calls leaves):
+                # they read it with its tool calls and results cut to the floor, so it folds in the summaries a
+                # turn has rather than outgrowing them turn after turn.
+                reads = raw
+                if total - self.budget.target > (MAX_SUMMARIES - self.summaries) * self.budget.chunk:
+                    reads = [*raw[:covered], *(cut_to_floor(item) for item in raw[covered:foldable]), *raw[foldable:]]
+                    costs[covered:foldable] = await asyncio.to_thread(
+                        lambda: [self._count(item) for item in reads[covered:foldable]])
+                cumulative = [0]
+                for cost in costs:
+                    cumulative.append(cumulative[-1] + cost)
                 # Bounded chunks avoid sending an already overflowing history
                 # to the summarizer.
                 while cuts and total > self.budget.target and self.summaries < MAX_SUMMARIES and not self.failed:
@@ -405,10 +421,10 @@ class Compactor:
                         # results cut.
                         end = cuts[0]
                         chunk = await asyncio.to_thread(
-                            cut_tool_calls, raw[covered:end],
+                            cut_tool_calls, reads[covered:end],
                             cumulative[end] - cumulative[covered] - self.budget.chunk, self._count)
                     else:
-                        chunk = raw[covered:end]
+                        chunk = reads[covered:end]
                     if not compacting and not settling:
                         compacting = True
                         self._notify("compacting")
@@ -434,12 +450,14 @@ class Compactor:
                     self._notify("compacted")
         return covered, foldable, effective, total
 
-    async def _cut(self, items, start, total):
+    async def _cut(self, items, start, total, history_length):
         """``items`` with tool calls' arguments and tool results past ``start`` cut to the floor, oldest first: the
         older ones down to the target, as a fold goes, so the calls after this one extend the cut view until the
         ceiling comes round again; the latest call group only while still past the ceiling. Before those, a call
         still past it (a long turn whose summaries are spent: the older ones alone outgrow the context at their
-        floor) has the older ones, which the model already acted on, cut to a stub, down to the target as before."""
+        floor) has the older ones, which the model already acted on, cut to a stub, down to the target as before;
+        and one past it even so has the oldest left out (``_leave_out``). ``items`` ends with the history's last
+        ``history_length`` items."""
         items = list(items)
         latest = len(items)  # where the latest call's group starts: its response (calls and any text), then results
         while latest > start and items[latest - 1].get("type") == "function_call_output":
@@ -447,24 +465,66 @@ class Compactor:
         while latest > start and (items[latest - 1].get("type") in ("function_call", "reasoning") or (
                 items[latest - 1].get("type") == "message" and items[latest - 1].get("role") == "assistant")):
             latest -= 1
+        marks = [start + b for b in safe_boundaries(items[start:latest])]
+        groups = list(zip(marks, marks[1:]))
+        out: set = set()
+        offset = history_length - len(items)
+        # What the run already left out stays out; the rest is cut only where that still passes the ceiling.
+        total = await self._leave_out(items, groups, out, total, offset, more=False)
         older, newest = range(start, latest), range(latest, len(items))
         passes = ((older, self.budget.target, TOOL_OUTPUT_FLOOR), (older, self.budget.target, TOOL_OUTPUT_STUB),
                   (newest, self.budget.hard, TOOL_OUTPUT_FLOOR))
         for span, goal, floor in passes:
-            if floor == TOOL_OUTPUT_STUB and total <= self.budget.hard:
+            if total <= self.budget.hard:
                 break
             for i in span:
                 if total <= goal:
                     break
                 key = _cut_key(items[i])
-                if not _cuttable(items[i]) or self.cut.get(key, (floor + 1,))[0] <= floor:
+                if i in out or not _cuttable(items[i]) or self.cut.get(key, (floor + 1,))[0] <= floor:
                     continue
                 cut = cut_to_floor(self._originals.get(key, items[i]), floor)
                 if cut is not items[i]:
                     total -= await asyncio.to_thread(lambda: self._count(items[i]) - self._count(cut))
                     items[i] = cut
                     self.cut[key] = (floor, cut)
+        if total > self.budget.hard:
+            await self._leave_out(items, groups, out, total, offset, more=True)
+        if out:  # the note stands where the first item left out did
+            first = min(out)
+            items = [*items[:first], {"role": "developer", "content": PROMPTS.LEFT_OUT_NOTE},
+                     *(item for i, item in enumerate(items) if i > first and i not in out)]
         return items, await self._size(items)
+
+    async def _leave_out(self, items, groups, out, total, offset, *, more):
+        """Adds to ``out`` the call groups of ``items`` (``groups``: the older ones, oldest first) this run left out
+        of the model's view, and with ``more`` the oldest after them, down to the target; returns what the view then
+        comes to. A turn that can't fold them (its summaries spent, or one failed) and finds them past the ceiling
+        even cut to a stub leaves them out: the backlog a long turn leaves would otherwise fail every turn after it.
+        Their tool calls, results and reasoning go first, keeping the conversation's messages; while the view still
+        passes the ceiling, those go too, all but the request the turn answers. What's left out stays out for the
+        rest of the run (``left_out``, in the history's own indices: an item's is its index here plus ``offset``),
+        and the history keeps it all, to fold on a later turn."""
+        before, noted = dict(self.left_out), bool(out)
+        request = max((i for a, b in groups for i in range(a, b) if items[i].get("role") == "user"), default=None)
+        for tier in ("calls", "messages"):
+            needed = more and total > self.budget.hard
+            for a, b in groups:
+                if b + offset > self.left_out[tier] and not (needed and total > self.budget.target):
+                    break
+                going = [i for i in range(a, b) if i not in out and i != request
+                         and (tier == "messages" or not _message(items[i]))]
+                total -= await asyncio.to_thread(lambda: sum(self._count(items[i]) for i in going))
+                out.update(going)
+                self.left_out[tier] = max(self.left_out[tier], b + offset)
+        if self.left_out != before:
+            logger.error("Compaction couldn't fold %s in time (%d summaries this turn%s): %d of its oldest items "
+                         "past the checkpoint are left out of the model's view; its history keeps them",
+                         getattr(self.store, "conversation_id", None) or self.user_id, self.summaries,
+                         ", one failed" if self.failed else "", len(out))
+        if out and not noted:  # the note saying so takes its room in the view
+            total += await asyncio.to_thread(self._count, [{"role": "developer", "content": PROMPTS.LEFT_OUT_NOTE}])
+        return total
 
     def _notify(self, status: str) -> None:
         if self.notify is None:
