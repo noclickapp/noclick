@@ -5505,6 +5505,12 @@ class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
         cls, *, pool, user_id, workflow_id, node_id, webhook_id,
         webhook_url, credential, credential_id, config,
     ) -> Dict[str, Any]:
+        if credential.get("credential_type") != "jira_oauth" and not credential.get("access_token"):
+            # Atlassian lets only OAuth and Connect apps register dynamic webhooks; an API token gets a bare 403.
+            raise ValueError(
+                "Jira only lets a connection made with Continue with Jira register this trigger, "
+                "and refuses API tokens. Reconnect this node with Continue with Jira."
+            )
         api_base = _jira_api_base_from_dict(credential)
         headers = _jira_auth_headers_from_dict(credential)
 
