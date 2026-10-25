@@ -28,9 +28,9 @@ RUN pip install -r requirements.txt && pip uninstall -y pip
 # (backend/nodes/agent/config/_cli_models.json); a test keeps them in step.
 FROM node:22-bookworm-slim AS cli
 RUN npm install -g --prefix /opt/noclick-cli \
-        @openai/codex@0.163.0 \
-        @anthropic-ai/claude-code@2.1.308 \
-        opencode-ai@1.19.3 \
+        @openai/codex@0.164.0 \
+        @anthropic-ai/claude-code@2.1.310 \
+        opencode-ai@1.19.4 \
         openclaw@2026.9.1 \
     && npm cache clean --force \
     # opencode's postinstall hard-links the platform binary into bin/, leaving
