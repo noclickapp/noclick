@@ -3,6 +3,14 @@
 // "[" toggles the folder sidebar) don't hijack characters in inputs. Extracted
 // from the copies previously inlined in Dashboard and the command palette.
 
+/**
+ * The pressed key, lowercased. A keydown Chrome dispatches for an autofill pick
+ * carries no `key`, so reading `e.key.toLowerCase()` throws in every listener.
+ */
+export function pressedKey(e: { key?: string }): string {
+    return (e.key ?? '').toLowerCase();
+}
+
 /** True when the event target is a text-entry field (input/textarea/contenteditable). */
 export function isTextEntryTarget(target: EventTarget | null): boolean {
     if (!(target instanceof HTMLElement)) return false;
