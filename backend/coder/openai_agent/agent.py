@@ -326,9 +326,11 @@ class Agent:
         # etc.) has it available.
         self._current_workdir: str = "/tmp/apps"
 
-        # The running turn's guards (``guards.TurnGuard``), and which of them ended the last turn, if one did.
+        # The running turn's guards (``guards.TurnGuard``), and which of them ended the last turn, if one did; for a
+        # turn the account couldn't pay for (``guards.FUNDS``), what its wrap-up said of its work (``turn_closing``).
         self._turn_guard: Optional[TurnGuard] = None
         self.turn_ended_by: Optional[str] = None
+        self.turn_closing: Optional[str] = None
 
         # Whether create() has finished. Until then, ``__call__`` raises.
         self._initialized = False
@@ -417,7 +419,8 @@ class Agent:
         agent._tool_step_preview = tool_step_preview
         # How far each turn goes (``guards.TurnLimits``), and what the model is told once a guard ends one: per guard
         # (``{steps|spend|time: {prompt, line?}}``, or one prompt for all), it answers once more without tools and
-        # the guard's line follows; a guard with none ends the turn on its line alone.
+        # the guard's line follows; a guard with none ends the turn on its line alone. With ``funds``, a tool the
+        # credit gate turned down ends the turn too (``_end_unfunded``).
         agent._limits = limits or TurnLimits()
         agent._wrap_up = guards.wrap_ups(wrap_up)
         # The reasoning effort of each run's first model call, which someone is waiting on (its first words, or
@@ -938,8 +941,9 @@ class Agent:
         """
         if not self._initialized or self._sdk_agent is None:
             raise RuntimeError("Agent not initialized — call await Agent.create(...)")
-        guard = TurnGuard(getattr(self, "_limits", None) or TurnLimits(), getattr(self, "_billing_hooks", None))
-        self._turn_guard, self.turn_ended_by = guard, None
+        guard = TurnGuard(getattr(self, "_limits", None) or TurnLimits(), getattr(self, "_billing_hooks", None),
+                          ends_unfunded=guards.FUNDS in getattr(self, "_wrap_up", {}))
+        self._turn_guard, self.turn_ended_by, self.turn_closing = guard, None, None
         try:
             await self._turn(message, guard)
         finally:
@@ -1171,6 +1175,9 @@ class Agent:
         # A guard that stopped the run, rather than the model's answer: the turn wraps up once, or ends on its line.
         closing: List[Dict[str, Any]] = []
         ended_by = guard.tripped if result is not None and result.final_output is None and not guard.paused else None
+        if ended_by == guards.FUNDS:
+            await self._end_unfunded(guard, result.to_input_list(), run_config, env_overrides)
+            return
         if ended_by is not None:
             self.turn_ended_by = ended_by
             with override_env(**env_overrides) if env_overrides else contextlib.nullcontext():
@@ -1258,11 +1265,36 @@ class Agent:
                            guards.WRAP_UP_S)
             return None
         line = entry.get("line") or guards.stopped_line(reason, guard.limits)
-        said = str(closing.final_output or "").strip()
-        text = f"{said}\n\n{line}" if said else line
+        text = "\n\n".join(part for part in (str(closing.final_output or "").strip(), line) if part)
+        if not text:
+            return None
         reply = ResponseOutputMessage(id=FAKE_RESPONSES_ID, type="message", role="assistant", status="completed",
                                       content=[ResponseOutputText(type="output_text", text=text, annotations=[])])
         return text, MessageOutputItem(agent=closing_agent, raw_item=reply).to_input_item()
+
+    async def _end_unfunded(self, guard: TurnGuard, history: List[Dict[str, Any]], run_config: Any,
+                            env_overrides: Dict[str, str]) -> None:
+        """A tool the credit gate turned down ended the turn (``guards.FUNDS``): its wrap-up says once what the turn
+        got done (``turn_closing``, never streamed: the agent node keeps it on the turn's failed reply, for the
+        refusal its platform makes of the failure), then the turn fails with the gate's words, as one whose model call
+        the gate turned down does."""
+        self.turn_ended_by = guards.FUNDS
+        closing: List[Dict[str, Any]] = []
+        try:
+            with override_env(**env_overrides) if env_overrides else contextlib.nullcontext():
+                wrapped = await self._wrap_up_turn(guards.FUNDS, guard, history, run_config)
+        except InsufficientBalanceError:
+            wrapped = None  # nor can that call be paid for
+        if wrapped is not None:
+            self.turn_closing, item = wrapped
+            closing = [item]
+            if self._session is not None:
+                await self._session.add_items(closing)
+        if self._session is None:
+            self._history = history + closing
+        logger.warning("[openai_agent] turn ended unfunded: %s", guard.unfunded)
+        await self._emit_message(ChatMessageEvent(message=guard.unfunded, finished=True, status="error"))
+        await self._emit_message(AgentStateEvent(state="error", reason=guard.unfunded))
 
     def _settle_context(self) -> None:
         """With the reply out, fold what the next turn would otherwise wait on, in the background."""

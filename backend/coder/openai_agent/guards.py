@@ -10,7 +10,14 @@ rest of the turn (``loop_guardrails``). A call whose result changes, like a poll
 A tool whose result hands the turn's work on (``ENDS_TURN``: a platform's wake-up set on work still running) stops the
 run after the calls in hand the same way, with no wrap-up: once the turn has said something, or at once when the
 result says ``SILENTLY`` (nobody waits on its words). Left running, such turns polled the work, set the same wake-up
-again after each look and wrote one more line about work their person already knew was under way (2026-10-25)."""
+again after each look and wrote one more line about work their person already knew was under way (2026-10-25).
+
+A tool NoClick's credit gate turned down (``credit_refusal``: its result's error is the gate's
+``insufficient_credits_message``) means the account can't pay for the turn's work. A run whose caller says how to wrap
+such a turn up (a ``FUNDS`` wrap-up) stops after the calls in hand: it says once what it got done, then fails with the
+gate's words, which its platform turns into its own refusal. Left running, a coordinator whose shell the gate refused
+tried other tools and told its person it couldn't confirm the work, never that the day's allowance had run out
+(2026-10-25)."""
 
 from __future__ import annotations
 
@@ -28,10 +35,14 @@ from agents.tool_guardrails import (
     ToolOutputGuardrailData,
 )
 
+from billing.exceptions import match_insufficient_credits
+
 logger = logging.getLogger(__name__)
 
 STEPS, SPEND, TIME = "steps", "spend", "time"
-REASONS = (STEPS, SPEND, TIME)
+LIMITS = (STEPS, SPEND, TIME)
+FUNDS = "funds"
+REASONS = LIMITS + (FUNDS,)
 # The time an identical call returns the same result that gets the nudge; one more is refused.
 REPEATS = 3
 REPEATED_RESULT_CHARS = 2000
@@ -64,6 +75,20 @@ def ends_turn(output: Any) -> Any:
     return output.get(ENDS_TURN) if isinstance(output, Mapping) else None
 
 
+def credit_refusal(output: Any) -> Optional[str]:
+    """The credit gate's words when a tool's result is its refusal (its ``error``, never what a command printed)."""
+    if not match_insufficient_credits(str(output)):
+        return None
+    if isinstance(output, str):
+        try:
+            output = json.loads(output)
+        except ValueError:
+            return None
+    error = output.get("error") if isinstance(output, Mapping) else None
+    found = match_insufficient_credits(error) if isinstance(error, str) else None
+    return found.group(0) if found else None
+
+
 def says_something(response: Any) -> bool:
     """Whether a model response has words in it, beside its calls or alone."""
     return any(getattr(item, "type", None) == "message" and any(
@@ -92,7 +117,10 @@ class TurnLimits:
 
 
 def stopped_line(reason: str, limits: TurnLimits) -> str:
-    """The plain line a person reads for a turn ``reason`` ended."""
+    """The plain line a person reads for a turn ``reason`` ended; none for one the account couldn't pay for, whose
+    platform's refusal says why."""
+    if reason == FUNDS:
+        return ""
     if reason == STEPS:
         return f"I stopped here: this turn used all {limits.steps} of its steps."
     if reason == SPEND:
@@ -101,9 +129,9 @@ def stopped_line(reason: str, limits: TurnLimits) -> str:
 
 
 def wrap_ups(wrap_up: Any) -> Dict[str, Dict[str, str]]:
-    """``wrap_up`` as ``{reason: {prompt, line?}}``: a string is the prompt for every guard."""
+    """``wrap_up`` as ``{reason: {prompt, line?}}``: a string is the prompt for every limit."""
     if isinstance(wrap_up, str) and wrap_up:
-        return {reason: {"prompt": wrap_up} for reason in REASONS}
+        return {reason: {"prompt": wrap_up} for reason in LIMITS}
     if isinstance(wrap_up, Mapping):
         return {reason: dict(entry) for reason, entry in wrap_up.items()
                 if reason in REASONS and isinstance(entry, Mapping) and entry.get("prompt")}
@@ -125,11 +153,14 @@ def _digest(output: Any) -> str:
 class TurnGuard(RunHooks):
     """One turn's limits as it runs. ``inner`` is the run's billing hooks, called first, whose ``spent_usd`` (what
     they priced the calls at) is the turn's spend: hooks that keep no total leave the ceiling unreached. ``tripped``
-    is the guard that tripped, once one has; ``handed_on`` that a tool's result ended it instead (``ENDS_TURN``)."""
+    is the guard that tripped, once one has; ``handed_on`` that a tool's result ended it instead (``ENDS_TURN``).
+    With ``ends_unfunded``, a tool the credit gate turned down trips ``FUNDS``, and ``unfunded`` is the gate's words."""
 
-    def __init__(self, limits: TurnLimits, inner: Optional[RunHooks] = None):
+    def __init__(self, limits: TurnLimits, inner: Optional[RunHooks] = None, *, ends_unfunded: bool = False):
         self.limits = limits
         self._inner = inner
+        self._ends_unfunded = ends_unfunded
+        self.unfunded: Optional[str] = None
         self._started = _now()
         self._spent_from = self._spent_total()
         self._stop: Optional[Callable[[], None]] = None
@@ -204,6 +235,11 @@ class TurnGuard(RunHooks):
         self._check()
 
     async def on_tool_end(self, context, agent, tool, result) -> None:
+        unfunded = self._ends_unfunded and not self.tripped and credit_refusal(result)
+        if unfunded:
+            self.tripped, self.unfunded = FUNDS, unfunded
+            if self._stop is not None:
+                self._stop()
         handing_on = ends_turn(result)
         if handing_on and not (self.tripped or self.handed_on) and (handing_on == SILENTLY or self.said):
             self.handed_on = True

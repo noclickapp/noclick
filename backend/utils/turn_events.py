@@ -17,7 +17,8 @@ a schedule, a wake-up), merged into its persisted message's ``trigger``.
 left out at the engine's default), and ``TURN_WRAP_UP_KEY`` what a turn one of
 those limits ended is told, for one more call without tools that says where its
 work stands, with the line a person reads after it (``{steps|spend|time:
-{prompt, line}}``).
+{prompt, line}}``); given ``funds``, a tool the credit gate turns down ends the
+turn too, which says what it got done and fails on the gate's words.
 ``TURN_FIRST_EFFORT_KEY`` is the reasoning effort of a turn's first model call,
 for one someone waits on: its first words come sooner. ``TURN_EMPTY_ANSWER_KEY``
 is what a turn whose model answered with nothing (no words, no call) is told,
