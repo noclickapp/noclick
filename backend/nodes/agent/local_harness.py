@@ -272,14 +272,17 @@ def _join_notes(*notes: Optional[str]) -> str:
     return " ".join(n for n in notes if n)
 
 
-def _compose_prompt(config: Any, *, inline_system: bool, extra_note: str = "", carried: str = "") -> str:
+def _compose_prompt(config: Any, *, extra_note: str = "", carried: str = "") -> str:
+    """The turn's message, led by the instructions current now: a resumed
+    conversation keeps the system prompt it began with (Claude Code restores it
+    whatever --append-system-prompt says), so they ride every turn."""
     from nodes.agent.session_interchange import with_carried_context
 
     message = with_carried_context(getattr(config, "message", "") or "", carried)
     if extra_note:
         message = f"{message}\n\n[Environment note: {extra_note}]"
     system_prompt = (getattr(config, "system_prompt", "") or "").strip()
-    if inline_system and system_prompt:
+    if system_prompt:
         return f"System instructions:\n{system_prompt}\n\n---\n\n{message}"
     return message
 
@@ -380,11 +383,8 @@ def _build_command(
     """Returns (argv, parser_kind). Raises if the CLI is missing."""
     if model_type == "claude_code":
         binary = _require_binary("claude", "https://docs.anthropic.com/en/docs/claude-code")
-        cmd = [binary, "-p", _compose_prompt(config, inline_system=False, extra_note=extra_note),
+        cmd = [binary, "-p", _compose_prompt(config, extra_note=extra_note),
                "--output-format", "stream-json", "--verbose"]
-        system_prompt = (getattr(config, "system_prompt", "") or "").strip()
-        if system_prompt:
-            cmd += ["--append-system-prompt", system_prompt]
         model = getattr(config, "claude_code_model", "") or ""
         if model:
             cmd += ["--model", model]
@@ -419,7 +419,7 @@ def _build_command(
             cmd += ["-c", f'mcp_servers.noclick.url="{mcp_url}"',
                     "-c", "experimental_use_rmcp_client=true",
                     "-c", 'mcp_servers.noclick.default_tools_approval_mode="approve"']
-        cmd += [_compose_prompt(config, inline_system=True, extra_note=extra_note)]
+        cmd += [_compose_prompt(config, extra_note=extra_note)]
         if persistent:
             options = []
             if mcp_url:
@@ -440,7 +440,7 @@ def _build_command(
             # which fails on accounts without a payment method.
             opencode_config["small_model"] = model
         (workdir / "opencode.json").write_text(json.dumps(opencode_config))
-        cmd = [binary, "run", _compose_prompt(config, inline_system=True, extra_note=extra_note)]
+        cmd = [binary, "run", _compose_prompt(config, extra_note=extra_note)]
         if model:
             cmd += ["-m", model]
         if persistent:
@@ -461,7 +461,7 @@ def _build_command(
                 "    timeout: 120\n    connect_timeout: 60\n"
                 if mcp_url else "mcp_servers: {}\n")
         )
-        cmd = [binary, "-z", _compose_prompt(config, inline_system=True, extra_note=extra_note)]
+        cmd = [binary, "-z", _compose_prompt(config, extra_note=extra_note)]
         provider, model = hermes_provider_and_model(getattr(config, "hermes_agent_model", "") or "")
         if model:
             cmd += ["-m", model]
@@ -498,7 +498,7 @@ def _build_command(
         (home / "config.json").write_text(json.dumps(oc_config, indent=2))
         cmd = [
             binary, "agent", "--local", "--json",
-            "--message", _compose_prompt(config, inline_system=True, extra_note=extra_note),
+            "--message", _compose_prompt(config, extra_note=extra_note),
             # Session id keyed to the conversation: openclaw owns continuity
             # internally, the same way claude keys on cwd.
             "--session-id", f"noclick-{hashlib.sha256(str(workdir).encode()).hexdigest()[:16]}",
@@ -864,7 +864,7 @@ async def run_local_harness_turn(
     def prompt(session):
         # Carried context rides the FIRST turn of a freshly started session only.
         carried, session.carried = getattr(session, "carried", ""), ""
-        return _compose_prompt(config, inline_system=model_type != "claude_code", extra_note=session.note, carried=carried)
+        return _compose_prompt(config, extra_note=session.note, carried=carried)
 
     await _emit_status(node, "Agent is working…")
     hub = _presence_hub()

@@ -170,7 +170,9 @@ def test_claude_command_assembly(fake_binaries, tmp_path):
     assert kind == "claude_stream_json"
     assert cmd[0] == "/fake/bin/claude"
     assert "--output-format" in cmd and "stream-json" in cmd
-    assert "--append-system-prompt" in cmd
+    # A resumed claude keeps the system prompt it began with: the current one rides the prompt.
+    assert "--append-system-prompt" not in cmd
+    assert cmd[cmd.index("-p") + 1].startswith("System instructions:\nbe terse")
     assert cmd[cmd.index("--model") + 1] == "opus"
     mcp_file = tmp_path / ".noclick-mcp.json"
     assert cmd[cmd.index("--mcp-config") + 1] == str(mcp_file)

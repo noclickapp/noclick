@@ -157,5 +157,5 @@ def test_compose_prompt_puts_the_block_after_the_message_and_before_the_note():
     from nodes.agent.local_harness import _compose_prompt
 
     config = SimpleNamespace(message="hi", system_prompt="")
-    assert _compose_prompt(config, inline_system=True, extra_note="tools", carried="<<<B>>>") == "hi\n\n<<<B>>>\n\n[Environment note: tools]"
-    assert _compose_prompt(config, inline_system=True) == "hi"
+    assert _compose_prompt(config, extra_note="tools", carried="<<<B>>>") == "hi\n\n<<<B>>>\n\n[Environment note: tools]"
+    assert _compose_prompt(config) == "hi"

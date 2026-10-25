@@ -143,3 +143,32 @@ async def test_native_overlapping_inputs_are_consumed_and_session_becomes_idle(k
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
         await close_local_harness_sessions()
+
+
+@pytest.mark.skipif(os.environ.get('NOCLICK_TEST_LOCAL_CLIS') != '1', reason='requires installed CLI binaries')
+@pytest.mark.parametrize('kind,binary', [('codex', 'codex'), ('claude_code', 'claude'), ('opencode', 'opencode'), ('hermes_agent', 'hermes'), ('openclaw', 'openclaw')])
+@pytest.mark.asyncio
+async def test_native_changed_instructions_reach_a_resumed_conversation(kind, binary, monkeypatch, tmp_path, native_environment):
+    """The process that answers after the instructions change runs the new ones,
+    beside the conversation's history: Claude Code resumes a conversation with the
+    system prompt it began with, whatever --append-system-prompt says."""
+    env, model, base, auth = native_environment
+    model.call_tool = False
+    model.release.set()
+    async def persist(output, **kw):
+        pass
+    node = SimpleNamespace(workflow_id='native', node_id='agent', conversation_id='native',
+        chat_routing_id=lambda: 'native', _persist_llm_assistant_turn=persist, _execute_downstream_callback=model.echo)
+    async def turn(instructions, text):
+        config = SimpleNamespace(conversation_key='same', message=text, system_prompt=instructions,
+                                 claude_code_model='claude-haiku-4-5', codex_model='gpt-5-codex', opencode_model='anthropic/claude-haiku-4-5', hermes_agent_model='anthropic/claude-haiku-4-5', openclaw_model='anthropic/claude-haiku-4-5')
+        result = await asyncio.wait_for(run_local_harness_turn(node, config, env, 'local-test', {}, [], model_type=kind), 60)
+        assert result['status'] == 'completed', result
+        return json.dumps(next(r for r in model.requests if text in json.dumps(r)))
+    try:
+        await turn('INSTR-ALPHA tea is $3', 'NATIVE-ONE')
+        changed = await turn('INSTR-BETA tea is $4', 'NATIVE-TWO')
+    finally:
+        await close_local_harness_sessions()
+    assert 'NATIVE-ONE' in changed, 'conversation history was lost on restart'
+    assert 'INSTR-BETA' in changed
