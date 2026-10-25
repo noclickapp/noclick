@@ -164,6 +164,16 @@ def _message(item):
     return item.get("role") is not None and item.get("type", "message") == "message"
 
 
+def _said(item):
+    """A reply the model wrote with words in it (each tool round also stores one with none)."""
+    if item.get("role") != "assistant" or not _message(item):
+        return False
+    content = item.get("content")
+    if isinstance(content, str):
+        return bool(content.strip())
+    return any(isinstance(part, dict) and str(part.get("text") or "").strip() for part in content or [])
+
+
 def _cut_key(item):
     # A call and its result share a call id, and each is cut on its own.
     return item.get("type"), item.get("call_id")
@@ -368,11 +378,14 @@ class Compactor:
             items = []
             if memory:  # a forgotten checkpoint takes the requests it covered with it
                 items.append({"role": "developer", "content": PROMPTS.CHECKPOINT_HEADER + "\n" + memory["content"]})
-                # The request whose turn the history in view goes on with stays ahead of it. It changes only with a
-                # fold, so a turn that folds nothing extends the view the turn before it left.
+                # The request whose turn the history in view goes on with stays ahead of it, with what that turn
+                # already said: everything a turn writes reaches the person as one message, so a fold partway
+                # through it must not have it say it again. It changes only with a fold, so a turn that folds nothing
+                # extends the view the turn before it left.
                 request = next((i for i in range(covered - 1, -1, -1) if raw[i].get("role") == "user"), None)
                 if request is not None and (covered == len(raw) or raw[covered].get("role") != "user"):
                     items.append(raw[request])
+                    items.extend(item for item in raw[request + 1:covered] if _said(item))
             return items + [self.cut.get(_cut_key(item), (None, item))[1] for item in raw[covered:]]
 
         # A cut is made from the item as it was, so the same call or result reads the same in every call of the run.

@@ -239,6 +239,94 @@ async def test_real_streamed_sdk_compacts_between_tool_rounds(context_db, monkey
     assert stored[-1]["content"][0]["text"] == "Done"
 
 
+async def test_a_fold_partway_through_a_turn_keeps_what_the_turn_already_said(context_db, monkeypatch):
+    """A site build's turn said "it should take about 5 minutes" with its first call, folded twice on the way to its
+    deploy, and said it again after each fold: its reply stacked the line three times (2026-10-25). The fold had taken
+    the line out of the model's view with the calls around it, leaving only the request. The real streamed SDK over
+    PostgreSQL: once a fold covers part of the turn, the view after the checkpoint is the request, then the line the
+    turn already wrote, once, then the calls the fold left. Replays of that turn, folding where production's did,
+    stacked the line in 3 of 8, each time after a fold; with it kept, in none of 16."""
+    from agents.models.interface import Model
+    from openai.types.responses import Response, ResponseCompletedEvent, ResponseFunctionToolCall, ResponseOutputMessage, ResponseOutputText
+    from coder.openai_agent import Agent
+    from coder.openai_agent.config import AgentConfiguration
+    from wss.sender.schema import ContentItem
+
+    pool, _, summary, _ = context_db
+    await pool.execute("UPDATE conversations SET metadata='{}' WHERE conversation_id=$1", f"coordinator:{USER}")
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: pool)
+    line = "I'm making your site now; it should take about 5 minutes."
+    seen = []
+
+    def text(id_, said):
+        return ResponseOutputMessage(id=id_, type="message", role="assistant", status="completed",
+                                     content=[ResponseOutputText(type="output_text", text=said, annotations=[])])
+
+    class ModelDouble(Model):
+        async def get_response(self, *args, **kwargs):
+            raise AssertionError("Expected streaming")
+
+        async def stream_response(self, system_instructions, input, *args, **kwargs):
+            seen.append(input)
+            n = len(seen)
+            call = ResponseFunctionToolCall(type="function_call", name="lookup", call_id=f"live-{n}", arguments="{}")
+            output = [text("first", line), call] if n == 1 else [call] if n < 4 else [text("final", "It's live.")]
+            response = Response.model_construct(id=f"r{n}", created_at=0, model="test", object="response", output=output,
+                                                status="completed", usage=None)
+            yield ResponseCompletedEvent(type="response.completed", response=response, sequence_number=0)
+
+    compact = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test",
+                                             budget=compaction.Budget(target=8000, hard=16000, chunk=12000, recent=2000))
+    instance = await Agent.create(emit_message=AsyncMock(), conversation_id=f"coordinator:{USER}",
+                                  enable_persistence=True, user_id=USER,
+                                  config=AgentConfiguration.from_kwargs(model="gpt-4o", system_prompt="Build the site.", custom_tools=[
+                                      {"type": "function", "function": {"name": "lookup", "description": "Look up context", "parameters": {"type": "object", "properties": {}}}}]),
+                                  custom_tool_executor=AsyncMock(return_value={"text": "result " * 4000}),
+                                  call_model_input_filter=compact)
+    instance._sdk_agent.model = ModelDouble()
+    instance._billing_hooks = None
+    try:
+        await instance({"content_items": [ContentItem(type="text", text="Make me a website for my business")]})
+    finally:
+        await instance.cleanup()
+
+    def said(item):
+        return item.get("role") == "assistant" and any(part.get("text") == line for part in item.get("content") or [])
+
+    checkpoint, stored = await compact.repo.load()
+    folded = [view for view in seen if view[0].get("role") == "developer"]
+    assert summary.await_count > 0 and checkpoint["covered"] > 0 and folded
+    assert any(said(item) for item in stored[:checkpoint["covered"]])  # the line itself was folded
+    for view in folded:
+        check_pairs(view)
+        assert not any(i.get("call_id") == "live-1" for i in view)
+        assert view[1]["role"] == "user" and "Make me a website" in json.dumps(view[1]["content"])
+        assert said(view[2]) and sum(map(said, view)) == 1
+
+
+async def test_a_fold_keeps_the_turns_words_not_its_empty_tool_round_messages(context_db):
+    """Each tool round of a turn stores an assistant message, most with no words: a fold keeps those with words
+    (what the person was told) ahead of the history it left, and no empty one."""
+    pool, _, summary, budget = context_db
+    await pool.execute("UPDATE conversations SET metadata='{}' WHERE conversation_id=$1", f"coordinator:{USER}")
+
+    def reply(text):
+        return {"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": text}]}
+
+    raw = [{"role": "user", "content": "Make me a website for my business"}, reply("On it: about 5 minutes.")]
+    for i in range(4):
+        raw += [reply("") if i else {"type": "reasoning", "summary": []},
+                {"type": "function_call", "name": "lookup", "call_id": f"c{i}", "arguments": "{}"},
+                {"type": "function_call_output", "call_id": f"c{i}", "output": "result " * 3000}]
+    await pool.execute("UPDATE conversations SET metadata=jsonb_build_object('sdk_history', $2::jsonb) "
+                       "WHERE conversation_id=$1", f"coordinator:{USER}", raw)
+    compact = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)
+    view = (await compact(model_data(raw))).input
+    checkpoint, _ = await compact.repo.load()
+    assert summary.await_count and 2 < checkpoint["covered"] < len(raw)
+    assert view[1:3] == raw[:2] and view[3:] == raw[checkpoint["covered"]:]
+
+
 async def test_what_the_user_asked_to_remember_outlives_compaction_and_a_tools_secret_doesnt(context_db, monkeypatch):
     """An agent told to remember a vault code answered "I don't know" once its conversation was compacted: the
     summarizer was told to add no secrets, so its checkpoint left the code out (2026-10). The real summary path
