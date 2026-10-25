@@ -13,6 +13,8 @@ import httpx
 logger = logging.getLogger(__name__)
 
 API_BASE = "https://api.sendblue.com/api"
+UPLOAD_LIMIT = 100 * 1024 * 1024  # Sendblue's cap on a file it hosts
+UPLOAD_TIMEOUT_S = 120.0
 LINE_VAR = "SENDBLUE_NUMBER"
 
 
@@ -29,6 +31,19 @@ class SendblueError(Exception):
         super().__init__(message)
         self.status = status
         self.key = key
+
+
+def _answer(response: httpx.Response) -> Dict[str, Any]:
+    try:
+        data = response.json()
+    except ValueError:
+        data = {}
+    if response.status_code >= 400 or str(data.get("status", "")).upper() == "ERROR":
+        raise SendblueError(
+            data.get("error_message") or data.get("message") or response.text[:300] or f"HTTP {response.status_code}",
+            status=response.status_code, key=data.get("error_key"),
+        )
+    return data
 
 
 class Sendblue:
@@ -57,16 +72,7 @@ class Sendblue:
     async def _post(self, path: str, body: Dict[str, Any]) -> Dict[str, Any]:
         async with httpx.AsyncClient(timeout=self._timeout) as client:
             response = await client.post(f"{API_BASE}/{path}", json=body, headers=self._headers())
-        try:
-            data = response.json()
-        except ValueError:
-            data = {}
-        if response.status_code >= 400 or str(data.get("status", "")).upper() == "ERROR":
-            raise SendblueError(
-                data.get("error_message") or data.get("message") or response.text[:300] or f"HTTP {response.status_code}",
-                status=response.status_code, key=data.get("error_key"),
-            )
-        return data
+        return _answer(response)
 
     async def check_keys(self) -> None:
         """A read that only answers a valid key pair; raises with Sendblue's words when it refuses them."""
@@ -92,6 +98,19 @@ class Sendblue:
         if media_url:
             body["media_url"] = media_url
         return (await self._post("send-message", body)).get("message_handle")
+
+    async def upload_file(self, data: bytes, *, filename: str, mime_type: str) -> str:
+        """Put a file on Sendblue's CDN under ``filename``: the ``media_url`` a send takes."""
+        try:
+            async with httpx.AsyncClient(timeout=UPLOAD_TIMEOUT_S) as client:
+                response = await client.post(f"{API_BASE}/upload-file", headers=self._headers(),
+                                             files={"file": (filename, data, mime_type)})
+        except httpx.HTTPError as exc:
+            raise SendblueError(f"Sendblue unreachable: {type(exc).__name__}") from exc
+        media_url = _answer(response).get("media_url")
+        if not media_url:
+            raise SendblueError("Sendblue's upload answered no media_url", status=response.status_code)
+        return media_url
 
     async def typing(self, to: str) -> None:
         await self._post("send-typing-indicator", {"number": to, "from_number": self._number})

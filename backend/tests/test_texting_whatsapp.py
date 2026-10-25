@@ -14,9 +14,10 @@ import respx
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from coder.coordinator.texting import routes, whatsapp
-from coder.coordinator.texting.channel import chunk
+from coder.coordinator.texting import channel, routes, whatsapp
+from coder.coordinator.texting.channel import Embed, chunk
 from coder.coordinator.texting.whatsapp import InboundMessage, parse_failed, parse_inbound, to_whatsapp_text, verify_signature
+from nodes.core.media_resolver import FileInfo
 from utils import capabilities
 from utils.whatsapp_cloud_api import GRAPH_BASE, CloudApi, WhatsAppSendError, template_param
 
@@ -122,12 +123,107 @@ def test_whatsapp_markup_and_chunking():
     assert chunk("short") == ["short"] and chunk("") == []
 
 
+@pytest.fixture
+def files(monkeypatch):
+    """What each embedded URL holds, as the stored file's record or its server would say (``describe_url``)."""
+    known = {}
+
+    async def describe(url):
+        return known.get(url)
+
+    monkeypatch.setattr(channel, "describe_url", describe)
+    return known
+
+
 @pytest.mark.asyncio
-async def test_rich_reply_sends_every_chunk_and_attachment():
+async def test_rich_reply_sends_every_chunk_and_attachment(files):
+    files["https://assets.example/x.png"] = FileInfo("image/png", "x.png", 2_000)
     api = MagicMock(send_text=AsyncMock(return_value="first"), send_media=AsyncMock(return_value="media"))
     result = await whatsapp.send_rich(api, SENDER, "x" * 4100 + "\n![photo](https://assets.example/x.png)")
     assert result == "first" and api.send_text.await_count == 2
-    api.send_media.assert_awaited_once_with(SENDER, "image", "https://assets.example/x.png", caption="photo")
+    api.send_media.assert_awaited_once_with(SENDER, "image", link="https://assets.example/x.png", caption="photo",
+                                            filename="x.png")
+
+
+MB = 1024 * 1024
+
+
+@pytest.mark.parametrize("mime, size, sent_as", [
+    ("image/jpeg", 2 * MB, "image"), ("image/png", 5 * MB, "image"), ("image/jpg", 1 * MB, "image"),
+    ("video/mp4", 10 * MB, "video"), ("video/3gpp", 1 * MB, "video"),
+    ("audio/mpeg", 3 * MB, "audio"), ("audio/ogg", 1 * MB, "audio"), ("audio/x-m4a", 1 * MB, "audio"),
+    ("image/png", None, "image"),  # a size nothing reported is no bar
+    # Meta's documents: PDF, plain text and Office files, by link up to 100 MB.
+    ("application/pdf", 1 * MB, "document"), ("text/plain", 40_000, "document"),
+    ("application/vnd.openxmlformats-officedocument.wordprocessingml.document", 1 * MB, "document"),
+    ("application/vnd.ms-excel", 1 * MB, "document"), ("application/pdf", 100 * MB, "document"),
+    # Another text file goes up as plain text under its own name: Meta refuses an HTML page's own type.
+    ("text/html", 40_000, whatsapp.TEXT), ("text/csv", 1 * MB, whatsapp.TEXT), ("text/markdown", 2000, whatsapp.TEXT),
+    ("application/json", 2000, whatsapp.TEXT),
+    # Meta takes no file of these types or sizes: a link.
+    ("application/zip", 30 * MB, None), ("image/webp", 1 * MB, None), ("image/gif", 1 * MB, None),
+    ("image/heic", 1 * MB, None), ("video/quicktime", 1 * MB, None), ("audio/wav", 1 * MB, None),
+    ("image/jpeg", 6 * MB, None), ("video/mp4", 20 * MB, None), ("audio/mpeg", 17 * MB, None),
+    ("application/pdf", 101 * MB, None), ("text/html", 101 * MB, None),
+])
+def test_each_file_goes_in_the_form_whatsapp_takes_for_its_type_and_size(mime, size, sent_as):
+    assert whatsapp.sent_as(Embed("https://f.example/x", "x", FileInfo(mime, "x", size))) == sent_as
+
+
+def test_a_file_nothing_can_tell_the_type_of_is_a_link():
+    assert whatsapp.sent_as(Embed("https://f.example/x", "the file", None)) is None
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_a_pdf_goes_as_a_document_by_link_and_an_html_file_as_plain_text_under_its_name(files, monkeypatch):
+    pdf, page = "https://assets.example/u/w/r/Dummy%20PDF", "https://assets.example/u/w/r/game.html"
+    files[pdf] = FileInfo("application/pdf", "Dummy PDF.pdf", 642)
+    files[page] = FileInfo("text/html", "game.html", 30_000)
+    read = AsyncMock(return_value=b"<!doctype html><title>Neon Static</title>")
+    monkeypatch.setattr(whatsapp, "read_url", read)
+    upload = respx.post(f"{GRAPH_BASE}/123/media").mock(return_value=httpx.Response(200, json={"id": "media.1"}))
+    route = respx.post(MESSAGES_URL).mock(return_value=httpx.Response(200, json={"messages": [{"id": "wamid.d"}]}))
+    await whatsapp.send_rich(_api(), SENDER, f"Here you go.\n![Dummy PDF]({pdf})\n![Neon Static, to play offline]({page})")
+    read.assert_awaited_once_with(page, max_bytes=whatsapp.DOCUMENT_LIMIT)
+    uploaded = upload.calls.last.request.read()
+    assert b'name="file"; filename="game.html"' in uploaded and b"Content-Type: text/plain" in uploaded
+    assert b"<!doctype html><title>Neon Static</title>" in uploaded and b'name="type"\r\n\r\ntext/plain' in uploaded
+    text, first, second = (json.loads(call.request.read()) for call in route.calls)
+    assert text["text"] == {"body": "Here you go."}
+    # The caption that only repeats the file's name is left off; the file shows its name.
+    assert first == {"messaging_product": "whatsapp", "to": "14155550100", "type": "document",
+                     "document": {"link": pdf, "filename": "Dummy PDF.pdf"}}
+    assert second["document"] == {"id": "media.1", "caption": "Neon Static, to play offline", "filename": "game.html"}
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_meta_refusing_a_file_or_an_unreadable_one_sends_none_of_the_message(files, monkeypatch):
+    page = "https://f.example/game.html"
+    files[page] = FileInfo("text/html", "game.html", 300)
+    monkeypatch.setattr(whatsapp, "read_url", AsyncMock(return_value=b"<html></html>"))
+    respx.post(f"{GRAPH_BASE}/123/media").mock(return_value=httpx.Response(400, json={"error": {
+        "message": "(#100) Param file must be a file with one of the following types", "code": 100}}))
+    sent = respx.post(MESSAGES_URL).mock(return_value=httpx.Response(200, json={"messages": [{"id": "w"}]}))
+    with pytest.raises(WhatsAppSendError, match="refused the file") as refused:
+        await whatsapp.send_rich(_api(), SENDER, f"Here.\n![]({page})")
+    assert refused.value.code == 100 and not sent.called
+    monkeypatch.setattr(whatsapp, "read_url", AsyncMock(side_effect=ValueError("Could not fetch media from URL: 404")))
+    with pytest.raises(WhatsAppSendError, match="couldn't read game.html"):
+        await whatsapp.send_rich(_api(), SENDER, f"Here.\n![]({page})")
+    assert not sent.called
+
+
+@pytest.mark.asyncio
+async def test_a_file_that_cant_go_as_one_is_a_link_line_with_the_text(files):
+    files["https://f.example/site.zip"] = FileInfo("application/zip", "site.zip", 3 * MB)
+    api = MagicMock(send_text=AsyncMock(return_value="t"), send_media=AsyncMock())
+    await whatsapp.send_rich(api, SENDER, "Both are here.\n![The site's source](https://f.example/site.zip)\n"
+                                          "![](https://f.example/mystery)")
+    api.send_text.assert_awaited_once_with(
+        SENDER, "Both are here.\nThe site's source: https://f.example/site.zip\nhttps://f.example/mystery")
+    api.send_media.assert_not_awaited()
 
 
 APPROVE = "https://example.com/h/0f8b3c2a-1d2e-4f5a-9b6c-7d8e9f0a1b2c?k=0123456789abcdef0123456789abcdef"

@@ -17,6 +17,7 @@ GRAPH_BASE = f"https://graph.facebook.com/{GRAPH_VERSION}"
 # Meta refuses a template body parameter past this.
 TEMPLATE_BODY_LIMIT = 1024
 TEMPLATE_LANGUAGE = "en"
+UPLOAD_TIMEOUT_S = 120.0
 # WhatsApp previews the first link in a text only when asked, and only one with a scheme.
 _PREVIEWABLE_LINK = re.compile(r"https?://\S", re.I)
 # The number people text, as Meta displays it; filled from Graph when the keys are saved in Settings.
@@ -168,12 +169,35 @@ class CloudApi:
             payload["typing_indicator"] = {"type": "text"}
         await self._send(payload)
 
-    async def send_media(self, to_e164: str, kind: str, link: str, *, caption: str = "") -> str:
-        """An image, video or audio by public link (Meta fetches it), within 24h of
-        the recipient's last message."""
-        media: Dict[str, Any] = {"link": link}
+    async def upload_media(self, data: bytes, *, filename: str, mime_type: str) -> str:
+        """Put a file on Meta's servers to send by its id: the media id. Meta refuses a type it doesn't take."""
+        try:
+            async with httpx.AsyncClient(timeout=UPLOAD_TIMEOUT_S) as client:
+                response = await client.post(
+                    f"{GRAPH_BASE}/{self._phone_number_id}/media", headers=self._headers(),
+                    data={"messaging_product": "whatsapp", "type": mime_type},
+                    files={"file": (filename, data, mime_type)},
+                )
+        except httpx.HTTPError as exc:
+            raise WhatsAppSendError(f"WhatsApp unreachable: {type(exc).__name__}") from exc
+        if response.status_code >= 400:
+            try:
+                error = response.json().get("error", {})
+            except ValueError:
+                error = {}
+            raise WhatsAppSendError(f"WhatsApp refused the file: {error.get('message') or response.text[:200]}",
+                                    code=error.get("code"), status=response.status_code)
+        return str(response.json()["id"])
+
+    async def send_media(self, to_e164: str, kind: str, *, link: Optional[str] = None, media_id: Optional[str] = None,
+                         caption: str = "", filename: Optional[str] = None) -> str:
+        """An image, video, audio or document by public link (Meta fetches it) or by an uploaded file's id, within 24h
+        of the recipient's last message. A document shows ``filename``, whose extension picks its icon."""
+        media: Dict[str, Any] = {"link": link} if link else {"id": media_id}
         if caption and kind != "audio":
             media["caption"] = caption[:1024]
+        if filename and kind == "document":
+            media["filename"] = filename
         return await self._send({"to": to_e164.lstrip("+"), "type": kind, kind: media})
 
     async def send_text(self, to_e164: str, text: str) -> str:

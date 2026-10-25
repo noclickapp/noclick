@@ -10,8 +10,9 @@ import respx
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from coder.coordinator.texting import imessage, routes
+from coder.coordinator.texting import channel, imessage, routes
 from coder.coordinator.texting.imessage import InboundMessage, parse_inbound, send_rich, to_imessage_text, verify_secret
+from nodes.core.media_resolver import FileInfo
 from utils.sendblue import API_BASE, Sendblue, SendblueError
 
 LINE = "+14155550123"
@@ -63,13 +64,86 @@ def test_replies_are_plain_text():
     assert to_imessage_text("Run `nc deploy`:\n```bash\nnc deploy\n```") == "Run nc deploy:\nnc deploy"
 
 
+@pytest.fixture
+def files(monkeypatch):
+    """What each embedded URL holds, as the stored file's record or its server would say (``describe_url``)."""
+    known = {}
+
+    async def describe(url):
+        return known.get(url)
+
+    monkeypatch.setattr(channel, "describe_url", describe)
+    return known
+
+
 @pytest.mark.asyncio
-async def test_rich_reply_sends_text_then_each_attachment_with_its_caption():
+async def test_rich_reply_sends_text_then_each_attachment_with_its_caption(files):
+    files["https://x/c.png"] = FileInfo("image/png", "c.png", 1000)
     api = MagicMock()
     api.send = AsyncMock(side_effect=["h1", "h2"])
     assert await send_rich(api, USER_PHONE, "Here it is **now**\n![the chart](https://x/c.png)") == "h1"
     assert api.send.await_args_list[0].kwargs == {"content": "Here it is now"}
     assert api.send.await_args_list[1].kwargs == {"content": "the chart", "media_url": "https://x/c.png"}
+
+
+MB = 1024 * 1024
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("mime, name", [
+    ("application/pdf", "Dummy PDF.pdf"), ("text/html", "game.html"), ("application/zip", "Neon Static.zip"),
+    ("audio/x-caf", "Voice.caf"), ("video/quicktime", "clip.mov"),
+])
+async def test_any_file_whose_url_names_it_is_sent_from_that_url(files, mime, name):
+    url = f"https://assets.example/u/w/r/{name.replace(' ', '%20')}"
+    files[url] = FileInfo(mime, name, 2 * MB)
+    api = MagicMock(send=AsyncMock(return_value="h1"), upload_file=AsyncMock())
+    await send_rich(api, USER_PHONE, f"![{name}]({url})")
+    # The caption that only repeats the file's name is left off: iMessage shows the file with its name.
+    api.send.assert_awaited_once_with(USER_PHONE, content=None, media_url=url)
+    api.upload_file.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_a_file_whose_url_doesnt_name_its_type_goes_up_to_sendblue_under_its_name(files, monkeypatch):
+    stored = "https://assets.example/u/w/r/Dummy%20PDF"  # uploaded before names kept their extension
+    signed = "https://files.example/report.pdf?X-Amz-Signature=abc"  # Sendblue takes no signed URL
+    files[stored] = FileInfo("application/pdf", "Dummy PDF.pdf", 642)
+    files[signed] = FileInfo("application/pdf", "report.pdf", 5000)
+    read = AsyncMock(side_effect=[b"%PDF-1.4 dummy", b"%PDF-1.4 report"])
+    monkeypatch.setattr(imessage, "read_url", read)
+    api = MagicMock(send=AsyncMock(side_effect=["h1", "h2", "h3"]),
+                    upload_file=AsyncMock(side_effect=["https://cdn.sendblue.co/up/a.pdf", "https://cdn.sendblue.co/up/b.pdf"]))
+    await send_rich(api, USER_PHONE, f"Here they are.\n![The dummy]({stored})\n![report.pdf]({signed})")
+    assert read.await_args_list == [((stored,), {"max_bytes": imessage.UPLOAD_LIMIT}),
+                                    ((signed,), {"max_bytes": imessage.UPLOAD_LIMIT})]
+    assert api.upload_file.await_args_list[0].args == (b"%PDF-1.4 dummy",)
+    assert api.upload_file.await_args_list[0].kwargs == {"filename": "Dummy PDF.pdf", "mime_type": "application/pdf"}
+    assert [call.kwargs for call in api.send.await_args_list] == [
+        {"content": "Here they are."},
+        {"content": "The dummy", "media_url": "https://cdn.sendblue.co/up/a.pdf"},
+        {"content": None, "media_url": "https://cdn.sendblue.co/up/b.pdf"},
+    ]
+
+
+@pytest.mark.asyncio
+async def test_a_file_that_cant_be_read_sends_none_of_the_message(files, monkeypatch):
+    url = "https://files.example/report.pdf?X-Amz-Signature=abc"
+    files[url] = FileInfo("application/pdf", "report.pdf", 5000)
+    monkeypatch.setattr(imessage, "read_url", AsyncMock(side_effect=ValueError("Could not fetch media from URL: 403")))
+    api = MagicMock(send=AsyncMock(), upload_file=AsyncMock())
+    with pytest.raises(SendblueError, match="couldn't read report.pdf"):
+        await send_rich(api, USER_PHONE, f"Here.\n![report.pdf]({url})")
+    api.send.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_a_file_nothing_can_tell_the_type_of_or_past_sendblues_cap_is_a_link_line(files):
+    files["https://f.example/huge.mov"] = FileInfo("video/quicktime", "huge.mov", 150 * MB)
+    api = MagicMock(send=AsyncMock(return_value="h1"), upload_file=AsyncMock())
+    await send_rich(api, USER_PHONE, "Two files.\n![The video](https://f.example/huge.mov)\n![x](https://f.example/x)")
+    api.send.assert_awaited_once_with(
+        USER_PHONE, content="Two files.\nThe video: https://f.example/huge.mov\nx: https://f.example/x")
 
 
 APPROVE = "https://example.com/h/0f8b3c2a-1d2e-4f5a-9b6c-7d8e9f0a1b2c?k=0123456789abcdef0123456789abcdef"
@@ -101,6 +175,27 @@ async def test_the_client_speaks_sendblues_api_and_raises_its_refusals():
     share = respx.post(f"{API_BASE}/v2/contact-sharing/share").mock(return_value=httpx.Response(200, json={"status": "OK"}))
     await api.share_profile(USER_PHONE)
     assert share.calls.last.request.read() == b'{"fromNumber":"+14155550123","toNumber":"+14155550100"}'
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_a_file_goes_up_to_sendblue_as_a_multipart_upload_named_by_its_file():
+    api = Sendblue("key-id", "key-secret", LINE)
+    route = respx.post(f"{API_BASE}/upload-file").mock(return_value=httpx.Response(
+        201, json={"status": "OK", "message": "File uploaded successfully", "media_url": "https://cdn.sendblue.co/a.pdf"}))
+    assert await api.upload_file(b"%PDF-1.4", filename="Dummy PDF.pdf", mime_type="application/pdf") == \
+        "https://cdn.sendblue.co/a.pdf"
+    sent = route.calls.last.request
+    assert sent.headers["sb-api-key-id"] == "key-id" and sent.headers["content-type"].startswith("multipart/form-data")
+    body = sent.read()
+    assert b'name="file"; filename="Dummy PDF.pdf"' in body and b"Content-Type: application/pdf" in body
+    assert b"%PDF-1.4" in body
+    route.mock(return_value=httpx.Response(400, json={"status": "ERROR", "message": "No file uploaded"}))
+    with pytest.raises(SendblueError, match="No file uploaded"):
+        await api.upload_file(b"", filename="x.pdf", mime_type="application/pdf")
+    route.mock(return_value=httpx.Response(201, json={"status": "OK"}))
+    with pytest.raises(SendblueError, match="no media_url"):
+        await api.upload_file(b"x", filename="x.pdf", mime_type="application/pdf")
 
 
 @pytest.mark.asyncio

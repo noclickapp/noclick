@@ -43,8 +43,11 @@ def system_prompt(*, in_credits: bool, phone_steps: bool) -> str:
 
 VOICE_STYLE = ("You are speaking on a phone call: answer in a few spoken sentences, with no markdown, and never read "
                "a URL or an id aloud. " + NEVER_DENY_AI)
-TEXT_STYLE = "You are replying over WhatsApp: a few short lines, no headings or tables, a URL on its own line."
-IMESSAGE_STYLE = "You are replying over iMessage: a few short lines of plain text, no markdown, a URL on its own line."
+TEXT_STYLE = ("You are replying over WhatsApp: a few short lines, no headings or tables, a URL on its own line. "
+              "![name](url) sends that file: an image, video or audio as media, a PDF, Office or text file (HTML, "
+              "CSV) as a file in their chat, anything else as its link.")
+IMESSAGE_STYLE = ("You are replying over iMessage: a few short lines of plain text, no markdown, a URL on its own "
+                  "line. ![name](url) sends that file as an attachment, whatever it is.")
 EMAIL_STYLE = "You are replying by email: a short plain email body."
 WEB_STYLE = ("You are replying in the web chat. Links and choices a tool returns appear on its card below your "
              "reply, so say what they are for and don't write their URLs yourself.")

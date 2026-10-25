@@ -346,6 +346,83 @@ async def resolve_attachments(
     return resolved
 
 
+@dataclass(frozen=True)
+class FileInfo:
+    """What a file at a URL holds, as its record or its server says."""
+
+    mime_type: str
+    name: str  # ending in its extension
+    size_bytes: Optional[int]
+
+
+_HEAD_TIMEOUT_S = 10.0
+_UNTYPED = ("", "application/octet-stream", "binary/octet-stream")
+
+
+def _known(mime: str, name: str, size: Optional[int]) -> Optional[FileInfo]:
+    """A file whose type is known: what the server or record says, else what its name says; None when neither
+    names one."""
+    from utils.resource_store import file_name
+
+    mime = mime.split(";")[0].strip().lower()
+    if mime in _UNTYPED:
+        mime = (mimetypes.guess_type(name)[0] or "").lower()
+    return FileInfo(mime, file_name(name, mime), size) if mime else None
+
+
+async def describe_url(url: str) -> Optional[FileInfo]:
+    """What the file at ``url`` holds, without fetching it: one of NoClick's own stored files by its record, any
+    other by a HEAD request (SSRF-guarded on every hop, bounded in time). None when neither can tell, or the URL
+    doesn't answer."""
+    from email.message import EmailMessage
+
+    from utils.resource_store import resource_key_at
+
+    key = resource_key_at(url)
+    if key is not None:
+        from repositories.resources import ResourceRepo
+        from utils.database_pool import get_native_pool
+
+        row = await ResourceRepo(get_native_pool()).get_resource(key.split("/")[2])
+        if row is None or row.get("storage_ref") != key:
+            return None
+        return _known(row.get("mime_type") or "", row.get("name") or key.rsplit("/", 1)[-1], row.get("size_bytes"))
+
+    from utils.ssrf import guarded_async_client
+
+    try:
+        async with guarded_async_client(timeout=httpx.Timeout(_HEAD_TIMEOUT_S), follow_redirects=True,
+                                        headers={"User-Agent": FETCH_USER_AGENT}) as client:
+            response = await client.head(url)
+    except (httpx.HTTPError, ValueError):  # unreachable, or refused by the SSRF guard
+        return None
+    if response.status_code >= 400:
+        return None
+    disposition = EmailMessage()
+    disposition["content-disposition"] = response.headers.get("content-disposition", "")
+    name = (disposition.get_filename() or unquote(urlsplit(url).path)).replace("\\", "/").rsplit("/", 1)[-1] or "file"
+    length = response.headers.get("content-length", "")
+    return _known(response.headers.get("content-type", ""), name, int(length) if length.isdigit() else None)
+
+
+async def read_url(url: str, *, max_bytes: int) -> bytes:
+    """The bytes at ``url``: one of NoClick's own stored files read from storage, any other fetched (SSRF-guarded,
+    capped at ``max_bytes``). Raises ValueError when it can't be read."""
+    from utils.resource_store import RESOURCE_BUCKET, resource_key_at
+
+    key = resource_key_at(url)
+    if key is None:
+        return (await resolve_media_input(url, max_bytes=max_bytes)).data
+    from utils.r2_cloudflare import download_bytes_from_r2_async_native
+
+    try:
+        data, _ = await download_bytes_from_r2_async_native(RESOURCE_BUCKET, key)
+    except httpx.HTTPError as exc:
+        raise ValueError(f"Could not read the stored file: {type(exc).__name__}") from exc
+    _check_size(len(data), max_bytes)
+    return data
+
+
 def _check_size(size: int, max_bytes: int) -> None:
     if size > max_bytes:
         raise ValueError(

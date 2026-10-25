@@ -12,16 +12,18 @@ import os
 import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
+from urllib.parse import unquote, urlsplit
 
 from coder.coordinator.reach import with_link
 from coder.coordinator.texting.channel import (
-    PhoneText, PhoneTransport, chunk, handle_phone_text, media_name, split_media,
+    Embed, PhoneText, PhoneTransport, chunk, handle_phone_text, media_name, read_embeds,
 )
+from nodes.core.media_resolver import read_url
 from repositories.phones import PhoneRepo
 from utils.app_event_dedup import mark_delivered, was_delivered
 from utils.async_helpers import spawn
 from utils.prompts import PromptPack
-from utils.sendblue import Sendblue, SendblueError
+from utils.sendblue import UPLOAD_LIMIT, Sendblue, SendblueError
 
 logger = logging.getLogger(__name__)
 
@@ -111,16 +113,34 @@ def to_imessage_text(markdown: str) -> str:
     return re.sub(r"\n{3,}", "\n\n", text).strip()
 
 
+async def _media_url(api: Sendblue, embed: Embed) -> str:
+    """Where Sendblue sends an embedded file from. Sendblue reads a file's type off its URL, which must end in its
+    extension and carry no signature; a file whose URL doesn't goes up to Sendblue under its own name first."""
+    ext = os.path.splitext(embed.file.name)[1].lower()
+    parts = urlsplit(embed.url)
+    if ext and not parts.query and not parts.fragment and unquote(parts.path).lower().endswith(ext):
+        return embed.url
+    try:
+        data = await read_url(embed.url, max_bytes=UPLOAD_LIMIT)
+    except ValueError as exc:
+        raise SendblueError(f"couldn't read {embed.file.name} to send it: {exc}") from exc
+    return await api.upload_file(data, filename=embed.file.name, mime_type=embed.file.mime_type)
+
+
 async def send_rich(api: Sendblue, to: str, markdown: str) -> Optional[str]:
-    """Plain text, then each embed as an attachment with its caption. The first
-    message handle, or None when nothing could be sent."""
-    media, text = split_media(markdown)
+    """Plain text, then each embedded file as an attachment (iMessage takes any file), with its caption; one nothing
+    can tell the type of, or past Sendblue's cap, goes as a link line with the text. Every attachment is ready before
+    anything is sent. The first message handle, or None when nothing could be sent."""
+    embeds, text = await read_embeds(markdown)
+    files = [embed for embed in embeds if embed.file is not None and (embed.file.size_bytes or 0) <= UPLOAD_LIMIT]
+    attachments = [(embed, await _media_url(api, embed)) for embed in files]
+    text = "\n".join([text.rstrip(), *(embed.link for embed in embeds if embed not in files)])
     first: Optional[str] = None
     for part in chunk(to_imessage_text(text)):
         sent = await api.send(to, content=part)
         first = first or sent
-    for _kind, url, caption in media:
-        sent = await api.send(to, content=caption or None, media_url=url)
+    for embed, media_url in attachments:
+        sent = await api.send(to, content=embed.note or None, media_url=media_url)
         first = first or sent
     return first
 

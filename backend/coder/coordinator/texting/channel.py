@@ -8,13 +8,16 @@ rule for texts registers it as ``PHONE_TEXT`` and gets every text instead."""
 
 from __future__ import annotations
 
+import asyncio
 import logging
+import os
 import re
 from dataclasses import dataclass, field
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from coder.coordinator.agent import COORDINATOR_MODEL, run_coordinator_turn
 from coder.workflow.builder_config import missing_brain_key
+from nodes.core.media_resolver import FileInfo, describe_url
 from repositories.phones import PhoneRepo
 from repositories.users import get_user_email
 from utils.capabilities import PHONE_TEXT, capability
@@ -102,17 +105,41 @@ def chunk(text: str, limit: int = TEXT_LIMIT) -> List[str]:
 
 
 _MEDIA = re.compile(r"!\[([^\]]*)\]\((https?://[^)\s]+)\)")
-_VIDEO_EXT = (".mp4", ".mov", ".webm")
-_AUDIO_EXT = (".mp3", ".m4a", ".aac", ".ogg", ".amr")
 
 
-def split_media(markdown: str) -> Tuple[List[Tuple[str, str, str]], str]:
-    """(kind, url, caption) for each Markdown media embed, and the text left.
-    A generated file's URL ends in its filename, which names its kind."""
-    media = [("video" if url.lower().split("?")[0].endswith(_VIDEO_EXT) else
-              "audio" if url.lower().split("?")[0].endswith(_AUDIO_EXT) else "image", url, caption)
-             for caption, url in _MEDIA.findall(markdown)]
-    return media, _MEDIA.sub("", markdown)
+def split_media(markdown: str) -> Tuple[List[Tuple[str, str]], str]:
+    """(url, caption) for each file the Markdown embeds as ``![caption](url)``, and the text left."""
+    return [(url, caption) for caption, url in _MEDIA.findall(markdown)], _MEDIA.sub("", markdown)
+
+
+@dataclass(frozen=True)
+class Embed:
+    """A file a reply embeds, and what it holds (``file``; None when nothing could tell, so it goes as a link)."""
+
+    url: str
+    caption: str
+    file: Optional[FileInfo]
+
+    @property
+    def link(self) -> str:
+        """The embed as a line of text."""
+        label = self.caption or (self.file.name if self.file else "")
+        return f"{label}: {self.url}" if label else self.url
+
+    @property
+    def note(self) -> str:
+        """Its caption, unless that only repeats the file's name, which the chat shows already."""
+        if self.file and self.caption in (self.file.name, os.path.splitext(self.file.name)[0]):
+            return ""
+        return self.caption
+
+
+async def read_embeds(markdown: str) -> Tuple[List[Embed], str]:
+    """Each file the Markdown embeds, judged by what it holds rather than its URL (``describe_url``), and the text
+    left."""
+    found, text = split_media(markdown)
+    files = await asyncio.gather(*(describe_url(url) for url, _ in found))
+    return [Embed(url, caption, file) for (url, caption), file in zip(found, files)], text
 
 
 def _masked(email: Optional[str]) -> str:

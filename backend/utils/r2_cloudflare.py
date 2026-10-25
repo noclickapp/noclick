@@ -13,6 +13,7 @@ import base64
 import asyncio
 from typing import Dict, Any, Optional, List
 from datetime import datetime
+from urllib.parse import quote
 import boto3
 import httpx
 
@@ -498,7 +499,8 @@ def get_public_download_url(key: str) -> str:
     """
     public_base = os.getenv("OBJECT_STORAGE_PUBLIC_BASE_URL", "").strip().rstrip("/")
     if public_base:
-        return f"{public_base}/{key.lstrip('/')}"
+        # A file's name may hold a space: the URL carries it encoded, or it ends at the space.
+        return f"{public_base}/{quote(key.lstrip('/'))}"
     return generate_presigned_download_url(
         "workflow-resources", key, expires_in=900,
     )

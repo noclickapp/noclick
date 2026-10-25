@@ -884,24 +884,17 @@ async def _execute_filesystem_tool(
         return {"success": False, "error": f"Unknown filesystem tool: {tool_name}"}
 
     import os
-    import uuid as _uuid
     import mimetypes
-    import httpx
-    from utils.r2_cloudflare import (
-        generate_presigned_upload_url,
-        get_public_download_url,
-    )
     from utils.database_pool import get_native_pool
+    from utils.resource_store import file_name
 
     file_path = arguments.get("file_path", "")
-    display_name = arguments.get("name", "")
     if not file_path:
         return {"success": False, "error": "file_path is required"}
 
-    if not display_name:
-        display_name = os.path.basename(file_path)
     mime_type, _ = mimetypes.guess_type(file_path)
     mime_type = mime_type or "application/octet-stream"
+    display_name = file_name(arguments.get("name", "") or os.path.basename(file_path), mime_type, source=file_path)
 
     resource_type = (
         "image"

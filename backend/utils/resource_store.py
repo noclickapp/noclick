@@ -14,8 +14,12 @@ layering cycle.
 """
 
 import logging
+import mimetypes
+import os
+import re
 import uuid
 from typing import Any, Dict, Optional
+from urllib.parse import unquote, urlsplit
 
 from utils import database_pool
 from utils.r2_cloudflare import get_public_download_url, upload_bytes_to_r2_async
@@ -44,6 +48,35 @@ def resource_type_for_mime(mime: str) -> str:
     ):
         return "document"
     return "file"
+
+
+def file_name(name: str, mime: str, *, source: str = "") -> str:
+    """``name`` ending in the extension of what the file holds, from ``source`` (the path it came from) or else its
+    type, when it names none: a download then opens as that file, and a chat shows it as one. A type that names
+    nothing (``application/octet-stream``) adds nothing."""
+    base = (mime or "").split(";")[0].strip().lower()
+    ext = os.path.splitext(source)[1] or (mimetypes.guess_extension(base) if base != "application/octet-stream" else "")
+    if not ext or name.lower().endswith(ext.lower()) or mimetypes.guess_type(name)[0]:
+        return name
+    return f"{name}{ext}"
+
+
+# A resource's key as ``upload_resource_bytes`` writes it: owner / workflow (or "account") / id / file name.
+_KEY = re.compile(r"[0-9a-f-]{36}/(?:[0-9a-f-]{36}|account)/[0-9a-f-]{36}/[^/]+$", re.I)
+
+
+def resource_key_at(url: str) -> Optional[str]:
+    """The key of the resource ``url`` downloads (a URL ``get_public_download_url`` made), else None."""
+    parts = urlsplit(url)
+    path = unquote(parts.path)
+    match = _KEY.search(path)
+    if match is None:
+        return None
+    try:
+        ours = urlsplit(get_public_download_url(match.group(0)))
+    except ValueError:  # this instance keeps no files
+        return None
+    return match.group(0) if (ours.scheme, ours.netloc, unquote(ours.path)) == (parts.scheme, parts.netloc, path) else None
 
 
 async def create_resource_from_bytes(

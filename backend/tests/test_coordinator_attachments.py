@@ -151,3 +151,14 @@ async def test_checkpoint_summarizer_receives_native_images(monkeypatch):
     result = await compaction.summarize("", items, model="gpt-4o", user_id=USER, user_email=None, organization_id=None)
     assert "$42" in result.content
     assert list(compaction.image_inputs(captured))[0]["image_url"] == "https://assets.example/photo.jpg"
+
+
+async def test_a_file_sent_without_its_extension_is_kept_under_one(files):
+    pool, _ = files
+    await prepare(b"hello there", filename="notes")
+    row = await pool.fetchrow("SELECT name, storage_ref FROM workflow_resources WHERE owner_id = $1::uuid "
+                              "ORDER BY created_at DESC LIMIT 1", USER)
+    assert row["name"] == "notes.txt" and row["storage_ref"].endswith("/notes.txt")
+    # A name that names its type keeps it; one that names nothing takes the type's.
+    assert attachments.classify("document", "application/pdf", "Q3 plan.pdf").name == "Q3 plan.pdf"
+    assert attachments.classify("document", "application/pdf", "Q3 plan v1.2").name == "Q3 plan v1.2.pdf"

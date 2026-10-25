@@ -17,7 +17,9 @@ from typing import NamedTuple
 
 from nodes.core.media_digest import DigestContext, DigestError, MediaRef, base_mime, digester_for, media_kind
 from utils.content_extraction import BillingContext, ExtractionError, extract_content
-from utils.resource_store import RESOURCE_BUCKET, record_resource, resource_type_for_mime, upload_resource_bytes
+from utils.resource_store import (
+    RESOURCE_BUCKET, file_name, record_resource, resource_type_for_mime, upload_resource_bytes,
+)
 from wss.sender.schema import ContentItem, ImageUrl
 
 PAGE_CHARS = 8000
@@ -49,8 +51,8 @@ def classify(kind: str, mime_type: str, filename: str) -> Kind:
     if kind == "document" and mime.startswith(("image/", "audio/", "video/")):
         kind = media_kind(mime, filename)
     # Never let a sender's filename shape storage paths or Markdown links.
-    name = re.sub(r"[^\w. -]", "_", filename.replace("\\", "/").split("/")[-1])[:120]
-    name = name.strip(". ") or f"{kind}{mimetypes.guess_extension(mime) or '.bin'}"
+    name = re.sub(r"[^\w. -]", "_", filename.replace("\\", "/").split("/")[-1])[:120].strip(". ")
+    name = file_name(name, mime) if name else f"{kind}{mimetypes.guess_extension(mime) or '.bin'}"
     return Kind(kind, mime, name, kind in ("image", "sticker"))
 
 

@@ -16,8 +16,9 @@ from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from coder.coordinator.reach import with_link
 from coder.coordinator.texting.channel import (
-    PhoneText, PhoneTransport, chunk, handle_phone_text, media_name, split_media,
+    Embed, PhoneText, PhoneTransport, chunk, handle_phone_text, media_name, read_embeds,
 )
+from nodes.core.media_resolver import read_url
 from repositories.phones import PhoneRepo
 from utils.app_event_dedup import mark_delivered, was_delivered
 from utils.async_helpers import spawn
@@ -162,16 +163,76 @@ def to_whatsapp_text(markdown: str) -> str:
     return re.sub(r"\n{3,}", "\n\n", text).strip()
 
 
+MB = 1024 * 1024
+# What Meta plays as each kind of media sent by link, and its cap for each (Cloud API, supported media types).
+NATIVE_MEDIA = {
+    "image": ({"image/jpeg", "image/png"}, 5 * MB),
+    "video": ({"video/mp4", "video/3gpp"}, 16 * MB),
+    "audio": ({"audio/aac", "audio/amr", "audio/mpeg", "audio/mp4", "audio/ogg", "audio/opus"}, 16 * MB),
+}
+# The documents Meta takes (PDF, plain text, Word, Excel, PowerPoint), each up to DOCUMENT_LIMIT. It reads a file's
+# type from what it holds and refuses any other (an HTML page, a ZIP): another text file goes up as the plain text it
+# is, under its own name (``TEXT``); anything else goes as a link.
+DOCUMENT_TYPES = {
+    "application/pdf", "text/plain", "application/msword", "application/vnd.ms-excel", "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+}
+DOCUMENT_LIMIT = 100 * MB
+TEXT = "text"
+_TEXT_TYPES = ("application/json", "application/xml", "application/javascript", "application/yaml",
+               "application/x-yaml", "application/x-sh", "image/svg+xml")
+_SAME_TYPE = {"image/jpg": "image/jpeg", "audio/mp3": "audio/mpeg", "audio/x-m4a": "audio/mp4",
+              "audio/mp4a-latm": "audio/mp4", "audio/x-aac": "audio/aac"}
+
+
+def sent_as(embed: Embed) -> Optional[str]:
+    """How WhatsApp carries an embedded file: as an image, video, audio or document by its link, as a text file
+    uploaded (``TEXT``), or None: as a link, when Meta takes no file of its type or size, or nothing says what it
+    holds."""
+    file = embed.file
+    if file is None:
+        return None
+    mime, size = _SAME_TYPE.get(file.mime_type, file.mime_type), file.size_bytes or 0
+    for kind, (types, cap) in NATIVE_MEDIA.items():
+        if mime in types:
+            return kind if size <= cap else None
+    if size > DOCUMENT_LIMIT:
+        return None
+    if mime in DOCUMENT_TYPES:
+        return "document"
+    return TEXT if mime.startswith("text/") or mime in _TEXT_TYPES else None
+
+
+async def _uploaded_text(api: CloudApi, embed: Embed) -> str:
+    try:
+        data = await read_url(embed.url, max_bytes=DOCUMENT_LIMIT)
+    except ValueError as exc:
+        raise WhatsAppSendError(f"couldn't read {embed.file.name} to send it: {exc}") from exc
+    return await api.upload_media(data, filename=embed.file.name, mime_type="text/plain")
+
+
 async def send_rich(api: CloudApi, to: str, markdown: str) -> Optional[str]:
-    """Text in WhatsApp markup, then each embed as native media. The
-    first message id, or None when nothing could be sent."""
-    media, text = split_media(markdown)
+    """Text in WhatsApp markup, then each embedded file as a file (``sent_as``); one that can't go as a file is a link
+    line in the text. Every file is ready before anything is sent. The first message id, or None when nothing could
+    be sent."""
+    embeds, text = await read_embeds(markdown)
+    files = []
+    for embed in embeds:
+        kind = sent_as(embed)
+        if kind == TEXT:
+            files.append((embed, "document", {"media_id": await _uploaded_text(api, embed)}))
+        elif kind is not None:
+            files.append((embed, kind, {"link": embed.url}))
+    sent_files = [embed for embed, _, _ in files]
+    text = "\n".join([text.rstrip(), *(embed.link for embed in embeds if embed not in sent_files)])
     first: Optional[str] = None
     for part in chunk(to_whatsapp_text(text)):
         sent = await api.send_text(to, part)
         first = first or sent
-    for kind, url, caption in media:
-        sent = await api.send_media(to, kind, url, caption=caption)
+    for embed, kind, where in files:
+        sent = await api.send_media(to, kind, caption=embed.note, filename=embed.file.name, **where)
         first = first or sent
     return first
 
