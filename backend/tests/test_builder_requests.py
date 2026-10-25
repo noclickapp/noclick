@@ -15,7 +15,7 @@ from repositories.coordinator_jobs import outside_sources
 from wss.handlers.workflow_builder_handler import WorkflowBuilderHandler
 from utils import capabilities, task_notifications
 from utils.builder_request import PublicationOptions
-from utils.capabilities import INTERFACE_PUBLISH, OWNER_MESSAGE
+from utils.capabilities import INTERFACE_PUBLISH
 
 pytestmark = pytest.mark.asyncio
 USER = "00000000-0000-0000-0000-000000000001"
@@ -127,7 +127,7 @@ async def test_result_and_phone_delivery_are_separate(builder_request_db, monkey
     publish = AsyncMock(return_value={"url": "https://app.example", "app_id": "app", "node_id": "ui"})
     phone = AsyncMock(return_value={"success": phone_success, "error": None if phone_success else "WhatsApp window closed"})
     monkeypatch.setattr(requests, "capability", lambda key: publish if key == INTERFACE_PUBLISH else None)
-    monkeypatch.setattr(task_notifications, "capability", lambda key: phone if key == OWNER_MESSAGE else None)
+    monkeypatch.setattr(task_notifications, "phone_sender", lambda app=None: phone)
     monkeypatch.setattr(requests, "get_sio", lambda: object())
     emit = AsyncMock()
     monkeypatch.setattr(task_notifications, "send_event", emit)
@@ -197,7 +197,7 @@ async def test_interrupted_phone_send_is_not_duplicated(builder_request_db, monk
     recovered = await repo.claim_notification()
     assert recovered["phone_state"] == "uncertain"
     phone = AsyncMock()
-    monkeypatch.setattr(task_notifications, "capability", lambda _: phone)
+    monkeypatch.setattr(task_notifications, "phone_sender", lambda app=None: phone)
     monkeypatch.setattr(requests, "get_sio", lambda: object())
     monkeypatch.setattr(task_notifications, "send_event", AsyncMock())
     await requests.notify_result(pool, recovered)

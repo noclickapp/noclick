@@ -21,6 +21,8 @@ from utils.instance_provider_keys import (
     list_keys,
     set_key,
     set_smtp,
+    set_texting,
+    texting_state,
 )
 from wss.schema import SocketIOHandler
 from wss.sender import send_event
@@ -30,6 +32,7 @@ from wss.receiver.client_events import (
     InstanceKeysListRequest,
     InstanceKeysSetRequest,
     InstanceSmtpSetRequest,
+    InstanceTextingSetRequest,
 )
 
 logger = logging.getLogger(__name__)
@@ -49,6 +52,7 @@ class InstanceKeysHandler(DatabasePoolMixin, SocketIOHandler):
             "instance_keys:set": self.handle_set,
             "instance_keys:delete": self.handle_delete,
             "instance_smtp:set": self.handle_set_smtp,
+            "instance_texting:set": self.handle_set_texting,
         }
 
     async def setup_user(self, sid: str) -> None:
@@ -73,6 +77,7 @@ class InstanceKeysHandler(DatabasePoolMixin, SocketIOHandler):
             "keys": await list_keys(await self.get_pool()),
             "env_vars": env_configured(),
             "supported": list(SUPPORTED_ENV_VARS),
+            "texting": texting_state(),
         }
 
     async def handle_list(self, sid: str, request: InstanceKeysListRequest) -> None:
@@ -130,5 +135,20 @@ class InstanceKeysHandler(DatabasePoolMixin, SocketIOHandler):
                 request_id=request.request_id, data=await self._state()))
         except Exception as e:
             logger.error(f"[InstanceKeys] smtp set failed: {e}", exc_info=True)
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data=None, error=str(e)))
+
+    async def handle_set_texting(self, sid: str, request: InstanceTextingSetRequest) -> None:
+        try:
+            user_id = await self._authorize(sid, request)
+            if not user_id:
+                return
+            made = await set_texting(await self.get_pool(), request.app, request.fields, user_id)
+            logger.info(f"[InstanceKeys] {request.app} texting configured by {user_id}")
+            # The webhook secret made just now is shown this once; it's never read back.
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data={**await self._state(), "made": made}))
+        except Exception as e:
+            logger.error(f"[InstanceKeys] texting set failed: {e}", exc_info=True)
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id, data=None, error=str(e)))

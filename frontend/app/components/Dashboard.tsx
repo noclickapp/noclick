@@ -21,6 +21,7 @@ import { WorkflowBrowserDataProvider } from '~/hooks/WorkflowBrowserDataProvider
 import { CommandPalette } from '~/components/command/CommandPalette';
 import { GlobalCreateCredentialDialog } from '~/components/shared/popups/CreateCredentialDialog';
 import { WorkflowBrowser } from '~/components/workflow/WorkflowBrowser';
+import { CoordinatorHome } from '~/components/shell/CoordinatorHome';
 // Lazy: the operator debug tab is rendered only on demand so its static graph
 // does not enter the dashboard's initial bundle.
 const DebugViewer = lazy(() => import('~/components/debug/DebugViewer').then(m => ({ default: m.DebugViewer })));
@@ -73,10 +74,11 @@ interface DashboardProps {
         'isDragging',
         false
     );
+    // The assistant's chat is where an install opens: the conversation its texts land in too.
     const [selectedTab, setSelectedTab] = useValtioState<string>(
         valtio_path,
         'selectedTab',
-        'flow'
+        'chat'
     );
 
     // Get current org context from cached state
@@ -114,6 +116,8 @@ interface DashboardProps {
     useEffect(() => {
         if (urlTab === 'workflows') {
             setSelectedTab('flow');
+        } else if (urlTab === 'chat') {
+            setSelectedTab('chat');
         } else if (urlTab === 'debug') {
             setSelectedTab('debug');
         } else if (urlTab === 'dashboard' || urlTab === 'feed') {
@@ -384,6 +388,8 @@ interface DashboardProps {
     const renderTabContent = () => {
         if (selectedTab === 'debug') {
             return <Suspense fallback={<div className="h-full w-full" />}><DebugViewer /></Suspense>;
+        } else if (selectedTab === 'chat') {
+            return <CoordinatorHome />;
         } else if (selectedTab === 'flow') {
             return (
                 <WorkflowBrowser
@@ -442,7 +448,7 @@ interface DashboardProps {
                             />
                         </div>
                         <main className="pt-[calc(3.5rem+env(safe-area-inset-top))] w-full h-full overflow-hidden flex flex-col">
-                            <div className={`${selectedTab === 'flow' || selectedTab === 'settings' || selectedTab === 'debug' || selectedTab === 'dashboard' ? 'flex-1 min-h-0 min-w-0' : 'p-4 w-fit min-w-full'}`}>
+                            <div className={`${selectedTab === 'chat' || selectedTab === 'flow' || selectedTab === 'settings' || selectedTab === 'debug' || selectedTab === 'dashboard' ? 'flex-1 min-h-0 min-w-0' : 'p-4 w-fit min-w-full'}`}>
                                 {renderTabContent()}
                             </div>
                         </main>

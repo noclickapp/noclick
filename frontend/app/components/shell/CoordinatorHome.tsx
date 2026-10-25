@@ -14,6 +14,7 @@ import { AgentChatComposer } from '~/components/chat/AgentChatComposer';
 import { ChatReferenceChip } from '~/components/chat/ChatReferenceChip';
 import { preloadMarkdownRenderer } from '~/components/chat/MarkdownRendererLazy';
 import { CoordinatorTranscript } from '~/components/coordinator/CoordinatorTranscript';
+import { InstanceKeyPrompt } from '~/components/credential/InstanceKeyPrompt';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { CoordinatorMemories } from '~/components/dashboard/CoordinatorMemories';
 import { NodeMark } from '~/components/dashboard/primitives';
@@ -255,7 +256,12 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
     const hasContext = readyAttachments.length > 0 || references.length > 0;
     // A file that failed to upload holds the send until it's removed; the message never goes out without it.
     const failed = files.attachments.some((a) => a.status === 'error');
-    const composer = (
+    // A self-hosted install without the model's key asks for it where the composer goes, then opens the chat again.
+    const composer = coordinator.needsKey ? (
+        <div className={cn('mx-auto w-full max-w-3xl', empty ? undefined : 'px-5 pb-5 sm:px-6')}>
+            <InstanceKeyPrompt envVar={coordinator.needsKey} title="Add this instance's key to chat with NoClick" submitLabel="Save and start" onSaved={coordinator.retry} />
+        </div>
+    ) : (
         <AgentChatComposer
             value={draft}
             onChange={setDraft}
@@ -335,7 +341,7 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
         );
         const starters = (className?: string) =>
             STARTERS.map(({ title, detail, mark, prompt }) => (
-                <StarterCard key={title} title={title} detail={detail} mark={mark} disabled={!conversationId} onTry={() => submit(prompt, false)} className={className} />
+                <StarterCard key={title} title={title} detail={detail} mark={mark} disabled={!conversationId || !!coordinator.needsKey} onTry={() => submit(prompt, false)} className={className} />
             ));
 
         // A phone keeps the composer where the thumb is, as the thread does.

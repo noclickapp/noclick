@@ -67,11 +67,11 @@ async def reach_owner(
     pool, user_id: str, text: str, *, link: Optional[str] = None, channel: str = "auto",
     subject: Optional[str] = None, organization_id: Optional[str] = None,
 ) -> Dict[str, Any]:
-    from utils.capabilities import OWNER_MESSAGE, capability
+    from coder.coordinator.texting.owner_message import phone_sender
 
     resolved = await resolve_channel(pool, user_id, channel)
     if resolved in PHONE_APPS:
-        send = capability(OWNER_MESSAGE)
+        send = phone_sender(resolved)
         if send is None:
             label = "WhatsApp" if resolved == "whatsapp" else "iMessage"
             return {"success": False, "channel": resolved, "error": f"{label} isn't available on this instance."}

@@ -20,8 +20,7 @@ from tests.mocks.mock_asyncpg import MockNativePool
 from tests.test_coordinator import CID, ORG, USER, turn_seams  # noqa: F401
 from utils import capabilities, feature_gates
 from utils.capabilities import (
-    AUTO_TOPUP, COORDINATOR_IMESSAGE, COORDINATOR_PLATFORM_TOOLS, INTERFACE_PUBLISH, OWNER_MESSAGE, PHONE_NUMBERS,
-    PURCHASES,
+    AUTO_TOPUP, COORDINATOR_PLATFORM_TOOLS, INTERFACE_PUBLISH, OWNER_MESSAGE, PHONE_NUMBERS, PURCHASES,
 )
 from utils.discovered_tools import MAX_VISIBLE_INSTALLED, MAX_VISIBLE_TOOLS, DiscoveredTools
 from wss.sender.events import ChatMessageEvent
@@ -189,8 +188,8 @@ def test_the_base_tool_list_is_pinned(monkeypatch):
     catalog = {"plans": [{"plan": "member", "label": "Member", "monthly_usd": 25, "yearly_usd": None,
                           "description": "More."}],
                "funds": {"min_usd": 5, "max_usd": 500, "presets_usd": [10, 25]}, "checkout_note": ""}
-    for name, provided in ((OWNER_MESSAGE, object()), (COORDINATOR_IMESSAGE, lambda: "+15550000000"),
-                           (INTERFACE_PUBLISH, object()), (PHONE_NUMBERS, object()),
+    monkeypatch.setenv("SENDBLUE_NUMBER", "+15550000000")
+    for name, provided in ((OWNER_MESSAGE, object()), (INTERFACE_PUBLISH, object()), (PHONE_NUMBERS, object()),
                            (PURCHASES, SimpleNamespace(catalog=lambda email=None: catalog)), (AUTO_TOPUP, object())):
         capabilities._providers[name] = provided
     monkeypatch.setitem(feature_gates.FEATURE_ROLLOUT, "auto_topup", feature_gates.EVERYONE)

@@ -180,6 +180,18 @@ export function NavBar({
                             </div>
                         )}
                         <div className="flex min-w-0 gap-1 sm:gap-4">
+                            <ShortcutTooltip keys={['G', 'H']}>
+                                <button
+                                    onClick={() => onTabChange('chat')}
+                                    className={`whitespace-nowrap px-2.5 sm:px-3 py-1 text-sm sm:text-base rounded-md transition-colors ${
+                                        selectedTab === 'chat'
+                                            ? 'bg-accent text-accent-foreground dark:bg-foreground/10'
+                                            : 'text-muted-foreground dark:text-white/60 hover:text-foreground'
+                                    }`}
+                                >
+                                    Chat
+                                </button>
+                            </ShortcutTooltip>
                             <ShortcutTooltip keys={['G', 'W']}>
                                 <button
                                     onClick={() => onTabChange('flow')}

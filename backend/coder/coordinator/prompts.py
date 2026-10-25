@@ -9,7 +9,7 @@ __all__ = [
     "system_prompt", "VOICE_STYLE", "TEXT_STYLE", "IMESSAGE_STYLE", "EMAIL_STYLE", "WEB_STYLE", "WRAP_UP",
     "MEMORY_CATALOG_HEADER", "MEMORY_CATALOG_MORE", "reach_note", "ALARM_WAKEUP", "JOB_WAKEUP",
     "AGENT_MESSAGE_WAKEUP", "run_failure_wakeup", "wakeup_input", "followup_delivery", "followup_instructions",
-    "arrival_context", "handover_note",
+    "arrival_context", "handover_note", "unreadable_attachment", "shared_item", "SHARED_ITEM_CUT",
 ]
 
 _SYSTEM_PROMPT = (
@@ -64,6 +64,21 @@ def reach_note(*, phone_only: bool, address: Optional[str], paused: bool) -> str
         return f"Your email address is {address}, but the owner turned off mail to it."
     return f"Your email address is {address}; the owner can email you there."
 
+
+def unreadable_attachment(kind: str) -> str:
+    """The note a texted ``kind`` of file ("image", "audio", "document"...) leaves in the turn when it couldn't be
+    fetched or read."""
+    return f"[The {kind} could not be read.]"
+
+
+def shared_item(kind: str, data: str) -> str:
+    """A contact card or location someone texted (``kind`` "contacts" | "location"), as the turn reads it: ``data``
+    is the app's own JSON for it."""
+    return f"[Shared {kind}]\n{data}"
+
+
+# Where a shared item past its length was cut.
+SHARED_ITEM_CUT = "\n[cut]"
 
 ALARM_WAKEUP = "A scheduled message is due."
 JOB_WAKEUP = "Work you started has finished."

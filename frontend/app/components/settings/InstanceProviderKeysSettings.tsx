@@ -14,6 +14,7 @@ import { BUTTON_PRIMARY } from '~/components/shell/buttons';
 import { FIELD, QUIET_LINK } from '~/components/shell/fields';
 import { PROVIDER_KEY_SOURCES } from '~/lib/providerKeys';
 import { InstanceSmtpForm } from '~/components/credential/InstanceSmtpForm';
+import { InstanceTextingSettings } from '~/components/settings/InstanceTextingSettings';
 import { applyInstanceKeysState, loadInstanceKeys, type InstanceKeysState as KeysState } from '~/lib/instanceKeys';
 import { InstanceKeysDeleteRequest, InstanceKeysSetRequest } from '~/types/socket-events.generated';
 
@@ -168,24 +169,27 @@ export function InstanceProviderKeysSettings() {
     }, [refresh]);
 
     return (
-        <div className="mb-10">
-            <div className="mb-6">
-                <h2 className="text-lg font-semibold text-foreground">Instance keys</h2>
-                <p className="text-sm text-muted-foreground dark:text-white/40 mt-1">
-                    Keys this instance uses on everyone&apos;s behalf. Stored encrypted; environment variables take precedence.
-                </p>
-            </div>
-            {state === null ? (
-                <p className="text-sm text-muted-foreground/60">Loading…</p>
-            ) : (
-                <div className="divide-y divide-border dark:divide-foreground/[0.08]">
-                    {INSTANCE_KEYS.map((k) => (
-                        <KeyRow key={k.envVar} {...k} state={state} onChange={setState} />
-                    ))}
-                    <OutboundEmailRow state={state} onChange={setState} />
+        <>
+            <div className="mb-10">
+                <div className="mb-6">
+                    <h2 className="text-lg font-semibold text-foreground">Instance keys</h2>
+                    <p className="text-sm text-muted-foreground dark:text-white/40 mt-1">
+                        Keys this instance uses on everyone&apos;s behalf. Stored encrypted; environment variables take precedence.
+                    </p>
                 </div>
-            )}
-        </div>
+                {state === null ? (
+                    <p className="text-sm text-muted-foreground/60">Loading…</p>
+                ) : (
+                    <div className="divide-y divide-border dark:divide-foreground/[0.08]">
+                        {INSTANCE_KEYS.map((k) => (
+                            <KeyRow key={k.envVar} {...k} state={state} onChange={setState} />
+                        ))}
+                        <OutboundEmailRow state={state} onChange={setState} />
+                    </div>
+                )}
+            </div>
+            {state && <InstanceTextingSettings state={state} onChange={setState} />}
+        </>
     );
 }
 

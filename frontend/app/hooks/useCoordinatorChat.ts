@@ -51,6 +51,8 @@ export interface CoordinatorReach {
 interface OpenReply {
     conversation_id: string;
     reach: CoordinatorReach;
+    /** The instance holds no key for the coordinator's model: the chat asks for it first. */
+    needs_key?: string;
 }
 
 let reachRead: Promise<CoordinatorReach | null> | null = null;
@@ -147,6 +149,7 @@ export function useCoordinatorChat() {
     const remembered = userId && lastOpened?.userId === userId ? lastOpened.conversationId : null;
     const [conversationId, setConversationId] = useState<string | null>(remembered);
     const [gated, setGated] = useState(false);
+    const [needsKey, setNeedsKey] = useState<string | null>(null);
     const [openError, setOpenError] = useState<string | null>(null);
     // This browser's copy says the account has no conversation yet, so the start can show before the server agrees.
     const [cachedEmpty, setCachedEmpty] = useState(false);
@@ -184,6 +187,7 @@ export function useCoordinatorChat() {
                     return;
                 }
                 if (userId) lastOpened = { userId, conversationId: reply.conversation_id };
+                setNeedsKey(reply.needs_key ?? null);
                 setConversationId(reply.conversation_id);
             } catch (error) {
                 if (cancelled) return;
@@ -224,7 +228,8 @@ export function useCoordinatorChat() {
             // The reply comes when the turn is over (its frames already streamed), or at once when the server refuses
             // the send: a file that never finished uploading, an account that dropped. That one has to be shown.
             registerRequestCallback(request_id, (reply) => {
-                const error = (reply as Reply<unknown> | null)?.error;
+                const { error, kind, env_var } = (reply as Reply<{ env_var: string }> | null) ?? {};
+                if (kind === 'instance_key' && env_var) setNeedsKey(env_var);
                 if (error) failTurn(error);
             });
             const request = CoordinatorSendRequest.create({
@@ -259,7 +264,7 @@ export function useCoordinatorChat() {
         [receiveFrame]
     );
 
-    return { ...chat, conversationId, gated, send, loaded, loadError, retry, upload: uploadCoordinatorAttachment, listFiles: listCoordinatorFiles, arrive };
+    return { ...chat, conversationId, gated, needsKey, send, loaded, loadError, retry, upload: uploadCoordinatorAttachment, listFiles: listCoordinatorFiles, arrive };
 }
 
 /** A file into the account's attachments: the server makes its row and a signed URL, the browser PUTs the bytes. */

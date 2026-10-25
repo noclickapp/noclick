@@ -216,3 +216,101 @@ async def test_smtp_rejections_carry_the_servers_words(smtp_server):
     with pytest.raises(ValueError, match="Enter the sender as an address"):
         await keys.set_smtp(pool, keys.SmtpSettings("smtp.example.com", 587, "", "", "not-an-address"), "u1")
     assert "SMTP_HOST" not in os.environ and pool.executed == []
+
+
+class StorePool:
+    """instance_provider_keys as rows: written by upsert, read back by both queries the store makes."""
+
+    def __init__(self):
+        self.values = {}
+
+    async def execute(self, sql, env_var, value_encrypted, *_):
+        self.values[env_var] = value_encrypted
+        return "OK"
+
+    async def fetch(self, *_a, **_k):
+        return [{"env_var": name, "value_encrypted": value} for name, value in self.values.items()]
+
+
+WHATSAPP_FIELDS = {"WHATSAPP_CLOUD_API_TOKEN": " EAAG-token ", "WHATSAPP_PHONE_NUMBER_ID": "100000000000001",
+                   "WHATSAPP_APP_SECRET": "app-secret"}
+
+
+@pytest.mark.asyncio
+async def test_whatsapp_keys_are_stored_once_meta_answers_with_the_number():
+    import httpx
+    import respx
+
+    from utils.whatsapp_cloud_api import GRAPH_BASE
+
+    pool = StorePool()
+    with respx.mock:
+        lookup = respx.get(f"{GRAPH_BASE}/100000000000001").mock(return_value=httpx.Response(
+            200, json={"display_phone_number": "1 555-010-0000", "verified_name": "Test"}))
+        made = await keys.set_texting(pool, "whatsapp", WHATSAPP_FIELDS, "user-1")
+    assert lookup.calls.last.request.headers["Authorization"] == "Bearer EAAG-token"
+    # The webhook's verify token is made here, and handed back this once to paste into Meta.
+    assert set(made) == {"WHATSAPP_WEBHOOK_VERIFY_TOKEN"} and len(made["WHATSAPP_WEBHOOK_VERIFY_TOKEN"]) >= 24
+    assert os.environ["WHATSAPP_DISPLAY_NUMBER"] == "+15550100000"
+    assert os.environ["WHATSAPP_CLOUD_API_TOKEN"] == "EAAG-token"
+    assert os.environ["WHATSAPP_WEBHOOK_VERIFY_TOKEN"] == made["WHATSAPP_WEBHOOK_VERIFY_TOKEN"]
+    assert keys.texting_state()["whatsapp"]["configured"] is True
+    # Saved again (a rotated token), the verify token Meta already holds stays.
+    with respx.mock:
+        respx.get(f"{GRAPH_BASE}/100000000000001").mock(return_value=httpx.Response(
+            200, json={"display_phone_number": "+1 555-010-0000"}))
+        assert await keys.set_texting(pool, "whatsapp", WHATSAPP_FIELDS, "user-1") == {}
+
+
+@pytest.mark.asyncio
+async def test_whatsapp_keys_meta_refuses_are_never_stored():
+    import httpx
+    import respx
+
+    from utils.whatsapp_cloud_api import GRAPH_BASE
+
+    pool = StorePool()
+    with respx.mock:
+        respx.get(f"{GRAPH_BASE}/100000000000001").mock(return_value=httpx.Response(
+            400, json={"error": {"message": "Invalid OAuth access token.", "code": 190}}))
+        with pytest.raises(ValueError, match="Invalid OAuth access token"):
+            await keys.set_texting(pool, "whatsapp", WHATSAPP_FIELDS, "user-1")
+    with pytest.raises(ValueError, match="WHATSAPP_APP_SECRET"):
+        await keys.set_texting(pool, "whatsapp", {**WHATSAPP_FIELDS, "WHATSAPP_APP_SECRET": " "}, "user-1")
+    assert pool.values == {} and "WHATSAPP_CLOUD_API_TOKEN" not in os.environ
+
+
+@pytest.mark.asyncio
+async def test_a_sendblue_line_is_stored_once_sendblue_accepts_the_keys():
+    import httpx
+    import respx
+
+    from utils.sendblue import API_BASE
+
+    pool = StorePool()
+    fields = {"SENDBLUE_API_KEY": "key-id", "SENDBLUE_API_SECRET": "key-secret", "SENDBLUE_NUMBER": "+1 (415) 555-0123"}
+    with respx.mock:
+        respx.get(f"{API_BASE}/v2/messages").mock(return_value=httpx.Response(401, json={"message": "Invalid API key"}))
+        with pytest.raises(ValueError, match="Sendblue refused the keys: Invalid API key"):
+            await keys.set_texting(pool, "imessage", fields, "user-1")
+        assert pool.values == {}
+        respx.get(f"{API_BASE}/v2/messages").mock(return_value=httpx.Response(200, json={"data": []}))
+        made = await keys.set_texting(pool, "imessage", fields, "user-1")
+    assert set(made) == {"SENDBLUE_WEBHOOK_SECRET"}
+    assert os.environ["SENDBLUE_NUMBER"] == "+14155550123"
+    with pytest.raises(ValueError, match="country code"):
+        await keys.set_texting(pool, "imessage", {**fields, "SENDBLUE_NUMBER": "415 555 0123"}, "user-1")
+
+
+def test_texting_state_names_the_webhook_urls_and_whether_redis_is_there(monkeypatch):
+    for name in ("WEBHOOK_URL_BASE", "PUBLIC_API_URL"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("PUBLIC_WEBHOOK_URL", "https://noclick.example.org/")
+    monkeypatch.delenv("REDIS_URL", raising=False)
+    state = keys.texting_state()
+    assert state["whatsapp"] == {"configured": False, "line": None, "redis": False,
+                                 "webhook_url": "https://noclick.example.org/whatsapp/meta"}
+    assert state["imessage"]["webhook_url"] == "https://noclick.example.org/imessage/sendblue"
+    monkeypatch.setenv("REDIS_URL", "redis://localhost:6379/0")
+    assert keys.texting_state()["imessage"]["redis"] is True
+    assert set(keys.TEXTING_ENV_VARS["whatsapp"]) | set(keys.TEXTING_ENV_VARS["imessage"]) <= set(keys.SUPPORTED_ENV_VARS)

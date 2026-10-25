@@ -131,7 +131,7 @@ async def test_phone_delivery_failure_keeps_the_durable_reply(task_db, monkeypat
     monkeypatch.setattr(tasks, "get_sio", lambda: object())
     monkeypatch.setattr(task_notifications, "send_event", AsyncMock())
     phone = AsyncMock(return_value={"success": False, "error": "WhatsApp window closed"})
-    monkeypatch.setattr(task_notifications, "capability", lambda key: phone)
+    monkeypatch.setattr(task_notifications, "phone_sender", lambda app=None: phone)
     await tasks.notify_results(pool)
     row = (await repo.list_for_user(USER))[0]
     assert row["status"] == "completed" and row["notified_at"]

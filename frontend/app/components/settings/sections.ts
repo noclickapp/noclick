@@ -93,9 +93,9 @@ export const SETTINGS_SECTION_DEFS: readonly SettingsSectionDef[] = [
     {
         id: 'oauth-apps',
         label: 'Self-hosted',
-        description: 'The builder key and OAuth apps for this instance',
+        description: 'The builder key, texting and OAuth apps for this instance',
         icon: Plug,
-        keywords: 'instance keys oauth apps smtp email provider',
+        keywords: 'instance keys oauth apps smtp email provider texting whatsapp imessage sendblue',
         // The hosted service connects through its own registered apps; this is the self-hosted alternative to
         // editing two .env files by hand.
         shown: (c) => c.selfHosted,

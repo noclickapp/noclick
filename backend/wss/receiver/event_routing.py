@@ -161,6 +161,7 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         "instance_keys:set": Handler.INSTANCE_KEYS,
         "instance_keys:delete": Handler.INSTANCE_KEYS,
         "instance_smtp:set": Handler.INSTANCE_KEYS,
+        "instance_texting:set": Handler.INSTANCE_KEYS,
 
         # In-app feedback / bug report
         "feedback:submit": Handler.FEEDBACK,

@@ -19,13 +19,13 @@ export interface LeaderShortcut {
 }
 
 // The app shell's pages. The open edition still runs the tabbed layout
-// (oss/overrides Dashboard.tsx), which has none of them.
+// (oss/overrides Dashboard.tsx), which has only Chat among them.
 const SHELL = !isLocalEdition();
 const shellOnly = (shortcut: LeaderShortcut): LeaderShortcut[] => (SHELL ? [shortcut] : []);
 
 // "G <key>" — go to a destination.
 export const GOTO_DESTINATIONS: LeaderShortcut[] = [
-    ...shellOnly({ key: 'h', label: 'Chat', commandId: 'nav:chat', run: () => navigateToTab('chat') }),
+    { key: 'h', label: 'Chat', commandId: 'nav:chat', run: () => navigateToTab('chat') },
     { key: 'w', label: SHELL ? 'Automations' : 'Workflows', commandId: 'nav:workflows', run: goToWorkflows },
     ...shellOnly({ key: 'l', label: 'Channels', commandId: 'nav:channels', run: () => navigateToTab('channels') }),
     ...(SHELL ? [] : [{ key: 'd', label: 'Dashboard', commandId: 'nav:dashboard', run: () => navigateToDashboard() }]),

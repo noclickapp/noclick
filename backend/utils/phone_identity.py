@@ -70,7 +70,7 @@ _MESSAGES = {
     "too_many_phones": f"An account can link up to {MAX_PHONES_PER_ACCOUNT} numbers. Unlink one first",
     "not_linked": "That number isn't linked to this account",
     "last_way_in": "This number is the only way into this account. Add an email before unlinking it",
-    "codes_unavailable": "Linking by text isn't available on this instance",
+    "codes_unavailable": "Linking by text needs Redis, which this instance doesn't have yet (REDIS_URL)",
     "code_expired": "That link code has expired or was already used. Scan the code in NoClick again for a new one",
 }
 

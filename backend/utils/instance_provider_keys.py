@@ -13,6 +13,7 @@ taken back without a restart, and every entry point is self-hosted only.
 
 import asyncio
 import logging
+import secrets
 import smtplib
 from dataclasses import dataclass
 from email.utils import parseaddr
@@ -30,6 +31,16 @@ logger = logging.getLogger(__name__)
 
 _TAG_PREFIX = "_NC_INSTANCE_KEY_"
 
+# Each texting app's keys, saved and removed together (``set_texting``): what the operator copies from the provider,
+# the value the instance makes for the provider's webhook, and what's read back from the provider.
+TEXTING_ENV_VARS: Dict[str, tuple] = {
+    "whatsapp": ("WHATSAPP_CLOUD_API_TOKEN", "WHATSAPP_PHONE_NUMBER_ID", "WHATSAPP_APP_SECRET",
+                 "WHATSAPP_WEBHOOK_VERIFY_TOKEN", "WHATSAPP_DISPLAY_NUMBER"),
+    "imessage": ("SENDBLUE_API_KEY", "SENDBLUE_API_SECRET", "SENDBLUE_NUMBER", "SENDBLUE_WEBHOOK_SECRET"),
+}
+# The value the instance generates for each app's webhook, shown once when it's made.
+TEXTING_WEBHOOK_SECRET = {"whatsapp": "WHATSAPP_WEBHOOK_VERIFY_TOKEN", "imessage": "SENDBLUE_WEBHOOK_SECRET"}
+
 # The only names the store accepts: the provider keys the agent runtime itself
 # knows how to use. Anything else would be an arbitrary write into the backend's
 # environment from a browser session.
@@ -39,7 +50,8 @@ _TAG_PREFIX = "_NC_INSTANCE_KEY_"
 # QR sign-in, the Discord bot whose Gateway session delivers channel-message
 # triggers (utils/discord_gateway_bridge.py), the platform-keyed operations a
 # self-hosted instance runs on its own key (nodes/core/platform_billing.py),
-# and outbound email — an SMTP server or a Resend key, plus the sender address.
+# outbound email — an SMTP server or a Resend key, plus the sender address — and the
+# lines people text the assistant on (WhatsApp's Cloud API, a Sendblue iMessage line).
 INSTANCE_SERVICE_ENV_VARS: tuple = (
     "WAHOOKS_API_KEY",
     "DISCORD_BOT_TOKEN",
@@ -56,6 +68,8 @@ INSTANCE_SERVICE_ENV_VARS: tuple = (
     "TWILIO_ACCOUNT_SID",
     "TWILIO_AUTH_TOKEN",
     "TWILIO_VERIFY_SERVICE_SID",
+    *TEXTING_ENV_VARS["whatsapp"],
+    *TEXTING_ENV_VARS["imessage"],
 )
 
 SUPPORTED_ENV_VARS: tuple = tuple(
@@ -98,19 +112,7 @@ async def set_key(pool, env_var: str, value: str, user_id: Optional[str]) -> Non
     rejection = await validate_provider_key(env_var, value)
     if rejection:
         raise ValueError(rejection.message("instance"))
-    encrypted = get_encryption().encrypt_credential({"value": value})
-    await pool.execute(
-        """
-        INSERT INTO instance_provider_keys (env_var, value_encrypted, updated_by)
-        VALUES ($1, $2, $3)
-        ON CONFLICT (env_var) DO UPDATE
-           SET value_encrypted = EXCLUDED.value_encrypted,
-               updated_at = now(),
-               updated_by = EXCLUDED.updated_by
-        """,
-        env_var, encrypted, user_id,
-    )
-    await apply_to_environment(pool)
+    await _store(pool, {env_var: value}, user_id)
 
 
 async def delete_key(pool, env_var: str) -> None:
@@ -189,3 +191,88 @@ async def set_smtp(pool, settings: SmtpSettings, user_id: Optional[str]) -> None
             await set_key(pool, env_var, value, user_id)
         else:
             await delete_key(pool, env_var)
+
+
+async def _store(pool, values: Dict[str, str], user_id: Optional[str]) -> None:
+    """Store several keys at once, then apply them together."""
+    for env_var, value in values.items():
+        encrypted = get_encryption().encrypt_credential({"value": value})
+        await pool.execute(
+            """
+            INSERT INTO instance_provider_keys (env_var, value_encrypted, updated_by)
+            VALUES ($1, $2, $3)
+            ON CONFLICT (env_var) DO UPDATE
+               SET value_encrypted = EXCLUDED.value_encrypted,
+                   updated_at = now(),
+                   updated_by = EXCLUDED.updated_by
+            """,
+            env_var, encrypted, user_id,
+        )
+    await apply_to_environment(pool)
+
+
+async def set_texting(pool, app: str, fields: Dict[str, str], user_id: Optional[str]) -> Dict[str, str]:
+    """Store one texting app's keys after the provider accepts them (``app`` "whatsapp": the Cloud API token, the
+    phone number id and the app secret; "imessage": Sendblue's API key and secret and the line). The secret its
+    webhook is checked against is made here the first time; returns it, by name, when it was just made (it's shown
+    then, never read back)."""
+    from utils.phone_numbers import normalize_e164
+
+    names = TEXTING_ENV_VARS.get(app)
+    if names is None:
+        raise ValueError("app must be whatsapp or imessage")
+    typed = {name: (fields.get(name) or "").strip() for name in names[:3]}
+    missing = [name for name, value in typed.items() if not value]
+    if missing:
+        raise ValueError(f"Fill in {', '.join(missing)}")
+    if app == "whatsapp":
+        from utils.whatsapp_cloud_api import CloudApi, WhatsAppSendError
+
+        try:
+            number = await CloudApi(typed["WHATSAPP_CLOUD_API_TOKEN"], typed["WHATSAPP_PHONE_NUMBER_ID"]).phone_number()
+        except WhatsAppSendError as exc:
+            raise ValueError(str(exc)) from exc
+        shown = str(number.get("display_phone_number") or "")
+        display = normalize_e164(shown if shown.startswith("+") else f"+{shown}")
+        if display is None:
+            raise ValueError(f"WhatsApp lists this number as {shown!r}, which isn't a full international number")
+        typed["WHATSAPP_DISPLAY_NUMBER"] = display
+    else:
+        from utils.sendblue import Sendblue, SendblueError
+
+        line = normalize_e164(typed["SENDBLUE_NUMBER"])
+        if line is None:
+            raise ValueError("Enter the line with its country code, like +1 415 555 0100")
+        typed["SENDBLUE_NUMBER"] = line
+        try:
+            await Sendblue(typed["SENDBLUE_API_KEY"], typed["SENDBLUE_API_SECRET"], line).check_keys()
+        except SendblueError as exc:
+            raise ValueError(f"Sendblue refused the keys: {exc}") from exc
+    made: Dict[str, str] = {}
+    secret_var = TEXTING_WEBHOOK_SECRET[app]
+    stored = {r["env_var"] for r in await pool.fetch("SELECT env_var FROM instance_provider_keys")}
+    if secret_var not in stored and secret_var not in env_configured():
+        made[secret_var] = secrets.token_urlsafe(24)
+    await _store(pool, {**typed, **made}, user_id)
+    return made
+
+
+def texting_state() -> Dict[str, Dict]:
+    """Each texting app as Settings shows it: whether its keys are in, the line, the webhook URL to give the
+    provider, and whether texting can run here at all (Redis counts link codes, notices and redeliveries)."""
+    from coder.coordinator.texting.routes import IMESSAGE_PATH, WHATSAPP_PATH
+    from utils.redis_client import redis_url_or_none
+    from utils.webhook_delivery import get_webhook_base_url
+
+    base = get_webhook_base_url()
+    lines = {"whatsapp": "WHATSAPP_DISPLAY_NUMBER", "imessage": "SENDBLUE_NUMBER"}
+    paths = {"whatsapp": WHATSAPP_PATH, "imessage": IMESSAGE_PATH}
+    return {
+        app: {
+            "configured": all(os.environ.get(name, "").strip() for name in names),
+            "line": os.environ.get(lines[app], "").strip() or None,
+            "webhook_url": f"{base}{paths[app]}" if base else None,
+            "redis": redis_url_or_none() is not None,
+        }
+        for app, names in TEXTING_ENV_VARS.items()
+    }

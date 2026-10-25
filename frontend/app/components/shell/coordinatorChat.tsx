@@ -21,6 +21,8 @@ export interface CoordinatorChat {
     loaded: boolean;
     /** This account has no coordinator to talk to. */
     gated: boolean;
+    /** The key this instance needs before the coordinator's model can run (a self-hosted install without one). */
+    needsKey?: string | null;
     loadError: string | null;
     retry: () => void;
     /** False when nothing went out (nothing to send, no thread yet, a turn still running, no connection). */

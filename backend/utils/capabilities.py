@@ -124,12 +124,10 @@ BUILDER_RESULT_NOTIFY = "builder.result_notify"
 # user_context, step) -> None, fire-and-forget.
 BUILDER_STEP_NOTIFY = "builder.step_notify"
 
-# Message the account owner on a channel of their own the engine does not
-# have (their phone, over WhatsApp or iMessage): async (pool, user_id, text, *,
-# link=None, channel=None) -> {"success", "channel"} or {"success": False,
-# "error"}. ``channel`` ("whatsapp" | "imessage") names the app; None means the
-# one the owner last texted on. Without one the coordinator has no
-# message_owner tool.
+# Message the account owner on their phone, over WhatsApp or iMessage: async (pool, user_id, text, *, link=None,
+# channel=None) -> {"success", "channel"} or {"success": False, "error"}. ``channel`` ("whatsapp" | "imessage") names
+# the app; None means the one the owner last texted on. Without one, the instance's own lines send it
+# (coder/coordinator/texting/owner_message.py), and with no line the coordinator can't message the owner's phone.
 OWNER_MESSAGE = "owner.message"
 
 # Phone numbers a workflow can own: coverage() -> [{country, number_types, texting_types, documents_types,
@@ -386,15 +384,15 @@ ACCOUNT_AGENT_HANDOVER = "account.agent_handover"
 # whose coordinator keeps its own address. Without one, every account's does.
 ACCOUNT_AGENT_EMAIL = "account.agent_email"
 
-# The number the account coordinator answers on, WhatsApp texts and calls
-# alike: () -> E.164 str, or None when this deployment has none. Without one,
-# the web offers no phone channel.
-COORDINATOR_NUMBER = "coordinator.number"
+# A platform's own rule for a text to the assistant's number: async (transport, message) -> None, with the
+# coder/coordinator/texting/channel.py PhoneTransport and PhoneText. Without one, a text reaches the account its number
+# is bound to, and the coordinator answers.
+PHONE_TEXT = "coordinator.phone_text"
 
-# The handle the coordinator answers iMessages on: () -> E.164 str, or None
-# when this deployment has no iMessage line. Without one, the web offers no
-# iMessage channel and message_owner can't send over iMessage.
-COORDINATOR_IMESSAGE = "coordinator.imessage"
+# What a platform does with a WhatsApp delivery's statuses (billing the messages it's charged for, falling back from a
+# send WhatsApp failed after taking it): async (pool, payload, *, phone_number_id) -> None, awaited before the delivery
+# is acknowledged so a write that didn't land is delivered again. Without one, statuses are ignored.
+WHATSAPP_STATUSES = "whatsapp.statuses"
 
 # Tools a platform gives the account coordinator on top of its own: async
 # (pool, *, user_id, turn_id, untrusted, voice, cards, discovered,

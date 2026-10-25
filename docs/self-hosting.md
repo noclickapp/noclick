@@ -451,13 +451,47 @@ WAHooks service and requires a WAHooks account plus `WAHOOKS_API_KEY` on the
 backend. Without that key, QR linking and QR-backed WhatsApp operations remain
 unavailable; other integrations continue to work.
 
+### Texting the assistant
+
+The assistant in Chat can also be texted, on WhatsApp through your own Meta app
+and on iMessage through your own Sendblue line, in the same conversation as the
+web. Set it up under Settings → Self-hosted → Texting:
+
+1. **WhatsApp**: make an app at Meta for Developers with the WhatsApp product.
+   Copy the phone number ID and an access token (a system user's, which doesn't
+   expire) from WhatsApp → API Setup, and the app secret from App settings →
+   Basic. Save them in the Texting card, which checks them with Meta. Then, under
+   WhatsApp → Configuration, set the callback URL and verify token the card
+   shows, and subscribe to `messages`.
+2. **iMessage**: copy your Sendblue API key and secret and your line's number,
+   save them in the card, then add a receive webhook in Sendblue with the URL and
+   secret it shows.
+3. Each person links their own number from Chat → Connect: the QR code opens
+   the app with a one-time code drafted, and sending it links the number to
+   their account.
+
+Meta and Sendblue reach the instance at `PUBLIC_WEBHOOK_URL` (or
+`WEBHOOK_URL_BASE` / `PUBLIC_API_URL`), which must be a public HTTPS address;
+on a laptop, run a tunnel such as `cloudflared tunnel --url
+http://localhost:8000` and set `PUBLIC_WEBHOOK_URL` to its address. Texting
+needs Redis (`REDIS_URL`; the Compose stack has it). A number that isn't linked
+to an account gets one short reply a day saying how to link it; a text never
+creates an account. WhatsApp only delivers the assistant's own messages within
+24 hours of the person's last text: past that, a reminder or a follow-up stays
+in the web chat instead of being texted (iMessage has no such window). The same
+keys can be set
+in the environment: `WHATSAPP_CLOUD_API_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`,
+`WHATSAPP_APP_SECRET`, `WHATSAPP_WEBHOOK_VERIFY_TOKEN`,
+`WHATSAPP_DISPLAY_NUMBER`, and `SENDBLUE_API_KEY`, `SENDBLUE_API_SECRET`,
+`SENDBLUE_NUMBER`, `SENDBLUE_WEBHOOK_SECRET`.
+
 ---
 
 ## Optional services
 
 | Variable                        | Enables                                                                                                                                                      |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `REDIS_URL`                     | Caching for OAuth state and UI state. Everything works without it, slightly slower.                                                                          |
+| `REDIS_URL`                     | Caching for OAuth state and UI state, and texting the assistant, which needs it. Everything else works without it, slightly slower.                          |
 | `SMTP_HOST` … + `FROM_EMAIL`    | Outbound email (the Send Email node, agent updates, run-failure and credential alerts, invites) through your SMTP server. Also settable in the app. See below. |
 | `RESEND_API_KEY` + `FROM_EMAIL` | The same, through [Resend](https://resend.com) instead of SMTP. Environment only.                                                                             |
 | `APIFY_API_TOKEN`               | LinkedIn and Instagram scraping operations, which run on Apify. Also settable in the app. See below.                                                          |

@@ -421,6 +421,14 @@ class InstanceSmtpSetRequest(ClientEventBase):
     from_email: str = Field(..., min_length=3, description="Sender, e.g. NoClick <noclick@yourdomain.com>")
 
 
+class InstanceTextingSetRequest(ClientEventBase):
+    """Store one texting app's keys (WhatsApp's Cloud API, or a Sendblue iMessage line) after the provider accepts them"""
+    event_name: ClassVar[str] = "instance_texting:set"
+
+    app: Literal["whatsapp", "imessage"] = Field(..., description="Which app's keys")
+    fields: Dict[str, str] = Field(..., description="The keys by environment variable name")
+
+
 class InstanceKeysDeleteRequest(ClientEventBase):
     """Forget one server-side provider key"""
     event_name: ClassVar[str] = "instance_keys:delete"

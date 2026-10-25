@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Thu Oct 22 18:19:16  2026
+// Generated at: Sun Oct 25 23:09:32  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -3472,6 +3472,26 @@ export interface InstanceSmtpSetRequest {
    * Sender, e.g. NoClick <noclick@yourdomain.com>
    */
   from_email: string;
+  [k: string]: unknown;
+}
+/**
+ * Store one texting app's keys (WhatsApp's Cloud API, or a Sendblue iMessage line) after the provider accepts them
+ */
+export interface InstanceTextingSetRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Which app's keys
+   */
+  app: "whatsapp" | "imessage";
+  /**
+   * The keys by environment variable name
+   */
+  fields: {
+    [k: string]: string;
+  };
   [k: string]: unknown;
 }
 /**
@@ -14325,6 +14345,7 @@ export interface ClientToServerEvents {
   'instance_oauth:list': (data: InstanceOAuthListRequest) => void;
   'instance_oauth:set': (data: InstanceOAuthSetRequest) => void;
   'instance_smtp:set': (data: InstanceSmtpSetRequest) => void;
+  'instance_texting:set': (data: InstanceTextingSetRequest) => void;
   'intercom:oauth:exchange': (data: IntercomOAuthExchangeRequest) => void;
   'intercom:oauth:refresh': (data: IntercomOAuthRefreshRequest) => void;
   'intercom:oauth:validate': (data: IntercomOAuthValidateRequest) => void;
@@ -14685,6 +14706,7 @@ export const ClientEventNames = {
   InstanceOAuthListRequest: 'instance_oauth:list',
   InstanceOAuthSetRequest: 'instance_oauth:set',
   InstanceSmtpSetRequest: 'instance_smtp:set',
+  InstanceTextingSetRequest: 'instance_texting:set',
   IntercomOAuthExchangeRequest: 'intercom:oauth:exchange',
   IntercomOAuthRefreshRequest: 'intercom:oauth:refresh',
   IntercomOAuthValidateRequest: 'intercom:oauth:validate',
@@ -15046,6 +15068,7 @@ interface ClientEventMap {
   InstanceOAuthListRequest: InstanceOAuthListRequest
   InstanceOAuthSetRequest: InstanceOAuthSetRequest
   InstanceSmtpSetRequest: InstanceSmtpSetRequest
+  InstanceTextingSetRequest: InstanceTextingSetRequest
   IntercomOAuthExchangeRequest: IntercomOAuthExchangeRequest
   IntercomOAuthRefreshRequest: IntercomOAuthRefreshRequest
   IntercomOAuthValidateRequest: IntercomOAuthValidateRequest
@@ -16035,6 +16058,10 @@ export const InstanceOAuthSetRequest = {
 export const InstanceSmtpSetRequest = {
   event_name: 'instance_smtp:set' as const,
   create: (data: InstanceSmtpSetRequest) => ({ event_name: 'instance_smtp:set' as const, ...data })
+};
+export const InstanceTextingSetRequest = {
+  event_name: 'instance_texting:set' as const,
+  create: (data: InstanceTextingSetRequest) => ({ event_name: 'instance_texting:set' as const, ...data })
 };
 export const IntercomOAuthExchangeRequest = {
   event_name: 'intercom:oauth:exchange' as const,
@@ -17041,6 +17068,7 @@ export const EventRouting = {
   'instance_oauth:list': 'API',
   'instance_oauth:set': 'API',
   'instance_smtp:set': 'API',
+  'instance_texting:set': 'API',
   'intercom:oauth:exchange': 'API',
   'intercom:oauth:refresh': 'API',
   'intercom:oauth:validate': 'API',

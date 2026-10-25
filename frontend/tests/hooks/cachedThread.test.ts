@@ -187,4 +187,16 @@ describe('the coordinator chat', () => {
         expect(result.current.loaded).toBe(true);
         expect(texts(result.current.messages)).toEqual(['brief me']);
     });
+
+    it('asks for the key a self-hosted instance lacks, and drops the ask once it opens without one', async () => {
+        socket.clearReplyHandlers();
+        socket.replyTo('coordinator:open', () => ({ conversation_id: `coordinator:${signedIn}`, reach: { phone: null, imessage: null, email: null }, needs_key: 'OPENROUTER_API_KEY' }));
+        const { result } = renderHook(() => useCoordinatorChat());
+        await waitFor(() => expect(result.current.needsKey).toBe('OPENROUTER_API_KEY'));
+
+        socket.clearReplyHandlers();
+        socket.replyTo('coordinator:open', () => ({ conversation_id: `coordinator:${signedIn}`, reach: { phone: null, imessage: null, email: null } }));
+        act(() => result.current.retry());
+        await waitFor(() => expect(result.current.needsKey).toBeNull());
+    });
 });

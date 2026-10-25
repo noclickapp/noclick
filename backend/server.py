@@ -372,10 +372,13 @@ fastapi_app.add_middleware(
 from utils.webhook_routes import router as webhook_router
 from utils.supabase_webhook_routes import router as supabase_webhook_router
 from utils.email_routes import router as email_router
+# Texts to the assistant's WhatsApp number and iMessage line (Meta's and Sendblue's webhooks).
+from coder.coordinator.texting.routes import router as texting_router
 if inline_webhook_routes():
     fastapi_app.include_router(webhook_router)
     fastapi_app.include_router(supabase_webhook_router)
     fastapi_app.include_router(email_router)
+    fastapi_app.include_router(texting_router)
 
 # Register public routes for unauthenticated access to shared resources
 from utils.public_routes import router as public_router
@@ -469,6 +472,7 @@ webhook_fastapi_app.add_middleware(
 webhook_fastapi_app.include_router(webhook_router)
 webhook_fastapi_app.include_router(supabase_webhook_router)
 webhook_fastapi_app.include_router(email_router)
+webhook_fastapi_app.include_router(texting_router)
 # Health route on the worker too so the load balancer / monitoring can probe
 # the function independently of the api function.
 webhook_fastapi_app.include_router(health_router)

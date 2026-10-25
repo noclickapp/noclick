@@ -43,18 +43,18 @@ def normalize_e164(raw: str | None) -> str | None:
 
 def is_noclick_number(raw: str | None) -> bool:
     """Whether ``raw`` (E.164, bare digits, or Twilio's ``whatsapp:+…``) is a
-    number NoClick itself texts people from: the coordinator's WhatsApp line or
+    number NoClick itself texts people from: the assistant's WhatsApp line or
     its iMessage line. A message from one never wakes an owner's trigger: the
-    coordinator answers on the owner's own linked phone, so an agent listening
+    assistant answers on the owner's own linked phone, so an agent listening
     there would spend its turns on NoClick's replies, and answer them."""
-    from utils.capabilities import COORDINATOR_IMESSAGE, COORDINATOR_NUMBER, capability
+    from utils.sendblue import line_number
+    from utils.whatsapp_cloud_api import display_number
 
     value = str(raw or "").strip().removeprefix("whatsapp:")
     number = normalize_e164(value if value.startswith(("+", "00")) else "+" + value)
     if number is None:
         return False
-    lines = (capability(name) for name in (COORDINATOR_NUMBER, COORDINATOR_IMESSAGE))
-    return any(line and normalize_e164(line() or "") == number for line in lines)
+    return any(normalize_e164(line() or "") == number for line in (display_number, line_number))
 
 
 def valid_e164(raw: str | None) -> str | None:

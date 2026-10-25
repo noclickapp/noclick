@@ -27,10 +27,11 @@ from utils.media_generation import (
 )
 from nodes.agent.platform_tools import submit_feedback_impl, submit_feedback_param
 from utils.capabilities import (
-    AUTO_TOPUP, COORDINATOR_IMESSAGE, COORDINATOR_PLATFORM_TOOLS, INTERFACE_PUBLISH, OWNER_MESSAGE, PHONE_NUMBERS,
-    PURCHASES, UPI_PAYMENTS, capability,
+    AUTO_TOPUP, COORDINATOR_PLATFORM_TOOLS, INTERFACE_PUBLISH, PHONE_NUMBERS, PURCHASES, UPI_PAYMENTS, capability,
 )
+from coder.coordinator.texting.owner_message import phone_sender
 from utils.feature_gates import is_feature_enabled
+from utils.sendblue import line_number
 from utils.prompts import PromptPack
 from utils.tool_call_log import record_tool_call
 
@@ -185,7 +186,7 @@ def coordinator_tool_params(*, include_whatsapp: bool = False, include_imessage:
     # A phone-only account (include_account_connect) has no email to send to or read mail from.
     has_email = not include_account_connect
     reach = (["auto"] + (["email"] if has_email else []) + ["web"] + (["whatsapp"] if include_whatsapp else [])
-             + (["imessage"] if include_whatsapp and include_imessage else []))
+             + (["imessage"] if include_imessage else []))
     params.extend([
         tool("message_owner", TOOL_PROMPTS.message_owner(has_email=has_email),
              {"text": string("message_owner.text"),
@@ -411,13 +412,20 @@ class CoordinatorTools:
 
     @property
     def can_whatsapp(self) -> bool:
-        return capability(OWNER_MESSAGE) is not None
+        return phone_sender("whatsapp") is not None
+
+    @property
+    def can_imessage(self) -> bool:
+        return phone_sender("imessage") is not None and line_number() is not None
+
+    @property
+    def can_text(self) -> bool:
+        return self.can_whatsapp or self.can_imessage
 
     def tool_params(self) -> List[Dict[str, Any]]:
         purchases = capability(PURCHASES)
-        imessage = capability(COORDINATOR_IMESSAGE)
         params = coordinator_tool_params(include_whatsapp=self.can_whatsapp,
-                                       include_imessage=bool(imessage and imessage()),
+                                       include_imessage=self.can_imessage,
                                        include_publishing=capability(INTERFACE_PUBLISH) is not None,
                                        include_phone_numbers=capability(PHONE_NUMBERS) is not None,
                                        include_account_connect="connect_account" in self._tools,
@@ -578,7 +586,7 @@ class CoordinatorTools:
             raise ValueError("Alarms must be scheduled from an active coordinator conversation.")
         if self.continuation["depth"] >= 8:
             raise ValueError("Automatic follow-up limit reached. Ask the user before scheduling more work.")
-        if send_to_phone and not self.can_whatsapp:
+        if send_to_phone and not self.can_text:
             raise ValueError("Phone delivery is unavailable on this instance.")
         return await CoordinatorAlarmRepo(self.pool).schedule(
             self.user_id, alarm_type=alarm_type, delay_or_time=delay_or_time, message=message,

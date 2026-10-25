@@ -31,8 +31,11 @@ from coder.coordinator.web_input import web_turn_input
 from repositories.coordinator_jobs import CoordinatorJobRepo
 from repositories.coordinator_memories import CoordinatorMemoryRepo, MemoryConflict
 from utils.activity import signal_activity
-from utils.capabilities import ACCOUNT_AGENT, COORDINATOR_IMESSAGE, COORDINATOR_NUMBER, capability
+from coder.workflow.builder_config import missing_brain_key
+from utils.capabilities import ACCOUNT_AGENT, capability
 from utils.database_pool import DatabasePoolMixin
+from utils.sendblue import line_number
+from utils.whatsapp_cloud_api import display_number
 from wss.handlers.workflow_handler import get_user_org_context
 from utils.feature_gates import FeatureNotAvailable, require_feature
 from wss.receiver.client_events import (
@@ -57,6 +60,20 @@ from wss.sender.events import ResponseEvent
 from wss.session_actor import session_actor
 
 logger = logging.getLogger(__name__)
+
+
+class ModelKeyMissing(Exception):
+    """The instance holds no key for the model the coordinator runs on (a self-hosted install before one is added)."""
+
+    def __init__(self, env_var: str):
+        super().__init__(f"Chat needs this instance's {env_var}. Add it to start.")
+        self.env_var = env_var
+
+
+def model_key_missing() -> Optional[str]:
+    """The key the coordinator's model needs and this instance lacks, else None."""
+    missing = missing_brain_key(coordinator.COORDINATOR_MODEL)
+    return missing[0] if missing else None
 
 
 class AnsweredByAgent(Exception):
@@ -113,6 +130,9 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             require_feature(coordinator.COORDINATOR_FEATURE, email=email)
             data = await op(user_id, email)
             await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data=data))
+        except ModelKeyMissing as e:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request_id, data={"kind": "instance_key", "env_var": e.env_var}, error=str(e)))
         except AnsweredByAgent as e:
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request_id, data={"kind": "agent", "agent": e.agent}, error=str(e)))
@@ -132,7 +152,6 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
 
     async def handle_open(self, sid: str, request: CoordinatorOpenRequest) -> None:
         async def op(user_id: str, _email):
-            number, imessage = capability(COORDINATOR_NUMBER), capability(COORDINATOR_IMESSAGE)
             pool = await self.get_pool()
             # The agent that answers instead, when the account has one: the chat talks to it over /v1, and its clock
             # is where this browser is.
@@ -141,10 +160,12 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
                 "conversation_id": coordinator.conversation_id_for(user_id),
                 "model": coordinator.COORDINATOR_MODEL,
                 **({"agent": agent} if agent else {}),
+                # The key the chat asks for first, where the instance has none for the coordinator's model.
+                **({"needs_key": needs_key} if (needs_key := model_key_missing()) else {}),
                 # The other ways into this same conversation.
                 "reach": {
-                    "phone": number() if number else None,
-                    "imessage": imessage() if imessage else None,
+                    "phone": display_number(),
+                    "imessage": line_number(),
                     **await email_reach(pool, user_id),
                 },
             }
@@ -159,6 +180,8 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             # A page that never opened the chat (an older one) still reaches the agent, made here if need be.
             if agent := await account_agent(pool, user_id, ensure=True):
                 raise AnsweredByAgent(agent)
+            if env_var := model_key_missing():
+                raise ModelKeyMissing(env_var)
             allowed, limit_error = await plan_allows_turn(pool, user_id)
             if not allowed:
                 raise ValueError(limit_error)

@@ -253,6 +253,14 @@ async def test_a_finished_video_that_reports_no_cost_is_charged_its_projection(s
     assert event.cost_usd == Decimal(spec["projected_usd"]) > 0
 
 
+def test_whatsapp_sends_generated_media_natively():
+    from coder.coordinator.texting.channel import split_media
+
+    media_items, text = split_media("Here it is:\n![A fern](https://f.example/a/image-1.png) and "
+                                    "![Waves](https://f.example/b/video.mp4)")
+    assert media_items == [("image", "https://f.example/a/image-1.png", "A fern"),
+                           ("video", "https://f.example/b/video.mp4", "Waves")]
+    assert "![" not in text and text.startswith("Here it is:")
 
 
 def test_image_counts_are_a_billable_unit():

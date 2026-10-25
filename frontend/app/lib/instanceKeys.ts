@@ -14,10 +14,24 @@ import { isLocalEdition } from '~/lib/edition';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { InstanceKeysListRequest } from '~/types/socket-events.generated';
 
+export type TextingApp = 'whatsapp' | 'imessage';
+
+/** A texting app as Settings shows it (utils/instance_provider_keys.texting_state). */
+export interface TextingState {
+    configured: boolean;
+    /** The number it answers on, E.164. */
+    line: string | null;
+    /** Where the provider's webhook goes; null without a public URL. */
+    webhook_url: string | null;
+    /** Whether the instance has Redis, which texting needs. */
+    redis: boolean;
+}
+
 export interface InstanceKeysState {
     keys: { env_var: string; updated_at: string | null }[];
     env_vars: string[];
     supported: string[];
+    texting?: Record<TextingApp, TextingState>;
 }
 
 export const instanceKeysStore = proxy({

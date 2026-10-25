@@ -7,7 +7,7 @@ import asyncio
 import logging
 from datetime import datetime, timezone
 
-from utils.capabilities import OWNER_MESSAGE, capability
+from coder.coordinator.texting.owner_message import phone_sender
 from wss.sender import send_event
 from wss.sender.events import ChatMessageEvent
 
@@ -20,7 +20,7 @@ def notification_event(text, turn_id, **metadata):
 
 
 async def deliver_phone(pool, user_id, text, *, link=None):
-    send = capability(OWNER_MESSAGE)
+    send = phone_sender()
     if send is None:
         return "failed", "No phone delivery channel; the result is saved in the conversation."
     try:

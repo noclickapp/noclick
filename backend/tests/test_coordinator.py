@@ -505,6 +505,8 @@ class TestCoordinatorHandler(BaseHandlerTest):
         monkeypatch.setattr(coordinator, "run_coordinator_turn", self.turn)
         monkeypatch.setattr("wss.handlers.coordinator_handler.plan_allows_turn", AsyncMock(return_value=(True, None)))
         monkeypatch.setattr("wss.handlers.coordinator_handler.get_user_org_context", AsyncMock(return_value=ORG))
+        # The instance holds the key the coordinator's model runs on; one that doesn't is the test below's.
+        monkeypatch.setattr("wss.handlers.coordinator_handler.model_key_missing", lambda: None)
 
     async def _send(self, frontend_sio, sid, request):
         await send_event(frontend_sio, sid, request)
@@ -514,15 +516,16 @@ class TestCoordinatorHandler(BaseHandlerTest):
 
     @pytest.mark.asyncio
     async def test_open_send_and_reset_over_the_socket(self, frontend_sio, sid, monkeypatch):
-        monkeypatch.delitem(capabilities._providers, capabilities.COORDINATOR_NUMBER, raising=False)
+        monkeypatch.delenv("WHATSAPP_DISPLAY_NUMBER", raising=False)
+        monkeypatch.delenv("SENDBLUE_NUMBER", raising=False)
         opened = await self._send(frontend_sio, sid, CoordinatorOpenRequest(request_id="o1"))
         assert opened["data"] == {
             "conversation_id": "coordinator:uuid-test-user", "model": coordinator.COORDINATOR_MODEL,
             # The coordinator itself answers only its owner's mail.
             "reach": {"phone": None, "imessage": None, "email": None, "email_paused": False, "email_from_anyone": False},
         }
-        monkeypatch.setitem(capabilities._providers, capabilities.COORDINATOR_NUMBER, lambda: "+14242421064")
-        monkeypatch.setitem(capabilities._providers, capabilities.COORDINATOR_IMESSAGE, lambda: "+14245550123")
+        monkeypatch.setenv("WHATSAPP_DISPLAY_NUMBER", "+14242421064")
+        monkeypatch.setenv("SENDBLUE_NUMBER", "+14245550123")
         opened = await self._send(frontend_sio, sid, CoordinatorOpenRequest(request_id="o2"))
         assert opened["data"]["reach"]["phone"] == "+14242421064"
         assert opened["data"]["reach"]["imessage"] == "+14245550123"
@@ -538,6 +541,18 @@ class TestCoordinatorHandler(BaseHandlerTest):
         monkeypatch.setattr("repositories.coordinator_wakeups.CoordinatorWakeupRepo.reset", AsyncMock(return_value=True))
         reset = await self._send(frontend_sio, sid, CoordinatorResetRequest(request_id="r1"))
         assert reset["data"] == {"reset": True}
+
+    @pytest.mark.asyncio
+    async def test_an_instance_without_the_models_key_asks_for_it_before_any_turn(self, frontend_sio, sid, monkeypatch):
+        """A self-hosted install before its model key is added: the chat opens naming the key it needs, and a send is
+        refused with it rather than failing inside the turn."""
+        monkeypatch.setattr("wss.handlers.coordinator_handler.model_key_missing", lambda: "OPENROUTER_API_KEY")
+        opened = await self._send(frontend_sio, sid, CoordinatorOpenRequest(request_id="o1"))
+        assert opened["data"]["needs_key"] == "OPENROUTER_API_KEY"
+        refused = await self._send(frontend_sio, sid, CoordinatorSendRequest(request_id="s1", text="hi"))
+        assert refused["data"] == {"kind": "instance_key", "env_var": "OPENROUTER_API_KEY"}
+        assert "OPENROUTER_API_KEY" in refused["error"]
+        self.turn.assert_not_awaited()
 
     @pytest.mark.asyncio
     async def test_an_account_an_agent_answers_is_pointed_at_it(self, frontend_sio, sid, monkeypatch):
