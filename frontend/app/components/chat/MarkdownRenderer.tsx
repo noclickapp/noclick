@@ -17,8 +17,9 @@ import panzoom from 'panzoom';
 import { cn } from '~/lib/utils';
 import { Copy, Check } from 'lucide-react';
 import { renderMermaidDiagram, initializeMermaid } from './mermaid/renderDiagram';
+import { ChatFileCard } from '~/components/chat/ChatReferenceChip';
 import { RecordingCard, VideoCard } from '~/components/coordinator/inline/media';
-import { embedKindOf } from '~/lib/embedKind';
+import { embedKindOf, fileNameOf } from '~/lib/embedKind';
 import 'katex/dist/katex.min.css';
 
 export interface MarkdownRendererProps {
@@ -422,7 +423,7 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
     );
 }
 
-/** A paragraph that is only an audio or video embed: its player is a block, which a <p> can't hold. */
+/** A paragraph that is only an audio, video or file embed: its player or card is a block, which a <p> can't hold. */
 function isMediaParagraph(node: ExtraProps['node']): boolean {
     const kids = node?.children.filter((c) => !(c.type === 'text' && !c.value.trim())) ?? [];
     const only = kids.length === 1 ? kids[0] : undefined;
@@ -624,11 +625,12 @@ const MarkdownRendererComponent = function({ content, className, variant = 'defa
                         );
                     },
 
-                    // Images, and the recordings and videos embedded the same way
+                    // Images, and the recordings, videos and other files embedded the same way
                     img: ({ src, alt }) => {
                         const kind = typeof src === 'string' ? embedKindOf(src) : 'image';
                         if (kind === 'audio') return <RecordingCard src={src} title={alt || 'Recording'} />;
                         if (kind === 'video') return <VideoCard src={src} caption={alt || undefined} />;
+                        if (kind === 'file' && src) return <ChatFileCard name={fileNameOf(src)} url={src} title={alt || undefined} />;
                         return (
                             <img
                                 src={src}

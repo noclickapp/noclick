@@ -16,11 +16,12 @@ import { Skeleton } from '~/components/ui/skeleton';
 import { openCreateCredential } from '~/components/shared/popups/CreateCredentialDialog';
 import { uploadWorkspaceFiles } from '~/hooks/useAgentWorkspaceFiles';
 import type { WorkspaceRef } from '~/hooks/useDashboardOverview';
+import { fileKindOf } from '~/lib/embedKind';
 import { navigateToWorkflow } from '~/lib/navigation';
 import { socketCall } from '~/lib/socketCall';
 import { cn } from '~/lib/utils';
 import { PhoneBarBack, useInPhoneShell } from '../AppShell';
-import { FileThumb, basename, fileKindFromPath, folderListing } from './fileParts';
+import { FileThumb, basename, folderListing } from './fileParts';
 import { kindDef, type ResourceItem, type FileRef } from './model';
 import { usePlatformResources, type Removal } from './platform';
 import { ConfirmAction, FolderTrail, InnerBackContext, InnerLevel, RemovalPanel, ResourceUserChip, RowDelete, Section, Surface, WorkflowChip, type InnerStep } from './ui';
@@ -89,7 +90,7 @@ async function listWorkspace(w: WorkspaceRef): Promise<FileSource | null> {
                 path: String(f.path ?? ''),
                 size: Number(f.size ?? 0),
                 mtime: mtime(f.mtime),
-                kind: fileKindFromPath(String(f.path ?? '')),
+                kind: fileKindOf(String(f.path ?? '')),
                 urlPath: typeof f.url_path === 'string' ? f.url_path : undefined,
             }))
             .sort((a, b) => b.mtime.localeCompare(a.mtime)),

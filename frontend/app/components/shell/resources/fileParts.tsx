@@ -1,25 +1,8 @@
 // How a file looks in a list: a thumbnail when there is one to show, else its
-// type's glyph; and the type itself, read from the name.
-import { Archive, Code2, File, FileText, Film, Image as ImageIcon, Music, Table2 } from 'lucide-react';
-import type { FileEntry, FileKind } from '~/components/dashboard/types';
+// type's glyph (the type itself is read from the name, `lib/embedKind`).
+import type { FileEntry } from '~/components/dashboard/types';
 import { workspaceFileUrl } from '~/hooks/useAgentWorkspaceFiles';
-import { cn } from '~/lib/utils';
-
-const GLYPHS: Record<FileKind, typeof File> = {
-    image: ImageIcon,
-    video: Film,
-    audio: Music,
-    doc: FileText,
-    data: Table2,
-    code: Code2,
-    archive: Archive,
-    other: File,
-};
-
-export function FileGlyph({ kind, className }: { kind: FileKind; className?: string }) {
-    const Glyph = GLYPHS[kind];
-    return <Glyph className={cn('h-4 w-4 shrink-0 text-foreground/65 dark:text-foreground/50', className)} strokeWidth={1.75} />;
-}
+import { FileGlyph } from './FileGlyph';
 
 /** A real thumbnail for images and videos that already have a URL; the glyph otherwise. */
 export function FileThumb({ file, size = 32 }: { file: FileEntry; size?: number }) {
@@ -42,18 +25,6 @@ export function FileThumb({ file, size = 32 }: { file: FileEntry; size?: number 
             <FileGlyph kind={file.kind} />
         </span>
     );
-}
-
-export function fileKindFromPath(path: string): FileKind {
-    const ext = path.includes('.') ? path.slice(path.lastIndexOf('.') + 1).toLowerCase() : '';
-    if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'].includes(ext)) return 'image';
-    if (['mp4', 'webm', 'mov', 'm4v', 'mkv'].includes(ext)) return 'video';
-    if (['mp3', 'wav', 'ogg', 'oga', 'm4a', 'aac'].includes(ext)) return 'audio';
-    if (['csv', 'tsv', 'xlsx', 'json', 'parquet'].includes(ext)) return 'data';
-    if (['py', 'js', 'jsx', 'mjs', 'ts', 'tsx', 'css', 'html', 'sh', 'sql', 'yaml', 'yml', 'toml'].includes(ext)) return 'code';
-    if (['zip', 'tar', 'gz', '7z'].includes(ext)) return 'archive';
-    if (['md', 'mdx', 'txt', 'pdf', 'doc', 'docx', 'log'].includes(ext)) return 'doc';
-    return 'other';
 }
 
 export function basename(path: string): string {

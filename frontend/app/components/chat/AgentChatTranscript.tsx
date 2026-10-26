@@ -360,7 +360,7 @@ export const AgentChatTranscript = memo(function AgentChatTranscript({
                                         </a>
                                     ))}
                                     {files.map((f, j) => (
-                                        <ChatFileCard key={`file-${j}`} name={f.name} url={f.url} mimeType={f.mimeType} />
+                                        <ChatFileCard key={`file-${j}`} name={f.name} url={f.url} mimeType={f.mimeType} sizeBytes={f.sizeBytes} />
                                     ))}
                                     {refs.map((r) => {
                                         const shown = referenceDisplay?.(r);

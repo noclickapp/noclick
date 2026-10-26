@@ -219,7 +219,7 @@ export const CoordinatorTranscript = memo(function CoordinatorTranscript({ useJo
                 {made.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-1.5" data-testid="coordinator-made-files">
                         {made.map((f) => (
-                            <ChatFileCard key={f.url} name={f.name} url={f.url} mimeType={f.mimeType} />
+                            <ChatFileCard key={f.url} name={f.name} url={f.url} mimeType={f.mimeType} sizeBytes={f.sizeBytes} />
                         ))}
                     </div>
                 )}

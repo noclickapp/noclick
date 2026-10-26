@@ -100,6 +100,8 @@ export interface AgentChatFileAttachment {
     name: string;
     url: string;
     mimeType?: string;
+    /** Where the file's record says (an account file's), else unknown. */
+    sizeBytes?: number | null;
 }
 
 export interface AgentChatMessage {

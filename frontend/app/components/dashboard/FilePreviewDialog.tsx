@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/u
 import { ResourceRenderer, isWidePreview } from '~/components/resource/ResourceRenderer';
 import { MarkdownRenderer } from '~/components/chat/MarkdownRendererLazy';
 import { workspaceFileUrl } from '~/hooks/useAgentWorkspaceFiles';
+import { useReturnFocus } from '~/hooks/useReturnFocus';
 import { downloadTableCsv } from '~/lib/tableCsv';
 import type { ResourceInfo } from '~/types/socket-events.generated';
 import { cn } from '~/lib/utils';
@@ -132,9 +133,10 @@ export function FilePreviewDialog({ request, onClose, onOpenWorkflow }: { reques
     const resource = file && source && isResource ? toResourceInfo(file, source) : null;
     const downloadHref = file && source ? fileDownloadHref(file, source) : undefined;
     const wide = resource ? isWidePreview(resource) : file?.kind === 'image' || file?.kind === 'video';
+    const returnFocus = useReturnFocus();
     return (
         <Dialog open={!!request} onOpenChange={(open) => { if (!open) onClose(); }}>
-            <DialogContent data-testid="dashboard-file-preview" className={cn('flex max-h-[85vh] flex-col', wide ? 'max-w-4xl' : 'max-w-2xl')}>
+            <DialogContent {...returnFocus} data-testid="dashboard-file-preview" className={cn('flex max-h-[85vh] flex-col', wide ? 'max-w-4xl' : 'max-w-2xl')}>
                 <DialogHeader className="shrink-0">
                     <DialogTitle className="flex min-w-0 items-center gap-2 text-sm font-medium">
                         <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -142,9 +144,10 @@ export function FilePreviewDialog({ request, onClose, onOpenWorkflow }: { reques
                     </DialogTitle>
                     {file && source && (
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                            <span>{file.rows != null ? countOf(file.rows, 'row') : fmtBytes(file.size)}</span>
-                            <span>{dateLabel(file.mtime)}</span>
-                            <span className="truncate">{source.label}</span>
+                            {/* A file linked from a message comes with no size, time or place. */}
+                            {file.rows != null ? <span>{countOf(file.rows, 'row')}</span> : file.size > 0 && <span>{fmtBytes(file.size)}</span>}
+                            {file.mtime && <span>{dateLabel(file.mtime)}</span>}
+                            {source.label && <span className="truncate">{source.label}</span>}
                             {downloadHref && (
                                 <a href={downloadHref} download={file.path.slice(file.path.lastIndexOf('/') + 1)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-foreground/80 transition-colors hover:text-foreground">
                                     <Download className="h-3.5 w-3.5" /> Download
