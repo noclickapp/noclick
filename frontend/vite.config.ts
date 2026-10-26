@@ -22,7 +22,11 @@ const neutralizeBaitName = (info: { name: string }) =>
 // process share one instance of each.
 const bundleServer = process.env.NOCLICK_BUNDLE_SERVER === '1';
 
-export default defineConfig({
+// A function, so each build gets plugins of its own: `react-router build` runs the
+// client and server builds in one process, and plugins exported as an object outlive
+// their build. Through the resolved config they hold, they kept the client build's
+// whole Rollup graph alive under the server build.
+export default defineConfig(() => ({
     plugins: [
         ncPlugin(),
         commonjs(),
@@ -100,4 +104,4 @@ export default defineConfig({
             ignored: ['**/sdk/**'],
         },
     },
-});
+}));
