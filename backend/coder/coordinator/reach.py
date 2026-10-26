@@ -104,11 +104,12 @@ async def _post_to_web(pool, user_id: str, text: str) -> Dict[str, Any]:
     return {"success": True}
 
 
-async def reach_note(pool, user_id: str, *, phone_only: bool = False) -> str:
-    """What the coordinator should know about reaching its owner this turn."""
+async def reach_note(pool, user_id: str, *, phone_only: bool = False, owner_email: Optional[str] = None) -> str:
+    """What the coordinator should know about reaching its owner this turn; ``owner_email`` is their own address."""
     from coder.coordinator.email_channel import coordinator_address, inbound_paused, instance_sender
 
     address = None if phone_only else await coordinator_address(pool, user_id)
     paused = bool(address) and await inbound_paused(pool, user_id)
     sends_from = None if phone_only or address else instance_sender()
-    return PROMPTS.reach_note(phone_only=phone_only, address=address, paused=paused, instance_address=sends_from)
+    return PROMPTS.reach_note(phone_only=phone_only, address=address, paused=paused, instance_address=sends_from,
+                              owner_email=owner_email)

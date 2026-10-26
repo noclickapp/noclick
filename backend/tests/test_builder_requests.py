@@ -531,3 +531,58 @@ async def test_an_answer_is_acknowledged_once_taken_before_its_build_runs(builde
     # A second answer to the same question is refused, the one reply it gets.
     await handler.handle_input_response("sid-1", {**answer, "request_id": "r2"})
     assert len(building) == 1 and sent[-1][1] == "r2" and "not waiting" in sent[-1][3]
+
+
+async def test_the_coordinator_answers_its_builds_question_and_the_build_goes_on(builder_request_db, monkeypatch):
+    """What the owner tells the coordinator about a question its build asks reaches the builder, which goes on: a
+    second request for the same workflow is refused while the first waits, so answering is the only way on."""
+    pool, repo, workflow_id, enqueue = builder_request_db
+    await _allow_builds(monkeypatch)
+    monkeypatch.setattr(requests, "get_sio", lambda: SimpleNamespace())
+    monkeypatch.setattr(WorkflowBuilderHandler, "get_pool", AsyncMock(return_value=pool))
+    queued = await enqueue(instructions="Email me the news every morning", publish=None)
+    claimed = await repo.claim()
+    await repo.waiting(USER, claimed["id"], claimed["attempt_id"], {"ask_id": "q1", "inputs": [
+        {"id": "tone", "label": "Tone", "type": "selection",
+         "options": [{"id": "warm", "label": "warm"}, {"id": "brief", "label": "brief"}]},
+        {"id": "exa", "label": "Your Exa account", "type": "credential", "credentialType": "exa_api_key",
+         "nodeId": "search"},
+    ]})
+    tools = CoordinatorTools(pool=pool, sio=object(), user_id=USER, organization_id=None,
+                             conversation_id=f"coordinator:{USER}")
+    assert "answer_build" in {p["function"]["name"] for p in tools.tool_params()}
+    job_id = str(queued["id"])
+    refused = await tools.execute("request_build", {"instructions": "Use my account email", "workflow_id": workflow_id})
+    assert refused == {"success": False, "error": "A build is already pending for this workflow. Check job_status."}
+    resumed = []
+
+    async def build(self, sid, data, caller_user_id=None):
+        resumed.append((sid, data, caller_user_id))
+
+    monkeypatch.setattr(WorkflowBuilderHandler, "_handle_input_response_impl", build)
+
+    # The question and the page that answers it, read as job_status shows them.
+    waiting_for = (await tools.job_status(job_id=job_id))["jobs"][0]["waiting_for"]
+    assert waiting_for["questions"] == ["Tone", "Your Exa account"] and "/b/" in waiting_for["answer_url"]
+    # An account to connect is the owner's: the coordinator gets that page to send them.
+    person = await tools.execute("answer_build", {"job_id": job_id, "answers": {"exa": "cred-1"}})
+    assert person["success"] is False and "needs a person" in person["error"]
+    assert person["waiting_for"] == waiting_for
+    wrong = await tools.execute("answer_build", {"job_id": job_id, "answers": {"tone": "loud"}})
+    assert wrong["success"] is False and "warm, brief" in wrong["error"]
+    assert (await tools.execute("answer_build", {"job_id": job_id}))["success"] is False
+    assert (await tools.execute("answer_build", {"job_id": str(uuid.uuid4()), "message": "Go on"}))["error"] == \
+        "No build with that job_id."
+    assert resumed == [] and (await repo.list_for_user(USER))[0]["status"] == "waiting"
+
+    answered = await tools.execute("answer_build", {
+        "job_id": job_id, "answers": {"tone": "brief"}, "message": "Send it to the owner's own account email."})
+    assert answered["success"] is True and answered["status"] == "running"
+    from utils.async_helpers import drain_spawned_tasks
+
+    await drain_spawned_tasks(timeout=5)
+    assert resumed == [("", {"conversation_id": queued["conversation_key"], "ask_id": "q1", "values": {"tone": "brief"},
+                             "message": "Send it to the owner's own account email."}, USER)]
+    # The build took the answer once: the same answer again finds nothing waiting.
+    again = await tools.execute("answer_build", {"job_id": job_id, "message": "Again"})
+    assert again["success"] is False and "isn't waiting" in again["error"]

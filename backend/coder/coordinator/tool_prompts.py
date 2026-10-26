@@ -40,9 +40,12 @@ DESCRIPTIONS = {
     "find_agents": "Find the account's agents; returns the workflow_id and node_id message_agent takes.",
     "message_agent": "Send work to an agent; its reply arrives here later.",
     "request_build": "Ask the builder to create, change or publish a workflow, agent or interface.",
+    "answer_build": ("Answer the question a build you started waits on (job_status shows it), so the build goes on. "
+                     "An account to connect or a secret value is the owner's to give on the question's page."),
     "list_runs": "List a workflow's recent runs.",
     "get_run": "Read one run in detail.",
-    "pause_workflow": "Switch a workflow's triggers off.",
+    "pause_workflow": ("Switch a workflow's triggers off: when the owner asks, or when its runs keep failing and it's "
+                       "no use. Never over a doubt of your own about one they asked for: ask them."),
     "resume_workflow": "Turn back on the triggers you paused.",
     "trash_workflow": "Move a workflow to the trash; confirm with the owner first.",
     "restore_workflow": "Bring a workflow back from the trash.",
@@ -74,6 +77,8 @@ PARAMETERS = {
     "request_build.name": "A new workflow's name.",
     "request_build.send_to_phone": "Send the result to the owner's phone.",
     "request_build.publish": "Publish, rename or unpublish the interface.",
+    "answer_build.answers": "Answers by the question's input id.",
+    "answer_build.message": "What to tell the builder, beside or instead of answers.",
     "find_phone_numbers.country": "An ISO alpha-2 country code.",
     "find_phone_numbers.number_type": "The kind of number.",
     "find_phone_numbers.locality": "A city.",

@@ -24,6 +24,9 @@ logger = logging.getLogger(__name__)
 CURRENT_ORG = object()
 # How often a running attempt renews its lease and looks for a cancel.
 HEARTBEAT_S = 10
+# Ask inputs only a person can answer: an account to connect, secret values to enter.
+PERSON_ONLY = ("credential", "env")
+MAX_ANSWER_CHARS = 4000
 
 _REPORTERS = {}
 
@@ -203,6 +206,84 @@ async def resume_request(handler, sid, data, user_id, *, taken=None):
         await handler._handle_input_response_impl(sid, data, caller_user_id=user_id)
 
     await _run_attempt(pool, request, build)
+
+
+class AnswerRefused(ValueError):
+    """An answer a build's question can't take from code, and what to do instead. ``needs_person``: an input only a
+    person can answer, on the question's page."""
+
+    def __init__(self, message, *, next_step, needs_person=False):
+        super().__init__(message)
+        self.next_step = next_step
+        self.needs_person = needs_person
+
+
+def checked_answers(inputs, values, *, answer_url=None):
+    """The answers code may give a build's question, as the builder takes them (each input's value as text).
+    Raises ``AnswerRefused`` for an input the question doesn't have, one only a person can answer, or a value
+    outside its options."""
+    by_id = {i.get("id"): i for i in inputs}
+    for key in values:
+        if key not in by_id:
+            raise AnswerRefused(f"The question has no input '{key}'.",
+                                next_step=f"Answer its inputs: {', '.join(map(str, by_id))}.")
+    checked = {}
+    for input_id, ask in by_id.items():
+        value = values.get(input_id)
+        if ask.get("type") in PERSON_ONLY:
+            if value is not None:
+                raise AnswerRefused(f"'{ask.get('label') or input_id}' needs a person: an account to connect or "
+                                    "secret values to enter.", needs_person=True,
+                                    next_step=f"Send a person to {answer_url} to answer it." if answer_url
+                                    else "Answer it in the NoClick app.")
+            continue
+        if value is None or value == "":
+            continue
+        # The builder writes each option as {id, label}; an answer page answers with its value, else its id.
+        options = [(o.get("value") or o.get("id") or o.get("label")) if isinstance(o, dict) else o
+                   for o in ask.get("options") or []]
+        chosen = value if isinstance(value, list) else [value]
+        if options and any(str(v) not in map(str, options) for v in chosen):
+            raise AnswerRefused(f"'{ask.get('label') or input_id}' is one of: {', '.join(map(str, options))}.",
+                                next_step="Answer with one of its options.")
+        checked[input_id] = ", ".join(map(str, chosen)) if isinstance(value, list) else str(value)[:MAX_ANSWER_CHARS]
+    return checked
+
+
+async def answer_request(pool, request, *, values=None, message=None):
+    """Answer the question ``request`` (its row) waits on, as its owner would on the question's page: the answers
+    ``checked_answers`` takes, a message to the builder, or both. Returns the request once the answer is taken; the
+    build goes on in the background and reports as any attempt does."""
+    from wss.handlers.workflow_builder_handler import WorkflowBuilderHandler
+
+    ask = request["pending_ask"]
+    if request["status"] != "waiting" or not ask:
+        raise ValueError("This build isn't waiting on a question.")
+    checked = checked_answers(ask.get("inputs") or [], values or {})
+    text = (message or "").strip()[:MAX_ANSWER_CHARS]
+    if not (checked or text):
+        raise ValueError("Answer at least one of its inputs, or give a message.")
+    data = {"conversation_id": request["conversation_key"], "ask_id": ask.get("ask_id"), "values": checked,
+            **({"message": text} if text else {})}
+    user_id = str(request["user_id"])
+    taken = asyncio.get_running_loop().create_future()
+
+    async def on_taken():
+        # Read before the build runs: the request as the answer left it.
+        taken.set_result(dict(await pool.fetchrow("SELECT * FROM coordinator_jobs WHERE id=$1::uuid", request["id"])))
+
+    async def resume():
+        try:
+            await resume_request(WorkflowBuilderHandler(get_sio()), "", data, user_id, taken=on_taken)
+        except Exception as exc:
+            if taken.done():
+                raise
+            taken.set_exception(exc)  # refused before it was taken (answered already): the caller hears why
+
+    from utils.async_helpers import spawn
+
+    spawn(resume(), name=f"builder-answer:{request['id']}")
+    return await taken
 
 
 async def record_question(pool, user_id, context, pending_ask):

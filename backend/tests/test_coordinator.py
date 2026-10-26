@@ -746,8 +746,10 @@ async def test_turn_composes_the_prompt_for_its_channel(turn_seams, monkeypatch)
     )
     prompt = captured["config"].settings.system_prompt
     assert coordinator.PROMPTS.VOICE_STYLE in prompt and "Their account has 2 workflows: A, B.\n\n" in prompt
-    # How to reach the owner rides every turn: here, no address yet.
-    assert prompt.endswith(coordinator.PROMPTS.reach_note(phone_only=False, address=None, paused=False))
+    # How to reach the owner rides every turn: here, no address of its own yet, and the owner's own address, which a
+    # workflow emails with nothing to connect (unknown, the coordinator asked them to connect a mailbox).
+    note = coordinator.PROMPTS.reach_note(phone_only=False, address=None, paused=False, owner_email="a@b.c")
+    assert prompt.endswith(note) and "a@b.c" in note
 
 
 async def test_only_a_web_turn_leaves_links_to_the_cards(turn_seams, monkeypatch):

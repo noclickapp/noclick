@@ -148,6 +148,11 @@ def coordinator_tool_params(*, include_whatsapp: bool = False, include_imessage:
               "kind": {"type": "string", "enum": ["build", "agent", "video"] + (["purchase"] if purchase_catalog else [])
                        + (["platform"] if include_platform else [])
                        + (["upi_payment"] if include_upi_payments else [])}}),
+        tool("answer_build", described["answer_build"],
+             {"job_id": {"type": "string"},
+              "answers": {"type": "object", "description": about["answer_build.answers"]},
+              "message": string("answer_build.message", maxLength=4000)},
+             ["job_id"]),
         tool("cancel_job", TOOL_PROMPTS.cancel_job(upi=include_upi_payments),
              {"job_id": {"type": "string"}}, ["job_id"]),
         tool("list_runs", described["list_runs"],
@@ -344,6 +349,7 @@ class CoordinatorTools:
             "message_agent": self.message_agent,
             "request_build": self.request_build,
             "job_status": self.job_status,
+            "answer_build": self.answer_build,
             "cancel_job": self.cancel_job,
             "list_runs": self.list_runs,
             "get_run": self.get_run,
@@ -756,6 +762,25 @@ class CoordinatorTools:
                 "note": "The builder owns this build through completion. job_status shows its phase and questions; "
                         "completion or failure will wake you to continue the user’s request using the result."}
 
+    async def answer_build(self, job_id: str, answers: Optional[Dict[str, Any]] = None,
+                           message: Optional[str] = None) -> Dict[str, Any]:
+        from coder.workflow.requests import AnswerRefused, answer_request, build_view
+        from repositories.coordinator_jobs import CoordinatorJobRepo
+
+        uuid.UUID(job_id)
+        found = await CoordinatorJobRepo(self.pool).list_for_user(self.user_id, job_id=job_id, kind="build")
+        if not found:
+            return {"success": False, "error": "No build with that job_id."}
+        try:
+            answered = await answer_request(self.pool, found[0], values=answers, message=message)
+        except AnswerRefused as exc:
+            if not exc.needs_person:
+                return {"success": False, "error": str(exc), "next_step": exc.next_step}
+            link = await self._ask_link(found[0], found[0]["pending_ask"])
+            return {"success": False, "error": str(exc), "waiting_for": link}
+        return {"success": True, **build_view(answered),
+                "note": "The builder goes on with the answer; completion or its next question works as before."}
+
     async def cancel_job(self, job_id: str) -> Dict[str, Any]:
         from coder.coordinator.jobs import cancel_job
 
@@ -783,7 +808,7 @@ class CoordinatorTools:
         if link_id:
             return {"questions": [i.get("label") for i in inputs if i.get("label")], "answer_url": bridge_url(link_id)}
         minted = await create_bridge_link_for_ask(
-            self.pool, user_id=self.user_id, workflow_id=row.get("workflow_id"),
+            self.pool, user_id=self.user_id, workflow_id=str(row["workflow_id"]),
             builder_conversation_id=row["conversation_key"], ask_id=ask["ask_id"], inputs=inputs,
             agent_conversation_id=None, agent_node_id=None, workflow_name=None,
         )

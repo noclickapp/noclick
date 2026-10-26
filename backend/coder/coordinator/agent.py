@@ -170,7 +170,7 @@ async def run_coordinator_turn(
         context_note = "\n\n".join(part for part in (
             "Current UTC time: " + datetime.now(timezone.utc).isoformat(), note,
             tools.platform.instructions if tools.platform is not None else None, jobs_note, memories_note,
-            await reach_note(pool, user_id, phone_only=not user_email),
+            await reach_note(pool, user_id, phone_only=not user_email, owner_email=user_email),
         ) if part)
         config = AgentConfiguration.from_kwargs(
             model=COORDINATOR_MODEL, enable_cmd=False, enable_editor=False, enable_mcp=False,

@@ -26,8 +26,8 @@ from utils.discovered_tools import MAX_VISIBLE_INSTALLED, MAX_VISIBLE_TOOLS, Dis
 from wss.sender.events import ChatMessageEvent
 
 # The coordinator's own tools on a web turn: the open edition's, and with every capability the hosted edition has.
-OPEN_EDITION_TOOLS = 41
-HOSTED_TOOLS = 46
+OPEN_EDITION_TOOLS = 42
+HOSTED_TOOLS = 47
 
 
 def param(name):
