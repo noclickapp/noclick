@@ -29,6 +29,7 @@ const app = (overrides = {}) => ({
     configured: false,
     line: null,
     webhook_url: 'https://chat.example.org/whatsapp/meta',
+    app_url: 'https://chat.example.org',
     redis: true,
     ...overrides,
 });
@@ -169,4 +170,21 @@ it('removes every key of an app together', async () => {
         'SENDBLUE_NUMBER',
         'SENDBLUE_WEBHOOK_SECRET',
     ]);
+});
+
+it('says where the links it texts open while a phone can’t reach the app', () => {
+    render(
+        <InstanceTextingSettings
+            state={state({
+                whatsapp: app({ app_url: 'http://127.0.0.1:3000' }),
+            })}
+            onChange={() => {}}
+        />
+    );
+    expect(screen.getByText(/Links it texts/).textContent).toContain(
+        'http://127.0.0.1:3000'
+    );
+    cleanup();
+    render(<InstanceTextingSettings state={state()} onChange={() => {}} />);
+    expect(screen.queryByText(/Links it texts/)).toBeNull();
 });

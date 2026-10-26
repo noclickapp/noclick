@@ -306,10 +306,13 @@ def test_texting_state_names_the_webhook_urls_and_whether_redis_is_there(monkeyp
     for name in ("WEBHOOK_URL_BASE", "PUBLIC_API_URL"):
         monkeypatch.delenv(name, raising=False)
     monkeypatch.setenv("PUBLIC_WEBHOOK_URL", "https://noclick.example.org/")
+    # Where the links it texts open: the app, which can sit at another address than the API.
+    monkeypatch.setenv("FRONTEND_URL", "http://127.0.0.1:3000")
     monkeypatch.delenv("REDIS_URL", raising=False)
     state = keys.texting_state()
     assert state["whatsapp"] == {"configured": False, "line": None, "redis": False,
-                                 "webhook_url": "https://noclick.example.org/whatsapp/meta"}
+                                 "webhook_url": "https://noclick.example.org/whatsapp/meta",
+                                 "app_url": "http://127.0.0.1:3000"}
     assert state["imessage"]["webhook_url"] == "https://noclick.example.org/imessage/sendblue"
     monkeypatch.setenv("REDIS_URL", "redis://localhost:6379/0")
     assert keys.texting_state()["imessage"]["redis"] is True

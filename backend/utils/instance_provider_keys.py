@@ -259,12 +259,15 @@ async def set_texting(pool, app: str, fields: Dict[str, str], user_id: Optional[
 
 def texting_state() -> Dict[str, Dict]:
     """Each texting app as Settings shows it: whether its keys are in, the line, the webhook URL to give the
-    provider, and whether texting can run here at all (Redis counts link codes, notices and redeliveries)."""
+    provider, where the links it texts open (the app's address), and whether texting can run here at all (Redis
+    counts link codes, notices and redeliveries)."""
     from coder.coordinator.texting.routes import IMESSAGE_PATH, WHATSAPP_PATH
+    from utils.hosted_defaults import frontend_url
     from utils.redis_client import redis_url_or_none
     from utils.webhook_delivery import get_webhook_base_url
 
     base = get_webhook_base_url()
+    app_url = frontend_url()
     lines = {"whatsapp": "WHATSAPP_DISPLAY_NUMBER", "imessage": "SENDBLUE_NUMBER"}
     paths = {"whatsapp": WHATSAPP_PATH, "imessage": IMESSAGE_PATH}
     return {
@@ -272,6 +275,7 @@ def texting_state() -> Dict[str, Dict]:
             "configured": all(os.environ.get(name, "").strip() for name in names),
             "line": os.environ.get(lines[app], "").strip() or None,
             "webhook_url": f"{base}{paths[app]}" if base else None,
+            "app_url": app_url,
             "redis": redis_url_or_none() is not None,
         }
         for app, names in TEXTING_ENV_VARS.items()

@@ -23,6 +23,8 @@ export interface TextingState {
     line: string | null;
     /** Where the provider's webhook goes; null without a public URL. */
     webhook_url: string | null;
+    /** The app's address, where the links it texts open. */
+    app_url: string;
     /** Whether the instance has Redis, which texting needs. */
     redis: boolean;
 }

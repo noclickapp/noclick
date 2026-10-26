@@ -378,6 +378,15 @@ function TextingRow({
     );
 }
 
+/** Whether people off this machine can reach `url`: HTTPS on an address that isn't this machine's own. */
+function isPublic(url: string | null | undefined): boolean {
+    return (
+        !!url &&
+        url.startsWith('https://') &&
+        !/\/\/(localhost|127\.|0\.0\.0\.0|[^/]*\.localhost)/.test(url)
+    );
+}
+
 /** The texting apps, under the instance's keys. */
 export function InstanceTextingSettings({
     state,
@@ -389,10 +398,8 @@ export function InstanceTextingSettings({
     const texting = state.texting;
     if (!texting) return null;
     const url = texting.whatsapp.webhook_url;
-    const reachable =
-        !!url &&
-        url.startsWith('https://') &&
-        !/\/\/(localhost|127\.|0\.0\.0\.0|[^/]*\.localhost)/.test(url);
+    const reachable = isPublic(url);
+    const appUrl = texting.whatsapp.app_url;
     return (
         <div className="mb-10" data-testid="instance-texting">
             <div className="mb-6">
@@ -422,6 +429,14 @@ export function InstanceTextingSettings({
                         )}
                         , which has to be a public HTTPS address: set
                         PUBLIC_WEBHOOK_URL, or put a tunnel in front of it.
+                    </p>
+                )}
+                {!isPublic(appUrl) && (
+                    <p className={NOTE}>
+                        Links it texts (to connect an account, say) open{' '}
+                        <code className="font-mono">{appUrl}</code>, which a
+                        phone can’t reach: give the app a public HTTPS address
+                        too (NOCLICK_APP_URL, and NOCLICK_API_URL for the API).
                     </p>
                 )}
             </div>

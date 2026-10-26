@@ -43,6 +43,11 @@ BACKEND_PORT = int(os.environ.get("NOCLICK_BACKEND_PORT", "8000"))
 FRONTEND_PORT = int(os.environ.get("NOCLICK_FRONTEND_PORT", "5173"))
 BACKEND_URL = f"http://127.0.0.1:{BACKEND_PORT}"
 FRONTEND_URL = f"http://127.0.0.1:{FRONTEND_PORT}"
+# Where people off this machine reach the app and the API (a tunnel, or your own domain), named as the Compose
+# stack names them. The links NoClick hands someone (texted, emailed, shared) and the webhook URLs it gives
+# providers are built on them; unset, they are this machine's own addresses.
+APP_URL = (os.environ.get("NOCLICK_APP_URL") or FRONTEND_URL).rstrip("/")
+API_URL = (os.environ.get("NOCLICK_API_URL") or BACKEND_URL).rstrip("/")
 
 RESOURCE_BUCKET = "workflow-resources"
 CAS_BUCKET = "workflow-cas"
@@ -170,13 +175,16 @@ def compose_backend_env(sb: dict, sec: dict) -> dict:
         "SUPABASE_SERVICE_ROLE_KEY": sb["SERVICE_ROLE_KEY"],
         # In-process replacements for the Cloudflare pieces.
         "WORKFLOW_JWT_SECRET": sec["WORKFLOW_JWT_SECRET"],
-        # The app's origin, so the backend's CORS allowlist accepts the
-        # browser's REST calls (model catalog, uploads) on any port.
-        "FRONTEND_URL": FRONTEND_URL,
+        # The app's public address, for the links the backend mints; the CORS
+        # allowlist takes it and the dev server's own origin, so the browser's
+        # REST calls (model catalog, uploads) are accepted on either.
+        "FRONTEND_URL": APP_URL,
+        "SOCKET_CORS_ORIGINS": ",".join(o for o in (os.environ.get("SOCKET_CORS_ORIGINS"), FRONTEND_URL) if o),
         "CRON_SCHEDULER_URL": f"{BACKEND_URL}/local-cron",
         "CRON_SCHEDULER_SECRET": sec["CRON_SCHEDULER_SECRET"],
-        "WEBHOOK_URL_BASE": BACKEND_URL,
-        "MCP_BASE_URL": BACKEND_URL,
+        "PUBLIC_API_URL": API_URL,
+        "WEBHOOK_URL_BASE": API_URL,
+        "MCP_BASE_URL": API_URL,
         # Credential encryption at rest (Fernet; losing it orphans credentials).
         "CREDENTIALS_ENCRYPTION_KEY": sec["CREDENTIALS_ENCRYPTION_KEY"],
     }
@@ -202,10 +210,11 @@ def compose_backend_env(sb: dict, sec: dict) -> dict:
 def compose_frontend_env(sb: dict, sec: dict) -> dict:
     return {
         "PORT": str(FRONTEND_PORT),
-        "PUBLIC_URL": FRONTEND_URL,
-        "VITE_PUBLIC_URL": FRONTEND_URL,
-        "VITE_API_URL": BACKEND_URL,
-        "VITE_RELAY_URL": f"ws://127.0.0.1:{BACKEND_PORT}/relay",
+        "PUBLIC_URL": APP_URL,
+        "VITE_PUBLIC_URL": APP_URL,
+        # A page opened from a link (on a phone, say) calls the API itself, so the browser takes its public address.
+        "VITE_API_URL": API_URL,
+        "VITE_RELAY_URL": f"{API_URL.replace('http', 'ws', 1)}/relay",
         "SUPABASE_URL": sb["API_URL"],
         "SUPABASE_ANON_KEY": sb["ANON_KEY"],
         "SESSION_SECRET": sec["SESSION_SECRET"],
@@ -270,8 +279,8 @@ def main() -> None:
 
         print(
             f"\n✓ NoClick is running:\n"
-            f"    app       {FRONTEND_URL}\n"
-            f"    backend   {BACKEND_URL}\n"
+            f"    app       {FRONTEND_URL}{f'  (public: {APP_URL})' if APP_URL != FRONTEND_URL else ''}\n"
+            f"    backend   {BACKEND_URL}{f'  (public: {API_URL})' if API_URL != BACKEND_URL else ''}\n"
             f"    supabase  {sb['API_URL']}  (studio: {sb.get('STUDIO_URL', 'see `supabase status`')})\n"
             f"\n  Sign up with any email — local auth auto-confirms.\n"
             f"  Ctrl-C stops backend + frontend (supabase keeps running; `supabase stop` in infra/).\n"

@@ -473,7 +473,11 @@ web. Set it up under Settings → Self-hosted → Texting:
 Meta and Sendblue reach the instance at `PUBLIC_WEBHOOK_URL` (or
 `WEBHOOK_URL_BASE` / `PUBLIC_API_URL`), which must be a public HTTPS address;
 on a laptop, run a tunnel such as `cloudflared tunnel --url
-http://localhost:8000` and set `PUBLIC_WEBHOOK_URL` to its address. Texting
+http://localhost:8000` and set `PUBLIC_WEBHOOK_URL` to its address. The links
+the assistant texts (to connect an account, say) open the app, so a phone
+needs the app's own public address too: with `make local`, tunnel the app's
+port as well and set `NOCLICK_APP_URL` and `NOCLICK_API_URL` to the two
+addresses. Texting
 needs Redis (`REDIS_URL`; the Compose stack has it). A number that isn't linked
 to an account gets one short reply a day saying how to link it; a text never
 creates an account. WhatsApp only delivers the assistant's own messages within
@@ -590,7 +594,10 @@ Running `make local` generates and wires everything above for a local install:
 
 Override the ports with `NOCLICK_BACKEND_PORT` and `NOCLICK_FRONTEND_PORT`, and
 the state directory (workspaces, volumes, generated secrets) with
-`NOCLICK_HOME`.
+`NOCLICK_HOME`. When people off your machine use it (a tunnel, or your own
+domain), set `NOCLICK_APP_URL` and `NOCLICK_API_URL` to the app's and the API's
+public addresses, as in the Compose stack: the links NoClick sends people and
+the webhook URLs it gives providers are built on them.
 
 ---
 
