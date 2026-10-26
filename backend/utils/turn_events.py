@@ -19,6 +19,9 @@ those limits ended is told, for one more call without tools that says where its
 work stands, with the line a person reads after it (``{steps|spend|time:
 {prompt, line}}``); given ``funds``, a tool the credit gate turns down ends the
 turn too, which says what it got done and fails on the gate's words.
+``TURN_SO_FAR_KEY`` is how far the turn had gone before this run of it
+(``{started_at, steps, usd, quiet}``), when a platform runs on a turn another process
+started: the run meets those limits from there.
 ``TURN_FIRST_EFFORT_KEY`` is the reasoning effort of a turn's first model call,
 for one someone waits on: its first words come sooner. ``TURN_EMPTY_ANSWER_KEY``
 is what a turn whose model answered with nothing (no words, no call) is told,
@@ -41,6 +44,7 @@ TURN_NOTE_KEY = "_turnNote"
 TURN_TRIGGER_KEY = "_turnTrigger"
 TURN_WRAP_UP_KEY = "_turnWrapUp"
 TURN_LIMITS_KEY = "_turnLimits"
+TURN_SO_FAR_KEY = "_turnSoFar"
 TURN_FIRST_EFFORT_KEY = "_turnFirstEffort"
 TURN_EMPTY_ANSWER_KEY = "_turnEmptyAnswer"
 # What a person reads when a turn fails: the error's own words stay in the log and the turn's record.
@@ -78,6 +82,12 @@ def turn_wrap_up_of(node_config: Any) -> Optional[Dict[str, Any]]:
 def turn_limits_of(node_config: Any) -> Optional[Dict[str, Any]]:
     """The limits a platform set for the turn, when it set any."""
     value = node_config.get(TURN_LIMITS_KEY) if isinstance(node_config, dict) else None
+    return value if isinstance(value, dict) and value else None
+
+
+def turn_so_far_of(node_config: Any) -> Optional[Dict[str, Any]]:
+    """How far the turn had gone before this run of it, when a platform said."""
+    value = node_config.get(TURN_SO_FAR_KEY) if isinstance(node_config, dict) else None
     return value if isinstance(value, dict) and value else None
 
 

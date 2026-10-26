@@ -8,9 +8,11 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from coder.openai_agent.guards import TurnLimits
+from coder.openai_agent.guards import TurnLimits, TurnSoFar
 from nodes.agent.handlers.llm import execute_llm_model
-from utils.turn_events import TURN_EMPTY_ANSWER_KEY, TURN_FIRST_EFFORT_KEY, TURN_LIMITS_KEY, TURN_WRAP_UP_KEY
+from utils.turn_events import (
+    TURN_EMPTY_ANSWER_KEY, TURN_FIRST_EFFORT_KEY, TURN_LIMITS_KEY, TURN_SO_FAR_KEY, TURN_WRAP_UP_KEY,
+)
 
 pytestmark = pytest.mark.asyncio
 USER_ID = "00000000-0000-0000-0000-000000000001"
@@ -56,6 +58,14 @@ async def test_a_turn_goes_as_far_as_the_platform_says(monkeypatch):
     assert kwargs["limits"] == TurnLimits(steps=100, spend_usd=None, minutes=None)
     kwargs = await _created_with(monkeypatch, {TURN_LIMITS_KEY: {"steps": 40, "usd": 2.5, "minutes": 30}})
     assert kwargs["limits"] == TurnLimits(steps=40, spend_usd=2.5, minutes=30.0)
+
+
+async def test_a_run_a_restart_handed_over_meets_its_limits_where_the_turn_stood(monkeypatch):
+    """A platform running on a turn another process started says how far it had gone (``TURN_SO_FAR_KEY``)."""
+    kwargs = await _created_with(monkeypatch, {TURN_SO_FAR_KEY: {"started_at": 1000.0, "steps": 37, "usd": 0.4,
+                                                                 "quiet": 12}})
+    assert kwargs["so_far"] == TurnSoFar(started_at=1000.0, steps=37, spent_usd=0.4, quiet=12)
+    assert (await _created_with(monkeypatch, {}))["so_far"] is None
 
 
 async def test_the_output_says_which_limit_ended_the_turn(monkeypatch):

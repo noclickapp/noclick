@@ -23,7 +23,13 @@ A turn that keeps calling tools without changing anything is stuck, whatever its
 the ``QUIET_NUDGE``th call in a row that only read (``progress.only_reads``: no file written, nothing saved, sent or
 started) carries a note to act or say what blocks it, and the ``QUIET_STOP``th stops the turn after the calls in hand,
 wrapped up as a limit's. A coordinator asked to rework one 8 MB game file re-read it at shifting offsets for over an
-hour, with one edit, and the repeat guard never saw it: no two calls were the same (2026-10-26)."""
+hour, with one edit, and the repeat guard never saw it: no two calls were the same (2026-10-26).
+
+A turn a platform hands to another process mid-run (a deploy) runs on there under the same limits, counted from its
+first run (``TurnSoFar``: its clock, steps, spend and reads in a row): the guard of each turn running in a process is
+kept by its conversation (``running``), so the platform reads how far the turn had gone as it stops it
+(``gone_so_far``) and seeds the next run's guard with it. Each run starting fresh, turns crossing a deploy ran well
+past their time limit (2026-10-26)."""
 
 from __future__ import annotations
 
@@ -32,8 +38,9 @@ import hashlib
 import json
 import logging
 import time
+from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Mapping, Optional, Set, Tuple
+from typing import Any, Callable, Dict, Iterator, Mapping, Optional, Set, Tuple
 
 from agents import RunHooks
 from agents.tool_guardrails import (
@@ -79,6 +86,8 @@ WRAP_UP_S = 90.0
 
 # Read through the module so a test can move the clock.
 _now = time.monotonic
+# The clock a turn's runs in other processes share (``TurnSoFar.started_at``).
+_wall = time.time
 
 
 def ends_turn(output: Any) -> Any:
@@ -134,6 +143,30 @@ class TurnLimits:
                    minutes=float(given["minutes"]) if given.get("minutes") is not None else default.minutes)
 
 
+@dataclass(frozen=True)
+class TurnSoFar:
+    """How far a turn had gone before this run of it, when a platform runs on one another process started: its first
+    run's start (``started_at``, epoch seconds), the ``steps`` and ``spent_usd`` it had used and its calls in a row
+    that only read (``quiet``). A run seeded with it meets the turn's limits where the turn stands."""
+
+    started_at: float
+    steps: int = 0
+    spent_usd: float = 0.0
+    quiet: int = 0
+
+    @classmethod
+    def of(cls, given: Optional[Mapping[str, Any]]) -> Optional["TurnSoFar"]:
+        """From a platform's ``{started_at, steps, usd, quiet}`` (``as_json``); None for none."""
+        if not given or given.get("started_at") is None:
+            return None
+        return cls(started_at=float(given["started_at"]), steps=int(given.get("steps") or 0),
+                   spent_usd=float(given.get("usd") or 0.0), quiet=int(given.get("quiet") or 0))
+
+    def as_json(self) -> Dict[str, Any]:
+        return {"started_at": self.started_at, "steps": self.steps, "usd": round(self.spent_usd, 6),
+                "quiet": self.quiet}
+
+
 def stopped_line(reason: str, limits: TurnLimits) -> str:
     """The plain line a person reads for a turn ``reason`` ended; none for one the account couldn't pay for, whose
     platform's refusal says why."""
@@ -175,23 +208,24 @@ class TurnGuard(RunHooks):
     they priced the calls at) is the turn's spend: hooks that keep no total leave the ceiling unreached. ``tripped``
     is the guard that tripped, once one has; ``handed_on`` that a tool's result ended it instead (``ENDS_TURN``).
     With ``ends_unfunded``, a tool the credit gate turned down trips ``FUNDS``, and ``unfunded`` is the gate's words.
-    With ``ends_stalled``, calls in a row that only read are noted, then trip ``STALLED`` (``unchanged``)."""
+    With ``ends_stalled``, calls in a row that only read are noted, then trip ``STALLED`` (``unchanged``).
+    ``so_far``: what the turn's earlier runs used (``TurnSoFar``), which this run's counts start from."""
 
     def __init__(self, limits: TurnLimits, inner: Optional[RunHooks] = None, *, ends_unfunded: bool = False,
-                 ends_stalled: bool = False):
+                 ends_stalled: bool = False, so_far: Optional[TurnSoFar] = None):
         self.limits = limits
         self._inner = inner
         self._ends_unfunded = ends_unfunded
         self._ends_stalled = ends_stalled
-        self.quiet = 0
-        self.longest_quiet = 0
+        self.quiet = so_far.quiet if so_far else 0
+        self.longest_quiet = self.quiet
         self.quiet_notes = 0
         self.unfunded: Optional[str] = None
-        self._started = _now()
-        self._spent_from = self._spent_total()
+        self._started = _now() - (max(0.0, _wall() - so_far.started_at) if so_far else 0.0)
+        self._spent_from = self._spent_total() - (so_far.spent_usd if so_far else 0.0)
         self._stop: Optional[Callable[[], None]] = None
         self._timers: list = []
-        self.model_calls = 0
+        self.model_calls = so_far.steps if so_far else 0
         self.tripped: Optional[str] = None
         self.paused = False
         self.said = False
@@ -211,6 +245,12 @@ class TurnGuard(RunHooks):
     @property
     def elapsed_s(self) -> float:
         return _now() - self._started
+
+    @property
+    def so_far(self) -> TurnSoFar:
+        """How far the turn has gone, for a run of it in another process."""
+        return TurnSoFar(started_at=_wall() - self.elapsed_s, steps=self.model_calls, spent_usd=self.spent_usd,
+                         quiet=self.quiet)
 
     def watch(self, result: Any) -> None:
         """The streamed run to stop once a guard trips; with a time limit, stopped by the clock as well, at once,
@@ -316,6 +356,28 @@ class TurnGuard(RunHooks):
         if len(shown) > REPEATED_RESULT_CHARS:
             shown = shown[:REPEATED_RESULT_CHARS] + "…"
         return NUDGE.format(tool=tool, times=times, result=shown)
+
+
+# The guard of each turn running in this process, by its conversation.
+_running: Dict[str, TurnGuard] = {}
+
+
+@contextmanager
+def running(conversation_id: Optional[str], guard: TurnGuard) -> Iterator[None]:
+    """``guard``'s turn runs in ``conversation_id`` while this is open (``gone_so_far``)."""
+    if conversation_id:
+        _running[conversation_id] = guard
+    try:
+        yield
+    finally:
+        if conversation_id and _running.get(conversation_id) is guard:
+            del _running[conversation_id]
+
+
+def gone_so_far(conversation_id: str) -> Optional[TurnSoFar]:
+    """How far the turn running in ``conversation_id`` in this process has gone; None when none runs here."""
+    guard = _running.get(conversation_id)
+    return guard.so_far if guard is not None else None
 
 
 def loop_guardrails(guard_of: Callable[[], Optional[TurnGuard]]) -> Dict[str, list]:

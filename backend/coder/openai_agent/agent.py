@@ -37,7 +37,7 @@ from .config import AgentConfiguration, LLMConfig
 from .output_limits import clip_bash_result, tool_output
 from .sandbox import create_sandbox_runtime
 from . import guards, steering, turn_notes
-from .guards import TurnGuard, TurnLimits
+from .guards import TurnGuard, TurnLimits, TurnSoFar
 from .session import PostgresSession
 from utils.thread_env import override_env
 
@@ -366,6 +366,7 @@ class Agent:
         tool_step_preview: Optional[Callable[[Any], str]] = None,
         wrap_up: Any = None,
         limits: Optional[TurnLimits] = None,
+        so_far: Optional[TurnSoFar] = None,
         first_call_effort: Optional[str] = None,
         empty_answer: Optional[str] = None,
         sandbox_region: Optional[str] = None,
@@ -424,6 +425,9 @@ class Agent:
         # nothing (``guards.QUIET_STOP``).
         agent._limits = limits or TurnLimits()
         agent._wrap_up = guards.wrap_ups(wrap_up)
+        # How far the turn had gone in another process before this run of it (``guards.TurnSoFar``): its next turn
+        # meets the limits from there, and any turn after that starts fresh.
+        agent._so_far = so_far
         # The reasoning effort of each run's first model call, which someone is waiting on (its first words, or
         # its first step); the calls after it reason as the model does by default.
         agent._first_call_effort = first_call_effort
@@ -945,10 +949,13 @@ class Agent:
             raise RuntimeError("Agent not initialized — call await Agent.create(...)")
         wrap_up = getattr(self, "_wrap_up", {})
         guard = TurnGuard(getattr(self, "_limits", None) or TurnLimits(), getattr(self, "_billing_hooks", None),
-                          ends_unfunded=guards.FUNDS in wrap_up, ends_stalled=guards.STALLED in wrap_up)
+                          ends_unfunded=guards.FUNDS in wrap_up, ends_stalled=guards.STALLED in wrap_up,
+                          so_far=getattr(self, "_so_far", None))
+        self._so_far = None
         self._turn_guard, self.turn_ended_by, self.turn_closing = guard, None, None
         try:
-            await self._turn(message, guard)
+            with guards.running(getattr(self, "conversation_id", None), guard):
+                await self._turn(message, guard)
         finally:
             guard.close()
             config = getattr(self, "config", None)

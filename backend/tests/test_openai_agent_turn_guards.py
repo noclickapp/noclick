@@ -43,12 +43,13 @@ class _Spans:
 
 
 async def _run(pool, monkeypatch, *, limits, wrap_up=WRAP_UP, call=None, results=None, cost=None, tick_s=0.0,
-               answer_after=None, hang_at=None, wrap_up_hangs=False):
+               answer_after=None, hang_at=None, wrap_up_hangs=False, so_far=None):
     """One turn of an agent whose model calls ``look`` with ``call(n)``'s arguments (by default a new page each
     time) until it's allowed no tool, or until ``answer_after(input)`` says it's seen enough. ``results(n)`` is
     what the tool's nth call returns; each tool call moves the turn's clock ``tick_s`` on. With a ``cost``, each
     model call reports it to the run's billing hooks (whose own work the caller fakes); without, there are none.
-    The ``hang_at``th model call, and the wrap-up with ``wrap_up_hangs``, never answer.
+    The ``hang_at``th model call, and the wrap-up with ``wrap_up_hangs``, never answer. ``so_far``: how far the turn
+    had gone before this run of it (another process's, on a wall clock 49,000s ahead of the turn's).
     Returns (model calls as (tool_choice, input), tool calls, emitted frames, agent, spans)."""
     import asyncio
     from agents.items import ModelResponse
@@ -68,6 +69,7 @@ async def _run(pool, monkeypatch, *, limits, wrap_up=WRAP_UP, call=None, results
         monkeypatch.setattr(Agent, "_build_billing_hooks", lambda self: None)
     clock = {"now": 1000.0}
     monkeypatch.setattr(guards, "_now", lambda: clock["now"])
+    monkeypatch.setattr(guards, "_wall", lambda: clock["now"] + 49_000.0)
     spans = _Spans()
     monkeypatch.setattr("utils.otel.get_tracer", lambda name: spans)
     await pool.execute("DELETE FROM conversations WHERE conversation_id = $1", CONVERSATION)
@@ -120,6 +122,7 @@ async def _run(pool, monkeypatch, *, limits, wrap_up=WRAP_UP, call=None, results
                                              "parameters": {"type": "object", "properties": {}}}}
     instance = await Agent.create(emit_message=emit, conversation_id=CONVERSATION, enable_persistence=True,
                                   user_id=USER, custom_tool_executor=look, wrap_up=wrap_up, limits=limits,
+                                  so_far=so_far,
                                   config=AgentConfiguration.from_kwargs(model="gpt-4o", system_prompt="Fix it.",
                                                                         custom_tools=[tool]))
     instance._sdk_agent.model = ModelDouble()
@@ -282,3 +285,74 @@ async def test_a_poll_whose_result_changes_is_never_nudged(builder_request_db, m
     assert len(looked) == 5 and _said(emitted) == "Done: nothing else to look at."
     assert not any(o.startswith(("You've called", "Not run")) for o in _outputs(calls[-1][1]))
     assert (spans[0].attributes["agent.turn.loop_nudges"], spans[0].attributes["agent.turn.loop_refusals"]) == (0, 0)
+
+
+# ── a turn a restart handed to another process ──────────────────────────────
+
+
+async def test_the_running_turns_guard_says_how_far_it_has_gone(builder_request_db, monkeypatch):
+    """What a platform reads of a turn as a shutdown stops it, to hand it on (``gone_so_far``): its first run's start
+    on the clock processes share, and the steps it has used."""
+    from coder.openai_agent import guards
+    from coder.openai_agent.guards import TurnLimits, TurnSoFar
+
+    pool = builder_request_db[0]
+    seen = []
+
+    def results(n):
+        seen.append(guards.gone_so_far(CONVERSATION))
+        return {"lines": [f"page {n} of the logs"]}
+
+    await _run(pool, monkeypatch, limits=TurnLimits(steps=2), results=results, tick_s=30.0)
+    assert seen == [TurnSoFar(started_at=50_000.0, steps=1), TurnSoFar(started_at=50_000.0, steps=2)]
+    assert guards.gone_so_far(CONVERSATION) is None  # over: nothing runs there
+
+
+async def test_a_run_a_restart_handed_over_meets_the_turns_limits_where_it_stood(builder_request_db, monkeypatch):
+    """A deploy hands a running turn to another process, which runs it on from what its thread kept. Run afresh, its
+    guard gave it a whole new time limit and step budget, and turns crossing a deploy ran well past their limits
+    (2026-10-26): seeded with how far the turn had gone (``TurnSoFar``), the run's guard counts on from there."""
+    from coder.openai_agent.guards import TurnLimits, TurnSoFar
+
+    pool = builder_request_db[0]
+    # Three of its five steps used: two are left, then it wraps up.
+    calls, looked, emitted, agent, spans = await _run(pool, monkeypatch, limits=TurnLimits(steps=5),
+                                                      so_far=TurnSoFar(started_at=50_000.0, steps=3))
+    assert [choice for choice, _ in calls] == [None, None, "none"] and len(looked) == 2
+    assert _said(emitted) == f"{STANDING}\n\nStopped on steps." and agent.turn_ended_by == "steps"
+    assert spans[0].attributes["agent.turn.model_calls"] == 6
+
+    # Begun 14 of its 15 minutes before this run: the first two-minute call runs it out.
+    calls, looked, emitted, agent, spans = await _run(pool, monkeypatch, tick_s=120.0,
+                                                      limits=TurnLimits(steps=10, minutes=15),
+                                                      so_far=TurnSoFar(started_at=50_000.0 - 14 * 60))
+    assert [choice for choice, _ in calls] == [None, "none"] and len(looked) == 1
+    assert _said(emitted) == f"{STANDING}\n\nStopped on time." and agent.turn_ended_by == "time"
+
+
+async def test_a_later_turn_of_the_same_agent_starts_fresh(builder_request_db, monkeypatch):
+    """How far a handed-over turn had gone seeds that turn's run alone."""
+    from coder.openai_agent.guards import TurnLimits, TurnSoFar
+
+    pool = builder_request_db[0]
+    *_, agent, _ = await _run(pool, monkeypatch, limits=TurnLimits(steps=5),
+                              so_far=TurnSoFar(started_at=50_000.0, steps=3),
+                              answer_after=lambda model_input: True)
+    assert agent._so_far is None and agent._turn_guard.model_calls == 4
+
+
+async def test_a_run_a_restart_handed_over_keeps_its_read_streak(builder_request_db, monkeypatch):
+    """Calls in a row that only read count on across a restart too (``guards.STALLED``): run afresh, a turn reading
+    on through a deploy got a whole new stretch of reads."""
+    from coder.openai_agent import guards, progress
+    from coder.openai_agent.guards import TurnLimits, TurnSoFar
+
+    monkeypatch.setattr(progress, "_JUDGES", [lambda tool, args: True if tool == "look" else None])
+    monkeypatch.setattr(guards, "QUIET_STOP", 5)
+    stalled = {**WRAP_UP, "stalled": {"prompt": "Out of stalled: say what blocks you.", "line": "Stopped on stalled."}}
+    pool = builder_request_db[0]
+    calls, looked, emitted, agent, spans = await _run(pool, monkeypatch, wrap_up=stalled, limits=TurnLimits(steps=20),
+                                                      so_far=TurnSoFar(started_at=50_000.0, steps=4, quiet=4))
+    # Four reads in a row before the restart: the next is the fifth, which stops it.
+    assert len(looked) == 1 and agent.turn_ended_by == "stalled"
+    assert spans[0].attributes["agent.turn.longest_read_streak"] == 5
