@@ -9,7 +9,7 @@ __all__ = [
     "system_prompt", "VOICE_STYLE", "TEXT_STYLE", "IMESSAGE_STYLE", "EMAIL_STYLE", "WEB_STYLE", "WRAP_UP",
     "MEMORY_CATALOG_HEADER", "MEMORY_CATALOG_MORE", "reach_note", "ALARM_WAKEUP", "JOB_WAKEUP",
     "AGENT_MESSAGE_WAKEUP", "run_failure_wakeup", "wakeup_input", "followup_delivery", "followup_instructions",
-    "arrival_context", "handover_note", "unreadable_attachment", "shared_item", "SHARED_ITEM_CUT",
+    "arrival_context", "handover_note", "unreadable_attachment", "attachment_more", "shared_item", "SHARED_ITEM_CUT",
 ]
 
 _SYSTEM_PROMPT = (
@@ -85,6 +85,11 @@ def unreadable_attachment(kind: str) -> str:
     """The note a texted ``kind`` of file ("image", "audio", "document"...) leaves in the turn when it couldn't be
     fetched or read."""
     return f"[The {kind} could not be read.]"
+
+
+def attachment_more(attachment_id: str, shown: int, total: int) -> str:
+    """The line after the first ``shown`` of a file's ``total`` characters of text in a turn: where the rest is."""
+    return f"More text: call read_attachment with attachment_id={attachment_id} and offset={shown}."
 
 
 def shared_item(kind: str, data: str) -> str:

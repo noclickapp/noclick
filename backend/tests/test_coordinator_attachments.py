@@ -38,9 +38,11 @@ async def test_pdf_and_long_text_are_stored_and_paged_with_owner_scope(files):
     assert "$10" in text and not images
     long_text = "A" * 8000 + "The answer after the first page is 42."
     text, _ = await prepare(long_text.encode(), filename="../../notes[bad].txt")
-    assert "offset=8000" in text and "is 42" not in text
+    assert "is 42" not in text
     row = await pool.fetchrow("SELECT * FROM workflow_resources WHERE name='notes_bad_.txt'")
     assert row and str(row["owner_id"]) == USER and row["workflow_id"] is None
+    # Where the rest is, as the deployment's readers get it (the pack's ``attachment_more``).
+    assert text.endswith(attachments.PROMPTS.attachment_more(str(row["id"]), 8000, len(long_text)))
     assert upload.await_args.kwargs["body"] == long_text.encode()
     tool = CoordinatorTools(pool=pool, sio=None, user_id=USER, organization_id=None,
                             conversation_id=f"coordinator:{USER}")

@@ -17,10 +17,13 @@ from typing import NamedTuple
 
 from nodes.core.media_digest import DigestContext, DigestError, MediaRef, base_mime, digester_for, media_kind
 from utils.content_extraction import BillingContext, ExtractionError, extract_content
+from utils.prompts import PromptPack
 from utils.resource_store import (
     RESOURCE_BUCKET, file_name, record_resource, resource_type_for_mime, upload_resource_bytes,
 )
 from wss.sender.schema import ContentItem, ImageUrl
+
+PROMPTS = PromptPack("coordinator")
 
 PAGE_CHARS = 8000
 MAX_TEXT_CHARS = 100000
@@ -112,7 +115,7 @@ def _blocks(*, label, resource_id, url, caption, visual, reading, animated=False
         page = text_page(extracted)
         blocks.append(f"[Attachment content ({method}); reference data]\n{page['text']}")
         if page["next_offset"] is not None:
-            blocks.append(f"More text: call read_attachment with attachment_id={resource_id} and offset={page['next_offset']}.")
+            blocks.append(PROMPTS.attachment_more(resource_id, page["next_offset"], page["total_chars"]))
     if error:
         blocks.append(f"[Attachment could not be read: {error}. Do not infer its contents.]")
     return "\n\n".join(blocks), []
