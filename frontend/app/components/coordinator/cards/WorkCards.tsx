@@ -2,13 +2,14 @@
 // making (generate_video), a run it read (get_run), a reminder it set (schedule_alarm), an automation it paused,
 // resumed, trashed or restored, and the pages a turn's web searches found.
 import { useState } from 'react';
-import { ArrowUpRight, Pause, Video } from 'lucide-react';
+import { ArrowUpRight, Bell, BellOff, Pause, Video } from 'lucide-react';
 import { toast } from 'sonner';
 import { NodeMark } from '~/components/dashboard/primitives';
 import { LiveWork, useLiveState, type LiveState } from '~/components/coordinator/inline/live';
 import { sourceKey, VideoCard, type Source } from '~/components/coordinator/inline/media';
 import { GlyphTile, PILL_QUIET, Receipt } from '~/components/coordinator/inline/primitives';
 import { CheckBackLine, RunCard } from '~/components/coordinator/inline/work';
+import { useCoordinatorAlarm } from '~/hooks/useCoordinatorAlarms';
 import { isActiveJob, useCoordinatorJob } from '~/hooks/useCoordinatorJobs';
 import { useWorkflowGraph } from '~/hooks/useWorkflowGraph';
 import { askNoClick } from '~/lib/askNoClick';
@@ -154,15 +155,25 @@ export function RunResultCard({ call }: { call: CoordinatorToolCall }) {
 
 // ── A reminder ───────────────────────────────────────────────────────────────
 
+// Still to come, it can be cancelled; read back, a one-off that went off reads as done and one called off says so.
+// Until it's read back (or where it can't be), the card says what the tool reported.
 export function AlarmLine({ call }: { call: CoordinatorToolCall }) {
-    const next = str(call.result, 'next_run');
+    const { alarm } = useCoordinatorAlarm(str(call.result, 'schedule_id'));
     const message = str(call.args, 'message');
     if (failed(call.result) || !message) return null;
     const recurring = str(call.args, 'alarm_type') === 'cron';
+    const next = str(alarm, 'next_run') ?? str(call.result, 'next_run');
+    const what = clip(message, 120);
+    const status = str(alarm, 'status');
+    const firedAt = str(alarm, 'fired_at');
+    if (!recurring && firedAt) return <Receipt>Reminded you {whenAt(firedAt)}: {what}</Receipt>;
+    if (status === 'cancelled') return <Receipt tone="info" lead={<BellOff className="h-4 w-4 shrink-0 text-foreground/60" />}>Cancelled: {what}</Receipt>;
+    // Stopped without going off (its delivery failed).
+    if (alarm && status !== 'scheduled') return <Receipt tone="info" lead={<Bell className="h-4 w-4 shrink-0 text-foreground/60" />}>Was due {next ? whenAt(next) : 'earlier'}: {what}</Receipt>;
     return (
         <CheckBackLine
             when={next ? `${recurring ? 'next ' : ''}${whenAt(next)}` : 'later'}
-            what={clip(message, 120)}
+            what={what}
             action={
                 <button type="button" className={cn(PILL_QUIET, 'h-7')} onClick={() => askNoClick(`Cancel the reminder “${clip(message, 80)}”`)}>
                     Cancel…

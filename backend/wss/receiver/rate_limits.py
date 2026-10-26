@@ -61,6 +61,7 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "coordinator:memories:save": SocketIORateLimit(second=2, minute=30),
             "coordinator:memories:delete": SocketIORateLimit(second=2, minute=30),
             "coordinator:jobs": SocketIORateLimit(second=5, minute=60),
+            "coordinator:alarms": SocketIORateLimit(second=5, minute=60),
             "referral:get": SocketIORateLimit(second=2, minute=30),
             "coordinator:arrival": SocketIORateLimit(second=1, minute=10),
             "coordinator:email:ensure": SocketIORateLimit(second=2, minute=30),

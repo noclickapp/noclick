@@ -365,6 +365,12 @@ class CoordinatorJobsRequest(ClientEventBase):
     job_ids: List[Annotated[str, Field(pattern=r"^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$")]] = Field(min_length=1, max_length=50)
 
 
+class CoordinatorAlarmsRequest(ClientEventBase):
+    """Read the account's own reminders (schedule_alarm) by id, for the chat's cards"""
+    event_name: ClassVar[str] = "coordinator:alarms"
+    schedule_ids: List[Annotated[str, Field(pattern=r"^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$")]] = Field(min_length=1, max_length=50)
+
+
 class PresenceChatRequest(ClientEventBase):
     """A tab's claim that its person is watching their chat right now, renewed every 15s, or its withdrawal"""
     event_name: ClassVar[str] = "presence:chat"

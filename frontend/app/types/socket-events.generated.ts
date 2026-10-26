@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Sun Oct 25 23:09:32  2026
+// Generated at: Mon Oct 26 07:00:52  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -2152,6 +2152,21 @@ export interface CodexDeviceCodeStartRequest {
    * UUID for request/response correlation
    */
   request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Read the account's own reminders (schedule_alarm) by id, for the chat's cards
+ */
+export interface CoordinatorAlarmsRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * @minItems 1
+   * @maxItems 50
+   */
+  schedule_ids: [string, ...string[]];
   [k: string]: unknown;
 }
 /**
@@ -14278,6 +14293,7 @@ export interface ClientToServerEvents {
   'conversation:list_for_agent': (data: ListConversationsForAgentRequest) => void;
   'conversation:resume': (data: ResumeConversationRequest) => void;
   'conversations:list': (data: ListConversationsRequest) => void;
+  'coordinator:alarms': (data: CoordinatorAlarmsRequest) => void;
   'coordinator:arrival': (data: CoordinatorArrivalRequest) => void;
   'coordinator:attachment:upload_url': (data: CoordinatorAttachmentUploadUrlRequest) => void;
   'coordinator:attachments:list': (data: CoordinatorAttachmentsListRequest) => void;
@@ -14631,6 +14647,7 @@ export const ClientEventNames = {
   CloudflareOAuthValidateRequest: 'cloudflare:oauth:validate',
   CodexDeviceCodePollRequest: 'codex:auth:poll',
   CodexDeviceCodeStartRequest: 'codex:auth:start',
+  CoordinatorAlarmsRequest: 'coordinator:alarms',
   CoordinatorArrivalRequest: 'coordinator:arrival',
   CoordinatorAttachmentUploadUrlRequest: 'coordinator:attachment:upload_url',
   CoordinatorAttachmentsListRequest: 'coordinator:attachments:list',
@@ -14993,6 +15010,7 @@ interface ClientEventMap {
   CloudflareOAuthValidateRequest: CloudflareOAuthValidateRequest
   CodexDeviceCodePollRequest: CodexDeviceCodePollRequest
   CodexDeviceCodeStartRequest: CodexDeviceCodeStartRequest
+  CoordinatorAlarmsRequest: CoordinatorAlarmsRequest
   CoordinatorArrivalRequest: CoordinatorArrivalRequest
   CoordinatorAttachmentUploadUrlRequest: CoordinatorAttachmentUploadUrlRequest
   CoordinatorAttachmentsListRequest: CoordinatorAttachmentsListRequest
@@ -15758,6 +15776,10 @@ export const CodexDeviceCodePollRequest = {
 export const CodexDeviceCodeStartRequest = {
   event_name: 'codex:auth:start' as const,
   create: (data: CodexDeviceCodeStartRequest) => ({ event_name: 'codex:auth:start' as const, ...data })
+};
+export const CoordinatorAlarmsRequest = {
+  event_name: 'coordinator:alarms' as const,
+  create: (data: CoordinatorAlarmsRequest) => ({ event_name: 'coordinator:alarms' as const, ...data })
 };
 export const CoordinatorArrivalRequest = {
   event_name: 'coordinator:arrival' as const,
@@ -16999,6 +17021,7 @@ export const EventRouting = {
   'conversation:list_for_agent': 'API',
   'conversation:resume': 'API',
   'conversations:list': 'API',
+  'coordinator:alarms': 'API',
   'coordinator:arrival': 'API',
   'coordinator:attachment:upload_url': 'API',
   'coordinator:attachments:list': 'API',

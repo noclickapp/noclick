@@ -122,6 +122,28 @@ async def test_failed_alarm_stays_stopped_if_scheduler_disable_is_temporarily_un
     assert not (await LocalScheduleRepo(pool).get(alarm["schedule_id"]))["enabled"]
 
 
+async def test_the_chats_reminder_cards_read_whether_each_is_still_to_come(alarm_db):
+    """A one-off reads as fired from the moment its wake-up is queued (before the turn it starts has answered, and
+    before the scheduler records the delivery); one cancelled says so; only the account's own come back."""
+    _, pool, alarms, inbox = alarm_db
+    once = await schedule(alarms)
+    weekly = await schedule(alarms, alarm_type="cron", delay_or_time="0 9 * * 1", message="Weekly review")
+    other = await schedule(alarms, message="Not asked about")
+    ids = [once["schedule_id"], weekly["schedule_id"]]
+    read = {a["schedule_id"]: a for a in await alarms.read(USER, ids)}
+    assert set(read) == set(ids)
+    assert all(a["status"] == "scheduled" and "fired_at" not in a for a in read.values())
+    assert await alarms.read(str(uuid.uuid4()), ids) == []
+
+    _, body = await fire(pool, once["schedule_id"])
+    await inbox.accept_alarm(body)
+    await alarms.cancel(USER, weekly["schedule_id"])
+    read = {a["schedule_id"]: a for a in await alarms.read(USER, ids + [str(uuid.uuid4())])}
+    assert read[once["schedule_id"]]["fired_at"] and read[once["schedule_id"]]["message"] == "Check the report"
+    assert read[weekly["schedule_id"]]["status"] == "cancelled" and "fired_at" not in read[weekly["schedule_id"]]
+    assert other["schedule_id"] not in read
+
+
 async def test_concurrent_creates_cannot_exceed_pending_limit(alarm_db):
     _, _, alarms, _ = alarm_db
     results = await asyncio.gather(*(schedule(alarms) for _ in range(15)), return_exceptions=True)

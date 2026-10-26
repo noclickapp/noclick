@@ -34,8 +34,8 @@ from utils import feature_gates
 from wss.receiver.client_events import (
     CoordinatorEmailInboundRequest, CoordinatorOpenRequest, CoordinatorResetRequest, CoordinatorSendRequest,
     CoordinatorMemoriesListRequest, CoordinatorMemoryGetRequest, CoordinatorMemorySaveRequest,
-    CoordinatorMemoryDeleteRequest, CoordinatorJobsRequest, CoordinatorAttachmentUploadUrlRequest,
-    CoordinatorAttachmentsListRequest, CoordinatorReference,
+    CoordinatorMemoryDeleteRequest, CoordinatorJobsRequest, CoordinatorAlarmsRequest,
+    CoordinatorAttachmentUploadUrlRequest, CoordinatorAttachmentsListRequest, CoordinatorReference,
 )
 from wss.sender import send_event
 from wss.sender.events import ChatMessageEvent
@@ -668,7 +668,8 @@ class TestCoordinatorHandler(BaseHandlerTest):
                         CoordinatorMemoryDeleteRequest(request_id="g6", memory_id=WORKFLOW, expected_version=1),
                         CoordinatorAttachmentUploadUrlRequest(request_id="g7", name="a.png", mime_type="image/png", size_bytes=3),
                         CoordinatorAttachmentsListRequest(request_id="g8"),
-                        CoordinatorJobsRequest(request_id="g9", job_ids=[WORKFLOW])):
+                        CoordinatorJobsRequest(request_id="g9", job_ids=[WORKFLOW]),
+                        CoordinatorAlarmsRequest(request_id="g10", schedule_ids=[WORKFLOW])):
             response = await self._send(frontend_sio, sid, request)
             assert response["data"] == {"kind": "gated"} and "available on your account" in response["error"], request
         self.turn.assert_not_awaited()
@@ -706,6 +707,20 @@ class TestCoordinatorHandler(BaseHandlerTest):
         for bad in ([], ["x" * 36], [WORKFLOW] * 51):
             with pytest.raises(ValidationError):
                 CoordinatorJobsRequest(job_ids=bad)
+
+    async def test_alarms_read_is_the_session_owners(self, frontend_sio, sid, monkeypatch):
+        alarm = {"schedule_id": WORKFLOW, "message": "Stretch", "alarm_type": "countdown", "status": "success",
+                 "fired_at": "2026-10-26T01:26:04+00:00"}
+        read = AsyncMock(return_value=[alarm])
+        monkeypatch.setattr("repositories.coordinator_alarms.CoordinatorAlarmRepo.read", read)
+        from pydantic import ValidationError
+        response = await self._send(frontend_sio, sid, CoordinatorAlarmsRequest(
+            request_id="a1", schedule_ids=[WORKFLOW.upper()], user_id="someone-else"))
+        assert read.await_args.args == ("uuid-test-user", [WORKFLOW])
+        assert response["data"] == {"alarms": [alarm]}
+        for bad in ([], ["x" * 36], [WORKFLOW] * 51):
+            with pytest.raises(ValidationError):
+                CoordinatorAlarmsRequest(schedule_ids=bad)
 
 
 def test_voice_turns_get_the_spoken_style_and_the_callers_note():

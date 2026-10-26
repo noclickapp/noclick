@@ -75,6 +75,14 @@ export function jobIdsOf(calls: readonly CoordinatorToolCall[]): string[] {
     });
 }
 
+/** The reminders a turn's calls set, for reading back whether each is still to come. */
+export function alarmIdsOf(calls: readonly CoordinatorToolCall[]): string[] {
+    return calls.flatMap((call) => {
+        const id = call.tool === 'schedule_alarm' ? str(call.result, 'schedule_id') : undefined;
+        return id ? [id] : [];
+    });
+}
+
 export { registerSetupCard, registerToolCard, registerTurnWork, turnWorkDrawing, type TurnWorkDrawing } from './toolCardRegistry';
 
 /** The card under a setup note; `id` is its place among the thread's cards, so a newer one about the same automation

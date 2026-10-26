@@ -2,7 +2,8 @@
 // conversation drawn in place. Turns that came in on WhatsApp, iMessage or email read the way that app drew them, a
 // call reads as one call, what NoClick handled on its own folds into one card, a reply says which app it went back
 // out on, the tools a turn used draw their cards under it (a build on its canvas, a number to pick, an account
-// to connect), kept live by reading their jobs back, and a workflow picked on a public page draws its setup card.
+// to connect), kept live by reading their jobs and reminders back, and a workflow picked on a public page draws its
+// setup card.
 import { memo, useCallback, useMemo, useState, type ComponentProps } from 'react';
 import { ChatFileCard } from '~/components/chat/ChatReferenceChip';
 import { AgentChatTranscript } from '~/components/chat/AgentChatTranscript';
@@ -10,6 +11,7 @@ import { CallCard, EmailMessage, EmailReceipt, IMessageMessage, IMessagePhotos, 
 import { PILL_QUIET } from '~/components/coordinator/inline/primitives';
 import { UpdatesCard } from '~/components/coordinator/inline/updates';
 import type { AgentChatMessage, AgentChatStep } from '~/hooks/useAgentChat';
+import { CoordinatorAlarmsContext, useCoordinatorAlarms } from '~/hooks/useCoordinatorAlarms';
 import { CoordinatorJobsContext, useCoordinatorJobs, type CoordinatorJobs, type ThreadJobs } from '~/hooks/useCoordinatorJobs';
 import { furthest, receiptState, useEmailReceipts } from '~/hooks/useEmailReceipts';
 import { inboxLink } from '~/components/shell/mailApp';
@@ -19,7 +21,7 @@ import { cn } from '~/lib/utils';
 import { CanvasesProvider, newestCanvases, setupCardId } from './canvases';
 import { callsOf, readChannelText, readEmailText, type CallGroup, type ChannelMedia } from './channelTurns';
 import { clockTime, duration, shortWhen, whenAt } from './format';
-import { jobIdsOf, SetupNoteCard, TurnCards, turnWorkDrawing } from './toolCards';
+import { alarmIdsOf, jobIdsOf, SetupNoteCard, TurnCards, turnWorkDrawing } from './toolCards';
 import { outOfFundsCard, TurnAskedProvider } from './toolCardRegistry';
 import { entriesOf, updatesOf } from './updates';
 
@@ -163,6 +165,8 @@ export const CoordinatorTranscript = memo(function CoordinatorTranscript({ useJo
     const updates = useMemo(() => updatesOf(messages), [messages]);
     const toolCalls = useMemo(() => messages.flatMap(toolCallsOf), [messages]);
     const jobs = useJobs(toolCalls, messages.length);
+    const alarmIds = useMemo(() => alarmIdsOf(toolCalls), [toolCalls]);
+    const alarms = useCoordinatorAlarms(alarmIds, messages.length);
     // Every card about an automation in thread order (a note's setup card, a turn's tool calls): the newest is drawn
     // in full.
     const canvases = useMemo(
@@ -229,9 +233,11 @@ export const CoordinatorTranscript = memo(function CoordinatorTranscript({ useJo
 
     return (
         <CoordinatorJobsContext.Provider value={jobs}>
-            <CanvasesProvider value={canvases}>
-                <AgentChatTranscript {...props} renderMessage={renderMessage} renderAfter={renderAfter} renderWork={turnWorkDrawing()} />
-            </CanvasesProvider>
+            <CoordinatorAlarmsContext.Provider value={alarms}>
+                <CanvasesProvider value={canvases}>
+                    <AgentChatTranscript {...props} renderMessage={renderMessage} renderAfter={renderAfter} renderWork={turnWorkDrawing()} />
+                </CanvasesProvider>
+            </CoordinatorAlarmsContext.Provider>
         </CoordinatorJobsContext.Provider>
     );
 });

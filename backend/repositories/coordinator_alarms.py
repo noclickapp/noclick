@@ -56,7 +56,7 @@ class CoordinatorAlarmRepo:
     async def list(self, user_id):
         rows = checked(await scheduler.list_schedules(user_id=str(user_id), target_kind="coordinator"))
         outcomes = await self.pool.fetch(
-            "SELECT DISTINCT ON(alarm_id) alarm_id,response,delivery_error FROM coordinator_wakeups "
+            "SELECT DISTINCT ON(alarm_id) alarm_id,response,delivery_error,created_at FROM coordinator_wakeups "
             "WHERE user_id=$1::uuid AND source='alarm' ORDER BY alarm_id,created_at DESC", user_id)
         latest = {str(row["alarm_id"]): row for row in outcomes}
         result = []
@@ -64,10 +64,17 @@ class CoordinatorAlarmRepo:
             view = alarm_view(row)
             outcome = latest.get(row["id"])
             if outcome:
+                # Its wake-up exists from the moment it fires, before the turn it starts has answered.
+                view["fired_at"] = outcome["created_at"].isoformat()
                 view["response"] = outcome["response"]
                 view["delivery_error"] = outcome["delivery_error"] or view["delivery_error"]
             result.append(view)
         return result
+
+    async def read(self, user_id, schedule_ids):
+        """The account's alarms among ``schedule_ids``, as ``list`` shows them: the chat's reminder cards."""
+        wanted = set(schedule_ids)
+        return [alarm for alarm in await self.list(user_id) if alarm["schedule_id"] in wanted]
 
     async def cancel(self, user_id, schedule_id):
         await self._owned(user_id, schedule_id)

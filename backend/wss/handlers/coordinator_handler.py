@@ -8,10 +8,11 @@ coordinator:send runs a turn that streams the usual chat:message frames (with
 any files and references the composer added), and coordinator:reset starts the
 thread over. coordinator:attachment:upload_url reserves a file the composer
 uploads straight to storage; coordinator:attachments:list offers the ones sent
-before; coordinator:jobs reads back the work its turns started (for the chat's
-live cards); coordinator:arrival posts the setup note for a workflow the owner
-started on a public page. Gated on the coordinator rollout; the turn itself
-lives in coder/coordinator/agent.py so channels can share it.
+before; coordinator:jobs reads back the work its turns started and
+coordinator:alarms the reminders they set (for the chat's live cards);
+coordinator:arrival posts the setup note for a workflow the owner started on a
+public page. Gated on the coordinator rollout; the turn itself lives in
+coder/coordinator/agent.py so channels can share it.
 """
 
 import logging
@@ -49,6 +50,7 @@ from wss.receiver.client_events import (
     CoordinatorMemoryGetRequest,
     CoordinatorMemorySaveRequest,
     CoordinatorMemoryDeleteRequest,
+    CoordinatorAlarmsRequest,
     CoordinatorJobsRequest,
     CoordinatorOpenRequest,
     CoordinatorResetRequest,
@@ -113,6 +115,7 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             "coordinator:memories:save": self.handle_memory_save,
             "coordinator:memories:delete": self.handle_memory_delete,
             "coordinator:jobs": self.handle_jobs,
+            "coordinator:alarms": self.handle_alarms,
             "coordinator:arrival": self.handle_arrival,
             "coordinator:email:ensure": self.handle_email_ensure,
             "coordinator:email:set": self.handle_email_set,
@@ -259,6 +262,14 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             ids = [str(uuid.UUID(job_id)) for job_id in request.job_ids]
             rows = await CoordinatorJobRepo(await self.get_pool()).list_by_ids(user_id, ids)
             return {"jobs": [job_entry(row) for row in rows]}
+        await self._respond(sid, request.request_id, op)
+
+    async def handle_alarms(self, sid: str, request: CoordinatorAlarmsRequest) -> None:
+        async def op(user_id: str, _email):
+            from repositories.coordinator_alarms import CoordinatorAlarmRepo
+
+            ids = [str(uuid.UUID(schedule_id)) for schedule_id in request.schedule_ids]
+            return {"alarms": await CoordinatorAlarmRepo(await self.get_pool()).read(user_id, ids)}
         await self._respond(sid, request.request_id, op)
 
     async def handle_email_ensure(self, sid: str, request: CoordinatorEmailEnsureRequest) -> None:
