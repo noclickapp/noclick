@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Fail the export if any blob in history holds a real-SHAPED credential.
 
-gitleaks already runs, and it is useful, but it is a report rather than a gate
-and it is tuned for recall. This narrower companion catches provider-shaped
-credentials in places where broad heuristic findings can otherwise obscure the
-one value that matters.
+gitleaks runs beside it, tuned for recall, so each of its findings is judged
+and a false positive allowlisted in .gitleaks.toml. This narrower companion
+catches provider-shaped credentials in places where broad heuristic findings
+can otherwise obscure the one value that matters.
 
 So this asks a narrower question with a yes/no answer: does any blob, in any
 commit, contain a string matching the exact shape a real credential has? A

@@ -55,3 +55,15 @@ any deployment. The generic rule still fires on a UUID next to that field.
 """
 targetRules = ["generic-api-key"]
 paths = ['''^frontend/app/components/design/onboarding/liveWorkflow\.ts$''']
+
+[[allowlists]]
+description = """
+The compaction tests hand a conversation a made-up Stripe-style key, to check
+that a summary never copies a key a tool printed. Neither value is a key: a
+live Stripe secret key is far longer. Exact values, so a real key in these
+files still fails.
+"""
+condition = "AND"
+targetRules = ["stripe-access-token"]
+paths = ['''^backend/tests/test_(compaction_model_eval|coordinator_compaction)\.py$''']
+regexes = ['''^sk_live_(?:51Hx9INCIDENTAL0001|INJECTED7777)$''']
