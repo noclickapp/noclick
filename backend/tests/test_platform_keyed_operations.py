@@ -96,3 +96,59 @@ def test_a_missing_key_names_the_fix_for_each_edition(monkeypatch):
 
     monkeypatch.setenv("EXA_API_KEY", "k")
     assert require_platform_key("EXA_API_KEY", "Exa", byok=True) == "k"
+
+
+def _search_graph():
+    return {"nodes": [{"id": "start", "type": "trigger-run", "config": {}},
+                      {"id": "news", "type": "automation-exa",
+                       "config": {"operation": "search", "label": "Find the news", "query": "OpenAI"}}],
+            "edges": [{"source": "start", "target": "news"}]}
+
+
+def test_the_builder_hears_which_keys_this_instance_lacks(self_hosted, monkeypatch):
+    """A step on a key the instance doesn't hold tells the builder whose key, where the owner adds it, and that a
+    step needing none is better, where it looks: the operations it lists and the step it added."""
+    from coder.workflow.agentic.commands import execute_query_operations
+    from coder.workflow.operation_catalog import credential_status_line
+    from coder.workflow.workflow_xml import XmlOp
+
+    line = credential_status_line("automation-exa", "search", {"operation": "search"}, "news")
+    assert line.startswith("[credentials needed: exa] This operation runs on Exa, and this instance has no Exa key.")
+    assert "Settings → Self-hosted (EXA_API_KEY)" in line and "Prefer a step that needs no key" in line
+    assert '<ask node="news" field="credential" />' in line and "search_credentials" not in line
+    scrape = credential_status_line("automation-linkedin", "scrape_user_profiles",
+                                    {"operation": "scrape_user_profiles"}, "people")
+    assert "no Apify key" in scrape and "your own" not in scrape
+
+    [listed] = execute_query_operations([XmlOp(tag="query_operations", attrs={"type": "automation-exa"})])
+    assert "On this instance:\n" in listed and "search" in listed.split("On this instance:\n")[1]
+    assert "this instance has no Exa key" in listed
+
+    monkeypatch.setenv("EXA_API_KEY", "instance-key")
+    assert credential_status_line("automation-exa", "search", {"operation": "search"}, "news") == (
+        "[credentials: not required for this operation]")
+    [listed] = execute_query_operations([XmlOp(tag="query_operations", attrs={"type": "automation-exa"})])
+    assert "On this instance" not in listed
+
+
+def test_activation_names_the_missing_instance_key(self_hosted, monkeypatch):
+    from utils.workflow_readiness import activation_issues
+
+    [issue] = activation_issues(_search_graph(), "start")
+    assert issue["code"] == "missing_credentials"
+    assert issue["message"] == ("Find the news: This operation runs on Exa, and this instance has no Exa key. Add it "
+                                "under Settings → Self-hosted (EXA_API_KEY), or connect your own Exa credential to "
+                                "this node.")
+    monkeypatch.setenv("EXA_API_KEY", "instance-key")
+    assert activation_issues(_search_graph(), "start") == []
+
+
+def test_hosted_says_nothing_of_instance_keys(hosted):
+    from coder.workflow.agentic.commands import execute_query_operations
+    from coder.workflow.operation_catalog import credential_status_line
+    from coder.workflow.workflow_xml import XmlOp
+
+    assert credential_status_line("automation-exa", "search", {"operation": "search"}, "news") == (
+        "[credentials: not required for this operation]")
+    [listed] = execute_query_operations([XmlOp(tag="query_operations", attrs={"type": "automation-exa"})])
+    assert "On this instance" not in listed

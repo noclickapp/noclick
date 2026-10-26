@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union, get_args, get_origin
 from pydantic import Tag
 
 from nodes.core.base import runtime_config_view
+from nodes.core.platform_billing import missing_platform_key, unfunded_platform_key
 from nodes.core.registry import NODE_REGISTRY
 from nodes.agent.config.providers import (
     agent_credential_requirement,
@@ -318,6 +319,37 @@ def is_operation_credentials_optional(
         return True
 
     return evaluate_condition(condition) and platform_key_funds(schema)
+
+
+PREFER_KEYLESS = "Prefer a step that needs no key where one does the job."
+
+
+def _missing_key(node_type: str, marker: Dict[str, Any]) -> str:
+    # A marker with no vendor runs on the node's own service (an Exa key for Exa).
+    service = marker.get("vendor") or _derive_provider_key(node_type).replace("_", " ").title()
+    return missing_platform_key(marker["env"], service, byok=bool(marker.get("byok")))
+
+
+def unfunded_platform_key_text(
+    node_type: str, operation: Optional[str], config: Optional[Dict[str, Any]] = None,
+) -> Optional[str]:
+    """What a step whose operation runs on a platform key this instance doesn't hold says about it, and the fix;
+    None for any other step (hosted, every platform key is held)."""
+    config_class = get_operation_config_class(node_type, operation, config) if operation else None
+    marker = unfunded_platform_key(config_class.model_json_schema()) if config_class else None
+    return _missing_key(node_type, marker) if marker else None
+
+
+def unfunded_operations_text(node_type: str) -> Optional[str]:
+    """For the builder's list of a node's operations: those that run on a platform key this instance doesn't hold."""
+    names_by_text: Dict[str, List[str]] = {}
+    for op in get_operations_for_node_type(node_type):
+        marker = unfunded_platform_key(op.config_class.model_json_schema())
+        if marker:
+            names_by_text.setdefault(_missing_key(node_type, marker), []).append(op.name)
+    if not names_by_text:
+        return None
+    return "\n".join(f"{', '.join(names)}: {text}" for text, names in names_by_text.items()) + f" {PREFER_KEYLESS}"
 
 
 def _validate_jsx(source: str) -> Optional[str]:
@@ -896,6 +928,14 @@ def credential_status_line(
             return (
                 _attached_unhealthy_line(cred_info.provider_key, attached_id, health)
                 or f"[credentials: {cred_info.provider_key} ✓]"
+            )
+        provider_wired = bool((config or {}).get('agent_tool_operations'))
+        missing_key = None if provider_wired else unfunded_platform_key_text(node_type, operation, config)
+        if missing_key:
+            # Its form (an <ask>) takes the instance's key or, where it funds the step, the owner's own account.
+            return (
+                f"[credentials needed: {cred_info.provider_key}] {missing_key} {PREFER_KEYLESS} If this step is "
+                f"needed, ask the owner with <ask node=\"{node_id}\" field=\"credential\" />: its form takes the key."
             )
         search_type = cred_info.credential_type or cred_info.provider_key
         return (

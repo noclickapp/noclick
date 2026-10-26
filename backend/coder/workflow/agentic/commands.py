@@ -44,6 +44,7 @@ from ..operation_catalog import (
     get_operation_schema,
     get_operation_config_class,
     credential_status_line,
+    unfunded_operations_text,
     credentials_truly_optional,
     get_credential_info,
     known_credential_types,
@@ -1420,6 +1421,9 @@ def execute_query_operations(ops: List[XmlOp]) -> List[str]:
         lines = [f"[Query: operations for {node_type}]"]
         for op_info in operations:
             lines.append(f"- {op_info.name}: {op_info.description or 'No description'}")
+        unfunded = unfunded_operations_text(node_type)
+        if unfunded:
+            lines.append(f"On this instance:\n{unfunded}")
 
         # Append node-level operations guidance if available
         guidance = load_node_guidance(node_type, section="operations", context={"type": node_type})

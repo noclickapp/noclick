@@ -53,7 +53,7 @@ def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dic
         is_node_op_provider,
         allowlist_requires_credentials,
     )
-    from coder.workflow.operation_catalog import node_requires_credentials
+    from coder.workflow.operation_catalog import node_requires_credentials, unfunded_platform_key_text
     from coder.workflow.workflow_ops import agent_message_error, agent_trigger_fed
     from utils.credentials import extract_credential_ids
 
@@ -126,11 +126,12 @@ def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dic
             else node_requires_credentials(kind, operation, cfg)
         )
         if needs_credential and not extract_credential_ids(cfg):
+            missing_key = None if provider else unfunded_platform_key_text(kind, operation, cfg)
             issues.append(
                 {
                     "node_id": nid,
                     "code": "missing_credentials",
-                    "message": f"{cfg.get('label') or nid}: connect an account",
+                    "message": f"{cfg.get('label') or nid}: {missing_key or 'connect an account'}",
                 }
             )
         if not provider:

@@ -209,6 +209,10 @@ class AgenticBuilder:
                 for node in nodes
                 if node.get("id") or node.get("name")
             }
+        if user_context:
+            email = await self._user_email()
+            if email:
+                user_context = {**user_context, "user_email": email}
         system = build_system_prompt(
             self.graph_state,
             silent=silent,
@@ -241,6 +245,21 @@ class AgenticBuilder:
             ),
             workflow_id=self.workflow_id,
         )
+
+    async def _user_email(self) -> Optional[str]:
+        """The user's own address, which a Send email step reaches with no account to connect. Fails open: the
+        brain is then just not told it."""
+        if not self.user_id:
+            return None
+        try:
+            from repositories.users import get_user_email
+            from utils.database_pool import get_native_pool
+
+            pool = get_native_pool()
+            return await get_user_email(pool, self.user_id) if pool else None
+        except Exception as exc:
+            logger.warning("Reading the user's email failed: %s", exc)
+            return None
 
     async def _read_description(self) -> None:
         """The workflow's description, for the snapshot (it isn't part of the
@@ -1029,6 +1048,14 @@ class AgenticBuilder:
                 node_id = op.attrs.get("node", "") or op.attrs.get("id", "")
             if node_id and node_id not in candidate_ids:
                 candidate_ids.append(node_id)
+        # A change anywhere (a step removed too) can finish what held a trigger back: try the unarmed ones again.
+        if candidate_ids or any(op.tag == "remove_node" for op in ops):
+            candidate_ids.extend(
+                node.id
+                for node in self.graph_state.nodes.values()
+                if node.id not in candidate_ids
+                and (not node.config.get("webhook_url") or node.config.get("trigger_error"))
+            )
 
         from utils.webhook_manager import WebhookManager
 

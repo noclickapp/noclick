@@ -54,6 +54,20 @@ def platform_key_funds(schema: Mapping[str, Any]) -> bool:
     return platform_key_configured(marker["env"])
 
 
+def unfunded_platform_key(schema: Mapping[str, Any]) -> Optional[Dict[str, Any]]:
+    """The marker of a platform-keyed operation this installation can't run credential-less (a self-hosted one
+    without its key), else None."""
+    marker = platform_key_of(schema)
+    return marker if marker is not None and not platform_key_funds(schema) else None
+
+
+def missing_platform_key(env_var: str, service: str, *, byok: bool) -> str:
+    """What a self-hosted instance without ``env_var`` says of an operation that runs on it, and the fix."""
+    alternative = f", or connect your own {service} credential to this node" if byok else ""
+    return (f"This operation runs on {service}, and this instance has no {service} key. "
+            f"Add it under Settings → Self-hosted ({env_var}){alternative}.")
+
+
 def require_platform_key(env_var: str, service: str, *, byok: bool) -> str:
     """The platform key for ``service``; when it is missing, the error names the fix."""
     # `or ""`: tests stub os.environ.get to answer None for an absent key.
@@ -61,10 +75,6 @@ def require_platform_key(env_var: str, service: str, *, byok: bool) -> str:
     if key:
         return key
     if is_local_edition():
-        alternative = f", or connect your own {service} credential to this node" if byok else ""
-        raise RuntimeError(
-            f"This operation runs on {service}, and this instance has no {service} key. "
-            f"Add it under Settings → Self-hosted ({env_var}){alternative}."
-        )
+        raise RuntimeError(missing_platform_key(env_var, service, byok=byok))
     fix = f"Add your own {service} API key to run this operation." if byok else "Scraping operations are unavailable."
     raise RuntimeError(f"{env_var} is not configured on the server. {fix}")

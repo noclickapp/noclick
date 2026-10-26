@@ -109,3 +109,28 @@ async def test_a_schedule_it_cannot_run_is_refused_with_the_reason(provisioning)
     assert ALLOWED in results
     assert not graph.nodes["daily"].config.get("trigger_registered")
     assert await pool.fetchval("SELECT count(*) FROM local_cron_schedules WHERE workflow_id=$1", workflow_id) == 0
+
+
+@pytest.mark.asyncio
+async def test_a_schedule_held_back_by_another_step_registers_once_that_step_goes(provisioning):
+    """A schedule refused because a step after it couldn't run yet (no account for it, or a key the instance lacks)
+    used to stay off once the builder removed that step: only the turn's own nodes were tried again."""
+    pool, workflow_id, provision = provisioning
+    graph = _graph(DAILY_AT_8)
+    graph.nodes["mail"] = NodeState(
+        id="mail", type="automation-gmail", label="Email the digest", goal="Email it", operation="send_email_message",
+        config={"operation": "send_email_message", "to": ["me@example.test"], "subject": "Digest", "body": "Hi"},
+    )
+    graph.add_edge("daily", "mail")
+    held = "\n".join(await provision(graph))
+    assert "Webhook provisioning failed for daily: Finish setup before activation" in held, held
+    assert "Email the digest" in held and not graph.nodes["daily"].config.get("trigger_registered")
+
+    graph.remove_node("mail")
+    results: list = []
+    async for _ in _builder(graph, workflow_id)._provision_trigger_webhooks(
+            [XmlOp("remove_node", {"name": "mail"})], [], results):
+        pass
+    assert "Webhook provisioned for daily" in "\n".join(results), results
+    assert graph.nodes["daily"].config["trigger_registered"] is True
+    assert await pool.fetchval("SELECT count(*) FROM local_cron_schedules WHERE workflow_id=$1", workflow_id) == 1
