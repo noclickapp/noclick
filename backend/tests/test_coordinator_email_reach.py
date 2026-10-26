@@ -16,6 +16,7 @@ from billing.usage_tracker import usage_tracker
 from coder.coordinator import email_channel, reach
 from coder.coordinator.email_channel import CoordinatorEmailError, set_coordinator_address
 from utils.email_sending import EmailNotSent
+from tests.test_local_email_transport import fake_smtp  # noqa: F401
 
 pytestmark = pytest.mark.asyncio
 DOMAIN = "noclick.app"
@@ -99,6 +100,45 @@ async def test_nothing_is_claimed_where_inbound_email_is_off(owner, monkeypatch)
     monkeypatch.setattr(email_channel, "get_inbound_email_domain", lambda: None)
     assert await email_channel.ensure_coordinator_address(pool, user_id) is None
     assert await email_channel.coordinator_address(pool, user_id) is None
+
+
+async def test_an_instance_with_no_inbound_mail_still_emails_the_owner_from_its_own_address(owner, monkeypatch,
+                                                                                          fake_smtp):
+    """A self-hosted instance that sends email (SMTP here) but takes none in gives the coordinator no address of its
+    own; told it had none, it asked the owner to connect Gmail to email them. It emails them from the instance's own
+    sender address, and says to answer in the chat, where their reply reaches it."""
+    from utils import email_reservation_manager, email_sending
+
+    pool, user_id, email = owner
+    monkeypatch.delenv("INBOUND_EMAIL_DOMAIN")
+    monkeypatch.setattr(email_reservation_manager, "_platform_mail", ((), None))
+    monkeypatch.setattr(email_sending, "_transport", email_sending.ConfiguredTransport())
+    for name in ("RESEND_API_KEY", "SMTP_PORT", "SMTP_USERNAME", "SMTP_PASSWORD"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("SMTP_HOST", "smtp.example.com")
+    monkeypatch.setenv("FROM_EMAIL", "NoClick <noclick@example.com>")
+    monkeypatch.setattr(usage_tracker, "enforce_credit_gate", AsyncMock())
+    monkeypatch.setattr(usage_tracker, "track_usage_event", AsyncMock())
+    await pool.execute("INSERT INTO conversations (conversation_id, user_id, events) VALUES ($1, $2::uuid, '[]')",
+                       f"coordinator:{user_id}", user_id)
+
+    assert await email_channel.ensure_coordinator_address(pool, user_id) is None
+    assert await reach.reach_note(pool, user_id) == reach.PROMPTS.reach_note(
+        phone_only=False, address=None, paused=False, instance_address="noclick@example.com")
+    out = await reach.reach_owner(pool, user_id, "Today's top story: Show HN.", channel="email", subject="Hacker News")
+    assert out["success"] and out["from"] == "noclick@example.com" and out["sent_to"] == email
+    (message,) = fake_smtp.sent
+    assert message["To"] == email and message["From"] == "NoClick coordinator <noclick@example.com>"
+    assert message["Subject"] == "Hacker News"
+    text = message.get_body(("plain",)).get_content()
+    assert "Answer in the NoClick chat." in text and "Reply to this email" not in text
+
+    # An instance that sends no email has nothing to send it from.
+    monkeypatch.delenv("SMTP_HOST")
+    assert email_channel.instance_sender() is None
+    assert (await reach.reach_owner(pool, user_id, "Again?", channel="email"))["reason"] == "no_address"
+    assert await reach.reach_note(pool, user_id) == reach.PROMPTS.reach_note(
+        phone_only=False, address=None, paused=False)
 
 
 async def test_default_names_are_readable_valid_addresses():

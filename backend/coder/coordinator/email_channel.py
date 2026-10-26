@@ -14,6 +14,10 @@ dropped before anything reads it. The reply goes back on
 the same thread from the same address, like any email the coordinator sends
 the owner (``send_owner_email``), billed as one email send.
 
+An instance with no inbound mail domain gives the coordinator no address, but
+still emails the owner from its own sender address (``instance_sender``); they
+answer in the chat.
+
 Where an agent answers the owner in the coordinator's place, its address
 (``ACCOUNT_AGENT_EMAIL``) is the one these read, claim, rename and switch.
 """
@@ -71,6 +75,16 @@ async def coordinator_address(pool, user_id: str) -> Optional[str]:
         user_id,
     )
     return build_email_address(row["local_part"], row["domain"]) if row else None
+
+
+def instance_sender() -> Optional[str]:
+    """On an instance with no inbound mail domain (so no address of the coordinator's own) that sends email, the
+    address its mail goes out from: the coordinator emails the owner from it, and replies to it never reach it."""
+    from utils.email_sending import configured_sender_address, outbound_email_configured
+
+    if get_inbound_email_domain() or not outbound_email_configured():
+        return None
+    return configured_sender_address() or None
 
 
 def _default_names(owner_email: Optional[str]) -> list[str]:
@@ -227,7 +241,8 @@ async def send_owner_email(pool, user_id: str, body: str, *, subject: Optional[s
     body = (body or "").strip()[:_BODY_MAX]
     if not body:
         return {"success": False, "reason": "empty", "error": "The email is empty."}
-    sender = await coordinator_address(pool, user_id)
+    own = await coordinator_address(pool, user_id)
+    sender = own or instance_sender()
     if sender is None:
         return {"success": False, "reason": "no_address",
                 "error": "You have no email address yet. Pick a readable name with "
@@ -250,9 +265,14 @@ async def send_owner_email(pool, user_id: str, body: str, *, subject: Optional[s
         subject = base if base.lower().startswith("re:") else f"Re: {base}"
     else:
         subject = (subject or body.splitlines()[0]).strip()[:_SUBJECT_MAX] or "From your NoClick coordinator"
-    # While the owner has mail to this address off, a reply would go nowhere: say where to answer instead.
-    footer = ("Your NoClick coordinator. Replies to this address are turned off; answer in the NoClick chat."
-              if await inbound_paused(pool, user_id) else "Your NoClick coordinator. Reply to this email to talk to it.")
+    # Where a reply would go nowhere (the instance's own address, or mail to the coordinator's turned off), say
+    # where to answer instead.
+    if own is None:
+        footer = "Your NoClick coordinator. Answer in the NoClick chat."
+    elif await inbound_paused(pool, user_id):
+        footer = "Your NoClick coordinator. Replies to this address are turned off; answer in the NoClick chat."
+    else:
+        footer = "Your NoClick coordinator. Reply to this email to talk to it."
     try:
         result = await send_email(
             from_addr=sender, from_name="NoClick coordinator", to=to, subject=subject,

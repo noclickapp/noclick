@@ -58,9 +58,15 @@ MEMORY_CATALOG_HEADER = "Memories (read_memory loads one):"
 MEMORY_CATALOG_MORE = "There are more; search_memories finds them."
 
 
-def reach_note(*, phone_only: bool, address: Optional[str], paused: bool) -> str:
+def reach_note(*, phone_only: bool, address: Optional[str], paused: bool,
+               instance_address: Optional[str] = None) -> str:
+    """``instance_address``: you have no address of your own, and email to the owner goes out from this one, the
+    instance's."""
     if phone_only:
         return "Email is unavailable until the owner connects one (connect_account)."
+    if not address and instance_address:
+        return (f"You email the owner with message_owner (channel email), from this instance's address "
+                f"{instance_address}; replies to it don't reach you.")
     if not address:
         return "You have no email address yet (set_email_address)."
     if paused:
