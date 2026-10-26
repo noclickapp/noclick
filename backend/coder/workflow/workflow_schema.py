@@ -75,10 +75,15 @@ def compact_schema(properties: dict, required: list) -> str:
     Features:
 
     - Hidden fields (``ui:hidden``) are omitted.
-    - Nested object fields become child ``<field>`` elements.
+    - Nested object fields become child ``<field>`` elements, also for list
+      items that are one of several types (a schedule object or a reference).
     - Enum values shown as ``values="a|b|c"``.
     - ~60 % fewer tokens than raw JSON Schema.
     """
+
+    def _item_variants(inner: dict) -> list:
+        items = inner.get("items", {})
+        return items.get("anyOf") or [items]
 
     def _parse_inner(prop: dict) -> tuple:
         """Extract the non-null variant, nullable flag, and nested props."""
@@ -92,9 +97,11 @@ def compact_schema(properties: dict, required: list) -> str:
         if inner.get("type") == "object" and "properties" in inner:
             nested = inner["properties"]
         elif inner.get("type") == "array":
-            items = inner.get("items", {})
-            if items.get("type") == "object" and "properties" in items:
-                nested = items["properties"]
+            nested = next(
+                (v["properties"] for v in _item_variants(inner)
+                 if v.get("type") == "object" and "properties" in v),
+                None,
+            )
         return inner, nullable, nested
 
     def _type_str(inner: dict) -> str:
@@ -104,7 +111,8 @@ def compact_schema(properties: dict, required: list) -> str:
         if t == "integer":
             return "int"
         if t == "array":
-            return f"{inner.get('items', {}).get('type', 'any')}[]"
+            types = [v.get("type", "any") for v in _item_variants(inner)]
+            return f"{types[0]}[]" if len(types) == 1 else f"({'|'.join(types)})[]"
         return t
 
     def _field_xml(name: str, prop: dict, indent: int = 0) -> list:
@@ -133,7 +141,7 @@ def compact_schema(properties: dict, required: list) -> str:
         # forces them to read the goal / user description for the value.
         is_queryable = bool(prop.get("x-queryable-enum"))
         if default is not None and not is_queryable:
-            if isinstance(default, dict):
+            if isinstance(default, (dict, list)):
                 attrs.append(f'default="{escape_xml_attr(json.dumps(default, separators=(",", ":")))}"')
             elif isinstance(default, str):
                 attrs.append(f'default="{escape_xml_attr(default)}"')

@@ -169,8 +169,11 @@ class SinglePassNodeDrafter:
             '{"operation": "<operation name>", "config": {"<field>": "<value>"}}'
         )
 
-    async def _call_model(self, prompt: str, schema_hint: str) -> Dict[str, Any]:
-        """Run one JSON completion and record its cost/token usage."""
+    async def _call_model(
+        self, prompt: str, schema_hint: str, correction: Optional[tuple] = None,
+    ) -> Dict[str, Any]:
+        """Run one JSON completion and record its cost/token usage.
+        ``correction`` is a rejected draft and why, for one corrective try."""
         import litellm
 
         from .builder_config import BRAIN_FALLBACK_MODEL
@@ -187,6 +190,15 @@ class SinglePassNodeDrafter:
             {"role": "system", "content": "You output only valid JSON objects."},
             {"role": "user", "content": f"{prompt}\n\n{schema_hint}"},
         ]
+        if correction:
+            rejected, error = correction
+            messages += [
+                {"role": "assistant", "content": json.dumps(rejected, default=str)},
+                {"role": "user", "content": (
+                    f"That configuration is invalid:\n{error}\n\n"
+                    "Fix it and return the whole corrected JSON object."
+                )},
+            ]
         candidates = [(
             model,
             getattr(config, "provider_order", None),
@@ -264,6 +276,8 @@ class SinglePassNodeDrafter:
         target_field: Optional[str] = None,
     ) -> None:
         from .operation_catalog import (
+            coerce_config_value_types,
+            config_value_errors,
             get_operation_schema,
             get_operations_for_node_type,
             validate_node_config,
@@ -306,6 +320,7 @@ class SinglePassNodeDrafter:
             ))
             return
 
+        prompt = self._node_prompt(node, operations)
         if mode in ("fields", "single_field") and node.operation:
             # Operation is already chosen; only fields are being (re)filled.
             hint = (
@@ -313,13 +328,11 @@ class SinglePassNodeDrafter:
                 + (f"Provide ONLY the field `{target_field}`. " if target_field else "")
                 + "Return only the JSON object."
             )
-            drafted = await self._call_model(self._node_prompt(node, operations), hint)
+            drafted = await self._call_model(prompt, hint)
             drafted["operation"] = node.operation
         else:
-            drafted = await self._call_model(
-                self._node_prompt(node, operations),
-                "Return only the JSON object.",
-            )
+            hint = "Return only the JSON object."
+            drafted = await self._call_model(prompt, hint)
         operation = drafted.get("operation") or ""
         valid_names = {op["name"] for op in operations}
         if operation not in valid_names:
@@ -344,18 +357,35 @@ class SinglePassNodeDrafter:
             config = None
         elif mode == "single_field" and isinstance(config, dict) and target_field:
             config = {k: v for k, v in config.items() if k == target_field}
-        if isinstance(config, dict):
-            merged = {**(node.config or {}), **config, "operation": operation}
+
+        async def judged(drafted_config: Dict[str, Any]) -> tuple:
+            merged = {**(node.config or {}), **drafted_config, "operation": operation}
+            # Stringified JSON, or a lone object where a list is wanted, fixed in place.
+            coerce_config_value_types(_node_kind(node), operation, merged)
             if _node_kind(node) == "agent":
                 # validate_node_config judges an agent's Model against models.dev synchronously.
                 await read_zen_catalog([merged.get("model")])
-            # Use the same validator as the canvas — an invalid
-            # draft is dropped rather than written onto the node.
-            error = validate_node_config(_node_kind(node), operation, merged)
-            if error:
-                logger.info(f"[NodeDrafter] {node_id}: config rejected ({error[:160]})")
-            else:
+            # The same validator as the canvas and the builder's own writes.
+            return merged, validate_node_config(_node_kind(node), operation, merged)
+
+        if isinstance(config, dict):
+            merged, error = await judged(config)
+            if error and mode == "full":
+                retry = await self._call_model(prompt, hint, correction=(drafted, error))
+                if retry.get("operation") == operation and isinstance(retry.get("config"), dict):
+                    merged, error = await judged(retry["config"])
+            if not error:
                 node.config = merged
+            elif mode == "full":
+                # Kept, less any wrong-typed value, so the builder's checks name what is wrong; dropped,
+                # the node kept its defaults (a schedule asked for daily read hourly) and nothing said so.
+                logger.info(f"[NodeDrafter] {node_id}: config invalid after a retry ({error[:160]})")
+                for key, _ in config_value_errors(_node_kind(node), operation, merged):
+                    if not (isinstance(merged.get(key), str) and "{{" in merged[key]):
+                        merged.pop(key, None)
+                node.config = merged
+            else:
+                logger.info(f"[NodeDrafter] {node_id}: config rejected ({error[:160]})")
 
         await queue.put(BuilderStreamEvent(
             type="node_updated",

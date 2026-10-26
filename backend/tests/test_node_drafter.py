@@ -29,17 +29,20 @@ def fresh_registry():
 
 
 
-def _drafter(model_reply, node_type="automation-slack", operation=None):
+def _drafter(*model_replies, node_type="automation-slack", operation=None):
+    """Each model call answers the next reply; the last one repeats."""
     d = SinglePassNodeDrafter(config=None)
     node = SimpleNamespace(type=node_type, operation=operation, config={},
                            goal="post a message", label="Slack")
     d.graph_state = SimpleNamespace(nodes={"n1": node})
     d.user_prompt = "notify the team"
 
-    async def fake_call(prompt, hint):
+    async def fake_call(prompt, hint, correction=None):
         fake_call.prompts.append((prompt, hint))
-        return model_reply
+        fake_call.corrections.append(correction)
+        return dict(model_replies[min(len(fake_call.prompts), len(model_replies)) - 1])
     fake_call.prompts = []
+    fake_call.corrections = []
     d._call_model = fake_call
     return d, node, fake_call
 
@@ -70,13 +73,72 @@ async def test_hallucinated_operation_is_refused():
     assert node.config == {}
 
 
+_DAYS = {"operation": "default", "config": {"schedules": [{"frequency": "days", "hour": 8, "minute": 0}]}}
+_DAY = {"operation": "default", "config": {"schedules": [{"frequency": "day", "hour": 8, "minute": 0}]}}
+
+
 @pytest.mark.asyncio
-async def test_invalid_config_is_dropped_not_written():
-    """Configs go through the same validator the canvas and hosted path use."""
-    d, node, _ = _drafter({"operation": "send_message_to_channel",
-                           "config": {"channel": {"not": "a string"}, "text": "hi"}})
+async def test_drafter_sees_the_schedule_fields_it_fills():
+    d, _, calls = _drafter(_DAY, node_type="trigger-cron")
     await _collect(d.draft_nodes({"n1"}))
-    assert node.operation == "send_message_to_channel"      # selection still stands
+    assert 'name="frequency" type="enum" values="seconds|minutes|hours|day|week|weeks|month"' in calls.prompts[0][0]
+
+
+@pytest.mark.asyncio
+async def test_rejected_draft_gets_one_corrective_try():
+    """"Every morning" drafted as "days": the validator's words go back once, and the fix is written."""
+    d, node, calls = _drafter(_DAYS, _DAY, node_type="trigger-cron")
+    await _collect(d.draft_nodes({"n1"}))
+    assert len(calls.prompts) == 2
+    rejected, error = calls.corrections[1]
+    assert rejected == _DAYS and "'day'" in error and "frequency" in error
+    assert node.config["schedules"] == _DAY["config"]["schedules"]
+
+
+@pytest.mark.asyncio
+async def test_draft_still_invalid_is_kept_for_the_builders_checks():
+    """Dropped, the trigger kept its hourly default and nothing said so: kept, the
+    validator the builder's done check runs names what is wrong."""
+    from coder.workflow.operation_catalog import validate_node_config
+
+    d, node, calls = _drafter(_DAYS, node_type="trigger-cron")
+    await _collect(d.draft_nodes({"n1"}))
+    assert len(calls.prompts) == 2                       # one corrective try, no more
+    assert node.config["schedules"] == _DAYS["config"]["schedules"]
+    assert "Input should be 'seconds', 'minutes', 'hours', 'day'" in validate_node_config(
+        "trigger-cron", "default", node.config)
+
+
+@pytest.mark.asyncio
+async def test_a_lone_schedule_object_is_put_in_its_list():
+    d, node, calls = _drafter(
+        {"operation": "default", "config": {"schedules": {"frequency": "day", "hour": 8, "minute": 0}}},
+        node_type="trigger-cron",
+    )
+    await _collect(d.draft_nodes({"n1"}))
+    assert len(calls.prompts) == 1
+    assert node.config["schedules"] == [{"frequency": "day", "hour": 8, "minute": 0}]
+
+
+@pytest.mark.asyncio
+async def test_wrong_typed_values_are_never_kept():
+    d, node, calls = _drafter(
+        {"operation": "default", "config": {"schedules": "every day at 8", "timezone": "Europe/London"}},
+        node_type="trigger-cron",
+    )
+    await _collect(d.draft_nodes({"n1"}))
+    assert len(calls.prompts) == 2
+    assert "schedules" not in node.config and node.config["timezone"] == "Europe/London"
+
+
+@pytest.mark.asyncio
+async def test_invalid_autofill_is_dropped_not_written():
+    """An on-demand autofill leaves the node as it was rather than writing an invalid value."""
+    d, node, calls = _drafter({"operation": "send_message_to_channel",
+                               "config": {"channel": {"not": "a string"}, "text": "hi"}},
+                              operation="send_message_to_channel")
+    await _collect(d.autofill_node("n1", mode="fields"))
+    assert len(calls.prompts) == 1
     assert "channel" not in node.config          # rejected draft not persisted
 
 

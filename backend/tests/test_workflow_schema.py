@@ -236,6 +236,26 @@ class TestCompactSchema:
         )
         assert 'default=' in result
 
+    def test_list_default_is_json(self):
+        result = compact_schema(
+            {"rows": {"type": "array", "items": {"type": "object"}, "default": [{"a": None}]}},
+            [],
+        )
+        assert 'default="[{&quot;a&quot;:null}]"' in result
+
+    def test_list_of_object_or_reference_shows_the_object(self):
+        # The cron trigger's schedules are each a schedule object or a {{reference}}: shown as any[], the drafter
+        # never saw `frequency` and wrote "days" for "every morning", a value the trigger can't run.
+        from coder.workflow.operation_catalog import get_operation_schema
+
+        schema = resolve_schema_refs(get_operation_schema("trigger-cron", "default"))
+        result = compact_schema({"schedules": schema["properties"]["schedules"]}, [])
+        assert 'name="schedules" type="(object|string)[]"' in result
+        assert '<field name="frequency" type="enum" values="seconds|minutes|hours|day|week|weeks|month"' in result
+        for name in ("interval", "hour", "minute", "dayOfWeek", "dayOfMonth", "daysOfWeek"):
+            assert f'<field name="{name}"' in result
+        assert '<field name="daysOfWeek" type="(integer|string)[]"' in result
+
 
 # ---------------------------------------------------------------------------
 # extract_output_paths

@@ -1061,6 +1061,9 @@ class AgenticBuilder:
                     node_type=node.type,
                     operation=node.operation,
                     config=node.config,
+                    # Readiness is judged on the graph being built: the saved one
+                    # lacks this turn's nodes ("Save the trigger before activating it").
+                    workflow_graph=self.graph_state.to_workflow_data(),
                 )
             except Exception as exc:
                 logger.warning(
