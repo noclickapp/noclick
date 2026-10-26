@@ -575,6 +575,23 @@ class TestCoordinatorHandler(BaseHandlerTest):
         self.turn.assert_not_awaited()
 
     @pytest.mark.asyncio
+    async def test_staff_viewing_as_the_owner_never_move_their_clock(self, frontend_sio, sid, monkeypatch):
+        """Staff viewing an account as its owner (mimic) open its chat from their own browser: the agent is still
+        made, but its clock stays where the owner is, not where the staff member is (2026-10-26)."""
+        asked = []
+
+        async def account_agent(pool, user_id, *, ensure=False, timezone=None):
+            asked.append((user_id, ensure, timezone))
+            return {"id": "agent-1", "conversation": "owner"}
+
+        monkeypatch.setitem(capabilities._providers, capabilities.ACCOUNT_AGENT, account_agent)
+        session = await self.main_api_sio.get_session(sid)
+        await self.main_api_sio.save_session(sid, {**session, "real_user_id": "uuid-staff"})
+        opened = await self._send(frontend_sio, sid, CoordinatorOpenRequest(request_id="o1", timezone="Asia/Calcutta"))
+        assert opened["data"]["agent"] == {"id": "agent-1", "conversation": "owner"}
+        assert asked == [("uuid-test-user", True, None)]
+
+    @pytest.mark.asyncio
     async def test_a_page_that_never_opened_the_chat_still_reaches_the_agent(self, frontend_sio, sid, monkeypatch):
         """A send or a reset from a page that skipped opening the chat (an older one) makes the agent, as an open
         does, rather than running the coordinator for an account meant to move."""

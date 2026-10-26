@@ -157,8 +157,10 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
         async def op(user_id: str, _email):
             pool = await self.get_pool()
             # The agent that answers instead, when the account has one: the chat talks to it over /v1, and its clock
-            # is where this browser is.
-            agent = await account_agent(pool, user_id, ensure=True, timezone=request.timezone)
+            # is where this browser is, unless staff are viewing as the owner (mimic) from wherever they are.
+            session = await self.sio.get_session(sid)
+            zone = None if session and session.get("real_user_id") else request.timezone
+            agent = await account_agent(pool, user_id, ensure=True, timezone=zone)
             return {
                 "conversation_id": coordinator.conversation_id_for(user_id),
                 "model": coordinator.COORDINATOR_MODEL,
