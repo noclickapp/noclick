@@ -38,6 +38,8 @@ class AgentSandboxRuntime(Protocol):
     """Structural contract implemented by every registered runtime."""
 
     mount_path: str
+    # What the shell has beyond the usual tools, said in execute_bash's description ("" when nothing).
+    tools_note: str
 
     @property
     def persistent(self) -> bool: ...
@@ -93,6 +95,8 @@ class LocalSandboxRuntime:
     working directory: commands run with it as cwd, and reads translate a
     mount-path prefix back to it.
     """
+
+    tools_note = ""
 
     def __init__(
         self,

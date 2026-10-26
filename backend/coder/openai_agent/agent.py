@@ -815,6 +815,7 @@ class Agent:
                 "and manipulating files; running scripts; and inspecting state."
                 + (f" {mounts_note}" if mounts_note else "")
                 + (f" {env_note}" if env_note else "")
+                + (f" {runtime.tools_note}" if getattr(runtime, "tools_note", "") else "")
             ),
             params_json_schema={
                 "type": "object",
