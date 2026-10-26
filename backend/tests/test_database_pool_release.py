@@ -6,6 +6,7 @@ does nothing under transaction pooling. An open transaction is still rolled back
 import asyncpg
 import pytest
 
+from tests.fixtures.real_db_fixture import real_database
 from utils import database_pool
 
 pytestmark = pytest.mark.asyncio
@@ -24,7 +25,7 @@ def sent(monkeypatch):
     return statements
 
 
-async def test_a_release_sends_nothing(sent):
+async def test_a_release_sends_nothing(real_database, sent):
     pool = database_pool.get_native_pool()
     async with pool.acquire() as conn:
         assert await conn.fetchval("SELECT 1") == 1
@@ -32,7 +33,7 @@ async def test_a_release_sends_nothing(sent):
     assert sent == []
 
 
-async def test_a_transaction_left_open_is_rolled_back_on_release(sent):
+async def test_a_transaction_left_open_is_rolled_back_on_release(real_database, sent):
     pool = database_pool.get_native_pool()
     async with pool.acquire() as conn:
         await conn.execute("BEGIN")

@@ -343,6 +343,21 @@ class TestJiraTrigger:
         assert refreshed["site_url"] == "https://acme.atlassian.net"
         assert refreshed["scope"] == "read:jira-work manage:jira-webhook"
 
+    @pytest.mark.asyncio
+    async def test_api_token_trigger_fails_with_reconnect_guidance(self, monkeypatch):
+        async def must_not_call(*args, **kwargs):
+            raise AssertionError("an API token can't register a dynamic webhook; don't call Jira")
+
+        monkeypatch.setattr("nodes.jira_node.jira_register_webhook", must_not_call)
+        monkeypatch.setattr("nodes.jira_node.get_watch_channel", must_not_call)
+        token = {"credential_type": "jira_api_token", "domain": "acme.atlassian.net", "email": "a@b.c", "api_token": "x"}
+        with pytest.raises(ValueError, match="Continue with Jira"):
+            await JiraNode._register_watch_channel(
+                pool=None, user_id="u", workflow_id="w", node_id="n", webhook_id="wh",
+                webhook_url="https://wh.hooks.example.test", credential=token, credential_id="c",
+                config={"operation": "on_issue_created"},
+            )
+
     def test_no_signature_override(self):
         # Jira dynamic webhooks carry no HMAC — the node deliberately inherits
         # the permissive base default (URL secrecy is the security boundary).
@@ -366,8 +381,7 @@ class TestJiraTrigger:
                 node_id="n1",
                 webhook_id="whid",
                 webhook_url="https://wh.hooks.example.test/whid",
-                credential={"credential_type": "jira_api_token", "domain": "acme.atlassian.net",
-                            "email": "a@b.com", "api_token": "xyz"},
+                credential={"credential_type": "jira_oauth", "cloud_id": "CID", "access_token": "t"},
                 credential_id="cid",
                 config={"events": ["jira:issue_created"], "jql_filter": "project = PROJ"},
             )
@@ -396,8 +410,7 @@ class TestJiraTrigger:
                 node_id="n1",
                 webhook_id="whid",
                 webhook_url="https://wh.hooks.example.test/whid",
-                credential={"credential_type": "jira_api_token", "domain": "acme.atlassian.net",
-                            "email": "a@b.com", "api_token": "xyz"},
+                credential={"credential_type": "jira_oauth", "cloud_id": "CID", "access_token": "t"},
                 credential_id="cid",
                 config={"operation": "on_issue_created", "project_key": "CHECKO"},
             )
@@ -424,8 +437,7 @@ class TestJiraTrigger:
                 node_id="n1",
                 webhook_id="whid",
                 webhook_url="https://wh.hooks.example.test/whid",
-                credential={"credential_type": "jira_api_token", "domain": "acme.atlassian.net",
-                            "email": "a@b.com", "api_token": "xyz"},
+                credential={"credential_type": "jira_oauth", "cloud_id": "CID", "access_token": "t"},
                 credential_id="cid",
                 config={"operation": "on_issue_created"},
             )

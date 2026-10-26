@@ -430,6 +430,8 @@ def _mcp_server(workflow_data, name):
     with patch("mcp_server.DatabasePoolMixin.__init__", return_value=None):
         srv = NoClickMCPServer(MagicMock())
     srv._emit_builder_event = AsyncMock()
+    # The account holds no credential the new harness could take (a DB read).
+    srv._auto_attach_agent_credential = AsyncMock(return_value=None)
 
     async def load(user_id, workflow_id, meta_out=None):
         if meta_out is not None:

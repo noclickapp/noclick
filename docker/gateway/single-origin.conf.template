@@ -121,6 +121,18 @@ server {
         include /etc/nginx/noclick-proxy.conf;
     }
 
+    # Texting: Meta's WhatsApp deliveries and Sendblue's iMessage ones, each
+    # checked against its provider's signature.
+    location /whatsapp/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    location /imessage/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
     location /local-cron/ {
         proxy_pass http://127.0.0.1:8000;
         include /etc/nginx/noclick-proxy.conf;

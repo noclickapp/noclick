@@ -20,6 +20,7 @@ class _CallableAgentStub:
 
     def __init__(self):
         self.cleanup = AsyncMock()
+        self.turn_ended_by = None  # no turn limit ended the turn
 
     async def __call__(self, _message_dict):
         return None
