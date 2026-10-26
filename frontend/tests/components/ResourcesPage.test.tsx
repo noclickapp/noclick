@@ -9,7 +9,8 @@
 // Interfaces or Tables kinds. Right after a domain is bought, one of the
 // websites can go on it in the same flow, or not yet. A kind's trash lists
 // under it, each item restorable or purged after a confirm. A bucket names the
-// apps and agents that use it, an app opening its own page.
+// apps and agents that use it, an app opening its own page. An item of one of
+// the account's users names that user.
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import type { ReactNode } from 'react';
@@ -450,5 +451,37 @@ describe('Resources with a platform', () => {
         const page = await screen.findByTestId('resource-detail');
         expect(within(page).getByRole('heading', { name: 'hello@acmebooking.com' })).toBeTruthy();
         expect(within(page).getByText('The hello@acmebooking.com body')).toBeTruthy();
+    });
+
+    it("names the one of the account's users an item belongs to on its row, its page and in the trash, nobody on the account's own, and never offers a user's domain for the account's address", async () => {
+        const pilot = { id: 'wa-100200300400500600', name: 'Harbor Flight School' };
+        const site: ResourceItem = { id: 'repo_pilot', kind: 'repos', title: 'flight-notes', subtitle: 'main · First page', usedBy: [], owner: pilot, platform: { facts: [] } };
+        const theirDomain: ResourceItem = { ...DOMAIN, id: 'dom_pilot', title: 'flight-notes.com', owner: pilot };
+        const { items, trash, errors, mailDomains } = platform;
+        platform.items = { ...items, repos: [site], domains: [DOMAIN, theirDomain] };
+        platform.trash = { repos: [{ id: 'tr_9', name: 'flight-notes-old', trashedAt: '2026-10-08T12:00:00Z', purgeAfter: '2026-11-07T12:00:00Z', owner: pilot }] };
+        platform.errors = {};
+        platform.mailDomains = ['acmebooking.com', 'flight-notes.com'];
+        try {
+            renderAt('&kind=repos');
+            expect((await screen.findByText('flight-notes')).closest('button')!.textContent).toContain('For Harbor Flight School');
+            expect(screen.getByTestId('trash-row-tr_9').textContent).toContain('For Harbor Flight School · Deleted');
+            cleanup();
+            renderAt('&kind=repos&resource=repo_pilot');
+            expect(within(await screen.findByTestId('resource-detail')).getByText('For Harbor Flight School, one of your users')).toBeTruthy();
+            cleanup();
+            renderAt('&kind=apps');
+            expect((await screen.findByText('booking')).closest('button')!.textContent).not.toContain('For ');
+            cleanup();
+            // An address made here is the account's: it goes on the account's own domain, never the user's.
+            renderAt('&kind=email&new=1');
+            const domain = (await screen.findByRole('combobox', { name: 'Domain' })) as HTMLSelectElement;
+            expect([...domain.options].map((o) => o.textContent)).toEqual(['acmebooking.com', 'NoClick’s mail domain']);
+        } finally {
+            platform.items = items;
+            platform.trash = trash;
+            platform.errors = errors;
+            platform.mailDomains = mailDomains;
+        }
     });
 });

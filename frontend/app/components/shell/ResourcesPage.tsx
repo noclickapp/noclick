@@ -85,6 +85,7 @@ function Row({ item, now, price, onOpen }: { item: ResourceItem; now: string; pr
                 </span>
             )}
             {origin && <span className="hidden min-w-0 max-w-[220px] shrink-0 truncate text-[12.5px] text-muted-foreground md:block">Built in {origin.name}</span>}
+            {item.owner && <span className="hidden min-w-0 max-w-[220px] shrink-0 truncate text-[12.5px] text-muted-foreground md:block">For {item.owner.name}</span>}
             {Figure && <Figure item={item} />}
             {price !== undefined && (
                 <span className="min-w-[72px] shrink-0 text-right text-[13px] tabular-nums text-foreground/85">
@@ -342,7 +343,8 @@ export function ResourcesView() {
     if (activeKind === 'email' && platform && params.get('new') === '1') {
         return (
             <NewAddressPage
-                domains={platform.mailDomains}
+                // An address made here is the account's, and goes only on one of the account's own domains.
+                domains={platform.mailDomains.filter((name) => !items.domains.find((d) => d.title === name)?.owner)}
                 create={platform.createAddress}
                 onBack={() => go('email')}
                 onCreated={(id) => {

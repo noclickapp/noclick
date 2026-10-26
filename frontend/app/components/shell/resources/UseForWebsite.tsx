@@ -6,12 +6,21 @@ import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { BUTTON_GHOST, BUTTON_PRIMARY, BUTTON_SECONDARY } from '../buttons';
 import { ShellDialog } from '../ShellDialog';
+import type { ResourceItem } from './model';
 import { usePlatformResources } from './platform';
 import { ChoiceList } from './ui';
 
+/** The websites `domain` can show: those of whoever holds it, the account or the one of its users it belongs to (a
+ * domain not listed yet, one just bought, is the account's). */
+export function useWebsitesFor(domain: string): ResourceItem[] {
+    const items = usePlatformResources()?.items;
+    const holder = items?.domains?.find((d) => d.title === domain)?.owner?.id;
+    return (items?.apps ?? []).filter((app) => app.owner?.id === holder);
+}
+
 function useServeWebsite(domain: string) {
     const platform = usePlatformResources();
-    const apps = platform?.items.apps ?? [];
+    const apps = useWebsitesFor(domain);
     // The only website is picked for you.
     const preset = apps.length === 1 ? apps[0].id : null;
     const [appId, setAppId] = useState<string | null>(preset);

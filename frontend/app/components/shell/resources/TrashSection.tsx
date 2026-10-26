@@ -47,7 +47,13 @@ function TrashRow({ entry, now, onRestore, onPurge }: { entry: TrashEntry; now: 
             setBusy(false);
         }
     };
-    const when = [entry.trashedAt && `Deleted ${relTime(entry.trashedAt, now)}`, entry.purgeAfter && `gone for good ${relTime(entry.purgeAfter, now)}`].filter(Boolean).join(' · ');
+    const when = [
+        entry.owner && `For ${entry.owner.name}`,
+        entry.trashedAt && `Deleted ${relTime(entry.trashedAt, now)}`,
+        entry.purgeAfter && `gone for good ${relTime(entry.purgeAfter, now)}`,
+    ]
+        .filter(Boolean)
+        .join(' · ');
     return (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3" data-testid={`trash-row-${entry.id}`}>
             <span className="min-w-0 flex-1">

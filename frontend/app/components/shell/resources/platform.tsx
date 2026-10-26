@@ -8,7 +8,7 @@
 import { createContext, Suspense, useContext, type ComponentType, type ReactNode } from 'react';
 import type { DomainRegistrar } from '~/hooks/useDomainPurchase';
 import type { KindId } from './kinds';
-import type { ResourceItem } from './model';
+import type { ResourceItem, ResourceOwner } from './model';
 
 /** What a deletion does, as the platform previews it (`POST /v1/delete_previews`'s `impact`). */
 export interface DeletionImpact {
@@ -28,6 +28,8 @@ export interface TrashEntry {
     name: string;
     trashedAt: string | null;
     purgeAfter: string | null;
+    /** The one of the account's users it belonged to. */
+    owner?: ResourceOwner;
 }
 
 /** The impact's lists that have something in them, as labelled rows. */
@@ -55,7 +57,7 @@ export interface Removal {
 }
 
 export interface PlatformResources {
-    /** The account's own platform resources, by kind. */
+    /** Every platform resource the account holds, by kind: its own, and its users' (each with its `owner`). */
     items: Partial<Record<KindId, ResourceItem[]>>;
     /** True until every kind's first read has answered. */
     loading: boolean;
@@ -68,7 +70,7 @@ export interface PlatformResources {
     registrar: DomainRegistrar;
     /** Shows the website (app) `appId` at `domain` too (a domain's own name brings its www); throws an Error saying why it couldn't. */
     serveApp(appId: string, domain: string): Promise<void>;
-    /** The account's domains an email address can be made at (any address works on one): those whose DNS NoClick runs. */
+    /** The domains any email address works on, the account's and its users': those whose DNS NoClick runs. */
     mailDomains: string[];
     /** Makes the address `localPart`@`domain`, or (`domain` null) one on NoClick's own mail domain; resolves to its
      * item's id, or throws an Error saying why it couldn't. */

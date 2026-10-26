@@ -410,7 +410,8 @@ export function BuyDomainPage({
     onBought: (domain: string) => void;
     onOpen: (domain: string) => void;
 }) {
-    const hasApps = !!usePlatformResources()?.items.apps?.length;
+    // A domain bought here is the account's own, which shows only the account's own websites.
+    const hasApps = !!usePlatformResources()?.items.apps?.some((app) => !app.owner);
     const [bought, setBought] = useState<string | null>(null);
     if (bought) {
         const done = () => onBought(bought);

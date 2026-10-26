@@ -3,7 +3,8 @@
 // from the dashboard overview (numbers are phone_number credentials; files and
 // tables are workflow resources, workspaces agent volumes). Domains, email
 // addresses (inboxes), apps, databases, buckets and repos are the platform's, read by the
-// registered platform (platform.tsx) for the signed-in account: an automation's
+// registered platform (platform.tsx) for the signed-in account, its platform users'
+// (`owner`) beside its own: an automation's
 // published interface is one of its apps. An automation's tables are a
 // database: the one a platform keeps them in, else one per automation here.
 import { useCallback, useMemo } from 'react';
@@ -40,6 +41,14 @@ export interface ResourceUser {
     binding: string | null;
 }
 
+/** One of the account's platform users, whose resource it is (the account's own resources have none). */
+export interface ResourceOwner {
+    /** Your id for the user. */
+    id: string;
+    /** Its name, else its id. */
+    name: string;
+}
+
 /** A file or table, as the overview lists it. */
 export interface FileRef {
     entry: FileEntry;
@@ -58,6 +67,8 @@ export interface ResourceItem {
     users?: ResourceUser[];
     /** The automation it came from (an interface published as an app, the database of an automation's tables). */
     origin?: WorkflowRef;
+    /** The one of the account's users it belongs to (an app a coding agent made for them, say). */
+    owner?: ResourceOwner;
     /** Something about it is broken (a dropped number, a domain that expired). */
     attention?: string;
     /** A step that breaks nothing yet (a DNS record to add, a registration under way). */

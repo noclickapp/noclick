@@ -556,6 +556,7 @@ export function ResourceDetail({
                                 automation
                             </p>
                         )}
+                        {item.owner && <p className="mt-1 text-[13px] text-muted-foreground">For {item.owner.name}, one of your users</p>}
                     </div>
                     {actions && <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">{actions}</div>}
                 </header>
