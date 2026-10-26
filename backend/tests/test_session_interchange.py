@@ -145,6 +145,12 @@ def _codex_rows(cwd: str) -> list:
         return {"retained_source": {"id": {"message_id": message_id, "turn_id": turn, "role": role}, "revision": f"retained_{message_id}", "complete": True},
                 "client_authored": False, "user_input_order": order}
 
+    # What 0.164.0 adds (thread_settings_applied, content_item_metadata, an
+    # assistant message's status and annotations) rides along, so its bump finds
+    # it already read.
+    def harness_item(kind: str) -> dict:
+        return {"turn_id": turn, "content_item_kinds": [kind], "content_item_metadata": [{"provenance": {"type": "harness", "hook": False}}]}
+
     return [
         ("session_meta", {"session_id": sid, "id": sid, "timestamp": "2026-09-12T10:00:00.000Z", "cwd": cwd, "originator": "codex_cli_rs",
                           "cli_version": "0.162.0", "source": "cli", "model_provider": "openai", "history_mode": "paginated",
@@ -152,18 +158,26 @@ def _codex_rows(cwd: str) -> list:
                           "context_window": {"window_id": "01a0a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a5d"}}),
         ("event_msg", {"type": "task_started", "turn_attribution": attribution, "turn_id": turn, "root_turn_id": turn, "started_at": 1789200000,
                        "model_context_window": 258400, "collaboration_mode_kind": "default"}),
-        ("response_item", {"type": "message", "id": "msg_dev", "role": "developer", "content": [{"type": "input_text", "text": "# AGENTS.md instructions\nBe terse."}]},
+        ("response_item", {"type": "message", "id": "msg_dev", "role": "developer", "content": [{"type": "input_text", "text": "# AGENTS.md instructions\nBe terse."}],
+                           "internal_chat_message_metadata_passthrough": harness_item("permissions.instructions")},
          {"client_authored": False, "mcp_attribution": {"status": "none"}}),
-        ("response_item", {"type": "message", "id": "msg_env", "role": "user", "content": [{"type": "input_text", "text": f"<environment_context>\n  <cwd>{cwd}</cwd>\n</environment_context>"}]}),
+        ("response_item", {"type": "message", "id": "msg_env", "role": "user", "content": [{"type": "input_text", "text": f"<environment_context>\n  <cwd>{cwd}</cwd>\n</environment_context>"}],
+                           "internal_chat_message_metadata_passthrough": harness_item("environments.environment_context")}),
         ("world_state", {"full": True, "state": {"agents_md": {"directory": cwd, "text": "Be terse."}}}),
         ("turn_context", {"turn_id": turn, "root_turn_id": turn, "disabled_plugin_ids": [], "cwd": cwd, "approval_policy": "never",
                           "sandbox_policy": {"type": "danger-full-access"}, "model": "gpt-5-codex", "summary": "none"}),
+        ("event_msg", {"type": "thread_settings_applied", "thread_id": sid, "thread_settings": {
+            "model": "gpt-5-codex", "model_provider_id": "openai", "approval_policy": "never", "approvals_reviewer": "user", "cwd": cwd,
+            "runtime_workspace_roots": [cwd], "collaboration_mode": {"mode": "default", "settings": {"model": "gpt-5-codex", "reasoning_effort": None, "developer_instructions": None}},
+            "disabled_plugin_ids": []}}),
         ("response_item", {"type": "message", "id": "msg_u1", "role": "user", "content": [{"type": "input_text", "text": "Which tests cover the auth callback?"}],
-                           "internal_chat_message_metadata_passthrough": {"turn_id": turn, "content_item_kinds": ["user.text"]}},
+                           "internal_chat_message_metadata_passthrough": {"turn_id": turn, "content_item_kinds": ["user.text"],
+                                                                          "content_item_metadata": [{"provenance": {"type": "user"}}]}},
          {**kept("msg_u1", "user", 0), "mcp_attribution": {"status": "none"}}),
         ("event_msg", {"type": "item_completed", "turn_id": turn, "thread_id": sid, "item": {"type": "UserMessage", "id": "it1", "content": [{"type": "text", "text": "Which tests cover the auth callback?"}]}}),
         ("response_item", {"type": "reasoning", "id": "rs_1", "summary": [], "encrypted_content": "gAAAAABopaque"}),
-        ("response_item", {"type": "message", "id": "msg_a1", "role": "assistant", "content": [{"type": "output_text", "text": "Let me search the test suite."}], "phase": "commentary"},
+        ("response_item", {"type": "message", "status": "completed", "id": "msg_a1", "role": "assistant",
+                           "content": [{"type": "output_text", "text": "Let me search the test suite.", "annotations": []}], "phase": "commentary"},
          kept("msg_a1", "assistant", 1)),
         ("response_item", {"type": "custom_tool_call", "id": "ctc_1", "status": "completed", "call_id": "call_1", "name": "exec", "input": "rg -n auth_callback tests"},
          {"client_authored": False, "user_input_order": 2}),
@@ -171,7 +185,8 @@ def _codex_rows(cwd: str) -> list:
         ("response_item", {"type": "custom_tool_call_output", "id": "ctco_1", "call_id": "call_1", "output": [{"type": "input_text", "text": "tests/test_auth.py:12:def test_auth_callback"}], "metadata": {}},
          {"client_authored": False, "fallback_token_limit_override": 3000}),
         ("event_msg", {"type": "token_count", "info": {"total_token_usage": {"input_tokens": 300, "output_tokens": 20, "total_tokens": 320}}}),
-        ("response_item", {"type": "message", "id": "msg_a2", "role": "assistant", "content": [{"type": "output_text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}], "phase": "final_answer"},
+        ("response_item", {"type": "message", "status": "completed", "id": "msg_a2", "role": "assistant",
+                           "content": [{"type": "output_text", "text": "One test covers it: tests/test_auth.py::test_auth_callback.", "annotations": []}], "phase": "final_answer"},
          kept("msg_a2", "assistant", 3)),
         ("event_msg", {"type": "item_completed", "turn_id": turn, "thread_id": sid, "item": {"type": "AgentMessage", "id": "it2", "content": [{"type": "Text", "text": "One test covers it: tests/test_auth.py::test_auth_callback."}]}}),
         ("event_msg", {"type": "task_complete", "turn_id": turn, "root_turn_id": turn, "last_agent_message": "One test covers it.", "started_at": 1789200000, "completed_at": 1789200009}),
@@ -332,6 +347,7 @@ class TestCodexRead:
         assert thread.dropped["context:injected"] == 1 and thread.dropped["context:system_message"] == 1
         assert thread.dropped["thinking"] == 1 and thread.dropped["context:turn_context"] == 1
         assert thread.dropped["opaque:record_world_state"] == 1 and thread.dropped["opaque:event_token_count"] == 1
+        assert thread.dropped["opaque:event_thread_settings_applied"] == 1
         assert ic.classify_drops(dict(thread.dropped)) == {}
         call = next(e for e in thread.events if e.kind == ic.ir.TOOL_CALL)
         assert (call.tool_name, call.tool_call_id, call.tool_input) == ("exec", "call_1", "rg -n auth_callback tests")
