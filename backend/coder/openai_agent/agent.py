@@ -420,7 +420,8 @@ class Agent:
         # How far each turn goes (``guards.TurnLimits``), and what the model is told once a guard ends one: per guard
         # (``{steps|spend|time: {prompt, line?}}``, or one prompt for all), it answers once more without tools and
         # the guard's line follows; a guard with none ends the turn on its line alone. With ``funds``, a tool the
-        # credit gate turned down ends the turn too (``_end_unfunded``).
+        # credit gate turned down ends the turn too (``_end_unfunded``); with ``stalled``, calls in a row that change
+        # nothing (``guards.QUIET_STOP``).
         agent._limits = limits or TurnLimits()
         agent._wrap_up = guards.wrap_ups(wrap_up)
         # The reasoning effort of each run's first model call, which someone is waiting on (its first words, or
@@ -941,8 +942,9 @@ class Agent:
         """
         if not self._initialized or self._sdk_agent is None:
             raise RuntimeError("Agent not initialized — call await Agent.create(...)")
+        wrap_up = getattr(self, "_wrap_up", {})
         guard = TurnGuard(getattr(self, "_limits", None) or TurnLimits(), getattr(self, "_billing_hooks", None),
-                          ends_unfunded=guards.FUNDS in getattr(self, "_wrap_up", {}))
+                          ends_unfunded=guards.FUNDS in wrap_up, ends_stalled=guards.STALLED in wrap_up)
         self._turn_guard, self.turn_ended_by, self.turn_closing = guard, None, None
         try:
             await self._turn(message, guard)
