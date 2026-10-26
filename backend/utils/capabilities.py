@@ -394,6 +394,12 @@ PHONE_TEXT = "coordinator.phone_text"
 # is acknowledged so a write that didn't land is delivered again. Without one, statuses are ignored.
 WHATSAPP_STATUSES = "whatsapp.statuses"
 
+# The link that saves one of the files NoClick stores: (key) -> URL, with the key as utils.resource_store writes it.
+# The link serves the file as an attachment of its own type under its own name, so a phone's browser saves it where
+# the file's own URL would open it. A texted reply sends a file its app can't carry as itself by this link; without
+# one, by the file's own URL.
+FILE_DOWNLOAD_URL = "file.download_url"
+
 # Tools a platform gives the account coordinator on top of its own: async
 # (pool, *, user_id, turn_id, untrusted, voice, cards, discovered,
 # continuation) -> the turn's tools, or None when the account has none this

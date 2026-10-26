@@ -9,7 +9,8 @@ import httpx
 import pytest
 
 from nodes.core.media_resolver import FileInfo, describe_url, read_url
-from utils.resource_store import file_name, resource_key_at
+from utils import capabilities
+from utils.resource_store import download_url, file_name, resource_key_at
 
 OWNER, WORKFLOW, RESOURCE = ("11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222",
                              "33333333-3333-3333-3333-333333333333")
@@ -57,6 +58,17 @@ def test_a_download_url_names_its_resource_only_where_this_instance_serves_it(st
     assert resource_key_at("https://elsewhere.example/" + quote(KEY)) is None
     assert resource_key_at("https://files.test/other/" + quote(KEY)) is None
     assert resource_key_at("https://files.test/report.pdf") is None
+
+
+def test_a_stored_file_has_the_link_that_saves_it_only_where_the_platform_makes_one(stored, monkeypatch):
+    url = "https://files.test/" + quote(KEY)
+    monkeypatch.delitem(capabilities._providers, capabilities.FILE_DOWNLOAD_URL, raising=False)
+    assert download_url(url) is None  # no platform link: the file goes by its own URL
+    made = []
+    monkeypatch.setitem(capabilities._providers, capabilities.FILE_DOWNLOAD_URL,
+                        lambda key: made.append(key) or "https://dl.test/" + quote(key))
+    assert download_url(url) == "https://dl.test/" + quote(KEY) and made == [KEY]
+    assert download_url("https://elsewhere.example/" + quote(KEY)) is None and made == [KEY]
 
 
 @pytest.mark.asyncio

@@ -185,12 +185,15 @@ _TEXT_TYPES = ("application/json", "application/xml", "application/javascript", 
                "application/x-yaml", "application/x-sh", "image/svg+xml")
 _SAME_TYPE = {"image/jpg": "image/jpeg", "audio/mp3": "audio/mpeg", "audio/x-m4a": "audio/mp4",
               "audio/mp4a-latm": "audio/mp4", "audio/x-aac": "audio/aac"}
+# A page a browser draws (HTML, SVG) would arrive as its source in plain text, which a phone opens as text or not at
+# all: one NoClick stores goes as the link that saves it, as the page it is.
+PAGE_TYPES = frozenset({"text/html", "application/xhtml+xml", "image/svg+xml"})
 
 
 def sent_as(embed: Embed) -> Optional[str]:
     """How WhatsApp carries an embedded file: as an image, video, audio or document by its link, as a text file
-    uploaded (``TEXT``), or None: as a link, when Meta takes no file of its type or size, or nothing says what it
-    holds."""
+    uploaded (``TEXT``), or None: as a link (``Embed.link``), when Meta takes no file of its type or size, nothing says
+    what it holds, or it's a page NoClick stores."""
     file = embed.file
     if file is None:
         return None
@@ -202,6 +205,8 @@ def sent_as(embed: Embed) -> Optional[str]:
         return None
     if mime in DOCUMENT_TYPES:
         return "document"
+    if mime in PAGE_TYPES and embed.download:
+        return None
     return TEXT if mime.startswith("text/") or mime in _TEXT_TYPES else None
 
 

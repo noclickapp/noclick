@@ -22,6 +22,7 @@ from typing import Any, Dict, Optional
 from urllib.parse import unquote, urlsplit
 
 from utils import database_pool
+from utils.capabilities import FILE_DOWNLOAD_URL, capability
 from utils.r2_cloudflare import get_public_download_url, upload_bytes_to_r2_async
 
 logger = logging.getLogger(__name__)
@@ -77,6 +78,19 @@ def resource_key_at(url: str) -> Optional[str]:
     except ValueError:  # this instance keeps no files
         return None
     return match.group(0) if (ours.scheme, ours.netloc, unquote(ours.path)) == (parts.scheme, parts.netloc, path) else None
+
+
+def is_resource_key(key: str) -> bool:
+    """Whether ``key`` has the shape ``upload_resource_bytes`` writes."""
+    return _KEY.fullmatch(key) is not None
+
+
+def download_url(url: str) -> Optional[str]:
+    """The link that saves the stored file at ``url`` (``FILE_DOWNLOAD_URL``); None for a URL that isn't one of this
+    instance's files, or where the platform makes no such link."""
+    make = capability(FILE_DOWNLOAD_URL)
+    key = resource_key_at(url) if make is not None else None
+    return make(key) if key else None
 
 
 async def create_resource_from_bytes(

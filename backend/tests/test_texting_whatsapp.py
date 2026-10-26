@@ -7,6 +7,7 @@ import hmac
 import json
 from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, MagicMock
+from urllib.parse import quote
 
 import httpx
 import pytest
@@ -172,6 +173,55 @@ def test_each_file_goes_in_the_form_whatsapp_takes_for_its_type_and_size(mime, s
 
 def test_a_file_nothing_can_tell_the_type_of_is_a_link():
     assert whatsapp.sent_as(Embed("https://f.example/x", "the file", None)) is None
+
+
+@pytest.mark.parametrize("mime, sent_as", [
+    # A page NoClick stores goes as the link that saves it: as plain text it would open as its source.
+    ("text/html", None), ("image/svg+xml", None), ("application/xhtml+xml", None),
+    # Text a person reads as text is still a file in their chat, and media and documents are as before.
+    ("text/csv", whatsapp.TEXT), ("application/json", whatsapp.TEXT), ("application/pdf", "document"),
+    ("image/png", "image"),
+])
+def test_a_page_noclick_stores_goes_as_the_link_that_saves_it(mime, sent_as):
+    embed = Embed("https://f.example/x", "x", FileInfo(mime, "x", 40_000), download="https://dl.example/x")
+    assert whatsapp.sent_as(embed) == sent_as
+
+
+OWNER, WORKFLOW = "11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222"
+PAGE_KEY = f"{OWNER}/{WORKFLOW}/33333333-3333-3333-3333-333333333333/City map.html"
+CSV_KEY = f"{OWNER}/{WORKFLOW}/44444444-4444-4444-4444-444444444444/scores.csv"
+ZIP_KEY = f"{OWNER}/account/55555555-5555-5555-5555-555555555555/site.zip"
+
+
+@pytest.fixture
+def downloads(monkeypatch):
+    """This instance serves its files at files.test, and its platform makes the links that save them, at dl.test."""
+    monkeypatch.setattr("utils.resource_store.get_public_download_url", lambda key: "https://files.test/" + quote(key))
+    monkeypatch.setitem(capabilities._providers, capabilities.FILE_DOWNLOAD_URL,
+                        lambda key: "https://dl.test/files/" + quote(key))
+    return lambda key: ("https://files.test/" + quote(key), "https://dl.test/files/" + quote(key))
+
+
+@pytest.mark.asyncio
+async def test_a_stored_page_or_archive_arrives_as_the_link_that_saves_it_and_a_text_file_as_one(files, downloads,
+                                                                                                  monkeypatch):
+    """Asked for a game as a downloadable HTML file, the coordinator's reply put it in the chat as plain text under its
+    name, which the phone wouldn't save or open as a page; a ZIP went as the address that opens it."""
+    (page, save_page), (sheet, _), (archive, save_archive) = downloads(PAGE_KEY), downloads(CSV_KEY), downloads(ZIP_KEY)
+    files[page] = FileInfo("text/html", "City map.html", 8 * MB)
+    files[sheet] = FileInfo("text/csv", "scores.csv", 2_000)
+    files[archive] = FileInfo("application/zip", "site.zip", 3 * MB)
+    read = AsyncMock(return_value=b"name,score\nAda,9\n")
+    monkeypatch.setattr(whatsapp, "read_url", read)
+    api = MagicMock(send_text=AsyncMock(return_value="t"), send_media=AsyncMock(return_value="m"),
+                    upload_media=AsyncMock(return_value="media.1"))
+    await whatsapp.send_rich(api, SENDER, f"Here's the map.\n![City map]({page})\n![scores.csv]({sheet})\n"
+                                          f"![The site]({archive})")
+    api.send_text.assert_awaited_once_with(
+        SENDER, f"Here's the map.\nCity map: {save_page}\nThe site: {save_archive}")
+    # Only the text file is read and sent as a file.
+    read.assert_awaited_once_with(sheet, max_bytes=whatsapp.DOCUMENT_LIMIT)
+    api.send_media.assert_awaited_once_with(SENDER, "document", caption="", filename="scores.csv", media_id="media.1")
 
 
 @pytest.mark.asyncio

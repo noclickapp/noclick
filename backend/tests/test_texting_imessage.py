@@ -3,6 +3,7 @@ secret, parsed to one-to-one messages on our line only, answered in plain text; 
 message over iMessage."""
 
 from unittest.mock import AsyncMock, MagicMock
+from urllib.parse import quote
 
 import httpx
 import pytest
@@ -13,6 +14,7 @@ from fastapi.testclient import TestClient
 from coder.coordinator.texting import channel, imessage, routes
 from coder.coordinator.texting.imessage import InboundMessage, parse_inbound, send_rich, to_imessage_text, verify_secret
 from nodes.core.media_resolver import FileInfo
+from utils import capabilities
 from utils.sendblue import API_BASE, Sendblue, SendblueError
 
 LINE = "+14155550123"
@@ -144,6 +146,26 @@ async def test_a_file_nothing_can_tell_the_type_of_or_past_sendblues_cap_is_a_li
     await send_rich(api, USER_PHONE, "Two files.\n![The video](https://f.example/huge.mov)\n![x](https://f.example/x)")
     api.send.assert_awaited_once_with(
         USER_PHONE, content="Two files.\nThe video: https://f.example/huge.mov\nx: https://f.example/x")
+
+
+@pytest.mark.asyncio
+async def test_a_stored_file_past_sendblues_cap_is_the_link_that_saves_it_and_a_page_still_an_attachment(files,
+                                                                                                         monkeypatch):
+    owner, workflow = "11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222"
+    video_key = f"{owner}/{workflow}/33333333-3333-3333-3333-333333333333/huge.mov"
+    page_key = f"{owner}/{workflow}/44444444-4444-4444-4444-444444444444/game.html"
+    monkeypatch.setattr("utils.resource_store.get_public_download_url", lambda key: "https://files.test/" + quote(key))
+    monkeypatch.setitem(capabilities._providers, capabilities.FILE_DOWNLOAD_URL,
+                        lambda key: "https://dl.test/files/" + quote(key))
+    video, page = "https://files.test/" + video_key, "https://files.test/" + page_key
+    files[video] = FileInfo("video/quicktime", "huge.mov", 150 * MB)
+    files[page] = FileInfo("text/html", "game.html", 2 * MB)
+    api = MagicMock(send=AsyncMock(return_value="h1"), upload_file=AsyncMock())
+    await send_rich(api, USER_PHONE, f"Both.\n![The video]({video})\n![game.html]({page})")
+    assert [call.kwargs for call in api.send.await_args_list] == [
+        {"content": f"Both.\nThe video: https://dl.test/files/{video_key}"},
+        {"content": None, "media_url": page},  # iMessage carries a page as the file it is
+    ]
 
 
 APPROVE = "https://example.com/h/0f8b3c2a-1d2e-4f5a-9b6c-7d8e9f0a1b2c?k=0123456789abcdef0123456789abcdef"

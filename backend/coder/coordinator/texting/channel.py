@@ -25,6 +25,7 @@ from utils.database_pool import get_native_pool
 from utils.phone_identity import PhoneLinkError, default_service, link_code_in
 from utils.phone_numbers import normalize_e164
 from utils.redis_client import get_shared_redis
+from utils.resource_store import download_url
 from utils.socket_singleton import get_sio
 from wss.handlers.coordinator_handler import plan_allows_turn
 from wss.handlers.workflow_handler import get_user_org_context
@@ -119,12 +120,14 @@ class Embed:
     url: str
     caption: str
     file: Optional[FileInfo]
+    download: Optional[str] = None  # the link that saves it, for a file NoClick stores (resource_store.download_url)
 
     @property
     def link(self) -> str:
-        """The embed as a line of text."""
+        """The embed as a line of text: the link that saves the file where there is one, else its URL."""
         label = self.caption or (self.file.name if self.file else "")
-        return f"{label}: {self.url}" if label else self.url
+        url = self.download or self.url
+        return f"{label}: {url}" if label else url
 
     @property
     def note(self) -> str:
@@ -135,11 +138,11 @@ class Embed:
 
 
 async def read_embeds(markdown: str) -> Tuple[List[Embed], str]:
-    """Each file the Markdown embeds, judged by what it holds rather than its URL (``describe_url``), and the text
-    left."""
+    """Each file the Markdown embeds, judged by what it holds rather than its URL (``describe_url``), with the link
+    that saves it, and the text left."""
     found, text = split_media(markdown)
     files = await asyncio.gather(*(describe_url(url) for url, _ in found))
-    return [Embed(url, caption, file) for (url, caption), file in zip(found, files)], text
+    return [Embed(url, caption, file, download_url(url)) for (url, caption), file in zip(found, files)], text
 
 
 def _masked(email: Optional[str]) -> str:
