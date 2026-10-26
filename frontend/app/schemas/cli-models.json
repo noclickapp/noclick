@@ -3,7 +3,8 @@
   "fetched_at": "2026-10-25T12:06:15+00:00",
   "codex": {
     "package": "@openai/codex",
-    "version": "0.164.0",
+    "_version_frozen": "Held at 0.162.0, the last version the Harness E2E validated. 0.164.0 passed the local interchange and native suites (its new records are already read) but not the Harness E2E; unfreeze once it passes against a throwaway database, then re-declare VALIDATED_HARNESS_VERSIONS. refresh_cli_models.py skips bumping codex.",
+    "version": "0.162.0",
     "models": [
       "gpt-6.1-sol",
       "gpt-6-astra",
@@ -23,7 +24,8 @@
   },
   "claude_code": {
     "package": "@anthropic-ai/claude-code",
-    "version": "2.1.310",
+    "_version_frozen": "Claude Code 2.1.310 defers every MCP tool behind ToolSearch by default (2.1.295 kept tool search off for a base URL that is not Anthropic's), so a turn's first request carries ToolSearch instead of NoClick's tools and the first-request tool gates fail. Frozen at 2.1.295 until the harness env sets ENABLE_TOOL_SEARCH=false (which restores the tools on 2.1.310) and the Harness E2E passes on the new version; refresh_cli_models.py skips bumping claude_code.",
+    "version": "2.1.295",
     "aliases": {
       "opus": "claude-opus-5-5",
       "sonnet": "claude-sonnet-5-5",
@@ -35,7 +37,8 @@
   },
   "opencode": {
     "package": "opencode-ai",
-    "version": "1.19.4",
+    "_version_frozen": "Held at 1.18.35, the last version the Harness E2E validated. 1.19.4 passed the local interchange and native suites (same schema and records) but not the Harness E2E; unfreeze once it passes against a throwaway database, then re-declare VALIDATED_HARNESS_VERSIONS. refresh_cli_models.py skips bumping opencode.",
+    "version": "1.18.35",
     "default_model": "opencode/big-pickle"
   },
   "openclaw": {
