@@ -917,7 +917,7 @@ async def _execute_filesystem_tool(
         return {"success": False, "error": f"Could not read file: {file_path}"}
 
     try:
-        from utils.resource_store import create_resource_from_bytes
+        from utils.resource_store import create_resource_from_bytes, uploaded
 
         wf_row = await get_native_pool().fetchrow(
             "SELECT organization_id FROM workflows WHERE id = $1", node.workflow_id
@@ -942,15 +942,8 @@ async def _execute_filesystem_tool(
         made_file(_conversation_id_for(node), {"name": ref["name"], "url": ref["download_url"],
                                                "mime_type": ref["mime_type"], "size_bytes": ref["size_bytes"]})
 
-        return {
-            "success": True,
-            "url": ref["download_url"],
-            "resource_id": ref["resource_id"],
-            "name": ref["name"],
-            "size_bytes": ref["size_bytes"],
-            "mime_type": ref["mime_type"],
-            "message": f"File uploaded successfully. Public URL: {ref['download_url']}",
-        }
+        return uploaded(url=ref["download_url"], resource_id=ref["resource_id"], name=ref["name"],
+                        size_bytes=ref["size_bytes"], mime_type=ref["mime_type"])
 
     except Exception as e:
         logger.error(f"[ToolExec] Failed to upload file: {e}", exc_info=True)

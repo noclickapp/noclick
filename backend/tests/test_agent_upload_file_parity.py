@@ -75,6 +75,8 @@ async def test_an_upload_named_without_its_extension_keeps_its_files(monkeypatch
                            workflow_id="wf", user_id="u", node_id="n", conversation_id="ck:wf:n:k")
     made = await _execute_filesystem_tool(node, "upload_file", {"file_path": "/tmp/dummy.pdf", "name": "Dummy PDF"}, {})
     assert made["name"] == "Dummy PDF.pdf" and made["mime_type"] == "application/pdf"
+    # Uploading sends it to no one; the result says so, with the words that would.
+    assert "nobody has it yet" in made["message"] and "![Dummy PDF.pdf](https://files.test/x)" in made["message"]
     assert (stored[0]["filename"], stored[0]["content_type"]) == ("Dummy PDF.pdf", "application/pdf")
     await _execute_filesystem_tool(node, "upload_file", {"file_path": "/workspace/game.html", "name": "game.html"}, {})
     assert stored[1]["filename"] == "game.html"  # a name that has its extension is kept as it is

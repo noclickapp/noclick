@@ -180,3 +180,16 @@ async def record_resource(
         "storage_ref": storage_ref,
         "download_url": get_public_download_url(storage_ref),
     }
+
+
+def uploaded(*, url: str, resource_id: str, name: str, size_bytes: int, mime_type: str) -> Dict[str, Any]:
+    """What an agent's ``upload_file`` answers, on either runtime: where the file now is, and that uploading it sent
+    it to no one."""
+    return {
+        "success": True, "url": url, "resource_id": resource_id, "name": name, "size_bytes": size_bytes,
+        "mime_type": mime_type,
+        "message": (f"Uploaded, not sent: nobody has it yet. It reaches someone only in words of yours that carry "
+                    f"it, ![{name}]({url}), or through a tool you give this URL to. When they want it now, those are "
+                    "the next words you write, even the line beside your next call; never a line calling it ready "
+                    "or sent without it."),
+    }

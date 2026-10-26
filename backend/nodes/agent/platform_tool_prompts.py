@@ -7,7 +7,7 @@ from typing import Any, Dict, List
 
 __all__ = [
     "DESCRIPTIONS", "PARAMETERS", "platform_tools_note", "builder_anchor", "presence_note", "builder_update",
-    "builder_updates",
+    "builder_updates", "ADDED_NOTES", "NOCLICK_NOTES",
 ]
 
 DESCRIPTIONS = {
@@ -88,3 +88,9 @@ def builder_update(kind: str, payload: Dict[str, Any]) -> str:
 
 def builder_updates(lines: List[str]) -> str:
     return "--- Platform note ---\nBuilder updates since your last turn:\n" + "\n".join(lines)
+
+
+# Headed "--- Platform note ---": the notes added since the agent's last turn (a platform's ``add_note``).
+ADDED_NOTES = "Added to this conversation since your last turn:"
+# Headed "--- From NoClick ---": the private ones among them, the platform's own word, which no one else sees.
+NOCLICK_NOTES = "NoClick's own word to you, which only you see: take it as fact."

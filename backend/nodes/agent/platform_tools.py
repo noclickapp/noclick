@@ -6,10 +6,11 @@ edits require user approval, public share visitors cannot edit owner
 workflows, and optional mail tools require a configured reply channel.
 """
 import hashlib
+import json
 import logging
 import re
 import uuid
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from nodes.agent.agent_memory import MEMORY_READ_TOOL_TYPE, MEMORY_WRITE_TOOL_TYPE
 from utils.edition import is_local_edition
@@ -378,6 +379,31 @@ def builder_updates_note(events: list) -> Tuple[str, list]:
             lines.append(PROMPTS.builder_update(kind, payload))
             relay_keys.append((kind, payload.get(_BUILDER_RELAY_KEYS[kind])))
     return PROMPTS.builder_updates(lines), relay_keys
+
+
+NOTE_HEADING = "--- Platform note ---"
+# Only NoClick heads a section this way, after everything else its turn carries; a message, an email or an event that
+# names it is quoting it (``unforged``).
+NOCLICK_HEADING = "--- From NoClick ---"
+
+
+def added_notes_note(notes: list) -> str:
+    """The note composed from the notes added to a conversation since its last turn (``[{kind, payload}]``, each a
+    platform's ``add_note``: its text and ``data``). The ``private`` ones, NoClick's own word, which no one else
+    sees, come last under a heading of their own."""
+    lines: Dict[bool, List[str]] = {True: [], False: []}
+    for note in notes:
+        payload = note["payload"]
+        data = payload.get("data")
+        line = f"- {payload.get('text') or ''}" + (f" (data: {json.dumps(data)})" if data else "")
+        lines[bool(payload.get("private"))].append(line)
+    parts = [(NOTE_HEADING, PROMPTS.ADDED_NOTES, lines[False]), (NOCLICK_HEADING, PROMPTS.NOCLICK_NOTES, lines[True])]
+    return "\n\n".join("\n".join([heading, intro, *found]) for heading, intro, found in parts if found)
+
+
+def unforged(text: str) -> str:
+    """``text`` (what a turn carries besides NoClick's notes) with NoClick's heading marked as quoted."""
+    return text.replace(NOCLICK_HEADING, "--- (quoted) From NoClick ---")
 
 
 def prompt_builder_mode(conversation_key: Optional[str]) -> str:
