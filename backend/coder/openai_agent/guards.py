@@ -182,13 +182,24 @@ def stopped_line(reason: str, limits: TurnLimits) -> str:
 
 
 def wrap_ups(wrap_up: Any) -> Dict[str, Dict[str, str]]:
-    """``wrap_up`` as ``{reason: {prompt, line?}}``: a string is the prompt for every limit."""
+    """``wrap_up`` as ``{reason: {prompt, line?, since?}}``: a string is the prompt for every limit. ``since`` is when
+    the work the line closes began (epoch seconds), for its ``{duration}`` (``job_line``)."""
     if isinstance(wrap_up, str) and wrap_up:
         return {reason: {"prompt": wrap_up} for reason in LIMITS}
     if isinstance(wrap_up, Mapping):
         return {reason: dict(entry) for reason, entry in wrap_up.items()
                 if reason in REASONS and isinstance(entry, Mapping) and entry.get("prompt")}
     return {}
+
+
+def job_line(line: str, since: Optional[float], guard: "TurnGuard") -> str:
+    """``line`` with its ``{duration}`` said: how long the work it closes ran as it stops, from ``since`` (a platform's
+    job begun in an earlier turn) or from this turn's start."""
+    if "{duration}" not in line:
+        return line
+    began = since if since is not None else _wall() - guard.elapsed_s
+    minutes = max(1, int((_wall() - began) // 60))
+    return line.replace("{duration}", f"{minutes} minute{'' if minutes == 1 else 's'}")
 
 
 def _call_key(tool: str, arguments: str) -> Tuple[str, str]:

@@ -356,3 +356,17 @@ async def test_a_run_a_restart_handed_over_keeps_its_read_streak(builder_request
     # Four reads in a row before the restart: the next is the fifth, which stops it.
     assert len(looked) == 1 and agent.turn_ended_by == "stalled"
     assert spans[0].attributes["agent.turn.longest_read_streak"] == 5
+
+
+async def test_a_line_can_say_how_long_the_work_it_closes_ran(builder_request_db, monkeypatch):
+    """A platform whose job ran over several turns closes its last on the whole job's time (``{duration}`` from the
+    entry's ``since``); without one, from the turn's own start."""
+    from coder.openai_agent.guards import TurnLimits
+
+    pool = builder_request_db[0]
+    line = {"prompt": "Out of steps: say where things stand.", "line": "Stopped after {duration}."}
+    *_, emitted, agent, _ = await _run(pool, monkeypatch, limits=TurnLimits(steps=2),
+                                      wrap_up={"steps": {**line, "since": 50_000.0 - 62 * 60}})
+    assert _said(emitted) == f"{STANDING}\n\nStopped after 62 minutes."
+    *_, emitted, agent, _ = await _run(pool, monkeypatch, limits=TurnLimits(steps=2), wrap_up={"steps": line})
+    assert _said(emitted) == f"{STANDING}\n\nStopped after 1 minute."

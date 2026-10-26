@@ -1274,7 +1274,8 @@ class Agent:
             logger.warning("[openai_agent] a turn's wrap-up got no answer in %gs; it ends on its line",
                            guards.WRAP_UP_S)
             return None
-        line = entry.get("line") or guards.stopped_line(reason, guard.limits)
+        line = guards.job_line(entry.get("line") or guards.stopped_line(reason, guard.limits), entry.get("since"),
+                               guard)
         text = "\n\n".join(part for part in (str(closing.final_output or "").strip(), line) if part)
         if not text:
             return None
