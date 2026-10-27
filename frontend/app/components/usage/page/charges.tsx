@@ -34,8 +34,24 @@ const COLUMNS = '@[640px]:grid @[640px]:grid-cols-[72px_minmax(0,1.45fr)_minmax(
 
 interface Loaded extends ChargesPage {
     key: string;
+    /** Read past its first page: a re-read brings new charges in on top rather than replacing what's shown. */
+    paged: boolean;
+    /** Reading this query from the top. */
     loading: boolean;
     failed: boolean;
+}
+
+const NONE: ChargesPage = { rows: [], runs: {}, next: null };
+
+const firstOf = (key: string, page: ChargesPage, failed = false): Loaded => ({ key, ...page, paged: false, loading: false, failed });
+
+/** A paged table re-read: the new first page on top, then the rows below it already shown, so it keeps its place
+ *  and its cursor. A first page that shares no row with what's shown leaves a gap between them: start again from it. */
+function withNewer(l: Loaded, first: ChargesPage): Loaded {
+    const shown = new Set(l.rows.map((r) => r.id));
+    if (!first.rows.some((r) => shown.has(r.id))) return firstOf(l.key, first);
+    const fresh = new Set(first.rows.map((r) => r.id));
+    return { ...l, rows: [...first.rows, ...l.rows.filter((r) => !fresh.has(r.id))], runs: { ...l.runs, ...first.runs } };
 }
 
 export function ChargesTable({
@@ -65,6 +81,9 @@ export function ChargesTable({
     const [run, setRun] = useState<ChargeRun | null>(null);
     const [exporting, setExporting] = useState(false);
     const [attempt, setAttempt] = useState(0);
+    // The next page: being read, or it didn't load.
+    const [nextPage, setNextPage] = useState<'idle' | 'reading' | 'failed'>('idle');
+    const appending = nextPage === 'reading';
     const motionCtx = useUsageMotion();
     const mounted = useRef(false);
     useEffect(() => {
@@ -75,42 +94,50 @@ export function ChargesTable({
         () => chargeQuery(view, { match: filter.match, day: filter.day, service: service === 'all' ? null : service, query: search }),
         [view, filter.match, filter.day, service, search]
     );
-    const queryKey = JSON.stringify(cq.query);
+    // A new period reads its own charges, whatever the filter.
+    const queryKey = JSON.stringify([view.snap.period.window_start, cq.query]);
     const unfiltered = !cq.query.keys && !cq.query.day;
-    // A table someone paged into keeps its place when the page re-reads; one still on its first page follows it.
-    const paged = !!loaded && loaded.key === queryKey && loaded.rows.length > PAGE;
-    const refresh = paged ? null : unfiltered ? firstPage : view.snap;
+    // What a re-read of the page brings; the query is `queryKey`.
+    const refresh = unfiltered ? firstPage : view.snap;
 
+    // A new query reads its first page; a re-read of the same one follows it on the first page, and brings new
+    // charges in on top once paged (withNewer). Paging itself changes neither, so it never reads page one again.
     useEffect(() => {
         if (cq.query.keys && !cq.query.keys.length) {
-            setLoaded({ key: queryKey, rows: [], runs: {}, next: null, loading: false, failed: false });
+            setLoaded(firstOf(queryKey, NONE));
             return;
         }
+        // Rows already shown for this query stay while it reads again.
+        const current = (l: Loaded | null): l is Loaded => l?.key === queryKey && !l.failed;
+        const land = (first: ChargesPage) => setLoaded((l) => (current(l) && l.paged ? withNewer(l, first) : firstOf(queryKey, first)));
         if (unfiltered && firstPage) {
-            setLoaded({ key: queryKey, ...firstPage, loading: false, failed: false });
+            land(firstPage);
             return;
         }
         let cancelled = false;
-        setLoaded((l) => ({ ...(l ?? { rows: [], runs: {}, next: null, failed: false }), key: queryKey, loading: true }));
+        setLoaded((l) => (current(l) ? l : { ...(l ?? firstOf(queryKey, NONE)), key: queryKey, paged: false, loading: true, failed: false }));
         source(cq.query, null, PAGE)
-            .then((page) => !cancelled && setLoaded({ key: queryKey, ...page, loading: false, failed: false }))
-            .catch(() => !cancelled && setLoaded({ key: queryKey, rows: [], runs: {}, next: null, loading: false, failed: true }));
+            .then((page) => !cancelled && land(page))
+            .catch(() => !cancelled && setLoaded((l) => (current(l) && !l.loading ? l : firstOf(queryKey, NONE, true))));
         return () => {
             cancelled = true;
         };
-        // `refresh` stands in for the data a re-read brings; the query is `queryKey`.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [queryKey, refresh, source, attempt]);
+    useEffect(() => setNextPage('idle'), [queryKey]);
 
     const more = async () => {
-        if (!loaded?.next) return;
         const at = loaded;
-        setLoaded({ ...at, loading: true });
+        if (!at?.next || at.loading || appending) return;
+        setNextPage('reading');
+        setLoaded((l) => (l?.key === at.key ? { ...l, paged: true } : l));
         try {
             const page = await source(cq.query, at.next, PAGE);
-            setLoaded({ key: at.key, rows: [...at.rows, ...page.rows], runs: { ...at.runs, ...page.runs }, next: page.next, loading: false, failed: false });
+            // It lands only where it was read from: the same query, still ending at the cursor it went on from.
+            setLoaded((l) => (l?.key === at.key && l.next === at.next ? { ...l, rows: [...l.rows, ...page.rows], runs: { ...l.runs, ...page.runs }, next: page.next } : l));
+            setNextPage('idle');
         } catch {
-            setLoaded({ ...at, loading: false, failed: true });
+            setNextPage('failed');
         }
     };
 
@@ -215,7 +242,7 @@ export function ChargesTable({
                     ))}
                 </div>
             )}
-            <div role="table" aria-label="Charges" aria-rowcount={cq.count} aria-busy={loaded?.loading || undefined}>
+            <div role="table" aria-label="Charges" aria-rowcount={cq.count} aria-busy={loaded?.loading || appending || undefined}>
                 <div role="row" className={cn('sticky top-0 z-[2] hidden border-b border-border bg-background py-2 text-[12px] text-muted-foreground dark:border-foreground/[0.08] @[640px]:grid', columns)}>
                     <span role="columnheader">Time</span>
                     <span role="columnheader">What</span>
@@ -258,7 +285,7 @@ export function ChargesTable({
                     </div>
                 ) : (
                     // A new filter (a drill, a day) brings its rows in with the list and the days, in the same move.
-                    <motion.div key={loaded.key} initial={mounted.current ? { opacity: 0, y: motionCtx.reduced ? 0 : 4 } : false} animate={{ opacity: loaded.loading ? 0.55 : 1, y: 0 }} transition={motionCtx.t}>
+                    <motion.div key={loaded.key} initial={mounted.current ? { opacity: 0, y: motionCtx.reduced ? 0 : 4 } : false} animate={{ opacity: loaded.loading || appending ? 0.55 : 1, y: 0 }} transition={motionCtx.t}>
                         {groups.map((g) => (
                             <div key={g.day} role="rowgroup">
                                 <div role="row" className="sticky top-0 z-[1] flex items-baseline justify-between gap-3 border-b border-border bg-background pb-1.5 pt-4 text-[12.5px] dark:border-foreground/[0.08] @[640px]:top-[33px]">
@@ -283,12 +310,12 @@ export function ChargesTable({
             {loaded && items.length > 0 && (loaded.next || read < cq.count) && (
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                     {loaded.next && (
-                        <button type="button" className={cn(BUTTON_SECONDARY, 'h-8')} onClick={() => void more()} disabled={loaded.loading}>
-                            {loaded.loading ? 'Loading' : `Show ${Math.min(PAGE, Math.max(1, cq.count - read))} more`}
+                        <button type="button" className={cn(BUTTON_SECONDARY, 'h-8')} onClick={() => void more()} disabled={loaded.loading || appending}>
+                            {loaded.loading || appending ? 'Loading' : `Show ${Math.min(PAGE, Math.max(1, cq.count - read))} more`}
                         </button>
                     )}
                     <span className="text-[12.5px] tabular-nums text-muted-foreground">
-                        Showing {read.toLocaleString('en-US')} of {cq.count.toLocaleString('en-US')} charges
+                        {nextPage === 'failed' ? 'The next charges didn’t load. ' : ''}Showing {read.toLocaleString('en-US')} of {cq.count.toLocaleString('en-US')} charges
                     </span>
                 </div>
             )}

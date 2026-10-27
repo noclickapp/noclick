@@ -146,6 +146,34 @@ async def test_charges_page_by_cursor_and_narrow_by_key_and_day(db):
     assert {r["created_at"][:10] for r in day["rows"]} == {"2026-10-03"} and len(day["rows"]) == 3
 
 
+async def test_charges_recorded_in_the_same_instant_page_without_a_gap_or_a_repeat(db):
+    # A site's hourly reading records its charges in one statement, so they share a created_at to the microsecond:
+    # the cursor's id breaks the tie exactly as the page's order does, narrowed or not.
+    me = await account(db)
+    reading = datetime(2026, 10, 9, 10, 0, 1, 123456, tzinfo=timezone.utc)
+    ids = [await charge(db, me, reading, 0.001 * (i + 1), "apps/hosting" if i % 2 else "apps/releases",
+                        usage_type="api_usage") for i in range(7)]
+    ids += [await charge(db, me, reading + timedelta(microseconds=1), 0.01, "apps/hosting", usage_type="api_usage"),
+            await charge(db, me, reading - timedelta(microseconds=1), 0.02, "apps/hosting", usage_type="api_usage")]
+    period = calendar_period(NOW)
+    window = dict(start=period["window_start"], end=period["window_end"])
+    rows = await db.fetch("SELECT id, created_at, usage_subtype FROM user_usage_events WHERE user_id = $1::uuid", me)
+    newest_first = sorted(rows, key=lambda r: (r["created_at"], r["id"]), reverse=True)
+    hosting = {g["k"] for g in (await page(me))["groups"] if g["usage_subtype"] == "apps/hosting"}
+
+    for keys, expected in ((None, newest_first), (sorted(hosting), [r for r in newest_first if r["usage_subtype"] == "apps/hosting"])):
+        for limit in (1, 2, 3, 4):
+            seen, cursor = [], None
+            while True:
+                got = await charges_page(me, **window, keys=keys, cursor=cursor and ChargesCursor.decode(cursor), limit=limit)
+                seen += [r["id"] for r in got["rows"]]
+                cursor = got["next"]
+                if not cursor:
+                    break
+            assert seen == [str(r["id"]) for r in expected], (keys, limit)
+    assert sorted(seen) == sorted(set(seen)) and len(ids) == 9
+
+
 async def test_only_an_emails_from_is_a_sender(db):
     """An app's metered storage names the stretch it covers (``from``/``to``): the day's beats are one group, not one
     each. An email's ``from`` is who sent it, and splits its charges by sender."""
