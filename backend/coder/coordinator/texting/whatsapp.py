@@ -23,7 +23,7 @@ from repositories.phones import PhoneRepo
 from utils.app_event_dedup import mark_delivered, was_delivered
 from utils.async_helpers import spawn
 from utils.prompts import PromptPack
-from utils.whatsapp_cloud_api import CloudApi, WhatsAppSendError
+from utils.whatsapp_cloud_api import CAPTION_LIMIT, CloudApi, WhatsAppSendError
 
 logger = logging.getLogger(__name__)
 
@@ -180,6 +180,8 @@ DOCUMENT_TYPES = {
     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
 }
 DOCUMENT_LIMIT = 100 * MB
+# The files WhatsApp shows a caption under, as a photo's: a reply's text can ride one of them.
+CAPTIONED = ("image", "video")
 TEXT = "text"
 _TEXT_TYPES = ("application/json", "application/xml", "application/javascript", "application/yaml",
                "application/x-yaml", "application/x-sh", "image/svg+xml", "application/xhtml+xml")
@@ -215,8 +217,10 @@ async def _uploaded_text(api: CloudApi, embed: Embed) -> str:
 
 async def send_rich(api: CloudApi, to: str, markdown: str) -> Optional[str]:
     """Text in WhatsApp markup, then each embedded file as a file (``sent_as``); one that can't go as a file is a link
-    line in the text, and so is a page NoClick stores (``Embed.page``) beside its file. Every file is ready before
-    anything is sent. The first message id, or None when nothing could be sent."""
+    line in the text, and so is a page NoClick stores (``Embed.page``) beside its file. A reply whose one file is a
+    picture or a video, with text that fits a caption, is one message: the file with the text as its caption (in
+    place of the embed's own). Every file is ready before anything is sent. The first message id, or None when
+    nothing could be sent."""
     embeds, text = await read_embeds(markdown)
     files = []
     for embed in embeds:
@@ -226,9 +230,13 @@ async def send_rich(api: CloudApi, to: str, markdown: str) -> Optional[str]:
         elif kind is not None:
             files.append((embed, kind, {"link": embed.url}))
     sent_files = [embed for embed, _, _ in files]
-    text = "\n".join([text.rstrip(), *(embed.link for embed in embeds if embed not in sent_files or embed.page)])
+    text = to_whatsapp_text("\n".join([text.rstrip(),
+                                       *(embed.link for embed in embeds if embed not in sent_files or embed.page)]))
+    if len(embeds) == 1 and len(files) == 1 and files[0][1] in CAPTIONED and 0 < len(text) <= CAPTION_LIMIT:
+        embed, kind, where = files[0]
+        return await api.send_media(to, kind, caption=text, filename=embed.file.name, **where)
     first: Optional[str] = None
-    for part in chunk(to_whatsapp_text(text)):
+    for part in chunk(text):
         sent = await api.send_text(to, part)
         first = first or sent
     for embed, kind, where in files:

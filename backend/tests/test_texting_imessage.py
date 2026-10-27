@@ -81,11 +81,42 @@ def files(monkeypatch):
 @pytest.mark.asyncio
 async def test_rich_reply_sends_text_then_each_attachment_with_its_caption(files):
     files["https://x/c.png"] = FileInfo("image/png", "c.png", 1000)
+    files["https://x/d.png"] = FileInfo("image/png", "d.png", 1000)
     api = MagicMock()
-    api.send = AsyncMock(side_effect=["h1", "h2"])
-    assert await send_rich(api, USER_PHONE, "Here it is **now**\n![the chart](https://x/c.png)") == "h1"
-    assert api.send.await_args_list[0].kwargs == {"content": "Here it is now"}
-    assert api.send.await_args_list[1].kwargs == {"content": "the chart", "media_url": "https://x/c.png"}
+    api.send = AsyncMock(side_effect=["h1", "h2", "h3"])
+    assert await send_rich(api, USER_PHONE,
+                           "Here they are **now**\n![the chart](https://x/c.png)\n![the table](https://x/d.png)") == "h1"
+    assert [call.kwargs for call in api.send.await_args_list] == [
+        {"content": "Here they are now"}, {"content": "the chart", "media_url": "https://x/c.png"},
+        {"content": "the table", "media_url": "https://x/d.png"}]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("mime, name", [("image/png", "quiet-form.png"), ("video/quicktime", "walkthrough.mov")])
+async def test_a_reply_with_one_picture_is_one_send_with_its_text(files, mime, name):
+    """A person picking a design got the reply's text, then the picture on its own: one picture or video goes in the
+    same send as the text, in place of the embed's own caption."""
+    url = f"https://assets.example/u/w/r/{name}"
+    files[url] = FileInfo(mime, name, 300_000)
+    api = MagicMock(send=AsyncMock(return_value="h1"), upload_file=AsyncMock())
+    assert await send_rich(api, USER_PHONE, f"Here's **Quiet Form** on a phone:\n![The homepage]({url})\n"
+                                            "Shall I build it?") == "h1"
+    api.send.assert_awaited_once_with(USER_PHONE, content="Here's Quiet Form on a phone:\n\nShall I build it?",
+                                      media_url=url)
+
+
+@pytest.mark.asyncio
+async def test_a_document_or_text_past_one_message_still_goes_first_on_its_own(files):
+    files["https://x/brief.pdf"] = FileInfo("application/pdf", "brief.pdf", 1000)
+    files["https://x/c.png"] = FileInfo("image/png", "c.png", 1000)
+    api = MagicMock(send=AsyncMock(return_value="h1"))
+    await send_rich(api, USER_PHONE, "The brief.\n![Brief](https://x/brief.pdf)")
+    long = "x" * (channel.TEXT_LIMIT + 1)
+    await send_rich(api, USER_PHONE, f"{long}\n![the chart](https://x/c.png)")
+    assert [call.kwargs for call in api.send.await_args_list] == [
+        {"content": "The brief."}, {"content": "Brief", "media_url": "https://x/brief.pdf"},
+        {"content": long[:channel.TEXT_LIMIT]}, {"content": "x"},
+        {"content": "the chart", "media_url": "https://x/c.png"}]
 
 
 MB = 1024 * 1024

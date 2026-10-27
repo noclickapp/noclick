@@ -16,7 +16,7 @@ from urllib.parse import unquote, urlsplit
 
 from coder.coordinator.reach import with_link
 from coder.coordinator.texting.channel import (
-    Embed, PhoneText, PhoneTransport, chunk, handle_phone_text, media_name, read_embeds,
+    TEXT_LIMIT, Embed, PhoneText, PhoneTransport, chunk, handle_phone_text, media_name, read_embeds,
 )
 from nodes.core.media_resolver import read_url
 from repositories.phones import PhoneRepo
@@ -113,6 +113,11 @@ def to_imessage_text(markdown: str) -> str:
     return re.sub(r"\n{3,}", "\n\n", text).strip()
 
 
+def _shown_inline(embed: Embed) -> bool:
+    """A picture or a video, which the chat shows as itself (a page NoClick stores also goes as its link)."""
+    return embed.file.mime_type.split("/", 1)[0] in ("image", "video") and not embed.page
+
+
 async def _media_url(api: Sendblue, embed: Embed) -> str:
     """Where Sendblue sends an embedded file from. Sendblue reads a file's type off its URL, which must end in its
     extension and carry no signature; a file whose URL doesn't goes up to Sendblue under its own name first."""
@@ -130,14 +135,18 @@ async def _media_url(api: Sendblue, embed: Embed) -> str:
 async def send_rich(api: Sendblue, to: str, markdown: str) -> Optional[str]:
     """Plain text, then each embedded file as an attachment (iMessage takes any file), with its caption; one nothing
     can tell the type of, or past Sendblue's cap, goes as a link line with the text, and so does a page NoClick stores
-    (``Embed.page``) beside its attachment. Every attachment is ready before
+    (``Embed.page``) beside its attachment. A reply whose one file is a picture or a video goes in one send, the file
+    with the text (in place of the embed's caption), as WhatsApp captions it. Every attachment is ready before
     anything is sent. The first message handle, or None when nothing could be sent."""
     embeds, text = await read_embeds(markdown)
     files = [embed for embed in embeds if embed.file is not None and (embed.file.size_bytes or 0) <= UPLOAD_LIMIT]
     attachments = [(embed, await _media_url(api, embed)) for embed in files]
-    text = "\n".join([text.rstrip(), *(embed.link for embed in embeds if embed not in files or embed.page)])
+    text = to_imessage_text("\n".join([text.rstrip(),
+                                       *(embed.link for embed in embeds if embed not in files or embed.page)]))
+    if len(embeds) == 1 and len(files) == 1 and _shown_inline(files[0]) and 0 < len(text) <= TEXT_LIMIT:
+        return await api.send(to, content=text, media_url=attachments[0][1])
     first: Optional[str] = None
-    for part in chunk(to_imessage_text(text)):
+    for part in chunk(text):
         sent = await api.send(to, content=part)
         first = first or sent
     for embed, media_url in attachments:

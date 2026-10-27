@@ -17,6 +17,8 @@ GRAPH_BASE = f"https://graph.facebook.com/{GRAPH_VERSION}"
 # Meta refuses a template body parameter past this.
 TEMPLATE_BODY_LIMIT = 1024
 TEMPLATE_LANGUAGE = "en"
+# An image's, video's or document's caption, at most.
+CAPTION_LIMIT = 1024
 UPLOAD_TIMEOUT_S = 120.0
 # WhatsApp previews the first link in a text only when asked, and only one with a scheme.
 _PREVIEWABLE_LINK = re.compile(r"https?://\S", re.I)
@@ -195,7 +197,7 @@ class CloudApi:
         of the recipient's last message. A document shows ``filename``, whose extension picks its icon."""
         media: Dict[str, Any] = {"link": link} if link else {"id": media_id}
         if caption and kind != "audio":
-            media["caption"] = caption[:1024]
+            media["caption"] = caption[:CAPTION_LIMIT]
         if filename and kind == "document":
             media["filename"] = filename
         return await self._send({"to": to_e164.lstrip("+"), "type": kind, kind: media})

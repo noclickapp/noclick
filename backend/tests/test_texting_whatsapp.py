@@ -20,7 +20,7 @@ from coder.coordinator.texting.channel import Embed, chunk
 from coder.coordinator.texting.whatsapp import InboundMessage, parse_failed, parse_inbound, to_whatsapp_text, verify_signature
 from nodes.core.media_resolver import FileInfo
 from utils import capabilities
-from utils.whatsapp_cloud_api import GRAPH_BASE, CloudApi, WhatsAppSendError, template_param
+from utils.whatsapp_cloud_api import CAPTION_LIMIT, GRAPH_BASE, CloudApi, WhatsAppSendError, template_param
 
 OUR_NUMBER = "100000000000001"
 SECRET = "app-secret"
@@ -145,6 +145,63 @@ async def test_rich_reply_sends_every_chunk_and_attachment(files):
     api.send_media.assert_awaited_once_with(SENDER, "image", link="https://assets.example/x.png", caption="photo",
                                             filename="x.png")
 
+
+
+QUIET_FORM = "https://assets.example/u/w/r/quiet-form.png"
+
+
+@pytest.mark.asyncio
+@respx.mock
+@pytest.mark.parametrize("mime, name, kind", [("image/png", "quiet-form.png", "image"),
+                                              ("video/mp4", "walkthrough.mp4", "video")])
+async def test_a_reply_with_one_picture_is_one_message_its_text_the_caption(files, mime, name, kind):
+    """A person picking a design was sent the reply's text, then the picture as a message of its own: on WhatsApp they
+    arrived apart. One picture or video and text that fits a caption go as one message, the text in WhatsApp markup
+    under it, in place of the embed's own caption."""
+    url = f"https://assets.example/u/w/r/{name}"
+    files[url] = FileInfo(mime, name, 300_000)
+    route = respx.post(MESSAGES_URL).mock(return_value=httpx.Response(200, json={"messages": [{"id": "wamid.m"}]}))
+    sent = await whatsapp.send_rich(_api(), SENDER, f"Here's **Quiet Form** on a phone:\n\n![The homepage]({url})\n\n"
+                                                    "- calm type\n- one column\n\nShall I build it?")
+    assert sent == "wamid.m"
+    [message] = [json.loads(call.request.read()) for call in route.calls]
+    assert message == {"messaging_product": "whatsapp", "to": "14155550100", "type": kind, kind: {
+        "link": url, "caption": "Here's *Quiet Form* on a phone:\n\n• calm type\n• one column\n\nShall I build it?"}}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("markdown", [
+    # Text past what a caption holds.
+    "x" * (CAPTION_LIMIT + 1) + f"\n![Quiet Form]({QUIET_FORM})",
+    # Two files.
+    f"Two looks.\n![Quiet Form]({QUIET_FORM})\n![Field Notes](https://assets.example/u/w/r/field-notes.png)",
+    # A file WhatsApp shows no caption under as a photo's.
+    "The brief.\n![Brief](https://assets.example/u/w/r/brief.pdf)",
+    # One that can't go as a file, and so is a link line in the text.
+    "The source.\n![Source](https://assets.example/u/w/r/site.zip)",
+])
+async def test_otherwise_the_text_goes_first_then_each_file_with_its_own_caption(files, markdown):
+    files[QUIET_FORM] = FileInfo("image/png", "quiet-form.png", 300_000)
+    files["https://assets.example/u/w/r/field-notes.png"] = FileInfo("image/png", "field-notes.png", 300_000)
+    files["https://assets.example/u/w/r/brief.pdf"] = FileInfo("application/pdf", "brief.pdf", 30_000)
+    files["https://assets.example/u/w/r/site.zip"] = FileInfo("application/zip", "site.zip", 30_000)
+    order = []
+    api = MagicMock(send_text=AsyncMock(side_effect=lambda to, text: order.append(("text", text)) or "t"),
+                    send_media=AsyncMock(side_effect=lambda to, kind, **kw: order.append((kind, kw["caption"])) or "m"))
+    await whatsapp.send_rich(api, SENDER, markdown)
+    texts = [i for i, (kind, _) in enumerate(order) if kind == "text"]
+    assert texts and texts == list(range(len(texts)))  # every text before any file
+    assert all(caption in ("Quiet Form", "Field Notes", "Brief") for kind, caption in order if kind != "text")
+
+
+@pytest.mark.asyncio
+async def test_a_picture_with_no_text_keeps_its_own_caption(files):
+    files[QUIET_FORM] = FileInfo("image/png", "quiet-form.png", 300_000)
+    api = MagicMock(send_text=AsyncMock(), send_media=AsyncMock(return_value="m"))
+    await whatsapp.send_rich(api, SENDER, f"![Quiet Form]({QUIET_FORM})")
+    api.send_text.assert_not_awaited()
+    api.send_media.assert_awaited_once_with(SENDER, "image", link=QUIET_FORM, caption="Quiet Form",
+                                            filename="quiet-form.png")
 
 MB = 1024 * 1024
 
