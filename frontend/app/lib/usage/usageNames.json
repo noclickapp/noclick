@@ -29,6 +29,8 @@
         "apps/build_outputs": "Site files kept",
         "apps/releases": "Site versions kept",
         "apps/hostnames": "Site addresses kept",
+        "live/session": "Live editing time",
+        "live/storage": "Live editing files kept",
         "storage/repo": "Code storage",
         "storage/repo_clone": "Code download",
         "storage/repo_push": "Code upload",
