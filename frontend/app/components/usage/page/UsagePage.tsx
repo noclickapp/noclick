@@ -167,7 +167,10 @@ export function UsageDashboard({
     const emphasis = onlyService ? (drill.path[0].id as ServiceId) : null;
     const narrowed = match && !onlyService ? selection : null;
     const hue = drillHue(drill, INK);
-    const chargeFilter = useMemo(() => ({ day, match, label: labels.length ? labels.join(' › ') : undefined }), [day, match, labels]);
+    const chargeFilter = useMemo(
+        () => ({ day, match, scope: match ? JSON.stringify(drillToParams(drill)) : null, label: labels.length ? labels.join(' › ') : undefined }),
+        [day, match, drill, labels]
+    );
 
     const chargesId = 'usage-charges';
     const pickDay = (k: string | null) => {

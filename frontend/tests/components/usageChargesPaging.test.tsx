@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 // Settings → Usage's charges, read a page at a time: "Show N more" appends the next page and the table stays there,
 // with or without a filter; a re-read of the page brings new charges in on top of a paged table without losing its
-// place; a changed filter starts again from its own first page. The backend here pages like usage:charges does, newest
+// place, also when it brings a new kind of charge under the filter or its groups in another order; a changed filter
+// starts again from its own first page. The backend here pages like usage:charges does, newest
 // first by a (created_at, id) cursor, narrowed to the groups chargeQuery picked.
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
@@ -18,6 +19,7 @@ const ME = 'u-1';
 const WF = 'wf-1';
 const SONNET = 'openrouter/anthropic/claude-sonnet-4.6';
 const EXA = 'exa/search_api';
+const HAIKU = 'openrouter/anthropic/claude-haiku-4.5';
 
 /** `n` charges, newest first, 20 minutes apart from `top`, each a cent more than the last so its amount names it. */
 function charges(n: number, top = Date.parse('2026-10-15T23:00:00Z'), from = 1): ChargeRow[] {
@@ -91,6 +93,12 @@ function page(rows: ChargeRow[], { keys, cursor, limit = 50 }: { keys?: string[]
 }
 
 let rows: ChargeRow[];
+/** usage:page answers its groups in another order (its GROUP BY has no ORDER BY). */
+let reordered: boolean;
+const answerPage = () => {
+    const data = pageData(rows);
+    return reordered ? { ...data, groups: [...data.groups].reverse() } : data;
+};
 
 beforeAll(() => {
     globalThis.ResizeObserver ??= class {
@@ -104,8 +112,9 @@ beforeAll(() => {
 
 beforeEach(() => {
     rows = charges(85);
+    reordered = false;
     socketCall.mockImplementation((event: string, payload: Record<string, unknown>) =>
-        Promise.resolve(event === 'usage:page' ? pageData(rows) : page(rows, payload as { keys?: string[]; cursor?: string; limit?: number }))
+        Promise.resolve(event === 'usage:page' ? answerPage() : page(rows, payload as { keys?: string[]; cursor?: string; limit?: number }))
     );
 });
 
@@ -189,6 +198,50 @@ it('brings new charges in on top of a paged table, keeping its place', async () 
     await act(async () => void window.dispatchEvent(new Event('focus')));
     await waitFor(() => expect(shown()).toEqual(amounts(rows.slice(0, 50))));
     expect(screen.getByText('Showing 50 of 147 charges')).toBeTruthy();
+});
+
+/** A charge of a model nothing used before: a group of its own, so a new key for any filter it falls under. */
+const otherModel = (top: string, id: number): ChargeRow => ({
+    ...charges(1, Date.parse(top), id)[0],
+    usage_type: 'ai_usage',
+    usage_subtype: HAIKU,
+    unit_type: 'tokens',
+    k: `${HAIKU}|${top.slice(0, 10)}`,
+});
+const ai = () => rows.filter((r) => r.usage_type === 'ai_usage');
+
+/** Pages the table to every AI charge, then reads the page again twice: its groups in another order, then with a
+ *  charge of another model on top. The table keeps the pages it read through both. */
+async function keepsItsPagesUnder(narrow: () => void) {
+    await open();
+    narrow();
+    await waitFor(() => expect(screen.getByText(`Showing 50 of ${ai().length} charges`)).toBeTruthy());
+    fireEvent.click(screen.getByRole('button', { name: `Show ${ai().length - 50} more` }));
+    await waitFor(() => expect(shown()).toHaveLength(ai().length));
+
+    reordered = true;
+    await act(async () => void window.dispatchEvent(new Event('focus')));
+    await settle();
+    expect(shown()).toEqual(amounts(ai()));
+
+    rows = [otherModel('2026-10-16T01:00:00Z', 300), ...rows];
+    await act(async () => void window.dispatchEvent(new Event('focus')));
+    await waitFor(() => expect(shown()).toHaveLength(ai().length));
+    await settle();
+    expect(shown()).toEqual(amounts(ai()));
+    // Only the one next page was read from a cursor; the re-reads asked for the new model's group too.
+    const reads = charging();
+    expect(reads.filter((p) => p.cursor)).toHaveLength(1);
+    expect(reads[reads.length - 1].keys).toContain(`${HAIKU}|2026-10-16`);
+    expect(screen.queryByRole('button', { name: /more$/ })).toBeNull();
+}
+
+it('keeps a service-filtered table’s pages when a re-read brings a new kind of charge or its groups in another order', async () => {
+    await keepsItsPagesUnder(() => fireEvent.click(within(screen.getByRole('region', { name: 'Charges' })).getByRole('tab', { name: 'AI models' })));
+});
+
+it('keeps a drilled table’s pages the same way', async () => {
+    await keepsItsPagesUnder(() => fireEvent.click(within(screen.getByLabelText('Where it goes')).getByText('AI models')));
 });
 
 it('starts a changed filter from its own first page', async () => {

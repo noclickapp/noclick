@@ -64,8 +64,9 @@ export function ChargesTable({
     id,
 }: {
     view: UsageView;
-    /** What the page narrowed it to (a drill, a picked day); the table owns service and search. */
-    filter: ChargeFilter & { label?: string };
+    /** What the page narrowed it to (a drill, a picked day); the table owns service and search. `scope` names what
+     *  `match` keeps (the drill), which a function can't say. */
+    filter: ChargeFilter & { label?: string; scope: string | null };
     source: ChargesSource;
     /** The unfiltered first page, read with the page. */
     firstPage: ChargesPage | null;
@@ -94,8 +95,9 @@ export function ChargesTable({
         () => chargeQuery(view, { match: filter.match, day: filter.day, service: service === 'all' ? null : service, query: search }),
         [view, filter.match, filter.day, service, search]
     );
-    // A new period reads its own charges, whatever the filter.
-    const queryKey = JSON.stringify([view.snap.period.window_start, cq.query]);
+    // The query is the period and the filter as asked, never the groups it comes to on this read: a re-read that
+    // brings a new kind of charge under the filter, or its groups in another order, is the same query.
+    const queryKey = JSON.stringify([view.snap.period.window_start, filter.scope, filter.day ?? null, service, search.trim().toLowerCase()]);
     const unfiltered = !cq.query.keys && !cq.query.day;
     // What a re-read of the page brings; the query is `queryKey`.
     const refresh = unfiltered ? firstPage : view.snap;
