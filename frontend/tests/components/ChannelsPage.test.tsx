@@ -204,6 +204,24 @@ describe('Channels on the platform', () => {
         expect(platform.after).toHaveBeenCalledWith('ch_launch', 'm2');
     });
 
+    it('shows an agent’s post the moment its frame lands, and stops saying it’s working', async () => {
+        // A busy writer, as the 10-27 day run's channel had it while the draft was being written.
+        platform.channelRows[0].members = [{ id: 'mem_scout', kind: 'agent', name: 'Scout', agentId: 'agt_scout', busy: true }];
+        renderAt('&channel=ch_launch');
+        await screen.findByText('Three threads worth reading.');
+        expect(screen.getByTestId('channel-working').textContent).toBe('Scout is working…');
+
+        // The agent's post settles its turn: the server says the channel moved and a message landed.
+        platform.channelRows[0].members = [{ id: 'mem_scout', kind: 'agent', name: 'Scout', agentId: 'agt_scout', busy: false }];
+        platform.after.mockResolvedValueOnce([message('m3', 'Newsletter draft, for your review.', SCOUT, 6)]);
+        const before = platform.after.mock.calls.length;
+        act(() => platform.push({ kind: 'message', channelId: 'ch_launch' }));
+        // Read where it landed, after the newest message held: no wait for the minute's backstop.
+        expect(await screen.findByText('Newsletter draft, for your review.', {}, { timeout: 1500 })).toBeTruthy();
+        expect(platform.after.mock.calls.slice(before)).toEqual([['ch_launch', 'm2']]);
+        await waitFor(() => expect(screen.queryByTestId('channel-working')).toBeNull());
+    });
+
     it('posts what you write, and flips your reaction', async () => {
         renderAt('&channel=ch_launch');
         await screen.findByText('Three threads worth reading.');

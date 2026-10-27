@@ -123,7 +123,7 @@ function DayPill({ label, earlier, onJump }: { label: string; earlier: { day: st
         <DropdownMenu>
             <DropdownMenuTrigger
                 aria-label={`${label}, jump to another day`}
-                className="pointer-events-auto inline-flex h-7 items-center gap-1 rounded-full bg-background pl-3 pr-2 text-[12.5px] font-medium text-foreground/80 shadow-[0_1px_2px_rgba(0,0,0,0.05)] ring-1 ring-inset ring-border transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-muted data-[state=open]:text-foreground dark:ring-foreground/[0.12]"
+                className="pointer-events-auto relative inline-flex h-7 items-center gap-1 rounded-full bg-background pl-3 pr-2 text-[12.5px] font-medium text-foreground/80 shadow-[0_1px_2px_rgba(0,0,0,0.05)] ring-1 ring-inset ring-border transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-muted data-[state=open]:text-foreground dark:ring-foreground/[0.12]"
             >
                 {label}
                 <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
@@ -383,9 +383,11 @@ export function MessageList({
             <Intro channel={channel} schedules={schedules} agents={agents} user={user} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} />
             {days.map(({ day, label, items }) => (
                 <section key={day} data-day={day} aria-label={label} className="relative">
-                    {/* The hairline stays put; the pill on it pins to the top while this day is on screen. */}
-                    <span aria-hidden className="absolute inset-x-0 top-[26px] h-px bg-border dark:bg-foreground/[0.08]" />
-                    <div className="pointer-events-none sticky top-2 z-10 flex justify-center pb-2 pt-3">
+                    {/* The day's hairline and its pill pin to the top while the day is on screen, over a band of the
+                        page's own colour that fades out below: a line scrolling up passes under it, never behind the pill. */}
+                    <div className="pointer-events-none sticky top-0 z-10 flex justify-center pb-2 pt-3" data-testid="day-divider">
+                        <span aria-hidden className="absolute inset-0 bg-background after:absolute after:inset-x-0 after:top-full after:h-3 after:bg-gradient-to-b after:from-background after:to-transparent" />
+                        <span aria-hidden className="absolute inset-x-0 top-[26px] h-px bg-border dark:bg-foreground/[0.08]" />
                         <DayPill label={label} earlier={earlier} onJump={jump} />
                     </div>
                     {items.map(({ msg, prev }) => (
