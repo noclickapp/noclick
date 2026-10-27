@@ -128,9 +128,16 @@ export const EARLIER = '__earlier__';
 /** What the account itself holds (a number's month, a domain's renewal): nothing used it but the account. */
 export const ACCOUNT = '__account__';
 
+/** The platform agent a charge was made by: the one its attribution names, else the one that runs on the workflow
+ *  node it was recorded in (a call its turn made under another key names only that). */
+function platformAgentOf(snap: UsageSnapshot, m: UsageRow['metadata']): string | undefined {
+    return m.platform_api?.agent_id ?? (m.workflow_id && m.node_id ? snap.directory.agents[`${m.workflow_id}:${m.node_id}`]?.agent : undefined);
+}
+
 /** Whether a charge was the account's chat with NoClick: the coordinator's own, or the agent that is it. */
 function inChat(snap: UsageSnapshot, m: UsageRow['metadata']): boolean {
-    return m.surface === 'coordinator' || !!(m.platform_api?.agent_id && snap.directory.agents[m.platform_api.agent_id]?.chat);
+    const agent = platformAgentOf(snap, m);
+    return m.surface === 'coordinator' || !!(agent && snap.directory.agents[agent]?.chat);
 }
 
 /** The charge's thing along `dim`. */
@@ -141,11 +148,13 @@ export function thingOf(snap: UsageSnapshot, row: UsageRow, dim: Dimension): str
             return rowOf(row).service;
         case 'automation':
             return inChat(snap, m) ? CHAT : m.workflow_id ?? OUTSIDE;
-        case 'agent':
+        case 'agent': {
             if (inChat(snap, m)) return CHAT;
-            if (m.platform_api?.agent_id) return m.platform_api.agent_id;
+            const agent = platformAgentOf(snap, m);
+            if (agent) return agent;
             if (m.workflow_id) return m.node_id ? `${m.workflow_id}:${m.node_id}` : EARLIER;
             return OUTSIDE;
+        }
         case 'app':
             return m.project_id ?? m.platform_api?.project_id ?? OUTSIDE;
         case 'person': {
@@ -176,12 +185,13 @@ export function thingLabel(snap: UsageSnapshot, dim: Dimension, id: string): str
     return d.keys?.[id]?.name ?? 'A key';
 }
 
-/** An agent node by its automation ("Support agent · Inbox triage"), or a platform agent by name. */
+/** An agent node by its automation ("Support agent · Inbox triage"), or a platform agent by name. An automation named
+ *  after its agent (a platform agent's own) isn't named twice. */
 function agentName(snap: UsageSnapshot, id: string): string {
     const d = snap.directory;
     if (d.agents[id]) {
         const wf = id.includes(':') ? d.workflows[id.split(':')[0]]?.name : null;
-        return wf ? `${d.agents[id].name} · ${wf}` : d.agents[id].name;
+        return wf && wf !== d.agents[id].name ? `${d.agents[id].name} · ${wf}` : d.agents[id].name;
     }
     const wf = id.includes(':') ? d.workflows[id.split(':')[0]]?.name : null;
     return wf ? `A removed step · ${wf}` : 'An agent';
@@ -791,7 +801,7 @@ export const FACETS: Record<ServiceId, { by: string; used?: true; of: (snap: Usa
         by: 'Agent',
         used: true,
         of: (s, r) => {
-            const a = r.metadata.platform_api?.agent_id;
+            const a = platformAgentOf(s, r.metadata);
             if (a) return { id: `agent:${a}`, label: s.directory.agents[a]?.name ?? 'An agent' };
             return { id: `${r.metadata.workflow_id ?? '-'}:${r.metadata.node_id ?? '-'}`, label: nodeName(s, r.metadata) };
         },
@@ -886,7 +896,7 @@ export function consumerOf(snap: UsageSnapshot, r: UsageRow): { id: string; labe
     if (r.usage_type === 'ai_builder' || r.usage_subtype.startsWith('noclick/builder') || m.surface === 'workflow_name') return on('builder', 'AI Builder');
     if (r.usage_type === 'ai_testing') return on('testing', 'Test runs');
     if (inChat(snap, m)) return { id: CHAT, label: 'Chat with NoClick' };
-    const agent = m.platform_api?.agent_id;
+    const agent = platformAgentOf(snap, m);
     if (agent) return { id: `agent:${agent}`, label: d.agents[agent]?.name ?? 'An agent' };
     if (m.workflow_id && m.node_id) return { id: `${m.workflow_id}:${m.node_id}`, label: agentName(snap, `${m.workflow_id}:${m.node_id}`) };
     if (m.workflow_id) return { id: `workflow:${m.workflow_id}`, label: `${d.workflows[m.workflow_id]?.name ?? 'A deleted automation'} (step not recorded)` };

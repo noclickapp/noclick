@@ -17,6 +17,7 @@ import {
     foldReadings,
     lineItem,
     metered,
+    thingOf,
     toSnapshot,
     type Drill,
 } from '~/components/usage/page/derive';
@@ -108,6 +109,76 @@ describe('what used each item', () => {
             consumerOf(snap, metered(snap).find((r) => r.usage_subtype === subtype && Object.entries(fields).every(([k, v]) => r.metadata[k as 'workflow_id'] === v))!).label;
         expect(byLabel('exa/search_api', {})).toBe('Larkspur concierge');
         expect(byLabel(LUNA, { surface: 'coordinator' })).toBe('Chat with NoClick');
+    });
+});
+
+describe('a charge recorded in a platform agent’s own run', () => {
+    // A platform agent runs on a workflow of its own, named after it, with one node named after it too. A call its
+    // turn made under another key (the coordinator's grant making a site's photo) carries that node and no agent id;
+    // the directory names the agent that runs on the node.
+    const COORD_WF = 'wf-coordinator';
+    const SUPPORT_WF = 'wf-larkspur';
+    const GONE_WF = 'wf-scout';
+    const IMAGE = 'openai/gpt-image-2.5-sunburst';
+    const ran = (workflow: string) => ({ workflow_id: workflow, node_id: 'agent', pa_key_id: 'key-1', pa_surface: 'ai', surface: 'platform_ai_image' });
+    const data: UsagePageData = {
+        ...DATA,
+        groups: [
+            group(IMAGE, 0.01, ran(COORD_WF)),
+            group(LUNA, 3, { pa_agent_id: CHAT_AGENT, workflow_id: COORD_WF, node_id: 'agent' }),
+            group(IMAGE, 0.02, ran(SUPPORT_WF)),
+            group(LUNA, 2, { pa_agent_id: SUPPORT, workflow_id: SUPPORT_WF, node_id: 'agent' }),
+            group(IMAGE, 0.04, ran(GONE_WF)),
+        ],
+        directory: {
+            ...DATA.directory,
+            workflows: { [COORD_WF]: { name: 'coordinator' }, [SUPPORT_WF]: { name: 'Larkspur concierge' }, [GONE_WF]: { name: 'scout' } },
+            agents: {
+                [CHAT_AGENT]: { name: 'coordinator', chat: true },
+                [`${COORD_WF}:agent`]: { name: 'coordinator', chat: true, agent: CHAT_AGENT },
+                [SUPPORT]: { name: 'Larkspur concierge' },
+                [`${SUPPORT_WF}:agent`]: { name: 'Larkspur concierge', agent: SUPPORT },
+                // An agent since deleted: only its node's label is left, the same as its automation's name.
+                [`${GONE_WF}:agent`]: { name: 'scout' },
+            },
+        },
+    };
+    const s = toSnapshot(data);
+    const charge = (workflow: string): ChargeRow => ({
+        id: `photo-${workflow}`,
+        created_at: '2026-10-15T11:35:28Z',
+        user_id: ME,
+        organization_id: 'org-1',
+        usage_type: 'ai_usage',
+        usage_subtype: IMAGE,
+        quantity: 1,
+        unit_type: 'images',
+        total_cost: 0.01,
+        user_resource: false,
+        metadata: { workflow_id: workflow, node_id: 'agent', execution_id: 'run-1', surface: 'platform_ai_image', platform_api: { key_id: 'key-1', surface: 'ai' } },
+        k: IMAGE,
+    });
+
+    it('reads the coordinator’s site photo as the chat with NoClick, said once', () => {
+        const photo = lineItem(s, charge(COORD_WF));
+        expect([photo.thing, photo.runner, photo.thingKind]).toEqual(['Chat with NoClick', null, 'chat']);
+    });
+
+    it('reads another agent’s as that agent, once, and one thing with what it spent itself', () => {
+        expect(lineItem(s, charge(SUPPORT_WF)).thing).toBe('Larkspur concierge');
+        expect(consumers(deriveView(s), 'ai', IMAGE).map((r) => r.label)).toEqual(['scout', 'Larkspur concierge', 'Chat with NoClick']);
+        const view = deriveView(s);
+        expect(consumers(view, 'ai', LUNA).map((r) => [r.label, r.total])).toEqual([
+            ['Chat with NoClick', 3],
+            ['Larkspur concierge', 2],
+        ]);
+        // By agent, the photo is the agent that made it.
+        expect(thingOf(s, metered(s).find((r) => r.usage_subtype === IMAGE && r.metadata.workflow_id === SUPPORT_WF)!, 'agent')).toBe(SUPPORT);
+        expect(thingOf(s, metered(s).find((r) => r.usage_subtype === IMAGE && r.metadata.workflow_id === COORD_WF)!, 'agent')).toBe(CHAT);
+    });
+
+    it('names an automation named after its agent once', () => {
+        expect(lineItem(s, charge(GONE_WF)).thing).toBe('scout');
     });
 });
 

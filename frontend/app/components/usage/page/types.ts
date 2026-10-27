@@ -215,8 +215,9 @@ export interface UsageBilling {
 /** Names for the ids the charges carry. */
 export interface Directory {
     workflows: Record<string, { name: string }>;
-    /** `${workflow_id}:${node_id}`, or a platform agent's id; `chat`: the agent that is the account's chat with NoClick. */
-    agents: Record<string, { name: string; chat?: boolean }>;
+    /** `${workflow_id}:${node_id}`, or a platform agent's id; `chat`: the agent that is the account's chat with NoClick;
+     *  `agent`: on a workflow node, the platform agent that runs on it. */
+    agents: Record<string, { name: string; chat?: boolean; agent?: string }>;
     people: Record<string, { name: string }>;
     projects?: Record<string, { name: string }>;
     databases?: Record<string, { name: string }>;

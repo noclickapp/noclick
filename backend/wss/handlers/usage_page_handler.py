@@ -38,7 +38,8 @@ OWNED_IDS = {
     "databases": ("database_id",),
     "numbers": ("phone_number_id",),
     "inboxes": ("inbox_id",),
-    "agents": ("pa_agent_id",),
+    # A deployment's agent may run on a workflow: a charge recorded in its run can name only that.
+    "agents": ("pa_agent_id", "workflow_id"),
     "keys": ("pa_key_id",),
     "people": ("pa_tenant_id",),
 }
