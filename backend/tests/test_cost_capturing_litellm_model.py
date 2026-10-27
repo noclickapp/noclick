@@ -14,6 +14,7 @@ Covers:
 """
 from __future__ import annotations
 
+import asyncio
 from types import SimpleNamespace
 from typing import Any, AsyncIterator, List
 from unittest.mock import AsyncMock, patch
@@ -302,3 +303,89 @@ async def test_whitespace_in_real_output_never_ends_a_call():
         _, wrapped = await model._fetch_response(stream=True)
     assert [c async for c in wrapped] == chunks
     assert model.last_call_cost == 0.001
+
+
+# --------------------------------------------------------------------------- #
+# A provider that stalls
+# --------------------------------------------------------------------------- #
+class _Silent:
+    """A provider stream that sends ``chunks``, then nothing ever again (OpenRouter holding the connection open while
+    its provider never answers); it records whether it was closed."""
+
+    def __init__(self, chunks=()):
+        self._chunks = list(chunks)
+        self.closed = False
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self._chunks:
+            return self._chunks.pop(0)
+        await asyncio.Event().wait()
+
+    async def aclose(self):
+        self.closed = True
+
+
+@pytest.mark.anyio
+async def test_a_call_whose_first_chunk_never_comes_is_asked_again(monkeypatch):
+    """A coordinator's third model call of a texted turn never answered: nothing timed it out, so the turn sat silent
+    for 15 minutes until its time limit cancelled it (2026-10-27). A call that sends nothing within ``FIRST_CHUNK_S``
+    is now closed and requested again before the SDK has read anything, so the run goes on as if it had answered."""
+    from agents import Agent as SDKAgent
+    from agents import Runner
+
+    from coder.openai_agent import litellm_model
+
+    monkeypatch.setattr(litellm_model, "FIRST_CHUNK_S", 0.05)
+    stalled = _Silent()
+    answer = _Stream([_real_chunk(text="I'm changing the label in the file you sent.")])
+    streams = iter([stalled, answer])
+    agent = SDKAgent(name="coordinator", instructions="Help.", model=CostCapturingLitellmModel(model="test/model"))
+    with patch("litellm.acompletion", new=AsyncMock(side_effect=lambda **kwargs: next(streams))) as model:
+        result = Runner.run_streamed(agent, "change Score to Points in my game")
+        async for _ in result.stream_events():
+            pass
+
+    assert result.final_output == "I'm changing the label in the file you sent."
+    assert model.await_count == 2
+    assert stalled.closed
+    assert answer.read == 2 and not answer.closed
+
+
+@pytest.mark.anyio
+async def test_a_call_that_stalls_every_time_fails_as_a_timeout_the_run_retries(monkeypatch):
+    """Past ``STALL_ATTEMPTS`` requests the call fails, as a timeout: the run's own retry treats it as transient."""
+    import litellm
+
+    from coder.openai_agent import litellm_model
+    from coder.openai_agent.agent import _is_retryable_llm_error
+
+    monkeypatch.setattr(litellm_model, "FIRST_CHUNK_S", 0.01)
+    stalls = [_Silent() for _ in range(litellm_model.STALL_ATTEMPTS)]
+    parent = AsyncMock(side_effect=[(SimpleNamespace(), s) for s in stalls])
+    model = CostCapturingLitellmModel(model="openrouter/openai/gpt-4o-mini")
+    with patch.object(CostCapturingLitellmModel.__bases__[0], "_fetch_response", new=parent):
+        with pytest.raises(litellm.Timeout) as raised:
+            await model._fetch_response(stream=True)
+    assert parent.await_count == litellm_model.STALL_ATTEMPTS
+    assert all(s.closed for s in stalls)
+    assert _is_retryable_llm_error(raised.value)
+
+
+@pytest.mark.anyio
+async def test_a_stream_that_goes_silent_partway_ends_there(monkeypatch):
+    """A stream that stops sending partway is ended after ``CHUNK_GAP_S``, as a stuck one is: what came is kept."""
+    from coder.openai_agent import litellm_model
+
+    monkeypatch.setattr(litellm_model, "CHUNK_GAP_S", 0.05)
+    chunks = [_chunk("I'm changing "), _chunk("the label")]
+    silent = _Silent(chunks)
+    model = CostCapturingLitellmModel(model="openrouter/openai/gpt-4o-mini")
+    with patch.object(CostCapturingLitellmModel.__bases__[0], "_fetch_response",
+                      new=AsyncMock(return_value=(SimpleNamespace(), silent))):
+        _, wrapped = await model._fetch_response(stream=True)
+        got = [c async for c in wrapped]
+    assert got == chunks
+    assert silent.closed

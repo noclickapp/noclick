@@ -28,6 +28,11 @@ unchanged but observes ``chunk.usage.cost`` as it flows (OpenRouter emits it
 on the final usage-bearing chunk; we update the slot every time a chunk
 carries usage to be robust to providers that split it).
 
+A streamed call that sends nothing within ``FIRST_CHUNK_S`` has stalled (its provider never answered, while
+OpenRouter keeps the connection open): it is closed and requested again before the SDK reads it, ``STALL_ATTEMPTS``
+times in all, then fails as a timeout the run's retry knows. One that goes silent ``CHUNK_GAP_S`` partway ends there,
+as a stuck one does.
+
 Non-streaming path: ``_fetch_response(stream=False)`` returns an assembled
 ``litellm.types.utils.ModelResponse`` synchronously — we read ``usage.cost``
 right off it.
@@ -39,6 +44,7 @@ N never reads turn N-1's stale value.
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Any, AsyncIterator, Iterator, Optional, Tuple
 
@@ -53,6 +59,13 @@ logger = logging.getLogger(__name__)
 # model's output cap, minutes later. The call ends there: the cut-off arguments answer the model as invalid JSON, and
 # it calls again.
 STUCK_WHITESPACE_CHARS = 2000
+# A streamed call that sends nothing for this long has stalled, not thought: a reasoning model's first chunk comes well
+# inside it. One held a texted coordinator turn silent for 15 minutes, until its time limit ended it (2026-10-27).
+FIRST_CHUNK_S = 180.0
+# Requests of a call whose first chunk never comes, before it fails as a timeout.
+STALL_ATTEMPTS = 3
+# A stream silent this long partway has stalled too.
+CHUNK_GAP_S = 180.0
 
 
 def extract_cost_from_response(response_obj: Any) -> Tuple[Optional[float], bool]:
@@ -101,12 +114,13 @@ class _StreamCostInterceptor:
     usage data so a provider that splits or repeats usage chunks can't drop
     the cost on the floor. The SDK's stream handler is duck-typed (does
     ``async for chunk in stream``), so this proxy needs only ``__aiter__`` /
-    ``__anext__``. A model stuck streaming whitespace (``STUCK_WHITESPACE_CHARS``)
-    has its stream closed there and ended, its usage chunk unread: billing
-    then counts the call itself (``BillingHooks``' fallback).
+    ``__anext__``. A model stuck streaming whitespace (``STUCK_WHITESPACE_CHARS``),
+    or a stream silent ``CHUNK_GAP_S`` partway, has its stream closed there and
+    ended, its usage chunk unread: billing then counts the call itself
+    (``BillingHooks``' fallback). ``started`` reads the first chunk ahead.
     """
 
-    __slots__ = ("_inner", "_model", "_iter", "_blank")
+    __slots__ = ("_inner", "_model", "_iter", "_blank", "_first", "_ended")
 
     def __init__(self, inner: Any, model: "CostCapturingLitellmModel") -> None:
         self._inner = inner
@@ -114,14 +128,41 @@ class _StreamCostInterceptor:
         self._iter: Optional[AsyncIterator[Any]] = None
         # How much whitespace the model has streamed in a row so far.
         self._blank = 0
+        # The first chunk, read ahead by ``started``.
+        self._first: Any = None
+        self._ended = False
 
     def __aiter__(self) -> "_StreamCostInterceptor":
-        self._iter = self._inner.__aiter__()
+        if self._iter is None:
+            self._iter = self._inner.__aiter__()
         return self
+
+    async def started(self) -> bool:
+        """Whether the provider sends anything within ``FIRST_CHUNK_S``; a stream that sends nothing is closed."""
+        self.__aiter__()
+        try:
+            self._first = await asyncio.wait_for(self._iter.__anext__(), FIRST_CHUNK_S)
+        except StopAsyncIteration:
+            self._ended = True
+        except asyncio.TimeoutError:
+            await self._close()
+            return False
+        return True
 
     async def __anext__(self) -> Any:
         assert self._iter is not None, "__aiter__ must be called before __anext__"
-        chunk = await self._iter.__anext__()
+        if self._ended:
+            raise StopAsyncIteration
+        if self._first is not None:
+            chunk, self._first = self._first, None
+        else:
+            try:
+                chunk = await asyncio.wait_for(self._iter.__anext__(), CHUNK_GAP_S)
+            except asyncio.TimeoutError:
+                logger.warning("[openai_agent] model=%s sent nothing for %.0fs partway; ending the call "
+                               "(generation=%s)", self._model.model, CHUNK_GAP_S, self._model._call_generation_id)
+                await self._close()
+                raise StopAsyncIteration from None
         if self._model._call_generation_id is None:
             self._model._call_generation_id = generation_id_of(chunk)
         usage = getattr(chunk, "usage", None)
@@ -133,11 +174,16 @@ class _StreamCostInterceptor:
         if self._stuck(chunk):
             logger.warning("[openai_agent] model=%s streamed %d whitespace characters in a row; ending the call "
                            "(generation=%s)", self._model.model, self._blank, self._model._call_generation_id)
-            close = getattr(self._inner, "aclose", None)
-            if close is not None:
-                await close()
+            await self._close()
             raise StopAsyncIteration
         return chunk
+
+    async def _close(self) -> None:
+        """The provider's stream closed, read no further."""
+        self._ended = True
+        close = getattr(self._inner, "aclose", None)
+        if close is not None:
+            await close()
 
     def _stuck(self, chunk: Any) -> bool:
         """Whether ``chunk`` brings the whitespace streamed in a row to ``STUCK_WHITESPACE_CHARS``."""
@@ -254,14 +300,22 @@ class CostCapturingLitellmModel(LitellmModel):
         elif len(args) >= 2:
             args = (args[0], strip_empty_assistant_messages(args[1]), *args[2:])
 
-        result = await super()._fetch_response(*args, stream=stream, **kwargs)
-
         if not stream:
+            result = await super()._fetch_response(*args, stream=stream, **kwargs)
             cost, reported = extract_cost_from_response(result)
             self._call_cost = cost
             self._call_cost_reported = reported
             self._call_generation_id = generation_id_of(result)
             return result
 
-        response, raw_stream = result
-        return response, _StreamCostInterceptor(raw_stream, self)
+        for attempt in range(1, STALL_ATTEMPTS + 1):
+            response, raw_stream = await super()._fetch_response(*args, stream=stream, **kwargs)
+            wrapped = _StreamCostInterceptor(raw_stream, self)
+            if await wrapped.started():
+                return response, wrapped
+            logger.warning("[openai_agent] model=%s sent nothing for %.0fs (request %d of %d)%s", self.model,
+                           FIRST_CHUNK_S, attempt, STALL_ATTEMPTS, "; asking again" if attempt < STALL_ATTEMPTS else "")
+        import litellm
+
+        raise litellm.Timeout(f"The model sent nothing for {FIRST_CHUNK_S:.0f}s, {STALL_ATTEMPTS} times in a row.",
+                              model=self.model, llm_provider=self.model.split("/", 1)[0])
