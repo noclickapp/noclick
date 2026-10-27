@@ -19,6 +19,13 @@ export function hueFor(id: string): AgentHue {
     return HUES[hash % HUES.length];
 }
 
+/** Who answers in a channel: agents read everything, or wait to be @-mentioned. */
+export function modeLine(mode: Channel['mode'], agents: Pick<ChannelMember, 'name'>[]): string {
+    const one = agents.length === 1;
+    const who = agents.length ? new Intl.ListFormat('en', { type: 'conjunction' }).format(agents.map((a) => a.name)) : 'Agents';
+    return mode === 'all' ? `${who} ${one ? 'reads' : 'read'} every message` : `${who} ${one ? 'answers' : 'answer'} when @-mentioned`;
+}
+
 /** A workspace's open channels, oldest first, as a sidebar lists them. */
 export function channelsIn(workspace: ChannelWorkspace, channels: Channel[]): Channel[] {
     return channels.filter((c) => c.workspaceId === workspace.id).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
@@ -34,12 +41,26 @@ export function unreadIn(workspace: ChannelWorkspace, channels: Channel[]): numb
     return channelsIn(workspace, channels).reduce((sum, c) => sum + c.unread, 0);
 }
 
-/** Who wrote a message, drawn as a member: you, a member of the room, or (one who left) the name it posted under. */
+/** An agent posting for you: the account's post an agent made (your assistant setting a channel going), never yours. */
+export function postedForYou(author: ChannelAuthor): boolean {
+    return author.type === 'account' && !!author.id;
+}
+
+/** NoClick's own name in a channel: its notes there, and your assistant's posts for you, wear its mark. */
+export const NOCLICK_NAME = 'NoClick';
+
+/** Whether NoClick wrote it: a note of its own in the room, or its assistant posting for you. */
+export function byNoClick(author: ChannelAuthor): boolean {
+    return author.type === 'system' || (postedForYou(author) && author.name === NOCLICK_NAME);
+}
+
+/** Who wrote a message, drawn as a member: you, a member of the room, or (one who left, or one posting for you) the
+ *  name it posted under. */
 export function authorMember(author: ChannelAuthor, members: ChannelMember[]): ChannelMember | null {
     switch (author.type) {
         case 'account':
-            return YOU;
         case 'agent':
+            if (author.type === 'account' && !postedForYou(author)) return YOU;
             return members.find((m) => m.agentId === author.id) ?? { id: `agent:${author.id}`, kind: 'agent', name: author.name, hue: hueFor(author.id ?? author.name) };
         case 'workflow_agent':
             return members.find((m) => m.id === author.id) ?? { id: `workflow_agent:${author.id}`, kind: 'agent', name: author.name, hue: hueFor(author.id ?? author.name) };

@@ -42,7 +42,7 @@ const LAUNCH: Channel = {
 type Call = [string, ...unknown[]];
 
 function fakeTransport(calls: Call[]) {
-    let listener: ((change: ChannelChange) => void) | null = null;
+    const listeners = new Set<(change: ChannelChange) => void>();
     let channels: Channel[] = [LAUNCH, { ...LAUNCH, id: 'ch_billing', name: 'billing', workspaceId: 'ws_acme', members: [], unread: 1 }];
     const newest = [msg('m1', '@Scout what are people saying?', ME, 10), msg('m2', 'Three threads worth reading.', SCOUT, 12, { mentions: [] })];
     let later: ChannelMessage[] = [];
@@ -72,6 +72,7 @@ function fakeTransport(calls: Call[]) {
             channels = channels.map((c) => (c.id === id ? { ...c, ...changes } : c));
             return channels.find((c) => c.id === id) as Channel;
         },
+        schedules: async () => [],
         addAgent: async (channel) => channel,
         removeMember: async (id) => channels.find((c) => c.id === id) as Channel,
         close: async () => undefined,
@@ -79,9 +80,9 @@ function fakeTransport(calls: Call[]) {
             calls.push(['markRead', id]);
         },
         subscribe: (l) => {
-            listener = l;
+            listeners.add(l);
             return () => {
-                listener = null;
+                listeners.delete(l);
             };
         },
     };
@@ -89,7 +90,7 @@ function fakeTransport(calls: Call[]) {
         transport,
         replyLive(text: string) {
             later = [msg('m3', text, SCOUT, 55)];
-            listener?.({ kind: 'message', channelId: 'ch_launch' });
+            listeners.forEach((l) => l({ kind: 'message', channelId: 'ch_launch' }));
         },
     };
 }

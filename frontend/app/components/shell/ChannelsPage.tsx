@@ -15,6 +15,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { TooltipProvider } from '~/components/ui/tooltip';
 import { useChannels, type Channels } from '~/hooks/useChannels';
+import { useChannelSchedules } from '~/hooks/useChannelSchedules';
 import type { VoiceClip } from '~/hooks/useVoiceClip';
 import { askNoClick } from '~/lib/askNoClick';
 import { navigateToTab } from '~/lib/navigation';
@@ -26,10 +27,11 @@ import { Facepile, MemberAvatar } from './channels/avatars';
 import { ChannelComposer, type DraftAttachment } from './channels/ChannelComposer';
 import { ChannelList } from './channels/ChannelList';
 import { CHANNEL_COMMANDS, mentionedMember, parseCommand, summarizeChannel } from './channels/commands';
-import { MessageList, modeLine } from './channels/MessageList';
-import { agentGroups, agentKey, channelIn, channelsIn, hueFor, YOU } from './channels/model';
+import { MessageList } from './channels/MessageList';
+import { agentGroups, agentKey, channelIn, channelsIn, hueFor, modeLine, YOU } from './channels/model';
 import { NewChannelDialog } from './channels/NewChannelDialog';
 import { PlatformChannelsBoundary, usePlatformChannels, type ChannelsTransport } from './channels/platform';
+import { ScheduleChip } from './channels/schedules';
 import type { AgentChoice, Channel, ChannelAttachment, ChannelMember, ChannelWorkspace } from './channels/types';
 import { WorkspaceRail } from './channels/workspaces';
 import { createPanelWidth } from './panelWidth';
@@ -368,6 +370,7 @@ function ChannelsLoaded({
     const byName = useMemo(() => new Map(channelsIn(workspace, channels.channels).map((c) => [c.name, c.id])), [workspace, channels.channels]);
     const draft = (channel && drafts[channel.id]) || EMPTY_DRAFT;
     const busy = channel?.members.filter((m) => m.busy) ?? [];
+    const schedules = useChannelSchedules(transport, channel?.id ?? null);
     // Phones show the list or one channel; laptops show both side by side.
     const channelOpen = !!channel && channel.id === requested;
 
@@ -762,6 +765,7 @@ function ChannelsLoaded({
                                     <Hash className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={2} />
                                     <span className="truncate">{channel.name}</span>
                                 </h1>
+                                {schedules.length > 0 && <ScheduleChip schedules={schedules} />}
                                 <span className="truncate text-[13px] text-muted-foreground">{channel.topic}</span>
                             </div>
                             <div className="flex shrink-0 items-center gap-1">
@@ -837,6 +841,7 @@ function ChannelsLoaded({
                             ) : history && !history.loading ? (
                                 <MessageList
                                     channel={channel}
+                                    schedules={schedules}
                                     messages={messages}
                                     members={members}
                                     user={user}

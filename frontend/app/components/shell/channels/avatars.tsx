@@ -35,8 +35,9 @@ const SIZE = {
 } as const;
 export type AvatarSize = keyof typeof SIZE;
 
-export function MemberAvatar({ member, user, size = 32, className }: { member: ChannelMember; user: AccountMenuUser; size?: AvatarSize; className?: string }) {
-    if (member.id === YOU_ID) return <AccountAvatar user={user} className={cn(SIZE[size], 'shrink-0', className)} />;
+/** `user` draws you; a card with no one signed in to show (the chat's agent and channel cards) draws agents alone. */
+export function MemberAvatar({ member, user, size = 32, className }: { member: ChannelMember; user?: AccountMenuUser; size?: AvatarSize; className?: string }) {
+    if (member.id === YOU_ID && user) return <AccountAvatar user={user} className={cn(SIZE[size], 'shrink-0', className)} />;
     return (
         <span
             aria-hidden
@@ -53,7 +54,7 @@ export function MemberAvatar({ member, user, size = 32, className }: { member: C
 }
 
 /** Overlapping avatars; the ring matches the surface they sit on. */
-export function Facepile({ members, user, size = 20, ring = 'ring-background' }: { members: ChannelMember[]; user: AccountMenuUser; size?: AvatarSize; ring?: string }) {
+export function Facepile({ members, user, size = 20, ring = 'ring-background' }: { members: ChannelMember[]; user?: AccountMenuUser; size?: AvatarSize; ring?: string }) {
     return (
         <span className="flex items-center -space-x-1">
             {members.map((m) => (

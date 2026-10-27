@@ -27,7 +27,8 @@ export interface ChannelMember {
 /** Who posted: the account, a person, an agent (a platform agent, or one from your Automations), an agent from elsewhere, NoClick, or an app's event. */
 export interface ChannelAuthor {
     type: 'account' | 'user' | 'agent' | 'workflow_agent' | 'a2a' | 'system' | 'app';
-    /** An agent's agent id, a person's user id, an Automations agent's or an outside agent's member id. */
+    /** An agent's agent id, a person's user id, an Automations agent's or an outside agent's member id; on the
+     *  account's post, the agent that posted it for you (null: you did). */
     id: string | null;
     name: string;
 }
@@ -73,6 +74,16 @@ export interface ChannelMessage {
 }
 
 export type ChannelMode = 'mentions' | 'all';
+
+/** A schedule that posts its message in the channel as you: a cron expression on its clock, and when it next posts. */
+export interface ChannelSchedule {
+    id: string;
+    cron: string;
+    tz: string | null;
+    message: string;
+    /** ISO; null while it's paused. */
+    nextRun: string | null;
+}
 
 export interface Channel {
     id: string;

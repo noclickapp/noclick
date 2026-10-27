@@ -180,6 +180,70 @@ export function isTimeOfDaySchedule(s: ScheduleEntry): boolean {
     return s.frequency === 'day' || s.frequency === 'week' || s.frequency === 'weeks' || s.frequency === 'month';
 }
 
+const capitalize = (s: string) => (s ? s[0].toUpperCase() + s.slice(1) : s);
+const int = (field: string) => (/^\d+$/.test(field) ? Number(field) : null);
+
+/** `1-5` → [1..5], `1,3,5` → [1,3,5], `*` → []; null for anything else. */
+function cronDays(field: string): number[] | null {
+    if (field === '*') return [];
+    const out: number[] = [];
+    for (const part of field.split(',')) {
+        const range = /^(\d)-(\d)$/.exec(part);
+        if (range) for (let d = Number(range[1]); d <= Number(range[2]); d++) out.push(d % 7);
+        else if (/^\d$/.test(part)) out.push(Number(part) % 7);
+        else return null;
+    }
+    return out;
+}
+
+/**
+ * A five-field cron expression as a sentence ("Weekdays at 9:00 AM", "Every 15 minutes"),
+ * or null when it's more than these common shapes say; show the expression then.
+ */
+export function describeCron(expr: string): string | null {
+    const fields = expr.trim().split(/\s+/);
+    if (fields.length !== 5) return null;
+    const [minute, hour, dayOfMonth, month, dayOfWeek] = fields;
+    if (month !== '*') return null;
+    const everyMinutes = /^\*\/(\d+)$/.exec(minute);
+    if (everyMinutes && hour === '*' && dayOfMonth === '*' && dayOfWeek === '*') {
+        return capitalize(describeSchedule({ frequency: 'minutes', interval: Number(everyMinutes[1]) }));
+    }
+    const m = int(minute);
+    if (m === null) return null;
+    const everyHours = /^\*\/(\d+)$/.exec(hour);
+    if ((hour === '*' || everyHours) && dayOfMonth === '*' && dayOfWeek === '*') {
+        const n = everyHours ? Number(everyHours[1]) : 1;
+        const at = m === 0 ? 'on the hour' : `at :${String(m).padStart(2, '0')}`;
+        return `Every ${n === 1 ? 'hour' : `${n} hours`} ${at}`;
+    }
+    const h = int(hour);
+    if (h === null) return null;
+    const entry: ScheduleEntry = { hour: h, minute: m };
+    if (dayOfMonth !== '*') {
+        const d = int(dayOfMonth);
+        return d === null || dayOfWeek !== '*' ? null : capitalize(describeSchedule({ ...entry, frequency: 'month', dayOfMonth: d }));
+    }
+    const dow = cronDays(dayOfWeek);
+    if (dow === null) return null;
+    if (dow.length === 1) return capitalize(describeSchedule({ ...entry, frequency: 'week', dayOfWeek: dow[0] }));
+    const label = daysLabel(dow);
+    const daily = describeSchedule({ ...entry, frequency: 'day' });
+    return label ? `${capitalize(label)} ${daily.replace(/^daily /, '')}` : capitalize(daily);
+}
+
+/**
+ * A cron schedule as the person reading it says it: the sentence, with its clock ("(Chicago time)") only when
+ * that isn't theirs (`viewerZone`, the browser's by default); null when `describeCron` can't say it.
+ */
+export function describeCronIn(expr: string, tz: string | null | undefined, viewerZone = Intl.DateTimeFormat().resolvedOptions().timeZone): string | null {
+    const sentence = describeCron(expr);
+    if (!sentence) return null;
+    const zone = tz && tz !== 'Etc/UTC' ? tz : 'UTC';
+    if (zone === viewerZone) return sentence;
+    return `${sentence} (${zone === 'UTC' ? 'UTC' : `${zone.split('/').pop()!.replace(/_/g, ' ')} time`})`;
+}
+
 /** The concrete schedule objects in a cron config, skipping unresolved {{ref}} strings. */
 export function getScheduleEntries(config: Record<string, unknown> | undefined): ScheduleEntry[] {
     const raw = config?.schedules;

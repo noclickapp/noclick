@@ -1,13 +1,14 @@
 // A channel's history, edge to edge across the pane as in Slack: where it
-// starts (or the way to read further back), then each day under a hairline
-// whose pill stays pinned while you read that day (and jumps between days).
-// Consecutive messages from one author share a header; words render as
-// markdown with their files under them, then their reactions. An agent that
-// @-mentions another hands it the work; NoClick's notes in the room (why it
+// starts with its schedules (or the way to read further back), then each day
+// under a hairline whose pill stays pinned while you read that day (and jumps
+// between days). Consecutive messages from one author share a header; words
+// render as markdown with their files under them, then their reactions. An
+// agent that @-mentions another hands it the work, a row of its own; what an
+// agent posted for you is signed by it; NoClick's notes in the room (why it
 // halted) read as NoClick's, and an app's event as that app's. NoClick's
 // answers to your commands are yours alone, and dismissable.
 import { useMemo, useRef, useState } from 'react';
-import { ChevronDown, CornerDownRight, EyeOff, Hash, Plug, SmilePlus } from 'lucide-react';
+import { ArrowRight, ChevronDown, EyeOff, Hash, Plug, SmilePlus } from 'lucide-react';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
 import { clockLabel } from '~/components/dashboard/primitives';
 import { LogoMark } from '~/components/shared/LogoMark';
@@ -16,24 +17,18 @@ import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 import { cn } from '~/lib/utils';
 import { MessageAttachments } from './attachments';
-import { Facepile, MemberAvatar } from './avatars';
+import { Facepile, MemberAvatar, MENTION_HUE } from './avatars';
 import { EmojiPicker } from './EmojiPicker';
 import { MessageBody } from './MessageBody';
-import { authorMember, handoffsOf } from './model';
-import type { Channel, ChannelMember, ChannelMessage, ChannelReaction } from './types';
+import { authorMember, byNoClick, handoffsOf, modeLine, NOCLICK_NAME, postedForYou } from './model';
+import { ScheduleLines } from './schedules';
+import type { Channel, ChannelMember, ChannelMessage, ChannelReaction, ChannelSchedule } from './types';
 
 /** Consecutive messages from one author inside this window share a header. */
 const GROUP_WINDOW_MS = 5 * 60 * 1000;
 
 /** The pane's side gutter: messages, the intro and the header all start here. */
 const GUTTER = 'px-5';
-
-/** Who answers in a channel: agents read everything, or wait to be @-mentioned. */
-export function modeLine(mode: Channel['mode'], agents: ChannelMember[]): string {
-    const one = agents.length === 1;
-    const who = agents.length ? new Intl.ListFormat('en', { type: 'conjunction' }).format(agents.map((a) => a.name)) : 'Agents';
-    return mode === 'all' ? `${who} ${one ? 'reads' : 'read'} every message` : `${who} ${one ? 'answers' : 'answer'} when @-mentioned`;
-}
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -55,7 +50,23 @@ function dayLabel(day: string, today: string): string {
 /** A key that says who wrote a message, for grouping. */
 const authorKey = (m: ChannelMessage) => `${m.author.type}:${m.author.id ?? m.author.name}`;
 
-function Intro({ channel, agents, user, older, loadingOlder, onLoadOlder }: { channel: Channel; agents: ChannelMember[]; user: AccountMenuUser; older: boolean; loadingOlder: boolean; onLoadOlder: () => void }) {
+function Intro({
+    channel,
+    schedules,
+    agents,
+    user,
+    older,
+    loadingOlder,
+    onLoadOlder,
+}: {
+    channel: Channel;
+    schedules: ChannelSchedule[];
+    agents: ChannelMember[];
+    user: AccountMenuUser;
+    older: boolean;
+    loadingOlder: boolean;
+    onLoadOlder: () => void;
+}) {
     if (older) {
         return (
             <div className={cn('flex justify-center pb-2 pt-6', GUTTER)}>
@@ -82,6 +93,7 @@ function Intro({ channel, agents, user, older, loadingOlder, onLoadOlder }: { ch
                 {agents.length > 0 && <Facepile members={agents} user={user} size={20} />}
                 <span>{agents.length ? `${modeLine(channel.mode, agents)}.` : 'No agents here yet: add one from the members menu, or with /invite.'}</span>
             </div>
+            <ScheduleLines schedules={schedules} />
         </div>
     );
 }
@@ -195,6 +207,31 @@ function Reactions({ reactions, onReact }: { reactions: ChannelReaction[]; onRea
     );
 }
 
+/** An agent passing the work on, as a row of its own under its message: its face to the next one's, and that agent's
+ *  name in the colour its @-mention reads in, working while it is. */
+function Handoffs({ from, to, user }: { from: ChannelMember; to: ChannelMember[]; user: AccountMenuUser }) {
+    return (
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {to.map((h) => (
+                <span
+                    key={h.id}
+                    className="inline-flex h-8 max-w-full items-center gap-2 rounded-full bg-foreground/[0.05] pl-1 pr-3.5 text-[13.5px] ring-1 ring-inset ring-foreground/[0.08]"
+                    data-testid="channel-handoff"
+                >
+                    <span className="flex shrink-0 items-center">
+                        <MemberAvatar member={from} user={user} size={24} />
+                        <ArrowRight className="mx-1 h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
+                        <MemberAvatar member={h} user={user} size={24} />
+                    </span>
+                    <span className="shrink-0 text-foreground/75">Handed off to</span>
+                    <span className={cn('min-w-0 truncate font-semibold', h.kind === 'agent' ? MENTION_HUE[h.hue ?? 'indigo'] : 'text-foreground')}>{h.name}</span>
+                    {h.busy && <span className="shrink-0 text-muted-foreground">· working</span>}
+                </span>
+            ))}
+        </div>
+    );
+}
+
 function MessageRow({
     msg,
     prev,
@@ -214,7 +251,7 @@ function MessageRow({
     onReact: (messageId: string, emoji: string) => void;
     onDismiss: (messageId: string) => void;
 }) {
-    const noclick = msg.author.type === 'system';
+    const noclick = byNoClick(msg.author);
     const app = msg.author.type === 'app';
     const author = authorMember(msg.author, members);
     const handoffs = handoffsOf(msg.author, msg.mentions, members);
@@ -245,9 +282,10 @@ function MessageRow({
             <div className="min-w-0 flex-1">
                 {!continued && (
                     <div className="mb-0.5 flex flex-wrap items-baseline gap-x-2">
-                        <span className="text-[14.5px] font-semibold text-foreground">{noclick ? 'NoClick' : (author?.name ?? msg.author.name)}</span>
+                        <span className="text-[14.5px] font-semibold text-foreground">{noclick ? NOCLICK_NAME : (author?.name ?? msg.author.name)}</span>
                         {app && <span className="text-[12.5px] text-muted-foreground">app</span>}
                         {msg.author.type === 'a2a' && <span className="text-[12.5px] text-muted-foreground">outside agent</span>}
+                        {postedForYou(msg.author) && <span className="text-[12.5px] text-muted-foreground">for you</span>}
                         {author?.workflowName && <span className="text-[12.5px] text-muted-foreground">{author.workflowName}</span>}
                         <time className="text-[12px] tabular-nums text-muted-foreground/80">{msg.pending ? 'Sending…' : clockLabel(msg.at)}</time>
                         {msg.ephemeral && (
@@ -266,20 +304,9 @@ function MessageRow({
                         )}
                     </div>
                 )}
-                {msg.text && <MessageBody text={msg.text} members={members} channels={channels} onChannel={onChannel} muted={noclick && !msg.ephemeral} />}
+                {msg.text && <MessageBody text={msg.text} members={members} channels={channels} onChannel={onChannel} muted={msg.author.type === 'system' && !msg.ephemeral} />}
                 {msg.attachments.length ? <MessageAttachments attachments={msg.attachments} /> : null}
-                {handoffs.length > 0 && (
-                    <p className="mt-2 flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
-                        <CornerDownRight className="h-3.5 w-3.5 shrink-0" />
-                        Handed off to
-                        {handoffs.map((h) => (
-                            <span key={h.id} className="inline-flex items-center gap-1">
-                                <MemberAvatar member={h} user={user} size={16} />
-                                <span className="font-medium text-foreground/80">{h.name}</span>
-                            </span>
-                        ))}
-                    </p>
-                )}
+                {author && handoffs.length > 0 && <Handoffs from={author} to={handoffs} user={user} />}
                 {canReact && msg.reactions.length > 0 && <Reactions reactions={msg.reactions} onReact={(emoji) => onReact(msg.id, emoji)} />}
             </div>
             {canReact && (
@@ -297,6 +324,7 @@ function MessageRow({
 
 export function MessageList({
     channel,
+    schedules,
     messages,
     members,
     user,
@@ -309,6 +337,8 @@ export function MessageList({
     onDismiss,
 }: {
     channel: Channel;
+    /** The schedules that post in it. */
+    schedules: ChannelSchedule[];
     messages: ChannelMessage[];
     members: ChannelMember[];
     user: AccountMenuUser;
@@ -350,7 +380,7 @@ export function MessageList({
 
     return (
         <div ref={root} className="flex flex-1 flex-col justify-end">
-            <Intro channel={channel} agents={agents} user={user} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} />
+            <Intro channel={channel} schedules={schedules} agents={agents} user={user} older={older} loadingOlder={loadingOlder} onLoadOlder={onLoadOlder} />
             {days.map(({ day, label, items }) => (
                 <section key={day} data-day={day} aria-label={label} className="relative">
                     {/* The hairline stays put; the pill on it pins to the top while this day is on screen. */}

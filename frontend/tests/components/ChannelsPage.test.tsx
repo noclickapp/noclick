@@ -16,7 +16,7 @@ vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 import { ChannelsPage } from '~/components/shell/ChannelsPage';
 import { PlatformChannelsContext, registerPlatformChannels, type ChannelChange, type ChannelsTransport } from '~/components/shell/channels/platform';
-import type { AgentChoice, Channel, ChannelMember, ChannelMessage, ChannelWorkspace } from '~/components/shell/channels/types';
+import type { AgentChoice, Channel, ChannelMember, ChannelMessage, ChannelSchedule, ChannelWorkspace } from '~/components/shell/channels/types';
 import { askNoClick } from '~/lib/askNoClick';
 
 const USER = { email: 'dana@example.com', display_name: 'Dana Ruiz' };
@@ -68,8 +68,14 @@ class FakePlatform implements ChannelsTransport {
         message('m1', '@Scout what are people saying?', ME, 2),
         message('m2', 'Three threads worth reading.', SCOUT, 3, { reactions: [{ emoji: '👍', count: 1, mine: true, names: ['You'] }] }),
     ];
-    listener: ((change: ChannelChange) => void) | null = null;
+    listeners = new Set<(change: ChannelChange) => void>();
     calls: { method: string; args: unknown[] }[] = [];
+    scheduleRows: ChannelSchedule[] = [];
+
+    /** A change the server pushes, to everyone following. */
+    push(change: ChannelChange) {
+        this.listeners.forEach((listener) => listener(change));
+    }
 
     private call(method: string, ...args: unknown[]) {
         this.calls.push({ method, args });
@@ -119,10 +125,11 @@ class FakePlatform implements ChannelsTransport {
     removeMember = vi.fn(async (channelId: string) => this.channelRows.find((c) => c.id === channelId) as Channel);
     close = vi.fn(async () => undefined);
     markRead = vi.fn(async () => undefined);
+    schedules = vi.fn(async () => this.scheduleRows);
     subscribe = (listener: (change: ChannelChange) => void) => {
-        this.listener = listener;
+        this.listeners.add(listener);
         return () => {
-            this.listener = null;
+            this.listeners.delete(listener);
         };
     };
 }
@@ -192,7 +199,7 @@ describe('Channels on the platform', () => {
         expect(screen.queryByTestId('load-older')).toBeNull();
 
         platform.after.mockResolvedValueOnce([message('m3', 'Drafted the post.', SCOUT, 5)]);
-        act(() => platform.listener?.({ kind: 'message', channelId: 'ch_launch' }));
+        act(() => platform.push({ kind: 'message', channelId: 'ch_launch' }));
         expect(await screen.findByText('Drafted the post.')).toBeTruthy();
         expect(platform.after).toHaveBeenCalledWith('ch_launch', 'm2');
     });
@@ -264,9 +271,45 @@ describe('Channels on the platform', () => {
 
         // Its reply reads as its own, with its workflow beside its name.
         platform.after.mockResolvedValueOnce([message('m3', 'Drafted the post.', { type: 'workflow_agent', id: 'mem_writer', name: 'Writer' }, 5)]);
-        act(() => platform.listener?.({ kind: 'message', channelId: 'ch_launch' }));
+        act(() => platform.push({ kind: 'message', channelId: 'ch_launch' }));
         const reply = (await screen.findByText('Drafted the post.')).closest('[data-testid="channel-message"]') as HTMLElement;
         expect(within(reply).getByText('Content')).toBeTruthy();
+    });
+
+    it('reads a hand-off as one, signs a post an agent made for you by that agent, and says when the channel posts on its own', async () => {
+        const viewer = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        platform.scheduleRows = [{ id: 'trg_1', cron: '0 8 * * 1', tz: viewer, message: '@Scout gather this week’s threads', nextRun: '2026-11-02T14:00:00.000Z' }];
+        platform.channelRows[0].members.push({ id: 'mem_quill', kind: 'agent', name: 'Quill', agentId: 'agt_quill' });
+        platform.newest = [
+            // Your assistant setting the room going: the account's post, made by an agent.
+            message('m1', '@Scout gather this week’s threads, then hand them to @Quill.', { type: 'account', id: 'agt_assistant', name: 'NoClick' }, 2, { mentions: ['Scout', 'Quill'] }),
+            message('m2', 'Three threads worth reading. @Quill, over to you.', SCOUT, 3, { mentions: ['Quill'] }),
+            message('m3', 'Ship it.', ME, 4),
+        ];
+        platform.history = vi.fn(async () => ({ messages: platform.newest, older: null }));
+        renderAt('&channel=ch_launch');
+
+        const handoff = await screen.findByTestId('channel-handoff');
+        expect(handoff.textContent).toBe('SQHanded off toQuill');
+        expect(handoff.closest('[data-testid="channel-message"]')?.textContent).toContain('Three threads worth reading.');
+        // Only an agent's message hands work on; the room being set going is no hand-off.
+        expect(screen.getAllByTestId('channel-handoff')).toHaveLength(1);
+
+        const [kickoff, , yours] = screen.getAllByTestId('channel-message');
+        expect(kickoff.textContent).toMatch(/^N?NoClickfor you/);
+        expect(kickoff.textContent).not.toContain('You');
+        expect(within(yours).getByText('You')).toBeTruthy();
+
+        await waitFor(() => expect(screen.getByTestId('channel-schedule').textContent).toBe('Every Monday at 8:00 AM'));
+        const line = screen.getByTestId('channel-schedule-line');
+        expect(line.textContent).toBe('Every Monday at 8:00 AMposts “@Scout gather this week’s threads”');
+        expect(platform.schedules).toHaveBeenCalledWith('ch_launch');
+
+        // A schedule added later shows once the channel says it changed.
+        platform.scheduleRows = [...platform.scheduleRows, { id: 'trg_2', cron: '0 17 * * 5', tz: viewer, message: '@Quill wrap up the week', nextRun: null }];
+        act(() => platform.push({ kind: 'channel', channelId: 'ch_launch' }));
+        await waitFor(() => expect(screen.getAllByTestId('channel-schedule-line')).toHaveLength(2));
+        expect(screen.getByTestId('channel-schedule').textContent).toBe('Every Monday at 8:00 AM+1');
     });
 
     it('starts a channel in the workspace you are in', async () => {

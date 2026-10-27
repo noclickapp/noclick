@@ -4,7 +4,7 @@
 // Channels opens) that renders the context below around the page; without one
 // the page says Channels aren't available here.
 import { createContext, Suspense, useContext, type ComponentType, type ReactNode } from 'react';
-import type { AgentChoice, Channel, ChannelAttachment, ChannelMessage, ChannelMode, ChannelWorkspace } from './types';
+import type { AgentChoice, Channel, ChannelAttachment, ChannelMessage, ChannelMode, ChannelSchedule, ChannelWorkspace } from './types';
 
 /** Something moved in the account's channels: new messages, one message's reactions, a channel itself, or a workspace. */
 export interface ChannelChange {
@@ -47,6 +47,8 @@ export interface ChannelsTransport {
     createWorkspace(name: string, logo?: File): Promise<ChannelWorkspace>;
     createChannel(input: { workspaceId: string | null; name: string; topic: string; mode: ChannelMode; agents: AgentChoice[] }): Promise<Channel>;
     updateChannel(channelId: string, changes: { topic?: string; mode?: ChannelMode }): Promise<Channel>;
+    /** The schedules that post in it. */
+    schedules(channelId: string): Promise<ChannelSchedule[]>;
     /** Add one of your agents; a workspace's channel takes a platform agent into the workspace first. */
     addAgent(channel: Channel, agent: AgentChoice): Promise<Channel>;
     removeMember(channelId: string, memberId: string): Promise<Channel>;
