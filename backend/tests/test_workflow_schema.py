@@ -243,6 +243,15 @@ class TestCompactSchema:
         )
         assert 'default="[{&quot;a&quot;:null}]"' in result
 
+    def test_a_list_of_a_union_reads_the_same_in_either_order(self):
+        # typing hands List[Union[int, str]] whichever equal union it cached first, so pydantic's anyOf order
+        # follows what else was imported (litellm's jinja2 import put str first in the open edition).
+        def rendered(*types):
+            return compact_schema({"days": {"type": "array", "items": {"anyOf": [{"type": t} for t in types]}}}, [])
+
+        assert rendered("integer", "string") == rendered("string", "integer")
+        assert 'type="(integer|string)[]"' in rendered("string", "integer")
+
     def test_list_of_object_or_reference_shows_the_object(self):
         # The cron trigger's schedules are each a schedule object or a {{reference}}: shown as any[], the drafter
         # never saw `frequency` and wrote "days" for "every morning", a value the trigger can't run.

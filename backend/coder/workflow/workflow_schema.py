@@ -111,7 +111,9 @@ def compact_schema(properties: dict, required: list) -> str:
         if t == "integer":
             return "int"
         if t == "array":
-            types = [v.get("type", "any") for v in _item_variants(inner)]
+            # Sorted: a union's order is whichever equal union typing cached first (another import's
+            # List[Union[str, int]] answers for List[Union[int, str]]), so it changes with what was imported.
+            types = sorted(v.get("type", "any") for v in _item_variants(inner))
             return f"{types[0]}[]" if len(types) == 1 else f"({'|'.join(types)})[]"
         return t
 
