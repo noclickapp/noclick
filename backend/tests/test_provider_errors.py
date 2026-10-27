@@ -489,3 +489,11 @@ class TestProxyRefusals:
         text = ("⚠️ noclick/claude-sonnet-4-5 request failed (authentication failed, HTTP 401). "
                 "Re-authenticate the provider and try again.")
         assert classify_provider_error(text, channel="error") is None
+
+
+def test_provider_label_is_the_name_a_person_reads():
+    from nodes.agent.provider_errors import provider_label
+
+    assert provider_label("openrouter") == "OpenRouter"
+    assert provider_label("anthropic") == "Anthropic"
+    assert provider_label("not-a-provider") == "the model provider"

@@ -333,6 +333,11 @@ def _meta(provider: str) -> Dict[str, str]:
     return meta
 
 
+def provider_label(provider: str) -> str:
+    """A provider's name as a person reads it ("OpenRouter")."""
+    return _meta(provider)["label"]
+
+
 def _action_for(kind: str, provider: str) -> Optional[Dict[str, str]]:
     meta = _meta(provider)
     if provider == "noclick" and kind == "spend_cap":
