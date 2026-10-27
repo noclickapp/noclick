@@ -16,6 +16,7 @@ from coder.coordinator.texting.imessage import InboundMessage, parse_inbound, se
 from nodes.core.media_resolver import FileInfo
 from utils import capabilities
 from utils.sendblue import API_BASE, Sendblue, SendblueError
+from tests.test_texting_whatsapp import CHART, _chart
 
 LINE = "+14155550123"
 USER_PHONE = "+14155550100"
@@ -157,6 +158,27 @@ async def test_a_file_whose_url_doesnt_name_its_type_goes_up_to_sendblue_under_i
         {"content": "The dummy", "media_url": "https://cdn.sendblue.co/up/a.pdf"},
         {"content": None, "media_url": "https://cdn.sendblue.co/up/b.pdf"},
     ]
+
+
+@pytest.mark.asyncio
+async def test_an_svg_chart_goes_up_as_the_picture_it_draws(files, monkeypatch):
+    """A chart the coordinator wrote as an SVG goes as the PNG it draws, put up to Sendblue under its name and sent
+    with the reply's text."""
+    chart = "https://assets.example/u/w/r/Bitcoin%202026%20chart.svg"
+    files[chart] = FileInfo("image/svg+xml", "Bitcoin 2026 chart.svg", len(CHART))
+    monkeypatch.setattr(channel, "read_url", AsyncMock(return_value=CHART.encode()))
+    api = MagicMock(send=AsyncMock(return_value="h1"),
+                    upload_file=AsyncMock(return_value="https://cdn.sendblue.co/up/chart.png"))
+    await send_rich(api, USER_PHONE, f"Bitcoin this year.\n![Monthly closes]({chart})")
+    [upload] = api.upload_file.await_args_list
+    assert upload.kwargs == {"filename": "Bitcoin 2026 chart.png", "mime_type": "image/png"}
+    _chart(upload.args[0])
+    api.send.assert_awaited_once_with(USER_PHONE, content="Bitcoin this year.",
+                                      media_url="https://cdn.sendblue.co/up/chart.png")
+    monkeypatch.setattr(channel, "read_url", AsyncMock(return_value=b"<svg><polyline"))
+    with pytest.raises(SendblueError, match="couldn't draw Bitcoin 2026 chart.svg to send it"):
+        await send_rich(api, USER_PHONE, f"Again.\n![Monthly closes]({chart})")
+    assert api.send.await_count == 1
 
 
 @pytest.mark.asyncio

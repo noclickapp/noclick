@@ -120,25 +120,33 @@ def _shown_inline(embed: Embed) -> bool:
 
 async def _media_url(api: Sendblue, embed: Embed) -> str:
     """Where Sendblue sends an embedded file from. Sendblue reads a file's type off its URL, which must end in its
-    extension and carry no signature; a file whose URL doesn't goes up to Sendblue under its own name first."""
+    extension and carry no signature; a file whose URL doesn't, or one sent in its place (an SVG's picture), goes up
+    to Sendblue under its own name first."""
     ext = os.path.splitext(embed.file.name)[1].lower()
     parts = urlsplit(embed.url)
-    if ext and not parts.query and not parts.fragment and unquote(parts.path).lower().endswith(ext):
+    if embed.data is not None:
+        data = embed.data
+    elif ext and not parts.query and not parts.fragment and unquote(parts.path).lower().endswith(ext):
         return embed.url
-    try:
-        data = await read_url(embed.url, max_bytes=UPLOAD_LIMIT)
-    except ValueError as exc:
-        raise SendblueError(f"couldn't read {embed.file.name} to send it: {exc}") from exc
+    else:
+        try:
+            data = await read_url(embed.url, max_bytes=UPLOAD_LIMIT)
+        except ValueError as exc:
+            raise SendblueError(f"couldn't read {embed.file.name} to send it: {exc}") from exc
     return await api.upload_file(data, filename=embed.file.name, mime_type=embed.file.mime_type)
 
 
 async def send_rich(api: Sendblue, to: str, markdown: str) -> Optional[str]:
     """Plain text, then each embedded file as an attachment (iMessage takes any file), with its caption; one nothing
     can tell the type of, or past Sendblue's cap, goes as a link line with the text, and so does a page NoClick stores
-    (``Embed.page``) beside its attachment. A reply whose one file is a picture or a video goes in one send, the file
-    with the text (in place of the embed's caption), as WhatsApp captions it. Every attachment is ready before
+    (``Embed.page``) beside its attachment, and an SVG goes as the picture it draws. A reply whose one file is a picture
+    or a video goes in one send, the file with the text (in place of the embed's caption), as WhatsApp captions it.
+    Every attachment is ready before
     anything is sent. The first message handle, or None when nothing could be sent."""
-    embeds, text = await read_embeds(markdown)
+    try:
+        embeds, text = await read_embeds(markdown)
+    except ValueError as exc:
+        raise SendblueError(str(exc)) from exc
     files = [embed for embed in embeds if embed.file is not None and (embed.file.size_bytes or 0) <= UPLOAD_LIMIT]
     attachments = [(embed, await _media_url(api, embed)) for embed in files]
     text = to_imessage_text("\n".join([text.rstrip(),

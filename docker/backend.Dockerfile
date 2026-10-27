@@ -64,7 +64,8 @@ RUN git clone --filter=blob:none https://github.com/NousResearch/hermes-agent.gi
 FROM python:3.12-slim AS runtime
 
 # libsndfile is soundfile's runtime library; git is what the harness CLIs and
-# agent workspaces expect; the rest is what outbound TLS and a readable
+# agent workspaces expect; fonts-dejavu-core draws the text of a chart a texted
+# reply sends as a picture; the rest is what outbound TLS and a readable
 # `docker logs` timestamp need.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libsndfile1 \
@@ -72,6 +73,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         git \
         tini \
+        fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/opt/noclick-cli/bin:/opt/venv/bin:$PATH" \

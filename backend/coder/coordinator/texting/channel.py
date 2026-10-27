@@ -12,12 +12,12 @@ import asyncio
 import logging
 import os
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from coder.coordinator.agent import COORDINATOR_MODEL, run_coordinator_turn
 from coder.workflow.builder_config import missing_brain_key
-from nodes.core.media_resolver import FileInfo, describe_url
+from nodes.core.media_resolver import FileInfo, describe_url, read_url
 from repositories.phones import PhoneRepo
 from repositories.users import get_user_email
 from utils.capabilities import PHONE_TEXT, capability
@@ -27,6 +27,7 @@ from utils.phone_numbers import normalize_e164
 from utils.redis_client import get_shared_redis
 from utils.resource_store import download_url
 from utils.socket_singleton import get_sio
+from utils.svg_image import to_png
 from wss.handlers.coordinator_handler import plan_allows_turn
 from wss.handlers.workflow_handler import get_user_org_context
 
@@ -113,9 +114,14 @@ def split_media(markdown: str) -> Tuple[List[Tuple[str, str]], str]:
     return [(url, caption) for caption, url in _MEDIA.findall(markdown)], _MEDIA.sub("", markdown)
 
 
-# A page a browser draws (HTML, SVG): a phone may open it as a file in a chat (as its source, or not at all) or save it
-# from a link, so one NoClick stores goes as both, the file and the link that saves it.
-PAGE_TYPES = frozenset({"text/html", "application/xhtml+xml", "image/svg+xml"})
+# A page a browser draws (HTML): a phone may open it as a file in a chat (as its source, or not at all) or save it from
+# a link, so one NoClick stores goes as both, the file and the link that saves it.
+PAGE_TYPES = frozenset({"text/html", "application/xhtml+xml"})
+# A drawing (an SVG) goes as the picture it draws, at a size a chat shows whole: WhatsApp sent a chart's as a text file
+# of its code (2026-10-27).
+SVG = "image/svg+xml"
+DRAWN_SIZE = (1080, 2160)
+SVG_LIMIT = 10 * 1024 * 1024
 
 
 @dataclass(frozen=True)
@@ -126,6 +132,7 @@ class Embed:
     caption: str
     file: Optional[FileInfo]
     download: Optional[str] = None  # the link that saves it, for a file NoClick stores (resource_store.download_url)
+    data: Optional[bytes] = None  # what goes in its place: the PNG an SVG draws (``drawn``)
 
     @property
     def link(self) -> str:
@@ -147,12 +154,28 @@ class Embed:
         return self.caption
 
 
+async def drawn(embed: Embed) -> Embed:
+    """An SVG embed as the PNG it draws (``svg_image.to_png``), sent in its place; any other as it is. Raises
+    ValueError when the SVG can't be read or drawn."""
+    if embed.file is None or embed.file.mime_type != SVG:
+        return embed
+    try:
+        png = await asyncio.to_thread(to_png, await read_url(embed.url, max_bytes=SVG_LIMIT),
+                                      width=DRAWN_SIZE[0], height=DRAWN_SIZE[1])
+    except ValueError as exc:
+        raise ValueError(f"couldn't draw {embed.file.name} to send it: {exc}") from exc
+    name = f"{os.path.splitext(embed.file.name)[0]}.png"
+    return replace(embed, file=FileInfo("image/png", name, len(png)), data=png)
+
+
 async def read_embeds(markdown: str) -> Tuple[List[Embed], str]:
     """Each file the Markdown embeds, judged by what it holds rather than its URL (``describe_url``), with the link
-    that saves it, and the text left."""
+    that saves it, an SVG as the picture it draws (``drawn``), and the text left. Raises ValueError when an SVG can't
+    be drawn."""
     found, text = split_media(markdown)
     files = await asyncio.gather(*(describe_url(url) for url, _ in found))
-    return [Embed(url, caption, file, download_url(url)) for (url, caption), file in zip(found, files)], text
+    embeds = [Embed(url, caption, file, download_url(url)) for (url, caption), file in zip(found, files)]
+    return list(await asyncio.gather(*(drawn(embed) for embed in embeds))), text
 
 
 def _masked(email: Optional[str]) -> str:

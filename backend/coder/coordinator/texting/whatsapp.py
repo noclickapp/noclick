@@ -184,7 +184,7 @@ DOCUMENT_LIMIT = 100 * MB
 CAPTIONED = ("image", "video")
 TEXT = "text"
 _TEXT_TYPES = ("application/json", "application/xml", "application/javascript", "application/yaml",
-               "application/x-yaml", "application/x-sh", "image/svg+xml", "application/xhtml+xml")
+               "application/x-yaml", "application/x-sh", "application/xhtml+xml")
 _SAME_TYPE = {"image/jpg": "image/jpeg", "audio/mp3": "audio/mpeg", "audio/x-m4a": "audio/mp4",
               "audio/mp4a-latm": "audio/mp4", "audio/x-aac": "audio/aac"}
 
@@ -216,17 +216,23 @@ async def _uploaded_text(api: CloudApi, embed: Embed) -> str:
 
 
 async def send_rich(api: CloudApi, to: str, markdown: str) -> Optional[str]:
-    """Text in WhatsApp markup, then each embedded file as a file (``sent_as``); one that can't go as a file is a link
-    line in the text, and so is a page NoClick stores (``Embed.page``) beside its file. A reply whose one file is a
-    picture or a video, with text that fits a caption, is one message: the file with the text as its caption (in
-    place of the embed's own). Every file is ready before anything is sent. The first message id, or None when
-    nothing could be sent."""
-    embeds, text = await read_embeds(markdown)
+    """Text in WhatsApp markup, then each embedded file as a file (``sent_as``), an SVG as the picture it draws; one
+    that can't go as a file is a link line in the text, and so is a page NoClick stores (``Embed.page``) beside its
+    file. A reply whose one file is a picture or a video, with text that fits a caption, is one message: the file with
+    the text as its caption (in place of the embed's own). Every file is ready before anything is sent. The first
+    message id, or None when nothing could be sent."""
+    try:
+        embeds, text = await read_embeds(markdown)
+    except ValueError as exc:
+        raise WhatsAppSendError(str(exc)) from exc
     files = []
     for embed in embeds:
         kind = sent_as(embed)
         if kind == TEXT:
             files.append((embed, "document", {"media_id": await _uploaded_text(api, embed)}))
+        elif kind is not None and embed.data is not None:
+            media_id = await api.upload_media(embed.data, filename=embed.file.name, mime_type=embed.file.mime_type)
+            files.append((embed, kind, {"media_id": media_id}))
         elif kind is not None:
             files.append((embed, kind, {"link": embed.url}))
     sent_files = [embed for embed, _, _ in files]

@@ -118,6 +118,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ripgrep \
         redis-server \
         tini \
+        fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
 
 # Node from the official image rather than Debian's, so the app runs on the

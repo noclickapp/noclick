@@ -8,6 +8,8 @@ fastapi-cli==0.0.4
 openai==2.38.0
 openai-agents==0.17.3
 pillow==13.0.0
+# An SVG a reply embeds, drawn as the PNG a phone's chat shows (utils/svg_image.py)
+resvg-py==0.4.0
 pydantic==2.13.4
 pydantic_core==2.46.4
 requests==2.34.2

@@ -6,6 +6,7 @@ import hashlib
 import hmac
 import json
 from datetime import datetime, timedelta, timezone
+from io import BytesIO
 from unittest.mock import AsyncMock, MagicMock
 from urllib.parse import quote
 
@@ -14,6 +15,7 @@ import pytest
 import respx
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from PIL import Image
 
 from coder.coordinator.texting import channel, routes, whatsapp
 from coder.coordinator.texting.channel import Embed, chunk
@@ -233,9 +235,9 @@ def test_a_file_nothing_can_tell_the_type_of_is_a_link():
 
 
 @pytest.mark.parametrize("mime, sent_as, page", [
-    # A page NoClick stores goes as its file (its source in plain text) and, in the text, the link that saves it.
-    ("text/html", whatsapp.TEXT, True), ("image/svg+xml", whatsapp.TEXT, True),
-    ("application/xhtml+xml", whatsapp.TEXT, True),
+    # A page NoClick stores goes as its file (its source in plain text) and, in the text, the link that saves it. An
+    # SVG goes as the picture it draws (``test_an_svg_chart_goes_as_the_picture_it_draws``).
+    ("text/html", whatsapp.TEXT, True), ("application/xhtml+xml", whatsapp.TEXT, True),
     # Any other file is one or the other, as before.
     ("text/csv", whatsapp.TEXT, False), ("application/json", whatsapp.TEXT, False),
     ("application/pdf", "document", False), ("image/png", "image", False), ("application/zip", None, False),
@@ -331,6 +333,54 @@ async def test_meta_refusing_a_file_or_an_unreadable_one_sends_none_of_the_messa
     with pytest.raises(WhatsAppSendError, match="couldn't read game.html"):
         await whatsapp.send_rich(_api(), SENDER, f"Here.\n![]({page})")
     assert not sent.called
+
+
+# A chart as the coordinator drew it by hand: a line, a title and the gridline labels.
+CHART = ('<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560"><rect width="1000" height="560" '
+         'fill="white"/><text x="70" y="55" font-family="Arial,sans-serif" font-size="28" font-weight="bold" '
+         'fill="#171717">Bitcoin (BTC), 2026 year to date</text><polyline points="130,252 215,361 300,347 385,288" '
+         'fill="none" stroke="#f7931a" stroke-width="5"/></svg>')
+
+
+def _chart(png: bytes) -> Image.Image:
+    """The picture sent, checked to be the chart drawn at a chat's width, its title in it."""
+    picture = Image.open(BytesIO(png))
+    assert (picture.format, picture.size) == ("PNG", (1080, 605))
+    assert picture.convert("L").crop((70, 20, 600, 70)).getextrema()[0] < 100
+    return picture
+
+
+@pytest.mark.asyncio
+async def test_an_svg_chart_goes_as_the_picture_it_draws(files, monkeypatch):
+    """Asked to chart Bitcoin's price, the coordinator embedded an SVG it wrote, which went as a text file of its code
+    (2026-10-27): an SVG goes up as the PNG it draws, at a chat's width, and is sent as an image, the reply's text its
+    caption."""
+    chart = "https://assets.example/u/w/r/Bitcoin%202026%20chart.svg"
+    files[chart] = FileInfo("image/svg+xml", "Bitcoin 2026 chart.svg", len(CHART))
+    read = AsyncMock(return_value=CHART.encode())
+    monkeypatch.setattr(channel, "read_url", read)
+    api = MagicMock(send_text=AsyncMock(return_value="t"), send_media=AsyncMock(return_value="m"),
+                    upload_media=AsyncMock(return_value="media.chart"))
+    await whatsapp.send_rich(api, SENDER, f"Bitcoin this year.\n![Monthly closes]({chart})")
+    read.assert_awaited_once_with(chart, max_bytes=channel.SVG_LIMIT)
+    [upload] = api.upload_media.await_args_list
+    assert upload.kwargs == {"filename": "Bitcoin 2026 chart.png", "mime_type": "image/png"}
+    _chart(upload.args[0])
+    api.send_text.assert_not_awaited()
+    api.send_media.assert_awaited_once_with(SENDER, "image", media_id="media.chart", caption="Bitcoin this year.",
+                                            filename="Bitcoin 2026 chart.png")
+
+
+@pytest.mark.asyncio
+async def test_an_svg_that_cant_be_drawn_sends_none_of_the_message(files, monkeypatch):
+    chart = "https://assets.example/u/w/r/chart.svg"
+    files[chart] = FileInfo("image/svg+xml", "chart.svg", 20)
+    monkeypatch.setattr(channel, "read_url", AsyncMock(return_value=b"<svg><polyline"))
+    api = MagicMock(send_text=AsyncMock(), send_media=AsyncMock(), upload_media=AsyncMock())
+    with pytest.raises(WhatsAppSendError, match="couldn't draw chart.svg to send it"):
+        await whatsapp.send_rich(api, SENDER, f"Here.\n![]({chart})")
+    api.send_text.assert_not_awaited()
+    api.upload_media.assert_not_awaited()
 
 
 @pytest.mark.asyncio
