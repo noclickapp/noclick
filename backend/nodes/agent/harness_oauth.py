@@ -371,12 +371,23 @@ def _chatgpt_id_token_claims(id_token: Optional[str]) -> Optional[Dict[str, Any]
     return claims if isinstance(claims, dict) else None
 
 
-def chatgpt_plan_type(id_token: Optional[str]) -> Optional[str]:
-    """``chatgpt_plan_type`` from a ChatGPT id token's claims; None when unknown."""
+def _chatgpt_auth_claim(id_token: Optional[str], name: str) -> Optional[str]:
     claims = _chatgpt_id_token_claims(id_token)
     auth = claims.get("https://api.openai.com/auth") if claims else None
-    plan = auth.get("chatgpt_plan_type") if isinstance(auth, dict) else None
-    return plan.lower() if isinstance(plan, str) and plan else None
+    value = auth.get(name) if isinstance(auth, dict) else None
+    return value if isinstance(value, str) and value else None
+
+
+def chatgpt_plan_type(id_token: Optional[str]) -> Optional[str]:
+    """``chatgpt_plan_type`` from a ChatGPT id token's claims; None when unknown."""
+    plan = _chatgpt_auth_claim(id_token, "chatgpt_plan_type")
+    return plan.lower() if plan else None
+
+
+def chatgpt_account_id(id_token: Optional[str]) -> Optional[str]:
+    """The ChatGPT account (workspace) a sign-in acts in, from its id token's claims, as Codex reads it; an expired
+    token still names it. None when unknown."""
+    return _chatgpt_auth_claim(id_token, "chatgpt_account_id")
 
 
 def codex_id_token_stale(id_token: Optional[str], *, buffer_s: int = 60) -> bool:
