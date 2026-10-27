@@ -40,14 +40,15 @@ cryptography==50.0.0
 chardet==5.2.0
 python-engineio==4.13.4
 # Pinned for provider-reported OpenRouter streaming costs and Gemini 3
-# thought-signature round trips.
-litellm==1.96.2
+# thought-signature round trips. 1.100.4 fixes CVE-2026-114612.
+litellm==1.100.4
 # LiteLLM's Vertex AI path imports google.auth at request time. It is an
 # optional LiteLLM dependency, so keep it explicit in the container image.
 google-auth==2.43.0
 deprecated==1.2.14
 wrapt==1.16.0
-boto3==1.39.9
+# litellm >= 1.98 requires boto3 >= 1.43.1.
+boto3==1.43.110
 cachetools==5.5.2
 tenacity==8.5.0
 posthog==7.19.2
