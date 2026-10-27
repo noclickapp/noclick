@@ -826,7 +826,7 @@ class Agent:
                 "properties": {
                     "command": {
                         "type": "string",
-                        "description": "Shell command to execute (sh -c).",
+                        "description": "Shell command to execute (bash -c).",
                     },
                 },
                 "required": ["command"],

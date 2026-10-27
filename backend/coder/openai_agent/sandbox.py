@@ -26,10 +26,13 @@ from typing import Any, Dict, List, Optional, Protocol
 logger = logging.getLogger(__name__)
 
 _LOCAL_TIMEOUT_S = 600
+# The shell every runtime runs a command in. Models write bash ([[ ]], <( ), arrays, pipefail), which Debian's sh
+# (dash) refuses with a syntax error.
+SHELL = ("bash", "-c")
 
 
 def without_stdin(command: str) -> str:
-    """``command`` for ``sh -c`` with its stdin closed (a CLI waiting on input hangs the turn). Grouped on lines of
+    """``command`` for ``SHELL`` with its stdin closed (a CLI waiting on input hangs the turn). Grouped on lines of
     its own, so a heredoc's closing line stays alone and every command of it, not only the last, reads /dev/null."""
     return f"{{\n{command}\n}} </dev/null"
 
@@ -203,7 +206,7 @@ class LocalSandboxRuntime:
         shell_cmd = f"cd {shlex.quote(str(self._workdir))} && {without_stdin(command)}"
         try:
             process = await asyncio.create_subprocess_exec(
-                "sh", "-c", shell_cmd,
+                *SHELL, shell_cmd,
                 stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
                 env=env,
             )

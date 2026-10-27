@@ -248,3 +248,28 @@ async def test_local_runtime_runs_a_heredoc_whole(tmp_path, monkeypatch):
     finally:
         await rt.close()
     assert (result["exit_code"], result["stdout"]) == (0, "42\n"), result["stderr"]
+
+
+# A model writes bash, not POSIX sh: pipefail, arrays, [[ ]], process substitution, brace expansion, and a command
+# substitution in a heredoc (Debian's sh, dash, stops at the first line).
+BASH_SCRIPT = """set -o pipefail
+words=(alpha beta)
+if [[ ${words[1]} == b* ]]; then
+  diff <(printf '%s\\n' "${words[@]}") <(printf 'alpha\\nbeta\\n') && echo same
+fi
+false | true || echo pipefail-on
+cat <<EOF
+$(echo {1..3})
+EOF"""
+
+
+async def test_local_runtime_runs_bash(tmp_path, monkeypatch):
+    monkeypatch.setenv("NOCLICK_HOME", str(tmp_path))
+    from coder.openai_agent.sandbox import LocalSandboxRuntime
+
+    rt = LocalSandboxRuntime(filesystem_configs=[], workflow_id="wf-bash", node_id="agent-1")
+    try:
+        result = await rt.run_bash(BASH_SCRIPT)
+    finally:
+        await rt.close()
+    assert (result["exit_code"], result["stdout"]) == (0, "same\npipefail-on\n1 2 3\n"), result["stderr"]
