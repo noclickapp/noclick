@@ -268,6 +268,10 @@ async def execute_tool(
                 from nodes.agent.platform_tools import execute_platform_tool
 
                 result = await execute_platform_tool(node, dispatch_arguments, tool_info)
+            elif tool_type == "render":
+                from nodes.agent.platform_tools import execute_render
+
+                result = await execute_render(node, dispatch_arguments)
             elif tool_type in ("memory_read", "memory_write"):
                 from nodes.agent.agent_memory import execute_memory_tool
 

@@ -282,6 +282,13 @@ PARENT_UPDATES = "agent.parent_updates"
 # its function name. Without a provider no tool is offered.
 AGENT_COORDINATION = "agent.coordination"
 
+# Pictures an agent draws for its replies (the ``render`` platform tool): an
+# object with ``param()`` (the tool, as the model takes it), async
+# ``offered(pool, workflow_id) -> bool`` (whether that workflow's agents get it)
+# and async ``call(pool, *, user_id, organization_id, workflow_id, arguments)
+# -> result``. Without one the tool is never offered.
+ANSWER_PICTURES = "agent.answer_pictures"
+
 # Tools a platform defines whole for an agent's turn (the runtime key
 # nodes.agent.platform_tools.PLATFORM_TOOLS_KEY): async (pool, *, spec,
 # arguments) -> result, called with the tool's own spec. ``spec["policy"]``

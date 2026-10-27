@@ -67,6 +67,7 @@
         "email/platform_human": "Email asking a person",
         "email/platform_inbox_reply": "Inbox reply",
         "email/platform_inbox_send": "Email from an inbox",
+        "render/picture": "Picture for a reply",
         "exa/search_api": "Web search",
         "perplexity/api": "Perplexity search",
         "twitter/x_api": "X posts read",

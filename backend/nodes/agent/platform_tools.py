@@ -29,6 +29,7 @@ MESSAGE_COORDINATOR_TOOL = "message_coordinator"
 REQUEST_CONNECTION_TOOL = "request_connection"
 WAKE_ME_TOOL = "wake_me"
 TELL_PARENT_TOOL = "tell_parent"
+RENDER_TOOL = "render"
 # The tool type of every tool a platform offers an agent to manage other agents.
 AGENTS_TOOL_TYPE = "agents"
 # The tool type of every tool a platform defines whole for a turn (``PLATFORM_TOOLS_KEY``).
@@ -38,7 +39,7 @@ PLATFORM_TOOL_TYPE = "platform"
 PLATFORM_TOOL_TYPES = {
     "submit_feedback", "prompt_builder", "builder_respond", "describe_workflow",
     "email_user", "message_coordinator", "request_connection", "wake_me", "tell_parent", AGENTS_TOOL_TYPE,
-    PLATFORM_TOOL_TYPE,
+    PLATFORM_TOOL_TYPE, RENDER_TOOL,
     MEMORY_READ_TOOL_TYPE, MEMORY_WRITE_TOOL_TYPE,
 }
 # The runtime config key a platform sets on an agent's turn to offer
@@ -266,16 +267,22 @@ def build_platform_tools(
     tell_parent: Optional[Dict[str, Any]] = None, agent_tools: Optional[Dict[str, Any]] = None,
     agent_memory: Optional[Dict[str, Any]] = None,
     platform_tools: Optional[Dict[str, Any]] = None,
+    answer_pictures: bool = False,
 ) -> list:
     """``(tool_param, tool_config)`` pairs to append to the agent's collected
     tool set. The config carries the tool type and its model-facing schema;
-    execution context comes from the active agent turn."""
+    execution context comes from the active agent turn. ``answer_pictures``:
+    the turn draws pictures for its replies (``answer_pictures_offered``)."""
     from nodes.agent.agent_memory import memory_params
     from utils.capabilities import (
-        AGENT_COORDINATION, AGENT_MEMORY, CONNECTION_REQUESTS, PARENT_UPDATES, PLATFORM_TOOLS, WAKEUPS, capability,
+        AGENT_COORDINATION, AGENT_MEMORY, ANSWER_PICTURES, CONNECTION_REQUESTS, PARENT_UPDATES, PLATFORM_TOOLS,
+        WAKEUPS, capability,
     )
 
     pairs = [_platform_pair(submit_feedback_param(), "submit_feedback")]
+    pictures = capability(ANSWER_PICTURES) if answer_pictures else None
+    if pictures is not None:
+        pairs.append(_platform_pair(pictures.param(), RENDER_TOOL))
     if connection_requests and capability(CONNECTION_REQUESTS) is not None:
         param, cfg = _platform_pair(_request_connection_param(connection_requests["integrations"]),
                                     REQUEST_CONNECTION_TOOL)
@@ -318,6 +325,21 @@ def build_platform_tools(
     if enable_email_updates and not in_iteration and agent_email_available():
         pairs.append(_platform_pair(_email_user_param(), "email_user"))
     return pairs
+
+
+async def answer_pictures_offered(pool, workflow_id: Optional[str]) -> bool:
+    """Whether this workflow's agents draw pictures for their replies (``ANSWER_PICTURES``); ``pool`` None = the
+    native pool, resolved only once there is a provider to ask."""
+    from utils.capabilities import ANSWER_PICTURES, capability
+
+    provider = capability(ANSWER_PICTURES)
+    if provider is None or not workflow_id:
+        return False
+    if pool is None:
+        from utils.database_pool import get_native_pool
+
+        pool = get_native_pool()
+    return await provider.offered(pool, workflow_id)
 
 
 def inputs_are_iteration_fanout(inputs: Dict[str, Any]) -> bool:
@@ -1028,6 +1050,25 @@ async def execute_agent_tool(node: Any, arguments: Dict[str, Any], tool_info: Di
     return await agent_tools_impl(get_native_pool(), tool_info.get("spec"), arguments)
 
 
+async def render_impl(pool, *, user_id: Optional[str], organization_id: Optional[str], workflow_id: Optional[str],
+                      arguments: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.capabilities import ANSWER_PICTURES, capability
+
+    provider = capability(ANSWER_PICTURES)
+    if provider is None or not user_id:
+        return {"success": False, "error": "Pictures aren't available here."}
+    return await provider.call(pool, user_id=user_id, organization_id=organization_id, workflow_id=workflow_id,
+                               arguments=arguments)
+
+
+async def execute_render(node: Any, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    from utils.database_pool import get_native_pool
+
+    return await render_impl(get_native_pool(), user_id=getattr(node, "user_id", None),
+                             organization_id=getattr(node, "organization_id", None),
+                             workflow_id=getattr(node, "workflow_id", None), arguments=arguments)
+
+
 async def platform_tool_impl(pool, spec: Optional[Dict[str, Any]], arguments: Dict[str, Any]) -> Dict[str, Any]:
     from utils.capabilities import PLATFORM_TOOLS, capability
 
@@ -1061,6 +1102,10 @@ async def execute_platform_tool_from_ctx(
         return await agent_tools_impl(pool, st_config.get("spec"), arguments)
     if tool_type == PLATFORM_TOOL_TYPE:
         return await platform_tool_impl(pool, st_config.get("spec"), arguments)
+    if tool_type == RENDER_TOOL:
+        return await render_impl(pool, user_id=st_config.get("user_id"),
+                                 organization_id=st_config.get("organization_id"),
+                                 workflow_id=st_config.get("workflow_id"), arguments=arguments)
     if tool_type in (MEMORY_READ_TOOL_TYPE, MEMORY_WRITE_TOOL_TYPE):
         from nodes.agent.agent_memory import memory_impl
 
