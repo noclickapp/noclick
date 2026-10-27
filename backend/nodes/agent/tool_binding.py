@@ -133,6 +133,14 @@ def _free_form(schema: Any) -> bool:
     return schema.get("type") == "object" and (not schema.get("properties") or bool(schema.get("additionalProperties")))
 
 
+def without_blanks(arguments: Optional[Dict[str, Any]], required: Iterable[str] = ()) -> Dict[str, Any]:
+    """``arguments`` with each optional one left blank ("" or null) taken out, as if never passed: a strict tool
+    schema makes a model fill every field, and it writes "" for the ones it doesn't mean (wake_me refused 20 calls in
+    a row whose unused timings were "", 2026-10-27). ``required`` ones are kept as given, for their own refusal."""
+    keep = set(required or ())
+    return {k: v for k, v in (arguments or {}).items() if k in keep or not (v is None or v == "")}
+
+
 def apply(arguments: Optional[Dict[str, Any]], bound: Optional[Dict[str, Any]],
           parameters: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """The call's final arguments: the model's, with ``bound`` on top, and no

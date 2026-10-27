@@ -20,7 +20,7 @@ from nodes.agent.rehearsal import (
 )
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
-from nodes.agent.tool_binding import BOUND_ARGUMENTS_KEY, apply as apply_bound
+from nodes.agent.tool_binding import BOUND_ARGUMENTS_KEY, apply as apply_bound, without_blanks
 from utils.capabilities import TOOL_CALL_GUARD, capability
 
 if TYPE_CHECKING:
@@ -134,6 +134,11 @@ async def execute_tool(
 
     tool_info = tool_configs[tool_name]
     tool_type = tool_info.get("tool_type", "workflow")
+    from nodes.agent.platform_tools import PLATFORM_TOOL_TYPES
+
+    if tool_type in PLATFORM_TOOL_TYPES:
+        # An integration's "" can be a real value; a platform tool's optional "" never is.
+        arguments = without_blanks(arguments, (tool_info.get("_parameters") or {}).get("required") or ())
     if tool_info.get(BOUND_ARGUMENTS_KEY):
         # Before the guard, so it judges the final arguments.
         arguments = apply_bound(arguments, tool_info[BOUND_ARGUMENTS_KEY], tool_info.get("_parameters"))

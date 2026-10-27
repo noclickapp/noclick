@@ -115,3 +115,31 @@ async def test_the_guard_judges_and_the_operation_runs_with_the_final_arguments(
     final = {"to": "ana@example.com", "subject": "Hi", "body": "x"}
     assert guarded.seen == [final]
     assert guarded.run.await_args.kwargs["arguments"] == final
+
+
+@pytest.mark.asyncio
+async def test_a_platform_tool_s_blank_optional_arguments_are_never_passed_and_an_operation_s_are_kept(
+        guarded, monkeypatch):
+    """A strict schema makes a model fill the arguments it doesn't mean with "" or null: a platform tool takes those
+    as never passed (wake_me refused a call whose unused timings were "", 20 times in a row, 2026-10-27), and its
+    required ones go on as given, for its own refusal. An integration's "" can be a real value, and is kept."""
+    from nodes.agent.platform_tools import build_platform_tools
+
+    called = []
+
+    async def wakeups(pool, *, spec, arguments):
+        called.append(arguments)
+        return {"success": True}
+
+    monkeypatch.setitem(capabilities._providers, capabilities.WAKEUPS, wakeups)
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: None)
+    configs = {param["function"]["name"]: config for param, config in build_platform_tools(False, wake_me={"x": 1})}
+    node = SimpleNamespace(user_id="u", organization_id=None, workflow_id="w", node_id="agent",
+                           conversation_id="c", execution_id=None)
+    sent = {"note": "", "at": "", "after_minutes": None, "operation_id": "op-1", "every": "", "wakeup_id": ""}
+    assert (await execute_tool(node, "wake_me", sent, configs))["success"] is True
+    assert called == guarded.seen == [{"note": "", "operation_id": "op-1"}]
+
+    _, configs = build_node_op_tools("automation-gmail", [SEND], node_id="gmail")
+    await execute_tool(node, f"gmail__{SEND}", {"to": "a@b.test", "subject": "", "body": "x"}, configs)
+    assert guarded.run.await_args.kwargs["arguments"] == {"to": "a@b.test", "subject": "", "body": "x"}
