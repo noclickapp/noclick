@@ -115,6 +115,37 @@ class TestExaSearchMock:
         assert len(result["data"]["results"]) == 2
 
     @pytest.mark.asyncio
+    async def test_a_news_search_is_exas_auto_search_in_its_news_category(self, api_key_credentials):
+        """A model asked how the market did sends "news" as the search type whatever the schema says, which Exa
+        refuses ("expected one of neural, keyword, auto, ..."): the node sends it as Exa's news search, keeping a
+        category the call names, and an agent's tool says it takes news."""
+        from nodes.agent.node_op_tools import build_node_op_tools
+
+        sent = []
+        mock_client = create_mock_client(200, {"results": []})
+
+        async def request(method, url, **kwargs):
+            sent.append(kwargs["json"])
+            return create_mock_response(200, {"results": []})
+
+        mock_client.request = request
+        for category in (None, "financial report"):
+            config = ExaNodeConfig(config=ExaSearchConfig(query="US stock market today", search_type="news",
+                                                          category=category), credentials=api_key_credentials)
+            with patch("nodes.exa_node.httpx.AsyncClient", return_value=mock_client):
+                assert (await create_exa_node(config).execute({}))["status"] == "success"
+        assert [(b["type"], b["category"]) for b in sent] == [("auto", "news"), ("auto", "financial report")]
+        # Any other type goes to Exa as it is.
+        config = ExaNodeConfig(config=ExaSearchConfig(query="ai agents", search_type="keyword"),
+                               credentials=api_key_credentials)
+        with patch("nodes.exa_node.httpx.AsyncClient", return_value=mock_client):
+            await create_exa_node(config).execute({})
+        assert (sent[-1]["type"], sent[-1].get("category")) == ("keyword", None)
+        params, _ = build_node_op_tools("automation-exa", ["search"], node_id="web", slug="exa")
+        [search] = [p["function"] for p in params if p["function"]["name"] == "exa__search"]
+        assert "news" in search["parameters"]["properties"]["search_type"]["enum"]
+
+    @pytest.mark.asyncio
     async def test_get_contents(self, api_key_credentials):
         config = ExaNodeConfig(
             config=ExaGetContentsConfig(urls="https://exa.ai, https://example.com"),

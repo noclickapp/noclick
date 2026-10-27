@@ -1094,18 +1094,20 @@
             }
           ],
           "default": "auto",
-          "description": "How to interpret the query",
+          "description": "How to interpret the query; news searches news articles (Exa's news category)",
           "enum": [
             "auto",
             "neural",
             "keyword",
-            "fast"
+            "fast",
+            "news"
           ],
           "enumNames": [
             "Auto",
             "Neural",
             "Keyword",
-            "Fast"
+            "Fast",
+            "News"
           ],
           "title": "Search Type",
           "x-enum-searchable": true
