@@ -259,3 +259,59 @@ async def test_evaluate_single_expression_no_accessor_constant():
     # The preview always evaluates, even without a `$`-accessor (unlike inline fields).
     out = await evaluate_single_expression("'a,b,c'.split(',')[1]", NODE_OUTPUTS)
     assert out == "b"
+
+
+# --- reads that never enter the sandbox ------------------------------------
+
+def _chat_pages(pages: int = 80) -> dict:
+    """An iteration's collected outputs at the size a day of group chats reaches: ~5.6 MB of message pages whose
+    text isn't Latin-1, too large for the sandbox to hand back."""
+    return {"collected_results": [
+        {"messages": [{"chatId": f"{p}@g.us", "id": f"m{p}-{i}", "senderPushName": "Ana", "media": None,
+                       "text": "on site at 9 😊 " * 20, "timestamp": 1761500000 + i} for i in range(100)]}
+        for p in range(pages)]}
+
+
+async def test_a_large_value_read_by_path_reaches_the_consumer_whole():
+    # An iteration's collected results reached a function as the string "<_quickjs.Object object at 0x…>"
+    # (2026-10-27): a read that only walks keys and indexes never enters the sandbox.
+    outputs = {"iteration-1": _chat_pages()}
+    with patch("utils.expression_evaluator.execute_js_async", new=AsyncMock()) as mock_js:
+        whole = await evaluate_expressions({"pages": "{{ $('iteration-1').collected_results }}"}, outputs)
+        one = await evaluate_expressions("{{ $('iteration-1')['collected_results'][3].messages[99].text }}", outputs)
+        count = await evaluate_expressions("{{ $('iteration-1').collected_results.length }}", outputs)
+    mock_js.assert_not_awaited()
+    assert whole == {"pages": outputs["iteration-1"]["collected_results"]}
+    assert one == "on site at 9 😊 " * 20
+    assert count == 80
+
+
+async def test_a_value_the_sandbox_cant_hand_back_fails_loudly():
+    # An expression that computes over the same value still runs in the sandbox, and fails saying why.
+    with pytest.raises(ExpressionEvaluationError) as exc:
+        await evaluate_expressions("{{ $('iteration-1').collected_results.slice(0) }}",
+                                   {"iteration-1": _chat_pages()})
+    assert "can't be turned into JSON" in str(exc.value) and "_quickjs" not in str(exc.value)
+
+
+async def test_a_path_read_answers_as_javascript_would():
+    outputs = {"n": {"a": {"b": None}, "items": [{"name": "x"}], "word": "😊"}, "vars": {"name": "Ada"}}
+    workflow_nodes = [{"id": "n", "data": {"label": "My Node"}}]
+    with patch("utils.expression_evaluator.execute_js_async", new=AsyncMock()) as mock_js:
+        assert await evaluate_expressions('{{ $("n").items[0]["name"] }}', outputs) == "x"
+        assert await evaluate_expressions("{{ $('My Node').a }}", outputs, workflow_nodes=workflow_nodes) == {
+            "b": None}
+        assert await evaluate_expressions("{{ $vars.name }}", outputs) == "Ada"
+        assert await evaluate_expressions("{{ $json.title }}", outputs, primary_input={"title": "hi"}) == "hi"
+        # A key the object lacks, or an index past the end, is undefined: the field comes back empty.
+        assert await evaluate_expressions({"f": "{{ $('n').missing }}", "g": "{{ $('n').items[5] }}"},
+                                          outputs) == {"f": None, "g": None}
+        for expression, message in (("$('n').missing.x", "cannot read property 'x' of undefined"),
+                                    ("$('n').a.b.c", "cannot read property 'c' of null"),
+                                    ("$('ghost').x", "No data for node 'ghost'")):
+            with pytest.raises(ExpressionEvaluationError) as exc:
+                await evaluate_expressions(f"{{{{ {expression} }}}}", outputs)
+            assert message in str(exc.value)
+    mock_js.assert_not_awaited()
+    # What only JavaScript answers is still its answer: a string's length counts UTF-16 units.
+    assert await evaluate_expressions("{{ $('n').word.length }}", outputs) == 2

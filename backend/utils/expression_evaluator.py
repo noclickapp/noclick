@@ -9,7 +9,9 @@ kinds, classified deterministically (no guessing / try-catch fallback):
      reference resolver (``utils.reference_resolver`` / the execution handlers)
      resolves it exactly as before.
   2. JS expression — uses a ``$``-accessor (``$('node')``, ``$json``, ``$vars``,
-     ``$if``, ``$ifEmpty``, ``$now``). Evaluated as JavaScript in the QuickJS sandbox.
+     ``$if``, ``$ifEmpty``, ``$now``). Evaluated as JavaScript in the QuickJS sandbox; one
+     that only reads a value (``$('id').a[0].b``) is walked in Python with the same
+     answer, so a large value never has to fit the sandbox.
   3. Literal passthrough — anything else (e.g. ``{{name}}`` placeholders meant for a
      downstream templating system). Left UNTOUCHED (today's behaviour).
 
@@ -84,13 +86,16 @@ class UnresolvedReference(NamedTuple):
 # form so it evaluates instead of passing through as a literal.
 _LEADING_NODE_RE = re.compile(r"^([A-Za-z0-9_-]+)((?:\.[A-Za-z_$][\w$]*|\[\d+\]).*)\Z", re.DOTALL)
 
+# What `$('id')` throws for an id with no data, around the id.
+_NO_DATA = ("No data for node '", "' — is it connected upstream and has it run?")
+
 # Fixed JS preamble exposing the `$`-accessors. `inputs` is declared by the executor
 # in the enclosing scope; the helpers read node data from it (never from source).
 # `$` throws a clear error for an unknown node id so a typo'd / unconnected reference
 # fails with an actionable message instead of a downstream "undefined" TypeError.
 _PREAMBLE = (
     "function $(id){ if (!Object.prototype.hasOwnProperty.call(inputs, id)) "
-    "throw new Error(\"No data for node '\" + id + \"' — is it connected upstream and has it run?\"); "
+    f"throw new Error({json.dumps(_NO_DATA[0])} + id + {json.dumps(_NO_DATA[1])}); "
     "return inputs[id]; }\n"
     "const $vars = inputs['vars'] || {};\n"
     "const $json = inputs['__primary_input__'] || {};\n"
@@ -98,6 +103,26 @@ _PREAMBLE = (
     "function $ifEmpty(v, f){ return (v === undefined || v === null || v === '') ? f : v; }\n"
     "const $now = new Date();\n"
 )
+
+
+# An expression that only reads a value — `$('id')`, `$vars` or `$json`, then `.key`,
+# `[0]` or `['key']` steps, with no operator, call or comment — is walked in Python
+# (``_read_path``), so a large value never has to fit the sandbox's memory.
+_PURE_PATH_RE = re.compile(
+    r"""^(?:\$\(\s*(?P<q>['"])(?P<id>[^'"]+)(?P=q)\s*\)|\$(?P<accessor>vars|json)\b)"""
+    r"""(?P<path>(?:\s*\.\s*[A-Za-z_$][\w$]*|\s*\[\s*(?:\d+|'[^'\\]*'|"[^"\\]*")\s*\])*)$"""
+)
+_PATH_STEP_RE = re.compile(
+    r"""\.\s*(?P<dot>[A-Za-z_$][\w$]*)|\[\s*(?:(?P<index>\d+)|'(?P<single>[^'\\]*)'|"(?P<double>[^"\\]*)")\s*\]"""
+)
+_ARRAY_INDEX_RE = re.compile(r"^(?:0|[1-9]\d*)$")
+# Keys every JS object inherits: read off an object without its own, they're JS's.
+_OBJECT_PROTOTYPE_KEYS = frozenset({
+    "constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "toLocaleString", "toString",
+    "valueOf", "__proto__", "__defineGetter__", "__defineSetter__", "__lookupGetter__", "__lookupSetter__",
+})
+# A step `_read_path` leaves to QuickJS, whose answer is JS's own (a string's length, an array's methods).
+_JS_ONLY = object()
 
 
 class ExpressionEvaluationError(ValueError):
@@ -263,6 +288,42 @@ def _build_inputs(
     return inputs
 
 
+def _read_path(expr: str, inputs: Dict[str, Any]) -> Any:
+    """What a pure path expression (``_PURE_PATH_RE``) reads from ``inputs``, as QuickJS reads it: a key the object
+    lacks is UNDEFINED, and a step past undefined or null throws JS's TypeError. ``_JS_ONLY`` for any other
+    expression, or at a step only JS can answer."""
+    match = _PURE_PATH_RE.match(expr)
+    if not match:
+        return _JS_ONLY
+    if match.group("accessor"):
+        current = inputs["vars" if match.group("accessor") == "vars" else "__primary_input__"]
+        if not isinstance(current, dict):
+            return _JS_ONLY  # the preamble's `|| {}` decides
+    elif match.group("id") in inputs:
+        current = inputs[match.group("id")]
+    else:
+        raise ExpressionEvaluationError(expr, f"Error: {_NO_DATA[0]}{match.group('id')}{_NO_DATA[1]}")
+    for step in _PATH_STEP_RE.finditer(match.group("path")):
+        key = next(k for k in step.groups() if k is not None)
+        if current is UNDEFINED or current is None:
+            held = "null" if current is None else "undefined"
+            raise ExpressionEvaluationError(expr, f"TypeError: cannot read property '{key}' of {held}")
+        if isinstance(current, dict):
+            if key in current:
+                current = current[key]
+            elif key in _OBJECT_PROTOTYPE_KEYS:
+                return _JS_ONLY
+            else:
+                current = UNDEFINED
+        elif isinstance(current, list) and _ARRAY_INDEX_RE.match(key):
+            current = current[int(key)] if int(key) < len(current) else UNDEFINED
+        elif isinstance(current, list) and key == "length":
+            current = len(current)
+        else:
+            return _JS_ONLY
+    return current
+
+
 async def _eval_block(
     inner: str,
     node_outputs: Dict[str, Any],
@@ -271,6 +332,9 @@ async def _eval_block(
 ) -> Any:
     expr = inner.strip()
     inputs = _build_inputs(inner, node_outputs, workflow_nodes, primary_input)
+    read = _read_path(expr, inputs)
+    if read is not _JS_ONLY:
+        return read
     # The newline before `)` keeps a trailing `// comment` in the expression
     # from swallowing the close paren.
     code = (

@@ -60,6 +60,10 @@ class JSExecutionError(Exception):
     pass
 
 
+_NO_JSON = "The result can't be turned into JSON: {}"
+_TOO_LARGE = "too large for the JavaScript sandbox's memory"
+
+
 def execute_js(
     code: str,
     inputs: Dict[str, Any],
@@ -232,20 +236,16 @@ def execute_js(
                 pass  # state variable may not exist or be serializable
 
         # Check result size
-        try:
-            result_str = json.dumps(result_json)
-            if len(result_str) > MAX_OUTPUT_SIZE:
-                return {
-                    "success": False,
-                    "error": f"Result too large ({len(result_str)} bytes, max {MAX_OUTPUT_SIZE})",
-                    "result": None,
-                    "stdout": stdout,
-                    "stderr": stderr,
-                    "execution_time_ms": (time.perf_counter() - start_time) * 1000,
-                }
-        except (TypeError, ValueError):
-            # Result not JSON-serializable, convert to string
-            result_json = str(result_json)
+        result_str = json.dumps(result_json)
+        if len(result_str) > MAX_OUTPUT_SIZE:
+            return {
+                "success": False,
+                "error": f"Result too large ({len(result_str)} bytes, max {MAX_OUTPUT_SIZE})",
+                "result": None,
+                "stdout": stdout,
+                "stderr": stderr,
+                "execution_time_ms": (time.perf_counter() - start_time) * 1000,
+            }
 
         response = {
             "success": True,
@@ -264,10 +264,10 @@ def execute_js(
     except Exception as e:
         error_msg = str(e)
 
-        # Provide helpful error messages
-        if "interrupted" in error_msg.lower():
+        # Provide helpful error messages (a JSExecutionError already says what went wrong)
+        if not isinstance(e, JSExecutionError) and "interrupted" in error_msg.lower():
             error_msg = f"Execution timed out after {timeout_sec} seconds"
-        elif "memory" in error_msg.lower():
+        elif not isinstance(e, JSExecutionError) and "memory" in error_msg.lower():
             error_msg = f"Memory limit exceeded ({memory_bytes // (1024*1024)}MB)"
 
         logger.warning(f"[JSExecutor] Execution error: {error_msg}")
@@ -310,7 +310,8 @@ def _serialize_arg(arg) -> str:
 
 
 def _convert_result(result, ctx) -> Any:
-    """Convert QuickJS result to JSON-serializable Python object."""
+    """Convert a QuickJS result to a JSON-native Python value. A value with no JSON form raises: its repr
+    (``<_quickjs.Object …>``) once reached a step as if it were the data."""
     if result is None:
         return None
     if isinstance(result, (bool, int, float, str)):
@@ -320,16 +321,15 @@ def _convert_result(result, ctx) -> Any:
     if isinstance(result, dict):
         return {k: _convert_result(v, ctx) for k, v in result.items()}
 
-    # Try to convert via JSON serialization in JS
     try:
-        # QuickJS objects might have a json() method or need JSON.stringify
-        if hasattr(result, 'json'):
-            return json.loads(result.json())
-    except Exception:
-        pass
-
-    # Last resort: string representation
-    return str(result)
+        text = result.json()
+    except Exception as e:  # a cycle, a throwing toJSON, running out of memory
+        reason = str(e).strip().splitlines()[0]
+        raise JSExecutionError(_NO_JSON.format(_TOO_LARGE if "out of memory" in reason else reason)) from e
+    # json() answers None for a function or a symbol, and for some values too large to serialise.
+    if text is None:
+        raise JSExecutionError(_NO_JSON.format(f"it's a function or a symbol, or {_TOO_LARGE}"))
+    return json.loads(text)
 
 
 # Type alias for cleaner imports
