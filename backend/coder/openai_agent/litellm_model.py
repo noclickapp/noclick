@@ -29,8 +29,8 @@ on the final usage-bearing chunk; we update the slot every time a chunk
 carries usage to be robust to providers that split it).
 
 A streamed call that sends nothing within ``FIRST_CHUNK_S`` has stalled (its provider never answered, while
-OpenRouter keeps the connection open): it is closed and requested again before the SDK reads it, ``STALL_ATTEMPTS``
-times in all, then fails as a timeout the run's retry knows. One that goes silent ``CHUNK_GAP_S`` partway ends there,
+OpenRouter kept the connection open with keepalive comments LiteLLM drops): it is closed and requested again before the
+SDK reads it, ``STALL_ATTEMPTS`` times in all, then fails as a timeout the run's retry knows. One that goes silent ``CHUNK_GAP_S`` partway ends there,
 as a stuck one does.
 
 Non-streaming path: ``_fetch_response(stream=False)`` returns an assembled
@@ -59,13 +59,15 @@ logger = logging.getLogger(__name__)
 # model's output cap, minutes later. The call ends there: the cut-off arguments answer the model as invalid JSON, and
 # it calls again.
 STUCK_WHITESPACE_CHARS = 2000
-# A streamed call that sends nothing for this long has stalled, not thought: a reasoning model's first chunk comes well
-# inside it. One held a texted coordinator turn silent for 15 minutes, until its time limit ended it (2026-10-27).
-FIRST_CHUNK_S = 180.0
-# Requests of a call whose first chunk never comes, before it fails as a timeout.
-STALL_ATTEMPTS = 3
+# A streamed call that sends nothing for this long has stalled, not thought: over twice the longest any agent's call
+# that answered took in all, and a thinking model streams its reasoning (OpenRouter's keepalive comments never reach
+# this stream, and they come while a provider stalls as while it thinks). One held a texted coordinator turn silent for
+# 15 minutes, until its time limit ended it (2026-10-27).
+FIRST_CHUNK_S = 300.0
+# Requests of a call whose first chunk never comes, before it fails as a timeout: both inside a turn's time limit.
+STALL_ATTEMPTS = 2
 # A stream silent this long partway has stalled too.
-CHUNK_GAP_S = 180.0
+CHUNK_GAP_S = 300.0
 
 
 def extract_cost_from_response(response_obj: Any) -> Tuple[Optional[float], bool]:
