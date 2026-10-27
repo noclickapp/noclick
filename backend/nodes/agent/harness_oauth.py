@@ -390,6 +390,12 @@ def chatgpt_account_id(id_token: Optional[str]) -> Optional[str]:
     return _chatgpt_auth_claim(id_token, "chatgpt_account_id")
 
 
+def chatgpt_account_of(env: Dict[str, Any]) -> Optional[str]:
+    """A ChatGPT sign-in's account: the credential's own field where it carries one (the sign-in flow saves none),
+    else its id token's."""
+    return env.get("CODEX_ACCOUNT_ID") or chatgpt_account_id(env.get("CODEX_ID_TOKEN"))
+
+
 def codex_id_token_stale(id_token: Optional[str], *, buffer_s: int = 60) -> bool:
     """True when a codex sign-in's id token cannot serve the ChatGPT backend:
     absent, unparseable, or past its ``exp`` claim. Codex picks its auth mode
