@@ -1,12 +1,13 @@
 // A channel's history, edge to edge across the pane as in Slack: where it
-// starts with its schedules (or the way to read further back), then each day
-// under a hairline whose pill stays pinned while you read that day (and jumps
-// between days). Consecutive messages from one author share a header; words
-// render as markdown with their files under them, then their reactions. An
-// agent that @-mentions another hands it the work, a row of its own; what an
-// agent posted for you is signed by it; NoClick's notes in the room (why it
-// halted) read as NoClick's, and an app's event as that app's. NoClick's
-// answers to your commands are yours alone, and dismissable.
+// starts with its agents and their jobs, and its schedules (or the way to read
+// further back), then each day under a hairline whose pill stays pinned while
+// you read that day (and jumps between days). Consecutive messages from one
+// author share a header; words render as markdown with their files under them,
+// then their reactions. An agent that @-mentions another hands it the work, a
+// row of its own; what an agent posted for you is signed by it; NoClick's
+// notes in the room (why it halted) read as NoClick's, and an app's event as
+// that app's. NoClick's answers to your commands are yours alone, and
+// dismissable.
 import { useMemo, useRef, useState } from 'react';
 import { ArrowRight, ChevronDown, EyeOff, Hash, Plug, SmilePlus } from 'lucide-react';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
@@ -17,10 +18,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 import { cn } from '~/lib/utils';
 import { MessageAttachments } from './attachments';
-import { Facepile, MemberAvatar, MENTION_HUE } from './avatars';
+import { MemberAvatar, MENTION_HUE } from './avatars';
 import { EmojiPicker } from './EmojiPicker';
 import { MessageBody } from './MessageBody';
-import { authorMember, byNoClick, handoffsOf, modeLine, NOCLICK_NAME, postedForYou } from './model';
+import { AGENT_HUES, authorMember, byNoClick, handoffsOf, modeLine, NOCLICK_NAME, postedForYou } from './model';
 import { ScheduleLines } from './schedules';
 import type { Channel, ChannelMember, ChannelMessage, ChannelReaction, ChannelSchedule } from './types';
 
@@ -89,10 +90,25 @@ function Intro({
             </span>
             <h2 className="mt-4 font-brand text-[24px] font-semibold tracking-[-0.02em] text-foreground">{channel.name}</h2>
             <p className="mt-1 max-w-[80ch] text-[14.5px] leading-relaxed text-muted-foreground">{channel.topic ? channel.topic : `This is the very beginning of #${channel.name}.`}</p>
-            <div className="mt-4 flex items-center gap-2.5 text-[13px] text-muted-foreground">
-                {agents.length > 0 && <Facepile members={agents} user={user} size={20} />}
-                <span>{agents.length ? `${modeLine(channel.mode, agents)}.` : 'No agents here yet: add one from the members menu, or with /invite.'}</span>
-            </div>
+            {agents.length > 0 ? (
+                <>
+                    {/* Who's here: each agent by name, its job under it. */}
+                    <ul className="mt-5 space-y-3" data-testid="channel-intro-agents">
+                        {agents.map((a) => (
+                            <li key={a.id} className="flex items-start gap-3">
+                                <MemberAvatar member={a} user={user} size={28} />
+                                <span className="min-w-0">
+                                    <span className="block text-[14px] font-medium leading-snug text-foreground">{a.name}</span>
+                                    {a.role && <span className="block text-[13px] leading-snug text-muted-foreground">{a.role}</span>}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                    <p className="mt-4 text-[13px] text-muted-foreground">{modeLine(channel.mode, agents, { named: false })}.</p>
+                </>
+            ) : (
+                <p className="mt-4 text-[13px] text-muted-foreground">No agents here yet: add one from the members menu, or with /invite.</p>
+            )}
             <ScheduleLines schedules={schedules} />
         </div>
     );
@@ -224,7 +240,7 @@ function Handoffs({ from, to, user }: { from: ChannelMember; to: ChannelMember[]
                         <MemberAvatar member={h} user={user} size={24} />
                     </span>
                     <span className="shrink-0 text-foreground/75">Handed off to</span>
-                    <span className={cn('min-w-0 truncate font-semibold', h.kind === 'agent' ? MENTION_HUE[h.hue ?? 'indigo'] : 'text-foreground')}>{h.name}</span>
+                    <span className={cn('min-w-0 truncate font-semibold', h.kind === 'agent' ? MENTION_HUE[h.hue ?? AGENT_HUES[0]] : 'text-foreground')}>{h.name}</span>
                     {h.busy && <span className="shrink-0 text-muted-foreground">· working</span>}
                 </span>
             ))}

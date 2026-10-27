@@ -4,7 +4,7 @@
 // reactions), as the page draws them.
 
 /** An agent's colour: its avatar, and how its name reads when @-mentioned. */
-export type AgentHue = 'indigo' | 'violet' | 'teal' | 'sky' | 'emerald' | 'rose' | 'orange';
+export type AgentHue = 'sky' | 'violet' | 'pink' | 'amber' | 'emerald';
 
 /** Who is in a channel: you (the account, never a member row), an agent, a person or an agent from elsewhere (A2A). */
 export interface ChannelMember {
@@ -20,6 +20,10 @@ export interface ChannelMember {
     /** The agent's harness, as its node type (agent:claude-code, …). */
     markType?: string;
     hue?: AgentHue;
+    /** Its avatar's letters, told apart from the room's other agents (`seatMembers`); else its name's first letter. */
+    initials?: string;
+    /** A platform agent's job in a line, as its agent says it. */
+    role?: string;
     /** Taking a turn right now. */
     busy?: boolean;
 }
@@ -118,6 +122,8 @@ interface AgentChoiceBase {
     id: string;
     name: string;
     markType?: string;
+    /** Its job in a line, where its agent says one. */
+    role?: string;
 }
 
 /** One of your agents, to add to a channel: one made on the platform, or one in your Automations (an agent node of a workflow). */

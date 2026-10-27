@@ -19,10 +19,12 @@ export const PILL_SECONDARY = cn(PILL, 'bg-secondary text-foreground hover:bg-ac
 export const PILL_QUIET = cn(PILL, 'px-3 text-muted-foreground hover:bg-foreground/[0.05] hover:text-foreground');
 
 /** A card for one object: its mark, its name, a line of what it is, then what it shows and what you can do. A name
- *  alone sits level with the mark; `display` sets it in the brand serif, for a thing you play or open (a recording). */
+ *  alone sits level with the mark; `display` sets it in the brand serif, for a thing you play or open (a recording).
+ *  `kind` names what the object is after its name (Agent, Channel) where its mark alone doesn't say. */
 export function InlineCard({
     lead,
     title,
+    kind,
     meta,
     aside,
     children,
@@ -32,6 +34,7 @@ export function InlineCard({
 }: {
     lead?: ReactNode;
     title: ReactNode;
+    kind?: string;
     meta?: ReactNode;
     aside?: ReactNode;
     children?: ReactNode;
@@ -44,7 +47,14 @@ export function InlineCard({
             <header className={cn('flex gap-3', meta ? 'items-start' : 'items-center')}>
                 {lead && <span className={cn('shrink-0', meta && 'mt-0.5')}>{lead}</span>}
                 <div className="min-w-0 flex-1">
-                    <h3 className={display ? cn(DISPLAY, 'text-[21px] leading-[1.15] text-foreground') : 'text-[14.5px] font-medium leading-snug tracking-[-0.005em] text-foreground'}>{title}</h3>
+                    <div className={display ? 'text-[21px] leading-[1.15]' : 'text-[14.5px] leading-snug'}>
+                        <h3 className={cn(display ? cn(DISPLAY, 'text-foreground') : 'font-medium tracking-[-0.005em] text-foreground', kind && 'inline')}>{title}</h3>
+                        {kind && (
+                            <span className="ml-2 inline-block rounded-full bg-foreground/[0.06] px-2 align-[1px] text-[11.5px] font-medium leading-[18px] text-foreground/65 dark:bg-foreground/[0.09]" data-testid="card-kind">
+                                {kind}
+                            </span>
+                        )}
+                    </div>
                     {meta && <p className="mt-0.5 text-[13px] leading-snug text-muted-foreground">{meta}</p>}
                 </div>
                 {aside && <div className="shrink-0">{aside}</div>}

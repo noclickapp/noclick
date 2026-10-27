@@ -330,6 +330,46 @@ describe('Channels on the platform', () => {
         expect(screen.getByTestId('channel-schedule').textContent).toBe('Every Monday at 8:00 AM+1');
     });
 
+    it('tells apart agents whose names start alike, everywhere they’re drawn, and says each one’s job at the start', async () => {
+        // The film run's pair: both drew a "P", in near-alike colours.
+        const researcher: ChannelMember = { id: 'mem_r', kind: 'agent', name: 'Paws & Pace Austin Events Researcher', agentId: 'agt_r' };
+        const writer: ChannelMember = { id: 'mem_w', kind: 'agent', name: 'Paws & Pace Newsletter Writer', agentId: 'agt_w' };
+        platform.channelRows[0].members = [researcher, writer];
+        platform.agentRows = [
+            { id: 'agt_r', source: 'platform', name: researcher.name, role: 'Finds dog-friendly events in Austin each week' },
+            { id: 'agt_w', source: 'platform', name: writer.name, role: 'Writes a client newsletter from Austin’s dog-friendly events' },
+        ];
+        const by = (m: ChannelMember) => ({ type: 'agent' as const, id: m.agentId!, name: m.name });
+        platform.newest = [message('m1', '**This week’s events** … @Paws & Pace Newsletter Writer, over to you.', by(researcher), 2, { mentions: [writer.name] }), message('m2', 'Newsletter draft.', by(writer), 3)];
+        platform.history = vi.fn(async () => ({ messages: platform.newest, older: null }));
+        renderAt('&channel=ch_launch');
+
+        // The start of the channel: each agent by its letters, name and job.
+        const intro = await screen.findByTestId('channel-intro-agents');
+        await waitFor(() => expect(intro.textContent).toContain('Finds dog-friendly events in Austin each week'));
+        expect([...intro.querySelectorAll('li')].map((li) => li.textContent)).toEqual([
+            'RPaws & Pace Austin Events ResearcherFinds dog-friendly events in Austin each week',
+            'WPaws & Pace Newsletter WriterWrites a client newsletter from Austin’s dog-friendly events',
+        ]);
+        expect(intro.nextElementSibling?.textContent).toBe('They answer when @-mentioned.');
+        const fill = (el: Element | null | undefined) => el?.className.match(/\bbg-\w+-\d+/)?.[0];
+        const [r, w] = [...intro.querySelectorAll('li > span:first-child')].map(fill);
+        expect(r).toBeTruthy();
+        expect(r).not.toBe(w);
+
+        // The same letters and colours on their messages, the hand-off, the header's faces and the members list.
+        const [first, second] = screen.getAllByTestId('channel-message');
+        expect(first.querySelector('[aria-hidden]')?.textContent).toBe('R');
+        expect(second.querySelector('[aria-hidden]')?.textContent).toBe('W');
+        expect(fill(first.querySelector('[aria-hidden]'))).toBe(r);
+        expect(fill(second.querySelector('[aria-hidden]'))).toBe(w);
+        expect(screen.getByTestId('channel-handoff').textContent).toBe('RWHanded off toPaws & Pace Newsletter Writer');
+        expect(screen.getByTestId('channel-members').textContent).toContain('RW');
+        fireEvent.click(screen.getByTestId('channel-members'));
+        const row = (await screen.findByRole('button', { name: 'Remove Paws & Pace Newsletter Writer' })).closest('li')!;
+        expect(row.textContent).toBe('WPaws & Pace Newsletter WriterWrites a client newsletter from Austin’s dog-friendly events');
+    });
+
     it('starts a channel in the workspace you are in', async () => {
         renderAt('&channel=ch_billing');
         await screen.findByRole('heading', { name: 'billing' });

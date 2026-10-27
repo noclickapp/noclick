@@ -6,6 +6,7 @@
 // a slow re-read is the backstop. Your own post shows at once and settles into
 // the message the server keeps; your reaction flips at once and settles too.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { seatMembers } from '~/components/shell/channels/model';
 import type { ChannelChange, ChannelsTransport } from '~/components/shell/channels/platform';
 import type { AgentChoice, Channel, ChannelAttachment, ChannelMessage, ChannelMode, ChannelReaction, ChannelWorkspace } from '~/components/shell/channels/types';
 
@@ -53,6 +54,9 @@ const EMPTY_HISTORY: ChannelHistory = { messages: [], older: null, loading: true
 const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 const time = (m: ChannelMessage) => Date.parse(m.at) || 0;
 
+/** A channel with its agents each in a colour and letters of their own there (`seatMembers`). */
+const seated = (channel: Channel): Channel => ({ ...channel, members: seatMembers(channel.members) });
+
 /** `incoming` folded into `current`: one copy of each message, in the order they were posted. */
 export function mergeMessages(current: ChannelMessage[], incoming: ChannelMessage[]): ChannelMessage[] {
     const byId = new Map(current.map((m) => [m.id, m]));
@@ -98,7 +102,7 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
     const readLists = useCallback(async () => {
         try {
             const [workspaces, channels] = await Promise.all([transport.workspaces(), transport.channels()]);
-            setLists({ loading: false, error: null, workspaces, channels });
+            setLists({ loading: false, error: null, workspaces, channels: channels.map(seated) });
         } catch (e) {
             setLists((prev) => ({ ...prev, loading: false, error: errorText(e) }));
         }
@@ -218,7 +222,8 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
         transport.markRead(openId).catch((e) => console.warn('[channels] mark read failed:', e));
     }, [openId, openUnread, transport]);
 
-    const replaceChannel = useCallback((channel: Channel) => {
+    const replaceChannel = useCallback((read: Channel) => {
+        const channel = seated(read);
         setLists((prev) => ({ ...prev, channels: prev.channels.some((c) => c.id === channel.id) ? prev.channels.map((c) => (c.id === channel.id ? channel : c)) : [...prev.channels, channel] }));
     }, []);
 

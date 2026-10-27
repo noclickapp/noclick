@@ -101,13 +101,13 @@ function kindOf(file: File, clip?: VoiceClip): ChannelAttachment['kind'] {
 
 const MEMBER_ROW = 'flex items-center gap-3 rounded-xl px-2.5 py-2';
 
-/** What a member is, under its name: an agent from your Automations says which. */
+/** What a member is, under its name: an agent its job, one from your Automations which it is. */
 function memberRole(m: ChannelMember): string {
     if (m.kind === 'you') return 'You';
     if (m.kind === 'outside') return 'Outside agent';
     if (m.kind !== 'agent') return 'Person';
     if (m.busy) return 'Working…';
-    return m.workflowName ? `Agent in ${m.workflowName}` : 'Agent';
+    return m.role ?? (m.workflowName ? `Agent in ${m.workflowName}` : 'Agent');
 }
 
 /** The header's members: the agents' faces and a count, opening who they are and how to change that. */
@@ -356,12 +356,12 @@ function ChannelsLoaded({
     const composeAfterMenu = useRef(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    // Each agent wears its harness's mark, from your agents.
+    // Each agent wears its harness's mark and says its job, from your agents.
     const mentionable = useMemo(() => {
-        const marks = new Map(channels.agents.map((a) => [a.id, a.markType]));
+        const yours = new Map(channels.agents.map((a) => [a.id, a]));
         return (channel?.members ?? []).map((m) => {
-            const markType = marks.get(agentKey(m) ?? '');
-            return markType ? { ...m, markType } : m;
+            const agent = yours.get(agentKey(m) ?? '');
+            return agent ? { ...m, ...(agent.markType ? { markType: agent.markType } : {}), ...(agent.role ? { role: agent.role } : {}) } : m;
         });
     }, [channel, channels.agents]);
     const members = useMemo(() => [YOU, ...mentionable], [mentionable]);

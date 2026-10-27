@@ -1,29 +1,30 @@
-// Who is in a channel, drawn: an agent is a monogram in its own colour (the
-// colour its @-mentions read in too), you are your account avatar, and anyone
-// else is their initial on a quiet disc.
+// Who is in a channel, drawn: an agent is its letters on a disc of its own
+// colour (the colour its @-mentions read in too), you are your account avatar,
+// and anyone else is their initial on a quiet disc.
 import { AccountAvatar, type AccountMenuUser } from '~/components/nav/AccountMenu';
 import { cn } from '~/lib/utils';
-import { YOU_ID } from './model';
+import { AGENT_HUES, YOU_ID } from './model';
 import type { AgentHue, ChannelMember } from './types';
 
+// The discs' fills, one step per theme: every pair passes the data-viz palette validator with all pairs compared
+// (light on #f9f9fa: colour-blind ΔE ≥ 11.6, normal ≥ 18.5; dark on #000: ≥ 9.2 and ≥ 17.2). Light pink and amber sit
+// under 3:1 against the page, so a disc never stands alone: its letters and the agent's name go with it. Each fill
+// takes the ink its letters read best in (WCAG ≥ 4.2:1).
 const AVATAR_HUE: Record<AgentHue, string> = {
-    indigo: 'bg-indigo-500/15 text-indigo-700 dark:bg-indigo-400/20 dark:text-indigo-200',
-    violet: 'bg-violet-500/15 text-violet-700 dark:bg-violet-400/20 dark:text-violet-200',
-    teal: 'bg-teal-500/15 text-teal-700 dark:bg-teal-400/20 dark:text-teal-200',
-    sky: 'bg-sky-500/15 text-sky-700 dark:bg-sky-400/20 dark:text-sky-200',
-    emerald: 'bg-emerald-500/15 text-emerald-700 dark:bg-emerald-400/20 dark:text-emerald-200',
-    rose: 'bg-rose-500/15 text-rose-700 dark:bg-rose-400/20 dark:text-rose-200',
-    orange: 'bg-orange-500/15 text-orange-700 dark:bg-orange-400/20 dark:text-orange-200',
+    sky: 'bg-sky-700 text-white dark:bg-sky-600',
+    violet: 'bg-violet-500 text-white dark:bg-violet-600',
+    pink: 'bg-pink-400 text-neutral-900 dark:bg-pink-600 dark:text-white',
+    amber: 'bg-amber-500 text-neutral-900 dark:bg-amber-600',
+    emerald: 'bg-emerald-600 text-neutral-900 dark:bg-emerald-700 dark:text-white',
 };
 
+// The same hues as text, at steps that read on the page (WCAG ≥ 4.7:1 on both themes' pages and cards).
 export const MENTION_HUE: Record<AgentHue, string> = {
-    indigo: 'text-indigo-600 dark:text-indigo-300',
-    violet: 'text-violet-600 dark:text-violet-300',
-    teal: 'text-teal-700 dark:text-teal-300',
-    sky: 'text-sky-700 dark:text-sky-300',
-    emerald: 'text-emerald-700 dark:text-emerald-300',
-    rose: 'text-rose-600 dark:text-rose-300',
-    orange: 'text-orange-700 dark:text-orange-300',
+    sky: 'text-sky-700 dark:text-sky-400',
+    violet: 'text-violet-600 dark:text-violet-400',
+    pink: 'text-pink-700 dark:text-pink-400',
+    amber: 'text-amber-700 dark:text-amber-400',
+    emerald: 'text-emerald-700 dark:text-emerald-400',
 };
 
 const SIZE = {
@@ -44,11 +45,12 @@ export function MemberAvatar({ member, user, size = 32, className }: { member: C
             className={cn(
                 'inline-flex shrink-0 select-none items-center justify-center rounded-full font-semibold leading-none',
                 SIZE[size],
-                member.kind === 'agent' ? AVATAR_HUE[member.hue ?? 'indigo'] : 'bg-foreground/[0.1] text-foreground/80',
+                member.kind === 'agent' ? AVATAR_HUE[member.hue ?? AGENT_HUES[0]] : 'bg-foreground/[0.1] text-foreground/80',
+                (member.initials?.length ?? 0) > 1 && 'tracking-[-0.04em]',
                 className
             )}
         >
-            {member.name.charAt(0)}
+            {member.initials ?? member.name.charAt(0)}
         </span>
     );
 }
