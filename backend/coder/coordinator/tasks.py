@@ -120,6 +120,9 @@ def reply_text(output: Any) -> str:
     return _reply_text(output) or ""
 
 
+NO_REPLY = "The agent finished without a reply."
+
+
 def turn_error(output: Any, error: Optional[str] = None, *, silent_ok: bool = False) -> Optional[str]:
     """Why a finished agent turn failed, or None when it replied (or, ``silent_ok``, when a turn nobody waits on
     ended with nothing to say)."""
@@ -128,7 +131,7 @@ def turn_error(output: Any, error: Optional[str] = None, *, silent_ok: bool = Fa
         if output.get("status") in ("failed", "error", "turn_lost"):
             error = error or "The agent could not complete the request."
     if not error and not silent_ok and not reply_text(output):
-        error = "The agent finished without a reply."
+        error = NO_REPLY
     return str(error) if error else None
 
 

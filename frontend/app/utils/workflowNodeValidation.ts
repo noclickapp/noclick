@@ -341,12 +341,14 @@ export function validateNode(node: Node, context?: NodeValidationContext): NodeV
     }
 
     // An agent's Message is required unless a trigger feeds the agent — the
-    // delivered event is then the turn. The schema can't say this (the field
-    // defaults to empty so a trigger-wired agent parses), so the graph-aware
-    // rule lives here, mirroring the backend's workflow_ops.agent_message_error.
+    // delivered event is then the turn — or each turn brings its own (an agent
+    // run through the API: `message_per_turn`). The schema can't say this (the
+    // field defaults to empty so a trigger-wired agent parses), so the
+    // graph-aware rule lives here, mirroring workflow_ops.agent_message_error.
     if (
         node.type === 'agent' &&
         isFieldEmpty(config.message) &&
+        config.message_per_turn !== true &&
         !context?.triggerFedAgentIds.has(node.id)
     ) {
         issues.push({

@@ -510,9 +510,11 @@ def agent_trigger_fed(node_id: str, nodes: Sequence[Any], edges: Sequence[Any]) 
 
 
 def agent_message_error(config: Optional[Mapping[str, Any]], *, trigger_fed: bool) -> Optional[str]:
-    """An agent's Message is required unless a trigger feeds it — the same rule
-    the canvas (``validateNode``) and the run engine apply."""
-    if trigger_fed or str((config or {}).get("message") or "").strip():
+    """An agent's Message is required unless a trigger feeds it or each turn
+    brings its own (``message_per_turn``) — the same rule the canvas
+    (``validateNode``) and the run engine apply."""
+    config = config or {}
+    if trigger_fed or config.get("message_per_turn") is True or str(config.get("message") or "").strip():
         return None
     return AGENT_MESSAGE_REQUIRED_ERROR
 

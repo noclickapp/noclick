@@ -39,6 +39,15 @@ class TestBuildTimeRule:
         assert agent_message_error({}, trigger_fed=True) is None
         assert agent_message_error({"message": "Reply helpfully."}, trigger_fed=False) is None
 
+    def test_an_agent_whose_turns_each_bring_a_message_needs_none(self):
+        """An agent run through an API is sent each turn's message, so the canvas, the builder and MCP asking for
+        its Message was a false gap (2026-10-27). Only the marker itself counts, not a truthy look-alike."""
+        assert agent_message_error({"message": "", "message_per_turn": True}, trigger_fed=False) is None
+        assert agent_message_error({"message": "", "message_per_turn": "yes"},
+                                   trigger_fed=False) == AGENT_MESSAGE_REQUIRED_ERROR
+        parsed = AgentNode.parse_config({"config": {"model": "openrouter/openai/gpt-4o-mini", "message_per_turn": True}})
+        assert parsed.config.message_per_turn is True
+
     def test_trigger_fed_reads_the_stored_graph_shapes(self):
         nodes = [
             {"id": "cron", "type": "trigger-cron", "config": {}},

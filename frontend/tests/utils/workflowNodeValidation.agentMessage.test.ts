@@ -68,6 +68,16 @@ describe('an agent with an empty Message', () => {
     test('a filled Message needs no trigger', () => {
         expect(messageIssue(agent('Reply like a helpful agent.'))).toBeUndefined();
     });
+
+    test('an agent whose every turn brings its own message (one run through the API) needs neither', () => {
+        // A platform agent's canvas, builder and MCP said "Message is required" though its turns are the messages
+        // the platform sends it (2026-10-27).
+        const platform = node('agent1', 'agent', {
+            config: { model: 'openrouter/openai/gpt-4o-mini', message: '', message_per_turn: true },
+        });
+        expect(messageIssue(platform)).toBeUndefined();
+        expect(validateNode(platform).isComplete).toBe(true);
+    });
 });
 
 describe('the wiring key', () => {

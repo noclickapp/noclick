@@ -49,6 +49,13 @@
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
           "ui:widget": "textarea"
         },
+        "message_per_turn": {
+          "default": false,
+          "description": "Each turn brings its own message, so Message stays empty (set for agents run through the API).",
+          "title": "Message Per Turn",
+          "type": "boolean",
+          "ui:hidden": true
+        },
         "temperature": {
           "default": 0.7,
           "description": "Creativity level (0.0 = focused, 2.0 = creative)",
@@ -213,6 +220,13 @@
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
           "ui:widget": "textarea"
         },
+        "message_per_turn": {
+          "default": false,
+          "description": "Each turn brings its own message, so Message stays empty (set for agents run through the API).",
+          "title": "Message Per Turn",
+          "type": "boolean",
+          "ui:hidden": true
+        },
         "temperature": {
           "default": 0.7,
           "description": "Creativity level (0.0 = focused, 2.0 = creative)",
@@ -376,6 +390,13 @@
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
           "ui:widget": "textarea"
+        },
+        "message_per_turn": {
+          "default": false,
+          "description": "Each turn brings its own message, so Message stays empty (set for agents run through the API).",
+          "title": "Message Per Turn",
+          "type": "boolean",
+          "ui:hidden": true
         },
         "temperature": {
           "default": 0.7,
@@ -574,6 +595,13 @@
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
           "ui:widget": "textarea"
+        },
+        "message_per_turn": {
+          "default": false,
+          "description": "Each turn brings its own message, so Message stays empty (set for agents run through the API).",
+          "title": "Message Per Turn",
+          "type": "boolean",
+          "ui:hidden": true
         },
         "temperature": {
           "default": 0.7,
@@ -1082,6 +1110,13 @@
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
           "ui:widget": "textarea"
         },
+        "message_per_turn": {
+          "default": false,
+          "description": "Each turn brings its own message, so Message stays empty (set for agents run through the API).",
+          "title": "Message Per Turn",
+          "type": "boolean",
+          "ui:hidden": true
+        },
         "temperature": {
           "default": 0.7,
           "description": "Creativity level (0.0 = focused, 2.0 = creative)",
@@ -1542,6 +1577,13 @@
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
           "ui:widget": "textarea"
         },
+        "message_per_turn": {
+          "default": false,
+          "description": "Each turn brings its own message, so Message stays empty (set for agents run through the API).",
+          "title": "Message Per Turn",
+          "type": "boolean",
+          "ui:hidden": true
+        },
         "temperature": {
           "default": 0.7,
           "description": "Creativity level (0.0 = focused, 2.0 = creative)",
@@ -1698,6 +1740,13 @@
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
           "ui:widget": "textarea"
+        },
+        "message_per_turn": {
+          "default": false,
+          "description": "Each turn brings its own message, so Message stays empty (set for agents run through the API).",
+          "title": "Message Per Turn",
+          "type": "boolean",
+          "ui:hidden": true
         },
         "temperature": {
           "default": 0.7,
@@ -1877,6 +1926,13 @@
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
           "ui:widget": "textarea"
         },
+        "message_per_turn": {
+          "default": false,
+          "description": "Each turn brings its own message, so Message stays empty (set for agents run through the API).",
+          "title": "Message Per Turn",
+          "type": "boolean",
+          "ui:hidden": true
+        },
         "temperature": {
           "default": 0.7,
           "description": "Creativity level (0.0 = focused, 2.0 = creative)",
@@ -2040,6 +2096,13 @@
           "type": "string",
           "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
           "ui:widget": "textarea"
+        },
+        "message_per_turn": {
+          "default": false,
+          "description": "Each turn brings its own message, so Message stays empty (set for agents run through the API).",
+          "title": "Message Per Turn",
+          "type": "boolean",
+          "ui:hidden": true
         },
         "temperature": {
           "default": 0.7,

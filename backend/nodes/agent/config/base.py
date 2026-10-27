@@ -39,6 +39,14 @@ class BaseAgentFields(BaseModel):
             "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message — write standing instructions here, not the event itself.",
         }
     )
+    # An agent each of whose turns brings its own message (an API's, a channel's, a chat's), as the platform's agents'
+    # do: its Message stays empty and isn't missing (agent_message_error, and the canvas's validateNode).
+    message_per_turn: bool = Field(
+        default=False,
+        title="Message Per Turn",
+        description="Each turn brings its own message, so Message stays empty (set for agents run through the API).",
+        json_schema_extra={"ui:hidden": True},
+    )
     temperature: float = Field(
         default=0.7,
         ge=0.0,
