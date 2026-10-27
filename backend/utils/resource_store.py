@@ -13,6 +13,7 @@ Lives in ``utils`` (depends only on ``utils.r2_cloudflare`` /
 layering cycle.
 """
 
+import json
 import logging
 import mimetypes
 import os
@@ -60,6 +61,35 @@ def file_name(name: str, mime: str, *, source: str = "") -> str:
     if not ext or name.lower().endswith(ext.lower()) or mimetypes.guess_type(name)[0]:
         return name
     return f"{name}{ext}"
+
+
+# The first bytes of the files people are sent most, by their type.
+_SIGNATURES = ((b"%PDF-", "application/pdf"), (b"\x89PNG\r\n\x1a\n", "image/png"), (b"\xff\xd8\xff", "image/jpeg"),
+               (b"GIF87a", "image/gif"), (b"GIF89a", "image/gif"), (b"PK\x03\x04", "application/zip"))
+
+
+def content_type(data: bytes) -> Optional[str]:
+    """What ``data`` is, read from its own bytes when nothing else names it (a file named "Neon Blocks"): a PDF, an
+    image, a zip, an HTML page, JSON or other text; None when it's none of these (XML and SVG among them)."""
+    found = next((mime for magic, mime in _SIGNATURES if data.startswith(magic)), None)
+    if found or (data[:4] == b"RIFF" and data[8:12] == b"WEBP"):
+        return found or "image/webp"
+    try:
+        text = data.decode("utf-8").lstrip("﻿ \t\r\n")
+    except UnicodeDecodeError:
+        return None
+    head = text[:1024].lower()
+    if head.startswith(("<!doctype html", "<html")):
+        return "text/html"
+    if head.startswith(("<?xml", "<svg")):
+        return None
+    if head.startswith(("{", "[")):
+        try:
+            json.loads(text)
+            return "application/json"
+        except ValueError:
+            pass
+    return "text/plain"
 
 
 # A resource's key as ``upload_resource_bytes`` writes it: owner / workflow (or "account") / id / file name.

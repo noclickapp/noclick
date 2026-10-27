@@ -155,3 +155,16 @@ async def _allowed(url):
 ])
 def test_a_file_name_ends_in_the_extension_of_what_it_holds(name, mime, source, named):
     assert file_name(name, mime, source=source) == named
+
+
+def test_content_type_reads_what_a_file_is_from_its_bytes():
+    from utils.resource_store import content_type
+
+    assert content_type(b"\xef\xbb\xbf\n  <!DOCTYPE html><html></html>") == "text/html"
+    assert content_type(b"\x89PNG\r\n\x1a\n\x00") == "image/png"
+    assert content_type(b"RIFF\x00\x00\x00\x00WEBPVP8 ") == "image/webp"
+    assert content_type(b'{"cars": 12}') == "application/json"
+    assert content_type(b"{not json") == "text/plain"
+    assert content_type(b"Buy flour.") == "text/plain"
+    assert content_type(b'<?xml version="1.0"?><svg/>') is None
+    assert content_type(b"\x00\x01\xfe\xff") is None

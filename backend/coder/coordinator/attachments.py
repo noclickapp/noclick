@@ -48,14 +48,15 @@ class Kind(NamedTuple):
     visual: bool
 
 
-def classify(kind: str, mime_type: str, filename: str) -> Kind:
-    """Which reader a file goes to and a name safe for storage keys and Markdown links."""
+def classify(kind: str, mime_type: str, filename: str, *, source: str = "") -> Kind:
+    """Which reader a file goes to and a name safe for storage keys and Markdown links, ending in the extension of
+    what it is (``source``: the path it came from)."""
     mime = base_mime(mime_type)
     if kind == "document" and mime.startswith(("image/", "audio/", "video/")):
         kind = media_kind(mime, filename)
     # Never let a sender's filename shape storage paths or Markdown links.
     name = re.sub(r"[^\w. -]", "_", filename.replace("\\", "/").split("/")[-1])[:120].strip(". ")
-    name = file_name(name, mime) if name else f"{kind}{mimetypes.guess_extension(mime) or '.bin'}"
+    name = file_name(name, mime, source=source) if name else f"{kind}{mimetypes.guess_extension(mime) or '.bin'}"
     return Kind(kind, mime, name, kind in ("image", "sticker"))
 
 

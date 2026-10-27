@@ -164,3 +164,6 @@ async def test_a_file_sent_without_its_extension_is_kept_under_one(files):
     # A name that names its type keeps it; one that names nothing takes the type's.
     assert attachments.classify("document", "application/pdf", "Q3 plan.pdf").name == "Q3 plan.pdf"
     assert attachments.classify("document", "application/pdf", "Q3 plan v1.2").name == "Q3 plan v1.2.pdf"
+    # One read from a path takes that path's extension.
+    assert attachments.classify("document", "text/html", "Neon Blocks", source="game/index.htm").name == \
+        "Neon Blocks.htm"
