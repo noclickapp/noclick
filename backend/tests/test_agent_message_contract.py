@@ -10,6 +10,7 @@ surfaces (canvas, builder done-gate, MCP validate_workflow) and the composed
 turn in ``execute`` for the run.
 """
 
+import uuid
 from types import SimpleNamespace
 
 import pytest
@@ -23,6 +24,8 @@ from nodes.agent_node import AgentNode
 from nodes.core.base import ConfigValidationError
 
 FIRED = {'_triggerPayload': {'a': 1}}
+# A workflow id as every real one is: a deployment's turn may look its workflow up (whether its agents draw pictures).
+WORKFLOW_ID = str(uuid.uuid4())
 
 
 class TestParse:
@@ -80,7 +83,7 @@ class _Reached(Exception):
 def _agent(message: str, monkeypatch, *, nodes=None, edges=None) -> AgentNode:
     data = {"config": {"model": "openrouter/openai/gpt-4o-mini", "message": message}}
     agent = AgentNode(node_id="agent_1", node_type="agent", node_data=data,
-                      config=AgentNode.parse_config(data), sio=None, sid=None, workflow_id="wf_1")
+                      config=AgentNode.parse_config(data), sio=None, sid=None, workflow_id=WORKFLOW_ID)
     if nodes is not None:
         agent._workflow_nodes, agent._workflow_edges = nodes, edges
 
