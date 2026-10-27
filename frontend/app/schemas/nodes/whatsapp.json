@@ -754,6 +754,75 @@
       "x-credential-instructions": "Connect your WhatsApp by scanning a QR code. A persistent connection fee of $0.99/month will be charged to your balance.",
       "x-credential-type": "qr_scan"
     },
+    "WhatsAppReadRecentMessagesConfig": {
+      "description": "Read every chat's messages from the last few hours in one call, compactly: per chat, one line per message (\"<UTC time> <sender>: <text>\", your own as You, media as [image] or [voice note] with its caption), oldest first, with no ids or media data. The cheap read for a digest or summary across chats (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "read_recent_messages",
+          "default": "read_recent_messages",
+          "title": "Read Recent Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-display-name": "Read Recent Messages",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "digest",
+            "summary",
+            "today's messages",
+            "all chats",
+            "group messages",
+            "messages since"
+          ],
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "hours": {
+          "default": 24,
+          "description": "How far back to read, in hours",
+          "maximum": 168,
+          "minimum": 1,
+          "title": "Hours",
+          "type": "integer"
+        },
+        "chats": {
+          "default": "all",
+          "description": "Which chats to read: all, group chats only, or one-to-one chats only",
+          "enum": [
+            "all",
+            "groups",
+            "direct"
+          ],
+          "enumNames": [
+            "All chats",
+            "Group chats",
+            "Direct chats"
+          ],
+          "title": "Chats",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "max_chats": {
+          "default": 100,
+          "description": "Most chats to read, the most recently active first",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Max Chats",
+          "type": "integer"
+        },
+        "per_chat_limit": {
+          "default": 100,
+          "description": "Most messages to read from one chat, the newest kept",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Messages per Chat",
+          "type": "integer"
+        }
+      },
+      "title": "WhatsAppReadRecentMessagesConfig",
+      "type": "object"
+    },
     "WhatsAppReceiveMessageConfig": {
       "description": "Receive incoming messages via webhook. Works with both QR scan and Cloud API credentials.",
       "properties": {
@@ -2166,6 +2235,7 @@
           "list_recent_chats": "#/$defs/WhatsAppGetChatsConfig",
           "mark_chat_read": "#/$defs/WhatsAppMarkChatReadConfig",
           "mark_message_read": "#/$defs/WhatsAppMarkReadConfig",
+          "read_recent_messages": "#/$defs/WhatsAppReadRecentMessagesConfig",
           "receive_message": "#/$defs/WhatsAppReceiveMessageConfig",
           "receive_status_update": "#/$defs/WhatsAppReceiveStatusConfig",
           "register_phone_number": "#/$defs/WhatsAppRegisterPhoneConfig",
@@ -2285,6 +2355,9 @@
         },
         {
           "$ref": "#/$defs/WhatsAppGetChatMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppReadRecentMessagesConfig"
         },
         {
           "$ref": "#/$defs/WhatsAppListContactsConfig"

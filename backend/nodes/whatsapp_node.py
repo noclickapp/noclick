@@ -1481,6 +1481,39 @@ class WhatsAppGetChatMessagesConfig(BaseModel):
     )
 
 
+class WhatsAppReadRecentMessagesConfig(BaseModel):
+    """Read every chat's messages from the last few hours in one call, compactly: per chat, one line per message ("<UTC time> <sender>: <text>", your own as You, media as [image] or [voice note] with its caption), oldest first, with no ids or media data. The cheap read for a digest or summary across chats (QR credentials)"""
+
+    operation: Literal["read_recent_messages"] = Field(
+        "read_recent_messages",
+        json_schema_extra={
+            "const": "read_recent_messages",
+            "ui:hidden": True,
+            "x-supported-credential-types": ["whatsapp_qr"],
+            "x-category": "Chats",
+            "x-is-trigger": False,
+            "x-display-name": "Read Recent Messages",
+            "x-keywords": ["digest", "summary", "today's messages", "all chats", "group messages",
+                           "messages since"],
+        },
+        title="Read Recent Messages",
+    )
+    hours: int = Field(24, title="Hours", description="How far back to read, in hours", ge=1, le=168)
+    chats: Literal["all", "groups", "direct"] = Field(
+        "all",
+        title="Chats",
+        description="Which chats to read: all, group chats only, or one-to-one chats only",
+        json_schema_extra={"enumNames": ["All chats", "Group chats", "Direct chats"], "x-enum-searchable": True},
+    )
+    max_chats: int = Field(
+        100, title="Max Chats", description="Most chats to read, the most recently active first", ge=1, le=200
+    )
+    per_chat_limit: int = Field(
+        100, title="Messages per Chat", description="Most messages to read from one chat, the newest kept", ge=1,
+        le=500,
+    )
+
+
 class WhatsAppListContactsConfig(BaseModel):
     """List the connected account's WhatsApp contacts (QR credentials)"""
 
@@ -1665,9 +1698,10 @@ WhatsAppConfig = Annotated[
         # Account (2 operations)
         WhatsAppGetAccountInfoConfig,
         WhatsAppListPhoneNumbersConfig,
-        # QR Operations (6 operations)
+        # QR Operations (7 operations)
         WhatsAppGetChatsConfig,
         WhatsAppGetChatMessagesConfig,
+        WhatsAppReadRecentMessagesConfig,
         WhatsAppListContactsConfig,
         WhatsAppEditMessageConfig,
         WhatsAppMarkChatReadConfig,
