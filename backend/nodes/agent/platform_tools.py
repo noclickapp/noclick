@@ -86,6 +86,7 @@ def _wake_me_params() -> Tuple[Dict[str, Any], ...]:
                 "at": _about("wake_me.at", type="string"),
                 "after_minutes": _about("wake_me.after_minutes", type="number"),
                 "operation_id": _about("wake_me.operation_id", type="string"),
+                "operation_ids": _about("wake_me.operation_ids", type="array", items={"type": "string"}),
                 "every": _about("wake_me.every", type="string"),
                 "wakeup_id": _about("wake_me.wakeup_id", type="string"),
                 "conversation": _about("wake_me.conversation", type="string"),

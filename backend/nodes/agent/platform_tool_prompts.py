@@ -31,6 +31,7 @@ PARAMETERS = {
     "wake_me.at": "An ISO 8601 time.",
     "wake_me.after_minutes": "Minutes from now.",
     "wake_me.operation_id": "Wake when this operation finishes.",
+    "wake_me.operation_ids": "Wake once, when the last of these operations finishes.",
     "wake_me.every": "A five-field cron schedule.",
     "wake_me.wakeup_id": "A wake-up of yours to change instead of setting a new one.",
     "wake_me.conversation": "Another of your own conversations to set it in (or change it in) instead of this one.",
