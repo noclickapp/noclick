@@ -129,12 +129,13 @@ async def _media_url(api: Sendblue, embed: Embed) -> str:
 
 async def send_rich(api: Sendblue, to: str, markdown: str) -> Optional[str]:
     """Plain text, then each embedded file as an attachment (iMessage takes any file), with its caption; one nothing
-    can tell the type of, or past Sendblue's cap, goes as a link line with the text. Every attachment is ready before
+    can tell the type of, or past Sendblue's cap, goes as a link line with the text, and so does a page NoClick stores
+    (``Embed.page``) beside its attachment. Every attachment is ready before
     anything is sent. The first message handle, or None when nothing could be sent."""
     embeds, text = await read_embeds(markdown)
     files = [embed for embed in embeds if embed.file is not None and (embed.file.size_bytes or 0) <= UPLOAD_LIMIT]
     attachments = [(embed, await _media_url(api, embed)) for embed in files]
-    text = "\n".join([text.rstrip(), *(embed.link for embed in embeds if embed not in files)])
+    text = "\n".join([text.rstrip(), *(embed.link for embed in embeds if embed not in files or embed.page)])
     first: Optional[str] = None
     for part in chunk(to_imessage_text(text)):
         sent = await api.send(to, content=part)

@@ -182,18 +182,15 @@ DOCUMENT_TYPES = {
 DOCUMENT_LIMIT = 100 * MB
 TEXT = "text"
 _TEXT_TYPES = ("application/json", "application/xml", "application/javascript", "application/yaml",
-               "application/x-yaml", "application/x-sh", "image/svg+xml")
+               "application/x-yaml", "application/x-sh", "image/svg+xml", "application/xhtml+xml")
 _SAME_TYPE = {"image/jpg": "image/jpeg", "audio/mp3": "audio/mpeg", "audio/x-m4a": "audio/mp4",
               "audio/mp4a-latm": "audio/mp4", "audio/x-aac": "audio/aac"}
-# A page a browser draws (HTML, SVG) would arrive as its source in plain text, which a phone opens as text or not at
-# all: one NoClick stores goes as the link that saves it, as the page it is.
-PAGE_TYPES = frozenset({"text/html", "application/xhtml+xml", "image/svg+xml"})
 
 
 def sent_as(embed: Embed) -> Optional[str]:
     """How WhatsApp carries an embedded file: as an image, video, audio or document by its link, as a text file
-    uploaded (``TEXT``), or None: as a link (``Embed.link``), when Meta takes no file of its type or size, nothing says
-    what it holds, or it's a page NoClick stores."""
+    uploaded (``TEXT``), or None: as a link (``Embed.link``), when Meta takes no file of its type or size, or nothing
+    says what it holds."""
     file = embed.file
     if file is None:
         return None
@@ -205,8 +202,6 @@ def sent_as(embed: Embed) -> Optional[str]:
         return None
     if mime in DOCUMENT_TYPES:
         return "document"
-    if mime in PAGE_TYPES and embed.download:
-        return None
     return TEXT if mime.startswith("text/") or mime in _TEXT_TYPES else None
 
 
@@ -220,8 +215,8 @@ async def _uploaded_text(api: CloudApi, embed: Embed) -> str:
 
 async def send_rich(api: CloudApi, to: str, markdown: str) -> Optional[str]:
     """Text in WhatsApp markup, then each embedded file as a file (``sent_as``); one that can't go as a file is a link
-    line in the text. Every file is ready before anything is sent. The first message id, or None when nothing could
-    be sent."""
+    line in the text, and so is a page NoClick stores (``Embed.page``) beside its file. Every file is ready before
+    anything is sent. The first message id, or None when nothing could be sent."""
     embeds, text = await read_embeds(markdown)
     files = []
     for embed in embeds:
@@ -231,7 +226,7 @@ async def send_rich(api: CloudApi, to: str, markdown: str) -> Optional[str]:
         elif kind is not None:
             files.append((embed, kind, {"link": embed.url}))
     sent_files = [embed for embed, _, _ in files]
-    text = "\n".join([text.rstrip(), *(embed.link for embed in embeds if embed not in sent_files)])
+    text = "\n".join([text.rstrip(), *(embed.link for embed in embeds if embed not in sent_files or embed.page)])
     first: Optional[str] = None
     for part in chunk(to_whatsapp_text(text)):
         sent = await api.send_text(to, part)

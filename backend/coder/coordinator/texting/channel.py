@@ -113,6 +113,11 @@ def split_media(markdown: str) -> Tuple[List[Tuple[str, str]], str]:
     return [(url, caption) for caption, url in _MEDIA.findall(markdown)], _MEDIA.sub("", markdown)
 
 
+# A page a browser draws (HTML, SVG): a phone may open it as a file in a chat (as its source, or not at all) or save it
+# from a link, so one NoClick stores goes as both, the file and the link that saves it.
+PAGE_TYPES = frozenset({"text/html", "application/xhtml+xml", "image/svg+xml"})
+
+
 @dataclass(frozen=True)
 class Embed:
     """A file a reply embeds, and what it holds (``file``; None when nothing could tell, so it goes as a link)."""
@@ -128,6 +133,11 @@ class Embed:
         label = self.caption or (self.file.name if self.file else "")
         url = self.download or self.url
         return f"{label}: {url}" if label else url
+
+    @property
+    def page(self) -> bool:
+        """A page NoClick stores: its link goes in the text even when the file itself is sent."""
+        return bool(self.download and self.file and self.file.mime_type in PAGE_TYPES)
 
     @property
     def note(self) -> str:

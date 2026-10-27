@@ -175,16 +175,19 @@ def test_a_file_nothing_can_tell_the_type_of_is_a_link():
     assert whatsapp.sent_as(Embed("https://f.example/x", "the file", None)) is None
 
 
-@pytest.mark.parametrize("mime, sent_as", [
-    # A page NoClick stores goes as the link that saves it: as plain text it would open as its source.
-    ("text/html", None), ("image/svg+xml", None), ("application/xhtml+xml", None),
-    # Text a person reads as text is still a file in their chat, and media and documents are as before.
-    ("text/csv", whatsapp.TEXT), ("application/json", whatsapp.TEXT), ("application/pdf", "document"),
-    ("image/png", "image"),
+@pytest.mark.parametrize("mime, sent_as, page", [
+    # A page NoClick stores goes as its file (its source in plain text) and, in the text, the link that saves it.
+    ("text/html", whatsapp.TEXT, True), ("image/svg+xml", whatsapp.TEXT, True),
+    ("application/xhtml+xml", whatsapp.TEXT, True),
+    # Any other file is one or the other, as before.
+    ("text/csv", whatsapp.TEXT, False), ("application/json", whatsapp.TEXT, False),
+    ("application/pdf", "document", False), ("image/png", "image", False), ("application/zip", None, False),
 ])
-def test_a_page_noclick_stores_goes_as_the_link_that_saves_it(mime, sent_as):
+def test_a_page_noclick_stores_goes_as_its_file_and_the_link_that_saves_it(mime, sent_as, page):
     embed = Embed("https://f.example/x", "x", FileInfo(mime, "x", 40_000), download="https://dl.example/x")
-    assert whatsapp.sent_as(embed) == sent_as
+    assert (whatsapp.sent_as(embed), embed.page) == (sent_as, page)
+    # A page nothing makes a download link for (not NoClick's, or no platform) is its file alone.
+    assert not Embed("https://f.example/x", "x", FileInfo(mime, "x", 40_000)).page
 
 
 OWNER, WORKFLOW = "11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222"
@@ -203,25 +206,33 @@ def downloads(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_a_stored_page_or_archive_arrives_as_the_link_that_saves_it_and_a_text_file_as_one(files, downloads,
-                                                                                                  monkeypatch):
-    """Asked for a game as a downloadable HTML file, the coordinator's reply put it in the chat as plain text under its
-    name, which the phone wouldn't save or open as a page; a ZIP went as the address that opens it."""
+async def test_a_stored_page_arrives_as_its_file_and_the_link_that_saves_it(files, downloads, monkeypatch):
+    """Asked for a game as an HTML file, a person couldn't open or save it as a document of plain text, then wanted
+    the file itself rather than a link: a page goes as both, whichever their phone handles. A text file is a file and
+    a ZIP the link that saves it, as before."""
     (page, save_page), (sheet, _), (archive, save_archive) = downloads(PAGE_KEY), downloads(CSV_KEY), downloads(ZIP_KEY)
     files[page] = FileInfo("text/html", "City map.html", 8 * MB)
     files[sheet] = FileInfo("text/csv", "scores.csv", 2_000)
     files[archive] = FileInfo("application/zip", "site.zip", 3 * MB)
-    read = AsyncMock(return_value=b"name,score\nAda,9\n")
+    bodies = {page: b"<!doctype html><title>City</title>", sheet: b"name,score\nAda,9\n"}
+    read = AsyncMock(side_effect=lambda url, max_bytes: bodies[url])
     monkeypatch.setattr(whatsapp, "read_url", read)
     api = MagicMock(send_text=AsyncMock(return_value="t"), send_media=AsyncMock(return_value="m"),
-                    upload_media=AsyncMock(return_value="media.1"))
+                    upload_media=AsyncMock(side_effect=["media.page", "media.sheet"]))
     await whatsapp.send_rich(api, SENDER, f"Here's the map.\n![City map]({page})\n![scores.csv]({sheet})\n"
                                           f"![The site]({archive})")
     api.send_text.assert_awaited_once_with(
         SENDER, f"Here's the map.\nCity map: {save_page}\nThe site: {save_archive}")
-    # Only the text file is read and sent as a file.
-    read.assert_awaited_once_with(sheet, max_bytes=whatsapp.DOCUMENT_LIMIT)
-    api.send_media.assert_awaited_once_with(SENDER, "document", caption="", filename="scores.csv", media_id="media.1")
+    # The page and the text file go up as plain text under their own names, and each is sent as a document.
+    assert [call.args for call in read.await_args_list] == [(page,), (sheet,)]
+    assert [(call.args, call.kwargs) for call in api.upload_media.await_args_list] == [
+        ((bodies[page],), {"filename": "City map.html", "mime_type": "text/plain"}),
+        ((bodies[sheet],), {"filename": "scores.csv", "mime_type": "text/plain"}),
+    ]
+    assert [call.kwargs for call in api.send_media.await_args_list] == [
+        {"caption": "", "filename": "City map.html", "media_id": "media.page"},
+        {"caption": "", "filename": "scores.csv", "media_id": "media.sheet"},
+    ]
 
 
 @pytest.mark.asyncio

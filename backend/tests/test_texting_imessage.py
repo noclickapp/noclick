@@ -149,8 +149,7 @@ async def test_a_file_nothing_can_tell_the_type_of_or_past_sendblues_cap_is_a_li
 
 
 @pytest.mark.asyncio
-async def test_a_stored_file_past_sendblues_cap_is_the_link_that_saves_it_and_a_page_still_an_attachment(files,
-                                                                                                         monkeypatch):
+async def test_a_stored_file_past_sendblues_cap_is_the_link_that_saves_it_and_a_page_is_both(files, monkeypatch):
     owner, workflow = "11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222"
     video_key = f"{owner}/{workflow}/33333333-3333-3333-3333-333333333333/huge.mov"
     page_key = f"{owner}/{workflow}/44444444-4444-4444-4444-444444444444/game.html"
@@ -163,8 +162,10 @@ async def test_a_stored_file_past_sendblues_cap_is_the_link_that_saves_it_and_a_
     api = MagicMock(send=AsyncMock(return_value="h1"), upload_file=AsyncMock())
     await send_rich(api, USER_PHONE, f"Both.\n![The video]({video})\n![game.html]({page})")
     assert [call.kwargs for call in api.send.await_args_list] == [
-        {"content": f"Both.\nThe video: https://dl.test/files/{video_key}"},
-        {"content": None, "media_url": page},  # iMessage carries a page as the file it is
+        # A page goes as the file it is and, in the text, the link that saves it.
+        {"content": f"Both.\nThe video: https://dl.test/files/{video_key}\n"
+                    f"game.html: https://dl.test/files/{page_key}"},
+        {"content": None, "media_url": page},
     ]
 
 
