@@ -46,6 +46,16 @@ logger = logging.getLogger(__name__)
 # The id of the tool call being run, for an executor that keys the call's effects on it: the model's, or for a CLI
 # harness's call over MCP that carries none, its request's.
 CURRENT_TOOL_CALL_ID: ContextVar[Optional[str]] = ContextVar("current_tool_call_id", default=None)
+# The input the model's latest call saw (its items, after every filter), for a tool that holds what it's given to
+# what the turn holds: the person's messages and what the tools returned. None outside a run of this wrapper.
+CURRENT_MODEL_INPUT: ContextVar[Optional[List[Any]]] = ContextVar("current_model_input", default=None)
+
+
+async def _seen(data):
+    """The last of a run's input filters: the input as the model gets it, for its tools (``CURRENT_MODEL_INPUT``).
+    Set in the run's own task, which runs the tools the model then calls."""
+    CURRENT_MODEL_INPUT.set(list(data.model_data.input))
+    return data.model_data
 
 # ── Transient-error retry for the streamed agent turn ────────────────────────
 # Providers fail mid-stream (observed: OpenRouter relaying a MiniMax inference
@@ -1037,10 +1047,9 @@ class Agent:
 
                     input_filter = chain(getattr(self, "_call_model_input_filter", None) or chain(
                         steering.filter_for(getattr(self, "conversation_id", None), getattr(self, "_session", None)),
-                        getattr(self, "_context_filter", None)), restore)
-                    if input_filter is not None:
-                        from agents import RunConfig
-                        run_config = RunConfig(call_model_input_filter=input_filter)
+                        getattr(self, "_context_filter", None)), restore, _seen)
+                    from agents import RunConfig
+                    run_config = RunConfig(call_model_input_filter=input_filter)
                     # A guard stops the run after the calls in hand (``TurnGuard.watch``), long before this backstop.
                     result = Runner.run_streamed(
                         self._sdk_agent,
