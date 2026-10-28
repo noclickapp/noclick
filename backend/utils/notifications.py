@@ -82,6 +82,12 @@ CATEGORY_LABELS = {
 # What an owner with no email isn't texted (``_text_owner``): the digest is news, never something to act on; a failed
 # run wakes the assistant, which tells them when it matters; an invitee joining reaches the sharer's assistant.
 NOT_TEXTED = frozenset({"digest", "run_failure", "referrals"})
+
+
+def texts_owner_without_email(category: str) -> bool:
+    """Whether an owner with no email is texted this category's alerts. The one rule for it: a platform that also
+    tells the owner on their own channel leaves such an owner to the alert, so each notice reaches them once."""
+    return category not in NOT_TEXTED
 # An alert that reached the owner: by email, or texted to one with no email (``metadata.texted``: the app).
 DELIVERED_SQL = "(email_sent OR metadata ? 'texted')"
 
@@ -458,7 +464,8 @@ async def send_system_alert(
                 sent = await asyncio.to_thread(
                     _send_email, to_email, subject, html_content, text_content, headers
                 )
-            elif category not in NOT_TEXTED and (texted := await _text_owner(pool, user_id, text_body, cta_url)):
+            elif texts_owner_without_email(category) and (
+                    texted := await _text_owner(pool, user_id, text_body, cta_url)):
                 metadata = {**(metadata or {}), "texted": texted}
             else:
                 logger.warning(f"[Notify] no email for user {user_id} — recording {category} without email")
