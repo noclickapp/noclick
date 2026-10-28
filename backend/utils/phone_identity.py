@@ -28,6 +28,8 @@ from typing import Any, Callable, Dict, Optional, Tuple
 import asyncpg
 
 from repositories.phones import PhoneRepo
+from utils.analytics import log_activity_async
+from utils.analytics_events import Events
 from utils.database_pool import get_native_pool
 from utils.phone_numbers import mask_e164, normalize_e164
 from utils.redis_client import get_shared_redis
@@ -291,6 +293,10 @@ class PhoneIdentity:
                 return phone
             await self.repo.bind_channel(conn, user_id=user_id, phone_e164=phone, source="verify")
         logger.info("phone_bound_by_sign_in user=%s phone=%s", user_id, mask_e164(phone))
+        # A first phone sign-in: the account its code was just confirmed for is a signup now, which the signup
+        # webhook left out while the code wasn't typed back (supabase_webhook_routes).
+        await log_activity_async(Events.USER_SIGNED_UP, user_id, {
+            "auth_method": "phone", "provider": "phone", "source": "server_phone_confirmed"})
         return phone
 
     async def claim_for_channel(self, phone_e164: str, *, name: str, source: str) -> ChannelClaim:

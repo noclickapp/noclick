@@ -6,6 +6,7 @@ without its +, a taken number refused with 422 — so the signup triggers run.""
 
 import asyncio
 from datetime import datetime, timedelta, timezone
+from unittest.mock import AsyncMock
 
 import asyncpg
 import pytest
@@ -170,8 +171,10 @@ async def test_phone_sign_in_lands_on_the_account_the_number_is_bound_to(phones_
     assert len(admin.updated) == 1 and admin.created == []
 
 
-async def test_a_first_phone_sign_in_binds_its_number_to_the_new_account(phones_db):
+async def test_a_first_phone_sign_in_binds_its_number_to_the_new_account(phones_db, monkeypatch):
     pool, repo, _, svc = phones_db
+    signups = AsyncMock()
+    monkeypatch.setattr("utils.phone_identity.log_activity_async", signups)
     # What Supabase's own phone sign-up leaves behind: a confirmed auth phone, no binding.
     fresh = str(await pool.fetchval(
         "INSERT INTO auth.users (phone, phone_confirmed_at, raw_user_meta_data) VALUES ('15550100010', now(), $1) RETURNING id",
@@ -179,6 +182,9 @@ async def test_a_first_phone_sign_in_binds_its_number_to_the_new_account(phones_
     assert await svc.bind_signed_in(fresh) == "+15550100010"
     assert str((await repo.get_user_by_phone("+15550100010"))["user_id"]) == fresh
     assert await svc.bind_signed_in(fresh) == "+15550100010"  # idempotent
+    # Its signup counts now, once: the signup webhook leaves an account whose code wasn't typed back yet out.
+    signups.assert_awaited_once_with("user_signed_up", fresh, {
+        "auth_method": "phone", "provider": "phone", "source": "server_phone_confirmed"})
 
     # A number another account holds live is never taken over.
     squatter = str(await pool.fetchval(
