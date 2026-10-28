@@ -140,6 +140,8 @@ class AgenticBuilder:
         self._total_cost = 0.0
         self._total_tokens = 0
         self._emitted_text = False
+        # What the last turn that spoke said: the run's result, never its narration before.
+        self._last_words = ""
         self._last_turn_result = TurnResult(next_action="continue")
         self._execution_effects: List[ExecutionEffects] = []
         self.session_log = SessionLogger(
@@ -152,6 +154,12 @@ class AgenticBuilder:
     @property
     def emitted_text(self) -> bool:
         return self._emitted_text
+
+    @property
+    def last_words(self) -> str:
+        """What the run's last turn that spoke said: its result (a bare <done/>
+        ends on the summary the turn before it wrote). "" if no turn spoke."""
+        return self._last_words
 
     async def generate(self, input: BuilderInput) -> None:
         """Seed a new workflow; ``run_one_turn`` drives generation."""
@@ -331,6 +339,7 @@ class AgenticBuilder:
             self._total_tokens += final.total_tokens
 
         visible = _visible_text(response_text)
+        said = [visible] if visible else []
         if visible:
             self._emitted_text = True
             yield BuilderStreamEvent(type="text_chunk", data={"text": visible})
@@ -373,7 +382,10 @@ class AgenticBuilder:
         ).strip()
         if message_text and message_text not in visible:
             self._emitted_text = True
+            said.append(message_text)
             yield BuilderStreamEvent(type="text_chunk", data={"text": message_text})
+        if said:
+            self._last_words = "\n".join(said).strip()
 
         effects = ExecutionEffects(
             turn=turn,
