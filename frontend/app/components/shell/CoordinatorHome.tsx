@@ -159,6 +159,8 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
     const [references, setReferences] = useState<ChatReference[]>([]);
     const { credentials } = useCredentialList();
     const [memoriesOpen, setMemoriesOpen] = useState(false);
+    // Beside the thread, where the composer's tab opens a column of its own on a laptop.
+    const [aside, setAside] = useState<HTMLDivElement | null>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const composerCard = useRef<HTMLDivElement>(null);
     const arrival = useScaffoldArrival(conversationId, coordinator.arrive);
@@ -375,24 +377,28 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
     }
 
     return (
-        <div className="relative flex h-full flex-col" data-testid="coordinator-home">
-            {corners}
-            <div ref={scroller.ref} onScroll={scroller.onScroll} className="min-h-0 flex-1 overflow-y-auto scrollbar-subtle">
-                <div className={cn('mx-auto w-full max-w-3xl px-5 pb-10 sm:px-6', inPhone ? 'pt-4' : 'pt-14')}>
-                    <CoordinatorTranscript messages={messages} isStreaming={isStreaming} errorReason={errorReason} referenceDisplay={referenceDisplay} jobs={jobs} />
-                    {settingUp && (
-                        <div className={messages.length ? 'mt-6' : undefined}>
-                            <Status state="working">Setting up {arriving.name}</Status>
-                        </div>
-                    )}
+        <div className="flex h-full min-h-0">
+            <div className="relative flex h-full min-w-0 flex-1 flex-col" data-testid="coordinator-home">
+                {corners}
+                <div ref={scroller.ref} onScroll={scroller.onScroll} className="min-h-0 flex-1 overflow-y-auto scrollbar-subtle">
+                    <div className={cn('mx-auto w-full max-w-3xl px-5 pb-10 sm:px-6', inPhone ? 'pt-4' : 'pt-14')}>
+                        <CoordinatorTranscript messages={messages} isStreaming={isStreaming} errorReason={errorReason} referenceDisplay={referenceDisplay} jobs={jobs} />
+                        {settingUp && (
+                            <div className={messages.length ? 'mt-6' : undefined}>
+                                <Status state="working">Setting up {arriving.name}</Status>
+                            </div>
+                        )}
+                    </div>
                 </div>
+                {/* The tab and the composer as one group, so the tab's edge brightens with the composer's while you type. */}
+                <div className="group/composer shrink-0">
+                    {ComposerTab && <ComposerTab messages={messages} jobs={jobs} draft={draftAndFocus} aside={aside} />}
+                    {composer}
+                </div>
+                {memories}
             </div>
-            {/* The tab and the composer as one group, so the tab's edge brightens with the composer's while you type. */}
-            <div className="group/composer shrink-0">
-                {ComposerTab && <ComposerTab messages={messages} jobs={jobs} draft={draftAndFocus} />}
-                {composer}
-            </div>
-            {memories}
+            {/* What opens beside the thread keeps the thread at least this wide. */}
+            <div ref={setAside} className="flex max-w-[calc(100%-360px)] shrink-0" />
         </div>
     );
 }

@@ -101,6 +101,8 @@
     "@visx/tooltip": "^3.12.0",
     "@visx/vendor": "^3.08.0",
     "@visx/wordcloud": "^3.12.0",
+    "@xterm/addon-fit": "0.11.0",
+    "@xterm/xterm": "6.0.0",
     "@xyflow/react": "^12.10.0",
     "ag-grid-community": "^32.3.3",
     "ag-grid-react": "32.3.3",

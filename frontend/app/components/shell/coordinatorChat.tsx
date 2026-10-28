@@ -43,11 +43,13 @@ export interface CoordinatorChat {
 }
 
 /** What the composer's tab reads: the thread, the work its turns started as the thread follows it, and how to start
- *  a reply in the composer. */
+ *  a reply in the composer; and where beside the chat it may open a column of its own (a laptop's: an agent's
+ *  terminal), null until the page has laid it out. */
 export interface ComposerTabProps {
     messages: AgentChatMessage[];
     jobs: CoordinatorJobs;
     draft: (text: string) => void;
+    aside: HTMLElement | null;
 }
 
 /** A workflow picked on a public page (an /agents page, /mcp), made and now set up from the chat. */
