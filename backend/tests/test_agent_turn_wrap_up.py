@@ -1,7 +1,7 @@
 """A platform's agent turn goes as far as the limits the platform names on the node's runtime config
 (``TURN_LIMITS_KEY``), the engine's defaults for any it leaves out, and a turn one of them ends still answers: the
 platform names the closing words per limit (``TURN_WRAP_UP_KEY``) and the agent node hands them to the engine's
-wrap-up call. The node's output says which limit ended the turn."""
+wrap-up call. The node's output says which limit ended the turn, and whether a tool's result handed its work on."""
 
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
@@ -68,23 +68,32 @@ async def test_a_run_a_restart_handed_over_meets_its_limits_where_the_turn_stood
     assert (await _created_with(monkeypatch, {}))["so_far"] is None
 
 
-async def test_the_output_says_which_limit_ended_the_turn(monkeypatch):
+async def _output_of(monkeypatch, said, *, ended_by=None, handed_on=False):
+    """The node's output for a turn the engine left as ``ended_by``/``handed_on``, having said ``said``."""
     reply = [""]
 
     class Ended:
-        """A turn its step limit ended, as the engine leaves it."""
-
-        turn_ended_by = "steps"
+        turn_ended_by, turn_handed_on = ended_by, handed_on
         cleanup = AsyncMock()
 
         async def __call__(self, message):
-            reply[0] += "Did A and B; C is left.\n\nCarrying on in a moment."
+            reply[0] += said
 
     monkeypatch.setattr("nodes.agent.handlers.llm.Agent.create", AsyncMock(return_value=Ended()))
-    output = await execute_llm_model(_node({}), _config(), None, USER_ID, None, emit_callback=MagicMock(),
-                                     final_response_ref=reply)
+    return await execute_llm_model(_node({}), _config(), None, USER_ID, None, emit_callback=MagicMock(),
+                                   final_response_ref=reply)
+
+
+async def test_the_output_says_which_limit_ended_the_turn(monkeypatch):
+    output = await _output_of(monkeypatch, "Did A and B; C is left.\n\nCarrying on in a moment.", ended_by="steps")
     assert output["status"] == "completed" and output["ended_by"] == "steps"
-    assert output["response"].endswith("Carrying on in a moment.")
+    assert output["response"].endswith("Carrying on in a moment.") and "handed_on" not in output
+
+
+async def test_the_output_says_a_tools_result_handed_the_turns_work_on(monkeypatch):
+    """Its platform takes such a turn's silence for the model's call on work still under way, never a failure."""
+    output = await _output_of(monkeypatch, "", handed_on=True)
+    assert output["status"] == "completed" and output["handed_on"] is True and "ended_by" not in output
 
 
 async def test_a_turn_someone_waits_on_starts_with_the_effort_the_platform_names(monkeypatch):

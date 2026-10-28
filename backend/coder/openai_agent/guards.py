@@ -10,7 +10,10 @@ rest of the turn (``loop_guardrails``). A call whose result changes, like a poll
 A tool whose result hands the turn's work on (``ENDS_TURN``: a platform's wake-up set on work still running) stops the
 run after the calls in hand the same way, with no wrap-up: once the turn has said something, or at once when the
 result says ``SILENTLY`` (nobody waits on its words). Left running, such turns polled the work, set the same wake-up
-again after each look and wrote one more line about work their person already knew was under way (2026-10-25).
+again after each look and wrote one more line about work their person already knew was under way (2026-10-25). A turn
+someone waits on that hasn't said anything yet stops there too when its caller gives a ``HANDED_ON`` wrap-up, and says
+its line in that one closing call (``owes_line``): left to say it by itself, a texted "Ok" turn made one more call,
+answered with nothing twice and ended with no reply (2026-10-28).
 
 A tool NoClick's credit gate turned down (``credit_refusal``: its result's error is the gate's
 ``insufficient_credits_message``) means the account can't pay for the turn's work. A run whose caller says how to wrap
@@ -57,7 +60,8 @@ STEPS, SPEND, TIME = "steps", "spend", "time"
 LIMITS = (STEPS, SPEND, TIME)
 FUNDS = "funds"
 STALLED = "stalled"
-REASONS = LIMITS + (FUNDS, STALLED)
+HANDED_ON = "handed_on"
+REASONS = LIMITS + (FUNDS, STALLED, HANDED_ON)
 # The time an identical call returns the same result that gets the nudge; one more is refused.
 REPEATS = 3
 REPEATED_RESULT_CHARS = 2000
@@ -169,8 +173,8 @@ class TurnSoFar:
 
 def stopped_line(reason: str, limits: TurnLimits) -> str:
     """The plain line a person reads for a turn ``reason`` ended; none for one the account couldn't pay for, whose
-    platform's refusal says why."""
-    if reason == FUNDS:
+    platform's refusal says why, nor for one whose work was handed on, whose closing words are its own."""
+    if reason in (FUNDS, HANDED_ON):
         return ""
     if reason == STEPS:
         return f"I stopped here: this turn used all {limits.steps} of its steps."
@@ -220,14 +224,17 @@ class TurnGuard(RunHooks):
     is the guard that tripped, once one has; ``handed_on`` that a tool's result ended it instead (``ENDS_TURN``).
     With ``ends_unfunded``, a tool the credit gate turned down trips ``FUNDS``, and ``unfunded`` is the gate's words.
     With ``ends_stalled``, calls in a row that only read are noted, then trip ``STALLED`` (``unchanged``).
-    ``so_far``: what the turn's earlier runs used (``TurnSoFar``), which this run's counts start from."""
+    With ``ends_unsaid``, a result handing the work of a turn someone waits on ends it before it has said anything,
+    and ``owes_line`` is that its closing call says it. ``so_far``: what the turn's earlier runs used
+    (``TurnSoFar``), which this run's counts start from."""
 
     def __init__(self, limits: TurnLimits, inner: Optional[RunHooks] = None, *, ends_unfunded: bool = False,
-                 ends_stalled: bool = False, so_far: Optional[TurnSoFar] = None):
+                 ends_stalled: bool = False, ends_unsaid: bool = False, so_far: Optional[TurnSoFar] = None):
         self.limits = limits
         self._inner = inner
         self._ends_unfunded = ends_unfunded
         self._ends_stalled = ends_stalled
+        self._ends_unsaid = ends_unsaid
         self.quiet = so_far.quiet if so_far else 0
         self.longest_quiet = self.quiet
         self.quiet_notes = 0
@@ -241,6 +248,7 @@ class TurnGuard(RunHooks):
         self.paused = False
         self.said = False
         self.handed_on = False
+        self.owes_line = False
         self._repeats: Dict[Tuple[str, str], Tuple[str, int]] = {}
         self._refused: Set[Tuple[str, str]] = set()
         self.nudges = 0
@@ -318,8 +326,10 @@ class TurnGuard(RunHooks):
             if self._stop is not None:
                 self._stop()
         handing_on = ends_turn(result)
-        if handing_on and not (self.tripped or self.handed_on) and (handing_on == SILENTLY or self.said):
+        if handing_on and not (self.tripped or self.handed_on) and (
+                handing_on == SILENTLY or self.said or self._ends_unsaid):
             self.handed_on = True
+            self.owes_line = handing_on != SILENTLY and not self.said
             if self._stop is not None:
                 self._stop()
         # A long tool can run the clock out between model calls.
@@ -434,6 +444,7 @@ def record(guard: TurnGuard, ended_by: Optional[str], *, conversation_id: Option
             span.set_attribute("agent.turn.loop_nudges", guard.nudges)
             span.set_attribute("agent.turn.loop_refusals", guard.refusals)
             span.set_attribute("agent.turn.handed_on", guard.handed_on)
+            span.set_attribute("agent.turn.owed_line", guard.owes_line)
             span.set_attribute("agent.turn.longest_read_streak", guard.longest_quiet)
             span.set_attribute("agent.turn.read_notes", guard.quiet_notes)
             if ended_by:

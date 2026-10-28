@@ -3,7 +3,12 @@ turn after that round of calls, through the real streamed SDK and PostgreSQL. Le
 polled the deploy, set the wake-up they already had again after each look and closed on one more line about work
 their person already knew was under way ("The site is underway.", 2026-10-25). A turn that hasn't said anything yet
 still gets to say its line, unless the result lets it end with nothing (``SILENTLY``: nobody waits on its words); and
-a turn ended this way is no guard's: no wrap-up, no stopped line, no empty-answer note."""
+a turn ended this way is no guard's: no wrap-up, no stopped line, no empty-answer note.
+
+Left to say that line by itself, a texted "Ok" turn that set wake_me on its site's check before writing a word made one
+more call and answered with nothing twice, and ended with no reply (2026-10-28). Given a ``HANDED_ON`` wrap-up (its
+caller's: someone waits on the turn's words), such a turn ends at the round that handed its work on and says its line
+in one closing call, tools off."""
 
 import json
 from unittest.mock import AsyncMock
@@ -22,10 +27,14 @@ NOTE = "Your last response was empty."
 WRAP_UP = {reason: {"prompt": "Say where the work stands."} for reason in ("steps", "spend", "time")}
 
 
-async def _run(pool, monkeypatch, script, results):
+async def _run(pool, monkeypatch, script, results, *, wrap_up=None, closing=None, closes=None):
     """One turn whose model answers with ``script``'s ``(text, tool or None)`` in order, each tool answering with
-    ``results[tool]``: the model calls made, the tools run, what the turn said and the history it kept."""
+    ``results[tool]``: the model calls made, the tools run, what the turn said and the history it kept. ``wrap_up``
+    replaces the limits' (``WRAP_UP``); a closing call (tools off) answers ``closing``, its settings and input kept in
+    ``closes``."""
+    from agents.items import ModelResponse
     from agents.models.interface import Model
+    from agents.usage import Usage
     from openai.types.responses import (
         Response, ResponseCompletedEvent, ResponseFunctionToolCall, ResponseOutputMessage, ResponseOutputText,
     )
@@ -47,8 +56,13 @@ async def _run(pool, monkeypatch, script, results):
         return results[name]
 
     class ModelDouble(Model):
-        async def get_response(self, *args, **kwargs):
-            raise AssertionError("Expected streaming")
+        async def get_response(self, system_instructions, input, model_settings, *args, **kwargs):
+            assert closing is not None, "Expected streaming"
+            closes.append((model_settings.tool_choice, list(input)))
+            reply = ResponseOutputMessage(id="closing", type="message", role="assistant", status="completed",
+                                          content=[ResponseOutputText(type="output_text", text=closing,
+                                                                      annotations=[])])
+            return ModelResponse(output=[reply], usage=Usage(), response_id="r-closing")
 
         async def stream_response(self, system_instructions, input, model_settings, *args, **kwargs):
             calls.append(list(input))
@@ -73,7 +87,8 @@ async def _run(pool, monkeypatch, script, results):
                                                "parameters": {"type": "object", "properties": {}}}}
              for name in results]
     instance = await Agent.create(emit_message=emit, conversation_id=CONVERSATION, enable_persistence=True,
-                                  user_id=USER, custom_tool_executor=run_tool, empty_answer=NOTE, wrap_up=WRAP_UP,
+                                  user_id=USER, custom_tool_executor=run_tool, empty_answer=NOTE,
+                                  wrap_up=wrap_up or WRAP_UP,
                                   config=AgentConfiguration.from_kwargs(model="openrouter/openai/gpt-4o",
                                                                         system_prompt="Build the site.",
                                                                         custom_tools=tools))
@@ -115,6 +130,49 @@ async def test_a_turn_that_has_said_nothing_still_says_its_line(builder_request_
 
     assert len(calls) == 3 and ran == ["deploy", "wake_me"] and said == LINE
     assert instance._turn_guard.handed_on is False
+
+
+HANDED_ON_WRAP_UP = {**WRAP_UP, "handed_on": {"prompt": "Say in one line what's under way."}}
+
+
+async def test_a_turn_someone_waits_on_says_its_line_in_one_closing_call(builder_request_db, monkeypatch):
+    """The texted "Ok" turn: its work handed on before it said a word, it ends at that round, and its one closing call
+    (tools off, told why) says the line; a model left to it made another call and answered with nothing."""
+    pool, closes = builder_request_db[0], []
+    calls, ran, said, stored, instance = await _run(
+        pool, monkeypatch, [("", "check"), ("", "wake_me"), ("", "search")],
+        {"check": {"success": True}, "wake_me": _wake(True), "search": {"success": True}},
+        wrap_up=HANDED_ON_WRAP_UP, closing=LINE, closes=closes)
+
+    assert len(calls) == 2 and ran == ["check", "wake_me"]
+    [(tool_choice, closing_input)] = closes
+    assert tool_choice == "none"
+    assert closing_input[-1] == {"role": "developer", "content": "Say in one line what's under way."}
+    assert said == LINE and instance.turn_handed_on is True and instance.turn_ended_by is None
+    # The line is the turn's reply in its history, with no empty-answer note beside it.
+    assert stored[-1]["role"] == "assistant" and stored[-1]["content"][0]["text"] == LINE
+    assert not any(item == {"role": "developer", "content": NOTE} for item in stored)
+
+
+async def test_a_closing_call_that_says_nothing_ends_the_turn_without_a_line(builder_request_db, monkeypatch):
+    """Nothing is made up for it: the turn ends with no words, handed on, never failed."""
+    calls, ran, said, _, instance = await _run(
+        builder_request_db[0], monkeypatch, [("", "wake_me")], {"wake_me": _wake(True)},
+        wrap_up=HANDED_ON_WRAP_UP, closing="", closes=[])
+
+    assert len(calls) == 1 and ran == ["wake_me"] and said == ""
+    assert instance.turn_handed_on is True and instance.turn_ended_by is None
+
+
+async def test_a_turn_that_said_its_line_or_nobody_waits_on_gets_no_closing_call(builder_request_db, monkeypatch):
+    said_first = await _run(builder_request_db[0], monkeypatch, [(LINE, "deploy"), ("", "wake_me")],
+                            {"deploy": {"success": True}, "wake_me": _wake(True)}, wrap_up=HANDED_ON_WRAP_UP)
+    nobody = await _run(builder_request_db[0], monkeypatch, [("", "check"), ("", "wake_me")],
+                        {"check": {"success": True}, "wake_me": _wake("silently")}, wrap_up=HANDED_ON_WRAP_UP)
+
+    # No closing call was made: the model double refuses one.
+    assert said_first[2] == LINE and said_first[4].turn_handed_on is True
+    assert nobody[2] == "" and nobody[4].turn_handed_on is True
 
 
 async def test_a_turn_nobody_waits_on_ends_with_nothing(builder_request_db, monkeypatch):

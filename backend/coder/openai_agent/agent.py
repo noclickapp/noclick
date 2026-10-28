@@ -337,10 +337,12 @@ class Agent:
         self._current_workdir: str = "/tmp/apps"
 
         # The running turn's guards (``guards.TurnGuard``), and which of them ended the last turn, if one did; for a
-        # turn the account couldn't pay for (``guards.FUNDS``), what its wrap-up said of its work (``turn_closing``).
+        # turn the account couldn't pay for (``guards.FUNDS``), what its wrap-up said of its work (``turn_closing``);
+        # whether a tool's result handed the last turn's work on instead (``guards.ENDS_TURN``, ``turn_handed_on``).
         self._turn_guard: Optional[TurnGuard] = None
         self.turn_ended_by: Optional[str] = None
         self.turn_closing: Optional[str] = None
+        self.turn_handed_on = False
 
         # Whether create() has finished. Until then, ``__call__`` raises.
         self._initialized = False
@@ -432,7 +434,8 @@ class Agent:
         # (``{steps|spend|time: {prompt, line?}}``, or one prompt for all), it answers once more without tools and
         # the guard's line follows; a guard with none ends the turn on its line alone. With ``funds``, a tool the
         # credit gate turned down ends the turn too (``_end_unfunded``); with ``stalled``, calls in a row that change
-        # nothing (``guards.QUIET_STOP``).
+        # nothing (``guards.QUIET_STOP``); with ``handed_on``, a turn someone waits on whose work a tool's result
+        # hands on before it has said anything, its answer the turn's line with none after it.
         agent._limits = limits or TurnLimits()
         agent._wrap_up = guards.wrap_ups(wrap_up)
         # How far the turn had gone in another process before this run of it (``guards.TurnSoFar``): its next turn
@@ -960,7 +963,7 @@ class Agent:
         wrap_up = getattr(self, "_wrap_up", {})
         guard = TurnGuard(getattr(self, "_limits", None) or TurnLimits(), getattr(self, "_billing_hooks", None),
                           ends_unfunded=guards.FUNDS in wrap_up, ends_stalled=guards.STALLED in wrap_up,
-                          so_far=getattr(self, "_so_far", None))
+                          ends_unsaid=guards.HANDED_ON in wrap_up, so_far=getattr(self, "_so_far", None))
         self._so_far = None
         self._turn_guard, self.turn_ended_by, self.turn_closing = guard, None, None
         try:
@@ -968,6 +971,7 @@ class Agent:
                 await self._turn(message, guard)
         finally:
             guard.close()
+            self.turn_handed_on = guard.handed_on
             config = getattr(self, "config", None)
             guards.record(guard, self.turn_ended_by, conversation_id=getattr(self, "conversation_id", None),
                           model=config.llm.model if config else "")
@@ -1192,21 +1196,28 @@ class Agent:
             break  # attempt succeeded
 
         # A guard that stopped the run, rather than the model's answer: the turn wraps up once, or ends on its line.
+        # One a tool's result handed on before it said a word says it in that one call, or ends with nothing.
         closing: List[Dict[str, Any]] = []
-        ended_by = guard.tripped if result is not None and result.final_output is None and not guard.paused else None
+        stopped = result is not None and result.final_output is None and not guard.paused
+        ended_by = guard.tripped if stopped else None
         if ended_by == guards.FUNDS:
             await self._end_unfunded(guard, result.to_input_list(), run_config, env_overrides)
             return
-        if ended_by is not None:
+        closing_for = ended_by or (guards.HANDED_ON if stopped and guard.owes_line else None)
+        wrapped = None
+        if closing_for is not None:
             self.turn_ended_by = ended_by
             with override_env(**env_overrides) if env_overrides else contextlib.nullcontext():
-                wrapped = await self._wrap_up_turn(ended_by, guard, result.to_input_list(), run_config)
-            if wrapped is None:
+                wrapped = await self._wrap_up_turn(closing_for, guard, result.to_input_list(), run_config)
+            if wrapped is None and ended_by is not None:
                 line = guards.stopped_line(ended_by, guard.limits)
                 logger.warning("[openai_agent] turn ended by its %s limit with no wrap-up", ended_by)
                 await self._emit_message(ChatMessageEvent(message=line, finished=True, status="error"))
                 await self._emit_message(AgentStateEvent(state="error", reason=line))
                 return
+            if wrapped is None:
+                logger.warning("[openai_agent] a turn handed on before it said anything said nothing in its closing")
+        if wrapped is not None:
             text, item = wrapped
             closing = [item]
             if self._session is not None:
@@ -1263,7 +1274,8 @@ class Agent:
     async def _wrap_up_turn(self, reason: str, guard: TurnGuard, history: List[Dict[str, Any]],
                             run_config: Any) -> Optional[Tuple[str, Dict[str, Any]]]:
         """The one wrap-up of a turn a guard ended: one more model call, told why (the guard's prompt), says where
-        the work stands, and the guard's line follows it; returns that text and the reply's history item. Its tools
+        the work stands, and the guard's line follows it (none for ``guards.HANDED_ON``: a turn whose work was handed
+        on before it said anything); returns that text and the reply's history item. Its tools
         stay declared (some providers require them beside tool calls in history) but never run, so a model that
         calls one anyway does nothing and the turn ends on the line (None), as one with no wrap-up for the guard."""
         entry = getattr(self, "_wrap_up", {}).get(reason)
