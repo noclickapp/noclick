@@ -37,6 +37,17 @@ def workflow_url(workflow_id) -> str:
     return f"{FRONTEND_URL}/dashboard?tab=workflows&workflow={workflow_id}"
 
 
+def phone_sign_in(url: str) -> str:
+    """``url`` for someone with no email, who signs in only with their phone: a page of the app (which asks them to
+    sign in) carries ``with=phone``, and the sign-in page opens on its phone form, since any other way in makes them
+    a second, empty account. Any other link is left as it is."""
+    from urllib.parse import urlsplit
+
+    if not urlsplit(url).path.startswith("/dashboard"):
+        return url
+    return f"{url}{'&' if '?' in url else '?'}with=phone"
+
+
 # Sender identities (domains must be verified in Resend). Two streams by
 # abuse-risk class: FROM_EMAIL is the default — system alerts and other mail
 # to our own users; INVITE_FROM_EMAIL is user-TRIGGERED mail to arbitrary
