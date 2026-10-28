@@ -190,3 +190,42 @@ def test_no_op_when_honeycomb_key_unset(monkeypatch):
         asyncio.Handle._run = saved_handle_run
         otel_loop_monitor._initialized = saved_initialized
         otel_loop_monitor._main_thread_id = saved_main_thread_id
+
+
+def _slow_marker():
+    """Named frame the watchdog should catch mid-stall (see test below)."""
+    time.sleep(0.25)
+
+
+def test_watchdog_captures_a_usable_stack(fresh_monitor):
+    """The watchdog must hand ``_emit_block`` a real, correctly-ordered stack.
+
+    Without this, a capture path that silently stops producing stacks looks
+    identical to a healthy monitor: ``_watchdog_loop`` swallows exceptions and
+    ``_emit_block`` accepts ``stack=None``, so every ``blocking.*`` attribution
+    attribute just vanishes while block spans keep arriving. The ordering
+    assertion is equally load-bearing — ``_top_user_frame`` takes
+    ``user_frames[-1]`` and ``_emit_block`` slices ``stack[-MAX_STACK_FRAMES:]``,
+    so an innermost-first stack would silently report ``<module>`` as the
+    blocking line and truncate to the wrong end.
+    """
+    loop = asyncio.new_event_loop()
+    fresh_monitor.init_loop_monitor(loop)
+
+    with patch.object(fresh_monitor, "_emit_block") as emit:
+        handle = _make_handle(loop, _slow_marker)
+        handle._run()
+
+    loop.close()
+    assert emit.call_count == 1
+    stack = emit.call_args.args[2]
+    assert stack, "watchdog must capture a stack for a stall past the threshold"
+
+    # Outermost-first, matching traceback.extract_stack: the innermost frame
+    # is the one still executing, not the module that started the run.
+    assert stack[-1].name == "_slow_marker"
+    assert stack[0].name != "_slow_marker"
+
+    top = fresh_monitor._top_user_frame(stack)
+    assert top is not None
+    assert os.path.basename(top.filename) == os.path.basename(__file__)

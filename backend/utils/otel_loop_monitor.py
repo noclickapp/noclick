@@ -240,7 +240,13 @@ def _watchdog_loop() -> None:
             frame = sys._current_frames().get(_main_thread_id)
             if frame is None:
                 continue
-            stack = traceback.extract_stack(frame)
+            # lookup_lines=False keeps this off the filesystem — we only ever
+            # read filename/lineno, and this runs while the loop is stalled.
+            stack = traceback.StackSummary.extract(
+                traceback.walk_stack(frame), lookup_lines=False
+            )
+            # walk_stack yields innermost-first; match extract_stack's ordering.
+            stack = list(reversed(stack))
         except Exception:
             continue
         # Nothing of ours on the loop's stack means it wasn't running our code,
