@@ -79,6 +79,12 @@ CATEGORY_LABELS = {
     "machines": "decisions on your requests for machines",
 }
 
+# What an owner with no email isn't texted (``_text_owner``): the digest is news, never something to act on; a failed
+# run wakes the assistant, which tells them when it matters; an invitee joining reaches the sharer's assistant.
+NOT_TEXTED = frozenset({"digest", "run_failure", "referrals"})
+# An alert that reached the owner: by email, or texted to one with no email (``metadata.texted``: the app).
+DELIVERED_SQL = "(email_sent OR metadata ? 'texted')"
+
 # Suppression window after a run-failure email per workflow — a cron flow
 # failing every 5 minutes sends one email, not 288/day. Failures inside the
 # window are counted and folded into the next email.
@@ -294,14 +300,14 @@ async def _window_acquire(
 
 
 async def _emails_sent_today(user_id: str, category: str, pool=None) -> int:
-    """Emails sent today in this category. Fail-open (0) on error: a DB blip
+    """Alerts that reached the owner today in this category (``DELIVERED_SQL``). Fail-open (0) on error: a DB blip
     must not eat an alert — the dedupe windows (incl. the in-process backstop)
     still bound repeats."""
     try:
         row = await _fetch_row(
             pool,
-            """SELECT COUNT(*) AS n FROM user_notifications
-                WHERE user_id = $1 AND category = $2 AND email_sent
+            f"""SELECT COUNT(*) AS n FROM user_notifications
+                WHERE user_id = $1 AND category = $2 AND {DELIVERED_SQL}
                   AND created_at >= date_trunc('day', now())""",
             user_id, category,
         )
@@ -379,7 +385,8 @@ async def send_system_alert(
     metadata: Optional[dict] = None,
     pool=None,
 ) -> bool:
-    """Render + send one system alert. Returns True iff an email went out.
+    """Render + send one system alert. Returns True iff it reached the owner: an email went out, or, for an owner
+    with no email, a text (``_text_owner``; ``metadata.texted`` records the app).
 
     Every non-suppressed alert is recorded in user_notifications even when the
     daily cap blocks the email (email_sent=false) — the future in-app feed
@@ -451,6 +458,8 @@ async def send_system_alert(
                 sent = await asyncio.to_thread(
                     _send_email, to_email, subject, html_content, text_content, headers
                 )
+            elif category not in NOT_TEXTED and (texted := await _text_owner(pool, user_id, text_body, cta_url)):
+                metadata = {**(metadata or {}), "texted": texted}
             else:
                 logger.warning(f"[Notify] no email for user {user_id} — recording {category} without email")
 
@@ -461,12 +470,28 @@ async def send_system_alert(
             dedupe_key=dedupe_key, metadata=metadata,
             email_sent=sent, claim_id=claim_id, pool=pool,
         )
-        return sent
+        return sent or bool((metadata or {}).get("texted"))
     except Exception as e:
         # Alerts are best-effort everywhere they're hooked (run completion,
         # credit gate) — never let one bubble into the caller's path.
         logger.error(f"[Notify] failed to send {category} alert to user {user_id}: {e}", exc_info=True)
         return False
+
+
+async def _text_owner(pool, user_id: str, text: str, url: str) -> Optional[str]:
+    """An alert for an owner with no email (they signed up by texting NoClick), texted on the app they last texted it
+    on as NoClick's other owner notices go (``reach_owner``), its app link opening on the phone sign-in. The app it
+    went on, or None when it didn't go."""
+    from coder.coordinator.reach import normalize_channel, phone_text_channel, reach_owner
+    from utils.email import phone_sign_in
+
+    pool = _resolve_pool(pool)
+    app = normalize_channel(await phone_text_channel(pool, user_id))
+    reached = await reach_owner(pool, user_id, text, link=phone_sign_in(url), channel=app)
+    if not reached.get("success"):
+        logger.warning(f"[Notify] couldn't text user {user_id} on {app}: {reached.get('error')}")
+        return None
+    return app
 
 
 # ── Run failure ──────────────────────────────────────────────────────────────
@@ -1030,7 +1055,7 @@ async def send_channel_reconnected_notice(
     exact hazard the disconnect email warns about."""
     recent = await _fetch_row(
         pool,
-        "SELECT 1 FROM user_notifications WHERE dedupe_key = $1 AND email_sent "
+        f"SELECT 1 FROM user_notifications WHERE dedupe_key = $1 AND {DELIVERED_SQL} "
         "AND created_at > now() - interval '2 hours'",
         f"channel_disconnected:{credential_id}",
     )

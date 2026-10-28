@@ -13,6 +13,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 import utils.notifications as notifications
+from tests.fixtures.real_db_fixture import real_database  # noqa: F401  (a fixture)
 from utils import capabilities, feature_gates
 from utils.notifications import (
     ALERT_DAILY_CAPS,
@@ -747,3 +748,59 @@ async def test_reconnected_notice_only_after_a_recent_emailed_alert(monkeypatch)
     # Its button opens the workflow on its canvas.
     from utils.email import workflow_url
     assert kwargs["cta_url"] == workflow_url("wf-1")
+
+
+# ── an owner with no email ───────────────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_an_owner_with_no_email_is_texted_what_they_must_act_on(real_database, monkeypatch):
+    """A WhatsApp-only owner's link failed overnight: the alert was recorded with no email to send it to, and nobody
+    told them (2026-10-28). An owner with no email hears an alert by text, on the app they last texted NoClick on,
+    through ``reach_owner``, its app link opening on the phone sign-in; a reconnection after a texted disconnect is
+    texted too; the category's daily cap counts texts as it counts emails; the weekly digest stays an email."""
+    import uuid
+
+    from utils.email import workflow_url
+    from utils.notifications import send_channel_disconnected_alert, send_channel_reconnected_notice
+
+    db = real_database
+    owner, workflow_id = str(uuid.uuid4()), str(uuid.uuid4())
+    await db.execute("INSERT INTO auth.users (id, phone, raw_user_meta_data) VALUES ($1::uuid, '15550100', "
+                     "'{\"username\": \"+1•••0100\"}'::jsonb)", owner)
+    await db.execute("INSERT INTO user_phones (user_id, phone_e164, source, last_seen_app) "
+                     "VALUES ($1::uuid, '+15550100', 'whatsapp', 'imessage')", owner)
+    credential = str(await db.fetchval(
+        "INSERT INTO credentials (owner_id, name, credential_type, credential) "
+        "VALUES ($1::uuid, 'My WhatsApp', 'whatsapp_qr', 'x') RETURNING id", owner))
+    texts = []
+
+    async def reach_owner(pool, user_id, text, *, link=None, channel="auto", **_):
+        texts.append({"user_id": user_id, "text": text, "link": link, "channel": channel})
+        return {"success": True, "channel": channel}
+
+    monkeypatch.setattr("coder.coordinator.reach.reach_owner", reach_owner)
+    monkeypatch.setattr(notifications, "_send_email", lambda *a, **k: pytest.fail("there's no email to send"))
+
+    assert await send_channel_disconnected_alert(credential, provider_label="WhatsApp", session_status="FAILED",
+                                                 workflow_id=workflow_id, pool=db.pool)
+    [text] = texts
+    assert (text["user_id"], text["channel"]) == (owner, "imessage")
+    assert 'Your WhatsApp connection "My WhatsApp" has disconnected' in text["text"]
+    assert text["link"] == workflow_url(workflow_id) + "&with=phone"
+    row = await db.fetchrow("SELECT email_sent, metadata FROM user_notifications WHERE user_id = $1::uuid", owner)
+    assert row["email_sent"] is False and row["metadata"]["texted"] == "imessage"
+
+    # The link healed itself: what they were texted is taken back the same way.
+    assert await send_channel_reconnected_notice(credential, provider_label="WhatsApp", workflow_id=workflow_id,
+                                                 pool=db.pool)
+    assert "is connected again" in texts[-1]["text"]
+
+    # The category's cap counts both texts: one more goes, then none.
+    cap = ALERT_DAILY_CAPS["channel_disconnected"]
+    for _ in range(cap):
+        await send_system_alert(owner, "channel_disconnected", **ALERT_KWARGS, pool=db.pool)
+    assert len(texts) == cap
+    # News, not something to act on: the digest is never texted.
+    assert not await send_system_alert(owner, "digest", **ALERT_KWARGS, pool=db.pool)
+    assert len(texts) == cap
