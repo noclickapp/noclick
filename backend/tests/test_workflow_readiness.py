@@ -212,6 +212,26 @@ async def test_credentials_a_product_binds_per_run_dont_block_activation(monkeyp
     assert asked == []
 
 
+async def test_readiness_judges_a_bound_credential_as_activation_does(real_database, monkeypatch):
+    """Readiness read "needs_setup" for a tool whose credential the product binds on every turn, while that tool was
+    sending, and an assistant told its owner the bot was broken (2026-10-28): the report judges the graph as
+    activation does (``unbound_issues``)."""
+    from utils import capabilities
+
+    graph = monitor_graph("Inspect the update.")
+    del graph["nodes"][2]["config"]["credentialIds"]
+    workflow_id = str(uuid.uuid4())
+
+    async def bound_credentials(pool, wid):
+        return {"alerts"} if wid == workflow_id else set()
+
+    monkeypatch.setitem(capabilities._providers, capabilities.BOUND_CREDENTIALS, bound_credentials)
+    report = await readiness_report(real_database.pool, workflow_id, graph, credential_health={})
+    assert report["issues"] == [] and report["status"] != "needs_setup"
+    other = await readiness_report(real_database.pool, str(uuid.uuid4()), graph, credential_health={})
+    assert [(i["node_id"], i["code"]) for i in other["issues"]] == [("alerts", "missing_credentials")]
+
+
 async def test_broken_path_cannot_register_and_repair_can(real_database, monkeypatch):
     graph = monitor_graph()
     graph["nodes"][1]["config"]["temperature"] = 3

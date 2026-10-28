@@ -160,17 +160,23 @@ def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dic
     return issues
 
 
-async def unbound_issues(pool, workflow_id, graph: dict, trigger_id: Optional[str] = None) -> list[dict]:
-    """``activation_issues`` less the missing credentials the workflow's
-    product binds on every run as a config override (``BOUND_CREDENTIALS``),
-    so the saved graph holds none. The product is asked only when one is missing."""
+async def bound_nodes(pool, workflow_id) -> set[str]:
+    """The nodes whose credential the workflow's product binds on every run as
+    a config override (``BOUND_CREDENTIALS``), so the saved graph holds none."""
     from utils.capabilities import BOUND_CREDENTIALS, capability
 
-    issues = activation_issues(graph, trigger_id)
     bound = capability(BOUND_CREDENTIALS)
-    if bound is None or not any(i["code"] == "missing_credentials" for i in issues):
+    return set(await bound(pool, str(workflow_id))) if bound is not None else set()
+
+
+async def unbound_issues(pool, workflow_id, graph: dict, trigger_id: Optional[str] = None) -> list[dict]:
+    """``activation_issues`` less the missing credentials of ``bound_nodes``:
+    the one judgment of a saved graph, for activation, runs and readiness. The
+    product is asked only when one is missing."""
+    issues = activation_issues(graph, trigger_id)
+    if not any(i["code"] == "missing_credentials" for i in issues):
         return issues
-    nodes = set(await bound(pool, str(workflow_id)))
+    nodes = await bound_nodes(pool, workflow_id)
     return [i for i in issues if i["code"] != "missing_credentials" or i["node_id"] not in nodes]
 
 
@@ -211,7 +217,7 @@ async def readiness_report(
         and node_config(n).get("disabled") not in (True, "true")
         and n.get("type") != "trigger-run"
     ]
-    issues = activation_issues(graph)
+    issues = await unbound_issues(pool, workflow_id, graph)
     for trigger in triggers:
         error = node_config(trigger).get("trigger_error")
         if error:
