@@ -5,7 +5,7 @@
 import { createContext, Suspense, useContext, type ComponentType, type ReactNode } from 'react';
 import type { AgentChatMessage } from '~/hooks/useAgentChat';
 import type { ChatUpload } from '~/hooks/useChatAttachments';
-import type { ThreadJobs } from '~/hooks/useCoordinatorJobs';
+import type { CoordinatorJobs, ThreadJobs } from '~/hooks/useCoordinatorJobs';
 import type { MemoryTransport } from '~/hooks/useCoordinatorMemories';
 import type { AgentChatAttachment, ChatReference } from '~/lib/agentChat';
 import type { ChatFile } from '~/hooks/useChatFiles';
@@ -37,6 +37,17 @@ export interface CoordinatorChat {
     listFiles: (query: string) => Promise<ChatFile[]>;
     /** Puts NoClick's note that `arrival` is being set up in the thread, which draws its setup card under it. */
     arrive: (arrival: SetupArrival) => Promise<void>;
+    /** What sits on the composer's top edge: the work the account's agents are doing, drawn by the platform that
+     *  runs them (hosted: the tab of what's at work). It draws nothing when nothing is going. */
+    ComposerTab?: ComponentType<ComposerTabProps>;
+}
+
+/** What the composer's tab reads: the thread, the work its turns started as the thread follows it, and how to start
+ *  a reply in the composer. */
+export interface ComposerTabProps {
+    messages: AgentChatMessage[];
+    jobs: CoordinatorJobs;
+    draft: (text: string) => void;
 }
 
 /** A workflow picked on a public page (an /agents page, /mcp), made and now set up from the chat. */

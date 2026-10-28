@@ -27,7 +27,8 @@ import { entriesOf, updatesOf } from './updates';
 
 // A finished turn's steps never change, so each is read once.
 const read = new WeakMap<readonly AgentChatStep[], CoordinatorToolCall[]>();
-function toolCallsOf(msg: AgentChatMessage): CoordinatorToolCall[] {
+/** A reply's tool calls, read out of its steps. */
+export function toolCallsOf(msg: AgentChatMessage): CoordinatorToolCall[] {
     if (msg.isUser || !msg.steps) return [];
     let calls = read.get(msg.steps);
     if (!calls) {
@@ -154,17 +155,33 @@ function useThreadJobs(toolCalls: readonly CoordinatorToolCall[], nudge: unknown
     return useCoordinatorJobs(ids, nudge);
 }
 
+/** The work the thread's turns started, followed as `useJobs` follows it (the coordinator's jobs when absent): read
+ *  once for the page, so the transcript's cards and the composer's tab share it. */
+export function useTranscriptJobs(messages: readonly AgentChatMessage[], useJobs: ThreadJobs = useThreadJobs): CoordinatorJobs {
+    const toolCalls = useMemo(() => messages.flatMap(toolCallsOf), [messages]);
+    return useJobs(toolCalls, messages.length);
+}
+
 type TranscriptProps = Omit<ComponentProps<typeof AgentChatTranscript>, 'renderMessage' | 'renderAfter' | 'renderWork'> & {
     /** How the cards follow the work the thread started, where it isn't the coordinator's jobs. */
     useJobs?: ThreadJobs;
+    /** That work, already followed by the page (`useTranscriptJobs`). */
+    jobs?: CoordinatorJobs;
 };
 
-export const CoordinatorTranscript = memo(function CoordinatorTranscript({ useJobs = useThreadJobs, ...props }: TranscriptProps) {
+export const CoordinatorTranscript = memo(function CoordinatorTranscript({ jobs, useJobs, ...props }: TranscriptProps) {
+    return jobs ? <Transcript {...props} jobs={jobs} /> : <FollowingTranscript {...props} useJobs={useJobs} />;
+});
+
+function FollowingTranscript({ useJobs, ...props }: Omit<TranscriptProps, 'jobs'>) {
+    return <Transcript {...props} jobs={useTranscriptJobs(props.messages, useJobs)} />;
+}
+
+function Transcript({ jobs, ...props }: Omit<TranscriptProps, 'jobs' | 'useJobs'> & { jobs: CoordinatorJobs }) {
     const { messages } = props;
     const calls = useMemo(() => callsOf(messages), [messages]);
     const updates = useMemo(() => updatesOf(messages), [messages]);
     const toolCalls = useMemo(() => messages.flatMap(toolCallsOf), [messages]);
-    const jobs = useJobs(toolCalls, messages.length);
     const alarmIds = useMemo(() => alarmIdsOf(toolCalls), [toolCalls]);
     const alarms = useCoordinatorAlarms(alarmIds, messages.length);
     // Every card about an automation in thread order (a note's setup card, a turn's tool calls): the newest is drawn
@@ -240,4 +257,4 @@ export const CoordinatorTranscript = memo(function CoordinatorTranscript({ useJo
             </CoordinatorAlarmsContext.Provider>
         </CoordinatorJobsContext.Provider>
     );
-});
+}

@@ -13,7 +13,7 @@ import { ArrowUpRight, Brain } from 'lucide-react';
 import { AgentChatComposer } from '~/components/chat/AgentChatComposer';
 import { ChatReferenceChip } from '~/components/chat/ChatReferenceChip';
 import { preloadMarkdownRenderer } from '~/components/chat/MarkdownRendererLazy';
-import { CoordinatorTranscript } from '~/components/coordinator/CoordinatorTranscript';
+import { CoordinatorTranscript, useTranscriptJobs } from '~/components/coordinator/CoordinatorTranscript';
 import { InstanceKeyPrompt } from '~/components/credential/InstanceKeyPrompt';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { CoordinatorMemories } from '~/components/dashboard/CoordinatorMemories';
@@ -152,7 +152,7 @@ export function CoordinatorHome() {
 
 function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
     const coordinator = useChat();
-    const { messages, isStreaming, errorReason, conversationId, send, loaded } = coordinator;
+    const { messages, isStreaming, errorReason, conversationId, send, loaded, ComposerTab } = coordinator;
     const inPhone = useInPhoneShell();
     const [draft, setDraft] = useState('');
     const files = useAttachmentTray(coordinator.upload);
@@ -171,6 +171,8 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
     // Pinned to the newest message unless the reader scrolled up, including while a card that loads after its message
     // (a canvas, a list of numbers) grows the thread.
     const scroller = useStickToBottom([messages.length, lastText?.length ?? 0, isStreaming]);
+    // The work the thread's turns started, followed once: its cards and the composer's tab read it.
+    const jobs = useTranscriptJobs(messages, coordinator.followJobs);
 
     const { readyAttachments, uploading, clearAttachments } = files;
     const submit = useCallback(
@@ -377,7 +379,7 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
             {corners}
             <div ref={scroller.ref} onScroll={scroller.onScroll} className="min-h-0 flex-1 overflow-y-auto scrollbar-subtle">
                 <div className={cn('mx-auto w-full max-w-3xl px-5 pb-10 sm:px-6', inPhone ? 'pt-4' : 'pt-14')}>
-                    <CoordinatorTranscript messages={messages} isStreaming={isStreaming} errorReason={errorReason} referenceDisplay={referenceDisplay} useJobs={coordinator.followJobs} />
+                    <CoordinatorTranscript messages={messages} isStreaming={isStreaming} errorReason={errorReason} referenceDisplay={referenceDisplay} jobs={jobs} />
                     {settingUp && (
                         <div className={messages.length ? 'mt-6' : undefined}>
                             <Status state="working">Setting up {arriving.name}</Status>
@@ -385,7 +387,11 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
                     )}
                 </div>
             </div>
-            {composer}
+            {/* The tab and the composer as one group, so the tab's edge brightens with the composer's while you type. */}
+            <div className="group/composer shrink-0">
+                {ComposerTab && <ComposerTab messages={messages} jobs={jobs} draft={draftAndFocus} />}
+                {composer}
+            </div>
             {memories}
         </div>
     );
