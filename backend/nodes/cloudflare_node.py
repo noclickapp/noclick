@@ -17361,13 +17361,16 @@ class CloudflareNode(ExternalWebhookTriggerMixin, ScheduledPollTriggerMixin, Wor
         config = node_config.config
         if not isinstance(config, CloudflareR2NewObjectTriggerConfig):
             return {"status": "success", "result": [], "action": "cloudflare_r2_new_object"}
+        import asyncio
+
         try:
             import boto3
             from botocore.config import Config as BotoConfig
         except ImportError:
             logger.error("[CloudflareNode] boto3 not available for R2 trigger polling")
             return {"status": "success", "result": [], "action": "cloudflare_r2_new_object"}
-        try:
+
+        def _list() -> List[Dict[str, Any]]:
             client = boto3.client(
                 "s3",
                 endpoint_url=_r2_endpoint_url(config.account_id),
@@ -17378,8 +17381,11 @@ class CloudflareNode(ExternalWebhookTriggerMixin, ScheduledPollTriggerMixin, Wor
             kwargs: Dict[str, Any] = {"Bucket": config.bucket_name, "MaxKeys": 100}
             if config.key_prefix:
                 kwargs["Prefix"] = config.key_prefix
-            response = client.list_objects_v2(**kwargs)
-            objects = response.get("Contents") or []
+            return client.list_objects_v2(**kwargs).get("Contents") or []
+
+        try:
+            # boto3 is synchronous: off the event loop, as the R2 operations above.
+            objects = await asyncio.to_thread(_list)
         except Exception as exc:
             logger.warning("[CloudflareNode] R2 poll trigger failed: %s", exc)
             return {"status": "success", "result": [], "action": "cloudflare_r2_new_object"}

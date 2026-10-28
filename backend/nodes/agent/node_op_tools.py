@@ -131,39 +131,37 @@ def _tool_visible(field: str, prop: Dict[str, Any]) -> bool:
     return field != "operation" and (not prop.get("ui:hidden") or bool(prop.get("x-agent-tool-visible")))
 
 
+@lru_cache(maxsize=None)
+def _operation_fields(node_type: str) -> Dict[str, Tuple[frozenset, frozenset]]:
+    """operation → (its tool's parameters, its scopable fields), for every action
+    operation of ``node_type``, from ONE schema parse. Cached for the process
+    lifetime (config schemas are import-time static). Read per operation, a
+    provider allowing all of Cloudflare's hundreds of operations parsed its large
+    schema once per operation and held the event loop for seconds."""
+    from nodes.core.registry import NODE_REGISTRY
+
+    node_class = NODE_REGISTRY.get(node_type)
+    out: Dict[str, Tuple[frozenset, frozenset]] = {}
+    for entry in _iter_operation_defs(node_class) if node_class is not None else ():
+        props = {f: p for f, p in entry["member"].get("properties", {}).items() if isinstance(p, dict)}
+        out.setdefault(entry["operation"], (
+            frozenset(f for f, p in props.items() if _tool_visible(f, p)),
+            frozenset(f for f, p in props.items() if p.get("x-dynamic-options") and p.get("x-resource-type")),
+        ))
+    return out
+
+
 def operation_parameter_names(node_type: str, operation: str) -> Optional[frozenset]:
     """The parameters ``operation``'s tool takes (what a binding may fix); None for an unknown one."""
-    from nodes.core.registry import NODE_REGISTRY
-
-    node_class = NODE_REGISTRY.get(node_type)
-    for entry in _iter_operation_defs(node_class) if node_class is not None else ():
-        if entry["operation"] == operation:
-            return frozenset(f for f, p in entry["member"].get("properties", {}).items()
-                             if isinstance(p, dict) and _tool_visible(f, p))
-    return None
+    fields = _operation_fields(node_type).get(operation)
+    return fields[0] if fields else None
 
 
-@lru_cache(maxsize=None)
 def scopable_fields_for_operation(node_type: str, operation: str) -> frozenset:
     """Fields of ``operation`` that can be scoped — tagged with both
-    ``x-dynamic-options`` and ``x-resource-type``. Cached for the process
-    lifetime (depends only on import-time-static config schemas)."""
-    from nodes.core.registry import NODE_REGISTRY
-
-    node_class = NODE_REGISTRY.get(node_type)
-    if node_class is None:
-        return frozenset()
-    for entry in _iter_operation_defs(node_class):
-        if entry["operation"] != operation:
-            continue
-        out = set()
-        for field, prop in entry["member"].get("properties", {}).items():
-            if not isinstance(prop, dict):
-                continue
-            if prop.get("x-dynamic-options") and prop.get("x-resource-type"):
-                out.add(field)
-        return frozenset(out)
-    return frozenset()
+    ``x-dynamic-options`` and ``x-resource-type``."""
+    fields = _operation_fields(node_type).get(operation)
+    return fields[1] if fields else frozenset()
 
 
 @lru_cache(maxsize=None)

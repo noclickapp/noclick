@@ -17,9 +17,9 @@ Documentation: https://www.typeform.com/developers/
 Rate Limit: 2 requests per second per account
 """
 
+import asyncio
 import logging
 import secrets
-import time
 from typing import Dict, Any, Optional, List, Literal, Tuple, Union, Annotated
 from pydantic import BaseModel, ConfigDict, Field, Discriminator
 import httpx
@@ -1748,7 +1748,7 @@ class TypeformNode(ExternalWebhookTriggerMixin, WorkflowNode):
             if response.status_code == 429:
                 retry_after = int(response.headers.get("Retry-After", 1))
                 logger.warning(f"Rate limited, waiting {retry_after} seconds...")
-                time.sleep(retry_after)
+                await asyncio.sleep(retry_after)
                 # Retry once
                 response = await client.request(
                     method=method,
