@@ -16,7 +16,7 @@ from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from coder.coordinator.reach import with_link
 from coder.coordinator.texting.channel import (
-    Embed, PhoneText, PhoneTransport, chunk, handle_phone_text, media_name, read_embeds,
+    Embed, PhoneText, PhoneTransport, chunk, handle_phone_text, link_lines, media_name, read_embeds,
 )
 from nodes.core.media_resolver import read_url
 from repositories.phones import PhoneRepo
@@ -145,7 +145,6 @@ def parse_inbound(payload: Dict[str, Any], *, phone_number_id: str) -> List[Inbo
     return out
 
 
-_LINK = re.compile(r"\[([^\]]+)\]\((https?://[^)\s]+)\)")
 _BOLD = re.compile(r"\*\*(.+?)\*\*")
 _HEADING = re.compile(r"^#{1,6}[ \t]+", re.M)
 _BULLET = re.compile(r"^[ \t]*[-*][ \t]+", re.M)
@@ -155,7 +154,7 @@ _FENCE = re.compile(r"```[A-Za-z0-9_-]*\n")
 def to_whatsapp_text(markdown: str) -> str:
     """WhatsApp's own markup (*bold*, _italic_, ```mono```); what it does not
     render — headings, link syntax, list markers — becomes plain lines."""
-    text = _LINK.sub(r"\1: \2", markdown)
+    text = link_lines(markdown)
     text = _BOLD.sub(r"*\1*", text)
     text = _HEADING.sub("", text)
     text = _BULLET.sub("• ", text)

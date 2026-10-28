@@ -286,6 +286,14 @@ def downloads(monkeypatch):
     return lambda key: ("https://files.test/" + quote(key), "https://dl.test/files/" + quote(key))
 
 
+# Asked for a game's file, a person got "[Download the game file](<its address>)", which opened as the page
+# (2026-10-28).
+def test_a_link_to_a_stored_file_in_the_words_is_the_link_that_saves_it(downloads):
+    page, save_page = downloads(PAGE_KEY)
+    text = to_whatsapp_text(f"[Download the game file]({page}) or [read the rules](https://example.com/rules)")
+    assert text == f"Download the game file: {save_page} or read the rules: https://example.com/rules"
+
+
 @pytest.mark.asyncio
 async def test_a_stored_page_arrives_as_its_file_and_the_link_that_saves_it(files, downloads, monkeypatch):
     """Asked for a game as an HTML file, a person couldn't open or save it as a document of plain text, then wanted
@@ -355,6 +363,29 @@ async def test_meta_refusing_a_file_or_an_unreadable_one_sends_none_of_the_messa
     with pytest.raises(WhatsAppSendError, match="couldn't read game.html"):
         await whatsapp.send_rich(_api(), SENDER, f"Here.\n![]({page})")
     assert not sent.called
+
+
+def _webp(mode: str) -> bytes:
+    out = BytesIO()
+    Image.new(mode, (64, 48), (200, 80, 20, 128) if mode == "RGBA" else (200, 80, 20)).save(out, "WEBP")
+    return out.getvalue()
+
+
+# An image model's WebP went to WhatsApp as a link: WhatsApp shows a WebP only as a sticker (2026-10-28).
+@pytest.mark.asyncio
+@pytest.mark.parametrize("mode, mime, name", [("RGB", "image/jpeg", "Hero.jpg"), ("RGBA", "image/png", "Hero.png")])
+async def test_a_webp_goes_as_the_jpeg_or_see_through_png_it_is(files, monkeypatch, mode, mime, name):
+    url = "https://assets.example/u/w/r/Hero.webp"
+    files[url] = FileInfo("image/webp", "Hero.webp", 900, stored=True)
+    monkeypatch.setattr(channel, "read_url", AsyncMock(return_value=_webp(mode)))
+    api = MagicMock(send_text=AsyncMock(), send_media=AsyncMock(return_value="m"),
+                    upload_media=AsyncMock(return_value="media.hero"))
+    await whatsapp.send_rich(api, SENDER, f"The hero.\n![Hero]({url})")
+    [(data,), kwargs] = api.upload_media.await_args
+    assert kwargs == {"filename": name, "mime_type": mime}
+    assert Image.open(BytesIO(data)).format == ("JPEG" if mime == "image/jpeg" else "PNG")
+    api.send_media.assert_awaited_once_with(SENDER, "image", media_id="media.hero", filename=name,
+                                            caption="The hero.")
 
 
 # A chart as the coordinator drew it by hand: a line, a title and the gridline labels.

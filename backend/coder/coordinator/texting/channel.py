@@ -13,7 +13,10 @@ import logging
 import os
 import re
 from dataclasses import dataclass, field, replace
+from io import BytesIO
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
+
+from PIL import Image
 
 from coder.coordinator.agent import COORDINATOR_MODEL, run_coordinator_turn
 from coder.workflow.builder_config import missing_brain_key
@@ -25,7 +28,7 @@ from utils.database_pool import get_native_pool
 from utils.phone_identity import PhoneLinkError, default_service, link_code_in
 from utils.phone_numbers import normalize_e164
 from utils.redis_client import get_shared_redis
-from utils.resource_store import download_url
+from utils.resource_store import download_url, saving_links
 from utils.socket_singleton import get_sio
 from utils.svg_image import to_png
 from wss.handlers.coordinator_handler import plan_allows_turn
@@ -114,6 +117,11 @@ def split_media(markdown: str) -> Tuple[List[Tuple[str, str]], str]:
     return [(url, caption) for caption, url in _MEDIA.findall(markdown)], _MEDIA.sub("", markdown)
 
 
+def link_lines(markdown: str) -> str:
+    """Each link in the words as the line "text: url", which a chat shows as a link; a stored file's saves it."""
+    return saving_links(markdown, "{text}: {url}")
+
+
 # A page a browser draws (HTML): a phone may open it as a file in a chat (as its source, or not at all) or save it from
 # a link, so one NoClick stores goes as both, the file and the link that saves it.
 PAGE_TYPES = frozenset({"text/html", "application/xhtml+xml"})
@@ -122,6 +130,10 @@ PAGE_TYPES = frozenset({"text/html", "application/xhtml+xml"})
 SVG = "image/svg+xml"
 DRAWN_SIZE = (1080, 2160)
 SVG_LIMIT = 10 * 1024 * 1024
+# A WebP (what some image models make) goes as the JPEG it is, or a PNG where it's see-through: WhatsApp shows a WebP
+# only as a sticker, so one went as a link (2026-10-28).
+WEBP = "image/webp"
+WEBP_LIMIT = 20 * 1024 * 1024
 
 
 @dataclass(frozen=True)
@@ -154,24 +166,45 @@ class Embed:
         return self.caption
 
 
+def flat_picture(data: bytes) -> Tuple[bytes, str]:
+    """A picture as a JPEG, or a PNG when it's see-through (its first frame, when it moves), and its type. Raises
+    ValueError when it isn't one."""
+    try:
+        with Image.open(BytesIO(data)) as picture:
+            picture.load()
+            out = BytesIO()
+            if picture.mode in ("RGBA", "LA", "PA") or "transparency" in picture.info:
+                picture.save(out, "PNG")
+                return out.getvalue(), "image/png"
+            picture.convert("RGB").save(out, "JPEG", quality=90)
+            return out.getvalue(), "image/jpeg"
+    except OSError as exc:  # Pillow's UnidentifiedImageError, a truncated file
+        raise ValueError(str(exc)) from exc
+
+
 async def drawn(embed: Embed) -> Embed:
-    """An SVG embed as the PNG it draws (``svg_image.to_png``), sent in its place; any other as it is. Raises
-    ValueError when the SVG can't be read or drawn."""
-    if embed.file is None or embed.file.mime_type != SVG:
+    """An SVG embed as the PNG it draws (``svg_image.to_png``) and a WebP as the JPEG or PNG it is
+    (``flat_picture``), sent in its place; any other as it is. Raises ValueError when one can't be read or drawn."""
+    kind = embed.file.mime_type if embed.file is not None else None
+    if kind not in (SVG, WEBP):
         return embed
     try:
-        png = await asyncio.to_thread(to_png, await read_url(embed.url, max_bytes=SVG_LIMIT),
-                                      width=DRAWN_SIZE[0], height=DRAWN_SIZE[1])
+        if kind == SVG:
+            data = await asyncio.to_thread(to_png, await read_url(embed.url, max_bytes=SVG_LIMIT),
+                                           width=DRAWN_SIZE[0], height=DRAWN_SIZE[1])
+            mime = "image/png"
+        else:
+            data, mime = await asyncio.to_thread(flat_picture, await read_url(embed.url, max_bytes=WEBP_LIMIT))
     except ValueError as exc:
         raise ValueError(f"couldn't draw {embed.file.name} to send it: {exc}") from exc
-    name = f"{os.path.splitext(embed.file.name)[0]}.png"
-    return replace(embed, file=FileInfo("image/png", name, len(png)), data=png)
+    name = f"{os.path.splitext(embed.file.name)[0]}{'.png' if mime == 'image/png' else '.jpg'}"
+    return replace(embed, file=FileInfo(mime, name, len(data)), data=data)
 
 
 async def read_embeds(markdown: str) -> Tuple[List[Embed], str]:
     """Each file the Markdown embeds, judged by what it holds rather than its URL (``describe_url``), with the link
-    that saves it, an SVG as the picture it draws (``drawn``), and the text left. Raises ValueError when an SVG can't
-    be drawn."""
+    that saves it, an SVG or a WebP as the picture it draws (``drawn``), and the text left. Raises ValueError when
+    one can't be drawn."""
     found, text = split_media(markdown)
     files = await asyncio.gather(*(describe_url(url) for url, _ in found))
     embeds = [Embed(url, caption, file, download_url(url)) for (url, caption), file in zip(found, files)]

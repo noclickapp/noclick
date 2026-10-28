@@ -16,7 +16,7 @@ from urllib.parse import unquote, urlsplit
 
 from coder.coordinator.reach import with_link
 from coder.coordinator.texting.channel import (
-    TEXT_LIMIT, Embed, PhoneText, PhoneTransport, chunk, handle_phone_text, media_name, read_embeds,
+    TEXT_LIMIT, Embed, PhoneText, PhoneTransport, chunk, handle_phone_text, link_lines, media_name, read_embeds,
 )
 from nodes.core.media_resolver import read_url
 from repositories.phones import PhoneRepo
@@ -93,7 +93,6 @@ def parse_inbound(payload: Dict[str, Any], *, line: str) -> Optional[InboundMess
     )
 
 
-_LINK = re.compile(r"\[([^\]]+)\]\((https?://[^)\s]+)\)")
 _EMPHASIS = re.compile(r"(\*\*|__)(.+?)\1")
 _HEADING = re.compile(r"^#{1,6}[ \t]+", re.M)
 _BULLET = re.compile(r"^[ \t]*[-*][ \t]+", re.M)
@@ -104,7 +103,7 @@ _CODE = re.compile(r"`([^`\n]+)`")
 def to_imessage_text(markdown: str) -> str:
     """Plain text: iMessage shows markup characters as they are, so links,
     emphasis, headings, list markers and code fences become plain lines."""
-    text = _LINK.sub(r"\1: \2", markdown)
+    text = link_lines(markdown)
     text = _EMPHASIS.sub(r"\2", text)
     text = _HEADING.sub("", text)
     text = _BULLET.sub("• ", text)

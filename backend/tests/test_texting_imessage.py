@@ -218,6 +218,17 @@ async def test_a_file_nothing_can_tell_the_type_of_or_past_sendblues_cap_is_a_li
         USER_PHONE, content="Two files.\nThe video: https://f.example/huge.mov\nx: https://f.example/x")
 
 
+# Asked for a game's file, a person got "[Download the game file](<its address>)", which opened as the page
+# (2026-10-28).
+def test_a_link_to_a_stored_file_in_the_words_is_the_link_that_saves_it(monkeypatch):
+    key = "11111111-1111-1111-1111-111111111111/account/44444444-4444-4444-4444-444444444444/game.html"
+    monkeypatch.setattr("utils.resource_store.get_public_download_url", lambda key: "https://files.test/" + quote(key))
+    monkeypatch.setitem(capabilities._providers, capabilities.FILE_DOWNLOAD_URL,
+                        lambda key: "https://dl.test/files/" + quote(key))
+    text = to_imessage_text(f"[Download the game file](https://files.test/{key}) or [the rules](https://example.com/r)")
+    assert text == f"Download the game file: https://dl.test/files/{quote(key)} or the rules: https://example.com/r"
+
+
 @pytest.mark.asyncio
 async def test_a_stored_file_past_sendblues_cap_is_the_link_that_saves_it_and_a_page_is_both(files, monkeypatch):
     owner, workflow = "11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222"

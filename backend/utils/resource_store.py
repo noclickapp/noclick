@@ -146,6 +146,18 @@ async def read_stored(row: Dict[str, Any]) -> bytes:
     return data
 
 
+# A link in Markdown's words, ``[text](url)``, not an embedded file's ``![name](url)``.
+_MARKDOWN_LINK = re.compile(r"(?<!!)\[([^\]]+)\]\((https?://[^)\s]+)\)")
+
+
+def saving_links(markdown: str, form: str = "[{text}]({url})") -> str:
+    """``markdown`` with each link in its words written in ``form``, one to a file NoClick stores pointing at the link
+    that saves it (``download_url``): asked for a game's file, a person got "[Download the game file](<its
+    address>)", which a phone opened as the page (2026-10-28)."""
+    return _MARKDOWN_LINK.sub(
+        lambda m: form.format(text=m.group(1), url=download_url(m.group(2)) or m.group(2)), markdown)
+
+
 def download_url(url: str) -> Optional[str]:
     """The link that saves the stored file at ``url`` (``FILE_DOWNLOAD_URL``); None for a URL that isn't one of this
     instance's files, or where the platform makes no such link."""
