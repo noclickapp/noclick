@@ -364,6 +364,19 @@ class ServerlessFunctionNode(WorkflowNode):
     def get_config_model(cls) -> Optional[Union[Type, type]]:
         return ServerlessFunctionNodeConfig
 
+    # The envelope each runtime returns; what the function returned is under `result`.
+    _OUTPUT_KEYS = {
+        "run_javascript_function": ["type", "status", "runtime", "result", "stdout", "stderr", "error",
+                                    "exit_code", "execution_time_ms"],
+        "run_python_function": ["type", "status", "runtime", "result", "stdout", "stderr", "error",
+                                "exit_code", "hardware"],
+    }
+
+    @classmethod
+    def declared_output_keys(cls, config: Dict[str, Any]) -> Optional[List[str]]:
+        keys = cls._OUTPUT_KEYS.get(config.get("operation"))
+        return list(keys) if keys else None
+
     @classmethod
     async def load_field_options(
         cls,

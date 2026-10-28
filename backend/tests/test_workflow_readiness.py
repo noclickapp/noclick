@@ -376,10 +376,72 @@ async def test_whatsapp_repair_clears_old_registration_error(
 def test_each_status_says_what_it_means():
     """Read alone, "waiting_for_input" sounded like a blocker: an assistant rebuilt a scheduled automation that was
     ready and on, then told its owner it couldn't say the digest worked (2026-10-23). Every status a report can give
-    says beside it what it means, and the usual one for a new automation says nothing needs doing."""
+    says beside it what it means, and the usual one for a new automation says it isn't a fault. It never says
+    nothing needs doing: registered isn't tested, and that was said of an automation whose every run failed
+    (2026-10-28)."""
     from typing import get_args
 
     from wss.sender.workflow_readiness_responses import WorkflowReadinessReport
 
     assert set(STATUS_MEANINGS) == set(get_args(WorkflowReadinessReport.model_fields["status"].annotation))
-    assert "which is normal for a new automation: nothing needs doing" in STATUS_MEANINGS["waiting_for_input"]
+    meaning = STATUS_MEANINGS["waiting_for_input"]
+    assert "which is normal for a new automation, not a fault" in meaning
+    assert "nothing needs doing" not in meaning and "`unverified` names each step no run has completed yet" in meaning
+
+
+def hourly_fetch_graph():
+    return {
+        "nodes": [
+            {"id": "hourly", "type": "trigger-cron",
+             "config": {"operation": "default", "label": "Every hour", "timezone": "UTC",
+                        "schedules": [{"frequency": "hours", "interval": 1}]}},
+            {"id": "fetch", "type": "automation-http-request",
+             "config": {"operation": "send_http_get_request", "label": "Fetch example.com",
+                        "url": "https://example.com", "full_response": "false", "response_format": "text"}},
+            {"id": "extract", "type": "automation-serverless-function",
+             "config": {"operation": "run_javascript_function", "label": "Extract snapshot fields",
+                        "function_inputs": [{"name": "html", "value": "{{ $('fetch').response }}"}],
+                        "function_body": "return { title: html.match(/<title>(.*)<\\/title>/)[1] };"}},
+        ],
+        "edges": [{"source": "hourly", "target": "fetch"}, {"source": "fetch", "target": "extract"}],
+    }
+
+
+async def test_a_step_whose_last_run_failed_is_an_issue_and_untested_steps_are_named(real_database):
+    """An hourly fetch-and-extract read `$('fetch').response` of a fetch that returns `{data}`: every run failed,
+    and readiness said it was on with nothing to do (2026-10-28). Each step's latest run decides: one that failed is
+    an issue in the way, naming the error; one no run has completed is named as untested."""
+    db = real_database
+    owner, wid = str(uuid.uuid4()), str(uuid.uuid4())
+    await db.execute("INSERT INTO auth.users (id,email) VALUES ($1,$2)", owner, f"{owner}@example.test")
+    graph = hourly_fetch_graph()
+    await db.execute("INSERT INTO workflows (id,owner_id,name,workflow) VALUES ($1,$2,'Snapshots',$3::jsonb)",
+                     wid, owner, json.dumps(graph))
+
+    report = await readiness_report(db.pool, wid, graph, credential_health={})
+    assert report["issues"] == []
+    assert [(u["node_id"], u["code"]) for u in report["unverified"]] == [("fetch", "untested"), ("extract", "untested")]
+    assert report["unverified"][1]["message"] == (
+        "Extract snapshot fields: no run has completed it yet, so nothing has shown it works.")
+
+    async def run(statuses, error=None):
+        eid = str(uuid.uuid4())
+        await db.execute("INSERT INTO workflow_executions(id,workflow_id,user_id,status,trigger_source) "
+                         "VALUES($1,$2,$3,$4,'api')", eid, wid, owner, "error" if error else "completed")
+        for node_id, status in statuses.items():
+            await db.execute("INSERT INTO cas_manifests(workflow_id,execution_id,node_id,manifest,last_run_status,"
+                             "last_run_error) VALUES($1,$2,$3,'{}'::jsonb,$4,$5)",
+                             wid, eid, node_id, status, error if status == "error" else None)
+
+    await run({"hourly": "completed", "fetch": "completed", "extract": "error"},
+              error="TypeError: cannot read property 'match' of null\n    at <anonymous> (<input>:11)")
+    report = await readiness_report(db.pool, wid, graph, credential_health={})
+    assert report["status"] == "needs_setup"
+    assert report["issues"] == [{"node_id": "extract", "code": "last_run_failed",
+                                 "message": "Extract snapshot fields: its last run failed: "
+                                            "TypeError: cannot read property 'match' of null"}]
+    assert [u["node_id"] for u in report["unverified"]] == ["extract"]
+
+    await run({"hourly": "completed", "fetch": "completed", "extract": "completed"})
+    report = await readiness_report(db.pool, wid, graph, credential_health={})
+    assert report["issues"] == [] and report["unverified"] == []

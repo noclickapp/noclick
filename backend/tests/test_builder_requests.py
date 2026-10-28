@@ -249,7 +249,7 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
     cid = queued["conversation_key"]
     monkeypatch.setattr(WorkflowBuilderHandler, "get_pool", AsyncMock(return_value=pool))
     monkeypatch.setattr(requests, "get_sio", lambda: SimpleNamespace())
-    builder = SimpleNamespace(edit=AsyncMock(), generation_id="resumed",
+    builder = SimpleNamespace(edit=AsyncMock(), generation_id="resumed", last_words="",
                               graph_state=SimpleNamespace(workflow_name="App", summary="Created dashboard"))
     pending = {"ask_id": "credentials", "inputs": []}
     ask = SimpleNamespace(to_dict=lambda: pending)

@@ -364,7 +364,7 @@ async def test_complete_finalizer_relays_result(monkeypatch):
         },
     )
     builder = SimpleNamespace(
-        graph_state=SimpleNamespace(workflow_name="Slack Bot", summary="2 nodes"),
+        graph_state=SimpleNamespace(workflow_name="Slack Bot", summary="2 nodes"), last_words="",
     )
     segments = [
         {"type": "text", "text": "Added a Slack provider"},

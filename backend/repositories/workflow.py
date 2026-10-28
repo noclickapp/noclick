@@ -156,6 +156,26 @@ class WorkflowRepo:
         """, workflow_id, node_ids)
         return [{**dict(r), 'execution_id': str(r['execution_id']), 'created_at': r['created_at'].isoformat()} for r in rows]
 
+    async def get_step_runs(self, conn, workflow_id, node_ids) -> Dict[str, Dict[str, Any]]:
+        """Per node: its latest run's ``status`` and ``error``, and whether any run ever
+        ``completed`` it (from its CAS manifests, any run source)."""
+        if not node_ids:
+            return {}
+        rows = await conn.fetch("""
+            SELECT n.node_id, l.last_run_status, l.last_run_error,
+                   EXISTS (SELECT 1 FROM cas_manifests c
+                           WHERE c.workflow_id = $1 AND c.node_id = n.node_id
+                             AND c.last_run_status = 'completed') AS completed
+            FROM unnest($2::text[]) AS n(node_id)
+            LEFT JOIN LATERAL (
+                SELECT last_run_status, last_run_error FROM cas_manifests
+                WHERE workflow_id = $1 AND node_id = n.node_id AND last_run_status IS NOT NULL
+                ORDER BY created_at DESC LIMIT 1
+            ) l ON true
+        """, workflow_id, node_ids)
+        return {r['node_id']: {'status': r['last_run_status'], 'error': r['last_run_error'],
+                               'completed': r['completed']} for r in rows}
+
     async def get_deadline_watches(self, conn, workflow_id, node_ids) -> List[Dict[str, Any]]:
         if not node_ids:
             return []

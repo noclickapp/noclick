@@ -45,6 +45,8 @@ class WorkflowReadinessReport(BaseModel):
         "manual_only",
     ]
     issues: list[ReadinessIssue]
+    # Steps no run has completed yet: configured, not tested.
+    unverified: list[ReadinessIssue] = Field(default_factory=list)
     registered_trigger_ids: list[str]
     observations: list[TriggerObservation]
     destinations: list[AlertDestination]

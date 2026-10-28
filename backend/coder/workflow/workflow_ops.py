@@ -10,7 +10,7 @@ import time
 import uuid
 from collections import deque
 from dataclasses import dataclass
-from typing import Any, Dict, Iterator, List, Mapping, Optional, Sequence, Set, Tuple
+from typing import Any, Collection, Dict, Iterable, Iterator, List, Mapping, Optional, Sequence, Set, Tuple
 
 from .workflow_xml import XmlOp
 
@@ -932,6 +932,55 @@ def output_top_level_keys(output: Any) -> Optional[List[str]]:
     return [str(k) for k in output]
 
 
+def _node_class(node_type: str):
+    from nodes.core.registry import NODE_REGISTRY, resolve_node_type
+
+    return NODE_REGISTRY.get(resolve_node_type(node_type or "") or "")
+
+
+def declares_output_keys(node_type: str) -> bool:
+    """Whether the node's code fixes its output shape (``WorkflowNode.declared_output_keys``):
+    such a node never takes the shape learned from other workflows' runs."""
+    from nodes.core.base import WorkflowNode
+
+    node_class = _node_class(node_type)
+    return node_class is not None and (
+        node_class.declared_output_keys.__func__ is not WorkflowNode.declared_output_keys.__func__
+    )
+
+
+def declared_output_keys(nodes: Iterable[Any]) -> Dict[str, List[str]]:
+    """Node id → the keys its output has, for each node whose code fixes its
+    shape for the config it has now. ``nodes`` carry ``id``, ``type``,
+    ``operation`` and ``config``."""
+    declared: Dict[str, List[str]] = {}
+    for node in nodes:
+        node_class = _node_class(node.type)
+        config = {**(node.config or {}), **({"operation": node.operation} if node.operation else {})}
+        keys = node_class.declared_output_keys(config) if node_class else None
+        if keys is not None:
+            declared[node.id] = keys
+    return declared
+
+
+def known_output_keys(nodes: Iterable[Any], observed: Mapping[str, Sequence[str]]) -> Dict[str, List[str]]:
+    """The top-level keys each node's output is known to have: what the node
+    declares (:func:`declared_output_keys`), else ``observed`` (its stored
+    output, or the shape learned across runs). A node absent from the result
+    has an unknown shape."""
+    return {**{node_id: list(keys) for node_id, keys in observed.items()}, **declared_output_keys(nodes)}
+
+
+def _output_references(config: Dict[str, Any], skip_fields: frozenset) -> Iterator[Tuple[str, str, str]]:
+    """``(field_path, node_id, key)`` for each ``$('node').key`` read inside a
+    ``{{ … }}`` block; method calls (``$('n').toString()``) aren't reads."""
+    for path, text in _config_strings(config, skip_fields):
+        for block in _FOREIGN_EXPR_BLOCK_RE.finditer(text):
+            for m in _OUTPUT_REF_RE.finditer(block.group(1)):
+                if not m.group("call"):
+                    yield path, m.group("node"), m.group("key") or m.group("bkey")
+
+
 def find_unknown_output_references(
     config: Dict[str, Any],
     output_keys: Mapping[str, Sequence[str]],
@@ -947,16 +996,16 @@ def find_unknown_output_references(
     :func:`find_foreign_expression_tokens`.
     """
     hits: List[tuple] = []
-    for path, text in _config_strings(config, skip_fields):
-        for block in _FOREIGN_EXPR_BLOCK_RE.finditer(text):
-            for m in _OUTPUT_REF_RE.finditer(block.group(1)):
-                if m.group("call"):
-                    continue
-                known = output_keys.get(m.group("node"))
-                key = m.group("key") or m.group("bkey")
-                if known and key not in known:
-                    hits.append((path, m.group("node"), key, list(known)))
+    for path, node_id, key in _output_references(config, skip_fields):
+        known = output_keys.get(node_id)
+        if known and key not in known:
+            hits.append((path, node_id, key, list(known)))
     return hits
+
+
+def find_output_references_to(config: Dict[str, Any], node_ids: Collection[str]) -> List[tuple]:
+    """``(field_path, node_id, key)`` for each ``$('node').key`` read of one of ``node_ids``."""
+    return [ref for ref in _output_references(config, frozenset()) if ref[1] in node_ids]
 
 
 def unknown_output_reference_error(

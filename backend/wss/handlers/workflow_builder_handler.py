@@ -3218,16 +3218,17 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         builder_result relay — the agent learns what the builder actually did
         on its next turn."""
         ctx = request.user_context or {}
+        # The result is what the run ended on, never every turn's narration before it; the handler's own
+        # fallback line is the run's only text when the builder said nothing.
+        final_text = builder.last_words or "\n".join(
+            s.get("text", "") for s in segments if s.get("type") == "text"
+        ).strip()
         if user_id and ctx.get('builder_request_id'):
             from coder.workflow.requests import record_result
 
-            text = "\n".join(s.get("text", "") for s in segments if s.get("type") == "text").strip()
-            summary = (text or builder.graph_state.summary or "Run completed.")[:1500] if success else (error or "Build failed.")
+            summary = (final_text or builder.graph_state.summary or "Run completed.")[:1500] if success else (error or "Build failed.")
             await record_result(await self.get_pool(), user_id, ctx, success=success, summary=summary, error=error)
             return  # The builder request owns follow-through and terminal delivery.
-        final_text = "\n".join(
-            s.get("text", "") for s in segments if s.get("type") == "text"
-        ).strip()
         if success:
             summary = (final_text or builder.graph_state.summary or "Run completed.")[:1500]
         else:

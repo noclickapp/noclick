@@ -23,6 +23,7 @@ __all__ = [
     "unrecognized_tags",
     "credential_check",
     "config_check",
+    "untested_check",
     "selected_node_note",
     "inbox_name_taken",
     "NAMING_SYSTEM_PROMPT",
@@ -108,6 +109,7 @@ Finish:
 ## Rules
 
 - Send at most 20 commands per turn, then wait for the results.
+- Offer only options you can build. An answer settles its question: never ask it again, and if what was chosen can't be built, say so and build the nearest thing you can.
 - Labels and the workflow's description say what each step and the workflow do. When a change makes one untrue (a schedule moved from 8 AM to 9 AM under a "Weekday 8 AM" label), rewrite it in the same response.
 - Agents run on {DEFAULT_LLM_AGENT_MODEL} unless the user names a model.
 - Agents can message the account coordinator with message_coordinator(message=...).
@@ -222,6 +224,14 @@ def config_check(problems: str) -> str:
     return (
         f"Before finishing, fix these node configs with <field>, or <ask> for values only the user knows:\n"
         f"{problems}\nIf one can't be fixed, send <done/> and tell the user."
+    )
+
+
+def untested_check(untested: str) -> str:
+    return (
+        f"Before finishing: nothing has shown these work; the steps involved never ran:\n{untested}\n"
+        "Run them with <run_node node=\"...\" get_output /> if the run's steps only read, fetch or transform, then "
+        "fix what it shows. If one can't run safely, send <done/> and say which step is untested."
     )
 
 

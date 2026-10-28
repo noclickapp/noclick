@@ -22,13 +22,15 @@ class WorkflowNotReadyError(ValueError):
 
 # What each status means, beside it wherever a model reads one: alone, "waiting_for_input" read as a blocker, and an
 # assistant rebuilt a scheduled automation that was ready and told its owner it couldn't say it worked (2026-10-23).
+# Registered isn't tested: "nothing needs doing" was said of an automation whose every run failed (2026-10-28).
 STATUS_MEANINGS = {
-    "needs_setup": "Something is in the way of it running: each issue says what, and where.",
+    "needs_setup": "Something is in the way of it working: each issue says what, and where.",
     "configured": "Nothing is in the way, but a trigger isn't registered with its service yet (or an Alarm step has "
                   "no deadline armed), so nothing starts it on its own until it is.",
     "waiting_for_input": "Ready and on: every trigger is registered (its schedule set, its webhook or subscription "
                          "in place), and it runs the next time one fires. None has fired yet, which is normal for a "
-                         "new automation: nothing needs doing.",
+                         "new automation, not a fault. Registered isn't tested: `unverified` names each step no run "
+                         "has completed yet.",
     "deadline_armed": "Ready and on: an Alarm step is watching a deadline, and fires if it passes.",
     "input_observed": "It has run from real input to one of its triggers.",
     "manual_only": "It has no trigger, so it runs only when started (from the app, the API or an agent).",
@@ -236,19 +238,35 @@ async def readiness_report(
     ]
     repo = WorkflowRepo(pool)
 
+    enabled = [n for n in nodes if node_config(n).get("disabled") not in (True, "true")]
+
     async def evidence(connection):
         ids = [n["id"] for n in triggers]
         return (
             await repo.get_trigger_observations(connection, workflow_id, ids),
             await repo.get_registered_trigger_ids(connection, workflow_id, ids),
             await repo.get_deadline_watches(connection, workflow_id, alarm_ids),
+            await repo.get_step_runs(connection, workflow_id, [n["id"] for n in enabled]),
         )
 
     if conn is not None:
-        observations, registered, watches = await evidence(conn)
+        observations, registered, watches, runs = await evidence(conn)
     else:
         async with pool.acquire() as connection:
-            observations, registered, watches = await evidence(connection)
+            observations, registered, watches, runs = await evidence(connection)
+    # A step's latest run failing is in the way of it working; a step no run
+    # has completed is configured but untested, which registration can't show.
+    fed = {e.get("target") or e.get("targetId") for e in graph_edges(graph) if e.get("targetHandle") != "bottom"}
+    unverified = []
+    for n in enabled:
+        run, label = runs.get(n["id"]) or {}, node_config(n).get("label") or n["id"]
+        if run.get("status") == "error":
+            error = (str(run.get("error") or "").strip().splitlines() or ["no error recorded"])[0][:200]
+            issues.append({"node_id": n["id"], "code": "last_run_failed",
+                           "message": f"{label}: its last run failed: {error}"})
+        if n["id"] in fed and not is_trigger_node(n) and not run.get("completed"):
+            unverified.append({"node_id": n["id"], "code": "untested",
+                               "message": f"{label}: no run has completed it yet, so nothing has shown it works."})
     # A definitive dead connection blocks readiness; unavailable health data
     # remains unknown and cannot establish a successful live connection.
     from utils.credentials import extract_credential_ids
@@ -319,6 +337,7 @@ async def readiness_report(
         "deadline_watches": watches,
         "alarm_node_ids": alarm_ids,
         "issues": issues,
+        "unverified": unverified,
         "observations": observations,
         "destinations": destinations,
         "explanation": "Observed input is historical evidence. Rehearsals and manual empty runs do not verify live monitoring; provider acceptance does not establish delivery.",

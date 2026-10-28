@@ -556,6 +556,23 @@ class HttpRequestNode(WorkflowNode):
         """Get Pydantic config model for HTTP Request node"""
         return HttpRequestNodeConfig
 
+    # What _make_request returns with full_response on; a failure kept as data adds `error`.
+    _FULL_OUTPUT_KEYS = ("type", "method", "url", "status_code", "status", "response", "response_headers",
+                         "elapsed_ms", "timestamp", "is_base64", "is_file")
+
+    @classmethod
+    def declared_output_keys(cls, config: Dict[str, Any]) -> Optional[List[str]]:
+        full = config.get("full_response") or "true"
+        never_error = config.get("never_error") or "false"
+        body_format = config.get("response_format") or "auto"
+        if any(isinstance(v, str) and "{{" in v for v in (full, never_error, body_format)):
+            return None
+        kept_failure = [*cls._FULL_OUTPUT_KEYS, "error"] if cls._is_true(never_error) else []
+        if cls._is_true(full):
+            return kept_failure or list(cls._FULL_OUTPUT_KEYS)
+        # Body only: text is wrapped as {data}; a JSON object or a file comes back as itself.
+        return ["data", *kept_failure] if body_format == "text" else None
+
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
         Execute HTTP request.

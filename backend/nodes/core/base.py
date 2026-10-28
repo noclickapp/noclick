@@ -1031,6 +1031,16 @@ class WorkflowNode(ABC):
         return None
 
     @classmethod
+    def declared_output_keys(cls, config: Dict[str, Any]) -> Optional[List[str]]:
+        """The top-level keys this node's output has when it runs with
+        ``config`` (a flat saved config), for a node whose code fixes its
+        shape: the builder judges ``$('node').key`` reads against it before
+        any run. None when the config can't say (a body-only HTTP response is
+        the API's own object). A node that overrides this never borrows the
+        shape learned from other workflows' runs, which ignores its config."""
+        return None
+
+    @classmethod
     def get_config_schema(cls) -> Dict[str, Any]:
         """
         Generate JSON Schema from Pydantic config model.
