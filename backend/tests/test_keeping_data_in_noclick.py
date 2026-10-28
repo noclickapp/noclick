@@ -10,7 +10,12 @@ from nodes.core.registry import NODE_REGISTRY
 
 def test_the_builder_is_told_how_a_workflow_keeps_data_between_runs():
     stable, _ = prompts_default.build_system_prompt_parts()
-    assert "a filesystem node wired into an agent keeps the agent's files from run to run" in stable
+    assert "Rows go in a Table step (automation-table)" in stable
+    # A step whose Add makes the table it names, so the builder needs no table set up first.
+    from coder.workflow.operation_catalog import get_operations_for_node_type
+
+    assert "add_rows" in {op.name for op in get_operations_for_node_type("automation-table")}
+    assert "A filesystem node wired into an agent keeps the agent's files from run to run" in stable
     # A node the builder can wire into an agent (an edge to it is a tools edge), whose storage persists.
     assert "filesystem" in NODE_REGISTRY and "filesystem" in STRUCTURAL_AGENT_TOOL_TYPES
     assert "persistent" in get_structural_agent_tool_provider("filesystem").description
