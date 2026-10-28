@@ -73,7 +73,7 @@ from utils.workflow_resource_manager import (
 )
 from utils.webhook_manager import WebhookManager
 from utils.access_control import check_resource_access, Permission, workflow_permission
-from utils.system_workflows import SYSTEM_KEY, refusal
+from utils.system_workflows import client_settings, refusal
 from utils.relay_tokens import mint_user_room_token
 from utils.activity import signal_activity
 from utils.workflow_delta import compute_workflow_delta
@@ -1006,8 +1006,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                     permissions=request.permissions,
                     display_metadata=request.display_metadata,
                     # Only NoClick marks a workflow it runs itself.
-                    settings={k: v for k, v in request.settings.items() if k != SYSTEM_KEY}
-                    if request.settings is not None else None,
+                    settings=client_settings(request.settings) if request.settings is not None else None,
                     expected_graph_version=request.expected_graph_version,
                 )
 
