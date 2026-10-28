@@ -29,6 +29,10 @@ logger = logging.getLogger(__name__)
 # Count the warm agent sandboxes a user currently has running.
 WARM_SANDBOX_LIST = "warm_sandbox.list_active"
 
+# Whether a visitor solved the captcha a public page showed them: async (token) -> bool, raising when it can't be
+# asked. Without one the instance shows no captcha and checks nothing.
+CAPTCHA_CHECK = "captcha.check"
+
 # The durable workspace an agent run writes into: (default mount, volume namer).
 WORKSPACE_VOLUME = "workspace.volume"
 
