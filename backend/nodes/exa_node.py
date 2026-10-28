@@ -37,13 +37,27 @@ EXA_API_BASE = "https://api.exa.ai"
 from nodes.core.platform_billing import platform_keyed_operation, require_platform_key
 
 # Runs on NoClick's Exa key when no credential is attached (nodes/core/platform_billing.py).
-PLATFORM_KEYED = platform_keyed_operation("EXA_API_KEY", byok=True)
+PLATFORM_KEYED = platform_keyed_operation("EXA_API_KEY", byok=True, vendor="Exa")
 
 # Synchronous ops that may run on NoClick's platform key with no user credential,
 # metered from the response's in-band costDollars. Async/recurring surfaces
 # (agent runs, websets, monitors) stay BYOK-only — their spend accrues outside
 # the node execution, so a platform key there would fund untracked usage.
 PLATFORM_METERED_OPERATIONS = {"search", "get_contents", "answer", "find_similar"}
+# exa.ai/pricing, read 2026-10-24: a search (auto or fast, up to 10 results with their page text) is $7 per
+# 1,000. For /pricing only: every call is charged the costDollars Exa answers with.
+SEARCH_PRICE_USD = Decimal("0.007")
+
+# Page text per result (Exa's ``maxCharacters``); unset, Exa returns whole pages, and three
+# searches with page text once outgrew an agent's context in one turn. A search returns an
+# excerpt per result; a page read for its own sake gets room.
+SEARCH_TEXT_CHARACTERS = 3_000
+CONTENTS_TEXT_CHARACTERS = 20_000
+MAX_TEXT_CHARACTERS = 1_000_000  # Exa's own ceiling
+# Asked for the news, an agent sends "news" as the search type whatever the schema says (every try, the types stated
+# in the schema or not, 2026-10-27), and Exa refuses it: it's this node's option for Exa's news search, its auto
+# search in the news category.
+NEWS_SEARCH = "news"
 
 
 # ============================================================================
@@ -97,10 +111,10 @@ class ExaSearchConfig(BaseModel):
     search_type: Optional[str] = Field(
         "auto",
         title="Search Type",
-        description="How to interpret the query",
+        description="How to interpret the query; news searches news articles (Exa's news category)",
         json_schema_extra={
-            "enum": ["auto", "neural", "keyword", "fast"],
-            "enumNames": ["Auto", "Neural", "Keyword", "Fast"],
+            "enum": ["auto", "neural", "keyword", "fast", NEWS_SEARCH],
+            "enumNames": ["Auto", "Neural", "Keyword", "Fast", "News"],
             "x-enum-searchable": True,
         },
     )
@@ -121,8 +135,13 @@ class ExaSearchConfig(BaseModel):
     include_text: str = Field(
         "false",
         title="Include Page Text",
-        description="Return parsed page text inline with each result",
+        description="Return parsed page text inline with each result, up to Max Characters each",
         json_schema_extra={"enum": ["true", "false"], "enumNames": ["Yes", "No"], "x-enum-searchable": True},
+    )
+    max_characters: int = Field(
+        SEARCH_TEXT_CHARACTERS, ge=1, le=MAX_TEXT_CHARACTERS,
+        title="Max Characters",
+        description="Most characters of page text each result returns, when Include Page Text is on",
     )
 
 
@@ -148,8 +167,13 @@ class ExaGetContentsConfig(BaseModel):
     include_text: str = Field(
         "true",
         title="Include Text",
-        description="Return full parsed page text",
+        description="Return parsed page text, up to Max Characters per page",
         json_schema_extra={"enum": ["true", "false"], "enumNames": ["Yes", "No"], "x-enum-searchable": True},
+    )
+    max_characters: int = Field(
+        CONTENTS_TEXT_CHARACTERS, ge=1, le=MAX_TEXT_CHARACTERS,
+        title="Max Characters",
+        description="Most characters of text each page returns, when Include Text is on",
     )
     include_highlights: str = Field(
         "false",
@@ -1135,6 +1159,7 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         booking $0 is the failure mode this path exists to prevent.
         """
         from billing.markup import (
+            current_markup,
             apply_exa_markup,
             round_up_to_credit_step,
         )
@@ -1152,11 +1177,12 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         raw = Decimal(str(cost))
         charged = round_up_to_credit_step(apply_exa_markup(raw))
         # Raw runner + org id; track_usage_event resolves the org owner
-        # centrally (organization attribution policy choke point).
+        # centrally (Owner Pays choke point).
         await usage_tracker.track_usage_event(
             UsageEventData(
                 user_id=self.user_id,
                 total_cost=charged,
+                cost_usd=raw,
                 usage_type="api_usage",
                 usage_subtype="exa/search_api",
                 quantity=Decimal("1"),
@@ -1168,6 +1194,7 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
                     "operation": operation,
                     "raw_cost_usd": float(raw),
                     "charged_cost_usd": float(charged),
+                    "markup_pct": int((current_markup() - 1) * 100),
                 },
             ),
             sio=self.sio,
@@ -1178,22 +1205,23 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     # Handlers — Search
     # ------------------------------------------------------------------
     async def _search(self, c: ExaSearchConfig, api_key: str) -> Dict[str, Any]:
+        news = c.search_type == NEWS_SEARCH
         body: Dict[str, Any] = {
             "query": c.query,
-            "type": c.search_type or None,
+            "type": "auto" if news else c.search_type or None,
             "numResults": int(c.num_results) if c.num_results and str(c.num_results).isdigit() else None,
-            "category": c.category or None,
+            "category": c.category or ("news" if news else None),
             "includeDomains": _comma_list(c.include_domains),
             "excludeDomains": _comma_list(c.exclude_domains),
         }
         if c.include_text == "true":
-            body["contents"] = {"text": True}
+            body["contents"] = {"text": {"maxCharacters": c.max_characters}}
         return await _exa_request(api_key, "POST", "/search", json_body=body, action_name="search")
 
     async def _get_contents(self, c: ExaGetContentsConfig, api_key: str) -> Dict[str, Any]:
         body: Dict[str, Any] = {"urls": _comma_list(c.urls)}
         if c.include_text == "true":
-            body["text"] = True
+            body["text"] = {"maxCharacters": c.max_characters}
         if c.include_highlights == "true":
             body["highlights"] = True
         if c.include_summary == "true":
