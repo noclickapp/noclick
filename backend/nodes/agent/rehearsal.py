@@ -622,9 +622,10 @@ def rehearsal_excluded_node_types() -> frozenset:
             found.add(node_type)
     found.discard("agent")
     # Credential-less nodes with real external effects: the self-notification
-    # email (charges credits, sends mail), raw HTTP, and nested workflows
-    # (whose inner nodes never see this run's rehearsal conversation key).
-    found |= {"automation-send-email", "automation-http-request", "noclick"}
+    # email (charges credits, sends mail), raw HTTP, nested workflows (whose
+    # inner nodes never see this run's rehearsal conversation key), and the
+    # automation's own tables (fabricated rows would land in the real table).
+    found |= {"automation-send-email", "automation-http-request", "noclick", "automation-table"}
     return frozenset(found)
 
 

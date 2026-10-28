@@ -1,7 +1,10 @@
 """Shared helpers for ``WorkflowNode.load_field_options`` implementations.
 
-Four primitives cover every dynamic-options field handler in the codebase:
+Five primitives cover every dynamic-options field handler in the codebase:
 
+- :func:`loader_context` — what every caller of a loader hands it: the
+  caller's field values, and the keys only the server sets (``_user_id``,
+  ``_workflow_id``).
 - :func:`normalize_search` — call once in the handler to convert an empty /
   whitespace-only search to ``None`` so every per-node helper can treat
   ``not search`` uniformly as "no filter requested".
@@ -59,6 +62,19 @@ def normalize_search(search: Optional[str]) -> Optional[str]:
         return None
     trimmed = search.strip()
     return trimmed or None
+
+
+def loader_context(
+    context: Optional[Dict[str, Any]], *, user_id: Optional[str], workflow_id: Optional[str] = None,
+) -> Dict[str, Any]:
+    """The context a loader reads: the caller's field values, and what the server vouches for under ``_`` keys:
+    ``_user_id``, and ``_workflow_id`` once the caller may see that workflow. A caller's own ``_`` keys are dropped."""
+    out = {k: v for k, v in (context or {}).items() if not str(k).startswith("_")}
+    if user_id:
+        out["_user_id"] = user_id
+    if workflow_id:
+        out["_workflow_id"] = str(workflow_id)
+    return out
 
 
 def require_credential_token(token: Optional[str], message: str) -> str:

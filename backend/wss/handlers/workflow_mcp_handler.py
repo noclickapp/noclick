@@ -2441,10 +2441,11 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
                             credential_id=str(row['id']),
                         )
 
+                from nodes.core.dynamic_options import loader_context
                 options = await node_class.load_field_options(
                     field_name=request.field_name,
                     credential_data=credential_data,
-                    context=request.depends_on or {}
+                    context=loader_context(request.depends_on, user_id=user_id),
                 )
 
                 # Apply search filter if provided

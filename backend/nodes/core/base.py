@@ -283,6 +283,24 @@ def _drop_rejected_unset_markers(target: Dict[str, Any], models: list) -> None:
             del target[key]
 
 
+def static_errors(error: Any, config_data: Any) -> List[Dict[str, Any]]:
+    """A config validation's errors a check before the run can stand by: none on a
+    value holding a {{ ... }} reference or expression, whose type is known only once
+    it resolves at run time (as the canvas's AJV check and the AI write gate judge it)."""
+    def value_at(loc: tuple) -> Any:
+        cur = config_data
+        for part in loc:
+            if isinstance(cur, dict):
+                cur = cur.get(part)
+            elif isinstance(cur, list) and isinstance(part, int) and 0 <= part < len(cur):
+                cur = cur[part]
+            else:
+                return None
+        return cur
+
+    return [e for e in error.errors() if not (isinstance(v := value_at(e.get('loc') or ()), str) and '{{' in v)]
+
+
 def runtime_config_view(config_data: Dict[str, Any], config_model: Any) -> Dict[str, Any]:
     """The config exactly as the runtime parse sees it: empty strings cleaned
     to None, str fields coerced back, and rejected unset markers dropped so
@@ -1103,27 +1121,9 @@ class WorkflowNode(ABC):
             }
 
         except ValidationError as e:
-            # A field holding a {{ ... }} reference/expression is resolved at runtime;
-            # its type is unknown now, so skip validation errors on it (mirrors the
-            # frontend AJV relaxation). Navigate config_data by the error loc.
-            def _raw_value_at(data: Any, loc: tuple) -> Any:
-                cur = data
-                for part in loc:
-                    if isinstance(cur, dict):
-                        cur = cur.get(part)
-                    elif isinstance(cur, list) and isinstance(part, int) and 0 <= part < len(cur):
-                        cur = cur[part]
-                    else:
-                        return None
-                return cur
-
             # Convert Pydantic validation errors to readable messages
             error_messages = []
-            for error in e.errors():
-                raw_value = _raw_value_at(config_data, error.get('loc') or ())
-                if isinstance(raw_value, str) and '{{' in raw_value:
-                    continue
-
+            for error in static_errors(e, config_data):
                 error_type = error['type']
                 field_path = '.'.join(str(loc) for loc in error['loc']) if error['loc'] else 'config'
 

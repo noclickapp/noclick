@@ -19,7 +19,7 @@ every table of an automation that is deleted for good. It keeps
 from __future__ import annotations
 
 import json
-from typing import Any, Callable, Dict, List, Mapping, Optional, Protocol, Sequence, Tuple
+from typing import Any, AsyncIterator, Callable, Dict, List, Mapping, Optional, Protocol, Sequence, Tuple
 
 # What one page holds (an interface's Table block reads 10,000 rows, the Table node as many).
 MAX_PAGE_ROWS = 10_000
@@ -106,6 +106,18 @@ async def read_rows(pool, resource: Mapping[str, Any], *, limit: int = 100,
     """``(rows, total)``: each row ``{id, row_index, data, created_at}``."""
     limit, offset = _page(limit, offset)
     return await dataset_store(pool).rows(_dataset(resource), limit=limit, offset=offset)
+
+
+async def each_row(pool, resource: Mapping[str, Any]) -> AsyncIterator[Dict[str, Any]]:
+    """Every row in order, read a page at a time (what a match on a column scans)."""
+    offset = 0
+    while True:
+        page, _ = await read_rows(pool, resource, limit=MAX_PAGE_ROWS, offset=offset)
+        for row in page:
+            yield row
+        if len(page) < MAX_PAGE_ROWS:
+            return
+        offset += len(page)
 
 
 async def append_rows(pool, resource: Mapping[str, Any], rows: Any) -> int:

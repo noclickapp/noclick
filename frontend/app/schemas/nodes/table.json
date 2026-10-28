@@ -1,0 +1,372 @@
+{
+  "$defs": {
+    "TableAddRowsConfig": {
+      "description": "Add rows after the table's last row; the first Add to a new name makes the table.",
+      "properties": {
+        "table": {
+          "description": "The table's name: one of this automation's tables, or a new name, which the first Add makes.",
+          "minLength": 1,
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Name a new table",
+            "field_name": "table",
+            "names_new": true,
+            "placeholder": "Pick a table or name a new one",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "add_rows",
+          "default": "add_rows",
+          "title": "Add Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rows",
+          "x-display-name": "Add Rows",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add row",
+            "append rows",
+            "insert rows",
+            "save results",
+            "log to table",
+            "store row"
+          ]
+        },
+        "rows": {
+          "description": "The rows to add, in order: a list of objects whose keys are the columns. One object adds one row; an upstream list passed whole adds a row per item.",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Rows",
+          "type": "array",
+          "ui:placeholder": "[{\"name\": \"Ada\", \"email\": \"ada@example.com\"}]",
+          "ui:rows": 5,
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "table",
+        "rows"
+      ],
+      "title": "TableAddRowsConfig",
+      "type": "object"
+    },
+    "TableDeleteRowsConfig": {
+      "description": "Delete the rows named by id or by a match.",
+      "properties": {
+        "table": {
+          "description": "The table's name: one of this automation's tables, or a new name, which the first Add makes.",
+          "minLength": 1,
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Name a new table",
+            "field_name": "table",
+            "names_new": true,
+            "placeholder": "Pick a table or name a new one",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "match_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only rows whose column holds Match value (text as written; a number or true/false as its text).",
+          "title": "Match column",
+          "ui:placeholder": "email"
+        },
+        "match_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The value Match column holds in the rows meant.",
+          "title": "Match value",
+          "ui:placeholder": "{{ $('trigger').email }}"
+        },
+        "row_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The row's id (every row read carries one). Leave empty to name rows by a match instead.",
+          "title": "Row ID",
+          "ui:placeholder": "{{ $('read').rows[0].id }}"
+        },
+        "operation": {
+          "const": "delete_rows",
+          "default": "delete_rows",
+          "title": "Delete Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rows",
+          "x-display-name": "Delete Rows",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove row",
+            "delete record",
+            "clear rows",
+            "remove from table"
+          ]
+        }
+      },
+      "required": [
+        "table"
+      ],
+      "title": "TableDeleteRowsConfig",
+      "type": "object"
+    },
+    "TableReadRowsConfig": {
+      "description": "Read rows in order, all of them or those matching a column, a page at a time.",
+      "properties": {
+        "table": {
+          "description": "The table's name: one of this automation's tables, or a new name, which the first Add makes.",
+          "minLength": 1,
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Name a new table",
+            "field_name": "table",
+            "names_new": true,
+            "placeholder": "Pick a table or name a new one",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "match_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only rows whose column holds Match value (text as written; a number or true/false as its text).",
+          "title": "Match column",
+          "ui:placeholder": "email"
+        },
+        "match_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The value Match column holds in the rows meant.",
+          "title": "Match value",
+          "ui:placeholder": "{{ $('trigger').email }}"
+        },
+        "operation": {
+          "const": "read_rows",
+          "default": "read_rows",
+          "title": "Read Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rows",
+          "x-display-name": "Read Rows",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get rows",
+            "list rows",
+            "find rows",
+            "lookup row",
+            "query table",
+            "search table"
+          ]
+        },
+        "limit": {
+          "default": 100,
+          "description": "At most this many rows.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip first (for the next page).",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "table"
+      ],
+      "title": "TableReadRowsConfig",
+      "type": "object"
+    },
+    "TableUpdateRowsConfig": {
+      "description": "Set columns of the rows named by id or by a match; their other columns stay.",
+      "properties": {
+        "table": {
+          "description": "The table's name: one of this automation's tables, or a new name, which the first Add makes.",
+          "minLength": 1,
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Name a new table",
+            "field_name": "table",
+            "names_new": true,
+            "placeholder": "Pick a table or name a new one",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "match_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only rows whose column holds Match value (text as written; a number or true/false as its text).",
+          "title": "Match column",
+          "ui:placeholder": "email"
+        },
+        "match_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The value Match column holds in the rows meant.",
+          "title": "Match value",
+          "ui:placeholder": "{{ $('trigger').email }}"
+        },
+        "row_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The row's id (every row read carries one). Leave empty to name rows by a match instead.",
+          "title": "Row ID",
+          "ui:placeholder": "{{ $('read').rows[0].id }}"
+        },
+        "operation": {
+          "const": "update_rows",
+          "default": "update_rows",
+          "title": "Update Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rows",
+          "x-display-name": "Update Rows",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit row",
+            "change row",
+            "set column",
+            "update record",
+            "mark row"
+          ]
+        },
+        "values": {
+          "additionalProperties": true,
+          "description": "The columns to set and their values, as an object; columns not named keep theirs.",
+          "title": "Values",
+          "type": "object",
+          "ui:placeholder": "{\"status\": \"done\"}",
+          "ui:rows": 3,
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "table",
+        "values"
+      ],
+      "title": "TableUpdateRowsConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Table node (no credentials: the tables are the automation's own).",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_rows": "#/$defs/TableAddRowsConfig",
+          "delete_rows": "#/$defs/TableDeleteRowsConfig",
+          "read_rows": "#/$defs/TableReadRowsConfig",
+          "update_rows": "#/$defs/TableUpdateRowsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TableAddRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/TableReadRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/TableUpdateRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/TableDeleteRowsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Table Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Save each result as a row in a Results table",
+    "Only read the rows whose status is new",
+    "Mark the row for this email as contacted",
+    "Delete the rows older runs added for this order"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

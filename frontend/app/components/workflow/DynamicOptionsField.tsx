@@ -16,6 +16,7 @@ import {
 } from './DroppableTextField';
 import { ReferenceHighlightOverlay } from './ReferenceHighlight';
 import { valueToText } from './valueText';
+import { useWorkflowId } from './WorkflowContext';
 
 // Dynamic options configuration from x-dynamic-options schema metadata
 interface DynamicOptionsConfig {
@@ -24,6 +25,7 @@ interface DynamicOptionsConfig {
     searchable?: boolean;
     allow_custom?: boolean;
     custom_placeholder?: string;
+    names_new?: boolean;        // A value not among the options names a new one, made on first use (a table)
     depends_on?: string;        // Field that this dropdown depends on (e.g., spreadsheet_id)
     auto_select_first?: boolean; // Take options[0] whatever the length (ordered lists only)
     auto_select_sole_option?: boolean; // Fill only when the complete list holds exactly one
@@ -125,6 +127,7 @@ export function DynamicOptionsField({
     const [cursorPosition, setCursorPosition] = useState<number | null>(null);
 
     const dynamicOptions = prop['x-dynamic-options'] as DynamicOptionsConfig;
+    const workflowId = useWorkflowId();
     const showOptionArtwork = supportsOptionArtwork(nodeType);
     const valueText = valueToText(value);
     const normalizedOptions = useMemo<FieldOption[]>(
@@ -326,6 +329,7 @@ export function DynamicOptionsField({
                     field_name: dynamicOptions.field_name,
                     credential_id: credentialId,
                     context: contextToSend,
+                    workflow_id: workflowId,
                     page_token: pageToken || undefined,
                     search: trimmedSearch || undefined,
                 })
@@ -361,7 +365,7 @@ export function DynamicOptionsField({
             setLoadingMore(false);
             setHasAttemptedLoad(true); // Mark that we've tried loading
         }
-    }, [fieldKey, nodeType, dynamicOptions.field_name, getCredentialId, config]);
+    }, [fieldKey, nodeType, dynamicOptions.field_name, getCredentialId, config, workflowId]);
 
     // Reset options and value when dependent field changes
     useEffect(() => {
@@ -477,13 +481,13 @@ export function DynamicOptionsField({
                 console.log(`[DynamicOptionsField] Auto-resolved label for ${fieldKey}: ${matchingOption.label}`);
                 onChange(`${fieldKey}__label`, matchingOption.label);
             }
-        } else if (!storedLabel) {
+        } else if (!storedLabel && !dynamicOptions.names_new) {
             // Value not found in options - warn user (could be wrong account or invalid ID)
             // Show warning even if allow_custom is true, since user should know the ID wasn't found
             console.log(`[DynamicOptionsField] Value not found in options for ${fieldKey}: ${valueText}`);
             setValueNotFound(true);
         }
-    }, [normalizedOptions, valueText, fieldKey, config, onChange]);
+    }, [normalizedOptions, valueText, fieldKey, config, onChange, dynamicOptions.names_new]);
 
     // Load options when dropdown opens (and not already loaded/attempted)
     useEffect(() => {

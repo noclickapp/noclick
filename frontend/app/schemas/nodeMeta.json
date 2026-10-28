@@ -1157,6 +1157,9 @@
     "automation-supabase": {
       "agentToolProvider": true
     },
+    "automation-table": {
+      "agentToolProvider": true
+    },
     "automation-tableau": {
       "agentToolProvider": true,
       "triggerOperations": [

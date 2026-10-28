@@ -2297,13 +2297,15 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
 
             # Call node's load_field_options method
             try:
-                # Inject user_id into context for credential-less nodes (e.g., resource picker)
-                context = dict(request.context or {})
-                context['_user_id'] = user_id
+                from nodes.core.dynamic_options import loader_context, normalize_search
 
-                # Trim once here so every per-node helper can treat empty /
-                # whitespace-only search as the single "no filter" sentinel.
-                from nodes.core.dynamic_options import normalize_search
+                # The open workflow reaches a loader only once its caller may see it (a table picker lists its tables).
+                workflow_id = None
+                if request.workflow_id:
+                    async with (await self.get_pool()).acquire() as conn:
+                        if (await check_resource_access(conn, user_id, "workflow", request.workflow_id)).has_access:
+                            workflow_id = request.workflow_id
+                context = loader_context(request.context, user_id=user_id, workflow_id=workflow_id)
 
                 # Refresh expiring OAuth tokens at load so option queries never
                 # hit the provider with a stale token (no-op for nodes that

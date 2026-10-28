@@ -19,7 +19,7 @@ from contextlib import asynccontextmanager
 from typing import Any, AsyncIterator, Dict, List, Optional
 
 from billing.exceptions import InsufficientBalanceError, OwnerResolutionError
-from nodes.core.registry import NodeFactory
+from nodes.core.registry import NODE_REGISTRY, NodeFactory
 from nodes.core.oauth_audit import caller_path_scope
 from utils.credentials import resolve_credential_with_owner_fallback
 
@@ -50,9 +50,15 @@ async def credential_place(credential_id: Optional[str]) -> AsyncIterator[None]:
 
 
 def needs_credential_hint(node_type: str, operation: Optional[str], config=None) -> bool:
-    """A platform scraper failure cannot be fixed by attaching a user credential."""
+    """Whether a failure with no credential attached may be its missing account: never for a node that takes none
+    (Send email, Table), nor a platform scraper's, which a user credential can't fix."""
     from coder.workflow.operation_catalog import get_operation_config_class, is_operation_credentials_optional
+    from nodes.core.credential_connect import credential_classes_for_node
     from nodes.core.platform_billing import platform_key_of
+
+    node_class = NODE_REGISTRY.get(node_type)
+    if node_class is not None and not credential_classes_for_node(node_class):
+        return False
 
     config_class = get_operation_config_class(node_type, operation) if operation else None
     marker = platform_key_of(config_class.model_json_schema()) if config_class else None
@@ -227,8 +233,7 @@ async def run_node_lookup(
     Always returns {"options": [...], "next_page_token": ...} (legacy
     list-shaped loader results are normalized).
     """
-    from nodes.core.registry import NODE_REGISTRY
-    from nodes.core.dynamic_options import normalize_search
+    from nodes.core.dynamic_options import loader_context, normalize_search
 
     if credential_id:
         # Resolve access before creating a review request, just as execution does.
@@ -262,8 +267,7 @@ async def run_node_lookup(
                 credential_id=credential_id,
             )
 
-    lookup_context = dict(context or {})
-    lookup_context["_user_id"] = user_id
+    lookup_context = loader_context(context, user_id=user_id, workflow_id=workflow_id)
 
     logger.info(f"[RunOp] Lookup {node_type}.{field_name} for user {user_id}")
     try:

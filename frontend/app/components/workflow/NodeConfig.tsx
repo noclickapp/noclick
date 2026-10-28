@@ -1063,8 +1063,9 @@ function NodeConfigForm({ nodeType, config, onChange, onInjectIteration, fieldHo
             definitions: rootSchema?.definitions || schema.definitions || {}
         };
 
-        // Preprocess config: parse JSON string values for fields that expect arrays
-        // (e.g., person_titles: "[\"CEO\",\"Owner\"]" → ["CEO","Owner"]). For
+        // Preprocess config: parse JSON string values for fields that expect arrays or
+        // objects (e.g., person_titles: "[\"CEO\",\"Owner\"]" → ["CEO","Owner"]), as the
+        // runtime does for the fields that take JSON text. For
         // ui:widget="list" fields, also coerce plain/comma-separated strings to
         // arrays so the banner doesn't flag a populated single recipient as
         // invalid — the list widget shows that string as one item, so validation
@@ -1076,12 +1077,12 @@ function NodeConfigForm({ nodeType, config, onChange, onInjectIteration, fieldHo
             // A reference/expression ({{ ... }}) resolves server-side; don't split or
             // coerce it (a comma inside `$('x').split(',')` isn't a list separator).
             if (val.includes('{{')) continue;
-            const options = prop.anyOf || prop.oneOf || (prop.type === 'array' ? [prop] : []);
+            const options = prop.anyOf || prop.oneOf || (prop.type === 'array' || prop.type === 'object' ? [prop] : []);
             const expectsArray = options.some((opt: any) => opt.type === 'array');
-            if (!expectsArray) continue;
-            if (val.startsWith('[')) {
+            const expectsObject = options.some((opt: { type?: string }) => opt.type === 'object');
+            if ((expectsArray && val.startsWith('[')) || (expectsObject && val.startsWith('{'))) {
                 try { preprocessed[key] = JSON.parse(val); } catch { /* leave as-is */ }
-            } else if (prop['ui:widget'] === 'list' && val.trim()) {
+            } else if (expectsArray && prop['ui:widget'] === 'list' && val.trim()) {
                 preprocessed[key] = val.split(',').map((s: string) => s.trim()).filter(Boolean);
             }
         }

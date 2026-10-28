@@ -73,6 +73,7 @@ from nodes.twilio_node import TwilioNode
 from nodes.webhook_trigger_node import WebhookTriggerNode
 from nodes.inbound_email_trigger_node import InboundEmailTriggerNode
 from nodes.send_email_node import SendEmailNode
+from nodes.table_node import TableNode
 from nodes.run_trigger_node import RunTriggerNode
 from nodes.submit_external_form_node import SubmitExternalFormNode
 from nodes.youtube_node import YouTubeNode
@@ -300,6 +301,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-bamboohr': BambooHRNode,
     'automation-dv360': DV360Node,
     'automation-send-email': SendEmailNode,
+    'automation-table': TableNode,
     'automation-typeform': TypeformNode,
     'automation-supabase': SupabaseNode,
     'automation-twilio': TwilioNode,

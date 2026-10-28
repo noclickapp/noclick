@@ -245,7 +245,7 @@ def test_the_exclusion_set_is_registry_derived_and_correct():
     ):
         assert t in excluded, f"{t} is credentialed and must never execute in a test"
     # Credential-less external actors, by name.
-    for t in ("automation-send-email", "automation-http-request", "noclick"):
+    for t in ("automation-send-email", "automation-http-request", "noclick", "automation-table"):
         assert t in excluded, f"{t} acts externally without a credential"
     # The world the rehearsal NEEDS: the agent itself, data providers, and pure
     # compute must keep executing or trigger→transform→agent graphs break.

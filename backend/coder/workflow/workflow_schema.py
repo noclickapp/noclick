@@ -193,12 +193,15 @@ def is_account_dynamic_field(prop: Any) -> bool:
     Queryable-enum fields (e.g. agent.model) also carry x-dynamic-options for
     the frontend picker, but their values are canonicalized server-side by the
     option registry — node drafter fills are trustworthy and no user input is needed
-    during build, so they are excluded.
+    during build, so they are excluded. So are fields whose picker only suggests
+    (``names_new``: a name not listed is a new one, made on first use, as a Table
+    step's table is).
     """
     return (
         isinstance(prop, dict)
         and isinstance(prop.get("x-dynamic-options"), dict)
         and not prop.get("x-queryable-enum")
+        and not prop["x-dynamic-options"].get("names_new")
     )
 
 

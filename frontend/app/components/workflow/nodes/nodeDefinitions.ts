@@ -174,6 +174,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['merge', 'MergeNode'],
     ['automation-submit-external-form', 'SubmitExternalFormNode'],
     ['automation-serverless-function', 'ServerlessFunctionNode'],
+    ['automation-table', 'TableNode'],
     ['state-manager', 'StateManagerNode'],
     ['on-error', 'OnErrorNode'],
     ['set-variable', 'SetVariableNode'],

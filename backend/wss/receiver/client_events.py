@@ -933,6 +933,7 @@ class WorkflowNodeLoadOptionsRequest(ClientEventBase):
     # rejecting the request with a 'string_type' error before it gets there.
     credential_id: Optional[str] = Field(default=None, description="UUID of the credential to use for API calls; null when the field's source doesn't require user credentials")
     context: Optional[Dict[str, Any]] = Field(default=None, description="Additional context (e.g., selected spreadsheet for listing worksheets)")
+    workflow_id: Optional[str] = Field(default=None, description="The workflow the picker is open in; a loader that lists that workflow's own things (its tables) reads it once the caller may see it")
     page_token: Optional[str] = Field(default=None, description="Token for loading next page of options (pagination)")
     search: Optional[str] = Field(default=None, description="User-typed search term to narrow options. Nodes whose upstream API supports a native query parameter pass it through; nodes without server-side search paginate up to a safety cap and case-insensitive substring filter on label/value.")
 

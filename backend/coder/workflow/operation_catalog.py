@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union, get_args, get_origin
 
 from pydantic import Tag
 
-from nodes.core.base import runtime_config_view
+from nodes.core.base import runtime_config_view, static_errors
 from nodes.core.platform_billing import missing_platform_key, unfunded_platform_key
 from nodes.core.registry import NODE_REGISTRY
 from nodes.agent.config.providers import (
@@ -372,15 +372,19 @@ def validate_node_config(node_type: str, operation: str, config: Dict[str, Any])
     config_class = get_operation_config_class(node_type, operation, config)
     if not config_class or not config:
         return None
+    from pydantic import ValidationError
+
+    view = runtime_config_view(config, config_class)
     try:
         # Validate the canonical runtime view (""→None, str coercions,
         # rejected unset markers dropped) — judging the raw config let values
         # through that the runtime transform then broke (cc="" valid,
         # cc=None not — Gmail validation regression).
-        config_class.model_validate(runtime_config_view(config, config_class))
+        config_class.model_validate(view)
     except Exception as e:
-        err = str(e)
-        return err[:300] + '...' if len(err) > 300 else err
+        if not (isinstance(e, ValidationError) and not static_errors(e, view)):
+            err = str(e)
+            return err[:300] + '...' if len(err) > 300 else err
 
     if node_type == 'agent':
         misplaced = misplaced_agent_model(config)

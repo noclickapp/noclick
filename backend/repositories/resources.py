@@ -25,6 +25,14 @@ from typing import Any, Dict, List, Optional, Tuple
 from repositories.workflow import WorkflowRepo
 
 
+_DATASET_NAMED = """
+    SELECT * FROM workflow_resources
+    WHERE workflow_id = $1 AND resource_type = 'dataset' AND lower(btrim(name)) = lower(btrim($2))
+    ORDER BY created_at, id
+    LIMIT 1
+"""
+
+
 def _row_to_dict(row) -> Dict[str, Any]:
     """Convert an asyncpg Record to a plain dict for the repo boundary."""
     return dict(row) if row is not None else None  # type: ignore[return-value]
@@ -208,6 +216,45 @@ class ResourceRepo:
                 """,
                 storage_ref, mime_type, resource_id,
             )
+
+    async def workflow_datasets(self, workflow_id: str) -> List[Dict[str, Any]]:
+        """An automation's tables, oldest first (the order a name resolves in)."""
+        async with self._pool.acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT * FROM workflow_resources WHERE workflow_id = $1 AND resource_type = 'dataset' "
+                "ORDER BY created_at, id",
+                workflow_id,
+            )
+        return [dict(r) for r in rows]
+
+    async def dataset_named(self, workflow_id: str, name: str) -> Optional[Dict[str, Any]]:
+        """The automation's table called ``name`` (any case; the oldest, should two share it), or None."""
+        async with self._pool.acquire() as conn:
+            row = await conn.fetchrow(_DATASET_NAMED, workflow_id, name)
+        return _row_to_dict(row) if row is not None else None
+
+    async def make_dataset(self, workflow_id: str, name: str) -> Tuple[Dict[str, Any], bool]:
+        """``(table, made)``: the automation's table called ``name``, made now (its owner's, in its workspace)
+        when it has none. Makers of one name wait for each other, so first writes at once make one table."""
+        async with self._pool.acquire() as conn, conn.transaction():
+            await conn.execute("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))",
+                               f"dataset:{workflow_id}:{name.strip().lower()}")
+            found = await conn.fetchrow(_DATASET_NAMED, workflow_id, name)
+            if found is not None:
+                return dict(found), False
+            row = await conn.fetchrow(
+                """
+                INSERT INTO workflow_resources
+                    (owner_id, organization_id, workflow_id, resource_type, name, size_bytes, metadata)
+                SELECT owner_id, organization_id, id, 'dataset', $2, 0, '{}'::jsonb
+                FROM workflows WHERE id = $1
+                RETURNING *
+                """,
+                workflow_id, name.strip(),
+            )
+        if row is None:
+            raise ValueError("The table's automation is gone.")
+        return dict(row), True
 
     async def dataset_for_run(self, resource_id: str, workflow_id: Optional[str],
                               user_id: Optional[str]) -> Optional[Dict[str, Any]]:

@@ -7596,6 +7596,10 @@ export interface WorkflowNodeLoadOptionsRequest {
     [k: string]: unknown;
   } | null;
   /**
+   * The workflow the picker is open in; a loader that lists that workflow's own things (its tables) reads it once the caller may see it
+   */
+  workflow_id?: string | null;
+  /**
    * Token for loading next page of options (pagination)
    */
   page_token?: string | null;
