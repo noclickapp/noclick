@@ -31,6 +31,7 @@ from utils.credentials import (
 )
 from utils.access_control import check_resource_access, Permission, workflow_permission
 from utils.node_schema_tracker import track_node_schema
+from utils.runtime_keys import DELIVERED_KEYS, config_without_runtime_keys, nodes_without_runtime_keys
 from wss.schema import SocketIOHandler
 from wss.sender import send_event, is_sdk_client, WorkflowNodeStateEvent, WorkflowNodeOutputEvent, WorkflowStartedEvent, WorkflowCompleteEvent, ResponseEvent, CreditsExhaustedEvent
 from wss.receiver.client_events import WorkflowExecuteRequest
@@ -430,7 +431,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 return None
 
             workflow_data = row['workflow'] or {"nodes": [], "edges": []}
-            nodes = workflow_data.get("nodes", [])
+            # A run never takes a runtime key from the saved graph: its caller sets them for this run.
+            nodes = nodes_without_runtime_keys(workflow_data.get("nodes", []))
             edges = workflow_data.get("edges", [])
             organization_id = str(row['organization_id']) if row['organization_id'] else None
             settings = row.get('settings') or {}
@@ -670,7 +672,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     return await _deny(VIEWER_RUNS_SAVED_GRAPH)
 
             if request.nodes is not None and request.edges is not None:
-                nodes = request.nodes
+                # Runtime keys come from the server alone: a server caller's graph keeps only what it delivers.
+                nodes = nodes_without_runtime_keys(request.nodes, DELIVERED_KEYS if caller_user_id else ())
                 edges = request.edges
                 # Fetch the workflow's organization_id, variables, and settings
                 async with pool.acquire() as conn:
@@ -731,8 +734,13 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             use_execution_graph_for_snapshot = not (
                 request.replay_nodes is not None and request.replay_edges is not None
             )
-            snapshot_nodes = nodes if use_execution_graph_for_snapshot else request.replay_nodes
+            snapshot_nodes = nodes if use_execution_graph_for_snapshot else nodes_without_runtime_keys(
+                request.replay_nodes)
             snapshot_edges = edges if use_execution_graph_for_snapshot else request.replay_edges
+            config_overrides = request.config_overrides if caller_user_id else {
+                node_id: config_without_runtime_keys(fields)
+                for node_id, fields in (request.config_overrides or {}).items() if isinstance(fields, dict)
+            }
 
             # Workflow-level minimum credits check (replaces the legacy
             # min_required_balance $-pre-flight). The setting name stays
@@ -767,7 +775,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     return _result(success=False, nodes_executed=0, error=gate_error)
 
             # Apply per-node config overrides supplied by SDK clients
-            if request.config_overrides:
+            if config_overrides:
                 import copy
                 nodes = copy.deepcopy(nodes)
                 if use_execution_graph_for_snapshot:
@@ -775,8 +783,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 else:
                     snapshot_nodes = copy.deepcopy(snapshot_nodes)
 
-                apply_config_overrides(nodes, request.config_overrides)
-                apply_config_overrides(snapshot_nodes, request.config_overrides)
+                apply_config_overrides(nodes, config_overrides)
+                apply_config_overrides(snapshot_nodes, config_overrides)
 
             # Inject inputs if provided (for template/app use)
             if request.inputs:
@@ -1867,7 +1875,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             return
 
         workflow_data = row["workflow"]
-        all_nodes = workflow_data.get("nodes", [])
+        all_nodes = nodes_without_runtime_keys(workflow_data.get("nodes", []))
         all_edges = workflow_data.get("edges", [])
         workflow_variables = {
             **self._defined_variable_values(row.get("settings") or {}),

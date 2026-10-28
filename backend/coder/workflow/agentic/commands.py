@@ -56,6 +56,7 @@ from ..operation_catalog import (
     validate_node_config,
 )
 from utils.capabilities import NODE_GUIDANCE, capability
+from utils.runtime_keys import runtime_key_refusal
 
 
 def load_node_guidance(*args, **kwargs):
@@ -1069,6 +1070,12 @@ def execute_field_ops(
         # __label keys are the frontend's display cache (DynamicOptionsField
         # recreates them from options) — an AI-written one that disagrees with
         # its value renders the wrong label and blocks the FE self-heal.
+        refused = runtime_key_refusal(field_name)
+        if refused:
+            refused_ops.add(id(op))
+            results.append(f"REJECTED {node_name}.{field_name}: {refused} The value was NOT saved.")
+            continue
+
         if field_name.endswith('__label'):
             results.append(
                 f"Field error: {node_name}.{field_name} — '__label' keys are the UI's "

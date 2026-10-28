@@ -34,6 +34,7 @@ from nodes.agent.node_op_tools import (
     resource_field_index,
 )
 from utils.event_relay import broadcast_to_user_safe
+from utils.runtime_keys import graph_without_runtime_keys
 from wss.sender.events import MCPBuilderEvent
 
 logger = logging.getLogger(__name__)
@@ -155,7 +156,7 @@ async def extend_node_field_scopes(
 
             await conn.execute(
                 "UPDATE workflows SET workflow = $1, updated_at = NOW() WHERE id = $2",
-                workflow,
+                graph_without_runtime_keys(workflow),
                 uuid.UUID(workflow_id),
             )
 

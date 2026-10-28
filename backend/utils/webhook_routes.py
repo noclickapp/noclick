@@ -31,6 +31,7 @@ from utils.async_helpers import spawn
 from utils.webhook_delivery import get_webhook_base_url
 from utils.database_pool import get_native_pool
 from utils.graph_nodes import node_disabled, node_label
+from utils.runtime_keys import graph_without_runtime_keys
 from billing.exceptions import match_spend_refusal
 from utils.shopify_routes import compliance_router as shopify_compliance_router
 from wss.receiver.client_events import WorkflowExecuteRequest
@@ -1685,7 +1686,7 @@ async def _persist_trigger_signing_secret(
         if updated:
             await pool.execute(
                 "UPDATE workflows SET workflow = $1, updated_at = NOW() WHERE id = $2",
-                workflow_json,
+                graph_without_runtime_keys(workflow_json),
                 uuid_module.UUID(workflow_id),
             )
         # Mirror to the webhooks row — the system of record verification falls

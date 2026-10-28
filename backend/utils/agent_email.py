@@ -21,6 +21,7 @@ import os
 from typing import Any, Dict, Optional
 from urllib.parse import urlencode
 from repositories.users import get_user_email
+from utils.runtime_keys import graph_without_runtime_keys
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +96,7 @@ async def disable_agent_email_updates(workflow_id: str, node_id: str) -> Optiona
     # (json.dumps here double-encodes).
     await pool.execute(
         "UPDATE workflows SET workflow = $1, updated_at = NOW() WHERE id = $2",
-        blob, workflow_id,
+        graph_without_runtime_keys(blob), workflow_id,
     )
     label = (node.get("config") or {}).get("label") or node.get("id") or "the agent"
     logger.info(f"[AgentEmail] email updates disabled for {node_id} in {workflow_id}")

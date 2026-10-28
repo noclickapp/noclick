@@ -27,6 +27,7 @@ from mcp_adapter.branding import NOCLICK_WEBSITE_URL, noclick_icons
 
 from utils.database_pool import DatabasePoolMixin
 from utils.access_control import check_resource_access, Permission
+from utils.runtime_keys import graph_without_runtime_keys, runtime_key_refusal
 from nodes.core.registry import NODE_REGISTRY
 from coder.workflow.operation_catalog import (
     get_operations_for_node_type,
@@ -917,6 +918,7 @@ class NoClickMCPServer(DatabasePoolMixin):
         call that changed the row since load loses with a 'conflict' error instead
         of silently clobbering the other writer's changes. ``name`` renames the
         workflow in the same write."""
+        workflow_data = graph_without_runtime_keys(workflow_data)
         pool = await self.get_pool()
         if not pool:
             return "Database connection not available"
@@ -1569,6 +1571,9 @@ class NoClickMCPServer(DatabasePoolMixin):
                 for k, v in attrs.items():
                     if k not in reserved:
                         config[k] = _coerce_field_value(node_type, operation, k, v)
+                refused = next(filter(None, map(runtime_key_refusal, config)), None)
+                if refused:
+                    raise ValueError(refused)
                 if node_type == "agent":
                     misplaced = misplaced_agent_model(config)
                     if misplaced:
@@ -1937,6 +1942,9 @@ class NoClickMCPServer(DatabasePoolMixin):
                         })
                     else:
                         config_updates[k] = _coerce_field_value(target_type, target_operation, k, v)
+                refused = next(filter(None, map(runtime_key_refusal, config_updates)), None)
+                if refused:
+                    raise ValueError(refused)
 
                 # Provider sandbox mounts: canvas-level field. Normalize +
                 # validate here so the agent gets immediate feedback.

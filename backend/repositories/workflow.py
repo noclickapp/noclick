@@ -33,6 +33,8 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 
+from utils.runtime_keys import config_without_runtime_keys, graph_without_runtime_keys
+
 # The name a workflow is made with when nobody named it; the builder names a
 # workflow still called one of these, and never renames a name someone gave.
 NEW_WORKFLOW_NAME = "New workflow"
@@ -291,7 +293,8 @@ class WorkflowRepo:
             INSERT INTO workflows (owner_id, organization_id, folder_id, name, description, workflow, permissions, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
             RETURNING id, name, description, workflow, permissions, created_at, updated_at
-        """, owner_id, organization_id, folder_id, name, description, workflow_data, permissions)
+        """, owner_id, organization_id, folder_id, name, description, graph_without_runtime_keys(workflow_data),
+            permissions)
         return dict(row) if row else None
 
     async def create_workflow_mcp(
@@ -311,7 +314,7 @@ class WorkflowRepo:
             INSERT INTO workflows (owner_id, name, description, workflow, permissions, folder_id, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
             RETURNING id, name, description
-        """, owner_id, name, description, workflow_data, permissions, folder_id)
+        """, owner_id, name, description, graph_without_runtime_keys(workflow_data), permissions, folder_id)
         return dict(row) if row else None
 
     async def create_workflow_builder(
@@ -329,7 +332,7 @@ class WorkflowRepo:
         return await conn.fetchval(
             """INSERT INTO workflows (name, description, owner_id, organization_id, workflow)
                VALUES ($1, $2, $3, $4, $5) RETURNING id""",
-            name, description, owner_id, organization_id, workflow_data,
+            name, description, owner_id, organization_id, graph_without_runtime_keys(workflow_data),
         )
 
     async def insert_workflow_org_share(
@@ -399,7 +402,7 @@ class WorkflowRepo:
                 f"ELSE ${idx}::jsonb || jsonb_build_object('variables', COALESCE(workflow->'variables', '{{}}'::jsonb)) "
                 f"END"
             )
-            params.append(workflow_data)
+            params.append(graph_without_runtime_keys(workflow_data))
             idx += 1
         if permissions is not None:
             updates.append(f"permissions = ${idx}")
@@ -514,7 +517,7 @@ class WorkflowRepo:
             UPDATE workflows
             SET workflow = $1, updated_at = NOW()
             WHERE id = $2
-        """, workflow_data, workflow_id)
+        """, graph_without_runtime_keys(workflow_data), workflow_id)
 
     async def soft_delete_workflow(
         self, conn, workflow_id, user_id
@@ -857,7 +860,7 @@ class WorkflowRepo:
             updated_at = now()
             FROM target
             WHERE workflows.id = $1
-        """, workflow_id, node_id, config_delta)
+        """, workflow_id, node_id, config_without_runtime_keys(config_delta))
 
     async def strip_node_config_keys(
         self, conn, workflow_id, node_id: str, keys: List[str]
@@ -1281,7 +1284,7 @@ class WorkflowRepo:
                 (user_id, workflow_id, name, description, workflow, created_at)
             VALUES ($1, $2, $3, $4, $5, NOW())
             RETURNING id, workflow_id, name, description, created_at
-        """, user_id, workflow_id, name, description, workflow_data)
+        """, user_id, workflow_id, name, description, graph_without_runtime_keys(workflow_data))
         return dict(row) if row else None
 
     async def list_checkpoints(
@@ -1321,7 +1324,7 @@ class WorkflowRepo:
             UPDATE workflows
             SET workflow = $1, updated_at = NOW()
             WHERE id = $2
-        """, workflow_data, workflow_id)
+        """, graph_without_runtime_keys(workflow_data), workflow_id)
 
     async def delete_checkpoint(
         self, conn, checkpoint_id, user_id

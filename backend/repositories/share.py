@@ -33,6 +33,7 @@ import asyncpg
 
 from repositories.organization import IS_ORG_MEMBER_SQL, PRIMARY_ORG_SQL
 from repositories.users import user_name_sql
+from utils.runtime_keys import graph_without_runtime_keys
 
 
 # ─── Dataclass returns ─────────────────────────────────────────────────────
@@ -1055,7 +1056,7 @@ class ShareRepo:
                     INSERT INTO workflows (id, name, description, workflow, owner_id, organization_id, settings)
                     VALUES ($1, $2, $3, $4, $5, $6, $7)
                     """,
-                    new_id, name, description, workflow_data, owner_id, org_id, settings,
+                    new_id, name, description, graph_without_runtime_keys(workflow_data), owner_id, org_id, settings,
                 )
                 await conn.execute(
                     """

@@ -17,6 +17,7 @@ from typing import Optional
 from urllib.parse import urlencode
 
 from utils.hosted_defaults import frontend_url
+from utils.runtime_keys import graph_without_runtime_keys
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +89,7 @@ async def disable_node_in_workflow(workflow_id: str, node_id: str) -> Optional[s
     # (mirrors mcp_server's workflow save; json.dumps here double-encodes).
     await pool.execute(
         "UPDATE workflows SET workflow = $1, updated_at = NOW() WHERE id = $2",
-        blob, workflow_id,
+        graph_without_runtime_keys(blob), workflow_id,
     )
     logger.info(f"[EmailUnsubscribe] Disabled node {node_id} in workflow {workflow_id}")
     return row["name"] or "your workflow"

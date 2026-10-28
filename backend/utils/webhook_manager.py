@@ -37,6 +37,7 @@ from typing import Dict, Any, List, Optional
 from uuid import UUID
 
 from utils.graph_nodes import node_disabled
+from utils.runtime_keys import config_without_runtime_keys
 
 logger = logging.getLogger(__name__)
 
@@ -1164,7 +1165,7 @@ class WebhookManager:
                 """,
                 wf_uuid,
                 node_id,
-                _json.dumps(patch),
+                _json.dumps(config_without_runtime_keys(patch)),
             )
 
     @staticmethod
