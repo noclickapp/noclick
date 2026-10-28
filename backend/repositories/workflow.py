@@ -234,11 +234,13 @@ class WorkflowRepo:
         )
         return dict(row) if row else None
 
-    async def mark_system(self, conn, workflow_id, what: str) -> None:
-        """Make it a workflow NoClick runs itself, running ``what`` (``utils.system_workflows``)."""
+    async def mark_system(self, conn, workflow_id, what: str, *, extra: Optional[Dict[str, Any]] = None) -> None:
+        """Make it a workflow NoClick runs itself, running ``what`` (``utils.system_workflows``); ``extra``: more
+        settings of NoClick's own for it, written with the mark."""
         await conn.execute(
-            "UPDATE workflows SET settings = COALESCE(settings, '{}'::jsonb) || jsonb_build_object($2::text, $3::text) "
-            "WHERE id = $1::uuid", str(workflow_id), SYSTEM_KEY, what)
+            "UPDATE workflows SET settings = COALESCE(settings, '{}'::jsonb) || $4::jsonb "
+            "|| jsonb_build_object($2::text, $3::text) WHERE id = $1::uuid",
+            str(workflow_id), SYSTEM_KEY, what, extra or {})
 
     async def owned_workflow_system(self, conn, workflow_id, user_id) -> Optional[str]:
         """None when ``user_id`` owns no such workflow (soft-deleted rows
