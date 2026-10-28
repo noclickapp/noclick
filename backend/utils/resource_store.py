@@ -23,7 +23,7 @@ from typing import Any, Dict, Optional
 from urllib.parse import unquote, urlsplit
 
 from utils import database_pool
-from utils.capabilities import FILE_DOWNLOAD_URL, capability
+from utils.capabilities import FILE_DOWNLOAD_URL, STORED_FILE_LINK, capability
 from utils.r2_cloudflare import get_public_download_url, upload_bytes_to_r2_async
 
 logger = logging.getLogger(__name__)
@@ -113,6 +113,37 @@ def resource_key_at(url: str) -> Optional[str]:
 def is_resource_key(key: str) -> bool:
     """Whether ``key`` has the shape ``upload_resource_bytes`` writes."""
     return _KEY.fullmatch(key) is not None
+
+
+def stored_file_id(url: str) -> Optional[str]:
+    """The id of the file NoClick stores that ``url`` serves: its public address (``resource_key_at``) or a link a
+    platform makes to it (``STORED_FILE_LINK``); else None."""
+    key = resource_key_at(url)
+    if key is not None:
+        return key.split("/")[2]
+    link = capability(STORED_FILE_LINK)
+    return link(url) if link is not None else None
+
+
+async def stored_file(url: str) -> Optional[Dict[str, Any]]:
+    """The record of the file NoClick stores that ``url`` serves (``stored_file_id``), to read from storage
+    (``read_stored``) rather than fetch through the URL; None for any other URL, or one whose file is gone."""
+    resource_id = stored_file_id(url)
+    if resource_id is None:
+        return None
+    from repositories.resources import ResourceRepo
+
+    row = await ResourceRepo(database_pool.get_native_pool()).get_resource(resource_id)
+    key = resource_key_at(url)
+    return row if row is not None and key in (None, row.get("storage_ref")) else None
+
+
+async def read_stored(row: Dict[str, Any]) -> bytes:
+    """A stored file's bytes, as stored."""
+    from utils.r2_cloudflare import download_bytes_from_r2_async_native
+
+    data, _ = await download_bytes_from_r2_async_native(RESOURCE_BUCKET, row["storage_ref"])
+    return data
 
 
 def download_url(url: str) -> Optional[str]:

@@ -407,6 +407,11 @@ WHATSAPP_STATUSES = "whatsapp.statuses"
 # one, by the file's own URL.
 FILE_DOWNLOAD_URL = "file.download_url"
 
+# A link a platform makes to one of the files NoClick stores, other than its public address (a picture's link that
+# expires): (url) -> the stored file's id, or None for any other URL. Such a file is described by its record and read
+# from storage, never fetched back through the link (utils.resource_store.stored_file).
+STORED_FILE_LINK = "file.stored_file_link"
+
 # Tools a platform gives the account coordinator on top of its own: async
 # (pool, *, user_id, turn_id, untrusted, voice, cards, discovered,
 # continuation) -> the turn's tools, or None when the account has none this

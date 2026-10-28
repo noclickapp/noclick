@@ -75,7 +75,8 @@ def test_a_stored_file_has_the_link_that_saves_it_only_where_the_platform_makes_
 async def test_a_stored_file_is_its_record_with_the_extension_its_type_takes(stored, server):
     stored[RESOURCE] = {"storage_ref": KEY, "name": "Dummy PDF", "mime_type": "application/pdf", "size_bytes": 642}
     server.answer = lambda request: pytest.fail("a stored file is read from its record")
-    assert await describe_url("https://files.test/" + quote(KEY)) == FileInfo("application/pdf", "Dummy PDF.pdf", 642)
+    assert await describe_url("https://files.test/" + quote(KEY)) == FileInfo("application/pdf", "Dummy PDF.pdf", 642,
+                                                                              stored=True)
     # A record for another key, or none, describes nothing.
     stored[RESOURCE] = {**stored[RESOURCE], "storage_ref": f"{OWNER}/account/{RESOURCE}/other.pdf"}
     assert await describe_url("https://files.test/" + quote(KEY)) is None
@@ -129,10 +130,17 @@ async def test_a_stored_file_is_read_from_storage_and_any_other_fetched_within_i
 
     monkeypatch.setattr("utils.r2_cloudflare.download_bytes_from_r2_async_native", from_storage)
     monkeypatch.setattr("utils.ssrf.assert_url_allowed", _allowed)
+    stored[RESOURCE] = {"storage_ref": KEY, "name": "Dummy PDF", "mime_type": "application/pdf", "size_bytes": 14}
     assert await read_url("https://files.test/" + quote(KEY), max_bytes=1000) == b"%PDF-1.4 dummy"
     assert reads == [("workflow-resources", KEY)]
     with pytest.raises(ValueError, match="too large"):
         await read_url("https://files.test/" + quote(KEY), max_bytes=10)
+    assert reads == [("workflow-resources", KEY)]  # its record's size says so before anything is read
+    # A file deleted since is read neither from storage nor through its address.
+    del stored[RESOURCE]
+    with pytest.raises(ValueError, match="gone"):
+        await read_url("https://files.test/" + quote(KEY), max_bytes=1000)
+    assert reads == [("workflow-resources", KEY)] and server.seen == []
     server.answer = lambda request: httpx.Response(200, content=b"<p>page</p>", headers={"content-type": "text/html"})
     assert await read_url("https://cdn.example/page.html", max_bytes=1000) == b"<p>page</p>"
     assert server.seen[-1].method == "GET"
@@ -142,6 +150,38 @@ async def test_a_stored_file_is_read_from_storage_and_any_other_fetched_within_i
 
 async def _allowed(url):
     return None
+
+
+# A picture's link that expires (a platform's /f/<token>/<name>) was asked a HEAD through NoClick's own API before it
+# was texted; the API's proxy didn't answer within the HEAD's 10s, so the picture went as a link, and the person who
+# tapped it read "Failed to connect to backend service" (2026-10-28).
+@pytest.mark.asyncio
+async def test_a_platforms_link_to_a_stored_file_is_its_record_and_its_bytes_from_storage_never_fetched(
+        stored, server, monkeypatch):
+    link = "https://api.test/f/sealed-token/Three%20looks.jpg"
+    monkeypatch.setitem(capabilities._providers, capabilities.STORED_FILE_LINK,
+                        lambda url: RESOURCE if url == link else None)
+    stored[RESOURCE] = {"storage_ref": f"{OWNER}/account/{RESOURCE}/Three looks.jpg", "name": "Three looks.jpg",
+                        "mime_type": "image/jpeg", "size_bytes": 4}
+    reads = []
+
+    async def from_storage(bucket, key):
+        reads.append(key)
+        return b"\xff\xd8\xff\xe0", "image/jpeg"
+
+    monkeypatch.setattr("utils.r2_cloudflare.download_bytes_from_r2_async_native", from_storage)
+    server.answer = lambda request: pytest.fail(f"a stored file's link was fetched: {request.url}")
+    assert await describe_url(link) == FileInfo("image/jpeg", "Three looks.jpg", 4, stored=True)
+    assert await read_url(link, max_bytes=1000) == b"\xff\xd8\xff\xe0"
+    assert reads == [f"{OWNER}/account/{RESOURCE}/Three looks.jpg"]
+    # Its file gone, it describes nothing and reads nothing, still without asking the link.
+    del stored[RESOURCE]
+    assert await describe_url(link) is None
+    with pytest.raises(ValueError, match="gone"):
+        await read_url(link, max_bytes=1000)
+    # A link the platform doesn't make (another, or one past its time) is any other URL.
+    server.answer = lambda request: httpx.Response(404)
+    assert await describe_url("https://api.test/f/other/x.jpg") is None and server.seen[-1].method == "HEAD"
 
 
 @pytest.mark.parametrize("name, mime, source, named", [

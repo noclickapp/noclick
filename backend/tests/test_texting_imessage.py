@@ -138,6 +138,23 @@ async def test_any_file_whose_url_names_it_is_sent_from_that_url(files, mime, na
     api.upload_file.assert_not_awaited()
 
 
+# A picture's link that expires names its file at its end, but Sendblue would fetch it back through NoClick's own
+# API, whose proxy failed it (2026-10-28): a file NoClick stores goes up from storage, whatever its URL says.
+@pytest.mark.asyncio
+async def test_a_file_noclick_stores_goes_up_to_sendblue_from_storage_whatever_its_url_names(files, monkeypatch):
+    link = "https://api.example/f/sealed/Three%20looks.jpg"
+    files[link] = FileInfo("image/jpeg", "Three looks.jpg", 181_447, stored=True)
+    read = AsyncMock(return_value=b"\xff\xd8\xff jpeg")
+    monkeypatch.setattr(imessage, "read_url", read)
+    api = MagicMock(send=AsyncMock(return_value="h1"),
+                    upload_file=AsyncMock(return_value="https://cdn.sendblue.test/looks.jpg"))
+    await send_rich(api, USER_PHONE, f"Reply A, B or C.\n![Three looks]({link})")
+    read.assert_awaited_once_with(link, max_bytes=imessage.UPLOAD_LIMIT)
+    api.upload_file.assert_awaited_once_with(b"\xff\xd8\xff jpeg", filename="Three looks.jpg", mime_type="image/jpeg")
+    api.send.assert_awaited_once_with(USER_PHONE, content="Reply A, B or C.",
+                                      media_url="https://cdn.sendblue.test/looks.jpg")
+
+
 @pytest.mark.asyncio
 async def test_a_file_whose_url_doesnt_name_its_type_goes_up_to_sendblue_under_its_name(files, monkeypatch):
     stored = "https://assets.example/u/w/r/Dummy%20PDF"  # uploaded before names kept their extension

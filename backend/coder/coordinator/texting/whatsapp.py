@@ -207,20 +207,25 @@ def sent_as(embed: Embed) -> Optional[str]:
     return TEXT if mime.startswith("text/") or mime in _TEXT_TYPES else None
 
 
-async def _uploaded_text(api: CloudApi, embed: Embed) -> str:
-    try:
-        data = await read_url(embed.url, max_bytes=DOCUMENT_LIMIT)
-    except ValueError as exc:
-        raise WhatsAppSendError(f"couldn't read {embed.file.name} to send it: {exc}") from exc
-    return await api.upload_media(data, filename=embed.file.name, mime_type="text/plain")
+async def _uploaded(api: CloudApi, embed: Embed, *, mime_type: Optional[str] = None) -> str:
+    """The embed's file put up to WhatsApp, its media id: what goes in its place, else its bytes as NoClick stores
+    them or its URL serves them."""
+    data = embed.data
+    if data is None:
+        try:
+            data = await read_url(embed.url, max_bytes=DOCUMENT_LIMIT)
+        except ValueError as exc:
+            raise WhatsAppSendError(f"couldn't read {embed.file.name} to send it: {exc}") from exc
+    return await api.upload_media(data, filename=embed.file.name, mime_type=mime_type or embed.file.mime_type)
 
 
 async def send_rich(api: CloudApi, to: str, markdown: str) -> Optional[str]:
     """Text in WhatsApp markup, then each embedded file as a file (``sent_as``), an SVG as the picture it draws; one
     that can't go as a file is a link line in the text, and so is a page NoClick stores (``Embed.page``) beside its
-    file. A reply whose one file is a picture or a video, with text that fits a caption, is one message: the file with
-    the text as its caption (in place of the embed's own). Every file is ready before anything is sent. The first
-    message id, or None when nothing could be sent."""
+    file. A file NoClick stores goes up to WhatsApp from storage, never by its link, which Meta would fetch back
+    through NoClick's API; only someone else's goes by link. A reply whose one file is a picture or a video, with text
+    that fits a caption, is one message: the file with the text as its caption (in place of the embed's own). Every
+    file is ready before anything is sent. The first message id, or None when nothing could be sent."""
     try:
         embeds, text = await read_embeds(markdown)
     except ValueError as exc:
@@ -229,10 +234,9 @@ async def send_rich(api: CloudApi, to: str, markdown: str) -> Optional[str]:
     for embed in embeds:
         kind = sent_as(embed)
         if kind == TEXT:
-            files.append((embed, "document", {"media_id": await _uploaded_text(api, embed)}))
-        elif kind is not None and embed.data is not None:
-            media_id = await api.upload_media(embed.data, filename=embed.file.name, mime_type=embed.file.mime_type)
-            files.append((embed, kind, {"media_id": media_id}))
+            files.append((embed, "document", {"media_id": await _uploaded(api, embed, mime_type="text/plain")}))
+        elif kind is not None and (embed.data is not None or embed.file.stored):
+            files.append((embed, kind, {"media_id": await _uploaded(api, embed)}))
         elif kind is not None:
             files.append((embed, kind, {"link": embed.url}))
     sent_files = [embed for embed, _, _ in files]

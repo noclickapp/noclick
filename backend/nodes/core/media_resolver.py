@@ -353,13 +353,14 @@ class FileInfo:
     mime_type: str
     name: str  # ending in its extension
     size_bytes: Optional[int]
+    stored: bool = False  # one of NoClick's own files: read from storage (``read_url``), never fetched by its URL
 
 
 _HEAD_TIMEOUT_S = 10.0
 _UNTYPED = ("", "application/octet-stream", "binary/octet-stream")
 
 
-def _known(mime: str, name: str, size: Optional[int]) -> Optional[FileInfo]:
+def _known(mime: str, name: str, size: Optional[int], *, stored: bool = False) -> Optional[FileInfo]:
     """A file whose type is known: what the server or record says, else what its name says; None when neither
     names one."""
     from utils.resource_store import file_name
@@ -367,26 +368,23 @@ def _known(mime: str, name: str, size: Optional[int]) -> Optional[FileInfo]:
     mime = mime.split(";")[0].strip().lower()
     if mime in _UNTYPED:
         mime = (mimetypes.guess_type(name)[0] or "").lower()
-    return FileInfo(mime, file_name(name, mime), size) if mime else None
+    return FileInfo(mime, file_name(name, mime), size, stored) if mime else None
 
 
 async def describe_url(url: str) -> Optional[FileInfo]:
-    """What the file at ``url`` holds, without fetching it: one of NoClick's own stored files by its record, any
-    other by a HEAD request (SSRF-guarded on every hop, bounded in time). None when neither can tell, or the URL
-    doesn't answer."""
+    """What the file at ``url`` holds, without fetching it: one of NoClick's own stored files by its record (at its
+    public address or a link to it, ``stored_file``), any other by a HEAD request (SSRF-guarded on every hop, bounded
+    in time). None when neither can tell, or the URL doesn't answer."""
     from email.message import EmailMessage
 
-    from utils.resource_store import resource_key_at
+    from utils.resource_store import stored_file, stored_file_id
 
-    key = resource_key_at(url)
-    if key is not None:
-        from repositories.resources import ResourceRepo
-        from utils.database_pool import get_native_pool
-
-        row = await ResourceRepo(get_native_pool()).get_resource(key.split("/")[2])
-        if row is None or row.get("storage_ref") != key:
+    if stored_file_id(url) is not None:
+        row = await stored_file(url)
+        if row is None:
             return None
-        return _known(row.get("mime_type") or "", row.get("name") or key.rsplit("/", 1)[-1], row.get("size_bytes"))
+        return _known(row.get("mime_type") or "", row.get("name") or row["storage_ref"].rsplit("/", 1)[-1],
+                      row.get("size_bytes"), stored=True)
 
     from utils.ssrf import guarded_async_client
 
@@ -406,17 +404,18 @@ async def describe_url(url: str) -> Optional[FileInfo]:
 
 
 async def read_url(url: str, *, max_bytes: int) -> bytes:
-    """The bytes at ``url``: one of NoClick's own stored files read from storage, any other fetched (SSRF-guarded,
-    capped at ``max_bytes``). Raises ValueError when it can't be read."""
-    from utils.resource_store import RESOURCE_BUCKET, resource_key_at
+    """The bytes at ``url``: one of NoClick's own stored files read from storage (``stored_file``), any other fetched
+    (SSRF-guarded, capped at ``max_bytes``). Raises ValueError when it can't be read."""
+    from utils.resource_store import read_stored, stored_file, stored_file_id
 
-    key = resource_key_at(url)
-    if key is None:
+    if stored_file_id(url) is None:
         return (await resolve_media_input(url, max_bytes=max_bytes)).data
-    from utils.r2_cloudflare import download_bytes_from_r2_async_native
-
+    row = await stored_file(url)
+    if row is None:
+        raise ValueError("The stored file is gone.")
+    _check_size(row.get("size_bytes") or 0, max_bytes)
     try:
-        data, _ = await download_bytes_from_r2_async_native(RESOURCE_BUCKET, key)
+        data = await read_stored(row)
     except httpx.HTTPError as exc:
         raise ValueError(f"Could not read the stored file: {type(exc).__name__}") from exc
     _check_size(len(data), max_bytes)

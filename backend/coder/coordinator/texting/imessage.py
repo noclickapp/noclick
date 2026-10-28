@@ -120,13 +120,15 @@ def _shown_inline(embed: Embed) -> bool:
 
 async def _media_url(api: Sendblue, embed: Embed) -> str:
     """Where Sendblue sends an embedded file from. Sendblue reads a file's type off its URL, which must end in its
-    extension and carry no signature; a file whose URL doesn't, or one sent in its place (an SVG's picture), goes up
-    to Sendblue under its own name first."""
+    extension and carry no signature; a file whose URL doesn't, one sent in its place (an SVG's picture) and one
+    NoClick stores (read from storage, never fetched back through NoClick's API) go up to Sendblue under their own
+    name first."""
     ext = os.path.splitext(embed.file.name)[1].lower()
     parts = urlsplit(embed.url)
     if embed.data is not None:
         data = embed.data
-    elif ext and not parts.query and not parts.fragment and unquote(parts.path).lower().endswith(ext):
+    elif (not embed.file.stored and ext and not parts.query and not parts.fragment
+          and unquote(parts.path).lower().endswith(ext)):
         return embed.url
     else:
         try:

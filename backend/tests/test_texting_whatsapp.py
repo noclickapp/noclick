@@ -205,6 +205,28 @@ async def test_a_picture_with_no_text_keeps_its_own_caption(files):
     api.send_media.assert_awaited_once_with(SENDER, "image", link=QUIET_FORM, caption="Quiet Form",
                                             filename="quiet-form.png")
 
+# The A/B/C picture of three looks went out as a link line: its link answered NoClick's own HEAD late through the API's
+# proxy, and the link the person tapped failed there too (2026-10-28). A file NoClick stores is put up from storage.
+@pytest.mark.asyncio
+@respx.mock
+async def test_a_picture_noclick_stores_goes_up_from_storage_and_is_never_sent_by_its_link(files, monkeypatch):
+    link = "https://api.example/f/sealed/Three%20looks.jpg"
+    files[link] = FileInfo("image/jpeg", "Three looks.jpg", 181_447, stored=True)
+    read = AsyncMock(return_value=b"\xff\xd8\xff jpeg")
+    monkeypatch.setattr(whatsapp, "read_url", read)
+    upload = respx.post(f"{GRAPH_BASE}/123/media").mock(return_value=httpx.Response(200, json={"id": "media.looks"}))
+    route = respx.post(MESSAGES_URL).mock(return_value=httpx.Response(200, json={"messages": [{"id": "wamid.p"}]}))
+    sent = await whatsapp.send_rich(_api(), SENDER, f"Reply A, B or C.\n\n![Three looks]({link})")
+    assert sent == "wamid.p"
+    read.assert_awaited_once_with(link, max_bytes=whatsapp.DOCUMENT_LIMIT)
+    uploaded = upload.calls.last.request.read()
+    assert b'filename="Three looks.jpg"' in uploaded and b"\xff\xd8\xff jpeg" in uploaded
+    [message] = [json.loads(call.request.read()) for call in route.calls]
+    assert message == {"messaging_product": "whatsapp", "to": "14155550100", "type": "image",
+                       "image": {"id": "media.looks", "caption": "Reply A, B or C."}}
+    assert link not in json.dumps(message)
+
+
 MB = 1024 * 1024
 
 
