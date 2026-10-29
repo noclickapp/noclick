@@ -58,7 +58,9 @@ async def _seed_credential(conn, owner, connection_id, phone=None, **extra_meta)
 def stub_wahooks_reconnect(monkeypatch):
     """wahooks SDK stub covering the reconnect + finalize surfaces."""
     calls = {
-        "get_qr": [], "created": 0, "get_or_create": 0, "connections": {},
+        "get_qr": [], "created": 0, "get_or_create": 0, "restarted": [],
+        # get-or-create hands out an unscanned session showing a QR.
+        "connections": {"conn-virgin": {"status": "scan_qr", "phoneNumber": None}},
         "webhooks": {}, "seq": [],
     }
 
@@ -88,9 +90,15 @@ def stub_wahooks_reconnect(monkeypatch):
             return {"id": "conn-fresh", "status": "scan_qr"}  # no QR until asked for
 
         def get_connection(self, connection_id):
+            if connection_id == "conn-gone":
+                raise mod.WAHooksError("Connection not found", 404)
             return calls["connections"].get(
                 connection_id, {"status": "connected", "phoneNumber": ""}
             )
+
+        def restart_connection(self, connection_id):
+            calls["restarted"].append(connection_id)
+            return {"id": connection_id, "status": "scan_qr"}
 
         def list_webhooks(self, connection_id):
             if connection_id == "conn-broken":
@@ -148,6 +156,41 @@ class TestStartReconnect:
         assert result["success"] is True
         assert result["connection_id"] == "conn-virgin"
         assert "reconnect" not in result
+        await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
+
+    async def test_reconnect_restarts_a_failed_own_session(
+        self, postgres_db, fake_redis, stub_wahooks_reconnect  # noqa: F811
+    ):
+        owner = await _seed_user(postgres_db)
+        cred_id = await _seed_credential(postgres_db, owner, "conn-own", phone="12025550105")
+        stub_wahooks_reconnect["connections"]["conn-own"] = {"status": "failed", "phoneNumber": "12025550105"}
+
+        result = await start_qr_connection(
+            _PoolShim(postgres_db), owner_id=str(owner), reconnect_credential_id=str(cred_id),
+        )
+        assert result["success"] is True and result["reconnect"] is True
+        assert result["connection_id"] == "conn-own"
+        assert stub_wahooks_reconnect["restarted"] == ["conn-own"]
+        assert stub_wahooks_reconnect["get_or_create"] == 0
+        await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
+
+    async def test_reconnect_of_a_deleted_connection_goes_straight_to_a_fresh_scan(
+        self, postgres_db, fake_redis, stub_wahooks_reconnect  # noqa: F811
+    ):
+        # WAHooks answers 503 for a deleted connection's QR forever, so it is
+        # never waited on, and not held either.
+        owner = await _seed_user(postgres_db)
+        cred_id = await _seed_credential(postgres_db, owner, "conn-deleted")
+        stub_wahooks_reconnect["connections"]["conn-deleted"] = {"status": "stopped", "phoneNumber": None}
+
+        result = await start_qr_connection(
+            _PoolShim(postgres_db), owner_id=str(owner), reconnect_credential_id=str(cred_id),
+        )
+        assert result["success"] is True and result["connection_id"] == "conn-virgin"
+        assert "reconnect" not in result
+        assert "conn-deleted" not in stub_wahooks_reconnect["get_qr"]
+        assert stub_wahooks_reconnect["restarted"] == []
+        assert fake_redis.store.get("whatsapp:qr:reserved:conn-deleted") is None
         await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
 
     async def test_reconnect_ignores_foreign_credential(

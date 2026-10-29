@@ -135,6 +135,7 @@ class WhatsAppQRHandler(DatabasePoolMixin, SocketIOHandler):
                     credential_id=result.get("credential_id"),
                     credential_name=result.get("credential_name"),
                     phone_number=result.get("phone_number"),
+                    qr_code=result.get("qr_code"),
                     message=result.get("message", ""),
                 ).model_dump(),
             ))

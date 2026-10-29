@@ -17,10 +17,11 @@ import pytest
 
 from utils.whatsapp_qr import (
     QR_RESERVATION_TTL_S,
-    _bound_to_other_owner,
+    _binding_owner,
     _reservation_status,
     _try_reserve_connection,
     get_connection_statuses,
+    is_own_binding,
     start_qr_connection,
 )
 
@@ -42,6 +43,12 @@ class FakeRedis:
 
     async def get(self, key):
         return self.store.get(key)
+
+    async def delete(self, *keys):
+        removed = [k for k in keys if self.store.pop(k, None) is not None]
+        for k in keys:
+            self.ttls.pop(k, None)
+        return len(removed)
 
 
 class BrokenRedis:
@@ -184,8 +191,9 @@ async def _seed_binding(conn, connection_id):
 
 @pytest.fixture
 def stub_wahooks(monkeypatch):
-    """Stub the wahooks SDK: get-or-create recycles 'conn-recycled'; create
-    mints 'conn-fresh'. Returns the call counter."""
+    """Stub the wahooks SDK: get-or-create recycles 'conn-recycled' (an
+    unscanned session showing a QR); create mints 'conn-fresh'. Returns the
+    call counter."""
     calls = {"created": 0, "virgin_only": None}
 
     class StubClient:
@@ -205,6 +213,9 @@ def stub_wahooks(monkeypatch):
         def create_connection(self):
             calls["created"] += 1
             return {"id": "conn-fresh", "status": "scan_qr"}  # no QR until asked for
+
+        def get_connection(self, connection_id):
+            return {"id": connection_id, "status": "scan_qr", "phoneNumber": None}
 
         def get_qr(self, connection_id):
             return {"value": f"QR-{connection_id}", "mimetype": "image/png"}
@@ -235,20 +246,18 @@ class TestRecycledConnectionGuard:
     never handed out — a fresh one is minted instead. The owner's own binding
     stays reusable (reconnect-your-own-session)."""
 
-    async def test_bound_to_other_owner_detected(self, postgres_db):
-        await _seed_binding(postgres_db, "conn-bound")
-        pool = _PoolShim(postgres_db)
-        assert await _bound_to_other_owner(pool, "conn-bound", str(uuid.uuid4())) is True
-        await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
-
-    async def test_own_binding_not_flagged(self, postgres_db):
+    async def test_binding_owner_names_whoever_binds_it(self, postgres_db):
         owner = await _seed_binding(postgres_db, "conn-bound")
         pool = _PoolShim(postgres_db)
-        assert await _bound_to_other_owner(pool, "conn-bound", str(owner)) is False
+        binder = await _binding_owner(pool, "conn-bound")
+        assert binder == str(owner)
+        # Another owner is a conflict; the binder's own re-scan is not.
+        assert not is_own_binding(binder, str(uuid.uuid4()))
+        assert is_own_binding(binder, str(owner))
         await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
 
-    async def test_unbound_not_flagged(self, postgres_db):
-        assert await _bound_to_other_owner(_PoolShim(postgres_db), "conn-nobody", str(uuid.uuid4())) is False
+    async def test_unbound_has_no_binding_owner(self, postgres_db):
+        assert await _binding_owner(_PoolShim(postgres_db), "conn-nobody") is None
 
     async def test_start_mints_fresh_when_recycled_is_bound(
         self, postgres_db, fake_redis, stub_wahooks, funded_owner
