@@ -456,13 +456,15 @@ class WorkflowRepo:
 
         query = f"""
             WITH old AS (
-                SELECT name, workflow FROM workflows WHERE id = $1
+                SELECT name, description, settings, workflow FROM workflows WHERE id = $1
             )
             UPDATE workflows
             SET {', '.join(updates)}
             WHERE {where}
             RETURNING id, name, description, workflow, permissions, created_at, updated_at, display_metadata, settings, graph_version,
                       (SELECT name FROM old) as old_name,
+                      (SELECT description FROM old) as old_description,
+                      (SELECT settings FROM old) as old_settings,
                       (SELECT workflow FROM old) as old_workflow
         """
         row = await conn.fetchrow(query, *params)
@@ -488,15 +490,27 @@ class WorkflowRepo:
         name: Optional[str] = None,
         description: Optional[str] = None,
         settings: Optional[Dict[str, Any]] = None,
+        replace_settings: bool = False,
+        bump: bool = False,
     ) -> int:
-        """Write a locked workflow's graph (its version moves when the graph does), and the fields given:
-        ``settings`` merges into the stored ones by top-level key. Returns its ``graph_version``."""
+        """Write a locked workflow's graph and the fields given: ``settings`` merges into the stored ones by
+        top-level key, or takes their place (``replace_settings``). Its version moves when the graph does
+        (the ``workflows_graph_version_bump`` trigger), and with ``bump`` when only its own fields changed.
+        Returns its ``graph_version``."""
         return await conn.fetchval(
             """UPDATE workflows SET workflow = $2, name = COALESCE($3, name), description = COALESCE($4, description),
-                   settings = CASE WHEN $5::jsonb IS NULL THEN settings ELSE COALESCE(settings, '{}'::jsonb) || $5 END,
+                   settings = CASE WHEN $5::jsonb IS NULL THEN settings WHEN $6 THEN $5
+                                   ELSE COALESCE(settings, '{}'::jsonb) || $5 END,
+                   graph_version = graph_version + CASE WHEN $7 THEN 1 ELSE 0 END,
                    updated_at = now()
                WHERE id = $1::uuid RETURNING graph_version""",
-            str(workflow_id), graph_without_runtime_keys(graph), name, description, settings)
+            str(workflow_id), graph_without_runtime_keys(graph), name, description, settings, replace_settings,
+            bump)
+
+    async def bump_graph_version(self, conn, workflow_id) -> int:
+        """Move a workflow's version on when its own fields changed and its graph didn't."""
+        return await conn.fetchval("UPDATE workflows SET graph_version = graph_version + 1 WHERE id = $1::uuid "
+                                   "RETURNING graph_version", str(workflow_id))
 
     async def update_workflow_metadata(
         self,

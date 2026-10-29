@@ -21,4 +21,12 @@ def get_registry(name: str) -> OptionRegistry | None:
     return REGISTRY.get(name)
 
 
-__all__ = ["Option", "Resolution", "OptionRegistry", "REGISTRY", "get_registry"]
+async def warm_registries() -> None:
+    """Build every live registry that's stale, off the event loop (``LazyOptionRegistry.warm``)."""
+    for registry in REGISTRY.values():
+        warm = getattr(registry, "warm", None)
+        if warm is not None:
+            await warm()
+
+
+__all__ = ["Option", "Resolution", "OptionRegistry", "REGISTRY", "get_registry", "warm_registries"]

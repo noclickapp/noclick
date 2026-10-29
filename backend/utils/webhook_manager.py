@@ -32,14 +32,19 @@ Schema markers:
 """
 
 import logging
+from contextvars import ContextVar
 from functools import lru_cache
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from uuid import UUID
 
 from utils.graph_nodes import node_disabled
 from utils.runtime_keys import config_without_runtime_keys
 
 logger = logging.getLogger(__name__)
+
+# The versions ``merge_node_config_patch`` moves a workflow through, (before, after) each, while a caller listens:
+# a writer handing back the version its own reconcile left (``utils.workflow_reconcile``).
+PATCH_MOVES: ContextVar[Optional[List[Tuple[int, int]]]] = ContextVar("workflow_patch_moves", default=None)
 
 
 def _extract_node_config(node: Dict[str, Any]) -> Dict[str, Any]:
@@ -1138,14 +1143,17 @@ class WebhookManager:
         string on codec pools, and `object || string-scalar` is jsonb ARRAY
         concatenation — it silently turned the node's config into a list
         (2026-07-20: broke every hook reading the blob until the next full
-        canvas save repaired it).
+        canvas save repaired it). The version it moved the workflow from and
+        to goes to whoever listens (``PATCH_MOVES``).
         """
         import json as _json
 
         async with pool.acquire() as conn:
-            await conn.execute(
+            moved = await conn.fetchrow(
                 """
-                WITH target AS (
+                WITH locked AS (
+                    SELECT graph_version FROM workflows WHERE id = $1 FOR UPDATE
+                ), target AS (
                     SELECT (idx - 1)::int AS pos
                     FROM jsonb_array_elements(
                         (SELECT workflow->'nodes' FROM workflows WHERE id = $1)
@@ -1160,13 +1168,17 @@ class WebhookManager:
                     COALESCE(workflow->'nodes'->target.pos->'config', '{}'::jsonb) || ($3::text)::jsonb
                 ),
                 updated_at = now()
-                FROM target
+                FROM target, locked
                 WHERE workflows.id = $1
+                RETURNING locked.graph_version AS before, workflows.graph_version AS after
                 """,
                 wf_uuid,
                 node_id,
                 _json.dumps(config_without_runtime_keys(patch)),
             )
+        moves = PATCH_MOVES.get()
+        if moves is not None and moved is not None and moved["after"] != moved["before"]:
+            moves.append((moved["before"], moved["after"]))
 
     @staticmethod
     async def _register_single_node(

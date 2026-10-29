@@ -953,14 +953,21 @@ def misplaced_agent_model(values: Mapping[str, Any]) -> Optional[str]:
 async def read_model_catalog(nodes: Iterable[Dict[str, Any]], written: Iterable[Any] = ()) -> None:
     """Read models.dev off the event loop for the agents' Models, saved or
     ``written``: writes and verdicts judge them against it synchronously
-    (``misplaced_agent_model``, ``agent_credential_requirement``)."""
+    (``misplaced_agent_model``, ``agent_credential_requirement``); and the
+    model list a write resolves a model against (``option_registries``), so a
+    write never builds it under its lock."""
     from nodes.agent.config.harness_model_lists import AGENT_ZEN_MODEL_FIELDS, read_zen_catalog
 
-    await read_zen_catalog([
+    from .option_registries import warm_registries
+
+    models = [
         *(((n.get("data") or n).get("config") or {}).get(f) for n in nodes if n.get("type") == "agent"
           for f in AGENT_ZEN_MODEL_FIELDS),
         *written,
-    ])
+    ]
+    if any(models):  # an agent's Model may be resolved
+        await warm_registries()
+    await read_zen_catalog(models)
 
 
 def judge_config(

@@ -24,6 +24,8 @@ BUILTIN_TRIGGER_TYPES = frozenset({
 
 # Nodes that say nothing about what a workflow *is*.
 _UNMARKED_TYPES = frozenset({"sticky-note", "sticky_note", "note", "tool"})
+# A note on the canvas: never a step. Stored as ``stickyNote``; the rest are older spellings.
+NOTE_TYPES = frozenset({"stickyNote", "sticky-note", "sticky_note", "note"})
 
 
 def parse_graph(graph: Any) -> Dict[str, Any]:
@@ -100,6 +102,10 @@ def agent_mark(model: str) -> str:
     """The icon-registry key for an agent node: ``agent:<harness>`` for a CLI
     harness, the generic ``agent`` for API models."""
     return f"agent:{model}" if model in HARNESS_SLUGS else "agent"
+
+
+def is_note(node: Dict[str, Any]) -> bool:
+    return node.get("type") in NOTE_TYPES
 
 
 def is_trigger_node(node: Dict[str, Any]) -> bool:

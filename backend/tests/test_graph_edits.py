@@ -346,6 +346,40 @@ class TestRefusals:
         assert (await self._refused([{"op": "update_step", "id": "slack",
                                       "settings": {"operation": "x"}}])).field == "settings.operation"
 
+    @pytest.mark.parametrize("settings", [
+        {"credential_id": "cred-x"}, {"credentialId": "cred-x"}, {"credential_ids": {"slack_oauth": "cred-x"}},
+        {"credentials": {"id": "cred-x"}}, {"config": {"credentialIds": {"slack_oauth": "cred-x"}}},
+    ])
+    async def test_a_connection_rides_in_by_no_other_key(self, settings):
+        """Each key the run engine reads a connection from (``extract_credential_ids``, and the nested ``config``
+        it flattens) is set_connection's alone."""
+        for op in ({"op": "update_step", "id": "slack", "settings": copy.deepcopy(settings)},
+                   {"op": "add_step", "type": "automation-slack", "operation": "send_message_to_channel",
+                    "settings": copy.deepcopy(settings)}):
+            refused = await self._refused([op])
+            assert refused.field.startswith("settings.") and "set_connection" in refused.message
+
+    async def test_the_canvas_copy_of_settings_isnt_written(self):
+        refused = await self._refused([{"op": "update_step", "id": "slack", "settings": {"config": {"text": "x"}}}])
+        assert refused.field == "settings.config"
+
+    async def test_a_field_of_the_steps_own_named_like_a_connection_is_its_own(self):
+        """A provider's own id (Databricks' Git credential) is the step's field: written, and the step's connection
+        map is there so the run engine never reads it as a NoClick connection."""
+        graph = {"nodes": [node("db", "automation-databricks", operation="get_git_credential")], "edges": []}
+        editor = await through_ops(graph, [{"op": "update_step", "id": "db", "settings": {"credential_id": "42"}}])
+        config = node_config(editor.nodes[0])
+        assert config["credential_id"] == "42" and config["credentialIds"] == {}
+        from utils.credentials import extract_credential_ids
+        assert extract_credential_ids(config) == {}
+
+    async def test_a_patch_never_reaches_the_operation_or_the_connections(self):
+        for field in ("operation", "credentialIds", "credential_id"):
+            refused = await self._refused([{"op": "patch_step", "id": "slack", "field": field,
+                                            "patch": "@@ send_message_to_channel\n-send_message_to_channel\n+x"}])
+            assert refused.field == "field" and ("set_connection" in refused.message or "operation" in
+                                                 refused.message)
+
     async def test_a_connection_the_caller_cant_use(self):
         refused = await self._refused([{"op": "set_connection", "id": "slack", "connection": "someone-elses"}])
         assert (refused.field, refused.message) == ("connection", "No connection 'someone-elses' that this account "

@@ -28,6 +28,7 @@ EXEMPT = {
     "repositories/workflow.py::merge_workflow_variables": "writes the graph's variables, never a node",
     "repositories/workflow.py::strip_node_config_keys": "only removes keys",
     "mcp_server.py::create_workflow": "inserts an empty graph",
+    "repositories/workflow_versions.py::join": "empties the version's graph (the open version reads the workflow's)",
 }
 
 _GRAPH_WRITE = re.compile(
@@ -152,9 +153,14 @@ async def _saved(db, workflow_id, table="workflows", column="id"):
     return await db.fetchval(f"SELECT workflow FROM {table} WHERE {column} = $1::uuid", workflow_id)
 
 
-async def _newest_version(db, workflow_id):
-    return await db.fetchval("SELECT graph FROM workflow_versions WHERE workflow_id = $1::uuid "
-                             "ORDER BY version DESC LIMIT 1", workflow_id)
+async def _closed(db, workflow_id, source):
+    """The graph a version from ``source`` holds once the next version closed it."""
+    return await db.fetchval("SELECT graph FROM workflow_versions WHERE workflow_id = $1::uuid AND source = $2 "
+                             "AND graph IS NOT NULL ORDER BY version DESC LIMIT 1", workflow_id, source)
+
+
+async def _settled(pool, owner_id, workflow_id, author, before, after, version, **kwargs):
+    return version, after
 
 
 def _assert_clean(graph):
@@ -187,7 +193,13 @@ class TestEachWritePath:
             request_id="r", workflow_id=workflow_id, workflow_data=_graph()))
         assert not sio.emit.await_args.args[1].get("error")
         _assert_clean(await _saved(real_database, workflow_id))
-        _assert_clean(await _newest_version(real_database, workflow_id))
+        # The version it recorded holds its graph once the next one (another source's) starts.
+        from coder.workflow import graph_service
+
+        with patch("coder.workflow.graph_service._settle", side_effect=_settled):
+            await graph_service.apply(real_database.pool, graph_service.Author(OWNER), workflow_id,
+                                      [{"op": "update_step", "id": "agent", "name": "Agent"}], source="coordinator")
+        _assert_clean(await _closed(real_database, workflow_id, "canvas"))
 
     async def test_the_graph_services_edit_and_restore(self, real_database):
         """An edit of a graph saved before writes dropped runtime keys writes it, and the versions it records
@@ -196,16 +208,16 @@ class TestEachWritePath:
 
         workflow_id = await _workflow(real_database, _graph())
         author = graph_service.Author(OWNER)
-        with patch("coder.workflow.graph_service._settle", new=AsyncMock()):
+        with patch("coder.workflow.graph_service._settle", side_effect=_settled):
             edited = await graph_service.apply(real_database.pool, author, workflow_id,
                                                [{"op": "update_step", "id": "agent", "name": "Agent"}])
             _assert_clean(await _saved(real_database, workflow_id))
-            for row in await real_database.fetch("SELECT graph FROM workflow_versions WHERE workflow_id = $1::uuid",
-                                                 workflow_id):
+            for row in await real_database.fetch("SELECT graph FROM workflow_versions WHERE workflow_id = $1::uuid "
+                                                 "AND graph IS NOT NULL", workflow_id):
                 _assert_clean(row["graph"])
-            await graph_service.restore(real_database.pool, author, workflow_id, edited.version - 1)
+            await graph_service.restore(real_database.pool, author, workflow_id, edited.history_version - 1)
         _assert_clean(await _saved(real_database, workflow_id))
-        _assert_clean(await _newest_version(real_database, workflow_id))
+        _assert_clean(await _closed(real_database, workflow_id, "api"))
 
     async def test_a_node_config_write(self, real_database):
         from wss.handlers.workflow_handler import WorkflowHandler

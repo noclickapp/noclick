@@ -7,7 +7,8 @@ pull live OpenRouter + LiteLLM data instead of a hand-curated tuple.
 
 Design notes:
 - Cache miss after TTL expiry triggers a rebuild on the next ``match``/``get``
-  call. Build is synchronous (the OpenRouter fetch already is).
+  call. Build is synchronous (the OpenRouter fetch already is); a caller about
+  to match under a lock ``warm``s it first, off the event loop.
 - A failed rebuild keeps the previous in-memory snapshot in service. The
   build callback is expected to log its own errors.
 - Cold start with no successful build ever falls back to ``static_fallback``
@@ -18,6 +19,7 @@ Design notes:
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import time
 from typing import Callable, Iterable, Optional
@@ -64,10 +66,19 @@ class LazyOptionRegistry:
         self._maybe_refresh()
         return self._inner.match(query, limit=limit)
 
+    async def warm(self, *, margin_s: float = 60.0) -> None:
+        """Rebuild off the event loop when the snapshot is stale or within ``margin_s`` of it, so the ``match``es
+        that follow (a write resolving models under its row lock) never build it."""
+        if not self._has_succeeded or (time.monotonic() - self._loaded_at) >= self._ttl - margin_s:
+            await asyncio.to_thread(self._refresh)
+
     def _maybe_refresh(self) -> None:
-        now = time.monotonic()
-        if self._has_succeeded and (now - self._loaded_at) < self._ttl:
+        if self._has_succeeded and (time.monotonic() - self._loaded_at) < self._ttl:
             return
+        self._refresh()
+
+    def _refresh(self) -> None:
+        now = time.monotonic()
         try:
             options = tuple(self._build())
         except Exception as e:

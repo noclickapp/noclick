@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/local-cron")
 
 _TICK_INTERVAL_S = 15.0  # Compatibility for callers of the idle-delay helper.
+_DAILY_S = 86400.0
 
 from repositories.local_schedules import LocalScheduleRepo
 
@@ -248,12 +249,25 @@ def _sleep_seconds(earliest_next_run, now):
     return min(_TICK_INTERVAL_S, max(1.0, (earliest_next_run - now).total_seconds()))
 
 
+async def maintain_daily(pool) -> None:
+    """What the hosted edition's daily maintenance does that this one needs: a workflow's versions are kept 90 days
+    (its newest whatever its age)."""
+    from repositories import workflow_versions
+
+    pruned = await workflow_versions.prune(pool)
+    logger.info("Workflow versions pruned: %s", pruned)
+
+
 async def _run_ticker():
     import time
     next_recovery = 0.0
+    next_daily = time.monotonic()
     recovery = None
     while True:
         try:
+            if time.monotonic() >= next_daily:
+                next_daily = time.monotonic() + _DAILY_S
+                await maintain_daily(_get_pool())
             await _tick()
             if time.monotonic() >= next_recovery and (recovery is None or recovery.done()):
                 if recovery and not recovery.cancelled() and recovery.exception():

@@ -30,6 +30,11 @@ MAX_NAME_CHARS = 200
 # Config keys a ``settings`` write never sets: each has an op of its own (``set_connection`` checks the caller may
 # use the connection).
 _OWN_OP = {"operation": "operation", "credentialIds": "set_connection"}
+# The other keys the run engine reads a step's connection from (``utils.credentials.extract_credential_ids``): set
+# only as a step's own field, never as a connection; and the canvas's copy of a step's settings (``config``), which
+# the run engine flattens into them.
+CONNECTION_KEYS = frozenset({"credential_ids", "credential_id", "credentialId", "credentials"})
+_CANVAS_COPY = "config"
 # On a trigger, NoClick's records of its registration (the webhooks row and the scheduler are the truth; these only
 # mirror them): what a step is doesn't change with them. On another step a field may share one of these names.
 REGISTRATION_MIRRORS = frozenset({
@@ -178,6 +183,13 @@ _OPS = TypeAdapter(List[GraphOp])
 LAYOUT_OPS = frozenset({"move", "layout"})
 
 
+def _keep_connection_map(config: Dict[str, Any]) -> None:
+    """A step holding a field of its own named like a connection key has a connection map, so the run engine
+    reads its connection from that map and never from the field."""
+    if any(k in config for k in CONNECTION_KEYS) and not isinstance(config.get("credentialIds"), dict):
+        config["credentialIds"] = {}
+
+
 class EditRefused(Exception):
     """Op ``index`` can't be applied: nothing of its batch lands."""
 
@@ -297,19 +309,30 @@ class GraphEditor:
             raise EditRefused(index, f"'{operation}' isn't an operation of {node_type} (its operations: "
                                      f"{', '.join(names) or 'none'}).", field="operation")
 
-    def _check_settings(self, index: int, node_type: str, settings: Dict[str, Any]) -> None:
+    def _check_settings(self, index: int, node_type: str, operation: Optional[str],
+                        settings: Dict[str, Any]) -> None:
         """Refuse what no settings write may carry; normalize the canvas-level fields, in place."""
         from utils.runtime_keys import runtime_key_refusal
 
+        from .graph_secrets import settings_schema
         from .workflow_ops import misplaced_agent_model, normalize_canvas_fields
 
-        for key in settings:
+        declared = set(((settings_schema(node_type, operation) or {}).get("properties") or {}))
+        for key, value in settings.items():
             refused = runtime_key_refusal(key)
             if refused:
                 raise EditRefused(index, refused, field=f"settings.{key}")
             if key in _OWN_OP:
                 raise EditRefused(index, f"'{key}' isn't set through settings: use {_OWN_OP[key]}.",
                                   field=f"settings.{key}")
+            names_connection = key == _CANVAS_COPY and isinstance(value, dict) and bool(
+                (CONNECTION_KEYS | set(_OWN_OP)) & set(value))
+            if names_connection or (key in CONNECTION_KEYS and key not in declared):
+                raise EditRefused(index, f"'{key}' isn't set through settings: a step's connection is set with "
+                                         "set_connection.", field=f"settings.{key}")
+            if key == _CANVAS_COPY and key not in declared:
+                raise EditRefused(index, "'config' is the app's copy of a step's settings: set the fields "
+                                         "themselves.", field=f"settings.{key}")
             if str(key).endswith("__label"):
                 raise EditRefused(index, f"'{key}' is the app's display cache; set "
                                          f"'{key[:-len('__label')]}' and the app shows its label.",
@@ -377,9 +400,10 @@ class GraphEditor:
             raise EditRefused(index, f"'{op.type}' isn't a step type NoClick has.", field="type")
         self._check_operation(index, op.type, op.operation)
         settings = copy.deepcopy(op.settings)
-        self._check_settings(index, op.type, settings)
+        self._check_settings(index, op.type, op.operation, settings)
         if op.operation:
             settings["operation"] = op.operation
+        _keep_connection_map(settings)
         node = new_node(op.type, settings, op.position.model_dump() if op.position else {"x": 0, "y": 0},
                         label=op.name)
         node["id"] = self._new_id(index, op.id, node["id"])
@@ -395,6 +419,8 @@ class GraphEditor:
     async def _update_step(self, index: int, op: UpdateStep) -> Dict[str, Any]:
         from utils.webhook_manager import _WEBHOOK_CONFIG_FIELDS, WebhookManager
 
+        from .graph_secrets import keep_withheld
+
         from .workflow_ops import (
             deep_merge_config, drop_stale_agent_discriminator, mcp_server_url_conflict, set_node_disabled,
             trigger_provider_conflict,
@@ -404,7 +430,7 @@ class GraphEditor:
         node_type = node.get("type", "")
         existing = copy.deepcopy(node_config(node))
         updates = copy.deepcopy(op.settings or {})
-        self._check_settings(index, node_type, updates)
+        self._check_settings(index, node_type, op.operation or existing.get("operation"), updates)
         if op.name is not None:
             updates["label"] = op.name
         if op.operation is not None:
@@ -420,6 +446,9 @@ class GraphEditor:
                 raise EditRefused(index, conflict, field="settings.server_url")
         await self._reserve_email(index, node_type, op.id, updates)
         merged = deep_merge_config(existing, updates)
+        # A secret no read showed stays when settings come back without it (a header row, a nested password).
+        keep_withheld(existing, merged, node_type, existing.get("operation"))
+        _keep_connection_map(merged)
         drop_stale_agent_discriminator(node_type, updates, merged)
         notes = self._postprocess(index, node, merged, changed=set(updates), prior=existing,
                                   harness_prior=existing if node_type == "agent" else None)
@@ -444,6 +473,9 @@ class GraphEditor:
         refused = runtime_key_refusal(op.field)
         if refused:
             raise EditRefused(index, refused, field="field")
+        if op.field in _OWN_OP or op.field in CONNECTION_KEYS or op.field == _CANVAS_COPY:
+            raise EditRefused(index, f"'{op.field}' isn't patched: use "
+                                     f"{_OWN_OP.get(op.field, 'set_connection')}.", field="field")
         existing = copy.deepcopy(node_config(node))
         config = copy.deepcopy(existing)
         err = apply_config_patch(config, op.field, op.patch)
@@ -558,6 +590,8 @@ class GraphEditor:
     async def _update_workflow(self, index: int, op: UpdateWorkflow) -> Dict[str, Any]:
         from utils.system_workflows import client_settings
 
+        from .graph_secrets import keep_withheld
+
         if op.name is not None:
             self.name = op.name.strip()
             if not self.name:
@@ -576,7 +610,8 @@ class GraphEditor:
             kept = sorted(set(op.settings) - set(allowed))
             if kept:
                 raise EditRefused(index, f"'{kept[0]}' is a setting only NoClick writes.", field=f"settings.{kept[0]}")
-            for key, value in allowed.items():
+            stored = {key: self._current_setting(key) for key in allowed if self._current_setting(key) is not None}
+            for key, value in keep_withheld(stored, copy.deepcopy(allowed), None, None).items():
                 self._write_settings(key, value)
         return {}
 
@@ -760,6 +795,23 @@ def describe_changes(old: Any, new: Any) -> List[str]:
               if e[0] in new_nodes and e[1] in new_nodes]
     if isinstance(new, dict) and ((old or {}).get("variables") or {}) != (new.get("variables") or {}):
         lines.append("changed its variables")
+    return lines
+
+
+_SETTING_LINES = {"variable_definitions": "changed its variables", "rehearsal_authoring": "changed its test runs"}
+
+
+def describe_fields(before: Dict[str, Any], after: Dict[str, Any]) -> List[str]:
+    """What a write changed of the workflow's own fields (``name``, ``description``, ``settings``), one line
+    each."""
+    lines = []
+    if (before.get("name") or "") != (after.get("name") or ""):
+        lines.append(f"renamed the workflow to '{after.get('name')}'")
+    if (before.get("description") or "") != (after.get("description") or ""):
+        lines.append("changed its description")
+    old, new = before.get("settings") or {}, after.get("settings") or {}
+    lines += [_SETTING_LINES.get(k, f"changed its setting {k}")
+              for k in sorted(set(old) | set(new)) if old.get(k) != new.get(k)]
     return lines
 
 

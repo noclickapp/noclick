@@ -77,7 +77,7 @@ from utils.relay_tokens import mint_user_room_token
 from utils.activity import signal_activity
 from utils.workflow_delta import compute_workflow_delta
 from utils.workflow_reconcile import reconcile_graph_change
-from coder.workflow.graph_service import Author, record_save
+from coder.workflow.graph_service import Author, definition, record_save
 from utils.analytics import log_activity_background
 from utils.analytics_events import Events
 from repositories.workflow import WorkflowRepo
@@ -996,9 +996,9 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                     ))
                     return
 
-                # Dynamic UPDATE + CTE to capture old (name, workflow) in one query so
+                # Dynamic UPDATE + CTE to capture the old definition in one query so
                 # the caller can compute the Slack delta without a second read; a
-                # graph save is a version, recorded in the same transaction.
+                # save of the definition is a version, recorded in the same transaction.
                 repo = WorkflowRepo(pool)
                 async with conn.transaction():
                     row = await repo.update_workflow_dynamic(
@@ -1012,10 +1012,14 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                         settings=client_settings(request.settings) if request.settings is not None else None,
                         expected_graph_version=request.expected_graph_version,
                     )
-                    if row and request.workflow_data is not None:
-                        await record_save(conn, request.workflow_id, Author(user_id), source="canvas",
-                                          before=row['old_workflow'], graph=row['workflow'],
-                                          version=row['graph_version'])
+                    if row and any(v is not None for v in (request.workflow_data, request.name,
+                                                             request.description, request.settings)):
+                        await record_save(
+                            conn, request.workflow_id, Author(user_id), source="canvas",
+                            before=definition(row['old_workflow'], row['old_name'], row['old_description'],
+                                              row['old_settings']),
+                            after=definition(row['workflow'], row['name'], row['description'], row['settings']),
+                            version=row['graph_version'])
 
                 # CAS miss: the row exists but another writer bumped
                 # graph_version since this client loaded. Return the current
@@ -1065,13 +1069,16 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 graph_version=row.get('graph_version'),
             )
 
-            # What the save sets in motion outside the graph (removed steps' cleanup and
-            # inboxes, trigger registrations, re-added steps), judged from the graph
-            # before and after it. Spawned: it makes provider round-trips that must not
-            # block the save ack or pin a pool connection.
-            if request.workflow_data is not None and row.get('old_workflow') is not None:
+            # What the save sets in motion outside the graph (the cleanup and inboxes of
+            # the steps it says it deleted, trigger registrations, re-added steps), judged
+            # from the graph before and after it. Spawned: it makes provider round-trips
+            # that must not block the save ack or pin a pool connection.
+            if request.workflow_data is not None or request.deleted_node_ids:
                 spawn(
-                    reconcile_graph_change(pool, request.workflow_id, user_id, row['old_workflow'], row['workflow']),
+                    reconcile_graph_change(pool, request.workflow_id, user_id,
+                                           row['old_workflow'] if row.get('old_workflow') is not None
+                                           else row['workflow'], row['workflow'],
+                                           deleted=request.deleted_node_ids or ()),
                     name=f"workflow-reconcile:{request.workflow_id}",
                 )
 
