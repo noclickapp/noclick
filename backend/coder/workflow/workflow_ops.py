@@ -339,6 +339,124 @@ def validate_agent_tool_operations(
     return normalized, None
 
 
+# Canvas-level config keys outside every operation's Pydantic model (an agent's tool allowlist, sandbox mounts,
+# requested env vars): a config carrying one isn't judged against the operation model.
+CANVAS_ONLY_CONFIG_KEYS = frozenset({"agent_tool_operations", "agent_sandbox_repos", "agent_env_requested"})
+
+
+def normalize_canvas_fields(node_type: str, updates: Dict[str, Any]) -> None:
+    """Normalize the canvas-level fields a write sets (``CANVAS_ONLY_CONFIG_KEYS``), in place; raises
+    ``ValueError`` naming the field when one can't be."""
+    if "agent_sandbox_repos" in updates:
+        from nodes.agent.node_op_tools import normalize_sandbox_repos
+
+        repos, err = normalize_sandbox_repos(updates["agent_sandbox_repos"])
+        if err:
+            raise ValueError(f"agent_sandbox_repos: {err}")
+        updates["agent_sandbox_repos"] = repos
+    if "agent_tool_operations" in updates:
+        allowed, err = validate_agent_tool_operations(node_type, updates["agent_tool_operations"])
+        if err:
+            raise ValueError(f"agent_tool_operations: {err}")
+        updates["agent_tool_operations"] = allowed
+    if "agent_env_requested" in updates:
+        from nodes.agent.user_env import normalize_requested_env_vars
+
+        requested, err = normalize_requested_env_vars(updates["agent_env_requested"])
+        if err:
+            raise ValueError(f"agent_env_requested: {err}")
+        updates["agent_env_requested"] = requested
+
+
+# ---------------------------------------------------------------------------
+# Graph primitives over the stored shape ({nodes, edges} dicts)
+# ---------------------------------------------------------------------------
+
+def new_node(
+    node_type: str,
+    config: Optional[Dict[str, Any]],
+    position: Dict[str, float],
+    *,
+    label: Optional[str] = None,
+) -> Dict[str, Any]:
+    """A node in the stored shape, its id minted from its type."""
+    node_config = dict(config) if config else {}
+    if label:
+        node_config["label"] = label
+    return {
+        "id": f"{node_type}-{int(time.time() * 1000)}-{uuid.uuid4().hex[:6]}",
+        "type": node_type,
+        "position": position,
+        "config": node_config,
+    }
+
+
+def check_edge(
+    nodes_by_id: Mapping[str, Dict[str, Any]],
+    edges: List[Dict[str, Any]],
+    source_id: str,
+    target_id: str,
+    *,
+    edge_type: Optional[str] = None,
+    handle: Optional[str] = None,
+    source_name: Optional[str] = None,
+) -> Tuple[Optional[str], Optional[str]]:
+    """The ``(sourceHandle, targetHandle)`` a new edge between two existing
+    nodes takes: a tool-provider edge (``edge_type="tools"``, or wiring that
+    can only be one) runs top→bottom, a dataflow edge keeps ``handle``, which
+    must be one of the source's output handles. Raises ``ValueError`` saying
+    why the edge can't be added (connectionless types, provider-vs-dataflow,
+    trigger-vs-provider and hosting-vs-proxy conflicts). ``source_name`` is
+    what the messages call the source."""
+    from nodes.core.registry import NODE_REGISTRY, validate_edge
+
+    name = source_name or source_id
+    source, target = nodes_by_id[source_id], nodes_by_id[target_id]
+    source_type, target_type = source.get("type", ""), target.get("type", "")
+    edge_err = validate_edge(source_type, target_type)
+    if edge_err:
+        raise ValueError(edge_err)
+    tools_handles, tools_err = resolve_tools_edge(source_type, target_type, edge_type=edge_type, source_handle=handle)
+    if tools_err:
+        raise ValueError(tools_err)
+    conflict = provider_dataflow_conflict(source_id, edges, new_edge_is_tools=tools_handles is not None)
+    if conflict:
+        raise ValueError(conflict)
+    if tools_handles:
+        from utils.graph_nodes import node_config
+
+        conflict = (trigger_provider_conflict(source_type, node_config(source).get("operation"))
+                    or mcp_hosting_conflict(target_type, node_config(target)))
+        if conflict:
+            raise ValueError(conflict)
+        return tools_handles
+    if handle:
+        source_class = NODE_REGISTRY.get(source_type)
+        source_handles = source_class.get_output_handles() if source_class else None
+        valid = {h["id"] for h in (source_handles or []) if isinstance(h, dict) and "id" in h}
+        if not valid:
+            raise ValueError(
+                f'handle="{handle}" but source \'{name}\' ({source_type}) is a single-output node with no named '
+                f"handles — remove handle= and encode any branching inside the source node's config.")
+        if handle not in valid:
+            shown = ", ".join(f'"{h}"' for h in sorted(valid))
+            raise ValueError(f'handle="{handle}" but source \'{name}\' ({source_type}) only supports handles: {shown}.')
+    return handle, None
+
+
+def new_edge(source_id: str, target_id: str, source_handle: Optional[str] = None,
+             target_handle: Optional[str] = None) -> Dict[str, Any]:
+    edge: Dict[str, Any] = {
+        "id": f"{source_id}-{target_id}" + (f"-{source_handle}" if source_handle else ""),
+        "source": source_id, "target": target_id, "type": "animated",
+    }
+    if source_handle:
+        edge["sourceHandle"] = source_handle
+    if target_handle:
+        edge["targetHandle"] = target_handle
+    return edge
+
+
 # ---------------------------------------------------------------------------
 # Primitive config mutations
 # ---------------------------------------------------------------------------
@@ -830,6 +948,169 @@ def misplaced_agent_model(values: Mapping[str, Any]) -> Optional[str]:
                 f"model the {harness} harness runs, such as {example!r}."
             )
     return None
+
+
+async def read_model_catalog(nodes: Iterable[Dict[str, Any]], written: Iterable[Any] = ()) -> None:
+    """Read models.dev off the event loop for the agents' Models, saved or
+    ``written``: writes and verdicts judge them against it synchronously
+    (``misplaced_agent_model``, ``agent_credential_requirement``)."""
+    from nodes.agent.config.harness_model_lists import AGENT_ZEN_MODEL_FIELDS, read_zen_catalog
+
+    await read_zen_catalog([
+        *(((n.get("data") or n).get("config") or {}).get(f) for n in nodes if n.get("type") == "agent"
+          for f in AGENT_ZEN_MODEL_FIELDS),
+        *written,
+    ])
+
+
+def judge_config(
+    node_type: str, operation: Optional[str], config: Dict[str, Any], *, trigger_fed: bool,
+) -> Dict[str, Any]:
+    """Whether a node's config can run, as the run engine judges it: Pydantic +
+    JSX + placeholder lint (``config_valid``, ``validation_error``), the
+    required fields still empty, and an agent's Message (required unless a
+    trigger feeds it) and the account its model needs."""
+    from .operation_catalog import missing_required_fields, validate_node_config
+
+    error = validate_node_config(node_type, operation or "default", config)
+    if error is None and node_type == "agent":
+        error = agent_message_error(config, trigger_fed=trigger_fed)
+    verdict: Dict[str, Any] = {"config_valid": error is None}
+    if error:
+        verdict["validation_error"] = error
+    missing = missing_required_fields(node_type, operation, config)
+    if missing:
+        verdict["missing_required"] = missing
+    if node_type == "agent":
+        from nodes.agent.config.providers import agent_credential_requirement, claude_plan_refusal
+
+        req = agent_credential_requirement(config)
+        refusal = claude_plan_refusal(config, config.get("credentialIds"))
+        if req.required and (refusal or not node_has_credential(config)):
+            verdict["agent_credential_hint"] = {
+                "credential_type": req.credential_type,
+                "accepted_types": list(req.accepted_types),
+                "label": req.label,
+                **({"refused": refusal} if refusal else {}),
+            }
+    return verdict
+
+
+def postprocess_config(
+    node_type: str,
+    operation: Optional[str],
+    config: Dict[str, Any],
+    *,
+    is_provider: bool = False,
+    upstream_trigger_ids: Optional[Collection[str]] = None,
+    changed_keys: Optional[Collection[str]] = None,
+    prior_config: Optional[Dict[str, Any]] = None,
+    harness_prior: Optional[Dict[str, Any]] = None,
+    judge: bool = True,
+) -> Optional[Dict[str, Any]]:
+    """Canonicalize a merged node config IN PLACE and return a structured
+    verdict: the post-write pass every AI and API write runs (resolve
+    queryable enums → coerce stringified JSON → revert wrong-typed changed
+    keys → strip placeholder auth headers and an agent's trigger references →
+    ``judge_config`` unless ``judge`` is False).
+
+    ``harness_prior`` is the whole config before an update: an agent the
+    update moved to another harness drops the old one's leftovers
+    (``switch_agent_harness``, judged on the resolved model), reported as
+    ``harness_switch``.
+
+    Mutates *config*: queryable-enum values are rewritten to their canonical
+    id, ``__label`` display-cache sidecars are dropped (the FE re-derives
+    them), stringified JSON in structured fields is parsed, and placeholder
+    auth headers are removed (surfaced as a credential hint). Changed keys
+    whose values are STILL wrong-typed after coercion are REVERTED to
+    ``prior_config`` (dropped when absent there) and named in
+    ``rejected_values``: a wrong-typed value kills every run at the node's
+    runtime parse. Returns None when there's nothing to judge (a
+    provider-wired node, or a config carrying canvas-only keys).
+    """
+    from .operation_catalog import coerce_config_value_types, config_value_errors, get_operation_schema
+    from .option_registries.resolver import format_resolution_block, resolve_config_dict
+
+    strip_label_sidecars(config)
+
+    def _switch_harness() -> Optional[Dict[str, Any]]:
+        if harness_prior is None:
+            return None
+        switch = switch_agent_harness(
+            node_type, harness_prior, config,
+            label=config.get("label", ""), keep_label="label" in (changed_keys or ()),
+        )
+        if switch and switch.label:
+            config["label"] = switch.label
+        return switch.as_dict() if switch else None
+
+    if is_provider or (CANVAS_ONLY_CONFIG_KEYS & set(config.keys())):
+        harness_switch = _switch_harness()
+        return {"harness_switch": harness_switch} if harness_switch else None
+
+    op = operation or "default"
+    resolutions = resolve_config_dict(get_operation_schema(node_type, op), config)
+    harness_switch = _switch_harness()
+
+    coerced_notes = coerce_config_value_types(node_type, op, config)
+    rejected_values: List[Dict[str, str]] = []
+    if changed_keys:
+        for key, msg in config_value_errors(node_type, op, config):
+            if key not in changed_keys:
+                continue
+            val = config.get(key)
+            if isinstance(val, str) and "{{" in val:
+                continue  # runtime template — can't be judged statically
+            if key not in (prior_config or {}):
+                config.pop(key, None)
+            else:
+                config[key] = (prior_config or {})[key]
+            rejected_values.append({"field": key, "error": msg})
+
+    auth_hint = None
+    if node_type == "automation-http-request":
+        stripped = strip_placeholder_auth_headers(config)
+        if stripped:
+            cred_type, label = http_auth_credential_hint(stripped)
+            auth_hint = {"credential_type": cred_type, "label": label}
+
+    stripped_trigger_refs: List[str] = []
+    if node_type == "agent":
+        # Templated refs to a direct-upstream trigger break at runtime (event delivery is automatic).
+        stripped_trigger_refs = strip_agent_trigger_message_refs(config, upstream_trigger_ids or ())
+
+    verdict: Dict[str, Any] = (
+        judge_config(node_type, operation, config, trigger_fed=bool(upstream_trigger_ids)) if judge else {}
+    )
+    if coerced_notes:
+        verdict["coerced_values"] = coerced_notes
+    if rejected_values:
+        verdict["rejected_values"] = {
+            "fields": rejected_values,
+            "reason": (
+                "these values were wrong-typed for the operation's schema "
+                "and were NOT saved — re-send them matching the schema"
+            ),
+        }
+    if auth_hint:
+        verdict["http_auth_credential_hint"] = auth_hint
+    if stripped_trigger_refs:
+        verdict["stripped_trigger_refs"] = {
+            "node_ids": stripped_trigger_refs,
+            "reason": (
+                "a wired trigger's fired event is delivered to the agent "
+                "automatically — message must hold standing instructions, "
+                "not a template of the event"
+            ),
+            "message": config.get("message"),
+        }
+    res_lines = [line for r in resolutions for line in format_resolution_block(r)]
+    if res_lines:
+        verdict["resolutions"] = res_lines
+    if harness_switch:
+        verdict["harness_switch"] = harness_switch
+    return verdict
 
 
 # ---------------------------------------------------------------------------
