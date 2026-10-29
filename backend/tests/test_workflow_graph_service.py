@@ -56,7 +56,7 @@ def told():
     """The notices (the owner's pages, the canvases' room), as (owner, workflow, version)."""
     calls = []
 
-    async def tell(owner_id, workflow_id, version):
+    async def tell(owner_id, workflow_id, version, canvas=()):
         calls.append((owner_id, workflow_id, version))
 
     with patch("coder.workflow.graph_service.tell", side_effect=tell):
@@ -135,6 +135,34 @@ class TestWrites:
         assert told == [(OWNER, workflow_id, 2)]
         [(user, old, new)] = reconciled
         assert user == OWNER and _labels(old)["log"] == "Log" and _labels(new)["log"] == "Record"
+
+    async def test_every_canvas_open_on_it_is_sent_what_changed_then_the_version(self, db, reconciled):
+        """Whoever's canvas it is (a collaborator's too): the workflow's room carries the change as the builder's
+        events, then one notice of the version."""
+        heard = []
+
+        class Room:
+            def __init__(self, workflow_id, execution_id, user_id, **kwargs):
+                pass
+
+            def start(self):
+                return None
+
+            async def send_event(self, event):
+                heard.append(event)
+
+            async def close(self):
+                return None
+
+        workflow_id = await _workflow(db)
+        with patch("utils.execution_relay.create_execution_relay", Room), \
+                patch("utils.capabilities.capability", lambda name: None):
+            await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "Record"},
+                                           {"op": "remove_step", "id": "hook"}])
+        assert heard[-1] == {"type": "workflow:graph_changed", "workflow_id": workflow_id, "version": 2}
+        assert [(e["type"], e["event_type"], e["data"]) for e in heard[:-1]] == [
+            ("mcp:builder_event", "node_removed", {"nodeId": "hook", "removedEdgeIds": ["hook-agent"]}),
+            ("mcp:builder_event", "node_updated", {"nodeId": "log", "config": {"label": "Record"}})]
 
     async def test_a_stale_version_is_refused_with_the_workflow_as_it_stands(self, db, told, reconciled):
         workflow_id = await _workflow(db)

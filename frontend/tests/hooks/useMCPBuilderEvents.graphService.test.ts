@@ -1,12 +1,14 @@
 // @vitest-environment jsdom
-// A write through the graph service (/v1/workflows/{id}/edits, a restore) sends the canvases open on the
-// workflow what changed as the builder's events (coder/workflow/graph_service.py: canvas_events). An open canvas
-// applies them to its own copy, so its next save carries the write instead of putting the old steps back.
+// A write through the graph service (/v1/workflows/{id}/edits, a restore) sends every canvas open on the
+// workflow, whoever's, what changed as the builder's events in the workflow's room on the relay
+// (coder/workflow/graph_service.py: canvas_events). An open canvas applies them to its own copy, so its next save
+// carries the write instead of putting the old steps back.
 import type { Edge, Node } from '@xyflow/react';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createWorkflowNode } from '~/lib/applyNodeUpdate';
 import { useMCPBuilderEvents } from '~/hooks/useMCPBuilderEvents';
+import { WorkflowPresenceService } from '~/lib/collaboration/workflowPresenceService';
 
 const handlers: Record<string, (event: unknown) => void> = {};
 vi.mock('~/lib/socket-receiver', () => ({
@@ -14,7 +16,25 @@ vi.mock('~/lib/socket-receiver', () => ({
         handlers[event] = handler;
         return () => undefined;
     }),
+    socketReceiver: { injectWireEvent: (event: string, payload: unknown) => handlers[event]?.(payload) },
 }));
+
+class RoomSocket {
+    static last: RoomSocket;
+    onopen: (() => void) | null = null;
+    onmessage: ((event: { data: string }) => void) | null = null;
+    onclose: ((event: { code: number }) => void) | null = null;
+    onerror: ((error: unknown) => void) | null = null;
+    readyState = 1;
+
+    constructor(public url: string) {
+        RoomSocket.last = this;
+    }
+
+    send(): void {}
+
+    close(): void {}
+}
 
 afterEach(() => vi.clearAllMocks());
 
@@ -64,6 +84,39 @@ describe('a graph service write on an open canvas', () => {
         expect(state.edges.map((e) => [e.source, e.target])).toEqual([['note', 'done']]);
         unmount();
         vi.useRealTimers();
+    });
+
+    it('reaches a collaborator\'s canvas through the workflow\'s room', () => {
+        vi.stubGlobal('WebSocket', RoomSocket);
+        const room = new WorkflowPresenceService();
+        room.connect({ workflowId: 'wf', localUser: { id: 'collaborator', name: 'Sam' }, token: 'token' });
+        const { state, setNodes, setEdges } = canvas(
+            [
+                createWorkflowNode('hook', 'trigger-webhook', { x: 0, y: 0 }, { label: 'Hook' }),
+                createWorkflowNode('note', 'log', { x: 0, y: 200 }, { label: 'Note' }),
+            ],
+            [{ id: 'hook-note', source: 'hook', target: 'note' }],
+        );
+        const { unmount } = renderHook(() => useMCPBuilderEvents({ workflowId: 'wf', setNodes, setEdges }));
+        const heard = (event: Record<string, unknown>) =>
+            act(() => RoomSocket.last.onmessage!({ data: JSON.stringify(event) }));
+
+        heard({
+            type: 'mcp:builder_event', workflow_id: 'wf', execution_id: 'graph-1', event_type: 'node_removed',
+            data: { nodeId: 'hook', removedEdgeIds: ['hook-note'] },
+        });
+        heard({
+            type: 'mcp:builder_event', workflow_id: 'wf', execution_id: 'graph-1', event_type: 'node_updated',
+            data: { nodeId: 'note', config: { label: 'Order note' } },
+        });
+        heard({ type: 'workflow:graph_changed', workflow_id: 'wf', version: 3 });
+
+        expect(state.nodes.map((n) => n.id)).toEqual(['note']);
+        expect(state.nodes[0].data.label).toBe('Order note');
+        expect(state.edges).toEqual([]);
+        unmount();
+        room.disconnect();
+        vi.unstubAllGlobals();
     });
 
     it('leaves another workflow alone', () => {

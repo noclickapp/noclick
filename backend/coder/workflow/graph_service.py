@@ -10,18 +10,23 @@ what the change sets in motion outside the graph (``utils.workflow_reconcile``),
 whose own writes (a trigger's webhook fields) move the version on: the version
 handed back is the one they left, so a caller edits on from it. Then it tells
 whoever watches, once: the owner's open pages (the ``WORKFLOW_GRAPH_CHANGED``
-capability) and every canvas open on the workflow (its room on the relay, a
+capability) and every canvas open on the workflow, whoever's (its room on the
+relay: the change as the builder's canvas events, then a
 ``workflow:graph_changed`` event). ``restore`` writes a version back the same
 way.
 
 A version (``workflow_versions``) holds the definition whole: the graph, the
 name, the description and the settings a client may write (never NoClick's own,
-``utils.system_workflows``), so a restore puts all of it back. It's keyed by
-the ``graph_version`` its write produced. Writes by one author from one source
-within ``JOIN_S`` of the last are one version (a canvas session is one, not five
-hundred); a restore never joins another. A write that only moved things
-(layout) is no version. A workflow's first version is what it was before
-(``baseline``), so its first change can be undone. The canvas's save records
+``utils.system_workflows``), so a restore puts all of it back. Its
+``history_version`` is given by its first write (the ``graph_version`` that
+write produced) and never changes; its ``version`` is the one its latest write
+produced. One author's writes from one source join their newest version while
+it's under ``JOIN_S`` from its first write, whoever wrote in between (a canvas
+session is one, not five hundred); a restore never joins another. The newest
+version is open (the workflow as it stands) until the next one closes it with
+its definition. A write that only moved things (layout) is no version. A
+workflow's first version is what it was before (``baseline``), so its first
+change can be undone. The canvas's save records
 through ``record_save``: a graph save as any write; a change to only the
 workflow's own fields moves no version (the canvas's next save mustn't conflict
 with its own rename), so it joins the author's own canvas version or is carried
@@ -51,6 +56,8 @@ JOIN_S = 300
 # What a run leaves on a node, never what the node is.
 RUN_STATE_FIELDS = frozenset({"output", "outputTimestamp", "executionState", "error", "configValid"})
 GRAPH_CHANGED_EVENT = "workflow:graph_changed"
+# The builder's canvas events (``useMCPBuilderEvents``), as the workflow's room carries them.
+CANVAS_EVENT = "mcp:builder_event"
 _FIELDS = ("name", "description", "settings")
 
 
@@ -499,10 +506,9 @@ async def restore(pool, author: Author, workflow_id: str, number: int, *,
 
 async def _settle(pool, owner_id, workflow_id: str, author: Author, before: Dict[str, Any],
                   after: Dict[str, Any], version: int, *, reconcile: bool) -> Tuple[int, Dict[str, Any]]:
-    """Reconcile what the write changed, then (spawned, off the answer's path) show the canvases open on it what
-    changed (``canvas_events``) and tell whoever watches once, at the version the reconcile's own writes left (the
-    write's own when it wrote none, or when another writer's came in between). Returns that version and the
-    definition at it."""
+    """Reconcile what the write changed, then (spawned, off the answer's path) tell whoever watches once, with what
+    changed (``canvas_events``), at the version the reconcile's own writes left (the write's own when it wrote none,
+    or when another writer's came in between). Returns that version and the definition at it."""
     from repositories.workflow import WorkflowRepo
     from utils.async_helpers import spawn
     from utils.workflow_reconcile import reconcile_graph_change
@@ -516,16 +522,9 @@ async def _settle(pool, owner_id, workflow_id: str, author: Author, before: Dict
     async with pool.acquire() as conn:
         row = await WorkflowRepo(pool).read_graph(conn, workflow_id)
     now = _of(row) if row is not None and row["graph_version"] == version else after
-    spawn(_notify(str(owner_id), author.user_id, workflow_id, before, now, version),
+    spawn(tell(str(owner_id), workflow_id, version, canvas_events(before, now)),
           name=f"workflow-graph-notify:{workflow_id}")
     return version, now
-
-
-async def _notify(owner_id: str, user_id: str, workflow_id: str, before: Dict[str, Any], after: Dict[str, Any],
-                  version: int) -> None:
-    """Off the answer's path, as best effort is: the canvases first, then the one notice."""
-    await show_canvases({owner_id, user_id}, workflow_id, before, after)
-    await tell(owner_id, workflow_id, version)
 
 
 def canvas_events(before: Dict[str, Any], after: Dict[str, Any]) -> List[Tuple[str, Dict[str, Any]]]:
@@ -576,25 +575,11 @@ def canvas_events(before: Dict[str, Any], after: Dict[str, Any]) -> List[Tuple[s
     return events
 
 
-async def show_canvases(users, workflow_id: str, before: Dict[str, Any], after: Dict[str, Any]) -> None:
-    """Send ``users``' open canvases of the workflow what a write changed (``canvas_events``). Best effort, as the
-    relay is."""
-    from utils.event_relay import broadcast_to_user_safe
-    from wss.sender.events import MCPBuilderEvent
-
-    for event_type, data in canvas_events(before, after):
-        for user_id in users:
-            try:
-                await broadcast_to_user_safe(user_id, MCPBuilderEvent(workflow_id=workflow_id, event_type=event_type,
-                                                                      data=data), workflow_id=workflow_id)
-            except Exception:
-                logger.warning("[graph] showing %s's canvases a change to %s failed", user_id, workflow_id,
-                               exc_info=True)
-
-
-async def tell(owner_id: str, workflow_id: str, version: int) -> None:
-    """The workflow is at ``version`` now: its owner's open pages read it again, and so does every canvas open on
-    it (its room on the relay). Best effort, as the relay is."""
+async def tell(owner_id: str, workflow_id: str, version: int,
+               canvas: Sequence[Tuple[str, Dict[str, Any]]] = ()) -> None:
+    """The workflow is at ``version`` now: its owner's open pages read it again, and every canvas open on it,
+    whoever's (its room on the relay), applies what changed (``canvas``: ``canvas_events``) to its own copy, then
+    hears the version. Best effort, as the relay is."""
     from utils.capabilities import WORKFLOW_GRAPH_CHANGED, capability
     from utils.execution_relay import create_execution_relay
 
@@ -607,6 +592,9 @@ async def tell(owner_id: str, workflow_id: str, version: int) -> None:
     relay = create_execution_relay(workflow_id, f"graph-{uuid.uuid4()}", owner_id)
     try:
         relay.start()
+        for event_type, data in canvas:
+            await relay.send_event({"type": CANVAS_EVENT, "workflow_id": workflow_id, "event_type": event_type,
+                                    "data": data})
         await relay.send_event({"type": GRAPH_CHANGED_EVENT, "workflow_id": workflow_id, "version": version})
     except Exception:
         logger.warning("[graph] notice to the canvases of %s failed", workflow_id, exc_info=True)
