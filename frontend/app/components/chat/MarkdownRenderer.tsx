@@ -17,7 +17,7 @@ import panzoom from 'panzoom';
 import { cn } from '~/lib/utils';
 import { Copy, Check } from 'lucide-react';
 import { renderMermaidDiagram, initializeMermaid } from './mermaid/renderDiagram';
-import { ChatFileCard } from '~/components/chat/ChatReferenceChip';
+import { ChatFileCard, ChatPicture } from '~/components/chat/ChatReferenceChip';
 import { RecordingCard, VideoCard } from '~/components/coordinator/inline/media';
 import { embedKindOf, fileNameOf } from '~/lib/embedKind';
 import 'katex/dist/katex.min.css';
@@ -631,13 +631,8 @@ const MarkdownRendererComponent = function({ content, className, variant = 'defa
                         if (kind === 'audio') return <RecordingCard src={src} title={alt || 'Recording'} />;
                         if (kind === 'video') return <VideoCard src={src} caption={alt || undefined} />;
                         if (kind === 'file' && src) return <ChatFileCard name={fileNameOf(src)} url={src} title={alt || undefined} />;
-                        return (
-                            <img
-                                src={src}
-                                alt={alt}
-                                className="max-w-full h-auto rounded-lg my-2"
-                            />
-                        );
+                        if (typeof src === 'string' && src) return <ChatPicture src={src} alt={alt || undefined} />;
+                        return <img src={src} alt={alt} className="my-2 h-auto max-h-[min(60vh,480px)] max-w-full rounded-lg" />;
                     },
                 }}
             >

@@ -100,6 +100,39 @@ describe('MarkdownRenderer', () => {
         expect(container.querySelector('img')?.getAttribute('alt')).toBe('Logo');
     });
 
+    it('draws a picture about as big as a phone shows one, and opens it whole when tapped', async () => {
+        // A render's A/B/C card, as the coordinator embeds it: a portrait picture the column's width made taller than
+        // the window (2026-10-29).
+        const url = 'https://api.example.test/f/tok123/three-portfolio-directions.png';
+        render(<MarkdownRenderer content={`Here are the three designs.\n\n![Three portfolio directions](${url})`} />);
+        const picture = screen.getByTestId('chat-picture');
+        const img = picture.querySelector('img')!;
+        expect(img.getAttribute('src')).toBe(url);
+        expect(img.getAttribute('alt')).toBe('Three portfolio directions');
+        // Capped in height, never stretched past its own width or the column's.
+        const classes = img.className.split(/\s+/);
+        expect(classes).toEqual(expect.arrayContaining(['max-h-[min(60vh,480px)]', 'w-auto', 'max-w-full']));
+        expect(classes).not.toContain('w-full');
+        expect(picture.getAttribute('href')).toBe(url);
+
+        picture.focus();
+        fireEvent.click(picture);
+        const preview = await screen.findByTestId('dashboard-file-preview');
+        expect(within(preview).getByText('three-portfolio-directions.png')).toBeTruthy();
+        expect(within(preview).getByRole('img').getAttribute('src')).toBe(url);
+        fireEvent.keyDown(preview, { key: 'Escape' });
+        await waitFor(() => expect(screen.queryByTestId('dashboard-file-preview')).toBeNull());
+        expect(document.activeElement).toBe(picture);
+    });
+
+    it('opens a picture in a tab on a modified click, as a link does', () => {
+        render(<MarkdownRenderer content={'![Logo](https://x.test/logo.png)'} />);
+        const picture = screen.getByTestId('chat-picture');
+        expect(picture.getAttribute('target')).toBe('_blank');
+        fireEvent.click(picture, { metaKey: true });
+        expect(screen.queryByTestId('dashboard-file-preview')).toBeNull();
+    });
+
     it('draws a PDF as a file card under its caption, which opens the PDF in the preview', async () => {
         const { container } = render(<MarkdownRenderer content={BRIEFING} />);
         expect(container.querySelector('img')).toBeNull();

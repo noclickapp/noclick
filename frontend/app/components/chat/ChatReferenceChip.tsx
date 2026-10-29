@@ -8,7 +8,7 @@ import { fmtBytes } from '~/components/dashboard/formatters';
 import { ACTION_GLYPHS, AutomationMark } from '~/components/shell/glyphs';
 import { FileGlyph } from '~/components/shell/resources/FileGlyph';
 import type { ChatReference } from '~/lib/agentChat';
-import { extensionOf, fileKindOf, previewType } from '~/lib/embedKind';
+import { extensionOf, fileKindOf, fileNameOf, previewType } from '~/lib/embedKind';
 import { cn } from '~/lib/utils';
 
 export function ChatReferenceChip({ reference, mark, onRemove, className }: { reference: ChatReference; mark?: ReactNode; onRemove?: () => void; className?: string }) {
@@ -37,6 +37,41 @@ export function ChatReferenceChip({ reference, mark, onRemove, className }: { re
 
 // The preview loads with the first file opened, so a page that only shows a card never loads it.
 const FilePreviewDialog = lazy(() => import('~/components/dashboard/FilePreviewDialog').then((m) => ({ default: m.FilePreviewDialog })));
+
+/** A picture in a message, about as big as a phone shows one: no taller than the lesser of 60% of the window and
+ *  480px, as wide as the column lets it be within that (a portrait card is phone-width, a wide chart takes the column).
+ *  Tapped, it opens whole in the preview; a modified click opens it in a tab. */
+export function ChatPicture({ src, alt }: { src: string; alt?: string }) {
+    const [previewing, setPreviewing] = useState<boolean | null>(null);
+    const name = fileNameOf(src);
+    const open = (e: MouseEvent) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        setPreviewing(true);
+    };
+    return (
+        <>
+            <a href={src} target="_blank" rel="noopener noreferrer" onClick={open} title={alt || name} data-testid="chat-picture" className="my-2 block w-fit max-w-full cursor-zoom-in">
+                <img src={src} alt={alt} className="block h-auto max-h-[min(60vh,480px)] w-auto max-w-full rounded-lg" />
+            </a>
+            {previewing !== null && (
+                <Suspense fallback={null}>
+                    <FilePreviewDialog
+                        request={
+                            previewing
+                                ? {
+                                      file: { path: name, size: 0, mtime: '', kind: 'image', url: src, mime: `image/${extensionOf(name)}` },
+                                      source: { id: src, kind: 'resources', label: '', sublabel: '', files: [] },
+                                  }
+                                : null
+                        }
+                        onClose={() => setPreviewing(false)}
+                    />
+                </Suspense>
+            )}
+        </>
+    );
+}
 
 /** A file in a message, as a card: its kind in a tile, its title (what the message calls it, an embed's caption,
  *  else its name), its type and its size when known. One the preview shows (a PDF, a picture, text of a known size)
