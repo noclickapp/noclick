@@ -1,6 +1,7 @@
 """The date and time an agent's turn is told (``nodes.agent.turn_clock``), and
 the agent node opening a turn with it when a platform set the clock."""
 
+import uuid
 from datetime import datetime, timezone
 
 from nodes.agent.turn_clock import TURN_CLOCK_KEY, clock_line, clock_of
@@ -33,6 +34,10 @@ def test_only_a_platform_set_clock_counts():
         assert clock_of(config) is None
 
 
+# A workflow id as every real one is: a deployment's turn may look its workflow up (whether its agents draw pictures).
+WORKFLOW_ID = str(uuid.uuid4())
+
+
 class _Reached(Exception):
     """Raised at the first step after the turn is composed."""
 
@@ -44,7 +49,7 @@ async def _composed(monkeypatch, config: dict) -> str:
 
     data = {"config": {"model": "openrouter/openai/gpt-4o-mini", "message": "What happened last month?", **config}}
     agent = AgentNode(node_id="agent_1", node_type="agent", node_data=data, config=AgentNode.parse_config(data),
-                      sio=None, sid=None, workflow_id="wf_1")
+                      sio=None, sid=None, workflow_id=WORKFLOW_ID)
 
     async def _no_emit(*a, **k):
         return None
