@@ -963,7 +963,8 @@ class Agent:
         wrap_up = getattr(self, "_wrap_up", {})
         guard = TurnGuard(getattr(self, "_limits", None) or TurnLimits(), getattr(self, "_billing_hooks", None),
                           ends_unfunded=guards.FUNDS in wrap_up, ends_stalled=guards.STALLED in wrap_up,
-                          ends_unsaid=guards.HANDED_ON in wrap_up, so_far=getattr(self, "_so_far", None))
+                          ends_unsaid=guards.HANDED_ON in wrap_up, ends_stopped=guards.STOPPED in wrap_up,
+                          so_far=getattr(self, "_so_far", None))
         self._so_far = None
         self._turn_guard, self.turn_ended_by, self.turn_closing = guard, None, None
         try:
@@ -1202,14 +1203,16 @@ class Agent:
             break  # attempt succeeded
 
         # A guard that stopped the run, rather than the model's answer: the turn wraps up once, or ends on its line.
-        # One a tool's result handed on before it said a word says it in that one call, or ends with nothing.
+        # One a tool's result handed on before it said a word says it in that one call, or ends with nothing; one a
+        # result stopped says there where the work stands.
         closing: List[Dict[str, Any]] = []
         stopped = result is not None and result.final_output is None and not guard.paused
         ended_by = guard.tripped if stopped else None
         if ended_by == guards.FUNDS:
             await self._end_unfunded(guard, result.to_input_list(), run_config, env_overrides)
             return
-        closing_for = ended_by or (guards.HANDED_ON if stopped and guard.owes_line else None)
+        closing_for = ended_by or (guards.STOPPED if stopped and guard.stopped_work else None) or (
+            guards.HANDED_ON if stopped and guard.owes_line else None)
         wrapped = None
         if closing_for is not None:
             self.turn_ended_by = ended_by
@@ -1222,7 +1225,8 @@ class Agent:
                 await self._emit_message(AgentStateEvent(state="error", reason=line))
                 return
             if wrapped is None:
-                logger.warning("[openai_agent] a turn handed on before it said anything said nothing in its closing")
+                logger.warning("[openai_agent] a turn whose work was %s said nothing in its closing",
+                               "stopped" if closing_for == guards.STOPPED else "handed on before it said anything")
         if wrapped is not None:
             text, item = wrapped
             closing = [item]

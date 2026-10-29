@@ -191,3 +191,41 @@ async def test_a_result_that_hands_nothing_on_lets_the_turn_go_on(builder_reques
                                                {"wake_me": {"success": True, "status": "succeeded"}})
 
     assert len(calls) == 2 and said == f"{LINE}\n\nIt's live." and instance._turn_guard.handed_on is False
+
+
+STOPPED_WRAP_UP = {**WRAP_UP, "stopped": {"prompt": "Say where the work stands."}}
+STANDS = "The site is live at https://crumb.example.site; its form isn't checked yet."
+
+
+def _refused():
+    return {"success": False, "error": "You've woken yourself 25 times in a row on work you set going.",
+            "ends_turn": "stopped"}
+
+
+async def test_a_result_that_stops_the_work_ends_the_turn_and_its_closing_call_says_where_it_stands(
+        builder_request_db, monkeypatch):
+    """A woken site build refused its next wake-up was free to end saying nothing, and did; its owner never heard it
+    stopped (2026-10-29). A result that stops the work (``STOPPED``) ends the turn at that round, and its one closing
+    call, tools off, says where the work stands, whatever the turn said before it."""
+    pool, closes = builder_request_db[0], []
+    calls, ran, said, stored, instance = await _run(
+        pool, monkeypatch, [("Checking the deploy.", "check"), ("", "wake_me"), ("", "check")],
+        {"check": {"success": True}, "wake_me": _refused()}, wrap_up=STOPPED_WRAP_UP, closing=STANDS, closes=closes)
+
+    assert len(calls) == 2 and ran == ["check", "wake_me"]
+    [(tool_choice, closing_input)] = closes
+    assert tool_choice == "none" and closing_input[-1] == {"role": "developer", "content": "Say where the work stands."}
+    assert said.endswith(STANDS) and instance._turn_guard.stopped_work is True
+    # Neither a limit nor work handed on: the platform reads it as an ordinary reply.
+    assert instance.turn_ended_by is None and instance.turn_handed_on is False
+    assert stored[-1]["role"] == "assistant" and stored[-1]["content"][0]["text"] == STANDS
+
+
+async def test_without_a_stopped_wrap_up_the_turn_reads_the_refusal_and_goes_on(builder_request_db, monkeypatch):
+    """A caller that gives no ``STOPPED`` wrap-up (a workflow's agent node) keeps its turn: the model reads the
+    refusal and answers."""
+    calls, ran, said, _, instance = await _run(builder_request_db[0], monkeypatch,
+                                               [("", "wake_me"), (STANDS, None)], {"wake_me": _refused()})
+
+    assert len(calls) == 2 and ran == ["wake_me"] and said == STANDS
+    assert instance._turn_guard.stopped_work is False
