@@ -10,6 +10,8 @@ import { useEffect, useCallback, useRef } from 'react';
 import { Node, Edge } from '@xyflow/react';
 import { applyNodeUpdate, createWorkflowNode, updateNodeInList, rawConfigToPayload } from '~/lib/applyNodeUpdate';
 import { onSocketEvent } from '~/lib/socket-receiver';
+import { sendEventAsync } from '~/lib/socket-sender';
+import { holdSaves, releaseSaves } from '~/lib/liveGraphStore';
 // Node dimensions come from the serialized icon singleton (dashboard loader), not
 // the registry — this hook runs always-mounted via useMCPNavigation, so importing
 // the registry here would pull its ~4.7MB component graph into the dashboard bundle.
@@ -44,6 +46,26 @@ export function useMCPBuilderEvents({
         }, delay);
         animationTimers.current.add(timer);
     }, [setNodes]);
+
+    // A step the graph service's room event held part of back (a secret, an outsize setting): read it whole
+    // through the canvas's own authorized read, the canvas's saves held until it has, so none writes it as it was.
+    const fetchWhole = useCallback(async (nodeId: string) => {
+        if (!workflowId) return;
+        holdSaves(workflowId);
+        try {
+            const resp = (await sendEventAsync({
+                event_name: 'workflow:node:get_config',
+                workflow_id: workflowId,
+                node_id: nodeId,
+            } as never)) as { config?: Record<string, unknown> } | null;
+            const config = resp?.config;
+            if (config) setNodes(curr => updateNodeInList(curr, nodeId, rawConfigToPayload(config)));
+        } catch (e) {
+            console.error('[useMCPBuilderEvents] reading a step whole failed:', e);
+        } finally {
+            releaseSaves(workflowId);
+        }
+    }, [workflowId, setNodes]);
 
     const handleEvent = useCallback((event: MCPBuilderEvent) => {
         if (!workflowId || event.workflow_id !== workflowId) return;
@@ -134,6 +156,7 @@ export function useMCPBuilderEvents({
                     });
                 });
                 clearAnimationState(nodeId);
+                if (data.refetch) void fetchWhole(nodeId);
                 break;
             }
 
@@ -223,7 +246,7 @@ export function useMCPBuilderEvents({
                 break;
             }
         }
-    }, [workflowId, setNodes, setEdges, clearAnimationState]);
+    }, [workflowId, setNodes, setEdges, clearAnimationState, fetchWhole]);
 
     useEffect(() => {
         const unsubscribe = onSocketEvent(

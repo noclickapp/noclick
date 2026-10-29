@@ -94,7 +94,11 @@ function primeMountedRecord(nodes: Node[], version: number | null = null) {
 beforeEach(() => {
     for (const k of Object.keys(graphRecords)) delete graphRecords[k];
     wire.sent = [];
-    wire.respond = () => ({ success: true, workflow: { graph_version: 2 } });
+    // A save that lands moves the version one past the one it was made against (the first, unguarded, to 2).
+    wire.respond = (event) => ({
+        success: true,
+        workflow: { graph_version: ((event.expected_graph_version as number | undefined) ?? 1) + 1 },
+    });
     vi.mocked(valtioCache.set).mockClear();
 });
 
@@ -160,7 +164,7 @@ describe('acked saves', () => {
         expect(sent.deleted_node_ids).toEqual(['victim']);
 
         const rec = graphRecords[WF];
-        expect(rec.graphVersion).toBe(2); // adopted from the ack
+        expect(rec.graphVersion).toBe(6); // adopted from the ack
         expect(rec.deletedNodeIds.size).toBe(0); // retired on ack
         expect(rec.dirty).toBe(false);
 

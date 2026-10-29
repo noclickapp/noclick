@@ -11,36 +11,41 @@ whose own writes (a trigger's webhook fields) move the version on: the version
 handed back is the one they left, so a caller edits on from it. Then it tells
 whoever watches, once: the owner's open pages (the ``WORKFLOW_GRAPH_CHANGED``
 capability) and every canvas open on the workflow, whoever's (its room on the
-relay: the change as the builder's canvas events, then a
-``workflow:graph_changed`` event). ``restore`` writes a version back the same
-way.
+relay: the change as the builder's canvas events, never a secret nor an outsize
+step, which the canvas reads whole itself, then a ``workflow:graph_changed``
+event the canvas takes as its base). An open canvas's save of what it was sent
+writes nothing (``canvas_save``), so the version stays the one to edit on from.
+``restore`` writes a version back the same way.
 
 A version (``workflow_versions``) holds the definition whole: the graph, the
 name, the description and the settings a client may write (never NoClick's own,
 ``utils.system_workflows``), so a restore puts all of it back. Its
 ``history_version`` is given by its first write (the ``graph_version`` that
 write produced) and never changes; its ``version`` is the one its latest write
-produced. One author's writes from one source join their newest version while
-it's under ``JOIN_S`` from its first write, whoever wrote in between (a canvas
-session is one, not five hundred); a restore never joins another. The newest
-version is open (the workflow as it stands) until the next one closes it with
-its definition. A write that only moved things (layout) is no version. A
-workflow's first version is what it was before (``baseline``), so its first
-change can be undone. The canvas's save records
-through ``record_save``: a graph save as any write; a change to only the
-workflow's own fields moves no version (the canvas's next save mustn't conflict
-with its own rename), so it joins the author's own canvas version or is carried
-by the next one.
+produced. Canvas saves within ``JOIN_S`` of the newest version's first write,
+when it's the canvas's, are that version (one canvas session, whoever edits in
+it: ``authors``); any other write closes the newest version and is a version of
+its own, which only the same author's next writes from the same source join,
+within ``JOIN_S`` of its first; a restore never joins one. So an API or
+coordinator edit is always undone on its own. The newest version is open (the
+workflow as it stands) until the next one closes it with its definition. A
+write that only moved things (layout) is no version. A workflow's first version
+is what it was before (``baseline``), so its first change can be undone. The
+canvas's save records through ``record_save``: a graph save as any write; a
+change to only the workflow's own fields moves no version (the canvas's next
+save mustn't conflict with its own rename), so it joins the canvas session or
+is carried by the next version.
 
 Reads (``read``, ``versions``, ``version``) never carry a secret
 (``graph_secrets``): a setting its schema or name marks as one, at any depth,
 and a header or row named like one, is withheld (``withheld`` names each by
 step and path); connections are by reference (``credentialIds``). A write that
-sends settings back without a withheld value keeps it.
+sends settings back without a withheld value keeps it, the canvas's too.
 """
 
 from __future__ import annotations
 
+import copy
 import json
 import logging
 import uuid
@@ -56,6 +61,8 @@ JOIN_S = 300
 # What a run leaves on a node, never what the node is.
 RUN_STATE_FIELDS = frozenset({"output", "outputTimestamp", "executionState", "error", "configValid"})
 GRAPH_CHANGED_EVENT = "workflow:graph_changed"
+# The most of one step a room event carries; a bigger one is a notice the canvas fetches the step for.
+CANVAS_EVENT_MAX_BYTES = 32 * 1024
 # The builder's canvas events (``useMCPBuilderEvents``), as the workflow's room carries them.
 CANVAS_EVENT = "mcp:builder_event"
 _FIELDS = ("name", "description", "settings")
@@ -186,6 +193,9 @@ def _version_view(workflow_id: str, row: Dict[str, Any], *,
         "version": row["version"], "source": row["source"],
         "author": ({"user_id": str(row["author_user_id"]), "key_id": row["author_key_id"]}
                    if row["author_user_id"] else None),
+        # Everyone who wrote into it (a canvas session's editors), the first its author.
+        "authors": [{"user_id": str(u), "key_id": row["author_key_id"] if str(u) == str(row["author_user_id"])
+                     else None} for u in row["authors"] or []],
         "summary": summary(changes) if row["source"] != "baseline" else "As it was before its history began.",
         "changes": changes, "restored_from": row["restored_from"],
         "created_at": row["created_at"].isoformat(), "updated_at": row["updated_at"].isoformat(),
@@ -277,42 +287,41 @@ def describe(before: Dict[str, Any], after: Dict[str, Any]) -> List[str]:
     return describe_changes(before["graph"], after["graph"]) + describe_fields(before, after)
 
 
-async def _joinable(conn, workflow_id: str, author: Optional[Author], source: str) -> Optional[Dict[str, Any]]:
-    """The version a write by ``author`` from ``source`` joins: their newest from that source, begun less than
-    ``JOIN_S`` ago (another author's versions in between or not); never for a restore."""
-    from repositories import workflow_versions
-
-    if source == "restore":
-        return None
+def _joinable(newest: Optional[Dict[str, Any]], author: Optional[Author], source: str) -> bool:
+    """Whether a write by ``author`` from ``source`` joins the workflow's newest version: one begun less than
+    ``JOIN_S`` ago from the same source, by anyone for the canvas (one canvas session, whoever edits in it), else by
+    the same author (user and key), so a write from anywhere else is a version of its own; never a restore."""
+    if newest is None or source == "restore" or newest["source"] != source or newest["age"].total_seconds() >= JOIN_S:
+        return False
+    if source == "canvas":
+        return True
     user_id, key_id = (author.user_id, author.key_id) if author else (None, None)
-    theirs = await workflow_versions.newest_by(conn, workflow_id, source=source, author_user_id=user_id,
-                                               author_key_id=key_id)
-    return theirs if theirs is not None and theirs["age"].total_seconds() < JOIN_S else None
+    return str(newest["author_user_id"] or "") == str(user_id or "") and newest["author_key_id"] == key_id
 
 
 async def record_version(conn, workflow_id: str, *, author: Optional[Author], source: str, before_version: int,
                          before: Dict[str, Any], version: int, after: Dict[str, Any], changes: Sequence[str],
                          restored_from: Optional[int] = None) -> int:
     """Record a write of definition ``after`` (``definition``) as a version, inside the transaction that wrote it:
-    it joins the version ``_joinable`` names, else starts one. Either is open, the newest: the version open before
-    it is closed with ``before``, unless it's the one joined. The first write of a workflow with no history records
-    what it was before as a ``baseline`` first. Returns the ``history_version`` it landed in."""
+    it joins the newest version when ``_joinable``, else closes it with ``before`` and starts one (open, the
+    newest). The first write of a workflow with no history records what it was before as a ``baseline`` first.
+    Returns the ``history_version`` it landed in."""
     from repositories import workflow_versions
 
     from .graph_edits import merge_changes
 
-    joined = await _joinable(conn, workflow_id, author, source)
     newest = await workflow_versions.newest(conn, workflow_id)
+    user_id, key_id = (author.user_id, author.key_id) if author else (None, None)
+    if _joinable(newest, author, source):
+        await workflow_versions.join(conn, workflow_id=workflow_id, history_version=newest["history_version"],
+                                     version=version, changes=merge_changes(newest["changes"] or [], changes),
+                                     author_user_id=user_id)
+        return newest["history_version"]
     if newest is None:
         await workflow_versions.insert(conn, workflow_id=workflow_id, version=before_version, state=before,
                                        source="baseline", author_user_id=None, author_key_id=None, changes=[])
-    elif joined is None or joined["history_version"] != newest["history_version"]:
+    else:
         await workflow_versions.close(conn, workflow_id, before)
-    if joined is not None:
-        await workflow_versions.join(conn, workflow_id=workflow_id, history_version=joined["history_version"],
-                                     version=version, changes=merge_changes(joined["changes"] or [], changes))
-        return joined["history_version"]
-    user_id, key_id = (author.user_id, author.key_id) if author else (None, None)
     return await workflow_versions.insert(conn, workflow_id=workflow_id, version=version, source=source,
                                           author_user_id=user_id, author_key_id=key_id, changes=list(changes),
                                           restored_from=restored_from)
@@ -322,8 +331,8 @@ async def record_save(conn, workflow_id: str, author: Author, *, source: Source,
                       after: Dict[str, Any], version: int) -> Optional[int]:
     """A whole-definition save (the canvas's ``workflow:update``) as a version, inside its transaction: what it
     changed, or no version for a save that changed nothing but where things sit. A save of the graph moved it one
-    version on; a save of only the workflow's own fields moved none, so it joins the author's own version from the
-    same source at ``version`` and is otherwise carried by the next version recorded."""
+    version on; a save of only the workflow's own fields moved none, so it joins the canvas session at ``version``
+    and is otherwise carried by the next version recorded."""
     from repositories import workflow_versions
 
     from .graph_edits import merge_changes
@@ -335,12 +344,53 @@ async def record_save(conn, workflow_id: str, author: Author, *, source: Source,
     if after["graph"] != before["graph"]:
         return await record_version(conn, workflow_id, author=author, source=source, before_version=version - 1,
                                     before=before, version=version, after=after, changes=changes)
-    joined = await _joinable(conn, workflow_id, author, source)
-    if joined is None or joined["version"] != version:
+    newest = await workflow_versions.newest(conn, workflow_id)
+    if not _joinable(newest, author, source) or newest["version"] != version:
         return None
-    await workflow_versions.join(conn, workflow_id=workflow_id, history_version=joined["history_version"],
-                                 version=version, changes=merge_changes(joined["changes"] or [], changes))
-    return joined["history_version"]
+    await workflow_versions.join(conn, workflow_id=workflow_id, history_version=newest["history_version"],
+                                 version=version, changes=merge_changes(newest["changes"] or [], changes),
+                                 author_user_id=author.user_id)
+    return newest["history_version"]
+
+
+# What a canvas save holds of a step; the rest (its selection, run state) is the canvas's own.
+_CANVAS_STEP_KEYS = ("id", "type", "position", "config", "width", "height")
+
+
+def _as_canvas_saves(graph: Any) -> Dict[str, Any]:
+    """A graph as a canvas save would hold it: its steps by id (``_CANVAS_STEP_KEYS``), its edges by their ends and
+    handles (their style is the canvas's own), and its other keys."""
+    graph = parse_graph(graph)
+    steps = {n.get("id"): {k: n.get(k) for k in _CANVAS_STEP_KEYS if n.get(k) is not None}
+             for n in graph_nodes(graph)}
+    edges = sorted((str(e.get("id")), e.get("source"), e.get("target"), e.get("sourceHandle") or None,
+                    e.get("targetHandle") or None) for e in graph_edges(graph))
+    rest = {k: v for k, v in graph.items() if k not in ("nodes", "edges") and v is not None}
+    return {"steps": steps, "edges": edges, "rest": rest}
+
+
+async def canvas_save(conn, repo, workflow_id: str, graph: Dict[str, Any],
+                      expected_version: Optional[int]) -> Optional[Dict[str, Any]]:
+    """What a canvas save (``workflow:update``) writes, inside its transaction: its graph with each secret a step's
+    stored settings hold and the save left out kept (``keep_withheld``: the room never sends a canvas one), or
+    None when it holds the graph as stored, in the canvas's shape (``_as_canvas_saves``): an open canvas echoing a
+    write it was sent, which writes nothing, so the version that write answered stays the one to edit on from."""
+    from .graph_secrets import keep_withheld
+
+    stored = await repo.read_graph(conn, workflow_id, lock=True)
+    if stored is None:
+        return graph
+    held = {n.get("id"): n for n in graph_nodes(stored["workflow"])}
+    graph = copy.deepcopy(graph)
+    for node in graph_nodes(graph):
+        prior = held.get(node.get("id"))
+        if prior is not None and isinstance(node.get("config"), dict):
+            keep_withheld(node_config(prior), node["config"], node_type(prior), node_operation(prior))
+    unchanged = expected_version in (None, stored["graph_version"])
+    if unchanged and _as_canvas_saves(stored["workflow"]) == _as_canvas_saves(
+            {**graph, **({} if "variables" in graph else {"variables": parse_graph(stored["workflow"]).get("variables")})}):
+        return None
+    return graph
 
 
 async def _locked(conn, repo, author: Author, workflow_id: str, if_version: Optional[int]):
@@ -527,11 +577,28 @@ async def _settle(pool, owner_id, workflow_id: str, author: Author, before: Dict
     return version, now
 
 
+def _secret_keys(node: Dict[str, Any]) -> set:
+    """The settings of a step holding a secret (``graph_secrets``), by their top-level name."""
+    from .graph_secrets import withhold
+
+    _, paths = withhold(node_config(node), node_type(node), node_operation(node))
+    return {path.split(".")[0].split("[")[0] for path in paths}
+
+
+def _within(data: Dict[str, Any], keep: Sequence[str]) -> Dict[str, Any]:
+    """``data``, or only its ``keep`` keys and ``refetch`` when it's too big to send."""
+    if len(json.dumps(data, default=str)) <= CANVAS_EVENT_MAX_BYTES:
+        return data
+    return {**{k: data[k] for k in keep if k in data}, "refetch": True}
+
+
 def canvas_events(before: Dict[str, Any], after: Dict[str, Any]) -> List[Tuple[str, Dict[str, Any]]]:
     """A write as the events an open canvas applies to its own copy (``useMCPBuilderEvents``, which the workflow
     MCP and the builder drive too): steps added, changed (each changed setting, a removed one as null), removed,
     edges added and removed, steps moved, settings changed. Applied, the canvas's next save carries the write
-    rather than undoing it."""
+    rather than undoing it. No event carries a secret or a step bigger than ``CANVAS_EVENT_MAX_BYTES``: such a
+    step's event says ``refetch`` and the canvas reads it whole through its own authorized read, and a save of the
+    canvas without the secret keeps it (``canvas_save``)."""
     old = {n.get("id"): n for n in graph_nodes(before["graph"]) if n.get("id")}
     new = {n.get("id"): n for n in graph_nodes(after["graph"]) if n.get("id")}
 
@@ -549,17 +616,25 @@ def canvas_events(before: Dict[str, Any], after: Dict[str, Any]) -> List[Tuple[s
             k for k, e in old_edges.items() if node_id in (e["source"], e["target"])]}))
     for node_id, node in new.items():
         config, position = node_config(node), node.get("position") or {"x": 0, "y": 0}
+        secret = _secret_keys(node)
         if node_id not in old:
+            from .graph_secrets import withhold
+
+            shown_config, hidden = withhold(config, node_type(node), node_operation(node))
+            start = {"id": node_id, "type": node.get("type"), "position": position}
             shown = {k: config[k] for k in ("label", "operation", "goal", "content", "color") if k in config}
-            events.append(("node_start", {"node": {"id": node_id, "type": node.get("type"), "position": position,
-                                                    **shown}}))
-            events.append(("node_updated", {"nodeId": node_id, "type": node.get("type"), "position": position,
-                                            "config": config}))
+            events.append(("node_start", {"node": {k: v for k, v in _within({**start, **shown}, tuple(start)).items()
+                                                   if k != "refetch"}}))
+            update = {"nodeId": node_id, "type": node.get("type"), "position": position, "config": shown_config}
+            events.append(("node_updated", _within({**update, **({"refetch": True} if hidden else {})},
+                                                   ("nodeId", "type", "position"))))
             continue
         prior = node_config(old[node_id])
         changed = {k: config.get(k) for k in set(prior) | set(config) if prior.get(k) != config.get(k)}
         if changed:
-            events.append(("node_updated", {"nodeId": node_id, "config": changed}))
+            sent = {k: v for k, v in changed.items() if k not in secret}
+            update = {"nodeId": node_id, "config": sent, **({"refetch": True} if len(sent) < len(changed) else {})}
+            events.append(("node_updated", _within(update, ("nodeId",))))
     gone = {i for i in old if i not in new}
     events += [("edge_removed", {"edgeId": k}) for k, e in old_edges.items()
                if k not in new_edges and not gone & {e["source"], e["target"]}]

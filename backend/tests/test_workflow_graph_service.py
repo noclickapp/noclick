@@ -76,6 +76,29 @@ def reconciled():
         yield calls
 
 
+@pytest.fixture
+def room():
+    """What the workflow's room on the relay carried (every canvas open on it hears it); no owner's frame."""
+    heard = []
+
+    class Room:
+        def __init__(self, workflow_id, execution_id, user_id, **kwargs):
+            pass
+
+        def start(self):
+            return None
+
+        async def send_event(self, event):
+            heard.append(event)
+
+        async def close(self):
+            return None
+
+    with patch("utils.execution_relay.create_execution_relay", Room), \
+            patch("utils.capabilities.capability", lambda name: None):
+        yield heard
+
+
 async def _workflow(db, graph=GRAPH, *, owner=OWNER, settings=None) -> str:
     return str(await db.fetchval(
         "INSERT INTO workflows (owner_id, name, workflow, settings) VALUES ($1::uuid, 'Flow', $2, $3) RETURNING id",
@@ -136,33 +159,41 @@ class TestWrites:
         [(user, old, new)] = reconciled
         assert user == OWNER and _labels(old)["log"] == "Log" and _labels(new)["log"] == "Record"
 
-    async def test_every_canvas_open_on_it_is_sent_what_changed_then_the_version(self, db, reconciled):
+    async def test_every_canvas_open_on_it_is_sent_what_changed_then_the_version(self, db, reconciled, room):
         """Whoever's canvas it is (a collaborator's too): the workflow's room carries the change as the builder's
         events, then one notice of the version."""
-        heard = []
-
-        class Room:
-            def __init__(self, workflow_id, execution_id, user_id, **kwargs):
-                pass
-
-            def start(self):
-                return None
-
-            async def send_event(self, event):
-                heard.append(event)
-
-            async def close(self):
-                return None
-
+        heard = room
         workflow_id = await _workflow(db)
-        with patch("utils.execution_relay.create_execution_relay", Room), \
-                patch("utils.capabilities.capability", lambda name: None):
-            await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "Record"},
-                                           {"op": "remove_step", "id": "hook"}])
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "Record"},
+                                       {"op": "remove_step", "id": "hook"}])
         assert heard[-1] == {"type": "workflow:graph_changed", "workflow_id": workflow_id, "version": 2}
         assert [(e["type"], e["event_type"], e["data"]) for e in heard[:-1]] == [
             ("mcp:builder_event", "node_removed", {"nodeId": "hook", "removedEdgeIds": ["hook-agent"]}),
             ("mcp:builder_event", "node_updated", {"nodeId": "log", "config": {"label": "Record"}})]
+
+    async def test_the_room_never_carries_a_secret_or_an_outsize_setting(self, db, reconciled, room):
+        """A step's secrets, and a setting too big to send, stay out of the room: the canvas fetches that step
+        through its own authorized read (``refetch``)."""
+        import json
+
+        workflow_id = await _workflow(db)
+        await _apply(db, workflow_id, [{"op": "add_step", "type": "automation-http-request", "id": "fetch",
+                                        "operation": "send_http_get_request", "settings": {
+                                            "url": "https://api.example", "api_key": "sk-live-SECRET",
+                                            "headers": [{"key": "Authorization", "value": "Bearer HDR-SECRET"}]}}])
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "fetch", "settings": {"api_key": "sk-NEW"}},
+                                       {"op": "update_step", "id": "log", "settings": {"message": "x" * 200_000}}])
+        sent = json.dumps(room)
+        assert "SECRET" not in sent and "sk-NEW" not in sent and "x" * 1000 not in sent
+        updates = {(e["data"]["nodeId"], json.dumps(e["data"], sort_keys=True))
+                   for e in room if e.get("event_type") == "node_updated"}
+        added = next(json.loads(d) for n, d in updates if n == "fetch" and "type" in json.loads(d))
+        assert added["refetch"] is True and added["config"]["url"] == "https://api.example"
+        assert added["config"]["headers"] == [{"key": "Authorization"}] and "api_key" not in added["config"]
+        changed = [json.loads(d) for n, d in updates if n == "fetch" and "type" not in json.loads(d)]
+        assert changed == [{"nodeId": "fetch", "refetch": True, "config": {}}]
+        outsize = [json.loads(d) for n, d in updates if n == "log"]
+        assert outsize == [{"nodeId": "log", "refetch": True}]
 
     async def test_a_stale_version_is_refused_with_the_workflow_as_it_stands(self, db, told, reconciled):
         workflow_id = await _workflow(db)
@@ -273,23 +304,24 @@ class TestVersions:
         assert [(v["version"], v["source"], v["author_key_id"]) for v in await _versions(db, workflow_id)] == [
             (1, "baseline", None), (3, "api", None), (4, "api", "key-2"), (5, "api", "key-2"), (6, "coordinator", None)]
 
-    async def test_two_authors_taking_turns_each_keep_their_one_version(self, db, told, reconciled):
+    async def test_api_writes_taking_turns_each_keep_a_version_of_their_own(self, db, told, reconciled):
+        """A edits, B edits, A edits again within five minutes: A's first edit is a version without B's, so either
+        can be undone on its own; one author's consecutive writes are still one version."""
         workflow_id = await _workflow(db)
         other = Author(OWNER, key_id="key-2")
-        for name in ("A", "B", "C"):
-            await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": f"Log {name}"}])
-            await _apply(db, workflow_id, [{"op": "update_step", "id": "agent", "settings": {"message": name}}],
-                         author=other)
-        # Each keeps the number its first write gave it, and orders by its latest.
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "A1"}])
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "agent", "settings": {"message": "B"}}],
+                     author=other)
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "A2"}])
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "A3"}])
         assert [(v["history_version"], v["version"], v["author_key_id"]) for v in await _versions(db, workflow_id)] \
-            == [(1, 1, None), (2, 6, None), (3, 7, "key-2")]
-        # Each is what it was when its author's turn ended: the newest, open, is the workflow as it stands.
-        six = await graph_service.version(db.pool, Author(OWNER), workflow_id, 2)
-        assert _labels(six["graph"])["log"] == "Log C" and six["changes"] == ["renamed 'Log' to 'Log A'",
-                                                                              "renamed 'Log A' to 'Log B'",
-                                                                              "renamed 'Log B' to 'Log C'"]
-        seven = await graph_service.version(db.pool, Author(OWNER), workflow_id, 3)
-        assert next(n for n in seven["graph"]["nodes"] if n["id"] == "agent")["config"]["message"] == "C"
+            == [(1, 1, None), (2, 2, None), (3, 3, "key-2"), (4, 5, None)]
+        two = await graph_service.version(db.pool, Author(OWNER), workflow_id, 2)
+        assert _labels(two["graph"])["log"] == "A1"
+        assert next(n for n in two["graph"]["nodes"] if n["id"] == "agent")["config"]["message"] == "Sum up."
+        three = await graph_service.version(db.pool, Author(OWNER), workflow_id, 3)
+        assert _labels(three["graph"])["log"] == "A1"
+        assert next(n for n in three["graph"]["nodes"] if n["id"] == "agent")["config"]["message"] == "B"
 
     async def test_a_version_spans_five_minutes_from_its_first_write_however_often_it_is_written(
             self, db, told, reconciled):
@@ -606,6 +638,68 @@ class TestReconcileThroughTheService:
         await reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH, without)
         assert registry["cleaned"] == []
 
+    async def test_reconciles_hold_no_connection_while_they_work(self, db, told, registry):
+        """On a one-connection pool, reconciles of two workflows (and two of one) all finish: none holds a
+        connection or a transaction while its work takes its own."""
+        import asyncio
+
+        import asyncpg
+
+        from utils.database_pool import setup_asyncpg_codecs
+        from utils.workflow_reconcile import reconcile_graph_change
+
+        small = await asyncpg.create_pool(db.url, min_size=1, max_size=1, init=setup_asyncpg_codecs,
+                                          statement_cache_size=0)
+        try:
+            flows = [await _workflow(db), await _workflow(db)]
+            after = copy.deepcopy(GRAPH)
+            after["nodes"] = [n for n in after["nodes"] if n["id"] != "log"]
+            for workflow_id in flows:
+                await db.execute("UPDATE workflows SET workflow = $2 WHERE id = $1::uuid", workflow_id, after)
+
+            async def cleanup(*, pool, workflow_id, node_ids, background, old_nodes, requesting_user_id):
+                async with pool.acquire() as conn:  # as cleanup_nodes_resources does
+                    await conn.fetchval("SELECT 1")
+
+            with patch("utils.workflow_resource_manager.cleanup_nodes_resources", side_effect=cleanup):
+                await asyncio.wait_for(asyncio.gather(*(
+                    reconcile_graph_change(small, w, OWNER, GRAPH, after) for w in [*flows, flows[0]])), timeout=20)
+        finally:
+            await small.close()
+
+    async def test_a_reconcile_waits_for_another_processs_lease_then_runs(self, db, told, registry, monkeypatch):
+        import asyncio
+        import time
+
+        from utils import workflow_reconcile
+
+        workflow_id = await _workflow(db)
+        await db.execute("INSERT INTO workflow_reconcile_leases (workflow_id, holder, expires_at) "
+                         "VALUES ($1::uuid, 'elsewhere', now() + interval '1 second')", workflow_id)
+        renamed = copy.deepcopy(GRAPH)
+        renamed["nodes"][0]["config"]["label"] = "Renamed"
+        hooked = []
+
+        async def hook(pool, node_type, workflow_id, node_id, *args, **kwargs):
+            hooked.append(node_id)
+
+        monkeypatch.setattr("utils.webhook_manager.WebhookManager.handle_registration_fields_change", hook)
+        started = time.monotonic()
+        await asyncio.wait_for(workflow_reconcile.reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH,
+                                                                         renamed), timeout=10)
+        assert time.monotonic() - started >= 0.8 and sorted(hooked) == ["agent", "hook", "log"]
+        # Its own lease is gone once it's done.
+        assert await db.fetchval("SELECT count(*) FROM workflow_reconcile_leases WHERE workflow_id = $1::uuid",
+                                 workflow_id) == 0
+        # A lease held past the wait runs it anyway rather than holding the write's answer.
+        await db.execute("INSERT INTO workflow_reconcile_leases (workflow_id, holder, expires_at) "
+                         "VALUES ($1::uuid, 'stuck', now() + interval '1 hour')", workflow_id)
+        monkeypatch.setattr(workflow_reconcile, "WAIT_S", 0.5)
+        started = time.monotonic()
+        await asyncio.wait_for(workflow_reconcile.reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH,
+                                                                         renamed), timeout=10)
+        assert time.monotonic() - started < 5
+
     async def test_one_workflows_reconciles_run_one_at_a_time(self, db, told, registry):
         import asyncio
 
@@ -772,6 +866,69 @@ class TestTheCanvasSave:
                 request_id="r", workflow_id=workflow_id, workflow_data=deleted, deleted_node_ids=["agent", "draft"]))
             await drain_spawned_tasks(timeout=5)
         assert cleaned == [(["agent", "draft"], ["agent"])]
+
+    async def test_a_canvas_session_is_one_version_whoever_edits_in_it(self, db, told, reconciled):
+        """Canvas saves within five minutes of the session's first are one version listing its authors; a write
+        from anywhere else closes it and is a version of its own, and the canvas starts another after it."""
+        workflow_id = await _workflow(db)
+        await db.execute("INSERT INTO resource_shares (resource_type, resource_id, target_type, target_user_id, "
+                         "permission, shared_by) VALUES ('workflow', $1::uuid, 'user', $2::uuid, 'edit', $3::uuid)",
+                         workflow_id, EDITOR, OWNER)
+        mine, _ = self._handler(db)
+        theirs, _ = self._handler(db, EDITOR)
+        graph = copy.deepcopy(GRAPH)
+        for handler, label, version in ((mine, "One", 1), (theirs, "Two", 2), (mine, "Three", 3)):
+            graph["nodes"][2]["config"]["label"] = label
+            await self._save(handler, workflow_id, copy.deepcopy(graph), version=version)
+        rows = await db.fetch("SELECT history_version, version, source, authors::text[] AS authors "
+                              "FROM workflow_versions WHERE workflow_id = $1::uuid ORDER BY version", workflow_id)
+        assert [(r["history_version"], r["version"], r["source"], r["authors"]) for r in rows] == [
+            (1, 1, "baseline", []), (2, 4, "canvas", [OWNER, EDITOR])]
+        session = await graph_service.version(db.pool, Author(OWNER), workflow_id, 2)
+        assert session["authors"] == [{"user_id": OWNER, "key_id": None}, {"user_id": EDITOR, "key_id": None}]
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "agent", "settings": {"message": "Mine."}}],
+                     source="coordinator")
+        graph = copy.deepcopy((await _graph(db, workflow_id))["workflow"])
+        graph["nodes"][2]["config"]["label"] = "Four"
+        await self._save(mine, workflow_id, graph, version=5)
+        assert [(v["history_version"], v["source"]) for v in await _versions(db, workflow_id)] == [
+            (1, "baseline"), (2, "canvas"), (5, "coordinator"), (6, "canvas")]
+        # The coordinator's edit is undone on its own: the canvas session before it holds none of it.
+        assert next(n for n in session["graph"]["nodes"] if n["id"] == "agent")["config"]["message"] == "Sum up."
+
+    async def test_an_open_canvas_echoing_a_write_leaves_the_version_the_write_answered(self, db, told,
+                                                                                         reconciled):
+        """The canvas saves what it now shows (the write applied, in its own shape: edges without their style);
+        that writes nothing, so the version the write answered stays the one to edit on from."""
+        workflow_id = await _workflow(db)
+        edited = await _apply(db, workflow_id, [{"op": "connect", "from": "agent", "to": "log"}])
+        stored = (await _graph(db, workflow_id))["workflow"]
+        assert any(e.get("type") for e in stored["edges"])
+        echo = {"nodes": stored["nodes"], "edges": [
+            {k: e[k] for k in ("id", "source", "target", "sourceHandle", "targetHandle") if k in e}
+            for e in stored["edges"]]}
+        handler, sio = self._handler(db)
+        await self._save(handler, workflow_id, echo, version=edited.version)
+        answer = sio.emit.await_args.args[1]["data"]
+        assert answer["workflow"]["graph_version"] == edited.version
+        assert (await _graph(db, workflow_id))["graph_version"] == edited.version
+        again = await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "Next"}],
+                             if_version=edited.version)
+        assert again.version == edited.version + 1
+
+    async def test_a_canvas_save_keeps_a_secret_the_canvas_never_had(self, db, told, reconciled):
+        graph = {"nodes": [node("fetch", "automation-http-request", url="https://api.example",
+                                operation="send_http_get_request", api_key="sk-live-123",
+                                headers=[{"key": "Authorization", "value": "Bearer abc"}])], "edges": []}
+        workflow_id = await _workflow(db, graph)
+        shown = copy.deepcopy(graph)
+        shown["nodes"][0]["config"] = {"url": "https://api.example/v2", "operation": "send_http_get_request",
+                                       "headers": [{"key": "Authorization"}], "label": "Fetch"}
+        handler, sio = self._handler(db)
+        await self._save(handler, workflow_id, shown, version=1)
+        config = (await _graph(db, workflow_id))["workflow"]["nodes"][0]["config"]
+        assert (config["url"], config["api_key"], config["headers"]) == (
+            "https://api.example/v2", "sk-live-123", [{"key": "Authorization", "value": "Bearer abc"}])
 
     async def test_a_stale_save_records_nothing(self, db, reconciled):
         workflow_id = await _workflow(db)

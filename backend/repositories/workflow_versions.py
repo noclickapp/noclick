@@ -22,25 +22,15 @@ from utils.runtime_keys import graph_without_runtime_keys
 
 # How long a version is kept; a workflow's newest is kept whatever its age.
 KEEP_DAYS = 90
-_LISTED = ("workflow_id, history_version, version, source, author_user_id, author_key_id, changes, restored_from, "
-           "created_at, updated_at")
+_LISTED = ("workflow_id, history_version, version, source, author_user_id, author_key_id, authors, changes, "
+           "restored_from, created_at, updated_at")
 _STATE = "graph, name, description, settings"
 
 
 async def newest(conn, workflow_id) -> Optional[Dict[str, Any]]:
-    row = await conn.fetchrow(f"SELECT {_LISTED} FROM workflow_versions WHERE workflow_id = $1::uuid "
-                              "ORDER BY version DESC LIMIT 1", str(workflow_id))
-    return dict(row) if row else None
-
-
-async def newest_by(conn, workflow_id, *, source: str, author_user_id: Optional[str],
-                    author_key_id: Optional[str]) -> Optional[Dict[str, Any]]:
-    """The newest version one author wrote from one source, with ``age``: how long since its first write."""
-    row = await conn.fetchrow(
-        f"""SELECT {_LISTED}, now() - created_at AS age FROM workflow_versions
-            WHERE workflow_id = $1::uuid AND source = $2 AND author_user_id IS NOT DISTINCT FROM $3::uuid
-              AND author_key_id IS NOT DISTINCT FROM $4
-            ORDER BY version DESC LIMIT 1""", str(workflow_id), source, author_user_id, author_key_id)
+    """The workflow's newest version, with ``age``: how long since its first write."""
+    row = await conn.fetchrow(f"SELECT {_LISTED}, now() - created_at AS age FROM workflow_versions "
+                              "WHERE workflow_id = $1::uuid ORDER BY version DESC LIMIT 1", str(workflow_id))
     return dict(row) if row else None
 
 
@@ -62,22 +52,26 @@ async def insert(conn, *, workflow_id, version: int, source: str, author_user_id
     graph = state.get("graph")
     await conn.execute(
         """INSERT INTO workflow_versions (workflow_id, history_version, version, graph, name, description, settings,
-                                          source, author_user_id, author_key_id, changes, restored_from)
-           VALUES ($1::uuid, $2, $2, $3, $4, $5, $6, $7, $8::uuid, $9, $10::text[], $11)""",
+                                          source, author_user_id, author_key_id, authors, changes, restored_from)
+           VALUES ($1::uuid, $2, $2, $3, $4, $5, $6, $7, $8::uuid, $9,
+                   CASE WHEN $8::uuid IS NULL THEN '{}'::uuid[] ELSE ARRAY[$8::uuid] END, $10::text[], $11)""",
         str(workflow_id), version, graph_without_runtime_keys(graph) if graph is not None else None,
         state.get("name"), state.get("description"), state.get("settings"), source, author_user_id, author_key_id,
         list(changes), restored_from)
     return version
 
 
-async def join(conn, *, workflow_id, history_version: int, version: int, changes: Sequence[str]) -> None:
-    """A write that joins version ``history_version``: it takes the write's ``version`` and changes, and is open
-    (the newest)."""
+async def join(conn, *, workflow_id, history_version: int, version: int, changes: Sequence[str],
+               author_user_id: Optional[str] = None) -> None:
+    """A write that joins version ``history_version``: it takes the write's ``version`` and changes, and its
+    author among its ``authors``; it's open (the newest)."""
     await conn.execute(
         """UPDATE workflow_versions SET version = $3, changes = $4::text[], updated_at = now(),
+                  authors = CASE WHEN $5::uuid IS NULL OR $5::uuid = ANY(authors) THEN authors
+                                 ELSE authors || $5::uuid END,
                   graph = NULL, name = NULL, description = NULL, settings = NULL
            WHERE workflow_id = $1::uuid AND history_version = $2""",
-        str(workflow_id), history_version, version, list(changes))
+        str(workflow_id), history_version, version, list(changes), author_user_id)
 
 
 async def page(conn, workflow_id, *, limit: int, before: Optional[int]) -> List[Dict[str, Any]]:

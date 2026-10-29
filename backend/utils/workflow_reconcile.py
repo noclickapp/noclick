@@ -16,10 +16,13 @@ service's edits and restores, the canvas's save):
 - a step that's back (a delete undone) registers again what it registered.
 
 It makes provider round-trips, so writers run it after their write commits.
-One workflow's reconciles run one at a time (a lock on the database, across
-processes), each judged against the graph as it stands when it runs: a step a
-later write brought back isn't torn down, nor one a later write removed
-registered. Each part runs whatever another part did. Given the version the
+One workflow's reconciles run one at a time: one per process, then a lease
+across processes (``workflow_reconcile_leases``, claimed, renewed and given
+back in short statements, so a reconcile holds no connection or transaction
+while it works, and one that lapses is anyone's). A reconcile waits for
+another's with backoff, at most ``WAIT_S``, then runs anyway: each is judged
+against the graph as it stands when it runs, so a step a later write brought
+back isn't torn down, nor one a later write removed registered. Each part runs whatever another part did. Given the version the
 write left, it returns the version its own writes (a trigger's webhook fields)
 left the workflow at, so a writer hands back a version its caller can edit
 from; another writer's change in between ends that chain."""
@@ -28,6 +31,8 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import random
+import uuid
 import weakref
 from contextlib import asynccontextmanager
 from typing import Any, Collection, List, Optional, Tuple
@@ -35,6 +40,11 @@ from typing import Any, Collection, List, Optional, Tuple
 from utils.graph_nodes import graph_nodes, node_config
 
 logger = logging.getLogger(__name__)
+
+# A lease lapses LEASE_S after its last renewal (renewed every third of it while its reconcile runs).
+LEASE_S = 60
+# How long a reconcile waits for another of the same workflow before it runs anyway.
+WAIT_S = 30.0
 
 
 async def reconcile_graph_change(pool, workflow_id: str, user_id: str, old_graph: Any, new_graph: Any, *,
@@ -46,8 +56,8 @@ async def reconcile_graph_change(pool, workflow_id: str, user_id: str, old_graph
     moves: List[Tuple[int, int]] = []
     token = PATCH_MOVES.set(moves)
     try:
-        async with _one_at_a_time(pool, workflow_id) as held:
-            now = await held.fetchval("SELECT workflow FROM workflows WHERE id = $1::uuid", workflow_id)
+        async with _one_at_a_time(pool, workflow_id):
+            now = await pool.fetchval("SELECT workflow FROM workflows WHERE id = $1::uuid", workflow_id)
             await _reconcile(pool, workflow_id, user_id, old_graph, new_graph, now, deleted)
     finally:
         PATCH_MOVES.reset(token)
@@ -64,26 +74,76 @@ _IN_PROCESS: "weakref.WeakValueDictionary[str, asyncio.Lock]" = weakref.WeakValu
 
 @asynccontextmanager
 async def _one_at_a_time(pool, workflow_id: str):
-    """Hold the workflow's reconcile lock: one per process, then one on the database across processes, held by a
-    transaction on a connection of its own (beside no row lock: the writes a reconcile makes lock the row
-    themselves). A reconcile waiting on another's holds no connection."""
+    """Run the body as the workflow's one reconcile: its in-process lock, then its lease; waited for with backoff,
+    at most ``WAIT_S`` in all, after which it runs anyway (logged)."""
+    loop = asyncio.get_running_loop()
+    deadline = loop.time() + WAIT_S
     lock = _IN_PROCESS.get(workflow_id)
     if lock is None:
         lock = _IN_PROCESS.setdefault(workflow_id, asyncio.Lock())
-    key, delay = f"workflow-reconcile:{workflow_id}", 0.05
-    async with lock:
-        while True:
-            async with pool.acquire() as conn:
-                held = conn.transaction()
-                await held.start()
-                try:
-                    if await conn.fetchval("SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0))", key):
-                        yield conn
-                        return
-                finally:
-                    await held.rollback()
-            await asyncio.sleep(delay)
-            delay = min(delay * 2, 1.0)
+    try:
+        await asyncio.wait_for(lock.acquire(), timeout=WAIT_S)
+        locked = True
+    except asyncio.TimeoutError:
+        locked = False
+        logger.warning("[reconcile] %s: another reconcile in this process held it past %ss; running anyway",
+                       workflow_id, WAIT_S)
+    holder = uuid.uuid4().hex
+    leased = False
+    renewing = None
+    try:
+        leased = await _claim(pool, workflow_id, holder, deadline)
+        if leased:
+            renewing = asyncio.create_task(_renew(pool, workflow_id, holder))
+        yield
+    finally:
+        if renewing is not None:
+            renewing.cancel()
+        if leased:
+            try:
+                await pool.execute("DELETE FROM workflow_reconcile_leases WHERE workflow_id = $1::uuid AND holder = $2",
+                                   workflow_id, holder)
+            except Exception:
+                logger.warning("[reconcile] giving back %s's lease failed; it lapses", workflow_id, exc_info=True)
+        if locked:
+            lock.release()
+
+
+async def _claim(pool, workflow_id: str, holder: str, deadline: float) -> bool:
+    """Take the workflow's lease when it's free or lapsed, retrying with backoff until ``deadline``. False: run
+    without it (the wait ran out, or the workflow is gone)."""
+    import asyncpg
+
+    loop = asyncio.get_running_loop()
+    delay = 0.05
+    while True:
+        try:
+            if await pool.fetchval(
+                    f"""INSERT INTO workflow_reconcile_leases (workflow_id, holder, expires_at)
+                        VALUES ($1::uuid, $2, now() + interval '{LEASE_S} seconds')
+                        ON CONFLICT (workflow_id) DO UPDATE SET holder = EXCLUDED.holder,
+                            expires_at = EXCLUDED.expires_at
+                        WHERE workflow_reconcile_leases.expires_at < now()
+                        RETURNING holder""", workflow_id, holder) == holder:
+                return True
+        except asyncpg.ForeignKeyViolationError:
+            return False  # the workflow is gone: nothing to keep another reconcile of it away from
+        if loop.time() + delay > deadline:
+            logger.warning("[reconcile] %s: another reconcile held its lease past %ss; running anyway",
+                           workflow_id, WAIT_S)
+            return False
+        await asyncio.sleep(delay * random.uniform(0.8, 1.2))
+        delay = min(delay * 2, 1.0)
+
+
+async def _renew(pool, workflow_id: str, holder: str) -> None:
+    while True:
+        await asyncio.sleep(LEASE_S / 3)
+        try:
+            await pool.execute(f"UPDATE workflow_reconcile_leases SET expires_at = now() + interval '{LEASE_S} seconds' "
+                               "WHERE workflow_id = $1::uuid AND holder = $2", workflow_id, holder)
+        except Exception:
+            logger.warning("[reconcile] renewing %s's lease failed", workflow_id, exc_info=True)
 
 
 async def _reconcile(pool, workflow_id: str, user_id: str, old_graph: Any, new_graph: Any, now_graph: Any,

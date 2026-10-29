@@ -1,6 +1,8 @@
--- Each write of a workflow's definition (coder/workflow/graph_service.py), kept 90 days. One author's writes
--- from one source within five minutes of a version's first are that version; a restore is a write of its own,
--- and what a workflow was when its history began is its first row (source 'baseline'). A version holds the
+-- Each write of a workflow's definition (coder/workflow/graph_service.py), kept 90 days. Canvas saves within
+-- five minutes of a version's first are that version (one canvas session, whoever edits in it: authors); any
+-- other write closes it and is a version of its own, which only the same author's next writes from the same
+-- source join, in the same five minutes; a restore never joins one. What a workflow was when its history began
+-- is its first row (source 'baseline'). A version holds the
 -- definition whole, so a restore puts all of it back: the graph as written (never a runtime key), the workflow's
 -- name and description, and the settings a client may write (never NoClick's own, utils/system_workflows.py).
 -- history_version is the version's own number, the workflows.graph_version its first write produced, never
@@ -21,6 +23,7 @@ CREATE TABLE public.workflow_versions (
     definition jsonb,
     author_user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
     author_key_id text,
+    authors uuid[] NOT NULL DEFAULT '{}',
     source text NOT NULL CHECK (source IN ('baseline', 'canvas', 'api', 'builder', 'mcp', 'coordinator', 'deploy',
                                            'restore')),
     changes text[] NOT NULL DEFAULT '{}',
@@ -33,7 +36,18 @@ CREATE TABLE public.workflow_versions (
 );
 
 CREATE INDEX workflow_versions_updated_at ON public.workflow_versions (updated_at);
-CREATE INDEX workflow_versions_author ON public.workflow_versions (workflow_id, source, author_user_id, version DESC);
 
 ALTER TABLE public.workflow_versions ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON TABLE public.workflow_versions FROM anon, authenticated;
+
+-- One workflow's reconcile at a time (utils/workflow_reconcile.py): the reconcile running holds this lease,
+-- claimed and renewed in short statements, never across its own work; one that lapsed is anyone's.
+-- Backend-only: RLS on with no policy, and the API roles hold no grants.
+CREATE TABLE public.workflow_reconcile_leases (
+    workflow_id uuid PRIMARY KEY REFERENCES public.workflows(id) ON DELETE CASCADE,
+    holder text NOT NULL,
+    expires_at timestamptz NOT NULL
+);
+
+ALTER TABLE public.workflow_reconcile_leases ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON TABLE public.workflow_reconcile_leases FROM anon, authenticated;

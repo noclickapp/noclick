@@ -61,6 +61,11 @@ interface GraphRecord {
     loaded: boolean;
     dragging: boolean;
     canvasMounted: boolean;
+    // The viewer can only read this workflow (workflow:get's user_permission is view): it never saves.
+    readOnly: boolean;
+    // Steps the canvas is fetching whole after a server write (a secret or an outsize setting the room held
+    // back): its saves wait for them, or they'd write the step as it was.
+    savesHeld: number;
 
     // Save coordination. graphVersion is the server's optimistic-concurrency
     // token from the last workflow:get / save ack (null = unknown → save
@@ -113,6 +118,8 @@ export function createGraphRecord(
         loaded: false,
         dragging: false,
         canvasMounted: false,
+        readOnly: false,
+        savesHeld: 0,
         dirty: false,
         saveTimer: null,
         graphVersion: null,
@@ -212,6 +219,8 @@ export function getBackendGraphSnapshot(
 function canSave(rec: GraphRecord): boolean {
     if (!isPersistableWorkflowId(rec.workflowId)) return false;
     if (!rec.loaded) return false;
+    if (rec.readOnly) return false;
+    if (rec.savesHeld > 0) return false;
     if (rec.dragging) return false;
     if (headlessBuilder.isActive()) return false;
     // Snapshot is only fresh while the canvas is mounted and recording
@@ -390,9 +399,12 @@ function fireSave(rec: GraphRecord, opts?: { unconditional?: boolean }): void {
         // delete the cache would still hold the pre-delete graph and the
         // next mount would restore — and eventually re-save — deleted nodes).
         rec.saveFailures = 0;
-        rec.lastSavedPayloadJson = payloadJson;
         const newVersion = resp?.workflow?.graph_version;
-        if (typeof newVersion === 'number') rec.graphVersion = newVersion;
+        // A save acked after a server write moved the base on (its room notice came first) never moves it back.
+        if (typeof newVersion !== 'number' || rec.graphVersion == null || newVersion >= rec.graphVersion) {
+            rec.lastSavedPayloadJson = payloadJson;
+            if (typeof newVersion === 'number') rec.graphVersion = newVersion;
+        }
         for (const id of deletedNodeIds) rec.deletedNodeIds.delete(id);
         try {
             // JSON round-trip strips valtio proxies for structured clone.
@@ -524,6 +536,35 @@ export function setGraphVersion(workflowId: string, version: number | null): voi
     if (typeof version === 'number') rec.graphVersion = version;
     rec.remoteDeletedNodeIds.clear();
     rec.remoteDeletedEdgeIds.clear();
+}
+
+/** A server write the canvas applied from the workflow's room (its builder events, then
+ *  `workflow:graph_changed`) is the server's state: the CAS base moves to the version it left, never back, so the
+ *  canvas's next save carries the write instead of conflicting and rebasing over it. */
+export function adoptServerVersion(workflowId: string, version: number): void {
+    const rec = graphRecords[workflowId];
+    if (!rec || typeof version !== 'number') return;
+    if (rec.graphVersion == null || version > rec.graphVersion) rec.graphVersion = version;
+}
+
+/** The viewer may only read this workflow: the canvas never saves it. */
+export function setGraphReadOnly(workflowId: string, readOnly: boolean): void {
+    const rec = graphRecords[workflowId];
+    if (!rec) return;
+    rec.readOnly = readOnly;
+}
+
+/** Hold the canvas's saves while it fetches a step whole after a server write; `releaseSaves` lets them go. */
+export function holdSaves(workflowId: string): void {
+    const rec = graphRecords[workflowId];
+    if (rec) rec.savesHeld += 1;
+}
+
+export function releaseSaves(workflowId: string): void {
+    const rec = graphRecords[workflowId];
+    if (!rec || rec.savesHeld === 0) return;
+    rec.savesHeld -= 1;
+    if (rec.savesHeld === 0 && rec.dirty) scheduleSave(rec);
 }
 
 /** Snapshot the record's current content as the no-op-save baseline. Called
@@ -928,6 +969,11 @@ function wire(): void {
     // evicts the gen by reading it out at this listener's call time;
     // listener order isn't guaranteed, so we tolerate the eviction by
     // also checking byWorkflow as a fallback.
+    // A server write's notice in the workflow's room, after the builder events the canvas applied.
+    onSocketEvent('workflow:graph_changed', (data) => {
+        if (data?.workflow_id && typeof data.version === 'number') adoptServerVersion(data.workflow_id, data.version);
+    });
+
     onSocketEvent('active_gen:terminal' as never, ((data: { gen_id?: string }) => {
         const gen_id = data?.gen_id;
         if (!gen_id) return;

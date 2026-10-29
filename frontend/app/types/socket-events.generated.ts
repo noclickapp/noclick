@@ -918,6 +918,21 @@ export interface WorkflowCompleteEvent {
   dropped?: boolean;
 }
 /**
+ * A workflow's graph was written through the graph service (``coder.workflow.graph_service``): sent in the
+ * workflow's room on the relay after the builder events (``MCPBuilderEvent``) that carry the change, so every
+ * canvas open on it takes ``version`` as its base, the change being the server's and not an edit of its own.
+ */
+export interface WorkflowGraphChangedEvent {
+  /**
+   * UUID of the workflow
+   */
+  workflow_id: string;
+  /**
+   * Its graph version now (the one to edit on from)
+   */
+  version: number;
+}
+/**
  * Backend request for frontend workflow data or mutation.
  *
  * This enables bidirectional communication where the backend MCP handler
@@ -14225,6 +14240,7 @@ export interface ServerToClientEvents {
   'usage:data': (data: UsageDataEvent) => void;
   'usage:event': (data: UsageEventUpdateEvent) => void;
   'workflow:complete': (data: WorkflowCompleteEvent) => void;
+  'workflow:graph_changed': (data: WorkflowGraphChangedEvent) => void;
   'workflow:mcp:request': (data: WorkflowMCPRequestEvent) => void;
   'workflow:name_generated': (data: WorkflowNameGeneratedEvent) => void;
   'workflow:node:output': (data: WorkflowNodeOutputEvent) => void;

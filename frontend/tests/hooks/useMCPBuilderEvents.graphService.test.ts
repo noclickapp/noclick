@@ -9,6 +9,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createWorkflowNode } from '~/lib/applyNodeUpdate';
 import { useMCPBuilderEvents } from '~/hooks/useMCPBuilderEvents';
 import { WorkflowPresenceService } from '~/lib/collaboration/workflowPresenceService';
+import { holdSaves, releaseSaves } from '~/lib/liveGraphStore';
+import { sendEventAsync } from '~/lib/socket-sender';
 
 const handlers: Record<string, (event: unknown) => void> = {};
 vi.mock('~/lib/socket-receiver', () => ({
@@ -18,6 +20,11 @@ vi.mock('~/lib/socket-receiver', () => ({
     }),
     socketReceiver: { injectWireEvent: (event: string, payload: unknown) => handlers[event]?.(payload) },
 }));
+const { stored } = vi.hoisted(() => ({ stored: {} as Record<string, Record<string, unknown>> }));
+vi.mock('~/lib/socket-sender', () => ({
+    sendEventAsync: vi.fn(async (event: { node_id: string }) => ({ config: stored[event.node_id] })),
+}));
+vi.mock('~/lib/liveGraphStore', () => ({ holdSaves: vi.fn(), releaseSaves: vi.fn() }));
 
 class RoomSocket {
     static last: RoomSocket;
@@ -117,6 +124,28 @@ describe('a graph service write on an open canvas', () => {
         unmount();
         room.disconnect();
         vi.unstubAllGlobals();
+    });
+
+    it('fetches a step whole when the room held part of it back, holding saves until it has', async () => {
+        const { state, setNodes, setEdges } = canvas(
+            [createWorkflowNode('fetch', 'automation-http-request', { x: 0, y: 0 }, { label: 'Fetch' })], []);
+        const { unmount } = renderHook(() => useMCPBuilderEvents({ workflowId: 'wf', setNodes, setEdges }));
+        stored.fetch = { label: 'Fetch', url: 'https://api.example', api_key: 'sk-live-123' };
+        await act(async () => {
+            handlers['mcp:builder_event']({
+                workflow_id: 'wf', event_type: 'node_updated',
+                data: { nodeId: 'fetch', config: { url: 'https://api.example' }, refetch: true },
+            });
+        });
+        expect(sendEventAsync).toHaveBeenCalledWith(expect.objectContaining({
+            event_name: 'workflow:node:get_config', workflow_id: 'wf', node_id: 'fetch',
+        }));
+        expect(holdSaves).toHaveBeenCalledWith('wf');
+        expect(releaseSaves).toHaveBeenCalledWith('wf');
+        const config = state.nodes[0].data.config as Record<string, unknown>;
+        expect(config.url).toBe('https://api.example');
+        expect(config.api_key).toBe('sk-live-123');
+        unmount();
     });
 
     it('leaves another workflow alone', () => {

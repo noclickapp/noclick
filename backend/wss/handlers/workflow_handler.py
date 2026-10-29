@@ -77,7 +77,7 @@ from utils.relay_tokens import mint_user_room_token
 from utils.activity import signal_activity
 from utils.workflow_delta import compute_workflow_delta
 from utils.workflow_reconcile import reconcile_graph_change
-from coder.workflow.graph_service import Author, definition, record_save
+from coder.workflow.graph_service import Author, canvas_save, definition, record_save
 from utils.analytics import log_activity_background
 from utils.analytics_events import Events
 from repositories.workflow import WorkflowRepo
@@ -1001,18 +1001,31 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 # save of the definition is a version, recorded in the same transaction.
                 repo = WorkflowRepo(pool)
                 async with conn.transaction():
-                    row = await repo.update_workflow_dynamic(
-                        conn, request.workflow_id,
-                        name=request.name,
-                        description=request.description,
-                        workflow_data=request.workflow_data,
-                        permissions=request.permissions,
-                        display_metadata=request.display_metadata,
-                        # Only NoClick marks a workflow it runs itself.
-                        settings=client_settings(request.settings) if request.settings is not None else None,
-                        expected_graph_version=request.expected_graph_version,
-                    )
-                    if row and any(v is not None for v in (request.workflow_data, request.name,
+                    # A secret the canvas was never sent is kept; an echo of what's stored writes nothing.
+                    workflow_data = request.workflow_data
+                    if workflow_data is not None:
+                        workflow_data = await canvas_save(conn, repo, request.workflow_id, workflow_data,
+                                                          request.expected_graph_version)
+                    echo = request.workflow_data is not None and workflow_data is None
+                    others = (request.name, request.description, request.permissions, request.display_metadata,
+                              request.settings)
+                    if echo and all(v is None for v in others):
+                        row = await repo.get_workflow_full(conn, request.workflow_id)
+                        row = row and {**row, **{f"old_{k}": row[k] for k in ("name", "description", "settings",
+                                                                               "workflow")}}
+                    else:
+                        row = await repo.update_workflow_dynamic(
+                            conn, request.workflow_id,
+                            name=request.name,
+                            description=request.description,
+                            workflow_data=workflow_data,
+                            permissions=request.permissions,
+                            display_metadata=request.display_metadata,
+                            # Only NoClick marks a workflow it runs itself.
+                            settings=client_settings(request.settings) if request.settings is not None else None,
+                            expected_graph_version=request.expected_graph_version,
+                        )
+                    if row and any(v is not None for v in (workflow_data, request.name,
                                                              request.description, request.settings)):
                         await record_save(
                             conn, request.workflow_id, Author(user_id), source="canvas",
@@ -1073,7 +1086,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
             # the steps it says it deleted, trigger registrations, re-added steps), judged
             # from the graph before and after it. Spawned: it makes provider round-trips
             # that must not block the save ack or pin a pool connection.
-            if request.workflow_data is not None or request.deleted_node_ids:
+            if (request.workflow_data is not None and not echo) or request.deleted_node_ids:
                 spawn(
                     reconcile_graph_change(pool, request.workflow_id, user_id,
                                            row['old_workflow'] if row.get('old_workflow') is not None
@@ -1106,8 +1119,8 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
             ))
 
             # An autosave that added, removed or reconfigured a node; saves of one sitting are one line.
-            delta = (compute_workflow_delta(row['old_workflow'], request.workflow_data, request.deleted_node_ids)
-                     if request.workflow_data is not None else None)
+            delta = (compute_workflow_delta(row['old_workflow'], workflow_data, request.deleted_node_ids)
+                     if workflow_data is not None else None)
             if delta:
                 changed = {"added": delta['added_labels'], "removed": delta['deleted_labels'],
                            "changed": [label for label, _ in delta['modified_details']]}

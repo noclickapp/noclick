@@ -66,6 +66,7 @@ workflow_folders
 workflow_invite_links
 workflow_node_output_schemas
 workflow_node_state
+workflow_reconcile_leases
 workflow_resources
 workflow_run_totals
 workflow_saved_output
