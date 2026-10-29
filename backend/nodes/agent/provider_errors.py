@@ -65,7 +65,7 @@ _DETAIL_MAX_LEN = 300
 class ProviderError:
     provider: str  # 'anthropic' | 'openai' | 'openrouter' | 'gemini' | 'xai' | 'noclick' | 'unknown'
     kind: str      # 'no_credits' | 'invalid_key' | 'plan_limit' | 'account_blocked' | 'provider_outage' | 'bad_request'
-                   # | 'spend_cap' or a PROXY_REFUSAL_KINDS entry (provider 'noclick')
+                   # | 'spend_cap', VENDOR_UNAVAILABLE or a PROXY_REFUSAL_KINDS entry (provider 'noclick')
     message: str   # full user-facing rewrite (includes the original detail)
     detail: str    # provider's verbatim text, trimmed
 
@@ -104,12 +104,46 @@ def proxy_refusal_message(kind: str, sentence: str) -> str:
     return f"NoClick: {sentence} [{kind}]"
 
 
+# NoClick's own account at a vendor (the instance's OpenRouter key, which pays for every call NoClick runs and charges
+# at cost) turning a call down for want of credit: NoClick's side, over once its top-up lands, never the account's
+# funds, so never an Add funds card or a payment link. Minted ONLY by vendor_unavailable_message (from
+# platform_key_refusal, which logs the vendor's words); none of those words reach a model or a person: a coordinator
+# read OpenRouter's "would exceed your available credits" on NoClick's key as its owner's balance and asked them for
+# funds (2026-10-29).
+VENDOR_UNAVAILABLE = "vendor_unavailable"
+VENDOR_UNAVAILABLE_RE = re.compile(r"NoClick's ([a-z]+(?: [a-z]+)*) is briefly unavailable; try again in a few minutes")
+
+
+def vendor_unavailable_message(service: str) -> str:
+    """The one way NoClick's own key out of credit is said: ``service`` is what failed ("image service")."""
+    return (f"NoClick's {service} is briefly unavailable; try again in a few minutes "
+            "(nothing on your account needs to change).")
+
+
+def match_vendor_unavailable(text: Optional[str]) -> Optional[re.Match]:
+    return VENDOR_UNAVAILABLE_RE.search(text) if text else None
+
+
+def platform_key_refusal(status: Optional[int], said: str, *, vendor: str, call: str,
+                         service: str) -> Optional[str]:
+    """``vendor_unavailable_message(service)`` when ``vendor`` answered ``call`` on NoClick's own key with 402 (its
+    account wants credit), logged at ERROR, which pages, with the vendor's words; None for any other status, whose
+    words are the caller's to keep. Only for a call on NoClick's key: on the account's own, a 402 is its own balance."""
+    if status != 402:
+        return None
+    logger.error("[vendor_unavailable] %s turned down NoClick's own key on %s for want of credit (HTTP 402): %.300s",
+                 vendor, call, " ".join((said or "").split()),
+                 extra={"alert_key": (VENDOR_UNAVAILABLE, vendor, call)})
+    return vendor_unavailable_message(service)
+
+
 # Platform failures are checked before provider rules. OpenRouter also emits
 # the phrase "insufficient credits", so provenance is decided by the platform
 # gate's exact X < Y shape rather than by a loose substring match.
 _PLATFORM_RULES: Tuple[_Rule, ...] = (
     _Rule("noclick", "spend_cap", SPEND_CAP_RE),
     _Rule("noclick", "no_credits", INSUFFICIENT_CREDITS_RE),
+    _Rule("noclick", VENDOR_UNAVAILABLE, VENDOR_UNAVAILABLE_RE),
     *(_Rule("noclick", kind, re.compile(r"NoClick: [^\[\n]*\[" + kind + r"\]")) for kind in PROXY_REFUSAL_KINDS),
 )
 
@@ -133,6 +167,9 @@ _RULES: Tuple[_Rule, ...] = (
     # ── OpenRouter ────────────────────────────────────────────────────────
     _r("openrouter", "no_credits", r"requires more credits"),
     _r("openrouter", "no_credits", r"insufficient credits"),
+    # Its 402 while the account's balance can't cover what's already running ("This request would exceed your
+    # available credits given your current in-flight requests").
+    _r("openrouter", "no_credits", r"exceed your available credits"),
     _r("openrouter", "invalid_key", r"no auth credentials found"),
     # A key whose account no longer resolves (deleted/rotated) — OpenRouter
     # answers 401 "User not found." Bound to the JSON error envelope on
@@ -371,6 +408,10 @@ def format_provider_message(provider: str, kind: str, detail: str) -> str:
     the runtime failure read identically."""
     if kind == "spend_cap":
         return (detail or "").strip()  # minted whole by billing.exceptions.spend_cap_message
+    if kind == VENDOR_UNAVAILABLE:
+        # Said again whole, without what framed it (a harness's "API Error: 503 {...}").
+        found = match_vendor_unavailable(detail)
+        return vendor_unavailable_message(found.group(1)) if found else (detail or "").strip()
     meta = _meta(provider)
     billing_hint = f" Add credits at {meta['billing_url']}." if meta["billing_url"] else ""
     keys_hint = f" or create a new one at {meta['keys_url']}" if meta["keys_url"] else ""

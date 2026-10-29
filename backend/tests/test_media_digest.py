@@ -297,7 +297,7 @@ def test_no_speech_is_a_refusal_not_a_transcript(scribe_api):
     assert tracker.track_usage_event.await_args.args[0].cost_usd == 0
 
 
-@pytest.mark.parametrize("status", [400, 402, 502])
+@pytest.mark.parametrize("status", [400, 502])
 def test_a_refused_call_is_a_note_never_a_charge_and_never_sent_twice(scribe_api, status):
     tracker = _tracker()
     scribe_api.status = status
@@ -305,6 +305,42 @@ def test_a_refused_call_is_a_note_never_a_charge_and_never_sent_twice(scribe_api
         with pytest.raises(md.DigestError, match=f"^transcription failed: HTTP {status}$"):
             asyncio.run(md.transcribe_audio(b"x", mime_type="audio/ogg", filename="v.oga", billing=_billing()))
     assert len(scribe_api.asked) == 1
+    tracker.track_usage_event.assert_not_awaited()
+
+
+def test_a_402_on_the_instances_key_is_noclicks_side_in_the_note(scribe_api):
+    """Transcription runs on NoClick's own key: its 402 is NoClick's account wanting credit, so the note the agent
+    reads says NoClick's side, never "HTTP 402" (read as payment) or the provider's words about credits; nothing is
+    charged and the call isn't sent again."""
+    from nodes.agent.provider_errors import vendor_unavailable_message
+
+    tracker = _tracker()
+    scribe_api.status = 402
+    with patch("billing.usage_tracker.usage_tracker", tracker):
+        with pytest.raises(md.DigestError) as refused:
+            asyncio.run(md.transcribe_audio(b"x", mime_type="audio/ogg", filename="v.oga", billing=_billing()))
+    assert str(refused.value) + "." == vendor_unavailable_message("transcription service")
+    assert len(scribe_api.asked) == 1
+    tracker.track_usage_event.assert_not_awaited()
+    note = md.format_media_digests([md.MediaDigest(ref=_voice_ref(), error=str(refused.value))])
+    assert "briefly unavailable" in note and "402" not in note and "credit" not in note.lower()
+
+
+def test_a_402_to_video_understanding_is_noclicks_side_in_the_note():
+    import litellm
+
+    from nodes.agent.provider_errors import vendor_unavailable_message
+
+    refused = litellm.APIError(status_code=402, llm_provider="openrouter", model="google/gemini-3.5-flash",
+                               message='{"error":{"message":"Insufficient credits","code":402}}')
+    tracker = _tracker()
+    with patch("billing.usage_tracker.usage_tracker", tracker), \
+         patch("litellm.acompletion", new=AsyncMock(side_effect=refused)), \
+         patch("utils.video_probe.video_duration", new=AsyncMock(return_value=10.0)):
+        with pytest.raises(md.DigestError) as failed:
+            asyncio.run(md.digester_for("video")(
+                md.MediaRef(kind="video", mime_type="video/mp4"), b"video", md.DigestContext(billing=_billing())))
+    assert str(failed.value) + "." == vendor_unavailable_message("video service")
     tracker.track_usage_event.assert_not_awaited()
 
 

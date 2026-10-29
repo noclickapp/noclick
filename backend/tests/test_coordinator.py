@@ -928,6 +928,33 @@ async def test_media_tools_answer_the_model_with_results_or_the_gate_reason(monk
     assert coordinator_tools.start_video.await_args.kwargs["continuation"] is None
 
 
+async def test_noclicks_own_key_out_of_credit_is_never_the_owners_funds(monkeypatch):
+    """OpenRouter's 402 to NoClick's own key ("would exceed your available credits") reached the coordinator as its
+    image tool's error, and it asked the owner to add $5, $10 or $25 (2026-10-29). Through the real image path it is
+    NoClick's side: one sentence, no gate kind and no purchase link, though this platform sells funds."""
+    import httpx
+    import respx
+
+    from billing import gates
+    from billing.usage_tracker import usage_tracker
+    from nodes.agent.provider_errors import vendor_unavailable_message
+
+    monkeypatch.setenv("OPENROUTER_API_KEY", "or-test")
+    monkeypatch.setattr(gates, "check_product", AsyncMock())
+    monkeypatch.setattr(usage_tracker, "enforce_credit_gate", AsyncMock())
+    purchases = FakePurchases()
+    monkeypatch.setattr(capabilities, "_providers", {**capabilities._providers, capabilities.PURCHASES: purchases})
+    t = CoordinatorTools(pool=MockNativePool(), sio=object(), user_id=USER, organization_id=ORG, conversation_id=CID,
+                         reply_channel="whatsapp_text", continuation={"turn_id": "t1"})
+    with respx.mock:
+        respx.post("https://openrouter.ai/api/v1/images").mock(return_value=httpx.Response(402, json={"error": {
+            "code": 402,
+            "message": "This request would exceed your available credits given your current in-flight requests"}}))
+        refused = await t.execute("generate_image", {"prompt": "a fern"})
+    assert refused == {"success": False, "error": vendor_unavailable_message("image service")}
+    assert purchases.minted == []
+
+
 async def test_the_owner_can_ask_for_any_purchase_link_the_platform_sells(monkeypatch):
     purchases = FakePurchases()
     monkeypatch.setattr(capabilities, "_providers", {**capabilities._providers, capabilities.PURCHASES: purchases})

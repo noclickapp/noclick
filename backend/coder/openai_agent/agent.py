@@ -1172,9 +1172,15 @@ class Agent:
                 # Provider billing/auth rejections (litellm surfaces them as
                 # raw exception text) get the actionable rewrite — the same
                 # classifier used by CLI harnesses.
-                from nodes.agent.provider_errors import classify_provider_error
+                from nodes.agent.provider_errors import classify_provider_error, platform_key_refusal
 
-                match = classify_provider_error(str(e), channel="error")
+                # With no key of the account's (``BillingHooks``' rule), the router's 402 is NoClick's own account
+                # wanting credit, never the account's.
+                said = platform_key_refusal(
+                    getattr(e, "status_code", None), str(e), vendor="OpenRouter",
+                    call=f"a model call ({getattr(e, 'model', None)})", service="model service",
+                ) if not self._env and getattr(e, "llm_provider", None) == "openrouter" else None
+                match = classify_provider_error(said or str(e), channel="error")
                 reason = match.message if match else str(e)
                 await self._emit_message(ChatMessageEvent(
                     message=f"Error: {reason}",

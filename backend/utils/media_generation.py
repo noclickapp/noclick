@@ -49,6 +49,21 @@ class MediaError(RuntimeError):
         self.status, self.provider_said = status, provider_said
 
 
+class MediaUnavailable(MediaError):
+    """OpenRouter turned a call on NoClick's key down for want of credit: NoClick's side, briefly, said in
+    ``provider_errors.vendor_unavailable_message``'s words, never the provider's (``noclicks_key_refusal``)."""
+
+
+def noclicks_key_refusal(resp: httpx.Response, kind: str) -> Optional[MediaUnavailable]:
+    """OpenRouter's 402 to a ``kind`` ("image", "video") call on NoClick's key: NoClick's account wanting credit
+    (``platform_key_refusal``, which logs it), never the caller's funds; None for any other answer."""
+    from nodes.agent.provider_errors import platform_key_refusal
+
+    said = platform_key_refusal(resp.status_code, resp.text, vendor="OpenRouter", call=f"{kind} generation",
+                                service=f"{kind} service")
+    return MediaUnavailable(said, status=resp.status_code) if said is not None else None
+
+
 def openrouter_key() -> str:
     """The instance's OpenRouter key: every call NoClick pays for runs on it."""
     key = os.environ.get("OPENROUTER_API_KEY")
@@ -96,9 +111,13 @@ def build_image_request(
     return body
 
 
-async def post_image_request(api_key: str, body: Dict[str, Any]) -> Dict[str, Any]:
+async def post_image_request(api_key: str, body: Dict[str, Any], *, noclicks_key: bool) -> Dict[str, Any]:
+    """``noclicks_key``: ``api_key`` is NoClick's own (``openrouter_key``), not the caller's."""
     async with httpx.AsyncClient(timeout=300.0) as client:
         resp = await client.post(f"{OPENROUTER_API}/chat/completions", headers=openrouter_headers(api_key), json=body)
+    unavailable = noclicks_key_refusal(resp, "image") if noclicks_key else None
+    if unavailable is not None:
+        raise unavailable
     if resp.status_code >= 400:
         logger.error("[Image] OpenRouter API error %s: %s", resp.status_code, resp.text)
         raise RuntimeError(
@@ -261,6 +280,9 @@ async def generate_image(
     async with httpx.AsyncClient(timeout=300.0) as client:
         resp = await client.post(f"{OPENROUTER_API}/images", headers=openrouter_headers(openrouter_key()), json=body)
     if resp.status_code >= 400:
+        unavailable = noclicks_key_refusal(resp, "image")
+        if unavailable is not None:
+            raise unavailable
         logger.error("[Image] OpenRouter images error %s: %s", resp.status_code, resp.text)
         raise MediaError(f"The image model refused the request (HTTP {resp.status_code}): {resp.text[:300]}",
                          status=resp.status_code, provider_said=resp.text)
@@ -409,7 +431,8 @@ async def start_video(
     async with httpx.AsyncClient(timeout=60.0) as client:
         resp = await client.post(f"{OPENROUTER_API}/videos", headers=openrouter_headers(openrouter_key()), json=body)
     if resp.status_code >= 400:
-        raise MediaError(f"The video model refused the request (HTTP {resp.status_code}): {resp.text[:300]}")
+        raise noclicks_key_refusal(resp, "video") or MediaError(
+            f"The video model refused the request (HTTP {resp.status_code}): {resp.text[:300]}")
     submitted = resp.json()
     job_id = await pool.fetchval(
         """INSERT INTO coordinator_jobs (user_id, kind, status, spec, origin, continuation, send_to_phone,

@@ -67,8 +67,10 @@ class Heard:
 
 
 def openrouter_post(*, timeout_s: float) -> Post:
-    """Requests on the instance's OpenRouter key; ``utils.media_generation.MediaError`` when it has none."""
-    from utils.media_generation import OPENROUTER_API, openrouter_headers, openrouter_key
+    """Requests on the instance's OpenRouter key; ``utils.media_generation.MediaError`` when it has none, and
+    ``MediaUnavailable`` when its account wants credit (``platform_key_refusal``)."""
+    from nodes.agent.provider_errors import platform_key_refusal
+    from utils.media_generation import OPENROUTER_API, MediaUnavailable, openrouter_headers, openrouter_key
 
     headers = openrouter_headers(openrouter_key())
 
@@ -78,6 +80,10 @@ def openrouter_post(*, timeout_s: float) -> Post:
                 response = await client.post(f"{OPENROUTER_API}{path}", headers=headers, json=body)
         except httpx.HTTPError as exc:
             raise ScribeError(None, f"no answer from OpenRouter ({type(exc).__name__})") from None
+        unavailable = platform_key_refusal(response.status_code, response.text, vendor="OpenRouter",
+                                           call="transcription", service="transcription service")
+        if unavailable is not None:
+            raise MediaUnavailable(unavailable, status=response.status_code)
         if response.status_code >= 400:
             raise ScribeError(response.status_code, response.text[:500])
         return response.json()

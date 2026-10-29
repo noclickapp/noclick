@@ -12,6 +12,12 @@ decided by shape, never by which greedy rule matches first:
   ``InsufficientBalanceError``) as provider='noclick', without a hosted purchase action.
 - ``notifications`` routes it to the credits-exhausted email — and must NOT
   route provider balance errors there (the reverse confusion).
+- A provider's 402 to NoClick's OWN key (the instance's OpenRouter key, which
+  pays for what NoClick runs) is neither: it is NoClick's side, briefly
+  (``provider_errors.platform_key_refusal``), worded with none of the
+  provider's words about credits, with nothing to buy (2026-10-29: a
+  coordinator read OpenRouter's "would exceed your available credits" on
+  NoClick's key as its owner's balance and asked them to add funds).
 
 The source scan at the bottom is the anti-recurrence guard: a new inline mint
 of the gate string fails CI until it goes through the helper.
@@ -27,12 +33,16 @@ from billing.exceptions import (
     InsufficientBalanceError,
     insufficient_credits_message,
     match_insufficient_credits,
+    match_spend_refusal,
 )
 from nodes.agent.provider_errors import (
+    VENDOR_UNAVAILABLE,
     action_for_error_text,
     classify_provider_error,
     describe_failure,
     normalize_turn_result,
+    platform_key_refusal,
+    vendor_unavailable_message,
 )
 
 GATE_MSG = insufficient_credits_message(0.0, 0.20)  # the incident string
@@ -197,6 +207,79 @@ def test_gate_message_survives_runner_framing_for_email_routing():
     assert m is not None and float(m.group(1)) == 0.0
 
 
+# ── NoClick's own key out of credit: NoClick's side, never the account's ────
+
+# OpenRouter's 402s as it words them: the first is what answered NoClick's own key on 2026-10-29.
+OPENROUTER_402S = (
+    "This request would exceed your available credits given your current in-flight requests",
+    'litellm.APIError: APIError: OpenrouterException - {"error":{"message":"This request would exceed your '
+    'available credits given your current in-flight requests","code":402}}',
+    "Insufficient credits. Add more using https://openrouter.ai/settings/credits",
+)
+UNAVAILABLE = vendor_unavailable_message("image service")
+
+
+@pytest.mark.parametrize("text", OPENROUTER_402S + (UNAVAILABLE,))
+def test_neither_openrouters_402_nor_noclicks_side_reads_as_the_credit_gate(text):
+    """The out-of-funds card, the coordinator's refusal with its payment links and the turn's ``FUNDS`` wrap-up all
+    key on the gate's own shape: none may fire on a provider's words, or on NoClick's own key running short."""
+    from coder.openai_agent.guards import credit_refusal
+
+    assert match_insufficient_credits(text) is None and match_spend_refusal(text) is None
+    assert credit_refusal({"success": False, "error": text}) is None
+
+
+def test_a_402_on_noclicks_key_is_said_as_noclicks_side_and_pages(caplog):
+    said = OPENROUTER_402S[0]
+    with caplog.at_level("ERROR", logger="nodes.agent.provider_errors"):
+        message = platform_key_refusal(402, said, vendor="OpenRouter", call="image generation",
+                                       service="image service")
+    assert message == UNAVAILABLE == ("NoClick's image service is briefly unavailable; try again in a few minutes "
+                                      "(nothing on your account needs to change).")
+    # None of the provider's words, so nothing a model or a person could take for the account's own balance.
+    assert not any(word in message.lower() for word in ("credit", "fund", "402", "openrouter", "pay"))
+    # Logged at ERROR (the Slack handler pages on it) with what the vendor said, under a key of its own.
+    [record] = [r for r in caplog.records if r.levelname == "ERROR"]
+    assert "OpenRouter" in record.getMessage() and "image generation" in record.getMessage()
+    assert said in record.getMessage() and record.alert_key == (VENDOR_UNAVAILABLE, "OpenRouter", "image generation")
+
+
+@pytest.mark.parametrize("status", [None, 200, 400, 401, 403, 429, 500, 503])
+def test_any_other_answer_keeps_its_own_words_and_logs_nothing(status, caplog):
+    with caplog.at_level("ERROR", logger="nodes.agent.provider_errors"):
+        said = platform_key_refusal(status, OPENROUTER_402S[0], vendor="OpenRouter", call="x", service="model service")
+    assert said is None
+    assert caplog.records == []
+
+
+@pytest.mark.parametrize("framed", [
+    UNAVAILABLE,
+    f"Node node_abc failed: {UNAVAILABLE}",
+    # A coding harness relaying the credential proxy's 503 to NoClick's own key.
+    'API Error: 503 {"type":"error","error":{"type":"api_error","message":"NoClick: ' + UNAVAILABLE + '"}}',
+])
+def test_noclicks_side_classifies_as_noclick_with_nothing_to_buy(framed, credit_cta):
+    """Even where a top-up is sold (CREDIT_CTA), NoClick's side briefly unavailable offers nothing to click: it is
+    waited out. Its rewrite is the one sentence, whatever framed it."""
+    match = classify_provider_error(framed, channel="error")
+    assert (match.provider, match.kind) == ("noclick", VENDOR_UNAVAILABLE)
+    assert match.message == UNAVAILABLE and match.action() is None
+    for node_type in ("agent", "automation-image", None):
+        assert action_for_error_text(framed, node_type=node_type) is None
+    assert describe_failure(RuntimeError(framed), node_type="agent") == (UNAVAILABLE, None)
+    assert normalize_turn_result("", framed) == ("", UNAVAILABLE)
+
+
+@pytest.mark.parametrize("text", OPENROUTER_402S)
+def test_a_402_on_the_accounts_own_openrouter_key_names_that_account(text):
+    """On the account's own key (BYOK) the same 402 is its own OpenRouter balance, and says so."""
+    match = classify_provider_error(text, channel="error")
+    assert (match.provider, match.kind) == ("openrouter", "no_credits")
+    assert "Your OpenRouter account has no API credits" in match.message
+    assert "not your NoClick credits" in match.message
+    assert "openrouter.ai/settings/credits" in action_for_error_text(text, node_type="agent")["url"]
+
+
 # ── Anti-recurrence: the mint is a choke point ──────────────────────────────
 
 def test_no_inline_mints_of_the_gate_message():
@@ -208,7 +291,8 @@ def test_no_inline_mints_of_the_gate_message():
     offenders = []
     for path in backend.rglob("*.py"):
         rel = path.relative_to(backend).as_posix()
-        if rel.startswith(("tests/", ".venv/", "venv/")) or rel == "billing/exceptions.py":
+        # Test code (tests/, and the hosted cloud/tests/) fakes refusals; it reaches no one.
+        if "/tests/" in f"/{rel}" or rel.startswith((".venv/", "venv/")) or rel == "billing/exceptions.py":
             continue
         try:
             source = path.read_text(encoding="utf-8")
@@ -220,3 +304,21 @@ def test_no_inline_mints_of_the_gate_message():
         f"inline 'Insufficient credits:' mint(s) in {offenders} — use "
         "billing.exceptions.insufficient_credits_message instead"
     )
+
+
+def test_no_inline_mints_of_noclicks_side_unavailable():
+    """NoClick's own key out of credit is said only by ``vendor_unavailable_message``: an inline copy could drift
+    from ``VENDOR_UNAVAILABLE_RE``, and the classifier would hand it to a provider rule or to nothing."""
+    backend = pathlib.Path(__file__).resolve().parents[1]
+    offenders = []
+    for path in backend.rglob("*.py"):
+        rel = path.relative_to(backend).as_posix()
+        if "/tests/" in f"/{rel}" or rel.startswith((".venv/", "venv/")) or rel == "nodes/agent/provider_errors.py":
+            continue
+        try:
+            source = path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue
+        if "is briefly unavailable; try again" in source:
+            offenders.append(rel)
+    assert not offenders, f"inline mint(s) in {offenders}: use provider_errors.vendor_unavailable_message"

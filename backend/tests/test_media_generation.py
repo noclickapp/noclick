@@ -119,6 +119,58 @@ async def test_a_refusal_or_an_empty_answer_is_said_plainly(seams):
     assert billed == []
 
 
+# OpenRouter's 402 to NoClick's own key (2026-10-29): its account is short, not the caller's.
+OUT_OF_CREDIT = httpx.Response(402, json={"error": {
+    "code": 402, "message": "This request would exceed your available credits given your current in-flight requests"}})
+
+
+@respx.mock
+async def test_a_402_on_noclicks_key_is_noclicks_side_never_the_accounts_funds(seams, caplog):
+    """The image and the video both run on NoClick's key: OpenRouter's 402 is NoClick's account wanting credit,
+    said as NoClick's side and logged at ERROR once, never in OpenRouter's words about credits."""
+    from nodes.agent.provider_errors import vendor_unavailable_message
+
+    _, billed = seams
+    respx.post("https://openrouter.ai/api/v1/images").mock(return_value=OUT_OF_CREDIT)
+    with caplog.at_level("ERROR"), pytest.raises(media.MediaUnavailable) as image:
+        await media.generate_image(None, user_id=USER, organization_id=None, prompt="a fern")
+    assert str(image.value) == vendor_unavailable_message("image service")
+    assert "credit" not in str(image.value).lower() and image.value.provider_said is None
+    [logged] = [r for r in caplog.records if r.levelname == "ERROR"]
+    assert "image generation" in logged.getMessage() and "in-flight requests" in logged.getMessage()
+
+    respx.get("https://openrouter.ai/api/v1/videos/models").mock(return_value=httpx.Response(200, json={
+        "data": [VEO_SPEC]}))
+    respx.post("https://openrouter.ai/api/v1/videos").mock(return_value=OUT_OF_CREDIT)
+    with pytest.raises(media.MediaUnavailable, match=r"^NoClick's video service is briefly unavailable"):
+        await media.start_video(MockNativePool(), user_id=USER, organization_id=None, prompt="waves")
+    assert billed == []
+
+
+@respx.mock
+@pytest.mark.parametrize("own_key", [None, "sk-or-mine"])
+async def test_the_agent_image_model_tells_noclicks_key_from_the_accounts_own(seams, own_key):
+    """The agent node's image model runs on the account's own OpenRouter key when it brings one, else NoClick's.
+    The same 402 is the account's own OpenRouter balance on its key, and NoClick's side on NoClick's."""
+    from nodes.agent.handlers.image import execute_image_model
+    from nodes.agent.provider_errors import describe_failure, vendor_unavailable_message
+
+    call = respx.post("https://openrouter.ai/api/v1/chat/completions").mock(return_value=OUT_OF_CREDIT)
+    node = SimpleNamespace(emit=AsyncMock(), organization_id=None, sio=None, sid=None, user_id=None, workflow_id=None)
+    config = SimpleNamespace(model="openrouter/google/gemini-2.5-flash-image", system_prompt="", message="a fern",
+                             temperature=0.7, gemini_reference_image_url="")
+    with pytest.raises(RuntimeError) as failed:
+        await execute_image_model(node, config, {"OPENROUTER_API_KEY": own_key} if own_key else None, None)
+    assert call.calls.last.request.headers["authorization"] == f"Bearer {own_key or 'or-test'}"
+    said, action = describe_failure(failed.value, node_type="agent")
+    if own_key:
+        assert not isinstance(failed.value, media.MediaUnavailable)
+        assert "Your OpenRouter account has no API credits" in said and "openrouter.ai" in action["url"]
+    else:
+        assert isinstance(failed.value, media.MediaUnavailable)
+        assert (said, action) == (vendor_unavailable_message("image service"), None)
+
+
 @respx.mock
 async def test_a_video_is_refused_before_it_runs_when_it_cannot_be_afforded(seams):
     respx.get("https://openrouter.ai/api/v1/videos/models").mock(return_value=httpx.Response(200, json={

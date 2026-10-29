@@ -210,3 +210,30 @@ class TestTurnRetry:
         # duplicate text.
         final = [e for e in events if isinstance(e, ChatMessageEvent) and e.finished]
         assert final and final[-1].message is None
+
+    @pytest.mark.parametrize("own_key", [None, "sk-or-mine"])
+    async def test_the_routers_402_is_noclicks_side_on_noclicks_key_and_the_accounts_on_its_own(self, own_key):
+        """With no key of the account's the model runs on NoClick's, so OpenRouter's 402 is NoClick's account
+        wanting credit: the turn fails in NoClick's words, none of OpenRouter's. On the account's own key it is
+        that OpenRouter account's balance, said as such."""
+        from nodes.agent.provider_errors import vendor_unavailable_message
+
+        events = []
+        agent = _make_agent(events)
+        agent._env = {"OPENROUTER_API_KEY": own_key} if own_key else None
+        refused = litellm.APIError(
+            status_code=402, llm_provider="openrouter", model="openai/gpt-5.5",
+            message='APIError: OpenrouterException - {"error":{"message":"This request would exceed your available '
+                    'credits given your current in-flight requests","code":402}}')
+        with patch("coder.openai_agent.agent.Runner.run_streamed", side_effect=[FakeResult(exc=refused)]) as run:
+            await agent(MESSAGE)
+
+        assert run.call_count == 1  # waited out, never retried in the turn
+        [state] = [e for e in events if isinstance(e, AgentStateEvent)]
+        [final] = [e for e in events if isinstance(e, ChatMessageEvent) and e.finished]
+        if own_key:
+            assert "Your OpenRouter account has no API credits" in state.reason
+        else:
+            assert state.reason == vendor_unavailable_message("model service")
+            assert "credit" not in final.message.lower()
+        assert final.message == f"Error: {state.reason}"

@@ -59,6 +59,9 @@ POSITIVE_CORPUS = [
      'requires more credits, or fewer max_tokens. You requested up to 16384 tokens, '
      'but can only afford 0.","code":402}}'),
     ("openrouter", "no_credits", "402 Insufficient credits"),
+    # Its 402 while the account's balance can't also cover the calls already running (2026-10-29).
+    ("openrouter", "no_credits",
+     "This request would exceed your available credits given your current in-flight requests"),
     ("openrouter", "invalid_key", "No auth credentials found"),
     # Representative LiteLLM-framed OpenRouter authentication failure.
     ("openrouter", "invalid_key",

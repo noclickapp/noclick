@@ -113,12 +113,9 @@ async def execute_image_model(
 
         return await execute_imagen_model(node, config, env_overrides, user_id)
 
-    # Resolve API key
-    api_key = None
-    if env_overrides:
-        api_key = env_overrides.get("OPENROUTER_API_KEY")
-    if not api_key:
-        api_key = os.environ.get("OPENROUTER_API_KEY")
+    # The account's own OpenRouter key, else NoClick's.
+    own_key = (env_overrides or {}).get("OPENROUTER_API_KEY")
+    api_key = own_key or os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
         raise ValueError("OPENROUTER_API_KEY not available for image model")
 
@@ -208,7 +205,7 @@ async def execute_image_model(
             surface="image",
         )
 
-    raw_data = await post_image_request(api_key, body)
+    raw_data = await post_image_request(api_key, body, noclicks_key=not own_key)
     text_content, extracted = parse_image_response(raw_data)
     logger.info(f"[Image] Response: total_images={len(extracted)}, text={len(text_content)} chars")
 
