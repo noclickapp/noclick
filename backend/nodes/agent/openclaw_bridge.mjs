@@ -111,7 +111,7 @@ function connect() {
       ws.send(JSON.stringify({type:'req', id:'connect', method:'connect', params:{
         minProtocol:4, maxProtocol:4,
         client:{id:'gateway-client', version:'1.0.0', platform:process.platform, mode:'backend'},
-        role:'operator', scopes:['operator.read','operator.write','operator.admin'], caps:[], auth:{token},
+        role:'operator', scopes:['operator.read','operator.write','operator.admin'], caps:['tool-events'], auth:{token},
       }}));
     } else if (frame.type === 'res' && frame.id === 'connect') {
       if (frame.ok) {
