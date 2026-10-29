@@ -70,4 +70,5 @@ workflow_resources
 workflow_run_totals
 workflow_saved_output
 workflow_templates
+workflow_versions
 workflows

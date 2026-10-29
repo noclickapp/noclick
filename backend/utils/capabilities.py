@@ -235,6 +235,11 @@ CREDENTIAL_HOLDERS = "credentials.holders"
 # None, for what a product keeps of those nodes by id (a channel's agents).
 WORKFLOW_NODES_REMOVED = "workflow.nodes_removed"
 
+# A workflow's graph moved to a version (``coder.workflow.graph_service``): async (owner_id, workflow_id,
+# version) -> None, for the owner's open pages that show it. Without one, only canvases open on it hear (its
+# room on the relay).
+WORKFLOW_GRAPH_CHANGED = "workflow.graph_changed"
+
 # Receive mail to a reserved inbound address whose kind the engine has no
 # receiver for (neither a trigger's nor the coordinator's): async (pool,
 # reservation, message, *, defer) -> str, what happened, for the log.

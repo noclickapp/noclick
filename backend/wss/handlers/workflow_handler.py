@@ -4,7 +4,6 @@ Handles workflow creation, listing, updating, and deletion.
 """
 
 import asyncio
-import json
 import logging
 from typing import Dict, Callable, Optional, Any
 from utils.database_pool import DatabasePoolMixin
@@ -69,7 +68,7 @@ from utils.encryption import get_encryption
 import uuid
 from utils.async_helpers import spawn
 from utils.workflow_resource_manager import (
-    cleanup_nodes_resources, cleanup_workflow_operational_resources, cleanup_workflow_resources, restore_nodes_resources,
+    cleanup_workflow_operational_resources, cleanup_workflow_resources, restore_nodes_resources,
 )
 from utils.webhook_manager import WebhookManager
 from utils.access_control import check_resource_access, Permission, workflow_permission
@@ -77,6 +76,8 @@ from utils.system_workflows import client_settings, refusal
 from utils.relay_tokens import mint_user_room_token
 from utils.activity import signal_activity
 from utils.workflow_delta import compute_workflow_delta
+from utils.workflow_reconcile import reconcile_graph_change
+from coder.workflow.graph_service import Author, record_save
 from utils.analytics import log_activity_background
 from utils.analytics_events import Events
 from repositories.workflow import WorkflowRepo
@@ -996,19 +997,25 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                     return
 
                 # Dynamic UPDATE + CTE to capture old (name, workflow) in one query so
-                # the caller can compute the Slack delta without a second read.
+                # the caller can compute the Slack delta without a second read; a
+                # graph save is a version, recorded in the same transaction.
                 repo = WorkflowRepo(pool)
-                row = await repo.update_workflow_dynamic(
-                    conn, request.workflow_id,
-                    name=request.name,
-                    description=request.description,
-                    workflow_data=request.workflow_data,
-                    permissions=request.permissions,
-                    display_metadata=request.display_metadata,
-                    # Only NoClick marks a workflow it runs itself.
-                    settings=client_settings(request.settings) if request.settings is not None else None,
-                    expected_graph_version=request.expected_graph_version,
-                )
+                async with conn.transaction():
+                    row = await repo.update_workflow_dynamic(
+                        conn, request.workflow_id,
+                        name=request.name,
+                        description=request.description,
+                        workflow_data=request.workflow_data,
+                        permissions=request.permissions,
+                        display_metadata=request.display_metadata,
+                        # Only NoClick marks a workflow it runs itself.
+                        settings=client_settings(request.settings) if request.settings is not None else None,
+                        expected_graph_version=request.expected_graph_version,
+                    )
+                    if row and request.workflow_data is not None:
+                        await record_save(conn, request.workflow_id, Author(user_id), source="canvas",
+                                          before=row['old_workflow'], graph=row['workflow'],
+                                          version=row['graph_version'])
 
                 # CAS miss: the row exists but another writer bumped
                 # graph_version since this client loaded. Return the current
@@ -1058,141 +1065,15 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 graph_version=row.get('graph_version'),
             )
 
-            # Cleanup resources for deleted nodes (fire-and-forget).
-            # Pass the OLD node dicts: this UPDATE already persisted the
-            # node-less workflow, so the live blob no longer carries the
-            # deleted nodes' external_webhook_id needed to deregister.
-            if request.deleted_node_ids:
-                old_deleted_nodes = None
-                if row.get('old_workflow'):
-                    try:
-                        _ow = row['old_workflow'] if isinstance(row['old_workflow'], dict) else json.loads(row['old_workflow'])
-                        _targets = set(request.deleted_node_ids)
-                        old_deleted_nodes = [
-                            n for n in _ow.get('nodes', []) if n.get('id') in _targets
-                        ]
-                    except Exception as e:
-                        logger.warning(f"[Workflow] Could not extract old deleted-node configs: {e}")
-                # background=True: provider deregistration (credential
-                # decrypt + OAuth freshen + HTTP) must not block the save
-                # ack nor pin a pool connection.
-                await cleanup_nodes_resources(
-                    pool=pool,
-                    workflow_id=request.workflow_id,
-                    node_ids=request.deleted_node_ids,
-                    background=True,
-                    old_nodes=old_deleted_nodes,
-                    requesting_user_id=user_id,
+            # What the save sets in motion outside the graph (removed steps' cleanup and
+            # inboxes, trigger registrations, re-added steps), judged from the graph
+            # before and after it. Spawned: it makes provider round-trips that must not
+            # block the save ack or pin a pool connection.
+            if request.workflow_data is not None and row.get('old_workflow') is not None:
+                spawn(
+                    reconcile_graph_change(pool, request.workflow_id, user_id, row['old_workflow'], row['workflow']),
+                    name=f"workflow-reconcile:{request.workflow_id}",
                 )
-                # Release inbound-email reservations held by removed nodes
-                try:
-                    from utils.email_reservation_manager import EmailReservationManager
-                    await EmailReservationManager.release_many(
-                        pool, request.workflow_id, request.deleted_node_ids
-                    )
-                except Exception as e:
-                    logger.warning(f"[Workflow] Failed to release email reservations for deleted nodes: {e}")
-
-            # Detect operation changes and credential swaps, cleaning up
-            # any provider-side webhook registrations against the OLD
-            # operation / OLD credential. Without the credential branch,
-            # swapping the credential on a trigger node leaks an active
-            # provider config on the previous connection — every event
-            # that arrives on that connection still fans out to the
-            # orphan and produces a duplicate workflow run. (Verified
-            # 2026-06-25 against a WhatsApp/WAHooks user whose group
-            # chats hit both old and new connections.)
-            # Spawned: the handlers make provider API calls (teardown +
-            # self-heal re-registration) that must not block the save ack
-            # or pin a pool connection.
-            if request.workflow_data is not None and row.get('old_workflow'):
-                try:
-                    from utils.async_helpers import spawn
-                    old_wf = row['old_workflow'] if isinstance(row['old_workflow'], dict) else json.loads(row['old_workflow'])
-                    new_wf = row['workflow'] if isinstance(row['workflow'], dict) else json.loads(row['workflow'])
-
-                    async def _handle_config_changes(
-                        _pool=pool, _wid=request.workflow_id, _uid=user_id,
-                        _old_wf=old_wf, _new_wf=new_wf,
-                    ):
-                        from utils.webhook_manager import WebhookManager
-                        old_nodes = {n.get('id'): n for n in _old_wf.get('nodes', [])}
-                        new_node_ids = set()
-                        for new_node in _new_wf.get('nodes', []):
-                            nid = new_node.get('id')
-                            new_node_ids.add(nid)
-                            old_node = old_nodes.get(nid)
-                            if not old_node:
-                                continue
-                            old_cfg = old_node.get('config', {})
-                            new_cfg = new_node.get('config', {})
-                            if isinstance(old_node.get('data'), dict):
-                                old_cfg = old_node['data'].get('config', old_cfg)
-                            if isinstance(new_node.get('data'), dict):
-                                new_cfg = new_node['data'].get('config', new_cfg)
-                            old_op = old_cfg.get('operation')
-                            new_op = new_cfg.get('operation')
-                            n_type = new_node.get('type', '')
-                            if old_op and new_op and old_op != new_op:
-                                await WebhookManager.handle_operation_change(
-                                    _pool, n_type, _wid, nid,
-                                    old_op, new_op,
-                                    old_config=old_cfg, user_id=_uid,
-                                )
-                            await WebhookManager.handle_credential_change(
-                                _pool, n_type, _wid, nid,
-                                old_cfg, new_cfg, _uid,
-                            )
-                            # Registration-relevant field edits (PostHog
-                            # event_name, GitHub repository) with the same
-                            # op/credentials reconcile too — otherwise the
-                            # provider registration silently stays on the
-                            # OLD value until a panel reopen.
-                            await WebhookManager.handle_registration_fields_change(
-                                _pool, n_type, _wid, nid,
-                                old_cfg, new_cfg, user_id=_uid,
-                            )
-                        from utils.graph_nodes import graph_nodes, node_config
-                        from utils.workflow_readiness import unbound_issues
-                        for trigger in graph_nodes(_new_wf):
-                            cfg = node_config(trigger)
-                            kind, nid = trigger.get('type'), trigger.get('id')
-                            if not nid or cfg.get('disabled') in (True, 'true'):
-                                continue
-                            if not WebhookManager.node_webhook_field_for(kind, cfg.get('operation')):
-                                continue
-                            if cfg.get('webhook_url') and not cfg.get('trigger_error'):
-                                continue
-                            if await unbound_issues(_pool, _wid, _new_wf, nid):
-                                continue
-                            try:
-                                patch = await WebhookManager.provision_node_webhook(
-                                    _pool, user_id=_uid, workflow_id=_wid, node_id=nid,
-                                    node_type=kind, operation=cfg.get('operation'), config=cfg,
-                                    workflow_graph=_new_wf,
-                                )
-                                if patch:
-                                    await WebhookManager.merge_node_config_patch(_pool, _wid, nid, patch)
-                            except Exception:
-                                logger.warning('Trigger activation after setup edit failed: %s', nid, exc_info=True)
-                        # Re-added nodes (canvas undo of a delete): their
-                        # rows were deactivated at delete time; re-register
-                        # the previously-registered triggers among them.
-                        readded = [
-                            nid for nid in new_node_ids
-                            if nid and nid not in old_nodes
-                        ]
-                        if readded:
-                            await WebhookManager.register_node_webhooks(
-                                _pool, _wid, _uid, node_ids=readded
-                            )
-
-                    spawn(
-                        _handle_config_changes(),
-                        name=f"workflow-config-change-hooks:{request.workflow_id}",
-                    )
-                except Exception as e:
-                    logger.warning(f"[Workflow] Operation/credential change detection error: {e}")
 
             # NOTE: credentials are deliberately NOT authorized for run-as-owner
             # resolution here. This save persists the full workflow blob, which is

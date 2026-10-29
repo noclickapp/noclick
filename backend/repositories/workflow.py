@@ -468,6 +468,36 @@ class WorkflowRepo:
         row = await conn.fetchrow(query, *params)
         return dict(row) if row else None
 
+    async def read_graph(self, conn, workflow_id, *, lock: bool = False) -> Optional[Dict[str, Any]]:
+        """A live workflow's graph, its version and its own fields, for the graph service; ``lock``: its row
+        locked until the transaction ends, as before edits apply."""
+        row = await conn.fetchrow(
+            "SELECT id, owner_id, name, description, workflow, settings, graph_version FROM workflows "
+            f"WHERE id = $1::uuid AND deleted_at IS NULL{' FOR UPDATE' if lock else ''}", str(workflow_id))
+        return dict(row) if row else None
+
+    async def graph_version(self, conn, workflow_id) -> Optional[int]:
+        return await conn.fetchval("SELECT graph_version FROM workflows WHERE id = $1::uuid", str(workflow_id))
+
+    async def write_graph(
+        self,
+        conn,
+        workflow_id,
+        graph: Dict[str, Any],
+        *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        settings: Optional[Dict[str, Any]] = None,
+    ) -> int:
+        """Write a locked workflow's graph (its version moves when the graph does), and the fields given:
+        ``settings`` merges into the stored ones by top-level key. Returns its ``graph_version``."""
+        return await conn.fetchval(
+            """UPDATE workflows SET workflow = $2, name = COALESCE($3, name), description = COALESCE($4, description),
+                   settings = CASE WHEN $5::jsonb IS NULL THEN settings ELSE COALESCE(settings, '{}'::jsonb) || $5 END,
+                   updated_at = now()
+               WHERE id = $1::uuid RETURNING graph_version""",
+            str(workflow_id), graph_without_runtime_keys(graph), name, description, settings)
+
     async def update_workflow_metadata(
         self,
         conn,

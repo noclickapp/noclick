@@ -1,12 +1,13 @@
 """No write of a graph keeps a runtime key (``utils.runtime_keys``).
 
 The ratchet: every SQL statement that writes a stored graph
-(``workflows.workflow``, ``workflow_checkpoints.workflow``) sits in a function
-that passes what it writes through the shared helper; a new write path that
-skips it fails here until it does. Then each client write path, over real
-Postgres: the canvas's save and node config write, a fork, a checkpoint and
-its restore, MCP's save, and the repository writes the builder and the
-platform API use.
+(``workflows.workflow``, ``workflow_checkpoints.workflow``,
+``workflow_versions.graph``) sits in a function that passes what it writes
+through the shared helper; a new write path that skips it fails here until it
+does. Then each client write path, over real Postgres: the canvas's save (and
+the version it records) and node config write, a fork, a checkpoint and its
+restore, MCP's save, the repository writes the builder and the platform API
+use, and the graph service's writes and versions.
 """
 
 import ast
@@ -31,8 +32,11 @@ EXEMPT = {
 
 _GRAPH_WRITE = re.compile(
     r"INSERT\s+INTO\s+(?:public\.)?(?:workflows|workflow_checkpoints)\s*\([^)]*\bworkflow\b"
+    r"|INSERT\s+INTO\s+(?:public\.)?workflow_versions\s*\([^)]*\bgraph\b"
     r"|UPDATE\s+(?:public\.)?(?:workflows|workflow_checkpoints)\b(?:(?!\bWHERE\b).)*?\bSET\b"
     r"(?:(?!\bWHERE\b).)*?(?<![\w.'\"-])workflow\s*="
+    r"|UPDATE\s+(?:public\.)?workflow_versions\b(?:(?!\bWHERE\b).)*?\bSET\b"
+    r"(?:(?!\bWHERE\b).)*?(?<![\w.'\"-])graph\s*="
     # A SET clause assembled in pieces (``update_workflow_dynamic``).
     r"|\A\s*workflow\s*=\s*(?:\$|CASE\b|jsonb_set\b|COALESCE\b)",
     re.IGNORECASE | re.DOTALL,
@@ -84,7 +88,7 @@ def test_every_graph_write_strips_runtime_keys():
     writers, violations = set(), []
     for rel, path in _sources():
         text = path.read_text(encoding="utf-8", errors="ignore")
-        if not re.search(r"\b(?:workflows|workflow_checkpoints|workflow\s*=)", text):
+        if not re.search(r"\b(?:workflows|workflow_checkpoints|workflow_versions|workflow\s*=)", text):
             continue
         for name, strips in _graph_writers(ast.parse(text)):
             key = f"{rel.as_posix()}::{name}"
@@ -98,7 +102,9 @@ def test_every_graph_write_strips_runtime_keys():
     assert set(EXEMPT) <= writers, f"stale exemptions: {sorted(set(EXEMPT) - writers)}"
     # The scan sees the writers it's meant to (a regex that matched nothing would pass vacuously).
     assert {"repositories/workflow.py::update_workflow_dynamic", "repositories/workflow.py::merge_node_config",
-            "repositories/share.py::insert_forked_workflow", "mcp_server.py::_save_workflow"} <= writers
+            "repositories/share.py::insert_forked_workflow", "mcp_server.py::_save_workflow",
+            "repositories/workflow.py::write_graph", "repositories/workflow_versions.py::insert",
+            "repositories/workflow_versions.py::join"} <= writers
 
 
 def test_the_ratchet_flags_a_writer_that_skips_the_helper():
@@ -146,6 +152,11 @@ async def _saved(db, workflow_id, table="workflows", column="id"):
     return await db.fetchval(f"SELECT workflow FROM {table} WHERE {column} = $1::uuid", workflow_id)
 
 
+async def _newest_version(db, workflow_id):
+    return await db.fetchval("SELECT graph FROM workflow_versions WHERE workflow_id = $1::uuid "
+                             "ORDER BY version DESC LIMIT 1", workflow_id)
+
+
 def _assert_clean(graph):
     agent = next(n for n in graph["nodes"] if n["id"] == "agent")
     assert agent["config"]["message"] == "hi" and {k: agent["config"].get(k) for k in AUTHORED} == AUTHORED
@@ -176,6 +187,25 @@ class TestEachWritePath:
             request_id="r", workflow_id=workflow_id, workflow_data=_graph()))
         assert not sio.emit.await_args.args[1].get("error")
         _assert_clean(await _saved(real_database, workflow_id))
+        _assert_clean(await _newest_version(real_database, workflow_id))
+
+    async def test_the_graph_services_edit_and_restore(self, real_database):
+        """An edit of a graph saved before writes dropped runtime keys writes it, and the versions it records
+        (the graph before it among them), without them; so does a restore of that first version."""
+        from coder.workflow import graph_service
+
+        workflow_id = await _workflow(real_database, _graph())
+        author = graph_service.Author(OWNER)
+        with patch("coder.workflow.graph_service._settle", new=AsyncMock()):
+            edited = await graph_service.apply(real_database.pool, author, workflow_id,
+                                               [{"op": "update_step", "id": "agent", "name": "Agent"}])
+            _assert_clean(await _saved(real_database, workflow_id))
+            for row in await real_database.fetch("SELECT graph FROM workflow_versions WHERE workflow_id = $1::uuid",
+                                                 workflow_id):
+                _assert_clean(row["graph"])
+            await graph_service.restore(real_database.pool, author, workflow_id, edited.version - 1)
+        _assert_clean(await _saved(real_database, workflow_id))
+        _assert_clean(await _newest_version(real_database, workflow_id))
 
     async def test_a_node_config_write(self, real_database):
         from wss.handlers.workflow_handler import WorkflowHandler

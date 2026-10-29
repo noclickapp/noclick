@@ -218,11 +218,14 @@ class EmailReservationManager:
         node_id: str,
         local_part: str,
         domain: Optional[str] = None,
+        conn=None,
     ) -> Dict[str, Any]:
         """Reserve (or re-point) the inbound address for a node. Idempotent per
         (workflow_id, node_id): a node keeping its local part keeps the domain
         it was minted on. Raises ValueError if the local-part is invalid or
-        already taken by another node."""
+        already taken by another node. ``conn``: claim it inside that
+        connection's transaction (a savepoint, so a taken address leaves the
+        transaction usable), landing or not with the rest of it."""
         domain = domain or require_inbound_email_domain()
         local_part = (local_part or "").strip().lower()
         is_valid, err = validate_local_part(local_part)
@@ -230,25 +233,24 @@ class EmailReservationManager:
             raise ValueError(err)
 
         workflow_uuid = UUID(str(workflow_id))
+        sql = """
+            INSERT INTO email_reservations (user_id, workflow_id, node_id, local_part, domain)
+            VALUES ($1, $2, $3, $4, $5)
+            ON CONFLICT (workflow_id, node_id)
+            DO UPDATE SET domain = CASE WHEN email_reservations.local_part = EXCLUDED.local_part
+                                        THEN email_reservations.domain ELSE EXCLUDED.domain END,
+                          local_part = EXCLUDED.local_part,
+                          is_active = true
+            RETURNING id, local_part, domain
+        """
+        args = (user_id, workflow_uuid, node_id, local_part, domain)
         try:
-            async with pool.acquire() as conn:
-                row = await conn.fetchrow(
-                    """
-                    INSERT INTO email_reservations (user_id, workflow_id, node_id, local_part, domain)
-                    VALUES ($1, $2, $3, $4, $5)
-                    ON CONFLICT (workflow_id, node_id)
-                    DO UPDATE SET domain = CASE WHEN email_reservations.local_part = EXCLUDED.local_part
-                                                THEN email_reservations.domain ELSE EXCLUDED.domain END,
-                                  local_part = EXCLUDED.local_part,
-                                  is_active = true
-                    RETURNING id, local_part, domain
-                    """,
-                    user_id,
-                    workflow_uuid,
-                    node_id,
-                    local_part,
-                    domain,
-                )
+            if conn is not None:
+                async with conn.transaction():
+                    row = await conn.fetchrow(sql, *args)
+            else:
+                async with pool.acquire() as pooled:
+                    row = await pooled.fetchrow(sql, *args)
         except asyncpg.UniqueViolationError:
             # The address (on any of the installation's domains) is held by another node.
             raise ValueError("This address is already taken")
@@ -269,6 +271,7 @@ class EmailReservationManager:
         workflow_id,
         node_id: str,
         config: Dict[str, Any],
+        conn=None,
     ) -> Dict[str, Any]:
         """Reserve ``config['local_part']`` for this node and return the config
         patch to apply: the normalized ``local_part`` plus the derived
@@ -279,7 +282,7 @@ class EmailReservationManager:
         server) so an AI-chosen inbox is validated and claimed, never just
         written to config where it would collide at runtime."""
         reserved = await EmailReservationManager.reserve(
-            pool, user_id, workflow_id, node_id, config.get("local_part") or ""
+            pool, user_id, workflow_id, node_id, config.get("local_part") or "", conn=conn,
         )
         return {
             "local_part": reserved["local_part"],
