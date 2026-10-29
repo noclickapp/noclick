@@ -20,6 +20,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, HTTPException, Request, Response
 
+from nodes.agent import hermes_scheduler
 from nodes.agent.openclaw_protocol import DENIED_TOOLS, bridge_env
 from nodes.core.base import FailureWithDiagnostics
 
@@ -453,9 +454,12 @@ def _build_command(
         home.mkdir(parents=True, exist_ok=True)
         # Replace the owned configuration even when tools were removed; a
         # retired endpoint must not remain in the next process's tool list.
+        for name, text in hermes_scheduler.home_files().items():
+            (home / name).parent.mkdir(parents=True, exist_ok=True)
+            (home / name).write_text(text)
         (home / "config.yaml").write_text(
-            "agent:\n  disabled_toolsets: [messaging, gateway]\n\ntools:\n  tool_search: false\n\n"
-            "mcp_discovery_timeout: 20\n" + (
+            f"agent:\n  disabled_toolsets: [{', '.join(('messaging', 'gateway', *hermes_scheduler.WITHHELD_TOOLSETS))}]\n\n"
+            f"tools:\n  tool_search: false\n\n{hermes_scheduler.CRON_CONFIG}\nmcp_discovery_timeout: 20\n" + (
                 "mcp_servers:\n  noclick:\n"
                 f"    url: {json.dumps(mcp_url)}\n"
                 "    timeout: 120\n    connect_timeout: 60\n"
