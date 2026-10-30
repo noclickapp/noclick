@@ -1,12 +1,12 @@
 """The secrets in a step's settings: what no read of a workflow shows, and what a write that never saw them keeps.
 
 A setting is a secret when its schema marks it (``writeOnly``, a password format or widget) or its name does
-(``looks_like_secret_field``), at any depth: a step's own fields, a nested object's, a list's items'. An entry of
-a free-form map (a ``Dict[str, str]``) and the value of a name/value row (an HTTP
-step's headers, query parameters and form fields) are secrets when the name is ``Authorization``, ``Cookie`` or
-``Proxy-Authorization`` or holds ``key``, ``token`` or ``secret``; so is an entry of any object kept under a
-name holding ``header`` whose schema isn't known. Of a workflow's own settings
-(``kind`` None), every variable's value is withheld, whatever its name.
+(``looks_like_secret_field``), at any depth: a step's own fields, a nested object's, a list's items'; never a yes or
+no (a form field's ``secret: true``). An entry of a free-form map (a ``Dict[str, str]``) and the value of a
+name/value row (an HTTP step's headers, query parameters and form fields) are secrets when the name is
+``Authorization``, ``Cookie`` or ``Proxy-Authorization`` or holds ``key``, ``token`` or ``secret``; so is an entry
+of any object kept under a name holding ``header`` whose schema isn't known. Of a workflow's own settings (``kind``
+None), every variable's value is withheld, whatever its name.
 
 ``withhold`` gives a step's settings without them and the path of each (``headers[0].value``, ``auth.password``);
 ``keep_withheld`` puts the stored ones back into settings a write sends without them: a row is matched by its
@@ -58,6 +58,11 @@ def is_secret_name(name: Any) -> bool:
     """A header, map entry or name/value row that holds a secret, by its name."""
     lowered = str(name or "").strip().lower()
     return lowered in SECRET_HEADERS or any(word in lowered for word in SECRET_WORDS)
+
+
+def _flag(value: Any) -> bool:
+    """A yes or no holds no secret, whatever its name (a form field's ``secret: true``)."""
+    return isinstance(value, bool)
 
 
 def _row_name(row: Any) -> Optional[str]:
@@ -113,7 +118,7 @@ def _secrets(value: Any, schema: Any, defs: Dict[str, Any], shown: str,
         for i, row in enumerate(value):
             name = _row_name(row)
             if name is not None and "value" in row:
-                if is_secret_name(name):
+                if is_secret_name(name) and not _flag(row["value"]):
                     yield f"{shown}[{i}].value", (*at, ("row", name.strip().lower()), "value")
                 continue
             own = _item_id(row)
@@ -126,14 +131,14 @@ def _secrets(value: Any, schema: Any, defs: Dict[str, Any], shown: str,
     if headers or (shape is not None and not isinstance(shape.get("properties"), dict)):  # a map of named entries
         entries = (shape or {}).get("additionalProperties")
         for key, inner in value.items():
-            if is_secret_name(key):
+            if is_secret_name(key) and not _flag(inner):
                 yield f"{shown}.{key}", (*at, key)
             else:
                 yield from _secrets(inner, entries, defs, f"{shown}.{key}", (*at, key))
         return
     props = (shape or {}).get("properties") or {}  # an object, judged by its fields' names where its schema is unknown
     for key, inner in value.items():
-        if is_secret_field(key, props.get(key)):
+        if is_secret_field(key, props.get(key)) and not _flag(inner):
             yield f"{shown}.{key}", (*at, key)
         else:
             yield from _secrets(inner, props.get(key), defs, f"{shown}.{key}", (*at, key))
@@ -150,7 +155,7 @@ def _found(settings: Dict[str, Any], kind: Optional[str],
         if kind is None and key == VARIABLES and isinstance(value, list):
             found.extend((f"{key}[{i}].value", (key, ("row", _row_name(row).strip().lower()), "value"))
                          for i, row in enumerate(value) if _row_name(row) is not None and "value" in row)
-        elif is_secret_field(key, props.get(key)):
+        elif is_secret_field(key, props.get(key)) and not _flag(value):
             found.append((key, (key,)))
         else:
             found.extend(_secrets(value, props.get(key), defs, key, (key,)))

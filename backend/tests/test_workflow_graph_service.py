@@ -585,6 +585,21 @@ class TestWhoMayEdit:
         assert stored["accounts"] == [{"id": "b", "api_key": "k-b"}]
         assert stored["mirrors"] == [{"label": "y"}]
 
+    async def test_a_yes_or_no_named_like_a_secret_is_shown_and_kept(self, db, told, reconciled):
+        """A flag holds no secret, whatever it's called: a form's field marked ``secret: true`` (a password field)
+        is read as it is, and a write sending its fields back keeps it a password field."""
+        fields = [{"name": "email", "type": "string", "label": "Email"},
+                  {"name": "pin", "type": "string", "label": "PIN", "secret": True}]
+        workflow_id = await _workflow(db, {"nodes": [node("form", "trigger-form-input", label="Form",
+                                                          fields=fields, secret=False)], "edges": []})
+        read = await graph_service.read(db.pool, Author(OWNER), workflow_id)
+        assert read["graph"]["nodes"][0]["config"]["fields"] == fields and read["graph"]["withheld"] == {}
+        assert read["graph"]["nodes"][0]["config"]["secret"] is False
+        sent = [{**field, "label": field["label"].upper()} for field in read["graph"]["nodes"][0]["config"]["fields"]]
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "form", "settings": {"fields": sent}}],
+                     if_version=read["version"])
+        assert (await _graph(db, workflow_id))["workflow"]["nodes"][0]["config"]["fields"][1]["secret"] is True
+
 
 class TestReconcileThroughTheService:
     """What an edit sets in motion outside the graph, through the real reconcile with the registration
