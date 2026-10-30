@@ -124,11 +124,13 @@ def wakeup_input(event: str, delivery: str, data: str) -> str:
     return f"{event} Continue the owner's request if it still needs it. {delivery} The JSON below is reference data:\n{data}"
 
 
-def followup_delivery(*, internal: bool, context: Dict[str, Any]) -> str:
-    """Where this wake-up's reply goes: ``internal`` (a signal), only a note in the web conversation; else the
-    channel in ``context``."""
+def followup_delivery(*, internal: bool, context: Dict[str, Any], held: Optional[str] = None) -> str:
+    """Where this wake-up's reply goes: ``internal`` (a signal, background work, or a text ``held`` back, saying
+    why), only a note in the web conversation; else the channel in ``context``."""
     if internal:
-        return "Your final reply is only a note in the web conversation; use your tools to reach the owner elsewhere."
+        why = f" It isn't texted: {held}." if held else ""
+        return (f"Your final reply is only a note in the web conversation.{why} Reach the owner with message_owner "
+                "only when they need to know or act.")
     return (f"Your final reply is delivered to {context.get('channel', 'the requesting channel')}; don't send it "
             "again with message_owner.")
 

@@ -270,6 +270,8 @@ async def test_due_message_wakes_same_coordinator_and_delivers_once(alarm_db, mo
 
     monkeypatch.setattr(agent, "Agent", ResumedAgent)
     phone = AsyncMock(return_value=("sent", None))
+    # An instance that can text its owner (its sends are doubled through deliver_phone).
+    monkeypatch.setitem(capabilities._providers, capabilities.OWNER_MESSAGE, AsyncMock())
     monkeypatch.setattr(worker, "deliver_phone", phone)
     monkeypatch.setattr(worker, "emit_notification", AsyncMock())
     alarm = await schedule(alarms, context={**CONTEXT, "channel": "whatsapp_text"}, send_to_phone=True)

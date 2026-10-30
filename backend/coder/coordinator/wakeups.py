@@ -37,8 +37,16 @@ def outcome_summary(event):
     return job_summary(payload)
 
 
+async def text_held(pool, user_id):
+    """Why a follow-up for the owner's phone shouldn't be texted now (``reach.unreachable_by_text`` on the app they
+    text on), else None."""
+    from coder.coordinator.reach import normalize_channel, phone_text_channel, unreachable_by_text
+
+    return await unreachable_by_text(pool, user_id, normalize_channel(await phone_text_channel(pool, user_id)))
+
+
 async def run_wakeup(pool, event):
-    from coder.coordinator.agent import COORDINATOR_FEATURE, FollowupFailed, run_coordinator_turn
+    from coder.coordinator.agent import COORDINATOR_FEATURE, VOICE_CHANNELS, FollowupFailed, run_coordinator_turn
     from coder.coordinator.handover import hand_over_wakeup
     from utils.feature_gates import require_feature
     from wss.handlers.coordinator_handler import plan_allows_turn
@@ -79,21 +87,27 @@ async def run_wakeup(pool, event):
                               " I've reached the automatic follow-up limit. Please message me to continue.", reschedule=False)
             return
         channel = event["context"]["channel"]
-        # A call may have ended hours ago. Its follow-up is delivered as text.
-        if channel in ("phone", "whatsapp", "callback", "voice") or (channel == "web" and event["send_to_phone"]):
-            from coder.coordinator.reach import phone_text_channel
+        held = None
+        if channel != "email":
+            if event["send_to_phone"] or channel in VOICE_CHANNELS:
+                # Texted (a call may have ended hours ago) on the app they text on, when a text can go now.
+                from coder.coordinator.reach import phone_text_channel
 
-            channel = await phone_text_channel(pool, user_id)
+                held = await text_held(pool, user_id)
+                channel = "web" if held else await phone_text_channel(pool, user_id)
+            else:
+                channel = "web"  # its reply is only a note there, wherever its work started
         async with asyncio.timeout(600):
             reply = await run_coordinator_turn(
                 sio=get_sio(), sid="", user_id=user_id, user_email=email, text="",
-                extra={"channel": channel}, completion=event,
+                extra={"channel": channel}, completion=event, texting_held=held,
             )
         if reply is not None:
             text = reply.text
             if not text and reply.delivery["notify"] and event["payload"].get("operation") != "call_recording":
                 text = outcome_summary(event)
-            await repo.finish(event, text, delivery=reply.delivery, tool_calls=reply.tool_calls)
+            delivery = {**reply.delivery, "held": held} if held else reply.delivery
+            await repo.finish(event, text, delivery=delivery, tool_calls=reply.tool_calls)
     except CoordinatorBusy:
         await repo.defer(event)
     except asyncio.CancelledError:
@@ -135,7 +149,12 @@ async def deliver_reply(pool, event):
             logger.exception("Coordinator email follow-up delivery could not be confirmed: %s", event["id"])
             error = EMAIL_UNCONFIRMED
     elif event["send_to_phone"]:
-        phone_state, error = await deliver_phone(pool, user_id, event["response"])
+        # Judged again as it goes: they may have opened the chat, where it just landed, since the turn began.
+        held = (event["payload"].get("delivery") or {}).get("held") or await text_held(pool, user_id)
+        if held:
+            error = f"Not texted ({held}); the reply is in the web chat."
+        else:
+            phone_state, error = await deliver_phone(pool, user_id, event["response"])
     await CoordinatorWakeupRepo(pool).delivered(event, phone_state, error)
 
 

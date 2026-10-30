@@ -2,7 +2,6 @@
 
 import uuid
 
-from coder.coordinator.reach import owner_channel
 from coder.coordinator.signals import signal_ref
 from repositories.coordinator_wakeups import CoordinatorWakeupRepo
 
@@ -47,7 +46,7 @@ class CoordinatorSignalRepo:
             return await CoordinatorWakeupRepo(self.pool).enqueue_signal(
                 signal=dict(row), conn=conn, payload={"kind": "agent_message", **row["payload"]},
                 context={"epoch": epoch, "depth": 0, "turn_id": str(uuid.uuid4()),
-                         "channel": await owner_channel(conn, user_id),
+                         "channel": "web",
                          "request": f"An agent in “{row['payload']['workflow_name']}” messaged you",
                          "signal": signal_ref("agent_message", workflow_id, row["payload"]["workflow_name"])},
             )

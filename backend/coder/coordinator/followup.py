@@ -20,10 +20,16 @@ class FollowupReply:
 
 
 class FollowupDelivery:
-    def __init__(self, event, *, parent=None):
+    def __init__(self, event, *, parent=None, channel=None, held=None):
+        """``channel``: what the turn runs as; ``held``: why a reply meant for the owner's phone isn't texted."""
         self.event = event
-        self.internal = event["source"] == "signal"
+        self.channel = channel or event["context"].get("channel")
+        self.held = held
         self.background = event["source"] in ("alarm", "signal") or event["context"].get("origin") == "background"
+        # Its reply is only a note in the web conversation: a signal's, and background work's or a held text's
+        # there, so the turn reaches the owner with its tools only when they need it.
+        on_web = (self.channel or "web") == "web"
+        self.internal = event["source"] == "signal" or (on_web and (self.background or bool(held)))
         self.artifact_only = event["payload"].get("operation") == "call_recording"
         previous = (parent or {}).get("payload", {}).get("delivery", {})
         self.notify = previous.get("notify", True)
@@ -48,14 +54,16 @@ class FollowupDelivery:
         self.notify, self.include_recordings, self.reason = notify, include_recordings, reason[:500]
         return {"success": True, **self.decision(), "note": self.delivery_instructions()}
 
-    def note(self, text):
-        """A message to the web conversation from a turn whose reply is only a note there is that note."""
+    def note(self, text, *, held=None):
+        """A message to the web conversation from a turn whose reply is only a note there is that note; ``held``
+        says why a text became it."""
         self.notes.append(text)
-        return {"success": True, "channel": "web",
-                "note": "Posted as this turn's note in the owner's web conversation, in place of your final reply."}
+        note = "Posted as this turn's note in the owner's web conversation, in place of your final reply."
+        return {"success": True, "channel": "web", "note": f"{note} Not texted: {held}." if held else note}
 
     def delivery_instructions(self):
-        return PROMPTS.followup_delivery(internal=self.internal, context=self.event["context"])
+        context = {**self.event["context"], "channel": self.channel} if self.channel else self.event["context"]
+        return PROMPTS.followup_delivery(internal=self.internal, context=context, held=self.held)
 
     def decision(self):
         return {"notify": self.notify, "include_recordings": self.include_recordings, "reason": self.reason}

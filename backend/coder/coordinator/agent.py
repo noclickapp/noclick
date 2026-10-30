@@ -100,6 +100,7 @@ async def run_coordinator_turn(
     prepare_input: Optional[Callable[[], Awaitable[tuple[str, list[ContentItem]]]]] = None,
     user_event: Optional[Dict[str, Any]] = None,
     reply_event: Optional[Dict[str, Any]] = None,
+    texting_held: Optional[str] = None,
 ) -> Optional[str | FollowupReply]:
     """Persist the user's message, run one agent turn, persist the reply.
     Frames stream to the socket ``sid`` and, when given, to ``sink`` — how a
@@ -108,7 +109,9 @@ async def run_coordinator_turn(
     the persisted user message shows instead of the model's input: its
     ``message`` and fields only that event carries (the web composer's files
     and references); ``reply_event``, fields only the reply's event carries (an
-    email reply's receipt). Turns of one account never interleave."""
+    email reply's receipt). ``texting_held`` says why a ``completion`` meant
+    for the owner's phone is only a note in the web conversation this time.
+    Turns of one account never interleave."""
     pool = get_native_pool()
     conversation_id = conversation_id_for(user_id)
     lock = _turn_locks.setdefault(user_id, asyncio.Lock())
@@ -136,11 +139,15 @@ async def run_coordinator_turn(
             continuation = {**completion["context"], "depth": completion["context"]["depth"] + 1}
             if completion["source"] in ("alarm", "signal"):
                 continuation["origin"] = "background"
+            if continuation.get("origin") == "background":
+                # What background work starts reports in the web conversation (``CoordinatorTools.texts_back``).
+                continuation["channel"] = "web"
             parent = None
             if parent_id := completion["payload"].get("parent_operation_id"):
                 from repositories.coordinator_operations import CoordinatorOperationRepo
                 parent = await CoordinatorOperationRepo(pool).get(parent_id, user_id)
-            followup = FollowupDelivery(completion, parent=parent)
+            followup = FollowupDelivery(completion, parent=parent, channel=(extra or {}).get("channel") or "web",
+                                        held=texting_held)
         else:
             continuation = {"epoch": epoch, "depth": 0, "request": text,
                             "channel": (extra or {}).get("channel") or "web", "turn_id": str(uuid.uuid4())}

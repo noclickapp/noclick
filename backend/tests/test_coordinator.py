@@ -821,8 +821,15 @@ async def test_message_owner_reaches_the_owner_on_the_channel_it_resolves(own_ca
         "function"]["parameters"]["properties"]["channel"]["enum"]
     assert channel_enum == ["auto", "email", "web"]  # no WhatsApp where the instance can't send it
     monkeypatch.setattr(reach, "resolve_channel", AsyncMock(return_value="whatsapp"))
-    out = await bare.execute("message_owner", {"text": "hi"})
+    out = await bare.execute("message_owner", {"text": "hi", "channel": "whatsapp"})
     assert out == {"success": False, "channel": "whatsapp", "error": "WhatsApp isn't available on this instance."}
+    # Its own pick ('auto') goes where it can, the web chat, and says why.
+    posted = AsyncMock(return_value={"success": True})
+    monkeypatch.setattr(reach, "_post_to_web", posted)
+    out = await bare.execute("message_owner", {"text": "hi"})
+    assert out == {"success": True, "channel": "web",
+                   "note": "Posted in the web chat, not texted: WhatsApp isn't available on this instance."}
+    assert posted.await_args.args[1:] == (USER, "hi")
 
     send = AsyncMock(return_value={"success": True, "message_id": "wamid.9"})
     capabilities.provide(OWNER_MESSAGE, send)

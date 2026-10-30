@@ -79,14 +79,11 @@ async def _publish(pool, type: str, data: Dict[str, Any], *, account_user_id: st
 
 
 async def _wake(pool, signal: Dict[str, Any], *, request: str) -> None:
-    from coder.coordinator.reach import owner_channel
     from repositories.coordinator_wakeups import CoordinatorWakeupRepo
 
     repo = CoordinatorWakeupRepo(pool)
     user_id = str(signal["user_id"])
-    # Its own reply stays a note (send_to_phone false): the channel is where what it starts reports back.
-    context = {"epoch": await repo.epoch(user_id), "depth": 0, "request": request,
-               "channel": await owner_channel(pool, user_id),
+    context = {"epoch": await repo.epoch(user_id), "depth": 0, "request": request, "channel": "web",
                "turn_id": str(uuid.uuid4()),
                "signal": signal_ref(signal["kind"], str(signal["workflow_id"]), signal["payload"].get("workflow_name"))}
     await repo.enqueue_signal(signal=signal, context=context, payload={"kind": signal["kind"], **signal["payload"]})

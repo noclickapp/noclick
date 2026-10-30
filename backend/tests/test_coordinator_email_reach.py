@@ -668,6 +668,47 @@ async def test_auto_is_the_last_used_channel_and_a_named_channel_wins(owner, mon
     assert [e["message"] for e in events[-2:]] == [f"Answer here: {link}", f"Answer here:\n{link}"]
 
 
+async def test_auto_texts_only_where_a_text_reaches_the_owner_now(owner, monkeypatch):
+    """On this instance's own WhatsApp line (no templates), ``auto`` texts inside the 24 hours the owner's last
+    WhatsApp text opened, and past them, or while the owner has the web chat open, posts in the web chat and says
+    why. A phone call is no app: after one, ``auto`` is the app they text on, and the web if they never texted."""
+    from repositories.phones import PhoneRepo
+    from utils import capabilities
+
+    pool, user_id, _ = owner
+    monkeypatch.delitem(capabilities._providers, capabilities.OWNER_MESSAGE, raising=False)
+    monkeypatch.setenv("WHATSAPP_DISPLAY_NUMBER", "+15550100")
+    sent = AsyncMock(return_value={"success": True, "message_id": "wamid.1"})
+    monkeypatch.setattr("coder.coordinator.texting.owner_message.send_owner_message", sent)
+    monkeypatch.setattr("utils.task_notifications.emit_notification", AsyncMock())
+    await pool.execute("INSERT INTO conversations (conversation_id, user_id, events) VALUES ($1, $2::uuid, $3)",
+                       f"coordinator:{user_id}", user_id, [{"role": "user", "message": "(a call)", "channel": "phone"}])
+    assert await reach.resolve_channel(pool, user_id) == "web"
+
+    phone = f"+1415555{uuid.uuid4().int % 10000:04d}"
+    await pool.execute("INSERT INTO public.user_phones (user_id, phone_e164, source, last_seen_at) "
+                       "VALUES ($1::uuid, $2, 'whatsapp', now() - interval '2 hours')", user_id, phone)
+    await PhoneRepo(pool).record_app(phone, "whatsapp")
+    assert await reach.resolve_channel(pool, user_id) == "whatsapp"
+    out = await reach.reach_owner(pool, user_id, "I fixed your digest.")
+    assert out["success"] and out["channel"] == "whatsapp" and sent.await_count == 1
+
+    monkeypatch.setattr("utils.user_presence.watching_chat", AsyncMock(return_value=True))
+    out = await reach.reach_owner(pool, user_id, "I fixed your digest.")
+    assert out == {"success": True, "channel": "web",
+                   "note": "Posted in the web chat, not texted: the owner has the web chat open."}
+
+    monkeypatch.setattr("utils.user_presence.watching_chat", AsyncMock(return_value=False))
+    await pool.execute("UPDATE public.user_phones SET last_seen_at = now() - interval '25 hours' WHERE phone_e164 = $1",
+                       phone)
+    out = await reach.reach_owner(pool, user_id, "I fixed your digest.")
+    assert out == {"success": True, "channel": "web", "note": "Posted in the web chat, not texted: WhatsApp's 24-hour "
+                                                              "window since the owner's last text there has closed."}
+    assert sent.await_count == 1
+    events = await pool.fetchval("SELECT events FROM conversations WHERE conversation_id = $1", f"coordinator:{user_id}")
+    assert [e["message"] for e in events if e.get("notification")] == ["I fixed your digest."] * 2
+
+
 async def test_the_phone_app_is_the_one_the_owner_last_texted_on(owner, monkeypatch):
     from utils import capabilities
 

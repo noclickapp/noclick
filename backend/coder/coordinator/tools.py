@@ -428,6 +428,13 @@ class CoordinatorTools:
     def can_text(self) -> bool:
         return self.can_whatsapp or self.can_imessage
 
+    @property
+    def texts_back(self) -> bool:
+        """Whether what this turn starts reports back to the owner's phone unless it says otherwise: work they asked
+        for by text or a call. Background work's (a failed run's, an alarm's) reports in the web conversation; the
+        turn texts them only what needs them."""
+        return self.reply_channel != "web" and (self.continuation or {}).get("origin") != "background"
+
     def tool_params(self) -> List[Dict[str, Any]]:
         purchases = capability(PURCHASES)
         params = coordinator_tool_params(include_whatsapp=self.can_whatsapp,
@@ -524,7 +531,7 @@ class CoordinatorTools:
     async def _mint(self, **what) -> Dict[str, Any]:
         return await capability(PURCHASES).mint(
             self.pool, user_id=self.user_id, continuation=self.continuation,
-            send_to_phone=self.reply_channel != "web", **what,
+            send_to_phone=self.texts_back, **what,
         )
 
     async def purchase_link(self, kind: str, plan: Optional[str] = None, amount_usd: Optional[int] = None,
@@ -550,7 +557,7 @@ class CoordinatorTools:
         requested = await capability(UPI_PAYMENTS).request(
             self.pool, user_id=self.user_id, upi_link=upi_link, vpa=vpa, payee_name=payee_name,
             amount_inr=amount_inr, note=note, continuation=self.continuation,
-            send_to_phone=self.reply_channel != "web",
+            send_to_phone=self.texts_back,
         )
         return {"success": True, **requested}
 
@@ -597,7 +604,7 @@ class CoordinatorTools:
         return await CoordinatorAlarmRepo(self.pool).schedule(
             self.user_id, alarm_type=alarm_type, delay_or_time=delay_or_time, message=message,
             timezone_name=timezone_name, context=self.continuation,
-            send_to_phone=send_to_phone or self.reply_channel != "web",
+            send_to_phone=send_to_phone or self.texts_back,
         )
 
     async def list_alarms(self):
@@ -696,7 +703,7 @@ class CoordinatorTools:
 
         return await request_agent_message(
             self.pool, self.sio, user_id=self.user_id, workflow_id=workflow_id, node_id=node_id,
-            message=message, send_to_phone=self.reply_channel != "web", reply_to_job_id=reply_to_job_id,
+            message=message, send_to_phone=self.texts_back, reply_to_job_id=reply_to_job_id,
             continuation=self.continuation,
         )
 
@@ -756,7 +763,7 @@ class CoordinatorTools:
             origin={"source": "coordinator", "coordinator_conversation_id": self.conversation_id},
             continuation=self.continuation,
             reply_conversation_id=self.conversation_id, reply_node_id=COORDINATOR_NODE_ID,
-            send_to_phone=send_to_phone or self.reply_channel != "web",
+            send_to_phone=send_to_phone or self.texts_back,
         )
         return {"success": True, **build_view(request),
                 "note": "The builder owns this build through completion. job_status shows its phase and questions; "
@@ -930,15 +937,16 @@ class CoordinatorTools:
 
     async def message_owner(self, text: str, link: Optional[str] = None, channel: str = "auto",
                             subject: Optional[str] = None) -> Dict[str, Any]:
-        from coder.coordinator.reach import reach_owner, resolve_channel, with_link
+        from coder.coordinator.reach import choose_channel, reach_owner, with_link
 
         text = (text or "").strip()
         if not text:
             return {"success": False, "error": "text is required"}
         link = (link or "").strip() or None
-        if self.followup is not None and self.followup.internal and \
-                await resolve_channel(self.pool, self.user_id, channel) == "web":
-            return self.followup.note(with_link(text, link))
+        if self.followup is not None and self.followup.internal:
+            resolved, held = await choose_channel(self.pool, self.user_id, channel)
+            if resolved == "web":
+                return self.followup.note(with_link(text, link), held=held)
         return await reach_owner(self.pool, self.user_id, text, link=link,
                                  channel=channel, subject=subject, organization_id=self.organization_id)
 

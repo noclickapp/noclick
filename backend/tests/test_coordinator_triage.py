@@ -66,22 +66,21 @@ async def test_one_workflows_failures_fold_into_one_wakeup(account):
     assert len(dispatched) == 1
 
 
-async def test_what_a_failure_starts_reports_back_where_the_owner_texts(account, monkeypatch):
-    """An owner who texted their digest request heard nothing more after its first run failed: the failure woke the
-    coordinator as the web, so the fix it asked the builder for reported to a web chat they never open."""
+async def test_background_work_reports_in_the_web_and_texts_only_what_needs_the_owner(account, monkeypatch):
+    """A failure's turn runs as the web whatever app the owner texts on, so its instructions and its delivery note
+    agree (its reply is a note there), and what it starts reports back there too, even from a turn running as their
+    text app (an alarm's): the turn reaches them with message_owner when they need to know or act."""
     from coder.coordinator import wakeups
+    from coder.coordinator.followup import FollowupDelivery
 
     pool, user_id, workflow, dispatched = account
-    wf = await workflow()
     await pool.execute("INSERT INTO conversations(conversation_id,user_id,events) VALUES($1,$2::uuid,$3)",
                        f"coordinator:{user_id}", user_id,
-                       [{"role": "user", "channel": "web", "message": "Hi"},
-                        {"role": "user", "channel": "whatsapp_text", "message": "Email me the top stories daily"}])
-    await record_run_failure(pool, workflow_id=wf, execution_id=str(uuid.uuid4()), error="Required field 'body' "
-                             "is empty", trigger_source="cron")
+                       [{"role": "user", "channel": "whatsapp_text", "message": "Email me the top stories daily"}])
+    await record_run_failure(pool, workflow_id=await workflow(), execution_id=str(uuid.uuid4()),
+                             error="Required field 'body' is empty", trigger_source="cron")
     wake = dict(await pool.fetchrow("SELECT * FROM coordinator_wakeups WHERE id = $1", dispatched[0]["id"]))
-    # The failure's own reply stays a note; the turn runs as the owner's channel.
-    assert wake["context"]["channel"] == "whatsapp_text" and wake["send_to_phone"] is False
+    assert wake["context"]["channel"] == "web" and wake["send_to_phone"] is False
 
     turn = AsyncMock(return_value=None)
     monkeypatch.setattr("coder.coordinator.agent.run_coordinator_turn", turn)
@@ -89,27 +88,23 @@ async def test_what_a_failure_starts_reports_back_where_the_owner_texts(account,
     monkeypatch.setattr("coder.coordinator.handover.hand_over_wakeup", AsyncMock(return_value=False))
     monkeypatch.setattr("utils.feature_gates.require_feature", lambda *a, **k: None)
     await wakeups.run_wakeup(pool, wake)
-    assert turn.await_args.kwargs["extra"] == {"channel": "whatsapp_text"}
+    assert turn.await_args.kwargs["extra"] == {"channel": "web"}
+    note = FollowupDelivery(wake, channel="web").delivery_instructions()
+    assert note == signals.PROMPTS.followup_delivery(internal=True, context={}) and "message_owner" in note
 
-    # The fix that turn hands the builder is texted back when it finishes.
-    tools = CoordinatorTools(pool=pool, sio=object(), user_id=user_id, organization_id=None,
-                             conversation_id=f"coordinator:{user_id}", reply_channel=wake["context"]["channel"],
-                             continuation={**wake["context"], "depth": 1, "origin": "background"})
-    build = await tools.request_build("Read the agent's reply as response", workflow_id=wf)
-    row = await pool.fetchrow("SELECT send_to_phone, continuation FROM coordinator_jobs WHERE id = $1::uuid",
-                              build["job_id"])
-    assert row["send_to_phone"] and row["continuation"]["channel"] == "whatsapp_text"
-
-
-async def test_an_owner_on_the_web_is_woken_as_the_web(account):
-    pool, user_id, workflow, dispatched = account
-    wf = await workflow()
-    await pool.execute("INSERT INTO conversations(conversation_id,user_id,events) VALUES($1,$2::uuid,$3)",
-                       f"coordinator:{user_id}", user_id,
-                       [{"role": "user", "channel": "whatsapp_text", "message": "Hi"},
-                        {"role": "user", "channel": "web", "message": "Build me a digest"}])
-    await record_run_failure(pool, workflow_id=wf, execution_id=str(uuid.uuid4()), error="boom", trigger_source="cron")
-    assert dispatched[0]["context"]["channel"] == "web"
+    background = {**wake["context"], "depth": 1, "origin": "background"}
+    texted = []
+    for channel, asked in (("web", False), ("whatsapp_text", False), ("whatsapp_text", True)):
+        tools = CoordinatorTools(pool=pool, sio=object(), user_id=user_id, organization_id=None,
+                                 conversation_id=f"coordinator:{user_id}", reply_channel=channel,
+                                 continuation=background)
+        build = await tools.request_build("Fix the digest's empty body", workflow_id=await workflow(),
+                                          send_to_phone=asked)
+        texted.append(await pool.fetchval("SELECT send_to_phone FROM coordinator_jobs WHERE id = $1::uuid",
+                                          build["job_id"]))
+    assert texted == [False, False, True]
+    # The fix's report is background work too: a note in the web conversation.
+    assert FollowupDelivery({"source": "job", "context": background, "payload": {}}).internal
 
 
 async def test_a_failures_diagnostics_are_the_coordinators_context_and_never_the_owners_text(account):
@@ -247,8 +242,7 @@ async def test_free_form_message_is_internal_and_cannot_cross_accounts(account, 
     out = await record_agent_message(pool, user_id=user_id, workflow_id=wf, node_id="agent", message=message)
     assert out["status"] == "queued" and "channel" not in out
     event = dispatched[0]
-    # It runs where the owner last wrote (WhatsApp), never where the agent asked; its own reply is only a note.
-    assert event["context"]["channel"] == "whatsapp_text" and not event["send_to_phone"]
+    assert event["context"]["channel"] == "web" and not event["send_to_phone"]
     assert event["payload"]["message"] == message
     assert "purpose" not in event["payload"] and "channel" not in event["payload"]
     assert event["payload"]["workflow_id"] == wf and event["payload"]["node_id"] == "agent"

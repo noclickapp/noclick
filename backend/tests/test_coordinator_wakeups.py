@@ -36,7 +36,11 @@ async def db(builder_request_db, monkeypatch, local_scheduler):
     import wss.handlers.coordinator_handler  # noqa: F401
     monkeypatch.setattr("utils.feature_gates.require_feature", lambda *a, **kw: None)
     monkeypatch.setattr("wss.handlers.coordinator_handler.plan_allows_turn", AsyncMock(return_value=(True, None)))
-    monkeypatch.setattr(capabilities, "_providers", {capabilities.INTERFACE_PUBLISH: AsyncMock()})
+    # An instance that can text its owner (its sends are doubled through deliver_phone).
+    monkeypatch.setattr(capabilities, "_providers", {
+        capabilities.INTERFACE_PUBLISH: AsyncMock(),
+        capabilities.OWNER_MESSAGE: AsyncMock(return_value={"success": True}),
+    })
     # No real provider/billing/transport calls in this regression.
     monkeypatch.setattr(agent, "memory_context", AsyncMock(return_value=""))
     try:
@@ -485,6 +489,8 @@ async def test_background_origin_survives_next_action_and_silent_turn_acknowledg
     monkeypatch.setattr(wakeups, 'emit_notification', socket)
     await wakeups.run_wakeup(pool, event)
     assert created[0]['continuation']['origin'] == 'background'
+    # Started from WhatsApp, background work still reports in the web conversation unless its turn asks to text.
+    assert created[0]['continuation']['channel'] == 'web' and created[0]['send_to_phone'] is False
     current = await repo.get(event['id'])
     assert current['status'] == 'done' and not current['response']
     assert 'stop_schedule' not in current['payload']
@@ -494,6 +500,50 @@ async def test_background_origin_survives_next_action_and_silent_turn_acknowledg
     assert await repo.claim_delivery() is None
     if source == 'job':
         assert (await builds.list_for_user(USER, job_id=str(request['id'])))[0]['notified_at'] is not None
+
+
+@pytest.mark.parametrize("why", ["watching", "window"])
+async def test_a_followup_for_the_phone_is_a_web_note_when_a_text_cant_go_now(db, monkeypatch, why):
+    """Asked for on WhatsApp, a build's follow-up is texted, unless the owner has the web chat open (it lands there
+    as it's written) or, on an instance with no WhatsApp templates, the 24 hours since their last text there have
+    passed. Then its turn is told the reply is a web note and why, and nothing is texted."""
+    pool, repo, builds, _, _ = db
+    request, _ = await complete_build(db)
+    if why == "watching":
+        monkeypatch.setattr("utils.user_presence.watching_chat", AsyncMock(return_value=True))
+        reason = "the owner has the web chat open"
+    else:
+        # This instance's own line, which sends nothing past the window; the owner never texted it.
+        monkeypatch.delitem(capabilities._providers, capabilities.OWNER_MESSAGE)
+        monkeypatch.setenv("WHATSAPP_DISPLAY_NUMBER", "+15550100")
+        reason = "WhatsApp's 24-hour window since the owner's last text there has closed"
+    seen = []
+
+    class HeldAgent:
+        @classmethod
+        async def create(cls, **kwargs):
+            self = cls()
+            self.kwargs = kwargs
+            return self
+
+        async def __call__(self, message):
+            seen.append(message["input_items"][0]["content"])
+            await self.kwargs["emit_message"](ChatMessageEvent(message="Unpublished.", finished=True))
+
+        async def cleanup(self):
+            pass
+
+    monkeypatch.setattr(agent, "Agent", HeldAgent)
+    phone, socket = AsyncMock(return_value=("sent", None)), AsyncMock()
+    monkeypatch.setattr(wakeups, "deliver_phone", phone)
+    monkeypatch.setattr(wakeups, "emit_notification", socket)
+    await wakeups.run_wakeup(pool, await repo.claim())
+    assert agent.PROMPTS.followup_delivery(internal=True, context={}, held=reason) in seen[0]
+    await wakeups.deliver_reply(pool, await repo.claim_delivery())
+    phone.assert_not_awaited()
+    assert socket.await_args.args[3]["message"] == "Unpublished."
+    job = (await builds.list_for_user(USER, job_id=str(request["id"])))[0]
+    assert job["phone_state"] is None and reason in job["delivery_error"]
 
 
 @pytest.mark.parametrize("failure", ["unavailable", "timeout"])
