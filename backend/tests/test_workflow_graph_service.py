@@ -920,9 +920,9 @@ class TestReconcileThroughTheService:
 
     async def test_given_up_jobs_are_retried_newest_per_step_and_closed_by_a_newer_success(
             self, db, told, registry, monkeypatch):
-        """Each save touching a broken step queues a job that's given up on in time. Only the newest per step is
-        retried daily (the older ones it covers are superseded), and a newer job on those steps that succeeds closes
-        the older ones: none runs after it."""
+        """Each save touching a broken step queues a job that's given up on in time. Each newer one takes over the
+        older ones it covers (they're superseded, their work its), so only the newest per step is retried daily, and
+        a newer job on those steps that succeeds closes it: none runs after it."""
         from utils import workflow_reconcile
         from utils.webhook_manager import WebhookManager
 
@@ -936,8 +936,8 @@ class TestReconcileThroughTheService:
             return db.fetch("SELECT status FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid ORDER BY id",
                             workflow_id)
 
-        assert [r["status"] for r in await statuses()] == ["failed", "failed", "failed"]
-        # The daily retry runs the newest alone, and closes the two it covers.
+        assert [r["status"] for r in await statuses()] == ["superseded", "superseded", "failed"]
+        # The daily retry runs the newest alone (the provider is still down).
         assert await workflow_reconcile.retry_given_up(db.pool) == 1
         assert [r["status"] for r in await statuses()] == ["superseded", "superseded", "failed"]
         # The provider is back: the next change to hook succeeds, and closes the one given up on.
@@ -945,6 +945,50 @@ class TestReconcileThroughTheService:
         await _apply(db, workflow_id, [{"op": "update_step", "id": "hook", "name": "Four"}])
         assert [r["status"] for r in await statuses()] == ["superseded", "superseded", "superseded", "done"]
         assert await workflow_reconcile.retry_given_up(db.pool) == 0
+
+    @pytest.mark.parametrize("taken_over_by", ["the daily retry", "a newer change"])
+    async def test_a_job_taking_over_older_ones_does_their_work_from_where_it_began(
+            self, db, told, registry, monkeypatch, taken_over_by):
+        """A step's operation changed and its job was given up on; a rename of it was too. The job that takes them
+        over (the newest, retried daily, or a newer change's) reconciles from where the first change began, so the
+        change of operation is still made, and the trigger's error stays until it is."""
+        from utils import workflow_reconcile
+        from utils.webhook_manager import WebhookManager
+
+        monkeypatch.setattr(workflow_reconcile, "MAX_ATTEMPTS", 1)
+        changed, provider = [], {"up": False}
+
+        async def operation_change(pool, node_type, workflow_id, node_id, old_op, new_op, **kwargs):
+            if not provider["up"]:
+                raise RuntimeError("the provider is down")
+            changed.append((node_id, old_op, new_op))
+
+        async def fields_change(pool, node_type, workflow_id, node_id, *args, **kwargs):
+            if not provider["up"]:
+                raise RuntimeError("the provider is down")
+
+        monkeypatch.setattr(WebhookManager, "handle_operation_change", operation_change)
+        monkeypatch.setattr(WebhookManager, "handle_registration_fields_change", fields_change)
+        workflow_id = await _workflow(db, {"nodes": [
+            node("chat", "automation-slack", label="Chat", operation="on_channel_message")], "edges": []})
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "chat", "operation": "on_app_mention"}])
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "chat", "name": "Mentions"}])
+        # The rename's job took over the first: it's given up on too, the first superseded.
+        assert [r["status"] for r in await db.fetch(
+            "SELECT status FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid ORDER BY id", workflow_id)] == [
+            "superseded", "failed"]
+        assert changed == []
+        provider["up"] = True
+        if taken_over_by == "the daily retry":
+            assert await workflow_reconcile.retry_given_up(db.pool) == 1
+        else:
+            await _apply(db, workflow_id, [{"op": "update_step", "id": "chat", "name": "Mentions only"}])
+        assert changed == [("chat", "on_channel_message", "on_app_mention")]
+        statuses = [r["status"] for r in await db.fetch(
+            "SELECT status FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid ORDER BY id", workflow_id)]
+        assert statuses[-1] == "done" and set(statuses[:-1]) == {"superseded"}
+        chat = next(n for n in (await _graph(db, workflow_id))["workflow"]["nodes"] if n["id"] == "chat")
+        assert not chat["config"].get("trigger_error")
 
     async def test_another_steps_job_leaves_a_failing_triggers_error_alone(self, db, told, registry, monkeypatch):
         """A trigger whose own job couldn't finish registering keeps showing it: another step's job neither

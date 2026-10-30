@@ -85,6 +85,24 @@ describe('undo and written server changes', () => {
         expect(hook.result.current.canUndo).toBe(false);
     });
 
+    it('never brings back a connection to a step the server removed', () => {
+        const { hook, shown } = canvas([step('hook', 'Hook'), step('log', 'Log')]);
+        // The person connects hook to log (never saved), then adds a step.
+        const wired = [{ id: 'hook-log', source: 'hook', target: 'log' }] as Edge[];
+        act(() => hook.result.current.captureState([step('hook', 'Hook'), step('log', 'Log')], wired));
+        act(() => hook.result.current.captureState(
+            [step('hook', 'Hook'), step('log', 'Log'), step('mine', 'Mine')], wired));
+        // An API edit removes log; the server never had the connection, so its event doesn't name it.
+        act(() => {
+            handlers['mcp:builder_event']({
+                workflow_id: WF, event_type: 'node_removed', committed: true, data: { nodeId: 'log' },
+            });
+        });
+        act(() => hook.result.current.undo());
+        expect(shown.nodes.map((n) => n.id)).toEqual(['hook']);
+        expect(shown.edges).toEqual([]);
+    });
+
     it('starts the history again after a conflict takes the server graph', () => {
         const { hook, shown } = canvas([step('log', 'Log')]);
         act(() => hook.result.current.captureState([step('log', 'Log'), step('mine', 'Mine')], []));

@@ -22,10 +22,15 @@ export function useUndoKeepsServerWrites(
             if (changed !== workflowId) return;
             if (change) {
                 const { eventType, data } = change;
-                rebaseHistory((state) => ({
-                    nodes: serverNodesAfter(state.nodes, eventType, data),
-                    edges: serverEdgesAfter(state.edges, eventType, data),
-                }));
+                rebaseHistory((state) => {
+                    const nodes = serverNodesAfter(state.nodes, eventType, data);
+                    const ids = new Set(nodes.map((n) => n.id));
+                    // A connection the history holds to a step the server removed goes with it, its own included.
+                    const edges = serverEdgesAfter(state.edges, eventType, data).filter(
+                        (e) => ids.has(e.source) && ids.has(e.target),
+                    );
+                    return { nodes, edges };
+                });
                 return;
             }
             const rec = graphRecords[workflowId];
