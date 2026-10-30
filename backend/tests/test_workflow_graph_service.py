@@ -1005,7 +1005,7 @@ class TestReconcileThroughTheService:
         chat = next(n for n in (await _graph(db, workflow_id))["workflow"]["nodes"] if n["id"] == "chat")
         assert not chat["config"].get("trigger_error")
 
-    async def test_another_steps_job_leaves_a_failing_triggers_error_alone(self, db, told, registry, monkeypatch):
+    async def test_another_steps_job_leaves_a_failing_triggers_error_alone(self, db, told, registry):
         """A trigger whose own job couldn't finish registering keeps showing it: another step's job neither
         provisions it nor clears what it shows."""
         from utils import workflow_reconcile
@@ -1017,12 +1017,14 @@ class TestReconcileThroughTheService:
             provisioned.append(node_id)
             return {"webhook_url": f"https://hooks.example/{node_id}", "trigger_error": None}
 
-        monkeypatch.setattr(WebhookManager, "provision_node_webhook", provision)
         shown = f"{workflow_reconcile.UNFINISHED} the provider is down"
         graph = copy.deepcopy(GRAPH)
         graph["nodes"][0]["config"].update(webhook_url="https://hooks.example/1", trigger_error=shown)
         workflow_id = await _workflow(db, graph)
-        await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "Record"}])
+        # Inside the registry's own stand-in, and gone before it is: a monkeypatch over a fixture's patch outlived
+        # both, and every later test in the session provisioned through this stub.
+        with patch.object(WebhookManager, "provision_node_webhook", side_effect=provision):
+            await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "Record"}])
         hook = next(n for n in (await _graph(db, workflow_id))["workflow"]["nodes"] if n["id"] == "hook")
         assert hook["config"]["trigger_error"] == shown and provisioned == []
 
