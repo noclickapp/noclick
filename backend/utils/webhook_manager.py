@@ -42,8 +42,8 @@ from utils.runtime_keys import config_without_runtime_keys
 
 logger = logging.getLogger(__name__)
 
-# The versions ``merge_node_config_patch`` moves a workflow through, (before, after) each, while a caller listens:
-# a writer handing back the version its own reconcile left (``utils.workflow_reconcile``).
+# The versions ``merge_node_config_patch`` moves a workflow through, (before, after) each, while a reconcile job
+# runs (``utils.workflow_reconcile``): each such version is recorded as a reconcile's (workflow_reconcile_versions).
 PATCH_MOVES: ContextVar[Optional[List[Tuple[int, int]]]] = ContextVar("workflow_patch_moves", default=None)
 
 
@@ -1143,11 +1143,13 @@ class WebhookManager:
         string on codec pools, and `object || string-scalar` is jsonb ARRAY
         concatenation — it silently turned the node's config into a list
         (2026-07-20: broke every hook reading the blob until the next full
-        canvas save repaired it). The version it moved the workflow from and
-        to goes to whoever listens (``PATCH_MOVES``).
+        canvas save repaired it). Inside a reconcile job (``PATCH_MOVES``), the
+        version it moves the workflow to is recorded as a reconcile's, in the
+        same statement, and the move goes to the job.
         """
         import json as _json
 
+        moves = PATCH_MOVES.get()
         async with pool.acquire() as conn:
             moved = await conn.fetchrow(
                 """
@@ -1160,23 +1162,29 @@ class WebhookManager:
                     ) WITH ORDINALITY AS n(node, idx)
                     WHERE node->>'id' = $2
                     LIMIT 1
+                ), moved AS (
+                    UPDATE workflows
+                    SET workflow = jsonb_set(
+                        workflow,
+                        ARRAY['nodes', target.pos::text, 'config'],
+                        COALESCE(workflow->'nodes'->target.pos->'config', '{}'::jsonb) || ($3::text)::jsonb
+                    ),
+                    updated_at = now()
+                    FROM target, locked
+                    WHERE workflows.id = $1
+                    RETURNING locked.graph_version AS before, workflows.graph_version AS after
+                ), noted AS (
+                    INSERT INTO workflow_reconcile_versions (workflow_id, version)
+                    SELECT $1, after FROM moved WHERE $4 AND after <> before
+                    ON CONFLICT DO NOTHING
                 )
-                UPDATE workflows
-                SET workflow = jsonb_set(
-                    workflow,
-                    ARRAY['nodes', target.pos::text, 'config'],
-                    COALESCE(workflow->'nodes'->target.pos->'config', '{}'::jsonb) || ($3::text)::jsonb
-                ),
-                updated_at = now()
-                FROM target, locked
-                WHERE workflows.id = $1
-                RETURNING locked.graph_version AS before, workflows.graph_version AS after
+                SELECT before, after FROM moved
                 """,
                 wf_uuid,
                 node_id,
                 _json.dumps(config_without_runtime_keys(patch)),
+                moves is not None,
             )
-        moves = PATCH_MOVES.get()
         if moves is not None and moved is not None and moved["after"] != moved["before"]:
             moves.append((moved["before"], moved["after"]))
 

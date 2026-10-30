@@ -5,10 +5,12 @@ workflow, refuses a stale ``if_version`` with the version and graph as they
 stand, applies the ops in order (a batch lands whole or not at all), writes the
 graph and the workflow's own fields and records a version. The version moves
 with the graph (the ``workflows_graph_version_bump`` trigger) and with a change
-to the workflow's name, description or settings. After the commit it reconciles
-what the change sets in motion outside the graph (``utils.workflow_reconcile``),
-whose own writes (a trigger's webhook fields) move the version on: the version
-handed back is the one they left, so a caller edits on from it. Then it tells
+to the workflow's name, description or settings. What the change sets in
+motion outside the graph (``utils.workflow_reconcile``) is recorded in the same
+transaction and run after the commit by the workflow's worker, never on the
+write's path; the versions its own writes (a trigger's webhook fields) produce
+never make an edit stale (``_locked``), so the version handed back stays one to
+edit on from. After the commit it tells
 whoever watches, once: the owner's open pages (the ``WORKFLOW_GRAPH_CHANGED``
 capability) and every canvas open on the workflow, whoever's (its room on the
 relay: the change as the builder's canvas events, never a secret nor an outsize
@@ -94,8 +96,8 @@ class GraphError(Exception):
 
 @dataclass
 class Edited:
-    """What a write did: the workflow's ``version`` (its CAS token, what ``if_version`` names) once it and its
-    reconcile were written, whether its definition ``changed``, the version of its history it landed in
+    """What a write did: the workflow's ``version`` (its CAS token, what ``if_version`` names) once it was
+    written, whether its definition ``changed``, the version of its history it landed in
     (``history_version``, which reads and restores name it by; None for a layout-only write or none), each op's
     ``results`` and each touched step's verdict (``steps``); ``definition``: the workflow as ``read`` shows it,
     when asked for."""
@@ -460,16 +462,28 @@ async def canvas_save(conn, repo, workflow_id: str, graph: Dict[str, Any], expec
 
 async def _locked(conn, repo, author: Author, workflow_id: str, if_version: Optional[int]):
     """(access, the workflow's row locked for the transaction), once the author may edit it and it's still at
-    ``if_version`` when one is given."""
+    ``if_version`` when one is given: at it, or past it only by a reconcile's own writes (a trigger's webhook
+    fields), which the edit, applied to the workflow as it stands, keeps."""
     access = await _access(conn, author, workflow_id, edit=True)
     row = await repo.read_graph(conn, workflow_id, lock=True)
     if row is None:
         raise GraphError("not_found", f"No workflow '{workflow_id}' this account can open.")
-    if if_version is not None and if_version != row["graph_version"]:
+    if if_version is not None and not await _still_at(conn, workflow_id, if_version, row["graph_version"]):
         raise GraphError("stale", f"The workflow is at version {row['graph_version']}, not {if_version}: "
                                   "it changed since it was read.",
                          version=row["graph_version"], graph=public_graph(row["workflow"]))
     return access, row
+
+
+async def _still_at(conn, workflow_id: str, if_version: int, version: int) -> bool:
+    """``version`` is ``if_version``, or every version after it came from a reconcile's own write."""
+    if if_version == version:
+        return True
+    if if_version > version:
+        return False
+    return await conn.fetchval(
+        "SELECT count(*) FROM workflow_reconcile_versions WHERE workflow_id = $1::uuid AND version > $2 "
+        "AND version <= $3", str(workflow_id), if_version, version) == version - if_version
 
 
 async def _write(conn, repo, workflow_id: str, row: Dict[str, Any], before: Dict[str, Any],
@@ -491,7 +505,7 @@ async def apply(pool, author: Author, workflow_id: str, ops: Sequence[Any], *, i
     from utils.access_control import Permission
     from utils.credentials import authorize_credentials_for_workflow, resolve_accessible_credential_types
 
-    from .graph_edits import EditContext, EditRefused, SetConnection, apply_ops, describe_changes, parse_ops, summary
+    from .graph_edits import EditContext, EditRefused, SetConnection, apply_ops, parse_ops, summary
     from .workflow_ops import read_model_catalog
 
     workflow_id = _uuid(workflow_id)
@@ -535,13 +549,12 @@ async def apply(pool, author: Author, workflow_id: str, ops: Sequence[Any], *, i
             recorded = await record_version(conn, workflow_id, author=author, source=source,
                                             before_version=row["graph_version"], before=before, version=version,
                                             after=after, changes=changes)
-    now = after
+        queued = wrote and await _queue_reconcile(conn, workflow_id, author, before, after, row["graph_version"],
+                                                  version)
     if wrote:
-        version, now = await _settle(pool, row["owner_id"], workflow_id, author, before, after,
-                                     row["graph_version"], version,
-                                     reconcile=bool(describe_changes(before["graph"], after["graph"])))
+        _settled(pool, row["owner_id"], workflow_id, before, after, row["graph_version"], version, queued)
     return Edited(workflow_id, version, wrote, recorded, summary(changes), editor.results, editor.steps,
-                  definition=_definition_view(now) if include_graph else None)
+                  definition=_definition_view(after) if include_graph else None)
 
 
 def _adds_no_connection(typed: Sequence[Any], graph: Any) -> None:
@@ -591,7 +604,7 @@ async def restore(pool, author: Author, workflow_id: str, number: int, *,
     from repositories.workflow import WorkflowRepo
     from utils.system_workflows import client_settings
 
-    from .graph_edits import describe_changes, summary
+    from .graph_edits import summary
 
     workflow_id = _uuid(workflow_id)
     repo = WorkflowRepo(pool)
@@ -613,35 +626,38 @@ async def restore(pool, author: Author, workflow_id: str, number: int, *,
         recorded = await record_version(conn, workflow_id, author=author, source="restore",
                                         before_version=row["graph_version"], before=before, version=version,
                                         after=after, changes=changes, restored_from=number)
-    version, _ = await _settle(pool, row["owner_id"], workflow_id, author, before, after, row["graph_version"],
-                               version, reconcile=bool(describe_changes(before["graph"], after["graph"])))
+        queued = await _queue_reconcile(conn, workflow_id, author, before, after, row["graph_version"], version)
+    _settled(pool, row["owner_id"], workflow_id, before, after, row["graph_version"], version, queued)
     return Edited(workflow_id, version, True, recorded, summary(changes))
 
 
 # ── after the commit ────────────────────────────────────────────────────────
 
-async def _settle(pool, owner_id, workflow_id: str, author: Author, before: Dict[str, Any],
-                  after: Dict[str, Any], base: int, version: int, *, reconcile: bool) -> Tuple[int, Dict[str, Any]]:
-    """Reconcile what the write changed, then (spawned, off the answer's path) tell whoever watches once, with what
-    changed (``canvas_events``), from the version the write was made on (``base``) to the one the reconcile's own
-    writes left (the write's own when it wrote none, or when another writer's came in between). Returns that
-    version and the definition at it."""
-    from repositories.workflow import WorkflowRepo
-    from utils.async_helpers import spawn
-    from utils.workflow_reconcile import reconcile_graph_change
+async def _queue_reconcile(conn, workflow_id: str, author: Author, before: Dict[str, Any], after: Dict[str, Any],
+                           base: int, version: int) -> bool:
+    """Record, in the write's transaction, what its change to the steps sets in motion (``utils.workflow_reconcile``);
+    True when there's any (moving steps sets nothing in motion)."""
+    from utils import workflow_reconcile
 
-    if reconcile:
-        try:
-            version = await reconcile_graph_change(pool, workflow_id, author.user_id, before["graph"],
-                                                   after["graph"], version=version)
-        except Exception:
-            logger.error("[graph] reconciling %s after its write failed", workflow_id, exc_info=True)
-    async with pool.acquire() as conn:
-        row = await WorkflowRepo(pool).read_graph(conn, workflow_id)
-    now = _of(row) if row is not None and row["graph_version"] == version else after
-    spawn(tell(str(owner_id), workflow_id, version, canvas_events(before, now), base=base),
+    from .graph_edits import describe_changes
+
+    if not describe_changes(before["graph"], after["graph"]):
+        return False
+    return await workflow_reconcile.enqueue(conn, workflow_id, author.user_id, before["graph"], after["graph"],
+                                            from_version=base, to_version=version) is not None
+
+
+def _settled(pool, owner_id, workflow_id: str, before: Dict[str, Any], after: Dict[str, Any], base: int,
+             version: int, queued: bool) -> None:
+    """Once the write committed, off its answer's path: tell whoever watches what changed (``canvas_events``), from
+    the version it was made on (``base``) to the one it left, and wake the workflow's reconcile worker."""
+    from utils import workflow_reconcile
+    from utils.async_helpers import spawn
+
+    spawn(tell(str(owner_id), workflow_id, version, canvas_events(before, after), base=base),
           name=f"workflow-graph-notify:{workflow_id}")
-    return version, now
+    if queued:
+        workflow_reconcile.kick(pool, workflow_id)
 
 
 def _secret_keys(node: Dict[str, Any]) -> set:
@@ -736,7 +752,7 @@ async def tell(owner_id: str, workflow_id: str, version: int,
         relay.start()
         for event_type, data in canvas:
             await relay.send_event({"type": CANVAS_EVENT, "workflow_id": workflow_id, "event_type": event_type,
-                                    "data": data})
+                                    "data": data, "committed": True})
         await relay.send_event({"type": GRAPH_CHANGED_EVENT, "workflow_id": workflow_id,
                                 "base_version": base, "version": version})
     except Exception:

@@ -65,14 +65,14 @@ def told():
 
 @pytest.fixture
 def reconciled():
-    """Each reconcile the service ran, as (user, old graph, new graph)."""
+    """Each reconcile job's work the workflow's worker ran, as (user, the steps it touched as they were, as the
+    write left them)."""
     calls = []
 
-    async def reconcile(pool, workflow_id, user_id, old, new, *, version=None):
+    async def reconcile(pool, workflow_id, user_id, old, new, deleted):
         calls.append((user_id, old, new))
-        return version
 
-    with patch("utils.workflow_reconcile.reconcile_graph_change", side_effect=reconcile):
+    with patch("utils.workflow_reconcile._reconcile", side_effect=reconcile):
         yield calls
 
 
@@ -124,6 +124,19 @@ async def _apply(db, workflow_id, ops, *, author=Author(OWNER), **kwargs):
     return edited
 
 
+async def _restore(db, workflow_id, number, *, author=Author(OWNER), **kwargs):
+    """A restore, and what runs after it (its notices, its reconcile job)."""
+    from utils.async_helpers import drain_spawned_tasks
+
+    restored = await graph_service.restore(db.pool, author, workflow_id, number, **kwargs)
+    await drain_spawned_tasks(timeout=5)
+    return restored
+
+
+async def _job_status(db, job_id):
+    return await db.fetchval("SELECT status FROM workflow_reconcile_jobs WHERE id = $1", job_id)
+
+
 async def _share(db, workflow_id, user, permission):
     await db.execute("INSERT INTO resource_shares (resource_type, resource_id, target_type, target_user_id, "
                      "permission, shared_by) VALUES ('workflow', $1::uuid, 'user', $2::uuid, $3, $4::uuid)",
@@ -168,6 +181,8 @@ class TestWrites:
                                        {"op": "remove_step", "id": "hook"}])
         assert heard[-1] == {"type": "workflow:graph_changed", "workflow_id": workflow_id, "base_version": 1,
                              "version": 2}
+        # Written changes: a canvas takes them as the server's state, its base for a conflict's merge.
+        assert all(e["committed"] is True for e in heard[:-1])
         assert [(e["type"], e["event_type"], e["data"]) for e in heard[:-1]] == [
             ("mcp:builder_event", "node_removed", {"nodeId": "hook", "removedEdgeIds": ["hook-agent"]}),
             ("mcp:builder_event", "node_updated", {"nodeId": "log", "config": {"label": "Record"}})]
@@ -347,7 +362,7 @@ class TestVersions:
         graph = await db.fetchval("SELECT graph FROM workflow_versions WHERE workflow_id = $1::uuid AND version = 3",
                                   workflow_id)
         assert _labels(graph)["log"] == "Two"
-        restored = await graph_service.restore(db.pool, Author(OWNER), workflow_id, 2)
+        restored = await _restore(db, workflow_id, 2)
         assert _labels((await _graph(db, workflow_id))["workflow"])["log"] == "Two" and restored.version == 5
 
     async def test_the_open_editions_scheduler_prunes_old_versions(self, db, told, reconciled):
@@ -364,11 +379,11 @@ class TestVersions:
         workflow_id = await _workflow(db)
         await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "Record"}])
         await _apply(db, workflow_id, [{"op": "remove_step", "id": "log"}], source="coordinator")
-        restored = await graph_service.restore(db.pool, Author(OWNER), workflow_id, 2)
+        restored = await _restore(db, workflow_id, 2)
         assert (restored.version, restored.summary) == (4, "restored version 2")
         assert _labels((await _graph(db, workflow_id))["workflow"])["log"] == "Record"
         # Undone: the version before the restore comes back, as a version of its own.
-        await graph_service.restore(db.pool, Author(OWNER), workflow_id, 3)
+        await _restore(db, workflow_id, 3)
         assert "log" not in _labels((await _graph(db, workflow_id))["workflow"])
         assert [(v["version"], v["source"], v["restored_from"]) for v in await _versions(db, workflow_id)] == [
             (1, "baseline", None), (2, "api", None), (3, "coordinator", None), (4, "restore", 2), (5, "restore", 3)]
@@ -405,7 +420,7 @@ class TestVersions:
         assert (three["name"], three["description"]) == ("Refunds", "Refund mail.")
         assert [d["name"] for d in three["settings"]["variable_definitions"]] == ["a", "region"]
         assert "kept_by_noclick" not in three["settings"]
-        restored = await graph_service.restore(db.pool, Author(OWNER), workflow_id, 2)
+        restored = await _restore(db, workflow_id, 2)
         assert restored.version == 4
         row = await db.fetchrow("SELECT name, description, settings, workflow FROM workflows WHERE id = $1::uuid",
                                 workflow_id)
@@ -414,7 +429,7 @@ class TestVersions:
         assert row["settings"] == {"variable_definitions": [{"name": "a", "value": "1"}], "kept_by_noclick": "later"}
         assert _labels(row["workflow"])["log"] == "Record"
         # A restore that would change nothing writes nothing.
-        same = await graph_service.restore(db.pool, Author(OWNER), workflow_id, 4)
+        same = await _restore(db, workflow_id, 4)
         assert (same.version, same.changed) == (4, False)
 
     async def test_old_versions_go_but_a_workflows_newest_stays(self, db, told, reconciled):
@@ -635,7 +650,7 @@ class TestReconcileThroughTheService:
                                            "edges": []})
         await EmailReservationManager.reserve(db.pool, OWNER, workflow_id, "inbox", local)
         await _apply(db, workflow_id, [{"op": "remove_step", "id": "inbox"}])
-        await graph_service.restore(db.pool, Author(OWNER), workflow_id, 1)
+        await _restore(db, workflow_id, 1)
         claimed = await db.fetchrow("SELECT node_id, local_part, is_active FROM email_reservations "
                                     "WHERE workflow_id = $1::uuid", workflow_id)
         assert (claimed["node_id"], claimed["local_part"], claimed["is_active"]) == ("inbox", local, True)
@@ -644,7 +659,7 @@ class TestReconcileThroughTheService:
         other = await _workflow(db)
         await EmailReservationManager.reserve(db.pool, OWNER, other, "theirs", local)
         with pytest.raises(GraphError) as taken:
-            await graph_service.restore(db.pool, Author(OWNER), workflow_id, 1)
+            await _restore(db, workflow_id, 1)
         assert taken.value.kind == "invalid" and local in taken.value.message
         assert "inbox" not in _labels((await _graph(db, workflow_id))["workflow"])
 
@@ -688,9 +703,11 @@ class TestReconcileThroughTheService:
         finally:
             await small.close()
 
-    async def test_a_reconcile_waits_for_another_processs_lease_then_runs(self, db, told, registry, monkeypatch):
+    async def test_a_job_another_worker_holds_waits_for_it_and_a_dead_ones_resumes_on_the_sweep(
+            self, db, told, registry, monkeypatch):
+        """A worker elsewhere holds the workflow's lease: the job waits for it rather than running beside it. That
+        worker died: once its lease lapses the sweep runs the job."""
         import asyncio
-        import time
 
         from utils import workflow_reconcile
 
@@ -705,33 +722,59 @@ class TestReconcileThroughTheService:
             hooked.append(node_id)
 
         monkeypatch.setattr("utils.webhook_manager.WebhookManager.handle_registration_fields_change", hook)
-        started = time.monotonic()
-        await asyncio.wait_for(workflow_reconcile.reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH,
-                                                                         renamed), timeout=10)
-        assert time.monotonic() - started >= 0.8 and sorted(hooked) == ["agent", "hook", "log"]
-        # Its own lease is gone once it's done.
+        job = await workflow_reconcile.reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH, renamed)
+        assert hooked == [] and await _job_status(db, job) == "queued"
+        await asyncio.sleep(1.2)
+        assert await workflow_reconcile.sweep(db.pool) == 1
+        assert hooked == ["hook"] and await _job_status(db, job) == "done"
         assert await db.fetchval("SELECT count(*) FROM workflow_reconcile_leases WHERE workflow_id = $1::uuid",
                                  workflow_id) == 0
-        # A lease held past the wait runs it anyway rather than holding the write's answer.
-        await db.execute("INSERT INTO workflow_reconcile_leases (workflow_id, holder, expires_at) "
-                         "VALUES ($1::uuid, 'stuck', now() + interval '1 hour')", workflow_id)
-        monkeypatch.setattr(workflow_reconcile, "WAIT_S", 0.5)
-        started = time.monotonic()
-        await asyncio.wait_for(workflow_reconcile.reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH,
-                                                                         renamed), timeout=10)
-        assert time.monotonic() - started < 5
 
-    async def test_overlapping_reconciles_leave_each_step_as_the_graph_has_it(self, db, told, monkeypatch):
-        """Two reconciles of one workflow that overlap (the first ran past the wait): each teardown and
-        registration acts on the graph as stored when it acts, so the last word on a step matches the graph,
-        whichever order they finish in."""
+    async def test_an_edit_answers_before_its_teardown_which_runs_after(self, db, told):
+        """Removing a step answers once it's written; the step's teardown (provider round trips) runs after, off
+        the answer's path, and the next edit made on the answered version isn't held by it."""
         import asyncio
 
-        from utils import workflow_reconcile
         from utils.webhook_manager import WebhookManager
-        from utils.workflow_reconcile import reconcile_graph_change
 
-        monkeypatch.setattr(workflow_reconcile, "WAIT_S", 0.3)
+        release, cleaned = asyncio.Event(), []
+
+        async def cleanup(*, pool, workflow_id, node_ids, background, old_nodes, requesting_user_id):
+            await release.wait()
+            cleaned.append(list(node_ids))
+
+        workflow_id = await _workflow(db)
+        with patch("utils.workflow_resource_manager.cleanup_nodes_resources", side_effect=cleanup), \
+                patch.object(WebhookManager, "provision_node_webhook", AsyncMock(return_value=None)):
+            edited = await asyncio.wait_for(graph_service.apply(
+                db.pool, Author(OWNER), workflow_id, [{"op": "remove_step", "id": "log"}]), timeout=5)
+            assert edited.version == 2 and cleaned == []
+            again = await asyncio.wait_for(graph_service.apply(
+                db.pool, Author(OWNER), workflow_id, [{"op": "update_step", "id": "agent", "name": "Next"}],
+                if_version=edited.version), timeout=5)
+            assert again.version == 3 and cleaned == []
+            release.set()
+            from utils.async_helpers import drain_spawned_tasks
+
+            await drain_spawned_tasks(timeout=5)
+        assert cleaned == [["log"]]
+        assert [r["status"] for r in await db.fetch(
+            "SELECT status FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid ORDER BY id", workflow_id)] == [
+            "done", "done"]
+
+    async def test_overlapping_reconciles_leave_each_step_as_the_graph_has_it(self, db, told, monkeypatch):
+        """Two runs of one workflow's work that overlap (a lease that lapsed under a worker): each teardown and
+        registration acts on the graph as stored when it acts, so the last word on a step matches the graph,
+        whichever order they finish in; a step back while its teardown ran holds its inbox's address again."""
+        import asyncio
+
+        from utils.email_reservation_manager import EmailReservationManager
+        from utils.webhook_manager import WebhookManager
+        from utils.workflow_reconcile import _reconcile
+
+        local = f"in-{uuid.uuid4().hex[:8]}"
+        inbox = node("log", "trigger-email", label="Inbox", local_part=local)
+        with_inbox = {"nodes": [*[n for n in GRAPH["nodes"] if n["id"] != "log"], inbox], "edges": GRAPH["edges"]}
         without = copy.deepcopy(GRAPH)
         without["nodes"] = [n for n in without["nodes"] if n["id"] != "log"]
         acted = []
@@ -751,73 +794,95 @@ class TestReconcileThroughTheService:
         with patch("utils.workflow_resource_manager.cleanup_nodes_resources", side_effect=cleanup), \
                 patch.object(WebhookManager, "register_node_webhooks", side_effect=register), \
                 patch.object(WebhookManager, "provision_node_webhook", AsyncMock(return_value=None)):
-            # A slow teardown of a removed step, overtaken by a write that puts it back: registered at the end.
+            # A slow teardown of a removed step, overtaken by a write that puts it back: registered at the end,
+            # its address claimed again.
             slow.update(teardown=1.0, register=0)
             workflow_id = await _workflow(db, without)
-            first = asyncio.create_task(reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH, without))
+            await EmailReservationManager.reserve(db.pool, OWNER, workflow_id, "log", local)
+            first = asyncio.create_task(_reconcile(db.pool, workflow_id, OWNER, with_inbox, without, None))
             await asyncio.sleep(0.1)
-            await store(workflow_id, GRAPH)
-            await asyncio.gather(first, reconcile_graph_change(db.pool, workflow_id, OWNER, without, GRAPH))
+            await store(workflow_id, with_inbox)
+            await asyncio.gather(first, _reconcile(db.pool, workflow_id, OWNER, without, with_inbox, None))
             assert acted[-1] == ("register", ["log"]), acted
+            assert await db.fetchval("SELECT local_part FROM email_reservations WHERE workflow_id = $1::uuid "
+                                     "AND node_id = 'log'", workflow_id) == local
             # A slow registration of a step that's back, overtaken by a write that removes it: torn down at the end.
             acted.clear()
             slow.update(teardown=0, register=1.0)
             workflow_id = await _workflow(db)
-            first = asyncio.create_task(reconcile_graph_change(db.pool, workflow_id, OWNER, without, GRAPH,
-                                                               deleted=[]))
+            first = asyncio.create_task(_reconcile(db.pool, workflow_id, OWNER, without, GRAPH, []))
             await asyncio.sleep(0.1)
             await store(workflow_id, without)
-            await asyncio.gather(first, reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH, without))
+            await asyncio.gather(first, _reconcile(db.pool, workflow_id, OWNER, GRAPH, without, None))
             assert acted[-1] == ("teardown", ["log"]), acted
 
-    async def test_a_hung_reconcile_gives_its_lease_back(self, db, told, registry, monkeypatch):
-        """A reconcile whose work hangs is stopped at ``WORK_S`` and gives its lease back, so the next one runs
-        on its own rather than waiting out every wait."""
+    async def test_a_job_cut_off_resumes_until_done(self, db, told, registry, monkeypatch):
+        """A job whose work runs past ``WORK_S`` is stopped, its lease given back, and retried: its removed step's
+        teardown and inbox are finished then, never left half done."""
         import asyncio
-        import time
 
         from utils import workflow_reconcile
-        from utils.webhook_manager import WebhookManager
+        from utils.email_reservation_manager import EmailReservationManager
 
         monkeypatch.setattr(workflow_reconcile, "WORK_S", 0.5)
-        workflow_id = await _workflow(db)
-        renamed = copy.deepcopy(GRAPH)
-        renamed["nodes"][0]["config"]["label"] = "Renamed"
+        local = f"in-{uuid.uuid4().hex[:8]}"
+        workflow_id = await _workflow(db, {"nodes": [node("inbox", "trigger-email", label="Inbox", local_part=local)],
+                                           "edges": []})
+        await EmailReservationManager.reserve(db.pool, OWNER, workflow_id, "inbox", local)
+        slow = {"s": 5.0}
+        cleaned = []
 
-        async def hang(*args, **kwargs):
-            await asyncio.Event().wait()
+        async def cleanup(*, pool, workflow_id, node_ids, background, old_nodes, requesting_user_id):
+            await asyncio.sleep(slow["s"])
+            cleaned.append(list(node_ids))
 
-        with patch.object(WebhookManager, "handle_registration_fields_change", side_effect=hang):
-            started = time.monotonic()
-            await asyncio.wait_for(workflow_reconcile.reconcile_graph_change(
-                db.pool, workflow_id, OWNER, GRAPH, renamed), timeout=10)
-        assert time.monotonic() - started < 3
-        assert await db.fetchval("SELECT count(*) FROM workflow_reconcile_leases WHERE workflow_id = $1::uuid",
+        with patch("utils.workflow_resource_manager.cleanup_nodes_resources", side_effect=cleanup):
+            edited = await _apply(db, workflow_id, [{"op": "remove_step", "id": "inbox"}])
+            [job] = await db.fetch("SELECT id, status, attempts, last_error FROM workflow_reconcile_jobs "
+                                   "WHERE workflow_id = $1::uuid", workflow_id)
+            assert (job["status"], job["attempts"], cleaned) == ("queued", 1, [])
+            assert "ran past" in job["last_error"]
+            assert await db.fetchval("SELECT count(*) FROM workflow_reconcile_leases WHERE workflow_id = $1::uuid",
+                                     workflow_id) == 0
+            assert await db.fetchval("SELECT count(*) FROM email_reservations WHERE workflow_id = $1::uuid",
+                                     workflow_id) == 1
+            # Its retry comes due, and the provider answers in time now.
+            slow["s"] = 0
+            await db.execute("UPDATE workflow_reconcile_jobs SET retry_at = now() WHERE id = $1", job["id"])
+            assert await workflow_reconcile.sweep(db.pool) == 1
+        assert cleaned == [["inbox"]] and await _job_status(db, job["id"]) == "done"
+        assert await db.fetchval("SELECT count(*) FROM email_reservations WHERE workflow_id = $1::uuid",
                                  workflow_id) == 0
+        assert edited.version == 2
 
-    async def test_one_workflows_reconciles_run_one_at_a_time(self, db, told, registry):
+    async def test_one_workflows_jobs_run_one_at_a_time_in_order(self, db, told, registry):
         import asyncio
 
         from utils.webhook_manager import WebhookManager
         from utils.workflow_reconcile import reconcile_graph_change
 
         workflow_id = await _workflow(db)
-        running, overlapped = [], []
+        running, overlapped, order = [], [], []
 
-        async def slow(*args, **kwargs):
+        async def slow(pool, node_type, workflow_id, node_id, old_config, new_config, **kwargs):
             overlapped.append(bool(running))
             running.append(1)
             await asyncio.sleep(0.2)
+            order.append(new_config.get("label"))
             running.pop()
 
-        renamed = copy.deepcopy(GRAPH)
-        renamed["nodes"][0]["config"]["label"] = "Renamed"
+        first, second = copy.deepcopy(GRAPH), copy.deepcopy(GRAPH)
+        first["nodes"][0]["config"]["label"] = "First"
+        second["nodes"][0]["config"]["label"] = "Second"
         with patch.object(WebhookManager, "handle_registration_fields_change", side_effect=slow):
-            await asyncio.gather(*(reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH, renamed)
-                                   for _ in range(2)))
-        assert len(overlapped) >= 2 and not any(overlapped)
+            await asyncio.gather(reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH, first),
+                                 reconcile_graph_change(db.pool, workflow_id, OWNER, first, second))
+            from utils.async_helpers import drain_spawned_tasks
 
-    async def test_a_new_trigger_is_provisioned_and_the_version_handed_back_has_its_webhook(
+            await drain_spawned_tasks(timeout=5)
+        assert order == ["First", "Second"] and not any(overlapped)
+
+    async def test_a_new_trigger_is_provisioned_after_the_answer_and_its_version_edits_on(
             self, db, told, registry):
         workflow_id = await _workflow(db)
         edited = await _apply(db, workflow_id, [{"op": "add_step", "type": "trigger-webhook", "id": "hook2"}],
@@ -826,18 +891,19 @@ class TestReconcileThroughTheService:
         row = await _graph(db, workflow_id)
         hook = next(n for n in row["workflow"]["nodes"] if n["id"] == "hook2")
         assert hook["config"]["webhook_url"] == "https://hooks.example/hook2"
-        # The webhook's fields are NoClick's mirror: they move the graph's version, not its history, and the
-        # version handed back (and the one notice) is the one they left.
-        assert (edited.version, edited.history_version, row["graph_version"]) == (3, 2, 3)
-        assert next(n for n in edited.definition["graph"]["nodes"] if n["id"] == "hook2")["config"]["webhook_url"]
+        # The edit answered once it was written; the webhook's fields, NoClick's mirror written after, move the
+        # graph's version (each recorded as a reconcile's), not its history, and its canvases hear them too.
+        assert (edited.version, edited.history_version, row["graph_version"]) == (2, 2, 3)
         assert [v["version"] for v in await _versions(db, workflow_id)] == [1, 2]
-        assert told == [(OWNER, workflow_id, 3)]
-        # So the caller edits on from it.
+        assert told == [(OWNER, workflow_id, 2), (OWNER, workflow_id, 3)]
+        assert [r["version"] for r in await db.fetch(
+            "SELECT version FROM workflow_reconcile_versions WHERE workflow_id = $1::uuid", workflow_id)] == [3]
+        # The caller edits on from the version it was answered.
         again = await _apply(db, workflow_id, [{"op": "update_step", "id": "hook2", "name": "Orders"}],
                              if_version=edited.version)
         assert again.version == 4 and _labels((await _graph(db, workflow_id))["workflow"])["hook2"] == "Orders"
 
-    async def test_another_writers_change_in_between_keeps_the_writes_own_version(self, db, told, registry):
+    async def test_another_writers_change_after_the_answer_makes_its_version_stale(self, db, told, registry):
         from utils.webhook_manager import WebhookManager
 
         workflow_id = await _workflow(db)
@@ -850,7 +916,7 @@ class TestReconcileThroughTheService:
         with patch.object(WebhookManager, "provision_node_webhook", side_effect=provision):
             edited = await _apply(db, workflow_id, [{"op": "add_step", "type": "trigger-webhook", "id": "hook2"}])
         assert (edited.version, (await _graph(db, workflow_id))["graph_version"]) == (2, 4)
-        # The change it never saw refuses an edit from its version.
+        # The change it never saw (version 3, not a reconcile's) refuses an edit from its version.
         with pytest.raises(GraphError) as stale:
             await _apply(db, workflow_id, [{"op": "remove_step", "id": "hook2"}], if_version=edited.version)
         assert stale.value.details["version"] == 4
@@ -858,21 +924,11 @@ class TestReconcileThroughTheService:
     async def test_a_step_a_restore_brings_back_registers_again(self, db, told, registry):
         workflow_id = await _workflow(db)
         await _apply(db, workflow_id, [{"op": "remove_step", "id": "hook"}])
-        await graph_service.restore(db.pool, Author(OWNER), workflow_id, 1)
+        await _restore(db, workflow_id, 1)
         assert registry["registered"] == [["hook"]]
 
 
 class TestTheCanvasSave:
-    @pytest.fixture
-    def reconciled(self):
-        calls = []
-
-        async def reconcile(pool, workflow_id, user_id, old, new, **kwargs):
-            calls.append((user_id, old, new))
-
-        with patch("wss.handlers.workflow_handler.reconcile_graph_change", side_effect=reconcile):
-            yield calls
-
     def _handler(self, db, user=OWNER):
         from wss.handlers.workflow_handler import WorkflowHandler
 

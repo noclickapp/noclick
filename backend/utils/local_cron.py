@@ -251,24 +251,37 @@ def _sleep_seconds(earliest_next_run, now):
 
 async def maintain_daily(pool) -> None:
     """What the hosted edition's daily maintenance does that this one needs: a workflow's versions are kept 90 days
-    (its newest whatever its age)."""
+    (its newest whatever its age), its finished reconcile jobs 30."""
     from repositories import workflow_versions
+    from utils import workflow_reconcile
 
     pruned = await workflow_versions.prune(pool)
-    logger.info("Workflow versions pruned: %s", pruned)
+    jobs = await workflow_reconcile.prune(pool)
+    logger.info("Workflow versions pruned: %s, reconcile jobs: %s", pruned, jobs)
 
 
 async def _run_ticker():
     import time
+    from utils import workflow_reconcile
+
     next_recovery = 0.0
     next_daily = time.monotonic()
-    recovery = None
+    next_reconcile = 0.0
+    recovery = reconciling = None
     while True:
         try:
             if time.monotonic() >= next_daily:
                 next_daily = time.monotonic() + _DAILY_S
                 await maintain_daily(_get_pool())
             await _tick()
+            # A workflow's reconcile jobs a worker that died left, or whose retry is due, run again.
+            if time.monotonic() >= next_reconcile and (reconciling is None or reconciling.done()):
+                if reconciling and not reconciling.cancelled() and reconciling.exception():
+                    logger.error("Workflow reconcile sweep failed", exc_info=reconciling.exception())
+                next_reconcile = time.monotonic() + workflow_reconcile.SWEEP_EVERY_S
+                reconciling = asyncio.create_task(workflow_reconcile.sweep(_get_pool()))
+                _recovery_tasks.add(reconciling)
+                reconciling.add_done_callback(_recovery_tasks.discard)
             if time.monotonic() >= next_recovery and (recovery is None or recovery.done()):
                 if recovery and not recovery.cancelled() and recovery.exception():
                     logger.error("Scheduler reconciliation failed", exc_info=recovery.exception())

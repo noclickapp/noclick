@@ -295,6 +295,60 @@ describe('a CAS conflict rebase against the canvas base', () => {
     });
 });
 
+describe('two conflicts in a row', () => {
+    function server(version: number, nodes: Array<[string, string]>) {
+        return {
+            conflict: true, graph_version: version, workflow_data: {
+                nodes: nodes.map(([id, label]) => ({
+                    id, type: 'automation-slack', position: { x: 0, y: 0 }, config: { label },
+                })), edges: [],
+            },
+        };
+    }
+
+    it("takes the server's newest copy of a step it never changed, on the second rebase too", async () => {
+        const responses: unknown[] = [server(7, [['a', 'A'], ['b', 'B server 1']]),
+                                      server(8, [['a', 'A'], ['b', 'B server 2']]),
+                                      { success: true, workflow: { graph_version: 9 } }];
+        wire.respond = () => responses.shift();
+        primeMountedRecord([createWorkflowNode('a', 'automation-slack', { x: 0, y: 0 }, { label: 'A' }),
+                            createWorkflowNode('b', 'automation-slack', { x: 0, y: 0 }, { label: 'B' })], 5);
+        seedSaveBaseline(WF);
+        const rec = graphRecords[WF];
+        // The person moved a.
+        rec.nodes = rec.nodes.map((n) => (n.id === 'a'
+            ? createWorkflowNode('a', 'automation-slack', { x: 5, y: 5 }, { label: 'A' }) : n));
+        markGraphDirty(WF);
+        flushGraphNow(WF); await tick();
+        flushGraphNow(WF); await tick();
+        flushGraphNow(WF); await tick();
+        const label = (id: string) => (rec.nodes.find((n) => n.id === id)?.data as Record<string, unknown>)?.label;
+        expect(label('b')).toBe('B server 2');
+        expect(rec.nodes.find((n) => n.id === 'a')?.position).toEqual({ x: 5, y: 5 });
+        const saved = wire.sent[wire.sent.length - 1] as {
+            workflow_data: { nodes: Array<{ id: string; config: { label: string } }> };
+        };
+        expect(saved.workflow_data.nodes.find((n) => n.id === 'b')?.config.label).toBe('B server 2');
+    });
+
+    it('drops a step another writer removed after the first rebase took its copy', async () => {
+        const responses: unknown[] = [server(7, [['a', 'A'], ['b', 'B server 1']]), server(8, [['a', 'A']]),
+                                      { success: true, workflow: { graph_version: 9 } }];
+        wire.respond = () => responses.shift();
+        primeMountedRecord([createWorkflowNode('a', 'automation-slack', { x: 0, y: 0 }, { label: 'A' }),
+                            createWorkflowNode('b', 'automation-slack', { x: 0, y: 0 }, { label: 'B' })], 5);
+        seedSaveBaseline(WF);
+        const rec = graphRecords[WF];
+        rec.nodes = rec.nodes.map((n) => (n.id === 'a'
+            ? createWorkflowNode('a', 'automation-slack', { x: 5, y: 5 }, { label: 'A' }) : n));
+        markGraphDirty(WF);
+        flushGraphNow(WF); await tick();
+        flushGraphNow(WF); await tick();
+        flushGraphNow(WF); await tick();
+        expect(rec.nodes.map((n) => n.id)).toEqual(['a']);
+    });
+});
+
 describe('builder removals survive a CAS conflict rebase', () => {
     // 2026-09-22: the builder streamed node_removed, the canvas flush-saved on
     // active_gen:terminal with a version token the builder had already bumped

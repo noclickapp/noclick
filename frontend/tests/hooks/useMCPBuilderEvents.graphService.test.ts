@@ -9,7 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createWorkflowNode } from '~/lib/applyNodeUpdate';
 import { FETCH_WHOLE_TRIES, useMCPBuilderEvents } from '~/hooks/useMCPBuilderEvents';
 import { WorkflowPresenceService } from '~/lib/collaboration/workflowPresenceService';
-import { markStepPartial, markStepWhole } from '~/lib/liveGraphStore';
+import { markStepPartial, reloadFromServer, takeServerStep } from '~/lib/liveGraphStore';
 import { sendEventAsync } from '~/lib/socket-sender';
 
 const handlers: Record<string, (event: unknown) => void> = {};
@@ -27,7 +27,9 @@ vi.mock('~/lib/socket-sender', () => ({
         return { config: stored[event.node_id] };
     }),
 }));
-vi.mock('~/lib/liveGraphStore', () => ({ markStepPartial: vi.fn(), markStepWhole: vi.fn() }));
+vi.mock('~/lib/liveGraphStore', () => ({
+    markStepPartial: vi.fn(), takeServerStep: vi.fn(), reloadFromServer: vi.fn(async () => true),
+}));
 
 class RoomSocket {
     static last: RoomSocket;
@@ -144,14 +146,15 @@ describe('a graph service write on an open canvas', () => {
             event_name: 'workflow:node:get_config', workflow_id: 'wf', node_id: 'fetch',
         }));
         expect(markStepPartial).toHaveBeenCalledWith('wf', 'fetch');
-        expect(markStepWhole).toHaveBeenCalledWith('wf', 'fetch');
+        expect(takeServerStep).toHaveBeenCalledWith('wf', 'fetch', stored.fetch);
+        expect(reloadFromServer).not.toHaveBeenCalled();
         const config = state.nodes[0].data.config as Record<string, unknown>;
         expect(config.url).toBe('https://api.example');
         expect(config.api_key).toBe('sk-live-123');
         unmount();
     });
 
-    it('leaves a step it could not read whole in part, so its saves keep it as stored', async () => {
+    it('reads the whole workflow again when it can\'t read a step whole, never saving its partial copy', async () => {
         vi.useFakeTimers();
         const { setNodes, setEdges } = canvas(
             [createWorkflowNode('big', 'log', { x: 0, y: 0 }, { label: 'Big' })], []);
@@ -165,7 +168,8 @@ describe('a graph service write on an open canvas', () => {
         });
         expect(sendEventAsync).toHaveBeenCalledTimes(FETCH_WHOLE_TRIES);
         expect(markStepPartial).toHaveBeenCalledWith('wf', 'big');
-        expect(markStepWhole).not.toHaveBeenCalled();
+        expect(takeServerStep).not.toHaveBeenCalled();
+        expect(reloadFromServer).toHaveBeenCalledWith('wf');
         unmount();
         vi.useRealTimers();
     });

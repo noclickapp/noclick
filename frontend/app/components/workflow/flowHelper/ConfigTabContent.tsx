@@ -18,6 +18,7 @@ import {
 import { EVENTS } from '~/lib/analytics-events';
 import { useAnalytics } from '~/lib/analytics';
 import { useNodeSchemas } from '~/hooks/useNodeSchemas';
+import { useStepPartial } from '~/lib/liveGraphStore';
 import { getFieldErrorMap, parseExecutionError } from '~/utils/pydanticErrorParser';
 import { getDefaultLabelFromType } from '../nodes/base/NodeLabel';
 import { AgentToolOperationsPicker } from '../AgentToolOperationsPicker';
@@ -143,6 +144,8 @@ export function ConfigTabContent({
 
     // What the panel says about credentials is read from the node's schema.
     const schemaReady = useNodeSchemas([selectedNode?.type]);
+    // A step a server write left the canvas holding only in part can't be edited until it's read whole.
+    const partial = useStepPartial(workflowId, selectedNode?.id);
 
     if (!selectedNode) {
         return (
@@ -154,6 +157,14 @@ export function ConfigTabContent({
         );
     }
     if (!schemaReady) return null;
+    if (partial) {
+        return (
+            <div className="flex items-center justify-center gap-2 h-full text-sm text-muted-foreground" role="status">
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                Loading this step
+            </div>
+        );
+    }
 
     const defaultLabel = getDefaultLabelFromType(selectedNode.type || '');
     const executionError = selectedNode.data?.error;

@@ -76,7 +76,7 @@ from utils.system_workflows import client_settings, refusal
 from utils.relay_tokens import mint_user_room_token
 from utils.activity import signal_activity
 from utils.workflow_delta import compute_workflow_delta
-from utils.workflow_reconcile import reconcile_graph_change
+from utils import workflow_reconcile
 from coder.workflow.graph_service import Author, CanvasChanges, canvas_save, definition, record_save
 from utils.analytics import log_activity_background
 from utils.analytics_events import Events
@@ -1039,6 +1039,16 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                                               row['old_settings']),
                             after=definition(row['workflow'], row['name'], row['description'], row['settings']),
                             version=row['graph_version'])
+                    # What the save sets in motion outside the graph (the cleanup and inboxes of the steps it
+                    # says it deleted, trigger registrations, re-added steps), recorded with it and run by the
+                    # workflow's worker once it commits: provider round-trips never hold the save's answer.
+                    queued = None
+                    if row and ((request.workflow_data is not None and not echo) or request.deleted_node_ids):
+                        queued = await workflow_reconcile.enqueue(
+                            conn, request.workflow_id, user_id,
+                            row['old_workflow'] if row.get('old_workflow') is not None else row['workflow'],
+                            row['workflow'], from_version=row.get('old_graph_version') or row['graph_version'],
+                            to_version=row['graph_version'], deleted=request.deleted_node_ids or ())
 
                 # CAS miss: the row exists but another writer bumped
                 # graph_version since this client loaded. Return the current
@@ -1088,18 +1098,8 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 graph_version=row.get('graph_version'),
             )
 
-            # What the save sets in motion outside the graph (the cleanup and inboxes of
-            # the steps it says it deleted, trigger registrations, re-added steps), judged
-            # from the graph before and after it. Spawned: it makes provider round-trips
-            # that must not block the save ack or pin a pool connection.
-            if (request.workflow_data is not None and not echo) or request.deleted_node_ids:
-                spawn(
-                    reconcile_graph_change(pool, request.workflow_id, user_id,
-                                           row['old_workflow'] if row.get('old_workflow') is not None
-                                           else row['workflow'], row['workflow'],
-                                           deleted=request.deleted_node_ids or ()),
-                    name=f"workflow-reconcile:{request.workflow_id}",
-                )
+            if queued is not None:
+                workflow_reconcile.kick(pool, request.workflow_id)
 
             # NOTE: credentials are deliberately NOT authorized for run-as-owner
             # resolution here. This save persists the full workflow blob, which is

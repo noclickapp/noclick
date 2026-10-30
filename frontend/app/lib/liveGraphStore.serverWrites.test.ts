@@ -3,17 +3,20 @@
  * then `workflow:graph_changed` with the versions it was made on and left. What the canvas applied from the
  * room is the server's, not an edit of its own: a canvas on the write's base moves to the version it left (so
  * its next save doesn't conflict and rebase over the write), one on any other base keeps it (it missed a write,
- * so its next save conflicts and rebases). A step it must fetch whole (a secret, an outsize setting) is named in
- * its saves until it has, so the server keeps it as stored; a closing tab's save names what it changed; and a
- * canvas its viewer can't edit never saves.
+ * so its next save conflicts and rebases). A written change's events also move the canvas's per-step base, so a
+ * conflict's three-way merge and a closing tab's save tell the canvas's own changes from the server's. A step it
+ * must fetch whole (a secret, an outsize setting) is named in its saves until it has, so the server keeps it as
+ * stored, and one it can't read sends it to read the whole workflow again; a canvas its viewer can't edit never
+ * saves.
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { handlers, sent, acks } = vi.hoisted(() => ({
+const { handlers, sent, acks, reads } = vi.hoisted(() => ({
     handlers: {} as Record<string, (data: unknown) => void>,
     sent: [] as Array<Record<string, unknown>>,
     acks: [] as Array<(response: unknown) => void>,
+    reads: [] as unknown[],
 }));
 
 vi.mock('~/lib/socket-sender', () => ({
@@ -25,6 +28,7 @@ vi.mock('~/lib/socket-sender', () => ({
         acks.push(ack);
         return () => {};
     }),
+    sendEventAsync: vi.fn(async () => reads.shift()),
 }));
 vi.mock('~/lib/socket-receiver', () => ({
     onSocketEvent: vi.fn((event: string, handler: (data: unknown) => void) => {
@@ -42,13 +46,14 @@ import {
     graphRecords,
     markGraphDirty,
     markStepPartial,
-    markStepWhole,
     recordGraphSnapshot,
+    reloadFromServer,
     seedSaveBaseline,
     setCanvasMounted,
     setGraphLoaded,
     setGraphReadOnly,
     setGraphVersion,
+    takeServerStep,
 } from './liveGraphStore';
 
 const WF = 'wf-server-writes';
@@ -76,6 +81,7 @@ describe('server writes on an open canvas', () => {
         vi.clearAllTimers();
         sent.length = 0;
         acks.length = 0;
+        reads.length = 0;
         for (const k of Object.keys(graphRecords)) delete graphRecords[k];
     });
 
@@ -110,13 +116,86 @@ describe('server writes on an open canvas', () => {
         vi.advanceTimersByTime(5000);
         expect(sent[0].partial_node_ids).toEqual(['note']);
         acks[0]({ workflow: { graph_version: 2 } });
-        markStepWhole(WF, 'note');
+        takeServerStep(WF, 'note', { label: 'Mine', message: 'all of it' });
         editLocally('Mine again');
         vi.advanceTimersByTime(5000);
         expect(sent[1].partial_node_ids).toBeUndefined();
         markStepPartial(WF, 'note');
         setGraphVersion(WF, 2);
-        expect(graphRecords[WF].partialNodeIds.size).toBe(0);
+        expect(graphRecords[WF].partialNodeIds).toEqual({});
+    });
+
+    it("moves its base with a written change's events, so a later conflict takes the server's newer copy", () => {
+        openCanvas(1);
+        // Another writer renames the step; the canvas applies it (as useMCPBuilderEvents does) and its base too.
+        handlers['mcp:builder_event']({
+            workflow_id: WF, event_type: 'node_updated', data: { nodeId: 'note', config: { label: 'Theirs' } },
+            committed: true,
+        });
+        editLocally('Theirs');
+        vi.advanceTimersByTime(5000);
+        // Its save meets a still newer write it never heard: the step it never changed itself takes that one.
+        acks[0]({ conflict: true, graph_version: 6, workflow_data: { nodes: [
+            { id: 'note', type: 'log', position: { x: 0, y: 0 }, config: { label: 'Newer' } },
+        ], edges: [] } });
+        const label = (graphRecords[WF].nodes[0].data as Record<string, unknown>).label;
+        expect(label).toBe('Newer');
+    });
+
+    it('a builder stream not yet written moves no base', () => {
+        openCanvas(1);
+        handlers['mcp:builder_event']({
+            workflow_id: WF, event_type: 'node_updated', data: { nodeId: 'note', config: { label: 'Drafted' } },
+        });
+        editLocally('Drafted');
+        flushAllGraphsNow();
+        expect(sent[0].changes).toEqual({ steps: ['note'], edges_added: [], edges_removed: [] });
+    });
+
+    it("closing, never names the server's own changes as its own", () => {
+        openCanvas(4);
+        handlers['mcp:builder_event']({
+            workflow_id: WF, event_type: 'node_start',
+            data: { node: { id: 'theirs', type: 'log', position: { x: 0, y: 200 }, label: 'Theirs' } }, committed: true,
+        });
+        const rec = graphRecords[WF];
+        rec.nodes = [...rec.nodes, createWorkflowNode('theirs', 'log', { x: 0, y: 200 }, { label: 'Theirs' })];
+        rec.nodes = rec.nodes.map((n) => (n.id === 'note'
+            ? createWorkflowNode('note', 'log', { x: 0, y: 0 }, { label: 'Mine' }) : n));
+        markGraphDirty(WF);
+        flushAllGraphsNow();
+        expect(sent[0].changes).toEqual({ steps: ['note'], edges_added: [], edges_removed: [] });
+    });
+
+    it('a step a conflict takes from the server is whole again', () => {
+        openCanvas(1);
+        markStepPartial(WF, 'note');
+        const rec = graphRecords[WF];
+        rec.nodes = [...rec.nodes, createWorkflowNode('mine', 'log', { x: 0, y: 200 }, { label: 'Mine' })];
+        markGraphDirty(WF);
+        vi.advanceTimersByTime(5000);
+        acks[0]({ conflict: true, graph_version: 3, workflow_data: { nodes: [
+            { id: 'note', type: 'log', position: { x: 0, y: 0 }, config: { label: 'Note', message: 'x'.repeat(50) } },
+        ], edges: [] } });
+        expect(graphRecords[WF].partialNodeIds).toEqual({});
+        expect(((graphRecords[WF].nodes[0].data as Record<string, unknown>).config as Record<string, unknown>).message)
+            .toBe('x'.repeat(50));
+    });
+
+    it('reads the whole workflow again when a step can\'t be read whole, keeping its own changes', async () => {
+        openCanvas(1);
+        const rec = graphRecords[WF];
+        rec.nodes = [...rec.nodes, createWorkflowNode('mine', 'log', { x: 0, y: 200 }, { label: 'Mine' })];
+        markStepPartial(WF, 'note');
+        reads.push({ workflow: { graph_version: 4, workflow_data: { nodes: [
+            { id: 'note', type: 'log', position: { x: 0, y: 0 }, config: { label: 'Note', message: 'whole' } },
+        ], edges: [] } } });
+        expect(await reloadFromServer(WF)).toBe(true);
+        expect(rec.graphVersion).toBe(4);
+        expect(rec.partialNodeIds).toEqual({});
+        expect(rec.nodes.map((n) => n.id)).toEqual(['note', 'mine']);
+        vi.advanceTimersByTime(5000);
+        expect(sent[0].expected_graph_version).toBe(4);
     });
 
     it('closing, saves on the version it saw and names what it changed since', () => {

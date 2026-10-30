@@ -8,17 +8,14 @@
 
 import { useEffect, useCallback, useRef } from 'react';
 import { Node, Edge } from '@xyflow/react';
-import { applyNodeUpdate, createWorkflowNode, updateNodeInList, rawConfigToPayload } from '~/lib/applyNodeUpdate';
+import { updateNodeInList, rawConfigToPayload } from '~/lib/applyNodeUpdate';
 import { onSocketEvent } from '~/lib/socket-receiver';
 import { sendEventAsync } from '~/lib/socket-sender';
-import { markStepPartial, markStepWhole } from '~/lib/liveGraphStore';
-// Node dimensions come from the serialized icon singleton (dashboard loader), not
-// the registry — this hook runs always-mounted via useMCPNavigation, so importing
-// the registry here would pull its ~4.7MB component graph into the dashboard bundle.
-import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
+import { markStepPartial, reloadFromServer, takeServerStep } from '~/lib/liveGraphStore';
+import { GRAPH_EVENT_TYPES, serverEdgesAfter, serverNodesAfter } from '~/lib/serverGraphEvents';
 
-// A step the room held part of back is read whole this many times (waiting longer each time) before the canvas
-// leaves it partial: its saves keep the step as stored meanwhile, and the next full load brings it whole.
+// A step the room held part of back is read whole this many times (waiting longer each time); when it can't be,
+// the canvas reads the whole workflow again instead, so it never saves its partial copy.
 export const FETCH_WHOLE_TRIES = 3;
 const FETCH_WHOLE_BACKOFF_MS = 2000;
 
@@ -53,8 +50,8 @@ export function useMCPBuilderEvents({
     }, [setNodes]);
 
     // A step the graph service's room event held part of back (a secret, an outsize setting): read it whole
-    // through the canvas's own authorized read. Until it has, the canvas holds it in part, and every save (a
-    // closing tab's too) keeps it as stored rather than writing it blank or as it was.
+    // through the canvas's own authorized read. Until it has, the step can't be edited (its panel shows it
+    // loading) and every save keeps it as stored; when it can't be read, the whole workflow is read again.
     const fetchWhole = useCallback(async (nodeId: string) => {
         if (!workflowId) return;
         markStepPartial(workflowId, nodeId);
@@ -66,18 +63,21 @@ export function useMCPBuilderEvents({
                     node_id: nodeId,
                 } as never)) as { config?: Record<string, unknown> } | null;
                 const config = resp?.config;
-                if (!config) return;
-                setNodes(curr => updateNodeInList(curr, nodeId, rawConfigToPayload(config)));
-                markStepWhole(workflowId, nodeId);
-                return;
+                if (config) {
+                    setNodes(curr => updateNodeInList(curr, nodeId, rawConfigToPayload(config)));
+                    takeServerStep(workflowId, nodeId, config);
+                    return;
+                }
+                break;
             } catch (e) {
                 if (attempt === FETCH_WHOLE_TRIES) {
-                    console.error('[useMCPBuilderEvents] reading a step whole failed; it stays as stored:', e);
-                    return;
+                    console.error('[useMCPBuilderEvents] reading a step whole failed; reading the workflow:', e);
+                    break;
                 }
                 await new Promise(resolve => setTimeout(resolve, FETCH_WHOLE_BACKOFF_MS * attempt));
             }
         }
+        await reloadFromServer(workflowId);
     }, [workflowId, setNodes]);
 
     const handleEvent = useCallback((event: MCPBuilderEvent) => {
@@ -86,127 +86,35 @@ export function useMCPBuilderEvents({
         lastMCPEventRef.current = Date.now();
         const { event_type, data } = event;
 
-        switch (event_type) {
-            case 'node_start': {
-                // Node appears with 'adding' animation
-                const nodeData = data.node;
-                if (!nodeData) break;
-                if (!nodeData.id) {
-                    console.error('[useMCPBuilderEvents] node_start missing id:', nodeData);
-                    break;
-                }
-                const newNode = createWorkflowNode(
-                    nodeData.id,
-                    nodeData.type,
-                    nodeData.position || { x: 250, y: 150 },
-                    {
-                        ...(nodeData.label ? { label: nodeData.label } : {}),
-                        ...(nodeData.operation ? { operation: nodeData.operation } : {}),
-                        ...(nodeData.goal ? { goal: nodeData.goal } : {}),
-                        ...(nodeData.content !== undefined ? { content: nodeData.content } : {}),
-                        ...(nodeData.color !== undefined ? { color: nodeData.color } : {}),
-                    },
-                    { mcpAnimationState: 'adding' },
-                );
-                // Set initial dimensions for resizable nodes (sticky notes + interface blocks)
-                if (nodeData.type === 'stickyNote' && (nodeData.width || nodeData.height)) {
-                    newNode.style = {
-                        width: nodeData.width || 200,
-                        height: nodeData.height || 200,
-                    };
-                    newNode.width = nodeData.width || 200;
-                    newNode.height = nodeData.height || 200;
-                } else if (nodeData.type?.startsWith('interface-')) {
-                    const nodeDef = getNodeIconMeta(nodeData.type);
-                    newNode.style = {
-                        width: nodeDef?.dimensions.width || 350,
-                        height: nodeDef?.dimensions.height || 200,
-                    };
-                }
-                setNodes(curr => {
-                    if (curr.some(n => n.id === nodeData.id)) return curr;
-                    return [...curr, newNode];
-                });
-                break;
+        if (GRAPH_EVENT_TYPES.has(event_type)) {
+            setNodes(curr => serverNodesAfter(curr, event_type, data, true));
+            setEdges(curr => serverEdgesAfter(curr, event_type, data, true));
+            if (event_type === 'node_updated' && data.nodeId) {
+                clearAnimationState(data.nodeId);
+                if (data.refetch) void fetchWhole(data.nodeId);
             }
+            if (event_type === 'layout_applied' && data.positions && typeof data.positions === 'object') {
+                // The move animates; its transition comes off once it's done.
+                const moved = data.positions as Record<string, unknown>;
+                const layoutTimer = setTimeout(() => {
+                    setNodes(curr => curr.map(n => {
+                        if (!moved[n.id]) return n;
+                        const style = { ...n.style };
+                        delete (style as Record<string, unknown>).transition;
+                        return { ...n, style: Object.keys(style).length ? style : undefined };
+                    }));
+                }, 600);
+                animationTimers.current.add(layoutTimer);
+            }
+            return;
+        }
 
+        switch (event_type) {
             case 'node_processing_start': {
                 // Node transitions to 'editing' glow
                 const { nodeId } = data;
                 if (!nodeId) break;
                 setNodes(curr => updateNodeInList(curr, nodeId, { extras: { mcpAnimationState: 'editing' } }));
-                break;
-            }
-
-            case 'node_updated': {
-                // Node settles to 'complete', config updates applied.
-                // `config` is the backend flat blob — config fields plus
-                // metadata (credentialIds, label, operation) mixed at the top
-                // level. rawConfigToPayload routes each key to the correct
-                // place in the node data model; passing it raw as `config`
-                // would bury credentialIds at data.config.credentialIds where
-                // NodeCredentials can't see it.
-                const { nodeId, config, type, position } = data;
-                if (!nodeId) break;
-                const payload = rawConfigToPayload(config || {});
-                setNodes(curr => {
-                    const exists = curr.some(n => n.id === nodeId);
-                    if (!exists && type) {
-                        // Node wasn't added by node_start yet — create it via applyNodeUpdate
-                        // on a fresh empty node to get proper operation sync
-                        const blank = createWorkflowNode(nodeId, type, position || { x: 250, y: 150 }, {});
-                        return [...curr, applyNodeUpdate(blank, {
-                            ...payload,
-                            extras: { mcpAnimationState: 'complete' },
-                        })];
-                    }
-                    return curr.map(n => {
-                        if (n.id !== nodeId) return n;
-                        return applyNodeUpdate(n, {
-                            ...payload,
-                            extras: { mcpAnimationState: 'complete' },
-                        });
-                    });
-                });
-                clearAnimationState(nodeId);
-                if (data.refetch) void fetchWhole(nodeId);
-                break;
-            }
-
-            case 'node_removed': {
-                const { nodeId, removedEdgeIds } = data;
-                if (!nodeId) break;
-                setNodes(curr => curr.filter(n => n.id !== nodeId));
-                if (removedEdgeIds?.length) {
-                    setEdges(curr => curr.filter(e => !removedEdgeIds.includes(e.id)));
-                }
-                break;
-            }
-
-            case 'edge_added': {
-                const edgeData = data.edge;
-                if (!edgeData) break;
-                setEdges(curr => {
-                    if (curr.some(e => e.id === edgeData.id)) return curr;
-                    return [...curr, {
-                        id: edgeData.id,
-                        source: edgeData.source,
-                        target: edgeData.target,
-                        ...(edgeData.sourceHandle ? { sourceHandle: edgeData.sourceHandle } : {}),
-                        ...(edgeData.targetHandle ? { targetHandle: edgeData.targetHandle } : {}),
-                        type: 'animated',
-                        animated: true,
-                        style: { stroke: 'hsl(var(--foreground))', strokeWidth: 3, opacity: 0.8, strokeDasharray: '5 5' },
-                        data: { isAnimating: false },
-                    }];
-                });
-                break;
-            }
-
-            case 'edge_removed': {
-                const { edgeId } = data;
-                if (!edgeId) break;
-                setEdges(curr => curr.filter(e => e.id !== edgeId));
                 break;
             }
 
@@ -223,39 +131,6 @@ export function useMCPBuilderEvents({
                 document.dispatchEvent(new CustomEvent('noclick:workflow-settings-updated', {
                     detail: { workflowId },
                 }));
-                break;
-            }
-
-            case 'layout_applied': {
-                const { positions, sticky_updates } = data;
-                if (!positions || typeof positions !== 'object') break;
-                // Animate nodes to their autolayout positions (includes sticky notes)
-                setNodes(curr => curr.map(n => {
-                    const pos = positions[n.id];
-                    if (!pos) return n;
-                    const stickyDims = sticky_updates?.[n.id];
-                    return {
-                        ...n,
-                        position: pos,
-                        ...(stickyDims ? {
-                            width: stickyDims.width,
-                            height: stickyDims.height,
-                            style: { ...n.style, width: stickyDims.width, height: stickyDims.height, transition: 'transform 0.5s ease' },
-                        } : {
-                            style: { ...n.style, transition: 'transform 0.5s ease' },
-                        }),
-                    };
-                }));
-                // Remove transition style after animation completes
-                const layoutTimer = setTimeout(() => {
-                    setNodes(curr => curr.map(n => {
-                        if (!positions[n.id]) return n;
-                        const style = { ...n.style };
-                        delete (style as Record<string, unknown>).transition;
-                        return { ...n, style: Object.keys(style).length ? style : undefined };
-                    }));
-                }, 600);
-                animationTimers.current.add(layoutTimer);
                 break;
             }
         }

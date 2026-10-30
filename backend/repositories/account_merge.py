@@ -54,6 +54,7 @@ MOVE_COLUMNS = (
     ("workflow_executions", "user_id"),
     ("workflow_folders", "owner_id"),
     ("workflow_invite_links", "created_by"),
+    ("workflow_reconcile_jobs", "user_id"),
     ("workflow_resources", "owner_id"),
     ("workflow_saved_output", "owner_id"),
     ("workflow_versions", "author_user_id"),

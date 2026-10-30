@@ -747,3 +747,5 @@ class MCPBuilderEvent(BaseModel):
     workflow_id: str = Field(..., description="UUID of the workflow being mutated")
     event_type: str = Field(..., description="Builder event variant (e.g. 'node_updated')")
     data: Dict[str, Any] = Field(default_factory=dict, description="Per-event payload (nodeId, config, …)")
+    committed: bool = Field(False, description="The change is written (the graph service's room events): a canvas "
+                                               "takes it as the server's state, its base for a conflict's merge")

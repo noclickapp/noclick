@@ -637,6 +637,10 @@ export interface MCPBuilderEvent {
   data?: {
     [k: string]: unknown;
   };
+  /**
+   * The change is written (the graph service's room events): a canvas takes it as the server's state, its base for a conflict's merge
+   */
+  committed?: boolean;
 }
 /**
  * Live progress of a staged agent run.

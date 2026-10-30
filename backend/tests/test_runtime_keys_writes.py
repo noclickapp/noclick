@@ -159,8 +159,8 @@ async def _closed(db, workflow_id, source):
                              "AND graph IS NOT NULL ORDER BY version DESC LIMIT 1", workflow_id, source)
 
 
-async def _settled(pool, owner_id, workflow_id, author, before, after, base, version, **kwargs):
-    return version, after
+def _settled(*args, **kwargs):
+    """What runs after a write (its notices, its reconcile), left out."""
 
 
 def _assert_clean(graph):
@@ -196,7 +196,7 @@ class TestEachWritePath:
         # The version it recorded holds its graph once the next one (another source's) starts.
         from coder.workflow import graph_service
 
-        with patch("coder.workflow.graph_service._settle", side_effect=_settled):
+        with patch("coder.workflow.graph_service._settled", side_effect=_settled):
             await graph_service.apply(real_database.pool, graph_service.Author(OWNER), workflow_id,
                                       [{"op": "update_step", "id": "agent", "name": "Agent"}], source="coordinator")
         _assert_clean(await _closed(real_database, workflow_id, "canvas"))
@@ -208,7 +208,7 @@ class TestEachWritePath:
 
         workflow_id = await _workflow(real_database, _graph())
         author = graph_service.Author(OWNER)
-        with patch("coder.workflow.graph_service._settle", side_effect=_settled):
+        with patch("coder.workflow.graph_service._settled", side_effect=_settled):
             edited = await graph_service.apply(real_database.pool, author, workflow_id,
                                                [{"op": "update_step", "id": "agent", "name": "Agent"}])
             _assert_clean(await _saved(real_database, workflow_id))

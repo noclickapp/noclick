@@ -456,7 +456,7 @@ class WorkflowRepo:
 
         query = f"""
             WITH old AS (
-                SELECT name, description, settings, workflow FROM workflows WHERE id = $1
+                SELECT name, description, settings, workflow, graph_version FROM workflows WHERE id = $1
             )
             UPDATE workflows
             SET {', '.join(updates)}
@@ -465,7 +465,8 @@ class WorkflowRepo:
                       (SELECT name FROM old) as old_name,
                       (SELECT description FROM old) as old_description,
                       (SELECT settings FROM old) as old_settings,
-                      (SELECT workflow FROM old) as old_workflow
+                      (SELECT workflow FROM old) as old_workflow,
+                      (SELECT graph_version FROM old) as old_graph_version
         """
         row = await conn.fetchrow(query, *params)
         return dict(row) if row else None

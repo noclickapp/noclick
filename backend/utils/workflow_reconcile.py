@@ -1,6 +1,6 @@
 """What a change to a workflow's graph sets in motion outside the graph,
-judged from the graph before and after it, for every writer (the graph
-service's edits and restores, the canvas's save):
+judged from the steps it touched, for every writer (the graph service's edits
+and restores, the canvas's save):
 
 - a step removed tears down what it registered (schedules, provider webhooks,
   node state, published apps, conversations, volumes; ``cleanup_nodes_resources``,
@@ -13,152 +13,261 @@ service's edits and restores, the canvas's save):
 - a trigger with no webhook yet, or one whose registration failed, is
   provisioned once nothing it needs is missing, its webhook fields written
   into its config;
-- a step that's back (a delete undone) registers again what it registered.
+- a step that's back (a delete undone) registers again what it registered,
+  and claims its inbox's address again.
 
-It makes provider round-trips, so writers run it after their write commits.
-One workflow's reconciles run one at a time: one per process, then a lease
-across processes (``workflow_reconcile_leases``, claimed, renewed and given
-back in short statements, so a reconcile holds no connection or transaction
-while it works, and one that lapses is anyone's). A reconcile's work is
-bounded (``WORK_S``: stopped there, its lease given back, and never renewed
-past it). One waits for another's with backoff, at most ``WAIT_S``, then runs
-anyway, so two may overlap: each teardown and registration acts on the graph
-as stored when it acts (a removed step is torn down only while it's still
-absent, a step registered only while it's still there), then checks it again
-and puts right what a write in between changed (a step back while it was
-torn down registers again; one removed while it was registered is torn
-down). Each part runs whatever another part did. Given the version the write
-left, it returns the version its own writes (a trigger's webhook fields) left
-the workflow at, so a writer hands back a version its caller can edit from;
-another writer's change in between ends that chain."""
+It makes provider round-trips, so no request waits on it: the write records
+it (``enqueue``, a ``workflow_reconcile_jobs`` row, in the write's own
+transaction) and, once committed, wakes the workflow's worker (``kick``). The
+worker (``run``) holds the workflow's lease (``workflow_reconcile_leases``,
+claimed, renewed and given back in short statements, so it holds no
+connection or transaction while it works) and runs the workflow's jobs in
+order, each bounded (``WORK_S``; the lease is never renewed past it). A job
+that fails or is cut off is retried with backoff (``MAX_ATTEMPTS``), the jobs
+after it waiting; one left by a worker that died resumes when the lease lapses,
+on the next sweep (``sweep``: the hosted edition's operations tick, the open
+edition's scheduler). The versions a job's own writes produce (a trigger's
+webhook fields) are recorded (``workflow_reconcile_versions``): an edit made
+on a version is still made on it when only those came after
+(``graph_service._locked``).
+
+Each teardown and registration acts on the graph as stored when it acts (a
+removed step torn down only while it's still absent, a step registered only
+while it's still there), then checks it again and puts right what a write in
+between changed (a step back while it was torn down registers again; one
+removed while it was registered is torn down), so two runs that overlap (a
+lease that lapsed under a worker) still leave each step as the graph has
+it."""
 
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
-import random
 import uuid
-import weakref
-from contextlib import asynccontextmanager
 from typing import Any, Collection, Dict, List, Optional, Tuple
 
 from utils.graph_nodes import graph_nodes, node_config
 
 logger = logging.getLogger(__name__)
 
-# A lease lapses LEASE_S after its last renewal (renewed every third of it while its reconcile runs).
+# A lease lapses LEASE_S after its last renewal (renewed every third of it while its worker runs).
 LEASE_S = 60
-# How long a reconcile waits for another of the same workflow before it runs anyway.
-WAIT_S = 30.0
-# How long a reconcile's work may run before it's stopped and its lease given back.
+# How long one job's work may run before it's stopped (and retried).
 WORK_S = 120.0
+# A job that keeps failing is given up on (logged) after this many attempts, waiting RETRY_S, doubling, between.
+MAX_ATTEMPTS = 6
+RETRY_S = 30
+RETRY_MAX_S = 1800
+# How many workflows one sweep runs the due jobs of; how often it runs (the open edition's scheduler).
+SWEEP_LIMIT = 50
+SWEEP_EVERY_S = 30
+# Finished jobs and recorded reconcile versions are kept this long.
+KEEP_DAYS = 30
 
 
-async def reconcile_graph_change(pool, workflow_id: str, user_id: str, old_graph: Any, new_graph: Any, *,
-                                 version: Optional[int] = None,
-                                 deleted: Optional[Collection[str]] = None) -> Optional[int]:
-    from utils.webhook_manager import PATCH_MOVES
+class ReconcileIncomplete(Exception):
+    """Part of a job's work failed; the job is retried."""
 
-    workflow_id = str(workflow_id)
-    moves: List[Tuple[int, int]] = []
-    token = PATCH_MOVES.set(moves)
-    try:
-        async with _one_at_a_time(pool, workflow_id):
-            try:
-                await asyncio.wait_for(_reconcile(pool, workflow_id, user_id, old_graph, new_graph, deleted),
-                                       timeout=WORK_S)
-            except asyncio.TimeoutError:
-                logger.error("[reconcile] %s: its work ran past %ss; stopped, its lease given back",
-                             workflow_id, WORK_S)
-    finally:
-        PATCH_MOVES.reset(token)
-    if version is None:
+
+def _nodes(graph: Any) -> Dict[str, Any]:
+    return {n.get("id"): n for n in graph_nodes(graph) if n.get("id")}
+
+
+async def enqueue(conn, workflow_id: str, user_id: Optional[str], old_graph: Any, new_graph: Any, *,
+                  from_version: int, to_version: int,
+                  deleted: Optional[Collection[str]] = None) -> Optional[int]:
+    """Record, in the write's transaction (``conn``), what its change sets in motion: the steps it touched (removed,
+    added, changed) as they were and as it left them, and the canvas's ``deleted`` steps. None when it touched
+    none."""
+    old, new = _nodes(old_graph), _nodes(new_graph)
+    touched = [node_id for node_id in dict.fromkeys([*old, *new]) if old.get(node_id) != new.get(node_id)]
+    named = [node_id for node_id in dict.fromkeys(deleted or ()) if node_id]
+    if not touched and not named:
         return None
-    following = dict(moves)
-    while version in following:
-        version = following.pop(version)
-    return version
+    ids = dict.fromkeys([*touched, *named])
+    return await conn.fetchval(
+        "INSERT INTO workflow_reconcile_jobs (workflow_id, user_id, old_nodes, new_nodes, deleted, from_version, "
+        "to_version) VALUES ($1::uuid, $2::uuid, ($3::text)::jsonb, ($4::text)::jsonb, $5, $6, $7) RETURNING id",
+        str(workflow_id), user_id,
+        json.dumps({i: old[i] for i in ids if i in old}), json.dumps({i: new[i] for i in ids if i in new}),
+        None if deleted is None else named, from_version, to_version)
 
 
-_IN_PROCESS: "weakref.WeakValueDictionary[str, asyncio.Lock]" = weakref.WeakValueDictionary()
+def kick(pool, workflow_id: str) -> None:
+    """Wake the workflow's worker once the write that queued a job has committed; never awaited."""
+    from utils.async_helpers import spawn
+
+    spawn(run(pool, str(workflow_id)), name=f"workflow-reconcile:{workflow_id}")
 
 
-@asynccontextmanager
-async def _one_at_a_time(pool, workflow_id: str):
-    """Run the body as the workflow's one reconcile: its in-process lock, then its lease; waited for with backoff,
-    at most ``WAIT_S`` in all, after which it runs anyway (logged)."""
-    loop = asyncio.get_running_loop()
-    deadline = loop.time() + WAIT_S
-    lock = _IN_PROCESS.get(workflow_id)
-    if lock is None:
-        lock = _IN_PROCESS.setdefault(workflow_id, asyncio.Lock())
-    try:
-        await asyncio.wait_for(lock.acquire(), timeout=WAIT_S)
-        locked = True
-    except asyncio.TimeoutError:
-        locked = False
-        logger.warning("[reconcile] %s: another reconcile in this process held it past %ss; running anyway",
-                       workflow_id, WAIT_S)
-    holder = uuid.uuid4().hex
-    leased = False
-    renewing = None
-    try:
-        leased = await _claim(pool, workflow_id, holder, deadline)
-        if leased:
-            renewing = asyncio.create_task(_renew(pool, workflow_id, holder))
-        yield
-    finally:
-        if renewing is not None:
+async def reconcile_graph_change(pool, workflow_id: str, user_id: Optional[str], old_graph: Any, new_graph: Any, *,
+                                 from_version: int = 0, to_version: int = 0,
+                                 deleted: Optional[Collection[str]] = None) -> Optional[int]:
+    """Queue a change's reconcile (its own transaction) and run the workflow's due jobs now; the job's id."""
+    async with pool.acquire() as conn:
+        job = await enqueue(conn, workflow_id, user_id, old_graph, new_graph, from_version=from_version,
+                            to_version=to_version, deleted=deleted)
+    if job is not None:
+        await run(pool, str(workflow_id))
+    return job
+
+
+# ── the worker ──────────────────────────────────────────────────────────────
+
+async def run(pool, workflow_id: str) -> None:
+    """Run the workflow's due jobs, oldest first, as its one worker: when another holds the lease it returns (that
+    worker looks again before it lets go), and it looks again itself after letting go, so a job queued meanwhile
+    is never left waiting for a sweep."""
+    workflow_id = str(workflow_id)
+    while True:
+        holder = uuid.uuid4().hex
+        if not await _claim(pool, workflow_id, holder):
+            return
+        bound = {"until": asyncio.get_running_loop().time() + WORK_S}
+        renewing = asyncio.create_task(_renew(pool, workflow_id, holder, bound))
+        try:
+            while (job := await _next(pool, workflow_id)) is not None:
+                bound["until"] = asyncio.get_running_loop().time() + WORK_S
+                if not await _run_job(pool, job):
+                    break
+        finally:
             renewing.cancel()
-        if leased:
             try:
                 await pool.execute("DELETE FROM workflow_reconcile_leases WHERE workflow_id = $1::uuid AND holder = $2",
                                    workflow_id, holder)
             except Exception:
                 logger.warning("[reconcile] giving back %s's lease failed; it lapses", workflow_id, exc_info=True)
-        if locked:
-            lock.release()
+        if await _next(pool, workflow_id) is None:
+            return
 
 
-async def _claim(pool, workflow_id: str, holder: str, deadline: float) -> bool:
-    """Take the workflow's lease when it's free or lapsed, retrying with backoff until ``deadline``. False: run
-    without it (the wait ran out, or the workflow is gone)."""
+async def sweep(pool) -> int:
+    """Run the due jobs of the workflows no live worker holds (a worker that died, a retry that's due); how many
+    workflows it ran."""
+    rows = await pool.fetch(
+        "SELECT DISTINCT j.workflow_id FROM workflow_reconcile_jobs j "
+        "LEFT JOIN workflow_reconcile_leases l ON l.workflow_id = j.workflow_id AND l.expires_at > now() "
+        "WHERE j.status = 'queued' AND j.retry_at <= now() AND l.workflow_id IS NULL LIMIT $1", SWEEP_LIMIT)
+    for row in rows:
+        try:
+            await run(pool, str(row["workflow_id"]))
+        except Exception:
+            logger.error("[reconcile] sweeping %s failed", row["workflow_id"], exc_info=True)
+    return len(rows)
+
+
+async def prune(pool, *, days: int = KEEP_DAYS) -> int:
+    """Drop finished jobs and recorded reconcile versions older than ``days``; how many jobs went."""
+    result = await pool.execute("DELETE FROM workflow_reconcile_jobs WHERE status <> 'queued' "
+                                "AND done_at < now() - make_interval(days => $1)", days)
+    await pool.execute("DELETE FROM workflow_reconcile_versions WHERE created_at < now() - make_interval(days => $1)",
+                       days)
+    return int(result.split()[-1])
+
+
+async def _claim(pool, workflow_id: str, holder: str) -> bool:
+    """Take the workflow's lease when it's free or lapsed. False: a live worker holds it, or the workflow's gone."""
     import asyncpg
 
+    try:
+        return await pool.fetchval(
+            f"""INSERT INTO workflow_reconcile_leases (workflow_id, holder, expires_at)
+                VALUES ($1::uuid, $2, now() + interval '{LEASE_S} seconds')
+                ON CONFLICT (workflow_id) DO UPDATE SET holder = EXCLUDED.holder, expires_at = EXCLUDED.expires_at
+                WHERE workflow_reconcile_leases.expires_at < now()
+                RETURNING holder""", workflow_id, holder) == holder
+    except asyncpg.ForeignKeyViolationError:
+        return False
+
+
+async def _renew(pool, workflow_id: str, holder: str, bound: Dict[str, float]) -> None:
+    """Keep the lease while a job runs, never past its ``WORK_S``: a worker that can't be stopped lets it lapse."""
     loop = asyncio.get_running_loop()
-    delay = 0.05
     while True:
-        try:
-            if await pool.fetchval(
-                    f"""INSERT INTO workflow_reconcile_leases (workflow_id, holder, expires_at)
-                        VALUES ($1::uuid, $2, now() + interval '{LEASE_S} seconds')
-                        ON CONFLICT (workflow_id) DO UPDATE SET holder = EXCLUDED.holder,
-                            expires_at = EXCLUDED.expires_at
-                        WHERE workflow_reconcile_leases.expires_at < now()
-                        RETURNING holder""", workflow_id, holder) == holder:
-                return True
-        except asyncpg.ForeignKeyViolationError:
-            return False  # the workflow is gone: nothing to keep another reconcile of it away from
-        if loop.time() + delay > deadline:
-            logger.warning("[reconcile] %s: another reconcile held its lease past %ss; running anyway",
-                           workflow_id, WAIT_S)
-            return False
-        await asyncio.sleep(delay * random.uniform(0.8, 1.2))
-        delay = min(delay * 2, 1.0)
-
-
-async def _renew(pool, workflow_id: str, holder: str) -> None:
-    """Keep the lease while the work runs, never past ``WORK_S``: a holder that can't be stopped lets it lapse."""
-    loop = asyncio.get_running_loop()
-    until = loop.time() + WORK_S
-    while loop.time() + LEASE_S / 3 < until:
         await asyncio.sleep(LEASE_S / 3)
+        if loop.time() > bound["until"]:
+            return
         try:
             await pool.execute(f"UPDATE workflow_reconcile_leases SET expires_at = now() + interval '{LEASE_S} seconds' "
                                "WHERE workflow_id = $1::uuid AND holder = $2", workflow_id, holder)
         except Exception:
             logger.warning("[reconcile] renewing %s's lease failed", workflow_id, exc_info=True)
 
+
+async def _next(pool, workflow_id: str) -> Optional[Dict[str, Any]]:
+    """The workflow's oldest queued job when it's due; None when there's none, or it waits for its retry (the jobs
+    after it wait too)."""
+    row = await pool.fetchrow(
+        "SELECT id, workflow_id, user_id, old_nodes, new_nodes, deleted, from_version, to_version, attempts, "
+        "retry_at <= now() AS due FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid AND status = 'queued' "
+        "ORDER BY id LIMIT 1", workflow_id)
+    return dict(row) if row is not None and row["due"] else None
+
+
+def _as_dict(value: Any) -> Dict[str, Any]:
+    return json.loads(value) if isinstance(value, str) else dict(value or {})
+
+
+async def _run_job(pool, job: Dict[str, Any]) -> bool:
+    """Run one job; True when the jobs after it may run (it's done, or given up on)."""
+    from utils.webhook_manager import PATCH_MOVES
+
+    workflow_id = str(job["workflow_id"])
+    user_id = str(job["user_id"]) if job["user_id"] else None
+    old = {"nodes": list(_as_dict(job["old_nodes"]).values())}
+    new = {"nodes": list(_as_dict(job["new_nodes"]).values())}
+    before = await _row(pool, workflow_id)
+    moves: List[Tuple[int, int]] = []
+    token = PATCH_MOVES.set(moves)
+    try:
+        await asyncio.wait_for(_reconcile(pool, workflow_id, user_id, old, new, job["deleted"]), timeout=WORK_S)
+    except Exception as e:
+        reason = f"ran past {WORK_S:g}s" if isinstance(e, asyncio.TimeoutError) else (str(e) or type(e).__name__)
+        attempts = job["attempts"] + 1
+        given_up = attempts >= MAX_ATTEMPTS
+        await pool.execute(
+            "UPDATE workflow_reconcile_jobs SET attempts = $2, status = $3, last_error = $4, "
+            "retry_at = now() + make_interval(secs => $5), done_at = CASE WHEN $3 = 'failed' THEN now() END "
+            "WHERE id = $1", job["id"], attempts, "failed" if given_up else "queued", reason[:2000],
+            float(min(RETRY_S * 2 ** (attempts - 1), RETRY_MAX_S)))
+        log = logger.error if given_up else logger.warning
+        log("[reconcile] job %s of %s %s (attempt %s): %s", job["id"], workflow_id,
+            "given up on" if given_up else "failed, to be retried", attempts, reason)
+        return given_up
+    finally:
+        PATCH_MOVES.reset(token)
+    await pool.execute("UPDATE workflow_reconcile_jobs SET status = 'done', done_at = now() WHERE id = $1", job["id"])
+    if moves and before is not None:
+        await _tell_own_writes(pool, workflow_id, before)
+    return True
+
+
+async def _row(pool, workflow_id: str) -> Optional[Dict[str, Any]]:
+    from repositories.workflow import WorkflowRepo
+
+    async with pool.acquire() as conn:
+        return await WorkflowRepo(pool).read_graph(conn, workflow_id)
+
+
+async def _tell_own_writes(pool, workflow_id: str, before: Dict[str, Any]) -> None:
+    """Every canvas open on the workflow applies what the job's own writes changed, when nothing else wrote in
+    between (each version since ``before`` is a reconcile's); else a canvas's next save conflicts and rebases."""
+    from coder.workflow.graph_service import _of, canvas_events, tell
+
+    after = await _row(pool, workflow_id)
+    if after is None or after["graph_version"] <= before["graph_version"]:
+        return
+    ours = await pool.fetchval(
+        "SELECT count(*) FROM workflow_reconcile_versions WHERE workflow_id = $1::uuid AND version > $2 "
+        "AND version <= $3", workflow_id, before["graph_version"], after["graph_version"])
+    if ours != after["graph_version"] - before["graph_version"]:
+        return
+    await tell(str(after["owner_id"]), workflow_id, after["graph_version"], canvas_events(_of(before), _of(after)),
+               base=before["graph_version"])
+
+
+# ── the work ────────────────────────────────────────────────────────────────
 
 async def _stored(pool, workflow_id: str) -> Any:
     """The workflow's graph as stored now (None once it's gone)."""
@@ -169,7 +278,7 @@ def _ids(graph: Any) -> set:
     return {n.get("id") for n in graph_nodes(graph) if n.get("id")}
 
 
-async def _tear_down(pool, workflow_id: str, user_id: str, nodes: Dict[str, Any]) -> List[str]:
+async def _tear_down(pool, workflow_id: str, user_id: Optional[str], nodes: Dict[str, Any]) -> List[str]:
     """Tear down the steps of ``nodes`` (as they were) that the graph as stored still lacks, and give back their
     inboxes; the ones torn down."""
     from utils.email_reservation_manager import EmailReservationManager
@@ -179,47 +288,69 @@ async def _tear_down(pool, workflow_id: str, user_id: str, nodes: Dict[str, Any]
     removed = [node_id for node_id in nodes if node_id not in present]
     if not removed:
         return []
-    try:
-        await cleanup_nodes_resources(pool=pool, workflow_id=workflow_id, node_ids=removed, background=False,
-                                      old_nodes=[nodes[i] for i in removed if nodes[i] is not None],
-                                      requesting_user_id=user_id)
-    except Exception:
-        logger.warning("[reconcile] cleanup of removed steps %s of %s failed", removed, workflow_id, exc_info=True)
-    try:
-        await EmailReservationManager.release_many(pool, workflow_id, removed)
-    except Exception:
-        logger.warning("[reconcile] releasing the inboxes of %s of %s failed", removed, workflow_id, exc_info=True)
+    await cleanup_nodes_resources(pool=pool, workflow_id=workflow_id, node_ids=removed, background=False,
+                                  old_nodes=[nodes[i] for i in removed if nodes[i] is not None],
+                                  requesting_user_id=user_id)
+    present = _ids(await _stored(pool, workflow_id))
+    await EmailReservationManager.release_many(pool, workflow_id, [i for i in removed if i not in present])
     return removed
 
 
-async def _register(pool, workflow_id: str, user_id: str, node_ids: List[str]) -> List[str]:
-    """Register again what the steps of ``node_ids`` the graph as stored holds registered; the ones it did."""
+async def _register(pool, workflow_id: str, user_id: Optional[str], node_ids: List[str]) -> List[str]:
+    """Register again what the steps of ``node_ids`` the graph as stored holds registered, and claim their inboxes'
+    addresses again; the ones it did."""
     from utils.webhook_manager import WebhookManager
 
-    present = _ids(await _stored(pool, workflow_id))
-    back = [node_id for node_id in node_ids if node_id in present]
+    stored = _nodes(await _stored(pool, workflow_id))
+    back = [node_id for node_id in node_ids if node_id in stored]
     if back:
-        try:
-            await WebhookManager.register_node_webhooks(pool, workflow_id, user_id, node_ids=back)
-        except Exception:
-            logger.warning("[reconcile] re-registering %s of %s failed", back, workflow_id, exc_info=True)
+        await WebhookManager.register_node_webhooks(pool, workflow_id, user_id, node_ids=back)
+        for node_id in back:
+            await _claim_inbox(pool, workflow_id, user_id, stored[node_id])
     return back
 
 
-async def _reconcile(pool, workflow_id: str, user_id: str, old_graph: Any, new_graph: Any,
+async def _claim_inbox(pool, workflow_id: str, user_id: Optional[str], node: Dict[str, Any]) -> None:
+    """An inbound-email step that's back holds its address again, unless another step took it meanwhile."""
+    from utils.email_reservation_manager import EmailReservationManager, get_inbound_email_domain
+    from utils.webhook_manager import WebhookManager
+
+    config = node_config(node)
+    if node.get("type") != "trigger-email" or not config.get("local_part") or get_inbound_email_domain() is None:
+        return
+    if await pool.fetchval("SELECT 1 FROM email_reservations WHERE workflow_id = $1::uuid AND node_id = $2",
+                           workflow_id, node["id"]):
+        return
+    try:
+        patch = await EmailReservationManager.reserve_from_config(pool, user_id, workflow_id, node["id"], config)
+    except ValueError as e:
+        logger.warning("[reconcile] %s:%s is back but its address can't be claimed again: %s",
+                       workflow_id, node["id"], e)
+        return
+    if patch:
+        await WebhookManager.merge_node_config_patch(pool, uuid.UUID(workflow_id), node["id"], patch)
+
+
+async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: Any, new_graph: Any,
                      deleted: Optional[Collection[str]]) -> None:
+    """A job's work: raises ``ReconcileIncomplete`` when part of it failed (after doing the rest), so it's
+    retried; a trigger's provisioning only logs, as the next job's provisions it again."""
     from utils.webhook_manager import WebhookManager
     from utils.workflow_readiness import unbound_issues
 
-    old_nodes = {n.get("id"): n for n in graph_nodes(old_graph) if n.get("id")}
-    new_nodes = {n.get("id"): n for n in graph_nodes(new_graph) if n.get("id")}
+    old_nodes, new_nodes = _nodes(old_graph), _nodes(new_graph)
+    failed: List[str] = []
 
     gone = [node_id for node_id in old_nodes if node_id not in new_nodes] if deleted is None else \
         [node_id for node_id in dict.fromkeys(deleted) if node_id and node_id not in new_nodes]
-    torn = await _tear_down(pool, workflow_id, user_id, {node_id: old_nodes.get(node_id) for node_id in gone})
-    if torn:
-        # A write in between put one back while it was torn down: it registers again.
-        await _register(pool, workflow_id, user_id, torn)
+    try:
+        torn = await _tear_down(pool, workflow_id, user_id, {node_id: old_nodes.get(node_id) for node_id in gone})
+        if torn:
+            # A write in between put one back while it was torn down: it registers again.
+            await _register(pool, workflow_id, user_id, torn)
+    except Exception:
+        logger.warning("[reconcile] tearing down %s of %s failed", gone, workflow_id, exc_info=True)
+        failed.append(f"tearing down {', '.join(gone)}")
 
     now_graph = await _stored(pool, workflow_id)
     now_ids = _ids(now_graph)
@@ -242,8 +373,9 @@ async def _reconcile(pool, workflow_id: str, user_id: str, old_graph: Any, new_g
                                                                    old_config, new_config, user_id=user_id)
         except Exception:
             logger.warning("[reconcile] change hooks of %s:%s failed", workflow_id, node_id, exc_info=True)
+            failed.append(f"reconciling {node_id}'s registration")
 
-    # Triggers as they stand now: a later write's own reconcile judges what it changed.
+    # Triggers as they stand now: a later write's own job judges what it changed.
     provisioned = []
     for trigger in graph_nodes(now_graph):
         config = node_config(trigger)
@@ -266,9 +398,15 @@ async def _reconcile(pool, workflow_id: str, user_id: str, old_graph: Any, new_g
         except Exception:
             logger.warning("[reconcile] trigger activation of %s:%s failed", workflow_id, node_id, exc_info=True)
 
-    registered = await _register(pool, workflow_id, user_id,
-                                 [node_id for node_id in new_nodes if node_id not in old_nodes])
-    # A write in between removed one while it was registered: it's torn down.
-    stood = {n.get("id"): n for n in graph_nodes(now_graph)}
-    await _tear_down(pool, workflow_id, user_id, {node_id: stood.get(node_id) or new_nodes.get(node_id)
-                                                  for node_id in dict.fromkeys([*provisioned, *registered])})
+    added = [node_id for node_id in new_nodes if node_id not in old_nodes]
+    try:
+        registered = await _register(pool, workflow_id, user_id, added)
+        # A write in between removed one while it was registered: it's torn down.
+        stood = _nodes(now_graph)
+        await _tear_down(pool, workflow_id, user_id, {node_id: stood.get(node_id) or new_nodes.get(node_id)
+                                                      for node_id in dict.fromkeys([*provisioned, *registered])})
+    except Exception:
+        logger.warning("[reconcile] registering %s of %s failed", added, workflow_id, exc_info=True)
+        failed.append(f"registering {', '.join(added)}")
+    if failed:
+        raise ReconcileIncomplete("; ".join(failed))

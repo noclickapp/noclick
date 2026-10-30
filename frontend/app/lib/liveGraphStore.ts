@@ -14,13 +14,14 @@
 // pushes a snapshot to the store on changes and tells it about lifecycle
 // transitions.
 
-import { proxy } from 'valtio';
+import { proxy, useSnapshot } from 'valtio';
 import type { Node, Edge, Node as XYFlowNode, Edge as XYFlowEdge } from '@xyflow/react';
 import { valtioCache } from '~/lib/indexeddb';
-import { sendEvent, sendEventWithCallback } from '~/lib/socket-sender';
+import { sendEvent, sendEventAsync, sendEventWithCallback } from '~/lib/socket-sender';
 import { onSocketEvent } from '~/lib/socket-receiver';
 import { serializeNodeForSave, serializeEdgeForSave, createWorkflowNode, applyNodeUpdate, mergeServerNodes, rawConfigToPayload } from '~/lib/applyNodeUpdate';
 import { headlessBuilder } from '~/lib/headless-builder';
+import { GRAPH_EVENT_TYPES, serverEdgesAfter, serverNodesAfter } from '~/lib/serverGraphEvents';
 import { activeGenStore } from '~/lib/activeGenStore';
 
 interface InterfaceGridState {
@@ -29,6 +30,12 @@ interface InterfaceGridState {
 }
 
 type DisplayMetadata = object;
+
+/** Each step and connection as the server holds it, as far as this canvas knows, serialized as a save sends it. */
+interface GraphBase {
+    nodes: Map<string, string>;
+    edges: Map<string, string>;
+}
 
 interface GraphRecord {
     workflowId: string;
@@ -64,9 +71,16 @@ interface GraphRecord {
     // The viewer can only read this workflow (workflow:get's user_permission is view): it never saves.
     readOnly: boolean;
     // Steps the canvas holds only in part: a server write's room event held some of each back (a secret, an
-    // outsize setting) and the canvas hasn't read it whole. Every save names them, so the server keeps their
-    // settings as stored instead of writing the canvas's partial copy; a full load clears them.
-    partialNodeIds: Set<string>;
+    // outsize setting) and the canvas hasn't read it whole. They can't be edited (their panel shows them
+    // loading), every save names them so the server keeps their settings as stored, and a full load, a server
+    // copy a conflict takes or their own read makes them whole. An object, so a panel re-renders on the change.
+    partialNodeIds: Record<string, true>;
+    // The per-step base of a three-way merge: what the server holds, as far as this canvas knows. Set on load
+    // and on each acked save, and moved by every server change the canvas takes (a written change's room
+    // events, a server copy a conflict takes, a step read whole). A step or connection that differs from it
+    // is the canvas's own change: a conflict keeps those and takes the server's copy of the rest, and a closing
+    // tab's last save names only those. null before a load (then everything local counts as its own).
+    base: GraphBase | null;
 
     // Save coordination. graphVersion is the server's optimistic-concurrency
     // token from the last workflow:get / save ack (null = unknown → save
@@ -120,7 +134,8 @@ export function createGraphRecord(
         dragging: false,
         canvasMounted: false,
         readOnly: false,
-        partialNodeIds: new Set(),
+        partialNodeIds: {},
+        base: null,
         dirty: false,
         saveTimer: null,
         graphVersion: null,
@@ -177,7 +192,7 @@ function buildPayload(rec: GraphRecord): {
     if (Object.keys(rec.variables).length > 0) {
         savePayload.variables = rec.variables;
     }
-    const partialNodeIds = Array.from(rec.partialNodeIds);
+    const partialNodeIds = Object.keys(rec.partialNodeIds);
     const event: Record<string, unknown> = rec.isSkill
         ? {
             event_name: 'skill:update_workflow',
@@ -197,15 +212,27 @@ function buildPayload(rec: GraphRecord): {
 
 type SavedGraph = { nodes?: Array<{ id?: string }>; edges?: Array<{ id?: string }> };
 
-/** The canvas's base: its last acked or loaded save (`lastSavedPayloadJson`), each step as saved by id and its
- *  connections' ids; null before it has one. */
-function savedBase(rec: GraphRecord): { nodes: Map<string, string>; edges: Set<string> } | null {
-    if (!rec.lastSavedPayloadJson) return null;
-    const base: SavedGraph = JSON.parse(rec.lastSavedPayloadJson);
+const nodeJson = (node: Node) => JSON.stringify(serializeNodeForSave(node));
+const edgeJson = (edge: Edge) => JSON.stringify(serializeEdgeForSave(edge));
+
+function baseOf(nodes: Node[], edges: Edge[]): GraphBase {
     return {
-        nodes: new Map((base.nodes ?? []).filter((n) => n?.id).map((n) => [n.id as string, JSON.stringify(n)])),
-        edges: new Set((base.edges ?? []).filter((e) => e?.id).map((e) => e.id as string)),
+        nodes: new Map(nodes.filter((n) => n?.id).map((n) => [n.id, nodeJson(n)])),
+        edges: new Map(edges.filter((e) => e?.id).map((e) => [e.id, edgeJson(e)])),
     };
+}
+
+/** The base a save sets once acked: what it sent is what the server holds. */
+function baseOfSaved(saved: SavedGraph): GraphBase {
+    const byId = (items: Array<{ id?: string }> | undefined) =>
+        new Map((items ?? []).filter((x) => x?.id).map((x) => [x.id as string, JSON.stringify(x)]));
+    return { nodes: byId(saved.nodes), edges: byId(saved.edges) };
+}
+
+/** The step differs from what the server holds as far as the canvas knows: the canvas's own change (or no base
+ *  yet, when everything local counts as its own). */
+function changedHere(rec: GraphRecord, node: Node): boolean {
+    return !rec.base || rec.base.nodes.get(node.id) !== nodeJson(node);
 }
 
 /** What the canvas changed since its base: steps it added or changed, connections it added or removed. A
@@ -216,13 +243,13 @@ function changesSinceBase(rec: GraphRecord, savePayload: SavedGraph): {
     edges_added: string[];
     edges_removed: string[];
 } {
-    const base = savedBase(rec) ?? { nodes: new Map<string, string>(), edges: new Set<string>() };
+    const base = rec.base ?? { nodes: new Map<string, string>(), edges: new Map<string, string>() };
     const nodes = (savePayload.nodes ?? []).filter((n) => n?.id);
     const edges = new Set((savePayload.edges ?? []).filter((e) => e?.id).map((e) => e.id as string));
     return {
         steps: nodes.filter((n) => base.nodes.get(n.id as string) !== JSON.stringify(n)).map((n) => n.id as string),
         edges_added: [...edges].filter((id) => !base.edges.has(id)),
-        edges_removed: [...base.edges].filter((id) => !edges.has(id)),
+        edges_removed: [...base.edges.keys()].filter((id) => !edges.has(id)),
     };
 }
 
@@ -278,72 +305,71 @@ function rawNodeToCanvasNode(raw: Record<string, unknown>): Node {
     return node;
 }
 
-/** Fold the server's current graph into the record after a CAS conflict.
- *
- *  Policy: what this canvas changed since its base (its last acked or loaded
- *  save, `lastSavedPayloadJson`) wins: the user's own edits, steps and
- *  connections they added. A step or connection it holds unchanged since
- *  then is the server's: its copy is taken, and one the server no longer has
- *  goes (another writer changed or removed it, maybe one whose changes never
- *  reached this canvas: the builder's, MCP's or the platform's). With no
- *  base, everything local wins. Server-only steps are adopted UNLESS
- *  tombstoned (my pending delete, or a collaborator's delete whose save
- *  hasn't landed yet), server-only connections unless removed here. The
- *  re-save that follows persists the merged result under the server's new
- *  version. */
+/** Fold the server's current graph into the record: a CAS conflict's answer, or a full read when a step couldn't
+ *  be read whole. A three-way merge over the per-step base (`rec.base`): what the canvas changed since its base
+ *  wins (the user's own edits, the steps and connections they added); a step or connection it holds unchanged
+ *  is the server's, its copy taken (whole: no longer partial), and one the server no longer has goes (another
+ *  writer changed or removed it, maybe one the canvas never heard: the builder's, MCP's or the platform's).
+ *  Server-only steps are adopted UNLESS tombstoned (my pending delete, or a collaborator's delete whose save
+ *  hasn't landed yet), server-only connections unless removed here. The base becomes the server's graph, so a
+ *  second conflict judges against it. The re-save that follows persists the merged result under the server's
+ *  new version. */
 function rebaseFromServer(
     rec: GraphRecord,
     serverData: { nodes?: unknown[]; edges?: unknown[] } | null | undefined,
     serverVersion: number | null | undefined,
 ): void {
     if (typeof serverVersion === 'number') rec.graphVersion = serverVersion;
-    const rawNodes = ((serverData?.nodes ?? []) as Record<string, unknown>[])
-        .filter((raw) => typeof raw?.id === 'string' && raw.type);
-    const rawEdges = (serverData?.edges ?? []) as Record<string, unknown>[];
-    const base = savedBase(rec);
-    const untouched = (node: Node) =>
-        base != null && base.nodes.get(node.id) === JSON.stringify(serializeNodeForSave(node));
-    const dropped = (id: string) =>
-        rec.deletedNodeIds.has(id) || rec.remoteDeletedNodeIds.has(id);
+    const serverNodes = new Map(
+        ((serverData?.nodes ?? []) as Record<string, unknown>[])
+            .filter((raw) => typeof raw?.id === 'string' && raw.type)
+            .map((raw) => [raw.id as string, rawNodeToCanvasNode(raw)] as const),
+    );
+    const serverEdges = ((serverData?.edges ?? []) as Record<string, unknown>[])
+        .filter((raw) => raw?.id && raw.source && raw.target)
+        .map((raw) => ({
+            id: raw.id as string,
+            source: raw.source as string,
+            target: raw.target as string,
+            ...(raw.sourceHandle ? { sourceHandle: raw.sourceHandle as string } : {}),
+            ...(raw.targetHandle ? { targetHandle: raw.targetHandle as string } : {}),
+        }) as Edge);
+    const dropped = (id: string) => rec.deletedNodeIds.has(id) || rec.remoteDeletedNodeIds.has(id);
 
-    const serverNodes = new Map(rawNodes.map((raw) => [raw.id as string, raw]));
     const nodes: Node[] = [];
     for (const node of rec.nodes) {
-        const raw = serverNodes.get(node.id);
-        if (raw && untouched(node)) nodes.push(mergeServerNodes([rawNodeToCanvasNode(raw)], [node])[0]);
-        else if (raw || !untouched(node)) nodes.push(node);
+        const server = serverNodes.get(node.id);
+        if (server && !changedHere(rec, node)) {
+            nodes.push(mergeServerNodes([server], [node])[0]);
+            delete rec.partialNodeIds[node.id];
+        } else if (server || changedHere(rec, node)) {
+            nodes.push(node);
+        }
     }
     const nodeIds = new Set(nodes.map((n) => n.id));
-    for (const raw of rawNodes) {
-        const id = raw.id as string;
+    for (const [id, server] of serverNodes) {
         if (nodeIds.has(id) || dropped(id)) continue;
-        nodes.push(rawNodeToCanvasNode(raw));
+        nodes.push(server);
         nodeIds.add(id);
     }
-    rec.nodes = nodes;
 
-    const serverEdgeIds = new Set(rawEdges.map((raw) => raw?.id as string));
+    const serverEdgeIds = new Set(serverEdges.map((e) => e.id));
     const edges = rec.edges.filter(
-        (e) => (serverEdgeIds.has(e.id) || !base?.edges.has(e.id)) && nodeIds.has(e.source) && nodeIds.has(e.target),
+        (e) => (serverEdgeIds.has(e.id) || !rec.base?.edges.has(e.id)) && nodeIds.has(e.source) && nodeIds.has(e.target),
     );
     const edgeIds = new Set(edges.map((e) => e.id));
-    for (const raw of rawEdges) {
-        const id = raw?.id as string | undefined;
-        const source = raw?.source as string | undefined;
-        const target = raw?.target as string | undefined;
-        if (!id || !source || !target || edgeIds.has(id)) continue;
-        if (rec.remoteDeletedEdgeIds.has(id) || base?.edges.has(id)) continue;
+    const localEdgeIds = new Set(rec.edges.map((e) => e.id));
+    for (const edge of serverEdges) {
+        if (edgeIds.has(edge.id) || rec.remoteDeletedEdgeIds.has(edge.id)) continue;
+        // Removed here since the base: it stays removed.
+        if (rec.base?.edges.has(edge.id) && !localEdgeIds.has(edge.id)) continue;
         // An edge is only meaningful if both endpoints survived the merge.
-        if (!nodeIds.has(source) || !nodeIds.has(target)) continue;
-        edges.push({
-            id,
-            source,
-            target,
-            ...(raw.sourceHandle ? { sourceHandle: raw.sourceHandle } : {}),
-            ...(raw.targetHandle ? { targetHandle: raw.targetHandle } : {}),
-        } as Edge);
+        if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target)) continue;
+        edges.push(edge);
     }
+    rec.nodes = nodes;
     rec.edges = edges;
+    rec.base = baseOf([...serverNodes.values()], serverEdges);
 }
 
 function fireSave(rec: GraphRecord, opts?: { unconditional?: boolean }): void {
@@ -459,6 +485,7 @@ function fireSave(rec: GraphRecord, opts?: { unconditional?: boolean }): void {
         // A save acked after a server write moved the base on (its room notice came first) never moves it back.
         if (typeof newVersion !== 'number' || rec.graphVersion == null || newVersion >= rec.graphVersion) {
             rec.lastSavedPayloadJson = payloadJson;
+            rec.base = baseOfSaved(savePayload as SavedGraph);
             if (typeof newVersion === 'number') rec.graphVersion = newVersion;
         }
         for (const id of deletedNodeIds) rec.deletedNodeIds.delete(id);
@@ -593,7 +620,7 @@ export function setGraphVersion(workflowId: string, version: number | null): voi
     rec.remoteDeletedNodeIds.clear();
     rec.remoteDeletedEdgeIds.clear();
     // The load takes every step whole from the server.
-    rec.partialNodeIds.clear();
+    rec.partialNodeIds = {};
 }
 
 /** A server write the canvas applied from the workflow's room (its builder events, then
@@ -618,14 +645,72 @@ export function isGraphReadOnly(workflowId: string): boolean {
     return graphRecords[workflowId]?.readOnly ?? false;
 }
 
-/** The canvas holds this step only in part (the room held some of it back) until `markStepWhole`: its saves
- *  keep the step's settings as stored meanwhile, the closing tab's last one included. */
+/** The canvas holds this step only in part (the room held some of it back) until it's read whole
+ *  (`takeServerStep`), a full read takes it or a load does: it can't be edited meanwhile, and its saves keep the
+ *  step's settings as stored, the closing tab's last one included. */
 export function markStepPartial(workflowId: string, nodeId: string): void {
-    graphRecords[workflowId]?.partialNodeIds.add(nodeId);
+    const rec = graphRecords[workflowId];
+    if (rec) rec.partialNodeIds[nodeId] = true;
 }
 
-export function markStepWhole(workflowId: string, nodeId: string): void {
-    graphRecords[workflowId]?.partialNodeIds.delete(nodeId);
+export function isStepPartial(workflowId: string | undefined, nodeId: string | undefined): boolean {
+    return !!(workflowId && nodeId && graphRecords[workflowId]?.partialNodeIds[nodeId]);
+}
+
+/** The step is held in part, for a component (its panel shows it loading). */
+export function useStepPartial(workflowId: string | undefined, nodeId: string | undefined): boolean {
+    const records = useSnapshot(graphRecords);
+    return !!(workflowId && nodeId && records[workflowId]?.partialNodeIds[nodeId]);
+}
+
+/** A step read whole from the server (`workflow:node:get_config`'s settings, which the canvas applied): no longer
+ *  partial, and the server's state in the base. */
+export function takeServerStep(workflowId: string, nodeId: string, config: Record<string, unknown>): void {
+    const rec = graphRecords[workflowId];
+    if (!rec) return;
+    delete rec.partialNodeIds[nodeId];
+    const held = rec.base?.nodes.get(nodeId);
+    if (rec.base && held) {
+        const node = applyNodeUpdate(rawNodeToCanvasNode(JSON.parse(held)), rawConfigToPayload(config));
+        rec.base.nodes.set(nodeId, nodeJson(node));
+    }
+}
+
+/** The server's graph as a load read it: the canvas's base from here on. */
+export function setServerBase(workflowId: string, nodes: Node[], edges: Edge[]): void {
+    const rec = graphRecords[workflowId];
+    if (rec) rec.base = baseOf(nodes, edges);
+}
+
+/** A written change's builder event (the graph service's room) moves the base as it moves the canvas. */
+function applyToBase(workflowId: string, eventType: string, data: Record<string, unknown>): void {
+    const rec = graphRecords[workflowId];
+    if (!rec?.base || !GRAPH_EVENT_TYPES.has(eventType)) return;
+    const nodes = [...rec.base.nodes.values()].map((json) => rawNodeToCanvasNode(JSON.parse(json)));
+    const edges = [...rec.base.edges.values()].map((json) => JSON.parse(json) as Edge);
+    rec.base = baseOf(serverNodesAfter(nodes, eventType, data), serverEdgesAfter(edges, eventType, data));
+}
+
+/** Read the whole workflow again and fold it in as a conflict's answer is (`rebaseFromServer`): what a canvas
+ *  falls back to when a step can't be read whole, never a save of its partial copy. False when the read failed
+ *  (the step stays partial: uneditable, and kept as stored by every save). */
+export async function reloadFromServer(workflowId: string): Promise<boolean> {
+    const rec = graphRecords[workflowId];
+    if (!rec) return false;
+    try {
+        const resp = (await sendEventAsync({ event_name: 'workflow:get', workflow_id: workflowId } as never)) as {
+            workflow?: { workflow_data?: { nodes?: unknown[]; edges?: unknown[] }; graph_version?: number };
+        } | null;
+        const workflow = resp?.workflow;
+        if (!workflow?.workflow_data) return false;
+        rebaseFromServer(rec, workflow.workflow_data, workflow.graph_version ?? null);
+        rec.dirty = true;
+        scheduleSave(rec);
+        return true;
+    } catch (e) {
+        console.error(`[liveGraphStore] reading ${workflowId} again failed:`, e);
+        return false;
+    }
 }
 
 /** Snapshot the record's current content as the no-op-save baseline. Called
@@ -637,6 +722,7 @@ export function seedSaveBaseline(workflowId: string): void {
     if (!rec) return;
     try {
         rec.lastSavedPayloadJson = JSON.stringify(buildPayload(rec).savePayload);
+        rec.base = baseOf(rec.nodes, rec.edges);
     } catch {
         /* non-serializable state — leave unseeded; the save fires normally */
     }
@@ -1034,6 +1120,15 @@ function wire(): void {
     onSocketEvent('workflow:graph_changed', (data) => {
         if (data?.workflow_id) adoptServerVersion(data.workflow_id, data.base_version, data.version);
     });
+    // A written change's builder events move the canvas's base too; the builder's own stream (not yet written)
+    // doesn't.
+    onSocketEvent('mcp:builder_event' as never, ((event: {
+        workflow_id?: string; event_type?: string; data?: Record<string, unknown>; committed?: boolean;
+    }) => {
+        if (event?.committed && event.workflow_id && event.event_type) {
+            applyToBase(event.workflow_id, event.event_type, event.data ?? {});
+        }
+    }) as never);
 
     onSocketEvent('active_gen:terminal' as never, ((data: { gen_id?: string }) => {
         const gen_id = data?.gen_id;
