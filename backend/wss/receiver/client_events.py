@@ -673,6 +673,13 @@ class WorkflowNodeGetConfigRequest(ClientEventBase):
     node_id: str = Field(..., description="ID of the node")
 
 
+class WorkflowCanvasChanges(BaseModel):
+    """What a canvas changed since the version it saves on: its deleted steps are ``deleted_node_ids``."""
+    steps: List[str] = Field(default_factory=list, description="Steps it added or changed")
+    edges_added: List[str] = Field(default_factory=list, description="Connections it added")
+    edges_removed: List[str] = Field(default_factory=list, description="Connections it removed")
+
+
 class WorkflowUpdateRequest(ClientEventBase):
     """Request to update a workflow's data or metadata"""
     event_name: ClassVar[str] = "workflow:update"
@@ -702,7 +709,15 @@ class WorkflowUpdateRequest(ClientEventBase):
     )
     expected_graph_version: Optional[int] = Field(
         None,
-        description="CAS guard for workflow_data writes: the graph_version this client loaded. When set and the server's version differs, the write is rejected and the response carries conflict=true plus the current blob + version so the client can rebase. Omitted (None) = unconditional write (metadata-only updates, MCP/builder writers)."
+        description="CAS guard for workflow_data writes: the graph_version this client loaded. When set and the server's version differs, the write is rejected and the response carries conflict=true plus the current blob + version so the client can rebase (unless the save names its changes). Omitted (None) = unconditional write (metadata-only updates, MCP/builder writers)."
+    )
+    partial_node_ids: Optional[List[str]] = Field(
+        None,
+        description="Steps this canvas holds only in part (a server write's room event held some of a step back and the canvas hasn't read it whole): their settings are kept as stored, and one no longer stored isn't written back."
+    )
+    changes: Optional[WorkflowCanvasChanges] = Field(
+        None,
+        description="What this save changed since expected_graph_version (a closing tab's last save, which can't rebase): when the workflow moved on since, only these changes are written onto it as it stands."
     )
 
 

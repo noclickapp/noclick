@@ -56,7 +56,7 @@ def told():
     """The notices (the owner's pages, the canvases' room), as (owner, workflow, version)."""
     calls = []
 
-    async def tell(owner_id, workflow_id, version, canvas=()):
+    async def tell(owner_id, workflow_id, version, canvas=(), *, base):
         calls.append((owner_id, workflow_id, version))
 
     with patch("coder.workflow.graph_service.tell", side_effect=tell):
@@ -166,7 +166,8 @@ class TestWrites:
         workflow_id = await _workflow(db)
         await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "Record"},
                                        {"op": "remove_step", "id": "hook"}])
-        assert heard[-1] == {"type": "workflow:graph_changed", "workflow_id": workflow_id, "version": 2}
+        assert heard[-1] == {"type": "workflow:graph_changed", "workflow_id": workflow_id, "base_version": 1,
+                             "version": 2}
         assert [(e["type"], e["event_type"], e["data"]) for e in heard[:-1]] == [
             ("mcp:builder_event", "node_removed", {"nodeId": "hook", "removedEdgeIds": ["hook-agent"]}),
             ("mcp:builder_event", "node_updated", {"nodeId": "log", "config": {"label": "Record"}})]
@@ -550,6 +551,26 @@ class TestWhoMayEdit:
             {"key": "authorization", "value": "Bearer new", "enabled": True}]
 
 
+    async def test_a_secret_in_a_list_comes_back_only_to_the_item_it_belongs_to(self, db, told, reconciled):
+        """An item matched by a name it keeps (a row's key, an item's id) takes its secret back; one with no such
+        name never takes another's by its place in the list (a removed item's key landing in the next one)."""
+        graph = {"nodes": [node("fetch", "automation-http-request", label="Fetch", url="https://api.example",
+                                operation="send_http_get_request",
+                                accounts=[{"id": "a", "api_key": "k-a"}, {"id": "b", "api_key": "k-b"}],
+                                mirrors=[{"label": "x", "api_key": "k-x"}, {"label": "y", "api_key": "k-y"}])],
+                 "edges": []}
+        workflow_id = await _workflow(db, graph)
+        read = await graph_service.read(db.pool, Author(OWNER), workflow_id)
+        config = read["graph"]["nodes"][0]["config"]
+        assert config["accounts"] == [{"id": "a"}, {"id": "b"}] and config["mirrors"] == [{"label": "x"},
+                                                                                       {"label": "y"}]
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "fetch", "settings": {
+            "accounts": [{"id": "b"}], "mirrors": [{"label": "y"}]}}], if_version=read["version"])
+        stored = (await _graph(db, workflow_id))["workflow"]["nodes"][0]["config"]
+        assert stored["accounts"] == [{"id": "b", "api_key": "k-b"}]
+        assert stored["mirrors"] == [{"label": "y"}]
+
+
 class TestReconcileThroughTheService:
     """What an edit sets in motion outside the graph, through the real reconcile with the registration
     chokepoints stood in for: each family's change hook, removed steps' teardown, new triggers' provisioning and
@@ -699,6 +720,80 @@ class TestReconcileThroughTheService:
         await asyncio.wait_for(workflow_reconcile.reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH,
                                                                          renamed), timeout=10)
         assert time.monotonic() - started < 5
+
+    async def test_overlapping_reconciles_leave_each_step_as_the_graph_has_it(self, db, told, monkeypatch):
+        """Two reconciles of one workflow that overlap (the first ran past the wait): each teardown and
+        registration acts on the graph as stored when it acts, so the last word on a step matches the graph,
+        whichever order they finish in."""
+        import asyncio
+
+        from utils import workflow_reconcile
+        from utils.webhook_manager import WebhookManager
+        from utils.workflow_reconcile import reconcile_graph_change
+
+        monkeypatch.setattr(workflow_reconcile, "WAIT_S", 0.3)
+        without = copy.deepcopy(GRAPH)
+        without["nodes"] = [n for n in without["nodes"] if n["id"] != "log"]
+        acted = []
+        slow = {}
+
+        async def cleanup(*, pool, workflow_id, node_ids, background, old_nodes, requesting_user_id):
+            await asyncio.sleep(slow["teardown"])
+            acted.append(("teardown", sorted(node_ids)))
+
+        async def register(pool, workflow_id, user_id, node_ids=None):
+            await asyncio.sleep(slow["register"])
+            acted.append(("register", sorted(node_ids)))
+
+        async def store(workflow_id, graph):
+            await db.execute("UPDATE workflows SET workflow = $2 WHERE id = $1::uuid", workflow_id, graph)
+
+        with patch("utils.workflow_resource_manager.cleanup_nodes_resources", side_effect=cleanup), \
+                patch.object(WebhookManager, "register_node_webhooks", side_effect=register), \
+                patch.object(WebhookManager, "provision_node_webhook", AsyncMock(return_value=None)):
+            # A slow teardown of a removed step, overtaken by a write that puts it back: registered at the end.
+            slow.update(teardown=1.0, register=0)
+            workflow_id = await _workflow(db, without)
+            first = asyncio.create_task(reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH, without))
+            await asyncio.sleep(0.1)
+            await store(workflow_id, GRAPH)
+            await asyncio.gather(first, reconcile_graph_change(db.pool, workflow_id, OWNER, without, GRAPH))
+            assert acted[-1] == ("register", ["log"]), acted
+            # A slow registration of a step that's back, overtaken by a write that removes it: torn down at the end.
+            acted.clear()
+            slow.update(teardown=0, register=1.0)
+            workflow_id = await _workflow(db)
+            first = asyncio.create_task(reconcile_graph_change(db.pool, workflow_id, OWNER, without, GRAPH,
+                                                               deleted=[]))
+            await asyncio.sleep(0.1)
+            await store(workflow_id, without)
+            await asyncio.gather(first, reconcile_graph_change(db.pool, workflow_id, OWNER, GRAPH, without))
+            assert acted[-1] == ("teardown", ["log"]), acted
+
+    async def test_a_hung_reconcile_gives_its_lease_back(self, db, told, registry, monkeypatch):
+        """A reconcile whose work hangs is stopped at ``WORK_S`` and gives its lease back, so the next one runs
+        on its own rather than waiting out every wait."""
+        import asyncio
+        import time
+
+        from utils import workflow_reconcile
+        from utils.webhook_manager import WebhookManager
+
+        monkeypatch.setattr(workflow_reconcile, "WORK_S", 0.5)
+        workflow_id = await _workflow(db)
+        renamed = copy.deepcopy(GRAPH)
+        renamed["nodes"][0]["config"]["label"] = "Renamed"
+
+        async def hang(*args, **kwargs):
+            await asyncio.Event().wait()
+
+        with patch.object(WebhookManager, "handle_registration_fields_change", side_effect=hang):
+            started = time.monotonic()
+            await asyncio.wait_for(workflow_reconcile.reconcile_graph_change(
+                db.pool, workflow_id, OWNER, GRAPH, renamed), timeout=10)
+        assert time.monotonic() - started < 3
+        assert await db.fetchval("SELECT count(*) FROM workflow_reconcile_leases WHERE workflow_id = $1::uuid",
+                                 workflow_id) == 0
 
     async def test_one_workflows_reconciles_run_one_at_a_time(self, db, told, registry):
         import asyncio
@@ -915,6 +1010,72 @@ class TestTheCanvasSave:
         again = await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "Next"}],
                              if_version=edited.version)
         assert again.version == edited.version + 1
+
+    async def test_an_echo_without_a_setting_a_write_cleared_writes_nothing(self, db, told, reconciled):
+        """A write that clears a setting stores it as null (a trigger's mirrors after a reconcile), and the canvas
+        that applied it holds no such setting (``node_updated`` sends it as null, which the canvas drops): its
+        echo is still the graph as stored. So is one holding a null the store doesn't."""
+        cleared = copy.deepcopy(GRAPH)
+        cleared["nodes"][0]["config"].update(trigger_error=None, paused_reason=None)
+        workflow_id = await _workflow(db, cleared)
+        handler, sio = self._handler(db)
+        await self._save(handler, workflow_id, copy.deepcopy(GRAPH), version=1)
+        nulled = copy.deepcopy(GRAPH)
+        nulled["nodes"][2]["config"]["stale_key"] = None
+        await self._save(handler, workflow_id, nulled, version=1)
+        assert sio.emit.await_args.args[1]["data"]["workflow"]["graph_version"] == 1
+        assert (await _graph(db, workflow_id))["graph_version"] == 1 and await _versions(db, workflow_id) == []
+
+    async def test_a_step_held_in_part_keeps_its_settings_as_stored(self, db, told, reconciled):
+        """A step the room held part of back, which the canvas hasn't read whole yet, is saved with what the canvas
+        does hold of it (it moved), never its settings; one no longer stored isn't written back."""
+        from wss.receiver.client_events import WorkflowUpdateRequest
+
+        workflow_id = await _workflow(db)
+        handler, sio = self._handler(db)
+        shown = copy.deepcopy(GRAPH)
+        log = next(n for n in shown["nodes"] if n["id"] == "log")
+        log["config"], log["position"] = {}, {"x": 500, "y": 40}
+        shown["nodes"].append(node("gone", "log", label="Gone"))
+        shown["edges"].append({"id": "log-gone", "source": "log", "target": "gone"})
+        await handler.update_workflow("sid", WorkflowUpdateRequest(
+            request_id="r", workflow_id=workflow_id, workflow_data=shown, expected_graph_version=1,
+            partial_node_ids=["log", "gone"]))
+        assert not sio.emit.await_args.args[1].get("error"), sio.emit.await_args.args[1]
+        stored = (await _graph(db, workflow_id))["workflow"]
+        saved = next(n for n in stored["nodes"] if n["id"] == "log")
+        assert saved["config"] == {"label": "Log", "message": "done"} and saved["position"] == {"x": 500, "y": 40}
+        assert [n["id"] for n in stored["nodes"]] == ["hook", "agent", "log"]
+        assert [e["id"] for e in stored["edges"]] == ["hook-agent"]
+
+    async def test_a_closing_tabs_save_on_an_old_version_writes_only_its_own_changes(self, db, told, reconciled):
+        """A tab that missed later writes (its room was down) saves as it closes, on the version it last saw and
+        with nothing to rebase on: what it changed lands on the workflow as it stands, and nothing it missed (an
+        added step, another's change) is lost."""
+        from wss.receiver.client_events import WorkflowCanvasChanges, WorkflowUpdateRequest
+
+        workflow_id = await _workflow(db)
+        await _apply(db, workflow_id, [
+            {"op": "add_step", "type": "log", "id": "tock", "name": "Tock", "settings": {"message": "tock"}},
+            {"op": "update_step", "id": "agent", "settings": {"message": "Theirs."}}])
+        version = (await _graph(db, workflow_id))["graph_version"]
+        mine = copy.deepcopy(GRAPH)
+        next(n for n in mine["nodes"] if n["id"] == "log")["config"]["label"] = "Mine"
+        mine["nodes"] = [n for n in mine["nodes"] if n["id"] != "hook"]
+        mine["edges"] = [{"id": "agent-log", "source": "agent", "target": "log"}]
+        handler, sio = self._handler(db)
+        await handler.update_workflow("sid", WorkflowUpdateRequest(
+            request_id="r", workflow_id=workflow_id, workflow_data=mine, expected_graph_version=1,
+            deleted_node_ids=["hook"], changes=WorkflowCanvasChanges(
+                steps=["log"], edges_added=["agent-log"], edges_removed=["hook-agent"])))
+        assert not sio.emit.await_args.args[1]["data"].get("conflict"), sio.emit.await_args.args[1]
+        row = await _graph(db, workflow_id)
+        assert row["graph_version"] == version + 1
+        labels = _labels(row["workflow"])
+        assert labels == {"agent": "Helper", "log": "Mine", "tock": "Tock"}
+        agent = next(n for n in row["workflow"]["nodes"] if n["id"] == "agent")
+        assert agent["config"]["message"] == "Theirs."
+        assert [e["id"] for e in row["workflow"]["edges"]] == ["agent-log"]
 
     async def test_a_canvas_save_keeps_a_secret_the_canvas_never_had(self, db, told, reconciled):
         graph = {"nodes": [node("fetch", "automation-http-request", url="https://api.example",

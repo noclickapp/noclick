@@ -6,6 +6,7 @@ import { Viewport } from '@xyflow/react';
 import { useCachedValtioState } from './useCachedValtioState';
 import { useDebounce } from './useDebounce';
 import { sendEventWithCallback } from '~/lib/socket-sender';
+import { isGraphReadOnly } from '~/lib/liveGraphStore';
 import { WorkflowUpdateRequest } from '~/types/socket-events.generated';
 
 // Display metadata structure for persisting UI state
@@ -197,6 +198,8 @@ export function useWorkflowDisplayMetadata({
         if (!workflowId || workflowId.startsWith('workflow_demo') || !hasLoadedWorkflow) {
             return;
         }
+        // A viewer keeps their view in this browser only: they can't write the workflow.
+        if (isGraphReadOnly(workflowId)) return;
 
         console.log('[useWorkflowDisplayMetadata] Auto-saving display metadata:', workflowId);
 

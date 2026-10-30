@@ -159,7 +159,7 @@ async def _closed(db, workflow_id, source):
                              "AND graph IS NOT NULL ORDER BY version DESC LIMIT 1", workflow_id, source)
 
 
-async def _settled(pool, owner_id, workflow_id, author, before, after, version, **kwargs):
+async def _settled(pool, owner_id, workflow_id, author, before, after, base, version, **kwargs):
     return version, after
 
 

@@ -721,6 +721,18 @@ class ApprovalRequestResolvedEvent(BaseModel):
     decided_by: str = Field(..., description="User ID of the person who decided")
 
 
+class WorkflowGraphChangedEvent(BaseModel):
+    """A workflow's graph was written through the graph service (``coder.workflow.graph_service``): sent in the
+    workflow's room on the relay after the builder events (``MCPBuilderEvent``) that carry the change. A canvas
+    whose base was ``base_version`` takes ``version`` as its base, the change being the server's and not an edit
+    of its own; one on any other base missed a write and keeps its base, so its next save conflicts and rebases."""
+    event_name: ClassVar[str] = "workflow:graph_changed"
+
+    workflow_id: str = Field(..., description="UUID of the workflow")
+    base_version: int = Field(..., description="Its graph version before this write")
+    version: int = Field(..., description="Its graph version now (the one to edit on from)")
+
+
 class MCPBuilderEvent(BaseModel):
     """Canvas-update event sent to all of a user's connected frontends.
 

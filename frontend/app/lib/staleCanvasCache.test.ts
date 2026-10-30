@@ -251,6 +251,50 @@ describe('CAS conflict rebase', () => {
     });
 });
 
+describe('a CAS conflict rebase against the canvas base', () => {
+    it("takes the server's copy of what it never changed and keeps what it did", async () => {
+        // The canvas loaded a, b, c and the a-b, b-c connections, then missed writes it was never sent (the
+        // builder's or MCP's, which reach only the owner's pages): b renamed, c removed, d added.
+        wire.respond = () => ({
+            conflict: true,
+            graph_version: 7,
+            workflow_data: {
+                nodes: [
+                    { id: 'a', type: 'automation-slack', position: { x: 0, y: 0 }, config: { label: 'A server' } },
+                    { id: 'b', type: 'automation-slack', position: { x: 0, y: 0 }, config: { label: 'B server' } },
+                    { id: 'd', type: 'automation-gmail', position: { x: 0, y: 0 }, config: {} },
+                ],
+                edges: [{ id: 'a-b', source: 'a', target: 'b' }],
+            },
+        });
+        primeMountedRecord([makeNode('a'), makeNode('b'), makeNode('c')], 5);
+        recordGraphSnapshot(WF, false, {
+            edges: [
+                { id: 'a-b', source: 'a', target: 'b' },
+                { id: 'b-c', source: 'b', target: 'c' },
+            ] as Edge[],
+        }, false);
+        seedSaveBaseline(WF);
+        // Its own edits since: a renamed, e added and connected, a-b removed.
+        const rec = graphRecords[WF];
+        rec.nodes = rec.nodes.map((n) => (n.id === 'a' ? createWorkflowNode('a', 'automation-slack', { x: 0, y: 0 },
+            { label: 'A mine' }) : n));
+        rec.nodes = [...rec.nodes, makeNode('e')];
+        rec.edges = [{ id: 'b-c', source: 'b', target: 'c' }, { id: 'a-e', source: 'a', target: 'e' }] as Edge[];
+        markGraphDirty(WF);
+        flushGraphNow(WF);
+        await tick();
+
+        const label = (id: string) => (rec.nodes.find((n) => n.id === id)?.data as Record<string, unknown>)?.label;
+        expect(rec.graphVersion).toBe(7);
+        expect(rec.nodes.map((n) => n.id).sort()).toEqual(['a', 'b', 'd', 'e']);
+        expect(label('a')).toBe('A mine');
+        expect(label('b')).toBe('B server');
+        // b-c went with c; the a-b connection it removed stays removed; its own a-e stays.
+        expect(rec.edges.map((e) => e.id).sort()).toEqual(['a-e']);
+    });
+});
+
 describe('builder removals survive a CAS conflict rebase', () => {
     // 2026-09-22: the builder streamed node_removed, the canvas flush-saved on
     // active_gen:terminal with a version token the builder had already bumped

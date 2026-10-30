@@ -7,9 +7,9 @@ import type { Edge, Node } from '@xyflow/react';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createWorkflowNode } from '~/lib/applyNodeUpdate';
-import { useMCPBuilderEvents } from '~/hooks/useMCPBuilderEvents';
+import { FETCH_WHOLE_TRIES, useMCPBuilderEvents } from '~/hooks/useMCPBuilderEvents';
 import { WorkflowPresenceService } from '~/lib/collaboration/workflowPresenceService';
-import { holdSaves, releaseSaves } from '~/lib/liveGraphStore';
+import { markStepPartial, markStepWhole } from '~/lib/liveGraphStore';
 import { sendEventAsync } from '~/lib/socket-sender';
 
 const handlers: Record<string, (event: unknown) => void> = {};
@@ -22,9 +22,12 @@ vi.mock('~/lib/socket-receiver', () => ({
 }));
 const { stored } = vi.hoisted(() => ({ stored: {} as Record<string, Record<string, unknown>> }));
 vi.mock('~/lib/socket-sender', () => ({
-    sendEventAsync: vi.fn(async (event: { node_id: string }) => ({ config: stored[event.node_id] })),
+    sendEventAsync: vi.fn(async (event: { node_id: string }) => {
+        if (!(event.node_id in stored)) throw new Error('Request timeout after 30000ms');
+        return { config: stored[event.node_id] };
+    }),
 }));
-vi.mock('~/lib/liveGraphStore', () => ({ holdSaves: vi.fn(), releaseSaves: vi.fn() }));
+vi.mock('~/lib/liveGraphStore', () => ({ markStepPartial: vi.fn(), markStepWhole: vi.fn() }));
 
 class RoomSocket {
     static last: RoomSocket;
@@ -116,7 +119,7 @@ describe('a graph service write on an open canvas', () => {
             type: 'mcp:builder_event', workflow_id: 'wf', execution_id: 'graph-1', event_type: 'node_updated',
             data: { nodeId: 'note', config: { label: 'Order note' } },
         });
-        heard({ type: 'workflow:graph_changed', workflow_id: 'wf', version: 3 });
+        heard({ type: 'workflow:graph_changed', workflow_id: 'wf', base_version: 1, version: 3 });
 
         expect(state.nodes.map((n) => n.id)).toEqual(['note']);
         expect(state.nodes[0].data.label).toBe('Order note');
@@ -126,7 +129,7 @@ describe('a graph service write on an open canvas', () => {
         vi.unstubAllGlobals();
     });
 
-    it('fetches a step whole when the room held part of it back, holding saves until it has', async () => {
+    it('fetches a step whole when the room held part of it back, holding it in part until it has', async () => {
         const { state, setNodes, setEdges } = canvas(
             [createWorkflowNode('fetch', 'automation-http-request', { x: 0, y: 0 }, { label: 'Fetch' })], []);
         const { unmount } = renderHook(() => useMCPBuilderEvents({ workflowId: 'wf', setNodes, setEdges }));
@@ -140,12 +143,31 @@ describe('a graph service write on an open canvas', () => {
         expect(sendEventAsync).toHaveBeenCalledWith(expect.objectContaining({
             event_name: 'workflow:node:get_config', workflow_id: 'wf', node_id: 'fetch',
         }));
-        expect(holdSaves).toHaveBeenCalledWith('wf');
-        expect(releaseSaves).toHaveBeenCalledWith('wf');
+        expect(markStepPartial).toHaveBeenCalledWith('wf', 'fetch');
+        expect(markStepWhole).toHaveBeenCalledWith('wf', 'fetch');
         const config = state.nodes[0].data.config as Record<string, unknown>;
         expect(config.url).toBe('https://api.example');
         expect(config.api_key).toBe('sk-live-123');
         unmount();
+    });
+
+    it('leaves a step it could not read whole in part, so its saves keep it as stored', async () => {
+        vi.useFakeTimers();
+        const { setNodes, setEdges } = canvas(
+            [createWorkflowNode('big', 'log', { x: 0, y: 0 }, { label: 'Big' })], []);
+        const { unmount } = renderHook(() => useMCPBuilderEvents({ workflowId: 'wf', setNodes, setEdges }));
+        delete stored.big;
+        await act(async () => {
+            handlers['mcp:builder_event']({
+                workflow_id: 'wf', event_type: 'node_updated', data: { nodeId: 'big', refetch: true },
+            });
+            await vi.runAllTimersAsync();
+        });
+        expect(sendEventAsync).toHaveBeenCalledTimes(FETCH_WHOLE_TRIES);
+        expect(markStepPartial).toHaveBeenCalledWith('wf', 'big');
+        expect(markStepWhole).not.toHaveBeenCalled();
+        unmount();
+        vi.useRealTimers();
     });
 
     it('leaves another workflow alone', () => {

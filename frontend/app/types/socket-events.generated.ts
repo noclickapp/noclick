@@ -919,14 +919,19 @@ export interface WorkflowCompleteEvent {
 }
 /**
  * A workflow's graph was written through the graph service (``coder.workflow.graph_service``): sent in the
- * workflow's room on the relay after the builder events (``MCPBuilderEvent``) that carry the change, so every
- * canvas open on it takes ``version`` as its base, the change being the server's and not an edit of its own.
+ * workflow's room on the relay after the builder events (``MCPBuilderEvent``) that carry the change. A canvas
+ * whose base was ``base_version`` takes ``version`` as its base, the change being the server's and not an edit
+ * of its own; one on any other base missed a write and keeps its base, so its next save conflicts and rebases.
  */
 export interface WorkflowGraphChangedEvent {
   /**
    * UUID of the workflow
    */
   workflow_id: string;
+  /**
+   * Its graph version before this write
+   */
+  base_version: number;
   /**
    * Its graph version now (the one to edit on from)
    */
@@ -6660,6 +6665,23 @@ export interface WorkflowBuilderEditRequest {
   [k: string]: unknown;
 }
 /**
+ * What a canvas changed since the version it saves on: its deleted steps are ``deleted_node_ids``.
+ */
+export interface WorkflowCanvasChanges {
+  /**
+   * Steps it added or changed
+   */
+  steps?: string[];
+  /**
+   * Connections it added
+   */
+  edges_added?: string[];
+  /**
+   * Connections it removed
+   */
+  edges_removed?: string[];
+}
+/**
  * Request to create a checkpoint/snapshot of the current workflow state
  */
 export interface WorkflowCheckpointCreateRequest {
@@ -7897,9 +7919,17 @@ export interface WorkflowUpdateRequest {
    */
   deleted_node_ids?: string[] | null;
   /**
-   * CAS guard for workflow_data writes: the graph_version this client loaded. When set and the server's version differs, the write is rejected and the response carries conflict=true plus the current blob + version so the client can rebase. Omitted (None) = unconditional write (metadata-only updates, MCP/builder writers).
+   * CAS guard for workflow_data writes: the graph_version this client loaded. When set and the server's version differs, the write is rejected and the response carries conflict=true plus the current blob + version so the client can rebase (unless the save names its changes). Omitted (None) = unconditional write (metadata-only updates, MCP/builder writers).
    */
   expected_graph_version?: number | null;
+  /**
+   * Steps this canvas holds only in part (a server write's room event held some of a step back and the canvas hasn't read it whole): their settings are kept as stored, and one no longer stored isn't written back.
+   */
+  partial_node_ids?: string[] | null;
+  /**
+   * What this save changed since expected_graph_version (a closing tab's last save, which can't rebase): when the workflow moved on since, only these changes are written onto it as it stands.
+   */
+  changes?: WorkflowCanvasChanges | null;
   [k: string]: unknown;
 }
 /**

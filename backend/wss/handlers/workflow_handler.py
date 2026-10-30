@@ -77,7 +77,7 @@ from utils.relay_tokens import mint_user_room_token
 from utils.activity import signal_activity
 from utils.workflow_delta import compute_workflow_delta
 from utils.workflow_reconcile import reconcile_graph_change
-from coder.workflow.graph_service import Author, canvas_save, definition, record_save
+from coder.workflow.graph_service import Author, CanvasChanges, canvas_save, definition, record_save
 from utils.analytics import log_activity_background
 from utils.analytics_events import Events
 from repositories.workflow import WorkflowRepo
@@ -1001,11 +1001,17 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 # save of the definition is a version, recorded in the same transaction.
                 repo = WorkflowRepo(pool)
                 async with conn.transaction():
-                    # A secret the canvas was never sent is kept; an echo of what's stored writes nothing.
+                    # A secret the canvas was never sent is kept, a step it holds in part keeps its settings, a
+                    # closing tab's save writes only what it changed, and an echo of what's stored writes nothing.
                     workflow_data = request.workflow_data
+                    expected_graph_version = request.expected_graph_version
                     if workflow_data is not None:
-                        workflow_data = await canvas_save(conn, repo, request.workflow_id, workflow_data,
-                                                          request.expected_graph_version)
+                        changes = request.changes
+                        workflow_data, expected_graph_version = await canvas_save(
+                            conn, repo, request.workflow_id, workflow_data, expected_graph_version,
+                            partial=request.partial_node_ids or (), deleted=request.deleted_node_ids or (),
+                            changes=CanvasChanges(changes.steps, changes.edges_added, changes.edges_removed)
+                            if changes is not None else None)
                     echo = request.workflow_data is not None and workflow_data is None
                     others = (request.name, request.description, request.permissions, request.display_metadata,
                               request.settings)
@@ -1023,7 +1029,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                             display_metadata=request.display_metadata,
                             # Only NoClick marks a workflow it runs itself.
                             settings=client_settings(request.settings) if request.settings is not None else None,
-                            expected_graph_version=request.expected_graph_version,
+                            expected_graph_version=expected_graph_version,
                         )
                     if row and any(v is not None for v in (workflow_data, request.name,
                                                              request.description, request.settings)):

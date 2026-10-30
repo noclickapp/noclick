@@ -13,8 +13,10 @@ whoever watches, once: the owner's open pages (the ``WORKFLOW_GRAPH_CHANGED``
 capability) and every canvas open on the workflow, whoever's (its room on the
 relay: the change as the builder's canvas events, never a secret nor an outsize
 step, which the canvas reads whole itself, then a ``workflow:graph_changed``
-event the canvas takes as its base). An open canvas's save of what it was sent
-writes nothing (``canvas_save``), so the version stays the one to edit on from.
+event naming the version the write was made on and the one it left: a canvas
+on the first takes the second as its base). An open canvas's save of what it
+was sent writes nothing (``canvas_save``), so the version stays the one to
+edit on from.
 ``restore`` writes a version back the same way.
 
 A version (``workflow_versions``) holds the definition whole: the graph, the
@@ -357,11 +359,21 @@ async def record_save(conn, workflow_id: str, author: Author, *, source: Source,
 _CANVAS_STEP_KEYS = ("id", "type", "position", "config", "width", "height")
 
 
+def _without_nulls(value: Any) -> Any:
+    """``value`` with each null-valued key left out, at any depth: a write that clears a setting stores it as null,
+    and a canvas applying that write drops the key (``node_updated`` sends a cleared setting as null)."""
+    if isinstance(value, dict):
+        return {k: _without_nulls(v) for k, v in value.items() if v is not None}
+    if isinstance(value, list):
+        return [_without_nulls(v) for v in value]
+    return value
+
+
 def _as_canvas_saves(graph: Any) -> Dict[str, Any]:
-    """A graph as a canvas save would hold it: its steps by id (``_CANVAS_STEP_KEYS``), its edges by their ends and
-    handles (their style is the canvas's own), and its other keys."""
+    """A graph as a canvas save would hold it: its steps by id (``_CANVAS_STEP_KEYS``, a cleared setting as no
+    setting), its edges by their ends and handles (their style is the canvas's own), and its other keys."""
     graph = parse_graph(graph)
-    steps = {n.get("id"): {k: n.get(k) for k in _CANVAS_STEP_KEYS if n.get(k) is not None}
+    steps = {n.get("id"): {k: _without_nulls(n.get(k)) for k in _CANVAS_STEP_KEYS if n.get(k) is not None}
              for n in graph_nodes(graph)}
     edges = sorted((str(e.get("id")), e.get("source"), e.get("target"), e.get("sourceHandle") or None,
                     e.get("targetHandle") or None) for e in graph_edges(graph))
@@ -369,19 +381,72 @@ def _as_canvas_saves(graph: Any) -> Dict[str, Any]:
     return {"steps": steps, "edges": edges, "rest": rest}
 
 
-async def canvas_save(conn, repo, workflow_id: str, graph: Dict[str, Any],
-                      expected_version: Optional[int]) -> Optional[Dict[str, Any]]:
-    """What a canvas save (``workflow:update``) writes, inside its transaction: its graph with each secret a step's
-    stored settings hold and the save left out kept (``keep_withheld``: the room never sends a canvas one), or
-    None when it holds the graph as stored, in the canvas's shape (``_as_canvas_saves``): an open canvas echoing a
-    write it was sent, which writes nothing, so the version that write answered stays the one to edit on from."""
+@dataclass(frozen=True)
+class CanvasChanges:
+    """What a canvas changed since the version it saves on (``expected_graph_version``): steps it added or
+    changed, connections it added or removed (its deleted steps are ``deleted_node_ids``)."""
+    steps: Sequence[str] = ()
+    edges_added: Sequence[str] = ()
+    edges_removed: Sequence[str] = ()
+
+
+def _own_changes(stored: Any, graph: Dict[str, Any], changes: CanvasChanges,
+                 deleted: Sequence[str]) -> Dict[str, Any]:
+    """The workflow as stored with only what the canvas changed (``changes``, ``deleted``) taken from its save."""
+    stored = parse_graph(stored)
+    mine = {n.get("id"): n for n in graph_nodes(graph)}
+    nodes = {n.get("id"): n for n in graph_nodes(stored)}
+    for node_id in changes.steps:
+        if node_id in mine:
+            nodes[node_id] = mine[node_id]
+    for node_id in deleted:
+        nodes.pop(node_id, None)
+    gone = set(changes.edges_removed)
+    edges = [e for e in graph_edges(stored) if str(e.get("id")) not in gone]
+    held = {str(e.get("id")) for e in edges}
+    added = set(changes.edges_added)
+    edges += [e for e in graph_edges(graph) if str(e.get("id")) in added and str(e.get("id")) not in held]
+    edges = [e for e in edges if e.get("source") in nodes and e.get("target") in nodes]
+    return {**stored, "nodes": list(nodes.values()), "edges": edges}
+
+
+async def canvas_save(conn, repo, workflow_id: str, graph: Dict[str, Any], expected_version: Optional[int], *,
+                      partial: Sequence[str] = (), changes: Optional[CanvasChanges] = None,
+                      deleted: Sequence[str] = ()) -> Tuple[Optional[Dict[str, Any]], Optional[int]]:
+    """What a canvas save (``workflow:update``) writes, inside its transaction, and the version it writes on.
+
+    - A save on a version the workflow has moved past that names what it changed (``changes``: a closing tab's
+      last save, which hears no answer to rebase on) writes those changes onto the workflow as stored, never its
+      stale copy of the rest.
+    - A step the canvas holds only in part (``partial``: the room held some of it back and the canvas hasn't read
+      it whole) keeps its settings as stored, and isn't written back once it's gone.
+    - Each secret a step's stored settings hold and the save left out is kept (``keep_withheld``: the room never
+      sends a canvas one).
+    - A save holding the graph as stored, in the canvas's shape (``_as_canvas_saves``), writes nothing (None): an
+      open canvas echoing a write it was sent, so the version that write answered stays the one to edit on from."""
     from .graph_secrets import keep_withheld
 
     stored = await repo.read_graph(conn, workflow_id, lock=True)
     if stored is None:
-        return graph
-    held = {n.get("id"): n for n in graph_nodes(stored["workflow"])}
+        return graph, expected_version
     graph = copy.deepcopy(graph)
+    if changes is not None and expected_version is not None and expected_version != stored["graph_version"]:
+        graph = _own_changes(stored["workflow"], graph, changes, deleted)
+        expected_version = stored["graph_version"]
+    held = {n.get("id"): n for n in graph_nodes(stored["workflow"])}
+    partial = set(partial)
+    if partial:
+        nodes = []
+        for node in graph_nodes(graph):
+            prior = held.get(node.get("id"))
+            if node.get("id") in partial:
+                if prior is None:
+                    continue
+                node["config"] = copy.deepcopy(node_config(prior))
+            nodes.append(node)
+        kept = {n.get("id") for n in nodes}
+        graph = {**graph, "nodes": nodes,
+                 "edges": [e for e in graph_edges(graph) if e.get("source") in kept and e.get("target") in kept]}
     for node in graph_nodes(graph):
         prior = held.get(node.get("id"))
         if prior is not None and isinstance(node.get("config"), dict):
@@ -389,8 +454,8 @@ async def canvas_save(conn, repo, workflow_id: str, graph: Dict[str, Any],
     unchanged = expected_version in (None, stored["graph_version"])
     if unchanged and _as_canvas_saves(stored["workflow"]) == _as_canvas_saves(
             {**graph, **({} if "variables" in graph else {"variables": parse_graph(stored["workflow"]).get("variables")})}):
-        return None
-    return graph
+        return None, expected_version
+    return graph, expected_version
 
 
 async def _locked(conn, repo, author: Author, workflow_id: str, if_version: Optional[int]):
@@ -472,7 +537,8 @@ async def apply(pool, author: Author, workflow_id: str, ops: Sequence[Any], *, i
                                             after=after, changes=changes)
     now = after
     if wrote:
-        version, now = await _settle(pool, row["owner_id"], workflow_id, author, before, after, version,
+        version, now = await _settle(pool, row["owner_id"], workflow_id, author, before, after,
+                                     row["graph_version"], version,
                                      reconcile=bool(describe_changes(before["graph"], after["graph"])))
     return Edited(workflow_id, version, wrote, recorded, summary(changes), editor.results, editor.steps,
                   definition=_definition_view(now) if include_graph else None)
@@ -547,18 +613,19 @@ async def restore(pool, author: Author, workflow_id: str, number: int, *,
         recorded = await record_version(conn, workflow_id, author=author, source="restore",
                                         before_version=row["graph_version"], before=before, version=version,
                                         after=after, changes=changes, restored_from=number)
-    version, _ = await _settle(pool, row["owner_id"], workflow_id, author, before, after, version,
-                               reconcile=bool(describe_changes(before["graph"], after["graph"])))
+    version, _ = await _settle(pool, row["owner_id"], workflow_id, author, before, after, row["graph_version"],
+                               version, reconcile=bool(describe_changes(before["graph"], after["graph"])))
     return Edited(workflow_id, version, True, recorded, summary(changes))
 
 
 # ── after the commit ────────────────────────────────────────────────────────
 
 async def _settle(pool, owner_id, workflow_id: str, author: Author, before: Dict[str, Any],
-                  after: Dict[str, Any], version: int, *, reconcile: bool) -> Tuple[int, Dict[str, Any]]:
+                  after: Dict[str, Any], base: int, version: int, *, reconcile: bool) -> Tuple[int, Dict[str, Any]]:
     """Reconcile what the write changed, then (spawned, off the answer's path) tell whoever watches once, with what
-    changed (``canvas_events``), at the version the reconcile's own writes left (the write's own when it wrote none,
-    or when another writer's came in between). Returns that version and the definition at it."""
+    changed (``canvas_events``), from the version the write was made on (``base``) to the one the reconcile's own
+    writes left (the write's own when it wrote none, or when another writer's came in between). Returns that
+    version and the definition at it."""
     from repositories.workflow import WorkflowRepo
     from utils.async_helpers import spawn
     from utils.workflow_reconcile import reconcile_graph_change
@@ -572,7 +639,7 @@ async def _settle(pool, owner_id, workflow_id: str, author: Author, before: Dict
     async with pool.acquire() as conn:
         row = await WorkflowRepo(pool).read_graph(conn, workflow_id)
     now = _of(row) if row is not None and row["graph_version"] == version else after
-    spawn(tell(str(owner_id), workflow_id, version, canvas_events(before, now)),
+    spawn(tell(str(owner_id), workflow_id, version, canvas_events(before, now), base=base),
           name=f"workflow-graph-notify:{workflow_id}")
     return version, now
 
@@ -651,10 +718,10 @@ def canvas_events(before: Dict[str, Any], after: Dict[str, Any]) -> List[Tuple[s
 
 
 async def tell(owner_id: str, workflow_id: str, version: int,
-               canvas: Sequence[Tuple[str, Dict[str, Any]]] = ()) -> None:
-    """The workflow is at ``version`` now: its owner's open pages read it again, and every canvas open on it,
-    whoever's (its room on the relay), applies what changed (``canvas``: ``canvas_events``) to its own copy, then
-    hears the version. Best effort, as the relay is."""
+               canvas: Sequence[Tuple[str, Dict[str, Any]]] = (), *, base: int) -> None:
+    """The workflow is at ``version`` now, moved from ``base``: its owner's open pages read it again, and every
+    canvas open on it, whoever's (its room on the relay), applies what changed (``canvas``: ``canvas_events``) to
+    its own copy, then hears both versions. Best effort, as the relay is."""
     from utils.capabilities import WORKFLOW_GRAPH_CHANGED, capability
     from utils.execution_relay import create_execution_relay
 
@@ -670,7 +737,8 @@ async def tell(owner_id: str, workflow_id: str, version: int,
         for event_type, data in canvas:
             await relay.send_event({"type": CANVAS_EVENT, "workflow_id": workflow_id, "event_type": event_type,
                                     "data": data})
-        await relay.send_event({"type": GRAPH_CHANGED_EVENT, "workflow_id": workflow_id, "version": version})
+        await relay.send_event({"type": GRAPH_CHANGED_EVENT, "workflow_id": workflow_id,
+                                "base_version": base, "version": version})
     except Exception:
         logger.warning("[graph] notice to the canvases of %s failed", workflow_id, exc_info=True)
     finally:

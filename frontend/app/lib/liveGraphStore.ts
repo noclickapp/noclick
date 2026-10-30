@@ -19,7 +19,7 @@ import type { Node, Edge, Node as XYFlowNode, Edge as XYFlowEdge } from '@xyflow
 import { valtioCache } from '~/lib/indexeddb';
 import { sendEvent, sendEventWithCallback } from '~/lib/socket-sender';
 import { onSocketEvent } from '~/lib/socket-receiver';
-import { serializeNodeForSave, serializeEdgeForSave, createWorkflowNode, applyNodeUpdate, rawConfigToPayload } from '~/lib/applyNodeUpdate';
+import { serializeNodeForSave, serializeEdgeForSave, createWorkflowNode, applyNodeUpdate, mergeServerNodes, rawConfigToPayload } from '~/lib/applyNodeUpdate';
 import { headlessBuilder } from '~/lib/headless-builder';
 import { activeGenStore } from '~/lib/activeGenStore';
 
@@ -63,9 +63,10 @@ interface GraphRecord {
     canvasMounted: boolean;
     // The viewer can only read this workflow (workflow:get's user_permission is view): it never saves.
     readOnly: boolean;
-    // Steps the canvas is fetching whole after a server write (a secret or an outsize setting the room held
-    // back): its saves wait for them, or they'd write the step as it was.
-    savesHeld: number;
+    // Steps the canvas holds only in part: a server write's room event held some of each back (a secret, an
+    // outsize setting) and the canvas hasn't read it whole. Every save names them, so the server keeps their
+    // settings as stored instead of writing the canvas's partial copy; a full load clears them.
+    partialNodeIds: Set<string>;
 
     // Save coordination. graphVersion is the server's optimistic-concurrency
     // token from the last workflow:get / save ack (null = unknown → save
@@ -119,7 +120,7 @@ export function createGraphRecord(
         dragging: false,
         canvasMounted: false,
         readOnly: false,
-        savesHeld: 0,
+        partialNodeIds: new Set(),
         dirty: false,
         saveTimer: null,
         graphVersion: null,
@@ -176,6 +177,7 @@ function buildPayload(rec: GraphRecord): {
     if (Object.keys(rec.variables).length > 0) {
         savePayload.variables = rec.variables;
     }
+    const partialNodeIds = Array.from(rec.partialNodeIds);
     const event: Record<string, unknown> = rec.isSkill
         ? {
             event_name: 'skill:update_workflow',
@@ -188,8 +190,40 @@ function buildPayload(rec: GraphRecord): {
             workflow_id: rec.workflowId,
             workflow_data: savePayload,
             ...(deletedNodeIds.length > 0 ? { deleted_node_ids: deletedNodeIds } : {}),
+            ...(partialNodeIds.length > 0 ? { partial_node_ids: partialNodeIds } : {}),
         };
     return { event, deletedNodeIds, savePayload };
+}
+
+type SavedGraph = { nodes?: Array<{ id?: string }>; edges?: Array<{ id?: string }> };
+
+/** The canvas's base: its last acked or loaded save (`lastSavedPayloadJson`), each step as saved by id and its
+ *  connections' ids; null before it has one. */
+function savedBase(rec: GraphRecord): { nodes: Map<string, string>; edges: Set<string> } | null {
+    if (!rec.lastSavedPayloadJson) return null;
+    const base: SavedGraph = JSON.parse(rec.lastSavedPayloadJson);
+    return {
+        nodes: new Map((base.nodes ?? []).filter((n) => n?.id).map((n) => [n.id as string, JSON.stringify(n)])),
+        edges: new Set((base.edges ?? []).filter((e) => e?.id).map((e) => e.id as string)),
+    };
+}
+
+/** What the canvas changed since its base: steps it added or changed, connections it added or removed. A
+ *  closing tab's save names them, so a workflow that moved on without it takes only these (its deleted steps
+ *  ride `deleted_node_ids`). */
+function changesSinceBase(rec: GraphRecord, savePayload: SavedGraph): {
+    steps: string[];
+    edges_added: string[];
+    edges_removed: string[];
+} {
+    const base = savedBase(rec) ?? { nodes: new Map<string, string>(), edges: new Set<string>() };
+    const nodes = (savePayload.nodes ?? []).filter((n) => n?.id);
+    const edges = new Set((savePayload.edges ?? []).filter((e) => e?.id).map((e) => e.id as string));
+    return {
+        steps: nodes.filter((n) => base.nodes.get(n.id as string) !== JSON.stringify(n)).map((n) => n.id as string),
+        edges_added: [...edges].filter((id) => !base.edges.has(id)),
+        edges_removed: [...base.edges].filter((id) => !edges.has(id)),
+    };
 }
 
 /** DB-shaped snapshot of the live canvas graph, for the brain to consume on a
@@ -220,7 +254,6 @@ function canSave(rec: GraphRecord): boolean {
     if (!isPersistableWorkflowId(rec.workflowId)) return false;
     if (!rec.loaded) return false;
     if (rec.readOnly) return false;
-    if (rec.savesHeld > 0) return false;
     if (rec.dragging) return false;
     if (headlessBuilder.isActive()) return false;
     // Snapshot is only fresh while the canvas is mounted and recording
@@ -247,45 +280,62 @@ function rawNodeToCanvasNode(raw: Record<string, unknown>): Node {
 
 /** Fold the server's current graph into the record after a CAS conflict.
  *
- *  Policy: LOCAL wins for shared ids (collab broadcasts / builder events
- *  already deliver other writers' edits into local state, so the local copy
- *  is the freshest view — and must not clobber what the user is typing);
- *  server-only entries are adopted UNLESS tombstoned (my pending delete, or
- *  a collaborator's delete whose save hasn't landed yet); local-only
- *  entries are kept (unsaved adds). The re-save that follows persists the
- *  merged result under the server's new version. */
+ *  Policy: what this canvas changed since its base (its last acked or loaded
+ *  save, `lastSavedPayloadJson`) wins: the user's own edits, steps and
+ *  connections they added. A step or connection it holds unchanged since
+ *  then is the server's: its copy is taken, and one the server no longer has
+ *  goes (another writer changed or removed it, maybe one whose changes never
+ *  reached this canvas: the builder's, MCP's or the platform's). With no
+ *  base, everything local wins. Server-only steps are adopted UNLESS
+ *  tombstoned (my pending delete, or a collaborator's delete whose save
+ *  hasn't landed yet), server-only connections unless removed here. The
+ *  re-save that follows persists the merged result under the server's new
+ *  version. */
 function rebaseFromServer(
     rec: GraphRecord,
     serverData: { nodes?: unknown[]; edges?: unknown[] } | null | undefined,
     serverVersion: number | null | undefined,
 ): void {
     if (typeof serverVersion === 'number') rec.graphVersion = serverVersion;
-    const rawNodes = (serverData?.nodes ?? []) as Record<string, unknown>[];
+    const rawNodes = ((serverData?.nodes ?? []) as Record<string, unknown>[])
+        .filter((raw) => typeof raw?.id === 'string' && raw.type);
     const rawEdges = (serverData?.edges ?? []) as Record<string, unknown>[];
-
-    const localNodeIds = new Set(rec.nodes.map(n => n.id));
+    const base = savedBase(rec);
+    const untouched = (node: Node) =>
+        base != null && base.nodes.get(node.id) === JSON.stringify(serializeNodeForSave(node));
     const dropped = (id: string) =>
         rec.deletedNodeIds.has(id) || rec.remoteDeletedNodeIds.has(id);
-    const addNodes: Node[] = [];
-    for (const raw of rawNodes) {
-        const id = raw?.id as string | undefined;
-        if (!id || !raw.type || localNodeIds.has(id) || dropped(id)) continue;
-        addNodes.push(rawNodeToCanvasNode(raw));
-        localNodeIds.add(id);
-    }
-    if (addNodes.length) rec.nodes = [...rec.nodes, ...addNodes];
 
-    const localEdgeIds = new Set(rec.edges.map(e => e.id));
-    const addEdges: Edge[] = [];
+    const serverNodes = new Map(rawNodes.map((raw) => [raw.id as string, raw]));
+    const nodes: Node[] = [];
+    for (const node of rec.nodes) {
+        const raw = serverNodes.get(node.id);
+        if (raw && untouched(node)) nodes.push(mergeServerNodes([rawNodeToCanvasNode(raw)], [node])[0]);
+        else if (raw || !untouched(node)) nodes.push(node);
+    }
+    const nodeIds = new Set(nodes.map((n) => n.id));
+    for (const raw of rawNodes) {
+        const id = raw.id as string;
+        if (nodeIds.has(id) || dropped(id)) continue;
+        nodes.push(rawNodeToCanvasNode(raw));
+        nodeIds.add(id);
+    }
+    rec.nodes = nodes;
+
+    const serverEdgeIds = new Set(rawEdges.map((raw) => raw?.id as string));
+    const edges = rec.edges.filter(
+        (e) => (serverEdgeIds.has(e.id) || !base?.edges.has(e.id)) && nodeIds.has(e.source) && nodeIds.has(e.target),
+    );
+    const edgeIds = new Set(edges.map((e) => e.id));
     for (const raw of rawEdges) {
         const id = raw?.id as string | undefined;
         const source = raw?.source as string | undefined;
         const target = raw?.target as string | undefined;
-        if (!id || !source || !target || localEdgeIds.has(id)) continue;
-        if (rec.remoteDeletedEdgeIds.has(id)) continue;
+        if (!id || !source || !target || edgeIds.has(id)) continue;
+        if (rec.remoteDeletedEdgeIds.has(id) || base?.edges.has(id)) continue;
         // An edge is only meaningful if both endpoints survived the merge.
-        if (!localNodeIds.has(source) || !localNodeIds.has(target)) continue;
-        addEdges.push({
+        if (!nodeIds.has(source) || !nodeIds.has(target)) continue;
+        edges.push({
             id,
             source,
             target,
@@ -293,16 +343,18 @@ function rebaseFromServer(
             ...(raw.targetHandle ? { targetHandle: raw.targetHandle } : {}),
         } as Edge);
     }
-    if (addEdges.length) rec.edges = [...rec.edges, ...addEdges];
+    rec.edges = edges;
 }
 
 function fireSave(rec: GraphRecord, opts?: { unconditional?: boolean }): void {
     if (!canSave(rec) || !rec.dirty) return;
 
     // Pagehide flush: the page is dying, so no ack/rebase cycle is possible.
-    // Send fire-and-forget WITHOUT the CAS guard (legacy last-write-wins for
-    // the final state) and ignore the in-flight latch — an in-flight save
-    // predates the last edits and must not swallow them.
+    // Send fire-and-forget, ignoring the in-flight latch (an in-flight save
+    // predates the last edits and must not swallow them), on the version this
+    // canvas last saw and naming what it changed since: a workflow that moved
+    // on without this tab takes only its own changes, never its stale copy of
+    // the rest.
     if (opts?.unconditional) {
         const { event, deletedNodeIds, savePayload } = buildPayload(rec);
         if (
@@ -313,6 +365,10 @@ function fireSave(rec: GraphRecord, opts?: { unconditional?: boolean }): void {
             return;
         }
         (event as { request_id: string }).request_id = crypto.randomUUID();
+        if (!rec.isSkill && rec.graphVersion != null) {
+            (event as Record<string, unknown>).expected_graph_version = rec.graphVersion;
+            (event as Record<string, unknown>).changes = changesSinceBase(rec, savePayload as SavedGraph);
+        }
         sendEvent(event as never);
         rec.dirty = false;
         return;
@@ -536,15 +592,19 @@ export function setGraphVersion(workflowId: string, version: number | null): voi
     if (typeof version === 'number') rec.graphVersion = version;
     rec.remoteDeletedNodeIds.clear();
     rec.remoteDeletedEdgeIds.clear();
+    // The load takes every step whole from the server.
+    rec.partialNodeIds.clear();
 }
 
 /** A server write the canvas applied from the workflow's room (its builder events, then
- *  `workflow:graph_changed`) is the server's state: the CAS base moves to the version it left, never back, so the
- *  canvas's next save carries the write instead of conflicting and rebasing over it. */
-export function adoptServerVersion(workflowId: string, version: number): void {
+ *  `workflow:graph_changed`) is the server's state: when the canvas was on the version the write was made on
+ *  (`base`), its CAS base moves to the version the write left, so its next save carries the write instead of
+ *  conflicting and rebasing over it. On any other base the canvas missed a write (one the room never carried, or
+ *  carried while it was away): it keeps its base, so its next save conflicts and rebases on what the server holds. */
+export function adoptServerVersion(workflowId: string, base: number, version: number): void {
     const rec = graphRecords[workflowId];
-    if (!rec || typeof version !== 'number') return;
-    if (rec.graphVersion == null || version > rec.graphVersion) rec.graphVersion = version;
+    if (!rec || typeof base !== 'number' || typeof version !== 'number') return;
+    if (rec.graphVersion === base) rec.graphVersion = version;
 }
 
 /** The viewer may only read this workflow: the canvas never saves it. */
@@ -554,17 +614,18 @@ export function setGraphReadOnly(workflowId: string, readOnly: boolean): void {
     rec.readOnly = readOnly;
 }
 
-/** Hold the canvas's saves while it fetches a step whole after a server write; `releaseSaves` lets them go. */
-export function holdSaves(workflowId: string): void {
-    const rec = graphRecords[workflowId];
-    if (rec) rec.savesHeld += 1;
+export function isGraphReadOnly(workflowId: string): boolean {
+    return graphRecords[workflowId]?.readOnly ?? false;
 }
 
-export function releaseSaves(workflowId: string): void {
-    const rec = graphRecords[workflowId];
-    if (!rec || rec.savesHeld === 0) return;
-    rec.savesHeld -= 1;
-    if (rec.savesHeld === 0 && rec.dirty) scheduleSave(rec);
+/** The canvas holds this step only in part (the room held some of it back) until `markStepWhole`: its saves
+ *  keep the step's settings as stored meanwhile, the closing tab's last one included. */
+export function markStepPartial(workflowId: string, nodeId: string): void {
+    graphRecords[workflowId]?.partialNodeIds.add(nodeId);
+}
+
+export function markStepWhole(workflowId: string, nodeId: string): void {
+    graphRecords[workflowId]?.partialNodeIds.delete(nodeId);
 }
 
 /** Snapshot the record's current content as the no-op-save baseline. Called
@@ -971,7 +1032,7 @@ function wire(): void {
     // also checking byWorkflow as a fallback.
     // A server write's notice in the workflow's room, after the builder events the canvas applied.
     onSocketEvent('workflow:graph_changed', (data) => {
-        if (data?.workflow_id && typeof data.version === 'number') adoptServerVersion(data.workflow_id, data.version);
+        if (data?.workflow_id) adoptServerVersion(data.workflow_id, data.base_version, data.version);
     });
 
     onSocketEvent('active_gen:terminal' as never, ((data: { gen_id?: string }) => {

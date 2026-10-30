@@ -11,11 +11,16 @@ import { Node, Edge } from '@xyflow/react';
 import { applyNodeUpdate, createWorkflowNode, updateNodeInList, rawConfigToPayload } from '~/lib/applyNodeUpdate';
 import { onSocketEvent } from '~/lib/socket-receiver';
 import { sendEventAsync } from '~/lib/socket-sender';
-import { holdSaves, releaseSaves } from '~/lib/liveGraphStore';
+import { markStepPartial, markStepWhole } from '~/lib/liveGraphStore';
 // Node dimensions come from the serialized icon singleton (dashboard loader), not
 // the registry — this hook runs always-mounted via useMCPNavigation, so importing
 // the registry here would pull its ~4.7MB component graph into the dashboard bundle.
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
+
+// A step the room held part of back is read whole this many times (waiting longer each time) before the canvas
+// leaves it partial: its saves keep the step as stored meanwhile, and the next full load brings it whole.
+export const FETCH_WHOLE_TRIES = 3;
+const FETCH_WHOLE_BACKOFF_MS = 2000;
 
 interface MCPBuilderEvent {
     workflow_id: string;
@@ -48,22 +53,30 @@ export function useMCPBuilderEvents({
     }, [setNodes]);
 
     // A step the graph service's room event held part of back (a secret, an outsize setting): read it whole
-    // through the canvas's own authorized read, the canvas's saves held until it has, so none writes it as it was.
+    // through the canvas's own authorized read. Until it has, the canvas holds it in part, and every save (a
+    // closing tab's too) keeps it as stored rather than writing it blank or as it was.
     const fetchWhole = useCallback(async (nodeId: string) => {
         if (!workflowId) return;
-        holdSaves(workflowId);
-        try {
-            const resp = (await sendEventAsync({
-                event_name: 'workflow:node:get_config',
-                workflow_id: workflowId,
-                node_id: nodeId,
-            } as never)) as { config?: Record<string, unknown> } | null;
-            const config = resp?.config;
-            if (config) setNodes(curr => updateNodeInList(curr, nodeId, rawConfigToPayload(config)));
-        } catch (e) {
-            console.error('[useMCPBuilderEvents] reading a step whole failed:', e);
-        } finally {
-            releaseSaves(workflowId);
+        markStepPartial(workflowId, nodeId);
+        for (let attempt = 1; attempt <= FETCH_WHOLE_TRIES; attempt++) {
+            try {
+                const resp = (await sendEventAsync({
+                    event_name: 'workflow:node:get_config',
+                    workflow_id: workflowId,
+                    node_id: nodeId,
+                } as never)) as { config?: Record<string, unknown> } | null;
+                const config = resp?.config;
+                if (!config) return;
+                setNodes(curr => updateNodeInList(curr, nodeId, rawConfigToPayload(config)));
+                markStepWhole(workflowId, nodeId);
+                return;
+            } catch (e) {
+                if (attempt === FETCH_WHOLE_TRIES) {
+                    console.error('[useMCPBuilderEvents] reading a step whole failed; it stays as stored:', e);
+                    return;
+                }
+                await new Promise(resolve => setTimeout(resolve, FETCH_WHOLE_BACKOFF_MS * attempt));
+            }
         }
     }, [workflowId, setNodes]);
 

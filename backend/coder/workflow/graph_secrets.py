@@ -10,7 +10,8 @@ name holding ``header`` whose schema isn't known. Of a workflow's own settings
 
 ``withhold`` gives a step's settings without them and the path of each (``headers[0].value``, ``auth.password``);
 ``keep_withheld`` puts the stored ones back into settings a write sends without them: a row is matched by its
-name, any other list item by its place, and a value the write does send replaces the stored one.
+name and any other list item by its ``id``, never by its place (a removed item's secret would land in the next
+one), and a value the write does send replaces the stored one.
 """
 
 from __future__ import annotations
@@ -92,8 +93,15 @@ def _shape(schema: Any, defs: Dict[str, Any], value: Any) -> Optional[Dict[str, 
     return None
 
 
-# A place in settings: a key, a row by its name (``("row", name)``) or a list item by its place.
+# A place in settings: a key, a row by its name (``("row", name)``), a list item by its id (``("id", id)``) or,
+# for one with neither, by its place (withheld, never put back).
 Step = Any
+
+
+def _item_id(item: Any) -> Any:
+    """A list item's own id, else None."""
+    found = item.get("id") if isinstance(item, dict) else None
+    return found if isinstance(found, (str, int)) and not isinstance(found, bool) else None
 
 
 def _secrets(value: Any, schema: Any, defs: Dict[str, Any], shown: str,
@@ -108,7 +116,8 @@ def _secrets(value: Any, schema: Any, defs: Dict[str, Any], shown: str,
                 if is_secret_name(name):
                     yield f"{shown}[{i}].value", (*at, ("row", name.strip().lower()), "value")
                 continue
-            yield from _secrets(row, items, defs, f"{shown}[{i}]", (*at, i))
+            own = _item_id(row)
+            yield from _secrets(row, items, defs, f"{shown}[{i}]", (*at, i if own is None else ("id", own)))
         return
     if not isinstance(value, dict):
         return
@@ -153,8 +162,7 @@ def _parent(root: Any, at: Tuple[Step, ...]) -> Tuple[Any, Step]:
     node = root
     for step in at[:-1]:
         if isinstance(step, tuple):
-            node = next((r for r in node if (_row_name(r) or "").strip().lower() == step[1]), None) \
-                if isinstance(node, list) else None
+            node = next((r for r in node if _matches(r, step)), None) if isinstance(node, list) else None
         elif isinstance(step, int):
             node = node[step] if isinstance(node, list) and step < len(node) else None
         else:
@@ -162,6 +170,11 @@ def _parent(root: Any, at: Tuple[Step, ...]) -> Tuple[Any, Step]:
         if node is None:
             return None, None
     return node, at[-1]
+
+
+def _matches(item: Any, step: Tuple[str, Any]) -> bool:
+    kind, value = step
+    return _item_id(item) == value if kind == "id" else (_row_name(item) or "").strip().lower() == value
 
 
 def withhold(settings: Dict[str, Any], kind: Optional[str],
@@ -181,8 +194,11 @@ def withhold(settings: Dict[str, Any], kind: Optional[str],
 
 def keep_withheld(stored: Dict[str, Any], written: Dict[str, Any], kind: Optional[str],
                   operation: Optional[str]) -> Dict[str, Any]:
-    """``written`` with each of ``stored``'s secrets it leaves out put back (in place), where its place still is."""
+    """``written`` with each of ``stored``'s secrets it leaves out put back (in place), where its place still is:
+    never into a list item known only by its place."""
     for _, at in _found(stored, kind, operation):
+        if any(isinstance(step, int) for step in at):
+            continue
         parent, last = _parent(written, at)
         if isinstance(parent, dict) and last not in parent:
             source, _ = _parent(stored, at)
