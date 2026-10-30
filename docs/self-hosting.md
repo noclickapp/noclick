@@ -423,12 +423,11 @@ process is running.
 
 **Inbound email.** Disabled and hidden by default. Set `INBOUND_EMAIL_DOMAIN`
 on the backend and `VITE_INBOUND_EMAIL_DOMAIN` when building the frontend, plus
-`EMAIL_RELAY_SECRET`; configure an email provider for that domain to POST
-inbound mail to your backend's `/email/inbound` route. No address is minted
-until these values are configured. Outbound workflow notifications and replies
-use the operator's Resend account; set `RESEND_API_KEY` and a verified
-`FROM_EMAIL`. Inbound triggering still works without those variables, while
-outbound sends fail closed.
+`EMAIL_RELAY_SECRET` (the relay authenticates with it); configure an email
+provider for that domain to POST inbound mail to your backend's
+`/email/inbound` route. No address is minted until these values are
+configured. Replies leave through the [outbound email](#outbound-email)
+transport: inbound triggering works without one, while replies fail closed.
 
 **Discord app events.** Discord must be able to reach the backend route that
 receives registered app-event webhooks. Set `APP_WEBHOOK_BASE_URL` to the
@@ -496,7 +495,7 @@ in the environment: `WHATSAPP_CLOUD_API_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`,
 | Variable                        | Enables                                                                                                                                                      |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `REDIS_URL`                     | Caching for OAuth state and UI state, and texting the assistant, which needs it. Everything else works without it, slightly slower.                          |
-| `SMTP_HOST` … + `FROM_EMAIL`    | Outbound email (the Send Email node, agent updates, run-failure and credential alerts, invites) through your SMTP server. Also settable in the app. See below. |
+| `SMTP_HOST` … + `FROM_EMAIL`    | Outbound email (the Send Email node, agent updates, run-failure and credential alerts, invites) through your SMTP server, with `EMAIL_RELAY_SECRET` set. Also settable in the app. See below. |
 | `RESEND_API_KEY` + `FROM_EMAIL` | The same, through [Resend](https://resend.com) instead of SMTP. Environment only.                                                                             |
 | `APIFY_API_TOKEN`               | LinkedIn and Instagram scraping operations, which run on Apify. Also settable in the app. See below.                                                          |
 | `EXA_API_KEY`, `PERPLEXITY_API_KEY` | Instance-wide keys for Exa and Perplexity nodes, so users need no credential of their own. Also settable in the app.                                    |
@@ -537,6 +536,13 @@ FROM_EMAIL="NoClick <noclick@yourdomain.com>"
 RESEND_API_KEY=re_...
 FROM_EMAIL=noclick@yourdomain.com   # a domain verified in Resend
 ```
+
+Each email carries a signed one-click link that turns it off (the Send Email
+step, an agent's updates, an alert's category), and an agent's update a
+reply address. Both are signed with `EMAIL_RELAY_SECRET`, so mail fails
+without it. The Compose stack and `make local` generate it; on any other
+deployment set it to a long random string (`openssl rand -hex 32`) and keep
+it: changing it breaks the links in emails already sent.
 
 Environment values take precedence over anything saved in the app.
 Settings → Notifications lets each user choose which alerts they get;
@@ -586,9 +592,11 @@ Running `make local` generates and wires everything above for a local install:
 
 - Starts a local Supabase and applies migrations.
 - Generates `WORKFLOW_JWT_SECRET`, `CREDENTIALS_ENCRYPTION_KEY`,
-  `SESSION_SECRET` and a cron secret into `.noclick/local.env`, reusing them on
-  later runs. **Keep that file** — it holds your credential encryption key.
-- Points storage at the local Supabase bucket, webhooks at your local backend,
+  `SESSION_SECRET`, `EMAIL_RELAY_SECRET` and a cron secret into
+  `.noclick/local.env`, reusing them on later runs. **Keep that file** — it
+  holds your credential encryption key.
+- Points storage at the local Supabase bucket (signed for the region its CLI
+  serves), webhooks at your local backend,
   and the frontend at both.
 - Sets `NOCLICK_LOCAL=1`.
 

@@ -105,7 +105,9 @@ def apply_migrations() -> None:
 
 def local_secrets() -> dict:
     """Generate once, reuse forever — WORKFLOW_JWT_SECRET signs collab tokens,
-    CRON_SCHEDULER_SECRET guards the in-process scheduler API."""
+    CRON_SCHEDULER_SECRET guards the in-process scheduler API, EMAIL_RELAY_SECRET
+    signs the disable links in the emails NoClick sends (an old email's link must
+    keep working) and the reply tokens of inbound mail."""
     STATE_DIR.mkdir(parents=True, exist_ok=True)
     stored: dict = {}
     if SECRETS_FILE.exists():
@@ -114,7 +116,7 @@ def local_secrets() -> dict:
                 key, _, value = line.partition("=")
                 stored[key.strip()] = value.strip()
     changed = False
-    for key in ("WORKFLOW_JWT_SECRET", "CRON_SCHEDULER_SECRET", "SESSION_SECRET"):
+    for key in ("WORKFLOW_JWT_SECRET", "CRON_SCHEDULER_SECRET", "SESSION_SECRET", "EMAIL_RELAY_SECRET"):
         if not stored.get(key):
             stored[key] = secrets.token_urlsafe(48)
             changed = True
@@ -187,6 +189,7 @@ def compose_backend_env(sb: dict, sec: dict) -> dict:
         "MCP_BASE_URL": API_URL,
         # Credential encryption at rest (Fernet; losing it orphans credentials).
         "CREDENTIALS_ENCRYPTION_KEY": sec["CREDENTIALS_ENCRYPTION_KEY"],
+        "EMAIL_RELAY_SECRET": sec["EMAIL_RELAY_SECRET"],
     }
     # Media/CAS storage: Supabase Storage's S3-compatible endpoint through the
     # shared object-store client. Older CLIs don't expose S3 credentials —
@@ -198,7 +201,8 @@ def compose_backend_env(sb: dict, sec: dict) -> dict:
             "OBJECT_STORAGE_ENDPOINT": f"{sb['API_URL']}/storage/v1/s3",
             "OBJECT_STORAGE_ACCESS_KEY_ID": s3_key,
             "OBJECT_STORAGE_SECRET_ACCESS_KEY": s3_secret,
-            "OBJECT_STORAGE_REGION": "us-east-1",
+            # Storage refuses a URL signed for any region but the one it serves ("local").
+            "OBJECT_STORAGE_REGION": sb["S3_PROTOCOL_REGION"],
         })
     else:
         print("⚠ Supabase CLI exposes no S3 credentials — file/media uploads will be unavailable.")

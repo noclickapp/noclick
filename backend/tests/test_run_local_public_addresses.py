@@ -9,7 +9,7 @@ SCRIPT = Path(__file__).parents[1] / "scripts" / "run_local.py"
 SUPABASE = {"API_URL": "http://127.0.0.1:54321", "DB_URL": "postgresql://local", "JWT_SECRET": "jwt",
             "ANON_KEY": "anon", "SERVICE_ROLE_KEY": "service"}
 SECRETS = {"WORKFLOW_JWT_SECRET": "w", "CRON_SCHEDULER_SECRET": "c", "SESSION_SECRET": "s",
-           "CREDENTIALS_ENCRYPTION_KEY": "k"}
+           "CREDENTIALS_ENCRYPTION_KEY": "k", "EMAIL_RELAY_SECRET": "e"}
 
 
 def _run_local(monkeypatch, **env):

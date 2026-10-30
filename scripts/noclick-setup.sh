@@ -146,6 +146,8 @@ INVITE_FROM_EMAIL=
 # Inbound workflow addresses and agent email replies stay hidden until you own
 # a domain whose provider forwards mail to this instance's /email/inbound route.
 INBOUND_EMAIL_DOMAIN=
+# Signs every email's disable link and inbound mail; left empty, the instance
+# generates one and keeps it.
 EMAIL_RELAY_SECRET=
 
 # Close registration once the accounts you want exist.
