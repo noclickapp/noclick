@@ -489,6 +489,9 @@ def describe_unresolved_reference(
     if ref.reason == "null":
         what = f"'{key}' is null" if key else "the value is null"
         return f"{detail}: in node '{node_id}' output {what}"
+    if key and isinstance(output, dict) and key in output:
+        # The key is there: the read ran out further in.
+        return f"{detail}: node '{node_id}' output's '{key}' holds nothing there ({_output_keys_summary(output[key])})"
     what = f"has no key '{key}'" if key else "has no such value"
     return f"{detail}: node '{node_id}' output {what} ({_output_keys_summary(output)})"
 

@@ -119,6 +119,19 @@ def test_describe_explains_a_manual_runs_no_event_placeholder():
     assert "has no live event in this run" in msg and "real message/webhook" in msg
 
 
+def test_describe_says_where_a_deeper_read_ran_out():
+    """An agent's reply read as $('a').response.body, with `response` plain text, said the output "has no key
+    'response'" while listing `response` among its keys, and the fix that followed kept reading `.response.body`."""
+    agent = {"type": "agent", "status": "completed", "response": "1. A story", "model": "m"}
+    msg = describe_unresolved_reference(UnresolvedReference("body", "$('a').response.body", "undefined"),
+                                        {"a": agent})
+    assert msg == ("{{ $('a').response.body }} resolved to nothing: node 'a' output's 'response' holds nothing "
+                   "there (it is a str value)")
+    nested = {"payload": {"from": "x", "body": "hi"}}
+    assert describe_unresolved_reference(UnresolvedReference("to", "$('t').payload.chat_id", "undefined"),
+                                         {"t": nested}).endswith("(its top-level keys are: from, body)")
+
+
 def test_describe_clips_long_key_lists_and_handles_non_objects():
     wide = {f"k{i}": i for i in range(20)}
     msg = describe_unresolved_reference(UnresolvedReference("f", "$('t').zz", "undefined"), {"t": wide})
