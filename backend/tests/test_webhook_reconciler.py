@@ -196,6 +196,31 @@ async def test_fingerprint_field_change_reregisters(world):
     _assert_invariant(world)
 
 
+async def test_a_config_that_cant_activate_is_torn_down_and_says_why(world):
+    """A field edit (or a restore) whose config can't activate (the readiness check registration runs refuses it):
+    the earlier registration is torn down, the step says why, and the refusal still reaches the caller."""
+    from utils.workflow_readiness import WorkflowNotReadyError
+
+    world.set_node("on_issue_closed", repository="o/r")
+    await _reconcile(world)
+    world.set_node("on_issue_closed", repository="o/other")
+    patches = []
+
+    async def refuse(*args, **kwargs):
+        raise WorkflowNotReadyError("Finish setup before activation: Issues: Repository is required")
+
+    async def mirror(pool, wf, node_id, values):
+        patches.append(values)
+
+    with patch.object(world, "register_single", refuse), \
+            patch.object(WebhookManager, "merge_node_config_patch", AsyncMock(side_effect=mirror)):
+        with pytest.raises(WorkflowNotReadyError):
+            await _reconcile(world)
+    assert world.provider == {} and world.row["is_active"] is False
+    assert patches == [{"trigger_registered": False,
+                        "trigger_error": "Finish setup before activation: Issues: Repository is required"}]
+
+
 async def test_switch_to_action_operation_deregisters(world):
     world.set_node("on_issue_closed")
     await _reconcile(world)

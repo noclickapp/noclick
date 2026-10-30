@@ -218,6 +218,29 @@ async def test_reconcile_waits_for_downstream_setup_and_registers_after_repair(w
     assert {r["event_type"] for r in world.rows} == {"app_mention"}
 
 
+async def test_a_config_that_cant_activate_tears_down_live_rows_and_says_why(world):
+    """A change (an edit, a restore) whose config can't activate: the subscriptions an earlier config registered stop
+    fanning out to the step, and it says why. Rows that match the config stay (the fast path), and an unresolvable
+    credential keeps them (above): only NoClick's own refusal tears down."""
+    world.set_node("on_channel_message")
+    world.seed_rows(["app_mention"])
+    world.nodes.append({"id": "agent", "type": "agent", "config": {
+        "model": "claude-code", "temperature": 3,
+        "credentialIds": {"agent_claude_code_oauth": "saved-account"},
+    }})
+    world.edges = [{"source": NODE, "target": "agent"}]
+    patches = []
+
+    async def mirror(pool, wf, node_id, values):
+        patches.append(values)
+
+    with patch.object(WebhookManager, "merge_node_config_patch", AsyncMock(side_effect=mirror)):
+        result = await _reconcile(world)
+    assert result["state"] == "deregistered" and world.rows == []
+    assert result["error"].startswith("Finish setup before activation")
+    assert patches[-1]["trigger_registered"] is False and patches[-1]["trigger_error"] == result["error"]
+
+
 # ─── headless provisioning (builder / MCP) ───────────────────────────────────
 
 

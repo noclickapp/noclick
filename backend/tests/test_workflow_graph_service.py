@@ -1167,6 +1167,102 @@ class TestReconcileThroughTheService:
         assert registry["registered"] == [["hook2"]]
 
 
+class TestASchedulesConfigThatCantRun:
+    """A schedule exists only for a config that can run: when a restore or an edit leaves a schedule trigger's saved
+    config unable to activate, its reconcile takes the schedule an earlier config registered down and the step says
+    why (``trigger_error``). Through the real reconcile, schedule arm and registration chokepoint, against a fake
+    scheduler at its client's edge; a refusal NoClick can't judge (a database error) takes nothing down."""
+
+    AT_8 = {"schedules": [{"frequency": "day", "hour": 8, "minute": 0}], "timezone": "UTC"}
+    RUNS = {"schedules": [{"frequency": "day", "hour": 9, "minute": 0}], "timezone": "UTC"}
+    # A frequency the node's model refuses, which its schedule spec still reads (as hourly): only activation judges it.
+    CANT_RUN = {"schedules": [{"frequency": "daily", "hour": 10}]}
+    # What the restore in the 10-30 production check brought back: a legacy ``schedule`` the model refuses the same way.
+    LEGACY = {"schedule": {"frequency": "daily", "time": "08:00"}, "timezone": "UTC"}
+
+    @pytest.fixture
+    def scheduler(self, monkeypatch):
+        """The scheduler's live schedules, by id: what ``register_node_schedules`` upserts and prunes."""
+        live = {}
+
+        async def create_schedule(*, user_id, workflow_id, node_id, cron_expression, webhook_url, payload=None,
+                                  timezone="UTC", schedule_id=None, **kwargs):
+            live[schedule_id] = {"workflow_id": str(workflow_id), "node_id": node_id, "cron": cron_expression}
+            return {"id": schedule_id, "next_run": "2026-11-01T09:00:00Z"}
+
+        async def delete_schedules_for_nodes(workflow_id, node_ids, keep_ids=None, timeout=10.0):
+            gone = [i for i, s in live.items() if s["workflow_id"] == str(workflow_id) and s["node_id"] in node_ids
+                    and i not in (keep_ids or ())]
+            for i in gone:
+                live.pop(i)
+            return {"deleted": len(gone)}
+
+        async def get_schedule(schedule_id, timeout=10.0):
+            return {"next_run": "2026-11-01T09:00:00Z"} if schedule_id in live else {"error": "not found"}
+
+        monkeypatch.setattr("utils.cron_scheduler_client.is_cron_scheduler_enabled", lambda: True)
+        monkeypatch.setattr("utils.cron_scheduler_client.create_schedule", create_schedule)
+        monkeypatch.setattr("utils.cron_scheduler_client.delete_schedules_for_nodes", delete_schedules_for_nodes)
+        monkeypatch.setattr("utils.cron_scheduler_client.get_schedule", get_schedule)
+        monkeypatch.setattr("utils.webhook_delivery.relay_in_use", lambda: False)
+        monkeypatch.setattr("utils.webhook_delivery.get_webhook_url", lambda key: f"https://hooks.example/{key}")
+        return live
+
+    def _graph(self, cron):
+        return {"nodes": [node("cron", "trigger-cron", label="Every morning", **cron),
+                          node("log", "log", label="Log", message="done")],
+                "edges": [{"id": "cron-log", "source": "cron", "target": "log"}]}
+
+    async def _cron(self, db, workflow_id):
+        row = await _graph(db, workflow_id)
+        return next(n for n in row["workflow"]["nodes"] if n["id"] == "cron")["config"]
+
+    async def _registered(self, db, scheduler, workflow_id):
+        """Live once an edit makes the trigger's config one that runs."""
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "cron", "settings": {"schedule": None,
+                                                                                        **self.RUNS}}])
+        cron = await self._cron(db, workflow_id)
+        assert [s["node_id"] for s in scheduler.values()] == ["cron"]
+        assert cron["schedule_id"] in scheduler and cron["trigger_registered"] is True and not cron.get("trigger_error")
+
+    async def _taken_down(self, db, scheduler, workflow_id):
+        cron = await self._cron(db, workflow_id)
+        assert scheduler == {}
+        assert cron["trigger_error"].startswith("Finish setup before activation")
+        assert (cron.get("schedule_id"), cron.get("next_run"), cron["trigger_registered"]) == (None, None, False)
+        assert await db.fetchval("SELECT is_active FROM webhooks WHERE workflow_id = $1::uuid AND node_id = 'cron'",
+                                 workflow_id) is False
+        assert await db.fetchval("SELECT count(*) FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid "
+                                 "AND status <> 'done'", workflow_id) == 0
+
+    async def test_an_edit_that_leaves_it_unable_to_run_takes_its_schedule_down(self, db, told, scheduler):
+        workflow_id = await _workflow(db, self._graph(self.AT_8))
+        await self._registered(db, scheduler, workflow_id)
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "cron", "settings": self.CANT_RUN}])
+        await self._taken_down(db, scheduler, workflow_id)
+        # Made runnable again, it's registered again and the reason goes.
+        await self._registered(db, scheduler, workflow_id)
+
+    async def test_a_restore_of_a_version_that_cant_run_takes_its_schedule_down(self, db, told, scheduler):
+        workflow_id = await _workflow(db, self._graph(self.LEGACY))
+        await self._registered(db, scheduler, workflow_id)
+        await _restore(db, workflow_id, 1)
+        await self._taken_down(db, scheduler, workflow_id)
+
+    async def test_a_refusal_it_cant_judge_takes_nothing_down(self, db, told, scheduler, monkeypatch):
+        workflow_id = await _workflow(db, self._graph(self.AT_8))
+        await self._registered(db, scheduler, workflow_id)
+
+        async def unreadable(pool, workflow_id, node_id):
+            raise ConnectionError("the database didn't answer")
+
+        monkeypatch.setattr("utils.workflow_readiness.require_activation_ready", unreadable)
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "cron", "settings": self.CANT_RUN}])
+        cron = await self._cron(db, workflow_id)
+        assert [s["node_id"] for s in scheduler.values()] == ["cron"] and not cron.get("trigger_error")
+        assert cron["trigger_registered"] is True
+
+
 class TestTheCanvasSave:
     def _handler(self, db, user=OWNER):
         from wss.handlers.workflow_handler import WorkflowHandler

@@ -1303,6 +1303,7 @@ class WebhookManager:
         from nodes.core.registry import NODE_REGISTRY
         from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
         from utils.credentials import extract_credential_ids
+        from utils.workflow_readiness import WorkflowNotReadyError
 
         wf_uuid = UUID(workflow_id) if isinstance(workflow_id, str) else workflow_id
 
@@ -1476,36 +1477,47 @@ class WebhookManager:
                     org_id=org_id,
                 )
 
-            if loader_registered:
-                values = await WebhookManager._provision_node_webhook(
-                    pool, user_id=user_id or owner_id, workflow_id=wf_uuid, node_id=node_id,
-                    node_type=node_type, operation=current_op, config=node_config,
-                ) or {}
-                await WebhookManager.merge_node_config_patch(pool, wf_uuid, node_id, values)
+            try:
+                if loader_registered:
+                    values = await WebhookManager._provision_node_webhook(
+                        pool, user_id=user_id or owner_id, workflow_id=wf_uuid, node_id=node_id,
+                        node_type=node_type, operation=current_op, config=node_config,
+                    ) or {}
+                    await WebhookManager.merge_node_config_patch(pool, wf_uuid, node_id, values)
+                    return {
+                        "state": "registered" if values.get("trigger_registered") is True else "failed",
+                        "fingerprint": desired_fp,
+                    }
+
+                cred_ids = extract_credential_ids(node_config)
+                if not cred_ids and isinstance(node.get("data"), dict):
+                    cred_ids = extract_credential_ids(node["data"])
+                credential = await node_class._resolve_trigger_credential(
+                    pool, owner_id, cred_ids
+                )
+                if not credential:
+                    return {"state": "unregistered", "error": "credential unavailable"}
+
+                ok = await WebhookManager._register_single_node(
+                    pool, wf_uuid=wf_uuid, user_id=user_id or owner_id,
+                    node_class=node_class, node_type=node_type, node_id=node_id,
+                    node_config=node_config, credential=credential,
+                    credential_id=credential_id, current_op=current_op,
+                )
                 return {
-                    "state": "registered" if values.get("trigger_registered") is True else "failed",
+                    "state": "registered" if ok else "failed",
                     "fingerprint": desired_fp,
                 }
-
-            cred_ids = extract_credential_ids(node_config)
-            if not cred_ids and isinstance(node.get("data"), dict):
-                cred_ids = extract_credential_ids(node["data"])
-            credential = await node_class._resolve_trigger_credential(
-                pool, owner_id, cred_ids
-            )
-            if not credential:
-                return {"state": "unregistered", "error": "credential unavailable"}
-
-            ok = await WebhookManager._register_single_node(
-                pool, wf_uuid=wf_uuid, user_id=user_id or owner_id,
-                node_class=node_class, node_type=node_type, node_id=node_id,
-                node_config=node_config, credential=credential,
-                credential_id=credential_id, current_op=current_op,
-            )
-            return {
-                "state": "registered" if ok else "failed",
-                "fingerprint": desired_fp,
-            }
+            except WorkflowNotReadyError as refused:
+                # The saved config can't activate: the registration an earlier
+                # config made was torn down above, and the step says why. The
+                # refusal still reaches the caller.
+                if row and row["registered_operation"]:
+                    await WebhookManager.merge_node_config_patch(
+                        pool, wf_uuid, node_id,
+                        {"trigger_registered": False, "trigger_error": str(refused)},
+                    )
+                raise
         finally:
             if have_lock and redis is not None:
                 try:
@@ -1583,8 +1595,9 @@ class WebhookManager:
         if not credential:
             return {"state": "unregistered", "error": "credential unavailable"}
 
+        from utils.workflow_readiness import WorkflowNotReadyError, require_activation_ready
+
         try:
-            from utils.workflow_readiness import require_activation_ready
             await require_activation_ready(pool, wf_uuid, node_id)
             mirrors = await node_class.register_and_describe(
                 pool,
@@ -1596,6 +1609,21 @@ class WebhookManager:
                 credential=credential,
                 config=node_config,
             )
+        except WorkflowNotReadyError as refused:
+            # The saved config can't activate (a restore or an edit made it
+            # unrunnable): the subscriptions an earlier config registered stop
+            # fanning out to it, and the step says why.
+            if rows:
+                await node_class.cleanup_external_webhook(
+                    pool, str(wf_uuid), node_id, node_config, None
+                )
+            await WebhookManager.merge_node_config_patch(
+                pool, wf_uuid, node_id,
+                {"trigger_registered": False, "trigger_error": str(refused),
+                 "subscription_status": f"⚠ Not registered: {refused}",
+                 "trigger_action": None},
+            )
+            return {"state": "deregistered" if rows else "failed", "error": str(refused)}
         except Exception as e:
             logger.warning(
                 f"[WEBHOOK] App-event registration failed for "
@@ -1676,10 +1704,10 @@ class WebhookManager:
         """
         from utils.async_helpers import spawn
         from utils.cron_scheduler_client import (
-            delete_schedules_for_nodes,
             is_cron_scheduler_enabled,
             register_node_schedules,
         )
+        from utils.workflow_readiness import WorkflowNotReadyError
 
         spec = None
         if node is not None:
@@ -1714,41 +1742,10 @@ class WebhookManager:
             # can't judge, so never tear down (local dev without the CF scheduler).
             if spec is not None and not is_cron_scheduler_enabled():
                 return {"state": "noop"}
-            # Prune only when something suggests schedules may exist —
-            # a family-registered row or legacy config mirrors — so sweep
-            # passes over converged nodes stay Cloudflare-free.
-            may_have_schedules = bool(
-                (row and row["registered_operation"])
-                or node_config.get("schedule_id")
-                or node_config.get("next_run")
-                or node_config.get("trigger_registered")
+            return await WebhookManager._unschedule(
+                pool, wf_uuid, node_id, node=node, node_config=node_config, row=row, paused=paused,
+                error=f"Schedule not registered: {spec.config_error}" if spec and spec.config_error else None,
             )
-            if not may_have_schedules:
-                return {"state": "noop"}
-            try:
-                await delete_schedules_for_nodes(str(wf_uuid), [node_id])
-            except Exception as e:
-                logger.warning(
-                    f"[WEBHOOK] Schedule prune failed for {node_id}: {e}"
-                )
-                return {"state": "failed", "error": str(e)}
-            if row and row["registered_operation"]:
-                await WebhookManager.deactivate_webhook(
-                    pool, str(wf_uuid), node_id, clear_registration=False,
-                )
-            teardown_values = {
-                "schedule_id": None, "next_run": None,
-                "trigger_registered": False,
-                "trigger_error": (
-                    f"Schedule not registered: {spec.config_error}"
-                    if spec and spec.config_error else None
-                ),
-            }
-            if node is not None:
-                await WebhookManager.merge_node_config_patch(
-                    pool, wf_uuid, node_id, teardown_values
-                )
-            return {"state": "deregistered", "paused": paused, "values": teardown_values}
 
         scope = node_class.schedule_poll_scope(node_config)
         credential_id = _extract_node_credential_id(node, node_config)
@@ -1768,9 +1765,20 @@ class WebhookManager:
                 result["values"] = refreshed
             return result
 
-        webhook = await WebhookManager.get_or_create_webhook(
-            pool, user_id or owner_id, wf_uuid, node_id
-        )
+        try:
+            webhook = await WebhookManager.get_or_create_webhook(
+                pool, user_id or owner_id, wf_uuid, node_id
+            )
+        except WorkflowNotReadyError as refused:
+            # The saved config can't activate (a restore or an edit made it
+            # unrunnable): a schedule an earlier config registered doesn't stay
+            # live, and the step says why. The refusal still reaches the caller.
+            if is_cron_scheduler_enabled():
+                await WebhookManager._unschedule(
+                    pool, wf_uuid, node_id, node=node, node_config=node_config, row=row, paused=False,
+                    error=str(refused),
+                )
+            raise
         webhook_url = webhook.get("webhook_url")
         if not (is_cron_scheduler_enabled() and webhook_url):
             return {"state": "noop"}
@@ -1822,6 +1830,48 @@ class WebhookManager:
             name=f"schedule-arm:{node_id}",
         )
         return {"state": "registered", "fingerprint": desired_fp, "values": values}
+
+    @staticmethod
+    async def _unschedule(
+        pool, wf_uuid, node_id: str, *, node: Optional[Dict[str, Any]], node_config: Dict[str, Any],
+        row, paused: bool, error: Optional[str],
+    ) -> Dict[str, Any]:
+        """The schedule arm's teardown: prune the node's schedules and mirror
+        that it has none, with ``error`` (why it can't run) as its
+        ``trigger_error``. Only when something suggests schedules may exist
+        (a family-registered row or legacy config mirrors), so sweep passes
+        over converged nodes stay Cloudflare-free."""
+        from utils.cron_scheduler_client import delete_schedules_for_nodes
+
+        may_have_schedules = bool(
+            (row and row["registered_operation"])
+            or node_config.get("schedule_id")
+            or node_config.get("next_run")
+            or node_config.get("trigger_registered")
+        )
+        if not may_have_schedules:
+            return {"state": "noop"}
+        try:
+            await delete_schedules_for_nodes(str(wf_uuid), [node_id])
+        except Exception as e:
+            logger.warning(
+                f"[WEBHOOK] Schedule prune failed for {node_id}: {e}"
+            )
+            return {"state": "failed", "error": str(e)}
+        if row and row["registered_operation"]:
+            await WebhookManager.deactivate_webhook(
+                pool, str(wf_uuid), node_id, clear_registration=False,
+            )
+        teardown_values = {
+            "schedule_id": None, "next_run": None,
+            "trigger_registered": False,
+            "trigger_error": error,
+        }
+        if node is not None:
+            await WebhookManager.merge_node_config_patch(
+                pool, wf_uuid, node_id, teardown_values
+            )
+        return {"state": "deregistered", "paused": paused, "values": teardown_values}
 
     @staticmethod
     async def _cleanup_orphaned_app_event_rows(pool, wf_uuid, node_id: str) -> bool:
