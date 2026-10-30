@@ -56,6 +56,12 @@ export function isInstanceKeyConfigured(envVar: string): boolean {
     return instanceKeysStore.configured.includes(envVar);
 }
 
+/** Whether the instance holds every key of one of ``alternatives`` (a provider's ``requiredApiKeys``). */
+export function instanceHoldsKeys(alternatives: readonly (readonly string[])[] | undefined): boolean {
+    ensureInstanceKeysLoaded();
+    return (alternatives ?? []).some((keys) => keys.length > 0 && keys.every(isInstanceKeyConfigured));
+}
+
 let inflight: Promise<void> | null = null;
 let lastAttempt = 0;
 

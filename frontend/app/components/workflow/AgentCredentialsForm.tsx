@@ -5,6 +5,8 @@
 // Advanced, shown in a compact host (the builder's asks, Setup, the chat's cards) only once there are some.
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useSnapshot } from 'valtio';
+import { instanceKeysStore } from '~/lib/instanceKeys';
 import { AlertCircle, ChevronDown, ChevronRight, Plus, Search, Trash2, Share2 } from 'lucide-react';
 import { useModels } from '~/hooks/useModels';
 import { getProviderMetadata, ModelProvider } from '~/types/provider';
@@ -17,6 +19,7 @@ import { ShareDialog } from '~/components/shared/popups/ShareDialog';
 import { ConnectionVerdict, StoredVerdict } from '~/components/credential/ConnectionVerdict';
 import { AiConnect, agentKeyMethod, agentSignInMethod } from '~/components/shell/connections/AiConnect';
 import { FIELD_LABEL } from '~/components/shell/fields';
+import { NOTICE_MARK, NOTICE_TITLE } from '~/components/shell/notices';
 import { INLINE_ACTION } from './CredentialRequestActions';
 import { AgentEnvVarsSection } from './AgentEnvVarsSection';
 import { hasAgentOAuthConnect } from './AgentOAuthConnect';
@@ -147,6 +150,8 @@ export function AgentCredentialsForm({
 
     const credentialType = provider ? getAgentCredentialType(provider) : null;
     const requiredKeys = providerMetadata?.requiredApiKeys?.[0] || [];
+    // Read so a self-hosted instance's keys loading re-renders the form (agentAllowsUsageBased reads them).
+    useSnapshot(instanceKeysStore);
     const allowUsageBased = agentAllowsUsageBased(selectedModel, provider);
     const selectedCredentialId = getAgentCredentialIdForProvider(
         credentialIds,
@@ -449,14 +454,18 @@ export function AgentCredentialsForm({
             {/* A Claude plan attached to an anthropic/* model on another harness: why it no longer counts, in the
                 backend's words. */}
             {planRefusal && (
-                <p role="alert" className="flex items-start gap-2 text-[13px] leading-relaxed text-amber-600 dark:text-amber-400">
-                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                <p role="alert" className={cn('flex items-start gap-2 text-[13px] leading-relaxed', NOTICE_TITLE)}>
+                    <AlertCircle className={cn('mt-0.5 h-4 w-4 shrink-0', NOTICE_MARK)} />
                     {planRefusal}
                 </p>
             )}
 
             {allowUsageBased && (
-                <p className="text-[13px] leading-relaxed text-muted-foreground">Optional. With no account here, NoClick’s own key runs it and bills the usage.</p>
+                <p className="text-[13px] leading-relaxed text-muted-foreground">
+                    {isLocalEdition()
+                        ? 'Optional. With no account here, this instance’s own key runs it.'
+                        : 'Optional. With no account here, NoClick’s own key runs it and bills the usage.'}
+                </p>
             )}
 
             {matchingCredentials.length > 0 && (

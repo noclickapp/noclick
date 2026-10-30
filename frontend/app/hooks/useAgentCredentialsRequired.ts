@@ -2,7 +2,9 @@
 // Uses the same logic as AgentCredentialsForm for consistency.
 
 import { useMemo } from 'react';
+import { useSnapshot } from 'valtio';
 import { useModels } from '~/hooks/useModels';
+import { instanceKeysStore } from '~/lib/instanceKeys';
 import {
     agentAllowsUsageBased,
     getAgentEffectiveModel,
@@ -38,6 +40,8 @@ export function useAgentCredentialsRequired(
     // from usage-based billing by its own identity, so both are needed.
     const selectedModel = getAgentSelectedModel(model, config);
     const effectiveModel = getAgentEffectiveModel(model, config);
+    // A self-hosted instance funds what it holds the key for, known once its keys load.
+    const { configured: instanceKeys } = useSnapshot(instanceKeysStore);
 
     return useMemo(() => {
         const provider =
@@ -58,5 +62,7 @@ export function useAgentCredentialsRequired(
             allowUsageBased,
             provider,
         };
-    }, [selectedModel, effectiveModel, credentialIds, getModelById]);
+        // instanceKeys: agentAllowsUsageBased reads the store they come from.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedModel, effectiveModel, credentialIds, getModelById, instanceKeys]);
 }

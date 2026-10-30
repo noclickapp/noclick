@@ -3,6 +3,7 @@ import type { Node } from '@xyflow/react';
 import { getProviderMetadata, ModelProvider } from '~/types/provider';
 import type { NodeUpdatePayload } from '~/lib/applyNodeUpdate';
 import { isLocalEdition } from '~/lib/edition';
+import { instanceHoldsKeys } from '~/lib/instanceKeys';
 import { CLI_MODEL_PROVIDER, DEFAULT_AGENT_MODEL, LLM_HARNESS, harnessOf } from '~/lib/agentChat';
 import agentSchema from '~/schemas/nodes/agent.json';
 
@@ -374,12 +375,11 @@ export function agentAllowsUsageBased(
 ): boolean {
     if (!provider) return false;
     if (harnessOf(selectedModel) !== LLM_HARNESS) return false;
-    // Usage-based billing is the hosted service's platform key; a self-hosted
-    // instance has no such thing to fall back to.
-    if (isLocalEdition()) return false;
-    return (
-        getProviderMetadata(provider as ModelProvider)?.allowUsageBased ?? false
-    );
+    const metadata = getProviderMetadata(provider as ModelProvider);
+    if (!metadata?.allowUsageBased) return false;
+    // Self-hosted, the key the call runs on is the instance's own (Settings →
+    // Self-hosted, or its environment): there only while the instance holds it.
+    return !isLocalEdition() || instanceHoldsKeys(metadata.requiredApiKeys);
 }
 
 /** Pre-flight credential check before dispatching a chat send — catches the common

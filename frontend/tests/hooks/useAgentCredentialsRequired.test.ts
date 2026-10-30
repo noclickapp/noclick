@@ -14,11 +14,12 @@
  * no prior warning. The rule now comes from agentAllowsUsageBased, which judges
  * the top-level harness identity.
  */
-import { describe, it, expect, vi } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { afterEach, describe, it, expect, vi } from 'vitest';
+import { act, renderHook } from '@testing-library/react';
 
 import { ModelProvider } from '~/types/provider';
 import { WRAPPER_SUBMODEL_DEFAULT_BY_MODEL } from '~/lib/agentCredentialModel';
+import { applyInstanceKeysState } from '~/lib/instanceKeys';
 
 // Catalog miss for every id — the wrapper sub-models are models.dev-sourced and
 // genuinely absent from the catalog, so the hook's inferProviderFromPrefix
@@ -26,6 +27,8 @@ import { WRAPPER_SUBMODEL_DEFAULT_BY_MODEL } from '~/lib/agentCredentialModel';
 vi.mock('~/hooks/useModels', () => ({
     useModels: () => ({ getModelById: () => undefined }),
 }));
+// The instance's keys are set by each test; nothing reads them over a socket.
+vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn(() => new Promise(() => {})) }));
 
 const { useAgentCredentialsRequired } = await import('~/hooks/useAgentCredentialsRequired');
 
@@ -137,5 +140,49 @@ describe('useAgentCredentialsRequired — in-process LLM path keeps usage-based 
         const r = check('some-unprefixed-mystery-model', {});
         expect(r.provider).toBeNull();
         expect(r.credentialsRequired).toBe(true);
+    });
+});
+
+// Self-hosted, the key an openrouter/* model runs on is the instance's own. The panel said the agent needed an
+// OpenRouter credential while the instance held OPENROUTER_API_KEY and the agent ran on it.
+describe('useAgentCredentialsRequired — a self-hosted instance funds what it holds the key for', () => {
+    const setLocal = (value: string | undefined) => {
+        if (value === undefined) delete (import.meta.env as Record<string, unknown>).VITE_NOCLICK_LOCAL;
+        else (import.meta.env as Record<string, unknown>).VITE_NOCLICK_LOCAL = value;
+    };
+    const holds = (...envVars: string[]) =>
+        applyInstanceKeysState({ keys: [], env_vars: envVars, supported: envVars });
+
+    afterEach(() => {
+        setLocal(undefined);
+        holds();
+    });
+
+    it('needs no credential while the instance holds the OpenRouter key, and asks for one without it', () => {
+        setLocal('1');
+        holds('OPENROUTER_API_KEY');
+        const funded = check('openrouter/google/gemma-3-27b-it:free', {});
+        expect(funded.allowUsageBased).toBe(true);
+        expect(funded.credentialsRequired).toBe(false);
+        holds();
+        expect(check('openrouter/google/gemma-3-27b-it:free', {}).credentialsRequired).toBe(true);
+    });
+
+    it('updates once the instance keys load', async () => {
+        setLocal('1');
+        holds();
+        const [credentialIds, config] = [{}, {}];
+        const { result } = renderHook(() =>
+            useAgentCredentialsRequired('openrouter/google/gemma-3-27b-it:free', credentialIds, config),
+        );
+        expect(result.current.credentialsRequired).toBe(true);
+        await act(async () => holds('OPENROUTER_API_KEY'));
+        expect(result.current.credentialsRequired).toBe(false);
+    });
+
+    it('keeps every CLI harness BYOK, whatever keys the instance holds', () => {
+        setLocal('1');
+        holds('OPENROUTER_API_KEY');
+        expect(check('hermes', {}).credentialsRequired).toBe(true);
     });
 });

@@ -13,7 +13,9 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSnapshot } from 'valtio';
 import type { Edge, Node } from '@xyflow/react';
+import { instanceKeysStore } from '~/lib/instanceKeys';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, Braces, ChevronDown, FlaskConical, PanelLeftClose, Play } from 'lucide-react';
 import { cn } from '~/lib/utils';
@@ -329,6 +331,8 @@ function WorkflowSetupSteps({
     // Steps a completed session has seen stay in the rail with a check —
     // derivation alone would delete them, and a shrinking list reads as jank.
     const seenRef = useRef<Map<string, SetupStep>>(new Map());
+    // A self-hosted instance funds the agent's model when it holds the key, known once its keys load.
+    const { configured: instanceKeys } = useSnapshot(instanceKeysStore);
 
     const steps = useMemo<SetupStep[]>(() => {
         const credentialSteps: SetupStep[] = [];
@@ -454,7 +458,7 @@ function WorkflowSetupSteps({
         for (const s of out) seenRef.current.set(s.key, s);
         return out;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nodes, ctx, variableDefinitions, agentNode, getModelById, schemasReady]);
+    }, [nodes, ctx, variableDefinitions, agentNode, getModelById, schemasReady, instanceKeys]);
 
     const [selectedKey, setSelectedKey] = useState<string | null>(null);
     // Footer slot the credential phase portals its Test Connection button into.

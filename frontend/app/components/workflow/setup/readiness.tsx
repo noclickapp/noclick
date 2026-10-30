@@ -13,6 +13,7 @@ import type { Edge, Node } from '@xyflow/react';
 import { AlertTriangle } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { sendEventAsync } from '~/lib/socket-sender';
+import { NOTICE, NOTICE_ACTION, NOTICE_MARK, NOTICE_TEXT, NOTICE_TITLE } from '~/components/shell/notices';
 import {
     buildNodeValidationContext,
     validateNode,
@@ -243,7 +244,7 @@ export function useWorkflowReadiness(
     return unmet;
 }
 
-/** The bench SkipWarning's card, live: amber, named consequence, one action.
+/** The bench SkipWarning's card, live: a notice (shell/notices.ts), named consequence, one action.
     Past two services the full cards stack taller than the surface they warn
     on (four buried the whole chat, 2026-08-10), so the list collapses into
     ONE card — a summary line plus a connect chip per service. `compact`
@@ -271,20 +272,15 @@ export function ReadinessCard({
               ? 'Real runs will miss those events and fail at unconnected steps.'
               : 'Real runs will fail when they reach these steps.';
         return (
-            <div
-                className={cn(
-                    'rounded-xl border border-amber-400/25 bg-amber-400/[0.04] px-4 py-3',
-                    className
-                )}
-            >
+            <div className={cn(NOTICE, 'px-4 py-3', className)}>
                 <div className="flex items-start gap-2.5">
-                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+                    <AlertTriangle className={cn('mt-0.5 h-4 w-4 shrink-0', NOTICE_MARK)} />
                     <div className="min-w-0">
-                        <p className="m-0 text-[13px] font-medium text-amber-100/95">
+                        <p className={cn('m-0 text-[13px] font-medium', NOTICE_TITLE)}>
                             Not connected yet:{' '}
                             {unmet.map((u) => u.label).join(', ')}.
                         </p>
-                        <p className="m-0 mt-0.5 text-[12.5px] leading-relaxed text-amber-100/55">
+                        <p className={cn('m-0 mt-0.5 text-[12.5px] leading-relaxed', NOTICE_TEXT)}>
                             {body}
                         </p>
                     </div>
@@ -294,7 +290,7 @@ export function ReadinessCard({
                         <button
                             key={item.nodeId}
                             onClick={() => onConnect(item)}
-                            className="rounded-lg border border-amber-400/30 px-2.5 py-1 text-[12.5px] font-medium text-amber-300 transition-colors hover:bg-amber-400/10"
+                            className={NOTICE_ACTION}
                         >
                             Connect {item.label}
                         </button>
@@ -304,27 +300,22 @@ export function ReadinessCard({
         );
     }
     return (
-        <div
-            className={cn(
-                'overflow-hidden rounded-xl border border-amber-400/25 bg-amber-400/[0.04]',
-                className
-            )}
-        >
+        <div className={cn(NOTICE, 'overflow-hidden', className)}>
             {unmet.map((item, n) => (
                 <div
                     key={item.nodeId}
-                    className={cn('px-4 py-3', n > 0 && 'border-t border-amber-400/15')}
+                    className={cn('px-4 py-3', n > 0 && 'border-t border-border dark:border-foreground/[0.08]')}
                 >
-                    <AlertTriangle className="mb-1.5 h-4 w-4 text-amber-400" />
-                    <p className="m-0 text-[13px] font-medium text-amber-100/95">
+                    <AlertTriangle className={cn('mb-1.5 h-4 w-4', NOTICE_MARK)} />
+                    <p className={cn('m-0 text-[13px] font-medium', NOTICE_TITLE)}>
                         {item.headline}
                     </p>
-                    <p className="m-0 mt-1 text-[12.5px] leading-relaxed text-amber-100/55">
+                    <p className={cn('m-0 mt-1 text-[12.5px] leading-relaxed', NOTICE_TEXT)}>
                         {item.body}
                     </p>
                     <button
                         onClick={() => onConnect(item)}
-                        className="mt-3 w-full rounded-lg border border-amber-400/30 px-3.5 py-1.5 text-[13px] font-medium text-amber-300 transition-colors hover:bg-amber-400/10"
+                        className={cn(NOTICE_ACTION, 'mt-3 w-full py-1.5 text-[13px]')}
                     >
                         Connect {item.label}
                     </button>

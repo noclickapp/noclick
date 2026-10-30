@@ -68,6 +68,8 @@ import {
 } from '~/lib/agentCredentialModel';
 import { useModels } from '~/hooks/useModels';
 import { ModelProvider } from '~/types/provider';
+import { instanceKeysStore } from '~/lib/instanceKeys';
+import { NOTICE, NOTICE_HOVER, NOTICE_LINK, NOTICE_MARK, NOTICE_TITLE } from '~/components/shell/notices';
 
 // Resizable settings sidebar bounds, in px. Kept at module scope so they
 // aren't recreated on every render of the block.
@@ -422,6 +424,8 @@ export function AgentChatBlock({
     // — so the validator demands the SAME agent_<provider> credential the backend
     // loads. Using the bare harness id asked for a nonexistent `agent_openclaw`
     // credential and blocked every send for a correctly-linked openrouter cred.
+    // A self-hosted instance funds what it holds the key for, known once its keys load.
+    const { configured: instanceKeys } = useSnapshot(instanceKeysStore);
     const sendCredentialError = useMemo(
         () =>
             validateAgentSendCredentials({
@@ -438,7 +442,9 @@ export function AgentChatBlock({
                     inferProviderFromPrefix(m) ??
                     null,
             }),
-        [effectiveSendModel, config, credentialIds, getModelById]
+        // instanceKeys: the validator reads the store they come from.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [effectiveSendModel, config, credentialIds, getModelById, instanceKeys]
     );
 
     // Attachment tray (images/files) — uploaded to R2 as they're added, so a
@@ -919,7 +925,7 @@ export function AgentChatBlock({
             attempt additionally raises the red banner with the fix actions. */}
                 {/* One warning stack: the agent-credential pill and the
                     unconnected-wiring card share the readiness vocabulary
-                    (same amber recipe, same radius) and a single rhythm —
+                    (shell/notices.ts, same radius) and a single rhythm —
                     two banners in two styles read as two systems. */}
                 {!isReadOnly && (sendCredentialError || wiringUnmet.length > 0) && (
                     <div className="shrink-0 px-6 pb-2">
@@ -929,13 +935,13 @@ export function AgentChatBlock({
                                     type="button"
                                     onClick={handleFixCredential}
                                     data-testid="agent-chat-credential-hint"
-                                    className="flex w-full items-center gap-2.5 rounded-xl border border-amber-400/25 bg-amber-400/[0.04] px-4 py-3 text-left text-[12.5px] transition-colors hover:bg-amber-400/[0.08]"
+                                    className={cn(NOTICE, NOTICE_HOVER, 'flex w-full items-center gap-2.5 px-4 py-3 text-left text-[12.5px]')}
                                 >
-                                    <KeyRound className="h-4 w-4 shrink-0 text-amber-400" />
-                                    <span className="min-w-0 flex-1 text-amber-800 dark:text-amber-100/95">
+                                    <KeyRound className={cn('h-4 w-4 shrink-0', NOTICE_MARK)} />
+                                    <span className={cn('min-w-0 flex-1', NOTICE_TITLE)}>
                                         {sendCredentialError}
                                     </span>
-                                    <span className="shrink-0 font-medium text-amber-700 underline underline-offset-2 dark:text-amber-300">
+                                    <span className={cn('shrink-0', NOTICE_LINK)}>
                                         Add credential
                                     </span>
                                 </button>

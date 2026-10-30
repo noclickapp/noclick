@@ -24,6 +24,8 @@ import { getOptionDisplayName } from '~/utils/operationHelpers';
 import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
 import { useNodeSchemas } from '~/hooks/useNodeSchemas';
 import { BANNER_PULSE_CYCLES, pulseElement } from '~/lib/pulseHighlight';
+import { cn } from '~/lib/utils';
+import { NOTICE, NOTICE_LINK, NOTICE_MARK, NOTICE_TITLE } from '~/components/shell/notices';
 import { hasUnconnectedCredentials } from './NodeCredentials';
 import { useAgentCredentialsRequired } from '~/hooks/useAgentCredentialsRequired';
 import { CopyLinkButton } from '~/components/ui/CopyLinkButton';
@@ -45,7 +47,7 @@ const ajv = new Ajv2020({
 });
 addFormats(ajv);
 
-/** The amber "complete required fields" callout.
+/** The "complete required fields" callout (a notice: shell/notices.ts).
  *
  *  Pulses on mount and whenever it starts describing a different node, so it
  *  registers however the user arrived: clicking the node on the canvas, opening
@@ -72,7 +74,7 @@ function IncompleteConfigBanner({
         <div
             ref={ref}
             data-incomplete-banner={nodeId ?? ''}
-            className="px-3 py-2.5 rounded-lg bg-amber-100 border border-amber-300 dark:bg-amber-500/15 dark:border-amber-400/40"
+            className={cn(NOTICE, 'px-3 py-2.5')}
         >
             {children}
         </div>
@@ -1517,20 +1519,20 @@ function NodeConfigForm({ nodeType, config, onChange, onInjectIteration, fieldHo
                     <IncompleteConfigBanner nodeId={nodeId}>
                         <div className="space-y-1">
                             <div className="flex items-center gap-2">
-                                <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-amber-400/25 ring-1 ring-amber-500/30 dark:bg-amber-400/15 dark:ring-amber-300/30">
-                                    <AlertCircle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-300" />
+                                <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-foreground/[0.06]">
+                                    <AlertCircle className={cn('h-3.5 w-3.5', NOTICE_MARK)} />
                                 </div>
-                                <div className="text-sm font-semibold leading-5 text-amber-900 dark:text-amber-100">
+                                <div className={cn('text-sm font-semibold leading-5', NOTICE_TITLE)}>
                                     Complete required fields (click below)
                                 </div>
                             </div>
                             {missingCredentials && (
-                                <p className="pl-8 text-xs leading-4 text-amber-900/90 dark:text-amber-100/90">
+                                <p className={cn('pl-8 text-xs leading-4', NOTICE_TITLE)}>
                                     {onSwitchToCredentials ? (
                                         <>
                                             <button
                                                 onClick={onSwitchToCredentials}
-                                                className="inline-flex items-center gap-1 font-semibold text-amber-700 dark:text-amber-50 hover:text-amber-800 dark:hover:text-foreground underline underline-offset-2 transition-colors"
+                                                className={cn('inline-flex items-center gap-1', NOTICE_LINK)}
                                             >
                                                 Credentials
                                                 <ArrowUpRight className="h-3 w-3" />
@@ -1543,12 +1545,12 @@ function NodeConfigForm({ nodeType, config, onChange, onInjectIteration, fieldHo
                                 </p>
                             )}
                             {frontendValidation.errors.map((error, idx) => (
-                                <p key={idx} className="pl-8 text-xs leading-4 text-amber-900/90 dark:text-amber-100/90">
+                                <p key={idx} className={cn('pl-8 text-xs leading-4', NOTICE_TITLE)}>
                                     {error.type === 'field' && error.fieldKey ? (
                                         <>
                                             <button
                                                 onClick={() => highlightConfigField(error.fieldKey!, { focus: true })}
-                                                className="inline-flex items-center gap-1 font-semibold text-amber-700 dark:text-amber-50 hover:text-amber-800 dark:hover:text-foreground underline underline-offset-2 transition-colors"
+                                                className={cn('inline-flex items-center gap-1', NOTICE_LINK)}
                                             >
                                                 {error.fieldLabel}
                                                 <ArrowUpRight className="h-3 w-3" />

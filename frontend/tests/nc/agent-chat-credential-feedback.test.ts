@@ -1,5 +1,5 @@
 // Regression test: a missing agent credential must give VISIBLE feedback in
-// the agent chat — a standing amber hint above the composer, and the red
+// the agent chat — a standing hint above the composer, and the red
 // error banner on an attempted send — instead of the send silently no-oping
 // (the empty state used to render instead of the transcript that owns the
 // banner, so a failed pre-flight showed nothing at all).

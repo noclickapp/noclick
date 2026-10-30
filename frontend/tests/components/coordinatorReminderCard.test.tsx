@@ -13,6 +13,7 @@ import type { AgentChatMessage } from '~/hooks/useAgentChat';
 
 const ONCE = '11111111-1111-4111-8111-111111111111';
 const WEEKLY = '22222222-2222-4222-8222-222222222222';
+const DAILY = '33333333-3333-4333-8333-333333333333';
 const DUE = '2026-10-26T01:26:03+00:00';
 
 afterEach(() => {
@@ -118,9 +119,33 @@ it('says a reminder was called off, and keeps a repeating one that went off canc
     render(thread([STRETCH, REVIEW]));
     await screen.findByText(/Cancelled: Stretch/);
     expect(
-        screen.getByText(/Checking back next .*: Weekly review/)
+        screen.getByText(
+            /Checking back .+, then every Monday at 9:00 AM( \(UTC\))?: Weekly review/
+        )
     ).toBeTruthy();
     expect(cancelButtons()).toHaveLength(1);
+});
+
+// A repeating reminder due tomorrow read "Checking back next tomorrow at 2:30 PM".
+it('says when a repeating reminder is next, then how it repeats', async () => {
+    const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const tomorrow = new Date(Date.now() + 86_400_000);
+    tomorrow.setHours(14, 30, 0, 0);
+    serve({ [DAILY]: { status: 'scheduled', next_run: tomorrow.toISOString() } });
+    render(
+        thread([
+            setReminder(DAILY, {
+                alarm_type: 'cron',
+                delay_or_time: '30 14 * * 1-5',
+                message: 'Send the preorders',
+                timezone_name: zone,
+            }),
+        ])
+    );
+    await screen.findByText(
+        'Checking back tomorrow at 2:30 PM, then weekdays at 2:30 PM: Send the preorders'
+    );
+    expect(screen.queryByText(/next tomorrow/)).toBeNull();
 });
 
 it('says only what the tool reported where the server can’t read reminders back', async () => {
@@ -139,7 +164,7 @@ it('says what the tool reported for a reminder set after the last read, until it
     sendEventAsync.mockImplementation(() => new Promise(() => {}));
     rerender(thread([STRETCH, REVIEW]));
     expect(
-        screen.getByText(/Checking back next .*: Weekly review/)
+        screen.getByText(/Checking back .+, then every Monday .*: Weekly review/)
     ).toBeTruthy();
     expect(cancelButtons()).toHaveLength(1);
 });

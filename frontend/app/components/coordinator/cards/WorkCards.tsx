@@ -17,6 +17,7 @@ import { failed, list, num, obj, str, type CoordinatorToolCall, type JsonObject 
 import { navigateToWorkflow } from '~/lib/navigation';
 import { socketCall } from '~/lib/socketCall';
 import { cn } from '~/lib/utils';
+import { describeCronIn } from '~/utils/scheduleFormat';
 import { whenAt } from '../format';
 
 function until(job: JsonObject | undefined): number | undefined {
@@ -155,6 +156,15 @@ export function RunResultCard({ call }: { call: CoordinatorToolCall }) {
 
 // ── A reminder ───────────────────────────────────────────────────────────────
 
+/** When a reminder goes off: "tomorrow at 2:30 PM", and for a repeating one ", then weekdays at 2:30 PM". */
+function reminderWhen(next: string | undefined, cron: string | undefined, tz: string | undefined): string {
+    const at = next ? whenAt(next) : undefined;
+    if (cron === undefined) return at ?? 'later';
+    const sentence = describeCronIn(cron, tz);
+    const repeats = sentence ? sentence.charAt(0).toLowerCase() + sentence.slice(1) : 'on its schedule';
+    return at ? `${at}, then ${repeats}` : repeats;
+}
+
 // Still to come, it can be cancelled; read back, a one-off that went off reads as done and one called off says so.
 // Until it's read back (or where it can't be), the card says what the tool reported.
 export function AlarmLine({ call }: { call: CoordinatorToolCall }) {
@@ -172,7 +182,7 @@ export function AlarmLine({ call }: { call: CoordinatorToolCall }) {
     if (alarm && status !== 'scheduled') return <Receipt tone="info" lead={<Bell className="h-4 w-4 shrink-0 text-foreground/60" />}>Was due {next ? whenAt(next) : 'earlier'}: {what}</Receipt>;
     return (
         <CheckBackLine
-            when={next ? `${recurring ? 'next ' : ''}${whenAt(next)}` : 'later'}
+            when={reminderWhen(next, recurring ? str(call.args, 'delay_or_time') ?? '' : undefined, str(call.args, 'timezone_name'))}
             what={what}
             action={
                 <button type="button" className={cn(PILL_QUIET, 'h-7')} onClick={() => askNoClick(`Cancel the reminder “${clip(message, 80)}”`)}>
