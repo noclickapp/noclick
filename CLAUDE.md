@@ -64,6 +64,7 @@ these keys in a field's `json_schema_extra`:
 |---|---|
 | `enum` + `enumNames` | Renders a `<select>` |
 | `x-enum-searchable` | Renders a searchable combobox instead |
+| `x-enum-allow-custom` | The enum is a shortlist, not the accepted set: validation skips it (judge the value with `format`, e.g. `"format": "timezone"`) |
 | `x-dynamic-options` | Options loaded from the backend at runtime (e.g. "list my Slack channels") |
 | `x-keywords` | Search synonyms so intent queries find the operation |
 | `x-credential-type` / `x-oauth-provider` / `x-oauth-scopes` | Credential + OAuth metadata |
@@ -91,7 +92,10 @@ automatically and renders as a searchable dropdown.
 before anything reads it: `""` → `None`, string coercions, and unset markers
 dropped so Pydantic applies defaults. **Both** `parse_config` and every
 validator judge that same view, so a build-time verdict can't disagree with
-run-time behaviour. Never validate a node config against the raw dict.
+run-time behaviour. Never validate a node config against the raw dict. The
+config panel's instant check (`frontend/app/utils/nodeConfigFormValidation.ts`)
+mirrors it: it judges the node's committed operation and treats `null`/`""` on a
+defaulted field as unset.
 
 ## Socket events are typed end to end
 

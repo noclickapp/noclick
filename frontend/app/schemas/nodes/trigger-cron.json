@@ -92,8 +92,10 @@
             "Pacific/Auckland",
             "Pacific/Honolulu"
           ],
+          "format": "timezone",
           "title": "Timezone",
           "type": "string",
+          "x-enum-allow-custom": true,
           "x-enum-searchable": true
         },
         "webhook_id": {

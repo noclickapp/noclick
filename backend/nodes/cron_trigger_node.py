@@ -573,7 +573,11 @@ class CronTriggerConfig(BaseModel):
         default="UTC",
         title="Timezone",
         description="Timezone for the cron schedule",
+        # Any IANA zone runs (the scheduler evaluates it); the enum is only the
+        # picker's shortlist, so the panel judges the zone, not list membership.
         json_schema_extra={
+            "format": "timezone",
+            "x-enum-allow-custom": True,
             "enum": [
                 "UTC",
                 "US/Eastern", "US/Central", "US/Mountain", "US/Pacific",

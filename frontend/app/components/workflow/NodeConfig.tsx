@@ -2,10 +2,8 @@
 // It validates both on the frontend (instant feedback with AJV) and backend (security).
 
 import { useEffect, useState, useCallback, useRef, useMemo, type ReactNode, type JSX } from 'react';
-import Ajv2020 from 'ajv/dist/2020';
 import { useAnalytics } from '~/lib/analytics';
 import { EVENTS } from '~/lib/analytics-events';
-import addFormats from 'ajv-formats';
 import { CheckCircle2, AlertCircle, Braces, Loader2, ChevronDown, ChevronRight, ArrowUpRight, Sparkles, Repeat2 } from 'lucide-react';
 import { hasListReference } from '~/lib/listReferences';
 import { sendEventAsync } from '~/lib/socket-sender';
@@ -30,22 +28,12 @@ import { hasUnconnectedCredentials } from './NodeCredentials';
 import { useAgentCredentialsRequired } from '~/hooks/useAgentCredentialsRequired';
 import { CopyLinkButton } from '~/components/ui/CopyLinkButton';
 import { buildNodeDeepLink } from '~/utils/workflowNavigation';
-import { booleanSelectValue, getRequireOneOfGroups, isBooleanSchema, isFieldApplicable } from '~/utils/schemaFieldExtractor';
-import { evaluateRequireOneOf, describeRequireOneOfGroup } from '~/utils/workflowNodeValidation';
+import { booleanSelectValue, getRequireOneOfGroups, getSchemaInfo, isBooleanSchema, isFieldApplicable } from '~/utils/schemaFieldExtractor';
+import { evaluateRequireOneOf } from '~/utils/workflowNodeValidation';
+import { evaluateShowIf, validateConfigForm, type ConfigFormValidation } from '~/utils/nodeConfigFormValidation';
 import { NodeSettings } from './NodeSettings';
 import { FieldRequirementBadge, isFieldFilled } from './FieldRequirementBadge';
 import { TikTokPublishingPanel, TIKTOK_PANEL_FIELDS } from './TikTokPublishingPanel';
-import { tikTokDisclosureError } from '~/utils/tikTokPublishing';
-
-// Initialize AJV for frontend validation (Draft 2020-12)
-// IMPORTANT: Use Ajv2020 class for draft-2020-12 schemas
-const ajv = new Ajv2020({
-    allErrors: true,
-    strict: false,  // Allow non-standard keywords like "ui:widget"
-    validateFormats: true,  // Enable format validation (email, uri, etc.)
-    coerceTypes: true,  // Coerce strings to booleans/numbers (e.g., "true" -> true)
-});
-addFormats(ajv);
 
 /** The "complete required fields" callout (a notice: shell/notices.ts).
  *
@@ -159,49 +147,6 @@ export interface NodeConfigProps {
     onVariableValueChange?: (name: string, value: string) => void;
 }
 
-interface ValidationError {
-    message: string;
-    fieldKey?: string;      // For field-related errors, the field key to scroll to
-    fieldLabel?: string;    // Human-readable field name
-    type: 'field' | 'credentials' | 'general';
-}
-
-interface ValidationResult {
-    valid: boolean;
-    errors: ValidationError[];
-}
-
-/**
- * Evaluate a ui:show-if condition against the current config.
- * Supports:
- *   { anyOf: [...] }         — passes if ANY sub-condition passes (OR compound)
- *   { field, contains }      — single substring match
- *   { field, containsAny }   — match ANY of the substrings (OR)
- *   { field, containsAll }   — match ALL of the substrings (AND) — pattern-based, future-proof
- *   { field, notContains }   — AND the field must NOT contain this string
- */
-function evaluateShowIf(showIf: any, config: Record<string, any>): boolean {
-    if (showIf.anyOf) {
-        return (showIf.anyOf as any[]).some(sub => evaluateShowIf(sub, config));
-    }
-    const condVal = String(config[showIf.field] ?? '').toLowerCase();
-    let passes: boolean;
-    if (showIf.containsAny) {
-        passes = (showIf.containsAny as string[]).some(s => condVal.includes(s.toLowerCase()));
-    } else if (showIf.containsAll) {
-        passes = (showIf.containsAll as string[]).every(s => condVal.includes(s.toLowerCase()));
-    } else if (showIf.contains) {
-        passes = condVal.includes(showIf.contains.toLowerCase());
-    } else {
-        return false;
-    }
-    if (!passes) return false;
-    if (showIf.notContains) {
-        if (condVal.includes((showIf.notContains as string).toLowerCase())) return false;
-    }
-    return true;
-}
-
 // Helper to detect discriminator field in anyOf options
 // Returns the field name and mapping of const values to option indices
 function detectDiscriminator(options: any[], resolveRef: (ref: string) => any): {
@@ -307,12 +252,17 @@ function NodeConfigForm({ nodeType, config, onChange, onInjectIteration, fieldHo
     const lastFetchKeyRef = useRef<Record<string, string>>({});
     const desiredFetchKeyRef = useRef<Record<string, string>>({});
     useEffect(() => () => { desiredFetchKeyRef.current = {}; }, []);
-    const [frontendValidation, setFrontendValidation] = useState<ValidationResult>({ valid: true, errors: [] });
+    const [frontendValidation, setFrontendValidation] = useState<ConfigFormValidation>({ valid: true, errors: [] });
     // Track collapsed state for collapsible sections (function_inputs, python_editor, nested objects)
     const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
-    const [backendValidation, setBackendValidation] = useState<ValidationResult | null>(null);
+    const [backendValidation, setBackendValidation] = useState<ConfigFormValidation | null>(null);
     const [isValidatingBackend, setIsValidatingBackend] = useState(false);
-    const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(0);
+    // Start on the committed operation's option so the first frame draws its
+    // fields, not option 0's (the sync effect below follows later changes).
+    const [selectedOptionIndex, setSelectedOptionIndex] = useState<number>(() => {
+        const idx = operationProp ? getSchemaInfo(nodeType)?.discriminator.valueToOptionIndex.get(operationProp) : undefined;
+        return idx ?? 0;
+    });
     const [focusedFieldKey, setFocusedFieldKey] = useState<string | null>(null);
     // Present inside a workflow (FlowHelperView wraps NodeConfig in the provider); null
     // elsewhere. Gates the "Add reference" affordance — only fields that can hold a
@@ -1002,297 +952,11 @@ function NodeConfigForm({ nodeType, config, onChange, onInjectIteration, fieldHo
 
     const currentFields = getFieldsForCurrentOption();
 
-    // Operation-aware frontend validation (instant)
-    // Only validates fields that are relevant to the currently selected operation
+    // Instant frontend validation, judged on the COMMITTED operation (the one
+    // that runs), never the picker's index — that starts at 0 for a frame.
     useEffect(() => {
-        if (!schema || !resolvedSchema) {
-            setFrontendValidation({ valid: false, errors: [{ message: 'No schema found for this node type', type: 'general' }] });
-            return;
-        }
-
-        // Get the active schema for the selected operation
-        // Start with resolvedSchema (handles $ref resolution) instead of raw schema
-        let activeSchema = resolvedSchema;
-        const oneOfOpts = resolvedSchema?.oneOf || resolvedSchema?.anyOf || [];
-
-        if (discriminatorHidden && oneOfOpts.length > 0) {
-            // Merge all variants' fields so validation matches the flattened UI.
-            const mergedProps: Record<string, any> = {};
-            const mergedRequired: string[] = [];
-            oneOfOpts.forEach((option: any) => {
-                const resolved = option.$ref ? resolveRef(option.$ref) : option;
-                Object.entries(resolved?.properties || {}).forEach(([k, v]) => {
-                    if (!(k in mergedProps)) mergedProps[k] = v;
-                });
-                (resolved?.required || []).forEach((f: string) => {
-                    if (!mergedRequired.includes(f)) mergedRequired.push(f);
-                });
-            });
-            activeSchema = { ...resolvedSchema, properties: mergedProps, required: mergedRequired };
-        } else if (oneOfOpts.length > 0 && selectedOptionIndex < oneOfOpts.length) {
-            const selectedOption = oneOfOpts[selectedOptionIndex];
-            if (selectedOption?.$ref) {
-                // Resolve $ref
-                const refPath = selectedOption.$ref.replace('#/$defs/', '').replace('#/definitions/', '');
-                const defs = rootSchema?.$defs || rootSchema?.definitions || schema.$defs || schema.definitions || {};
-                activeSchema = defs[refPath] || resolvedSchema;
-            } else if (selectedOption) {
-                activeSchema = selectedOption;
-            }
-        }
-
-        // Build validation schema for the active operation only
-        // Exclude fields hidden by ui:show-if conditions
-        const allProperties = activeSchema?.properties || {};
-        const visibleProperties: Record<string, any> = {};
-        const allRequired = activeSchema?.required || [];
-        for (const [key, prop] of Object.entries(allProperties) as [string, any][]) {
-            const showIf = prop['ui:show-if'];
-            if (showIf) {
-                if (!evaluateShowIf(showIf, localConfig)) {
-                    continue; // skip hidden fields
-                }
-            }
-            visibleProperties[key] = prop;
-        }
-        const visibleRequired = allRequired.filter((f: string) => f in visibleProperties);
-
-        const validationSchema = {
-            type: 'object',
-            properties: visibleProperties,
-            required: visibleRequired,
-            $defs: rootSchema?.$defs || schema.$defs || {},
-            definitions: rootSchema?.definitions || schema.definitions || {}
-        };
-
-        // Preprocess config: parse JSON string values for fields that expect arrays or
-        // objects (e.g., person_titles: "[\"CEO\",\"Owner\"]" → ["CEO","Owner"]), as the
-        // runtime does for the fields that take JSON text. For
-        // ui:widget="list" fields, also coerce plain/comma-separated strings to
-        // arrays so the banner doesn't flag a populated single recipient as
-        // invalid — the list widget shows that string as one item, so validation
-        // must agree.
-        const preprocessed = { ...localConfig };
-        for (const [key, prop] of Object.entries(visibleProperties) as [string, any][]) {
-            const val = preprocessed[key];
-            if (typeof val !== 'string') continue;
-            // A reference/expression ({{ ... }}) resolves server-side; don't split or
-            // coerce it (a comma inside `$('x').split(',')` isn't a list separator).
-            if (val.includes('{{')) continue;
-            const options = prop.anyOf || prop.oneOf || (prop.type === 'array' || prop.type === 'object' ? [prop] : []);
-            const expectsArray = options.some((opt: any) => opt.type === 'array');
-            const expectsObject = options.some((opt: { type?: string }) => opt.type === 'object');
-            if ((expectsArray && val.startsWith('[')) || (expectsObject && val.startsWith('{'))) {
-                try { preprocessed[key] = JSON.parse(val); } catch { /* leave as-is */ }
-            } else if (expectsArray && prop['ui:widget'] === 'list' && val.trim()) {
-                preprocessed[key] = val.split(',').map((s: string) => s.trim()).filter(Boolean);
-            }
-        }
-
-        const validate = ajv.compile(validationSchema);
-        const ajvValid = validate(preprocessed);
-
-        const validationErrors: ValidationError[] = [];
-        const fieldsWithErrors = new Set<string>(); // Track fields already reported
-
-        // Collect AJV validation errors
-        if (!ajvValid) {
-            // Filter out sub-errors from anyOf/oneOf branches — only keep the parent error
-            // e.g., for anyOf: [{type: "array"}, {type: "null"}], AJV produces:
-            //   1. type error for array branch (schemaPath: .../anyOf/0/type)
-            //   2. type error for null branch (schemaPath: .../anyOf/1/type)
-            //   3. parent anyOf error (schemaPath: .../anyOf)
-            // We only want #3 to avoid duplicate rows per field
-            const filteredErrors = (validate.errors || []).filter(err =>
-                !err.schemaPath || !/\/(anyOf|oneOf)\/\d+/.test(err.schemaPath)
-            );
-            // Helper: extract top-level field name from instancePath (e.g., "/foo/0/bar" → "foo")
-            const rootField = (path: string | undefined) => path?.replace(/^\//, '').split('/')[0] || '';
-
-            for (const err of filteredErrors) {
-                // A field holding a reference/expression ({{ ... }}) is resolved
-                // server-side; its type/format/enum is only knowable after resolution,
-                // so don't flag it as invalid here.
-                const errField = err.keyword === 'required'
-                    ? err.params?.missingProperty
-                    : rootField(err.instancePath);
-                const rawVal = errField ? localConfig[errField] : undefined;
-                if (typeof rawVal === 'string' && rawVal.includes('{{')) continue;
-                if (err.keyword === 'anyOf' || err.keyword === 'oneOf') {
-                    const field = rootField(err.instancePath);
-                    if (field && !fieldsWithErrors.has(field)) {
-                        fieldsWithErrors.add(field);
-                        const fieldSchema = activeSchema?.properties?.[field];
-                        const label = fieldSchema?.title || field;
-                        const options = fieldSchema?.anyOf || fieldSchema?.oneOf || [];
-                        const expectedTypes = options
-                            .map((opt: any) => opt.type)
-                            .filter((t: string) => t && t !== 'null');
-                        const message = expectedTypes.length > 0
-                            ? `must be ${expectedTypes.join(' or ')}`
-                            : 'has invalid value';
-                        validationErrors.push({
-                            message,
-                            fieldKey: field,
-                            fieldLabel: label,
-                            type: 'field',
-                        });
-                    }
-                    continue;
-                }
-                if (err.keyword === 'required') {
-                    const missing = err.params.missingProperty;
-                    if (fieldsWithErrors.has(missing)) continue;
-                    fieldsWithErrors.add(missing);
-                    const fieldSchema = activeSchema?.properties?.[missing];
-                    const label = fieldSchema?.title || missing;
-                    validationErrors.push({
-                        message: 'is required',
-                        fieldKey: missing,
-                        fieldLabel: label,
-                        type: 'field',
-                    });
-                } else if (err.keyword === 'minLength') {
-                    const field = rootField(err.instancePath) || 'field';
-                    if (fieldsWithErrors.has(field)) continue;
-                    fieldsWithErrors.add(field);
-                    const fieldSchema = activeSchema?.properties?.[field];
-                    const label = fieldSchema?.title || field;
-                    validationErrors.push({
-                        message: 'is required',
-                        fieldKey: field,
-                        fieldLabel: label,
-                        type: 'field',
-                    });
-                } else if (err.keyword === 'pattern') {
-                    const field = rootField(err.instancePath) || 'field';
-                    if (fieldsWithErrors.has(field)) continue;
-                    fieldsWithErrors.add(field);
-                    const fieldSchema = activeSchema?.properties?.[field];
-                    const label = fieldSchema?.title || field;
-                    validationErrors.push({
-                        message: 'has invalid format',
-                        fieldKey: field,
-                        fieldLabel: label,
-                        type: 'field',
-                    });
-                } else if (err.keyword === 'type') {
-                    const field = rootField(err.instancePath) || 'field';
-                    if (fieldsWithErrors.has(field)) continue;
-                    // Empty string on a number/integer field means "use backend default" — not an error
-                    if ((err.params?.type === 'integer' || err.params?.type === 'number') && localConfig[field] === '') {
-                        continue;
-                    }
-                    fieldsWithErrors.add(field);
-                    const fieldSchema = activeSchema?.properties?.[field];
-                    const label = fieldSchema?.title || field;
-                    const expectedType = err.params?.type || 'correct type';
-                    validationErrors.push({
-                        message: `must be ${expectedType}`,
-                        fieldKey: field,
-                        fieldLabel: label,
-                        type: 'field',
-                    });
-                } else if (err.keyword === 'enum') {
-                    const field = rootField(err.instancePath);
-                    if (field) {
-                        if (fieldsWithErrors.has(field)) continue;
-                        fieldsWithErrors.add(field);
-                        const fieldSchema = activeSchema?.properties?.[field];
-                        const label = fieldSchema?.title || field;
-                        // Get allowed values from err.params or the field's items schema
-                        const allowed: string[] = err.params?.allowedValues
-                            || fieldSchema?.items?.enum
-                            || fieldSchema?.enum
-                            || [];
-                        const MAX_SHOWN = 8;
-                        let message: string;
-                        if (allowed.length === 0) {
-                            message = 'has invalid value';
-                        } else if (allowed.length <= MAX_SHOWN) {
-                            message = `must be one of: ${allowed.join(', ')}`;
-                        } else {
-                            message = `must be one of: ${allowed.slice(0, MAX_SHOWN).join(', ')} (+${allowed.length - MAX_SHOWN} more)`;
-                        }
-                        validationErrors.push({
-                            message,
-                            fieldKey: field,
-                            fieldLabel: label,
-                            type: 'field',
-                        });
-                    }
-                } else {
-                    const field = rootField(err.instancePath);
-                    if (field) {
-                        if (fieldsWithErrors.has(field)) continue;
-                        fieldsWithErrors.add(field);
-                        const fieldSchema = activeSchema?.properties?.[field];
-                        const label = fieldSchema?.title || field;
-                        validationErrors.push({
-                            message: err.message || 'has invalid value',
-                            fieldKey: field,
-                            fieldLabel: label,
-                            type: 'field',
-                        });
-                    } else {
-                        validationErrors.push({
-                            message: err.message || 'Invalid value',
-                            type: 'general',
-                        });
-                    }
-                }
-            }
-        }
-
-        // Additional check: required string fields that are empty
-        // AJV's "required" only checks if property exists, not if it's non-empty
-        // Use visibleRequired/visibleProperties to skip hidden fields
-        for (const fieldName of visibleRequired) {
-            // Skip if AJV already reported this field
-            if (fieldsWithErrors.has(fieldName)) continue;
-
-            const fieldSchema = visibleProperties[fieldName];
-            // Check string fields that are empty (AJV doesn't catch this)
-            if (fieldSchema?.type === 'string' && !fieldSchema?.default) {
-                const value = localConfig[fieldName];
-                if (value === undefined || value === null || (typeof value === 'string' && value.trim() === '')) {
-                    const label = fieldSchema.title || fieldName;
-                    validationErrors.push({
-                        message: 'is required',
-                        fieldKey: fieldName,
-                        fieldLabel: label,
-                        type: 'field',
-                    });
-                }
-            }
-        }
-
-        // Either-or constraints: flag any group with no satisfied alternative.
-        const oneOfGroups = activeSchema?.['x-require-one-of'];
-        if (Array.isArray(oneOfGroups) && oneOfGroups.length > 0) {
-            const titleOf = (k: string) => activeSchema?.properties?.[k]?.title || k;
-            const { unsatisfiedGroups } = evaluateRequireOneOf(oneOfGroups, localConfig);
-            for (const group of unsatisfiedGroups) {
-                const firstKey = group[0]?.[0];
-                if (firstKey) fieldsWithErrors.add(firstKey);
-                validationErrors.push({
-                    message: `Provide ${describeRequireOneOfGroup(group, titleOf)}`,
-                    fieldKey: firstKey,
-                    fieldLabel: firstKey ? titleOf(firstKey) : undefined,
-                    type: 'field',
-                });
-            }
-        }
-
-        if (nodeType === 'automation-tiktok' && ['direct_post_video', 'direct_post_photo'].includes(operationProp || '')) {
-            const disclosureError = tikTokDisclosureError(localConfig);
-            if (disclosureError) validationErrors.push({ message: disclosureError, type: 'general' });
-        }
-        setFrontendValidation({
-            valid: validationErrors.length === 0,
-            errors: validationErrors,
-        });
-    }, [localConfig, schema, resolvedSchema, rootSchema, nodeType, selectedOptionIndex, operationProp]);
+        setFrontendValidation(validateConfigForm(nodeType, localConfig, operationProp));
+    }, [localConfig, nodeType, operationProp]);
 
     // Fire an analytics event when validation first transitions from valid → invalid with a
     // new set of field keys. Signature uses (type, fieldKey) only — never the error message,
