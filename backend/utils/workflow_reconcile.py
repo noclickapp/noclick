@@ -22,11 +22,15 @@ transaction) and, once committed, wakes the workflow's worker (``kick``). The
 worker (``run``) holds the workflow's lease (``workflow_reconcile_leases``,
 claimed, renewed and given back in short statements, so it holds no
 connection or transaction while it works) and runs the workflow's jobs in
-order, each bounded (``WORK_S``; the lease is never renewed past it). A job
-that fails or is cut off is retried with backoff (``MAX_ATTEMPTS``), the jobs
-after it waiting; one left by a worker that died resumes when the lease lapses,
-on the next sweep (``sweep``: the hosted edition's operations tick, the open
-edition's scheduler). The versions a job's own writes produce (a trigger's
+order step by step: a job waits only for older ones touching one of its steps.
+Each is bounded (``WORK_S``; the lease is never renewed past it). A job that
+fails or is cut off is retried with backoff (``MAX_ATTEMPTS``), shown where
+people look (a trigger step's ``trigger_error``, an ERROR log, the staff
+Reliability view), and once given up on it's kept and retried daily
+(``retry_given_up``), never dropped; one left by a worker that died resumes
+when the lease lapses, on the next sweep (``sweep``: the hosted edition's
+operations tick, the open edition's scheduler). A change that only moved steps
+queues nothing. The versions a job's own writes produce (a trigger's
 webhook fields) are recorded (``workflow_reconcile_versions``): an edit made
 on a version is still made on it when only those came after
 (``graph_service._locked``).
@@ -59,11 +63,19 @@ WORK_S = 120.0
 MAX_ATTEMPTS = 6
 RETRY_S = 30
 RETRY_MAX_S = 1800
-# How many workflows one sweep runs the due jobs of; how often it runs (the open edition's scheduler).
+# How many workflows one sweep runs the due jobs of, how many at once, and how often (the open edition's scheduler).
 SWEEP_LIMIT = 50
+SWEEP_CONCURRENCY = 4
 SWEEP_EVERY_S = 30
 # Finished jobs and recorded reconcile versions are kept this long.
 KEEP_DAYS = 30
+
+
+# What a trigger step whose registration a job couldn't finish shows (its ``trigger_error``) until a run of it does.
+UNFINISHED = "NoClick couldn't finish registering this trigger and is retrying:"
+# Where a step sits and how big it's drawn: moving it sets nothing in motion.
+_LAYOUT_KEYS = frozenset({"position", "positionAbsolute", "width", "height", "measured", "style", "selected",
+                          "dragging", "zIndex"})
 
 
 class ReconcileIncomplete(Exception):
@@ -74,6 +86,10 @@ def _nodes(graph: Any) -> Dict[str, Any]:
     return {n.get("id"): n for n in graph_nodes(graph) if n.get("id")}
 
 
+def _unplaced(node: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    return None if node is None else {k: v for k, v in node.items() if k not in _LAYOUT_KEYS}
+
+
 async def enqueue(conn, workflow_id: str, user_id: Optional[str], old_graph: Any, new_graph: Any, *,
                   from_version: int, to_version: int,
                   deleted: Optional[Collection[str]] = None) -> Optional[int]:
@@ -81,7 +97,8 @@ async def enqueue(conn, workflow_id: str, user_id: Optional[str], old_graph: Any
     added, changed) as they were and as it left them, and the canvas's ``deleted`` steps. None when it touched
     none."""
     old, new = _nodes(old_graph), _nodes(new_graph)
-    touched = [node_id for node_id in dict.fromkeys([*old, *new]) if old.get(node_id) != new.get(node_id)]
+    touched = [node_id for node_id in dict.fromkeys([*old, *new])
+               if _unplaced(old.get(node_id)) != _unplaced(new.get(node_id))]
     named = [node_id for node_id in dict.fromkeys(deleted or ()) if node_id]
     if not touched and not named:
         return None
@@ -129,8 +146,7 @@ async def run(pool, workflow_id: str) -> None:
         try:
             while (job := await _next(pool, workflow_id)) is not None:
                 bound["until"] = asyncio.get_running_loop().time() + WORK_S
-                if not await _run_job(pool, job):
-                    break
+                await _run_job(pool, job)
         finally:
             renewing.cancel()
             try:
@@ -149,17 +165,35 @@ async def sweep(pool) -> int:
         "SELECT DISTINCT j.workflow_id FROM workflow_reconcile_jobs j "
         "LEFT JOIN workflow_reconcile_leases l ON l.workflow_id = j.workflow_id AND l.expires_at > now() "
         "WHERE j.status = 'queued' AND j.retry_at <= now() AND l.workflow_id IS NULL LIMIT $1", SWEEP_LIMIT)
-    for row in rows:
-        try:
-            await run(pool, str(row["workflow_id"]))
-        except Exception:
-            logger.error("[reconcile] sweeping %s failed", row["workflow_id"], exc_info=True)
+    # A few workflows at once, so one slow provider doesn't hold every other workflow's retries.
+    room = asyncio.Semaphore(SWEEP_CONCURRENCY)
+
+    async def one(workflow_id: str) -> None:
+        async with room:
+            try:
+                await run(pool, workflow_id)
+            except Exception:
+                logger.error("[reconcile] sweeping %s failed", workflow_id, exc_info=True)
+
+    await asyncio.gather(*(one(str(row["workflow_id"])) for row in rows))
     return len(rows)
 
 
+async def retry_given_up(pool) -> int:
+    """Queue again every job given up on (the daily maintenance): what it sets in motion (inboxes, volumes, apps,
+    conversations, registrations) is never left undone for good. How many."""
+    result = await pool.execute("UPDATE workflow_reconcile_jobs SET status = 'queued', attempts = 0, retry_at = now(), "
+                                "done_at = NULL WHERE status = 'failed'")
+    requeued = int(result.split()[-1])
+    if requeued:
+        await sweep(pool)
+    return requeued
+
+
 async def prune(pool, *, days: int = KEEP_DAYS) -> int:
-    """Drop finished jobs and recorded reconcile versions older than ``days``; how many jobs went."""
-    result = await pool.execute("DELETE FROM workflow_reconcile_jobs WHERE status <> 'queued' "
+    """Drop done jobs and recorded reconcile versions older than ``days`` (a job given up on stays, retried daily);
+    how many jobs went."""
+    result = await pool.execute("DELETE FROM workflow_reconcile_jobs WHERE status = 'done' "
                                 "AND done_at < now() - make_interval(days => $1)", days)
     await pool.execute("DELETE FROM workflow_reconcile_versions WHERE created_at < now() - make_interval(days => $1)",
                        days)
@@ -195,22 +229,33 @@ async def _renew(pool, workflow_id: str, holder: str, bound: Dict[str, float]) -
             logger.warning("[reconcile] renewing %s's lease failed", workflow_id, exc_info=True)
 
 
-async def _next(pool, workflow_id: str) -> Optional[Dict[str, Any]]:
-    """The workflow's oldest queued job when it's due; None when there's none, or it waits for its retry (the jobs
-    after it wait too)."""
-    row = await pool.fetchrow(
-        "SELECT id, workflow_id, user_id, old_nodes, new_nodes, deleted, from_version, to_version, attempts, "
-        "retry_at <= now() AS due FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid AND status = 'queued' "
-        "ORDER BY id LIMIT 1", workflow_id)
-    return dict(row) if row is not None and row["due"] else None
-
-
 def _as_dict(value: Any) -> Dict[str, Any]:
     return json.loads(value) if isinstance(value, str) else dict(value or {})
 
 
+def _steps(job: Dict[str, Any]) -> set:
+    """The steps a job touches."""
+    return {*_as_dict(job["old_nodes"]), *_as_dict(job["new_nodes"]), *(job["deleted"] or ())}
+
+
+async def _next(pool, workflow_id: str) -> Optional[Dict[str, Any]]:
+    """The workflow's oldest due job that no older queued job shares a step with (one waiting for its retry holds
+    only the jobs touching its steps); None when there's none."""
+    rows = await pool.fetch(
+        "SELECT id, workflow_id, user_id, old_nodes, new_nodes, deleted, from_version, to_version, attempts, "
+        "retry_at <= now() AS due FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid AND status = 'queued' "
+        "ORDER BY id", workflow_id)
+    held: set = set()
+    for row in rows:
+        steps = _steps(row)
+        if row["due"] and not steps & held:
+            return dict(row)
+        held |= steps
+    return None
+
+
 async def _run_job(pool, job: Dict[str, Any]) -> bool:
-    """Run one job; True when the jobs after it may run (it's done, or given up on)."""
+    """Run one job; True when it's done."""
     from utils.webhook_manager import PATCH_MOVES
 
     workflow_id = str(job["workflow_id"])
@@ -231,10 +276,12 @@ async def _run_job(pool, job: Dict[str, Any]) -> bool:
             "retry_at = now() + make_interval(secs => $5), done_at = CASE WHEN $3 = 'failed' THEN now() END "
             "WHERE id = $1", job["id"], attempts, "failed" if given_up else "queued", reason[:2000],
             float(min(RETRY_S * 2 ** (attempts - 1), RETRY_MAX_S)))
-        log = logger.error if given_up else logger.warning
-        log("[reconcile] job %s of %s %s (attempt %s): %s", job["id"], workflow_id,
-            "given up on" if given_up else "failed, to be retried", attempts, reason)
-        return given_up
+        # Its first failure and its giving up page; the retries between only log.
+        log = logger.error if given_up or attempts == 1 else logger.warning
+        log("[reconcile] job %s of %s (steps %s) %s (attempt %s): %s", job["id"], workflow_id,
+            ", ".join(sorted(_steps(job))), "given up on, retried daily" if given_up else "failed, to be retried",
+            attempts, reason)
+        return False
     finally:
         PATCH_MOVES.reset(token)
     await pool.execute("UPDATE workflow_reconcile_jobs SET status = 'done', done_at = now() WHERE id = $1", job["id"])
@@ -331,6 +378,34 @@ async def _claim_inbox(pool, workflow_id: str, user_id: Optional[str], node: Dic
         await WebhookManager.merge_node_config_patch(pool, uuid.UUID(workflow_id), node["id"], patch)
 
 
+async def _flag(pool, workflow_id: str, node_id: str, reason: Optional[str]) -> None:
+    """Show on a trigger step that a job couldn't finish its registration (``reason``), or clear what it showed once
+    a run of it did: never another error the step's registration recorded."""
+    from utils.webhook_manager import WebhookManager
+
+    try:
+        node = _nodes(await _stored(pool, workflow_id)).get(node_id)
+        if node is None:
+            return
+        shown = node_config(node).get("trigger_error")
+        ours = isinstance(shown, str) and shown.startswith(UNFINISHED)
+        if reason is not None and (not shown or ours) and _is_trigger(node):
+            await WebhookManager.merge_node_config_patch(pool, workflow_id, node_id,
+                                                         {"trigger_error": f"{UNFINISHED} {reason}"[:500]})
+        elif reason is None and ours:
+            await WebhookManager.merge_node_config_patch(pool, workflow_id, node_id, {"trigger_error": None})
+    except Exception:
+        logger.warning("[reconcile] showing %s:%s's registration state failed", workflow_id, node_id, exc_info=True)
+
+
+def _is_trigger(node: Dict[str, Any]) -> bool:
+    from utils.webhook_manager import WebhookManager
+
+    config = node_config(node)
+    kind = node.get("type") or ""
+    return kind.startswith("trigger-") or bool(WebhookManager.node_webhook_field_for(kind, config.get("operation")))
+
+
 async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: Any, new_graph: Any,
                      deleted: Optional[Collection[str]]) -> None:
     """A job's work: raises ``ReconcileIncomplete`` when part of it failed (after doing the rest), so it's
@@ -348,9 +423,9 @@ async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: 
         if torn:
             # A write in between put one back while it was torn down: it registers again.
             await _register(pool, workflow_id, user_id, torn)
-    except Exception:
+    except Exception as e:
         logger.warning("[reconcile] tearing down %s of %s failed", gone, workflow_id, exc_info=True)
-        failed.append(f"tearing down {', '.join(gone)}")
+        failed.append(f"tearing down {', '.join(gone)}: {str(e) or type(e).__name__}")
 
     now_graph = await _stored(pool, workflow_id)
     now_ids = _ids(now_graph)
@@ -371,9 +446,12 @@ async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: 
             # connections: else the provider stays registered on the old value until the panel reopens.
             await WebhookManager.handle_registration_fields_change(pool, node_type, workflow_id, node_id,
                                                                    old_config, new_config, user_id=user_id)
-        except Exception:
+        except Exception as e:
             logger.warning("[reconcile] change hooks of %s:%s failed", workflow_id, node_id, exc_info=True)
-            failed.append(f"reconciling {node_id}'s registration")
+            failed.append(f"reconciling {node_id}'s registration: {str(e) or type(e).__name__}")
+            await _flag(pool, workflow_id, node_id, str(e) or type(e).__name__)
+        else:
+            await _flag(pool, workflow_id, node_id, None)
 
     # Triggers as they stand now: a later write's own job judges what it changed.
     provisioned = []
@@ -405,8 +483,13 @@ async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: 
         stood = _nodes(now_graph)
         await _tear_down(pool, workflow_id, user_id, {node_id: stood.get(node_id) or new_nodes.get(node_id)
                                                       for node_id in dict.fromkeys([*provisioned, *registered])})
-    except Exception:
+    except Exception as e:
         logger.warning("[reconcile] registering %s of %s failed", added, workflow_id, exc_info=True)
-        failed.append(f"registering {', '.join(added)}")
+        failed.append(f"registering {', '.join(added)}: {str(e) or type(e).__name__}")
+        for node_id in added:
+            await _flag(pool, workflow_id, node_id, str(e) or type(e).__name__)
+    else:
+        for node_id in registered:
+            await _flag(pool, workflow_id, node_id, None)
     if failed:
         raise ReconcileIncomplete("; ".join(failed))

@@ -251,13 +251,15 @@ def _sleep_seconds(earliest_next_run, now):
 
 async def maintain_daily(pool) -> None:
     """What the hosted edition's daily maintenance does that this one needs: a workflow's versions are kept 90 days
-    (its newest whatever its age), its finished reconcile jobs 30."""
+    (its newest whatever its age), its done reconcile jobs 30, and the reconcile jobs given up on are retried."""
     from repositories import workflow_versions
     from utils import workflow_reconcile
 
     pruned = await workflow_versions.prune(pool)
     jobs = await workflow_reconcile.prune(pool)
-    logger.info("Workflow versions pruned: %s, reconcile jobs: %s", pruned, jobs)
+    retried = await workflow_reconcile.retry_given_up(pool)
+    logger.info("Workflow versions pruned: %s, reconcile jobs: %s, given-up reconcile jobs retried: %s",
+                pruned, jobs, retried)
 
 
 async def _run_ticker():

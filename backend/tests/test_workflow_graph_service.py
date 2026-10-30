@@ -743,6 +743,9 @@ class TestReconcileThroughTheService:
             await release.wait()
             cleaned.append(list(node_ids))
 
+        from coder.workflow.option_registries import warm_registries
+
+        await warm_registries()  # the model list an edit resolves against, built once per process: not the edit's
         workflow_id = await _workflow(db)
         with patch("utils.workflow_resource_manager.cleanup_nodes_resources", side_effect=cleanup), \
                 patch.object(WebhookManager, "provision_node_webhook", AsyncMock(return_value=None)):
@@ -855,6 +858,107 @@ class TestReconcileThroughTheService:
                                  workflow_id) == 0
         assert edited.version == 2
 
+    async def test_a_failing_job_holds_only_the_jobs_touching_its_steps(self, db, told, registry, monkeypatch):
+        """A job that keeps failing (its trigger's provider down) waits for its retries; a later job touching other
+        steps runs at once, and one touching its step waits behind it. The failing trigger shows it."""
+        from utils import workflow_reconcile
+        from utils.webhook_manager import WebhookManager
+
+        async def broken(pool, node_type, workflow_id, node_id, *args, **kwargs):
+            if node_id == "hook":
+                raise RuntimeError("the provider is down")
+
+        monkeypatch.setattr(WebhookManager, "handle_registration_fields_change", broken)
+        workflow_id = await _workflow(db)
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "hook", "name": "Orders"}])
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "agent", "settings": {"message": "Later."}}])
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "hook", "name": "Orders again"}])
+        jobs = await db.fetch("SELECT status, attempts, last_error FROM workflow_reconcile_jobs "
+                              "WHERE workflow_id = $1::uuid ORDER BY id", workflow_id)
+        assert [(j["status"], j["attempts"]) for j in jobs] == [("queued", 1), ("done", 0), ("queued", 0)]
+        assert "the provider is down" in jobs[0]["last_error"]
+        hook = next(n for n in (await _graph(db, workflow_id))["workflow"]["nodes"] if n["id"] == "hook")
+        assert hook["config"]["trigger_error"].startswith(workflow_reconcile.UNFINISHED)
+        assert "the provider is down" in hook["config"]["trigger_error"]
+        # The provider is back and the retry comes due: both run, in order, and the trigger no longer shows it.
+        monkeypatch.setattr(WebhookManager, "handle_registration_fields_change", AsyncMock(return_value=None))
+        await db.execute("UPDATE workflow_reconcile_jobs SET retry_at = now() WHERE workflow_id = $1::uuid",
+                         workflow_id)
+        await workflow_reconcile.sweep(db.pool)
+        assert [r["status"] for r in await db.fetch(
+            "SELECT status FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid ORDER BY id", workflow_id)] == [
+            "done", "done", "done"]
+        hook = next(n for n in (await _graph(db, workflow_id))["workflow"]["nodes"] if n["id"] == "hook")
+        assert hook["config"]["trigger_error"] is None
+
+    async def test_a_job_given_up_on_is_kept_and_retried_daily(self, db, told, registry, monkeypatch):
+        import asyncio
+
+        from utils import workflow_reconcile
+        from utils.webhook_manager import WebhookManager
+
+        monkeypatch.setattr(workflow_reconcile, "MAX_ATTEMPTS", 2)
+        monkeypatch.setattr(workflow_reconcile, "RETRY_S", 0.1)
+        monkeypatch.setattr(WebhookManager, "handle_registration_fields_change",
+                            AsyncMock(side_effect=RuntimeError("the provider is down")))
+        workflow_id = await _workflow(db)
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "hook", "name": "Orders"}])
+        await asyncio.sleep(0.2)
+        await workflow_reconcile.sweep(db.pool)
+        job = await db.fetchrow("SELECT id, status, attempts FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid",
+                                workflow_id)
+        assert (job["status"], job["attempts"]) == ("failed", 2)
+        # Never pruned, however old, while it's undone.
+        await db.execute("UPDATE workflow_reconcile_jobs SET done_at = now() - interval '90 days' WHERE id = $1",
+                         job["id"])
+        await workflow_reconcile.prune(db.pool)
+        assert await _job_status(db, job["id"]) == "failed"
+        # The daily maintenance runs it again: the provider is back.
+        monkeypatch.setattr(WebhookManager, "handle_registration_fields_change", AsyncMock(return_value=None))
+        assert await workflow_reconcile.retry_given_up(db.pool) == 1
+        assert await _job_status(db, job["id"]) == "done"
+
+    async def test_moving_steps_on_the_canvas_queues_nothing(self, db, told, registry):
+        from wss.handlers.workflow_handler import WorkflowHandler
+        from wss.receiver.client_events import WorkflowUpdateRequest
+
+        workflow_id = await _workflow(db)
+        sio = MagicMock()
+        sio.get_session = AsyncMock(return_value={"user_id": OWNER})
+        sio.emit = AsyncMock()
+        handler = WorkflowHandler(sio=sio)
+        handler.get_pool = AsyncMock(return_value=db.pool)
+        moved = copy.deepcopy(GRAPH)
+        moved["nodes"][0]["position"] = {"x": 300, "y": 40}
+        moved["nodes"][1].update(width=320, height=180)
+        await handler.update_workflow("sid", WorkflowUpdateRequest(
+            request_id="r", workflow_id=workflow_id, workflow_data=moved, expected_graph_version=1))
+        assert (await _graph(db, workflow_id))["graph_version"] == 2
+        assert await db.fetchval("SELECT count(*) FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid",
+                                 workflow_id) == 0
+
+    async def test_a_sweep_runs_workflows_side_by_side(self, db, told, monkeypatch):
+        """One workflow's slow provider doesn't hold every other workflow's retries."""
+        import asyncio
+        import time
+
+        from utils import workflow_reconcile
+
+        async def slow(*args, **kwargs):
+            await asyncio.sleep(1.0)
+
+        flows = [await _workflow(db) for _ in range(3)]
+        renamed = copy.deepcopy(GRAPH)
+        renamed["nodes"][0]["config"]["label"] = "Renamed"
+        for workflow_id in flows:
+            async with db.pool.acquire() as conn:
+                await workflow_reconcile.enqueue(conn, workflow_id, OWNER, GRAPH, renamed, from_version=1,
+                                                 to_version=2)
+        with patch.object(workflow_reconcile, "_reconcile", side_effect=slow):
+            started = time.monotonic()
+            assert await workflow_reconcile.sweep(db.pool) >= 3
+        assert time.monotonic() - started < 2.5
+
     async def test_one_workflows_jobs_run_one_at_a_time_in_order(self, db, told, registry):
         import asyncio
 
@@ -945,7 +1049,7 @@ class TestTheCanvasSave:
         await handler.update_workflow("sid", WorkflowUpdateRequest(
             request_id="r", workflow_id=workflow_id, workflow_data=graph, expected_graph_version=version))
 
-    async def test_a_session_is_one_version_moves_are_none_and_each_save_is_reconciled(self, db, reconciled):
+    async def test_a_session_is_one_version_and_moves_are_no_version_nor_reconcile(self, db, reconciled):
         from utils.async_helpers import drain_spawned_tasks
 
         workflow_id = await _workflow(db)
@@ -962,7 +1066,8 @@ class TestTheCanvasSave:
         await drain_spawned_tasks(timeout=5)
         assert [(v["version"], v["source"], v["author"], v["changes"]) for v in await _versions(db, workflow_id)] == [
             (1, "baseline", None, []), (3, "canvas", OWNER, ["renamed 'Log' to 'Record'", "removed 'Record'"])]
-        assert len(reconciled) == 3
+        # The rename and the removal are reconciled; the move sets nothing in motion.
+        assert len(reconciled) == 2
         assert "log" in _labels(reconciled[1][1]) and "log" not in _labels(reconciled[1][2])
 
     async def test_a_change_to_only_the_workflows_fields_joins_the_canvas_version_or_waits(self, db, reconciled):

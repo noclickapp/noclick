@@ -81,6 +81,11 @@ interface GraphRecord {
     // is the canvas's own change: a conflict keeps those and takes the server's copy of the rest, and a closing
     // tab's last save names only those. null before a load (then everything local counts as its own).
     base: GraphBase | null;
+    // While a save is in flight: the written changes heard since it was sent (replayed onto the base its ack sets,
+    // so the ack never resets them out of it), and the room's notices of writes made on a version this canvas
+    // reaches only when the ack lands (taken then, in order).
+    heardSinceSend: Array<{ eventType: string; data: Record<string, unknown> }> | null;
+    noticesSinceSend: Array<{ base: number; version: number }>;
 
     // Save coordination. graphVersion is the server's optimistic-concurrency
     // token from the last workflow:get / save ack (null = unknown → save
@@ -136,6 +141,8 @@ export function createGraphRecord(
         readOnly: false,
         partialNodeIds: {},
         base: null,
+        heardSinceSend: null,
+        noticesSinceSend: [],
         dirty: false,
         saveTimer: null,
         graphVersion: null,
@@ -421,6 +428,8 @@ function fireSave(rec: GraphRecord, opts?: { unconditional?: boolean }): void {
 
     rec.saveInFlight = true;
     rec.dirty = false; // optimistic; failure paths re-set it
+    rec.heardSinceSend = [];
+    rec.noticesSinceSend = [];
 
     let cleanup: (() => void) | undefined;
     let settled = false;
@@ -461,6 +470,10 @@ function fireSave(rec: GraphRecord, opts?: { unconditional?: boolean }): void {
         workflow?: { graph_version?: number };
     }) => {
         if (!settle()) return;
+        const heard = rec.heardSinceSend ?? [];
+        const notices = rec.noticesSinceSend;
+        rec.heardSinceSend = null;
+        rec.noticesSinceSend = [];
         if (resp?.conflict) {
             // Another writer (other tab/device, MCP, builder) bumped the
             // version. Fold their graph in and re-save under the new version.
@@ -485,8 +498,18 @@ function fireSave(rec: GraphRecord, opts?: { unconditional?: boolean }): void {
         // A save acked after a server write moved the base on (its room notice came first) never moves it back.
         if (typeof newVersion !== 'number' || rec.graphVersion == null || newVersion >= rec.graphVersion) {
             rec.lastSavedPayloadJson = payloadJson;
-            rec.base = baseOfSaved(savePayload as SavedGraph);
-            if (typeof newVersion === 'number') rec.graphVersion = newVersion;
+            // What it sent is what the server holds, with the written changes heard since on top.
+            rec.base = heard.reduce(
+                (base, { eventType, data }) => baseAfter(base, eventType, data),
+                baseOfSaved(savePayload as SavedGraph),
+            );
+            if (typeof newVersion === 'number') {
+                rec.graphVersion = newVersion;
+                // Writes made on the version this save produced, heard while it was on its way: taken, in order.
+                for (const notice of notices) {
+                    if (notice.base === rec.graphVersion) rec.graphVersion = notice.version;
+                }
+            }
         }
         for (const id of deletedNodeIds) rec.deletedNodeIds.delete(id);
         try {
@@ -632,6 +655,8 @@ export function adoptServerVersion(workflowId: string, base: number, version: nu
     const rec = graphRecords[workflowId];
     if (!rec || typeof base !== 'number' || typeof version !== 'number') return;
     if (rec.graphVersion === base) rec.graphVersion = version;
+    // Made on a version the save on its way may be producing: judged when that save's ack lands.
+    else if (rec.saveInFlight) rec.noticesSinceSend.push({ base, version });
 }
 
 /** The viewer may only read this workflow: the canvas never saves it. */
@@ -669,11 +694,7 @@ export function takeServerStep(workflowId: string, nodeId: string, config: Recor
     const rec = graphRecords[workflowId];
     if (!rec) return;
     delete rec.partialNodeIds[nodeId];
-    const held = rec.base?.nodes.get(nodeId);
-    if (rec.base && held) {
-        const node = applyNodeUpdate(rawNodeToCanvasNode(JSON.parse(held)), rawConfigToPayload(config));
-        rec.base.nodes.set(nodeId, nodeJson(node));
-    }
+    noteServerChange(rec, 'node_updated', { nodeId, config });
 }
 
 /** The server's graph as a load read it: the canvas's base from here on. */
@@ -685,10 +706,19 @@ export function setServerBase(workflowId: string, nodes: Node[], edges: Edge[]):
 /** A written change's builder event (the graph service's room) moves the base as it moves the canvas. */
 function applyToBase(workflowId: string, eventType: string, data: Record<string, unknown>): void {
     const rec = graphRecords[workflowId];
-    if (!rec?.base || !GRAPH_EVENT_TYPES.has(eventType)) return;
-    const nodes = [...rec.base.nodes.values()].map((json) => rawNodeToCanvasNode(JSON.parse(json)));
-    const edges = [...rec.base.edges.values()].map((json) => JSON.parse(json) as Edge);
-    rec.base = baseOf(serverNodesAfter(nodes, eventType, data), serverEdgesAfter(edges, eventType, data));
+    if (rec && GRAPH_EVENT_TYPES.has(eventType)) noteServerChange(rec, eventType, data);
+}
+
+/** A server change the canvas took: into its base, and kept for the ack of a save on its way (`heardSinceSend`). */
+function noteServerChange(rec: GraphRecord, eventType: string, data: Record<string, unknown>): void {
+    if (rec.base) rec.base = baseAfter(rec.base, eventType, data);
+    rec.heardSinceSend?.push({ eventType, data });
+}
+
+function baseAfter(base: GraphBase, eventType: string, data: Record<string, unknown>): GraphBase {
+    const nodes = [...base.nodes.values()].map((json) => rawNodeToCanvasNode(JSON.parse(json)));
+    const edges = [...base.edges.values()].map((json) => JSON.parse(json) as Edge);
+    return baseOf(serverNodesAfter(nodes, eventType, data), serverEdgesAfter(edges, eventType, data));
 }
 
 /** Read the whole workflow again and fold it in as a conflict's answer is (`rebaseFromServer`): what a canvas

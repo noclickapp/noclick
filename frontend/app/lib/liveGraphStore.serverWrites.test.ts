@@ -142,6 +142,41 @@ describe('server writes on an open canvas', () => {
         expect(label).toBe('Newer');
     });
 
+    it("keeps a written change heard before its own save's ack, and takes the version it was made on", () => {
+        const step = (id: string, label: string) => createWorkflowNode(id, 'log', { x: 0, y: 0 }, { label });
+        recordGraphSnapshot(WF, false, { nodes: [step('a', 'A'), step('b', 'B')], edges: [] }, false);
+        setCanvasMounted(WF, false, true);
+        setGraphLoaded(WF, true);
+        setGraphVersion(WF, 5);
+        seedSaveBaseline(WF);
+        const rec = graphRecords[WF];
+        rec.nodes = [step('a', 'A mine'), step('b', 'B')];
+        markGraphDirty(WF);
+        vi.advanceTimersByTime(5000);
+        expect(sent[0].expected_graph_version).toBe(5);
+        // The save lands at 6; an API write on 6 renames b, and its room events come before the save's ack.
+        handlers['mcp:builder_event']({
+            workflow_id: WF, event_type: 'node_updated', data: { nodeId: 'b', config: { label: 'B api' } },
+            committed: true,
+        });
+        rec.nodes = [step('a', 'A mine'), step('b', 'B api')];
+        handlers['workflow:graph_changed']({ workflow_id: WF, base_version: 6, version: 7 });
+        acks[0]({ workflow: { graph_version: 6 } });
+        expect(rec.graphVersion).toBe(7);
+        // A writer it never hears renames b at 8; the person renames a again, and the save conflicts: b, never
+        // the person's, takes the server's copy.
+        rec.nodes = [step('a', 'A mine again'), rec.nodes[1]];
+        markGraphDirty(WF);
+        vi.advanceTimersByTime(5000);
+        expect(sent[1].expected_graph_version).toBe(7);
+        acks[1]({ conflict: true, graph_version: 8, workflow_data: { nodes: [
+            { id: 'a', type: 'log', position: { x: 0, y: 0 }, config: { label: 'A mine' } },
+            { id: 'b', type: 'log', position: { x: 0, y: 0 }, config: { label: 'B mcp' } },
+        ], edges: [] } });
+        const label = (id: string) => (rec.nodes.find((n) => n.id === id)?.data as Record<string, unknown>).label;
+        expect([label('a'), label('b')]).toEqual(['A mine again', 'B mcp']);
+    });
+
     it('a builder stream not yet written moves no base', () => {
         openCanvas(1);
         handlers['mcp:builder_event']({
