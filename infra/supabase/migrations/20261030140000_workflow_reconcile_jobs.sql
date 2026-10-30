@@ -6,7 +6,7 @@
 -- changed), by id, as they were and as it left them; deleted names the steps a canvas said it deleted (NULL: the
 -- steps the write removed); from_version and to_version are the graph versions the write moved between.
 -- Backend-only: RLS on with no policy, and the API roles hold no grants.
-CREATE TABLE public.workflow_reconcile_jobs (
+CREATE TABLE IF NOT EXISTS public.workflow_reconcile_jobs (
     id bigserial PRIMARY KEY,
     workflow_id uuid NOT NULL REFERENCES public.workflows(id) ON DELETE CASCADE,
     user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
@@ -23,12 +23,12 @@ CREATE TABLE public.workflow_reconcile_jobs (
     done_at timestamptz
 );
 
-CREATE INDEX workflow_reconcile_jobs_queued ON public.workflow_reconcile_jobs (workflow_id, id)
+CREATE INDEX IF NOT EXISTS workflow_reconcile_jobs_queued ON public.workflow_reconcile_jobs (workflow_id, id)
     WHERE status = 'queued';
-CREATE INDEX workflow_reconcile_jobs_done_at ON public.workflow_reconcile_jobs (done_at)
+CREATE INDEX IF NOT EXISTS workflow_reconcile_jobs_done_at ON public.workflow_reconcile_jobs (done_at)
     WHERE status <> 'queued';
 -- The staff Reliability view's read: jobs failing (retrying) or given up on, oldest first.
-CREATE INDEX workflow_reconcile_jobs_unfinished ON public.workflow_reconcile_jobs (created_at)
+CREATE INDEX IF NOT EXISTS workflow_reconcile_jobs_unfinished ON public.workflow_reconcile_jobs (created_at)
     WHERE status = 'failed' OR (status = 'queued' AND attempts > 0);
 
 ALTER TABLE public.workflow_reconcile_jobs ENABLE ROW LEVEL SECURITY;
@@ -38,14 +38,14 @@ REVOKE ALL ON SEQUENCE public.workflow_reconcile_jobs_id_seq FROM anon, authenti
 -- The graph versions a reconcile's own writes produced (a trigger's webhook fields, its schedule's mirrors):
 -- an edit made on a version is still made on it when every version after it is one of these.
 -- Backend-only: RLS on with no policy, and the API roles hold no grants.
-CREATE TABLE public.workflow_reconcile_versions (
+CREATE TABLE IF NOT EXISTS public.workflow_reconcile_versions (
     workflow_id uuid NOT NULL REFERENCES public.workflows(id) ON DELETE CASCADE,
     version bigint NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     PRIMARY KEY (workflow_id, version)
 );
 
-CREATE INDEX workflow_reconcile_versions_created_at ON public.workflow_reconcile_versions (created_at);
+CREATE INDEX IF NOT EXISTS workflow_reconcile_versions_created_at ON public.workflow_reconcile_versions (created_at);
 
 ALTER TABLE public.workflow_reconcile_versions ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON TABLE public.workflow_reconcile_versions FROM anon, authenticated;

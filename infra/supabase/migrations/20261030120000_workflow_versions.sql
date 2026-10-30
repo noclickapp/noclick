@@ -12,7 +12,7 @@
 -- definition is reserved for an agent's own fields, written with its workflow; author_key_id names the API key
 -- or grant that wrote it; changes are the lines its summary is made of.
 -- Backend-only: RLS on with no policy, and the API roles hold no grants.
-CREATE TABLE public.workflow_versions (
+CREATE TABLE IF NOT EXISTS public.workflow_versions (
     workflow_id uuid NOT NULL REFERENCES public.workflows(id) ON DELETE CASCADE,
     history_version bigint NOT NULL,
     version bigint NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE public.workflow_versions (
     CHECK ((graph IS NULL) = (name IS NULL))
 );
 
-CREATE INDEX workflow_versions_updated_at ON public.workflow_versions (updated_at);
+CREATE INDEX IF NOT EXISTS workflow_versions_updated_at ON public.workflow_versions (updated_at);
 
 ALTER TABLE public.workflow_versions ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON TABLE public.workflow_versions FROM anon, authenticated;
@@ -43,7 +43,7 @@ REVOKE ALL ON TABLE public.workflow_versions FROM anon, authenticated;
 -- One workflow's reconcile at a time (utils/workflow_reconcile.py): the reconcile running holds this lease,
 -- claimed and renewed in short statements, never across its own work; one that lapsed is anyone's.
 -- Backend-only: RLS on with no policy, and the API roles hold no grants.
-CREATE TABLE public.workflow_reconcile_leases (
+CREATE TABLE IF NOT EXISTS public.workflow_reconcile_leases (
     workflow_id uuid PRIMARY KEY REFERENCES public.workflows(id) ON DELETE CASCADE,
     holder text NOT NULL,
     expires_at timestamptz NOT NULL
