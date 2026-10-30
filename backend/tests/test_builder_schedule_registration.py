@@ -35,6 +35,7 @@ def _builder(graph: GraphState, workflow_id: str = "") -> AgenticBuilder:
     builder = object.__new__(AgenticBuilder)
     builder.messages = [{"role": "user", "content": f"{EXEC_RESULT_MARKER}\nadded nodes"}]
     builder.graph_state = graph
+    builder._written_steps = set(graph.nodes)  # the build added them
     builder.platform_ops, builder.user_id, builder.workflow_id = object(), USER, workflow_id
     return builder
 

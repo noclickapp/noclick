@@ -133,8 +133,11 @@ class AgenticBuilder:
         self.messages: List[Dict[str, str]] = []
         self._user_prompt = ""
         self._host_theme: Optional[str] = None
-        # A managed build request (requests.py): what it says reaches a person through its caller, never a canvas.
-        self._build_request = False
+        # A build request (requests.py) on a workflow that began with no steps: it must leave some, since what it
+        # says reaches a person through its caller, never a canvas.
+        self._must_build = False
+        # The steps this run added or wrote fields of: the done gate judges their reads, never an untouched step's.
+        self._written_steps: Set[str] = set()
         self._viewport_width: Optional[float] = None
         self._viewport_height: Optional[float] = None
         self._turn_count = 0
@@ -211,7 +214,9 @@ class AgenticBuilder:
         self._initial_graph_fingerprint = self._graph_fingerprint()
         self._user_prompt = edit_prompt
         self._host_theme = (user_context or {}).get("theme")
-        self._build_request = bool((user_context or {}).get("builder_request_id"))
+        from ..requests import must_build
+
+        self._must_build = must_build(user_context)
         self._viewport_width = viewport_width
         self._viewport_height = viewport_height
         if n8n_workflow:
@@ -523,6 +528,8 @@ class AgenticBuilder:
                 problems.append(
                     f"- {node.id} ({node.type}:{node.operation}): {error}"
                 )
+            if node.id not in self._written_steps:
+                continue  # its reads are another build's, or the person's
             for path, message in step_reference_errors(node, node_ids, known_keys):
                 problems.append(f"- {node.id}.{path}: {message}")
         if not problems:
@@ -605,15 +612,16 @@ class AgenticBuilder:
     _NOTHING_BUILT_MARKER = "[System: Nothing built]"
 
     def _gate_on_nothing_built(self, _where: str = "done") -> bool:
-        """Keep a build request open once while the workflow has no steps: a
-        build that queried operations then said it had set up a digest and
-        sent a test had added nothing, and its caller passed that on. (On a
-        canvas the person sees what's there.)"""
+        """Keep a build request open once while a workflow that began with no
+        steps still has none: a build that queried operations then said it had
+        set up a digest and sent a test had added nothing, and its caller passed
+        that on. A build that empties a workflow did what it was asked; on a
+        canvas the person sees what's there."""
 
         from ..workflow_ops import workflow_steps
         from .prompts import PROMPTS
 
-        if (not self._build_request or workflow_steps(self.graph_state.nodes.values())
+        if (not self._must_build or workflow_steps(self.graph_state.nodes.values())
                 or any(self._NOTHING_BUILT_MARKER in (m.get("content") or "")
                        for m in self.messages if m.get("role") == "user")):
             return False
@@ -641,6 +649,7 @@ class AgenticBuilder:
         if graph_ops:
             results, new_node_ids = execute_graph_mutations(graph_ops, self.graph_state)
             mutation_results.extend(results)
+            self._written_steps.update(new_node_ids)
             for op in graph_ops:
                 if op.tag == "add_node" and op.attrs.get("name") in new_node_ids:
                     node = self.graph_state.get_node(op.attrs["name"])
@@ -751,6 +760,7 @@ class AgenticBuilder:
                         dict(node.config or {}),
                     )
             field_results.extend(execute_field_ops(field_ops, self.graph_state))
+            self._written_steps.update(op.attrs.get("node", "") or op.attrs.get("id", "") for op in field_ops)
             await self._self_heal_operation_changes(
                 operation_changes, field_results
             )

@@ -317,7 +317,7 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
     row = await repo.for_conversation(USER, cid)
     assert row["status"] == "completed" and row["result"]["summary"] == "Created dashboard"
     # Beside the builder's words, what the workflow has and what the build ran.
-    assert requests.build_view(row)["result"]["steps"] == ["Dashboard"] and row["result"]["ran"] == {}
+    assert requests.build_view(row)["result"]["steps"] == {"dashboard": "Dashboard"} and row["result"]["ran"] == {}
     assert ("publication" in row["result"]) is publish_after
     await handler._maybe_notify_agent_result(request=finished_request, user_id=USER, builder=builder, segments=[])
     assert await repo.claim() is None
@@ -376,6 +376,30 @@ async def test_publication_lifecycle_results_and_notifications(builder_request_d
     message = events[-1]["message"]
     assert ("unpublished" if action == "unpublish" else "URL has changed") in message
     assert "Your interface is published." not in message
+
+
+async def test_what_every_attempt_ran_adds_up_and_how_the_workflow_began_is_kept(builder_request_db):
+    """A build that asks a question runs again on the answer: its result names what both attempts ran, and every
+    attempt judges "built nothing" by how the workflow began, not by what an earlier attempt left."""
+    pool, repo, workflow_id, enqueue = builder_request_db
+    queued = await enqueue(instructions="Build a digest", publish=None)
+    assert queued["spec"]["began_empty"] is True
+    assert requests.request_context(queued)["began_empty"] is True
+    first = await repo.claim()
+    assert await repo.waiting(USER, str(first["id"]), str(first["attempt_id"]), {"ask_id": "a", "inputs": []},
+                              ran={"fetch": "completed"})
+    resumed = await repo.claim_resume(USER, first["conversation_key"], "a")
+    await repo.build_finished(USER, str(resumed["id"]), str(resumed["attempt_id"]), success=True, summary="Built",
+                              facts={"steps": {"fetch": "Fetch", "send": "Send"}, "ran": {"send": "failed"}})
+    row = await repo.for_conversation(USER, first["conversation_key"])
+    assert row["result"] == {"summary": "Built", "steps": {"fetch": "Fetch", "send": "Send"},
+                             "ran": {"fetch": "completed", "send": "failed"}}
+
+    await pool.execute("UPDATE workflows SET workflow=$2 WHERE id=$1::uuid", workflow_id,
+                       {"nodes": [{"id": "old", "type": "trigger-cron"}, {"id": "n", "type": "stickyNote"}],
+                        "edges": []})
+    again = await enqueue(instructions="Remove everything", publish=None)
+    assert again["spec"]["began_empty"] is False
 
 
 async def test_build_only_result_cannot_claim_deployment(builder_request_db, monkeypatch):

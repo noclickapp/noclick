@@ -197,6 +197,20 @@ async def test_the_drafter_is_told_the_steps_before_it_and_their_keys():
 
 
 @pytest.mark.asyncio
+async def test_a_read_that_is_off_never_drops_a_draft():
+    """A read the check doesn't like is worth one more try, not the draft: an autofill keeps it (the builder's summary
+    names the read), and a valid draft is never traded for a retry that doesn't validate."""
+    d, node, calls = _form_to_email(_LITERAL)
+    node.operation = "send"
+    await _collect(d.autofill_node("n1", mode="fields"))
+    assert len(calls.prompts) == 1 and node.config["body"] == _LITERAL["config"]["body"]
+
+    d, node, calls = _form_to_email(_LITERAL, {"operation": "send", "config": {"subject": {"not": "text"}}})
+    await _collect(d.draft_nodes({"n1"}))
+    assert len(calls.prompts) == 2 and node.config["body"] == _LITERAL["config"]["body"]
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("drafted, said", [(_LITERAL, "no step 'trigger'"), (_MISSING_KEY, "no key 'body'")])
 async def test_a_read_of_a_missing_step_or_key_gets_one_corrective_try(drafted, said):
     d, node, calls = _form_to_email(drafted, _RIGHT)

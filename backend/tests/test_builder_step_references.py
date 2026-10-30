@@ -82,10 +82,13 @@ def test_reads_of_a_step_that_isnt_there_are_found():
     config = {
         "body": "**Name:** {{trigger.name}}\n**Email:** {{ $('form').email }}",
         "subject": "From {{contact_webhook.name}} ({{ $('contact_webhook').email }})",
+        "reply_to": "{{contact_webhok.email}} {{ $('Contact_Webhook').email }}",
     }
     assert find_missing_node_references(config, steps) == [
-        ("body", "{{trigger.name}}", "trigger"),
-        ("body", "{{ $('form').email }}", "form"),
+        ("body", "{{trigger.name}}", "trigger", None),             # a name drafters use for no step
+        ("body", "{{ $('form').email }}", "form", None),           # $('…') of no step always fails the run
+        ("reply_to", "{{contact_webhok.email}}", "contact_webhok", "contact_webhook"),  # a slip of a step id
+        ("reply_to", "{{ $('Contact_Webhook').email }}", "Contact_Webhook", "contact_webhook"),
     ]
 
 
@@ -97,6 +100,11 @@ def test_reads_of_a_step_that_isnt_there_are_found():
     "{{ $now }}",
     "{{ background: '#fff' }}",            # an object literal, not a read
     "{{contact_webhook.name}}",
+    "{{item.name}}", "{{ item.email }}",   # an iteration step's loop variables
+    "{{index}} of {{total}}", "{{items[0].id}}", "{{row_number}}",
+    "token: ${{ secrets.GITHUB_TOKEN }}",  # a CI system's, passed through as text
+    "Hi {{ contact.FIRSTNAME }}",          # another system's template
+    "Dear {{ customer.first_name }},",
 ])
 def test_what_isnt_a_read_of_a_missing_step_passes(value):
     assert find_missing_node_references({"f": value}, {"contact_webhook"}) == []
@@ -132,45 +140,59 @@ def test_what_drafting_wrote_is_judged_in_its_summary():
     assert "[reference error:" in summary and "no key 'body'" in summary
 
 
-def _builder(graph: GraphState, messages=None, build_request=False) -> AgenticBuilder:
+def _builder(graph: GraphState, messages=None, must_build=False, written=None) -> AgenticBuilder:
     b = object.__new__(AgenticBuilder)
     b.messages = list(_WORKED if messages is None else messages)
     b.graph_state = graph
-    b._build_request = build_request
+    b._must_build = must_build
+    b._written_steps = set(graph.nodes) if written is None else set(written)
     return b
 
 
-def test_done_waits_on_a_broken_read():
+def test_done_waits_on_a_broken_read_this_build_wrote():
     nudge = _builder(_digest())._config_done_nudge()
     assert nudge and "email_roundup.body" in nudge and "no key 'body'" in nudge
+    # Editing another step leaves a step it didn't touch alone: its reads are another build's, or the person's.
+    assert _builder(_digest(), written={"select_and_explain"})._config_done_nudge() is None
 
 
-def test_a_build_request_with_no_steps_waits_once():
+def test_a_build_request_on_an_empty_workflow_that_adds_nothing_waits_once():
+    from coder.workflow.requests import must_build
+
     empty = GraphState()
-    empty.add_node("note", "sticky-note", "A note")
-    b = _builder(empty, build_request=True)
+    empty.add_node("note", "stickyNote", "A note")  # a note isn't a step
+    b = _builder(empty, must_build=True)
     assert b._gate_on_nothing_built("Done") is True
     assert b._NOTHING_BUILT_MARKER in b.messages[-1]["content"] and "no steps" in b.messages[-1]["content"]
     assert b._last_turn_result.next_action == "continue"
     assert b._gate_on_nothing_built("Done") is False  # once: then it may say why
     # Built something, or a question answered on a canvas (the person sees it): nothing to hold.
-    assert _builder(_digest(), build_request=True)._gate_on_nothing_built("Done") is False
+    assert _builder(_digest(), must_build=True)._gate_on_nothing_built("Done") is False
     assert _builder(GraphState())._gate_on_nothing_built("Done") is False
+    # Only a build request on a workflow that began with no steps must build: emptying one is a build too, and a
+    # request from before this was recorded is never judged.
+    request = {"builder_request_id": "r1"}
+    assert must_build({**request, "began_empty": True})
+    assert not must_build({**request, "began_empty": False}) and not must_build(request)
+    assert not must_build({"began_empty": True})
 
 
 # ── What a finished build reports ────────────────────────────────────────────
 
 
-def test_a_build_reports_its_steps_and_what_it_ran():
+def test_a_build_reports_its_steps_and_what_it_ran_by_step():
     from coder.workflow.requests import build_facts
     from wss.handlers.workflow_builder_handler import record_build_run
 
     ran = {}
     record_build_run(ran, "select_and_explain", {"success": True, "ran": {"email_roundup": "error"}})
     record_build_run(ran, "weekday_8pm", {"error": "Node weekday_8pm didn't run.", "failed_node": "other"})
-    facts = build_facts(_digest().nodes.values(), ran)
-    assert facts["steps"] == ["Weekdays at 8 PM", "Select and explain the top five", "Email the roundup"]
-    assert facts["ran"] == {"Select and explain the top five": "completed", "Email the roundup": "failed"}
+    graph = _digest()
+    graph.add_node("note", "stickyNote", "Why")
+    facts = build_facts(graph.nodes.values(), ran)
+    assert facts["steps"] == {"weekday_8pm": "Weekdays at 8 PM", "select_and_explain": "Select and explain the top five",
+                              "email_roundup": "Email the roundup"}
+    assert facts["ran"] == {"select_and_explain": "completed", "email_roundup": "failed"}
 
 
 @pytest.mark.asyncio
@@ -184,15 +206,19 @@ async def test_a_build_that_added_nothing_is_not_a_success(monkeypatch):
     handler.get_pool = AsyncMock(return_value=object())
     claim = "The workflow is set up, and I sent a one-time test digest to your account."
     builder = SimpleNamespace(last_words=claim, graph_state=GraphState(), platform_ops=SimpleNamespace(ran={}))
-    request = SimpleNamespace(user_context={"builder_request_id": "r1", "builder_attempt_id": "a1"},
-                              current_graph={"nodes": [], "edges": []})
+    asked = {"builder_request_id": "r1", "builder_attempt_id": "a1"}
+    request = SimpleNamespace(user_context={**asked, "began_empty": True}, current_graph={"nodes": [], "edges": []})
 
     await handler._maybe_notify_agent_result(request=request, user_id="u1", builder=builder, segments=[])
     kwargs = recorded.await_args.kwargs
     assert kwargs["success"] is False and kwargs["error"] == requests.NOTHING_BUILT
-    assert claim not in kwargs["summary"] and kwargs["facts"] == {"steps": [], "ran": {}}
+    assert claim not in kwargs["summary"] and kwargs["facts"] == {"steps": {}, "ran": {}}
 
-    # Emptying a workflow that had steps is what was asked: that finishes as asked.
-    request.current_graph = {"nodes": [{"id": "old", "type": "trigger-cron"}]}
+    # Emptying a workflow that had steps is what was asked, though this attempt (resumed after an earlier one
+    # emptied it) began with none: judged by how the request began, it finishes as asked.
+    request.user_context = {**asked, "began_empty": False}
+    await handler._maybe_notify_agent_result(request=request, user_id="u1", builder=builder, segments=[])
+    assert recorded.await_args.kwargs["success"] is True
+    request.user_context = asked  # a request from before the start was recorded
     await handler._maybe_notify_agent_result(request=request, user_id="u1", builder=builder, segments=[])
     assert recorded.await_args.kwargs["success"] is True

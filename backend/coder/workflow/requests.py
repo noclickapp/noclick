@@ -69,7 +69,15 @@ def request_context(row):
     return {**row["origin"], "workflow_id": str(row["workflow_id"]),
             "builder_request_id": str(row["id"]), "builder_attempt_id": str(row["attempt_id"]),
             "coordinator_channel": (row.get("continuation") or {}).get("channel"),
-            "publication_requested": row["spec"].get("publish")}
+            "publication_requested": row["spec"].get("publish"),
+            "began_empty": row["spec"].get("began_empty")}
+
+
+def must_build(user_context):
+    """Whether a builder run is a build request on a workflow that began with no steps, every attempt of it: one that
+    ends with none built nothing. A request from before this was recorded is never judged."""
+    ctx = user_context or {}
+    return bool(ctx.get("builder_request_id")) and ctx.get("began_empty") is True
 
 
 async def submit_request(pool, *, user_id, workflow_id=None, instructions=None, name=None, publish=None,
@@ -287,8 +295,10 @@ async def answer_request(pool, request, *, values=None, message=None):
     return await taken
 
 
-async def record_question(pool, user_id, context, pending_ask):
-    return await BuilderRequestRepo(pool).waiting(user_id, context["builder_request_id"], context["builder_attempt_id"], pending_ask)
+async def record_question(pool, user_id, context, pending_ask, ran=None):
+    """``ran``: what this attempt ran, kept for the build's result (later attempts add theirs)."""
+    return await BuilderRequestRepo(pool).waiting(user_id, context["builder_request_id"], context["builder_attempt_id"],
+                                                  pending_ask, ran=ran)
 
 
 # A build that ends as it began, with no steps, built nothing, whatever its summary says.
@@ -297,12 +307,11 @@ NOTHING_BUILT = "The build ended with no steps in the workflow: nothing was buil
 
 def build_facts(nodes, ran):
     """What a finished build leaves beside the builder's own words (``summary``): the workflow's steps as they stand
-    (labels), and the steps the build ran with how each ended. Nothing in ``ran``: nothing ran or was sent."""
+    (step id → label), and the steps it ran, step id → how each ended, across its attempts (the repository adds the
+    earlier ones). Nothing in ``ran``: nothing ran or was sent."""
     from coder.workflow.workflow_ops import workflow_steps
 
-    labels = {n.id: n.label or n.id for n in nodes}
-    return {"steps": [labels[n.id] for n in workflow_steps(nodes)],
-            "ran": {labels.get(step, step): status for step, status in ran.items()}}
+    return {"steps": {n.id: n.label or n.id for n in workflow_steps(nodes)}, "ran": dict(ran)}
 
 
 async def record_result(pool, user_id, context, *, success, summary, error, facts=None):

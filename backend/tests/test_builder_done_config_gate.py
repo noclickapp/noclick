@@ -23,6 +23,7 @@ def _builder(nodes: dict[str, NodeState], messages: list | None = None) -> Agent
     b.messages = list(_WORKED if messages is None else messages)
     b.graph_state = GraphState()
     b.graph_state.nodes.update(nodes)
+    b._written_steps = set(nodes)  # the build added them
     return b
 
 

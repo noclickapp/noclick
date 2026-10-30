@@ -397,23 +397,24 @@ class SinglePassNodeDrafter:
             if _node_kind(node) == "agent":
                 # validate_node_config judges an agent's Model against models.dev synchronously.
                 await read_zen_catalog([merged.get("model")])
-            # The same validator as the canvas and the builder's own writes, then
-            # the reads of other steps, as the builder judges them.
+            # The same validator as the canvas and the builder's own writes; then the
+            # reads of other steps, as the builder judges them: worth one more try,
+            # never a reason to drop the draft (the builder's summary names any left).
             error = validate_node_config(_node_kind(node), operation, merged)
-            if error is None:
-                drafted_node = SimpleNamespace(type=_node_kind(node), operation=operation, config=merged)
-                references = step_reference_errors(
-                    drafted_node, set(self.graph_state.nodes), self.graph_state.known_output_keys(),
-                )
-                error = "\n".join(message for _path, message in references) or None
-            return merged, error
+            drafted_node = SimpleNamespace(type=_node_kind(node), operation=operation, config=merged)
+            references = "\n".join(message for _path, message in step_reference_errors(
+                drafted_node, set(self.graph_state.nodes), self.graph_state.known_output_keys(),
+            ))
+            return merged, error, references
 
         if isinstance(config, dict):
-            merged, error = await judged(config)
-            if error and mode == "full":
-                retry = await self._call_model(prompt, hint, correction=(drafted, error))
+            merged, error, references = await judged(config)
+            if (error or references) and mode == "full":
+                retry = await self._call_model(prompt, hint, correction=(drafted, error or references))
                 if retry.get("operation") == operation and isinstance(retry.get("config"), dict):
-                    merged, error = await judged(retry["config"])
+                    retried_merged, retried_error, retried_references = await judged(retry["config"])
+                    if not retried_error or error:  # never trade a valid draft for one that isn't
+                        merged, error, references = retried_merged, retried_error, retried_references
             if not error:
                 node.config = merged
             elif mode == "full":

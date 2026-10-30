@@ -1318,40 +1318,74 @@ def unknown_output_reference_error(
     )
 
 
+# Words a drafted {{word.key}} uses for a step that no workflow has (a drafted {{trigger.name}} emailed the owner
+# "{{trigger.name}}"); any other unknown word may be another system's template ({{ contact.FIRSTNAME }}).
+MISTAKEN_STEP_NAMES = frozenset({"trigger", "input", "node", "previous"})
+# What an iteration step puts in scope for the steps in its loop (nodes/iteration_node.py), and the workflow's
+# variables: neither is a step.
+ITERATION_VARIABLES = frozenset({"item", "index", "items", "total", "row_number"})
+
+
+def _near_step(word: str, node_ids: Collection[str]) -> Optional[str]:
+    """The step id ``word`` is a slip of (case, a dash for an underscore, a letter or two), if any."""
+    import difflib
+
+    normal = {node_id.lower().replace("-", "_"): node_id for node_id in node_ids}
+    if word.lower().replace("-", "_") in normal:
+        return normal[word.lower().replace("-", "_")]
+    close = difflib.get_close_matches(word, list(node_ids), n=1, cutoff=0.8)
+    return close[0] if close else None
+
+
 def find_missing_node_references(
     config: Dict[str, Any], node_ids: Collection[str], skip_fields: frozenset = frozenset(),
 ) -> List[tuple]:
-    """``(field_path, reference, step)`` for each read of a step the workflow
-    doesn't have: ``$('step')``, which fails the run there, or a
-    ``{{step.key}}`` path, which passes through as that literal text (a
-    drafted ``{{trigger.name}}`` emailed the owner "{{trigger.name}}").
-    ``vars`` is the workflow's variables, not a step."""
+    """``(field_path, reference, step, near)`` for each read of a step the
+    workflow doesn't have: ``$('step')``, which fails the run there, always;
+    and a ``{{word.key}}`` path, which passes through as that literal text,
+    only where ``word`` is a slip of a step id here (``near``) or a name
+    drafters use for a step no workflow has (:data:`MISTAKEN_STEP_NAMES`).
+    Iteration variables, ``vars``, ``${{ … }}`` and other systems' templates
+    (``{{ contact.FIRSTNAME }}``) are left alone."""
     hits: List[tuple] = []
     for path, text in _config_strings(config, skip_fields):
         for block in _FOREIGN_EXPR_BLOCK_RE.finditer(text):
+            if block.start() > 0 and text[block.start() - 1] == "$":
+                continue  # ${{ … }}: a CI system's, passed through as text
             inner = block.group(1).strip()
-            steps = [m.group("node") for m in _STEP_CALL_RE.finditer(inner)]
+            for step in dict.fromkeys(m.group("node") for m in _STEP_CALL_RE.finditer(inner)):
+                if step not in node_ids:
+                    hits.append((path, block.group(0), step, _near_step(step, node_ids)))
             plain = _PATH_REF_RE.match(inner)
-            if plain and plain.group("node") != "vars":
-                steps.append(plain.group("node"))
-            hits.extend((path, block.group(0), step) for step in dict.fromkeys(steps) if step not in node_ids)
+            word = plain.group("node") if plain else None
+            if not word or word in node_ids or word == "vars" or word in ITERATION_VARIABLES:
+                continue
+            near = _near_step(word, node_ids)
+            if near or word in MISTAKEN_STEP_NAMES:
+                hits.append((path, block.group(0), word, near))
     return hits
 
 
-def missing_node_reference_error(path: str, reference: str, step: str, node_ids: Collection[str]) -> str:
+def missing_node_reference_error(
+    path: str, reference: str, step: str, node_ids: Collection[str], near: Optional[str] = None,
+) -> str:
     """The actionable lint message for one read of a step that isn't there."""
     ids = sorted(node_ids)
     shown = ", ".join(ids[:12]) + (", …" if len(ids) > 12 else "")
     outcome = "the run fails there" if reference.lstrip("{ ").startswith("$") else "it is sent as that literal text"
+    guess = f" Did you mean '{near}'?" if near else ""
     return (
-        f"Field '{path}' reads {reference}, but this workflow has no step '{step}': {outcome}. Read a step's "
-        f"output as {{{{ $('step_id').key }}}}; the steps here are: {shown}."
+        f"Field '{path}' reads {reference}, but this workflow has no step '{step}': {outcome}.{guess} Read a "
+        f"step's output as {{{{ $('step_id').key }}}}; the steps here are: {shown}."
     )
+
+
+STICKY_NOTE_TYPE = "stickyNote"
 
 
 def workflow_steps(nodes: Iterable[Any]) -> List[Any]:
     """The nodes that are steps of the workflow (graph nodes or their stored dicts): all but sticky notes."""
-    return [n for n in nodes if (n.get("type") if isinstance(n, dict) else n.type) != "sticky-note"]
+    return [n for n in nodes if (n.get("type") if isinstance(n, dict) else n.type) != STICKY_NOTE_TYPE]
 
 
 def step_reference_errors(
@@ -1375,8 +1409,8 @@ def step_reference_errors(
     ]
     skip = template_lint_skip_fields(node.type, node.operation or "default", node.config or {})
     errors += [
-        (path, missing_node_reference_error(path, reference, step, node_ids))
-        for path, reference, step in find_missing_node_references(config, node_ids, skip)
+        (path, missing_node_reference_error(path, reference, step, node_ids, near))
+        for path, reference, step, near in find_missing_node_references(config, node_ids, skip)
     ]
     return errors
 

@@ -29,9 +29,14 @@ class BuilderRequestRepo:
 
     async def enqueue(self, *, user_id, workflow_id, instructions=None, publish=None, origin=None, continuation=None,
                       reply_conversation_id=None, reply_node_id=None, send_to_phone=False):
-        await self.accessible_workflow(user_id, workflow_id, publishing=publish is not None)
+        workflow = await self.accessible_workflow(user_id, workflow_id, publishing=publish is not None)
         job_id = uuid.uuid4()
         spec = {k: v for k, v in (("instructions", instructions), ("publish", publish)) if v is not None}
+        if instructions:
+            from coder.workflow.workflow_ops import workflow_steps
+
+            # Whether the workflow had steps when it was asked for: every attempt judges "built nothing" by it.
+            spec["began_empty"] = not workflow_steps((workflow["workflow"] or {}).get("nodes") or [])
         async with self.pool.acquire() as conn:
             async with conn.transaction():
                 await conn.execute("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", f"builder-requests:{user_id}")
@@ -115,22 +120,32 @@ class BuilderRequestRepo:
                                (SELECT status FROM coordinator_jobs WHERE id=$1::uuid))""", job_id, attempt_id,
         )
 
-    async def waiting(self, user_id, job_id, attempt_id, pending_ask):
+    async def waiting(self, user_id, job_id, attempt_id, pending_ask, *, ran=None):
+        """``ran``: what this attempt ran (step id → status), added to what earlier attempts ran."""
         row = await self.pool.fetchrow(
             """UPDATE coordinator_jobs SET status='waiting', pending_ask=$4::jsonb,
+               result=CASE WHEN $5::jsonb = '{}'::jsonb THEN result
+                      ELSE COALESCE(result, '{}'::jsonb)
+                           || jsonb_build_object('ran', COALESCE(result->'ran', '{}'::jsonb) || $5::jsonb) END,
                updated_at=now(), lease_until=now()+interval '7 days'
                WHERE kind='build' AND id=$1::uuid AND user_id=$2::uuid AND attempt_id=$3::uuid
-                 AND status='running' AND phase='building' RETURNING id""", job_id, user_id, attempt_id, pending_ask,
+                 AND status='running' AND phase='building' RETURNING id""",
+            job_id, user_id, attempt_id, pending_ask, ran or {},
         )
         return row is not None
 
     async def build_finished(self, user_id, job_id, attempt_id, *, success, summary, error=None, facts=None):
-        """``facts``: what the build left beside its summary (``requests.build_facts``), kept in its result."""
+        """``facts``: what the build left beside its summary (``requests.build_facts``), kept in its result, its
+        ``ran`` added to what earlier attempts ran."""
         await self.pool.execute(
             """UPDATE coordinator_jobs SET
                status=CASE WHEN NOT $4 THEN 'failed' WHEN spec ? 'publish' THEN 'queued' ELSE 'completed' END,
                phase=CASE WHEN $4 AND spec ? 'publish' THEN 'publishing' ELSE phase END,
-               result=$5::jsonb, error=$6, pending_ask=NULL, lease_until=NULL, updated_at=now()
+               result=$5::jsonb || CASE WHEN result ? 'ran' OR $5::jsonb ? 'ran'
+                   THEN jsonb_build_object('ran', COALESCE(result->'ran', '{}'::jsonb)
+                                                  || COALESCE($5::jsonb->'ran', '{}'::jsonb))
+                   ELSE '{}'::jsonb END,
+               error=$6, pending_ask=NULL, lease_until=NULL, updated_at=now()
                WHERE kind='build' AND id=$1::uuid AND user_id=$2::uuid AND attempt_id=$3::uuid
                  AND status='running' AND phase='building'""",
             job_id, user_id, attempt_id, success, {"summary": summary, **(facts or {})},

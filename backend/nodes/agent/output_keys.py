@@ -18,12 +18,16 @@ OUTPUT_KEYS = (
 )
 
 
-def agent_output_keys(config: Dict[str, Any]) -> Optional[List[str]]:
-    """The agent's output keys for its config as saved, or None for a coding harness."""
+def runs_in_process(config: Dict[str, Any]) -> bool:
+    """Whether the agent's model runs in this process, not in a coding harness's sandbox."""
     from nodes.agent.config.base import infer_model_type
 
     probe = {"model": (config or {}).get("model") or ""}
     if (config or {}).get("model_type"):
         probe["model_type"] = config["model_type"]
-    model_type = infer_model_type(probe).get("model_type", "llm")
-    return list(OUTPUT_KEYS) if model_type in IN_PROCESS_MODEL_TYPES else None
+    return infer_model_type(probe).get("model_type", "llm") in IN_PROCESS_MODEL_TYPES
+
+
+def agent_output_keys(config: Dict[str, Any]) -> Optional[List[str]]:
+    """The agent's output keys for its config as saved, or None for a coding harness."""
+    return list(OUTPUT_KEYS) if runs_in_process(config) else None

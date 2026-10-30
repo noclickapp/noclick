@@ -3152,7 +3152,8 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         if user_id and ctx.get('builder_request_id'):
             from coder.workflow.requests import record_question
 
-            if not await record_question(await self.get_pool(), user_id, ctx, pending_ask.to_dict()):
+            if not await record_question(await self.get_pool(), user_id, ctx, pending_ask.to_dict(),
+                                         ran=getattr(builder.platform_ops, "ran", None)):
                 return  # A cancelled or superseded attempt cannot ask more questions.
         notify = capability(BUILDER_ASK_NOTIFY)
         if notify is not None and user_id:
@@ -3241,13 +3242,13 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             s.get("text", "") for s in segments if s.get("type") == "text"
         ).strip()
         if user_id and ctx.get('builder_request_id'):
-            from coder.workflow.requests import NOTHING_BUILT, build_facts, record_result
-            from coder.workflow.workflow_ops import workflow_steps
+            from coder.workflow.requests import NOTHING_BUILT, build_facts, must_build, record_result
 
-            # What exists and what ran, beside the builder's words: a build that added nothing failed, whatever
-            # it said (one said it had set up a digest and sent a test, with no steps in the workflow).
-            facts = build_facts(builder.graph_state.nodes.values(), getattr(builder.platform_ops, "ran", {}))
-            if success and not facts["steps"] and not workflow_steps((request.current_graph or {}).get("nodes") or []):
+            # What exists and what ran, beside the builder's words: a build asked of a workflow with no steps that
+            # leaves none failed, whatever it said (one said it had set up a digest and sent a test). Judged by
+            # how the workflow began, not this attempt's start: an earlier attempt may have emptied it as asked.
+            facts = build_facts(builder.graph_state.nodes.values(), getattr(builder.platform_ops, "ran", None) or {})
+            if success and not facts["steps"] and must_build(ctx):
                 success, error = False, NOTHING_BUILT
             summary = (final_text or builder.graph_state.summary or "Run completed.")[:1500] if success else (error or "Build failed.")
             await record_result(await self.get_pool(), user_id, ctx, success=success, summary=summary, error=error,
