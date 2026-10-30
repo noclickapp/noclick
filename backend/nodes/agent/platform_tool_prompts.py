@@ -69,8 +69,11 @@ def builder_anchor(node_id: str) -> str:
 
 
 def presence_note(presence: str) -> str:
-    """``presence``: whether the workflow owner is in the app (utils/user_presence)."""
-    return f"--- Platform note ---\nThe workflow owner is {presence}. When they are away, use email_user to reach them."
+    """``presence``: whether the workflow owner is in the app (utils/user_presence). It steers only how to reach
+    them, so it must not read as the owner taking over a conversation."""
+    return (f"--- Platform note ---\nThe workflow owner is {presence}. This only says whether they have the NoClick app "
+            "open; it is not a sign they are handling any conversation or channel, and it never changes whether you "
+            "answer messages. If you need them while they are away, use email_user to reach them.")
 
 
 def builder_update(kind: str, payload: Dict[str, Any]) -> str:

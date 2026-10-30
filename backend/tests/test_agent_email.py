@@ -449,6 +449,16 @@ async def test_presence_describe_buckets(monkeypatch):
     assert "no recent" in await age(None)
 
 
+def test_presence_note_is_not_a_handover_signal():
+    from nodes.agent import platform_tool_prompts
+
+    note = platform_tool_prompts.presence_note("ACTIVE in the NoClick app right now")
+    assert note.startswith("--- Platform note ---\nThe workflow owner is ACTIVE")
+    assert "not a sign they are handling any conversation or channel" in note
+    assert "never changes whether you answer messages" in note
+    assert "email_user" in note
+
+
 def test_presence_touch_throttles(monkeypatch):
     from utils import user_presence
 
