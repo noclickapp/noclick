@@ -57,7 +57,8 @@ def build_view(row):
         "publication_status": ((row["result"] or {}).get("publication", {}).get("state", "published")
                                if row["status"] == "completed" and (row["result"] or {}).get("publication")
                                else (row["status"] if publish is not None else "not_requested")),
-        "deployment_note": ("This request only saves changes. It does not update the public site."
+        "deployment_note": ("This request only saves changes, which take effect at once: a schedule or trigger runs "
+                            "without publishing. It does not update the public site."
                             if publish is None else None),
         "delivery": {"send_to_phone": row["send_to_phone"], "phone_state": row["phone_state"],
                      "error": row["delivery_error"]},
@@ -290,9 +291,24 @@ async def record_question(pool, user_id, context, pending_ask):
     return await BuilderRequestRepo(pool).waiting(user_id, context["builder_request_id"], context["builder_attempt_id"], pending_ask)
 
 
-async def record_result(pool, user_id, context, *, success, summary, error):
+# A build that ends as it began, with no steps, built nothing, whatever its summary says.
+NOTHING_BUILT = "The build ended with no steps in the workflow: nothing was built, run or sent."
+
+
+def build_facts(nodes, ran):
+    """What a finished build leaves beside the builder's own words (``summary``): the workflow's steps as they stand
+    (labels), and the steps the build ran with how each ended. Nothing in ``ran``: nothing ran or was sent."""
+    from coder.workflow.workflow_ops import workflow_steps
+
+    labels = {n.id: n.label or n.id for n in nodes}
+    return {"steps": [labels[n.id] for n in workflow_steps(nodes)],
+            "ran": {labels.get(step, step): status for step, status in ran.items()}}
+
+
+async def record_result(pool, user_id, context, *, success, summary, error, facts=None):
     await BuilderRequestRepo(pool).build_finished(
-        user_id, context["builder_request_id"], context["builder_attempt_id"], success=success, summary=summary, error=error,
+        user_id, context["builder_request_id"], context["builder_attempt_id"], success=success, summary=summary,
+        error=error, facts=facts,
     )
 
 

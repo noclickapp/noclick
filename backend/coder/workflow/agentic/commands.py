@@ -19,7 +19,7 @@ from ..workflow_xml import XmlOp, coerce_value, coerce_value_for_field
 from ..workflow_ops import (
     STRUCTURAL_TOOL_TYPES,
     drop_stale_agent_discriminator,
-    find_unknown_output_references,
+    step_reference_errors,
     misplaced_agent_model,
     is_trigger_source,
     resolve_sticky_note_position,
@@ -36,7 +36,6 @@ from ..workflow_ops import (
     provider_dataflow_conflict,
     resolve_tools_edge,
     trigger_provider_conflict,
-    unknown_output_reference_error,
     validate_agent_tool_operations,
 )
 from ..operation_catalog import (
@@ -1347,17 +1346,14 @@ def execute_field_ops(
                         desc = _describe_field(schema['properties'][fname], defs)
                         results.append(f"  Expected schema for {fname}: {desc}")
         # A reference to a key the referenced output does not have resolves
-        # to nothing at run time (a required field then fails the node). The
-        # keys come from real outputs (GraphState._output_keys); an unknown
-        # shape is never judged.
-        for path, ref_node, key, known in find_unknown_output_references(
-            {k: node.config[k] for k in changed_fields if k in node.config},
-            graph_state._output_keys,
+        # to nothing at run time (a required field then fails the node), and
+        # one to a step that isn't there is sent as literal text. The keys are
+        # what the node declares or real outputs showed
+        # (GraphState.known_output_keys); an unknown shape is never judged.
+        for path, message in step_reference_errors(
+            node, set(graph_state.nodes), graph_state.known_output_keys(), fields=changed_fields,
         ):
-            results.append(
-                f"REFERENCE ERROR for {node_name}.{path}: "
-                f"{unknown_output_reference_error(path, ref_node, key, known)}"
-            )
+            results.append(f"REFERENCE ERROR for {node_name}.{path}: {message}")
 
     return results
 
@@ -2146,6 +2142,8 @@ async def execute_node_ops(
                     # Update has_output on the graph state
                     if node:
                         node.has_output = True
+                        if result.get('output') is not None:
+                            graph_state.saw_output(node.id, result['output'])
             _op_span.set_attribute("agent.op.duration_ms", (time.monotonic() - _op_started) * 1000)
     return results
 
@@ -2515,6 +2513,13 @@ def build_node_summary(node: NodeState, graph_state: Optional[GraphState] = None
     )
     if cred_status:
         parts.append(f"  {cred_status}")
+
+    # What node drafting wrote is judged as a <field> write is: a drafted read
+    # of a key the upstream output won't have, or of a step that isn't there,
+    # fails every run.
+    if graph_state and not is_provider:
+        for _path, message in step_reference_errors(node, set(graph_state.nodes), graph_state.known_output_keys()):
+            parts.append(f"  [reference error: {message}]")
 
     return '\n'.join(parts)
 

@@ -24,6 +24,7 @@ __all__ = [
     "credential_check",
     "config_check",
     "untested_check",
+    "NOTHING_BUILT",
     "selected_node_note",
     "inbox_name_taken",
     "NAMING_SYSTEM_PROMPT",
@@ -157,7 +158,8 @@ def build_user_context(
         if user_context.get("publication_requested"):
             lines.append("Publication runs after you finish: say the edits are saved and publication is pending.")
         else:
-            lines.append("This request only saves changes; nothing is published.")
+            lines.append("This request only saves changes, which take effect at once (a schedule or trigger runs "
+                         "without publishing); no interface is published.")
     if user_context.get("inner_tab"):
         lines.append(f"The user is on the {user_context['inner_tab']} tab.")
     if user_context.get("selected_node_id"):
@@ -233,6 +235,14 @@ def untested_check(untested: str) -> str:
         "Run them with <run_node node=\"...\" get_output /> if the run's steps only read, fetch or transform, then "
         "fix what it shows. If one can't run safely, send <done/> and say which step is untested."
     )
+
+
+# The done-gate's note when the workflow still has no steps: nothing said in the turn exists yet.
+NOTHING_BUILT = (
+    "Before finishing: the workflow has no steps, so nothing you described exists, ran or was sent. Add the steps "
+    "with <add_node> and <add_edge>. If this request needs no steps, send <done/> and say so: never say something "
+    "was built, set up, tested or sent."
+)
 
 
 def selected_node_note(node_id: str, label: str, node_type: str) -> str:

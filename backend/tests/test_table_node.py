@@ -325,11 +325,15 @@ class TestBuilderAndMcp:
 
     async def test_a_builder_write_runs_as_written(self, real_database, store):
         from coder.workflow.agentic.commands import execute_field_ops
+        from coder.workflow.graph_state import NodeState
         from coder.workflow.operation_catalog import validate_node_config
         from coder.workflow.workflow_xml import parse_xml
         from utils.expression_evaluator import evaluate_expressions
 
         state = self._state()
+        for step in ("extract", "fetch"):  # the steps the writes read
+            state.nodes[step] = NodeState(id=step, type="automation-serverless-function", label=step, goal="",
+                                          operation=None, config={})
         results = execute_field_ops(parse_xml(
             """<field name="table" node="save" value="Results" />"""
             """<field name="rows" node="save" value="{{ $('extract').items }}" />"""), state)

@@ -279,6 +279,12 @@ class AgentNode(WorkflowNode):
         return not (isinstance(output, dict) and output.get("skipped"))
 
     @classmethod
+    def declared_output_keys(cls, config: Dict[str, Any]) -> Optional[List[str]]:
+        from nodes.agent.output_keys import agent_output_keys
+
+        return agent_output_keys(config)
+
+    @classmethod
     async def load_field_options(
         cls,
         field_name: str,

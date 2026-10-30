@@ -224,7 +224,10 @@ class GraphState:
         # of the same type+operation — populated out-of-band like
         # _credential_health, so a `$('node').key` write can be judged
         # without a DB round-trip. Absent node = shape unknown, never "no keys".
+        # Read through known_output_keys(), which puts what a node declares first.
         self._output_keys: Dict[str, List[str]] = {}
+        # The nodes whose keys above come from a run of this workflow, not a guess.
+        self._output_seen: Set[str] = set()
 
         # Workflow variables (settings.variable_definitions) — settings-level,
         # not part of the graph blob, so populated out-of-band like
@@ -327,6 +330,22 @@ class GraphState:
                 if target and target.type in ('agent', 'mcp-server'):
                     return True
         return False
+
+    def known_output_keys(self) -> Dict[str, List[str]]:
+        """What each node's output is known to have: its declared shape for
+        the config as it stands, else _output_keys (workflow_ops.known_output_keys)."""
+        from .workflow_ops import known_output_keys
+
+        return known_output_keys(self.nodes.values(), self._output_keys)
+
+    def saw_output(self, node_id: str, output: Any) -> None:
+        """Record a run's output of ``node_id``: its keys are now observed, not guessed."""
+        from .workflow_ops import output_top_level_keys
+
+        keys = output_top_level_keys(output)
+        if keys is not None:
+            self._output_keys[node_id] = keys
+            self._output_seen.add(node_id)
 
     def has_wired_providers(self, node_id: str) -> bool:
         """Whether tool providers are wired INTO this node's bottom handle —

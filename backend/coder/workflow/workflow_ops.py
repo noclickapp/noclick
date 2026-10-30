@@ -1207,6 +1207,11 @@ _OUTPUT_REF_RE = re.compile(
     r"""\$\(\s*(['"])(?P<node>[^'"]+)\1\s*\)\s*"""
     r"""(?:\.(?P<key>[A-Za-z_$][\w$]*)|\[\s*(['"])(?P<bkey>[^'"]+)\4\s*\])(?P<call>\s*\()?"""
 )
+# A `$('step')` call, whatever is read off it.
+_STEP_CALL_RE = re.compile(r"""\$\(\s*(['"])(?P<node>[^'"]+)\1\s*\)""")
+# A whole `{{ step.key… }}` block in the path form the run resolves (utils/reference_resolver.py): its step, then
+# at least one `.key` or index. A bare `{{word}}` may be another system's template and is left alone.
+_PATH_REF_RE = re.compile(r"^(?P<node>[A-Za-z0-9_-]+)(?P<rest>(?:\.[A-Za-z0-9_]+|\[\d+\]|\[\])+)$")
 
 
 def output_top_level_keys(output: Any) -> Optional[List[str]]:
@@ -1261,12 +1266,16 @@ def known_output_keys(nodes: Iterable[Any], observed: Mapping[str, Sequence[str]
 
 def _output_references(config: Dict[str, Any], skip_fields: frozenset) -> Iterator[Tuple[str, str, str]]:
     """``(field_path, node_id, key)`` for each ``$('node').key`` read inside a
-    ``{{ … }}`` block; method calls (``$('n').toString()``) aren't reads."""
+    ``{{ … }}`` block, and each ``{{node.key}}`` path read; method calls
+    (``$('n').toString()``) aren't reads."""
     for path, text in _config_strings(config, skip_fields):
         for block in _FOREIGN_EXPR_BLOCK_RE.finditer(text):
             for m in _OUTPUT_REF_RE.finditer(block.group(1)):
                 if not m.group("call"):
                     yield path, m.group("node"), m.group("key") or m.group("bkey")
+            plain = _PATH_REF_RE.match(block.group(1).strip())
+            if plain and plain.group("rest").startswith("."):
+                yield path, plain.group("node"), plain.group("rest")[1:].split(".")[0].split("[")[0]
 
 
 def find_unknown_output_references(
@@ -1307,6 +1316,69 @@ def unknown_output_reference_error(
         f"'{key}' — it resolves to nothing at run time. Its keys are: {shown}. Reference "
         f"one of those, or <get_output node=\"{node_id}\" /> to see the stored output."
     )
+
+
+def find_missing_node_references(
+    config: Dict[str, Any], node_ids: Collection[str], skip_fields: frozenset = frozenset(),
+) -> List[tuple]:
+    """``(field_path, reference, step)`` for each read of a step the workflow
+    doesn't have: ``$('step')``, which fails the run there, or a
+    ``{{step.key}}`` path, which passes through as that literal text (a
+    drafted ``{{trigger.name}}`` emailed the owner "{{trigger.name}}").
+    ``vars`` is the workflow's variables, not a step."""
+    hits: List[tuple] = []
+    for path, text in _config_strings(config, skip_fields):
+        for block in _FOREIGN_EXPR_BLOCK_RE.finditer(text):
+            inner = block.group(1).strip()
+            steps = [m.group("node") for m in _STEP_CALL_RE.finditer(inner)]
+            plain = _PATH_REF_RE.match(inner)
+            if plain and plain.group("node") != "vars":
+                steps.append(plain.group("node"))
+            hits.extend((path, block.group(0), step) for step in dict.fromkeys(steps) if step not in node_ids)
+    return hits
+
+
+def missing_node_reference_error(path: str, reference: str, step: str, node_ids: Collection[str]) -> str:
+    """The actionable lint message for one read of a step that isn't there."""
+    ids = sorted(node_ids)
+    shown = ", ".join(ids[:12]) + (", …" if len(ids) > 12 else "")
+    outcome = "the run fails there" if reference.lstrip("{ ").startswith("$") else "it is sent as that literal text"
+    return (
+        f"Field '{path}' reads {reference}, but this workflow has no step '{step}': {outcome}. Read a step's "
+        f"output as {{{{ $('step_id').key }}}}; the steps here are: {shown}."
+    )
+
+
+def workflow_steps(nodes: Iterable[Any]) -> List[Any]:
+    """The nodes that are steps of the workflow (graph nodes or their stored dicts): all but sticky notes."""
+    return [n for n in nodes if (n.get("type") if isinstance(n, dict) else n.type) != "sticky-note"]
+
+
+def step_reference_errors(
+    node: Any, node_ids: Collection[str], output_keys: Mapping[str, Sequence[str]],
+    fields: Optional[Collection[str]] = None,
+) -> List[Tuple[str, str]]:
+    """``(field_path, message)`` for each read in ``node``'s config (only
+    ``fields``, when given) that can't hold at run time: a key the step's
+    output doesn't have, or a step that isn't there. ``node`` carries ``type``,
+    ``operation`` and ``config``; ``output_keys`` is what each step's output is
+    known to have (:func:`known_output_keys`). The one check the builders run
+    on a <field> write, on what the drafter wrote, and before <done/>."""
+    from .operation_catalog import template_lint_skip_fields
+
+    config = node.config or {}
+    if fields is not None:
+        config = {key: config[key] for key in fields if key in config}
+    errors = [
+        (path, unknown_output_reference_error(path, ref, key, known))
+        for path, ref, key, known in find_unknown_output_references(config, output_keys)
+    ]
+    skip = template_lint_skip_fields(node.type, node.operation or "default", node.config or {})
+    errors += [
+        (path, missing_node_reference_error(path, reference, step, node_ids))
+        for path, reference, step in find_missing_node_references(config, node_ids, skip)
+    ]
+    return errors
 
 
 def find_placeholder_tokens(

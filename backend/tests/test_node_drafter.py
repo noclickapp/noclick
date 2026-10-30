@@ -1,11 +1,11 @@
 """Public node-drafter registry, events, validation, and autofill tests."""
 
 import asyncio
-from types import SimpleNamespace
 
 import pytest
 
 import coder.workflow.node_drafter as nd
+from coder.workflow.graph_state import GraphState
 from coder.workflow.node_drafter import SinglePassNodeDrafter, create_node_drafter
 
 
@@ -32,9 +32,9 @@ def fresh_registry():
 def _drafter(*model_replies, node_type="automation-slack", operation=None):
     """Each model call answers the next reply; the last one repeats."""
     d = SinglePassNodeDrafter(config=None)
-    node = SimpleNamespace(type=node_type, operation=operation, config={},
-                           goal="post a message", label="Slack")
-    d.graph_state = SimpleNamespace(nodes={"n1": node})
+    d.graph_state = GraphState()
+    node = d.graph_state.add_node("n1", node_type, "Slack", goal="post a message")
+    node.operation = operation
     d.user_prompt = "notify the team"
 
     async def fake_call(prompt, hint, correction=None):
@@ -164,3 +164,42 @@ async def test_nodes_without_operations_pass_through():
     d, node, _ = _drafter({}, node_type="sticky-note")
     events = await _collect(d.draft_nodes({"n1"}))
     assert [e.type for e in events] == ["node_processing_start", "node_updated"]
+
+
+# Told only to write {{node_id.field}}, with no step named, the drafter emailed a contact form's
+# {{trigger.name}} as that literal text and read a digest's agent reply as $('agent').body.
+
+def _form_to_email(*model_replies):
+    d, node, calls = _drafter(*model_replies, node_type="automation-send-email")
+    graph = d.graph_state
+    graph.add_node("contact_form", "trigger-webhook", "Contact form")
+    graph.add_node("check_submission", "agent", "Check the submission")
+    graph.add_edge("contact_form", "check_submission")
+    graph.add_edge("check_submission", "n1")
+    graph.get_node("check_submission").operation = "default"
+    return d, node, calls
+
+
+_LITERAL = {"operation": "send", "config": {"subject": "New message", "body": "From {{trigger.name}}"}}
+_MISSING_KEY = {"operation": "send", "config": {"subject": "New message", "body": "{{ $('check_submission').body }}"}}
+_RIGHT = {"operation": "send", "config": {"subject": "New message",
+                                          "body": "From {{ $('check_submission').response.name }}"}}
+
+
+@pytest.mark.asyncio
+async def test_the_drafter_is_told_the_steps_before_it_and_their_keys():
+    d, _, calls = _form_to_email(_RIGHT)
+    await _collect(d.draft_nodes({"n1"}))
+    prompt = calls.prompts[0][0]
+    assert "- check_submission (agent): type, status, response," in prompt
+    assert "- contact_form (trigger-webhook): keys not known until it runs" in prompt
+    assert "{{ $('step_id').key }}" in prompt and "{{node_id.field}}" not in prompt
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("drafted, said", [(_LITERAL, "no step 'trigger'"), (_MISSING_KEY, "no key 'body'")])
+async def test_a_read_of_a_missing_step_or_key_gets_one_corrective_try(drafted, said):
+    d, node, calls = _form_to_email(drafted, _RIGHT)
+    await _collect(d.draft_nodes({"n1"}))
+    assert len(calls.prompts) == 2 and said in calls.corrections[1][1]
+    assert node.config["body"] == _RIGHT["config"]["body"]

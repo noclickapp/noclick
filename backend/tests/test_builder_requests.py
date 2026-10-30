@@ -9,6 +9,7 @@ import pytest
 
 from coder.coordinator.tools import CoordinatorTools, coordinator_tool_params
 from coder.workflow import requests
+from coder.workflow.graph_state import GraphState
 from repositories.builder_requests import BuilderRequestRepo
 from repositories.conversation import ConversationRepo
 from repositories.coordinator_jobs import outside_sources
@@ -249,8 +250,11 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
     cid = queued["conversation_key"]
     monkeypatch.setattr(WorkflowBuilderHandler, "get_pool", AsyncMock(return_value=pool))
     monkeypatch.setattr(requests, "get_sio", lambda: SimpleNamespace())
-    builder = SimpleNamespace(edit=AsyncMock(), generation_id="resumed", last_words="",
-                              graph_state=SimpleNamespace(workflow_name="App", summary="Created dashboard"))
+    built = GraphState()
+    built.add_node("dashboard", "interface-html-react", "Dashboard")
+    built.workflow_name, built.summary = "App", "Created dashboard"
+    builder = SimpleNamespace(edit=AsyncMock(), generation_id="resumed", last_words="", graph_state=built,
+                              platform_ops=None)
     pending = {"ask_id": "credentials", "inputs": []}
     ask = SimpleNamespace(to_dict=lambda: pending)
     monkeypatch.setattr(capabilities, "_providers", {})
@@ -312,6 +316,8 @@ async def test_builder_worker_and_real_answer_handler_share_the_request(builder_
         publish.assert_not_awaited()
     row = await repo.for_conversation(USER, cid)
     assert row["status"] == "completed" and row["result"]["summary"] == "Created dashboard"
+    # Beside the builder's words, what the workflow has and what the build ran.
+    assert requests.build_view(row)["result"]["steps"] == ["Dashboard"] and row["result"]["ran"] == {}
     assert ("publication" in row["result"]) is publish_after
     await handler._maybe_notify_agent_result(request=finished_request, user_id=USER, builder=builder, segments=[])
     assert await repo.claim() is None

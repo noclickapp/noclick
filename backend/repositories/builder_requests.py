@@ -124,7 +124,8 @@ class BuilderRequestRepo:
         )
         return row is not None
 
-    async def build_finished(self, user_id, job_id, attempt_id, *, success, summary, error=None):
+    async def build_finished(self, user_id, job_id, attempt_id, *, success, summary, error=None, facts=None):
+        """``facts``: what the build left beside its summary (``requests.build_facts``), kept in its result."""
         await self.pool.execute(
             """UPDATE coordinator_jobs SET
                status=CASE WHEN NOT $4 THEN 'failed' WHEN spec ? 'publish' THEN 'queued' ELSE 'completed' END,
@@ -132,7 +133,7 @@ class BuilderRequestRepo:
                result=$5::jsonb, error=$6, pending_ask=NULL, lease_until=NULL, updated_at=now()
                WHERE kind='build' AND id=$1::uuid AND user_id=$2::uuid AND attempt_id=$3::uuid
                  AND status='running' AND phase='building'""",
-            job_id, user_id, attempt_id, success, {"summary": summary},
+            job_id, user_id, attempt_id, success, {"summary": summary, **(facts or {})},
             None if success else (error or "The build did not complete."),
         )
 

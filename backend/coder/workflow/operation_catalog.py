@@ -549,6 +549,13 @@ def reject_invalid_config_values(
 _CODE_FIELD_WIDGETS = frozenset({'code_editor', 'python_editor'})
 
 
+def template_lint_skip_fields(node_type: str, operation: str, config: Dict[str, Any]) -> frozenset:
+    """The fields the template lints leave alone for this operation: code (JSX object literals look like
+    templates) and an HTTP request's headers."""
+    config_class = get_operation_config_class(node_type, operation, config)
+    return _placeholder_skip_fields(node_type, config_class) if config_class else frozenset()
+
+
 def _placeholder_skip_fields(node_type: str, config_class) -> frozenset:
     """Fields exempt from the placeholder lint for this operation."""
     skip = set()

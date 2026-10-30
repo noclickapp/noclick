@@ -173,6 +173,17 @@ def builder_run_outcome(result: Any, node_id: str, edges: List[Dict[str, Any]], 
     return {"success": True, "ran": ran} if include_downstream else {"success": True, "output": output, "ran": ran}
 
 
+def record_build_run(ran: Dict[str, str], node_id: str, outcome: Dict[str, Any]) -> None:
+    """Keep what a build's ``<run_node>`` ran, step id → "completed" or
+    "failed", for the build's result: a step that didn't run isn't in it."""
+    for step, status in (outcome.get("ran") or {}).items():
+        ran[step] = "failed" if status == "error" else status
+    if outcome.get("success"):
+        ran[node_id] = "completed"
+    elif outcome.get("failed_node") == node_id:
+        ran[node_id] = "failed"
+
+
 BUILDER_NOT_SIGNED_IN = "Sign in to use the AI builder."
 BUILDER_NO_EDIT_ACCESS = "You don't have edit access to this workflow."
 BUILDER_FOREIGN_CONVERSATION = "This chat belongs to another account. Start a new chat."
@@ -466,6 +477,10 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             # in-memory nodes that haven't been saved to the DB yet.
             _graph_state = None
 
+            def __init__(self):
+                # What this run's <run_node> ran (record_build_run), for a build's result.
+                self.ran: Dict[str, str] = {}
+
             async def get_node_output(self, node_id: str) -> Optional[Any]:
                 """Return {output, created_at} or None (latest output from CAS)."""
                 pool = await handler.get_pool()
@@ -557,8 +572,10 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                     )
                     exec_handler = WorkflowExecutionHandler(handler.sio)
                     result = await exec_handler.handle_execute(sid, exec_req, caller_user_id=user_id)
-                    return builder_run_outcome(result, node_id, normalized_edges,
-                                               include_downstream=include_downstream)
+                    outcome = builder_run_outcome(result, node_id, normalized_edges,
+                                                  include_downstream=include_downstream)
+                    record_build_run(self.ran, node_id, outcome)
+                    return outcome
                 except Exception as e:
                     logger.error(f"[PlatformOps] run_node error: {e}", exc_info=True)
                     return {"error": str(e)}
@@ -3224,10 +3241,17 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             s.get("text", "") for s in segments if s.get("type") == "text"
         ).strip()
         if user_id and ctx.get('builder_request_id'):
-            from coder.workflow.requests import record_result
+            from coder.workflow.requests import NOTHING_BUILT, build_facts, record_result
+            from coder.workflow.workflow_ops import workflow_steps
 
+            # What exists and what ran, beside the builder's words: a build that added nothing failed, whatever
+            # it said (one said it had set up a digest and sent a test, with no steps in the workflow).
+            facts = build_facts(builder.graph_state.nodes.values(), getattr(builder.platform_ops, "ran", {}))
+            if success and not facts["steps"] and not workflow_steps((request.current_graph or {}).get("nodes") or []):
+                success, error = False, NOTHING_BUILT
             summary = (final_text or builder.graph_state.summary or "Run completed.")[:1500] if success else (error or "Build failed.")
-            await record_result(await self.get_pool(), user_id, ctx, success=success, summary=summary, error=error)
+            await record_result(await self.get_pool(), user_id, ctx, success=success, summary=summary, error=error,
+                                facts=facts)
             return  # The builder request owns follow-through and terminal delivery.
         if success:
             summary = (final_text or builder.graph_state.summary or "Run completed.")[:1500]

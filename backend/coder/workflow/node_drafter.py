@@ -153,21 +153,50 @@ class SinglePassNodeDrafter:
                 + json.dumps(source_context, default=str)
                 + "\n\n"
             )
+        upstream = self._upstream_steps(node)
+        steps_note = (
+            f"The steps before this one, with the keys their output has:\n{upstream}\n\n"
+            if upstream else "No step runs before this one.\n\n"
+        )
         return (
             "You are configuring one node in an automation workflow.\n\n"
             f"The user asked for: {self.user_prompt}\n\n"
             f"This node is a `{_node_kind(node)}` and its purpose in the workflow is: "
             f"{getattr(node, 'goal', '') or getattr(node, 'label', '') or 'unspecified'}\n\n"
             f"{source_note}"
+            f"{steps_note}"
             f"Available operations for this node type:\n{catalog}\n\n"
             "Choose the single operation that fits the node's purpose, then provide "
             "values for its configuration fields. Use the exact operation name from "
             "the list. For any field you cannot determine from the request, either "
-            "omit it or use a reference to an upstream node's output in the form "
-            "{{node_id.field}}.\n\n"
+            "omit it or read an earlier step's output as {{ $('step_id').key }} (a "
+            "nested value as {{ $('step_id').key.inner }}), with a step id and one of "
+            "its keys from the list above: no other step exists to read.\n\n"
             "Respond with JSON only, no prose:\n"
             '{"operation": "<operation name>", "config": {"<field>": "<value>"}}'
         )
+
+    def _upstream_steps(self, node: Any) -> str:
+        """The steps before ``node`` and the keys their output is known to have.
+        Told only to write ``{{node_id.field}}``, the drafter read steps that
+        don't exist ({{trigger.name}}, sent as literal text) and keys an output
+        doesn't have ($('agent').body, which failed every run)."""
+        from .workflow_ops import find_predecessors
+
+        graph = self.graph_state
+        node_id = getattr(node, "id", None)
+        if graph is None or not node_id:
+            return ""
+        known = graph.known_output_keys()
+        edges = [{"source": e.source_id, "target": e.target_id} for e in graph.edges.values()]
+        lines = []
+        for step_id in sorted(find_predecessors(node_id, edges, set(graph.nodes))):
+            if graph.is_tool_provider(step_id):
+                continue
+            keys = known.get(step_id)
+            shape = ", ".join(keys) if keys else "keys not known until it runs"
+            lines.append(f"- {step_id} ({_node_kind(graph.nodes[step_id])}): {shape}")
+        return "\n".join(lines)
 
     async def _call_model(
         self, prompt: str, schema_hint: str, correction: Optional[tuple] = None,
@@ -282,7 +311,10 @@ class SinglePassNodeDrafter:
             get_operations_for_node_type,
             validate_node_config,
         )
+        from types import SimpleNamespace
+
         from nodes.agent.config.harness_model_lists import read_zen_catalog
+        from .workflow_ops import step_reference_errors
         from .workflow_schema import compact_schema, resolve_schema_refs
 
         node = self.graph_state.nodes.get(node_id) if self.graph_state else None
@@ -365,8 +397,16 @@ class SinglePassNodeDrafter:
             if _node_kind(node) == "agent":
                 # validate_node_config judges an agent's Model against models.dev synchronously.
                 await read_zen_catalog([merged.get("model")])
-            # The same validator as the canvas and the builder's own writes.
-            return merged, validate_node_config(_node_kind(node), operation, merged)
+            # The same validator as the canvas and the builder's own writes, then
+            # the reads of other steps, as the builder judges them.
+            error = validate_node_config(_node_kind(node), operation, merged)
+            if error is None:
+                drafted_node = SimpleNamespace(type=_node_kind(node), operation=operation, config=merged)
+                references = step_reference_errors(
+                    drafted_node, set(self.graph_state.nodes), self.graph_state.known_output_keys(),
+                )
+                error = "\n".join(message for _path, message in references) or None
+            return merged, error
 
         if isinstance(config, dict):
             merged, error = await judged(config)

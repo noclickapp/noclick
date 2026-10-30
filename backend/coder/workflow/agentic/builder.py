@@ -133,6 +133,8 @@ class AgenticBuilder:
         self.messages: List[Dict[str, str]] = []
         self._user_prompt = ""
         self._host_theme: Optional[str] = None
+        # A managed build request (requests.py): what it says reaches a person through its caller, never a canvas.
+        self._build_request = False
         self._viewport_width: Optional[float] = None
         self._viewport_height: Optional[float] = None
         self._turn_count = 0
@@ -205,9 +207,11 @@ class AgenticBuilder:
         if self.platform_ops and hasattr(self.platform_ops, "_graph_state"):
             self.platform_ops._graph_state = self.graph_state
         await self._read_description()
+        await self._refresh_output_keys()
         self._initial_graph_fingerprint = self._graph_fingerprint()
         self._user_prompt = edit_prompt
         self._host_theme = (user_context or {}).get("theme")
+        self._build_request = bool((user_context or {}).get("builder_request_id"))
         self._viewport_width = viewport_width
         self._viewport_height = viewport_height
         if n8n_workflow:
@@ -268,6 +272,44 @@ class AgenticBuilder:
         except Exception as exc:
             logger.warning("Reading the user's email failed: %s", exc)
             return None
+
+    async def _refresh_output_keys(self) -> None:
+        """Fill GraphState._output_keys, the top-level keys each step's output
+        was seen to have: this workflow's latest stored output, else the shape
+        learned across runs of the same type and operation. <field> writes,
+        what node drafting wrote and the done gate judge each step's reads
+        against GraphState.known_output_keys(), which puts what a step's code
+        declares first. Fails open: an unknown shape is never "no keys"."""
+        ops = self.platform_ops
+        if not ops or not hasattr(ops, "get_node_output"):
+            return
+        from utils.node_schema_tracker import get_schema_for_node
+        from ..workflow_ops import declares_output_keys, output_top_level_keys
+
+        nodes = [n for n in self.graph_state.nodes.values() if not self.graph_state.is_tool_provider(n.id)]
+        try:
+            with_output = await ops.get_nodes_with_output([n.id for n in nodes])
+        except Exception as exc:
+            logger.warning("Output keys pre-fetch failed: %s", exc)
+            with_output = set()
+        keys: Dict[str, List[str]] = {}
+        seen: Set[str] = set()
+        for n in nodes:
+            known = None
+            try:
+                if n.id in with_output:
+                    known = output_top_level_keys(((await ops.get_node_output(n.id)) or {}).get("output"))
+                    if known is not None:
+                        seen.add(n.id)
+                if known is None and n.operation and not declares_output_keys(n.type):
+                    known = output_top_level_keys(await get_schema_for_node(n.type, n.operation))
+            except Exception as exc:
+                logger.warning("Output keys for %s unavailable: %s", n.id, exc)
+                continue
+            if known:
+                keys[n.id] = known
+        self.graph_state._output_keys = keys
+        self.graph_state._output_seen = seen
 
     async def _read_description(self) -> None:
         """The workflow's description, for the snapshot (it isn't part of the
@@ -430,8 +472,10 @@ class AgenticBuilder:
             # later no-action completion after checking the resulting graph.
             if actionable:
                 self._last_turn_result = TurnResult(next_action="continue")
-            elif not self._gate_on_missing_credentials("Done"):
+            elif not self._gate_on_nothing_built("Done") and not self._gate_on_missing_credentials("Done"):
                 await self._read_model_catalog()
+                # Steps this run added have no keys from the run's start yet.
+                await self._refresh_output_keys()
                 if not self._gate_on_invalid_configs("Done"):
                     self._last_turn_result = TurnResult(next_action="done")
         else:
@@ -458,9 +502,11 @@ class AgenticBuilder:
         if attempts >= self._CONFIG_NUDGE_LIMIT:
             return None
         from ..operation_catalog import validate_node_config
-        from ..workflow_ops import agent_message_error, agent_trigger_fed
+        from ..workflow_ops import agent_message_error, agent_trigger_fed, step_reference_errors
 
         problems: List[str] = []
+        known_keys = self.graph_state.known_output_keys()
+        node_ids = set(self.graph_state.nodes)
         for node in self.graph_state.nodes.values():
             config = node.config or {}
             if config.get("disabled") or not node.operation:
@@ -477,6 +523,8 @@ class AgenticBuilder:
                 problems.append(
                     f"- {node.id} ({node.type}:{node.operation}): {error}"
                 )
+            for path, message in step_reference_errors(node, node_ids, known_keys):
+                problems.append(f"- {node.id}.{path}: {message}")
         if not problems:
             return None
         return (
@@ -551,6 +599,25 @@ class AgenticBuilder:
         if not nudge:
             return False
         self.messages.append({"role": "user", "content": nudge})
+        self._last_turn_result = TurnResult(next_action="continue")
+        return True
+
+    _NOTHING_BUILT_MARKER = "[System: Nothing built]"
+
+    def _gate_on_nothing_built(self, _where: str = "done") -> bool:
+        """Keep a build request open once while the workflow has no steps: a
+        build that queried operations then said it had set up a digest and
+        sent a test had added nothing, and its caller passed that on. (On a
+        canvas the person sees what's there.)"""
+
+        from ..workflow_ops import workflow_steps
+        from .prompts import PROMPTS
+
+        if (not self._build_request or workflow_steps(self.graph_state.nodes.values())
+                or any(self._NOTHING_BUILT_MARKER in (m.get("content") or "")
+                       for m in self.messages if m.get("role") == "user")):
+            return False
+        self.messages.append({"role": "user", "content": f"{self._NOTHING_BUILT_MARKER}\n{PROMPTS.NOTHING_BUILT}"})
         self._last_turn_result = TurnResult(next_action="continue")
         return True
 
