@@ -172,6 +172,23 @@ async def test_message_requires_edit_access(permission):
         fetch.assert_not_called()
 
 
+async def test_a_queued_message_says_the_agent_hasnt_answered(task_db, monkeypatch):
+    """Asked "try it: what does it say?", the coordinator texted the owner what the agent "should say", in its own
+    words, while the agent hadn't run; the agent's real reply came a turn later and differed. The tool's result
+    says no answer exists yet, and what to tell the owner instead."""
+    pool, repo, _ = task_db
+    agent = {"id": "agent", "type": "agent", "config": {}}
+    monkeypatch.setattr(tasks, "agent_target", AsyncMock(return_value=agent))
+    workflow_id = await pool.fetchval("SELECT id::text FROM workflows WHERE owner_id = $1::uuid", USER)
+    result = await tasks.request_agent_message(pool, None, user_id=USER, workflow_id=workflow_id, node_id="agent",
+                                               message="A customer asks: gluten-free loaf on Friday?",
+                                               send_to_phone=True)
+    assert result["job"]["status"] == "queued" and "response" not in result["job"]
+    note = result["note"]
+    assert "hasn't answered yet" in note and "never what it said or would say" in note
+    assert "you've asked it" in note
+
+
 async def test_the_owner_messages_the_agent_of_a_workflow_noclick_runs_itself():
     from tests.mocks.mock_asyncpg import MockNativePool
 

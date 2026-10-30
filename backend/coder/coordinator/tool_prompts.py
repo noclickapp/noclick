@@ -38,7 +38,8 @@ DESCRIPTIONS = {
     "list_workflows": "List the account's workflows.",
     "describe_workflow": "Describe a workflow: its nodes, wiring, triggers and credentials.",
     "find_agents": "Find the account's agents; returns the workflow_id and node_id message_agent takes.",
-    "message_agent": "Send work to an agent; its reply arrives here later.",
+    "message_agent": ("Send work to an agent, or try one. Its reply arrives here later, and only that reply says "
+                      "what the agent says."),
     "request_build": "Ask the builder to create, change or publish a workflow, agent or interface.",
     "answer_build": ("Answer the question a build you started waits on (job_status shows it), so the build goes on. "
                      "An account to connect or a secret value is the owner's to give on the question's page."),

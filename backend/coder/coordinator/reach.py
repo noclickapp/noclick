@@ -50,6 +50,15 @@ async def phone_text_channel(pool, user_id: str) -> str:
     return "imessage_text" if await last_phone_app(pool, user_id) == "imessage" else "whatsapp_text"
 
 
+async def owner_channel(pool, user_id: str) -> str:
+    """The channel a turn nobody asked for (a failed run, an agent's message) runs as: the app the owner texts on
+    when their newest message here came by text or a call, else the web. What it starts (a fix, a question to an
+    agent) reports back there, and a phone owner never reads the web."""
+    if await last_used_channel(pool, user_id) in PHONE_APPS:
+        return await phone_text_channel(pool, user_id)
+    return "web"
+
+
 def with_link(text: str, link: Optional[str]) -> str:
     """The message with its link on a line of its own, once: the text often carries it already."""
     if not link or link in text:

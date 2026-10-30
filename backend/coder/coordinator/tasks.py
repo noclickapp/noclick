@@ -110,8 +110,10 @@ async def request_agent_message(pool, sio, *, user_id: str, workflow_id: str, no
         message=message, send_to_phone=send_to_phone, parent_job_id=reply_to_job_id, continuation=continuation,
     )
     return {"success": True, "job": agent_view(task),
-            "note": "Queued. The reply will arrive in this coordinator conversation. Pass this job_id as "
-                    "reply_to_job_id to continue the same agent conversation; job_status checks progress."}
+            "note": "Queued: the agent hasn't answered yet. Its reply wakes you in this conversation when it "
+                    "arrives; until then, tell the owner you've asked it, and never what it said or would say. "
+                    "Pass this job_id as reply_to_job_id to continue the same agent conversation; job_status "
+                    "checks progress."}
 
 
 def reply_text(output: Any) -> str:
