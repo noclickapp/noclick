@@ -918,6 +918,55 @@ class TestReconcileThroughTheService:
         assert await workflow_reconcile.retry_given_up(db.pool) == 1
         assert await _job_status(db, job["id"]) == "done"
 
+    async def test_given_up_jobs_are_retried_newest_per_step_and_closed_by_a_newer_success(
+            self, db, told, registry, monkeypatch):
+        """Each save touching a broken step queues a job that's given up on in time. Only the newest per step is
+        retried daily (the older ones it covers are superseded), and a newer job on those steps that succeeds closes
+        the older ones: none runs after it."""
+        from utils import workflow_reconcile
+        from utils.webhook_manager import WebhookManager
+
+        monkeypatch.setattr(workflow_reconcile, "MAX_ATTEMPTS", 1)
+        monkeypatch.setattr(WebhookManager, "handle_registration_fields_change",
+                            AsyncMock(side_effect=RuntimeError("the provider is down")))
+        workflow_id = await _workflow(db)
+        for name in ("One", "Two", "Three"):
+            await _apply(db, workflow_id, [{"op": "update_step", "id": "hook", "name": name}])
+        def statuses():
+            return db.fetch("SELECT status FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid ORDER BY id",
+                            workflow_id)
+
+        assert [r["status"] for r in await statuses()] == ["failed", "failed", "failed"]
+        # The daily retry runs the newest alone, and closes the two it covers.
+        assert await workflow_reconcile.retry_given_up(db.pool) == 1
+        assert [r["status"] for r in await statuses()] == ["superseded", "superseded", "failed"]
+        # The provider is back: the next change to hook succeeds, and closes the one given up on.
+        monkeypatch.setattr(WebhookManager, "handle_registration_fields_change", AsyncMock(return_value=None))
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "hook", "name": "Four"}])
+        assert [r["status"] for r in await statuses()] == ["superseded", "superseded", "superseded", "done"]
+        assert await workflow_reconcile.retry_given_up(db.pool) == 0
+
+    async def test_another_steps_job_leaves_a_failing_triggers_error_alone(self, db, told, registry, monkeypatch):
+        """A trigger whose own job couldn't finish registering keeps showing it: another step's job neither
+        provisions it nor clears what it shows."""
+        from utils import workflow_reconcile
+        from utils.webhook_manager import WebhookManager
+
+        provisioned = []
+
+        async def provision(pool, *, node_id, **kwargs):
+            provisioned.append(node_id)
+            return {"webhook_url": f"https://hooks.example/{node_id}", "trigger_error": None}
+
+        monkeypatch.setattr(WebhookManager, "provision_node_webhook", provision)
+        shown = f"{workflow_reconcile.UNFINISHED} the provider is down"
+        graph = copy.deepcopy(GRAPH)
+        graph["nodes"][0]["config"].update(webhook_url="https://hooks.example/1", trigger_error=shown)
+        workflow_id = await _workflow(db, graph)
+        await _apply(db, workflow_id, [{"op": "update_step", "id": "log", "name": "Record"}])
+        hook = next(n for n in (await _graph(db, workflow_id))["workflow"]["nodes"] if n["id"] == "hook")
+        assert hook["config"]["trigger_error"] == shown and provisioned == []
+
     async def test_moving_steps_on_the_canvas_queues_nothing(self, db, told, registry):
         from wss.handlers.workflow_handler import WorkflowHandler
         from wss.receiver.client_events import WorkflowUpdateRequest

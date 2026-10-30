@@ -1,7 +1,8 @@
 -- What a write of a workflow's graph sets in motion outside it (utils/workflow_reconcile.py), recorded in the
 -- write's own transaction and run after it commits, by the workflow's one worker (its lease,
--- workflow_reconcile_leases), in order, retried until done: no teardown or registration runs on a request's
--- path, and one cut off resumes. old_nodes and new_nodes are the steps the write touched (removed, added,
+-- workflow_reconcile_leases), in order per step, retried until done: no teardown or registration runs on a
+-- request's path, and one cut off resumes. One given up on ('failed') is retried daily until a newer job covering
+-- its steps succeeds ('superseded'). old_nodes and new_nodes are the steps the write touched (removed, added,
 -- changed), by id, as they were and as it left them; deleted names the steps a canvas said it deleted (NULL: the
 -- steps the write removed); from_version and to_version are the graph versions the write moved between.
 -- Backend-only: RLS on with no policy, and the API roles hold no grants.
@@ -14,7 +15,7 @@ CREATE TABLE public.workflow_reconcile_jobs (
     deleted text[],
     from_version bigint NOT NULL,
     to_version bigint NOT NULL,
-    status text NOT NULL DEFAULT 'queued' CHECK (status IN ('queued', 'done', 'failed')),
+    status text NOT NULL DEFAULT 'queued' CHECK (status IN ('queued', 'done', 'failed', 'superseded')),
     attempts integer NOT NULL DEFAULT 0,
     retry_at timestamptz NOT NULL DEFAULT now(),
     last_error text,
@@ -26,6 +27,9 @@ CREATE INDEX workflow_reconcile_jobs_queued ON public.workflow_reconcile_jobs (w
     WHERE status = 'queued';
 CREATE INDEX workflow_reconcile_jobs_done_at ON public.workflow_reconcile_jobs (done_at)
     WHERE status <> 'queued';
+-- The staff Reliability view's read: jobs failing (retrying) or given up on, oldest first.
+CREATE INDEX workflow_reconcile_jobs_unfinished ON public.workflow_reconcile_jobs (created_at)
+    WHERE status = 'failed' OR (status = 'queued' AND attempts > 0);
 
 ALTER TABLE public.workflow_reconcile_jobs ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON TABLE public.workflow_reconcile_jobs FROM anon, authenticated;

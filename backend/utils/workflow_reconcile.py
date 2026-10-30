@@ -27,7 +27,9 @@ Each is bounded (``WORK_S``; the lease is never renewed past it). A job that
 fails or is cut off is retried with backoff (``MAX_ATTEMPTS``), shown where
 people look (a trigger step's ``trigger_error``, an ERROR log, the staff
 Reliability view), and once given up on it's kept and retried daily
-(``retry_given_up``), never dropped; one left by a worker that died resumes
+(``retry_given_up``), never dropped, until a newer job covering its steps
+succeeds (it's superseded then: only the newest per step is retried); one left
+by a worker that died resumes
 when the lease lapses, on the next sweep (``sweep``: the hosted edition's
 operations tick, the open edition's scheduler). A change that only moved steps
 queues nothing. The versions a job's own writes produce (a trigger's
@@ -180,20 +182,44 @@ async def sweep(pool) -> int:
 
 
 async def retry_given_up(pool) -> int:
-    """Queue again every job given up on (the daily maintenance): what it sets in motion (inboxes, volumes, apps,
-    conversations, registrations) is never left undone for good. How many."""
-    result = await pool.execute("UPDATE workflow_reconcile_jobs SET status = 'queued', attempts = 0, retry_at = now(), "
-                                "done_at = NULL WHERE status = 'failed'")
-    requeued = int(result.split()[-1])
-    if requeued:
+    """Queue again the jobs given up on (the daily maintenance): what one sets in motion (inboxes, volumes, apps,
+    conversations, registrations) is never left undone for good. Only the newest per step: an older one whose steps
+    a newer given-up job covers is superseded. How many it queued."""
+    rows = await pool.fetch("SELECT id, workflow_id, old_nodes, new_nodes, deleted FROM workflow_reconcile_jobs "
+                            "WHERE status = 'failed' ORDER BY workflow_id, id DESC")
+    covered: Dict[str, set] = {}
+    again, superseded = [], []
+    for row in rows:
+        steps, seen = _steps(row), covered.setdefault(str(row["workflow_id"]), set())
+        (superseded if steps <= seen else again).append(row["id"])
+        seen |= steps
+    await _supersede(pool, superseded)
+    if again:
+        await pool.execute("UPDATE workflow_reconcile_jobs SET status = 'queued', attempts = 0, retry_at = now(), "
+                           "done_at = NULL WHERE id = ANY($1::bigint[])", again)
         await sweep(pool)
-    return requeued
+    return len(again)
+
+
+async def _supersede(pool, job_ids: List[int]) -> None:
+    if job_ids:
+        await pool.execute("UPDATE workflow_reconcile_jobs SET status = 'superseded', done_at = now() "
+                           "WHERE id = ANY($1::bigint[])", job_ids)
+
+
+async def _close_covered(pool, workflow_id: str, job: Dict[str, Any]) -> None:
+    """A job that succeeded supersedes the older ones given up on whose steps it covers: it left them as the graph
+    has them."""
+    steps = _steps(job)
+    rows = await pool.fetch("SELECT id, old_nodes, new_nodes, deleted FROM workflow_reconcile_jobs "
+                            "WHERE workflow_id = $1::uuid AND status = 'failed' AND id < $2", workflow_id, job["id"])
+    await _supersede(pool, [row["id"] for row in rows if _steps(row) <= steps])
 
 
 async def prune(pool, *, days: int = KEEP_DAYS) -> int:
-    """Drop done jobs and recorded reconcile versions older than ``days`` (a job given up on stays, retried daily);
-    how many jobs went."""
-    result = await pool.execute("DELETE FROM workflow_reconcile_jobs WHERE status = 'done' "
+    """Drop done and superseded jobs and recorded reconcile versions older than ``days`` (a job given up on stays,
+    retried daily); how many jobs went."""
+    result = await pool.execute("DELETE FROM workflow_reconcile_jobs WHERE status IN ('done', 'superseded') "
                                 "AND done_at < now() - make_interval(days => $1)", days)
     await pool.execute("DELETE FROM workflow_reconcile_versions WHERE created_at < now() - make_interval(days => $1)",
                        days)
@@ -285,6 +311,7 @@ async def _run_job(pool, job: Dict[str, Any]) -> bool:
     finally:
         PATCH_MOVES.reset(token)
     await pool.execute("UPDATE workflow_reconcile_jobs SET status = 'done', done_at = now() WHERE id = $1", job["id"])
+    await _close_covered(pool, workflow_id, job)
     if moves and before is not None:
         await _tell_own_writes(pool, workflow_id, before)
     return True
@@ -453,12 +480,16 @@ async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: 
         else:
             await _flag(pool, workflow_id, node_id, None)
 
-    # Triggers as they stand now: a later write's own job judges what it changed.
+    # Triggers as they stand now: a later write's own job judges what it changed. One another job couldn't finish
+    # registering is left to that job, so what it shows doesn't come and go with other steps' jobs.
     provisioned = []
     for trigger in graph_nodes(now_graph):
         config = node_config(trigger)
         kind, node_id = trigger.get("type"), trigger.get("id")
         if not node_id or config.get("disabled") in (True, "true"):
+            continue
+        shown = config.get("trigger_error")
+        if node_id not in new_nodes and isinstance(shown, str) and shown.startswith(UNFINISHED):
             continue
         if not WebhookManager.node_webhook_field_for(kind, config.get("operation")):
             continue

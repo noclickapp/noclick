@@ -377,6 +377,7 @@ function rebaseFromServer(
     rec.nodes = nodes;
     rec.edges = edges;
     rec.base = baseOf([...serverNodes.values()], serverEdges);
+    for (const listener of serverChangeListeners) listener(rec.workflowId, null);
 }
 
 function fireSave(rec: GraphRecord, opts?: { unconditional?: boolean }): void {
@@ -709,10 +710,28 @@ function applyToBase(workflowId: string, eventType: string, data: Record<string,
     if (rec && GRAPH_EVENT_TYPES.has(eventType)) noteServerChange(rec, eventType, data);
 }
 
-/** A server change the canvas took: into its base, and kept for the ack of a save on its way (`heardSinceSend`). */
+/** A server change the canvas took: into its base, kept for the ack of a save on its way (`heardSinceSend`), and
+ *  told to whoever follows them (the canvas's undo history). */
 function noteServerChange(rec: GraphRecord, eventType: string, data: Record<string, unknown>): void {
     if (rec.base) rec.base = baseAfter(rec.base, eventType, data);
     rec.heardSinceSend?.push({ eventType, data });
+    for (const listener of serverChangeListeners) listener(rec.workflowId, { eventType, data });
+}
+
+/** A server change the canvas took (`change`), or null when it took the server's graph wholesale (a conflict's
+ *  merge, a re-read). */
+export type ServerChangeListener = (
+    workflowId: string,
+    change: { eventType: string; data: Record<string, unknown> } | null,
+) => void;
+
+const serverChangeListeners = new Set<ServerChangeListener>();
+
+export function onServerChange(listener: ServerChangeListener): () => void {
+    serverChangeListeners.add(listener);
+    return () => {
+        serverChangeListeners.delete(listener);
+    };
 }
 
 function baseAfter(base: GraphBase, eventType: string, data: Record<string, unknown>): GraphBase {
