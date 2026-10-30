@@ -161,6 +161,8 @@ async def test_parallel_call_group_is_indivisible():
 
 
 async def test_concurrent_memory_edit_wins_checkpoint_cas(context_db):
+    """A person edits the checkpoint while a turn's fold summarizes: their edit wins the commit and the stale summary
+    never lands. The turn then reads the edit and folds on from it, so what it folds next is built on the edit."""
     pool, raw, summary, budget = context_db
     compact = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)
     await compact(model_data(raw))
@@ -169,28 +171,89 @@ async def test_concurrent_memory_edit_wins_checkpoint_cas(context_db):
     extended = raw + [{"role": "user", "content": "new detail " * 1000} for _ in range(8)]
     await pool.execute("UPDATE conversations SET metadata=jsonb_set(metadata,'{sdk_history}',$2) WHERE conversation_id=$1",
                        f"coordinator:{USER}", extended)
+    edit = "Do not proceed. Wait for my next instruction."
+    folds = []
 
-    async def user_edits_during_summary(*args, **kwargs):
-        await compact.memories.save(USER, CoordinatorMemoryWrite(
-            name=memory["name"], description="User correction wins over an in-flight automatic summary.",
-            memory_type="project", content="Do not proceed. Wait for my next instruction.",
-            memory_id=memory["id"], expected_version=memory["version"],
-        ))
-        return compaction.Summary(description="A stale generated summary that must not replace the user's edit.",
-                                  content="Continue the earlier request; this is a stale generated summary.")
+    async def user_edits_during_the_first_summary(previous, items, **kwargs):
+        folds.append(previous)
+        if len(folds) == 1:
+            await compact.memories.save(USER, CoordinatorMemoryWrite(
+                name=memory["name"], description="User correction wins over an in-flight automatic summary.",
+                memory_type="project", content=edit, memory_id=memory["id"], expected_version=memory["version"],
+            ))
+            return compaction.Summary(description="A stale generated summary that must not replace the user's edit.",
+                                      content="Continue the earlier request; this is a stale generated summary.")
+        return compaction.Summary(description="The owner's correction and the new details since it.",
+                                  content=previous + "\n## New details\nMore detail arrived after the correction.")
 
-    summary.side_effect = user_edits_during_summary
+    summary.side_effect = user_edits_during_the_first_summary
     fresh = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)
     view = (await fresh(model_data(extended))).input
-    assert (await compact.memories.get(USER, memory["id"]))["content"] == "Do not proceed. Wait for my next instruction."
-    assert await compact.repo.load() == (checkpoint, extended)
-    # The turn runs on the person's edit, in a view that fits: what it can't fold is left out, its own messages
-    # too once the tool calls aren't enough, all but the request it answers.
-    assert "Do not proceed. Wait for my next instruction." in view[0]["content"]
+    assert len(folds) > 1 and folds[1] == edit and not fresh.failed  # it folded on from the edit
+    kept = await compact.memories.get(USER, memory["id"])
+    assert kept["content"].startswith(edit) and "stale generated summary" not in kept["content"]
+    moved, stored = await compact.repo.load()
+    assert moved["memory_id"] == checkpoint["memory_id"] and moved["covered"] > checkpoint["covered"]
+    assert stored == extended
+    # The turn runs on what it built on the edit, in a view that fits, folded rather than left out.
+    assert view[0]["content"].endswith(kept["content"]) and edit in view[0]["content"]
     assert fresh.overhead + view_size(view) <= budget.hard
     check_pairs(view)
-    assert {"role": "developer", "content": engine.PROMPTS.LEFT_OUT_NOTE} in view and view[-1] == extended[-1]
-    assert view.count(extended[-1]) < 8  # older messages left out too
+    assert {"role": "developer", "content": engine.PROMPTS.LEFT_OUT_NOTE} not in view and view[-1] == extended[-1]
+
+
+async def test_folds_racing_a_newer_checkpoint_stay_within_the_turns_summaries(context_db):
+    """Each of the turn's folds loses to a newer checkpoint (here the person edits it during every summary): the
+    turn folds on from each, but every try spends one of its summaries, so the race ends at ``MAX_SUMMARIES`` and
+    the turn goes on in a view that fits, the person's last edit standing."""
+    pool, raw, summary, budget = context_db
+    compact = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)
+    await compact(model_data(raw))
+    checkpoint, _ = await compact.repo.load()
+    extended = raw + [{"role": "user", "content": "new detail " * 1000} for _ in range(8)]
+    await pool.execute("UPDATE conversations SET metadata=jsonb_set(metadata,'{sdk_history}',$2) WHERE conversation_id=$1",
+                       f"coordinator:{USER}", extended)
+    made = summary.await_count
+
+    async def user_edits_every_time(previous, items, **kwargs):
+        memory = await compact.memories.get(USER, checkpoint["memory_id"])
+        await compact.memories.save(USER, CoordinatorMemoryWrite(
+            name=memory["name"], description="The owner keeps correcting what NoClick keeps.", memory_type="project",
+            content=f"Correction {summary.await_count}: wait for my word.", memory_id=memory["id"],
+            expected_version=memory["version"]))
+        return compaction.Summary(description="A summary that loses to the owner's next correction.",
+                                  content="Continue the earlier request; this summary never lands.")
+
+    summary.side_effect = user_edits_every_time
+    fresh = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)
+    view = (await fresh(model_data(extended))).input
+    assert summary.await_count - made == compaction.MAX_SUMMARIES == fresh.summaries and not fresh.failed
+    kept = await compact.memories.get(USER, checkpoint["memory_id"])
+    assert kept["content"] == f"Correction {summary.await_count}: wait for my word."
+    assert (await compact.repo.load())[0] == checkpoint
+    assert kept["content"] in view[0]["content"] and fresh.overhead + view_size(view) <= budget.hard
+    check_pairs(view)
+
+
+async def test_a_conflict_no_newer_checkpoint_explains_folds_no_more(context_db, caplog):
+    """A commit refused with no newer checkpoint behind it (here the conversation was reset meanwhile) is not a race
+    the turn lost: folding on would only be refused again, so it folds no more this run and goes on in a view that
+    fits, by cuts and leaving out."""
+    pool, raw, summary, budget = context_db
+    stub = summary.return_value
+
+    async def reset_meanwhile(*args, **kwargs):
+        await pool.execute("UPDATE conversations SET metadata=jsonb_set(metadata,'{coordinator_epoch}','\"reset-1\"') "
+                           "WHERE conversation_id=$1", f"coordinator:{USER}")
+        return stub
+
+    summary.side_effect = reset_meanwhile
+    compact = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)
+    view = (await compact(model_data(raw))).input
+    assert summary.await_count == 1 and compact.failed
+    assert await compact.repo.load() == ({}, raw)
+    assert compact.overhead + view_size(view) <= budget.hard
+    check_pairs(view)
 
 
 async def test_real_streamed_sdk_compacts_between_tool_rounds(context_db, monkeypatch):

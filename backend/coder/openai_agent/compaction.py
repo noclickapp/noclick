@@ -174,6 +174,11 @@ def _said(item):
     return any(isinstance(part, dict) and str(part.get("text") or "").strip() for part in content or [])
 
 
+def _version(memory):
+    """A checkpoint entry's version, None once it's forgotten."""
+    return (memory or {}).get("version")
+
+
 def _cut_key(item):
     # A call and its result share a call id, and each is cut on its own.
     return item.get("type"), item.get("call_id")
@@ -366,105 +371,124 @@ class Compactor:
 
     async def _fold(self, raw, trigger, *, settling=False):
         """The view of ``raw`` (None: the stored history) past the conversation's checkpoint, folding older history
-        into it in bounded chunks once the view passes ``trigger``: ``(covered, foldable, view, size)``. A conflict
-        folds no more this run (a call's view reloads the checkpoint); a failed summary leaves the history as it was.
-        ``settling``: after the run, where nobody watches and nothing reads the view."""
-        checkpoint, stored = await self.store.load()
-        raw = stored if raw is None else raw
-        covered = checkpoint.get("covered", 0)
-        if covered > len(raw) or (covered and fingerprint(raw[:covered]) != checkpoint["fingerprint"]):
-            raise ContextBudgetError("Context checkpoint no longer matches this conversation; history is preserved.")
-        # Forgetting removes semantic context, never replays its old source prefix to reconstruct it.
-        memory = await self.store.read(checkpoint) if covered else None
+        into it in bounded chunks once the view passes ``trigger``: ``(covered, foldable, view, size)``. A fold whose
+        commit loses to a newer checkpoint (the last run's settle, a person's edit) reads the one that won and folds
+        on from it, within the run's summaries; a settle that loses stops there. A summary that fails is the run's one
+        failure and leaves the history as it was. ``settling``: after the run, where nobody watches and nothing reads
+        the view."""
+        given, compacting, lost = raw, False, None
+        try:
+            while True:
+                checkpoint, stored = await self.store.load()
+                raw = stored if given is None else given
+                covered = checkpoint.get("covered", 0)
+                if covered > len(raw) or (covered and fingerprint(raw[:covered]) != checkpoint["fingerprint"]):
+                    raise ContextBudgetError(
+                        "Context checkpoint no longer matches this conversation; history is preserved.")
+                # Forgetting removes semantic context, never replays its old source prefix to reconstruct it.
+                memory = await self.store.read(checkpoint) if covered else None
+                if lost is not None and lost == (checkpoint, _version(memory)):
+                    # Nothing newer won the commit (a reset, a rewritten history): fold no more this run.
+                    self.failed = True
 
-        def shaped():
-            items = []
-            if memory:  # a forgotten checkpoint takes the requests it covered with it
-                items.append({"role": "developer", "content": PROMPTS.CHECKPOINT_HEADER + "\n" + memory["content"]})
-                # The request whose turn the history in view goes on with stays ahead of it, with what that turn
-                # already said: everything a turn writes reaches the person as one message, so a fold partway
-                # through it must not have it say it again. It changes only with a fold, so a turn that folds nothing
-                # extends the view the turn before it left.
-                request = next((i for i in range(covered - 1, -1, -1) if raw[i].get("role") == "user"), None)
-                if request is not None and (covered == len(raw) or raw[covered].get("role") != "user"):
-                    items.append(raw[request])
-                    items.extend(item for item in raw[request + 1:covered] if _said(item))
-            return items + [self.cut.get(_cut_key(item), (None, item))[1] for item in raw[covered:]]
+                def shaped():
+                    items = []
+                    if memory:  # a forgotten checkpoint takes the requests it covered with it
+                        items.append({"role": "developer",
+                                      "content": PROMPTS.CHECKPOINT_HEADER + "\n" + memory["content"]})
+                        # The request whose turn the history in view goes on with stays ahead of it, with what that
+                        # turn already said: everything a turn writes reaches the person as one message, so a fold
+                        # partway through it must not have it say it again. It changes only with a fold, so a turn
+                        # that folds nothing extends the view the turn before it left.
+                        request = next((i for i in range(covered - 1, -1, -1) if raw[i].get("role") == "user"), None)
+                        if request is not None and (covered == len(raw) or raw[covered].get("role") != "user"):
+                            items.append(raw[request])
+                            items.extend(item for item in raw[request + 1:covered] if _said(item))
+                    return items + [self.cut.get(_cut_key(item), (None, item))[1] for item in raw[covered:]]
 
-        # A cut is made from the item as it was, so the same call or result reads the same in every call of the run.
-        self._originals = {_cut_key(item): item for item in raw if _cuttable(item)}
+                # A cut is made from the item as it was, so the same call or result reads the same in every call of
+                # the run.
+                self._originals = {_cut_key(item): item for item in raw if _cuttable(item)}
 
-        effective = shaped()
-        total = await self._size(effective)
-        compacting = False
-        foldable = len(raw)  # nothing is cut before the history is measured
-        if total > trigger:
-            try:
-                boundaries = safe_boundaries(raw)
-                costs = await asyncio.to_thread(lambda: [self._count(item) for item in raw])
-                # Keep a useful recent tail even when old tool output is huge.
-                tail_start = len(raw)
-                tail_tokens = 0
-                for i in range(len(raw)-1, covered-1, -1):
-                    tail_tokens += costs[i]
-                    tail_start = i
-                    if tail_tokens >= self.budget.recent:
-                        break
-                # Stored history before the tail folds, up to its last safe boundary.
-                foldable = max(i for i in boundaries if i <= min(tail_start, len(stored)))
-                cuts = [i for i in boundaries if covered < i <= foldable]
-                # More to fold than the summaries left can read whole (what a long turn of big tool calls leaves):
-                # they read it with its tool calls and results cut to the floor, so it folds in the summaries a
-                # turn has rather than outgrowing them turn after turn.
-                reads = raw
-                if total - self.budget.target > (MAX_SUMMARIES - self.summaries) * self.budget.chunk:
-                    reads = [*raw[:covered], *(cut_to_floor(item) for item in raw[covered:foldable]), *raw[foldable:]]
-                    costs[covered:foldable] = await asyncio.to_thread(
-                        lambda: [self._count(item) for item in reads[covered:foldable]])
-                cumulative = [0]
-                for cost in costs:
-                    cumulative.append(cumulative[-1] + cost)
-                # Bounded chunks avoid sending an already overflowing history
-                # to the summarizer.
-                while cuts and total > self.budget.target and self.summaries < MAX_SUMMARIES and not self.failed:
-                    end = None
-                    for i in cuts:
-                        if cumulative[i] - cumulative[covered] > self.budget.chunk:
+                effective = shaped()
+                total = await self._size(effective)
+                foldable = len(raw)  # nothing is cut before the history is measured
+                if total <= trigger:
+                    return covered, foldable, effective, total
+                try:
+                    boundaries = safe_boundaries(raw)
+                    costs = await asyncio.to_thread(lambda: [self._count(item) for item in raw])
+                    # Keep a useful recent tail even when old tool output is huge.
+                    tail_start = len(raw)
+                    tail_tokens = 0
+                    for i in range(len(raw)-1, covered-1, -1):
+                        tail_tokens += costs[i]
+                        tail_start = i
+                        if tail_tokens >= self.budget.recent:
                             break
-                        end = i
-                    if end is None:
-                        # One call group outgrows the chunk alone: the summarizer reads it with its calls and
-                        # results cut.
-                        end = cuts[0]
-                        chunk = await asyncio.to_thread(
-                            cut_tool_calls, reads[covered:end],
-                            cumulative[end] - cumulative[covered] - self.budget.chunk, self._count)
-                    else:
-                        chunk = reads[covered:end]
-                    if not compacting and not settling:
-                        compacting = True
-                        self._notify("compacting")
-                    self.summaries += 1
-                    summary = await self._summarize(memory["content"] if memory else "", chunk)
-                    checkpoint, memory = await self.store.commit(previous=checkpoint, prefix=raw[:end],
-                                                                 summary=summary, current=memory)
-                    covered = end
-                    effective = shaped()
-                    total = await self._size(effective)
-                    cuts = [i for i in cuts if i > covered]
-            except CheckpointConflict:
-                self.failed = True
-                # Respect concurrent user edits/deletion (or a fold another turn made) immediately.
-                return (covered, foldable, effective, total) if settling else await self._fold(raw, trigger)
-            except Exception:
-                self.failed = True  # one failure per turn; no retry storm
-                logger.exception("Compaction failed; preserving context for %s", self.user_id)
-                # User edits/deletion may have won a CAS while summarizing.
-                # Reload on the next turn, never send the rejected summary.
-            finally:
-                if compacting:
-                    self._notify("compacted")
-        return covered, foldable, effective, total
+                    # Stored history before the tail folds, up to its last safe boundary.
+                    foldable = max(i for i in boundaries if i <= min(tail_start, len(stored)))
+                    cuts = [i for i in boundaries if covered < i <= foldable]
+                    # More to fold than the summaries left can read whole (what a long turn of big tool calls
+                    # leaves): they read it with its tool calls and results cut to the floor, so it folds in the
+                    # summaries a turn has rather than outgrowing them turn after turn.
+                    reads = raw
+                    if total - self.budget.target > (MAX_SUMMARIES - self.summaries) * self.budget.chunk:
+                        reads = [*raw[:covered], *(cut_to_floor(item) for item in raw[covered:foldable]),
+                                 *raw[foldable:]]
+                        costs[covered:foldable] = await asyncio.to_thread(
+                            lambda: [self._count(item) for item in reads[covered:foldable]])
+                    cumulative = [0]
+                    for cost in costs:
+                        cumulative.append(cumulative[-1] + cost)
+                    # Bounded chunks avoid sending an already overflowing history
+                    # to the summarizer.
+                    while (cuts and total > self.budget.target and self.summaries < MAX_SUMMARIES
+                           and not self.failed):
+                        end = None
+                        for i in cuts:
+                            if cumulative[i] - cumulative[covered] > self.budget.chunk:
+                                break
+                            end = i
+                        if end is None:
+                            # One call group outgrows the chunk alone: the summarizer reads it with its calls and
+                            # results cut.
+                            end = cuts[0]
+                            chunk = await asyncio.to_thread(
+                                cut_tool_calls, reads[covered:end],
+                                cumulative[end] - cumulative[covered] - self.budget.chunk, self._count)
+                        else:
+                            chunk = reads[covered:end]
+                        if not compacting and not settling:
+                            compacting = True
+                            self._notify("compacting")
+                        self.summaries += 1
+                        summary = await self._summarize(memory["content"] if memory else "", chunk)
+                        checkpoint, memory = await self.store.commit(previous=checkpoint, prefix=raw[:end],
+                                                                     summary=summary, current=memory)
+                        covered = end
+                        effective = shaped()
+                        total = await self._size(effective)
+                        cuts = [i for i in cuts if i > covered]
+                except CheckpointConflict:
+                    if settling:
+                        self.failed = True  # the fold or the person's edit that landed first stands
+                        return covered, foldable, effective, total
+                    # Lost to a newer checkpoint: read the one that won and fold on from it. Each try spent a
+                    # summary, so two folds racing stay within the run's.
+                    lost = (checkpoint, _version(memory))
+                    logger.info("Compaction of %s had its commit refused; reading the checkpoint again to fold on",
+                                getattr(self.store, "conversation_id", None) or self.user_id)
+                    continue
+                except Exception:
+                    self.failed = True  # one failure per turn; no retry storm
+                    logger.exception("Compaction failed; preserving context for %s", self.user_id)
+                    # User edits/deletion may have won a CAS while summarizing.
+                    # Reload on the next turn, never send the rejected summary.
+                return covered, foldable, effective, total
+        finally:
+            if compacting:
+                self._notify("compacted")
 
     async def _cut(self, items, start, total, history_length):
         """``items`` with tool calls' arguments and tool results past ``start`` cut to the floor, oldest first: the

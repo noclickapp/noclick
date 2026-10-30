@@ -13,6 +13,8 @@ from unittest.mock import AsyncMock
 import pytest
 
 from coder.coordinator import compaction
+from coder.openai_agent import compaction as engine
+from coder.openai_agent.output_limits import CONTEXT_HINT
 from repositories.coordinator_memories import CoordinatorMemoryRepo
 from tests.test_coordinator_compaction import (  # noqa: F401 (fixtures)
     USER, builder_request_db, check_pairs, context_db, model_data, view_size,
@@ -299,15 +301,13 @@ def _chunked(value, model):
 
 
 @pytest.mark.parametrize("guidance", [900, 1050, 1100])
-async def test_a_turn_whose_fold_lost_to_the_last_settle_rides_the_ceiling_by_cuts_and_never_fails(
-        context_db, monkeypatch, guidance):
-    """A wake-up's turn started while the turn before it was still settling: both folded from the same checkpoint,
-    the settle's landed first, and the turn, its one failure spent, rode the hard ceiling by cutting what it read.
-    The cuts steered by their items' counts while the final check counted the whole view, which litellm 1.100 counts
-    in chunks: a cut that fit by its own reckoning came out a few tokens over, and the turn failed with "The latest
-    messages are too large" with nothing left out (2026-10-30). Every call measures a view one way now. Instructions
-    that outweigh the target (``guidance``: a few sizes, each riding the ceiling at its own offsets) are what kept
-    production's cuts landing just under it."""
+async def test_a_turn_that_can_only_cut_rides_the_ceiling_and_never_fails(context_db, monkeypatch, guidance):
+    """A turn that can't fold (here its summary fails; on 2026-10-30 a fold lost to the last turn's settle counted
+    as that failure) rides the hard ceiling by cutting what it reads. The cuts steered by their items' counts while
+    the final check counted the whole view, which litellm 1.100 counts in chunks: a cut that fit by its own reckoning
+    came out a few tokens over, and the turn failed with "The latest messages are too large" with nothing left out.
+    Every call measures a view one way now. Instructions that outweigh the target (``guidance``: a few sizes, each
+    riding the ceiling at its own offsets) are what kept production's cuts landing just under it."""
     from types import SimpleNamespace
 
     from agents.run_config import ModelInputData
@@ -332,16 +332,10 @@ async def test_a_turn_whose_fold_lost_to_the_last_settle_rides_the_ceiling_by_cu
     await _store(pool, raw)
     previous = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=BUDGET)
     await previous(called(raw))  # its run's last call
+    await previous.settle()
     turn = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=BUDGET)
-    stub, raced = summary.return_value, []
-
-    async def the_settle_lands_first(*args, **kwargs):
-        if not raced:
-            raced.append(True)
-            await previous.settle()
-        return stub
-
-    summary.side_effect = the_settle_lands_first
+    made = summary.await_count
+    summary.side_effect = RuntimeError("provider unavailable")
     raw = raw + [{"role": "user", "content": "Read the check: " + " ".join(words * 30)}]
     for i in range(80):
         view = (await turn(called(raw))).input
@@ -351,6 +345,51 @@ async def test_a_turn_whose_fold_lost_to_the_last_settle_rides_the_ceiling_by_cu
             await _store(pool, raw)  # the SDK saves the run's input after its first call
         raw = raw + lookup(100 + i, sizes[(i * 5) % len(sizes)])
         await _store(pool, raw)
-    assert raced and turn.failed and turn.summaries == 1  # its one fold lost to the settle's
+    assert turn.failed and summary.await_count == made + 1  # its one fold failed, and it folded no more
     _, stored = await turn.repo.load()
     assert stored == raw
+
+
+async def test_a_turn_whose_fold_lost_to_the_last_settle_folds_on_from_the_settles_checkpoint(context_db):
+    """A wake-up's turn started while the turn before it was still settling: both folded from the same checkpoint
+    and the settle's landed first. The turn took the lost commit for its one failure, folded no more and rode the
+    hard ceiling on cuts for the rest of its run (2026-10-30). It reads the checkpoint that won and folds on from it
+    now: what it folds next builds on the settle's summary, and nothing it reads is cut or left out."""
+    pool, _, summary, _ = context_db
+    raw = [{"role": "user", "content": "Look up eight."}, *_lookups(8), {"role": "assistant", "content": "Done."}]
+    await _store(pool, raw)
+    previous = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=BUDGET)
+    await previous(model_data(raw))  # its run's last call: short of the hard ceiling, past the settle's trigger
+    turn = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=BUDGET)
+    folds, settled = [], {}
+
+    async def fold(previous_text, items, **kwargs):
+        folds.append(previous_text)
+        if len(folds) == 1:  # the turn's first fold: the last turn's settle lands while it summarizes
+            await previous.settle()
+            checkpoint, _ = await turn.repo.load()
+            memory = await turn.memories.get(USER, checkpoint["memory_id"])
+            settled.update(checkpoint=checkpoint, content=memory["content"], folds=len(folds))
+        return compaction.Summary(description="The lookups so far and what the owner asked for next.",
+                                  content=f"## Lookups\nFold {len(folds)}: " + "fact " * 20)
+
+    summary.side_effect = fold
+    following = raw + [{"role": "user", "content": "Now twelve more. " + "detail " * 1200}]
+    views = [(await turn(model_data(following))).input]
+    assert settled and not turn.failed
+    await _store(pool, following)  # the SDK saves the run's input after its first call
+    for i in range(8, 20):
+        following = following + _lookups(1, start=i)
+        await _store(pool, following)
+        views.append((await turn(model_data(following))).input)
+
+    after = folds[settled["folds"]:]
+    assert after and after[0] == settled["content"]  # its next fold built on the settle's summary
+    checkpoint, stored = await turn.repo.load()
+    assert checkpoint["covered"] > settled["checkpoint"]["covered"] and stored == following
+    assert not turn.failed and turn.summaries <= compaction.MAX_SUMMARIES
+    note = {"role": "developer", "content": engine.PROMPTS.LEFT_OUT_NOTE}
+    for view in views:
+        assert turn.overhead + view_size(view) <= BUDGET.hard
+        assert note not in view and CONTEXT_HINT not in json.dumps(view)
+        check_pairs(view)
