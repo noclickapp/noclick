@@ -693,6 +693,43 @@ class TestHandleCredentialChange:
         assert result == 1
         assert mock_rec.await_count == 1
 
+    async def test_first_credential_on_a_trigger_reconciles(self):
+        """An attach to a node that held none for the type is a change too: a
+        trigger whose row was torn down converges only through this reconcile
+        (its config mirror can still claim a live webhook_url)."""
+        from utils.webhook_manager import WebhookManager
+        workflow_id = str(uuid.uuid4())
+        pool = MagicMock()
+        old_cfg = {"operation": "receive_message", "webhook_url": "https://hook.test/x"}
+        new_cfg = {**old_cfg, "credentialIds": {"whatsapp_qr": "cred-B"}}
+        with patch("utils.webhook_manager.WebhookManager.reconcile_node",
+                   new_callable=AsyncMock) as mock_rec:
+            mock_rec.return_value = {"state": "registered"}
+            result = await WebhookManager.handle_credential_change(
+                pool, "automation-whatsapp", workflow_id, "n-1",
+                old_cfg, new_cfg, user_id="user-1",
+            )
+        assert result == 1
+        mock_rec.assert_awaited_once_with(
+            pool, workflow_id, "n-1", user_id="user-1", org_id=None,
+            nodes_override=None,
+        )
+
+    async def test_first_credential_on_an_action_node_is_a_noop(self):
+        # Nothing registers on an action operation and nothing was replaced,
+        # so there is nothing to converge.
+        from utils.webhook_manager import WebhookManager
+        with patch("utils.webhook_manager.WebhookManager.reconcile_node",
+                   new_callable=AsyncMock) as mock_rec:
+            result = await WebhookManager.handle_credential_change(
+                MagicMock(), "automation-whatsapp", str(uuid.uuid4()), "n-1",
+                {"operation": "send_text_message"},
+                {"operation": "send_text_message", "credentialIds": {"whatsapp_qr": "cred-B"}},
+                user_id="user-1",
+            )
+        assert result == 0
+        mock_rec.assert_not_awaited()
+
     async def test_multi_credential_swap_counts_each_but_reconciles_once(self):
         from utils.webhook_manager import WebhookManager
         pool = MagicMock()

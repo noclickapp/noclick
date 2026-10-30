@@ -206,6 +206,15 @@ class WorkflowRepo:
         """, workflow_id, node_ids)
         return [r['node_id'] for r in rows]
 
+    async def get_active_webhook_node_ids(self, conn, workflow_id) -> List[str]:
+        """Nodes whose webhooks row accepts deliveries. An inactive row 410s
+        whatever URL the node's config still mirrors."""
+        rows = await conn.fetch(
+            "SELECT node_id FROM webhooks WHERE workflow_id = $1 AND is_active",
+            workflow_id,
+        )
+        return [r['node_id'] for r in rows]
+
     async def get_workflow_for_mcp_load(
         self, conn, workflow_id
     ) -> Optional[Dict[str, Any]]:

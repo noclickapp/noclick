@@ -18,8 +18,9 @@ Lifecycle choke points — every mutation surface routes through these two:
   undo/restore re-registers at the same address. ``registered_operation``
   survives deactivation as the "was registered" marker.
 - ``register_node_webhooks``    — trash restore, checkpoint restore, canvas
-  undo re-add, post-swap self-heal. Registers ONLY inactive rows carrying the
-  marker whose CURRENT operation still requires a webhook; the row re-activates
+  undo re-add. External-webhook triggers register ONLY from inactive rows
+  carrying the marker whose CURRENT operation still requires a webhook (the
+  other families converge through ``reconcile_node``); the row re-activates
   only via the post-success persist, so a failed provider call leaves the next
   config-panel open (or restore) to retry.
 
@@ -84,6 +85,19 @@ def _extract_node_credential_id(node: Dict[str, Any], node_config: Dict[str, Any
     """The single credential id configured on a node (trigger nodes carry one)."""
     ids = _usable_credential_ids(node, node_config)
     return ids[0] if ids else None
+
+
+def _loader_registers(node_type: Optional[str], node: Dict[str, Any], node_config: Dict[str, Any]) -> bool:
+    """Whether the node is a trigger its own loader registers (WhatsApp's
+    messages on a QR session): it holds a credential its class's
+    ``self_registering_triggers`` registers the current operation with."""
+    from nodes.core.registry import NODE_REGISTRY
+
+    node_class = NODE_REGISTRY.get(node_type) if node_type else None
+    declared = getattr(node_class, "self_registering_triggers", {}).get(
+        node_config.get("operation") or "", ()
+    )
+    return any(t in declared for t in _usable_credentials(node, node_config))
 
 
 def registration_fingerprint(
@@ -1020,15 +1034,19 @@ class WebhookManager:
         node_ids: Optional[list] = None,
     ) -> int:
         """Re-register external webhooks for restored trigger nodes. THE
-        re-registration choke point — trash restore, checkpoint restore, canvas
-        undo re-add, and the post-credential-swap self-heal route here.
+        re-registration choke point — trash restore, checkpoint restore and
+        canvas undo re-add route here.
 
-        Registers ONLY nodes whose webhooks row is INACTIVE and carries the
-        ``registered_operation`` marker (a previously-registered trigger that
-        ``deregister_node_webhooks`` tore down) and whose CURRENT operation
-        still requires a webhook. Action nodes and never-registered triggers
-        are never touched — a restored Stripe ``create_customer`` node must not
-        grow a wildcard endpoint. The existing row (same UUID/URL) is reused;
+        App-event, cron-schedule and loader-registered triggers (WhatsApp on a
+        QR session) converge through ``reconcile_node``. External-webhook
+        triggers register ONLY when their webhooks row is INACTIVE and carries
+        the ``registered_operation`` marker (a previously-registered trigger
+        that ``deregister_node_webhooks`` tore down) and their CURRENT
+        operation still requires a webhook. Their action nodes and
+        never-registered triggers are never touched — a restored Stripe
+        ``create_customer`` node must not grow a wildcard endpoint (the
+        reconciler's desired state excludes action operations the same way).
+        The existing row (same UUID/URL) is reused;
         it re-activates only via the post-success persist, so a failed provider
         call leaves the row inactive (deliveries 410) and the next config-panel
         open retries with the error surfaced.
@@ -1073,10 +1091,15 @@ class WebhookManager:
             if not node_type or not node_id:
                 continue
 
-            if _app_event_trigger_class(node_type) or _schedule_trigger_class(node_type):
-                # App-event + cron-schedule families: desired state recomputes
-                # from the saved graph and registration is zero-provider-cost
-                # (idempotent upserts), so restores route straight through the
+            if (
+                _app_event_trigger_class(node_type)
+                or _schedule_trigger_class(node_type)
+                or _loader_registers(node_type, node, _extract_node_config(node))
+            ):
+                # App-event + cron-schedule families, and triggers their own
+                # loader registers (WhatsApp on a QR session): desired state
+                # recomputes from the saved graph and registration is
+                # idempotent, so restores route straight through the
                 # reconciler — no inactive-row marker gating needed.
                 try:
                     result = await WebhookManager.reconcile_node(
@@ -1400,11 +1423,7 @@ class WebhookManager:
             # session) is desired while the node holds a credential the loader
             # registers its operation with, and converges through that loader.
             loader_registered = bool(
-                node and not is_mixin
-                and any(
-                    WebhookManager.registers_itself(node_type, current_op, credential_type)
-                    for credential_type in _usable_credentials(node, node_config)
-                )
+                node and not is_mixin and _loader_registers(node_type, node, node_config)
             )
             desired = loader_registered or bool(
                 node and is_mixin
@@ -2220,38 +2239,40 @@ class WebhookManager:
         nodes_override: Optional[List[Dict[str, Any]]] = None,
     ) -> int:
         """
-        Deregister provider-side webhooks against the OLD credential's resource
-        when a node's ``credentialIds`` change between saves, then self-heal by
-        re-registering under the new credential.
-
-        Without the teardown, swapping credentials on a trigger node leaves an
-        active provider-side webhook attached to the previous credential's
-        connection — the next event on the OLD connection still fans out to the
-        orphan and produces duplicate runs (WhatsApp group-message incident,
-        2026-06-25).
+        Reconcile a node's registration when its ``credentialIds`` change
+        between saves: a swap or removal (the OLD credential's provider
+        endpoint must go, or every event on the old connection fans out to an
+        orphan — WhatsApp group-message incident, 2026-06-25), or an attach to
+        a node whose current operation registers something. An attach is a
+        change like any other: the fingerprint covers the credential, and a
+        trigger whose row was torn down (or never registered) converges only
+        through this reconcile, whatever its config mirror still says.
 
         Row semantics fix the swap race: if the config panel already
-        re-registered under the NEW credential (row's registered_credential_id
-        no longer matches any swapped-away id), the row is the live new
-        registration and is left alone — only the old provider endpoint is torn
-        down. Otherwise the row is deactivated and ``register_node_webhooks``
-        re-registers it under the new credential (also covers headless swaps
-        via MCP set_credentials, where no config panel will ever fire).
+        re-registered under the NEW credential, the reconcile is a fingerprint
+        no-op and only the old provider endpoint is torn down. Headless swaps
+        (MCP set_credentials) converge the same way.
 
-        Returns the number of credential entries that triggered a teardown.
+        Returns the number of changed credential entries when the reconcile
+        acted, else 0.
         """
-        old_creds = (old_config or {}).get("credentialIds") or {}
-        new_creds = (new_config or {}).get("credentialIds") or {}
-
-        removed_or_swapped: list[tuple[str, str]] = []
-        for cred_type, old_cid in old_creds.items():
-            if not old_cid:
-                continue
-            new_cid = new_creds.get(cred_type)
-            if old_cid != new_cid:
-                removed_or_swapped.append((cred_type, old_cid))
-
-        if not removed_or_swapped:
+        old_creds = _usable_credentials({}, old_config or {})
+        new_creds = _usable_credentials({}, new_config or {})
+        removed_or_swapped = [
+            (cred_type, old_cid) for cred_type, old_cid in old_creds.items()
+            if new_creds.get(cred_type) != old_cid
+        ]
+        attached = [cid for cred_type, cid in new_creds.items() if cred_type not in old_creds]
+        # A pure attach has nothing to tear down: only a node that registers on
+        # its current operation can need converging.
+        if not removed_or_swapped and not (
+            attached and (
+                WebhookManager.operation_requires_registration(
+                    node_type, (new_config or {}).get("operation")
+                )
+                or _loader_registers(node_type, {}, new_config or {})
+            )
+        ):
             return 0
 
         from nodes.core.registry import NODE_REGISTRY
@@ -2261,7 +2282,8 @@ class WebhookManager:
 
         logger.info(
             f"[WEBHOOK] Credential change on {node_type}:{node_id} "
-            f"({[cid for _, cid in removed_or_swapped]}) — reconciling registration"
+            f"(replaced {[cid for _, cid in removed_or_swapped]}, attached {attached}) "
+            f"— reconciling registration"
         )
 
         # Panel-won race supplement: when the config panel already
@@ -2319,12 +2341,12 @@ class WebhookManager:
             )
         except Exception as e:
             logger.warning(
-                f"[WEBHOOK] Post-credential-swap reconcile failed for "
+                f"[WEBHOOK] Post-credential-change reconcile failed for "
                 f"{node_type}:{node_id}: {e}"
             )
             return supplemental
         acted = supplemental or result.get("state") not in ("noop", "live", "no_workflow")
-        return len(removed_or_swapped) if acted else 0
+        return len(removed_or_swapped) + len(attached) if acted else 0
 
     @staticmethod
     async def delete_webhooks_for_workflow(
