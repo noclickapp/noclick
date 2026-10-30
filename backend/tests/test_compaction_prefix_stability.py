@@ -13,7 +13,7 @@ import pytest
 from coder.coordinator import compaction
 from coder.openai_agent.output_limits import CONTEXT_HINT
 from tests.test_coordinator_compaction import (  # noqa: F401 (fixtures)
-    USER, builder_request_db, check_pairs, context_db, model_data,
+    USER, builder_request_db, check_pairs, context_db, model_data, view_size,
 )
 
 pytestmark = pytest.mark.asyncio
@@ -95,7 +95,7 @@ async def test_a_turns_later_calls_extend_the_prompt_the_provider_cached(context
 
     overhead = compaction.token_count([INSTRUCTIONS, [{"name": "lookup", "description": "Look something up",
                                                        "parameters": tool["function"]["parameters"]}]], "test") + 6000
-    sizes = [overhead + compaction.token_count(view, "test") for view in views]
+    sizes = [overhead + view_size(view) for view in views]
     broken = rewrites(views)
     folded = [i for i in range(1, len(views)) if summaries_before[i] > summaries_before[i - 1]]
     assert len(views) == 16 and summary.await_count
@@ -131,7 +131,7 @@ async def test_results_cut_in_the_models_view_stay_cut_the_same_way_for_the_rest
         newest.append(raw[-1])
 
     overhead = compaction.token_count([INSTRUCTIONS, []], "test") + 6000
-    sizes = [overhead + compaction.token_count(view, "test") for view in views]
+    sizes = [overhead + view_size(view) for view in views]
     assert summary.await_count == 1 and all(size <= budget.hard for size in sizes)
     broken = rewrites(views)
     assert broken
@@ -185,7 +185,7 @@ async def test_a_turns_first_call_folds_only_past_the_hard_ceiling(context_db):
     view = await persisted_call(pool, turn, raw)
     overhead = compaction.token_count([INSTRUCTIONS, []], "test") + 6000
     midway = (budget.target + budget.hard) // 2
-    while overhead + compaction.token_count(view, "test") <= midway:  # well past the target, short of the ceiling
+    while overhead + view_size(view) <= midway:  # well past the target, short of the ceiling
         n = len(raw)
         raw = raw + [{"type": "function_call", "name": "offers_search", "call_id": f"o{n}", "arguments": "{}"},
                      {"type": "function_call_output", "call_id": f"o{n}", "output": f"offer {n} " + "terms " * 1400}]
@@ -194,7 +194,7 @@ async def test_a_turns_first_call_folds_only_past_the_hard_ceiling(context_db):
                  {"role": "user", "content": "Take the second one."}]
     following = await persisted_call(
         pool, compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget), raw)
-    assert overhead + compaction.token_count(following, "test") <= budget.hard
+    assert overhead + view_size(following) <= budget.hard
     assert not summary.await_count  # nothing folded, on the turn's first call either
     assert extends(view, following) and following[-1] == raw[-1]
 
@@ -211,7 +211,7 @@ async def test_what_a_turn_leaves_out_of_its_view_stays_out_for_the_rest_of_the_
     summary.side_effect = RuntimeError("provider unavailable")
     raw = [{"role": "user", "content": "Build me a weekly digest of Hacker News."}]
     compact = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=budget)
-    views, marks = [], []
+    views, marks, newest = [], [], []
     for i in range(120):
         thought = [{"type": "summary_text", "text": f"Step {i}: checking the feed. " + "reasoning " * 100}]
         raw = raw + [{"type": "reasoning", "summary": thought, "content": thought},
@@ -219,15 +219,22 @@ async def test_what_a_turn_leaves_out_of_its_view_stays_out_for_the_rest_of_the_
                      {"type": "function_call_output", "call_id": f"f{i}", "output": f"story {i} " + "text " * 1200}]
         views.append(await persisted_call(pool, compact, raw))
         marks.append(compact.left_out["calls"])
+        newest.append(raw[-1])
 
     note = {"role": "developer", "content": engine.PROMPTS.LEFT_OUT_NOTE}
     overhead = compaction.token_count([INSTRUCTIONS, []], "test") + 6000
-    assert summary.await_count == 1 and all(overhead + compaction.token_count(v, "test") <= budget.hard for v in views)
+    assert summary.await_count == 1 and all(overhead + view_size(v) <= budget.hard for v in views)
     left = [i for i, view in enumerate(views) if note in view]
     assert left and left == list(range(left[0], len(views)))  # once something is left out, the note stays
     for view in views:
         check_pairs(view)
-    assert views[-1][-1] == raw[-1] and views[-1][0] == raw[0]  # the newest result whole, the request in view
+    assert views[-1][0] == raw[0]  # the request in view
+    # The newest result reads whole, but on a call where the ceiling comes round: that one cuts it to the floor (its
+    # head kept) before leaving anything out, which rewrites the cached prompt only at its end.
+    whole = [view[-1] == latest for view, latest in zip(views, newest)]
+    assert sum(whole) > len(views) * 3 // 4
+    assert all(CONTEXT_HINT in view[-1]["output"] and view[-1]["output"].startswith(latest["output"][:20])
+               for view, latest, kept in zip(views, newest, whole) if not kept)
     # A call group left out never comes back in a later call of the turn.
     gone, before = set(), None
     for view in views[left[0]:]:

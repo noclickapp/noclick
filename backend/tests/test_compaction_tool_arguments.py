@@ -12,7 +12,7 @@ import pytest
 from coder.coordinator import compaction
 from coder.openai_agent import output_limits
 from tests.test_coordinator_compaction import (  # noqa: F401 (fixtures)
-    USER, builder_request_db, check_pairs, context_db, model_data,
+    USER, builder_request_db, check_pairs, context_db, model_data, view_size,
 )
 
 pytestmark = pytest.mark.asyncio
@@ -128,7 +128,7 @@ async def test_a_turns_commit_of_whole_pages_is_cut_in_the_models_view_and_the_t
     [result] = [i for i in seen[1] if i.get("type") == "function_call_output"]
     assert result["output"] == committed("commit-1")["output"]  # its result, under the same call id, reads whole
     assert {"role": "user", "content": "Add a menu and a contact page."} in seen[1]  # the request stays in view
-    assert compaction.token_count(seen[1], "test") <= budget.hard
+    assert view_size(seen[1]) <= budget.hard
     # The conversation keeps the commit as the model made it.
     _, stored = await compact.repo.load()
     [kept] = [i for i in stored if i.get("type") == "function_call"]
@@ -168,7 +168,7 @@ async def test_a_long_build_turn_past_its_summaries_cuts_the_files_it_pushed_and
 
     assert summary.await_count == compaction.MAX_SUMMARIES
     overhead = compaction.token_count(["System instructions", []], "test") + 6000
-    assert all(overhead + compaction.token_count(view, "test") <= budget.hard for view in views)
+    assert all(overhead + view_size(view) <= budget.hard for view in views)
     view = views[-1]
     check_pairs(view)
     assert view[-2:] == raw[-2:]  # the newest commit and its result read whole
@@ -215,7 +215,7 @@ async def test_a_parallel_commit_past_the_chunk_folds_with_its_files_cut(context
     assert any(output_limits.ARGUMENTS_HINT in i["arguments"] for i in group if i.get("type") == "function_call")
     checkpoint, stored = await compact.repo.load()
     assert checkpoint["covered"] >= 7 and stored == raw
-    assert compaction.token_count(result.input, "test") <= budget.hard
+    assert view_size(result.input) <= budget.hard
 
 
 async def test_arguments_cut_to_a_cap_stay_their_json_and_say_the_call_ran_whole():

@@ -23,6 +23,11 @@ def model_data(items):
                            agent=SimpleNamespace(tools=[]))
 
 
+def view_size(view):
+    """A view's count as the compactor measures it: the sum of its items' (``Compactor._size``)."""
+    return sum(compaction.token_count(item, "test") for item in view)
+
+
 @pytest.fixture
 async def context_db(builder_request_db, monkeypatch):
     pool = builder_request_db[0]
@@ -113,7 +118,7 @@ async def test_a_failed_summary_saves_nothing_and_the_turn_runs_on_a_view_that_f
     view = (await compact(model_data(raw))).input
     assert await compact.repo.load() == ({}, raw)
     assert not (await CoordinatorMemoryRepo(pool).list_headers(USER))["memories"]
-    assert compact.overhead + compaction.token_count(view, "test") <= budget.hard
+    assert compact.overhead + view_size(view) <= budget.hard
     check_pairs(view)
     note = {"role": "developer", "content": engine.PROMPTS.LEFT_OUT_NOTE}
     assert view[:2] == [raw[0], note]  # where the first call left out stood
@@ -182,7 +187,7 @@ async def test_concurrent_memory_edit_wins_checkpoint_cas(context_db):
     # The turn runs on the person's edit, in a view that fits: what it can't fold is left out, its own messages
     # too once the tool calls aren't enough, all but the request it answers.
     assert "Do not proceed. Wait for my next instruction." in view[0]["content"]
-    assert fresh.overhead + compaction.token_count(view, "test") <= budget.hard
+    assert fresh.overhead + view_size(view) <= budget.hard
     check_pairs(view)
     assert {"role": "developer", "content": engine.PROMPTS.LEFT_OUT_NOTE} in view and view[-1] == extended[-1]
     assert view.count(extended[-1]) < 8  # older messages left out too
@@ -496,7 +501,7 @@ async def test_real_streamed_sdk_turn_with_large_parallel_tool_results_completes
     assert [r["call_id"] for r in results] == ["search-0", "search-1", "search-2"]
     assert all(TOOL_OUTPUT_FLOOR <= len(r["output"]) <= TOOL_OUTPUT_CAP + 300 for r in results)
     assert CONTEXT_HINT in results[0]["output"]  # the oldest result is cut first
-    assert compaction.token_count(seen[1], "test") <= budget.hard
+    assert view_size(seen[1]) <= budget.hard
     # The conversation keeps each result as the tool gave it, bounded where it became the tool's message.
     _, stored = await compact.repo.load()
     kept = [i for i in stored if i.get("type") == "function_call_output"]
@@ -529,7 +534,7 @@ async def test_a_call_group_past_the_chunk_folds_with_its_results_cut(context_db
     assert all(CONTEXT_HINT in i["output"] for i in group if i.get("type") == "function_call_output")
     checkpoint, stored = await compact.repo.load()
     assert checkpoint["covered"] >= 8 and stored == raw
-    assert compaction.token_count(result.input, "test") <= budget.hard
+    assert view_size(result.input) <= budget.hard
     check_pairs(result.input)
 
 
@@ -559,7 +564,7 @@ async def test_a_turn_past_its_summaries_cuts_older_results_and_carries_on(conte
                            "WHERE conversation_id=$1", f"coordinator:{USER}", raw)
         result = await compact(model_data(raw))
     assert summary.await_count == compaction.MAX_SUMMARIES
-    assert compaction.token_count(result.input, "test") <= budget.hard
+    assert view_size(result.input) <= budget.hard
     check_pairs(result.input)
     outputs = [i for i in result.input if i.get("type") == "function_call_output"]
     assert outputs[-1] == raw[-1]  # the newest result is whole
@@ -603,7 +608,7 @@ async def test_a_turn_whose_summary_failed_cuts_older_results_and_carries_on(con
         result = await compact(model_data(raw))
     assert calls  # the summarizer's model was asked, and failed
     assert caplog.text.count("Compaction failed") == 1  # no retry loop after the failure
-    assert compaction.token_count(result.input, "test") <= budget.hard
+    assert view_size(result.input) <= budget.hard
     check_pairs(result.input)
     assert [i for i in result.input if i.get("type") == "function_call_output"][-1] == raw[-1]
     assert await compact.repo.load() == ({}, raw)
@@ -630,7 +635,7 @@ async def test_a_long_turn_past_its_summaries_cuts_results_it_acted_on_to_a_stub
         views.append((await compact(model_data(raw))).input)
     assert summary.await_count == compaction.MAX_SUMMARIES
     view = views[-1]
-    assert compaction.token_count(view, "test") <= budget.hard
+    assert view_size(view) <= budget.hard
     check_pairs(view)
     outputs = [i for i in view if i.get("type") == "function_call_output"]
     assert outputs[-1] == raw[-1]

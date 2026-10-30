@@ -359,7 +359,10 @@ class Compactor:
         await self._fold(None, self.budget.settle, settling=True)
 
     async def _size(self, items):
-        return self.overhead + await asyncio.to_thread(self._count, items)
+        # Each item counted on its own and summed, as the cuts and leave-outs reckon: a whole list's count drifts from
+        # that sum by tens of tokens (litellm counts long text in 1,024-character chunks), so a cut that fit by its
+        # own reckoning could fail the final check with nothing left out (2026-10-30).
+        return self.overhead + await asyncio.to_thread(lambda: sum(self._count(item) for item in items))
 
     async def _fold(self, raw, trigger, *, settling=False):
         """The view of ``raw`` (None: the stored history) past the conversation's checkpoint, folding older history
@@ -536,7 +539,7 @@ class Compactor:
                          getattr(self.store, "conversation_id", None) or self.user_id, self.summaries,
                          ", one failed" if self.failed else "", len(out))
         if out and not noted:  # the note saying so takes its room in the view
-            total += await asyncio.to_thread(self._count, [{"role": "developer", "content": PROMPTS.LEFT_OUT_NOTE}])
+            total += await asyncio.to_thread(self._count, {"role": "developer", "content": PROMPTS.LEFT_OUT_NOTE})
         return total
 
     def _notify(self, status: str) -> None:

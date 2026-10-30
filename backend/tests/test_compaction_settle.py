@@ -15,7 +15,7 @@ import pytest
 from coder.coordinator import compaction
 from repositories.coordinator_memories import CoordinatorMemoryRepo
 from tests.test_coordinator_compaction import (  # noqa: F401 (fixtures)
-    USER, builder_request_db, check_pairs, context_db, model_data,
+    USER, builder_request_db, check_pairs, context_db, model_data, view_size,
 )
 from utils.coordinator_memory import CoordinatorMemoryWrite
 
@@ -288,3 +288,69 @@ async def test_a_turn_that_spent_its_summaries_leaves_its_backlog_to_a_settle_wi
     view = (await compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=BUDGET)(
         model_data(following))).input
     assert summary.await_count == made and view[-1] == following[-1]
+
+
+
+def _chunked(value, model):
+    """litellm's count since 1.100, in miniature: a long text is counted in chunks, and a word a chunk boundary splits
+    counts in both, so a list's count isn't the sum of its items'."""
+    text = value if isinstance(value, str) else json.dumps(value)
+    return sum(len(text[i:i + 32].split()) for i in range(0, len(text), 32))
+
+
+@pytest.mark.parametrize("guidance", [900, 1050, 1100])
+async def test_a_turn_whose_fold_lost_to_the_last_settle_rides_the_ceiling_by_cuts_and_never_fails(
+        context_db, monkeypatch, guidance):
+    """A wake-up's turn started while the turn before it was still settling: both folded from the same checkpoint,
+    the settle's landed first, and the turn, its one failure spent, rode the hard ceiling by cutting what it read.
+    The cuts steered by their items' counts while the final check counted the whole view, which litellm 1.100 counts
+    in chunks: a cut that fit by its own reckoning came out a few tokens over, and the turn failed with "The latest
+    messages are too large" with nothing left out (2026-10-30). Every call measures a view one way now. Instructions
+    that outweigh the target (``guidance``: a few sizes, each riding the ceiling at its own offsets) are what kept
+    production's cuts landing just under it."""
+    from types import SimpleNamespace
+
+    from agents.run_config import ModelInputData
+
+    pool, _, summary, _ = context_db
+    monkeypatch.setattr(compaction, "token_count", _chunked)
+    words = "sourdough croissants contact-form deployment check status passed screenshot bakery-site".split()
+
+    def called(items):
+        return SimpleNamespace(agent=SimpleNamespace(tools=[]), model_data=ModelInputData(
+            input=items, instructions="Guidance for the coordinator. " * guidance))
+
+    def lookup(i, n):
+        text = " ".join(words[(i * 7 + j * 3) % len(words)] for j in range(n))
+        return [{"type": "function_call", "name": "lookup", "call_id": f"l{i}", "arguments": json.dumps({"n": i})},
+                {"type": "function_call_output", "call_id": f"l{i}", "output": json.dumps({"text": text})}]
+
+    sizes = [150, 900, 400, 1300, 250, 700, 1100, 300, 850, 500, 1200, 650]
+    raw = [{"role": "user", "content": "Build the bakery's site."}]
+    for i in range(12):
+        raw += lookup(i, sizes[i])
+    await _store(pool, raw)
+    previous = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=BUDGET)
+    await previous(called(raw))  # its run's last call
+    turn = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=BUDGET)
+    stub, raced = summary.return_value, []
+
+    async def the_settle_lands_first(*args, **kwargs):
+        if not raced:
+            raced.append(True)
+            await previous.settle()
+        return stub
+
+    summary.side_effect = the_settle_lands_first
+    raw = raw + [{"role": "user", "content": "Read the check: " + " ".join(words * 30)}]
+    for i in range(80):
+        view = (await turn(called(raw))).input
+        assert turn.overhead + view_size(view) <= BUDGET.hard
+        check_pairs(view)
+        if i == 0:
+            await _store(pool, raw)  # the SDK saves the run's input after its first call
+        raw = raw + lookup(100 + i, sizes[(i * 5) % len(sizes)])
+        await _store(pool, raw)
+    assert raced and turn.failed and turn.summaries == 1  # its one fold lost to the settle's
+    _, stored = await turn.repo.load()
+    assert stored == raw
