@@ -2699,7 +2699,7 @@ class GitLabNode(ExternalWebhookTriggerMixin, WorkflowNode):
         follow-up comment resumes the same conversation; every other
         ``object_kind`` (pipeline, build, release, …) rides as a bounded dump
         of its ``object_attributes`` under a named header."""
-        from nodes.core.agent_events import bullet_lines, compact_json, first_line, prune_empty
+        from nodes.core.agent_events import bullet_lines, compact_json, prune_empty, push_commit_lines
 
         kind = (output.get("object_kind") or output.get("event_name")) if isinstance(output, dict) else None
         if not isinstance(kind, str):
@@ -2740,11 +2740,13 @@ class GitLabNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if kind in ("push", "tag_push") and isinstance(output.get("commits"), list):
             commits = output["commits"]
             branch = str(output.get("ref") or "").removeprefix("refs/heads/").removeprefix("refs/tags/")
-            lines = [f"- {str(c.get('id') or '')[:8]} {first_line(str(c.get('message') or ''))} ({(c.get('author') or {}).get('name')})" for c in commits[:10] if isinstance(c, dict)]
-            if len(commits) > 10:
-                lines.append(f"- … and {len(commits) - 10} more")
+            lines = push_commit_lines(commits) + bullet_lines([("before", output.get("before")), ("after", output.get("after"))])
             header = f"GitLab push by {who} to {branch} in {path} ({len(commits)} commit(s)):"
-            return {"text": "\n".join([header, *lines, "", f"To read the project, use get_project with project_id={pid}."]), "conversation_key": None, "title": f"Push to {branch} in {path}"}
+            act = (
+                f"To read a pushed file, use get_file with project_id={pid}, file_path=<path>, ref={output.get('after') or branch}; "
+                f"for the project itself, get_project with project_id={pid}."
+            )
+            return {"text": "\n".join([header, *lines, "", act]), "conversation_key": None, "title": f"Push to {branch} in {path}"}
         label = kind.replace("_", " ")
         act = f"To dig in, use get_project with project_id={pid}" if pid else ""
         if kind == "pipeline" and oa.get("id"):

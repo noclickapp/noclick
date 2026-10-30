@@ -125,17 +125,72 @@ def test_github_pull_request_state_branches_and_long_body_clip():
     assert ev["title"] == "Pull request #7: Fix auth"
 
 
-def test_github_push_lists_commits_without_a_thread():
-    ev = GithubRestNode.resolve_agent_event(_gh(
-        ref="refs/heads/main", compare="https://github.example/acme-example/api/compare/a...b", pusher={"name": "dev-example"},
-        commits=[{"id": "abcdef1234567", "message": "Fix login\n\nlong body", "author": {"name": "Dev Example"}}] * 12,
-    ))
-    assert_clean(ev)
-    assert ev["text"].startswith("GitHub push by dev-example to main in acme-example/api (12 commit(s)):")
-    assert "- abcdef1 Fix login (Dev Example)" in ev["text"] and "… and 2 more" in ev["text"]
-    assert_names_real_operation(GithubRestNode, ev["text"], "get_commit")
+GH_BEFORE, GH_AFTER = "6113728f27ae82c7b1a177c8d03f9e96e0adf246", "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c"
+GH_SHA_1, GH_SHA_2 = "a3f9c2e1b4d5f6071829304a5b6c7d8e9f012345", GH_AFTER
+
+
+def _gh_commit(sha, message, *, added=(), modified=(), removed=()):
+    who = {"name": "Dev Example", "email": "dev@acme.example", "username": "dev-example"}
+    return {
+        "id": sha, "tree_id": "f" * 40, "distinct": True, "message": message, "timestamp": "2026-10-30T09:00:00+08:00",
+        "url": f"https://github.example/acme-example/api/commit/{sha}", "author": who, "committer": who,
+        "added": list(added), "modified": list(modified), "removed": list(removed),
+    }
+
+
+def _gh_push(commits):
+    return _gh(
+        ref="refs/heads/main", before=GH_BEFORE, after=GH_AFTER, created=False, deleted=False, forced=False,
+        compare=f"https://github.example/acme-example/api/compare/{GH_BEFORE[:12]}...{GH_AFTER[:12]}",
+        pusher={"name": "dev-example", "email": "dev@acme.example"}, commits=commits, head_commit=commits[-1] if commits else None,
+    )
+
+
+def test_github_push_lists_full_shas_and_changed_files():
+    ev = GithubRestNode.resolve_agent_event(_gh_push([
+        _gh_commit(GH_SHA_1, "Add meeting notes\n\nlong body", added=["笔记/会议记录.md", "docs/guide.md"], modified=["README.md"]),
+        _gh_commit(GH_SHA_2, "Drop the old draft", modified=["笔记/会议记录.md"], removed=["drafts/旧稿.md"]),
+    ]))
+    assert_clean(ev, "dev@acme.example", "tree_id")
+    text = ev["text"]
+    assert text.startswith("GitHub push by dev-example to main in acme-example/api (2 commit(s)):")
+    assert f"- {GH_SHA_1} Add meeting notes (Dev Example)" in text and "long body" not in text
+    assert '  added: ["笔记/会议记录.md", "docs/guide.md"]' in text and '  modified: ["README.md"]' in text
+    assert f"- {GH_SHA_2} Drop the old draft (Dev Example)" in text
+    assert '  modified: ["笔记/会议记录.md"]' in text and '  removed: ["drafts/旧稿.md"]' in text
+    assert f"- before: {GH_BEFORE}" in text and f"- after: {GH_AFTER}" in text and "- compare: https://github.example/" in text
+    assert f"get_file_contents with owner=acme-example, repo=api, path=<path>, ref={GH_AFTER}" in text
+    assert f"compare_commits with owner=acme-example, repo=api, base={GH_BEFORE}, head={GH_AFTER}" in text
+    assert_names_real_operation(GithubRestNode, text, "get_file_contents", "get_commit", "compare_commits")
+    assert text.index("get_file_contents") < text.index("get_commit")
     assert ev["conversation_key"] is None
     assert ev["title"] == "Push to main in acme-example/api"
+
+
+def test_github_push_bounds_commits_and_files():
+    commits = [
+        _gh_commit(f"{i:02d}" + "b" * 38, f"Bulk import {i}", added=[f"import/{i}/文件{j}.md" for j in range(30)], removed=[f"old/{i}.md"])
+        for i in range(12)
+    ]
+    ev = GithubRestNode.resolve_agent_event(_gh_push(commits))
+    assert_clean(ev)
+    text = ev["text"]
+    assert text.startswith("GitHub push by dev-example to main in acme-example/api (12 commit(s)):")
+    assert "- … and 2 more commit(s)" in text
+    assert f"- {'09' + 'b' * 38} Bulk import 9" in text and "Bulk import 10" not in text
+    # 20 paths per commit, 50 across the push: commits 0-1 show 20, commit 2 shows 10, the rest none.
+    assert text.count("文件") == 50 and "import/0/文件19.md" in text and "import/0/文件20.md" not in text
+    assert "import/2/文件9.md" in text and "import/2/文件10.md" not in text and "import/3/" not in text
+    assert text.count("  … and 11 more file(s)") == 2 and "  … and 21 more file(s)" in text
+    assert text.count("  … and 31 more file(s)") == 7 and "removed:" not in text
+    assert f"- after: {GH_AFTER}" in text
+
+
+def test_github_branch_delete_push_has_no_commits():
+    ev = GithubRestNode.resolve_agent_event({**_gh_push([]), "after": "0" * 40, "deleted": True})
+    assert_clean(ev)
+    assert ev["text"].startswith("GitHub push by dev-example to main in acme-example/api (0 commit(s)):")
+    assert f"- after: {'0' * 40}" in ev["text"]
 
 
 def test_github_release_and_star():
@@ -189,12 +244,17 @@ def test_gitlab_note_on_merge_request_resumes_the_mr_thread():
 def test_gitlab_push_and_pipeline():
     push = GitLabNode.resolve_agent_event({
         "object_kind": "push", "ref": "refs/heads/main", "user_name": "Dana Example", "project": GL_PROJECT, "_webhook": WEBHOOK,
-        "commits": [{"id": "abcdef1234", "message": "Fix boot\n\nbody", "author": {"name": "Dana", "email": "dana@acme.example"}}],
+        "before": GH_BEFORE, "after": GH_SHA_1,
+        "commits": [{"id": GH_SHA_1, "message": "Fix boot\n\nbody", "author": {"name": "Dana", "email": "dana@acme.example"},
+                     "added": ["配置/启动.yml"], "modified": ["src/boot.py"], "removed": []}],
     })
     assert_clean(push, "dana@acme.example")
     assert push["text"].startswith("GitLab push by Dana Example to main in acme-example/api (1 commit(s)):")
-    assert "- abcdef12 Fix boot (Dana)" in push["text"]
-    assert_names_real_operation(GitLabNode, push["text"], "get_project")
+    assert f"- {GH_SHA_1} Fix boot (Dana)" in push["text"]
+    assert '  added: ["配置/启动.yml"]' in push["text"] and '  modified: ["src/boot.py"]' in push["text"]
+    assert "removed:" not in push["text"] and f"- before: {GH_BEFORE}" in push["text"]
+    assert f"file_path=<path>, ref={GH_SHA_1}" in push["text"]
+    assert_names_real_operation(GitLabNode, push["text"], "get_file", "get_project")
     assert push["conversation_key"] is None
     pipe = GitLabNode.resolve_agent_event({
         "object_kind": "pipeline", "user": GL_USER, "project": GL_PROJECT, "_webhook": WEBHOOK,

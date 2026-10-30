@@ -298,6 +298,37 @@ def delivered_event(agent_node_id: str, nodes: Any) -> Optional[Dict[str, Any]]:
     }
 
 
+def push_commit_lines(
+    commits: List[Any],
+    *,
+    max_commits: int = 10,
+    max_paths_per_commit: int = 20,
+    max_paths: int = 50,
+) -> List[str]:
+    """A git push's commits as the agent reads them: each commit's full sha,
+    subject and author, then the paths it added / modified / removed. Paths
+    are JSON-quoted so they pass verbatim into a file tool. Bounded per commit
+    and across the push, with "… and N more" lines where something was cut."""
+    lines: List[str] = []
+    budget = max_paths
+    for c in commits[:max_commits]:
+        if not isinstance(c, dict):
+            continue
+        lines.append(f"- {c.get('id') or ''} {first_line(str(c.get('message') or ''))} ({(c.get('author') or {}).get('name')})")
+        room, hidden = min(max_paths_per_commit, budget), 0
+        for kind in ("added", "modified", "removed"):
+            paths = [p for p in c.get(kind) or [] if isinstance(p, str) and p]
+            shown = paths[:room]
+            room, budget, hidden = room - len(shown), budget - len(shown), hidden + len(paths) - len(shown)
+            if shown:
+                lines.append(f"  {kind}: {json.dumps(shown, ensure_ascii=False)}")
+        if hidden:
+            lines.append(f"  … and {hidden} more file(s)")
+    if len(commits) > max_commits:
+        lines.append(f"- … and {len(commits) - max_commits} more commit(s)")
+    return lines
+
+
 def bullet_lines(pairs: Iterable[Tuple[str, Any]]) -> List[str]:
     """``[(label, value)]`` → ``"- label: value"`` lines, skipping empties."""
     lines = []

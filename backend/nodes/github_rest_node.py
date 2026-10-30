@@ -7309,7 +7309,7 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
         objects GitHub sends around it. Issue, PR and comment events key on
         ``owner/repo#number`` so a follow-up comment resumes the same
         conversation; pushes, releases and stars have no thread."""
-        from nodes.core.agent_events import bullet_lines, first_line, prune_empty
+        from nodes.core.agent_events import bullet_lines, prune_empty, push_commit_lines
 
         repo = (output.get("repository") or {}).get("full_name") if isinstance(output, dict) else None
         if not repo:
@@ -7345,12 +7345,14 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
             return {"text": "\n".join([header, *[l for l in body if l], "", act + "."]), "conversation_key": f"{repo}#{n}", "title": head}
         if isinstance(output.get("commits"), list):
             commits, branch = output["commits"], str(output.get("ref") or "").removeprefix("refs/heads/")
-            lines = [f"- {str(c.get('id') or '')[:7]} {first_line(str(c.get('message') or ''))} ({(c.get('author') or {}).get('name')})" for c in commits[:10] if isinstance(c, dict)]
-            if len(commits) > 10:
-                lines.append(f"- … and {len(commits) - 10} more")
+            before, after = output.get("before"), output.get("after")
             header = f"GitHub push by {(output.get('pusher') or {}).get('name') or who} to {branch} in {repo} ({len(commits)} commit(s)):"
-            lines += bullet_lines([("compare", output.get("compare"))])
-            act = f"To inspect a commit, use get_commit with {ids}, ref=<sha>."
+            lines = push_commit_lines(commits) + bullet_lines([("before", before), ("after", after), ("compare", output.get("compare"))])
+            act = (
+                f"To read a pushed file, use get_file_contents with {ids}, path=<path>, ref={after or '<sha>'}. "
+                f"Only for diffs or files not listed above, fall back to get_commit with {ids}, ref=<sha>"
+                + (f", or compare_commits with {ids}, base={before}, head={after}." if before and after else ".")
+            )
             return {"text": "\n".join([header, *lines, "", act]), "conversation_key": None, "title": f"Push to {branch} in {repo}"}
         release = output.get("release")
         if isinstance(release, dict):
