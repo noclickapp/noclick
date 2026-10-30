@@ -136,6 +136,33 @@ async def reconcile_graph_change(pool, workflow_id: str, user_id: Optional[str],
     return job
 
 
+async def retry_refused(pool, workflow_id: str, user_id: Optional[str], graph: Any) -> List[str]:
+    """Reconcile again the triggers of ``graph`` (the workflow as just saved) refused for setup they couldn't finish
+    (``trigger_error`` an activation refusal) that nothing holds back any more: a write elsewhere in the workflow (a
+    step's account connected, its settings completed, the step removed) can finish it, and the trigger itself is never
+    touched by it. Only those triggers, so a write costs nothing more otherwise. Their ids. For a write that queues no
+    reconcile job (the workflow MCP's); a job's own pass does this for the writes that queue one."""
+    from utils.webhook_manager import WebhookManager
+    from utils.workflow_readiness import WorkflowNotReadyError, is_activation_refusal, unbound_issues
+
+    again: List[str] = []
+    for trigger in graph_nodes(graph):
+        config, node_id = node_config(trigger), trigger.get("id")
+        if not node_id or config.get("disabled") in (True, "true") or not is_activation_refusal(
+                config.get("trigger_error")):
+            continue
+        try:
+            if await unbound_issues(pool, workflow_id, graph, node_id):
+                continue
+            await WebhookManager.reconcile_node(pool, str(workflow_id), node_id, user_id=user_id)
+            again.append(node_id)
+        except WorkflowNotReadyError:
+            continue
+        except Exception:
+            logger.warning("[reconcile] judging %s:%s again failed", workflow_id, node_id, exc_info=True)
+    return again
+
+
 # ── the worker ──────────────────────────────────────────────────────────────
 
 async def run(pool, workflow_id: str) -> None:
@@ -469,7 +496,7 @@ async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: 
     """A job's work: raises ``ReconcileIncomplete`` when part of it failed (after doing the rest), so it's
     retried; a trigger's provisioning only logs, as the next job's provisions it again."""
     from utils.webhook_manager import WebhookManager
-    from utils.workflow_readiness import unbound_issues
+    from utils.workflow_readiness import WorkflowNotReadyError, is_activation_refusal, unbound_issues
 
     old_nodes, new_nodes = _nodes(old_graph), _nodes(new_graph)
     failed: List[str] = []
@@ -531,6 +558,17 @@ async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: 
         if node_id not in new_nodes and isinstance(shown, str) and shown.startswith(UNFINISHED):
             continue
         if not WebhookManager.node_webhook_field_for(kind, config.get("operation")):
+            continue
+        if node_id in old_nodes and is_activation_refusal(node_config(old_nodes[node_id]).get("trigger_error")) \
+                and not is_activation_refusal(shown):
+            # This write took a refusal's reason off the step (a canvas that never heard it saved its own copy of
+            # the step): judged again, it registers when its setup is finished, or says again why it can't.
+            try:
+                await WebhookManager.reconcile_node(pool, workflow_id, node_id, user_id=user_id)
+            except WorkflowNotReadyError:
+                pass
+            except Exception:
+                logger.warning("[reconcile] judging %s:%s again failed", workflow_id, node_id, exc_info=True)
             continue
         if config.get("webhook_url") and not config.get("trigger_error"):
             continue

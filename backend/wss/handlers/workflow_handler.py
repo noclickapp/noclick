@@ -805,9 +805,21 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                 # Atomically merge config fields into the target node using jsonb.
                 # Uses a CTE to find the node index, then jsonb_set to merge config
                 # in a single UPDATE — no read-modify-write race with frontend autosave.
-                result = await repo.merge_node_config(
-                    conn, request.workflow_id, request.node_id, clean_config,
-                )
+                # What the change sets in motion (a trigger's registration, and a
+                # trigger held back by this step's unfinished setup) is queued with
+                # it, as a canvas save's is.
+                queued = None
+                async with conn.transaction():
+                    before = await repo.read_graph(conn, request.workflow_id, lock=True)
+                    result = await repo.merge_node_config(
+                        conn, request.workflow_id, request.node_id, clean_config,
+                    )
+                    if before is not None and result != 'UPDATE 0':
+                        after = await repo.read_graph(conn, request.workflow_id)
+                        queued = await workflow_reconcile.enqueue(
+                            conn, request.workflow_id, user_id, before['workflow'], after['workflow'],
+                            from_version=before['graph_version'], to_version=after['graph_version'],
+                        )
 
                 if result == 'UPDATE 0':
                     await send_event(self.sio, sid, ResponseEvent(
@@ -851,6 +863,9 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                             )
                 except Exception as e:
                     logger.warning(f"[Workflow] Operation change cleanup error for {request.node_id}: {e}")
+
+            if queued is not None:
+                workflow_reconcile.kick(pool, request.workflow_id)
 
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id, data={"success": True}))

@@ -20,6 +20,15 @@ class WorkflowNotReadyError(ValueError):
     pass
 
 
+# How an activation refusal begins: the reason a trigger torn down for setup it can't finish shows (``trigger_error``).
+ACTIVATION_REFUSED = "Finish setup before activation"
+
+
+def is_activation_refusal(error: object) -> bool:
+    """A trigger's ``trigger_error`` saying it was refused for unfinished setup, which a later change can finish."""
+    return isinstance(error, str) and error.startswith(ACTIVATION_REFUSED)
+
+
 # What each status means, beside it wherever a model reads one: alone, "waiting_for_input" read as a blocker, and an
 # assistant rebuilt a scheduled automation that was ready and told its owner it couldn't say it worked (2026-10-23).
 # Registered isn't tested: "nothing needs doing" was said of an automation whose every run failed (2026-10-28).
@@ -201,7 +210,7 @@ async def require_activation_ready(pool, workflow_id, node_id):
     issues = await unbound_issues(pool, workflow_id, graph, node_id)
     if issues:
         raise WorkflowNotReadyError(
-            "Finish setup before activation: " + "; ".join(i["message"] for i in issues)
+            f"{ACTIVATION_REFUSED}: " + "; ".join(i["message"] for i in issues)
         )
 
 

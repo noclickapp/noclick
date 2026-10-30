@@ -1167,11 +1167,9 @@ class TestReconcileThroughTheService:
         assert registry["registered"] == [["hook2"]]
 
 
-class TestASchedulesConfigThatCantRun:
-    """A schedule exists only for a config that can run: when a restore or an edit leaves a schedule trigger's saved
-    config unable to activate, its reconcile takes the schedule an earlier config registered down and the step says
-    why (``trigger_error``). Through the real reconcile, schedule arm and registration chokepoint, against a fake
-    scheduler at its client's edge; a refusal NoClick can't judge (a database error) takes nothing down."""
+class _ScheduleWorld:
+    """A schedule trigger through the real reconcile, schedule arm and registration chokepoint, against a fake
+    scheduler at its client's edge."""
 
     AT_8 = {"schedules": [{"frequency": "day", "hour": 8, "minute": 0}], "timezone": "UTC"}
     RUNS = {"schedules": [{"frequency": "day", "hour": 9, "minute": 0}], "timezone": "UTC"}
@@ -1208,10 +1206,10 @@ class TestASchedulesConfigThatCantRun:
         monkeypatch.setattr("utils.webhook_delivery.get_webhook_url", lambda key: f"https://hooks.example/{key}")
         return live
 
-    def _graph(self, cron):
-        return {"nodes": [node("cron", "trigger-cron", label="Every morning", **cron),
-                          node("log", "log", label="Log", message="done")],
-                "edges": [{"id": "cron-log", "source": "cron", "target": "log"}]}
+    def _graph(self, cron, after=None):
+        after = after or node("log", "log", label="Log", message="done")
+        return {"nodes": [node("cron", "trigger-cron", label="Every morning", **cron), after],
+                "edges": [{"id": f"cron-{after['id']}", "source": "cron", "target": after["id"]}]}
 
     async def _cron(self, db, workflow_id):
         row = await _graph(db, workflow_id)
@@ -1221,6 +1219,9 @@ class TestASchedulesConfigThatCantRun:
         """Live once an edit makes the trigger's config one that runs."""
         await _apply(db, workflow_id, [{"op": "update_step", "id": "cron", "settings": {"schedule": None,
                                                                                         **self.RUNS}}])
+        await self._live(db, scheduler, workflow_id)
+
+    async def _live(self, db, scheduler, workflow_id):
         cron = await self._cron(db, workflow_id)
         assert [s["node_id"] for s in scheduler.values()] == ["cron"]
         assert cron["schedule_id"] in scheduler and cron["trigger_registered"] is True and not cron.get("trigger_error")
@@ -1234,6 +1235,13 @@ class TestASchedulesConfigThatCantRun:
                                  workflow_id) is False
         assert await db.fetchval("SELECT count(*) FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid "
                                  "AND status <> 'done'", workflow_id) == 0
+
+
+
+class TestASchedulesConfigThatCantRun(_ScheduleWorld):
+    """A schedule exists only for a config that can run: when a restore or an edit leaves a schedule trigger's saved
+    config unable to activate, its reconcile takes the schedule an earlier config registered down and the step says
+    why (``trigger_error``); a refusal NoClick can't judge (a database error) takes nothing down."""
 
     async def test_an_edit_that_leaves_it_unable_to_run_takes_its_schedule_down(self, db, told, scheduler):
         workflow_id = await _workflow(db, self._graph(self.AT_8))
@@ -1262,6 +1270,85 @@ class TestASchedulesConfigThatCantRun:
         assert [s["node_id"] for s in scheduler.values()] == ["cron"] and not cron.get("trigger_error")
         assert cron["trigger_registered"] is True
 
+
+
+class TestATriggerHeldBackByAnotherStepComesBack(_ScheduleWorld):
+    """A working trigger reconciled while a step after it is unfinished (no account connected) is taken down, its
+    ``trigger_error`` the refusal. Finishing that step touches only the step, so the trigger comes back from the write
+    that finishes it, whatever made the write (an API edit, a step's config set on its own, a canvas save holding a
+    copy of the trigger from before the refusal, the workflow MCP), never left for the nightly resync."""
+
+    @pytest.fixture
+    async def held(self, db, told, scheduler):
+        """A workflow whose schedule a change took down because its Slack step has no account; and that account."""
+        account = await _credential(db, OWNER, "slack_oauth")
+        post = node("post", "automation-slack", label="Post it", operation="send_message_to_channel",
+                    channel="#team", text="hi", credentialIds={"slack_oauth": account})
+        before = self._graph(self.AT_8, post)
+        workflow_id = await _workflow(db, before)
+        await self._registered(db, scheduler, workflow_id)
+        await _apply(db, workflow_id, [
+            {"op": "set_connection", "id": "post", "connection": None, "slot": "slack_oauth"},
+            {"op": "update_step", "id": "cron", "settings": {"schedules": [{"frequency": "day", "hour": 10,
+                                                                           "minute": 0}]}},
+        ])
+        await self._taken_down(db, scheduler, workflow_id)
+        cron = await self._cron(db, workflow_id)
+        assert "Post it" in cron["trigger_error"]
+        return workflow_id, account, before
+
+    async def _back(self, db, scheduler, workflow_id):
+        from utils.async_helpers import drain_spawned_tasks
+
+        await drain_spawned_tasks(timeout=5)
+        await self._live(db, scheduler, workflow_id)
+
+    async def test_an_api_edit_connecting_the_step(self, db, scheduler, held):
+        workflow_id, account, _ = held
+        await _apply(db, workflow_id, [{"op": "set_connection", "id": "post", "connection": account}])
+        await self._back(db, scheduler, workflow_id)
+
+    async def test_the_steps_config_set_on_its_own(self, db, scheduler, held):
+        """``workflow:node:set_config``: the coordinator's setup card and the SDK bridge attach accounts with it."""
+        from wss.receiver.client_events import WorkflowNodeSetConfigRequest
+
+        workflow_id, account, _ = held
+        handler, _ = TestTheCanvasSave()._handler(db)
+        await handler.set_node_config("sid", WorkflowNodeSetConfigRequest(
+            request_id="r", workflow_id=workflow_id, node_id="post", config={"credentialIds": {"slack_oauth": account}}))
+        await self._back(db, scheduler, workflow_id)
+
+    async def test_a_canvas_save_holding_the_trigger_from_before(self, db, scheduler, held):
+        """The live site's canvas never hears the refusal: its save carries the trigger as it loaded it (no reason,
+        the old schedule's mirrors), with the account it just connected."""
+        workflow_id, account, before = held
+        handler, _ = TestTheCanvasSave()._handler(db)
+        canvas = copy.deepcopy((await _graph(db, workflow_id))["workflow"])
+        cron = next(n for n in canvas["nodes"] if n["id"] == "cron")
+        for key in ("trigger_error", "trigger_registered", "schedule_id", "next_run"):
+            cron["config"].pop(key, None)
+        cron["config"].update(schedule_id="stale", next_run="2026-11-01T08:00:00Z", trigger_registered=True)
+        next(n for n in canvas["nodes"] if n["id"] == "post")["config"]["credentialIds"] = {"slack_oauth": account}
+        await TestTheCanvasSave()._save(handler, workflow_id, canvas)
+        await self._back(db, scheduler, workflow_id)
+
+    async def test_the_workflow_mcp_connecting_the_step(self, db, scheduler, held):
+        from mcp_server import NoClickMCPServer, _user_id_var
+
+        workflow_id, account, _ = held
+        with patch("mcp_server.DatabasePoolMixin.__init__", return_value=None):
+            server = NoClickMCPServer(MagicMock())
+        server._emit_builder_event = AsyncMock()
+        server.get_pool = AsyncMock(return_value=db.pool)
+        token = _user_id_var.set(OWNER)
+        try:
+            result = await server._process_update_workflow(
+                workflow_id=workflow_id, updates_xml=f'<set_credentials id="post" slack_oauth="{account}" />',
+                include_operations=False, include_configs=False)
+        finally:
+            _user_id_var.reset(token)
+        assert result.get("success"), result
+        await self._back(db, scheduler, workflow_id)
 
 class TestTheCanvasSave:
     def _handler(self, db, user=OWNER):
