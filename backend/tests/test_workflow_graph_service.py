@@ -1124,6 +1124,31 @@ class TestReconcileThroughTheService:
         await _restore(db, workflow_id, 1)
         assert registry["registered"] == [["hook"]]
 
+    async def test_a_job_run_once_its_workflow_is_in_the_trash_registers_nothing(self, db, told, registry):
+        """Trashing a workflow stops its triggers and restoring it registers them again, so a job from before the
+        trash, run after it (a retry, a sweep, the daily retry of one given up on), only tears down the steps its
+        change removed: a trashed workflow's schedule or provider webhook never comes back on."""
+        from utils.workflow_reconcile import reconcile_graph_change
+
+        before = {"nodes": [node("cron", "trigger-cron", schedule={"frequency": "daily", "time": "08:00"},
+                                 webhook_url="https://h/2"),
+                            node("log", "log", label="Log", message="done")], "edges": []}
+        after = {"nodes": [node("cron", "trigger-cron", schedule={"frequency": "daily", "time": "09:00"},
+                                webhook_url="https://h/2"),
+                           node("hook2", "trigger-webhook", label="Orders")], "edges": []}
+        workflow_id = await _workflow(db, after)
+        await db.execute("UPDATE workflows SET deleted_at = now() WHERE id = $1::uuid", workflow_id)
+        await reconcile_graph_change(db.pool, workflow_id, OWNER, before, after)
+        assert (registry["reconciled"], registry["provisioned"], registry["registered"]) == ([], [], [])
+        assert registry["cleaned"] == [(["log"], ["log"])]
+        assert await db.fetchval("SELECT status FROM workflow_reconcile_jobs WHERE workflow_id = $1::uuid",
+                                 workflow_id) == "done"
+        # Out of the trash, the same change registers as any change does.
+        await db.execute("UPDATE workflows SET deleted_at = NULL WHERE id = $1::uuid", workflow_id)
+        await reconcile_graph_change(db.pool, workflow_id, OWNER, before, after)
+        assert registry["reconciled"] == ["cron"] and registry["provisioned"] == ["hook2"]
+        assert registry["registered"] == [["hook2"]]
+
 
 class TestTheCanvasSave:
     def _handler(self, db, user=OWNER):

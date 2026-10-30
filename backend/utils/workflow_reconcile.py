@@ -16,6 +16,9 @@ and restores, the canvas's save):
 - a step that's back (a delete undone) registers again what it registered,
   and claims its inbox's address again.
 
+While the workflow is in the trash, a job only tears down: trashing it stopped
+its triggers, and restoring it registers them again.
+
 It makes provider round-trips, so no request waits on it: the write records
 it (``enqueue``, a ``workflow_reconcile_jobs`` row, in the write's own
 transaction) and, once committed, wakes the workflow's worker (``kick``). The
@@ -470,17 +473,25 @@ async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: 
 
     old_nodes, new_nodes = _nodes(old_graph), _nodes(new_graph)
     failed: List[str] = []
+    # Trashing a workflow stops its triggers and restoring it registers them again: a job run while it's in the
+    # trash (a retry, a sweep, the daily retry) only tears down the steps its change removed.
+    trashed = bool(await pool.fetchval("SELECT deleted_at IS NOT NULL FROM workflows WHERE id = $1::uuid",
+                                       workflow_id))
 
     gone = [node_id for node_id in old_nodes if node_id not in new_nodes] if deleted is None else \
         [node_id for node_id in dict.fromkeys(deleted) if node_id and node_id not in new_nodes]
     try:
         torn = await _tear_down(pool, workflow_id, user_id, {node_id: old_nodes.get(node_id) for node_id in gone})
-        if torn:
+        if torn and not trashed:
             # A write in between put one back while it was torn down: it registers again.
             await _register(pool, workflow_id, user_id, torn)
     except Exception as e:
         logger.warning("[reconcile] tearing down %s of %s failed", gone, workflow_id, exc_info=True)
         failed.append(f"tearing down {', '.join(gone)}: {str(e) or type(e).__name__}")
+    if trashed:
+        if failed:
+            raise ReconcileIncomplete("; ".join(failed))
+        return
 
     now_graph = await _stored(pool, workflow_id)
     now_ids = _ids(now_graph)
