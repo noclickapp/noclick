@@ -21,7 +21,7 @@ from typing import Any, AsyncIterator, Dict, List, Optional
 from billing.exceptions import InsufficientBalanceError, OwnerResolutionError
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
 from nodes.core.oauth_audit import caller_path_scope
-from utils.credentials import resolve_credential_with_owner_fallback
+from utils.credentials import resolve_credential_with_owner_fallback, unresolved_credential_error
 
 logger = logging.getLogger(__name__)
 
@@ -104,14 +104,11 @@ async def resolve_operation_credential(
         workflow_id=workflow_id,
     )
     if not credential_data:
-        # The model can't act on a bare UUID — tell it the actionable cause so
-        # it relays "reconnect the credential" instead of a dead-end error
-        # (resolution returns empty for revoked/disconnected rows too).
-        raise ValueError(
-            f"Failed to resolve credential {credential_id} — it may have been "
-            f"disconnected or revoked. Ask the user to reconnect the credential "
-            f"on this tool's provider node and try again."
-        )
+        # The model can't act on a bare UUID: give it the cause to relay.
+        raise ValueError(await unresolved_credential_error(
+            pool, credential_id, user_id=user_id, workflow_id=workflow_id,
+            where="this tool's provider node",
+        ))
     return credential_data
 
 

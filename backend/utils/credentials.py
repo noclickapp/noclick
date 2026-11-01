@@ -482,6 +482,50 @@ async def resolve_credential_with_owner_fallback(
     return credential_data
 
 
+async def unresolved_credential_error(
+    pool, credential_id: str, *, user_id: str, workflow_id: Optional[str], where: str = "this step",
+) -> str:
+    """The error for a credential ``resolve_credential_with_owner_fallback``
+    returned nothing for, saying why in words a person (or an agent relaying
+    to one) can act on. Diagnosis only: access stays the resolver's call. It
+    names the credential, never the person it belongs to."""
+    prefix = f"Failed to resolve credential {credential_id}"
+    unknown = f"{prefix}: it may have been disconnected or revoked. Reconnect it on {where} and try again."
+    if not _is_credential_uuid(credential_id):
+        return unknown
+    try:
+        async with (pool or get_native_pool()).acquire() as conn:
+            row = await conn.fetchrow(
+                """
+                SELECT c.name, c.owner_id::text AS owner_id, c.revoked_at IS NOT NULL AS revoked,
+                       (SELECT w.owner_id::text FROM workflows w WHERE w.id = $2::uuid) AS workflow_owner_id
+                FROM credentials c WHERE c.id = $1::uuid
+                """,
+                credential_id, workflow_id,
+            )
+    except Exception as e:
+        logger.warning(f"[CredentialsUtil] Couldn't tell why credential {credential_id} didn't resolve: {e}")
+        return unknown
+    if row is None:
+        return f"{prefix}: it was deleted. Connect an account on {where} and try again."
+    if row["revoked"]:
+        return f"{prefix}: it was revoked. Reconnect it on {where} and try again."
+    if row["owner_id"] == str(user_id):
+        return unknown
+    name = f'"{row["name"]}"' if row["name"] else "the credential"
+    if row["workflow_owner_id"] and row["owner_id"] == row["workflow_owner_id"]:
+        return (
+            f"{prefix}: {name} is the workflow owner's connection, and other members' runs can use it "
+            f"only once the owner selects it on {where} themselves."
+        )
+    return (
+        f"{prefix}: {name} is connected, but it belongs to another member of this workflow, so this run "
+        f"can't use it: automatic runs (triggers, schedules and agents) use the workflow owner's "
+        f"connections. To fix it, the owner connects their own account on {where}, or the member who "
+        f"connected it shares it with them."
+    )
+
+
 async def get_credential_name(pool, credential_id: str) -> Optional[str]:
     """Display name of a credential — NO secret, NO access grant (same class of
     exposure as the credential:display_info handler). Used to tag agent tool

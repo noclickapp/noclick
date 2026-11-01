@@ -28,6 +28,7 @@ from utils.credentials import (
     get_workflow_owner_id,
     pick_credential_id,
     resolve_credential_with_owner_fallback,
+    unresolved_credential_error,
 )
 from utils.access_control import check_resource_access, Permission, workflow_permission
 from utils.node_schema_tracker import track_node_schema
@@ -3592,7 +3593,9 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         )
 
         if not credential_data:
-            raise ValueError(f"Failed to resolve credential {credential_id}")
+            raise ValueError(await unresolved_credential_error(
+                pool, credential_id, user_id=user_id, workflow_id=workflow_id,
+            ))
 
         # Restructure into { config: {...}, credentials: {...}, credential_id: "..." }.
         # credentialIds rides along (ids only, no secrets) so a node can resolve
