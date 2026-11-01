@@ -842,7 +842,9 @@ class WorkflowNode(ABC):
         node_id: Optional[str],
     ) -> Optional[str]:
         """Provider CONTROL-PLANE events arriving on a data webhook (e.g. a
-        WAHooks ``session.status`` push on a WhatsApp per-node webhook).
+        WAHooks ``session.status`` push on a WhatsApp per-node webhook), and
+        deliveries the node refuses outright (WhatsApp: one from an account
+        its credential isn't on).
 
         Return a short message when the event is CONSUMED — the delivery is
         acked 200 and the workflow is NOT executed (same response shape as a

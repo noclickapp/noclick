@@ -1085,21 +1085,23 @@ async def test_load_field_options_qr_without_connection_raises():
 
 
 # ============================================================================
-# cleanup_external_webhook — credential-swap leak fix (2026-06-25)
+# cleanup_external_webhook — a trigger's WAHooks webhook comes off every
+# connection it may be on
 #
-# Closes the duplicate-execution bug reproduced in integration testing:
-# swapping a credential on a WhatsApp trigger node left a WAHooks config
-# attached to the OLD connection. When the old and new connections both
-# saw the same WhatsApp event (a group message reached both connections), the
-# orphan fired alongside the new one and the workflow ran twice.
-#
-# The fix wires WebhookManager.handle_credential_change to call this
-# cleanup with the OLD credential. These tests pin the contract:
-# - With proper old-credential context: delete the matching WAHooks config
-# - Without credentials (legacy callers): no-op (don't 401/burn API quota)
-# - Multiple configs on the connection: delete only the one whose URL
-#   matches our noclick subdomain (don't nuke unrelated webhooks)
+# A webhook left on a previous connection keeps delivering that account's
+# messages to the trigger. Runs answer through the node's CURRENT credential,
+# so the reply leaves from a different number than the sender wrote to, and
+# two connections seeing the same event run the workflow twice. The webhooks
+# row records the connection a registration is on (external_webhook_id), so
+# teardown never needs the previous credential — which may belong to another
+# member of the workflow, or be deleted. These tests pin the contract:
+# - The recorded connection and the passed credential's both lose our webhook
+# - Only the webhook whose URL is this node's goes, nothing else on them
+# - Nothing recorded and no credential: no WAHooks call at all
 # ============================================================================
+
+WORKFLOW_ID = "0b6c1f0e-3f6d-4d5e-9a51-6f4f1d7c2a10"
+NOCLICK_WEBHOOK_ID = "5dda188b-7569-4328-824b-5a5d37972bd4"
 
 
 class _FakeWAHooksAdminClient:
@@ -1126,73 +1128,57 @@ class _FakeWAHooksAdminClient:
         return True
 
 
+class _WebhookRowPool:
+    """The one lookup cleanup makes: the node's webhooks row and the
+    connection its registration recorded."""
+
+    def __init__(self, recorded_connection=None):
+        self.row = {"id": NOCLICK_WEBHOOK_ID, "external_webhook_id": recorded_connection, "metadata": None}
+
+    async def fetchrow(self, *args):
+        return self.row
+
+
 @pytest.mark.asyncio
 async def test_cleanup_external_webhook_deletes_matching_wahooks_config():
-    """End-to-end check: given the OLD credential + OLD node config from
-    the autosave diff, the WhatsApp cleanup finds the WAHooks config on
-    the OLD connection whose URL matches our noclick webhook subdomain
-    and deletes it. This is what closes the duplicate-execution loop
-    when a user swaps credentials on a trigger node."""
+    """The recorded connection (another member's, unreadable to whoever runs
+    the teardown) and the passed credential's connection both lose the
+    webhook pointing at this node; a third connection is left alone."""
     from nodes.whatsapp_node import WhatsAppNode
-
-    old_connection = "conn-OLD"
-    other_connection = "conn-NEW"
-    noclick_webhook_id = "5dda188b-7569-4328-824b-5a5d37972bd4"
 
     # Asked rather than spelled: cleanup matches on this instance's own webhook
     # URL, and a self-hosted install mints those under its own host.
     from utils.webhook_delivery import get_webhook_url
 
-    our_url = get_webhook_url(noclick_webhook_id)
-
-    # Two WAHooks configs target our URL on the OLD connection (the leak), plus
-    # an unrelated webhook on a different connection.
+    our_url = get_webhook_url(NOCLICK_WEBHOOK_ID)
     state = {
-        old_connection: [
+        "conn-RECORDED": [
             {"id": "whk-leak", "url": our_url},
             {"id": "whk-unrelated", "url": "https://something-else.example.com"},
         ],
-        other_connection: [
-            {"id": "whk-other", "url": our_url},
-        ],
+        "conn-CREDENTIAL": [{"id": "whk-current", "url": our_url}],
+        "conn-OTHER": [{"id": "whk-other", "url": our_url}],
     }
     fake_client = _FakeWAHooksAdminClient(state)
-
-    old_config = {
-        "operation": "receive_message",
-        "webhook_id": noclick_webhook_id,
-        "credentialIds": {"whatsapp_qr": "cred-OLD"},
-    }
-    old_credential = {
-        "credential_type": "whatsapp_qr",
-        "connection_id": old_connection,
-    }
 
     with patch.dict(os.environ, {"WAHOOKS_API_KEY": "test-key"}), patch(
         "wahooks.WAHooks", lambda api_key: fake_client
     ):
         await WhatsAppNode.cleanup_external_webhook(
-            pool=None,
-            workflow_id="wf-1",
+            pool=_WebhookRowPool("conn-RECORDED"),
+            workflow_id=WORKFLOW_ID,
             node_id="trigger-node",
-            config=old_config,
-            credentials=old_credential,
+            config={"operation": "receive_message"},
+            credentials={"credential_type": "whatsapp_qr", "connection_id": "conn-CREDENTIAL"},
         )
 
-    # Cleanup MUST: delete the leaking webhook on the OLD connection
-    assert "whk-leak" in fake_client.deleted
-    # Cleanup MUST NOT: touch the unrelated webhook on the OLD connection
-    assert "whk-unrelated" not in fake_client.deleted
-    # Cleanup MUST NOT: touch the new connection's webhook (different conn)
-    assert "whk-other" not in fake_client.deleted
+    assert sorted(fake_client.deleted) == ["whk-current", "whk-leak"]
 
 
 @pytest.mark.asyncio
 async def test_cleanup_external_webhook_noop_when_credentials_missing():
-    """Legacy callers (and the pre-fix operation-change path) pass
-    credentials=None. The provider must short-circuit instead of probing
-    every WAHooks connection — preserves the existing safe-no-op behavior
-    so we don't regress."""
+    """Nothing recorded and no credential to read a connection from: no
+    WAHooks call (never probe every connection)."""
     from nodes.whatsapp_node import WhatsAppNode
 
     fake_client = _FakeWAHooksAdminClient({"conn-X": [{"id": "whk-1", "url": "https://x.hooks.example.test"}]})
@@ -1201,7 +1187,7 @@ async def test_cleanup_external_webhook_noop_when_credentials_missing():
         "wahooks.WAHooks", lambda api_key: fake_client
     ):
         await WhatsAppNode.cleanup_external_webhook(
-            pool=None, workflow_id="wf", node_id="n", config={"webhook_id": "anything"},
+            pool=_WebhookRowPool(), workflow_id=WORKFLOW_ID, node_id="n", config={},
             credentials=None,
         )
     assert fake_client.deleted == []
@@ -1217,17 +1203,29 @@ async def test_cleanup_external_webhook_noop_when_no_match():
     fake_client = _FakeWAHooksAdminClient({
         "conn-X": [{"id": "whk-other", "url": "https://different.example.com/hook"}],
     })
-    old_config = {"webhook_id": "5dda188b-7569-4328-824b-5a5d37972bd4"}
-    old_credential = {"credential_type": "whatsapp_qr", "connection_id": "conn-X"}
 
     with patch.dict(os.environ, {"WAHOOKS_API_KEY": "test-key"}), patch(
         "wahooks.WAHooks", lambda api_key: fake_client
     ):
         await WhatsAppNode.cleanup_external_webhook(
-            pool=None, workflow_id="wf", node_id="n",
-            config=old_config, credentials=old_credential,
+            pool=_WebhookRowPool("conn-X"), workflow_id=WORKFLOW_ID, node_id="n",
+            config={}, credentials={"credential_type": "whatsapp_qr", "connection_id": "conn-X"},
         )
     assert fake_client.deleted == []
+
+
+@pytest.mark.asyncio
+async def test_cleanup_external_webhook_raises_when_it_cannot_reach_wahooks():
+    """A teardown that didn't happen must not read as done: the choke point
+    keeps the row's record so the converger retries."""
+    from nodes.whatsapp_node import WhatsAppNode
+
+    with patch.dict(os.environ, {}, clear=False):
+        os.environ.pop("WAHOOKS_API_KEY", None)
+        with pytest.raises(RuntimeError):
+            await WhatsAppNode.cleanup_external_webhook(
+                pool=_WebhookRowPool("conn-X"), workflow_id=WORKFLOW_ID, node_id="n", config={},
+            )
 
 
 if __name__ == "__main__":

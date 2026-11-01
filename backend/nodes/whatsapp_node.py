@@ -24,6 +24,7 @@ import logging
 import os
 import time
 import json
+import uuid
 from typing import Dict, Any, ClassVar, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 import httpx
@@ -1687,6 +1688,32 @@ def _wahooks_ensure_webhook(api_key: str, connection_id: str, webhook_url: str) 
         return changed
 
 
+def _wahooks_drop_webhooks(api_key: str, connection_id: str, webhook_url: str) -> int:
+    """Sync (thread-pool) removal of every WAHooks webhook on a connection that
+    delivers to ``webhook_url``. Needs only the platform key, never the
+    credential. A connection or webhook WAHooks no longer knows is already
+    gone; any other failure raises. Returns how many were removed."""
+    from wahooks import WAHooks, WAHooksError
+
+    def _gone(e: Exception) -> bool:
+        return getattr(e, "status_code", None) == 404
+
+    with WAHooks(api_key=api_key) as client:
+        try:
+            ours = [w for w in client.list_webhooks(connection_id) if w.get("url") == webhook_url]
+        except WAHooksError as e:
+            if _gone(e):
+                return 0
+            raise
+        for w in ours:
+            try:
+                client.delete_webhook(w["id"])
+            except WAHooksError as e:
+                if not _gone(e):
+                    raise
+        return len(ours)
+
+
 class WhatsAppNode(WorkflowNode):
     """
     WhatsApp Business Cloud API automation node.
@@ -2001,20 +2028,78 @@ class WhatsAppNode(WorkflowNode):
         return payload
 
     @classmethod
+    async def _foreign_account_delivery(cls, payload, config, *, pool, node_id) -> Optional[str]:
+        """Why a WAHooks delivery is from a WhatsApp account this node's
+        credential is not on (a webhook left on a previous credential's
+        connection), or None. Running it would answer from the credential's
+        number, not the one the sender wrote to. Judged on the envelope's
+        ``connectionId`` against the credential's connection; the same phone
+        through another of its links is still this account (a re-scan whose
+        webhook carry-over failed keeps delivering from the old link).
+        Whatever can't be judged lets the delivery through: no connectionId,
+        no credential id, a lookup error. A lost message is worse."""
+        from utils.credentials import _is_credential_uuid, credential_metadata
+
+        delivered = str(payload.get("connectionId") or "")
+        credential_id = ((config or {}).get("credentialIds") or {}).get("whatsapp_qr")
+        if not delivered or not _is_credential_uuid(credential_id):
+            return None
+        try:
+            from utils.encryption import get_encryption
+
+            row = await pool.fetchrow(
+                "SELECT credential, metadata FROM credentials WHERE id = $1::uuid", credential_id
+            )
+            bound = (
+                str(get_encryption().decrypt_credential(row["credential"]).get("connection_id") or "")
+                if row else None
+            )
+        except Exception as e:
+            logger.warning(
+                f"[WhatsAppNode] Can't tell which connection credential {credential_id} is on ({e}); "
+                f"letting the delivery to {node_id} through"
+            )
+            return None
+        if bound == delivered or bound == "":
+            return None
+
+        def digits(value) -> str:
+            return "".join(ch for ch in str(value or "") if ch.isdigit())
+
+        receiving = digits(str((payload.get("me") or {}).get("id") or "").split("@")[0].split(":")[0])
+        if row and receiving and receiving == digits(credential_metadata(row).get("phone_number")):
+            return None
+        logger.warning(
+            f"[WhatsAppNode] Dropped a delivery to {node_id} from WhatsApp connection {delivered}: "
+            f"its credential {credential_id} is "
+            f"{f'on connection {bound}' if bound else 'deleted'}, so the webhook is a leftover"
+        )
+        return (
+            f"Delivery from WhatsApp connection {delivered} ignored: this trigger's "
+            f"credential is connected to a different WhatsApp account"
+        )
+
+    @classmethod
     async def handle_control_event(
         cls, payload, config, *, pool, workflow_id, node_id
     ):
-        """Consume WAHooks ``session.status`` pushes: never a workflow run.
+        """Consume, without a run, WAHooks deliveries from an account the
+        node's credential isn't on (``_foreign_account_delivery``) and
+        ``session.status`` pushes.
         A down signal (FAILED/STOPPED) first arms a grace window — a worker
         restart flaps every session for ~30 s and the link comes back on its
         own — and only once the connection has stayed down past it do we
-        live-verify the node's OWN credential's connection (the event names a
-        WAHA session we can't map to a connection id, so a stale registration
-        delivering another session's death must not mis-flag a healthy
-        credential) and alert the owner. WORKING closes the window and, if an
-        alert had gone out, tells the owner it reconnected so they don't
-        re-scan a healthy link."""
-        if payload.get("event") != "session.status" or "session" not in payload:
+        live-verify the node's OWN credential's connection (an envelope from
+        before WAHooks stamped ``connectionId`` can't be mapped to one, so a
+        stale registration delivering another session's death must not
+        mis-flag a healthy credential) and alert the owner. WORKING closes the
+        window and, if an alert had gone out, tells the owner it reconnected
+        so they don't re-scan a healthy link."""
+        if "session" not in payload:
+            return None
+        if foreign := await cls._foreign_account_delivery(payload, config, pool=pool, node_id=node_id):
+            return foreign
+        if payload.get("event") != "session.status":
             return None
         status = str((payload.get("payload") or {}).get("status") or "").upper()
         consumed = f"session.status {status or 'unknown'} consumed"
@@ -2093,43 +2178,51 @@ class WhatsAppNode(WorkflowNode):
             logger.warning(f"[WhatsAppNode] reconnected notice failed: {e}")
             return False
 
+    @staticmethod
+    async def _registered_connections(pool, workflow_id, node_id) -> tuple:
+        """``(webhooks row id, connection ids)``: the WAHooks connections this
+        node's recorded registration lives on — the one the row recorded at
+        registration (``external_webhook_id``) and its registering credential's
+        (metadata; covers rows from before the record). Neither needs access to
+        the credential, so one that belongs to another member or was deleted
+        can't strand a webhook: WAHooks calls take only the platform key."""
+        from utils.credentials import credential_metadata
+
+        row = await pool.fetchrow(
+            """SELECT w.id, w.external_webhook_id,
+                      (SELECT c.metadata FROM credentials c
+                        WHERE c.id::text = w.registered_credential_id) AS metadata
+               FROM webhooks w WHERE w.workflow_id = $1 AND w.node_id = $2""",
+            workflow_id if isinstance(workflow_id, uuid.UUID) else uuid.UUID(str(workflow_id)),
+            node_id,
+        )
+        if not row:
+            return None, set()
+        recorded = {row["external_webhook_id"], credential_metadata(row).get("connection_id")}
+        return str(row["id"]), {str(c) for c in recorded if c}
+
     @classmethod
     async def cleanup_external_webhook(
         cls, pool, workflow_id, node_id, config, credentials=None
     ):
-        """Clean up WAHooks webhook when node is removed or operation changes."""
-        if not credentials or credentials.get("credential_type") != "whatsapp_qr":
-            return
-        connection_id = credentials.get("connection_id")
-        if not connection_id:
+        """Remove this node's WAHooks webhook from every connection it may be
+        on: those its row records and the passed credential's (a re-scan moves
+        a credential to a new connection). Raises when WAHooks can't, so the
+        choke point keeps the record for a retry."""
+        webhook_id, connections = await cls._registered_connections(pool, workflow_id, node_id)
+        if credentials and credentials.get("credential_type") == "whatsapp_qr" and credentials.get("connection_id"):
+            connections.add(str(credentials["connection_id"]))
+        if not (webhook_id and connections):
             return
         api_key = os.environ.get("WAHOOKS_API_KEY")
         if not api_key:
-            return
-        try:
-            webhook_id = config.get("webhook_id")
-            if not webhook_id:
-                return
-            # Find the WAHooks webhook that points to our webhook URL and delete it
-            from wahooks import WAHooks
-            from utils.webhook_delivery import get_webhook_url
+            raise RuntimeError("WAHOOKS_API_KEY is not set; can't remove the WhatsApp webhook")
+        from utils.webhook_delivery import get_webhook_url
 
-            our_url = get_webhook_url(webhook_id)
-
-            def _delete_matching_webhook():
-                with WAHooks(api_key=api_key) as client:
-                    for wh in client.list_webhooks(connection_id):
-                        if wh.get("url") == our_url:
-                            client.delete_webhook(wh["id"])
-                            return True
-                return False
-
-            if await asyncio.to_thread(_delete_matching_webhook):
-                logger.info(
-                    f"[WhatsAppNode] Deleted WAHooks webhook for connection {connection_id}"
-                )
-        except Exception as e:
-            logger.warning(f"[WhatsAppNode] Failed to cleanup WAHooks webhook: {e}")
+        url = get_webhook_url(webhook_id)
+        for connection_id in sorted(connections):
+            if await asyncio.to_thread(_wahooks_drop_webhooks, api_key, connection_id, url):
+                logger.info(f"[WhatsAppNode] Removed {node_id}'s WAHooks webhook from connection {connection_id}")
 
     @classmethod
     async def load_field_options(
@@ -2296,11 +2389,29 @@ class WhatsAppNode(WorkflowNode):
                                         f"credential needs a re-scan"
                                     )
                                 else:
+                                    # Moving to another connection: the previous one
+                                    # stops delivering here first. Best-effort, like a
+                                    # replaced provider endpoint — the delivery-time
+                                    # account check drops anything a failure leaves.
+                                    _, recorded = await cls._registered_connections(pool, workflow_id, node_id)
+                                    for stale in sorted(recorded - {str(connection_id)}):
+                                        try:
+                                            await asyncio.to_thread(
+                                                _wahooks_drop_webhooks, api_key, stale, webhook_url
+                                            )
+                                        except Exception as e:
+                                            logger.warning(
+                                                f"[WhatsAppNode] Couldn't remove {node_id}'s webhook from "
+                                                f"previous connection {stale}: {e}"
+                                            )
                                     await asyncio.to_thread(
                                         _wahooks_ensure_webhook, api_key, connection_id, webhook_url
                                     )
+                                    # The row records the connection, so teardown never
+                                    # needs the credential (another member's, or deleted).
                                     await WebhookManager.persist_registration_state(
                                         pool, webhook_data['webhook_id'],
+                                        external_webhook_id=connection_id,
                                         registered_operation='receive_message',
                                         registered_credential_id=credential_id,
                                         registered_fingerprint=registration_fingerprint(
@@ -2317,6 +2428,9 @@ class WhatsAppNode(WorkflowNode):
                     f"[WhatsAppNode] Failed to auto-register WAHooks webhook: {e}"
                 )
 
+        # The row alone records the connection: a config copy would be a stale
+        # record for handle_credential_change's pre-swap endpoint cleanup.
+        webhook_data.pop("external_webhook_id", None)
         return {
             "values": {
                 **webhook_data,
