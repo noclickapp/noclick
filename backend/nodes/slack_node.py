@@ -25,7 +25,7 @@ from typing import Dict, Any, ClassVar, Optional, Tuple, Union, Literal, List, A
 import httpx
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 
-from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.base import WorkflowNode, NodeConfig, iter_operation_definitions
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import load_paginated_options
 from nodes.core.oauth_refresh import ensure_fresh_oauth_token
@@ -7103,22 +7103,6 @@ class SlackNodeConfig(NodeConfig[SlackConfig, SlackCredential]):
     pass
 
 
-def _iter_operation_definitions(schema: Dict[str, Any]):
-    """Yield ``(operation_name, config_class_definition)`` for a node schema.
-
-    Markers belong on the config class's ``$defs`` entry, NOT on its nested
-    ``properties.operation`` — that is where the frontend reads them from
-    (``NodeConfig.getOptionTierLabel`` resolves the ``$ref`` and reads the top
-    level). The operation name itself lives on the nested ``const``.
-    """
-    for definition in (schema.get("$defs") or {}).values():
-        if not isinstance(definition, dict):
-            continue
-        operation = (definition.get("properties") or {}).get("operation")
-        if isinstance(operation, dict) and "const" in operation:
-            yield operation["const"], definition
-
-
 # ============================================================================
 # Slack Node Implementation
 # ============================================================================
@@ -7182,7 +7166,7 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         ``_make_request`` is correct but arrives too late to be good UX.
         """
         schema = super().get_config_schema()
-        for operation, definition in _iter_operation_definitions(schema):
+        for operation, definition in iter_operation_definitions(schema):
             if operation in GRID_ADMIN_OPERATIONS:
                 definition["x-requires-tier"] = GRID_ADMIN_TIER
                 definition["x-tier-label"] = "Enterprise Grid"

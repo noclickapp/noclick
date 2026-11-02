@@ -104,13 +104,13 @@ def _shopify_order():
     }
 
 
-def test_shopify_order_reads_the_topic_header_and_names_the_get_op():
+def test_shopify_order_reads_the_topic_header_and_names_the_lookup_op():
     ev = ShopifyNode.resolve_agent_event(_shopify_order())
     assert ev["text"].startswith("Shopify orders/create: Order #1001 at acme-example.myshopify.com")
     assert "Casey Example <casey@example.com>" in ev["text"]
     assert "$42.00" in ev["text"] and "paid" in ev["text"] and "Portland, United States" in ev["text"]
     assert "2 × Blue Mug @ 21.00" in ev["text"]
-    assert "get_order_by_id order_id=5551001" in ev["text"]
+    assert "query_orders_with_graphql query_filter=id:5551001" in ev["text"]
     assert "hmac-secret-value" not in ev["text"] and "_webhook" not in ev["text"]
     assert ev["conversation_key"] is None
     assert ev["title"] == "Order #1001 · $42.00"
@@ -123,14 +123,14 @@ def test_shopify_product_and_customer_topics():
         "_webhook": {"headers": {"x-shopify-topic": "products/update"}},  # lower-cased headers
     })
     assert product["text"].startswith("Shopify products/update: Blue Mug (product 77)")
-    assert "- Default: 21.00" in product["text"] and "get_product_by_id product_id=77" in product["text"]
+    assert "- Default: 21.00" in product["text"] and "query_products_with_graphql query_filter=id:77" in product["text"]
     assert product["title"] == "Product: Blue Mug"
     customer = ShopifyNode.resolve_agent_event({
         "id": 88, "email": "casey@example.com", "first_name": "Casey", "last_name": "Example",
         "_webhook": {"headers": {"X-Shopify-Topic": "customers/create"}},
     })
     assert "Casey Example <casey@example.com> (customer 88)" in customer["text"]
-    assert "get_customer_by_id customer_id=88" in customer["text"]
+    assert "query_customers_with_graphql query_filter=id:88" in customer["text"]
 
 
 def test_shopify_unrecognised_shape_falls_through():

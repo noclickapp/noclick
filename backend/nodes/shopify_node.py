@@ -26,7 +26,7 @@ from pydantic import BaseModel, ConfigDict, Field, Discriminator
 import httpx
 
 from nodes.core.agent_events import bullet_lines
-from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.base import WorkflowNode, NodeConfig, iter_operation_definitions
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from nodes.scopes.shopify import SHOPIFY_SCOPES
@@ -71,6 +71,11 @@ PUBLIC_APP_GRAPHQL_OPERATIONS = {
     "query_fulfillment_orders_with_graphql",
     "get_shop_with_graphql",
 }
+
+#: Picker marker for the legacy REST operations, which only a merchant's own
+#: Shopify app (or an old admin access token) can run.
+OWN_APP_TIER = "shopify_own_app"
+OWN_APP_TIER_LABEL = "Own Shopify app"
 
 
 # ============================================================================
@@ -3974,8 +3979,9 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         """Shopify webhook → the agent's user turn. The delivery is the raw
         order/product/customer and its topic lives only in the ``X-Shopify-Topic``
         header, so the header block is read before it is dropped. The turn is
-        what a shop owner reads off the object, then the ``get_*_by_id``
-        operation that takes its id. No conversation key — a store event is not
+        what a shop owner reads off the object, then the GraphQL query that
+        finds it by id: the App Store connection cannot run the REST
+        ``get_*_by_id`` operations. No conversation key — a store event is not
         a thread."""
         if not isinstance(output, dict):
             return super().resolve_agent_event(output)
@@ -4004,18 +4010,18 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             lines += [f"- {i.get('quantity')} × {i.get('title')} @ {i.get('price')}" for i in items[:20]]
             if len(items) > 20:
                 lines.append(f"[… {len(items) - 20} more line items]")
-            lines.append(f"Full order: get_order_by_id order_id={oid}.")
+            lines.append(f"Full order: query_orders_with_graphql query_filter=id:{oid}.")
             title = f"Order {label} · {money}" if money else f"Order {label}"
         elif resource == "products":
             lines = [f"Shopify {topic or 'product'}: {obj.get('title')} (product {oid}){where}"]
             lines += bullet_lines([("handle", obj.get("handle")), ("status", obj.get("status"))])
             variants = [v for v in obj.get("variants") or [] if isinstance(v, dict)]
             lines += [f"- {v.get('title')}: {v.get('price')}" for v in variants[:20]]
-            lines.append(f"Full product: get_product_by_id product_id={oid}.")
+            lines.append(f"Full product: query_products_with_graphql query_filter=id:{oid}.")
             title = f"Product: {obj.get('title')}"
         else:
             who = _shopify_person(obj.get("first_name"), obj.get("last_name"), obj.get("email")) or "customer"
-            lines = [f"Shopify {topic or 'customer'}: {who} (customer {oid}){where}", f"Full customer: get_customer_by_id customer_id={oid}."]
+            lines = [f"Shopify {topic or 'customer'}: {who} (customer {oid}){where}", f"Full customer: query_customers_with_graphql query_filter=id:{oid}."]
             title = f"Customer: {who}"
         return {"text": "\n".join(lines), "conversation_key": None, "title": title}
 
@@ -4023,6 +4029,33 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     def get_config_model(cls):
         """Return the Pydantic model for node configuration."""
         return ShopifyNodeConfig
+
+    @classmethod
+    def public_app_supports(cls, operation: str) -> bool:
+        """Whether a grant from NoClick's App Store app can run ``operation``.
+
+        The one predicate behind both the runtime refusal in :meth:`execute`
+        and the picker marker in :meth:`get_config_schema`, so they cannot
+        disagree."""
+        return (
+            operation in PUBLIC_APP_GRAPHQL_OPERATIONS
+            or operation in cls._trigger_event_map
+        )
+
+    @classmethod
+    def get_config_schema(cls) -> Dict[str, Any]:
+        """Schema with the legacy REST operations marked in the picker.
+
+        The App Store connection nearly every user has is GraphQL-only, so
+        every surface that offers operations (picker, tool presets, templates)
+        has to see which ones need the merchant's own app before wiring one up;
+        the runtime refusal in :meth:`execute` arrives too late."""
+        schema = super().get_config_schema()
+        for operation, definition in iter_operation_definitions(schema):
+            if not cls.public_app_supports(operation):
+                definition["x-requires-tier"] = OWN_APP_TIER
+                definition["x-tier-label"] = OWN_APP_TIER_LABEL
+        return schema
 
     # ========================================================================
     # Webhook Triggers (per-event)
@@ -4178,10 +4211,8 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         # exclusively. Legacy REST handlers remain available only to merchants
         # using their own custom OAuth app or an old admin access token; a grant
         # issued by NoClick's App Store client can never invoke one of them.
-        if (
-            uses_public_shopify_app(credentials)
-            and op_config.operation not in PUBLIC_APP_GRAPHQL_OPERATIONS
-            and op_config.operation not in self._trigger_event_map
+        if uses_public_shopify_app(credentials) and not self.public_app_supports(
+            op_config.operation
         ):
             raise ValueError(
                 "Shopify App Store connections support GraphQL Admin API "

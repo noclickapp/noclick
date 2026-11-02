@@ -79,7 +79,9 @@
         "product_id"
       ],
       "title": "ShopifyAddProductToCollectionConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyAdjustInventoryLevelConfig": {
       "description": "Adjust the inventory level of an item at a location",
@@ -123,7 +125,9 @@
         "available_adjustment"
       ],
       "title": "ShopifyAdjustInventoryLevelConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCalculateRefundConfig": {
       "description": "Calculate refund transactions for an order",
@@ -199,7 +203,9 @@
         "order_id"
       ],
       "title": "ShopifyCalculateRefundConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCancelFulfillmentConfig": {
       "description": "Cancel a fulfillment",
@@ -235,7 +241,9 @@
         "fulfillment_id"
       ],
       "title": "ShopifyCancelFulfillmentConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCancelOrderConfig": {
       "description": "Cancel an order",
@@ -312,7 +320,9 @@
         "order_id"
       ],
       "title": "ShopifyCancelOrderConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCloseOrderConfig": {
       "description": "Close an order",
@@ -343,7 +353,9 @@
         "order_id"
       ],
       "title": "ShopifyCloseOrderConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCompleteFulfillmentConfig": {
       "description": "Mark a fulfillment as complete",
@@ -379,7 +391,9 @@
         "fulfillment_id"
       ],
       "title": "ShopifyCompleteFulfillmentConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyConnectInventoryLevelConfig": {
       "description": "Connect an inventory item to a location",
@@ -429,7 +443,9 @@
         "location_id"
       ],
       "title": "ShopifyConnectInventoryLevelConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCountCustomersConfig": {
       "description": "Get the count of customers",
@@ -451,7 +467,9 @@
         }
       },
       "title": "ShopifyCountCustomersConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCountOrdersConfig": {
       "description": "Get the count of orders",
@@ -519,7 +537,9 @@
         }
       },
       "title": "ShopifyCountOrdersConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCountProductVariantsConfig": {
       "description": "Get the count of variants for a product",
@@ -550,7 +570,9 @@
         "product_id"
       ],
       "title": "ShopifyCountProductVariantsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCountProductsConfig": {
       "description": "Get the count of products",
@@ -612,7 +634,9 @@
         }
       },
       "title": "ShopifyCountProductsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCountTransactionsConfig": {
       "description": "Get the count of transactions for an order",
@@ -642,7 +666,9 @@
         "order_id"
       ],
       "title": "ShopifyCountTransactionsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateBlogArticleConfig": {
       "description": "Create a blog article",
@@ -836,7 +862,9 @@
         "title"
       ],
       "title": "ShopifyCreateCollectionConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateCustomerAddressConfig": {
       "description": "Create a new address for a customer",
@@ -1009,7 +1037,9 @@
         "customer_id"
       ],
       "title": "ShopifyCreateCustomerAddressConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateCustomerConfig": {
       "description": "Create a new customer",
@@ -1161,7 +1191,9 @@
         "email"
       ],
       "title": "ShopifyCreateCustomerConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateFulfillmentConfig": {
       "description": "Create a fulfillment for an order",
@@ -1265,7 +1297,9 @@
         "order_id"
       ],
       "title": "ShopifyCreateFulfillmentConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateMetafieldConfig": {
       "description": "Create a metafield",
@@ -1332,7 +1366,9 @@
         "type"
       ],
       "title": "ShopifyCreateMetafieldConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateOrderConfig": {
       "description": "Create a new order",
@@ -1496,7 +1532,9 @@
         "line_items"
       ],
       "title": "ShopifyCreateOrderConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateProductConfig": {
       "description": "Create a new product",
@@ -1649,7 +1687,9 @@
         "title"
       ],
       "title": "ShopifyCreateProductConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateProductImageConfig": {
       "description": "Create a new product image",
@@ -1750,7 +1790,9 @@
         "product_id"
       ],
       "title": "ShopifyCreateProductImageConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateProductVariantConfig": {
       "description": "Create a new product variant",
@@ -1904,7 +1946,9 @@
         "product_id"
       ],
       "title": "ShopifyCreateProductVariantConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateRefundConfig": {
       "description": "Create a refund for an order",
@@ -2022,7 +2066,9 @@
         "order_id"
       ],
       "title": "ShopifyCreateRefundConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateTransactionConfig": {
       "description": "Create a transaction for an order",
@@ -2132,7 +2178,9 @@
         "kind"
       ],
       "title": "ShopifyCreateTransactionConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyCreateWebhookConfig": {
       "description": "Create a webhook",
@@ -2185,7 +2233,9 @@
         "address"
       ],
       "title": "ShopifyCreateWebhookConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyDeleteBlogArticleConfig": {
       "description": "Delete a blog article",
@@ -2250,7 +2300,9 @@
         "collection_id"
       ],
       "title": "ShopifyDeleteCollectionConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyDeleteCustomerAddressConfig": {
       "description": "Delete a customer address",
@@ -2286,7 +2338,9 @@
         "address_id"
       ],
       "title": "ShopifyDeleteCustomerAddressConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyDeleteCustomerConfig": {
       "description": "Delete a customer",
@@ -2316,7 +2370,9 @@
         "customer_id"
       ],
       "title": "ShopifyDeleteCustomerConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyDeleteInventoryLevelConfig": {
       "description": "Delete an inventory level (disconnect item from location)",
@@ -2352,7 +2408,9 @@
         "location_id"
       ],
       "title": "ShopifyDeleteInventoryLevelConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyDeleteMetafieldConfig": {
       "description": "Delete a metafield",
@@ -2382,7 +2440,9 @@
         "metafield_id"
       ],
       "title": "ShopifyDeleteMetafieldConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyDeleteOrderConfig": {
       "description": "Delete an order",
@@ -2412,7 +2472,9 @@
         "order_id"
       ],
       "title": "ShopifyDeleteOrderConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyDeleteProductConfig": {
       "description": "Delete a product",
@@ -2443,7 +2505,9 @@
         "product_id"
       ],
       "title": "ShopifyDeleteProductConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyDeleteProductImageConfig": {
       "description": "Delete a product image",
@@ -2479,7 +2543,9 @@
         "image_id"
       ],
       "title": "ShopifyDeleteProductImageConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyDeleteProductVariantConfig": {
       "description": "Delete a product variant",
@@ -2515,7 +2581,9 @@
         "variant_id"
       ],
       "title": "ShopifyDeleteProductVariantConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyDeleteWebhookConfig": {
       "description": "Delete a webhook",
@@ -2545,7 +2613,9 @@
         "webhook_id"
       ],
       "title": "ShopifyDeleteWebhookConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetBlogArticleConfig": {
       "description": "Get a single blog article",
@@ -2611,7 +2681,9 @@
         "collection_id"
       ],
       "title": "ShopifyGetCollectionConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetCustomerAddressConfig": {
       "description": "Get a single customer address by ID",
@@ -2647,7 +2719,9 @@
         "address_id"
       ],
       "title": "ShopifyGetCustomerAddressConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetCustomerConfig": {
       "description": "Get a single customer by ID",
@@ -2691,7 +2765,9 @@
         "customer_id"
       ],
       "title": "ShopifyGetCustomerConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetCustomerOrdersConfig": {
       "description": "Get orders for a specific customer",
@@ -2741,7 +2817,9 @@
         "customer_id"
       ],
       "title": "ShopifyGetCustomerOrdersConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetFulfillmentConfig": {
       "description": "Get a single fulfillment",
@@ -2777,7 +2855,9 @@
         "fulfillment_id"
       ],
       "title": "ShopifyGetFulfillmentConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetLocationConfig": {
       "description": "Get a single location",
@@ -2807,7 +2887,9 @@
         "location_id"
       ],
       "title": "ShopifyGetLocationConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetMetafieldConfig": {
       "description": "Get a single metafield",
@@ -2836,7 +2918,9 @@
         "metafield_id"
       ],
       "title": "ShopifyGetMetafieldConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetOrderConfig": {
       "description": "Get a single order by ID",
@@ -2880,7 +2964,9 @@
         "order_id"
       ],
       "title": "ShopifyGetOrderConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetProductConfig": {
       "description": "Get a single product by ID",
@@ -2924,7 +3010,9 @@
         "product_id"
       ],
       "title": "ShopifyGetProductConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetProductImageConfig": {
       "description": "Get a single product image by ID",
@@ -2973,7 +3061,9 @@
         "image_id"
       ],
       "title": "ShopifyGetProductImageConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetProductVariantConfig": {
       "description": "Get a single product variant by ID",
@@ -3017,7 +3107,9 @@
         "variant_id"
       ],
       "title": "ShopifyGetProductVariantConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetRefundConfig": {
       "description": "Get a single refund by ID",
@@ -3066,7 +3158,9 @@
         "refund_id"
       ],
       "title": "ShopifyGetRefundConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetShopConfig": {
       "description": "Get shop information",
@@ -3089,7 +3183,9 @@
         }
       },
       "title": "ShopifyGetShopConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetTransactionConfig": {
       "description": "Get a single transaction by ID",
@@ -3139,7 +3235,9 @@
         "transaction_id"
       ],
       "title": "ShopifyGetTransactionConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGetWebhookConfig": {
       "description": "Get a single webhook",
@@ -3168,7 +3266,9 @@
         "webhook_id"
       ],
       "title": "ShopifyGetWebhookConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyGraphQLCollectionsQueryConfig": {
       "description": "Query collections using GraphQL",
@@ -4183,7 +4283,9 @@
         }
       },
       "title": "ShopifyListCollectionsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListCustomerAddressesConfig": {
       "description": "List all addresses for a customer",
@@ -4213,7 +4315,9 @@
         "customer_id"
       ],
       "title": "ShopifyListCustomerAddressesConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListCustomersConfig": {
       "description": "List customers from the store with pagination and filtering",
@@ -4329,7 +4433,9 @@
         }
       },
       "title": "ShopifyListCustomersConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListFulfillmentsConfig": {
       "description": "List fulfillments for an order",
@@ -4359,7 +4465,9 @@
         "order_id"
       ],
       "title": "ShopifyListFulfillmentsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListInventoryLevelsConfig": {
       "description": "List inventory levels for items or locations",
@@ -4423,7 +4531,9 @@
         }
       },
       "title": "ShopifyListInventoryLevelsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListLocationsConfig": {
       "description": "List all locations",
@@ -4445,7 +4555,9 @@
         }
       },
       "title": "ShopifyListLocationsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListMetafieldsConfig": {
       "description": "List metafields for a resource",
@@ -4488,7 +4600,9 @@
         "resource"
       ],
       "title": "ShopifyListMetafieldsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListOrdersConfig": {
       "description": "List orders from the store with pagination and filtering",
@@ -4642,7 +4756,9 @@
         }
       },
       "title": "ShopifyListOrdersConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListProductImagesConfig": {
       "description": "List all images for a product",
@@ -4699,7 +4815,9 @@
         "product_id"
       ],
       "title": "ShopifyListProductImagesConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListProductVariantsConfig": {
       "description": "List all variants for a product",
@@ -4771,7 +4889,9 @@
         "product_id"
       ],
       "title": "ShopifyListProductVariantsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListProductsConfig": {
       "description": "List products from the store with pagination and filtering",
@@ -4893,7 +5013,9 @@
         }
       },
       "title": "ShopifyListProductsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListRefundsConfig": {
       "description": "List all refunds for an order",
@@ -4937,7 +5059,9 @@
         "order_id"
       ],
       "title": "ShopifyListRefundsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListTransactionsConfig": {
       "description": "List all transactions for an order",
@@ -4995,7 +5119,9 @@
         "order_id"
       ],
       "title": "ShopifyListTransactionsConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyListWebhooksConfig": {
       "description": "List webhooks",
@@ -5017,7 +5143,9 @@
         }
       },
       "title": "ShopifyListWebhooksConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyOAuthCredential": {
       "description": "OAuth 2.0 credential for Shopify Admin API. Tokens are obtained via OAuth flow.\n\nOAuth app setup: https://shopify.dev/docs/apps/build/authentication-authorization",
@@ -6114,7 +6242,9 @@
         "order_id"
       ],
       "title": "ShopifyOpenOrderConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifySearchCustomersConfig": {
       "description": "Search for customers",
@@ -6173,7 +6303,9 @@
         "query"
       ],
       "title": "ShopifySearchCustomersConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifySetDefaultCustomerAddressConfig": {
       "description": "Set a customer address as the default",
@@ -6210,7 +6342,9 @@
         "address_id"
       ],
       "title": "ShopifySetDefaultCustomerAddressConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifySetInventoryLevelConfig": {
       "description": "Set the inventory level of an item at a location",
@@ -6266,7 +6400,9 @@
         "available"
       ],
       "title": "ShopifySetInventoryLevelConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyUpdateBlogArticleConfig": {
       "description": "Update a blog article",
@@ -6486,7 +6622,9 @@
         "collection_id"
       ],
       "title": "ShopifyUpdateCollectionConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyUpdateCustomerAddressConfig": {
       "description": "Update an existing customer address",
@@ -6665,7 +6803,9 @@
         "address_id"
       ],
       "title": "ShopifyUpdateCustomerAddressConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyUpdateCustomerConfig": {
       "description": "Update an existing customer",
@@ -6774,7 +6914,9 @@
         "customer_id"
       ],
       "title": "ShopifyUpdateCustomerConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyUpdateFulfillmentConfig": {
       "description": "Update a fulfillment",
@@ -6852,7 +6994,9 @@
         "fulfillment_id"
       ],
       "title": "ShopifyUpdateFulfillmentConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyUpdateMetafieldConfig": {
       "description": "Update a metafield",
@@ -6901,7 +7045,9 @@
         "value"
       ],
       "title": "ShopifyUpdateMetafieldConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyUpdateOrderConfig": {
       "description": "Update an existing order",
@@ -6986,7 +7132,9 @@
         "order_id"
       ],
       "title": "ShopifyUpdateOrderConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyUpdateProductConfig": {
       "description": "Update an existing product",
@@ -7101,7 +7249,9 @@
         "product_id"
       ],
       "title": "ShopifyUpdateProductConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyUpdateProductVariantConfig": {
       "description": "Update an existing product variant",
@@ -7236,7 +7386,9 @@
         "variant_id"
       ],
       "title": "ShopifyUpdateProductVariantConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     },
     "ShopifyUpdateWebhookConfig": {
       "description": "Update a webhook",
@@ -7291,7 +7443,9 @@
         "webhook_id"
       ],
       "title": "ShopifyUpdateWebhookConfig",
-      "type": "object"
+      "type": "object",
+      "x-requires-tier": "shopify_own_app",
+      "x-tier-label": "Own Shopify app"
     }
   },
   "description": "Full configuration for Shopify node including credentials",

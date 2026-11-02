@@ -1,16 +1,26 @@
 """Public Shopify App Store grants must never call the legacy REST Admin API."""
 
+import json
+from pathlib import Path
 from unittest.mock import AsyncMock
 
 import pytest
 
+from coder.workflow.operation_catalog import get_operations_for_node_type
+from nodes.core.base import iter_operation_definitions
 from nodes.shopify_node import (
+    OWN_APP_TIER,
+    PUBLIC_APP_GRAPHQL_OPERATIONS,
     ShopifyCreateBlogArticleConfig,
     ShopifyGraphQLShopQueryConfig,
     ShopifyListProductsConfig,
     ShopifyNode,
     ShopifyNodeConfig,
     ShopifyOAuthCredential,
+)
+
+GENERATED_SCHEMA = (
+    Path(__file__).resolve().parents[3] / "frontend/app/schemas/nodes/shopify.json"
 )
 
 
@@ -111,3 +121,78 @@ async def test_public_app_registers_webhooks_through_graphql(monkeypatch):
     register_rest.assert_not_awaited()
     unregister_graphql.assert_awaited_once()
     unregister_rest.assert_not_awaited()
+
+
+def _tier_split(schema):
+    tiered, untiered = set(), set()
+    for operation, definition in iter_operation_definitions(schema):
+        (tiered if definition.get("x-requires-tier") else untiered).add(operation)
+        if definition.get("x-requires-tier"):
+            assert definition["x-requires-tier"] == OWN_APP_TIER
+            assert definition.get("x-tier-label"), (
+                f"{operation}: x-requires-tier without an x-tier-label renders "
+                "no marker in the picker"
+            )
+        assert "x-requires-tier" not in definition["properties"]["operation"], (
+            f"{operation}: the marker belongs on the config class, not the "
+            "nested operation property the picker never reads"
+        )
+    return tiered, untiered
+
+
+class _ReachedProvider(Exception):
+    """Raised instead of any network call: the operation got past the gate."""
+
+
+async def _refused_on_public_app(config_class) -> bool:
+    """Run ``execute`` the way an App Store grant does and report whether the
+    GraphQL-only gate refused it. Network helpers raise before any I/O, and a
+    handler tripping over the unvalidated config also means the gate let it
+    through."""
+    node = _node(config_class.model_construct())
+    node._make_request = AsyncMock(side_effect=_ReachedProvider)
+    node._make_graphql_request = AsyncMock(side_effect=_ReachedProvider)
+    try:
+        await node.execute({})
+    except ValueError as e:
+        if "GraphQL Admin API operations only" in str(e):
+            return True
+    except Exception:
+        pass
+    return False
+
+
+@pytest.fixture(scope="module")
+def refused_operations():
+    import asyncio
+
+    operations = get_operations_for_node_type("automation-shopify")
+    assert len(operations) > 50, "precondition: enumerated the Shopify union"
+
+    async def judge():
+        return {
+            op.name
+            for op in operations
+            if await _refused_on_public_app(op.config_class)
+        }
+
+    return asyncio.run(judge())
+
+
+@pytest.mark.parametrize(
+    "schema",
+    [
+        pytest.param(ShopifyNode.get_config_schema, id="live"),
+        pytest.param(lambda: json.loads(GENERATED_SCHEMA.read_text()), id="generated"),
+    ],
+)
+def test_marker_matches_what_the_public_app_refuses(schema, refused_operations):
+    """Exactly the operations ``execute`` refuses on an App Store grant carry
+    ``x-requires-tier`` (which the picker, tool presets and templates read), in
+    the live schema and in the generated file the frontend ships."""
+    tiered, untiered = _tier_split(schema())
+
+    assert tiered == refused_operations
+    assert PUBLIC_APP_GRAPHQL_OPERATIONS <= untiered
+    assert set(ShopifyNode._trigger_event_map) <= untiered
+    assert "list_products" in tiered and "query_products_with_graphql" in untiered

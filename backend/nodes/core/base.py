@@ -416,6 +416,23 @@ def _mark_sole_option_autofill(schema: Any) -> None:
             dyn.setdefault("auto_select_sole_option", True)
 
 
+def iter_operation_definitions(schema: Dict[str, Any]):
+    """Yield ``(operation_name, config_class_definition)`` for a node schema.
+
+    Per-operation markers such as ``x-requires-tier`` belong on the config
+    class's ``$defs`` entry, NOT on its nested ``properties.operation``: that
+    is where the frontend reads them (``NodeConfig.getOptionTierLabel``
+    resolves the ``$ref`` and reads the top level). The operation name itself
+    lives on the nested ``const``.
+    """
+    for definition in (schema.get("$defs") or {}).values():
+        if not isinstance(definition, dict):
+            continue
+        operation = (definition.get("properties") or {}).get("operation")
+        if isinstance(operation, dict) and "const" in operation:
+            yield operation["const"], definition
+
+
 @lru_cache(maxsize=None)
 def _cached_base_schema_json(node_cls: Any) -> str:
     """Build a node class's JSON Schema once and keep it serialized.
