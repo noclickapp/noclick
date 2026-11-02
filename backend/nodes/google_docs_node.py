@@ -15,7 +15,7 @@ import httpx
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import require_credential_token
-from nodes.oauth.google_oauth import is_token_expired, refresh_access_token
+from nodes.oauth.google_oauth import GOOGLE_API_TIMEOUT, is_token_expired, refresh_access_token
 from nodes.scopes.google import GOOGLE_DOCS_SCOPES
 
 logger = logging.getLogger(__name__)
@@ -447,7 +447,7 @@ class GoogleDocsNode(WorkflowNode):
         }
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
                 response = await client.get(
                     url,
                     headers={"Authorization": f"Bearer {access_token}"},
@@ -607,7 +607,7 @@ class GoogleDocsNode(WorkflowNode):
         if config.page_size:
             params["pageSize"] = config.page_size
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.get(
                 url, headers={"Authorization": f"Bearer {access_token}"}, params=params
             )
@@ -653,7 +653,7 @@ class GoogleDocsNode(WorkflowNode):
 
         url = f"{GOOGLE_DOCS_API_BASE}/{config.document_id}"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.get(
                 url,
                 headers={"Authorization": f"Bearer {access_token}"},
@@ -696,7 +696,7 @@ class GoogleDocsNode(WorkflowNode):
 
         url = GOOGLE_DOCS_API_BASE
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             # Create the document
             response = await client.post(
                 url,
@@ -765,7 +765,7 @@ class GoogleDocsNode(WorkflowNode):
         # First get the document to find the end index
         get_url = f"{GOOGLE_DOCS_API_BASE}/{config.document_id}"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             get_response = await client.get(
                 get_url,
                 headers={"Authorization": f"Bearer {access_token}"},
@@ -844,7 +844,7 @@ class GoogleDocsNode(WorkflowNode):
 
         url = f"{GOOGLE_DOCS_API_BASE}/{config.document_id}:batchUpdate"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.post(
                 url,
                 headers={
@@ -890,7 +890,7 @@ class GoogleDocsNode(WorkflowNode):
 
         url = f"{GOOGLE_DOCS_API_BASE}/{config.document_id}:batchUpdate"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.post(
                 url,
                 headers={

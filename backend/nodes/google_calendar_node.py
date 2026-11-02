@@ -24,7 +24,7 @@ from nodes.core.watch_channels import (
     save_watch_channel,
     update_channel_subscription,
 )
-from nodes.oauth.google_oauth import is_token_expired, refresh_access_token
+from nodes.oauth.google_oauth import GOOGLE_API_TIMEOUT, is_token_expired, refresh_access_token
 from nodes.oauth.google_token import ensure_fresh_google_token
 from nodes.scopes.google import GOOGLE_CALENDAR_SCOPES
 
@@ -1579,7 +1579,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
         url = f"{GOOGLE_CALENDAR_API_BASE}/users/me/calendarList"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
                 response = await client.get(
                     url,
                     headers={"Authorization": f"Bearer {access_token}"},
@@ -2049,7 +2049,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
         if config.search_query:
             params["q"] = config.search_query
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.get(
                 url, headers={"Authorization": f"Bearer {access_token}"}, params=params
             )
@@ -2103,7 +2103,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
 
         url = f"{GOOGLE_CALENDAR_API_BASE}/calendars/{config.calendar_id}/events/{config.event_id}"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.get(
                 url,
                 headers={"Authorization": f"Bearer {access_token}"},
@@ -2178,7 +2178,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
         if config.send_notifications is not None:
             params["sendUpdates"] = "all" if config.send_notifications else "none"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.post(
                 url,
                 headers={
@@ -2228,7 +2228,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
         # First, get the existing event
         get_url = f"{GOOGLE_CALENDAR_API_BASE}/calendars/{config.calendar_id}/events/{config.event_id}"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             get_response = await client.get(
                 get_url,
                 headers={"Authorization": f"Bearer {access_token}"},
@@ -2322,7 +2322,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
         if config.send_notifications is not None:
             params["sendUpdates"] = "all" if config.send_notifications else "none"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.delete(
                 url, headers={"Authorization": f"Bearer {access_token}"}, params=params
             )
@@ -2360,7 +2360,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
         if config.send_notifications is not None:
             params["sendUpdates"] = "all" if config.send_notifications else "none"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.post(
                 url, headers={"Authorization": f"Bearer {access_token}"}, params=params
             )
@@ -2414,7 +2414,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
         if config.max_results:
             params["maxResults"] = config.max_results
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.get(
                 url, headers={"Authorization": f"Bearer {access_token}"}, params=params
             )
@@ -2474,7 +2474,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
         if config.send_notifications is not None:
             params["sendUpdates"] = "all" if config.send_notifications else "none"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.post(
                 url, headers={"Authorization": f"Bearer {access_token}"}, params=params
             )
@@ -2529,7 +2529,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
             "items": [{"id": cid} for cid in calendar_ids],
         }
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.post(
                 url,
                 headers={
@@ -2584,7 +2584,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
         if config.show_deleted:
             params["showDeleted"] = True
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.get(
                 url, headers={"Authorization": f"Bearer {access_token}"}, params=params
             )
@@ -2639,7 +2639,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
 
         url = f"{GOOGLE_CALENDAR_API_BASE}/calendars/{config.calendar_id}"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.get(
                 url,
                 headers={"Authorization": f"Bearer {access_token}"},
@@ -2690,7 +2690,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
         if config.location:
             calendar_body["location"] = config.location
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.post(
                 url,
                 headers={
@@ -2736,7 +2736,7 @@ class GoogleCalendarNode(WatchChannelTriggerMixin, WorkflowNode):
 
         url = f"{GOOGLE_CALENDAR_API_BASE}/calendars/{config.calendar_id}/clear"
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=GOOGLE_API_TIMEOUT) as client:
             response = await client.post(
                 url,
                 headers={"Authorization": f"Bearer {access_token}"},

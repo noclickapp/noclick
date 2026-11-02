@@ -282,7 +282,8 @@ async def execute_tool(
                 )
         except Exception as e:
             logger.error(f"[ToolExec] Error executing tool {tool_name}: {e}", exc_info=True)
-            error = str(e)
+            # A timeout's text is empty; its type is all the model gets to act on.
+            error = str(e) or type(e).__name__
             result = {"success": False, "error": error}
 
         # Soft failures (handlers return {success: False} instead of raising)
