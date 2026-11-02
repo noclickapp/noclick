@@ -650,6 +650,7 @@ async def test_get_prefs_defaults_and_overrides(monkeypatch):
     monkeypatch.setattr(notifications, "_fetch_row", fake_fetch_row)
     prefs = await notifications.get_prefs("user-1")
     assert prefs == {
+        "approvals": True,
         "channel_disconnected": True,
         "credential_revoked": True,
         "credits": True,

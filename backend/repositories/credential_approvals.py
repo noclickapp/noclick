@@ -168,6 +168,7 @@ class CredentialApprovalRepo:
                 execution_id,
             )
         return {**dict(row), "new_request": True, "owner_id": str(credential["owner_id"]),
+                "credential_id": str(UUID(credential_id)),
                 "title": f"{operation.replace('_', ' ')} · {credential['name']}"}
 
     async def resumable_workflows(self, execution_id=None):

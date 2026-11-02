@@ -139,6 +139,38 @@ async def test_shared_node_boundary_never_calls_provider_before_approval(approva
     assert (await node.run({}))["status"] == "pending_approval"
 
 
+async def test_a_held_call_tells_its_owner_once_a_window(approval_db, monkeypatch):
+    """The owner hears that a call waits on them, on the review page's link: before, only a browser event
+    nothing listens to said so, and a held agent's replies waited unseen until they lapsed."""
+    import utils.async_helpers as tasks
+    from utils import notifications
+
+    pool, repo, (cid, _) = approval_db
+    await pool.execute("DELETE FROM user_notifications WHERE user_id=$1::uuid AND category='approvals'", USER)
+    monkeypatch.setenv("EMAIL_RELAY_SECRET", "test-secret")
+    sent = []
+    monkeypatch.setattr(notifications, "_send_email", lambda to, subject, html, text, headers: sent.append((to, subject, text)) or True)
+    await repo.tighten(cid, USER, [OP])
+    first = TestMailNode("mail", "automation-gmail", {"credential_id": cid, "_approval_pool": pool},
+                         config=NodeConfig[MailConfig, None](config=MailConfig()), user_id=USER)
+    second = TestMailNode("mail", "automation-gmail", {"credential_id": cid, "_approval_pool": pool},
+                          config=NodeConfig[MailConfig, None](config=MailConfig(to="other@example.test")), user_id=USER)
+    held = []
+    for node in (first, second):
+        held.append(await node.run({}))
+        await asyncio.gather(*list(tasks._bg_tasks))
+
+    assert [result["status"] for result in held] == ["pending_approval", "pending_approval"]
+    assert len(sent) == 1
+    to, subject, text = sent[0]
+    assert to == "test@example.com" and subject == "1 action waiting for your approval"
+    assert held[0]["approval_url"] in text and f"/credential/permissions/{cid}" in text
+    row = await pool.fetchrow("SELECT email_sent, suppressed_count FROM user_notifications "
+                              "WHERE user_id=$1::uuid AND category='approvals'", USER)
+    assert row["email_sent"] and row["suppressed_count"] == 1
+    await pool.execute("DELETE FROM user_notifications WHERE user_id=$1::uuid AND category='approvals'", USER)
+
+
 async def test_connect_without_workflow_or_email_reuses_live_link(approval_db):
     pool, _, _ = approval_db
     actions = CredentialActions(pool=pool, user_id=USER)

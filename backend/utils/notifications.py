@@ -63,6 +63,7 @@ logger = logging.getLogger(__name__)
 CATEGORIES = frozenset({
     "run_failure", "credits", "digest", "credential_revoked", "channel_disconnected",
     "schedule_paused", "topup", "phone_numbers", "platform_paused", "spend_cap", "referrals", "machines",
+    "approvals",
 })
 CATEGORY_LABELS = {
     "run_failure": "workflow failure alerts",
@@ -77,6 +78,7 @@ CATEGORY_LABELS = {
     "spend_cap": "monthly spending cap alerts",
     "referrals": "news of people you invited",
     "machines": "decisions on your requests for machines",
+    "approvals": "actions waiting for your approval",
 }
 
 # What an owner with no email isn't texted (``_text_owner``): the digest is news, never something to act on; a failed
@@ -209,6 +211,8 @@ ALERT_DAILY_CAPS = {
     "referrals": 3,
     # One a decision on a request for machines.
     "machines": 3,
+    # Once a window per credential (APPROVAL_WAITING_SUPPRESS_S).
+    "approvals": 3,
 }
 assert set(ALERT_DAILY_CAPS) == CATEGORIES  # every category decides its cap explicitly
 
@@ -966,6 +970,61 @@ async def send_credential_revoked_alert(
             "provider": provider,
             "revoked_reason": revoked_reason,
         },
+        pool=pool,
+    )
+
+
+# ── Approvals ────────────────────────────────────────────────────────────────
+
+# A busy agent files a request a message; within a window they are one notice, counted into the next.
+APPROVAL_WAITING_SUPPRESS_S = 6 * 3600
+
+
+async def send_approval_waiting_alert(
+    credential_id: str, *, title: str, review_url: str, permissions_url: str, pool=None,
+) -> bool:
+    """Tell a restricted credential's owner that an agent's call on it waits for their approval. Nothing else
+    reaches them: the call's result links the review page to the agent alone, so an owner away from the app never
+    learned that its replies were held."""
+    row = await _fetch_row(
+        pool,
+        "SELECT c.owner_id, c.name, (SELECT count(*) FROM approval_requests a WHERE a.credential_id = c.id "
+        "AND a.status = 'pending' AND a.expires_at > now()) AS waiting "
+        f"FROM credentials c WHERE c.id = $1::uuid AND {listed_to_owner_sql('c')}",
+        credential_id,
+    )
+    if not row:
+        return False
+    name = row["name"] or "a connected account"
+    waiting = int(row["waiting"])
+    actions = f"{waiting} action{'s' if waiting != 1 else ''}"
+    blocks = (
+        para(
+            f"An agent asked to use {strong(html_lib.escape(name))} and is waiting for you: "
+            f"{strong(html_lib.escape(title))}. Nothing it asked for happens until you approve it."
+        )
+        + kv_rows([("Connection", html_lib.escape(name)), ("Waiting", actions)])
+        + link_panel(f"To let it act without asking, change what {html_lib.escape(name)} needs approval for:",
+                     permissions_url)
+    )
+    text_body = (
+        f'An agent is waiting for your approval to use "{name}": {title}. Nothing it asked for happens until you '
+        f"approve it ({actions} waiting).\nTo let it act without asking, change what it needs approval for: "
+        f"{permissions_url}"
+    )
+    return await send_system_alert(
+        str(row["owner_id"]), "approvals",
+        subject=f"{actions.capitalize()} waiting for your approval",
+        heading="Waiting for your approval",
+        eyebrow="Approval needed",
+        blocks_html=blocks,
+        text_body=text_body,
+        preheader=f"{title} is waiting for your approval",
+        cta_text="Review it",
+        cta_url=review_url,
+        dedupe_key=f"approval_waiting:{credential_id}",
+        dedupe_ttl_s=APPROVAL_WAITING_SUPPRESS_S,
+        metadata={"credential_id": credential_id, "waiting": waiting},
         pool=pool,
     )
 

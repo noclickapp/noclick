@@ -45,6 +45,11 @@ const CATEGORIES = [
         description: 'When a live channel connection (like WhatsApp) drops and messages stop arriving.',
     },
     {
+        key: 'approvals',
+        label: 'Approvals',
+        description: 'When an agent is waiting for you to approve something it asked to do with an account you restricted.',
+    },
+    {
         key: 'schedule_paused',
         label: 'Paused schedules',
         description: 'When a schedule is paused because its runs kept failing the same way.',

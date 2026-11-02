@@ -9,7 +9,7 @@ from repositories.credential_approvals import CredentialApprovalRepo
 from utils.database_pool import get_native_pool
 
 
-async def notify_created(row):
+async def notify_created(row, pool):
     if not row or not row.get("new_request"):
         return
     from utils.socket_singleton import get_sio
@@ -25,12 +25,26 @@ async def notify_created(row):
         # reloads the queue on focus; notification failure never authorizes I/O.
         import logging
         logging.getLogger(__name__).warning("Could not notify browser of credential approval %s", row["id"], exc_info=True)
+    from utils.async_helpers import spawn
+    from utils.notifications import send_approval_waiting_alert
+    spawn(send_approval_waiting_alert(
+        row["credential_id"], title=row["title"], review_url=review_url(row["id"]),
+        permissions_url=f"{_frontend()}/credential/permissions/{row['credential_id']}", pool=pool,
+    ), name="approval_waiting_alert")
+
+
+def _frontend():
+    return get_frontend_url().rstrip("/")
+
+
+def review_url(approval_id):
+    return f"{_frontend()}/credential/approval/{approval_id}"
 
 
 def pending_result(row):
     return {"status": "pending_approval" if row["status"] == "pending" else "rejected",
             "executed": False, "approval_id": str(row["id"]),
-            "approval_url": f"{get_frontend_url().rstrip('/')}/credential/approval/{row['id']}",
+            "approval_url": review_url(row["id"]),
             "message": "The credential owner must review this exact call. Retry the same call after approval.",
             "_halt_downstream": True}
 
@@ -47,13 +61,14 @@ async def admit_node(node, inputs):
     # without ever serializing the outer config's decrypted credentials.
     if inputs:
         arguments["__inputs__"] = inputs
-    row = await CredentialApprovalRepo(node.node_data.get("_approval_pool") or get_native_pool()).admit(
+    pool = node.node_data.get("_approval_pool") or get_native_pool()
+    row = await CredentialApprovalRepo(pool).admit(
         credential_id=str(credential_id), user_id=node.user_id, node_type=node.node_type,
         operation=operation, arguments=arguments, organization_id=node.organization_id,
         workflow_id=node.workflow_id, execution_id=node.execution_id, node_id=node.node_id,
         conversation_id=node.conversation_id, continuation=node.node_data.get("_approval_context"),
     )
-    await notify_created(row)
+    await notify_created(row, pool)
     return pending_result(row) if row else None
 
 
@@ -71,12 +86,13 @@ async def forbid_secret_export(credential_id, *, pool=None):
 
 async def admit_lookup(*, credential_id, user_id, node_type, arguments, pool=None,
                        organization_id=None, workflow_id=None, conversation_id=None, continuation=None):
-    row = await CredentialApprovalRepo(pool or get_native_pool()).admit(
+    pool = pool or get_native_pool()
+    row = await CredentialApprovalRepo(pool).admit(
         credential_id=credential_id, user_id=user_id, node_type=node_type, operation="__lookup__",
         arguments=arguments, organization_id=organization_id, workflow_id=workflow_id,
         conversation_id=conversation_id, continuation=continuation,
     )
-    await notify_created(row)
+    await notify_created(row, pool)
     return pending_result(row) if row else None
 
 
@@ -88,7 +104,7 @@ async def admit_lookups(*, credential_ids, user_id, node_type, arguments, pool, 
         for cid in sorted(set(credential_ids))
     ])
     for row in rows:
-        await notify_created(row)
+        await notify_created(row, pool)
     if not rows:
         return None
     results = [pending_result(row) for row in rows]
