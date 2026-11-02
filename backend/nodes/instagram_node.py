@@ -1790,6 +1790,36 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
                           message_id=str(message["mid"]), text=message.get("text") or "")
         return result
 
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """A DM or comment → a turn of its sender's own conversation (DMs keyed on
+        the sender's Instagram-scoped id, comments on the commenter), naming the id
+        its reply tool takes. Without a key every sender shared one thread."""
+        action = output.get("action") if isinstance(output, dict) else None
+        if action == "on_message" and output.get("sender_id"):
+            sender = output["sender_id"]
+            message = (output.get("data") or {}).get("message") or {}
+            lines = [output.get("text") or ""] + [
+                f"[sent {item.get('type') or 'an attachment'}"
+                + (f": {item['payload']['url']}]" if isinstance(item.get("payload"), dict) and item["payload"].get("url") else "]")
+                for item in message.get("attachments") or [] if isinstance(item, dict)
+            ]
+            body = "\n".join(line for line in lines if line) or "[a message with no text]"
+            return {
+                "text": f"Instagram message from {sender}:\n{body}\n\nTo reply, call send_dm with recipient_id={sender}.",
+                "conversation_key": f"instagram:{sender}",
+                "title": f"Instagram {sender}",
+            }
+        if action == "on_comment" and output.get("comment_id"):
+            who = f"@{output['author_username']}" if output.get("author_username") else output.get("author_id")
+            return {
+                "text": (f"Instagram comment by {who} on post {output.get('media_id')}:\n{output.get('text') or ''}\n\n"
+                         f"To reply publicly, call reply_to_comment with comment_id={output['comment_id']}."),
+                "conversation_key": f"instagram-comments:{output.get('author_id') or output.get('author_username')}",
+                "title": f"{who} on Instagram",
+            }
+        return super().resolve_agent_event(output)
+
     def trigger_produced_no_event(self, output):
         return output.get("action") in self._trigger_event_map and output.get("status") == "no_event"
 
