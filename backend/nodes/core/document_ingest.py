@@ -53,8 +53,14 @@ def extract_text(data: bytes, mime_type: str, filename: str) -> str:
     """Extract plain text from an uploaded document's bytes.
 
     Routes by file extension first, then MIME. Raises ValueError for a type we
-    can't extract (never returns garbage silently).
+    can't extract (never returns garbage silently). NUL characters are dropped:
+    PDF text layers carry them, and Postgres text and jsonb refuse them, so a
+    reading kept on the file failed the turn that read it.
     """
+    return _parsed_text(data, mime_type, filename).replace("\x00", "").strip()
+
+
+def _parsed_text(data: bytes, mime_type: str, filename: str) -> str:
     name = (filename or "").lower()
     mime = (mime_type or "").lower()
 
