@@ -2,8 +2,17 @@
 
 The schema states which inputs are user-supplied for QR versus Cloud API.
 """
-from typing import Literal, Optional
+from typing import List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field
+
+# The chat picker WhatsAppNode.load_field_options serves (loader key "chat_id"
+# or "to"), shared by the send operations' recipient and the trigger's chats.
+CHAT_PICKER_OPTIONS = {
+    "placeholder": "Select a chat...",
+    "searchable": True,
+    "allow_custom": True,
+    "custom_placeholder": "Or enter a phone number / chat ID",
+}
 
 
 class WhatsAppReceiveMessageConfig(BaseModel):
@@ -48,10 +57,23 @@ class WhatsAppReceiveMessageConfig(BaseModel):
     include_group_messages: str = Field(
         "false",
         title="Trigger on Group Messages",
-        description="Also trigger when a message arrives in a group chat. Off by default: an auto-reply bot answering into groups can message many people at once.",
+        description="Also trigger when a message arrives in a group chat. Off by default: an auto-reply bot answering into groups can message many people at once. Not consulted when Only These Chats is set.",
         json_schema_extra={
             "enum": ["false", "true"],
             "enumNames": ["No (direct messages only)", "Yes (also group chats)"],
             "x-enum-searchable": True,
+        },
+    )
+    chat_ids: List[str] = Field(
+        default_factory=list,
+        title="Only These Chats",
+        description=(
+            "Start a run only for messages in these chats; leave empty for every chat. "
+            "When set, the list alone decides: a group listed here fires even with group "
+            "messages off, and every chat not listed, direct or group, is ignored."
+        ),
+        json_schema_extra={
+            "x-dynamic-options": {**CHAT_PICKER_OPTIONS, "field_name": "chat_id"},
+            "x-supported-credential-types": ["whatsapp_qr"],
         },
     )

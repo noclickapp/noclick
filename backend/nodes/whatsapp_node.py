@@ -234,13 +234,7 @@ def _chat_picker_field(
         description=description,
         json_schema_extra={
             "placeholder": "+12025550100",
-            "x-dynamic-options": {
-                "field_name": field_name,
-                "placeholder": "Select a chat...",
-                "searchable": True,
-                "allow_custom": True,
-                "custom_placeholder": "Or enter a phone number / chat ID",
-            },
+            "x-dynamic-options": {**CHAT_PICKER_OPTIONS, "field_name": field_name},
             "x-resource-type": "whatsapp_chat",
         },
     )
@@ -1582,9 +1576,6 @@ class WhatsAppGetProfileConfig(BaseModel):
 # ============================================================================
 
 
-from nodes.whatsapp_trigger_config import WhatsAppReceiveMessageConfig
-
-
 class WhatsAppReceiveStatusConfig(BaseModel):
     """Receive message status updates via webhook"""
 
@@ -2005,8 +1996,9 @@ class WhatsAppNode(WorkflowNode):
         (@newsletter), and the account's own outgoing messages (fromMe) — an
         auto-reply workflow fed those DMs arbitrary contacts (incl. replying to
         their stories) and echoes itself. Group chats are opt-in via
-        include_group_messages. A message from one of NoClick's own numbers
-        never fires, in either envelope (``is_noclick_number``).
+        include_group_messages, unless chat_ids is set: then it alone names the
+        chats that fire, groups included. A message from one of NoClick's own
+        numbers never fires, in either envelope (``is_noclick_number``).
         """
         if (config or {}).get("operation") != "receive_message":
             return True
@@ -2029,6 +2021,12 @@ class WhatsAppNode(WorkflowNode):
         chat_id = str(event_payload.get("from") or key.get("remoteJid") or "")
         if chat_id == "status@broadcast" or chat_id.endswith("@newsletter"):
             return False
+        allowed = {_chat_key(c) for c in (config or {}).get("chat_ids") or [] if str(c).strip()}
+        if allowed:
+            # An @lid chat also carries its phone jid as remoteJidAlt, and the
+            # picker may list either spelling.
+            spellings = (chat_id, key.get("remoteJid"), key.get("remoteJidAlt"))
+            return any(_chat_key(c) in allowed for c in spellings if str(c or "").strip())
         if chat_id.endswith("@g.us") and (config or {}).get("include_group_messages") != "true":
             return False
         return True

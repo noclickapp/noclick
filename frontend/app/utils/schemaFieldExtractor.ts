@@ -414,6 +414,18 @@ export function booleanSelectValue(value: unknown): '' | 'true' | 'false' {
     return '';
 }
 
+/** Whether a field schema holds a list (`List[str]` or `Optional[List[str]]`). */
+export function isListSchema(prop: Record<string, unknown>): boolean {
+    const variants = Array.isArray(prop.anyOf) ? (prop.anyOf as Array<{ type?: unknown }>) : [];
+    return prop.type === 'array' || variants.some(v => v?.type === 'array');
+}
+
+/** The labels a list-valued picker caches as `${fieldKey}__label`, keyed by value so removing a row can't shift them. */
+export function listLabels(config: Record<string, unknown>, fieldKey: string): Record<string, string> {
+    const stored = config[`${fieldKey}__label`];
+    return stored && typeof stored === 'object' && !Array.isArray(stored) ? (stored as Record<string, string>) : {};
+}
+
 /** Credential-specific fields stay available until an account is selected. */
 export function isFieldApplicable(prop: Record<string, unknown>, credentialIds: Record<string, string>): boolean {
     const supported = prop['x-supported-credential-types'];

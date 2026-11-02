@@ -11,6 +11,7 @@ import { useDebounce } from '~/hooks/useDebounce';
 import type { WorkflowNodeValidateConfigResponse } from '~/types/socket-events.generated';
 import { WorkflowNodeValidateConfigRequest } from '~/types/socket-events.generated';
 import { DynamicOptionsField } from './DynamicOptionsField';
+import { DynamicOptionsListField } from './DynamicOptionsListField';
 import { DroppableTextField, getInsertReferenceForField } from './DroppableTextField';
 import { useReferenceAutocomplete } from './ReferenceAutocompleteContext';
 import { OperationPicker } from './OperationPicker';
@@ -1889,8 +1890,9 @@ export function NodeConfigFieldControl({
     onOpenCredentials,
 }: NodeConfigFieldControlProps) {
     if (prop['x-dynamic-options']) {
+        const Picker = isListSchema(prop) ? DynamicOptionsListField : DynamicOptionsField;
         return (
-            <DynamicOptionsField
+            <Picker
                 fieldKey={fieldKey}
                 prop={prop}
                 value={value}

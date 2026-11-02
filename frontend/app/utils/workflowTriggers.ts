@@ -5,7 +5,7 @@
 // starts, instead of silently doing a confusing one-off test run.
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
 import { getTriggerOperations, isTriggerSource, resolveNodeType } from '~/utils/nodeSchemas';
-import { getFieldsForOption } from '~/utils/schemaFieldExtractor';
+import { getFieldsForOption, listLabels } from '~/utils/schemaFieldExtractor';
 import { getCredentialEmail } from '~/utils/credentialAutoSelect';
 import { EMAIL_DOMAIN } from '~/components/workflow/EmailTriggerField';
 import { describeSchedule, getScheduleEntries, isTimeOfDaySchedule } from '~/utils/scheduleFormat';
@@ -106,6 +106,11 @@ function fieldDisplayValue(
 ): string | null {
     const raw = config[key];
     if (prop['x-dynamic-options']) {
+        if (Array.isArray(raw)) {
+            const labels = listLabels(config, key);
+            const items = raw.map(strv).filter(v => v && !v.includes('{{'));
+            return items.length ? items.map(v => strv(labels[v]) || v).join(', ') : null;
+        }
         const v = strv(raw);
         if (!v || v.includes('{{')) return null;
         return strv(config[`${key}__label`]) || v;

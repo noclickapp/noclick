@@ -816,7 +816,7 @@
         },
         "include_group_messages": {
           "default": "false",
-          "description": "Also trigger when a message arrives in a group chat. Off by default: an auto-reply bot answering into groups can message many people at once.",
+          "description": "Also trigger when a message arrives in a group chat. Off by default: an auto-reply bot answering into groups can message many people at once. Not consulted when Only These Chats is set.",
           "enum": [
             "false",
             "true"
@@ -828,6 +828,24 @@
           "title": "Trigger on Group Messages",
           "type": "string",
           "x-enum-searchable": true
+        },
+        "chat_ids": {
+          "description": "Start a run only for messages in these chats; leave empty for every chat. When set, the list alone decides: a group listed here fires even with group messages off, and every chat not listed, direct or group, is ignored.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Only These Chats",
+          "type": "array",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "chat_id",
+            "placeholder": "Select a chat...",
+            "searchable": true
+          },
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
         }
       },
       "title": "WhatsAppReceiveMessageConfig",
