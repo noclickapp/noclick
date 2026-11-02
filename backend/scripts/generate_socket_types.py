@@ -10,7 +10,6 @@ import re
 import inspect
 import argparse
 from pathlib import Path
-from datetime import datetime
 from pydantic import BaseModel
 from pydantic2ts import generate_typescript_defs
 
@@ -145,10 +144,9 @@ def generate_types(target='all', output_dir=None, quiet=False):
     # Ensure output directory exists
     frontend_types_dir.mkdir(parents=True, exist_ok=True)
 
-    # Generate header with timestamp
+    # No timestamp: two branches that regenerate would otherwise differ on that line alone and conflict.
     header = f"""// Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: {datetime.now().strftime('%a %b %d %H:%M:%S %Z %Y')}
 // Target: {target}
 
 """
