@@ -526,10 +526,11 @@ async def unresolved_credential_error(
     )
 
 
-async def get_credential_name(pool, credential_id: str) -> Optional[str]:
-    """Display name of a credential — NO secret, NO access grant (same class of
-    exposure as the credential:display_info handler). Used to tag agent tool
-    descriptions so the model can tell same-type providers apart."""
+async def get_credential_display(pool, credential_id: str) -> Optional[Dict[str, Any]]:
+    """A credential's ``name`` and ``credential_type`` — NO secret, NO access
+    grant (same class of exposure as the credential:display_info handler).
+    Tags agent tool descriptions so the model can tell same-type providers
+    apart, and says which of a provider's operations its credential runs."""
     try:
         cred_uuid = credential_id if not isinstance(credential_id, str) else _uuid.UUID(credential_id)
         async with pool.acquire() as conn:

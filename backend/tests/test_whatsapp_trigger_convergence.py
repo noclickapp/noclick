@@ -405,3 +405,81 @@ async def test_a_delivery_that_cant_be_judged_runs(real_database, wahooks, monke
         await db.execute("UPDATE credentials SET credential = 'not-a-ciphertext' WHERE id = $1", wf.mine)
     _, runs = await _deliver(db, wf.workflow_id, envelope, monkeypatch)
     assert len(runs) == 1
+
+
+async def _torn_down(db, wahooks, *, attached):
+    """A trigger whose registration was torn down with the account it ran on (deleted since), while its
+    config still mirrors a live one. ``attached`` names the account the saved trigger holds now, if any."""
+    owner, workflow_id, credentials, connections = await _seed(db, wahooks)
+    assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "registered"
+    [url] = _urls(wahooks, connections["a"])
+    await WebhookManager.deregister_node_webhooks(db.pool, workflow_id, [NODE], requesting_user_id=owner)
+    await db.execute("DELETE FROM credentials WHERE id = $1", credentials["a"])
+    graph = await db.fetchval("SELECT workflow FROM workflows WHERE id = $1", workflow_id)
+    config = graph["nodes"][0]["config"]
+    config["credentialIds"] = {"whatsapp_qr": credentials[attached]} if attached else {}
+    await db.execute("UPDATE workflows SET workflow = $2::jsonb WHERE id = $1", workflow_id, graph)
+    row = await _row(db, workflow_id)
+    assert not row["is_active"] and row["registered_operation"] == "receive_message"
+    assert config["webhook_url"] and config["trigger_registered"] is True and not config.get("trigger_error")
+    return owner, workflow_id, credentials, connections, url, graph
+
+
+async def _canvas_save(db, owner, workflow_id, graph):
+    """Save ``graph`` as the canvas does, then run the reconcile job the save queues and wakes."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+    from wss.handlers.workflow_handler import WorkflowHandler
+    from wss.receiver.client_events import WorkflowUpdateRequest
+
+    sio = MagicMock()
+    sio.get_session = AsyncMock(return_value={"user_id": owner})
+    sio.emit = AsyncMock()
+    handler = WorkflowHandler(sio=sio)
+    handler.get_pool = AsyncMock(return_value=db.pool)
+    spawned = {}
+    with patch("utils.async_helpers.spawn", side_effect=lambda coro, name=None: spawned.setdefault(name, coro)):
+        await handler.update_workflow("sid", WorkflowUpdateRequest(
+            request_id="r", workflow_id=workflow_id, workflow_data=graph))
+    assert not sio.emit.await_args.args[1].get("error")
+    hooks = spawned.pop(f"workflow-reconcile:{workflow_id}")
+    for other in spawned.values():
+        other.close()
+    await hooks
+
+
+async def test_attaching_an_account_to_a_torn_down_trigger_registers_it(real_database, wahooks):  # noqa: F811
+    """The trigger lost its account; a new one is linked and saved onto it. The save brings the
+    registration back under the new account, whatever the config mirror still claims."""
+    db = real_database
+    owner, workflow_id, credentials, connections, url, graph = await _torn_down(db, wahooks, attached=None)
+
+    graph["nodes"][0]["config"]["credentialIds"] = {"whatsapp_qr": credentials["b"]}
+    await _canvas_save(db, owner, workflow_id, graph)
+
+    row = await _row(db, workflow_id)
+    assert row["is_active"] and str(row["registered_credential_id"]) == credentials["b"]
+    assert _urls(wahooks, connections["b"]) == [url]
+
+
+async def test_a_save_reactivates_a_trigger_whose_row_is_down(real_database, wahooks):  # noqa: F811
+    """No account change this time: a setup save activates a ready trigger the row says is down,
+    not only one whose config mirror says so."""
+    db = real_database
+    owner, workflow_id, _, connections, url, graph = await _torn_down(db, wahooks, attached="b")
+
+    graph["nodes"][0]["config"]["label"] = "Inbox messages"
+    await _canvas_save(db, owner, workflow_id, graph)
+
+    assert (await _row(db, workflow_id))["is_active"] and _urls(wahooks, connections["b"]) == [url]
+
+
+async def test_the_re_registration_choke_point_restores_a_loader_registered_trigger(real_database, wahooks):  # noqa: F811
+    """Restore, undo and repair route through ``register_node_webhooks``; a trigger its own loader
+    registers comes back like any other."""
+    db = real_database
+    owner, workflow_id, credentials, connections, url, _ = await _torn_down(db, wahooks, attached="b")
+
+    assert await WebhookManager.register_node_webhooks(db.pool, workflow_id, owner, node_ids=[NODE]) == 1
+    row = await _row(db, workflow_id)
+    assert row["is_active"] and str(row["registered_credential_id"]) == credentials["b"]
+    assert _urls(wahooks, connections["b"]) == [url]
