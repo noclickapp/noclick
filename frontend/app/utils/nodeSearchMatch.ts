@@ -14,6 +14,7 @@
  */
 
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import type { AgentQueryMatch } from '~/lib/agentModelMatch';
 import { getAvailableOperations } from '~/utils/operationHelpers';
 import { getFieldsForOption, getSchemaInfo } from '~/utils/schemaFieldExtractor';
 
@@ -159,6 +160,7 @@ function tokenize(query: string): string[] {
 // metadata merely mentioned the term (e.g. "subreddit") bury the node the user
 // literally named.
 const BAND_NODE_NAME = 40_000; // query matches the node's identity (label/type)
+const BAND_NAME_TYPO = 35_000; // a harness name with one typo (Agent tile)
 const BAND_OP_NAME = 30_000; // query names a specific operation
 const BAND_NODE_DESC = 20_000; // query appears only in the node description
 const BAND_OP_FIELD = 10_000; // query appears only in operation field metadata
@@ -185,6 +187,13 @@ export function getNodeSearchScore(entry: NodeSearchIndexEntry, query: string): 
     // Otherwise a description/type-only hit — a real but weaker node match.
     const base = scoreSearchText(entry.baseHaystack, query);
     return base === null ? null : BAND_NODE_DESC + base;
+}
+
+/** The Agent tile's rank for a query `matchAgentQuery` resolved. A literal
+ *  harness/model hit tops the palette; a typo'd one ranks under every literal
+ *  node-name hit, so "cloud" lists Cloudflare first and the Agent after it. */
+export function getAgentQueryScore(match: AgentQueryMatch): number {
+    return match.typo ? BAND_NAME_TYPO : Number.MAX_SAFE_INTEGER;
 }
 
 export function getOperationSearchMatch(

@@ -170,19 +170,15 @@ function PaletteNodes({
         // "gpt-5.2", "deepseek r1") surface the Agent tile even though those
         // words don't appear in its label/description/type. The drop path
         // separately seeds the new agent node's model from the same query.
-        const agentExtraMatch = doesAgentQueryMatch(q, models);
+        const agentMatch = matchAgentQuery(q, models);
         return availableNodes.flatMap((node) => {
-            if (node.type === 'agent' && agentExtraMatch) {
-                const initialConfig = buildAgentInitialConfig(
-                    trimmedQuery,
-                    models
-                );
+            if (node.type === 'agent' && agentMatch) {
                 return [
                     {
                         node,
-                        initialConfig,
-                        seedLabel: describeAgentSeed(initialConfig, models),
-                        score: Number.MAX_SAFE_INTEGER,
+                        initialConfig: agentMatch.config,
+                        seedLabel: describeAgentSeed(agentMatch.config, models),
+                        score: getAgentQueryScore(agentMatch),
                     },
                 ];
             }

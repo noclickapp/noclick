@@ -1,7 +1,7 @@
 // Maps free-form node-palette search queries (e.g. "claude code", "codex",
 // "opus", "gpt-5.2", "hermes", "deepseek r1") to an initial config seed for
-// the Agent node, and answers "does this query target the agent node?" for
-// the palette filter.
+// the Agent node, and tells the palette filter whether (and how strongly) the
+// query targets the agent node.
 //
 // The matcher is built so we don't have to hand-maintain alias tables:
 //  • Per-CLI aliases are derived from the CLI's model string (kebab/space/
@@ -12,6 +12,8 @@
 //    against the live model catalog via useModels(), with OpenRouter models
 //    preferred and the model's `created` epoch breaking ties so the newest
 //    Claude/GPT/Gemini wins for a bare "claude" / "gpt" / "gemini".
+//  • Failing all of that, one typo in a harness name is forgiven ("cloude",
+//    "clude code"), flagged `typo` so the palette ranks it under literal hits.
 //
 // Used by NodesTabContent (to surface the Agent tile on CLI/model queries) and
 // by the drag-drop + click-to-add paths (to seed data.config.model and the
@@ -84,6 +86,8 @@ export const HARNESS_MODEL_SPECS: Record<string, HarnessModelSpec> = (() => {
 })();
 
 const MIN_PREFIX_CHARS = 3;
+// "cl"/"clo" are one edit from too many unrelated words to forgive a typo in.
+const MIN_TYPO_CHARS = 4;
 
 // Derive base CLI aliases from a kebab-cased model id. "claude-code" yields
 // ["claude-code", "claude code", "claudecode", "claude"]. New CLI rename in
@@ -186,6 +190,49 @@ function resolveCliSeed(q: string): AgentSeed | null {
     return seed;
 }
 
+// Fewest edits turning `q` into some prefix of `alias`, where swapping two
+// neighbouring letters counts as one edit: "cloude" → "claude",
+// "clou" → "clau" and "cladu" → "claud" are each 1.
+function prefixEditDistance(q: string, alias: string): number {
+    let before: number[] = [];
+    let prev = Array.from({ length: alias.length + 1 }, (_, j) => j);
+    for (let i = 1; i <= q.length; i++) {
+        const row = [i];
+        for (let j = 1; j <= alias.length; j++) {
+            let d = Math.min(
+                prev[j] + 1,
+                row[j - 1] + 1,
+                prev[j - 1] + (q[i - 1] === alias[j - 1] ? 0 : 1)
+            );
+            if (
+                i > 1 &&
+                j > 1 &&
+                q[i - 1] === alias[j - 2] &&
+                q[i - 2] === alias[j - 1]
+            )
+                d = Math.min(d, before[j - 2] + 1);
+            row.push(d);
+        }
+        before = prev;
+        prev = row;
+    }
+    return Math.min(...prev);
+}
+
+// A harness name typed with one typo. Only harness-level aliases are forgiven
+// (sub-model aliases are a daily-refreshed list of generic words), and the
+// first letter must match: "node"/"term" are one edit from "code"/"herm" too.
+function resolveTypoSeed(q: string): AgentSeed | null {
+    if (q.length < MIN_TYPO_CHARS) return null;
+    const hit = CLI_INDEX.find(
+        (e) =>
+            e.subValue === undefined &&
+            e.alias[0] === q[0] &&
+            prefixEditDistance(q, e.alias) <= 1
+    );
+    return hit ? { model: hit.spec.model } : null;
+}
+
 // Match tier — lower number = stronger match. Matters more than score length
 // when picking the winner, so a model whose tail starts with the query always
 // beats one that merely contains it somewhere.
@@ -243,27 +290,36 @@ function resolveCatalogSeed(q: string, models: Model[] | undefined): AgentSeed |
     return best ? { model: best.id } : null;
 }
 
-// Build the data.config seed to apply when the Agent node is dropped (or
-// click-added) while `query` is in the search bar. CLI agents win when their
-// alias matches; otherwise we fall through to a live catalog match.
-// Returns null when nothing matches — caller leaves config alone in that case.
-export function buildAgentInitialConfig(query: string, models?: Model[]): Record<string, any> | null {
+export interface AgentQueryMatch {
+    /** data.config seed for the Agent node added with this query. */
+    config: Record<string, unknown>;
+    /** Matched only by forgiving a typo in a harness name: a weaker signal than
+     *  any literal node-name match, so the palette must rank it below them. */
+    typo: boolean;
+}
+
+// Whether the palette search targets the Agent node, and the config seed to
+// apply when it's added. CLI agents win when their alias matches; otherwise a
+// live catalog match; otherwise a one-typo harness match. Null when nothing
+// matches — the caller leaves the agent tile out and its config alone.
+export function matchAgentQuery(
+    query: string,
+    models?: Model[]
+): AgentQueryMatch | null {
     const q = query.trim().toLowerCase();
     if (!q) return null;
-    const seed = resolveCliSeed(q) ?? resolveCatalogSeed(q, models);
+    const exact = resolveCliSeed(q) ?? resolveCatalogSeed(q, models);
+    const seed = exact ?? resolveTypoSeed(q);
     if (!seed) return null;
-    const config: Record<string, any> = { model: seed.model };
+    const config: Record<string, unknown> = { model: seed.model };
     if (seed.subField && seed.subValue) config[seed.subField] = seed.subValue;
     // Seed a wrapper harness's default sub-model when the search didn't pin a
     // specific one (e.g. bare "openclaw"), so the dropped node isn't left with
     // an empty sub-model (no-op for regular models / already-seeded sub-models).
-    return { ...config, ...seedWrapperSubmodel(seed.model, config) };
-}
-
-// True when the palette search likely targets the Agent node. Drives the
-// "surface the Agent tile" branch of the filter in NodesTabContent.
-export function doesAgentQueryMatch(query: string, models?: Model[]): boolean {
-    return buildAgentInitialConfig(query, models) !== null;
+    return {
+        config: { ...config, ...seedWrapperSubmodel(seed.model, config) },
+        typo: !exact,
+    };
 }
 
 // Human-readable summary of an agent seed, e.g. "claude-code · opus" or
