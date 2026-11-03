@@ -208,6 +208,17 @@ def _stanza_id(message: Any) -> Optional[str]:
     return stanza if isinstance(stanza, str) and stanza else None
 
 
+def chat_number(chat: Any) -> Optional[str]:
+    """The phone digits a chat id or number names (+12025550101,
+    12025550101@c.us, 12025550101:3@s.whatsapp.net all name the same one);
+    None for a @lid, group or channel, which name no number."""
+    local, _, server = str(chat or "").strip().partition("@")
+    if server and server not in ("c.us", "s.whatsapp.net"):
+        return None
+    digits = "".join(ch for ch in local.split(":", 1)[0] if ch.isdigit())
+    return digits or None
+
+
 def _chat_picker_field(
     title: str, description: str = _RECIPIENT_DESC, *, field_name: str
 ) -> Any:
