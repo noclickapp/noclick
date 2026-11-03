@@ -526,6 +526,34 @@ async def unresolved_credential_error(
     )
 
 
+async def member_connection_warnings(pool, workflow_id, actor_id: str, credential_ids) -> Dict[str, str]:
+    """By credential id, the warning for each of ``actor_id``'s own connections they put on a workflow someone
+    else owns that its owner can't use (neither theirs nor shared with them): its automatic runs go as the
+    owner, so they would fail on it. Empty for the owner's own placements. Access is unchanged; this only says
+    so at attach time, as ``unresolved_credential_error`` does at run time."""
+    ids = list(dict.fromkeys(str(c) for c in (credential_ids or []) if c and _is_credential_uuid(str(c))))
+    if not ids or not workflow_id:
+        return {}
+    async with (pool or get_native_pool()).acquire() as conn:
+        workflow = await conn.fetchrow(
+            "SELECT owner_id, organization_id FROM workflows WHERE id = $1::uuid", str(workflow_id))
+        if workflow is None or str(workflow["owner_id"]) == str(actor_id):
+            return {}
+        rows = await conn.fetch(
+            f"""SELECT c.id::text AS id, c.name FROM credentials c
+                WHERE c.id = ANY($1::uuid[]) AND c.owner_id = $4::uuid AND NOT {credential_access_predicate()}""",
+            ids, workflow["owner_id"], workflow["organization_id"], actor_id)
+    warnings = {}
+    for row in rows:
+        yours = f'Your "{row["name"]}"' if row["name"] else "This connection of yours"
+        warnings[row["id"]] = (
+            f"{yours} won't work in this workflow's automatic runs (triggers, schedules and agents): they use "
+            "the workflow owner's connections. Share it with the owner, or ask them to connect their own "
+            "account on this step."
+        )
+    return warnings
+
+
 async def get_credential_display(pool, credential_id: str) -> Optional[Dict[str, Any]]:
     """A credential's ``name`` and ``credential_type`` — NO secret, NO access
     grant (same class of exposure as the credential:display_info handler).

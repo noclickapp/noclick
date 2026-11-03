@@ -620,18 +620,21 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                         for r in rows
                     ]
 
-            async def authorize_credentials(self, credential_ids: List[str]) -> None:
+            async def authorize_credentials(self, credential_ids: List[str]) -> List[str]:
                 if not wf_id or not credential_ids:
-                    return
+                    return []
                 pool = await handler.get_pool()
                 if not pool:
-                    return
+                    return []
                 # Owner-gated: only authorize when the builder actor owns the workflow.
                 owner_id = await get_workflow_owner_id(pool, wf_id)
                 if not owner_id or str(owner_id) != str(user_id):
-                    return
+                    from utils.credentials import member_connection_warnings
+
+                    return list((await member_connection_warnings(pool, wf_id, user_id, credential_ids)).values())
                 async with pool.acquire() as conn:
                     await authorize_credentials_for_workflow(conn, wf_id, owner_id, credential_ids)
+                return []
 
             async def _settings_content_write(self, mutate) -> Dict[str, Any]:
                 """Owner-gated read-modify-write of one workflows.settings key.

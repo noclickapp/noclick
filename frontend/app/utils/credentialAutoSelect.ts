@@ -5,6 +5,7 @@
  * Used when adding nodes via drag-drop or paste operations.
  */
 
+import { toast } from 'sonner';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { CredentialAuthorizeForWorkflowRequest } from '~/types/socket-events.generated';
 import { valtioCache } from '~/lib/indexeddb';
@@ -309,7 +310,9 @@ export function isInjectedDisplayCredential(id: string): boolean {
  * every LOCAL owner credential-placement site (manual pick, auto-select on add/paste).
  * The backend no longer authorizes off the autosaved blob because it is presence-tainted
  * (a collaborator could inject credentialIds via the collaborative channel). Owner-gated
- * server-side, so a collaborator's call is a harmless no-op. Fire-and-forget.
+ * server-side: a collaborator's call authorizes nothing, and when the credential is
+ * their own connection the owner can't use, its reply's warning is shown, since the
+ * workflow's automatic runs (which go as the owner) would fail on it. Fire-and-forget.
  */
 export function authorizeCredentialsForWorkflow(
     workflowId: string | undefined | null,
@@ -321,9 +324,13 @@ export function authorizeCredentialsForWorkflow(
     if (!wfId || !credentialIds) return;
     const ids = Array.isArray(credentialIds) ? credentialIds : Object.values(credentialIds);
     for (const credId of new Set(ids.filter(Boolean))) {
-        sendEventAsync(CredentialAuthorizeForWorkflowRequest.create({
+        sendEventAsync<{ warning?: string }>(CredentialAuthorizeForWorkflowRequest.create({
             workflow_id: wfId, credential_id: credId,
-        })).catch(() => { /* owner-gated no-op / transient */ });
+        }))
+            .then((reply) => {
+                if (reply?.warning) toast.warning(reply.warning, { id: `member-connection:${credId}` });
+            })
+            .catch(() => { /* transient */ });
     }
 }
 

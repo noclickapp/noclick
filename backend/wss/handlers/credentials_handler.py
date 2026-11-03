@@ -16,6 +16,7 @@ from utils.credentials import (
     collect_node_credential_uuids,
     get_workflow_owner_id,
     authorize_credentials_for_workflow,
+    member_connection_warnings,
 )
 from repositories.credentials import CredentialsRepo
 from repositories.users import user_label
@@ -483,12 +484,16 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 return
 
             owner_id = await get_workflow_owner_id(pool, request.workflow_id)
-            # Owner-gated: silently no-op for non-owners. Returning success (without
-            # authorizing) keeps the collaborative path quiet — the collaborator's
-            # placement still syncs/persists, it just can't self-authorize a run.
+            # Owner-gated: a non-owner never authorizes. Their placement still
+            # syncs/persists; when it's their own connection the owner can't use,
+            # the reply says so, since the workflow's automatic runs would fail on it.
             if not owner_id or str(owner_id) != str(user_id):
+                warnings = await member_connection_warnings(
+                    pool, request.workflow_id, user_id, [request.credential_id])
+                warning = warnings.get(str(request.credential_id))
                 await send_event(self.sio, sid, ResponseEvent(
-                    request_id=request.request_id, data={"authorized": False}))
+                    request_id=request.request_id,
+                    data={"authorized": False, **({"warning": warning} if warning else {})}))
                 return
 
             # The owner must actually own the credential they're authorizing (a
@@ -787,8 +792,8 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                     request_id=request.request_id,
                     data={},
                     error=(
-                        "Only the owner can delete this credential. "
-                        "Remove it from your list instead."
+                        "Only the person who connected this account can delete it. "
+                        "You can remove it from your list, or take it off your steps."
                     )
                 ))
                 return
