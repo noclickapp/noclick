@@ -784,6 +784,16 @@ class WorkflowNode(ABC):
         return {"status": "no_event", "action": action, "data": {}, "message": message}
 
     @classmethod
+    async def scope_matches(
+        cls, field: str, value: str, allowed: List[str], credentials: Dict[str, Any],
+    ) -> bool:
+        """Whether ``value`` names one of a field scope's ``allowed`` resources by
+        another id. Asked only once the plain string match failed, for a node
+        whose resources go by more than one id (a WhatsApp chat by its @lid and
+        by its number). Default: ids are strings, so no."""
+        return False
+
+    @classmethod
     def filter_trigger_payload(cls, payload: Dict[str, Any], config: Dict[str, Any]) -> bool:
         """Return False to silently skip this webhook delivery without executing the workflow.
 

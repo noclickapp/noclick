@@ -398,7 +398,7 @@ async def _execute_node_op_tool(
     come from the live agent node. Errors propagate to execute_tool's
     catch-all and return to the model as {success: False, error}.
     """
-    from nodes.core.run_op import credential_note_result, run_node_operation
+    from nodes.core.run_op import credential_note_result, field_scope_refusal, run_node_operation
 
     node_type = tool_info.get("node_type")
     operation = tool_info.get("operation")
@@ -411,7 +411,10 @@ async def _execute_node_op_tool(
     # Resource-scope gate (defense in depth — the JSON-schema enum on the
     # parameter already blocks off-list IDs at the wire layer; this catches
     # any caller bypassing the SDK validator.
-    scope_error = _enforce_field_scopes(arguments or {}, tool_info)
+    scope_error = await field_scope_refusal(
+        arguments or {}, tool_info, user_id=node.user_id,
+        organization_id=node.organization_id, workflow_id=node.workflow_id,
+    )
     if scope_error:
         return {"success": False, "error": scope_error}
     unconnected = credential_note_result(tool_info)
@@ -478,32 +481,6 @@ async def _maybe_autoextend_field_scopes(
         logger.warning(
             f"[ToolExec] live tool_configs mirror failed for {provider_node_id}: {e}"
         )
-
-
-def _enforce_field_scopes(
-    arguments: Dict[str, Any], tool_info: Dict
-) -> Optional[str]:
-    """Return an error message if any scoped field's value isn't in its
-    allowlist, else None. ``field_scopes`` is stamped onto the op's tool_info
-    by build_node_op_tools when the user pinned that op to specific resource
-    IDs."""
-    scopes = tool_info.get("field_scopes") or {}
-    if not isinstance(scopes, dict):
-        return None
-    for field, allowed in scopes.items():
-        if not isinstance(allowed, list) or not allowed:
-            continue
-        value = arguments.get(field)
-        # Unset scoped fields slip past here — the node's own required-field
-        # check fails the call with a clear schema error. Avoid double-failing.
-        if value is None or value == "":
-            continue
-        if value not in allowed:
-            return (
-                f"'{field}' is restricted to a specific set of resources for this "
-                f"tool. Allowed values: {sorted(allowed)}. Got: {value!r}."
-            )
-    return None
 
 
 def _with_missing_credential_hint(error: Exception, tool_info: Dict) -> Exception:

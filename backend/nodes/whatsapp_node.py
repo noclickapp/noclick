@@ -1879,6 +1879,42 @@ class WhatsAppNode(WorkflowNode):
         return None
 
     @classmethod
+    async def _remember_sender_number(cls, payload: Dict[str, Any]) -> None:
+        """Record the number a @lid writer's message names, so a scope written
+        as numbers knows their chat (utils.whatsapp_lids)."""
+        p = payload.get("payload")
+        if not isinstance(p, dict) or p.get("fromMe") or not p.get("senderPhone"):
+            return
+        data = p.get("_data") if isinstance(p.get("_data"), dict) else {}
+        key = data.get("key") if isinstance(data.get("key"), dict) else {}
+        writer = str(key.get("participant") or p.get("participant") or p.get("from") or "").strip()
+        number = chat_number(p["senderPhone"])
+        if writer.endswith("@lid") and number:
+            from utils import whatsapp_lids
+
+            await whatsapp_lids.remember(payload.get("connectionId"), writer, number)
+
+    @classmethod
+    async def scope_matches(
+        cls, field: str, value: str, allowed: List[str], credentials: Dict[str, Any],
+    ) -> bool:
+        """A recipient is the same person whichever id names them: a number in
+        any of its spellings, or the @lid WhatsApp moved their chat to, once a
+        message from it said whose it is. A scope picked as numbers otherwise
+        refused every reply to an allowed person who now writes as a @lid."""
+        if field not in ("to", "chat_id"):
+            return False
+        from utils import whatsapp_lids
+
+        known = await whatsapp_lids.phones(credentials.get("connection_id"), [value, *allowed])
+
+        def number(chat: str) -> Optional[str]:
+            return known.get(chat) or chat_number(chat)
+
+        wanted = number(value)
+        return bool(wanted) and any(number(chat) == wanted for chat in allowed)
+
+    @classmethod
     def filter_trigger_payload(cls, payload: Dict[str, Any], config: Dict[str, Any]) -> bool:
         """Drop WAHooks events a receive_message trigger must never fire on.
 
@@ -1995,6 +2031,7 @@ class WhatsAppNode(WorkflowNode):
         if payload.get("event") != "message":
             return None
         p = payload.get("payload") or {}
+        await cls._remember_sender_number(payload)
         media = p.get("media") or {}
         url = media.get("url")
         if not url or not isinstance(url, str):

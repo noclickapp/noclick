@@ -366,7 +366,9 @@ async def run_node_op_tool(
 
     # Resource-scope enforcement on the cross-container path (mirror of
     # _execute_node_op_tool in nodes/agent/tool_execution.py).
-    scope_error = _check_field_scopes(arguments or {}, info.get("field_scopes"))
+    scope_error = await field_scope_refusal(
+        arguments or {}, info, user_id=user_id, organization_id=organization_id, workflow_id=workflow_id,
+    )
     if scope_error:
         return {"success": False, "error": scope_error}
     unconnected = credential_note_result(info)
@@ -385,22 +387,59 @@ async def run_node_op_tool(
     )
 
 
-def _check_field_scopes(
-    arguments: Dict[str, Any], field_scopes: Optional[Any],
+async def field_scope_refusal(
+    arguments: Dict[str, Any],
+    tool_info: Dict[str, Any],
+    *,
+    user_id: str,
+    organization_id: Optional[str] = None,
+    workflow_id: Optional[str] = None,
 ) -> Optional[str]:
-    """Standalone scope check for the cross-container path. The
-    in-process path uses the same logic in nodes/agent/tool_execution.py."""
-    if not isinstance(field_scopes, dict):
+    """Why a call's arguments fall outside its tool's ``field_scopes`` (stamped by
+    build_node_op_tools when the user pinned an op to specific resource ids),
+    else None. One check for the in-process and cross-container paths. A value
+    the plain match refuses is put to the node's ``scope_matches``, which may
+    know it by another id."""
+    scopes = tool_info.get("field_scopes")
+    if not isinstance(scopes, dict):
         return None
-    for field, allowed in field_scopes.items():
+    from nodes.core.base import WorkflowNode
+
+    node_class = NODE_REGISTRY.get(tool_info.get("node_type") or "")
+    knows_aliases = node_class is not None and (
+        node_class.scope_matches.__func__ is not WorkflowNode.scope_matches.__func__
+    )
+    credentials: Optional[Dict[str, Any]] = None
+    for field, allowed in scopes.items():
         if not isinstance(allowed, list) or not allowed:
             continue
         value = arguments.get(field)
-        if value is None or value == "":
+        # Unset scoped fields slip past here — the node's own required-field
+        # check fails the call with a clear schema error. Avoid double-failing.
+        if value is None or value == "" or value in allowed:
             continue
-        if value not in allowed:
-            return (
-                f"'{field}' is restricted to a specific set of resources for this "
-                f"tool. Allowed values: {sorted(allowed)}. Got: {value!r}."
-            )
+        if knows_aliases:
+            if credentials is None:
+                credentials = await _credentials_for_scope(tool_info, user_id, organization_id, workflow_id)
+            if await node_class.scope_matches(field, str(value), [str(a) for a in allowed], credentials):
+                continue
+        return (
+            f"'{field}' is restricted to a specific set of resources for this "
+            f"tool. Allowed values: {sorted(allowed)}. Got: {value!r}."
+        )
     return None
+
+
+async def _credentials_for_scope(
+    tool_info: Dict[str, Any], user_id: str, organization_id: Optional[str], workflow_id: Optional[str],
+) -> Dict[str, Any]:
+    """The provider's credential, for a node to read its other ids by. Empty when
+    none is bound or it can't be resolved: the call is then judged on the ids
+    alone, and running it fails on the credential anyway."""
+    credential_id = tool_info.get("credential_id")
+    if not credential_id:
+        return {}
+    try:
+        return await resolve_operation_credential(credential_id, user_id, None, organization_id, workflow_id)
+    except ValueError:
+        return {}
