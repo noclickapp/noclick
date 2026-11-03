@@ -1541,6 +1541,12 @@ async def handle_webhook_payload(
                 execution_id=None,
             ).model_dump()
         ) if return_response else True
+    if drop_msg := await _drop_trigger_event(node_cls, trigger_node, payload):
+        update_webhook_stats(webhook_id)
+        return _json_relay_response(
+            WebhookResponse(success=True, message=f"Webhook received but dropped: {drop_msg}",
+                            execution_id=None).model_dump()
+        ) if return_response else True
 
     if await _over_trigger_fire_budget(node_cls, trigger_node, payload, workflow_id):
         update_webhook_stats(webhook_id)
@@ -1821,6 +1827,31 @@ async def _over_trigger_fire_budget(
         )
         return True
     return False
+
+
+async def _drop_trigger_event(node_cls, trigger_node: dict, payload: dict) -> Optional[str]:
+    """The node class's async drop verdict (e.g. a WhatsApp message another
+    NoClick node sent): the reason to ack without a run, or None to deliver.
+    Fails open: a broken hook delivers."""
+    from nodes.core.base import WorkflowNode
+
+    # Fast path — mirrors _consume_control_event.
+    if node_cls is None or node_cls.drop_trigger_event.__func__ is WorkflowNode.drop_trigger_event.__func__:
+        return None
+    try:
+        reason = await node_cls.drop_trigger_event(payload, trigger_node.get("config", {}))
+    except Exception as e:
+        logger.warning(
+            f"[WEBHOOK] drop_trigger_event failed for node "
+            f"{trigger_node.get('id')} ({trigger_node.get('type')}): {e}"
+        )
+        return None
+    if reason:
+        logger.info(
+            f"[WEBHOOK] Trigger node {trigger_node.get('id')} ({trigger_node.get('type')}) "
+            f"dropped delivery: {reason}"
+        )
+    return reason
 
 
 async def _consume_control_event(
@@ -2952,6 +2983,10 @@ async def receive_webhook(
             message="Webhook received but event action does not match trigger filter",
             execution_id=None,
         )
+    if _drop_msg := await _drop_trigger_event(_node_cls, trigger_node, payload):
+        update_webhook_stats(webhook_id)
+        return WebhookResponse(success=True, message=f"Webhook received but dropped: {_drop_msg}",
+                               execution_id=None)
 
     if await _over_trigger_fire_budget(_node_cls, trigger_node, payload, workflow_id):
         update_webhook_stats(webhook_id)

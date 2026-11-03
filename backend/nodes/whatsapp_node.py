@@ -30,6 +30,7 @@ import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
 from utils.phone_numbers import is_noclick_number
+from utils.self_echo import is_self_post, record_self_post
 from utils.ssrf import assert_exact_url_origin, guarded_async_client
 from nodes.core.connection_evidence import ConnectionEvidence
 
@@ -167,6 +168,16 @@ def wahooks_chat_id(recipient: Any) -> str:
             "{{ $('<trigger node>').payload.from }}."
         )
     return raw if server else f"{local}@s.whatsapp.net"
+
+
+def _stanza_id(message: Any) -> Optional[str]:
+    """The WhatsApp stanza id of a WAHA message record (``key.id``). It is the
+    same id on both ends of one message: a send result carries it at
+    ``key.id``, and the receiving connection's inbound delivery at
+    ``payload._data.key.id`` (``payload.id`` = ``false_<chat>_<stanza>``)."""
+    key = message.get("key") if isinstance(message, dict) else None
+    stanza = key.get("id") if isinstance(key, dict) else None
+    return stanza if isinstance(stanza, str) and stanza else None
 
 
 def _chat_picker_field(
@@ -1878,6 +1889,27 @@ class WhatsAppNode(WorkflowNode):
         return True
 
     @classmethod
+    async def drop_trigger_event(
+        cls, payload: Dict[str, Any], config: Dict[str, Any]
+    ) -> Optional[str]:
+        """A message a NoClick WhatsApp node sent never fires receive_message:
+        two agents on different linked numbers would otherwise answer each
+        other until credits run out (each reply is a genuine inbound message
+        to the other, so ``fromMe`` can't see it). Exact match on the stanza
+        id fingerprinted at send (utils/self_echo.py)."""
+        event_payload = payload.get("payload")
+        if (
+            (config or {}).get("operation") != "receive_message"
+            or payload.get("event") != "message"
+            or not isinstance(event_payload, dict)
+        ):
+            return None
+        stanza = _stanza_id(event_payload.get("_data"))
+        if await is_self_post("whatsapp", stanza):
+            return f"message {stanza} was sent by a NoClick WhatsApp node"
+        return None
+
+    @classmethod
     def trigger_fire_budget_channel(
         cls, payload: Dict[str, Any], config: Dict[str, Any]
     ) -> Optional[str]:
@@ -2593,6 +2625,10 @@ class WhatsAppNode(WorkflowNode):
                         )
 
             result = await asyncio.to_thread(_run_wahooks_op)
+            if action.startswith("send_"):
+                # Self-echo guard: another NoClick WhatsApp trigger that
+                # receives this message must not fire on it (drop_trigger_event).
+                await record_self_post("whatsapp", _stanza_id(result))
 
             api_time = (time.time() - start_time) * 1000
             return {

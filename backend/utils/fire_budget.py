@@ -1,6 +1,6 @@
 """Blast-radius bound for app-webhook trigger fires.
 
-The self-echo guard (utils/slack_self_echo.py) catches NoClick-authored
+The self-echo guard (utils/self_echo.py) catches NoClick-authored
 echoes exactly, but no authorship/fingerprint check can see a TWO-PARTY loop:
 NoClick posts, some external bot in the channel auto-replies, and that
 genuinely foreign message re-triggers the workflow. This bounds every such

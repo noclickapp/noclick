@@ -794,6 +794,19 @@ class WorkflowNode(ABC):
         return True
 
     @classmethod
+    async def drop_trigger_event(
+        cls, payload: Dict[str, Any], config: Dict[str, Any]
+    ) -> Optional[str]:
+        """Async counterpart of filter_trigger_payload, for drops that need I/O
+        (WhatsApp's self-echo fingerprint lookup). Return a short reason to skip
+        the delivery (acked 200, no run), or ``None`` to deliver. Runs after
+        filter_trigger_payload and before the fire budget in both per-node
+        delivery paths; must fail open, since a lookup error delivers.
+        Default: never drops.
+        """
+        return None
+
+    @classmethod
     async def transform_trigger_payload(
         cls,
         payload: Dict[str, Any],
