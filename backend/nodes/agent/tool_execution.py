@@ -412,8 +412,8 @@ async def _execute_node_op_tool(
     # parameter already blocks off-list IDs at the wire layer; this catches
     # any caller bypassing the SDK validator.
     scope_error = await field_scope_refusal(
-        arguments or {}, tool_info, user_id=node.user_id,
-        organization_id=node.organization_id, workflow_id=node.workflow_id,
+        arguments or {}, tool_info, user_id=getattr(node, "user_id", None),
+        organization_id=getattr(node, "organization_id", None), workflow_id=getattr(node, "workflow_id", None),
     )
     if scope_error:
         return {"success": False, "error": scope_error}
