@@ -89,12 +89,16 @@ export interface ExecutionStateResponse {
 type ExecutionEventHandler = (event: ExecutionStateResponse) => void;
 type AgentPresenceHandler = (agents: AgentPresenceWire[]) => void;
 
-// Execution event types that should be injected into socketReceiver
+// Backend events the room carries that should be injected into socketReceiver: a run's, and a write's changes
+// (the graph service sends every canvas open on the workflow its builder events, a collaborator's included,
+// then the version they left).
 const EXECUTION_EVENT_TYPES = new Set([
   'workflow:started',
   'workflow:node:state',
   'workflow:node:output',
   'workflow:complete',
+  'mcp:builder_event',
+  'workflow:graph_changed',
 ]);
 
 export class WorkflowPresenceService {
@@ -432,8 +436,8 @@ export class WorkflowPresenceService {
         const state = msg as ExecutionStateResponse;
         this.lastExecutionState = state;
         this.executionEventHandlers.forEach(h => h(state));
-        // A reconnect snapshot restores a local process that remained live
-        // while the browser's relay connection was unavailable.
+        // A reconnect snapshot restores an agent that stayed live while the relay was unavailable. Only a relay
+        // that sends agents[] says so: an older one omits it, which must not read as none running.
         if (Array.isArray(state.agents)) this.emitAgentPresence(state.agents);
         break;
       }
