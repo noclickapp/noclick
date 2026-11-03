@@ -28,6 +28,11 @@ class _Recorder:
         node._send_batch_update = self._send
         node._get_sheet_id = self._sheet_id
         node._fetch_sheet_entry = self._fetch
+        # A sheet with no header row (what a read Google refuses gives too): no test here reaches the network.
+        node._read_header_row = self._read_headers
+
+    async def _read_headers(self, spreadsheet_id, sheet_name, grid_range, access_token):
+        return []
 
     async def _send(self, spreadsheet_id, requests, access_token):
         self.requests.append(requests)
