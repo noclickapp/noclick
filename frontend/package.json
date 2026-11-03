@@ -233,6 +233,7 @@
       "brace-expansion@<1.1.16": "^1.1.16",
       "browserslist@<4.28.7": "^4.28.7",
       "compression@<1.8.2": "1.8.2",
+      "decode-uri-component@<0.5.1": "0.5.1",
       "dompurify@<3.4.17": "^3.4.17",
       "esbuild": "0.25.12",
       "estree-util-value-to-estree@<3.3.3": "3.4.0",

@@ -123,14 +123,18 @@ afterEach(() => {
     socketCall.mockReset();
 });
 
-const table = () => screen.getByRole('table', { name: 'Charges' });
+// Plain DOM queries for what waitFor polls: *ByRole over 85 rows took each test past its limit on a CI runner.
+const table = () => {
+    const found = document.querySelector<HTMLElement>('[role="table"][aria-label="Charges"]');
+    if (!found) throw new Error('No Charges table');
+    return found;
+};
 /** Each charge line's amount, top to bottom: which charges the table shows, in its order. */
 const shown = () =>
-    within(table())
-        .queryAllByRole('row')
+    Array.from(table().querySelectorAll<HTMLElement>('[role="row"]'))
         .filter((r) => r.tabIndex === 0)
         .map((r) => {
-            const cells = within(r).getAllByRole('cell');
+            const cells = r.querySelectorAll('[role="cell"]');
             return cells[cells.length - 1].textContent;
         });
 const amounts = (list: ChargeRow[]) => list.map((r) => money(r.total_cost));
