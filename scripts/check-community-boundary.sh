@@ -201,7 +201,7 @@ done < <(
 # fictional values produced by the exporter rather than account identifiers.
 while IFS= read -r whatsapp_jid; do
   case "$whatsapp_jid" in
-    12025550100@s.whatsapp.net|12025550101@c.us|\
+    12025550100@s.whatsapp.net|12025550101@c.us|12025550101@s.whatsapp.net|\
     12025550102@lid|12025550103@lid|\
     12025550104@s.whatsapp.net|120000000000000001@g.us|\
     120000000000000002@newsletter|12025550107@c.us|\
