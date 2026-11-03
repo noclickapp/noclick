@@ -552,8 +552,8 @@ async def unresolved_credential_error(
     return (
         f"{prefix}: {name} is connected, but it belongs to another member of this workflow, so this run "
         f"can't use it: automatic runs (triggers, schedules and agents) use the workflow owner's "
-        f"connections. To fix it, the member who connected it lets this workflow use it (they pick it on "
-        f"{where} and choose Use it), or the owner connects their own account there."
+        f"connections. To fix it, the member who connected it picks it on {where} in the canvas, which shares "
+        f"it with this workflow, or the owner connects their own account there."
     )
 
 
@@ -586,25 +586,25 @@ def _yours(name: Optional[str], *, capital: bool = False) -> str:
 
 async def member_connection_warnings(pool, workflow_id, actor_id: str, credential_ids) -> Dict[str, str]:
     """By credential id, the warning for each unlent member connection a builder or MCP call placed
-    (``unlent_member_connections``). Letting the runs use it is a person's choice, made on the step."""
+    (``unlent_member_connections``). Sharing it with the runs is a person's act: picking it on the step."""
     held = await unlent_member_connections(pool, workflow_id, actor_id, credential_ids)
     return {
         credential_id: (
             f"{_yours(name, capital=True)} won't work in this workflow's automatic runs (triggers, "
-            "schedules and agents): they use the workflow owner's connections. To let them use it, pick it on "
-            "this step in the canvas and choose Use it, or ask the owner to connect their own account."
+            "schedules and agents): they use the workflow owner's connections. To share it with them, pick it "
+            "on this step in the canvas, or ask the owner to connect their own account."
         )
         for credential_id, name in held.items()
     }
 
 
-def member_lend_consent(name: Optional[str]) -> Tuple[str, str]:
-    """What a member agrees to by letting a workflow's runs use their own connection: the question, and what
-    saying yes means."""
+def member_share_notice(name: Optional[str]) -> Tuple[str, str]:
+    """What a member is told once picking their own connection shared it with a workflow's runs: what
+    happened, and what it means (which the notice's Undo takes back)."""
     return (
-        f"Let this workflow's automatic runs use {_yours(name)}?",
-        "Triggers, schedules and agents run as the workflow's owner, so they can't use it otherwise. Anyone who "
-        "can edit this workflow can then make it act as you.",
+        f"Shared {_yours(name)} with this workflow",
+        "Its automatic runs (triggers, schedules and agents) can use it now, and anyone who can edit the "
+        "workflow can make it act as you.",
     )
 
 
@@ -623,6 +623,20 @@ async def lend_credential_to_workflow(pool, workflow_id, member_id: str, credent
             return False
         await authorize_credentials_for_workflow(conn, str(workflow_id), member_id, [str(credential_id)])
     return True
+
+
+async def withdraw_credential_lend(pool, workflow_id, member_id: str, credential_id: str) -> bool:
+    """Take back ``member_id``'s lend of their own ``credential_id`` to ``workflow_id``'s runs (the share
+    notice's Undo); no one else's. True when there was one."""
+    if not _is_credential_uuid(str(credential_id)):
+        return False
+    async with (pool or get_native_pool()).acquire() as conn:
+        status = await conn.execute(
+            """DELETE FROM workflow_authorized_credentials a USING credentials c
+               WHERE a.workflow_id = $1::uuid AND a.credential_id = $2::uuid AND c.id = a.credential_id
+                 AND a.authorized_by = $3::uuid AND c.owner_id = $3::uuid""",
+            str(workflow_id), str(credential_id), str(member_id))
+    return bool(status) and status.split()[-1] != "0"
 
 
 async def prune_unused_lends(pool, workflow_id, graph: Any) -> int:

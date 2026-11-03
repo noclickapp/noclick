@@ -1,8 +1,8 @@
-"""A member's own connection on a workflow someone else owns: asked, lent, and no further.
+"""A member's own connection on a workflow someone else owns: shared by picking it, and no further.
 
 Trigger, schedule and agent runs go as the workflow's owner, so a connection only the member holds failed there
-("Failed to resolve credential") while it looked fine on the canvas. Picking it now asks the member whether the
-runs may use it; their yes lends it to that workflow alone, while they can still edit it and a step holds it.
+("Failed to resolve credential") while it looked fine on the canvas. Picking it now shares it with that
+workflow's runs alone (the member is told, with an Undo), while they can still edit it and a step holds it.
 The secret never moves: the runs resolve it as the member's.
 """
 
@@ -17,6 +17,7 @@ from utils.credentials import (
     prune_unused_lends,
     resolve_credential_with_owner_fallback,
     unlent_member_connections,
+    withdraw_credential_lend,
 )
 from utils.encryption import get_encryption
 
@@ -63,10 +64,10 @@ async def _run_as_owner(db, credential_id, workflow_id):
     return await resolve_credential_with_owner_fallback(credential_id, OWNER, db.pool, workflow_id=workflow_id)
 
 
-CONSENT = {
-    "consent": 'Let this workflow\'s automatic runs use your "Shop WhatsApp"?',
-    "consent_detail": ("Triggers, schedules and agents run as the workflow's owner, so they can't use it otherwise. "
-                       "Anyone who can edit this workflow can then make it act as you."),
+SHARED = {
+    "shared": 'Shared your "Shop WhatsApp" with this workflow',
+    "shared_detail": ("Its automatic runs (triggers, schedules and agents) can use it now, and anyone who can edit "
+                      "the workflow can make it act as you."),
 }
 
 
@@ -150,28 +151,57 @@ def _handler(db, user_id):
 
 
 @pytest.mark.asyncio
-async def test_the_panel_asks_the_member_then_records_their_yes(real_database):  # noqa: F811
+async def test_picking_it_shares_it_and_undo_takes_it_back(real_database):  # noqa: F811
     from wss.receiver.client_events import CredentialAuthorizeForWorkflowRequest
 
     db = real_database
     workflow_id = await _world(db)
     theirs = await _credential(db, MEMBER)
     handler, sio = _handler(db, MEMBER)
+    pick = CredentialAuthorizeForWorkflowRequest(request_id="r", workflow_id=workflow_id, credential_id=theirs)
+    undo = CredentialAuthorizeForWorkflowRequest(request_id="r", workflow_id=workflow_id, credential_id=theirs,
+                                                 withdraw=True)
 
-    await handler.authorize_for_workflow("sid", CredentialAuthorizeForWorkflowRequest(
-        request_id="r", workflow_id=workflow_id, credential_id=theirs))
-    assert sio.emit.await_args.args[1]["data"] == {"authorized": False, **CONSENT}
-    assert await _run_as_owner(db, theirs, workflow_id) is None  # asking lends nothing
+    await handler.authorize_for_workflow("sid", pick)
+    assert sio.emit.await_args.args[1]["data"] == {"authorized": True, **SHARED}
+    assert (await _run_as_owner(db, theirs, workflow_id))["connection_id"] == "conn-1"
 
-    await handler.authorize_for_workflow("sid", CredentialAuthorizeForWorkflowRequest(
-        request_id="r", workflow_id=workflow_id, credential_id=theirs, lend=True))
-    assert sio.emit.await_args.args[1]["data"] == {"authorized": True, "lent": True}
+    # Picked again while shared: nothing new to say.
+    await handler.authorize_for_workflow("sid", pick)
+    assert sio.emit.await_args.args[1]["data"] == {"authorized": False}
+
+    await handler.authorize_for_workflow("sid", undo)
+    assert sio.emit.await_args.args[1]["data"] == {"authorized": False, "withdrawn": True}
+    assert await _run_as_owner(db, theirs, workflow_id) is None
+
+    # Picking it again shares it again.
+    await handler.authorize_for_workflow("sid", pick)
+    assert sio.emit.await_args.args[1]["data"] == {"authorized": True, **SHARED}
     assert await _run_as_owner(db, theirs, workflow_id) is not None
 
-    # Picked again, it's lent already: nothing to ask.
+
+@pytest.mark.asyncio
+async def test_picking_shares_nothing_without_edit_access_and_undo_is_only_the_members(real_database):  # noqa: F811
+    from wss.receiver.client_events import CredentialAuthorizeForWorkflowRequest
+
+    db = real_database
+    workflow_id = await _world(db, member_permission="view")
+    theirs = await _credential(db, MEMBER)
+    handler, sio = _handler(db, MEMBER)
+
     await handler.authorize_for_workflow("sid", CredentialAuthorizeForWorkflowRequest(
         request_id="r", workflow_id=workflow_id, credential_id=theirs))
     assert sio.emit.await_args.args[1]["data"] == {"authorized": False}
+    assert await _run_as_owner(db, theirs, workflow_id) is None
+
+    # The owner's own authorization of their own connection is no member's to take back.
+    owners = await _credential(db, OWNER)
+    async with db.pool.acquire() as conn:
+        from utils.credentials import authorize_credentials_for_workflow
+        await authorize_credentials_for_workflow(conn, workflow_id, OWNER, [owners])
+    assert await withdraw_credential_lend(db.pool, workflow_id, MEMBER, owners) is False
+    assert await db.fetchval("SELECT count(*) FROM workflow_authorized_credentials WHERE workflow_id = $1::uuid",
+                             workflow_id) == 1
 
 
 @pytest.mark.asyncio

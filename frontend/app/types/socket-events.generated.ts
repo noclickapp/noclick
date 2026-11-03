@@ -2420,9 +2420,9 @@ export interface CoordinatorSendRequest {
  * collaborator's call never introduces an owner credential. This is the trustworthy
  * authorization signal for the collaborative frontend — credentialIds in the
  * blob/autosave aren't trusted because a collaborator can inject them via the
- * presence channel. A member picking their OWN connection the owner can't use is
- * answered with ``consent``; ``lend`` then records their yes, letting this workflow's
- * runs use it.
+ * presence channel. A member picking their OWN connection the owner can't use shares it
+ * with this workflow's runs, and is answered with ``shared`` (the notice to show);
+ * ``withdraw`` takes that back (the notice's Undo).
  */
 export interface CredentialAuthorizeForWorkflowRequest {
   /**
@@ -2438,9 +2438,9 @@ export interface CredentialAuthorizeForWorkflowRequest {
    */
   credential_id: string;
   /**
-   * The member agrees to let this workflow's runs use their own connection
+   * The member takes back this workflow's runs' use of their own connection
    */
-  lend?: boolean;
+  withdraw?: boolean;
   [k: string]: unknown;
 }
 /**

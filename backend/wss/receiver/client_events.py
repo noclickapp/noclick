@@ -494,14 +494,14 @@ class CredentialAuthorizeForWorkflowRequest(ClientEventBase):
     collaborator's call never introduces an owner credential. This is the trustworthy
     authorization signal for the collaborative frontend — credentialIds in the
     blob/autosave aren't trusted because a collaborator can inject them via the
-    presence channel. A member picking their OWN connection the owner can't use is
-    answered with ``consent``; ``lend`` then records their yes, letting this workflow's
-    runs use it."""
+    presence channel. A member picking their OWN connection the owner can't use shares it
+    with this workflow's runs, and is answered with ``shared`` (the notice to show);
+    ``withdraw`` takes that back (the notice's Undo)."""
     event_name: ClassVar[str] = "credential:authorize_for_workflow"
 
     workflow_id: str = Field(..., description="Workflow the credential is being authorized for")
     credential_id: str = Field(..., description="The credential just placed on a node")
-    lend: bool = Field(False, description="The member agrees to let this workflow's runs use their own connection")
+    withdraw: bool = Field(False, description="The member takes back this workflow's runs' use of their own connection")
 
 
 class CredentialUpdateRequest(ClientEventBase):

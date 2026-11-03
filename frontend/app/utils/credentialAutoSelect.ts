@@ -311,8 +311,8 @@ export function isInjectedDisplayCredential(id: string): boolean {
  * The backend no longer authorizes off the autosaved blob because it is presence-tainted
  * (a collaborator could inject credentialIds via the collaborative channel). Owner-gated
  * server-side: a collaborator's call authorizes nothing of the owner's, and when the
- * credential is their own connection the owner's runs can't use, they're asked whether
- * to let them (``askToLend``). Fire-and-forget.
+ * credential is their own connection the owner's runs can't use, picking it shares it
+ * with them and says so, with an Undo (``tellShared``). Fire-and-forget.
  */
 export function authorizeCredentialsForWorkflow(
     workflowId: string | undefined | null,
@@ -324,41 +324,37 @@ export function authorizeCredentialsForWorkflow(
     if (!wfId || !credentialIds) return;
     const ids = Array.isArray(credentialIds) ? credentialIds : Object.values(credentialIds);
     for (const credId of new Set(ids.filter(Boolean))) {
-        sendEventAsync<{ consent?: string; consent_detail?: string }>(CredentialAuthorizeForWorkflowRequest.create({
+        sendEventAsync<{ shared?: string; shared_detail?: string }>(CredentialAuthorizeForWorkflowRequest.create({
             workflow_id: wfId, credential_id: credId,
         }))
             .then((reply) => {
-                if (reply?.consent) askToLend(wfId, credId, reply.consent, reply.consent_detail);
+                if (reply?.shared) tellShared(wfId, credId, reply.shared, reply.shared_detail);
             })
             .catch(() => { /* transient */ });
     }
 }
 
-/** A member picked their own connection on a workflow whose automatic runs go as its owner: ask whether
- *  the runs may use it, and record their yes (``lend``). Saying nothing leaves it unused by the runs. */
-function askToLend(workflowId: string, credentialId: string, question: string, detail?: string): void {
+/** A member's pick of their own connection shared it with a workflow whose automatic runs go as its owner:
+ *  say so, with an Undo that takes it back (``withdraw``). Picking it again shares it again. */
+function tellShared(workflowId: string, credentialId: string, title: string, detail?: string): void {
     const id = `member-connection:${credentialId}`;
-    const settled = { duration: 5000, description: undefined, action: undefined, cancel: undefined };
-    toast(question, {
+    const settled = { duration: 6000, description: undefined, action: undefined };
+    toast.success(title, {
         id,
         description: detail,
-        duration: Infinity,
+        duration: 10000,
         action: {
-            label: 'Use it',
+            label: 'Undo',
             onClick: (event) => {
                 // Keep the toast: it turns into the answer instead of vanishing on the click.
                 event.preventDefault();
-                sendEventAsync<{ lent?: boolean }>(CredentialAuthorizeForWorkflowRequest.create({
-                    workflow_id: workflowId, credential_id: credentialId, lend: true,
+                sendEventAsync(CredentialAuthorizeForWorkflowRequest.create({
+                    workflow_id: workflowId, credential_id: credentialId, withdraw: true,
                 }))
-                    .then((reply) => {
-                        if (reply?.lent) toast.success("This workflow's runs can use it now.", { id, ...settled });
-                        else toast.error("This workflow's runs can't use it: you need edit access to the workflow.", { id, ...settled });
-                    })
-                    .catch(() => toast.error("Couldn't reach NoClick. Pick it again to retry.", { id, ...settled }));
+                    .then(() => toast.info("Not shared. This workflow's automatic runs can't use it; pick it again to share it.", { id, ...settled }))
+                    .catch(() => toast.error("Couldn't reach NoClick, so it's still shared. Take it off this step to stop sharing it.", { id, ...settled }));
             },
         },
-        cancel: { label: 'Not now', onClick: () => {} },
     });
 }
 

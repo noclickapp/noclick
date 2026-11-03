@@ -17,8 +17,9 @@ from utils.credentials import (
     get_workflow_owner_id,
     authorize_credentials_for_workflow,
     lend_credential_to_workflow,
-    member_lend_consent,
+    member_share_notice,
     unlent_member_connections,
+    withdraw_credential_lend,
 )
 from repositories.credentials import CredentialsRepo
 from repositories.users import user_label
@@ -487,24 +488,25 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
 
             owner_id = await get_workflow_owner_id(pool, request.workflow_id)
             # Owner-gated: a non-owner never authorizes an owner's credential. Their
-            # placement still syncs/persists; when it's their own connection the
-            # owner's runs can't use, they're asked whether to let them (``consent``),
-            # and their yes (``lend``) is recorded.
+            # placement still syncs/persists; picking their own connection the owner's
+            # runs can't use shares it with them, and they're told (``shared``), with
+            # an Undo (``withdraw``).
             if not owner_id or str(owner_id) != str(user_id):
-                if request.lend:
-                    lent = await lend_credential_to_workflow(
+                if request.withdraw:
+                    withdrawn = await withdraw_credential_lend(
                         pool, request.workflow_id, user_id, request.credential_id)
                     await send_event(self.sio, sid, ResponseEvent(
-                        request_id=request.request_id, data={"authorized": lent, "lent": lent}))
+                        request_id=request.request_id, data={"authorized": False, "withdrawn": withdrawn}))
                     return
                 held = await unlent_member_connections(
                     pool, request.workflow_id, user_id, [request.credential_id])
-                consent = {}
-                if str(request.credential_id) in held:
-                    question, detail = member_lend_consent(held[str(request.credential_id)])
-                    consent = {"consent": question, "consent_detail": detail}
+                notice = {}
+                if str(request.credential_id) in held and await lend_credential_to_workflow(
+                        pool, request.workflow_id, user_id, request.credential_id):
+                    title, detail = member_share_notice(held[str(request.credential_id)])
+                    notice = {"shared": title, "shared_detail": detail}
                 await send_event(self.sio, sid, ResponseEvent(
-                    request_id=request.request_id, data={"authorized": False, **consent}))
+                    request_id=request.request_id, data={"authorized": bool(notice), **notice}))
                 return
 
             # The owner must actually own the credential they're authorizing (a

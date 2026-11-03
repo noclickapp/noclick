@@ -16,8 +16,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
             position="bottom-right"
             toastOptions={{
                 classNames: {
-                    toast: 'group toast group-[.toaster]:bg-card group-[.toaster]:border-border group-[.toaster]:text-foreground group-[.toaster]:shadow-lg has-[[data-button]]:flex-wrap has-[[data-button]]:!gap-y-3',
+                    toast: 'group toast group-[.toaster]:bg-card group-[.toaster]:border-border group-[.toaster]:text-foreground group-[.toaster]:shadow-lg has-[[data-button]]:flex-wrap has-[[data-button]]:!gap-y-3 has-[[data-description]]:!items-start',
                     content: 'group-has-[[data-button]]:flex-[1_1_calc(100%-2rem)]',
+                    // Beside a title with a description under it, the icon sits on the title's line.
+                    icon: 'group-has-[[data-description]]:mt-[2px]',
                     // Colours here are marked important: sonner styles its toasts as its light
                     // theme (#3f3f3f text, dark buttons) and those rules win over plain classes,
                     // so on the dark card a description and the buttons read as near-black.
