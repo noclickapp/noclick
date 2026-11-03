@@ -395,8 +395,9 @@ async def test_register_node_webhooks_re_registers_and_patches_config():
     assert isinstance(p[5], str) and len(p[5]) == 16
     assert p[6] == uuid.UUID(WEBHOOK_ID)
 
-    # Node config patched atomically into the workflow blob via the CTE.
-    patches = [c for c in conn.execute.await_args_list if "jsonb_set" in c.args[0]]
+    # Node config patched atomically into the workflow blob via the CTE (a fetchrow: it answers the versions it
+    # moved the workflow between, which a reconcile job records as its own).
+    patches = [c for c in conn.fetchrow.await_args_list if "jsonb_set" in c.args[0]]
     assert len(patches) == 1, "Node config must be patched in workflow JSON via jsonb_set"
     assert patches[0].args[1] == uuid.UUID(WORKFLOW_ID)
     assert patches[0].args[2] == NODE_ID
