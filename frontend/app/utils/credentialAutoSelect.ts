@@ -324,11 +324,11 @@ export function authorizeCredentialsForWorkflow(
     if (!wfId || !credentialIds) return;
     const ids = Array.isArray(credentialIds) ? credentialIds : Object.values(credentialIds);
     for (const credId of new Set(ids.filter(Boolean))) {
-        sendEventAsync<{ consent?: string }>(CredentialAuthorizeForWorkflowRequest.create({
+        sendEventAsync<{ consent?: string; consent_detail?: string }>(CredentialAuthorizeForWorkflowRequest.create({
             workflow_id: wfId, credential_id: credId,
         }))
             .then((reply) => {
-                if (reply?.consent) askToLend(wfId, credId, reply.consent);
+                if (reply?.consent) askToLend(wfId, credId, reply.consent, reply.consent_detail);
             })
             .catch(() => { /* transient */ });
     }
@@ -336,22 +336,26 @@ export function authorizeCredentialsForWorkflow(
 
 /** A member picked their own connection on a workflow whose automatic runs go as its owner: ask whether
  *  the runs may use it, and record their yes (``lend``). Saying nothing leaves it unused by the runs. */
-function askToLend(workflowId: string, credentialId: string, consent: string): void {
+function askToLend(workflowId: string, credentialId: string, question: string, detail?: string): void {
     const id = `member-connection:${credentialId}`;
-    toast(consent, {
+    const settled = { duration: 5000, description: undefined, action: undefined, cancel: undefined };
+    toast(question, {
         id,
+        description: detail,
         duration: Infinity,
         action: {
             label: 'Use it',
-            onClick: () => {
+            onClick: (event) => {
+                // Keep the toast: it turns into the answer instead of vanishing on the click.
+                event.preventDefault();
                 sendEventAsync<{ lent?: boolean }>(CredentialAuthorizeForWorkflowRequest.create({
                     workflow_id: workflowId, credential_id: credentialId, lend: true,
                 }))
                     .then((reply) => {
-                        if (reply?.lent) toast.success("This workflow's runs can use it now.", { id });
-                        else toast.error("This workflow's runs can't use it: you need edit access to the workflow.", { id });
+                        if (reply?.lent) toast.success("This workflow's runs can use it now.", { id, ...settled });
+                        else toast.error("This workflow's runs can't use it: you need edit access to the workflow.", { id, ...settled });
                     })
-                    .catch(() => toast.error("Couldn't reach NoClick. Pick it again to retry.", { id }));
+                    .catch(() => toast.error("Couldn't reach NoClick. Pick it again to retry.", { id, ...settled }));
             },
         },
         cancel: { label: 'Not now', onClick: () => {} },

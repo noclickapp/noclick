@@ -8,7 +8,7 @@ bypassing the WebSocket routing system.
 import json
 import logging
 import uuid as _uuid
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from repositories.credentials import credential_access_predicate, listed_to_owner_sql
 from repositories.workflow import WorkflowRepo
 from utils.database_pool import get_native_pool
@@ -598,11 +598,13 @@ async def member_connection_warnings(pool, workflow_id, actor_id: str, credentia
     }
 
 
-def member_lend_consent(name: Optional[str]) -> str:
-    """What a member agrees to by letting a workflow's runs use their own connection."""
+def member_lend_consent(name: Optional[str]) -> Tuple[str, str]:
+    """What a member agrees to by letting a workflow's runs use their own connection: the question, and what
+    saying yes means."""
     return (
-        "Automatic runs of this workflow (triggers, schedules and agents) go as its owner. Let them use "
-        f"{_yours(name)}? Anyone who can edit this workflow can then make it act as you."
+        f"Let this workflow's automatic runs use {_yours(name)}?",
+        "Triggers, schedules and agents run as the workflow's owner, so they can't use it otherwise. Anyone who "
+        "can edit this workflow can then make it act as you.",
     )
 
 

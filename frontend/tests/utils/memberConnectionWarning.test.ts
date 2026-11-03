@@ -12,7 +12,10 @@ vi.mock('sonner', () => ({
 import { authorizeCredentialsForWorkflow } from '~/utils/credentialAutoSelect';
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
-const CONSENT = 'Automatic runs of this workflow go as its owner. Let them use your "Shop WhatsApp"?';
+const CONSENT = 'Let this workflow\'s automatic runs use your "Shop WhatsApp"?';
+const DETAIL = 'Anyone who can edit this workflow can then make it act as you.';
+// The click keeps the toast open (it becomes the answer), so the handler gets sonner's event.
+const click = { preventDefault: vi.fn() };
 
 describe('authorizeCredentialsForWorkflow', () => {
     beforeEach(() => {
@@ -20,7 +23,7 @@ describe('authorizeCredentialsForWorkflow', () => {
     });
 
     it("asks a member whether the runs may use their connection, and sends their yes", async () => {
-        mocks.send.mockResolvedValueOnce({ authorized: false, consent: CONSENT });
+        mocks.send.mockResolvedValueOnce({ authorized: false, consent: CONSENT, consent_detail: DETAIL });
         authorizeCredentialsForWorkflow('wf-1', { whatsapp_qr: 'cred-1' });
         await flush();
 
@@ -28,17 +31,21 @@ describe('authorizeCredentialsForWorkflow', () => {
         const [message, options] = mocks.toast.mock.calls[0];
         expect(message).toBe(CONSENT);
         expect(options.id).toBe('member-connection:cred-1');
+        expect(options.description).toBe(DETAIL);
         expect(options.action.label).toBe('Use it');
 
         mocks.send.mockResolvedValueOnce({ authorized: true, lent: true });
-        options.action.onClick();
+        options.action.onClick(click);
         await flush();
 
+        expect(click.preventDefault).toHaveBeenCalled();
         expect(mocks.send.mock.calls[1][0]).toMatchObject({
             workflow_id: 'wf-1', credential_id: 'cred-1', lend: true,
         });
+        // The same toast turns into the answer: its question, detail and buttons go, and it closes by itself.
         expect(mocks.success).toHaveBeenCalledWith("This workflow's runs can use it now.", {
-            id: 'member-connection:cred-1',
+            id: 'member-connection:cred-1', duration: 5000,
+            description: undefined, action: undefined, cancel: undefined,
         });
     });
 
@@ -48,7 +55,7 @@ describe('authorizeCredentialsForWorkflow', () => {
         await flush();
 
         mocks.send.mockResolvedValueOnce({ authorized: false, lent: false });
-        mocks.toast.mock.calls[0][1].action.onClick();
+        mocks.toast.mock.calls[0][1].action.onClick(click);
         await flush();
 
         expect(mocks.error).toHaveBeenCalledTimes(1);

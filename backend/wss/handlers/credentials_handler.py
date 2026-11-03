@@ -499,10 +499,10 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                     return
                 held = await unlent_member_connections(
                     pool, request.workflow_id, user_id, [request.credential_id])
-                consent = (
-                    {"consent": member_lend_consent(held[str(request.credential_id)])}
-                    if str(request.credential_id) in held else {}
-                )
+                consent = {}
+                if str(request.credential_id) in held:
+                    question, detail = member_lend_consent(held[str(request.credential_id)])
+                    consent = {"consent": question, "consent_detail": detail}
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id, data={"authorized": False, **consent}))
                 return

@@ -63,8 +63,11 @@ async def _run_as_owner(db, credential_id, workflow_id):
     return await resolve_credential_with_owner_fallback(credential_id, OWNER, db.pool, workflow_id=workflow_id)
 
 
-CONSENT = ('Automatic runs of this workflow (triggers, schedules and agents) go as its owner. Let them use your '
-           '"Shop WhatsApp"? Anyone who can edit this workflow can then make it act as you.')
+CONSENT = {
+    "consent": 'Let this workflow\'s automatic runs use your "Shop WhatsApp"?',
+    "consent_detail": ("Triggers, schedules and agents run as the workflow's owner, so they can't use it otherwise. "
+                       "Anyone who can edit this workflow can then make it act as you."),
+}
 
 
 @pytest.mark.asyncio
@@ -157,7 +160,7 @@ async def test_the_panel_asks_the_member_then_records_their_yes(real_database): 
 
     await handler.authorize_for_workflow("sid", CredentialAuthorizeForWorkflowRequest(
         request_id="r", workflow_id=workflow_id, credential_id=theirs))
-    assert sio.emit.await_args.args[1]["data"] == {"authorized": False, "consent": CONSENT}
+    assert sio.emit.await_args.args[1]["data"] == {"authorized": False, **CONSENT}
     assert await _run_as_owner(db, theirs, workflow_id) is None  # asking lends nothing
 
     await handler.authorize_for_workflow("sid", CredentialAuthorizeForWorkflowRequest(
