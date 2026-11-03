@@ -38,6 +38,18 @@ POSITIVE_CORPUS = [
     ("anthropic", "plan_limit", "Claude AI usage limit reached|1751968800"),
     ("anthropic", "plan_limit", "Claude usage limit reached — your limit will reset at 3am"),
     ("anthropic", "plan_limit", "5-hour limit reached ∙ resets 6pm"),
+    # Claude Code's current line, verbatim from a scheduled run whose whole reply it was.
+    ("anthropic", "plan_limit", "You've hit your weekly limit · resets 2am (UTC)"),
+    # Its siblings, from the CLI's own template (`You've hit your ${name}${" · …"}`, 2.1.310 and
+    # 2.1.317): the 5-hour window was the "session limit" through 2.1.310, the bare "limit" is
+    # the one shown once usage credits are spent too, and "usage limit" is the fallback.
+    ("anthropic", "plan_limit", "You've hit your session limit · resets 6pm (UTC)"),
+    ("anthropic", "plan_limit", "You've hit your 5-hour limit · resets 6pm (UTC) · progress saved"),
+    ("anthropic", "plan_limit", "You've hit your Opus limit · resets 2am (UTC)"),
+    ("anthropic", "plan_limit", "You've hit your Sonnet limit · resets 2am (UTC)"),
+    ("anthropic", "plan_limit", "You've hit your Fable limit · resets 2am (UTC)"),
+    ("anthropic", "plan_limit", "You've hit your usage limit · contact your admin to increase it"),
+    ("anthropic", "plan_limit", "You've hit your limit · resets 2am (UTC)"),
     # OpenAI — quota exhaustion rides a 429 with the insufficient_quota slug.
     ("openai", "no_credits",
      "Error code: 429 - {'error': {'message': 'You exceeded your current quota, "
@@ -109,6 +121,11 @@ NEGATIVE_RESPONSES = [
     "User not found.",
     "I searched Slack for that address and the user was not found.",
     "The Stripe customer lookup returned: user not found",
+    # An agent relaying some other service's cap in its own words. The Claude Code
+    # rule is bound to the CLI's " · " separator so these stay replies.
+    "You've hit your weekly limit of 5 posts on Buffer, so I skipped today's.",
+    "The Sheets API says you've hit your usage limit",
+    "Done. You've hit your 5-hour limit on the trial; next window opens at 6pm.",
 ]
 
 
@@ -154,6 +171,19 @@ def test_a_key_zen_refuses_fails_the_turn_with_both_ways_out():
     assert "https://opencode.ai/auth" in error
     assert "OpenCode's free models need no key" in error
     assert error.endswith("Provider message: Upstream request failed: Invalid credential")
+
+
+def test_a_claude_plan_limit_as_the_whole_reply_fails_the_turn():
+    """Claude Code on a Claude sign-in answered a scheduled turn with only its
+    limit line and the run went green: nothing was sent and nobody was told."""
+    line = "You've hit your weekly limit · resets 2am (UTC)"
+    response, error = normalize_turn_result(line, None)
+    assert response == ""
+    assert error.startswith("Your Anthropic subscription hit its usage limit.")
+    assert "not your NoClick credits" in error and "switch this agent to an API key" in error
+    assert error.endswith(f"Provider message: {line}")
+    assert classify_provider_error(line, channel="response").action() == {
+        "type": "open_credentials", "label": "Open credentials"}
 
 
 # ── Exception-type classification ──────────────────────────────────────────

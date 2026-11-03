@@ -158,6 +158,11 @@ _RULES: Tuple[_Rule, ...] = (
     # relays e.g. "Claude AI usage limit reached|<epoch>" / "5-hour limit reached".
     _r("anthropic", "plan_limit", r"claude (ai )?usage limit reached"),
     _r("anthropic", "plan_limit", r"\b5-hour limit reached"),
+    # Newer CLIs: "You've hit your weekly limit · resets 2am (UTC)", one line per window. Bound to
+    # the " · " the CLI always follows the name with, so a reply saying "you've hit your weekly
+    # limit" about some other service stays a reply.
+    _r("anthropic", "plan_limit",
+       r"you've hit your (?:(?:5-hour|session|weekly|opus|sonnet|fable|usage) )?limit\s*[·∙]"),
     # ── OpenAI ────────────────────────────────────────────────────────────
     _r("openai", "no_credits", r"insufficient_quota"),
     _r("openai", "no_credits", r"exceeded your current quota"),
