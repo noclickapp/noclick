@@ -306,6 +306,15 @@ def _app_event_trigger_class(node_type: Optional[str]):
     return None
 
 
+def _failure_on_record(node_config: Dict[str, Any]) -> bool:
+    """Whether an app-event trigger's mirrors still record a failed registration
+    (both failure paths write one), which rows saved by an earlier success don't
+    contradict: its last attempt must be judged again, not taken as converged."""
+    return node_config.get("trigger_registered") is False or str(
+        node_config.get("trigger_error") or ""
+    ).startswith("Not registered:")
+
+
 def _app_event_class_for_provider(provider: str):
     """Resolve an app-event provider slug (a webhook_subscriptions row's
     ``provider``) back to its node class — for orphan-row teardown where the
@@ -1602,7 +1611,7 @@ class WebhookManager:
             event_types=desired_events,
             credential_id=credential_id,
             user_id=owner_id,
-        ):
+        ) and not _failure_on_record(node_config):
             return {"state": "live"}
 
         if not credential_id:

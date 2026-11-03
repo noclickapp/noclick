@@ -46,15 +46,28 @@ async def graph_request(client, method, path, *, base, label, params=None, data=
     try:
         body = response.json()
     except ValueError:
-        raise ValueError(f"{label} {purpose} returned an invalid response.") from None
+        body = None
     error = body.get("error") if isinstance(body, dict) else None
     if isinstance(error, dict) and error.get("is_transient") is not True and error.get("code") in (10, 102, 190, 200):
         raise MetaAuthorizationDenied(f"{label} account authorization is unavailable; reconnect with the required Page permissions.")
+    code = _meta_code(error)
+    if response.status_code >= 500 or (isinstance(error, dict) and error.get("is_transient") is True):
+        # Meta's own outage, not the account's: the same request may well pass next time.
+        raise ValueError(f"{label} had a temporary error on the {purpose} request (HTTP {response.status_code}{code}); retry later.")
+    if body is None:
+        raise ValueError(f"{label} {purpose} returned an invalid response.")
     if response.status_code != 200:
-        raise ValueError(f"{label} {purpose} request returned HTTP {response.status_code}; check account access.")
+        raise ValueError(f"{label} {purpose} request returned HTTP {response.status_code}{code}; check account access.")
     if not isinstance(body, dict) or error:
-        raise ValueError(f"{label} rejected the {purpose} request; check account access.")
+        raise ValueError(f"{label} rejected the {purpose} request{code}; check account access.")
     return body
+
+
+def _meta_code(error) -> str:
+    """Meta's error code, never its message: that can name the account or its
+    content, and these errors reach the step, the builder and agents."""
+    code = error.get("code") if isinstance(error, dict) else None
+    return f" (code {code})" if isinstance(code, int) and not isinstance(code, bool) else ""
 
 
 async def read_edge(request, path, *, fields, label, max_pages=5):
