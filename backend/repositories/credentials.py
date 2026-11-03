@@ -358,11 +358,12 @@ class CredentialsRepo:
         )
 
     async def fetch_credentials_display_info(
-        self, credential_ids: List[str], owner_id: str
+        self, credential_ids: List[str], owner_id: str, workflow_id: Optional[str] = None,
     ) -> List[CredentialDisplayRow]:
         """Display-only credential rows for a workflow, constrained to the
-        workflow owner's credentials — a collaborator can't inject arbitrary
-        UUIDs and read back a third party's credential name."""
+        workflow owner's credentials and those a member lent to this workflow
+        (``utils.credentials.lend_credential_to_workflow``) — a collaborator
+        can't inject arbitrary UUIDs and read back a third party's credential name."""
         if not credential_ids:
             return []
         sql = f"""
@@ -371,10 +372,15 @@ class CredentialsRepo:
                    {user_name_sql('u')} AS owner_name
             FROM credentials c
             JOIN auth.users u ON u.id = c.owner_id
-            WHERE c.id = ANY($1::uuid[]) AND c.owner_id = $2
+            WHERE c.id = ANY($1::uuid[]) AND (
+                c.owner_id = $2
+                OR EXISTS (SELECT 1 FROM workflow_authorized_credentials a
+                           WHERE a.workflow_id = $3::uuid AND a.credential_id = c.id
+                             AND a.authorized_by = c.owner_id)
+            )
         """
         async with self._pool.acquire() as conn:
-            rows = await conn.fetch(sql, credential_ids, owner_id)
+            rows = await conn.fetch(sql, credential_ids, owner_id, workflow_id)
         return [
             CredentialDisplayRow(
                 id=str(r['id']),

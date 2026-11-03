@@ -310,9 +310,9 @@ export function isInjectedDisplayCredential(id: string): boolean {
  * every LOCAL owner credential-placement site (manual pick, auto-select on add/paste).
  * The backend no longer authorizes off the autosaved blob because it is presence-tainted
  * (a collaborator could inject credentialIds via the collaborative channel). Owner-gated
- * server-side: a collaborator's call authorizes nothing, and when the credential is
- * their own connection the owner can't use, its reply's warning is shown, since the
- * workflow's automatic runs (which go as the owner) would fail on it. Fire-and-forget.
+ * server-side: a collaborator's call authorizes nothing of the owner's, and when the
+ * credential is their own connection the owner's runs can't use, they're asked whether
+ * to let them (``askToLend``). Fire-and-forget.
  */
 export function authorizeCredentialsForWorkflow(
     workflowId: string | undefined | null,
@@ -324,14 +324,38 @@ export function authorizeCredentialsForWorkflow(
     if (!wfId || !credentialIds) return;
     const ids = Array.isArray(credentialIds) ? credentialIds : Object.values(credentialIds);
     for (const credId of new Set(ids.filter(Boolean))) {
-        sendEventAsync<{ warning?: string }>(CredentialAuthorizeForWorkflowRequest.create({
+        sendEventAsync<{ consent?: string }>(CredentialAuthorizeForWorkflowRequest.create({
             workflow_id: wfId, credential_id: credId,
         }))
             .then((reply) => {
-                if (reply?.warning) toast.warning(reply.warning, { id: `member-connection:${credId}` });
+                if (reply?.consent) askToLend(wfId, credId, reply.consent);
             })
             .catch(() => { /* transient */ });
     }
+}
+
+/** A member picked their own connection on a workflow whose automatic runs go as its owner: ask whether
+ *  the runs may use it, and record their yes (``lend``). Saying nothing leaves it unused by the runs. */
+function askToLend(workflowId: string, credentialId: string, consent: string): void {
+    const id = `member-connection:${credentialId}`;
+    toast(consent, {
+        id,
+        duration: Infinity,
+        action: {
+            label: 'Use it',
+            onClick: () => {
+                sendEventAsync<{ lent?: boolean }>(CredentialAuthorizeForWorkflowRequest.create({
+                    workflow_id: workflowId, credential_id: credentialId, lend: true,
+                }))
+                    .then((reply) => {
+                        if (reply?.lent) toast.success("This workflow's runs can use it now.", { id });
+                        else toast.error("This workflow's runs can't use it: you need edit access to the workflow.", { id });
+                    })
+                    .catch(() => toast.error("Couldn't reach NoClick. Pick it again to retry.", { id }));
+            },
+        },
+        cancel: { label: 'Not now', onClick: () => {} },
+    });
 }
 
 /** The cached credentials of one type, most recent first; undefined until the cache is populated. */

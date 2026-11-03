@@ -70,7 +70,7 @@ async def test_another_members_credential_says_whose_connections_runs_use(real_d
         assert error.startswith(f"Failed to resolve credential {theirs}")
         assert '"WhatsApp (shop)" is connected, but it belongs to another member of this workflow' in error
         assert "use the workflow owner's connections" in error
-        assert "the owner connects their own account" in error and "shares it with them" in error
+        assert "the owner connects their own account" in error and "lets this workflow use it" in error
         assert "revoked" not in error
         assert member not in error and "example.test" not in error
     assert "this tool's provider node" in await _tool_error(db, theirs, owner, workflow_id)

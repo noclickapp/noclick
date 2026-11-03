@@ -529,6 +529,14 @@ async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: 
 
     now_graph = await _stored(pool, workflow_id)
     now_ids = _ids(now_graph)
+    try:
+        from utils.credentials import prune_unused_lends
+
+        # A member's connection taken off every step is no longer the runs' to use.
+        await prune_unused_lends(pool, workflow_id, now_graph)
+    except Exception as e:
+        logger.warning("[reconcile] ending unused lends of %s failed", workflow_id, exc_info=True)
+        failed.append(f"ending unused lends: {str(e) or type(e).__name__}")
     for node_id, node in new_nodes.items():
         old = old_nodes.get(node_id)
         if old is None or node_id not in now_ids:

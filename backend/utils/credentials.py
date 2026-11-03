@@ -479,7 +479,38 @@ async def resolve_credential_with_owner_fallback(
             and await is_credential_authorized_for_workflow(pool, workflow_id, credential_id)
         ):
             credential_data = await get_credential(credential_id, owner_id, pool, org_id)
+    if not credential_data and workflow_id:
+        # A member's own connection they let this workflow's runs use (``lend_credential_to_workflow``).
+        lender = await credential_lender(pool, workflow_id, credential_id)
+        if lender and lender != str(user_id):
+            credential_data = await get_credential(credential_id, lender, pool, org_id)
     return credential_data
+
+
+async def credential_lender(pool, workflow_id, credential_id) -> Optional[str]:
+    """The member who let ``workflow_id``'s runs use their own ``credential_id`` (their authorization of it
+    there, recorded by ``lend_credential_to_workflow``), while they can still edit the workflow; else None.
+    Fail-closed on any error."""
+    if not workflow_id or not _is_credential_uuid(str(credential_id)):
+        return None
+    from utils.access_control import Permission, check_resource_access
+
+    try:
+        async with (pool or get_native_pool()).acquire() as conn:
+            lender = await conn.fetchval(
+                """SELECT c.owner_id::text FROM workflow_authorized_credentials a
+                   JOIN credentials c ON c.id = a.credential_id
+                   JOIN workflows w ON w.id = a.workflow_id
+                   WHERE a.workflow_id = $1::uuid AND a.credential_id = $2::uuid AND a.authorized_by = c.owner_id
+                     AND c.owner_id <> w.owner_id AND c.revoked_at IS NULL""",
+                str(workflow_id), str(credential_id))
+            if not lender:
+                return None
+            access = await check_resource_access(conn, lender, "workflow", str(workflow_id))
+    except Exception as e:
+        logger.warning(f"[CredentialsUtil] Lend check failed for credential {credential_id} on {workflow_id}: {e}")
+        return None
+    return lender if access.permission in (Permission.EDIT, Permission.OWNER) else None
 
 
 async def unresolved_credential_error(
@@ -521,16 +552,15 @@ async def unresolved_credential_error(
     return (
         f"{prefix}: {name} is connected, but it belongs to another member of this workflow, so this run "
         f"can't use it: automatic runs (triggers, schedules and agents) use the workflow owner's "
-        f"connections. To fix it, the owner connects their own account on {where}, or the member who "
-        f"connected it shares it with them."
+        f"connections. To fix it, the member who connected it lets this workflow use it (they pick it on "
+        f"{where} and choose Use it), or the owner connects their own account there."
     )
 
 
-async def member_connection_warnings(pool, workflow_id, actor_id: str, credential_ids) -> Dict[str, str]:
-    """By credential id, the warning for each of ``actor_id``'s own connections they put on a workflow someone
-    else owns that its owner can't use (neither theirs nor shared with them): its automatic runs go as the
-    owner, so they would fail on it. Empty for the owner's own placements. Access is unchanged; this only says
-    so at attach time, as ``unresolved_credential_error`` does at run time."""
+async def unlent_member_connections(pool, workflow_id, actor_id: str, credential_ids) -> Dict[str, Optional[str]]:
+    """By credential id, the name of each of ``actor_id``'s own connections on a workflow someone else owns that
+    its owner's runs can't use: neither the owner's, nor shared with them, nor lent to this workflow. Its
+    automatic runs (triggers, schedules and agents) go as the owner, so they would fail on it."""
     ids = list(dict.fromkeys(str(c) for c in (credential_ids or []) if c and _is_credential_uuid(str(c))))
     if not ids or not workflow_id:
         return {}
@@ -541,17 +571,70 @@ async def member_connection_warnings(pool, workflow_id, actor_id: str, credentia
             return {}
         rows = await conn.fetch(
             f"""SELECT c.id::text AS id, c.name FROM credentials c
-                WHERE c.id = ANY($1::uuid[]) AND c.owner_id = $4::uuid AND NOT {credential_access_predicate()}""",
-            ids, workflow["owner_id"], workflow["organization_id"], actor_id)
-    warnings = {}
-    for row in rows:
-        yours = f'Your "{row["name"]}"' if row["name"] else "This connection of yours"
-        warnings[row["id"]] = (
-            f"{yours} won't work in this workflow's automatic runs (triggers, schedules and agents): they use "
-            "the workflow owner's connections. Share it with the owner, or ask them to connect their own "
-            "account on this step."
+                WHERE c.id = ANY($1::uuid[]) AND c.owner_id = $4::uuid AND NOT {credential_access_predicate()}
+                  AND NOT EXISTS (SELECT 1 FROM workflow_authorized_credentials a
+                                  WHERE a.workflow_id = $5::uuid AND a.credential_id = c.id
+                                    AND a.authorized_by = c.owner_id)""",
+            ids, workflow["owner_id"], workflow["organization_id"], actor_id, str(workflow_id))
+    return {row["id"]: row["name"] for row in rows}
+
+
+def _yours(name: Optional[str], *, capital: bool = False) -> str:
+    text = f'your "{name}"' if name else "this connection of yours"
+    return text[0].upper() + text[1:] if capital else text
+
+
+async def member_connection_warnings(pool, workflow_id, actor_id: str, credential_ids) -> Dict[str, str]:
+    """By credential id, the warning for each unlent member connection a builder or MCP call placed
+    (``unlent_member_connections``). Letting the runs use it is a person's choice, made on the step."""
+    held = await unlent_member_connections(pool, workflow_id, actor_id, credential_ids)
+    return {
+        credential_id: (
+            f"{_yours(name, capital=True)} won't work in this workflow's automatic runs (triggers, "
+            "schedules and agents): they use the workflow owner's connections. To let them use it, pick it on "
+            "this step in the canvas and choose Use it, or ask the owner to connect their own account."
         )
-    return warnings
+        for credential_id, name in held.items()
+    }
+
+
+def member_lend_consent(name: Optional[str]) -> str:
+    """What a member agrees to by letting a workflow's runs use their own connection."""
+    return (
+        "Automatic runs of this workflow (triggers, schedules and agents) go as its owner. Let them use "
+        f"{_yours(name)}? Anyone who can edit this workflow can then make it act as you."
+    )
+
+
+async def lend_credential_to_workflow(pool, workflow_id, member_id: str, credential_id: str) -> bool:
+    """Record that ``member_id`` lets ``workflow_id``'s runs use their own ``credential_id``: only their own
+    connection, unlent and unusable by the owner, on a workflow they can edit. It ends when they lose that
+    access, delete the credential, or no step holds it (``prune_unused_lends``). Access to the secret is
+    unchanged: no one else can read it, and it reaches no other workflow."""
+    from utils.access_control import Permission, check_resource_access
+
+    if str(credential_id) not in await unlent_member_connections(pool, workflow_id, member_id, [credential_id]):
+        return False
+    async with (pool or get_native_pool()).acquire() as conn:
+        access = await check_resource_access(conn, member_id, "workflow", str(workflow_id))
+        if access.permission not in (Permission.EDIT, Permission.OWNER):
+            return False
+        await authorize_credentials_for_workflow(conn, str(workflow_id), member_id, [str(credential_id)])
+    return True
+
+
+async def prune_unused_lends(pool, workflow_id, graph: Any) -> int:
+    """End the lends of credentials no step of ``graph`` (the workflow as saved) holds any more: taking a
+    connection off every step takes back the runs' use of it. Returns how many ended."""
+    held = list(collect_node_credential_uuids(graph))
+    async with (pool or get_native_pool()).acquire() as conn:
+        status = await conn.execute(
+            """DELETE FROM workflow_authorized_credentials a USING credentials c, workflows w
+               WHERE a.workflow_id = $1::uuid AND w.id = a.workflow_id AND c.id = a.credential_id
+                 AND a.authorized_by = c.owner_id AND c.owner_id <> w.owner_id
+                 AND NOT (a.credential_id = ANY($2::uuid[]))""",
+            str(workflow_id), held)
+    return int(status.split()[-1]) if status else 0
 
 
 async def get_credential_display(pool, credential_id: str) -> Optional[Dict[str, Any]]:

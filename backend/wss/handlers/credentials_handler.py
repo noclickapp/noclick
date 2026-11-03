@@ -16,7 +16,9 @@ from utils.credentials import (
     collect_node_credential_uuids,
     get_workflow_owner_id,
     authorize_credentials_for_workflow,
-    member_connection_warnings,
+    lend_credential_to_workflow,
+    member_lend_consent,
+    unlent_member_connections,
 )
 from repositories.credentials import CredentialsRepo
 from repositories.users import user_label
@@ -432,12 +434,12 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
             cred_ids = list(collect_node_credential_uuids(wf.workflow)) if wf else []
             credentials = []
             if cred_ids and wf:
-                # Constrain to credentials owned by the WORKFLOW OWNER. Without this
-                # a collaborator could inject any credential UUID into the blob and
-                # read back a third party's credential name + owner identity. The
-                # display path only ever needs the owner's creds (a collaborator's
-                # own creds come from their credential:list).
-                rows = await repo.fetch_credentials_display_info(cred_ids, wf.owner_id)
+                # Constrain to credentials owned by the WORKFLOW OWNER, or lent to
+                # this workflow by their own owner. Without this a collaborator could
+                # inject any credential UUID into the blob and read back a third
+                # party's credential name + owner identity (a collaborator's own
+                # creds come from their credential:list).
+                rows = await repo.fetch_credentials_display_info(cred_ids, wf.owner_id, request.workflow_id)
                 for r in rows:
                     owned_by_me = r.owner_id == user_id
                     owner_label = None
@@ -484,16 +486,25 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 return
 
             owner_id = await get_workflow_owner_id(pool, request.workflow_id)
-            # Owner-gated: a non-owner never authorizes. Their placement still
-            # syncs/persists; when it's their own connection the owner can't use,
-            # the reply says so, since the workflow's automatic runs would fail on it.
+            # Owner-gated: a non-owner never authorizes an owner's credential. Their
+            # placement still syncs/persists; when it's their own connection the
+            # owner's runs can't use, they're asked whether to let them (``consent``),
+            # and their yes (``lend``) is recorded.
             if not owner_id or str(owner_id) != str(user_id):
-                warnings = await member_connection_warnings(
+                if request.lend:
+                    lent = await lend_credential_to_workflow(
+                        pool, request.workflow_id, user_id, request.credential_id)
+                    await send_event(self.sio, sid, ResponseEvent(
+                        request_id=request.request_id, data={"authorized": lent, "lent": lent}))
+                    return
+                held = await unlent_member_connections(
                     pool, request.workflow_id, user_id, [request.credential_id])
-                warning = warnings.get(str(request.credential_id))
+                consent = (
+                    {"consent": member_lend_consent(held[str(request.credential_id)])}
+                    if str(request.credential_id) in held else {}
+                )
                 await send_event(self.sio, sid, ResponseEvent(
-                    request_id=request.request_id,
-                    data={"authorized": False, **({"warning": warning} if warning else {})}))
+                    request_id=request.request_id, data={"authorized": False, **consent}))
                 return
 
             # The owner must actually own the credential they're authorizing (a

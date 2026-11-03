@@ -2415,12 +2415,14 @@ export interface CoordinatorSendRequest {
   [k: string]: unknown;
 }
 /**
- * Fired when the OWNER explicitly selects a credential on a node, to authorize it
+ * Fired when someone explicitly selects a credential on a node, to authorize it
  * for run-as-owner resolution on this workflow. Owner-gated server-side: a
- * collaborator's call is a no-op (they can't introduce an owner credential). This is
- * the trustworthy authorization signal for the collaborative frontend — credentialIds
- * in the blob/autosave aren't trusted because a collaborator can inject them via the
- * presence channel.
+ * collaborator's call never introduces an owner credential. This is the trustworthy
+ * authorization signal for the collaborative frontend — credentialIds in the
+ * blob/autosave aren't trusted because a collaborator can inject them via the
+ * presence channel. A member picking their OWN connection the owner can't use is
+ * answered with ``consent``; ``lend`` then records their yes, letting this workflow's
+ * runs use it.
  */
 export interface CredentialAuthorizeForWorkflowRequest {
   /**
@@ -2432,9 +2434,13 @@ export interface CredentialAuthorizeForWorkflowRequest {
    */
   workflow_id: string;
   /**
-   * The credential the owner just placed on a node
+   * The credential just placed on a node
    */
   credential_id: string;
+  /**
+   * The member agrees to let this workflow's runs use their own connection
+   */
+  lend?: boolean;
   [k: string]: unknown;
 }
 /**
