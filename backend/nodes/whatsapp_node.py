@@ -144,6 +144,33 @@ _RECIPIENT_DESC = (
 
 # WAHooks ops addressed by a chat id rather than a send recipient.
 _WAHOOKS_CHAT_ID_OPS = frozenset({"get_chat_messages", "edit_message", "mark_chat_read"})
+# What a QR link (WAHooks, a linked phone) can run; the Cloud API runs the rest.
+QR_OPERATIONS = frozenset({
+    "send_text_message",
+    "send_image_message",
+    "send_video_message",
+    "send_document_message",
+    "send_audio_message",
+    "send_location_message",
+    "send_contact_card",
+    "send_reaction_emoji",
+    "list_recent_chats",
+    "get_chat_messages",
+    "list_contacts",
+    "edit_message",
+    "mark_chat_read",
+    "get_account_profile",
+})
+# Chat reads only a linked phone has: the Cloud API has no chat or message history.
+QR_ONLY_OPERATIONS = frozenset({
+    "list_recent_chats",
+    "get_chat_messages",
+    "list_contacts",
+    "edit_message",
+    "mark_chat_read",
+    "get_account_profile",
+})
+_TRIGGER_OPERATIONS = frozenset({"receive_message", "receive_status_update"})
 
 
 def wahooks_chat_id(recipient: Any) -> str:
@@ -1879,6 +1906,14 @@ class WhatsAppNode(WorkflowNode):
         return None
 
     @classmethod
+    def operation_credential_types(cls, operation: str) -> Optional[frozenset]:
+        if operation in QR_ONLY_OPERATIONS:
+            return frozenset({"whatsapp_qr"})
+        if operation in QR_OPERATIONS or operation in _TRIGGER_OPERATIONS:
+            return None
+        return frozenset({"whatsapp_access_token"})
+
+    @classmethod
     async def _remember_sender_number(cls, payload: Dict[str, Any]) -> None:
         """Record the number a @lid writer's message names, so a scope written
         as numbers knows their chat (utils.whatsapp_lids)."""
@@ -2548,15 +2583,7 @@ class WhatsAppNode(WorkflowNode):
         if isinstance(credentials, WhatsAppQRCredential):
             return await self._execute_wahooks(op_config, credentials)
 
-        qr_only_actions = {
-            "list_recent_chats",
-            "get_chat_messages",
-            "list_contacts",
-            "edit_message",
-            "mark_chat_read",
-            "get_account_profile",
-        }
-        if action in qr_only_actions:
+        if action in QR_ONLY_OPERATIONS:
             raise ValueError(
                 f"The '{action}' operation requires a WhatsApp QR credential "
                 "(the Meta Cloud API has no chat/message read access)."
@@ -2633,26 +2660,10 @@ class WhatsAppNode(WorkflowNode):
 
         action = op_config.operation
 
-        supported_actions = {
-            "send_text_message",
-            "send_image_message",
-            "send_video_message",
-            "send_document_message",
-            "send_audio_message",
-            "send_location_message",
-            "send_contact_card",
-            "send_reaction_emoji",
-            "list_recent_chats",
-            "get_chat_messages",
-            "list_contacts",
-            "edit_message",
-            "mark_chat_read",
-            "get_account_profile",
-        }
-        if action not in supported_actions:
+        if action not in QR_OPERATIONS:
             raise ValueError(
                 f"The '{action}' operation requires Meta Cloud API credentials (Access Token). "
-                f"QR scan credentials support: {', '.join(sorted(supported_actions))}"
+                f"QR scan credentials support: {', '.join(sorted(QR_OPERATIONS))}"
             )
 
         # Resolved OUTSIDE the try below: an empty recipient must fail the node

@@ -139,8 +139,8 @@ export function getToolProviderConsumerTypes(
  */
 /** A field on an operation that can be resource-scoped — has both
  *  `x-dynamic-options` (loader-backed picker) AND `x-resource-type`
- *  (identity tag). Backend enforcement at runtime (run_op._check_field_scopes
- *  and tool_execution._enforce_field_scopes) reads the matching
+ *  (identity tag). Backend enforcement at runtime (run_op.field_scope_refusal)
+ *  reads the matching
  *  `agent_tool_operations[i].field_scopes[field]` allowlist. */
 export interface AgentToolScopableField {
     field: string;

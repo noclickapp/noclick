@@ -24,7 +24,6 @@ from utils.process_stats import get_rss_mb
 from utils.database_pool import DatabasePoolMixin
 from utils.credentials import (
     extract_credential_ids,
-    get_credential_name,
     get_workflow_owner_id,
     pick_credential_id,
     resolve_credential_with_owner_fallback,
@@ -3684,17 +3683,13 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         # instead of running one. Short-circuits BEFORE credential resolution
         # and NodeFactory because provider-mode config holds an operation
         # allowlist, not a runnable single-operation config.
-        from nodes.agent.node_op_tools import is_node_op_provider, build_provider_output
+        from nodes.agent.node_op_tools import (
+            build_provider_output, describe_provider_credential, is_node_op_provider,
+        )
         if is_node_op_provider(node_id, node_type, workflow_nodes, workflow_edges):
             output = build_provider_output(node_type, resolved_config)
-            # Credential display name (no secret) — together with the node
-            # label it's what lets the agent tell same-type providers apart.
             if output.get("credential_id"):
-                pool = await self.get_pool()
-                if pool:
-                    output["credential_label"] = await get_credential_name(
-                        pool, output["credential_id"]
-                    )
+                await describe_provider_credential(await self.get_pool(), output)
             logger.info(
                 f"[WorkflowExecution] Node {node_id} ({node_type}) is an agent tool provider "
                 f"({len(output['allowed_operations'])} operation(s) allowlisted)"

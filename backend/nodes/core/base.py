@@ -784,6 +784,13 @@ class WorkflowNode(ABC):
         return {"status": "no_event", "action": action, "data": {}, "message": message}
 
     @classmethod
+    def operation_credential_types(cls, operation: str) -> Optional[FrozenSet[str]]:
+        """The credential types that can run ``operation``, for a node whose
+        credentials don't all run every operation (a WhatsApp QR link has no
+        Cloud API; the Cloud API reads no chats). None: any the node takes."""
+        return None
+
+    @classmethod
     async def scope_matches(
         cls, field: str, value: str, allowed: List[str], credentials: Dict[str, Any],
     ) -> bool:

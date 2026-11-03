@@ -534,12 +534,12 @@ async def get_credential_name(pool, credential_id: str) -> Optional[str]:
         cred_uuid = credential_id if not isinstance(credential_id, str) else _uuid.UUID(credential_id)
         async with pool.acquire() as conn:
             row = await conn.fetchrow(
-                "SELECT name FROM credentials WHERE id = $1 AND revoked_at IS NULL",
+                "SELECT name, credential_type FROM credentials WHERE id = $1 AND revoked_at IS NULL",
                 cred_uuid,
             )
-        return row["name"] if row else None
+        return dict(row) if row else None
     except Exception as e:
-        logger.warning(f"[CredentialsUtil] Name lookup failed for {credential_id}: {e}")
+        logger.warning(f"[CredentialsUtil] Display lookup failed for {credential_id}: {e}")
         return None
 
 

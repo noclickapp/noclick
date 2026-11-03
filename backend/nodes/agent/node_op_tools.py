@@ -507,6 +507,41 @@ def build_provider_output(node_type: str, raw_config: Dict[str, Any]) -> Dict[st
     return output
 
 
+async def describe_provider_credential(pool, output: Dict[str, Any]) -> None:
+    """Stamp a provider output's ``credential_label`` (no secret: with the node
+    label, what lets the agent tell same-type providers apart) and drop the
+    allowlisted operations its credential's type can't run, which the agent
+    could only ever call to fail (a WhatsApp QR link offered the Cloud API)."""
+    if not pool or not output.get("credential_id"):
+        return
+    from nodes.core.registry import NODE_REGISTRY
+    from utils.credentials import get_credential_display
+
+    display = await get_credential_display(pool, output["credential_id"])
+    if not display:
+        return
+    output["credential_label"] = display["name"]
+    node_class = NODE_REGISTRY.get(output["node_type"])
+    credential_type = display.get("credential_type")
+    if node_class is None or not credential_type:
+        return
+
+    def runs(entry: Any) -> bool:
+        operation = entry.get("operation") if isinstance(entry, dict) else entry
+        types = node_class.operation_credential_types(str(operation))
+        return types is None or credential_type in types
+
+    allowed = output.get("allowed_operations") or []
+    kept = [entry for entry in allowed if runs(entry)]
+    if len(kept) < len(allowed):
+        dropped = [e.get("operation") if isinstance(e, dict) else e for e in allowed if not runs(e)]
+        logger.info(
+            f"[NodeOpTools] {output['node_type']} provider offers no {dropped}: "
+            f"its {credential_type} credential can't run them"
+        )
+        output["allowed_operations"] = kept
+
+
 def allowlist_requires_credentials(node_type: str, operations: List[Any]) -> bool:
     """Whether a provider's allowlisted operations need credentials — False
     when EVERY allowlisted op is x-credentials-optional (e.g. reddit's

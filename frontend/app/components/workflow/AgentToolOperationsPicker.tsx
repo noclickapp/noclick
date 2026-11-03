@@ -9,7 +9,7 @@
 // x-resource-type) expose an inline accordion under the row to pin specific
 // resource IDs — the persisted entry switches from a bare string to
 // {operation, field_scopes} so backend enforcement in
-// tool_execution._enforce_field_scopes gates calls to those resources.
+// run_op.field_scope_refusal gates calls to those resources.
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertCircle, ArrowUpRight, Check, ChevronDown, GitBranch, Info, Loader2, Lock, Search, SlidersHorizontal, Wrench, X } from 'lucide-react';
