@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import datetime, timezone
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 # Bytes of pretty-printed JSON the model turn carries before it is cut.
@@ -156,6 +157,12 @@ def compact_for_display(output: Any) -> Any:
         scalars = {k: v for k, v in record.items() if not isinstance(v, (dict, list))}
         return {**scalars, "_truncated": True}
     return {"_truncated": True}
+
+
+def event_block(source: str, text: str, at: datetime) -> str:
+    """An event as it joins an agent's turn: where it came from, when it arrived, then the hook's text. The time
+    stays in the thread, so a later turn can tell how long a conversation was quiet."""
+    return f"--- Event from {source} ---\nArrived {at.astimezone(timezone.utc):%a %Y-%m-%d %H:%M} UTC\n{text}"
 
 
 def first_line(text: str, limit: int = 100) -> str:

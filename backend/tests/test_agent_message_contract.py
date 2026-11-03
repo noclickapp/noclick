@@ -10,6 +10,7 @@ surfaces (canvas, builder done-gate, MCP validate_workflow) and the composed
 turn in ``execute`` for the run.
 """
 
+import re
 import uuid
 from types import SimpleNamespace
 
@@ -113,6 +114,9 @@ class TestRunTimeRule:
         with pytest.raises(_Reached):
             await agent.execute({"wh1": {"type": "webhook-trigger", "payload": {"a": 1}}})
         assert "--- Event from Hook ---" in agent.config.config.message
+        # When it arrived stays in the thread, so a later turn can tell how long a conversation was quiet.
+        assert re.search(r"--- Event from Hook ---\nArrived \w{3} \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC\n",
+                         agent.config.config.message)
 
     @pytest.mark.asyncio
     async def test_a_manual_run_of_a_trigger_wired_agent_names_the_missing_event(self, monkeypatch):

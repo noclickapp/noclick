@@ -1650,10 +1650,9 @@ class AgentNode(WorkflowNode):
             await self._digest_event_media(trigger_event, config)
         event_ck = (trigger_event or {}).get("conversation_key")
         if trigger_event and trigger_event.get("text"):
-            event_block = (
-                f"--- Event from {trigger_event['source']} ---\n"
-                f"{trigger_event['text']}"
-            )
+            from nodes.core.agent_events import event_block as event_block_text
+
+            event_block = event_block_text(trigger_event["source"], trigger_event["text"], datetime.now(timezone.utc))
             base_message = (config.message or "").strip()
             config.message = (
                 f"{base_message}\n\n{event_block}" if base_message else event_block
