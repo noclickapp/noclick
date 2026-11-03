@@ -443,6 +443,87 @@ class TestCredentialRequestHTTPAPI:
         # Verify notification email was sent
         mock_send_email.assert_called_once()
 
+    SHEETS_SCOPES = [
+        'https://www.googleapis.com/auth/spreadsheets',
+        'https://www.googleapis.com/auth/drive.metadata.readonly',
+        'email',
+        'profile',
+    ]
+
+    @pytest.fixture
+    def google_sheets_request(self, db, setup_db, monkeypatch):
+        """A pending Sheets OAuth request whose Google exchange grants ``granted['scope']``."""
+        from types import SimpleNamespace
+
+        row = db.fetchrow(
+            "INSERT INTO credential_requests (requester_id, target_email, credential_type) "
+            "VALUES ($1, $2, 'google_sheets_oauth') RETURNING id, token",
+            TEST_USER_ID, TARGET_EMAIL,
+        )
+        granted = {'scope': ''}
+
+        async def exchange(code, redirect_uri, custom_client_id=None, custom_client_secret=None):
+            return (
+                SimpleNamespace(access_token='ya29', refresh_token='1//r', expires_at='2099-01-01T00:00:00+00:00',
+                                scope=granted['scope'], token_type='Bearer'),
+                SimpleNamespace(email=TARGET_EMAIL),
+            )
+
+        monkeypatch.setattr('nodes.oauth.google_oauth.exchange_code_for_tokens', exchange)
+        yield SimpleNamespace(request_id=str(row['id']), token=row['token'], granted=granted)
+        db.execute("DELETE FROM credentials WHERE credential_type = 'google_sheets_oauth'")
+
+    def _provide_google(self, token):
+        from utils.credential_request_routes import provide_credential, ProvideCredentialBody
+
+        return provide_credential(token, ProvideCredentialBody(
+            oauth_code='code-1', redirect_uri='https://noclick.test/api/auth/google/callback',
+            scopes=self.SHEETS_SCOPES,
+        ))
+
+    @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
+    async def test_provide_refuses_a_google_token_missing_a_requested_scope(
+        self, mock_send_email, real_database, db, google_sheets_request,
+    ):
+        """Unticking Sheets on Google's granular consent screen yields an identity-only token that fails every
+        Sheets call. The link refuses it, naming the box to tick, stores nothing, and stays open for a retry."""
+        from fastapi import HTTPException
+
+        google_sheets_request.granted['scope'] = (
+            'openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile'
+        )
+        with pytest.raises(HTTPException) as refused:
+            await self._provide_google(google_sheets_request.token)
+        assert refused.value.status_code == 400
+        assert refused.value.detail.startswith("Google didn't grant the Google Sheets and Google Drive permission.")
+
+        assert db.fetchrow("SELECT id FROM credentials WHERE credential_type = 'google_sheets_oauth'") is None
+        req = db.fetchrow("SELECT status, credential_id FROM credential_requests WHERE id = $1",
+                          google_sheets_request.request_id)
+        assert (req['status'], req['credential_id']) == ('pending', None)
+        mock_send_email.assert_not_awaited()
+
+    @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
+    async def test_provide_stores_a_full_google_grant_whose_identity_scopes_google_renamed(
+        self, mock_send_email, real_database, db, google_sheets_request,
+    ):
+        """Google grants ``email``/``profile`` as ``userinfo.*`` aliases; those never count as missing."""
+        from utils.encryption import get_encryption
+
+        google_sheets_request.granted['scope'] = (
+            'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.metadata.readonly '
+            'openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile'
+        )
+        result = await self._provide_google(google_sheets_request.token)
+        assert result['status'] == 'success'
+
+        row = db.fetchrow("SELECT credential, metadata FROM credentials WHERE id = $1::uuid", result['credential_id'])
+        data = get_encryption().decrypt_credential(row['credential'])
+        assert data['scope'] == google_sheets_request.granted['scope']
+        assert row['metadata']['scopes'] == self.SHEETS_SCOPES
+        req = db.fetchrow("SELECT status FROM credential_requests WHERE id = $1", google_sheets_request.request_id)
+        assert req['status'] == 'fulfilled'
+
     @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
     async def test_request_metadata_silences_the_requester_and_returns_the_person(
         self, mock_send_email, real_database, db, setup_db,

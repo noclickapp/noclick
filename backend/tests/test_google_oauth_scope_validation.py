@@ -3,17 +3,14 @@
 These guard the fix for Google's "granular consent" UX, where users can
 uncheck individual scopes on the consent screen while still clicking
 Continue — producing tokens that look fine to the OAuth callback but fail
-every API call at runtime. The handler now compares granted vs requested
-scopes and refuses the credential up-front.
+every API call at runtime. Every Google connect path compares granted vs
+requested scopes and refuses the credential up-front.
 """
 
 import pytest
 
-from wss.handlers.oauth.google_oauth_handler import (
-    GoogleOAuthHandler,
-    find_missing_granted_scopes,
-    format_missing_scopes_message,
-)
+from nodes.oauth.google_scopes import find_missing_granted_scopes, format_missing_scopes_message
+from wss.handlers.oauth.google_oauth_handler import GoogleOAuthHandler
 
 
 # ---------------------------------------------------------------------------

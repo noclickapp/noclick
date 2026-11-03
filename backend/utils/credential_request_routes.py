@@ -13,6 +13,7 @@ import asyncpg
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from nodes.oauth.google_scopes import find_missing_granted_scopes, format_missing_scopes_message
 from repositories.credentials import MAX_PROVISION_ATTEMPTS
 from repositories.organization import PRIMARY_ORG_SQL
 from repositories.users import user_label_sql
@@ -164,7 +165,8 @@ async def _exchange_oauth_code(
 ) -> dict[str, Any]:
     """Exchange an OAuth code for tokens and return credential_data dict.
     ``client``: an OAuth app of the requester's, which the credential keeps
-    (its refreshes run on it too)."""
+    (its refreshes run on it too). Raises 400 for a Google token missing a
+    requested API scope (granular consent), so it is never stored."""
     import importlib
 
     mod = importlib.import_module(f'nodes.oauth.{provider}_oauth')
@@ -192,6 +194,12 @@ async def _exchange_oauth_code(
         val = getattr(tokens, attr, None)
         if val is not None:
             credential_data[attr] = val
+
+    if provider == 'google':
+        missing = find_missing_granted_scopes(scopes, credential_data.get('scope'))
+        if missing:
+            logger.warning("Rejecting Google token missing scopes %s (granted=%r)", missing, credential_data.get('scope'))
+            raise HTTPException(status_code=400, detail=format_missing_scopes_message(missing))
 
     # Include user info email if available
     email = getattr(user_info, 'email', None) or getattr(user_info, 'name', None)
