@@ -38,6 +38,7 @@ interface UseWorkflowUndoRedoReturn {
     startBatch: () => void;
     endBatch: (nodes: Node[], edges: Edge[]) => void;
     resetBaseline: (nodes: Node[], edges: Edge[]) => void;
+    rebaseHistory: (change: (state: WorkflowState) => WorkflowState) => void;
 }
 
 /**
@@ -160,10 +161,10 @@ export function useWorkflowUndoRedo(
      * Re-anchor history at the given state: it becomes `present` with no
      * past/future. Called after the authoritative workflow:get load so undo
      * can never walk below the loaded graph — the hook mounts with an empty
-     * canvas. Without this reset, that empty state sits at the bottom of
-     * the stack and repeated undo can delete every loaded node. Also drops
-     * history from a
-     * previously-viewed workflow when the canvas switches ids in place.
+     * canvas, and without this reset that empty state sits at the bottom of
+     * the stack, making "undo a few times" equivalent to deleting every node.
+     * Also drops history from a previously-viewed workflow when the canvas
+     * switches ids in place.
      */
     const resetBaseline = useCallback((nodes: Node[], edges: Edge[]) => {
         historyRef.current = {
@@ -172,6 +173,16 @@ export function useWorkflowUndoRedo(
             future: [],
         };
         forceUpdate({});
+    }, []);
+
+    /**
+     * Apply a server's written change to every state in the history (past,
+     * present and future), so undo and redo walk the person's own edits on top
+     * of it and never put back what the server wrote.
+     */
+    const rebaseHistory = useCallback((change: (state: WorkflowState) => WorkflowState) => {
+        const { past, present, future } = historyRef.current;
+        historyRef.current = { past: past.map(change), present: change(present), future: future.map(change) };
     }, []);
 
     /**
@@ -370,5 +381,6 @@ export function useWorkflowUndoRedo(
         startBatch,
         endBatch,
         resetBaseline,
+        rebaseHistory,
     };
 }
