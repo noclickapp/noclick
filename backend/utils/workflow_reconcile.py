@@ -491,6 +491,13 @@ def _is_trigger(node: Dict[str, Any]) -> bool:
     return kind.startswith("trigger-") or bool(WebhookManager.node_webhook_field_for(kind, config.get("operation")))
 
 
+async def _active_webhook_nodes(pool, workflow_id: str) -> set:
+    from repositories.workflow import WorkflowRepo
+
+    async with pool.acquire() as conn:
+        return set(await WorkflowRepo(pool).get_active_webhook_node_ids(conn, uuid.UUID(str(workflow_id))))
+
+
 async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: Any, new_graph: Any,
                      deleted: Optional[Collection[str]]) -> None:
     """A job's work: raises ``ReconcileIncomplete`` when part of it failed (after doing the rest), so it's
@@ -549,6 +556,7 @@ async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: 
     # Triggers as they stand now: a later write's own job judges what it changed. One another job couldn't finish
     # registering is left to that job, so what it shows doesn't come and go with other steps' jobs.
     provisioned = []
+    live_rows = await _active_webhook_nodes(pool, workflow_id)
     for trigger in graph_nodes(now_graph):
         config = node_config(trigger)
         kind, node_id = trigger.get("type"), trigger.get("id")
@@ -570,7 +578,8 @@ async def _reconcile(pool, workflow_id: str, user_id: Optional[str], old_graph: 
             except Exception:
                 logger.warning("[reconcile] judging %s:%s again failed", workflow_id, node_id, exc_info=True)
             continue
-        if config.get("webhook_url") and not config.get("trigger_error"):
+        # The row, not the config mirror, says a trigger is live: a torn-down row keeps its mirrored webhook_url.
+        if config.get("webhook_url") and not config.get("trigger_error") and node_id in live_rows:
             continue
         try:
             if await unbound_issues(pool, workflow_id, now_graph, node_id):

@@ -100,9 +100,15 @@ def room():
 
 
 async def _workflow(db, graph=GRAPH, *, owner=OWNER, settings=None) -> str:
-    return str(await db.fetchval(
+    workflow_id = str(await db.fetchval(
         "INSERT INTO workflows (owner_id, name, workflow, settings) VALUES ($1::uuid, 'Flow', $2, $3) RETURNING id",
         owner, copy.deepcopy(graph), settings or {}))
+    # A trigger the graph shows registered has its webhooks row, the record of that registration.
+    for node in graph.get("nodes", []):
+        if (node.get("config") or {}).get("webhook_url"):
+            await db.execute("INSERT INTO webhooks (user_id, workflow_id, node_id, is_active) "
+                             "VALUES ($1::uuid, $2::uuid, $3, true)", owner, workflow_id, node["id"])
+    return workflow_id
 
 
 async def _graph(db, workflow_id):
