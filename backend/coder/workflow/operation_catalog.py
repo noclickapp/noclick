@@ -19,6 +19,7 @@ from nodes.core.registry import NODE_REGISTRY
 from nodes.agent.config.providers import (
     agent_credential_requirement,
     claude_plan_refusal,
+    codex_chatgpt_model_note,
     agent_credential_types,
 )
 from .workflow_ops import find_placeholder_tokens, misplaced_agent_model
@@ -921,6 +922,9 @@ def credential_status_line(
                 _attached_unhealthy_line(req.provider, attached_id, health)
                 or f"[credentials: {req.provider} ✓]"
             )
+            model_note = codex_chatgpt_model_note(config or {}, cred_ids)
+            if model_note:
+                base = f"{base} {model_note}"
         elif not req.required:
             base = "[credentials: not required — this model runs with no key]"
         else:

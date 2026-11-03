@@ -22,6 +22,10 @@ class CodexConfig(BaseAgentFields):
     codex_model: str = Field(
         default=harness_default_model("codex"),
         title="Codex Model",
+        description=(
+            "A ChatGPT sign-in runs the account's general models listed here. "
+            "Codex-family ids (e.g. gpt-5-codex) need an OpenAI API key."
+        ),
         json_schema_extra={
             "x-dynamic-options": {
                 "field_name": "codex_model",

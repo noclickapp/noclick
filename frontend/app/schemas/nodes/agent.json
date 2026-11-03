@@ -354,6 +354,7 @@
         },
         "codex_model": {
           "default": "gpt-5.6-luna",
+          "description": "A ChatGPT sign-in runs the account's general models listed here. Codex-family ids (e.g. gpt-5-codex) need an OpenAI API key.",
           "title": "Codex Model",
           "type": "string",
           "ui:show-if": {

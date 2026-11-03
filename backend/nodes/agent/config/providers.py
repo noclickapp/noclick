@@ -760,6 +760,28 @@ def claude_plan_refusal(config: Any, credential_ids: Optional[Dict[str, Any]]) -
     return CLAUDE_PLAN_REFUSAL if requirement and requirement.provider == "anthropic" else None
 
 
+def codex_chatgpt_model_note(config: Any, credential_ids: Optional[Dict[str, Any]]) -> Optional[str]:
+    """Which ``codex_model`` ids a ChatGPT sign-in takes, when one runs this Codex
+    agent; else None. Guidance for the builder, not a gate: custom ids stay allowed."""
+    from ._cli_models_loader import codex_chatgpt_models, harness_default_model, is_codex_family_model
+
+    match = match_model_credential(config, credential_ids)
+    if not match or match[0] != AGENT_OAUTH_CREDENTIAL_TYPES["codex"]:
+        return None
+    # The same sign-in runs openai/* on other harnesses, which have no codex_model.
+    requirement = _model_requirement(config)
+    if not requirement or requirement.provider != "codex":
+        return None
+    get = config.get if isinstance(config, dict) else (lambda k: getattr(config, k, None))
+    model = str(get("codex_model") or "").strip() or harness_default_model("codex")
+    verdict = f'codex_model "{model}" ✗. ' if is_codex_family_model(model) else ""
+    return (
+        f"[ChatGPT sign-in: {verdict}codex_model takes one of the account's general models "
+        f"({', '.join(codex_chatgpt_models())}), never a codex-family id like gpt-5-codex; "
+        "those are for an OpenAI API key, and a ChatGPT account rejects them (HTTP 400)]"
+    )
+
+
 def agent_credential_types() -> frozenset:
     """Every credential_type an agent credential can be stored under.
 

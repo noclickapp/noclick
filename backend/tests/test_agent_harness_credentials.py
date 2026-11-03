@@ -336,7 +336,9 @@ class TestCredentialStatusLine:
             "agent", None,
             {"model": "codex", "credentialIds": {"agent_codex_oauth": "c1"}}, "agent-1",
         )
-        assert line == "[credentials: codex ✓]"
+        # The sign-in satisfies the requirement; what follows is its model rule
+        # (TestCodexChatGPTModelGuidance).
+        assert line.startswith("[credentials: codex ✓] [ChatGPT sign-in:")
 
     def test_a_refused_claude_plan_says_why(self):
         line = credential_status_line(
@@ -357,6 +359,64 @@ class TestCredentialStatusLine:
             "[credentials: not required — this model runs on NoClick's "
             "platform key and is billed per use]"
         )
+
+
+class TestCodexChatGPTModelGuidance:
+    """A ChatGPT sign-in rejects codex-family ids (HTTP 400), which are what an
+    OpenAI API key needs for tools. The builder "fixed" a ChatGPT-signed-in Codex
+    agent by setting one, so the rule rides the status line the snapshot shows
+    beside codex_model. Guidance, not a gate: the field still takes any id."""
+
+    SIGNED_IN = {
+        "model": "codex", "codex_model": "gpt-6-luna",
+        "credentialIds": {"agent_codex_oauth": "c1"},
+    }
+
+    def _line(self, **overrides):
+        return credential_status_line("agent", None, {**self.SIGNED_IN, **overrides}, "agent-1")
+
+    def test_a_chatgpt_sign_in_names_the_models_it_takes(self):
+        from nodes.agent.config._cli_models_loader import codex_chatgpt_models
+
+        line = self._line()
+        assert line.startswith("[credentials: codex ✓] [ChatGPT sign-in: codex_model takes one of")
+        general = codex_chatgpt_models()
+        assert general and all(m in line for m in general)
+        assert "never a codex-family id like gpt-5-codex" in line
+        assert "OpenAI API key" in line
+        assert "✗" not in line
+
+    @pytest.mark.parametrize("model", ["gpt-5-codex", "gpt-5.1-codex"])
+    def test_a_codex_family_model_on_a_chatgpt_sign_in_is_flagged(self, model):
+        assert f'[ChatGPT sign-in: codex_model "{model}" ✗.' in self._line(codex_model=model)
+
+    @pytest.mark.parametrize("credential_ids", [
+        {"agent_codex": "key"},
+        # Both attached: the API key runs it (match_model_credential, as at run time).
+        {"agent_codex": "key", "agent_codex_oauth": "c1"},
+    ])
+    def test_no_note_when_an_api_key_runs_it(self, credential_ids):
+        line = self._line(codex_model="gpt-5-codex", credentialIds=credential_ids)
+        assert line == "[credentials: codex ✓]"
+
+    def test_no_codex_model_note_on_another_harness(self):
+        config = {
+            "model": "opencode", "opencode_model": "openai/gpt-5.5",
+            "credentialIds": {"agent_codex_oauth": "c1"},
+        }
+        assert credential_status_line("agent", None, config, "agent-1") == "[credentials: openai ✓]"
+
+    def test_the_snapshot_carries_it_beside_the_model(self):
+        xml = _agent_state(dict(self.SIGNED_IN)).to_xml()
+        assert 'codex_model="gpt-6-luna"' in xml
+        assert "[ChatGPT sign-in: codex_model takes one of" in xml
+
+    def test_the_picker_says_which_ids_need_an_api_key(self):
+        from nodes.agent.config._cli_models_loader import codex_chatgpt_models, codex_options
+
+        labels = {o["value"]: o["label"] for o in codex_options()}
+        assert labels["gpt-5-codex"] == "gpt-5-codex (OpenAI API key only)"
+        assert all(labels[m] == m for m in codex_chatgpt_models())
 
 
 class TestOpenCodeRunsZensFreeModelsWithNoKey:

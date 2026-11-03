@@ -73,6 +73,18 @@ def codex_models() -> List[str]:
     return models + [m for m in block.get("extra_models") or [] if m not in models]
 
 
+def is_codex_family_model(model: str) -> bool:
+    """A codex-family id (gpt-5-codex, gpt-5.1-codex, ...): the API-key path's
+    tool-capable models, which a ChatGPT sign-in rejects (HTTP 400)."""
+    return "codex" in (model or "").lower()
+
+
+def codex_chatgpt_models() -> List[str]:
+    """The models a ChatGPT sign-in runs: the binary's picker list, without the
+    codex-family extras."""
+    return [m for m in _load()["codex"]["models"] if not is_codex_family_model(m)]
+
+
 def codex_retired_models() -> Dict[str, str]:
     """Ids codex hides from its picker but still serves, mapped to the
     replacement it names. Gates accept them so a saved config keeps running;
@@ -110,8 +122,12 @@ def claude_code_aliases() -> Dict[str, str]:
 
 
 def codex_options() -> List[Dict[str, str]]:
-    """`{value, label}` entries for the Codex model dropdown."""
-    return [{"value": m, "label": m} for m in codex_models()]
+    """`{value, label}` entries for the Codex model dropdown. Codex-family ids
+    say they need an API key: the picker can't tell which credential runs."""
+    return [
+        {"value": m, "label": f"{m} (OpenAI API key only)" if is_codex_family_model(m) else m}
+        for m in codex_models()
+    ]
 
 
 def claude_code_options() -> List[Dict[str, str]]:
