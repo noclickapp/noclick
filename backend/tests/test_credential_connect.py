@@ -123,6 +123,29 @@ def test_shape_refuses_placeholder_secrets():
     assert "placeholder" in errors["api_key"]
 
 
+def test_shape_refuses_a_key_holding_a_character_no_key_has():
+    # A pasted Exa key carried an em dash: saved unverified, every call failed on "'ascii' codec can't encode".
+    _, errors, _ = cc.shape_credential("exa_api_key", {"api_key": "a1b2c3d4—e5f6"})
+    assert errors == {"api_key": (
+        "API Key contains em dash (U+2014), which no key has: it probably came along with the copy. "
+        "Paste the value again from where it was made."
+    )}
+
+
+@pytest.mark.parametrize("credential_type", sorted(cc._class_index()))
+def test_every_issued_key_is_ascii_and_every_password_may_hold_any_character(credential_type):
+    from nodes.core.credential_fields import looks_like_key_field
+
+    _, cls = cc._class_index()[credential_type]
+    secrets = cc._secret_fields(cls)
+    if not secrets:
+        pytest.skip("no secret-shaped field")
+    _, errors, _ = cc.shape_credential(credential_type, {name: "s3crét​value" for name in secrets})
+    for name in secrets:
+        refused = "which no key has" in errors.get(name, "")
+        assert refused == looks_like_key_field(name), (credential_type, name, errors)
+
+
 def test_unknown_types_pass_through_stripped():
     data, errors, resolved = cc.shape_credential("not_a_node_type", {"k": " v "})
     assert (data, errors, resolved) == ({"k": "v"}, {}, None)

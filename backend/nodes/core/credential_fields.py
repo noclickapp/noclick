@@ -14,6 +14,7 @@ without any declaration, so a class only declares what is specific to it.
 from __future__ import annotations
 
 import re
+import unicodedata
 from typing import Optional
 from urllib.parse import urlsplit
 
@@ -27,6 +28,9 @@ _PLACEHOLDER = re.compile(
 )
 _SECRET_FIELD = re.compile(r"(?:^|_)(?:api_?key|key|token|secret|password|passwd|pat)(?:_|$)", re.I)
 _ADDRESS_FIELD = re.compile(r"url|uri|host|domain|endpoint", re.I)
+# Issued values: what a provider mints. A secret or password a person may have chosen is left out.
+_KEY_FIELD = re.compile(r"(?:^|_)(?:api_?key|key|token|pat)(?:_|$)", re.I)
+_PASSWORD_FIELD = re.compile(r"pass(?:word|wd|phrase)", re.I)
 
 
 def is_url_shaped(value: object) -> bool:
@@ -51,11 +55,20 @@ def looks_like_address_field(name: str) -> bool:
     return bool(_ADDRESS_FIELD.search(name or ""))
 
 
-def clean_secret(value: object, *, field_name: str = "This value") -> str:
+def looks_like_key_field(name: str) -> bool:
+    """Secret fields holding a key or token a provider issued, which travel in a
+    header and so are ASCII; a password a person chose may hold any character."""
+    return (bool(_KEY_FIELD.search(name or "")) and looks_like_secret_field(name)
+            and not _PASSWORD_FIELD.search(name or ""))
+
+
+def clean_secret(value: object, *, field_name: str = "This value", key: bool = False) -> str:
     """A secret with the paste noise removed, or a ValueError naming what is wrong.
 
     Emptiness is left to the schema (required vs optional); this only judges
-    values that are present.
+    values that are present. A ``key`` (an issued key or token) holds ASCII only:
+    a curly quote, a dash a keyboard autocorrected or an invisible space can't be
+    sent, and every call with it failed on encoding instead of reaching the provider.
     """
     text = (value if isinstance(value, str) else str(value or "")).strip()
     if not text:
@@ -67,6 +80,13 @@ def clean_secret(value: object, *, field_name: str = "This value") -> str:
         )
     if is_placeholder(text):
         raise ValueError(f"{field_name} still holds placeholder text.")
+    stray = next((ch for ch in text if ord(ch) > 127), None) if key else None
+    if stray is not None:
+        name = unicodedata.name(stray, "a non-ASCII character").lower()
+        raise ValueError(
+            f"{field_name} contains {name} (U+{ord(stray):04X}), which no key has: it probably came "
+            f"along with the copy. Paste the value again from where it was made."
+        )
     return text
 
 

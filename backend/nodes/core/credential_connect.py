@@ -53,7 +53,9 @@ from nodes.core.connection_evidence import (
     FieldLabels,
     collect_evidence as _collect_evidence,
 )
-from nodes.core.credential_fields import clean_secret, looks_like_address_field, looks_like_secret_field
+from nodes.core.credential_fields import (
+    clean_secret, looks_like_address_field, looks_like_key_field, looks_like_secret_field,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -268,7 +270,7 @@ def shape_credential(
         value = data.get(name)
         if isinstance(value, str) and value:
             try:
-                data[name] = clean_secret(value, field_name=title)
+                data[name] = clean_secret(value, field_name=title, key=looks_like_key_field(name))
             except ValueError as e:
                 errors[name] = str(e)
     if errors:
