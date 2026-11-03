@@ -50,6 +50,13 @@ POSITIVE_CORPUS = [
     ("anthropic", "plan_limit", "You've hit your Fable limit · resets 2am (UTC)"),
     ("anthropic", "plan_limit", "You've hit your usage limit · contact your admin to increase it"),
     ("anthropic", "plan_limit", "You've hit your limit · resets 2am (UTC)"),
+    # The CLI's other refusals on a sign-in (2.1.317): spend caps, a team's pool, usage credits.
+    ("anthropic", "plan_limit", "You've hit your monthly spend limit · your weekly limit resets Mon 9am"),
+    ("anthropic", "plan_limit", "You've hit your monthly spend limit. Switch to another model to continue."),
+    ("anthropic", "plan_limit", "You've hit your channel's monthly spend limit. Switch to another model to continue."),
+    ("anthropic", "plan_limit", "You've hit your team's shared budget. /model to switch models."),
+    ("anthropic", "plan_limit", "You're out of usage credits. Run /usage-credits to keep using Opus"),
+    ("anthropic", "plan_limit", "Your org is out of usage · add funds to continue"),
     # OpenAI — quota exhaustion rides a 429 with the insufficient_quota slug.
     ("openai", "no_credits",
      "Error code: 429 - {'error': {'message': 'You exceeded your current quota, "
@@ -126,6 +133,8 @@ NEGATIVE_RESPONSES = [
     "You've hit your weekly limit of 5 posts on Buffer, so I skipped today's.",
     "The Sheets API says you've hit your usage limit",
     "Done. You've hit your 5-hour limit on the trial; next window opens at 6pm.",
+    "You've hit your monthly spend limit on Google Ads, so I paused the campaign",
+    "You're out of usage credits on Apify, top up there to keep scraping",
 ]
 
 

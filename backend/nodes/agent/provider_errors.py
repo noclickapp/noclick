@@ -163,6 +163,11 @@ _RULES: Tuple[_Rule, ...] = (
     # limit" about some other service stays a reply.
     _r("anthropic", "plan_limit",
        r"you've hit your (?:(?:5-hour|session|weekly|opus|sonnet|fable|usage) )?limit\s*[·∙]"),
+    # The CLI's other lines for a turn it won't run on a sign-in: spend caps, a team's pool, usage
+    # credits spent. Each is the CLI's own wording up to its first stop, not a phrase a reply uses.
+    _r("anthropic", "plan_limit",
+       r"you've hit your (?:channel's )?monthly spend limit\s*[.·∙]|you've hit your team's shared budget\."
+       r"|you're out of usage credits\.|your org is out of usage\s*[·∙]"),
     # ── OpenAI ────────────────────────────────────────────────────────────
     _r("openai", "no_credits", r"insufficient_quota"),
     _r("openai", "no_credits", r"exceeded your current quota"),
