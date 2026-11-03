@@ -2957,6 +2957,20 @@ class NoClickMCPServer(DatabasePoolMixin):
             if renamed:
                 workflow_renamed = {"from": load_meta.get("name"), "to": renamed}
 
+            # A trigger refused for setup this write may have finished (a step's
+            # account connected, its settings completed, the step removed) is
+            # judged again once the graph is saved.
+            from utils.graph_nodes import node_config
+            from utils.workflow_readiness import is_activation_refusal
+
+            if any(is_activation_refusal(node_config(n).get("trigger_error")) for n in data.get("nodes", [])):
+                async def _retry_refused(pool, graph=data, by=user_id):
+                    from utils.workflow_reconcile import retry_refused
+
+                    await retry_refused(pool, workflow_id, by, graph)
+
+                deferred_webhook_hooks.append(_retry_refused)
+
             # Deferred webhook lifecycle hooks — AFTER the save, so the
             # reconciler's desired-state read sees the graph these ops built.
             # Spawned: provider round-trips must not sit on the MCP response.
