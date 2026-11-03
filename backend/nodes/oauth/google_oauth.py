@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
 GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo"
+# A large document or calendar can take Google past httpx's 5s default, which fails with an empty ReadTimeout.
+GOOGLE_API_TIMEOUT = httpx.Timeout(60.0, connect=10.0)
 
 
 class GoogleTokens(BaseModel):
