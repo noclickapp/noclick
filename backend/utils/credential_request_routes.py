@@ -807,6 +807,10 @@ async def _sign_in_for_request(pool, row, credential_type: str, provider: str,
               'code_verifier': body.code_verifier}
     if body.scopes is not None:
         inputs['scopes'] = body.scopes
+    # A page from before the link sent its form's inputs names no credential: it's named for its method, as the
+    # form's own default names it.
+    inputs.setdefault('credential_name', (_get_credential_method(credential_type) or {}).get('label')
+                      or f'{provider.title()} Account')
     client = await _oauth_app(pool, row, provider)
     if client is not None:
         named = client_fields(provider, client)

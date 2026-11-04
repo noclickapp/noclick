@@ -504,6 +504,21 @@ class TestCredentialRequestHTTPAPI:
         mock_send_email.assert_not_awaited()
 
     @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
+    async def test_a_page_that_sends_no_form_inputs_still_signs_in(
+        self, mock_send_email, real_database, db, google_sheets_request,
+    ):
+        """noclick.com's page can trail the backend: one that sends only the code (no ``oauth_inputs``) still signs
+        in, its credential named for its method as the form would name it."""
+        from utils.credential_request_routes import ProvideCredentialBody, provide_credential
+
+        google_sheets_request.granted['scope'] = ' '.join(self.SHEETS_SCOPES)
+        result = await provide_credential(google_sheets_request.token, ProvideCredentialBody(
+            oauth_code='code-1', redirect_uri='https://noclick.test/api/auth/google/callback', scopes=self.SHEETS_SCOPES))
+        assert result['status'] == 'success'
+        row = db.fetchrow("SELECT name, credential_type FROM credentials WHERE id = $1::uuid", result['credential_id'])
+        assert row['credential_type'] == 'google_sheets_oauth' and row['name']
+
+    @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
     async def test_provide_stores_a_full_google_grant_whose_identity_scopes_google_renamed(
         self, mock_send_email, real_database, db, google_sheets_request,
     ):
