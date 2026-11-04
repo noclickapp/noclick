@@ -9,11 +9,12 @@ import { ResourceDownloadUrlRequest } from '~/types/socket-events.generated';
 const WORKFLOW_RESOURCE_ID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export function isWorkflowResourceId(value: string): boolean {
-  return WORKFLOW_RESOURCE_ID_RE.test(value.trim());
+// Stored config is untyped JSON: anything that isn't a string is not an id.
+export function isWorkflowResourceId(value: unknown): value is string {
+  return typeof value === 'string' && WORKFLOW_RESOURCE_ID_RE.test(value.trim());
 }
 
-export function useRenewableResourceUrl(value: string) {
+export function useRenewableResourceUrl(value: unknown) {
   const resourceId = isWorkflowResourceId(value) ? value.trim() : null;
   const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
   const [resolving, setResolving] = useState(false);
@@ -50,7 +51,7 @@ export function useRenewableResourceUrl(value: string) {
   }, [resourceId]);
 
   return {
-    url: resourceId ? resolvedUrl : value,
+    url: resourceId ? resolvedUrl : typeof value === 'string' ? value : null,
     isResourceId: resourceId !== null,
     resolving,
     error,

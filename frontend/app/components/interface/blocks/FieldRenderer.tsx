@@ -229,7 +229,7 @@ export function FieldRenderer({
 
       {field.type === 'list' && (
         <ListField
-          items={Array.isArray(value) ? (value as string[]) : []}
+          items={Array.isArray(value) ? value : []}
           placeholder={field.placeholder}
           onChange={(items) => onChange(field.id, items)}
         />
@@ -447,7 +447,7 @@ function ListField({
   placeholder,
   onChange,
 }: {
-  items: string[];
+  items: readonly unknown[];
   placeholder?: string;
   onChange: (items: string[]) => void;
 }) {

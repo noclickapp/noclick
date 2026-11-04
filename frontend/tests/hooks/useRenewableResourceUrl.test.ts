@@ -9,7 +9,10 @@ vi.mock('~/lib/socket-sender', () => ({
   sendEventAsync: (...args: unknown[]) => sendEventAsync(...args),
 }));
 
-import { useRenewableResourceUrl } from '~/hooks/useRenewableResourceUrl';
+import {
+  isWorkflowResourceId,
+  useRenewableResourceUrl,
+} from '~/hooks/useRenewableResourceUrl';
 
 const RESOURCE_ID = '12345678-1234-1234-1234-1234567890ab';
 
@@ -24,6 +27,20 @@ describe('useRenewableResourceUrl', () => {
     );
 
     expect(result.current.url).toBe('https://example.test/file.png');
+    expect(result.current.isResourceId).toBe(false);
+    expect(sendEventAsync).not.toHaveBeenCalled();
+  });
+
+  it('treats a non-string stored value as not a resource ID', () => {
+    const stored = [
+      { hour: 9, minute: 0, dayOfWeek: 1, frequency: 'day', dayOfMonth: 1 },
+    ];
+    expect(isWorkflowResourceId(stored)).toBe(false);
+    expect(isWorkflowResourceId(stored[0])).toBe(false);
+
+    const { result } = renderHook(() => useRenewableResourceUrl(stored[0]));
+
+    expect(result.current.url).toBeNull();
     expect(result.current.isResourceId).toBe(false);
     expect(sendEventAsync).not.toHaveBeenCalled();
   });

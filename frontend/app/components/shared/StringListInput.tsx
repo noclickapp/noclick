@@ -7,6 +7,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 
+// Stored lists are untyped JSON and can hold non-strings (e.g. a dragged-in
+// object); show those as JSON text instead of crashing on `.trim()`.
+const toRowText = (item: unknown): string =>
+    typeof item === 'string' ? item : item == null ? '' : JSON.stringify(item);
+
 export function StringListInput({
     value,
     onChange,
@@ -14,7 +19,7 @@ export function StringListInput({
     inputClassName,
     trailingClassName = '',
 }: {
-    value: string[];
+    value: readonly unknown[];
     onChange: (next: string[]) => void;
     placeholder?: string;
     /** Applied to every row input. */
@@ -23,16 +28,17 @@ export function StringListInput({
     trailingClassName?: string;
 }) {
     const project = (rs: string[]) => rs.map(r => r.trim()).filter(r => r !== '');
-    const [rows, setRows] = useState<string[]>(() => [...value, '']);
+    const [rows, setRows] = useState<string[]>(() => [...value.map(toRowText), '']);
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     // Adopt external value changes (AI builder edit, reference drop, reset)
     // without clobbering the in-progress trailing box: reset only when the
     // saved projection actually diverges from the incoming value.
     useEffect(() => {
+        const incoming = value.map(toRowText);
         const current = project(rows);
-        const same = current.length === value.length && current.every((v, i) => v === value[i]);
-        if (!same) setRows([...value, '']);
+        const same = current.length === incoming.length && current.every((v, i) => v === incoming[i]);
+        if (!same) setRows([...incoming, '']);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value]);
 
