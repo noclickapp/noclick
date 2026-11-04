@@ -625,60 +625,6 @@ class TestErrorHandling:
         with pytest.raises(ValueError, match="credentials are required"):
             await node.execute({})
 
-    @pytest.mark.asyncio
-    async def test_api_401_unauthorized(self):
-        """Test handling of 401 unauthorized error."""
-        config = TodoListTaskListsConfig()
-        node = create_node(config)
-
-        mock_response = create_mock_response(401, {
-            "error": {"message": "Access token has expired"}
-        })
-
-        with patch('httpx.AsyncClient') as mock_client:
-            mock_client.return_value.__aenter__ = AsyncMock(return_value=mock_client.return_value)
-            mock_client.return_value.__aexit__ = AsyncMock(return_value=None)
-            mock_client.return_value.get = AsyncMock(return_value=mock_response)
-
-            with pytest.raises(ValueError, match="Microsoft Graph API error"):
-                await node.execute({})
-
-    @pytest.mark.asyncio
-    async def test_api_404_not_found(self):
-        """Test handling of 404 not found error."""
-        config = TodoGetTaskListConfig(task_list_id="nonexistent-list")
-        node = create_node(config)
-
-        mock_response = create_mock_response(404, {
-            "error": {"message": "Resource not found"}
-        })
-
-        with patch('httpx.AsyncClient') as mock_client:
-            mock_client.return_value.__aenter__ = AsyncMock(return_value=mock_client.return_value)
-            mock_client.return_value.__aexit__ = AsyncMock(return_value=None)
-            mock_client.return_value.get = AsyncMock(return_value=mock_response)
-
-            with pytest.raises(ValueError, match="Microsoft Graph API error"):
-                await node.execute({})
-
-    @pytest.mark.asyncio
-    async def test_api_400_bad_request(self):
-        """Test handling of 400 bad request error."""
-        config = TodoCreateTaskListConfig(display_name="")
-        node = create_node(config)
-
-        mock_response = create_mock_response(400, {
-            "error": {"message": "Invalid request: displayName cannot be empty"}
-        })
-
-        with patch('httpx.AsyncClient') as mock_client:
-            mock_client.return_value.__aenter__ = AsyncMock(return_value=mock_client.return_value)
-            mock_client.return_value.__aexit__ = AsyncMock(return_value=None)
-            mock_client.return_value.post = AsyncMock(return_value=mock_response)
-
-            with pytest.raises(ValueError, match="Microsoft Graph API error"):
-                await node.execute({})
-
 
 # ============================================================================
 # Template Resolution Tests

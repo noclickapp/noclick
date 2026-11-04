@@ -153,7 +153,6 @@ class TestKlaviyoRevoke:
         mock_post.assert_not_called()
 
 
-
 class TestKlaviyoJsonApi:
     @pytest.mark.asyncio
     async def test_create_profile_body(self, api_key_credentials):

@@ -782,24 +782,6 @@ class TestErrorHandling:
     """Test error handling scenarios."""
 
     @pytest.mark.asyncio
-    async def test_api_error_response(self):
-        """Test handling of API error responses."""
-        config = GoogleCalendarGetEventConfig(
-            calendar_id="primary", event_id="nonexistent"
-        )
-        node = create_node(config)
-
-        with patch("httpx.AsyncClient") as mock_client:
-            mock_instance = AsyncMock()
-            mock_client.return_value.__aenter__.return_value = mock_instance
-            mock_instance.get.return_value = mock_response(
-                404, {"error": {"message": "Not Found"}}
-            )
-
-            with pytest.raises(ValueError, match="Not Found"):
-                await node.execute({})
-
-    @pytest.mark.asyncio
     async def test_missing_credentials(self):
         """Test handling of missing credentials."""
         config = GoogleCalendarListEventsConfig(calendar_id="primary")

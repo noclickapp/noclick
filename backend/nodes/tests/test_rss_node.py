@@ -141,23 +141,6 @@ class TestMinifluxOperations:
             api_token=MINIFLUX_API_TOKEN or "test-token-123",
         )
 
-    def _should_skip(self) -> bool:
-        """Check if Miniflux tests should be skipped."""
-        return not (MINIFLUX_SERVER_URL and MINIFLUX_API_TOKEN)
-
-    @pytest.mark.asyncio
-    async def test_get_feeds(self):
-        """Test getting all feeds."""
-        if self._should_skip():
-            pytest.skip("No Miniflux credentials provided")
-            return
-
-        config = MinifluxGetFeedsConfig()
-        node = create_node(config, self._create_credential())
-        result = await node.execute({})
-
-        assert result["action"] == "get_miniflux_feeds"
-
     @pytest.mark.asyncio
     async def test_discover_feed_routing(self):
         """Test discovering feed URL from website."""
@@ -276,23 +259,6 @@ class TestFeedlyOperations:
         """Create Feedly credential for testing."""
         return RSSFeedlyCredential(access_token=FEEDLY_ACCESS_TOKEN or "test-token-123")
 
-    def _should_skip(self) -> bool:
-        """Check if Feedly tests should be skipped."""
-        return not FEEDLY_ACCESS_TOKEN
-
-    @pytest.mark.asyncio
-    async def test_get_subscriptions(self):
-        """Test getting all subscriptions."""
-        if self._should_skip():
-            pytest.skip("No Feedly credentials provided")
-            return
-
-        config = FeedlyGetSubscriptionsConfig()
-        node = create_node(config, self._create_credential())
-        result = await node.execute({})
-
-        assert result["action"] == "get_feedly_subscriptions"
-
     @pytest.mark.asyncio
     async def test_get_stream_contents_routing(self):
         """Test getting stream contents."""
@@ -392,23 +358,6 @@ class TestFreshRSSOperations:
             api_password=FRESHRSS_API_PASSWORD or "testpass",
         )
 
-    def _should_skip(self) -> bool:
-        """Check if FreshRSS tests should be skipped."""
-        return not (FRESHRSS_SERVER_URL and FRESHRSS_USERNAME and FRESHRSS_API_PASSWORD)
-
-    @pytest.mark.asyncio
-    async def test_get_subscriptions(self):
-        """Test getting all subscriptions."""
-        if self._should_skip():
-            pytest.skip("No FreshRSS credentials provided")
-            return
-
-        config = FreshRSSGetSubscriptionsConfig()
-        node = create_node(config, self._create_credential())
-        result = await node.execute({})
-
-        assert result["action"] == "get_freshrss_subscriptions"
-
     @pytest.mark.asyncio
     async def test_get_stream_contents_routing(self):
         """Test getting items/entries."""
@@ -448,10 +397,6 @@ class TestRSSAppOperations:
             api_key=RSSAPP_API_KEY or "test-api-key",
             secret_key=RSSAPP_SECRET_KEY or "test-secret-key",
         )
-
-    def _should_skip(self) -> bool:
-        """Check if RSS.app tests should be skipped."""
-        return not (RSSAPP_API_KEY and RSSAPP_SECRET_KEY)
 
     @pytest.mark.asyncio
     async def test_list_feeds_routing(self):

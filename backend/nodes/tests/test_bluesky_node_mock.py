@@ -490,13 +490,6 @@ class TestAccountCreationOperations:
     """Mock tests for account creation and invite operations."""
 
     @pytest.mark.asyncio
-    async def test_create_account(self):
-        """Test create_account - REMOVED (operation no longer exists)."""
-        pytest.skip(
-            "create_account operation removed - requires email/phone verification"
-        )
-
-    @pytest.mark.asyncio
     async def test_create_invite_code(self):
         """Test create_invite_code routing - MOCKED (requires admin)."""
         config = BlueSkyCreateInviteCodeConfig(use_count=1)

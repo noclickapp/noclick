@@ -635,12 +635,6 @@ class TestFeedOperations:
         assert result["action"] == "get_custom_feed_posts"
 
     @pytest.mark.asyncio
-    async def test_get_list_feed(self):
-        """Test get_list_feed operation."""
-        # Requires a valid list URI - skip if not available
-        pytest.skip("Requires valid list URI")
-
-    @pytest.mark.asyncio
     async def test_get_feed_skeleton(self):
         """Test get_feed_skeleton operation."""
         config = BlueSkyGetFeedSkeletonConfig(
@@ -853,12 +847,6 @@ class TestGraphOperations:
         assert result["action"] == "unmute_actor"
 
     @pytest.mark.asyncio
-    async def test_block_user(self):
-        """Test block_user operation."""
-        # Use a test DID instead of creating a real block
-        pytest.skip("Skipping to avoid creating real blocks")
-
-    @pytest.mark.asyncio
     async def test_get_blocks(self):
         """Test get_blocks operation."""
         config = BlueSkyGetBlocksConfig(limit=10)
@@ -867,11 +855,6 @@ class TestGraphOperations:
         )
 
         assert result["action"] == "list_blocked_accounts"
-
-    @pytest.mark.asyncio
-    async def test_unblock_user(self):
-        """Test unblock_user operation."""
-        pytest.skip("Requires valid block URI")
 
     @pytest.mark.asyncio
     async def test_mute_thread(self):
@@ -898,11 +881,6 @@ class TestGraphOperations:
         )
 
         assert result["action"] == "unmute_thread"
-
-    @pytest.mark.asyncio
-    async def test_get_list(self):
-        """Test get_list operation."""
-        pytest.skip("Requires valid list URI")
 
     @pytest.mark.asyncio
     async def test_get_lists(self):
@@ -943,21 +921,6 @@ class TestGraphOperations:
         )
 
         assert result["action"] == "list_actor_membership_lists"
-
-    @pytest.mark.asyncio
-    async def test_mute_actor_list(self):
-        """Test mute_actor_list operation."""
-        pytest.skip("Requires valid list URI")
-
-    @pytest.mark.asyncio
-    async def test_unmute_actor_list(self):
-        """Test unmute_actor_list operation."""
-        pytest.skip("Requires valid list URI")
-
-    @pytest.mark.asyncio
-    async def test_get_starter_pack(self):
-        """Test get_starter_pack operation."""
-        pytest.skip("Requires valid starter pack URI")
 
     @pytest.mark.asyncio
     async def test_get_starter_packs(self):
@@ -1065,11 +1028,6 @@ class TestIdentityOperations:
         )
 
         assert result["action"] == "get_recommended_did_credentials"
-
-    @pytest.mark.asyncio
-    async def test_update_handle(self):
-        """Test update_handle operation - SKIPPED to avoid account changes."""
-        pytest.skip("Skipping to avoid modifying account handle")
 
 
 # ============================================================================
@@ -1181,21 +1139,6 @@ class TestNotificationOperations:
 
         assert result["action"] == "update_notification_preferences"
 
-    @pytest.mark.asyncio
-    async def test_list_activity_subscriptions(self):
-        """Test list_activity_subscriptions operation."""
-        pytest.skip("Requires activity subscriptions feature")
-
-    @pytest.mark.asyncio
-    async def test_register_push(self):
-        """Test register_push operation."""
-        pytest.skip("Requires push token and platform details")
-
-    @pytest.mark.asyncio
-    async def test_unregister_push(self):
-        """Test unregister_push operation."""
-        pytest.skip("Requires push token")
-
 
 # ============================================================================
 # Chat Operations Tests (18 operations)
@@ -1226,56 +1169,6 @@ class TestChatOperations:
         assert result["action"] == "check_conversation_availability"
 
     @pytest.mark.asyncio
-    async def test_get_conversation_log(self):
-        """Test get_conversation_log operation."""
-        pytest.skip("Requires valid conversation")
-
-    @pytest.mark.asyncio
-    async def test_get_conversation(self):
-        """Test get_conversation operation."""
-        pytest.skip("Requires valid conversation ID")
-
-    @pytest.mark.asyncio
-    async def test_get_conversation_for_members(self):
-        """Test get_conversation_for_members operation."""
-        pytest.skip("Requires valid member DIDs")
-
-    @pytest.mark.asyncio
-    async def test_get_messages(self):
-        """Test get_messages operation."""
-        pytest.skip("Requires valid conversation ID")
-
-    @pytest.mark.asyncio
-    async def test_send_message(self):
-        """Test send_message operation."""
-        pytest.skip("Requires valid conversation ID")
-
-    @pytest.mark.asyncio
-    async def test_send_message_batch(self):
-        """Test send_message_batch operation."""
-        pytest.skip("Requires valid conversation IDs")
-
-    @pytest.mark.asyncio
-    async def test_delete_message(self):
-        """Test delete_message operation."""
-        pytest.skip("Requires valid message ID")
-
-    @pytest.mark.asyncio
-    async def test_add_message_reaction(self):
-        """Test add_message_reaction operation."""
-        pytest.skip("Requires valid message ID")
-
-    @pytest.mark.asyncio
-    async def test_remove_message_reaction(self):
-        """Test remove_message_reaction operation."""
-        pytest.skip("Requires valid message ID and reaction")
-
-    @pytest.mark.asyncio
-    async def test_update_conversation_read(self):
-        """Test update_conversation_read operation."""
-        pytest.skip("Requires valid conversation ID")
-
-    @pytest.mark.asyncio
     async def test_update_all_read(self):
         """Test update_all_read operation."""
         config = BlueSkyUpdateAllReadConfig()
@@ -1284,31 +1177,6 @@ class TestChatOperations:
         )
 
         assert result["action"] == "mark_all_messages_read"
-
-    @pytest.mark.asyncio
-    async def test_accept_conversation(self):
-        """Test accept_conversation operation."""
-        pytest.skip("Requires valid conversation ID")
-
-    @pytest.mark.asyncio
-    async def test_leave_conversation(self):
-        """Test leave_conversation operation."""
-        pytest.skip("Requires valid conversation ID")
-
-    @pytest.mark.asyncio
-    async def test_mute_conversation(self):
-        """Test mute_conversation operation."""
-        pytest.skip("Requires valid conversation ID")
-
-    @pytest.mark.asyncio
-    async def test_unmute_conversation(self):
-        """Test unmute_conversation operation."""
-        pytest.skip("Requires valid conversation ID")
-
-    @pytest.mark.asyncio
-    async def test_delete_chat_account(self):
-        """Test delete_chat_account - SKIPPED for safety."""
-        pytest.skip("Skipping destructive operation")
 
 
 # ============================================================================
@@ -1328,16 +1196,6 @@ class TestVideoOperations:
         )
 
         assert result["action"] == "get_video_upload_limits"
-
-    @pytest.mark.asyncio
-    async def test_upload_video(self):
-        """Test upload_video operation."""
-        pytest.skip("Requires video file data")
-
-    @pytest.mark.asyncio
-    async def test_get_video_job_status(self):
-        """Test get_video_job_status operation."""
-        pytest.skip("Requires valid job ID")
 
 
 # ============================================================================
@@ -1378,15 +1236,6 @@ class TestRepositoryOperations:
         assert result["action"] == "list_repository_records"
 
     @pytest.mark.asyncio
-    async def test_get_record(self):
-        """Test get_record operation."""
-        if not TEST_DATA["post_uri"]:
-            pytest.skip("No post URI available")
-
-        # Parse URI to extract repo and rkey
-        pytest.skip("Requires URI parsing")
-
-    @pytest.mark.asyncio
     async def test_create_record(self):
         """Test create_record operation."""
         if not TEST_DATA["did"]:
@@ -1405,26 +1254,6 @@ class TestRepositoryOperations:
         )
 
         assert result["action"] == "create_repository_record"
-
-    @pytest.mark.asyncio
-    async def test_put_record(self):
-        """Test put_record operation."""
-        pytest.skip("Requires valid rkey and record")
-
-    @pytest.mark.asyncio
-    async def test_delete_record(self):
-        """Test delete_record operation."""
-        pytest.skip("Requires valid rkey")
-
-    @pytest.mark.asyncio
-    async def test_upload_blob(self):
-        """Test upload_blob operation."""
-        pytest.skip("Requires blob data")
-
-    @pytest.mark.asyncio
-    async def test_apply_writes(self):
-        """Test apply_writes operation."""
-        pytest.skip("Requires write operations array")
 
 
 # ============================================================================
@@ -1454,11 +1283,6 @@ class TestAgeAssuranceOperations:
         )
 
         assert result["action"] == "get_age_assurance_state"
-
-    @pytest.mark.asyncio
-    async def test_begin_age_assurance(self):
-        """Test begin_age_assurance - SKIPPED for safety."""
-        pytest.skip("Skipping age assurance flow")
 
 
 # ============================================================================
@@ -1492,11 +1316,6 @@ class TestLabelerModerationOperations:
         )
 
         assert result["action"] == "query_content_labels"
-
-    @pytest.mark.asyncio
-    async def test_create_moderation_report(self):
-        """Test create_moderation_report operation."""
-        pytest.skip("Skipping to avoid creating false reports")
 
 
 # ============================================================================
@@ -1580,87 +1399,6 @@ class TestServerOperations:
         assert result["action"] == "get_service_auth_token"
 
     # Skipping destructive account operations for safety
-    @pytest.mark.asyncio
-    async def test_create_app_password(self):
-        """Test create_app_password - SKIPPED for safety."""
-        pytest.skip("Skipping to avoid creating app passwords during tests")
-
-    @pytest.mark.asyncio
-    async def test_revoke_app_password(self):
-        """Test revoke_app_password - SKIPPED for safety."""
-        pytest.skip("Skipping to avoid revoking app passwords during tests")
-
-    @pytest.mark.asyncio
-    async def test_delete_session(self):
-        """Test delete_session - SKIPPED for safety."""
-        pytest.skip("Skipping to avoid deleting active session")
-
-    @pytest.mark.asyncio
-    async def test_deactivate_account(self):
-        """Test deactivate_account - SKIPPED for safety."""
-        pytest.skip("Skipping destructive operation")
-
-    @pytest.mark.asyncio
-    async def test_activate_account(self):
-        """Test activate_account - SKIPPED for safety."""
-        pytest.skip("Skipping destructive operation")
-
-    @pytest.mark.asyncio
-    async def test_delete_account(self):
-        """Test delete_account - SKIPPED for safety."""
-        pytest.skip("Skipping destructive operation")
-
-    @pytest.mark.asyncio
-    async def test_request_account_delete(self):
-        """Test request_account_delete - SKIPPED for safety."""
-        pytest.skip("Skipping destructive operation")
-
-    @pytest.mark.asyncio
-    async def test_create_account(self):
-        """Test create_account - REMOVED (operation no longer exists)."""
-        pytest.skip(
-            "create_account operation removed - requires email/phone verification"
-        )
-
-    @pytest.mark.asyncio
-    async def test_create_invite_code(self):
-        """Test create_invite_code - SKIPPED (requires admin)."""
-        pytest.skip("Requires admin permissions")
-
-    @pytest.mark.asyncio
-    async def test_create_invite_codes(self):
-        """Test create_invite_codes - SKIPPED (requires admin)."""
-        pytest.skip("Requires admin permissions")
-
-    @pytest.mark.asyncio
-    async def test_confirm_email(self):
-        """Test confirm_email - SKIPPED for safety."""
-        pytest.skip("Skipping email operations")
-
-    @pytest.mark.asyncio
-    async def test_request_email_confirmation(self):
-        """Test request_email_confirmation - SKIPPED for safety."""
-        pytest.skip("Skipping email operations")
-
-    @pytest.mark.asyncio
-    async def test_request_email_update(self):
-        """Test request_email_update - SKIPPED for safety."""
-        pytest.skip("Skipping email operations")
-
-    @pytest.mark.asyncio
-    async def test_update_email(self):
-        """Test update_email - SKIPPED for safety."""
-        pytest.skip("Skipping email operations")
-
-    @pytest.mark.asyncio
-    async def test_request_password_reset(self):
-        """Test request_password_reset - SKIPPED for safety."""
-        pytest.skip("Skipping password operations")
-
-    @pytest.mark.asyncio
-    async def test_reset_password(self):
-        """Test reset_password - SKIPPED for safety."""
-        pytest.skip("Skipping password operations")
 
     @pytest.mark.asyncio
     async def test_reserve_signing_key(self):

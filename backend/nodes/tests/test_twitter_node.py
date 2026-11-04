@@ -1431,8 +1431,3 @@ class TestTwitterOAuthUtils:
         # Should be parseable
         dt = datetime.fromisoformat(result.replace("Z", "+00:00"))
         assert dt > datetime.now(timezone.utc)
-
-
-# ============================================================================
-# Credential Deletion Revocation Tests
-# ============================================================================

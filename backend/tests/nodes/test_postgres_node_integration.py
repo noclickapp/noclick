@@ -258,51 +258,6 @@ class TestPostgresNodeIntegration:
         finally:
             await postgres_conn.execute("DROP TABLE IF EXISTS test_cursor")
 
-    @pytest.mark.skip(reason="Table visibility issue with separate connections - copy_to_table works in production")
-    @pytest.mark.asyncio
-    async def test_copy_to_table_operation(self, postgres_container, postgres_conn):
-        """Test copy_to_table operation - bulk CSV insert."""
-        await postgres_conn.execute("DROP TABLE IF EXISTS test_copy_to")
-        await postgres_conn.execute("""
-            CREATE TABLE test_copy_to (
-                id INTEGER,
-                name VARCHAR(100),
-                value INTEGER
-            )
-        """)
-
-        # Verify table exists
-        table_check = await postgres_conn.fetchval(
-            "SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'test_copy_to')"
-        )
-        assert table_check is True, "Table test_copy_to was not created successfully"
-
-        try:
-            # Convert CSV to 2D array as expected by config
-            data_rows = [
-                [1, "test1", 100],
-                [2, "test2", 200],
-                [3, "test3", 300]
-            ]
-            config = PostgresCopyToTableConfig(
-                table_name="test_copy_to",
-                schema_name="public",
-                data=data_rows,
-                columns=["id", "name", "value"],
-            )
-            node = self.create_node(config, postgres_container)
-            result = await node.execute({})
-
-            assert result["status"] == "success"
-            assert result["action"] == "copy_data_to_table"
-            assert result["data"]["rows_imported"] == 3
-
-            # Verify data
-            rows = await postgres_conn.fetch("SELECT COUNT(*) as count FROM test_copy_to")
-            assert rows[0]["count"] == 3
-        finally:
-            await postgres_conn.execute("DROP TABLE IF EXISTS test_copy_to")
-
     @pytest.mark.asyncio
     async def test_copy_from_table_operation(self, postgres_container, postgres_conn):
         """Test copy_from_table operation - bulk CSV export."""
@@ -664,51 +619,6 @@ class TestPostgresNodeIntegration:
     # ========================================================================
     # Sequence Operations Tests (4)
     # ========================================================================
-
-    @pytest.mark.skip(reason="currval requires nextval in same session - limitation of stateless connections")
-    @pytest.mark.asyncio
-    async def test_sequence_operations(self, postgres_container, postgres_conn):
-        """Test all sequence operations."""
-        await postgres_conn.execute("DROP SEQUENCE IF EXISTS test_seq CASCADE")
-        await postgres_conn.execute("CREATE SEQUENCE test_seq START 1 INCREMENT 1")
-
-        try:
-            # List sequences
-            list_config = PostgresListSequencesConfig(schema_name="public")
-            list_node = self.create_node(list_config, postgres_container)
-            list_result = await list_node.execute({})
-
-            assert list_result["status"] == "success"
-            # Sequences are now returned as simple strings (primitives)
-            assert "test_seq" in list_result["data"]["sequences"]
-
-            # Get next value
-            next_config = PostgresGetNextSequenceValueConfig(sequence_name="test_seq")
-            next_node = self.create_node(next_config, postgres_container)
-            next_result = await next_node.execute({})
-
-            assert next_result["status"] == "success"
-            assert next_result["data"]["value"] == 1
-
-            # Note: currval() requires nextval() to have been called in the SAME database session.
-            # Since each node execution creates a new connection, currval will fail unless
-            # we call nextval first in that same connection. This is a PostgreSQL limitation.
-            # We skip testing currval here as it's not practical in stateless node executions.
-            # In real workflows, users should use the last_value field from pg_sequences instead.
-
-            # Set sequence value
-            set_config = PostgresSetSequenceValueConfig(sequence_name="test_seq", value=100)
-            set_node = self.create_node(set_config, postgres_container)
-            set_result = await set_node.execute({})
-
-            assert set_result["status"] == "success"
-            assert set_result["data"]["set"] is True
-
-            # Verify new value
-            next_result2 = await next_node.execute({})
-            assert next_result2["data"]["value"] == 101
-        finally:
-            await postgres_conn.execute("DROP SEQUENCE IF EXISTS test_seq CASCADE")
 
     # ========================================================================
     # Function Operations Tests (2)

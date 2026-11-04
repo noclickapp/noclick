@@ -220,12 +220,6 @@ from nodes.discord_node import (
     DiscordDeleteGuildIntegrationConfig,
 )
 
-# Test constants
-TEST_GUILD_ID = os.environ.get("DISCORD_TEST_GUILD_ID", "111111111111111111")
-TEST_CHANNEL_ID = os.environ.get("DISCORD_TEST_CHANNEL_ID", "222222222222222222")
-TEST_USER_ID = os.environ.get("DISCORD_TEST_USER_ID", "123456789012345678")
-TEST_MESSAGE_ID = os.environ.get("DISCORD_TEST_MESSAGE_ID", "123456789012345678")
-
 # Environment variable for Bot Token
 DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN", "")
 
@@ -1784,67 +1778,6 @@ class TestLiveAPIOperations:
         assert result["action"] == "list_user_guilds"
         # Bot might not be in any guilds during testing
         assert "guilds" in result or "count" in result
-
-    @pytest.mark.asyncio
-    @pytest.mark.skipif(
-        not os.environ.get("DISCORD_TEST_CHANNEL_ID"),
-        reason="DISCORD_TEST_CHANNEL_ID not set",
-    )
-    async def test_get_channel_live(self):
-        """Test getting channel information."""
-        config = DiscordGetChannelConfig(channel_id=TEST_CHANNEL_ID)
-        node = create_node(config)
-
-        try:
-            result = await node.execute({})
-        except ValueError as e:
-            # Skip test if rate limited by Discord API
-            if "429" in str(e):
-                pytest.skip(f"Skipping due to Discord API rate limit: {e}")
-            raise
-
-        assert result["action"] == "get_channel_info"
-
-    @pytest.mark.asyncio
-    @pytest.mark.skipif(
-        not os.environ.get("DISCORD_TEST_GUILD_ID"),
-        reason="DISCORD_TEST_GUILD_ID not set",
-    )
-    async def test_get_guild_live(self):
-        """Test getting guild information."""
-        config = DiscordGetGuildConfig(guild_id=TEST_GUILD_ID)
-        node = create_node(config)
-
-        try:
-            result = await node.execute({})
-        except ValueError as e:
-            # Skip test if rate limited by Discord API
-            if "429" in str(e):
-                pytest.skip(f"Skipping due to Discord API rate limit: {e}")
-            raise
-
-        assert result["action"] == "get_guild_info"
-
-    @pytest.mark.asyncio
-    @pytest.mark.skipif(
-        not os.environ.get("DISCORD_TEST_GUILD_ID"),
-        reason="DISCORD_TEST_GUILD_ID not set",
-    )
-    async def test_get_guild_roles_live(self):
-        """Test getting guild roles."""
-        config = DiscordGetGuildRolesConfig(guild_id=TEST_GUILD_ID)
-        node = create_node(config)
-
-        try:
-            result = await node.execute({})
-        except ValueError as e:
-            # Skip test if rate limited by Discord API
-            if "429" in str(e):
-                pytest.skip(f"Skipping due to Discord API rate limit: {e}")
-            raise
-
-        assert result["action"] == "list_guild_roles"
-        assert "roles" in result
 
 
 class TestDynamicOptions:

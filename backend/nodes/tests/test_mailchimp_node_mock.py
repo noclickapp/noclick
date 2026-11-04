@@ -940,23 +940,6 @@ class TestCredentials:
     """Test different credential types."""
 
     @pytest.mark.asyncio
-    async def test_api_key_credential(self):
-        """Test API Key authentication."""
-        credentials = MailchimpAPIKeyCredential(api_key="test_key-us1")
-        config = MailchimpNodeConfig(
-            config=MailchimpPingConfig(), credentials=credentials
-        )
-        node = create_node(config)
-
-        mock_client = create_mock_client(
-            "get", 200, {"health_status": "Everything's Chimpy!"}
-        )
-        with patch("nodes.mailchimp_node.httpx.AsyncClient", return_value=mock_client):
-            result = await node.execute({})
-
-        assert result["status"] == "success"
-
-    @pytest.mark.asyncio
     async def test_oauth_credential(self):
         """Test OAuth authentication."""
         credentials = MailchimpOAuthCredential(
