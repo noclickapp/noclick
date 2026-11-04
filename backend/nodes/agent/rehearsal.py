@@ -223,8 +223,11 @@ def register_must_rehearse(predicate: Callable[[str], bool]) -> None:
 
 
 def must_rehearse(conversation_id: Optional[str]) -> bool:
-    """Whether a tool call in ``conversation_id`` may only ever be fabricated (``register_must_rehearse``)."""
-    return bool(conversation_id) and any(predicate(str(conversation_id)) for predicate in _MUST_REHEARSE)
+    """Whether a tool call in ``conversation_id`` may only ever be fabricated: a rehearsal's own
+    (``is_rehearsal_conversation``), whose tools reach people and money once its fence is gone, and any a platform
+    registers (``register_must_rehearse``)."""
+    return bool(conversation_id) and (is_rehearsal_conversation(conversation_id) or any(
+        predicate(str(conversation_id)) for predicate in _MUST_REHEARSE))
 
 
 def _messages(state: Dict[str, Any], ask: str) -> List[Dict[str, str]]:
