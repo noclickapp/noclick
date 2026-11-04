@@ -83,12 +83,14 @@ def agent_memory_of(node: Any) -> Optional[Dict[str, Any]]:
 
 
 def conversation_compactor(node: Any, *, conversation_id: Optional[str], user_id: Optional[str],
-                           user_email: Optional[str] = None, organization_id: Optional[str] = None) -> Any:
+                           user_email: Optional[str] = None, organization_id: Optional[str] = None,
+                           turn_model: Optional[str] = None) -> Any:
     """The turn's context filter: a ``Compactor`` keeping its checkpoint where
     the platform keeps this agent's memory (``CONVERSATION_CHECKPOINTS``); None
     for a turn without memory or a conversation, or one the platform keeps no
-    checkpoint for. Summaries run on the default model, billed as the turn is; the turn's watchers hear
-    ``status`` ``compacting`` and ``compacted`` around them."""
+    checkpoint for. Its view folds at ``turn_model``'s ceiling (``compaction.budget_for``). Summaries run on the
+    default model, billed as the turn is; the turn's watchers hear ``status`` ``compacting`` and ``compacted``
+    around them."""
     from utils.capabilities import CONVERSATION_CHECKPOINTS, capability
 
     spec, provider = agent_memory_of(node), capability(CONVERSATION_CHECKPOINTS)
@@ -110,8 +112,8 @@ def conversation_compactor(node: Any, *, conversation_id: Optional[str], user_id
         publish(conversation_id, {"type": "status", "status": status,
                                   "created_at": datetime.now(timezone.utc).isoformat()})
 
-    return Compactor(store, model=DEFAULT_LLM_AGENT_MODEL, user_id=user_id, user_email=user_email,
-                     organization_id=organization_id, notify=notify)
+    return Compactor(store, model=DEFAULT_LLM_AGENT_MODEL, turn_model=turn_model, user_id=user_id,
+                     user_email=user_email, organization_id=organization_id, notify=notify)
 
 
 def memory_catalog_of(node_config: Any) -> Optional[str]:

@@ -393,6 +393,66 @@ def list_litellm_models() -> List[Model]:
     return out
 
 
+# ── Prompt limits ────────────────────────────────────────────────────────
+
+@dataclass(frozen=True)
+class PromptLimits:
+    provider: str                    # whose tokenizer counts the prompt: "openai", "anthropic", "gemini", ...
+    window: int                      # the most a prompt and its reply can hold
+    price_step: Optional[int] = None  # the prompt size from which every token costs more
+
+
+_LITELLM_PRICE_STEP = re.compile(r"^input_cost_per_token_above_(\d+)k_tokens$")
+
+
+def _openrouter_limits(row: Dict[str, Any]) -> Optional[PromptLimits]:
+    windows = [w for w in (row.get("context_length"), (row.get("top_provider") or {}).get("context_length"))
+               if isinstance(w, int) and w > 0]
+    if not windows:
+        return None
+    steps = [o.get("min_prompt_tokens") for o in (row.get("pricing") or {}).get("overrides") or []]
+    steps = [s for s in steps if isinstance(s, int) and s > 0]
+    return PromptLimits(provider=row["id"].lstrip("~").split("/", 1)[0], window=min(windows),
+                        price_step=min(steps) if steps else None)
+
+
+def _litellm_limits(model_id: str) -> Optional[PromptLimits]:
+    try:
+        import litellm  # type: ignore
+    except ImportError:
+        return None
+    cost = getattr(litellm, "model_cost", None) or {}
+    # Its map names most models both with and without their provider ("anthropic/claude-…", "claude-…").
+    info = cost.get(model_id) or cost.get(model_id.split("/", 1)[-1])
+    if not isinstance(info, dict):
+        return None
+    window = info.get("max_input_tokens")
+    if not isinstance(window, int) or window <= 0:
+        return None
+    steps = [int(m.group(1)) * 1000 for key, value in info.items()
+             if value and (m := _LITELLM_PRICE_STEP.match(key))]
+    return PromptLimits(provider=str(info.get("litellm_provider") or ""), window=window,
+                        price_step=min(steps) if steps else None)
+
+
+async def prompt_limits(model_id: str) -> Optional[PromptLimits]:
+    """How large a prompt to ``model_id`` may grow: OpenRouter's live catalog for a model routed there (its context
+    window, and the least ``min_prompt_tokens`` of its price overrides), else litellm's bundled map (its
+    ``max_input_tokens`` and ``input_cost_per_token_above_<n>k_tokens``); None for a model neither knows."""
+    if model_id.startswith("openrouter/"):
+        routed = model_id.removeprefix("openrouter/")
+        try:
+            rows = await get_openrouter_models() or []
+        except Exception as e:
+            logger.warning(f"[model_catalog] OpenRouter fetch failed reading {model_id}'s limits: {e}")
+            rows = []
+        row = next((r for r in rows if r.get("id") == routed), None)
+        limits = _openrouter_limits(row) if row else None
+        if limits is not None:
+            return limits
+    return _litellm_limits(model_id)
+
+
 # ── OpenCode Zen translator ──────────────────────────────────────────────
 # OpenCode Zen/Go are OpenAI-compatible inference gateways (one shared
 # OPENCODE_API_KEY; see utils/opencode_zen.py). Their models run on the

@@ -115,7 +115,7 @@ async def execute_llm_model(
         # leaves no memory (a live call's) only replays a bounded tail, so it doesn't compact.
         context_filter = None if memory_readonly or not enable_persistence else conversation_compactor(
             node, conversation_id=effective_conversation_id, user_id=user_id, user_email=user_email,
-            organization_id=node.organization_id)
+            organization_id=node.organization_id, turn_model=config.model)
         node_config = (getattr(node, "node_data", None) or {}).get("config")
         agent = await Agent.create(
             emit_message=emit_callback,

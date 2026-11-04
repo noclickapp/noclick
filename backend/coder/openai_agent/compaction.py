@@ -66,18 +66,21 @@ def parse_summary(text):
 
 @dataclass(frozen=True)
 class Budget:
-    # Conservative portable ceiling for a model route reached through OpenRouter.
-    # Includes system/tools and reserves room for output; does not assume a
-    # provider-specific encrypted compaction format. A call's view folds once it
-    # would pass ``hard``, down to ``target``: every fold rewrites the prompt the
-    # provider cached, so none happens mid-run before it must. Once a run is
-    # over, a conversation past ``settle`` folds down to ``target`` in the
-    # background, so the next run starts with room and rarely waits on a summary.
+    # Counts include system/tools and reserve room for output; no provider-specific
+    # encrypted compaction format is assumed. A call's view folds once it would
+    # pass ``hard``, down to ``target``, keeping a recent tail of ``turn_recent``
+    # (``recent`` when unset): every fold rewrites the prompt the provider cached,
+    # so none happens mid-run before it must. Once a run is over, a conversation
+    # past ``settle`` folds down to ``target`` with a tail of ``recent``, in the
+    # background, so the next run starts small and rarely waits on a summary.
+    # These defaults are the portable budget for a model the catalogs don't know;
+    # ``budget_for`` sets ``hard`` from the model's own limits.
     target: int = 20000
     hard: int = 48000
     chunk: int = 12000
     recent: int = 6000
     settle: int = 32000
+    turn_recent: Optional[int] = None
 
 
 # A turn's summary calls at most; past them, older tool results are cut in the model's view instead.
@@ -86,6 +89,50 @@ MAX_SUMMARIES = 8
 # largest (OpenAI's high detail, Gemini's tiles, Claude before Opus 4.7); current Claude reads up to 2576px, ~4,800
 # tokens, an undercount the budget absorbs since it sits far below any model's context.
 IMAGE_TOKENS = 1600
+
+# The most a turn's view grows before it folds, in the tokens its provider bills, whatever the model takes: past it,
+# a call costs more than the folds it saves (and every call after the turn's first rereads it from cache).
+CEILING_CAP = 240_000
+# What a ceiling leaves of its model's limit for content the count wasn't measured on.
+CEILING_MARGIN = 0.10
+# The tokens a provider bills for each one ``token_count`` counts (cl100k over each item's JSON), measured 2026-11-04
+# on a site build's mix of a skill, TSX, HTML, a JSON schema and prose: OpenAI 0.87, Google 0.90, Anthropic 1.03
+# (Claude 4.5) and 1.38 (Claude 5.5). A count that runs over is taken as even; an unmeasured provider as the most.
+BILLED_PER_COUNTED = {"openai": 1.0, "google": 1.0, "gemini": 1.0, "anthropic": 1.4}
+UNMEASURED_BILLED_PER_COUNTED = 1.4
+_UNKNOWN_MODELS: set = set()
+
+
+def budget_at(hard: int) -> Budget:
+    """The budget of a turn that folds at ``hard``. Above the portable default, only the turn's own folds grow: each
+    reads a quarter of the ceiling at a time (a fold the eight summaries of ``MAX_SUMMARIES`` can read whole) and
+    keeps the last quarter whole, so the turn keeps what it just read rather than fetch it again, while the settle
+    still folds down to ``target`` with a ``recent`` tail. Below it (a small window), the whole budget shrinks with
+    it."""
+    base = Budget()
+    if hard >= base.hard:
+        return Budget(hard=hard, chunk=max(base.chunk, hard // 4), turn_recent=max(base.recent, hard // 4))
+    scale = hard / base.hard
+    return Budget(target=int(base.target * scale), hard=hard, chunk=int(base.chunk * scale),
+                  recent=int(base.recent * scale), settle=int(base.settle * scale))
+
+
+async def budget_for(model: str) -> Budget:
+    """``model``'s budget: it folds at the smaller of its context window and the prompt size its price goes up at,
+    less ``CEILING_MARGIN``, at most ``CEILING_CAP``, in the tokens ``token_count`` counts for those its provider
+    bills (``BILLED_PER_COUNTED``). A model neither catalog knows keeps the portable default, said once a process."""
+    from utils.model_catalog import prompt_limits
+
+    limits = await prompt_limits(model)
+    if limits is None:
+        if model not in _UNKNOWN_MODELS:
+            _UNKNOWN_MODELS.add(model)
+            logger.warning("Compaction knows no context window for %s; its turns fold at the portable %d tokens",
+                           model, Budget.hard)
+        return Budget()
+    billed = min(CEILING_CAP, min(limits.window, limits.price_step or limits.window) * (1 - CEILING_MARGIN))
+    ratio = BILLED_PER_COUNTED.get(limits.provider, UNMEASURED_BILLED_PER_COUNTED)
+    return budget_at(int(billed / ratio) // 1000 * 1000)
 
 
 def fingerprint(items) -> str:
@@ -303,12 +350,14 @@ class Compactor:
     this one is over (``settle``), off its reply's path."""
 
     def __init__(self, store: CheckpointStore, *, model, user_id, user_email=None, organization_id=None,
-                 budget=None, notify: Optional[Callable[[str], None]] = None):
+                 budget=None, turn_model=None, notify: Optional[Callable[[str], None]] = None):
         self.store = store
         self.notify = notify
-        self.user_id, self.model = user_id, model
+        # ``model`` summarizes; ``turn_model`` answers the turn, and its limits set the budget (``budget_for``) at the
+        # run's first call unless one is given.
+        self.user_id, self.model, self.turn_model = user_id, model, turn_model or model
         self.user_email, self.organization_id = user_email, organization_id
-        self.budget = budget or Budget()
+        self.budget: Optional[Budget] = budget
         self.failed = False
         self.summaries = 0
         # What every call's view costs beside its history (instructions, tool schemas, output), as the run's last
@@ -332,6 +381,8 @@ class Compactor:
         return token_count(value, self.model)
 
     async def filter(self, data):
+        if self.budget is None:
+            self.budget = await budget_for(self.turn_model)
         tool_schemas = [{"name": getattr(t, "name", ""), "description": getattr(t, "description", ""),
                          "parameters": getattr(t, "params_json_schema", {})} for t in data.agent.tools]
         self.overhead = await asyncio.to_thread(self._count, [data.model_data.instructions, tool_schemas])
@@ -421,10 +472,11 @@ class Compactor:
                     # Keep a useful recent tail even when old tool output is huge.
                     tail_start = len(raw)
                     tail_tokens = 0
+                    recent = self.budget.recent if settling else self.budget.turn_recent or self.budget.recent
                     for i in range(len(raw)-1, covered-1, -1):
                         tail_tokens += costs[i]
                         tail_start = i
-                        if tail_tokens >= self.budget.recent:
+                        if tail_tokens >= recent:
                             break
                     # Stored history before the tail folds, up to its last safe boundary.
                     foldable = max(i for i in boundaries if i <= min(tail_start, len(stored)))
