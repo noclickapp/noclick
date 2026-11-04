@@ -63,10 +63,6 @@ def pytest_collection_modifyitems(items):
         # module-autouse fixture and start its own container.
         if str(item.path) in _postgres_test_module_paths:
             item.add_marker(pytest.mark.xdist_group(name="postgres"))
-        elif item.path.name == "test_mock_server.py":
-            # This module intentionally exercises fixed ports (8080/8081 and
-            # 8443/8444). Its tests cannot safely run on separate workers.
-            item.add_marker(pytest.mark.xdist_group(name="mock-server"))
 
 
 @pytest.fixture(scope="module", autouse=True)
