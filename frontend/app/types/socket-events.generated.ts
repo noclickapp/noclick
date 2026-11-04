@@ -1600,6 +1600,14 @@ export interface AsanaOAuthExchangeRequest {
    * OAuth scopes that were requested
    */
   scopes?: string[];
+  /**
+   * Custom client ID (for the user's own OAuth app)
+   */
+  client_id?: string | null;
+  /**
+   * Custom client secret (for the user's own OAuth app)
+   */
+  client_secret?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -1812,6 +1820,14 @@ export interface BoxOAuthExchangeRequest {
    * OAuth scopes that were requested
    */
   scopes?: string[];
+  /**
+   * Custom client ID (for the user's own OAuth app)
+   */
+  client_id?: string | null;
+  /**
+   * Custom client secret (for the user's own OAuth app)
+   */
+  client_secret?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -2056,6 +2072,14 @@ export interface ClickUpOAuthExchangeRequest {
    * OAuth scopes (ClickUp has none)
    */
   scopes?: string[];
+  /**
+   * Custom client ID (for the user's own OAuth app)
+   */
+  client_id?: string | null;
+  /**
+   * Custom client secret (for the user's own OAuth app)
+   */
+  client_secret?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -3151,6 +3175,14 @@ export interface GitLabOAuthExchangeRequest {
    * OAuth scopes that were requested
    */
   scopes?: string[];
+  /**
+   * Custom client ID (for the user's own OAuth app)
+   */
+  client_id?: string | null;
+  /**
+   * Custom client secret (for the user's own OAuth app)
+   */
+  client_secret?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -3563,6 +3595,14 @@ export interface IntercomOAuthExchangeRequest {
    * OAuth scopes the app was granted
    */
   scopes?: string[];
+  /**
+   * Custom client ID (for the user's own OAuth app)
+   */
+  client_id?: string | null;
+  /**
+   * Custom client secret (for the user's own OAuth app)
+   */
+  client_secret?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -3621,6 +3661,14 @@ export interface KlaviyoOAuthExchangeRequest {
    * OAuth scopes that were requested
    */
   scopes?: string[];
+  /**
+   * Custom client ID (for the user's own OAuth app)
+   */
+  client_id?: string | null;
+  /**
+   * Custom client secret (for the user's own OAuth app)
+   */
+  client_secret?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -4042,6 +4090,14 @@ export interface MondayOAuthExchangeRequest {
    * OAuth scopes that were requested
    */
   scopes?: string[];
+  /**
+   * Custom client ID (for the user's own OAuth app)
+   */
+  client_id?: string | null;
+  /**
+   * Custom client secret (for the user's own OAuth app)
+   */
+  client_secret?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -4254,6 +4310,14 @@ export interface PagerDutyOAuthExchangeRequest {
    * OAuth scopes that were requested
    */
   scopes?: string[];
+  /**
+   * Custom client ID (for the user's own OAuth app)
+   */
+  client_id?: string | null;
+  /**
+   * Custom client secret (for the user's own OAuth app)
+   */
+  client_secret?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -4632,6 +4696,14 @@ export interface PipedriveOAuthExchangeRequest {
    * OAuth scopes that were requested
    */
   scopes?: string[];
+  /**
+   * Custom client ID (for the user's own OAuth app)
+   */
+  client_id?: string | null;
+  /**
+   * Custom client secret (for the user's own OAuth app)
+   */
+  client_secret?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -6411,6 +6483,14 @@ export interface WebflowOAuthExchangeRequest {
    * OAuth scopes that were requested
    */
   scopes?: string[];
+  /**
+   * Custom client ID (for the user's own OAuth app)
+   */
+  client_id?: string | null;
+  /**
+   * Custom client secret (for the user's own OAuth app)
+   */
+  client_secret?: string | null;
   [k: string]: unknown;
 }
 /**
@@ -8026,6 +8106,14 @@ export interface ZoomOAuthExchangeRequest {
    * OAuth scopes that were requested
    */
   scopes: string[];
+  /**
+   * Custom client ID (for the user's own OAuth app)
+   */
+  client_id?: string | null;
+  /**
+   * Custom client secret (for the user's own OAuth app)
+   */
+  client_secret?: string | null;
   [k: string]: unknown;
 }
 /**

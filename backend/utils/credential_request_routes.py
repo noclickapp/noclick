@@ -535,7 +535,8 @@ class ProvideCredentialBody(BaseModel):
     # For OAuth credentials
     oauth_code: Optional[str] = None
     redirect_uri: Optional[str] = None
-    scopes: Optional[list[str]] = None
+    # As the provider's connect form sends them (Shopify's joins them into one string).
+    scopes: Optional[list[str] | str] = None
     code_verifier: Optional[str] = None
     # The connect form's own inputs beside the code (a site, a subdomain, a shop), as the app's form sends them.
     oauth_inputs: Optional[dict[str, Any]] = None
@@ -803,7 +804,9 @@ async def _sign_in_for_request(pool, row, credential_type: str, provider: str,
     if not body.oauth_code or not body.redirect_uri:
         raise HTTPException(status_code=400, detail="OAuth credentials require oauth_code and redirect_uri")
     inputs = {**(body.oauth_inputs or {}), 'code': body.oauth_code, 'redirect_uri': body.redirect_uri,
-              'scopes': body.scopes or [], 'code_verifier': body.code_verifier}
+              'code_verifier': body.code_verifier}
+    if body.scopes is not None:
+        inputs['scopes'] = body.scopes
     client = await _oauth_app(pool, row, provider)
     if client is not None:
         named = client_fields(provider, client)

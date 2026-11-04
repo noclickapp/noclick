@@ -1371,6 +1371,8 @@ class PagerDutyOAuthExchangeRequest(ClientEventBase):
     code: str = Field(..., description="Authorization code from PagerDuty OAuth callback")
     redirect_uri: str = Field(..., description="Redirect URI used in authorization request")
     scopes: List[str] = Field(default_factory=list, description="OAuth scopes that were requested")
+    client_id: Optional[str] = Field(None, description="Custom client ID (for the user's own OAuth app)")
+    client_secret: Optional[str] = Field(None, description="Custom client secret (for the user's own OAuth app)")
 
 
 class PagerDutyOAuthRefreshRequest(ClientEventBase):
@@ -1515,6 +1517,8 @@ class BoxOAuthExchangeRequest(ClientEventBase):
     code: str = Field(..., description="Authorization code from Box OAuth callback")
     redirect_uri: str = Field(..., description="Redirect URI used in authorization request")
     scopes: List[str] = Field(default_factory=list, description="OAuth scopes that were requested")
+    client_id: Optional[str] = Field(None, description="Custom client ID (for the user's own OAuth app)")
+    client_secret: Optional[str] = Field(None, description="Custom client secret (for the user's own OAuth app)")
 
 
 class BoxOAuthRefreshRequest(ClientEventBase):
@@ -1539,6 +1543,8 @@ class MondayOAuthExchangeRequest(ClientEventBase):
     code: str = Field(..., description="Authorization code from monday OAuth callback")
     redirect_uri: str = Field(..., description="Redirect URI used in authorization request")
     scopes: List[str] = Field(default_factory=list, description="OAuth scopes that were requested")
+    client_id: Optional[str] = Field(None, description="Custom client ID (for the user's own OAuth app)")
+    client_secret: Optional[str] = Field(None, description="Custom client secret (for the user's own OAuth app)")
 
 
 class MondayOAuthRefreshRequest(ClientEventBase):
@@ -1722,6 +1728,8 @@ class AsanaOAuthExchangeRequest(ClientEventBase):
     code: str = Field(..., description="Authorization code from Asana OAuth callback")
     redirect_uri: str = Field(..., description="Redirect URI used in authorization request")
     scopes: List[str] = Field(default_factory=list, description="OAuth scopes that were requested")
+    client_id: Optional[str] = Field(None, description="Custom client ID (for the user's own OAuth app)")
+    client_secret: Optional[str] = Field(None, description="Custom client secret (for the user's own OAuth app)")
 
 
 class AsanaOAuthRefreshRequest(ClientEventBase):
@@ -1771,6 +1779,8 @@ class IntercomOAuthExchangeRequest(ClientEventBase):
     redirect_uri: str = Field(..., description="Redirect URI used in authorization request")
     region: str = Field("us", description="Data residency region for the workspace (us/eu/au)")
     scopes: List[str] = Field(default_factory=list, description="OAuth scopes the app was granted")
+    client_id: Optional[str] = Field(None, description="Custom client ID (for the user's own OAuth app)")
+    client_secret: Optional[str] = Field(None, description="Custom client secret (for the user's own OAuth app)")
 
 
 class IntercomOAuthRefreshRequest(ClientEventBase):
@@ -1795,6 +1805,8 @@ class WebflowOAuthExchangeRequest(ClientEventBase):
     code: str = Field(..., description="Authorization code from Webflow OAuth callback")
     redirect_uri: str = Field(..., description="Redirect URI used in authorization request")
     scopes: List[str] = Field(default_factory=list, description="OAuth scopes that were requested")
+    client_id: Optional[str] = Field(None, description="Custom client ID (for the user's own OAuth app)")
+    client_secret: Optional[str] = Field(None, description="Custom client secret (for the user's own OAuth app)")
 
 
 class WebflowOAuthRefreshRequest(ClientEventBase):
@@ -1957,6 +1969,8 @@ class ZoomOAuthExchangeRequest(ClientEventBase):
     code: str = Field(..., description="Authorization code from Zoom OAuth callback")
     redirect_uri: str = Field(..., description="Redirect URI used in authorization (must match)")
     scopes: List[str] = Field(..., description="OAuth scopes that were requested")
+    client_id: Optional[str] = Field(None, description="Custom client ID (for the user's own OAuth app)")
+    client_secret: Optional[str] = Field(None, description="Custom client secret (for the user's own OAuth app)")
 
 
 class ZoomOAuthRefreshRequest(ClientEventBase):
@@ -2019,6 +2033,8 @@ class KlaviyoOAuthExchangeRequest(ClientEventBase):
     code_verifier: str = Field(..., description="PKCE code verifier used during authorization")
     credential_name: str = Field(..., description="Human-readable name for the credential")
     scopes: List[str] = Field(default_factory=list, description="OAuth scopes that were requested")
+    client_id: Optional[str] = Field(None, description="Custom client ID (for the user's own OAuth app)")
+    client_secret: Optional[str] = Field(None, description="Custom client secret (for the user's own OAuth app)")
 
 
 class KlaviyoOAuthRefreshRequest(ClientEventBase):
@@ -2043,6 +2059,8 @@ class ClickUpOAuthExchangeRequest(ClientEventBase):
     code: str = Field(..., description="Authorization code from ClickUp OAuth callback")
     redirect_uri: str = Field(..., description="Redirect URI used in authorization request")
     scopes: List[str] = Field(default_factory=list, description="OAuth scopes (ClickUp has none)")
+    client_id: Optional[str] = Field(None, description="Custom client ID (for the user's own OAuth app)")
+    client_secret: Optional[str] = Field(None, description="Custom client secret (for the user's own OAuth app)")
 
 
 class ClickUpOAuthRefreshRequest(ClientEventBase):
@@ -2157,6 +2175,8 @@ class GitLabOAuthExchangeRequest(ClientEventBase):
     code: str = Field(..., description="Authorization code from GitLab OAuth callback")
     redirect_uri: str = Field(..., description="Redirect URI used in authorization request")
     scopes: List[str] = Field(default_factory=list, description="OAuth scopes that were requested")
+    client_id: Optional[str] = Field(None, description="Custom client ID (for the user's own OAuth app)")
+    client_secret: Optional[str] = Field(None, description="Custom client secret (for the user's own OAuth app)")
 
 
 class GitLabOAuthRefreshRequest(ClientEventBase):
@@ -3362,6 +3382,8 @@ class PipedriveOAuthExchangeRequest(ClientEventBase):
     code: str = Field(..., description="Authorization code from Pipedrive OAuth callback")
     redirect_uri: str = Field(..., description="Redirect URI used in authorization request")
     scopes: List[str] = Field(default_factory=list, description="OAuth scopes that were requested")
+    client_id: Optional[str] = Field(None, description="Custom client ID (for the user's own OAuth app)")
+    client_secret: Optional[str] = Field(None, description="Custom client secret (for the user's own OAuth app)")
 
 
 class PipedriveOAuthRefreshRequest(ClientEventBase):

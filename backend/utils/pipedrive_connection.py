@@ -6,6 +6,7 @@ grant metadata; installs reconnect only the owner's exact company/user pair.
 
 import os
 import re
+from typing import Optional
 
 from nodes.oauth.pipedrive_oauth import exchange_code_for_tokens
 from repositories.credentials import CredentialsRepo, create_credential_with_limit_check
@@ -25,10 +26,12 @@ async def connect_pipedrive(
     redirect_uri: str,
     pool,
     installation: bool = False,
+    client_id: Optional[str] = None,
+    client_secret: Optional[str] = None,
 ) -> dict:
     try:
         tokens, user_info = await exchange_code_for_tokens(
-            code=code, redirect_uri=redirect_uri
+            code=code, redirect_uri=redirect_uri, client_id=client_id, client_secret=client_secret
         )
     except ValueError:
         raise PipedriveConnectionError(
@@ -58,6 +61,10 @@ async def connect_pipedrive(
         "email": user_info.email,
         "scope": tokens.scope,
     }
+    # Store custom client credentials for token refresh if provided
+    if client_id and client_secret:
+        credential_data["client_id"] = client_id
+        credential_data["client_secret"] = client_secret
     metadata = {
         "provider": "pipedrive",
         "name": user_info.name,
@@ -67,7 +74,7 @@ async def connect_pipedrive(
         "api_domain": tokens.api_domain,
         "scopes": granted_scopes,
         "scope_verified": tokens.scope is not None,
-        "oauth_client_id": os.environ.get("PIPEDRIVE_CLIENT_ID"),
+        "oauth_client_id": client_id or os.environ.get("PIPEDRIVE_CLIENT_ID"),
     }
     if installation:
         metadata["installation_source"] = "pipedrive_install"

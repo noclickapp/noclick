@@ -69,6 +69,8 @@ class ZoomOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 tokens, user_info = await exchange_code_for_tokens(
                     code=request.code,
                     redirect_uri=request.redirect_uri,
+                    client_id=request.client_id,
+                    client_secret=request.client_secret,
                 )
             except ValueError as e:
                 logger.error(f"[ZoomOAuthHandler] Token exchange failed: {e}")
@@ -88,6 +90,10 @@ class ZoomOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 'name': user_info.name,
                 'email': user_info.email,
             }
+            # Store custom client credentials for token refresh if provided
+            if request.client_id and request.client_secret:
+                credential_data['client_id'] = request.client_id
+                credential_data['client_secret'] = request.client_secret
 
             try:
                 encrypted_data = self.encryption.encrypt_credential(credential_data)

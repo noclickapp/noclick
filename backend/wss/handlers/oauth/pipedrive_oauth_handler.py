@@ -81,6 +81,7 @@ class PipedriveOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                     user_id=user_id,
                     user_tier=session.get('user_data', {}).get('subscription_tier', 'free'),
                     code=request.code, redirect_uri=request.redirect_uri, pool=pool,
+                    client_id=request.client_id, client_secret=request.client_secret,
                 )
                 response = PipedriveOAuthExchangeResponse(**result)
             except PipedriveConnectionError as exc:

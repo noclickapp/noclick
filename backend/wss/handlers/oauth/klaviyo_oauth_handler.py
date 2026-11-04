@@ -59,6 +59,7 @@ class KlaviyoOAuthHandler(DatabasePoolMixin, SocketIOHandler):
             try:
                 tokens = await exchange_code_for_tokens(
                     code=request.code, redirect_uri=request.redirect_uri, code_verifier=request.code_verifier,
+                    client_id=request.client_id, client_secret=request.client_secret,
                 )
             except ValueError as e:
                 logger.error(f"[KlaviyoOAuthHandler] Token exchange failed: {e}")
@@ -71,6 +72,10 @@ class KlaviyoOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 'expires_at': tokens.expires_at,
                 'name': request.credential_name,
             }
+            # Store custom client credentials for token refresh if provided
+            if request.client_id and request.client_secret:
+                credential_data['client_id'] = request.client_id
+                credential_data['client_secret'] = request.client_secret
             try:
                 encrypted_data = self.encryption.encrypt_credential(credential_data)
             except Exception as e:
