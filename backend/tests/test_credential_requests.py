@@ -469,7 +469,7 @@ class TestCredentialRequestHTTPAPI:
                 SimpleNamespace(email=TARGET_EMAIL),
             )
 
-        monkeypatch.setattr('nodes.oauth.google_oauth.exchange_code_for_tokens', exchange)
+        monkeypatch.setattr('wss.handlers.oauth.google_oauth_handler.exchange_code_for_tokens', exchange)
         yield SimpleNamespace(request_id=str(row['id']), token=row['token'], granted=granted)
         db.execute("DELETE FROM credentials WHERE credential_type = 'google_sheets_oauth'")
 
@@ -478,7 +478,7 @@ class TestCredentialRequestHTTPAPI:
 
         return provide_credential(token, ProvideCredentialBody(
             oauth_code='code-1', redirect_uri='https://noclick.test/api/auth/google/callback',
-            scopes=self.SHEETS_SCOPES,
+            scopes=self.SHEETS_SCOPES, oauth_inputs={'credential_name': 'Google Sheets'},
         ))
 
     @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
@@ -523,6 +523,103 @@ class TestCredentialRequestHTTPAPI:
         assert row['metadata']['scopes'] == self.SHEETS_SCOPES
         req = db.fetchrow("SELECT status FROM credential_requests WHERE id = $1", google_sheets_request.request_id)
         assert req['status'] == 'fulfilled'
+
+    def _oauth_request(self, db, credential_type):
+        return db.fetchrow(
+            "INSERT INTO credential_requests (requester_id, target_email, credential_type) "
+            "VALUES ($1, $2, $3) RETURNING id, token", TEST_USER_ID, TARGET_EMAIL, credential_type,
+        )
+
+    async def test_every_sign_in_a_link_offers_names_its_provider_and_runs_on_the_apps_own_handler(self):
+        """A link draws a sign-in's button from the provider its credential class declares, and runs that
+        provider's own exchange handler: a type whose name doesn't spell its provider (Instagram Login, Jira on
+        Atlassian) once drew no button, and a sign-in the link can't run would fail only once someone tried."""
+        from utils import credential_request_routes as routes
+        from utils.link_sign_in import exchange_request, _handler, _Socket
+
+        declared = routes._oauth_providers_by_type()
+        assert declared['instagram_login'] == 'instagram_login' and declared['jira_oauth'] == 'atlassian'
+        for credential_type, provider in declared.items():
+            method = routes._get_credential_method(credential_type)
+            assert method is None or method['oauth_provider'] == provider, credential_type
+        for provider in set(declared.values()):
+            exchange_request(provider)
+            _handler(provider, _Socket('user', 'free'))
+
+    @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
+    async def test_an_instagram_login_link_stores_the_account_the_app_would(
+        self, mock_send_email, real_database, db, setup_db, monkeypatch,
+    ):
+        """The link's credential is the in-app one: the Instagram account's id and handle, which every
+        Instagram call is addressed by, where the link once kept the token alone."""
+        from types import SimpleNamespace
+        from utils.credential_request_routes import ProvideCredentialBody, get_credential_request, provide_credential
+        from utils.encryption import get_encryption
+
+        request = self._oauth_request(db, 'instagram_login')
+        details = await get_credential_request(request['token'])
+        assert details.available_methods[0].oauth_provider == 'instagram_login'
+
+        async def exchange(code, redirect_uri):
+            assert (code, redirect_uri) == ('code-1', 'https://noclick.test/oauth/instagram/callback')
+            return (SimpleNamespace(access_token='IGAA', expires_at='2099-01-01T00:00:00+00:00',
+                                    instagram_user_id='1789'),
+                    SimpleNamespace(instagram_user_id='1789', username='bakery', name='Bakery',
+                                    account_type='BUSINESS'))
+
+        monkeypatch.setattr('wss.handlers.oauth.instagram_login_oauth_handler.exchange_code_for_tokens', exchange)
+        try:
+            result = await provide_credential(request['token'], ProvideCredentialBody(
+                oauth_code='code-1', redirect_uri='https://noclick.test/oauth/instagram/callback',
+                scopes=details.available_methods[0].oauth_scopes, oauth_inputs={}))
+            row = db.fetchrow("SELECT owner_id, credential_type, name, credential, metadata FROM credentials "
+                              "WHERE id = $1::uuid", result['credential_id'])
+            data = get_encryption().decrypt_credential(row['credential'])
+            assert (data['access_token'], data['instagram_user_id'], data['instagram_username']) == (
+                'IGAA', '1789', 'bakery')
+            assert (row['credential_type'], row['name'], str(row['owner_id'])) == (
+                'instagram_login', 'Instagram (@bakery)', TEST_USER_ID)
+            assert (row['metadata']['provider'], row['metadata']['provided_by']) == ('instagram_login', TARGET_EMAIL)
+            req = db.fetchrow("SELECT status, credential_id FROM credential_requests WHERE id = $1", request['id'])
+            assert (req['status'], str(req['credential_id'])) == ('fulfilled', result['credential_id'])
+            mock_send_email.assert_awaited_once()
+        finally:
+            db.execute("DELETE FROM credentials WHERE credential_type = 'instagram_login'")
+
+    @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
+    async def test_a_link_hands_its_connect_forms_inputs_to_the_sign_in(
+        self, mock_send_email, real_database, db, setup_db, monkeypatch,
+    ):
+        """A sign-in that needs the form's own input (Zendesk's subdomain) gets it from the link, and one sent
+        without it is refused naming the field, before any code is exchanged."""
+        from types import SimpleNamespace
+        from fastapi import HTTPException
+        from utils.credential_request_routes import ProvideCredentialBody, provide_credential
+        from utils.encryption import get_encryption
+
+        request = self._oauth_request(db, 'zendesk_oauth')
+        exchanged = []
+
+        async def exchange(code, redirect_uri, subdomain):
+            exchanged.append(subdomain)
+            return (SimpleNamespace(access_token='zd', refresh_token='zr', expires_at='2099-01-01T00:00:00+00:00'),
+                    SimpleNamespace(id=7, name='Dana', email=TARGET_EMAIL))
+
+        monkeypatch.setattr('wss.handlers.oauth.zendesk_oauth_handler.exchange_code_for_tokens', exchange)
+        body = dict(oauth_code='code-1', redirect_uri='https://noclick.test/oauth/zendesk/callback', scopes=['read'])
+        try:
+            with pytest.raises(HTTPException) as refused:
+                await provide_credential(request['token'], ProvideCredentialBody(**body, oauth_inputs={}))
+            assert refused.value.status_code == 400 and refused.value.detail.startswith('subdomain')
+            assert exchanged == []
+
+            result = await provide_credential(request['token'], ProvideCredentialBody(
+                **body, oauth_inputs={'subdomain': 'acme'}))
+            row = db.fetchrow("SELECT credential FROM credentials WHERE id = $1::uuid", result['credential_id'])
+            assert get_encryption().decrypt_credential(row['credential'])['subdomain'] == 'acme'
+            assert exchanged == ['acme']
+        finally:
+            db.execute("DELETE FROM credentials WHERE credential_type = 'zendesk_oauth'")
 
     @patch('utils.credential_request_routes.send_credential_fulfilled_email', new_callable=AsyncMock, return_value=True)
     async def test_request_metadata_silences_the_requester_and_returns_the_person(

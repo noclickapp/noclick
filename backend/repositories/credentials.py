@@ -17,9 +17,10 @@ is the reference implementation.
 
 from __future__ import annotations
 
+from contextvars import ContextVar
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from utils.activity import signal_activity
 from utils.analytics import log_activity_background
@@ -30,6 +31,11 @@ from .users import user_name_sql
 
 # Tries at providing one credential request (a refused key counts) before its link stops taking them.
 MAX_PROVISION_ATTEMPTS = 5
+
+# Where a sign-in run on someone's behalf stores its credential (``utils.link_sign_in``): set for one call, it takes
+# what the sign-in's handler would have created, as (type, name, encrypted, metadata), and answers as the insert would.
+SignInStore = Callable[[str, str, str, Dict[str, Any]], Awaitable[Tuple[Optional[Dict[str, Any]], Optional[str]]]]
+SIGN_IN_STORE: ContextVar[Optional[SignInStore]] = ContextVar("sign_in_store", default=None)
 
 
 def credential_access_predicate(require_edit: bool = False) -> str:
@@ -994,6 +1000,9 @@ async def create_credential_with_limit_check(
     Returns (credential_row_dict, None) on success or (None, error_message)
     on limit hit.
     """
+    store = SIGN_IN_STORE.get()
+    if store is not None:
+        return await store(credential_type, credential_name, encrypted_data, metadata)
     # The one billing edge on this path; lazy so the metering implementation
     # stays swappable behind it.
     from billing.plan_limits import check_credential_limit

@@ -13,7 +13,6 @@ import asyncpg
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from nodes.oauth.google_scopes import find_missing_granted_scopes, format_missing_scopes_message
 from repositories.credentials import MAX_PROVISION_ATTEMPTS
 from repositories.organization import PRIMARY_ORG_SQL
 from repositories.users import user_label_sql
@@ -54,35 +53,39 @@ def validated_return_url(url: str) -> str:
 # OAuth provider registry — auto-discovered from node schemas and module conventions
 # ---------------------------------------------------------------------------
 
-# Lazy cache: set of OAuth provider keys discovered from x-oauth-provider in node schemas
-_oauth_providers_cache: set[str] | None = None
+# Lazy cache: each OAuth credential type's provider, as its credential class declares it (x-oauth-provider)
+_oauth_provider_cache: dict[str, str] | None = None
 # Lazy cache: provider → bool indicating whether PKCE is required
 _pkce_cache: dict[str, bool] = {}
 
 
-def _discover_oauth_providers() -> set[str]:
-    """Discover OAuth provider keys from node schema ``x-oauth-provider`` metadata."""
-    global _oauth_providers_cache
-    if _oauth_providers_cache is not None:
-        return _oauth_providers_cache
+def _oauth_providers_by_type() -> dict[str, str]:
+    """Each OAuth credential type's provider (``x-oauth-provider``), read from the node schemas: the one source
+    the in-app connect reads too, never guessed from the type's name."""
+    global _oauth_provider_cache
+    if _oauth_provider_cache is not None:
+        return _oauth_provider_cache
 
-    providers: set[str] = set()
-    try:
-        from nodes.core.registry import NODE_REGISTRY
-        for node_class in NODE_REGISTRY.values():
-            try:
-                schema = node_class.get_config_schema()
-                for defn in schema.get('$defs', {}).values():
-                    provider = defn.get('x-oauth-provider')
-                    if provider:
-                        providers.add(provider)
-            except Exception:
-                continue
-    except Exception as e:
-        logger.warning(f"Failed to discover OAuth providers: {e}")
+    providers: dict[str, str] = {}
+    from nodes.core.registry import NODE_REGISTRY
+    for node_class in NODE_REGISTRY.values():
+        try:
+            schema = node_class.get_config_schema()
+        except Exception:
+            logger.exception("Reading %s's schema for its OAuth providers failed", node_class.__name__)
+            continue
+        for title, defn in schema.get('$defs', {}).items():
+            provider, cred_type = defn.get('x-oauth-provider'), _resolve_credential_type(title, defn)
+            if provider and cred_type:
+                providers.setdefault(cred_type, provider)
 
-    _oauth_providers_cache = providers
+    _oauth_provider_cache = providers
     return providers
+
+
+def _discover_oauth_providers() -> set[str]:
+    """Every OAuth provider a credential type signs in with."""
+    return set(_oauth_providers_by_type().values())
 
 
 def _is_pkce_provider(provider: str) -> bool:
@@ -106,17 +109,8 @@ def _is_pkce_provider(provider: str) -> bool:
 
 
 def _get_oauth_provider(credential_type: str) -> Optional[str]:
-    """Return the provider key if this credential_type is OAuth, else None."""
-    if 'oauth' not in credential_type:
-        return None
-    for provider in _discover_oauth_providers():
-        if credential_type.startswith(provider):
-            return provider
-    return None
-
-
-def _is_oauth_type(credential_type: str) -> bool:
-    return _get_oauth_provider(credential_type) is not None
+    """The provider ``credential_type`` signs in with, or None when it isn't an OAuth credential."""
+    return _oauth_providers_by_type().get(credential_type)
 
 
 class OAuthAppUnavailable(Exception):
@@ -124,21 +118,22 @@ class OAuthAppUnavailable(Exception):
 
 
 def oauth_app_providers() -> set[str]:
-    """The OAuth providers whose sign-in, code exchange and refresh can all
-    run on an OAuth app brought by the requester (``OAUTH_APPS``)."""
+    """The OAuth providers whose sign-in takes an OAuth app brought by the
+    requester (``OAUTH_APPS``: its exchange request names the app) and whose
+    refresh runs on it."""
     import importlib
 
     from nodes.core.oauth_refresh import own_client_kwargs
+    from utils.link_sign_in import client_fields
 
+    probe = {'client_id': 'x', 'client_secret': 'x'}
     supported = set()
     for provider in _discover_oauth_providers():
         try:
-            mod = importlib.import_module(f'nodes.oauth.{provider}_oauth')
-        except ImportError:
+            refresh = getattr(importlib.import_module(f'nodes.oauth.{provider}_oauth'), 'refresh_access_token', None)
+        except ImportError:  # its handler refreshes on its own (facebook_pages)
             continue
-        exchange, refresh = getattr(mod, 'exchange_code_for_tokens', None), getattr(mod, 'refresh_access_token', None)
-        probe = {'client_id': 'x', 'client_secret': 'x'}
-        if exchange and refresh and own_client_kwargs(exchange, probe) and own_client_kwargs(refresh, probe):
+        if client_fields(provider, probe) and refresh and own_client_kwargs(refresh, probe):
             supported.add(provider)
     return supported
 
@@ -153,62 +148,6 @@ async def _oauth_app(pool, row, provider: Optional[str]) -> Optional[dict[str, s
         return None
     return await resolver(pool, requester_id=str(row['requester_id']), metadata=row['metadata'] or {},
                           provider=provider)
-
-
-async def _exchange_oauth_code(
-    provider: str,
-    code: str,
-    redirect_uri: str,
-    scopes: list[str],
-    code_verifier: Optional[str] = None,
-    client: Optional[dict[str, str]] = None,
-) -> dict[str, Any]:
-    """Exchange an OAuth code for tokens and return credential_data dict.
-    ``client``: an OAuth app of the requester's, which the credential keeps
-    (its refreshes run on it too). Raises 400 for a Google token missing a
-    requested API scope (granular consent), so it is never stored."""
-    import importlib
-
-    mod = importlib.import_module(f'nodes.oauth.{provider}_oauth')
-    exchange_fn = mod.exchange_code_for_tokens
-
-    kwargs: dict[str, Any] = {'code': code, 'redirect_uri': redirect_uri}
-    if _is_pkce_provider(provider) and code_verifier:
-        kwargs['code_verifier'] = code_verifier
-    if client is not None:
-        from nodes.core.oauth_refresh import own_client_kwargs
-
-        own = own_client_kwargs(exchange_fn, client)
-        if own is None:
-            raise OAuthAppUnavailable(f"{provider} can't sign in with an OAuth app of your own here.")
-        kwargs.update(own)
-
-    result = await exchange_fn(**kwargs)
-
-    # All providers return (tokens, user_info) tuple
-    tokens, user_info = result
-
-    # Build credential_data from the tokens object's attributes
-    credential_data: dict[str, Any] = {}
-    for attr in ['access_token', 'refresh_token', 'expires_at', 'scope', 'token_type']:
-        val = getattr(tokens, attr, None)
-        if val is not None:
-            credential_data[attr] = val
-
-    if provider == 'google':
-        missing = find_missing_granted_scopes(scopes, credential_data.get('scope'))
-        if missing:
-            logger.warning("Rejecting Google token missing scopes %s (granted=%r)", missing, credential_data.get('scope'))
-            raise HTTPException(status_code=400, detail=format_missing_scopes_message(missing))
-
-    # Include user info email if available
-    email = getattr(user_info, 'email', None) or getattr(user_info, 'name', None)
-    if email:
-        credential_data['email'] = email
-    if client is not None:
-        credential_data.update(client_id=client['client_id'], client_secret=client['client_secret'])
-
-    return credential_data
 
 
 # ---------------------------------------------------------------------------
@@ -598,6 +537,8 @@ class ProvideCredentialBody(BaseModel):
     redirect_uri: Optional[str] = None
     scopes: Optional[list[str]] = None
     code_verifier: Optional[str] = None
+    # The connect form's own inputs beside the code (a site, a subdomain, a shop), as the app's form sends them.
+    oauth_inputs: Optional[dict[str, Any]] = None
 
 
 # ---------------------------------------------------------------------------
@@ -818,32 +759,85 @@ async def _store_and_fulfill(
 ) -> dict[str, str]:
     """Encrypt + store an already-built credential, atomically fulfil the request,
     share to the requester when the provider has an account, and notify. Shared by
-    the API-key / redirect-OAuth provide path and the agent-OAuth completion."""
-    encrypted = get_encryption().encrypt_credential(credential_data)
+    the API-key provide path and the agent-OAuth completion."""
+    owner_id = await _provided_credential_owner(pool, row, credential_type)
+    credential_id = await _store_provided(pool, row, owner_id, credential_type, credential_name,
+                                          get_encryption().encrypt_credential(credential_data), metadata)
+    return await _fulfilled(pool, row, credential_id, credential_type)
 
-    credential_owner_id = await _provided_credential_owner(pool, row, credential_type)
 
-    org_context_row = await pool.fetchrow(PRIMARY_ORG_SQL, credential_owner_id)
-    cred_org_id = str(org_context_row['organization_id']) if org_context_row else None
-
+async def _store_provided(pool, row, owner_id: str, credential_type: str, name: str, encrypted: str,
+                          metadata: dict) -> str:
+    """Store the credential as ``owner_id``'s and fulfil the request with it, in one commit. 410 when the
+    request was fulfilled meanwhile."""
     from repositories.credentials import CredentialsRepo
+
+    org_context_row = await pool.fetchrow(PRIMARY_ORG_SQL, owner_id)
     try:
-        credential_id = await CredentialsRepo(pool).store_provided_credential(
-            request_id=str(row['id']), request_token=row['token'], owner_id=credential_owner_id, requester_id=str(row['requester_id']),
-            organization_id=cred_org_id, name=credential_name, credential_type=credential_type,
-            encrypted=encrypted, metadata=metadata,
+        return await CredentialsRepo(pool).store_provided_credential(
+            request_id=str(row['id']), request_token=row['token'], owner_id=owner_id,
+            requester_id=str(row['requester_id']),
+            organization_id=str(org_context_row['organization_id']) if org_context_row else None,
+            name=name, credential_type=credential_type, encrypted=encrypted, metadata=metadata,
         )
     except ValueError as exc:
         raise HTTPException(status_code=410, detail=str(exc)) from None
 
-    await _notify_requester_fulfilled(row, credential_type)
 
+async def _fulfilled(pool, row, credential_id: str, credential_type: str) -> dict[str, str]:
+    await _notify_requester_fulfilled(row, credential_type)
     logger.info(
         f"Credential request {row['id']} fulfilled: type={credential_type}, "
         f"requester={row['requester_id']}, provider={row['target_email']}"
     )
     _announce_fulfilled(pool, row, credential_id, credential_type)
     return {"status": "success", "message": "Credential provided successfully", "credential_id": credential_id}
+
+
+async def _sign_in_for_request(pool, row, credential_type: str, provider: str,
+                               body: ProvideCredentialBody) -> dict[str, str]:
+    """Run the app's own sign-in for ``provider`` (``utils.link_sign_in``) with the link's inputs; its credential
+    is stored as ``_store_and_fulfill`` stores one, so the link's credential is the one the app makes."""
+    from utils.link_sign_in import SignInFailed, client_fields, sign_in
+
+    if not body.oauth_code or not body.redirect_uri:
+        raise HTTPException(status_code=400, detail="OAuth credentials require oauth_code and redirect_uri")
+    inputs = {**(body.oauth_inputs or {}), 'code': body.oauth_code, 'redirect_uri': body.redirect_uri,
+              'scopes': body.scopes or [], 'code_verifier': body.code_verifier}
+    client = await _oauth_app(pool, row, provider)
+    if client is not None:
+        named = client_fields(provider, client)
+        if named is None:
+            raise OAuthAppUnavailable(f"{provider} can't sign in with an OAuth app of your own here.")
+        inputs.update(named)
+    owner_id = await _provided_credential_owner(pool, row, credential_type)
+    stored: dict[str, Any] = {}
+
+    async def store(stored_type: str, name: str, encrypted: str, metadata: dict):
+        if stored_type != credential_type:
+            return None, f"This sign-in connects {stored_type}, not the {credential_type} this link asks for."
+        metadata = {**metadata, 'provided_by': row['target_email'],
+                    **({'oauth_client_id': client['client_id']} if client else {})}
+        try:
+            stored['id'] = await _store_provided(pool, row, owner_id, stored_type, name, encrypted, metadata)
+        except HTTPException as exc:
+            stored['ended'] = exc
+            return None, exc.detail
+        return {'id': stored['id'], 'name': name}, None
+
+    try:
+        credential_id, _ = await sign_in(provider, inputs, user_id=owner_id,
+                                         tier=await _requester_effective_tier(pool, owner_id), store=store)
+    except SignInFailed as exc:
+        if 'ended' in stored:
+            raise stored['ended'] from None
+        raise HTTPException(status_code=400, detail=str(exc)) from None
+    if 'id' not in stored:
+        # The sign-in put the account back on a credential its owner already holds (a reconnect): that one fills it.
+        if not await _claim_fulfillment(pool, row, credential_id, credential_type, owner_id=owner_id):
+            raise HTTPException(status_code=410, detail="This credential request has already been fulfilled")
+        return {"status": "success", "message": "Credential provided successfully", "credential_id": credential_id}
+    return await _fulfilled(pool, row, credential_id, credential_type)
 
 
 def _announce_fulfilled(pool, row, credential_id: str, credential_type: str) -> None:
@@ -923,74 +917,53 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
 
     try:
         if provider:
-            # OAuth credential
-            if not body.oauth_code or not body.redirect_uri:
-                raise HTTPException(status_code=400, detail="OAuth credentials require oauth_code and redirect_uri")
+            return await _sign_in_for_request(pool, row, credential_type, provider, body)
+        # API key / manual credential
+        if not body.credential_data:
+            raise HTTPException(status_code=400, detail="API key credentials require credential_data")
 
-            client = await _oauth_app(pool, row, provider)
-            credential_data = await _exchange_oauth_code(
-                provider=provider,
-                code=body.oauth_code,
-                redirect_uri=body.redirect_uri,
-                scopes=body.scopes or [],
-                code_verifier=body.code_verifier,
-                client=client,
-            )
-            credential_name = credential_data.get('email', f'{provider.title()} Account')
-            metadata = {
-                'provider': provider,
-                'email': credential_data.get('email'),
-                'scopes': body.scopes or [],
-                'provided_by': row['target_email'],
-                **({'oauth_client_id': client['client_id']} if client else {}),
-            }
+        # "(provided by …)" only when we know who — copy-link requests carry no email.
+        provided_by = row['target_email']
+        by_suffix = f" (provided by {provided_by})" if provided_by else ""
+        agent_provider = _get_agent_provider(credential_type)
+        if agent_provider:
+            # Agent LLM credentials nest their env vars under `credentials` and
+            # carry `provider` so the runtime + agent form resolve them correctly.
+            credential_data = {'credentials': body.credential_data}
+            credential_name = f"{agent_provider.title()} API Key{by_suffix}"
+            metadata = {'provider': agent_provider, 'provided_by': provided_by}
         else:
-            # API key / manual credential
-            if not body.credential_data:
-                raise HTTPException(status_code=400, detail="API key credentials require credential_data")
+            credential_data = body.credential_data
+            credential_name = f"{credential_type}{by_suffix}"
+            metadata = {'provided_by': provided_by}
 
-            # "(provided by …)" only when we know who — copy-link requests carry no email.
-            provided_by = row['target_email']
-            by_suffix = f" (provided by {provided_by})" if provided_by else ""
-            agent_provider = _get_agent_provider(credential_type)
-            if agent_provider:
-                # Agent LLM credentials nest their env vars under `credentials` and
-                # carry `provider` so the runtime + agent form resolve them correctly.
-                credential_data = {'credentials': body.credential_data}
-                credential_name = f"{agent_provider.title()} API Key{by_suffix}"
-                metadata = {'provider': agent_provider, 'provided_by': provided_by}
-            else:
-                credential_data = body.credential_data
-                credential_name = f"{credential_type}{by_suffix}"
-                metadata = {'provided_by': provided_by}
+        # The same judgement the in-app form gets: shape through the
+        # credential class and prove against the provider before storing.
+        # The probe runs as the requester (the workflow owner the
+        # credential is for) — a public page has no session of its own.
+        from nodes.core.credential_connect import validate_for_connect
 
-            # The same judgement the in-app form gets: shape through the
-            # credential class and prove against the provider before storing.
-            # The probe runs as the requester (the workflow owner the
-            # credential is for) — a public page has no session of its own.
-            from nodes.core.credential_connect import validate_for_connect
-
-            verdict = await validate_for_connect(
-                credential_type=credential_type,
-                credential_data=credential_data,
-                user_id=str(row['requester_id']),
-                pool=pool,
+        verdict = await validate_for_connect(
+            credential_type=credential_type,
+            credential_data=credential_data,
+            user_id=str(row['requester_id']),
+            pool=pool,
+        )
+        if not verdict.ok:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "message": verdict.message,
+                    "field_errors": verdict.field_errors,
+                    "hint": verdict.hint,
+                    "reachable": False if verdict.rejection else None,
+                },
             )
-            if not verdict.ok:
-                raise HTTPException(
-                    status_code=400,
-                    detail={
-                        "message": verdict.message,
-                        "field_errors": verdict.field_errors,
-                        "hint": verdict.hint,
-                        "reachable": False if verdict.rejection else None,
-                    },
-                )
-            credential_data = verdict.credential_data
-            metadata = {**metadata, **verdict.verified_metadata()}
+        credential_data = verdict.credential_data
+        metadata = {**metadata, **verdict.verified_metadata()}
 
         stored = await _store_and_fulfill(pool, row, credential_type, credential_data, credential_name, metadata)
-        if not provider and verdict.evidence is not None:
+        if verdict.evidence is not None:
             from wss.sender.responses import CredentialTestConnectionResponse
 
             stored["verification"] = CredentialTestConnectionResponse.from_evidence(
@@ -1002,9 +975,6 @@ async def provide_credential(token: str, body: ProvideCredentialBody) -> dict[st
         raise
     except OAuthAppUnavailable as e:
         raise HTTPException(status_code=409, detail=str(e))
-    except ValueError as e:
-        logger.error(f"Token exchange failed for request {row['id']}: {e}")
-        raise HTTPException(status_code=400, detail=f"Failed to exchange OAuth code: {e}")
     except Exception as e:
         logger.error(f"Failed to provision credential for request {row['id']}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to store credential")
@@ -1195,25 +1165,32 @@ async def _rollback_qr_credential(pool, credential_id: str) -> None:
     await pool.execute("DELETE FROM credentials WHERE id = $1", credential_id)
 
 
-async def _claim_qr_fulfillment(pool, row, credential_id: str) -> bool:
-    """CAS-claim the request as fulfilled with an already-created QR credential
-    (owned by the requester) and notify. Returns False if the request was already
-    fulfilled — the caller rolls back the orphaned credential."""
-    claimed = await pool.fetchval(
-        """
-        UPDATE credential_requests
-        SET status = 'fulfilled', credential_id = $1, fulfilled_at = NOW()
-        WHERE id = $2 AND token = $3 AND status = 'pending' AND expires_at > now()
-        RETURNING id
-        """,
-        credential_id, str(row["id"]), row["token"],
-    )
-    if not claimed:
-        return False
+async def _claim_fulfillment(pool, row, credential_id: str, credential_type: str, *, owner_id: str) -> bool:
+    """CAS-claim the request as fulfilled with a credential its sign-in already holds (a WhatsApp scan's, a
+    reconnect's), shared with the requester when someone else owns it, and notify. Returns False if the request
+    was already fulfilled: the caller rolls back a credential it just created."""
+    async with pool.acquire() as conn, conn.transaction():
+        claimed = await conn.fetchval(
+            """
+            UPDATE credential_requests
+            SET status = 'fulfilled', credential_id = $1, fulfilled_at = NOW()
+            WHERE id = $2 AND token = $3 AND status = 'pending' AND expires_at > now()
+            RETURNING id
+            """,
+            credential_id, str(row["id"]), row["token"],
+        )
+        if not claimed:
+            return False
+        if owner_id != str(row["requester_id"]):
+            await conn.execute(
+                "INSERT INTO resource_shares(resource_type,resource_id,target_type,target_user_id,permission,shared_by) "
+                "VALUES('credential',$1::uuid,'user',$2::uuid,'edit',$3::uuid) ON CONFLICT DO NOTHING",
+                credential_id, str(row["requester_id"]), owner_id,
+            )
     if row["target_email"]:
-        await _notify_requester_fulfilled(row, "whatsapp_qr")
-    logger.info(f"Credential request {row['id']} fulfilled via WhatsApp QR: credential={credential_id}")
-    _announce_fulfilled(pool, row, credential_id, "whatsapp_qr")
+        await _notify_requester_fulfilled(row, credential_type)
+    logger.info(f"Credential request {row['id']} fulfilled with an existing {credential_type}: credential={credential_id}")
+    _announce_fulfilled(pool, row, credential_id, credential_type)
     return True
 
 
@@ -1252,7 +1229,8 @@ async def qr_status(token: str, body: QRStatusBody) -> dict[str, Any]:
     )
     if result.get("status") == "connected" and result.get("credential_id"):
         try:
-            claimed = await _claim_qr_fulfillment(pool, row, result["credential_id"])
+            claimed = await _claim_fulfillment(pool, row, result["credential_id"], "whatsapp_qr",
+                                               owner_id=str(row["requester_id"]))
         except asyncpg.UniqueViolationError:
             # The phone's credential already fills another of what the request's surface binds one credential to.
             raise HTTPException(status_code=409, detail="This WhatsApp account is already connected elsewhere in "

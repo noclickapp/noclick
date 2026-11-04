@@ -143,7 +143,15 @@ function ApiKeyMethod({ method, apiBase, token, serviceName, onProvided, onReque
 /** oauth — the shared redirect-OAuth connect form (incl. Shopify/Zendesk/Atlassian/BYOO
  *  inputs) under the HTTP transport. */
 function OAuthMethod({ method, apiBase, token, serviceName, onProvided, onRequestEnded, note }: CredentialMethodConnectProps) {
-    if (!method.oauth_provider) return null;
+    if (!method.oauth_provider) {
+        // The server names every sign-in's provider; one without has nothing to open, so say so rather than show nothing.
+        console.error(`[credential-provide] ${method.credential_type} is a sign-in with no provider`);
+        return (
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
+                {serviceName || method.label} can’t be connected through this link. Ask whoever sent it for a new one.
+            </p>
+        );
+    }
     return (
         <RedirectOAuthProvideMethod
             apiBase={apiBase}
