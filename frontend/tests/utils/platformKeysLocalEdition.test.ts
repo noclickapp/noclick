@@ -64,7 +64,7 @@ describe('self-hosted credential-optional operations', () => {
 
     it.each([
         ['automation-linkedin', 'scrape_user_profiles', 'APIFY_API_TOKEN'],
-        ['automation-reddit', 'get_subreddit_posts', 'DECODO_AUTH_TOKEN'],
+        ['automation-reddit', 'get_subreddit_posts', 'APIFY_API_TOKEN'],
     ])('%s scraping requires its instance provider key', (nodeType, operation, envVar) => {
         configure();
         expect(
