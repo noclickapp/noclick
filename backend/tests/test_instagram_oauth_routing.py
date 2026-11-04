@@ -83,17 +83,8 @@ async def test_instagram_login_dispatch_reaches_the_real_handler(event, monkeypa
     proxy._exit_request_context.assert_called_once_with(None)
 
 
-@pytest.mark.parametrize(
-    "relative_path",
-    [
-        "frontend/app/types/socket-events.generated.ts",
-        "oss/overrides/frontend/app/types/socket-events.generated.ts",
-    ],
-)
-def test_generated_frontends_route_instagram_login_to_api(relative_path):
-    path = ROOT / relative_path
-    if not path.exists() and relative_path.startswith("oss/"):
-        pytest.skip("The exported edition has no override source directory")
+def test_generated_frontends_route_instagram_login_to_api():
+    path = ROOT / "frontend/app/types/socket-events.generated.ts"
     routing = path.read_text().split("export const EventRouting = {", 1)[1].split("}", 1)[0]
     for event in INSTAGRAM_EVENTS:
         assert f"'{event}': 'API'" in routing

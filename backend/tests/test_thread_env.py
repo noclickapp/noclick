@@ -1,7 +1,6 @@
 """
-Tests for thread_env module - thread-safe environment variable management.
-
-This is a superset of test_async_env.py tests, adding cross-thread support verification.
+Tests for thread_env module - thread-safe environment variable management,
+in async contexts and across threads.
 """
 
 import asyncio
@@ -635,27 +634,7 @@ class TestThreadEnv:
         assert 'CONTEXT_VAR' not in os.environ
         
         del os.environ['GLOBAL_VAR']
-    
-    def test_clear_operation(self):
-        """Test clear operation in contexts."""
-        os.environ['CLEAR_VAR1'] = 'value1'
-        os.environ['CLEAR_VAR2'] = 'value2'
-        
-        with override_env(CONTEXT_VAR='context'):
-            # Clear in context should clear context vars
-            os.environ.clear()
-            
-            # Behavior depends on implementation
-            # Either clears all or just context vars
-            # Test will be adjusted based on implementation
-            pass
-        
-        # Clean up
-        if 'CLEAR_VAR1' in os.environ:
-            del os.environ['CLEAR_VAR1']
-        if 'CLEAR_VAR2' in os.environ:
-            del os.environ['CLEAR_VAR2']
-    
+
     def test_delete_operation(self):
         """Test delete operation in different contexts."""
         os.environ['DELETE_VAR'] = 'original'

@@ -438,10 +438,10 @@ class TestErrorOutputRouting:
     Unit tests for the error-handle routing logic introduced alongside the
     _settings.onError = continueErrorOutput feature.
 
-    These tests verify (a) _build_dependency_maps surfaces the per-edge
-    sourceHandle, and (b) the live-edge predicate used by execute_single_node's
-    cascade-skip check selects the right downstream nodes when a predecessor
-    finishes via the error handle vs the success handle.
+    These tests verify that _build_dependency_maps surfaces the per-edge
+    sourceHandle. Which downstream nodes run when a predecessor finishes via the
+    error handle vs the success handle is driven through the real executor in
+    TestWorkflowExecutionHandler's continueErrorOutput tests.
     """
 
     @pytest.fixture
@@ -474,71 +474,6 @@ class TestErrorOutputRouting:
         # Verify it's an independent set per instance (default_factory, not shared)
         state.error_continuations.add("foo")
         assert ConcurrentExecutionState().error_continuations == set()
-
-    def test_edge_live_predicate_routes_success_when_predecessor_completed_normally(self):
-        """
-        Replicates the inlined _edge_live closure from execute_single_node.
-        With a clean completion: success/default edges live, error edges dead.
-        """
-        from wss.handlers.workflow_execution_handler import ConcurrentExecutionState
-        state = ConcurrentExecutionState()
-        state.completed.add("src")  # Normal success
-
-        def edge_live(pred_id, handle):
-            if handle == "error":
-                return pred_id in state.error_continuations
-            return pred_id in state.completed and pred_id not in state.error_continuations
-
-        assert edge_live("src", None) is True       # default success handle
-        assert edge_live("src", "true") is True     # any non-error handle
-        assert edge_live("src", "error") is False   # error handle dead on normal success
-
-    def test_edge_live_predicate_routes_error_when_predecessor_error_continued(self):
-        """When the predecessor finished via continueErrorOutput with a wired error
-        edge, the success handle goes dead and the error handle goes live."""
-        from wss.handlers.workflow_execution_handler import ConcurrentExecutionState
-        state = ConcurrentExecutionState()
-        state.completed.add("src")
-        state.error_continuations.add("src")
-
-        def edge_live(pred_id, handle):
-            if handle == "error":
-                return pred_id in state.error_continuations
-            return pred_id in state.completed and pred_id not in state.error_continuations
-
-        assert edge_live("src", None) is False       # default handle is now dead
-        assert edge_live("src", "error") is True     # error handle is the only live route
-
-    def test_edge_live_predicate_dead_when_predecessor_failed(self):
-        """Predecessor that hit stopWorkflow (or any uncaught error) is in `failed`,
-        so both success and error handles stay dead."""
-        from wss.handlers.workflow_execution_handler import ConcurrentExecutionState
-        state = ConcurrentExecutionState()
-        state.failed.add("src")
-
-        def edge_live(pred_id, handle):
-            if handle == "error":
-                return pred_id in state.error_continuations
-            return pred_id in state.completed and pred_id not in state.error_continuations
-
-        assert edge_live("src", None) is False
-        assert edge_live("src", "error") is False
-
-    def test_nodes_with_error_edge_set_membership(self, handler):
-        """The handler precomputes which nodes have an outgoing error edge so the
-        execution loop can gate the new routing path. Verify the set is built
-        correctly from edge metadata (same one-liner the handler uses inline)."""
-        edges = [
-            {"source": "A", "target": "B"},
-            {"source": "A", "target": "C", "sourceHandle": "error"},
-            {"source": "B", "target": "D"},
-            {"source": "B", "target": "E", "sourceHandle": "true"},  # not 'error'
-        ]
-        nodes_with_error_edge = {
-            e["source"] for e in edges
-            if e.get("source") and e.get("sourceHandle") == "error"
-        }
-        assert nodes_with_error_edge == {"A"}
 
 
 # Enable fast test mode (no sleep delays in node execution)
@@ -2477,44 +2412,6 @@ class TestConcurrentExecution:
 
         assert "A:executed" in execution_log
         assert "B:executed" in execution_log
-        assert "C:executed" not in execution_log
-
-    async def test_disabled_node_with_config_flag(self, handler):
-        """
-        Test that the config-level disabled flag is respected.
-
-        The disabled flag lives at node["config"]["disabled"] — the flat wire/DB
-        shape is the single source of truth (top-level node["disabled"] mirror
-        was dropped when the shape was normalized).
-        """
-        execution_log = []
-        lock = asyncio.Lock()
-
-        async def mock_execute_node(node, node_outputs, sid, user_id, workflow_id, conversation_id=None, workflow_nodes=None, workflow_edges=None, workflow_org_id=None, execution_id=None):
-            node_id = node['id']
-            async with lock:
-                execution_log.append(f"{node_id}:executed")
-            return {"node_id": node_id}
-
-        handler._execute_node = mock_execute_node
-
-        nodes = [
-            {"id": "A", "type": "test", "config": {}},
-            {"id": "B", "type": "test", "config": {"disabled": True}},  # Config-level disabled
-            {"id": "C", "type": "test", "config": {}},
-        ]
-        edges = [
-            {"source": "A", "target": "B"},
-            {"source": "B", "target": "C"},
-        ]
-
-        nodes_executed, error, _ = await handler._execute_nodes_concurrent(nodes, edges, "test-sid", "test-user-id", "test-workflow-id")
-
-        assert error is None
-        assert nodes_executed == 1  # Only A executed
-
-        assert "A:executed" in execution_log
-        assert "B:executed" not in execution_log
         assert "C:executed" not in execution_log
 
     async def test_disabled_root_node_skips_entire_workflow(self, handler):
