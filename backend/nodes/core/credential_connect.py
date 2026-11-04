@@ -319,6 +319,27 @@ def linked_only(credential_type: Optional[str]) -> bool:
     return resolved is not None and bool(_required_linked(resolved[1]))
 
 
+def typed_fields(credential_type: Optional[str]) -> Optional[List[Dict[str, Any]]]:
+    """The fields a credential of ``credential_type`` is typed in with (``validate_for_connect``'s data): each one's
+    name, label, whether it's required, whether it holds a secret (those shaping cleans as one) and what it is;
+    never a value. A field the form hides (one a sign-in fills) only when it's required, a linked one never. None
+    for a type no class declares or one only NoClick links (``linked_only``)."""
+    resolved = resolve_credential_class(credential_type)
+    if resolved is None or linked_only(credential_type):
+        return None
+    cls = resolved[1]
+    secret = _secret_fields(cls)
+    out = []
+    for name, fld in cls.model_fields.items():
+        extra = fld.json_schema_extra if isinstance(fld.json_schema_extra, dict) else {}
+        hidden = extra.get("ui:hidden") and not fld.is_required()
+        if name == "credential_type" or name in _linked_index() or hidden:
+            continue
+        out.append({"name": name, "label": _label(name, fld), "required": fld.is_required(),
+                    "secret": name in secret, "description": fld.description or None})
+    return out
+
+
 def linked_metadata(metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     """The linked part of a row's metadata, which a client's metadata replace keeps."""
     return {k: v for k, v in (metadata or {}).items() if k in _linked_index()}
