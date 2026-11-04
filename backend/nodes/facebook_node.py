@@ -98,12 +98,6 @@ class FacebookOAuthCredential(BaseModel):
             "x-credential-url": "https://developers.facebook.com/apps/",
             "x-credential-type": "oauth",
             "x-oauth-provider": "facebook_pages",
-            # Hidden until Meta approves our OAuth app — existing OAuth credentials
-            # still parse/execute; new connections use the access-token credential below.
-            # The PostHog flag reveals it for allow-listed accounts (e.g. Meta reviewers)
-            # so the live connect flow can be demoed/recorded before Advanced Access is granted.
-            "x-credential-hidden": True,
-            "x-credential-preview-flag": "meta-oauth-preview",
             "x-oauth-scopes": FACEBOOK_OAUTH_SCOPES,
         }
     )

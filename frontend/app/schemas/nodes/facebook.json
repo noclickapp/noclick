@@ -111,8 +111,6 @@
       ],
       "title": "FacebookOAuthCredential",
       "type": "object",
-      "x-credential-hidden": true,
-      "x-credential-preview-flag": "meta-oauth-preview",
       "x-credential-type": "oauth",
       "x-credential-url": "https://developers.facebook.com/apps/",
       "x-oauth-provider": "facebook_pages",
