@@ -1,7 +1,9 @@
 """A run that makes every model call its step limit allows (``TurnLimits.steps``), through the real streamed SDK and
 PostgreSQL: with ``wrap_up`` (the coordinator's) the model answers once more, allowed no tool, and that answer with
 the limit's plain line after it is the turn's reply, streamed and stored; a model that calls a tool there anyway runs
-nothing, and the run fails on that line; without it the run fails on the line too, never the SDK's own error."""
+nothing, and the run fails on that line; without it the run fails on the line too, never the SDK's own error. A limit
+whose work carries on by itself (``guards.CARRIES_ON``) ends the turn there: no closing call, nothing said, and no
+fold of its context before the turn that carries it on."""
 
 from unittest.mock import AsyncMock
 
@@ -14,7 +16,7 @@ pytestmark = pytest.mark.asyncio
 CONVERSATION = "coordinator:wrap-up"
 WRAP_UP = "You're out of steps: say where things stand."
 STANDING = "Found it: the app needs a package.json. Its fix is deploying; I'll report when it's live."
-LINE = "I stopped here: this turn used all 3 of its steps."
+LINE = "I stopped here after 3 steps on this."
 
 
 async def _run(pool, monkeypatch, *, wrap_up, closing_calls_a_tool=False):
@@ -81,7 +83,17 @@ async def _run(pool, monkeypatch, *, wrap_up, closing_calls_a_tool=False):
     return calls, looked, emitted
 
 
-async def test_a_run_out_of_model_calls_says_where_the_work_stands(builder_request_db, monkeypatch):
+@pytest.fixture
+def settles(monkeypatch):
+    """The folds a turn leaves for the background once its reply is out (``Agent._settle_context``)."""
+    from coder.openai_agent import Agent
+
+    made = []
+    monkeypatch.setattr(Agent, "_settle_context", lambda self: made.append(self.turn_ended_by))
+    return made
+
+
+async def test_a_run_out_of_model_calls_says_where_the_work_stands(builder_request_db, monkeypatch, settles):
     pool = builder_request_db[0]
     calls, looked, emitted = await _run(pool, monkeypatch, wrap_up=WRAP_UP)
 
@@ -97,6 +109,29 @@ async def test_a_run_out_of_model_calls_says_where_the_work_stands(builder_reque
     stored = await pool.fetchval("SELECT metadata->'sdk_history' FROM conversations WHERE conversation_id = $1",
                                  CONVERSATION)
     assert stored[-1]["role"] == "assistant" and stored[-1]["content"][0]["text"] == f"{STANDING}\n\n{LINE}"
+    # Nothing follows it by itself: the conversation folds once its reply is out.
+    assert settles == ["steps"]
+
+
+async def test_a_limit_whose_work_carries_on_ends_the_turn_saying_nothing_and_folds_nothing(
+        builder_request_db, monkeypatch, settles):
+    """The turn that carries the work on starts straight away, with all this one read in view and its prompt still in
+    the provider's cache; a closing call would only tell the person about the turn's mechanics."""
+    from coder.openai_agent import guards
+
+    pool = builder_request_db[0]
+    await pool.execute("DELETE FROM conversations WHERE conversation_id = $1", CONVERSATION)
+    calls, looked, emitted = await _run(pool, monkeypatch, wrap_up={"steps": {guards.CARRIES_ON: True},
+                                                                    "spend": {"prompt": WRAP_UP}})
+
+    assert [choice for choice, _ in calls] == [None, None, None] and len(looked) == 3
+    assert not [e for e in emitted if getattr(e, "message", None)]
+    assert not [e for e in emitted if getattr(e, "status", None) == "error" or getattr(e, "state", None) == "error"]
+    assert emitted[-1].finished is True
+    assert settles == []
+    stored = await pool.fetchval("SELECT metadata->'sdk_history' FROM conversations WHERE conversation_id = $1",
+                                 CONVERSATION)
+    assert stored[-1]["type"] == "function_call_output"  # its history ends where its work did
 
 
 async def test_without_a_wrap_up_a_run_out_of_model_calls_fails_on_one_plain_line(builder_request_db, monkeypatch):

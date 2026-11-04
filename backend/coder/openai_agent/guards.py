@@ -2,8 +2,9 @@
 ceiling and its time limit. ``TurnGuard`` is the run's hooks (around the billing hooks, whose cost it reads) and
 checks them after every model call and tool call; the first to trip lets the calls in hand finish and stops the run
 after them (the SDK's own ``cancel(mode="after_turn")``), and the agent then wraps the turn up once, whichever guard
-it was, in a call of at most ``WRAP_UP_S``. A time limit is kept by the clock too: a call still holding the run
-``OVERDUE_S`` past it is cancelled where it stands. A call the model repeats with the same arguments and the same
+it was, in a call of at most ``WRAP_UP_S``; or, at a limit whose work carries on by itself straight away
+(``CARRIES_ON``), ends it there saying nothing, its context left as it is for the turn that carries it on. A time
+limit is kept by the clock too: a call still holding the run ``OVERDUE_S`` past it is cancelled where it stands. A call the model repeats with the same arguments and the same
 result is a loop: the ``REPEATS``th time its result carries a nudge, and from then on that call is refused for the
 rest of the turn (``loop_guardrails``). A call whose result changes, like a poll, never counts.
 
@@ -86,6 +87,10 @@ QUIET_NOTE = ("Your last {calls} calls only read: nothing written, saved, sent o
               "working copy beats reading another slice) or give your answer. If something stops you, say exactly "
               "what it is.")
 
+# A limit's wrap-up entry (``wrap_ups``) saying the work carries on by itself straight away: the turn ends there with
+# no closing call and nothing said, and its context stays as it is for the turn that carries it on.
+CARRIES_ON = "carries_on"
+
 ENDS_TURN = "ends_turn"
 SILENTLY = "silently"
 # How long past its time limit a call may hold a run before the run is cancelled where it stands.
@@ -136,7 +141,9 @@ def says_something(response: Any) -> bool:
 class TurnLimits:
     """How far one turn goes: ``steps`` model calls, ``spend_usd`` of model calls (None: no ceiling) and
     ``minutes`` of wall clock (None: no limit). By default only the steps: a caller with no wrap-up (a workflow's
-    agent node, whose run a limit fails) never meets a spend or time limit it didn't ask for."""
+    agent node, whose run a limit fails) never meets a spend or time limit it didn't ask for. A platform whose turns
+    carry on past a limit sets its own (its steps a backstop: the repeat and read-streak guards catch a loop, and
+    its spend limit bounds the cost)."""
 
     steps: int = 30
     spend_usd: Optional[float] = None
@@ -177,27 +184,30 @@ class TurnSoFar:
 
 
 def stopped_line(reason: str, limits: TurnLimits) -> str:
-    """The plain line a person reads for a turn ``reason`` ended; none for one the account couldn't pay for, whose
-    platform's refusal says why, nor for one whose work was handed on or stopped, whose closing words are its own."""
+    """The plain line a person reads for a turn ``reason`` ended, in their terms (never the turn's mechanics); none
+    for one the account couldn't pay for, whose platform's refusal says why, nor for one whose work was handed on or
+    stopped, whose closing words are its own."""
     if reason in (FUNDS, HANDED_ON, STOPPED):
         return ""
     if reason == STEPS:
-        return f"I stopped here: this turn used all {limits.steps} of its steps."
+        return f"I stopped here after {limits.steps} steps on this."
     if reason == SPEND:
-        return f"I stopped here: this turn reached its ${limits.spend_usd:.2f} spending limit."
+        return f"I stopped here: this reached the ${limits.spend_usd:.2f} I may spend on it without asking."
     if reason == STALLED:
         return "I stopped here: I'd spent a long stretch reading without changing anything."
-    return f"I stopped here: this turn ran for {limits.minutes:g} minutes, its time limit."
+    return f"I stopped here after {limits.minutes:g} minutes on this."
 
 
 def wrap_ups(wrap_up: Any) -> Dict[str, Dict[str, str]]:
     """``wrap_up`` as ``{reason: {prompt, line?, since?}}``: a string is the prompt for every limit. ``since`` is when
-    the work the line closes began (epoch seconds), for its ``{duration}`` (``job_line``)."""
+    the work the line closes began (epoch seconds), for its ``{duration}`` (``job_line``). A limit's entry may be
+    ``{CARRIES_ON: True}`` instead, with no prompt: the turn it ends closes saying nothing."""
     if isinstance(wrap_up, str) and wrap_up:
         return {reason: {"prompt": wrap_up} for reason in LIMITS}
     if isinstance(wrap_up, Mapping):
         return {reason: dict(entry) for reason, entry in wrap_up.items()
-                if reason in REASONS and isinstance(entry, Mapping) and entry.get("prompt")}
+                if reason in REASONS and isinstance(entry, Mapping)
+                and (entry.get("prompt") or (reason in LIMITS and entry.get(CARRIES_ON)))}
     return {}
 
 

@@ -194,10 +194,42 @@ async def test_without_a_wrap_up_a_guard_ends_the_turn_on_one_plain_line(builder
 
     # No closing call: the turn fails on the line, never the run's raw error.
     assert [choice for choice, _ in calls] == [None, None, None] and len(looked) == 3
-    line = "I stopped here: this turn ran for 15 minutes, its time limit."
+    line = "I stopped here after 15 minutes on this."
     [message, state] = _failed(emitted)
     assert (message.message, message.finished, state.reason) == (line, True, line)
     assert not _said(emitted) and agent.turn_ended_by == "time"
+    assert spans[0].attributes["agent.turn.ended_by"] == "time"
+
+
+def test_no_limits_line_names_the_turns_mechanics():
+    """A person reads these: where things stand in their terms, never turns or how far one goes."""
+    from coder.openai_agent import guards
+    from coder.openai_agent.guards import TurnLimits
+
+    limits = TurnLimits(steps=200, spend_usd=1.0, minutes=30)
+    lines = [guards.stopped_line(reason, limits) for reason in guards.REASONS]
+    assert lines[:3] == ["I stopped here after 200 steps on this.",
+                         "I stopped here: this reached the $1.00 I may spend on it without asking.",
+                         "I stopped here after 30 minutes on this."]
+    for line in lines:
+        assert "turn" not in line.lower() and "in a moment" not in line
+
+
+async def test_a_limit_whose_work_carries_on_ends_even_a_hung_call_saying_nothing(builder_request_db, monkeypatch):
+    """A texted job carries on past its minutes: the clock ends the turn where it stands, and the turn carrying it on
+    says what there is to say."""
+    from coder.openai_agent import guards
+    from coder.openai_agent.guards import TurnLimits
+
+    monkeypatch.setattr(guards, "OVERDUE_S", 0.05)
+    pool = builder_request_db[0]
+    calls, looked, emitted, agent, spans = await _run(pool, monkeypatch, hang_at=2,
+                                                      wrap_up={**WRAP_UP, "time": {guards.CARRIES_ON: True}},
+                                                      limits=TurnLimits(steps=10, minutes=0.001))
+
+    assert [choice for choice, _ in calls] == [None, None] and len(looked) == 1
+    assert not _said(emitted) and not _failed(emitted) and emitted[-1].finished is True
+    assert agent.turn_ended_by == "time" and agent.turn_carries_on
     assert spans[0].attributes["agent.turn.ended_by"] == "time"
 
 

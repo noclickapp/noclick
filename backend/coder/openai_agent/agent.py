@@ -338,11 +338,13 @@ class Agent:
 
         # The running turn's guards (``guards.TurnGuard``), and which of them ended the last turn, if one did; for a
         # turn the account couldn't pay for (``guards.FUNDS``), what its wrap-up said of its work (``turn_closing``);
-        # whether a tool's result handed the last turn's work on instead (``guards.ENDS_TURN``, ``turn_handed_on``).
+        # whether a tool's result handed the last turn's work on instead (``guards.ENDS_TURN``, ``turn_handed_on``);
+        # whether the limit that ended it carries its work on by itself (``guards.CARRIES_ON``, ``turn_carries_on``).
         self._turn_guard: Optional[TurnGuard] = None
         self.turn_ended_by: Optional[str] = None
         self.turn_closing: Optional[str] = None
         self.turn_handed_on = False
+        self.turn_carries_on = False
 
         # Whether create() has finished. Until then, ``__call__`` raises.
         self._initialized = False
@@ -966,7 +968,7 @@ class Agent:
                           ends_unsaid=guards.HANDED_ON in wrap_up, ends_stopped=guards.STOPPED in wrap_up,
                           so_far=getattr(self, "_so_far", None))
         self._so_far = None
-        self._turn_guard, self.turn_ended_by, self.turn_closing = guard, None, None
+        self._turn_guard, self.turn_ended_by, self.turn_closing, self.turn_carries_on = guard, None, None, False
         try:
             with guards.running(getattr(self, "conversation_id", None), guard):
                 await self._turn(message, guard)
@@ -1213,6 +1215,9 @@ class Agent:
             return
         closing_for = ended_by or (guards.STOPPED if stopped and guard.stopped_work else None) or (
             guards.HANDED_ON if stopped and guard.owes_line else None)
+        if ended_by and getattr(self, "_wrap_up", {}).get(ended_by, {}).get(guards.CARRIES_ON):
+            # Its work carries on by itself straight away: nothing to close or say, and no fold before it does.
+            self.turn_ended_by, self.turn_carries_on, closing_for = ended_by, True, None
         wrapped = None
         if closing_for is not None:
             self.turn_ended_by = ended_by
@@ -1272,7 +1277,8 @@ class Agent:
             message=final_message,
             finished=True,
         ))
-        self._settle_context()
+        if not self.turn_carries_on:
+            self._settle_context()
 
     def _answered_nothing(self, result: Any) -> bool:
         """Whether the run ended on a model answer with no words and no call, and the turn says what that's told
@@ -1339,7 +1345,9 @@ class Agent:
         await self._emit_message(AgentStateEvent(state="error", reason=guard.unfunded))
 
     def _settle_context(self) -> None:
-        """With the reply out, fold what the next turn would otherwise wait on, in the background."""
+        """With the reply out, fold what the next turn would otherwise wait on, in the background. Never after a turn
+        whose work carries on by itself (``turn_carries_on``): the turn that carries it on starts with all it had,
+        extending the prompt the provider cached, and the fold waits for the job's last turn."""
         from coder.openai_agent.compaction import Compactor
         from utils.async_helpers import spawn
 

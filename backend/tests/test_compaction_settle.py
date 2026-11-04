@@ -40,9 +40,10 @@ def _lookups(n, start=0):
     return items
 
 
-async def _run(pool, summary, compact, text, lookups, monkeypatch):
+async def _run(pool, summary, compact, text, lookups, monkeypatch, **options):
     """One turn through the real streamed SDK: ``lookups`` tool rounds, then a reply. Returns each model call's view
-    with the summaries made before it, and the settle the turn left running in the background (not yet run)."""
+    with the summaries made before it, and the settle the turn left running in the background (not yet run).
+    ``options``: the agent's own (its ``limits``, ``wrap_up``)."""
     from agents.models.interface import Model
     from openai.types.responses import (Response, ResponseCompletedEvent, ResponseFunctionToolCall,
                                         ResponseOutputMessage, ResponseOutputText)
@@ -80,7 +81,7 @@ async def _run(pool, summary, compact, text, lookups, monkeypatch):
     instance = await Agent.create(emit_message=AsyncMock(), conversation_id=CONVERSATION, enable_persistence=True,
                                   user_id=USER, custom_tool_executor=lookup, call_model_input_filter=compact,
                                   config=AgentConfiguration.from_kwargs(model="gpt-4o", system_prompt="Look things up.",
-                                                                        custom_tools=[tool]))
+                                                                        custom_tools=[tool]), **options)
     instance._sdk_agent.model = ModelDouble()
     instance._billing_hooks = None
     try:
@@ -126,6 +127,34 @@ async def test_the_turn_after_one_that_crossed_the_trigger_never_waits_on_a_summ
     # Raw history is never replaced: both turns' calls and results are all stored, in pairs.
     assert sum(1 for i in stored if i.get("type") == "function_call_output") == 12
     check_pairs(stored)
+
+
+async def test_a_turn_whose_work_carries_on_leaves_the_fold_to_the_jobs_last_turn(context_db, monkeypatch):
+    """A limit that ends a turn whose work carries on by itself straight away (a platform's continuation,
+    ``guards.CARRIES_ON``) folds nothing between them: the turn that carries it on reads all the first one read, from
+    the provider's cache, rather than a summary of it. The job's last turn folds the conversation once it's over."""
+    from coder.openai_agent import guards
+    from coder.openai_agent.guards import TurnLimits
+
+    pool, _, summary, _ = context_db
+    await pool.execute("UPDATE conversations SET metadata='{}' WHERE conversation_id=$1", CONVERSATION)
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: pool)
+    limited = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=BUDGET)
+    calls, settles = await _run(pool, summary, limited, "Look up the first six.", 6, monkeypatch,
+                                limits=TurnLimits(steps=6), wrap_up={"steps": {guards.CARRIES_ON: True}})
+    assert len(calls) == 6 and settles == []  # its steps ran out mid-work, past the settle's trigger
+    assert limited.overhead + view_size(calls[-1][0]) > BUDGET.settle
+
+    carrying = compaction.CoordinatorCompactor(pool, USER, epoch="", model="test", budget=BUDGET)
+    then, later = await _run(pool, summary, carrying, "Carry on with the work your last turn didn't finish.", 1,
+                             monkeypatch)
+    # Its first call waited on nothing and holds every result the first turn read, under no checkpoint.
+    assert then[0][1] == summary.await_count == 0
+    assert then[0][0][0]["role"] == "user" and sum(
+        1 for item in then[0][0] if item.get("type") == "function_call_output") == 6
+    for settle in later:
+        await settle
+    assert summary.await_count >= 1
 
 
 async def test_without_the_settle_the_next_turn_waits_on_a_summary_partway(context_db, monkeypatch):
