@@ -12,15 +12,18 @@ This node can operate in two modes:
 
 import json
 import os
+import secrets
 import time
 import logging
 from typing import Dict, Any, Optional, Tuple, Union, Type, Literal, Annotated, List
 from uuid import UUID, uuid4
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
+from pydantic import BaseModel, Field, HttpUrl, model_validator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
+from utils.self_echo import is_self_post, record_self_post
 from utils.ssrf import guarded_async_client
 
 logger = logging.getLogger(__name__)
@@ -42,6 +45,9 @@ TELEGRAM_MEDIA_KEYS: Tuple[Tuple[str, Optional[str]], ...] = (
     ("sticker", None),
 )
 _UPDATE_MESSAGE_KEYS = ("message", "edited_message", "channel_post", "edited_channel_post")
+# The operations that point the bot's one webhook at NoClick.
+WEBHOOK_OPERATIONS = ("receive_webhook_messages", "setup_telegram_channel_guided")
+SECRET_HEADER = "x-telegram-bot-api-secret-token"
 
 
 def update_message(update: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -64,6 +70,29 @@ def message_attachment(msg: Dict[str, Any]) -> Optional[Tuple[str, Dict[str, Any
     return None
 
 
+def bot_id(token: str) -> str:
+    """The bot a token is for: its id is the token's part before the colon."""
+    return token.split(":", 1)[0]
+
+
+def message_key(msg: Dict[str, Any]) -> Optional[str]:
+    """One message wherever it's seen: a message id is unique within its chat."""
+    chat_id = (msg.get("chat") or {}).get("id")
+    if chat_id is None or msg.get("message_id") is None:
+        return None
+    return f"{chat_id}:{msg['message_id']}"
+
+
+async def record_sent(result: Any) -> None:
+    """Fingerprint each message the Bot API answered a call with (a send, an
+    edit, an album's messages), so no NoClick Telegram trigger fires on it:
+    two bots in one channel would otherwise answer each other's posts."""
+    for msg in result if isinstance(result, list) else [result]:
+        key = message_key(msg) if isinstance(msg, dict) else None
+        if key:
+            await record_self_post("telegram", key)
+
+
 async def get_telegram_file_info(bot_token: str, file_id: str) -> Dict[str, Any]:
     """Bot API ``getFile``: the server-side path a file downloads from
     (valid for about an hour). Raises on a Telegram error."""
@@ -84,14 +113,16 @@ async def get_telegram_file_info(bot_token: str, file_id: str) -> Dict[str, Any]
 # ============================================================================
 
 
-async def set_telegram_webhook(bot_token: str, webhook_url: str) -> Dict[str, Any]:
-    """Register a webhook URL with Telegram Bot API."""
+async def set_telegram_webhook(bot_token: str, webhook_url: str, secret_token: str) -> Dict[str, Any]:
+    """Register a webhook URL with Telegram Bot API. Telegram sends
+    ``secret_token`` back on every delivery (``SECRET_HEADER``)."""
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"{TELEGRAM_API_BASE}{bot_token}/setWebhook",
                 json={
                     "url": webhook_url,
+                    "secret_token": secret_token,
                     "allowed_updates": [
                         "message",
                         "edited_message",
@@ -163,41 +194,6 @@ async def get_telegram_webhook_info(bot_token: str) -> Dict[str, Any]:
         return {"success": False, "error": str(e)}
 
 
-async def setup_telegram_trigger_webhook(
-    pool, user_id, workflow_id, node_id, bot_token
-):
-    """Set up a complete Telegram trigger webhook (internal + Telegram registration)."""
-    from utils.webhook_manager import WebhookManager
-
-    webhook_data = await WebhookManager.get_or_create_webhook(
-        pool=pool,
-        user_id=user_id,
-        workflow_id=workflow_id,
-        node_id=node_id,
-    )
-    webhook_url = webhook_data.get("webhook_url")
-    telegram_result = await set_telegram_webhook(bot_token, webhook_url)
-    return {
-        "webhook_id": webhook_data.get("webhook_id"),
-        "webhook_url": webhook_url,
-        "relay_connected": webhook_data.get("relay_connected"),
-        "is_production": webhook_data.get("is_production"),
-        "telegram_registered": telegram_result.get("success", False),
-        "telegram_error": telegram_result.get("error")
-        if not telegram_result.get("success")
-        else None,
-    }
-
-
-async def cleanup_telegram_trigger_webhook(pool, workflow_id, node_id, bot_token=None):
-    """Clean up a Telegram trigger webhook."""
-    from utils.webhook_manager import WebhookManager
-
-    if bot_token:
-        await delete_telegram_webhook(bot_token)
-    return await WebhookManager.delete_webhook(pool, workflow_id, node_id)
-
-
 # ============================================================================
 # Redis helpers for setup_channel flow
 # ============================================================================
@@ -259,6 +255,31 @@ async def _store_setup_result(
         )
     finally:
         await client.aclose()
+
+
+async def _setup_link(
+    bot_token: Optional[str], workflow_id: str, node_id: str, user_id: str, token: Optional[str] = None
+) -> Dict[str, Any]:
+    """The guided setup's deep link (``t.me/<bot>?start=setup_<token>``),
+    minting and keeping a token when none is given; empty when the bot can't
+    be named (logged)."""
+    if not bot_token:
+        return {}
+    try:
+        async with httpx.AsyncClient() as client:
+            me_data = (await client.get(f"{TELEGRAM_API_BASE}{bot_token}/getMe", timeout=10.0)).json()
+        if not me_data.get("ok"):
+            logger.warning(f"[TelegramNode] getMe refused while minting a setup link: {me_data.get('description')}")
+            return {}
+        if token is None:
+            token = uuid4().hex[:16]
+            await _store_setup_token(token, workflow_id, node_id, user_id)
+        username = me_data["result"].get("username", "")
+        return {"setup_token": token, "setup_link": f"https://t.me/{username}?start=setup_{token}",
+                "setup_status": "pending"}
+    except Exception as e:
+        logger.warning(f"[TelegramNode] Could not generate setup_link: {e}")
+        return {}
 
 
 async def _get_setup_result(workflow_id: str, node_id: str) -> Optional[Dict[str, Any]]:
@@ -429,13 +450,17 @@ class TelegramWebhookConfig(BaseModel):
     )
 
 
-class TelegramReceiveConfig(BaseModel):
-    """Receive messages via webhook (trigger mode)."""
-
-    model_config = ConfigDict(json_schema_extra={"x-requires-webhook": True})
+class TelegramReceiveConfig(WebhookTriggerConfigBase):
+    """Receive messages via webhook (trigger mode). NoClick points the bot's
+    webhook here (``setWebhook``) once a bot token is attached."""
 
     operation: Literal["receive_webhook_messages"] = Field(
         default="receive_webhook_messages",
+        description=(
+            "Each update the bot gets: messages in its private chats, in groups it's in (what its privacy "
+            "mode, set with @BotFather, lets it see) and in channels it administers, their edits, button "
+            "presses and inline queries."
+        ),
         json_schema_extra={
             "ui:hidden": True,
             "x-category": None,
@@ -451,29 +476,15 @@ class TelegramReceiveConfig(BaseModel):
         },
         title="Receive Webhook Messages",
     )
-    webhook_id: Optional[str] = Field(
-        default=None, json_schema_extra={"ui:hidden": True}
-    )
     webhook_url: Optional[str] = Field(
         default=None,
         title="Webhook URL",
+        description="Where Telegram sends the bot's updates. Registered automatically when you attach a bot token.",
         json_schema_extra={
             "ui:widget": "webhook",
             "ui:copyable": True,
             "ui:loadValue": True,
         },
-    )
-    relay_connected: Optional[bool] = Field(
-        default=None, json_schema_extra={"ui:hidden": True}
-    )
-    is_production: Optional[bool] = Field(
-        default=None, json_schema_extra={"ui:hidden": True}
-    )
-    telegram_registered: Optional[bool] = Field(
-        default=None, json_schema_extra={"ui:hidden": True}
-    )
-    telegram_error: Optional[str] = Field(
-        default=None, json_schema_extra={"ui:hidden": True}
     )
 
 
@@ -2079,7 +2090,7 @@ class TelegramAnswerPreCheckoutQueryConfig(BaseModel):
 # ============================================================================
 
 
-class TelegramSetupChannelConfig(BaseModel):
+class TelegramSetupChannelConfig(WebhookTriggerConfigBase):
     """
     Guided channel setup flow.
 
@@ -2087,8 +2098,6 @@ class TelegramSetupChannelConfig(BaseModel):
     When the user adds the bot to their channel as admin, the channel ID is
     automatically detected and stored — no manual copy-pasting needed.
     """
-
-    model_config = ConfigDict(json_schema_extra={"x-requires-webhook": True})
 
     operation: Literal["setup_telegram_channel_guided"] = Field(
         default="setup_telegram_channel_guided",
@@ -2107,10 +2116,6 @@ class TelegramSetupChannelConfig(BaseModel):
         },
         title="Setup Telegram Channel Guided",
     )
-    # Webhook fields (same as receive mode)
-    webhook_id: Optional[str] = Field(
-        default=None, json_schema_extra={"ui:hidden": True}
-    )
     webhook_url: Optional[str] = Field(
         default=None,
         title="Webhook URL",
@@ -2119,15 +2124,6 @@ class TelegramSetupChannelConfig(BaseModel):
             "ui:copyable": True,
             "ui:loadValue": True,
         },
-    )
-    relay_connected: Optional[bool] = Field(
-        default=None, json_schema_extra={"ui:hidden": True}
-    )
-    is_production: Optional[bool] = Field(
-        default=None, json_schema_extra={"ui:hidden": True}
-    )
-    telegram_registered: Optional[bool] = Field(
-        default=None, json_schema_extra={"ui:hidden": True}
     )
     # Setup-specific fields
     setup_link: Optional[str] = Field(
@@ -2282,10 +2278,15 @@ class TelegramNodeConfig(NodeConfig[TelegramConfig, TelegramBotTokenCredential])
 # ============================================================================
 
 
-class TelegramNode(WorkflowNode):
+class TelegramNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """
     Telegram automation node supporting 48 operations across messaging,
     media, polls, chat management, payments, and guided channel setup.
+
+    Its receive and guided-setup operations point the bot's webhook at
+    NoClick through the push-trigger lifecycle (``ExternalWebhookTriggerMixin``):
+    registered with a secret Telegram sends back on each delivery, torn down
+    when the trigger goes. A bot has ONE webhook, so it wakes one trigger.
     """
 
     edit_examples = [
@@ -2442,13 +2443,101 @@ class TelegramNode(WorkflowNode):
         credential, _owner = await resolve_delivery_credential(pool, config, workflow_id, "telegram_bot_token")
         return (credential or {}).get("token") or None
 
+    # ── the bot's webhook: the push-trigger lifecycle owns WHEN ─────────────
+
     @classmethod
-    async def cleanup_external_webhook(
-        cls, pool, workflow_id, node_id, config, credentials=None
-    ):
-        bot_token = credentials.get("bot_token") if credentials else None
-        if bot_token:
-            await delete_telegram_webhook(bot_token)
+    async def _register_external_webhook(
+        cls, *, webhook_url: str, credential: Dict[str, Any], config: Dict[str, Any], node_id: str
+    ) -> Optional[Dict[str, Any]]:
+        token = (credential or {}).get("token")
+        if not token:
+            raise ValueError("A Telegram bot token is required to register the trigger")
+        webhook_id = str((config or {}).get("webhook_id") or "")
+        if not webhook_id:
+            raise RuntimeError("The trigger's webhook is not provisioned yet")
+        # A bot sends its updates to one URL: a second trigger on the same bot
+        # would take them from the first, which would still read "registered".
+        # Where Telegram points it now decides first (a trigger registered
+        # before the bot was recorded on its row), then the record.
+        from utils.webhook_manager import address_holder, registration_holder
+
+        info = await get_telegram_webhook_info(token)
+        if not info.get("success"):
+            raise ValueError(f"Telegram didn't say where the bot's webhook points: {info.get('error')}")
+        current = (info.get("info") or {}).get("url") or ""
+        bot = bot_id(token)
+        holder = (
+            await address_holder(current, except_webhook_id=webhook_id) if current and current != webhook_url else None
+        ) or await registration_holder(bot, WEBHOOK_OPERATIONS, except_webhook_id=webhook_id)
+        if holder is not None:
+            raise RuntimeError(
+                f"This bot already sends its messages to {holder}. Telegram gives a bot one webhook, so it "
+                "wakes one trigger: remove that trigger first, or make another bot with @BotFather for this one."
+            )
+        secret = secrets.token_urlsafe(32)
+        result = await set_telegram_webhook(token, webhook_url, secret)
+        if not result.get("success"):
+            raise ValueError(result.get("error") or "Telegram didn't accept the webhook")
+        return {"external_webhook_id": bot, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(
+        cls, *, credential: Optional[Dict[str, Any]], config: Dict[str, Any], node_id: str
+    ) -> None:
+        """Clears the bot's webhook only while it is still this node's: the
+        bot's owner may have pointed it elsewhere since (their own server)."""
+        token = (credential or {}).get("token")
+        if not token:
+            return
+        from utils.webhook_delivery import get_webhook_url
+
+        cfg = config or {}
+        ours = {cfg.get("webhook_url")} | ({get_webhook_url(str(cfg["webhook_id"]))} if cfg.get("webhook_id") else set())
+        info = await get_telegram_webhook_info(token)
+        if not info.get("success"):
+            raise ValueError(f"Telegram didn't say where the bot's webhook points: {info.get('error')}")
+        current = (info.get("info") or {}).get("url") or ""
+        if not current:
+            return
+        if current not in ours:
+            logger.info(f"[TelegramNode] Bot webhook for {node_id} points elsewhere now; left as it is")
+            return
+        result = await delete_telegram_webhook(token)
+        if not result.get("success"):
+            raise ValueError(f"Telegram didn't remove the webhook: {result.get('error')}")
+
+    @classmethod
+    def verify_webhook_signature(cls, body: bytes, headers: Dict[str, str], config: Dict[str, Any]) -> bool:
+        secret = (config or {}).get("signing_secret")
+        if not secret:
+            return True  # no secret stored — accept (trigger not yet armed)
+        sent = headers.get(SECRET_HEADER)
+        return bool(sent) and secrets.compare_digest(secret, sent)
+
+    # ── loop guards: a channel agent's reply can land where another listens ──
+
+    @classmethod
+    async def drop_trigger_event(cls, payload: Dict[str, Any], config: Dict[str, Any]) -> Optional[str]:
+        """A message a NoClick Telegram node sent never fires a receive
+        trigger: two bots administering one channel each hear the other's
+        posts (utils/self_echo.py)."""
+        if (config or {}).get("operation") != "receive_webhook_messages" or not isinstance(payload, dict):
+            return None
+        msg = update_message(payload)
+        key = message_key(msg) if msg else None
+        if key and await is_self_post("telegram", key):
+            return f"message {key} was sent by a NoClick Telegram node"
+        return None
+
+    @classmethod
+    def trigger_fire_budget_channel(cls, payload: Dict[str, Any], config: Dict[str, Any]) -> Optional[str]:
+        """Budget receive fires per chat: bounds two-party loops (the bot
+        answers, another bot or an auto-reply answers back) no fingerprint sees."""
+        if (config or {}).get("operation") != "receive_webhook_messages" or not isinstance(payload, dict):
+            return None
+        msg = update_message(payload) or (payload.get("callback_query") or {}).get("message") or {}
+        chat_id = (msg.get("chat") or {}).get("id")
+        return str(chat_id) if chat_id is not None else None
 
     @classmethod
     async def load_field_value(
@@ -2461,9 +2550,8 @@ class TelegramNode(WorkflowNode):
         context: Optional[Dict[str, Any]] = None,
         credential_ids: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
-        """Load computed field values for webhook_url and setup_channel fields."""
-
-        # ---- setup_channel: channel_id polling ----
+        """The guided setup's detected channel, else the mixin's webhook
+        registration, plus the setup deep link once the bot hears NoClick."""
         if field_name == "channel_id":
             result = await _get_setup_result(str(workflow_id), node_id)
             if result:
@@ -2476,111 +2564,14 @@ class TelegramNode(WorkflowNode):
                 }
             return {"value": None}
 
-        if field_name not in ("webhook_url",):
-            return {"value": None}
-
-        # ---- webhook_url (used by both receive and setup_channel) ----
-        from utils.encryption import get_encryption
-
-        credential_id = (
-            credential_ids.get("telegram_bot_token") if credential_ids else None
+        result = await super().load_field_value(
+            field_name, user_id, workflow_id, node_id, pool, context=context, credential_ids=credential_ids
         )
-
-        if not credential_id:
-            logger.warning(f"[TelegramNode] No bot token credential for node {node_id}")
-            from utils.webhook_manager import WebhookManager
-
-            webhook_data = await WebhookManager.get_or_create_webhook(
-                pool=pool,
-                user_id=user_id,
-                workflow_id=workflow_id,
-                node_id=node_id,
-            )
-            return {
-                "values": {
-                    "webhook_id": webhook_data.get("webhook_id"),
-                    "webhook_url": webhook_data.get("webhook_url"),
-                    "relay_connected": webhook_data.get("relay_connected"),
-                    "is_production": webhook_data.get("is_production"),
-                    "telegram_registered": False,
-                    "telegram_error": "Bot token not configured — please add credentials",
-                }
-            }
-
-        try:
-            from repositories.credentials import credential_access_predicate
-            from repositories.organization import PRIMARY_ORG_SQL
-
-            async with pool.acquire() as conn:
-                org_row = await conn.fetchrow(PRIMARY_ORG_SQL, user_id)
-                org_id = str(org_row["organization_id"]) if org_row else None
-                row = await conn.fetchrow(
-                    f"""
-                    SELECT c.credential FROM credentials c
-                    WHERE c.id = $1 AND {credential_access_predicate()}
-                    """,
-                    credential_id,
-                    user_id,
-                    org_id,
-                )
-                if not row:
-                    return {
-                        "values": {
-                            "telegram_registered": False,
-                            "telegram_error": "Bot token credential not found",
-                        }
-                    }
-                encryption = get_encryption()
-                credential_data = encryption.decrypt_credential(row["credential"])
-                bot_token = credential_data.get("token")
-                if not bot_token:
-                    return {
-                        "values": {
-                            "telegram_registered": False,
-                            "telegram_error": "Bot token is empty",
-                        }
-                    }
-        except Exception as e:
-            logger.error(f"[TelegramNode] Error fetching credential: {e}")
-            return {
-                "values": {
-                    "telegram_registered": False,
-                    "telegram_error": f"Error fetching credential: {e}",
-                }
-            }
-
-        result = await setup_telegram_trigger_webhook(
-            pool=pool,
-            user_id=user_id,
-            workflow_id=workflow_id,
-            node_id=node_id,
-            bot_token=bot_token,
-        )
-
-        # For setup_channel mode: also compute the setup_link
-        extra = {}
-        if context and context.get("operation") == "setup_telegram_channel_guided":
-            try:
-                async with httpx.AsyncClient() as client:
-                    me_resp = await client.get(
-                        f"{TELEGRAM_API_BASE}{bot_token}/getMe", timeout=10.0
-                    )
-                    me_data = me_resp.json()
-                    if me_data.get("ok"):
-                        username = me_data["result"].get("username", "")
-                        token = uuid4().hex[:16]
-                        await _store_setup_token(
-                            token, str(workflow_id), node_id, user_id
-                        )
-                        extra["setup_token"] = token
-                        extra[
-                            "setup_link"
-                        ] = f"https://t.me/{username}?start=setup_{token}"
-                        extra["setup_status"] = "pending"
-            except Exception as e:
-                logger.warning(f"[TelegramNode] Could not generate setup_link: {e}")
-
-        return {"values": {**result, **extra}}
+        values = result.get("values") or {}
+        if (context or {}).get("operation") == "setup_telegram_channel_guided" and values.get("trigger_registered"):
+            credential = await cls._resolve_trigger_credential(pool, user_id, credential_ids)
+            values.update(await _setup_link((credential or {}).get("token"), str(workflow_id), node_id, user_id))
+        return result
 
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the Telegram node."""
@@ -2774,6 +2765,7 @@ class TelegramNode(WorkflowNode):
             raise ValueError(
                 f"Telegram API error: {result.get('description', 'Unknown error')}"
             )
+        await record_sent(result.get("result"))
         return result.get("result", {})
 
     def _chat_id_str(self, chat_id: Union[str, int]) -> str:
@@ -2804,6 +2796,7 @@ class TelegramNode(WorkflowNode):
                 f"Telegram API error: {result.get('description', 'Unknown error')}"
             )
         sent = result.get("result", {})
+        await record_sent(sent)
         return {
             "type": "telegram",
             "method": method,
@@ -2839,6 +2832,7 @@ class TelegramNode(WorkflowNode):
                 f"Telegram API error: {result.get('description', 'Unknown error')}"
             )
         sent = result.get("result", {})
+        await record_sent(sent)
         doc = sent.get("document", {})
         return {
             "type": "telegram",
@@ -2873,30 +2867,11 @@ class TelegramNode(WorkflowNode):
             output["error"] = f"Webhook returned status {response.status_code}"
         return output
 
-    async def _ensure_telegram_webhook_registered(self):
-        if not self.config or not isinstance(self.config, TelegramNodeConfig):
-            return
-        config = self.config.config
-        credentials = self.config.credentials
-        if not isinstance(config, (TelegramReceiveConfig, TelegramSetupChannelConfig)):
-            return
-        if not credentials or not credentials.token:
-            return
-        webhook_url = config.webhook_url
-        if not webhook_url:
-            return
-        try:
-            result = await set_telegram_webhook(credentials.token, webhook_url)
-            if not result.get("success"):
-                logger.warning(
-                    f"[TelegramNode] Failed to re-register webhook: {result.get('error')}"
-                )
-        except Exception as e:
-            logger.warning(f"[TelegramNode] Error during webhook re-registration: {e}")
-
     async def _handle_receive(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        logger.info(f"[TelegramNode] Handling received message for node {self.node_id}")
-        await self._ensure_telegram_webhook_registered()
+        # A delivery's update is the output itself (resolve_trigger_payload);
+        # a run with none (manual, test) says so instead of looking fired.
+        if inputs.get("update_id") is None:
+            return self.no_event_output("Receive Webhook Messages", "Message the bot to fire it.")
         webhook_meta = inputs.get("_webhook", {})
         message = inputs.get("message", {})
         callback_query = inputs.get("callback_query", {})
@@ -3022,8 +2997,6 @@ class TelegramNode(WorkflowNode):
         self, config: TelegramSetupChannelConfig, inputs: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Handle setup_channel: detect my_chat_member admin promotion and store channel_id."""
-        await self._ensure_telegram_webhook_registered()
-
         # Telegram webhook payloads arrive via _triggerPayload in node_data (set by the execution
         # engine when a webhook fires). After credential resolution node_data becomes
         # {'config': {..., '_triggerPayload': {...}}, 'credentials': {...}}.
@@ -3129,30 +3102,11 @@ class TelegramNode(WorkflowNode):
         credentials = self.config.credentials if self.config else None
 
         if (not setup_link or not setup_token) and credentials and credentials.token:
-            try:
-                async with httpx.AsyncClient() as client:
-                    me_resp = await client.get(
-                        f"{TELEGRAM_API_BASE}{credentials.token}/getMe", timeout=10.0
-                    )
-                    me_data = me_resp.json()
-                    if me_data.get("ok"):
-                        username = me_data["result"].get("username", "")
-                        if not setup_token:
-                            setup_token = uuid4().hex[:16]
-                            await _store_setup_token(
-                                setup_token,
-                                str(self.workflow_id),
-                                self.node_id,
-                                self.user_id or "",
-                            )
-                        setup_link = (
-                            f"https://t.me/{username}?start=setup_{setup_token}"
-                        )
-                        logger.info(
-                            f"[TelegramNode] Generated setup_link for node {self.node_id}"
-                        )
-            except Exception as e:
-                logger.warning(f"[TelegramNode] Could not generate setup_link: {e}")
+            minted = await _setup_link(
+                credentials.token, str(self.workflow_id), self.node_id, self.user_id or "", token=setup_token
+            )
+            setup_link = minted.get("setup_link", setup_link)
+            setup_token = minted.get("setup_token", setup_token)
 
         return {
             "type": "telegram",

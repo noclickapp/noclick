@@ -97,7 +97,9 @@ class ExternalWebhookTriggerMixin:
         """Register *webhook_url* with the external service.
 
         Called once the internal webhook URL is provisioned and a credential is
-        available. Return a dict of extra values to persist into node config
+        available; ``config["webhook_id"]`` is the node's webhooks row (a
+        one-address resource excludes it when it looks for another holder).
+        Return a dict of extra values to persist into node config
         (e.g. an external webhook id), or ``None``. Raise on failure — the
         mixin converts the exception into a ``trigger_error`` shown to the user.
         """
@@ -309,7 +311,7 @@ class ExternalWebhookTriggerMixin:
             # (which lags behind the debounced autosave) — merge it into the
             # ctx so stale-endpoint replacement can find the previous provider
             # endpoint instead of minting a duplicate.
-            register_ctx = dict(ctx)
+            register_ctx = {**ctx, "webhook_id": values["webhook_id"]}
             if not register_ctx.get("external_webhook_id") and webhook_data.get("external_webhook_id"):
                 register_ctx["external_webhook_id"] = webhook_data.get("external_webhook_id")
             # Opt-in lifecycle behavior (webhook_replace_stale_endpoint): a

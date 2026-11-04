@@ -33,6 +33,7 @@ Schema markers:
 """
 
 import logging
+import re
 from contextvars import ContextVar
 from functools import lru_cache
 from typing import Dict, Any, List, Optional, Tuple
@@ -98,6 +99,50 @@ def _loader_registers(node_type: Optional[str], node: Dict[str, Any], node_confi
         node_config.get("operation") or "", ()
     )
     return any(t in declared for t in _usable_credentials(node, node_config))
+
+
+async def _live_holder(where: str, *args) -> Optional[str]:
+    """The workflow of an active webhooks row matching ``where`` (its name, for a refusal), or None."""
+    from utils.database_pool import get_native_pool
+
+    row = await get_native_pool().fetchrow(
+        "SELECT w.workflow_id, wf.name FROM webhooks w LEFT JOIN workflows wf ON wf.id = w.workflow_id "
+        f"WHERE w.is_active AND {where} LIMIT 1",
+        *args,
+    )
+    if row is None:
+        return None
+    return f'"{row["name"]}"' if row["name"] else f"workflow {row['workflow_id']}"
+
+
+async def registration_holder(
+    external_webhook_id: str, operations: Tuple[str, ...], *, except_webhook_id: str
+) -> Optional[str]:
+    """The workflow whose live registration on one of ``operations`` already
+    holds ``external_webhook_id``, or None. For a provider resource that points
+    at ONE address (a phone number's voice webhook, a Telegram bot's webhook):
+    a second registration would silently take it from the first, which would
+    still read "registered"."""
+    return await _live_holder(
+        "w.external_webhook_id = $1 AND w.registered_operation = ANY($2::text[]) AND w.id::text <> $3",
+        external_webhook_id, list(operations), except_webhook_id,
+    )
+
+
+_WEBHOOK_ID_RE = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", re.IGNORECASE)
+
+
+async def address_holder(url: str, *, except_webhook_id: str) -> Optional[str]:
+    """The workflow whose live webhook ``url`` is, when it is one of this
+    instance's webhook addresses, or None. Where a provider says a one-address
+    resource points now: that outlasts any record of ours (a registration made
+    before the record was kept)."""
+    from utils.webhook_delivery import get_webhook_url
+
+    match = _WEBHOOK_ID_RE.search(url or "")
+    if match is None or get_webhook_url(match.group(0)) != url:
+        return None
+    return await _live_holder("w.id::text = $1 AND w.id::text <> $2", match.group(0).lower(), except_webhook_id)
 
 
 def registration_fingerprint(
@@ -902,7 +947,7 @@ class WebhookManager:
         # must not read as "nothing was registered" — let it raise.
         async with pool.acquire() as conn:
             rows = await conn.fetch(
-                "SELECT node_id, external_webhook_id, registered_operation, "
+                "SELECT id, node_id, external_webhook_id, registered_operation, "
                 "registered_credential_id "
                 "FROM webhooks WHERE workflow_id = $1",
                 wf_uuid,
@@ -962,6 +1007,9 @@ class WebhookManager:
             row_ext = row["external_webhook_id"] if row else None
             if row_ext:
                 node_config = {**node_config, "external_webhook_id": row_ext}
+            if row is not None and row.get("id") is not None:
+                # Which address is this node's, for a provider whose one webhook may since point elsewhere.
+                node_config = {**node_config, "webhook_id": str(row["id"])}
 
             credential_ids = _usable_credential_ids(node, node_config)
             # The row remembers WHICH credential registered the endpoint. After
@@ -1250,8 +1298,9 @@ class WebhookManager:
 
         try:
             # The row's endpoint id backs up the (possibly stale) config mirror
-            # so replace-stale-endpoint nodes can drop the previous endpoint.
-            register_config = dict(node_config)
+            # so replace-stale-endpoint nodes can drop the previous endpoint;
+            # its own id tells a one-address resource's hook which row is its own.
+            register_config = {**node_config, "webhook_id": webhook_id}
             if not register_config.get("external_webhook_id") and webhook_data.get("external_webhook_id"):
                 register_config["external_webhook_id"] = webhook_data.get("external_webhook_id")
             extra = await node_class._register_external_webhook(
@@ -1292,6 +1341,14 @@ class WebhookManager:
                 f"[WEBHOOK] Failed to register external webhook for "
                 f"{node_type}:{node_id}: {e}"
             )
+            # The step says why, as a panel open would: a headless caller (the
+            # platform's triggers, a restore) reads it back as the reason.
+            try:
+                await WebhookManager.merge_node_config_patch(
+                    pool, wf_uuid, node_id, {"trigger_registered": False, "trigger_error": str(e)}
+                )
+            except Exception:
+                logger.warning(f"[WEBHOOK] Could not record the failure on {node_type}:{node_id}", exc_info=True)
             return False
 
     @staticmethod

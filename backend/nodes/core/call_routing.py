@@ -16,21 +16,9 @@ async def number_holder(number_sid: str, *, except_webhook_id: str) -> Optional[
     """The workflow whose active on_call trigger already routes this number
     (its name, for the message), or None. The webhook row's
     external_webhook_id IS the number's provider id."""
-    from utils.database_pool import get_native_pool
+    from utils.webhook_manager import registration_holder
 
-    row = await get_native_pool().fetchrow(
-        """
-        SELECT w.workflow_id, wf.name
-        FROM webhooks w LEFT JOIN workflows wf ON wf.id = w.workflow_id
-        WHERE w.external_webhook_id = $1 AND w.registered_operation = $2
-          AND w.is_active AND w.id::text <> $3
-        LIMIT 1
-        """,
-        number_sid, ON_CALL, except_webhook_id,
-    )
-    if row is None:
-        return None
-    return f'"{row["name"]}"' if row["name"] else f"workflow {row['workflow_id']}"
+    return await registration_holder(number_sid, (ON_CALL,), except_webhook_id=except_webhook_id)
 
 
 def already_answers(number: str, holder: str) -> str:

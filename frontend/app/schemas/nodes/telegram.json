@@ -1215,25 +1215,8 @@
       "type": "object"
     },
     "TelegramReceiveConfig": {
-      "description": "Receive messages via webhook (trigger mode).",
+      "description": "Receive messages via webhook (trigger mode). NoClick points the bot's\nwebhook here (``setWebhook``) once a bot token is attached.",
       "properties": {
-        "operation": {
-          "const": "receive_webhook_messages",
-          "default": "receive_webhook_messages",
-          "title": "Receive Webhook Messages",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": null,
-          "x-display-name": "Receive Webhook Messages",
-          "x-is-trigger": true,
-          "x-keywords": [
-            "when new message",
-            "on incoming message",
-            "watch for messages",
-            "bot receives message",
-            "listen for updates"
-          ]
-        },
         "webhook_id": {
           "anyOf": [
             {
@@ -1247,7 +1230,23 @@
           "title": "Webhook Id",
           "ui:hidden": true
         },
-        "webhook_url": {
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
           "anyOf": [
             {
               "type": "string"
@@ -1257,10 +1256,8 @@
             }
           ],
           "default": null,
-          "title": "Webhook URL",
-          "ui:copyable": true,
-          "ui:loadValue": true,
-          "ui:widget": "webhook"
+          "title": "Signing Secret",
+          "ui:hidden": true
         },
         "relay_connected": {
           "anyOf": [
@@ -1288,7 +1285,7 @@
           "title": "Is Production",
           "ui:hidden": true
         },
-        "telegram_registered": {
+        "trigger_registered": {
           "anyOf": [
             {
               "type": "boolean"
@@ -1298,10 +1295,10 @@
             }
           ],
           "default": null,
-          "title": "Telegram Registered",
+          "title": "Trigger Registered",
           "ui:hidden": true
         },
-        "telegram_error": {
+        "trigger_error": {
           "anyOf": [
             {
               "type": "string"
@@ -1311,8 +1308,42 @@
             }
           ],
           "default": null,
-          "title": "Telegram Error",
+          "title": "Trigger Error",
           "ui:hidden": true
+        },
+        "operation": {
+          "const": "receive_webhook_messages",
+          "default": "receive_webhook_messages",
+          "description": "Each update the bot gets: messages in its private chats, in groups it's in (what its privacy mode, set with @BotFather, lets it see) and in channels it administers, their edits, button presses and inline queries.",
+          "title": "Receive Webhook Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "Receive Webhook Messages",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new message",
+            "on incoming message",
+            "watch for messages",
+            "bot receives message",
+            "listen for updates"
+          ]
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where Telegram sends the bot's updates. Registered automatically when you attach a bot token.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
         }
       },
       "title": "TelegramReceiveConfig",
@@ -2626,23 +2657,6 @@
     "TelegramSetupChannelConfig": {
       "description": "Guided channel setup flow.\n\nRegisters a webhook with the bot, then generates a deep-link for the user.\nWhen the user adds the bot to their channel as admin, the channel ID is\nautomatically detected and stored \u2014 no manual copy-pasting needed.",
       "properties": {
-        "operation": {
-          "const": "setup_telegram_channel_guided",
-          "default": "setup_telegram_channel_guided",
-          "title": "Setup Telegram Channel Guided",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Channel",
-          "x-display-name": "Setup Telegram Channel Guided",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "guided channel setup",
-            "auto detect channel",
-            "wizard add channel",
-            "connect channel deep link",
-            "onboard channel"
-          ]
-        },
         "webhook_id": {
           "anyOf": [
             {
@@ -2656,7 +2670,23 @@
           "title": "Webhook Id",
           "ui:hidden": true
         },
-        "webhook_url": {
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
           "anyOf": [
             {
               "type": "string"
@@ -2666,10 +2696,8 @@
             }
           ],
           "default": null,
-          "title": "Webhook URL",
-          "ui:copyable": true,
-          "ui:loadValue": true,
-          "ui:widget": "webhook"
+          "title": "Signing Secret",
+          "ui:hidden": true
         },
         "relay_connected": {
           "anyOf": [
@@ -2697,7 +2725,7 @@
           "title": "Is Production",
           "ui:hidden": true
         },
-        "telegram_registered": {
+        "trigger_registered": {
           "anyOf": [
             {
               "type": "boolean"
@@ -2707,8 +2735,53 @@
             }
           ],
           "default": null,
-          "title": "Telegram Registered",
+          "title": "Trigger Registered",
           "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "setup_telegram_channel_guided",
+          "default": "setup_telegram_channel_guided",
+          "title": "Setup Telegram Channel Guided",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "Setup Telegram Channel Guided",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "guided channel setup",
+            "auto detect channel",
+            "wizard add channel",
+            "connect channel deep link",
+            "onboard channel"
+          ]
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
         },
         "setup_link": {
           "anyOf": [
