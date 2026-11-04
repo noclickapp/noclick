@@ -139,7 +139,7 @@ async def test_persist_event_carries_media_urls_and_skips_empty():
     event row, and the relaxed guard admits an image-only turn (empty
     message) while still skipping a truly empty turn."""
     persist_node = SimpleNamespace(
-        user_id="u1", workflow_id="wf1", node_id="n1",
+        user_id="u1", workflow_id="wf1", node_id="n1", node_data={"config": {}},
         _UPSERT_INTERFACE_EVENT_SQL=AgentNode._UPSERT_INTERFACE_EVENT_SQL,
     )
     pool = MagicMock()

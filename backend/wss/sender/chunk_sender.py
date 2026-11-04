@@ -75,19 +75,6 @@ def serialize_payload(data: Any) -> bytes:
     return json.dumps(data, default=str).encode('utf-8')
 
 
-def get_payload_size(data: Any) -> int:
-    """Calculate the serialized size of a payload in bytes."""
-    try:
-        return len(serialize_payload(data))
-    except (TypeError, ValueError):
-        return 0
-
-
-def needs_chunking(data: Any, chunk_size: int = CHUNK_SIZE) -> bool:
-    """Check if a payload exceeds the chunk size threshold."""
-    return get_payload_size(data) > chunk_size
-
-
 def chunk_payload(
     data: Any,
     chunk_size: int = CHUNK_SIZE,

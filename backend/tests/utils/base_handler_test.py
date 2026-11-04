@@ -243,10 +243,6 @@ class BaseHandlerTest:
         from tests.mocks.mock_system import reset_subprocess_mocks
         reset_subprocess_mocks()
         
-        # Clean up S3 mocks
-        from tests.mocks.mock_boto3 import configure_mock_s3_responses
-        configure_mock_s3_responses({})  # Reset to empty
-        
         # Clean up database mocks
         from tests.mocks.mock_asyncpg import configure_mock_query_responses, clear_executed_queries
         configure_mock_query_responses({})  # Reset to empty

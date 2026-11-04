@@ -6,7 +6,7 @@ Provides both async (httpx) and sync (requests) fetch functions.
 """
 
 import logging
-from typing import Optional, List, Dict, Any
+from typing import List, Dict, Any
 import httpx
 import requests
 from cachetools import TTLCache
@@ -116,41 +116,6 @@ def get_openrouter_models_sync() -> List[Dict[str, Any]]:
     _models_cache[CACHE_KEY] = models
 
     return models
-
-
-async def refresh_openrouter_models() -> List[Dict[str, Any]]:
-    """
-    Force refresh models by clearing cache and fetching from API.
-
-    Returns:
-        List of model metadata dictionaries
-    """
-    logger.info("[OPENROUTER] Force refreshing models")
-
-    # Clear cache
-    _models_cache.clear()
-
-    # Fetch fresh data
-    return await get_openrouter_models()
-
-
-async def get_openrouter_model_by_id(model_id: str) -> Optional[Dict[str, Any]]:
-    """
-    Get a specific OpenRouter model by ID.
-
-    Args:
-        model_id: Model ID (e.g., "openai/gpt-4")
-
-    Returns:
-        Model metadata dictionary if found, None otherwise
-    """
-    models = await get_openrouter_models()
-
-    for model in models:
-        if model.get('id') == model_id:
-            return model
-
-    return None
 
 
 async def ensure_models_cached() -> None:

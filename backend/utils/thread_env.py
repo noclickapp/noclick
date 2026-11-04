@@ -8,10 +8,7 @@ affecting each other or the global environment. Works in both sync and async con
 For async contexts, it uses contextvars for isolation between async tasks.
 For sync/thread contexts, it uses thread-local storage.
 
-Created because OpenHands creates new threads that break async_env(). We can
-probably deprecate async_env.py now.
-
-UPDATE: Because of OpenHands' queue thread pattern where there's a worker queue processor,
+Because of OpenHands' queue thread pattern where there's a worker queue processor,
 we can't use this either inside agent_handler. The robust fix is to use it in TrackingLLM.
 """
 

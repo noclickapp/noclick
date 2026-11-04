@@ -620,36 +620,3 @@ def parse_xml_streaming(
         opening or a partial ``<...`` suffix at the buffer tail.
     """
     return _parse_xml_impl(text, allowed_tags, rejected_tags, start_offset)
-
-
-# ============================================================================
-# Line-by-line streaming parser
-# ============================================================================
-
-def parse_xml_line(line: str, allowed_tags: Optional[Set[str]] = None) -> Optional[XmlOp]:
-    """Parse a single line of XML, returning an XmlOp or None.
-
-    Used for streaming line-by-line parsing (builder). Only handles single-line
-    self-closing tags — body tags spanning multiple lines are not supported.
-    """
-    stripped = line.strip()
-    if not stripped or not stripped.startswith('<'):
-        return None
-
-    # Try tag with attributes first
-    m = _TAG_PATTERN.match(stripped)
-    if m:
-        tag = m.group(1)
-        if allowed_tags and tag not in allowed_tags:
-            return None
-        return XmlOp(tag=tag, attrs=_parse_attrs(m.group(2)))
-
-    # Try bare tag (no attributes)
-    m = _BARE_TAG_PATTERN.match(stripped)
-    if m:
-        tag = m.group(1)
-        if allowed_tags and tag not in allowed_tags:
-            return None
-        return XmlOp(tag=tag, attrs={})
-
-    return None

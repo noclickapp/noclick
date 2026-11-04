@@ -1,8 +1,8 @@
 """Stateful in-memory R2 fake for CAS tests.
 
-The pure-MagicMock S3 in mock_boto3 can't hold bytes, so it can't verify
-"a ref points at a live object", "R2 deleted before the DB row", or the
-delete-vs-rePUT race. This fake is dict-backed with working put/get/delete, a
+A MagicMock S3 can't hold bytes, so it can't verify "a ref points at a
+live object", "R2 deleted before the DB row", or the delete-vs-rePUT race.
+This fake is dict-backed with working put/get/delete, a
 per-key delete counter, and fault injection — so CAS write→GC→read is exercised
 for real. It patches the native helpers in ``utils.r2_cloudflare`` (which the
 CAS store calls by module attribute), so the store's real 404/missing handling

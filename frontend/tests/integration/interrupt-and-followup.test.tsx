@@ -81,7 +81,7 @@ test('stream → interrupt → nav-away → back → follow-up → stream → na
     });
 
     // Mount the hook for the first time.
-    const view1 = renderHook(() => useConversation('wf-1'), {
+    const view1 = renderHook(() => useConversation(conversationId), {
         wrapper: withWorkflow('wf-1'),
     });
 
@@ -138,9 +138,8 @@ test('stream → interrupt → nav-away → back → follow-up → stream → na
     await sleep(50);
 
     // ── Step 4: Navigate back (remount) ────────────────────────────────────
-    // The new hook fetches latest persisted from BE — mock that response.
-    // useConversation issues `conversation:get_latest_for_workflow`; we
-    // have to intercept on the harness's socket emit and reply.
+    // The new hook fetches the conversation's persisted history from BE
+    // (`conversation:resume`) — intercept on the harness's socket emit and reply.
     const origEmit = harness.socket.emit;
     harness.socket.emit = ((name: string, data: unknown, ...rest: unknown[]) => {
         origEmit.call(harness.socket, name, data, ...rest);
@@ -148,18 +147,7 @@ test('stream → interrupt → nav-away → back → follow-up → stream → na
             ? (data as { request_id?: string }).request_id
             : undefined;
         if (!reqId) return true;
-        if (name === 'conversation:get_latest_for_workflow') {
-            queueMicrotask(() => {
-                harness.socket.serverEmit('response', {
-                    request_id: reqId,
-                    data: {
-                        conversation_id: conversationId,
-                        has_user_messages: true,
-                        has_pending_ask: false,
-                    },
-                });
-            });
-        } else if (name === 'conversation:resume') {
+        if (name === 'conversation:resume') {
             queueMicrotask(() => {
                 harness.socket.serverEmit('response', {
                     request_id: reqId,
@@ -180,7 +168,7 @@ test('stream → interrupt → nav-away → back → follow-up → stream → na
         return true;
     }) as typeof harness.socket.emit;
 
-    const view2 = renderHook(() => useConversation('wf-1'), {
+    const view2 = renderHook(() => useConversation(conversationId), {
         wrapper: withWorkflow('wf-1'),
     });
 
@@ -251,7 +239,7 @@ test('stream → interrupt → nav-away → back → follow-up → stream → na
     });
 
     // ── Step 8: Navigate back, gen still running ───────────────────────────
-    const view3 = renderHook(() => useConversation('wf-1'), {
+    const view3 = renderHook(() => useConversation(conversationId), {
         wrapper: withWorkflow('wf-1'),
     });
 

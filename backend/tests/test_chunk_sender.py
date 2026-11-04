@@ -11,107 +11,19 @@ import zlib
 from unittest.mock import AsyncMock, MagicMock, call
 
 from wss.sender.chunk_sender import (
-    CHUNK_SIZE,
     COMPRESSION_ENABLED,
     ChunkMetadata,
     ChunkedWrapper,
-    get_payload_size,
-    needs_chunking,
     chunk_payload,
     send_chunked_event,
 )
-
-
-class TestPayloadSizeCalculation:
-    """Tests for get_payload_size function."""
-
-    def test_small_dict_size(self):
-        """Small dict should have correct JSON size."""
-        data = {"key": "value"}
-        expected = len(json.dumps(data).encode('utf-8'))
-        assert get_payload_size(data) == expected
-
-    def test_empty_dict_size(self):
-        """Empty dict should have minimal size."""
-        assert get_payload_size({}) == 2  # '{}'
-
-    def test_list_size(self):
-        """List payload should be sized correctly."""
-        data = [1, 2, 3, 4, 5]
-        expected = len(json.dumps(data).encode('utf-8'))
-        assert get_payload_size(data) == expected
-
-    def test_nested_structure_size(self):
-        """Nested structures should be sized correctly."""
-        data = {
-            "level1": {
-                "level2": {
-                    "data": [1, 2, 3],
-                    "text": "hello"
-                }
-            }
-        }
-        expected = len(json.dumps(data).encode('utf-8'))
-        assert get_payload_size(data) == expected
-
-    def test_unicode_size(self):
-        """Unicode characters should be sized correctly (UTF-8 bytes)."""
-        data = {"emoji": "🚀🔥"}
-        # Each emoji is 4 bytes in UTF-8
-        expected = len(json.dumps(data).encode('utf-8'))
-        assert get_payload_size(data) == expected
-
-    def test_large_payload_size(self):
-        """Large payload size should be calculated correctly."""
-        # 1MB of data
-        data = {"data": "x" * (1024 * 1024)}
-        size = get_payload_size(data)
-        # Should be slightly over 1MB due to JSON structure
-        assert size > 1024 * 1024
-        assert size < 1024 * 1024 + 100  # JSON overhead is minimal
-
-
-class TestNeedsChunking:
-    """Tests for needs_chunking function."""
-
-    def test_small_payload_no_chunking(self):
-        """Small payloads should not need chunking."""
-        data = {"small": "data"}
-        assert needs_chunking(data) is False
-
-    def test_exact_threshold_no_chunking(self):
-        """Payload exactly at threshold should not need chunking."""
-        # Create payload exactly at CHUNK_SIZE
-        # JSON format: {"data":"xxx..."} has overhead of 10 chars
-        padding_size = CHUNK_SIZE - len('{"data":""}')
-        data = {"data": "x" * (padding_size - 1)}  # -1 to stay at or under threshold
-        # At exactly the threshold, should not need chunking
-        assert get_payload_size(data) <= CHUNK_SIZE
-        assert needs_chunking(data) is False
-
-    def test_over_threshold_needs_chunking(self):
-        """Payload over threshold should need chunking."""
-        # Create payload just over CHUNK_SIZE
-        data = {"data": "x" * CHUNK_SIZE}
-        assert needs_chunking(data) is True
-
-    def test_large_payload_needs_chunking(self):
-        """Large payloads should need chunking."""
-        data = {"data": "x" * (2 * 1024 * 1024)}  # 2MB
-        assert needs_chunking(data) is True
-
-    def test_custom_chunk_size(self):
-        """Custom chunk size should be respected."""
-        data = {"data": "x" * 1000}  # ~1KB
-        assert needs_chunking(data, chunk_size=500) is True
-        assert needs_chunking(data, chunk_size=2000) is False
 
 
 class TestMaybeChunk:
     """Tests for maybe_chunk — the loop-safe serialize+chunk entry point.
 
     Regression guard for the perf finding: send_event used to serialize a
-    payload twice on the event loop (once in needs_chunking, once in
+    payload twice on the event loop (once for the size check, once in
     chunk_payload). maybe_chunk runs off-loop and serializes exactly once.
     """
 

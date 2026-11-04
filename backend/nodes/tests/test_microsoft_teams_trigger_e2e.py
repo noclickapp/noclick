@@ -16,17 +16,19 @@ for real:
 import uuid
 from unittest.mock import patch
 
-import pytest
+import httpx
 from fastapi import FastAPI
-from fastapi.testclient import TestClient
 
 from utils.webhook_routes import router
 
 
-def _app() -> FastAPI:
+async def _post(path: str, **kwargs) -> httpx.Response:
+    """POST through the real router on the test's own loop, the one its DB pool is bound to (a ``TestClient`` runs
+    the app on a loop of its own, where the route's DB reads refuse the pool)."""
     app = FastAPI()
     app.include_router(router)
-    return app
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
+        return await client.post(path, **kwargs)
 
 
 def _teams_config(webhook_id, node_id, operation, secret, **fields):
@@ -56,19 +58,18 @@ def _teams_config(webhook_id, node_id, operation, secret, **fields):
 
 
 class TestTeamsGraphValidationHandshake:
-    def test_validation_token_echoed_as_plaintext(self):
+    async def test_validation_token_echoed_as_plaintext(self):
         """Graph's subscription-validation request must be echoed verbatim."""
         webhook_id = str(uuid.uuid4())
         cfg = _teams_config(webhook_id, "n1", "on_channel_message", "sec", team_id="t1", channel_id="c1")
         token = "Validation Token abc123=="
         with patch("utils.webhook_routes.get_webhook_config", return_value=cfg):
-            client = TestClient(_app())
-            resp = client.post(f"/webhook/{webhook_id}", params={"validationToken": token}, content=b"")
+            resp = await _post(f"/webhook/{webhook_id}", params={"validationToken": token}, content=b"")
         assert resp.status_code == 200
         assert resp.text == token
         assert resp.headers["content-type"].startswith("text/plain")
 
-    def test_validation_works_before_row_activated(self):
+    async def test_validation_works_before_row_activated(self):
         """Validation happens during registration, while the row is still
         inactive — it must NOT 410."""
         webhook_id = str(uuid.uuid4())
@@ -76,14 +77,13 @@ class TestTeamsGraphValidationHandshake:
         cfg["is_active"] = False  # registration time: row not yet activated
         token = "tok-inactive"
         with patch("utils.webhook_routes.get_webhook_config", return_value=cfg):
-            client = TestClient(_app())
-            resp = client.post(f"/webhook/{webhook_id}", params={"validationToken": token}, content=b"")
+            resp = await _post(f"/webhook/{webhook_id}", params={"validationToken": token}, content=b"")
         assert resp.status_code == 200
         assert resp.text == token
 
 
 class TestTeamsNotificationRoundtrip:
-    def test_channel_message_notification_fires_trigger(self):
+    async def test_channel_message_notification_fires_trigger(self):
         webhook_id = str(uuid.uuid4())
         node_id = "teams-trigger-1"
         secret = "topsecret-clientstate"
@@ -101,8 +101,7 @@ class TestTeamsNotificationRoundtrip:
         with patch("utils.webhook_routes.get_webhook_config", return_value=cfg), patch(
             "utils.webhook_routes.update_webhook_stats"
         ), patch("utils.webhook_routes._execute_workflow_with_relay") as mock_exec:
-            client = TestClient(_app())
-            resp = client.post(f"/webhook/{webhook_id}", json=notification)
+            resp = await _post(f"/webhook/{webhook_id}", json=notification)
 
         assert resp.status_code == 200
         # workflow dispatched from the trigger node...
@@ -114,7 +113,7 @@ class TestTeamsNotificationRoundtrip:
         injected = fired["config"]["_triggerPayload"]
         assert injected["value"][0]["resource"].startswith("teams")
 
-    def test_bad_client_state_is_rejected(self):
+    async def test_bad_client_state_is_rejected(self):
         webhook_id = str(uuid.uuid4())
         node_id = "teams-trigger-2"
         secret = "the-real-secret"
@@ -123,13 +122,12 @@ class TestTeamsNotificationRoundtrip:
         with patch("utils.webhook_routes.get_webhook_config", return_value=cfg), patch(
             "utils.webhook_routes.update_webhook_stats"
         ), patch("utils.webhook_routes._execute_workflow_with_relay") as mock_exec:
-            client = TestClient(_app())
-            resp = client.post(f"/webhook/{webhook_id}", json=bad)
+            resp = await _post(f"/webhook/{webhook_id}", json=bad)
 
         assert resp.status_code == 401
         assert not mock_exec.called
 
-    def test_chat_message_notification_fires_trigger(self):
+    async def test_chat_message_notification_fires_trigger(self):
         webhook_id = str(uuid.uuid4())
         node_id = "teams-trigger-3"
         secret = "chat-secret"
@@ -138,8 +136,7 @@ class TestTeamsNotificationRoundtrip:
         with patch("utils.webhook_routes.get_webhook_config", return_value=cfg), patch(
             "utils.webhook_routes.update_webhook_stats"
         ), patch("utils.webhook_routes._execute_workflow_with_relay") as mock_exec:
-            client = TestClient(_app())
-            resp = client.post(f"/webhook/{webhook_id}", json=notification)
+            resp = await _post(f"/webhook/{webhook_id}", json=notification)
 
         assert resp.status_code == 200
         assert mock_exec.called

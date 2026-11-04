@@ -7,7 +7,6 @@ import pytest
 from coder.workflow.workflow_xml import (
     XmlOp,
     parse_xml,
-    parse_xml_line,
     parse_xml_streaming,
     unescape_attr_value,
     coerce_value,
@@ -464,124 +463,6 @@ class TestParseXml:
 
 
 # ============================================================================
-# parse_xml_line — streaming line parser
-# ============================================================================
-
-class TestParseXmlLine:
-    def test_add_node(self):
-        op = parse_xml_line('<add_node type="automation-rss" name="rss" label="Feed" goal="Parse RSS">')
-        assert op is not None
-        assert op.tag == "add_node"
-        assert op.attrs["type"] == "automation-rss"
-        assert op.attrs["name"] == "rss"
-        assert op.attrs["label"] == "Feed"
-        assert op.attrs["goal"] == "Parse RSS"
-
-    def test_add_edge(self):
-        op = parse_xml_line('<add_edge from="rss" to="slack">')
-        assert op is not None
-        assert op.tag == "add_edge"
-        assert op.attrs["from"] == "rss"
-        assert op.attrs["to"] == "slack"
-
-    def test_add_edge_with_handle(self):
-        op = parse_xml_line('<add_edge from="iter" to="body" handle="loop">')
-        assert op.attrs["handle"] == "loop"
-
-    def test_remove_node(self):
-        op = parse_xml_line('<remove_node name="old_node"/>')
-        assert op is not None
-        assert op.tag == "remove_node"
-        assert op.attrs["name"] == "old_node"
-
-    def test_remove_edge(self):
-        op = parse_xml_line('<remove_edge from="a" to="b"/>')
-        assert op.tag == "remove_edge"
-
-    def test_update_goal(self):
-        op = parse_xml_line('<update_goal node="rss" goal="Parse and filter RSS"/>')
-        assert op.tag == "update_goal"
-        assert op.attrs["node"] == "rss"
-        assert op.attrs["goal"] == "Parse and filter RSS"
-
-    def test_input(self):
-        op = parse_xml_line('<input node="sheets" type="credential" label="Google Sheets" service="google_sheets">')
-        assert op.tag == "input"
-        assert op.attrs["node"] == "sheets"
-        assert op.attrs["service"] == "google_sheets"
-
-    def test_done_with_attrs(self):
-        op = parse_xml_line('<done name="My Workflow" summary="A test workflow"/>')
-        assert op.tag == "done"
-        assert op.attrs["name"] == "My Workflow"
-        assert op.attrs["summary"] == "A test workflow"
-
-    def test_done_bare(self):
-        op = parse_xml_line("<done/>")
-        assert op is not None
-        assert op.tag == "done"
-        assert op.attrs == {}
-
-    def test_done_bare_with_space(self):
-        op = parse_xml_line("<done />")
-        assert op.tag == "done"
-
-    def test_non_xml_returns_none(self):
-        assert parse_xml_line("This is just text") is None
-
-    def test_empty_line_returns_none(self):
-        assert parse_xml_line("") is None
-        assert parse_xml_line("   ") is None
-
-    def test_allowed_tags_filter(self):
-        op = parse_xml_line(
-            '<field id="n1" name="x" value="1" />',
-            allowed_tags={"add_node"}
-        )
-        assert op is None
-
-    def test_allowed_tags_passes(self):
-        op = parse_xml_line(
-            '<add_node type="x" name="a" label="A" goal="test">',
-            allowed_tags={"add_node"}
-        )
-        assert op is not None
-        assert op.tag == "add_node"
-
-    def test_single_quotes(self):
-        op = parse_xml_line("<add_node type='x' name='a' label='A' goal='test'>")
-        assert op.attrs["type"] == "x"
-
-    def test_mixed_quotes(self):
-        op = parse_xml_line("""<add_node type="x" name='a' label="A" goal='test'>""")
-        assert op.attrs["type"] == "x"
-        assert op.attrs["name"] == "a"
-
-    def test_any_attribute_order(self):
-        """Attributes can appear in any order."""
-        op = parse_xml_line('<add_node goal="test" name="a" type="x" label="A">')
-        assert op.attrs["type"] == "x"
-        assert op.attrs["name"] == "a"
-        assert op.attrs["label"] == "A"
-        assert op.attrs["goal"] == "test"
-
-    def test_optional_description(self):
-        op = parse_xml_line(
-            '<add_node type="x" name="a" label="A" goal="test" description="Extra info">'
-        )
-        assert op.attrs.get("description") == "Extra info"
-
-    def test_leading_whitespace_stripped(self):
-        op = parse_xml_line('   <add_node type="x" name="a">')
-        assert op is not None
-        assert op.tag == "add_node"
-
-    def test_escaped_quotes(self):
-        op = parse_xml_line(r'<add_node type="x" name="a" label="it\'s" goal="test">')
-        assert op.attrs["label"] == "it's"
-
-
-# ============================================================================
 # update_settings tag parsing
 # ============================================================================
 
@@ -677,11 +558,6 @@ class TestBooleanAttributes:
         assert "full" in ops[0].attrs
         assert ops[0].attrs["node"] == "list_docs"
 
-    def test_parse_xml_line_boolean_attr(self):
-        op = parse_xml_line('<get_output node="list_docs" full />')
-        assert op is not None
-        assert op.attrs["node"] == "list_docs"
-        assert "full" in op.attrs
 
 
 # ============================================================================
