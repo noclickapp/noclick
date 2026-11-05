@@ -698,8 +698,9 @@ class Agent:
             except Exception:
                 _model = None
             infra_error = result.get("error")
+            # A command stopped under a failure still shows how far it got.
             preview = (
-                None if infra_error else
+                None if infra_error and "exit_code" not in result else
                 f"exit {result.get('exit_code')}"
                 f" | stdout: {(result.get('stdout') or '')[-300:]}"
                 f" | stderr: {(result.get('stderr') or '')[-150:]}"
@@ -832,6 +833,9 @@ class Agent:
                 "a persistent filesystem mounted at the workspace path. Returns "
                 "stdout, stderr, and exit_code. Use this for reading, writing, "
                 "and manipulating files; running scripts; and inspecting state."
+                + (f" A command still running after {runtime.command_limit_s} seconds is stopped, so start longer "
+                   "work in the background (`nohup CMD > out.log 2>&1 &`) and check on it with later commands."
+                   if getattr(runtime, "command_limit_s", None) else "")
                 + (f" {mounts_note}" if mounts_note else "")
                 + (f" {env_note}" if env_note else "")
                 + (f" {runtime.tools_note}" if getattr(runtime, "tools_note", "") else "")

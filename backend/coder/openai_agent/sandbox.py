@@ -18,14 +18,20 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+import re
 import shlex
+import signal
 import tempfile
+import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Protocol
+from typing import Any, Dict, List, Optional, Protocol, Sequence
 
 logger = logging.getLogger(__name__)
 
 _LOCAL_TIMEOUT_S = 600
+# How long a command's output may still take to arrive once it has ended: a background process it left holding its
+# output keeps the pipe open for as long as it runs.
+OUTPUT_DRAIN_S = 5.0
 # The shell every runtime runs a command in. Models write bash ([[ ]], <( ), arrays, pipefail), which Debian's sh
 # (dash) refuses with a syntax error.
 SHELL = ("bash", "-c")
@@ -37,12 +43,30 @@ def without_stdin(command: str) -> str:
     return f"{{\n{command}\n}} </dev/null"
 
 
+def without_logins(text: str) -> str:
+    """``text`` with the login a URL carries taken out, a URL cut off before its ``@`` included."""
+    return re.sub(r"(\w+://)[^/\s'\"@]*:[^/\s'\"@]*$", r"\1", re.sub(r"(\w+://)[^/\s'\"@]*@", r"\1", text))
+
+
+def stopped_after(limit_s: int, command: str, running: Sequence[str] = ()) -> str:
+    """What a command's result says once its time limit stopped it: for how long, what it was doing (``running``, else
+    how the command ends) and what to do next."""
+    doing = "; ".join(running) or f"...{without_logins(command.strip())[-200:]}"
+    return (f"Stopped after {limit_s}s: this command was still running, so it was killed. Its workspace is kept, and "
+            f"stdout and stderr hold what it printed so far. It was running: {doing}. Steps that finished stand and "
+            "the one that was running may be half done, so check it, then run just that step again: a network call "
+            "that hung often goes through on a retry. For work that really takes this long, start it in the "
+            "background (`nohup CMD > out.log 2>&1 &`) and read the log with later commands.")
+
+
 class AgentSandboxRuntime(Protocol):
     """Structural contract implemented by every registered runtime."""
 
     mount_path: str
     # What the shell has beyond the usual tools, said in execute_bash's description ("" when nothing).
     tools_note: str
+    # How long one command may run before it's stopped, said in the same description.
+    command_limit_s: int
 
     @property
     def persistent(self) -> bool: ...
@@ -85,6 +109,32 @@ def clear() -> None:
     _initialized = False
 
 
+async def _read_into(stream: asyncio.StreamReader, into: bytearray) -> None:
+    while chunk := await stream.read(65536):
+        into += chunk
+
+
+async def _exited(process: asyncio.subprocess.Process, within_s: float) -> bool:
+    """Whether ``process`` ended within ``within_s``. Read off its ``returncode``: ``wait()`` also waits for its pipes,
+    which a background process it left can hold open."""
+    deadline = time.monotonic() + within_s
+    while process.returncode is None:
+        if time.monotonic() >= deadline:
+            return False
+        await asyncio.sleep(0.02)
+    return True
+
+
+def _kill_session(process: asyncio.subprocess.Process) -> None:
+    try:
+        if hasattr(os, "killpg"):
+            os.killpg(process.pid, signal.SIGKILL)
+        else:
+            process.kill()
+    except ProcessLookupError:
+        pass
+
+
 class LocalSandboxRuntime:
     """Run execute_bash on the local machine.
 
@@ -100,6 +150,7 @@ class LocalSandboxRuntime:
     """
 
     tools_note = ""
+    command_limit_s = _LOCAL_TIMEOUT_S
 
     def __init__(
         self,
@@ -205,28 +256,34 @@ class LocalSandboxRuntime:
         env = {**os.environ, **self.user_env}
         shell_cmd = f"cd {shlex.quote(str(self._workdir))} && {without_stdin(command)}"
         try:
+            # A session of its own, so its limit stops everything it started.
             process = await asyncio.create_subprocess_exec(
                 *SHELL, shell_cmd,
                 stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-                env=env,
+                env=env, start_new_session=True,
             )
+            stdout_b, stderr_b = bytearray(), bytearray()
+            readers = {asyncio.create_task(_read_into(process.stdout, stdout_b)),
+                       asyncio.create_task(_read_into(process.stderr, stderr_b))}
             try:
-                stdout_b, stderr_b = await asyncio.wait_for(
-                    process.communicate(), timeout=_LOCAL_TIMEOUT_S,
-                )
-            except asyncio.TimeoutError:
-                process.kill()
-                await process.wait()
-                return {"error": f"Command timed out after {_LOCAL_TIMEOUT_S}s"}
+                ended = await _exited(process, _LOCAL_TIMEOUT_S)
+                if not ended:
+                    _kill_session(process)
+                    await _exited(process, OUTPUT_DRAIN_S)
+                await asyncio.wait(readers, timeout=OUTPUT_DRAIN_S)
+            finally:
+                for reader in readers:
+                    reader.cancel()
         except Exception as e:
             logger.error("[sandbox] run_bash failed: %s", e, exc_info=True)
             return {"error": f"Command execution failed: {e}"}
 
-        return {
+        result: Dict[str, Any] = {
             "stdout": stdout_b.decode(errors="replace"),
             "stderr": stderr_b.decode(errors="replace"),
-            "exit_code": process.returncode or 0,
+            "exit_code": 124 if not ended else process.returncode or 0,
         }
+        return result if ended else {**result, "error": stopped_after(_LOCAL_TIMEOUT_S, command)}
 
     async def read_file(self, path: str) -> Optional[bytes]:
         if not await self.ensure_sandbox():
