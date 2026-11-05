@@ -131,7 +131,9 @@ async def test_oversized_media_not_rehosted(monkeypatch):
         out = await WhatsAppNode.transform_trigger_payload(
             _media_payload(), WA_CFG, pool=_pool(), workflow_id="wf-1", node_id="n",
         )
-    assert out is None  # delivery proceeds with the original payload
+    media = out["payload"]["media"]  # the message still runs, and the agent is told why
+    assert media["too_large"] is True and media["max_bytes"] == WhatsAppNode.MEDIA_REHOST_MAX_BYTES
+    assert "url" not in media
 
 
 @pytest.mark.asyncio

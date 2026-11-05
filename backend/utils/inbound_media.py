@@ -16,7 +16,9 @@ The returned dict is the ``media`` slot every consumer reads (the frontend's
 """
 
 import logging
-from typing import Any, Dict, Iterable, Optional, Tuple
+from typing import Any, AsyncIterator, Dict, Iterable, Optional, Tuple
+
+import httpx
 
 from utils.ssrf import guarded_async_client
 
@@ -24,6 +26,30 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_MAX_BYTES = 25 * 1024 * 1024
 DEFAULT_TIMEOUT_S = 20
+
+
+class MediaTooLarge(Exception):
+    """Media over its cap. ``size`` is the size it declared; None when it declared
+    none, and the download was stopped at the cap without learning the real one."""
+
+    def __init__(self, source: str, size: Optional[int], max_bytes: int):
+        super().__init__(f"{source}: media over the rehost cap of {max_bytes} bytes")
+        self.size = size
+        self.max_bytes = max_bytes
+
+
+class MediaFetchFailed(Exception):
+    """The provider refused the media (a dead link, usually). Replaces httpx's
+    status error, whose message carries the URL and is logged by the delivery seam."""
+
+
+async def _capped(chunks: AsyncIterator[bytes], source: str, max_bytes: int) -> AsyncIterator[bytes]:
+    total = 0
+    async for chunk in chunks:
+        total += len(chunk)
+        if total > max_bytes:
+            raise MediaTooLarge(source, None, max_bytes)
+        yield chunk
 
 
 async def resolve_delivery_credential(
@@ -75,23 +101,27 @@ async def rehost_inbound_media(
     mimetype: Optional[str] = None,
     filename: Optional[str] = None,
     headers: Optional[Dict[str, str]] = None,
+    declared_size: Optional[int] = None,
     max_bytes: int = DEFAULT_MAX_BYTES,
     timeout_s: float = DEFAULT_TIMEOUT_S,
     trusted_exact_urls: Iterable[str] = (),
 ) -> Optional[Dict[str, Any]]:
     """Stream ``url`` into a workflow resource owned by the workflow's owner.
 
-    ``None`` when the workflow is unknown or the body exceeds ``max_bytes``
-    (the delivery then proceeds with the original payload — media that is
-    too large to keep is still a message). Transport errors raise; the
-    delivery seam catches them and keeps the original payload. The URL is
-    never logged: a provider URL may carry a credential in its path.
+    Raises :class:`MediaTooLarge` when ``declared_size`` or the response's own
+    length is over ``max_bytes`` (nothing downloaded) or the body turns out to be
+    (stopped there). ``None`` when the workflow is unknown. ``timeout_s`` bounds
+    each network operation, not the copy. A provider's refusal raises
+    :class:`MediaFetchFailed` and a transport error its own; the delivery seam
+    catches them and keeps the original payload. The URL is never logged: a
+    provider URL may carry a credential in its path.
     """
     owner = await _workflow_owner(pool, workflow_id)
     if not owner:
         return None
 
-    chunks, total = [], 0
+    from utils.resource_store import create_resource_from_stream
+
     async with guarded_async_client(
         timeout=timeout_s, trusted_exact_urls=trusted_exact_urls
     ) as client:

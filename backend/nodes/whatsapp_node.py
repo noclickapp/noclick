@@ -177,6 +177,10 @@ QR_ONLY_OPERATIONS = frozenset({
 _TRIGGER_OPERATIONS = frozenset({"receive_message", "receive_status_update"})
 
 
+def _megabytes(size: int) -> str:
+    return f"{round(size / (1024 * 1024), 1):g} MB"
+
+
 def wahooks_chat_id(recipient: Any) -> str:
     """A phone number ("+12025550100") or chat id as WAHooks expects it.
 
@@ -2026,10 +2030,17 @@ class WhatsAppNode(WorkflowNode):
             media_note = ""
             entries = []
             if has_media:
-                if media.get("rehosted") and media.get("url"):
-                    desc = ", ".join(
-                        str(x) for x in (media.get("mimetype"), media.get("filename")) if x
+                desc = ", ".join(
+                    str(x) for x in (media.get("mimetype"), media.get("filename")) if x
+                )
+                if media.get("too_large") and media.get("max_bytes"):
+                    size = f"{_megabytes(media['size'])}; " if media.get("size") else ""
+                    media_note = (
+                        f"\n[The attachment ({desc or 'unknown type'}) arrived but is too large to use "
+                        f"({size}the limit is {_megabytes(media['max_bytes'])}), so you cannot "
+                        f"see its content. Tell the sender and ask them to send a smaller version.]"
                     )
+                elif media.get("rehosted") and media.get("url"):
                     media_note = (
                         f"\nAttached media ({desc or 'unknown type'}): {media['url']}\n"
                         f"Download that URL (e.g. curl -o) to view or process the file — "
@@ -2049,8 +2060,8 @@ class WhatsAppNode(WorkflowNode):
                     # Not rehosted: the provider URL is platform-authed and
                     # useless to the run — say so instead of dangling it.
                     media_note = (
-                        "\n[The attached media could not be retrieved — ask the "
-                        "sender to describe it or resend if its content matters.]"
+                        "\n[The attached media could not be retrieved — ask the sender to "
+                        "describe it or resend it (smaller, if it is a large file) if its content matters.]"
                     )
             identity_note = (
                 " The phone number in the header identifies the sender; it is not the reply address."
@@ -2229,17 +2240,44 @@ class WhatsAppNode(WorkflowNode):
         return str(event_payload.get("from") or key.get("remoteJid") or "unknown")
 
     # Provider media URLs require a service credential and are not safe to hand
-    # to a run. Rehost at delivery time, with caps that keep large media from
-    # stalling the delivery path.
-    MEDIA_REHOST_MAX_BYTES = 25 * 1024 * 1024
-    MEDIA_REHOST_TIMEOUT_S = 20
+    # to a run, and they expire within minutes: copy at delivery time. The copy
+    # runs before the delivery is acked, and WAHooks aborts a delivery unanswered
+    # after 15s and sends it again (5 attempts, with nothing here to dedupe them):
+    # the timeout bounds the WHOLE copy, leaving room for the rest of the delivery.
+    MEDIA_REHOST_MAX_BYTES = 100 * 1024 * 1024
+    MEDIA_REHOST_TIMEOUT_S = 12
 
     @staticmethod
-    def _audio_message(p: Dict[str, Any]) -> Dict[str, Any]:
-        """WAHA's raw record for a voice/audio message, when the engine ships it."""
+    def _raw_message(p: Dict[str, Any]) -> Dict[str, Any]:
+        """WAHA's raw message record, when the engine ships it."""
         data = p.get("_data") if isinstance(p.get("_data"), dict) else {}
-        msg = data.get("message") if isinstance(data.get("message"), dict) else {}
-        audio = msg.get("audioMessage")
+        return data.get("message") if isinstance(data.get("message"), dict) else {}
+
+    @classmethod
+    def _declared_media_size(cls, message: Dict[str, Any]) -> Optional[int]:
+        """The size a raw message declares for its media: ``fileLength`` on its
+        ``videoMessage``/``documentMessage``/…, one ``message`` further down in a
+        wrapper (``documentWithCaptionMessage``, ``ephemeralMessage``). A protobuf
+        Long reaches us as a number, a string or ``{low, high}``. Never reads
+        ``contextInfo``, where a quoted message's size lives. None when absent."""
+        for value in message.values():
+            if not isinstance(value, dict):
+                continue
+            length = value.get("fileLength")
+            if isinstance(length, dict) and isinstance(length.get("low"), int):
+                length = (int(length.get("high") or 0) << 32) | (length["low"] & 0xFFFFFFFF)
+            if isinstance(length, (int, str)) and str(length).isdigit():
+                return int(length)
+            if isinstance(value.get("message"), dict):
+                nested = cls._declared_media_size(value["message"])
+                if nested is not None:
+                    return nested
+        return None
+
+    @classmethod
+    def _audio_message(cls, p: Dict[str, Any]) -> Dict[str, Any]:
+        """WAHA's raw record for a voice/audio message, when the engine ships it."""
+        audio = cls._raw_message(p).get("audioMessage")
         return audio if isinstance(audio, dict) else {}
 
     @classmethod
@@ -2266,9 +2304,10 @@ class WhatsAppNode(WorkflowNode):
     ):
         """Rehost an inbound message's media to workflow resources (R2) and
         swap ``payload.media.url`` for the public capability URL the agent can
-        actually download. Without rehosting, media reaches agents as an opaque
-        placeholder with no fetchable content. Failures raise into the delivery seam,
-        which keeps the original payload — the message still runs."""
+        actually download. Media that can't be copied still runs as a message,
+        without the provider URL (only the platform key opens it, and briefly):
+        its slot says ``too_large`` with ``max_bytes`` and any known ``size``, or
+        ``unavailable`` for a dead link, a transport failure or a missed deadline."""
         if payload.get("event") != "message":
             return None
         p = payload.get("payload") or {}
@@ -2286,20 +2325,34 @@ class WhatsAppNode(WorkflowNode):
         # before attaching the bearer (also blocks private-network SSRF).
         assert_exact_url_origin(url, WAHOOKS_API_ORIGIN)
 
-        from utils.inbound_media import rehost_inbound_media
+        from utils.inbound_media import MediaFetchFailed, MediaTooLarge, copy_inbound_media
 
-        rehosted = await rehost_inbound_media(
-            pool,
-            workflow_id=str(workflow_id),
-            node_id=node_id,
-            url=url,
-            source="whatsapp_inbound_media",
-            mimetype=media.get("mimetype"),
-            filename=media.get("filename") or url.rsplit("/", 1)[-1] or "whatsapp-media",
-            headers={"Authorization": f"Bearer {api_key}"},
-            max_bytes=cls.MEDIA_REHOST_MAX_BYTES,
-            timeout_s=cls.MEDIA_REHOST_TIMEOUT_S,
-        )
+        no_url = {k: v for k, v in media.items() if k != "url"}
+        try:
+            async with asyncio.timeout(cls.MEDIA_REHOST_TIMEOUT_S):
+                rehosted = await copy_inbound_media(
+                    pool,
+                    workflow_id=str(workflow_id),
+                    node_id=node_id,
+                    url=url,
+                    source="whatsapp_inbound_media",
+                    mimetype=media.get("mimetype"),
+                    filename=media.get("filename") or url.rsplit("/", 1)[-1] or "whatsapp-media",
+                    headers={"Authorization": f"Bearer {api_key}"},
+                    declared_size=cls._declared_media_size(cls._raw_message(p)),
+                    max_bytes=cls.MEDIA_REHOST_MAX_BYTES,
+                    timeout_s=cls.MEDIA_REHOST_TIMEOUT_S,
+                )
+        except MediaTooLarge as e:
+            logger.warning(f"[WhatsApp] {e}; telling the agent")
+            p["media"] = {**no_url, "too_large": True, "size": e.size, "max_bytes": e.max_bytes}
+            return payload
+        except Exception as e:
+            # By name: an R2 status error's message holds a signed URL. A fetch failure says only its status.
+            why = e if isinstance(e, MediaFetchFailed) else type(e).__name__
+            logger.warning(f"[WhatsApp] inbound media not copied for node {node_id}: {why}")
+            p["media"] = {**no_url, "unavailable": True}
+            return payload
         if not rehosted:
             return None
         p["media"] = {**media, **rehosted}

@@ -13,22 +13,27 @@ Lives in ``utils`` (depends only on ``utils.r2_cloudflare`` /
 layering cycle.
 """
 
+import asyncio
 import json
 import logging
 import mimetypes
 import os
 import re
 import uuid
-from typing import Any, Dict, Optional
+from typing import Any, AsyncIterator, Dict, List, Optional
 from urllib.parse import unquote, urlsplit
 
-from utils import database_pool
+from utils import database_pool, local_object_store, r2_cloudflare
+from utils.async_helpers import spawn
 from utils.capabilities import FILE_DOWNLOAD_URL, STORED_FILE_LINK, capability
 from utils.r2_cloudflare import get_public_download_url, upload_bytes_to_r2_async
 
 logger = logging.getLogger(__name__)
 
 RESOURCE_BUCKET = "workflow-resources"
+# R2 wants every part of an upload but the last to be one size, and at least 5 MiB.
+STREAM_PART_BYTES = 8 * 1024 * 1024
+_STREAM_WRITE_BYTES = 64 * 1024
 
 
 def resource_type_for_mime(mime: str) -> str:
@@ -200,11 +205,117 @@ async def create_resource_from_bytes(
     )
 
 
+async def create_resource_from_stream(
+    *,
+    user_id: str,
+    workflow_id: Optional[str],
+    node_id: Optional[str] = None,
+    organization_id: Optional[str] = None,
+    chunks: AsyncIterator[bytes],
+    content_type: str,
+    filename: str,
+    metadata: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """:func:`create_resource_from_bytes` for a body of unknown length, holding at most two upload parts of it:
+    one that ends within the first part goes up whole, a longer one a part at a time. The store on an instance's own
+    disk takes only whole files, so there the body is held. ``chunks`` raising stops the upload; nothing is kept."""
+    in_parts = not local_object_store.enabled()
+    pending = bytearray()
+    async for chunk in chunks:
+        pending += chunk
+        if in_parts and len(pending) >= STREAM_PART_BYTES:
+            break
+    else:
+        return await create_resource_from_bytes(
+            user_id=user_id, workflow_id=workflow_id, node_id=node_id, organization_id=organization_id,
+            body=bytes(pending), content_type=content_type, filename=filename, metadata=metadata,
+        )
+    resource_id = str(uuid.uuid4())
+    storage_ref = _storage_ref(user_id, workflow_id, resource_id, filename)
+    size = await _upload_in_parts(storage_ref, pending, chunks, content_type)
+    return await record_resource(
+        user_id=user_id, workflow_id=workflow_id, node_id=node_id, organization_id=organization_id,
+        resource_id=resource_id, storage_ref=storage_ref, size_bytes=size, content_type=content_type,
+        filename=filename, metadata=metadata,
+    )
+
+
+async def _upload_in_parts(key: str, pending: bytearray, chunks: AsyncIterator[bytes], content_type: str) -> int:
+    """Upload ``pending`` then ``chunks`` to ``key``; the bytes written. One part fills while the one before it uploads
+    and reading waits on that upload, so two parts is the most held at any size, and the read and the upload overlap
+    instead of adding up. Any failure drops the upload (R2 also expires an abandoned one after a week)."""
+    s3 = r2_cloudflare.create_s3_client()
+    made = await asyncio.to_thread(
+        s3.create_multipart_upload, Bucket=RESOURCE_BUCKET, Key=key, ContentType=content_type
+    )
+    target = {"Bucket": RESOURCE_BUCKET, "Key": key, "UploadId": made["UploadId"]}
+    etags: List[str] = []
+    in_flight: Optional[asyncio.Task] = None
+    total = len(pending)
+
+    async def send(number: int, body: bytes) -> str:
+        # As a stream: httpx keeps ``content=`` on a Request inside a reference cycle (a Response and its stream), so
+        # sent parts would pile up until the cyclic GC runs. A spent generator holds nothing.
+        async def pieces():
+            for start in range(0, len(body), _STREAM_WRITE_BYTES):
+                yield body[start:start + _STREAM_WRITE_BYTES]
+
+        url = s3.generate_presigned_url("upload_part", Params={**target, "PartNumber": number})
+        async with r2_cloudflare._get_r2_request_gate():
+            response = await r2_cloudflare._get_r2_http_client().put(
+                url, content=pieces(), headers={"Content-Length": str(len(body))}
+            )
+        response.raise_for_status()
+        return response.headers["etag"].strip('"')
+
+    async def settle() -> None:
+        nonlocal in_flight
+        if in_flight is not None:
+            etags.append(await in_flight)
+            in_flight = None
+
+    async def send_full_parts() -> None:
+        nonlocal in_flight
+        while len(pending) >= STREAM_PART_BYTES:
+            await settle()
+            in_flight = asyncio.create_task(send(len(etags) + 1, bytes(pending[:STREAM_PART_BYTES])))
+            del pending[:STREAM_PART_BYTES]
+
+    async def drop() -> None:
+        if in_flight is not None:
+            in_flight.cancel()
+            await asyncio.gather(in_flight, return_exceptions=True)
+        await asyncio.to_thread(s3.abort_multipart_upload, **target)
+
+    try:
+        await send_full_parts()
+        async for chunk in chunks:
+            pending += chunk
+            total += len(chunk)
+            await send_full_parts()
+        await settle()
+        if pending:
+            etags.append(await send(len(etags) + 1, bytes(pending)))
+        await asyncio.to_thread(
+            s3.complete_multipart_upload, **target,
+            MultipartUpload={"Parts": [{"PartNumber": n, "ETag": etag} for n, etag in enumerate(etags, 1)]},
+        )
+    except BaseException:
+        # Spawned: a copy past its deadline must not wait on the cleanup.
+        spawn(drop(), name=f"r2-multipart-drop:{key}")
+        raise
+    return total
+
+
+def _storage_ref(user_id: str, workflow_id: Optional[str], resource_id: str, filename: str) -> str:
+    return f"{user_id}/{workflow_id or 'account'}/{resource_id}/{filename}"
+
+
 async def upload_resource_bytes(*, user_id: str, workflow_id: Optional[str], resource_id: str, filename: str,
                                 body: bytes, content_type: str) -> str:
     """Put *body* where resource ``resource_id`` keeps it; its storage ref. ``record_resource`` then makes the row,
     so a caller can read a file while it uploads."""
-    storage_ref = f"{user_id}/{workflow_id or 'account'}/{resource_id}/{filename}"
+    storage_ref = _storage_ref(user_id, workflow_id, resource_id, filename)
     await upload_bytes_to_r2_async(
         bucket=RESOURCE_BUCKET, key=storage_ref, body=body, content_type=content_type
     )

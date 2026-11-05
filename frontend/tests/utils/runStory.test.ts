@@ -251,6 +251,21 @@ describe('buildRunStory trigger presentation', () => {
         expect(inner?.handle).toBe('12025550102');
     });
 
+    it('frames WhatsApp media that was not kept as a named chip, with nothing to play or open', () => {
+        const slots = [
+            { too_large: true, size: 157286400, max_bytes: 104857600 },
+            { unavailable: true },
+        ];
+        for (const slot of slots) {
+            const lead = deriveLead('whatsapp', sanitizeEventPayload({ event: 'message', payload: {
+                from: '12025550108@c.us', body: null, hasMedia: true,
+                media: { filename: 'clip.mp4', mimetype: 'video/mp4', ...slot },
+            } }));
+            expect(lead?.media).toEqual({ kind: 'video', name: 'clip.mp4' });
+            expect(lead?.media?.url).toBeUndefined();
+        }
+    });
+
     it('carries the transcript the agent digest wrote onto the media record (WhatsApp and Telegram)', () => {
         const wa = deriveLead('whatsapp', sanitizeEventPayload({ event: 'message', payload: {
             from: '12025550102@lid', body: null, hasMedia: true,
