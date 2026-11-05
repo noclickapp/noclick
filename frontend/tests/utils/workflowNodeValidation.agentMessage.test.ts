@@ -59,6 +59,27 @@ describe('an agent with an empty Message', () => {
         expect(messageIssue(agent(''), ctx)).toBeUndefined();
     });
 
+    test('is complete once a trigger feeds it through if/else or switch routing', () => {
+        // The run delivers the event past routing nodes (backend workflow_ops.agent_trigger_ids).
+        const gate = node('gate1', 'conditional', { config: {} });
+        const route = node('route1', 'switch', { config: {} });
+        const ctx = buildNodeValidationContext(
+            [agent(''), cron, route, gate],
+            [edge('cron1', 'route1'), edge('route1', 'gate1'), { ...edge('gate1', 'agent1'), sourceHandle: 'true' }],
+        );
+        expect(messageIssue(agent(''), ctx)).toBeUndefined();
+    });
+
+    test('a step that produces data on the way is the agent\'s input, not the event', () => {
+        const fn = node('fn1', 'automation-serverless-function', { config: {} });
+        const gate = node('gate1', 'conditional', { config: {} });
+        const ctx = buildNodeValidationContext(
+            [agent(''), cron, fn, gate],
+            [edge('cron1', 'fn1'), edge('fn1', 'gate1'), edge('gate1', 'agent1')],
+        );
+        expect(messageIssue(agent(''), ctx)).toBeDefined();
+    });
+
     test('a tool provider on the bottom handle is not a trigger', () => {
         const ctx = buildNodeValidationContext([agent(''), slackProvider], [edge('slack2', 'agent1', 'bottom')]);
         expect(messageIssue(agent(''), ctx)).toBeDefined();

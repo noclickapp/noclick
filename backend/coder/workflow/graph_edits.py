@@ -286,12 +286,9 @@ class GraphEditor:
         return any(e.get("source") == step_id and e.get("targetHandle") == PROVIDER_TARGET_HANDLE for e in self.edges)
 
     def _upstream_triggers(self, step_id: str) -> Set[str]:
-        from .workflow_ops import is_trigger_source
+        from .workflow_ops import agent_trigger_ids
 
-        by_id = {n.get("id"): n for n in self.nodes}
-        return {e.get("source") for e in self.edges
-                if e.get("target") == step_id and (src := by_id.get(e.get("source")))
-                and is_trigger_source(src.get("type", ""), node_config(src).get("operation"))}
+        return agent_trigger_ids(step_id, self.nodes, self.edges)
 
     def _new_id(self, index: int, wanted: Optional[str], minted: str) -> str:
         step_id = wanted or minted

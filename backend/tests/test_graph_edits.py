@@ -448,6 +448,16 @@ class TestBatches:
              {"op": "connect", "from": "hook", "to": "agent"}])
         assert edited.steps["agent"]["stripped_trigger_refs"]["node_ids"] == ["hook"]
 
+    async def test_a_trigger_behind_an_if_else_has_its_reference_taken_out_on_both_paths(self):
+        """The run delivers the event through an if/else, so the MCP write and the step ops both drop the ref."""
+        graph = {"nodes": [node("hook", "trigger-webhook"), node("gate", "conditional"),
+                           node("agent", "agent", model="openrouter/x/y")],
+                 "edges": [edge("hook", "gate"), edge("gate", "agent", sourceHandle="true")]}
+        edited, _ = await assert_same(
+            graph, '<update_config id="agent" message="Answer {{ $(\'hook\').body }}" />',
+            [{"op": "update_step", "id": "agent", "settings": {"message": "Answer {{ $('hook').body }}"}}])
+        assert steps(edited.graph)["agent"]["config"]["message"] == "Answer"
+
     async def test_variables_and_test_runs_land_in_the_settings(self):
         from coder.workflow.workflow_ops import upsert_variable_definitions
 

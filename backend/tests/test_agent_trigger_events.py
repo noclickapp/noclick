@@ -390,6 +390,140 @@ class TestAgentResolveTriggerEvent:
         assert '$rageclick' in event['text']
 
 
+# A group message as WAHooks delivers it to a QR-linked WhatsApp trigger.
+GROUP_ID = '120363000000000001@g.us'
+GROUP_MESSAGE = {
+    'event': 'message',
+    'payload': {
+        'from': GROUP_ID,
+        'body': 'Is order 42 ready?',
+        '_data': {'key': {'remoteJid': GROUP_ID, 'participant': '15550000001@c.us'}, 'pushName': 'Sam'},
+    },
+}
+
+
+def _whatsapp(config: dict) -> dict:
+    return {'id': 'wa', 'type': 'automation-whatsapp',
+            'config': {'operation': 'receive_message', 'label': 'Shop WhatsApp', **config}}
+
+
+class TestEventThroughRouting:
+    """trigger → if/else or switch → agent: the routing node only picks the
+    branch, so the agent behind it is delivered the fired event exactly as
+    if wired directly. It used to get none — its turn was the standing
+    instructions alone, and it answered that no event had arrived."""
+
+    FIRED = {'_triggerPayload': GROUP_MESSAGE}
+
+    def test_an_if_else_branch_delivers_the_fired_event(self):
+        agent = _make_agent()
+        _wire(
+            agent,
+            nodes=[_whatsapp(self.FIRED), {'id': 'only_group', 'type': 'conditional', 'config': {}},
+                   {'id': 'agent_1', 'type': 'agent', 'config': {}}],
+            edges=[{'source': 'wa', 'target': 'only_group'},
+                   {'source': 'only_group', 'target': 'agent_1', 'sourceHandle': 'true'}],
+        )
+        inputs = {'wa': GROUP_MESSAGE,
+                  'only_group': {'isConditionalNode': True, 'output_handle': 'true', 'data': GROUP_ID}}
+        event = agent._resolve_trigger_event(inputs)
+        assert event is not None
+        assert event['node_id'] == 'wa' and event['source'] == 'Shop WhatsApp'
+        assert event['conversation_key'] == GROUP_ID  # one conversation per group, as when wired directly
+        assert 'Is order 42 ready?' in event['text']
+        assert event['output'] is inputs['wa']
+
+    def test_nested_switch_and_if_else_deliver(self):
+        agent = _make_agent()
+        _wire(
+            agent,
+            nodes=[_whatsapp(self.FIRED), {'id': 'by_kind', 'type': 'switch', 'config': {}},
+                   {'id': 'only_group', 'type': 'conditional', 'config': {}},
+                   {'id': 'agent_1', 'type': 'agent', 'config': {}}],
+            edges=[{'source': 'wa', 'target': 'by_kind'},
+                   {'source': 'by_kind', 'target': 'only_group', 'sourceHandle': 'text'},
+                   {'source': 'only_group', 'target': 'agent_1', 'sourceHandle': 'true'}],
+        )
+        event = agent._resolve_trigger_event({'wa': GROUP_MESSAGE, 'by_kind': {}, 'only_group': {}})
+        assert event['node_id'] == 'wa' and event['conversation_key'] == GROUP_ID
+
+    def test_a_stale_trigger_output_behind_a_branch_delivers_nothing(self):
+        """Without the run-scoped marker the trigger did not fire THIS run (a
+        preloaded output from an earlier one): the branch is no way around that."""
+        agent = _make_agent()
+        _wire(
+            agent,
+            nodes=[_whatsapp({}), {'id': 'only_group', 'type': 'conditional', 'config': {}},
+                   {'id': 'agent_1', 'type': 'agent', 'config': {}}],
+            edges=[{'source': 'wa', 'target': 'only_group'}, {'source': 'only_group', 'target': 'agent_1'}],
+        )
+        assert agent._resolve_trigger_event({'wa': GROUP_MESSAGE, 'only_group': {}}) is None
+
+    @pytest.mark.parametrize('between', [
+        ('fn1', 'automation-serverless-function'),
+        ('http1', 'automation-http-request'),
+        ('triage', 'agent'),
+        ('drop_dupes', 'filter'),
+        ('wait', 'delay'),
+    ])
+    def test_any_other_node_on_the_path_ends_delivery(self, between):
+        """A node that produces or reshapes data (or a delay, whose resumed run
+        carries no marker) is the agent's input; the trigger's event is not."""
+        node_id, node_type = between
+        for chain in (['wa', node_id, 'only_group', 'agent_1'], ['wa', 'only_group', node_id, 'agent_1']):
+            agent = _make_agent()
+            _wire(
+                agent,
+                nodes=[_whatsapp(self.FIRED), {'id': node_id, 'type': node_type, 'config': {}},
+                       {'id': 'only_group', 'type': 'conditional', 'config': {}},
+                       {'id': 'agent_1', 'type': 'agent', 'config': {}}],
+                edges=[{'source': a, 'target': b} for a, b in zip(chain, chain[1:])],
+            )
+            assert agent._resolve_trigger_event({'wa': GROUP_MESSAGE, node_id: {'r': 1}, 'only_group': {}}) is None
+
+
+class TestEventThroughRoutingInARun:
+    """The same graph through the real concurrent runner: the fired trigger's
+    output is in the agent's inputs by the time the branch lets it run."""
+
+    async def _run(self, monkeypatch, group: str):
+        from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
+
+        monkeypatch.setattr('wss.handlers.workflow_execution_handler.track_node_schema', AsyncMock())
+        seen = {}
+
+        async def execute(self, inputs):
+            seen['event'] = self._resolve_trigger_event(inputs)
+            return {'type': 'agent', 'response': 'ok'}
+
+        monkeypatch.setattr(AgentNode, 'execute', execute)
+        nodes = [
+            _whatsapp({'_triggerPayload': GROUP_MESSAGE}),
+            {'id': 'only_group', 'type': 'conditional', 'config': {
+                'input_data': "{{ $('wa').payload.from }}", 'condition_operator': 'equals', 'condition_value': group}},
+            {'id': 'agent_1', 'type': 'agent', 'config': {'message': 'Answer the customer.'}},
+        ]
+        edges = [{'source': 'wa', 'target': 'only_group'},
+                 {'source': 'only_group', 'target': 'agent_1', 'sourceHandle': 'true'}]
+        _, error, outputs = await WorkflowExecutionHandler(AsyncMock())._execute_nodes_concurrent(
+            nodes, edges, 'sid', 'user', 'wf',
+        )
+        assert error is None
+        return seen, outputs
+
+    async def test_the_agent_on_the_taken_branch_reads_the_event(self, monkeypatch):
+        seen, outputs = await self._run(monkeypatch, GROUP_ID)
+        assert outputs['only_group']['condition_result'] is True
+        event = seen['event']
+        assert event['node_id'] == 'wa' and event['conversation_key'] == GROUP_ID
+        assert 'Is order 42 ready?' in event['text']
+
+    async def test_the_branch_not_taken_runs_no_agent(self, monkeypatch):
+        seen, outputs = await self._run(monkeypatch, 'another-group@g.us')
+        assert outputs['only_group']['condition_result'] is False
+        assert 'event' not in seen
+
+
 class TestEventMedia:
     """What a message carried besides text rides the hook result as
     ``media`` entries (agent_events.media_entry) and the agent digests them

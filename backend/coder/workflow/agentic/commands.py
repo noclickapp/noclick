@@ -18,6 +18,7 @@ from ..graph_state import GraphState, NodeState
 from ..workflow_xml import XmlOp, coerce_value, coerce_value_for_field
 from ..workflow_ops import (
     STRUCTURAL_TOOL_TYPES,
+    agent_trigger_ids,
     drop_stale_agent_discriminator,
     step_reference_errors,
     misplaced_agent_model,
@@ -1277,12 +1278,10 @@ def execute_field_ops(
         # Trigger refs templated into an agent's message break at runtime —
         # the fired event is delivered automatically. Strip + tell the brain.
         if node.type == 'agent':
-            upstream_trigger_ids = [
-                u.id for u in graph_state.get_upstream_nodes(node_name)
-                if is_trigger_source(u.type, u.operation)
-            ]
             stripped_refs = strip_agent_trigger_message_refs(
-                node.config, upstream_trigger_ids, standing_message=node.goal,
+                node.config,
+                agent_trigger_ids(node.id, graph_state.nodes.values(), graph_state.edges.values()),
+                standing_message=node.goal,
             )
             if stripped_refs:
                 results.append(

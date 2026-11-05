@@ -22,6 +22,8 @@ from coder.workflow.agentic.commands import (
 from coder.workflow.graph_state import GraphState, NodeState
 from coder.workflow.workflow_ops import (
     DEFAULT_AGENT_STANDING_MESSAGE,
+    agent_event_source_ids,
+    agent_trigger_ids,
     drop_stale_agent_discriminator,
     is_trigger_source,
     strip_agent_trigger_message_refs,
@@ -902,17 +904,28 @@ class TestStripAgentTriggerMessageRefs:
         assert strip_agent_trigger_message_refs(cfg2, []) == []
         assert cfg2['message'] == "{{ $('tg').message }}"
 
-    def test_execute_field_ops_strips_and_reports(self):
+    @staticmethod
+    def _telegram_agent_state(*between):
+        """tg (Telegram trigger) → each (id, type) in *between* → agent1, wired as the builder wires."""
         state = GraphState()
         state.nodes['tg'] = NodeState(
             id='tg', type='automation-telegram', label='TG', goal='trigger',
             operation='receive_webhook_messages',
         )
+        for node_id, node_type in between:
+            state.nodes[node_id] = NodeState(id=node_id, type=node_type, label=node_id, goal='', operation='default')
         state.nodes['agent1'] = NodeState(
             id='agent1', type='agent', label='Agent',
             goal='Reply helpfully to Telegram messages.', operation='default',
-            config={'model': 'openclaw'}, parent_ids=['tg'],
+            config={'model': 'openclaw'},
         )
+        chain = ['tg', *(node_id for node_id, _ in between), 'agent1']
+        for source, target in zip(chain, chain[1:]):
+            state.add_edge(source, target)
+        return state
+
+    def test_execute_field_ops_strips_and_reports(self):
+        state = self._telegram_agent_state()
         results = execute_field_ops(
             [_field_op('agent1', 'message', "{{ $('tg').message }}")], state,
         )
@@ -920,6 +933,72 @@ class TestStripAgentTriggerMessageRefs:
             'Reply helpfully to Telegram messages.'
         )
         assert any('delivered to the agent automatically' in r for r in results)
+
+    def test_a_trigger_behind_if_else_routing_is_stripped_too(self):
+        """The run delivers the event through an if/else, so a ref to it is the same redundant template."""
+        state = self._telegram_agent_state(('only_dms', 'conditional'))
+        execute_field_ops([_field_op('agent1', 'message', "Answer: {{ $('tg').message }}")], state)
+        assert state.nodes['agent1'].config['message'] == 'Answer:'
+
+    def test_a_trigger_behind_a_transform_is_kept(self):
+        """Past a code step the agent reads that step's output, never the trigger's event: the ref is real data."""
+        state = self._telegram_agent_state(('clean', 'automation-serverless-function'))
+        message = "Answer: {{ $('tg').message }}"
+        execute_field_ops([_field_op('agent1', 'message', message)], state)
+        assert state.nodes['agent1'].config['message'] == message
+
+    def test_an_edited_workflow_strips_by_its_saved_edges(self):
+        """A workflow the builder edits is loaded from its saved graph, whose nodes carry no parent ids: the
+        wiring is the edges, which is what the shared predicate reads."""
+        state = GraphState.from_dict({
+            'nodes': [
+                {'id': 'tg', 'type': 'automation-telegram', 'config': {'operation': 'receive_webhook_messages'}},
+                {'id': 'only_dms', 'type': 'conditional', 'config': {}},
+                {'id': 'agent1', 'type': 'agent', 'config': {'model': 'openclaw'}, 'goal': 'Reply.'},
+            ],
+            'edges': [{'source': 'tg', 'target': 'only_dms'},
+                      {'source': 'only_dms', 'target': 'agent1', 'sourceHandle': 'true'}],
+        })
+        assert state.get_upstream_nodes('agent1') == []
+        execute_field_ops([_field_op('agent1', 'message', "Reply to {{ $('tg').message }}")], state)
+        assert state.nodes['agent1'].config['message'] == 'Reply to'
+
+
+class TestAgentTriggerIds:
+    """The builder's notion of a delivered trigger is the runtime's wiring rule (agent_event_source_ids)."""
+
+    NODES = [
+        {'id': 'wa', 'type': 'automation-whatsapp', 'config': {'operation': 'receive_message'}},
+        {'id': 'cron', 'type': 'trigger-cron', 'config': {}},
+        {'id': 'route', 'type': 'switch', 'config': {}},
+        {'id': 'gate', 'type': 'conditional', 'config': {}},
+        {'id': 'fn', 'type': 'automation-serverless-function', 'config': {}},
+        {'id': 'slack_tools', 'type': 'automation-slack', 'config': {'operation': 'on_channel_message'}},
+        {'id': 'agent', 'type': 'agent', 'config': {}},
+    ]
+
+    def test_direct_and_routed_triggers_count(self):
+        edges = [{'source': 'wa', 'target': 'gate'}, {'source': 'cron', 'target': 'route'},
+                 {'source': 'route', 'target': 'gate'}, {'source': 'gate', 'target': 'agent', 'sourceHandle': 'true'}]
+        assert agent_trigger_ids('agent', self.NODES, edges) == {'wa', 'cron'}
+
+    def test_a_transform_or_the_tools_handle_does_not(self):
+        edges = [{'source': 'wa', 'target': 'fn'}, {'source': 'fn', 'target': 'gate'},
+                 {'source': 'gate', 'target': 'agent'},
+                 {'source': 'slack_tools', 'target': 'agent', 'targetHandle': 'bottom'}]
+        assert agent_trigger_ids('agent', self.NODES, edges) == set()
+
+    def test_the_runtime_walk_keeps_the_tools_handle_for_an_alarm(self):
+        nodes = [*self.NODES, {'id': 'alarm', 'type': 'alarm', 'config': {}}]
+        edges = [{'source': 'alarm', 'target': 'agent', 'targetHandle': 'bottom'},
+                 {'source': 'wa', 'target': 'gate'}, {'source': 'gate', 'target': 'agent'}]
+        assert agent_event_source_ids('agent', nodes, edges) == {'alarm', 'wa'}
+        assert agent_event_source_ids('agent', nodes, edges, tools_handle=False) == {'wa'}
+
+    def test_a_routing_cycle_terminates(self):
+        edges = [{'source': 'gate', 'target': 'route'}, {'source': 'route', 'target': 'gate'},
+                 {'source': 'wa', 'target': 'route'}, {'source': 'gate', 'target': 'agent'}]
+        assert agent_event_source_ids('agent', self.NODES, edges) == {'wa'}
 
 
 # ============================================================================

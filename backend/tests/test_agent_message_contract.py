@@ -70,6 +70,23 @@ class TestBuildTimeRule:
         assert not agent_trigger_fed("agent", nodes, [{"source": "sheet", "target": "agent"}])
         assert not agent_trigger_fed("agent", nodes, [])
 
+    def test_a_trigger_behind_if_else_or_switch_routing_feeds_the_agent(self):
+        """The run delivers the event through routing nodes, so the Message is optional there too; any other
+        node in between is the agent's input instead."""
+        nodes = [
+            {"id": "slack", "type": "automation-slack", "config": {"operation": "on_channel_message"}},
+            {"id": "gate", "type": "conditional", "config": {}},
+            {"id": "route", "type": "switch", "config": {}},
+            {"id": "fn", "type": "automation-serverless-function", "config": {}},
+            {"id": "agent", "type": "agent", "config": {}},
+        ]
+        routed = [{"source": "slack", "target": "route"}, {"source": "route", "target": "gate"},
+                  {"source": "gate", "target": "agent", "sourceHandle": "true"}]
+        assert agent_trigger_fed("agent", nodes, routed)
+        transformed = [{"source": "slack", "target": "fn"}, {"source": "fn", "target": "gate"},
+                       {"source": "gate", "target": "agent"}]
+        assert not agent_trigger_fed("agent", nodes, transformed)
+
     def test_trigger_fed_reads_the_builder_graph_state_shape(self):
         nodes = [
             SimpleNamespace(id="cron", type="trigger-cron", operation="cron"),

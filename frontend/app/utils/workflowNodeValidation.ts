@@ -6,7 +6,7 @@
 import type { Edge, Node } from '@xyflow/react';
 import { getSchemaInfo, getFieldsForOption, getRequireOneOfGroups, nodeTypeOffersOperationChoice, type RequireOneOfGroups } from '~/utils/schemaFieldExtractor';
 import { hasUnconnectedCredentials, providerCredentialsMissing } from '~/components/workflow/NodeCredentials';
-import { isAgentToolProviderType, isTriggerSource } from '~/utils/nodeSchemas';
+import { isAgentToolProviderType, isAgentTriggerFed, isTriggerSource } from '~/utils/nodeSchemas';
 import { tikTokNodePublishingError } from '~/utils/tikTokPublishing';
 
 /** Graph context for edge-dependent validation (agent tool-provider mode).
@@ -17,8 +17,9 @@ export interface NodeValidationContext {
     /** Ids of nodes currently wired into an agent's bottom handle as tool
      *  providers (qualifying types only). */
     wiredProviderIds: ReadonlySet<string>;
-    /** Ids of agents a trigger source feeds through an input handle — their
-     *  turn is the delivered event, so an empty Message is not a gap. */
+    /** Ids of agents a trigger source feeds through an input handle, directly
+     *  or through if/else / switch routing (isAgentTriggerFed) — their turn is
+     *  the delivered event, so an empty Message is not a gap. */
     triggerFedAgentIds: ReadonlySet<string>;
 }
 
@@ -38,21 +39,15 @@ export function computeWiredProviderIdsKey(nodes: Node[], edges: Edge[]): string
     );
     const byId = new Map(nodes.map(n => [n.id, n]));
     const wired = new Set<string>();
-    const triggerFed = new Set<string>();
     for (const e of edges) {
         const source = byId.get(e.source);
-        if (!source) continue;
-        if (e.targetHandle === 'bottom') {
-            if (consumerIds.has(e.target) && isAgentToolProviderType(source.type)) wired.add(source.id);
-            continue;
+        if (e.targetHandle === 'bottom' && source && consumerIds.has(e.target) && isAgentToolProviderType(source.type)) {
+            wired.add(source.id);
         }
-        // Same predicate as the agent's trigger chips (getAgentTriggerSources).
-        const target = byId.get(e.target);
-        if (target?.type !== 'agent') continue;
-        const data = (source.data || {}) as Record<string, any>;
-        const operation = (data.operation ?? data.config?.operation) as string | undefined;
-        if (isTriggerSource(source.type, operation)) triggerFed.add(target.id);
     }
+    const triggerFed = new Set(
+        nodes.filter(n => n.type === 'agent' && isAgentTriggerFed(n.id, nodes, edges)).map(n => n.id),
+    );
     return `${[...wired].sort().join('|')}#${[...triggerFed].sort().join('|')}`;
 }
 

@@ -615,31 +615,77 @@ AGENT_MESSAGE_REQUIRED_ERROR = (
 )
 
 
-def agent_trigger_fed(node_id: str, nodes: Sequence[Any], edges: Sequence[Any]) -> bool:
-    """Whether a trigger source feeds ``node_id`` through an input handle (not
-    the bottom tools handle) — the wiring under which a delivered event is the
-    agent's turn. Takes either stored shape (dict nodes/edges) or the builder's
-    GraphState objects; mirrors the FE's ``getAgentTriggerSources``."""
-    def _get(obj: Any, *keys: str) -> Any:
-        for key in keys:
-            value = obj.get(key) if isinstance(obj, dict) else getattr(obj, key, None)
-            if value is not None:
-                return value
-        return None
+# Control-flow nodes that only choose which branch runs, so an event routed
+# through one still reaches the agent as its turn. Anything that reshapes or
+# produces data (filter, code, http, another agent) ends the path, and so do
+# delay and approval: the run they resume no longer carries the fired marker.
+EVENT_ROUTING_NODE_TYPES = frozenset({"conditional", "switch"})
 
-    by_id = {_get(n, "id"): n for n in nodes}
+
+def _graph_field(obj: Any, *keys: str) -> Any:
+    """The first set key of a stored dict node/edge or a builder GraphState object."""
+    for key in keys:
+        value = obj.get(key) if isinstance(obj, dict) else getattr(obj, key, None)
+        if value is not None:
+            return value
+    return None
+
+
+def agent_event_source_ids(
+    agent_id: str, nodes: Iterable[Any], edges: Iterable[Any], *, tools_handle: bool = True,
+) -> Set[str]:
+    """Ids of the nodes whose fired event a run delivers to agent ``agent_id``:
+    wired into it, or into an if/else or switch on the way to it (routing
+    nodes are walked through, never returned). The one wiring rule behind
+    the runtime's ``AgentNode._find_fired_trigger`` and the builder's
+    ``agent_trigger_ids``. ``tools_handle=False`` ignores edges into the
+    agent's bottom handle, which only an alarm's wake-up rides."""
+    by_id = {_graph_field(n, "id"): n for n in nodes}
+    into: Dict[Any, List[Any]] = {}
     for e in edges:
-        if _get(e, "target", "target_id") != node_id or _get(e, "targetHandle", "target_handle") == "bottom":
-            continue
-        src = by_id.get(_get(e, "source", "source_id"))
-        if src is None:
-            continue
-        op = _get(src, "operation")
-        if op is None and isinstance(src, dict):
-            op = (src.get("config") or {}).get("operation") or (src.get("data") or {}).get("operation")
-        if is_trigger_source(str(_get(src, "type") or ""), op):
-            return True
-    return False
+        into.setdefault(_graph_field(e, "target", "target_id"), []).append(e)
+    found: Set[str] = set()
+    seen = {agent_id}
+    frontier = [agent_id]
+    while frontier:
+        target = frontier.pop()
+        for e in into.get(target, ()):
+            if (target == agent_id and not tools_handle
+                    and _graph_field(e, "targetHandle", "target_handle") == PROVIDER_TARGET_HANDLE):
+                continue
+            source = _graph_field(e, "source", "source_id")
+            if source in seen or source not in by_id:
+                continue
+            seen.add(source)
+            if _graph_field(by_id[source], "type") in EVENT_ROUTING_NODE_TYPES:
+                frontier.append(source)
+            else:
+                found.add(source)
+    return found
+
+
+def agent_trigger_ids(agent_id: str, nodes: Iterable[Any], edges: Iterable[Any]) -> Set[str]:
+    """Trigger sources whose fired event is ``agent_id``'s turn, through its
+    input (never the tools handle), directly or past if/else / switch
+    routing — so a ``{{ $('trigger') }}`` in its message is redundant. Takes
+    either stored shape or the builder's GraphState objects; the FE mirror is
+    ``isAgentTriggerFed``."""
+    from utils.graph_nodes import node_operation
+
+    nodes = list(nodes)
+    by_id = {_graph_field(n, "id"): n for n in nodes}
+    out: Set[str] = set()
+    for source in agent_event_source_ids(agent_id, nodes, edges, tools_handle=False):
+        src = by_id[source]
+        op = _graph_field(src, "operation") or (node_operation(src) if isinstance(src, dict) else None)
+        if is_trigger_source(str(_graph_field(src, "type") or ""), op):
+            out.add(source)
+    return out
+
+
+def agent_trigger_fed(node_id: str, nodes: Iterable[Any], edges: Iterable[Any]) -> bool:
+    """Whether a trigger's delivered event is the agent's turn (``agent_trigger_ids``)."""
+    return bool(agent_trigger_ids(node_id, nodes, edges))
 
 
 def agent_message_error(config: Optional[Mapping[str, Any]], *, trigger_fed: bool) -> Optional[str]:
@@ -682,9 +728,10 @@ def strip_agent_trigger_message_refs(
     upstream_trigger_ids: Any,
     standing_message: Optional[str] = None,
 ) -> List[str]:
-    """Remove template expressions referencing a DIRECT-upstream trigger from
-    an agent's ``message``, replacing an emptied message with standing
-    instructions (*standing_message*, usually the node goal).
+    """Remove template expressions referencing a trigger whose event the agent
+    is delivered (``agent_trigger_ids``) from its ``message``, replacing an
+    emptied message with standing instructions (*standing_message*, usually
+    the node goal).
 
     The fired trigger's event is delivered to the agent automatically
     (``resolve_agent_event``) — a templated reference is the legacy pattern
@@ -1099,7 +1146,7 @@ def postprocess_config(
 
     stripped_trigger_refs: List[str] = []
     if node_type == "agent":
-        # Templated refs to a direct-upstream trigger break at runtime (event delivery is automatic).
+        # Templated refs to a delivered trigger break at runtime (event delivery is automatic).
         stripped_trigger_refs = strip_agent_trigger_message_refs(config, upstream_trigger_ids or ())
 
     verdict: Dict[str, Any] = (

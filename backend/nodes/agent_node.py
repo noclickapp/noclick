@@ -877,7 +877,7 @@ class AgentNode(WorkflowNode):
             process_tool_definition(self.node_id, get_upload_tool_definition())
 
         # Opaque email reply: when THIS run was started by an inbound-email
-        # trigger wired directly into this agent, inject the locked
+        # trigger whose event this agent is delivered, inject the locked
         # reply-to-sender tool. Keyed on the fired trigger (not bottom-handle
         # wiring) — email deliberately has no user-wirable send provider; see
         # nodes/agent/email_reply.py for the containment model.
@@ -973,30 +973,32 @@ class AgentNode(WorkflowNode):
     def _find_fired_trigger(
         self, inputs: Dict[str, Any]
     ) -> Optional[Tuple[Dict[str, Any], Dict[str, Any]]]:
-        """(node, output) of the FIRED trigger wired directly into this agent
-        (any handle), else None.
+        """(node, output) of the FIRED trigger wired into this agent (any
+        handle), directly or through if/else / switch routing
+        (``agent_event_source_ids``), else None.
 
         The fired trigger carries ``_triggerPayload`` (injected only by the
         webhook/trigger routes) or ``_pollFired`` (stamped by the executor
         right after a poll trigger executed THIS run and emitted fresh items —
         covers manual runs, whose fresh polls used to reach the agent with no
         event). Both markers are run-scoped, so stale trigger outputs
-        preloaded from previous runs can't masquerade as a fresh event.
+        preloaded from previous runs can't masquerade as a fresh event. The
+        output is the run's own: ``inputs`` holds every output of the run.
         """
         nodes = getattr(self, "_workflow_nodes", None)
         edges = getattr(self, "_workflow_edges", None)
         if not nodes or not edges:
             return None
-        direct_sources = {
-            e.get("source") for e in edges if e.get("target") == self.node_id
-        }
+        from coder.workflow.workflow_ops import agent_event_source_ids
+
+        sources = agent_event_source_ids(self.node_id, nodes, edges)
         fired = next(
             (
                 n
                 for n in nodes
                 if isinstance(n.get("config"), dict)
                 and ("_triggerPayload" in n["config"] or n["config"].get("_pollFired"))
-                and n.get("id") in direct_sources
+                and n.get("id") in sources
             ),
             None,
         )
@@ -1050,8 +1052,9 @@ class AgentNode(WorkflowNode):
         return text, trigger_event.get("title") or first_line(text), record
 
     def _resolve_trigger_event(self, inputs: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """The event that started this run, when its trigger is wired directly
-        into this agent (any handle — dataflow left or alarm/tools bottom).
+        """The event that started this run, when its trigger is wired into
+        this agent (any handle — dataflow left or alarm/tools bottom), directly
+        or through if/else / switch routing (``_find_fired_trigger``).
 
         The fired trigger's OUTPUT is translated by the trigger class's
         ``resolve_agent_event`` hook into ``{text, conversation_key}``.
@@ -1656,8 +1659,9 @@ class AgentNode(WorkflowNode):
         )
 
         # Trigger-event delivery: when the run was started by a trigger wired
-        # directly into this agent, the fired event joins this turn's user
-        # message (config.message stays the user's STANDING instructions).
+        # into this agent (directly or through if/else / switch routing), the
+        # fired event joins this turn's user message (config.message stays the
+        # user's STANDING instructions).
         # Composed here, pre-dispatch, so all six harnesses (SDK llm + 5 CLI
         # sandboxes) see the same effective message.
         trigger_event = self._resolve_trigger_event(inputs)

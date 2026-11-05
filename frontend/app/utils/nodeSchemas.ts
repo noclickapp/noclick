@@ -318,6 +318,46 @@ export function getAgentTriggerSources(
     return sources;
 }
 
+/** Control-flow nodes that only pick a branch, so a fired event passes through
+ *  them to an agent (backend: workflow_ops.EVENT_ROUTING_NODE_TYPES). */
+const EVENT_ROUTING_NODE_TYPES = new Set(['conditional', 'switch']);
+
+/**
+ * Whether a trigger's fired event is this agent's turn: a trigger source wired
+ * into its input handle, directly or through if/else / switch routing — so an
+ * empty Message is not a gap. Mirrors the backend's
+ * workflow_ops.agent_trigger_ids, the run's own delivery rule. Wider than
+ * getAgentTriggerSources, whose chips are the triggers that ALWAYS run it.
+ */
+export function isAgentTriggerFed(
+    agentNodeId: string,
+    nodes: Array<{ id: string; type?: string; data?: Record<string, unknown> }>,
+    edges: Array<{ source: string; target: string; targetHandle?: string | null }>,
+): boolean {
+    const byId = new Map(nodes.map(n => [n.id, n]));
+    const seen = new Set([agentNodeId]);
+    const frontier = [agentNodeId];
+    while (frontier.length) {
+        const target = frontier.pop()!;
+        for (const e of edges) {
+            if (e.target !== target || (target === agentNodeId && e.targetHandle === 'bottom')) continue;
+            const src = byId.get(e.source);
+            if (!src?.type || seen.has(src.id)) continue;
+            seen.add(src.id);
+            if (EVENT_ROUTING_NODE_TYPES.has(src.type)) {
+                frontier.push(src.id);
+                continue;
+            }
+            const data = src.data ?? {};
+            const operation = (data.operation ?? (data.config as { operation?: unknown } | undefined)?.operation) as
+                | string
+                | undefined;
+            if (isTriggerSource(src.type, operation)) return true;
+        }
+    }
+    return false;
+}
+
 /**
  * Agent nodes with NO trigger wired into their input handle — i.e. chat-driven
  * agents that run by chatting rather than by a fired event. Used after an AI

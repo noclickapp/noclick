@@ -6,8 +6,9 @@ Unlike other channel triggers (Slack/Telegram), email replies do NOT come from
 a provider node the user wires into the agent's bottom handle: a general
 send-email surface on our domain would invite cold-email campaigns and burn
 the shared deliverability of the trigger domain. Instead, when the FIRED
-trigger of a run is an inbound-email trigger wired directly into the agent,
-the agent gets one tool whose recipient and threading are locked server-side
+trigger of a run is an inbound-email trigger whose event the agent is
+delivered (wired into it directly or through if/else / switch routing), the
+agent gets one tool whose recipient and threading are locked server-side
 to the triggering email (HMAC reply token minted at receipt — see
 utils/email_reply.py). The model chooses only body and subject. Every send is
 credit-gated and charged a flat fee (billing.pricing.EMAIL_SEND_PRICE) as

@@ -52,7 +52,7 @@ from coder.workflow.workflow_ops import (
     misplaced_agent_model,
     rename_workflow_for_harness_switches,
     switch_agent_harness,
-    is_trigger_source,
+    agent_trigger_ids,
     strip_agent_trigger_message_refs,
     strip_label_sidecars,
     set_node_disabled,
@@ -2086,7 +2086,7 @@ class NoClickMCPServer(DatabasePoolMixin):
                     node_type, operation_value or target_operation, merged,
                     is_provider=is_provider,
                     upstream_trigger_ids=(
-                        self._upstream_trigger_ids(node_id, nodes, edges)
+                        agent_trigger_ids(node_id, nodes, edges)
                         if node_type == "agent" else None
                     ),
                     changed_keys=set(config_updates.keys()),
@@ -3306,25 +3306,6 @@ class NoClickMCPServer(DatabasePoolMixin):
     # spuriously fail, so nodes carrying them skip Pydantic validation.
     _CANVAS_ONLY_CONFIG_KEYS = frozenset({"agent_tool_operations", "agent_sandbox_repos", "agent_env_requested"})
 
-    def _upstream_trigger_ids(
-        self,
-        node_id: str,
-        nodes: List[Dict[str, Any]],
-        edges: List[Dict[str, Any]],
-    ) -> set:
-        """Ids of direct-upstream nodes acting as trigger sources for node_id."""
-        by_id = {n.get("id"): n for n in nodes}
-        out: set = set()
-        for e in edges:
-            if e.get("target") != node_id:
-                continue
-            src = by_id.get(e.get("source"))
-            if src and is_trigger_source(
-                src.get("type", ""), self._get_current_operation(src)
-            ):
-                out.add(src.get("id"))
-        return out
-
     def _postprocess_config(
         self,
         node_type: str,
@@ -4250,8 +4231,9 @@ class NoClickMCPServer(DatabasePoolMixin):
                 'the user provides values, which become a credential you can never read). Prefer a '
                 'provider or HTTP Request node; only use env vars when no node exists for the API.\n'
                 '  <add_edge from="trigger-node" to="agent-node" /> — TRIGGER wiring: a trigger wired '
-                "directly into an agent delivers its fired event as part of the agent's user turn "
-                'automatically. Do NOT template trigger references into the agent message — it holds '
+                "into an agent, directly or through if/else / switch routing, delivers its fired event "
+                "as part of the agent's user turn automatically. "
+                'Do NOT template trigger references into the agent message — it holds '
                 'standing instructions; multiple triggers can feed one agent and only the fired one '
                 'delivers. Channel triggers (Telegram/Slack message, alarms) also auto-supply their '
                 'chat/thread id as the conversation key (per-chat history). For replies into the '
@@ -4401,7 +4383,7 @@ class NoClickMCPServer(DatabasePoolMixin):
                 verdict = self._postprocess_config(
                     node_type, op, dict(config), is_provider=is_provider,
                     upstream_trigger_ids=(
-                        self._upstream_trigger_ids(nid, nodes, edges) if node_type == "agent" else None
+                        agent_trigger_ids(nid, nodes, edges) if node_type == "agent" else None
                     ),
                 )
                 entry.update(verdict or {"config_valid": True})
