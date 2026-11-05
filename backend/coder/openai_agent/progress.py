@@ -5,7 +5,9 @@ of unknown effect counts as progress. ``guards.TurnGuard`` counts the calls in a
 ``execute_bash`` is judged by its command (``shell_reads``): every command in it a reader (``cat``, ``grep``,
 ``sed -n``, ``git log``, a ``python3``/``node`` snippet that opens nothing for writing), and no redirect into a file.
 Any other tool is judged by the judges a platform registers (``register``): each answers for the tools it knows
-(True: only read; False: changed something) and None for the rest."""
+(True: only read; False: changed something) and None for the rest. ``only_its_own(tool)`` is true of a tool a platform
+says touches only the turn's own notes and follow-ups, or talks to someone (``register_own``): it changes nothing about
+the work a person asked for, though it isn't a read."""
 
 from __future__ import annotations
 
@@ -17,6 +19,7 @@ from typing import Any, Callable, List, Mapping, Optional
 
 Judge = Callable[[str, Mapping[str, Any]], Optional[bool]]
 _JUDGES: List[Judge] = []
+_OWN: List[Callable[[str], bool]] = []
 
 SHELL_TOOL = "execute_bash"
 
@@ -70,6 +73,16 @@ def register(judge: Judge) -> None:
     of its tools)."""
     if judge not in _JUDGES:
         _JUDGES.append(judge)
+
+
+def register_own(judge: Callable[[str], bool]) -> None:
+    """A platform's judge of the tools that keep a turn's own notes and follow-ups, or only talk (``only_its_own``)."""
+    if judge not in _OWN:
+        _OWN.append(judge)
+
+
+def only_its_own(tool: str) -> bool:
+    return any(judge(tool) for judge in _OWN)
 
 
 def only_reads(tool: str, arguments: Any) -> bool:

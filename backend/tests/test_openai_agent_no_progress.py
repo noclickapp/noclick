@@ -140,3 +140,90 @@ async def test_a_turn_without_a_stalled_wrap_up_reads_on_unjudged(builder_reques
     assert len(looked) == 8 and agent.turn_ended_by is None
     assert not any("only read" in output for output in _outputs(calls[-1][1]))
     assert spans[0].attributes["agent.turn.read_notes"] == 0
+
+
+# --- whether the whole turn changed anything ---------------------------------------
+
+
+async def test_a_turn_that_only_read_says_how_many_calls_it_read_with(builder_request_db, monkeypatch):
+    from coder.openai_agent.guards import TurnLimits
+
+    _reads_look(monkeypatch)
+    pool = builder_request_db[0]
+    *_, agent, _ = await _run(pool, monkeypatch, wrap_up=STALLED, limits=TurnLimits(steps=20),
+                              answer_after=lambda model_input: len(_outputs(model_input)) == 4)
+    assert agent.turn_only_read == 4
+
+
+async def test_one_call_that_may_have_changed_something_means_it_cant_be_said(builder_request_db, monkeypatch):
+    from coder.openai_agent.guards import TurnLimits
+
+    _reads_look(monkeypatch)
+    pool = builder_request_db[0]
+    *_, agent, _ = await _run(pool, monkeypatch, wrap_up=STALLED, limits=TurnLimits(steps=20),
+                              call=lambda n: {"page": n, "write": n == 2},
+                              answer_after=lambda model_input: len(_outputs(model_input)) == 4)
+    assert agent.turn_only_read is None
+
+
+async def test_a_call_that_only_keeps_its_own_notes_changes_nothing_of_the_work(builder_request_db, monkeypatch):
+    """A wake-up set, a memory saved or a line to the owner isn't an edit: a turn doing only those has still changed
+    nothing, however much it says it's getting on."""
+    from coder.openai_agent.guards import TurnLimits
+
+    _reads_look(monkeypatch)
+    monkeypatch.setattr(progress, "_OWN", [lambda tool: tool == "look"])
+    pool = builder_request_db[0]
+    *_, agent, _ = await _run(pool, monkeypatch, wrap_up=STALLED, limits=TurnLimits(steps=20),
+                              call=lambda n: {"page": n, "write": n == 2},
+                              answer_after=lambda model_input: len(_outputs(model_input)) == 4)
+    assert agent.turn_only_read == 3
+
+
+async def test_a_turn_nothing_counts_never_claims_it(builder_request_db, monkeypatch):
+    """A workflow's agent node gives no ``stalled`` wrap-up, so its calls aren't judged."""
+    from coder.openai_agent.guards import TurnLimits
+
+    _reads_look(monkeypatch)
+    pool = builder_request_db[0]
+    *_, agent, _ = await _run(pool, monkeypatch, limits=TurnLimits(steps=20),
+                              answer_after=lambda model_input: len(_outputs(model_input)) == 4)
+    assert agent.turn_only_read is None
+
+
+async def test_a_limit_wrap_up_is_told_when_the_turn_changed_nothing(builder_request_db, monkeypatch):
+    from coder.openai_agent import guards
+    from coder.openai_agent.guards import TurnLimits
+
+    _reads_look(monkeypatch)
+    pool = builder_request_db[0]
+    calls, *_ = await _run(pool, monkeypatch, wrap_up=STALLED, limits=TurnLimits(steps=3))
+    assert calls[-1][1][-1]["content"] == f"{WRAP_UP['steps']['prompt']} {guards.ONLY_READ_FACT.format(calls=3)}"
+
+    calls, *_ = await _run(pool, monkeypatch, wrap_up=STALLED, limits=TurnLimits(steps=3),
+                           call=lambda n: {"page": n, "write": n == 2})
+    assert calls[-1][1][-1]["content"] == WRAP_UP["steps"]["prompt"]
+
+
+def test_how_far_a_turn_had_gone_keeps_whether_it_changed_anything():
+    from coder.openai_agent.guards import TurnSoFar
+
+    so_far = TurnSoFar(started_at=50_000.0, steps=2, quiet=1, reads=4, changed=True)
+    assert TurnSoFar.of(so_far.as_json()) == so_far
+    # What a deploy stopped before these fields were kept reads as nothing known.
+    assert TurnSoFar.of({"started_at": 50_000.0}) == TurnSoFar(started_at=50_000.0)
+
+
+async def test_a_restarted_run_remembers_what_its_first_run_changed(builder_request_db, monkeypatch):
+    from coder.openai_agent.guards import TurnLimits, TurnSoFar
+
+    _reads_look(monkeypatch)
+    pool = builder_request_db[0]
+    *_, agent, _ = await _run(pool, monkeypatch, wrap_up=STALLED, limits=TurnLimits(steps=20),
+                              so_far=TurnSoFar(started_at=50_000.0, changed=True),
+                              answer_after=lambda model_input: len(_outputs(model_input)) == 2)
+    assert agent.turn_only_read is None
+    *_, agent, _ = await _run(pool, monkeypatch, wrap_up=STALLED, limits=TurnLimits(steps=20),
+                              so_far=TurnSoFar(started_at=50_000.0, reads=3),
+                              answer_after=lambda model_input: len(_outputs(model_input)) == 2)
+    assert agent.turn_only_read == 5

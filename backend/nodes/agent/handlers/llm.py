@@ -240,6 +240,9 @@ async def execute_llm_model(
         if agent.turn_handed_on:
             # A tool's result handed its work on (``guards.ENDS_TURN``): a wake-up waits on it.
             output['handed_on'] = True
+        if agent.turn_only_read is not None:
+            # None of its calls can have changed anything (``guards.TurnGuard.only_read``).
+            output['only_read'] = agent.turn_only_read
         if image_urls:
             output['images'] = image_urls
             output['image_url'] = image_urls[0]['url']

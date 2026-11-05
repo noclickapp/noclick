@@ -31,7 +31,9 @@ A turn that keeps calling tools without changing anything is stuck, whatever its
 the ``QUIET_NUDGE``th call in a row that only read (``progress.only_reads``: no file written, nothing saved, sent or
 started) carries a note to act or say what blocks it, and the ``QUIET_STOP``th stops the turn after the calls in hand,
 wrapped up as a limit's. A coordinator asked to rework one 8 MB game file re-read it at shifting offsets for over an
-hour, with one edit, and the repeat guard never saw it: no two calls were the same (2026-10-26).
+hour, with one edit, and the repeat guard never saw it: no two calls were the same (2026-10-26). Such a guard also
+knows when a whole turn changed nothing (``only_read``: every call only read, or kept its own notes and follow-ups),
+which its wrap-up is told and its platform can tell the turn after it.
 
 A turn a platform hands to another process mid-run (a deploy) runs on there under the same limits, counted from its
 first run (``TurnSoFar``: its clock, steps, spend and reads in a row): the guard of each turn running in a process is
@@ -86,6 +88,10 @@ QUIET_NOTE = ("Your last {calls} calls only read: nothing written, saved, sent o
               "won't get it done. If you have what you need, act now: make the change (an exact replacement in a "
               "working copy beats reading another slice) or give your answer. If something stops you, say exactly "
               "what it is.")
+
+# What a wrap-up is told of a turn none of whose calls changed anything (``TurnGuard.only_read``).
+ONLY_READ_FACT = ("Everything this turn did was read: its {calls} calls changed nothing. Say so in your own words, with "
+                  "what stops you or what you'll change first, and never that the work is under way.")
 
 # A limit's wrap-up entry (``wrap_ups``) saying the work carries on by itself straight away: the turn ends there with
 # no closing call and nothing said, and its context stays as it is for the turn that carries it on.
@@ -162,25 +168,29 @@ class TurnLimits:
 @dataclass(frozen=True)
 class TurnSoFar:
     """How far a turn had gone before this run of it, when a platform runs on one another process started: its first
-    run's start (``started_at``, epoch seconds), the ``steps`` and ``spent_usd`` it had used and its calls in a row
-    that only read (``quiet``). A run seeded with it meets the turn's limits where the turn stands."""
+    run's start (``started_at``, epoch seconds), the ``steps`` and ``spent_usd`` it had used, its calls in a row that
+    only read (``quiet``), all such calls (``reads``) and whether any call may have changed something (``changed``).
+    A run seeded with it meets the turn's limits where the turn stands."""
 
     started_at: float
     steps: int = 0
     spent_usd: float = 0.0
     quiet: int = 0
+    reads: int = 0
+    changed: bool = False
 
     @classmethod
     def of(cls, given: Optional[Mapping[str, Any]]) -> Optional["TurnSoFar"]:
-        """From a platform's ``{started_at, steps, usd, quiet}`` (``as_json``); None for none."""
+        """From a platform's ``{started_at, steps, usd, quiet, reads, changed}`` (``as_json``); None for none."""
         if not given or given.get("started_at") is None:
             return None
         return cls(started_at=float(given["started_at"]), steps=int(given.get("steps") or 0),
-                   spent_usd=float(given.get("usd") or 0.0), quiet=int(given.get("quiet") or 0))
+                   spent_usd=float(given.get("usd") or 0.0), quiet=int(given.get("quiet") or 0),
+                   reads=int(given.get("reads") or 0), changed=bool(given.get("changed")))
 
     def as_json(self) -> Dict[str, Any]:
         return {"started_at": self.started_at, "steps": self.steps, "usd": round(self.spent_usd, 6),
-                "quiet": self.quiet}
+                "quiet": self.quiet, "reads": self.reads, "changed": self.changed}
 
 
 def stopped_line(reason: str, limits: TurnLimits) -> str:
@@ -254,6 +264,8 @@ class TurnGuard(RunHooks):
         self._ends_unsaid = ends_unsaid
         self._ends_stopped = ends_stopped
         self.quiet = so_far.quiet if so_far else 0
+        self.reads = so_far.reads if so_far else 0
+        self.changed = so_far.changed if so_far else False
         self.longest_quiet = self.quiet
         self.quiet_notes = 0
         self.unfunded: Optional[str] = None
@@ -288,7 +300,13 @@ class TurnGuard(RunHooks):
     def so_far(self) -> TurnSoFar:
         """How far the turn has gone, for a run of it in another process."""
         return TurnSoFar(started_at=_wall() - self.elapsed_s, steps=self.model_calls, spent_usd=self.spent_usd,
-                         quiet=self.quiet)
+                         quiet=self.quiet, reads=self.reads, changed=self.changed)
+
+    @property
+    def only_read(self) -> Optional[int]:
+        """How many calls the turn read with, when none of its calls can have changed anything for anyone; None when
+        one may have, or nothing counts them (no ``STALLED`` wrap-up)."""
+        return self.reads if self._ends_stalled and not self.changed else None
 
     def watch(self, result: Any) -> None:
         """The streamed run to stop once a guard trips; with a time limit, stopped by the clock as well, at once,
@@ -367,7 +385,9 @@ class TurnGuard(RunHooks):
             return None
         if not progress.only_reads(tool, arguments):
             self.quiet = 0
+            self.changed = self.changed or not progress.only_its_own(tool)
             return None
+        self.reads += 1
         self.quiet += 1
         self.longest_quiet = max(self.longest_quiet, self.quiet)
         if self.quiet >= QUIET_STOP and not self.tripped:

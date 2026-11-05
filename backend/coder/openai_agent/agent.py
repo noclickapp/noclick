@@ -345,6 +345,8 @@ class Agent:
         self.turn_closing: Optional[str] = None
         self.turn_handed_on = False
         self.turn_carries_on = False
+        # The calls the last turn read with, when none can have changed anything (``guards.TurnGuard.only_read``).
+        self.turn_only_read: Optional[int] = None
 
         # Whether create() has finished. Until then, ``__call__`` raises.
         self._initialized = False
@@ -979,6 +981,7 @@ class Agent:
         finally:
             guard.close()
             self.turn_handed_on = guard.handed_on
+            self.turn_only_read = guard.only_read
             config = getattr(self, "config", None)
             guards.record(guard, self.turn_ended_by, conversation_id=getattr(self, "conversation_id", None),
                           model=config.llm.model if config else "")
@@ -1304,10 +1307,14 @@ class Agent:
         closing_agent = self._sdk_agent.clone(
             tools=[_refusing(t) for t in self._sdk_agent.tools if isinstance(t, FunctionTool)], mcp_servers=[],
             model_settings=dataclasses.replace(self._sdk_agent.model_settings, tool_choice="none"))
+        prompt = entry["prompt"]
+        # A stall's prompt says it already; handed on, what it waits on is under way.
+        if guard.only_read and reason not in (guards.STALLED, guards.HANDED_ON):
+            prompt += " " + guards.ONLY_READ_FACT.format(calls=guard.only_read)
         try:
             async with asyncio.timeout(guards.WRAP_UP_S):
                 closing = await Runner.run(closing_agent,
-                                           [*history, {"role": "developer", "content": entry["prompt"]}],
+                                           [*history, {"role": "developer", "content": prompt}],
                                            hooks=guard, max_turns=1, run_config=run_config)
         except MaxTurnsExceeded:
             return None
