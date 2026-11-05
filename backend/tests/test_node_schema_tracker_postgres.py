@@ -2,6 +2,7 @@
 its own (``account_node_output_schemas``), against real Postgres."""
 
 import uuid
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -158,3 +159,79 @@ async def test_a_workflow_nothing_holds_teaches_no_account_and_the_pool_still_le
                                "AND node_operation = $2 AND output_schema::text LIKE '%acme_renewal_tier%'",
                                *ACTION) == 0
     assert await get_schema_for_node(*ACTION) == extract_schema(CUSTOM)
+
+
+async def test_the_canvas_asks_for_a_shape_and_gets_only_its_accounts(pool):
+    """``workflow:node:schema`` answers any signed-in session about any node type: a learned shape it read from the
+    pool could name another account's fields."""
+    from wss.handlers.workflow_handler import WorkflowHandler
+    from wss.receiver.client_events import NodeOutputSchemaRequest
+
+    a, a_workflow = await _account(pool)
+    b, _ = await _account(pool)
+    await track_node_schema(*ACTION, CUSTOM, workflow_id=a_workflow)
+
+    async def answered(user_id):
+        sio = MagicMock()
+        sio.get_session = AsyncMock(return_value={"user_id": user_id})
+        sio.emit = AsyncMock()
+        await WorkflowHandler(sio=sio).get_node_output_schema("sid", NodeOutputSchemaRequest(
+            request_id="r1", node_type=ACTION[0], node_operation=ACTION[1]))
+        [response] = [call.args[1] for call in sio.emit.call_args_list if call.args[0] == "response"]
+        return response["data"]
+
+    assert (await answered(a))["schema"] == extract_schema(CUSTOM)
+    theirs = await answered(b)
+    assert theirs["success"] is True and theirs["schema"] is None and theirs["suggested_refs"] is None
+    assert (await answered(None))["success"] is False
+
+
+def _mcp_server():
+    from mcp_server import NoClickMCPServer
+
+    with patch("mcp_server.DatabasePoolMixin.__init__", return_value=None):
+        server = NoClickMCPServer(MagicMock())
+    server._emit_builder_event = AsyncMock()
+    server.get_pool = AsyncMock(return_value=None)
+    server._save_workflow = AsyncMock(return_value=None)
+    return server
+
+
+async def test_the_workflow_mcp_tells_a_client_only_its_accounts_shapes(pool):
+    from mcp_server import _user_id_var
+
+    a, a_workflow = await _account(pool)
+    b, _ = await _account(pool)
+    await track_node_schema(*ACTION, CUSTOM, workflow_id=a_workflow)
+
+    async def told(user_id):
+        token = _user_id_var.set(user_id)
+        try:
+            server = _mcp_server()
+            server._load_workflow = AsyncMock(return_value=({"nodes": [], "edges": []}, None))
+            added = await server._process_update_workflow(
+                workflow_id="wf-1",
+                updates_xml=f'<add_node type="{ACTION[0]}" name="exa" operation="{ACTION[1]}" />'
+                            f'<add_node type="{ACTION[0]}" name="next" operation="{ACTION[1]}" />'
+                            '<add_edge from="exa" to="next" />',
+                include_operations=True, include_configs=True,
+            )
+        finally:
+            _user_id_var.reset(token)
+        return added
+
+    def operation(result):
+        ops = result["node_operations"][ACTION[0]]["operations"]
+        return next(op for op in ops if op["name"] == ACTION[1])
+
+    def fields_on_the_next_step(result):
+        return [field for config in result["node_configs"].values()
+                for step in config.get("available_inputs", []) for field in step.get("output_fields", [])]
+
+    mine = await told(a)
+    assert operation(mine)["output_schema"] == extract_schema(CUSTOM)
+    assert any("acme_renewal_tier" in field for field in fields_on_the_next_step(mine))
+
+    theirs = await told(b)
+    assert "output_schema" not in operation(theirs)
+    assert "acme_renewal_tier" not in str(theirs)

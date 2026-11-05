@@ -63,7 +63,7 @@ from wss.receiver.client_events import (
     WebhookRelayReconnectRequest,
     NodeOutputSchemaRequest,
 )
-from utils.node_schema_tracker import get_schema_with_suggestions
+from utils.node_schema_tracker import get_own_schema_with_suggestions
 from utils.encryption import get_encryption
 import uuid
 from utils.async_helpers import spawn
@@ -2595,14 +2595,21 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
     async def get_node_output_schema(self, sid: str, request: NodeOutputSchemaRequest) -> None:
         """
         Get the expected output schema and curated suggested references for a
-        node type and operation.
+        node type and operation, from what the caller's own account has seen.
 
         ``suggested_refs`` is ``null`` while the LLM curation hasn't produced
         a valid result yet — the frontend treats that as a loading state.
-        ``schema`` is ``null`` if no execution has ever been observed.
+        ``schema`` is ``null`` if the account has never seen an execution.
         """
         try:
-            row = await get_schema_with_suggestions(request.node_type, request.node_operation)
+            session = await self.sio.get_session(sid)
+            user_id = session.get('user_id')
+            if not user_id:
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id, data={"success": False}, error="User not authenticated"))
+                return
+
+            row = await get_own_schema_with_suggestions(user_id, request.node_type, request.node_operation)
             schema = row["schema"] if row else None
             suggested_refs = row["suggested_refs"] if row else None
 

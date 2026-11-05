@@ -3066,17 +3066,17 @@ class NoClickMCPServer(DatabasePoolMixin):
 
         # Progressive disclosure: include operations for added node types
         if include_operations and added_node_types:
-            from utils.node_schema_tracker import get_schema_for_node
+            from utils.node_schema_tracker import get_own_schema_with_suggestions
             node_operations = {}
             for nt in added_node_types:
                 ops = get_operations_for_node_type(nt)
-                # Build operations list with per-operation output schemas from DB
+                # Build operations list with per-operation output schemas this account has seen
                 ops_list = []
                 for op in ops:
                     op_entry: Dict[str, Any] = _op_to_dict(op)  # I4: +display_name/category
-                    db_schema = await get_schema_for_node(nt, op.name)
-                    if db_schema:
-                        op_entry["output_schema"] = db_schema
+                    own = await get_own_schema_with_suggestions(user_id, nt, op.name)
+                    if own:
+                        op_entry["output_schema"] = own["schema"]
                     ops_list.append(op_entry)
                 node_class = NODE_REGISTRY.get(nt)
                 handles = node_class.get_output_handles() if node_class else None
@@ -3134,12 +3134,13 @@ class NoClickMCPServer(DatabasePoolMixin):
                         if output is not None and isinstance(output, dict):
                             paths = extract_output_paths(output)
                         else:
-                            # I3: no live output — fall back to the DB-learned schema
-                            # so a never-run pipeline still gets ready-made references.
-                            from utils.node_schema_tracker import get_schema_for_node
-                            db_schema = await get_schema_for_node(up_type, self._get_current_operation(n) or "default")
-                            if db_schema:
-                                paths = extract_output_paths(db_schema)
+                            # I3: no live output — fall back to the shape this account has
+                            # seen, so a pipeline not run yet still gets ready-made references.
+                            from utils.node_schema_tracker import get_own_schema_with_suggestions
+                            own = await get_own_schema_with_suggestions(
+                                user_id, up_type, self._get_current_operation(n) or "default")
+                            if own:
+                                paths = extract_output_paths(own["schema"])
                         if paths:
                             input_info["output_fields"] = paths
                             input_info["references"] = [f"{{{{ $('{nid}').{p} }}}}" for p in paths[:8]]
