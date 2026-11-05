@@ -17,6 +17,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from nodes.slack_node import SlackNode
+from repositories import trigger_resync
 from utils.webhook_manager import WebhookManager
 
 pytestmark = pytest.mark.asyncio
@@ -388,29 +389,20 @@ async def test_register_node_webhooks_reconciles_app_event_nodes(world):
 
 async def _run_sweep(world, sub_node_ids=(), webhook_node_ids=()):
     wf_uuid = uuid.UUID(WF)
-    conn = AsyncMock()
-
-    async def fetch(sql, *args):
-        if "WITH candidates" in sql:
-            return [{"id": wf_uuid}]
-        if "FROM webhooks" in sql:
-            return [{"node_id": n} for n in webhook_node_ids]
-        if "FROM webhook_subscriptions" in sql:
-            return [{"node_id": n} for n in sub_node_ids]
-        raise AssertionError(f"unexpected sweep SQL: {sql}")
-
-    conn.fetch = AsyncMock(side_effect=fetch)
     pool = MagicMock()
-    pool.acquire = MagicMock(return_value=AsyncMock(
-        __aenter__=AsyncMock(return_value=conn),
-        __aexit__=AsyncMock(return_value=False),
-    ))
 
     async def load_owner_nodes(p, wf, include_nodes=True):
         return world.owner, list(world.nodes)
 
     with (
         patch("utils.webhook_manager._load_workflow_owner_and_nodes", load_owner_nodes),
+        patch("repositories.trigger_resync.read_state",
+              AsyncMock(return_value=trigger_resync.State(registers=True))),
+        patch("repositories.trigger_resync.candidates",
+              AsyncMock(return_value=[{"id": wf_uuid, "has_graph": True}])),
+        patch("repositories.trigger_resync.advance", AsyncMock(return_value=True)),
+        patch("repositories.trigger_resync.registered_nodes",
+              AsyncMock(return_value=set(webhook_node_ids) | set(sub_node_ids))),
         patch.object(WebhookManager, "reconcile_node",
                      AsyncMock(return_value={"state": "registered"})) as rec,
     ):

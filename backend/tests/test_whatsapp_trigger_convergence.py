@@ -24,6 +24,7 @@ import uuid
 
 import pytest
 
+from repositories import trigger_resync
 from tests.fixtures.real_db_fixture import real_database  # noqa: F401
 from utils.encryption import get_encryption
 from utils.webhook_manager import WebhookManager
@@ -138,7 +139,10 @@ async def test_a_loader_registered_trigger_stays_registered_and_follows_its_conf
     db = real_database
     owner, workflow_id, credentials, connections = await _seed(db, wahooks)
 
-    # Never registered: the converger registers it through the node's own loader, as the panel would.
+    # Never registered: a dry run says so without touching WAHooks, then the converger registers it through the
+    # node's own loader, as the panel would.
+    assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, plan_only=True))["state"] == "would_register"
+    assert wahooks.hooks == {}
     assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "registered"
     row = await _row(db, workflow_id)
     assert row["is_active"] and row["registered_operation"] == "receive_message"
@@ -160,9 +164,16 @@ async def test_a_loader_registered_trigger_stays_registered_and_follows_its_conf
     assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "deregistered"
     assert _urls(wahooks, connections["b"]) == [] and not (await _row(db, workflow_id))["is_active"]
 
-    # A trigger again, its row torn down before: the nightly resync finds it and registers it.
+    # A trigger again, its row torn down before: the nightly resync finds it and, turned on, registers it.
     await _save(db, workflow_id, "receive_message", credentials["b"])
-    await WebhookManager.resync_trigger_registrations(db.pool)
+    await db.execute("DELETE FROM trigger_resync_state")
+    await WebhookManager.resync_trigger_registrations(db.pool, limit=10_000)
+    assert not (await _row(db, workflow_id))["is_active"] and _urls(wahooks, connections["b"]) == []
+    await trigger_resync.set_registers(db.pool, True)
+    try:
+        await WebhookManager.resync_trigger_registrations(db.pool, limit=10_000)
+    finally:
+        await db.execute("DELETE FROM trigger_resync_state")
     assert (await _row(db, workflow_id))["is_active"] and _urls(wahooks, connections["b"]) == [url]
 
 

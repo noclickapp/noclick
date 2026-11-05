@@ -42,6 +42,7 @@ skills
 slack_installations
 template_votes
 tool_call_events
+trigger_resync_state
 trigger_test_credentials
 trigger_test_runs
 user_billing

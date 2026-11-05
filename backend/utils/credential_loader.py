@@ -10,6 +10,7 @@ current organization context.
 
 import logging
 from typing import Any, Dict, Optional
+from uuid import UUID
 
 from repositories.credentials import credential_access_predicate
 
@@ -20,6 +21,21 @@ _LOAD_CREDENTIAL_SQL = f"""
     FROM credentials c
     WHERE c.id = $1 AND {credential_access_predicate()}
 """
+
+
+async def credential_usable(pool, user_id: str, credential_id: Optional[str]) -> bool:
+    """Whether ``load_credential`` would hand this credential over, read without
+    decrypting or refreshing anything. A failed read raises: it says nothing."""
+    from wss.handlers.workflow_handler import get_user_org_context
+
+    try:
+        UUID(str(credential_id))
+    except ValueError:
+        return False  # never saved: a placeholder a template or a model left
+    async with pool.acquire() as conn:
+        org_id = await get_user_org_context(conn, user_id)
+        row = await conn.fetchrow(_LOAD_CREDENTIAL_SQL, credential_id, user_id, org_id)
+    return row is not None and row["revoked_at"] is None
 
 
 async def load_credential(

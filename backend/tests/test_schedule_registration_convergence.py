@@ -502,16 +502,13 @@ async def test_registration_fields_change_ignores_cosmetic_edits():
 def test_sweep_walks_schedule_family_types():
     """The nightly graph-driven sweep must include family members, so a
     registration that NEVER happened heals within a day."""
-    import inspect
-
     from nodes.core.registry import NODE_REGISTRY
     from nodes.core.schedule_registration import CronScheduleTriggerMixin
 
-    src = inspect.getsource(WebhookManager.resync_trigger_registrations)
-    assert "CronScheduleTriggerMixin" in src
     members = [t for t, c in NODE_REGISTRY.items()
                if isinstance(c, type) and issubclass(c, CronScheduleTriggerMixin)]
     assert len(members) >= 16  # 10 poll-mixin + 5 bespoke + trigger-cron
+    assert set(members) <= set(WebhookManager._registerable_types())
 
 
 
