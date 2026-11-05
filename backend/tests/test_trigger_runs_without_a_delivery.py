@@ -126,6 +126,7 @@ async def test_a_delivery_teaches_as_a_delivery(monkeypatch):
     assert outputs["n1"] == payload
     taught.assert_awaited_once()
     assert taught.await_args.kwargs["output"] == payload and taught.await_args.kwargs["delivered"] is True
+    assert taught.await_args.kwargs["workflow_id"] == "wf"  # whose owner keeps the shape as their own
 
 
 class _Poll(ExaNode):
@@ -175,6 +176,7 @@ async def test_a_step_that_isnt_a_trigger_still_teaches(monkeypatch):
     taught, _ = await _run(monkeypatch, node, "automation-exa", {"operation": "search"})
     taught.assert_awaited_once()
     assert not taught.await_args.kwargs.get("delivered")
+    assert taught.await_args.kwargs["workflow_id"] == "wf"
 
 
 def test_only_a_trigger_ran_with_no_event():

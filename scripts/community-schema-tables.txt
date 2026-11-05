@@ -1,4 +1,5 @@
 account_link_challenges
+account_node_output_schemas
 activity_logs
 agent_email_replies
 api_keys

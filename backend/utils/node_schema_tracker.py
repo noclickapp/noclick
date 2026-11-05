@@ -24,6 +24,12 @@ alone.** Concretely:
   such row isn't read (``_served``): most triggers' manual runs copied the
   run's other outputs into theirs, so it may hold another account's step
   names. A row that's taught again says so; one like that never is.
+* Every account's outputs pool in this table and it names none of them, while
+  a shape can hold one account's own field names (a webhook's body, a CRM's
+  custom properties, a sheet's columns). So its reads are for NoClick's own
+  models; what a person or a client outside NoClick reads is the account's own
+  record of what it has seen (``repositories/node_output_schemas.py``: written
+  with ``workflow_id``, read by ``get_own_schema_with_suggestions``).
 
 The LLM call is awaited inline. Cost is bounded by global dedup: only
 the first observation of a given shape pays for the LLM, and rows that
@@ -40,6 +46,7 @@ from typing import Any, Dict, List, Optional
 
 import litellm
 
+from repositories import node_output_schemas
 from utils.database_pool import get_native_pool
 from utils.edition import is_local_edition
 
@@ -400,6 +407,7 @@ async def track_node_schema(
     output: Any,
     config: Optional[Dict[str, Any]] = None,
     delivered: bool = False,
+    workflow_id: Optional[str] = None,
 ) -> None:
     """Record a node's output schema, then fill whichever of
     ``suggested_refs`` / ``sample_output_clipped`` is still NULL on the row.
@@ -410,6 +418,9 @@ async def track_node_schema(
 
     ``delivered``: ``output`` is a trigger's delivery as it arrived, never
     what a node made of it.
+
+    ``workflow_id``: the workflow it came from, whose owner keeps the shape as
+    their own.
 
     The LLM call (for refs) is skipped entirely when refs is already set,
     so prefilled rows only pay for the (tiny) sample write going forward.
@@ -450,6 +461,11 @@ async def track_node_schema(
             node_type, node_operation, schema, schema_hash,
             safe_config, "delivery" if delivered else "run",
         )
+        if workflow_id:
+            await node_output_schemas.record(
+                pool, workflow_id=workflow_id, node_type=node_type, node_operation=node_operation,
+                schema=schema, schema_hash=schema_hash, delivered=delivered,
+            )
         row = rows[0] if rows else None
         need_refs = row is None or row["suggested_refs"] is None
         need_sample = row is None or row["sample_output_clipped"] is None
@@ -519,7 +535,7 @@ def _served(node_type: str, node_operation: str) -> str:
 
 
 async def get_schema_for_node(node_type: str, node_operation: str) -> Optional[Dict[str, Any]]:
-    """Most-common schema for a (type, operation), or None."""
+    """Most-common schema for a (type, operation) over every account, or None. For NoClick's own models."""
     try:
         return await get_native_pool().fetchval(
             f"""
@@ -540,7 +556,8 @@ async def get_schema_with_suggestions(
     node_type: str,
     node_operation: str,
 ) -> Optional[Dict[str, Any]]:
-    """Most-common schema row with its curated suggestions.
+    """Most-common schema row over every account, with its curated suggestions.
+    For NoClick's own models.
 
     Returns ``{"schema": ..., "suggested_refs": ... | None}`` or ``None``
     if no row exists yet. ``suggested_refs`` is None while the LLM hasn't
@@ -568,6 +585,20 @@ async def get_schema_with_suggestions(
         logger.warning(
             f"[SchemaTracker] Failed to get schema+suggestions for {node_type}:{node_operation}: {e}"
         )
+        return None
+
+
+async def get_own_schema_with_suggestions(
+    user_id: str,
+    node_type: str,
+    node_operation: str,
+) -> Optional[Dict[str, Any]]:
+    """As ``get_schema_with_suggestions``, of what this account has seen alone: ``None`` until it has."""
+    try:
+        row = await node_output_schemas.most_seen(get_native_pool(), user_id, node_type, node_operation)
+        return row and {"schema": row["output_schema"], "suggested_refs": row["suggested_refs"]}
+    except Exception as e:
+        logger.warning(f"[SchemaTracker] Failed to get own schema for {node_type}:{node_operation}: {e}")
         return None
 
 

@@ -17,6 +17,7 @@ from dataclasses import dataclass
 from typing import Dict, Optional
 
 MOVE_COLUMNS = (
+    ("account_node_output_schemas", "user_id"),
     ("agent_email_replies", "user_id"),
     ("api_keys", "user_id"),
     ("apps", "owner_id"),
@@ -212,7 +213,8 @@ async def merge_accounts(conn, *, source: str, target: str) -> MergeResult:
         "AND t.parent_folder_id IS NULL AND t.name = s.name "
         "AND t.organization_id IS NOT DISTINCT FROM (CASE WHEN s.organization_id = $3::uuid THEN $4::uuid ELSE s.organization_id END))",
         source, target, s_org, t_org)
-    for table, key in (("template_votes", "template_id"), ("skill_user_mutes", "skill_id")):
+    for table, key in (("template_votes", "template_id"), ("skill_user_mutes", "skill_id"),
+                       ("account_node_output_schemas", "schema_hash")):
         await conn.execute(
             f"DELETE FROM {table} s WHERE s.user_id = $1::uuid AND EXISTS "
             f"(SELECT 1 FROM {table} t WHERE t.user_id = $2::uuid AND t.{key} = s.{key})", *args)
