@@ -111,7 +111,6 @@ class TestBaseMetaOperations:
         if result["data"]["bases"]:
             TEST_BASE_ID = result["data"]["bases"][0]["id"]
 
-    @pytest.mark.skip(reason="Requires AIRTABLE_PAT environment variable")
     @pytest.mark.asyncio
     async def test_get_base_schema(self):
         """Test getting the schema of a base."""
@@ -122,11 +121,10 @@ class TestBaseMetaOperations:
             list_config = AirtableListBasesConfig()
             list_node = create_node(list_config)
             list_result = await list_node.execute({})
-            if list_result["status"] == "success" and list_result["data"].get("bases"):
-                base_id = list_result["data"]["bases"][0]["id"]
-            else:
-                pytest.skip("No bases available for testing")
-                return
+            assert list_result["status"] == "success"
+            # Skipping here would quietly skip every test that needs the table id set below.
+            assert list_result["data"].get("bases"), "AIRTABLE_PAT reaches no base"
+            base_id = list_result["data"]["bases"][0]["id"]
         else:
             base_id = TEST_BASE_ID
 
