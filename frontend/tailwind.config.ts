@@ -28,7 +28,7 @@ export default {
                     'sans-serif',
                 ],
                 // The landing and pricing pages' headlines; their routes load the face.
-                display: ['Instrument Serif', 'ui-serif', 'Georgia', 'serif'],
+                display: ['Instrument Serif One', 'Instrument Serif', 'ui-serif', 'Georgia', 'serif'],
             },
             borderRadius: {
                 lg: 'var(--radius)',

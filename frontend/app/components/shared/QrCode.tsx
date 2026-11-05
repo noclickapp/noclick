@@ -12,6 +12,9 @@ const MARK_SHARE = 0.22; // of the code's width, safely inside what level H reco
 // overflow-hidden drops the box's automatic minimum height, so the code inside can't make WebKit grow it past square.
 const CARD = 'aspect-square overflow-hidden rounded-2xl bg-white p-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.08)] ring-1 ring-black/[0.07] dark:ring-0';
 
+/** How many modules wide a code is drawn, with its quiet zone: a caller sizes the code to a whole number of pixels a module. */
+export const qrModules = (value: string, marked = true) => encode(value, { ecc: marked ? 'H' : 'M', border: 0 }).size + QUIET * 2;
+
 /** The code's card with nothing to scan yet, the same size, while the code it will show is on its way. */
 export function QrPlaceholder({ label, className }: { label: string; className?: string }) {
     return (
