@@ -41,20 +41,43 @@ def normalize_e164(raw: str | None) -> str | None:
     return value if _E164.match(value) else None
 
 
+# Why a send to NoClick's own line is refused, to the agent that tried. The owner's phone holds a chat with NoClick, so
+# an agent going through their chats takes it for a contact; and on their linked phone it would read as the owner's own
+# text to their assistant.
+NOCLICK_LINE_REFUSAL = (
+    "Not sent: that number is NoClick's own line, where the owner texts their NoClick assistant. It isn't one of their "
+    "contacts, and a message there would read as the owner's own text to the assistant. Send to the person's own "
+    "number or chat id instead: to answer someone, the sender's id from the event that woke you; otherwise find them "
+    "among the owner's contacts and chats, leaving this one out. To tell the owner something, use your tool for that "
+    "(human__notify or email_user)."
+)
+
+
 def is_noclick_number(raw: str | None) -> bool:
-    """Whether ``raw`` (E.164, bare digits, or Twilio's ``whatsapp:+…``) is a
-    number NoClick itself texts people from: the assistant's WhatsApp line or
-    its iMessage line. A message from one never wakes an owner's trigger: the
-    assistant answers on the owner's own linked phone, so an agent listening
-    there would spend its turns on NoClick's replies, and answer them."""
+    """Whether ``raw`` (E.164, bare digits, Twilio's ``whatsapp:+…`` or a WhatsApp
+    chat id, ``…@c.us``) is a number NoClick itself texts people from: the
+    assistant's WhatsApp line or its iMessage line. A message from one never wakes
+    an owner's trigger: the assistant answers on the owner's own linked phone, so
+    an agent listening there would spend its turns on NoClick's replies, and answer
+    them. A send to one is refused (``noclick_line_refusal``). A ``@lid`` or group
+    id names no number."""
     from utils.sendblue import line_number
     from utils.whatsapp_cloud_api import display_number
 
-    value = str(raw or "").strip().removeprefix("whatsapp:")
+    value, _, server = str(raw or "").strip().removeprefix("whatsapp:").partition("@")
+    if server:
+        if server not in ("c.us", "s.whatsapp.net"):
+            return False
+        value = value.split(":", 1)[0]
     number = normalize_e164(value if value.startswith(("+", "00")) else "+" + value)
     if number is None:
         return False
     return any(normalize_e164(line() or "") == number for line in (display_number, line_number))
+
+
+def noclick_line_refusal(recipient: str | None) -> str | None:
+    """Why a message to ``recipient`` is refused, or None when it may be sent."""
+    return NOCLICK_LINE_REFUSAL if is_noclick_number(recipient) else None
 
 
 def valid_e164(raw: str | None) -> str | None:

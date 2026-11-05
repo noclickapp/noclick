@@ -16,6 +16,7 @@ from nodes.twilio_node import TWILIO_API_BASE, TwilioNode, TwilioNodeFullConfig
 from utils import capabilities
 from utils.call_safety import emergency_refusal
 from utils.capabilities import PHONE_CALLS, provide
+from utils.phone_numbers import NOCLICK_LINE_REFUSAL
 
 ACCOUNT = {"credential_type": "twilio_account", "account_sid": "AC" + "1" * 32, "auth_token": "tok"}
 API_KEY = {"credential_type": "twilio_api_key", "account_sid": "AC" + "1" * 32, "api_key_sid": "SK" + "1" * 32, "api_key_secret": "s"}
@@ -141,3 +142,26 @@ def test_a_finished_call_is_the_agents_event_on_either_node():
     # An SMS is still an SMS.
     sms = TwilioNode.resolve_agent_event({"From": "+15551234567", "To": "+14155238886", "Body": "hi"})
     assert "SMS" in sms["text"]
+
+
+# --- a send to NoClick's own line ----------------------------------------------------
+
+
+@respx.mock
+@pytest.mark.parametrize("operation, line, other", [
+    ("send_sms_message", "+12025550108", "+14155550100"),
+    ("send_whatsapp_message", "whatsapp:+12025550108", "whatsapp:+14155550100"),
+])
+async def test_a_text_to_noclicks_own_line_is_refused_and_says_why(monkeypatch, operation, line, other):
+    """It would start a turn on NoClick's line, from a number that never asked for one."""
+    monkeypatch.setenv("WHATSAPP_DISPLAY_NUMBER", "+12025550108")
+    monkeypatch.delenv("SENDBLUE_NUMBER", raising=False)
+    send = respx.post(f"{TWILIO_API_BASE}/2010-04-01/Accounts/{ACCOUNT['account_sid']}/Messages.json").mock(
+        return_value=httpx.Response(201, json={"sid": "SM1"}))
+    text = {"operation": operation, "from_number": "+15674833618", "body": "Hello"}
+    out = await _node({**text, "to_number": line}).execute({})
+    assert out["status"] == "error" and out["error"] == NOCLICK_LINE_REFUSAL
+    assert send.call_count == 0
+    # Anyone else still gets it.
+    assert (await _node({**text, "to_number": other}).execute({}))["sid"] == "SM1"
+    assert send.call_count == 1

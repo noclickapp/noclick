@@ -30,7 +30,7 @@ from pydantic import BaseModel, Field, Discriminator, ConfigDict
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
-from utils.phone_numbers import is_noclick_number
+from utils.phone_numbers import is_noclick_number, noclick_line_refusal
 from utils.self_echo import is_self_post, record_self_post
 from utils.ssrf import assert_exact_url_origin, guarded_async_client
 from nodes.core.connection_evidence import ConnectionEvidence
@@ -2182,6 +2182,9 @@ class WhatsAppNode(WorkflowNode):
             return None
         if foreign := await cls._foreign_account_delivery(payload, config, pool=pool, node_id=node_id):
             return foreign
+        if is_noclick_number(cls._sender_number(payload)):
+            # It never reaches the trigger, but its chat may be a @lid an agent could send to.
+            await cls._remember_sender_number(payload)
         if payload.get("event") != "session.status":
             return None
         status = str((payload.get("payload") or {}).get("status") or "").upper()
@@ -2590,6 +2593,9 @@ class WhatsAppNode(WorkflowNode):
         elif action == "receive_status_update":
             return self.no_event_output("receive_status_update")
 
+        if action.startswith("send_"):
+            await self._refuse_noclick_line(op_config, credentials)
+
         # Route to WAHooks handler for QR scan credentials
         if isinstance(credentials, WhatsAppQRCredential):
             return await self._execute_wahooks(op_config, credentials)
@@ -2662,6 +2668,18 @@ class WhatsAppNode(WorkflowNode):
         elif action == "list_account_phone_numbers":
             return await self._handle_list_phone_numbers(op_config, credentials)
         raise ValueError(f"Unknown WhatsApp action: {action}")
+
+    @staticmethod
+    async def _refuse_noclick_line(op_config, credentials) -> None:
+        """A send to NoClick's own line fails the call, its error telling the agent why and what to do instead. A
+        @lid counts once a delivery has said whose it is (``handle_control_event``)."""
+        to = str(getattr(op_config, "to", "") or "").strip()
+        if to.endswith("@lid") and isinstance(credentials, WhatsAppQRCredential):
+            from utils import whatsapp_lids
+
+            to = (await whatsapp_lids.phones(credentials.connection_id, [to])).get(to, to)
+        if refusal := noclick_line_refusal(to):
+            raise ValueError(refusal)
 
     async def _execute_wahooks(
         self, op_config, credentials: WhatsAppQRCredential
