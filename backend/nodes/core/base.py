@@ -698,9 +698,17 @@ class WorkflowNode(ABC):
         the node's ``execute`` with a fresh URL for every persisted media resource
         ID, then replaces every ``BinaryOutput`` marker in the output with a stored
         ``{url, mime_type, name, size_bytes}`` file reference. Both transforms are
-        cheap no-ops for nodes without those values."""
+        cheap no-ops for nodes without those values.
+
+        A trigger is handed nothing: ``inputs`` is the run's other outputs, by step, and a
+        delivery reaches a trigger through ``resolve_trigger_payload``, so all it could do
+        with them is pass another step's data off as its event (most copied them into their
+        output on a manual run, where they were learned and read back to other accounts)."""
         from nodes.core.binary_output import resolve_binary_outputs
         from nodes.core.media_resolver import renewable_media_urls
+
+        if self.runs_as_trigger():
+            inputs = {}
 
         from utils.credential_approval import admit_node
         pending = await admit_node(self, inputs)
@@ -732,6 +740,12 @@ class WorkflowNode(ABC):
         """
         return payload
 
+    def runs_as_trigger(self) -> bool:
+        """Whether this node, on its current operation, is a trigger."""
+        from nodes.agent.node_op_tools import is_trigger
+
+        return is_trigger(self.node_type, getattr(getattr(self.config, "config", None), "operation", None))
+
     def trigger_produced_no_event(self, output: Dict[str, Any]) -> bool:
         """Halt a trigger's branch when it ran without an event.
 
@@ -739,14 +753,7 @@ class WorkflowNode(ABC):
         with their dedup result. An action's similarly named status is data,
         never an instruction to stop downstream execution.
         """
-        if output.get("status") != "no_event":
-            return False
-        from nodes.agent.node_op_tools import is_trigger_operation
-
-        operation = getattr(getattr(self.config, "config", None), "operation", None)
-        return self.node_type.startswith("trigger-") or is_trigger_operation(
-            self.node_type, operation,
-        )
+        return output.get("status") == "no_event" and self.runs_as_trigger()
 
     def trigger_emitted_event(self, output: Dict[str, Any]) -> bool:
         """The positive counterpart: this trigger just polled AND emitted fresh

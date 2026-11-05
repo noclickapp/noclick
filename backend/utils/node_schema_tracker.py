@@ -18,6 +18,12 @@ alone.** Concretely:
 * ``sample_output_clipped`` is filled on every observation where it is
   NULL — including rows that were schema-only prefilled — so a later
   manual re-curation pass has real samples to work from.
+* ``taught_by`` says what the shape came from: ``delivery``, a trigger's
+  delivery as it arrived, which is all a public shape may show; or ``run``,
+  a node's output. NULL on a row from before it was recorded. A trigger's
+  such row isn't read (``_served``): most triggers' manual runs copied the
+  run's other outputs into theirs, so it may hold another account's step
+  names. A row that's taught again says so; one like that never is.
 
 The LLM call is awaited inline. Cost is bounded by global dedup: only
 the first observation of a given shape pays for the LLM, and rows that
@@ -393,6 +399,7 @@ async def track_node_schema(
     node_operation: str,
     output: Any,
     config: Optional[Dict[str, Any]] = None,
+    delivered: bool = False,
 ) -> None:
     """Record a node's output schema, then fill whichever of
     ``suggested_refs`` / ``sample_output_clipped`` is still NULL on the row.
@@ -400,6 +407,9 @@ async def track_node_schema(
     Write rule: fill the NULL columns, leave the populated ones alone. The
     runtime tracker never overwrites a value it didn't write — manual
     re-curation is the only path that replaces existing refs.
+
+    ``delivered``: ``output`` is a trigger's delivery as it arrived, never
+    what a node made of it.
 
     The LLM call (for refs) is skipped entirely when refs is already set,
     so prefilled rows only pay for the (tiny) sample write going forward.
@@ -422,11 +432,13 @@ async def track_node_schema(
 
         upsert_query = """
             INSERT INTO workflow_node_output_schemas (
-                node_type, node_operation, output_schema, schema_hash, sample_config
-            ) VALUES ($1, $2, $3, $4, $5)
+                node_type, node_operation, output_schema, schema_hash, sample_config, taught_by
+            ) VALUES ($1, $2, $3, $4, $5, $6)
             ON CONFLICT (schema_hash) DO UPDATE SET
                 last_seen_at = NOW(),
-                occurrence_count = workflow_node_output_schemas.occurrence_count + 1
+                occurrence_count = workflow_node_output_schemas.occurrence_count + 1,
+                taught_by = CASE WHEN workflow_node_output_schemas.taught_by = 'delivery'
+                                 THEN 'delivery' ELSE EXCLUDED.taught_by END
             RETURNING suggested_refs, sample_output_clipped
         """
         # Pass raw Python objects for jsonb params — the asyncpg jsonb codec
@@ -436,7 +448,7 @@ async def track_node_schema(
         rows = await pool.fetch(
             upsert_query,
             node_type, node_operation, schema, schema_hash,
-            safe_config,
+            safe_config, "delivery" if delivered else "run",
         )
         row = rows[0] if rows else None
         need_refs = row is None or row["suggested_refs"] is None
@@ -499,14 +511,21 @@ async def track_node_schema(
         )
 
 
+def _served(node_type: str, node_operation: str) -> str:
+    """The condition on what a read of (type, operation) may see: see ``taught_by`` above."""
+    from nodes.agent.node_op_tools import is_trigger
+
+    return "AND taught_by IS NOT NULL" if is_trigger(node_type, node_operation) else ""
+
+
 async def get_schema_for_node(node_type: str, node_operation: str) -> Optional[Dict[str, Any]]:
     """Most-common schema for a (type, operation), or None."""
     try:
         return await get_native_pool().fetchval(
-            """
+            f"""
             SELECT output_schema
             FROM workflow_node_output_schemas
-            WHERE node_type = $1 AND node_operation = $2
+            WHERE node_type = $1 AND node_operation = $2 {_served(node_type, node_operation)}
             ORDER BY occurrence_count DESC
             LIMIT 1
             """,
@@ -529,10 +548,10 @@ async def get_schema_with_suggestions(
     """
     try:
         rows = await get_native_pool().fetch(
-            """
+            f"""
             SELECT output_schema, suggested_refs
             FROM workflow_node_output_schemas
-            WHERE node_type = $1 AND node_operation = $2
+            WHERE node_type = $1 AND node_operation = $2 {_served(node_type, node_operation)}
             ORDER BY occurrence_count DESC
             LIMIT 1
             """,
@@ -556,11 +575,11 @@ async def get_all_schemas_for_node(node_type: str, node_operation: str) -> list:
     """All known schemas for a (type, operation), ordered by occurrence count."""
     try:
         rows = await get_native_pool().fetch(
-            """
+            f"""
             SELECT output_schema, occurrence_count, first_seen_at, last_seen_at,
                    sample_config, suggested_refs, suggestions_updated_at
             FROM workflow_node_output_schemas
-            WHERE node_type = $1 AND node_operation = $2
+            WHERE node_type = $1 AND node_operation = $2 {_served(node_type, node_operation)}
             ORDER BY occurrence_count DESC
             """,
             node_type, node_operation,

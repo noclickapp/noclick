@@ -313,6 +313,12 @@ def is_trigger_operation(node_type: str, operation: Optional[str]) -> bool:
     return bool(operation) and operation in _trigger_operations(node_type)
 
 
+def is_trigger(node_type: str, operation: Optional[str]) -> bool:
+    """Whether a node on ``operation`` is a trigger: a trigger node type (which has
+    no operations), or a node's trigger operation."""
+    return node_type.startswith("trigger-") or is_trigger_operation(node_type, operation)
+
+
 def is_node_op_provider(
     node_id: str,
     node_type: str,

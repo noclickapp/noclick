@@ -161,6 +161,15 @@ def apply_config_overrides(nodes: List[Dict[str, Any]], overrides: Optional[Dict
             node.setdefault('config', {}).update(node_overrides)
 
 
+def _output_teaches_a_shape(node_instance, node_config: Dict[str, Any], no_event: bool, emitted: bool) -> bool:
+    """A trigger teaches only what an event left it with: run with none (a manual run of a push
+    trigger, a poll that found nothing), its output describes the run, and read back as its shape
+    would flag every real reference to it."""
+    if not node_instance.runs_as_trigger():
+        return True
+    return not no_event and (emitted or node_config.get('_triggerPayload') is not None)
+
+
 def _is_awaiting_marker(output: Any) -> bool:
     """An agent's delivery marker: the turn was handed to a sandbox and the
     response arrives as a separate run."""
@@ -2717,6 +2726,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                             # holds the raw inbound payload (e.g. the full email content), which
                             # must not be persisted as sample_config.
                             config={k: v for k, v in node_config.items() if not k.startswith('_')},
+                            delivered=True,
                         )
                     except Exception as e:
                         logger.warning(f"[WorkflowExecution] track_node_schema (trigger) failed for {node_id}: {e}")
@@ -3879,13 +3889,15 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         # Track output schema for workflow builder hints. Awaited inline so the
         # curated suggested-references list is built on first observation of a
         # new shape (subsequent cache-hit observations skip the LLM call).
-        node_operation = node_config.get('operation') or 'default'
-        await track_node_schema(
-            node_type=node_type,
-            node_operation=node_operation,
-            output=output,
-            config=node_config,
-        )
+        no_event = isinstance(output, dict) and node_instance.trigger_produced_no_event(output)
+        emitted = isinstance(output, dict) and not no_event and node_instance.trigger_emitted_event(output)
+        if _output_teaches_a_shape(node_instance, node_config, no_event, emitted):
+            await track_node_schema(
+                node_type=node_type,
+                node_operation=node_config.get('operation') or 'default',
+                output=output,
+                config=node_config,
+            )
 
         # A poll trigger whose poll found no new data should not run downstream
         # nodes (e.g. an agent) — the empty envelope is not an event, and firing
@@ -3905,11 +3917,10 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         # ("no payload was available", 2026-08-04). Stamping only ever happens
         # right after execute(), so preloaded outputs from previous runs can
         # never masquerade as a fresh event.
-        if isinstance(output, dict):
-            if node_instance.trigger_produced_no_event(output):
-                output['_halt_downstream'] = True
-            elif node_instance.trigger_emitted_event(output):
-                node_config['_pollFired'] = True
+        if no_event:
+            output['_halt_downstream'] = True
+        elif emitted:
+            node_config['_pollFired'] = True
 
         return output
 
