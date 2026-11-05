@@ -20,10 +20,12 @@ import hashlib
 import hmac
 import logging
 import os
+import re
 import time
+from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
-from pydantic import BaseModel, Field, ConfigDict, Discriminator
+from pydantic import BaseModel, Field, ConfigDict, Discriminator, field_validator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
@@ -58,6 +60,46 @@ MAX_TEXT_CHARACTERS = 1_000_000  # Exa's own ceiling
 # in the schema or not, 2026-10-27), and Exa refuses it: it's this node's option for Exa's news search, its auto
 # search in the news category.
 NEWS_SEARCH = "news"
+
+# The one event the trigger fires on: Exa posts every monitor.* event to a webhook that names none.
+MONITOR_RESULTS_EVENT = "monitor.run.completed"
+# What Exa's docs say to refuse: a signature older than this is a replay.
+SIGNATURE_MAX_AGE_S = 300
+DEFAULT_MONITOR_PERIOD = "1d"
+_MONITOR_PERIOD_RE = re.compile(r"[1-9]\d*[hd]")
+_CRON_RUNS_COMPARED = 60
+
+
+def _period_of_cron(expression: str) -> Optional[str]:
+    """The interval a cron expression fires at, or None when its runs are no fixed whole hours or days apart."""
+    from croniter import croniter
+
+    if not croniter.is_valid(expression):
+        return None
+    runs = croniter(expression, datetime(2026, 1, 1, tzinfo=timezone.utc))
+    times = [runs.get_next(float) for _ in range(_CRON_RUNS_COMPARED)]
+    gaps = {later - earlier for earlier, later in zip(times, times[1:])}
+    gap = int(gaps.pop()) if len(gaps) == 1 else 0
+    if not gap or gap % 3600:
+        return None
+    return f"{gap // 86400}d" if gap % 86400 == 0 else f"{gap // 3600}h"
+
+
+def monitor_period(cadence: Optional[str]) -> str:
+    """The ``period`` of a monitor's trigger. Exa runs one at a fixed interval counted from its creation: a duration in
+    one unit, an hour at the least, never a time of day. A cron expression (what this field once asked for, so saved
+    configs hold one) reads as the interval it fires at; one that fires at no such interval is refused, never run on
+    some other schedule."""
+    value = (cadence or DEFAULT_MONITOR_PERIOD).strip()
+    if _MONITOR_PERIOD_RE.fullmatch(value):
+        return value
+    period = _period_of_cron(value)
+    if period is None:
+        raise ValueError(
+            f"Exa runs a monitor at a fixed interval of at least an hour, so '{value}' can't be its cadence. "
+            "Set an interval such as 6h or 1d."
+        )
+    return period
 
 
 # ============================================================================
@@ -763,9 +805,18 @@ class ExaMonitorTriggerConfig(BaseModel):
         description="The recurring search query the monitor runs",
     )
     cadence: str = Field(
-        "0 9 * * *",
-        title="Cadence (Cron)",
-        description="How often the monitor runs, as a cron expression (default: daily at 9am UTC)",
+        DEFAULT_MONITOR_PERIOD,
+        title="Cadence",
+        description=(
+            "How often the monitor runs, counted from when it's created: hours or days, at least an hour "
+            "(1h, 6h, 1d, 7d)"
+        ),
+        json_schema_extra={
+            "enum": ["1h", "6h", "12h", "1d", "7d"],
+            "enumNames": ["Every hour", "Every 6 hours", "Every 12 hours", "Daily", "Weekly"],
+            "x-enum-searchable": True,
+            "x-enum-allow-custom": True,
+        },
     )
     webhook_url: Optional[str] = Field(
         default=None,
@@ -789,6 +840,11 @@ class ExaMonitorTriggerConfig(BaseModel):
         default=None, json_schema_extra={"ui:hidden": True}
     )
     trigger_error: Optional[str] = Field(default=None, json_schema_extra={"ui:hidden": True})
+
+    @field_validator("cadence")
+    @classmethod
+    def _cadence_exa_can_run(cls, value: str) -> str:
+        return monitor_period(value)
 
 
 # ============================================================================
@@ -947,10 +1003,12 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "Trigger a workflow whenever a scheduled Exa monitor finds new results",
     ]
 
+    # A key's own monitors, free to read. Not its websets: Exa answers a key without Websets access 401, as it
+    # does a key that's no good, and search itself is charged per call.
     connection_evidence = ConnectionEvidence(
-        operation="list_websets",
-        noun="websets",
-        label_keys=("title", "externalId", "id"),
+        operation="list_monitors",
+        noun="monitors",
+        label_keys=("name", "id"),
     )
 
     @classmethod
@@ -1007,6 +1065,7 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         # the node never sequences teardown/re-register).
         return {
             "monitor_query": (config or {}).get("monitor_query"),
+            "cadence": (config or {}).get("cadence"),
         }
 
     @classmethod
@@ -1023,7 +1082,11 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
             api_key,
             "POST",
             "/monitors",
-            json_body={"search": {"query": query}, "webhook": {"url": webhook_url}},
+            json_body={
+                "search": {"query": query},
+                "trigger": {"type": "interval", "period": monitor_period((config or {}).get("cadence"))},
+                "webhook": {"url": webhook_url, "events": [MONITOR_RESULTS_EVENT]},
+            },
             action_name="register_monitor",
         )
         if result.get("status") != "success":
@@ -1051,21 +1114,31 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         )
 
     @classmethod
+    def filter_trigger_payload(cls, payload: Dict[str, Any], config: Dict[str, Any]) -> bool:
+        # What a monitor registers for; one registered before it named its events also posts its lifecycle.
+        return payload.get("type") == MONITOR_RESULTS_EVENT
+
+    @classmethod
     def verify_webhook_signature(
         cls, body: bytes, headers: Dict[str, str], config: Dict[str, Any]
     ) -> bool:
+        """Exa's ``Exa-Signature: t=<unix>,v1=<hex>``: an HMAC-SHA256 of ``<t>.<raw body>`` under the
+        monitor's ``webhookSecret``, which every monitor gets when it's created (the route retries with
+        the row's when the config's mirror hasn't landed)."""
         secret = (config or {}).get("signing_secret")
-        if not secret:
-            return True  # no secret stored — accept (trigger not yet armed)
-        sent = (
-            headers.get("exa-signature")
-            or headers.get("x-exa-signature")
-            or headers.get("svix-signature")
-        )
-        if not sent:
+        sent = headers.get("exa-signature")
+        if not secret or not sent:
             return False
-        expected = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
-        return hmac.compare_digest(expected, sent)
+        parts = dict(part.split("=", 1) for part in sent.split(",") if "=" in part)
+        timestamp, provided = parts.get("t", ""), parts.get("v1", "")
+        try:
+            age = abs(time.time() - int(timestamp))
+        except (ValueError, OverflowError):
+            return False
+        if not provided or age > SIGNATURE_MAX_AGE_S:
+            return False
+        expected = hmac.new(secret.encode(), timestamp.encode() + b"." + body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected.encode(), provided.encode())
 
     # ------------------------------------------------------------------
     # Execute
@@ -1301,7 +1374,7 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     async def _trigger_monitor(self, c: ExaTriggerMonitorConfig, api_key: str) -> Dict[str, Any]:
         return await _exa_request(
-            api_key, "POST", f"/monitors/{c.monitor_id}/runs", action_name="trigger_monitor"
+            api_key, "POST", f"/monitors/{c.monitor_id}/trigger", action_name="trigger_monitor"
         )
 
     async def _list_monitor_runs(self, c: ExaListMonitorRunsConfig, api_key: str) -> Dict[str, Any]:

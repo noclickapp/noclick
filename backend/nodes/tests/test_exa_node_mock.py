@@ -15,11 +15,18 @@ Exercises every operation with mocked HTTP responses (no live API calls):
 
 import hashlib
 import hmac
+import time
 
+import httpx
 import pytest
-from unittest.mock import Mock, patch
+from fastapi import HTTPException
+from pydantic import ValidationError
+from unittest.mock import AsyncMock, Mock, patch
 
+from nodes.core.connection_evidence import collect_evidence
 from nodes.exa_node import (
+    MONITOR_RESULTS_EVENT,
+    monitor_period,
     ExaNode,
     ExaNodeConfig,
     ExaApiKeyCredential,
@@ -49,6 +56,7 @@ from nodes.exa_node import (
     ExaListWebsetsEventsConfig,
     ExaMonitorTriggerConfig,
 )
+from utils.webhook_routes import _apply_trigger_node_hooks
 
 
 @pytest.fixture
@@ -315,11 +323,15 @@ class TestExaMonitorsMock:
             config=ExaTriggerMonitorConfig(monitor_id="mon_1"), credentials=api_key_credentials
         )
         node = create_exa_node(config)
-        mock_client = create_mock_client(201, {"id": "monrun_1", "status": "running"})
+        mock_client = create_mock_client(200, {"triggered": True})
+        mock_client.request = AsyncMock(return_value=create_mock_response(200, {"triggered": True}))
         with patch("nodes.exa_node.httpx.AsyncClient", return_value=mock_client):
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "trigger_monitor"
+        # /runs only lists a monitor's runs; a POST there answers 404.
+        request = mock_client.request.call_args.kwargs
+        assert (request["method"], request["url"]) == ("POST", "https://api.exa.ai/monitors/mon_1/trigger")
 
     @pytest.mark.asyncio
     async def test_list_monitor_runs(self, api_key_credentials):
@@ -485,6 +497,72 @@ class TestExaTriggerMock:
         assert extra["external_webhook_id"] == "mon_99"
         assert extra["monitor_id"] == "mon_99"
         assert extra["signing_secret"] == "api-secret-xyz"
+        # A monitor with no trigger only ever runs by hand; with no events named, Exa also posts its lifecycle.
+        assert mock_req.call_args.kwargs["json_body"] == {
+            "search": {"query": "ai news"},
+            "trigger": {"type": "interval", "period": "1d"},
+            "webhook": {"url": "https://abc.hooks.example.test", "events": ["monitor.run.completed"]},
+        }
+
+    @pytest.mark.asyncio
+    async def test_a_monitor_runs_at_the_cadence_it_was_given(self):
+        with patch(
+            "nodes.exa_node._exa_request",
+            return_value={"status": "success", "data": {"id": "mon_99", "webhookSecret": "s"}},
+        ) as mock_req:
+            await ExaNode._register_external_webhook(
+                webhook_url="https://abc.hooks.example.test",
+                credential={"api_key": "exa_test"},
+                config={"monitor_query": "ai news", "cadence": "6h"},
+                node_id="node-1",
+            )
+        assert mock_req.call_args.kwargs["json_body"]["trigger"] == {"type": "interval", "period": "6h"}
+
+    @pytest.mark.asyncio
+    async def test_a_cadence_exa_cant_run_refuses_the_registration(self):
+        with patch("nodes.exa_node._exa_request") as mock_req, pytest.raises(ValueError, match="fixed interval"):
+            await ExaNode._register_external_webhook(
+                webhook_url="https://abc.hooks.example.test",
+                credential={"api_key": "exa_test"},
+                config={"monitor_query": "ai news", "cadence": "0 9 * * 1-5"},
+                node_id="node-1",
+            )
+        assert not mock_req.called
+
+    @pytest.mark.parametrize("cadence, period", [
+        ("1h", "1h"), ("6h", "6h"), ("1d", "1d"), ("7d", "7d"), (None, "1d"), ("", "1d"),
+        # Cron expressions saved before the field asked for an interval, the old default among them.
+        ("0 9 * * *", "1d"), ("15 * * * *", "1h"), ("0 */6 * * *", "6h"), ("30 8 * * 1", "7d"),
+    ])
+    def test_monitor_period(self, cadence, period):
+        assert monitor_period(cadence) == period
+
+    @pytest.mark.parametrize("cadence", [
+        "0 9 * * 1-5",  # weekdays: an interval would run it at weekends too
+        "0 9 1 * *",  # months differ in length
+        "0 */5 * * *",  # its last gap of a day is shorter
+        "*/30 * * * *",  # under Exa's hour
+        "30m", "0h", "1w", "1d12h", "every day",
+    ])
+    def test_a_cadence_exa_cant_run_is_refused_by_name(self, cadence):
+        with pytest.raises(ValueError, match="fixed interval"):
+            monitor_period(cadence)
+        # Where the builder, MCP and the canvas's writes meet it.
+        with pytest.raises(ValidationError, match="fixed interval"):
+            ExaMonitorTriggerConfig(monitor_query="q", cadence=cadence)
+
+    def test_a_changed_cadence_registers_again(self):
+        fields = ExaNode.registration_fingerprint_fields
+        assert fields({"monitor_query": "q", "cadence": "1d"}) != fields({"monitor_query": "q", "cadence": "6h"})
+
+    @pytest.mark.parametrize("event, fires", [
+        (MONITOR_RESULTS_EVENT, True),
+        ("monitor.created", False), ("monitor.updated", False), ("monitor.deleted", False),
+        ("monitor.run.created", False),
+    ])
+    def test_only_a_finished_run_fires_the_trigger(self, event, fires):
+        # Monitors registered before this asked for every event, and one torn down still says it was deleted.
+        assert ExaNode.filter_trigger_payload({"type": event, "data": {}}, {}) is fires
 
     @pytest.mark.asyncio
     async def test_unregister_external_webhook(self):
@@ -499,18 +577,95 @@ class TestExaTriggerMock:
             )
         assert mock_req.called
 
+    @staticmethod
+    def _signed(secret: str, body: bytes, *, at: float = None, sign: bytes = None) -> dict:
+        """The header Exa sends: ``t=<unix>,v1=<hmac of "<t>.<body>">``."""
+        t = str(int(time.time() if at is None else at))
+        v1 = hmac.new(secret.encode(), t.encode() + b"." + (body if sign is None else sign), hashlib.sha256).hexdigest()
+        return {"exa-signature": f"t={t},v1={v1}"}
+
     def test_verify_webhook_signature(self):
         secret = "topsecret"
-        body = b'{"event":"monitor.run.completed"}'
-        good_sig = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
-        assert ExaNode.verify_webhook_signature(
-            body, {"exa-signature": good_sig}, {"signing_secret": secret}
-        )
-        assert not ExaNode.verify_webhook_signature(
-            body, {"exa-signature": "deadbeef"}, {"signing_secret": secret}
-        )
-        # no secret stored yet -> accept (trigger not armed)
-        assert ExaNode.verify_webhook_signature(body, {}, {})
+        body = b'{"type":"monitor.run.completed"}'
+        config = {"signing_secret": secret}
+        assert ExaNode.verify_webhook_signature(body, self._signed(secret, body), config)
+        # Signed by someone else, or over another body.
+        assert not ExaNode.verify_webhook_signature(body, self._signed("another", body), config)
+        assert not ExaNode.verify_webhook_signature(body, self._signed(secret, body, sign=b"{}"), config)
+        # The HMAC of the body alone was never what Exa signs.
+        bare = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+        assert not ExaNode.verify_webhook_signature(body, {"exa-signature": bare}, config)
+        assert not ExaNode.verify_webhook_signature(body, {"exa-signature": f"t={int(time.time())},v1={bare}"}, config)
+        assert not ExaNode.verify_webhook_signature(body, {}, config)
+
+    def test_a_signature_older_or_newer_than_five_minutes_is_refused(self):
+        secret, body = "topsecret", b"{}"
+        config = {"signing_secret": secret}
+        now = time.time()
+        assert ExaNode.verify_webhook_signature(body, self._signed(secret, body, at=now - 280), config)
+        assert not ExaNode.verify_webhook_signature(body, self._signed(secret, body, at=now - 320), config)
+        assert not ExaNode.verify_webhook_signature(body, self._signed(secret, body, at=now + 320), config)
+
+    @pytest.mark.parametrize("header", ["", "t=,v1=", "v1=abc", "t=123", "t=soon,v1=abc", "abc",
+                                        "t=" + "9" * 400 + ",v1=abc", "t=" + "9" * 5000 + ",v1=abc"])
+    def test_a_malformed_signature_is_refused_never_raised(self, header):
+        assert not ExaNode.verify_webhook_signature(b"{}", {"exa-signature": header}, {"signing_secret": "s"})
+
+    def test_a_signature_that_isnt_ascii_is_refused_never_raised(self):
+        header = f"t={int(time.time())},v1=caf\u00e9"
+        assert not ExaNode.verify_webhook_signature(b"{}", {"exa-signature": header}, {"signing_secret": "s"})
+
+    @pytest.mark.asyncio
+    async def test_no_secret_in_the_config_is_judged_by_the_rows_never_waved_through(self):
+        """The config's secret lags the row's until the autosave lands: unsigned mail mustn't pass meanwhile."""
+        secret, body = "row-secret", b'{"type":"monitor.run.completed"}'
+        node = {"id": "n1", "type": "automation-exa", "config": {"operation": "on_monitor_results"}}
+        signed = self._signed(secret, body)["exa-signature"]
+        assert await _apply_trigger_node_hooks(node, body, {"Exa-Signature": signed}, webhook_secret=secret) is None
+        for headers, row_secret in (({}, secret), (self._signed("another", body), secret), ({}, None)):
+            with pytest.raises(HTTPException) as refused:
+                await _apply_trigger_node_hooks(node, body, headers, webhook_secret=row_secret)
+            assert refused.value.status_code == 401
+
+
+class TestExaConnectionEvidence:
+    """A key with no Websets access is still a good key: the probe mustn't need more than the key."""
+
+    @staticmethod
+    def _exa(monitors: httpx.Response):
+        def answer(request: httpx.Request) -> httpx.Response:
+            if request.url.path.startswith("/websets"):
+                return httpx.Response(401, json={"error": "Unauthorized"})
+            assert (request.method, request.url.path) == ("GET", "/monitors")
+            return monitors
+
+        transport = httpx.MockTransport(answer)
+        real = httpx.AsyncClient
+        return patch("nodes.exa_node.httpx.AsyncClient", lambda **kw: real(transport=transport, **kw))
+
+    async def _probe(self, monitors: httpx.Response):
+        with self._exa(monitors):
+            return await collect_evidence(
+                node_type="automation-exa", credential_data={"api_key": "exa-key"}, user_id="user-1"
+            )
+
+    @pytest.mark.asyncio
+    async def test_a_key_without_websets_connects(self):
+        result = await self._probe(httpx.Response(200, json={"data": [], "hasMore": False, "nextCursor": None}))
+        assert (result.reachable, result.error, result.samples) == (True, None, [])
+
+    @pytest.mark.asyncio
+    async def test_the_teams_own_monitors_are_the_proof(self):
+        result = await self._probe(httpx.Response(200, json={"data": [
+            {"id": "mon_1", "name": "Competitor launches"}, {"id": "mon_2", "name": None},
+        ], "hasMore": False, "nextCursor": None}))
+        assert result.reachable is True and result.noun == "monitors"
+        assert [s.label for s in result.samples] == ["Competitor launches", "mon_2"]
+
+    @pytest.mark.asyncio
+    async def test_a_key_exa_refuses_is_still_refused(self):
+        result = await self._probe(httpx.Response(401, json={"error": "Unauthorized"}))
+        assert result.reachable is False and "Unauthorized" in result.error
 
 
 class TestExaErrorHandlingMock:

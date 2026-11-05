@@ -933,10 +933,26 @@
           "type": "string"
         },
         "cadence": {
-          "default": "0 9 * * *",
-          "description": "How often the monitor runs, as a cron expression (default: daily at 9am UTC)",
-          "title": "Cadence (Cron)",
-          "type": "string"
+          "default": "1d",
+          "description": "How often the monitor runs, counted from when it's created: hours or days, at least an hour (1h, 6h, 1d, 7d)",
+          "enum": [
+            "1h",
+            "6h",
+            "12h",
+            "1d",
+            "7d"
+          ],
+          "enumNames": [
+            "Every hour",
+            "Every 6 hours",
+            "Every 12 hours",
+            "Daily",
+            "Weekly"
+          ],
+          "title": "Cadence",
+          "type": "string",
+          "x-enum-allow-custom": true,
+          "x-enum-searchable": true
         },
         "webhook_url": {
           "anyOf": [
