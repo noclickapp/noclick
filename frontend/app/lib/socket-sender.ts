@@ -7,6 +7,7 @@
 import { socketReceiver, registerRequestCallback, cleanupRequestCallback } from './socket-receiver';
 import type {
   ClientToServerEvents,
+  EventRouting,
   SocketEnvironment,
   RequestResponseMap
 } from '~/types/socket-events.generated';
@@ -14,9 +15,10 @@ import { ClientEventNames } from '~/types/socket-events.generated';
 import { profilingStore } from './profiling-store';
 import { trackSendDropped } from './telemetry-socket';
 
-// Type for any event object that includes its event_name
+// Type for any event object that includes its event_name. A routed event whose
+// handler reads a plain dict has no request model, so it's named by its route alone.
 export type EventWithName = {
-  event_name: keyof ClientToServerEvents;
+  event_name: keyof ClientToServerEvents | keyof typeof EventRouting;
   request_id?: string | null;
   tag?: string; // Optional human-readable label for profiling
   [key: string]: any;
