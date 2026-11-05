@@ -88,6 +88,13 @@ jobs:
             echo "::error::npm returned a non-canonical version: $PUBLISHED"
             exit 1
           fi
+          # The source names its own release line: never publish an older line's
+          # code as the next patch of a newer one.
+          OWN=$(node -p "require('./package.json').version")
+          if [[ "${OWN%.*}" != "${PUBLISHED%.*}" ]]; then
+            echo "::error::sdk/typescript is version $OWN but npm serves $PUBLISHED: this source isn't that release line"
+            exit 1
+          fi
           npm version "$PUBLISHED" --no-git-tag-version --allow-same-version
           npm version patch --no-git-tag-version
           echo "VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
@@ -159,6 +166,12 @@ jobs:
           PUBLISHED=$(curl -fsSL https://pypi.org/pypi/noclick/json | python -c "import sys,json; print(json.load(sys.stdin)['info']['version'])")
           if [[ ! "$PUBLISHED" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
             echo "::error::PyPI returned a non-canonical version: $PUBLISHED"
+            exit 1
+          fi
+          # The source names its own release line, as for npm.
+          OWN=$(sed -n 's/^version = "\(.*\)"$/\1/p' pyproject.toml)
+          if [[ "${OWN%.*}" != "${PUBLISHED%.*}" ]]; then
+            echo "::error::sdk/python is version $OWN but PyPI serves $PUBLISHED: this source isn't that release line"
             exit 1
           fi
           IFS='.' read -r MAJOR MINOR PATCH <<< "$PUBLISHED"
