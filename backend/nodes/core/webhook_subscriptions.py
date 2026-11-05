@@ -16,11 +16,16 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
+from utils.registration_verdict import RegistrationUnverified
+
 logger = logging.getLogger(__name__)
 
 
 def _as_uuid(value):
     return UUID(value) if isinstance(value, str) else value
+
+
+UNVERIFIED_NOTE = " (couldn't re-check just now)"
 
 
 @dataclass(frozen=True)
@@ -238,6 +243,28 @@ class AppEventTriggerMixin:
         return True
 
     @classmethod
+    def rows_are_registration(
+        cls,
+        rows: List[Dict[str, Any]],
+        *,
+        event_types: List[str],
+        credential_id: Optional[str],
+        user_id: str,
+        config: Optional[Dict[str, Any]],
+        tenant_id: Optional[str] = None,
+    ) -> bool:
+        """Whether a node's rows already ARE the desired registration — the one
+        predicate the reconciler's fast path, re-registration and the
+        unverified-attempt rule share."""
+        return cls.subscription_matches_config(rows, config) and subscription_rows_match(
+            rows,
+            event_types=event_types,
+            credential_id=credential_id,
+            user_id=user_id,
+            tenant_id=tenant_id,
+        )
+
+    @classmethod
     async def _resolve_subscription_tenant(cls, credential, config):
         return await cls._resolve_tenant_id(credential)
 
@@ -320,11 +347,12 @@ class AppEventTriggerMixin:
             raise ValueError("Could not determine the connected account")
 
         existing = await get_node_subscriptions(pool, str(workflow_id), node_id)
-        if not subscription_rows_match(
+        if not cls.rows_are_registration(
             existing,
             event_types=event_types,
             credential_id=credential_id,
             user_id=user_id,
+            config=config,
             tenant_id=str(tenant_id),
         ):
             await save_subscriptions(
@@ -369,17 +397,35 @@ class AppEventTriggerMixin:
         The panel loader and the reconciler both stamp exactly this, so the
         Status field can never say Active for a trigger the provider will
         not feed. A health probe that fails is "cannot judge" — the
-        registration itself is never failed by it."""
-        status = await cls.register_node_subscriptions(
-            pool,
-            user_id=user_id,
-            workflow_id=workflow_id,
-            node_id=node_id,
-            operation=operation,
-            credential_id=credential_id,
-            credential=credential,
-            config=config,
-        )
+        registration itself is never failed by it, and neither is a
+        registration on record by an attempt that reached no verdict."""
+        try:
+            status = await cls.register_node_subscriptions(
+                pool,
+                user_id=user_id,
+                workflow_id=workflow_id,
+                node_id=node_id,
+                operation=operation,
+                credential_id=credential_id,
+                credential=credential,
+                config=config,
+            )
+        except RegistrationUnverified as unverified:
+            event_types = cls.subscription_events_for_config(operation, config)
+            rows = await get_node_subscriptions(pool, str(workflow_id), node_id)
+            if not cls.rows_are_registration(
+                rows,
+                event_types=event_types,
+                credential_id=credential_id,
+                user_id=user_id,
+                config=config,
+            ):
+                raise
+            logger.warning(
+                f"[{cls.__name__}] Node {node_id} stays registered through an "
+                f"unverified attempt: {unverified}"
+            )
+            status = cls._subscription_status_line(event_types, config) + UNVERIFIED_NOTE
         try:
             advisory = await cls.check_registration_health(credential, operation, config)
         except (ImportError, AttributeError, TypeError, NameError):
@@ -429,6 +475,11 @@ class AppEventTriggerMixin:
         )
         if credential is None:
             return _fail(cls._credential_prompt)
+        # The panel sends credential ids beside its config; headless callers
+        # carry them inside. Judge rows against the same config shape either way.
+        config = dict(context or {})
+        if credential_ids is not None:
+            config.setdefault("credentialIds", credential_ids)
 
         try:
             # Rows are stamped with the workflow OWNER — the identity the
@@ -446,10 +497,10 @@ class AppEventTriggerMixin:
                 user_id=owner_id,
                 workflow_id=workflow_id,
                 node_id=node_id,
-                operation=(context or {}).get("operation"),
+                operation=config.get("operation"),
                 credential_id=credential_id,
                 credential=credential,
-                config=context,
+                config=config,
             )
         except Exception as e:
             logger.error(

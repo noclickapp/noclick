@@ -1300,8 +1300,10 @@ class FacebookNode(AppEventTriggerMixin, WorkflowNode):
     @classmethod
     async def register_node_subscriptions(cls, pool, *, user_id, workflow_id, node_id,
                                           operation, credential_id, credential, config=None):
+        from nodes.core.oauth_refresh import OAuthRefreshError
         from utils.credential_loader import load_credential
         from utils.facebook_subscriptions import ensure_page_subscription
+        from utils.registration_verdict import RegistrationUnverified
 
         config = {**(config or {}), "operation": operation}
         if not credential_id or cls._pick_trigger_credential_id(config.get("credentialIds")) != credential_id:
@@ -1311,8 +1313,11 @@ class FacebookNode(AppEventTriggerMixin, WorkflowNode):
             current = await load_credential(pool, user_id, credential_id, raise_on_error=True)
             if current:
                 current = await cls.freshen_credential(current, pool=pool, user_id=user_id, credential_id=credential_id)
-        except Exception:
-            raise ValueError("Facebook credential verification is unavailable; retry registration.") from None
+        except Exception as e:
+            # Only a refresh Facebook refused is a verdict; a DB or network blip is not.
+            unverified = not isinstance(e, OAuthRefreshError) or e.transient
+            raise (RegistrationUnverified if unverified else ValueError)(
+                "Facebook credential verification is unavailable; retry registration.") from None
         if not current:
             raise ValueError("The workflow owner cannot use this Facebook credential; reconnect or share it explicitly.")
         await ensure_page_subscription(current, config)

@@ -14,7 +14,9 @@ import httpx
 from utils.facebook_events import FB_WEBHOOK_FIELDS, facebook_page_id
 from utils.meta_subscriptions import (
     MetaAuthorizationDenied, graph_request, read_edge, read_subscribed_fields, registration_lease,
+    write_subscribed_fields,
 )
+from utils.registration_verdict import RegistrationUnverified
 
 GRAPH_API_VERSION = "v25.0"
 FB_API_BASE = f"https://graph.facebook.com/{GRAPH_API_VERSION}"
@@ -163,13 +165,13 @@ async def ensure_page_subscription(credential, config):
             wanted = current | fields
             if wanted != current:
                 await check_owner()
-                result = await request("POST", f"{page_id}/subscribed_apps", data={"subscribed_fields": ",".join(sorted(wanted))})
+                result = await write_subscribed_fields(request, page_id, wanted)
                 if result.get("success") is not True:
                     raise ValueError("Facebook did not confirm the subscription update; remote fields may have changed; no workflow subscription was saved.")
                 try:
                     verified = await read()
                 except ValueError:
-                    raise ValueError("Facebook accepted the subscription update but readback could not be verified; remote fields may have changed; no workflow subscription was saved.") from None
+                    raise RegistrationUnverified("Facebook accepted the subscription update but readback could not be verified; remote fields may have changed; no workflow subscription was saved.") from None
                 if not wanted.issubset(verified):
                     raise ValueError("Facebook readback did not confirm every subscribed field; no workflow subscription was saved.")
     return page_id

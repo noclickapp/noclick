@@ -25,6 +25,7 @@ import asyncio
 import json
 import logging
 import time
+from functools import partial
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 import httpx
@@ -1642,8 +1643,12 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
 
         rows = await list_subscriptions_for_tenant(pool, cls._app_provider, account_id)
         events = {row["event_type"] for row in rows if (str(row["workflow_id"]), row["node_id"]) != (str(workflow_id), node_id)}
+        return cls._subscription_fields(events | set(event_types))
+
+    @staticmethod
+    def _subscription_fields(events) -> set[str]:
         # Instagram Login delivers mentions through the comments field.
-        return {"comments" if event == "mentions" else event for event in events | set(event_types)}
+        return {"comments" if event == "mentions" else event for event in events}
 
     @staticmethod
     def _registration_lease(account_id: str, app_id: str):
@@ -1656,7 +1661,10 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
         cls, pool, *, user_id, workflow_id, node_id, operation,
         credential_id, credential, config=None,
     ):
+        from nodes.core.webhook_subscriptions import get_node_subscriptions
         from utils.instagram_webhooks import require_instagram_webhook_configuration
+        from utils.meta_subscriptions import write_subscribed_fields
+        from utils.registration_verdict import RegistrationUnverified
 
         if isinstance(credential, dict) and credential.get("credential_type") == "instagram_oauth":
             if operation != "on_mention":
@@ -1665,7 +1673,7 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
                     and cls._pick_trigger_credential_id(config["credentialIds"]) != credential_id):
                 raise ValueError(cls._credential_prompt)
             from utils.instagram_facebook import PROVIDER, ensure_instagram_facebook_subscription
-            from nodes.core.webhook_subscriptions import get_node_subscriptions, save_subscriptions, subscription_rows_match
+            from nodes.core.webhook_subscriptions import save_subscriptions, subscription_rows_match
 
             credential = await cls.freshen_credential(
                 credential, pool=pool, user_id=user_id, credential_id=credential_id,
@@ -1694,9 +1702,20 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
         )
         credential = cls._require_instagram_login_credential(credential)
         account_id = credential["instagram_user_id"]
+        registered = cls.rows_are_registration(
+            await get_node_subscriptions(pool, str(workflow_id), node_id), event_types=event_types,
+            credential_id=credential_id, user_id=user_id, config=config, tenant_id=account_id,
+        )
         async with httpx.AsyncClient(
             timeout=15.0, headers={"Authorization": f"Bearer {credential['access_token']}"},
         ) as client:
+            if registered:
+                # Re-checked with a read, never re-posted: a POST per panel load ran
+                # the account into Meta's rate limit. A read with no verdict keeps
+                # the registration (register_and_describe).
+                needed = cls._subscription_fields(event_types)
+                if any(needed <= fields for fields in await cls._read_subscription_fields(client, account_id)):
+                    return cls._subscription_status_line(event_types, config)
             identity = await cls._registration_request(client, "GET", "me", params={"fields": "user_id"})
             if str(identity.get("user_id")) != account_id:
                 raise ValueError("Instagram Login account identity changed; reconnect the intended account before activating this trigger.")
@@ -1704,10 +1723,7 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
                 wanted = await cls._desired_subscription_fields(pool, account_id, workflow_id, node_id, event_types)
                 await check_owner()
                 # The POST replaces this app's field set, so it converges the account to exactly `wanted`.
-                result = await cls._registration_request(
-                    client, "POST", f"{account_id}/subscribed_apps",
-                    data={"subscribed_fields": ",".join(sorted(wanted))},
-                )
+                result = await write_subscribed_fields(partial(cls._registration_request, client), account_id, wanted)
                 if result.get("success") is not True:
                     raise ValueError("Instagram did not confirm the account subscription; no workflow subscription was saved.")
                 try:
@@ -1715,7 +1731,7 @@ class InstagramNode(AppEventTriggerMixin, ApifyRunnerMixin, WorkflowNode):
                 except ValueError:
                     # POST already succeeded. Do not falsely claim the
                     # provider was unchanged, or activate a local row.
-                    raise ValueError(
+                    raise RegistrationUnverified(
                         "Instagram accepted the subscription update but its readback could not be verified; "
                         "remote fields may have changed and no workflow subscription was saved."
                     ) from None

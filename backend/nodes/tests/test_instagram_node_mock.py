@@ -1642,7 +1642,8 @@ class TestInstagramEventRegistration:
         assert s.posts[-1] == {"comments", "messages"}
         assert s.rows[(TRIGGER_WORKFLOW, "ig-messages")][0]["event_type"] == "messages"
         await s.register("on_message", "ig-messages")
-        assert s.posts[-1] == {"comments", "messages"} and s.save.await_count == 2
+        # Idempotent: the registered node is re-checked with a read, never re-posted.
+        assert len(s.posts) == 2 and s.requests[-1].method == "GET" and s.save.await_count == 2
         before = len(s.requests)
         await InstagramNode.cleanup_external_webhook(object(), TRIGGER_WORKFLOW, "ig-comments", {})
         assert len(s.requests) == before
@@ -2227,7 +2228,8 @@ class TestInstagramMentionTrigger:
         assert s.rows[(TRIGGER_WORKFLOW, "ig-mentions")][0]["event_type"] == "mentions"
         await s.register("on_comment", "ig-comments")
         await s.register("on_mention", "ig-mentions")
-        assert s.posts == [{"comments", "messages"}] * 3
+        # Re-registering the already-registered mentions node is a read, not a third POST.
+        assert s.posts == [{"comments", "messages"}] * 2 and s.requests[-1].method == "GET"
         assert len(s.rows) == 3 and s.save.await_count == 2
 
     @pytest.mark.parametrize("field", ["comments", "mentions"])

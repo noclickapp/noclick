@@ -532,6 +532,26 @@ async def test_provider_readback_failure_never_saves_local_active_rows(facebook_
     assert not s.rows
 
 
+@pytest.mark.parametrize("registered", [True, False])
+async def test_a_meta_rate_limit_never_unregisters_a_registered_page_trigger(facebook_world, registered):
+    s = facebook_world
+    if registered:
+        await s.provision()
+    rows, posts, saves = deepcopy(s.rows), len(s.posts), s.save.await_count
+    s.failure = lambda r: (httpx.Response(400, json={"error": {"code": 613}})
+                           if r.url.path.endswith("/subscribed_apps") else None)
+    result = await s.provision()
+    if registered:
+        # Provisioning drops None mirrors, so a cleared trigger_error is absent.
+        assert result["trigger_registered"] is True and "trigger_error" not in result
+        assert result["subscription_status"] == "Registered — listening on the selected Facebook Page (couldn't re-check just now)"
+    else:
+        assert result["trigger_registered"] is False
+        assert result["trigger_error"] == ("Not registered: Facebook had a temporary error on the subscription "
+                                           "request (HTTP 400 (code 613)); retry later.")
+    assert s.rows == rows and len(s.posts) == posts and s.save.await_count == saves
+
+
 @pytest.mark.parametrize("mode", [None, "manual"])
 async def test_manual_mode_provisions_original_callback_and_rejects_managed_loader(facebook_world, monkeypatch, mode):
     from utils.webhook_manager import WebhookManager

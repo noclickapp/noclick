@@ -2037,6 +2037,7 @@ class WebhookManager:
             event_types=desired_events,
             credential_id=credential_id,
             user_id=owner_id,
+            config=node_config,
         ) and not _failure_on_record(node_config):
             decision = Decision("live", "converged", held=True)
         elif not credential_id or (plan_only and not hold_starts

@@ -9,8 +9,12 @@ from uuid import uuid4
 
 import httpx
 
+from utils.registration_verdict import RegistrationUnverified
+
 logger = logging.getLogger(__name__)
 _FIELD = re.compile(r"[A-Za-z][A-Za-z0-9_]*\Z")
+# Meta's throttling codes: app, user, Page, hourly and business-use-case limits.
+_THROTTLED = frozenset({4, 17, 32, 341, 613, *range(80001, 80015)})
 _PRIVATE_REQUEST = ContextVar("meta_subscription_request", default=False)
 
 
@@ -30,6 +34,10 @@ class MetaAuthorizationDenied(ValueError):
     """A definitive provider rejection, unlike an unavailable verification."""
 
 
+class MetaUnavailable(RegistrationUnverified):
+    """Meta could not answer just now (outage, throttling, transport)."""
+
+
 async def graph_request(client, method, path, *, base, label, params=None, data=None, headers=None, purpose="subscription"):
     # Callers provide fixed relative paths and tokens in Authorization headers.
     for name in tuple(logging.Logger.manager.loggerDict):
@@ -40,7 +48,7 @@ async def graph_request(client, method, path, *, base, label, params=None, data=
         options = {"headers": headers} if headers is not None else {}
         response = await client.request(method, f"{base}/{path}", params=params, data=data, **options)
     except httpx.HTTPError:
-        raise ValueError(f"{label} {purpose} request failed; retry later.") from None
+        raise MetaUnavailable(f"{label} {purpose} request failed; retry later.") from None
     finally:
         _PRIVATE_REQUEST.reset(private)
     try:
@@ -51,9 +59,10 @@ async def graph_request(client, method, path, *, base, label, params=None, data=
     if isinstance(error, dict) and error.get("is_transient") is not True and error.get("code") in (10, 102, 190, 200):
         raise MetaAuthorizationDenied(f"{label} account authorization is unavailable; reconnect with the required Page permissions.")
     code = _meta_code(error)
-    if response.status_code >= 500 or (isinstance(error, dict) and error.get("is_transient") is True):
-        # Meta's own outage, not the account's: the same request may well pass next time.
-        raise ValueError(f"{label} had a temporary error on the {purpose} request (HTTP {response.status_code}{code}); retry later.")
+    if response.status_code == 429 or response.status_code >= 500 or (isinstance(error, dict) and (
+            error.get("is_transient") is True or error.get("code") in _THROTTLED)):
+        # Meta's outage or rate limit, not the account's: the same request may well pass next time.
+        raise MetaUnavailable(f"{label} had a temporary error on the {purpose} request (HTTP {response.status_code}{code}); retry later.")
     if body is None:
         raise ValueError(f"{label} {purpose} returned an invalid response.")
     if response.status_code != 200:
@@ -117,6 +126,16 @@ async def read_subscription_field_sets(request, account_id, *, label):
     return [_subscribed_fields(row, label) for row in rows]
 
 
+async def write_subscribed_fields(request, account_id, fields):
+    """POST an account's subscribed fields. Only a node not yet registered, or an
+    account Meta says lacks its fields, gets here: a write Meta won't take is a
+    failed registration then, never a blip a registration on record rides out."""
+    try:
+        return await request("POST", f"{account_id}/subscribed_apps", data={"subscribed_fields": ",".join(sorted(fields))})
+    except RegistrationUnverified as unsent:
+        raise ValueError(str(unsent)) from None
+
+
 def _subscribed_fields(row, label):
     fields = row.get("subscribed_fields")
     if not isinstance(fields, list) or any(not isinstance(field, str) or not _FIELD.fullmatch(field) for field in fields):
@@ -136,25 +155,25 @@ async def registration_lease(account_id, app_id, *, provider, label):
         async with asyncio.timeout(5):
             acquired = await redis.set(key, owner, nx=True, ex=90)
     except Exception:
-        raise ValueError(f"{label} registration lock is unavailable; retry later.") from None
+        raise RegistrationUnverified(f"{label} registration lock is unavailable; retry later.") from None
     if not acquired:
-        raise ValueError(f"{label} account registration is already in progress; retry later.")
+        raise RegistrationUnverified(f"{label} account registration is already in progress; retry later.")
 
     async def check_owner():
         try:
             async with asyncio.timeout(5):
                 held = await redis.get(key)
         except Exception:
-            raise ValueError(f"{label} registration lock is unavailable; retry later.") from None
+            raise RegistrationUnverified(f"{label} registration lock is unavailable; retry later.") from None
         if held not in (owner, owner.encode()):
-            raise ValueError(f"{label} registration lock was lost; remote fields may have changed; retry verification.")
+            raise RegistrationUnverified(f"{label} registration lock was lost; remote fields may have changed; retry verification.")
 
     try:
         async with asyncio.timeout(45):
             yield check_owner
             await check_owner()
     except TimeoutError:
-        raise ValueError(f"{label} subscription verification timed out; remote fields may have changed; retry registration later.") from None
+        raise RegistrationUnverified(f"{label} subscription verification timed out; remote fields may have changed; retry registration later.") from None
     finally:
         try:
             async with asyncio.timeout(5):

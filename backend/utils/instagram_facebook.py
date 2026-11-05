@@ -15,6 +15,7 @@ from utils.instagram_webhooks import (
 )
 from utils.meta_subscriptions import (
     MetaAuthorizationDenied, graph_request, read_edge, read_subscribed_fields, registration_lease,
+    write_subscribed_fields,
 )
 
 PROVIDER = "instagram_facebook"
@@ -68,7 +69,7 @@ async def ensure_instagram_facebook_subscription(credential):
             current = await read()
             if not current:
                 await check_owner()
-                result = await request("POST", f"{page}/subscribed_apps", data={"subscribed_fields": "feed"})
+                result = await write_subscribed_fields(request, page, {"feed"})
                 if result.get("success") is not True or "feed" not in await read():
                     raise ValueError("Instagram Page subscription was not verified; no workflow subscription was saved.")
     return credential["instagram_user_id"]
