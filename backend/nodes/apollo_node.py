@@ -1076,10 +1076,11 @@ class ApolloUpdateContactSequenceStatusConfig(BaseModel):
         ..., title="Sequence ID", description="ID of the sequence",
         json_schema_extra={"x-dynamic-options": {"field_name": "sequence_id", "placeholder": "Select sequence...", "searchable": True, "allow_custom": True}},
     )
-    status: Literal["finished", "stop", "remove"] = Field(
+    status: str = Field(
         ...,
         title="Status",
-        description="Mark the contact finished, stop progress, or remove it from the sequence",
+        description="Sequence status; saved legacy statuses retain their original request behavior",
+        json_schema_extra={"enum": ["active", "paused", "finished", "bounced", "stop", "remove"]},
     )
 
 
@@ -1462,13 +1463,16 @@ class ApolloCreateCustomFieldConfig(BaseModel):
         description="Type of entity this field applies to",
         json_schema_extra={"enum": ["contact", "account", "opportunity"]},
     )
-    widget_type: Optional[Literal["text", "textarea", "number", "date", "checkbox"]] = Field(
+    widget_type: Optional[str] = Field(
         "text",
         title="Widget Type",
         description="Input widget type for the field",
         json_schema_extra={
-            "enum": ["text", "textarea", "number", "date", "checkbox"]
+            "enum": ["text", "textarea", "number", "date", "dropdown", "checkbox"]
         },
+    )
+    options: Optional[List[str]] = Field(
+        None, title="Options", description="Options for dropdown fields"
     )
 
 
@@ -1874,6 +1878,29 @@ class ApolloNode(WorkflowNode):
                         data = response.json()
                     except Exception:
                         data = {"raw": response.text}
+
+                # Keep saved downstream references while retaining every provider
+                # field. Never overwrite a legacy key already in the response.
+                if isinstance(data, dict):
+                    collection = {
+                        "create_multiple_accounts": "accounts",
+                        "create_multiple_contacts": "contacts",
+                    }.get(action_name)
+                    if collection and collection not in data:
+                        created = data.get(f"created_{collection}")
+                        existing = data.get(f"existing_{collection}")
+                        if isinstance(created, list) or isinstance(existing, list):
+                            data[collection] = (created if isinstance(created, list) else []) + (
+                                existing if isinstance(existing, list) else []
+                            )
+                    if action_name == "create_custom_field" and "typed_custom_field" not in data:
+                        fields = data.get("typed_custom_fields")
+                        if isinstance(fields, list) and len(fields) == 1:
+                            data["typed_custom_field"] = fields[0]
+                    if action_name == "get_api_usage_and_limits":
+                        # A successful authenticated usage request also proves
+                        # the legacy authentication-health condition.
+                        data.setdefault("is_logged_in", True)
 
                 return {
                     "status": "success",
@@ -2433,6 +2460,20 @@ class ApolloNode(WorkflowNode):
         credentials: ApolloCredential,
     ) -> Dict[str, Any]:
         """Update a contact's status in a sequence."""
+        # These saved values have no equivalent documented mode. Preserve their
+        # original endpoint/payload rather than silently changing their meaning.
+        if config.status not in {"finished", "stop", "remove"}:
+            return await self._make_request(
+                method="POST",
+                endpoint="/emailer_campaigns/update_contact_status",
+                credentials=credentials,
+                json_body={
+                    "contact_id": config.contact_id,
+                    "emailer_campaign_id": config.sequence_id,
+                    "status": config.status,
+                },
+                action_name="update_contact_sequence_status",
+            )
         return await self._make_request(
             method="POST",
             endpoint="/emailer_campaigns/remove_or_stop_contact_ids",
@@ -2846,6 +2887,24 @@ class ApolloNode(WorkflowNode):
         self, config: ApolloCreateCustomFieldConfig, credentials: ApolloCredential
     ) -> Dict[str, Any]:
         """Create a custom field."""
+        # Saved dropdown/options configurations cannot be expressed by /fields.
+        # Retain the legacy path and all configured values for those workflows.
+        if (
+            config.widget_type not in {None, "text", "textarea", "number", "date", "checkbox"}
+            or config.options is not None
+        ):
+            body: Dict[str, Any] = {"name": config.name, "field_type": config.field_type}
+            if config.widget_type:
+                body["widget_type"] = config.widget_type
+            if config.options is not None:
+                body["options"] = config.options
+            return await self._make_request(
+                method="POST",
+                endpoint="/typed_custom_fields",
+                credentials=credentials,
+                json_body=body,
+                action_name="create_custom_field",
+            )
         body: Dict[str, Any] = {
             "label": config.name,
             "modality": config.field_type,

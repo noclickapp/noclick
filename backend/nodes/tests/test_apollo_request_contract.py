@@ -58,6 +58,16 @@ from nodes.apollo_node import ApolloNode, ApolloNodeConfig
          {"contact_ids[]": ["contact"], "emailer_campaign_ids[]": ["sequence"], "mode": "mark_as_finished"}),
         ({"operation": "create_custom_field", "name": "Test Name", "field_type": "contact", "widget_type": "text"},
          "POST", "/fields", "json_body", {"label": "Test Name", "modality": "contact", "type": "string"}),
+        ({"operation": "create_deal", "name": "Demo", "deal_stage_id": "stage", "amount": 12.5},
+         "POST", "/opportunities", "json_body", {"name": "Demo", "opportunity_stage_id": "stage", "amount": "12.5"}),
+        ({"operation": "create_custom_field", "name": "Test Name", "field_type": "contact", "widget_type": "checkbox"},
+         "POST", "/fields", "json_body", {"label": "Test Name", "modality": "contact", "type": "boolean"}),
+        ({"operation": "create_task", "type": "linkedin_interact"},
+         "POST", "/tasks", "json_body", {"status": "scheduled", "priority": "medium", "type": "linkedin_step_interact_post"}),
+        ({"operation": "add_contacts_to_outreach_sequence", "sequence_id": "sequence", "emailer_campaign_id": "override",
+          "contact_ids": ["contact"], "send_email_from_email_account_id": "sender"},
+         "POST", "/emailer_campaigns/sequence/add_contact_ids", "params",
+         {"contact_ids[]": ["contact"], "emailer_campaign_id": "override", "send_email_from_email_account_id": "sender"}),
         ({"operation": "get_api_usage_and_limits"}, "POST", "/usage_stats/api_usage_stats", "json_body", {}),
         ({"operation": "create_task", "contact_id": "contact", "user_id": "owner", "due_at": "2025-02-15T08:10:30Z", "type": "email"},
          "POST", "/tasks", "json_body", {"contact_id": "contact", "user_id": "owner", "due_at": "2025-02-15T08:10:30Z",
@@ -80,15 +90,15 @@ async def test_documented_request_arguments(config, method, endpoint, location, 
         assert ("json_body" if location == "params" else "params") not in request
 
 
-@pytest.mark.parametrize(
-    "config",
-    [
-        {"operation": "update_contact_sequence_status", "contact_id": "contact", "sequence_id": "sequence", "status": "active"},
-        {"operation": "create_custom_field", "name": "Test Name", "field_type": "contact", "widget_type": "dropdown"},
-    ],
-)
-def test_rejects_undocumented_statuses_and_widgets(config):
-    from pydantic import ValidationError
-
-    with pytest.raises(ValidationError):
-        ApolloNodeConfig(config=config, credentials={"credential_type": "apollo_api_key", "api_key": "fake"})
+@pytest.mark.asyncio
+async def test_bulk_person_reveal_flags_are_query_parameters_not_json():
+    config = {"operation": "enrich_multiple_people", "details": [{"email": "jordan@ymail.com"}],
+              "reveal_personal_emails": True, "reveal_phone_number": True}
+    node = ApolloNode(node_id="contract", node_type="automation-apollo", node_data={}, sio=Mock(),
+                      config=ApolloNodeConfig(config=config, credentials={"credential_type": "apollo_api_key", "api_key": "fake"}))
+    node._make_request = AsyncMock(return_value={})
+    await node.execute({})
+    request = node._make_request.call_args.kwargs
+    assert request["endpoint"] == "/people/bulk_match"
+    assert request["json_body"] == {"details": config["details"]}
+    assert request["params"] == {"reveal_personal_emails": True, "reveal_phone_number": True}

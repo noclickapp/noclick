@@ -817,7 +817,7 @@ class TestSequenceOperations:
         )
 
         config = ApolloUpdateContactSequenceStatusConfig(
-            contact_id=contact_id, sequence_id=sequence_id, status="stop"
+            contact_id=contact_id, sequence_id=sequence_id, status="paused"
         )
         node = create_node(config)
 

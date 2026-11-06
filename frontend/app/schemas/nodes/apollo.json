@@ -700,13 +700,6 @@
         "widget_type": {
           "anyOf": [
             {
-              "enum": [
-                "text",
-                "textarea",
-                "number",
-                "date",
-                "checkbox"
-              ],
               "type": "string"
             },
             {
@@ -720,9 +713,26 @@
             "textarea",
             "number",
             "date",
+            "dropdown",
             "checkbox"
           ],
           "title": "Widget Type"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Options for dropdown fields",
+          "title": "Options"
         }
       },
       "required": [
@@ -2776,9 +2786,12 @@
           }
         },
         "status": {
-          "description": "Mark the contact finished, stop progress, or remove it from the sequence",
+          "description": "Sequence status; saved legacy statuses retain their original request behavior",
           "enum": [
+            "active",
+            "paused",
             "finished",
+            "bounced",
             "stop",
             "remove"
           ],
