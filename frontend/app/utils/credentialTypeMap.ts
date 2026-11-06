@@ -240,10 +240,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'TwitterOAuthCredential': 'twitter_oauth',
     'TwitterBearerTokenCredential': 'twitter_bearer_token',
 
-    // DNSimple
-    'DNSimple Account Token': 'dnsimple_account_token',
-    'DNSimpleAccountTokenCredential': 'dnsimple_account_token',
-
     // Cloudflare
     'STACKIT DNS Access Token': 'stackitdns_access_token',
     'STACKITDNSAccessTokenCredential': 'stackitdns_access_token',
@@ -271,6 +267,9 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'Bloomerang Private CRM API Key': 'bloomerang_private_api_key',
     'PrintifyPATCredential': 'printify_pat',
     'PrintifyOAuthAccessTokenCredential': 'printify_oauth_access_token',
+
+    // NocoDB
+    'NocoDBTokenCredential': 'nocodb_api_token',
 
     // NocoDB
     'NocoDBTokenCredential': 'nocodb_api_token',
