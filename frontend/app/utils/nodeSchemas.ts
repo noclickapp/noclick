@@ -639,12 +639,34 @@ export function getNodeCredentialInfo(nodeType: string): NodeCredentialInfo | un
     if (!schema?.properties?.credentials) return undefined;
 
     const credentialProp = schema.properties.credentials;
-    // Preserve the metadata helper's existing direct-ref/union contract; inline
-    // models continue to be rendered by NodeCredentials without service metadata.
-    if (!credentialProp.$ref && !Array.isArray(credentialProp.anyOf) && !Array.isArray(credentialProp.oneOf)) return undefined;
-    const credentialSchemas = collectCredentialSchemas(schema)
-        .filter(credSchema => credentialProp.$ref || credSchema.title)
-        .map(credSchema => ({ schema: credSchema, title: credSchema.title || '' }));
+    const $defs = schema.$defs || schema.definitions || {};
+
+    // Resolve $ref to get the actual credential schema
+    const resolveRef = (ref: string): any => {
+        const path = ref.replace('#/$defs/', '').replace('#/definitions/', '');
+        return $defs[path];
+    };
+
+    // Collect all credential schemas
+    const credentialSchemas: Array<{ schema: any; title: string }> = [];
+
+    if (credentialProp.$ref) {
+        // Direct $ref - single credential type
+        const credSchema = resolveRef(credentialProp.$ref);
+        if (credSchema) {
+            credentialSchemas.push({ schema: credSchema, title: credSchema.title || '' });
+        }
+    } else if (credentialProp.anyOf) {
+        // anyOf pattern - multiple credential types (OAuth, PAT, etc.)
+        for (const entry of credentialProp.anyOf) {
+            if (entry.$ref) {
+                const credSchema = resolveRef(entry.$ref);
+                if (credSchema && credSchema.title) {
+                    credentialSchemas.push({ schema: credSchema, title: credSchema.title });
+                }
+            }
+        }
+    }
 
     if (credentialSchemas.length === 0) return undefined;
 
