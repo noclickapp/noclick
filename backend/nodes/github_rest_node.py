@@ -3951,8 +3951,12 @@ class GithubUpdateGistConfig(BaseModel):
         },
         title="Update Gist",
     )
-    gist_id: int = Field(..., title="Gist Id", description="Gist Id")
-    files: List[Any] = Field(..., title="Files", description="Files")
+    gist_id: str = Field(..., title="Gist ID", description="The gist ID")
+    files: Optional[Dict[str, Optional[Dict[str, Optional[str]]]]] = Field(
+        default=None,
+        title="Files",
+        description="Map of current filenames to content/filename updates, or null to delete a file",
+    )
     description: Optional[str] = Field(
         default=None, title="Description", description="Gist description"
     )
@@ -8322,7 +8326,7 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
         # First, get the SHA of the source branch
         source_ref = await self._make_request(
             "GET",
-            f"/repos/{config.owner}/{config.repo}/git/refs/heads/{config.source_branch}",
+            f"/repos/{config.owner}/{config.repo}/git/ref/heads/{config.source_branch}",
             credentials,
             action_name="get_source_branch",
         )
@@ -9349,13 +9353,13 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
         credentials: GithubRestCredential,
     ) -> Dict[str, Any]:
         """Create a review comment on a pull request."""
-        params = {}
-        params["commit_id"] = config.commit_id
-        params["path"] = config.path
+        body = {
+            "body": config.body,
+            "commit_id": config.commit_id,
+            "path": config.path,
+        }
         if config.line is not None:
-            params["line"] = config.line
-        body = {}
-        body["body"] = config.body
+            body["line"] = config.line
         if config.side is not None:
             body["side"] = config.side
         if config.start_line is not None:
@@ -9367,7 +9371,6 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
             f"/repos/{config.owner}/{config.repo}/pulls/{config.pull_number}/comments",
             credentials,
             json_body=body,
-            params=params,
             action_name="create_pull_request_review_comment",
         )
 
@@ -9481,6 +9484,9 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
         credentials: GithubRestCredential,
     ) -> Dict[str, Any]:
         """Submit a pending review."""
+        body = {"event": config.event}
+        if config.body is not None:
+            body["body"] = config.body
         return await self._make_request(
             "POST",
             f"/repos/{config.owner}/{config.repo}/pulls/{config.pull_number}/reviews/{config.review_id}/events",
@@ -9546,15 +9552,14 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
         credentials: GithubRestCredential,
     ) -> Dict[str, Any]:
         """Update pull request branch with latest base branch."""
-        params = {}
+        body = {}
         if config.expected_head_sha is not None:
-            params["expected_head_sha"] = config.expected_head_sha
+            body["expected_head_sha"] = config.expected_head_sha
         return await self._make_request(
             "PUT",
             f"/repos/{config.owner}/{config.repo}/pulls/{config.pull_number}/update-branch",
             credentials,
             json_body=body,
-            params=params,
             action_name="update_pull_request_branch",
         )
 
@@ -9974,11 +9979,11 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
         self, config: GithubUpdateGistConfig, credentials: GithubRestCredential
     ) -> Dict[str, Any]:
         """Update a gist."""
-        params = {}
-        if config.description is not None:
-            params["description"] = config.description
         body = {}
-        body["files"] = config.files
+        if config.description is not None:
+            body["description"] = config.description
+        if config.files is not None:
+            body["files"] = config.files
         return await self._make_request(
             "PATCH",
             f"/gists/{config.gist_id}",
@@ -10240,17 +10245,18 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
         credentials: GithubRestCredential,
     ) -> Dict[str, Any]:
         """Update a repository webhook."""
-        params = {}
+        body = {}
         if config.config is not None:
-            params["config"] = config.config
+            body["config"] = config.config
         if config.events is not None:
-            params["events"] = config.events
+            body["events"] = config.events
         if config.active is not None:
-            params["active"] = config.active
+            body["active"] = config.active
         return await self._make_request(
             "PATCH",
             f"/repos/{config.owner}/{config.repo}/hooks/{config.hook_id}",
             credentials,
+            json_body=body,
             action_name="update_repo_webhook",
         )
 
@@ -10783,13 +10789,11 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
         credentials: GithubRestCredential,
     ) -> Dict[str, Any]:
         """Create an organization webhook."""
-        params = {}
+        body = {"name": config.name, "config": config.config}
         if config.events is not None:
-            params["events"] = config.events
+            body["events"] = config.events
         if config.active is not None:
-            params["active"] = config.active
-        body = {}
-        body["name"] = config.name
+            body["active"] = config.active
         return await self._make_request(
             "POST",
             f"/orgs/{config.org}/hooks",
@@ -11148,7 +11152,7 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
         params = {}
         return await self._make_request(
             "GET",
-            f"/repos/{config.owner}/{config.repo}/actions/runs/{config.run_id}/usage",
+            f"/repos/{config.owner}/{config.repo}/actions/runs/{config.run_id}/timing",
             credentials,
             action_name="get_workflow_run_usage",
         )

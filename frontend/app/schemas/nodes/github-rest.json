@@ -17820,15 +17820,42 @@
           ]
         },
         "gist_id": {
-          "description": "Gist Id",
-          "title": "Gist Id",
-          "type": "integer"
+          "description": "The gist ID",
+          "title": "Gist ID",
+          "type": "string"
         },
         "files": {
-          "description": "Files",
-          "items": {},
-          "title": "Files",
-          "type": "array"
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Map of current filenames to content/filename updates, or null to delete a file",
+          "title": "Files"
         },
         "description": {
           "anyOf": [
@@ -17845,8 +17872,7 @@
         }
       },
       "required": [
-        "gist_id",
-        "files"
+        "gist_id"
       ],
       "title": "GithubUpdateGistConfig",
       "type": "object"
