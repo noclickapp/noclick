@@ -627,11 +627,11 @@ class ProductPlanNode(WorkflowNode):
         return ProductPlanNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        _original_family(data)
-        shaped = dict(data)
-        if data.get("credentials") is not None:
-            shaped["credentials"] = _shape(data["credentials"])
+    def parse_config(cls, config_data):
+        _original_family(config_data)
+        shaped = dict(config_data)
+        if config_data.get("credentials") is not None:
+            shaped["credentials"] = _shape(config_data["credentials"])
         try:
             ProductPlanNodeConfig.model_validate(runtime_config_view(shaped, ProductPlanNodeConfig))
         except ValueError:
@@ -639,25 +639,25 @@ class ProductPlanNode(WorkflowNode):
         return super().parse_config(shaped)
 
     @classmethod
-    def validate_config(cls, data):
+    def validate_config(cls, config_data):
         try:
-            _original_family(data)
-            shaped = dict(data)
-            if data.get("credentials") is not None:
-                shaped["credentials"] = _shape(data["credentials"])
+            _original_family(config_data)
+            shaped = dict(config_data)
+            if config_data.get("credentials") is not None:
+                shaped["credentials"] = _shape(config_data["credentials"])
             ProductPlanNodeConfig.model_validate(runtime_config_view(shaped, ProductPlanNodeConfig))
         except (ValueError, TypeError):
             return ValidationResult(valid=False, errors=["ProductPlan configuration or credential family is invalid"], satisfied_set=None)
         return super().validate_config(shaped)
 
     @classmethod
-    async def freshen_credential(cls, data, **context):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         # Staging freshens before it supplies the trusted workflow context to the
         # picker. Carry only server-supplied authority; load the row in the picker.
-        if context.get("credential_id") and "workflow_id" not in context and "organization_id" not in context:
-            return {**_shape(data), "_productplan_authority": _LookupAuthority(
-                context.get("pool"), context.get("user_id"), context["credential_id"], None, None)}
-        return await _current_data(data, **context)
+        if credential_id:
+            return {**_shape(credential_data), "_productplan_authority": _LookupAuthority(
+                pool, user_id, credential_id, None, None)}
+        return _shape(credential_data)
 
     @classmethod
     async def validate_credential_access(cls, data, *, validation_context=None):

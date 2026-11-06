@@ -257,7 +257,7 @@ async def test_current_row_family_revocation_before_decrypt_and_owned_lookup(mon
     for actual in (None, replace(row, revoked_at=STAMP), replace(row, credential_type="http_bearer"), replace(row, token_version=0), replace(row, owner_id="")):
         monkeypatch.setattr(CredentialsRepo, "fetch_validation_authority", AsyncMock(return_value=actual))
         with pytest.raises(ValueError):
-            await pn.ProductPlanNode.freshen_credential(CREDS, credential_id="saved", user_id="actor", pool=object(), organization_id="org")
+            await pn.ProductPlanNode.load_field_options("roadmap_id", {**CREDS, "_productplan_authority": pn._LookupAuthority(object(), "actor", "saved", "org", None)}, context={"_user_id": "actor"})
     assert wire.calls == []
     from wss.handlers import workflow_handler
     monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value="org"))
@@ -282,7 +282,7 @@ async def test_current_row_family_revocation_before_decrypt_and_owned_lookup(mon
     assert seen == [("saved", p, "org") for p in ["actor", "owner"] * 2] and permitted.await_count == 2
     permitted.return_value = False
     with pytest.raises(ValueError):
-        await pn.ProductPlanNode.freshen_credential(CREDS, credential_id="saved", user_id="actor", pool=object(), organization_id="org", workflow_id="flow")
+        await pn.ProductPlanNode.load_field_options("roadmap_id", {**CREDS, "_productplan_authority": pn._LookupAuthority(pool, "actor", "saved", "org", "flow")}, context={"_user_id": "actor"})
 
 
 @pytest.mark.asyncio
