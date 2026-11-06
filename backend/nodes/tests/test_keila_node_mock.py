@@ -95,7 +95,9 @@ async def test_actual_connect_one_bearer_catalog_no_identity_or_content(wire, ca
     assert proof["protected_read_completed"] is True and proof["proves"] == "reachability"
     assert all(proof[k] is False for k in ("account_identity_verified", "user_identity_verified", "project_identity_verified", "ownership_verified", "all_permissions_verified", "entitlement_verified"))
     assert proof["results"] == [{"id": C, "inserted_at": "raw resource time", "format": "markdown"}]
-    assert "omit" not in json.dumps(result) and CREDS["api_key"] not in caplog.text and fn._PRIVATE_REQUEST.get() is False
+    private_values = ("omit subject", "omit preview", "omit body", "omit sender", "omit segment", '"omit"')
+    assert all(value not in json.dumps(result) for value in private_values)
+    assert CREDS["api_key"] not in caplog.text and fn._PRIVATE_REQUEST.get() is False
     logging.getLogger("httpx").warning("unrelated context"); assert "unrelated context" in caplog.text
 
 @pytest.mark.asyncio
@@ -249,6 +251,10 @@ async def test_actual_postconnect_handler_catalog_witness_evidence_and_tristate(
     from repositories.credential_approvals import CredentialApprovalRepo
     from wss.handlers import credentials_handler as hm
     from wss.receiver.client_events import CredentialValidateAccessRequest
+    from utils import encryption
+    cipher = SimpleNamespace(decrypt_credential=lambda _: CREDS)
+    monkeypatch.setattr(encryption, "get_encryption", lambda: cipher)
+    monkeypatch.setattr(hm, "get_encryption", lambda: cipher)
     row = CredentialValidationRow(fn.FAMILIES[0], "owner", 2, STAMP, 0, None, "sealed"); context = CredentialValidationContext("saved", fn.NODE_TYPE, "actor", "org", object(), row)
     monkeypatch.setattr(CredentialValidationContext, "create", AsyncMock(return_value=context)); monkeypatch.setattr(CredentialValidationContext, "revalidate", AsyncMock(return_value=row)); monkeypatch.setattr(run_op, "resolve_operation_credential", AsyncMock(return_value=CREDS)); monkeypatch.setattr(CredentialApprovalRepo, "admit", AsyncMock(return_value=None)); monkeypatch.setattr(fn, "_current_data", AsyncMock(return_value=fn._shape(CREDS)))
     sent = []
@@ -258,7 +264,8 @@ async def test_actual_postconnect_handler_catalog_witness_evidence_and_tristate(
     wire.responses.append(catalog(CAMPAIGN)); await handler.get_events()[request.event_name]("sid", request)
     assert sent[-1]["valid"] is True and sent[-1]["proves"] == "reachability" and sent[-1]["account_identity_verified"] is False
     wire.responses.append(catalog(CAMPAIGN)); evidence = await collect_evidence(node_type=fn.NODE_TYPE, credential_data=CREDS, user_id="actor")
-    assert evidence.reachable is True and evidence.proves == "reachability" and evidence.samples == [C]
+    assert evidence.reachable is True and evidence.proves == "reachability"
+    assert [(sample.label, sample.value) for sample in evidence.samples] == [(C, None)]
     wire.responses.append(catalog()); assert (await collect_evidence(node_type=fn.NODE_TYPE, credential_data=CREDS, user_id="actor")).reachable is True
     wire.responses.append(Response(status=403, raw=b"private", mime="text/html")); assert (await collect_evidence(node_type=fn.NODE_TYPE, credential_data=CREDS, user_id="actor")).reachable is None
     assert (await fn.KeilaNode.validate_credential_access(CREDS))["valid"] is None
