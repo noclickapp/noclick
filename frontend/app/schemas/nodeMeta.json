@@ -38,9 +38,6 @@
         "on_schedule"
       ]
     },
-    "automation-aprimo": {
-      "agentToolProvider": true
-    },
     "automation-asana": {
       "agentToolProvider": true,
       "triggerOperations": [
