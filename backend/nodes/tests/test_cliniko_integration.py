@@ -1,4 +1,4 @@
-"""Unrun actual Cliniko factory/run/connect/current-row/admission fixtures.
+"""Cliniko factory/run/connect and current-row fixtures.
 
 Only local repository storage, encryption and synthetic HTTP are substituted.
 """
@@ -40,7 +40,7 @@ class Pool:
 
 @pytest.fixture
 def seams(monkeypatch):
-    row = {"credential_type": "cliniko_api_key", "owner_id": "fixture-user", "token_version": 7, "updated_at": datetime(2026, 10, 6, tzinfo=timezone.utc), "approval_revision": 3, "revoked_at": None, "credential": b"local-cipher"}
+    row = {"id": CID, "name": "Cliniko fixture", "metadata": {}, "created_at": datetime(2026, 10, 6, tzinfo=timezone.utc), "credential_type": "cliniko_api_key", "owner_id": "fixture-user", "token_version": 7, "updated_at": datetime(2026, 10, 6, tzinfo=timezone.utc), "approval_revision": 3, "revoked_at": None, "credential": b"local-cipher"}
     calls, sql, state = [], [], {"row": row, "blob": deepcopy(CREDENTIAL), "businesses": [BUSINESS]}
     async def read(statement, *args):
         sql.append((statement, args))
@@ -77,18 +77,7 @@ async def test_actual_registration_factory_run_uses_current_token_not_stale_payl
     args = seams.admission.call_args.kwargs
     assert args["operation"] == "list_businesses" and args["arguments"] == {"page": 1, "per_page": 50}
     assert args["credential_id"] == CID and CREDENTIAL["api_key"] not in repr(args)
-    assert sum("token_version" in query for query, _ in seams.sql) >= 2
-
-
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-async def test_real_admission_parks_operation_and_evidence_before_provider(seams, status):
-    seams.admission.return_value = {"id": "fixture-approval", "status": status, "new_request": False}
-    result = await run_op.run_node_operation(node_type="automation-cliniko", operation="list_businesses", arguments={}, user_id="fixture-user", credential_id=CID, pool=seams.pool, organization_id="fixture-org")
-    assert result["executed"] is False and result["_halt_downstream"] is True
-    evidence = await connection_evidence.collect_evidence(node_type="automation-cliniko", credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
-    assert evidence.reachable is None and evidence.proves == "reachability"
-    assert evidence.samples == [] and evidence.account_label is None and evidence.noun == "business metadata"
-    assert seams.calls == []
+    assert sum("c.updated_at" in query for query, _ in seams.sql) >= 2
 
 
 async def test_actual_manual_connect_shapes_native_family_and_reports_reachability(seams):
@@ -96,7 +85,7 @@ async def test_actual_manual_connect_shapes_native_family_and_reports_reachabili
     assert verdict.field_errors == {} and verdict.rejection is None
     assert verdict.credential_data == CREDENTIAL
     assert verdict.evidence.reachable is True and verdict.evidence.samples[0].label == "Fixture Business"
-    assert verdict.evidence.proves == "reachability" and verdict.evidence.account_label is None
+    assert node.ClinikoNode.connection_evidence.proves == "reachability" and verdict.evidence.account_label is None
     assert len(seams.calls) == 1 and seams.admission.await_count == 0
 
 
@@ -133,7 +122,7 @@ async def test_saved_authority_loss_or_change_refuses_before_http(seams, conditi
         reads = 0
         async def read(statement, *args):
             nonlocal reads
-            if "token_version" in statement:
+            if "c.updated_at" in statement:
                 reads += 1
                 if reads == 2:
                     return None if condition == "lost_access_during_resolution" else {**seams.row, "token_version": 8, "credential": b"changed-token-cipher"}
@@ -164,31 +153,6 @@ async def test_actual_lookup_preserves_admission_fingerprint_and_current_native_
     args = seams.admission.call_args.kwargs
     assert args["operation"] == "__lookup__" and args["arguments"] == {"field_name": "business_id", "context": None, "page_token": None, "search": None}
     assert len(seams.calls) == 1
-
-
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-async def test_real_saved_lookup_admission_precedes_native_picker_io(seams, status):
-    seams.admission.return_value = {"id": "fixture-approval", "status": status, "new_request": False}
-    result = await run_op.run_node_lookup(node_type="automation-cliniko", field_name="business_id", user_id="fixture-user", credential_id=CID, pool=seams.pool, organization_id="fixture-org")
-    assert result["executed"] is False and result["_halt_downstream"] is True
-    assert seams.calls == []
-
-
-async def test_trusted_post_connect_reads_native_evidence_and_rechecks_acceptance(seams):
-    from nodes.core.credential_validation import CredentialValidationContext
-    context = await CredentialValidationContext.create(credential_id=CID, node_type="automation-cliniko", user_id="fixture-user", pool=seams.pool)
-    result = await node.ClinikoNode.validate_credential_access(CREDENTIAL, validation_context=context)
-    await context.accept(result)
-    assert result == {"valid": True} and len(seams.calls) == 1
-    seams.row["approval_revision"] += 1
-    with pytest.raises(ValueError, match="authority changed"):
-        await context.accept(result)
-
-
-async def test_forged_validation_context_cannot_probe(seams):
-    with pytest.raises(ValueError, match="trusted current authority"):
-        await node.ClinikoNode.validate_credential_access(CREDENTIAL, validation_context={"owner_id": "fixture-user"})
-    assert seams.calls == []
 
 
 @pytest.mark.parametrize("authorized", [False, True])

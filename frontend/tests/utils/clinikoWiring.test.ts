@@ -1,12 +1,13 @@
 // Checks native Cliniko registration and actual credential-schema consumers.
 // Its source stays separate from later UI, account and runtime verification.
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { ClinikoNode } from '~/components/workflow/nodes/ClinikoNode';
-import { getNodeCredentialInfo, NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { getNodeCredentialInfo, loadNodeSchemas, NODE_SCHEMAS } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 
 describe('Cliniko native wiring', () => {
+  beforeAll(() => loadNodeSchemas(['automation-cliniko']));
   it('selects the issued user API-key family without an OAuth flow', () => {
     expect(ClinikoNode.type).toBe('automation-cliniko');
     expect(getNodeCredentialInfo(ClinikoNode.type)?.acceptedTypes).toEqual(['cliniko_api_key']);
