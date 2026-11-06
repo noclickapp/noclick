@@ -16,7 +16,6 @@ from opentelemetry.instrumentation.utils import suppress_http_instrumentation
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr, model_serializer, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
-from repositories.credentials import CredentialsRepo
 from utils.credentials import resolve_credential_with_owner_fallback
 from utils.encryption import get_encryption
 from utils.ssrf import guarded_async_client
@@ -140,6 +139,33 @@ class HetrixToolsNodeConfig(NodeConfig[HetrixToolsConfig, HetrixToolsAPIKeyCrede
     node_type: Literal["automation-hetrixtools"] = "automation-hetrixtools"
 
 
+@dataclass(frozen=True)
+class HetrixToolsCredentialAuthority:
+    credential_type: str
+    owner_id: str
+    token_version: int
+    updated_at: datetime
+    approval_revision: int
+    revoked_at: Optional[datetime]
+    credential: Any = field(repr=False)
+
+
+async def fetch_credential_authority(pool, credential_id):
+    """Snapshot an already resolved key; authorization stays in the shared resolver."""
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "SELECT credential_type, owner_id, token_version, updated_at, "
+            "approval_revision, revoked_at, credential FROM credentials WHERE id=$1",
+            credential_id,
+        )
+    return HetrixToolsCredentialAuthority(
+        credential_type=row["credential_type"], owner_id=str(row["owner_id"]),
+        token_version=row["token_version"], updated_at=row["updated_at"],
+        approval_revision=row["approval_revision"], revoked_at=row["revoked_at"],
+        credential=row["credential"],
+    ) if row else None
+
+
 @dataclass(eq=False)
 class Authority:
     credential: HetrixToolsAPIKeyCredential = field(repr=False)
@@ -174,23 +200,21 @@ class Authority:
             return await get_user_org_context(conn, self.user_id)
 
     async def load(self):
-        selected = []
-
-        async def loader(identifier, principal, pool, org_id):
-            row = await CredentialsRepo(pool).fetch_validation_authority(identifier, principal, org_id)
-            if row is None:
-                return None
-            if row.credential_type != TYPE or row.revoked_at is not None or type(row.token_version) is not int or row.token_version < 1:
-                raise ValueError(UNAVAILABLE)
-            shaped = credential(get_encryption().decrypt_credential(row.credential))
-            selected.append((principal, row, shaped))
-            return shaped.model_dump()
-
-        result = await resolve_credential_with_owner_fallback(self.credential_id, self.user_id, self.pool, org_id=self.organization_id, workflow_id=self.workflow_id, load_credential_fn=loader)
-        if not result or not selected:
+        # Let staging's resolver own runner/owner/lender authorization. The raw
+        # row is a local snapshot only; it never grants access or selects a key.
+        result = await resolve_credential_with_owner_fallback(
+            self.credential_id, self.user_id, self.pool,
+            org_id=self.organization_id, workflow_id=self.workflow_id,
+        )
+        if not result:
             raise ValueError(UNAVAILABLE)
-        principal, row, shaped = selected[-1]
-        return shaped, (principal, row)
+        row = await fetch_credential_authority(self.pool, self.credential_id)
+        if row is None or row.credential_type != TYPE or row.revoked_at is not None or type(row.token_version) is not int or row.token_version < 1:
+            raise ValueError(UNAVAILABLE)
+        shaped = credential(get_encryption().decrypt_credential(row.credential))
+        if shaped != credential(result):
+            raise ValueError(UNAVAILABLE)
+        return shaped, row
 
     async def require_current(self):
         if self.credential_id:
@@ -253,7 +277,7 @@ async def request(auth, route, params=None):
     private = _PRIVATE.set(True)
     try:
         with suppress_http_instrumentation():
-            async with guarded_async_client(require_public=True, timeout=30, follow_redirects=False, trust_env=False) as client:
+            async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
                 async with client.stream("GET", API + "/" + route, params=params, headers={"Accept": "application/json", "Authorization": "Bearer " + auth.credential.api_key}) as response:
                     raw = bytearray()
                     async for chunk in response.aiter_bytes():

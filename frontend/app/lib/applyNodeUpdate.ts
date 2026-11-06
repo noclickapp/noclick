@@ -160,14 +160,11 @@ const TYPED_PAYLOAD_KEYS: ReadonlySet<string> = new Set([
     'content',
     'color',
     'configValid',
-    'preserveConfigNulls',
 ]);
 
 export interface NodeUpdatePayload {
     /** Config fields to merge into data.config (authoritative; includes `_settings`) */
     config?: Record<string, any>;
-    /** Treat config nulls as literal values for schema forms and saved snapshots. */
-    preserveConfigNulls?: boolean;
     /** Operation (top-level node attribute) */
     operation?: string | null;
     /** Operation reason from node drafter */
@@ -219,7 +216,7 @@ export function getNodeFieldValue(node: Node, fieldName: string): unknown {
  *
  * - `update.config` is merged into `data.config` (authoritative — includes `_settings`)
  * - Metadata fields listed in TOP_LEVEL_FIELDS are written to `data.<field>`
- * - `null` in `update.config` deletes the key unless `preserveConfigNulls` is true
+ * - `null` in `update.config` means "delete this config key"
  * - `update.mockedOutput === null` clears `data.mockedOutput`
  */
 export function applyNodeUpdate(node: Node, update: NodeUpdatePayload): Node {
@@ -237,14 +234,14 @@ export function applyNodeUpdate(node: Node, update: NodeUpdatePayload): Node {
     // Strip operation from config — it's a top-level field, not a config field
     const { operation: _stripOp, ...cleanIncomingConfig } = incomingConfig;
 
-    // Partial patches use null as a tombstone; forms and snapshots preserve it.
+    // Merge nested config: existing + incoming. `null` deletes the key.
     const mergedConfig: Record<string, any> = {
         ...existingConfig,
         ...cleanIncomingConfig,
     };
     delete mergedConfig.operation;
     for (const [k, v] of Object.entries(cleanIncomingConfig)) {
-        if (v === null && update.preserveConfigNulls !== true) delete mergedConfig[k];
+        if (v === null) delete mergedConfig[k];
     }
 
     // Build merged data: existing + config + top-level fields from update
@@ -578,8 +575,6 @@ export function createWorkflowNode(
 
     const blank: Node = { id, type, position: pos, data: {} };
     const payload = rawConfigToPayload(rawConfig);
-    // A saved config is a snapshot, so nullable field values must survive load.
-    payload.preserveConfigNulls = true;
     if (extras && Object.keys(extras).length > 0) {
         payload.extras = { ...(payload.extras ?? {}), ...extras };
     }

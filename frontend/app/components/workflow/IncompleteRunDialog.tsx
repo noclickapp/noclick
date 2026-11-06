@@ -856,7 +856,7 @@ export function IncompleteRunDialog({
                                         <NodeConfigFieldControl
                                             fieldKey={field.key}
                                             prop={field.prop}
-                                            value={values[field.key]}
+                                            value={values[field.key] ?? ''}
                                             onChange={(key, value) =>
                                                 onFieldChange(
                                                     step.nodeId,

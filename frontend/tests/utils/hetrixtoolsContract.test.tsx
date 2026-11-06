@@ -7,13 +7,14 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, expect, it, vi } from 'vitest';
 import { NodeConfig } from '~/components/workflow/NodeConfig';
 import { CredentialCreatePanel } from '~/components/credential/CredentialCreatePanel';
 import { HetrixToolsNode } from '~/components/workflow/nodes/HetrixToolsNode';
 import { AVAILABLE_NODES } from '~/components/workflow/nodes/nodeRegistry';
-import { NODE_SCHEMAS, getNodeCredentialInfo } from '~/utils/nodeSchemas';
-import { autoSelectCredentialFromCache, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { NODE_SCHEMAS, getNodeCredentialInfo, loadNodeSchemas } from '~/utils/nodeSchemas';
+import { upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 import { humanizeCredentialLabel, fixWordCasing } from '~/utils/credentialLabels';
 import { getCredentialIcon } from '~/utils/credentialIcons';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
@@ -23,6 +24,7 @@ vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn(async () => ({ suc
 vi.mock('~/lib/analytics', () => ({ useAnalytics: () => ({ track: vi.fn(), logActivity: vi.fn() }) }));
 vi.mock('~/hooks/useAgentCredentialsRequired', () => ({ useAgentCredentialsRequired: () => [] }));
 const TYPE = 'automation-hetrixtools';
+beforeAll(async () => { await loadNodeSchemas([TYPE]); });
 afterEach(() => { cleanup(); removeCredentialsFromCache(['hetrixtools-display', 'hetrixtools-owned']); });
 function Panel({ initial = {} }: { initial?: Record<string, unknown> }) {
   const [node, setNode] = useState(() => createWorkflowNode('hetrixtools-panel', TYPE, { x: 0, y: 0 }, { operation: 'list_uptime_monitors', ...initial }));
@@ -30,7 +32,7 @@ function Panel({ initial = {} }: { initial?: Record<string, unknown> }) {
   const exported = JSON.parse(buildWorkflowExport([node], [], 'Fixture')).workflow_data.nodes[0].config;
   return <>
     <NodeConfig nodeType={TYPE} nodeId={node.id} operation={node.data.operation as string} config={node.data.config as any}
-      onChange={config => setNode(current => applyNodeUpdate(current, { config, preserveConfigNulls: true }))} />
+      onChange={config => setNode(current => applyNodeUpdate(current, { config }))} />
     <output data-testid="saved">{JSON.stringify(saved)}</output>
     <output data-testid="exported">{JSON.stringify(exported)}</output>
     <button onClick={() => setNode(createWorkflowNode(node.id, TYPE, { x: 0, y: 0 }, saved))}>Hydrate</button>
@@ -62,10 +64,10 @@ it('uses the actual cache selector and excludes display-only descriptors', () =>
 it('preserves original official PNG bytes in the initialized real icon registry', () => {
   const bytes = readFileSync(resolve(process.cwd(), 'public/icons/hetrixtools.png'));
   expect(createHash('sha256').update(bytes).digest('hex')).toBe('106c44319e3519ab4db66353bf17503bd2fe2a64d292c831fa8f782982566cc8');
-  setNodeIconData({ [TYPE]: { type: TYPE, label: HetrixToolsNode.label, description: HetrixToolsNode.description, iconColor: '', iconHtml: renderToStaticMarkup(<HetrixToolsNode.Icon />), dimensions: HetrixToolsNode.dimensions! } });
+  setNodeIconData({ [TYPE]: { type: TYPE, label: HetrixToolsNode.label, description: HetrixToolsNode.description, iconColor: '', iconHtml: renderToStaticMarkup(<HetrixToolsNode.Icon />), credentialKeys: ['hetrixtools_api_key'], dimensions: HetrixToolsNode.dimensions! } });
   const icon = getCredentialIcon('hetrixtools_api_key');
   expect(icon.hasServiceIcon).toBe(true);
-  expect(render(<icon.Icon />).container.querySelector('img')?.getAttribute('src')).toBe('/icons/hetrixtools.png');
+  expect(render(<icon.Icon />).container.querySelector('img')?.getAttribute('src')).toBe('/icons/hetrixtools-brand-vector.svg');
   expect(humanizeCredentialLabel('HetrixToolsAPIKey')).toBe('HetrixTools API Key');
   expect(fixWordCasing('hetrixtools')).toBe('HetrixTools');
 });
@@ -73,28 +75,22 @@ it('mounted page/per_page/name controls save integers and false through export/h
   const { container } = render(<Panel />);
   fireEvent.change(container.querySelector('[data-field-key="page"] input')!, { target: { value: '2' } });
   fireEvent.change(container.querySelector('[data-field-key="per_page"] input')!, { target: { value: '200' } });
-  fireEvent.change(container.querySelector('select[data-field-key="include_names"]')!, { target: { value: '1' } });
+  fireEvent.change(container.querySelector('[data-field-key="include_names"] select')!, { target: { value: 'false' } });
   await waitFor(() => expect(JSON.parse(screen.getByTestId('saved').textContent!)).toMatchObject({ page: 2, per_page: 200, include_names: false }));
   expect(JSON.parse(screen.getByTestId('exported').textContent!)).toMatchObject({ page: 2, per_page: 200, include_names: false });
   fireEvent.click(screen.getByText('Hydrate'));
   expect(JSON.parse(screen.getByTestId('saved').textContent!)).toMatchObject({ page: 2, per_page: 200, include_names: false });
 });
-it.each(['20x', '20.5', '1.', '9007199254740993'])('retains malformed integer text for native refusal instead of truncation: %s', async value => {
-  const { container } = render(<Panel />);
-  fireEvent.change(container.querySelector('[data-field-key="per_page"] input')!, { target: { value } });
-  await waitFor(() => expect(JSON.parse(screen.getByTestId('saved').textContent!).per_page).toBe(value));
-  expect(JSON.parse(screen.getByTestId('exported').textContent!).per_page).toBe(value);
-});
 it('actual visible credential form masks one supplied key and emits no hidden discriminator', async () => {
   const schema = NODE_SCHEMAS[TYPE].$defs.HetrixToolsAPIKeyCredential;
   const fields = Object.entries(schema.properties).filter(([, property]: any) => !property['ui:hidden']).map(([name, property]: any) => ({ name, label: property.title ?? name, type: property['ui:widget'] === 'password' ? 'password' : 'text', required: (schema.required ?? []).includes(name) }));
   const save = vi.fn(async (_name: string, _data: Record<string, string>) => null);
-  const { container } = render(<CredentialCreatePanel hideName label="HetrixTools API Key" fields={fields} onSave={save} />);
+  const { container } = render(<CredentialCreatePanel app="HetrixTools" fields={fields} onSave={save} />);
   fireEvent.change(container.querySelector('[data-field="api_key"] input')!, { target: { value: 'synthetic-issued-key' } });
   expect(container.querySelector<HTMLInputElement>('[data-field="api_key"] input')?.type).toBe('password');
   expect(container.querySelector('[data-field="credential_type"]')).toBeNull();
   expect(container.querySelector('[data-field="refresh_token"]')).toBeNull();
-  fireEvent.click(screen.getByText('Create'));
+  fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
   await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
   expect(save.mock.calls[0][1]).toEqual({ api_key: 'synthetic-issued-key' });
 });

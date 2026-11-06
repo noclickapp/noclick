@@ -526,7 +526,7 @@ export const FlowHelperView = memo(({ selectedNode, nodes, edges, noAnimation, o
                 return;
             }
             // NodeConfig passes pure config fields. Write them into data.config.
-            onNodeDataUpdate(currentNode.id, { config: newConfig, preserveConfigNulls: true });
+            onNodeDataUpdate(currentNode.id, { config: newConfig });
         }
     }, [onNodeDataUpdate]);
 

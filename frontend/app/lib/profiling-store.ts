@@ -4,7 +4,6 @@
  */
 
 import { secureRandomId } from './secureRandom';
-import { diagnosticSocketText, projectSocketDiagnostics } from './socket-diagnostics';
 
 export interface ProfileEntry {
     _uid: string;       // Unique ID for React key (to avoid duplicate key warnings)
@@ -17,14 +16,17 @@ export interface ProfileEntry {
     success: boolean;
     error?: string;
     timestamp: string;
-    requestData?: unknown;  // Diagnostic projection of the request
-    responseData?: unknown; // Diagnostic projection of the response
+    requestData?: any;  // The data sent in the request
+    responseData?: any; // The data received in the response
 }
 
 class ProfilingStore {
     private entries: ProfileEntry[] = [];
     private maxEntries = 200;
-    // The drawer enables profiling in production; retained payloads are bounded diagnostic copies.
+    // Dev-only by default: each entry pins the FULL request + response payload
+    // (node outputs can be MBs), so an always-on ring of 200 holds tens of MB
+    // of the per-tab memory budget on every prod session. The DebugDrawer
+    // flips it on when opened, so profiling starts at drawer-open in prod.
     private enabled = import.meta.env.DEV;
 
     /**
@@ -53,15 +55,15 @@ class ProfilingStore {
             _uid: uniqueId,
             requestId,
             eventName,
-            tag: diagnosticSocketText(eventName, tag),
+            tag,
             startTime: performance.now(),
             success: false,
             timestamp: new Date().toISOString(),
-            requestData: projectSocketDiagnostics(eventName, requestData)
+            requestData: requestData // Store the request data
         };
 
         this.entries.push(entry);
-        const tagLabel = entry.tag ? ` [${entry.tag}]` : '';
+        const tagLabel = tag ? ` [${tag}]` : '';
         console.log(`[ProfilingStore] Started tracking: ${eventName}${tagLabel} (${requestId.slice(0, 8)}...) - Total entries: ${this.entries.length}`);
 
         // Keep only last N entries
@@ -73,7 +75,7 @@ class ProfilingStore {
     /**
      * Record the completion of a socket event
      */
-    endEvent(requestId: string, success: boolean, error?: unknown, responseData?: unknown): void {
+    endEvent(requestId: string, success: boolean, error?: string, responseData?: any): void {
         if (!this.enabled) return;
 
         const entry = this.entries.find(e => e.requestId === requestId && !e.endTime);
@@ -81,8 +83,8 @@ class ProfilingStore {
             entry.endTime = performance.now();
             entry.duration = entry.endTime - entry.startTime;
             entry.success = success;
-            entry.error = diagnosticSocketText(entry.eventName, error);
-            entry.responseData = projectSocketDiagnostics(entry.eventName, responseData);
+            entry.error = error;
+            entry.responseData = responseData; // Store the response data
             console.log(`[ProfilingStore] Completed: ${entry.eventName} (${requestId.slice(0, 8)}...) - ${entry.duration.toFixed(2)}ms - ${success ? 'SUCCESS' : 'FAILED'}`);
         } else {
             console.warn(`[ProfilingStore] No pending entry found for requestId: ${requestId.slice(0, 8)}...`);
@@ -93,18 +95,7 @@ class ProfilingStore {
      * Get all profiling entries
      */
     getEntries(): ProfileEntry[] {
-        // Re-project older in-memory entries and prevent consumers retaining mutable payload references.
-        return this.entries.map(entry => ({
-            ...entry,
-            tag: diagnosticSocketText(entry.eventName, entry.tag),
-            error: diagnosticSocketText(entry.eventName, entry.error),
-            requestData: projectSocketDiagnostics(entry.eventName, entry.requestData),
-            responseData: projectSocketDiagnostics(entry.eventName, entry.responseData),
-        }));
-    }
-
-    getEventName(requestId: string): string | undefined {
-        return this.entries.find(entry => entry.requestId === requestId && !entry.endTime)?.eventName;
+        return [...this.entries];
     }
 
     /**

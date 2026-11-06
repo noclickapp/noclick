@@ -20,29 +20,29 @@ import { ReferenceHighlightOverlay } from './ReferenceHighlight';
 import { scoreFields } from '~/utils/fuzzySearch';
 import { valueToText } from './valueText';
 
-interface SearchableEnumFieldProps<T> {
+interface SearchableEnumFieldProps {
     /** Field identifier */
     fieldKey: string;
     /** Current selected value */
     value: unknown;
     /** Enum values (actual values stored in config) */
-    enumValues: T[];
+    enumValues: unknown[];
     /** Enum labels (display names) - if not provided, uses enumValues */
     enumLabels?: unknown[];
     /** Change handler */
-    onChange: (key: string, value: T | string) => void;
+    onChange: (key: string, value: string) => void;
     /** Placeholder text */
     placeholder?: string;
 }
 
-export function SearchableEnumField<T>({
+export function SearchableEnumField({
     fieldKey,
     value,
     enumValues,
     enumLabels,
     onChange,
     placeholder = 'Select or type a value...'
-}: SearchableEnumFieldProps<T>) {
+}: SearchableEnumFieldProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -64,14 +64,12 @@ export function SearchableEnumField<T>({
 
     // Create options array from enum values and labels
     const options = enumValues.map((val, idx) => ({
-        value: val,
-        text: valueToText(val),
-        index: idx,
+        value: valueToText(val),
         label: valueToText(labels[idx] ?? val)
     }));
 
     // The text shown in the input: when open, show what user is typing; when closed, show selected value's label
-    const selectedLabel = options.find(o => o.value === value)?.label || valueText || '';
+    const selectedLabel = options.find(o => o.value === valueText)?.label || valueText || '';
     const displayValue = isOpen ? inputValue : selectedLabel;
 
     // Filter + rank options by relevance while searching (only when the
@@ -84,7 +82,7 @@ export function SearchableEnumField<T>({
                 score: scoreFields(
                     [
                         { text: opt.label.toLowerCase(), weight: 1, fuzzy: true },
-                        { text: opt.text.toLowerCase(), weight: 0.6, fuzzy: true },
+                        { text: opt.value.toLowerCase(), weight: 0.6, fuzzy: true },
                     ],
                     inputValue,
                 ),
@@ -233,7 +231,7 @@ export function SearchableEnumField<T>({
     }, [fieldKey, onChange, autocompleteContext, isOpen]);
 
     // Handle option selection
-    const handleSelect = useCallback((selectedValue: T) => {
+    const handleSelect = useCallback((selectedValue: string) => {
         onChange(fieldKey, selectedValue);
         setIsOpen(false);
         setInputValue('');
@@ -331,7 +329,7 @@ export function SearchableEnumField<T>({
             // If input matches an option, select it; otherwise set raw value
             const match = filteredOptions.find(o =>
                 o.label.toLowerCase() === inputValue.toLowerCase() ||
-                o.text.toLowerCase() === inputValue.toLowerCase()
+                o.value.toLowerCase() === inputValue.toLowerCase()
             );
             if (match) {
                 handleSelect(match.value);
@@ -409,7 +407,7 @@ export function SearchableEnumField<T>({
                 />
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
                     {/* Clear button — only for fields where empty is a valid enum value */}
-                    {Boolean(value) && !isOpen && !hasRefs && enumValues.some(option => option === '') && (
+                    {Boolean(value) && !isOpen && !hasRefs && enumValues.includes('') && (
                         <button
                             type="button"
                             onClick={(e) => {
@@ -521,7 +519,7 @@ export function SearchableEnumField<T>({
                         {filteredOptions.length > 0 ? (
                             filteredOptions.map((option, index) => (
                                 <button
-                                    key={option.index}
+                                    key={option.value}
                                     type="button"
                                     data-option-index={index}
                                     onMouseDown={(e) => e.preventDefault()}
@@ -530,13 +528,13 @@ export function SearchableEnumField<T>({
                                     className={`w-full px-3 py-2.5 text-sm text-left transition-colors flex items-center justify-between ${
                                         index === highlightedIndex
                                             ? 'bg-secondary text-foreground'
-                                            : option.value === value
+                                            : option.value === valueText
                                                 ? 'bg-muted/50 text-foreground'
                                                 : 'text-foreground/80'
                                     }`}
                                 >
                                     <span className="truncate">{option.label}</span>
-                                    {option.value === value && (
+                                    {option.value === valueText && (
                                         <span className="text-xs text-emerald-600 dark:text-emerald-400 ml-2">✓</span>
                                     )}
                                 </button>
