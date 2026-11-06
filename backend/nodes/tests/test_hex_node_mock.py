@@ -16,6 +16,9 @@ Exercises every operation with mocked HTTP responses (no live API calls):
 - Workspace host: custom single-tenant/EU host in the request URL
 """
 
+import json
+from pathlib import Path
+
 import pytest
 from unittest.mock import Mock, patch
 
@@ -58,6 +61,13 @@ from nodes.hex_node import (
 @pytest.fixture
 def api_credentials():
     return HexApiTokenCredential(api_token="hxtp_test_token_123")
+
+
+@pytest.fixture
+def documented_responses():
+    # Copied from Hex's reference page; each entry records its source URL.
+    path = Path(__file__).parent / "fixtures" / "hex_documented_responses.json"
+    return json.loads(path.read_text())
 
 
 def create_hex_node(config):
@@ -237,19 +247,60 @@ class TestHexProjectsMock:
         assert result["data"]["id"] == "p1"
 
     @pytest.mark.asyncio
-    async def test_update_project(self, api_credentials):
+    async def test_update_project(self, api_credentials, documented_responses):
         config = HexNodeConfig(
-            config=HexUpdateProjectConfig(project_id="p1", body='{"status": {"name": "In review"}}'),
+            config=HexUpdateProjectConfig(project_id="p1", body='{"status": "string"}'),
             credentials=api_credentials,
         )
         node = create_hex_node(config)
         capture = {}
-        mock_client = create_mock_client(200, {"id": "p1"}, capture=capture)
+        mock_client = create_mock_client(200, documented_responses["UpdateProject"]["body"], capture=capture)
         with patch("nodes.hex_node.httpx.AsyncClient", return_value=mock_client):
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "update_project"
-        assert capture["json"]["status"]["name"] == "In review"
+        assert capture["json"]["status"] == "string"
+
+    @pytest.mark.asyncio
+    async def test_clear_project_status_preserves_null(self, api_credentials, documented_responses):
+        # Hex's UpdateProject API explicitly uses null to remove a status.
+        config = HexNodeConfig(
+            config=HexUpdateProjectConfig(project_id="p1", body='{"status": null}'),
+            credentials=api_credentials,
+        )
+        capture = {}
+        mock_client = create_mock_client(200, documented_responses["UpdateProject"]["body"], capture=capture)
+        with patch("nodes.hex_node.httpx.AsyncClient", return_value=mock_client):
+            result = await create_hex_node(config).execute({})
+        assert result["status"] == "success"
+        assert capture["json"] == {"status": None}
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "operation, expected_body, response_operation, response_status",
+        [
+            (
+                HexRunProjectConfig(project_id="p1"),
+                {"dryRun": False, "updatePublishedResults": False, "useCachedSqlResults": True},
+                "RunProject", 201,
+            ),
+            (HexCreateEmbedUrlConfig(project_id="p1"), {"testMode": False}, "CreatePresignedUrl", 200),
+            (HexCreateCollectionConfig(name="string"), {"name": "string"}, "CreateCollection", 201),
+        ],
+    )
+    async def test_unset_optional_fields_are_omitted(
+        self, api_credentials, documented_responses, operation, expected_body,
+        response_operation, response_status,
+    ):
+        config = HexNodeConfig(config=operation, credentials=api_credentials)
+        capture = {}
+        mock_client = create_mock_client(
+            response_status, documented_responses[response_operation]["body"], capture=capture,
+        )
+        with patch("nodes.hex_node.httpx.AsyncClient", return_value=mock_client):
+            result = await create_hex_node(config).execute({})
+        assert result["status"] == "success"
+        assert capture["json"] == expected_body
 
 
 class TestHexSharingMock:

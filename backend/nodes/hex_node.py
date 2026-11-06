@@ -387,7 +387,7 @@ class HexUpdateProjectConfig(BaseModel):
     body: str = Field(
         ...,
         title="Update Body",
-        description='JSON body of fields to update, e.g. {"status": {"name": "In review"}}',
+        description='JSON body with a status name (string), or {"status": null} to remove the current status',
         json_schema_extra={"ui:widget": "textarea"},
     )
 
@@ -988,8 +988,7 @@ async def _hex_request(
         "Authorization": f"Bearer {api_token}",
         "Content-Type": "application/json",
     }
-    if json_body is not None:
-        json_body = {k: v for k, v in json_body.items() if v is not None}
+    # Explicit JSON nulls clear fields; only the form handlers omit unset values.
     if params:
         params = {k: v for k, v in params.items() if v not in (None, "")}
 
@@ -1209,7 +1208,8 @@ class HexNode(ScheduledPollTriggerMixin, WorkflowNode):
             "viewId": c.view_id,
         }
         return await _hex_request(
-            token, host, "POST", f"/projects/{c.project_id}/runs", json_body=body,
+            token, host, "POST", f"/projects/{c.project_id}/runs",
+            json_body={k: v for k, v in body.items() if v is not None},
             action_name="run_project",
         )
 
@@ -1344,7 +1344,8 @@ class HexNode(ScheduledPollTriggerMixin, WorkflowNode):
         }
         return await _hex_request(
             token, host, "POST", f"/embedding/createPresignedUrl/{c.project_id}",
-            json_body=body, action_name="create_embed_url",
+            json_body={k: v for k, v in body.items() if v is not None},
+            action_name="create_embed_url",
         )
 
     # ------------------------------------------------------------------
@@ -1400,7 +1401,9 @@ class HexNode(ScheduledPollTriggerMixin, WorkflowNode):
     async def _create_collection(self, c: HexCreateCollectionConfig, token: str, host: str) -> Dict[str, Any]:
         body = {"name": c.name, "description": c.description}
         return await _hex_request(
-            token, host, "POST", "/collections", json_body=body, action_name="create_collection",
+            token, host, "POST", "/collections",
+            json_body={k: v for k, v in body.items() if v is not None},
+            action_name="create_collection",
         )
 
     async def _get_collection(self, c: HexGetCollectionConfig, token: str, host: str) -> Dict[str, Any]:

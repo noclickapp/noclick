@@ -1189,7 +1189,7 @@
           }
         },
         "body": {
-          "description": "JSON body of fields to update, e.g. {\"status\": {\"name\": \"In review\"}}",
+          "description": "JSON body with a status name (string), or {\"status\": null} to remove the current status",
           "title": "Update Body",
           "type": "string",
           "ui:widget": "textarea"
