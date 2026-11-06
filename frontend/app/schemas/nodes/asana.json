@@ -4311,8 +4311,21 @@
             }
           ],
           "default": null,
-          "description": "Unit label for number metrics (e.g. 'users', 'deals').",
-          "title": "Unit"
+          "description": "Optional display unit; defaults to the selected metric type.",
+          "enum": [
+            "",
+            "none",
+            "currency",
+            "percentage"
+          ],
+          "enumNames": [
+            "Use metric type",
+            "Number",
+            "Currency",
+            "Percentage"
+          ],
+          "title": "Unit",
+          "x-enum-searchable": true
         }
       },
       "required": [
@@ -4576,6 +4589,12 @@
           "title": "Rule Trigger GID",
           "type": "string"
         },
+        "resource": {
+          "description": "The task gid to run the rule on; it must belong to the rule's project.",
+          "title": "Task",
+          "type": "string",
+          "x-resource-type": "asana_task"
+        },
         "action_data": {
           "anyOf": [
             {
@@ -4592,7 +4611,8 @@
         }
       },
       "required": [
-        "rule_trigger_gid"
+        "rule_trigger_gid",
+        "resource"
       ],
       "title": "AsanaTriggerRuleConfig",
       "type": "object"

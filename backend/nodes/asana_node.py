@@ -22,6 +22,7 @@ returns reads as ``{"data": ...}``; the request helper handles both. All object
 IDs are ``gid`` strings (not the legacy numeric id).
 """
 
+import json
 import logging
 import time
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
@@ -2881,7 +2882,14 @@ class AsanaSetGoalMetricConfig(BaseModel):
         None, title="Initial Value", description="Starting value (defaults to 0)."
     )
     unit: Optional[str] = Field(
-        None, title="Unit", description="Unit label for number metrics (e.g. 'users', 'deals')."
+        None,
+        title="Unit",
+        description="Optional display unit; defaults to the selected metric type.",
+        json_schema_extra={
+            "enum": ["", "none", "currency", "percentage"],
+            "enumNames": ["Use metric type", "Number", "Currency", "Percentage"],
+            "x-enum-searchable": True,
+        },
     )
 
 
@@ -3186,6 +3194,12 @@ class AsanaTriggerRuleConfig(BaseModel):
     )
     rule_trigger_gid: str = Field(
         ..., title="Rule Trigger GID", description="The gid of the 'incoming web request' rule trigger."
+    )
+    resource: str = Field(
+        ...,
+        title="Task",
+        description="The task gid to run the rule on; it must belong to the rule's project.",
+        json_schema_extra={"x-resource-type": "asana_task"},
     )
     action_data: Optional[str] = Field(
         None,
@@ -4390,7 +4404,7 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     async def _duplicate_task(self, c: AsanaDuplicateTaskConfig, token: str) -> Dict[str, Any]:
         body: Dict[str, Any] = {"name": c.name}
         if c.include:
-            body["include"] = _comma_list(c.include)
+            body["include"] = ",".join(_comma_list(c.include) or [])
         return await _asana_request(
             token,
             "POST",
@@ -4404,7 +4418,7 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if c.team:
             body["team"] = c.team
         if c.include:
-            body["include"] = _comma_list(c.include)
+            body["include"] = ",".join(_comma_list(c.include) or [])
         return await _asana_request(
             token,
             "POST",
@@ -4527,7 +4541,7 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
             token,
             "POST",
             f"/projects/{c.project_gid}/addMembers",
-            json_data={"members": _comma_list(c.members)},
+            json_data={"members": ",".join(_comma_list(c.members) or [])},
             action_name="add_project_member",
         )
 
@@ -4536,7 +4550,7 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
             token,
             "POST",
             f"/projects/{c.project_gid}/removeMembers",
-            json_data={"members": _comma_list(c.members)},
+            json_data={"members": ",".join(_comma_list(c.members) or [])},
             action_name="remove_project_member",
         )
 
@@ -4545,7 +4559,7 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
             token,
             "POST",
             f"/projects/{c.project_gid}/addFollowers",
-            json_data={"followers": _comma_list(c.followers)},
+            json_data={"followers": ",".join(_comma_list(c.followers) or [])},
             action_name="add_project_followers",
         )
 
@@ -4554,7 +4568,7 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
             token,
             "POST",
             f"/projects/{c.project_gid}/removeFollowers",
-            json_data={"followers": _comma_list(c.followers)},
+            json_data={"followers": ",".join(_comma_list(c.followers) or [])},
             action_name="remove_project_followers",
         )
 
@@ -4622,13 +4636,13 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         )
 
     async def _create_project_brief(self, c: AsanaCreateProjectBriefConfig, token: str) -> Dict[str, Any]:
-        body: Dict[str, Any] = {"project_gid": c.project_gid, "title": c.title}
+        body: Dict[str, Any] = {"title": c.title}
         if c.html_text:
             body["html_text"] = c.html_text
         return await _asana_request(
             token,
             "POST",
-            "/project_briefs",
+            f"/projects/{c.project_gid}/project_briefs",
             json_data=body,
             action_name="create_project_brief",
         )
@@ -4913,7 +4927,7 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     # ------------------------------------------------------------------
     async def _get_task_attachments(self, c: AsanaGetTaskAttachmentsConfig, token: str) -> Dict[str, Any]:
         return await _asana_request(
-            token, "GET", f"/tasks/{c.task_gid}/attachments", action_name="get_task_attachments"
+            token, "GET", "/attachments", params={"parent": c.task_gid}, action_name="get_task_attachments"
         )
 
     async def _delete_attachment(self, c: AsanaDeleteAttachmentConfig, token: str) -> Dict[str, Any]:
@@ -5073,7 +5087,7 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
             token,
             "POST",
             f"/portfolios/{c.portfolio_gid}/addMembers",
-            json_data={"members": _comma_list(c.members)},
+            json_data={"members": ",".join(_comma_list(c.members) or [])},
             action_name="add_portfolio_members",
         )
 
@@ -5084,7 +5098,7 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
             token,
             "POST",
             f"/portfolios/{c.portfolio_gid}/removeMembers",
-            json_data={"members": _comma_list(c.members)},
+            json_data={"members": ",".join(_comma_list(c.members) or [])},
             action_name="remove_portfolio_members",
         )
 
@@ -5143,14 +5157,15 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         )
 
     async def _set_goal_metric(self, c: AsanaSetGoalMetricConfig, token: str) -> Dict[str, Any]:
+        unit = c.unit or ("none" if c.metric_type == "number" else c.metric_type)
+        if unit not in ("none", "currency", "percentage"):
+            return {"status": "error", "error": "Metric unit must be none, currency, or percentage"}
         body: Dict[str, Any] = {
-            "metric_type": c.metric_type,
-            "target_value": float(c.target_value),
+            "target_number_value": float(c.target_value),
+            "unit": unit,
         }
         if c.initial_value:
-            body["initial_value"] = float(c.initial_value)
-        if c.unit:
-            body["unit"] = c.unit
+            body["initial_number_value"] = float(c.initial_value)
         return await _asana_request(
             token,
             "POST",
@@ -5190,13 +5205,15 @@ class AsanaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     # Handlers — Rules
     # ------------------------------------------------------------------
     async def _trigger_rule(self, c: AsanaTriggerRuleConfig, token: str) -> Dict[str, Any]:
-        body: Dict[str, Any] = {}
+        action_data: Dict[str, Any] = {}
         if c.action_data:
             try:
-                import json as _json
-                body["action_data"] = _json.loads(c.action_data)
-            except Exception:
-                body["action_data"] = c.action_data
+                action_data = json.loads(c.action_data)
+            except (TypeError, ValueError):
+                return {"status": "error", "error": "Action data must be a JSON object"}
+            if not isinstance(action_data, dict):
+                return {"status": "error", "error": "Action data must be a JSON object"}
+        body: Dict[str, Any] = {"resource": c.resource, "action_data": action_data}
         return await _asana_request(
             token,
             "POST",

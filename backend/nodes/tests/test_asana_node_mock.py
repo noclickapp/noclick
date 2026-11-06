@@ -735,3 +735,128 @@ class TestAsanaDynamicOptionsMock:
     async def test_load_options_no_token(self):
         result = await AsanaNode.load_field_options("workspace_gid", {}, context={})
         assert result["options"] == []
+
+
+class TestAsanaConformanceRequests:
+    """Regressions for routes and payloads rejected by Asana's OpenAPI contract."""
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "operation, fields, method, path, body, params",
+        [
+            (
+                "create_project_brief",
+                {"project_gid": "1331", "title": "Stuff to buy"},
+                "POST", "/projects/1331/project_briefs",
+                {"title": "Stuff to buy"}, None,
+            ),
+            (
+                "get_task_attachments", {"task_gid": "321654"},
+                "GET", "/attachments", None, {"parent": "321654"},
+            ),
+            (
+                "duplicate_project",
+                {"project_gid": "1331", "name": "New Project Name", "include": "members,notes"},
+                "POST", "/projects/1331/duplicate",
+                {"name": "New Project Name", "include": "members,notes"}, None,
+            ),
+            (
+                "duplicate_task",
+                {"task_gid": "321654", "name": "New Task Name", "include": "notes,assignee"},
+                "POST", "/tasks/321654/duplicate",
+                {"name": "New Task Name", "include": "notes,assignee"}, None,
+            ),
+            *[
+                (
+                    "set_goal_metric",
+                    {"goal_gid": "12345", "metric_type": metric_type, "target_value": "10.2", "initial_value": "5.2"},
+                    "POST", "/goals/12345/setMetric",
+                    {"target_number_value": 10.2, "initial_number_value": 5.2, "unit": unit}, None,
+                )
+                for metric_type, unit in [("number", "none"), ("currency", "currency"), ("percentage", "percentage")]
+            ],
+            (
+                "set_goal_metric",
+                {"goal_gid": "12345", "target_value": "10.2", "unit": "percentage"},
+                "POST", "/goals/12345/setMetric",
+                {"target_number_value": 10.2, "unit": "percentage"}, None,
+            ),
+            *[
+                (
+                    operation, {id_field: gid, field: "521621,621373"},
+                    "POST", f"/{collection}/{gid}/{endpoint}",
+                    {field: "521621,621373"}, None,
+                )
+                for operation, id_field, gid, collection, endpoint, field in [
+                    ("add_project_member", "project_gid", "1331", "projects", "addMembers", "members"),
+                    ("remove_project_member", "project_gid", "1331", "projects", "removeMembers", "members"),
+                    ("add_project_followers", "project_gid", "1331", "projects", "addFollowers", "followers"),
+                    ("remove_project_followers", "project_gid", "1331", "projects", "removeFollowers", "followers"),
+                    ("add_portfolio_members", "portfolio_gid", "12345", "portfolios", "addMembers", "members"),
+                    ("remove_portfolio_members", "portfolio_gid", "12345", "portfolios", "removeMembers", "members"),
+                ]
+            ],
+            (
+                "trigger_rule",
+                {"rule_trigger_gid": "12345", "resource": "12345", "action_data": '{"jira_ticket_name":"Test","jira_ticket_id":"123"}'},
+                "POST", "/rule_triggers/12345/run",
+                {"resource": "12345", "action_data": {"jira_ticket_name": "Test", "jira_ticket_id": "123"}}, None,
+            ),
+            (
+                "trigger_rule", {"rule_trigger_gid": "12345", "resource": "12345"},
+                "POST", "/rule_triggers/12345/run",
+                {"resource": "12345", "action_data": {}}, None,
+            ),
+        ],
+    )
+    async def test_provider_request(self, credentials, operation, fields, method, path, body, params):
+        from unittest.mock import AsyncMock
+
+        config = AsanaNodeConfig.model_validate({
+            "config": {"operation": operation, **fields},
+            "credentials": credentials,
+        })
+        with patch("nodes.asana_node._asana_request", new_callable=AsyncMock, return_value={}) as request:
+            await create_asana_node(config).execute({})
+        kwargs = {"action_name": operation}
+        if body is not None:
+            kwargs["json_data"] = body
+        if params is not None:
+            kwargs["params"] = params
+        request.assert_awaited_once_with(credentials.access_token, method, path, **kwargs)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("action_data", ["1", "[]", "null", "invalid JSON"])
+    async def test_rule_rejects_non_object_action_data(self, credentials, action_data):
+        from unittest.mock import AsyncMock
+
+        config = AsanaNodeConfig.model_validate({
+            "config": {"operation": "trigger_rule", "rule_trigger_gid": "12345", "resource": "12345", "action_data": action_data},
+            "credentials": credentials,
+        })
+        with patch("nodes.asana_node._asana_request", new_callable=AsyncMock, return_value={}) as request:
+            result = await create_asana_node(config).execute({})
+        assert result["status"] == "error"
+        request.assert_not_awaited()
+
+    def test_rule_requires_resource(self, credentials):
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError, match="resource"):
+            AsanaNodeConfig.model_validate({
+                "config": {"operation": "trigger_rule", "rule_trigger_gid": "12345"},
+                "credentials": credentials,
+            })
+
+    @pytest.mark.asyncio
+    async def test_goal_metric_rejects_unsupported_unit(self, credentials):
+        from unittest.mock import AsyncMock
+
+        config = AsanaNodeConfig.model_validate({
+            "config": {"operation": "set_goal_metric", "goal_gid": "12345", "target_value": "10.2", "unit": "users"},
+            "credentials": credentials,
+        })
+        with patch("nodes.asana_node._asana_request", new_callable=AsyncMock, return_value={}) as request:
+            result = await create_asana_node(config).execute({})
+        assert result["status"] == "error"
+        request.assert_not_awaited()
