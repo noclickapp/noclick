@@ -17,6 +17,7 @@ from nodes.core import credential_connect as cc
 from nodes.core.connection_evidence import collect_evidence
 from nodes.core.run_op import run_node_operation, run_node_lookup
 from repositories.credentials import credential_access_predicate
+from repositories.organization import PRIMARY_ORG_SQL
 from wss.receiver.client_events import CredentialValidateAccessRequest, WorkflowNodeLoadOptionsRequest
 
 NODE = "automation-bloomerang"
@@ -63,6 +64,9 @@ class Storage:
 
     async def fetchrow(self, sql, *args):
         self.calls.append((sql, args))
+        if sql == PRIMARY_ORG_SQL:
+            assert args == (USER,)
+            return {"organization_id": ORG}
         if "SELECT name,owner_id,approval_operations" in sql:
             assert args == (CID,) and "FOR UPDATE" in sql
             return deepcopy(self.row)
@@ -203,7 +207,7 @@ async def test_actual_admission_parks_native_run_lookup_and_identity_evidence(ha
 async def test_actual_socket_picker_uses_api_ids_and_refuses_foreign_row(harness):
     harness.replies = binding() + [(200, page([constituent()]))]
     await harness.picker.load_node_options("fixture", WorkflowNodeLoadOptionsRequest(request_id="fixture", node_type=NODE, field_name="constituent_id", credential_id=CID, context={}))
-    assert harness.events[-1]["data"]["options"] == [{"label": "Fixture Constituent", "value": "42"}]
+    assert harness.events[-1]["data"]["options"] == [{"label": "Fixture Constituent", "value": "42", "metadata": {"database_id": "fixture-database", "constituent_id": None}}]
     count = len(harness.http)
     harness.storage.row["credential_type"] = "slack_bot_token"
     await harness.picker.load_node_options("fixture", WorkflowNodeLoadOptionsRequest(request_id="fixture", node_type=NODE, field_name="constituent_id", credential_id=CID, context={}))
@@ -212,12 +216,13 @@ async def test_actual_socket_picker_uses_api_ids_and_refuses_foreign_row(harness
 
 @pytest.mark.asyncio
 async def test_handler_refusal_unknown_status_and_no_context_keep_tri_state(harness):
+    unverified = {"valid": None, "error": "The credential access probe did not complete successfully"}
     harness.replies = [(403, {"error": "Do not expose"})]
     await harness.access.validate_access("fixture", CredentialValidateAccessRequest(request_id="fixture", credential_id=CID, node_type=NODE))
-    assert harness.events[-1]["data"]["valid"] is False
+    assert harness.events[-1]["data"] == unverified
     harness.replies = [(202, database())]
     await harness.access.validate_access("fixture", CredentialValidateAccessRequest(request_id="fixture", credential_id=CID, node_type=NODE))
-    assert harness.events[-1]["data"]["valid"] is None and harness.events[-1]["data"]["identity_verified"] is False
+    assert harness.events[-1]["data"] == unverified
     assert (await bm.BloomerangNode.validate_credential_access(harness.storage.blob))["valid"] is None
 
 
@@ -242,7 +247,7 @@ async def test_actual_stored_parent_lookup_searches_later_offset_without_broaden
 async def test_actual_agent_tools_refuse_outside_parent_allowlist_before_i_o(harness):
     from nodes.agent.node_op_tools import build_node_op_tools, resource_creators
     from nodes.agent.tool_execution import _execute_node_op_tool, _execute_node_op_lookup
-    tools, configs = build_node_op_tools(NODE, [{"operation": "get_note", "field_scopes": {"constituent_id": ["42"], "note_id": ["43"]}}, "create_note"], node_id="provider", credential_id=CID)
+    tools, configs = build_node_op_tools(NODE, [{"operation": "get_note", "field_scopes": {"constituent_id": ["42"], "note_id": ["43"]}}, {"operation": "create_note", "field_scopes": {"constituent_id": ["42"]}}], node_id="provider", credential_id=CID)
     action = next(name for name, info in configs.items() if info.get("operation") == "get_note")
     definition = next(tool for tool in tools if tool["function"]["name"] == action)
     assert definition["function"]["parameters"]["properties"]["constituent_id"]["enum"] == ["42"]
@@ -250,5 +255,6 @@ async def test_actual_agent_tools_refuse_outside_parent_allowlist_before_i_o(har
     refused = await _execute_node_op_tool(SimpleNamespace(user_id=USER, organization_id=ORG, workflow_id=None), action, {"constituent_id": "99", "note_id": "43"}, configs[action], configs)
     assert refused["success"] is False and "restricted" in refused["error"] and harness.http == []
     lookup = next(name for name, info in configs.items() if info.get("tool_type") == "node_op_lookup")
+    assert configs[lookup]["field_dependencies"]["note_id"] == "constituent_id"
     missing = await _execute_node_op_lookup(SimpleNamespace(user_id=USER, organization_id=ORG, workflow_id=None), lookup, {"field": "note_id", "context": {}}, configs[lookup])
     assert missing["success"] is False and "parent" in missing["error"] and harness.storage.calls == []

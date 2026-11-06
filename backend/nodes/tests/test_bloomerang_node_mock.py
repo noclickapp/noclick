@@ -105,6 +105,34 @@ async def test_actual_factory_current_identity_has_no_contact_or_financial_leak(
     assert (await run("list_constituents"))["data"] == []
 
 
+@pytest.mark.asyncio
+async def test_validated_config_executes_without_duplicate_raw_credentials(http):
+    http.replies = binding()
+    node = bm.BloomerangNode(
+        node_id="fixture", node_type="automation-bloomerang", node_data={},
+        config=bm.BloomerangNodeConfig.model_validate({
+            "config": {"operation": "check_connection"}, "credentials": CREDENTIAL,
+        }),
+    )
+    result = await node.execute({})
+    assert result["identity_verified"] is True and result["data"][0]["Id"] == "7"
+    assert [r.url.path for r in http.requests] == ["/v2/database", "/v2/user/current"]
+
+
+@pytest.mark.asyncio
+async def test_conflicting_raw_and_validated_credentials_fail_before_transport(http):
+    node = bm.BloomerangNode(
+        node_id="fixture", node_type="automation-bloomerang",
+        node_data={"credentials": {**CREDENTIAL, "api_key": "different-synthetic-key"}},
+        config=bm.BloomerangNodeConfig.model_validate({
+            "config": {"operation": "check_connection"}, "credentials": CREDENTIAL,
+        }),
+    )
+    with pytest.raises(ValueError, match="raw and validated credentials differ"):
+        await node.execute({})
+    assert http.requests == []
+
+
 @pytest.mark.parametrize("row", [user(Id=True), user(IsActive=False), user(Name=None), {"Results": [user()]}])
 @pytest.mark.asyncio
 async def test_invalid_direct_identity_never_uses_list_first_row(http, row):

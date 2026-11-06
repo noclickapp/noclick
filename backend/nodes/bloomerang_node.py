@@ -232,7 +232,7 @@ class ListInteractions(_Constituent, _Paged):
 
 
 class _Interaction(_Constituent):
-    interaction_id: str = Field(..., title="Interaction", json_schema_extra={"x-resource-type": "bloomerang_interaction", "x-dynamic-options": {"field_name": "interaction_id", "searchable": True, "allow_custom": True, "depends_on": ["constituent_id"]}})
+    interaction_id: str = Field(..., title="Interaction", json_schema_extra={"x-resource-type": "bloomerang_interaction", "x-dynamic-options": {"field_name": "interaction_id", "searchable": True, "allow_custom": True, "depends_on": "constituent_id"}})
     _child_identifier = field_validator("interaction_id", mode="before")(_id)
 
 
@@ -268,7 +268,7 @@ class ListNotes(_Constituent, _Paged):
 
 
 class _Note(_Constituent):
-    note_id: str = Field(..., title="Note", json_schema_extra={"x-resource-type": "bloomerang_note", "x-dynamic-options": {"field_name": "note_id", "searchable": True, "allow_custom": True, "depends_on": ["constituent_id"]}})
+    note_id: str = Field(..., title="Note", json_schema_extra={"x-resource-type": "bloomerang_note", "x-dynamic-options": {"field_name": "note_id", "searchable": True, "allow_custom": True, "depends_on": "constituent_id"}})
     _child_identifier = field_validator("note_id", mode="before")(_id)
 
 
@@ -575,7 +575,9 @@ class BloomerangNode(WorkflowNode):
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Bloomerang private CRM API key")
-        data = credential(self.node_data.get("credentials"))
+        data = credential(self.config.credentials.model_dump())
+        if "credentials" in self.node_data and credential(self.node_data["credentials"]) != data:
+            raise ValueError("Bloomerang raw and validated credentials differ")
         session = self.node_data.get("credentials", {}).get("_bloomerang_session")
         if session is not None:
             if not isinstance(session, Session) or session.data != data:
