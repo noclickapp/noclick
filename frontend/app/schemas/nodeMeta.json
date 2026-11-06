@@ -101,6 +101,9 @@
         "on_beehiiv_event"
       ]
     },
+    "automation-bigcommerce": {
+      "agentToolProvider": true
+    },
     "automation-bigquery": {
       "agentToolProvider": true,
       "triggerOperations": [
