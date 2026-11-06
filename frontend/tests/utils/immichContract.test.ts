@@ -1,15 +1,18 @@
-// UNRUN real native editor/schema registrations; generated schema needs separate root lane.
+// Verify Immich schema and editor registrations against the current lazy schema loader.
 import { describe, expect, it } from 'vitest';
 import schema from '../../app/schemas/nodes/immich.json';
-import { NODE_SCHEMAS } from '../../app/utils/nodeSchemas';
+import { NODE_SCHEMAS, loadNodeSchemas } from '../../app/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '../../app/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '../../app/utils/credentialLabels';
-import { AVAILABLE_NODES } from '../../app/components/workflow/nodes/nodeRegistry';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 describe('Immich album metadata', () => {
-    it('registers the existing API key, exactly two reads and current UUID album selector', () => {
+    it('registers the existing API key, exactly two reads and current UUID album selector', async () => {
+        await loadNodeSchemas(['automation-immich']);
         expect(NODE_SCHEMAS['automation-immich']).toBe(schema);
-        expect(AVAILABLE_NODES.filter(n => n.type === 'automation-immich')).toHaveLength(1);
+        const registrations = readFileSync(join(__dirname, '../../app/components/workflow/nodes/nodeDefinitions.ts'), 'utf8');
+        expect(registrations.match(/\['automation-immich', 'ImmichNode'\]/g)).toHaveLength(1);
         expect(CREDENTIAL_TYPE_MAP.ImmichAPIKeyCredential).toBe('immich_api_key');
         expect(humanizeCredentialLabel('ImmichAPIKey')).toBe('Immich API Key');
         const native = schema as any;

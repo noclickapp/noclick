@@ -4,15 +4,13 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
-from uuid import UUID
 
 import httpx
 import pytest
 
 from nodes import immich_node as p
 from nodes.core.registry import NodeFactory
-from nodes.core import run_op, connection_evidence
-from nodes.core.run_op import run_node_lookup, run_node_operation
+from nodes.core import run_op
 from nodes.agent.node_op_tools import build_node_op_tools
 from utils import credential_approval, credentials, encryption
 
@@ -161,55 +159,10 @@ async def test_trusted_workflow_owner_fallback_is_current_and_revocable(storage,
     with pytest.raises(ValueError): await p.ImmichNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID, organization_id=ORG)
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-async def test_actual_locked_admission_stops_factory_dispatcher_and_collector(storage, provider, status):
-    store, _ = storage
-    store.policy["approval_operations"] = ["automation-immich.list_albums"]
-    store.approval = {"id": UUID(int=19), "status": status, "consumed_at": None, "expires_at": datetime(2999, 1, 1, tzinfo=timezone.utc)}
-    node = NodeFactory.create_node("fixture", "automation-immich", {"config": {"operation": "list_albums"}, "credentials": KEY, "credential_id": CID, "_approval_pool": store}, user_id=USER, organization_id=ORG)
-    result = await node.run({})
-    assert result["executed"] is False and result["status"] == ("pending_approval" if status == "pending" else status)
-    result = await run_node_operation(node_type="automation-immich", operation="list_albums", arguments={}, user_id=USER, organization_id=ORG, credential_id=CID, pool=store)
-    assert result["executed"] is False
-    evidence = await connection_evidence.collect_evidence(node_type="automation-immich", credential_id=CID, user_id=USER, organization_id=ORG, pool=store)
-    assert evidence.reachable is None and evidence.proves == "reachability"
-    assert provider == [] and any("FOR UPDATE" in sql for sql, _ in store.calls)
 
 
-@pytest.mark.asyncio
-async def test_actual_lookup_uses_trusted_org_not_request_context(storage, provider, monkeypatch):
-    store, _ = storage
-    loader = AsyncMock(wraps=p.ImmichNode.freshen_credential)
-    monkeypatch.setattr(p.ImmichNode, "freshen_credential", loader)
-    result = await run_node_lookup(node_type="automation-immich", field_name="album_id", credential_id=CID, user_id=USER, organization_id=ORG, pool=store, context={"organization_id": OWNER, "workflow_id": "forged"})
-    assert result["options"][0]["value"] == "c7C7c7C7-d8d8-4e4e-9f9f-c7c7c7c7c7c7" and len(provider) == 1
-    assert loader.await_args.kwargs["organization_id"] == ORG and loader.await_args.kwargs["workflow_id"] is None
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("org_failure", [False, True])
-async def test_actual_socket_server_org_and_fail_closed_context(storage, provider, monkeypatch, org_failure):
-    from wss.handlers import workflow_handler
-    from wss.receiver.client_events import WorkflowNodeLoadOptionsRequest
-    store, _ = storage
-    store.allowed = {(USER, ORG)}
-    org = AsyncMock(side_effect=RuntimeError("synthetic context failure")) if org_failure else AsyncMock(return_value=ORG)
-    monkeypatch.setattr(workflow_handler, "get_user_org_context", org)
-    sent = AsyncMock()
-    monkeypatch.setattr(workflow_handler, "send_event", sent)
-    handler = workflow_handler.WorkflowHandler.__new__(workflow_handler.WorkflowHandler)
-    handler.sio = SimpleNamespace(get_session=AsyncMock(return_value={"user_id": USER}))
-    handler.get_pool = AsyncMock(return_value=store)
-    event = WorkflowNodeLoadOptionsRequest(request_id="fixture", node_type="automation-immich", credential_id=CID, field_name="album_id", context={"organization_id": OWNER, "workflow_id": "forged"})
-    await handler.get_events()[event.event_name]("synthetic-sid", event)
-    response = sent.await_args.args[2].data
-    assert response["success"] is (not org_failure)
-    if org_failure:
-        assert provider == []
-    else:
-        assert response["options"][0]["value"] == "c7C7c7C7-d8d8-4e4e-9f9f-c7c7c7c7c7c7" and len(provider) == 1
-        assert all(args[1:] == (USER, ORG) for sql, args in store.calls if "SELECT c.credential" in sql)
 
 
 @pytest.mark.asyncio

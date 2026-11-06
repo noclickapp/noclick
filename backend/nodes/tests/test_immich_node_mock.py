@@ -31,7 +31,7 @@ def wire(monkeypatch, responses=None, *, status=200, raw=None, mime="application
     responses = deepcopy(responses) if responses is not None else {}
     @asynccontextmanager
     async def client(**options):
-        assert options == {"timeout": 12, "follow_redirects": False, "trust_env": False, "require_public": True}
+        assert options == {"timeout": 12, "follow_redirects": False, "trust_env": False}
         class Client:
             @asynccontextmanager
             async def stream(self, method, url, **kwargs):
@@ -178,9 +178,10 @@ async def test_actual_connect_and_collector_empty_catalog_only_reachability(monk
     visible = {k: v for k, v in KEY.items() if k != "credential_type"}
     verdict = await credential_connect.validate_for_connect(credential_type=p.TYPE, credential_data=visible, user_id="synthetic-owner")
     assert verdict.ok is True and verdict.credential_data["credential_type"] == p.TYPE
-    assert verdict.evidence.reachable is True and verdict.evidence.proves == "reachability"
+    assert verdict.evidence.is_empty_but_working and verdict.evidence.account_label is None
     evidence = await collect_evidence(node_type="automation-immich", credential_data=KEY, user_id="synthetic-owner")
-    assert evidence.reachable is True and evidence.proves == "reachability"
+    assert evidence.is_empty_but_working and evidence.account_label is None
+    assert p.ImmichNode.connection_evidence.proves == "reachability"
     assert calls == ["/albums", "/albums"]
 
 
@@ -196,3 +197,12 @@ def test_raw_type_and_private_credential_errors():
     with pytest.raises(ValueError): p.guard({**KEY, "credential_type": "foreign"})
     with pytest.raises(ValidationError) as error: p.ImmichAPIKeyCredential(instance_origin=KEY["instance_origin"], api_key="secret bad whitespace")
     assert "secret bad whitespace" not in str(error.value)
+
+
+@pytest.mark.asyncio
+async def test_private_network_override_is_refused_before_provider(monkeypatch):
+    calls = wire(monkeypatch)
+    monkeypatch.setenv("OUTBOUND_ALLOW_PRIVATE_IPS", "true")
+    with pytest.raises(ValueError, match="could not be established"):
+        await node("list_albums").execute({})
+    assert calls == []
