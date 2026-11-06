@@ -14,6 +14,7 @@ import pytest
 from pydantic import ValidationError
 from nodes import bitrise_node as ad
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
+from nodes.core.connection_evidence import EvidenceSample
 from tests.test_oauth_refresh_authority import _Storage as AuthorityStorage, CID, USER, OWNER, ORG, WF
 from tests.test_post_connect_validation_context import _Storage as AdmissionStorage
 from wss.receiver.client_events import WorkflowNodeLoadOptionsRequest, CredentialValidateAccessRequest
@@ -386,7 +387,7 @@ async def test_manual_connect_uses_actual_catalog_reachability_not_account_ident
     http.responses = [page(app())]
     result = await credential_connect.validate_for_connect(credential_type="bitrise_api_token", credential_data=credential(), user_id=USER)
     assert result.ok and result.node_type == NODE and result.evidence.reachable is True
-    assert result.evidence.samples == [APP] and result.evidence.proves == "reachability" and result.evidence.account_label is None
+    assert result.evidence.samples == [EvidenceSample(label=APP, value=None)] and result.evidence.proves == "reachability" and result.evidence.account_label is None
     assert "private@example.invalid" not in json.dumps(asdict(result.evidence))
 
 
@@ -398,7 +399,7 @@ async def test_registered_socket_uses_current_token_and_trusted_org_not_context(
     sockets.saved.http.responses = [page(app())]
     out = await socket_call(sockets, "workflow:node:load_options", field_name="app_slug",
         context={"access_token": "forged", "organization_id": OWNER, "workflow_id": WF})
-    assert out["success"] is True and out["options"] == [{"value": APP, "label": APP}]
+    assert out["success"] is True and out["options"] == [{"value": APP, "label": APP, "metadata": None}]
     assert all(req.headers["Authorization"] == "current-token" for req in sockets.saved.http.calls)
     assert all(args[2] == ORG for sql, args in sockets.saved.storage.calls if "SELECT c.credential" in sql)
 
