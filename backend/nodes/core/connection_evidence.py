@@ -265,6 +265,10 @@ def _rows_from_options(payload: Any) -> List[Any]:
     return opts if isinstance(opts, list) else []
 
 
+class _ProbeNotExecuted(Exception):
+    """An admission refusal is no verdict about the provider."""
+
+
 class _ProviderRefused(Exception):
     """A node reported failure in its RESULT rather than by raising.
 
@@ -296,9 +300,11 @@ def _raise_if_probe_not_executed(payload: Any) -> None:
 
 
 def _raise_if_error_envelope(payload: Any) -> None:
-    """Turn a node's error-shaped result into a real failure."""
+    """Separate unexecuted probes from provider failures before reading evidence."""
     if not isinstance(payload, dict):
         return
+    if payload.get("executed") is False or payload.get("_halt_downstream"):
+        raise _ProbeNotExecuted
     failed = payload.get("status") == "error" or payload.get("success") is False
     err = payload.get("error") or payload.get("message")
     if not (failed and err):
@@ -601,6 +607,15 @@ async def collect_evidence(
                 )
                 if loaded is None:
                     raise ValueError(f"credential {credential_id} is unresolvable")
+                from utils.credential_approval import admit_lookup
+
+                pending = await admit_lookup(
+                    credential_id=credential_id, user_id=user_id, node_type=node_type,
+                    arguments={"field_name": spec.field, "context": None, "page_token": None, "search": None},
+                    pool=pool, organization_id=organization_id, workflow_id=workflow_id,
+                )
+                if pending:
+                    raise _ProbeNotExecuted
                 # Freshen at load, exactly as the dropdown path does. Without this
                 # the probe can hit the provider with an expired access token and
                 # report a perfectly healthy credential as REJECTED — telling

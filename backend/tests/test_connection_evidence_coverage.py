@@ -376,8 +376,13 @@ def test_evidence_operations_are_read_only(node_type, node_cls):
 # for every field-based node. These execute the real function.
 
 
+@pytest.fixture
+def admitted_lookup(monkeypatch):
+    monkeypatch.setattr("utils.credential_approval.admit_lookup", _async_return(None))
+
+
 @pytest.mark.asyncio
-async def test_field_path_resolves_credential_and_returns_samples(monkeypatch):
+async def test_field_path_resolves_credential_and_returns_samples(monkeypatch, admitted_lookup):
     """The load_field_options path must actually run end to end."""
     from nodes.core import connection_evidence as ce
 
@@ -405,7 +410,7 @@ async def test_field_path_resolves_credential_and_returns_samples(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_broken_declaration_is_logged_not_silently_swallowed(monkeypatch, caplog):
+async def test_broken_declaration_is_logged_not_silently_swallowed(monkeypatch, caplog, admitted_lookup):
     """A declaration pointing at nothing must be loud, not a quiet blank panel."""
     import logging
 
@@ -435,7 +440,7 @@ async def test_broken_declaration_is_logged_not_silently_swallowed(monkeypatch, 
 
 
 @pytest.mark.asyncio
-async def test_provider_rejection_is_reported_as_rejection(monkeypatch):
+async def test_provider_rejection_is_reported_as_rejection(monkeypatch, admitted_lookup):
     """invalid_auth is a verdict about the credential, and must survive as one."""
     from nodes.core import connection_evidence as ce
 
@@ -533,7 +538,7 @@ async def test_error_shaped_result_is_not_reported_as_connected(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_field_evidence_can_answer_the_field_it_came_from(monkeypatch):
+async def test_field_evidence_can_answer_the_field_it_came_from(monkeypatch, admitted_lookup):
     """Samples from a field's own loader are legal values for that field."""
     from nodes.core import connection_evidence as ce
 
