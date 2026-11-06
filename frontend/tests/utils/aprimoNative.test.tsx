@@ -1,5 +1,5 @@
 // UNRUN actual native schema/selection/search/projection fixture source.
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import fixture from '../fixtures/aprimo-native.json';
@@ -7,14 +7,22 @@ import { AprimoNode } from '~/components/workflow/nodes/AprimoNode';
 import { AVAILABLE_NODES } from '~/components/workflow/nodes/nodeRegistry';
 import { buildNodeSearchIndexEntry, getNodeSearchScore } from '~/utils/nodeSearchMatch';
 import { filterNodeServices } from '~/utils/nodeServiceSearch';
-import { getAgentToolOperations, getNodeCredentialInfo, filterConfigForExecution } from '~/utils/nodeSchemas';
+import { getAgentToolOperations, getNodeCredentialInfo, filterConfigForExecution, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
-import { autoSelectCredentialFromCache, invalidateCredentialsCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { invalidateCredentialsCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
 
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
+
+// The eager catalog imports other providers' artwork, unrelated to Aprimo.
+vi.mock('@lobehub/icons', () => {
+    const Icon = Object.assign(() => null, { Avatar: () => null, Color: () => null });
+    return new Proxy({}, { has: () => true, get: (_target, key) => key === 'then' ? undefined : Icon });
+});
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { clear: vi.fn(), get: vi.fn(), set: vi.fn(), delete: vi.fn() } }));
 
 describe('Aprimo DAM native surfaces', () => {
+    beforeAll(async () => { await loadNodeSchemas([fixture.node_type]); });
     beforeEach(() => invalidateCredentialsCache());
     it('uses actual native registration and both service selectors', () => {
         expect(AVAILABLE_NODES.find(node => node.type === fixture.node_type)?.label).toBe('Aprimo DAM');
@@ -27,9 +35,9 @@ describe('Aprimo DAM native surfaces', () => {
         expect(CREDENTIAL_TYPE_MAP.AprimoBearerCredential).toBe(fixture.credential_type);
         expect(CREDENTIAL_TYPE_MAP['Aprimo DAM Bearer Token']).toBe(fixture.credential_type);
         expect(getNodeCredentialInfo(fixture.node_type)?.acceptedTypes).toEqual([fixture.credential_type]);
-        upsertCredentialsIntoCache([{ id: 'display', credential_type: fixture.credential_type }]);
+        upsertCredentialsIntoCache([{ id: 'display', name: 'Display only', credential_type: fixture.credential_type }]);
         expect(autoSelectCredentialFromCache(fixture.node_type)).toEqual({});
-        upsertCredentialsIntoCache([{ id: 'own', credential_type: fixture.credential_type, owned_by_me: true } as any]);
+        upsertCredentialsIntoCache([{ id: 'own', name: 'Owned Aprimo', credential_type: fixture.credential_type, owned_by_me: true } as any]);
         expect(autoSelectCredentialFromCache(fixture.node_type)).toEqual({ aprimo_bearer: 'own' });
     });
     it('filters fields through the selected operation while retaining metadata', () => {

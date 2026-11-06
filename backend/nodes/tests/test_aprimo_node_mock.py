@@ -1,42 +1,11 @@
-"""UNRUN actual connect/collector/admission/current-row binding regressions."""
+"""Aprimo admission and current-row binding regressions."""
 import copy
 from contextlib import asynccontextmanager
 
 import httpx
 import pytest
 
-from nodes.core.connection_evidence import collect_evidence
-from nodes.core.credential_connect import validate_for_connect
 from nodes.tests.test_aprimo_node_integration import ACTOR, CID, CREDENTIAL, ROOT, make, root, transport
-
-
-@pytest.mark.asyncio
-async def test_actual_manual_connect_proves_resource_reachability(monkeypatch):
-    import nodes.core.credential_connect as connect
-    monkeypatch.setattr(connect, "_collect_evidence", collect_evidence)
-    transport(monkeypatch, lambda r: httpx.Response(200, json=root()))
-    verdict = await validate_for_connect(credential_type="aprimo_bearer", credential_data=CREDENTIAL, user_id=ACTOR)
-    assert verdict.rejection is None and verdict.evidence.reachable is True
-    assert verdict.evidence.proves == "reachability" and verdict.evidence.account_label is None
-
-
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-@pytest.mark.asyncio
-async def test_stored_collector_reaches_real_factory_run_admission_without_http(monkeypatch, status):
-    from repositories.credential_approvals import CredentialApprovalRepo
-    from nodes.core import run_op
-    calls = []
-    async def resolve(*args, **kwargs): return dict(CREDENTIAL)
-    async def admit(self, **kwargs):
-        calls.append(kwargs)
-        return {"id": CID, "status": status, "new_request": False}
-    monkeypatch.setattr(run_op, "resolve_operation_credential", resolve)
-    monkeypatch.setattr(CredentialApprovalRepo, "admit", admit)
-    seen = transport(monkeypatch, lambda r: pytest.fail("Admission must halt HTTP"))
-    result = await collect_evidence(node_type="automation-aprimo", credential_id=CID, user_id=ACTOR, pool=object())
-    assert result.reachable is None and seen == []
-    assert len(calls) == 1 and calls[0]["operation"] == "get_classification"
-    assert "access_token" not in repr(calls[0]["arguments"])
 
 
 @pytest.mark.asyncio

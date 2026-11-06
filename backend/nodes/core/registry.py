@@ -29,6 +29,7 @@ from nodes.http_request_node import HttpRequestNode
 from nodes.linear_node import LinearNode
 from nodes.github_rest_node import GithubRestNode
 from nodes.affinity_node import AffinityNode
+from nodes.aprimo_node import AprimoNode
 from nodes.nocodb_node import NocoDBNode
 from nodes.airtable_node import AirtableNode
 from nodes.nylas_node import NylasNode
@@ -239,6 +240,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-linear': LinearNode,
     'automation-github-rest': GithubRestNode,
     'automation-affinity': AffinityNode,
+    'automation-aprimo': AprimoNode,
     'automation-nocodb': NocoDBNode,
     'automation-airtable': AirtableNode,
     'automation-nylas': NylasNode,
