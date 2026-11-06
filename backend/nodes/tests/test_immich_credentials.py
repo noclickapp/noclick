@@ -1,4 +1,4 @@
-"""UNRUN actual current-row, factory, locked admission, Agent and socket fixtures."""
+"""Current-row, factory, locked admission, Agent and socket fixtures."""
 from contextlib import asynccontextmanager
 from copy import deepcopy
 from datetime import datetime, timezone
@@ -38,7 +38,7 @@ class Context:
 
 class Storage:
     def __init__(self):
-        self.row = {"credential": b"synthetic-ciphertext", "credential_type": KEY["credential_type"], "owner_id": OWNER, "revoked_at": None, "token_version": 3}
+        self.row = {"credential": b"synthetic-ciphertext", "credential_type": KEY["credential_type"], "owner_id": OWNER, "revoked_at": None, "token_version": 3, "updated_at": datetime(2026, 1, 1, tzinfo=timezone.utc)}
         self.policy = {"name": "Fixture Immich application", "owner_id": OWNER, "approval_operations": [], "approval_revision": 1, "revoked_at": None}
         self.calls, self.allowed, self.approval = [], {(USER, ORG), (USER, None)}, None
     def acquire(self): return Context(self)
