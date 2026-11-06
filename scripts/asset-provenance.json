@@ -848,6 +848,24 @@
       "source": "https://hetrixtools.com",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "106c44319e3519ab4db66353bf17503bd2fe2a64d292c831fa8f782982566cc8"
+    },
+    {
+      "path": "frontend/public/icons/nylas.svg",
+      "source": "https://www.nylas.com/wp-content/uploads/main-logo.svg",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "f9245e93ecc6ede674095440e5f7908a5a24b45a86d677b1e41e9d4cd992c7e7"
+    },
+    {
+      "path": "frontend/public/icons/nylas-brand-vector.svg",
+      "source": "https://www.nylas.com/ (provider-published brand artwork, cropped to the mark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "0a782bb6d3600c16530993739cd0f16e376afbfa738a07a3612e27fb182f7077"
+    },
+    {
+      "path": "frontend/public/icons/nylas-brand.png",
+      "source": "https://www.nylas.com/ (provider-published brand artwork, cropped to the mark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "4c3c0e4ecb6ac496dc8a40f9897539f1ab56c3863afffade0208222c51980d6a"
     }
   ],
   "excludedSourceAssets": [

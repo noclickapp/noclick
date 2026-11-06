@@ -17,6 +17,10 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'FormBuilder123TokenCredential': '123formbuilder_v2_token',
     'PorkbunCredential': 'porkbun_api_key',
     'HetrixToolsAPIKeyCredential': 'hetrixtools_api_key',
+    'NylasAPIKeyCredential': 'nylas_api_key',
+    'Nylas API Key': 'nylas_api_key',
+    'NylasAccessTokenCredential': 'nylas_access_token',
+    'Nylas Access Token': 'nylas_access_token',
     // Agent credentials
     'AgentCredentials': 'agent_api_key',
 
