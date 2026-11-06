@@ -31,6 +31,18 @@ logger = logging.getLogger(__name__)
 
 INSTANTLY_API_BASE = "https://api.instantly.ai/api/v2"
 
+# Provider-documented schedule for name-only saved campaign configurations.
+# https://developer.instantly.ai/api-reference/campaign/create-campaign
+# Creation does not activate a campaign; callers can override this schedule.
+DEFAULT_CAMPAIGN_SCHEDULE = json.dumps({
+    "schedules": [{
+        "name": "My Schedule",
+        "timing": {"from": "09:00", "to": "17:00"},
+        "days": {"0": True, "1": True, "2": True, "3": True, "4": True, "5": False, "6": False},
+        "timezone": "Etc/GMT+12",
+    }],
+})
+
 # ============================================================================
 # Credential Schema
 # ============================================================================
@@ -287,9 +299,9 @@ class InstantlyCreateCampaignConfig(BaseModel):
         ..., title="Campaign Name", description="Name for the new campaign"
     )
     campaign_schedule: Optional[str] = Field(
-        None,
+        DEFAULT_CAMPAIGN_SCHEDULE,
         title="Campaign Schedule (JSON)",
-        description="Required by the API when creating a campaign. Existing configs remain loadable; set a JSON object containing schedules with name, timing (from/to in HH:MM), days (0-6), and timezone",
+        description="JSON object containing schedules with name, timing, days, and timezone. Omitted or null values use the provider's documented example schedule: 09:00-17:00, days 0-4, Etc/GMT+12. Creation does not activate the campaign; override before activation to choose other sending hours.",
         json_schema_extra={"ui:widget": "code_editor", "ui:rows": 8},
     )
 
@@ -1617,16 +1629,8 @@ class InstantlyNode(WorkflowNode):
     async def _handle_create_campaign(
         self, config: InstantlyCreateCampaignConfig, credentials
     ) -> Dict[str, Any]:
-        # Do not invent sending hours or a timezone for a saved name-only config.
-        if not config.campaign_schedule:
-            return {
-                "status": "error", "action": "create_campaign", "status_code": 400,
-                "error": "Update this saved campaign configuration with campaign_schedule (JSON schedules containing name, timing, days, and timezone) required by Instantly.",
-                "config_upgrade_required": True, "missing_fields": ["campaign_schedule"],
-                "timing_ms": {},
-            }
         try:
-            schedule = json.loads(config.campaign_schedule)
+            schedule = json.loads(config.campaign_schedule or DEFAULT_CAMPAIGN_SCHEDULE)
         except json.JSONDecodeError as exc:
             raise ValueError(f"Invalid JSON for campaign schedule: {exc}") from exc
         if not isinstance(schedule, dict):
@@ -2000,7 +2004,8 @@ class InstantlyNode(WorkflowNode):
             json_body=body,
             action_name="get_account_warmup_analytics",
         )
-        if result["status"] == "success" and (start or end):
+        if (result["status"] == "success" and (start or end)
+                and "email_date_data" in result["data"]):
             # Keep the provider envelope and aggregate summary; scope only daily rows.
             data = result["data"]
             data["email_date_data"] = {

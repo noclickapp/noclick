@@ -86,10 +86,9 @@ async def test_create_campaign_rejects_invalid_schedule_json(schedule):
 @pytest.mark.parametrize("saved, missing", [
     ({"operation": "create_email_account", "email": "user@example.com",
       "first_name": "John", "last_name": "Doe"}, list(ACCOUNT_SETTINGS)),
-    ({"operation": "create_campaign", "name": "Saved campaign"}, ["campaign_schedule"]),
 ])
-async def test_saved_creation_configs_remain_loadable_and_explain_upgrade(saved, missing, monkeypatch):
-    """A manual migration must not prevent an old workflow from loading."""
+async def test_saved_account_config_loads_but_requires_unavailable_mailbox_settings(saved, missing, monkeypatch):
+    """Loadability only: execution migration is blocked on owner-supplied secrets."""
     credentials = InstantlyAPIKeyCredential(api_key="test-key")
     model = InstantlyNodeConfig.model_validate({"config": saved, "credentials": credentials})
     restored = InstantlyNodeConfig.model_validate(model.model_dump())
@@ -161,4 +160,81 @@ async def test_saved_warmup_dates_filter_daily_rows_without_changing_provider_su
             assert metrics == body["email_date_data"][email][day]
     assert set(data["email_date_data"]) == set(body["email_date_data"])
     assert data["aggregate_data"] == body["aggregate_data"]
+    assert {"api_request", "total"} <= result["timing_ms"].keys()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("extra", [{}, {"campaign_schedule": None}, {"campaign_schedule": ""}])
+async def test_saved_name_only_campaign_executes_with_documented_default(extra, monkeypatch):
+    from pathlib import Path
+
+    fixture = json.loads((Path(__file__).parent / "fixtures/instantly/create_campaign.json").read_text())
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(200, json=fixture["body"])
+
+    client_type = httpx.AsyncClient
+    monkeypatch.setattr(instantly_node.httpx, "AsyncClient", lambda **kwargs: client_type(
+        transport=httpx.MockTransport(respond), **kwargs,
+    ))
+    model = InstantlyNodeConfig.model_validate({
+        "config": {"operation": "create_campaign", "name": "My First Campaign", **extra},
+        "credentials": {"credential_type": "instantly_api_key", "api_key": "test-key"},
+    })
+    restored = InstantlyNodeConfig.model_validate(model.model_dump())
+    node = InstantlyNode(
+        node_id="saved", node_type="automation-instantly", node_data={}, config=restored,
+        sio=None, sid=None, workflow_id="saved-workflow",
+    )
+    result = await node.execute({})
+    assert len(requests) == 1
+    assert json.loads(requests[0].content) == {
+        "name": "My First Campaign", "campaign_schedule": CAMPAIGN_SCHEDULE,
+    }
+    assert result["status"] == "success"
+    assert result["action"] == "create_campaign"
+    assert result["status_code"] == 200
+    assert result["data"] == fixture["body"]
+    assert "config_upgrade_required" not in result
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("omit_aggregate", [False, True])
+async def test_warmup_dates_preserve_success_without_optional_daily_data(omit_aggregate, monkeypatch):
+    from tests.nodes.test_instantly_node_mock import provider_response
+
+    # Both properties are optional in the current official response schema.
+    # Omit them from the authored example without inventing response values.
+    body = provider_response("warmup_analytics")
+    body.pop("email_date_data")
+    if omit_aggregate:
+        body.pop("aggregate_data")
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(200, json=body)
+
+    client_type = httpx.AsyncClient
+    monkeypatch.setattr(instantly_node.httpx, "AsyncClient", lambda **kwargs: client_type(
+        transport=httpx.MockTransport(respond), **kwargs,
+    ))
+    node = InstantlyNode(
+        node_id="saved", node_type="automation-instantly", node_data={},
+        config=InstantlyNodeConfig.model_validate({
+            "config": {"operation": "get_account_warmup_analytics", "email": "example1@example.com",
+                       "start_date": "2023-10-01"},
+            "credentials": {"credential_type": "instantly_api_key", "api_key": "test-key"},
+        }), sio=None, sid=None, workflow_id="saved-workflow",
+    )
+    result = await node.execute({})
+    assert len(requests) == 1
+    assert json.loads(requests[0].content) == {"emails": ["example1@example.com"]}
+    assert result["status"] == "success"
+    assert result["action"] == "get_account_warmup_analytics"
+    assert result["status_code"] == 200
+    assert result["data"] == body
+    assert "email_date_data" not in result["data"]
     assert {"api_request", "total"} <= result["timing_ms"].keys()
