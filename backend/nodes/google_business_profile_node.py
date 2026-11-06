@@ -1701,13 +1701,14 @@ class GoogleBusinessProfileNode(WorkflowNode):
             data = resp.json()
         date_map: Dict[str, Dict[str, Any]] = {}
         for ts in data.get("multiDailyMetricTimeSeries", []):
-            metric_name = ts.get("dailyMetric", "unknown")
-            for series in (ts.get("dailyMetricTimeSeries", {}).get("timeSeries", {}).get("datedValues", [])):
-                d = series.get("date", {})
-                date_str = f"{d.get('year', '')}-{str(d.get('month', '')).zfill(2)}-{str(d.get('day', '')).zfill(2)}"
-                if date_str not in date_map:
-                    date_map[date_str] = {"date": date_str}
-                date_map[date_str][metric_name] = _gbp_int(series.get("value", 0))
+            for metric in ts.get("dailyMetricTimeSeries", []):
+                metric_name = metric.get("dailyMetric", "unknown")
+                for series in metric.get("timeSeries", {}).get("datedValues", []):
+                    d = series.get("date", {})
+                    date_str = f"{d.get('year', '')}-{str(d.get('month', '')).zfill(2)}-{str(d.get('day', '')).zfill(2)}"
+                    if date_str not in date_map:
+                        date_map[date_str] = {"date": date_str}
+                    date_map[date_str][metric_name] = _gbp_int(series.get("value", 0))
         rows = sorted(date_map.values(), key=lambda r: r["date"])
         return {"rows": rows, "row_count": len(rows), "metrics": metrics_list, "date_range": {"start": start, "end": end}}
 
@@ -1726,7 +1727,7 @@ class GoogleBusinessProfileNode(WorkflowNode):
                     "monthlyRange.startMonth.month": month,
                     "monthlyRange.endMonth.year": year,
                     "monthlyRange.endMonth.month": month,
-                    "pageSize": 300,
+                    "pageSize": 100,
                 }
                 if page_token:
                     params["pageToken"] = page_token

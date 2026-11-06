@@ -515,19 +515,27 @@ class TestAnalytics:
             location_id=LOCATION_ID, start_date="2026-06-01", end_date="2026-06-07",
             daily_metrics="WEBSITE_CLICKS,CALL_CLICKS",
         ), creds)
+        # Synthetic counts in Google's documented nested array structure:
+        # https://developers.google.com/my-business/reference/performance/rest/v1/locations/fetchMultiDailyMetricsTimeSeries
         payload = {"multiDailyMetricTimeSeries": [
-            {"dailyMetric": "WEBSITE_CLICKS", "dailyMetricTimeSeries": {"timeSeries": {"datedValues": [
-                {"date": {"year": 2026, "month": 6, "day": 1}, "value": 15},
-            ]}}},
-            {"dailyMetric": "CALL_CLICKS", "dailyMetricTimeSeries": {"timeSeries": {"datedValues": [
-                {"date": {"year": 2026, "month": 6, "day": 1}, "value": 3},
-            ]}}},
+            {"dailyMetricTimeSeries": [
+                {"dailyMetric": "WEBSITE_CLICKS", "timeSeries": {"datedValues": [
+                    {"date": {"year": 2026, "month": 6, "day": 1}, "value": "15"},
+                    {"date": {"year": 2026, "month": 6, "day": 2}, "value": "7"},
+                ]}},
+                {"dailyMetric": "CALL_CLICKS", "timeSeries": {"datedValues": [
+                    {"date": {"year": 2026, "month": 6, "day": 1}, "value": "3"},
+                ]}},
+            ]},
+            {"dailyMetricTimeSeries": []},
         ]}
         with patch_token(), patch("httpx.AsyncClient") as m:
             m.return_value.__aenter__.return_value.get = AsyncMock(return_value=_resp(payload))
             result = await node.execute({})
         assert result["rows"][0]["WEBSITE_CLICKS"] == 15
         assert result["rows"][0]["CALL_CLICKS"] == 3
+        assert result["rows"][1] == {"date": "2026-06-02", "WEBSITE_CLICKS": 7}
+        assert result["row_count"] == 2
 
     @pytest.mark.asyncio
     async def test_search_keywords(self, creds):
@@ -537,8 +545,17 @@ class TestAnalytics:
             {"searchKeyword": "best pizza", "insightsValue": {"value": 200}},
         ]}
         with patch_token(), patch("httpx.AsyncClient") as m:
-            m.return_value.__aenter__.return_value.get = AsyncMock(return_value=_resp(payload))
+            request = AsyncMock(side_effect=[
+                _resp({**payload, "nextPageToken": "bmV4dA=="}),
+                _resp({"searchKeywordsCounts": []}),
+            ])
+            m.return_value.__aenter__.return_value.get = request
             result = await node.execute({})
+        assert request.await_count == 2
+        assert request.call_args_list[0].kwargs["params"]["pageSize"] == 100
+        assert "pageToken" not in request.call_args_list[0].kwargs["params"]
+        assert request.call_args_list[1].kwargs["params"]["pageSize"] == 100
+        assert request.call_args_list[1].kwargs["params"]["pageToken"] == "bmV4dA=="
         assert result["count"] == 2
         assert result["keywords"][0]["keyword"] == "pizza place"
         assert result["period"] == "2026-05"
