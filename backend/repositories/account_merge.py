@@ -130,6 +130,7 @@ COORDINATOR_REFERENCES = (
 _REGISTERED_MOVE: list = []
 _REGISTERED_KEEP: list = []
 _REGISTERED_ORG_MOVE: list = []
+_REGISTERED_ORG_KEEP: list = []
 
 
 _REGISTERED_RESOLVERS: list = []
@@ -142,10 +143,11 @@ def register_collision_resolver(resolve) -> None:
         _REGISTERED_RESOLVERS.append(resolve)
 
 
-def register_columns(*, move=(), keep=(), org_move=()) -> None:
+def register_columns(*, move=(), keep=(), org_move=(), org_keep=()) -> None:
     _REGISTERED_MOVE.extend(c for c in move if c not in _REGISTERED_MOVE)
     _REGISTERED_KEEP.extend(c for c in keep if c not in _REGISTERED_KEEP)
     _REGISTERED_ORG_MOVE.extend(t for t in org_move if t not in _REGISTERED_ORG_MOVE)
+    _REGISTERED_ORG_KEEP.extend(t for t in org_keep if t not in _REGISTERED_ORG_KEEP)
 
 
 def move_columns() -> tuple:
@@ -158,6 +160,10 @@ def keep_columns() -> tuple:
 
 def org_move_tables() -> tuple:
     return ORG_MOVE_TABLES + tuple(_REGISTERED_ORG_MOVE)
+
+
+def org_keep_tables() -> tuple:
+    return ORG_KEEP_TABLES + tuple(_REGISTERED_ORG_KEEP)
 
 
 @dataclass(frozen=True)

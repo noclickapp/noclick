@@ -79,7 +79,7 @@ export function phoneLabel(number: string): string {
 
 // ── services: where the money goes ───────────────────────────────────────────
 
-export type ServiceId = 'ai' | 'sandboxes' | 'machines' | 'browsers' | 'calls' | 'numbers' | 'email' | 'apps' | 'databases' | 'storage' | 'domains' | 'tools';
+export type ServiceId = 'ai' | 'runs' | 'sandboxes' | 'machines' | 'browsers' | 'calls' | 'numbers' | 'email' | 'apps' | 'databases' | 'storage' | 'domains' | 'tools';
 
 /** What each service is called, beside every charge's name (lib/usage/usageNames.json: one table). The buckets are
  *  the platform API's `group_by=type`, with model calls, emails and stored files each joined into one. */
@@ -89,6 +89,7 @@ export function serviceOf(row: UsageRow): ServiceId {
     const t = row.usage_type;
     const s = row.usage_subtype;
     if (row.metadata.platform_api?.surface === 'ai' || t === 'ai_usage' || t === 'ai_builder' || t === 'ai_testing') return 'ai';
+    if (s === 'compute/workflow_run') return 'runs';
     if (t === 'cpu_usage' || t === 'gpu_usage') return 'sandboxes';
     if (t === 'recurring') return 'numbers';
     if (s.startsWith('email/')) return 'email';
@@ -806,6 +807,8 @@ export const FACETS: Record<ServiceId, { by: string; used?: true; of: (snap: Usa
             return { id: `${r.metadata.workflow_id ?? '-'}:${r.metadata.node_id ?? '-'}`, label: nodeName(s, r.metadata) };
         },
     },
+    // An automation's runs, an hour of them a charge: each by its automation.
+    runs: { by: 'Automation', of: (s, r) => ({ id: r.metadata.workflow_id ?? '-', label: nodeName(s, { ...r.metadata, node_id: undefined }) }) },
     machines: { by: 'Machine', of: (_, r) => ({ id: r.usage_subtype, label: getDisplayName(r.usage_subtype) }) },
     browsers: { by: 'Browser', of: (_, r) => ({ id: r.usage_subtype, label: getDisplayName(r.usage_subtype) }) },
     calls: {

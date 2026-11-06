@@ -108,6 +108,11 @@ ACTIVITY_SIGNAL = "activity.signal"
 # one a workflow has no public endpoints to describe.
 PUBLIC_ENDPOINTS = "workflow.public_endpoints"
 
+# A workflow run's CPU on this process, once the run ends (utils/run_cpu.py): async (*, execution_id, user_id,
+# organization_id, workflow_id, cpu_ms) -> None, off the run's return. Hosted, it's what the run is charged for its
+# own compute; without one, the CPU is only on the run's span.
+RUN_CPU_SPENT = "workflow.run_cpu_spent"
+
 # Tell whoever runs this instance that one node's execution grew the process
 # by a lot: async (workflow_id, node_id, node_label, node_type, rss_mb,
 # rss_delta_mb, threads) -> None. The engine logs the allocators either way.

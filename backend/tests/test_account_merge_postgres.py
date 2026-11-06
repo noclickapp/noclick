@@ -11,7 +11,7 @@ import pytest
 
 from repositories import account_merge
 from repositories.account_merge import (
-    ORG_KEEP_TABLES, SPECIAL_COLUMNS, USER_KEYED_SQL, merge_accounts, personal_workspace,
+    SPECIAL_COLUMNS, USER_KEYED_SQL, merge_accounts, personal_workspace,
 )
 from repositories.phones import PhoneRepo
 from tests.test_phone_accounts_postgres import FakeAuthAdmin, phones_db  # noqa: F401 — the shared fixture
@@ -44,7 +44,7 @@ async def test_every_user_keyed_column_has_a_merge_decision(phones_db):
         "SELECT cl.relname FROM pg_class cl JOIN pg_namespace n ON n.oid = cl.relnamespace AND n.nspname = 'public' "
         "JOIN pg_attribute a ON a.attrelid = cl.oid AND a.attname = 'organization_id' AND NOT a.attisdropped "
         "WHERE cl.relkind IN ('r', 'p')")}
-    org_planned = set(account_merge.org_move_tables()) | set(ORG_KEEP_TABLES)
+    org_planned = set(account_merge.org_move_tables()) | set(account_merge.org_keep_tables())
     assert org_planned - with_org in ({"workflow_embeddings"}, set())
     assert with_org <= org_planned
     assert set(account_merge.org_move_tables()) <= {t for t, _ in account_merge.move_columns()}

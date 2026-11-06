@@ -20,6 +20,8 @@ from typing import Callable, Dict, List, Any, Union, Tuple, Optional, Set
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from utils.async_helpers import spawn
+from utils import run_cpu
+from utils.run_cpu import metered_run
 from utils.process_stats import get_rss_mb
 from utils.database_pool import DatabasePoolMixin
 from utils.credentials import (
@@ -593,6 +595,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 error=f"Execution failed: {e}",
             )
 
+    @metered_run
     async def _handle_execute_impl(
         self, sid: str, request: WorkflowExecuteRequest, execution_id: Optional[str] = None,
         caller_user_id: Optional[str] = None
@@ -881,6 +884,10 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                     logger.info(f"[WorkflowExecution] Created execution record {execution_id}")
             else:
                 logger.info(f"[WorkflowExecution] Using pre-created execution record {execution_id}")
+            run_cpu.bind(
+                execution_id=execution_id, user_id=user_id, organization_id=workflow_org_id,
+                workflow_id=request.workflow_id,
+            )
 
             # CAS: snapshot the run's graph once at start (whole-blob, deduped).
             # The commit short-circuits on resume (existing graph_hash), so the
@@ -1803,6 +1810,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             except Exception as emit_err:
                 logger.warning("[WorkflowExecution] synthetic resume completion emit failed: %s", emit_err)
 
+    @metered_run
     async def _handle_resume_impl(
         self,
         sid: str,
@@ -1845,6 +1853,7 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         if not user_id:
             logger.error("[resume] missing user_id; cannot resume")
             return
+        run_cpu.bind(execution_id=execution_id, user_id=user_id, organization_id=workflow_org_id, workflow_id=workflow_id)
 
         pool = await self.get_pool()
         if not pool:

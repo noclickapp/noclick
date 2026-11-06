@@ -1,6 +1,7 @@
 {
     "services": {
         "ai": { "label": "AI models", "gloss": "Every model call: chats, agents and the builder" },
+        "runs": { "label": "Automation runs", "gloss": "The computing each run of your automations uses" },
         "sandboxes": { "label": "Sandboxes", "gloss": "The computers agents work in, by the minute" },
         "machines": { "label": "Machines", "gloss": "Always-on machines, by the day" },
         "browsers": { "label": "Browsers", "gloss": "Browser time agents use" },
@@ -18,6 +19,7 @@
         "noclick/testing-1": "Test run",
         "noclick/transcribe-1": "Transcription",
         "agent/sandbox": "Sandbox time",
+        "compute/workflow_run": "Automation runs",
         "sandbox": "Sandbox time",
         "sandbox/cli_uptime": "Sandbox time",
         "modal_sandbox": "Code sandbox",
