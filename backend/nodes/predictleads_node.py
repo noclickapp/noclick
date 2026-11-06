@@ -550,17 +550,21 @@ class PredictLeadsNode(WorkflowNode):
     @classmethod
     def get_config_model(cls): return PredictLeadsNodeConfig
     @classmethod
-    def parse_config(cls, data):
-        if data.get("credentials") is not None: credential(data["credentials"])
-        return super().parse_config(data)
+    def parse_config(cls, config_data):
+        if config_data.get("credentials") is not None: credential(config_data["credentials"])
+        return super().parse_config(config_data)
     @classmethod
-    def validate_config(cls, data):
-        if data.get("credentials") is not None:
-            try: credential(data["credentials"])
+    def validate_config(cls, config_data):
+        if config_data.get("credentials") is not None:
+            try: credential(config_data["credentials"])
             except ValueError: return {"valid": False, "errors": ["Complete the native PredictLeads credential form"], "satisfied_set": None}
-        return super().validate_config(data)
+        return super().validate_config(config_data)
     @classmethod
-    async def freshen_credential(cls, data, *, pool=None, user_id=None, credential_id=None, organization_id=None, workflow_id=None, **kwargs):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await cls._freshen_current_credential(
+            credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
+    @classmethod
+    async def _freshen_current_credential(cls, data, *, pool=None, user_id=None, credential_id=None, organization_id=None, workflow_id=None):
         credential(data)
         if isinstance(data, BoundCredential):
             await current_credential(data)
@@ -598,7 +602,7 @@ class PredictLeadsNode(WorkflowNode):
         supplied = self.node_data.get("credentials")
         if "credentials" not in self.node_data and self.config.credentials is not None:
             supplied = self.config.credentials.model_dump()
-        data = await self.freshen_credential(supplied, pool=self.node_data.get("_approval_pool"),
+        data = await self._freshen_current_credential(supplied, pool=self.node_data.get("_approval_pool"),
             user_id=self.user_id, credential_id=self.node_data.get("credential_id"), organization_id=self.organization_id, workflow_id=self.workflow_id)
         cfg = self.config.config
         if isinstance(cfg, CheckConnection): return await check_subscription(data)

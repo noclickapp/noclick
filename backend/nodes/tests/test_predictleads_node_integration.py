@@ -51,7 +51,7 @@ def storage(monkeypatch):
 
 
 async def bound(state, **context):
-    return await p.PredictLeadsNode.freshen_credential(state.blob, pool=state.pool,
+    return await p.PredictLeadsNode._freshen_current_credential(state.blob, pool=state.pool,
         user_id=USER, credential_id=CID, organization_id=context.get("organization_id"), workflow_id=context.get("workflow_id"))
 
 
@@ -167,3 +167,15 @@ async def test_actual_agent_picker_authoritative_local_scope_is_not_injected(sto
         user_id=USER, pool=storage.pool, credential_id=CID, organization_id=ORG)
     assert [item["value"] for item in result["options"]] == ["fixture.example", "second.example"]
     assert not wire.calls
+
+
+@pytest.mark.asyncio
+async def test_freshen_hook_accepts_base_keyword_and_binds_saved_authority(storage):
+    current = await p.PredictLeadsNode.freshen_credential(
+        credential_data=storage.blob, pool=storage.pool, user_id=USER, credential_id=CID)
+    assert isinstance(current, p.BoundCredential)
+    assert current.authority.caller_id == USER
+    assert current.authority.credential_id == CID
+    storage.pool.row["revoked_at"] = UPDATED
+    with pytest.raises(ValueError):
+        await p.PredictLeadsNode.freshen_credential(credential_data=current)

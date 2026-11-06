@@ -266,3 +266,9 @@ async def test_native_validation_hook_preserves_true_false_unknown(wire, status,
     result = await p.PredictLeadsNode.validate_credential_access(blob(allow_credit_reads=False))
     assert result["valid"] is expected
     assert len(wire.calls) == 1 and wire.calls[0][1] == p.ROOT + "/api_subscription"
+
+
+def test_config_hooks_accept_base_keyword():
+    config_data = {"config": {"operation": "check_connection"}}
+    assert p.PredictLeadsNode.validate_config(config_data=config_data)["valid"] is True
+    assert p.PredictLeadsNode.parse_config(config_data=config_data).config.operation == "check_connection"
