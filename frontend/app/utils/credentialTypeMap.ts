@@ -82,6 +82,8 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // RingCentral
     'RingCentralAccessTokenCredential': 'ringcentral_access_token',
+    'StatuspageAPIKeyCredential': 'statuspage_api_key',
+    'Statuspage API Key': 'statuspage_api_key',
 
     // Apollo
     'ApolloAPIKeyCredential': 'apollo_api_key',
