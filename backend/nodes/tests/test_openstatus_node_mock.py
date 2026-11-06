@@ -108,6 +108,30 @@ async def test_real_factory_execute_and_exact_closed_http(world, op, monkeypatch
 
 
 @pytest.mark.asyncio
+async def test_heartbeat_monitors_are_listed_and_read_without_ping_capability(world):
+    # The pinned v2 OpenAPI declares heartbeatMonitors in ListMonitorsResponse
+    # and heartbeat in MonitorConfig; pingUrl remains private configuration.
+    heartbeat = {"id": MONITOR, "name": "Nightly backup", "active": True,
+        "status": "MONITOR_STATUS_ACTIVE", "period": "3600", "grace": "300",
+        "pingUrl": "https://api.openstatus.dev/heartbeat/" + PRIVATE}
+    def response(name, body, raw):
+        if name == "ListMonitors":
+            return {"heartbeatMonitors": [heartbeat], "totalSize": 1}
+        if name == "GetMonitor":
+            return {"monitor": {"heartbeat": heartbeat}}
+        return raw
+    world.override = response
+    listed = await R.records(AUTH, {"operation": "list_monitors"})
+    assert listed["data"] == [{"id": MONITOR, "active": True,
+        "status": "MONITOR_STATUS_ACTIVE", "type": "heartbeat"}]
+    assert listed["total_count"] == 1 and listed["completion_known"]
+    selected = await R.records(AUTH, args("get_monitor"))
+    assert selected["data"] == listed["data"][0]
+    assert PRIVATE not in json.dumps([listed, selected])
+    assert all("/heartbeat/" not in str(req.url) for req in world.calls)
+
+
+@pytest.mark.asyncio
 async def test_explicit_names_and_actual_paging_are_local_sealed_offsets(world):
     world.count = 2
     result = await R.records(AUTH, {"operation": "list_status_pages", "limit": 1, "include_names": True})

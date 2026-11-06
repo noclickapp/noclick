@@ -198,6 +198,20 @@ async def test_actual_saved_socket_context_has_honest_tristate(storage,world,reg
     assert len(world.calls)==(0 if status==0 else 2 if status==200 else 1)
 
 
+@pytest.mark.asyncio
+async def test_actual_public_discovery_manual_connect_and_no_guessed_identity(world,registry,monkeypatch):
+    from nodes.core import credential_connect,connection_evidence
+    from utils.credential_request_routes import _credential_union_leaves, _get_oauth_provider
+    leaves=_credential_union_leaves(R.OpenStatusNode.get_config_schema())
+    assert len(leaves)==1
+    _,schema,hidden=leaves[0]
+    assert not hidden and _get_oauth_provider(R.FAMILY) is None
+    assert schema["properties"]["credential_type"]["const"]==R.FAMILY
+    assert schema["required"]==["api_key"] and schema["properties"]["api_key"]["ui:sensitive"] is True
+    monkeypatch.setattr(credential_connect,"_collect_evidence",connection_evidence.collect_evidence)
+    value=await credential_connect.validate_for_connect(credential_type=R.FAMILY,credential_data={"api_key":AUTH["api_key"]},user_id=USER)
+    assert value.ok and value.credential_data["credential_type"]==R.FAMILY
+    assert value.evidence.reachable is True and value.evidence.proves=="reachability" and value.evidence.account_label is None
 
 
 

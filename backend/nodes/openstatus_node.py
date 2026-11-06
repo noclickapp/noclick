@@ -12,7 +12,7 @@ import re
 from typing import Annotated, Literal, Optional, Union
 
 from cryptography.fernet import Fernet
-from pydantic import BaseModel, ConfigDict, Discriminator, Field, TypeAdapter, field_validator
+from pydantic import BaseModel, ConfigDict, Discriminator, Field, TypeAdapter, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
@@ -37,6 +37,7 @@ SERVICES = {
     "ListStatusReports": "status_report.v1.StatusReportService", "GetStatusReport": "status_report.v1.StatusReportService",
     "ListMaintenances": "maintenance.v1.MaintenanceService", "GetMaintenance": "maintenance.v1.MaintenanceService",
 }
+MONITOR_TYPES = ("http", "tcp", "dns", "icmp", "grpc", "heartbeat")
 MONITOR_STATUSES = {"MONITOR_STATUS_" + v for v in ("UNSPECIFIED", "ACTIVE", "DEGRADED", "ERROR")}
 OVERALL_STATUSES = {"OVERALL_STATUS_" + v for v in ("UNSPECIFIED", "OPERATIONAL", "DEGRADED", "PARTIAL_OUTAGE", "MAJOR_OUTAGE", "MAINTENANCE", "UNKNOWN")}
 REPORT_STATUSES = {"STATUS_REPORT_STATUS_" + v for v in ("UNSPECIFIED", "INVESTIGATING", "IDENTIFIED", "MONITORING", "RESOLVED")}
@@ -72,6 +73,15 @@ class OpenStatusApiKeyCredential(BaseModel):
     api_key: str = Field(..., title="API Key", min_length=1, max_length=4096,
         json_schema_extra={"ui:widget": "password", "ui:sensitive": True})
     _key = field_validator("api_key", mode="before")(key)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _native_family(cls, value):
+        # Manual connect serializes only explicitly set fields. Materialize
+        # this model's default so its evidence probe receives a typed credential.
+        if isinstance(value, dict) and "credential_type" not in value:
+            return {**value, "credential_type": FAMILY}
+        return value
 
 
 def credential(data):
@@ -422,7 +432,7 @@ async def list_page(data, kind, limit=100, offset=0, parent=None, names=False):
     raw = await request(data, method, body)
     rows = []
     if kind == "monitor":
-        for mode in ("http", "tcp", "dns", "icmp", "grpc"):
+        for mode in MONITOR_TYPES:
             rows.extend({**project(v, kind, names), "type": mode} for v in array(raw, mode + "Monitors", 100))
     else:
         rows = [project(v, kind, names) for v in array(raw, field, 100)]
@@ -535,7 +545,7 @@ async def records(data, args):
     elif op == "get_monitor":
         raw = await request(data, "GetMonitor", {"id": cfg["monitor_id"]})
         monitor = raw.get("monitor")
-        if not isinstance(monitor, dict) or len(monitor) != 1 or next(iter(monitor)) not in {"http", "tcp", "dns", "icmp", "grpc"}:
+        if not isinstance(monitor, dict) or len(monitor) != 1 or next(iter(monitor)) not in MONITOR_TYPES:
             raise _Unverified("OpenStatus monitor oneof envelope is unverified")
         mode = next(iter(monitor))
         item = {**project(monitor[mode], "monitor", names), "type": mode}
