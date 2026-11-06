@@ -656,8 +656,8 @@ OP_SPECS: List[Dict[str, Any]] = [
  'path': '/dealFields/{field_code}/options',
  'path_params': ['field_code'],
  'list': False,
- 'query': ['ids'],
- 'body': []},
+ 'query': [],
+ 'body': [['ids', True, 'string', 'Comma-separated option IDs to delete']]},
     {'operation': 'get_deal_fields',
  'display': 'Get All Deal Fields (v1)',
  'category': 'Deals',
@@ -3527,11 +3527,14 @@ _REQUIRED_QUERY = {
 # dispatcher builds a {field: value} dict; for these we send the array instead.
 #   "field": send that array body-field's value as the raw body
 #   "wrap":  send [<the built body dict>] as a one-element array
+#   "ids":   turn the comma-separated option IDs into [{"id": <integer>}, ...]
 _RAW_ARRAY_BODY = {
     "add_deal_field_options_v2": ("field", "options"),
     "update_deal_field_options_v2": ("field", "options"),
+    "delete_deal_field_options_v2": ("ids", "ids"),
     "add_product_field_options": ("wrap", None),
     "update_product_field_options": ("wrap", None),
+    "delete_product_field_options": ("wrap", None),
 }
 
 # Operations where the API requires AT LEAST ONE of a group of otherwise-optional
@@ -4302,7 +4305,13 @@ class PipedriveNode(ExternalWebhookTriggerMixin, WorkflowNode):
         raw = _RAW_ARRAY_BODY.get(op.operation)
         if raw:
             mode, field = raw
-            json_body = body.get(field) if mode == "field" else ([body] if body else None)
+            if mode == "ids":
+                ids = str(body.get(field) or "").split(",")
+                if any(not value.strip() for value in ids):
+                    raise ValueError("At least one option ID is required")
+                json_body = [{"id": int(value.strip())} for value in ids]
+            else:
+                json_body = body.get(field) if mode == "field" else ([body] if body else None)
 
         return await _pipedrive_request(
             domain,

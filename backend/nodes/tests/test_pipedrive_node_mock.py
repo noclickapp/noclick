@@ -100,6 +100,8 @@ def _minimal_config(spec) -> dict:
         api, required, ftype, _desc = bf
         if required:
             cfg[_safe_attr(api)] = _dummy_for(ftype)
+    if op == "delete_deal_field_options_v2":
+        cfg["ids"] = "1"  # This CSV field contains numeric option IDs.
     # required query params (API-required, enforced by the node)
     for (op_name, qname) in _REQUIRED_QUERY:
         if op_name == op:
@@ -443,3 +445,49 @@ class TestPipedriveErrorsAndOptions:
         import inspect
         params = list(inspect.signature(PipedriveNode.load_field_options).parameters)
         assert params[:3] == ["field_name", "credential_data", "context"], params
+
+
+class TestPipedriveDeleteFieldOptions:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("operation, values, expected", [
+        ("delete_deal_field_options_v2", {"ids": "4, 5"}, [{"id": 4}, {"id": 5}]),
+        ("delete_product_field_options", {"id": "4"}, [{"id": 4}]),
+    ])
+    async def test_delete_sends_option_object_array(self, credentials, operation, values, expected):
+        import httpx
+
+        captured = []
+
+        def transport(request):
+            import json
+            captured.append(request)
+            assert json.loads(request.content) == expected
+            assert not request.url.query
+            assert request.method == "DELETE"
+            resource = "dealFields" if operation == "delete_deal_field_options_v2" else "productFields"
+            assert request.url.path == f"/api/v2/{resource}/custom_field/options"
+            return httpx.Response(200, json={"success": True, "data": []})
+
+        real_client = httpx.AsyncClient
+        node = create_pipedrive_node(PipedriveNodeConfig(
+            config={"operation": operation, "field_code": "custom_field", **values},
+            credentials=credentials,
+        ))
+        with patch("nodes.pipedrive_node.httpx.AsyncClient",
+                   side_effect=lambda **kwargs: real_client(transport=httpx.MockTransport(transport), **kwargs)):
+            result = await node.execute({})
+        assert result["status"] == "success"
+        assert len(captured) == 1
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("ids", ["", " ", "4,", "not-an-id"])
+    async def test_deal_option_ids_reject_invalid_input(self, credentials, ids):
+        node = create_pipedrive_node(PipedriveNodeConfig(
+            config={"operation": "delete_deal_field_options_v2",
+                    "field_code": "custom_field", "ids": ids},
+            credentials=credentials,
+        ))
+        with patch("nodes.pipedrive_node.httpx.AsyncClient") as client:
+            with pytest.raises(ValueError):
+                await node.execute({})
+        client.assert_not_called()
