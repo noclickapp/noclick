@@ -1223,7 +1223,9 @@ class TestConfluenceTasksMock:
     @pytest.mark.asyncio
     async def test_list_tasks(self, api_token_credentials):
         config = ConfluenceNodeConfig(
-            config=ConfluenceListTasksConfig(status="incomplete", limit="10"),
+            config=ConfluenceListTasksConfig(
+                page_id="123", space_id="456", status="incomplete", limit="10"
+            ),
             credentials=api_token_credentials,
         )
         node = create_confluence_node(config)
@@ -1233,7 +1235,12 @@ class TestConfluenceTasksMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert "/api/v2/tasks" in capture["url"]
-        assert capture["params"]["status"] == "incomplete"
+        assert capture["params"] == {
+            "page-id": "123",
+            "space-id": "456",
+            "status": "incomplete",
+            "limit": "10",
+        }
 
     @pytest.mark.asyncio
     async def test_get_task(self, api_token_credentials):

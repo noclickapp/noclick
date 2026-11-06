@@ -2842,9 +2842,9 @@ class ConfluenceNode(WorkflowNode):
     async def _list_tasks(self, c: ConfluenceListTasksConfig, cred) -> Dict[str, Any]:
         params: Dict[str, Any] = {"limit": c.limit}
         if c.page_id:
-            params["pageId"] = c.page_id
+            params["page-id"] = c.page_id
         if c.space_id:
-            params["spaceId"] = c.space_id
+            params["space-id"] = c.space_id
         if c.status:
             params["status"] = c.status
         return await _confluence_request(
