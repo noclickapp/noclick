@@ -8698,7 +8698,7 @@ class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
         """Get a workflow by name"""
         async with guarded_async_client() as client:
             response = await client.get(
-                f"{api_base}/workflow",
+                f"{api_base}/workflow/search",
                 headers=headers,
                 params={"workflowName": config.workflow_name},
             )
@@ -8787,7 +8787,11 @@ class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
         self, api_base: str, headers: Dict, config: JiraCreateDashboardConfig
     ) -> Dict[str, Any]:
         """Create a new dashboard"""
-        payload: Dict[str, Any] = {"name": config.name}
+        payload: Dict[str, Any] = {
+            "name": config.name,
+            "editPermissions": [],
+            "sharePermissions": [],
+        }
         if config.description:
             payload["description"] = config.description
         async with guarded_async_client() as client:
@@ -8801,6 +8805,25 @@ class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
             )
             return result
 
+    @staticmethod
+    def _dashboard_permission_for_write(permission: Dict[str, Any]) -> Dict[str, Any]:
+        """Keep permission identities, excluding GET-only expanded metadata."""
+        kind = permission["type"]
+        if kind == "project-unknown":
+            raise ValueError("Cannot preserve a dashboard permission for an inaccessible project")
+        result = {"type": "authenticated" if kind == "loggedin" else kind}
+        for field, keys in (
+            ("group", ("groupId", "name")),
+            ("project", ("id",)),
+            ("role", ("id",)),
+            ("user", ("accountId",)),
+        ):
+            if field in permission:
+                result[field] = {
+                    key: permission[field][key] for key in keys if key in permission[field]
+                }
+        return result
+
     async def _update_dashboard(
         self, api_base: str, headers: Dict, config: JiraUpdateDashboardConfig
     ) -> Dict[str, Any]:
@@ -8811,6 +8834,24 @@ class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
         if config.description is not None:
             payload["description"] = config.description
         async with guarded_async_client() as client:
+            # PUT replaces required details; preserve sharing and omitted fields.
+            current_response = await client.get(
+                f"{api_base}/dashboard/{config.dashboard_id}", headers=headers
+            )
+            current_response.raise_for_status()
+            current = current_response.json()
+            payload = {
+                **{key: current[key] for key in ("name", "description") if key in current},
+                "editPermissions": [
+                    self._dashboard_permission_for_write(p)
+                    for p in current.get("editPermissions", [])
+                ],
+                "sharePermissions": [
+                    self._dashboard_permission_for_write(p)
+                    for p in current.get("sharePermissions", [])
+                ],
+                **payload,
+            }
             response = await client.put(
                 f"{api_base}/dashboard/{config.dashboard_id}",
                 headers=headers,
@@ -9197,14 +9238,17 @@ class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
         """Get an issue type scheme by ID"""
         async with guarded_async_client() as client:
             response = await client.get(
-                f"{api_base}/issuetypescheme/{config.scheme_id}", headers=headers
+                f"{api_base}/issuetypescheme",
+                headers=headers,
+                params={"id": config.scheme_id},
             )
             response.raise_for_status()
             result = response.json()
             await self.emit(
                 {"action": "get_issue_type_scheme", "scheme_id": config.scheme_id}
             )
-            return result
+            schemes = result.get("values", [])
+            return schemes[0] if schemes else result
 
     async def _create_issue_type_scheme(
         self, api_base: str, headers: Dict, config: JiraCreateIssueTypeSchemeConfig
@@ -10088,11 +10132,18 @@ class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
             response = await client.delete(
                 f"{api_base}/priority/{config.priority_id}", headers=headers
             )
-            response.raise_for_status()
+            # Jira starts an asynchronous task and returns 303 on success.
+            if response.status_code != 303:
+                response.raise_for_status()
             await self.emit(
                 {"action": "delete_priority", "priority_id": config.priority_id}
             )
-            return {"success": True, "priority_id": config.priority_id, "deleted": True}
+            return {
+                "success": True,
+                "priority_id": config.priority_id,
+                "deleted": response.status_code != 303,
+                "task": response.headers.get("Location"),
+            }
 
     # --- Issue Type Operations ---
 
@@ -10176,7 +10227,10 @@ class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
         payload = {"queries": [config.jql]}
         async with guarded_async_client() as client:
             response = await client.post(
-                f"{api_base}/jql/parse", headers=headers, json=payload
+                f"{api_base}/jql/parse",
+                headers=headers,
+                params={"validation": "strict"},
+                json=payload,
             )
             response.raise_for_status()
             result = response.json()
@@ -10230,9 +10284,10 @@ class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
         """Set a user preference"""
         async with guarded_async_client() as client:
             response = await client.put(
-                f"{api_base}/mypreferences?key={config.preference_key}",
+                f"{api_base}/mypreferences",
                 headers=headers,
-                data=config.value,
+                params={"key": config.preference_key},
+                json=config.value,
             )
             response.raise_for_status()
             await self.emit(
