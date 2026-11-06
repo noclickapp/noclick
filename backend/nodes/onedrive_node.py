@@ -1857,7 +1857,7 @@ class OneDriveNode(WorkflowNode):
                 )
             elif config.item_path:
                 path = config.item_path.lstrip("/")
-                url = f"https://graph.microsoft.com/v1.0/me/drive/root:/{path}"
+                url = f"https://graph.microsoft.com/v1.0/me/drive/root:/{path}:"
             else:
                 return {
                     "status": "error",

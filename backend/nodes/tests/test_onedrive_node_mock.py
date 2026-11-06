@@ -181,6 +181,38 @@ class TestOneDriveComprehensive:
             assert mock_client.call_args.kwargs["event_hooks"]["request"]
 
     @pytest.mark.asyncio
+    @pytest.mark.parametrize("item_path", ["FolderA/FileB.txt", "/FolderA/FileB.txt"])
+    @pytest.mark.parametrize("download_format", [None, "pdf"])
+    async def test_download_path(self, item_path, download_format):
+        import httpx
+        from nodes.onedrive_node import OneDriveDownloadConfig
+
+        node = create_node_mock(OneDriveDownloadConfig(
+            item_path=item_path, format=download_format
+        ))
+
+        def transport(request):
+            # https://learn.microsoft.com/graph/api/driveitem-get-content
+            assert request.method == "GET"
+            assert request.url.path == "/v1.0/me/drive/root:/FolderA/FileB.txt:/content"
+            assert dict(request.url.params) == (
+                {"format": download_format} if download_format else {}
+            )
+            return httpx.Response(200, content=b"File content", headers={
+                "Content-Type": "application/pdf" if download_format else "text/plain"
+            })
+
+        client = httpx.AsyncClient(transport=httpx.MockTransport(transport))
+        with patch("nodes.onedrive_node.guarded_async_client", return_value=client):
+            result = await node.execute({})
+
+        assert result["status"] == "success"
+        assert result["data"]["content"].data == b"File content"
+        assert result["data"]["content"].filename == (
+            "FileB.pdf" if download_format else "FileB.txt"
+        )
+
+    @pytest.mark.asyncio
     async def test_update_item(self):
         from nodes.onedrive_node import OneDriveUpdateItemConfig
         config = OneDriveUpdateItemConfig(action="update_item_metadata", item_id="item123", new_name="renamed.pdf")
