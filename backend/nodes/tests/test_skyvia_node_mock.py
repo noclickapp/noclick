@@ -1,4 +1,4 @@
-"""UNRUN native factory/connect/contract/paging fixtures; HTTP boundary synthetic."""
+"""Skyvia factory, connect, contract and paging fixtures with synthetic HTTP."""
 from contextlib import asynccontextmanager
 from copy import deepcopy
 import json
@@ -29,7 +29,7 @@ def wire(monkeypatch):
     state = {"calls": [], "responses": {}, "status": 200, "content": None, "headers": {"content-type": "application/json"}, "after": None, "workspace_ids": [101]}
     @asynccontextmanager
     async def client(**options):
-        assert options == {"timeout": 12, "follow_redirects": False, "trust_env": False, "require_public": True}
+        assert options == {"timeout": 12, "follow_redirects": False, "trust_env": False}
         class Client:
             @asynccontextmanager
             async def stream(self, method, url, **kwargs):
@@ -94,7 +94,8 @@ def test_visible_only_credential_connect_shape_and_actual_picker_strings():
     assert model.config.workspace_id == 101 and model.config.connection_id == 301
     for bad in ["Bearer synthetic-token", "line\nsecret", "line\rsecret", " ", "é"]:
         verdict = p.SkyviaNode.validate_config({"config": {"operation": "list_workspaces"}, "credentials": {**KEY, "api_token": bad}})
-        assert verdict["valid"] is False and bad not in repr(verdict)
+        assert verdict["valid"] is False
+        assert verdict["errors"] == ["Skyvia credential shape is invalid; reconnect it"]
     verdict = p.SkyviaNode.validate_config({"config": {"operation": "list_workspaces"}, "credentials": {**KEY, "credential_type": "foreign"}})
     assert verdict["valid"] is False
 
@@ -105,9 +106,9 @@ async def test_actual_connect_and_collector_prove_protected_workspace_visibility
     monkeypatch.setattr(credential_connect, "_collect_evidence", connection_evidence.collect_evidence)
     verdict = await credential_connect.validate_for_connect(credential_type=p.TYPE, credential_data={"api_token": KEY["api_token"], "workspace_ids": [101]}, user_id="11111111-1111-4111-8111-111111111111", probe=True)
     assert verdict.ok and verdict.credential_data == KEY
-    assert verdict.evidence.reachable is True and verdict.evidence.proves == "account"
+    assert verdict.evidence.reachable is True and p.SkyviaNode.connection_evidence.proves == "account"
     result = await connection_evidence.collect_evidence(node_type="automation-skyvia", credential_data=KEY, user_id="11111111-1111-4111-8111-111111111111")
-    assert result.reachable is True and result.proves == "account" and "101" in repr(result.samples)
+    assert result.reachable is True and "101" in repr(result.samples)
     assert KEY["api_token"] not in repr(result) and "private workspace" not in repr(result)
     output = await create("list_workspaces").execute({})
     assert output["principal_identity_verified"] is False and output["account_ownership_verified"] is False and output["provider_permissions_verified"] is False

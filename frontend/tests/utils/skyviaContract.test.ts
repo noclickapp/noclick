@@ -1,15 +1,16 @@
-// UNRUN: current native schema/maps/credential labels; no browser/provider calls.
-import { describe, expect, it } from 'vitest';
+// Skyvia schema, palette and credential contract against staging's lazy loaders.
+import { beforeAll, describe, expect, it } from 'vitest';
 import schema from '../../app/schemas/nodes/skyvia.json';
-import { NODE_SCHEMAS } from '../../app/utils/nodeSchemas';
+import { NODE_SCHEMAS, loadNodeSchemas } from '../../app/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '../../app/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '../../app/utils/credentialLabels';
-import { AVAILABLE_NODES } from '../../app/components/workflow/nodes/nodeRegistry';
+import { NODE_DEFINITION_FILES } from '../../app/components/workflow/nodes/nodeDefinitions';
 
 describe('Skyvia native contract', () => {
+    beforeAll(async () => { await loadNodeSchemas(['automation-skyvia']); });
     it('registers one editor node/schema and the actual supplied token method', () => {
         expect(NODE_SCHEMAS['automation-skyvia']).toBe(schema);
-        expect(AVAILABLE_NODES.filter(node => node.type === 'automation-skyvia')).toHaveLength(1);
+        expect(NODE_DEFINITION_FILES.filter(([type]) => type === 'automation-skyvia')).toEqual([['automation-skyvia', 'SkyviaNode']]);
         expect(CREDENTIAL_TYPE_MAP.SkyviaAPITokenCredential).toBe('skyvia_api_token');
         expect(humanizeCredentialLabel('SkyviaAPIToken')).toBe('Skyvia API Token');
         const credential = (schema as any).$defs.SkyviaAPITokenCredential;

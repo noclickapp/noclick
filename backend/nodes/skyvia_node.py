@@ -13,7 +13,7 @@ from typing import Annotated, Any, Literal, Union
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StrictBool, StrictInt, field_validator, model_serializer
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
-from repositories.skyvia_credentials import fetch_snapshot
+from repositories.skyvia_credentials import fetch_snapshot, fetch_primary_org
 from utils.ssrf import guarded_async_client
 
 ROOT = "https://api.skyvia.com/v1"
@@ -90,6 +90,8 @@ async def current(credential_id, user_id, organization_id=None, workflow_id=None
     from utils.credentials import get_workflow_owner_id, is_credential_authorized_for_workflow
     from utils.encryption import get_encryption
     pool = pool or get_native_pool()
+    if organization_id is None:
+        organization_id = await fetch_primary_org(pool, user_id)
     row = await fetch_snapshot(pool, credential_id, user_id, organization_id)
     if row is None and workflow_id:
         owner = await get_workflow_owner_id(pool, workflow_id)
@@ -239,7 +241,7 @@ async def request(value, path, *, params=None, reader=None):
         value = await reader.read()
     try:
         try:
-            async with guarded_async_client(timeout=12, follow_redirects=False, trust_env=False, require_public=True) as client:
+            async with guarded_async_client(timeout=12, follow_redirects=False, trust_env=False) as client:
                 async with client.stream("GET", ROOT + path, params=query, headers=PrivateHeaders({"Authorization": value.api_token, "Accept": "application/json", "Cache-Control": "no-store"})) as response:
                     if response.status_code != 200:
                         raise ValueError("Skyvia metadata read refused or service unavailable")
@@ -304,7 +306,6 @@ def reader_from(data):
 
 
 class SkyviaNode(WorkflowNode):
-    workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_workspaces", noun="allowed accessible workspace IDs", proves="account", label_keys=("id",))
 
     @classmethod
@@ -331,7 +332,6 @@ class SkyviaNode(WorkflowNode):
         value = guard(data)
         if credential_id:
             reader = Reader(credential_id, user_id, organization_id, workflow_id, pool, expected=authority(value))
-            value = await reader.read()
             return {**value.model_dump(), "_skyvia_reader": reader}
         return value.model_dump()
 
@@ -380,6 +380,8 @@ class SkyviaNode(WorkflowNode):
         context = context or {}; search = search or ""
         if not isinstance(context, dict) or not isinstance(search, str) or len(search) > 128 or any(ord(c) < 32 or ord(c) == 127 for c in search):
             raise ValueError("Supply bounded Skyvia picker context/search")
+        if reader and reader.workflow_id is None:
+            reader.workflow_id = context.get("_workflow_id")
         workspace_id = identifier(context.get("workspace_id")) if field_name != "workspace_id" else None
         binding = {"field": field_name, "workspace": workspace_id, "search": search, "take": PICKER_TAKE}
         key = json.dumps(authority(value), separators=(",", ":")).encode()

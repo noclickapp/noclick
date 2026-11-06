@@ -1,5 +1,6 @@
 """Current Skyvia rows under canonical actor/organization/workflow access."""
 from repositories.credentials import credential_access_predicate
+from repositories.organization import PRIMARY_ORG_SQL
 
 
 async def fetch_snapshot(pool, credential_id, user_id, organization_id=None, *, workflow_id=None):
@@ -17,3 +18,10 @@ async def fetch_snapshot(pool, credential_id, user_id, organization_id=None, *, 
           FROM credentials c WHERE c.id = $1
           AND {credential_access_predicate()} {workflow_guard}
         """, *args)
+
+
+async def fetch_primary_org(pool, user_id):
+    # Staging's freshening hook supplies the caller, not their organization.
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(PRIMARY_ORG_SQL, user_id)
+    return str(row["organization_id"]) if row else None

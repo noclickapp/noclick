@@ -1,10 +1,9 @@
 // Native Skyvia workspace and management metadata node.
 // Uses the current shared editor shell and exact official vendor SVG.
-import { forwardRef, memo } from 'react';
-import type { ImgHTMLAttributes } from 'react';
+import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
-import type { NodeDefinition, SvgIconComponent } from './types';
+import type { NodeDefinition } from './types';
 
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
@@ -16,10 +15,6 @@ const PreferredBrandIcon = ({ className, style }: { className?: string; style?: 
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
-const SkyviaIcon: SvgIconComponent = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTMLImageElement>>(
-    (props, ref) => <img {...props} ref={ref} src="/icons/skyvia.svg" alt="" />
-);
-SkyviaIcon.displayName = 'SkyviaIcon';
 export const SkyviaNode: NodeDefinition = {
     type: 'automation-skyvia', label: 'Skyvia',
     description: 'Read workspace, connection, integration, backup and automation metadata',

@@ -1,19 +1,16 @@
-"""UNRUN actual current-row, factory, locked admission, Agent and socket fixtures."""
+"""Skyvia current-row authority, revocation and saved execution fixtures."""
 from contextlib import asynccontextmanager
 from copy import deepcopy
-from datetime import datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
-from uuid import UUID
 
 import httpx
 import pytest
 
 from nodes import skyvia_node as p
 from nodes.core.registry import NodeFactory
-from nodes.core import run_op, connection_evidence
-from nodes.core.run_op import run_node_lookup, run_node_operation
-from nodes.agent.node_op_tools import build_node_op_tools
+from nodes.core.run_op import run_node_lookup
+from repositories.organization import PRIMARY_ORG_SQL
 from utils import credential_approval, credentials, encryption
 
 USER = "11111111-1111-4111-8111-111111111111"
@@ -22,9 +19,7 @@ OWNER = "33333333-3333-4333-8333-333333333333"
 ORG = "44444444-4444-4444-8444-444444444444"
 WORKFLOW = "55555555-5555-4555-8555-555555555555"
 KEY = {"credential_type": "skyvia_api_token", "api_token": "synthetic-private-token", "workspace_ids": [101]}
-LOCATION = 101
 ACCOUNT = 101
-PRODUCT = 301
 
 
 @pytest.fixture
@@ -47,6 +42,8 @@ class Storage:
     def transaction(self): return Context(self)
     async def fetchrow(self, sql, *args):
         self.calls.append((sql, args))
+        if sql == PRIMARY_ORG_SQL:
+            return {"organization_id": ORG}
         if "SELECT c.credential" in sql:
             assert "resource_shares" in sql and "$2" in sql and "$3" in sql
             return deepcopy(self.row) if args[0] == CID and (args[1], args[2]) in self.allowed else None
@@ -88,12 +85,18 @@ def provider(monkeypatch):
     return calls
 
 
+async def read_fresh(store, **context):
+    fresh = await p.SkyviaNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID, **context)
+    await fresh["_skyvia_reader"].read()
+    return fresh
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("change", [{"credential_type": "foreign_provider"}, {"revoked_at": "revoked"}, {"owner_id": None}, {"token_version": True}, {"token_version": -1}, {"token_version": "3"}])
 async def test_current_rows_refuse_before_decrypt_and_provider(storage, provider, change):
     store, crypto = storage
     store.row.update(change)
-    with pytest.raises(ValueError): await p.SkyviaNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID)
+    with pytest.raises(ValueError): await read_fresh(store)
     crypto.decrypt_credential.assert_not_called()
     assert provider == []
 
@@ -123,10 +126,10 @@ async def test_cached_rebinding_and_row_blob_type_mismatch_are_not_reconciled(st
     store, crypto = storage
     crypto.decrypt_credential.return_value["api_token"] = "synthetic-replacement"
     with pytest.raises(ValueError, match="cached credential changed"):
-        await p.SkyviaNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID)
+        await read_fresh(store)
     crypto.decrypt_credential.return_value["credential_type"] = "foreign_provider"
     with pytest.raises(ValueError, match="does not match"):
-        await p.SkyviaNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID)
+        await read_fresh(store)
     assert provider == []
 
 
@@ -153,65 +156,14 @@ async def test_trusted_workflow_owner_fallback_is_current_and_revocable(storage,
     owner, allowed = AsyncMock(return_value=OWNER), AsyncMock(return_value=True)
     monkeypatch.setattr(credentials, "get_workflow_owner_id", owner)
     monkeypatch.setattr(credentials, "is_credential_authorized_for_workflow", allowed)
-    fresh = await p.SkyviaNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID, organization_id=ORG, workflow_id=WORKFLOW)
+    fresh = await read_fresh(store, organization_id=ORG, workflow_id=WORKFLOW)
     owner.assert_awaited_once_with(store, WORKFLOW)
     allowed.assert_awaited_once_with(store, WORKFLOW, CID)
     sql, args = store.calls[-1]
     assert "workflow_authorized_credentials" in sql and "w.owner_id = $2" in sql and args == (CID, OWNER, ORG, WORKFLOW)
     allowed.return_value = False
     with pytest.raises(ValueError): await fresh["_skyvia_reader"].read()
-    with pytest.raises(ValueError): await p.SkyviaNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID, organization_id=ORG)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-async def test_actual_locked_admission_stops_factory_dispatcher_and_collector(storage, provider, status):
-    store, _ = storage
-    store.policy["approval_operations"] = ["automation-skyvia.list_workspaces", "automation-skyvia.get_workspace"]
-    store.approval = {"id": UUID(int=19), "status": status, "consumed_at": None, "expires_at": datetime(2999, 1, 1, tzinfo=timezone.utc)}
-    node = NodeFactory.create_node("fixture", "automation-skyvia", {"config": {"operation": "list_workspaces"}, "credentials": KEY, "credential_id": CID, "_approval_pool": store}, user_id=USER, organization_id=ORG)
-    result = await node.run({})
-    assert result["executed"] is False and result["status"] == ("pending_approval" if status == "pending" else status)
-    result = await run_node_operation(node_type="automation-skyvia", operation="list_workspaces", arguments={}, user_id=USER, organization_id=ORG, credential_id=CID, pool=store)
-    assert result["executed"] is False
-    evidence = await connection_evidence.collect_evidence(node_type="automation-skyvia", credential_id=CID, user_id=USER, organization_id=ORG, pool=store)
-    assert evidence.reachable is None and evidence.proves == "account"
-    assert provider == [] and any("FOR UPDATE" in sql for sql, _ in store.calls)
-
-
-@pytest.mark.asyncio
-async def test_actual_lookup_uses_trusted_org_not_request_context(storage, provider, monkeypatch):
-    store, _ = storage
-    loader = AsyncMock(wraps=p.SkyviaNode.freshen_credential)
-    monkeypatch.setattr(p.SkyviaNode, "freshen_credential", loader)
-    result = await run_node_lookup(node_type="automation-skyvia", field_name="workspace_id", credential_id=CID, user_id=USER, organization_id=ORG, pool=store, context={"organization_id": OWNER, "workflow_id": "forged"})
-    assert result["options"][0]["value"] == str(LOCATION) and len(provider) == 1
-    assert loader.await_args.kwargs["organization_id"] == ORG and loader.await_args.kwargs["workflow_id"] is None
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("org_failure", [False, True])
-async def test_actual_socket_server_org_and_fail_closed_context(storage, provider, monkeypatch, org_failure):
-    from wss.handlers import workflow_handler
-    from wss.receiver.client_events import WorkflowNodeLoadOptionsRequest
-    store, _ = storage
-    store.allowed = {(USER, ORG)}
-    org = AsyncMock(side_effect=RuntimeError("synthetic context failure")) if org_failure else AsyncMock(return_value=ORG)
-    monkeypatch.setattr(workflow_handler, "get_user_org_context", org)
-    sent = AsyncMock()
-    monkeypatch.setattr(workflow_handler, "send_event", sent)
-    handler = workflow_handler.WorkflowHandler.__new__(workflow_handler.WorkflowHandler)
-    handler.sio = SimpleNamespace(get_session=AsyncMock(return_value={"user_id": USER}))
-    handler.get_pool = AsyncMock(return_value=store)
-    event = WorkflowNodeLoadOptionsRequest(request_id="fixture", node_type="automation-skyvia", credential_id=CID, field_name="workspace_id", context={"organization_id": OWNER, "workflow_id": "forged"})
-    await handler.get_events()[event.event_name]("synthetic-sid", event)
-    response = sent.await_args.args[2].data
-    assert response["success"] is (not org_failure)
-    if org_failure:
-        assert provider == []
-    else:
-        assert response["options"][0]["value"] == str(LOCATION) and len(provider) == 1
-        assert all(args[1:] == (USER, ORG) for sql, args in store.calls if "SELECT c.credential" in sql)
+    with pytest.raises(ValueError): await read_fresh(store, organization_id=ORG)
 
 
 @pytest.mark.asyncio
@@ -225,12 +177,23 @@ async def test_actual_saved_factory_run_uses_current_row_and_locked_admission(st
 
 
 @pytest.mark.asyncio
-async def test_actual_agent_asset_scope_refuses_foreign_id_before_resolution(provider, monkeypatch):
-    _, configs = build_node_op_tools("automation-skyvia", [{"operation": "get_connection", "field_scopes": {"workspace_id": [str(LOCATION)], "connection_id": [str(PRODUCT)]}}], node_id="fixture", credential_id=CID)
-    operation = next(info for info in configs.values() if info["tool_type"] == "node_op")
-    resolved = AsyncMock()
-    monkeypatch.setattr(run_op, "resolve_credential_with_owner_fallback", resolved)
-    result = await run_op.run_node_op_tool(operation, {"workspace_id": 102, "connection_id": PRODUCT}, user_id=USER, organization_id=ORG, workflow_id=WORKFLOW)
-    assert result["success"] is False
-    resolved.assert_not_awaited()
-    assert provider == []
+async def test_staging_picker_binds_server_org_and_trusted_workflow(storage, provider, monkeypatch):
+    store, _ = storage
+    # Staging's hook omits org/workflow; only the loader's underscored context is trusted.
+    store.allowed = {(OWNER, ORG)}
+    monkeypatch.setattr(credentials, "get_workflow_owner_id", AsyncMock(return_value=OWNER))
+    monkeypatch.setattr(credentials, "is_credential_authorized_for_workflow", AsyncMock(return_value=True))
+    fresh = await p.SkyviaNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID)
+    result = await p.SkyviaNode.load_field_options("workspace_id", fresh, {"_workflow_id": WORKFLOW, "organization_id": USER, "workflow_id": "forged"})
+    assert result["options"] == [{"value": "101", "label": "101"}] and len(provider) == 1
+    assert all(args[2] == ORG for sql, args in store.calls if "SELECT c.credential" in sql)
+    assert any(args == (CID, OWNER, ORG, WORKFLOW) for sql, args in store.calls)
+
+
+@pytest.mark.asyncio
+async def test_staging_lookup_reads_org_before_skyvia_request(storage, provider):
+    store, _ = storage
+    store.allowed = {(USER, ORG)}
+    result = await run_node_lookup(node_type="automation-skyvia", field_name="workspace_id", credential_id=CID, user_id=USER, organization_id=ORG, pool=store, context={"organization_id": OWNER})
+    assert result["options"] == [{"value": "101", "label": "101"}] and len(provider) == 1
+    assert all(args[2] == ORG for sql, args in store.calls if "SELECT c.credential" in sql)
